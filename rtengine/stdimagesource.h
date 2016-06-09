@@ -38,15 +38,15 @@ protected:
     bool rgbSourceModified;
 
     //void transformPixel             (int x, int y, int tran, int& tx, int& ty);
-    void getSampleFormat (const Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement);
+    void getSampleFormat (Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement);
 
 public:
     StdImageSource ();
     ~StdImageSource ();
 
-    int         load        (const Glib::ustring &fname, bool batch = false);
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
-    ColorTemp   getWB       () const
+    int         load        (Glib::ustring fname, bool batch = false);
+    void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hrp, ColorManagementParams cmp, RAWParams raw);
+    ColorTemp   getWB       ()
     {
         return wb;
     }
@@ -60,7 +60,7 @@ public:
 
     void        getAutoExpHistogram (LUTu &histogram, int& histcompr);
 
-    double      getDefGain  () const
+    double      getDefGain  ()
     {
         return 0.0;
     }
@@ -90,10 +90,20 @@ public:
         plistener = pl;
     }
 
-    void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
-    static void colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
+    void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
+    static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
 
-    bool        IsrgbSourceModified() const
+    static inline double intpow (double a, int b)
+    {
+        double r = 1.0;
+
+        for (int i = 0; i < b; i++) {
+            r *= a;
+        }
+
+        return r;
+    }
+    bool        IsrgbSourceModified()
     {
         return rgbSourceModified;
     }

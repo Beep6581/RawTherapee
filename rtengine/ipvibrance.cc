@@ -59,7 +59,9 @@ void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve)
             outCurve[i] = 65535.f * diagCurve->getVal( double(i) / 65535.0 );
         }
     } else {
-        outCurve.makeIdentity();
+        for (int i = 0; i <= 0xffff; i++) {
+            outCurve[i] = float(i);
+        }
     }
 }
 

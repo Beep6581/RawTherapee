@@ -731,8 +731,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // perform first analysis
     LUTu hist16 (65536);
+    LUTu hist16C (65536);
 
-    ipf.firstAnalysis (baseImg, params, hist16);
+    ipf.firstAnalysis (baseImg, &params, hist16);
 
     // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
@@ -775,15 +776,15 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LUTf curve (65536, 0);
     LUTf satcurve (65536, 0);
     LUTf lhskcurve (65536, 0);
-    LUTf lumacurve(32770, 0); // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
+    LUTf lumacurve(65536, 0);
     LUTf clcurve (65536, 0);
-    LUTf clToningcurve;
-    LUTf cl2Toningcurve;
+    LUTf clToningcurve (65536, 0);
+    LUTf cl2Toningcurve (65536, 0);
     LUTf wavclCurve (65536, 0);
 
-    LUTf rCurve;
-    LUTf gCurve;
-    LUTf bCurve;
+    LUTf rCurve (65536, 0);
+    LUTf gCurve (65536, 0);
+    LUTf bCurve (65536, 0);
     LUTu dummy;
 
     ToneCurve customToneCurve1, customToneCurve2;
@@ -796,38 +797,37 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     CurveFactory::complexCurve (expcomp, black / 65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr,
                                 params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
-                                hist16, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2 );
+                                hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2 );
 
     CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
     CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
     CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
 
-    bool opautili = false;
+    TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
 
-    if(params.colorToning.enabled) {
-        TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
-        double wp[3][3] = {
-            {wprof[0][0], wprof[0][1], wprof[0][2]},
-            {wprof[1][0], wprof[1][1], wprof[1][2]},
-            {wprof[2][0], wprof[2][1], wprof[2][2]}
-        };
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
-        double wip[3][3] = {
-            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-        };
-        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
-        clToningcurve (65536, 0);
-        CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, 1);
-        cl2Toningcurve (65536, 0);
-        CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, 1);
-    }
+    double wp[3][3] = {
+        {wprof[0][0], wprof[0][1], wprof[0][2]},
+        {wprof[1][0], wprof[1][1], wprof[1][2]},
+        {wprof[2][0], wprof[2][1], wprof[2][2]}
+    };
+    double wip[3][3] = {
+        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+    };
+    bool opautili = false;
+    params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+
+    bool clctoningutili = false;
+    CurveFactory::curveToningCL(clctoningutili, params.colorToning.clcurve, clToningcurve, 1);
+    bool llctoningutili = false;
+    CurveFactory::curveToningLL(llctoningutili, params.colorToning.cl2curve, cl2Toningcurve, 1);
+
     LabImage* labView = new LabImage (fw, fh);
 
-    if(params.blackwhite.enabled) {
-        CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
-    }
+
+    CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
     double rrm, ggm, bbm;
     float autor, autog, autob;
     float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
@@ -853,10 +853,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-    DCPProfile::ApplyState as;
-    DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
-
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as);
+    DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB);
+    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf);
 
     if (settings->verbose) {
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
@@ -895,15 +893,16 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // start tile processing...???
 
+    hist16.clear();
+    hist16C.clear();
 
     if(params.labCurve.contrast != 0) { //only use hist16 for contrast
-        hist16.clear();
 
 #ifdef _OPENMP
-        #pragma omp parallel
+        #pragma omp parallel shared(hist16,labView, fh, fw)
 #endif
         {
-            LUTu hist16thr (hist16.getSize());  // one temporary lookup table per thread
+            LUTu hist16thr (65536);  // one temporary lookup table per thread
             hist16thr.clear();
 #ifdef _OPENMP
             #pragma omp for schedule(static) nowait
@@ -912,27 +911,38 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             for (int i = 0; i < fh; i++)
                 for (int j = 0; j < fw; j++)
                 {
-                    hist16thr[(int)((labView->L[i][j]))]++;
+                    hist16thr[CLIP((int)((labView->L[i][j])))]++;
                 }
 
             #pragma omp critical
             {
-                hist16 += hist16thr;
+                for(int i = 0; i < 65536; i++)
+                {
+                    hist16[i] += hist16thr[i];
+                }
             }
         }
+
+
     }
 
-    bool utili;
-    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, lumacurve, dummy, 1, utili);
+    bool utili = false;
+    bool autili = false;
+    bool butili = false;
+    bool ccutili = false;
+    bool cclutili = false;
+    bool clcutili = false;
 
-    bool clcutili;
-    CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, 1);
+    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, lumacurve, dummy, 1, utili);
+    CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 1);
 
-    bool autili, butili, ccutili, cclutili;
-    CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
-                                   params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
+    CurveFactory::complexsgnCurve (1.f, autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+                                   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve, params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve,
+                                   hist16C, hist16C, dummy, dummy,
+                                   1);
+//   ipf.MSR(labView, labView->W, labView->H, 1);
 
-    ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
+    ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
 
     if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
         ipf.EPDToneMap(labView, 5, 1);
@@ -1020,11 +1030,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     begh = 0;
     endh = fh;
     CurveFactory::curveLightBrightColor (
-        params.colorappearance.curve,
-        params.colorappearance.curve2,
-        params.colorappearance.curve3,
-        hist16, dummy,
-        dummy, dummy,
+        params.colorappearance.curveMode, params.colorappearance.curve,
+        params.colorappearance.curveMode2, params.colorappearance.curve2,
+        params.colorappearance.curveMode3, params.colorappearance.curve3,
+        hist16, hist16, dummy,
+        hist16C, dummy,
         customColCurve1,
         customColCurve2,
         customColCurve3,

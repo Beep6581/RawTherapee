@@ -72,15 +72,11 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
 
             if(x[0] == 0.f && x[1] == 0.f)
                 // Avoid crash when first two points are at x = 0 (git Issue 2888)
-            {
                 x[1] = 0.01f;
-            }
 
             if(x[0] == 1.f && x[1] == 1.f)
                 // Avoid crash when first two points are at x = 1 (100 in gui) (git Issue 2923)
-            {
                 x[0] = 0.99f;
-            }
 
             if (!identity) {
                 if (kind == DCT_Spline && N > 2) {
@@ -264,8 +260,6 @@ void DiagonalCurve::NURBS_set ()
     // adding the final horizontal segment, always (see under)
     poly_x.push_back(3.0);      // 3.0 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
     poly_y.push_back(y[N - 1]);
-
-    fillDyByDx();
 }
 
 double DiagonalCurve::getVal (double t) const
@@ -307,10 +301,10 @@ double DiagonalCurve::getVal (double t) const
         }
 
         // do a binary search for the right interval:
-        unsigned int k_lo = 0, k_hi = N - 1;
+        int k_lo = 0, k_hi = N - 1;
 
-        while (k_hi > 1 + k_lo) {
-            unsigned int k = (k_hi + k_lo) / 2;
+        while (k_hi - k_lo > 1) {
+            int k = (k_hi + k_lo) / 2;
 
             if (x[k] > t) {
                 k_hi = k;
@@ -329,7 +323,7 @@ double DiagonalCurve::getVal (double t) const
         else { // if (kind==Spline) {
             double a = (x[k_hi] - t) / h;
             double b = (t - x[k_lo]) / h;
-            double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) * 0.1666666666666666666666666666666;
+            double r = a * y[k_lo] + b * y[k_hi] + ((a * a * a - a) * ypp[k_lo] + (b * b * b - b) * ypp[k_hi]) * (h * h) / 6.0;
             return CLIPD(r);
         }
 
@@ -340,7 +334,7 @@ double DiagonalCurve::getVal (double t) const
         // get the hash table entry by rounding the value (previously multiplied by "hashSize")
         unsigned short int i = (unsigned short int)(t * hashSize);
 
-        if (UNLIKELY(i > (hashSize + 1))) {
+        if (i > (hashSize + 1)) {
             //printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash.at(i), poly_x.size(), poly_x[hash.at(i)]);
             printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f\n\n", i, t);
             return t;
@@ -353,7 +347,7 @@ double DiagonalCurve::getVal (double t) const
         k_hi = hash.at(i).higherValue;
 
         // do a binary search for the right interval :
-        while (k_hi > 1 + k_lo) {
+        while (k_hi - k_lo > 1) {
             unsigned int k = (k_hi + k_lo) / 2;
 
             if (poly_x[k] > t) {
@@ -363,7 +357,13 @@ double DiagonalCurve::getVal (double t) const
             }
         }
 
-        return poly_y[k_lo] + (t - poly_x[k_lo]) * dyByDx[k_lo];
+        if (k_lo == k_hi) {
+            k_hi = k_lo + 1;
+        }
+
+        double dx = poly_x[k_hi] - poly_x[k_lo];
+        double dy = poly_y[k_hi] - poly_y[k_lo];
+        return poly_y[k_lo] + (t - poly_x[k_lo]) * ( dy ) / dx;
         break;
     }
 

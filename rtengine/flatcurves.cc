@@ -16,14 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <glib.h>
+#include <glib/gstdio.h>
 #include "curves.h"
 #include <cmath>
 #include <vector>
+#include "mytime.h"
+#include <cstring>
+
+#include <gtkmm.h>
+#include <fstream>
 
 namespace rtengine
 {
 
-FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn) : kind(FCT_Empty), leftTangent(nullptr), rightTangent(nullptr), identityValue(0.5), periodic(isPeriodic)
+FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn) : kind(FCT_Empty), leftTangent(NULL), rightTangent(NULL), identityValue(0.5), periodic(isPeriodic)
 {
 
     ppn = poly_pn > 65500 ? 65500 : poly_pn;
@@ -334,7 +341,17 @@ void FlatCurve::CtrlPoints_set ()
     poly_x.push_back(3.0);      // 3.0 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
     poly_y.push_back(sc_y[j - 1]);
 
-    fillDyByDx();
+    /*
+    // Checking the values
+    Glib::ustring fname = "Curve.xyz"; // TopSolid'Design "plot" file format
+    std::ofstream f (fname.c_str());
+    f << "$" << std::endl;;
+    for (unsigned int iter = 0; iter < poly_x.size(); iter++) {
+        f << poly_x[iter] << ", " << poly_y[iter] << ", 0." << std::endl;;
+    }
+    f << "$" << std::endl;;
+    f.close ();
+    */
 }
 
 double FlatCurve::getVal (double t) const
@@ -350,10 +367,10 @@ double FlatCurve::getVal (double t) const
         }
 
         // do a binary search for the right interval:
-        unsigned int k_lo = 0, k_hi = poly_x.size() - 1;
+        int k_lo = 0, k_hi = poly_x.size() - 1;
 
-        while (k_hi > 1 + k_lo) {
-            unsigned int k = (k_hi + k_lo) / 2;
+        while (k_hi - k_lo > 1) {
+            int k = (k_hi + k_lo) / 2;
 
             if (poly_x[k] > t) {
                 k_hi = k;
@@ -362,7 +379,9 @@ double FlatCurve::getVal (double t) const
             }
         }
 
-        return poly_y[k_lo] + (t - poly_x[k_lo]) * dyByDx[k_lo];
+        double dx = poly_x[k_hi] - poly_x[k_lo];
+        double dy = poly_y[k_hi] - poly_y[k_lo];
+        return poly_y[k_lo] + (t - poly_x[k_lo]) * dy / dx;
         break;
     }
 

@@ -17,159 +17,117 @@
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#include <map>
-#include <vector>
-#include <array>
-#include <memory>
-
-#include <glibmm.h>
+#ifndef _DCP_
+#define _DCP_
 
 #include "imagefloat.h"
 #include "curves.h"
 #include "colortemp.h"
-
 #include "../rtgui/threadutils.h"
+#include <glibmm.h>
+#include <map>
+#include <string>
 
 namespace rtengine
 {
 
-class DCPProfile final
+class DCPProfile
 {
-public:
-    class ApplyState final
-    {
-    public:
-        ApplyState();
-        ~ApplyState();
-
-    private:
-        struct Data;
-
-        std::unique_ptr<Data> data;
-
-        friend class DCPProfile;
+    struct HSBModify {
+        float fHueShift;
+        float fSatScale;
+        float fValScale;
     };
-
-    struct Illuminants {
-        short light_source_1;
-        short light_source_2;
-        double temperature_1;
-        double temperature_2;
-        bool will_interpolate;
-    };
-
-    using Triple = std::array<double, 3>;
-    using Matrix = std::array<Triple, 3>;
-
-    DCPProfile(const Glib::ustring& filename);
-    ~DCPProfile();
-
-    bool getHasToneCurve() const;
-    bool getHasLookTable() const;
-    bool getHasHueSatMap() const;
-    bool getHasBaselineExposureOffset() const;
-
-    Illuminants getIlluminants() const;
-
-    void apply(
-        Imagefloat* img,
-        int preferred_illuminant,
-        const Glib::ustring& working_space,
-        const ColorTemp& white_balance,
-        const Triple& pre_mul,
-        const Matrix& cam_wb_matrix,
-        bool use_tone_curve = false,
-        bool apply_hue_sat_map = true,
-        bool apply_look_table = false
-    ) const;
-    void setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out);
-    void step2ApplyTile(float* r, float* g, float* b, int width, int height, int tile_width, const ApplyState& as_in) const;
-
-private:
-    struct HsbModify {
-        float hue_shift;
-        float sat_scale;
-        float val_scale;
-    };
-
-    struct HsdTableInfo {
-        int hue_divisions;
-        int sat_divisions;
-        int val_divisions;
-        int hue_step;
-        int val_step;
-        unsigned int array_count;
-        bool srgb_gamma;
+    struct HSDTableInfo {
+        int iHueDivisions, iSatDivisions, iValDivisions;
+        int iHueStep, iValStep, iArrayCount;
+        bool sRGBGamma;
         struct {
-            float h_scale;
-            float s_scale;
-            float v_scale;
-            int max_hue_index0;
-            int max_sat_index0;
-            int max_val_index0;
-            int hue_step;
-            int val_step;
+            float hScale, sScale, vScale;
+            int maxHueIndex0, maxSatIndex0, maxValIndex0;
+            int hueStep, valStep;
         } pc;
     };
 
-    void findXyztoCamera(const double white_xy[2], int preferred_illuminant, Matrix& xyz_to_camera) const;
-    void neutralToXy(const Triple& neutral, int preferred_illuminant, double xy[2]) const;
-    void makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mul, const Matrix& cam_wb_matrix, int preferred_illuminant, Matrix& xyz_cam) const;
-    std::vector<HsbModify> makeHueSatMap(const ColorTemp& white_balance, int preferred_illuminant) const;
-    void hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const;
+    double mColorMatrix1[3][3], mColorMatrix2[3][3];
+    bool hasColorMatrix1, hasColorMatrix2, hasForwardMatrix1, hasForwardMatrix2, hasToneCurve, hasBaselineExposureOffset, willInterpolate;
+    double mForwardMatrix1[3][3], mForwardMatrix2[3][3];
+    double temperature1, temperature2;
+    double baselineExposureOffset;
+    HSBModify *aDeltas1, *aDeltas2, *aLookTable;
+    HSDTableInfo DeltaInfo, LookInfo;
+    short iLightSource1, iLightSource2;
 
-    Matrix color_matrix_1;
-    Matrix color_matrix_2;
-    bool has_color_matrix_1;
-    bool has_color_matrix_2;
-    bool has_forward_matrix_1;
-    bool has_forward_matrix_2;
-    bool has_tone_curve;
-    bool has_baseline_exposure_offset;
-    bool will_interpolate;
-    Matrix forward_matrix_1;
-    Matrix forward_matrix_2;
-    double temperature_1;
-    double temperature_2;
-    double baseline_exposure_offset;
-    std::vector<HsbModify> deltas_1;
-    std::vector<HsbModify> deltas_2;
-    std::vector<HsbModify> look_table;
-    HsdTableInfo delta_info;
-    HsdTableInfo look_info;
-    short light_source_1;
-    short light_source_2;
+    AdobeToneCurve toneCurve;
+    struct {
+        double m2ProPhoto[3][3];
+        double m2Work[3][3];
+        bool alreadyProPhoto;
+        bool useToneCurve;
+        bool applyLookTable;
+        float blScale;
+    } applyState;
 
-    AdobeToneCurve tone_curve;
+    void dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const;
+    void dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const;
+    void dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const;
+    void MakeXYZCAM(ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
+    const HSBModify* MakeHueSatMap(ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
+    void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, float &h, float &s, float &v) const;
+
+public:
+    DCPProfile(Glib::ustring fname);
+    ~DCPProfile();
+
+    bool getHasToneCurve()
+    {
+        return hasToneCurve;
+    }
+    bool getHasLookTable()
+    {
+        return !!aLookTable;
+    }
+    bool getHasHueSatMap()
+    {
+        return !!aDeltas1;
+    }
+    bool getHasBaselineExposureOffset()
+    {
+        return hasBaselineExposureOffset;
+    }
+    void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_)
+    {
+        i1 = iLightSource1;
+        i2 = iLightSource2;
+        temp1 = temperature1, temp2 = temperature2;
+        willInterpolate_ = willInterpolate;
+    };
+    void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, double pre_mul[3], double camMatrix[3][3], bool useToneCurve = false, bool applyHueSatMap = true, bool applyLookTable = false) const;
+    void setStep2ApplyState(Glib::ustring workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure);
+    void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth) const;
 };
 
-class DCPStore final
+class DCPStore
 {
-public:
-    static DCPStore* getInstance();
-
-    DCPStore(const DCPStore& other) = delete;
-    DCPStore& operator =(const DCPStore& other) = delete;
-
-    void init(const Glib::ustring& rt_profile_dir);
-
-    bool isValidDCPFileName(const Glib::ustring& filename) const;
-
-    DCPProfile* getProfile(const Glib::ustring& filename) const;
-    DCPProfile* getStdProfile(const Glib::ustring& camShortName) const;
-
-private:
-    DCPStore() = default;
-
-    mutable MyMutex mutex;
+    MyMutex mtx;
 
     // these contain standard profiles from RT. keys are all in uppercase, file path is value
-    std::map<Glib::ustring, Glib::ustring> file_std_profiles;
+    std::map<Glib::ustring, Glib::ustring> fileStdProfiles;
 
     // Maps file name to profile as cache
-    mutable std::map<Glib::ustring, DCPProfile*> profile_cache;
+    std::map<Glib::ustring, DCPProfile*> profileCache;
+
+public:
+    void init(Glib::ustring rtProfileDir);
+
+    bool isValidDCPFileName(Glib::ustring filename) const;
+
+    DCPProfile* getProfile(Glib::ustring filename);
+    DCPProfile* getStdProfile(Glib::ustring camShortName);
+
+    static DCPStore* getInstance();
 };
 
+#define dcpStore DCPStore::getInstance()
 }
+#endif

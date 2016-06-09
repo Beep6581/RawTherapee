@@ -16,9 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-
-#include <type_traits>
+#ifndef _SIMPLEUTILS_
+#define _SIMPLEUTILS_
 
 namespace rtengine
 {
@@ -36,10 +35,5 @@ void rotate (unsigned char* img, int& w, int& h, int deg);
 void hflip (unsigned char* img, int w, int h);
 void vflip (unsigned char* img, int w, int h);
 
-template<typename ENUM>
-typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
-{
-    return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
-
-}
+#endif

@@ -159,9 +159,7 @@ protected:
     static inline double simplebasecurve (double x, double b, double sr)
     {
         // a = 1, D = 1, hr = 0 (unused for a = D = 1)
-        if (b == 0.0) {
-            return x;
-        } else if (b < 0) {
+        if (b < 0) {
             double m = 0.5;//midpoint
             double slope = 1.0 + b; //slope of straight line between (0,-b) and (1,1)
             double y = -b + m * slope; //value at midpoint
@@ -177,7 +175,7 @@ protected:
             double y = (m - b) * slope;
 
             if (x <= m) {
-                return clower (x / m, slope * m / y, sr) * y;
+                return b == 0 ? x * slope : clower (x / m, slope * m / y, sr) * y;
             } else {
                 return y + (x - m) * slope;
             }
@@ -240,18 +238,13 @@ public:
     }
     static inline float gamma            (float x, float gamma, float start, float slope, float mul, float add)
     {
-        return (x <= start ? x*slope : xexpf(xlogf(x) / gamma) * mul - add);
+        return (x <= start ? x*slope : expf(logf(x) / gamma) * mul - add);
     }
     static inline float igamma           (float x, float gamma, float start, float slope, float mul, float add)
     {
-        return (x <= start * slope ? x / slope : xexpf(xlogf((x + add) / mul) * gamma) );
+        return (x <= start * slope ? x / slope : expf(logf((x + add) / mul) * gamma) );
     }
-#ifdef __SSE2__
-    static inline vfloat igamma           (vfloat x, vfloat gamma, vfloat start, vfloat slope, vfloat mul, vfloat add)
-    {
-        return (x <= start * slope ? x / slope : xexpf(xlogf((x + add) / mul) * gamma) );
-    }
-#endif
+
     static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level)
     {
         if (comp > 0.0) {
@@ -278,31 +271,42 @@ public:
 public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
                               procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
-                              LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
+
+                              LUTu & histogram, LUTu & histogramCropped,
+                              LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
 
                               int skip = 1);
-    static void curveBW (const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
+    static void curveBW (const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
                          ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
 
-    static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, int skip);
+    static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, LUTu & histogramcl, LUTu & outBeforeCLurveHistogram, int skip);
 
     static void curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve,/* LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip);
-    static void curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
-    static void mapcurve ( bool & mapcontlutili, const std::vector<double>& mapcurvePoints, LUTf & mapcurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram);
+    static void curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, LUTu & histogram, LUTu & outBeforeCurveHistogram);
+    static void mapcurve ( bool & mapcontlutili, const std::vector<double>& mapcurvePoints, LUTf & mapcurve, int skip, LUTu & histogram, LUTu & outBeforeCurveHistogram);
 
-    static void curveToning ( const std::vector<double>& curvePoints, LUTf & ToningCurve, int skip);
+    static void curveToningCL ( bool & clctoningutili, const std::vector<double>& clcurvePoints, LUTf & clToningCurve, int skip);
+    static void curveToningLL ( bool & llctoningutili, const std::vector<double>& llcurvePoints, LUTf & llToningCurve, int skip);
+    static void denoiseCC ( bool & ccdenoiseutili, const std::vector<double>& cccurvePoints, LUTf & NoiseCCcurve, int skip);
 
-    static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
+    static void complexsgnCurve ( float adjustr, bool & autili,  bool & butili, bool & ccutili, bool & clcutili, double saturation, double rstprotection, const std::vector<double>& acurvePoints,
                                   const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
+                                  LUTu & histogramC, LUTu & histogramLC, LUTu & outBeforeCCurveHistogram, LUTu & outBeforeLCurveHistogram, ///for chroma
                                   int skip = 1);
-    static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, const LUTu & histogram, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili);
+    static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+                               LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili);
+
+    static void updatechroma (
+        const std::vector<double>& cccurvePoints,
+        LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,//for chroma
+        int skip = 1);
 
     static void curveLightBrightColor (
-        const std::vector<double>& curvePoints,
-        const std::vector<double>& curvePoints2,
-        const std::vector<double>& curvePoints3,
-        const LUTu & histogram, LUTu & outBeforeCCurveHistogram,
-        const LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,
+        procparams::ColorAppearanceParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
+        procparams::ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+        procparams::ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,
+        LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,
+        LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,
         ColorAppearance & outColCurve1,
         ColorAppearance & outColCurve2,
         ColorAppearance & outColCurve3,
@@ -333,7 +337,6 @@ protected:
     // end of variables used in Parametric curves only
     std::vector<double> poly_x;     // X points of the faceted curve
     std::vector<double> poly_y;     // Y points of the faceted curve
-    std::vector<double> dyByDx;
     std::vector<HashEntry> hash;
     unsigned short hashSize;        // hash table's size, between [10, 100, 1000]
 
@@ -355,11 +358,11 @@ protected:
     }
     static inline double p01 (double x, double prot)
     {
-        return x <= 0.5 ? CurveFactory::clower (x * 2, 2.0, prot) * 0.5 : 0.5 + CurveFactory::cupper ((x - 0.5) * 2, 2.0, prot) * 0.5;
+        return x <= 0.5 ? CurveFactory::clower (x * 2, 2.0, prot) / 2.0 : 0.5 + CurveFactory::cupper ((x - 0.5) * 2, 2.0, prot) / 2.0;
     }
     static inline double p10 (double x, double prot)
     {
-        return x <= 0.5 ? CurveFactory::cupper (x * 2, 2.0, prot) * 0.5 : 0.5 + CurveFactory::clower ((x - 0.5) * 2, 2.0, prot) * 0.5;
+        return x <= 0.5 ? CurveFactory::cupper (x * 2, 2.0, prot) / 2.0 : 0.5 + CurveFactory::clower ((x - 0.5) * 2, 2.0, prot) / 2.0;
     }
     static inline double pfull (double x, double prot, double sh, double hl)
     {
@@ -367,7 +370,6 @@ protected:
     }
 
     void fillHash();
-    void fillDyByDx();
 
 public:
     Curve ();
@@ -405,7 +407,7 @@ public:
 class FlatCurve : public Curve
 {
 
-private:
+protected:
     FlatCurveType kind;
     double* leftTangent;
     double* rightTangent;
@@ -486,7 +488,7 @@ public:
     virtual ~ToneCurve() {};
 
     void Reset();
-    void Set(const Curve &pCurve, float gamma = 0);
+    void Set(Curve *pCurve, float gamma = 0, float start = 0, float slope = 0, float mul = 0, float add = 0);
     operator bool (void) const
     {
         return lutToneCurve;
@@ -710,7 +712,7 @@ public:
     virtual ~ColorAppearance() {};
 
     void Reset();
-    void Set(const Curve &pCurve);
+    void Set(Curve *pCurve);
     operator bool (void) const
     {
         return lutColCurve;

@@ -580,9 +580,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
         if (cc) {
             for (int i = 0; i < 4; i++) {
                 if (RT_blacklevel_from_constant) {
-                    int blackFromCc = cc->get_BlackLevel(i, iso_speed);
-                    // if black level from camconst > 0xffff it is an absolute value.
-                    black_c4[i] = blackFromCc > 0xffff ? (blackFromCc & 0xffff) : blackFromCc + cblack[i];
+                    black_c4[i] = cblack[i] + cc->get_BlackLevel(i, iso_speed);
                 }
 
                 // load 4 channel white level here, will be used if available

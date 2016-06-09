@@ -107,14 +107,16 @@ protected:
     LUTf NoiseCCcurve;
 
     LUTu vhist16, vhist16bw;
-    LUTu lhist16CAM;
+    LUTu lhist16, lhist16Cropped;
+    LUTu lhist16CAM, lhist16CroppedCAM;
     LUTu lhist16CCAM;
     LUTu lhist16RETI;
-    LUTu lhist16CLlad, lhist16LClad;
+    LUTu histCropped;
+    LUTu lhist16Clad, lhist16CLlad, lhist16LClad, lhist16LLClad;
     LUTu histRed, histRedRaw;
     LUTu histGreen, histGreenRaw;
     LUTu histBlue, histBlueRaw;
-    LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
+    LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve, histCLurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;

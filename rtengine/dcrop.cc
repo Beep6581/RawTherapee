@@ -773,13 +773,11 @@ void Crop::update (int todo)
 
     if (todo & M_RGBCURVE) {
         double rrm, ggm, bbm;
-        DCPProfile::ApplyState as;
-        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB, as);
-
+        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB);
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
                              params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit , satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
-                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as);
+                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf);
     }
 
     /*xref=000;yref=000;
@@ -816,7 +814,7 @@ void Crop::update (int todo)
         LUTu dummy;
         int moderetinex;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
-        parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
+        parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
         parent->ipf.vibrance (labnCrop);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {

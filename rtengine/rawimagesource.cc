@@ -587,7 +587,9 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
     }
 }
 
-float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], bool isMono, int colors)
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+static float
+calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], bool isMono, int colors)
 {
     if (isMono || colors == 1) {
         for (int c = 0; c < 4; c++) {
@@ -615,7 +617,7 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
     return gain;
 }
 
-void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw )
+void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw )
 {
     MyMutex::MyLock lock(getImageMutex);
 
@@ -725,7 +727,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         float line_blue[imwidth] ALIGNED16;
 
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic,16)
+        #pragma omp for
 #endif
 
         for (int ix = 0; ix < imheight; ix++) {
@@ -889,7 +891,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb)
 {
     DCPProfile *dcpProf = NULL;
     cmsHPROFILE dummy;
@@ -899,11 +901,11 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &
         return NULL;
     }
 
-    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
+    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset);
     return dcpProf;
 }
 
-void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb)
+void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb)
 {
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
     colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
@@ -1499,7 +1501,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname, bool batch)
+int RawImageSource::load (Glib::ustring fname, bool batch)
 {
 
     MyTime t1, t2;
@@ -3713,7 +3715,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
+void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
 {
 
 //    MyTime t1, t2, t3;
@@ -3727,17 +3729,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
     if (dcpProf != NULL) {
         // DCP processing
-        const DCPProfile::Triple pre_mul_row = {
-            pre_mul[0],
-            pre_mul[1],
-            pre_mul[2]
-        };
-        const DCPProfile::Matrix cam_matrix = {{
-            {camMatrix[0][0], camMatrix[0][1], camMatrix[0][2]},
-            {camMatrix[1][0], camMatrix[1][1], camMatrix[1][2]},
-            {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
-        }};
-        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, false, cmp.applyHueSatMap, false);
+        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, false, cmp.applyHueSatMap, false);
         return;
     }
 
@@ -4095,7 +4087,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         in = embedded;
     } else if (inProfile == "(cameraICC)") {
         // DCPs have higher quality, so use them first
-        *dcpProf = DCPStore::getInstance()->getStdProfile(camName);
+        *dcpProf = dcpStore->getStdProfile(camName);
 
         if (*dcpProf == NULL) {
             in = iccStore->getStdProfile(camName);
@@ -4107,8 +4099,8 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
             normalName = inProfile.substr(5);
         }
 
-        if (DCPStore::getInstance()->isValidDCPFileName(normalName)) {
-            *dcpProf = DCPStore::getInstance()->getProfile(normalName);
+        if (dcpStore->isValidDCPFileName(normalName)) {
+            *dcpProf = dcpStore->getProfile(normalName);
         }
 
         if (*dcpProf == NULL) {
@@ -4383,7 +4375,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
     #pragma omp parallel
 #endif
     {
-        LUTu tmphistogram(histogram.getSize());
+        LUTu tmphistogram(65536 >> histcompr);
         tmphistogram.clear();
 #ifdef _OPENMP
         #pragma omp for nowait
@@ -4438,20 +4430,19 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 
     const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
 
-    constexpr int histoSize = 65536;
     LUTu hist[4];
-    hist[0](histoSize);
+    hist[0](65536);
     hist[0].clear();
 
     if (ri->get_colors() > 1) {
-        hist[1](histoSize);
+        hist[1](65536);
         hist[1].clear();
-        hist[2](histoSize);
+        hist[2](65536);
         hist[2].clear();
     }
 
     if (fourColours) {
-        hist[3](histoSize);
+        hist[3](65536);
         hist[3].clear();
     }
 
@@ -4466,17 +4457,17 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     {
         // we need one LUT per color and thread, which corresponds to 1 MB per thread
         LUTu tmphist[4];
-        tmphist[0](histoSize);
+        tmphist[0](65536);
         tmphist[0].clear();
 
         if (ri->get_colors() > 1) {
-            tmphist[1](histoSize);
+            tmphist[1](65536);
             tmphist[1].clear();
-            tmphist[2](histoSize);
+            tmphist[2](65536);
             tmphist[2].clear();
 
             if (fourColours) {
-                tmphist[3](histoSize);
+                tmphist[3](65536);
                 tmphist[3].clear();
             }
         }

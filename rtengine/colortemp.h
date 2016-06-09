@@ -47,14 +47,12 @@ private:
     std::string method;
     static void clip (double &temp, double &green);
     static void clip (double &temp, double &green, double &equal);
-    int XYZtoCorColorTemp(double x0, double y0 , double z0, double &temp) const;
-    void temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul) const;
 
 public:
 
     ColorTemp () : temp(-1.), green(-1.), equal (1.), method("Custom") {}
     ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
-    ColorTemp (double t, double g, double e, const Glib::ustring &m);
+    ColorTemp (double t, double g, double e, Glib::ustring m);
     ColorTemp (double mulr, double mulg, double mulb, double e);
 
     void update (const double rmul, const double gmul, const double bmul, const double equal)
@@ -69,40 +67,42 @@ public:
         this->equal = equal;
     }
 
-    inline std::string getMethod() const
+    inline std::string getMethod()
     {
         return method;
     }
-    inline double getTemp () const
+    inline double getTemp ()
     {
         return temp;
     }
-    inline double getGreen () const
+    inline double getGreen ()
     {
         return green;
     }
-    inline double getEqual () const
+    inline double getEqual ()
     {
         return equal;
     }
 
-    void  getMultipliers (double &mulr, double &mulg, double &mulb) const
+    void  getMultipliers (double &mulr, double &mulg, double &mulb)
     {
         temp2mul (temp, green, equal, mulr, mulg, mulb);
     }
 
-    void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) const;
+    void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green);
+    void temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul);
     static void temp2mulxyz (double tem, double gree, std::string method, double &Xxyz, double &Zxyz);
 
+    int XYZtoCorColorTemp(double x0, double y0 , double z0, double &temp);
     static void cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, double &CAM02BB01, double &CAM02BB02, double &CAM02BB10, double &CAM02BB11, double &CAM02BB12, double &CAM02BB20, double &CAM02BB21, double &CAM02BB22, double adap );
     //static    void CAT02 (Imagefloat* baseImg, const ProcParams* params);
     //static void ciecam_02 (LabImage* lab, const ProcParams* params);
 
-    bool operator== (const ColorTemp& other) const
+    bool operator== (const ColorTemp& other)
     {
         return fabs(temp - other.temp) < 1e-10 && fabs(green - other.green) < 1e-10;
     }
-    bool operator!= (const ColorTemp& other) const
+    bool operator!= (const ColorTemp& other)
     {
         return !(*this == other);
     }

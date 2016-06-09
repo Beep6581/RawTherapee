@@ -42,7 +42,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     settings = s;
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
     iccStore->findDefaultMonitorProfile();
-    DCPStore::getInstance()->init (baseDir + "/dcpprofiles");
+    dcpStore->init (baseDir + "/dcpprofiles");
 
     CameraConstantsStore::getInstance ()->init (baseDir, userSettingsDir);
     profileStore.init ();

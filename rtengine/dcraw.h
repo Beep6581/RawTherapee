@@ -127,7 +127,6 @@ protected:
     struct tiff_ifd {
       int width, height, bps, comp, phint, offset, flip, samples, bytes;
       int tile_width, tile_length, sample_format, predictor;
-      float shutter;
     } tiff_ifd[10];
 
     struct ph1 {
@@ -140,8 +139,8 @@ protected:
     } hbd;
 
     struct jhead {
-      int algo, bits, high, wide, clrs, sraw, psv, restart, vpred[6];
-      ushort quant[64], idct[64], *huff[20], *free[20], *row;
+      int bits, high, wide, clrs, sraw, psv, restart, vpred[6];
+      ushort *huff[6], *free[4], *row;
     };
 
     struct tiff_tag {
@@ -218,8 +217,6 @@ void ljpeg_end (struct jhead *jh);
 int ljpeg_diff (ushort *huff);
 ushort * ljpeg_row (int jrow, struct jhead *jh);
 void lossless_jpeg_load_raw();
-void ljpeg_idct (struct jhead *jh);
-
 
 void canon_sraw_load_raw();
 void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);

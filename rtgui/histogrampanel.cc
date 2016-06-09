@@ -25,7 +25,8 @@
 #include "rtimage.h"
 #include "../rtengine/improccoordinator.h"
 #include "../rtengine/color.h"
-#include "../rtengine/opthelper.h"
+
+
 using namespace rtengine;
 
 extern Options options;
@@ -965,7 +966,7 @@ void HistogramArea::updateBackBuffer ()
 
         // make double copies of LUT, one for faster access, another one to scale down the raw histos
         LUTu rhchanged(256), ghchanged(256), bhchanged(256);
-        unsigned int lhisttemp[256] ALIGNED16 {0}, chisttemp[256] ALIGNED16 {0}, rhtemp[256] ALIGNED16 {0}, ghtemp[256] ALIGNED16 {0}, bhtemp[256] ALIGNED16 {0};
+        unsigned int lhisttemp[256], chisttemp[256], rhtemp[256], ghtemp[256], bhtemp[256];
         const int scale = (rawMode ? 8 : 1);
 
         for(int i = 0; i < 256; i++) {
@@ -1024,48 +1025,31 @@ void HistogramArea::updateBackBuffer ()
         if (!fullMode) {
             int area = 0;
 
-#ifdef __SSE2__
-            vint onev = _mm_set1_epi32(1);
-            vint iv = (vint)ZEROV;
-#endif
+            if(!rawMode)
+                for (int i = 0; i < fullhistheight; i++) {
+                    for (int j = 0; j < 256; j++)
+                        if ((needLuma && lhisttemp[j] > i) || (needChroma && chisttemp[j] > i) || (needRed && rhtemp[j] > i) || (needGreen && ghtemp[j] > i) || (needBlue && bhtemp[j] > i)) {
+                            area++;
+                        }
 
-            for (int i = 0; i < fullhistheight; i++) {
-#ifdef __SSE2__
-                vint areatempv = (vint)ZEROV;
-
-                for (int j = 0; j < 256; j += 4) {
-                    vmask mask1v = _mm_cmpgt_epi32(LVI(lhisttemp[j]), iv);
-                    vmask mask2v = _mm_cmpgt_epi32(LVI(rhtemp[j]), iv);
-                    vmask mask3v = _mm_cmpgt_epi32(LVI(ghtemp[j]), iv);
-                    vmask mask4v = _mm_cmpgt_epi32(LVI(bhtemp[j]), iv);
-                    mask1v = _mm_or_si128(mask1v, mask2v);
-                    mask3v = _mm_or_si128(mask3v, mask4v);
-                    mask2v = _mm_cmpgt_epi32(LVI(chisttemp[j]), iv);
-                    mask1v = _mm_or_si128(mask1v, mask3v);
-                    mask1v = _mm_or_si128(mask1v, mask2v);
-                    areatempv = _mm_add_epi32(areatempv, _mm_and_si128(mask1v, onev));
-
-                }
-
-                areatempv = _mm_add_epi32(areatempv, (vint)_mm_movehl_ps((vfloat)areatempv, (vfloat)areatempv));
-                areatempv = _mm_add_epi32(areatempv, _mm_shuffle_epi32(areatempv, 1));
-                area += _mm_cvtsi128_si32(areatempv);
-                iv = _mm_add_epi32(iv, onev);
-
-#else
-
-                for (int j = 0; j < 256; j++)
-                    if (lhisttemp[j] > i || rhtemp[j] > i || ghtemp[j] > i || bhtemp[j] > i || chisttemp[j] > i) {
-                        area++;
+                    if ((double)area / (256 * (i + 1)) < 0.3) {
+                        realhistheight = i;
+                        break;
                     }
-
-#endif
-
-                if ((double)area / (256 * (i + 1)) < 0.3) {
-                    realhistheight = i;
-                    break;
                 }
-            }
+            else
+                for (int i = 0; i < fullhistheight; i++) {
+                    for (int j = 0; j < 256; j++)
+                        if ((needRed && rhtemp[j] > i) || (needGreen && ghtemp[j] > i) || (needBlue && bhtemp[j] > i)) {
+                            area++;
+                        }
+
+                    if ((double)area / (256 * (i + 1)) < 0.3) {
+                        realhistheight = i;
+                        break;
+                    }
+                }
+
         }
 
         if (realhistheight < winh - 2) {
