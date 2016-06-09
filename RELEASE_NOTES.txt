@@ -32,7 +32,8 @@ LIVE CHAT WITH USERS AND DEVELOPERS
   Network: freenode
   Server: chat.freenode.net
   Channel #rawtherapee
-Or use freenode webchat to chat without installing anything:
+
+You can use freenode webchat to communicate without installing anything:
 http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
 More information here: http://rawpedia.rawtherapee.com/IRC
 
@@ -44,5 +45,5 @@ http://plus.google.com/106783532637761598368
 REVISION HISTORY
 ----------------
 The complete changelog is available at:
-https://github.com/Beep6581/RawTherapee/commits/master
+https://github.com/Beep6581/RawTherapee/commits/
 
