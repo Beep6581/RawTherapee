@@ -21,6 +21,8 @@
 
 #include <map>
 #include <vector>
+#include <array>
+#include <memory>
 
 #include <glibmm.h>
 
@@ -36,13 +38,18 @@ namespace rtengine
 class DCPProfile final
 {
 public:
-    struct ApplyState {
-        double m2ProPhoto[3][3];
-        double m2Work[3][3];
-        bool alreadyProPhoto;
-        bool useToneCurve;
-        bool applyLookTable;
-        float blScale;
+    class ApplyState final
+    {
+    public:
+        ApplyState();
+        ~ApplyState();
+
+    private:
+        struct Data;
+
+        std::unique_ptr<Data> data;
+
+        friend class DCPProfile;
     };
 
     struct Illuminants {
@@ -52,6 +59,9 @@ public:
         double temperature_2;
         bool will_interpolate;
     };
+
+    using Triple = std::array<double, 3>;
+    using Matrix = std::array<Triple, 3>;
 
     DCPProfile(const Glib::ustring& filename);
     ~DCPProfile();
@@ -68,23 +78,23 @@ public:
         int preferred_illuminant,
         const Glib::ustring& working_space,
         const ColorTemp& white_balance,
-        double pre_mul[3],
-        double cam_matrix[3][3],
+        const Triple& pre_mul,
+        const Matrix& cam_wb_matrix,
         bool use_tone_curve = false,
         bool apply_hue_sat_map = true,
         bool apply_look_table = false
     ) const;
-    void setStep2ApplyState(const Glib::ustring &workingSpace, bool useToneCurve, bool applyLookTable, bool applyBaselineExposure, ApplyState &asOut);
-    void step2ApplyTile(float *r, float *g, float *b, int width, int height, int tileWidth, const ApplyState &asIn) const;
+    void setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out);
+    void step2ApplyTile(float* r, float* g, float* b, int width, int height, int tile_width, const ApplyState& as_in) const;
 
 private:
-    struct HSBModify {
+    struct HsbModify {
         float hue_shift;
         float sat_scale;
         float val_scale;
     };
 
-    struct HSDTableInfo {
+    struct HsdTableInfo {
         int hue_divisions;
         int sat_divisions;
         int val_divisions;
@@ -104,15 +114,14 @@ private:
         } pc;
     };
 
-    void dngref_XYCoord2Temperature(const double whiteXY[2], double *temp, double *tint) const;
-    void dngref_FindXYZtoCamera(const double whiteXY[2], int preferredIlluminant, double (*xyzToCamera)[3]) const;
-    void dngref_NeutralToXY(double neutral[3], int preferredIlluminant, double XY[2]) const;
-    void makeXyzCam(const ColorTemp &wb, double pre_mul[3], double camWbMatrix[3][3], int preferredIlluminant, double (*mXYZCAM)[3]) const;
-    std::vector<HSBModify> makeHueSatMap(const ColorTemp& white_balance, int preferred_illuminant) const;
-    void hsdApply(const HSDTableInfo& table_info, const std::vector<HSBModify>& table_base, float& h, float& s, float& v) const;
+    void findXyztoCamera(const double white_xy[2], int preferred_illuminant, Matrix& xyz_to_camera) const;
+    void neutralToXy(const Triple& neutral, int preferred_illuminant, double xy[2]) const;
+    void makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mul, const Matrix& cam_wb_matrix, int preferred_illuminant, Matrix& xyz_cam) const;
+    std::vector<HsbModify> makeHueSatMap(const ColorTemp& white_balance, int preferred_illuminant) const;
+    void hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const;
 
-    double color_matrix_1[3][3];
-    double color_matrix_2[3][3];
+    Matrix color_matrix_1;
+    Matrix color_matrix_2;
     bool has_color_matrix_1;
     bool has_color_matrix_2;
     bool has_forward_matrix_1;
@@ -120,16 +129,16 @@ private:
     bool has_tone_curve;
     bool has_baseline_exposure_offset;
     bool will_interpolate;
-    double forward_matrix_1[3][3];
-    double forward_matrix_2[3][3];
+    Matrix forward_matrix_1;
+    Matrix forward_matrix_2;
     double temperature_1;
     double temperature_2;
     double baseline_exposure_offset;
-    std::vector<HSBModify> deltas_1;
-    std::vector<HSBModify> deltas_2;
-    std::vector<HSBModify> look_table;
-    HSDTableInfo delta_info;
-    HSDTableInfo look_info;
+    std::vector<HsbModify> deltas_1;
+    std::vector<HsbModify> deltas_2;
+    std::vector<HsbModify> look_table;
+    HsdTableInfo delta_info;
+    HsdTableInfo look_info;
     short light_source_1;
     short light_source_2;
 

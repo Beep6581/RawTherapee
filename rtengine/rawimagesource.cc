@@ -889,7 +889,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb,DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
 {
     DCPProfile *dcpProf = NULL;
     cmsHPROFILE dummy;
@@ -3727,7 +3727,17 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
     if (dcpProf != NULL) {
         // DCP processing
-        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, false, cmp.applyHueSatMap, false);
+        const DCPProfile::Triple pre_mul_row = {
+            pre_mul[0],
+            pre_mul[1],
+            pre_mul[2]
+        };
+        const DCPProfile::Matrix cam_matrix = {{
+            {camMatrix[0][0], camMatrix[0][1], camMatrix[0][2]},
+            {camMatrix[1][0], camMatrix[1][1], camMatrix[1][2]},
+            {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
+        }};
+        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, false, cmp.applyHueSatMap, false);
         return;
     }
 
