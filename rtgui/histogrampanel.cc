@@ -938,7 +938,7 @@ void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu
     g_idle_add (histupdateUI, haih);
 }
 
-SSEFUNCTION void HistogramArea::updateBackBuffer ()
+void HistogramArea::updateBackBuffer ()
 {
 
     if (!get_realized ()) {
