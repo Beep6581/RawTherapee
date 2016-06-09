@@ -1071,7 +1071,7 @@ void DCPProfile::apply(
         }
     } else {
         // LUT available --> Calculate matrix for conversion raw>ProPhoto
-        double pro_photo[3][3] = {};
+        float pro_photo[3][3] = {};
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -1081,7 +1081,7 @@ void DCPProfile::apply(
             }
         }
 
-        double work[3][3] = {};
+        float work[3][3] = {};
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -1093,56 +1093,31 @@ void DCPProfile::apply(
 
         // Convert to ProPhoto and apply LUT
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic,16)
 #endif
         for (int y = 0; y < img->height; ++y) {
-            float h, s, v, hs, ss, vs;
-
             for (int x = 0; x < img->width; x++) {
                 float newr = pro_photo[0][0] * img->r(y, x) + pro_photo[0][1] * img->g(y, x) + pro_photo[0][2] * img->b(y, x);
                 float newg = pro_photo[1][0] * img->r(y, x) + pro_photo[1][1] * img->g(y, x) + pro_photo[1][2] * img->b(y, x);
                 float newb = pro_photo[2][0] * img->r(y, x) + pro_photo[2][1] * img->g(y, x) + pro_photo[2][2] * img->b(y, x);
 
                 // If point is in negative area, just the matrix, but not the LUT
-                if (
-                    (
-                        apply_hue_sat_map
-                        || apply_look_table
-                    )
-                    && newr >= 0
-                    && newg >= 0
-                    && newb >= 0
-               ) {
+                if (newr >= 0 && newg >= 0 && newb >= 0) {
                     float h;
                     float s;
                     float v;
-                    Color::rgb2hsv(newr, newg, newb, h , s, v);
-                    h *= 6.0f; // RT calculates in [0,1]
+                    Color::rgb2hsvdcp(newr, newg, newb, h , s, v);
 
-                    if (apply_hue_sat_map) {
-                        hsdApply(delta_info, delta_base, h, s, v);
-                    }
-
-                    if (apply_look_table) {
-                        hsdApply(look_info, look_table, h, s, v);
-                    }
+                    hsdApply(delta_info, delta_base, h, s, v);
 
                     // RT range correction
                     if (h < 0.0f) {
                         h += 6.0f;
-                    }
-
-                    if (h >= 6.0f) {
+                    } else if (h >= 6.0f) {
                         h -= 6.0f;
                     }
 
-                    h /= 6.f;
-
-                    Color::hsv2rgb(h, s, v, newr, newg, newb);
-                }
-
-                if (use_tone_curve) {
-                    tone_curve.Apply(newr, newg, newb);
+                    Color::hsv2rgbdcp(h, s, v, newr, newg, newb);
                 }
 
                 img->r(y, x) = work[0][0] * newr + work[0][1] * newg + work[0][2] * newb;
