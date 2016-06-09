@@ -134,9 +134,11 @@ int LensGeometry::doDisableAutoFillIfActive (void* data)
         if (instance->fill->get_active()) {
             instance->fillConn.block (true);
             instance->fill->set_active(false);
+
             if (instance->listener) {
                 instance->listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
             }
+
             instance->fillConn.block (false);
         }
     }

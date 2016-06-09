@@ -54,7 +54,10 @@ public:
     void onUseDistChanged();
     void onUseVignChanged();
     void onUseCAChanged();
-    void setLensGeomRef( LensGeometry *foo) { lensgeomLcpFill = foo ;};
+    void setLensGeomRef( LensGeometry *foo)
+    {
+        lensgeomLcpFill = foo ;
+    };
 };
 
 #endif
