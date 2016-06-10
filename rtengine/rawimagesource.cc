@@ -3737,7 +3737,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
             {camMatrix[1][0], camMatrix[1][1], camMatrix[1][2]},
             {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
         }};
-        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, false, cmp.applyHueSatMap, false);
+        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
         return;
     }
 

@@ -230,34 +230,41 @@ public:
     * @param v value channel [0 ; 1] (return value)
     */
     static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
-    
-    static inline void rgb2hsvdcp(float r, float g, float b, float &h, float &s, float &v)
+
+    static inline bool rgb2hsvdcp(float r, float g, float b, float &h, float &s, float &v)
     {
 
         float var_Min = min(r, g, b);
-        float var_Max = max(r, g, b);
-        float del_Max = var_Max - var_Min;
-        v = var_Max / 65535.f;
 
-        if (fabsf(del_Max) < 0.00001f) {
-            h = 0.f;
-            s = 0.f;
+        if(var_Min < 0.f) {
+            return false;
         } else {
-            s = del_Max / var_Max;
+            float var_Max = max(r, g, b);
+            float del_Max = var_Max - var_Min;
+            v = var_Max / 65535.f;
 
-            if ( r == var_Max ) {
-                h = (g - b) / del_Max;
-            } else if ( g == var_Max ) {
-                h = 2.f + (b - r) / del_Max;
-            } else { /*if ( b == var_Max ) */
-                h = 4.f + (r - g) / del_Max;
+            if (fabsf(del_Max) < 0.00001f) {
+                h = 0.f;
+                s = 0.f;
+            } else {
+                s = del_Max / var_Max;
+
+                if ( r == var_Max ) {
+                    h = (g - b) / del_Max;
+                } else if ( g == var_Max ) {
+                    h = 2.f + (b - r) / del_Max;
+                } else { /*if ( b == var_Max ) */
+                    h = 4.f + (r - g) / del_Max;
+                }
+
+                if ( h < 0.f ) {
+                    h += 6.f;
+                } else if ( h > 6.f ) {
+                    h -= 6.f;
+                }
             }
 
-            if ( h < 0.f ) {
-                h += 6.f;
-            } else if ( h > 6.f ) {
-                h -= 6.f;
-            }
+            return true;
         }
     }
 
@@ -272,44 +279,56 @@ public:
     */
     static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 
-static inline void hsv2rgbdcp (float h, float s, float v, float &r, float &g, float &b)
-{
-    // special version for dcp which saves 1 division (in caller) and six multiplications (inside this function)
-    int i = h;  // sector 0 to 5, floor() is very slow, and h is always >0
-    float f = h - i; // fractional part of h
+    static inline void hsv2rgbdcp (float h, float s, float v, float &r, float &g, float &b)
+    {
+        // special version for dcp which saves 1 division (in caller) and six multiplications (inside this function)
+        int sector = h;  // sector 0 to 5, floor() is very slow, and h is always >0
+        float f = h - sector; // fractional part of h
 
-    v *= 65535.f;
-    float vs = v * s;
-    float p = v - vs;
-    float q = v - f * vs;
-    float t = p + v - q;
+        v *= 65535.f;
+        float vs = v * s;
+        float p = v - vs;
+        float q = v - f * vs;
+        float t = p + v - q;
 
-    if (i == 1) {
-        r = q;
-        g = v;
-        b = p;
-    } else if (i == 2) {
-        r = p;
-        g = v;
-        b = t;
-    } else if (i == 3) {
-        r = p;
-        g = q;
-        b = v;
-    } else if (i == 4) {
-        r = t;
-        g = p;
-        b = v;
-    } else if (i == 5) {
-        r = v;
-        g = p;
-        b = q;
-    } else { /*i==(0|6)*/
-        r = v;
-        g = t;
-        b = p;
+        switch (sector) {
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+
+            case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
+
+            default:
+                r = v;
+                g = t;
+                b = p;
+        }
     }
-}
+
     static void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
 
 

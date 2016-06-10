@@ -80,9 +80,7 @@ public:
         const ColorTemp& white_balance,
         const Triple& pre_mul,
         const Matrix& cam_wb_matrix,
-        bool use_tone_curve = false,
-        bool apply_hue_sat_map = true,
-        bool apply_look_table = false
+        bool apply_hue_sat_map = true
     ) const;
     void setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out);
     void step2ApplyTile(float* r, float* g, float* b, int width, int height, int tile_width, const ApplyState& as_in) const;

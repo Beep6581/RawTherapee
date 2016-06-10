@@ -35,25 +35,6 @@ namespace
 {
 
 // This sRGB gamma is taken from DNG reference code, with the added linear extension past 1.0, as we run clipless here
-float srgbGammaForward(float x)
-{
-    return
-        x <= 0.0031308f
-            ? x * 12.92f
-            : x > 1.0f
-                ? 1.0f + (x - 1.0f) * (1.055f * (1.0f / 2.4f)) // Linear extension
-                : 1.055f * pow(x, 1.0f / 2.4f) - 0.055f;
-}
-
-float srgbGammaInverse(float y)
-{
-    return
-        y <= 0.0031308f * 12.92f
-            ? y * (1.0f / 12.92f)
-            : y > 1.0f
-                ? 1.0f + (y - 1.0f) / (1.055f * (1.0f / 2.4f))
-                : pow ((y + 0.055f) * (1.0f / 1.055f), 2.4f);
-}
 
 void invert3x3(const DCPProfile::Matrix& a, DCPProfile::Matrix& b)
 {
@@ -143,10 +124,11 @@ void mapWhiteMatrix(const DCPProfile::Triple& white1, const DCPProfile::Triple& 
 
     // Use the linearized Bradford adaptation matrix
     const DCPProfile::Matrix mb = {{
-        { 0.8951,  0.2664, -0.1614 },
-        { -0.7502, 1.7135,  0.0367 },
-        { 0.0389, -0.0685,  1.0296 }
-    }};
+            { 0.8951,  0.2664, -0.1614 },
+            { -0.7502, 1.7135,  0.0367 },
+            { 0.0389, -0.0685,  1.0296 }
+        }
+    };
 
     DCPProfile::Triple w1;
     multiply3x3_v3(mb, white1, w1);
@@ -735,13 +717,13 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     Tag* tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_1));
     light_source_1 =
         tag
-            ? tag->toInt(0, rtexif::SHORT)
-            : -1;
+        ? tag->toInt(0, rtexif::SHORT)
+        : -1;
     tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_2));
     light_source_2 =
         tag
-            ? tag->toInt(0, rtexif::SHORT)
-            : -1;
+        ? tag->toInt(0, rtexif::SHORT)
+        : -1;
     temperature_1 = calibrationIlluminantToTemperature(light_source_1);
     temperature_2 = calibrationIlluminantToTemperature(light_source_2);
 
@@ -813,8 +795,8 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         // Precalculated constants for table application
         look_info.pc.h_scale =
             look_info.hue_divisions < 2
-                ? 0.0f
-                : static_cast<float>(look_info.hue_divisions) / 6.0f;
+            ? 0.0f
+            : static_cast<float>(look_info.hue_divisions) / 6.0f;
         look_info.pc.s_scale = look_info.sat_divisions - 1;
         look_info.pc.v_scale = look_info.val_divisions - 1;
         look_info.pc.max_hue_index0 = look_info.hue_divisions - 1;
@@ -847,8 +829,8 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
         delta_info.pc.h_scale =
             delta_info.hue_divisions < 2
-                ? 0.0f
-                : static_cast<float>(delta_info.hue_divisions) / 6.0f;
+            ? 0.0f
+            : static_cast<float>(delta_info.hue_divisions) / 6.0f;
         delta_info.pc.s_scale = delta_info.sat_divisions - 1;
         delta_info.pc.v_scale = delta_info.val_divisions - 1;
         delta_info.pc.max_hue_index0 = delta_info.hue_divisions - 1;
@@ -868,8 +850,8 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
             for (int col = 0; col < 3; ++col) {
                 color_matrix_2[row][col] =
                     tag
-                        ? tag->toDouble((col + row * 3) * 8)
-                        : color_matrix_1[row][col];
+                    ? tag->toDouble((col + row * 3) * 8)
+                    : color_matrix_1[row][col];
             }
         }
 
@@ -1019,9 +1001,7 @@ void DCPProfile::apply(
     const ColorTemp& white_balance,
     const Triple& pre_mul,
     const Matrix& cam_wb_matrix,
-    bool use_tone_curve,
-    bool apply_hue_sat_map,
-    bool apply_look_table
+    bool apply_hue_sat_map
 ) const
 {
     BENCHFUN
@@ -1036,15 +1016,9 @@ void DCPProfile::apply(
         apply_hue_sat_map = false;
     }
 
-    if (look_table.empty()) {
-        apply_look_table = false;
-    }
-
-    use_tone_curve = use_tone_curve && tone_curve;
-
-    if (!apply_hue_sat_map && !apply_look_table && !use_tone_curve) {
-        // The fast path: No LUT and not tone curve --> Calculate matrix for direct conversion raw>working space
-        double mat[3][3] = {};
+    if (!apply_hue_sat_map) {
+        // The fast path: No LUT --> Calculate matrix for direct conversion raw -> working space
+        float mat[3][3] = {};
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -1058,6 +1032,7 @@ void DCPProfile::apply(
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
+
         for (int y = 0; y < img->height; ++y) {
             for (int x = 0; x < img->width; x++) {
                 const float& newr = mat[0][0] * img->r(y, x) + mat[0][1] * img->g(y, x) + mat[0][2] * img->b(y, x);
@@ -1095,18 +1070,19 @@ void DCPProfile::apply(
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
+
         for (int y = 0; y < img->height; ++y) {
             for (int x = 0; x < img->width; x++) {
                 float newr = pro_photo[0][0] * img->r(y, x) + pro_photo[0][1] * img->g(y, x) + pro_photo[0][2] * img->b(y, x);
                 float newg = pro_photo[1][0] * img->r(y, x) + pro_photo[1][1] * img->g(y, x) + pro_photo[1][2] * img->b(y, x);
                 float newb = pro_photo[2][0] * img->r(y, x) + pro_photo[2][1] * img->g(y, x) + pro_photo[2][2] * img->b(y, x);
 
-                // If point is in negative area, just the matrix, but not the LUT
-                if (newr >= 0 && newg >= 0 && newb >= 0) {
-                    float h;
-                    float s;
-                    float v;
-                    Color::rgb2hsvdcp(newr, newg, newb, h , s, v);
+                // If point is in negative area, just the matrix, but not the LUT. This is checked inside Color::rgb2hsvdcp
+                float h;
+                float s;
+                float v;
+
+                if(Color::rgb2hsvdcp(newr, newg, newb, h , s, v)) {
 
                     hsdApply(delta_info, delta_base, h, s, v);
 
@@ -1178,11 +1154,10 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 
-    float exp_scale = 1.0;
-    exp_scale *= as_in.data->bl_scale;
+    float exp_scale = as_in.data->bl_scale;
 
     if (!as_in.data->use_tone_curve && !as_in.data->apply_look_table) {
-        if (exp_scale == 1.0) {
+        if (exp_scale == 1.f) {
             return;
         }
 
@@ -1370,10 +1345,11 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
         invert3x3(cam_wb_matrix, cam_xyz);
         Matrix cam_rgb;
         constexpr Matrix xyz_srgb = {{
-            {xyz_sRGB[0][0], xyz_sRGB[0][1], xyz_sRGB[0][2]},
-            {xyz_sRGB[1][0], xyz_sRGB[1][1], xyz_sRGB[1][2]},
-            {xyz_sRGB[2][0], xyz_sRGB[2][1], xyz_sRGB[2][2]}
-        }};
+                {xyz_sRGB[0][0], xyz_sRGB[0][1], xyz_sRGB[0][2]},
+                {xyz_sRGB[1][0], xyz_sRGB[1][1], xyz_sRGB[1][2]},
+                {xyz_sRGB[2][0], xyz_sRGB[2][1], xyz_sRGB[2][2]}
+            }
+        };
         multiply3x3(cam_xyz, xyz_srgb, cam_rgb);
         double camwb_red   = cam_rgb[0][0] * r + cam_rgb[0][1] * g + cam_rgb[0][2] * b;
         double camwb_green = cam_rgb[1][0] * r + cam_rgb[1][1] * g + cam_rgb[1][2] * b;
@@ -1499,10 +1475,11 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
         multiply3x3_v3(color_matrix, white_xyz, camera_white);
 
         const Matrix white_diag = {{
-            {camera_white[0], 0, 0},
-            {0, camera_white[1], 0},
-            {0, 0, camera_white[2]}
-        }};
+                {camera_white[0], 0, 0},
+                {0, camera_white[1], 0},
+                {0, 0, camera_white[2]}
+            }
+        };
         Matrix white_diag_inv;
         invert3x3(white_diag, white_diag_inv);
 
@@ -1594,14 +1571,15 @@ std::vector<DCPProfile::HsbModify> DCPProfile::makeHueSatMap(const ColorTemp& wh
     const bool reverse = temperature_1 > temperature_2;
     const double t1 =
         reverse
-            ? temperature_2
-            : temperature_1;
+        ? temperature_2
+        : temperature_1;
     const double t2 =
         reverse
-            ? temperature_1
-            : temperature_2;
+        ? temperature_1
+        : temperature_2;
 
     double mix;
+
     if (white_balance.getTemp() <= t1) {
         mix = 1.0;
     } else if (white_balance.getTemp() >= t2) {
