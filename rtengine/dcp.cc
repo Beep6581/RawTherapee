@@ -79,7 +79,7 @@ void invert3x3(const DCPProfile::Matrix& a, DCPProfile::Matrix& b)
 
     const double det = a00 * temp[0][0] + a01 * temp[1][0] + a02 * temp[2][0];
 
-    if (fabs(det) < 1.0e-10) {
+    if (std::fabs(det) < 1.0e-10) {
         abort(); // Can't be inverted, we shouldn't be dealing with such matrices
     }
 
@@ -1357,8 +1357,7 @@ void DCPProfile::neutralToXy(const Triple& neutral, int preferred_illuminant, do
         multiply3x3_v3(inv_m, neutral, next_xyz);
         xyzToXy(next_xyz, next_xy);
 
-        if (fabs(next_xy[0] - last_xy[0]) +
-                fabs(next_xy[1] - last_xy[1]) < 0.0000001) {
+        if (std::fabs(next_xy[0] - last_xy[0]) + std::fabs(next_xy[1] - last_xy[1]) < 0.0000001) {
             xy[0] = next_xy[0];
             xy[1] = next_xy[1];
             return;
@@ -1677,7 +1676,7 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
         const float h_scaled = h * table_info.pc.h_scale;
         const float s_scaled = s * table_info.pc.s_scale;
 
-        int h_index0 = max<int>(h_scaled, 0);
+        int h_index0 = std::max<int>(h_scaled, 0);
         const int s_index0 = std::max(std::min<int>(s_scaled, table_info.pc.max_sat_index0), 0);
 
         int h_index1 = h_index0 + 1;
@@ -1720,7 +1719,7 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
 
         const float v_scaled = v_encoded * table_info.pc.v_scale;
 
-        int h_index0 = (int) h_scaled;
+        int h_index0 = static_cast<int>(h_scaled);
         const int s_index0 = std::max(std::min<int>(s_scaled, table_info.pc.max_sat_index0), 0);
         const int v_index0 = std::max(std::min<int>(v_scaled, table_info.pc.max_val_index0), 0);
 
