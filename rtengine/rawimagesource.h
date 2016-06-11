@@ -134,7 +134,7 @@ public:
 
     void        processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4]);
     void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
-    void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
+    void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw); // raw for cblack
 
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
