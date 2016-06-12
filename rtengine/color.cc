@@ -38,7 +38,9 @@ LUTf Color::gamma2curve;
 LUTf Color::gammatab;
 LUTuc Color::gammatabThumb;
 LUTf Color::igammatab_srgb;
+LUTf Color::igammatab_srgb1;
 LUTf Color::gammatab_srgb;
+LUTf Color::gammatab_srgb1;
 //  LUTf Color::igammatab_709;
 //  LUTf Color::gammatab_709;
 LUTf Color::igammatab_55;
@@ -143,7 +145,9 @@ void Color::init ()
     gammatabThumb(maxindex, 0);
 
     igammatab_srgb(maxindex, 0);
+    igammatab_srgb1(maxindex, 0);
     gammatab_srgb(maxindex, 0);
+    gammatab_srgb1(maxindex, 0);
     igammatab_55(maxindex, 0);
     gammatab_55(maxindex, 0);
     igammatab_4(maxindex, 0);
@@ -187,19 +191,20 @@ void Color::init ()
         {
             for (int i = 0; i < maxindex; i++)
             {
-                gammatab_srgb[i] = 65535.0 * gamma2(i / 65535.0);
+                gammatab_srgb[i] = gammatab_srgb1[i] = gamma2(i / 65535.0);
             }
-
+            gammatab_srgb *= 65535.f;
             gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
         }
 #ifdef _OPENMP
         #pragma omp section
 #endif
-
+{
         for (int i = 0; i < maxindex; i++) {
-            igammatab_srgb[i] = 65535.0 * igamma2 (i / 65535.0);
+            igammatab_srgb[i] = igammatab_srgb1[i] = igamma2 (i / 65535.0);
         }
-
+        igammatab_srgb *= 65535.f;
+}
 #ifdef _OPENMP
         #pragma omp section
 #endif

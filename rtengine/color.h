@@ -129,7 +129,9 @@ public:
 
     // look-up tables for the standard srgb gamma and its inverse (filled by init())
     static LUTf igammatab_srgb;
+    static LUTf igammatab_srgb1;
     static LUTf gammatab_srgb;
+    static LUTf gammatab_srgb1;
     static LUTf igammatab_55;
     static LUTf gammatab_55;
     static LUTf igammatab_4;
@@ -229,6 +231,42 @@ public:
     */
     static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
 
+    static inline bool rgb2hsvdcp(float r, float g, float b, float &h, float &s, float &v)
+    {
+
+        float var_Min = min(r, g, b);
+
+        if(var_Min < 0.f) {
+            return false;
+        } else {
+            float var_Max = max(r, g, b);
+            float del_Max = var_Max - var_Min;
+            v = var_Max / 65535.f;
+
+            if (fabsf(del_Max) < 0.00001f) {
+                h = 0.f;
+                s = 0.f;
+            } else {
+                s = del_Max / var_Max;
+
+                if ( r == var_Max ) {
+                    h = (g - b) / del_Max;
+                } else if ( g == var_Max ) {
+                    h = 2.f + (b - r) / del_Max;
+                } else { /*if ( b == var_Max ) */
+                    h = 4.f + (r - g) / del_Max;
+                }
+
+                if ( h < 0.f ) {
+                    h += 6.f;
+                } else if ( h > 6.f ) {
+                    h -= 6.f;
+                }
+            }
+
+            return true;
+        }
+    }
 
     /**
     * @brief Convert hue saturation value in red green blue
@@ -240,6 +278,57 @@ public:
     * @param b blue channel [0 ; 65535] (return value)
     */
     static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
+
+    static inline void hsv2rgbdcp (float h, float s, float v, float &r, float &g, float &b)
+    {
+        // special version for dcp which saves 1 division (in caller) and six multiplications (inside this function)
+        int sector = h;  // sector 0 to 5, floor() is very slow, and h is always >0
+        float f = h - sector; // fractional part of h
+
+        v *= 65535.f;
+        float vs = v * s;
+        float p = v - vs;
+        float q = v - f * vs;
+        float t = p + v - q;
+
+        switch (sector) {
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+
+            case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
+
+            default:
+                r = v;
+                g = t;
+                b = p;
+        }
+    }
+
     static void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
 
 
