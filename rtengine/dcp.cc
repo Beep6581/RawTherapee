@@ -26,8 +26,6 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "rt_math.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 using namespace rtengine;
 using namespace rtexif;
@@ -989,7 +987,7 @@ void DCPProfile::apply(
     bool apply_hue_sat_map
 ) const
 {
-    BENCHFUN
+
     const TMatrix work_matrix = iccStore->workingSpaceInverseMatrix(working_space);
 
     const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
