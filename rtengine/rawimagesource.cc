@@ -2685,7 +2685,6 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         cfaboxblur(riFlatFile, cfablur, 0, 2 * BS);
     } else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-        //allocate buffer and pass it to cfaboxblur => saves two allocations/deallocations later in code
         cfaboxblur(riFlatFile, cfablur, BS, BS);    //first do area blur to correct vignette
     } else { //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
         cfaboxblur(riFlatFile, cfablur, BS, BS);
