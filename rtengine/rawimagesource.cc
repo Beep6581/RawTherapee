@@ -3042,9 +3042,16 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 
 SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW)
 {
+
+    if(boxW == 0 && boxH == 0) { // nothing to blur
+        memcpy(cfablur, riFlatFile->data[0], W*H*sizeof(float));
+        return;
+    }
+
     float *tmpBuffer = nullptr;
     float *cfatmp = nullptr;
     float *srcVertical = nullptr;
+
 
     if(boxH > 0 && boxW > 0) {
         // we need a temporary buffer if we have to blur both directions
@@ -3064,7 +3071,6 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
     } else {
         srcVertical = cfatmp;
     }
-
 
 #ifdef _OPENMP
     #pragma omp parallel
