@@ -2762,8 +2762,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             }
 
 
-        int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
-        int c4[2][2];
+        unsigned int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
+        unsigned int c4[2][2];
         c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
         c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
         c4[1][0] = c[1][0];
@@ -2892,8 +2892,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         cfaboxblur(riFlatFile, cfablur2, 2 * BS, 0); //now do vertical blur
 
         if(ri->getSensorType() == ST_BAYER) {
-            int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
-            int c4[2][2];
+            unsigned int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
+            unsigned int c4[2][2];
             c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
             c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
             c4[1][0] = c[1][0];
