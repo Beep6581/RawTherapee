@@ -66,6 +66,8 @@ public:
     DCPProfile(const Glib::ustring& filename);
     ~DCPProfile();
 
+    explicit operator bool() const;
+
     bool getHasToneCurve() const;
     bool getHasLookTable() const;
     bool getHasHueSatMap() const;
@@ -112,9 +114,9 @@ private:
         } pc;
     };
 
-    void findXyztoCamera(const double white_xy[2], int preferred_illuminant, Matrix& xyz_to_camera) const;
-    void neutralToXy(const Triple& neutral, int preferred_illuminant, double xy[2]) const;
-    void makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mul, const Matrix& cam_wb_matrix, int preferred_illuminant, Matrix& xyz_cam) const;
+    Matrix findXyztoCamera(const std::array<double, 2>& white_xy, int preferred_illuminant) const;
+    std::array<double, 2> neutralToXy(const Triple& neutral, int preferred_illuminant) const;
+    Matrix makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mul, const Matrix& cam_wb_matrix, int preferred_illuminant) const;
     std::vector<HsbModify> makeHueSatMap(const ColorTemp& white_balance, int preferred_illuminant) const;
     void hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const;
 

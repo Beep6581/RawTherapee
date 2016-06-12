@@ -17,6 +17,7 @@
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <iostream>
 #include <cstring>
 
 #include "dcp.h"
@@ -36,104 +37,92 @@ namespace
 
 // This sRGB gamma is taken from DNG reference code, with the added linear extension past 1.0, as we run clipless here
 
-void invert3x3(const DCPProfile::Matrix& a, DCPProfile::Matrix& b)
+DCPProfile::Matrix invert3x3(const DCPProfile::Matrix& a)
 {
-    const double& a00 = a[0][0];
-    const double& a01 = a[0][1];
-    const double& a02 = a[0][2];
-    const double& a10 = a[1][0];
-    const double& a11 = a[1][1];
-    const double& a12 = a[1][2];
-    const double& a20 = a[2][0];
-    const double& a21 = a[2][1];
-    const double& a22 = a[2][2];
+    const double res00 = a[1][1] * a[2][2] - a[2][1] * a[1][2];
+    const double res10 = a[2][0] * a[1][2] - a[1][0] * a[2][2];
+    const double res20 = a[1][0] * a[2][1] - a[2][0] * a[1][1];
 
-    double temp[3][3];
+    const double det = a[0][0] * res00 + a[0][1] * res10 + a[0][2] * res20;
 
-    temp[0][0] = a11 * a22 - a21 * a12;
-    temp[0][1] = a21 * a02 - a01 * a22;
-    temp[0][2] = a01 * a12 - a11 * a02;
-    temp[1][0] = a20 * a12 - a10 * a22;
-    temp[1][1] = a00 * a22 - a20 * a02;
-    temp[1][2] = a10 * a02 - a00 * a12;
-    temp[2][0] = a10 * a21 - a20 * a11;
-    temp[2][1] = a20 * a01 - a00 * a21;
-    temp[2][2] = a00 * a11 - a10 * a01;
-
-    const double det = a00 * temp[0][0] + a01 * temp[1][0] + a02 * temp[2][0];
-
-    if (fabs(det) < 1.0e-10) {
-        abort(); // Can't be inverted, we shouldn't be dealing with such matrices
+    if (std::fabs(det) < 1.0e-10) {
+        std::cerr << "DCP matrix cannot be inverted! Expect weird output." << std::endl;
+        return a;
     }
 
-    for (int j = 0; j < 3; ++j) {
-        for (int k = 0; k < 3; ++k) {
-            b[j][k] = temp[j][k] / det;
-        }
-    }
+    DCPProfile::Matrix res;
+
+    res[0][0] = res00 / det;
+    res[0][1] = (a[2][1] * a[0][2] - a[0][1] * a[2][2]) / det;
+    res[0][2] = (a[0][1] * a[1][2] - a[1][1] * a[0][2]) / det;
+    res[1][0] = res10 / det;
+    res[1][1] = (a[0][0] * a[2][2] - a[2][0] * a[0][2]) / det;
+    res[1][2] = (a[1][0] * a[0][2] - a[0][0] * a[1][2]) / det;
+    res[2][0] = res20 / det;
+    res[2][1] = (a[2][0] * a[0][1] - a[0][0] * a[2][1]) / det;
+    res[2][2] = (a[0][0] * a[1][1] - a[1][0] * a[0][1]) / det;
+
+    return res;
 }
 
-void multiply3x3(const DCPProfile::Matrix& a, const DCPProfile::Matrix& b, DCPProfile::Matrix& c)
+DCPProfile::Matrix multiply3x3(const DCPProfile::Matrix& a, const DCPProfile::Matrix& b)
 {
-    // Use temp to support having output same as input
-    DCPProfile::Matrix m;
+    DCPProfile::Matrix res;
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            m[i][j] = 0;
+            res[i][j] = 0;
 
             for (int k = 0; k < 3; ++k) {
-                m[i][j] += a[i][k] * b[k][j];
+                res[i][j] += a[i][k] * b[k][j];
             }
         }
     }
 
-    c = m;
+    return res;
 }
 
-void multiply3x3_v3(const DCPProfile::Matrix& a, const DCPProfile::Triple& b, DCPProfile::Triple& c)
+DCPProfile::Triple multiply3x3_v3(const DCPProfile::Matrix& a, const DCPProfile::Triple& b)
 {
-    // Use temp to support having output same as input
-    DCPProfile::Triple m = {};
+    DCPProfile::Triple res = {};
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            m[i] += a[i][j] * b[j];
+            res[i] += a[i][j] * b[j];
         }
     }
 
-    c = m;
+    return res;
 }
 
-void mix3x3(const DCPProfile::Matrix& a, double mul_a, const DCPProfile::Matrix& b, double mul_b, DCPProfile::Matrix& c)
+DCPProfile::Matrix mix3x3(const DCPProfile::Matrix& a, double mul_a, const DCPProfile::Matrix& b, double mul_b)
 {
-    DCPProfile::Matrix m;
+    DCPProfile::Matrix res;
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            m[i][j] = a[i][j] * mul_a + b[i][j] * mul_b;
+            res[i][j] = a[i][j] * mul_a + b[i][j] * mul_b;
         }
     }
 
-    c = m;
+    return res;
 }
 
-void mapWhiteMatrix(const DCPProfile::Triple& white1, const DCPProfile::Triple& white2, DCPProfile::Matrix& b)
+DCPProfile::Matrix mapWhiteMatrix(const DCPProfile::Triple& white1, const DCPProfile::Triple& white2)
 {
     // Code adapted from dng_color_spec::MapWhiteMatrix
 
     // Use the linearized Bradford adaptation matrix
-    const DCPProfile::Matrix mb = {{
+    const DCPProfile::Matrix mb = {
+        {
             { 0.8951,  0.2664, -0.1614 },
             { -0.7502, 1.7135,  0.0367 },
             { 0.0389, -0.0685,  1.0296 }
         }
     };
 
-    DCPProfile::Triple w1;
-    multiply3x3_v3(mb, white1, w1);
-    DCPProfile::Triple w2;
-    multiply3x3_v3(mb, white2, w2);
+    DCPProfile::Triple w1 = multiply3x3_v3(mb, white1);
+    DCPProfile::Triple w2 = multiply3x3_v3(mb, white2);
 
     // Negative white coordinates are kind of meaningless.
     w1[0] = std::max(w1[0], 0.0);
@@ -149,44 +138,46 @@ void mapWhiteMatrix(const DCPProfile::Triple& white1, const DCPProfile::Triple& 
     a[1][1] = std::max(0.1, std::min(w1[1] > 0.0 ? w2[1] / w1[1] : 10.0, 10.0));
     a[2][2] = std::max(0.1, std::min(w1[2] > 0.0 ? w2[2] / w1[2] : 10.0, 10.0));
 
-    DCPProfile::Matrix temp;
-    invert3x3(mb, temp);
-    multiply3x3(temp, a, temp);
-    multiply3x3(temp, mb, b);
+    return multiply3x3(multiply3x3(invert3x3(mb), a), mb);
 }
 
-void xyzToXy(const DCPProfile::Triple& xyz, double xy[2])
+std::array<double, 2> xyzToXy(const DCPProfile::Triple& xyz)
 {
     const double total = xyz[0] + xyz[1] + xyz[2];
 
-    if (total > 0.0) {
-        xy[0] = xyz[0] / total;
-        xy[1] = xyz[1] / total;
-    } else {
-        xy[0] = 0.3457;
-        xy[1] = 0.3585;
-    }
+    return
+        total > 0.0
+            ? std::array<double, 2>{
+                xyz[0] / total,
+                xyz[1] / total
+            }
+            : std::array<double, 2>{
+                0.3457,
+                0.3585
+            };
 }
 
-void xyToXyz(const double xy[2], DCPProfile::Triple& xyz)
+DCPProfile::Triple xyToXyz(std::array<double, 2> xy)
 {
-    double temp[2] = {xy[0], xy[1]};
-
     // Restrict xy coord to someplace inside the range of real xy coordinates.
     // This prevents math from doing strange things when users specify
     // extreme temperature/tint coordinates.
-    temp[0] = std::max(0.000001, std::min(temp[0], 0.999999));
-    temp[1] = std::max(0.000001, std::min(temp[1], 0.999999));
+    xy[0] = std::max(0.000001, std::min(xy[0], 0.999999));
+    xy[1] = std::max(0.000001, std::min(xy[1], 0.999999));
 
-    if (temp[0] + temp[1] > 0.999999) {
-        double scale = 0.999999 / (temp[0] + temp[1]);
-        temp[0] *= scale;
-        temp[1] *= scale;
+    const double sum = xy[0] + xy[1];
+
+    if (sum > 0.999999) {
+        const double scale = 0.999999 / sum;
+        xy[0] *= scale;
+        xy[1] *= scale;
     }
 
-    xyz[0] = temp[0] / temp[1];
-    xyz[1] = 1.0;
-    xyz[2] = (1.0 - temp[0] - temp[1]) / temp[1];
+    return {
+        xy[0] / xy[1],
+        1.0,
+        (1.0 - xy[0] - xy[1]) / xy[1]
+    };
 }
 
 double calibrationIlluminantToTemperature(int light)
@@ -277,7 +268,7 @@ double calibrationIlluminantToTemperature(int light)
     }
 }
 
-void xyCoordToTemperature(const double white_xy[2], double* temp, double* tint)
+double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 {
     struct Ruvt {
         double r;
@@ -322,8 +313,7 @@ void xyCoordToTemperature(const double white_xy[2], double* temp, double* tint)
 
     constexpr double tint_scale = -3000.0;
 
-    double temperature = 0;
-    double computed_tint = 0;
+    double res = 0;
 
     // Convert to uv space.
     double u = 2.0 * white_xy[0] / (1.5 - white_xy[0] + 6.0 * white_xy[1]);
@@ -367,7 +357,7 @@ void xyCoordToTemperature(const double white_xy[2], double* temp, double* tint)
             }
 
             // Interpolate the temperature.
-            temperature = 1.0e6 / (temp_table[index - 1].r * f + temp_table[index].r * (1.0 - f));
+            res = 1.0e6 / (temp_table[index - 1].r * f + temp_table[index].r * (1.0 - f));
 
             // Find delta from black body point to test coordinate.
             uu = u - (temp_table [index - 1].u * f + temp_table [index].u * (1.0 - f));
@@ -378,9 +368,6 @@ void xyCoordToTemperature(const double white_xy[2], double* temp, double* tint)
             len = sqrt (du * du + dv * dv);
             du /= len;
             dv /= len;
-
-            // Find distance along slope.
-            computed_tint = (uu * du + vv * dv) * tint_scale;
             break;
         }
 
@@ -390,13 +377,7 @@ void xyCoordToTemperature(const double white_xy[2], double* temp, double* tint)
         last_dv = dv;
     }
 
-    if (temp != nullptr) {
-        *temp = temperature;
-    }
-
-    if (tint != nullptr) {
-        *tint = computed_tint;
-    }
+    return res;
 }
 
 }
@@ -758,9 +739,8 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     tag = tagDir->getTag(toUnderlying(TagKey::COLOR_MATRIX_1));
 
     if (!tag) {
-        // FIXME: better error handling
-        fprintf(stderr, "Bad DCP, no ColorMatrix1\n");
-        abort();
+        std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
+        return;
     }
 
     has_color_matrix_1 = true;
@@ -963,6 +943,11 @@ DCPProfile::~DCPProfile()
 {
 }
 
+DCPProfile::operator bool() const
+{
+    return has_color_matrix_1;
+}
+
 bool DCPProfile::getHasToneCurve() const
 {
     return has_tone_curve;
@@ -1007,8 +992,7 @@ void DCPProfile::apply(
     BENCHFUN
     const TMatrix work_matrix = iccStore->workingSpaceInverseMatrix(working_space);
 
-    Matrix xyz_cam; // Camera RGB to XYZ D50 matrix
-    makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant, xyz_cam);
+    const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
 
     const std::vector<HsbModify> delta_base = makeHueSatMap(white_balance, preferred_illuminant);
 
@@ -1232,7 +1216,7 @@ void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int 
     }
 }
 
-void DCPProfile::findXyztoCamera(const double white_xy[2], int preferred_illuminant, Matrix& xyz_to_camera) const
+DCPProfile::Matrix DCPProfile::findXyztoCamera(const std::array<double, 2>& white_xy, int preferred_illuminant) const
 {
     bool has_col_1 = has_color_matrix_1;
     bool has_col_2 = has_color_matrix_2;
@@ -1248,17 +1232,14 @@ void DCPProfile::findXyztoCamera(const double white_xy[2], int preferred_illumin
     }
 
     // Mix if we have two matrices
-    double mix;
-    Matrix col;
-
     if (has_col_1 && has_col_2) {
-        double wbtemp;
         /*
           Note: We're using DNG SDK reference code for XY to temperature translation to get the exact same mix as
           the reference code does.
         */
-        xyCoordToTemperature(white_xy, &wbtemp, nullptr);
+        const double wbtemp = xyCoordToTemperature(white_xy);
 
+        double mix;
         if (wbtemp <= temperature_1) {
             mix = 1.0;
         } else if (wbtemp >= temperature_2) {
@@ -1270,45 +1251,36 @@ void DCPProfile::findXyztoCamera(const double white_xy[2], int preferred_illumin
 
         // Interpolate
         if (mix >= 1.0) {
-            col = color_matrix_1;
+            return color_matrix_1;
         } else if (mix <= 0.0) {
-            col = color_matrix_2;
+            return color_matrix_2;
         } else {
-            mix3x3(color_matrix_1, mix, color_matrix_2, 1.0 - mix, col);
+            return mix3x3(color_matrix_1, mix, color_matrix_2, 1.0 - mix);
         }
     } else if (has_col_1) {
-        col = color_matrix_1;
+        return color_matrix_1;
     } else {
-        col = color_matrix_2;
+        return color_matrix_2;
     }
-
-    xyz_to_camera = col;
 }
 
-void DCPProfile::neutralToXy(const Triple& neutral, int preferred_illuminant, double xy[2]) const
+std::array<double, 2> DCPProfile::neutralToXy(const Triple& neutral, int preferred_illuminant) const
 {
     enum {
         MAX_PASSES = 30
     };
 
-    double last_xy[2] = {0.3457, 0.3585}; // D50
+    std::array<double, 2> last_xy = {0.3457, 0.3585}; // D50
 
     for (unsigned int pass = 0; pass < MAX_PASSES; ++pass) {
-        Matrix xyz_to_camera;
-        findXyztoCamera(last_xy, preferred_illuminant, xyz_to_camera);
+        const Matrix& xyz_to_camera = findXyztoCamera(last_xy, preferred_illuminant);
+        const Matrix& inv_m = invert3x3(xyz_to_camera);
+        const Triple& next_xyz = multiply3x3_v3(inv_m, neutral);
 
-        Matrix inv_m;
-        Triple next_xyz;
-        double next_xy[2];
-        invert3x3(xyz_to_camera, inv_m);
-        multiply3x3_v3(inv_m, neutral, next_xyz);
-        xyzToXy(next_xyz, next_xy);
+        std::array<double, 2> next_xy = xyzToXy(next_xyz);
 
-        if (fabs(next_xy[0] - last_xy[0]) +
-                fabs(next_xy[1] - last_xy[1]) < 0.0000001) {
-            xy[0] = next_xy[0];
-            xy[1] = next_xy[1];
-            return;
+        if (std::fabs(next_xy[0] - last_xy[0]) + std::fabs(next_xy[1] - last_xy[1]) < 0.0000001) {
+            return next_xy;
         }
 
         // If we reach the limit without converging, we are most likely
@@ -1319,15 +1291,13 @@ void DCPProfile::neutralToXy(const Triple& neutral, int preferred_illuminant, do
             next_xy[1] = (last_xy[1] + next_xy[1]) * 0.5;
         }
 
-        last_xy[0] = next_xy[0];
-        last_xy[1] = next_xy[1];
+        last_xy = next_xy;
     }
 
-    xy[0] = last_xy[0];
-    xy[1] = last_xy[1];
+    return last_xy;
 }
 
-void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mul, const Matrix& cam_wb_matrix, int preferred_illuminant, Matrix& xyz_cam) const
+DCPProfile::Matrix DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mul, const Matrix& cam_wb_matrix, int preferred_illuminant) const
 {
     // Code adapted from dng_color_spec::FindXYZtoCamera.
     // Note that we do not support monochrome or colorplanes > 3 (no reductionMatrix support),
@@ -1340,32 +1310,24 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
         double r, g, b;
         white_balance.getMultipliers(r, g, b);
 
-        // camWbMatrix == imatrices.xyz_cam
-        Matrix cam_xyz;
-        invert3x3(cam_wb_matrix, cam_xyz);
-        Matrix cam_rgb;
-        constexpr Matrix xyz_srgb = {{
+        constexpr Matrix xyz_srgb = {
+            {
                 {xyz_sRGB[0][0], xyz_sRGB[0][1], xyz_sRGB[0][2]},
                 {xyz_sRGB[1][0], xyz_sRGB[1][1], xyz_sRGB[1][2]},
                 {xyz_sRGB[2][0], xyz_sRGB[2][1], xyz_sRGB[2][2]}
             }
         };
-        multiply3x3(cam_xyz, xyz_srgb, cam_rgb);
+        const Matrix cam_rgb = multiply3x3(invert3x3(cam_wb_matrix), xyz_srgb);
         double camwb_red   = cam_rgb[0][0] * r + cam_rgb[0][1] * g + cam_rgb[0][2] * b;
         double camwb_green = cam_rgb[1][0] * r + cam_rgb[1][1] * g + cam_rgb[1][2] * b;
         double camwb_blue  = cam_rgb[2][0] * r + cam_rgb[2][1] * g + cam_rgb[2][2] * b;
         neutral[0] = camwb_red / pre_mul[0];
         neutral[1] = camwb_green / pre_mul[1];
         neutral[2] = camwb_blue / pre_mul[2];
-        double maxentry = 0;
 
-        for (int i = 0; i < 3; i++) {
-            if (neutral[i] > maxentry) {
-                maxentry = neutral[i];
-            }
-        }
+        const double maxentry = std::max({neutral[0], neutral[1], neutral[2]});
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; ++i) {
             neutral[i] /= maxentry;
         }
     }
@@ -1374,8 +1336,7 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
        DCP ColorMatrix or ColorMatrices if dual-illuminant. This is the DNG reference code way to
        do it, which is a bit different from RT's own white balance model at the time of writing.
        When RT's white balance can make use of the DCP color matrices we could use that instead. */
-    double white_xy[2];
-    neutralToXy(neutral, preferred_illuminant, white_xy);
+    const std::array<double, 2> white_xy = neutralToXy(neutral, preferred_illuminant);
 
     bool has_fwd_1 = has_forward_matrix_1;
     bool has_fwd_2 = has_forward_matrix_2;
@@ -1404,18 +1365,17 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
     double mix = 1.0;
 
     if ((has_col_1 && has_col_2) || (has_fwd_1 && has_fwd_2)) {
-        double wbtemp;
         /* DNG ref way to convert XY to temperature, which affect matrix mixing. A different model here
            typically does not affect the result too much, ie it's probably not strictly necessary to
            use the DNG reference code here, but we do it for now. */
-        xyCoordToTemperature(white_xy, &wbtemp, nullptr);
+        const double wbtemp = xyCoordToTemperature(white_xy);
 
         if (wbtemp <= temperature_1) {
             mix = 1.0;
         } else if (wbtemp >= temperature_2) {
             mix = 0.0;
         } else {
-            double invT = 1.0 / wbtemp;
+            const double& invT = 1.0 / wbtemp;
             mix = (invT - (1.0 / temperature_2)) / ((1.0 / temperature_1) - (1.0 / temperature_2));
         }
     }
@@ -1430,7 +1390,7 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
         } else if (mix <= 0.0) {
             color_matrix = color_matrix_2;
         } else {
-            mix3x3(color_matrix_1, mix, color_matrix_2, 1.0 - mix, color_matrix);
+            color_matrix = mix3x3(color_matrix_1, mix, color_matrix_2, 1.0 - mix);
         }
     } else if (has_col_1) {
         color_matrix = color_matrix_1;
@@ -1446,8 +1406,7 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
       will show incorrect color.
     */
 
-    Triple white_xyz;
-    xyToXyz(white_xy, white_xyz);
+    const Triple white_xyz = xyToXyz(white_xy);
 
     Matrix cam_xyz;
 
@@ -1462,7 +1421,7 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
             } else if (mix <= 0.0) {
                 fwd = forward_matrix_2;
             } else {
-                mix3x3(forward_matrix_1, mix, forward_matrix_2, 1.0 - mix, fwd);
+                fwd = mix3x3(forward_matrix_1, mix, forward_matrix_2, 1.0 - mix);
             }
         } else if (has_fwd_1) {
             fwd = forward_matrix_1;
@@ -1471,76 +1430,66 @@ void DCPProfile::makeXyzCam(const ColorTemp& white_balance, const Triple& pre_mu
         }
 
         // adapted from dng_color_spec::SetWhiteXY
-        Triple camera_white;
-        multiply3x3_v3(color_matrix, white_xyz, camera_white);
-
-        const Matrix white_diag = {{
+        const Triple camera_white = multiply3x3_v3(color_matrix, white_xyz);
+        const Matrix white_diag = {
+            {
                 {camera_white[0], 0, 0},
                 {0, camera_white[1], 0},
                 {0, 0, camera_white[2]}
             }
         };
-        Matrix white_diag_inv;
-        invert3x3(white_diag, white_diag_inv);
 
-        Matrix xyz_cam;
-        multiply3x3(fwd, white_diag_inv, xyz_cam);
-        invert3x3(xyz_cam, cam_xyz);
+        cam_xyz = invert3x3(multiply3x3(fwd, invert3x3(white_diag)));
     } else {
-        Matrix white_matrix;
-        const Triple white_d50 = {0.3457, 0.3585, 0.2958}; // D50
-        mapWhiteMatrix(white_d50, white_xyz, white_matrix);
-        multiply3x3(color_matrix, white_matrix, cam_xyz);
+        constexpr Triple white_d50 = {0.3457, 0.3585, 0.2958}; // D50
+
+        cam_xyz = multiply3x3(color_matrix, mapWhiteMatrix(white_d50, white_xyz));
     }
 
     // Convert cam_xyz (XYZ D50 to CameraRGB, "PCS to Camera" in DNG terminology) to mXYZCAM
 
-    {
-        // This block can probably be simplified, seems unnecessary to pass through the sRGB matrix
-        // (probably dcraw legacy), it does no harm though as we don't clip anything.
-        int i, j, k;
+    // This block can probably be simplified, seems unnecessary to pass through the sRGB matrix
+    // (probably dcraw legacy), it does no harm though as we don't clip anything.
+    int i, j, k;
 
-        // Multiply out XYZ colorspace
-        double cam_rgb[3][3] = {};
+    // Multiply out XYZ colorspace
+    double cam_rgb[3][3] = {};
 
-        for (i = 0; i < 3; ++i) {
-            for (j = 0; j < 3; ++j) {
-                for (k = 0; k < 3; ++k) {
-                    cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
-                }
-            }
-        }
-
-        // Normalize cam_rgb so that cam_rgb * (1,1,1) is (1,1,1,1)
-        double num;
-
-        for (i = 0; i < 3; ++i) {
-            for (num = j = 0; j < 3; ++j) {
-                num += cam_rgb[i][j];
-            }
-
-            for (j = 0; j < 3; ++j) {
-                cam_rgb[i][j] /= num;
-            }
-        }
-
-        double rgb_cam[3][3] = {};
-        RawImageSource::inverse33(cam_rgb, rgb_cam);
-
-        for (i = 0; i < 3; ++i) {
-            for (j = 0; j < 3; ++j) {
-                xyz_cam[i][j] = 0;
-            }
-        }
-
-        for (i = 0; i < 3; ++i) {
-            for (j = 0; j < 3; ++j) {
-                for (k = 0; k < 3; ++k) {
-                    xyz_cam[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
-                }
+    for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+            for (k = 0; k < 3; ++k) {
+                cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
             }
         }
     }
+
+    // Normalize cam_rgb so that cam_rgb * (1,1,1) is (1,1,1,1)
+    double num;
+
+    for (i = 0; i < 3; ++i) {
+        for (num = j = 0; j < 3; ++j) {
+            num += cam_rgb[i][j];
+        }
+
+        for (j = 0; j < 3; ++j) {
+            cam_rgb[i][j] /= num;
+        }
+    }
+
+    double rgb_cam[3][3] = {};
+    RawImageSource::inverse33(cam_rgb, rgb_cam);
+
+    Matrix res = {};
+
+    for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+            for (k = 0; k < 3; ++k) {
+                res[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
+            }
+        }
+    }
+
+    return res;
 }
 
 std::vector<DCPProfile::HsbModify> DCPProfile::makeHueSatMap(const ColorTemp& white_balance, int preferred_illuminant) const
@@ -1670,7 +1619,7 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
 
         const float v_scaled = v_encoded * table_info.pc.v_scale;
 
-        int h_index0 = (int) h_scaled;
+        int h_index0 = h_scaled;
         const int s_index0 = std::max(std::min<int>(s_scaled, table_info.pc.max_sat_index0), 0);
         const int v_index0 = std::max(std::min<int>(v_scaled, table_info.pc.max_val_index0), 0);
 
@@ -1823,10 +1772,14 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 
     DCPProfile* const res = new DCPProfile(filename);
 
-    // Add profile
-    profile_cache[filename] = res;
+    if (*res) {
+        // Add profile
+        profile_cache[filename] = res;
+        return res;
+    }
 
-    return res;
+    delete res;
+    return nullptr;
 }
 
 DCPProfile* DCPStore::getStdProfile(const Glib::ustring& cam_short_name) const
