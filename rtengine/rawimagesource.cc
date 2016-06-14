@@ -33,6 +33,7 @@
 #include "dcp.h"
 #include "rt_math.h"
 #include "improcfun.h"
+#include "median.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -432,13 +433,6 @@ PIX_SORT(p[0],p[3]); PIX_SORT(p[5],p[8]); PIX_SORT(p[4],p[7]); \
 PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]); \
 PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); \
 PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
-
-#define med5(a0,a1,a2,a3,a4,median) { \
-p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; \
-PIX_SORT(p[0],p[1]) ; PIX_SORT(p[3],p[4]) ; PIX_SORT(p[0],p[3]) ; \
-PIX_SORT(p[1],p[4]) ; PIX_SORT(p[1],p[2]) ; PIX_SORT(p[2],p[3]) ; \
-PIX_SORT(p[1],p[2]) ; median=p[2] ;}
-
 
 RawImageSource::RawImageSource ()
     : ImageSource()
@@ -3018,7 +3012,7 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 
         for (int i = 0; i < H; i++) {
             int iprev, inext, jprev, jnext;
-            int p[5], temp, median;
+            int med;
 
             if (i < 2) {
                 iprev = i + 2;
@@ -3048,12 +3042,11 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
                 //med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext],
                 //     riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext],
                 //     riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
-                med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev], riFlatFile->data[i][j],
-                     riFlatFile->data[i][jnext], riFlatFile->data[inext][j], median);
+                med = median(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext], riFlatFile->data[inext][j]);
 
 //          if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
-                if (((int)riFlatFile->data[i][j] << 1) > median || (median << 1) > riFlatFile->data[i][j]) {
-                    cfatmp[i * W + j] = median;
+                if (((int)riFlatFile->data[i][j] << 1) > med || (med << 1) > riFlatFile->data[i][j]) {
+                    cfatmp[i * W + j] = med;
                 } else {
                     cfatmp[i * W + j] = riFlatFile->data[i][j];
                 }

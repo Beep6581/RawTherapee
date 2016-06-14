@@ -22,7 +22,7 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#include <math.h>
+#include <cmath>
 #include <fftw3.h>
 #include "../rtgui/threadutils.h"
 #include "rtengine.h"
@@ -36,6 +36,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "cplx_wavelet_dec.h"
+#include "median.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -47,6 +48,8 @@
 #define blkrad 1    // radius of block averaging
 
 #define epsilon 0.001f/(TS*TS) //tolerance
+
+#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 
 #define med2(a0,a1,a2,a3,a4,median) { \
 pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4;  \
@@ -292,7 +295,6 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     medianOut[i][j] = medianIn[i][j];
                 }
             } else if(medianType == MED_3X3STRONG) {
-                float pp[9], temp;
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -300,7 +302,7 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 }
 
                 for (; j < width - border; j++) {
-                    med3(medianIn[i][j] , medianIn[i - 1][j], medianIn[i + 1][j] , medianIn[i][j + 1], medianIn[i][j - 1], medianIn[i - 1][j - 1], medianIn[i - 1][j + 1], medianIn[i + 1][j - 1], medianIn[i + 1][j + 1], medianOut[i][j]);
+                    medianOut[i][j] = median(medianIn[i][j] , medianIn[i - 1][j], medianIn[i + 1][j] , medianIn[i][j + 1], medianIn[i][j - 1], medianIn[i - 1][j - 1], medianIn[i - 1][j + 1], medianIn[i + 1][j - 1], medianIn[i + 1][j + 1]);
                 }
 
                 for(; j < width; j++) {
@@ -1859,7 +1861,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             }
                         else
                             for (int j = 1; j < wid - 1; j++) {
-                                med3(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), source->r(i - 1, j - 1), source->r(i - 1, j + 1), source->r(i + 1, j - 1), source->r(i + 1, j + 1), tm[i][j]); //3x3
+                                tm[i][j] = median(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), source->r(i - 1, j - 1), source->r(i - 1, j + 1), source->r(i + 1, j - 1), source->r(i + 1, j + 1)); //3x3
                             }
                     }
                 } else {
@@ -1922,7 +1924,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             }
                         else
                             for (int j = 1; j < wid - 1; j++) {
-                                med3(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), source->b(i - 1, j - 1), source->b(i - 1, j + 1), source->b(i + 1, j - 1), source->b(i + 1, j + 1), tm[i][j]);
+                                tm[i][j] = median(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), source->b(i - 1, j - 1), source->b(i - 1, j + 1), source->b(i + 1, j - 1), source->b(i + 1, j + 1));
                             }
                     }
                 } else {
@@ -1987,7 +1989,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             }
                         else
                             for (int j = 1; j < wid - 1; j++) {
-                                med3(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), source->g(i - 1, j - 1), source->g(i - 1, j + 1), source->g(i + 1, j - 1), source->g(i + 1, j + 1), tm[i][j]);
+                                tm[i][j] = median(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), source->g(i - 1, j - 1), source->g(i - 1, j + 1), source->g(i + 1, j - 1), source->g(i + 1, j + 1));
                             }
                     }
                 } else {
