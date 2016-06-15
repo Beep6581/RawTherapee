@@ -25,38 +25,38 @@
 #include "opthelper.h"
 
 template<typename T, std::size_t N>
-T median(std::array<T, N> array)
+inline T median(std::array<T, N> array)
 {
-    const typename std::array<T, N>::iterator middle = array.begin() + array.size() / 2;
+    const typename std::array<T, N>::iterator middle = array.begin() + N / 2;
     std::nth_element(array.begin(), middle, array.end());
 
     return
-        array.size() % 2
-            ? ((*middle + *std::min_element(middle + 1, array.end())) / static_cast<T>(2))
-            : *middle;
+        N % 2
+            ? *middle
+            : ((*middle + *std::max_element(array.begin(), middle)) / static_cast<T>(2));
 }
 
 template<typename T, typename... ARGS>
-T median(T arg, ARGS... args)
+inline T median(T arg, ARGS... args)
 {
     return median(std::array<T, sizeof...(args) + 1>{std::move(arg), std::move(args)...});
 }
 
 template<typename T>
-inline T median3(T a, T b, T c)
+inline T median(T a, T b, T c)
 {
     return std::max(std::min(a, b), std::min(c, std::max(a, b)));
 }
 
 template<>
-inline vfloat median3(vfloat a, vfloat b, vfloat c)
+inline vfloat median(vfloat a, vfloat b, vfloat c)
 {
     return vmaxf(vminf(a, b), vminf(c, vmaxf(a, b)));
 }
 
 // See http://stackoverflow.com/questions/480960/code-to-calculate-median-of-five-in-c-sharp
 template<typename T>
-inline T median5(T a, T b, T c, T d, T e)
+inline T median(T a, T b, T c, T d, T e)
 {
     if (b < a) {
         std::swap(a, b);
@@ -85,11 +85,176 @@ inline T median5(T a, T b, T c, T d, T e)
 }
 
 template<>
-inline vfloat median5(vfloat a, vfloat b, vfloat c, vfloat d, vfloat e)
+inline vfloat median(vfloat a, vfloat b, vfloat c, vfloat d, vfloat e)
 {
     const vfloat f = vmaxf(vminf(a, b), vminf(c, d));
     const vfloat g = vminf(vmaxf(a, b), vmaxf(c, d));
-    return median3(e, f, g);
+    return median(e, f, g);
+}
+
+// See http://www.cs.hut.fi/~cessu/selection/V_7_4
+// Hand unrolled algorithm by Flössie ;)
+template<typename T>
+inline T median(T a, T b, T c, T d, T e, T f, T g)
+{
+    if (b < a) {
+        std::swap(a, b);
+    }
+
+    if (d < c) {
+        std::swap(b, c);
+        std::swap(b, d);
+    } else {
+        std::swap(b, c);
+    }
+
+    if (b < a) {
+        std::swap(a, b);
+    } else {
+        std::swap(c, d);
+    }
+
+    if (e < d) {
+        std::swap(c, d);
+        std::swap(c, e);
+
+        if (c < b) {
+            std::swap(b, c);
+
+            if (g < f) {
+                std::swap(d, g);
+                std::swap(e, g);
+                std::swap(f, g);
+            } else {
+                std::swap(d, f);
+                std::swap(e, f);
+            }
+
+            if (g < c) {
+                std::swap(a, d);
+
+                if (d < b) {
+                    std::swap(a, b);
+                } else {
+                    std::swap(a, d);
+                    b = d;
+                }
+
+                if (g < f) {
+                    return std::max(a, g);
+                }
+
+                return std::max(b, f);
+            }
+
+            if (f < d) {
+                std::swap(d, f);
+            }
+
+            if (d < c) {
+                return std::min(c, f);
+            }
+
+            return std::min(d, e);
+        }
+
+        if (d < c) {
+            std::swap(c, e);
+
+            if (f < b) {
+                if (g < b) {
+                    return b;
+                }
+
+                return std::min(d, g);
+            }
+
+            if (g < f) {
+                std::swap(e, g);
+                std::swap(f, g);
+            } else {
+                std::swap(e, f);
+            }
+
+            if (e < d) {
+                return std::min(d, g);
+            }
+
+            return std::min(e, f);
+        }
+
+        if (g < f) {
+            std::swap(f, g);
+        }
+
+        std::swap(e, f);
+
+        if (e < c) {
+            if (g < b) {
+                return b;
+            }
+
+            return std::min(c, g);
+        }
+
+        if (d < e) {
+            return std::min(d, f);
+        }
+
+        return std::min(e, f);
+    }
+
+    if (d < b) {
+        std::swap(b, d);
+    } else {
+        std::swap(c, e);
+    }
+
+    if (e < d) {
+        std::swap(d, e);
+
+        if (f < b) {
+            if (g < b) {
+                return b;
+            }
+
+            return std::min(d, g);
+        }
+
+        if (g < f) {
+            std::swap(e, g);
+            std::swap(f, g);
+        } else {
+            std::swap(e, f);
+        }
+
+        if (e < d) {
+            return std::min(d, g);
+        }
+
+        return std::min(e, f);
+    }
+
+    if (g < f) {
+        std::swap(c, g);
+        std::swap(f, g);
+    } else {
+        std::swap(c, f);
+    }
+
+    if (c < d) {
+        if (g < b) {
+            return b;
+        }
+
+        return std::min(d, g);
+    }
+
+    if (e < c) {
+        return std::min(e, f);
+    }
+
+    return std::min(c, f);
 }
 
 // middle 4 of 6 elements,
