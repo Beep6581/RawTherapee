@@ -10,7 +10,6 @@
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
 
-#include "StopWatch.h"
 #include "opthelper.h"
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
@@ -895,7 +894,6 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 
 void CLASS lossless_jpeg_load_raw()
 {
-StopWatch Stop1("decode");
   struct jhead jh;
 
   if (!ljpeg_start (&jh, 0)) return;
