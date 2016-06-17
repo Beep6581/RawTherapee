@@ -3044,7 +3044,7 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 {
 
     if(boxW == 0 && boxH == 0) { // nothing to blur
-        memcpy(cfablur, riFlatFile->data[0], W*H*sizeof(float));
+        memcpy(cfablur, riFlatFile->data[0], W * H * sizeof(float));
         return;
     }
 
@@ -3787,7 +3787,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                 {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
             }
         };
-        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, false, cmp.applyHueSatMap, false);
+        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
         return;
     }
 
