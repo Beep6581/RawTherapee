@@ -41,7 +41,8 @@
 #include "color.h"
 
 #include "jpeg.h"
-
+#define BENCHMARK
+#include "StopWatch.h"
 using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -917,7 +918,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 {
-
+BENCHFUN
     FILE *file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
@@ -1011,7 +1012,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 {
-
+BENCHFUN
     FILE *file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
@@ -1198,7 +1199,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
 int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 {
-
+BENCHFUN
     //TODO: Handling 32 bits floating point output images!
     bool writeOk = true;
     int width = getW ();
