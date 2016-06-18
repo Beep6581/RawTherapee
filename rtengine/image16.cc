@@ -23,6 +23,29 @@
 #include <cstdio>
 #include "rtengine.h"
 
+namespace
+{
+
+void getScanline8 (uint16_t *red, uint16_t *green, uint16_t *blue, int width, unsigned char* buffer)
+{
+    for (int i = 0, ix = 0; i < width; i++) {
+        buffer[ix++] = red[i] >> 8;
+        buffer[ix++] = green[i] >> 8;
+        buffer[ix++] = blue[i] >> 8;
+    }
+}
+
+void getScanline16 (uint16_t *red, uint16_t *green, uint16_t *blue, int width, unsigned short* buffer)
+{
+    for (int i = 0, ix = 0; i < width; i++) {
+        buffer[ix++] = red[i];
+        buffer[ix++] = green[i];
+        buffer[ix++] = blue[i];
+    }
+}
+
+}
+
 using namespace rtengine;
 
 Image16::Image16 ()
@@ -46,99 +69,9 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
     }
 
     if (bps == 16) {
-        int ix = 0;
-        unsigned short* sbuffer = (unsigned short*) buffer;
-
-        for (int i = 0; i < width; i++) {
-            sbuffer[ix++] = r(row, i);
-            sbuffer[ix++] = g(row, i);
-            sbuffer[ix++] = b(row, i);
-        }
+        getScanline16 (&r(row, 0), &g(row, 0), &b(row, 0), width, (unsigned short*)buffer);
     } else if (bps == 8) {
-        int ix = 0;
-        int i = 0;
-#ifdef __SSSE3__
-        // process 48 values using SSSE3. Looks like a lot of code, but it only needs about one instruction per value, whereas scalar version needs about five instructions per value
-        vmask reduceWord2Bytev = _mm_set_epi8(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 15, 13, 11, 9, 7, 5, 3, 1);
-        // we need fivev and sixv to reduce the number of registers used for permutation masks from 9 to 6
-        vint fivev = _mm_set1_epi8(5);
-        vint sixv = _mm_set1_epi8(6);
-
-        for (; i < width - 15; i += 16, ix += 48) {
-            // generate initial shuffle masks. Gaps are set to 0xf0 to allow calculating subsequent masks from previous ones
-            vint redmaskv = _mm_set_epi8(5, 0xf0, 0xf0, 4, 0xf0, 0xf0, 3, 0xf0, 0xf0, 2, 0xf0, 0xf0, 1, 0xf0, 0xf0, 0);
-            vint greenmaskv = _mm_set_epi8(0xf0, 0xf0, 4, 0xf0, 0xf0, 3, 0xf0, 0xf0, 2, 0xf0, 0xf0, 1, 0xf0, 0xf0, 0, 0xf0);
-            vint bluemaskv = _mm_set_epi8(0xf0, 4, 0xf0, 0xf0, 3, 0xf0, 0xf0, 2, 0xf0, 0xf0, 1, 0xf0, 0xf0, 0, 0xf0, 0xf0);
-
-            // load first 8 values for each colour
-            vint red1v = _mm_loadu_si128((__m128i*)&r(row, i));
-            vint green1v = _mm_loadu_si128((__m128i*)&g(row, i));
-            vint blue1v = _mm_loadu_si128((__m128i*)&b(row, i));
-
-            // load second 8 values for each colour
-            vint red2v = _mm_loadu_si128((__m128i*)&r(row, i + 8));
-            vint green2v = _mm_loadu_si128((__m128i*)&g(row, i + 8));
-            vint blue2v = _mm_loadu_si128((__m128i*)&b(row, i + 8));
-
-            // shuffle the high bytes of the values to the lower 64 bit of the register
-            red1v = _mm_shuffle_epi8(red1v, reduceWord2Bytev);
-            green1v = _mm_shuffle_epi8(green1v, reduceWord2Bytev);
-            blue1v = _mm_shuffle_epi8(blue1v, reduceWord2Bytev);
-
-            // shuffle the high bytes of the values to the lower 64 bit of the register
-            red2v = _mm_shuffle_epi8(red2v, reduceWord2Bytev);
-            green2v = _mm_shuffle_epi8(green2v, reduceWord2Bytev);
-            blue2v = _mm_shuffle_epi8(blue2v, reduceWord2Bytev);
-
-            // mix first and second 8 values of each colour together
-            red1v = (vint)_mm_shuffle_pd((__m128d)red1v, (__m128d)red2v, 0);
-            green1v = (vint)_mm_shuffle_pd((__m128d)green1v, (__m128d)green2v, 0);
-            blue1v = (vint)_mm_shuffle_pd((__m128d)blue1v, (__m128d)blue2v, 0);
-
-            // now we have the input in registers => let's generate the output
-
-            // first we need r0g0b0r1g1b1r2g2b2r3g3b3r4g4b4r5
-            vint destv = _mm_shuffle_epi8(red1v, redmaskv);
-            vint greenv = _mm_shuffle_epi8(green1v, greenmaskv);
-            destv = _mm_or_si128(destv, greenv);
-            vint bluev = _mm_shuffle_epi8(blue1v, bluemaskv);
-            destv = _mm_or_si128(destv, bluev);
-            _mm_storeu_si128((__m128i*) & (buffer[ix]), destv);
-
-            // then we need g5b5r6g6b6r7g7b7r8g8b8r9g9b9raga
-            // we can calculate the shuffle masks from previous ones => needs only 6 instead of 9 registers to handle the 9 different shuffle masks
-            vint tempmaskv = _mm_add_epi8(redmaskv, fivev);
-            redmaskv = _mm_add_epi8(bluemaskv, sixv);
-            bluemaskv = _mm_add_epi8(greenmaskv, fivev);
-            greenmaskv = tempmaskv;
-            destv = _mm_shuffle_epi8(red1v, redmaskv);
-            greenv = _mm_shuffle_epi8(green1v, greenmaskv);
-            destv = _mm_or_si128(destv, greenv);
-            bluev = _mm_shuffle_epi8(blue1v, bluemaskv);
-            destv = _mm_or_si128(destv, bluev);
-            _mm_storeu_si128((__m128i*) & (buffer[ix + 16]), destv);
-
-            // and last one is barbgbbbrcgcbcrdgdbdregeberfgfbf
-            // we can calculate the shuffle masks from previous ones => needs only 6 instead of 9 registers to handle the 9 different shuffle masks
-            tempmaskv = _mm_add_epi8(greenmaskv, fivev);
-            greenmaskv = _mm_add_epi8(redmaskv, fivev);
-            redmaskv = _mm_add_epi8(bluemaskv, sixv);
-            bluemaskv = tempmaskv;
-            destv = _mm_shuffle_epi8(red1v, redmaskv);
-            greenv = _mm_shuffle_epi8(green1v, greenmaskv);
-            destv = _mm_or_si128(destv, greenv);
-            bluev = _mm_shuffle_epi8(blue1v, bluemaskv);
-            destv = _mm_or_si128(destv, bluev);
-            _mm_storeu_si128((__m128i*) & (buffer[ix + 32]), destv);
-        }
-
-#endif
-
-        for (; i < width; i++) {
-            buffer[ix++] = r(row, i) >> 8;
-            buffer[ix++] = g(row, i) >> 8;
-            buffer[ix++] = b(row, i) >> 8;
-        }
+        getScanline8 (&r(row, 0), &g(row, 0), &b(row, 0), width, buffer);
     }
 }
 
