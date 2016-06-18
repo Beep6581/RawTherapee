@@ -19,14 +19,13 @@
 #include "image16.h"
 #include "imagefloat.h"
 #include "image8.h"
-#include <cstring>
 #include <cstdio>
 #include "rtengine.h"
 
 namespace
 {
 
-void getScanline8 (uint16_t *red, uint16_t *green, uint16_t *blue, int width, unsigned char* buffer)
+void getScanline8 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned char* buffer)
 {
     for (int i = 0, ix = 0; i < width; i++) {
         buffer[ix++] = red[i] >> 8;
@@ -35,7 +34,7 @@ void getScanline8 (uint16_t *red, uint16_t *green, uint16_t *blue, int width, un
     }
 }
 
-void getScanline16 (uint16_t *red, uint16_t *green, uint16_t *blue, int width, unsigned short* buffer)
+void getScanline16 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned short* buffer)
 {
     for (int i = 0, ix = 0; i < width; i++) {
         buffer[ix++] = red[i];
@@ -64,14 +63,14 @@ Image16::~Image16 ()
 void Image16::getScanline (int row, unsigned char* buffer, int bps)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
     if (bps == 16) {
-        getScanline16 (&r(row, 0), &g(row, 0), &b(row, 0), width, (unsigned short*)buffer);
+        getScanline16 (r(row), g(row), b(row), width, (unsigned short*)buffer);
     } else if (bps == 8) {
-        getScanline8 (&r(row, 0), &g(row, 0), &b(row, 0), width, buffer);
+        getScanline8 (r(row), g(row), b(row), width, buffer);
     }
 }
 
@@ -82,11 +81,11 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
 void Image16::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
-    // For optimization purpose, we're assuming that this class never have to provide min/max bound
+    // For optimization purpose, we're assuming that this class never has to provide min/max bounds
     assert(!minValue);
 
     switch (sampleFormat) {
@@ -116,7 +115,7 @@ void Image16::setScanline (int row, unsigned char* buffer, int bps, float *minVa
         }
 
         default:
-            // Other type are ignored, but could be implemented if necessary
+            // Other types are ignored, but could be implemented if necessary
             break;
     }
 
