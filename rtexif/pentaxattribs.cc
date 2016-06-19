@@ -701,6 +701,7 @@ public:
         choices.insert(p_t(256 * 3 + 44, "Sigma 12-24mm f/4.5-5.6 EX DG"));
         choices.insert(p_t(256 * 3 + 44, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
         choices.insert(p_t(256 * 3 + 44, "Sigma 18-50mm f/3.5-5.6 DC"));
+        choices.insert(p_t(256 * 3 + 44, "Sigma 17-35mm f/2.8-4 EX DG"));
         choices.insert(p_t(256 * 3 + 44, "Tamron 35-90mm f/4 AF"));
         choices.insert(p_t(256 * 3 + 46, "Sigma or Samsung Lens (3 46)"));
         choices.insert(p_t(256 * 3 + 46, "Sigma APO 70-200mm f/2.8 EX"));
@@ -873,11 +874,16 @@ public:
         choices.insert(p_t(256 * 8 + 27, "Sigma 18-200mm f/3.5-6.3 II DC HSM"));
         choices.insert(p_t(256 * 8 + 28, "Sigma 18-250mm f/3.5-6.3 DC Macro HSM"));
         choices.insert(p_t(256 * 8 + 29, "Sigma 35mm f/1.4 DG HSM"));
-        choices.insert(p_t(256 * 8 + 30, "Sigma 17-70mm f/2.8-4 DC Macro HSM Contemporary"));
+        choices.insert(p_t(256 * 8 + 30, "Sigma 17-70mm f/2.8-4 DC Macro HSM | C"));
         choices.insert(p_t(256 * 8 + 31, "Sigma 18-35mm f/1.8 DC HSM"));
         choices.insert(p_t(256 * 8 + 32, "Sigma 30mm f/1.4 DC HSM | A"));
+        choices.insert(p_t(256 * 8 + 34, "Sigma 18-300mm f/3.5-6.3 DC Macro HSM"));
         choices.insert(p_t(256 * 8 + 59, "HD PENTAX-D FA 150-450mm f/4.5-5.6 ED DC AW"));
         choices.insert(p_t(256 * 8 + 60, "HD PENTAX-D FA* 70-200mm f/2.8 ED DC AW"));
+        choices.insert(p_t(256 * 8 + 61, "HD PENTAX-D FA 28-105mm f/3.5-5.6 ED DC WR"));
+        choices.insert(p_t(256 * 8 + 62, "HD PENTAX-D FA 24-70mm f/2.8 ED SDM WR"));
+        choices.insert(p_t(256 * 8 + 63, "HD PENTAX-D FA 15-30mm f/2.8 ED SDM WR"));
+        choices.insert(p_t(256 * 8 + 197, "HD PENTAX-DA 55-300mm f/4.5-6.3 ED PLM WR RE"));
         choices.insert(p_t(256 * 8 + 198, "smc PENTAX-DA L 18-50mm f/4-5.6 DC WR RE"));
         choices.insert(p_t(256 * 8 + 199, "HD PENTAX-DA 18-50mm f/4-5.6 DC WR RE"));
         choices.insert(p_t(256 * 8 + 200, "HD PENTAX-DA 16-85mm f/3.5-5.6 ED DC WR"));
@@ -915,6 +921,7 @@ public:
         choices.insert(p_t(256 * 11 + 14, "smc PENTAX-FA 645 55-110mm f/5.6"));
         choices.insert(p_t(256 * 11 + 16, "smc PENTAX-FA 645 33-55mm f/4.5 AL"));
         choices.insert(p_t(256 * 11 + 17, "smc PENTAX-FA 645 150-300mm f/5.6 ED [IF]"));
+        choices.insert(p_t(256 * 11 + 21, "HD PENTAX-D FA 645 35mm f/3.5 AL [IF]"));
         choices.insert(p_t(256 * 13 + 18, "smc PENTAX-D FA 645 55mm f/2.8 AL [IF] SDM AW"));
         choices.insert(p_t(256 * 13 + 19, "smc PENTAX-D FA 645 25mm f/4 AL [IF] SDM AW"));
         choices.insert(p_t(256 * 13 + 20, "HD PENTAX-D FA 645 90mm f/2.8 ED AW SR"));

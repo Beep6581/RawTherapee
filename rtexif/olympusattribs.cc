@@ -120,6 +120,7 @@ public:
         lenses["00 23 00"] = "Olympus Zuiko Digital ED 14-42mm f/3.5-5.6";
         lenses["00 23 10"] = "Olympus M.Zuiko Digital ED 7-14mm f/2.8 Pro";
         lenses["00 24 00"] = "Olympus Zuiko Digital ED 40-150mm f/4.0-5.6";
+        lenses["00 24 10"] = "Olympus M.Zuiko Digital ED 300mm f/4.0 IS Pro";
         lenses["00 25 10"] = "Olympus M.Zuiko Digital ED 8mm f/1.8 Fisheye Pro";
         lenses["00 30 00"] = "Olympus Zuiko Digital ED 50-200mm f/2.8-3.5 SWD";
         lenses["00 31 00"] = "Olympus Zuiko Digital ED 12-60mm f/2.8-4.0 SWD";
@@ -138,6 +139,7 @@ public:
         lenses["01 05 00"] = "Sigma 30mm f/1.4 EX DC HSM";
         lenses["01 05 10"] = "Sigma 60mm f/2.8 DN | A";
         lenses["01 06 00"] = "Sigma APO 50-500mm f/4.0-6.3 EX DG HSM";
+        lenses["01 06 10"] = "Sigma 30mm f/1.4 DC DN | C";
         lenses["01 07 00"] = "Sigma Macro 105mm f/2.8 EX DG";
         lenses["01 08 00"] = "Sigma APO Macro 150mm f/2.8 EX DG HSM";
         lenses["01 09 00"] = "Sigma 18-50mm f/2.8 EX DC Macro";
@@ -176,8 +178,12 @@ public:
         lenses["02 20 10"] = "Lumix G Vario 12-32mm f/3.5-5.6 Asph. Mega OIS";
         lenses["02 21 10"] = "Leica DG Nocticron 42.5mm f/1.2 Asph. Power OIS";
         lenses["02 22 10"] = "Leica DG Summilux 15mm f/1.7 Asph.";
+        lenses["02 23 10"] = "Lumix G Vario 35-100mm f/4.0-5.6 Asph. Mega OIS";
         lenses["02 24 10"] = "Lumix G Macro 30mm f/2.8 Asph. Mega OIS";
         lenses["02 25 10"] = "Lumix G 42.5mm f/1.7 Asph. Power OIS";
+        lenses["02 26 10"] = "Lumix G 25mm f/1.7 Asph.";
+        lenses["02 27 10"] = "Leica DG Vario-Elmar 100-400mm f/4.0-6.3 Asph. Power OIS";
+        lenses["02 28 10"] = "Lumix G Vario 12-60mm f/3.5-5.6 Asph. Power OIS";
         lenses["03 01 00"] = "Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.";
         lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         lenses["05 01 10"] = "Tamron 14-150mm f/3.5-5.8 Di III";
