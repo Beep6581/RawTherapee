@@ -422,18 +422,6 @@ extern const Settings* settings;
 #define ABS(a) ((a)<0?-(a):(a))
 #define DIST(a,b) (ABS(a-b))
 
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-
-#define med3x3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
-p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; p[5]=a5; p[6]=a6; p[7]=a7; p[8]=a8; \
-PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
-PIX_SORT(p[0],p[1]); PIX_SORT(p[3],p[4]); PIX_SORT(p[6],p[7]); \
-PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
-PIX_SORT(p[0],p[3]); PIX_SORT(p[5],p[8]); PIX_SORT(p[4],p[7]); \
-PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]); \
-PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); \
-PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
-
 RawImageSource::RawImageSource ()
     : ImageSource()
     , plistener(NULL)
@@ -1333,12 +1321,10 @@ SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thres
 #endif
 
         for (int i = 2; i < H - 2; i++) {
-            float p[9], temp; // we need this for med3x3 macro
-
             for (int j = 2; j < W - 2; j++) {
-                med3x3(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
-                       rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
-                       rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2], temp);
+                const float& temp = median(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
+                                       rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
+                                       rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2]);
                 cfablur[i * W + j] = rawData[i][j] - temp;
             }
         }
@@ -3039,9 +3025,6 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
                     jnext = j + 2;
                 }
 
-                //med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext],
-                //     riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext],
-                //     riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
                 med = median(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext], riFlatFile->data[inext][j]);
 
 //          if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
@@ -5148,11 +5131,4 @@ void RawImageSource::cleanup ()
     delete phaseOneIccCurveInv;
 }
 
-#undef PIX_SORT
-#undef med3x3
-
 } /* namespace */
-
-#undef PIX_SORT
-#undef med3x3
-

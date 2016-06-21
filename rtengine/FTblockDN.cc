@@ -49,54 +49,6 @@
 
 #define epsilon 0.001f/(TS*TS) //tolerance
 
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-
-#define med2(a0,a1,a2,a3,a4,median) { \
-pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4;  \
-PIX_SORT(pp[0],pp[1]) ; PIX_SORT(pp[3],pp[4]) ; PIX_SORT(pp[0],pp[3]) ;\
-PIX_SORT(pp[1],pp[4]) ; PIX_SORT(pp[1],pp[2]) ; PIX_SORT(pp[2],pp[3]) ;\
-PIX_SORT(pp[1],pp[2]) ; median=pp[2] ;}
-
-#define med5(a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20,a21,a22,a23,a24,median) { \
-pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; pp[9]=a9; pp[10]=a10; pp[11]=a11; pp[12]=a12; \
-pp[13]=a13; pp[14]=a14; pp[15]=a15; pp[16]=a16; pp[17]=a17; pp[18]=a18; pp[19]=a19; pp[20]=a20; pp[21]=a21; pp[22]=a22; pp[23]=a23; pp[24]=a24; \
-PIX_SORT(pp[0], pp[1]) ;   PIX_SORT(pp[3], pp[4]) ;   PIX_SORT(pp[2], pp[4]) ;\
-PIX_SORT(pp[2], pp[3]) ;   PIX_SORT(pp[6], pp[7]) ;   PIX_SORT(pp[5], pp[7]) ;\
-PIX_SORT(pp[5], pp[6]) ;   PIX_SORT(pp[9], pp[10]) ;  PIX_SORT(pp[8], pp[10]) ;\
-PIX_SORT(pp[8], pp[9]) ;   PIX_SORT(pp[12], pp[13]) ; PIX_SORT(pp[11], pp[13]) ;\
-PIX_SORT(pp[11], pp[12]) ; PIX_SORT(pp[15], pp[16]) ; PIX_SORT(pp[14], pp[16]) ;\
-PIX_SORT(pp[14], pp[15]) ; PIX_SORT(pp[18], pp[19]) ; PIX_SORT(pp[17], pp[19]) ;\
-PIX_SORT(pp[17], pp[18]) ; PIX_SORT(pp[21], pp[22]) ; PIX_SORT(pp[20], pp[22]) ;\
-PIX_SORT(pp[20], pp[21]) ; PIX_SORT(pp[23], pp[24]) ; PIX_SORT(pp[2], pp[5]) ;\
-PIX_SORT(pp[3], pp[6]) ;   PIX_SORT(pp[0], pp[6]) ;   PIX_SORT(pp[0], pp[3]) ;\
-PIX_SORT(pp[4], pp[7]) ;   PIX_SORT(pp[1], pp[7]) ;   PIX_SORT(pp[1], pp[4]) ;\
-PIX_SORT(pp[11], pp[14]) ; PIX_SORT(pp[8], pp[14]) ;  PIX_SORT(pp[8], pp[11]) ;\
-PIX_SORT(pp[12], pp[15]) ; PIX_SORT(pp[9], pp[15]) ;  PIX_SORT(pp[9], pp[12]) ;\
-PIX_SORT(pp[13], pp[16]) ; PIX_SORT(pp[10], pp[16]) ; PIX_SORT(pp[10], pp[13]) ;\
-PIX_SORT(pp[20], pp[23]) ; PIX_SORT(pp[17], pp[23]) ; PIX_SORT(pp[17], pp[20]) ;\
-PIX_SORT(pp[21], pp[24]) ; PIX_SORT(pp[18], pp[24]) ; PIX_SORT(pp[18], pp[21]) ;\
-PIX_SORT(pp[19], pp[22]) ; PIX_SORT(pp[8], pp[17]) ;  PIX_SORT(pp[9], pp[18]) ;\
-PIX_SORT(pp[0], pp[18]) ;  PIX_SORT(pp[0], pp[9]) ;   PIX_SORT(pp[10], pp[19]) ;\
-PIX_SORT(pp[1], pp[19]) ;  PIX_SORT(pp[1], pp[10]) ;  PIX_SORT(pp[11], pp[20]) ;\
-PIX_SORT(pp[2], pp[20]) ;  PIX_SORT(pp[2], pp[11]) ;  PIX_SORT(pp[12], pp[21]) ;\
-PIX_SORT(pp[3], pp[21]) ;  PIX_SORT(pp[3], pp[12]) ;  PIX_SORT(pp[13], pp[22]) ;\
-PIX_SORT(pp[4], pp[22]) ;  PIX_SORT(pp[4], pp[13]) ;  PIX_SORT(pp[14], pp[23]) ;\
-PIX_SORT(pp[5], pp[23]) ;  PIX_SORT(pp[5], pp[14]) ;  PIX_SORT(pp[15], pp[24]) ;\
-PIX_SORT(pp[6], pp[24]) ;  PIX_SORT(pp[6], pp[15]) ;  PIX_SORT(pp[7], pp[16]) ;\
-PIX_SORT(pp[7], pp[19]) ;  PIX_SORT(pp[13], pp[21]) ; PIX_SORT(pp[15], pp[23]) ;\
-PIX_SORT(pp[7], pp[13]) ;  PIX_SORT(pp[7], pp[15]) ;  PIX_SORT(pp[1], pp[9]) ;\
-PIX_SORT(pp[3], pp[11]) ;  PIX_SORT(pp[5], pp[17]) ;  PIX_SORT(pp[11], pp[17]) ;\
-PIX_SORT(pp[9], pp[17]) ;  PIX_SORT(pp[4], pp[10]) ;  PIX_SORT(pp[6], pp[12]) ;\
-PIX_SORT(pp[7], pp[14]) ;  PIX_SORT(pp[4], pp[6]) ;   PIX_SORT(pp[4], pp[7]) ;\
-PIX_SORT(pp[12], pp[14]) ; PIX_SORT(pp[10], pp[14]) ; PIX_SORT(pp[6], pp[7]) ;\
-PIX_SORT(pp[10], pp[12]) ; PIX_SORT(pp[6], pp[10]) ;  PIX_SORT(pp[6], pp[17]) ;\
-PIX_SORT(pp[12], pp[17]) ; PIX_SORT(pp[7], pp[17]) ;  PIX_SORT(pp[7], pp[10]) ;\
-PIX_SORT(pp[12], pp[18]) ; PIX_SORT(pp[7], pp[12]) ;  PIX_SORT(pp[10], pp[18]) ;\
-PIX_SORT(pp[12], pp[20]) ; PIX_SORT(pp[10], pp[20]) ; PIX_SORT(pp[10], pp[12]) ;\
-median=pp[12];}
-
-#define ELEM_FLOAT_SWAP(a,b) { register float t=(a);(a)=(b);(b)=t; }
-
 namespace rtengine
 {
 
@@ -119,72 +71,6 @@ namespace rtengine
 
 
 extern const Settings* settings;
-
-// Median calculation using quicksort
-float fq_sort2(float arr[], int n)
-{
-    int low = 0;
-    int high = n - 1;
-    int median = (low + high) / 2;
-
-    for (;;) {
-        if (high <= low) {
-            return arr[median] ;
-        }
-
-        if (high == low + 1) {
-            if (arr[low] > arr[high]) {
-                ELEM_FLOAT_SWAP(arr[low], arr[high]) ;
-            }
-
-            return arr[median] ;
-        }
-
-        int middle = (low + high) / 2;
-
-        if (arr[middle] > arr[high]) {
-            ELEM_FLOAT_SWAP(arr[middle], arr[high]) ;
-        }
-
-        if (arr[low] > arr[high]) {
-            ELEM_FLOAT_SWAP(arr[low], arr[high]) ;
-        }
-
-        if (arr[middle] > arr[low]) {
-            ELEM_FLOAT_SWAP(arr[middle], arr[low]) ;
-        }
-
-        ELEM_FLOAT_SWAP(arr[middle], arr[low + 1]) ;
-        int ll = low + 1;
-        int hh = high;
-
-        for (;;) {
-            do {
-                ll++;
-            } while (arr[low] > arr[ll]) ;
-
-            do {
-                hh--;
-            } while (arr[hh]  > arr[low]) ;
-
-            if (hh < ll) {
-                break;
-            }
-
-            ELEM_FLOAT_SWAP(arr[ll], arr[hh]) ;
-        }
-
-        ELEM_FLOAT_SWAP(arr[low], arr[hh]) ;
-
-        if (hh <= median) {
-            low = ll;
-        }
-
-        if (hh >= median) {
-            high = hh - 1;
-        }
-    }
-}
 
 float media(float *elements, int N)
 {
@@ -211,7 +97,7 @@ float media(float *elements, int N)
 
 void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width, const int height, const mediantype medianType, const int iterations, const int numThreads, float **buffer)
 {
-    int border = 1, numElements, middleElement;
+    int border = 1;
 
     switch(medianType) {
     case MED_3X3SOFT:
@@ -229,14 +115,10 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
 
     case MED_7X7:
         border = 3;
-        numElements = 49;
-        middleElement = 24;
         break;
 
     default: // includes MED_9X9
         border = 4;
-        numElements = 81;
-        middleElement = 40;
     }
 
     float **allocBuffer = NULL;
@@ -280,7 +162,6 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
 
         for (int i = border; i < height - border; i++) {
             if(medianType == MED_3X3SOFT) {
-                float pp[5], temp;
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -288,7 +169,7 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 }
 
                 for (; j < width - border; j++) {
-                    med2(medianIn[i][j] , medianIn[i - 1][j], medianIn[i + 1][j] , medianIn[i][j + 1], medianIn[i][j - 1], medianOut[i][j]);
+                    medianOut[i][j] = median(medianIn[i][j] , medianIn[i - 1][j], medianIn[i + 1][j] , medianIn[i][j + 1], medianIn[i][j - 1]);
                 }
 
                 for(; j < width; j++) {
@@ -309,7 +190,6 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     medianOut[i][j] = medianIn[i][j];
                 }
             } else if(medianType == MED_5X5SOFT) {
-                float pp[13];
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -317,28 +197,27 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 }
 
                 for (; j < width - border; j++) {
-                    pp[0] = medianIn[i][j];
-                    pp[1] = medianIn[i - 1][j];
-                    pp[2] = medianIn[i + 1][j];
-                    pp[3] = medianIn[i][j + 1];
-                    pp[4] = medianIn[i][j - 1];
-                    pp[5] = medianIn[i - 1][j - 1];
-                    pp[6] = medianIn[i - 1][j + 1];
-                    pp[7] = medianIn[i + 1][j - 1];
-                    pp[8] = medianIn[i + 1][j + 1];
-                    pp[9] = medianIn[i + 2][j];
-                    pp[10] = medianIn[i - 2][j];
-                    pp[11] = medianIn[i][j + 2];
-                    pp[12] = medianIn[i][j - 2];
-                    fq_sort2(pp, 13);
-                    medianOut[i][j] = pp[6];
+                    medianOut[i][j] = median(
+                        medianIn[i][j],
+                        medianIn[i - 1][j],
+                        medianIn[i + 1][j],
+                        medianIn[i][j + 1],
+                        medianIn[i][j - 1],
+                        medianIn[i - 1][j - 1],
+                        medianIn[i - 1][j + 1],
+                        medianIn[i + 1][j - 1],
+                        medianIn[i + 1][j + 1],
+                        medianIn[i + 2][j],
+                        medianIn[i - 2][j],
+                        medianIn[i][j + 2],
+                        medianIn[i][j - 2]
+                    );
                 }
 
                 for(; j < width; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
             } else if(medianType == MED_5X5STRONG) {
-                float pp[25], temp;
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -346,17 +225,16 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 }
 
                 for (; j < width - border; j++) {
-                    med5(medianIn[i][j], medianIn[i - 1][j], medianIn[i + 1][j], medianIn[i][j + 1], medianIn[i][j - 1], medianIn[i - 1][j - 1], medianIn[i - 1][j + 1], medianIn[i + 1][j - 1], medianIn[i + 1][j + 1],
+                    medianOut[i][j] = median(medianIn[i][j], medianIn[i - 1][j], medianIn[i + 1][j], medianIn[i][j + 1], medianIn[i][j - 1], medianIn[i - 1][j - 1], medianIn[i - 1][j + 1], medianIn[i + 1][j - 1], medianIn[i + 1][j + 1],
                          medianIn[i - 2][j], medianIn[i + 2][j], medianIn[i][j + 2], medianIn[i][j - 2], medianIn[i - 2][j - 2], medianIn[i - 2][j + 2], medianIn[i + 2][j - 2], medianIn[i + 2][j + 2],
-                         medianIn[i - 2][j + 1], medianIn[i + 2][j + 1], medianIn[i - 1][j + 2], medianIn[i - 1][j - 2], medianIn[i - 2][j - 1], medianIn[i + 2][j - 1], medianIn[i + 1][j + 2], medianIn[i + 1][j - 2],
-                         medianOut[i][j]);
+                         medianIn[i - 2][j + 1], medianIn[i + 2][j + 1], medianIn[i - 1][j + 2], medianIn[i - 1][j - 2], medianIn[i - 2][j - 1], medianIn[i + 2][j - 1], medianIn[i + 1][j + 2], medianIn[i + 1][j - 2]);
                 }
 
                 for(; j < width; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-            } else {// includes MED_7X7 and MED_9X9
-                float pp[81];
+            } else if (medianType == MED_7X7) {
+                std::array<float, 49> pp = {};
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -373,8 +251,31 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                         }
                     }
 
-                    fq_sort2(pp, numElements);
-                    medianOut[i][j] = pp[middleElement];
+                    medianOut[i][j] = median(pp);
+                }
+
+                for(; j < width; j++) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+            } else { // includes MED_9X9
+                std::array<float, 81> pp = {};
+                int j;
+
+                for (j = 0; j < border; j++) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+
+                for (; j < width - border; j++) {
+                    int kk = 0;
+
+                    for (int ii = -border; ii <= border; ii++) {
+                        for (int jj = -border; jj <= border; jj++) {
+                            kk++;
+                            pp[kk] = medianIn[i + ii][j + jj];
+                        }
+                    }
+
+                    medianOut[i][j] = median(pp);
                 }
 
                 for(; j < width; j++) {
@@ -1853,11 +1754,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                     #pragma omp for
 
                     for (int i = 1; i < hei - 1; i++) {
-                        float pp[9], temp;
-
                         if(methmed == 0)
                             for (int j = 1; j < wid - 1; j++) {
-                                med2(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), tm[i][j]); //3x3 soft
+                                tm[i][j] = median(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1)); //3x3 soft
                             }
                         else
                             for (int j = 1; j < wid - 1; j++) {
@@ -1869,34 +1768,29 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                     for (int i = 2; i < hei - 2; i++)
                     {
-                        float pp[25];
-
                         if(methmed == 3) {
-                            float temp;
-
                             for (int j = 2; j < wid - 2; j++) {
-                                med5(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), source->r(i - 1, j - 1), source->r(i - 1, j + 1), source->r(i + 1, j - 1), source->r(i + 1, j + 1),
+                                tm[i][j] = median(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), source->r(i - 1, j - 1), source->r(i - 1, j + 1), source->r(i + 1, j - 1), source->r(i + 1, j + 1),
                                 source->r(i - 2, j), source->r(i + 2, j), source->r(i, j + 2), source->r(i, j - 2), source->r(i - 2, j - 2), source->r(i - 2, j + 2), source->r(i + 2, j - 2), source->r(i + 2, j + 2),
-                                source->r(i - 2, j + 1), source->r(i + 2, j + 1), source->r(i - 1, j + 2), source->r(i - 1, j - 2), source->r(i - 2, j - 1), source->r(i + 2, j - 1), source->r(i + 1, j + 2), source->r(i + 1, j - 2),
-                                tm[i][j]);//5x5
+                                source->r(i - 2, j + 1), source->r(i + 2, j + 1), source->r(i - 1, j + 2), source->r(i - 1, j - 2), source->r(i - 2, j - 1), source->r(i + 2, j - 1), source->r(i + 1, j + 2), source->r(i + 1, j - 2));//5x5
                             }
                         } else
                             for (int j = 2; j < wid - 2; j++) {
-                                pp[0] = source->r(i, j);
-                                pp[1] = source->r(i - 1, j);
-                                pp[2] = source->r(i + 1, j);
-                                pp[3] = source->r(i, j + 1);
-                                pp[4] = source->r(i, j - 1);
-                                pp[5] = source->r(i - 1, j - 1);
-                                pp[6] = source->r(i - 1, j + 1);
-                                pp[7] = source->r(i + 1, j - 1);
-                                pp[8] = source->r(i + 1, j + 1);
-                                pp[9] = source->r(i + 2, j);
-                                pp[10] = source->r(i - 2, j);
-                                pp[11] = source->r(i, j + 2);
-                                pp[12] = source->r(i, j - 2);
-                                fq_sort2(pp, 13);
-                                tm[i][j] = pp[6]; //5x5 soft
+                                tm[i][j] = median(
+                                    source->r(i, j),
+                                    source->r(i - 1, j),
+                                    source->r(i + 1, j),
+                                    source->r(i, j + 1),
+                                    source->r(i, j - 1),
+                                    source->r(i - 1, j - 1),
+                                    source->r(i - 1, j + 1),
+                                    source->r(i + 1, j - 1),
+                                    source->r(i + 1, j + 1),
+                                    source->r(i + 2, j),
+                                    source->r(i - 2, j),
+                                    source->r(i, j + 2),
+                                    source->r(i, j - 2)
+                                ); // 5x5 soft
                             }
                     }
                 }
@@ -1916,11 +1810,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                     #pragma omp for
 
                     for (int i = 1; i < hei - 1; i++) {
-                        float pp[9], temp;
-
                         if(methmed == 0)
                             for (int j = 1; j < wid - 1; j++) {
-                                med2(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), tm[i][j]);
+                                tm[i][j] = median(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1));
                             }
                         else
                             for (int j = 1; j < wid - 1; j++) {
@@ -1932,34 +1824,29 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                     for (int i = 2; i < hei - 2; i++)
                     {
-                        float pp[25];
-
                         if(methmed == 3) {
-                            float temp;
-
                             for (int j = 2; j < wid - 2; j++) {
-                                med5(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), source->b(i - 1, j - 1), source->b(i - 1, j + 1), source->b(i + 1, j - 1), source->b(i + 1, j + 1),
+                                tm[i][j] = median(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), source->b(i - 1, j - 1), source->b(i - 1, j + 1), source->b(i + 1, j - 1), source->b(i + 1, j + 1),
                                 source->b(i - 2, j), source->b(i + 2, j), source->b(i, j + 2), source->b(i, j - 2), source->b(i - 2, j - 2), source->b(i - 2, j + 2), source->b(i + 2, j - 2), source->b(i + 2, j + 2),
-                                source->b(i - 2, j + 1), source->b(i + 2, j + 1), source->b(i - 1, j + 2), source->b(i - 1, j - 2), source->b(i - 2, j - 1), source->b(i + 2, j - 1), source->b(i + 1, j + 2), source->b(i + 1, j - 2),
-                                tm[i][j]);//5x5
+                                source->b(i - 2, j + 1), source->b(i + 2, j + 1), source->b(i - 1, j + 2), source->b(i - 1, j - 2), source->b(i - 2, j - 1), source->b(i + 2, j - 1), source->b(i + 1, j + 2), source->b(i + 1, j - 2)); // 5x5
                             }
                         } else
                             for (int j = 2; j < wid - 2; j++) {
-                                pp[0] = source->b(i, j);
-                                pp[1] = source->b(i - 1, j);
-                                pp[2] = source->b(i + 1, j);
-                                pp[3] = source->b(i, j + 1);
-                                pp[4] = source->b(i, j - 1);
-                                pp[5] = source->b(i - 1, j - 1);
-                                pp[6] = source->b(i - 1, j + 1);
-                                pp[7] = source->b(i + 1, j - 1);
-                                pp[8] = source->b(i + 1, j + 1);
-                                pp[9] = source->b(i + 2, j);
-                                pp[10] = source->b(i - 2, j);
-                                pp[11] = source->b(i, j + 2);
-                                pp[12] = source->b(i, j - 2);
-                                fq_sort2(pp, 13);
-                                tm[i][j] = pp[6]; //5x5 soft
+                                tm[i][j] = median(
+                                    source->b(i, j),
+                                    source->b(i - 1, j),
+                                    source->b(i + 1, j),
+                                    source->b(i, j + 1),
+                                    source->b(i, j - 1),
+                                    source->b(i - 1, j - 1),
+                                    source->b(i - 1, j + 1),
+                                    source->b(i + 1, j - 1),
+                                    source->b(i + 1, j + 1),
+                                    source->b(i + 2, j),
+                                    source->b(i - 2, j),
+                                    source->b(i, j + 2),
+                                    source->b(i, j - 2)
+                                ); // 5x5 soft
                             }
                     }
                 }
@@ -1981,11 +1868,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                     #pragma omp for
 
                     for (int i = 1; i < hei - 1; i++) {
-                        float pp[9], temp;
-
                         if(methmed == 0)
                             for (int j = 1; j < wid - 1; j++) {
-                                med2(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), tm[i][j]);
+                                tm[i][j] = median(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1));
                             }
                         else
                             for (int j = 1; j < wid - 1; j++) {
@@ -1997,34 +1882,29 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                     for (int i = 2; i < hei - 2; i++)
                     {
-                        float pp[25];
-
                         if(methmed == 3) {
-                            float temp;
-
                             for (int j = 2; j < wid - 2; j++) {
-                                med5(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), source->g(i - 1, j - 1), source->g(i - 1, j + 1), source->g(i + 1, j - 1), source->g(i + 1, j + 1),
+                                tm[i][j] = median(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), source->g(i - 1, j - 1), source->g(i - 1, j + 1), source->g(i + 1, j - 1), source->g(i + 1, j + 1),
                                 source->g(i - 2, j), source->g(i + 2, j), source->g(i, j + 2), source->g(i, j - 2), source->g(i - 2, j - 2), source->g(i - 2, j + 2), source->g(i + 2, j - 2), source->g(i + 2, j + 2),
-                                source->g(i - 2, j + 1), source->g(i + 2, j + 1), source->g(i - 1, j + 2), source->g(i - 1, j - 2), source->g(i - 2, j - 1), source->g(i + 2, j - 1), source->g(i + 1, j + 2), source->g(i + 1, j - 2),
-                                tm[i][j]);//5x5
+                                source->g(i - 2, j + 1), source->g(i + 2, j + 1), source->g(i - 1, j + 2), source->g(i - 1, j - 2), source->g(i - 2, j - 1), source->g(i + 2, j - 1), source->g(i + 1, j + 2), source->g(i + 1, j - 2)); // 5x5
                             }
                         } else
                             for (int j = 2; j < wid - 2; j++) {
-                                pp[0] = source->g(i, j);
-                                pp[1] = source->g(i - 1, j);
-                                pp[2] = source->g(i + 1, j);
-                                pp[3] = source->g(i, j + 1);
-                                pp[4] = source->g(i, j - 1);
-                                pp[5] = source->g(i - 1, j - 1);
-                                pp[6] = source->g(i - 1, j + 1);
-                                pp[7] = source->g(i + 1, j - 1);
-                                pp[8] = source->g(i + 1, j + 1);
-                                pp[9] = source->g(i + 2, j);
-                                pp[10] = source->g(i - 2, j);
-                                pp[11] = source->g(i, j + 2);
-                                pp[12] = source->g(i, j - 2);
-                                fq_sort2(pp, 13);
-                                tm[i][j] = pp[6]; //5x5 soft
+                                tm[i][j] = median(
+                                    source->g(i, j),
+                                    source->g(i - 1, j),
+                                    source->g(i + 1, j),
+                                    source->g(i, j + 1),
+                                    source->g(i, j - 1),
+                                    source->g(i - 1, j - 1),
+                                    source->g(i - 1, j + 1),
+                                    source->g(i + 1, j - 1),
+                                    source->g(i + 1, j + 1),
+                                    source->g(i + 2, j),
+                                    source->g(i - 2, j),
+                                    source->g(i, j + 2),
+                                    source->g(i, j - 2)
+                                ); // 5x5 soft
                             }
                     }
                 }
