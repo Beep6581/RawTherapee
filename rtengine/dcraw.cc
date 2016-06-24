@@ -9316,13 +9316,15 @@ konica_400z:
       width -= 6;
   } else if (!strcmp(make,"Sony") && raw_width == 7392) {
     width -= 30;
-  } else if (!strcmp(make,"Sony") && raw_width == 8000) {
-    width -= 32;
-    if (!strncmp(model,"DSC",3)) {
-      tiff_bps = 14;
-      load_raw = &CLASS unpacked_load_raw;
-      black = 512;
-    }
+// this was introduced with update to dcraw 9.27
+// but led to broken decode for compressed files from Sony DSC-RX1RM2
+//  } else if (!strcmp(make,"Sony") && raw_width == 8000) {
+//    width -= 32;
+//    if (!strncmp(model,"DSC",3)) {
+//      tiff_bps = 14;
+//      load_raw = &CLASS unpacked_load_raw;
+//      black = 512;
+//    }
   } else if (!strcmp(model,"DSLR-A100")) {
     if (width == 3880) {
       height--;
