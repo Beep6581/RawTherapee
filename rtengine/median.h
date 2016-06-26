@@ -42,11 +42,13 @@ inline T median(std::array<T, 3> array)
     return std::max(std::min(array[0], array[1]), std::min(array[2], std::max(array[0], array[1])));
 }
 
+#ifdef __SSE2__
 template<>
 inline vfloat median(std::array<vfloat, 3> array)
 {
     return vmaxf(vminf(array[0], array[1]), vminf(array[2], vmaxf(array[0], array[1])));
 }
+#endif
 
 template<typename T>
 inline T median(std::array<T, 5> array)
@@ -65,6 +67,7 @@ inline T median(std::array<T, 5> array)
     return std::max(array[1], tmp);
 }
 
+#ifdef __SSE2__
 template<>
 inline vfloat median(std::array<vfloat, 5> array)
 {
@@ -81,6 +84,7 @@ inline vfloat median(std::array<vfloat, 5> array)
     tmp = vminf(array[2], array[3]);
     return vmaxf(array[1], tmp);
 }
+#endif
 
 template<typename T>
 inline T median(std::array<T, 7> array)
@@ -112,6 +116,7 @@ inline T median(std::array<T, 7> array)
     return std::min(array[3], array[4]);
 }
 
+#ifdef __SSE2__
 template<>
 inline vfloat median(std::array<vfloat, 7> array)
 {
@@ -141,6 +146,7 @@ inline vfloat median(std::array<vfloat, 7> array)
     array[3] = vmaxf(tmp, array[3]);
     return vminf(array[3], array[4]);
 }
+#endif
 
 template<typename T>
 inline T median(std::array<T, 9> array)
@@ -185,6 +191,7 @@ inline T median(std::array<T, 9> array)
     return std::min(array[4], array[2]);
 }
 
+#ifdef __SSE2__
 template<>
 inline vfloat median(std::array<vfloat, 9> array)
 {
@@ -227,6 +234,7 @@ inline vfloat median(std::array<vfloat, 9> array)
     array[4] = vmaxf(array[6], tmp);
     return vminf(array[4], array[2]);
 }
+#endif
 
 template<typename T>
 inline T median(std::array<T, 25> array)
@@ -441,6 +449,7 @@ inline T median(std::array<T, 25> array)
     return std::max(tmp, array[12]);
 }
 
+#ifdef __SSE2__
 template<>
 inline vfloat median(std::array<vfloat, 25> array)
 {
@@ -653,6 +662,7 @@ inline vfloat median(std::array<vfloat, 25> array)
     tmp = vminf(array[10], array[20]);
     return vmaxf(tmp, array[12]);
 }
+#endif
 
 template<typename T, typename... ARGS>
 inline T median(T arg, ARGS... args)
@@ -698,55 +708,4 @@ temp = vminf(d3,d4);\
 d4 = vmaxf(d3,d4);\
 d3 = vmaxf(d0,temp);\
 d2 = vminf(d2,d5);\
-}
-
-
-#define MEDIAN7(s0,s1,s2,s3,s4,s5,s6,t0,t1,t2,t3,t4,t5,t6,median) \
-{\
-t0 = std::min(s0,s5);\
-t5 = std::max(s0,s5);\
-t3 = std::max(t0,s3);\
-t0 = std::min(t0,s3);\
-t1 = std::min(s1,s6);\
-t6 = std::max(s1,s6);\
-t2 = std::min(s2,s4);\
-t4 = std::max(s2,s4);\
-t1 = std::max(t0,t1);\
-median = std::min(t3,t5);\
-t5 = std::max(t3,t5);\
-t3 = median;\
-median = std::min(t2,t6);\
-t6 = std::max(t2,t6);\
-t3 = std::max(median,t3);\
-t3 = std::min(t3,t6);\
-t4 = std::min(t4,t5);\
-median = std::min(t1,t4);\
-t4 = std::max(t1,t4);\
-t3 = std::max(median,t3);\
-median = std::min(t3,t4);\
-}
-
-#define VMEDIAN7(s0,s1,s2,s3,s4,s5,s6,t0,t1,t2,t3,t4,t5,t6,median) \
-{\
-t0 = vminf(s0,s5);\
-t5 = vmaxf(s0,s5);\
-t3 = vmaxf(t0,s3);\
-t0 = vminf(t0,s3);\
-t1 = vminf(s1,s6);\
-t6 = vmaxf(s1,s6);\
-t2 = vminf(s2,s4);\
-t4 = vmaxf(s2,s4);\
-t1 = vmaxf(t0,t1);\
-median = vminf(t3,t5);\
-t5 = vmaxf(t3,t5);\
-t3 = median;\
-median = vminf(t2,t6);\
-t6 = vmaxf(t2,t6);\
-t3 = vmaxf(median,t3);\
-t3 = vminf(t3,t6);\
-t4 = vminf(t4,t5);\
-median = vminf(t1,t4);\
-t4 = vmaxf(t1,t4);\
-t3 = vmaxf(median,t3);\
-median = vminf(t3,t4);\
 }

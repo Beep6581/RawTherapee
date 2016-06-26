@@ -3483,12 +3483,11 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = _mm_setr_ps(rbconv_I[px][j + 1], rbconv_Q[px][j + 1], 0, 0), post1[1] = _mm_setr_ps(rbconv_I[cx][j + 1], rbconv_Q[cx][j + 1], 0, 0), post1[2] = _mm_setr_ps(rbconv_I[nx][j + 1], rbconv_Q[nx][j + 1], 0, 0);
             VMIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
-            vfloat medianval;
-            VMEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            vfloat medianval = median(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4]);
             rbout_I[cx][j] = medianval[0];
             rbout_Q[cx][j] = medianval[1];
             post2[0] = _mm_setr_ps(rbconv_I[px][j + 2], rbconv_Q[px][j + 2], 0, 0), post2[1] = _mm_setr_ps(rbconv_I[cx][j + 2], rbconv_Q[cx][j + 2], 0, 0), post2[2] = _mm_setr_ps(rbconv_I[nx][j + 2], rbconv_Q[nx][j + 2], 0, 0);
-            VMEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            medianval = median(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4]);
             rbout_I[cx][j + 1] = medianval[0];
             rbout_Q[cx][j + 1] = medianval[1];
             std::swap(pre1, post1);
@@ -3513,9 +3512,9 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = rbconv_I[px][j + 1], post1[1] = rbconv_I[cx][j + 1], post1[2] = rbconv_I[nx][j + 1];
             MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
-            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
+            rbout_I[cx][j] = median(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4]);
             post2[0] = rbconv_I[px][j + 2], post2[1] = rbconv_I[cx][j + 2], post2[2] = rbconv_I[nx][j + 2];
-            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
+            rbout_I[cx][j + 1] = median(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4]);
             std::swap(pre1, post1);
             std::swap(pre2, post2);
         }
@@ -3534,9 +3533,9 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = rbconv_Q[px][j + 1], post1[1] = rbconv_Q[cx][j + 1], post1[2] = rbconv_Q[nx][j + 1];
             MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
-            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
+            rbout_Q[cx][j] = median(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4]);
             post2[0] = rbconv_Q[px][j + 2], post2[1] = rbconv_Q[cx][j + 2], post2[2] = rbconv_Q[nx][j + 2];
-            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
+            rbout_Q[cx][j + 1] = median(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4]);
             std::swap(pre1, post1);
             std::swap(pre2, post2);
         }

@@ -43,12 +43,6 @@ inline _Tp LIM01(const _Tp& a)
 }
 
 template<typename _Tp>
-inline const _Tp ULIM(const _Tp& a, const _Tp& b, const _Tp& c)
-{
-    return ((b < c) ? LIM(a, b, c) : LIM(a, c, b));
-}
-
-template<typename _Tp>
 inline _Tp CLIP(const _Tp& a)
 {
     return LIM(a, static_cast<_Tp>(0), static_cast<_Tp>(MAXVAL));
