@@ -1768,36 +1768,39 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
                     rix[c] = qix[c] + rr * cc1 + cc;
                     rix[1] = qix[1] + rr * cc1 + cc;
                     // Assign 3x3 differential color values
-                    const __m128 p1v = LVFU(rix[c][-w1 - 1]) - LVFU(rix[1][-w1 - 1]);
-                    const __m128 p2v = LVFU(rix[c][-w1]) - LVFU(rix[1][-w1]);
-                    const __m128  p3v = LVFU(rix[c][-w1 + 1]) - LVFU(rix[1][-w1 + 1]);
-                    const __m128  p4v = LVFU(rix[c][   -1]) - LVFU(rix[1][   -1]);
-                    const __m128 p5v = LVFU(rix[c][  0]) - LVFU(rix[1][  0]);
-                    const __m128 p6v = LVFU(rix[c][    1]) - LVFU(rix[1][    1]);
-                    const __m128 p7v = LVFU(rix[c][ w1 - 1]) - LVFU(rix[1][ w1 - 1]);
-                    const __m128 p8v = LVFU(rix[c][ w1]) - LVFU(rix[1][ w1]);
-                    const __m128 p9v = LVFU(rix[c][ w1 + 1]) - LVFU(rix[1][ w1 + 1]);
-                    _mm_storeu_ps(&rix[d][0], median(p1v, p2v, p3v, p4v, p5v, p6v, p7v, p8v, p9v));
+                    const std::array<vfloat, 9> p = {
+                        LVFU(rix[c][-w1 - 1]) - LVFU(rix[1][-w1 - 1]),
+                        LVFU(rix[c][-w1]) - LVFU(rix[1][-w1]),
+                        LVFU(rix[c][-w1 + 1]) - LVFU(rix[1][-w1 + 1]),
+                        LVFU(rix[c][   -1]) - LVFU(rix[1][   -1]),
+                        LVFU(rix[c][  0]) - LVFU(rix[1][  0]),
+                        LVFU(rix[c][    1]) - LVFU(rix[1][    1]),
+                        LVFU(rix[c][ w1 - 1]) - LVFU(rix[1][ w1 - 1]),
+                        LVFU(rix[c][ w1]) - LVFU(rix[1][ w1]),
+                        LVFU(rix[c][ w1 + 1]) - LVFU(rix[1][ w1 + 1])
+                    };
+                    _mm_storeu_ps(&rix[d][0], median(p));
                 }
 
 #endif
 
                 for (; cc < cc1 - 1; cc++) {
-                    float temp;
                     rix[d] = qix[d] + rr * cc1 + cc;
                     rix[c] = qix[c] + rr * cc1 + cc;
                     rix[1] = qix[1] + rr * cc1 + cc;
                     // Assign 3x3 differential color values
-                    const float p1 = rix[c][-w1 - 1] - rix[1][-w1 - 1];
-                    const float p2 = rix[c][-w1] - rix[1][-w1];
-                    const float p3 = rix[c][-w1 + 1] - rix[1][-w1 + 1];
-                    const float p4 = rix[c][   -1] - rix[1][   -1];
-                    const float p5 = rix[c][  0] - rix[1][  0];
-                    const float p6 = rix[c][    1] - rix[1][    1];
-                    const float p7 = rix[c][ w1 - 1] - rix[1][ w1 - 1];
-                    const float p8 = rix[c][ w1] - rix[1][ w1];
-                    const float p9 = rix[c][ w1 + 1] - rix[1][ w1 + 1];
-                    rix[d][0] = median(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+                    const std::array<float, 9> p = {
+                        rix[c][-w1 - 1] - rix[1][-w1 - 1],
+                        rix[c][-w1] - rix[1][-w1],
+                        rix[c][-w1 + 1] - rix[1][-w1 + 1],
+                        rix[c][   -1] - rix[1][   -1],
+                        rix[c][  0] - rix[1][  0],
+                        rix[c][    1] - rix[1][    1],
+                        rix[c][ w1 - 1] - rix[1][ w1 - 1],
+                        rix[c][ w1] - rix[1][ w1],
+                        rix[c][ w1 + 1] - rix[1][ w1 + 1]
+                    };
+                    rix[d][0] = median(p);
                 }
             }
         }
