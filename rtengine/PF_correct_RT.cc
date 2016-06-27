@@ -1434,7 +1434,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
                         jn = j + 2;
                     }
 
-                    tmbb[i][j] = median(srbb[ip][jp], srbb[ip][j], srbb[ip][jn], srbb[i][jp], srbb[i][j], srbb[i][jn], srbb[in][jp], srbb[in][j], srbb[in][jn], tmbb[i][j]);
+                    tmbb[i][j] = median(srbb[ip][jp], srbb[ip][j], srbb[ip][jn], srbb[i][jp], srbb[i][j], srbb[i][jn], srbb[in][jp], srbb[in][j], srbb[in][jn]);
                 }
             }
         }
