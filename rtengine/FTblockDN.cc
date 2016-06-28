@@ -95,29 +95,29 @@ float media(float *elements, int N)
     return elements[N >> 1];
 }
 
-void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width, const int height, const mediantype medianType, const int iterations, const int numThreads, float **buffer)
+void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
 {
     int border = 1;
 
-    switch(medianType) {
-    case MED_3X3SOFT:
-    case MED_3X3STRONG:
+    switch (medianType) {
+    case Median::SIZE_3X3_SOFT:
+    case Median::SIZE_3X3_STRONG:
         border = 1;
         break;
 
-    case MED_5X5SOFT:
+    case Median::SIZE_5X5_SOFT:
         border = 2;
         break;
 
-    case MED_5X5STRONG:
+    case Median::SIZE_5X5_STRONG:
         border = 2;
         break;
 
-    case MED_7X7:
+    case Median::SIZE_7X7:
         border = 3;
         break;
 
-    default: // includes MED_9X9
+    default: // includes Median::SIZE_9X9
         border = 4;
     }
 
@@ -157,11 +157,11 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
+        #pragma omp parallel for num_threads(numThreads) if(numThreads>1) schedule(dynamic,16)
 #endif
 
         for (int i = border; i < height - border; i++) {
-            if(medianType == MED_3X3SOFT) {
+            if (medianType == Median::SIZE_3X3_SOFT) {
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -175,7 +175,7 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 for(; j < width; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-            } else if(medianType == MED_3X3STRONG) {
+            } else if (medianType == Median::SIZE_3X3_STRONG) {
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -189,7 +189,7 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 for(; j < width; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-            } else if(medianType == MED_5X5SOFT) {
+            } else if (medianType == Median::SIZE_5X5_SOFT) {
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -217,12 +217,20 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 for(; j < width; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-            } else if(medianType == MED_5X5STRONG) {
+            } else if(medianType == Median::SIZE_5X5_STRONG) {
                 int j;
 
                 for (j = 0; j < border; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
+
+#ifdef __SSE2__
+                for (; j < width - border - 3; j += 4) {
+                    STVFU(medianOut[i][j], median(LVFU(medianIn[i][j]), LVFU(medianIn[i - 1][j]), LVFU(medianIn[i + 1][j]), LVFU(medianIn[i][j + 1]), LVFU(medianIn[i][j - 1]), LVFU(medianIn[i - 1][j - 1]), LVFU(medianIn[i - 1][j + 1]), LVFU(medianIn[i + 1][j - 1]), LVFU(medianIn[i + 1][j + 1]),
+                         LVFU(medianIn[i - 2][j]), LVFU(medianIn[i + 2][j]), LVFU(medianIn[i][j + 2]), LVFU(medianIn[i][j - 2]), LVFU(medianIn[i - 2][j - 2]), LVFU(medianIn[i - 2][j + 2]), LVFU(medianIn[i + 2][j - 2]), LVFU(medianIn[i + 2][j + 2]),
+                         LVFU(medianIn[i - 2][j + 1]), LVFU(medianIn[i + 2][j + 1]), LVFU(medianIn[i - 1][j + 2]), LVFU(medianIn[i - 1][j - 2]), LVFU(medianIn[i - 2][j - 1]), LVFU(medianIn[i + 2][j - 1]), LVFU(medianIn[i + 1][j + 2]), LVFU(medianIn[i + 1][j - 2])));
+                }
+#endif
 
                 for (; j < width - border; j++) {
                     medianOut[i][j] = median(medianIn[i][j], medianIn[i - 1][j], medianIn[i + 1][j], medianIn[i][j + 1], medianIn[i][j - 1], medianIn[i - 1][j - 1], medianIn[i - 1][j + 1], medianIn[i + 1][j - 1], medianIn[i + 1][j + 1],
@@ -233,8 +241,8 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 for(; j < width; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-            } else if (medianType == MED_7X7) {
-                std::array<float, 49> pp = {};
+            } else if (medianType == Median::SIZE_7X7) {
+                std::array<float, 49> pp;
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -257,8 +265,8 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 for(; j < width; j++) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-            } else { // includes MED_9X9
-                std::array<float, 81> pp = {};
+            } else { // includes Median::SIZE_9X9
+                std::array<float, 81> pp;
                 int j;
 
                 for (j = 0; j < border; j++) {
@@ -1230,50 +1238,50 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                     tmL[i] = new float[wid];
                                 }
 
-                                mediantype medianTypeL = MED_3X3SOFT;
-                                mediantype medianTypeAB = MED_3X3SOFT;
+                                Median medianTypeL = Median::SIZE_3X3_SOFT;
+                                Median medianTypeAB = Median::SIZE_3X3_SOFT;
 
                                 if(dnparams.medmethod == "soft") {
                                     if(metchoice != 4) {
-                                        medianTypeL = medianTypeAB = MED_3X3SOFT;
+                                        medianTypeL = medianTypeAB = Median::SIZE_3X3_SOFT;
                                     } else {
-                                        medianTypeL = MED_3X3SOFT;
-                                        medianTypeAB = MED_3X3SOFT;
+                                        medianTypeL = Median::SIZE_3X3_SOFT;
+                                        medianTypeAB = Median::SIZE_3X3_SOFT;
                                     }
                                 } else if(dnparams.medmethod == "33") {
                                     if(metchoice != 4) {
-                                        medianTypeL = medianTypeAB = MED_3X3STRONG;
+                                        medianTypeL = medianTypeAB = Median::SIZE_3X3_STRONG;
                                     } else {
-                                        medianTypeL = MED_3X3SOFT;
-                                        medianTypeAB = MED_3X3STRONG;
+                                        medianTypeL = Median::SIZE_3X3_SOFT;
+                                        medianTypeAB = Median::SIZE_3X3_STRONG;
                                     }
                                 } else if(dnparams.medmethod == "55soft") {
                                     if(metchoice != 4) {
-                                        medianTypeL = medianTypeAB = MED_5X5SOFT;
+                                        medianTypeL = medianTypeAB = Median::SIZE_5X5_SOFT;
                                     } else {
-                                        medianTypeL = MED_3X3SOFT;
-                                        medianTypeAB = MED_5X5SOFT;
+                                        medianTypeL = Median::SIZE_3X3_SOFT;
+                                        medianTypeAB = Median::SIZE_5X5_SOFT;
                                     }
                                 } else if(dnparams.medmethod == "55") {
                                     if(metchoice != 4) {
-                                        medianTypeL = medianTypeAB = MED_5X5STRONG;
+                                        medianTypeL = medianTypeAB = Median::SIZE_5X5_STRONG;
                                     } else {
-                                        medianTypeL = MED_3X3STRONG;
-                                        medianTypeAB = MED_5X5STRONG;
+                                        medianTypeL = Median::SIZE_3X3_STRONG;
+                                        medianTypeAB = Median::SIZE_5X5_STRONG;
                                     }
                                 } else if(dnparams.medmethod == "77") {
                                     if(metchoice != 4) {
-                                        medianTypeL = medianTypeAB = MED_7X7;
+                                        medianTypeL = medianTypeAB = Median::SIZE_7X7;
                                     } else {
-                                        medianTypeL = MED_3X3STRONG;
-                                        medianTypeAB = MED_7X7;
+                                        medianTypeL = Median::SIZE_3X3_STRONG;
+                                        medianTypeAB = Median::SIZE_7X7;
                                     }
                                 } else if(dnparams.medmethod == "99") {
                                     if(metchoice != 4) {
-                                        medianTypeL = medianTypeAB = MED_9X9;
+                                        medianTypeL = medianTypeAB = Median::SIZE_9X9;
                                     } else {
-                                        medianTypeL = MED_5X5SOFT;
-                                        medianTypeAB = MED_9X9;
+                                        medianTypeL = Median::SIZE_5X5_SOFT;
+                                        medianTypeAB = Median::SIZE_9X9;
                                     }
                                 }
 

@@ -184,6 +184,14 @@ class ImProcFunctions
 
 
 public:
+    enum class Median {
+        SIZE_3X3_SOFT,
+        SIZE_3X3_STRONG,
+        SIZE_5X5_SOFT,
+        SIZE_5X5_STRONG,
+        SIZE_7X7,
+        SIZE_9X9
+    };
 
     double lumimul[3];
 //      float chau;
@@ -310,8 +318,7 @@ public:
 
 
 
-    enum mediantype {MED_3X3SOFT, MED_3X3STRONG, MED_5X5SOFT, MED_5X5STRONG, MED_7X7, MED_9X9};
-    void Median_Denoise( float **src, float **dst, int width, int height, mediantype medianType, int iterations, int numThreads, float **buffer = NULL);
+    void Median_Denoise( float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = NULL);
     void RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & ctNoisCurve , const NoiseCurve & ctNoisCCcurve , float &chaut, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &nresi, float &highresi);
     void RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, const bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope);
     void RGB_denoise_info(Imagefloat * src, Imagefloat * calclum, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut, float &nresi, float &highresi, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread = false);
