@@ -37,7 +37,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
@@ -1664,6 +1664,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
 
 void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse)
 {
+    BENCHFUN
     MyTime t1, t2;
     t1.set();
 
@@ -2673,7 +2674,7 @@ void RawImageSource::HLRecovery_Global(ToneCurveParams hrp)
 
 void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4])
 {
-    BENCHFUN
+//    BENCHFUN
     float *cfablur = (float (*)) malloc (H * W * sizeof * cfablur);
     int BS = raw.ff_BlurRadius;
     BS += BS & 1;
@@ -4427,7 +4428,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 
     histogram(65536 >> histcompr);
     histogram.clear();
-    const float refwb[3] = {static_cast<float>(refwb_red), static_cast<float>(refwb_green), static_cast<float>(refwb_blue)};
+    const float refwb[3] = {static_cast<float>(refwb_red  / (1 << histcompr)), static_cast<float>(refwb_green / (1 << histcompr)), static_cast<float>(refwb_blue / (1 << histcompr))};
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -4436,7 +4437,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
         LUTu tmphistogram(histogram.getSize());
         tmphistogram.clear();
 #ifdef _OPENMP
-        #pragma omp for nowait
+        #pragma omp for schedule(dynamic,16) nowait
 #endif
 
         for (int i = border; i < H - border; i++) {
@@ -4444,22 +4445,46 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
             getRowStartEnd (i, start, end);
 
             if (ri->getSensorType() == ST_BAYER) {
-                for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb[ri->FC(i, j)] * rawData[i][j]) >> histcompr] += 4;
+                // precalculate factors to avoid expensive per pixel calculations
+                float refwb0 =  refwb[ri->FC(i, start)];
+                float refwb1 =  refwb[ri->FC(i, start + 1)];
+                int j;
+                for (j = start; j < end - 1; j+=2) {
+                    tmphistogram[(int)(refwb0 * rawData[i][j])] += 4;
+                    tmphistogram[(int)(refwb1 * rawData[i][j+1])] += 4;
+                }
+                if(j < end) {
+                    tmphistogram[(int)(refwb0 * rawData[i][j])] += 4;
                 }
             } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-                for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb[ri->XTRANSFC(i, j)] * rawData[i][j]) >> histcompr] += 4;
+                // precalculate factors to avoid expensive per pixel calculations
+                float refwb0 =  refwb[ri->XTRANSFC(i, start)];
+                float refwb1 =  refwb[ri->XTRANSFC(i, start + 1)];
+                float refwb2 =  refwb[ri->XTRANSFC(i, start + 2)];
+                float refwb3 =  refwb[ri->XTRANSFC(i, start + 3)];
+                float refwb4 =  refwb[ri->XTRANSFC(i, start + 4)];
+                float refwb5 =  refwb[ri->XTRANSFC(i, start + 5)];
+                int j;
+                for (j = start; j < end-5; j+=6) {
+                    tmphistogram[(int)(refwb0 * rawData[i][j])] += 4;
+                    tmphistogram[(int)(refwb1 * rawData[i][j+1])] += 4;
+                    tmphistogram[(int)(refwb2 * rawData[i][j+2])] += 4;
+                    tmphistogram[(int)(refwb3 * rawData[i][j+3])] += 4;
+                    tmphistogram[(int)(refwb4 * rawData[i][j+4])] += 4;
+                    tmphistogram[(int)(refwb5 * rawData[i][j+5])] += 4;
+                }
+                for (; j < end; j++) {
+                    tmphistogram[(int)(refwb[ri->XTRANSFC(i, j)] * rawData[i][j])] += 4;
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb_red *  rawData[i][j]) >> histcompr]++;
+                    tmphistogram[(int)(refwb_red *  rawData[i][j])]++;
                 }
             } else {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[CLIP((int)(refwb_red *  rawData[i][3 * j + 0])) >> histcompr]++;
-                    tmphistogram[CLIP((int)(refwb_green * rawData[i][3 * j + 1])) >> histcompr] += 2;
-                    tmphistogram[CLIP((int)(refwb_blue * rawData[i][3 * j + 2])) >> histcompr]++;
+                    tmphistogram[CLIP((int)(refwb_red *  rawData[i][3 * j + 0]))]++;
+                    tmphistogram[CLIP((int)(refwb_green * rawData[i][3 * j + 1]))] += 2;
+                    tmphistogram[CLIP((int)(refwb_blue * rawData[i][3 * j + 2]))]++;
                 }
             }
         }
