@@ -376,10 +376,21 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     medianOut[i][j] = medianIn[i][j];
                 }
 
-                for (; j < width - border; ++j) {
-                    int kk = 0;
+#ifdef __SSE2__
+                std::array<vfloat, 49> vpp ALIGNED16;
+                for (; j < width - border - 3; j += 4) {
+                    for (int kk = 0, ii = -border; ii <= border; ++ii) {
+                        for (int jj = -border; jj <= border; ++jj, ++kk) {
+                            vpp[kk] = LVFU(medianIn[i + ii][j + jj]);
+                        }
+                    }
 
-                    for (int ii = -border; ii <= border; ++ii) {
+                    STVFU(medianOut[i][j], median(vpp));
+                }
+#endif
+
+                for (; j < width - border; ++j) {
+                    for (int kk = 0, ii = -border; ii <= border; ++ii) {
                         for (int jj = -border; jj <= border; ++jj, ++kk) {
                             pp[kk] = medianIn[i + ii][j + jj];
                         }
@@ -399,10 +410,21 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     medianOut[i][j] = medianIn[i][j];
                 }
 
-                for (; j < width - border; ++j) {
-                    int kk = 0;
+#ifdef __SSE2__
+                std::array<vfloat, 81> vpp ALIGNED16;
+                for (; j < width - border - 3; j += 4) {
+                    for (int kk = 0, ii = -border; ii <= border; ++ii) {
+                        for (int jj = -border; jj <= border; ++jj, ++kk) {
+                            vpp[kk] = LVFU(medianIn[i + ii][j + jj]);
+                        }
+                    }
 
-                    for (int ii = -border; ii <= border; ++ii) {
+                    STVFU(medianOut[i][j], median(vpp));
+                }
+#endif
+
+                for (; j < width - border; ++j) {
+                    for (int kk = 0, ii = -border; ii <= border; ++ii) {
                         for (int jj = -border; jj <= border; ++jj, ++kk) {
                             pp[kk] = medianIn[i + ii][j + jj];
                         }
