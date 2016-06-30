@@ -38,6 +38,9 @@
 #include "cplx_wavelet_dec.h"
 #include "median.h"
 
+#define BENCHMARK
+#include "StopWatch.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -96,7 +99,7 @@ float media(float *elements, int N)
 }
 
 void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
-{
+{ BENCHFUN
     int border = 1;
 
     switch (medianType) {
@@ -130,7 +133,7 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
         if(buffer == NULL) { // we didn't get a buufer => create one
             allocBuffer = new float*[height];
 
-            for (int i = 0; i < height; i++) {
+            for (int i = 0; i < height; ++i) {
                 allocBuffer[i] = new float[width];
             }
 
@@ -145,13 +148,13 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
     float ** medianIn, ** medianOut;
     int BufferIndex = 0;
 
-    for(int iteration = 1; iteration <= iterations; iteration++) {
+    for(int iteration = 1; iteration <= iterations; ++iteration) {
         medianIn = medBuffer[BufferIndex];
         medianOut = medBuffer[BufferIndex ^ 1];
 
         if(iteration == 1) { // upper border
-            for (int i = 0; i < border; i++)
-                for (int j = 0; j < width; j++) {
+            for (int i = 0; i < border; ++i)
+                for (int j = 0; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
         }
@@ -160,101 +163,225 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
         #pragma omp parallel for num_threads(numThreads) if(numThreads>1) schedule(dynamic,16)
 #endif
 
-        for (int i = border; i < height - border; i++) {
+        for (int i = border; i < height - border; ++i) {
             if (medianType == Median::SIZE_3X3_SOFT) {
-                int j;
+                int j = 0;
 
-                for (j = 0; j < border; j++) {
-                    medianOut[i][j] = medianIn[i][j];
-                }
-
-                for (; j < width - border; j++) {
-                    medianOut[i][j] = median(medianIn[i][j] , medianIn[i - 1][j], medianIn[i + 1][j] , medianIn[i][j + 1], medianIn[i][j - 1]);
-                }
-
-                for(; j < width; j++) {
-                    medianOut[i][j] = medianIn[i][j];
-                }
-            } else if (medianType == Median::SIZE_3X3_STRONG) {
-                int j;
-
-                for (j = 0; j < border; j++) {
-                    medianOut[i][j] = medianIn[i][j];
-                }
-
-                for (; j < width - border; j++) {
-                    medianOut[i][j] = median(medianIn[i][j] , medianIn[i - 1][j], medianIn[i + 1][j] , medianIn[i][j + 1], medianIn[i][j - 1], medianIn[i - 1][j - 1], medianIn[i - 1][j + 1], medianIn[i + 1][j - 1], medianIn[i + 1][j + 1]);
-                }
-
-                for(; j < width; j++) {
-                    medianOut[i][j] = medianIn[i][j];
-                }
-            } else if (medianType == Median::SIZE_5X5_SOFT) {
-                int j;
-
-                for (j = 0; j < border; j++) {
-                    medianOut[i][j] = medianIn[i][j];
-                }
-
-                for (; j < width - border; j++) {
-                    medianOut[i][j] = median(
-                        medianIn[i][j],
-                        medianIn[i - 1][j],
-                        medianIn[i + 1][j],
-                        medianIn[i][j + 1],
-                        medianIn[i][j - 1],
-                        medianIn[i - 1][j - 1],
-                        medianIn[i - 1][j + 1],
-                        medianIn[i + 1][j - 1],
-                        medianIn[i + 1][j + 1],
-                        medianIn[i + 2][j],
-                        medianIn[i - 2][j],
-                        medianIn[i][j + 2],
-                        medianIn[i][j - 2]
-                    );
-                }
-
-                for(; j < width; j++) {
-                    medianOut[i][j] = medianIn[i][j];
-                }
-            } else if(medianType == Median::SIZE_5X5_STRONG) {
-                int j;
-
-                for (j = 0; j < border; j++) {
+                for (; j < border; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
 
 #ifdef __SSE2__
                 for (; j < width - border - 3; j += 4) {
-                    STVFU(medianOut[i][j], median(LVFU(medianIn[i][j]), LVFU(medianIn[i - 1][j]), LVFU(medianIn[i + 1][j]), LVFU(medianIn[i][j + 1]), LVFU(medianIn[i][j - 1]), LVFU(medianIn[i - 1][j - 1]), LVFU(medianIn[i - 1][j + 1]), LVFU(medianIn[i + 1][j - 1]), LVFU(medianIn[i + 1][j + 1]),
-                         LVFU(medianIn[i - 2][j]), LVFU(medianIn[i + 2][j]), LVFU(medianIn[i][j + 2]), LVFU(medianIn[i][j - 2]), LVFU(medianIn[i - 2][j - 2]), LVFU(medianIn[i - 2][j + 2]), LVFU(medianIn[i + 2][j - 2]), LVFU(medianIn[i + 2][j + 2]),
-                         LVFU(medianIn[i - 2][j + 1]), LVFU(medianIn[i + 2][j + 1]), LVFU(medianIn[i - 1][j + 2]), LVFU(medianIn[i - 1][j - 2]), LVFU(medianIn[i - 2][j - 1]), LVFU(medianIn[i + 2][j - 1]), LVFU(medianIn[i + 1][j + 2]), LVFU(medianIn[i + 1][j - 2])));
+                    STVFU(
+                        medianOut[i][j],
+                        median(
+                            LVFU(medianIn[i - 1][j]),
+                            LVFU(medianIn[i][j - 1]),
+                            LVFU(medianIn[i][j]),
+                            LVFU(medianIn[i][j + 1]),
+                            LVFU(medianIn[i + 1][j])
+                        )
+                    );
                 }
 #endif
 
-                for (; j < width - border; j++) {
-                    medianOut[i][j] = median(medianIn[i][j], medianIn[i - 1][j], medianIn[i + 1][j], medianIn[i][j + 1], medianIn[i][j - 1], medianIn[i - 1][j - 1], medianIn[i - 1][j + 1], medianIn[i + 1][j - 1], medianIn[i + 1][j + 1],
-                         medianIn[i - 2][j], medianIn[i + 2][j], medianIn[i][j + 2], medianIn[i][j - 2], medianIn[i - 2][j - 2], medianIn[i - 2][j + 2], medianIn[i + 2][j - 2], medianIn[i + 2][j + 2],
-                         medianIn[i - 2][j + 1], medianIn[i + 2][j + 1], medianIn[i - 1][j + 2], medianIn[i - 1][j - 2], medianIn[i - 2][j - 1], medianIn[i + 2][j - 1], medianIn[i + 1][j + 2], medianIn[i + 1][j - 2]);
+                for (; j < width - border; ++j) {
+                    medianOut[i][j] = median(
+                        medianIn[i - 1][j],
+                        medianIn[i][j - 1],
+                        medianIn[i][j],
+                        medianIn[i][j + 1],
+                        medianIn[i + 1][j]
+                    );
                 }
 
-                for(; j < width; j++) {
+                for(; j < width; ++j) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+            } else if (medianType == Median::SIZE_3X3_STRONG) {
+                int j = 0;
+
+                for (; j < border; ++j) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+
+#ifdef __SSE2__
+                for (; j < width - border - 3; j += 4) {
+                    STVFU(
+                        medianOut[i][j],
+                        median(
+                            LVFU(medianIn[i - 1][j - 1]),
+                            LVFU(medianIn[i - 1][j]),
+                            LVFU(medianIn[i - 1][j + 1]),
+                            LVFU(medianIn[i][j - 1]),
+                            LVFU(medianIn[i][j]),
+                            LVFU(medianIn[i][j + 1]),
+                            LVFU(medianIn[i + 1][j - 1]),
+                            LVFU(medianIn[i + 1][j]),
+                            LVFU(medianIn[i + 1][j + 1])
+                        )
+                    );
+                }
+#endif
+
+                for (; j < width - border; ++j) {
+                    medianOut[i][j] = median(
+                        medianIn[i - 1][j - 1],
+                        medianIn[i - 1][j],
+                        medianIn[i - 1][j + 1],
+                        medianIn[i][j - 1],
+                        medianIn[i][j],
+                        medianIn[i][j + 1],
+                        medianIn[i + 1][j - 1],
+                        medianIn[i + 1][j],
+                        medianIn[i + 1][j + 1]
+                    );
+                }
+
+                for(; j < width; ++j) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+            } else if (medianType == Median::SIZE_5X5_SOFT) {
+                int j = 0;
+
+                for (; j < border; ++j) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+
+#ifdef __SSE2__
+                for (; j < width - border - 3; j += 4) {
+                    STVFU(
+                        medianOut[i][j],
+                        median(
+                            LVFU(medianIn[i - 2][j]),
+                            LVFU(medianIn[i - 1][j - 1]),
+                            LVFU(medianIn[i - 1][j]),
+                            LVFU(medianIn[i - 1][j + 1]),
+                            LVFU(medianIn[i][j - 2]),
+                            LVFU(medianIn[i][j - 1]),
+                            LVFU(medianIn[i][j]),
+                            LVFU(medianIn[i][j + 1]),
+                            LVFU(medianIn[i][j + 2]),
+                            LVFU(medianIn[i + 1][j - 1]),
+                            LVFU(medianIn[i + 1][j]),
+                            LVFU(medianIn[i + 1][j + 1]),
+                            LVFU(medianIn[i + 2][j])
+                        )
+                    );
+                }
+#endif
+
+                for (; j < width - border; ++j) {
+                    medianOut[i][j] = median(
+                        medianIn[i - 2][j],
+                        medianIn[i - 1][j - 1],
+                        medianIn[i - 1][j],
+                        medianIn[i - 1][j + 1],
+                        medianIn[i][j - 2],
+                        medianIn[i][j - 1],
+                        medianIn[i][j],
+                        medianIn[i][j + 1],
+                        medianIn[i][j + 2],
+                        medianIn[i + 1][j - 1],
+                        medianIn[i + 1][j],
+                        medianIn[i + 1][j + 1],
+                        medianIn[i + 2][j]
+                    );
+                }
+
+                for(; j < width; ++j) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+            } else if(medianType == Median::SIZE_5X5_STRONG) {
+                int j = 0;
+
+                for (; j < border; ++j) {
+                    medianOut[i][j] = medianIn[i][j];
+                }
+
+#ifdef __SSE2__
+                for (; j < width - border - 3; j += 4) {
+                    STVFU(
+                        medianOut[i][j],
+                        median(
+                            LVFU(medianIn[i - 2][j - 2]),
+                            LVFU(medianIn[i - 2][j - 1]),
+                            LVFU(medianIn[i - 2][j]),
+                            LVFU(medianIn[i - 2][j + 1]),
+                            LVFU(medianIn[i - 2][j + 2]),
+                            LVFU(medianIn[i - 1][j - 2]),
+                            LVFU(medianIn[i - 1][j - 1]),
+                            LVFU(medianIn[i - 1][j]),
+                            LVFU(medianIn[i - 1][j + 1]),
+                            LVFU(medianIn[i - 1][j + 2]),
+                            LVFU(medianIn[i][j - 2]),
+                            LVFU(medianIn[i][j - 1]),
+                            LVFU(medianIn[i][j]),
+                            LVFU(medianIn[i][j + 1]),
+                            LVFU(medianIn[i][j + 2]),
+                            LVFU(medianIn[i + 1][j - 2]),
+                            LVFU(medianIn[i + 1][j - 1]),
+                            LVFU(medianIn[i + 1][j]),
+                            LVFU(medianIn[i + 1][j + 1]),
+                            LVFU(medianIn[i + 1][j + 2]),
+                            LVFU(medianIn[i + 2][j - 2]),
+                            LVFU(medianIn[i + 2][j - 1]),
+                            LVFU(medianIn[i + 2][j]),
+                            LVFU(medianIn[i + 2][j + 1]),
+                            LVFU(medianIn[i + 2][j + 2])
+                        )
+                    );
+                }
+#endif
+
+                for (; j < width - border; ++j) {
+                    medianOut[i][j] = median(
+                        medianIn[i - 2][j - 2],
+                        medianIn[i - 2][j - 1],
+                        medianIn[i - 2][j],
+                        medianIn[i - 2][j + 1],
+                        medianIn[i - 2][j + 2],
+                        medianIn[i - 1][j - 2],
+                        medianIn[i - 1][j - 1],
+                        medianIn[i - 1][j],
+                        medianIn[i - 1][j + 1],
+                        medianIn[i - 1][j + 2],
+                        medianIn[i][j - 2],
+                        medianIn[i][j - 1],
+                        medianIn[i][j],
+                        medianIn[i][j + 1],
+                        medianIn[i][j + 2],
+                        medianIn[i + 1][j - 2],
+                        medianIn[i + 1][j - 1],
+                        medianIn[i + 1][j],
+                        medianIn[i + 1][j + 1],
+                        medianIn[i + 1][j + 2],
+                        medianIn[i + 2][j - 2],
+                        medianIn[i + 2][j - 1],
+                        medianIn[i + 2][j],
+                        medianIn[i + 2][j + 1],
+                        medianIn[i + 2][j + 2]
+                    );
+                }
+
+                for(; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
             } else if (medianType == Median::SIZE_7X7) {
                 std::array<float, 49> pp;
-                int j;
+                int j = 0;
 
-                for (j = 0; j < border; j++) {
+                for (; j < border; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
 
-                for (; j < width - border; j++) {
+                for (; j < width - border; ++j) {
                     int kk = 0;
 
-                    for (int ii = -border; ii <= border; ii++) {
-                        for (int jj = -border; jj <= border; jj++) {
-                            kk++;
+                    for (int ii = -border; ii <= border; ++ii) {
+                        for (int jj = -border; jj <= border; ++jj) {
+                            ++kk;
                             pp[kk] = medianIn[i + ii][j + jj];
                         }
                     }
@@ -262,23 +389,23 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     medianOut[i][j] = median(pp);
                 }
 
-                for(; j < width; j++) {
+                for(; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
             } else { // includes Median::SIZE_9X9
                 std::array<float, 81> pp;
-                int j;
+                int j = 0;
 
-                for (j = 0; j < border; j++) {
+                for (; j < border; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
 
-                for (; j < width - border; j++) {
+                for (; j < width - border; ++j) {
                     int kk = 0;
 
-                    for (int ii = -border; ii <= border; ii++) {
-                        for (int jj = -border; jj <= border; jj++) {
-                            kk++;
+                    for (int ii = -border; ii <= border; ++ii) {
+                        for (int jj = -border; jj <= border; ++jj) {
+                            ++kk;
                             pp[kk] = medianIn[i + ii][j + jj];
                         }
                     }
@@ -286,15 +413,15 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     medianOut[i][j] = median(pp);
                 }
 
-                for(; j < width; j++) {
+                for(; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
             }
         }
 
         if(iteration == 1) { // lower border
-            for (int i = height - border; i < height; i++)
-                for (int j = 0; j < width; j++) {
+            for (int i = height - border; i < height; ++i)
+                for (int j = 0; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
         }
@@ -307,15 +434,15 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
         #pragma omp parallel for num_threads(numThreads) if(numThreads>1)
 #endif
 
-        for(int i = border; i < height - border; i++ ) {
-            for(int j = border; j < width - border; j++) {
+        for(int i = border; i < height - border; ++i ) {
+            for(int j = border; j < width - border; ++j) {
                 dst[i][j] = medianOut[i][j];
             }
         }
     }
 
     if(allocBuffer != NULL) { // we allocated memory, so let's free it now
-        for (int i = 0; i < height; i++) {
+        for (int i = 0; i < height; ++i) {
             delete[] allocBuffer[i];
         }
 
