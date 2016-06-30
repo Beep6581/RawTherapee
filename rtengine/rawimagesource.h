@@ -97,7 +97,7 @@ protected:
     void hphd_horizontal     (float** hpmap, int row_from, int row_to);
     void hphd_green          (float** hpmap);
     void processFalseColorCorrectionThread (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
-    void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax);
+    void hlRecovery          (std::string method, float* red, float* green, float* blue, int width, float* hlmax);
     void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
@@ -116,7 +116,7 @@ public:
     ~RawImageSource ();
 
     int         load        (const Glib::ustring &fname, bool batch = false);
-    void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
+    void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true);
     void        demosaic    (const RAWParams &raw);
     void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
     void        retinexPrepareCurves       (RetinexParams retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI);
