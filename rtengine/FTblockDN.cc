@@ -380,8 +380,7 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     int kk = 0;
 
                     for (int ii = -border; ii <= border; ++ii) {
-                        for (int jj = -border; jj <= border; ++jj) {
-                            ++kk;
+                        for (int jj = -border; jj <= border; ++jj, ++kk) {
                             pp[kk] = medianIn[i + ii][j + jj];
                         }
                     }
@@ -404,8 +403,7 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     int kk = 0;
 
                     for (int ii = -border; ii <= border; ++ii) {
-                        for (int jj = -border; jj <= border; ++jj) {
-                            ++kk;
+                        for (int jj = -border; jj <= border; ++jj, ++kk) {
                             pp[kk] = medianIn[i + ii][j + jj];
                         }
                     }
