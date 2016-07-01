@@ -36,12 +36,14 @@ class PAQualityInterpreter : public ChoiceInterpreter
 public:
     PAQualityInterpreter ()
     {
-        choices[0]      = "Good";
-        choices[1]      = "Better";
-        choices[2]      = "Best";
-        choices[3]      = "TIFF";
-        choices[4]      = "RAW";
-        choices[5]      = "Premium";
+        choices[0] = "Good";
+        choices[1] = "Better";
+        choices[2] = "Best";
+        choices[3] = "TIFF";
+        choices[4] = "RAW";
+        choices[5] = "Premium";
+        choices[7] = "RAW (pixel shift enabled)";
+        choices[65535] = "n/a";
     }
 };
 PAQualityInterpreter paQualityInterpreter;
@@ -79,6 +81,7 @@ PAShakeReductionInterpreter paShakeReductionInterpreter;
 class PAShakeReduction2Interpreter : public ChoiceInterpreter
 {
 public:
+    // ShakeReduction
     PAShakeReduction2Interpreter ()
     {
         choices[ 0] = "Off";
@@ -144,7 +147,15 @@ public:
         choices[59] = "Report";
         choices[60] = "Kids";
         choices[61] = "Blur Reduction";
+        choices[63] = "Panorama 2";
         choices[65] = "Half-length Portrait";
+        choices[66] = "Portrait 2";
+        choices[74] = "Digital Microscope";
+        choices[75] = "Blue Sky";
+        choices[80] = "Miniature";
+        choices[81] = "HDR";
+        choices[83] = "Fisheye";
+        choices[85] = "Digital Filter 4";
         choices[221] = "P";
         choices[255] = "PICT";
     }
@@ -156,14 +167,14 @@ class PASceneModeInterpreter : public ChoiceInterpreter
 public:
     PASceneModeInterpreter ()
     {
-        choices[ 0] = "Off";
-        choices[ 1] = "HDR";
-        choices[ 4] = "Auto PICT";
-        choices[ 5] = "Portrait";
-        choices[ 6] = "Landscape";
-        choices[ 7] = "Macro";
-        choices[ 8] = "Sport";
-        choices[ 9] = "Night Scene Portrait";
+        choices[0] = "Off";
+        choices[1] = "HDR";
+        choices[4] = "Auto PICT";
+        choices[5] = "Portrait";
+        choices[6] = "Landscape";
+        choices[7] = "Macro";
+        choices[8] = "Sport";
+        choices[9] = "Night Scene Portrait";
         choices[10] = "No Flash";
         choices[11] = "Night Scene";
         choices[12] = "Surf & Snow";
@@ -188,25 +199,25 @@ class PAAEProgramModeInterpreter : public ChoiceInterpreter
 public:
     PAAEProgramModeInterpreter ()
     {
-        choices[  0] = "M, P or TAv";
-        choices[  1] = "Av, B or X";
-        choices[  2] = "Tv";
-        choices[  3] = "Sv or Green Mode";
-        choices[  8] = "Hi-speed Program";
-        choices[ 11] = "Hi-speed Program (P-Shift)";
-        choices[ 16] = "DOF Program";
-        choices[ 19] = "DOF Program (P-Shift)";
-        choices[ 24] = "MTF Program";
-        choices[ 27] = "MTF Program (P-Shift)";
-        choices[ 35] = "Standard";
-        choices[ 43] = "Portrait";
-        choices[ 51] = "Landscape";
-        choices[ 59] = "Macro";
-        choices[ 67] = "Sport";
-        choices[ 75] = "Night Scene Portrait";
-        choices[ 83] = "No Flash";
-        choices[ 91] = "Night Scene";
-        choices[ 99] = "Surf & Snow";
+        choices[0] = "M, P or TAv";
+        choices[1] = "Av, B or X";
+        choices[2] = "Tv";
+        choices[3] = "Sv or Green Mode";
+        choices[8] = "Hi-speed Program";
+        choices[11] = "Hi-speed Program (P-Shift)";
+        choices[16] = "DOF Program";
+        choices[19] = "DOF Program (P-Shift)";
+        choices[24] = "MTF Program";
+        choices[27] = "MTF Program (P-Shift)";
+        choices[35] = "Standard";
+        choices[43] = "Portrait";
+        choices[51] = "Landscape";
+        choices[59] = "Macro";
+        choices[67] = "Sport";
+        choices[75] = "Night Scene Portrait";
+        choices[83] = "No Flash";
+        choices[91] = "Night Scene";
+        choices[99] = "Surf & Snow";
         choices[104] = "Night Snap";
         choices[107] = "Text";
         choices[115] = "Sunset";
@@ -227,20 +238,21 @@ class PAFlashModeInterpreter : public ChoiceInterpreter
 public:
     PAFlashModeInterpreter ()
     {
-        choices[0x0] = "Auto, Did not fire";
-        choices[0x1] = "Off";
-        choices[0x2] = "On, Did not fire";
-        choices[0x3] = "Auto, Did not fire, Red-eye reduction";
-        choices[0x100] = "Auto, Fired";
-        choices[0x102] = "On";
-        choices[0x103] = "Auto, Fired, Red-eye reduction";
-        choices[0x104] = "On, Red-eye reduction";
-        choices[0x105] = "On, Wireless (Master)";
-        choices[0x106] = "On, Wireless (Control)";
-        choices[0x108] = "On, Soft";
-        choices[0x109] = "On, Slow-sync";
-        choices[0x10a] = "On, Slow-sync, Red-eye reduction";
-        choices[0x10b] = "On, Trailing-curtain Sync";
+        choices[0] = "Auto, Did not fire";
+        choices[1] = "Off, Did not fire";
+        choices[2] = "On, Did not fire";
+        choices[3] = "Auto, Did not fire, Red-eye reduction";
+        choices[5] = "On, Did not fire, Wireless (Master)";
+        choices[256] = "Auto, Fired";
+        choices[258] = "On, Fired";
+        choices[259] = "Auto, Fired, Red-eye reduction";
+        choices[260] = "On, Red-eye reduction";
+        choices[261] = "On, Wireless (Master)";
+        choices[262] = "On, Wireless (Control)";
+        choices[264] = "On, Soft";
+        choices[265] = "On, Slow-sync";
+        choices[266] = "On, Slow-sync, Red-eye reduction";
+        choices[267] = "On, Trailing-curtain Sync";
     }
 };
 PAFlashModeInterpreter paFlashModeInterpreter;
@@ -256,9 +268,15 @@ public:
         choices[3] = "Manual";
         choices[4] = "Super Macro";
         choices[5] = "Pan Focus";
-        choices[16] = "AF-S";
-        choices[17] = "AF-C";
-        choices[18] = "AF-A";
+        choices[16] = "AF-S (Focus-priority)";
+        choices[17] = "AF-C (Focus-priority)";
+        choices[18] = "AF-A (Focus-priority)";
+        choices[32] = "Contrast-detect (Focus-priority)";
+        choices[33] = "Tracking Contrast-detect (Focus-priority)";
+        choices[272] = "AF-S (Release-priority)";
+        choices[273] = "AF-C (Release-priority)";
+        choices[274] = "AF-A (Release-priority)";
+        choices[288] = "Contrast-detect (Release-priority)";
     }
 };
 PAFocusModeInterpreter paFocusModeInterpreter;
@@ -266,8 +284,10 @@ PAFocusModeInterpreter paFocusModeInterpreter;
 class PAAFPointInterpreter : public ChoiceInterpreter
 {
 public:
+    // AFPointSelected
     PAAFPointInterpreter        ()
     {
+        choices[0] = "None";
         choices[1] = "Upper-left";
         choices[2] = "Top";
         choices[3] = "Upper-right";
@@ -279,7 +299,8 @@ public:
         choices[9] = "Lower-left";
         choices[10] = "Bottom";
         choices[11] = "Lower-right";
-        choices[65532] = "Face Recognition AF";
+        choices[65531] = "AF Select";
+        choices[65532] = "Face Detect AF";
         choices[65533] = "Automatic Tracking AF";
         choices[65534] = "Fixed Center";
         choices[65535] = "Auto";
@@ -290,19 +311,20 @@ PAAFPointInterpreter paAFPointInterpreter;
 class PAAFFocusInterpreter : public ChoiceInterpreter
 {
 public:
+    // AFPointsInFocus
     PAAFFocusInterpreter        ()
     {
-        choices[0x0] = "Fixed Center or Multiple";
-        choices[0x1] = "Top-left";
-        choices[0x2] = "Top-center";
-        choices[0x3] = "Top-right";
-        choices[0x4] = "Left";
-        choices[0x5] = "Center";
-        choices[0x6] = "Right";
-        choices[0x7] = "Bottom-left";
-        choices[0x8] = "Bottom-center";
-        choices[0x9] = "Bottom-right";
-        choices[0xffff] = "None";
+        choices[0] = "Fixed Center or Multiple";
+        choices[1] = "Top-left";
+        choices[2] = "Top-center";
+        choices[3] = "Top-right";
+        choices[4] = "Left";
+        choices[5] = "Center";
+        choices[6] = "Right";
+        choices[7] = "Bottom-left";
+        choices[8] = "Bottom-center";
+        choices[9] = "Bottom-right";
+        choices[65535] = "None";
     }
 };
 PAAFFocusInterpreter paAFFocusInterpreter;
@@ -343,15 +365,15 @@ public:
         choices[31] = "32000";
         choices[32] = "40000";
         choices[33] = "51200";
-
+        choices[34] = "64000";
+        choices[35] = "80000";
+        choices[36] = "102400";
+        choices[37] = "128000";
+        choices[38] = "160000";
+        choices[39] = "204800";
         choices[50] = "50";
         choices[100] = "100";
         choices[200] = "200";
-        /*choices[400] = "400";
-          choices[800] = "800";
-          choices[1600] = "1600";
-          choices[3200] = "3200";  Moved to tail for sorting reasons */
-
         choices[258] = "50";
         choices[259] = "70";
         choices[260] = "100";
@@ -373,14 +395,10 @@ public:
         choices[276] = "25600";
         choices[277] = "36000";
         choices[278] = "51200";
-
         choices[400] = "400";
         choices[800] = "800";
         choices[1600] = "1600";
         choices[3200] = "3200";
-
-        //choices[65534] = "Auto"; ??
-        //choices[65535] = "Auto"; ??
     }
 };
 PAISOInterpreter paISOInterpreter;
@@ -437,7 +455,7 @@ public:
         choices[15] = "Color Temperature Enhancement";
         choices[17] = "Kelvin";
         choices[65534] = "Unknown";
-        choices[65535] = "User Selected";
+        choices[65535] = "User-Selected";
     }
 };
 PAWhiteBalanceInterpreter paWhiteBalanceInterpreter;
@@ -451,11 +469,11 @@ public:
         choices[2] = "Auto (Shade)";
         choices[3] = "Auto (Flash)";
         choices[4] = "Auto (Tungsten)";
-        choices[6] = "Auto (DaylightFluorescent)";
-        choices[7] = "Auto (DaywhiteFluorescent)";
-        choices[8] = "Auto (WhiteFluorescent)";
+        choices[6] = "Auto (Daylight Fluorescent)";
+        choices[7] = "Auto (Day White Fluorescent)";
+        choices[8] = "Auto (White Fluorescent)";
         choices[10] = "Auto (Cloudy)";
-        choices[65534] = "Preset (Fireworks?)";
+        choices[65534] = "Unknown";
         choices[65535] = "User-Selected";
     }
 };
@@ -466,13 +484,16 @@ class PASaturationInterpreter : public ChoiceInterpreter
 public:
     PASaturationInterpreter ()
     {
-        choices[0] = "Low";
-        choices[1] = "Normal";
-        choices[2] = "High";
-        choices[3] = "Med Low";
-        choices[4] = "Med High";
-        choices[5] = "Very Low";
-        choices[6] = "Very High";
+        choices[0] = "-2 (low)";
+        choices[1] = "0 (normal)";
+        choices[2] = "+2 (high)";
+        choices[3] = "-1 (med low)";
+        choices[4] = "+1 (med high)";
+        choices[5] = "-3 (very low)";
+        choices[6] = "+3 (very high)";
+        choices[7] = "-4 (minimum)";
+        choices[8] = "+4 (maximum)";
+        choices[65535] = "None";
     }
 };
 PASaturationInterpreter paSaturationInterpreter;
@@ -482,13 +503,16 @@ class PAContrastInterpreter : public ChoiceInterpreter
 public:
     PAContrastInterpreter ()
     {
-        choices[0] = "Low";
-        choices[1] = "Normal";
-        choices[2] = "High";
-        choices[3] = "Med Low";
-        choices[4] = "Med High";
-        choices[5] = "Very Low";
-        choices[6] = "Very High";
+        choices[0] = "-2 (low)";
+        choices[1] = "0 (normal)";
+        choices[2] = "+2 (high)";
+        choices[3] = "-1 (med low)";
+        choices[4] = "+1 (med high)";
+        choices[5] = "-3 (very low)";
+        choices[6] = "+3 (very high)";
+        choices[7] = "-4 (minimum)";
+        choices[8] = "+4 (maximum)";
+        choices[65535] = "n/a";
     }
 };
 PAContrastInterpreter paContrastInterpreter;
@@ -498,13 +522,15 @@ class PASharpnessInterpreter : public ChoiceInterpreter
 public:
     PASharpnessInterpreter ()
     {
-        choices[0] = "Soft";
-        choices[1] = "Normal";
-        choices[2] = "Hard";
-        choices[3] = "Med Soft";
-        choices[4] = "Med Hard";
-        choices[5] = "Very Soft";
-        choices[6] = "Very Hard";
+        choices[0] = "-2 (soft)";
+        choices[1] = "0 (normal)";
+        choices[2] = "+2 (hard)";
+        choices[3] = "-1 (med soft)";
+        choices[4] = "+1 (med hard)";
+        choices[5] = "-3 (very soft)";
+        choices[6] = "+3 (very hard)";
+        choices[7] = "-4 (minimum)";
+        choices[8] = "+4 (maximum)";
     }
 };
 PASharpnessInterpreter paSharpnessInterpreter;
@@ -514,51 +540,67 @@ class PAPictureModeInterpreter2: public ChoiceInterpreter
 public:
     PAPictureModeInterpreter2()
     {
-        choices[ 0] = "Program";
-        choices[ 1] = "Hi-speed Program";
-        choices[ 2] = "DOF Program";
-        choices[ 3] = "MTF Program";
-        choices[ 4] = "Standard";
-        choices[ 5] = "Portrait";
-        choices[ 6] = "Landscape";
-        choices[ 7] = "Macro";
-        choices[ 8] = "Sport ";
-        choices[ 9] = "Night Scene Portrait ";
-        choices[10] = "No Flash";
-        choices[11] = "Night Scene";
-        choices[12] = "Surf & Snow";
-        choices[13] = "Text";
-        choices[14] = "Sunset";
-        choices[15] = "Kids";
-        choices[16] = "Pet";
-        choices[17] = "Candlelight";
-        choices[18] = "Museum";
-        choices[19] = "Food ";
-        choices[20] = "Stage Lighting";
-        choices[21] = "Night Snap";
-        choices[256 + 4] = "Auto PICT";
-        choices[256 + 5] = "Auto PICT (Portrait)";
-        choices[256 + 6] = "Auto PICT (Landscape)";
-        choices[256 + 7] = "Auto PICT (Macro)";
-        choices[256 + 8] = "Auto PICT (Sport)";
-        choices[256 + 8] = "Auto PICT (Sport)";
-        choices[512 + 0] = "Program (HyP)";
-        choices[512 + 1] = "Hi-speed Program (HyP)";
-        choices[512 + 2] = "DOF Program (HyP)";
-        choices[512 + 3] = "MTF Program (HyP)";
-        choices[3 * 256] = "Green Mode";
-        choices[4 * 256] = "Shutter Speed Priority";
-        choices[5 * 256] = "Aperture Priority";
-        choices[6 * 256] = "Program Tv Shift";
-        choices[7 * 256] = "Program Av Shift";
-        choices[8 * 256] = "Manual";
-        choices[9 * 256] = "Bulb";
-        choices[10 * 256] = "Aperture Priority, Off-Auto-Aperture";
-        choices[11 * 256] = "Manual, Off-Auto-Aperture";
-        choices[12 * 256] = "Bulb, Off-Auto-Aperture";
-        choices[13 * 256] = "Shutter & Aperture Priority AE";
-        choices[15 * 256] = "Sensitivity Priority AE";
-        choices[16 * 256] = "Flash X-Sync Speed AE";
+        choices[256 *   0 +   0] = "Program";
+        choices[256 *   0 +   1] = "Hi-speed Program";
+        choices[256 *   0 +   2] = "DOF Program";
+        choices[256 *   0 +   3] = "MTF Program";
+        choices[256 *   0 +   4] = "Standard";
+        choices[256 *   0 +   5] = "Portrait";
+        choices[256 *   0 +   6] = "Landscape";
+        choices[256 *   0 +   7] = "Macro";
+        choices[256 *   0 +   8] = "Sport";
+        choices[256 *   0 +   9] = "Night Scene Portrait";
+        choices[256 *   0 +  10] = "No Flash";
+        choices[256 *   0 +  11] = "Night Scene";
+        choices[256 *   0 +  12] = "Surf & Snow";
+        choices[256 *   0 +  13] = "Text";
+        choices[256 *   0 +  14] = "Sunset";
+        choices[256 *   0 +  15] = "Kids";
+        choices[256 *   0 +  16] = "Pet";
+        choices[256 *   0 +  17] = "Candlelight";
+        choices[256 *   0 +  18] = "Museum";
+        choices[256 *   0 +  19] = "Food";
+        choices[256 *   0 +  20] = "Stage Lighting";
+        choices[256 *   0 +  21] = "Night Snap";
+        choices[256 *   0 +  23] = "Blue Sky";
+        choices[256 *   0 +  24] = "Sunset";
+        choices[256 *   0 +  26] = "Night Scene HDR";
+        choices[256 *   0 +  27] = "HDR";
+        choices[256 *   0 +  28] = "Quick Macro";
+        choices[256 *   0 +  29] = "Forest";
+        choices[256 *   0 +  30] = "Backlight Silhouette";
+        choices[256 *   1 +   4] = "Auto PICT (Standard)";
+        choices[256 *   1 +   5] = "Auto PICT (Portrait)";
+        choices[256 *   1 +   6] = "Auto PICT (Landscape)";
+        choices[256 *   1 +   7] = "Auto PICT (Macro)";
+        choices[256 *   1 +   8] = "Auto PICT (Sport)";
+        choices[256 *   2 +   0] = "Program (HyP)";
+        choices[256 *   2 +   1] = "Hi-speed Program (HyP)";
+        choices[256 *   2 +   2] = "DOF Program (HyP)";
+        choices[256 *   2 +   3] = "MTF Program (HyP)";
+        choices[256 *   2 +  22] = "Shallow DOF (HyP)";
+        choices[256 *   3 +   0] = "Green Mode";
+        choices[256 *   4 +   0] = "Shutter Speed Priority";
+        choices[256 *   5 +   0] = "Aperture Priority";
+        choices[256 *   6 +   0] = "Program Tv Shift";
+        choices[256 *   7 +   0] = "Program Av Shift";
+        choices[256 *   8 +   0] = "Manual";
+        choices[256 *   9 +   0] = "Bulb";
+        choices[256 *  10 +   0] = "Aperture Priority, Off-Auto-Aperture";
+        choices[256 *  11 +   0] = "Manual, Off-Auto-Aperture";
+        choices[256 *  12 +   0] = "Bulb, Off-Auto-Aperture";
+        choices[256 *  13 +   0] = "Shutter & Aperture Priority AE";
+        choices[256 *  15 +   0] = "Sensitivity Priority AE";
+        choices[256 *  16 +   0] = "Flash X-Sync Speed AE";
+        choices[256 *  18 +   0] = "Auto Program (Normal)";
+        choices[256 *  18 +   1] = "Auto Program (Hi-speed)";
+        choices[256 *  18 +   2] = "Auto Program (DOF)";
+        choices[256 *  18 +   3] = "Auto Program (MTF)";
+        choices[256 *  18 +  22] = "Auto Program (Shallow DOF)";
+        choices[256 *  20 +  22] = "Blur Control";
+        choices[256 * 254 +   0] = "Video";
+        choices[256 * 255 +   0] = "Video (Auto Aperture)";
+        choices[256 * 255 +   4] = "Video (4)";
     }
     virtual std::string toString (Tag* t)
     {
@@ -1025,12 +1067,15 @@ PASRResultInterpreter paSRResultInterpreter;
 class PAHighISONoiseInterpreter: public ChoiceInterpreter
 {
 public:
+    // HighISONoiseReduction
     PAHighISONoiseInterpreter()
     {
         choices[0] = "Off";
         choices[1] = "Weakest";
         choices[2] = "Weak";
         choices[3] = "Strong";
+        choices[4] = "Medium";
+        choices[255] = "Auto";
     }
 };
 PAHighISONoiseInterpreter paHighISONoiseInterpreter;
@@ -1178,9 +1223,9 @@ public:
         choices1[1]   = "Auto-align On";
 
         choices2[0]   = "n/a";
-        choices2[1]   = "1 EV";
-        choices2[2]   = "2 EV";
-        choices2[4]   = "3 EV";
+        choices2[4]   = "1 EV";
+        choices2[8]   = "2 EV";
+        choices2[12]  = "3 EV";
     }
     virtual std::string toString (Tag* t)
     {
@@ -1536,11 +1581,13 @@ class PAFlashStatusInterpreter: public ChoiceInterpreter
 public:
     PAFlashStatusInterpreter()
     {
-        choices[0x0] = "Off";
-        choices[0x2] = "External, Did not fire";
-        choices[0x6] = "External, Fired";
-        choices[0x9] = "Internal, Did not fire";
-        choices[0xd] = "Internal, Fired";
+        choices[0] = "Off";
+        choices[1] = "Off (1)";
+        choices[2] = "External, Did not fire";
+        choices[6] = "External, Fired";
+        choices[8] = "Internal, Did not fire (0x08)";
+        choices[9] = "Internal, Did not fire";
+        choices[13] = "Internal, Fired";
     }
 };
 PAFlashStatusInterpreter paFlashStatusInterpreter;
@@ -1550,26 +1597,27 @@ class PAInternalFlashModeInterpreter: public ChoiceInterpreter
 public:
     PAInternalFlashModeInterpreter()
     {
-        choices[0x0] = "n/a - Off-Auto-Aperture";
-        choices[0x86] = "On, Wireless (Control)";
-        choices[0x95] = "On, Wireless (Master)";
-        choices[0xc0] = "On";
-        choices[0xc1] = "On, Red-eye reduction";
-        choices[0xc2] = "On, Auto";
-        choices[0xc3] = "On, Auto, Red-eye reduction";
-        choices[0xc8] = "On, Slow-sync";
-        choices[0xc9] = "On, Slow-sync, Red-eye reduction";
-        choices[0xca] = "On, Trailing-curtain Sync";
-        choices[0xf0] = "Off, Normal";
-        choices[0xf1] = "Off, Red-eye reduction";
-        choices[0xf2] = "Off, Auto";
-        choices[0xf3] = "Off, Auto, Red-eye reduction";
-        choices[0xf4] = "Off, (Unknown 0xf4)";
-        choices[0xf5] = "Off, Wireless (Master)";
-        choices[0xf6] = "Off, Wireless (Control)";
-        choices[0xf8] = "Off, Slow-sync";
-        choices[0xf9] = "Off, Slow-sync, Red-eye reduction";
-        choices[0xfa] = "Off, Trailing-curtain Sync";
+        choices[0] = "n/a - Off-Auto-Aperture";
+        choices[134] = "Fired, Wireless (Control)";
+        choices[149] = "Fired, Wireless (Master)";
+        choices[192] = "Fired";
+        choices[193] = "Fired, Red-eye reduction";
+        choices[194] = "Fired, Auto";
+        choices[195] = "Fired, Auto, Red-eye reduction";
+        choices[198] = "Fired, Wireless (Control), Fired normally not as control";
+        choices[200] = "Fired, Slow-sync";
+        choices[201] = "Fired, Slow-sync, Red-eye reduction";
+        choices[202] = "Fired, Trailing-curtain Sync";
+        choices[240] = "Did not fire, Normal";
+        choices[241] = "Did not fire, Red-eye reduction";
+        choices[242] = "Did not fire, Auto";
+        choices[243] = "Did not fire, Auto, Red-eye reduction";
+        choices[244] = "Did not fire, (Unknown 0xf4)";
+        choices[245] = "Did not fire, Wireless (Master)";
+        choices[246] = "Did not fire, Wireless (Control)";
+        choices[248] = "Did not fire, Slow-sync";
+        choices[249] = "Did not fire, Slow-sync, Red-eye reduction";
+        choices[250] = "Did not fire, Trailing-curtain Sync";
     }
 };
 PAInternalFlashModeInterpreter paInternalFlashModeInterpreter;
@@ -1579,16 +1627,17 @@ class PAExternalFlashModeInterpreter: public ChoiceInterpreter
 public:
     PAExternalFlashModeInterpreter()
     {
-        choices[0x0 ] = "n/a - Off-Auto-Aperture";
-        choices[0x3f] = "Off";
-        choices[0x40] = "On, Auto";
-        choices[0xbf] = "On, Flash Problem";
-        choices[0xc0] = "On, Manual";
-        choices[0xc4] = "On, P-TTL Auto";
-        choices[0xc5] = "On, Contrast-control Sync";
-        choices[0xc6] = "On, High-speed Sync";
-        choices[0xcc] = "On, Wireless";
-        choices[0xcd] = "On, Wireless, High-speed Sync";
+        choices[0] = "n/a - Off-Auto-Aperture";
+        choices[63] = "Off";
+        choices[64] = "On, Auto";
+        choices[191] = "On, Flash Problem";
+        choices[192] = "On, Manual";
+        choices[196] = "On, P-TTL Auto";
+        choices[197] = "On, Contrast-control Sync";
+        choices[198] = "On, High-speed Sync";
+        choices[204] = "On, Wireless";
+        choices[205] = "On, Wireless, High-speed Sync";
+        choices[240] = "Not Connected";
     }
 };
 PAExternalFlashModeInterpreter paExternalFlashModeInterpreter;
@@ -1606,9 +1655,9 @@ public:
         choices[171] = "-1.5";
         choices[172] = "-1.0";
         choices[175] = "-0.5";
-        choices[176] = "0";
-        choices[179] = "+0.5";
-        choices[180] = "+1.0";
+        choices[176] = "0.0";
+        choices[179] = "0.5";
+        choices[180] = "1.0";
     }
 };
 PAExternalFlashExposureCompInterpreter paExternalFlashExposureCompInterpreter;
@@ -1701,15 +1750,15 @@ class PAFlashOptionInterpreter: public ChoiceInterpreter
 public:
     PAFlashOptionInterpreter()
     {
-        choices[0x0] = "Normal";
-        choices[0x1] = "Red-eye reduction";
-        choices[0x2] = "Auto";
-        choices[0x3] = "Auto, Red-eye reduction";
-        choices[0x5] = "Wireless (Master)";
-        choices[0x6] = "Wireless (Control)";
-        choices[0x8] = "Slow-sync";
-        choices[0x9] = "Slow-sync, Red-eye reduction";
-        choices[0xa] = "Trailing-curtain Sync";
+        choices[0] = "Normal";
+        choices[1] = "Red-eye reduction";
+        choices[2] = "Auto";
+        choices[3] = "Auto, Red-eye reduction";
+        choices[5] = "Wireless (Master)";
+        choices[6] = "Wireless (Control)";
+        choices[8] = "Slow-sync";
+        choices[9] = "Slow-sync, Red-eye reduction";
+        choices[10] = "Trailing-curtain Sync";
     }
     virtual std::string toString (Tag* t)
     {
@@ -1891,6 +1940,8 @@ public:
             return "Single-frame";
         } else if( c & 0x01) {
             return "Continuous";
+        } else if( c & 0x02) {
+            return "Continuous (Lo)";
         } else if( c & 0x04) {
             return "Self-timer (12 s)";
         } else if( c & 0x08) {
