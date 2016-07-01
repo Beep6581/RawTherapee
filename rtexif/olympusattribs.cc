@@ -269,22 +269,28 @@ public:
     OLWhitebalance2Interpreter ()
     {
         choices[0] = "Auto";
+        choices[1] = "Auto (Keep Warm Color Off)";
         choices[16] = "7500K (Fine Weather with Shade)";
         choices[17] = "6000K (Cloudy)";
         choices[18] = "5300K (Fine Weather)";
         choices[20] = "3000K (Tungsten light)";
         choices[21] = "3600K (Tungsten light-like)";
+        choices[22] = "Auto Setup";
+        choices[23] = "5500K (Flash)";
         choices[33] = "6600K (Daylight fluorescent)";
         choices[34] = "4500K (Neutral white fluorescent)";
         choices[35] = "4000K (Cool white fluorescent)";
+        choices[36] = "White Fluorescent";
         choices[48] = "3600K (Tungsten light-like)";
-        choices[256] = "Custom WB 1";
-        choices[257] = "Custom WB 2";
-        choices[258] = "Custom WB 3";
-        choices[259] = "Custom WB 4";
-        choices[512] = "Custom WB 5400K";
-        choices[513] = "Custom WB 2900K";
-        choices[514] = "Custom WB 8000K";
+        choices[67] = "Underwater";
+        choices[256] = "One Touch WB 1";
+        choices[257] = "One Touch WB 2";
+        choices[258] = "One Touch WB 3";
+        choices[259] = "One Touch WB 4";
+        choices[512] = "Custom WB 1";
+        choices[513] = "Custom WB 2";
+        choices[514] = "Custom WB 3";
+        choices[515] = "Custom WB 4";
     }
 };
 OLWhitebalance2Interpreter olWhitebalance2Interpreter;
@@ -310,6 +316,7 @@ public:
         choices[18] = "Indoor";
         choices[19] = "Fireworks";
         choices[20] = "Sunset";
+        choices[21] = "Beauty Skin";
         choices[22] = "Macro";
         choices[23] = "Super Macro";
         choices[24] = "Food";
@@ -339,6 +346,17 @@ public:
         choices[48] = "Nature Macro";
         choices[49] = "Underwater Snapshot";
         choices[50] = "Shooting Guide";
+        choices[54] = "Face Portrait";
+        choices[57] = "Bulb";
+        choices[59] = "Smile Shot";
+        choices[60] = "Quick Shutter";
+        choices[63] = "Slow Shutter";
+        choices[64] = "Bird Watching";
+        choices[65] = "Multiple Exposure";
+        choices[66] = "e-Portrait";
+        choices[67] = "Soft Background Shot";
+        choices[142] = "Hand-held Starlight";
+        choices[154] = "HDR";
     }
 };
 OLSceneModeInterpreter olSceneModeInterpreter;
@@ -382,6 +400,7 @@ public:
         choices[2] = "HQ";
         choices[3] = "SHQ";
         choices[4] = "RAW";
+        choices[5] = "SQ (5)";
     }
 };
 OLImageQuality2Interpreter olImageQuality2Interpreter;
@@ -389,6 +408,7 @@ OLImageQuality2Interpreter olImageQuality2Interpreter;
 class OLDevEngineInterpreter : public ChoiceInterpreter
 {
 public:
+    // RawDevEngine
     OLDevEngineInterpreter ()
     {
         choices[0] = "High Speed";
@@ -408,6 +428,14 @@ public:
         choices[2] = "Natural";
         choices[3] = "Muted";
         choices[4] = "Portrait";
+        choices[5] = "i-Enhance";
+        choices[7] = "Color Creator";
+        choices[9] = "Color Profile 1";
+        choices[10] = "Color Profile 2";
+        choices[11] = "Color Profile 3";
+        choices[12] = "Monochrome Profile 1";
+        choices[13] = "Monochrome Profile 2";
+        choices[14] = "Monochrome Profile 3";
         choices[256] = "Monotone";
         choices[512] = "Sepia";
     }
@@ -480,7 +508,8 @@ public:
         int a = t->toInt ();
         str << "Noise Reduction = " << ((a & 1) ? "On" : "Off") << std::endl;
         str << "Noise Filter = " << ((a & 2) ? "On" : "Off") << std::endl;
-        str << "Noise Filter (ISO Boost) = " << ((a & 4) ? "On" : "Off");
+        str << "Noise Filter (ISO Boost) = " << ((a & 4) ? "On" : "Off") << std::endl;
+        str << "Auto = " << ((a & 8) ? "On" : "Off");
         return str.str();
     }
 };
@@ -491,14 +520,16 @@ class OLFlashModelInterpreter : public ChoiceInterpreter
 public:
     OLFlashModelInterpreter ()
     {
-        choices[0]      = "None";
-        choices[1]      = "FL-20";
-        choices[2]      = "FL-50";
-        choices[3]      = "RF-11";
-        choices[4]      = "TF-22";
-        choices[5]      = "FL-36";
-        choices[6]      = "FL-50R";
-        choices[7]      = "FL-36R";
+        choices[0]  = "None";
+        choices[1]  = "FL-20";
+        choices[2]  = "FL-50";
+        choices[3]  = "RF-11";
+        choices[4]  = "TF-22";
+        choices[5]  = "FL-36";
+        choices[6]  = "FL-50R";
+        choices[7]  = "FL-36R";
+        choices[9]  = "FL-14";
+        choices[11] = "FL-600R";
     }
 };
 OLFlashModelInterpreter olFlashModelInterpreter;
