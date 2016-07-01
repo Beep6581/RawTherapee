@@ -314,6 +314,7 @@ public:
         choices[0x50] = "Flash";
         choices[0x60] = "Fluorescent";
         choices[0x70] = "Custom";
+        choices[0x80] = "Underwater";
     }
 };
 SAWhiteBalanceInterpreter saWhiteBalanceInterpreter;
@@ -383,23 +384,31 @@ class SASceneModeInterpreter : public ChoiceInterpreter
 public:
     SASceneModeInterpreter ()
     {
-        choices[0]  = "Normal (P,A,S or M)";
+        choices[0]  = "Standard";
         choices[1]  = "Portrait";
         choices[2]  = "Text";
         choices[3]  = "Night Scene";
         choices[4]  = "Sunset";
         choices[5]  = "Sports";
         choices[6]  = "Landscape";
+        choices[7]  = "Night Portrait";
         choices[8]  = "Macro";
         choices[9]  = "Super Macro";
         choices[16] = "Auto";
-        choices[17] = "Night Portrait";
+        choices[17] = "Night View/Portrait";
         choices[18] = "Sweep Panorama";
         choices[19] = "Handheld Night Shot";
         choices[20] = "Anti Motion Blur";
-        choices[21] = "Cont.Priority AE";
+        choices[21] = "Cont. Priority AE";
         choices[22] = "Auto+";
         choices[23] = "3D Sweep Panorama";
+        choices[24] = "Superior Auto";
+        choices[25] = "High Sensitivity";
+        choices[26] = "Fireworks";
+        choices[27] = "Food";
+        choices[28] = "Pet";
+        choices[33] = "HDR";
+        choices[65535] = "n/a";
     }
 };
 SASceneModeInterpreter saSceneModeInterpreter;
@@ -449,14 +458,14 @@ public:
         choices[2]  = "Portrait";
         choices[3]  = "Landscape";
         choices[4]  = "Sunset";
-        choices[5]  = "Night Scene";
+        choices[5]  = "Night View/Portrait";
         choices[6]  = "B&W";
         choices[7]  = "Adobe RGB";
         choices[12] = "Neutral";
         choices[13] = "Clear";
         choices[14] = "Deep";
         choices[15] = "Light";
-        choices[16] = "Autumn";
+        choices[16] = "Autumn Leaves";
         choices[17] = "Sepia";
         choices[100] = "Neutral";
         choices[101] = "Clear";
@@ -473,18 +482,19 @@ class SAExposureModeInterpreter : public ChoiceInterpreter
 public:
     SAExposureModeInterpreter ()
     {
-        choices[0]  = "Auto";
+        choices[0]  = "Program AE";
         choices[1]  = "Portrait";
         choices[2]  = "Beach";
+        choices[3]  = "Sports";
         choices[4]  = "Snow";
         choices[5]  = "Landscape";
-        choices[6]  = "Program";
-        choices[7]  = "Aperture Priority";
-        choices[8]  = "Shutter Priority";
-        choices[9]  = "Night Scene";
+        choices[6]  = "Auto";
+        choices[7]  = "Aperture-priority AE";
+        choices[8]  = "Shutter speed priority AE";
+        choices[9]  = "Night Scene / Twilight";
         choices[10] = "Hi-Speed Shutter";
         choices[11] = "Twilight Portrait";
-        choices[12] = "Soft Snap";
+        choices[12] = "Soft Snap/Portrait";
         choices[13] = "Fireworks";
         choices[14] = "Smile Shutter";
         choices[15] = "Manual";
@@ -492,13 +502,17 @@ public:
         choices[19] = "Macro";
         choices[20] = "Advanced Sports Shooting";
         choices[29] = "Underwater";
-        choices[33] = "Gourmet";
-        choices[34] = "Panorama";
-        choices[35] = "Handheld Twilight";
+        choices[33] = "Food";
+        choices[34] = "Sweep Panorama";
+        choices[35] = "Handheld Night Shot";
         choices[36] = "Anti Motion Blur";
         choices[37] = "Pet";
         choices[38] = "Backlight Correction HDR";
+        choices[39] = "Superior Auto";
         choices[40] = "Background Defocus";
+        choices[41] = "Soft Skin";
+        choices[42] = "3D Image";
+        choices[65535] = "n/a";
     }
 };
 SAExposureModeInterpreter saExposureModeInterpreter;
@@ -1181,11 +1195,15 @@ class MATeleconverterInterpreter : public ChoiceInterpreter
 public:
     MATeleconverterInterpreter ()
     {
-        choices[0]     = "None ";
-        choices[0x48]  = "Minolta AF 2x APO (D)";
-        choices[0x50]  = "Minolta AF 2x APO II";
-        choices[0x88]  = "Minolta AF 1.4x APO (D)";
-        choices[0x90]  = "Minolta AF 1.4x APO II";
+        choices[0x0]  = "None";
+        choices[0x4]  = "Minolta/Sony AF 1.4x APO (D) (0x04)";
+        choices[0x5]  = "Minolta/Sony AF 2x APO (D) (0x05)";
+        choices[0x48] = "Minolta/Sony AF 2x APO (D)";
+        choices[0x50] = "Minolta AF 2x APO II";
+        choices[0x60] = "Minolta AF 2x APO";
+        choices[0x88] = "Minolta/Sony AF 1.4x APO (D)";
+        choices[0x90] = "Minolta AF 1.4x APO II";
+        choices[0xa0] = "Minolta AF 1.4x APO";
     }
 };
 MATeleconverterInterpreter maTeleconverterInterpreter;
@@ -1195,15 +1213,15 @@ class MAQualityInterpreter : public ChoiceInterpreter
 public:
     MAQualityInterpreter ()
     {
-        choices[0]  = "Raw";
-        choices[1]  = "Super Fine";
-        choices[2]  = "Fine";
-        choices[3]  = "Standard";
-        choices[4]  = "Economy";
-        choices[5]  = "Extra fine";
-        choices[6]  = "RAW + JPEG";
-        choices[7]  = "cRAW";
-        choices[8]  = "cRAW + JPEG";
+        choices[0] = "RAW";
+        choices[1] = "Super Fine";
+        choices[2] = "Fine";
+        choices[3] = "Standard";
+        choices[4] = "Economy";
+        choices[5] = "Extra Fine";
+        choices[6] = "RAW + JPEG";
+        choices[7] = "Compressed RAW";
+        choices[8] = "Compressed RAW + JPEG";
     }
 };
 MAQualityInterpreter maQualityInterpreter;
@@ -1257,14 +1275,19 @@ class SADriveMode : public ChoiceInterpreter
 public:
     SADriveMode ()
     {
-        choices[0]  = "Single Frame";
-        choices[1]  = "Continuous High";
+        choices[1]  = "Single Frame";
+        choices[2]  = "Continuous High";
         choices[4]  = "Self-timer 10 sec";
-        choices[5]  = "Self-timer 2 sec";
+        choices[5]  = "Self-timer 2 sec, Mirror Lock-up";
+        choices[6]  = "Single-frame Bracketing";
         choices[7]  = "Continuous Bracketing";
-        choices[12] = "Continuous Low";
-        choices[18] = "White Balance Bracketing Low";
-        choices[19] = "D-Range Optimizer Bracketing Low";
+        choices[10] = "Remote Commander";
+        choices[11] = "Mirror Lock-up";
+        choices[18] = "Continuous Low";
+        choices[24] = "White Balance Bracketing Low";
+        choices[25] = "D-Range Optimizer Bracketing Low";
+        choices[40] = "White Balance Bracketing High";
+        choices[41] = "D-Range Optimizer Bracketing High";
     }
 };
 SADriveMode saDriveMode;
@@ -1274,7 +1297,7 @@ class SADriveMode2 : public ChoiceInterpreter
 public:
     SADriveMode2 ()
     {
-        choices[0]  = "Single Frame";
+        choices[1]  = "Single Frame";
         choices[2]  = "Continuous High";
         choices[4]  = "Self-timer 10 sec";
         choices[5]  = "Self-timer 2 sec, Mirror Lock-up";
@@ -1290,23 +1313,23 @@ class SADriveMode3 : public ChoiceInterpreter
 public:
     SADriveMode3 ()
     {
-        choices[0x10] = "Single Frame";
-        choices[0x21] = "Continuous High";
-        choices[0x22] = "Continuous Low";
-        choices[0x30] = "Speed Priority Continuous";
-        choices[0x51] = "Self-timer 10 sec";
-        choices[0x52] = "Self-timer 2 sec, Mirror Lock-up";
-        choices[0x71] = "Continuous Bracketing 0.3 EV";
-        choices[0x75] = "Continuous Bracketing 0.7 EV";
-        choices[0x91] = "White Balance Bracketing Low";
-        choices[0x92] = "White Balance Bracketing High";
-        choices[0xC0] = "Remote Commander";
-        choices[0xD1] = "Continuous - HDR";
-        choices[0xD2] = "Continuous - Multi Frame NR";
-        choices[0xD3] = "Continuous - Handheld Night Shot";
-        choices[0xD4] = "Continuous - Anti Motion Blur";
-        choices[0xD5] = "Continuous - Sweep Panorama";
-        choices[0xD6] = "Continuous - 3D Sweep Panorama";
+        choices[16]  = "Single Frame";
+        choices[33]  = "Continuous High";
+        choices[34]  = "Continuous Low";
+        choices[48]  = "Speed Priority Continuous";
+        choices[81]  = "Self-timer 10 sec";
+        choices[82]  = "Self-timer 2 sec, Mirror Lock-up";
+        choices[113] = "Continuous Bracketing 0.3 EV";
+        choices[117] = "Continuous Bracketing 0.7 EV";
+        choices[145] = "White Balance Bracketing Low";
+        choices[146] = "White Balance Bracketing High";
+        choices[192] = "Remote Commander";
+        choices[209] = "Continuous - HDR";
+        choices[210] = "Continuous - Multi Frame NR";
+        choices[211] = "Continuous - Handheld Night Shot";
+        choices[212] = "Continuous - Anti Motion Blur";
+        choices[213] = "Continuous - Sweep Panorama";
+        choices[214] = "Continuous - 3D Sweep Panorama";
     }
 };
 SADriveMode3 saDriveMode3;
@@ -1366,8 +1389,8 @@ public:
         choices[3] = "Spot AF";
         choices[4] = "Flexible Spot AF";
         choices[6] = "Touch AF";
-        choices[14] = "Manual Focus";
-        choices[15] = "Face Detected";
+        choices[14] = "Tracking";
+        choices[15] = "Face Tracking";
         choices[65535] = "n/a";
     }
 };
@@ -1670,27 +1693,27 @@ class SAExposureProgram2: public ChoiceInterpreter
 public:
     SAExposureProgram2 ()
     {
-        choices[1] = "Program AE";
-        choices[2] = "Aperture-priority AE";
-        choices[3] = "Shutter speed priority AE";
-        choices[4] = "Manual";
-        choices[5] = "Cont. Priority AE";
-        choices[16] = "Auto";
-        choices[17] = "Auto (no flash)";
-        choices[18] = "Auto+";
-        choices[49] = "Portrait";
-        choices[50] = "Landscape";
-        choices[51] = "Macro";
-        choices[52] = "Sports";
-        choices[53] = "Sunset";
-        choices[54] = "Night view";
-        choices[55] = "Night view/portrait";
-        choices[56] = "Handheld Night Shot";
-        choices[57] = "3D Sweep Panorama";
-        choices[64] = "Auto 2";
-        choices[65] = "Auto 2 (no flash)";
-        choices[80] = "Sweep Panorama";
-        choices[96] = "Anti Motion Blur";
+        choices[1]   = "Program AE";
+        choices[2]   = "Aperture-priority AE";
+        choices[3]   = "Shutter speed priority AE";
+        choices[4]   = "Manual";
+        choices[5]   = "Cont. Priority AE";
+        choices[16]  = "Auto";
+        choices[17]  = "Auto (no flash)";
+        choices[18]  = "Auto+";
+        choices[49]  = "Portrait";
+        choices[50]  = "Landscape";
+        choices[51]  = "Macro";
+        choices[52]  = "Sports";
+        choices[53]  = "Sunset";
+        choices[54]  = "Night view";
+        choices[55]  = "Night view/portrait";
+        choices[56]  = "Handheld Night Shot";
+        choices[57]  = "3D Sweep Panorama";
+        choices[64]  = "Auto 2";
+        choices[65]  = "Auto 2 (no flash)";
+        choices[80]  = "Sweep Panorama";
+        choices[96]  = "Anti Motion Blur";
         choices[128] = "Toy Camera";
         choices[129] = "Pop Color";
         choices[130] = "Posterization";
@@ -1831,9 +1854,10 @@ public:
     SAReleaseModeInterpreter ()
     {
         choices[0] = "Normal";
-        choices[2] = "Burst";
+        choices[2] = "Continuous";
         choices[5] = "Exposure Bracketing";
         choices[6] = "White Balance Bracketing";
+        choices[8] = "DRO Bracketing";
         choices[65535] = "n/a";
     }
 };
@@ -1846,11 +1870,19 @@ public:
     {
         choices[1] = "Standard";
         choices[2] = "Vivid";
+        choices[3] = "Portrait";
+        choices[4] = "Landscape";
+        choices[5] = "Sunset";
+        choices[7] = "Night View/Portrait";
+        choices[8] = "B&W";
         choices[9] = "Adobe RGB";
         choices[11] = "Neutral";
         choices[129] = "StyleBox1";
         choices[130] = "StyleBox2";
         choices[131] = "StyleBox3";
+        choices[132] = "StyleBox4";
+        choices[133] = "StyleBox5";
+        choices[134] = "StyleBox6";
     }
 };
 SAImageStyleInterpreter saImageStyleInterpreter;
@@ -1860,27 +1892,42 @@ class SAPictureEffectInterpreter: public ChoiceInterpreter
 public:
     SAPictureEffectInterpreter()
     {
-        choices[0] = "Off";
-        choices[1] = "Toy Camera";
-        choices[2] = "Pop Color";
-        choices[3] = "Posterization";
-        choices[4] = "Posterization B/W";
-        choices[5] = "Retro Photo";
-        choices[6] = "Soft High Key";
-        choices[7] = "Partial Color Red";
-        choices[8] = "Partial Color Green";
-        choices[9] = "Partial Color Blue";
-        choices[10] = "Partial Color Yellow";
+        choices[0]  = "Off";
+        choices[1]  = "Toy Camera";
+        choices[2]  = "Pop Color";
+        choices[3]  = "Posterization";
+        choices[4]  = "Posterization B/W";
+        choices[5]  = "Retro Photo";
+        choices[6]  = "Soft High Key";
+        choices[7]  = "Partial Color (red)";
+        choices[8]  = "Partial Color (green)";
+        choices[9]  = "Partial Color (blue)";
+        choices[10] = "Partial Color (yellow)";
         choices[13] = "High Contrast Monochrome";
-        choices[16] = "Toy Camera 2";
+        choices[16] = "Toy Camera (normal)";
+        choices[17] = "Toy Camera (cool)";
+        choices[18] = "Toy Camera (warm)";
+        choices[19] = "Toy Camera (green)";
+        choices[20] = "Toy Camera (magenta)";
+        choices[32] = "Soft Focus (low)";
         choices[33] = "Soft Focus";
-        choices[48] = "Miniature";
-        choices[50] = "Miniature 2";
-        choices[51] = "Miniature 3";
+        choices[34] = "Soft Focus (high)";
+        choices[48] = "Miniature (auto)";
+        choices[49] = "Miniature (top)";
+        choices[50] = "Miniature (middle horizontal)";
+        choices[51] = "Miniature (bottom)";
+        choices[52] = "Miniature (left)";
+        choices[53] = "Miniature (middle vertical)";
+        choices[54] = "Miniature (right)";
+        choices[64] = "HDR Painting (low)";
         choices[65] = "HDR Painting";
+        choices[66] = "HDR Painting (high)";
         choices[80] = "Rich-tone Monochrome";
-        choices[98] = "Water Color";
-        choices[114] = "Illustration";
+        choices[97] = "Water Color";
+        choices[98] = "Water Color 2";
+        choices[112] = "Illustration (low)";
+        choices[113] = "Illustration";
+        choices[114] = "Illustration (high)";
     }
 };
 SAPictureEffectInterpreter saPictureEffectInterpreter;
