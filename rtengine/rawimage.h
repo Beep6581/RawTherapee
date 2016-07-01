@@ -44,7 +44,7 @@ public:
     PixelsMap(int width, int height )
         : h(height)
     {
-        w = (width + base_t_size - 1) / base_t_size;
+        w = (width / (base_t_size * 8)) + 1;
         pm = new base_t [h * w ];
         memset(pm, 0, h * w * base_t_size );
     }
