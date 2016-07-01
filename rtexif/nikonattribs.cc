@@ -161,11 +161,12 @@ class NAFlashModeInterpreter : public ChoiceInterpreter
 public:
     NAFlashModeInterpreter ()
     {
-        choices[0]      = "Did Not Fire";
-        choices[1]      = "Fired, Manual";
-        choices[7]      = "Fired, External";
-        choices[8]      = "Fired, Commander Mode";
-        choices[9]      = "Fired, TTL Mode";
+        choices[0x0] = "Did Not Fire";
+        choices[0x1] = "Fired, Manual";
+        choices[0x3] = "Not Ready";
+        choices[0x7] = "Fired, External";
+        choices[0x8] = "Fired, Commander Mode";
+        choices[0x9] = "Fired, TTL Mode";
     }
 };
 NAFlashModeInterpreter naFlashModeInterpreter;
@@ -173,13 +174,16 @@ NAFlashModeInterpreter naFlashModeInterpreter;
 class NAHiISONRInterpreter : public ChoiceInterpreter
 {
 public:
+    // HighISONoiseReduction
     NAHiISONRInterpreter ()
     {
-        choices[0]      = "Off";
-        choices[1]      = "Minimal";
-        choices[2]      = "Low";
-        choices[4]      = "Normal";
-        choices[6]      = "High";
+        choices[0x0] = "Off";
+        choices[0x1] = "Minimal";
+        choices[0x2] = "Low";
+        choices[0x3] = "Medium Low";
+        choices[0x4] = "Normal";
+        choices[0x5] = "Medium High";
+        choices[0x6] = "High";
     }
 };
 NAHiISONRInterpreter naHiISONRInterpreter;
@@ -209,25 +213,27 @@ class NAAFInfoInterpreter : public Interpreter
     std::map<int, std::string> amchoices;
     std::map<int, std::string> afpchoices;
 public:
+    // AFAreaMode
     NAAFInfoInterpreter ()
     {
-        amchoices[0] = "Single Area";
-        amchoices[1] = "Dynamic Area";
-        amchoices[2] = "Dynamic Area, Closest Subject";
-        amchoices[3] = "Group Dynamic";
-        amchoices[4] = "Single Area (wide)";
-        amchoices[5] = "Dynamic Area (wide)";
-        afpchoices[0] = "Center";
-        afpchoices[1] = "Top";
-        afpchoices[2] = "Bottom";
-        afpchoices[3] = "Left";
-        afpchoices[4] = "Right";
-        afpchoices[5] = "Upper-left";
-        afpchoices[6] = "Upper-right";
-        afpchoices[7] = "Lower-left";
-        afpchoices[8] = "Lower-right";
-        afpchoices[9] = "Far Left";
-        afpchoices[10] = "Far Right";
+        amchoices[0x0] = "Single Area";
+        amchoices[0x1] = "Dynamic Area";
+        amchoices[0x2] = "Dynamic Area (closest subject)";
+        amchoices[0x3] = "Group Dynamic";
+        amchoices[0x4] = "Single Area (wide)";
+        amchoices[0x5] = "Dynamic Area (wide)";
+    // AFPoint
+        afpchoices[0x0] = "Center";
+        afpchoices[0x1] = "Top";
+        afpchoices[0x2] = "Bottom";
+        afpchoices[0x3] = "Mid-left";
+        afpchoices[0x4] = "Mid-right";
+        afpchoices[0x5] = "Upper-left";
+        afpchoices[0x6] = "Upper-right";
+        afpchoices[0x7] = "Lower-left";
+        afpchoices[0x8] = "Lower-right";
+        afpchoices[0x9] = "Far Left";
+        afpchoices[0xa] = "Far Right";
     }
     virtual std::string toString (Tag* t)
     {
