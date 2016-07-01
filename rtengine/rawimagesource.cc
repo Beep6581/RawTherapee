@@ -37,7 +37,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
@@ -1664,7 +1664,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
 
 void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise)
 {
-    BENCHFUN
+//    BENCHFUN
     MyTime t1, t2;
     t1.set();
 
