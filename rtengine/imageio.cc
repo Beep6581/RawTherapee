@@ -1227,7 +1227,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
         // buffer for the exif and iptc
-        int bufferSize = 165535;   //TODO: Is it really 165535... or 65535 ?
+        int bufferSize = 175535;   //TODO: Is it really 165535... or 65535 ?
 
         if(profileData) {
             bufferSize += profileLength;

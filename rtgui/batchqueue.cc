@@ -370,7 +370,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
     timeval tv;
     gettimeofday(&tv, 0);
     char mseconds[4];
-    sprintf(mseconds, "%d", tv.tv_usec / 1000);
+    sprintf(mseconds, "%d", (int)(tv.tv_usec / 1000));
     time_t rawtime;
     struct tm *timeinfo;
     char stringTimestamp [80];
