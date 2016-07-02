@@ -61,6 +61,7 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
 
     HANDLE hFile = CreateFileW ( wfname.get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
     if (hFile != INVALID_HANDLE_VALUE) {
         f = _fdopen (_open_osfhandle ((intptr_t)hFile, 0), "wb");
     }
@@ -1227,9 +1228,11 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // buffer for the exif and iptc
         int bufferSize = 165535;   //TODO: Is it really 165535... or 65535 ?
-        if(profileData)
+
+        if(profileData) {
             bufferSize += profileLength;
-        
+        }
+
         unsigned char* buffer = new unsigned char[bufferSize];
         unsigned char* iptcdata = NULL;
         unsigned int iptclen = 0;

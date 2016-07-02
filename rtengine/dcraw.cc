@@ -10,6 +10,7 @@
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
 
+#include "opthelper.h"
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2016 by Dave Coffin, dcoffin a cybercom o net
@@ -551,13 +552,13 @@ int CLASS canon_s2is()
   return 0;
 }
 
-unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
+inline unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
 {
 /*RT static unsigned bitbuf=0; */
 /*RT static int vbits=0, reset=0; */
   unsigned c;
 
-  if (nbits > 25) return 0;
+  if (UNLIKELY(nbits > 25)) return 0;
   if (nbits < 0)
     return bitbuf = vbits = reset = 0;
   if (nbits == 0 || vbits < 0) return 0;
@@ -828,7 +829,7 @@ int CLASS ljpeg_start (struct jhead *jh, int info_only)
     FORC(4)        jh->huff[2+c] = jh->huff[1];
     FORC(jh->sraw) jh->huff[1+c] = jh->huff[0];
   }
-  jh->row = (ushort *) calloc (jh->wide*jh->clrs, 4);
+  jh->row = (ushort *) calloc (2 * jh->wide*jh->clrs, 4);
   merror (jh->row, "ljpeg_start()");
   return zero_after_ff = 1;
 }
@@ -840,7 +841,7 @@ void CLASS ljpeg_end (struct jhead *jh)
   free (jh->row);
 }
 
-int CLASS ljpeg_diff (ushort *huff)
+inline int CLASS ljpeg_diff (ushort *huff)
 {
   int len, diff;
 
@@ -867,7 +868,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
     }
     getbits(-1);
   }
-  FORC3 row[c] = jh->row + jh->wide*jh->clrs*((jrow+c) & 1);
+  FORC3 row[c] = (jh->row + ((jrow & 1) + 1) * (jh->wide*jh->clrs*((jrow+c) & 1)));
   for (col=0; col < jh->wide; col++)
     FORC(jh->clrs) {
       diff = ljpeg_diff (jh->huff[c]);
@@ -875,8 +876,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 		    pred = spred;
       else if (col) pred = row[0][-jh->clrs];
       else	    pred = (jh->vpred[c] += diff) - diff;
-      if (jrow && col) switch (jh->psv) {
-	case 1:	break;
+      if (jh->psv != 1 && jrow && col) switch (jh->psv) {
 	case 2: pred = row[1][0];					break;
 	case 3: pred = row[1][-jh->clrs];				break;
 	case 4: pred = pred +   row[1][0] - row[1][-jh->clrs];		break;
@@ -885,7 +885,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 	case 7: pred = (pred + row[1][0]) >> 1;				break;
 	default: pred = 0;
       }
-      if ((**row = pred + diff) >> jh->bits) derror();
+      if (UNLIKELY((**row = pred + diff) >> jh->bits)) derror();
       if (c <= jh->sraw) spred = **row;
       row[0]++; row[1]++;
     }
@@ -894,22 +894,39 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 
 void CLASS lossless_jpeg_load_raw()
 {
-  int jwide, jrow, jcol, val, jidx, i, j, row=0, col=0;
   struct jhead jh;
-  ushort *rp;
 
   if (!ljpeg_start (&jh, 0)) return;
-  jwide = jh.wide * jh.clrs;
+  int jwide = jh.wide * jh.clrs;
+  ushort *rp[2];
+  rp[0] = ljpeg_row (0, &jh);
 
-  for (jrow=0; jrow < jh.high; jrow++) {
-    rp = ljpeg_row (jrow, &jh);
+  for (int jrow=0; jrow < jh.high; jrow++) {
+#ifdef _OPENMP
+#pragma omp parallel sections
+#endif
+{
+#ifdef _OPENMP
+    #pragma omp section
+#endif
+    {
+        if(jrow < jh.high - 1)
+            rp[(jrow + 1)&1] = ljpeg_row (jrow + 1, &jh);
+    }
+#ifdef _OPENMP
+     #pragma omp section
+#endif
+    {
+  int row=0, col=0;
+
     if (load_flags & 1)
       row = jrow & 1 ? height-1-jrow/2 : jrow/2;
-    for (jcol=0; jcol < jwide; jcol++) {
-      val = curve[*rp++];
+    for (int jcol=0; jcol < jwide; jcol++) {
+      int val = curve[*rp[jrow&1]++];
       if (cr2_slice[0]) {
-	jidx = jrow*jwide + jcol;
-	i = jidx / (cr2_slice[1]*raw_height);
+	int jidx = jrow*jwide + jcol;
+	int i = jidx / (cr2_slice[1]*raw_height);
+	int j;
 	if ((j = i >= cr2_slice[0]))
 		 i  = cr2_slice[0];
 	jidx -= i * (cr2_slice[1]*raw_height);
@@ -922,6 +939,8 @@ void CLASS lossless_jpeg_load_raw()
       if (++col >= raw_width)
 	col = (row++,0);
     }
+    }
+}
   }
   ljpeg_end (&jh);
 }
@@ -9297,13 +9316,15 @@ konica_400z:
       width -= 6;
   } else if (!strcmp(make,"Sony") && raw_width == 7392) {
     width -= 30;
-  } else if (!strcmp(make,"Sony") && raw_width == 8000) {
-    width -= 32;
-    if (!strncmp(model,"DSC",3)) {
-      tiff_bps = 14;
-      load_raw = &CLASS unpacked_load_raw;
-      black = 512;
-    }
+// this was introduced with update to dcraw 9.27
+// but led to broken decode for compressed files from Sony DSC-RX1RM2
+//  } else if (!strcmp(make,"Sony") && raw_width == 8000) {
+//    width -= 32;
+//    if (!strncmp(model,"DSC",3)) {
+//      tiff_bps = 14;
+//      load_raw = &CLASS unpacked_load_raw;
+//      black = 512;
+//    }
   } else if (!strcmp(model,"DSLR-A100")) {
     if (width == 3880) {
       height--;

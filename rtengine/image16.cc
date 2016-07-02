@@ -19,9 +19,31 @@
 #include "image16.h"
 #include "imagefloat.h"
 #include "image8.h"
-#include <cstring>
 #include <cstdio>
 #include "rtengine.h"
+
+namespace
+{
+
+void getScanline8 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned char* buffer)
+{
+    for (int i = 0, ix = 0; i < width; i++) {
+        buffer[ix++] = red[i] >> 8;
+        buffer[ix++] = green[i] >> 8;
+        buffer[ix++] = blue[i] >> 8;
+    }
+}
+
+void getScanline16 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned short* buffer)
+{
+    for (int i = 0, ix = 0; i < width; i++) {
+        buffer[ix++] = red[i];
+        buffer[ix++] = green[i];
+        buffer[ix++] = blue[i];
+    }
+}
+
+}
 
 using namespace rtengine;
 
@@ -41,27 +63,14 @@ Image16::~Image16 ()
 void Image16::getScanline (int row, unsigned char* buffer, int bps)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
     if (bps == 16) {
-        int ix = 0;
-        unsigned short* sbuffer = (unsigned short*) buffer;
-
-        for (int i = 0; i < width; i++) {
-            sbuffer[ix++] = r(row, i);
-            sbuffer[ix++] = g(row, i);
-            sbuffer[ix++] = b(row, i);
-        }
+        getScanline16 (r(row), g(row), b(row), width, (unsigned short*)buffer);
     } else if (bps == 8) {
-        int ix = 0;
-
-        for (int i = 0; i < width; i++) {
-            buffer[ix++] = r(row, i) >> 8;
-            buffer[ix++] = g(row, i) >> 8;
-            buffer[ix++] = b(row, i) >> 8;
-        }
+        getScanline8 (r(row), g(row), b(row), width, buffer);
     }
 }
 
@@ -72,42 +81,42 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
 void Image16::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
-    // For optimization purpose, we're assuming that this class never have to provide min/max bound
+    // For optimization purpose, we're assuming that this class never has to provide min/max bounds
     assert(!minValue);
 
     switch (sampleFormat) {
-    case (IIOSF_UNSIGNED_CHAR): {
-        int ix = 0;
+        case (IIOSF_UNSIGNED_CHAR): {
+            int ix = 0;
 
-        for (int i = 0; i < width; i++) {
-            r(row, i) = (unsigned short)(buffer[ix++]) << 8;
-            g(row, i) = (unsigned short)(buffer[ix++]) << 8;
-            b(row, i) = (unsigned short)(buffer[ix++]) << 8;
+            for (int i = 0; i < width; i++) {
+                r(row, i) = (unsigned short)(buffer[ix++]) << 8;
+                g(row, i) = (unsigned short)(buffer[ix++]) << 8;
+                b(row, i) = (unsigned short)(buffer[ix++]) << 8;
+            }
+
+            break;
         }
 
-        break;
-    }
+        case (IIOSF_UNSIGNED_SHORT): {
+            unsigned short* sbuffer = (unsigned short*) buffer;
+            int ix = 0;
 
-    case (IIOSF_UNSIGNED_SHORT): {
-        unsigned short* sbuffer = (unsigned short*) buffer;
-        int ix = 0;
+            for (int i = 0; i < width; i++) {
+                r(row, i) = sbuffer[ix++];
+                g(row, i) = sbuffer[ix++];
+                b(row, i) = sbuffer[ix++];
+            }
 
-        for (int i = 0; i < width; i++) {
-            r(row, i) = sbuffer[ix++];
-            g(row, i) = sbuffer[ix++];
-            b(row, i) = sbuffer[ix++];
+            break;
         }
 
-        break;
-    }
-
-    default:
-        // Other type are ignored, but could be implemented if necessary
-        break;
+        default:
+            // Other types are ignored, but could be implemented if necessary
+            break;
     }
 
     /*

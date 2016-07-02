@@ -33,7 +33,7 @@
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
 #include "rtimage.h"
-
+#include <sys/time.h>
 using namespace std;
 using namespace rtengine;
 
@@ -363,6 +363,10 @@ bool BatchQueue::loadBatchQueue ()
 
 Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
 {
+    timeval tv;
+    gettimeofday(&tv, 0);
+    char mseconds[4];
+    sprintf(mseconds, "%d", tv.tv_usec / 1000);
     time_t rawtime;
     struct tm *timeinfo;
     char stringTimestamp [80];
@@ -374,6 +378,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
     g_mkdir_with_parents (savedParamPath.c_str (), 0755);
     savedParamPath += Glib::path_get_basename (filename);
     savedParamPath += stringTimestamp;
+    savedParamPath += mseconds;
     savedParamPath += paramFileExtension;
     return savedParamPath;
 }

@@ -102,7 +102,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ImProcFunctions ipf (&params, true);
 
     PreviewProps pp (0, 0, fw, fh, 1);
-    imgsrc->preprocess( params.raw, params.lensProf, params.coarse);
+    imgsrc->preprocess( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
     if (params.toneCurve.autoexp) {// this enabled HLRecovery
         LUTu histRedRaw(256), histGreenRaw(256), histBlueRaw(256);
@@ -823,11 +823,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cl2Toningcurve (65536, 0);
         CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, 1);
     }
+
     LabImage* labView = new LabImage (fw, fh);
 
     if(params.blackwhite.enabled) {
         CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
     }
+
     double rrm, ggm, bbm;
     float autor, autog, autob;
     float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
@@ -910,8 +912,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 #endif
 
             for (int i = 0; i < fh; i++)
-                for (int j = 0; j < fw; j++)
-                {
+                for (int j = 0; j < fw; j++) {
                     hist16thr[(int)((labView->L[i][j]))]++;
                 }
 
