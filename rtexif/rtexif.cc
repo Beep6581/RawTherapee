@@ -2792,6 +2792,9 @@ TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored)
 
 std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 {
+    Glib::ustring rtVersion("RawTherapee ");
+    rtVersion += VERSION;
+
     std::vector<Tag*> defTags;
 
     defTags.reserve (12);
@@ -2800,7 +2803,7 @@ std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "XResolution"), 300, RATIONAL));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "YResolution"), 300, RATIONAL));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "ResolutionUnit"), 2, SHORT));
-    defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Software"), "RawTherapee"));
+    defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Software"), rtVersion.c_str()));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Orientation"), 1, SHORT));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "SamplesPerPixel"), 3, SHORT));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "BitsPerSample"), 8, SHORT));
