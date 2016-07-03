@@ -2864,7 +2864,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     return size + 6;
 }
 
-int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer)
+int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
 {
 
 // write tiff header
@@ -2874,13 +2874,6 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     if (root) {
         order = root->getOrder ();
     }
-
-    sset2 ((unsigned short)order, buffer + offs, order);
-    offs += 2;
-    sset2 (42, buffer + offs, order);
-    offs += 2;
-    sset4 (8, buffer + offs, order);
-    offs += 4;
 
     TagDirectory* cl;
 
@@ -2956,6 +2949,15 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     }
 
     cl->sort ();
+    bufferSize = cl->calculateSize() + 8;
+    buffer = new unsigned char[bufferSize]; // this has to be deleted in caller
+    sset2 ((unsigned short)order, buffer + offs, order);
+    offs += 2;
+    sset2 (42, buffer + offs, order);
+    offs += 2;
+    sset4 (8, buffer + offs, order);
+    offs += 4;
+
     int endOffs = cl->write (8, buffer);
 
 //  cl->printAll();

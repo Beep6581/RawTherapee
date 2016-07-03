@@ -1227,22 +1227,17 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
         // buffer for the exif and iptc
-        int bufferSize = 175535;   //TODO: Is it really 165535... or 65535 ?
-
-        if(profileData) {
-            bufferSize += profileLength;
-        }
-
-        unsigned char* buffer = new unsigned char[bufferSize];
-        unsigned char* iptcdata = NULL;
+        unsigned int bufferSize;
+        unsigned char* buffer = nullptr; // buffer will be allocated in createTIFFHeader
+        unsigned char* iptcdata = nullptr;
         unsigned int iptclen = 0;
 
         if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
             iptc_data_free_buf (iptc, iptcdata);
-            iptcdata = NULL;
+            iptcdata = nullptr;
         }
 
-        int size = rtexif::ExifManager::createTIFFHeader (exifRoot, exifChange, width, height, bps, profileData, profileLength, (char*)iptcdata, iptclen, buffer);
+        int size = rtexif::ExifManager::createTIFFHeader (exifRoot, exifChange, width, height, bps, profileData, profileLength, (char*)iptcdata, iptclen, buffer, bufferSize);
 
         if (iptcdata) {
             iptc_data_free_buf (iptc, iptcdata);
@@ -1250,7 +1245,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // The maximum lenght is strangely not the same than for the JPEG file...
         // Which maximum length is the good one ?
-        if (size > 0 && size < bufferSize) {
+        if (size > 0 && size <= bufferSize) {
             fwrite (buffer, size, 1, file);
         }
 
@@ -1277,7 +1272,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
             }
         }
 
-        delete [] buffer;
+        if(buffer) {
+            delete [] buffer;
+        }
 
         if (ferror(file)) {
             writeOk = false;
