@@ -264,7 +264,9 @@ int main(int argc, char **argv)
     if (argc > 1 || options.rtSettings.verbose) {
         // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
         std::cout << "RawTherapee, version " << VERSION << std::endl;
+#ifdef WIN32
         std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+#endif
 
         if (argc > 1) {
             int ret = processLineParams( argc, argv);
