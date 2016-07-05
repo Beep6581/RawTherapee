@@ -1082,7 +1082,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     cinfo.comp_info[2].h_samp_factor = cinfo.comp_info[2].v_samp_factor = 1;
 
     if (subSamp == 1) {
-        // Best compression, default of the JPEG library:  2x2, 1x1, 1x1 (4:1:1)
+        // Best compression, default of the JPEG library:  2x2, 1x1, 1x1 (4:2:0)
         cinfo.comp_info[0].h_samp_factor = cinfo.comp_info[0].v_samp_factor = 2;
     } else if (subSamp == 2) {
         // Widely used normal ratio 2x1, 1x1, 1x1 (4:2:2)
