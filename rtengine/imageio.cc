@@ -1285,11 +1285,13 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
         const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
 #ifdef WIN32
-        wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-        TIFF* out = TIFFOpenW (wfilename, mode);
-        g_free (wfilename);
+        FILE *file = g_fopen_withBinaryAndLock (fname);
+        int fileno = _fileno(file);
+        int osfileno = _get_osfhandle(fileno);
+        TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode);
 #else
         TIFF* out = TIFFOpen(fname.c_str(), mode);
+        int fileno = TIFFFileno (out);
 #endif
 
         if (!out) {
@@ -1314,7 +1316,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
                     // TIFFOpen writes out the header and sets file pointer at position 8
 
                     exif->write (8, buffer);
-                    write (TIFFFileno (out), buffer + 8, exif_size);
+
+                    write (fileno, buffer + 8, exif_size);
+
                     delete [] buffer;
                     // let libtiff know that scanlines or any other following stuff should go
                     // at a different offset:
@@ -1352,7 +1356,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
         TIFFSetField (out, TIFFTAG_SAMPLESPERPIXEL, 3);
-        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, height);
+        TIFFSetField (out, TIFFTAG_ROWSPERSTRIP, height);
         TIFFSetField (out, TIFFTAG_BITSPERSAMPLE, bps);
         TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
@@ -1386,6 +1390,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
         TIFFClose (out);
+#ifdef WIN32
+        fclose (file);
+#endif
     }
 
     delete [] linebuffer;
