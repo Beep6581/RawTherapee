@@ -176,7 +176,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     int err = 1;
 
     // see if it is something we support
-    if ( ri->is_supportedThumb() ) {
+    if ( ri->is_supportedThumb() && ri->get_thumbOffset() < ri->get_file()->size ) {
         const char* data((const char*)fdata(ri->get_thumbOffset(), ri->get_file()));
 
         if ( (unsigned char)data[1] == 0xd8 ) {
