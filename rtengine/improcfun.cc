@@ -611,8 +611,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         Jpro = (CAMBrightCurveJ[(float)(Jpro * 327.68)]) / 327.68; //ligthness CIECAM02 + contrast
                         double sres;
                         double Sp = spro / 100.0;
-                        double parsat = 1.5;
-                        parsat = 1.5; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+                        double parsat = 1.5; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
 
                         if(schr == -100.0) {
                             schr = -99.8;
@@ -4964,7 +4963,6 @@ void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go
         if(s > s_1) ksat=SQR((1.f/(s_1-1.f))*s - (1.f/(s_1-1.f)));
     }
     */
-    ksat = 1.f;
     float kl = 1.f;
     float rlo = 1.f; //0.4  0.5
     float rlm = 1.5f; //1.1
@@ -5235,7 +5233,6 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
             if(s > s_1) ksat=SQR((1.f/(s_1-1.f))*s - (1.f/(s_1-1.f)));
         }
         */
-    ksat = 1.f;
     float kl = 1.f;
     float rlo = 1.f;
     float rlh = 2.2f;
@@ -5303,7 +5300,6 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
 
     //high tones
     float kh = 1.f;
-    kh = 1.f;
     float aa0, bb0;
     //fixed value of reducac ==0.4;
     secondeg_begin (reducac, iphigh, aa0, bb0);

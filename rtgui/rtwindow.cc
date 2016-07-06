@@ -670,7 +670,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
             Gtk::Widget *w = mainNB->get_nth_page(page);
             bool optionsWritten = false;
 
-            for (std::map<Glib::ustring, EditorPanel*>::iterator i = epanels.begin(); i != epanels.end(); i++) {
+            for (std::map<Glib::ustring, EditorPanel*>::iterator i = epanels.begin(); i != epanels.end(); ++i) {
                 if (i->second == w) {
                     i->second->writeOptions();
                     optionsWritten = true;

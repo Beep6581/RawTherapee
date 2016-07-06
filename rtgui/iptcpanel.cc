@@ -402,7 +402,7 @@ void IPTCPanel::addKeyWord ()
     keyword->prepend_text (keyword->get_entry()->get_text());
     std::vector<Glib::ustring> items;
 
-    for (Gtk::TreeModel::iterator i = keyword->get_model()->children().begin(); i != keyword->get_model()->children().end(); i++) {
+    for (Gtk::TreeModel::iterator i = keyword->get_model()->children().begin(); i != keyword->get_model()->children().end(); ++i) {
         Glib::ustring s;
         i->get_value (0, s);
         items.push_back (s);
@@ -454,7 +454,7 @@ void IPTCPanel::addSuppCategory ()
     suppCategory->prepend_text (suppCategory->get_entry()->get_text());
     std::vector<Glib::ustring> items;
 
-    for (Gtk::TreeModel::iterator i = suppCategory->get_model()->children().begin(); i != suppCategory->get_model()->children().end(); i++) {
+    for (Gtk::TreeModel::iterator i = suppCategory->get_model()->children().begin(); i != suppCategory->get_model()->children().end(); ++i) {
         Glib::ustring s;
         i->get_value (0, s);
         items.push_back (s);
@@ -557,7 +557,7 @@ void IPTCPanel::applyChangeList ()
     keyword->get_entry()->set_text ("");
     suppCategory->get_entry()->set_text ("");
 
-    for (rtengine::procparams::IPTCPairs::iterator i = changeList.begin(); i != changeList.end(); i++) {
+    for (rtengine::procparams::IPTCPairs::iterator i = changeList.begin(); i != changeList.end(); ++i) {
         if (i->first == "Caption" && !i->second.empty()) {
             captionText->set_text (i->second.at(0));
         } else if (i->first == "CaptionWriter" && !i->second.empty()) {

@@ -101,7 +101,7 @@ protected:
     const TagAttrib*  attribs;  // descriptor table to decode the tags
     ByteOrder         order;    // byte order
     TagDirectory*     parent;   // parent directory (NULL if root)
-    static Glib::ustring getDumpKey (int tagID, const Glib::ustring tagName);
+    static Glib::ustring getDumpKey (int tagID, const Glib::ustring &tagName);
 
 public:
     TagDirectory ();
@@ -495,7 +495,7 @@ protected:
         * Get the lens info (min/man focal, min/max aperture) and compare them to the possible choice
         */
         if (lensInfoArray) {
-            for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); r++  ) {
+            for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); ++r  ) {
                 if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
                     continue;
                 }
@@ -532,7 +532,7 @@ protected:
         std::ostringstream candidates;
         double deltaMin = 1000.;
 
-        for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); r++  ) {
+        for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); ++r  ) {
             double lensAperture, dif;
 
             if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {

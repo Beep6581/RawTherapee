@@ -623,7 +623,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
         std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
 
         while (i != fd.end() && *entry < * ((FileBrowserEntry*)*i)) {
-            i++;
+            ++i;
         }
 
         fd.insert (i, entry);
@@ -640,7 +640,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
 {
     MYWRITERLOCK(l, entryRW);
 
-    for (std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin(); i != fd.end(); i++)
+    for (std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin(); i != fd.end(); ++i)
         if ((*i)->filename == fname) {
             ThumbBrowserEntryBase* entry = *i;
             entry->selected = false;

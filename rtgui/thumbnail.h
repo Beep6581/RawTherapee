@@ -146,7 +146,7 @@ public:
     {
         return fname;
     }
-    void            setFileName (const Glib::ustring fn);
+    void            setFileName (const Glib::ustring &fn);
 
     bool            isSupported ();
 

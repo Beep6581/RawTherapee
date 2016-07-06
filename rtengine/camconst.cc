@@ -428,7 +428,7 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
         std::map<int, struct camera_const_levels>::iterator best_it = mLevels[bw].begin();
 
         if (iso > 0) {
-            for (it = mLevels[bw].begin(); it != mLevels[bw].end(); it++) {
+            for (it = mLevels[bw].begin(); it != mLevels[bw].end(); ++it) {
                 if (abs(it->first - iso) <= abs(best_it->first - iso)) {
                     best_it = it;
                 } else {
@@ -487,7 +487,7 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
         if (it == mApertureScaling.end()) {
             std::map<float, float>::reverse_iterator it;
 
-            for (it = mApertureScaling.rbegin(); it != mApertureScaling.rend(); it++) {
+            for (it = mApertureScaling.rbegin(); it != mApertureScaling.rend(); ++it) {
                 if (it->first > fnumber) {
                     scaling = it->second;
                 } else {

@@ -336,7 +336,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
     return true;
 }
 
-Glib::ustring TagDirectory::getDumpKey (int tagID, const Glib::ustring tagName)
+Glib::ustring TagDirectory::getDumpKey (int tagID, const Glib::ustring &tagName)
 {
     Glib::ustring key;
 
@@ -2841,7 +2841,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
         cl = new TagDirectory (NULL, ifdAttribs, INTEL);
     }
 
-    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); i++) {
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
         cl->applyChange (i->first, i->second);
     }
 
@@ -2927,7 +2927,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     }
 
 // apply list of changes
-    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); i++) {
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
         cl->applyChange (i->first, i->second);
     }
 

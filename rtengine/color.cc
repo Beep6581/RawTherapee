@@ -1361,12 +1361,10 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
     float bal, balH, cal, calH, calm;
     bal = balH = balance;
     cal = calH = calm = 1.f - chromat;
-    float med = (iphigh + iplow) / 2.f;
-    float medH = (iphigh + iplow) / 2.f;
+    float med = 1.f;
+    float medH = 0.f;
     float medL = (iphigh + iplow) / 2.f;
 
-    med = 1.f;
-    medH = 0.f; //new algo for 2 colors
     float calan;
     calan = chromat;
 
