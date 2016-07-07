@@ -550,7 +550,8 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
         return false;
     }
 
-    size_t bufsize = 4096;
+    size_t bufsize = 16384;
+    size_t increment = 2 * bufsize;
     size_t datasize = 0, ret;
     char *buf = (char *)malloc(bufsize);
 
@@ -558,8 +559,9 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
         datasize += ret;
 
         if (datasize == bufsize) {
-            bufsize += 4096;
+            bufsize += increment;
             buf = (char *)realloc(buf, bufsize);
+            increment *= 2;
         }
     }
 
@@ -571,7 +573,11 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
     }
 
     fclose(stream);
-    buf = (char *)realloc(buf, datasize + 1);
+
+    if(datasize == bufsize) {
+        buf = (char *)realloc(buf, datasize + 1);
+    }
+
     buf[datasize] = '\0';
 
     // remove comments
@@ -637,18 +643,17 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 
             Glib::ustring make_model(ji->valuestring);
             make_model = make_model.uppercase();
-            std::map<Glib::ustring, CameraConst *>::iterator existingccIter = mCameraConstants.find(make_model);
 
-            if (existingccIter == mCameraConstants.end()) {
-                // add the new CamConst to the map
-                mCameraConstants.insert(std::pair<Glib::ustring, CameraConst *>(make_model, cc));
+            std::pair<std::map<Glib::ustring, CameraConst *>::iterator, bool> ret;
+            ret = mCameraConstants.insert(std::pair<Glib::ustring, CameraConst *>(make_model, cc));
 
+            if(ret.second) { // entry inserted into map
                 if (settings->verbose) {
                     printf("Add camera constants for \"%s\"\n", make_model.c_str());
                 }
             } else {
                 // The CameraConst already exist for this camera make/model -> we merge the values
-                CameraConst *existingcc = existingccIter->second;
+                CameraConst *existingcc = ret.first->second;
 
                 // updating the dcraw matrix
                 existingcc->update_dcrawMatrix(cc->get_dcrawMatrix());
