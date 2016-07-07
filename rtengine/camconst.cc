@@ -644,8 +644,7 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
             Glib::ustring make_model(ji->valuestring);
             make_model = make_model.uppercase();
 
-            std::pair<std::map<Glib::ustring, CameraConst *>::iterator, bool> ret;
-            ret = mCameraConstants.insert(std::pair<Glib::ustring, CameraConst *>(make_model, cc));
+            const auto ret = mCameraConstants.emplace(make_model, cc);
 
             if(ret.second) { // entry inserted into map
                 if (settings->verbose) {
