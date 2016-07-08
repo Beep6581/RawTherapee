@@ -227,7 +227,7 @@ void SHMap::updateL (float** L, double radius, bool hq, int skip)
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         //experimental dirpyr shmap
         float thresh = (100.f * radius); //1000;
-        int levrad = 16;
+        int levrad; // = 16;
         levrad = 2; //for retinex - otherwise levrad = 16
         // set up range function
         // calculate size of Lookup table. That's possible because from a value k for all i>=k rangefn[i] will be exp(-10)

@@ -641,10 +641,10 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     itrt = curve.rightTangent.begin();
 
                     for (int i = 0; i < closest_point; i++) {
-                        itx++;
-                        ity++;
-                        itlt++;
-                        itrt++;
+                        ++itx;
+                        ++ity;
+                        ++itlt;
+                        ++itrt;
                     }
 
                     curve.x.insert (itx, 0);
@@ -1327,10 +1327,10 @@ bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
         itrt = curve.rightTangent.begin();
 
         for (int i = 0; i < closest_point; i++) {
-            itx++;
-            ity++;
-            itlt++;
-            itrt++;
+            ++itx;
+            ++ity;
+            ++itlt;
+            ++itrt;
         }
 
         curve.x.insert (itx, 0);

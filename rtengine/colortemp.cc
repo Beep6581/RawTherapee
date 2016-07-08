@@ -114,9 +114,8 @@ void ColorTemp::clip (double &temp, double &green, double &equal)
     }
 }
 
-ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e)
+ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e), method("Custom")
 {
-    method = "Custom";
     mul2temp (mulr, mulg, mulb, equal, temp, green);
 }
 

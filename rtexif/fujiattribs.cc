@@ -68,6 +68,7 @@ public:
         choices[0x304]  = "Living Room Warm White Fluorescent";
         choices[0x400]  = "Incandescent";
         choices[0x500]  = "Flash";
+        choices[0x600]  = "Underwater";
         choices[0xf00]  = "Custom";
         choices[0xf01]  = "Custom2";
         choices[0xf02]  = "Custom3";
@@ -89,6 +90,11 @@ public:
         choices[0x180]  = "Medium Low";
         choices[0x200]  = "Low";
         choices[0x300]  = "None (B&W)";
+        choices[0x301]  = "B&W Red Filter";
+        choices[0x302]  = "B&W Yellow Filter";
+        choices[0x303]  = "B&W Green Filter";
+        choices[0x310]  = "B&W Sepia";
+        choices[0x400]  = "Low 2";
         choices[0x8000] = "Film Simulation";
     }
 };
@@ -126,8 +132,9 @@ class FANoiseReductionInterpreter : public ChoiceInterpreter
 public:
     FANoiseReductionInterpreter ()
     {
-        choices[0x40] = "Low";
-        choices[0x80] = "Normal";
+        choices[0x40]  = "Low";
+        choices[0x80]  = "Normal";
+        choices[0x100] = "n/a";
     }
 };
 FANoiseReductionInterpreter faNoiseReductionInterpreter;
@@ -135,6 +142,7 @@ FANoiseReductionInterpreter faNoiseReductionInterpreter;
 class FAFlashInterpreter : public ChoiceInterpreter
 {
 public:
+    // FujiFlashMode
     FAFlashInterpreter ()
     {
         choices[0]  = "Auto";
@@ -185,14 +193,17 @@ class FAFilmModeInterpreter : public ChoiceInterpreter
 public:
     FAFilmModeInterpreter ()
     {
-        choices[0]      = "F0/Standard";
-        choices[0x100]  = "F1/Studio Portrait";
-        choices[0x110]  = "F1a/Studio Portrait Enhanced Saturation";
-        choices[0x120]  = "F1b/Studio Portrait Smooth Skin Tone";
-        choices[0x130]  = "F1c/Studio Portrait Increased Sharpness ";
-        choices[0x200]  = "F2/Fujichrome";
-        choices[0x300]  = "F3/Studio Portrait Ex";
-        choices[0x400]  = "F4/Velvia";
+        choices[0x0]   = "F0/Standard (Provia)";
+        choices[0x100] = "F1/Studio Portrait";
+        choices[0x110] = "F1a/Studio Portrait Enhanced Saturation";
+        choices[0x120] = "F1b/Studio Portrait Smooth Skin Tone (Astia)";
+        choices[0x130] = "F1c/Studio Portrait Increased Sharpness";
+        choices[0x200] = "F2/Fujichrome (Velvia)";
+        choices[0x300] = "F3/Studio Portrait Ex";
+        choices[0x400] = "F4/Velvia";
+        choices[0x500] = "Pro Neg. Std";
+        choices[0x501] = "Pro Neg. Hi";
+        choices[0x600] = "Classic Chrome";
     }
 };
 FAFilmModeInterpreter faFilmModeInterpreter;
@@ -200,10 +211,11 @@ FAFilmModeInterpreter faFilmModeInterpreter;
 class FADRSettingInterpreter : public ChoiceInterpreter
 {
 public:
+    // DynamicRangeSetting
     FADRSettingInterpreter ()
     {
-        choices[0]      = "Auto (100-400%)";
-        choices[0x1]    = "RAW";
+        choices[0x0]    = "Auto (100-400%)";
+        choices[0x1]    = "Manual";
         choices[0x100]  = "Standard (100%)";
         choices[0x200]  = "Wide1 (230%)";
         choices[0x201]  = "Wide2 (400%)";
@@ -217,25 +229,35 @@ class FAPictureModeInterpreter : public ChoiceInterpreter
 public:
     FAPictureModeInterpreter ()
     {
-        choices[0]     = "Auto";
-        choices[1]     = "Portrait";
-        choices[2]     = "Landscape";
-        choices[3]     = "Macro";
-        choices[4]     = "Sports";
-        choices[5]     = "Night Scene";
-        choices[6]     = "Program AE";
-        choices[7]     = "Natural Light";
-        choices[8]     = "Anti-blur";
-        choices[9]     = "Beach & Snow";
-        choices[10]    = "Sunset";
-        choices[11]    = "Museum";
-        choices[12]    = "Party";
-        choices[13]    = "Flower";
-        choices[14]    = "Text";
-        choices[15]    = "Natural Light & Flash";
-        choices[16]    = "Beach";
-        choices[17]    = "Fireworks";
-        choices[18]    = "Underwater";
+        choices[0x0]   = "Auto";
+        choices[0x1]   = "Portrait";
+        choices[0x2]   = "Landscape";
+        choices[0x3]   = "Macro";
+        choices[0x4]   = "Sports";
+        choices[0x5]   = "Night Scene";
+        choices[0x6]   = "Program AE";
+        choices[0x7]   = "Natural Light";
+        choices[0x8]   = "Anti-blur";
+        choices[0x9]   = "Beach & Snow";
+        choices[0xa]   = "Sunset";
+        choices[0xb]   = "Museum";
+        choices[0xc]   = "Party";
+        choices[0xd]   = "Flower";
+        choices[0xe]   = "Text";
+        choices[0xf]   = "Natural Light & Flash";
+        choices[0x10]  = "Beach";
+        choices[0x11]  = "Snow";
+        choices[0x12]  = "Fireworks";
+        choices[0x13]  = "Underwater";
+        choices[0x14]  = "Portrait with Skin Correction";
+        choices[0x16]  = "Panorama";
+        choices[0x17]  = "Night (tripod)";
+        choices[0x18]  = "Pro Low-light";
+        choices[0x19]  = "Pro Focus";
+        choices[0x1a]  = "Portrait 2";
+        choices[0x1b]  = "Dog Face Detection";
+        choices[0x1c]  = "Cat Face Detection";
+        choices[0x40]  = "Advanced Filter";
         choices[0x100] = "Aperture-priority AE";
         choices[0x200] = "Shutter speed priority AE";
         choices[0x300] = "Manual";

@@ -252,7 +252,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
 
 int ProfileStore::findFolderId(const Glib::ustring &path)
 {
-    for (std::vector<Glib::ustring>::iterator i = folders.begin(); i != folders.end(); i++) {
+    for (std::vector<Glib::ustring>::iterator i = folders.begin(); i != folders.end(); ++i) {
         if (*i == path) {
             return i - folders.begin();
         }
