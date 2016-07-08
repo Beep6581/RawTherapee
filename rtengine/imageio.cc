@@ -136,7 +136,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
 
     iptc = iptc_data_new ();
 
-    for (rtengine::procparams::IPTCPairs::const_iterator i = iptcc.begin(); i != iptcc.end(); i++) {
+    for (rtengine::procparams::IPTCPairs::const_iterator i = iptcc.begin(); i != iptcc.end(); ++i) {
         if (i->first == "Keywords" && !(i->second.empty())) {
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();

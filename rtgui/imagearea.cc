@@ -213,7 +213,7 @@ bool ImageArea::on_expose_event(GdkEventExpose* event)
         cr->fill ();
     }
 
-    for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); i++) {
+    for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); ++i) {
         (*i)->expose (cr);
     }
 

@@ -2765,13 +2765,13 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     // Exif changes are added to the existing ones
     if (exif)
-        for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); i++) {
+        for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); ++i) {
             toEdit.exif[i->first] = i->second;
         }
 
     // IPTC changes are added to the existing ones
     if (iptc)
-        for (procparams::IPTCPairs::const_iterator i = mods.iptc.begin(); i != mods.iptc.end(); i++) {
+        for (procparams::IPTCPairs::const_iterator i = mods.iptc.begin(); i != mods.iptc.end(); ++i) {
             toEdit.iptc[i->first] = i->second;
         }
 }

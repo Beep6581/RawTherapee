@@ -227,7 +227,7 @@ bool EditWindow::on_delete_event(GdkEventAny* event)
     // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
     bool isProcessing = false;
 
-    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end() && !isProcessing; iter++ ) {
+    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end() && !isProcessing; ++iter ) {
         if (epanels[*iter]->getIsProcessing()) {
             isProcessing = true;
         }
@@ -237,7 +237,7 @@ bool EditWindow::on_delete_event(GdkEventAny* event)
         return true;
     }
 
-    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end(); iter++ ) {
+    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end(); ++iter ) {
         mainNB->remove_page (*epanels[*iter]);
     }
 

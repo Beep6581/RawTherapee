@@ -574,15 +574,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         realtile = 12;
     }
 
-    int tilesize;
-    int overlap;
-    tilesize = 1024;
-    overlap = 128;
-    //tilesize=128*params->wavelet.tiles;
-    tilesize = 128 * realtile;
-    //overlap=(int) tilesize*params->wavelet.overl;
-    overlap = (int) tilesize * 0.125f;
-    //  printf("overl=%d\n",overlap);
+    int tilesize = 128 * realtile;
+    int overlap = (int) tilesize * 0.125f;
     int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 
     if(params->wavelet.Tilesmethod == "full") {
@@ -1828,8 +1821,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     float maxkoeLi[12];
 
     float *koeLibuffer = NULL;
-    bool lipschitz = false;
-    lipschitz = true;
+    bool lipschitz = true;
 
     if(lipschitz == true) {
         for(int y = 0; y < 12; y++) {
@@ -3262,8 +3254,6 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                     int ii = i / W_L;
                     int jj = i - ii * W_L;
                     float LL100 = labco->L[ii * 2][jj * 2] / 327.68f;
-                    k1 = 600.f;
-                    k2 = 300.f;
                     k1 = 0.3f * (waOpacityCurveW[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
                     k2 = k1 * 2.f;
 
@@ -3525,8 +3515,6 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
                     int ii = i / W_ab;
                     int jj = i - ii * W_ab;
                     float LL100 = labco->L[ii * 2][jj * 2] / 327.68f;
-                    k1 = 600.f;
-                    k2 = 300.f;
                     k1 = 0.3f * (waOpacityCurveW[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
                     k2 = k1 * 2.f;
 

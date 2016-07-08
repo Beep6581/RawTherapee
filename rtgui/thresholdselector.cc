@@ -272,16 +272,16 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event)
         if (pts.size() >= 4) {
             std::vector<double>::iterator i = pts.begin();
             double x = *i;
-            i++;
+            ++i;
             double y = *i;
-            i++;
+            ++i;
             cr->move_to (hb + hwslider + iw * x + 0.5, (yEnd - yStart)*y + yStart);
 
             for (; i < pts.end(); ) {
                 x = *i;
-                i++;
+                ++i;
                 y = *i;
-                i++;
+                ++i;
                 cr->line_to (hb + hwslider + iw * x + 0.5, (yEnd - yStart)*y + yStart);
             }
         } else {

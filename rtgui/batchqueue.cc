@@ -365,7 +365,7 @@ bool BatchQueue::loadBatchQueue ()
     return !fd.empty ();
 }
 
-Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
+Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filename )
 {
     timeval tv;
     gettimeofday(&tv, 0);

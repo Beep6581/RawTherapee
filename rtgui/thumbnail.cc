@@ -903,7 +903,7 @@ Glib::ustring Thumbnail::getCacheFileName (const Glib::ustring& subdir, const Gl
     return cachemgr->getCacheFileName (subdir, fname, fext, cfs.md5);
 }
 
-void Thumbnail::setFileName (const Glib::ustring fn)
+void Thumbnail::setFileName (const Glib::ustring &fn)
 {
 
     fname = fn;
