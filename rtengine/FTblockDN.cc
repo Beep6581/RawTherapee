@@ -38,9 +38,6 @@
 #include "cplx_wavelet_dec.h"
 #include "median.h"
 
-#define BENCHMARK
-#include "StopWatch.h"
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -99,7 +96,7 @@ float media(float *elements, int N)
 }
 
 void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
-{ BENCHFUN
+{
     int border = 1;
 
     switch (medianType) {
@@ -171,21 +168,6 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                     medianOut[i][j] = medianIn[i][j];
                 }
 
-#ifdef __SSE2__
-                for (; j < width - border - 3; j += 4) {
-                    STVFU(
-                        medianOut[i][j],
-                        median(
-                            LVFU(medianIn[i - 1][j]),
-                            LVFU(medianIn[i][j - 1]),
-                            LVFU(medianIn[i][j]),
-                            LVFU(medianIn[i][j + 1]),
-                            LVFU(medianIn[i + 1][j])
-                        )
-                    );
-                }
-#endif
-
                 for (; j < width - border; ++j) {
                     medianOut[i][j] = median(
                         medianIn[i - 1][j],
@@ -205,25 +187,6 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 for (; j < border; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-
-#ifdef __SSE2__
-                for (; j < width - border - 3; j += 4) {
-                    STVFU(
-                        medianOut[i][j],
-                        median(
-                            LVFU(medianIn[i - 1][j - 1]),
-                            LVFU(medianIn[i - 1][j]),
-                            LVFU(medianIn[i - 1][j + 1]),
-                            LVFU(medianIn[i][j - 1]),
-                            LVFU(medianIn[i][j]),
-                            LVFU(medianIn[i][j + 1]),
-                            LVFU(medianIn[i + 1][j - 1]),
-                            LVFU(medianIn[i + 1][j]),
-                            LVFU(medianIn[i + 1][j + 1])
-                        )
-                    );
-                }
-#endif
 
                 for (; j < width - border; ++j) {
                     medianOut[i][j] = median(
@@ -248,29 +211,6 @@ void ImProcFunctions::Median_Denoise( float **src, float **dst, const int width,
                 for (; j < border; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-
-#ifdef __SSE2__
-                for (; j < width - border - 3; j += 4) {
-                    STVFU(
-                        medianOut[i][j],
-                        median(
-                            LVFU(medianIn[i - 2][j]),
-                            LVFU(medianIn[i - 1][j - 1]),
-                            LVFU(medianIn[i - 1][j]),
-                            LVFU(medianIn[i - 1][j + 1]),
-                            LVFU(medianIn[i][j - 2]),
-                            LVFU(medianIn[i][j - 1]),
-                            LVFU(medianIn[i][j]),
-                            LVFU(medianIn[i][j + 1]),
-                            LVFU(medianIn[i][j + 2]),
-                            LVFU(medianIn[i + 1][j - 1]),
-                            LVFU(medianIn[i + 1][j]),
-                            LVFU(medianIn[i + 1][j + 1]),
-                            LVFU(medianIn[i + 2][j])
-                        )
-                    );
-                }
-#endif
 
                 for (; j < width - border; ++j) {
                     medianOut[i][j] = median(
