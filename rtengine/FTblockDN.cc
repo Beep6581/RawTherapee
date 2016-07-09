@@ -137,7 +137,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
                 for (int j = 0; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-}
+            }
         }
 
 #ifdef _OPENMP
@@ -354,7 +354,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
                 for (int j = 0; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
-}
+            }
         }
 
         BufferIndex ^= 1; // swap buffers
@@ -723,7 +723,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         dsttmp->g(i, j) = 0.f;
                         dsttmp->b(i, j) = 0.f;
                     }
-}
+                }
             }
 
             //now we have tile dimensions, overlaps
@@ -800,7 +800,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                     LbloxArray[i]  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                     fLbloxArray[i] = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                 }
-}
+            }
 
             TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
             //inverse matrix user select
@@ -1193,7 +1193,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         if (!WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb)) {
                                             memoryAllocationFailed = true;
                                         }
-}
+                                    }
                                 }
                             }
 
@@ -1230,7 +1230,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             if (!WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb)) {
                                                 memoryAllocationFailed = true;
                                             }
-}
+                                        }
                                     }
                                 }
 
@@ -1266,7 +1266,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                 if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, nullptr, edge)) {
                                                     memoryAllocationFailed = true;
                                                 }
-}
+                                            }
                                         }
 
                                         if (!memoryAllocationFailed) {
@@ -1280,7 +1280,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                 for (int j = 0; j < width; ++j) {
                                                     (*Lin)[i][j] = labdn->L[i][j];
                                                 }
-}
+                                            }
 
                                             Ldecomp->reconstruct(labdn->L[0]);
                                         }
@@ -1396,7 +1396,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         LbloxArray[i]  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                                         fLbloxArray[i] = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                                     }
-}
+                                }
 
 #ifdef _RT_NESTED_OPENMP
                                 int masterThread = omp_get_thread_num();
@@ -1765,7 +1765,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         dst->g(i, j) = Color::gammatab_srgb[ dst->g(i, j) ];
                         dst->b(i, j) = Color::gammatab_srgb[ dst->b(i, j) ];
                     }
-}
+                }
             }
 
             if (denoiseLuminance) {
@@ -1836,7 +1836,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), source->r(i - 1, j - 1), source->r(i - 1, j + 1), source->r(i + 1, j - 1), source->r(i + 1, j + 1)); //3x3
                             }
-}
+                        }
                     }
                 } else {
                     #pragma omp for
@@ -1867,7 +1867,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                source->r(i, j - 2)
                                            ); // 5x5 soft
                             }
-}
+                        }
                     }
                 }
 #ifdef _OPENMP
@@ -1894,7 +1894,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), source->b(i - 1, j - 1), source->b(i - 1, j + 1), source->b(i + 1, j - 1), source->b(i + 1, j + 1));
                             }
-}
+                        }
                     }
                 } else {
                     #pragma omp for
@@ -1925,7 +1925,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                source->b(i, j - 2)
                                            ); // 5x5 soft
                             }
-}
+                        }
                     }
                 }
 
@@ -1954,7 +1954,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), source->g(i - 1, j - 1), source->g(i - 1, j + 1), source->g(i + 1, j - 1), source->g(i + 1, j + 1));
                             }
-}
+                        }
                     }
                 } else {
                     #pragma omp for
@@ -1985,7 +1985,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                source->g(i, j - 2)
                                            ); // 5x5 soft
                             }
-}
+                        }
                     }
                 }
 
@@ -2090,7 +2090,7 @@ void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float ** Ldetail, fl
 
             }
         }
-}
+    }
 }
 /*
 #undef TS
@@ -2324,7 +2324,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
                                 float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
                                 sfave[coeffloc_L] = mag_L / (mag_L + levelFactor * noisevarlum[coeffloc_L] * xexpf(-mag_L / (9.f * levelFactor * noisevarlum[coeffloc_L])) + eps);
                             }
-}
+                        }
 
 #endif
                         boxblur(sfave, sfaved, blurBuffer, lvl + 2, lvl + 2, Wlvl_L, Hlvl_L); //increase smoothness by locally averaging shrinkage
@@ -2355,7 +2355,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
                                 //use smoothed shrinkage unless local shrinkage is much less
                                 WavCoeffs_L[dir][coeffloc_L] *= (SQR(sfaved[coeffloc_L]) + SQR(sf_L)) / (sfaved[coeffloc_L] + sf_L + eps);
                             }//now luminance coeffs are denoised
-}
+                        }
 
 #endif
                     }
@@ -2367,7 +2367,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
             if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
-}
+        }
 
     }
     return (!memoryAllocationFailed);
@@ -2506,7 +2506,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
             if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
-}
+        }
 
     }
     return (!memoryAllocationFailed);
@@ -2566,7 +2566,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L,
             if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
-}
+        }
     }
     return (!memoryAllocationFailed);
 }
@@ -2620,7 +2620,7 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L
             if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
-}
+        }
     }
     return (!memoryAllocationFailed);
 }

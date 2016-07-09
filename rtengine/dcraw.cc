@@ -131,7 +131,7 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 #define MIN(a,b) rtengine::min(a,static_cast<__typeof__(a)>(b))
 #define MAX(a,b) rtengine::max(a,static_cast<__typeof__(a)>(b))
 #define LIM(x,min,max) rtengine::LIM(x,static_cast<__typeof__(x)>(min),static_cast<__typeof__(x)>(max))
-#define median(x,y,z) rtengine::median(x,static_cast<__typeof__(x)>(y),static_cast<__typeof__(x)>(z))
+#define ULIM(x,y,z) rtengine::median(x,static_cast<__typeof__(x)>(y),static_cast<__typeof__(x)>(z))
 #define CLIP(x) rtengine::CLIP(x)
 #define SWAP(a,b) { a=a+b; b=a-b; a=a-b; }
 
@@ -9852,5 +9852,5 @@ struct tiff_hdr {
 /*RT*/#undef MIN
 /*RT*/#undef ABS
 /*RT*/#undef LIM
-/*RT*/#undef median
+/*RT*/#undef ULIM
 /*RT*/#undef CLIP
