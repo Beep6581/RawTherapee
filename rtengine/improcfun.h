@@ -185,12 +185,12 @@ class ImProcFunctions
 
 public:
     enum class Median {
-        SIZE_3X3_SOFT,
-        SIZE_3X3_STRONG,
-        SIZE_5X5_SOFT,
-        SIZE_5X5_STRONG,
-        SIZE_7X7,
-        SIZE_9X9
+        TYPE_3X3_SOFT,
+        TYPE_3X3_STRONG,
+        TYPE_5X5_SOFT,
+        TYPE_5X5_STRONG,
+        TYPE_7X7,
+        TYPE_9X9
     };
 
     double lumimul[3];
