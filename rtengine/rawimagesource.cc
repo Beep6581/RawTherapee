@@ -33,7 +33,6 @@
 #include "dcp.h"
 #include "rt_math.h"
 #include "improcfun.h"
-#include "median.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

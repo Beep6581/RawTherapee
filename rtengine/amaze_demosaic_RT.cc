@@ -602,28 +602,28 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 
                             if (hcd[indx] > 0) {
                                 if (3.f * hcd[indx] > (Ginth + cfa[indx])) {
-                                    hcd[indx] = -ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]) + cfa[indx];
+                                    hcd[indx] = -median(Ginth, cfa[indx - 1], cfa[indx + 1]) + cfa[indx];
                                 } else {
                                     float hwt = 1.f - 3.f * hcd[indx] / (eps + Ginth + cfa[indx]);
-                                    hcd[indx] = hwt * hcd[indx] + (1.f - hwt) * (-ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]) + cfa[indx]);
+                                    hcd[indx] = hwt * hcd[indx] + (1.f - hwt) * (-median(Ginth, cfa[indx - 1], cfa[indx + 1]) + cfa[indx]);
                                 }
                             }
 
                             if (vcd[indx] > 0) {
                                 if (3.f * vcd[indx] > (Gintv + cfa[indx])) {
-                                    vcd[indx] = -ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]) + cfa[indx];
+                                    vcd[indx] = -median(Gintv, cfa[indx - v1], cfa[indx + v1]) + cfa[indx];
                                 } else {
                                     float vwt = 1.f - 3.f * vcd[indx] / (eps + Gintv + cfa[indx]);
-                                    vcd[indx] = vwt * vcd[indx] + (1.f - vwt) * (-ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]) + cfa[indx]);
+                                    vcd[indx] = vwt * vcd[indx] + (1.f - vwt) * (-median(Gintv, cfa[indx - v1], cfa[indx + v1]) + cfa[indx]);
                                 }
                             }
 
                             if (Ginth > clip_pt) {
-                                hcd[indx] = -ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]) + cfa[indx];
+                                hcd[indx] = -median(Ginth, cfa[indx - 1], cfa[indx + 1]) + cfa[indx];
                             }
 
                             if (Gintv > clip_pt) {
-                                vcd[indx] = -ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]) + cfa[indx];
+                                vcd[indx] = -median(Gintv, cfa[indx - v1], cfa[indx + v1]) + cfa[indx];
                             }
 
 
@@ -634,28 +634,28 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 
                             if (hcd[indx] < 0) {
                                 if (3.f * hcd[indx] < -(Ginth + cfa[indx])) {
-                                    hcd[indx] = ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]) - cfa[indx];
+                                    hcd[indx] = median(Ginth, cfa[indx - 1], cfa[indx + 1]) - cfa[indx];
                                 } else {
                                     float hwt = 1.f + 3.f * hcd[indx] / (eps + Ginth + cfa[indx]);
-                                    hcd[indx] = hwt * hcd[indx] + (1.f - hwt) * (ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]) - cfa[indx]);
+                                    hcd[indx] = hwt * hcd[indx] + (1.f - hwt) * (median(Ginth, cfa[indx - 1], cfa[indx + 1]) - cfa[indx]);
                                 }
                             }
 
                             if (vcd[indx] < 0) {
                                 if (3.f * vcd[indx] < -(Gintv + cfa[indx])) {
-                                    vcd[indx] = ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]) - cfa[indx];
+                                    vcd[indx] = median(Gintv, cfa[indx - v1], cfa[indx + v1]) - cfa[indx];
                                 } else {
                                     float vwt = 1.f + 3.f * vcd[indx] / (eps + Gintv + cfa[indx]);
-                                    vcd[indx] = vwt * vcd[indx] + (1.f - vwt) * (ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]) - cfa[indx]);
+                                    vcd[indx] = vwt * vcd[indx] + (1.f - vwt) * (median(Gintv, cfa[indx - v1], cfa[indx + v1]) - cfa[indx]);
                                 }
                             }
 
                             if (Ginth > clip_pt) {
-                                hcd[indx] = ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]) - cfa[indx];
+                                hcd[indx] = median(Ginth, cfa[indx - 1], cfa[indx + 1]) - cfa[indx];
                             }
 
                             if (Gintv > clip_pt) {
-                                vcd[indx] = ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]) - cfa[indx];
+                                vcd[indx] = median(Gintv, cfa[indx - v1], cfa[indx + v1]) - cfa[indx];
                             }
 
                             cddiffsq[indx] = SQR(vcd[indx] - hcd[indx]);
@@ -1172,28 +1172,28 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 
                         if (rbp[indx1] < cfa[indx]) {
                             if (xmul2f(rbp[indx1]) < cfa[indx]) {
-                                rbp[indx1] = ULIM(rbp[indx1] , cfa[indx - p1], cfa[indx + p1]);
+                                rbp[indx1] = median(rbp[indx1] , cfa[indx - p1], cfa[indx + p1]);
                             } else {
                                 float pwt = xmul2f(cfa[indx] - rbp[indx1]) / (eps + rbp[indx1] + cfa[indx]);
-                                rbp[indx1] = pwt * rbp[indx1] + (1.f - pwt) * ULIM(rbp[indx1], cfa[indx - p1], cfa[indx + p1]);
+                                rbp[indx1] = pwt * rbp[indx1] + (1.f - pwt) * median(rbp[indx1], cfa[indx - p1], cfa[indx + p1]);
                             }
                         }
 
                         if (rbm[indx1] < cfa[indx]) {
                             if (xmul2f(rbm[indx1]) < cfa[indx]) {
-                                rbm[indx1] = ULIM(rbm[indx1] , cfa[indx - m1], cfa[indx + m1]);
+                                rbm[indx1] = median(rbm[indx1] , cfa[indx - m1], cfa[indx + m1]);
                             } else {
                                 float mwt = xmul2f(cfa[indx] - rbm[indx1]) / (eps + rbm[indx1] + cfa[indx]);
-                                rbm[indx1] = mwt * rbm[indx1] + (1.f - mwt) * ULIM(rbm[indx1], cfa[indx - m1], cfa[indx + m1]);
+                                rbm[indx1] = mwt * rbm[indx1] + (1.f - mwt) * median(rbm[indx1], cfa[indx - m1], cfa[indx + m1]);
                             }
                         }
 
                         if (rbp[indx1] > clip_pt) {
-                            rbp[indx1] = ULIM(rbp[indx1], cfa[indx - p1], cfa[indx + p1]);
+                            rbp[indx1] = median(rbp[indx1], cfa[indx - p1], cfa[indx + p1]);
                         }
 
                         if (rbm[indx1] > clip_pt) {
-                            rbm[indx1] = ULIM(rbm[indx1], cfa[indx - m1], cfa[indx + m1]);
+                            rbm[indx1] = median(rbm[indx1], cfa[indx - m1], cfa[indx + m1]);
                         }
                     }
 
@@ -1339,28 +1339,28 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
                         //bound the interpolation in regions of high saturation
                         if (Gintv < rbint[indx1]) {
                             if (2 * Gintv < rbint[indx1]) {
-                                Gintv = ULIM(Gintv , cfa[indx - v1], cfa[indx + v1]);
+                                Gintv = median(Gintv , cfa[indx - v1], cfa[indx + v1]);
                             } else {
                                 float vwt = 2.0 * (rbint[indx1] - Gintv) / (eps + Gintv + rbint[indx1]);
-                                Gintv = vwt * Gintv + (1.f - vwt) * ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]);
+                                Gintv = vwt * Gintv + (1.f - vwt) * median(Gintv, cfa[indx - v1], cfa[indx + v1]);
                             }
                         }
 
                         if (Ginth < rbint[indx1]) {
                             if (2 * Ginth < rbint[indx1]) {
-                                Ginth = ULIM(Ginth , cfa[indx - 1], cfa[indx + 1]);
+                                Ginth = median(Ginth , cfa[indx - 1], cfa[indx + 1]);
                             } else {
                                 float hwt = 2.0 * (rbint[indx1] - Ginth) / (eps + Ginth + rbint[indx1]);
-                                Ginth = hwt * Ginth + (1.f - hwt) * ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]);
+                                Ginth = hwt * Ginth + (1.f - hwt) * median(Ginth, cfa[indx - 1], cfa[indx + 1]);
                             }
                         }
 
                         if (Ginth > clip_pt) {
-                            Ginth = ULIM(Ginth, cfa[indx - 1], cfa[indx + 1]);
+                            Ginth = median(Ginth, cfa[indx - 1], cfa[indx + 1]);
                         }
 
                         if (Gintv > clip_pt) {
-                            Gintv = ULIM(Gintv, cfa[indx - v1], cfa[indx + v1]);
+                            Gintv = median(Gintv, cfa[indx - v1], cfa[indx + v1]);
                         }
 
                         rgbgreen[indx] = Ginth * (1.f - hvwt[indx1]) + Gintv * hvwt[indx1];

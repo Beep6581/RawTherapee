@@ -72,29 +72,6 @@ namespace rtengine
 
 extern const Settings* settings;
 
-float media(float *elements, int N)
-{
-
-    //   Order elements (only half of them)
-    for (int i = 0; i < (N >> 1) + 1; ++i) {
-        //   Find position of minimum element
-        int min = i;
-
-        for (int j = i + 1; j < N; ++j)
-            if (elements[j] < elements[min]) {
-                min = j;
-            }
-
-        //   Put found minimum element in its place
-        float temp = elements[i];
-        elements[i] = elements[min];
-        elements[min] = temp;
-    }
-
-    //   Get result - the middle element
-    return elements[N >> 1];
-}
-
 void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, const int height, const Median medianType, const int iterations, const int numThreads, float **buffer)
 {
     int border = 1;
@@ -127,13 +104,13 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
         }
     }
 
-    float **allocBuffer = NULL;
+    float **allocBuffer = nullptr;
     float **medBuffer[2];
     medBuffer[0] = src;
 
     // we need a buffer if src == dst or if (src != dst && iterations > 1)
     if (src == dst || (src != dst && iterations > 1)) {
-        if (buffer == NULL) { // we didn't get a buufer => create one
+        if (buffer == nullptr) { // we didn't get a buufer => create one
             allocBuffer = new float*[height];
 
             for (int i = 0; i < height; ++i) {
@@ -156,10 +133,11 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
         medianOut = medBuffer[BufferIndex ^ 1];
 
         if (iteration == 1) { // upper border
-            for (int i = 0; i < border; ++i)
+            for (int i = 0; i < border; ++i) {
                 for (int j = 0; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
+}
         }
 
 #ifdef _OPENMP
@@ -372,10 +350,11 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
         }
 
         if (iteration == 1) { // lower border
-            for (int i = height - border; i < height; ++i)
+            for (int i = height - border; i < height; ++i) {
                 for (int j = 0; j < width; ++j) {
                     medianOut[i][j] = medianIn[i][j];
                 }
+}
         }
 
         BufferIndex ^= 1; // swap buffers
@@ -393,7 +372,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
         }
     }
 
-    if (allocBuffer != NULL) { // we allocated memory, so let's free it now
+    if (allocBuffer != nullptr) { // we allocated memory, so let's free it now
         for (int i = 0; i < height; ++i) {
             delete[] allocBuffer[i];
         }
@@ -402,7 +381,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
     }
 }
 
-void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip)
+void ImProcFunctions::Tile_calc(int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip)
 
 {
     if (kall == 2) {
@@ -412,8 +391,8 @@ void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidt
             tileWskip = imwidth;
             tilewidth = imwidth;
         } else {
-            numtiles_W = ceil(((float)(imwidth)) / (tilesize - overlap));
-            tilewidth  = ceil(((float)(imwidth)) / (numtiles_W)) + overlap;
+            numtiles_W = ceil((static_cast<float>(imwidth)) / (tilesize - overlap));
+            tilewidth  = ceil((static_cast<float>(imwidth)) / (numtiles_W)) + overlap;
             tilewidth += (tilewidth & 1);
             tileWskip = tilewidth - overlap;
         }
@@ -423,8 +402,8 @@ void ImProcFunctions::Tile_calc (int tilesize, int overlap, int kall, int imwidt
             tileHskip = imheight;
             tileheight = imheight;
         } else {
-            numtiles_H = ceil(((float)(imheight)) / (tilesize - overlap));
-            tileheight = ceil(((float)(imheight)) / (numtiles_H)) + overlap;
+            numtiles_H = ceil((static_cast<float>(imheight)) / (tilesize - overlap));
+            tileheight = ceil((static_cast<float>(imheight)) / (numtiles_H)) + overlap;
             tileheight += (tileheight & 1);
             tileHskip = tileheight - overlap;
         }
@@ -460,7 +439,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
         if (calclum) {
             delete calclum;
-            calclum = NULL;
+            calclum = nullptr;
         }
 
         return;
@@ -470,7 +449,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
     MyMutex::MyLock lock(FftwMutex);
 
     const nrquality nrQuality = (dnparams.smethod == "shal") ? QUALITY_STANDARD : QUALITY_HIGH;//shrink method
-    const float qhighFactor = (nrQuality == QUALITY_HIGH) ? 1.f / (float) settings->nrhigh : 1.0f;
+    const float qhighFactor = (nrQuality == QUALITY_HIGH) ? 1.f / static_cast<float>( settings->nrhigh) : 1.0f;
     const bool useNoiseCCurve = (noiseCCurve && noiseCCurve.getSum() > 5.f);
     const bool useNoiseLCurve = (noiseLCurve && noiseLCurve.getSum() >= 7.f);
     const bool autoch = (settings->leveldnautsimpl == 1 && (dnparams.Cmethod == "AUT" || dnparams.Cmethod == "PRE")) || (settings->leveldnautsimpl == 0 && (dnparams.C2method == "AUTO" || dnparams.C2method == "PREV"));
@@ -510,8 +489,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
     const bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
     // init luma noisevarL
-    const float noiseluma = (float) dnparams.luma;
-    const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? (float) (SQR(((noiseluma + 1.0) / 125.0) * (10. + (noiseluma + 1.0) / 25.0))) : (float) (SQR((noiseluma / 125.0) * (1.0 + noiseluma / 25.0)));
+    const float noiseluma = static_cast<float>( dnparams.luma);
+    const float noisevarL = (useNoiseLCurve && (denoiseMethodRgb || !isRAW)) ? static_cast<float> (SQR(((noiseluma + 1.0) / 125.0) * (10. + (noiseluma + 1.0) / 25.0))) : static_cast<float> (SQR((noiseluma / 125.0) * (1.0 + noiseluma / 25.0)));
     const bool denoiseLuminance = (noisevarL > 0.00001f);
 
     //printf("NL=%f \n",noisevarL);
@@ -591,7 +570,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
         }
 
         delete calclum;
-        calclum = NULL;
+        calclum = nullptr;
     }
 
     const short int imheight = src->height, imwidth = src->width;
@@ -609,17 +588,17 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             }
         }
 
-        float gamslope = exp(log((double)gamthresh) / gam) / gamthresh;
+        float gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
 
         LUTf gamcurve(65536, LUT_CLIP_BELOW);
 
         if (denoiseMethodRgb) {
             for (int i = 0; i < 65536; ++i) {
-                gamcurve[i] = (Color::gamma((double)i / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
+                gamcurve[i] = (Color::gamma(static_cast<double>(i) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
             }
         } else {
             for (int i = 0; i < 65536; ++i) {
-                gamcurve[i] = (Color::gamman((double)i / 65535.0, gam)) * 32768.0f;
+                gamcurve[i] = (Color::gamman(static_cast<double>(i) / 65535.0, gam)) * 32768.0f;
             }
         }
 
@@ -632,16 +611,16 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
         if (denoiseMethodRgb) {
             for (int i = 0; i < 65536; ++i) {
-                igamcurve[i] = (Color::gamma((float)i / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+                igamcurve[i] = (Color::gamma(static_cast<float>(i) / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
             }
         } else {
             for (int i = 0; i < 65536; ++i) {
-                igamcurve[i] = (Color::gamman((float)i / 32768.0f, igam) * 65535.0f);
+                igamcurve[i] = (Color::gamman(static_cast<float>(i) / 32768.0f, igam) * 65535.0f);
             }
         }
 
         const float gain = pow (2.0f, float(expcomp));
-        float noisevar_Ldetail = SQR((float)(SQR(100. - dnparams.Ldetail) + 50.*(100. - dnparams.Ldetail)) * TS * 0.5f);
+        float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - dnparams.Ldetail) + 50.*(100. - dnparams.Ldetail)) * TS * 0.5f);
 
         if (settings->verbose) {
             printf("Denoise Lab=%i\n", settings->denoiselabgamma);
@@ -738,12 +717,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 #pragma omp parallel for
 #endif
 
-                for (int i = 0; i < imheight; ++i)
+                for (int i = 0; i < imheight; ++i) {
                     for (int j = 0; j < imwidth; ++j) {
                         dsttmp->r(i, j) = 0.f;
                         dsttmp->g(i, j) = 0.f;
                         dsttmp->b(i, j) = 0.f;
                     }
+}
             }
 
             //now we have tile dimensions, overlaps
@@ -753,17 +733,17 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             // outside the parallel region and use them inside the parallel region.
 
             // calculate max size of numblox_W.
-            int max_numblox_W = ceil(((float)(MIN(imwidth, tilewidth))) / (offset)) + 2 * blkrad;
+            int max_numblox_W = ceil((static_cast<float>(MIN(imwidth, tilewidth))) / (offset)) + 2 * blkrad;
             // calculate min size of numblox_W.
-            int min_numblox_W = ceil(((float)((MIN(imwidth, ((numtiles_W - 1) * tileWskip) + tilewidth)) - ((numtiles_W - 1) * tileWskip))) / (offset)) + 2 * blkrad;
+            int min_numblox_W = ceil((static_cast<float>((MIN(imwidth, ((numtiles_W - 1) * tileWskip) + tilewidth)) - ((numtiles_W - 1) * tileWskip))) / (offset)) + 2 * blkrad;
 
             // these are needed only for creation of the plans and will be freed before entering the parallel loop
             fftwf_plan plan_forward_blox[2];
             fftwf_plan plan_backward_blox[2];
 
             if (denoiseLuminance) {
-                float *Lbloxtmp  = (float*) fftwf_malloc(max_numblox_W * TS * TS * sizeof (float));
-                float *fLbloxtmp = (float*) fftwf_malloc(max_numblox_W * TS * TS * sizeof (float));
+                float *Lbloxtmp  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof (float)));
+                float *fLbloxtmp = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof (float)));
 
                 int nfwd[2] = {TS, TS};
 
@@ -772,10 +752,10 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
 
                 // Creating the plans with FFTW_MEASURE instead of FFTW_ESTIMATE speeds up the execute a bit
-                plan_forward_blox[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Lbloxtmp, NULL, 1, TS * TS, fLbloxtmp, NULL, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
-                plan_backward_blox[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fLbloxtmp, NULL, 1, TS * TS, Lbloxtmp, NULL, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
-                plan_forward_blox[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Lbloxtmp, NULL, 1, TS * TS, fLbloxtmp, NULL, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
-                plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, NULL, 1, TS * TS, Lbloxtmp, NULL, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
+                plan_forward_blox[0]  = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
+                plan_backward_blox[0] = fftwf_plan_many_r2r(2, nfwd, max_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
+                plan_forward_blox[1]  = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, Lbloxtmp, nullptr, 1, TS * TS, fLbloxtmp, nullptr, 1, TS * TS, fwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
+                plan_backward_blox[1] = fftwf_plan_many_r2r(2, nfwd, min_numblox_W, fLbloxtmp, nullptr, 1, TS * TS, Lbloxtmp, nullptr, 1, TS * TS, bwdkind, FFTW_MEASURE || FFTW_DESTROY_INPUT  );
                 fftwf_free (Lbloxtmp);
                 fftwf_free (fLbloxtmp);
             }
@@ -815,11 +795,12 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             float *LbloxArray[denoiseNestedLevels * numthreads];
             float *fLbloxArray[denoiseNestedLevels * numthreads];
 
-            if (numtiles > 1 && denoiseLuminance)
+            if (numtiles > 1 && denoiseLuminance) {
                 for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
-                    LbloxArray[i]  = (float*) fftwf_malloc(max_numblox_W * TS * TS * sizeof(float));
-                    fLbloxArray[i] = (float*) fftwf_malloc(max_numblox_W * TS * TS * sizeof(float));
+                    LbloxArray[i]  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                    fLbloxArray[i] = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                 }
+}
 
             TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
             //inverse matrix user select
@@ -869,19 +850,19 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         int height = tilebottom - tiletop;
                         int width2 = (width + 1) / 2;
                         float realred, realblue;
-                        float interm_med = (float) dnparams.chroma / 10.0;
+                        float interm_med = static_cast<float>( dnparams.chroma) / 10.0;
                         float intermred, intermblue;
 
                         if (dnparams.redchro > 0.) {
                             intermred = (dnparams.redchro / 10.);
                         } else {
-                            intermred = (float) dnparams.redchro / 7.0;    //increase slower than linear for more sensit
+                            intermred = static_cast<float>( dnparams.redchro) / 7.0;    //increase slower than linear for more sensit
                         }
 
                         if (dnparams.bluechro > 0.) {
                             intermblue = (dnparams.bluechro / 10.);
                         } else {
-                            intermblue = (float) dnparams.bluechro / 7.0;    //increase slower than linear for more sensit
+                            intermblue = static_cast<float>( dnparams.bluechro) / 7.0;    //increase slower than linear for more sensit
                         }
 
                         if (ponder && kall == 2) {
@@ -985,9 +966,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         float Y = gain * src->g(i, j);
                                         float Z = gain * src->b(i, j);
                                         //conversion colorspace to determine luminance with no gamma
-                                        X = X < 65535.0f ? gamcurve[X] : (Color::gamma((double)X / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                                        Y = Y < 65535.0f ? gamcurve[Y] : (Color::gamma((double)Y / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                                        Z = Z < 65535.0f ? gamcurve[Z] : (Color::gamma((double)Z / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                                        X = X < 65535.0f ? gamcurve[X] : (Color::gamma(static_cast<double>(X) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                                        Y = Y < 65535.0f ? gamcurve[Y] : (Color::gamma(static_cast<double>(Y) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                                        Z = Z < 65535.0f ? gamcurve[Z] : (Color::gamma(static_cast<double>(Z) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
                                         //end chroma
                                         labdn->L[i1][j1] = Y;
                                         labdn->a[i1][j1] = (X - Y);
@@ -1028,9 +1009,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                     float btmp = Color::igammatab_srgb[ src->b(i, j) ];
                                     //modification Jacques feb 2013
                                     // gamma slider different from raw
-                                    rtmp = rtmp < 65535.0f ? gamcurve[rtmp] : (Color::gamman((double)rtmp / 65535.0, gam) * 32768.0f);
-                                    gtmp = gtmp < 65535.0f ? gamcurve[gtmp] : (Color::gamman((double)gtmp / 65535.0, gam) * 32768.0f);
-                                    btmp = btmp < 65535.0f ? gamcurve[btmp] : (Color::gamman((double)btmp / 65535.0, gam) * 32768.0f);
+                                    rtmp = rtmp < 65535.0f ? gamcurve[rtmp] : (Color::gamman(static_cast<double>(rtmp) / 65535.0, gam) * 32768.0f);
+                                    gtmp = gtmp < 65535.0f ? gamcurve[gtmp] : (Color::gamman(static_cast<double>(gtmp) / 65535.0, gam) * 32768.0f);
+                                    btmp = btmp < 65535.0f ? gamcurve[btmp] : (Color::gamman(static_cast<double>(btmp) / 65535.0, gam) * 32768.0f);
 
                                     float X, Y, Z;
                                     Color::rgbxyz(rtmp, gtmp, btmp, X, Y, Z, wp);
@@ -1095,7 +1076,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         //binary 1 or 0 for each level, eg subsampling = 0 means no subsampling, 1 means subsample
                         //the first level only, 7 means subsample the first three levels, etc.
                         //actual implementation only works with subsampling set to 1
-                        float interm_medT = (float) dnparams.chroma / 10.0;
+                        float interm_medT = static_cast<float>( dnparams.chroma) / 10.0;
                         bool execwavelet = true;
 
                         if (!denoiseLuminance && interm_medT < 0.05f && dnparams.median && (dnparams.methodmed == "Lab" || dnparams.methodmed == "Lonly")) {
@@ -1208,10 +1189,11 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         memoryAllocationFailed = true;
                                     }
 
-                                    if (!memoryAllocationFailed)
+                                    if (!memoryAllocationFailed) {
                                         if (!WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb)) {
                                             memoryAllocationFailed = true;
                                         }
+}
                                 }
                             }
 
@@ -1244,10 +1226,11 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             memoryAllocationFailed = true;
                                         }
 
-                                        if (!memoryAllocationFailed)
+                                        if (!memoryAllocationFailed) {
                                             if (!WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb)) {
                                                 memoryAllocationFailed = true;
                                             }
+}
                                     }
                                 }
 
@@ -1271,7 +1254,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         int edge = 0;
 
                                         if (nrQuality == QUALITY_STANDARD) {
-                                            if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, NULL, edge)) { //enhance mode
+                                            if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, nullptr, edge)) { //enhance mode
                                                 memoryAllocationFailed = true;
                                             }
                                         } else { /*if (nrQuality==QUALITY_HIGH)*/
@@ -1279,10 +1262,11 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                 memoryAllocationFailed = true;
                                             }
 
-                                            if (!memoryAllocationFailed)
-                                                if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, NULL, edge)) {
+                                            if (!memoryAllocationFailed) {
+                                                if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, nullptr, edge)) {
                                                     memoryAllocationFailed = true;
                                                 }
+}
                                         }
 
                                         if (!memoryAllocationFailed) {
@@ -1292,10 +1276,11 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             #pragma omp parallel for num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
 
-                                            for (int i = 0; i < height; ++i)
+                                            for (int i = 0; i < height; ++i) {
                                                 for (int j = 0; j < width; ++j) {
                                                     (*Lin)[i][j] = labdn->L[i][j];
                                                 }
+}
 
                                             Ldecomp->reconstruct(labdn->L[0]);
                                         }
@@ -1388,8 +1373,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                             // blocks are not the same thing as tiles!
 
                             // calculation for detail recovery blocks
-                            const int numblox_W = ceil(((float)(width)) / (offset)) + 2 * blkrad;
-                            const int numblox_H = ceil(((float)(height)) / (offset)) + 2 * blkrad;
+                            const int numblox_W = ceil((static_cast<float>(width)) / (offset)) + 2 * blkrad;
+                            const int numblox_H = ceil((static_cast<float>(height)) / (offset)) + 2 * blkrad;
 
 
 
@@ -1406,11 +1391,12 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                 //pixel weight
                                 array2D<float> totwt(width, height, ARRAY2D_CLEAR_DATA); //weight for combining DCT blocks
 
-                                if (numtiles == 1)
+                                if (numtiles == 1) {
                                     for (int i = 0; i < denoiseNestedLevels * numthreads; ++i) {
-                                        LbloxArray[i]  = (float*) fftwf_malloc(max_numblox_W * TS * TS * sizeof(float));
-                                        fLbloxArray[i] = (float*) fftwf_malloc(max_numblox_W * TS * TS * sizeof(float));
+                                        LbloxArray[i]  = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
+                                        fLbloxArray[i] = reinterpret_cast<float*>( fftwf_malloc(max_numblox_W * TS * TS * sizeof(float)));
                                     }
+}
 
 #ifdef _RT_NESTED_OPENMP
                                 int masterThread = omp_get_thread_num();
@@ -1664,9 +1650,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             float Z = Y - (labdn->b[i1][j1]);
 
 
-                                            X = X < 32768.0f ? igamcurve[X] : (Color::gamma((float)X / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-                                            Y = Y < 32768.0f ? igamcurve[Y] : (Color::gamma((float)Y / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-                                            Z = Z < 32768.0f ? igamcurve[Z] : (Color::gamma((float)Z / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+                                            X = X < 32768.0f ? igamcurve[X] : (Color::gamma(X / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+                                            Y = Y < 32768.0f ? igamcurve[Y] : (Color::gamma(Y / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+                                            Z = Z < 32768.0f ? igamcurve[Z] : (Color::gamma(Z / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
 
                                             if (numtiles == 1) {
                                                 dsttmp->r(i, j) = newGain * X;
@@ -1709,9 +1695,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         float r_, g_, b_;
                                         Color::xyz2rgb(X, Y, Z, r_, g_, b_, wip);
                                         //gamma slider is different from Raw
-                                        r_ = r_ < 32768.0f ? igamcurve[r_] : (Color::gamman((float)r_ / 32768.0f, igam) * 65535.0f);
-                                        g_ = g_ < 32768.0f ? igamcurve[g_] : (Color::gamman((float)g_ / 32768.0f, igam) * 65535.0f);
-                                        b_ = b_ < 32768.0f ? igamcurve[b_] : (Color::gamman((float)b_ / 32768.0f, igam) * 65535.0f);
+                                        r_ = r_ < 32768.0f ? igamcurve[r_] : (Color::gamman(r_ / 32768.0f, igam) * 65535.0f);
+                                        g_ = g_ < 32768.0f ? igamcurve[g_] : (Color::gamman(g_ / 32768.0f, igam) * 65535.0f);
+                                        b_ = b_ < 32768.0f ? igamcurve[b_] : (Color::gamman(b_ / 32768.0f, igam) * 65535.0f);
 
                                         if (numtiles == 1) {
                                             dsttmp->r(i, j) = newGain * r_;
@@ -1773,12 +1759,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 #pragma omp parallel for
 #endif
 
-                for (int i = 0; i < dst->height; ++i)
+                for (int i = 0; i < dst->height; ++i) {
                     for (int j = 0; j < dst->width; ++j) {
                         dst->r(i, j) = Color::gammatab_srgb[ dst->r(i, j) ];
                         dst->g(i, j) = Color::gammatab_srgb[ dst->g(i, j) ];
                         dst->b(i, j) = Color::gammatab_srgb[ dst->b(i, j) ];
                     }
+}
             }
 
             if (denoiseLuminance) {
@@ -1841,14 +1828,15 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                     #pragma omp for
 
                     for (int i = 1; i < hei - 1; ++i) {
-                        if (methmed == 0)
+                        if (methmed == 0) {
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1)); //3x3 soft
                             }
-                        else
+                        } else {
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->r(i, j), source->r(i - 1, j), source->r(i + 1, j), source->r(i, j + 1), source->r(i, j - 1), source->r(i - 1, j - 1), source->r(i - 1, j + 1), source->r(i + 1, j - 1), source->r(i + 1, j + 1)); //3x3
                             }
+}
                     }
                 } else {
                     #pragma omp for
@@ -1861,7 +1849,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                 source->r(i - 2, j), source->r(i + 2, j), source->r(i, j + 2), source->r(i, j - 2), source->r(i - 2, j - 2), source->r(i - 2, j + 2), source->r(i + 2, j - 2), source->r(i + 2, j + 2),
                                 source->r(i - 2, j + 1), source->r(i + 2, j + 1), source->r(i - 1, j + 2), source->r(i - 1, j - 2), source->r(i - 2, j - 1), source->r(i + 2, j - 1), source->r(i + 1, j + 2), source->r(i + 1, j - 2));//5x5
                             }
-                        } else
+                        } else {
                             for (int j = 2; j < wid - 2; ++j) {
                                 tm[i][j] = median(
                                                source->r(i, j),
@@ -1879,6 +1867,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                source->r(i, j - 2)
                                            ); // 5x5 soft
                             }
+}
                     }
                 }
 #ifdef _OPENMP
@@ -1897,14 +1886,15 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                     #pragma omp for
 
                     for (int i = 1; i < hei - 1; ++i) {
-                        if (methmed == 0)
+                        if (methmed == 0) {
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1));
                             }
-                        else
+                        } else {
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->b(i, j), source->b(i - 1, j), source->b(i + 1, j), source->b(i, j + 1), source->b(i, j - 1), source->b(i - 1, j - 1), source->b(i - 1, j + 1), source->b(i + 1, j - 1), source->b(i + 1, j + 1));
                             }
+}
                     }
                 } else {
                     #pragma omp for
@@ -1917,7 +1907,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                 source->b(i - 2, j), source->b(i + 2, j), source->b(i, j + 2), source->b(i, j - 2), source->b(i - 2, j - 2), source->b(i - 2, j + 2), source->b(i + 2, j - 2), source->b(i + 2, j + 2),
                                 source->b(i - 2, j + 1), source->b(i + 2, j + 1), source->b(i - 1, j + 2), source->b(i - 1, j - 2), source->b(i - 2, j - 1), source->b(i + 2, j - 1), source->b(i + 1, j + 2), source->b(i + 1, j - 2)); // 5x5
                             }
-                        } else
+                        } else {
                             for (int j = 2; j < wid - 2; ++j) {
                                 tm[i][j] = median(
                                                source->b(i, j),
@@ -1935,6 +1925,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                source->b(i, j - 2)
                                            ); // 5x5 soft
                             }
+}
                     }
                 }
 
@@ -1955,14 +1946,15 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                     #pragma omp for
 
                     for (int i = 1; i < hei - 1; ++i) {
-                        if (methmed == 0)
+                        if (methmed == 0) {
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1));
                             }
-                        else
+                        } else {
                             for (int j = 1; j < wid - 1; ++j) {
                                 tm[i][j] = median(source->g(i, j), source->g(i - 1, j), source->g(i + 1, j), source->g(i, j + 1), source->g(i, j - 1), source->g(i - 1, j - 1), source->g(i - 1, j + 1), source->g(i + 1, j - 1), source->g(i + 1, j + 1));
                             }
+}
                     }
                 } else {
                     #pragma omp for
@@ -1975,7 +1967,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                 source->g(i - 2, j), source->g(i + 2, j), source->g(i, j + 2), source->g(i, j - 2), source->g(i - 2, j - 2), source->g(i - 2, j + 2), source->g(i + 2, j - 2), source->g(i + 2, j + 2),
                                 source->g(i - 2, j + 1), source->g(i + 2, j + 1), source->g(i - 1, j + 2), source->g(i - 1, j - 2), source->g(i - 2, j - 1), source->g(i + 2, j - 1), source->g(i + 1, j + 2), source->g(i + 1, j - 2)); // 5x5
                             }
-                        } else
+                        } else {
                             for (int j = 2; j < wid - 2; ++j) {
                                 tm[i][j] = median(
                                                source->g(i, j),
@@ -1993,6 +1985,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                                source->g(i, j - 2)
                                            ); // 5x5 soft
                             }
+}
                     }
                 }
 
@@ -2076,7 +2069,7 @@ SSEFUNCTION void ImProcFunctions::RGBtile_denoise (float * fLblox, int hblproc, 
 
 void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float ** Ldetail, float ** tilemask_out, int height, int width, int top)
 {
-    const int numblox_W = ceil(((float)(width)) / (offset));
+    const int numblox_W = ceil((static_cast<float>(width)) / (offset));
     const float DCTnorm = 1.0f / (4 * TS * TS); //for DCT
 
     int imin = MAX(0, -top);
@@ -2084,7 +2077,7 @@ void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float ** Ldetail, fl
     int imax = bottom - top;
 
     //add row of tiles to output image
-    for (int i = imin; i < imax; ++i)
+    for (int i = imin; i < imax; ++i) {
         for (int hblk = 0; hblk < numblox_W; ++hblk) {
             int left = (hblk - blkrad) * offset;
             int right  = MIN(left + TS, width);
@@ -2097,6 +2090,7 @@ void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float ** Ldetail, fl
 
             }
         }
+}
 }
 /*
 #undef TS
@@ -2146,7 +2140,7 @@ float ImProcFunctions::MadMax(float * DataList, int & max, int datalen)
     delete[] histo;
 
     // interpolate
-    return (((median - 1) + (datalen / 2 - count_) / ((float)(count - count_))) / 0.6745);
+    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
 
 }
 
@@ -2159,7 +2153,7 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[min(255, abs((int)DataList[i]))]++;
+        histo[min(255, abs(static_cast<int>(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -2173,7 +2167,7 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
     int count_ = count - histo[median - 1];
 
     // interpolate
-    return (((median - 1) + (datalen / 2 - count_) / ((float)(count - count_))) / 0.6745);
+    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
 }
 
 float ImProcFunctions::MadRgb(float * DataList, const int datalen)
@@ -2191,7 +2185,7 @@ float ImProcFunctions::MadRgb(float * DataList, const int datalen)
     int i;
 
     for (i = 0; i < datalen; ++i) {
-        histo[min(65536, abs((int)DataList[i]))]++;
+        histo[min(65536, abs(static_cast<int>(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -2206,7 +2200,7 @@ float ImProcFunctions::MadRgb(float * DataList, const int datalen)
 
     // interpolate
     delete[] histo;
-    return (((median - 1) + (datalen / 2 - count_) / ((float)(count - count_))) / 0.6745);
+    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
 }
 
 
@@ -2272,7 +2266,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
         buffer[1] = new (std::nothrow) float[maxWL * maxHL + 64];
         buffer[2] = new (std::nothrow) float[maxWL * maxHL + 96];
 
-        if (buffer[0] == NULL || buffer[1] == NULL || buffer[2] == NULL) {
+        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr) {
             memoryAllocationFailed = true;
         }
 
@@ -2292,7 +2286,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
                     if (lvl == maxlvl - 1) {
                         float vari[4];
                         int edge = 0;
-                        ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], NULL, edge);
+                        ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], nullptr, edge);
                     } else {
                         //simple wavelet shrinkage
                         float * sfave = buffer[0] + 32;
@@ -2323,13 +2317,14 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 
 #else
 
-                        for (int i = 0; i < Hlvl_L; ++i)
+                        for (int i = 0; i < Hlvl_L; ++i) {
                             for (int j = 0; j < Wlvl_L; ++j) {
 
                                 int coeffloc_L = i * Wlvl_L + j;
                                 float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
                                 sfave[coeffloc_L] = mag_L / (mag_L + levelFactor * noisevarlum[coeffloc_L] * xexpf(-mag_L / (9.f * levelFactor * noisevarlum[coeffloc_L])) + eps);
                             }
+}
 
 #endif
                         boxblur(sfave, sfaved, blurBuffer, lvl + 2, lvl + 2, Wlvl_L, Hlvl_L); //increase smoothness by locally averaging shrinkage
@@ -2353,13 +2348,14 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
 
 #else
 
-                        for (int i = 0; i < Hlvl_L; ++i)
+                        for (int i = 0; i < Hlvl_L; ++i) {
                             for (int j = 0; j < Wlvl_L; ++j) {
                                 int coeffloc_L = i * Wlvl_L + j;
                                 float sf_L = sfave[coeffloc_L];
                                 //use smoothed shrinkage unless local shrinkage is much less
                                 WavCoeffs_L[dir][coeffloc_L] *= (SQR(sfaved[coeffloc_L]) + SQR(sf_L)) / (sfaved[coeffloc_L] + sf_L + eps);
                             }//now luminance coeffs are denoised
+}
 
 #endif
                     }
@@ -2367,10 +2363,11 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
             }
         }
 
-        for (int i = 2; i >= 0; i--)
-            if (buffer[i] != NULL) {
+        for (int i = 2; i >= 0; i--) {
+            if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
+}
 
     }
     return (!memoryAllocationFailed);
@@ -2409,7 +2406,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
         buffer[1] = new (std::nothrow) float[maxWL * maxHL + 64];
         buffer[2] = new (std::nothrow) float[maxWL * maxHL + 96];
 
-        if (buffer[0] == NULL || buffer[1] == NULL || buffer[2] == NULL) {
+        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr) {
             memoryAllocationFailed = true;
         }
 
@@ -2505,10 +2502,11 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
             }
         }
 
-        for (int i = 2; i >= 0; i--)
-            if (buffer[i] != NULL) {
+        for (int i = 2; i >= 0; i--) {
+            if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
+}
 
     }
     return (!memoryAllocationFailed);
@@ -2548,7 +2546,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L,
         buffer[2] = new (std::nothrow) float[maxWL * maxHL + 96];
         buffer[3] = new (std::nothrow) float[maxWL * maxHL + 128];
 
-        if (buffer[0] == NULL || buffer[1] == NULL || buffer[2] == NULL || buffer[3] == NULL) {
+        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr || buffer[3] == nullptr) {
             memoryAllocationFailed = true;
         }
 
@@ -2564,10 +2562,11 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L,
             }
         }
 
-        for (int i = 3; i >= 0; i--)
-            if (buffer[i] != NULL) {
+        for (int i = 3; i >= 0; i--) {
+            if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
+}
     }
     return (!memoryAllocationFailed);
 }
@@ -2601,7 +2600,7 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L
         buffer[1] = new (std::nothrow) float[maxWL * maxHL + 64];
         buffer[2] = new (std::nothrow) float[maxWL * maxHL + 96];
 
-        if (buffer[0] == NULL || buffer[1] == NULL || buffer[2] == NULL) {
+        if (buffer[0] == nullptr || buffer[1] == nullptr || buffer[2] == nullptr) {
             memoryAllocationFailed = true;
         }
 
@@ -2617,10 +2616,11 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L
             }
         }
 
-        for (int i = 2; i >= 0; i--)
-            if (buffer[i] != NULL) {
+        for (int i = 2; i >= 0; i--) {
+            if (buffer[i] != nullptr) {
                 delete[] buffer[i];
             }
+}
     }
     return (!memoryAllocationFailed);
 }
@@ -2655,7 +2655,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
         }
     }
 
-    float levelFactor = mad_L * 5.f / (float)(level + 1);
+    float levelFactor = mad_L * 5.f / static_cast<float>(level + 1);
 #ifdef __SSE2__
     __m128  magv;
     __m128 levelFactorv = _mm_set1_ps(levelFactor);
@@ -2878,9 +2878,9 @@ SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** 
         if (nc > 0) {
             chromina = chro / nc;
             sigma = sqrt(dev / nc);
-            nsknc = (float)nsk / (float)nc;
+            nsknc = static_cast<float>(nsk) / static_cast<float>(nc);
         } else {
-            nsknc = (float)nsk;
+            nsknc = static_cast<float>(nsk);
         }
 
         if (nL > 0) {
@@ -2897,7 +2897,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** 
         }
     }
 
-    const float reduc = (schoice == 2) ? (float) settings->nrhigh : 1.f;
+    const float reduc = (schoice == 2) ? static_cast<float>( settings->nrhigh) : 1.f;
 
     for (int dir = 1; dir < 4; ++dir) {
         float mada, madb;
@@ -2989,16 +2989,16 @@ void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoisePa
         }
     }
 
-    gamslope = exp(log((double)gamthresh) / gam) / gamthresh;
+    gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
     if (denoiseMethodRgb) {
         for (int i = 0; i < 65536; ++i) {
-            gamcurve[i] = (Color::gamma((double)i / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
+            gamcurve[i] = (Color::gamma(static_cast<double>(i) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
         }
     } else {
         for (int i = 0; i < 65536; ++i) {
-            gamcurve[i] = (Color::gamman((double)i / 65535.0, gam)) * 32768.0f;
+            gamcurve[i] = (Color::gamman(static_cast<double>(i) / 65535.0, gam)) * 32768.0f;
         }
     }
 }
@@ -3009,7 +3009,7 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
     float reducdelta = 1.f;
 
     if (params->dirpyrDenoise.smethod == "shalbi") {
-        reducdelta = (float)settings->nrhigh;
+        reducdelta = static_cast<float>(settings->nrhigh);
     }
 
     chaut = (chaut * Nb - maxmax) / (Nb - 1); //suppress maximum for chaut calcul
@@ -3298,19 +3298,19 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
             float noisevarab_b, noisevarab_r;
 
             float realred, realblue;
-            float interm_med = (float) dnparams.chroma / 10.0;
+            float interm_med = static_cast<float>( dnparams.chroma) / 10.0;
             float intermred, intermblue;
 
             if (dnparams.redchro > 0.) {
                 intermred = (dnparams.redchro / 10.);
             } else {
-                intermred = (float) dnparams.redchro / 7.0;    //increase slower than linear for more sensit
+                intermred = static_cast<float>( dnparams.redchro) / 7.0;    //increase slower than linear for more sensit
             }
 
             if (dnparams.bluechro > 0.) {
                 intermblue = (dnparams.bluechro / 10.);
             } else {
-                intermblue = (float) dnparams.bluechro / 7.0;    //increase slower than linear for more sensit
+                intermblue = static_cast<float>( dnparams.bluechro) / 7.0;    //increase slower than linear for more sensit
             }
 
             realred = interm_med + intermred;
@@ -3418,9 +3418,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                             B_ = (*denoiseigamtab)[B_];
 
                             //apply gamma noise standard (slider)
-                            R_ = R_ < 65535.0f ? gamcurve[R_] : (Color::gamman((double)R_ / 65535.0, gam) * 32768.0f);
-                            G_ = G_ < 65535.0f ? gamcurve[G_] : (Color::gamman((double)G_ / 65535.0, gam) * 32768.0f);
-                            B_ = B_ < 65535.0f ? gamcurve[B_] : (Color::gamman((double)B_ / 65535.0, gam) * 32768.0f);
+                            R_ = R_ < 65535.0f ? gamcurve[R_] : (Color::gamman(static_cast<double>(R_) / 65535.0, gam) * 32768.0f);
+                            G_ = G_ < 65535.0f ? gamcurve[G_] : (Color::gamman(static_cast<double>(G_) / 65535.0, gam) * 32768.0f);
+                            B_ = B_ < 65535.0f ? gamcurve[B_] : (Color::gamman(static_cast<double>(B_) / 65535.0, gam) * 32768.0f);
                             //true conversion xyz=>Lab
                             float X, Y, Z;
                             Color::rgbxyz(R_, G_, B_, X, Y, Z, wp);
@@ -3445,9 +3445,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                             float Y = gain * src->g(i, j);
                             float Z = gain * src->b(i, j);
 
-                            X = X < 65535.0f ? gamcurve[X] : (Color::gamma((double)X / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                            Y = Y < 65535.0f ? gamcurve[Y] : (Color::gamma((double)Y / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                            Z = Z < 65535.0f ? gamcurve[Z] : (Color::gamma((double)Z / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                            X = X < 65535.0f ? gamcurve[X] : (Color::gamma(static_cast<double>(X) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                            Y = Y < 65535.0f ? gamcurve[Y] : (Color::gamma(static_cast<double>(Y) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                            Z = Z < 65535.0f ? gamcurve[Z] : (Color::gamma(static_cast<double>(Z) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
 
                             labdn->a[i1][j1] = (X - Y);
                             labdn->b[i1][j1] = (Y - Z);
@@ -3474,9 +3474,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                         float btmp = Color::igammatab_srgb[ src->b(i, j) ];
                         //modification Jacques feb 2013
                         // gamma slider different from raw
-                        rtmp = rtmp < 65535.0f ? gamcurve[rtmp] : (Color::gamman((double)rtmp / 65535.0, gam) * 32768.0f);
-                        gtmp = gtmp < 65535.0f ? gamcurve[gtmp] : (Color::gamman((double)gtmp / 65535.0, gam) * 32768.0f);
-                        btmp = btmp < 65535.0f ? gamcurve[btmp] : (Color::gamman((double)btmp / 65535.0, gam) * 32768.0f);
+                        rtmp = rtmp < 65535.0f ? gamcurve[rtmp] : (Color::gamman(static_cast<double>(rtmp) / 65535.0, gam) * 32768.0f);
+                        gtmp = gtmp < 65535.0f ? gamcurve[gtmp] : (Color::gamman(static_cast<double>(gtmp) / 65535.0, gam) * 32768.0f);
+                        btmp = btmp < 65535.0f ? gamcurve[btmp] : (Color::gamman(static_cast<double>(btmp) / 65535.0, gam) * 32768.0f);
 
                         float X, Y, Z;
                         Color::rgbxyz(rtmp, gtmp, btmp, X, Y, Z, wp);
