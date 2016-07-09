@@ -210,7 +210,7 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
         expcomp->clear_items();
         curefs.expcomp.clear();
 
-        for (std::set<std::string>::iterator i = defefs.expcomp.begin(); i != defefs.expcomp.end(); i++) {
+        for (std::set<std::string>::iterator i = defefs.expcomp.begin(); i != defefs.expcomp.end(); ++i) {
             expcomp->append (*i);
             curefs.expcomp.insert(*i);
         }
@@ -220,7 +220,7 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
         lens->clear_items();
         curefs.lenses.clear();
 
-        for (std::set<std::string>::iterator i = defefs.lenses.begin(); i != defefs.lenses.end(); i++) {
+        for (std::set<std::string>::iterator i = defefs.lenses.begin(); i != defefs.lenses.end(); ++i) {
             lens->append (*i);
             curefs.lenses.insert(*i);
         }
@@ -230,7 +230,7 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
         camera->clear_items();
         curefs.cameras.clear();
 
-        for (std::set<std::string>::iterator i = defefs.cameras.begin(); i != defefs.cameras.end(); i++) {
+        for (std::set<std::string>::iterator i = defefs.cameras.begin(); i != defefs.cameras.end(); ++i) {
             camera->append(*i);
             curefs.cameras.insert(*i);
         }
@@ -240,14 +240,14 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
         filetype->clear_items();
         curefs.filetypes.clear();
 
-        for (std::set<std::string>::iterator i = defefs.filetypes.begin(); i != defefs.filetypes.end(); i++) {
+        for (std::set<std::string>::iterator i = defefs.filetypes.begin(); i != defefs.filetypes.end(); ++i) {
             filetype->append(*i);
             curefs.filetypes.insert(*i);
         }
 
         ftselection->select_all();
     } else {
-        for( Gtk::TreeModel::Children::iterator iter = expcomp->get_model()->children().begin(); iter != expcomp->get_model()->children().end(); iter++) {
+        for( Gtk::TreeModel::Children::iterator iter = expcomp->get_model()->children().begin(); iter != expcomp->get_model()->children().end(); ++iter) {
             Glib::ustring v;
             iter->get_value(0, v);
 
@@ -258,7 +258,7 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
             }
         }
 
-        for( Gtk::TreeModel::Children::iterator iter = lens->get_model()->children().begin(); iter != lens->get_model()->children().end(); iter++) {
+        for( Gtk::TreeModel::Children::iterator iter = lens->get_model()->children().begin(); iter != lens->get_model()->children().end(); ++iter) {
             Glib::ustring v;
             iter->get_value(0, v);
 
@@ -269,7 +269,7 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
             }
         }
 
-        for( Gtk::TreeModel::Children::iterator iter = camera->get_model()->children().begin(); iter != camera->get_model()->children().end(); iter++) {
+        for( Gtk::TreeModel::Children::iterator iter = camera->get_model()->children().begin(); iter != camera->get_model()->children().end(); ++iter) {
             Glib::ustring v;
             iter->get_value(0, v);
 
@@ -280,7 +280,7 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists)
             }
         }
 
-        for( Gtk::TreeModel::Children::iterator iter = filetype->get_model()->children().begin(); iter != filetype->get_model()->children().end(); iter++) {
+        for( Gtk::TreeModel::Children::iterator iter = filetype->get_model()->children().begin(); iter != filetype->get_model()->children().end(); ++iter) {
             Glib::ustring v;
             iter->get_value(0, v);
 

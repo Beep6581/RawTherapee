@@ -3388,14 +3388,14 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         // save exif change list
         if (!pedited || pedited->exif) {
-            for (ExifPairs::const_iterator i = exif.begin(); i != exif.end(); i++) {
+            for (ExifPairs::const_iterator i = exif.begin(); i != exif.end(); ++i) {
                 keyFile.set_string ("Exif", i->first, i->second);
             }
         }
 
         // save iptc change list
         if (!pedited || pedited->iptc) {
-            for (IPTCPairs::const_iterator i = iptc.begin(); i != iptc.end(); i++) {
+            for (IPTCPairs::const_iterator i = iptc.begin(); i != iptc.end(); ++i) {
                 Glib::ArrayHandle<Glib::ustring> values = i->second;
                 keyFile.set_string_list ("IPTC", i->first, values);
             }
@@ -7487,7 +7487,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 for (
                     std::vector<Glib::ustring>::iterator currLoadedTagValue = currIptc.begin();
                     currLoadedTagValue != currIptc.end();
-                    currLoadedTagValue++) {
+                    ++currLoadedTagValue) {
                     iptc[keys[i]].push_back(currLoadedTagValue->data());
                 }
 

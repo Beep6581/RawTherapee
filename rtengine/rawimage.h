@@ -99,7 +99,7 @@ class RawImage: public DCraw
 {
 public:
 
-    RawImage(  const Glib::ustring name );
+    RawImage(  const Glib::ustring &name );
     ~RawImage();
 
     int loadRaw (bool loadData = true, bool closeFile = true, ProgressListener *plistener = 0, double progressRange = 1.0);

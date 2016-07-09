@@ -245,7 +245,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
 
     // remove all rows after the selection
     if (iter) {
-        iter++;
+        ++iter;
 
         while (iter) {
             iter = historyModel->erase (iter);
@@ -380,7 +380,7 @@ void History::redo ()
     Gtk::TreeModel::iterator iter = selection->get_selected();
 
     if (iter) {
-        iter++;
+        ++iter;
 
         if (iter != historyModel->children().end()) {
             selection->select (iter);

@@ -511,7 +511,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
         state = SNormal;
 
-        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
+        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
             (*i)->cropPositionChanged (this);
         }
 
@@ -2304,7 +2304,7 @@ void CropWindow::delCropWindowListener (CropWindowListener* l)
         if (*i == l) {
             i = listeners.erase (i);
         } else {
-            i++;
+            ++i;
         }
 }
 

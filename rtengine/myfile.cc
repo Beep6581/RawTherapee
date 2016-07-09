@@ -68,18 +68,17 @@ int munmap(void *start, size_t length)
 
 IMFILE* fopen (const char* fname)
 {
-    int fd = -1;
+    int fd;
 
 #ifdef WIN32
 
-    {
-        // First convert UTF8 to UTF16, then use Windows function to open the file and convert back to file descriptor.
-        std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL)), g_free);
+    fd = -1;
+    // First convert UTF8 to UTF16, then use Windows function to open the file and convert back to file descriptor.
+    std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL)), g_free);
 
-        HANDLE hFile = CreateFileW (wfname.get (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-        if (hFile != INVALID_HANDLE_VALUE) {
-            fd = _open_osfhandle((intptr_t)hFile, 0);
-        }
+    HANDLE hFile = CreateFileW (wfname.get (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        fd = _open_osfhandle((intptr_t)hFile, 0);
     }
 
 #else

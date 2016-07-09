@@ -888,14 +888,9 @@ void Crop::update (int todo)
             realtile = 12;
         }
 
-        int tilesize;
-        int overlap;
-        tilesize = 1024;
-        overlap = 128;
-        tilesize = 128 * realtile;
-        //overlap=(int) tilesize*params->wavelet.overl;
-        overlap = (int) tilesize * 0.125f;
-        //  printf("overl=%d\n",overlap);
+        int tilesize = 128 * realtile;
+        int overlap = (int) tilesize * 0.125f;
+
         int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 
         parent->ipf.Tile_calc (tilesize, overlap, kall, labnCrop->W, labnCrop->H, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);

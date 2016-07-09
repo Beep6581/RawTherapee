@@ -109,7 +109,7 @@ void FavoritBrowser::addPressed ()
             return;
         }
 
-        iter++;
+        ++iter;
     }
 
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_parse_name (lastSelectedDir);

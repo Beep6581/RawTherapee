@@ -180,7 +180,7 @@ void DirBrowser::addRoot (char letter)
 void DirBrowser::updateDirTreeRoot ()
 {
 
-    for (Gtk::TreeModel::iterator i = dirTreeModel->children().begin(); i != dirTreeModel->children().end(); i++) {
+    for (Gtk::TreeModel::iterator i = dirTreeModel->children().begin(); i != dirTreeModel->children().end(); ++i) {
         updateDirTree (i);
     }
 }
@@ -191,7 +191,7 @@ void DirBrowser::updateDirTree (const Gtk::TreeModel::iterator& iter)
     if (dirtree->row_expanded (dirTreeModel->get_path (iter))) {
         updateDir (iter);
 
-        for (Gtk::TreeModel::iterator i = iter->children().begin(); i != iter->children().end(); i++) {
+        for (Gtk::TreeModel::iterator i = iter->children().begin(); i != iter->children().end(); ++i) {
             updateDirTree (i);
         }
     }
@@ -207,7 +207,7 @@ void DirBrowser::updateVolumes ()
 
         for (int i = 0; i < 32; i++)
             if (((volumes >> i) & 1) && !((nvolumes >> i) & 1)) { // volume i has been deleted
-                for (Gtk::TreeModel::iterator iter = dirTreeModel->children().begin(); iter != dirTreeModel->children().end(); iter++)
+                for (Gtk::TreeModel::iterator iter = dirTreeModel->children().begin(); iter != dirTreeModel->children().end(); ++iter)
                     if (iter->get_value (dtColumns.filename).c_str()[0] - 'A' == i) {
                         dirTreeModel->erase (iter);
                         break;
@@ -332,7 +332,7 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)
     while (change) {
         change = false;
 
-        for (Gtk::TreeModel::iterator it = iter->children().begin(); it != iter->children().end(); it++)
+        for (Gtk::TreeModel::iterator it = iter->children().begin(); it != iter->children().end(); ++it)
             if (!Glib::file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_EXISTS)
                     || !Glib::file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_IS_DIR)) {
                 GThreadLock lock;
@@ -349,7 +349,7 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)
     for (int i = 0; i < subDirs.size(); i++) {
         bool found = false;
 
-        for (Gtk::TreeModel::iterator it = iter->children().begin(); it != iter->children().end() && !found ; it++) {
+        for (Gtk::TreeModel::iterator it = iter->children().begin(); it != iter->children().end() && !found ; ++it) {
             found = (it->get_value (dtColumns.filename) == subDirs[i]);
         }
 

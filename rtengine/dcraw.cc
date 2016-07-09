@@ -895,6 +895,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 void CLASS lossless_jpeg_load_raw()
 {
   struct jhead jh;
+  int row=0, col=0;
 
   if (!ljpeg_start (&jh, 0)) return;
   int jwide = jh.wide * jh.clrs;
@@ -917,8 +918,6 @@ void CLASS lossless_jpeg_load_raw()
      #pragma omp section
 #endif
     {
-  int row=0, col=0;
-
     if (load_flags & 1)
       row = jrow & 1 ? height-1-jrow/2 : jrow/2;
     for (int jcol=0; jcol < jwide; jcol++) {

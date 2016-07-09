@@ -294,7 +294,7 @@ void ExifPanel::delIt (Gtk::TreeModel::iterator iter)
     }
 
     if (recursiveOp)
-        for (Gtk::TreeModel::iterator i = iter->children().begin(); i != iter->children().end(); i++) {
+        for (Gtk::TreeModel::iterator i = iter->children().begin(); i != iter->children().end(); ++i) {
             delIt (i);
         }
 }
@@ -325,7 +325,7 @@ void ExifPanel::keepIt (Gtk::TreeModel::iterator iter)
     }
 
     if (recursiveOp)
-        for (Gtk::TreeModel::iterator i = iter->children().begin(); i != iter->children().end(); i++) {
+        for (Gtk::TreeModel::iterator i = iter->children().begin(); i != iter->children().end(); ++i) {
             keepIt (i);
         }
 }
@@ -491,7 +491,7 @@ void ExifPanel::editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib
     // look up first segment of the path
     Gtk::TreeModel::iterator iter;
 
-    for (iter = root.begin(); iter != root.end(); iter++)
+    for (iter = root.begin(); iter != root.end(); ++iter)
         if (iter->get_value (exifColumns.field_nopango) == fseg) {
             break;
         }
@@ -600,7 +600,7 @@ void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string pre
 
     Gtk::TreeModel::iterator iter;
 
-    for (iter = root.begin(); iter != root.end(); iter++)  {
+    for (iter = root.begin(); iter != root.end(); ++iter)  {
         if (iter->get_value (exifColumns.edited) == true) {
             changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
         } else if (iter->get_value (exifColumns.action) == AC_WRITE && iter->get_value (exifColumns.icon) == delicon) {
@@ -625,7 +625,7 @@ void ExifPanel::updateChangeList ()
 void ExifPanel::applyChangeList ()
 {
 
-    for (rtengine::procparams::ExifPairs::iterator i = changeList.begin(); i != changeList.end(); i++) {
+    for (rtengine::procparams::ExifPairs::iterator i = changeList.begin(); i != changeList.end(); ++i) {
         editTag (exifTreeModel->children(), i->first, i->second);
     }
 }

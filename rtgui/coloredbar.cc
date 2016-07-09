@@ -116,7 +116,7 @@ void ColoredBar::draw()
                 break;
             }
 
-            for (std::vector<GradientMilestone>::iterator i = bgGradient.begin(); i != bgGradient.end(); i++) {
+            for (std::vector<GradientMilestone>::iterator i = bgGradient.begin(); i != bgGradient.end(); ++i) {
                 bggradient->add_color_stop_rgb (i->position, i->r, i->g, i->b);
             }
 

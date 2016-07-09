@@ -136,7 +136,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
 
     iptc = iptc_data_new ();
 
-    for (rtengine::procparams::IPTCPairs::const_iterator i = iptcc.begin(); i != iptcc.end(); i++) {
+    for (rtengine::procparams::IPTCPairs::const_iterator i = iptcc.begin(); i != iptcc.end(); ++i) {
         if (i->first == "Keywords" && !(i->second.empty())) {
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
@@ -1082,7 +1082,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
     cinfo.comp_info[2].h_samp_factor = cinfo.comp_info[2].v_samp_factor = 1;
 
     if (subSamp == 1) {
-        // Best compression, default of the JPEG library:  2x2, 1x1, 1x1 (4:1:1)
+        // Best compression, default of the JPEG library:  2x2, 1x1, 1x1 (4:2:0)
         cinfo.comp_info[0].h_samp_factor = cinfo.comp_info[0].v_samp_factor = 2;
     } else if (subSamp == 2) {
         // Widely used normal ratio 2x1, 1x1, 1x1 (4:2:2)
@@ -1227,22 +1227,17 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
         // buffer for the exif and iptc
-        int bufferSize = 165535;   //TODO: Is it really 165535... or 65535 ?
-
-        if(profileData) {
-            bufferSize += profileLength;
-        }
-
-        unsigned char* buffer = new unsigned char[bufferSize];
-        unsigned char* iptcdata = NULL;
+        unsigned int bufferSize;
+        unsigned char* buffer = nullptr; // buffer will be allocated in createTIFFHeader
+        unsigned char* iptcdata = nullptr;
         unsigned int iptclen = 0;
 
         if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
             iptc_data_free_buf (iptc, iptcdata);
-            iptcdata = NULL;
+            iptcdata = nullptr;
         }
 
-        int size = rtexif::ExifManager::createTIFFHeader (exifRoot, exifChange, width, height, bps, profileData, profileLength, (char*)iptcdata, iptclen, buffer);
+        int size = rtexif::ExifManager::createTIFFHeader (exifRoot, exifChange, width, height, bps, profileData, profileLength, (char*)iptcdata, iptclen, buffer, bufferSize);
 
         if (iptcdata) {
             iptc_data_free_buf (iptc, iptcdata);
@@ -1250,7 +1245,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // The maximum lenght is strangely not the same than for the JPEG file...
         // Which maximum length is the good one ?
-        if (size > 0 && size < bufferSize) {
+        if (size > 0 && size <= bufferSize) {
             fwrite (buffer, size, 1, file);
         }
 
@@ -1277,7 +1272,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
             }
         }
 
-        delete [] buffer;
+        if(buffer) {
+            delete [] buffer;
+        }
 
         if (ferror(file)) {
             writeOk = false;
@@ -1288,11 +1285,13 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
         const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
 #ifdef WIN32
-        wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-        TIFF* out = TIFFOpenW (wfilename, mode);
-        g_free (wfilename);
+        FILE *file = g_fopen_withBinaryAndLock (fname);
+        int fileno = _fileno(file);
+        int osfileno = _get_osfhandle(fileno);
+        TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode);
 #else
         TIFF* out = TIFFOpen(fname.c_str(), mode);
+        int fileno = TIFFFileno (out);
 #endif
 
         if (!out) {
@@ -1317,7 +1316,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
                     // TIFFOpen writes out the header and sets file pointer at position 8
 
                     exif->write (8, buffer);
-                    write (TIFFFileno (out), buffer + 8, exif_size);
+
+                    write (fileno, buffer + 8, exif_size);
+
                     delete [] buffer;
                     // let libtiff know that scanlines or any other following stuff should go
                     // at a different offset:
@@ -1350,14 +1351,12 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         }
 
-        Glib::ustring rtVersion("RawTherapee ");
-        rtVersion += VERSION;
-        TIFFSetField (out, TIFFTAG_SOFTWARE, rtVersion.c_str());
+        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " VERSION);
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
         TIFFSetField (out, TIFFTAG_SAMPLESPERPIXEL, 3);
-        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, height);
+        TIFFSetField (out, TIFFTAG_ROWSPERSTRIP, height);
         TIFFSetField (out, TIFFTAG_BITSPERSAMPLE, bps);
         TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
@@ -1391,6 +1390,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
         }
 
         TIFFClose (out);
+#ifdef WIN32
+        fclose (file);
+#endif
     }
 
     delete [] linebuffer;

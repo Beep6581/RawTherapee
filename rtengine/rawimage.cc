@@ -19,7 +19,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-RawImage::RawImage(  const Glib::ustring name )
+RawImage::RawImage(  const Glib::ustring &name )
     : data(NULL)
     , prefilters(0)
     , filename(name)
