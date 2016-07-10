@@ -20,14 +20,7 @@
 #include "../rtgui/options.h"
 #include "rawimage.h"
 #include "imagedata.h"
-
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-#define med5(a0,a1,a2,a3,a4,median) { \
-p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; \
-PIX_SORT(p[0],p[1]) ; PIX_SORT(p[3],p[4]) ; PIX_SORT(p[0],p[3]) ; \
-PIX_SORT(p[1],p[4]) ; PIX_SORT(p[1],p[2]) ; PIX_SORT(p[2],p[3]) ; \
-PIX_SORT(p[1],p[2]) ; median=p[2] ;}
-
+#include "median.h"
 
 namespace rtengine
 {
@@ -217,7 +210,6 @@ void ffInfo::updateRawImage()
 #endif
 
         for (int i = 0; i < H; i++) {
-            int p[5], temp;
             int iprev = i < 2 ? i + 2 : i - 2;
             int inext = i > H - 3 ? i - 2 : i + 2;
 
@@ -225,8 +217,7 @@ void ffInfo::updateRawImage()
                 int jprev = j < 2 ? j + 2 : j - 2;
                 int jnext = j > W - 3 ? j - 2 : j + 2;
 
-                med5(ri->data[iprev][j], ri->data[i][jprev], ri->data[i][j],
-                     ri->data[i][jnext], ri->data[inext][j], cfatmp[i * W + j]);
+                cfatmp[i * W + j] = median(ri->data[iprev][j], ri->data[i][jprev], ri->data[i][j], ri->data[i][jnext], ri->data[inext][j]);
             }
         }
 
