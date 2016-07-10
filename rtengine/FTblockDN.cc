@@ -2222,7 +2222,7 @@ float ImProcFunctions::MadRgb( float * DataList, const int datalen)
     int i;
 
     for (i = 0; i < datalen; i++) {
-        histo[min(65536, abs((int)DataList[i]))]++;
+        histo[min(65535, abs((int)DataList[i]))]++;
     }
 
     //find median of histogram
