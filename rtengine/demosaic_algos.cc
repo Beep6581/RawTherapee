@@ -36,6 +36,7 @@
 #include "procparams.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "median.h"
 //#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
@@ -58,9 +59,6 @@ namespace rtengine
 #define x00625(a) xdivf(a, 4)
 #define x0125(a) xdivf(a, 3)
 
-
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-#define PIX_SORTV(av,bv)  tempv = _mm_min_ps(av,bv); bv = _mm_max_ps(av,bv); av = tempv;
 extern const Settings* settings;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -929,7 +927,7 @@ void RawImageSource::ppg_demosaic()
             }
 
             d = dir[i = diff[0] > diff[1]];
-            pix[0][1] = ULIM(static_cast<float>(guess[i] >> 2), pix[d][1], pix[-d][1]);
+            pix[0][1] = median(static_cast<float>(guess[i] >> 2), pix[d][1], pix[-d][1]);
         }
 
         if(plistener) {
@@ -1253,8 +1251,8 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
             for (col = 6 + (FC(row, 2) & 1), indx = row * width + col, c = FC(row, col) / 2; col < u - 6; col += 2, indx += 2) {
                 f[0] = 1.f + 78.f * SQR((float)dif[indx][0]) + 69.f * (SQR((float) dif[indx - v][0]) + SQR((float)dif[indx + v][0])) + 51.f * (SQR((float)dif[indx - x][0]) + SQR((float)dif[indx + x][0])) + 21.f * (SQR((float)dif[indx - z][0]) + SQR((float)dif[indx + z][0])) - 6.f * SQR((float)dif[indx - v][0] + dif[indx][0] + dif[indx + v][0]) - 10.f * (SQR((float)dif[indx - x][0] + dif[indx - v][0] + dif[indx][0]) + SQR((float)dif[indx][0] + dif[indx + v][0] + dif[indx + x][0])) - 7.f * (SQR((float)dif[indx - z][0] + dif[indx - x][0] + dif[indx - v][0]) + SQR((float)dif[indx + v][0] + dif[indx + x][0] + dif[indx + z][0]));
                 f[1] = 1.f + 78.f * SQR((float)dif[indx][1]) + 69.f * (SQR((float)dif[indx - 2][1]) + SQR((float)dif[indx + 2][1])) + 51.f * (SQR((float)dif[indx - 4][1]) + SQR((float)dif[indx + 4][1])) + 21.f * (SQR((float)dif[indx - 6][1]) + SQR((float)dif[indx + 6][1])) - 6.f * SQR((float)dif[indx - 2][1] + dif[indx][1] + dif[indx + 2][1]) - 10.f * (SQR((float)dif[indx - 4][1] + dif[indx - 2][1] + dif[indx][1]) + SQR((float)dif[indx][1] + dif[indx + 2][1] + dif[indx + 4][1])) - 7.f * (SQR((float)dif[indx - 6][1] + dif[indx - 4][1] + dif[indx - 2][1]) + SQR((float)dif[indx + 2][1] + dif[indx + 4][1] + dif[indx + 6][1]));
-                g[0] = ULIM<float>(0.725f * dif[indx][0] + 0.1375f * dif[indx - v][0] + 0.1375f * dif[indx + v][0], dif[indx - v][0], dif[indx + v][0]);
-                g[1] = ULIM<float>(0.725f * dif[indx][1] + 0.1375f * dif[indx - 2][1] + 0.1375f * dif[indx + 2][1], dif[indx - 2][1], dif[indx + 2][1]);
+                g[0] = median(0.725f * dif[indx][0] + 0.1375f * dif[indx - v][0] + 0.1375f * dif[indx + v][0], static_cast<float>(dif[indx - v][0]), static_cast<float>(dif[indx + v][0]));
+                g[1] = median(0.725f * dif[indx][1] + 0.1375f * dif[indx - 2][1] + 0.1375f * dif[indx + 2][1], static_cast<float>(dif[indx - 2][1]), static_cast<float>(dif[indx + 2][1]));
                 chr[indx][c] = (f[1] * g[0] + f[0] * g[1]) / (f[0] + f[1]);
             }
 
@@ -1268,10 +1266,10 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
                 f[1] = 1.f / (float)(1.f + fabs((float)chr[indx - u + 1][c] - chr[indx + u - 1][c]) + fabs((float)chr[indx - u + 1][c] - chr[indx - w + 3][c]) + fabs((float)chr[indx + u - 1][c] - chr[indx - w + 3][c]));
                 f[2] = 1.f / (float)(1.f + fabs((float)chr[indx + u - 1][c] - chr[indx - u + 1][c]) + fabs((float)chr[indx + u - 1][c] - chr[indx + w + 3][c]) + fabs((float)chr[indx - u + 1][c] - chr[indx + w - 3][c]));
                 f[3] = 1.f / (float)(1.f + fabs((float)chr[indx + u + 1][c] - chr[indx - u - 1][c]) + fabs((float)chr[indx + u + 1][c] - chr[indx + w - 3][c]) + fabs((float)chr[indx - u - 1][c] - chr[indx + w + 3][c]));
-                g[0] = ULIM(chr[indx - u - 1][c], chr[indx - w - 1][c], chr[indx - u - 3][c]);
-                g[1] = ULIM(chr[indx - u + 1][c], chr[indx - w + 1][c], chr[indx - u + 3][c]);
-                g[2] = ULIM(chr[indx + u - 1][c], chr[indx + w - 1][c], chr[indx + u - 3][c]);
-                g[3] = ULIM(chr[indx + u + 1][c], chr[indx + w + 1][c], chr[indx + u + 3][c]);
+                g[0] = median(chr[indx - u - 1][c], chr[indx - w - 1][c], chr[indx - u - 3][c]);
+                g[1] = median(chr[indx - u + 1][c], chr[indx - w + 1][c], chr[indx - u + 3][c]);
+                g[2] = median(chr[indx + u - 1][c], chr[indx + w - 1][c], chr[indx + u - 3][c]);
+                g[3] = median(chr[indx + u + 1][c], chr[indx + w + 1][c], chr[indx + u + 3][c]);
                 chr[indx][c] = (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) / (f[0] + f[1] + f[2] + f[3]);
                 image[indx][1] = CLIP(image[indx][2 - d] + chr[indx][1 - c]);
                 image[indx][d] = CLIP(image[indx][1] - chr[indx][c]);
@@ -1459,7 +1457,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
                 float Y = v0 + xdiv2f(rix[0][0]);
 
                 if (rix[4][0] > 1.75f * Y) {
-                    rix[0][0] = ULIM(rix[0][0], rix[4][ -1], rix[4][ 1]);
+                    rix[0][0] = median(rix[0][0], rix[4][ -1], rix[4][ 1]);
                 } else {
                     rix[0][0] = LIM(rix[0][0], 0.0f, 1.0f);
                 }
@@ -1471,7 +1469,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
                 Y = v0 + xdiv2f(rix[1][0]);
 
                 if (rix[4][0] > 1.75f * Y) {
-                    rix[1][0] = ULIM(rix[1][0], rix[4][-w1], rix[4][w1]);
+                    rix[1][0] = median(rix[1][0], rix[4][-w1], rix[4][w1]);
                 } else {
                     rix[1][0] = LIM(rix[1][0], 0.0f, 1.0f);
                 }
@@ -1764,83 +1762,45 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
                 int d = c + 3 - (c == 0 ? 0 : 1);
                 int cc = 1;
 #ifdef __SSE2__
-                __m128 p1v, p2v, p3v, p4v, p5v, p6v, p7v, p8v, p9v, tempv;
 
                 for (; cc < cc1 - 4; cc += 4) {
                     rix[d] = qix[d] + rr * cc1 + cc;
                     rix[c] = qix[c] + rr * cc1 + cc;
                     rix[1] = qix[1] + rr * cc1 + cc;
                     // Assign 3x3 differential color values
-                    p1v = LVFU(rix[c][-w1 - 1]) - LVFU(rix[1][-w1 - 1]);
-                    p2v = LVFU(rix[c][-w1]) - LVFU(rix[1][-w1]);
-                    p3v = LVFU(rix[c][-w1 + 1]) - LVFU(rix[1][-w1 + 1]);
-                    p4v = LVFU(rix[c][   -1]) - LVFU(rix[1][   -1]);
-                    p5v = LVFU(rix[c][  0]) - LVFU(rix[1][  0]);
-                    p6v = LVFU(rix[c][    1]) - LVFU(rix[1][    1]);
-                    p7v = LVFU(rix[c][ w1 - 1]) - LVFU(rix[1][ w1 - 1]);
-                    p8v = LVFU(rix[c][ w1]) - LVFU(rix[1][ w1]);
-                    p9v = LVFU(rix[c][ w1 + 1]) - LVFU(rix[1][ w1 + 1]);
-                    // Sort for median of 9 values
-                    PIX_SORTV(p2v, p3v);
-                    PIX_SORTV(p5v, p6v);
-                    PIX_SORTV(p8v, p9v);
-                    PIX_SORTV(p1v, p2v);
-                    PIX_SORTV(p4v, p5v);
-                    PIX_SORTV(p7v, p8v);
-                    PIX_SORTV(p2v, p3v);
-                    PIX_SORTV(p5v, p6v);
-                    PIX_SORTV(p8v, p9v);
-                    p4v = _mm_max_ps(p1v, p4v);
-                    p6v = _mm_min_ps(p6v, p9v);
-                    PIX_SORTV(p5v, p8v);
-                    p7v = _mm_max_ps(p4v, p7v);
-                    p5v = _mm_max_ps(p5v, p2v);
-                    p3v = _mm_min_ps(p3v, p6v);
-                    p5v = _mm_min_ps(p5v, p8v);
-                    PIX_SORTV(p5v, p3v);
-                    p5v = _mm_max_ps(p7v, p5v);
-                    p5v = _mm_min_ps(p3v, p5v);
-                    _mm_storeu_ps(&rix[d][0], p5v);
+                    const std::array<vfloat, 9> p = {
+                        LVFU(rix[c][-w1 - 1]) - LVFU(rix[1][-w1 - 1]),
+                        LVFU(rix[c][-w1]) - LVFU(rix[1][-w1]),
+                        LVFU(rix[c][-w1 + 1]) - LVFU(rix[1][-w1 + 1]),
+                        LVFU(rix[c][   -1]) - LVFU(rix[1][   -1]),
+                        LVFU(rix[c][  0]) - LVFU(rix[1][  0]),
+                        LVFU(rix[c][    1]) - LVFU(rix[1][    1]),
+                        LVFU(rix[c][ w1 - 1]) - LVFU(rix[1][ w1 - 1]),
+                        LVFU(rix[c][ w1]) - LVFU(rix[1][ w1]),
+                        LVFU(rix[c][ w1 + 1]) - LVFU(rix[1][ w1 + 1])
+                    };
+                    _mm_storeu_ps(&rix[d][0], median(p));
                 }
 
 #endif
 
                 for (; cc < cc1 - 1; cc++) {
-                    float temp;
                     rix[d] = qix[d] + rr * cc1 + cc;
                     rix[c] = qix[c] + rr * cc1 + cc;
                     rix[1] = qix[1] + rr * cc1 + cc;
                     // Assign 3x3 differential color values
-                    float p1 = rix[c][-w1 - 1] - rix[1][-w1 - 1];
-                    float p2 = rix[c][-w1] - rix[1][-w1];
-                    float p3 = rix[c][-w1 + 1] - rix[1][-w1 + 1];
-                    float p4 = rix[c][   -1] - rix[1][   -1];
-                    float p5 = rix[c][  0] - rix[1][  0];
-                    float p6 = rix[c][    1] - rix[1][    1];
-                    float p7 = rix[c][ w1 - 1] - rix[1][ w1 - 1];
-                    float p8 = rix[c][ w1] - rix[1][ w1];
-                    float p9 = rix[c][ w1 + 1] - rix[1][ w1 + 1];
-                    // Sort for median of 9 values
-                    PIX_SORT(p2, p3);
-                    PIX_SORT(p5, p6);
-                    PIX_SORT(p8, p9);
-                    PIX_SORT(p1, p2);
-                    PIX_SORT(p4, p5);
-                    PIX_SORT(p7, p8);
-                    PIX_SORT(p2, p3);
-                    PIX_SORT(p5, p6);
-                    PIX_SORT(p8, p9);
-                    PIX_SORT(p1, p4);
-                    PIX_SORT(p6, p9);
-                    PIX_SORT(p5, p8);
-                    PIX_SORT(p4, p7);
-                    PIX_SORT(p2, p5);
-                    PIX_SORT(p3, p6);
-                    PIX_SORT(p5, p8);
-                    PIX_SORT(p5, p3);
-                    PIX_SORT(p7, p5);
-                    PIX_SORT(p5, p3);
-                    rix[d][0] = p5;
+                    const std::array<float, 9> p = {
+                        rix[c][-w1 - 1] - rix[1][-w1 - 1],
+                        rix[c][-w1] - rix[1][-w1],
+                        rix[c][-w1 + 1] - rix[1][-w1 + 1],
+                        rix[c][   -1] - rix[1][   -1],
+                        rix[c][  0] - rix[1][  0],
+                        rix[c][    1] - rix[1][    1],
+                        rix[c][ w1 - 1] - rix[1][ w1 - 1],
+                        rix[c][ w1] - rix[1][ w1],
+                        rix[c][ w1 + 1] - rix[1][ w1 + 1]
+                    };
+                    rix[d][0] = median(p);
                 }
             }
         }
@@ -2158,8 +2118,8 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
                 egv = LIMV(epssqv + c78v * SQRV(LVFU(hdif[indx1])) + c69v * (SQRV(LVFU(hdif[indx1 - h1])) + SQRV(LVFU(hdif[indx1 + h1]))) + c51v * (SQRV(LVFU(hdif[indx1 - h2])) + SQRV(LVFU(hdif[indx1 + h2]))) + c21v * (SQRV(LVFU(hdif[indx1 - h3])) + SQRV(LVFU(hdif[indx1 + h3]))) - c6v * SQRV(LVFU(hdif[indx1 - h1]) + LVFU(hdif[indx1]) + LVFU(hdif[indx1 + h1]))
                            - c10v * (SQRV(LVFU(hdif[indx1 - h2]) + LVFU(hdif[indx1 - h1]) + LVFU(hdif[indx1])) + SQRV(LVFU(hdif[indx1]) + LVFU(hdif[indx1 + h1]) + LVFU(hdif[indx1 + h2]))) - c7v * (SQRV(LVFU(hdif[indx1 - h3]) + LVFU(hdif[indx1 - h2]) + LVFU(hdif[indx1 - h1])) + SQRV(LVFU(hdif[indx1 + h1]) + LVFU(hdif[indx1 + h2]) + LVFU(hdif[indx1 + h3]))), zerov, onev);
                 //Limit chrominance using H/V neighbourhood
-                nvv = ULIMV(d725v * LVFU(vdif[indx1]) + d1375v * LVFU(vdif[indx1 - v1]) + d1375v * LVFU(vdif[indx1 + v1]), LVFU(vdif[indx1 - v1]), LVFU(vdif[indx1 + v1]));
-                evv = ULIMV(d725v * LVFU(hdif[indx1]) + d1375v * LVFU(hdif[indx1 - h1]) + d1375v * LVFU(hdif[indx1 + h1]), LVFU(hdif[indx1 - h1]), LVFU(hdif[indx1 + h1]));
+                nvv = median(d725v * LVFU(vdif[indx1]) + d1375v * LVFU(vdif[indx1 - v1]) + d1375v * LVFU(vdif[indx1 + v1]), LVFU(vdif[indx1 - v1]), LVFU(vdif[indx1 + v1]));
+                evv = median(d725v * LVFU(hdif[indx1]) + d1375v * LVFU(hdif[indx1 - h1]) + d1375v * LVFU(hdif[indx1 + h1]), LVFU(hdif[indx1 - h1]), LVFU(hdif[indx1 + h1]));
                 //Chrominance estimation
                 tempv = (egv * nvv + ngv * evv) / (ngv + egv);
                 _mm_storeu_ps(&(chr[d][indx1]), tempv);
@@ -2176,8 +2136,8 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
                 eg = LIM(epssq + 78.0f * SQR(hdif[indx1]) + 69.0f * (SQR(hdif[indx1 - h1]) + SQR(hdif[indx1 + h1])) + 51.0f * (SQR(hdif[indx1 - h2]) + SQR(hdif[indx1 + h2])) + 21.0f * (SQR(hdif[indx1 - h3]) + SQR(hdif[indx1 + h3])) - 6.0f * SQR(hdif[indx1 - h1] + hdif[indx1] + hdif[indx1 + h1])
                          - 10.0f * (SQR(hdif[indx1 - h2] + hdif[indx1 - h1] + hdif[indx1]) + SQR(hdif[indx1] + hdif[indx1 + h1] + hdif[indx1 + h2])) - 7.0f * (SQR(hdif[indx1 - h3] + hdif[indx1 - h2] + hdif[indx1 - h1]) + SQR(hdif[indx1 + h1] + hdif[indx1 + h2] + hdif[indx1 + h3])), 0.f, 1.f);
                 //Limit chrominance using H/V neighbourhood
-                nv = ULIM(0.725f * vdif[indx1] + 0.1375f * vdif[indx1 - v1] + 0.1375f * vdif[indx1 + v1], vdif[indx1 - v1], vdif[indx1 + v1]);
-                ev = ULIM(0.725f * hdif[indx1] + 0.1375f * hdif[indx1 - h1] + 0.1375f * hdif[indx1 + h1], hdif[indx1 - h1], hdif[indx1 + h1]);
+                nv = median(0.725f * vdif[indx1] + 0.1375f * vdif[indx1 - v1] + 0.1375f * vdif[indx1 + v1], vdif[indx1 - v1], vdif[indx1 + v1]);
+                ev = median(0.725f * hdif[indx1] + 0.1375f * hdif[indx1 - h1] + 0.1375f * hdif[indx1 + h1], hdif[indx1 - h1], hdif[indx1 + h1]);
                 //Chrominance estimation
                 chr[d][indx1] = (eg * nv + ng * ev) / (ng + eg);
                 //Green channel population
@@ -2207,10 +2167,10 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
                 swgv = onev / (epsv + vabsf(LVFU(chr[c][(indx + v1 - h1) >> 1]) - LVFU(chr[c][(indx + v3 + h3) >> 1])) + vabsf(LVFU(chr[c][(indx - v1 + h1) >> 1]) - LVFU(chr[c][(indx + v3 - h3) >> 1])));
                 segv = onev / (epsv + vabsf(LVFU(chr[c][(indx + v1 + h1) >> 1]) - LVFU(chr[c][(indx + v3 - h3) >> 1])) + vabsf(LVFU(chr[c][(indx - v1 - h1) >> 1]) - LVFU(chr[c][(indx + v3 + h3) >> 1])));
                 //Limit NW,NE,SW,SE Color differences
-                nwvv = ULIMV(LVFU(chr[c][(indx - v1 - h1) >> 1]), LVFU(chr[c][(indx - v3 - h1) >> 1]), LVFU(chr[c][(indx - v1 - h3) >> 1]));
-                nevv = ULIMV(LVFU(chr[c][(indx - v1 + h1) >> 1]), LVFU(chr[c][(indx - v3 + h1) >> 1]), LVFU(chr[c][(indx - v1 + h3) >> 1]));
-                swvv = ULIMV(LVFU(chr[c][(indx + v1 - h1) >> 1]), LVFU(chr[c][(indx + v3 - h1) >> 1]), LVFU(chr[c][(indx + v1 - h3) >> 1]));
-                sevv = ULIMV(LVFU(chr[c][(indx + v1 + h1) >> 1]), LVFU(chr[c][(indx + v3 + h1) >> 1]), LVFU(chr[c][(indx + v1 + h3) >> 1]));
+                nwvv = median(LVFU(chr[c][(indx - v1 - h1) >> 1]), LVFU(chr[c][(indx - v3 - h1) >> 1]), LVFU(chr[c][(indx - v1 - h3) >> 1]));
+                nevv = median(LVFU(chr[c][(indx - v1 + h1) >> 1]), LVFU(chr[c][(indx - v3 + h1) >> 1]), LVFU(chr[c][(indx - v1 + h3) >> 1]));
+                swvv = median(LVFU(chr[c][(indx + v1 - h1) >> 1]), LVFU(chr[c][(indx + v3 - h1) >> 1]), LVFU(chr[c][(indx + v1 - h3) >> 1]));
+                sevv = median(LVFU(chr[c][(indx + v1 + h1) >> 1]), LVFU(chr[c][(indx + v3 + h1) >> 1]), LVFU(chr[c][(indx + v1 + h3) >> 1]));
                 //Interpolate chrominance: R@B and B@R
                 tempv = (nwgv * nwvv + negv * nevv + swgv * swvv + segv * sevv) / (nwgv + negv + swgv + segv);
                 _mm_storeu_ps( &(chr[c][indx >> 1]), tempv);
@@ -2223,10 +2183,10 @@ SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
                 swg = 1.0f / (eps + fabsf(chr[c][(indx + v1 - h1) >> 1] - chr[c][(indx + v3 + h3) >> 1]) + fabsf(chr[c][(indx - v1 + h1) >> 1] - chr[c][(indx + v3 - h3) >> 1]));
                 seg = 1.0f / (eps + fabsf(chr[c][(indx + v1 + h1) >> 1] - chr[c][(indx + v3 - h3) >> 1]) + fabsf(chr[c][(indx - v1 - h1) >> 1] - chr[c][(indx + v3 + h3) >> 1]));
                 //Limit NW,NE,SW,SE Color differences
-                nwv = ULIM(chr[c][(indx - v1 - h1) >> 1], chr[c][(indx - v3 - h1) >> 1], chr[c][(indx - v1 - h3) >> 1]);
-                nev = ULIM(chr[c][(indx - v1 + h1) >> 1], chr[c][(indx - v3 + h1) >> 1], chr[c][(indx - v1 + h3) >> 1]);
-                swv = ULIM(chr[c][(indx + v1 - h1) >> 1], chr[c][(indx + v3 - h1) >> 1], chr[c][(indx + v1 - h3) >> 1]);
-                sev = ULIM(chr[c][(indx + v1 + h1) >> 1], chr[c][(indx + v3 + h1) >> 1], chr[c][(indx + v1 + h3) >> 1]);
+                nwv = median(chr[c][(indx - v1 - h1) >> 1], chr[c][(indx - v3 - h1) >> 1], chr[c][(indx - v1 - h3) >> 1]);
+                nev = median(chr[c][(indx - v1 + h1) >> 1], chr[c][(indx - v3 + h1) >> 1], chr[c][(indx - v1 + h3) >> 1]);
+                swv = median(chr[c][(indx + v1 - h1) >> 1], chr[c][(indx + v3 - h1) >> 1], chr[c][(indx + v1 - h3) >> 1]);
+                sev = median(chr[c][(indx + v1 + h1) >> 1], chr[c][(indx + v3 + h1) >> 1], chr[c][(indx + v1 + h3) >> 1]);
                 //Interpolate chrominance: R@B and B@R
                 chr[c][indx >> 1] = (nwg * nwv + neg * nev + swg * swv + seg * sev) / (nwg + neg + swg + seg);
             }
@@ -2487,8 +2447,8 @@ void RawImageSource::igv_interpolate(int winw, int winh)
                 eg = LIM(epssq + 78.0f * SQR(hdif[indx >> 1]) + 69.0f * (SQR(hdif[(indx - h2) >> 1]) + SQR(hdif[(indx + h2) >> 1])) + 51.0f * (SQR(hdif[(indx - h4) >> 1]) + SQR(hdif[(indx + h4) >> 1])) + 21.0f * (SQR(hdif[(indx - h6) >> 1]) + SQR(hdif[(indx + h6) >> 1])) - 6.0f * SQR(hdif[(indx - h2) >> 1] + hdif[indx >> 1] + hdif[(indx + h2) >> 1])
                          - 10.0f * (SQR(hdif[(indx - h4) >> 1] + hdif[(indx - h2) >> 1] + hdif[indx >> 1]) + SQR(hdif[indx >> 1] + hdif[(indx + h2) >> 1] + hdif[(indx + h4) >> 1])) - 7.0f * (SQR(hdif[(indx - h6) >> 1] + hdif[(indx - h4) >> 1] + hdif[(indx - h2) >> 1]) + SQR(hdif[(indx + h2) >> 1] + hdif[(indx + h4) >> 1] + hdif[(indx + h6) >> 1])), 0.f, 1.f);
                 //Limit chrominance using H/V neighbourhood
-                nv = ULIM(0.725f * vdif[indx >> 1] + 0.1375f * vdif[(indx - v2) >> 1] + 0.1375f * vdif[(indx + v2) >> 1], vdif[(indx - v2) >> 1], vdif[(indx + v2) >> 1]);
-                ev = ULIM(0.725f * hdif[indx >> 1] + 0.1375f * hdif[(indx - h2) >> 1] + 0.1375f * hdif[(indx + h2) >> 1], hdif[(indx - h2) >> 1], hdif[(indx + h2) >> 1]);
+                nv = median(0.725f * vdif[indx >> 1] + 0.1375f * vdif[(indx - v2) >> 1] + 0.1375f * vdif[(indx + v2) >> 1], vdif[(indx - v2) >> 1], vdif[(indx + v2) >> 1]);
+                ev = median(0.725f * hdif[indx >> 1] + 0.1375f * hdif[(indx - h2) >> 1] + 0.1375f * hdif[(indx + h2) >> 1], hdif[(indx - h2) >> 1], hdif[(indx + h2) >> 1]);
                 //Chrominance estimation
                 chr[d][indx] = (eg * nv + ng * ev) / (ng + eg);
                 //Green channel population
@@ -2517,10 +2477,10 @@ void RawImageSource::igv_interpolate(int winw, int winh)
                 swg = 1.0f / (eps + fabsf(chr[c][indx + v1 - h1] - chr[c][indx + v3 + h3]) + fabsf(chr[c][indx - v1 + h1] - chr[c][indx + v3 - h3]));
                 seg = 1.0f / (eps + fabsf(chr[c][indx + v1 + h1] - chr[c][indx + v3 - h3]) + fabsf(chr[c][indx - v1 - h1] - chr[c][indx + v3 + h3]));
                 //Limit NW,NE,SW,SE Color differences
-                nwv = ULIM(chr[c][indx - v1 - h1], chr[c][indx - v3 - h1], chr[c][indx - v1 - h3]);
-                nev = ULIM(chr[c][indx - v1 + h1], chr[c][indx - v3 + h1], chr[c][indx - v1 + h3]);
-                swv = ULIM(chr[c][indx + v1 - h1], chr[c][indx + v3 - h1], chr[c][indx + v1 - h3]);
-                sev = ULIM(chr[c][indx + v1 + h1], chr[c][indx + v3 + h1], chr[c][indx + v1 + h3]);
+                nwv = median(chr[c][indx - v1 - h1], chr[c][indx - v3 - h1], chr[c][indx - v1 - h3]);
+                nev = median(chr[c][indx - v1 + h1], chr[c][indx - v3 + h1], chr[c][indx - v1 + h3]);
+                swv = median(chr[c][indx + v1 - h1], chr[c][indx + v3 - h1], chr[c][indx + v1 - h3]);
+                sev = median(chr[c][indx + v1 + h1], chr[c][indx + v3 + h1], chr[c][indx + v1 + h3]);
                 //Interpolate chrominance: R@B and B@R
                 chr[c][indx] = (nwg * nwv + neg * nev + swg * swv + seg * sev) / (nwg + neg + swg + seg);
             }
@@ -2545,10 +2505,10 @@ void RawImageSource::igv_interpolate(int winw, int winh)
                 swg = 1.0f / (eps + fabsf(chr[c][indx + v1 - h1] - chr[c][indx + v3 + h3]) + fabsf(chr[c][indx - v1 + h1] - chr[c][indx + v3 - h3]));
                 seg = 1.0f / (eps + fabsf(chr[c][indx + v1 + h1] - chr[c][indx + v3 - h3]) + fabsf(chr[c][indx - v1 - h1] - chr[c][indx + v3 + h3]));
                 //Limit NW,NE,SW,SE Color differences
-                nwv = ULIM(chr[c][indx - v1 - h1], chr[c][indx - v3 - h1], chr[c][indx - v1 - h3]);
-                nev = ULIM(chr[c][indx - v1 + h1], chr[c][indx - v3 + h1], chr[c][indx - v1 + h3]);
-                swv = ULIM(chr[c][indx + v1 - h1], chr[c][indx + v3 - h1], chr[c][indx + v1 - h3]);
-                sev = ULIM(chr[c][indx + v1 + h1], chr[c][indx + v3 + h1], chr[c][indx + v1 + h3]);
+                nwv = median(chr[c][indx - v1 - h1], chr[c][indx - v3 - h1], chr[c][indx - v1 - h3]);
+                nev = median(chr[c][indx - v1 + h1], chr[c][indx - v3 + h1], chr[c][indx - v1 + h3]);
+                swv = median(chr[c][indx + v1 - h1], chr[c][indx + v3 - h1], chr[c][indx + v1 - h3]);
+                sev = median(chr[c][indx + v1 + h1], chr[c][indx + v3 + h1], chr[c][indx + v1 + h3]);
                 //Interpolate chrominance: R@B and B@R
                 chr[c][indx] = (nwg * nwv + neg * nev + swg * swv + seg * sev) / (nwg + neg + swg + seg);
             }
@@ -2730,10 +2690,10 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
                     pix = image + (row * width + col);
                     val = 0.25 * ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
                                   - pix[-2][c] - pix[2][c]) ;
-                    rgb[0][row - top][col - left][1] = ULIM(static_cast<float>(val), pix[-1][1], pix[1][1]);
+                    rgb[0][row - top][col - left][1] = median(static_cast<float>(val), pix[-1][1], pix[1][1]);
                     val = 0.25 * ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
                                   - pix[-2 * width][c] - pix[2 * width][c]) ;
-                    rgb[1][row - top][col - left][1] = ULIM(static_cast<float>(val), pix[-width][1], pix[width][1]);
+                    rgb[1][row - top][col - left][1] = median(static_cast<float>(val), pix[-width][1], pix[width][1]);
                 }
             }
 
@@ -3215,39 +3175,21 @@ void RawImageSource::refinement_lassus(int PassCount)
 
                     g[4] = (f[0] * g[0] + f[1] * g[1] + f[2] * g[2] + f[3] * g[3]) / (f[0] + f[1] + f[2] + f[3]);
 
-                    float p[9];
-                    p[0] = (pix[-u - 1][1] - pix[-u - 1][c]);
-                    p[1] = (pix[-u + 0][1] - pix[-u + 0][c]);
-                    p[2] = (pix[-u + 1][1] - pix[-u + 1][c]);
-                    p[3] = (pix[+0 - 1][1] - pix[+0 - 1][c]);
-                    p[4] = (pix[+0 + 0][1] - pix[+0 + 0][c]);
-                    p[5] = (pix[+0 + 1][1] - pix[+0 + 1][c]);
-                    p[6] = (pix[+u - 1][1] - pix[+u - 1][c]);
-                    p[7] = (pix[+u + 0][1] - pix[+u + 0][c]);
-                    p[8] = (pix[+u + 1][1] - pix[+u + 1][c]);
+                    const std::array<float, 9> p = {
+                        pix[-u - 1][1] - pix[-u - 1][c],
+                        pix[-u + 0][1] - pix[-u + 0][c],
+                        pix[-u + 1][1] - pix[-u + 1][c],
+                        pix[+0 - 1][1] - pix[+0 - 1][c],
+                        pix[+0 + 0][1] - pix[+0 + 0][c],
+                        pix[+0 + 1][1] - pix[+0 + 1][c],
+                        pix[+u - 1][1] - pix[+u - 1][c],
+                        pix[+u + 0][1] - pix[+u + 0][c],
+                        pix[+u + 1][1] - pix[+u + 1][c]
+                    };
 
-                    // sort p[]
-                    float temp;  // used in PIX_SORT macro;
-                    PIX_SORT(p[1], p[2]);
-                    PIX_SORT(p[4], p[5]);
-                    PIX_SORT(p[7], p[8]);
-                    PIX_SORT(p[0], p[1]);
-                    PIX_SORT(p[3], p[4]);
-                    PIX_SORT(p[6], p[7]);
-                    PIX_SORT(p[1], p[2]);
-                    PIX_SORT(p[4], p[5]);
-                    PIX_SORT(p[7], p[8]);
-                    PIX_SORT(p[0], p[3]);
-                    PIX_SORT(p[5], p[8]);
-                    PIX_SORT(p[4], p[7]);
-                    PIX_SORT(p[3], p[6]);
-                    PIX_SORT(p[1], p[4]);
-                    PIX_SORT(p[2], p[5]);
-                    PIX_SORT(p[4], p[7]);
-                    PIX_SORT(p[4], p[2]);
-                    PIX_SORT(p[6], p[4]);
-                    PIX_SORT(p[4], p[2]);
-                    pix[0][c] = LIM(pix[0][1] - (1.30f * g[4] - 0.30f * (pix[0][1] - pix[0][c])), 0.99f * (pix[0][1] - p[4]), 1.01f * (pix[0][1] - p[4]));
+                    const float med = median(p);
+
+                    pix[0][c] = LIM(pix[0][1] - (1.30f * g[4] - 0.30f * (pix[0][1] - pix[0][c])), 0.99f * (pix[0][1] - med), 1.01f * (pix[0][1] - med));
 
                 }
             }

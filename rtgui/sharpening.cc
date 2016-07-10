@@ -80,7 +80,7 @@ Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENI
     edgesonly->set_active (false);
     edgebox = new Gtk::VBox ();
     eradius = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.5, 2.5, 0.1, 1.9));
-    etolerance = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDTOLERANCE"), 10, 10000, 100, 1000));
+    etolerance = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDTOLERANCE"), 10, 10000, 100, 1800));
     usm->pack_start(*hsep6, Gtk::PACK_SHRINK, 2);
     usm->pack_start(*edgesonly);
     edgebox->pack_start(*eradius);

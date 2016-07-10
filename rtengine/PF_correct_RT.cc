@@ -31,6 +31,7 @@
 #include "../rtgui/myflatcurve.h"
 #include "rt_math.h"
 #include "opthelper.h"
+#include "median.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -766,7 +767,6 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
         #pragma omp parallel
         {
             int ip, in, jp, jn;
-            float pp[9], temp;
             #pragma omp for nowait  //nowait because next loop inside this parallel region is independent on this one
 
             for (int i = 0; i < height; i++) {
@@ -795,7 +795,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
                         jn = j + 2;
                     }
 
-                    med3(sraa[ip][jp], sraa[ip][j], sraa[ip][jn], sraa[i][jp], sraa[i][j], sraa[i][jn], sraa[in][jp], sraa[in][j], sraa[in][jn], tmaa[i][j]);
+                    tmaa[i][j] = median(sraa[ip][jp], sraa[ip][j], sraa[ip][jn], sraa[i][jp], sraa[i][j], sraa[i][jn], sraa[in][jp], sraa[in][j], sraa[in][jn]);
                 }
             }
 
@@ -827,7 +827,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
                         jn = j + 2;
                     }
 
-                    med3(srbb[ip][jp], srbb[ip][j], srbb[ip][jn], srbb[i][jp], srbb[i][j], srbb[i][jn], srbb[in][jp], srbb[in][j], srbb[in][jn], tmbb[i][j]);
+                    tmbb[i][j] = median(srbb[ip][jp], srbb[ip][j], srbb[ip][jn], srbb[i][jp], srbb[i][j], srbb[i][jn], srbb[in][jp], srbb[in][j], srbb[in][jn]);
                 }
             }
         }
@@ -1374,7 +1374,6 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
         #pragma omp parallel
         {
             int ip, in, jp, jn;
-            float pp[9], temp;
             #pragma omp for nowait  //nowait because next loop inside this parallel region is independent on this one
 
             for (int i = 0; i < height; i++) {
@@ -1403,7 +1402,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
                         jn = j + 2;
                     }
 
-                    med3(sraa[ip][jp], sraa[ip][j], sraa[ip][jn], sraa[i][jp], sraa[i][j], sraa[i][jn], sraa[in][jp], sraa[in][j], sraa[in][jn], tmaa[i][j]);
+                    tmaa[i][j] = median(sraa[ip][jp], sraa[ip][j], sraa[ip][jn], sraa[i][jp], sraa[i][j], sraa[i][jn], sraa[in][jp], sraa[in][j], sraa[in][jn]);
                 }
             }
 
@@ -1435,7 +1434,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
                         jn = j + 2;
                     }
 
-                    med3(srbb[ip][jp], srbb[ip][j], srbb[ip][jn], srbb[i][jp], srbb[i][j], srbb[i][jn], srbb[in][jp], srbb[in][j], srbb[in][jn], tmbb[i][j]);
+                    tmbb[i][j] = median(srbb[ip][jp], srbb[ip][j], srbb[ip][jn], srbb[i][jp], srbb[i][j], srbb[i][jn], srbb[in][jp], srbb[in][j], srbb[in][jn]);
                 }
             }
         }

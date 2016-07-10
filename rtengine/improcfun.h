@@ -35,20 +35,6 @@
 #include "cplx_wavelet_dec.h"
 #include "pipettebuffer.h"
 
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-
-#define med3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
-pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; \
-PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
-PIX_SORT(pp[0],pp[1]); PIX_SORT(pp[3],pp[4]); PIX_SORT(pp[6],pp[7]); \
-PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
-PIX_SORT(pp[0],pp[3]); PIX_SORT(pp[5],pp[8]); PIX_SORT(pp[4],pp[7]); \
-PIX_SORT(pp[3],pp[6]); PIX_SORT(pp[1],pp[4]); PIX_SORT(pp[2],pp[5]); \
-PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
-PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
-
-
-
 namespace rtengine
 {
 
@@ -198,6 +184,14 @@ class ImProcFunctions
 
 
 public:
+    enum class Median {
+        TYPE_3X3_SOFT,
+        TYPE_3X3_STRONG,
+        TYPE_5X5_SOFT,
+        TYPE_5X5_STRONG,
+        TYPE_7X7,
+        TYPE_9X9
+    };
 
     double lumimul[3];
 //      float chau;
@@ -292,7 +286,6 @@ public:
 
     // pyramid denoise
     procparams::DirPyrDenoiseParams dnparams;
-    void dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams );//Emil's directional pyramid denoise
     void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab,
                            int pitch, int scale, const int luma, int chroma );
     void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
@@ -325,13 +318,12 @@ public:
 
 
 
-    enum mediantype {MED_3X3SOFT, MED_3X3STRONG, MED_5X5SOFT, MED_5X5STRONG, MED_7X7, MED_9X9};
-    void Median_Denoise( float **src, float **dst, int width, int height, mediantype medianType, int iterations, int numThreads, float **buffer = NULL);
-    void RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & ctNoisCurve , const NoiseCurve & ctNoisCCcurve , float &chaut, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &nresi, float &highresi);
+    void Median_Denoise( float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = NULL);
+    void RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve , const NoiseCurve & noiseCCurve , float &chaut, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &nresi, float &highresi);
     void RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, const bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope);
-    void RGB_denoise_info(Imagefloat * src, Imagefloat * calclum, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut, float &nresi, float &highresi, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread = false);
-    void RGBtile_denoise (float * fLblox, int hblproc, float noisevar_L, float * nbrwt, float * blurbuffer );   //for DCT
-    void RGBoutput_tile_row (float *Lbloxrow, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
+    void RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut, float &nresi, float &highresi, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread = false);
+    void RGBtile_denoise (float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer );   //for DCT
+    void RGBoutput_tile_row (float *bloxrow_L, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
     bool WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge);
     bool WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb);
     void WaveletDenoiseAll_info(int levwav, wavelet_decomposition &WaveletCoeffs_a,
@@ -341,7 +333,7 @@ public:
     bool WaveletDenoiseAll_BiShrinkL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3]);
     bool WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float noisevar_ab,
                                       const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb);
-    void ShrinkAllL(wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir, float *noisevarlum, float * madaL, float * vari, int edge);
+    void ShrinkAllL(wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir, float *noisevarlum, float * madL, float * vari, int edge);
     void ShrinkAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float **buffer, int level, int dir,
                      float *noisevarchrom, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, float * madL, float * madaab = NULL, bool madCalculated = false);
     void ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
@@ -349,7 +341,7 @@ public:
                         float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb, bool multiThread);
     void Noise_residualAB(wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb);
     void calcautodn_info (float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc);
-    float MadMax(float * HH_Coeffs, int &max, int datalen);
+    float MadMax(float * DataList, int &max, int datalen);
     float Mad(float * DataList, const int datalen);
     float MadRgb(float * DataList, const int datalen);
 

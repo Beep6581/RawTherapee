@@ -1038,8 +1038,8 @@ void ProcParams::setDefaults ()
     prsharpening.edges_tolerance  = 1800;
     prsharpening.halocontrol      = false;
     prsharpening.halocontrol_amount = 85;
-    prsharpening.method           = "usm";
-    prsharpening.deconvradius     = 0.5;
+    prsharpening.method           = "rld";
+    prsharpening.deconvradius     = 0.45;
     prsharpening.deconviter       = 100;
     prsharpening.deconvdamping    = 0;
     prsharpening.deconvamount     = 100;
@@ -1149,10 +1149,10 @@ void ProcParams::setDefaults ()
     crop.y          = -1;
     crop.w          = 15000;
     crop.h          = 15000;
-    crop.fixratio   = false;
+    crop.fixratio   = true;
     crop.ratio      = "3:2";
     crop.orientation = "As Image";
-    crop.guide      = "Rule of thirds";
+    crop.guide      = "Frame";
 
     coarse.setDefaults();
 

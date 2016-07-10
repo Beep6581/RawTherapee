@@ -1334,12 +1334,6 @@ static INLINE vfloat LIMV( vfloat a, vfloat b, vfloat c ) {
 return vmaxf( b, vminf(a,c));
 }
 
-static INLINE vfloat ULIMV( vfloat a, vfloat b, vfloat c  ){
-    // made to clamp a in range [b,c] but in fact it's also the median of a,b,c, which means that the result is independent on order of arguments
-    // ULIMV(a,b,c) = ULIMV(a,c,b) = ULIMV(b,a,c) = ULIMV(b,c,a) = ULIMV(c,a,b) = ULIMV(c,b,a)
-	return vmaxf(vminf(a,b), vminf(vmaxf(a,b),c));
-}
-
 static INLINE vfloat SQRV(vfloat a){
 	return a * a;
 }
