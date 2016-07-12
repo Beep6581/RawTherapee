@@ -6244,6 +6244,7 @@ inline std::array<T, 4> middle4of6(const std::array<T, 6>& array)
     return res;
 }
 
+#ifdef __SSE2__
 template<>
 inline std::array<vfloat, 4> middle4of6(const std::array<vfloat, 6>& array)
 {
@@ -6267,6 +6268,7 @@ inline std::array<vfloat, 4> middle4of6(const std::array<vfloat, 6>& array)
 
     return res;
 }
+#endif
 
 template<typename T>
 inline std::array<T, 4> middle4of6(T arg0, T arg1, T arg2, T arg3, T arg4, T arg5)
