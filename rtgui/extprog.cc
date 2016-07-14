@@ -250,7 +250,10 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 
 #elif defined __APPLE__
 
-    auto cmdLine = Glib::ustring("open -a /Applications/GIMP.app \'") + fileName + Glib::ustring("\'");
+    // Apps should be opened using the simplest, case-insensitive form, "open -a NameOfProgram"
+    // Calling the executable directly is said to often cause trouble,
+    // https://discuss.pixls.us/t/affinity-photo-as-external-editor-how-to/1756/18
+    auto cmdLine = Glib::ustring("open -a GIMP \'") + fileName + Glib::ustring("\'");
     auto success = spawnCommandAsync (cmdLine);
 
 #else
@@ -279,7 +282,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 
 #elif defined __APPLE__
 
-    cmdLine = Glib::ustring("open -a /Applications/Gimp.app/Contents/Resources/start \'") + fileName + Glib::ustring("\'");
+    cmdLine = Glib::ustring("open -a GIMP-dev \'") + fileName + Glib::ustring("\'");
     success = ExtProgStore::spawnCommandAsync (cmdLine);
 
 #else
@@ -301,7 +304,7 @@ bool ExtProgStore::openInPhotoshop (const Glib::ustring& fileName)
 
 #elif defined __APPLE__
 
-    const auto cmdLine = Glib::ustring("open -a \'") + Glib::build_filename(options.psDir, "Photoshop.app\' ")  + Glib::ustring("\'") + fileName + Glib::ustring("\'");
+    const auto cmdLine = Glib::ustring("open -a Photoshop \'") + fileName + Glib::ustring("\'");
 
 #else
 
