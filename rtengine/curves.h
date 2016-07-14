@@ -249,7 +249,11 @@ public:
 #ifdef __SSE2__
     static inline vfloat igamma           (vfloat x, vfloat gamma, vfloat start, vfloat slope, vfloat mul, vfloat add)
     {
+#if !defined(__clang__)
         return (x <= start * slope ? x / slope : xexpf(xlogf((x + add) / mul) * gamma) );
+#else
+        return vself(vmaskf_le(x, start * slope), x / slope, xexpf(xlogf((x + add) / mul) * gamma));
+#endif
     }
 #endif
     static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level)
