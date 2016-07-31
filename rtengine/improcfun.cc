@@ -2967,17 +2967,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     if (editID != EUID_None) {
         switch  (pipetteBuffer->getDataProvider()->getCurrSubscriber()->getPipetteBufferType()) {
-        case (BT_IMAGEFLOAT):
-            editImgFloat = pipetteBuffer->getImgFloatBuffer();
-            break;
+            case (BT_IMAGEFLOAT):
+                editImgFloat = pipetteBuffer->getImgFloatBuffer();
+                break;
 
-        case (BT_LABIMAGE):
-            editLab = pipetteBuffer->getLabBuffer();
-            break;
+            case (BT_LABIMAGE):
+                editLab = pipetteBuffer->getLabBuffer();
+                break;
 
-        case (BT_SINGLEPLANE_FLOAT):
-            editWhatever = pipetteBuffer->getSinglePlaneBuffer();
-            break;
+            case (BT_SINGLEPLANE_FLOAT):
+                editWhatever = pipetteBuffer->getSinglePlaneBuffer();
+                break;
         }
     }
 
@@ -4828,9 +4828,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         }
 
 
-        if(tmpImage) {
-            delete tmpImage;
-        }
+    }
+
+    if (tmpImage) {
+        delete tmpImage;
     }
 
     if (hCurveEnabled) {
@@ -5492,17 +5493,17 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
             editPipette = true;
 
             switch  (pipetteBuffer->getDataProvider()->getCurrSubscriber()->getPipetteBufferType()) {
-            case (BT_IMAGEFLOAT):
-                editImgFloat = pipetteBuffer->getImgFloatBuffer();
-                break;
+                case (BT_IMAGEFLOAT):
+                    editImgFloat = pipetteBuffer->getImgFloatBuffer();
+                    break;
 
-            case (BT_LABIMAGE):
-                editLab = pipetteBuffer->getLabBuffer();
-                break;
+                case (BT_LABIMAGE):
+                    editLab = pipetteBuffer->getLabBuffer();
+                    break;
 
-            case (BT_SINGLEPLANE_FLOAT):
-                editWhatever = pipetteBuffer->getSinglePlaneBuffer();
-                break;
+                case (BT_SINGLEPLANE_FLOAT):
+                    editWhatever = pipetteBuffer->getSinglePlaneBuffer();
+                    break;
             }
         }
     }
