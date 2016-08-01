@@ -2238,7 +2238,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             int sk = 1;
                             float ko = 1.f / coef;
                             Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red, sk, rstprotection, ko, Cpro);
-
+/*
                             if(Jpro < 1.f && Cpro > 12.f) {
                                 Cpro = 12.f;    //reduce artifacts by "pseudo gamut control CIECAM"
                             } else if(Jpro < 2.f && Cpro > 15.f) {
@@ -2248,7 +2248,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             } else if(Jpro < 7.f && Cpro > 50.f) {
                                 Cpro = 50.f;
                             }
-
+*/
                         } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) { //
                             float parsat = 0.8f; //0.6
                             float coef = 327.68f / parsat;
@@ -2280,7 +2280,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             int sk = 0;
                             float ko = 1.f / coef;
                             Color::skinredfloat(Jpro, hpro, Mm, Mold, dred, protect_red, sk, rstprotection, ko, Mpro);
-
+/*
                             if(Jpro < 1.f && Mpro > 12.f * coe) {
                                 Mpro = 12.f * coe;    //reduce artifacts by "pseudo gamut control CIECAM"
                             } else if(Jpro < 2.f && Mpro > 15.f * coe) {
@@ -2290,7 +2290,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             } else if(Jpro < 7.f && Mpro > 50.f * coe) {
                                 Mpro = 50.f * coe;
                             }
-
+*/
                             Cpro = Mpro / coe;
                         }
                     }
