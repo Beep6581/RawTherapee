@@ -499,6 +499,8 @@ void Thumbnail::decreaseRef ()
 
 void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::ProcParams *pparams)
 {
+    MyMutex::MyLock lock(mutex);
+
     int tw_ = tw;
     int th_ = th;
     float imgRatio_ = imgRatio;
