@@ -386,7 +386,7 @@ public:
     ShutterSpeedInterpreter () {}
     virtual std::string toString (Tag* t)
     {
-        char buffer[1024];
+        char buffer[32];
         double d = pow (2.0, -t->toDouble());
 
         if (d > 0.0 && d < 0.9) {
@@ -406,7 +406,7 @@ public:
     ExposureTimeInterpreter () {}
     virtual std::string toString (Tag* t)
     {
-        char buffer[1024];
+        char buffer[32];
         double d = t->toDouble();
 
         if (d > 0.0 && d < 0.9) {

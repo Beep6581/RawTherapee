@@ -1955,7 +1955,7 @@ public:
         double a = t->toDouble();
 
         if(a > 0) {
-            char buffer[10];
+            char buffer[32];
             sprintf (buffer, "%.4f", a);
             return buffer;
         } else {
@@ -2015,7 +2015,7 @@ public:
         double a = double(t->toDouble());
 
         if(a) {
-            char buffer[10];
+            char buffer[32];
             sprintf (buffer, "%.1f", a / 100. );
             return buffer;
         } else {
@@ -2075,7 +2075,7 @@ public:
         int a = t->toInt();
 
         if(a) {
-            char buffer[10];
+            char buffer[32];
             sprintf (buffer, "%d", a );
             return buffer;
         } else {
@@ -2114,7 +2114,7 @@ public:
     virtual std::string toString (Tag* t)
     {
         double a = t->toDouble();
-        char buffer[10];
+        char buffer[32];
         sprintf (buffer, "%.2f", a );
         return buffer;
     }
@@ -2134,7 +2134,7 @@ public:
     SAAFMicroAdjValueInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        char buffer[10];
+        char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] - 20);
         return buffer;
     }
@@ -2173,7 +2173,7 @@ public:
     SAAFMicroAdjRegisteredLensesInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        char buffer[10];
+        char buffer[32];
         sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
         return buffer;
     }
@@ -2229,7 +2229,7 @@ public:
     SAColorTemperatureSettingInterpreter () {}
     virtual std::string toString (Tag* t)
     {
-        char buffer[10];
+        char buffer[32];
         sprintf (buffer, "%d", t->toInt());
         return buffer;
     }
