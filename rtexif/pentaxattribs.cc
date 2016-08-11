@@ -1320,7 +1320,7 @@ public:
             a = t->toInt(0, SBYTE) / 6;    // int8u[2]
         }
 
-        char buffer[10];
+        char buffer[32];
         sprintf (buffer, "%d", a );
         return buffer;
     }
@@ -1348,7 +1348,7 @@ public:
         double a = double(t->toInt(0, LONG));
 
         if(a > 1.) {
-            char buffer[10];
+            char buffer[32];
             sprintf (buffer, "%.2f", a / 100. );
             return buffer;
         } else {
@@ -1378,7 +1378,7 @@ public:
         float b = float(10 * int(a >> 2)) * pow(4.f, float(int(a & 0x03) - 2));
 
         if(b > 1.f) {
-            char buffer[10];
+            char buffer[32];
             sprintf (buffer, "%.2f", b );
             return buffer;
         } else {
@@ -1680,7 +1680,7 @@ public:
     PAExternalFlashGNInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        char buffer[1024];
+        char buffer[32];
         int b = t->toInt(0, BYTE) & 0x1F;
         sprintf (buffer, "%.0f", pow(2., b / 16. + 4) );
         return buffer;

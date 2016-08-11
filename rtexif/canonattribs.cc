@@ -1050,7 +1050,7 @@ public:
             return "undef";
         }
 
-        char buffer[1024];
+        char buffer[32];
         sprintf (buffer, "%.2fmm", val * 25.4 / 1000);
         return buffer;
     }
@@ -1062,7 +1062,7 @@ class CAExposureTimeInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        char buffer[1024];
+        char buffer[32];
         double d = pow (2, - t->toInt() / 32.0);
         sprintf (buffer, "%.3f", d);
         return buffer;
@@ -1074,7 +1074,7 @@ class CAEVInterpreter : public Interpreter
 {
     virtual std::string toString (Tag* t)
     {
-        char buffer[1024];
+        char buffer[32];
         sprintf (buffer, "%.1f", t->toDouble() / 32.0  );
         return buffer;
     }
@@ -1281,7 +1281,7 @@ class CAFocusDistanceInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        char buffer[1024];
+        char buffer[32];
         sprintf (buffer, "%.2f", t->toDouble() / 100 );
         return buffer;
     }
@@ -1293,7 +1293,7 @@ class CAMeasuredEVInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        char buffer[1024];
+        char buffer[32];
         sprintf (buffer, "%.1f", t->toDouble() / 8 - 6 );
         return buffer;
     }
