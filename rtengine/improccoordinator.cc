@@ -35,7 +35,7 @@ ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
       ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
-      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
+      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
       hltonecurve(65536),
       shtonecurve(65536),
@@ -743,6 +743,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
 
             // Issue 2785, only float version of ciecam02 for navigator and pan background
+            CAMMean = NAN;
+            CAMBrightCurveJ.dirty = true;
+            CAMBrightCurveQ.dirty = true;
+
             ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, d, scale, 1);
 
             if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) {
@@ -782,11 +786,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if (crops[i]->hasListener () && cropCall != crops[i] ) {
             crops[i]->update (todo);    // may call ourselves
         }
-
-    // Flagging some LUT as dirty now, whether they have been freed up or not
-    CAMBrightCurveJ.dirty = true;
-    CAMBrightCurveQ.dirty = true;
-
 
     progress ("Conversion to RGB...", 100 * readyphase / numofphases);
 

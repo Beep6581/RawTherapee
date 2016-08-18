@@ -421,23 +421,23 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
                     c = ri->XTRANSFC(row, col);
 
                     switch (c) {
-                    case 0:
-                        tmpImg->r(y, x) = image[ofs][0];
-                        tmpImg->g(y, x) = sum[1] / 5.f;
-                        tmpImg->b(y, x) = sum[2] / 3.f;
-                        break;
+                        case 0:
+                            tmpImg->r(y, x) = image[ofs][0];
+                            tmpImg->g(y, x) = sum[1] / 5.f;
+                            tmpImg->b(y, x) = sum[2] / 3.f;
+                            break;
 
-                    case 1:
-                        tmpImg->r(y, x) = sum[0] / 2.f;
-                        tmpImg->g(y, x) = image[ofs][1];
-                        tmpImg->b(y, x) = sum[2] / 2.f;
-                        break;
+                        case 1:
+                            tmpImg->r(y, x) = sum[0] / 2.f;
+                            tmpImg->g(y, x) = image[ofs][1];
+                            tmpImg->b(y, x) = sum[2] / 2.f;
+                            break;
 
-                    case 2:
-                        tmpImg->r(y, x) = sum[0] / 3.f;
-                        tmpImg->g(y, x) = sum[1] / 5.f;
-                        tmpImg->b(y, x) = image[ofs][2];
-                        break;
+                        case 2:
+                            tmpImg->r(y, x) = sum[0] / 3.f;
+                            tmpImg->g(y, x) = sum[1] / 5.f;
+                            tmpImg->b(y, x) = image[ofs][2];
+                            break;
                     }
                 }
             }
@@ -799,6 +799,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                                   double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso, std::string expcomp_, double& myscale)
 {
     BENCHFUN
+
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4)) {
         wbEqual = params.wb.equal;
@@ -878,6 +879,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 #ifdef _OPENMP
         #pragma omp simd
 #endif
+
         for (int j = 0; j < rwidth; j++) {
             float red = baseImg->r(i, j) * rmi;
             baseImg->r(i, j) = CLIP(red);
@@ -947,6 +949,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int     black = params.toneCurve.black;
     int     hlcompr = params.toneCurve.hlcompr;
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
+
     if (params.toneCurve.autoexp && aeHistogram) {
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
     }
@@ -986,6 +989,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 16);
 
     bool opautili = false;
+
     if(params.colorToning.enabled) {
         TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
         double wp[3][3] = {
@@ -1042,6 +1046,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
     DCPProfile::ApplyState as;
+
     if (isRaw) {
         cmsHPROFILE dummy;
         RawImageSource::findInputProfile(params.icm.input, nullptr, camName, &dcpProf, dummy);
@@ -1050,6 +1055,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             dcpProf->setStep2ApplyState(params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
         }
     }
+
     ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as);
 
     // freeing up some memory
@@ -1067,6 +1073,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // luminance histogram update
     if(params.labCurve.contrast != 0) {
         hist16.clear();
+
         for (int i = 0; i < fh; i++)
             for (int j = 0; j < fw; j++) {
                 hist16[(int)((labView->L[i][j]))]++;
@@ -1142,6 +1149,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         sk = 16;
         int rtt = 0;
         CieImage* cieView = new CieImage (fw, fh);
+        CAMMean = NAN;
+        CAMBrightCurveJ.dirty = true;
+        CAMBrightCurveQ.dirty = true;
         ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, execsharp, d, sk, rtt);
         delete cieView;
     }
