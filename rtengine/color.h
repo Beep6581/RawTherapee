@@ -231,6 +231,19 @@ public:
     */
     static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
 
+    static inline float rgb2s(float r, float g, float b) // fast version if only saturation is needed
+    {
+        float var_Min = min(r, g, b);
+        float var_Max = max(r, g, b);
+        float del_Max = var_Max - var_Min;
+
+        if (del_Max < 0.00001f) {
+            return 0.f;
+        } else {
+            return del_Max / var_Max;
+        }
+    }
+
     static inline bool rgb2hsvdcp(float r, float g, float b, float &h, float &s, float &v)
     {
 

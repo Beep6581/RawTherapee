@@ -40,7 +40,7 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/guiutils.h"
@@ -2861,54 +2861,28 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
 void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
 {
-//  MyTime t1e,t2e;
-//  t1e.set();
+    BENCHFUN
 
     int tHh = working->height;
     int tWw = working->width;
-    float moy = 0.f;
-    float eqt = 0.f;
-    #pragma omp parallel
-    {
-        float mo = 0.f;
+    double moy = 0.0;
+    double sqrs = 0.0;
 #ifndef _DEBUG
-        #pragma omp for reduction(+:moy)
+    #pragma omp parallel for reduction(+:moy,sqrs) schedule(dynamic,16)
 #endif
 
-        for (int i = 0; i < tHh; i++) {
-            for (int j = 0; j < tWw; j++) {
-                float r = CLIP(working->r(i, j));
-                float g = CLIP(working->g(i, j));
-                float b = CLIP(working->b(i, j));
-                float h, s, v;
-                Color::rgb2hsv(r, g, b, h, s, v);
-                moy += s;
-            }
-        }
-
-        mo = moy / (tHh * tWw);
-        moyS = mo;
-#ifndef _DEBUG
-        #pragma omp for reduction(+:eqt)
-#endif
-
-        for (int i = 0; i < tHh; i++) {
-            for (int j = 0; j < tWw; j++) {
-                float r = CLIP(working->r(i, j));
-                float g = CLIP(working->g(i, j));
-                float b = CLIP(working->b(i, j));
-                float h, s, v;
-                Color::rgb2hsv(r, g, b, h, s, v);
-                eqt += SQR(s - mo);
-            }
+    for (int i = 0; i < tHh; i++) {
+        for (int j = 0; j < tWw; j++) {
+            float s = Color::rgb2s(CLIP(working->r(i, j)), CLIP(working->g(i, j)), CLIP(working->b(i, j)));
+            moy += s;
+            sqrs += SQR(s);
         }
     }
-    eqt = eqt / (tHh * tWw);
-    eqty = (sqrt(eqt));
 
-    //  t2e.set();
-    //  printf("Moyeqt:%d\n", t2e.etime(t1e));
-
+    double mo = moy / (tHh * tWw);
+    moyS = mo;
+    double eqt = (sqrs - 2.0 * mo * moy + tHh * tWw * SQR(mo)) / (tHh * tWw);
+    eqty = sqrt(eqt);
 }
 
 static inline void
