@@ -2867,7 +2867,8 @@ void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
     int tWw = working->width;
     double moy = 0.0;
     double sqrs = 0.0;
-#ifndef _DEBUG
+
+#ifdef _OPENMP
     #pragma omp parallel for reduction(+:moy,sqrs) schedule(dynamic,16)
 #endif
 
@@ -2879,10 +2880,10 @@ void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
         }
     }
 
-    double mo = moy / (tHh * tWw);
-    moyS = mo;
-    double eqt = (sqrs - 2.0 * mo * moy + tHh * tWw * SQR(mo)) / (tHh * tWw);
-    eqty = sqrt(eqt);
+    moy /= (tHh * tWw);
+    sqrs /= (tHh * tWw);
+    eqty = sqrt(sqrs - SQR(moy));
+    moyS = moy;
 }
 
 static inline void
