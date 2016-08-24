@@ -473,8 +473,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, scale == 1 ? 1 : 1);
         }
 
-        float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
-        float satLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
+        colourToningSatLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
+        colourToningSatLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
 
         int satTH = 80;
         int satPR = 30;
@@ -497,10 +497,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             //satTH=(int) 100.f*satp;
             //satPR=(int) 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
-            satLimit = 100.f * satp;
+            colourToningSatLimit = 100.f * satp;
             satTH = (int) 100.f * satp;
 
-            satLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
+            colourToningSatLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
             satPR = (int) 100.f * (moyS - 0.85f * eqty);
         }
 
@@ -539,7 +539,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
 
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as);
+                         rCurve, gCurve, bCurve, colourToningSatLimit , colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as);
 
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose) {
@@ -551,10 +551,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             if(params.colorToning.autosat && actListener) {
                 if (settings->verbose) {
-                    printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi, (int)satLimit , (int) satLimitOpacity);
+                    printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi, (int)colourToningSatLimit , (int) colourToningSatLimitOpacity);
                 }
 
-                actListener->autoColorTonChanged(indi, (int) satLimit, (int)satLimitOpacity);//change sliders autosat
+                actListener->autoColorTonChanged(indi, (int) colourToningSatLimit, (int)colourToningSatLimitOpacity);//change sliders autosat
             }
 
             // correct GUI black and white with value
