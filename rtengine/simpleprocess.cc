@@ -1050,7 +1050,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
         LUTf CAMBrightCurveJ;
         LUTf CAMBrightCurveQ;
-        float CAMMean;
+        float CAMMean = NAN;
 
         if (params.sharpening.enabled) {
             float d;
