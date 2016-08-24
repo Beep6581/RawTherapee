@@ -353,8 +353,9 @@ void ParamsEdited::set (bool v)
     icm.working      = v;
     icm.output       = v;
     icm.outputIntent = v;
+    icm.outputBPC    = v;
     icm.gamma       = v;
-    icm.freegamma       = v;
+    icm.freegamma   = v;
     icm.gampos      = v;
     icm.slpos       = v;
     raw.bayersensor.method = v;
@@ -847,6 +848,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
         icm.outputIntent = icm.outputIntent && p.icm.outputIntent == other.icm.outputIntent;
+        icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
         icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
@@ -2208,6 +2210,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (icm.outputIntent) {
         toEdit.icm.outputIntent = mods.icm.outputIntent;
+    }
+
+    if (icm.outputBPC) {
+        toEdit.icm.outputBPC = mods.icm.outputBPC;
     }
 
     //if (icm.gampos)           toEdit.icm.gampos       = mods.icm.gampos;

@@ -202,6 +202,11 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     ointent->set_active (1);
     oVBox->pack_start(*riHBox, Gtk::PACK_SHRINK);
 
+    // Black Point Compensation
+    obpc = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_BPC"))));
+    obpc->set_active (true);
+    oVBox->pack_start(*obpc, Gtk::PACK_SHRINK);
+
     // Output gamma
 
     Gtk::HBox* gaHBox = Gtk::manage (new Gtk::HBox ());
@@ -295,6 +300,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
     dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
 
+    obpcconn = obpc->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::oBPCChanged) );
     gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
     tcurveconn = ckbToneCurve->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
     ltableconn = ckbApplyLookTable->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::applyLookTableChanged));
@@ -455,6 +461,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener ();
 
+    obpcconn.block (true);
     ipc.block (true);
     gamcsconn.block (true);
     tcurveconn.block(true);
@@ -469,36 +476,50 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pp->icm.input == "(none)") {
         inone->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false);
+        if (!batchMode) {
+            ckbBlendCMSMatrix->set_sensitive (false);
+        }
         updateDCP(pp->icm.dcpIlluminant, "");
     } else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() == Gtk::STATE_INSENSITIVE)) {
         iembedded->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false);
+        if (!batchMode) {
+            ckbBlendCMSMatrix->set_sensitive (false);
+        }
         updateDCP(pp->icm.dcpIlluminant, "");
     } else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_INSENSITIVE) {
         icameraICC->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (true);
+        if (!batchMode) {
+            ckbBlendCMSMatrix->set_sensitive (true);
+        }
         updateDCP(pp->icm.dcpIlluminant, "(cameraICC)");
     } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() != Gtk::STATE_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_INSENSITIVE) {
         // this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
         // therefore falling back UI to explicitly reflect the (camera) option
         icamera->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false);
+        if (!batchMode) {
+            ckbBlendCMSMatrix->set_sensitive (false);
+        }
         updateDCP(pp->icm.dcpIlluminant, "");
     } else if ((pp->icm.input == "(cameraICC)") && icamera->get_state() == Gtk::STATE_INSENSITIVE && icameraICC->get_state() == Gtk::STATE_INSENSITIVE) {
         // If neither (camera) nor (cameraICC) are available, as is the case when loading a non-raw, activate (embedded).
         iembedded->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false);
+        if (!batchMode) {
+            ckbBlendCMSMatrix->set_sensitive (false);
+        }
         updateDCP(pp->icm.dcpIlluminant, "(cameraICC)");
     } else if ((pp->icm.input == "(camera)" || pp->icm.input == "") && icamera->get_state() != Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false);
+        if (!batchMode) {
+            ckbBlendCMSMatrix->set_sensitive (false);
+        }
         updateDCP(pp->icm.dcpIlluminant, "");
     } else {
         ifromfile->set_active (true);
         oldip = pp->icm.input.substr(5);  // cut of "file:"
         ipDialog->set_filename (pp->icm.input.substr(5));
-        ckbBlendCMSMatrix->set_sensitive (true);
+        if (!batchMode) {
+            ckbBlendCMSMatrix->set_sensitive (true);
+        }
         updateDCP(pp->icm.dcpIlluminant, pp->icm.input.substr(5));
     }
 
@@ -516,6 +537,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
     ointent->set_active(pp->icm.outputIntent);
 
+    obpc->set_active (pp->icm.outputBPC);
     ckbToneCurve->set_active (pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
     ckbApplyLookTable->set_active (pp->icm.applyLookTable);
@@ -528,22 +550,28 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     ckbBlendCMSMatrix->set_active (pp->icm.blendCMSMatrix);
     lastBlendCMSMatrix = pp->icm.blendCMSMatrix;
 
-    onames->set_sensitive(wgamma->get_active_row_number() == 0 || freegamma->get_active()); //"default"
-    wgamma->set_sensitive(!freegamma->get_active());
-
     freegamma->set_active (pp->icm.freegamma);
     lastgamfree = pp->icm.freegamma;
+
+    if (!batchMode) {
+        onames->set_sensitive(wgamma->get_active_row_number() == 0 && !pp->icm.freegamma); //"default"
+        wgamma->set_sensitive(!pp->icm.freegamma);
+        gampos->set_sensitive(pp->icm.freegamma);
+        slpos->set_sensitive(pp->icm.freegamma);
+    }
 
     gampos->setValue (pp->icm.gampos);
     slpos->setValue (pp->icm.slpos);
 
     if (pedited) {
         iunchanged->set_active (!pedited->icm.input);
+        obpc->set_inconsistent(!pedited->icm.outputBPC);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
         ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
         ckbApplyHueSatMap->set_inconsistent(!pedited->icm.applyHueSatMap);
         ckbBlendCMSMatrix->set_inconsistent(!pedited->icm.blendCMSMatrix);
+        freegamma->set_inconsistent (!pedited->icm.freegamma);
 
         if (!pedited->icm.working) {
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
@@ -578,6 +606,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     hsmconn.block(false);
     gamcsconn.block (false);
     ipc.block (false);
+    obpcconn.block (false);
 
     enableListener ();
 }
@@ -655,12 +684,14 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     pp->icm.blendCMSMatrix = ckbBlendCMSMatrix->get_active ();
     pp->icm.gampos = (double) gampos->getValue();
     pp->icm.slpos = (double) slpos->getValue();
+    pp->icm.outputBPC = obpc->get_active ();
 
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.outputIntent = ointent->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.outputBPC = !obpc->get_inconsistent ();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent ();
@@ -697,7 +728,7 @@ void ICMPanel::setAdjusterBehavior (bool gammaadd, bool slopeadd)
 void ICMPanel::adjusterChanged (Adjuster* a, double newval)
 {
 
-    if (listener && freegamma->get_active()) {
+    if (listener && (freegamma->get_active() || batchMode)) {
 
         Glib::ustring costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), newval);
 
@@ -735,7 +766,7 @@ void ICMPanel::dcpIlluminantChanged()
 
 void ICMPanel::toneCurveChanged()
 {
-    if (batchMode) {
+    if (multiImage) {
         if (ckbToneCurve->get_inconsistent()) {
             ckbToneCurve->set_inconsistent (false);
             tcurveconn.block (true);
@@ -749,13 +780,19 @@ void ICMPanel::toneCurveChanged()
     }
 
     if (listener) {
-        listener->panelChanged (EvDCPToneCurve, ckbToneCurve->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        if (ckbToneCurve->get_inconsistent()) {
+            listener->panelChanged (EvDCPToneCurve, M("GENERAL_UNCHANGED"));
+        } else if (ckbToneCurve->get_active()) {
+            listener->panelChanged (EvDCPToneCurve, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvDCPToneCurve, M("GENERAL_DISABLED"));
+        }
     }
 }
 
 void ICMPanel::applyLookTableChanged()
 {
-    if (batchMode) {
+    if (multiImage) {
         if (ckbApplyLookTable->get_inconsistent()) {
             ckbApplyLookTable->set_inconsistent (false);
             ltableconn.block (true);
@@ -769,13 +806,19 @@ void ICMPanel::applyLookTableChanged()
     }
 
     if (listener) {
-        listener->panelChanged (EvDCPApplyLookTable, ckbApplyLookTable->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        if (ckbApplyLookTable->get_inconsistent()) {
+            listener->panelChanged (EvDCPApplyLookTable, M("GENERAL_UNCHANGED"));
+        } else if (ckbApplyLookTable->get_active()) {
+            listener->panelChanged (EvDCPApplyLookTable, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvDCPApplyLookTable, M("GENERAL_DISABLED"));
+        }
     }
 }
 
 void ICMPanel::applyBaselineExposureOffsetChanged()
 {
-    if (batchMode) {
+    if (multiImage) {
         if (ckbApplyBaselineExposureOffset->get_inconsistent()) {
             ckbApplyBaselineExposureOffset->set_inconsistent (false);
             beoconn.block (true);
@@ -789,13 +832,19 @@ void ICMPanel::applyBaselineExposureOffsetChanged()
     }
 
     if (listener) {
-        listener->panelChanged (EvDCPApplyBaselineExposureOffset, ckbApplyBaselineExposureOffset->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        if (ckbApplyBaselineExposureOffset->get_inconsistent()) {
+            listener->panelChanged (EvDCPApplyBaselineExposureOffset, M("GENERAL_UNCHANGED"));
+        } else if (ckbApplyBaselineExposureOffset->get_active()) {
+            listener->panelChanged (EvDCPApplyBaselineExposureOffset, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvDCPApplyBaselineExposureOffset, M("GENERAL_DISABLED"));
+        }
     }
 }
 
 void ICMPanel::applyHueSatMapChanged()
 {
-    if (batchMode) {
+    if (multiImage) {
         if (ckbApplyHueSatMap->get_inconsistent()) {
             ckbApplyHueSatMap->set_inconsistent (false);
             hsmconn.block (true);
@@ -809,7 +858,13 @@ void ICMPanel::applyHueSatMapChanged()
     }
 
     if (listener) {
-        listener->panelChanged (EvDCPApplyHueSatMap, ckbApplyHueSatMap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        if (ckbApplyHueSatMap->get_inconsistent()) {
+            listener->panelChanged (EvDCPApplyHueSatMap, M("GENERAL_UNCHANGED"));
+        } else if (ckbApplyHueSatMap->get_active()) {
+            listener->panelChanged (EvDCPApplyHueSatMap, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvDCPApplyHueSatMap, M("GENERAL_DISABLED"));
+        }
     }
 }
 
@@ -846,7 +901,7 @@ void ICMPanel::ipChanged ()
 
 void ICMPanel::blendCMSMatrixChanged()
 {
-    if (batchMode) {
+    if (multiImage) {
         if (ckbBlendCMSMatrix->get_inconsistent()) {
             ckbBlendCMSMatrix->set_inconsistent (false);
             blendcmsconn.block (true);
@@ -860,13 +915,19 @@ void ICMPanel::blendCMSMatrixChanged()
     }
 
     if (listener) {
-        listener->panelChanged (EvBlendCMSMatrix, ckbBlendCMSMatrix->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        if (ckbBlendCMSMatrix->get_inconsistent()) {
+            listener->panelChanged (EvBlendCMSMatrix, M("GENERAL_UNCHANGED"));
+        } else if (ckbBlendCMSMatrix->get_active()) {
+            listener->panelChanged (EvBlendCMSMatrix, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvBlendCMSMatrix, M("GENERAL_DISABLED"));
+        }
     }
 }
 
 void ICMPanel::GamChanged()
 {
-    if (batchMode) {
+    if (multiImage) {
         if (freegamma->get_inconsistent()) {
             freegamma->set_inconsistent (false);
             gamcsconn.block (true);
@@ -880,14 +941,25 @@ void ICMPanel::GamChanged()
     }
 
     if (listener) {
-        if (freegamma->get_active()) {
+        if (freegamma->get_inconsistent()) {
+            listener->panelChanged (EvGAMFREE, M("GENERAL_UNCHANGED"));
+        }
+        else if (freegamma->get_active()) {
             listener->panelChanged (EvGAMFREE, M("GENERAL_ENABLED"));
-            onames->set_sensitive(!freegamma->get_active());//disabled choice
-            wgamma->set_sensitive(!freegamma->get_active());
+            if (!batchMode) {
+                onames->set_sensitive(false);//disabled choice
+                wgamma->set_sensitive(false);
+                gampos->set_sensitive(true);
+                slpos->set_sensitive(true);
+            }
         } else {
             listener->panelChanged (EvGAMFREE, M("GENERAL_DISABLED"));
-            onames->set_sensitive(!freegamma->get_active() && wgamma->get_active_row_number() == 0);
-            wgamma->set_sensitive(!freegamma->get_active());
+            if (!batchMode) {
+                onames->set_sensitive(wgamma->get_active_row_number() == 0);
+                wgamma->set_sensitive(true);
+                gampos->set_sensitive(false);
+                slpos->set_sensitive(false);
+            }
         }
     }
 }
@@ -905,6 +977,32 @@ void ICMPanel::oiChanged ()
 
     if (listener) {
         listener->panelChanged (EvOIntent, ointent->get_active_text());
+    }
+}
+
+void ICMPanel::oBPCChanged ()
+{
+    if (multiImage) {
+        if (obpc->get_inconsistent()) {
+            obpc->set_inconsistent (false);
+            obpcconn.block (true);
+            obpc->set_active (false);
+            obpcconn.block (false);
+        } else if (lastobpc) {
+            obpc->set_inconsistent (true);
+        }
+
+        lastobpc = obpc->get_active ();
+    }
+
+    if (listener) {
+        if (obpc->get_inconsistent()) {
+            listener->panelChanged (EvOBPCompens, M("GENERAL_UNCHANGED"));
+        } else if (obpc->get_active()) {
+            listener->panelChanged (EvOBPCompens, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvOBPCompens, M("GENERAL_DISABLED"));
+        }
     }
 }
 

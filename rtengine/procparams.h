@@ -967,6 +967,7 @@ public:
     Glib::ustring working;
     Glib::ustring output;
     RenderingIntent outputIntent;
+    bool outputBPC;
     static const Glib::ustring NoICMString;
 
     Glib::ustring gamma;

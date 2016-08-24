@@ -119,8 +119,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvDPDNLuma,
     ALLNORAW,         // EvDPDNChroma,
     ALLNORAW,         // EvDPDNGamma,
-    ALLNORAW,  // EvDirPyrEqualizer,
-    ALLNORAW,  // EvDirPyrEqlEnabled,
+    ALLNORAW,         // EvDirPyrEqualizer,
+    ALLNORAW,         // EvDirPyrEqlEnabled,
     LUMINANCECURVE,   // EvLSaturation,
     LUMINANCECURVE,   // EvLaCurve,
     LUMINANCECURVE,   // EvLbCurve,
@@ -275,12 +275,12 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLCLCurve
     LUMINANCECURVE,   // EvLLHCurve
     LUMINANCECURVE,   // EvLHHCurve
-    ALLNORAW,  // EvDirPyrEqualizerThreshold
+    ALLNORAW,         // EvDirPyrEqualizerThreshold
     ALLNORAW,         // EvDPDNenhance
     RGBCURVE,         // EvBWMethodalg
-    ALLNORAW,  // EvDirPyrEqualizerSkin
-    ALLNORAW,  // EvDirPyrEqlgamutlab
-    ALLNORAW,  // EvDirPyrEqualizerHueskin
+    ALLNORAW,         // EvDirPyrEqualizerSkin
+    ALLNORAW,         // EvDirPyrEqlgamutlab
+    ALLNORAW,         // EvDirPyrEqualizerHueskin
     ALLNORAW,         // EvDPDNmedian
     ALLNORAW,         // EvDPDNmedmet
     RGBCURVE,         // EvColorToningEnabled
@@ -453,7 +453,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvLhighl
     DEMOSAIC,         // EvLbaselog
     DEMOSAIC,         // EvRetinexlhcurve
-    ALLNORAW,         // EvOIntent
+    OUTPUTPROFILE,    // EvOIntent
     MONITORTRANSFORM, // EvMonitorTransform: no history message
     RETINEX,          // EvLiter
     RETINEX,          // EvLgrad
@@ -465,10 +465,11 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvLradius
     RETINEX,          // EvmapMethod
     DEMOSAIC,         // EvRetinexmapcurve
-    DEMOSAIC,          // EvviewMethod
-    ALLNORAW,          // EvcbdlMethod
+    DEMOSAIC,         // EvviewMethod
+    ALLNORAW,         // EvcbdlMethod
     RETINEX,          // EvRetinexgaintransmission
-    RETINEX         //EvLskal
+    RETINEX,          // EvLskal
+    OUTPUTPROFILE     // EvOBPCompens
 
 };
 

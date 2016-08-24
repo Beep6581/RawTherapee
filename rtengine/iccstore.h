@@ -23,6 +23,8 @@
 #include <glibmm.h>
 #include <map>
 #include <string>
+#include <cstdint>
+#include "procparams.h"
 #include "../rtgui/threadutils.h"
 
 namespace rtengine
@@ -85,8 +87,11 @@ public:
 
     void init (const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir);
 
+    static void getGammaArray(const procparams::ColorManagementParams &icm, double ga[]); // ga must be an array of double with 6 elements
     static cmsHPROFILE makeStdGammaProfile (cmsHPROFILE iprof);
     static cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
+    static cmsHPROFILE createGammaProfile (const procparams::ColorManagementParams &icm, double ga[]);
+    static cmsHPROFILE createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, double ga[]);
 
     // Main monitors standard profile name, from OS
     void findDefaultMonitorProfile ();
@@ -98,9 +103,10 @@ public:
     TMatrix          workingSpaceMatrix (const Glib::ustring& name) const;
     TMatrix          workingSpaceInverseMatrix (const Glib::ustring& name) const;
 
-    cmsHPROFILE      getProfile    (const Glib::ustring& name) const;
-    cmsHPROFILE      getStdProfile (const Glib::ustring& name) const;
-    ProfileContent   getContent    (const Glib::ustring& name) const;
+    bool             outputProfileExist (const Glib::ustring& name) const;
+    cmsHPROFILE      getProfile         (const Glib::ustring& name) const;
+    cmsHPROFILE      getStdProfile      (const Glib::ustring& name) const;
+    ProfileContent   getContent         (const Glib::ustring& name) const;
 
     cmsHPROFILE      getXYZProfile  () const;
     cmsHPROFILE      getsRGBProfile () const;

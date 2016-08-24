@@ -40,6 +40,7 @@ public:
 
     Glib::ustring   monitorProfile;         ///< ICC profile name used for the monitor
     RenderingIntent monitorIntent;          ///< Colorimetric intent used with the above profile
+    bool            monitorBPC;             ///< Black Point Compensation for the WCS->Monitor transform (directly, i.e. not soft-proofing)
     bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
     bool            autocielab;
     bool            rgbcurveslumamode_gamut;// controls gamut enforcement for RGB curves in lumamode

@@ -53,6 +53,8 @@ protected:
     sigc::connection beoconn;
     bool lastApplyHueSatMap;
     sigc::connection hsmconn;
+    bool lastobpc;
+    sigc::connection obpcconn;
     bool lastBlendCMSMatrix;
     bool isBatchMode;
     sigc::connection blendcmsconn;
@@ -60,6 +62,7 @@ protected:
 private:
     Gtk::VBox       *  iVBox;
 
+    Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  freegamma;
     Gtk::RadioButton*  inone;
 
@@ -108,6 +111,7 @@ public:
     void wpChanged ();
     void opChanged ();
     void oiChanged ();
+    void oBPCChanged ();
     void ipChanged ();
     void gpChanged ();
     void GamChanged ();
