@@ -2137,7 +2137,7 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
 {
-    const float ClipLevel = 65535.0f;
+    constexpr float ClipLevel = 65535.0f;
     bool inGamut;
 #ifdef _DEBUG
     neg = false, more_rgb = false;
@@ -2146,7 +2146,6 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
     do {
         inGamut = true;
 
-        //Lprov1=LL;
         float aprov1 = Chprov1 * sincosval.y;
         float bprov1 = Chprov1 * sincosval.x;
 
@@ -2156,9 +2155,8 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
         float fz = fy - (0.005f * bprov1);
 
         float x_ = 65535.0f * f2xyz(fx) * D50x;
-        // float y_ = 65535.0f * f2xyz(fy);
         float z_ = 65535.0f * f2xyz(fz) * D50z;
-        float y_ = (Lprov1 > epskap) ? 65535.0 * fy * fy * fy : 65535.0 * Lprov1 / kappa;
+        float y_ = (Lprov1 > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * Lprov1 / kappa;
 
         xyz2rgb(x_, y_, z_, R, G, B, wip);
 
