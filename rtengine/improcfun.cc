@@ -2992,6 +2992,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             static_cast<float>( wprof[2][2] / Color::D50z)
         }
     };
+    float maxFactorToxyz = max(toxyz[1][0],toxyz[1][1],toxyz[1][2]);
+    float equalR = maxFactorToxyz / toxyz[1][0];
+    float equalG = maxFactorToxyz / toxyz[1][1];
+    float equalB = maxFactorToxyz / toxyz[1][2];
 
     //inverse matrix user select
     double wip[3][3] = {
@@ -3646,15 +3650,18 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                                 // rgb values after RGB curves
                                 if (rCurve) {
-                                    r = rCurve[r];
+                                    float rNew = rCurve[r];
+                                    r += (rNew - r) * equalR;
                                 }
 
                                 if (gCurve) {
-                                    g = gCurve[g];
+                                    float gNew = gCurve[g];
+                                    g += (gNew - g) * equalG;
                                 }
 
                                 if (bCurve) {
-                                    b = bCurve[b];
+                                    float bNew = bCurve[b];
+                                    b += (bNew - b) * equalB;
                                 }
 
                                 // Luminosity after
