@@ -3637,9 +3637,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
                                 float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
 
-                                float fx = x < 65535.0f ? Color::cachef[x] : 327.68f * std::cbrt(x / MAXVALF);
-                                float fy = y < 65535.0f ? Color::cachef[y] : 327.68f * std::cbrt(y / MAXVALF);
-                                float fz = z < 65535.0f ? Color::cachef[z] : 327.68f * std::cbrt(z / MAXVALF);
+                                float fx = x < MAXVALF ? Color::cachef[x] : 327.68f * std::cbrt(x / MAXVALF);
+                                float fy = y < MAXVALF ? Color::cachef[y] : 327.68f * std::cbrt(y / MAXVALF);
+                                float fz = z < MAXVALF ? Color::cachef[z] : 327.68f * std::cbrt(z / MAXVALF);
 
                                 float a_1 = 500.0f * (fx - fy);
                                 float b_1 = 200.0f * (fy - fz);
@@ -3660,15 +3660,16 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 // Luminosity after
                                 // only Luminance in Lab
                                 float newy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
-                                float newfy = newy < 65535.0f ? Color::cachef[newy] : 327.68f * std::cbrt(newy / MAXVALF);
+                                float newfy = newy < MAXVALF ? Color::cachef[newy] : 327.68f * std::cbrt(newy / MAXVALF);
                                 float L_2 = 116.0f * newfy - 5242.88f;
 
                                 //gamut control
                                 if(settings->rgbcurveslumamode_gamut) {
                                     float Lpro = L_2 / 327.68f;
                                     float Chpro = sqrtf(SQR(a_1) + SQR(b_1)) / 327.68f;
-                                    float HH = xatan2f(b_1, a_1);
-                                    // According to mathematical laws we can get the sin and cos of HH by simple operations
+                                    float HH = NAN; // we set HH to NAN, because then it will be calculated in Color::gamutLchonly only if needed
+//                                    float HH = xatan2f(b_1, a_1);
+                                    // According to mathematical laws we can get the sin and cos of HH by simple operations even if we don't calculate HH
                                     float2 sincosval;
 
                                     if(Chpro == 0.0f) {

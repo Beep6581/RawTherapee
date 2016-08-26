@@ -2142,7 +2142,7 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 #ifdef _DEBUG
     neg = false, more_rgb = false;
 #endif
-
+    float ChprovSave = Chprov1;
     do {
         inGamut = true;
 
@@ -2165,6 +2165,11 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 #ifdef _DEBUG
             neg = true;
 #endif
+            if (isnan(HH)) {
+                float atemp = ChprovSave * sincosval.y * 327.68;
+                float btemp = ChprovSave * sincosval.x * 327.68;
+                HH = xatan2f(btemp, atemp);
+            }
 
             if (Lprov1 < 0.1f) {
                 Lprov1 = 0.1f;
