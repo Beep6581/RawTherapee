@@ -25,6 +25,7 @@
 #include <string>
 #include <cstdint>
 #include "procparams.h"
+#include "color.h"
 #include "../rtgui/threadutils.h"
 
 namespace rtengine
@@ -87,11 +88,11 @@ public:
 
     void init (const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir);
 
-    static void getGammaArray(const procparams::ColorManagementParams &icm, double ga[]); // ga must be an array of double with 6 elements
+    static void getGammaArray(const procparams::ColorManagementParams &icm, Color::GammaValues &ga);
     static cmsHPROFILE makeStdGammaProfile (cmsHPROFILE iprof);
     static cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
-    static cmsHPROFILE createGammaProfile (const procparams::ColorManagementParams &icm, double ga[]);
-    static cmsHPROFILE createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, double ga[]);
+    static cmsHPROFILE createGammaProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga);
+    static cmsHPROFILE createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga);
 
     // Main monitors standard profile name, from OS
     void findDefaultMonitorProfile ();
@@ -114,19 +115,19 @@ public:
     std::vector<Glib::ustring> getProfiles () const;
     std::vector<Glib::ustring> getProfilesFromDir (const Glib::ustring& dirName) const;
 
-    std::uint8_t     getInputIntents  (cmsHPROFILE profile) const;
-    std::uint8_t     getOutputIntents (cmsHPROFILE profile) const;
-    std::uint8_t     getProofIntents  (cmsHPROFILE profile) const;
+    uint8_t     getInputIntents  (cmsHPROFILE profile) const;
+    uint8_t     getOutputIntents (cmsHPROFILE profile) const;
+    uint8_t     getProofIntents  (cmsHPROFILE profile) const;
 
-    std::uint8_t     getInputIntents  (const Glib::ustring& name) const;
-    std::uint8_t     getOutputIntents (const Glib::ustring& name) const;
-    std::uint8_t     getProofIntents  (const Glib::ustring& name) const;
+    uint8_t     getInputIntents  (const Glib::ustring& name) const;
+    uint8_t     getOutputIntents (const Glib::ustring& name) const;
+    uint8_t     getProofIntents  (const Glib::ustring& name) const;
 };
 
 #define iccStore ICCStore::getInstance()
 
 inline ProfileContent::ProfileContent () :
-    data(NULL),
+    data(nullptr),
     length(0)
 {
 }
@@ -146,17 +147,17 @@ inline Glib::ustring ICCStore::getDefaultMonitorProfileName () const
     return defaultMonitorProfile;
 }
 
-inline std::uint8_t ICCStore::getInputIntents (const Glib::ustring &name) const
+inline uint8_t ICCStore::getInputIntents (const Glib::ustring &name) const
 {
     return getInputIntents (getProfile (name));
 }
 
-inline std::uint8_t ICCStore::getOutputIntents (const Glib::ustring &name) const
+inline uint8_t ICCStore::getOutputIntents (const Glib::ustring &name) const
 {
     return getOutputIntents (getProfile (name));
 }
 
-inline std::uint8_t ICCStore::getProofIntents (const Glib::ustring &name) const
+inline uint8_t ICCStore::getProofIntents (const Glib::ustring &name) const
 {
     return getProofIntents (getProfile (name));
 }

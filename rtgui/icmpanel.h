@@ -25,6 +25,7 @@
 #include "guiutils.h"
 
 #include "toolpanel.h"
+#include "popupbutton.h"
 #include "../rtengine/imagedata.h"
 
 class ICMPanelListener
@@ -81,7 +82,7 @@ private:
     MyComboBoxText*    wgamma;
 
     MyComboBoxText*    onames;
-    MyComboBoxText*    ointent;
+    PopUpButton*       ointent;
     Gtk::RadioButton*  ofromdir;
     Gtk::RadioButton*  ofromfile;
     Gtk::RadioButton*  iunchanged;
@@ -98,6 +99,7 @@ private:
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
+    void updateRenderingIntent (const Glib::ustring &profile);
 public:
     ICMPanel ();
 
@@ -110,7 +112,7 @@ public:
 
     void wpChanged ();
     void opChanged ();
-    void oiChanged ();
+    void oiChanged (int n);
     void oBPCChanged ();
     void ipChanged ();
     void gpChanged ();

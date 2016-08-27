@@ -702,8 +702,9 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
         monProfile->append_text (*profile);
 
-    monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
+    // same order than enum
     monIntent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     monIntent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
     monIntent->set_active (1);
 
@@ -1454,10 +1455,10 @@ void Preferences::storePreferences ()
     switch (monIntent->get_active_row_number ()) {
     default:
     case 0:
-        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
+        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
         break;
     case 1:
-        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
+        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
         break;
     case 2:
         moptions.rtSettings.monitorIntent = rtengine::RI_ABSOLUTE;
@@ -1584,10 +1585,10 @@ void Preferences::fillPreferences ()
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
     switch (moptions.rtSettings.monitorIntent) {
     default:
-    case rtengine::RI_RELATIVE:
+    case rtengine::RI_PERCEPTUAL:
         monIntent->set_active (0);
         break;
-    case rtengine::RI_PERCEPTUAL:
+    case rtengine::RI_RELATIVE:
         monIntent->set_active (1);
         break;
     case rtengine::RI_ABSOLUTE:

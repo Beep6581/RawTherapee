@@ -68,11 +68,12 @@ private:
 
     void prepareIntentBox ()
     {
-        intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
+        // same order than the enum
         intentBox.addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox.addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
 
-        intentBox.setSelected(0);
+        intentBox.setSelected(1);
         intentBox.show ();
     }
 
@@ -146,7 +147,7 @@ private:
             profile.clear();
 
             intentBox.set_sensitive (false);
-            intentBox.setSelected (0);
+            intentBox.setSelected (1);
 
             profileBox.set_tooltip_text ("");
 
@@ -158,12 +159,15 @@ private:
 
             if (supportsPerceptual || supportsRelativeColorimetric || supportsAbsoluteColorimetric) {
                 intentBox.set_sensitive (true);
-                intentBox.setItemSensitivity(0, supportsRelativeColorimetric);
-                intentBox.setItemSensitivity(1, supportsPerceptual);
+                intentBox.setItemSensitivity(0, supportsPerceptual);
+                intentBox.setItemSensitivity(1, supportsRelativeColorimetric);
                 intentBox.setItemSensitivity(2, supportsAbsoluteColorimetric);
             } else {
+                intentBox.setItemSensitivity(0, true);
+                intentBox.setItemSensitivity(1, true);
+                intentBox.setItemSensitivity(2, true);
                 intentBox.set_sensitive (false);
-                intentBox.setSelected (0);
+                intentBox.setSelected (1);
             }
 
             profileBox.set_tooltip_text (profileBox.get_active_text ());
@@ -246,10 +250,10 @@ public:
         switch (options.rtSettings.monitorIntent)
         {
         default:
-        case rtengine::RI_RELATIVE:
+        case rtengine::RI_PERCEPTUAL:
             intentBox.setSelected (0);
             break;
-        case rtengine::RI_PERCEPTUAL:
+        case rtengine::RI_RELATIVE:
             intentBox.setSelected (1);
             break;
         case rtengine::RI_ABSOLUTE:
@@ -806,8 +810,6 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     }
 
     history->resetSnapShotNumber();
-
-    colorMgmtToolBar->reset ();
 }
 
 void EditorPanel::close ()

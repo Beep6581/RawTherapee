@@ -1973,7 +1973,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     } else if(retinexParams.gammaretinex == "hig") {
         retinexgamtab = &(Color::gammatab_145_3);
     } else if(retinexParams.gammaretinex == "fre") {
-        double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
+        Color::GammaValues g_a;
         double pwr = 1.0 / retinexParams.gam;
         double gamm = retinexParams.gam;
         double ts = retinexParams.slope;
@@ -1984,21 +1984,21 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         }
 
         int mode = 0, imax = 0;
-        Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
         double add;
 
         if(gamm2 < 1.) {
-            start = g_a2;
-            add = g_a4;
+            start = g_a.gamma2;
+            add = g_a.gamma4;
         } else {
-            start = g_a3;
-            add = g_a4;
+            start = g_a.gamma3;
+            add = g_a.gamma4;
         }
 
-        double mul = 1. + g_a4;
+        double mul = 1. + g_a.gamma4;
 
         lutTonereti(65536);
 
@@ -2245,7 +2245,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     } else if(deh.gammaretinex == "hig") {
         retinexigamtab = &(Color::igammatab_145_3);
     } else if(deh.gammaretinex == "fre") {
-        double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
+        Color::GammaValues g_a;
         double pwr = 1.0 / deh.gam;
         double gamm = deh.gam;
         double gamm2 = gamm;
@@ -2256,18 +2256,18 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
             std::swap(pwr, gamm);
         }
 
-        Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
 
-        double mul = 1. + g_a4;
+        double mul = 1. + g_a.gamma4;
         double add;
         double start;
 
         if(gamm2 < 1.) {
-            start = g_a3;
-            add = g_a3;
+            start = g_a.gamma3;
+            add = g_a.gamma3;
         } else {
-            add = g_a4;
-            start = g_a2;
+            add = g_a.gamma4;
+            start = g_a.gamma2;
         }
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);

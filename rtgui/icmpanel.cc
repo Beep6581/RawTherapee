@@ -193,13 +193,14 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     Gtk::HBox *riHBox = Gtk::manage ( new Gtk::HBox());
     Gtk::Label* outputIntentLbl = Gtk::manage (new Gtk::Label(M("TP_ICM_PROFILEINTENT")+":"));
     riHBox->pack_start (*outputIntentLbl, Gtk::PACK_SHRINK);
-    ointent = Gtk::manage (new MyComboBoxText ());
-    riHBox->pack_start (*ointent, Gtk::PACK_EXPAND_WIDGET);
-    ointent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
-    ointent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
-    ointent->append_text (M("PREFERENCES_INTENT_SATURATION"));
-    ointent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
-    ointent->set_active (1);
+    ointent = Gtk::manage (new PopUpButton ());
+    ointent->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
+    ointent->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
+    ointent->addEntry("intent-saturation.png", M("PREFERENCES_INTENT_SATURATION"));
+    ointent->addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
+    ointent->setSelected (1);
+    ointent->show();
+    riHBox->pack_start (*ointent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
     oVBox->pack_start(*riHBox, Gtk::PACK_SHRINK);
 
     // Black Point Compensation
@@ -317,6 +318,29 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     saveRef->signal_pressed().connect( sigc::mem_fun(*this, &ICMPanel::saveReferencePressed) );
 
     show_all ();
+}
+
+void ICMPanel::updateRenderingIntent (const Glib::ustring &profile) {
+    const uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
+    const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
+    const bool supportsRelative   = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
+    const bool supportsSaturation = supportedIntents & 1 << INTENT_SATURATION;
+    const bool supportsAbsolute   = supportedIntents & 1 << INTENT_ABSOLUTE_COLORIMETRIC;
+
+    if (!profile.empty() && (supportsPerceptual || supportsRelative || supportsSaturation || supportsAbsolute)) {
+        ointent->set_sensitive (true);
+        ointent->setItemSensitivity(0, supportsPerceptual);
+        ointent->setItemSensitivity(1, supportsRelative);
+        ointent->setItemSensitivity(2, supportsSaturation);
+        ointent->setItemSensitivity(3, supportsAbsolute);
+    } else {
+        ointent->setItemSensitivity(0, true);
+        ointent->setItemSensitivity(1, true);
+        ointent->setItemSensitivity(2, true);
+        ointent->setItemSensitivity(3, true);
+        ointent->set_sensitive (false);
+        ointent->setSelected (1);
+    }
 }
 
 void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
@@ -535,7 +559,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
     if (onames->get_active_row_number() == -1) {
         onames->set_active_text (M("TP_ICM_NOICM"));
     }
-    ointent->set_active(pp->icm.outputIntent);
+    ointent->setSelected (pp->icm.outputIntent);
 
     obpc->set_active (pp->icm.outputBPC);
     ckbToneCurve->set_active (pp->icm.toneCurve);
@@ -558,6 +582,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         wgamma->set_sensitive(!pp->icm.freegamma);
         gampos->set_sensitive(pp->icm.freegamma);
         slpos->set_sensitive(pp->icm.freegamma);
+        updateRenderingIntent(pp->icm.output);
     }
 
     gampos->setValue (pp->icm.gampos);
@@ -582,7 +607,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         if (!pedited->icm.outputIntent) {
-            ointent->set_active_text(M("GENERAL_UNCHANGED"));
+            ointent->setSelected (4);
         }
 
         if (!pedited->icm.dcpIlluminant) {
@@ -646,7 +671,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pp->icm.output  = onames->get_active_text();
     }
 
-    int ointentVal = ointent->get_active_row_number();
+    int ointentVal = ointent->getSelected ();
     if (ointentVal >= 0 && ointentVal < RI__COUNT) {
         pp->icm.outputIntent  = static_cast<RenderingIntent>(ointentVal);
     } else {
@@ -690,7 +715,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->icm.outputIntent = ointent->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.outputIntent = ointent->getSelected () < 4;
         pedited->icm.outputBPC = !obpc->get_inconsistent ();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
@@ -966,17 +991,37 @@ void ICMPanel::GamChanged()
 
 void ICMPanel::opChanged ()
 {
+    updateRenderingIntent(onames->get_active_text());
 
     if (listener) {
         listener->panelChanged (EvOProfile, onames->get_active_text());
     }
 }
 
-void ICMPanel::oiChanged ()
+void ICMPanel::oiChanged (int n)
 {
 
     if (listener) {
-        listener->panelChanged (EvOIntent, ointent->get_active_text());
+        Glib::ustring str;
+        switch (n) {
+        case 0:
+            str = M("PREFERENCES_INTENT_PERCEPTUAL");
+            break;
+        case 1:
+            str = M("PREFERENCES_INTENT_RELATIVE");
+            break;
+        case 2:
+            str = M("PREFERENCES_INTENT_SATURATION");
+            break;
+        case 3:
+            str = M("PREFERENCES_INTENT_ABSOLUTE");
+            break;
+        case 4:
+        default:
+            str = M("GENERAL_UNCHANGED");
+            break;
+        }
+        listener->panelChanged (EvOIntent, str);
     }
 }
 
@@ -1104,7 +1149,7 @@ void ICMPanel::setBatchMode (bool batchMode)
     iVBox->reorder_child (*iunchanged, 5);
     removeIfThere (this, saveRef);
     onames->append_text (M("GENERAL_UNCHANGED"));
-    ointent->append_text (M("GENERAL_UNCHANGED"));
+    ointent->addEntry("unchanged-22.png", M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
     wgamma->append_text (M("GENERAL_UNCHANGED"));
     dcpIll->append_text (M("GENERAL_UNCHANGED"));

@@ -96,20 +96,20 @@ void loadProfiles (const Glib::ustring& dirName,
     } catch (Glib::Exception&) {}
 }
 
-inline void getSupportedIntent (cmsHPROFILE profile, cmsUInt32Number intent, cmsUInt32Number direction, std::uint8_t& result)
+inline void getSupportedIntent (cmsHPROFILE profile, cmsUInt32Number intent, cmsUInt32Number direction, uint8_t& result)
 {
     if (cmsIsIntentSupported (profile, intent, direction)) {
         result |= 1 << intent;
     }
 }
 
-inline std::uint8_t getSupportedIntents (cmsHPROFILE profile, cmsUInt32Number direction)
+inline uint8_t getSupportedIntents (cmsHPROFILE profile, cmsUInt32Number direction)
 {
     if (!profile) {
         return 0;
     }
 
-    std::uint8_t result = 0;
+    uint8_t result = 0;
 
     getSupportedIntent (profile, INTENT_PERCEPTUAL, direction, result);
     getSupportedIntent (profile, INTENT_RELATIVE_COLORIMETRIC, direction, result);
@@ -188,8 +188,8 @@ std::vector<Glib::ustring> ICCStore::getProfilesFromDir (const Glib::ustring& di
 
     ProfileMap profiles;
 
-    loadProfiles (profilesDir, &profiles, NULL, NULL, false, true);
-    loadProfiles (dirName, &profiles, NULL, NULL, false, true);
+    loadProfiles (profilesDir, &profiles, nullptr, nullptr, false, true);
+    loadProfiles (dirName, &profiles, nullptr, nullptr, false, true);
 
     for (ProfileMap::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile) {
         res.push_back (profile->first);
@@ -202,14 +202,14 @@ cmsHPROFILE ICCStore::makeStdGammaProfile (cmsHPROFILE iprof)
 {
     // forgive me for the messy code, quick hack to change gamma of an ICC profile to the RT standard gamma
     if (!iprof) {
-        return NULL;
+        return nullptr;
     }
 
     cmsUInt32Number bytesNeeded = 0;
     cmsSaveProfileToMem(iprof, 0, &bytesNeeded);
 
     if (bytesNeeded == 0) {
-        return NULL;
+        return nullptr;
     }
 
     uint8_t *data = new uint8_t[bytesNeeded + 1];
@@ -363,180 +363,167 @@ cmsHPROFILE ICCStore::workingSpaceGamma (const Glib::ustring& name) const
     }
 }
 
-void ICCStore::getGammaArray(const procparams::ColorManagementParams &icm, double *ga)
+void ICCStore::getGammaArray(const procparams::ColorManagementParams &icm, Color::GammaValues &ga)
 {
     const double eps = 0.000000001; // not divide by zero
     if (!icm.freegamma) {//if Free gamma not selected
         // gamma : ga[0],ga[1],ga[2],ga[3],ga[4],ga[5] by calcul
         if(icm.gamma == "BT709_g2.2_s4.5")      {
-            ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
-            ga[1] = 0.909995;
-            ga[2] = 0.090005;
-            ga[3] = 0.222222;
-            ga[4] = 0.081071;
-            ga[5] = 0.0;
+            ga.gamma0 = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
+            ga.gamma1 = 0.909995;
+            ga.gamma2 = 0.090005;
+            ga.gamma3 = 0.222222;
+            ga.gamma4 = 0.081071;
+            ga.gamma5 = 0.0;
         } else if (icm.gamma == "sRGB_g2.4_s12.92")   {
-            ga[0] = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
-            ga[1] = 0.947858;
-            ga[2] = 0.052142;
-            ga[3] = 0.077399;
-            ga[4] = 0.039293;
-            ga[5] = 0.0;
+            ga.gamma0 = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
+            ga.gamma1 = 0.947858;
+            ga.gamma2 = 0.052142;
+            ga.gamma3 = 0.077399;
+            ga.gamma4 = 0.039293;
+            ga.gamma5 = 0.0;
         } else if (icm.gamma == "High_g1.3_s3.35")    {
-            ga[0] = 1.3 ;    //for high dynamic images
-            ga[1] = 0.998279;
-            ga[2] = 0.001721;
-            ga[3] = 0.298507;
-            ga[4] = 0.005746;
-            ga[5] = 0.0;
+            ga.gamma0 = 1.3 ;    //for high dynamic images
+            ga.gamma1 = 0.998279;
+            ga.gamma2 = 0.001721;
+            ga.gamma3 = 0.298507;
+            ga.gamma4 = 0.005746;
+            ga.gamma5 = 0.0;
         } else if (icm.gamma == "Low_g2.6_s6.9")   {
-            ga[0] = 2.6 ;    //gamma 2.6 variable : for low contrast images
-            ga[1] = 0.891161;
-            ga[2] = 0.108839;
-            ga[3] = 0.144928;
-            ga[4] = 0.076332;
-            ga[5] = 0.0;
+            ga.gamma0 = 2.6 ;    //gamma 2.6 variable : for low contrast images
+            ga.gamma1 = 0.891161;
+            ga.gamma2 = 0.108839;
+            ga.gamma3 = 0.144928;
+            ga.gamma4 = 0.076332;
+            ga.gamma5 = 0.0;
         } else if (icm.gamma == "linear_g1.0")   {
-            ga[0] = 1.0;    //gamma=1 linear : for high dynamic images (cf : D.Coffin...)
-            ga[1] = 1.;
-            ga[2] = 0.;
-            ga[3] = 1. / eps;
-            ga[4] = 0.;
-            ga[5] = 0.0;
+            ga.gamma0 = 1.0;    //gamma=1 linear : for high dynamic images (cf : D.Coffin...)
+            ga.gamma1 = 1.;
+            ga.gamma2 = 0.;
+            ga.gamma3 = 1. / eps;
+            ga.gamma4 = 0.;
+            ga.gamma5 = 0.0;
         } else if (icm.gamma == "standard_g2.2")   {
-            ga[0] = 2.2;    //gamma=2.2 (as gamma of Adobe, Widegamut...)
-            ga[1] = 1.;
-            ga[2] = 0.;
-            ga[3] = 1. / eps;
-            ga[4] = 0.;
-            ga[5] = 0.0;
+            ga.gamma0 = 2.2;    //gamma=2.2 (as gamma of Adobe, Widegamut...)
+            ga.gamma1 = 1.;
+            ga.gamma2 = 0.;
+            ga.gamma3 = 1. / eps;
+            ga.gamma4 = 0.;
+            ga.gamma5 = 0.0;
         } else if (icm.gamma == "standard_g1.8")   {
-            ga[0] = 1.8;    //gamma=1.8  (as gamma of Prophoto)
-            ga[1] = 1.;
-            ga[2] = 0.;
-            ga[3] = 1. / eps;
-            ga[4] = 0.;
-            ga[5] = 0.0;
+            ga.gamma0 = 1.8;    //gamma=1.8  (as gamma of Prophoto)
+            ga.gamma1 = 1.;
+            ga.gamma2 = 0.;
+            ga.gamma3 = 1. / eps;
+            ga.gamma4 = 0.;
+            ga.gamma5 = 0.0;
         }
     } else { //free gamma selected
-        double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5; //gamma parameters
+        Color::GammaValues g_a; //gamma parameters
         double pwr = 1.0 / icm.gampos;
         double ts = icm.slpos;
         double slope = icm.slpos == 0 ? eps : icm.slpos;
 
         int mode = 0, imax = 0;
-        Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-        ga[4] = g_a3 * ts;
-        //printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
-        ga[0] = icm.gampos;
-        ga[1] = 1. / (1.0 + g_a4);
-        ga[2] = g_a4 / (1.0 + g_a4);
-        ga[3] = 1. / slope;
-        ga[5] = 0.0;
+        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+        ga.gamma4 = g_a.gamma3 * ts;
+        //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
+        ga.gamma0 = icm.gampos;
+        ga.gamma1 = 1. / (1.0 + g_a.gamma4);
+        ga.gamma2 = g_a.gamma4 / (1.0 + g_a.gamma4);
+        ga.gamma3 = 1. / slope;
+        ga.gamma5 = 0.0;
         //printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
     }
 }
 
-cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParams &icm, double ga[]) {
-    float p1, p2, p3, p4, p5, p6; //primaries
-    ga[6] = 0.0;
-    int mode = 0, imax = 0;
+cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga) {
+    float p[6]; //primaries
+    ga.gamma6 = 0.0;
 
-    int t50;
-    int select_temp = 1; //5003K
+    enum class ColorTemp {
+        D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
+        D65 = 6504   // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+    };
+    ColorTemp temp = ColorTemp::D50;
 
     //primaries for 7 working profiles ==> output profiles
     // eventually to adapt primaries  if RT used special profiles !
     if (icm.output == "WideGamut") {
-        p1 = 0.7350;    //Widegamut primaries
-        p2 = 0.2650;
-        p3 = 0.1150;
-        p4 = 0.8260;
-        p5 = 0.1570;
-        p6 = 0.0180;
-        select_temp = 1;
+        p[0] = 0.7350;    //Widegamut primaries
+        p[1] = 0.2650;
+        p[2] = 0.1150;
+        p[3] = 0.8260;
+        p[4] = 0.1570;
+        p[5] = 0.0180;
     } else if (icm.output == "Adobe RGB") {
-        p1 = 0.6400;    //Adobe primaries
-        p2 = 0.3300;
-        p3 = 0.2100;
-        p4 = 0.7100;
-        p5 = 0.1500;
-        p6 = 0.0600;
-        select_temp = 2;
+        p[0] = 0.6400;    //Adobe primaries
+        p[1] = 0.3300;
+        p[2] = 0.2100;
+        p[3] = 0.7100;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
     } else if (icm.output == "sRGB") {
-        p1 = 0.6400;    // sRGB primaries
-        p2 = 0.3300;
-        p3 = 0.3000;
-        p4 = 0.6000;
-        p5 = 0.1500;
-        p6 = 0.0600;
-        select_temp = 2;
+        p[0] = 0.6400;    // sRGB primaries
+        p[1] = 0.3300;
+        p[2] = 0.3000;
+        p[3] = 0.6000;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
     } else if (icm.output == "BruceRGB") {
-        p1 = 0.6400;    // Bruce primaries
-        p2 = 0.3300;
-        p3 = 0.2800;
-        p4 = 0.6500;
-        p5 = 0.1500;
-        p6 = 0.0600;
-        select_temp = 2;
+        p[0] = 0.6400;    // Bruce primaries
+        p[1] = 0.3300;
+        p[2] = 0.2800;
+        p[3] = 0.6500;
+        p[4] = 0.1500;
+        p[5] = 0.0600;
+        temp = ColorTemp::D65;
     } else if (icm.output == "Beta RGB") {
-        p1 = 0.6888;    // Beta primaries
-        p2 = 0.3112;
-        p3 = 0.1986;
-        p4 = 0.7551;
-        p5 = 0.1265;
-        p6 = 0.0352;
-        select_temp = 1;
+        p[0] = 0.6888;    // Beta primaries
+        p[1] = 0.3112;
+        p[2] = 0.1986;
+        p[3] = 0.7551;
+        p[4] = 0.1265;
+        p[5] = 0.0352;
     } else if (icm.output == "BestRGB") {
-        p1 = 0.7347;    // Best primaries
-        p2 = 0.2653;
-        p3 = 0.2150;
-        p4 = 0.7750;
-        p5 = 0.1300;
-        p6 = 0.0350;
-        select_temp = 1;
+        p[0] = 0.7347;    // Best primaries
+        p[1] = 0.2653;
+        p[2] = 0.2150;
+        p[3] = 0.7750;
+        p[4] = 0.1300;
+        p[5] = 0.0350;
     } else if (icm.output == "Rec2020") {
-        p1 = 0.7080;    // Rec2020 primaries
-        p2 = 0.2920;
-        p3 = 0.1700;
-        p4 = 0.7970;
-        p5 = 0.1310;
-        p6 = 0.0460;
-        select_temp = 2;
+        p[0] = 0.7080;    // Rec2020 primaries
+        p[1] = 0.2920;
+        p[2] = 0.1700;
+        p[3] = 0.7970;
+        p[4] = 0.1310;
+        p[5] = 0.0460;
+        temp = ColorTemp::D65;
     } else {
-        p1 = 0.7347;    //ProPhoto and default primaries
-        p2 = 0.2653;
-        p3 = 0.1596;
-        p4 = 0.8404;
-        p5 = 0.0366;
-        p6 = 0.0001;
-        select_temp = 1;
-    }
-
-    if(select_temp == 1) {
-        t50 = 5003;    // for Widegamut, Prophoto Best, Beta -> D50
-    } else if (select_temp == 2) {
-        t50 = 6504;    // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+        p[0] = 0.7347;    //ProPhoto and default primaries
+        p[1] = 0.2653;
+        p[2] = 0.1596;
+        p[3] = 0.8404;
+        p[4] = 0.0366;
+        p[5] = 0.0001;
     }
 
     cmsCIExyY xyD;
     cmsCIExyYTRIPLE Primaries = {
-        {p1, p2, 1.0}, // red
-        {p3, p4, 1.0}, // green
-        {p5, p6, 1.0}  // blue
+        {p[0], p[1], 1.0}, // red
+        {p[2], p[3], 1.0}, // green
+        {p[4], p[5], 1.0}  // blue
     };
     cmsToneCurve* GammaTRC[3];
-    cmsFloat64Number Parameters[7]; // 7 parameters for smoother curves
-    Parameters[0] = ga[0];
-    Parameters[1] = ga[1];
-    Parameters[2] = ga[2];
-    Parameters[3] = ga[3];
-    Parameters[4] = ga[4];
-    Parameters[5] = ga[5];
-    Parameters[6] = ga[6];
 
-    cmsWhitePointFromTemp(&xyD, t50);
-    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters);//5 = more smoother than 4
+    // 7 parameters for smoother curves
+    cmsFloat64Number Parameters[7] = { ga.gamma0,  ga.gamma1, ga.gamma2, ga.gamma3, ga.gamma4, ga.gamma5, ga.gamma6 } ;
+
+    cmsWhitePointFromTemp(&xyD, (double)temp);
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
 
     cmsFreeToneCurve(GammaTRC[0]);
@@ -544,10 +531,10 @@ cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParam
     return oprofdef;
 }
 
-cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, double ga[]) {
+cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga) {
     bool pro = false;
     Glib::ustring outProfile;
-    cmsHPROFILE outputProfile = NULL;
+    cmsHPROFILE outputProfile = nullptr;
 
     if (icm.freegamma && icm.gampos < 1.35) {
         pro = true;    //select profil with gammaTRC modified :
@@ -583,7 +570,7 @@ cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorMan
             printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", icm.working.c_str() );
         }
 
-        return NULL;
+        return nullptr;
     }
 
     //begin adaptation rTRC gTRC bTRC
@@ -594,16 +581,16 @@ cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorMan
 
     outputProfile = iccStore->getProfile(outProfile); //get output profile
 
-    if (outputProfile == NULL) {
+    if (outputProfile == nullptr) {
 
         if (settings->verbose) {
             printf("\"%s\" ICC output profile not found!\n", outProfile.c_str());
         }
-        return NULL;
+        return nullptr;
     }
 
     // 7 parameters for smoother curves
-    cmsFloat64Number Parameters[7] = { ga[0], ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] };
+    cmsFloat64Number Parameters[7] = { ga.gamma0, ga.gamma1, ga.gamma2, ga.gamma3, ga.gamma4, ga.gamma5, ga.gamma6 };
 
     //change desc Tag , to "free gamma", or "BT709", etc.
     cmsMLU *mlu;
@@ -611,7 +598,7 @@ cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorMan
     mlu = cmsMLUalloc(ContextID, 1);
 
     // instruction with //ICC are used to generate ICC profile
-    if (mlu == NULL) {
+    if (mlu == nullptr) {
         printf("Description error\n");
     } else {
 
@@ -663,8 +650,8 @@ cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorMan
     }
 
     // Calculate output profile's rTRC gTRC bTRC
-    cmsToneCurve* GammaTRC = NULL;
-    GammaTRC = cmsBuildParametricToneCurve(NULL, 5, Parameters);
+    cmsToneCurve* GammaTRC = nullptr;
+    GammaTRC = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
     cmsWriteTag(outputProfile, cmsSigRedTRCTag,   (void*)GammaTRC );
     cmsWriteTag(outputProfile, cmsSigGreenTRCTag, (void*)GammaTRC );
     cmsWriteTag(outputProfile, cmsSigBlueTRCTag,  (void*)GammaTRC );
@@ -680,14 +667,7 @@ bool ICCStore::outputProfileExist (const Glib::ustring& name) const
 {
 
     MyMutex::MyLock lock(mutex_);
-
-    const ProfileMap::const_iterator r = fileProfiles.find (name);
-
-    if (r != fileProfiles.end ()) {
-        return true;
-    }
-
-    return false;
+    return fileProfiles.find(name) != fileProfiles.end();
 }
 
 cmsHPROFILE ICCStore::getProfile (const Glib::ustring& name) const
@@ -735,7 +715,7 @@ cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name) const
 
     // profile does not exist
     if (f == fileStdProfilesFileNames.end ()) {
-        return NULL;
+        return nullptr;
     }
 
     // but there exists one => load it
@@ -761,21 +741,21 @@ ProfileContent ICCStore::getContent (const Glib::ustring& name) const
     return r != fileProfileContents.end () ? r->second : ProfileContent();
 }
 
-std::uint8_t ICCStore::getInputIntents (cmsHPROFILE profile) const
+uint8_t ICCStore::getInputIntents (cmsHPROFILE profile) const
 {
     MyMutex::MyLock lock (mutex_);
 
     return getSupportedIntents (profile, LCMS_USED_AS_INPUT);
 }
 
-std::uint8_t ICCStore::getOutputIntents (cmsHPROFILE profile) const
+uint8_t ICCStore::getOutputIntents (cmsHPROFILE profile) const
 {
     MyMutex::MyLock lock (mutex_);
 
     return getSupportedIntents (profile, LCMS_USED_AS_OUTPUT);
 }
 
-std::uint8_t ICCStore::getProofIntents (cmsHPROFILE profile) const
+uint8_t ICCStore::getProofIntents (cmsHPROFILE profile) const
 {
     MyMutex::MyLock lock (mutex_);
 
@@ -792,15 +772,15 @@ void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCD
     profilesDir = Glib::build_filename (rtICCDir, "output");
     fileProfiles.clear();
     fileProfileContents.clear();
-    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, NULL, false, true);
-    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, NULL, false, true);
+    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, nullptr, false, true);
+    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, nullptr, false, true);
 
     // Input profiles
     // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
     stdProfilesDir = Glib::build_filename (rtICCDir, "input");
     fileStdProfiles.clear();
     fileStdProfilesFileNames.clear();
-    loadProfiles (stdProfilesDir, NULL, NULL, &fileStdProfilesFileNames, true, false);
+    loadProfiles (stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true, false);
 }
 
 // Determine the first monitor default profile of operating system, if selected
@@ -843,7 +823,7 @@ void ICCStore::findDefaultMonitorProfile ()
     }
 }
 
-ProfileContent::ProfileContent (const Glib::ustring& fileName) : data(NULL), length(0)
+ProfileContent::ProfileContent (const Glib::ustring& fileName) : data(nullptr), length(0)
 {
 
     FILE* f = g_fopen (fileName.c_str (), "rb");
@@ -870,14 +850,14 @@ ProfileContent::ProfileContent (const ProfileContent& other)
         data = new char[length + 1];
         memcpy (data, other.data, length + 1);
     } else {
-        data = NULL;
+        data = nullptr;
     }
 }
 
-ProfileContent::ProfileContent (cmsHPROFILE hProfile) : data(NULL), length(0)
+ProfileContent::ProfileContent (cmsHPROFILE hProfile) : data(nullptr), length(0)
 {
 
-    if (hProfile != NULL) {
+    if (hProfile != nullptr) {
         cmsUInt32Number bytesNeeded = 0;
         cmsSaveProfileToMem(hProfile, 0, &bytesNeeded);
 
@@ -901,7 +881,7 @@ ProfileContent& ProfileContent::operator= (const ProfileContent& other)
         data = new char[length + 1];
         memcpy (data, other.data, length + 1);
     } else {
-        data = NULL;
+        data = nullptr;
     }
 
     return *this;
@@ -913,7 +893,7 @@ cmsHPROFILE ProfileContent::toProfile () const
     if (data) {
         return cmsOpenProfileFromMem (data, length);
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 

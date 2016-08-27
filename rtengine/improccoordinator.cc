@@ -23,6 +23,7 @@
 #include "../rtgui/ppversion.h"
 #include "colortemp.h"
 #include "improcfun.h"
+#include "iccstore.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
