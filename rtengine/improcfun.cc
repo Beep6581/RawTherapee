@@ -40,7 +40,7 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/guiutils.h"
@@ -4127,23 +4127,26 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     } else if (algm == 1) { //Luminance mixer in Lab mode to avoid artifacts
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                //rgb=>lab
-                                float r = rtemp[ti * TS + tj];
-                                float g = gtemp[ti * TS + tj];
-                                float b = btemp[ti * TS + tj];
+                                //rgb => xyz
                                 float X, Y, Z;
+                                Color::rgbxyz(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], X, Y, Z, wp);
+                                //xyz => Lab
                                 float L, aa, bb;
-                                Color::rgbxyz(r, g, b, X, Y, Z, wp);
-                                //convert Lab
                                 Color::XYZ2Lab(X, Y, Z, L, aa, bb);
-                                //end rgb=>lab
-                                //lab ==> Ch
-                                float CC = sqrt(SQR(aa / 327.68f) + SQR(bb / 327.68f)); //CC chromaticity in 0..180 or more
+                                float CC = sqrtf(SQR(aa) + SQR(bb)) / 327.68f; //CC chromaticity in 0..180 or more
                                 float HH = xatan2f(bb, aa); // HH hue in -3.141  +3.141
-                                float l_r;//Luminance Lab in 0..1
-                                l_r = L / 32768.f;
+                                float2 sincosval;
+
+                                if(CC == 0.0f) {
+                                    sincosval.y = 1.f;
+                                    sincosval.x = 0.0f;
+                                } else {
+                                    sincosval.y = aa / (CC * 327.68f);
+                                    sincosval.x = bb / (CC * 327.68f);
+                                }
 
                                 if (bwlCurveEnabled) {
+                                    L /= 32768.f;
                                     double hr = Color::huelab_to_huehsv2(HH);
                                     float valparam = float((bwlCurve->getVal(hr) - 0.5f) * 2.0f); //get l_r=f(H)
                                     float kcc = (CC / 70.f); //take Chroma into account...70 "middle" of chromaticity (arbitrary and simple), one can imagine other algorithme
@@ -4151,47 +4154,35 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     valparam *= kcc;
 
                                     if(valparam > 0.f) {
-                                        l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(SQR(SQR(SQR(1.f - min(l_r, 1.0f))))));   // SQR (SQR((SQR)  to increase action in low light
+                                        L = (1.f - valparam) * L + valparam * (1.f - SQR(SQR(SQR(SQR(1.f - min(L, 1.0f))))));   // SQR (SQR((SQR)  to increase action in low light
                                     } else {
-                                        l_r *= (1.f + valparam);    //for negative
+                                        L *= (1.f + valparam);    //for negative
                                     }
+                                    L *= 32768.f;
                                 }
 
-                                L = l_r * 32768.f;
                                 float RR, GG, BB;
-                                float Lr;
-                                Lr = L / 327.68f; //for gamutlch
+                                L /= 327.68f;
 #ifdef _DEBUG
                                 bool neg = false;
                                 bool more_rgb = false;
                                 //gamut control : Lab values are in gamut
-                                Color::gamutLchonly(HH, Lr, CC, RR, GG, BB, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+                                Color::gamutLchonly(HH, sincosval, L, CC, RR, GG, BB, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
 #else
                                 //gamut control : Lab values are in gamut
-                                Color::gamutLchonly(HH, Lr, CC, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
+                                Color::gamutLchonly(HH, sincosval, L, CC, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
 #endif
-                                //convert CH ==> ab
-                                L = Lr * 327.68f;
-                                //  float a_,b_;
-                                //  a_=0.f;//grey
-                                //  b_=0.f;//grey
-                                //convert lab=>rgb
-                                Color::Lab2XYZ(L, 0.f, 0.f, X, Y, Z);
-                                float rr_, gg_, bb_;
-                                Color::xyz2rgb(X, Y, Z, rr_, gg_, bb_, wip);
-                                rtemp[ti * TS + tj] = gtemp[ti * TS + tj] = btemp[ti * TS + tj] = rr_;
-                                //  tmpImage->r(i,j) = tmpImage->g(i,j) = tmpImage->b(i,j) = CLIP(val[0]*kcorec);
+                                L *= 327.68f;
+                                //convert l => rgb
+                                Color::L2XYZ(L, X, Y, Z);
+                                float newRed; // We use the red channel for bw
+                                Color::xyz2r(X, Y, Z, newRed, wip);
+                                rtemp[ti * TS + tj] = gtemp[ti * TS + tj] = btemp[ti * TS + tj] = newRed;
 
                                 if (hasgammabw) {
+                                    //gamma correction: pseudo TRC curve
                                     Color::trcGammaBW (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], gammabwr, gammabwg, gammabwb);
                                 }
-
-                                //gamma correction: pseudo TRC curve
-                                //  if (hasgammabw)
-                                //      Color::trcGammaBW (rr_, gg_, bb_, gammabwr, gammabwg, gammabwb);
-                                //  rtemp[ti*TS+tj] = rr_;
-                                //  gtemp[ti*TS+tj] = gg_;
-                                //  btemp[ti*TS+tj] = bb_;
                             }
                         }
                     }

@@ -408,6 +408,7 @@ public:
     * @param rgb_xyz[3][3] transformation matrix to use for the conversion
     */
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]);
+    static void xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]);
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
 #ifdef __SSE2__
     static void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3]);
@@ -441,6 +442,7 @@ public:
     * @param z Z coordinate [0 ; 65535] ; can be negative! (return value)
     */
     static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
+    static void L2XYZ(float L, float &x, float &y, float &z);
 
 #ifdef __SSE2__
     static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
