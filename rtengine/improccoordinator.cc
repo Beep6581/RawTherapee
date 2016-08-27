@@ -36,7 +36,7 @@ ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
       ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE),
       softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
-      allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.),
+      allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
       hltonecurve(65536),
       shtonecurve(65536),
@@ -474,8 +474,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, scale == 1 ? 1 : 1);
         }
 
-        float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
-        float satLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
+        colourToningSatLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
+        colourToningSatLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
 
         int satTH = 80;
         int satPR = 30;
@@ -498,10 +498,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             //satTH=(int) 100.f*satp;
             //satPR=(int) 100.f*(moyS-0.85f*eqty);//-0.85 sigma==>20% pixels with low saturation
-            satLimit = 100.f * satp;
+            colourToningSatLimit = 100.f * satp;
             satTH = (int) 100.f * satp;
 
-            satLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
+            colourToningSatLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
             satPR = (int) 100.f * (moyS - 0.85f * eqty);
         }
 
@@ -540,7 +540,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
 
             ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as);
+                         rCurve, gCurve, bCurve, colourToningSatLimit , colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as);
 
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose) {
@@ -552,10 +552,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             if(params.colorToning.autosat && actListener) {
                 if (settings->verbose) {
-                    printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi, (int)satLimit , (int) satLimitOpacity);
+                    printf("ImProcCoordinator / Auto CT:  indi=%d   satH=%d  satPR=%d\n", indi, (int)colourToningSatLimit , (int) colourToningSatLimitOpacity);
                 }
 
-                actListener->autoColorTonChanged(indi, (int) satLimit, (int)satLimitOpacity);//change sliders autosat
+                actListener->autoColorTonChanged(indi, (int) colourToningSatLimit, (int)colourToningSatLimitOpacity);//change sliders autosat
             }
 
             // correct GUI black and white with value
@@ -744,6 +744,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
 
             // Issue 2785, only float version of ciecam02 for navigator and pan background
+            CAMMean = NAN;
+            CAMBrightCurveJ.dirty = true;
+            CAMBrightCurveQ.dirty = true;
+
             ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, execsharp, d, scale, 1);
 
             if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) {
@@ -783,11 +787,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if (crops[i]->hasListener () && cropCall != crops[i] ) {
             crops[i]->update (todo);    // may call ourselves
         }
-
-    // Flagging some LUT as dirty now, whether they have been freed up or not
-    CAMBrightCurveJ.dirty = true;
-    CAMBrightCurveQ.dirty = true;
-
 
     progress ("Conversion to RGB...", 100 * readyphase / numofphases);
 

@@ -198,6 +198,8 @@ protected:
     bool wavcontlutili;
     void startProcessing ();
     void process ();
+    float colourToningSatLimit;
+    float colourToningSatLimitOpacity;
 
 public:
 

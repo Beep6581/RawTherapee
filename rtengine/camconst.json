@@ -801,6 +801,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 
     { // Quality b, scaling factors missing but guessed safely
         "make_model": [ "Canon EOS 600D", "Canon EOS Rebel T3i", "Canon EOS Kiss X5", "Canon EOS 1200D", "Canon EOS Rebel T5", "Canon EOS Kiss X70" ],
+      //  "dcraw_matrix": [ 13254,-6296,-1798,184,2753,90,1438,-566,1129 ], // Infrared guessed
         "dcraw_matrix": [ 6461,-907,-882,-4300,12184,2378,-819,1944,5931 ], // dcp D65 colormatrix2
         "ranges": {
                "white": [
@@ -1049,7 +1050,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
     { //   Quality B,
-        "make_model": "Canon PowerShot G7 X",
+        "make_model": [ "Canon PowerShot G7 X", "Canon PowerShot G7 X Mark II" ],
         "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 ], // DNG_V8.7 D65
      //   "raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
@@ -1126,9 +1127,9 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
 	{ // Quality B
-        "make_model": "FUJIFILM X-PRO2",
+        "make_model": [ "FUJIFILM X-PRO2", "FUJIFILM X-T2" ],
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
-        "raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - experimental crop
+      //  "raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - experimental crop
         "ranges": { "white": 16100 }
     },
 
@@ -1312,7 +1313,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
      //   "dcraw_matrix": [ 9336,-3405,14,-7321,14779,2764,-914,1171,8248 ], // illuminant A
         "ranges": { "white": [ 15500, 15500, 15500 ] }
 		// Non linearities start at 15500 (hi ISOs) 15850 (low ISOs) with long exposures (>2sec) and LENR ON .. nominal 15892
-		// white 15500 is correct for 14-bit files, for 12-bit files RT auto_calculates it 15750*4095/16383=3936
+		// white 15500 is correct for 14-bit files, for 12-bit files RT auto_calculates it 15500*4095/16383=3874
 	},
 
 	{ // Quality B,
@@ -1617,8 +1618,8 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                   }
     },
 
-    { // G7 Quality A, GX80 Quality B, BLs and WLs are same, color matrix looks to also be same as G7
-        "make_model": [ "Panasonic DMC-G7", "Panasonic DMC-G70", "Panasonic DMC-GX80", "Panasonic DMC-GX85" ],
+    { // Quality A,
+        "make_model": [ "Panasonic DMC-G7", "Panasonic DMC-G70" ],
         "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ],// DNG_v9.1 D65
         "ranges": {
            "black": 16, // 16 is BL offset. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
@@ -1630,6 +1631,18 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                   }
     },
     { // Quality B,
+        "make_model": [ "Panasonic DMC-GX80", "Panasonic DMC-GX85", "Panasonic DMC-GX7MK2" ],
+        "dcraw_matrix": [ 7771,-3020,-629,-4029,11950,2345,-821,1977,6119 ],// DNG_v9.6 D65
+        "ranges": {
+           "black": 16, // 16 is BL offset. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": [
+              { "iso": 100, "levels": 2300 }, // gaussian 2300-2700 exif_linearitylimit 2111
+              { "iso": 125, "levels": 3180 }, // gaussian 3200-3600 exif_linearitylimit 2626
+              { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+                    ]
+                  }
+    },
+	{ // Quality B,
         "make_model": "Panasonic DMC-GX8",
         "dcraw_matrix": [ 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 ], // DNG_v9.1.1 D65
         "ranges": {
@@ -1861,8 +1874,8 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 800, "white": 16300 }
     },
     { // Quality B,
-        "make_model": "Sony DSC-RX10M2",
-        "dcraw_matrix": [ 6679,-1825,-745,-5047,13256,1953,-1580,2422,5183 ], // DNG_v9.1.1 D65
+        "make_model": [ "Sony DSC-RX10M2", "Sony DSC-RX10M3" ],
+        "dcraw_matrix": [ 6679,-1825,-745,-5047,13256,1953,-1580,2422,5183 ], // DNG_v9.6 D65
         "ranges": { "black": 800, "white": 16300 }
     },
 

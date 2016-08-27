@@ -199,12 +199,12 @@ void Color::init ()
 #ifdef _OPENMP
         #pragma omp section
 #endif
-{
-        for (int i = 0; i < maxindex; i++) {
-            igammatab_srgb[i] = igammatab_srgb1[i] = igamma2 (i / 65535.0);
+        {
+            for (int i = 0; i < maxindex; i++) {
+                igammatab_srgb[i] = igammatab_srgb1[i] = igamma2 (i / 65535.0);
+            }
+            igammatab_srgb *= 65535.f;
         }
-        igammatab_srgb *= 65535.f;
-}
 #ifdef _OPENMP
         #pragma omp section
 #endif
@@ -1725,7 +1725,7 @@ void Color::skinred ( double J, double h, double sres, double Sp, float dred, fl
             if     (J < 16.0) {
                 dred = 40.0f;
             } else if(J < 22.0) {
-                dred = (4.1666f) * (float)J - 26.6f;
+                dred = 2.5f * (float)J;
             } else if(J < 60.0) {
                 dred = 55.0f;
             } else if(J < 70.0) {
@@ -1784,16 +1784,16 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
         float chromapro = sres / Sp;
 
         if(sk == 1) { //in C mode to adapt dred to J
-            if     (J < 16.0) {
-                dred = 40.0f;
-            } else if(J < 22.0) {
-                dred = (4.1666f) * (float)J - 26.6f;
-            } else if(J < 60.0) {
-                dred = 55.0f;
-            } else if(J < 70.0) {
-                dred = -1.5f * (float)J + 145.0f;
+            if     (J < 16.f) {
+                dred = 40.f;
+            } else if(J < 22.f) {
+                dred = 2.5f * J;
+            } else if(J < 60.f) {
+                dred = 55.f;
+            } else if(J < 70.f) {
+                dred = 145.f - 1.5f * J;
             } else {
-                dred = 40.0f;
+                dred = 40.f;
             }
         }
 
