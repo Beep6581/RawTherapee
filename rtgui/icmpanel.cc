@@ -991,7 +991,9 @@ void ICMPanel::GamChanged()
 
 void ICMPanel::opChanged ()
 {
-    updateRenderingIntent(onames->get_active_text());
+    if (!batchMode) {
+        updateRenderingIntent(onames->get_active_text());
+    }
 
     if (listener) {
         listener->panelChanged (EvOProfile, onames->get_active_text());
@@ -1150,6 +1152,7 @@ void ICMPanel::setBatchMode (bool batchMode)
     removeIfThere (this, saveRef);
     onames->append_text (M("GENERAL_UNCHANGED"));
     ointent->addEntry("unchanged-22.png", M("GENERAL_UNCHANGED"));
+    ointent->show();
     wnames->append_text (M("GENERAL_UNCHANGED"));
     wgamma->append_text (M("GENERAL_UNCHANGED"));
     dcpIll->append_text (M("GENERAL_UNCHANGED"));
