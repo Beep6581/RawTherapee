@@ -40,7 +40,7 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/guiutils.h"
