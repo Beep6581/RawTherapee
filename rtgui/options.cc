@@ -734,8 +734,6 @@ int Options::readFromFile (Glib::ustring fname)
     try {
         if (keyFile.load_from_file (fname)) {
 
-            setDefaults ();
-
 // --------------------------------------------------------------------------------------------------------
 
             if (keyFile.has_group ("General")) {
@@ -1781,14 +1779,10 @@ int Options::readFromFile (Glib::ustring fname)
         if (options.rtSettings.verbose) {
             printf("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
-
-        setDefaults ();
     } catch (...) {
         if (options.rtSettings.verbose) {
             printf("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
-
-        setDefaults ();
     }
 
     return 1;
