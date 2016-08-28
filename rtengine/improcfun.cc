@@ -2977,21 +2977,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
     TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
 
-    double toxyz[3][3] = {
+    float toxyz[3][3] = {
         {
-            ( wprof[0][0] / Color::D50x),
-            ( wprof[0][1] / Color::D50x),
-            ( wprof[0][2] / Color::D50x)
+            static_cast<float>( wprof[0][0] / Color::D50x),
+            static_cast<float>( wprof[0][1] / Color::D50x),
+            static_cast<float>( wprof[0][2] / Color::D50x)
         }, {
-            ( wprof[1][0]),
-            ( wprof[1][1]),
-            ( wprof[1][2])
+            static_cast<float>( wprof[1][0]),
+            static_cast<float>( wprof[1][1]),
+            static_cast<float>( wprof[1][2])
         }, {
-            ( wprof[2][0] / Color::D50z),
-            ( wprof[2][1] / Color::D50z),
-            ( wprof[2][2] / Color::D50z)
+            static_cast<float>( wprof[2][0] / Color::D50z),
+            static_cast<float>( wprof[2][1] / Color::D50z),
+            static_cast<float>( wprof[2][2] / Color::D50z)
         }
     };
+    float maxFactorToxyz = max(toxyz[1][0],toxyz[1][1],toxyz[1][2]);
+    float equalR = maxFactorToxyz / toxyz[1][0];
+    float equalG = maxFactorToxyz / toxyz[1][1];
+    float equalB = maxFactorToxyz / toxyz[1][2];
 
     //inverse matrix user select
     double wip[3][3] = {
@@ -3628,60 +3632,52 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                float r1, g1, b1, r2, g2, b2, L_1, L_2, Lfactor, a_1, b_1, x_, y_, z_, R, G, B ;
-                                float y, fy, yy, fyy, x, z, fx, fz;
-
                                 // rgb values before RGB curves
-                                r1 = rtemp[ti * TS + tj] ;
-                                g1 = gtemp[ti * TS + tj] ;
-                                b1 = btemp[ti * TS + tj] ;
+                                float r = rtemp[ti * TS + tj] ;
+                                float g = gtemp[ti * TS + tj] ;
+                                float b = btemp[ti * TS + tj] ;
                                 //convert to Lab to get a&b before RGB curves
-                                x = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
-                                y = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
-                                z = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
+                                float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+                                float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
 
-                                fx = (x < 65535.0f ? Color::cachef[std::max(x, 0.f)] : 327.68f * std::cbrt(x / MAXVALF));
-                                fy = (y < 65535.0f ? Color::cachef[std::max(y, 0.f)] : 327.68f * std::cbrt(y / MAXVALF));
-                                fz = (z < 65535.0f ? Color::cachef[std::max(z, 0.f)] : 327.68f * std::cbrt(z / MAXVALF));
+                                float fx = x < MAXVALF ? Color::cachef[x] : 327.68f * std::cbrt(x / MAXVALF);
+                                float fy = y < MAXVALF ? Color::cachef[y] : 327.68f * std::cbrt(y / MAXVALF);
+                                float fz = z < MAXVALF ? Color::cachef[z] : 327.68f * std::cbrt(z / MAXVALF);
 
-                                L_1 = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
-                                a_1 = (500.0f * (fx - fy) );
-                                b_1 = (200.0f * (fy - fz) );
+                                float a_1 = 500.0f * (fx - fy);
+                                float b_1 = 200.0f * (fy - fz);
 
                                 // rgb values after RGB curves
                                 if (rCurve) {
-                                    r2 = rCurve[ rtemp[ti * TS + tj]];
-                                } else {
-                                    r2 = r1;
+                                    float rNew = rCurve[r];
+                                    r += (rNew - r) * equalR;
                                 }
 
                                 if (gCurve) {
-                                    g2 = gCurve[ gtemp[ti * TS + tj]];
-                                } else {
-                                    g2 = g1;
+                                    float gNew = gCurve[g];
+                                    g += (gNew - g) * equalG;
                                 }
 
                                 if (bCurve) {
-                                    b2 = bCurve[ btemp[ti * TS + tj]];
-                                } else {
-                                    b2 = b1;
+                                    float bNew = bCurve[b];
+                                    b += (bNew - b) * equalB;
                                 }
 
                                 // Luminosity after
                                 // only Luminance in Lab
-                                yy = toxyz[1][0] * r2 + toxyz[1][1] * g2 + toxyz[1][2] * b2;
-                                fyy = (yy < 65535.0f ? Color::cachef[std::max(yy, 0.f)] : 327.68f * std::cbrt(yy / MAXVALF));
-                                L_2 = (116.0f *  fyy - 5242.88f);
+                                float newy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                float newfy = newy < MAXVALF ? Color::cachef[newy] : 327.68f * std::cbrt(newy / MAXVALF);
+                                float L_2 = 116.0f * newfy - 5242.88f;
 
                                 //gamut control
                                 if(settings->rgbcurveslumamode_gamut) {
-                                    float RR, GG, BB;
-                                    float HH, Lpro, Chpro;
-                                    Lpro = L_2 / 327.68f;
-                                    Chpro = sqrt(SQR(a_1) + SQR(b_1)) / 327.68f;
-                                    HH = xatan2f(b_1, a_1);
-                                    // According to mathematical laws we can get the sin and cos of HH by simple operations
-                                    float2  sincosval;
+                                    float Lpro = L_2 / 327.68f;
+                                    float Chpro = sqrtf(SQR(a_1) + SQR(b_1)) / 327.68f;
+                                    float HH = NAN; // we set HH to NAN, because then it will be calculated in Color::gamutLchonly only if needed
+//                                    float HH = xatan2f(b_1, a_1);
+                                    // According to mathematical laws we can get the sin and cos of HH by simple operations even if we don't calculate HH
+                                    float2 sincosval;
 
                                     if(Chpro == 0.0f) {
                                         sincosval.y = 1.0f;
@@ -3695,30 +3691,18 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     bool neg = false;
                                     bool more_rgb = false;
                                     //gamut control : Lab values are in gamut
-                                    Color::gamutLchonly(HH, Lpro, Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+                                    Color::gamutLchonly(HH, sincosval, Lpro, Chpro, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], wip, highlight, 0.15f, 0.96f, neg, more_rgb);
 #else
                                     //gamut control : Lab values are in gamut
-                                    Color::gamutLchonly(HH, Lpro, Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
+                                    Color::gamutLchonly(HH, sincosval, Lpro, Chpro, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], wip, highlight, 0.15f, 0.96f);
 #endif
-
-                                    //Color::gamutLchonly(HH,Lpro,Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
-
-
-
-//                              float2 sincosval = xsincosf(HH);
-
-                                    L_2 = Lpro * 327.68f;
-                                    a_1 = 327.68f * Chpro * sincosval.y;
-                                    b_1 = 327.68f * Chpro * sincosval.x;
-                                } //end of gamut control
-
-                                //calculate RGB with L_2 and old value of a and b
-                                Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
-                                Color::xyz2rgb(x_, y_, z_, R, G, B, wip);
-
-                                rtemp[ti * TS + tj] = R;
-                                gtemp[ti * TS + tj] = G;
-                                btemp[ti * TS + tj] = B;
+                                //end of gamut control
+                                } else {
+                                    float x_, y_, z_;
+                                    //calculate RGB with L_2 and old value of a and b
+                                    Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
+                                    Color::xyz2rgb(x_, y_, z_, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], wip);
+                                }
                             }
                         }
                     }
