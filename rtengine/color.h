@@ -894,6 +894,9 @@ public:
     * @param gammabwb gamma value for red channel [>0]
     */
     static void trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb);
+#ifdef __SSE2__
+    static void trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb);
+#endif
 
 
     /** @brief Compute the B&W constants for the Black and White processing and its GUI

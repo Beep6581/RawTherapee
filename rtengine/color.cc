@@ -888,7 +888,7 @@ void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat 
 void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profil
-    vfloat rgbv = _mm_set_ps(0.f, b, g, r);
+    vfloat rgbv = _mm_set_ps(0.f, r, r, r); // input channel is always r
     vfloat gammabwv = _mm_set_ps(0.f, gammabwb, gammabwg, gammabwr);
     vfloat c65535v = F2V(65535.f);
     rgbv /= c65535v;
@@ -901,19 +901,45 @@ void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gamm
     g = temp[1];
     b = temp[2];
 }
+void Color::trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
+{
+    // correct gamma for black and white image : pseudo TRC curve of ICC profil
+    vfloat c65535v = F2V(65535.f);
+    vfloat gammabwrv = F2V(gammabwr);
+    vfloat gammabwgv = F2V(gammabwg);
+    vfloat gammabwbv = F2V(gammabwb);
+    int i = 0;
+    for(; i < width - 3; i += 4 ) {
+        vfloat inv = _mm_loadu_ps(&r[i]); // input channel is always r
+        inv /= c65535v;
+        inv = vmaxf(inv, ZEROV);
+        vfloat rv = pow_F(inv, gammabwrv);
+        vfloat gv = pow_F(inv, gammabwgv);
+        vfloat bv = pow_F(inv, gammabwbv);
+        rv *= c65535v;
+        gv *= c65535v;
+        bv *= c65535v;
+        _mm_storeu_ps(&r[i], rv);
+        _mm_storeu_ps(&g[i], gv);
+        _mm_storeu_ps(&b[i], bv);
+    }
+    for(; i < width; i++) {
+        trcGammaBW(r[i], g[i], b[i], gammabwr, gammabwg, gammabwb);
+    }
+}
 
 #else
 void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
     // correct gamma for black and white image : pseudo TRC curve of ICC profil
-    b /= 65535.0f;
-    b = pow_F (max(b, 0.0f), gammabwb);
+    float in = r; // input channel is always r
+    in /= 65535.0f;
+    in = max(in, 0.f);
+    b = pow_F (in, gammabwb);
     b *= 65535.0f;
-    r /= 65535.0f;
-    r = pow_F (max(r, 0.0f), gammabwr);
+    r = pow_F (in, gammabwr);
     r *= 65535.0f;
-    g /= 65535.0f;
-    g = pow_F (max(g, 0.0f), gammabwg);
+    g = pow_F (in, gammabwg);
     g *= 65535.0f;
 }
 #endif

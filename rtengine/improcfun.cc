@@ -4114,15 +4114,23 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                                 // --------------------------------------------------
 
+#ifndef __SSE2__
                                 //gamma correction: pseudo TRC curve
                                 if (hasgammabw) {
                                     Color::trcGammaBW (r, g, b, gammabwr, gammabwg, gammabwb);
                                 }
-
+#endif
                                 rtemp[ti * TS + tj] = r;
                                 gtemp[ti * TS + tj] = g;
                                 btemp[ti * TS + tj] = b;
                             }
+#ifdef __SSE2__
+                            if (hasgammabw) {
+                                //gamma correction: pseudo TRC curve
+                                Color::trcGammaBWRow (&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], tW - jstart, gammabwr, gammabwg, gammabwb);
+                            }
+#endif
+
                         }
                     } else if (algm == 1) { //Luminance mixer in Lab mode to avoid artifacts
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -4178,12 +4186,19 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 float newRed; // We use the red channel for bw
                                 Color::xyz2r(X, Y, Z, newRed, wip);
                                 rtemp[ti * TS + tj] = gtemp[ti * TS + tj] = btemp[ti * TS + tj] = newRed;
-
+#ifndef __SSE2__
                                 if (hasgammabw) {
                                     //gamma correction: pseudo TRC curve
                                     Color::trcGammaBW (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], gammabwr, gammabwg, gammabwb);
                                 }
+#endif
                             }
+#ifdef __SSE2__
+                            if (hasgammabw) {
+                                //gamma correction: pseudo TRC curve
+                                Color::trcGammaBWRow (&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], tW - jstart, gammabwr, gammabwg, gammabwb);
+                            }
+#endif
                         }
                     }
                 }
@@ -4389,13 +4404,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
         if (algm == 2) { //channel-mixer
             //end auto chmix
-            float mix[3][3];
-
             if (computeMixerAuto) {
                 // auto channel-mixer
-
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic, 5) reduction(+:nr,ng,nb)
+                #pragma omp parallel for schedule(dynamic, 16) reduction(+:nr,ng,nb)
 #endif
 
                 for (int i = 0; i < tH; i++) {
@@ -4434,44 +4446,29 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                            bwr, bwg, bwb, mixerOrange, mixerYellow, mixerCyan, mixerPurple, mixerMagenta,
                                            params->blackwhite.autoc, complem, kcorec, rrm, ggm, bbm);
 
-            mix[0][0] = bwr;
-            mix[1][0] = bwr;
-            mix[2][0] = bwr;
-            mix[0][1] = bwg;
-            mix[1][1] = bwg;
-            mix[2][1] = bwg;
-            mix[0][2] = bwb;
-            mix[1][2] = bwb;
-            mix[2][2] = bwb;
-
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic, 5)
+            #pragma omp parallel for schedule(dynamic, 16)
 #endif
 
             for (int i = 0; i < tH; i++) {
-                float in[3], val[3];
-
                 for (int j = 0; j < tW; j++) {
-                    in[0] = tmpImage->r(i, j);
-                    in[1] = tmpImage->g(i, j);
-                    in[2] = tmpImage->b(i, j);
 
                     //mix channel
-                    for (int end = 0; end < 3 ; end++) {
-                        val[end] = 0.f;
+                    tmpImage->r(i, j) = tmpImage->g(i, j) = tmpImage->b(i, j) = CLIP((bwr * tmpImage->r(i, j) + bwg * tmpImage->g(i, j) + bwb * tmpImage->b(i, j)) * kcorec);
 
-                        for (int beg = 0; beg < 3 ; beg++) {
-                            val[end] += mix[end][beg] * in[beg];
-                        }
-                    }
-
-                    tmpImage->r(i, j) = tmpImage->g(i, j) = tmpImage->b(i, j) = CLIP(val[0] * kcorec);
-
+#ifndef __SSE2__
                     //gamma correction: pseudo TRC curve
                     if (hasgammabw) {
                         Color::trcGammaBW (tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), gammabwr, gammabwg, gammabwb);
                     }
+#endif
                 }
+#ifdef __SSE2__
+                if (hasgammabw) {
+                    //gamma correction: pseudo TRC curve
+                    Color::trcGammaBWRow (tmpImage->r(i), tmpImage->g(i), tmpImage->b(i), tW, gammabwr, gammabwg, gammabwb);
+                }
+#endif
             }
         }
 
@@ -4774,29 +4771,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 float fx, fy, fz;
 
-                fx = (x < 65535.0f ? Color::cachef[std::max(x, 0.f)] : 327.68f * std::cbrt(x / MAXVALF));
-                fy = (y < 65535.0f ? Color::cachef[std::max(y, 0.f)] : 327.68f * std::cbrt(y / MAXVALF));
-                fz = (z < 65535.0f ? Color::cachef[std::max(z, 0.f)] : 327.68f * std::cbrt(z / MAXVALF));
+                fx = (x < MAXVALF ? Color::cachef[x] : 327.68f * std::cbrt(x / MAXVALF));
+                fy = (y < MAXVALF ? Color::cachef[y] : 327.68f * std::cbrt(y / MAXVALF));
+                fz = (z < MAXVALF ? Color::cachef[z] : 327.68f * std::cbrt(z / MAXVALF));
 
-                lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
-                lab->a[i][j] = (500.0f * (fx - fy) );
-                lab->b[i][j] = (200.0f * (fy - fz) );
-
-
-                //test for color accuracy
-                /*float fy = (0.00862069 * lab->L[i][j])/327.68 + 0.137932; // (L+16)/116
-                float fx = (0.002 * lab->a[i][j])/327.68 + fy;
-                float fz = fy - (0.005 * lab->b[i][j])/327.68;
-
-                float x_ = 65535*Lab2xyz(fx)*Color::D50x;
-                float y_ = 65535*Lab2xyz(fy);
-                float z_ = 65535*Lab2xyz(fz)*Color::D50z;
-
-                int R,G,B;
-                xyz2srgb(x_,y_,z_,R,G,B);
-                r=(float)R; g=(float)G; b=(float)B;
-                float xxx=1;*/
-
+                lab->L[i][j] = 116.0f *  fy - 5242.88f; //5242.88=16.0*327.68;
+                lab->a[i][j] = 500.0f * (fx - fy);
+                lab->b[i][j] = 200.0f * (fy - fz);
             }
         }
 
