@@ -68,7 +68,7 @@ private:
 
     void prepareIntentBox ()
     {
-        // same order than the enum
+        // same order as the enum
         intentBox.addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
         intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox.addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
@@ -177,10 +177,10 @@ private:
         switch (intentBox.getSelected ()) {
         default:
         case 0:
-            intent = rtengine::RI_RELATIVE;
+            intent = rtengine::RI_PERCEPTUAL;
             break;
         case 1:
-            intent = rtengine::RI_PERCEPTUAL;
+            intent = rtengine::RI_RELATIVE;
             break;
         case 2:
             intent = rtengine::RI_ABSOLUTE;

@@ -88,7 +88,7 @@ ImProcCoordinator::ImProcCoordinator ()
       fullw(1), fullh(1),
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), dehaListener(NULL), hListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
+      resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1)
 
 {}
@@ -778,7 +778,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     }
 
     // Update the monitor color transform if necessary
-    if (todo & M_MONITOR) {
+    if ((todo & M_MONITOR) || (lastOutputProfile!=params.icm.output) || lastOutputIntent!=params.icm.outputIntent || lastOutputBPC!=params.icm.outputBPC) {
+        lastOutputProfile = params.icm.output;
+        lastOutputIntent = params.icm.outputIntent;
+        lastOutputBPC = params.icm.outputBPC;
         ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent, softProof, gamutCheck);
     }
 

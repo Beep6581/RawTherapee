@@ -180,6 +180,13 @@ protected:
     MyMutex mProcessing;
     ProcParams params;
 
+    // for optimization purpose, the output profile, output rendering intent and
+    // output BPC will trigger a regeneration of the profile on parameter change only
+    // and automatically
+    Glib::ustring lastOutputProfile;
+    RenderingIntent lastOutputIntent;
+    bool lastOutputBPC;
+
     // members of the updater:
     Glib::Thread* thread;
     MyMutex updaterThreadStart;

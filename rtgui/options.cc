@@ -2107,7 +2107,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Fast Export", "fastexport_icm_working"               , fastexport_icm_working              );
         keyFile.set_string  ("Fast Export", "fastexport_icm_output"                , fastexport_icm_output               );
         keyFile.set_integer ("Fast Export", "fastexport_icm_output_intent"         , fastexport_icm_outputIntent         );
-        keyFile.set_integer ("Fast Export", "fastexport_icm_output_bpc"            , fastexport_icm_outputBPC            );
+        keyFile.set_boolean ("Fast Export", "fastexport_icm_output_bpc"            , fastexport_icm_outputBPC            );
         keyFile.set_string  ("Fast Export", "fastexport_icm_gamma"                 , fastexport_icm_gamma                );
         keyFile.set_boolean ("Fast Export", "fastexport_resize_enabled"            , fastexport_resize_enabled           );
         keyFile.set_double  ("Fast Export", "fastexport_resize_scale"              , fastexport_resize_scale             );

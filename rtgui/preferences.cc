@@ -702,7 +702,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
         monProfile->append_text (*profile);
 
-    // same order than enum
+    // same order as the enum
     monIntent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
     monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     monIntent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
