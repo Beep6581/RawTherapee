@@ -321,11 +321,13 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 }
 
 void ICMPanel::updateRenderingIntent (const Glib::ustring &profile) {
-    const uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
+    const uint8_t supportedIntents = rtengine::iccStore->getOutputIntents (profile);
     const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
     const bool supportsRelative   = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
     const bool supportsSaturation = supportedIntents & 1 << INTENT_SATURATION;
     const bool supportsAbsolute   = supportedIntents & 1 << INTENT_ABSOLUTE_COLORIMETRIC;
+
+    //printf("Intents: %d / Perceptual: %d  Relative: %d  Saturation: %d  Absolute: %d\n", supportedIntents, supportsPerceptual, supportsRelative, supportsSaturation, supportsAbsolute);
 
     if (!profile.empty() && (supportsPerceptual || supportsRelative || supportsSaturation || supportsAbsolute)) {
         ointent->set_sensitive (true);

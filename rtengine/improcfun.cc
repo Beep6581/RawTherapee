@@ -95,17 +95,14 @@ void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, con
                 Color::GammaValues ga;
                 iccStore->getGammaArray(icm, ga);
                 oprof = iccStore->createGammaProfile (icm, ga);
-                printf("ImProcFunctions::updateColorProfiles / iccStore->createGammaProfile (icm, ga);\n");
             }
             else if (!icm.output.empty() && icm.output != ColorManagementParams::NoICMString) {
                 if(icm.gamma != "default" || icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
                     Color::GammaValues ga;
                     iccStore->getGammaArray(icm, ga);
                     oprof = iccStore->createCustomGammaOutputProfile (icm, ga);
-                    printf("ImProcFunctions::updateColorProfiles / iccStore->createCustomGammaOutputProfile (icm, ga);\n");
                 } else {
                     oprof = iccStore->getProfile(icm.output);
-                    printf("ImProcFunctions::updateColorProfiles / iccStore->getProfile(%s);\n", icm.output.c_str());
                 }
             }
 
