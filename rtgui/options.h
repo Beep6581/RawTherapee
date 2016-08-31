@@ -88,10 +88,10 @@ private:
 public:
 
     enum class NavigatorUnit {
-        NU_PERCENT,
-        NU_0_255,
-        NU_0_1,
-        NU__COUNT,
+        PERCENT,
+        R0_255,
+        R0_1,
+        _COUNT
     };
     bool savesParamsAtExit;
     SaveFormat saveFormat, saveFormatBatch;

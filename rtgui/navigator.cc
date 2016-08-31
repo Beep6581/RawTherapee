@@ -225,17 +225,17 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustrin
         position->set_text (Glib::ustring::compose ("x: %1, y: %2", x, y));
 
         switch (currentRGBUnit) {
-        case (Options::NavigatorUnit::NU_0_1):
+        case (Options::NavigatorUnit::R0_1):
             R->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), r / 255.f));
             G->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), g / 255.f));
             B->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), b / 255.f));
             break;
-        case (Options::NavigatorUnit::NU_0_255):
+        case (Options::NavigatorUnit::R0_255):
             R->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), r));
             G->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), g));
             B->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), b));
             break;
-        case (Options::NavigatorUnit::NU_PERCENT):
+        case (Options::NavigatorUnit::PERCENT):
         default:
             R->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), r * 100.f / 255.f) + Glib::ustring("%"));
             G->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), g * 100.f / 255.f) + Glib::ustring("%"));
@@ -246,17 +246,17 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustrin
         float h, s, v;
         Color::rgb2hsv (r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, h, s, v);
         switch (currentHSVUnit) {
-        case (Options::NavigatorUnit::NU_0_1):
+        case (Options::NavigatorUnit::R0_1):
             H->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), h));
             S->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), s));
             V->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), v));
             break;
-        case (Options::NavigatorUnit::NU_0_255):
+        case (Options::NavigatorUnit::R0_255):
             H->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), h * 255));
             S->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), s * 255));
             V->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), v * 255));
             break;
-        case (Options::NavigatorUnit::NU_PERCENT):
+        case (Options::NavigatorUnit::PERCENT):
         default:
             H->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), h * 360.f) + Glib::ustring("\xc2\xb0"));
             S->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), s * 100.f) + Glib::ustring("%"));
@@ -276,23 +276,23 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustrin
 void Navigator::cycleUnitsRGB (GdkEventButton *event) {
     uint16_t v = (uint16_t)currentRGBUnit;
     ++v;
-    if (v == (uint16_t)Options::NavigatorUnit::NU__COUNT) {
+    if (v == (uint16_t)Options::NavigatorUnit::_COUNT) {
         v = 0;
     }
     options.navRGBUnit = currentRGBUnit = (Options::NavigatorUnit)v;
 
     switch (currentRGBUnit) {
-    case Options::NavigatorUnit::NU_0_1:
+    case Options::NavigatorUnit::R0_1:
         R->set_text ("[0-1]");
         G->set_text ("[0-1]");
         B->set_text ("[0-1]");
         break;
-    case Options::NavigatorUnit::NU_0_255:
+    case Options::NavigatorUnit::R0_255:
         R->set_text ("[0-255]");
         G->set_text ("[0-255]");
         B->set_text ("[0-255]");
         break;
-    case Options::NavigatorUnit::NU_PERCENT:
+    case Options::NavigatorUnit::PERCENT:
     default:
         R->set_text ("[%]");
         G->set_text ("[%]");
@@ -304,23 +304,23 @@ void Navigator::cycleUnitsRGB (GdkEventButton *event) {
 void Navigator::cycleUnitsHSV (GdkEventButton *event) {
     uint16_t v = (uint16_t)currentHSVUnit;
     ++v;
-    if (v == (uint16_t)Options::NavigatorUnit::NU__COUNT) {
+    if (v == (uint16_t)Options::NavigatorUnit::_COUNT) {
         v = 0;
     }
     options.navHSVUnit = currentHSVUnit = (Options::NavigatorUnit)v;
 
     switch (currentHSVUnit) {
-    case Options::NavigatorUnit::NU_0_1:
+    case Options::NavigatorUnit::R0_1:
         H->set_text ("[0-1]");
         S->set_text ("[0-1]");
         V->set_text ("[0-1]");
         break;
-    case Options::NavigatorUnit::NU_0_255:
+    case Options::NavigatorUnit::R0_255:
         H->set_text ("[0-255]");
         S->set_text ("[0-255]");
         V->set_text ("[0-255]");
         break;
-    case Options::NavigatorUnit::NU_PERCENT:
+    case Options::NavigatorUnit::PERCENT:
     default:
         H->set_text ("[\xc2\xb0]");
         S->set_text ("[%]");

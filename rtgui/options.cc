@@ -353,8 +353,8 @@ void Options::setDefaults ()
     fbShowExpComp = false;
     fbShowHidden = false;
     fbArrangement = 2;                  // was 0
-    navRGBUnit = NavigatorUnit::NU_PERCENT;
-    navHSVUnit = NavigatorUnit::NU_PERCENT;
+    navRGBUnit = NavigatorUnit::PERCENT;
+    navHSVUnit = NavigatorUnit::PERCENT;
     multiUser = true;
     profilePath = "profiles";
     loadSaveProfilePath = "";           // will be corrected in load as otherwise construction fails
