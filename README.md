@@ -13,6 +13,9 @@ Of course, professionals may use RawTherapee too while enjoying complete freedom
 Website:
 http://rawtherapee.com/
 
+Forum:
+https://discuss.pixls.us/c/software/rawtherapee
+
 Features:
 http://rawpedia.rawtherapee.com/Features
 
@@ -24,9 +27,6 @@ http://rawtherapee.com/downloads
 
 Download source code tarballs:
 http://rawtherapee.com/shared/source/
-
-Source code documentation:
-http://michaelezra.com/projects/rt/documentation/
 
 Git handbook:
 http://git-scm.com/book/en/
