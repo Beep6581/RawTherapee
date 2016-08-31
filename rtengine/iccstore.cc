@@ -363,83 +363,79 @@ cmsHPROFILE ICCStore::workingSpaceGamma (const Glib::ustring& name) const
     }
 }
 
-void ICCStore::getGammaArray(const procparams::ColorManagementParams &icm, Color::GammaValues &ga)
+void ICCStore::getGammaArray(const procparams::ColorManagementParams &icm, GammaValues &ga)
 {
     const double eps = 0.000000001; // not divide by zero
     if (!icm.freegamma) {//if Free gamma not selected
         // gamma : ga[0],ga[1],ga[2],ga[3],ga[4],ga[5] by calcul
         if(icm.gamma == "BT709_g2.2_s4.5")      {
-            ga.gamma0 = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
-            ga.gamma1 = 0.909995;
-            ga.gamma2 = 0.090005;
-            ga.gamma3 = 0.222222;
-            ga.gamma4 = 0.081071;
-            ga.gamma5 = 0.0;
+            ga[0] = 2.22;    //BT709  2.2  4.5  - my preferred as D.Coffin
+            ga[1] = 0.909995;
+            ga[2] = 0.090005;
+            ga[3] = 0.222222;
+            ga[4] = 0.081071;
         } else if (icm.gamma == "sRGB_g2.4_s12.92")   {
-            ga.gamma0 = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
-            ga.gamma1 = 0.947858;
-            ga.gamma2 = 0.052142;
-            ga.gamma3 = 0.077399;
-            ga.gamma4 = 0.039293;
-            ga.gamma5 = 0.0;
+            ga[0] = 2.40;    //sRGB 2.4 12.92  - RT default as Lightroom
+            ga[1] = 0.947858;
+            ga[2] = 0.052142;
+            ga[3] = 0.077399;
+            ga[4] = 0.039293;
         } else if (icm.gamma == "High_g1.3_s3.35")    {
-            ga.gamma0 = 1.3 ;    //for high dynamic images
-            ga.gamma1 = 0.998279;
-            ga.gamma2 = 0.001721;
-            ga.gamma3 = 0.298507;
-            ga.gamma4 = 0.005746;
-            ga.gamma5 = 0.0;
+            ga[0] = 1.3 ;    //for high dynamic images
+            ga[1] = 0.998279;
+            ga[2] = 0.001721;
+            ga[3] = 0.298507;
+            ga[4] = 0.005746;
         } else if (icm.gamma == "Low_g2.6_s6.9")   {
-            ga.gamma0 = 2.6 ;    //gamma 2.6 variable : for low contrast images
-            ga.gamma1 = 0.891161;
-            ga.gamma2 = 0.108839;
-            ga.gamma3 = 0.144928;
-            ga.gamma4 = 0.076332;
-            ga.gamma5 = 0.0;
-        } else if (icm.gamma == "linear_g1.0")   {
-            ga.gamma0 = 1.0;    //gamma=1 linear : for high dynamic images (cf : D.Coffin...)
-            ga.gamma1 = 1.;
-            ga.gamma2 = 0.;
-            ga.gamma3 = 1. / eps;
-            ga.gamma4 = 0.;
-            ga.gamma5 = 0.0;
+            ga[0] = 2.6 ;    //gamma 2.6 variable : for low contrast images
+            ga[1] = 0.891161;
+            ga[2] = 0.108839;
+            ga[3] = 0.144928;
+            ga[4] = 0.076332;
         } else if (icm.gamma == "standard_g2.2")   {
-            ga.gamma0 = 2.2;    //gamma=2.2 (as gamma of Adobe, Widegamut...)
-            ga.gamma1 = 1.;
-            ga.gamma2 = 0.;
-            ga.gamma3 = 1. / eps;
-            ga.gamma4 = 0.;
-            ga.gamma5 = 0.0;
+            ga[0] = 2.2;    //gamma=2.2 (as gamma of Adobe, Widegamut...)
+            ga[1] = 1.;
+            ga[2] = 0.;
+            ga[3] = 1. / eps;
+            ga[4] = 0.;
         } else if (icm.gamma == "standard_g1.8")   {
-            ga.gamma0 = 1.8;    //gamma=1.8  (as gamma of Prophoto)
-            ga.gamma1 = 1.;
-            ga.gamma2 = 0.;
-            ga.gamma3 = 1. / eps;
-            ga.gamma4 = 0.;
-            ga.gamma5 = 0.0;
+            ga[0] = 1.8;    //gamma=1.8  (as gamma of Prophoto)
+            ga[1] = 1.;
+            ga[2] = 0.;
+            ga[3] = 1. / eps;
+            ga[4] = 0.;
+        } else /* if (icm.gamma == "linear_g1.0") */   {
+            ga[0] = 1.0;    //gamma=1 linear : for high dynamic images (cf : D.Coffin...)
+            ga[1] = 1.;
+            ga[2] = 0.;
+            ga[3] = 1. / eps;
+            ga[4] = 0.;
         }
+        ga[5] = 0.0;
+        ga[6] = 0.0;
     } else { //free gamma selected
-        Color::GammaValues g_a; //gamma parameters
+        GammaValues g_a; //gamma parameters
         double pwr = 1.0 / icm.gampos;
         double ts = icm.slpos;
         double slope = icm.slpos == 0 ? eps : icm.slpos;
 
         int mode = 0, imax = 0;
         Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
-        ga.gamma4 = g_a.gamma3 * ts;
+        ga[4] = g_a[3] * ts;
         //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
-        ga.gamma0 = icm.gampos;
-        ga.gamma1 = 1. / (1.0 + g_a.gamma4);
-        ga.gamma2 = g_a.gamma4 / (1.0 + g_a.gamma4);
-        ga.gamma3 = 1. / slope;
-        ga.gamma5 = 0.0;
+        ga[0] = icm.gampos;
+        ga[1] = 1. / (1.0 + g_a[4]);
+        ga[2] = g_a[4] / (1.0 + g_a[4]);
+        ga[3] = 1. / slope;
+        ga[5] = 0.0;
+        ga[6] = 0.0;
         //printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", ga[0],ga[1],ga[2],ga[3],ga[4]);
     }
 }
 
-cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga) {
+cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParams &icm, GammaValues &ga) {
     float p[6]; //primaries
-    ga.gamma6 = 0.0;
+    ga[6] = 0.0;
 
     enum class ColorTemp {
         D50 = 5003,  // for Widegamut, Prophoto Best, Beta -> D50
@@ -520,7 +516,7 @@ cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParam
     cmsToneCurve* GammaTRC[3];
 
     // 7 parameters for smoother curves
-    cmsFloat64Number Parameters[7] = { ga.gamma0,  ga.gamma1, ga.gamma2, ga.gamma3, ga.gamma4, ga.gamma5, ga.gamma6 } ;
+    cmsFloat64Number Parameters[7] = { ga[0],  ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] } ;
 
     cmsWhitePointFromTemp(&xyD, (double)temp);
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters); //5 = smoother than 4
@@ -531,7 +527,7 @@ cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParam
     return oprofdef;
 }
 
-cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga) {
+cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, GammaValues &ga) {
     bool pro = false;
     Glib::ustring outProfile;
     cmsHPROFILE outputProfile = nullptr;
@@ -590,7 +586,7 @@ cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorMan
     }
 
     // 7 parameters for smoother curves
-    cmsFloat64Number Parameters[7] = { ga.gamma0, ga.gamma1, ga.gamma2, ga.gamma3, ga.gamma4, ga.gamma5, ga.gamma6 };
+    cmsFloat64Number Parameters[7] = { ga[0], ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] };
 
     //change desc Tag , to "free gamma", or "BT709", etc.
     cmsMLU *mlu;

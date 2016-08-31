@@ -280,7 +280,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
  * If a custom gamma profile can be created, divide by 327.68, convert to xyz and apply the custom gamma transform
  * otherwise divide by 327.68, convert to xyz and apply the sRGB transform, before converting with gamma2curve
  */
-Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool bw, Color::GammaValues *ga)
+Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool bw, GammaValues *ga)
 {
 
     //gamutmap(lab);

@@ -30,6 +30,8 @@
 namespace rtengine
 {
 
+typedef std::array<double, 7> GammaValues;
+
 #ifdef _DEBUG
 
 class MunsellDebugInfo
@@ -94,17 +96,6 @@ private:
     static vfloat hue2rgb(vfloat p, vfloat q, vfloat t);
 #endif
 public:
-
-    class GammaValues {
-    public:
-        double gamma0;
-        double gamma1;
-        double gamma2;
-        double gamma3;
-        double gamma4;
-        double gamma5;
-        double gamma6;
-    };
 
     typedef enum Channel {
         CHANNEL_RED            = 1 << 0,

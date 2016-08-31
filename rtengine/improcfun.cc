@@ -92,13 +92,13 @@ void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, con
         if (softProof) {
             cmsHPROFILE oprof;
             if(icm.gamma != "default" || icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
-                Color::GammaValues ga;
+                GammaValues ga;
                 iccStore->getGammaArray(icm, ga);
                 oprof = iccStore->createGammaProfile (icm, ga);
             }
             else if (!icm.output.empty() && icm.output != ColorManagementParams::NoICMString) {
                 if(icm.gamma != "default" || icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
-                    Color::GammaValues ga;
+                    GammaValues ga;
                     iccStore->getGammaArray(icm, ga);
                     oprof = iccStore->createCustomGammaOutputProfile (icm, ga);
                 } else {

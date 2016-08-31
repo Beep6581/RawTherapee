@@ -88,11 +88,11 @@ public:
 
     void init (const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir);
 
-    static void getGammaArray(const procparams::ColorManagementParams &icm, Color::GammaValues &ga);
+    static void getGammaArray(const procparams::ColorManagementParams &icm, GammaValues &ga);
     static cmsHPROFILE makeStdGammaProfile (cmsHPROFILE iprof);
     static cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
-    static cmsHPROFILE createGammaProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga);
-    static cmsHPROFILE createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, Color::GammaValues &ga);
+    static cmsHPROFILE createGammaProfile (const procparams::ColorManagementParams &icm, GammaValues &ga);
+    static cmsHPROFILE createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, GammaValues &ga);
 
     // Main monitors standard profile name, from OS
     void findDefaultMonitorProfile ();

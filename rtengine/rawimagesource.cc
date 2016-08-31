@@ -1973,7 +1973,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     } else if(retinexParams.gammaretinex == "hig") {
         retinexgamtab = &(Color::gammatab_145_3);
     } else if(retinexParams.gammaretinex == "fre") {
-        Color::GammaValues g_a;
+        GammaValues g_a;
         double pwr = 1.0 / retinexParams.gam;
         double gamm = retinexParams.gam;
         double ts = retinexParams.slope;
@@ -1991,14 +1991,14 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         double add;
 
         if(gamm2 < 1.) {
-            start = g_a.gamma2;
-            add = g_a.gamma4;
+            start = g_a[2];
+            add = g_a[4];
         } else {
-            start = g_a.gamma3;
-            add = g_a.gamma4;
+            start = g_a[3];
+            add = g_a[4];
         }
 
-        double mul = 1. + g_a.gamma4;
+        double mul = 1. + g_a[4];
 
         lutTonereti(65536);
 
@@ -2245,7 +2245,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     } else if(deh.gammaretinex == "hig") {
         retinexigamtab = &(Color::igammatab_145_3);
     } else if(deh.gammaretinex == "fre") {
-        Color::GammaValues g_a;
+        GammaValues g_a;
         double pwr = 1.0 / deh.gam;
         double gamm = deh.gam;
         double gamm2 = gamm;
@@ -2258,16 +2258,16 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
 
         Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
 
-        double mul = 1. + g_a.gamma4;
+        double mul = 1. + g_a[4];
         double add;
         double start;
 
         if(gamm2 < 1.) {
-            start = g_a.gamma3;
-            add = g_a.gamma3;
+            start = g_a[3];
+            add = g_a[3];
         } else {
-            add = g_a.gamma4;
-            start = g_a.gamma2;
+            add = g_a[4];
+            start = g_a[2];
         }
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);

@@ -1162,7 +1162,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
 
-        Color::GammaValues ga;
+        GammaValues ga;
         //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
         readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly, &ga);
         customGamma = true;

@@ -1469,13 +1469,13 @@ void Color::calcGamma (double pwr, double ts, int mode, int imax, GammaValues &g
     }
 
     if (!mode--) {
-        gamma.gamma0 = g[0];
-        gamma.gamma1 = g[1];
-        gamma.gamma2 = g[2];
-        gamma.gamma3 = g[3];
-        gamma.gamma4 = g[4];
-        gamma.gamma5 = g[5];
-        gamma.gamma6 = 0.;
+        gamma[0] = g[0];
+        gamma[1] = g[1];
+        gamma[2] = g[2];
+        gamma[3] = g[3];
+        gamma[4] = g[4];
+        gamma[5] = g[5];
+        gamma[6] = 0.;
         return;
     }
 }
