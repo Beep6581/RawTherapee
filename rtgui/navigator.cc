@@ -26,9 +26,11 @@
 #include "../rtengine/rt_math.h"
 #include "options.h"
 
+extern Options options;
+
 using namespace rtengine;
 
-Navigator::Navigator ()
+Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(options.navHSVUnit)
 {
 
     set_label (M("MAIN_MSG_NAVIGATOR"));
@@ -133,6 +135,7 @@ Navigator::Navigator ()
 
 
     // RGB
+    Gtk::EventBox *evBox1 = Gtk::manage (new Gtk::EventBox());
     Gtk::HBox* hbox1 = Gtk::manage (new Gtk::HBox ()); // container
     Gtk::Table* table1 = Gtk::manage (new Gtk::Table (3, 2));
 
@@ -145,11 +148,15 @@ Navigator::Navigator ()
     table1->attach (*lB, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
     table1->attach (*B,  1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
 
-    hbox1->pack_start (*table1, Gtk::PACK_EXPAND_WIDGET, 4);
+    evBox1->add (*table1);
+    evBox1->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Navigator::cycleUnitsRGB));
+
+    hbox1->pack_start (*evBox1, Gtk::PACK_EXPAND_WIDGET, 4);
     hbox1->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 4);
     table0->attach (*hbox1, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
 
     // HSV
+    Gtk::EventBox *evBox2 = Gtk::manage (new Gtk::EventBox());
     Gtk::HBox* hbox2 = Gtk::manage (new Gtk::HBox ()); // container
     Gtk::Table* table2 = Gtk::manage (new Gtk::Table (3, 2));
 
@@ -162,7 +169,10 @@ Navigator::Navigator ()
     table2->attach (*lV, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
     table2->attach (*V,  1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
 
-    hbox2->pack_start (*table2, Gtk::PACK_EXPAND_WIDGET, 4);
+    evBox2->add (*table2);
+    evBox2->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Navigator::cycleUnitsHSV));
+
+    hbox2->pack_start (*evBox2, Gtk::PACK_EXPAND_WIDGET, 4);
     hbox2->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 4);
     table0->attach (*hbox2, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
 
@@ -220,15 +230,45 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustrin
     } else {
         position->set_text (Glib::ustring::compose ("x: %1, y: %2", x, y));
 
-        R->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), r * 100.f / 255.f) + Glib::ustring("%"));
-        G->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), g * 100.f / 255.f) + Glib::ustring("%"));
-        B->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), b * 100.f / 255.f) + Glib::ustring("%"));
+        switch (currentRGBUnit) {
+        case (Options::NavigatorUnit::R0_1):
+            R->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), r / 255.f));
+            G->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), g / 255.f));
+            B->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), b / 255.f));
+            break;
+        case (Options::NavigatorUnit::R0_255):
+            R->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), r));
+            G->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), g));
+            B->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), b));
+            break;
+        case (Options::NavigatorUnit::PERCENT):
+        default:
+            R->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), r * 100.f / 255.f) + Glib::ustring("%"));
+            G->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), g * 100.f / 255.f) + Glib::ustring("%"));
+            B->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), b * 100.f / 255.f) + Glib::ustring("%"));
+            break;
+        }
 
         float h, s, v;
         Color::rgb2hsv (r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, h, s, v);
-        H->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), h * 360.f) + Glib::ustring("\xc2\xb0"));
-        S->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), s * 100.f) + Glib::ustring("%"));
-        V->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), v * 100.f) + Glib::ustring("%"));
+        switch (currentHSVUnit) {
+        case (Options::NavigatorUnit::R0_1):
+            H->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), h));
+            S->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), s));
+            V->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), v));
+            break;
+        case (Options::NavigatorUnit::R0_255):
+            H->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), h * 255));
+            S->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), s * 255));
+            V->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), v * 255));
+            break;
+        case (Options::NavigatorUnit::PERCENT):
+        default:
+            H->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), h * 360.f) + Glib::ustring("\xc2\xb0"));
+            S->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), s * 100.f) + Glib::ustring("%"));
+            V->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), v * 100.f) + Glib::ustring("%"));
+            break;
+        }
 
         float LAB_a, LAB_b, LAB_l;
         //rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
@@ -239,6 +279,61 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustrin
     }
 }
 
+void Navigator::cycleUnitsRGB (GdkEventButton *event) {
+    uint16_t v = (uint16_t)currentRGBUnit;
+    ++v;
+    if (v == (uint16_t)Options::NavigatorUnit::_COUNT) {
+        v = 0;
+    }
+    options.navRGBUnit = currentRGBUnit = (Options::NavigatorUnit)v;
+
+    switch (currentRGBUnit) {
+    case Options::NavigatorUnit::R0_1:
+        R->set_text ("[0-1]");
+        G->set_text ("[0-1]");
+        B->set_text ("[0-1]");
+        break;
+    case Options::NavigatorUnit::R0_255:
+        R->set_text ("[0-255]");
+        G->set_text ("[0-255]");
+        B->set_text ("[0-255]");
+        break;
+    case Options::NavigatorUnit::PERCENT:
+    default:
+        R->set_text ("[%]");
+        G->set_text ("[%]");
+        B->set_text ("[%]");
+        break;
+    }
+}
+
+void Navigator::cycleUnitsHSV (GdkEventButton *event) {
+    uint16_t v = (uint16_t)currentHSVUnit;
+    ++v;
+    if (v == (uint16_t)Options::NavigatorUnit::_COUNT) {
+        v = 0;
+    }
+    options.navHSVUnit = currentHSVUnit = (Options::NavigatorUnit)v;
+
+    switch (currentHSVUnit) {
+    case Options::NavigatorUnit::R0_1:
+        H->set_text ("[0-1]");
+        S->set_text ("[0-1]");
+        V->set_text ("[0-1]");
+        break;
+    case Options::NavigatorUnit::R0_255:
+        H->set_text ("[0-255]");
+        S->set_text ("[0-255]");
+        V->set_text ("[0-255]");
+        break;
+    case Options::NavigatorUnit::PERCENT:
+    default:
+        H->set_text ("[\xc2\xb0]");
+        S->set_text ("[%]");
+        V->set_text ("[%]");
+        break;
+    }
+}
 
 void Navigator::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b)
 {

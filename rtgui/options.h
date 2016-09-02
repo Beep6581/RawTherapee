@@ -86,6 +86,13 @@ private:
                     const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
+
+    enum class NavigatorUnit {
+        PERCENT,
+        R0_255,
+        R0_1,
+        _COUNT
+    };
     bool savesParamsAtExit;
     SaveFormat saveFormat, saveFormatBatch;
     Glib::ustring savePathTemplate;
@@ -133,6 +140,8 @@ public:
     bool fbShowExpComp;
     bool fbShowHidden;
     int  fbArrangement;
+    NavigatorUnit navRGBUnit;
+    NavigatorUnit navHSVUnit;
     bool multiUser;
     static Glib::ustring rtdir;
     Glib::ustring version;

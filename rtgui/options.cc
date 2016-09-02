@@ -353,6 +353,8 @@ void Options::setDefaults ()
     fbShowExpComp = false;
     fbShowHidden = false;
     fbArrangement = 2;                  // was 0
+    navRGBUnit = NavigatorUnit::PERCENT;
+    navHSVUnit = NavigatorUnit::PERCENT;
     multiUser = true;
     profilePath = "profiles";
     loadSaveProfilePath = "";           // will be corrected in load as otherwise construction fails
@@ -732,8 +734,6 @@ int Options::readFromFile (Glib::ustring fname)
 
     try {
         if (keyFile.load_from_file (fname)) {
-
-            setDefaults ();
 
 // --------------------------------------------------------------------------------------------------------
 
@@ -1402,6 +1402,14 @@ int Options::readFromFile (Glib::ustring fname)
                     histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
                 }
 
+                if (keyFile.has_key ("GUI", "NavigatorRGBUnit")) {
+                    navRGBUnit          = (NavigatorUnit)keyFile.get_integer ("GUI", "NavigatorRGBUnit");
+                }
+
+                if (keyFile.has_key ("GUI", "NavigatorHSVUnit")) {
+                    navHSVUnit          = (NavigatorUnit)keyFile.get_integer ("GUI", "NavigatorHSVUnit");
+                }
+
                 if (keyFile.has_key ("GUI", "ShowFilmStripToolBar")) {
                     showFilmStripToolBar        = keyFile.get_boolean ("GUI", "ShowFilmStripToolBar");
                 }
@@ -1776,14 +1784,10 @@ int Options::readFromFile (Glib::ustring fname)
         if (options.rtSettings.verbose) {
             printf ("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
-
-        setDefaults ();
     } catch (...) {
         if (options.rtSettings.verbose) {
             printf ("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
-
-        setDefaults ();
     }
 
     return 1;
@@ -2004,6 +2008,8 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
         keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
         keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
+        keyFile.set_integer ("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
+        keyFile.set_integer ("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
         keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
         keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
