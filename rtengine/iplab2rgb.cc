@@ -238,14 +238,14 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
-            uint8_t* dest = image->r(i - cy) + cx;
+            int ix = 3 * i * cw;
 
             for (int j = cx; j < cx + cw; j++) {
 
-                float fy = (0.0086206897f * (*rL)) / 327.68f + 0.1379310345f; // (L+16)/116
-                float fx = (0.002f * *(ra++)) / 327.68f + fy;
-                float fz = fy - (0.005f * *(rb++)) / 327.68f;
-                float LL = *(rL++) / 327.68f;
+                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
+                float fx = (0.002f * ra[j]) / 327.68f + fy;
+                float fz = fy - (0.005f * rb[j]) / 327.68f;
+                float LL = rL[j] / 327.68f;
 
                 float x_ = 65535.0f * Color::f2xyz(fx) * Color::D50x;
                 //float y_ = 65535.0f * Color::f2xyz(fy);
@@ -254,9 +254,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
                 Color::xyz2rgb(x_, y_, z_, R, G, B, xyz_rgb);
 
-                *(dest++) = (int)Color::gamma2curve[CLIP(R)] >> 8;
-                *(dest++) = (int)Color::gamma2curve[CLIP(G)] >> 8;
-                *(dest++) = (int)Color::gamma2curve[CLIP(B)] >> 8;
+                image->data[ix++] = (int)Color::gamma2curve[R] >> 8;
+                image->data[ix++] = (int)Color::gamma2curve[G] >> 8;
+                image->data[ix++] = (int)Color::gamma2curve[B] >> 8;
             }
         }
     }
@@ -314,63 +314,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
     }
 
     if (oprof) {
-
-
-        /*
-
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-        for (int i = cy; i < cy + ch; i++) {
-            float* rL = lab->L[i];
-            float* ra = lab->a[i];
-            float* rb = lab->b[i];
-            short* xa = (short*)image->r(i - cy) + cx;
-            short* ya = (short*)image->g(i - cy) + cx;
-            short* za = (short*)image->b(i - cy) + cx;
-
-            for (int j = 0; j < cw; j++) {
-
-                float fy = (0.0086206897f * *rL) / 327.68f + 0.1379310345f; // (L+16)/116
-                float fx = (0.002f * *(ra++)) / 327.68f + fy;
-                float fz = fy - (0.005f * *(rb++)) / 327.68f;
-                float LL = *(rL++) / 327.68f;
-
-                float x_ = 65535.0f * Color::f2xyz(fx) * Color::D50x;
-                //float y_ = 65535.0f * Color::f2xyz(fy);
-                float z_ = 65535.0f * Color::f2xyz(fz) * Color::D50z;
-                float y_ = (LL > (float)Color::epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / (float)Color::kappa;
-
-                *xa     = CLIP((int) round(x_)) ;
-                *(ya++) = CLIP((int) round(y_));
-                *za     = CLIP((int) round(z_));
-
-                if(bw && y_ < 65535.f) { //force Bw value and take highlight into account
-                    *xa = (int) round(y_ * Color::D50x);
-                    *za = (int) round(y_ * Color::D50z);
-                }
-                ++xa;
-                ++za;
-            }
-        }
-
-        cmsHPROFILE iprof = iccStore->getXYZProfile ();
-
-
-        */
-
-        cmsHPROFILE iprof = cmsCreateLab4Profile(nullptr);
-
-
-
-
-        // ----------------------------------------------------------------------------
-
-
-
-
         cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
         if (icm.outputBPC) {
             flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
@@ -378,12 +321,11 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
         }
         else printf("lab2rgb16 / icm.outputBPC=false / outputIntent=%d\n", icm.outputIntent);
         lcmsMutex->lock ();
-        //cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_16, icm.outputIntent, flags);
+        cmsHPROFILE iprof = cmsCreateLab4Profile(nullptr);
         cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, oprof, TYPE_RGB_16, icm.outputIntent, flags);
         lcmsMutex->unlock ();
 
-        //image->ExecCMSTransform(hTransform);
-        image->ExecCMSTransform(hTransform, *lab);
+        image->ExecCMSTransform(hTransform, *lab, cx, cy);
         cmsDeleteTransform(hTransform);
     } else {
         //
@@ -395,16 +337,13 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
-            uint16_t* rR = image->r(i - cy) + cx;
-            uint16_t* rG = image->g(i - cy) + cx;
-            uint16_t* rB = image->b(i - cy) + cx;
 
-            for (int j = 0; j < cw; j++) {
+            for (int j = cx; j < cx + cw; j++) {
 
-                float fy = (0.0086206897f * *rL) / 327.68f + 0.1379310345f; // (L+16)/116
-                float fx = (0.002f * *(ra++)) / 327.68f + fy;
-                float fz = fy - (0.005f * *(rb++)) / 327.68f;
-                float LL = *(rL++) / 327.68f;
+                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
+                float fx = (0.002f * ra[j]) / 327.68f + fy;
+                float fz = fy - (0.005f * rb[j]) / 327.68f;
+                float LL = rL[j] / 327.68f;
 
                 float x_ = 65535.0f * Color::f2xyz(fx) * Color::D50x;
                 //float y_ = 65535.0 * Color::f2xyz(fy);
@@ -413,9 +352,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
                 Color::xyz2srgb(x_, y_, z_, R, G, B);
 
-                *(rR++) = (int)Color::gamma2curve[CLIP(R)];
-                *(rG++) = (int)Color::gamma2curve[CLIP(G)];
-                *(rB++) = (int)Color::gamma2curve[CLIP(B)];
+                image->r(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(R)];
+                image->g(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(G)];
+                image->b(i - cy, j - cx) = (int)Color::gamma2curve[CLIP(B)];
             }
         }
     }

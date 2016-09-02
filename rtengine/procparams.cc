@@ -5930,7 +5930,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 icm.outputBPC      = keyFile.get_boolean ("Color Management", "OutputBPC");
 
                 if (pedited) {
-                    pedited->icm.gamfree = true;
+                    pedited->icm.outputBPC = true;
                 }
             }
 

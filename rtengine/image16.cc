@@ -326,7 +326,7 @@ Image16::tofloat()
 }
 
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
-void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage)
+void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
 {
     // LittleCMS cannot parallelize planar Lab float images
     // so build temporary buffers to allow multi processor execution
@@ -341,15 +341,15 @@ void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImag
         #pragma omp for schedule(static)
 #endif
 
-        for (int y = 0; y < height; y++)
+        for (int y = cy; y < cy + height; y++)
         {
             unsigned short *pRGB, *pR, *pG, *pB;
             float *pLab, *pL, *pa, *pb;
 
             pLab= bufferLab.data;
-            pL = labImage.L[y];
-            pa = labImage.a[y];
-            pb = labImage.b[y];
+            pL = labImage.L[y] + cx;
+            pa = labImage.a[y] + cx;
+            pb = labImage.b[y] + cx;
 
             for (int x = 0; x < width; x++) {
                 *(pLab++) = *(pL++)  / 327.68f;
@@ -360,9 +360,9 @@ void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImag
             cmsDoTransform (hTransform, bufferLab.data, bufferRGB.data, width);
 
             pRGB = bufferRGB.data;
-            pR = r(y);
-            pG = g(y);
-            pB = b(y);
+            pR = r(y - cy);
+            pG = g(y - cy);
+            pB = b(y - cy);
 
             for (int x = 0; x < width; x++) {
                 *(pR++) = *(pRGB++);

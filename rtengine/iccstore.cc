@@ -519,11 +519,12 @@ cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParam
     // 7 parameters for smoother curves
     cmsFloat64Number Parameters[7] = { ga[0],  ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] } ;
 
+    lcmsMutex->lock ();
     cmsWhitePointFromTemp(&xyD, (double)temp);
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
-
     cmsFreeToneCurve(GammaTRC[0]);
+    lcmsMutex->unlock ();
 
     return oprofdef;
 }

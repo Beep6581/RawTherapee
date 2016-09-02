@@ -2216,8 +2216,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.icm.outputBPC = mods.icm.outputBPC;
     }
 
-    //if (icm.gampos)           toEdit.icm.gampos       = mods.icm.gampos;
-    //if (icm.slpos)            toEdit.icm.slpos        = mods.icm.slpos;
     if (icm.gampos) {
         toEdit.icm.gampos     = dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.gampos + mods.icm.gampos : mods.icm.gampos;
     }
