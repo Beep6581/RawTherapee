@@ -2146,6 +2146,9 @@ float ImProcFunctions::MadMax(float * DataList, int & max, int datalen)
 
 float ImProcFunctions::Mad(float * DataList, const int datalen)
 {
+    if(datalen <= 0) { // Avoid possible buffer underrun
+        return 0;
+    }
 
     //computes Median Absolute Deviation
     //DataList values should mostly have abs val < 256 because we are in Lab mode
@@ -2172,6 +2175,9 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
 
 float ImProcFunctions::MadRgb(float * DataList, const int datalen)
 {
+    if(datalen <= 0) { // Avoid possible buffer underrun
+        return 0;
+    }
 
     //computes Median Absolute Deviation
     //DataList values should mostly have abs val < 65536 because we are in RGB mode
