@@ -40,7 +40,7 @@ void loadProfiles (const Glib::ustring& dirName,
                    std::map<Glib::ustring, cmsHPROFILE>* profiles,
                    std::map<Glib::ustring, ProfileContent>* profileContents,
                    std::map<Glib::ustring, Glib::ustring>* profileNames,
-                   bool nameUpper, bool onlyRgb)
+                   bool nameUpper)
 {
     if (dirName.empty ()) {
         return;
@@ -80,7 +80,7 @@ void loadProfiles (const Glib::ustring& dirName,
                 const ProfileContent content (filePath);
                 const cmsHPROFILE profile = content.toProfile ();
 
-                if (profile && (!onlyRgb || cmsGetColorSpace (profile) == cmsSigRgbData)) {
+                if (profile) {
                     profiles->insert (std::make_pair (name, profile));
 
                     if (profileContents) {
@@ -165,7 +165,7 @@ std::vector<Glib::ustring> getWorkingProfiles ()
     return res;
 }
 
-std::vector<Glib::ustring> ICCStore::getProfiles () const
+std::vector<Glib::ustring> ICCStore::getProfiles (const bool onlyRgb) const
 {
 
     MyMutex::MyLock lock(mutex_);
@@ -173,6 +173,7 @@ std::vector<Glib::ustring> ICCStore::getProfiles () const
     std::vector<Glib::ustring> res;
 
     for (ProfileMap::const_iterator profile = fileProfiles.begin (); profile != fileProfiles.end (); ++profile) {
+        if (!onlyRgb || (onlyRgb && cmsGetColorSpace (profile->second) == cmsSigRgbData))
         res.push_back (profile->first);
     }
 
@@ -188,8 +189,8 @@ std::vector<Glib::ustring> ICCStore::getProfilesFromDir (const Glib::ustring& di
 
     ProfileMap profiles;
 
-    loadProfiles (profilesDir, &profiles, nullptr, nullptr, false, true);
-    loadProfiles (dirName, &profiles, nullptr, nullptr, false, true);
+    loadProfiles (profilesDir, &profiles, nullptr, nullptr, false);
+    loadProfiles (dirName, &profiles, nullptr, nullptr, false);
 
     for (ProfileMap::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile) {
         res.push_back (profile->first);
@@ -768,15 +769,15 @@ void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCD
     profilesDir = Glib::build_filename (rtICCDir, "output");
     fileProfiles.clear();
     fileProfileContents.clear();
-    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, nullptr, false, true);
-    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, nullptr, false, true);
+    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
+    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
 
     // Input profiles
     // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
     stdProfilesDir = Glib::build_filename (rtICCDir, "input");
     fileStdProfiles.clear();
     fileStdProfilesFileNames.clear();
-    loadProfiles (stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true, false);
+    loadProfiles (stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true);
 }
 
 // Determine the first monitor default profile of operating system, if selected

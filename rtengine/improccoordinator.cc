@@ -779,11 +779,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     // Update the monitor color transform if necessary
     if ((todo & M_MONITOR) || (lastOutputProfile!=params.icm.output) || lastOutputIntent!=params.icm.outputIntent || lastOutputBPC!=params.icm.outputBPC) {
-        if (lastOutputIntent == RI__COUNT) {
-            // initializing...
-            monitorProfile = options.rtSettings.monitorProfile;
-            monitorIntent = options.rtSettings.monitorIntent;
-        }
         lastOutputProfile = params.icm.output;
         lastOutputIntent = params.icm.outputIntent;
         lastOutputBPC = params.icm.outputBPC;

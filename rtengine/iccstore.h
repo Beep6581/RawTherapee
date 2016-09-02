@@ -112,7 +112,7 @@ public:
     cmsHPROFILE      getXYZProfile  () const;
     cmsHPROFILE      getsRGBProfile () const;
 
-    std::vector<Glib::ustring> getProfiles () const;
+    std::vector<Glib::ustring> getProfiles (const bool onlyRgb = false) const;
     std::vector<Glib::ustring> getProfilesFromDir (const Glib::ustring& dirName) const;
 
     uint8_t     getInputIntents  (cmsHPROFILE profile) const;

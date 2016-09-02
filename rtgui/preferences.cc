@@ -698,7 +698,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
     monProfile->set_active (0);
 
-    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles ();
+    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (true);
     for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
         monProfile->append_text (*profile);
 

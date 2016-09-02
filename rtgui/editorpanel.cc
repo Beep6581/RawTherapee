@@ -59,7 +59,7 @@ private:
         profileBox.set_active (0);
 #endif
 
-        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles ();
+        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles (true);
         for (std::vector<Glib::ustring>::const_iterator iterator = profiles.begin (); iterator != profiles.end (); ++iterator) {
             profileBox.append_text (*iterator);
         }
@@ -119,7 +119,7 @@ private:
         updateSoftProofParameters ();
     }
 
-    void updateParameters ()
+    void updateParameters (bool noEvent = false)
     {
         ConnectionBlocker profileBlocker (profileConn);
         ConnectionBlocker intentBlocker (intentConn);
@@ -148,6 +148,8 @@ private:
 
             intentBox.set_sensitive (false);
             intentBox.setSelected (1);
+            softProof.set_sensitive(false);
+            spGamutCheck.set_sensitive(false);
 
             profileBox.set_tooltip_text ("");
 
@@ -162,12 +164,16 @@ private:
                 intentBox.setItemSensitivity(0, supportsPerceptual);
                 intentBox.setItemSensitivity(1, supportsRelativeColorimetric);
                 intentBox.setItemSensitivity(2, supportsAbsoluteColorimetric);
+                softProof.set_sensitive(true);
+                spGamutCheck.set_sensitive(true);
             } else {
                 intentBox.setItemSensitivity(0, true);
                 intentBox.setItemSensitivity(1, true);
                 intentBox.setItemSensitivity(2, true);
                 intentBox.set_sensitive (false);
                 intentBox.setSelected (1);
+                softProof.set_sensitive(false);
+                spGamutCheck.set_sensitive(false);
             }
 
             profileBox.set_tooltip_text (profileBox.get_active_text ());
@@ -191,19 +197,28 @@ private:
             return;
         }
 
-        processor->beginUpdateParams ();
+        if (!noEvent) {
+            processor->beginUpdateParams ();
+        }
         processor->setMonitorProfile (profile, intent);
-        processor->endUpdateParams (rtengine::EvMonitorTransform);
+        processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+        if (!noEvent) {
+            processor->endUpdateParams (rtengine::EvMonitorTransform);
+        }
     }
 
-    void updateSoftProofParameters ()
+    void updateSoftProofParameters (bool noEvent = false)
     {
         spGamutCheck.set_sensitive(softProof.get_active());
 
         if (profileBox.get_active_row_number () > 0) {
-            processor->beginUpdateParams ();
-            processor->setSoftProofing (softProof.get_active(), spGamutCheck.get_active());
-            processor->endUpdateParams (rtengine::EvMonitorTransform);
+            if (!noEvent) {
+                processor->beginUpdateParams ();
+            }
+            processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+            if (!noEvent) {
+                processor->endUpdateParams (rtengine::EvMonitorTransform);
+            }
         }
     }
 
@@ -230,6 +245,13 @@ public:
         box->pack_end (softProof, Gtk::PACK_SHRINK, 0);
         box->pack_end (*intentBox.buttonGroup, Gtk::PACK_SHRINK, 0);
         box->pack_end (profileBox, Gtk::PACK_SHRINK, 0);
+    }
+
+    void updateProcessor()
+    {
+        if (processor) {
+            updateParameters(true);
+        }
     }
 
     void reset ()
@@ -762,6 +784,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     this->isrc = isrc;
     ipc = rtengine::StagedImageProcessor::create (isrc);
     ipc->setProgressListener (this);
+    colorMgmtToolBar->updateProcessor();
     ipc->setPreviewImageListener (previewHandler);
     ipc->setPreviewScale (10);  // Important
     tpc->initImage (ipc, tmb->getType() == FT_Raw);
