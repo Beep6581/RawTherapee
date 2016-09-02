@@ -22,12 +22,19 @@
 #include <gtkmm.h>
 #include "previewwindow.h"
 #include "pointermotionlistener.h"
+#include "options.h"
 #include "../rtengine/iccstore.h"
 
 class Navigator : public Gtk::Frame, public PointerMotionListener
 {
 
     typedef const double (*TMatrix)[3];
+
+private:
+    Options::NavigatorUnit currentRGBUnit;
+    Options::NavigatorUnit currentHSVUnit;
+    void cycleUnitsRGB (GdkEventButton *event);
+    void cycleUnitsHSV (GdkEventButton *event);
 
 protected:
     Gtk::Label* position;
