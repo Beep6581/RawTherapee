@@ -1473,7 +1473,7 @@ int Options::readFromFile (Glib::ustring fname)
                     rtSettings.monitorIntent   = static_cast<rtengine::RenderingIntent>(keyFile.get_integer("Color Management", "Intent"));
                 }
 
-                if (keyFile.has_key ("Color Management", "Intent")) {
+                if (keyFile.has_key ("Color Management", "MonitorBPC")) {
                     rtSettings.monitorBPC           = keyFile.get_boolean("Color Management", "MonitorBPC");
                 }
 
@@ -1796,13 +1796,9 @@ int Options::readFromFile (Glib::ustring fname)
 
         }
     } catch (Glib::Error &err) {
-        if (options.rtSettings.verbose) {
-            printf("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
-        }
+        printf("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
     } catch (...) {
-        if (options.rtSettings.verbose) {
-            printf("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
-        }
+        printf("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
     }
 
     return 1;
