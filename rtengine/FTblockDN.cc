@@ -879,13 +879,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                         realred = interm_med + intermred;
 
-                        if (realred < 0.f) {
+                        if (realred <= 0.f) {
                             realred = 0.001f;
                         }
 
                         realblue = interm_med + intermblue;
 
-                        if (realblue < 0.f) {
+                        if (realblue <= 0.f) {
                             realblue = 0.001f;
                         }
 
