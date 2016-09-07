@@ -191,9 +191,6 @@ void Crop::update (int todo)
         parent->ipf.Tile_calc (tilesize, overlap, kall, widIm, heiIm, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
         kall = 0;
 
-        float *ch_M = new float [9];//allocate memory
-        float *max_r = new float [9];
-        float *max_b = new float [9];
         float *min_b = new float [9];
         float *min_r = new float [9];
         float *lumL = new float [9];
@@ -462,9 +459,9 @@ void Crop::update (int todo)
 
                         //printf("DCROP skip=%d cha=%f red=%f bl=%f redM=%f bluM=%f chrom=%f sigm=%f lum=%f\n",skip, chaut,redaut,blueaut, maxredaut, maxblueaut, chromina, sigma, lumema);
                         Nb[hcr * 3 + wcr] = nb;
-                        ch_M[hcr * 3 + wcr] = pondcorrec * chaut;
-                        max_r[hcr * 3 + wcr] = pondcorrec * maxredaut;
-                        max_b[hcr * 3 + wcr] = pondcorrec * maxblueaut;
+                        parent->denoiseInfoStore.ch_M[hcr * 3 + wcr] = pondcorrec * chaut;
+                        parent->denoiseInfoStore.max_r[hcr * 3 + wcr] = pondcorrec * maxredaut;
+                        parent->denoiseInfoStore.max_b[hcr * 3 + wcr] = pondcorrec * maxblueaut;
                         min_r[hcr * 3 + wcr] = pondcorrec * minredaut;
                         min_b[hcr * 3 + wcr] = pondcorrec * minblueaut;
                         lumL[hcr * 3 + wcr] = lumema;
@@ -524,20 +521,20 @@ void Crop::update (int todo)
             int lissage = settings->leveldnliss;
 
             for (int k = 0; k < 9; k++) {
-                float maxmax = max(max_r[k], max_b[k]);
-                parent->ipf.calcautodn_info (ch_M[k], delta[k], Nb[k], levaut, maxmax, lumL[k], chromC[k], mode, lissage, ry[k], sk[k], pcsk[k]);
+                float maxmax = max(parent->denoiseInfoStore.max_r[k], parent->denoiseInfoStore.max_b[k]);
+                parent->ipf.calcautodn_info (parent->denoiseInfoStore.ch_M[k], delta[k], Nb[k], levaut, maxmax, lumL[k], chromC[k], mode, lissage, ry[k], sk[k], pcsk[k]);
                 //  printf("ch_M=%f delta=%f\n",ch_M[k], delta[k]);
             }
 
             for (int k = 0; k < 9; k++) {
-                if(max_r[k] > max_b[k]) {
+                if(parent->denoiseInfoStore.max_r[k] > parent->denoiseInfoStore.max_b[k]) {
                     Max_R[k] = (delta[k]) / ((autoNRmax * multip * adjustr * lowdenoise) / 2.f);
-                    Min_B[k] = -(ch_M[k] - min_b[k]) / (autoNRmax * multip * adjustr * lowdenoise);
+                    Min_B[k] = -(parent->denoiseInfoStore.ch_M[k] - min_b[k]) / (autoNRmax * multip * adjustr * lowdenoise);
                     Max_B[k] = 0.f;
                     Min_R[k] = 0.f;
                 } else {
                     Max_B[k] = (delta[k]) / ((autoNRmax * multip * adjustr * lowdenoise) / 2.f);
-                    Min_R[k] = - (ch_M[k] - min_r[k])   / (autoNRmax * multip * adjustr * lowdenoise);
+                    Min_R[k] = - (parent->denoiseInfoStore.ch_M[k] - min_r[k])   / (autoNRmax * multip * adjustr * lowdenoise);
                     Min_B[k] = 0.f;
                     Max_R[k] = 0.f;
                 }
@@ -545,7 +542,7 @@ void Crop::update (int todo)
 
             for (int k = 0; k < 9; k++) {
                 //  printf("ch_M= %f Max_R=%f Max_B=%f min_r=%f min_b=%f\n",ch_M[k],Max_R[k], Max_B[k],Min_R[k], Min_B[k]);
-                chM += ch_M[k];
+                chM += parent->denoiseInfoStore.ch_M[k];
                 MaxBMoy += Max_B[k];
                 MaxRMoy += Max_R[k];
                 MinRMoy += Min_R[k];
@@ -644,7 +641,7 @@ void Crop::update (int todo)
                 int kall = 0;
 
                 float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
-                parent->ipf.RGB_denoise(kall, origCrop, origCrop, calclum, ch_M, max_r, max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+                parent->ipf.RGB_denoise(kall, origCrop, origCrop, calclum, parent->denoiseInfoStore.ch_M, parent->denoiseInfoStore.max_r, parent->denoiseInfoStore.max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 
                 if (parent->adnListener) {
                     parent->adnListener->noiseChanged(nresi, highresi);
@@ -665,9 +662,6 @@ void Crop::update (int todo)
 
         parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB);
 
-        delete [] ch_M;
-        delete [] max_r;
-        delete [] max_b;
         delete [] min_r;
         delete [] min_b;
         delete [] lumL;

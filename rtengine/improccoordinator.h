@@ -326,11 +326,13 @@ public:
         return imgsrc;
     }
 
-    class denoiseinfostore {
-        public:
-            bool valid;
+    struct {
+        float chM;
+        float max_r[9];
+        float max_b[9];
+        float ch_M[9];
+        bool valid = false;
 
-        denoiseinfostore() : valid(false) {};
     } denoiseInfoStore;
 
 };

@@ -37,8 +37,6 @@
 #include "opthelper.h"
 #include "cplx_wavelet_dec.h"
 #include "median.h"
-#define BENCHMARK
-#include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -427,7 +425,6 @@ enum nrquality {QUALITY_STANDARD, QUALITY_HIGH};
 
 SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &chaut, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &nresi, float &highresi)
 {
-BENCHFUN
 //#ifdef _DEBUG
     MyTime t1e, t2e;
     t1e.set();
@@ -594,15 +591,11 @@ BENCHFUN
         LUTf gamcurve(65536, LUT_CLIP_BELOW);
         float gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
 
-        MyTime t1e, t2e;
-        t1e.set();
         if (denoiseMethodRgb) {
             Color::gammaf2lut(gamcurve, gam, gamthresh, gamslope, 65535.f, 32768.f);
         } else {
             Color::gammanf2lut(gamcurve, gam, 65535.f, 32768.f);
         }
-        t2e.set();
-        printf("gamcurve performed in %d usec:\n", t2e.etime(t1e));
 
         // inverse gamma transform for output data
         float igam = 1.f / gam;
@@ -611,16 +604,11 @@ BENCHFUN
 
         LUTf igamcurve(65536, LUT_CLIP_BELOW);
 
-        MyTime t11e, t21e;
-        t11e.set();
-
         if (denoiseMethodRgb) {
             Color::gammaf2lut(igamcurve, igam, igamthresh, igamslope, 32768.f, 65535.f);
         } else {
             Color::gammanf2lut(igamcurve, igam, 32768.f, 65535.f);
         }
-        t21e.set();
-        printf("igamcurve performed in %d usec:\n", t21e.etime(t11e));
 
         const float gain = pow (2.0f, float(expcomp));
         float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - dnparams.Ldetail) + 50.*(100. - dnparams.Ldetail)) * TS * 0.5f);
@@ -820,7 +808,6 @@ BENCHFUN
                 {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
                 {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
             };
-
 
             // begin tile processing of image
 #ifdef _OPENMP
@@ -3000,18 +2987,12 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::Dir
 
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
-    MyTime t1e, t2e;
-    t1e.set();
-
     if (denoiseMethodRgb) {
         gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
         Color::gammaf2lut(gamcurve, gam, gamthresh, gamslope, 65535.f, 32768.f);
     } else {
         Color::gammanf2lut(gamcurve, gam, 65535.f, 32768.f);
     }
-    t2e.set();
-    printf("gamcurve in RGB_denoise_infoGamCurve performed in %d usec:\n", t2e.etime(t1e));
-
 }
 
 void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc)
