@@ -1275,6 +1275,25 @@ static INLINE vfloat xlogf0(vfloat d) {
   return x;
 }
 
+static INLINE vfloat xlogfNoCheck(vfloat d) { // this version does not check input values. Use it only when you know the input values are > 0 e.g. when filling a lookup table
+  vfloat x, x2, t, m;
+  vint2 e;
+
+  e = vilogbp1f(vmulf(d, vcast_vf_f(0.7071f)));
+  m = vldexpf(d, vsubi2(vcast_vi2_i(0), e));
+
+  x = vdivf(vaddf(vcast_vf_f(-1.0f), m), vaddf(vcast_vf_f(1.0f), m));
+  x2 = vmulf(x, x);
+
+  t = vcast_vf_f(0.2371599674224853515625f);
+  t = vmlaf(t, x2, vcast_vf_f(0.285279005765914916992188f));
+  t = vmlaf(t, x2, vcast_vf_f(0.400005519390106201171875f));
+  t = vmlaf(t, x2, vcast_vf_f(0.666666567325592041015625f));
+  t = vmlaf(t, x2, vcast_vf_f(2.0f));
+
+  return vaddf(vmulf(x, t), vmulf(vcast_vf_f(0.693147180559945286226764f), vcast_vf_vi2(e)));
+
+}
 
 static INLINE vfloat xexpf(vfloat d) {
   vint2 q = vrint_vi2_vf(vmulf(d, vcast_vf_f(R_LN2f)));
@@ -1297,6 +1316,24 @@ static INLINE vfloat xexpf(vfloat d) {
 // -104.0
   u = vself(vmaskf_gt(vcast_vf_f(-104), d), vcast_vf_f(0), u);
   return u;
+}
+
+static INLINE vfloat xexpfNoCheck(vfloat d) { // this version does not check input values. Use it only when you know the input values are > -104.f e.g. when filling a lookup table
+  vint2 q = vrint_vi2_vf(vmulf(d, vcast_vf_f(R_LN2f)));
+  vfloat s, u;
+
+  s = vmlaf(vcast_vf_vi2(q), vcast_vf_f(-L2Uf),d);
+  s = vmlaf(vcast_vf_vi2(q), vcast_vf_f(-L2Lf),s);
+
+  u = vcast_vf_f(0.00136324646882712841033936f);
+  u = vmlaf(u, s, vcast_vf_f(0.00836596917361021041870117f));
+  u = vmlaf(u, s, vcast_vf_f(0.0416710823774337768554688f));
+  u = vmlaf(u, s, vcast_vf_f(0.166665524244308471679688f));
+  u = vmlaf(u, s, vcast_vf_f(0.499999850988388061523438f));
+
+  u = vaddf(vcast_vf_f(1.0f), vmlaf(vmulf(s, s), u, s));
+
+  return vldexpf(u, q);
 }
 
 static INLINE vfloat xcbrtf(vfloat d) {

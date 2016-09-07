@@ -1478,6 +1478,67 @@ void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0
         return;
     }
 }
+void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
+{
+#ifdef __SSE2__
+    // SSE2 version is more than 6 times faster than scalar version
+    vfloat iv = _mm_set_ps(3.f,2.f,1.f,0.f);
+    vfloat fourv = F2V(4.f);
+    vfloat gammav = F2V(1.f / gamma);
+    vfloat slopev = F2V((slope / divisor) * factor);
+    vfloat divisorv = F2V(xlogf(divisor));
+    vfloat factorv = F2V(factor);
+    vfloat comparev = F2V(start * divisor);
+    int border = start * divisor;
+    int border1 = border - (border & 3);
+    int border2 = border1 + 4;
+    int i = 0;
+    for(; i < border1; i += 4) {
+        vfloat resultv = iv * slopev;
+        _mm_storeu_ps(&gammacurve[i], resultv);
+        iv += fourv;
+    }
+    for(; i < border2; i += 4) {
+        vfloat result0v = iv * slopev;
+        vfloat result1v = xexpf((xlogf(iv) - divisorv) * gammav) * factorv;
+        _mm_storeu_ps(&gammacurve[i], vself(vmaskf_le(iv, comparev), result0v, result1v));
+        iv += fourv;
+    }
+    for(; i < 65536; i += 4) {
+        vfloat resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
+        _mm_storeu_ps(&gammacurve[i], resultv);
+        iv += fourv;
+    }
+#else
+    for (int i = 0; i < 65536; ++i) {
+        gammacurve[i] = gammaf(static_cast<float>(i) / divisor, gamma, start, slope) * factor;
+    }
+#endif
+}
+
+void Color::gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float factor)           //standard gamma without slope...
+{
+#ifdef __SSE2__
+    // SSE2 version is more than 6 times faster than scalar version
+    vfloat iv = _mm_set_ps(3.f,2.f,1.f,0.f);
+    vfloat fourv = F2V(4.f);
+    vfloat gammav = F2V(1.f / gamma);
+    vfloat divisorv = F2V(xlogf(divisor));
+    vfloat factorv = F2V(factor);
+    vfloat resultv = xexpf((xlogf(iv) - divisorv) * gammav) * factorv;
+    _mm_storeu_ps(&gammacurve[0], resultv);
+    iv += fourv;
+    for(int i=4; i < 65536; i += 4) {
+        resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
+        _mm_storeu_ps(&gammacurve[i], resultv);
+        iv += fourv;
+    }
+#else
+    for (int i = 0; i < 65536; ++i) {
+        gammacurve[i] = Color::gammanf(static_cast<float>(i) / divisor, gamma) * factor;
+    }
+#endif
+}
 
 void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
 {

@@ -380,7 +380,7 @@ void Crop::update (int todo)
             }
         }
 
-        if(skip == 1 && params.dirpyrDenoise.enabled && ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO"))) {
+        if(skip == 1 && params.dirpyrDenoise.enabled && !parent->denoiseInfoStore.valid && ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO"))) {
             MyTime t1aue, t2aue;
             t1aue.set();
 
@@ -587,7 +587,7 @@ void Crop::update (int todo)
             params.dirpyrDenoise.chroma = chM / (autoNR * multip * adjustr);
             params.dirpyrDenoise.redchro = maxr;
             params.dirpyrDenoise.bluechro = maxb;
-
+            parent->denoiseInfoStore.valid = true;
             if(parent->adnListener) {
                 parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
             }

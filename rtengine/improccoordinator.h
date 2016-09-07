@@ -325,6 +325,14 @@ public:
     {
         return imgsrc;
     }
+
+    class denoiseinfostore {
+        public:
+            bool valid;
+
+        denoiseinfostore() : valid(false) {};
+    } denoiseInfoStore;
+
 };
 }
 #endif
