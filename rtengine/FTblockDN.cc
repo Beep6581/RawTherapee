@@ -613,36 +613,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
         const float gain = pow (2.0f, float(expcomp));
         float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - dnparams.Ldetail) + 50.*(100. - dnparams.Ldetail)) * TS * 0.5f);
 
-        if (settings->verbose) {
-            printf("Denoise Lab=%i\n", settings->denoiselabgamma);
-        }
-
-        // To avoid branches in loops we access the gammatabs by pointers
-        // modify arbitrary data for Lab..I have test : nothing, gamma 2.6 11 - gamma 4 5 - gamma 5.5 10
-        // we can put other as gamma g=2.6 slope=11, etc.
-        // but noting to do with real gamma !!!: it's only for data Lab # data RGB
-        // finally I opted fot gamma55 and with options we can change
-
-        LUTf *denoisegamtab;
-        LUTf *denoiseigamtab;
-
-        switch(settings->denoiselabgamma) {
-            case 0:
-                denoisegamtab = &(Color::gammatab_26_11);
-                denoiseigamtab = &(Color::igammatab_26_11);
-                break;
-
-            case 1:
-                denoisegamtab = &(Color::gammatab_4);
-                denoiseigamtab = &(Color::igammatab_4);
-                break;
-
-            default:
-                denoisegamtab = &(Color::gammatab_55);
-                denoiseigamtab = &(Color::igammatab_55);
-                break;
-        }
-
         array2D<float> tilemask_in(TS, TS);
         array2D<float> tilemask_out(TS, TS);
 
@@ -907,9 +877,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         float G_ = gain * src->g(i, j);
                                         float B_ = gain * src->b(i, j);
 
-                                        R_ = (*denoiseigamtab)[R_];
-                                        G_ = (*denoiseigamtab)[G_];
-                                        B_ = (*denoiseigamtab)[B_];
+                                        R_ = Color::denoiseIGammaTab[R_];
+                                        G_ = Color::denoiseIGammaTab[G_];
+                                        B_ = Color::denoiseIGammaTab[B_];
 
                                         //apply gamma noise standard (slider)
                                         R_ = R_ < 65535.f ? gamcurve[R_] : (Color::gammanf(R_ / 65535.f, gam) * 32768.f);
@@ -1602,9 +1572,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             b_ = b_ < 32768.f ? igamcurve[b_] : (Color::gammanf(b_ / 32768.f, igam) * 65535.f);
 
                                             //readapt arbitrary gamma (inverse from beginning)
-                                            r_ = (*denoisegamtab)[r_];
-                                            g_ = (*denoisegamtab)[g_];
-                                            b_ = (*denoisegamtab)[b_];
+                                            r_ = Color::denoiseGammaTab[r_];
+                                            g_ = Color::denoiseGammaTab[g_];
+                                            b_ = Color::denoiseGammaTab[b_];
 
                                             if (numtiles == 1) {
                                                 dsttmp->r(i, j) = newGain * r_;
@@ -3242,24 +3212,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
     int nb = 0;
     int comptlevel = 0;
 
-    // To avoid branches in loops we access the gammatabs by pointers
-    LUTf *denoiseigamtab;
-
-    switch(settings->denoiselabgamma) {
-        case 0:
-            denoiseigamtab = &(Color::igammatab_26_11);
-            break;
-
-        case 1:
-            denoiseigamtab = &(Color::igammatab_4);
-            break;
-
-        default:
-            denoiseigamtab = &(Color::igammatab_55);
-            break;
-    }
-
-
     for (int tiletop = 0; tiletop < imheight; tiletop += tileHskip) {
         for (int tileleft = 0; tileleft < imwidth; tileleft += tileWskip) {
 
@@ -3405,9 +3357,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                             float G_ = gain * src->g(i, j);
                             float B_ = gain * src->b(i, j);
 
-                            R_ = (*denoiseigamtab)[R_];
-                            G_ = (*denoiseigamtab)[G_];
-                            B_ = (*denoiseigamtab)[B_];
+                            R_ = Color::denoiseIGammaTab[R_];
+                            G_ = Color::denoiseIGammaTab[G_];
+                            B_ = Color::denoiseIGammaTab[B_];
 
                             //apply gamma noise standard (slider)
                             R_ = R_ < 65535.f ? gamcurve[R_] : (Color::gammanf(R_ / 65535.f, gam) * 32768.f);

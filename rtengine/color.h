@@ -132,13 +132,10 @@ public:
     static LUTf igammatab_srgb1;
     static LUTf gammatab_srgb;
     static LUTf gammatab_srgb1;
-    static LUTf igammatab_55;
-    static LUTf gammatab_55;
-    static LUTf igammatab_4;
-    static LUTf gammatab_4;
 
-    static LUTf igammatab_26_11;
-    static LUTf gammatab_26_11;
+    static LUTf denoiseGammaTab;
+    static LUTf denoiseIGammaTab;
+
     static LUTf igammatab_24_17;
     static LUTf gammatab_24_17a;
     static LUTf gammatab_13_2;
@@ -1107,7 +1104,7 @@ public:
 
     static inline float gammaf      (float x, float gamma, float start, float slope)
     {
-        return x <= start ? x*slope : xexpf(xlogf(x) / gamma);
+        return x <= start ? x * slope : xexpf(xlogf(x) / gamma);
     }
 
     //fills a LUT of size 65536 using gamma with slope...
