@@ -320,6 +320,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.setScale (scale);
 
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
+        denoiseInfoStore.valid = false;
         //ColorTemp::CAT02 (orig_prev, &params) ;
         //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
         /* Issue 2785, disabled some 1:1 tools

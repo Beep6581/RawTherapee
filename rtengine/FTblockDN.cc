@@ -37,7 +37,6 @@
 #include "opthelper.h"
 #include "cplx_wavelet_dec.h"
 #include "median.h"
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -588,18 +587,14 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             }
         }
 
-        float gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
 
         LUTf gamcurve(65536, LUT_CLIP_BELOW);
+        float gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
 
         if (denoiseMethodRgb) {
-            for (int i = 0; i < 65536; ++i) {
-                gamcurve[i] = (Color::gamma(static_cast<double>(i) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
-            }
+            Color::gammaf2lut(gamcurve, gam, gamthresh, gamslope, 65535.f, 32768.f);
         } else {
-            for (int i = 0; i < 65536; ++i) {
-                gamcurve[i] = (Color::gamman(static_cast<double>(i) / 65535.0, gam)) * 32768.0f;
-            }
+            Color::gammanf2lut(gamcurve, gam, 65535.f, 32768.f);
         }
 
         // inverse gamma transform for output data
@@ -610,47 +605,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
         LUTf igamcurve(65536, LUT_CLIP_BELOW);
 
         if (denoiseMethodRgb) {
-            for (int i = 0; i < 65536; ++i) {
-                igamcurve[i] = (Color::gamma(static_cast<float>(i) / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-            }
+            Color::gammaf2lut(igamcurve, igam, igamthresh, igamslope, 32768.f, 65535.f);
         } else {
-            for (int i = 0; i < 65536; ++i) {
-                igamcurve[i] = (Color::gamman(static_cast<float>(i) / 32768.0f, igam) * 65535.0f);
-            }
+            Color::gammanf2lut(igamcurve, igam, 32768.f, 65535.f);
         }
 
         const float gain = pow (2.0f, float(expcomp));
         float noisevar_Ldetail = SQR(static_cast<float>(SQR(100. - dnparams.Ldetail) + 50.*(100. - dnparams.Ldetail)) * TS * 0.5f);
-
-        if (settings->verbose) {
-            printf("Denoise Lab=%i\n", settings->denoiselabgamma);
-        }
-
-        // To avoid branches in loops we access the gammatabs by pointers
-        // modify arbitrary data for Lab..I have test : nothing, gamma 2.6 11 - gamma 4 5 - gamma 5.5 10
-        // we can put other as gamma g=2.6 slope=11, etc.
-        // but noting to do with real gamma !!!: it's only for data Lab # data RGB
-        // finally I opted fot gamma55 and with options we can change
-
-        LUTf *denoisegamtab;
-        LUTf *denoiseigamtab;
-
-        switch(settings->denoiselabgamma) {
-            case 0:
-                denoisegamtab = &(Color::gammatab_26_11);
-                denoiseigamtab = &(Color::igammatab_26_11);
-                break;
-
-            case 1:
-                denoisegamtab = &(Color::gammatab_4);
-                denoiseigamtab = &(Color::igammatab_4);
-                break;
-
-            default:
-                denoisegamtab = &(Color::gammatab_55);
-                denoiseigamtab = &(Color::igammatab_55);
-                break;
-        }
 
         array2D<float> tilemask_in(TS, TS);
         array2D<float> tilemask_out(TS, TS);
@@ -818,7 +779,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
             };
 
-
             // begin tile processing of image
 #ifdef _OPENMP
             #pragma omp parallel num_threads(numthreads) if (numthreads>1)
@@ -917,14 +877,14 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         float G_ = gain * src->g(i, j);
                                         float B_ = gain * src->b(i, j);
 
-                                        R_ = (*denoiseigamtab)[R_];
-                                        G_ = (*denoiseigamtab)[G_];
-                                        B_ = (*denoiseigamtab)[B_];
+                                        R_ = Color::denoiseIGammaTab[R_];
+                                        G_ = Color::denoiseIGammaTab[G_];
+                                        B_ = Color::denoiseIGammaTab[B_];
 
                                         //apply gamma noise standard (slider)
-                                        R_ = R_ < 65535.0f ? gamcurve[R_] : (Color::gammanf(R_ / 65535.f, gam) * 32768.0f);
-                                        G_ = G_ < 65535.0f ? gamcurve[G_] : (Color::gammanf(G_ / 65535.f, gam) * 32768.0f);
-                                        B_ = B_ < 65535.0f ? gamcurve[B_] : (Color::gammanf(B_ / 65535.f, gam) * 32768.0f);
+                                        R_ = R_ < 65535.f ? gamcurve[R_] : (Color::gammanf(R_ / 65535.f, gam) * 32768.f);
+                                        G_ = G_ < 65535.f ? gamcurve[G_] : (Color::gammanf(G_ / 65535.f, gam) * 32768.f);
+                                        B_ = B_ < 65535.f ? gamcurve[B_] : (Color::gammanf(B_ / 65535.f, gam) * 32768.f);
 
                                         //true conversion xyz=>Lab
                                         float X, Y, Z;
@@ -966,9 +926,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         float Y = gain * src->g(i, j);
                                         float Z = gain * src->b(i, j);
                                         //conversion colorspace to determine luminance with no gamma
-                                        X = X < 65535.0f ? gamcurve[X] : (Color::gamma(static_cast<double>(X) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                                        Y = Y < 65535.0f ? gamcurve[Y] : (Color::gamma(static_cast<double>(Y) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                                        Z = Z < 65535.0f ? gamcurve[Z] : (Color::gamma(static_cast<double>(Z) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                                        X = X < 65535.f ? gamcurve[X] : (Color::gammaf(X / 65535.f, gam, gamthresh, gamslope) * 32768.f);
+                                        Y = Y < 65535.f ? gamcurve[Y] : (Color::gammaf(Y / 65535.f, gam, gamthresh, gamslope) * 32768.f);
+                                        Z = Z < 65535.f ? gamcurve[Z] : (Color::gammaf(Z / 65535.f, gam, gamthresh, gamslope) * 32768.f);
                                         //end chroma
                                         labdn->L[i1][j1] = Y;
                                         labdn->a[i1][j1] = (X - Y);
@@ -1009,9 +969,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                     float btmp = Color::igammatab_srgb[ src->b(i, j) ];
                                     //modification Jacques feb 2013
                                     // gamma slider different from raw
-                                    rtmp = rtmp < 65535.0f ? gamcurve[rtmp] : (Color::gamman(static_cast<double>(rtmp) / 65535.0, gam) * 32768.0f);
-                                    gtmp = gtmp < 65535.0f ? gamcurve[gtmp] : (Color::gamman(static_cast<double>(gtmp) / 65535.0, gam) * 32768.0f);
-                                    btmp = btmp < 65535.0f ? gamcurve[btmp] : (Color::gamman(static_cast<double>(btmp) / 65535.0, gam) * 32768.0f);
+                                    rtmp = rtmp < 65535.f ? gamcurve[rtmp] : (Color::gammanf(rtmp / 65535.f, gam) * 32768.f);
+                                    gtmp = gtmp < 65535.f ? gamcurve[gtmp] : (Color::gammanf(gtmp / 65535.f, gam) * 32768.f);
+                                    btmp = btmp < 65535.f ? gamcurve[btmp] : (Color::gammanf(btmp / 65535.f, gam) * 32768.f);
 
                                     float X, Y, Z;
                                     Color::rgbxyz(rtmp, gtmp, btmp, X, Y, Z, wp);
@@ -1612,9 +1572,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             b_ = b_ < 32768.f ? igamcurve[b_] : (Color::gammanf(b_ / 32768.f, igam) * 65535.f);
 
                                             //readapt arbitrary gamma (inverse from beginning)
-                                            r_ = (*denoisegamtab)[r_];
-                                            g_ = (*denoisegamtab)[g_];
-                                            b_ = (*denoisegamtab)[b_];
+                                            r_ = Color::denoiseGammaTab[r_];
+                                            g_ = Color::denoiseGammaTab[g_];
+                                            b_ = Color::denoiseGammaTab[b_];
 
                                             if (numtiles == 1) {
                                                 dsttmp->r(i, j) = newGain * r_;
@@ -1650,9 +1610,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             float Z = Y - (labdn->b[i1][j1]);
 
 
-                                            X = X < 32768.0f ? igamcurve[X] : (Color::gamma(X / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-                                            Y = Y < 32768.0f ? igamcurve[Y] : (Color::gamma(Y / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-                                            Z = Z < 32768.0f ? igamcurve[Z] : (Color::gamma(Z / 32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+                                            X = X < 32768.f ? igamcurve[X] : (Color::gammaf(X / 32768.f, igam, igamthresh, igamslope) * 65535.f);
+                                            Y = Y < 32768.f ? igamcurve[Y] : (Color::gammaf(Y / 32768.f, igam, igamthresh, igamslope) * 65535.f);
+                                            Z = Z < 32768.f ? igamcurve[Z] : (Color::gammaf(Z / 32768.f, igam, igamthresh, igamslope) * 65535.f);
 
                                             if (numtiles == 1) {
                                                 dsttmp->r(i, j) = newGain * X;
@@ -1695,9 +1655,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         float r_, g_, b_;
                                         Color::xyz2rgb(X, Y, Z, r_, g_, b_, wip);
                                         //gamma slider is different from Raw
-                                        r_ = r_ < 32768.0f ? igamcurve[r_] : (Color::gamman(r_ / 32768.0f, igam) * 65535.0f);
-                                        g_ = g_ < 32768.0f ? igamcurve[g_] : (Color::gamman(g_ / 32768.0f, igam) * 65535.0f);
-                                        b_ = b_ < 32768.0f ? igamcurve[b_] : (Color::gamman(b_ / 32768.0f, igam) * 65535.0f);
+                                        r_ = r_ < 32768.f ? igamcurve[r_] : (Color::gammanf(r_ / 32768.f, igam) * 65535.f);
+                                        g_ = g_ < 32768.f ? igamcurve[g_] : (Color::gammanf(g_ / 32768.f, igam) * 65535.f);
+                                        b_ = b_ < 32768.f ? igamcurve[b_] : (Color::gammanf(b_ / 32768.f, igam) * 65535.f);
 
                                         if (numtiles == 1) {
                                             dsttmp->r(i, j) = newGain * r_;
@@ -2146,7 +2106,7 @@ float ImProcFunctions::MadMax(float * DataList, int & max, int datalen)
 
 float ImProcFunctions::Mad(float * DataList, const int datalen)
 {
-    if(datalen <= 0) { // Avoid possible buffer underrun
+    if(datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
@@ -2175,7 +2135,7 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
 
 float ImProcFunctions::MadRgb(float * DataList, const int datalen)
 {
-    if(datalen <= 0) { // Avoid possible buffer underrun
+    if(datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
@@ -2982,7 +2942,7 @@ void ImProcFunctions::WaveletDenoiseAll_info(int levwav, wavelet_decomposition &
     }
 }
 
-void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope)
+SSEFUNCTION void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope)
 {
     gam = dnparams.gamma;
     gamthresh = 0.001f;
@@ -2995,17 +2955,13 @@ void ImProcFunctions::RGB_denoise_infoGamCurve(const procparams::DirPyrDenoisePa
         }
     }
 
-    gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
     if (denoiseMethodRgb) {
-        for (int i = 0; i < 65536; ++i) {
-            gamcurve[i] = (Color::gamma(static_cast<double>(i) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
-        }
+        gamslope = exp(log(static_cast<double>(gamthresh)) / gam) / gamthresh;
+        Color::gammaf2lut(gamcurve, gam, gamthresh, gamslope, 65535.f, 32768.f);
     } else {
-        for (int i = 0; i < 65536; ++i) {
-            gamcurve[i] = (Color::gamman(static_cast<double>(i) / 65535.0, gam)) * 32768.0f;
-        }
+        Color::gammanf2lut(gamcurve, gam, 65535.f, 32768.f);
     }
 }
 
@@ -3256,24 +3212,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
     int nb = 0;
     int comptlevel = 0;
 
-    // To avoid branches in loops we access the gammatabs by pointers
-    LUTf *denoiseigamtab;
-
-    switch(settings->denoiselabgamma) {
-        case 0:
-            denoiseigamtab = &(Color::igammatab_26_11);
-            break;
-
-        case 1:
-            denoiseigamtab = &(Color::igammatab_4);
-            break;
-
-        default:
-            denoiseigamtab = &(Color::igammatab_55);
-            break;
-    }
-
-
     for (int tiletop = 0; tiletop < imheight; tiletop += tileHskip) {
         for (int tileleft = 0; tileleft < imwidth; tileleft += tileWskip) {
 
@@ -3419,14 +3357,14 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                             float G_ = gain * src->g(i, j);
                             float B_ = gain * src->b(i, j);
 
-                            R_ = (*denoiseigamtab)[R_];
-                            G_ = (*denoiseigamtab)[G_];
-                            B_ = (*denoiseigamtab)[B_];
+                            R_ = Color::denoiseIGammaTab[R_];
+                            G_ = Color::denoiseIGammaTab[G_];
+                            B_ = Color::denoiseIGammaTab[B_];
 
                             //apply gamma noise standard (slider)
-                            R_ = R_ < 65535.0f ? gamcurve[R_] : (Color::gamman(static_cast<double>(R_) / 65535.0, gam) * 32768.0f);
-                            G_ = G_ < 65535.0f ? gamcurve[G_] : (Color::gamman(static_cast<double>(G_) / 65535.0, gam) * 32768.0f);
-                            B_ = B_ < 65535.0f ? gamcurve[B_] : (Color::gamman(static_cast<double>(B_) / 65535.0, gam) * 32768.0f);
+                            R_ = R_ < 65535.f ? gamcurve[R_] : (Color::gammanf(R_ / 65535.f, gam) * 32768.f);
+                            G_ = G_ < 65535.f ? gamcurve[G_] : (Color::gammanf(G_ / 65535.f, gam) * 32768.f);
+                            B_ = B_ < 65535.f ? gamcurve[B_] : (Color::gammanf(B_ / 65535.f, gam) * 32768.f);
                             //true conversion xyz=>Lab
                             float X, Y, Z;
                             Color::rgbxyz(R_, G_, B_, X, Y, Z, wp);
@@ -3451,9 +3389,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                             float Y = gain * src->g(i, j);
                             float Z = gain * src->b(i, j);
 
-                            X = X < 65535.0f ? gamcurve[X] : (Color::gamma(static_cast<double>(X) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                            Y = Y < 65535.0f ? gamcurve[Y] : (Color::gamma(static_cast<double>(Y) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
-                            Z = Z < 65535.0f ? gamcurve[Z] : (Color::gamma(static_cast<double>(Z) / 65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 32768.0f);
+                            X = X < 65535.f ? gamcurve[X] : (Color::gammaf(X / 65535.f, gam, gamthresh, gamslope) * 32768.f);
+                            Y = Y < 65535.f ? gamcurve[Y] : (Color::gammaf(Y / 65535.f, gam, gamthresh, gamslope) * 32768.f);
+                            Z = Z < 65535.f ? gamcurve[Z] : (Color::gammaf(Z / 65535.f, gam, gamthresh, gamslope) * 32768.f);
 
                             labdn->a[i1][j1] = (X - Y);
                             labdn->b[i1][j1] = (Y - Z);
@@ -3480,9 +3418,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                         float btmp = Color::igammatab_srgb[ src->b(i, j) ];
                         //modification Jacques feb 2013
                         // gamma slider different from raw
-                        rtmp = rtmp < 65535.0f ? gamcurve[rtmp] : (Color::gamman(static_cast<double>(rtmp) / 65535.0, gam) * 32768.0f);
-                        gtmp = gtmp < 65535.0f ? gamcurve[gtmp] : (Color::gamman(static_cast<double>(gtmp) / 65535.0, gam) * 32768.0f);
-                        btmp = btmp < 65535.0f ? gamcurve[btmp] : (Color::gamman(static_cast<double>(btmp) / 65535.0, gam) * 32768.0f);
+                        rtmp = rtmp < 65535.f ? gamcurve[rtmp] : (Color::gammanf(rtmp / 65535.f, gam) * 32768.f);
+                        gtmp = gtmp < 65535.f ? gamcurve[gtmp] : (Color::gammanf(gtmp / 65535.f, gam) * 32768.f);
+                        btmp = btmp < 65535.f ? gamcurve[btmp] : (Color::gammanf(btmp / 65535.f, gam) * 32768.f);
 
                         float X, Y, Z;
                         Color::rgbxyz(rtmp, gtmp, btmp, X, Y, Z, wp);
