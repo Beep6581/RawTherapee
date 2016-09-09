@@ -24,6 +24,8 @@
 #include "sleef.c"
 #include "opthelper.h"
 
+#define pow_F(a,b) (xexpf(b*xlogf(a)))
+
 using namespace std;
 
 namespace rtengine
@@ -857,6 +859,14 @@ void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, co
     b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
 }
 
+void Color::xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]) // for black & white we need only r channel
+{
+    //Transform to output color.  Standard sRGB is D65, but internal representation is D50
+    //Note that it is only at this point that we should have need of clipping color data
+
+    r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
+}
+
 // same for float
 void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
 {
@@ -874,19 +884,65 @@ void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat 
 }
 #endif // __SSE2__
 
+#ifdef __SSE2__
 void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
-    // correct gamma for black and white image : pseudo TRC curve of ICC profil
-    b /= 65535.0f;
-    b = pow (max(b, 0.0f), gammabwb);
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
+    vfloat rgbv = _mm_set_ps(0.f, r, r, r); // input channel is always r
+    vfloat gammabwv = _mm_set_ps(0.f, gammabwb, gammabwg, gammabwr);
+    vfloat c65535v = F2V(65535.f);
+    rgbv /= c65535v;
+    rgbv = vmaxf(rgbv, ZEROV);
+    rgbv = pow_F(rgbv, gammabwv);
+    rgbv *= c65535v;
+    float temp[4] ALIGNED16;
+    STVF(temp[0], rgbv);
+    r = temp[0];
+    g = temp[1];
+    b = temp[2];
+}
+void Color::trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
+{
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
+    vfloat c65535v = F2V(65535.f);
+    vfloat gammabwrv = F2V(gammabwr);
+    vfloat gammabwgv = F2V(gammabwg);
+    vfloat gammabwbv = F2V(gammabwb);
+    int i = 0;
+    for(; i < width - 3; i += 4 ) {
+        vfloat inv = _mm_loadu_ps(&r[i]); // input channel is always r
+        inv /= c65535v;
+        inv = vmaxf(inv, ZEROV);
+        vfloat rv = pow_F(inv, gammabwrv);
+        vfloat gv = pow_F(inv, gammabwgv);
+        vfloat bv = pow_F(inv, gammabwbv);
+        rv *= c65535v;
+        gv *= c65535v;
+        bv *= c65535v;
+        _mm_storeu_ps(&r[i], rv);
+        _mm_storeu_ps(&g[i], gv);
+        _mm_storeu_ps(&b[i], bv);
+    }
+    for(; i < width; i++) {
+        trcGammaBW(r[i], g[i], b[i], gammabwr, gammabwg, gammabwb);
+    }
+}
+
+#else
+void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
+{
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
+    float in = r; // input channel is always r
+    in /= 65535.0f;
+    in = max(in, 0.f);
+    b = pow_F (in, gammabwb);
     b *= 65535.0f;
-    r /= 65535.0f;
-    r = pow (max(r, 0.0f), gammabwr);
+    r = pow_F (in, gammabwr);
     r *= 65535.0f;
-    g /= 65535.0f;
-    g = pow (max(g, 0.0f), gammabwg);
+    g = pow_F (in, gammabwg);
     g *= 65535.0f;
 }
+#endif
 
 /** @brief Compute the B&W constants for the B&W processing and its tool's GUI
  *
@@ -1491,6 +1547,17 @@ void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
     z = 65535.0f * f2xyz(fz) * D50z;
     y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
 }
+
+void Color::L2XYZ(float L, float &x, float &y, float &z) // for black & white
+{
+    float LL = L / 327.68f;
+    float fy = (0.00862069f * LL) + 0.137932f; // (L+16)/116
+    float fxz = 65535.f * f2xyz(fy);
+    x = fxz * D50x;
+    z = fxz * D50z;
+    y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
+}
+
 
 #ifdef __SSE2__
 void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z)
