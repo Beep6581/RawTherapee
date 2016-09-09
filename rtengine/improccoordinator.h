@@ -326,12 +326,13 @@ public:
         return imgsrc;
     }
 
-    struct {
+    struct DenoiseInfoStore {
+        DenoiseInfoStore () : valid(false) {}
         float chM;
         float max_r[9];
         float max_b[9];
         float ch_M[9];
-        bool valid = false;
+        bool valid;
 
     } denoiseInfoStore;
 

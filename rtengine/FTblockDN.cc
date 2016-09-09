@@ -2106,7 +2106,7 @@ float ImProcFunctions::MadMax(float * DataList, int & max, int datalen)
 
 float ImProcFunctions::Mad(float * DataList, const int datalen)
 {
-    if(datalen <= 0) { // Avoid possible buffer underrun
+    if(datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
@@ -2135,7 +2135,7 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
 
 float ImProcFunctions::MadRgb(float * DataList, const int datalen)
 {
-    if(datalen <= 0) { // Avoid possible buffer underrun
+    if(datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
