@@ -887,7 +887,7 @@ void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat 
 #ifdef __SSE2__
 void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
-    // correct gamma for black and white image : pseudo TRC curve of ICC profil
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
     vfloat rgbv = _mm_set_ps(0.f, r, r, r); // input channel is always r
     vfloat gammabwv = _mm_set_ps(0.f, gammabwb, gammabwg, gammabwr);
     vfloat c65535v = F2V(65535.f);
@@ -903,7 +903,7 @@ void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gamm
 }
 void Color::trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
 {
-    // correct gamma for black and white image : pseudo TRC curve of ICC profil
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
     vfloat c65535v = F2V(65535.f);
     vfloat gammabwrv = F2V(gammabwr);
     vfloat gammabwgv = F2V(gammabwg);
@@ -931,7 +931,7 @@ void Color::trcGammaBWRow (float *r, float *g, float *b, int width, float gammab
 #else
 void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
-    // correct gamma for black and white image : pseudo TRC curve of ICC profil
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
     float in = r; // input channel is always r
     in /= 65535.0f;
     in = max(in, 0.f);

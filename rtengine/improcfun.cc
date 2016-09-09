@@ -40,7 +40,7 @@
 #include "improccoordinator.h"
 #include "clutstore.h"
 #include "ciecam02.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/guiutils.h"
@@ -4132,7 +4132,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 #endif
 
                         }
-                    } else if (algm == 1) { //Luminance mixer in Lab mode to avoid artifacts
+                    } else if (algm == 1) { //Luminance mixer in Lab mode to avoid artefacts
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 //rgb => xyz
