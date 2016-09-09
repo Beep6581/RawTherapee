@@ -1,3 +1,13 @@
+////////////////////////////////////////////////////////////////
+//
+//  this code was taken from http://shibatch.sourceforge.net/
+//  Many thanks to the author of original version: Naoki Shibata
+//
+//  This version contains modifications made by Ingo Weyrich
+//
+////////////////////////////////////////////////////////////////
+
+
 #ifndef SLEEFSSEAVX
 #define SLEEFSSEAVX
 
