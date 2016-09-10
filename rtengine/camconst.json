@@ -500,6 +500,36 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 		}
     },
 
+    { // Quality C, Color Matrix same as 80D (color model 13)
+	  //			White Levels not properly indicated (look same as 80D's so copied from there), aperture scaling missing, scaling factors are guessed
+        "make_model": "Canon EOS 5D Mark IV",
+        "dcraw_matrix": [ 7457,-671,-937,-4849,12495,2643,-1213,2354,5492 ], // 80D, DNG_V9.5 D65
+        "raw_crop": [ 136, 42, 6740, 4500 ], // full size 6880x4544, official crop 148,54,6867,4533
+        "masked_areas": [ 54, 4, 4534, 132 ],
+        "ranges": {
+               "white": [
+                { "iso": [ 100, 125, 200, 250 ], "levels": 16200 }, // nominal 16383, LENR blue 16243
+                { "iso": [ 160 ], "levels": 13000 }, // nominal 13097,
+                { "iso": [ 320, 640, 1250, 2500, 5000, 10000 ], "levels": 13200 }, // G1,G2 13415
+                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000 ], "levels": 16150 }, // nominal 16383, LENR ISO3200 16150
+                { "iso": [ 6400, 8000, 12800, 16000, 25600 ], "levels": 16000 } // R,G1,G2 16383, B 16243, LENR B 16000
+                        ],
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: need for more data to properly fill all scale factors */
+		{ "aperture": 1.4, "scale_factor": 1.200 }, // guessed
+		{ "aperture": 1.6, "scale_factor": 1.080 }, // guessed
+		{ "aperture": 1.8, "scale_factor": 1.055 }, // guessed
+		{ "aperture": 2.0, "scale_factor": 1.030 }, // guessed
+		{ "aperture": 2.2, "scale_factor": 1.025 }, // guessed
+		{ "aperture": 2.5, "scale_factor": 1.020 }, // guessed
+		{ "aperture": 2.8, "scale_factor": 1.000 }, //
+		{ "aperture": 3.2, "scale_factor": 1.000 }, //
+		{ "aperture": 3.5, "scale_factor": 1.000 } //
+                                ]
+                  }
+    },
+
     { // Quality C, intermediate ISO samples missing but safely guessed, aperture scaling measures missing
         "make_model": [ "Canon EOS 5DS R", "Canon EOS 5DS" ],
       // "dcraw_matrix": [ 6848,-1661,-221,-3904,10931,3434,-470,1251,6039 ], // DNG_V9.0 A
