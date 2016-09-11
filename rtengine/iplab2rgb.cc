@@ -305,8 +305,10 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
     cmsHPROFILE oprof = NULL;
     if (ga) {
+        lcmsMutex->lock ();
         iccStore->getGammaArray(icm, *ga);
         oprof = iccStore->createGammaProfile(icm, *ga);
+        lcmsMutex->unlock ();
         printf("iccStore->createGammaProfile(icm, *ga);\n");
     } else {
         oprof = iccStore->getProfile (icm.output);

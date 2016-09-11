@@ -434,6 +434,7 @@ void ICCStore::getGammaArray(const procparams::ColorManagementParams &icm, Gamma
     }
 }
 
+// WARNING: the caller must lock lcmsMutex
 cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParams &icm, GammaValues &ga) {
     float p[6]; //primaries
     ga[6] = 0.0;
@@ -519,16 +520,17 @@ cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParam
     // 7 parameters for smoother curves
     cmsFloat64Number Parameters[7] = { ga[0],  ga[1], ga[2], ga[3], ga[4], ga[5], ga[6] } ;
 
-    lcmsMutex->lock ();
+    //lcmsMutex->lock ();  Mutex acquired by the caller
     cmsWhitePointFromTemp(&xyD, (double)temp);
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
     cmsFreeToneCurve(GammaTRC[0]);
-    lcmsMutex->unlock ();
+    //lcmsMutex->unlock ();
 
     return oprofdef;
 }
 
+// WARNING: the caller must lock lcmsMutex
 cmsHPROFILE ICCStore::createCustomGammaOutputProfile (const procparams::ColorManagementParams &icm, GammaValues &ga) {
     bool pro = false;
     Glib::ustring outProfile;
