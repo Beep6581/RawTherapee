@@ -1844,8 +1844,6 @@ const TagAttrib canonShotInfoAttribs[] = {
     {0, AC_WRITE, 0, 0, 16, AUTO, "AutoExposureBracketing", &caAutoExposureBracketingInterpreter},
     {0, AC_WRITE, 0, 0, 17, AUTO, "AEBBracketValue", &stdInterpreter},
     {0, AC_WRITE, 0, 0, 18, AUTO, "ControlMode", &caControModeInterpreter},
-    {0, AC_WRITE, 0, 0, 19, AUTO, "FocusDistanceUpper", &caFocusDistanceInterpreter},
-    {0, AC_WRITE, 0, 0, 20, AUTO, "FocusDistanceLower", &caFocusDistanceInterpreter},
     {0, AC_WRITE, 0, 0, 21, AUTO, "FNumber" , &caApertureInterpreter},
     {0, AC_WRITE, 0, 0, 22, AUTO, "ExposureTime", &caExposureTimeInterpreter},
     {0, AC_WRITE, 0, 0, 24, AUTO, "BulbDuration", &stdInterpreter},
@@ -1872,6 +1870,8 @@ const TagAttrib canonFileInfoAttribs[] = {
     {0, AC_WRITE, 0, 0, 14, AUTO, "FilterEffect" , &caFilterEffectInterpreter},
     {0, AC_WRITE, 0, 0, 15, AUTO, "ToningEffect" , &caToningEffectInterpreter},
     {0, AC_WRITE, 0, 0, 19, AUTO, "LiveViewShooting" , &caOnOffInterpreter},
+    {0, AC_WRITE, 0, 0, 20, AUTO, "FocusDistanceUpper", &caFocusDistanceInterpreter},
+    {0, AC_WRITE, 0, 0, 21, AUTO, "FocusDistanceLower", &caFocusDistanceInterpreter},
     {0, AC_WRITE, 0, 0, 25, AUTO, "FlashExposureLock" , &caOnOffInterpreter},
     { -1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL},
 };
