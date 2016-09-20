@@ -26,6 +26,19 @@
 #include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
+#define BENCHMARK
+#include "StopWatch.h"
+
+namespace
+{
+
+int float2intx(float d)
+{
+    d += 12582912.f;
+    return reinterpret_cast<int&>(d);
+}
+}
+
 
 namespace rtengine
 {
@@ -241,8 +254,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 // for default (not gamma)
 Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, RenderingIntent intent, bool bw)
 {
-
-    //gamutmap(lab);
+    BENCHFUN
 
     if (cx < 0) {
         cx = 0;
@@ -279,7 +291,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
             for (int j = cx; j < cx + cw; j++) {
 
                 float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
-                float fx = (0.002 * ra[j]) / 327.68f + fy;
+                float fx = (0.002f * ra[j]) / 327.68f + fy;
                 float fz = fy - (0.005f * rb[j]) / 327.68f;
                 float LL = rL[j] / 327.68f;
 
@@ -288,15 +300,14 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
                 float z_ = 65535.0f * (float) Color::f2xyz(fz) * Color::D50z;
                 float y_ = (LL > Color::epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / Color::kappa;
 
-                xa[j - cx] =  CLIP((int)  round(x_));
-                ya[j - cx] =  CLIP((int)  round(y_));
-                za[j - cx] = CLIP((int)   round(z_));
+                xa[j - cx] = float2uint16range(x_);
+                ya[j - cx] = float2uint16range(y_);
+                za[j - cx] = float2uint16range(z_);
 
                 if(bw && y_ < 65535.f ) { //force Bw value and take highlight into account
-                    xa[j - cx] = (int) round(y_ * Color::D50x );
-                    za[j - cx] = (int) round(y_ * Color::D50z);
+                    xa[j - cx] = float2uint16range(y_ * Color::D50x);
+                    za[j - cx] = float2uint16range(y_ * Color::D50z);
                 }
-
             }
         }
 
@@ -345,7 +356,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 // for gamma options (BT709...sRGB linear...)
 Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, RenderingIntent intent, Glib::ustring profi, Glib::ustring gam,  bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6, bool bw)
 {
-
+BENCHFUN
     //gamutmap(lab);
 
     if (cx < 0) {
@@ -539,7 +550,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 // 7 parameters for smoother curves
     cmsWhitePointFromTemp(&xyD, t50);
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, 5, Parameters);//5 = more smoother than 4
-    cmsHPROFILE oprofdef = cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
+    cmsHPROFILE oprofdef = cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC); //oprofdef  becomes Outputprofile
 
     cmsFreeToneCurve(GammaTRC[0]);
 
@@ -567,13 +578,13 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
                 float z_ = 65535.0f * (float)Color::f2xyz(fz) * Color::D50z;
                 float y_ = (LL > Color::epskap) ? (float) 65535.0 * fy * fy * fy : 65535.0f * LL / Color::kappa;
 
-                xa[j - cx] = CLIP((int) round(x_)) ;
-                ya[j - cx] = CLIP((int) round(y_));
-                za[j - cx] = CLIP((int) round(z_));
+                xa[j - cx] = float2uint16range(x_);
+                ya[j - cx] = float2uint16range(y_);
+                za[j - cx] = float2uint16range(z_);
 
                 if(bw && y_ < 65535.f) { //force Bw value and take highlight into account
-                    xa[j - cx] = (int) round(y_ * Color::D50x);
-                    za[j - cx] = (int) round(y_ * Color::D50z);
+                    xa[j - cx] = float2uint16range(y_ * Color::D50x);
+                    za[j - cx] = float2uint16range(y_ * Color::D50z);
                 }
 
             }
@@ -581,7 +592,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, intent,  cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, intent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
 
         image->ExecCMSTransform(hTransform);
