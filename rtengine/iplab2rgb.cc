@@ -29,17 +29,6 @@
 #define BENCHMARK
 #include "StopWatch.h"
 
-namespace
-{
-
-int float2intx(float d)
-{
-    d += 12582912.f;
-    return reinterpret_cast<int&>(d);
-}
-}
-
-
 namespace rtengine
 {
 
