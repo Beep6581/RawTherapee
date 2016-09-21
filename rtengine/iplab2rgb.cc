@@ -272,16 +272,8 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
             short* za = (short*)image->b(i - cy);
 
             for (int j = cx; j < cx + cw; j++) {
-
-                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
-                float fx = (0.002f * ra[j]) / 327.68f + fy;
-                float fz = fy - (0.005f * rb[j]) / 327.68f;
-                float LL = rL[j] / 327.68f;
-
-                float x_ = 65535.0f * (float) Color::f2xyz(fx) * Color::D50x;
-                //float y_ = 65535.0 * Color::f2xyz(fy);
-                float z_ = 65535.0f * (float) Color::f2xyz(fz) * Color::D50z;
-                float y_ = (LL > Color::epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / Color::kappa;
+                float x_, y_, z_;
+                Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
 
                 xa[j - cx] = float2uint16range(x_);
                 ya[j - cx] = float2uint16range(y_);
@@ -549,16 +541,8 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
             short* za = (short*)image->b(i - cy);
 
             for (int j = cx; j < cx + cw; j++) {
-
-                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
-                float fx = (0.002f * ra[j]) / 327.68f + fy;
-                float fz = fy - (0.005f * rb[j]) / 327.68f;
-                float LL = rL[j] / 327.68f;
-
-                float x_ = 65535.0f * (float)Color::f2xyz(fx) * Color::D50x;
-                //  float y_ = 65535.0 * Color::f2xyz(fy);
-                float z_ = 65535.0f * (float)Color::f2xyz(fz) * Color::D50z;
-                float y_ = (LL > Color::epskap) ? (float) 65535.0 * fy * fy * fy : 65535.0f * LL / Color::kappa;
+                float x_, y_, z_;
+                Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
 
                 xa[j - cx] = float2uint16range(x_);
                 ya[j - cx] = float2uint16range(y_);
