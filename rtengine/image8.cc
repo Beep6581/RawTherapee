@@ -74,7 +74,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minVal
         unsigned short* sbuffer = (unsigned short*) buffer;
 
         for (int i = 0, ix = row * width * 3; i < width * 3; ++i, ++ix) {
-            data[ix] = sbuffer[i] / 257;
+            data[ix] = (sbuffer[i] + 128) / 257;
         }
 
         break;

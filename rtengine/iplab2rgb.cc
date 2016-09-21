@@ -117,9 +117,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 
                 /* copy RGB */
                 //int R1=((int)gamma2curve[(R)])
-                data[ix++] = ((int)Color::gamma2curve[R]) >> 8;
-                data[ix++] = ((int)Color::gamma2curve[G]) >> 8;
-                data[ix++] = ((int)Color::gamma2curve[B]) >> 8;
+                data[ix++] = (static_cast<int>(Color::gamma2curve[R]) + 128) / 257;
+                data[ix++] = (static_cast<int>(Color::gamma2curve[G]) + 128) / 257;
+                data[ix++] = (static_cast<int>(Color::gamma2curve[B]) + 128) / 257;
             }
         }
     }
@@ -229,9 +229,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
                 Color::xyz2rgb(x_, y_, z_, R, G, B, xyz_rgb);
 
-                image->data[ix++] = (int)Color::gamma2curve[R] >> 8;
-                image->data[ix++] = (int)Color::gamma2curve[G] >> 8;
-                image->data[ix++] = (int)Color::gamma2curve[B] >> 8;
+                image->data[ix++] = (static_cast<int>(Color::gamma2curve[R]) + 128) / 257;
+                image->data[ix++] = (static_cast<int>(Color::gamma2curve[G]) + 128) / 257;
+                image->data[ix++] = (static_cast<int>(Color::gamma2curve[B]) + 128) / 257;
             }
         }
     }

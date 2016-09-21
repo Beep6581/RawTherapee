@@ -103,27 +103,27 @@ public:
 template<>
 inline void ImageDatas::convertTo(unsigned short src, unsigned char& dst) const
 {
-    dst = src / 257;
+    dst = (src + 128) / 257;
 }
 template<>
 inline void ImageDatas::convertTo(unsigned char src, int& dst) const
 {
-    dst = static_cast<int>(src) * 257;
+    dst = src * 257;
 }
 template<>
 inline void ImageDatas::convertTo(unsigned char src, unsigned short& dst) const
 {
-    dst = static_cast<unsigned short>(src) * 257;
+    dst = src * 257;
 }
 template<>
 inline void ImageDatas::convertTo(float src, unsigned char& dst) const
 {
-    dst = static_cast<unsigned short>(src) / 257;
+    dst = (static_cast<int>(src) + 128) / 257;
 }
 template<>
 inline void ImageDatas::convertTo(unsigned char src, float& dst) const
 {
-    dst = static_cast<unsigned short>(src) * 257;
+    dst = src * 257;
 }
 
 // --------------------------------------------------------------------

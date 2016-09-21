@@ -28,9 +28,9 @@ namespace
 void getScanline8 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned char* buffer)
 {
     for (int i = 0, ix = 0; i < width; i++) {
-        buffer[ix++] = red[i] / 257;
-        buffer[ix++] = green[i] / 257;
-        buffer[ix++] = blue[i] / 257;
+        buffer[ix++] = (red[i] + 128) / 257;
+        buffer[ix++] = (green[i] + 128) / 257;
+        buffer[ix++] = (blue[i] + 128) / 257;
     }
 }
 
@@ -300,9 +300,9 @@ Image16::to8()
 
     for (int h = 0; h < height; ++h) {
         for (int w = 0; w < width; ++w) {
-            img8->r(h, w) = r(h, w) / 257;
-            img8->g(h, w) = g(h, w) / 257;
-            img8->b(h, w) = b(h, w) / 257;
+            img8->r(h, w) = (r(h, w) + 128) / 257;
+            img8->g(h, w) = (g(h, w) + 128) / 257;
+            img8->b(h, w) = (b(h, w) + 128) / 257;
         }
     }
 
