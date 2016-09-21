@@ -104,12 +104,7 @@ inline T norminf(const T& x, const T& y)
 inline int float2uint16range(float d) // clips input to [0;65535] and rounds
 {
     d = CLIP(d); // clip to [0;65535]
-#ifdef __SSE2__ // this only works in IEEE 754 maths. For simplicity I restricted it to SSE2. We can enhance it later, but we have to take care of endianness then.
-    d += 12582912.f;
-    return reinterpret_cast<int&>(d);
-#else // fall back to slow std::round()
-    return std::round(d);
-#endif
+    return d + 0.5f;
 }
 
 }

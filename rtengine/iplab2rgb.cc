@@ -26,8 +26,6 @@
 #include "curves.h"
 #include "alignedbuffer.h"
 #include "color.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 namespace rtengine
 {
@@ -79,9 +77,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
                     cmsDoTransform (monitorTransform, buffer, data + ix, W);
                 }
             }
-
         } // End of parallelization
-
     } else {
 
         int W = lab->W;
@@ -129,7 +125,6 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 
 Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, RenderingIntent intent, bool standard_gamma)
 {
-    //gamutmap(lab);
 
     if (cx < 0) {
         cx = 0;
@@ -243,7 +238,6 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 // for default (not gamma)
 Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, RenderingIntent intent, bool bw)
 {
-    BENCHFUN
 
     if (cx < 0) {
         cx = 0;
@@ -264,10 +258,10 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
     Image16* image = new Image16 (cw, ch);
     cmsHPROFILE oprof = iccStore->getProfile (profile);
 
-
-
     if (oprof) {
+#ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
+#endif
 
         for (int i = cy; i < cy + ch; i++) {
             float* rL = lab->L[i];
@@ -309,7 +303,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
         cmsDeleteTransform(hTransform);
     } else {
+#ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
+#endif
 
         for (int i = cy; i < cy + ch; i++) {
             float R, G, B;
@@ -345,8 +341,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 // for gamma options (BT709...sRGB linear...)
 Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, RenderingIntent intent, Glib::ustring profi, Glib::ustring gam,  bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6, bool bw)
 {
-BENCHFUN
-    //gamutmap(lab);
 
     if (cx < 0) {
         cx = 0;
@@ -506,13 +500,11 @@ BENCHFUN
 
         Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
         ga4 = g_a3 * ts;
-        //printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         ga0 = gampos;
         ga1 = 1. / (1.0 + g_a4);
         ga2 = g_a4 / (1.0 + g_a4);
         ga3 = 1. / slpos;
         ga5 = 0.0;
-        //printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0,ga1,ga2,ga3,ga4);
 
     }
 
@@ -543,9 +535,10 @@ BENCHFUN
 
     cmsFreeToneCurve(GammaTRC[0]);
 
-
     if (oprofdef) {
+#ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
+#endif
 
         for (int i = cy; i < cy + ch; i++) {
             float* rL = lab->L[i];
@@ -575,7 +568,6 @@ BENCHFUN
                     xa[j - cx] = float2uint16range(y_ * Color::D50x);
                     za[j - cx] = float2uint16range(y_ * Color::D50z);
                 }
-
             }
         }
 
@@ -587,8 +579,10 @@ BENCHFUN
         image->ExecCMSTransform(hTransform);
         cmsDeleteTransform(hTransform);
     } else {
-        //
+#ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
+#endif
+
         for (int i = cy; i < cy + ch; i++) {
             float R, G, B;
             float* rL = lab->L[i];
@@ -618,7 +612,5 @@ BENCHFUN
 
     return image;
 }
-
-//#include "sRGBgamutbdy.cc"
 
 }
