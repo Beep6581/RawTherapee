@@ -107,9 +107,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 
                 /* copy RGB */
                 //int R1=((int)gamma2curve[(R)])
-                data[ix++] = (static_cast<int>(Color::gamma2curve[R]) + 128) / 257;
-                data[ix++] = (static_cast<int>(Color::gamma2curve[G]) + 128) / 257;
-                data[ix++] = (static_cast<int>(Color::gamma2curve[B]) + 128) / 257;
+                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
+                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
+                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
             }
         }
     }
@@ -218,9 +218,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
                 Color::xyz2rgb(x_, y_, z_, R, G, B, xyz_rgb);
 
-                image->data[ix++] = (static_cast<int>(Color::gamma2curve[R]) + 128) / 257;
-                image->data[ix++] = (static_cast<int>(Color::gamma2curve[G]) + 128) / 257;
-                image->data[ix++] = (static_cast<int>(Color::gamma2curve[B]) + 128) / 257;
+                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
+                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
+                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
             }
         }
     }

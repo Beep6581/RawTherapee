@@ -103,7 +103,7 @@ public:
 template<>
 inline void ImageDatas::convertTo(unsigned short src, unsigned char& dst) const
 {
-    dst = (src + 128) / 257;
+    dst = uint16ToUint8Rounded(src);
 }
 template<>
 inline void ImageDatas::convertTo(unsigned char src, int& dst) const
@@ -118,7 +118,7 @@ inline void ImageDatas::convertTo(unsigned char src, unsigned short& dst) const
 template<>
 inline void ImageDatas::convertTo(float src, unsigned char& dst) const
 {
-    dst = (static_cast<int>(src) + 128) / 257;
+    dst = uint16ToUint8Rounded(src);
 }
 template<>
 inline void ImageDatas::convertTo(unsigned char src, float& dst) const

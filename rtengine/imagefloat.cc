@@ -335,9 +335,9 @@ Imagefloat::to8()
 
     for (int h = 0; h < height; ++h) {
         for (int w = 0; w < width; ++w) {
-            img8->r(h, w) = (static_cast<unsigned int>(r(h, w)) + 128) / 257;
-            img8->g(h, w) = (static_cast<unsigned int>(g(h, w)) + 128) / 257;
-            img8->b(h, w) = (static_cast<unsigned int>(b(h, w)) + 128) / 257;
+            img8->r(h, w) = uint16ToUint8Rounded(r(h, w));
+            img8->g(h, w) = uint16ToUint8Rounded(g(h, w));
+            img8->b(h, w) = uint16ToUint8Rounded(b(h, w));
         }
     }
 
