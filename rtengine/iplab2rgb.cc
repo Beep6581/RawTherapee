@@ -101,15 +101,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 
                 //float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
 
-                fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
-                fx = (0.002 * ra[j]) / 327.68 + fy;
-                fz = fy - (0.005 * rb[j]) / 327.68;
-                LL = rL[j] / 327.68;
-
-                x_ = 65535.0 * Color::f2xyz(fx) * Color::D50x;
-                //  y_ = 65535.0 * Color::f2xyz(fy);
-                z_ = 65535.0 * Color::f2xyz(fz) * Color::D50z;
-                y_ = (LL > Color::epskap) ? 65535.0 * fy * fy * fy : 65535.0 * LL / Color::kappa;
+                Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_ );
 
                 Color::xyz2srgb(x_, y_, z_, R, G, B);
 
