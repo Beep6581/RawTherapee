@@ -1553,11 +1553,11 @@ void Tag::toString (char* buffer, int ofs)
             break;
 
         case SLONG:
-            sprintf (b, "%ld", (long)toInt(4 * i + ofs));
+            sprintf (b, "%d", toInt(4 * i + ofs));
             break;
 
         case LONG:
-            sprintf (b, "%lu", (unsigned long)toInt(4 * i + ofs));
+            sprintf (b, "%u", toInt(4 * i + ofs));
             break;
 
         case SRATIONAL:
