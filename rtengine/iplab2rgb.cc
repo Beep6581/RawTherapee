@@ -88,16 +88,16 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-        for (int i = 0; i < H; i++) {
+        for (int i = 0; i < H; ++i) {
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
             int ix = i * 3 * W;
 
             float R, G, B;
-            float fy, fx, fz, x_, y_, z_, LL;
+            float x_, y_, z_;
 
-            for (int j = 0; j < W; j++) {
+            for (int j = 0; j < W; ++j) {
 
                 //float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
 
@@ -197,24 +197,17 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-        for (int i = cy; i < cy + ch; i++) {
-            float R, G, B;
+        for (int i = cy; i < cy + ch; ++i) {
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
             int ix = 3 * i * cw;
 
-            for (int j = cx; j < cx + cw; j++) {
+            float R, G, B;
+            float x_, y_, z_;
 
-                float fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
-                float fx = (0.002 * ra[j]) / 327.68 + fy;
-                float fz = fy - (0.005 * rb[j]) / 327.68;
-                float LL = rL[j] / 327.68;
-
-                float x_ = 65535.0 * Color::f2xyz(fx) * Color::D50x;
-                //float y_ = 65535.0 * Color::f2xyz(fy);
-                float z_ = 65535.0 * Color::f2xyz(fz) * Color::D50z;
-                float y_ = (LL > Color::epskap) ? 65535.0 * fy * fy * fy : 65535.0 * LL / Color::kappa;
+            for (int j = cx; j < cx + cw; ++j) {
+                Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
 
                 Color::xyz2rgb(x_, y_, z_, R, G, B, xyz_rgb);
 
