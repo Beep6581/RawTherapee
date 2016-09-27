@@ -658,7 +658,7 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !HISTORY_MSG_146;Edge sharpening
 !HISTORY_MSG_147;ES - Luminance only
 !HISTORY_MSG_148;Microcontrast
-!HISTORY_MSG_149;Microcontrast - 3x3 matrix
+!HISTORY_MSG_149;Microcontrast - 3×3 matrix
 !HISTORY_MSG_150;Post-demosaic artifact/noise red.
 !HISTORY_MSG_151;Vibrance
 !HISTORY_MSG_152;Vib - Pastel tones
@@ -1428,11 +1428,11 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3x3 soft
+!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
 !TP_DIRPYRDENOISE_5X5;5×5
 !TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
 !TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9x9
+!TP_DIRPYRDENOISE_9X9;9×9
 !TP_DIRPYRDENOISE_ABM;Chroma only
 !TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_AUTO;Automatic global
@@ -1475,12 +1475,12 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 3x3 pixel window.\n3x3: treats 9 pixels in a 3x3 pixel window.\n5x5 soft: treats 13 pixels in a 5x5 pixel window.\n5x5: treats 25 pixels in a 5x5 pixel window.\n7x7: treats 49 pixels in a 7x7 pixel window.\n9x9: treats 81 pixels in a 9x9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
 !TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3x3 window size often leads to better results than using one median filter iteration with a 7x7 window size.
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_PON;Auto multi-zones
 !TP_DIRPYRDENOISE_PRE;Preview multi-zones
 !TP_DIRPYRDENOISE_PREV;Preview

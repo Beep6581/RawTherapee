@@ -391,7 +391,7 @@ HISTORY_MSG_145;Microcontrast - Uniformiteit
 HISTORY_MSG_146;Randen verscherpen
 HISTORY_MSG_147;RV - Luminantie
 HISTORY_MSG_148;Microcontrast
-HISTORY_MSG_149;Microcontrast - 3x3 matrix
+HISTORY_MSG_149;Microcontrast - 3×3 matrix
 HISTORY_MSG_150;Nabewerking demozaïek
 HISTORY_MSG_151;Levendigheid
 HISTORY_MSG_152;LV - Pasteltinten
@@ -2034,13 +2034,13 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_442;Retinex - Scale
 !TP_BWMIX_AUTOCH;Auto
 !TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3x3 soft
+!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
 !TP_DIRPYRDENOISE_5X5;5×5
 !TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
 !TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9x9
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 3x3 pixel window.\n3x3: treats 9 pixels in a 3x3 pixel window.\n5x5 soft: treats 13 pixels in a 5x5 pixel window.\n5x5: treats 25 pixels in a 5x5 pixel window.\n7x7: treats 49 pixels in a 7x7 pixel window.\n9x9: treats 81 pixels in a 9x9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3x3 window size often leads to better results than using one median filter iteration with a 7x7 window size.
+!TP_DIRPYRDENOISE_9X9;9×9
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.

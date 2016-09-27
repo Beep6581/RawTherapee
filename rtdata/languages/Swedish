@@ -374,7 +374,7 @@ HISTORY_MSG_145;Mikrokontrast - Enhetlighet
 HISTORY_MSG_146;Kantskärpning
 HISTORY_MSG_147;Kantskärpning - Endast luminans
 HISTORY_MSG_148;Mikrokontrast
-HISTORY_MSG_149;Mikrokontrast - 3x3-matris
+HISTORY_MSG_149;Mikrokontrast - 3×3-matris
 HISTORY_MSG_150;Reducering av artefakter och brus e. demosaicing
 HISTORY_MSG_151;Lyster
 HISTORY_MSG_152;Lyster - Pastelltoner
@@ -1825,11 +1825,11 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_COLORTONING_TWOBY;Special a* and b*
 !TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 !TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3x3 soft
+!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
 !TP_DIRPYRDENOISE_5X5;5×5
 !TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
 !TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9x9
+!TP_DIRPYRDENOISE_9X9;9×9
 !TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_AUTO;Automatic global
 !TP_DIRPYRDENOISE_C2TYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
@@ -1846,12 +1846,12 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 3x3 pixel window.\n3x3: treats 9 pixels in a 3x3 pixel window.\n5x5 soft: treats 13 pixels in a 5x5 pixel window.\n5x5: treats 25 pixels in a 5x5 pixel window.\n7x7: treats 49 pixels in a 7x7 pixel window.\n9x9: treats 81 pixels in a 9x9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
 !TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3x3 window size often leads to better results than using one median filter iteration with a 7x7 window size.
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_PON;Auto multi-zones
 !TP_DIRPYRDENOISE_PRE;Preview multi-zones
 !TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Center: Px=%2  Py=%3
