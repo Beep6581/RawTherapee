@@ -58,10 +58,10 @@ enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 class ImageDatas : virtual public ImageDimensions
 {
 public:
-    template <class S, class D >
-    void convertTo (S srcValue, D &dstValue)
+    template<class S, class D>
+    void convertTo(S src, D& dst) const
     {
-        dstValue = static_cast<D>(srcValue);
+        dst = src;
     }
 
     // parameters that will never be used, replaced by the subclasses r, g and b parameters!
@@ -100,30 +100,30 @@ public:
 
 };
 
-template <>
-inline void ImageDatas::convertTo<unsigned short, unsigned char> (const unsigned short srcValue, unsigned char &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned short src, unsigned char& dst) const
 {
-    dstValue = (unsigned char)(srcValue >> 8);
+    dst = uint16ToUint8Rounded(src);
 }
-template <>
-inline void ImageDatas::convertTo<unsigned char, int> (const unsigned char srcValue, int &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned char src, int& dst) const
 {
-    dstValue = (int)(srcValue) << 8;
+    dst = src * 257;
 }
-template <>
-inline void ImageDatas::convertTo<unsigned char, unsigned short> (const unsigned char srcValue, unsigned short &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned char src, unsigned short& dst) const
 {
-    dstValue = (unsigned short)(srcValue) << 8;
+    dst = src * 257;
 }
-template <>
-inline void ImageDatas::convertTo<float, unsigned char> (const float srcValue, unsigned char &dstValue)
+template<>
+inline void ImageDatas::convertTo(float src, unsigned char& dst) const
 {
-    dstValue = (unsigned char)( (unsigned short)(srcValue) >> 8 );
+    dst = uint16ToUint8Rounded(src);
 }
-template <>
-inline void ImageDatas::convertTo<unsigned char, float> (const unsigned char srcValue, float &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned char src, float& dst) const
 {
-    dstValue = float( (unsigned short)(srcValue) << 8 );
+    dst = src * 257;
 }
 
 // --------------------------------------------------------------------
