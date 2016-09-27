@@ -15,6 +15,16 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  This median implementations from Floessie and Ingo Weyrich are inspired by this work:
+ *
+ *  http://ndevilla.free.fr/median/median.pdf
+ *  http://pages.ripco.net/~jgamble/nw.html
+ *  https://github.com/hoytech/Algorithm-Networksort-Chooser
+ *
+ *  Instead of using the PIX_SORT and PIX_SWAP macros we use std::min() and std::max()
+ *  because it turned out that it generates much faster (branch free) code on machines which support SSE
+ *
  */
 
 #pragma once
