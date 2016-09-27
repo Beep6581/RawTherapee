@@ -1322,7 +1322,9 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
+!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
+!GENERAL_OPEN;Open
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_252;CbDL - Skin tar/prot
 !HISTORY_MSG_253;CbDL - Reduce artifacts

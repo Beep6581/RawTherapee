@@ -580,12 +580,14 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
 !GENERAL_AFTER;After
+!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_AUTO;Automatic
 !GENERAL_BEFORE;Before
 !GENERAL_CLOSE;Close
 !GENERAL_FILE;File
 !GENERAL_NONE;None
+!GENERAL_OPEN;Open
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.

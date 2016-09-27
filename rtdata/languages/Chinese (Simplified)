@@ -892,7 +892,9 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
+!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
+!GENERAL_OPEN;Open
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 !HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
