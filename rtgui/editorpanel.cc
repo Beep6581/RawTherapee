@@ -50,6 +50,8 @@ private:
         profileBox.set_size_request (100, -1);
         profileBox.setPreferredWidth (90, 150);
         setExpandAlignProperties (&profileBox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(profileBox.get_first_cell());
+        cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
 
         profileBox.append (M ("PREFERENCES_PROFILE_NONE"));
 #ifdef WIN32
