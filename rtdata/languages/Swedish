@@ -1243,8 +1243,8 @@ TP_DEFRINGE_THRESHOLD;Tröskelvärde
 TP_DIRPYRDENOISE_33;3×3 kraftig
 TP_DIRPYRDENOISE_55;5×5 kraftig
 TP_DIRPYRDENOISE_55SOFT;5×5
-TP_DIRPYRDENOISE_77;7×7 (långsam)
-TP_DIRPYRDENOISE_99;9x9 (mycket långsam)
+TP_DIRPYRDENOISE_77;7×7
+TP_DIRPYRDENOISE_99;9×9
 TP_DIRPYRDENOISE_ABM;Endast chroma
 TP_DIRPYRDENOISE_AUTO_TOOLTIP;Försök att utvärdera chroma-bruset\nVar försiktig, den här beräkningen görs på genomsnittet och är tämligen subjektiv!
 TP_DIRPYRDENOISE_BLUE;Krominans - Blå-Gul
