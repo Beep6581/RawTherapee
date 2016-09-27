@@ -1354,11 +1354,6 @@ TP_DARKFRAME_LABEL;Tmavý snímek
 TP_DEFRINGE_LABEL;Odstranění lemu
 TP_DEFRINGE_RADIUS;Poloměr
 TP_DEFRINGE_THRESHOLD;Práh
-TP_DIRPYRDENOISE_33;3×3 silný
-TP_DIRPYRDENOISE_55;5×5 silný
-TP_DIRPYRDENOISE_55SOFT;5×5
-TP_DIRPYRDENOISE_77;7×7
-TP_DIRPYRDENOISE_99;9×9
 TP_DIRPYRDENOISE_ABM;Pouze barevnost
 TP_DIRPYRDENOISE_AUT;Automatická celková
 TP_DIRPYRDENOISE_AUTO;Automatická celková
@@ -1401,12 +1396,10 @@ TP_DIRPYRDENOISE_METHOD11;Kvalita
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Kvalita může být přizpůsobena vzoru šumu. Nastavení "Vysoká" vylepší efekt redukce šumu za cenu navýšení času zpracování.
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pro raw obrázky může být použita jak RGB tak i L*a*b* metoda.\n\nPro ostatní obrázky bude vždy použita metoda L*a*b* bez ohledu na výběr.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Pokud je použito 'Pouze Jas' a 'L*a*b*' metody, bude při odstranění šumu použit filtr medián hned po vlnkové transformaci.\nPokud je použit "RGB" mód, bude filtr použit až na úplný závěr procesu redukce šumu.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Aplikuje filtr medián požadované velikosti. Čím větší velikost, tím déle to trvá.\n\n3×3 jemný: upraví 5 pixelů v rozsahu jednoho pixelu.\n3×3: upraví 9 pixelů v rozsahu jednoho pixelu.\n5×5 jemný; upraví 13 pixelů v rozsahu dvou pixelů.\n5×5: upraví 25 pixelů v rozsahu dvou pixelů.\n7×7: upraví 49 pixelů v rozsahu tří pixelů.\n9×9: upraví 81 pixelů v rozsahu čtyř pixelů.\n\nV některých případech může být větší kvality dosaženo pomocí několika průběhů s menším rozsahem než jedním průběhem s velkým rozsahem.
 TP_DIRPYRDENOISE_NOISELABEL;Náhled šumu: Průměr=%1  Výšky=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Náhled šumu: Průměr= -   Výšky= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Zobrazuje zbývající úroveň zašumění části obrázku viditelného v <b>náhledu</b> po vlnkové transformaci.\n\n>300 Hodně šumu\n100-300 Šum\n50-100 Málo šumu\n<50 Velmi málo šumu\n\nUpozornění:  hodnoty RGB a L*a*b* režimu se budou lišit. Protože v RGB režimu nedochází ke kompletnímu oddělení jasu a barev jsou RGB hodnoty jméně přesné
 TP_DIRPYRDENOISE_PASSES;Počet průchodů mediánu
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Aplikování medián filtru 3×3 se třemi průchody často vede k lepšímu výsledku než jednou aplikovaný filtr 7×7.
 TP_DIRPYRDENOISE_PON;Více zónová automatika
 TP_DIRPYRDENOISE_PRE;Více zónový náhled
 TP_DIRPYRDENOISE_PREV;Náhled
@@ -1417,7 +1410,6 @@ TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_SHAL;Běžná
 TP_DIRPYRDENOISE_SHALBI;Vysoká
 TP_DIRPYRDENOISE_SLI;Posuvník
-TP_DIRPYRDENOISE_SOFT;3×3
 TP_DIRPYRDENOISE_TILELABEL;Velikost dlaždice=%1, Střed: Tx=%2  Ty=%3
 TP_DIRPYREQUALIZER_ALGO;Rozsah pleťových tónů
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Jemný: blíž k barvám pleti, minimalizuje zásahy na ostatních barvách.\nVelký: více zabrání vzniku artefaktů.
@@ -2025,6 +2017,14 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
+!TP_DIRPYRDENOISE_3X3;3×3
+!TP_DIRPYRDENOISE_3X3_SOFT;3x3 soft
+!TP_DIRPYRDENOISE_5X5;5×5
+!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
+!TP_DIRPYRDENOISE_7X7;7×7
+!TP_DIRPYRDENOISE_9X9;9x9
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3x3 soft: treats 5 pixels in a 3x3 pixel window.\n3x3: treats 9 pixels in a 3x3 pixel window.\n5x5 soft: treats 13 pixels in a 5x5 pixel window.\n5x5: treats 25 pixels in a 5x5 pixel window.\n7x7: treats 49 pixels in a 7x7 pixel window.\n9x9: treats 81 pixels in a 9x9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3x3 window size often leads to better results than using one median filter iteration with a 7x7 window size.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_NEUTRAL;Reset
