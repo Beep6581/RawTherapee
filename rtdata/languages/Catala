@@ -1031,9 +1031,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
+!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
+!GENERAL_OPEN;Open
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_174;CIECAM02

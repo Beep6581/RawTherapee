@@ -586,11 +586,13 @@ TP_WBALANCE_TEMPERATURE;色溫
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
+!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
 !GENERAL_FILE;File
 !GENERAL_NONE;None
+!GENERAL_OPEN;Open
 !GENERAL_WARNING;Warning
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
