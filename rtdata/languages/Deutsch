@@ -1380,11 +1380,6 @@ TP_DARKFRAME_LABEL;Dunkelbild
 TP_DEFRINGE_LABEL;Farbsaum entfernen (Defringe)
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Schwellenwert
-TP_DIRPYRDENOISE_33;3x3 stark
-TP_DIRPYRDENOISE_55;5x5 stark
-TP_DIRPYRDENOISE_55SOFT;5x5
-TP_DIRPYRDENOISE_77;7x7 (langsam)
-TP_DIRPYRDENOISE_99;9x9 (sehr langsam)
 TP_DIRPYRDENOISE_ABM;Nur Farbe
 TP_DIRPYRDENOISE_AUT;Automatisch Global
 TP_DIRPYRDENOISE_AUTO;Automatisch Global
@@ -1427,12 +1422,10 @@ TP_DIRPYRDENOISE_METHOD11;Qualität
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Einstellung der Qualität der Rauschreduzierung. Die Einstellung “Hoch“ verbessert die Rauschreduzierung auf Kosten der Verarbeitungszeit.
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Für RAW-Bilder kann entweder die RGB- oder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der Auswahl immer die L*a*b*-Methode verwendet.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Bei der Methode “Nur Luminanz“ und “L*a*b*“, wird der Medianfilter nach den Waveletschritten verarbeitet.\nBei RGB wird der Medianfilter am Ende der Rauschreduzierung verarbeitet.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Wendet einen Medianfilter mit der angegebenen Größe an. Je größer der Bereich, desto länger dauert die Verarbeitung..\n\n3x3: Verarbeitet 5 Pixel in einem 1-Pixelbereich.\n3x3 stark: Verarbeitet 9 Pixel in einem 1-Pixelbereich.\n5x5: Verarbeitet 13 Pixel in einem 2-Pixelbereich.\n5x5 stark: Verarbeitet 25 Pixel in einem 2-Pixelbereich.\n7x7: Verarbeitet 49 Pixel in einem 3-Pixelbereich.\n9x9: Verarbeitet 81 Pixel in einem 4-Pixelbereich.\n\nManchmal erzielt man mit einem kleinen Bereich mit mehreren Iterationen eine bessere Qualität als mit einem großen Bereich.
 TP_DIRPYRDENOISE_NOISELABEL;Rauschen: Mittelwert=%1  Hoch=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Rauschen: Mittelwert = ---   Hoch = ---
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs in der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus. Die RGB-Werte sind ungenauer, da der RGB-Modus Luminanz und Chrominanz nicht komplett trennt.
 TP_DIRPYRDENOISE_PASSES;Medianiterationen
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Ein 3x3-Medianfilter mit 3 Iterationen erzielt oft bessere Ergebnisse als ein 7x7-Medianfilter mit nur einer Iteration.
 TP_DIRPYRDENOISE_PON;Auto-Multizonen
 TP_DIRPYRDENOISE_PRE;Vorschau
 TP_DIRPYRDENOISE_PREV;Vorschau
@@ -1443,7 +1436,6 @@ TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_SHAL;Standard
 TP_DIRPYRDENOISE_SHALBI;Hoch
 TP_DIRPYRDENOISE_SLI;Regler
-TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;Kachelgröße=%1 Zentrum: Tx=%2  Ty=%2
 TP_DIRPYREQUALIZER_ALGO;Hautfarbtonbereich
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fein: Ist näher an den Hautfarbtönen und minimiert den Einfluss auf andere Farben.\n\nGrob: Minimiert Artefakte.
@@ -2053,3 +2045,15 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!TP_DIRPYRDENOISE_3X3;3×3
+!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
+!TP_DIRPYRDENOISE_5X5;5×5
+!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
+!TP_DIRPYRDENOISE_7X7;7×7
+!TP_DIRPYRDENOISE_9X9;9×9
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.

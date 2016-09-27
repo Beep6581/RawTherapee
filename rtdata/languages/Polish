@@ -369,7 +369,7 @@ HISTORY_MSG_145;Mikrokontrast - Jednolitość
 HISTORY_MSG_146;Wyostrzanie krawędzi
 HISTORY_MSG_147;Wyostrzanie krawędzi - tylko luminacja
 HISTORY_MSG_148;Mikrokontrast
-HISTORY_MSG_149;Mikrokontrast - matryca 3x3
+HISTORY_MSG_149;Mikrokontrast - matryca 3×3
 HISTORY_MSG_150;Redukcja szumu i artefaktów po demozaikowaniu
 HISTORY_MSG_151;Jaskrawość
 HISTORY_MSG_152;Jaskrawość - Ppastelowe
@@ -1117,10 +1117,6 @@ TP_DARKFRAME_LABEL;Czarna klatka
 TP_DEFRINGE_LABEL;Usuwanie widma
 TP_DEFRINGE_RADIUS;Promień
 TP_DEFRINGE_THRESHOLD;Próg
-TP_DIRPYRDENOISE_33;3×3 silne
-TP_DIRPYRDENOISE_55;5×5 silne
-TP_DIRPYRDENOISE_55SOFT;5×5
-TP_DIRPYRDENOISE_77;7×7 (wolne)
 TP_DIRPYRDENOISE_BLUE;Chrominancja - Błękit-żółć
 TP_DIRPYRDENOISE_CHROMA;Chrominancja - Główna
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduluje działanie usuwania szumów luminancji
@@ -1144,15 +1140,12 @@ TP_DIRPYRDENOISE_METHOD11;Jakość
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Jakość może zostać dopasowana do wzoru szumów. Ustawienie "wysoka" ulepsza odszumianie około 20% wzrostu czasu przetwarzania.
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Dla obrazów raw można używać metody RGB oraz L*a*b*.\n\nDla obrazów nie-raw metoda L*a*b* zostanie użyta niezależnie od wyboru.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Przy użyciu metod "tylko luminancja" oraz "L*a*b*", filtrowanie mediana zostanie wykonane prosto po funkcji falki w procesie odszumiania.\nW trybie "RGB" filtrowanie to zostanie wykonana pod koniec calego procesu.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Zasrosuj filtrowanie mediana o oknie pożądanego rozmiaru. Im większy rozmiar okna, tym dłużej przetwarzanie zajmie.\n\n3x3 miękki: użyje 5 pikseli w zasięgu 1 pikseli.\n3x3: użyje 9 pikseli w zasięgu 1 pikseli.\n5x5 miękki: użyje 13 pikseli w zasięgu 2 pikseli.\n5x5: użyje 25 pikseli w zasięgu 2 pikseli.\n7x7: użyje 49 pikseli w zasięgu 3 pikseli.\n\nCzasem można uzyskać wyższą jakość wielokrotnym powtórzeniem filtru przy użyciu małego okna niz przy jednokrotnym przetworzeniu przy użyciu dużego okna.
 TP_DIRPYRDENOISE_PASSES;Liczba powtórzeń mediana
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Trzykrotne powtórzenie filtru mediana przy użyciu okna o rozmiarze 3x3 często skutkuje wyższą jakością niż jednokrotne z oknem o rozmiarze 7x7.
 TP_DIRPYRDENOISE_RED;Chrominancja - Czerwień-zieleń
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_SHAL;Standardowa
 TP_DIRPYRDENOISE_SHALBI;Wysoka
-TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYREQUALIZER_ALGO;Zakres odcieni skóry
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;-
 TP_DIRPYREQUALIZER_HUESKIN;Odcień skóry
@@ -1518,9 +1511,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
 !FILECHOOSER_FILTER_TIFF;TIFF files
-!GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
-!GENERAL_OPEN;Open
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_299;NR - Chrominance curve
 !HISTORY_MSG_300;-
@@ -1745,7 +1736,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_CROP_GTHARMMEANS;Harmonic Means
 !TP_CROP_GTTRIANGLE1;Golden Triangles 1
 !TP_CROP_GTTRIANGLE2;Golden Triangles 2
-!TP_DIRPYRDENOISE_99;9x9 (very slow)
+!TP_DIRPYRDENOISE_3X3;3×3
+!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
+!TP_DIRPYRDENOISE_5X5;5×5
+!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
+!TP_DIRPYRDENOISE_7X7;7×7
+!TP_DIRPYRDENOISE_9X9;9×9
 !TP_DIRPYRDENOISE_ABM;Chroma only
 !TP_DIRPYRDENOISE_AUT;Automatic global
 !TP_DIRPYRDENOISE_AUTO;Automatic global
@@ -1765,9 +1761,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 !TP_DIRPYRDENOISE_MAN;Manual
 !TP_DIRPYRDENOISE_MANU;Manual
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYRDENOISE_NOISELABEL;Preview noise: Mean=%1  High=%2
 !TP_DIRPYRDENOISE_NOISELABELEMPTY;Preview noise: Mean= -   High= -
 !TP_DIRPYRDENOISE_NRESID_TOOLTIP;Displays the remaining noise levels of the part of the image visible in the <b>preview</b> after wavelet.\n\n>300 Very noisy\n100-300 Noisy\n50-100 A little noisy\n<50 Very low noise\n\nBeware, the values will differ between RGB and L*a*b* mode. The RGB values are less accurate because the RGB mode does not completely separate luminance and chrominance.
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_PON;Auto multi-zones
 !TP_DIRPYRDENOISE_PRE;Preview multi-zones
 !TP_DIRPYRDENOISE_PREV;Preview
