@@ -1655,7 +1655,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             rid = dfm.searchDarkFrame( raw.dark_frame );
         }
     } else {
-        rid = dfm.searchDarkFrame( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+        rid = dfm.searchDarkFrame( idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     }
 
     if( rid && settings->verbose) {
