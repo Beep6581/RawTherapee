@@ -178,7 +178,6 @@ CropWindow* ImageArea::getCropWindow (int x, int y)
     return cw;
 }
 
-
 void ImageArea::redraw ()
 {
     // dirty prevents multiple updates queued up
@@ -186,6 +185,11 @@ void ImageArea::redraw ()
         dirty = true;
         queue_draw ();
     }
+}
+
+void ImageArea::switchPickerVisibility (bool isVisible)
+{
+    redraw();
 }
 
 bool ImageArea::on_expose_event(GdkEventExpose* event)
@@ -687,6 +691,16 @@ ToolMode ImageArea::getToolMode ()
         return listener->getToolBar()->getTool ();
     } else {
         return TMHand;
+    }
+}
+
+bool ImageArea::showColorPickers ()
+{
+
+    if (listener && listener->getToolBar()) {
+        return listener->getToolBar()->showColorPickers ();
+    } else {
+        return false;
     }
 }
 

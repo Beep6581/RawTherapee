@@ -22,6 +22,7 @@
 #include "../rtengine/rtengine.h"
 #include "threadutils.h"
 #include "edit.h"
+#include "lockablecolorpicker.h"
 #include <gtkmm.h>
 
 class CropDisplayHandler
@@ -94,22 +95,25 @@ public:
     }
     void    setEditSubscriber      (EditSubscriber* newSubscriber);
 
-    void    newImage    (rtengine::StagedImageProcessor* ipc_, bool isDetailWindow);
-    void    setZoom     (int z, int centerx = -1, int centery = -1);
-    double  getFitZoom  ();
+    void    newImage      (rtengine::StagedImageProcessor* ipc_, bool isDetailWindow);
+    void    setZoom       (int z, int centerx = -1, int centery = -1);
+    float   getZoomFactor ();
+    double  getFitZoom    ();
     double  getFitCropZoom();
-    void    setWSize    (int w, int h);
-    void    getWSize    (int& w, int &h);
+    void    setWSize      (int w, int h);
+    void    getWSize      (int& w, int &h);
     void    getAnchorPosition (int& x, int& y);
     void    setAnchorPosition (int x, int y, bool update = true);
-    void    moveAnchor   (int deltaX, int deltaY, bool update = true);
-    void    centerAnchor (bool update = true);
-    void    getPosition (int& x, int& y);
-    void    getSize     (int& w, int& h);
+    void    moveAnchor    (int deltaX, int deltaY, bool update = true);
+    void    centerAnchor  (bool update = true);
+    void    getPosition   (int& x, int& y);
+    void    getSize       (int& w, int& h);
     void    getFullImageSize (int& w, int& h);
 
     void    setEnabled (bool e);
     bool    getEnabled ();
+
+    void    colorPick (rtengine::Coord pickerPos, float &r, float &g, float &b, LockableColorPicker::PickerSize size);
 
     rtengine::DetailedCrop* getCrop()
     {

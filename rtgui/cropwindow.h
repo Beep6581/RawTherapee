@@ -59,6 +59,10 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     bool fitZoom;
     bool isLowUpdatePriority;
 
+    // color pickers
+    std::vector<LockableColorPicker*> colorPickers;
+    LockableColorPicker* hoveredPicker;
+
     // decoration
     LWButton *bZoomIn, *bZoomOut, *bZoom100, /**bZoomFit,*/ *bClose;
     LWButtonSet buttonSet;
@@ -101,12 +105,15 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
     void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1);
 
+    bool isHoveredPickerFullyInside(const rtengine::Coord &pos);
+
     // Used by the mainCropWindow only
     void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw = 0, int rh = 0);
 
 public:
     CropHandler cropHandler;
     CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_, bool isDetailWindow);
+    ~CropWindow ();
 
     void setDecorated       (bool decorated)
     {
@@ -127,6 +134,7 @@ public:
     void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy);
     void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy);
     void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy);
+    void imageCoordToCropImage (int imgx, int imgy, int& phyx, int& phyy);
     int scaleValueToImage (int value);
     float scaleValueToImage (float value);
     double scaleValueToImage (double value);
@@ -208,7 +216,7 @@ public:
     void remoteMove      (int deltaX, int deltaY);
     void remoteMoveReady ();
 
-    EditDataProvider* getImageArea();
+    ImageArea* getImageArea();
 };
 
 #endif

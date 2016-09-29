@@ -20,7 +20,7 @@
 #include "multilangmgr.h"
 #include "guiutils.h"
 
-ToolBar::ToolBar () : listener (NULL)
+ToolBar::ToolBar () : showColPickers(true), listener (NULL)
 {
 
     editingMode = false;
@@ -47,6 +47,19 @@ ToolBar::ToolBar () : listener (NULL)
 
     pack_start (*wbTool);
 
+    showcolpickersimg = Gtk::manage (new RTImage ("colorPickers-show.png"));
+    showcolpickersimg->reference();
+    hidecolpickersimg = Gtk::manage (new RTImage ("colorPickers-hide.png"));
+    hidecolpickersimg->reference();
+
+    colPickerTool = Gtk::manage (new Gtk::ToggleButton ());
+    colPickerTool->add (*showcolpickersimg);
+    showcolpickersimg->show ();
+    colPickerTool->set_relief(Gtk::RELIEF_NONE);
+    colPickerTool->show ();
+
+    pack_start (*colPickerTool);
+
     cropTool = Gtk::manage (new Gtk::ToggleButton ());
     Gtk::Image* cropimg = Gtk::manage (new RTImage ("crop.png"));
     cropTool->add (*cropimg);
@@ -71,11 +84,13 @@ ToolBar::ToolBar () : listener (NULL)
 
     handConn = handTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::hand_pressed));
     wbConn   = wbTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::wb_pressed));
+    cpConn   = colPickerTool->signal_button_press_event().connect_notify( sigc::mem_fun(*this, &ToolBar::colPicker_pressed));
     cropConn = cropTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::crop_pressed));
     straConn = straTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::stra_pressed));
 
     handTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_HAND"));
     wbTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_WB"));
+    colPickerTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_COLORPICKER"));
     cropTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_CROP"));
     straTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_STRAIGHTEN"));
 }
@@ -84,6 +99,8 @@ ToolBar::~ToolBar ()
 {
     handimg->unreference();
     editinghandimg->unreference();
+    showcolpickersimg->unreference();
+    hidecolpickersimg->unreference();
 
 }
 //
@@ -98,6 +115,9 @@ void ToolBar::setTool (ToolMode tool)
     if (wbTool) {
         wbConn.block (true);
     }
+    if (colPickerTool) {
+        cpConn.block (true);
+    }
 
     straConn.block (true);
 
@@ -111,6 +131,9 @@ void ToolBar::setTool (ToolMode tool)
 
     cropTool->set_active (false);
     straTool->set_active (false);
+    if (colPickerTool) {
+        colPickerTool->set_active (false);
+    }
 
     if (tool == TMHand) {
         handTool->set_active (true);
@@ -123,6 +146,10 @@ void ToolBar::setTool (ToolMode tool)
         cropTool->set_active (true);
     } else if (tool == TMStraighten) {
         straTool->set_active (true);
+    } else if (tool == TMColorPicker) {
+        if (colPickerTool) {
+            colPickerTool->set_active (true);
+        }
     }
 
     current = tool;
@@ -132,6 +159,9 @@ void ToolBar::setTool (ToolMode tool)
 
     if (wbTool) {
         wbConn.block (false);
+    }
+    if (colPickerTool) {
+        cpConn.block (false);
     }
 
     straConn.block (false);
@@ -181,6 +211,9 @@ void ToolBar::hand_pressed ()
 
     handConn.block (true);
     cropConn.block (true);
+    if (colPickerTool) {
+        cpConn.block (true);
+    }
 
     if (wbTool) {
         wbConn.block (true);
@@ -189,6 +222,9 @@ void ToolBar::hand_pressed ()
     straConn.block (true);
 
     if (current != TMHand) {
+        if (colPickerTool) {
+            colPickerTool->set_active(false);
+        }
         if (wbTool) {
             wbTool->set_active (false);
         }
@@ -209,7 +245,9 @@ void ToolBar::hand_pressed ()
     handTool->set_active (true);
     handConn.block (false);
     cropConn.block (false);
-
+    if (colPickerTool) {
+        cpConn.block (false);
+    }
     if (wbTool) {
         wbConn.block (false);
     }
@@ -226,7 +264,9 @@ void ToolBar::wb_pressed ()
 
     handConn.block (true);
     cropConn.block (true);
-
+    if (colPickerTool) {
+        cpConn.block (true);
+    }
     if (wbTool) {
         wbConn.block (true);
     }
@@ -237,6 +277,9 @@ void ToolBar::wb_pressed ()
         handTool->set_active (false);
         cropTool->set_active (false);
         straTool->set_active (false);
+        if (colPickerTool) {
+            colPickerTool->set_active(false);
+        }
         current = TMSpotWB;
     }
 
@@ -246,7 +289,9 @@ void ToolBar::wb_pressed ()
 
     handConn.block (false);
     cropConn.block (false);
-
+    if (colPickerTool) {
+        cpConn.block (false);
+    }
     if (wbTool) {
         wbConn.block (false);
     }
@@ -258,11 +303,92 @@ void ToolBar::wb_pressed ()
     }
 }
 
+void ToolBar::colPicker_pressed (GdkEventButton* event)
+{
+
+    if (event->button == 1) {
+        handConn.block (true);
+        cropConn.block (true);
+        cpConn.block (true);
+        if (wbTool) {
+            wbConn.block (true);
+        }
+
+        straConn.block (true);
+
+        cropTool->set_active (false);
+        if (wbTool) {
+            wbTool->set_active (false);
+        }
+        straTool->set_active (false);
+
+        if (current != TMColorPicker) {
+            // Disabling all other tools, enabling the Picker tool and entering the "visible pickers" mode
+            handTool->set_active (false);
+            showColorPickers(true);
+            current = TMColorPicker;
+        } else {
+            // Disabling the picker tool, enabling the Hand tool and keeping the "visible pickers" mode
+            handTool->set_active (true);
+            colPickerTool->set_active (false);
+            current = TMHand;
+        }
+
+        handConn.block (false);
+        cropConn.block (false);
+        cpConn.block (false);
+        wbConn.block (false);
+        straConn.block (false);
+
+        if (listener) {
+            listener->toolSelected (current);
+        }
+    } else if (event->button == 3) {
+        if (current == TMColorPicker) {
+            // Disabling the Picker tool and entering into the "invisible pickers" mode
+            cpConn.block (true);
+            handConn.block (true);
+            handTool->set_active (true);
+            colPickerTool->set_active (false);
+            current = TMHand;
+            showColorPickers(false);
+            cpConn.block (false);
+            handConn.block (false);
+        } else {
+            // The Picker tool is already disabled, entering into the "invisible pickers" mode
+            switchColorPickersVisibility();
+        }
+        if (pickerListener) {
+            pickerListener->switchPickerVisibility (showColPickers);
+        }
+    }
+}
+
+bool ToolBar::showColorPickers(bool showCP)
+{
+    if (showColPickers != showCP) {
+        // Inverting the state
+        colPickerTool->set_image(showCP ? *showcolpickersimg : *hidecolpickersimg);
+        showColPickers = showCP;
+        return true;
+    }
+
+    return false;
+}
+
+void ToolBar::switchColorPickersVisibility()
+{
+    // Inverting the state
+    showColPickers = !showColPickers;
+    colPickerTool->set_image(showColPickers ? *showcolpickersimg : *hidecolpickersimg);
+}
+
 void ToolBar::crop_pressed ()
 {
 
     handConn.block (true);
     cropConn.block (true);
+    cpConn.block(true);
 
     if (wbTool) {
         wbConn.block (true);
@@ -272,7 +398,9 @@ void ToolBar::crop_pressed ()
 
     if (current != TMCropSelect) {
         handTool->set_active (false);
-
+        if (colPickerTool) {
+            colPickerTool->set_active(false);
+        }
         if (wbTool) {
             wbTool->set_active (false);
         }
@@ -284,6 +412,7 @@ void ToolBar::crop_pressed ()
     cropTool->set_active (true);
     handConn.block (false);
     cropConn.block (false);
+    cpConn.block(false);
     wbConn.block (false);
     straConn.block (false);
 
@@ -297,6 +426,9 @@ void ToolBar::stra_pressed ()
 
     handConn.block (true);
     cropConn.block (true);
+    if (colPickerTool) {
+        cpConn.block (true);
+    }
 
     if (wbTool) {
         wbConn.block (true);
@@ -306,7 +438,9 @@ void ToolBar::stra_pressed ()
 
     if (current != TMStraighten) {
         handTool->set_active (false);
-
+        if (colPickerTool) {
+            colPickerTool->set_active(false);
+        }
         if (wbTool) {
             wbTool->set_active (false);
         }
@@ -318,6 +452,7 @@ void ToolBar::stra_pressed ()
     straTool->set_active (true);
     handConn.block (false);
     cropConn.block (false);
+    cpConn.block (false);
 
     if (wbTool) {
         wbConn.block (false);
@@ -371,12 +506,17 @@ bool ToolBar::handleShortcutKey (GdkEventKey* event)
     return false;
 }
 
-void ToolBar::removeWbTool()
+void ToolBar::setBatchMode()
 {
     if (wbTool) {
         wbConn.disconnect();
         removeIfThere(this, wbTool, false);
-        wbTool = NULL;
+        wbTool = nullptr;
+    }
+    if (colPickerTool) {
+        cpConn.disconnect();
+        removeIfThere(this, colPickerTool, false);
+        colPickerTool = nullptr;
     }
 }
 

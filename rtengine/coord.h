@@ -48,7 +48,10 @@ struct Coord
     Coord& operator+= (const Coord& other);
     Coord& operator-= (const Coord& other);
     Coord& operator*= (const double scale);
-
+    bool operator< (const Coord& rhs) const;
+    bool operator> (const Coord& rhs) const;
+    bool operator<=(const Coord& rhs) const;
+    bool operator>=(const Coord& rhs) const;
 };
 
 bool operator== (const Coord& lhs, const Coord& rhs);
@@ -128,6 +131,26 @@ inline Coord& Coord::operator*= (const double scale)
     x *= scale;
     y *= scale;
     return *this;
+}
+
+inline bool Coord::operator< (const Coord& rhs) const
+{
+    return x < rhs.x && y < rhs.y;
+}
+
+inline bool Coord::operator> (const Coord& rhs) const
+{
+    return x > rhs.x && y > rhs.y;
+}
+
+inline bool Coord::operator<=(const Coord& rhs) const
+{
+    return x <= rhs.x && y <= rhs.y;
+}
+
+inline bool Coord::operator>=(const Coord& rhs) const
+{
+    return x >= rhs.x && y >= rhs.y;
 }
 
 inline bool operator== (const Coord& lhs, const Coord& rhs)

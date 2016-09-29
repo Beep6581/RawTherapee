@@ -8,7 +8,7 @@ set (BASESOURCEFILES
     coarsepanel.cc cacorrection.cc  chmixer.cc blackwhite.cc
     resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     impulsedenoise.cc dirpyrdenoise.cc epd.cc
-    exifpanel.cc toolpanel.cc lensprofile.cc
+    exifpanel.cc toolpanel.cc lensprofile.cc lockablecolorpicker.cc
     sharpening.cc vibrance.cc rgbcurves.cc  colortoning.cc
     whitebalance.cc   vignetting.cc gradient.cc pcvignette.cc rotate.cc distortion.cc
     crophandler.cc dirbrowser.cc

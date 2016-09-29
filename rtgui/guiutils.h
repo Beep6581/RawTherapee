@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
+#include "../rtengine/coord.h"
 #include <sstream>
 #include <iostream>
 
@@ -383,33 +384,6 @@ public:
 };
 
 /**
- * @brief Handle point coordinates
- */
-template <class T>
-class Point
-{
-public:
-    T x, y;
-    Point()
-    {
-        x = T(0);
-        y = T(0);
-    }
-
-    Point(T coordX, T coordY)
-    {
-        x = coordX;
-        y = coordY;
-    }
-
-    void setCoords(T coordX, T coordY)
-    {
-        x = coordX;
-        y = coordY;
-    }
-};
-
-/**
  * @brief Handle backbuffers as automatically as possible
  */
 class BackBuffer
@@ -417,7 +391,7 @@ class BackBuffer
 
 protected:
     int x, y, w, h;  // Rectangle where the colored bar has to be drawn
-    Point<int> offset;  // Offset of the source region to draw, relative to the top left corner
+    rtengine::Coord offset;  // Offset of the source region to draw, relative to the top left corner
     Cairo::RefPtr<Cairo::ImageSurface> surface;
     bool dirty;  // mean that the Surface has to be (re)allocated
 
@@ -426,13 +400,19 @@ public:
 
     // set the destination drawing rectangle; return true if the dimensions are different
     // Note: newW & newH must be > 0
-    bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
-    bool setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
+    bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW=-1, int newH=-1, bool updateBackBufferSize = true);
+    bool setDrawRectangle(Cairo::Format format, int newX, int newY, int newW=-1, int newH=-1, bool updateBackBufferSize = true);
+    // set the destination drawing location, do not modify other parameters like size and offset. Use setDrawRectangle to set all parameters at the same time
+    void setDestPosition(int x, int y);
     void setSrcOffset(int x, int y);
+    void setSrcOffset(const rtengine::Coord &newOffset);
+    void getSrcOffset(int &x, int &y);
+    void getSrcOffset(rtengine::Coord &offset);
 
-    void copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rectangle = NULL);
+    void copySurface(Glib::RefPtr<Gdk::Window> &window, GdkRectangle *rectangle = NULL);
     void copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle = NULL);
-    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, GdkRectangle *rectangle = NULL);
+    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> &destSurface, GdkRectangle *rectangle = NULL);
+    void copySurface(Cairo::RefPtr<Cairo::Context> &context, GdkRectangle *rectangle = NULL);
 
     void setDirty(bool isDirty)
     {

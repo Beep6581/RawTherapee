@@ -131,6 +131,7 @@ protected:
     Gtk::HBox* hbtheme;
     Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
+    Gtk::FontButton* colorPickerFontButton;
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
 

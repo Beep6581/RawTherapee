@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include "toolenum.h"
 #include "rtimage.h"
+#include "lockablecolorpicker.h"
 
 class ToolBarListener
 {
@@ -40,17 +41,31 @@ class ToolBar : public Gtk::HBox
 private:
     RTImage* handimg;
     RTImage* editinghandimg;
+    RTImage* showcolpickersimg;
+    RTImage* hidecolpickersimg;
+    bool showColPickers;
+
+    void hand_pressed ();
+    void wb_pressed ();
+    void colPicker_pressed (GdkEventButton* event);
+    void crop_pressed ();
+    void stra_pressed ();
+    bool showColorPickers(bool showCP);
+    void switchColorPickersVisibility();
 
 protected:
     Gtk::ToggleButton* handTool;
     Gtk::ToggleButton* wbTool;
+    Gtk::ToggleButton* colPickerTool;
     Gtk::ToggleButton* cropTool;
     Gtk::ToggleButton* straTool;
     ToolBarListener* listener;
+    LockablePickerToolListener* pickerListener;
     ToolMode current;
     bool editingMode;  // true if the cursor is being used to remotely edit tool's values
     sigc::connection  handConn;
     sigc::connection  wbConn;
+    sigc::connection  cpConn;
     sigc::connection  cropConn;
     sigc::connection  straConn;
 
@@ -64,21 +79,25 @@ public:
         return current;
     }
 
+    bool showColorPickers() {
+        return showColPickers;
+    }
+
     void setToolBarListener (ToolBarListener* tpl)
     {
         listener = tpl;
     }
 
+    void setLockablePickerToolListener (LockablePickerToolListener* lptl)
+    {
+        pickerListener = lptl;
+    }
+
     void startEditMode();
     void stopEditMode();
 
-    void hand_pressed ();
-    void wb_pressed ();
-    void crop_pressed ();
-    void stra_pressed ();
-
     bool handleShortcutKey (GdkEventKey* event);
-    void removeWbTool();
+    void setBatchMode();
 };
 
 #endif

@@ -313,6 +313,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider(iareapanel->imageArea);
+    tpc->getToolBar()->setLockablePickerToolListener(iareapanel->imageArea);
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);
