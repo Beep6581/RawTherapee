@@ -34,6 +34,10 @@
 
 #include "opthelper.h"
 
+#if defined __GNUC__ && __GNUC__>=6 && defined __SSE2__
+    #pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 template<typename T, std::size_t N>
 inline T median(std::array<T, N> array)
 {
