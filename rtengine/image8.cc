@@ -49,8 +49,8 @@ void Image8::getScanline (int row, unsigned char* buffer, int bps)
     } else if (bps == 16) {
         unsigned short* sbuffer = (unsigned short*) buffer;
 
-        for (int i = 0, ix = row * width * 3; i < width * 3; i++, ix++) {
-            sbuffer[i] = (unsigned short)(data[ix]) << 8;
+        for (int i = 0, ix = row * width * 3; i < width * 3; ++i, ++ix) {
+            sbuffer[i] = static_cast<unsigned short>(data[ix]) * 257;
         }
     }
 }
@@ -73,8 +73,8 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minVal
     case (IIOSF_UNSIGNED_SHORT): {
         unsigned short* sbuffer = (unsigned short*) buffer;
 
-        for (int i = 0, ix = row * width * 3; i < width * 3; i++, ix++) {
-            data[ix] = sbuffer[i] >> 8;
+        for (int i = 0, ix = row * width * 3; i < width * 3; ++i, ++ix) {
+            data[ix] = uint16ToUint8Rounded(sbuffer[i]);
         }
 
         break;

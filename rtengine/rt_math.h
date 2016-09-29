@@ -1,14 +1,15 @@
-#ifndef _MYMATH_
-#define _MYMATH_
-#include <cmath>
-#include <algorithm>
+#pragma once
 
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
 
 namespace rtengine
 {
-static const int MAXVAL = 0xffff;
-static const float MAXVALF = float(MAXVAL);  // float version of MAXVAL
-static const double MAXVALD = double(MAXVAL); // double version of MAXVAL
+
+constexpr int MAXVAL = 0xffff;
+constexpr float MAXVALF = static_cast<float>(MAXVAL);  // float version of MAXVAL
+constexpr double MAXVALD = static_cast<double>(MAXVAL); // double version of MAXVAL
 
 template <typename _Tp>
 inline _Tp SQR (_Tp x)
@@ -80,7 +81,7 @@ inline _Tp intp(_Tp a, _Tp b, _Tp c)
     // following is valid:
     // intp(a, b+x, c+x) = intp(a, b, c) + x
     // intp(a, b*x, c*x) = intp(a, b, c) * x
-    return a * (b-c) + c;
+    return a * (b - c) + c;
 }
 
 template<typename T>
@@ -101,5 +102,15 @@ inline T norminf(const T& x, const T& y)
     return std::max(std::abs(x), std::abs(y));
 }
 
+inline int float2uint16range(float d) // clips input to [0;65535] and rounds
+{
+    d = CLIP(d); // clip to [0;65535]
+    return d + 0.5f;
 }
-#endif
+
+constexpr std::uint8_t uint16ToUint8Rounded(std::uint16_t i)
+{
+    return ((i + 128) - ((i + 128) >> 8)) >> 8;
+}
+
+}

@@ -409,7 +409,7 @@ HISTORY_MSG_145;マイクロコントラスト - 均等
 HISTORY_MSG_146;エッジ シャープ化
 HISTORY_MSG_147;エッジ シャープ化 - 輝度のみ
 HISTORY_MSG_148;マイクロコントラスト
-HISTORY_MSG_149;マイクロコントラスト - 3x3 マトリクス
+HISTORY_MSG_149;マイクロコントラスト - 3×3 マトリクス
 HISTORY_MSG_150;デモザイク後にアーティファクトとノイズを軽減
 HISTORY_MSG_151;自然な彩度
 HISTORY_MSG_152;自然な彩度 - 明清色トーン
@@ -1329,11 +1329,6 @@ TP_DARKFRAME_LABEL;ダークフレーム
 TP_DEFRINGE_LABEL;フリンジ低減
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
-TP_DIRPYRDENOISE_33;強い3x3
-TP_DIRPYRDENOISE_55;強い5x5
-TP_DIRPYRDENOISE_55SOFT;5x5
-TP_DIRPYRDENOISE_77;7x7（遅い）
-TP_DIRPYRDENOISE_99;9x9 (非常に遅い)
 TP_DIRPYRDENOISE_ABM;色ノイズだけ
 TP_DIRPYRDENOISE_AUT;自動（分割方式）
 TP_DIRPYRDENOISE_AUTO;自動（分割方式）
@@ -1376,12 +1371,10 @@ TP_DIRPYRDENOISE_METHOD11;ノイズ低減の質
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;ノイズの状態に応じて低減効果の質を選べます：1-標準　2－高い\n2の方がノイズ低減効果は高くなりますが、その分処理時間が増えます。
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;raw画像は、RGBまたはL*a*b*方式のいずれかを使用することができます。\n\nraw以外の画像は、選択にかかわらずL*a*b*方式が採用されます
 TP_DIRPYRDENOISE_METM_TOOLTIP;フィルタリングの方式で、"輝度のみ"と"L*a*b*"を選択した場合、メディアンフィルタリングはノイズ低減行程でウェーブレット変換が行われた直後に適用されます\n"RGB"モードの場合は、ノイズ低減行程の最後で適用されます
-TP_DIRPYRDENOISE_MET_TOOLTIP;適用するメディアンフィルターのサイズを決めます。大きくするとその分処理時間が増えます。\n\nソフトな3x3：1ピクセル範囲で5ピクセルの処理を行います\n強い3x3：1ピクセル範囲で9ピクセルの処理を行います\nソフトな5x5：2ピクセル範囲で13ピクセルの処理を行います\n強い5x5：2ピクセル範囲で25ピクセルの処理を行います\n7x7：3ピクセル範囲で49ピクセルの処理を行います\n9x9:4ピクセル範囲で81ピクセルの処理を行います\n\n小さいフィルターを使って、繰り返し処理をした方が、大きいフィルターを1回使うより結果が良いこともあります。
 TP_DIRPYRDENOISE_NOISELABEL;プレビューのノイズ: 中間色度=%1  高色度=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;プレビューのノイズ: 中間色度= -   高色度= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;ウェーブレット変換後、プレビューで見える部分画像で残ったノイズのレベルを表示します\n\n>300以上　非常にノイズが多い\n100～300 ノイズが多い\n50～100　ノイズが少ない\n50以下 ノイズが非常に少ない\n\n算出値はRGBとL*a*b*モードでは異なります。RGBモードは輝度と色を完全に切り離すことが出来ないので、算出値の精度は劣ります。
 TP_DIRPYRDENOISE_PASSES;フィルタリングの繰り返し回数
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;3x3のメディアンフィルターを3回繰り返して適用する方が、7x7のフィルターを1回適用するより、良い結果を生むことが多いです
 TP_DIRPYRDENOISE_PON;自動（多分割方式）
 TP_DIRPYRDENOISE_PRE;自動（プレビュー方式）
 TP_DIRPYRDENOISE_PREV;プレビュー方式
@@ -1392,7 +1385,6 @@ TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_SHAL;標準
 TP_DIRPYRDENOISE_SHALBI;高い
 TP_DIRPYRDENOISE_SLI;スライダー
-TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;タイルのサイズ=%1, 中心位置: X座標=%2  Y座標=%3
 TP_DIRPYREQUALIZER_ALGO;肌色の範囲
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;ファイン：撮影の肌色に近い部分に働くアルゴリズム、他の色への影響を最小限に抑えます\n広範：　アーティファクトの増加を避けるアルゴリズムです
@@ -1923,6 +1915,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
+!GENERAL_APPLY;Apply
+!GENERAL_OPEN;Open
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Radius
@@ -1975,6 +1969,14 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
+!TP_DIRPYRDENOISE_3X3;3×3
+!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
+!TP_DIRPYRDENOISE_5X5;5×5
+!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
+!TP_DIRPYRDENOISE_7X7;7×7
+!TP_DIRPYRDENOISE_9X9;9×9
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_NEUTRAL;Reset

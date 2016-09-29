@@ -132,13 +132,10 @@ public:
     static LUTf igammatab_srgb1;
     static LUTf gammatab_srgb;
     static LUTf gammatab_srgb1;
-    static LUTf igammatab_55;
-    static LUTf gammatab_55;
-    static LUTf igammatab_4;
-    static LUTf gammatab_4;
 
-    static LUTf igammatab_26_11;
-    static LUTf gammatab_26_11;
+    static LUTf denoiseGammaTab;
+    static LUTf denoiseIGammaTab;
+
     static LUTf igammatab_24_17;
     static LUTf gammatab_24_17a;
     static LUTf gammatab_13_2;
@@ -408,6 +405,7 @@ public:
     * @param rgb_xyz[3][3] transformation matrix to use for the conversion
     */
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]);
+    static void xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]);
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
 #ifdef __SSE2__
     static void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3]);
@@ -441,6 +439,7 @@ public:
     * @param z Z coordinate [0 ; 65535] ; can be negative! (return value)
     */
     static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
+    static void L2XYZ(float L, float &x, float &y, float &z);
 
 #ifdef __SSE2__
     static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
@@ -892,6 +891,9 @@ public:
     * @param gammabwb gamma value for red channel [>0]
     */
     static void trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb);
+#ifdef __SSE2__
+    static void trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb);
+#endif
 
 
     /** @brief Compute the B&W constants for the Black and White processing and its GUI
@@ -1104,6 +1106,15 @@ public:
     {
         return (x <= start ? x*slope : exp(log(x) / gamma) * mul - add);
     }
+
+    static inline float gammaf      (float x, float gamma, float start, float slope)
+    {
+        return x <= start ? x * slope : xexpf(xlogf(x) / gamma);
+    }
+
+    //fills a LUT of size 65536 using gamma with slope...
+    static void gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor);
+
     static inline double igamma     (double x, double gamma, double start, double slope, double mul, double add)
     {
         return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
@@ -1118,7 +1129,7 @@ public:
     */
     static inline double gamman      (double x, double gamma)           //standard gamma without slope...
     {
-        return (x = exp(log(x) / gamma));
+        return exp(log(x) / gamma);
     }
 
     /**
@@ -1129,9 +1140,10 @@ public:
     */
     static inline float gammanf      (float x, float gamma)           //standard gamma without slope...
     {
-        return (x = xexpf(xlogf(x) / gamma));
+        return xexpf(xlogf(x) / gamma);
     }
-
+    //fills a LUT of size 65536 using gamma without slope...
+    static void gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float factor);
 
     /**
     * @brief Very simply inverse gamma
@@ -1141,7 +1153,7 @@ public:
     */
     static inline double igamman     (double x, double gamma)           //standard inverse gamma without slope...
     {
-        return (x = exp(log(x) * gamma) );
+        return exp(log(x) * gamma);
     }
 
 

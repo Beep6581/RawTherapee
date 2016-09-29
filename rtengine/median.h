@@ -15,6 +15,16 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  These median implementations from Flössie and Ingo Weyrich are inspired by this work:
+ *
+ *  http://ndevilla.free.fr/median/median.pdf
+ *  http://pages.ripco.net/~jgamble/nw.html
+ *  https://github.com/hoytech/Algorithm-Networksort-Chooser
+ *
+ *  Instead of using the PIX_SORT and PIX_SWAP macros we use std::min() and std::max()
+ *  because it turned out that it generates much faster (branch free) code on machines which support SSE
+ *
  */
 
 #pragma once
@@ -23,6 +33,10 @@
 #include <algorithm>
 
 #include "opthelper.h"
+
+#if defined __GNUC__ && __GNUC__>=6 && defined __SSE2__
+    #pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
 
 template<typename T, std::size_t N>
 inline T median(std::array<T, N> array)
