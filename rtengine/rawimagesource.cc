@@ -1322,8 +1322,8 @@ SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thres
         for (int i = 2; i < H - 2; i++) {
             for (int j = 2; j < W - 2; j++) {
                 const float& temp = median(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
-                                       rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
-                                       rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2]);
+                                           rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
+                                           rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2]);
                 cfablur[i * W + j] = rawData[i][j] - temp;
             }
         }
@@ -1655,7 +1655,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             rid = dfm.searchDarkFrame( raw.dark_frame );
         }
     } else {
-        rid = dfm.searchDarkFrame( idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
+        rid = dfm.searchDarkFrame(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     }
 
     if( rid && settings->verbose) {
@@ -1726,7 +1726,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     bp = 0;
 
     if( raw.df_autoselect ) {
-        bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+        bp = dfm.getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     } else if( !raw.dark_frame.empty() ) {
         bp = dfm.getHotPixels( raw.dark_frame );
     }
@@ -3775,10 +3775,11 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
             pre_mul[2]
         };
         const DCPProfile::Matrix cam_matrix = {{
-            {camMatrix[0][0], camMatrix[0][1], camMatrix[0][2]},
-            {camMatrix[1][0], camMatrix[1][1], camMatrix[1][2]},
-            {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
-        }};
+                {camMatrix[0][0], camMatrix[0][1], camMatrix[0][2]},
+                {camMatrix[1][0], camMatrix[1][1], camMatrix[1][2]},
+                {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
+            }
+        };
         dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
         return;
     }
