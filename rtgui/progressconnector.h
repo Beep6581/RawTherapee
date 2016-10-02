@@ -32,7 +32,7 @@ class PLDBridge : public rtengine::ProgressListener
     rtengine::ProgressListener* pl;
 
 public:
-    PLDBridge ( rtengine::ProgressListener* pb)
+    explicit PLDBridge ( rtengine::ProgressListener* pb)
         : pl(pb) {}
 
     // ProgressListener interface

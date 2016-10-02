@@ -108,7 +108,7 @@ public:
       *
       * @param entry      Pointer to the ProfileStoreEntry object, be it a directory or a file
       */
-    ProfileStoreLabel(const ProfileStoreEntry *entry);
+    explicit ProfileStoreLabel(const ProfileStoreEntry *entry);
     ProfileStoreLabel (const ProfileStoreLabel &other);
 };
 

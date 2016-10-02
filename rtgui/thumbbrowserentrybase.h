@@ -107,7 +107,7 @@ public:
     bool updatepriority;
     eWithFilename withFilename;
 
-    ThumbBrowserEntryBase   (const Glib::ustring& fname);
+    explicit ThumbBrowserEntryBase   (const Glib::ustring& fname);
     virtual ~ThumbBrowserEntryBase  ();
 
     void setParent (ThumbBrowserBase* l)

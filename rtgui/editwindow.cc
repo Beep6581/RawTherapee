@@ -37,7 +37,7 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
     {
         EditWindow editWnd;
 
-        EditWindowInstance(RTWindow* p) : editWnd(p)
+        explicit EditWindowInstance(RTWindow* p) : editWnd(p)
         {
             // Determine the other display and maximize the window on that
             const Glib::RefPtr< Gdk::Window >& wnd = p->get_window();

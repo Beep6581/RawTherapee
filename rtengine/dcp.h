@@ -63,7 +63,7 @@ public:
     using Triple = std::array<double, 3>;
     using Matrix = std::array<Triple, 3>;
 
-    DCPProfile(const Glib::ustring& filename);
+    explicit DCPProfile(const Glib::ustring& filename);
     ~DCPProfile();
 
     explicit operator bool() const;

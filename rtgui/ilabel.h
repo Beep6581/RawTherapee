@@ -27,7 +27,7 @@ class ILabel : public Gtk::DrawingArea
     Glib::ustring label;
 
 public:
-    ILabel (Glib::ustring lab);
+    explicit ILabel (Glib::ustring lab);
     bool on_expose_event(GdkEventExpose* event);
     void on_realize();
     void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);

@@ -143,7 +143,7 @@ private:
     size_t size;
 
 public:
-    AlignedBufferMP(size_t sizeP)
+    explicit AlignedBufferMP(size_t sizeP)
     {
         size = sizeP;
     }

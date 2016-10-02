@@ -53,7 +53,7 @@ private:
 public:
 
     ColorTemp () : temp(-1.), green(-1.), equal (1.), method("Custom") {}
-    ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
+    explicit ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
     ColorTemp (double t, double g, double e, const Glib::ustring &m);
     ColorTemp (double mulr, double mulg, double mulb, double e);
 

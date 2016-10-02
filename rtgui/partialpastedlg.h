@@ -132,7 +132,7 @@ public:
     sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotpix_filtConn, raw_deadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_methodConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn;
 
 public:
-    PartialPasteDlg (Glib::ustring title);
+    explicit PartialPasteDlg (Glib::ustring title);
 
     void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE = NULL);
 

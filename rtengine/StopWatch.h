@@ -37,7 +37,7 @@ public:
     {
         stopped = false;
     }
-    StopWatch( const char* msg)
+    explicit StopWatch( const char* msg )
     {
         message = msg;
         start();

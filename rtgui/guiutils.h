@@ -79,7 +79,7 @@ public:
 class ConnectionBlocker
 {
 public:
-    ConnectionBlocker (sigc::connection& connection) : connection (connection)
+    explicit ConnectionBlocker (sigc::connection& connection) : connection (connection)
     {
         wasBlocked = connection.block();
     }
@@ -101,7 +101,7 @@ private:
     Gtk::Container *pC;
 
 public:
-    ExpanderBox( Gtk::Container *p);
+    explicit ExpanderBox( Gtk::Container *p);
     ~ExpanderBox( )
     {
         delete pC;

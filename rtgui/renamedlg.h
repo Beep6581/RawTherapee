@@ -55,7 +55,7 @@ protected:
     void fillTemplateList ();
 
 public:
-    RenameDialog (Gtk::Window* parent);
+    explicit RenameDialog (Gtk::Window* parent);
 
     void initName (const Glib::ustring& iname, const CacheImageData* cid);
     Glib::ustring getNewName ();
@@ -79,7 +79,7 @@ protected:
 
     void refreshTemplateList ();
 public:
-    RenameTemplateEditor (Gtk::Window* parent);
+    explicit RenameTemplateEditor (Gtk::Window* parent);
 
     Glib::ustring getSelectedTemplate ();
 

@@ -463,7 +463,7 @@ protected:
     } action;                /// object mode only, ignored in Pipette mode
 
 public:
-    EditSubscriber (EditType editType);
+    explicit EditSubscriber (EditType editType);
     virtual ~EditSubscriber () {}
 
     void               setEditProvider(EditDataProvider *provider);
