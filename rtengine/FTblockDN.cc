@@ -108,7 +108,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
     medBuffer[0] = src;
 
     // we need a buffer if src == dst or if (src != dst && iterations > 1)
-    if (src == dst || (src != dst && iterations > 1)) {
+    if (src == dst || iterations > 1) {
         if (buffer == nullptr) { // we didn't get a buufer => create one
             allocBuffer = new float*[height];
 
@@ -853,7 +853,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         const float noisevarab_b = SQR(realblue);
 
                         //input L channel
-                        array2D<float> *Lin;
+                        array2D<float> *Lin = nullptr;
                         //wavelet denoised image
                         LabImage * labdn = new LabImage(width, height);
 
@@ -1678,7 +1678,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                         delete labdn;
 
-                        if (denoiseLuminance) {
+                        if (Lin) {
                             delete Lin;
                         }
 
@@ -2250,7 +2250,6 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposit
                     float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 
                     if (lvl == maxlvl - 1) {
-                        float vari[4];
                         int edge = 0;
                         ShrinkAllL(WaveletCoeffs_L, buffer, lvl, dir, noisevarlum, madL[lvl], nullptr, edge);
                     } else {
@@ -2613,7 +2612,7 @@ SSEFUNCTION void ImProcFunctions::ShrinkAllL(wavelet_decomposition &WaveletCoeff
 //      printf("OK lev=%d\n",level);
     float mad_L = madL[dir - 1] ;
 
-    if (edge == 1) {
+    if (edge == 1 && vari) {
         noisevarlum = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
 
         for (int i = 0; i < W_L * H_L; ++i) {
@@ -3044,7 +3043,7 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
             delta *= 0.15f;
         } else if (chaut < 650.f) {
             delta *= 0.1f;
-        } else if (chaut >= 650.f) {
+        } else /*if (chaut >= 650.f)*/ {
             delta *= 0.07f;
         }
 
@@ -3082,7 +3081,7 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
             delta *= 0.3f;
         } else if (chaut < 650.f) {
             delta *= 0.2f;
-        } else if (chaut >= 650.f) {
+        } else /*if (chaut >= 650.f)*/ {
             delta *= 0.15f;
         }
 
@@ -3107,7 +3106,7 @@ void ImProcFunctions::calcautodn_info (float &chaut, float &delta, int Nb, int l
 
 }
 
-SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, const bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb,  float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, float &nresi, float &highresi, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread)
+SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc, const bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb,  float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread)
 {
     if ((settings->leveldnautsimpl == 1 && dnparams.Cmethod == "MAN") || (settings->leveldnautsimpl == 0 && dnparams.C2method == "MANU")) {
         //nothing to do
@@ -3546,9 +3545,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
             }
 
             comptlevel += 1;
-            float chresid, chmaxredresid, chmaxblueresid;
-            nresi = chresid;
-            highresi = chresid + 0.66f * (max(chmaxredresid, chmaxblueresid) - chresid); //evaluate sigma
             delete adecomp;
             delete bdecomp;
             delete labdn;
