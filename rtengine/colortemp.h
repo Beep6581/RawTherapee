@@ -92,7 +92,7 @@ public:
     }
 
     void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) const;
-    static void temp2mulxyz (double tem, double gree, std::string method, double &Xxyz, double &Zxyz);
+    static void temp2mulxyz (double tem, double gree, const std::string &method, double &Xxyz, double &Zxyz);
 
     static void cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, double &CAM02BB01, double &CAM02BB02, double &CAM02BB10, double &CAM02BB11, double &CAM02BB12, double &CAM02BB20, double &CAM02BB21, double &CAM02BB22, double adap );
     //static    void CAT02 (Imagefloat* baseImg, const ProcParams* params);
