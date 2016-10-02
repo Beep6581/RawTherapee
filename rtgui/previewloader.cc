@@ -80,6 +80,8 @@ public:
         threadPool_ = new Glib::ThreadPool(threadCount, 0);
     }
 
+    Impl(const Impl&) = delete;
+
     Glib::ThreadPool* threadPool_;
     MyMutex mutex_;
     JobSet jobs_;

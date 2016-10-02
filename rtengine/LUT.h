@@ -167,6 +167,8 @@ public:
         reset();
     }
 
+    LUT(const LUT&) = delete;
+
     ~LUT()
     {
         if (owner) {

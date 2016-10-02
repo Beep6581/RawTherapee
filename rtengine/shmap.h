@@ -33,6 +33,8 @@ public:
     float   max_f, min_f, avg;
 
     SHMap (int w, int h, bool multiThread);
+    SHMap(const SHMap&) = delete;
+
     ~SHMap ();
 
     void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);

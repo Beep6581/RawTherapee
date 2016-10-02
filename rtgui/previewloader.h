@@ -45,6 +45,8 @@ class PreviewLoader
 {
 public:
 
+    PreviewLoader(const PreviewLoader&) = delete;
+
     /**
      * @brief Singleton entry point.
      *

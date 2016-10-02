@@ -48,6 +48,9 @@ public:
         pm = new base_t [h * w ];
         memset(pm, 0, h * w * base_t_size );
     }
+
+    PixelsMap(const PixelsMap&) = delete;
+
     ~PixelsMap()
     {
         delete [] pm;

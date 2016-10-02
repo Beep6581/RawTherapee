@@ -176,6 +176,8 @@ private:
 public:
 
     ProfileStore();
+    ProfileStore (const ProfileStore&) = delete;
+
     ~ProfileStore();
     bool init ();
     void parseProfiles ();

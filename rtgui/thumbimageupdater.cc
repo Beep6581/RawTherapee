@@ -78,6 +78,8 @@ public:
         threadPool_ = new Glib::ThreadPool(threadCount, 0);
     }
 
+    Impl(const Impl&) = delete;
+
     Glib::ThreadPool* threadPool_;
 
     // Need to be a Glib::Threads::Mutex because used in a Glib::Threads::Cond object...

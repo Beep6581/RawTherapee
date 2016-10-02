@@ -167,6 +167,8 @@ public:
         }
     }
 
+    array2D(const array2D&) = delete;
+
     // destructor
     ~array2D()
     {

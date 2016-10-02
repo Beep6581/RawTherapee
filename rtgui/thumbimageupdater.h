@@ -46,6 +46,8 @@ class ThumbImageUpdater
 
 public:
 
+    ThumbImageUpdater(const ThumbImageUpdater&) = delete;
+
     /**
      * @brief Singleton entry point.
      *

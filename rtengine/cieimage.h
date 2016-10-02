@@ -41,6 +41,8 @@ public:
     float** h_p;
 
     CieImage (int w, int h);
+    CieImage (const CieImage&) = delete;
+
     ~CieImage ();
 
     //Copies image data in Img into this instance.

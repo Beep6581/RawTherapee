@@ -60,6 +60,7 @@ class MultiDiagonalSymmetricMatrix
 {
 public:
     MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle);
+    MultiDiagonalSymmetricMatrix(const MultiDiagonalSymmetricMatrix&) = delete;
     ~MultiDiagonalSymmetricMatrix();
 
     /* Storage of matrix data, and a function to create memory for Diagonals[index].
@@ -118,6 +119,7 @@ class EdgePreservingDecomposition
 {
 public:
     EdgePreservingDecomposition(int width, int height);
+    EdgePreservingDecomposition(const EdgePreservingDecomposition&) = delete;
     ~EdgePreservingDecomposition();
 
     //Create an edge preserving blur of Source. Will create and return, or fill into Blur if not NULL. In place not ok.
