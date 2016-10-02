@@ -117,6 +117,7 @@ void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_)
 
         cropWins.clear();
 
+        mainCropWindow->deleteColorPickers ();
         mainCropWindow->setObservedCropWin (NULL);
     }
 

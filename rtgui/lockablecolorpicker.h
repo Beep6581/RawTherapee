@@ -38,7 +38,7 @@ public:
 class LockableColorPicker : BackBuffer
 {
 public:
-    enum class PickerSize {
+    enum class Size {
         S5=5,
         S10=10,
         S15=15,
@@ -46,26 +46,35 @@ public:
         S25=25,
         S30=30
     };
+    enum class Validity {
+        INSIDE,
+        CROSSING,
+        OUTSIDE
+    };
 private:
     enum class ColorPickerType {
         RGB,
-        HSV
+        HSV,
+        LAB
     };
     CropWindow* cropWindow;  // the color picker is displayed in a single cropWindow, the one that the user has clicked in
     ColorPickerType displayedValues;
     rtengine::Coord position;  // Coordinate in image space
     rtengine::Coord anchorOffset;
-    PickerSize size;
-    bool isValid;
+    Size size;
+    Glib::ustring *outputProfile;
+    Glib::ustring *workingProfile;
+    Validity validity;
     float r, g, b;  // red green blue in [0;1] range
     float h, s, v;  // hue saturation value in [0;1] range
+    float L, a, bb;  // L*a*b value in [0;1] range
 
     void updateBackBuffer ();
 
 public:
 
-    LockableColorPicker (CropWindow* cropWindow);
-    LockableColorPicker (int x, int y, PickerSize size, const float R, const float G, const float B, CropWindow* cropWindow);
+    LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile);
+    LockableColorPicker (int x, int y, Size size, const float R, const float G, const float B, CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile);
 
     void draw (Cairo::RefPtr<Cairo::Context> &cr);
 
@@ -74,10 +83,10 @@ public:
     void setRGB (const float R, const float G, const float B);
     void getImagePosition (rtengine::Coord &imgPos);
     void getScreenPosition (rtengine::Coord &screenPos);
-    PickerSize getSize ();
+    Size getSize ();
     bool isOver (int x, int y);
-    void setValidity (bool isValid);
-    void setSize (PickerSize newSize);
+    void setValidity (Validity isValid);
+    void setSize (Size newSize);
     void incSize ();
     void decSize ();
 };

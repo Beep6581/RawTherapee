@@ -109,17 +109,18 @@ ToolBar::~ToolBar ()
 void ToolBar::setTool (ToolMode tool)
 {
 
-    handConn.block (true);
-    cropConn.block (true);
+    bool handWasBlocked = handConn.block (true);
+    bool cropWasBlocked = cropConn.block (true);
+    bool wbWasBlocked = true, cpWasBlocked = true;
 
     if (wbTool) {
-        wbConn.block (true);
+        wbWasBlocked = wbConn.block (true);
     }
     if (colPickerTool) {
-        cpConn.block (true);
+        cpWasBlocked = cpConn.block (true);
     }
 
-    straConn.block (true);
+    bool straWasBlocked = straConn.block (true);
 
     bool stopEdit = tool == TMHand && handTool->get_active() && editingMode;
 
@@ -154,17 +155,17 @@ void ToolBar::setTool (ToolMode tool)
 
     current = tool;
 
-    handConn.block (false);
-    cropConn.block (false);
+    if (!handWasBlocked) handConn.block (false);
+    if (!cropWasBlocked) cropConn.block (false);
 
     if (wbTool) {
-        wbConn.block (false);
+        if (!wbWasBlocked) wbConn.block (false);
     }
     if (colPickerTool) {
-        cpConn.block (false);
+        if (!cpWasBlocked) cpConn.block (false);
     }
 
-    straConn.block (false);
+    if (!straWasBlocked) straConn.block (false);
 
     if (stopEdit) {
         stopEditMode();
@@ -178,7 +179,44 @@ void ToolBar::setTool (ToolMode tool)
 void ToolBar::startEditMode()
 {
     if (!editingMode) {
-        handTool->set_active(true);  // will call hand_pressed, with editingMode=false
+        bool handWasBlocked = handConn.block (true);
+        bool cropWasBlocked = cropConn.block (true);
+        bool wbWasBlocked = true, cpWasBlocked = true;
+        if (colPickerTool) {
+            cpWasBlocked = cpConn.block (true);
+        }
+
+        if (wbTool) {
+            wbWasBlocked = wbConn.block (true);
+        }
+
+        bool straWasBlocked = straConn.block (true);
+
+        if (current != TMHand) {
+            if (colPickerTool) {
+                colPickerTool->set_active(false);
+            }
+            if (wbTool) {
+                wbTool->set_active (false);
+            }
+
+            cropTool->set_active (false);
+            straTool->set_active (false);
+            current = TMHand;
+        }
+        handTool->set_active (true);
+
+        if (!handWasBlocked) handConn.block (false);
+        if (!cropWasBlocked) cropConn.block (false);
+        if (colPickerTool) {
+            if (!cpWasBlocked) cpConn.block (false);
+        }
+        if (wbTool) {
+            if (!wbWasBlocked) wbConn.block (false);
+        }
+
+        if (!straWasBlocked) straConn.block (false);
+
         editingMode = true;
         handTool->set_image(*editinghandimg);
     }
@@ -195,13 +233,6 @@ void ToolBar::stopEditMode()
 {
     if (editingMode) {
         editingMode = false;
-        /* WARNING: Should we toggle the Hand button on?
-         * This method can be called while another tool is active, e.g. if the user toggle off
-         * the Subscriber's Edit button. For now, we keep that other tool active. If one want to
-         * switch to the Hand tool, uncommenting the following line should suffice (not tested).
-         *
-         * handTool->set_active(true);
-         */
         handTool->set_image(*handimg);
     }
 }
@@ -209,18 +240,25 @@ void ToolBar::stopEditMode()
 void ToolBar::hand_pressed ()
 {
 
-    handConn.block (true);
-    cropConn.block (true);
+    bool handWasBlocked = handConn.block (true);
+    bool cropWasBlocked = cropConn.block (true);
+    bool wbWasBlocked = true, cpWasBlocked = true;
     if (colPickerTool) {
-        cpConn.block (true);
+        cpWasBlocked = cpConn.block (true);
     }
 
     if (wbTool) {
-        wbConn.block (true);
+        wbWasBlocked = wbConn.block (true);
     }
 
-    straConn.block (true);
+    bool straWasBlocked = straConn.block (true);
 
+    if (editingMode) {
+        stopEditMode();
+        if (listener) {
+            listener->editModeSwitchedOff ();
+        }
+    }
     if (current != TMHand) {
         if (colPickerTool) {
             colPickerTool->set_active(false);
@@ -232,27 +270,19 @@ void ToolBar::hand_pressed ()
         cropTool->set_active (false);
         straTool->set_active (false);
         current = TMHand;
-    } else {
-        if (editingMode) {
-            stopEditMode();
-        }
-
-        if (listener) {
-            listener->editModeSwitchedOff ();
-        }
     }
 
     handTool->set_active (true);
-    handConn.block (false);
-    cropConn.block (false);
+    if (!handWasBlocked) handConn.block (false);
+    if (!cropWasBlocked) cropConn.block (false);
     if (colPickerTool) {
-        cpConn.block (false);
+        if (!cpWasBlocked) cpConn.block (false);
     }
     if (wbTool) {
-        wbConn.block (false);
+        if (!wbWasBlocked) wbConn.block (false);
     }
 
-    straConn.block (false);
+    if (!straWasBlocked) straConn.block (false);
 
     if (listener) {
         listener->toolSelected (TMHand);
@@ -262,18 +292,25 @@ void ToolBar::hand_pressed ()
 void ToolBar::wb_pressed ()
 {
 
-    handConn.block (true);
-    cropConn.block (true);
+    bool handWasBlocked = handConn.block (true);
+    bool cropWasBlocked = cropConn.block (true);
+    bool wbWasBlocked = true, cpWasBlocked = true;
     if (colPickerTool) {
-        cpConn.block (true);
+        cpWasBlocked = cpConn.block (true);
     }
     if (wbTool) {
-        wbConn.block (true);
+        wbWasBlocked = wbConn.block (true);
     }
 
-    straConn.block (true);
+    bool straWasBlocked = straConn.block (true);
 
     if (current != TMSpotWB) {
+        if (editingMode) {
+            stopEditMode();
+            if (listener) {
+                listener->editModeSwitchedOff ();
+            }
+        }
         handTool->set_active (false);
         cropTool->set_active (false);
         straTool->set_active (false);
@@ -287,16 +324,16 @@ void ToolBar::wb_pressed ()
         wbTool->set_active (true);
     }
 
-    handConn.block (false);
-    cropConn.block (false);
+    if (!handWasBlocked) handConn.block (false);
+    if (!cropWasBlocked) cropConn.block (false);
     if (colPickerTool) {
-        cpConn.block (false);
+        if (!cpWasBlocked) cpConn.block (false);
     }
     if (wbTool) {
-        wbConn.block (false);
+        if (!wbWasBlocked) wbConn.block (false);
     }
 
-    straConn.block (false);
+    if (!straWasBlocked) straConn.block (false);
 
     if (listener) {
         listener->toolSelected (TMSpotWB);
@@ -307,14 +344,15 @@ void ToolBar::colPicker_pressed (GdkEventButton* event)
 {
 
     if (event->button == 1) {
-        handConn.block (true);
-        cropConn.block (true);
-        cpConn.block (true);
+        bool handWasBlocked = handConn.block (true);
+        bool cropWasBlocked = cropConn.block (true);
+        bool wbWasBlocked = true;
+        bool cpWasBlocked = cpConn.block (true);
         if (wbTool) {
-            wbConn.block (true);
+            wbWasBlocked = wbConn.block (true);
         }
 
-        straConn.block (true);
+        bool straWasBlocked = straConn.block (true);
 
         cropTool->set_active (false);
         if (wbTool) {
@@ -324,21 +362,27 @@ void ToolBar::colPicker_pressed (GdkEventButton* event)
 
         if (current != TMColorPicker) {
             // Disabling all other tools, enabling the Picker tool and entering the "visible pickers" mode
+            if (editingMode) {
+                stopEditMode();
+                if (listener) {
+                    listener->editModeSwitchedOff ();
+                }
+            }
             handTool->set_active (false);
             showColorPickers(true);
             current = TMColorPicker;
         } else {
             // Disabling the picker tool, enabling the Hand tool and keeping the "visible pickers" mode
             handTool->set_active (true);
-            colPickerTool->set_active (false);
+            //colPickerTool->set_active (false);  Done by the standard event handler
             current = TMHand;
         }
 
-        handConn.block (false);
-        cropConn.block (false);
-        cpConn.block (false);
-        wbConn.block (false);
-        straConn.block (false);
+        if (!handWasBlocked) handConn.block (false);
+        if (!cropWasBlocked) cropConn.block (false);
+        if (!cpWasBlocked) cpConn.block (false);
+        if (!wbWasBlocked) wbConn.block (false);
+        if (!straWasBlocked) straConn.block (false);
 
         if (listener) {
             listener->toolSelected (current);
@@ -346,14 +390,14 @@ void ToolBar::colPicker_pressed (GdkEventButton* event)
     } else if (event->button == 3) {
         if (current == TMColorPicker) {
             // Disabling the Picker tool and entering into the "invisible pickers" mode
-            cpConn.block (true);
-            handConn.block (true);
+            bool cpWasBlocked = cpConn.block (true);
+            bool handWasBlocked = handConn.block (true);
             handTool->set_active (true);
             colPickerTool->set_active (false);
             current = TMHand;
             showColorPickers(false);
-            cpConn.block (false);
-            handConn.block (false);
+            if (!cpWasBlocked) cpConn.block (false);
+            if (!handWasBlocked) handConn.block (false);
         } else {
             // The Picker tool is already disabled, entering into the "invisible pickers" mode
             switchColorPickersVisibility();
@@ -386,17 +430,26 @@ void ToolBar::switchColorPickersVisibility()
 void ToolBar::crop_pressed ()
 {
 
-    handConn.block (true);
-    cropConn.block (true);
-    cpConn.block(true);
-
-    if (wbTool) {
-        wbConn.block (true);
+    bool handWasBlocked = handConn.block (true);
+    bool cropWasBlocked = cropConn.block (true);
+    bool wbWasBlocked = true, cpWasBlocked = true;
+    if (colPickerTool) {
+        cpConn.block(true);
     }
 
-    straConn.block (true);
+    if (wbTool) {
+        wbWasBlocked = wbConn.block (true);
+    }
+
+    bool straWasBlocked = straConn.block (true);
 
     if (current != TMCropSelect) {
+        if (editingMode) {
+            stopEditMode();
+            if (listener) {
+                listener->editModeSwitchedOff ();
+            }
+        }
         handTool->set_active (false);
         if (colPickerTool) {
             colPickerTool->set_active(false);
@@ -410,11 +463,12 @@ void ToolBar::crop_pressed ()
     }
 
     cropTool->set_active (true);
-    handConn.block (false);
-    cropConn.block (false);
-    cpConn.block(false);
-    wbConn.block (false);
-    straConn.block (false);
+    cropTool->grab_focus ();
+    if (!handWasBlocked) handConn.block (false);
+    if (!cropWasBlocked) cropConn.block (false);
+    if (!cpWasBlocked) cpConn.block(false);
+    if (!wbWasBlocked) wbConn.block (false);
+    if (!straWasBlocked) straConn.block (false);
 
     if (listener) {
         listener->toolSelected (TMCropSelect);
@@ -424,19 +478,26 @@ void ToolBar::crop_pressed ()
 void ToolBar::stra_pressed ()
 {
 
-    handConn.block (true);
-    cropConn.block (true);
+    bool handWasBlocked = handConn.block (true);
+    bool cropWasBlocked = cropConn.block (true);
+    bool wbWasBlocked = true, cpWasBlocked = true;
     if (colPickerTool) {
-        cpConn.block (true);
+        cpWasBlocked = cpConn.block (true);
     }
 
     if (wbTool) {
-        wbConn.block (true);
+        wbWasBlocked = wbConn.block (true);
     }
 
-    straConn.block (true);
+    bool straWasBlocked = straConn.block (true);
 
     if (current != TMStraighten) {
+        if (editingMode) {
+            stopEditMode();
+            if (listener) {
+                listener->editModeSwitchedOff ();
+            }
+        }
         handTool->set_active (false);
         if (colPickerTool) {
             colPickerTool->set_active(false);
@@ -450,15 +511,15 @@ void ToolBar::stra_pressed ()
     }
 
     straTool->set_active (true);
-    handConn.block (false);
-    cropConn.block (false);
-    cpConn.block (false);
+    if (!handWasBlocked) handConn.block (false);
+    if (!cropWasBlocked) cropConn.block (false);
+    if (!cpWasBlocked) cpConn.block (false);
 
     if (wbTool) {
-        wbConn.block (false);
+        if (!wbWasBlocked) wbConn.block (false);
     }
 
-    straConn.block (false);
+    if (!straWasBlocked) straConn.block (false);
 
     if (listener) {
         listener->toolSelected (TMStraighten);

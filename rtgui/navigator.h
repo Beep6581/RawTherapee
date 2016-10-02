@@ -46,8 +46,6 @@ protected:
     Gtk::Label *lH, *lS, *lV;
     Gtk::Label *lLAB_A, *lLAB_B, *lLAB_L;
 
-    void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
-
     void setInvalid (int fullWidth = -1, int fullHeight = -1);
 
 public:

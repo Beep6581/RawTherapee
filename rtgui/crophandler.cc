@@ -475,12 +475,12 @@ bool CropHandler::getEnabled ()
     return enabled;
 }
 
-void CropHandler::colorPick (rtengine::Coord pickerPos, float &r, float &g, float &b, LockableColorPicker::PickerSize size)
+void CropHandler::colorPick (rtengine::Coord pickerPos, float &r, float &g, float &b, LockableColorPicker::Size size)
 {
 
     int xSize = (int)size;
     int ySize = (int)size;
-    int pixbufW = cropPixbuf->get_width();
+    int pixbufW = cropPixbuftrue->get_width();
     rtengine::Coord topLeftPos(pickerPos.x - xSize/2, pickerPos.y - ySize/2);
 
     if (topLeftPos.x > pixbufW || topLeftPos.y > pixbufW || topLeftPos.x + xSize < 0 || topLeftPos.y + ySize < 0) {
@@ -510,9 +510,9 @@ void CropHandler::colorPick (rtengine::Coord pickerPos, float &r, float &g, floa
     // Accumulating the data
     std::uint32_t r2=0, g2=0, b2=0;
     std::uint32_t count = 0;
-    const guint8* data = cropPixbuf->get_pixels();
+    const guint8* data = cropPixbuftrue->get_pixels();
     for (int j = topLeftPos.y ; j < topLeftPos.y + ySize ; ++j) {
-        const guint8* data2 = data + cropPixbuf->get_rowstride()*j;
+        const guint8* data2 = data + cropPixbuftrue->get_rowstride()*j;
         for (int i = topLeftPos.x ; i < topLeftPos.x + xSize ; ++i) {
             const guint8* data3 = data2 + i*3;
             rtengine::Coord currPos(i, j);

@@ -105,7 +105,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
     void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1);
 
-    bool isHoveredPickerFullyInside(const rtengine::Coord &pos);
+    LockableColorPicker::Validity checkValidity (LockableColorPicker*  picker, const rtengine::Coord &pos);
 
     // Used by the mainCropWindow only
     void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw = 0, int rh = 0);
@@ -127,6 +127,7 @@ public:
     {
         observedCropWin = cw;
     }
+    void deleteColorPickers ();
 
     void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy);
     void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy);

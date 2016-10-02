@@ -322,11 +322,19 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             state = SDragPicker;
                         } else {
                             // Add a new Color Picker
-                            int x2, y2;
-                            screenCoordToImage(x, y, x2, y2);
-                            LockableColorPicker *newPicker = new LockableColorPicker(x2, y2, LockableColorPicker::PickerSize::S15, 0., 0., 0., this);
+                            rtengine::Coord imgPos, cropPos;
+                            screenCoordToImage(x, y, imgPos.x, imgPos.y);
+                            LockableColorPicker *newPicker = new LockableColorPicker(imgPos.x, imgPos.y, LockableColorPicker::Size::S15, 0., 0., 0., this, &cropHandler.colorParams.output, &cropHandler.colorParams.working);
                             colorPickers.push_back(newPicker);
                             hoveredPicker = newPicker;
+                            imageCoordToCropImage(imgPos.x, imgPos.y, cropPos.x, cropPos.y);
+                            float r=0.f, g=0.f, b=0.f;
+                            LockableColorPicker::Validity validity = checkValidity (hoveredPicker, cropPos);
+                            hoveredPicker->setValidity (validity);
+                            if (validity == LockableColorPicker::Validity::INSIDE) {
+                                cropHandler.colorPick(cropPos, r, g, b, hoveredPicker->getSize());
+                                hoveredPicker->setRGB (r, g, b);
+                            }
                             state = SDragPicker;
                             press_x = x;
                             press_y = y;
@@ -854,9 +862,9 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
         }
         imageCoordToCropImage(imgPos.x, imgPos.y, cropPos.x, cropPos.y);
         float r=0.f, g=0.f, b=0.f;
-        bool isValid = isHoveredPickerFullyInside (cropPos);
-        hoveredPicker->setValidity (isValid);
-        if (isValid) {
+        LockableColorPicker::Validity validity = checkValidity (hoveredPicker, cropPos);
+        hoveredPicker->setValidity (validity);
+        if (validity == LockableColorPicker::Validity::INSIDE) {
             cropHandler.colorPick(cropPos, r, g, b, hoveredPicker->getSize());
         }
         hoveredPicker->setPosition (imgPos, r, g, b);
@@ -2032,23 +2040,41 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
     iarea->redraw ();
 }
 
-bool CropWindow::isHoveredPickerFullyInside (const rtengine::Coord &pos)
+LockableColorPicker::Validity CropWindow::checkValidity (LockableColorPicker*  picker, const rtengine::Coord &pos)
 {
 
-    return true;
-    if (!cropHandler.cropPixbuf) {
-        return false;
+    if (!cropHandler.cropPixbuftrue) {
+        return LockableColorPicker::Validity::OUTSIDE;
     }
-    rtengine::Coord cropPos;
+    rtengine::Coord cropTopLeft, cropBottomRight, cropSize;
+    int skip;
+    cropHandler.getWindow(cropTopLeft.x, cropTopLeft.y, cropSize.x, cropSize.y, skip);
+    cropBottomRight = cropTopLeft + cropSize;
     rtengine::Coord pickerPos, cropPickerPos;
-    hoveredPicker->getImagePosition(pickerPos);
+    picker->getImagePosition(pickerPos);
     rtengine::Coord minPos(0, 0);
-    rtengine::Coord maxPos(cropHandler.cropPixbuf->get_width(), cropHandler.cropPixbuf->get_height());
-    rtengine::Coord halfPickerSize((int)hoveredPicker->getSize()/2, (int)hoveredPicker->getSize()/2);
+    rtengine::Coord maxPos(cropHandler.cropPixbuftrue->get_width(), cropHandler.cropPixbuftrue->get_height());
+    rtengine::Coord halfPickerSize((int)picker->getSize()/2, (int)picker->getSize()/2);
     imageCoordToCropImage (pickerPos.x, pickerPos.y, cropPickerPos.x, cropPickerPos.y);
+    imageCoordToCropImage (cropTopLeft.x, cropTopLeft.y, minPos.x, minPos.y);
+    imageCoordToCropImage (cropBottomRight.x, cropBottomRight.y, maxPos.x, maxPos.y);
     rtengine::Coord pickerMinPos = cropPickerPos - halfPickerSize;
     rtengine::Coord pickerMaxPos = cropPickerPos + halfPickerSize;
-    return pickerMinPos >= minPos && pickerMaxPos <= maxPos;
+    if (pickerMaxPos.x < minPos.x || pickerMaxPos.y < minPos.y || pickerMinPos.x > maxPos.x || pickerMinPos.y > maxPos.y) {
+        return LockableColorPicker::Validity::OUTSIDE;
+    } else if (pickerMinPos >= minPos && pickerMaxPos < maxPos) {
+        return LockableColorPicker::Validity::INSIDE;
+    } else {
+        return LockableColorPicker::Validity::CROSSING;
+    }
+}
+
+void CropWindow::deleteColorPickers ()
+{
+    for (auto colorPicker : colorPickers) {
+        delete colorPicker;
+    }
+    colorPickers.clear();
 }
 
 void CropWindow::screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy)
@@ -2360,6 +2386,7 @@ void CropWindow::cropImageUpdated ()
         colorPicker->getImagePosition(imgPos);
         imageCoordToCropImage(imgPos.x, imgPos.y, cropPos.x, cropPos.y);
         float r=0.f, g=0.f, b=0.f;
+        colorPicker->setValidity (checkValidity (colorPicker, cropPos));
         cropHandler.colorPick(cropPos, r, g, b, colorPicker->getSize());
         colorPicker->setRGB (r, g, b);
     }

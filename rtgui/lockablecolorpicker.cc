@@ -26,21 +26,24 @@
 
 extern Options options;
 
-LockableColorPicker::LockableColorPicker (CropWindow* cropWindow)
-: cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(PickerSize::S20),
-  isValid(false), r(0.f), g(0.f), b(0.f), h(0.f), s(0.f), v(0.f)
-{
-}
+LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
+: cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S20),
+  outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
+  r(0.f), g(0.f), b(0.f), h(0.f), s(0.f), v(0.f), L(0.f), a(0.f), bb(0.f)
+{}
 
-LockableColorPicker::LockableColorPicker (int x, int y, PickerSize size, const float R, const float G, const float B, CropWindow* cropWindow)
+LockableColorPicker::LockableColorPicker (int x, int y, Size size, const float R, const float G, const float B, CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(x, y), size(size),
-  isValid(false), r(R), g(G), b(B)
+  outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
+  r(R), g(G), b(B), L(0.f), a(0.f), bb(0.f)
 {
     float h_, s_, v_;
     rtengine::Color::rgb2hsv((float)r*65535.f, (float)g*65535.f, (float)b*65535.f, h_, s_, v_);
     h = (int)(h_*255.f);
     s = (int)(s_*255.f);
     v = (int)(v_*255.f);
+
+    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 }
 
 void LockableColorPicker::updateBackBuffer ()
@@ -48,19 +51,16 @@ void LockableColorPicker::updateBackBuffer ()
     int newW, newH;
 
     // -------------------- setting some key constants ---------------------
-    const float circlePadding = 3.f;
+    const float circlePadding = 3.f;  // keep this value odd
     // ---------------------------------------------------------------------
 
-    if (isValid) {
+    if (validity == Validity::INSIDE) {
         Gtk::DrawingArea *iArea = cropWindow->getImageArea();
-        Cairo::RefPtr<Cairo::Context> bbcr = BackBuffer::getContext();
 
         Glib::RefPtr<Pango::Context> pangoContext = iArea->get_pango_context ();
         Pango::FontDescription fontd(options.colorPickerFont);
+        fontd.set_weight(Pango::WEIGHT_NORMAL);
         pangoContext->set_font_description (fontd);
-
-        // for drawing text
-        bbcr->set_line_width (0.);
 
         Glib::RefPtr<Pango::Layout> layout[3][2];
 
@@ -97,10 +97,10 @@ void LockableColorPicker::updateBackBuffer ()
         int maxHRow2 = rtengine::max(h20, h21);
 
         // -------------------- setting some key constants ---------------------
-        const int textPadding = 2;
+        const int textPadding = 3;
         const int textWidth = maxWCol0 + maxWCol1 + textPadding;
         const int textHeight = maxHRow0 + maxHRow1 + maxHRow2 + 2*textPadding;
-        const double opacity = 0.75;
+        const double opacity = 0.62;
         // ---------------------------------------------------------------------
 
         newW = rtengine::max<int>((int)size + 2 * circlePadding, textWidth + 2 * textPadding);
@@ -108,29 +108,44 @@ void LockableColorPicker::updateBackBuffer ()
 
         setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, newW, newH, true);
 
-        float center = (float)size/2.f + circlePadding;
+        Cairo::RefPtr<Cairo::Context> bbcr = BackBuffer::getContext();
+
+        // cleaning the back buffer
+        bbcr->set_source_rgba (0., 0., 0., 0.);
+        bbcr->set_operator (Cairo::OPERATOR_CLEAR);
+        bbcr->paint ();
+        bbcr->set_operator (Cairo::OPERATOR_OVER);
+
+        // for drawing text
+        bbcr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
+        bbcr->set_line_width (0.);
+
+        float center = (float)size / 2.f + circlePadding;
 
         // black background of the whole color picker
         bbcr->set_line_width (0.);
-        bbcr->arc_negative (center, center, center, 0.f, (float)M_PI);
-        bbcr->line_to (0, 2.f * center + textHeight + 2*textPadding);
-        bbcr->line_to (textWidth + 2*textPadding, 2.f * center + textHeight + 2*textPadding);
-        bbcr->line_to (textWidth + 2*textPadding, 2.f * center);
-        bbcr->line_to (2.f * center, 2.f * center);
-        bbcr->close_path();
         bbcr->set_source_rgba (0., 0., 0., opacity);
+        bbcr->arc_negative (center, center, center, 0., (double)M_PI);
+        bbcr->line_to (0, 2. * center + textHeight);
+        bbcr->arc_negative (2. * textPadding, 2. * center + textHeight, 2. * textPadding, (double)M_PI, (double)M_PI / 2.);
+        bbcr->line_to (textWidth, 2. * center + textHeight + 2. * textPadding);
+        bbcr->arc_negative (textWidth, 2. * center + textHeight, 2. * textPadding, (double)M_PI / 2., 0.);
+        bbcr->line_to (textWidth + 2. * textPadding, 2. * center + 2. * textPadding);
+        bbcr->arc_negative (textWidth, 2. * center + 2. * textPadding, 2. * textPadding, 0., (double)M_PI * 1.5);
+        bbcr->line_to (2. * center, 2. * center);
+        bbcr->close_path();
         bbcr->set_line_join (Cairo::LINE_JOIN_BEVEL);
         bbcr->set_line_cap (Cairo::LINE_CAP_SQUARE);
         bbcr->fill ();
 
         // light grey circle around the color mark
-        bbcr->arc (center, center, center - circlePadding / 2.f - 0.5f, 0.f, 2.f * (float)M_PI);
-        bbcr->set_source_rgb (0.7, 0.7, 0.7);
-        bbcr->set_line_width (circlePadding-2.f);
+        bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)M_PI);
+        bbcr->set_source_rgb (0.75, 0.75, 0.75);
+        bbcr->set_line_width (circlePadding - 2.);
         bbcr->stroke ();
 
         // spot disc with picked color
-        bbcr->arc (center, center, center - circlePadding - 0.5f, 0.f, 2.f * (float)M_PI);
+        bbcr->arc (center, center, center - circlePadding, 0., 2. * (double)M_PI);
         bbcr->set_source_rgb (r, g, b);  // <- set the picker color here
         bbcr->set_line_width (0.);
         bbcr->fill();
@@ -141,7 +156,7 @@ void LockableColorPicker::updateBackBuffer ()
         bbcr->set_line_cap (Cairo::LINE_CAP_ROUND);
         bbcr->set_source_rgb (1., 1., 1.);
         double txtOffsetX = textPadding;
-        double txtOffsetY = (double)size + 2.f * circlePadding + textPadding;
+        double txtOffsetY = (double)size + 2. * circlePadding + textPadding;
         switch (iArea->get_direction()) {
         case Gtk::TEXT_DIR_RTL:
             bbcr->move_to (txtOffsetX                         , txtOffsetY);
@@ -190,31 +205,37 @@ void LockableColorPicker::updateBackBuffer ()
 
         anchorOffset.set (center, center);
 
-    } else {
+        setDirty (false);
+    } else if (validity == Validity::CROSSING) {
         newH = newW = (int)size + 2 * circlePadding;
 
         setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, newW, newH, true);
 
         Cairo::RefPtr<Cairo::Context> bbcr = BackBuffer::getContext();
+        bbcr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
 
-        float center = (float)size/2.f + circlePadding;
-        bbcr->arc (center, center, center - circlePadding/2.f, 0.f, 2.f * (float)M_PI);
+        float center = (float)size / 2.f + circlePadding;
+        bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)M_PI);
         bbcr->set_source_rgb (0., 0., 0.);
         bbcr->set_line_width(circlePadding);
         bbcr->stroke_preserve();
         bbcr->set_source_rgb (1., 1., 1.);
-        bbcr->set_line_width(circlePadding-2.f);
+        bbcr->set_line_width(circlePadding - 2.);
         bbcr->stroke ();
 
         anchorOffset.set (center, center);
 
+        setDirty (false);
     }
 
-    setDirty (false);
 }
 
 void LockableColorPicker::draw (Cairo::RefPtr<Cairo::Context> &cr)
 {
+    if (validity == Validity::OUTSIDE) {
+        return;
+    }
+
     if (isDirty()) {
         updateBackBuffer();
     }
@@ -240,7 +261,9 @@ void LockableColorPicker::setPosition (const rtengine::Coord &newPos, const floa
     s = (float)s_;
     v = (float)v_;
 
-    if (isValid) {
+    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+
+    if (validity != Validity::OUTSIDE) {
         setDirty(true);
     }
 }
@@ -261,7 +284,9 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B)
     s = (float)s_;
     v = (float)v_;
 
-    if (isValid) {
+    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+
+    if (validity != Validity::OUTSIDE) {
         setDirty(true);
     }
 }
@@ -293,15 +318,15 @@ bool LockableColorPicker::isOver (int x, int y)
     return mousePos >= tl && mousePos <= br;
 }
 
-void LockableColorPicker::setValidity (bool isValid)
+void LockableColorPicker::setValidity (Validity validity)
 {
-    if (this->isValid != isValid) {
+    if (this->validity != validity) {
         setDirty(true);
     }
-    this->isValid = isValid;
+    this->validity = validity;
 }
 
-void LockableColorPicker::setSize (PickerSize newSize)
+void LockableColorPicker::setSize (Size newSize)
 {
     if (size != newSize)
     {
@@ -310,23 +335,23 @@ void LockableColorPicker::setSize (PickerSize newSize)
     }
 }
 
-LockableColorPicker::PickerSize LockableColorPicker::getSize ()
+LockableColorPicker::Size LockableColorPicker::getSize ()
 {
     return size;
 }
 
 void LockableColorPicker::incSize ()
 {
-    if (size < PickerSize::S30) {
-        size = (PickerSize)((int)size + 5);
+    if (size < Size::S30) {
+        size = (Size)((int)size + 5);
         setDirty(true);
     }
 }
 
 void LockableColorPicker::decSize ()
 {
-    if (size > PickerSize::S5) {
-        size = (PickerSize)((int)size - 5);
+    if (size > Size::S5) {
+        size = (Size)((int)size - 5);
         setDirty(true);
     }
 }

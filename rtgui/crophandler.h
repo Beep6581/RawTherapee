@@ -113,7 +113,7 @@ public:
     void    setEnabled (bool e);
     bool    getEnabled ();
 
-    void    colorPick (rtengine::Coord pickerPos, float &r, float &g, float &b, LockableColorPicker::PickerSize size);
+    void    colorPick (rtengine::Coord pickerPos, float &r, float &g, float &b, LockableColorPicker::Size size);
 
     rtengine::DetailedCrop* getCrop()
     {
