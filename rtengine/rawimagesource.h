@@ -101,8 +101,6 @@ protected:
     void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
-    void updateHLRecoveryMap_ColorPropagation ();
-    void HLRecovery_ColorPropagation (float* red, float* green, float* blue, int i, int sx1, int width, int skip);
     unsigned FC(int row, int col)
     {
         return ri->FC(row, col);
