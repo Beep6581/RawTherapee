@@ -3221,7 +3221,10 @@ void CLASS smal_decode_segment (unsigned seg[2][2], int holes)
       diff = diff ? -diff : 0x80;
     if (ftell(ifp) + 12 >= seg[1][1])
       diff = 0;
-    raw_image[pix] = pred[pix & 1] += diff;
+    if(pix>=raw_width*raw_height)
+      derror();
+    else
+      raw_image[pix] = pred[pix & 1] += diff;
     if (!(pix & 1) && HOLE(pix / raw_width)) pix += 2;
   }
   maximum = 0xff;
