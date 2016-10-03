@@ -500,6 +500,38 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 		}
     },
 
+    { // Quality B, some intermediate ISO samples missing, LENR samples missing
+	  //			so White Levels not properly indicated, some aperture scaling missing
+        "make_model": "Canon EOS 5D Mark IV",
+        "dcraw_matrix": [ 6446,-366,-864,-4436,12204,2513,-952,2496,6348 ], // DNG_V9.7 D65
+        "raw_crop": [ 136, 42, 6740, 4500 ], // full size 6880x4544, official crop 148,54,6867,4533
+        "masked_areas": [ 54, 4, 4534, 132 ],
+        "ranges": {
+               "white": [
+                { "iso": [ 100, 125, 200, 250 ], "levels": 16100 }, // nominal 16383, LENR?
+                { "iso": [ 160 ], "levels": 13000 }, // nominal f8-13105
+                { "iso": [ 320, 640, 1250, 2500 ], "levels": 13300 }, // G1,G2 F4.0-13422-F2.8-13562-13616
+                { "iso": [ 5000, 10000, 20000 ], "levels": 13200 }, // G1,G2 F4.0-13422-F2.8-13562-13616
+                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000 ], "levels": 16100 }, // nominal 16383, 
+                { "iso": [ 6400, 8000, 12800, 16000, 25600, 32000 ], "levels": 16000 }, // R,G1,G2 16383, LENR?
+                { "iso": [ 40000, 51200, 102400 ], "levels": 15800 } // 16383, LENR?
+                        ],
+               "white_max": 16383,
+            "aperture_scaling": [
+		/* note: need for more data to properly fill all scale factors */
+		{ "aperture": 1.4, "scale_factor": 1.130 }, // 
+		{ "aperture": 1.6, "scale_factor": 1.100 }, // 
+		{ "aperture": 1.8, "scale_factor": 1.070 }, // 
+		{ "aperture": 2.0, "scale_factor": 1.050 }, // 14171/13422=1.055
+		{ "aperture": 2.2, "scale_factor": 1.035 }, // 13954/13422=1.039
+		{ "aperture": 2.5, "scale_factor": 1.025 }, // 11400/11000=1.028
+		{ "aperture": 2.8, "scale_factor": 1.015 }, // 13562/13422 - 13731,13688,13562
+		{ "aperture": 3.2, "scale_factor": 1.010 }, // 
+		{ "aperture": 3.5, "scale_factor": 1.005 } // 13508/13422
+                                ]
+                  }
+    },
+
     { // Quality C, intermediate ISO samples missing but safely guessed, aperture scaling measures missing
         "make_model": [ "Canon EOS 5DS R", "Canon EOS 5DS" ],
       // "dcraw_matrix": [ 6848,-1661,-221,-3904,10931,3434,-470,1251,6039 ], // DNG_V9.0 A
@@ -1258,6 +1290,12 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
     { // Quality B
+         "make_model": "Nikon D3400",
+         "dcraw_matrix": [ 6988,-1384,-714,-5631,13410,2447,-1485,2204,7318 ], // adobe dng_v9.7 d65
+         "ranges": { "white": 16300 } // WL value is for 14-bit files, RT auto adapts it for 12-bit files. WL typical 16383 set to 16300 for safety
+    },
+
+    { // Quality B
          "make_model": "Nikon D5300",
          "dcraw_matrix": [ 6988,-1384,-714,-5631,13410,2447,-1485,2204,7318 ], // adobe dng_v8.8 d65
          "ranges": { "white": 16300 } // WL value is for 14-bit files, RT auto adapts it for 12-bit files. WL typical 16383 set to 16300 for safety
@@ -1419,7 +1457,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
     },
 
-	{ // Quality Β,
+	{ // Quality B,
         "make_model": [ "Panasonic DMC-FZ300", "Panasonic DMC-FZ330" ],
         "dcraw_matrix": [ 8378,-2798,-769,-3068,11410,1877,-538,1792,4623 ], // DNG-V9.1.1
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
@@ -1633,6 +1671,18 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     { // Quality B,
         "make_model": [ "Panasonic DMC-GX80", "Panasonic DMC-GX85", "Panasonic DMC-GX7MK2" ],
         "dcraw_matrix": [ 7771,-3020,-629,-4029,11950,2345,-821,1977,6119 ],// DNG_v9.6 D65
+        "ranges": {
+           "black": 16, // 16 is BL offset. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
+           "white": [
+              { "iso": 100, "levels": 2300 }, // gaussian 2300-2700 exif_linearitylimit 2111
+              { "iso": 125, "levels": 3180 }, // gaussian 3200-3600 exif_linearitylimit 2626
+              { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+                    ]
+                  }
+    },
+    { // Quality B, Same as Panasonic G7
+        "make_model": [ "Panasonic DMC-G8", "Panasonic DMC-G80", "Panasonic DMC-G81", "Panasonic DMC-G85" ],
+        "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ],// DNG_v9.7 D65
         "ranges": {
            "black": 16, // 16 is BL offset. Dcraw/RT read the base black from exif and calculates total BL = BLbase+BLoffset
            "white": [

@@ -2754,7 +2754,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
 
         if (cp.reinforce == 3) {
             if(rad < lim0 / 60.f && level == 0) {
-                expkoef *= repart;    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
+                expkoef *= abs(repart);    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
             }
         }
 

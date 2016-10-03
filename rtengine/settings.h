@@ -72,7 +72,7 @@ public:
     int             nrwavlevel;
     bool            daubech;
     bool            ciebadpixgauss;
-    int             CRI_color; // N� for display Lab value  ; 0 disabled
+    int             CRI_color; // Number for display Lab value; 0 = disabled
     int             denoiselabgamma; // 0=gamma 26 11   1=gamma 40 5  2 =gamma 55 10
     //  double          colortoningab; //
     //  double          decaction;

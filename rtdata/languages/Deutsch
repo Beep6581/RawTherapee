@@ -28,6 +28,7 @@
 #27 2016-02-12 Retinexübersetzung (TooWaBoo) RT4.2.730
 #28 2016-03-19 Erweiterung/Korrekturen (TooWaBoo) RT4.2.880
 #29 2016-05-24 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1005
+#30 2016-09-30 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1234
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -1380,11 +1381,12 @@ TP_DARKFRAME_LABEL;Dunkelbild
 TP_DEFRINGE_LABEL;Farbsaum entfernen (Defringe)
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Schwellenwert
-TP_DIRPYRDENOISE_33;3x3 stark
-TP_DIRPYRDENOISE_55;5x5 stark
-TP_DIRPYRDENOISE_55SOFT;5x5
-TP_DIRPYRDENOISE_77;7x7 (langsam)
-TP_DIRPYRDENOISE_99;9x9 (sehr langsam)
+TP_DIRPYRDENOISE_3X3;3×3
+TP_DIRPYRDENOISE_3X3_SOFT;3×3 weich
+TP_DIRPYRDENOISE_5X5;5×5
+TP_DIRPYRDENOISE_5X5_SOFT;5×5 weich
+TP_DIRPYRDENOISE_7X7;7×7
+TP_DIRPYRDENOISE_9X9;9×9
 TP_DIRPYRDENOISE_ABM;Nur Farbe
 TP_DIRPYRDENOISE_AUT;Automatisch Global
 TP_DIRPYRDENOISE_AUTO;Automatisch Global
@@ -1427,12 +1429,12 @@ TP_DIRPYRDENOISE_METHOD11;Qualität
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Einstellung der Qualität der Rauschreduzierung. Die Einstellung “Hoch“ verbessert die Rauschreduzierung auf Kosten der Verarbeitungszeit.
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Für RAW-Bilder kann entweder die RGB- oder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der Auswahl immer die L*a*b*-Methode verwendet.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Bei der Methode “Nur Luminanz“ und “L*a*b*“, wird der Medianfilter nach den Waveletschritten verarbeitet.\nBei RGB wird der Medianfilter am Ende der Rauschreduzierung verarbeitet.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Wendet einen Medianfilter mit der angegebenen Größe an. Je größer der Bereich, desto länger dauert die Verarbeitung..\n\n3x3: Verarbeitet 5 Pixel in einem 1-Pixelbereich.\n3x3 stark: Verarbeitet 9 Pixel in einem 1-Pixelbereich.\n5x5: Verarbeitet 13 Pixel in einem 2-Pixelbereich.\n5x5 stark: Verarbeitet 25 Pixel in einem 2-Pixelbereich.\n7x7: Verarbeitet 49 Pixel in einem 3-Pixelbereich.\n9x9: Verarbeitet 81 Pixel in einem 4-Pixelbereich.\n\nManchmal erzielt man mit einem kleinen Bereich mit mehreren Iterationen eine bessere Qualität als mit einem großen Bereich.
+TP_DIRPYRDENOISE_MET_TOOLTIP;Einen Medianfilter mit der gewünschten Fenstergröße auswählen. Je größer das Fenster, umso länger dauert die Verarbeitungszeit.\n\n3×3 weich: Nutzt 5 Pixel in einem 3×3-Pixelfenster.\n3×3: Nutzt 9 Pixel in einem 3×3-Pixelfenster.\n5×5 weich: Nutzt 13 Pixel in einem 5×5-Pixelfenster.\n5×5: Nutzt 25 Pixel in einem 5×5-Pixelfenster.\n7×7: Nutzt 49 Pixel in einem 7×7-Pixelfenster.\n9×9: Nutzt 81 Pixel in einem 9×9-Pixelfenster.\n\nManchmal ist das Ergebnis mit einem kleineren Fenster und mehreren Iterationen besser, als mit einem größeren und nur einer Iteration.
 TP_DIRPYRDENOISE_NOISELABEL;Rauschen: Mittelwert=%1  Hoch=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Rauschen: Mittelwert = ---   Hoch = ---
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs in der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus. Die RGB-Werte sind ungenauer, da der RGB-Modus Luminanz und Chrominanz nicht komplett trennt.
 TP_DIRPYRDENOISE_PASSES;Medianiterationen
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Ein 3x3-Medianfilter mit 3 Iterationen erzielt oft bessere Ergebnisse als ein 7x7-Medianfilter mit nur einer Iteration.
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Manchmal führt ein kleines 3×3-Fenster mit mehreren Iterationen zu besseren Ergebnissen als ein 7×7-Fenster mit nur einer Iteration.
 TP_DIRPYRDENOISE_PON;Auto-Multizonen
 TP_DIRPYRDENOISE_PRE;Vorschau
 TP_DIRPYRDENOISE_PREV;Vorschau
@@ -1443,7 +1445,6 @@ TP_DIRPYRDENOISE_RGBM;RGB
 TP_DIRPYRDENOISE_SHAL;Standard
 TP_DIRPYRDENOISE_SHALBI;Hoch
 TP_DIRPYRDENOISE_SLI;Regler
-TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;Kachelgröße=%1 Zentrum: Tx=%2  Ty=%2
 TP_DIRPYREQUALIZER_ALGO;Hautfarbtonbereich
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fein: Ist näher an den Hautfarbtönen und minimiert den Einfluss auf andere Farben.\n\nGrob: Minimiert Artefakte.
@@ -1498,7 +1499,7 @@ TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Gewichteter Standard
 TP_EXPOS_BLACKPOINT_LABEL;Schwarzpunkt
 TP_EXPOS_WHITEPOINT_LABEL;Weißpunkt
 TP_FILMSIMULATION_LABEL;Filmsimulation
-TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee sucht nach Hald-CLUT-Bildern, die für die Filmsimulation benötigt werden, in einem Ordner, der viel Zeit benötigt.\nGehen Sie zu\n< Einstellungen > Bildbearbeitung > Filmsimulation >\nund prüfen Sie welcher Order benutzt wird. Wählen Sie den Ordner aus, der nur die Hald-CLUT-Bilder beinhaltet, oder einen leeren Ordner, wenn Sie die Filsimulation nicht verwenden möchten.\n\nWeitere Informationen über die Film Simulation finden Sie auf RawPedia.\n\nMöchten Sie die Suche beenden?
+TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee sucht nach Hald-CLUT-Bildern, die für die Filmsimulation benötigt werden, in einem Ordner, der viel Zeit benötigt.\nGehen Sie zu\n< Einstellungen > Bildbearbeitung > Filmsimulation >\nund prüfen Sie welcher Order benutzt wird. Wählen Sie den Ordner aus, der nur die Hald-CLUT-Bilder beinhaltet, oder einen leeren Ordner, wenn Sie die Filsimulation nicht verwenden möchten.\n\nWeitere Informationen über die Filmsimulation finden Sie auf RawPedia.\n\nMöchten Sie die Suche beenden?
 TP_FILMSIMULATION_STRENGTH;Intensität
 TP_FILMSIMULATION_ZEROCLUTSFOUND;HaldCLUT-Verzeichnis in den Einstellungen festlegen
 TP_FLATFIELD_AUTOSELECT;Automatische Auswahl
@@ -1961,7 +1962,7 @@ TP_WAVELET_NPHIGH;Hoch
 TP_WAVELET_NPLOW;Niedrig
 TP_WAVELET_NPNONE;Keine
 TP_WAVELET_NPTYPE;Benachbarte Pixel
-TP_WAVELET_NPTYPE_TOOLTIP;Dieser Algorithmus verwendet einen Pixel und acht seiner Nachbarn. Sind die Unterschiede gering, werden die Kanten geschärft.
+TP_WAVELET_NPTYPE_TOOLTIP;Dieser Algorithmus verwendet ein Pixel und acht seiner Nachbarn. Sind die Unterschiede gering, werden die Kanten geschärft.
 TP_WAVELET_OPACITY;Deckkraft Blau/Gelb
 TP_WAVELET_OPACITYW;Kontrastausgleichskurve
 TP_WAVELET_OPACITYWL;Lokale Kontrastkurve

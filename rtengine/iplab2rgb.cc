@@ -75,9 +75,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
 
                 cmsDoTransform (monitorTransform, buffer, data + ix, W);
             }
-
         } // End of parallelization
-
     } else {
 
         int W = lab->W;
@@ -88,36 +86,28 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image)
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-        for (int i = 0; i < H; i++) {
+        for (int i = 0; i < H; ++i) {
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
             int ix = i * 3 * W;
 
             float R, G, B;
-            float fy, fx, fz, x_, y_, z_, LL;
+            float x_, y_, z_;
 
-            for (int j = 0; j < W; j++) {
+            for (int j = 0; j < W; ++j) {
 
                 //float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
 
-                fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
-                fx = (0.002 * ra[j]) / 327.68 + fy;
-                fz = fy - (0.005 * rb[j]) / 327.68;
-                LL = rL[j] / 327.68;
-
-                x_ = 65535.0 * Color::f2xyz(fx) * Color::D50x;
-                //  y_ = 65535.0 * Color::f2xyz(fy);
-                z_ = 65535.0 * Color::f2xyz(fz) * Color::D50z;
-                y_ = (LL > (float)Color::epskap) ? 65535.0 * fy * fy * fy : 65535.0 * LL / (float)Color::kappa;
+                Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_ );
 
                 Color::xyz2srgb(x_, y_, z_, R, G, B);
 
                 /* copy RGB */
                 //int R1=((int)gamma2curve[(R)])
-                data[ix++] = ((int)Color::gamma2curve[R]) >> 8;
-                data[ix++] = ((int)Color::gamma2curve[G]) >> 8;
-                data[ix++] = ((int)Color::gamma2curve[B]) >> 8;
+                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
+                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
+                data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
             }
         }
     }
@@ -233,30 +223,23 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
-        for (int i = cy; i < cy + ch; i++) {
-            float R, G, B;
+        for (int i = cy; i < cy + ch; ++i) {
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
             int ix = 3 * i * cw;
 
-            for (int j = cx; j < cx + cw; j++) {
+            float R, G, B;
+            float x_, y_, z_;
 
-                float fy = (0.0086206897f * rL[j]) / 327.68f + 0.1379310345f; // (L+16)/116
-                float fx = (0.002f * ra[j]) / 327.68f + fy;
-                float fz = fy - (0.005f * rb[j]) / 327.68f;
-                float LL = rL[j] / 327.68f;
-
-                float x_ = 65535.0f * Color::f2xyz(fx) * Color::D50x;
-                //float y_ = 65535.0f * Color::f2xyz(fy);
-                float z_ = 65535.0f * Color::f2xyz(fz) * Color::D50z;
-                float y_ = (LL > (float)Color::epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / (float)Color::kappa;
+            for (int j = cx; j < cx + cw; ++j) {
+                Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
 
                 Color::xyz2rgb(x_, y_, z_, R, G, B, xyz_rgb);
 
-                image->data[ix++] = (int)Color::gamma2curve[R] >> 8;
-                image->data[ix++] = (int)Color::gamma2curve[G] >> 8;
-                image->data[ix++] = (int)Color::gamma2curve[B] >> 8;
+                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
+                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
+                image->data[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
             }
         }
     }
@@ -282,8 +265,6 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
  */
 Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool bw, GammaValues *ga)
 {
-
-    //gamutmap(lab);
 
     if (cx < 0) {
         cx = 0;
@@ -330,7 +311,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
         image->ExecCMSTransform(hTransform, *lab, cx, cy);
         cmsDeleteTransform(hTransform);
     } else {
-        //
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -363,7 +343,5 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
     return image;
 }
-
-//#include "sRGBgamutbdy.cc"
 
 }

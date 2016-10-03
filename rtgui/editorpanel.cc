@@ -859,6 +859,7 @@ void EditorPanel::close ()
         if(iareapanel) {
             iareapanel->imageArea->setPreviewHandler (NULL);
             iareapanel->imageArea->setImProcCoordinator (NULL);
+            iareapanel->imageArea->unsubscribe();
         }
 
         rtengine::StagedImageProcessor::destroy (ipc);

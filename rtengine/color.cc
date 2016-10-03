@@ -24,6 +24,8 @@
 #include "sleef.c"
 #include "opthelper.h"
 
+#define pow_F(a,b) (xexpf(b*xlogf(a)))
+
 using namespace std;
 
 namespace rtengine
@@ -41,15 +43,10 @@ LUTf Color::igammatab_srgb;
 LUTf Color::igammatab_srgb1;
 LUTf Color::gammatab_srgb;
 LUTf Color::gammatab_srgb1;
-//  LUTf Color::igammatab_709;
-//  LUTf Color::gammatab_709;
-LUTf Color::igammatab_55;
-LUTf Color::gammatab_55;
-LUTf Color::igammatab_4;
-LUTf Color::gammatab_4;
 
-LUTf Color::igammatab_26_11;
-LUTf Color::gammatab_26_11;
+LUTf Color::denoiseGammaTab;
+LUTf Color::denoiseIGammaTab;
+
 LUTf Color::igammatab_24_17;
 LUTf Color::gammatab_24_17a;
 LUTf Color::gammatab_13_2;
@@ -148,13 +145,10 @@ void Color::init ()
     igammatab_srgb1(maxindex, 0);
     gammatab_srgb(maxindex, 0);
     gammatab_srgb1(maxindex, 0);
-    igammatab_55(maxindex, 0);
-    gammatab_55(maxindex, 0);
-    igammatab_4(maxindex, 0);
-    gammatab_4(maxindex, 0);
 
-    igammatab_26_11(maxindex, 0);
-    gammatab_26_11(maxindex, 0);
+    denoiseGammaTab(maxindex, 0);
+    denoiseIGammaTab(maxindex, 0);
+
     igammatab_24_17(maxindex, 0);
     gammatab_24_17a(maxindex, LUT_CLIP_ABOVE | LUT_CLIP_BELOW);
     gammatab_13_2(maxindex, 0);
@@ -193,6 +187,7 @@ void Color::init ()
             {
                 gammatab_srgb[i] = gammatab_srgb1[i] = gamma2(i / 65535.0);
             }
+
             gammatab_srgb *= 65535.f;
             gamma2curve.share(gammatab_srgb, LUT_CLIP_BELOW | LUT_CLIP_ABOVE); // shares the buffer with gammatab_srgb but has different clip flags
         }
@@ -200,9 +195,11 @@ void Color::init ()
         #pragma omp section
 #endif
         {
-            for (int i = 0; i < maxindex; i++) {
+            for (int i = 0; i < maxindex; i++)
+            {
                 igammatab_srgb[i] = igammatab_srgb1[i] = igamma2 (i / 65535.0);
             }
+
             igammatab_srgb *= 65535.f;
         }
 #ifdef _OPENMP
@@ -211,42 +208,74 @@ void Color::init ()
         {
             double rsRGBGamma = 1.0 / sRGBGamma;
 
-            for (int i = 0; i < maxindex; i++) {
+            for (int i = 0; i < maxindex; i++)
+            {
                 double val = pow (i / 65535.0, rsRGBGamma);
                 gammatab[i] = 65535.0 * val;
                 gammatabThumb[i] = (unsigned char)(255.0 * val);
             }
         }
+
 #ifdef _OPENMP
         #pragma omp section
 #endif
+        // modify arbitrary data for Lab..I have test : nothing, gamma 2.6 11 - gamma 4 5 - gamma 5.5 10
+        // we can put other as gamma g=2.6 slope=11, etc.
+        // but noting to do with real gamma !!!: it's only for data Lab # data RGB
+        // finally I opted for gamma55 and with options we can change
 
-        for (int i = 0; i < maxindex; i++) {
-            gammatab_55[i] = 65535.0 * gamma55 (i / 65535.0);
+        switch(settings->denoiselabgamma) {
+            case 0:
+                for (int i = 0; i < maxindex; i++) {
+                    denoiseGammaTab[i] = 65535.0 * gamma26_11 (i / 65535.0);
+                }
+
+                break;
+
+            case 1:
+                for (int i = 0; i < maxindex; i++) {
+                    denoiseGammaTab[i] = 65535.0 * gamma4 (i / 65535.0);
+                }
+
+                break;
+
+            default:
+                for (int i = 0; i < maxindex; i++) {
+                    denoiseGammaTab[i] = 65535.0 * gamma55 (i / 65535.0);
+                }
+
+                break;
         }
 
 #ifdef _OPENMP
         #pragma omp section
 #endif
+        // modify arbitrary data for Lab..I have test : nothing, gamma 2.6 11 - gamma 4 5 - gamma 5.5 10
+        // we can put other as gamma g=2.6 slope=11, etc.
+        // but noting to do with real gamma !!!: it's only for data Lab # data RGB
+        // finally I opted for gamma55 and with options we can change
 
-        for (int i = 0; i < maxindex; i++) {
-            igammatab_55[i] = 65535.0 * igamma55 (i / 65535.0);
-        }
+        switch(settings->denoiselabgamma) {
+            case 0:
+                for (int i = 0; i < maxindex; i++) {
+                    denoiseIGammaTab[i] = 65535.0 * igamma26_11 (i / 65535.0);
+                }
 
-#ifdef _OPENMP
-        #pragma omp section
-#endif
+                break;
 
-        for (int i = 0; i < maxindex; i++) {
-            gammatab_4[i] = 65535.0 * gamma4 (i / 65535.0);
-        }
+            case 1:
+                for (int i = 0; i < maxindex; i++) {
+                    denoiseIGammaTab[i] = 65535.0 * igamma4 (i / 65535.0);
+                }
 
-#ifdef _OPENMP
-        #pragma omp section
-#endif
+                break;
 
-        for (int i = 0; i < maxindex; i++) {
-            igammatab_4[i] = 65535.0 * igamma4 (i / 65535.0);
+            default:
+                for (int i = 0; i < maxindex; i++) {
+                    denoiseIGammaTab[i] = 65535.0 * igamma55 (i / 65535.0);
+                }
+
+                break;
         }
 
 #ifdef _OPENMP
@@ -295,22 +324,6 @@ void Color::init ()
 
         for (int i = 0; i < maxindex; i++) {
             igammatab_145_3[i] = 65535.0 * igamma145_3 (i / 65535.0);
-        }
-
-#ifdef _OPENMP
-        #pragma omp section
-#endif
-
-        for (int i = 0; i < maxindex; i++) {
-            gammatab_26_11[i] = 65535.0 * gamma26_11 (i / 65535.0);
-        }
-
-#ifdef _OPENMP
-        #pragma omp section
-#endif
-
-        for (int i = 0; i < maxindex; i++) {
-            igammatab_26_11[i] = 65535.0 * igamma26_11 (i / 65535.0);
         }
 
 #ifdef _OPENMP
@@ -857,6 +870,14 @@ void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, co
     b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
 }
 
+void Color::xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]) // for black & white we need only r channel
+{
+    //Transform to output color.  Standard sRGB is D65, but internal representation is D50
+    //Note that it is only at this point that we should have need of clipping color data
+
+    r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
+}
+
 // same for float
 void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
 {
@@ -874,19 +895,65 @@ void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat 
 }
 #endif // __SSE2__
 
+#ifdef __SSE2__
 void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
-    // correct gamma for black and white image : pseudo TRC curve of ICC profil
-    b /= 65535.0f;
-    b = pow (max(b, 0.0f), gammabwb);
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
+    vfloat rgbv = _mm_set_ps(0.f, r, r, r); // input channel is always r
+    vfloat gammabwv = _mm_set_ps(0.f, gammabwb, gammabwg, gammabwr);
+    vfloat c65535v = F2V(65535.f);
+    rgbv /= c65535v;
+    rgbv = vmaxf(rgbv, ZEROV);
+    rgbv = pow_F(rgbv, gammabwv);
+    rgbv *= c65535v;
+    float temp[4] ALIGNED16;
+    STVF(temp[0], rgbv);
+    r = temp[0];
+    g = temp[1];
+    b = temp[2];
+}
+void Color::trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb)
+{
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
+    vfloat c65535v = F2V(65535.f);
+    vfloat gammabwrv = F2V(gammabwr);
+    vfloat gammabwgv = F2V(gammabwg);
+    vfloat gammabwbv = F2V(gammabwb);
+    int i = 0;
+    for(; i < width - 3; i += 4 ) {
+        vfloat inv = _mm_loadu_ps(&r[i]); // input channel is always r
+        inv /= c65535v;
+        inv = vmaxf(inv, ZEROV);
+        vfloat rv = pow_F(inv, gammabwrv);
+        vfloat gv = pow_F(inv, gammabwgv);
+        vfloat bv = pow_F(inv, gammabwbv);
+        rv *= c65535v;
+        gv *= c65535v;
+        bv *= c65535v;
+        _mm_storeu_ps(&r[i], rv);
+        _mm_storeu_ps(&g[i], gv);
+        _mm_storeu_ps(&b[i], bv);
+    }
+    for(; i < width; i++) {
+        trcGammaBW(r[i], g[i], b[i], gammabwr, gammabwg, gammabwb);
+    }
+}
+
+#else
+void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
+{
+    // correct gamma for black and white image : pseudo TRC curve of ICC profile
+    float in = r; // input channel is always r
+    in /= 65535.0f;
+    in = max(in, 0.f);
+    b = pow_F (in, gammabwb);
     b *= 65535.0f;
-    r /= 65535.0f;
-    r = pow (max(r, 0.0f), gammabwr);
+    r = pow_F (in, gammabwr);
     r *= 65535.0f;
-    g /= 65535.0f;
-    g = pow (max(g, 0.0f), gammabwg);
+    g = pow_F (in, gammabwg);
     g *= 65535.0f;
 }
+#endif
 
 /** @brief Compute the B&W constants for the B&W processing and its tool's GUI
  *
@@ -1479,6 +1546,80 @@ void Color::calcGamma (double pwr, double ts, int mode, int imax, GammaValues &g
         return;
     }
 }
+void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
+{
+#ifdef __SSE2__
+    // SSE2 version is more than 6 times faster than scalar version
+    vfloat iv = _mm_set_ps(3.f, 2.f, 1.f, 0.f);
+    vfloat fourv = F2V(4.f);
+    vfloat gammav = F2V(1.f / gamma);
+    vfloat slopev = F2V((slope / divisor) * factor);
+    vfloat divisorv = F2V(xlogf(divisor));
+    vfloat factorv = F2V(factor);
+    vfloat comparev = F2V(start * divisor);
+    int border = start * divisor;
+    int border1 = border - (border & 3);
+    int border2 = border1 + 4;
+    int i = 0;
+
+    for(; i < border1; i += 4) {
+        vfloat resultv = iv * slopev;
+        STVFU(gammacurve[i], resultv);
+        iv += fourv;
+    }
+
+    for(; i < border2; i += 4) {
+        vfloat result0v = iv * slopev;
+        vfloat result1v = xexpf((xlogf(iv) - divisorv) * gammav) * factorv;
+        STVFU(gammacurve[i], vself(vmaskf_le(iv, comparev), result0v, result1v));
+        iv += fourv;
+    }
+
+    for(; i < 65536; i += 4) {
+        vfloat resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
+        STVFU(gammacurve[i], resultv);
+        iv += fourv;
+    }
+
+#else
+
+    for (int i = 0; i < 65536; ++i) {
+        gammacurve[i] = gammaf(static_cast<float>(i) / divisor, gamma, start, slope) * factor;
+    }
+
+#endif
+}
+
+void Color::gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float factor)           //standard gamma without slope...
+{
+#ifdef __SSE2__
+    // SSE2 version is more than 6 times faster than scalar version
+    vfloat iv = _mm_set_ps(3.f, 2.f, 1.f, 0.f);
+    vfloat fourv = F2V(4.f);
+    vfloat gammav = F2V(1.f / gamma);
+    vfloat divisorv = F2V(xlogf(divisor));
+    vfloat factorv = F2V(factor);
+
+    // first input value is zero => we have to use the xlogf function which checks this
+    vfloat resultv = xexpf((xlogf(iv) - divisorv) * gammav) * factorv;
+    STVFU(gammacurve[0], resultv);
+    iv += fourv;
+
+    // inside the loop we can use xlogfNoCheck and xexpfNoCheck because we know about the input values
+    for(int i = 4; i < 65536; i += 4) {
+        resultv = xexpfNoCheck((xlogfNoCheck(iv) - divisorv) * gammav) * factorv;
+        STVFU(gammacurve[i], resultv);
+        iv += fourv;
+    }
+
+#else
+
+    for (int i = 0; i < 65536; ++i) {
+        gammacurve[i] = Color::gammanf(static_cast<float>(i) / divisor, gamma) * factor;
+    }
+
+#endif
+}
 
 void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
 {
@@ -1492,6 +1633,17 @@ void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
     z = 65535.0f * f2xyz(fz) * D50z;
     y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
 }
+
+void Color::L2XYZ(float L, float &x, float &y, float &z) // for black & white
+{
+    float LL = L / 327.68f;
+    float fy = (0.00862069f * LL) + 0.137932f; // (L+16)/116
+    float fxz = 65535.f * f2xyz(fy);
+    x = fxz * D50x;
+    z = fxz * D50z;
+    y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
+}
+
 
 #ifdef __SSE2__
 void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z)
@@ -2144,6 +2296,7 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
     neg = false, more_rgb = false;
 #endif
     float ChprovSave = Chprov1;
+
     do {
         inGamut = true;
 
@@ -2166,6 +2319,7 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
 #ifdef _DEBUG
             neg = true;
 #endif
+
             if (isnan(HH)) {
                 float atemp = ChprovSave * sincosval.y * 327.68;
                 float btemp = ChprovSave * sincosval.x * 327.68;
