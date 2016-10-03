@@ -1966,7 +1966,7 @@ public:
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
-        int a;
+        int a = 0;
 
         if (astype == BYTE) {
             a = t->getValue()[ofs];
@@ -1975,7 +1975,7 @@ public:
         }
 
         // Decode the value
-        if(a > 0.) {
+        if(a > 0) {
             return pow(2., 6. - (double(a) / 8.));
         } else {
             return 0.;
@@ -1984,7 +1984,7 @@ public:
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
@@ -2026,7 +2026,7 @@ public:
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
-        int a;
+        int a = 0;
 
         if (astype == BYTE) {
             a = t->getValue()[ofs];
@@ -2035,7 +2035,7 @@ public:
         }
 
         // Decode the value
-        if(a > 0.) {
+        if(a > 0) {
             return pow(2., (double(a) / 8. - 1.) / 2.);
         } else {
             return 0.;
@@ -2044,7 +2044,7 @@ public:
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
@@ -2085,7 +2085,7 @@ public:
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
@@ -2235,7 +2235,7 @@ public:
     }
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();

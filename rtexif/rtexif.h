@@ -535,7 +535,7 @@ protected:
         double deltaMin = 1000.;
 
         for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); ++r  ) {
-            double lensAperture, dif;
+            double dif;
 
             if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
                 continue;
@@ -550,6 +550,7 @@ protected:
             }
 
             if( maxApertureAtFocal > 0.1) {
+                double lensAperture;
                 if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
                     continue;
                 }

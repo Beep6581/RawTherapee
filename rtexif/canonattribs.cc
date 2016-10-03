@@ -101,7 +101,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.1fs %s", sec / 10., sec & 0x4000 ? ",Custom" : "");
+        sprintf (buffer, "%.1fs %s", sec / 10., (sec & 0x4000) ? ",Custom" : "");
         return buffer;
     }
 };
@@ -965,7 +965,7 @@ public:
         std::ostringstream candidates;
 
         for (r = choices.lower_bound(lensID); r != choices.upper_bound(lensID); r++) {
-            double a1, a2, f1, f2, lensAperture, dif;
+            double a1, a2, f1, f2, dif;
 
             if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
                 continue;
@@ -988,6 +988,7 @@ public:
             }
 
             if( maxApertureAtFocal > 0.1) {
+                double lensAperture;
                 if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
                     continue;
                 }
