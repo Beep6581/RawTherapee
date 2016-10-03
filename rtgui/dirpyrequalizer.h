@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  © 2010 Emil Martinec <ejmartin@uchicago.edu>
+ *  (C) 2010 Emil Martinec <ejmartin@uchicago.edu>
  */
 
 #ifndef DIRPYREQUALIZER_H_INCLUDED
