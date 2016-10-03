@@ -996,13 +996,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         }
     }
 
-    int kall = 2;
     bool wavcontlutili = false;
 
     CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
-    if((params.wavelet.enabled)) {
-        ipf.ip_wavelet(labView, labView, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
+    if(params.wavelet.enabled) {
+        ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
     }
 
     wavCLVCurve.Reset();
@@ -1053,25 +1052,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float CAMMean = NAN;
 
         if (params.sharpening.enabled) {
-            float d;
-            double dd;
-
-            int sk = 1;
-
             if(settings->ciecamfloat) {
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+                float d;
+                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
+                double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
             }
         } else {
-            float d;
-
-            double dd;
-            int sk = 1;
-
             if(settings->ciecamfloat) {
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+                float d;
+                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
+                double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
             }
         }
@@ -1160,10 +1153,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     bool useLCMS = false;
 
     if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
-        cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
 
-        cmsToneCurve* GammaTRC[3] = { NULL, NULL, NULL };
-        cmsFloat64Number Parameters[7];
         double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
         //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
         readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.outputIntent, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0, ga1, ga2, ga3, ga4, ga5, ga6, params.blackwhite.enabled );
@@ -1266,6 +1256,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                     printf("\"%s\" ICC output profile not found!\n", outProfile.c_str());
                 }
             } else {
+                cmsToneCurve* GammaTRC[3] = { NULL, NULL, NULL };
+
+                cmsFloat64Number Parameters[7];
+
                 Parameters[0] = ga0;
                 Parameters[1] = ga1;
                 Parameters[2] = ga2;
@@ -1275,6 +1269,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 Parameters[6] = ga6;
                 // 7 parameters for smoother curves
                 //change desc Tag , to "free gamma", or "BT709", etc.
+                cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
+
                 cmsContext ContextID = cmsGetProfileContextID(jprof);//modification TAG
                 DescriptionMLU  = cmsMLUalloc(ContextID, 1);
                 CopyrightMLU    = cmsMLUalloc(ContextID, 1);//for ICC
@@ -1344,13 +1340,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 //  else if (params.icm.gamma== "sRGB_g2.4_s12.92") cmsSaveProfileToFile(jprof, "RT_Medium_gsRGB.icc");
                 //  else if (params.icm.gamma== "linear_g1.0") cmsSaveProfileToFile(jprof, "RT_Large_g10.icc");
 
-
+                if (GammaTRC[0]) {
+                    cmsFreeToneCurve(GammaTRC[0]);
+                }
             }
         }
 
-        if (GammaTRC[0]) {
-            cmsFreeToneCurve(GammaTRC[0]);
-        }
     } else {
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool

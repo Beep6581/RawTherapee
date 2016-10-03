@@ -93,7 +93,15 @@ public:
                 // we're freeing the memory and allocate it again if the new size is bigger.
 
                 if (allocatedSize < oldAllocatedSize) {
-                    real = realloc(real, allocatedSize + alignment);
+                    void *temp = realloc(real, allocatedSize + alignment);
+                    if (temp) { // realloc succeeded
+                        real = temp;
+                    } else { // realloc failed => free old buffer and allocate new one
+                        if (real) {
+                            free (real);
+                        }
+                        real = malloc(allocatedSize + alignment);
+                    }
                 } else {
                     if (real) {
                         free (real);
