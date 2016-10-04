@@ -22,7 +22,7 @@
 #include "rtimage.h"
 
 extern Options options;
-SaveAsDialog::SaveAsDialog (Glib::ustring initialDir)
+SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir)
 {
 
     set_title(M("GENERAL_SAVE"));

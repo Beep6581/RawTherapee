@@ -276,7 +276,7 @@ float LCPMapper::calcVignetteFac(int x, int y) const
                                                    + 2.*aVig[0] * aVig[2] - 3.*param0Sqr * aVig[1]) * rsqr * rsqr));
 }
 
-LCPProfile::LCPProfile(Glib::ustring fname)
+LCPProfile::LCPProfile(const Glib::ustring &fname)
 {
     const int BufferSize = 8192;
     char buf[BufferSize];

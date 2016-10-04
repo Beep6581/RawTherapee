@@ -1677,10 +1677,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                         }
 
                         delete labdn;
-
-                        if (Lin) {
-                            delete Lin;
-                        }
+                        delete Lin;
 
                     }//end of tile row
                 }//end of tile loop
