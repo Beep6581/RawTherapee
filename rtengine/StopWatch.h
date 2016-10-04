@@ -26,18 +26,17 @@
 
 #ifdef BENCHMARK
     #define BENCHFUN StopWatch StopFun(__func__);
+    #define BENCHFUNMICRO StopWatch StopFun(__func__, true);
 #else
     #define BENCHFUN
+    #define BENCHFUNMICRO
 #endif
 
 class StopWatch
 {
 public:
-    StopWatch( )
-    {
-        stopped = false;
-    }
-    explicit StopWatch( const char* msg )
+
+    explicit StopWatch( const char* msg, bool microseconds = false ) : microseconds(microseconds)
     {
         message = msg;
         start();
@@ -56,8 +55,13 @@ public:
     void stop()
     {
         stopTime.set();
-        long elapsedTime = stopTime.etime(startTime) / 1000;
-        std::cout << message << " took " << elapsedTime << " ms" << std::endl;
+        if(!microseconds) {
+            long elapsedTime = stopTime.etime(startTime) / 1000;
+            std::cout << message << " took " << elapsedTime << " ms" << std::endl;
+        } else {
+            long elapsedTime = stopTime.etime(startTime);
+            std::cout << message << " took " << elapsedTime << " us" << std::endl;
+        }
         stopped = true;
     }
     void stop(const char *msg)
@@ -66,6 +70,7 @@ public:
         stop();
     };
 private:
+    bool microseconds;
     MyTime startTime;
     MyTime stopTime;
     const char *message;
