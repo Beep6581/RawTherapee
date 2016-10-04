@@ -104,6 +104,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     void drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
     void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
     void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1);
+    void updateHoveredPicker       (rtengine::Coord &imgPos);
 
     LockableColorPicker::Validity checkValidity (LockableColorPicker*  picker, const rtengine::Coord &pos);
 
@@ -166,6 +167,7 @@ public:
     bool isInside    (int x, int y);
 
 
+    void scroll        (int state, GdkScrollDirection direction, int x, int y);
     void buttonPress   (int button, int num, int state, int x, int y);
     void buttonRelease (int button, int num, int state, int x, int y);
     void pointerMoved  (int bstate, int x, int y);

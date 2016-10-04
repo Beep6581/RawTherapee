@@ -38,12 +38,12 @@ LockableColorPicker::LockableColorPicker (int x, int y, Size size, const float R
   r(R), g(G), b(B), L(0.f), a(0.f), bb(0.f)
 {
     float h_, s_, v_;
-    rtengine::Color::rgb2hsv((float)r*65535.f, (float)g*65535.f, (float)b*65535.f, h_, s_, v_);
+    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h_, s_, v_);
     h = (int)(h_*255.f);
     s = (int)(s_*255.f);
     v = (int)(v_*255.f);
 
-    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 }
 
 void LockableColorPicker::updateBackBuffer ()
@@ -66,21 +66,29 @@ void LockableColorPicker::updateBackBuffer ()
 
         switch (displayedValues) {
         case ColorPickerType::RGB:
-            layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_R") + " ");
+            layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_R"));
             layout[0][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(r*255.f)));
-            layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_G") + " ");
+            layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_G"));
             layout[1][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(g*255.f)));
-            layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_B") + " ");
+            layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_B"));
             layout[2][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(b*255.f)));
             break;
         case ColorPickerType::HSV:
-        default:
-            layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_H") + " ");
+            layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_H"));
             layout[0][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(h*255.f)));
-            layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_S") + " ");
+            layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_S"));
             layout[1][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(s*255.f)));
-            layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_V") + " ");
+            layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_V"));
             layout[2][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(v*255.f)));
+            break;
+        case ColorPickerType::LAB:
+        default:
+            layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_LAB_L"));
+            layout[0][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(1), L));
+            layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_LAB_A"));
+            layout[1][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(1), a));
+            layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_LAB_B"));
+            layout[2][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(1), bb));
         }
 
         int w00, w01, w10, w11, w20, w21, h00, h01, h10, h11, h20, h21;
@@ -256,12 +264,12 @@ void LockableColorPicker::setPosition (const rtengine::Coord &newPos, const floa
     b = B;
 
     float h_, s_, v_;
-    rtengine::Color::rgb2hsv((float)r*65535.f, (float)g*65535.f, (float)b*65535.f, h_, s_, v_);
+    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h_, s_, v_);
     h = (float)h_;
     s = (float)s_;
     v = (float)v_;
 
-    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 
     if (validity != Validity::OUTSIDE) {
         setDirty(true);
@@ -279,12 +287,12 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B)
     b = B;
 
     float h_, s_, v_;
-    rtengine::Color::rgb2hsv((float)r*65535.f, (float)g*65535.f, (float)b*65535.f, h_, s_, v_);
+    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h_, s_, v_);
     h = (float)h_;
     s = (float)s_;
     v = (float)v_;
 
-    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 
     if (validity != Validity::OUTSIDE) {
         setDirty(true);
@@ -338,6 +346,17 @@ void LockableColorPicker::setSize (Size newSize)
 LockableColorPicker::Size LockableColorPicker::getSize ()
 {
     return size;
+}
+
+void LockableColorPicker::rollDisplayedValues ()
+{
+    if (displayedValues < ColorPickerType::LAB) {
+        displayedValues = (ColorPickerType)((int)displayedValues + 1);
+    } else {
+        displayedValues = ColorPickerType::RGB;
+    }
+    setDirty(true);
+
 }
 
 void LockableColorPicker::incSize ()

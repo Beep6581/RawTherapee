@@ -87,6 +87,7 @@ public:
     bool isOver (int x, int y);
     void setValidity (Validity isValid);
     void setSize (Size newSize);
+    void rollDisplayedValues ();
     void incSize ();
     void decSize ();
 };

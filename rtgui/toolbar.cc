@@ -1,3 +1,4 @@
+
 /*
  *  This file is part of RawTherapee.
  *
@@ -371,6 +372,9 @@ void ToolBar::colPicker_pressed (GdkEventButton* event)
             handTool->set_active (false);
             showColorPickers(true);
             current = TMColorPicker;
+            if (pickerListener) {
+                pickerListener->switchPickerVisibility (showColPickers);
+            }
         } else {
             // Disabling the picker tool, enabling the Hand tool and keeping the "visible pickers" mode
             handTool->set_active (true);
