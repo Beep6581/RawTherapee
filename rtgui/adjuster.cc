@@ -35,7 +35,6 @@ static double one2one(double val)
 Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1, Gtk::Image *imgIcon2, double2double_fun slider2value_, double2double_fun value2slider_)
 {
 
-    Gtk::HBox *hbox2 = NULL;
     label = NULL;
     adjusterListener = NULL;
     afterReset = false;
@@ -107,6 +106,8 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
         if (!imgIcon1 || !imgIcon2) {
             pack_start (*slider, true, true);
         } else {
+            Gtk::HBox *hbox2 = NULL;
+
             // A second HBox is necessary
             hbox2 = Gtk::manage (new Gtk::HBox());
 

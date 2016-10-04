@@ -72,9 +72,10 @@ public:
 
     Impl(): nConcurrentThreads(0)
     {
-        int threadCount = 2;
 #ifdef _OPENMP
-        threadCount = omp_get_num_procs();
+        int threadCount = omp_get_num_procs();
+#else
+        int threadCount = 2;
 #endif
 
         threadPool_ = new Glib::ThreadPool(threadCount, 0);

@@ -21,7 +21,8 @@
 BrowserFilter::BrowserFilter () : exifFilterEnabled (false),
     showTrash (true),
     showNotTrash (true),
-    showOriginal (false)
+    showOriginal (false),
+    multiselect (false)
 {
     for (int i = 0; i < 6; i++) {
         showRanked[i] = true;

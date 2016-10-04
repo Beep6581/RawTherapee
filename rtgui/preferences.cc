@@ -609,9 +609,10 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     rgbDenoiseTreadLimitSB->set_digits (0);
     rgbDenoiseTreadLimitSB->set_increments (1, 5);
     rgbDenoiseTreadLimitSB->set_max_length(2);  // Will this be sufficient? :)
-    int maxThreadNumber = 10;
 #ifdef _OPENMP
-    maxThreadNumber = omp_get_max_threads();
+    int maxThreadNumber = omp_get_max_threads();
+#else
+    int maxThreadNumber = 10;
 #endif
     rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
     threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 2);

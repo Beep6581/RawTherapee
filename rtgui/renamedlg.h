@@ -30,29 +30,29 @@ class RenameDialog : public Gtk::Dialog
 
 protected:
 
-    class TemplateColumns : public Gtk::TreeModel::ColumnRecord
-    {
-    public:
-        Gtk::TreeModelColumn<Glib::ustring> tmplName;
-        Gtk::TreeModelColumn<bool>          rowSeparator;
-        TemplateColumns()
-        {
-            add(tmplName);
-            add(rowSeparator);
-        }
-    };
-    TemplateColumns         templateColumns;
-    Glib::RefPtr<Gtk::ListStore> templateModel;
+//    class TemplateColumns : public Gtk::TreeModel::ColumnRecord
+//    {
+//    public:
+//        Gtk::TreeModelColumn<Glib::ustring> tmplName;
+//        Gtk::TreeModelColumn<bool>          rowSeparator;
+//        TemplateColumns()
+//        {
+//            add(tmplName);
+//            add(rowSeparator);
+//        }
+//    };
+//    TemplateColumns         templateColumns;
+//    Glib::RefPtr<Gtk::ListStore> templateModel;
 
     Gtk::Window* p;
     Gtk::Label* oldName;
     Gtk::Entry* newName;
-    Gtk::CheckButton* useTmpl;
-    MyComboBox* templates;
-    Gtk::Button* all;
+//    Gtk::CheckButton* useTmpl;
+//    MyComboBox* templates;
+//    Gtk::Button* all;
     const CacheImageData* imageData;
 
-    void fillTemplateList ();
+//    void fillTemplateList ();
 
 public:
     explicit RenameDialog (Gtk::Window* parent);
@@ -60,32 +60,32 @@ public:
     void initName (const Glib::ustring& iname, const CacheImageData* cid);
     Glib::ustring getNewName ();
 
-    bool rowSeparatorFunc (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& iter);
-    void tmplSelectionChanged ();
-    void useTemplToggled ();
+//    bool rowSeparatorFunc (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& iter);
+//    void tmplSelectionChanged ();
+//    void useTemplToggled ();
 
-    bool isTemplSelected ();
-    Glib::ustring getActiveTemplate ();
+//    bool isTemplSelected ();
+//    Glib::ustring getActiveTemplate ();
 
-    static Glib::ustring applyTemplate (const Glib::ustring& oName, const CacheImageData* cid, const Glib::ustring& templ);
+//    static Glib::ustring applyTemplate (const Glib::ustring& oName, const CacheImageData* cid, const Glib::ustring& templ);
 };
 
-class RenameTemplateEditor : public Gtk::Dialog
-{
-
-protected:
-    Gtk::ListViewText* list;
-    Gtk::Entry* templ;
-
-    void refreshTemplateList ();
-public:
-    explicit RenameTemplateEditor (Gtk::Window* parent);
-
-    Glib::ustring getSelectedTemplate ();
-
-    void addPressed ();
-    void delPressed ();
-};
+//class RenameTemplateEditor : public Gtk::Dialog
+//{
+//
+//protected:
+//    Gtk::ListViewText* list;
+//    Gtk::Entry* templ;
+//
+//    void refreshTemplateList ();
+//public:
+//    explicit RenameTemplateEditor (Gtk::Window* parent);
+//
+//    Glib::ustring getSelectedTemplate ();
+//
+//    void addPressed ();
+//    void delPressed ();
+//};
 
 #endif
 

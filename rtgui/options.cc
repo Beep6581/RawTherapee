@@ -2168,9 +2168,9 @@ bool Options::load ()
     } else {
 #ifdef WIN32
         WCHAR pathW[MAX_PATH] = {0};
-        char pathA[MAX_PATH];
 
         if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_LOCAL_APPDATA, false)) {
+            char pathA[MAX_PATH];
             WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
             rtdir = Glib::build_filename(Glib::ustring(pathA), Glib::ustring(CACHEFOLDERNAME));
         }

@@ -32,6 +32,7 @@ CropHandler::CropHandler ()
     : zoom(10), ww(0), wh(0), imx(-1), imy(-1), imw(0), imh(0), cax(-1), cay(-1),
       cx(0), cy(0), cw(0), ch(0), cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
       cropimg(NULL), cropimgtrue(NULL), cropimg_width(0), cropimg_height(0),
+      cix(0), ciy(0), ciw(0), cih(0), cis(1),
       initial(false), isLowUpdatePriority(false), ipc(NULL), crop(NULL),
       displayHandler(NULL)
 {
