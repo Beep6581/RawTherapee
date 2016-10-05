@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  These median implementations from Floessie and Ingo Weyrich are inspired by this work:
+ *  These median implementations from Flössie and Ingo Weyrich are inspired by this work:
  *
  *  http://ndevilla.free.fr/median/median.pdf
  *  http://pages.ripco.net/~jgamble/nw.html

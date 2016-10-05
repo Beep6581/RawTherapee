@@ -34,7 +34,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 2 degree Standard Observer.
+static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
     {0.0000000, 0.000000, 0.000000}, {0.0000000, 0.000000, 0.000000}, {0.0001299, 0.0003917, 0.0006061},
     {0.0002321, 0.000006965, 0.001086}, {0.0004149, 0.00001239, 0.001946}, {0.0007416, 0.00002202, 0.003846},
     {0.001368, 0.000039, 0.006450001}, {0.002236, 0.000064, 0.01054999}, {0.004243, 0.000120, 0.02005001},
@@ -295,7 +295,7 @@ const double ColorTemp::Solux4100_spect[97] = {
     62.40, 61.373, 59.75, 58.1810, 56.25, 54.395, 51.90, 49.496, 47.05, 44.620
 };
 
-//spectral data for Solux lamp : near Daylight (for example  "Musee d'Orsay") - 4700K
+//spectral data for Solux lamp : near Daylight (for example  "Musée d'Orsay") - 4700K
 const double ColorTemp::Solux4700_spect[97] = {
     0.4590, 0.83, 1.2011, 1.53, 1.8647, 2.15, 2.5338, 3.06, 3.5809, 3.99, 4.4137, 4.82, 5.2228, 5.63, 6.0387, 6.53, 6.9944, 7.55, 8.0266, 8.475, 8.9276, 8.90, 9.7840, 10.20, 10.6390, 11.00, 11.3600, 11.75, 12.1340, 12.36, 12.5880, 12.74, 12.8790,
     13.07, 13.2560, 13.38, 13.5220, 13.41, 13.3070, 13.35, 13.3990, 13.37, 13.3420, 13.39, 13.4220, 13.65, 13.2710, 13.25, 13.2330, 13.12, 13.0110, 12.93, 12.8470, 12.805, 12.7630, 12.66, 12.5760, 12.563, 12.5490,
@@ -1797,7 +1797,7 @@ The next 3 methods are inspired from:
 
 this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-values cie_colour_match[][3] = Observer 2 degree Standard Observer x2, y2, z2
+values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
 E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
 I have increase precision used by J.Walker  and pass to 350nm to 830nm
 */
@@ -1855,7 +1855,7 @@ void ColorTemp::spectrum_to_xyz_preset(const double* spec_intens, double &x, dou
 
     this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-    values cie_colour_match[][3] = 2 degree Standard Observer x2, y2, z2
+    values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
     E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
     I have increased the precision used by J.Walker and pass from 350nm to 830nm
     */
