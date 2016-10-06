@@ -94,7 +94,6 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     std::list<CropWindowListener*> listeners;
 
     CropWindow* observedCropWin;  // Pointer to the currently active detail CropWindow
-    rtengine::StagedImageProcessor* ipc;
 
     bool onArea                    (CursorArea a, int x, int y);
     void updateCursor              (int x, int y);
@@ -105,6 +104,8 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw = 0, int rh = 0);
     void changeZoom                (int zoom, bool notify = true, int centerx = -1, int centery = -1);
     void updateHoveredPicker       (rtengine::Coord &imgPos);
+    void cycleRGB                  ();
+    void cycleHSV                  ();
 
     LockableColorPicker::Validity checkValidity (LockableColorPicker*  picker, const rtengine::Coord &pos);
 
@@ -113,7 +114,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
 
 public:
     CropHandler cropHandler;
-    CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_, bool isDetailWindow);
+    CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow);
     ~CropWindow ();
 
     void setDecorated       (bool decorated)
@@ -190,24 +191,13 @@ public:
     void setCropAnchorPosition (int& w, int& h);
 
     // listeners
-    void setCropGUIListener       (CropGUIListener* cgl)
-    {
-        cropgl = cgl;
-    }
-    void setPointerMotionListener (PointerMotionListener* pml)
-    {
-        pmlistener = pml;
-    }
-    void setPointerMotionHListener (PointerMotionListener* pml)
-    {
-        pmhlistener = pml;
-    }
+    void setCropGUIListener       (CropGUIListener* cgl);
+    void setPointerMotionListener (PointerMotionListener* pml);
+    PointerMotionListener* getPointerMotionListener ();
+    void setPointerMotionHListener (PointerMotionListener* pml);
 
     // crop window listeners
-    void addCropWindowListener (CropWindowListener* l)
-    {
-        listeners.push_back (l);
-    }
+    void addCropWindowListener (CropWindowListener* l);
     void delCropWindowListener (CropWindowListener* l);
 
     // crophandlerlistener interface

@@ -66,6 +66,7 @@ private:
     Glib::ustring *workingProfile;
     Validity validity;
     float r, g, b;  // red green blue in [0;1] range
+    float rpreview, gpreview, bpreview;
     float h, s, v;  // hue saturation value in [0;1] range
     float L, a, bb;  // L*a*b value in [0;1] range
 
@@ -79,8 +80,8 @@ public:
     void draw (Cairo::RefPtr<Cairo::Context> &cr);
 
     // Used to update the RGB color, the HSV values will be updated accordingly
-    void setPosition (const rtengine::Coord &newPos, const float R, const float G, const float B);
-    void setRGB (const float R, const float G, const float B);
+    void setPosition (const rtengine::Coord &newPos, const float R, const float G, float B, const float previewR, const float previewG, const float previewB);
+    void setRGB (const float R, const float G, const float B, const float previewR, const float previewG, const float previewB);
     void getImagePosition (rtengine::Coord &imgPos);
     void getScreenPosition (rtengine::Coord &screenPos);
     Size getSize ();
@@ -90,6 +91,8 @@ public:
     void rollDisplayedValues ();
     void incSize ();
     void decSize ();
+    bool cycleRGB ();
+    bool cycleHSV ();
 };
 
 #endif

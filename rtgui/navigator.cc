@@ -215,6 +215,55 @@ void Navigator::setInvalid (int fullWidth, int fullHeight)
     LAB_L->set_text (M("NAVIGATOR_NA"));
 }
 
+void Navigator::getRGBText (int r, int g, int b, Glib::ustring &sR, Glib::ustring &sG, Glib::ustring &sB)
+{
+    switch (currentRGBUnit) {
+    case (Options::NavigatorUnit::R0_1):
+        sR = Glib::ustring::format(std::fixed, std::setprecision(4), r / 255.f);
+        sG = Glib::ustring::format(std::fixed, std::setprecision(4), g / 255.f);
+        sB = Glib::ustring::format(std::fixed, std::setprecision(4), b / 255.f);
+        break;
+    case (Options::NavigatorUnit::R0_255):
+        sR = Glib::ustring::format(std::fixed, std::setprecision(0), r);
+        sG = Glib::ustring::format(std::fixed, std::setprecision(0), g);
+        sB = Glib::ustring::format(std::fixed, std::setprecision(0), b);
+        break;
+    case (Options::NavigatorUnit::PERCENT):
+    default:
+        sR = Glib::ustring::format(std::fixed, std::setprecision(1), r * 100.f / 255.f) + Glib::ustring("%");
+        sG = Glib::ustring::format(std::fixed, std::setprecision(1), g * 100.f / 255.f) + Glib::ustring("%");
+        sB = Glib::ustring::format(std::fixed, std::setprecision(1), b * 100.f / 255.f) + Glib::ustring("%");
+    }
+}
+
+void Navigator::getHSVText (float h, float s, float v, Glib::ustring &sH, Glib::ustring &sS, Glib::ustring &sV)
+{
+    switch (currentHSVUnit) {
+    case (Options::NavigatorUnit::R0_1):
+        sH = Glib::ustring::format(std::fixed, std::setprecision(4), h);
+        sS = Glib::ustring::format(std::fixed, std::setprecision(4), s);
+        sV = Glib::ustring::format(std::fixed, std::setprecision(4), v);
+        break;
+    case (Options::NavigatorUnit::R0_255):
+        sH = Glib::ustring::format(std::fixed, std::setprecision(0), h * 255);
+        sS = Glib::ustring::format(std::fixed, std::setprecision(0), s * 255);
+        sV = Glib::ustring::format(std::fixed, std::setprecision(0), v * 255);
+        break;
+    case (Options::NavigatorUnit::PERCENT):
+    default:
+        sH = Glib::ustring::format(std::fixed, std::setprecision(1), h * 360.f) + Glib::ustring("\xc2\xb0");
+        sS = Glib::ustring::format(std::fixed, std::setprecision(1), s * 100.f) + Glib::ustring("%");
+        sV = Glib::ustring::format(std::fixed, std::setprecision(1), v * 100.f) + Glib::ustring("%");
+    }
+}
+
+void Navigator::getLABText (float l, float a, float b, Glib::ustring &sL, Glib::ustring &sA, Glib::ustring &sB)
+{
+    sL = Glib::ustring::format(std::fixed, std::setprecision(1), l);
+    sA = Glib::ustring::format(std::fixed, std::setprecision(1), a);
+    sB = Glib::ustring::format(std::fixed, std::setprecision(1), b);
+}
+
 // if !validPos then x/y contain the full image size
 void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b)
 {
@@ -222,54 +271,28 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, Glib::ustrin
     if (!validPos) {
         setInvalid (x, y);
     } else {
+        Glib::ustring s1, s2, s3;
+        float h, s, v;
+        float LAB_a, LAB_b, LAB_l;
+
         position->set_text (Glib::ustring::compose ("x: %1, y: %2", x, y));
 
-        switch (currentRGBUnit) {
-        case (Options::NavigatorUnit::R0_1):
-            R->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), r / 255.f));
-            G->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), g / 255.f));
-            B->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), b / 255.f));
-            break;
-        case (Options::NavigatorUnit::R0_255):
-            R->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), r));
-            G->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), g));
-            B->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), b));
-            break;
-        case (Options::NavigatorUnit::PERCENT):
-        default:
-            R->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), r * 100.f / 255.f) + Glib::ustring("%"));
-            G->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), g * 100.f / 255.f) + Glib::ustring("%"));
-            B->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), b * 100.f / 255.f) + Glib::ustring("%"));
-            break;
-        }
+        getRGBText (r, g, b, s1, s2, s3);
+        R->set_text (s1);
+        G->set_text (s2);
+        B->set_text (s3);
 
-        float h, s, v;
         Color::rgb2hsv (r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, h, s, v);
-        switch (currentHSVUnit) {
-        case (Options::NavigatorUnit::R0_1):
-            H->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), h));
-            S->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), s));
-            V->set_text (Glib::ustring::format(std::fixed, std::setprecision(4), v));
-            break;
-        case (Options::NavigatorUnit::R0_255):
-            H->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), h * 255));
-            S->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), s * 255));
-            V->set_text (Glib::ustring::format(std::fixed, std::setprecision(0), v * 255));
-            break;
-        case (Options::NavigatorUnit::PERCENT):
-        default:
-            H->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), h * 360.f) + Glib::ustring("\xc2\xb0"));
-            S->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), s * 100.f) + Glib::ustring("%"));
-            V->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), v * 100.f) + Glib::ustring("%"));
-            break;
-        }
+        getHSVText (h, s, v, s1, s2, s3);
+        H->set_text (s1);
+        S->set_text (s2);
+        V->set_text (s3);
 
-        float LAB_a, LAB_b, LAB_l;
-        //rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
         Color::rgb2lab (profile, profileW, r * 0xffff / 0xff, g * 0xffff / 0xff, b * 0xffff / 0xff, LAB_l, LAB_a, LAB_b, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
-        LAB_A->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_a));
-        LAB_B->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_b));
-        LAB_L->set_text (Glib::ustring::format(std::fixed, std::setprecision(1), LAB_l));
+        getLABText (LAB_l, LAB_a, LAB_b, s1, s2, s3);
+        LAB_L->set_text (s1);
+        LAB_A->set_text (s2);
+        LAB_B->set_text (s3);
     }
 }
 
@@ -299,6 +322,7 @@ void Navigator::cycleUnitsRGB (GdkEventButton *event) {
         B->set_text ("[%]");
         break;
     }
+    sig_cycle_rgb.emit();
 }
 
 void Navigator::cycleUnitsHSV (GdkEventButton *event) {
@@ -327,4 +351,5 @@ void Navigator::cycleUnitsHSV (GdkEventButton *event) {
         V->set_text ("[%]");
         break;
     }
+    sig_cycle_hsv.emit();
 }

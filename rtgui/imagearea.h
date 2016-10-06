@@ -73,7 +73,8 @@ public:
     ImageArea (ImageAreaPanel* p);
     ~ImageArea ();
 
-    void setImProcCoordinator (rtengine::StagedImageProcessor* ipc_);
+    rtengine::StagedImageProcessor* getImProcCoordinator() const;
+    void setImProcCoordinator(rtengine::StagedImageProcessor* ipc_);
     void setPreviewModePanel(PreviewModePanel* previewModePanel_)
     {
         previewModePanel = previewModePanel_;

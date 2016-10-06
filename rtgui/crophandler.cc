@@ -475,15 +475,22 @@ bool CropHandler::getEnabled ()
     return enabled;
 }
 
-void CropHandler::colorPick (rtengine::Coord pickerPos, float &r, float &g, float &b, LockableColorPicker::Size size)
+void CropHandler::colorPick (const rtengine::Coord &pickerPos, float &r, float &g, float &b, float &rpreview, float &gpreview, float &bpreview, LockableColorPicker::Size size)
 {
+
+    if (!cropPixbuf || !cropPixbuftrue) {
+        r = g = b = 0.f;
+        rpreview = gpreview = bpreview = 0.f;
+        return;
+    }
 
     int xSize = (int)size;
     int ySize = (int)size;
     int pixbufW = cropPixbuftrue->get_width();
+    int pixbufH = cropPixbuftrue->get_height();
     rtengine::Coord topLeftPos(pickerPos.x - xSize/2, pickerPos.y - ySize/2);
 
-    if (topLeftPos.x > pixbufW || topLeftPos.y > pixbufW || topLeftPos.x + xSize < 0 || topLeftPos.y + ySize < 0) {
+    if (topLeftPos.x > pixbufW || topLeftPos.y > pixbufH || topLeftPos.x + xSize < 0 || topLeftPos.y + ySize < 0) {
         return;
     }
 
@@ -503,8 +510,8 @@ void CropHandler::colorPick (rtengine::Coord pickerPos, float &r, float &g, floa
         ySize += topLeftPos.y;
         topLeftPos.y = 0;
     }
-    if (topLeftPos.y + ySize > cropimg_height) {
-        ySize = cropimg_height - topLeftPos.y;
+    if (topLeftPos.y + ySize > pixbufH) {
+        ySize = pixbufH - topLeftPos.y;
     }
 
     // Accumulating the data
@@ -526,10 +533,35 @@ void CropHandler::colorPick (rtengine::Coord pickerPos, float &r, float &g, floa
             }
         }
     }
+
     // Averaging
     r = (float)r2 / (float)count / 255.f;
     g = (float)g2 / (float)count / 255.f;
     b = (float)b2 / (float)count / 255.f;
+
+    // Accumulating the data
+    r2=0, g2=0, b2=0;
+    count = 0;
+    data = cropPixbuf->get_pixels();
+    for (int j = topLeftPos.y ; j < topLeftPos.y + ySize ; ++j) {
+        const guint8* data2 = data + cropPixbuf->get_rowstride()*j;
+        for (int i = topLeftPos.x ; i < topLeftPos.x + xSize ; ++i) {
+            const guint8* data3 = data2 + i*3;
+            rtengine::Coord currPos(i, j);
+            rtengine::Coord delta = pickerPos - currPos;
+            rtengine::PolarCoord p(delta);
+            if (p.radius <= radius) {
+                r2 += *data3;
+                g2 += *(data3+1);
+                b2 += *(data3+2);
+                ++count;
+            }
+        }
+    }
+    // Averaging
+    rpreview = (float)r2 / (float)count / 255.f;
+    gpreview = (float)g2 / (float)count / 255.f;
+    bpreview = (float)b2 / (float)count / 255.f;
 }
 
 void CropHandler::getSize (int& w, int& h)

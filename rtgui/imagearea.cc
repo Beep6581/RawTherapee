@@ -88,7 +88,7 @@ void ImageArea::on_resized (Gtk::Allocation& req)
 {
     if (ipc && get_width() > 1) { // sometimes on_resize is called in some init state, causing wrong sizes
         if (!mainCropWindow) {
-            mainCropWindow = new CropWindow (this, ipc, false, false);
+            mainCropWindow = new CropWindow (this, false, false);
             mainCropWindow->setDecorated (false);
             mainCropWindow->setFitZoomEnabled (true);
             mainCropWindow->addCropWindowListener (this);
@@ -106,7 +106,12 @@ void ImageArea::on_resized (Gtk::Allocation& req)
     }
 }
 
-void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_)
+rtengine::StagedImageProcessor* ImageArea::getImProcCoordinator() const
+{
+    return ipc;
+}
+
+void ImageArea::setImProcCoordinator(rtengine::StagedImageProcessor* ipc_)
 {
     if( !ipc_ ) {
         focusGrabber = NULL;
@@ -398,7 +403,7 @@ void ImageArea::addCropWindow ()
         return;    // if called but no image is loaded, it would crash
     }
 
-    CropWindow* cw = new CropWindow (this, ipc, true, true);
+    CropWindow* cw = new CropWindow (this, true, true);
     cw->zoom11();
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);

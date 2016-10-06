@@ -23,26 +23,22 @@
 #include "../rtengine/rt_math.h"
 #include "imagearea.h"
 #include "multilangmgr.h"
+#include "navigator.h"
 
 extern Options options;
 
 LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S20),
   outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
-  r(0.f), g(0.f), b(0.f), h(0.f), s(0.f), v(0.f), L(0.f), a(0.f), bb(0.f)
+  r(0.f), g(0.f), b(0.f), rpreview(0.f), gpreview(0.f), bpreview(0.f), h(0.f), s(0.f), v(0.f), L(0.f), a(0.f), bb(0.f)
 {}
 
 LockableColorPicker::LockableColorPicker (int x, int y, Size size, const float R, const float G, const float B, CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(x, y), size(size),
   outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
-  r(R), g(G), b(B), L(0.f), a(0.f), bb(0.f)
+  r(R), g(G), b(B), rpreview(R), gpreview(G), bpreview(B), L(0.f), a(0.f), bb(0.f)
 {
-    float h_, s_, v_;
-    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h_, s_, v_);
-    h = (int)(h_*255.f);
-    s = (int)(s_*255.f);
-    v = (int)(v_*255.f);
-
+    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h, s, v);
     rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 }
 
@@ -52,6 +48,7 @@ void LockableColorPicker::updateBackBuffer ()
 
     // -------------------- setting some key constants ---------------------
     const float circlePadding = 3.f;  // keep this value odd
+    const double opacity = 0.62;
     // ---------------------------------------------------------------------
 
     if (validity == Validity::INSIDE) {
@@ -63,32 +60,37 @@ void LockableColorPicker::updateBackBuffer ()
         pangoContext->set_font_description (fontd);
 
         Glib::RefPtr<Pango::Layout> layout[3][2];
+        Glib::ustring s1, s2, s3;
+        PointerMotionListener* navigator = cropWindow->getPointerMotionListener ();
 
         switch (displayedValues) {
         case ColorPickerType::RGB:
+            navigator->getRGBText ((int)(r*255.f), (int)(g*255.f), (int)(b*255.f), s1, s2, s3);
             layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_R"));
-            layout[0][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(r*255.f)));
+            layout[0][1] = iArea->create_pango_layout(s1);
             layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_G"));
-            layout[1][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(g*255.f)));
+            layout[1][1] = iArea->create_pango_layout(s2);
             layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_B"));
-            layout[2][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(b*255.f)));
+            layout[2][1] = iArea->create_pango_layout(s3);
             break;
         case ColorPickerType::HSV:
+            navigator->getHSVText (h, s, v, s1, s2, s3);
             layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_H"));
-            layout[0][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(h*255.f)));
+            layout[0][1] = iArea->create_pango_layout(s1);
             layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_S"));
-            layout[1][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(s*255.f)));
+            layout[1][1] = iArea->create_pango_layout(s2);
             layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_V"));
-            layout[2][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(0), (int)(v*255.f)));
+            layout[2][1] = iArea->create_pango_layout(s3);
             break;
         case ColorPickerType::LAB:
         default:
+            navigator->getLABText (L, a, bb, s1, s2, s3);
             layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_LAB_L"));
-            layout[0][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(1), L));
+            layout[0][1] = iArea->create_pango_layout(s1);
             layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_LAB_A"));
-            layout[1][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(1), a));
+            layout[1][1] = iArea->create_pango_layout(s2);
             layout[2][0] = iArea->create_pango_layout(M("NAVIGATOR_LAB_B"));
-            layout[2][1] = iArea->create_pango_layout(Glib::ustring::format(std::fixed, std::setprecision(1), bb));
+            layout[2][1] = iArea->create_pango_layout(s3);
         }
 
         int w00, w01, w10, w11, w20, w21, h00, h01, h10, h11, h20, h21;
@@ -108,7 +110,6 @@ void LockableColorPicker::updateBackBuffer ()
         const int textPadding = 3;
         const int textWidth = maxWCol0 + maxWCol1 + textPadding;
         const int textHeight = maxHRow0 + maxHRow1 + maxHRow2 + 2*textPadding;
-        const double opacity = 0.62;
         // ---------------------------------------------------------------------
 
         newW = rtengine::max<int>((int)size + 2 * circlePadding, textWidth + 2 * textPadding);
@@ -124,7 +125,6 @@ void LockableColorPicker::updateBackBuffer ()
         bbcr->paint ();
         bbcr->set_operator (Cairo::OPERATOR_OVER);
 
-        // for drawing text
         bbcr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         bbcr->set_line_width (0.);
 
@@ -154,7 +154,7 @@ void LockableColorPicker::updateBackBuffer ()
 
         // spot disc with picked color
         bbcr->arc (center, center, center - circlePadding, 0., 2. * (double)M_PI);
-        bbcr->set_source_rgb (r, g, b);  // <- set the picker color here
+        bbcr->set_source_rgb (rpreview, gpreview, bpreview);  // <- set the picker color here
         bbcr->set_line_width (0.);
         bbcr->fill();
 
@@ -220,15 +220,24 @@ void LockableColorPicker::updateBackBuffer ()
         setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, newW, newH, true);
 
         Cairo::RefPtr<Cairo::Context> bbcr = BackBuffer::getContext();
+
+        // cleaning the back buffer
+        bbcr->set_source_rgba (0., 0., 0., 0.);
+        bbcr->set_operator (Cairo::OPERATOR_CLEAR);
+        bbcr->paint ();
+        bbcr->set_operator (Cairo::OPERATOR_OVER);
+
         bbcr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
 
         float center = (float)size / 2.f + circlePadding;
+
+        // light grey circle around the color mark
         bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)M_PI);
-        bbcr->set_source_rgb (0., 0., 0.);
+        bbcr->set_source_rgba (0., 0., 0., opacity);
         bbcr->set_line_width(circlePadding);
         bbcr->stroke_preserve();
-        bbcr->set_source_rgb (1., 1., 1.);
-        bbcr->set_line_width(circlePadding - 2.);
+        bbcr->set_source_rgb (0.75, 0.75, 0.75);
+        bbcr->set_line_width (circlePadding - 2.);
         bbcr->stroke ();
 
         anchorOffset.set (center, center);
@@ -254,7 +263,7 @@ void LockableColorPicker::draw (Cairo::RefPtr<Cairo::Context> &cr)
     copySurface(cr);
 }
 
-void LockableColorPicker::setPosition (const rtengine::Coord &newPos, const float R, const float G, const float B)
+void LockableColorPicker::setPosition (const rtengine::Coord &newPos, const float R, const float G, float B, const float previewR, const float previewG, const float previewB)
 {
     // we're not checking bounds here, this will be done at rendering time
     position = newPos;
@@ -263,12 +272,11 @@ void LockableColorPicker::setPosition (const rtengine::Coord &newPos, const floa
     g = G;
     b = B;
 
-    float h_, s_, v_;
-    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h_, s_, v_);
-    h = (float)h_;
-    s = (float)s_;
-    v = (float)v_;
+    rpreview = previewR;
+    gpreview = previewG;
+    bpreview = previewB;
 
+    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h, s, v);
     rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 
     if (validity != Validity::OUTSIDE) {
@@ -276,7 +284,7 @@ void LockableColorPicker::setPosition (const rtengine::Coord &newPos, const floa
     }
 }
 
-void LockableColorPicker::setRGB (const float R, const float G, const float B)
+void LockableColorPicker::setRGB (const float R, const float G, const float B, const float previewR, const float previewG, const float previewB)
 {
     if (r==R && g==G && b==B) {
         return;
@@ -286,12 +294,11 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B)
     g = G;
     b = B;
 
-    float h_, s_, v_;
-    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h_, s_, v_);
-    h = (float)h_;
-    s = (float)s_;
-    v = (float)v_;
+    rpreview = previewR;
+    gpreview = previewG;
+    bpreview = previewB;
 
+    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h, s, v);
     rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 
     if (validity != Validity::OUTSIDE) {
@@ -373,4 +380,24 @@ void LockableColorPicker::decSize ()
         size = (Size)((int)size - 5);
         setDirty(true);
     }
+}
+
+// return true if the picker has to be redrawn
+bool LockableColorPicker::cycleRGB ()
+{
+    if (displayedValues == ColorPickerType::RGB) {
+        setDirty (true);
+        return true;
+    }
+    return false;
+}
+
+// return true if the picker has to be redrawn
+bool LockableColorPicker::cycleHSV ()
+{
+    if (displayedValues == ColorPickerType::HSV) {
+        setDirty (true);
+        return true;
+    }
+    return false;
 }
