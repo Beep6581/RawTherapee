@@ -613,6 +613,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         }
 
         needRedraw = true;
+    } else if (state == SCropWinMove) {
+        if (iarea->showColorPickers () && !colorPickers.empty()) {
+            needRedraw = true;
+        }
     } else if (state == SCropImgMove) {
         cropHandler.update ();
 
@@ -1275,6 +1279,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 {
     MyMutex::MyLock lock(cropHandler.cimg);
 
+    bool isPreviewImg = false;
+
     if (decorated) {
         drawDecoration (cr);
     }
@@ -1787,6 +1793,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 }
 
             }
+
+            isPreviewImg = true;
         } else {
             // cropHandler.cropPixbuf is null
             int cropX, cropY;
@@ -1821,7 +1829,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         }
     }
 
-    if ((state == SNormal || state == SDragPicker) && iarea->showColorPickers()) {
+    if ((state == SNormal || state == SDragPicker) && isPreviewImg && iarea->showColorPickers()) {
         for (auto colorPicker : colorPickers) {
             colorPicker->draw(cr);
         }
