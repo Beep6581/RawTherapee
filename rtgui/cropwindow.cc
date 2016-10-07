@@ -310,7 +310,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
     iarea->grabFocus (this);
 
     if (button == 1) {
-        if (type == GDK_2BUTTON_PRESS && onArea (CropImage, x, y) && !onArea (ColorPicker, x, y) && (state == SNormal || state == SCropImgMove)) {
+        if (type == GDK_2BUTTON_PRESS && onArea (CropImage, x, y) && iarea->getToolMode () != TMColorPicker && (state == SNormal || state == SCropImgMove)) {
             if (fitZoomEnabled) {
                 if (fitZoom) {
                     state = SNormal;
