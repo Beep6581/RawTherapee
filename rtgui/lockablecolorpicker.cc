@@ -28,19 +28,10 @@
 extern Options options;
 
 LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
-: cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S20),
+: cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S15),
   outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
   r(0.f), g(0.f), b(0.f), rpreview(0.f), gpreview(0.f), bpreview(0.f), h(0.f), s(0.f), v(0.f), L(0.f), a(0.f), bb(0.f)
 {}
-
-LockableColorPicker::LockableColorPicker (int x, int y, Size size, const float R, const float G, const float B, CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
-: cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(x, y), size(size),
-  outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
-  r(R), g(G), b(B), rpreview(R), gpreview(G), bpreview(B), L(0.f), a(0.f), bb(0.f)
-{
-    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h, s, v);
-    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
-}
 
 void LockableColorPicker::updateBackBuffer ()
 {
@@ -263,25 +254,10 @@ void LockableColorPicker::draw (Cairo::RefPtr<Cairo::Context> &cr)
     copySurface(cr);
 }
 
-void LockableColorPicker::setPosition (const rtengine::Coord &newPos, const float R, const float G, float B, const float previewR, const float previewG, const float previewB)
+void LockableColorPicker::setPosition (const rtengine::Coord &newPos)
 {
     // we're not checking bounds here, this will be done at rendering time
     position = newPos;
-
-    r = R;
-    g = G;
-    b = B;
-
-    rpreview = previewR;
-    gpreview = previewG;
-    bpreview = previewB;
-
-    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h, s, v);
-    rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
-
-    if (validity != Validity::OUTSIDE) {
-        setDirty(true);
-    }
 }
 
 void LockableColorPicker::setRGB (const float R, const float G, const float B, const float previewR, const float previewG, const float previewB)
@@ -366,20 +342,24 @@ void LockableColorPicker::rollDisplayedValues ()
 
 }
 
-void LockableColorPicker::incSize ()
+bool LockableColorPicker::incSize ()
 {
     if (size < Size::S30) {
         size = (Size)((int)size + 5);
         setDirty(true);
+        return true;
     }
+    return false;
 }
 
-void LockableColorPicker::decSize ()
+bool LockableColorPicker::decSize ()
 {
     if (size > Size::S5) {
         size = (Size)((int)size - 5);
         setDirty(true);
+        return true;
     }
+    return false;
 }
 
 // return true if the picker has to be redrawn

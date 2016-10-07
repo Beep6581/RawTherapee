@@ -75,12 +75,11 @@ private:
 public:
 
     LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile);
-    LockableColorPicker (int x, int y, Size size, const float R, const float G, const float B, CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile);
 
     void draw (Cairo::RefPtr<Cairo::Context> &cr);
 
     // Used to update the RGB color, the HSV values will be updated accordingly
-    void setPosition (const rtengine::Coord &newPos, const float R, const float G, float B, const float previewR, const float previewG, const float previewB);
+    void setPosition (const rtengine::Coord &newPos);
     void setRGB (const float R, const float G, const float B, const float previewR, const float previewG, const float previewB);
     void getImagePosition (rtengine::Coord &imgPos);
     void getScreenPosition (rtengine::Coord &screenPos);
@@ -89,8 +88,8 @@ public:
     void setValidity (Validity isValid);
     void setSize (Size newSize);
     void rollDisplayedValues ();
-    void incSize ();
-    void decSize ();
+    bool incSize ();
+    bool decSize ();
     bool cycleRGB ();
     bool cycleHSV ();
 };

@@ -279,15 +279,11 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y)
         // resizing a color picker
         if (direction == GDK_SCROLL_UP) {
             hoveredPicker->incSize();
-            rtengine::Coord imgPos;
-            screenCoordToImage(x, y, imgPos.x, imgPos.y);
-            updateHoveredPicker(imgPos);
+            updateHoveredPicker();
             iarea->redraw ();
         }else if (direction == GDK_SCROLL_DOWN) {
             hoveredPicker->decSize();
-            rtengine::Coord imgPos;
-            screenCoordToImage(x, y, imgPos.x, imgPos.y);
-            updateHoveredPicker(imgPos);
+            updateHoveredPicker();
             iarea->redraw ();
         }
     } else {
@@ -352,9 +348,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         if (hoveredPicker) {
                             if ((bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
                                 hoveredPicker->decSize();
-                                rtengine::Coord imgPos;
-                                screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                                updateHoveredPicker(imgPos);
+                                updateHoveredPicker();
                                 needRedraw = true;
                             } else if (!(bstate & GDK_CONTROL_MASK) && (bstate & GDK_SHIFT_MASK)) {
                                 hoveredPicker->rollDisplayedValues();
@@ -367,10 +361,10 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             // Add a new Color Picker
                             rtengine::Coord imgPos;
                             screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                            LockableColorPicker *newPicker = new LockableColorPicker(imgPos.x, imgPos.y, LockableColorPicker::Size::S15, 0., 0., 0., this, &cropHandler.colorParams.output, &cropHandler.colorParams.working);
+                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams.output, &cropHandler.colorParams.working);
                             colorPickers.push_back(newPicker);
                             hoveredPicker = newPicker;
-                            updateHoveredPicker(imgPos);
+                            updateHoveredPicker(&imgPos);
                             state = SDragPicker;
                             press_x = x;
                             press_y = y;
@@ -502,11 +496,10 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     }
                 } else if (iarea->getToolMode () == TMColorPicker && hoveredPicker) {
                     if ((bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
-                        hoveredPicker->decSize();
-                        rtengine::Coord imgPos;
-                        screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                        updateHoveredPicker(imgPos);
-                        needRedraw = true;
+                        if (hoveredPicker->decSize()) {
+                            updateHoveredPicker();
+                            needRedraw = true;
+                        }
                     } else if (!(bstate & GDK_CONTROL_MASK) && (bstate & GDK_SHIFT_MASK)) {
                         hoveredPicker->rollDisplayedValues();
                     } else if (!(bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
@@ -568,11 +561,10 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     state = SDeletePicker;
                     needRedraw = true;
                 } else if ((bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
-                    hoveredPicker->incSize();
-                    rtengine::Coord imgPos;
-                    screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                    updateHoveredPicker(imgPos);
-                    needRedraw = true;
+                    if (hoveredPicker->incSize()) {
+                        updateHoveredPicker();
+                        needRedraw = true;
+                    }
                 } else if (!(bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
                     // Deleting the hovered picker
                     for (std::vector<LockableColorPicker*>::iterator i = colorPickers.begin(); i != colorPickers.end(); i++) {
@@ -898,7 +890,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
         action_y = new_action_y;
         iarea->redraw ();
     } else if (state == SDragPicker) {
-        Coord imgPos, cropPos;
+        Coord imgPos;
         action_x = x - press_x;
         action_x = y - press_y;
         screenCoordToImage (x, y, imgPos.x, imgPos.y);
@@ -912,15 +904,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
         }else if (imgPos.y >= iarea->getImProcCoordinator()->getFullHeight()) {
             imgPos.y = iarea->getImProcCoordinator()->getFullHeight()-1;
         }
-        imageCoordToCropImage(imgPos.x, imgPos.y, cropPos.x, cropPos.y);
-        float r=0.f, g=0.f, b=0.f;
-        float rpreview=0.f, gpreview=0.f, bpreview=0.f;
-        LockableColorPicker::Validity validity = checkValidity (hoveredPicker, cropPos);
-        hoveredPicker->setValidity (validity);
-        if (validity == LockableColorPicker::Validity::INSIDE) {
-            cropHandler.colorPick(cropPos, r, g, b, rpreview, gpreview, bpreview, hoveredPicker->getSize());
-        }
-        hoveredPicker->setPosition (imgPos, r, g, b, rpreview, gpreview, bpreview);
+        updateHoveredPicker (&imgPos);
         iarea->redraw ();
     } else if (state == SNormal && iarea->getToolMode () == TMColorPicker && onArea(ColorPicker, x, y)) {
         // TODO: we could set the hovered picker as Highlighted here
@@ -2071,7 +2055,7 @@ void CropWindow::redrawNeeded (LWButton* button)
     iarea->redraw ();
 }
 
-void CropWindow::updateHoveredPicker (rtengine::Coord &imgPos)
+void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
 {
 
     if (!hoveredPicker) {
@@ -2079,9 +2063,16 @@ void CropWindow::updateHoveredPicker (rtengine::Coord &imgPos)
     }
 
     rtengine::Coord cropPos;
-    imageCoordToCropImage(imgPos.x, imgPos.y, cropPos.x, cropPos.y);
     float r=0.f, g=0.f, b=0.f;
     float rpreview=0.f, gpreview=0.f, bpreview=0.f;
+    if (imgPos) {
+        imageCoordToCropImage(imgPos->x, imgPos->y, cropPos.x, cropPos.y);
+        hoveredPicker->setPosition (*imgPos);
+    } else {
+        rtengine::Coord imgPos2;
+        hoveredPicker->getImagePosition(imgPos2);
+        imageCoordToCropImage(imgPos2.x, imgPos2.y, cropPos.x, cropPos.y);
+    }
     LockableColorPicker::Validity validity = checkValidity (hoveredPicker, cropPos);
     hoveredPicker->setValidity (validity);
     if (validity == LockableColorPicker::Validity::INSIDE) {
