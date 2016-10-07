@@ -58,10 +58,10 @@ enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 class ImageDatas : virtual public ImageDimensions
 {
 public:
-    template <class S, class D >
-    void convertTo (S srcValue, D &dstValue)
+    template<class S, class D>
+    void convertTo(S src, D& dst) const
     {
-        dstValue = static_cast<D>(srcValue);
+        dst = src;
     }
 
     // parameters that will never be used, replaced by the subclasses r, g and b parameters!
@@ -100,30 +100,30 @@ public:
 
 };
 
-template <>
-inline void ImageDatas::convertTo<unsigned short, unsigned char> (const unsigned short srcValue, unsigned char &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned short src, unsigned char& dst) const
 {
-    dstValue = (unsigned char)(srcValue >> 8);
+    dst = uint16ToUint8Rounded(src);
 }
-template <>
-inline void ImageDatas::convertTo<unsigned char, int> (const unsigned char srcValue, int &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned char src, int& dst) const
 {
-    dstValue = (int)(srcValue) << 8;
+    dst = src * 257;
 }
-template <>
-inline void ImageDatas::convertTo<unsigned char, unsigned short> (const unsigned char srcValue, unsigned short &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned char src, unsigned short& dst) const
 {
-    dstValue = (unsigned short)(srcValue) << 8;
+    dst = src * 257;
 }
-template <>
-inline void ImageDatas::convertTo<float, unsigned char> (const float srcValue, unsigned char &dstValue)
+template<>
+inline void ImageDatas::convertTo(float src, unsigned char& dst) const
 {
-    dstValue = (unsigned char)( (unsigned short)(srcValue) >> 8 );
+    dst = uint16ToUint8Rounded(src);
 }
-template <>
-inline void ImageDatas::convertTo<unsigned char, float> (const unsigned char srcValue, float &dstValue)
+template<>
+inline void ImageDatas::convertTo(unsigned char src, float& dst) const
 {
-    dstValue = float( (unsigned short)(srcValue) << 8 );
+    dst = src * 257;
 }
 
 // --------------------------------------------------------------------
@@ -854,33 +854,21 @@ public:
                 }
             }
         } else if (interp == TI_Bilinear) {
-            for (int i = 0; i < nh; i++) {
-                int sy = i * height / nh;
+            float heightByNh = float(height) / float(nh);
+            float widthByNw = float(width) / float(nw);
+            float syf = 0.f;
 
-                if (sy >= height) {
-                    sy = height - 1;
-                }
+            for (int i = 0; i < nh; i++, syf += heightByNh) {
+                int sy = syf;
+                float dy = syf - float(sy);
+                int ny = sy < height - 1 ? sy + 1 : sy;
 
-                float dy = float(i) * float(height) / float(nh) - float(sy);
-                int ny = sy + 1;
+                float sxf = 0.f;
 
-                if (ny >= height) {
-                    ny = sy;
-                }
-
-                for (int j = 0; j < nw; j++) {
-                    int sx = j * width / nw;
-
-                    if (sx >= width) {
-                        sx = width;
-                    }
-
-                    float dx = float(j) * float(width) / float(nw) - float(sx);
-                    int nx = sx + 1;
-
-                    if (nx >= width) {
-                        nx = sx;
-                    }
+                for (int j = 0; j < nw; j++, sxf += widthByNw) {
+                    int sx = sxf;
+                    float dx = sxf - float(sx);
+                    int nx = sx < width - 1 ? sx + 1 : sx;
 
                     convertTo(r(sy, sx) * (1.f - dx) * (1.f - dy) + r(sy, nx)*dx * (1.f - dy) + r(ny, sx) * (1.f - dx)*dy + r(ny, nx)*dx * dy, imgPtr->r(i, j));
                     convertTo(g(sy, sx) * (1.f - dx) * (1.f - dy) + g(sy, nx)*dx * (1.f - dy) + g(ny, sx) * (1.f - dx)*dy + g(ny, nx)*dx * dy, imgPtr->g(i, j));
@@ -1046,9 +1034,6 @@ public:
                 avg_r += double(r_);
                 avg_g += double(g_);
                 avg_b += double(b_);
-                /*avg_r += intpow( (double)r(i, j), p);
-                avg_g += intpow( (double)g(i, j), p);
-                avg_b += intpow( (double)b(i, j), p);*/
                 n++;
             }
 
@@ -1669,9 +1654,6 @@ public:
                 avg_r += double(r_);
                 avg_g += double(g_);
                 avg_b += double(b_);
-                /*avg_r += intpow( (double)r(i, j), p);
-                avg_g += intpow( (double)g(i, j), p);
-                avg_b += intpow( (double)b(i, j), p);*/
                 n++;
             }
 

@@ -37,6 +37,7 @@
 #include "mytime.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "median.h"
 #include "EdgePreservingDecomposition.h"
 
 #ifdef _OPENMP
@@ -49,26 +50,6 @@
 #define offset 25   // shift between tiles
 #define fTS ((TS/2+1))  // second dimension of Fourier tiles
 #define blkrad 1    // radius of block averaging
-
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-
-#define med3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
-pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; \
-PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
-PIX_SORT(pp[0],pp[1]); PIX_SORT(pp[3],pp[4]); PIX_SORT(pp[6],pp[7]); \
-PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
-PIX_SORT(pp[0],pp[3]); PIX_SORT(pp[5],pp[8]); PIX_SORT(pp[4],pp[7]); \
-PIX_SORT(pp[3],pp[6]); PIX_SORT(pp[1],pp[4]); PIX_SORT(pp[2],pp[5]); \
-PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
-PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
-
-
-#define med2(a0,a1,a2,a3,a4,median) { \
-pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4;  \
-PIX_SORT(pp[0],pp[1]) ; PIX_SORT(pp[3],pp[4]) ; PIX_SORT(pp[0],pp[3]) ;\
-PIX_SORT(pp[1],pp[4]) ; PIX_SORT(pp[1],pp[2]) ; PIX_SORT(pp[2],pp[3]) ;\
-PIX_SORT(pp[1],pp[2]) ; median=pp[2] ;}
-
 
 #define epsilon 0.001f/(TS*TS) //tolerance
 
@@ -574,15 +555,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         realtile = 12;
     }
 
-    int tilesize;
-    int overlap;
-    tilesize = 1024;
-    overlap = 128;
-    //tilesize=128*params->wavelet.tiles;
-    tilesize = 128 * realtile;
-    //overlap=(int) tilesize*params->wavelet.overl;
-    overlap = (int) tilesize * 0.125f;
-    //  printf("overl=%d\n",overlap);
+    int tilesize = 128 * realtile;
+    int overlap = (int) tilesize * 0.125f;
     int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 
     if(params->wavelet.Tilesmethod == "full") {
@@ -827,11 +801,9 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 #endif
 
                     for (int i = 1; i < hei - 1; i++) {
-                        float pp[9], temp;
-
                         for (int j = 1; j < wid - 1; j++) {
                             if((varhue[i][j] < -1.3f && varhue[i][j] > - 2.5f)  && (varchro[i][j] > 15.f && varchro[i][j] < 55.f) && labco->L[i][j] > 6000.f) { //blue sky + med3x3  ==> after for more effect use denoise
-                                med3(labco->L[i][j] , labco->L[i - 1][j], labco->L[i + 1][j] , labco->L[i][j + 1], labco->L[i][j - 1], labco->L[i - 1][j - 1], labco->L[i - 1][j + 1], labco->L[i + 1][j - 1], labco->L[i + 1][j + 1], tmL[i][j]);    //3x3
+                                tmL[i][j] = median(labco->L[i][j] , labco->L[i - 1][j], labco->L[i + 1][j] , labco->L[i][j + 1], labco->L[i][j - 1], labco->L[i - 1][j - 1], labco->L[i - 1][j + 1], labco->L[i + 1][j - 1], labco->L[i + 1][j + 1]);    //3x3
                             }
                         }
                     }
@@ -1828,8 +1800,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     float maxkoeLi[12];
 
     float *koeLibuffer = NULL;
-    bool lipschitz = false;
-    lipschitz = true;
+    bool lipschitz = true;
 
     if(lipschitz == true) {
         for(int y = 0; y < 12; y++) {
@@ -2782,7 +2753,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
 
         if (cp.reinforce == 3) {
             if(rad < lim0 / 60.f && level == 0) {
-                expkoef *= repart;    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
+                expkoef *= abs(repart);    //reduce effect for low values of rad and level=0==> quasi only level 1 is effective
             }
         }
 
@@ -3262,8 +3233,6 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                     int ii = i / W_L;
                     int jj = i - ii * W_L;
                     float LL100 = labco->L[ii * 2][jj * 2] / 327.68f;
-                    k1 = 600.f;
-                    k2 = 300.f;
                     k1 = 0.3f * (waOpacityCurveW[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
                     k2 = k1 * 2.f;
 
@@ -3525,8 +3494,6 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
                     int ii = i / W_ab;
                     int jj = i - ii * W_ab;
                     float LL100 = labco->L[ii * 2][jj * 2] / 327.68f;
-                    k1 = 600.f;
-                    k2 = 300.f;
                     k1 = 0.3f * (waOpacityCurveW[6.f * LL100] - 0.5f); //k1 between 0 and 0.5    0.5==> 1/6=0.16
                     k2 = k1 * 2.f;
 

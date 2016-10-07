@@ -376,7 +376,7 @@ HISTORY_MSG_145;Microcontraste - Uniformité
 HISTORY_MSG_146;Netteté des bords
 HISTORY_MSG_147;Bords - Luminance uniquement
 HISTORY_MSG_148;Microcontraste
-HISTORY_MSG_149;Microcontraste - Matrice 3x3
+HISTORY_MSG_149;Microcontraste - Matrice 3×3
 HISTORY_MSG_150;Réduction du bruit/artefact post-dématriçage
 HISTORY_MSG_151;Vibrance
 HISTORY_MSG_152;Vib. - Tons pastels
@@ -1296,11 +1296,6 @@ TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
-TP_DIRPYRDENOISE_33;3×3 fort
-TP_DIRPYRDENOISE_55;5×5 fort
-TP_DIRPYRDENOISE_55SOFT;5×5
-TP_DIRPYRDENOISE_77;7×7 (lent)
-TP_DIRPYRDENOISE_99;9x9 (très lent)
 TP_DIRPYRDENOISE_ABM;Chroma uniquement
 TP_DIRPYRDENOISE_AUT;Global automatique
 TP_DIRPYRDENOISE_AUTO;Global automatique
@@ -1343,12 +1338,10 @@ TP_DIRPYRDENOISE_METHOD11;Qualité
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;La qualité peut être adapté à la trame du bruit. Régler sur "haut" augmentera l'effet de la réduction de bruit au prix d'un temps de traitement plus long.
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Lorsque vous utilisez les méthodes "Luminance seulement" et "Lab", un filtrage médian sera effectué juste après l'étape des ondelettes dans le pipeline de la réduction de bruit.\nEm mode "RVB", il sera effectué à la toute fin du pipeline de la réduction de bruit.
-TP_DIRPYRDENOISE_MET_TOOLTIP;Applique un filtre médian de la taille souhaité. Plus il est large, plus cela prendra de temps.\n\n3x3 soft: treats 5 pixels in a 1-pixel range.\n3x3: treats 9 pixels in a 1-pixel range.\n5x5 soft: treats 13 pixels in a 2-pixel range.\n5x5: treats 25 pixels in a 2-pixel range.\n7x7: treats 49 pixels in a 3-pixel range.\n\nSometimes it is possible to achieve higher quality running several iterations with a small range than one iteration with a large range.
 TP_DIRPYRDENOISE_NOISELABEL;Bruit de l'aperçu: Moyen=%1  Haut=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Bruit de l'aperçu: Moyen= -   Haut= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Affiche les niveaux de bruit résiduel de la partie de l'image visible dans l'<b>aperçu</b> après les ondelettes.\n\n>300 Très bruité\n100-300 Bruité\n50-100 Peu bruité\n<50 Très peu bruité\n\nAttention, les valeurs diffèreront entre le mode RVB et L*a*b*. Les valeurs RVB sont moins précises car le mode RVB ne séparent pas complètement la luminance et la chrominance.
 TP_DIRPYRDENOISE_PASSE;Itérations
-TP_DIRPYRDENOISE_PASSES_TOOLTIP;Appliquer 3 itération du filtre médian 3x3 donne de meilleurs résultats qu'appliquer une seule fois le filtre 7x7.
 TP_DIRPYRDENOISE_PON;Multi-zones auto
 TP_DIRPYRDENOISE_PRE;Aperçu multi-zones
 TP_DIRPYRDENOISE_PREV;Aperçu
@@ -1359,7 +1352,6 @@ TP_DIRPYRDENOISE_RGBM;RVB
 TP_DIRPYRDENOISE_SHAL;Standard
 TP_DIRPYRDENOISE_SHALBI;Haut
 TP_DIRPYRDENOISE_SLI;Curseur
-TP_DIRPYRDENOISE_SOFT;3x3
 TP_DIRPYRDENOISE_TILELABEL;Taille des tuiles =%1, Centre: Tx=%2  Ty=%3
 TP_DIRPYREQUALIZER_ALGO;Domaine des tons chairs
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fin: plus proche des tons chairs, minimisant l'actions sur les autres couleurs\nLarge: évite plus d'artéfacts
@@ -1893,18 +1885,20 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
+!GENERAL_APPLY;Apply
+!GENERAL_OPEN;Open
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_407;Retinex - Method
 !HISTORY_MSG_408;Retinex - Radius
 !HISTORY_MSG_409;Retinex - Contrast
-!HISTORY_MSG_410;Retinex - Brightness
+!HISTORY_MSG_410;Retinex - Offset
 !HISTORY_MSG_411;Retinex - Strength
 !HISTORY_MSG_412;Retinex - Gaussian Gradient
-!HISTORY_MSG_413;Retinex - Variance
+!HISTORY_MSG_413;Retinex - Contrast
 !HISTORY_MSG_414;Retinex - Histogram - Lab
 !HISTORY_MSG_415;Retinex - Transmission
 !HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission median
+!HISTORY_MSG_417;Retinex - Transmission Median
 !HISTORY_MSG_418;Retinex - Threshold
 !HISTORY_MSG_419;Retinex - Color space
 !HISTORY_MSG_420;Retinex - Histogram - HSL
@@ -1926,8 +1920,10 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_436;Retinex - M - Radius
 !HISTORY_MSG_437;Retinex - M - Method
 !HISTORY_MSG_438;Retinex - M - Equalizer
-!HISTORY_MSG_439;Retinex - Preview
+!HISTORY_MSG_439;Retinex - Process
 !HISTORY_MSG_440;CbDL - Method
+!HISTORY_MSG_441;Retinex - Gain transmission
+!HISTORY_MSG_442;Retinex - Scale
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
@@ -1944,7 +1940,15 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_COLORTONING_NEUTRAL;Reset sliders
+!TP_DIRPYRDENOISE_3X3;3×3
+!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
+!TP_DIRPYRDENOISE_5X5;5×5
+!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
+!TP_DIRPYRDENOISE_7X7;7×7
+!TP_DIRPYRDENOISE_9X9;9×9
+!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
+!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_NEUTRAL;Reset
@@ -1959,8 +1963,12 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
 !TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
+!TP_RETINEX_EQUAL;Equalizer
 !TP_RETINEX_FREEGAMMA;Free gamma
 !TP_RETINEX_GAIN;Gain
+!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
+!TP_RETINEX_GAINTRANSMISSION;Gain transmission
+!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
 !TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
 !TP_RETINEX_GAMMA;Gamma
 !TP_RETINEX_GAMMA_FREE;Free
@@ -1980,6 +1988,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RETINEX_HSLSPACE_LIN;HSL-Linear
 !TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
 !TP_RETINEX_ITER;Iterations (Tone-mapping)
+!TP_RETINEX_ITERF;Tone mapping
 !TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
 !TP_RETINEX_LABEL;Retinex
 !TP_RETINEX_LABEL_MASK;Mask
@@ -1999,10 +2008,11 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RETINEX_NEIGHBOR;Radius
 !TP_RETINEX_NEUTRAL;Reset
 !TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-!TP_RETINEX_OFFSET;Brightness
+!TP_RETINEX_OFFSET;Offset (brightness)
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
 !TP_RETINEX_SETTINGS;Settings
+!TP_RETINEX_SKAL;Scale
 !TP_RETINEX_SLOPE;Free gamma slope
 !TP_RETINEX_STRENGTH;Strength
 !TP_RETINEX_THRESHOLD;Threshold
@@ -2010,6 +2020,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
 !TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
 !TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
+!TP_RETINEX_TRANF;Transmission
 !TP_RETINEX_TRANSMISSION;Transmission map
 !TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 !TP_RETINEX_UNIFORM;Uniform

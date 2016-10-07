@@ -34,15 +34,11 @@ public:
     procparams::ProcParams pparams;
 
     ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp)
-        : fname(fn), isRaw(iR), initialImage(NULL)
-    {
-        pparams = pp;
-    }
+        : fname(fn), isRaw(iR), initialImage(NULL), pparams(pp) {}
 
     ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp)
-        : fname(""), initialImage(iImage)
+        : fname(""), initialImage(iImage), pparams(pp)
     {
-        pparams = pp;
         iImage->increaseRef();
     }
 

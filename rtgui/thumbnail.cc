@@ -499,6 +499,8 @@ void Thumbnail::decreaseRef ()
 
 void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::ProcParams *pparams)
 {
+    MyMutex::MyLock lock(mutex);
+
     int tw_ = tw;
     int th_ = th;
     float imgRatio_ = imgRatio;
@@ -903,7 +905,7 @@ Glib::ustring Thumbnail::getCacheFileName (const Glib::ustring& subdir, const Gl
     return cachemgr->getCacheFileName (subdir, fname, fext, cfs.md5);
 }
 
-void Thumbnail::setFileName (const Glib::ustring fn)
+void Thumbnail::setFileName (const Glib::ustring &fn)
 {
 
     fname = fn;

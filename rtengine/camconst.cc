@@ -428,7 +428,7 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
         std::map<int, struct camera_const_levels>::iterator best_it = mLevels[bw].begin();
 
         if (iso > 0) {
-            for (it = mLevels[bw].begin(); it != mLevels[bw].end(); it++) {
+            for (it = mLevels[bw].begin(); it != mLevels[bw].end(); ++it) {
                 if (abs(it->first - iso) <= abs(best_it->first - iso)) {
                     best_it = it;
                 } else {
@@ -487,7 +487,7 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
         if (it == mApertureScaling.end()) {
             std::map<float, float>::reverse_iterator it;
 
-            for (it = mApertureScaling.rbegin(); it != mApertureScaling.rend(); it++) {
+            for (it = mApertureScaling.rbegin(); it != mApertureScaling.rend(); ++it) {
                 if (it->first > fnumber) {
                     scaling = it->second;
                 } else {
@@ -550,7 +550,8 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
         return false;
     }
 
-    size_t bufsize = 4096;
+    size_t bufsize = 16384;
+    size_t increment = 2 * bufsize;
     size_t datasize = 0, ret;
     char *buf = (char *)malloc(bufsize);
 
@@ -558,8 +559,9 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
         datasize += ret;
 
         if (datasize == bufsize) {
-            bufsize += 4096;
+            bufsize += increment;
             buf = (char *)realloc(buf, bufsize);
+            increment *= 2;
         }
     }
 
@@ -571,7 +573,11 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
     }
 
     fclose(stream);
-    buf = (char *)realloc(buf, datasize + 1);
+
+    if(datasize == bufsize) {
+        buf = (char *)realloc(buf, datasize + 1);
+    }
+
     buf[datasize] = '\0';
 
     // remove comments
@@ -637,18 +643,16 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 
             Glib::ustring make_model(ji->valuestring);
             make_model = make_model.uppercase();
-            std::map<Glib::ustring, CameraConst *>::iterator existingccIter = mCameraConstants.find(make_model);
 
-            if (existingccIter == mCameraConstants.end()) {
-                // add the new CamConst to the map
-                mCameraConstants.insert(std::pair<Glib::ustring, CameraConst *>(make_model, cc));
+            const auto ret = mCameraConstants.emplace(make_model, cc);
 
+            if(ret.second) { // entry inserted into map
                 if (settings->verbose) {
                     printf("Add camera constants for \"%s\"\n", make_model.c_str());
                 }
             } else {
                 // The CameraConst already exist for this camera make/model -> we merge the values
-                CameraConst *existingcc = existingccIter->second;
+                CameraConst *existingcc = ret.first->second;
 
                 // updating the dcraw matrix
                 existingcc->update_dcrawMatrix(cc->get_dcrawMatrix());

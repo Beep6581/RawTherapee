@@ -5,13 +5,13 @@ find_file(REL_INFO_FILE ReleaseInfo.cmake PATHS "${PROJECT_SOURCE_DIR}" NO_DEFAU
 if (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     # we look for the git command in this paths by order of preference
     if (WIN32)
-        find_file(GIT_CMD git.exe HINTS ENV Path PATH_SUFFIXES ../)
+        find_program(GIT_CMD git.exe HINTS ENV Path PATH_SUFFIXES ../)
     elseif (APPLE)
-        find_file(GIT_CMD git PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
-        find_file(GIT_CMD git)
+        find_program(GIT_CMD git PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
+        find_program(GIT_CMD git)
         set (SHELL "/bin/bash")
     else (WIN32) # Linux
-        find_file(GIT_CMD git)
+        find_program(GIT_CMD git)
         set (SHELL "/bin/bash")
     endif (WIN32)
 

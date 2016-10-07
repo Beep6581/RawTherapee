@@ -511,7 +511,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
         state = SNormal;
 
-        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
+        for (std::list<CropWindowListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
             (*i)->cropPositionChanged (this);
         }
 
@@ -1029,8 +1029,7 @@ bool CropWindow::onArea (CursorArea a, int x, int y)
         }
 
         getObservedFrameArea (x1, y1, w, h);
-        return x > x1 - 6 && y > y1 - 6 && x < x1 + w - 1 + 6 && y < y1 + h - 1 + 6 &&
-               !(x > x1 + 2 && y > y1 + 2 && x < x1 + w - 1 - 2 && y < y1 + h - 1 - 2);
+        return x >= x1 && x <= x1 + w && y >= y1 && y <= y1 + h;
     }
 
     return false;
@@ -2278,7 +2277,7 @@ void CropWindow::delCropWindowListener (CropWindowListener* l)
         if (*i == l) {
             i = listeners.erase (i);
         } else {
-            i++;
+            ++i;
         }
 }
 

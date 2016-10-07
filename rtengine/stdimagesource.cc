@@ -83,7 +83,7 @@ StdImageSource::~StdImageSource ()
     }
 }
 
-void StdImageSource::getSampleFormat (Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
+void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
 
     sFormat = IIOSF_UNKNOWN;
@@ -125,7 +125,7 @@ void StdImageSource::getSampleFormat (Glib::ustring &fname, IIOSampleFormat &sFo
  * and RT's image data type (Image8, Image16 and Imagefloat), then it will
  * load the image into it
  */
-int StdImageSource::load (Glib::ustring fname, bool batch)
+int StdImageSource::load (const Glib::ustring &fname, bool batch)
 {
 
     fileName = fname;
@@ -213,7 +213,7 @@ int StdImageSource::load (Glib::ustring fname, bool batch)
     return 0;
 }
 
-void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps & pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw)
+void StdImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw)
 {
 
     // the code will use OpenMP as of now.
@@ -234,12 +234,12 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     }
 }
 
-void StdImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb)
+void StdImageSource::convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb)
 {
     colorSpaceConversion (image, cmp, embProfile, img->getSampleFormat());
 }
 
-void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat)
+void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat)
 {
 
     bool skipTransform = false;

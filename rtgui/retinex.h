@@ -35,7 +35,7 @@ protected:
     Adjuster* limd;
     Adjuster* highl;
     Adjuster* baselog;
-    Adjuster* grbl;
+    Adjuster* skal;
     Adjuster* gam;
     Adjuster* slope;
     Adjuster* highlights;
@@ -76,15 +76,21 @@ protected:
     Gtk::Label* mMLabels;
     Gtk::Label* transLabels;
     Gtk::Label* transLabels2;
+    Gtk::Frame *gainFrame;
+    Gtk::Frame *tranFrame;
+    Gtk::Frame *iterFrame;
+    Gtk::Frame *equalFrame;
 
     DiagonalCurveEditor* cdshape;
     DiagonalCurveEditor* cdshapeH;
     DiagonalCurveEditor* mapshape;
     CurveEditorGroup* transmissionCurveEditorG;
+    CurveEditorGroup* gaintransmissionCurve;
     sigc::connection retinexMethodConn, neutralconn, mapMethodConn, viewMethodConn;
     sigc::connection retinexColorSpaceConn;
     sigc::connection gammaretinexConn;
     FlatCurveEditor* transmissionShape;
+    FlatCurveEditor* gaintransmissionShape;
     FlatCurveEditor* lhshape;
     bool lastmedianmap;
     sigc::connection medianmapConn;

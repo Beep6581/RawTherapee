@@ -32,11 +32,10 @@ Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm)
     : ThumbBrowserEntryBase(fname),
       opreview(NULL), origpw(prevw), origph(prevh), opreviewDone(false),
-      job(pjob), progress(0), outFileName(""), sequence(0), forceFormatOpts(false)
+      job(pjob), progress(0), outFileName(""), sequence(0), forceFormatOpts(false), params(pparams)
 {
 
     thumbnail = thm;
-    params = pparams;
 
 #if 1 //ndef WIN32
     // The BatchQueueEntryIdleHelper tracks if an entry has been deleted while it was sitting waiting for "idle"

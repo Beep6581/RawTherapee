@@ -347,11 +347,11 @@ Imagefloat::to8()
     #pragma omp parallel for schedule(static)
 #endif
 
-    for ( int h = 0; h < height; ++h ) {
-        for ( int w = 0; w < width; ++w ) {
-            img8->r(h, w) = (unsigned char)( (unsigned short)(r(h, w)) >> 8);
-            img8->g(h, w) = (unsigned char)( (unsigned short)(g(h, w)) >> 8);
-            img8->b(h, w) = (unsigned char)( (unsigned short)(b(h, w)) >> 8);
+    for (int h = 0; h < height; ++h) {
+        for (int w = 0; w < width; ++w) {
+            img8->r(h, w) = uint16ToUint8Rounded(r(h, w));
+            img8->g(h, w) = uint16ToUint8Rounded(g(h, w));
+            img8->b(h, w) = uint16ToUint8Rounded(b(h, w));
         }
     }
 
@@ -366,11 +366,11 @@ Imagefloat::to16()
     #pragma omp parallel for schedule(static)
 #endif
 
-    for ( int h = 0; h < height; ++h ) {
-        for ( int w = 0; w < width; ++w ) {
-            img16->r( h, w) = (unsigned short)(r(h, w));
-            img16->g( h, w) = (unsigned short)(g(h, w));
-            img16->b( h, w) = (unsigned short)(b(h, w));
+    for (int h = 0; h < height; ++h) {
+        for (int w = 0; w < width; ++w) {
+            img16->r(h, w) = r(h, w);
+            img16->g(h, w) = g(h, w);
+            img16->b(h, w) = b(h, w);
         }
     }
 

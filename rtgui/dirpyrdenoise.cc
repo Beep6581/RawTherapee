@@ -218,21 +218,21 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     methodmedconn = methodmed->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::methodmedChanged) );
 
     rgbmethod = Gtk::manage (new MyComboBoxText ());
-    rgbmethod->append_text (M("TP_DIRPYRDENOISE_SOFT"));
-    rgbmethod->append_text (M("TP_DIRPYRDENOISE_33"));
-    rgbmethod->append_text (M("TP_DIRPYRDENOISE_55SOFT"));
+    rgbmethod->append_text (M("TP_DIRPYRDENOISE_3X3_SOFT"));
+    rgbmethod->append_text (M("TP_DIRPYRDENOISE_3X3"));
+    rgbmethod->append_text (M("TP_DIRPYRDENOISE_5X5_SOFT"));
     rgbmethod->set_active (0);
     rgbmethod->set_tooltip_text (M("TP_DIRPYRDENOISE_MET_TOOLTIP"));
     rgbmethodconn = rgbmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::rgbmethodChanged) );
 
 
     medmethod = Gtk::manage (new MyComboBoxText ());
-    medmethod->append_text (M("TP_DIRPYRDENOISE_SOFT"));
-    medmethod->append_text (M("TP_DIRPYRDENOISE_33"));
-    medmethod->append_text (M("TP_DIRPYRDENOISE_55SOFT"));
-    medmethod->append_text (M("TP_DIRPYRDENOISE_55"));
-    medmethod->append_text (M("TP_DIRPYRDENOISE_77"));
-    medmethod->append_text (M("TP_DIRPYRDENOISE_99"));
+    medmethod->append_text (M("TP_DIRPYRDENOISE_3X3_SOFT"));
+    medmethod->append_text (M("TP_DIRPYRDENOISE_3X3"));
+    medmethod->append_text (M("TP_DIRPYRDENOISE_5X5_SOFT"));
+    medmethod->append_text (M("TP_DIRPYRDENOISE_5X5"));
+    medmethod->append_text (M("TP_DIRPYRDENOISE_7X7"));
+    medmethod->append_text (M("TP_DIRPYRDENOISE_9X9"));
     medmethod->set_active (0);
     medmethod->set_tooltip_text (M("TP_DIRPYRDENOISE_MET_TOOLTIP"));
     medmethodconn = medmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::medmethodChanged) );

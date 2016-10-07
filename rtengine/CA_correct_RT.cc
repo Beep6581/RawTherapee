@@ -26,6 +26,7 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
+#include "median.h"
 
 namespace {
 
@@ -105,14 +106,6 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 }
 //end of linear equation solver
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-inline void pixSort(float &a, float &b) {
-    if (a > b) {
-        float temp = a;
-        a = b;
-        b = temp;
-    }
-}
 
 }
 
@@ -630,36 +623,18 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                                 float bstemp[2];
                                 for (int dir = 0; dir < 2; dir++) {
                                     //temporary storage for median filter
-                                    float p[9];
-                                    p[0] = blockshifts[(vblock - 1) * hblsz + hblock - 1][c][dir];
-                                    p[1] = blockshifts[(vblock - 1) * hblsz + hblock][c][dir];
-                                    p[2] = blockshifts[(vblock - 1) * hblsz + hblock + 1][c][dir];
-                                    p[3] = blockshifts[(vblock) * hblsz + hblock - 1][c][dir];
-                                    p[4] = blockshifts[(vblock) * hblsz + hblock][c][dir];
-                                    p[5] = blockshifts[(vblock) * hblsz + hblock + 1][c][dir];
-                                    p[6] = blockshifts[(vblock + 1) * hblsz + hblock - 1][c][dir];
-                                    p[7] = blockshifts[(vblock + 1) * hblsz + hblock][c][dir];
-                                    p[8] = blockshifts[(vblock + 1) * hblsz + hblock + 1][c][dir];
-                                    pixSort(p[1], p[2]);
-                                    pixSort(p[4], p[5]);
-                                    pixSort(p[7], p[8]);
-                                    pixSort(p[0], p[1]);
-                                    pixSort(p[3], p[4]);
-                                    pixSort(p[6], p[7]);
-                                    pixSort(p[1], p[2]);
-                                    pixSort(p[4], p[5]);
-                                    pixSort(p[7], p[8]);
-                                    pixSort(p[0], p[3]);
-                                    pixSort(p[5], p[8]);
-                                    pixSort(p[4], p[7]);
-                                    pixSort(p[3], p[6]);
-                                    pixSort(p[1], p[4]);
-                                    pixSort(p[2], p[5]);
-                                    pixSort(p[4], p[7]);
-                                    pixSort(p[4], p[2]);
-                                    pixSort(p[6], p[4]);
-                                    pixSort(p[4], p[2]);
-                                    bstemp[dir] = p[4];
+                                    const std::array<float, 9> p = {
+                                        blockshifts[(vblock - 1) * hblsz + hblock - 1][c][dir],
+                                        blockshifts[(vblock - 1) * hblsz + hblock][c][dir],
+                                        blockshifts[(vblock - 1) * hblsz + hblock + 1][c][dir],
+                                        blockshifts[(vblock) * hblsz + hblock - 1][c][dir],
+                                        blockshifts[(vblock) * hblsz + hblock][c][dir],
+                                        blockshifts[(vblock) * hblsz + hblock + 1][c][dir],
+                                        blockshifts[(vblock + 1) * hblsz + hblock - 1][c][dir],
+                                        blockshifts[(vblock + 1) * hblsz + hblock][c][dir],
+                                        blockshifts[(vblock + 1) * hblsz + hblock + 1][c][dir]
+                                    };
+                                    bstemp[dir] = median(p);
                                 }
 
                                 //now prepare coefficient matrix; use only data points within caautostrength/2 std devs of zero

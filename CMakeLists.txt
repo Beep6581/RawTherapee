@@ -4,6 +4,13 @@ else (WIN32)
   cmake_minimum_required(VERSION 2.6)
 endif (WIN32)
 
+# must stay before the 'project' command
+if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
+  set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
+  # users building with Eclipse should set CMAKE_ECLIPSE_VERSION through the command line to their current version of Eclipse
+  #set(CMAKE_ECLIPSE_VERSION "4.6.0" CACHE STRING "Eclipse version" FORCE)
+endif()
+
 PROJECT(RawTherapee)
 
 # the default target is 'Debug'
@@ -255,7 +262,7 @@ if (WITH_BZIP)
   find_package(BZip2)
   if (BZIP2_FOUND)
     add_definitions (-DBZIP_SUPPORT)
-    set (EXTRA_INCDIR ${EXTRA_LIB} ${BZIP2_INCLUDE_DIR})
+    set (EXTRA_INCDIR ${BZIP2_INCLUDE_DIR})
     set (EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
   endif (BZIP2_FOUND)
 endif (WITH_BZIP)

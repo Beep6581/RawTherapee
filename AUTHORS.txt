@@ -12,6 +12,7 @@ Developement contributors, in last name alphabetical order:
   Oliver Duis
   Maciek Dworak
   Michael Ezra
+  Flössie
   Jean-Christophe Frisch
   Ilias Giarimis
   Steve Herrell
@@ -32,7 +33,7 @@ Developement contributors, in last name alphabetical order:
   Ingo Weyrich
   Makoto Yoshida
 
-Other contributors (profiles, ideas, mockups, testing, forum activity, translations, etc.), in last name/nickname alphabetical order:
+Other contributors (profiles, ideas, mockups, testing, forum activity, translations, etc.), in last name alphabetical order:
 
   Marcin Bajor
   Thorsten Bartolomäus

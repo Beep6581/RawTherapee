@@ -191,9 +191,6 @@ void Crop::update (int todo)
         parent->ipf.Tile_calc (tilesize, overlap, kall, widIm, heiIm, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
         kall = 0;
 
-        float *ch_M = new float [9];//allocate memory
-        float *max_r = new float [9];
-        float *max_b = new float [9];
         float *min_b = new float [9];
         float *min_r = new float [9];
         float *lumL = new float [9];
@@ -380,7 +377,7 @@ void Crop::update (int todo)
             }
         }
 
-        if(skip == 1 && params.dirpyrDenoise.enabled && ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO"))) {
+        if(skip == 1 && params.dirpyrDenoise.enabled && !parent->denoiseInfoStore.valid && ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO"))) {
             MyTime t1aue, t2aue;
             t1aue.set();
 
@@ -462,9 +459,9 @@ void Crop::update (int todo)
 
                         //printf("DCROP skip=%d cha=%f red=%f bl=%f redM=%f bluM=%f chrom=%f sigm=%f lum=%f\n",skip, chaut,redaut,blueaut, maxredaut, maxblueaut, chromina, sigma, lumema);
                         Nb[hcr * 3 + wcr] = nb;
-                        ch_M[hcr * 3 + wcr] = pondcorrec * chaut;
-                        max_r[hcr * 3 + wcr] = pondcorrec * maxredaut;
-                        max_b[hcr * 3 + wcr] = pondcorrec * maxblueaut;
+                        parent->denoiseInfoStore.ch_M[hcr * 3 + wcr] = pondcorrec * chaut;
+                        parent->denoiseInfoStore.max_r[hcr * 3 + wcr] = pondcorrec * maxredaut;
+                        parent->denoiseInfoStore.max_b[hcr * 3 + wcr] = pondcorrec * maxblueaut;
                         min_r[hcr * 3 + wcr] = pondcorrec * minredaut;
                         min_b[hcr * 3 + wcr] = pondcorrec * minblueaut;
                         lumL[hcr * 3 + wcr] = lumema;
@@ -524,20 +521,20 @@ void Crop::update (int todo)
             int lissage = settings->leveldnliss;
 
             for (int k = 0; k < 9; k++) {
-                float maxmax = max(max_r[k], max_b[k]);
-                parent->ipf.calcautodn_info (ch_M[k], delta[k], Nb[k], levaut, maxmax, lumL[k], chromC[k], mode, lissage, ry[k], sk[k], pcsk[k]);
+                float maxmax = max(parent->denoiseInfoStore.max_r[k], parent->denoiseInfoStore.max_b[k]);
+                parent->ipf.calcautodn_info (parent->denoiseInfoStore.ch_M[k], delta[k], Nb[k], levaut, maxmax, lumL[k], chromC[k], mode, lissage, ry[k], sk[k], pcsk[k]);
                 //  printf("ch_M=%f delta=%f\n",ch_M[k], delta[k]);
             }
 
             for (int k = 0; k < 9; k++) {
-                if(max_r[k] > max_b[k]) {
+                if(parent->denoiseInfoStore.max_r[k] > parent->denoiseInfoStore.max_b[k]) {
                     Max_R[k] = (delta[k]) / ((autoNRmax * multip * adjustr * lowdenoise) / 2.f);
-                    Min_B[k] = -(ch_M[k] - min_b[k]) / (autoNRmax * multip * adjustr * lowdenoise);
+                    Min_B[k] = -(parent->denoiseInfoStore.ch_M[k] - min_b[k]) / (autoNRmax * multip * adjustr * lowdenoise);
                     Max_B[k] = 0.f;
                     Min_R[k] = 0.f;
                 } else {
                     Max_B[k] = (delta[k]) / ((autoNRmax * multip * adjustr * lowdenoise) / 2.f);
-                    Min_R[k] = - (ch_M[k] - min_r[k])   / (autoNRmax * multip * adjustr * lowdenoise);
+                    Min_R[k] = - (parent->denoiseInfoStore.ch_M[k] - min_r[k])   / (autoNRmax * multip * adjustr * lowdenoise);
                     Min_B[k] = 0.f;
                     Max_R[k] = 0.f;
                 }
@@ -545,7 +542,7 @@ void Crop::update (int todo)
 
             for (int k = 0; k < 9; k++) {
                 //  printf("ch_M= %f Max_R=%f Max_B=%f min_r=%f min_b=%f\n",ch_M[k],Max_R[k], Max_B[k],Min_R[k], Min_B[k]);
-                chM += ch_M[k];
+                chM += parent->denoiseInfoStore.ch_M[k];
                 MaxBMoy += Max_B[k];
                 MaxRMoy += Max_R[k];
                 MinRMoy += Min_R[k];
@@ -587,7 +584,7 @@ void Crop::update (int todo)
             params.dirpyrDenoise.chroma = chM / (autoNR * multip * adjustr);
             params.dirpyrDenoise.redchro = maxr;
             params.dirpyrDenoise.bluechro = maxb;
-
+            parent->denoiseInfoStore.valid = true;
             if(parent->adnListener) {
                 parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
             }
@@ -644,7 +641,7 @@ void Crop::update (int todo)
                 int kall = 0;
 
                 float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
-                parent->ipf.RGB_denoise(kall, baseCrop, baseCrop, calclum, ch_M, max_r, max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+                parent->ipf.RGB_denoise(kall, baseCrop, baseCrop, calclum, parent->denoiseInfoStore.ch_M, parent->denoiseInfoStore.max_r, parent->denoiseInfoStore.max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 
                 if (parent->adnListener) {
                     parent->adnListener->noiseChanged(nresi, highresi);
@@ -665,9 +662,6 @@ void Crop::update (int todo)
 
         parent->imgsrc->convertColorSpace(baseCrop, params.icm, parent->currWB);
 
-        delete [] ch_M;
-        delete [] max_r;
-        delete [] max_b;
         delete [] min_r;
         delete [] min_b;
         delete [] lumL;
@@ -749,27 +743,6 @@ void Crop::update (int todo)
                    baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
                    parent->imgsrc->getGamma());
         }*/
-    float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
-    float satLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
-
-    if(params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
-        float moyS = 0.f;
-        float eqty = 0.f;
-        parent->ipf.moyeqt (baseCrop, moyS, eqty);//return image : mean saturation and standard dev of saturation
-        //printf("moy=%f ET=%f\n", moyS,eqty);
-        float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
-
-        if(satp >= 0.92f) {
-            satp = 0.92f;    //avoid values too high (out of gamut)
-        }
-
-        if(satp <= 0.15f) {
-            satp = 0.15f;    //avoid too low values
-        }
-
-        satLimit = 100.f * satp;
-        satLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
-    }
 
     if (params.spot.enabled) {
         if (todo & M_SPOT) {
@@ -794,11 +767,13 @@ void Crop::update (int todo)
 
     if (todo & M_RGBCURVE) {
         double rrm, ggm, bbm;
-        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB);
+        DCPProfile::ApplyState as;
+        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, parent->currWB, as);
+
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, satLimit , satLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
+                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit , parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
-                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf);
+                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as);
     }
 
     /*xref=000;yref=000;
@@ -835,7 +810,7 @@ void Crop::update (int todo)
         LUTu dummy;
         int moderetinex;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
-        parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy, dummy, dummy);
+        parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance (labnCrop);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
@@ -907,14 +882,9 @@ void Crop::update (int todo)
             realtile = 12;
         }
 
-        int tilesize;
-        int overlap;
-        tilesize = 1024;
-        overlap = 128;
-        tilesize = 128 * realtile;
-        //overlap=(int) tilesize*params->wavelet.overl;
-        overlap = (int) tilesize * 0.125f;
-        //  printf("overl=%d\n",overlap);
+        int tilesize = 128 * realtile;
+        int overlap = (int) tilesize * 0.125f;
+
         int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
 
         parent->ipf.Tile_calc (tilesize, overlap, kall, labnCrop->W, labnCrop->H, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);

@@ -19,9 +19,31 @@
 #include "image16.h"
 #include "imagefloat.h"
 #include "image8.h"
-#include <cstring>
 #include <cstdio>
 #include "rtengine.h"
+
+namespace
+{
+
+void getScanline8 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned char* buffer)
+{
+    for (int i = 0, ix = 0; i < width; i++) {
+        buffer[ix++] = rtengine::uint16ToUint8Rounded(red[i]);
+        buffer[ix++] = rtengine::uint16ToUint8Rounded(green[i]);
+        buffer[ix++] = rtengine::uint16ToUint8Rounded(blue[i]);
+    }
+}
+
+void getScanline16 (const uint16_t *red, const uint16_t *green, const uint16_t *blue, int width, unsigned short* buffer)
+{
+    for (int i = 0, ix = 0; i < width; i++) {
+        buffer[ix++] = red[i];
+        buffer[ix++] = green[i];
+        buffer[ix++] = blue[i];
+    }
+}
+
+}
 
 using namespace rtengine;
 
@@ -41,27 +63,14 @@ Image16::~Image16 ()
 void Image16::getScanline (int row, unsigned char* buffer, int bps)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
     if (bps == 16) {
-        int ix = 0;
-        unsigned short* sbuffer = (unsigned short*) buffer;
-
-        for (int i = 0; i < width; i++) {
-            sbuffer[ix++] = r(row, i);
-            sbuffer[ix++] = g(row, i);
-            sbuffer[ix++] = b(row, i);
-        }
+        getScanline16 (r(row), g(row), b(row), width, (unsigned short*)buffer);
     } else if (bps == 8) {
-        int ix = 0;
-
-        for (int i = 0; i < width; i++) {
-            buffer[ix++] = r(row, i) >> 8;
-            buffer[ix++] = g(row, i) >> 8;
-            buffer[ix++] = b(row, i) >> 8;
-        }
+        getScanline8 (r(row), g(row), b(row), width, buffer);
     }
 }
 
@@ -72,42 +81,42 @@ void Image16::getScanline (int row, unsigned char* buffer, int bps)
 void Image16::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
-    // For optimization purpose, we're assuming that this class never have to provide min/max bound
+    // For optimization purpose, we're assuming that this class never has to provide min/max bounds
     assert(!minValue);
 
     switch (sampleFormat) {
-    case (IIOSF_UNSIGNED_CHAR): {
-        int ix = 0;
+        case (IIOSF_UNSIGNED_CHAR): {
+            int ix = 0;
 
-        for (int i = 0; i < width; i++) {
-            r(row, i) = (unsigned short)(buffer[ix++]) << 8;
-            g(row, i) = (unsigned short)(buffer[ix++]) << 8;
-            b(row, i) = (unsigned short)(buffer[ix++]) << 8;
+            for (int i = 0; i < width; ++i) {
+                r(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+                g(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+                b(row, i) = static_cast<unsigned short>(buffer[ix++]) * 257;
+            }
+
+            break;
         }
 
-        break;
-    }
+        case (IIOSF_UNSIGNED_SHORT): {
+            unsigned short* sbuffer = (unsigned short*) buffer;
+            int ix = 0;
 
-    case (IIOSF_UNSIGNED_SHORT): {
-        unsigned short* sbuffer = (unsigned short*) buffer;
-        int ix = 0;
+            for (int i = 0; i < width; ++i) {
+                r(row, i) = sbuffer[ix++];
+                g(row, i) = sbuffer[ix++];
+                b(row, i) = sbuffer[ix++];
+            }
 
-        for (int i = 0; i < width; i++) {
-            r(row, i) = sbuffer[ix++];
-            g(row, i) = sbuffer[ix++];
-            b(row, i) = sbuffer[ix++];
+            break;
         }
 
-        break;
-    }
-
-    default:
-        // Other type are ignored, but could be implemented if necessary
-        break;
+        default:
+            // Other types are ignored, but could be implemented if necessary
+            break;
     }
 
     /*
@@ -303,11 +312,11 @@ Image16::to8()
 {
     Image8* img8 = new Image8(width, height);
 
-    for ( int h = 0; h < height; ++h ) {
-        for ( int w = 0; w < width; ++w ) {
-            img8->r(h, w) = (unsigned char)( r(h, w) >> 8);
-            img8->g(h, w) = (unsigned char)( g(h, w) >> 8);
-            img8->b(h, w) = (unsigned char)( b(h, w) >> 8);
+    for (int h = 0; h < height; ++h) {
+        for (int w = 0; w < width; ++w) {
+            img8->r(h, w) = uint16ToUint8Rounded(r(h, w));
+            img8->g(h, w) = uint16ToUint8Rounded(g(h, w));
+            img8->b(h, w) = uint16ToUint8Rounded(b(h, w));
         }
     }
 
@@ -319,11 +328,11 @@ Image16::tofloat()
 {
     Imagefloat* imgfloat = new Imagefloat(width, height);
 
-    for ( int h = 0; h < height; ++h ) {
-        for ( int w = 0; w < width; ++w ) {
-            imgfloat->r(h, w) = (float)r(h, w);
-            imgfloat->g(h, w) = (float)g(h, w);
-            imgfloat->b(h, w) = (float)b(h, w);
+    for (int h = 0; h < height; ++h) {
+        for (int w = 0; w < width; ++w) {
+            imgfloat->r(h, w) = r(h, w);
+            imgfloat->g(h, w) = g(h, w);
+            imgfloat->b(h, w) = b(h, w);
         }
     }
 

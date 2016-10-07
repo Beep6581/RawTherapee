@@ -54,6 +54,9 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     dhbox->pack_start(*retinexcolorspace);
     retinexVBox->pack_start(*dhbox);
 
+    Gtk::VBox *equalVBox = Gtk::manage (new Gtk::VBox());
+
+    equalFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_EQUAL")));
 
     // Histogram equalizer Lab curve
     curveEditorGD = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_LAB"));
@@ -161,11 +164,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     grad   = Gtk::manage (new Adjuster (M("TP_RETINEX_GRAD"), -2., 2., 1., 1.));
     grads   = Gtk::manage (new Adjuster (M("TP_RETINEX_GRADS"), -2., 2., 1., 1.));
     gain   = Gtk::manage (new Adjuster (M("TP_RETINEX_GAIN"), 20, 200, 1, 50));
-    offs   = Gtk::manage (new Adjuster (M("TP_RETINEX_OFFSET"), -10000, 10000, 1, 0));
+    offs   = Gtk::manage (new Adjuster (M("TP_RETINEX_OFFSET"), -1000, 5000, 1, 0));
 //    vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 125));
     limd   = Gtk::manage (new Adjuster (M("TP_RETINEX_THRESHOLD"), 2, 100, 1, 8));
-    baselog   = Gtk::manage (new Adjuster (M("TP_RETINEX_BASELOG"), 1.1, 100., 0.001, 2.718));
-//    grbl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT3"), 1, 100, 1, 50));
+    baselog   = Gtk::manage (new Adjuster (M("TP_RETINEX_BASELOG"), 1., 10., 1., 3.));
+    skal   = Gtk::manage (new Adjuster (M("TP_RETINEX_SKAL"), 1, 8, 1, 3));
     gain->set_tooltip_markup (M("TP_RETINEX_GAIN_TOOLTIP"));
     scal->set_tooltip_markup (M("TP_RETINEX_SCALES_TOOLTIP"));
     iter->set_tooltip_markup (M("TP_RETINEX_ITER_TOOLTIP"));
@@ -174,6 +177,21 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 //    vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
     limd->set_tooltip_markup (M("TP_RETINEX_THRESHOLD_TOOLTIP"));
     baselog->set_tooltip_markup (M("TP_RETINEX_BASELOG_TOOLTIP"));
+
+    // Gain Transmission map curve
+    gaintransmissionCurve = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_GAINTRANSMISSION"));
+    gaintransmissionCurve->setCurveListener (this);
+
+//    std::vector<double> defaultCurve;
+    rtengine::RetinexParams::getDefaultgaintransmissionCurve(defaultCurve);
+    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", NULL, false));
+    gaintransmissionShape->setIdentityValue(0.);
+    gaintransmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
+    gaintransmissionShape->setBottomBarBgGradient(milestones);
+    gaintransmissionCurve->set_tooltip_markup (M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
+
+    gaintransmissionCurve->curveListComplete();
+
 
     Gtk::Frame *p1Frame;
     p1Frame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_LABEL_MASK")) );
@@ -251,52 +269,81 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     settingsVBox->pack_start (*transLabels2);
     transLabels2->show ();
 
-    settingsVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
+    equalVBox->pack_start (*curveEditorGD, Gtk::PACK_SHRINK, 4);
     curveEditorGD->show();
 
-    settingsVBox->pack_start (*curveEditorGDH, Gtk::PACK_SHRINK, 4);
+    equalVBox->pack_start (*curveEditorGDH, Gtk::PACK_SHRINK, 4);
     curveEditorGDH->show();
 
-    settingsVBox->pack_start (*curveEditorGH, Gtk::PACK_SHRINK, 4);
+    equalVBox->pack_start (*curveEditorGH, Gtk::PACK_SHRINK, 4);
     curveEditorGH->show();
 
     gambox->pack_start(*gammaretinex);
 
-    settingsVBox->pack_start(*gambox);
+    equalVBox->pack_start(*gambox);
     gammaretinex->show();
 
-    settingsVBox->pack_start (*gam);
+    equalVBox->pack_start (*gam);
     gam->show ();
 
-    settingsVBox->pack_start (*slope);
+    equalVBox->pack_start (*slope);
     slope->show ();
 
+    equalFrame->add(*equalVBox);
+    settingsVBox->pack_start (*equalFrame);
 
-    settingsVBox->pack_start (*iter);
+
+    Gtk::VBox *iterVBox = Gtk::manage (new Gtk::VBox());
+
+    iterFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_ITERF")));
+
+    iterVBox->pack_start (*iter);
     iter->show ();
 
-    settingsVBox->pack_start (*scal);
+    iterVBox->pack_start (*scal);
     scal->show ();
 
-    settingsVBox->pack_start (*grad);
+    iterVBox->pack_start (*grad);
     grad->show ();
 
-    settingsVBox->pack_start (*grads);
+    iterVBox->pack_start (*grads);
     grads->show ();
 
-    settingsVBox->pack_start (*gain);
-    gain->show ();
+    iterFrame->add(*iterVBox);
+    settingsVBox->pack_start (*iterFrame);
 
-    settingsVBox->pack_start (*offs);
-    offs->show ();
+    Gtk::VBox *tranVBox = Gtk::manage (new Gtk::VBox());
 
-//    settingsVBox->pack_start (*vart);
-//    vart->show ();
+    tranFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_TRANF")));
 
-    settingsVBox->pack_start (*limd);
+    tranVBox->pack_start( *transmissionCurveEditorG, Gtk::PACK_SHRINK, 2);
+    transmissionCurveEditorG->show();
+
+    tranVBox->pack_start (*skal);
+    skal->show ();
+
+    tranVBox->pack_start (*limd);
     limd->show ();
 
-    // settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    tranVBox->pack_start (*medianmap);
+    medianmap->show ();
+
+    tranFrame->add(*tranVBox);
+    settingsVBox->pack_start (*tranFrame);
+
+    Gtk::VBox *gainBox = Gtk::manage (new Gtk::VBox());
+
+    Gtk::HSeparator *separator = Gtk::manage (new  Gtk::HSeparator());
+    settingsVBox->pack_start(*separator, Gtk::PACK_SHRINK, 2);
+    gainFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_GAINOFFS")));
+
+    gainBox->pack_start( *gaintransmissionCurve, Gtk::PACK_SHRINK, 2);
+    gaintransmissionCurve->show();
+
+    gainBox->pack_start (*offs);
+    offs->show ();
+    gainFrame->add(*gainBox);
+    settingsVBox->pack_start (*gainFrame);
 
     viewbox->pack_start(*viewMethod);
 //   settingsVBox->pack_start(*viewbox);
@@ -326,18 +373,12 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 //    settingsVBox->pack_start (*highl);
 //    highl->show ();
 
-//    settingsVBox->pack_start (*baselog);
-//    baselog->show ();
+//   settingsVBox->pack_start (*baselog);
+//   baselog->show ();
 
-//    settingsVBox->pack_start (*grbl);
-//    grbl->show ();
     //  settingsVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-    settingsVBox->pack_start( *transmissionCurveEditorG, Gtk::PACK_SHRINK, 2);
-    transmissionCurveEditorG->show();
 
-    settingsVBox->pack_start (*medianmap);
-    medianmap->show ();
     expsettings->add(*settingsVBox);
 
     neutrHBox = Gtk::manage (new Gtk::HBox ());
@@ -468,12 +509,12 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
         s_tonalwidth->delay = 200;
     }
 
-    /*    grbl->setAdjusterListener (this);
+    skal->setAdjusterListener (this);
 
-        if (grbl->delay < 200) {
-            grbl->delay = 200;
-        }
-    */
+    if (skal->delay < 200) {
+        skal->delay = 200;
+    }
+
     pack_start (*retinexVBox);
     p1Frame->add(*p1VBox);
     pack_start (*p1Frame, Gtk::PACK_EXPAND_WIDGET, 4);
@@ -494,6 +535,7 @@ Retinex::~Retinex()
     delete curveEditorGD;
     delete curveEditorGDH;
     delete transmissionCurveEditorG;
+    delete gaintransmissionCurve;
     delete curveEditorGH;
     delete curveEditormap;
 
@@ -525,6 +567,7 @@ void Retinex::neutral_pressed ()
     retinexcolorspace->set_active(0);
     gammaretinex->set_active(0);
     transmissionShape->reset();
+    gaintransmissionShape->reset();
     cdshape->reset();
     cdshapeH->reset();
     lhshape->reset();
@@ -656,7 +699,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         limd->setEditedState (pedited->retinex.limd ? Edited : UnEdited);
         highl->setEditedState (pedited->retinex.highl ? Edited : UnEdited);
         baselog->setEditedState (pedited->retinex.baselog ? Edited : UnEdited);
-//        grbl->setEditedState (pedited->retinex.grbl ? Edited : UnEdited);
+        skal->setEditedState (pedited->retinex.skal ? Edited : UnEdited);
         set_inconsistent (multiImage && !pedited->retinex.enabled);
         medianmap->set_inconsistent (!pedited->retinex.medianmap);
         radius->setEditedState       (pedited->retinex.radius ? Edited : UnEdited);
@@ -689,6 +732,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         cdshape->setUnChanged  (!pedited->retinex.cdcurve);
         cdshapeH->setUnChanged  (!pedited->retinex.cdHcurve);
         transmissionShape->setUnChanged (!pedited->retinex.transmissionCurve);
+        gaintransmissionShape->setUnChanged (!pedited->retinex.gaintransmissionCurve);
         lhshape->setUnChanged  (!pedited->retinex.lhcurve);
         mapshape->setUnChanged  (!pedited->retinex.mapcurve);
 
@@ -715,7 +759,8 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     shadows->setValue       (pp->retinex.shadows);
     s_tonalwidth->setValue  (pp->retinex.stonalwidth);
 
-//    grbl->setValue  (pp->retinex.grbl);
+    skal->setValue  (pp->retinex.skal);
+
     if(pp->retinex.iter == 1)   {
         grad->set_sensitive(false);
         scal->set_sensitive(false);
@@ -809,6 +854,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     mapMethodConn.block(false);
     viewMethodConn.block(false);
     transmissionShape->setCurve (pp->retinex.transmissionCurve);
+    gaintransmissionShape->setCurve (pp->retinex.gaintransmissionCurve);
 
 
     enableListener ();
@@ -833,12 +879,13 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     pp->retinex.limd  = (int)limd->getValue ();
     pp->retinex.highl  = (int)highl->getValue ();
     pp->retinex.baselog  = baselog->getValue ();
-//    pp->retinex.grbl  = (int)grbl->getValue ();
+    pp->retinex.skal  = (int)skal->getValue ();
     pp->retinex.cdcurve = cdshape->getCurve ();
     pp->retinex.lhcurve = lhshape->getCurve ();
     pp->retinex.cdHcurve = cdshapeH->getCurve ();
     pp->retinex.mapcurve = mapshape->getCurve ();
     pp->retinex.transmissionCurve = transmissionShape->getCurve ();
+    pp->retinex.gaintransmissionCurve = gaintransmissionShape->getCurve ();
     pp->retinex.enabled      = getEnabled();
     pp->retinex.medianmap                = medianmap->get_active();
 
@@ -870,10 +917,11 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->retinex.limd = limd->getEditedState ();
         pedited->retinex.highl = highl->getEditedState ();
         pedited->retinex.baselog = baselog->getEditedState ();
-//        pedited->retinex.grbl = grbl->getEditedState ();
+        pedited->retinex.skal = skal->getEditedState ();
         pedited->retinex.cdcurve   = !cdshape->isUnChanged ();
         pedited->retinex.cdHcurve   = !cdshapeH->isUnChanged ();
         pedited->retinex.transmissionCurve  = !transmissionShape->isUnChanged ();
+        pedited->retinex.gaintransmissionCurve  = !gaintransmissionShape->isUnChanged ();
         pedited->retinex.mapcurve   = !mapshape->isUnChanged ();
         pedited->retinex.enabled       = !get_inconsistent();
         pedited->retinex.medianmap       = !medianmap->get_inconsistent();
@@ -1131,7 +1179,7 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
     limd->setDefault (defParams->retinex.limd);
     highl->setDefault (defParams->retinex.highl);
     baselog->setDefault (defParams->retinex.baselog);
-//    grbl->setDefault (defParams->retinex.grbl);
+    skal->setDefault (defParams->retinex.skal);
     gam->setDefault (defParams->retinex.gam);
     slope->setDefault (defParams->retinex.slope);
 
@@ -1154,7 +1202,7 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
         limd->setDefaultEditedState (pedited->retinex.limd ? Edited : UnEdited);
         highl->setDefaultEditedState (pedited->retinex.highl ? Edited : UnEdited);
         baselog->setDefaultEditedState (pedited->retinex.baselog ? Edited : UnEdited);
-//        grbl->setDefaultEditedState (pedited->retinex.grbl ? Edited : UnEdited);
+        skal->setDefaultEditedState (pedited->retinex.skal ? Edited : UnEdited);
         gam->setDefaultEditedState (pedited->retinex.gam ? Edited : UnEdited);
         slope->setDefaultEditedState (pedited->retinex.slope ? Edited : UnEdited);
 
@@ -1172,7 +1220,7 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
         limd->setDefaultEditedState (Irrelevant);
         highl->setDefaultEditedState (Irrelevant);
         baselog->setDefaultEditedState (Irrelevant);
-//        grbl->setDefaultEditedState (Irrelevant);
+        skal->setDefaultEditedState (Irrelevant);
         str->setDefaultEditedState (Irrelevant);
         scal->setDefaultEditedState (Irrelevant);
         iter->setDefaultEditedState (Irrelevant);
@@ -1245,8 +1293,8 @@ void Retinex::adjusterChanged (Adjuster* a, double newval)
         listener->panelChanged (EvLhighl, highl->getTextValue());
     } else if (a == baselog) {
         listener->panelChanged (EvLbaselog, baselog->getTextValue());
-//    } else if (a == grbl) {
-//        listener->panelChanged (EvLgrbl, grbl->getTextValue());
+    } else if (a == skal) {
+        listener->panelChanged (EvLskal, skal->getTextValue());
     } else if (a == gam) {
         listener->panelChanged (EvLgam, gam->getTextValue());
     } else if (a == slope) {
@@ -1274,6 +1322,7 @@ void Retinex::autoOpenCurve  ()
     cdshape->openIfNonlinear();
     cdshapeH->openIfNonlinear();
     transmissionShape->openIfNonlinear();
+    gaintransmissionShape->openIfNonlinear();
     lhshape->openIfNonlinear();
     mapshape->openIfNonlinear();
 
@@ -1289,6 +1338,8 @@ void Retinex::curveChanged (CurveEditor* ce)
             listener->panelChanged (EvLCDHCurve, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == transmissionShape) {
             listener->panelChanged (EvRetinextransmission, M("HISTORY_CUSTOMCURVE"));
+        } else if (ce == gaintransmissionShape) {
+            listener->panelChanged (EvRetinexgaintransmission, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == lhshape) {
             listener->panelChanged (EvRetinexlhcurve, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == mapshape) {
@@ -1410,10 +1461,11 @@ void Retinex::setBatchMode (bool batchMode)
     shadows->showEditedCB ();
     s_tonalwidth->showEditedCB ();
 
-//    grbl->showEditedCB ();
+    skal->showEditedCB ();
     curveEditorGD->setBatchMode (batchMode);
     curveEditorGDH->setBatchMode (batchMode);
     transmissionCurveEditorG->setBatchMode (batchMode);
+    gaintransmissionCurve->setBatchMode (batchMode);
     curveEditorGH->setBatchMode (batchMode);
     curveEditormap->setBatchMode (batchMode);
 

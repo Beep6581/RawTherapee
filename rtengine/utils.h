@@ -16,11 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _SIMPLEUTILS_
-#define _SIMPLEUTILS_
+#pragma once
+
+#include <type_traits>
 
 namespace rtengine
 {
+
+// update a point of a Cairo::Surface by accessing the raw data
+void poke255_uc(unsigned char* &dest, unsigned char r, unsigned char g, unsigned char b);
+// update a point of a Cairo::Surface by accessing the raw data
+void poke01_d(unsigned char* &dest, double r, double g, double b);
+// update a point of a Cairo::Surface by accessing the raw data
+void poke01_f(unsigned char* &dest, float r, float g, float b);
 
 void bilinearInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh);
 void nearestInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh);
@@ -28,5 +36,10 @@ void rotate (unsigned char* img, int& w, int& h, int deg);
 void hflip (unsigned char* img, int w, int h);
 void vflip (unsigned char* img, int w, int h);
 
+template<typename ENUM>
+typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
+{
+    return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
-#endif
+
+}

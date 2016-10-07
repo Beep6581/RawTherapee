@@ -247,6 +247,10 @@ void BatchToolPanelCoordinator::initSession ()
                 pparams.toneCurve.contrast = 0;
             }
 
+            if (options.baBehav[ADDSET_TC_SATURATION]) {
+                pparams.toneCurve.saturation = 0;
+            }
+
             if (options.baBehav[ADDSET_SH_HIGHLIGHTS]) {
                 pparams.sh.highlights = 0;
             }

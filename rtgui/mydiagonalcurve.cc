@@ -591,8 +591,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                         ity = curve.y.begin();
 
                         for (int i = 0; i < closest_point; i++) {
-                            itx++;
-                            ity++;
+                            ++itx;
+                            ++ity;
                         }
 
                         curve.x.insert (itx, 0);
@@ -1111,8 +1111,8 @@ bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
             ity = curve.y.begin();
 
             for (int i = 0; i < closest_point; i++) {
-                itx++;
-                ity++;
+                ++itx;
+                ++ity;
             }
 
             lit_point = closest_point;

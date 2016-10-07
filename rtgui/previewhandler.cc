@@ -239,7 +239,7 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desir
 void PreviewHandler::previewImageChanged ()
 {
 
-    for (std::list<PreviewListener*>::iterator i = listeners.begin(); i != listeners.end(); i++) {
+    for (std::list<PreviewListener*>::iterator i = listeners.begin(); i != listeners.end(); ++i) {
         (*i)->previewImageChanged ();
     }
 }

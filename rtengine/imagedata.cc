@@ -44,7 +44,7 @@ ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, RawMetaDataL
     return new ImageData (fname, rml);
 }
 
-ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri)
+ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(0), aperture(0.), shutter(0.)
 {
 
     size_t dotpos = fname.find_last_of ('.');
@@ -121,61 +121,80 @@ void ImageData::extractInfo ()
         return;
     }
 
-    make = "";
-    model = "";
-    serial = "";
-    orientation = "";
-    expcomp = 0;
-    shutter = 0;
-    aperture = 0;
-    focal_len = focal_len35mm = 0;
-    focus_dist = 0;
-    iso_speed = 0;
-    memset (&time, 0, sizeof(time));
+    memset(&time, 0, sizeof(time));
     timeStamp = 0;
+    iso_speed = 0;
+    aperture = 0.0;
+    focal_len = 0.0;
+    focal_len35mm = 0.0;
+    focus_dist = 0.0f;
+    shutter = 0.0;
+    expcomp = 0.0;
+    make.clear();
+    model.clear();
+    serial.clear();
+    orientation.clear();
+    lens.clear();
 
-    if (root->getTag ("Make")) {
-        make = root->getTag ("Make")->valueToString ();
-        // same dcraw treatment
-        static const char *corp[] = {
-            "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX", "RICOH",
-            "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
-            "SAMSUNG", "Mamiya", "MOTOROLA", "Leaf"
-        };
-
-        for (size_t i = 0; i < (sizeof(corp) / sizeof(*corp)); i++)
-            if ( make.find( corp[i] ) != std::string::npos ) {       /* Simplify company names */
-                make = corp[i];
+    if (root->getTag("Make")) {
+        make = root->getTag ("Make")->valueToString();
+        // Same dcraw treatment
+        for (const auto& corp : {
+            "Canon",
+            "NIKON",
+            "EPSON",
+            "KODAK",
+            "Kodak",
+            "OLYMPUS",
+            "PENTAX",
+            "RICOH",
+            "MINOLTA",
+            "Minolta",
+            "Konica",
+            "CASIO",
+            "Sinar",
+            "Phase One",
+            "SAMSUNG",
+            "Mamiya",
+            "MOTOROLA",
+            "Leaf"
+        }) {
+            if (make.find(corp) != std::string::npos) { // Simplify company names
+                make = corp;
                 break;
-            }
-
-        make.erase( make.find_last_not_of(' ') + 1 );
-    }
-
-    if (root->getTag ("Model")) {
-        model = root->getTag ("Model")->valueToString ();
-    }
-
-    if (!(model.size() == 0)) {
-        std::size_t i = 0;
-
-        if (  make.find("KODAK") != std::string::npos ) {
-            if( (i = model.find(" DIGITAL CAMERA")) !=  std::string::npos ||
-                    (i = model.find(" Digital Camera")) !=  std::string::npos ||
-                    (i = model.find("FILE VERSION")) ) {
-                model.resize( i );
             }
         }
 
-        model.erase( model.find_last_not_of(' ') + 1 );
+        make.erase(make.find_last_not_of(' ') + 1);
+    }
 
-        //if( (i=model.find( make )) != std::string::npos )
-        if( !strncasecmp (model.c_str(), make.c_str(), make.size()) )
-            if( model.at( make.size() ) == ' ') {
+    if (root->getTag("Model")) {
+        model = root->getTag("Model")->valueToString();
+    }
+
+    if (!model.empty()) {
+        std::string::size_type i = 0;
+
+        if (
+            make.find("KODAK") != std::string::npos
+            && (
+                (i = model.find(" DIGITAL CAMERA")) != std::string::npos
+                || (i = model.find(" Digital Camera")) !=  std::string::npos
+                || (i = model.find("FILE VERSION")) !=  std::string::npos
+            )
+        ) {
+            model.resize(i);
+        }
+
+        model.erase(model.find_last_not_of(' ') + 1);
+
+        if (!strncasecmp(model.c_str(), make.c_str(), make.size())) {
+            if (model.size() >= make.size() && model[make.size()] == ' ') {
                 model.erase(0, make.size() + 1);
             }
+        }
 
-        if( model.find( "Digital Camera ") != std::string::npos ) {
+        if (model.find( "Digital Camera ") != std::string::npos) {
             model.erase(0, 15);
         }
     } else {

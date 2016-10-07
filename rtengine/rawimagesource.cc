@@ -49,32 +49,32 @@ namespace
 void rotateLine (const float* const line, rtengine::PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
 {
     switch(tran & TR_ROT) {
-    case TR_R180:
-        for (int j = 0; j < w; j++) {
-            channel(h - 1 - i, w - 1 - j) = line[j];
-        }
+        case TR_R180:
+            for (int j = 0; j < w; j++) {
+                channel(h - 1 - i, w - 1 - j) = line[j];
+            }
 
-        break;
+            break;
 
-    case TR_R90:
-        for (int j = 0; j < w; j++) {
-            channel(j, h - 1 - i) = line[j];
-        }
+        case TR_R90:
+            for (int j = 0; j < w; j++) {
+                channel(j, h - 1 - i) = line[j];
+            }
 
-        break;
+            break;
 
-    case TR_R270:
-        for (int j = 0; j < w; j++) {
-            channel(w - 1 - j, i) = line[j];
-        }
+        case TR_R270:
+            for (int j = 0; j < w; j++) {
+                channel(w - 1 - j, i) = line[j];
+            }
 
-        break;
+            break;
 
-    case TR_NONE:
-    default:
-        for (int j = 0; j < w; j++) {
-            channel(i, j) = line[j];
-        }
+        case TR_NONE:
+        default:
+            for (int j = 0; j < w; j++) {
+                channel(i, j) = line[j];
+            }
     }
 }
 
@@ -96,60 +96,60 @@ void transLineFuji (const float* const red, const float* const green, const floa
     int end = min(h + fw - i, w - fw + i);
 
     switch(tran & TR_ROT) {
-    case TR_R180:
-        for (int j = start; j < end; j++) {
-            int y = i + j - fw;
-            int x = fw - i + j;
+        case TR_R180:
+            for (int j = start; j < end; j++) {
+                int y = i + j - fw;
+                int x = fw - i + j;
 
-            if (x >= 0 && y < image->height && y >= 0 && x < image->width) {
-                image->r(image->height - 1 - y, image->width - 1 - x) = red[j];
-                image->g(image->height - 1 - y, image->width - 1 - x) = green[j];
-                image->b(image->height - 1 - y, image->width - 1 - x) = blue[j];
+                if (x >= 0 && y < image->height && y >= 0 && x < image->width) {
+                    image->r(image->height - 1 - y, image->width - 1 - x) = red[j];
+                    image->g(image->height - 1 - y, image->width - 1 - x) = green[j];
+                    image->b(image->height - 1 - y, image->width - 1 - x) = blue[j];
+                }
             }
-        }
 
-        break;
+            break;
 
-    case TR_R270:
-        for (int j = start; j < end; j++) {
-            int y = i + j - fw;
-            int x = fw - i + j;
+        case TR_R270:
+            for (int j = start; j < end; j++) {
+                int y = i + j - fw;
+                int x = fw - i + j;
 
-            if (x >= 0 && x < image->height && y >= 0 && y < image->width) {
-                image->r(image->height - 1 - x, y) = red[j];
-                image->g(image->height - 1 - x, y) = green[j];
-                image->b(image->height - 1 - x, y) = blue[j];
+                if (x >= 0 && x < image->height && y >= 0 && y < image->width) {
+                    image->r(image->height - 1 - x, y) = red[j];
+                    image->g(image->height - 1 - x, y) = green[j];
+                    image->b(image->height - 1 - x, y) = blue[j];
+                }
             }
-        }
 
-        break;
+            break;
 
-    case TR_R90:
-        for (int j = start; j < end; j++) {
-            int y = i + j - fw;
-            int x = fw - i + j;
+        case TR_R90:
+            for (int j = start; j < end; j++) {
+                int y = i + j - fw;
+                int x = fw - i + j;
 
-            if (x >= 0 && y < image->width && y >= 0 && x < image->height) {
-                image->r(x, image->width - 1 - y) = red[j];
-                image->g(x, image->width - 1 - y) = green[j];
-                image->b(x, image->width - 1 - y) = blue[j];
+                if (x >= 0 && y < image->width && y >= 0 && x < image->height) {
+                    image->r(x, image->width - 1 - y) = red[j];
+                    image->g(x, image->width - 1 - y) = green[j];
+                    image->b(x, image->width - 1 - y) = blue[j];
+                }
             }
-        }
 
-        break;
+            break;
 
-    case TR_NONE:
-    default:
-        for (int j = start; j < end; j++) {
-            int y = i + j - fw;
-            int x = fw - i + j;
+        case TR_NONE:
+        default:
+            for (int j = start; j < end; j++) {
+                int y = i + j - fw;
+                int x = fw - i + j;
 
-            if (x >= 0 && y < image->height && y >= 0 && x < image->width) {
-                image->r(y, x) = red[j];
-                image->g(y, x) = green[j];
-                image->b(y, x) = blue[j];
+                if (x >= 0 && y < image->height && y >= 0 && x < image->width) {
+                    image->r(y, x) = red[j];
+                    image->g(y, x) = green[j];
+                    image->b(y, x) = blue[j];
+                }
             }
-        }
     }
 }
 
@@ -161,250 +161,250 @@ void transLineD1x (const float* const red, const float* const green, const float
     // We do that in combination with coarse rotation
 
     switch(tran & TR_ROT) {
-    case TR_R180: // rotate 180 degree
-        for (int j = 0; j < imwidth; j++) {
-            image->r(2 * (imheight - 1 - i), imwidth - 1 - j) = red[j];
-            image->g(2 * (imheight - 1 - i), imwidth - 1 - j) = green[j];
-            image->b(2 * (imheight - 1 - i), imwidth - 1 - j) = blue[j];
-        }
-
-        if (i == 0) {
+        case TR_R180: // rotate 180 degree
             for (int j = 0; j < imwidth; j++) {
-                image->r(2 * imheight - 1, imwidth - 1 - j) = red[j];
-                image->g(2 * imheight - 1, imwidth - 1 - j) = green[j];
-                image->b(2 * imheight - 1, imwidth - 1 - j) = blue[j];
-            }
-        }
-
-        if (i == 1 || i == 2) { // linear interpolation
-            int row = 2 * imheight - 1 - 2 * i;
-
-            for (int j = 0; j < imwidth; j++) {
-                int col = imwidth - 1 - j;
-                image->r(row, col) = (red[j] + image->r(row + 1, col)) / 2;
-                image->g(row, col) = (green[j] + image->g(row + 1, col)) / 2;
-                image->b(row, col) = (blue[j] + image->b(row + 1, col)) / 2;
+                image->r(2 * (imheight - 1 - i), imwidth - 1 - j) = red[j];
+                image->g(2 * (imheight - 1 - i), imwidth - 1 - j) = green[j];
+                image->b(2 * (imheight - 1 - i), imwidth - 1 - j) = blue[j];
             }
 
-            if(i == 2 && oddHeight) {
-                int row = 2 * imheight;
+            if (i == 0) {
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(2 * imheight - 1, imwidth - 1 - j) = red[j];
+                    image->g(2 * imheight - 1, imwidth - 1 - j) = green[j];
+                    image->b(2 * imheight - 1, imwidth - 1 - j) = blue[j];
+                }
+            }
+
+            if (i == 1 || i == 2) { // linear interpolation
+                int row = 2 * imheight - 1 - 2 * i;
 
                 for (int j = 0; j < imwidth; j++) {
                     int col = imwidth - 1 - j;
-                    image->r(row, col) = (red[j] + image->r(row - 2, col)) / 2;
-                    image->g(row, col) = (green[j] + image->g(row - 2, col)) / 2;
-                    image->b(row, col) = (blue[j] + image->b(row - 2, col)) / 2;
-                }
-            }
-        } else if (i == imheight - 1 || i == imheight - 2) {
-            int row = 2 * imheight - 1 - 2 * i;
-
-            for (int j = 0; j < imwidth; j++) {
-                int col = imwidth - 1 - j;
-                image->r(row, col) = (red[j] + image->r(row + 1, col)) / 2;
-                image->g(row, col) = (green[j] + image->g(row + 1, col)) / 2;
-                image->b(row, col) = (blue[j] + image->b(row + 1, col)) / 2;
-            }
-
-            row = 2 * imheight - 1 - 2 * i + 2;
-
-            for (int j = 0; j < imwidth; j++) {
-                int col = imwidth - 1 - j;
-                image->r(row, col) = (red[j] + image->r(row + 1, col)) / 2;
-                image->g(row, col) = (green[j] + image->g(row + 1, col)) / 2;
-                image->b(row, col) = (blue[j] + image->b(row + 1, col)) / 2;
-            }
-        } else if (i > 2 && i < imheight - 1) { // vertical bicubic interpolation
-            int row = 2 * imheight - 1 - 2 * i + 2;
-
-            for (int j = 0; j < imwidth; j++) {
-                int col = imwidth - 1 - j;
-                image->r(row, col) = MAX(0.f, -0.0625f * (red[j] + image->r(row + 3, col)) + 0.5625f * (image->r(row - 1, col) + image->r(row + 1, col)));
-                image->g(row, col) = MAX(0.f, -0.0625f * (green[j] + image->g(row + 3, col)) + 0.5625f * (image->g(row - 1, col) + image->g(row + 1, col)));
-                image->b(row, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(row + 3, col)) + 0.5625f * (image->b(row - 1, col) + image->b(row + 1, col)));
-
-                if(clip) {
-                    image->r(row, col) = MIN(image->r(row, col), rtengine::MAXVALF);
-                    image->g(row, col) = MIN(image->g(row, col), rtengine::MAXVALF);
-                    image->b(row, col) = MIN(image->b(row, col), rtengine::MAXVALF);
-                }
-            }
-        }
-
-        break;
-
-    case TR_R90: // rotate right
-        if( i == 0) {
-            for (int j = 0; j < imwidth; j++) {
-                image->r(j, 2 * imheight - 1) = red[j];
-                image->g(j, 2 * imheight - 1) = green[j];
-                image->b(j, 2 * imheight - 1) = blue[j];
-            }
-        }
-
-        for (int j = 0; j < imwidth; j++) {
-            image->r(j, 2 * (imheight - 1 - i)) = red[j];
-            image->g(j, 2 * (imheight - 1 - i)) = green[j];
-            image->b(j, 2 * (imheight - 1 - i)) = blue[j];
-        }
-
-        if (i == 1 || i == 2) { // linear interpolation
-            int col = 2 * imheight - 1 - 2 * i;
-
-            for (int j = 0; j < imwidth; j++) {
-                image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
-                image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
-                image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
-
-                if(oddHeight && i == 2) {
-                    image->r(j, 2 * imheight) = (red[j] + image->r(j, 2 * imheight - 2)) / 2;
-                    image->g(j, 2 * imheight) = (green[j] + image->g(j, 2 * imheight - 2)) / 2;
-                    image->b(j, 2 * imheight) = (blue[j] + image->b(j, 2 * imheight - 2)) / 2;
-                }
-            }
-        } else if (i == imheight - 1) {
-            int col = 2 * imheight - 1 - 2 * i;
-
-            for (int j = 0; j < imwidth; j++) {
-                image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
-                image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
-                image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
-            }
-
-            col = 2 * imheight - 1 - 2 * i + 2;
-
-            for (int j = 0; j < imwidth; j++) {
-                image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
-                image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
-                image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
-            }
-        } else if (i > 2 && i < imheight - 1) { // vertical bicubic interpolation
-            int col = 2 * imheight - 1 - 2 * i + 2;
-
-            for (int j = 0; j < imwidth; j++) {
-                image->r(j, col) = MAX(0.f, -0.0625f * (red[j] + image->r(j, col + 3)) + 0.5625f * (image->r(j, col - 1) + image->r(j, col + 1)));
-                image->g(j, col) = MAX(0.f, -0.0625f * (green[j] + image->g(j, col + 3)) + 0.5625f * (image->g(j, col - 1) + image->g(j, col + 1)));
-                image->b(j, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(j, col + 3)) + 0.5625f * (image->b(j, col - 1) + image->b(j, col + 1)));
-
-                if(clip) {
-                    image->r(j, col) = MIN(image->r(j, col), rtengine::MAXVALF);
-                    image->g(j, col) = MIN(image->g(j, col), rtengine::MAXVALF);
-                    image->b(j, col) = MIN(image->b(j, col), rtengine::MAXVALF);
-                }
-            }
-        }
-
-        break;
-
-    case TR_R270: // rotate left
-        if (i == 0) {
-            for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
-                image->r(row, 2 * i) = red[j];
-                image->g(row, 2 * i) = green[j];
-                image->b(row, 2 * i) = blue[j];
-            }
-        } else if (i == 1 || i == 2) { // linear interpolation
-            for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
-                image->r(row, 2 * i) = red[j];
-                image->g(row, 2 * i) = green[j];
-                image->b(row, 2 * i) = blue[j];
-                image->r(row, 2 * i - 1) = (red[j] + image->r(row, 2 * i - 2)) * 0.5f;
-                image->g(row, 2 * i - 1) = (green[j] + image->g(row, 2 * i - 2)) * 0.5f;
-                image->b(row, 2 * i - 1) = (blue[j] + image->b(row, 2 * i - 2)) * 0.5f;
-            }
-        } else if (i > 0 && i < imheight) { // vertical bicubic interpolation
-            for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
-                image->r(row, 2 * i - 3) = MAX(0.f, -0.0625f * (red[j] + image->r(row, 2 * i - 6)) + 0.5625f * (image->r(row, 2 * i - 2) + image->r(row, 2 * i - 4)));
-                image->g(row, 2 * i - 3) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 6)) + 0.5625f * (image->g(row, 2 * i - 2) + image->g(row, 2 * i - 4)));
-                image->b(row, 2 * i - 3) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 6)) + 0.5625f * (image->b(row, 2 * i - 2) + image->b(row, 2 * i - 4)));
-
-                if(clip) {
-                    image->r(row, 2 * i - 3) = MIN(image->r(row, 2 * i - 3), rtengine::MAXVALF);
-                    image->g(row, 2 * i - 3) = MIN(image->g(row, 2 * i - 3), rtengine::MAXVALF);
-                    image->b(row, 2 * i - 3) = MIN(image->b(row, 2 * i - 3), rtengine::MAXVALF);
+                    image->r(row, col) = (red[j] + image->r(row + 1, col)) / 2;
+                    image->g(row, col) = (green[j] + image->g(row + 1, col)) / 2;
+                    image->b(row, col) = (blue[j] + image->b(row + 1, col)) / 2;
                 }
 
-                image->r(row, 2 * i) = red[j];
-                image->g(row, 2 * i) = green[j];
-                image->b(row, 2 * i) = blue[j];
-            }
-        }
+                if(i == 2 && oddHeight) {
+                    int row = 2 * imheight;
 
-        if (i == imheight - 1) {
-            for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
-                image->r(row, 2 * i - 1) = MAX(0.f, -0.0625f * (red[j] + image->r(row, 2 * i - 4)) + 0.5625f * (image->r(row, 2 * i) + image->r(row, 2 * i - 2)));
-                image->g(row, 2 * i - 1) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 4)) + 0.5625f * (image->g(row, 2 * i) + image->g(row, 2 * i - 2)));
-                image->b(row, 2 * i - 1) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 4)) + 0.5625f * (image->b(row, 2 * i) + image->b(row, 2 * i - 2)));
+                    for (int j = 0; j < imwidth; j++) {
+                        int col = imwidth - 1 - j;
+                        image->r(row, col) = (red[j] + image->r(row - 2, col)) / 2;
+                        image->g(row, col) = (green[j] + image->g(row - 2, col)) / 2;
+                        image->b(row, col) = (blue[j] + image->b(row - 2, col)) / 2;
+                    }
+                }
+            } else if (i == imheight - 1 || i == imheight - 2) {
+                int row = 2 * imheight - 1 - 2 * i;
 
-                if(clip) {
-                    image->r(j, 2 * i - 1) = MIN(image->r(j, 2 * i - 1), rtengine::MAXVALF);
-                    image->g(j, 2 * i - 1) = MIN(image->g(j, 2 * i - 1), rtengine::MAXVALF);
-                    image->b(j, 2 * i - 1) = MIN(image->b(j, 2 * i - 1), rtengine::MAXVALF);
+                for (int j = 0; j < imwidth; j++) {
+                    int col = imwidth - 1 - j;
+                    image->r(row, col) = (red[j] + image->r(row + 1, col)) / 2;
+                    image->g(row, col) = (green[j] + image->g(row + 1, col)) / 2;
+                    image->b(row, col) = (blue[j] + image->b(row + 1, col)) / 2;
                 }
 
-                image->r(row, 2 * i + 1) = (red[j] + image->r(row, 2 * i - 1)) / 2;
-                image->g(row, 2 * i + 1) = (green[j] + image->g(row, 2 * i - 1)) / 2;
-                image->b(row, 2 * i + 1) = (blue[j] + image->b(row, 2 * i - 1)) / 2;
+                row = 2 * imheight - 1 - 2 * i + 2;
 
-                if (oddHeight) {
-                    image->r(row, 2 * i + 2) = (red[j] + image->r(row, 2 * i - 2)) / 2;
-                    image->g(row, 2 * i + 2) = (green[j] + image->g(row, 2 * i - 2)) / 2;
-                    image->b(row, 2 * i + 2) = (blue[j] + image->b(row, 2 * i - 2)) / 2;
+                for (int j = 0; j < imwidth; j++) {
+                    int col = imwidth - 1 - j;
+                    image->r(row, col) = (red[j] + image->r(row + 1, col)) / 2;
+                    image->g(row, col) = (green[j] + image->g(row + 1, col)) / 2;
+                    image->b(row, col) = (blue[j] + image->b(row + 1, col)) / 2;
+                }
+            } else if (i > 2 && i < imheight - 1) { // vertical bicubic interpolation
+                int row = 2 * imheight - 1 - 2 * i + 2;
+
+                for (int j = 0; j < imwidth; j++) {
+                    int col = imwidth - 1 - j;
+                    image->r(row, col) = MAX(0.f, -0.0625f * (red[j] + image->r(row + 3, col)) + 0.5625f * (image->r(row - 1, col) + image->r(row + 1, col)));
+                    image->g(row, col) = MAX(0.f, -0.0625f * (green[j] + image->g(row + 3, col)) + 0.5625f * (image->g(row - 1, col) + image->g(row + 1, col)));
+                    image->b(row, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(row + 3, col)) + 0.5625f * (image->b(row - 1, col) + image->b(row + 1, col)));
+
+                    if(clip) {
+                        image->r(row, col) = MIN(image->r(row, col), rtengine::MAXVALF);
+                        image->g(row, col) = MIN(image->g(row, col), rtengine::MAXVALF);
+                        image->b(row, col) = MIN(image->b(row, col), rtengine::MAXVALF);
+                    }
                 }
             }
-        }
 
-        break;
+            break;
 
-    case TR_NONE: // no coarse rotation
-    default:
-        rotateLine (red, image->r, tran, 2 * i, imwidth, imheight);
-        rotateLine (green, image->g, tran, 2 * i, imwidth, imheight);
-        rotateLine (blue, image->b, tran, 2 * i, imwidth, imheight);
+        case TR_R90: // rotate right
+            if( i == 0) {
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(j, 2 * imheight - 1) = red[j];
+                    image->g(j, 2 * imheight - 1) = green[j];
+                    image->b(j, 2 * imheight - 1) = blue[j];
+                }
+            }
 
-        if (i == 1 || i == 2) { // linear interpolation
             for (int j = 0; j < imwidth; j++) {
-                image->r(2 * i - 1, j) = (red[j] + image->r(2 * i - 2, j)) / 2;
-                image->g(2 * i - 1, j) = (green[j] + image->g(2 * i - 2, j)) / 2;
-                image->b(2 * i - 1, j) = (blue[j] + image->b(2 * i - 2, j)) / 2;
+                image->r(j, 2 * (imheight - 1 - i)) = red[j];
+                image->g(j, 2 * (imheight - 1 - i)) = green[j];
+                image->b(j, 2 * (imheight - 1 - i)) = blue[j];
             }
-        } else if (i > 2 && i < imheight) { // vertical bicubic interpolation
-            for (int j = 0; j < imwidth; j++) {
-                image->r(2 * i - 3, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 6, j)) + 0.5625f * (image->r(2 * i - 2, j) + image->r(2 * i - 4, j)));
-                image->g(2 * i - 3, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 6, j)) + 0.5625f * (image->g(2 * i - 2, j) + image->g(2 * i - 4, j)));
-                image->b(2 * i - 3, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 6, j)) + 0.5625f * (image->b(2 * i - 2, j) + image->b(2 * i - 4, j)));
 
-                if(clip) {
-                    image->r(2 * i - 3, j) = MIN(image->r(2 * i - 3, j), rtengine::MAXVALF);
-                    image->g(2 * i - 3, j) = MIN(image->g(2 * i - 3, j), rtengine::MAXVALF);
-                    image->b(2 * i - 3, j) = MIN(image->b(2 * i - 3, j), rtengine::MAXVALF);
+            if (i == 1 || i == 2) { // linear interpolation
+                int col = 2 * imheight - 1 - 2 * i;
+
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
+                    image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
+                    image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
+
+                    if(oddHeight && i == 2) {
+                        image->r(j, 2 * imheight) = (red[j] + image->r(j, 2 * imheight - 2)) / 2;
+                        image->g(j, 2 * imheight) = (green[j] + image->g(j, 2 * imheight - 2)) / 2;
+                        image->b(j, 2 * imheight) = (blue[j] + image->b(j, 2 * imheight - 2)) / 2;
+                    }
                 }
-            }
-        }
+            } else if (i == imheight - 1) {
+                int col = 2 * imheight - 1 - 2 * i;
 
-        if (i == imheight - 1) {
-            for (int j = 0; j < imwidth; j++) {
-                image->r(2 * i - 1, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 4, j)) + 0.5625f * (image->r(2 * i, j) + image->r(2 * i - 2, j)));
-                image->g(2 * i - 1, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 4, j)) + 0.5625f * (image->g(2 * i, j) + image->g(2 * i - 2, j)));
-                image->b(2 * i - 1, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 4, j)) + 0.5625f * (image->b(2 * i, j) + image->b(2 * i - 2, j)));
-
-                if(clip) {
-                    image->r(2 * i - 1, j) = MIN(image->r(2 * i - 1, j), rtengine::MAXVALF);
-                    image->g(2 * i - 1, j) = MIN(image->g(2 * i - 1, j), rtengine::MAXVALF);
-                    image->b(2 * i - 1, j) = MIN(image->b(2 * i - 1, j), rtengine::MAXVALF);
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
+                    image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
+                    image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
                 }
 
-                image->r(2 * i + 1, j) = (red[j] + image->r(2 * i - 1, j)) / 2;
-                image->g(2 * i + 1, j) = (green[j] + image->g(2 * i - 1, j)) / 2;
-                image->b(2 * i + 1, j) = (blue[j] + image->b(2 * i - 1, j)) / 2;
+                col = 2 * imheight - 1 - 2 * i + 2;
 
-                if (oddHeight) {
-                    image->r(2 * i + 2, j) = (red[j] + image->r(2 * i - 2, j)) / 2;
-                    image->g(2 * i + 2, j) = (green[j] + image->g(2 * i - 2, j)) / 2;
-                    image->b(2 * i + 2, j) = (blue[j] + image->b(2 * i - 2, j)) / 2;
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(j, col) = (red[j] + image->r(j, col + 1)) / 2;
+                    image->g(j, col) = (green[j] + image->g(j, col + 1)) / 2;
+                    image->b(j, col) = (blue[j] + image->b(j, col + 1)) / 2;
+                }
+            } else if (i > 2 && i < imheight - 1) { // vertical bicubic interpolation
+                int col = 2 * imheight - 1 - 2 * i + 2;
+
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(j, col) = MAX(0.f, -0.0625f * (red[j] + image->r(j, col + 3)) + 0.5625f * (image->r(j, col - 1) + image->r(j, col + 1)));
+                    image->g(j, col) = MAX(0.f, -0.0625f * (green[j] + image->g(j, col + 3)) + 0.5625f * (image->g(j, col - 1) + image->g(j, col + 1)));
+                    image->b(j, col) = MAX(0.f, -0.0625f * (blue[j] + image->b(j, col + 3)) + 0.5625f * (image->b(j, col - 1) + image->b(j, col + 1)));
+
+                    if(clip) {
+                        image->r(j, col) = MIN(image->r(j, col), rtengine::MAXVALF);
+                        image->g(j, col) = MIN(image->g(j, col), rtengine::MAXVALF);
+                        image->b(j, col) = MIN(image->b(j, col), rtengine::MAXVALF);
+                    }
                 }
             }
-        }
+
+            break;
+
+        case TR_R270: // rotate left
+            if (i == 0) {
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i) = red[j];
+                    image->g(row, 2 * i) = green[j];
+                    image->b(row, 2 * i) = blue[j];
+                }
+            } else if (i == 1 || i == 2) { // linear interpolation
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i) = red[j];
+                    image->g(row, 2 * i) = green[j];
+                    image->b(row, 2 * i) = blue[j];
+                    image->r(row, 2 * i - 1) = (red[j] + image->r(row, 2 * i - 2)) * 0.5f;
+                    image->g(row, 2 * i - 1) = (green[j] + image->g(row, 2 * i - 2)) * 0.5f;
+                    image->b(row, 2 * i - 1) = (blue[j] + image->b(row, 2 * i - 2)) * 0.5f;
+                }
+            } else if (i > 0 && i < imheight) { // vertical bicubic interpolation
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i - 3) = MAX(0.f, -0.0625f * (red[j] + image->r(row, 2 * i - 6)) + 0.5625f * (image->r(row, 2 * i - 2) + image->r(row, 2 * i - 4)));
+                    image->g(row, 2 * i - 3) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 6)) + 0.5625f * (image->g(row, 2 * i - 2) + image->g(row, 2 * i - 4)));
+                    image->b(row, 2 * i - 3) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 6)) + 0.5625f * (image->b(row, 2 * i - 2) + image->b(row, 2 * i - 4)));
+
+                    if(clip) {
+                        image->r(row, 2 * i - 3) = MIN(image->r(row, 2 * i - 3), rtengine::MAXVALF);
+                        image->g(row, 2 * i - 3) = MIN(image->g(row, 2 * i - 3), rtengine::MAXVALF);
+                        image->b(row, 2 * i - 3) = MIN(image->b(row, 2 * i - 3), rtengine::MAXVALF);
+                    }
+
+                    image->r(row, 2 * i) = red[j];
+                    image->g(row, 2 * i) = green[j];
+                    image->b(row, 2 * i) = blue[j];
+                }
+            }
+
+            if (i == imheight - 1) {
+                for (int j = imwidth - 1, row = 0; j >= 0; j--, row++) {
+                    image->r(row, 2 * i - 1) = MAX(0.f, -0.0625f * (red[j] + image->r(row, 2 * i - 4)) + 0.5625f * (image->r(row, 2 * i) + image->r(row, 2 * i - 2)));
+                    image->g(row, 2 * i - 1) = MAX(0.f, -0.0625f * (green[j] + image->g(row, 2 * i - 4)) + 0.5625f * (image->g(row, 2 * i) + image->g(row, 2 * i - 2)));
+                    image->b(row, 2 * i - 1) = MAX(0.f, -0.0625f * (blue[j] + image->b(row, 2 * i - 4)) + 0.5625f * (image->b(row, 2 * i) + image->b(row, 2 * i - 2)));
+
+                    if(clip) {
+                        image->r(j, 2 * i - 1) = MIN(image->r(j, 2 * i - 1), rtengine::MAXVALF);
+                        image->g(j, 2 * i - 1) = MIN(image->g(j, 2 * i - 1), rtengine::MAXVALF);
+                        image->b(j, 2 * i - 1) = MIN(image->b(j, 2 * i - 1), rtengine::MAXVALF);
+                    }
+
+                    image->r(row, 2 * i + 1) = (red[j] + image->r(row, 2 * i - 1)) / 2;
+                    image->g(row, 2 * i + 1) = (green[j] + image->g(row, 2 * i - 1)) / 2;
+                    image->b(row, 2 * i + 1) = (blue[j] + image->b(row, 2 * i - 1)) / 2;
+
+                    if (oddHeight) {
+                        image->r(row, 2 * i + 2) = (red[j] + image->r(row, 2 * i - 2)) / 2;
+                        image->g(row, 2 * i + 2) = (green[j] + image->g(row, 2 * i - 2)) / 2;
+                        image->b(row, 2 * i + 2) = (blue[j] + image->b(row, 2 * i - 2)) / 2;
+                    }
+                }
+            }
+
+            break;
+
+        case TR_NONE: // no coarse rotation
+        default:
+            rotateLine (red, image->r, tran, 2 * i, imwidth, imheight);
+            rotateLine (green, image->g, tran, 2 * i, imwidth, imheight);
+            rotateLine (blue, image->b, tran, 2 * i, imwidth, imheight);
+
+            if (i == 1 || i == 2) { // linear interpolation
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(2 * i - 1, j) = (red[j] + image->r(2 * i - 2, j)) / 2;
+                    image->g(2 * i - 1, j) = (green[j] + image->g(2 * i - 2, j)) / 2;
+                    image->b(2 * i - 1, j) = (blue[j] + image->b(2 * i - 2, j)) / 2;
+                }
+            } else if (i > 2 && i < imheight) { // vertical bicubic interpolation
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(2 * i - 3, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 6, j)) + 0.5625f * (image->r(2 * i - 2, j) + image->r(2 * i - 4, j)));
+                    image->g(2 * i - 3, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 6, j)) + 0.5625f * (image->g(2 * i - 2, j) + image->g(2 * i - 4, j)));
+                    image->b(2 * i - 3, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 6, j)) + 0.5625f * (image->b(2 * i - 2, j) + image->b(2 * i - 4, j)));
+
+                    if(clip) {
+                        image->r(2 * i - 3, j) = MIN(image->r(2 * i - 3, j), rtengine::MAXVALF);
+                        image->g(2 * i - 3, j) = MIN(image->g(2 * i - 3, j), rtengine::MAXVALF);
+                        image->b(2 * i - 3, j) = MIN(image->b(2 * i - 3, j), rtengine::MAXVALF);
+                    }
+                }
+            }
+
+            if (i == imheight - 1) {
+                for (int j = 0; j < imwidth; j++) {
+                    image->r(2 * i - 1, j) = MAX(0.f, -0.0625f * (red[j] + image->r(2 * i - 4, j)) + 0.5625f * (image->r(2 * i, j) + image->r(2 * i - 2, j)));
+                    image->g(2 * i - 1, j) = MAX(0.f, -0.0625f * (green[j] + image->g(2 * i - 4, j)) + 0.5625f * (image->g(2 * i, j) + image->g(2 * i - 2, j)));
+                    image->b(2 * i - 1, j) = MAX(0.f, -0.0625f * (blue[j] + image->b(2 * i - 4, j)) + 0.5625f * (image->b(2 * i, j) + image->b(2 * i - 2, j)));
+
+                    if(clip) {
+                        image->r(2 * i - 1, j) = MIN(image->r(2 * i - 1, j), rtengine::MAXVALF);
+                        image->g(2 * i - 1, j) = MIN(image->g(2 * i - 1, j), rtengine::MAXVALF);
+                        image->b(2 * i - 1, j) = MIN(image->b(2 * i - 1, j), rtengine::MAXVALF);
+                    }
+
+                    image->r(2 * i + 1, j) = (red[j] + image->r(2 * i - 1, j)) / 2;
+                    image->g(2 * i + 1, j) = (green[j] + image->g(2 * i - 1, j)) / 2;
+                    image->b(2 * i + 1, j) = (blue[j] + image->b(2 * i - 1, j)) / 2;
+
+                    if (oddHeight) {
+                        image->r(2 * i + 2, j) = (red[j] + image->r(2 * i - 2, j)) / 2;
+                        image->g(2 * i + 2, j) = (green[j] + image->g(2 * i - 2, j)) / 2;
+                        image->b(2 * i + 2, j) = (blue[j] + image->b(2 * i - 2, j)) / 2;
+                    }
+                }
+            }
     }
 }
 
@@ -420,25 +420,6 @@ extern const Settings* settings;
 
 #define ABS(a) ((a)<0?-(a):(a))
 #define DIST(a,b) (ABS(a-b))
-
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-
-#define med3x3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
-p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; p[5]=a5; p[6]=a6; p[7]=a7; p[8]=a8; \
-PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
-PIX_SORT(p[0],p[1]); PIX_SORT(p[3],p[4]); PIX_SORT(p[6],p[7]); \
-PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
-PIX_SORT(p[0],p[3]); PIX_SORT(p[5],p[8]); PIX_SORT(p[4],p[7]); \
-PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]); \
-PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); \
-PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
-
-#define med5(a0,a1,a2,a3,a4,median) { \
-p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; \
-PIX_SORT(p[0],p[1]) ; PIX_SORT(p[3],p[4]) ; PIX_SORT(p[0],p[3]) ; \
-PIX_SORT(p[1],p[4]) ; PIX_SORT(p[1],p[2]) ; PIX_SORT(p[2],p[3]) ; \
-PIX_SORT(p[1],p[2]) ; median=p[2] ;}
-
 
 RawImageSource::RawImageSource ()
     : ImageSource()
@@ -587,9 +568,7 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
     }
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-static float
-calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], bool isMono, int colors)
+float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4], bool isMono, int colors)
 {
     if (isMono || colors == 1) {
         for (int c = 0; c < 4; c++) {
@@ -617,7 +596,7 @@ calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_w
     return gain;
 }
 
-void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, const PreviewProps & pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw )
+void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw )
 {
     MyMutex::MyLock lock(getImageMutex);
 
@@ -716,7 +695,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, con
     rm /= area;
     gm /= area;
     bm /= area;
-
+    bool doHr = (hrp.hrenabled && hrp.method != "Color");
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
@@ -727,7 +706,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, con
         float line_blue[imwidth] ALIGNED16;
 
 #ifdef _OPENMP
-        #pragma omp for
+        #pragma omp for schedule(dynamic,16)
 #endif
 
         for (int ix = 0; ix < imheight; ix++) {
@@ -803,8 +782,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, con
             }
 
             //process all highlight recovery other than "Color"
-            if (hrp.hrenabled && hrp.method != "Color") {
-                hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip, raw, hlmax);
+            if (doHr) {
+                hlRecovery (hrp.method, line_red, line_grn, line_blue, imwidth, hlmax);
             }
 
             if(d1x) {
@@ -881,17 +860,17 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, con
     // Colour correction (only when running on full resolution)
     if(pp.skip == 1) {
         switch(ri->getSensorType()) {
-        case ST_BAYER:
-            processFalseColorCorrection (image, raw.bayersensor.ccSteps);
-            break;
+            case ST_BAYER:
+                processFalseColorCorrection (image, raw.bayersensor.ccSteps);
+                break;
 
-        case ST_FUJI_XTRANS:
-            processFalseColorCorrection (image, raw.xtranssensor.ccSteps);
+            case ST_FUJI_XTRANS:
+                processFalseColorCorrection (image, raw.xtranssensor.ccSteps);
         }
     }
 }
 
-DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
 {
     DCPProfile *dcpProf = NULL;
     cmsHPROFILE dummy;
@@ -901,11 +880,11 @@ DCPProfile *RawImageSource::getDCP(ColorManagementParams cmp, ColorTemp &wb)
         return NULL;
     }
 
-    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset);
+    dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
     return dcpProf;
 }
 
-void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb)
+void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb)
 {
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
     colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
@@ -1341,12 +1320,10 @@ SSEFUNCTION int RawImageSource::findHotDeadPixels( PixelsMap &bpMap, float thres
 #endif
 
         for (int i = 2; i < H - 2; i++) {
-            float p[9], temp; // we need this for med3x3 macro
-
             for (int j = 2; j < W - 2; j++) {
-                med3x3(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
-                       rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
-                       rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2], temp);
+                const float& temp = median(rawData[i - 2][j - 2], rawData[i - 2][j], rawData[i - 2][j + 2],
+                                           rawData[i][j - 2], rawData[i][j], rawData[i][j + 2],
+                                           rawData[i + 2][j - 2], rawData[i + 2][j], rawData[i + 2][j + 2]);
                 cfablur[i * W + j] = rawData[i][j] - temp;
             }
         }
@@ -1501,7 +1478,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (Glib::ustring fname, bool batch)
+int RawImageSource::load (const Glib::ustring &fname, bool batch)
 {
 
     MyTime t1, t2;
@@ -1664,8 +1641,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse)
+void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise)
 {
+//    BENCHFUN
     MyTime t1, t2;
     t1.set();
 
@@ -1677,25 +1655,27 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             rid = dfm.searchDarkFrame( raw.dark_frame );
         }
     } else {
-        rid = dfm.searchDarkFrame( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+        rid = dfm.searchDarkFrame(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     }
 
     if( rid && settings->verbose) {
         printf( "Subtracting Darkframe:%s\n", rid->get_filename().c_str());
     }
 
-    PixelsMap bitmapBads(W, H);
+    PixelsMap *bitmapBads = nullptr;
+
     int totBP = 0; // Hold count of bad pixels to correct
 
     if(ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
+        bitmapBads = new PixelsMap(W, H);
 #ifdef _OPENMP
-        #pragma omp parallel for reduction(+:totBP)
+        #pragma omp parallel for reduction(+:totBP) schedule(dynamic,16)
 #endif
 
         for(int i = 0; i < H; i++)
             for(int j = 0; j < W; j++) {
                 if(ri->data[i][j] == 0.f) {
-                    bitmapBads.set(j, i);
+                    bitmapBads->set(j, i);
                     totBP++;
                 }
             }
@@ -1706,7 +1686,6 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     //FLATFIELD start
-    Glib::ustring newFF = raw.ff_file;
     RawImage *rif = NULL;
 
     if (!raw.ff_AutoSelect) {
@@ -1732,7 +1711,11 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     std::vector<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), idata->getSerialNumber() );
 
     if( bp ) {
-        totBP += bitmapBads.set( *bp );
+        if(!bitmapBads) {
+            bitmapBads = new PixelsMap(W, H);
+        }
+
+        totBP += bitmapBads->set( *bp );
 
         if( settings->verbose ) {
             std::cout << "Correcting " << bp->size() << " pixels from .badpixels" << std::endl;
@@ -1743,13 +1726,17 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     bp = 0;
 
     if( raw.df_autoselect ) {
-        bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+        bp = dfm.getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     } else if( !raw.dark_frame.empty() ) {
         bp = dfm.getHotPixels( raw.dark_frame );
     }
 
     if(bp) {
-        totBP += bitmapBads.set( *bp );
+        if(!bitmapBads) {
+            bitmapBads = new PixelsMap(W, H);
+        }
+
+        totBP += bitmapBads->set( *bp );
 
         if( settings->verbose && !bp->empty()) {
             std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
@@ -1764,7 +1751,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
 
         if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
-            LCPMapper map(pLCPProf, max(idata->getFocalLen(),1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
+            LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -1788,7 +1775,11 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
-        int nFound = findHotDeadPixels( bitmapBads, raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter );
+        if(!bitmapBads) {
+            bitmapBads = new PixelsMap(W, H);
+        }
+
+        int nFound = findHotDeadPixels( *bitmapBads, raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter );
         totBP += nFound;
 
         if( settings->verbose && nFound > 0) {
@@ -1846,11 +1837,11 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if( totBP )
         if ( ri->getSensorType() == ST_BAYER ) {
-            interpolateBadPixelsBayer( bitmapBads );
+            interpolateBadPixelsBayer( *bitmapBads );
         } else if ( ri->getSensorType() == ST_FUJI_XTRANS ) {
-            interpolateBadPixelsXtrans( bitmapBads );
+            interpolateBadPixelsXtrans( *bitmapBads );
         } else {
-            interpolateBadPixelsNColours( bitmapBads, ri->get_colors() );
+            interpolateBadPixelsNColours( *bitmapBads, ri->get_colors() );
         }
 
     if ( ri->getSensorType() == ST_BAYER && raw.bayersensor.linenoise > 0 ) {
@@ -1875,7 +1866,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         processRawWhitepoint(raw.expos, raw.preser);
     }
 
-    if(dirpyrdenoiseExpComp == INFINITY) {
+    if(prepareDenoise && dirpyrdenoiseExpComp == INFINITY) {
         LUTu aehist;
         int aehistcompr;
         double clip = 0;
@@ -1888,6 +1879,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if( settings->verbose ) {
         printf("Preprocessing: %d usec\n", t2.etime(t1));
+    }
+
+    if(bitmapBads) {
+        delete bitmapBads;
     }
 
     return;
@@ -1970,7 +1965,6 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
     LUTf *retinexgamtab;//gamma before and after Retinex to restore tones
     LUTf lutTonereti;
-    lutTonereti(65536);
 
     if(retinexParams.gammaretinex == "low") {
         retinexgamtab = &(Color::gammatab_115_2);
@@ -1986,24 +1980,33 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         double gamm2 = retinexParams.gam;
 
         if(gamm2 < 1.) {
-            pwr = 1. / pwr;
-            gamm = 1. / gamm;
+            std::swap(pwr, gamm);
         }
 
         int mode = 0, imax = 0;
         Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
+        double start;
+        double add;
+
+        if(gamm2 < 1.) {
+            start = g_a2;
+            add = g_a4;
+        } else {
+            start = g_a3;
+            add = g_a4;
+        }
+
+        double mul = 1. + g_a4;
+
+        lutTonereti(65536);
+
         for (int i = 0; i < 65536; i++) {
             double val = (i) / 65535.;
-            double start = g_a3;
-            double add = g_a4;
-            double mul = 1. + g_a4;
             double x;
 
             if(gamm2 < 1.) {
-                start = g_a2;
-                add = g_a4;
                 x = Color::igammareti (val, gamm, start, ts, mul , add);
             } else {
                 x = Color::gammareti (val, gamm, start, ts, mul , add);
@@ -2055,6 +2058,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     }
     */
     if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -2083,7 +2087,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
             if(lhist16RETI)
             {
-                lhist16RETIThr(32769, 0);
+                lhist16RETIThr(lhist16RETI.getSize());
                 lhist16RETIThr.clear();
             }
 
@@ -2101,7 +2105,6 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                 for (; j < W - border - 3; j += 4) {
                     vfloat H, S, L;
-                    int pos;
                     Color::rgb2hsl(LVFU(red[i][j]), LVFU(green[i][j]), LVFU(blue[i][j]), H, S, L);
                     STVFU(conversionBuffer[0][i - border][j - border], H);
                     STVFU(conversionBuffer[1][i - border][j - border], S);
@@ -2111,7 +2114,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                     if(lhist16RETI) {
                         for(int p = 0; p < 4; p++) {
-                            pos =  (int) clipretinex( conversionBuffer[2][i - border][j - border + p], 0.f, 32768.f);//histogram in curve HSL
+                            int pos = ( conversionBuffer[2][i - border][j - border + p]);//histogram in curve HSL
                             lhist16RETIThr[pos]++;
                         }
                     }
@@ -2121,14 +2124,13 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
                 for (; j < W - border; j++) {
                     float H, S, L;
-                    int pos;
                     //rgb=>lab
                     Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], L);
                     L *= 32768.f;
                     conversionBuffer[2][i - border][j - border] = L;
 
                     if(lhist16RETI) {
-                        pos =  (int) clipretinex(L, 0, 32768);
+                        int pos = L;
                         lhist16RETIThr[pos]++;
                     }
                 }
@@ -2139,10 +2141,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             {
                 if(lhist16RETI)
                 {
-                    // Add per Thread LUT to global LUT
-                    for(int i = 0; i < 32769; i++) {
-                        lhist16RETI[i] += lhist16RETIThr[i];
-                    }
+                    lhist16RETI += lhist16RETIThr; // Add per Thread LUT to global LUT
                 }
             }
 #endif
@@ -2150,10 +2149,10 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         }
     } else {
         TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
-        double wp[3][3] = {
-            {wprof[0][0], wprof[0][1], wprof[0][2]},
-            {wprof[1][0], wprof[1][1], wprof[1][2]},
-            {wprof[2][0], wprof[2][1], wprof[2][2]}
+        float wp[3][3] = {
+            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
         };
 
         // Conversion rgb -> lab is hard to vectorize because it uses a lut (that's not the main problem)
@@ -2166,25 +2165,19 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             LUTu lhist16RETIThr;
 
             if(lhist16RETI) {
-                lhist16RETIThr(32769, 0);
+                lhist16RETIThr(lhist16RETI.getSize());
                 lhist16RETIThr.clear();
             }
 
 #ifdef _OPENMP
-            #pragma omp for
+            #pragma omp for schedule(dynamic,16)
 #endif
 
             for (int i = border; i < H - border; i++ )
                 for (int j = border; j < W - border; j++) {
                     float X, Y, Z, L, aa, bb;
-                    int pos;
-                    float R_, G_, B_;
-                    R_ = red[i][j];
-                    G_ = green[i][j];
-                    B_ = blue[i][j];
-                    float k;
                     //rgb=>lab
-                    Color::rgbxyz(R_, G_, B_, X, Y, Z, wp);
+                    Color::rgbxyz(red[i][j], green[i][j], blue[i][j], X, Y, Z, wp);
                     //convert Lab
                     Color::XYZ2Lab(X, Y, Z, L, aa, bb);
                     conversionBuffer[0][i - border][j - border] = aa;
@@ -2195,7 +2188,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 //                   if(R_>40000.f  && G_ > 30000.f && B_ > 30000.f) conversionBuffer[3][i - border][j - border] = R_;
 //                   else conversionBuffer[3][i - border][j - border] = 0.f;
                     if(lhist16RETI) {
-                        pos =  (int) clipretinex(L, 0, 32768);
+                        int pos = L;
                         lhist16RETIThr[pos]++;//histogram in Curve Lab
                     }
                 }
@@ -2204,10 +2197,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
             #pragma omp critical
             {
                 if(lhist16RETI) {
-                    // Add per Thread LUT to global LUT
-                    for(int i = 0; i < 32769; i++) {
-                        lhist16RETI[i] += lhist16RETIThr[i];
-                    }
+                    lhist16RETI += lhist16RETIThr; // Add per Thread LUT to global LUT
                 }
             }
 #endif
@@ -2219,7 +2209,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
 }
 
-void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI)
+void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI)
 {
     useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
@@ -2231,13 +2221,11 @@ void RawImageSource::retinexPrepareCurves(RetinexParams retinexParams, LUTf &cdc
 
     CurveFactory::mapcurve (mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
 
-    retinexParams.getCurves(retinextransmissionCurve);
+    retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
 
-//void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 3> &conversionBuffer, bool dehacontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
-void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
+void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI)
 {
-
     MyTime t4, t5;
     t4.set();
 
@@ -2265,23 +2253,29 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         int mode = 0, imax = 0;
 
         if(gamm2 < 1.) {
-            pwr = 1. / pwr;
-            gamm = 1. / gamm;
+            std::swap(pwr, gamm);
         }
 
         Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+
+        double mul = 1. + g_a4;
+        double add;
+        double start;
+
+        if(gamm2 < 1.) {
+            start = g_a3;
+            add = g_a3;
+        } else {
+            add = g_a4;
+            start = g_a2;
+        }
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         for (int i = 0; i < 65536; i++) {
             double val = (i) / 65535.;
             double x;
-            double mul = 1. + g_a4;
-            double add = g_a4;
-            double start = g_a2;
 
             if(gamm2 < 1.) {
-                start = g_a3;
-                add = g_a3;
                 x = Color::gammareti (val, gamm, start, ts, mul , add);
             } else {
                 x = Color::igammareti (val, gamm, start, ts, mul , add);
@@ -2305,11 +2299,10 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     float val;
 
     if(dehacontlutili && histLRETI) {
-        hist16RET(32769, 0);
+        hist16RET(32768);
         hist16RET.clear();
         histLRETI.clear();
-        dLcurve(32769, 0);
-        dLcurve.clear();
+        dLcurve(32768);
     }
 
     FlatCurve* chcurve = NULL;//curve c=f(H)
@@ -2337,8 +2330,8 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         // one LUT per thread
         LUTu hist16RETThr;
 
-        if(dehacontlutili && histLRETI) {
-            hist16RETThr(32769, 0);
+        if(hist16RET) {
+            hist16RETThr(hist16RET.getSize());
             hist16RETThr.clear();
         }
 
@@ -2352,7 +2345,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                     LBuffer[i][j] = cdcurve[2.f * temp[i][j]] / 2.f;
 
                     if(histLRETI) {
-                        int pos = (int) clipretinex(LBuffer[i][j], 0.f, 32768.f);
+                        int pos = LBuffer[i][j];
                         hist16RETThr[pos]++; //histogram in Curve
                     }
                 }
@@ -2365,29 +2358,29 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         #pragma omp critical
 #endif
         {
-            if(dehacontlutili && histLRETI) {
-                // Add per Thread LUT to global LUT
-                for(int i = 0; i < 32769; i++) {
-                    hist16RET[i] += hist16RETThr[i];
-                }
+            if(hist16RET) {
+                hist16RET += hist16RETThr; // Add per Thread LUT to global LUT
             }
         }
     }
 
-    if(dehacontlutili && histLRETI) {//update histogram
+    if(hist16RET) {//update histogram
+        // TODO : When rgbcurvesspeedup branch is merged into master, replace this by the following 1-liner
+        // hist16RET.compressTo(histLRETI);
+        // also remove declaration and init of dLcurve some lines above then and finally remove this comment :)
         for (int i = 0; i < 32768; i++) {
             val = (double)i / 32767.0;
-            dLcurve[i] = CLIPD(val);
+            dLcurve[i] = val;
         }
 
         for (int i = 0; i < 32768; i++) {
             float hval = dLcurve[i];
-            int hi = (int)(255.0f * CLIPD(hval));
+            int hi = (int)(255.0f * hval);
             histLRETI[hi] += hist16RET[i];
         }
     }
 
-    MSR(LBuffer, conversionBuffer[2], conversionBuffer[3], mapcurve, mapcontlutili, WNew, HNew, deh, dehatransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+    MSR(LBuffer, conversionBuffer[2], conversionBuffer[3], mapcurve, mapcontlutili, WNew, HNew, deh, dehatransmissionCurve, dehagaintransmissionCurve, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
     if(useHsl) {
         if(chutili) {
@@ -2401,7 +2394,6 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
                 for (; j < W - border; j++) {
 
                     float valp;
-                    float chr;
                     //   if(chutili) {  // c=f(H)
                     {
                         valp = float((chcurve->getVal(conversionBuffer[3][i - border][j - border]) - 0.5f));
@@ -2450,46 +2442,113 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         // gamut control only in Lab mode
         const bool highlight = Tc.hrenabled;
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel
+#endif
+        {
+#ifdef __SSE2__
+            // we need some line buffers to precalculate some expensive stuff using SSE
+            float atan2Buffer[W] ALIGNED16;
+            float sqrtBuffer[W] ALIGNED16;
+            float sincosxBuffer[W] ALIGNED16;
+            float sincosyBuffer[W] ALIGNED16;
+            const vfloat c327d68v = F2V(327.68);
+            const vfloat onev = F2V(1.f);
+#endif // __SSE2__
+#ifdef _OPENMP
+            #pragma omp for
 #endif
 
-        for (int i = border; i < H - border; i++ ) {
-            for (int j = border; j < W - border; j++) {
+            for (int i = border; i < H - border; i++ ) {
+#ifdef __SSE2__
+                // vectorized precalculation
+                {
+                    int j = border;
 
-                float Lprov1 = (LBuffer[i - border][j - border]) / 327.68f;
-                float Chprov1 = sqrt(SQR(conversionBuffer[0][i - border][j - border]) + SQR(conversionBuffer[1][i - border][j - border])) / 327.68f;
-                float  HH = xatan2f(conversionBuffer[1][i - border][j - border], conversionBuffer[0][i - border][j - border]);
-                float2 sincosval;
-                float valp;
-                float chr;
-
-                if(chutili) {  // c=f(H)
+                    for (; j < W - border - 3; j += 4)
                     {
-                        valp = float((chcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
-                        Chprov1 *= (1.f + 2.f * valp);
+                        vfloat av = LVFU(conversionBuffer[0][i - border][j - border]);
+                        vfloat bv = LVFU(conversionBuffer[1][i - border][j - border]);
+                        vfloat chprovv = vsqrtf(SQRV(av) + SQRV(bv));
+                        STVF(sqrtBuffer[j - border], chprovv / c327d68v);
+                        vfloat HHv = xatan2f(bv, av);
+                        STVF(atan2Buffer[j - border], HHv);
+                        av /= chprovv;
+                        bv /= chprovv;
+                        vmask selMask = vmaskf_eq(chprovv, ZEROV);
+                        STVF(sincosyBuffer[j - border], vself(selMask, onev, av));
+                        STVF(sincosxBuffer[j - border], vselfnotzero(selMask, bv));
+                    }
+
+                    for (; j < W - border; j++)
+                    {
+                        float aa = conversionBuffer[0][i - border][j - border];
+                        float bb = conversionBuffer[1][i - border][j - border];
+                        float Chprov1 = sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                        sqrtBuffer[j - border] = Chprov1;
+                        float HH = xatan2f(bb, aa);
+                        atan2Buffer[j - border] = HH;
+
+                        if(Chprov1 == 0.0f) {
+                            sincosyBuffer[j - border] = 1.f;
+                            sincosxBuffer[j - border] = 0.0f;
+                        } else {
+                            sincosyBuffer[j - border] = aa / (Chprov1 * 327.68f);
+                            sincosxBuffer[j - border] = bb / (Chprov1 * 327.68f);
+                        }
                     }
                 }
+#endif // __SSE2__
 
-                sincosval = xsincosf(HH);
-                float R, G, B;
-#ifdef _DEBUG
-                bool neg = false;
-                bool more_rgb = false;
-                //gamut control : Lab values are in gamut
-                Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+                for (int j = border; j < W - border; j++) {
+                    float Lprov1 = (LBuffer[i - border][j - border]) / 327.68f;
+#ifdef __SSE2__
+                    float Chprov1 = sqrtBuffer[j - border];
+                    float  HH = atan2Buffer[j - border];
+                    float2 sincosval;
+                    sincosval.x = sincosxBuffer[j - border];
+                    sincosval.y = sincosyBuffer[j - border];
+
 #else
-                //gamut control : Lab values are in gamut
-                Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
+                    float aa = conversionBuffer[0][i - border][j - border];
+                    float bb = conversionBuffer[1][i - border][j - border];
+                    float Chprov1 = sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+                    float  HH = xatan2f(bb, aa);
+                    float2 sincosval;// = xsincosf(HH);
+
+                    if(Chprov1 == 0.0f) {
+                        sincosval.y = 1.f;
+                        sincosval.x = 0.0f;
+                    } else {
+                        sincosval.y = aa / (Chprov1 * 327.68f);
+                        sincosval.x = bb / (Chprov1 * 327.68f);
+                    }
+
+#endif
+
+                    if(chutili) {  // c=f(H)
+                        float valp = float((chcurve->getVal(Color::huelab_to_huehsv2(HH)) - 0.5f));
+                        Chprov1 *= (1.f + 2.f * valp);
+                    }
+
+                    float R, G, B;
+#ifdef _DEBUG
+                    bool neg = false;
+                    bool more_rgb = false;
+                    //gamut control : Lab values are in gamut
+                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+                    //gamut control : Lab values are in gamut
+                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
 #endif
 
 
 
-                conversionBuffer[0][i - border][j - border] = 327.68f * Chprov1 * sincosval.y;
-                conversionBuffer[1][i - border][j - border] = 327.68f * Chprov1 * sincosval.x;
-                LBuffer[i - border][j - border] = Lprov1 * 327.68f;
+                    conversionBuffer[0][i - border][j - border] = 327.68f * Chprov1 * sincosval.y;
+                    conversionBuffer[1][i - border][j - border] = 327.68f * Chprov1 * sincosval.x;
+                    LBuffer[i - border][j - border] = Lprov1 * 327.68f;
+                }
             }
         }
-
         //end gamut control
 #ifdef __SSE2__
         vfloat wipv[3][3];
@@ -2611,8 +2670,8 @@ void RawImageSource::HLRecovery_Global(ToneCurveParams hrp)
 
 void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4])
 {
-    float (*cfablur);
-    cfablur = (float (*)) calloc (H * W, sizeof * cfablur);
+//    BENCHFUN
+    float *cfablur = (float (*)) malloc (H * W * sizeof * cfablur);
     int BS = raw.ff_BlurRadius;
     BS += BS & 1;
 
@@ -2621,9 +2680,8 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         cfaboxblur(riFlatFile, cfablur, 2 * BS, 0);
     } else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff]) {
         cfaboxblur(riFlatFile, cfablur, 0, 2 * BS);
-    } else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff])
+    } else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-    {
         cfaboxblur(riFlatFile, cfablur, BS, BS);    //first do area blur to correct vignette
     } else { //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
         cfaboxblur(riFlatFile, cfablur, BS, BS);
@@ -2632,7 +2690,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
     if(ri->getSensorType() == ST_BAYER) {
         float refcolor[2][2];
 
-        //find center ave values by channel
+        //find centre average values by channel
         for (int m = 0; m < 2; m++)
             for (int n = 0; n < 2; n++) {
                 int row = 2 * (H >> 2) + m;
@@ -2701,27 +2759,47 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             }
 
 
-        for (int m = 0; m < 2; m++)
-            for (int n = 0; n < 2; n++) {
-#ifdef _OPENMP
-                #pragma omp parallel
+        unsigned int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
+        unsigned int c4[2][2];
+        c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
+        c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
+        c4[1][0] = c[1][0];
+        c4[1][1] = c[1][1];
+
+#ifdef __SSE2__
+        vfloat refcolorv[2] = {_mm_set_ps(refcolor[0][1], refcolor[0][0], refcolor[0][1], refcolor[0][0]),
+                               _mm_set_ps(refcolor[1][1], refcolor[1][0], refcolor[1][1], refcolor[1][0])
+                              };
+        vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
+                            _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
+                           };
+
+        vfloat epsv = F2V(1e-5f);
 #endif
-                {
-                    int c  = FC(m, n);
-                    int c4 = ( c == 1 && !(m & 1) ) ? 3 : c;
 #ifdef _OPENMP
-                    #pragma omp for
+        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int row = 0; row < H - m; row += 2)
-                    {
-                        for (int col = 0; col < W - n; col += 2) {
-                            float vignettecorr = ( refcolor[m][n] / max(1e-5f, cfablur[(row + m) * W + col + n] - black[c4]) );
-                            rawData[row + m][col + n] = (rawData[row + m][col + n] - black[c4]) * vignettecorr + black[c4];
-                        }
-                    }
-                }
+        for (int row = 0; row < H; row ++) {
+            int col = 0;
+#ifdef __SSE2__
+            vfloat rowBlackv = blackv[row & 1];
+            vfloat rowRefcolorv = refcolorv[row & 1];
+
+            for (; col < W - 3; col += 4) {
+                vfloat vignettecorrv = rowRefcolorv / vmaxf(epsv, LVFU(cfablur[(row) * W + col]) - rowBlackv);
+                vfloat valv = LVFU(rawData[row][col]);
+                valv -= rowBlackv;
+                STVFU(rawData[row][col], valv * vignettecorrv + rowBlackv);
             }
+
+#endif
+
+            for (; col < W; col ++) {
+                float vignettecorr = refcolor[row & 1][col & 1] / max(1e-5f, cfablur[(row) * W + col] - black[c4[row & 1][col & 1]]);
+                rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * vignettecorr + black[c4[row & 1][col & 1]];
+            }
+        }
     } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
         float refcolor[3] = {0.f};
         int cCount[3] = {0};
@@ -2804,32 +2882,52 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
     }
 
     if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
-        float (*cfablur1);
-        cfablur1 = (float (*)) calloc (H * W, sizeof * cfablur1);
-        float (*cfablur2);
-        cfablur2 = (float (*)) calloc (H * W, sizeof * cfablur2);
+        float *cfablur1 = (float (*)) malloc (H * W * sizeof * cfablur1);
+        float *cfablur2 = (float (*)) malloc (H * W * sizeof * cfablur2);
         //slightly more complicated blur if trying to correct both vertical and horizontal anomalies
         cfaboxblur(riFlatFile, cfablur1, 0, 2 * BS); //now do horizontal blur
         cfaboxblur(riFlatFile, cfablur2, 2 * BS, 0); //now do vertical blur
 
         if(ri->getSensorType() == ST_BAYER) {
-            for (int m = 0; m < 2; m++)
-                for (int n = 0; n < 2; n++) {
+            unsigned int c[2][2]  = {{FC(0, 0), FC(0, 1)}, {FC(1, 0), FC(1, 1)}};
+            unsigned int c4[2][2];
+            c4[0][0] = ( c[0][0] == 1) ? 3 : c[0][0];
+            c4[0][1] = ( c[0][1] == 1) ? 3 : c[0][1];
+            c4[1][0] = c[1][0];
+            c4[1][1] = c[1][1];
+
+#ifdef __SSE2__
+            vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
+                                _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
+                               };
+
+            vfloat epsv = F2V(1e-5f);
+#endif
 #ifdef _OPENMP
-                    #pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                    for (int row = 0; row < H - m; row += 2) {
-                        int c  = FC(row, 0);
-                        int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;
+            for (int row = 0; row < H; row ++) {
+                int col = 0;
+#ifdef __SSE2__
+                vfloat rowBlackv = blackv[row & 1];
 
-                        for (int col = 0; col < W - n; col += 2) {
-                            float hlinecorr = (max(1e-5f, cfablur[(row + m) * W + col + n] - black[c4]) / max(1e-5f, cfablur1[(row + m) * W + col + n] - black[c4]) );
-                            float vlinecorr = (max(1e-5f, cfablur[(row + m) * W + col + n] - black[c4]) / max(1e-5f, cfablur2[(row + m) * W + col + n] - black[c4]) );
-                            rawData[row + m][col + n] = ((rawData[row + m][col + n] - black[c4]) * hlinecorr * vlinecorr + black[c4]);
-                        }
-                    }
+                for (; col < W - 3; col += 4) {
+                    vfloat linecorrv = SQRV(vmaxf(epsv, LVFU(cfablur[row * W + col]) - rowBlackv)) /
+                                       (vmaxf(epsv, LVFU(cfablur1[row * W + col]) - rowBlackv) * vmaxf(epsv, LVFU(cfablur2[row * W + col]) - rowBlackv));
+                    vfloat valv = LVFU(rawData[row][col]);
+                    valv -= rowBlackv;
+                    STVFU(rawData[row][col], valv * linecorrv + rowBlackv);
                 }
+
+#endif
+
+                for (; col < W; col ++) {
+                    float linecorr = SQR(max(1e-5f, cfablur[row * W + col] - black[c4[row & 1][col & 1]])) /
+                                     (max(1e-5f, cfablur1[row * W + col] - black[c4[row & 1][col & 1]]) * max(1e-5f, cfablur2[row * W + col] - black[c4[row & 1][col & 1]])) ;
+                    rawData[row][col] = (rawData[row][col] - black[c4[row & 1][col & 1]]) * linecorr + black[c4[row & 1][col & 1]];
+                }
+            }
         } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
 #ifdef _OPENMP
             #pragma omp parallel for
@@ -2876,13 +2974,17 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
                 for (int col = 0; col < W; col++) {
                     int c  = FC(row, col);
                     int c4 = ( c == 1 && !(row & 1) ) ? 3 : c;
-                    rawData[row][col]   = max(src->data[row][col] + black[c4] - riDark->data[row][col], 0.0f);
+                    rawData[row][col] = max(src->data[row][col] + black[c4] - riDark->data[row][col], 0.0f);
                 }
             }
         } else {
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
             for (int row = 0; row < H; row++) {
                 for (int col = 0; col < W; col++) {
-                    rawData[row][col]   = src->data[row][col];
+                    rawData[row][col] = src->data[row][col];
                 }
             }
         }
@@ -2939,238 +3041,248 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
     }
 }
 
-SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW )
+SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, const int boxH, const int boxW)
 {
 
-    float (*cfatmp);
-    cfatmp = (float (*)) calloc (H * W, sizeof * cfatmp);
-//  const float hotdeadthresh = 0.5;
+    if(boxW == 0 && boxH == 0) { // nothing to blur
+        memcpy(cfablur, riFlatFile->data[0], W * H * sizeof(float));
+        return;
+    }
+
+    float *tmpBuffer = nullptr;
+    float *cfatmp = nullptr;
+    float *srcVertical = nullptr;
+
+
+    if(boxH > 0 && boxW > 0) {
+        // we need a temporary buffer if we have to blur both directions
+        tmpBuffer = (float (*)) calloc (H * W, sizeof * tmpBuffer);
+    }
+
+    if(boxH == 0) {
+        // if boxH == 0 we can skip the vertical blur and process the horizontal blur from riFlatFile to cfablur without using a temporary buffer
+        cfatmp = cfablur;
+    } else {
+        cfatmp = tmpBuffer;
+    }
+
+    if(boxW == 0) {
+        // if boxW == 0 we can skip the horizontal blur and process the vertical blur from riFlatFile to cfablur without using a temporary buffer
+        srcVertical = riFlatFile->data[0];
+    } else {
+        srcVertical = cfatmp;
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
+
+        if(boxW > 0) {
+            //box blur cfa image; box size = BS
+            //horizontal blur
 #ifdef _OPENMP
-        #pragma omp for
+            #pragma omp for
 #endif
 
-        for (int i = 0; i < H; i++) {
-            int iprev, inext, jprev, jnext;
-            int p[5], temp, median;
+            for (int row = 0; row < H; row++) {
+                int len = boxW / 2 + 1;
+                cfatmp[row * W + 0] = riFlatFile->data[row][0] / len;
+                cfatmp[row * W + 1] = riFlatFile->data[row][1] / len;
 
-            if (i < 2) {
-                iprev = i + 2;
-            } else {
-                iprev = i - 2;
-            }
-
-            if (i > H - 3) {
-                inext = i - 2;
-            } else {
-                inext = i + 2;
-            }
-
-            for (int j = 0; j < W; j++) {
-                if (j < 2) {
-                    jprev = j + 2;
-                } else {
-                    jprev = j - 2;
+                for (int j = 2; j <= boxW; j += 2) {
+                    cfatmp[row * W + 0] += riFlatFile->data[row][j] / len;
+                    cfatmp[row * W + 1] += riFlatFile->data[row][j + 1] / len;
                 }
 
-                if (j > W - 3) {
-                    jnext = j - 2;
-                } else {
-                    jnext = j + 2;
+                for (int col = 2; col <= boxW; col += 2) {
+                    cfatmp[row * W + col] = (cfatmp[row * W + col - 2] * len + riFlatFile->data[row][boxW + col]) / (len + 1);
+                    cfatmp[row * W + col + 1] = (cfatmp[row * W + col - 1] * len + riFlatFile->data[row][boxW + col + 1]) / (len + 1);
+                    len ++;
                 }
 
-                //med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext],
-                //     riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext],
-                //     riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
-                med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev], riFlatFile->data[i][j],
-                     riFlatFile->data[i][jnext], riFlatFile->data[inext][j], median);
-
-//          if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
-                if (((int)riFlatFile->data[i][j] << 1) > median || (median << 1) > riFlatFile->data[i][j]) {
-                    cfatmp[i * W + j] = median;
-                } else {
-                    cfatmp[i * W + j] = riFlatFile->data[i][j];
+                for (int col = boxW + 2; col < W - boxW; col++) {
+                    cfatmp[row * W + col] = cfatmp[row * W + col - 2] + (riFlatFile->data[row][boxW + col] - cfatmp[row * W + col - boxW - 2]) / len;
                 }
 
+                for (int col = W - boxW; col < W; col += 2) {
+                    cfatmp[row * W + col] = (cfatmp[row * W + col - 2] * len - cfatmp[row * W + col - boxW - 2]) / (len - 1);
+
+                    if (col + 1 < W) {
+                        cfatmp[row * W + col + 1] = (cfatmp[row * W + col - 1] * len - cfatmp[row * W + col - boxW - 1]) / (len - 1);
+                    }
+
+                    len --;
+                }
             }
         }
 
-        //box blur cfa image; box size = BS
-        //horizontal blur
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-
-        for (int row = 0; row < H; row++) {
-            int len = boxW / 2 + 1;
-            cfatmp[row * W + 0] = cfatmp[row * W + 0] / len;
-            cfatmp[row * W + 1] = cfatmp[row * W + 1] / len;
-
-            for (int j = 2; j <= boxW; j += 2) {
-                cfatmp[row * W + 0] += cfatmp[row * W + j] / len;
-                cfatmp[row * W + 1] += cfatmp[row * W + j + 1] / len;
-            }
-
-            for (int col = 2; col <= boxW; col += 2) {
-                cfatmp[row * W + col] = (cfatmp[row * W + col - 2] * len + cfatmp[row * W + boxW + col]) / (len + 1);
-                cfatmp[row * W + col + 1] = (cfatmp[row * W + col - 1] * len + cfatmp[row * W + boxW + col + 1]) / (len + 1);
-                len ++;
-            }
-
-            for (int col = boxW + 2; col < W - boxW; col++) {
-                cfatmp[row * W + col] = cfatmp[row * W + col - 2] + (cfatmp[row * W + boxW + col] - cfatmp[row * W + col - boxW - 2]) / len;
-            }
-
-            for (int col = W - boxW; col < W; col += 2) {
-                cfatmp[row * W + col] = (cfatmp[row * W + col - 2] * len - cfatmp[row * W + col - boxW - 2]) / (len - 1);
-
-                if (col + 1 < W) {
-                    cfatmp[row * W + col + 1] = (cfatmp[row * W + col - 1] * len - cfatmp[row * W + col - boxW - 1]) / (len - 1);
-                }
-
-                len --;
-            }
-        }
-
-        //vertical blur
+        if(boxH > 0) {
+            //vertical blur
 #ifdef __SSE2__
-        vfloat  leninitv = F2V(boxH / 2 + 1);
-        vfloat  onev = F2V( 1.0f );
-        vfloat  temp1v, temp2v, lenv, lenp1v, lenm1v;
-        int row;
+            vfloat  leninitv = F2V(boxH / 2 + 1);
+            vfloat  onev = F2V( 1.0f );
+            vfloat  temp1v, temp2v, temp3v, temp4v, lenv, lenp1v, lenm1v;
+            int row;
 #ifdef _OPENMP
-        #pragma omp for
+            #pragma omp for nowait
 #endif
 
-        for (int col = 0; col < W - 3; col += 4) {
-            lenv = leninitv;
-            temp1v = LVFU(cfatmp[0 * W + col]) / lenv;
-            temp2v = LVFU(cfatmp[1 * W + col]) / lenv;
+            for (int col = 0; col < W - 7; col += 8) {
+                lenv = leninitv;
+                temp1v = LVFU(srcVertical[0 * W + col]) / lenv;
+                temp2v = LVFU(srcVertical[1 * W + col]) / lenv;
+                temp3v = LVFU(srcVertical[0 * W + col + 4]) / lenv;
+                temp4v = LVFU(srcVertical[1 * W + col + 4]) / lenv;
 
-            for (int i = 2; i < boxH + 2; i += 2) {
-                temp1v += LVFU(cfatmp[i * W + col]) / lenv;
-                temp2v += LVFU(cfatmp[(i + 1) * W + col]) / lenv;
-            }
-
-            STVFU(cfablur[0 * W + col], temp1v);
-            STVFU(cfablur[1 * W + col], temp2v);
-
-            for (row = 2; row < boxH + 2; row += 2) {
-                lenp1v = lenv + onev;
-                temp1v = (temp1v * lenv + LVFU(cfatmp[(row + boxH) * W + col])) / lenp1v;
-                temp2v = (temp2v * lenv + LVFU(cfatmp[(row + boxH + 1) * W + col])) / lenp1v;
-                STVFU(cfablur[row * W + col], temp1v);
-                STVFU(cfablur[(row + 1)*W + col], temp2v);
-                lenv = lenp1v;
-            }
-
-            for (; row < H - boxH - 1; row += 2) {
-                temp1v = temp1v + (LVFU(cfatmp[(row + boxH) * W + col]) - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenv;
-                temp2v = temp2v + (LVFU(cfatmp[(row + 1 + boxH) * W + col]) - LVFU(cfatmp[(row + 1 - boxH - 2) * W + col])) / lenv;
-                STVFU(cfablur[row * W + col], temp1v);
-                STVFU(cfablur[(row + 1)*W + col], temp2v);
-            }
-
-            for(; row < H - boxH; row++) {
-                temp1v = temp1v + (LVFU(cfatmp[(row + boxH) * W + col]) - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenv;
-                STVFU(cfablur[row * W + col], temp1v);
-                vfloat swapv = temp1v;
-                temp1v = temp2v;
-                temp2v = swapv;
-
-            }
-
-            for (; row < H - 1; row += 2) {
-                lenm1v = lenv - onev;
-                temp1v = (temp1v * lenv - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenm1v;
-                temp2v = (temp2v * lenv - LVFU(cfatmp[(row - boxH - 1) * W + col])) / lenm1v;
-                STVFU(cfablur[row * W + col], temp1v);
-                STVFU(cfablur[(row + 1)*W + col], temp2v);
-                lenv = lenm1v;
-            }
-
-            for(; row < H; row++) {
-                lenm1v = lenv - onev;
-                temp1v = (temp1v * lenv - LVFU(cfatmp[(row - boxH - 2) * W + col])) / lenm1v;
-                STVFU(cfablur[(row)*W + col], temp1v);
-            }
-
-        }
-
-        for (int col = W - (W % 4); col < W; col++) {
-            int len = boxH / 2 + 1;
-            cfablur[0 * W + col] = cfatmp[0 * W + col] / len;
-            cfablur[1 * W + col] = cfatmp[1 * W + col] / len;
-
-            for (int i = 2; i < boxH + 2; i += 2) {
-                cfablur[0 * W + col] += cfatmp[i * W + col] / len;
-                cfablur[1 * W + col] += cfatmp[(i + 1) * W + col] / len;
-            }
-
-            for (int row = 2; row < boxH + 2; row += 2) {
-                cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + cfatmp[(row + boxH) * W + col]) / (len + 1);
-                cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + cfatmp[(row + boxH + 1) * W + col]) / (len + 1);
-                len ++;
-            }
-
-            for (int row = boxH + 2; row < H - boxH; row++) {
-                cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (cfatmp[(row + boxH) * W + col] - cfatmp[(row - boxH - 2) * W + col]) / len;
-            }
-
-            for (int row = H - boxH; row < H; row += 2) {
-                cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - cfatmp[(row - boxH - 2) * W + col]) / (len - 1);
-
-                if (row + 1 < H) {
-                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - cfatmp[(row - boxH - 1) * W + col]) / (len - 1);
+                for (int i = 2; i < boxH + 2; i += 2) {
+                    temp1v += LVFU(srcVertical[i * W + col]) / lenv;
+                    temp2v += LVFU(srcVertical[(i + 1) * W + col]) / lenv;
+                    temp3v += LVFU(srcVertical[i * W + col + 4]) / lenv;
+                    temp4v += LVFU(srcVertical[(i + 1) * W + col + 4]) / lenv;
                 }
 
-                len --;
+                STVFU(cfablur[0 * W + col], temp1v);
+                STVFU(cfablur[1 * W + col], temp2v);
+                STVFU(cfablur[0 * W + col + 4], temp3v);
+                STVFU(cfablur[1 * W + col + 4], temp4v);
+
+                for (row = 2; row < boxH + 2; row += 2) {
+                    lenp1v = lenv + onev;
+                    temp1v = (temp1v * lenv + LVFU(srcVertical[(row + boxH) * W + col])) / lenp1v;
+                    temp2v = (temp2v * lenv + LVFU(srcVertical[(row + boxH + 1) * W + col])) / lenp1v;
+                    temp3v = (temp3v * lenv + LVFU(srcVertical[(row + boxH) * W + col + 4])) / lenp1v;
+                    temp4v = (temp4v * lenv + LVFU(srcVertical[(row + boxH + 1) * W + col + 4])) / lenp1v;
+                    STVFU(cfablur[row * W + col], temp1v);
+                    STVFU(cfablur[(row + 1)*W + col], temp2v);
+                    STVFU(cfablur[row * W + col + 4], temp3v);
+                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
+                    lenv = lenp1v;
+                }
+
+                for (; row < H - boxH - 1; row += 2) {
+                    temp1v = temp1v + (LVFU(srcVertical[(row + boxH) * W + col]) - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenv;
+                    temp2v = temp2v + (LVFU(srcVertical[(row + 1 + boxH) * W + col]) - LVFU(srcVertical[(row + 1 - boxH - 2) * W + col])) / lenv;
+                    temp3v = temp3v + (LVFU(srcVertical[(row + boxH) * W + col + 4]) - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenv;
+                    temp4v = temp4v + (LVFU(srcVertical[(row + 1 + boxH) * W + col + 4]) - LVFU(srcVertical[(row + 1 - boxH - 2) * W + col + 4])) / lenv;
+                    STVFU(cfablur[row * W + col], temp1v);
+                    STVFU(cfablur[(row + 1)*W + col], temp2v);
+                    STVFU(cfablur[row * W + col + 4], temp3v);
+                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
+                }
+
+                for(; row < H - boxH; row++) {
+                    temp1v = temp1v + (LVFU(srcVertical[(row + boxH) * W + col]) - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenv;
+                    temp3v = temp3v + (LVFU(srcVertical[(row + boxH) * W + col + 4]) - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenv;
+                    STVFU(cfablur[row * W + col], temp1v);
+                    STVFU(cfablur[row * W + col + 4], temp3v);
+                    vfloat swapv = temp1v;
+                    temp1v = temp2v;
+                    temp2v = swapv;
+                    swapv = temp3v;
+                    temp3v = temp4v;
+                    temp4v = swapv;
+                }
+
+                for (; row < H - 1; row += 2) {
+                    lenm1v = lenv - onev;
+                    temp1v = (temp1v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenm1v;
+                    temp2v = (temp2v * lenv - LVFU(srcVertical[(row - boxH - 1) * W + col])) / lenm1v;
+                    temp3v = (temp3v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenm1v;
+                    temp4v = (temp4v * lenv - LVFU(srcVertical[(row - boxH - 1) * W + col + 4])) / lenm1v;
+                    STVFU(cfablur[row * W + col], temp1v);
+                    STVFU(cfablur[(row + 1)*W + col], temp2v);
+                    STVFU(cfablur[row * W + col + 4], temp3v);
+                    STVFU(cfablur[(row + 1)*W + col + 4], temp4v);
+                    lenv = lenm1v;
+                }
+
+                for(; row < H; row++) {
+                    lenm1v = lenv - onev;
+                    temp1v = (temp1v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col])) / lenm1v;
+                    temp3v = (temp3v * lenv - LVFU(srcVertical[(row - boxH - 2) * W + col + 4])) / lenm1v;
+                    STVFU(cfablur[(row)*W + col], temp1v);
+                    STVFU(cfablur[(row)*W + col + 4], temp3v);
+                }
+
             }
-        }
+
+            #pragma omp single
+
+            for (int col = W - (W % 8); col < W; col++) {
+                int len = boxH / 2 + 1;
+                cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
+                cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
+
+                for (int i = 2; i < boxH + 2; i += 2) {
+                    cfablur[0 * W + col] += srcVertical[i * W + col] / len;
+                    cfablur[1 * W + col] += srcVertical[(i + 1) * W + col] / len;
+                }
+
+                for (int row = 2; row < boxH + 2; row += 2) {
+                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + srcVertical[(row + boxH) * W + col]) / (len + 1);
+                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
+                    len ++;
+                }
+
+                for (int row = boxH + 2; row < H - boxH; row++) {
+                    cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (srcVertical[(row + boxH) * W + col] - srcVertical[(row - boxH - 2) * W + col]) / len;
+                }
+
+                for (int row = H - boxH; row < H; row += 2) {
+                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - srcVertical[(row - boxH - 2) * W + col]) / (len - 1);
+
+                    if (row + 1 < H) {
+                        cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
+                    }
+
+                    len --;
+                }
+            }
 
 #else
 #ifdef _OPENMP
-        #pragma omp for
+            #pragma omp for
 #endif
 
-        for (int col = 0; col < W; col++) {
-            int len = boxH / 2 + 1;
-            cfablur[0 * W + col] = cfatmp[0 * W + col] / len;
-            cfablur[1 * W + col] = cfatmp[1 * W + col] / len;
+            for (int col = 0; col < W; col++) {
+                int len = boxH / 2 + 1;
+                cfablur[0 * W + col] = srcVertical[0 * W + col] / len;
+                cfablur[1 * W + col] = srcVertical[1 * W + col] / len;
 
-            for (int i = 2; i < boxH + 2; i += 2) {
-                cfablur[0 * W + col] += cfatmp[i * W + col] / len;
-                cfablur[1 * W + col] += cfatmp[(i + 1) * W + col] / len;
-            }
-
-            for (int row = 2; row < boxH + 2; row += 2) {
-                cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + cfatmp[(row + boxH) * W + col]) / (len + 1);
-                cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + cfatmp[(row + boxH + 1) * W + col]) / (len + 1);
-                len ++;
-            }
-
-            for (int row = boxH + 2; row < H - boxH; row++) {
-                cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (cfatmp[(row + boxH) * W + col] - cfatmp[(row - boxH - 2) * W + col]) / len;
-            }
-
-            for (int row = H - boxH; row < H; row += 2) {
-                cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - cfatmp[(row - boxH - 2) * W + col]) / (len - 1);
-
-                if (row + 1 < H) {
-                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - cfatmp[(row - boxH - 1) * W + col]) / (len - 1);
+                for (int i = 2; i < boxH + 2; i += 2) {
+                    cfablur[0 * W + col] += srcVertical[i * W + col] / len;
+                    cfablur[1 * W + col] += srcVertical[(i + 1) * W + col] / len;
                 }
 
-                len --;
+                for (int row = 2; row < boxH + 2; row += 2) {
+                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len + srcVertical[(row + boxH) * W + col]) / (len + 1);
+                    cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len + srcVertical[(row + boxH + 1) * W + col]) / (len + 1);
+                    len ++;
+                }
+
+                for (int row = boxH + 2; row < H - boxH; row++) {
+                    cfablur[row * W + col] = cfablur[(row - 2) * W + col] + (srcVertical[(row + boxH) * W + col] - srcVertical[(row - boxH - 2) * W + col]) / len;
+                }
+
+                for (int row = H - boxH; row < H; row += 2) {
+                    cfablur[row * W + col] = (cfablur[(row - 2) * W + col] * len - srcVertical[(row - boxH - 2) * W + col]) / (len - 1);
+
+                    if (row + 1 < H) {
+                        cfablur[(row + 1)*W + col] = (cfablur[(row - 1) * W + col] * len - srcVertical[(row - boxH - 1) * W + col]) / (len - 1);
+                    }
+
+                    len --;
+                }
             }
-        }
 
 #endif
+        }
     }
-    free (cfatmp);
+
+    if(tmpBuffer) {
+        free (tmpBuffer);
+    }
 }
 
 
@@ -3401,17 +3513,12 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
     vfloat* pre2 = &buffer[3];
     vfloat* post1 = &buffer[6];
     vfloat* post2 = &buffer[9];
-
-    vfloat middle[6];
-
 #else
     float buffer[12];
     float* pre1 = &buffer[0];
     float* pre2 = &buffer[3];
     float* post1 = &buffer[6];
     float* post2 = &buffer[9];
-
-    float middle[6];
 #endif
 
     int px = (row_from - 1) % 3, cx = row_from % 3, nx = 0;
@@ -3435,7 +3542,6 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
 #ifdef __SSE2__
         pre1[0] = _mm_setr_ps(rbconv_I[px][0], rbconv_Q[px][0], 0, 0) , pre1[1] = _mm_setr_ps(rbconv_I[cx][0], rbconv_Q[cx][0], 0, 0), pre1[2] = _mm_setr_ps(rbconv_I[nx][0], rbconv_Q[nx][0], 0, 0);
         pre2[0] = _mm_setr_ps(rbconv_I[px][1], rbconv_Q[px][1], 0, 0) , pre2[1] = _mm_setr_ps(rbconv_I[cx][1], rbconv_Q[cx][1], 0, 0), pre2[2] = _mm_setr_ps(rbconv_I[nx][1], rbconv_Q[nx][1], 0, 0);
-        vfloat temp[7];
 
         // fill first element in rbout_I and rbout_Q
         rbout_I[cx][0] = rbconv_I[cx][0];
@@ -3444,13 +3550,12 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
         // median I channel
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = _mm_setr_ps(rbconv_I[px][j + 1], rbconv_Q[px][j + 1], 0, 0), post1[1] = _mm_setr_ps(rbconv_I[cx][j + 1], rbconv_Q[cx][j + 1], 0, 0), post1[2] = _mm_setr_ps(rbconv_I[nx][j + 1], rbconv_Q[nx][j + 1], 0, 0);
-            VMIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
-            vfloat medianval;
-            VMEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            const auto middle = middle4of6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2]);
+            vfloat medianval = median(pre1[0], pre1[1], pre1[2], middle[0], middle[1], middle[2], middle[3]);
             rbout_I[cx][j] = medianval[0];
             rbout_Q[cx][j] = medianval[1];
             post2[0] = _mm_setr_ps(rbconv_I[px][j + 2], rbconv_Q[px][j + 2], 0, 0), post2[1] = _mm_setr_ps(rbconv_I[cx][j + 2], rbconv_Q[cx][j + 2], 0, 0), post2[2] = _mm_setr_ps(rbconv_I[nx][j + 2], rbconv_Q[nx][j + 2], 0, 0);
-            VMEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], medianval);
+            medianval = median(post2[0], post2[1], post2[2], middle[0], middle[1], middle[2], middle[3]);
             rbout_I[cx][j + 1] = medianval[0];
             rbout_Q[cx][j + 1] = medianval[1];
             std::swap(pre1, post1);
@@ -3466,7 +3571,6 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
 #else
         pre1[0] = rbconv_I[px][0], pre1[1] = rbconv_I[cx][0], pre1[2] = rbconv_I[nx][0];
         pre2[0] = rbconv_I[px][1], pre2[1] = rbconv_I[cx][1], pre2[2] = rbconv_I[nx][1];
-        float temp[7];
 
         // fill first element in rbout_I
         rbout_I[cx][0] = rbconv_I[cx][0];
@@ -3474,10 +3578,10 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
         // median I channel
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = rbconv_I[px][j + 1], post1[1] = rbconv_I[cx][j + 1], post1[2] = rbconv_I[nx][j + 1];
-            MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
-            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j]);
+            const auto middle = middle4of6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2]);
+            rbout_I[cx][j] = median(pre1[0], pre1[1], pre1[2], middle[0], middle[1], middle[2], middle[3]);
             post2[0] = rbconv_I[px][j + 2], post2[1] = rbconv_I[cx][j + 2], post2[2] = rbconv_I[nx][j + 2];
-            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_I[cx][j + 1]);
+            rbout_I[cx][j + 1] = median(post2[0], post2[1], post2[2], middle[0], middle[1], middle[2], middle[3]);
             std::swap(pre1, post1);
             std::swap(pre2, post2);
         }
@@ -3495,10 +3599,10 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
         // median Q channel
         for (int j = 1; j < W - 2; j += 2) {
             post1[0] = rbconv_Q[px][j + 1], post1[1] = rbconv_Q[cx][j + 1], post1[2] = rbconv_Q[nx][j + 1];
-            MIDDLE4OF6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2], middle[0], middle[1], middle[2], middle[3], middle[4], middle[5], temp[0]);
-            MEDIAN7(pre1[0], pre1[1], pre1[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j]);
+            const auto middle = middle4of6(pre2[0], pre2[1], pre2[2], post1[0], post1[1], post1[2]);
+            rbout_Q[cx][j] = median(pre1[0], pre1[1], pre1[2], middle[0], middle[1], middle[2], middle[3]);
             post2[0] = rbconv_Q[px][j + 2], post2[1] = rbconv_Q[cx][j + 2], post2[2] = rbconv_Q[nx][j + 2];
-            MEDIAN7(post2[0], post2[1], post2[2], middle[1], middle[2], middle[3], middle[4], temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], rbout_Q[cx][j + 1]);
+            rbout_Q[cx][j + 1] = median(post2[0], post2[1], post2[2], middle[0], middle[1], middle[2], middle[3]);
             std::swap(pre1, post1);
             std::swap(pre2, post2);
         }
@@ -3651,7 +3755,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
+void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParams &cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
 {
 
 //    MyTime t1, t2, t3;
@@ -3665,7 +3769,18 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
     if (dcpProf != NULL) {
         // DCP processing
-        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul, camMatrix, false, cmp.applyHueSatMap, false);
+        const DCPProfile::Triple pre_mul_row = {
+            pre_mul[0],
+            pre_mul[1],
+            pre_mul[2]
+        };
+        const DCPProfile::Matrix cam_matrix = {{
+                {camMatrix[0][0], camMatrix[0][1], camMatrix[0][2]},
+                {camMatrix[1][0], camMatrix[1][1], camMatrix[1][2]},
+                {camMatrix[2][0], camMatrix[2][1], camMatrix[2][2]}
+            }
+        };
+        dcpProf->apply(im, cmp.dcpIlluminant, cmp.working, wb, pre_mul_row, cam_matrix, cmp.applyHueSatMap);
         return;
     }
 
@@ -3772,32 +3887,32 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         lcmsMutex->lock ();
 
         switch (camera_icc_type) {
-        case CAMERA_ICC_TYPE_PHASE_ONE:
-        case CAMERA_ICC_TYPE_LEAF: {
-            // These profiles have a RGB to Lab cLUT, gives gamma 1.8 output, and expects a "film-like" curve on input
-            transform_via_pcs_lab = true;
-            separate_pcs_lab_highlights = true;
-            // We transform to Lab because we can and that we avoid getting an unnecessary unmatched gamma conversion which we would need to revert.
-            hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, NULL, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+            case CAMERA_ICC_TYPE_PHASE_ONE:
+            case CAMERA_ICC_TYPE_LEAF: {
+                // These profiles have a RGB to Lab cLUT, gives gamma 1.8 output, and expects a "film-like" curve on input
+                transform_via_pcs_lab = true;
+                separate_pcs_lab_highlights = true;
+                // We transform to Lab because we can and that we avoid getting an unnecessary unmatched gamma conversion which we would need to revert.
+                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, NULL, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
 
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    leaf_prophoto_mat[i][j] = 0;
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        leaf_prophoto_mat[i][j] = 0;
 
-                    for (int k = 0; k < 3; k++) {
-                        leaf_prophoto_mat[i][j] += prophoto_xyz[i][k] * camMatrix[k][j];
+                        for (int k = 0; k < 3; k++) {
+                            leaf_prophoto_mat[i][j] += prophoto_xyz[i][k] * camMatrix[k][j];
+                        }
                     }
                 }
+
+                break;
             }
 
-            break;
-        }
-
-        case CAMERA_ICC_TYPE_NIKON:
-        case CAMERA_ICC_TYPE_GENERIC:
-        default:
-            hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
-            break;
+            case CAMERA_ICC_TYPE_NIKON:
+            case CAMERA_ICC_TYPE_GENERIC:
+            default:
+                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+                break;
         }
 
         lcmsMutex->unlock ();
@@ -3855,45 +3970,45 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                     }
 
                     switch (camera_icc_type) {
-                    case CAMERA_ICC_TYPE_PHASE_ONE:
-                        // Here we apply a curve similar to Capture One's "Film Standard" + gamma, the reason is that the LUTs embedded in the
-                        // ICCs are designed to work on such input, and if you provide it with a different curve you don't get as good result.
-                        // We will revert this curve after we've made the color transform. However when we revert the curve, we'll notice that
-                        // highlight rendering suffers due to that the LUT transform don't expand well, therefore we do a less compressed
-                        // conversion too and mix them, this gives us the highest quality and most flexible result.
-                        hl_buffer.data[3 * w + 0] = pow_F(r, 1.0 / 1.8);
-                        hl_buffer.data[3 * w + 1] = pow_F(g, 1.0 / 1.8);
-                        hl_buffer.data[3 * w + 2] = pow_F(b, 1.0 / 1.8);
-                        r = phaseOneIccCurveInv->getVal(r);
-                        g = phaseOneIccCurveInv->getVal(g);
-                        b = phaseOneIccCurveInv->getVal(b);
-                        break;
+                        case CAMERA_ICC_TYPE_PHASE_ONE:
+                            // Here we apply a curve similar to Capture One's "Film Standard" + gamma, the reason is that the LUTs embedded in the
+                            // ICCs are designed to work on such input, and if you provide it with a different curve you don't get as good result.
+                            // We will revert this curve after we've made the color transform. However when we revert the curve, we'll notice that
+                            // highlight rendering suffers due to that the LUT transform don't expand well, therefore we do a less compressed
+                            // conversion too and mix them, this gives us the highest quality and most flexible result.
+                            hl_buffer.data[3 * w + 0] = pow_F(r, 1.0 / 1.8);
+                            hl_buffer.data[3 * w + 1] = pow_F(g, 1.0 / 1.8);
+                            hl_buffer.data[3 * w + 2] = pow_F(b, 1.0 / 1.8);
+                            r = phaseOneIccCurveInv->getVal(r);
+                            g = phaseOneIccCurveInv->getVal(g);
+                            b = phaseOneIccCurveInv->getVal(b);
+                            break;
 
-                    case CAMERA_ICC_TYPE_LEAF: {
-                        // Leaf profiles expect that the camera native RGB has been converted to Prophoto RGB
-                        float newr = leaf_prophoto_mat[0][0] * r + leaf_prophoto_mat[0][1] * g + leaf_prophoto_mat[0][2] * b;
-                        float newg = leaf_prophoto_mat[1][0] * r + leaf_prophoto_mat[1][1] * g + leaf_prophoto_mat[1][2] * b;
-                        float newb = leaf_prophoto_mat[2][0] * r + leaf_prophoto_mat[2][1] * g + leaf_prophoto_mat[2][2] * b;
-                        hl_buffer.data[3 * w + 0] = pow_F(newr, 1.0 / 1.8);
-                        hl_buffer.data[3 * w + 1] = pow_F(newg, 1.0 / 1.8);
-                        hl_buffer.data[3 * w + 2] = pow_F(newb, 1.0 / 1.8);
-                        r = phaseOneIccCurveInv->getVal(newr);
-                        g = phaseOneIccCurveInv->getVal(newg);
-                        b = phaseOneIccCurveInv->getVal(newb);
-                        break;
-                    }
+                        case CAMERA_ICC_TYPE_LEAF: {
+                            // Leaf profiles expect that the camera native RGB has been converted to Prophoto RGB
+                            float newr = leaf_prophoto_mat[0][0] * r + leaf_prophoto_mat[0][1] * g + leaf_prophoto_mat[0][2] * b;
+                            float newg = leaf_prophoto_mat[1][0] * r + leaf_prophoto_mat[1][1] * g + leaf_prophoto_mat[1][2] * b;
+                            float newb = leaf_prophoto_mat[2][0] * r + leaf_prophoto_mat[2][1] * g + leaf_prophoto_mat[2][2] * b;
+                            hl_buffer.data[3 * w + 0] = pow_F(newr, 1.0 / 1.8);
+                            hl_buffer.data[3 * w + 1] = pow_F(newg, 1.0 / 1.8);
+                            hl_buffer.data[3 * w + 2] = pow_F(newb, 1.0 / 1.8);
+                            r = phaseOneIccCurveInv->getVal(newr);
+                            g = phaseOneIccCurveInv->getVal(newg);
+                            b = phaseOneIccCurveInv->getVal(newb);
+                            break;
+                        }
 
-                    case CAMERA_ICC_TYPE_NIKON:
-                        // gamma 0.5
-                        r = sqrtf(r);
-                        g = sqrtf(g);
-                        b = sqrtf(b);
-                        break;
+                        case CAMERA_ICC_TYPE_NIKON:
+                            // gamma 0.5
+                            r = sqrtf(r);
+                            g = sqrtf(g);
+                            b = sqrtf(b);
+                            break;
 
-                    case CAMERA_ICC_TYPE_GENERIC:
-                    default:
-                        // do nothing
-                        break;
+                        case CAMERA_ICC_TYPE_GENERIC:
+                        default:
+                            // do nothing
+                            break;
                     }
 
                     *(p++) = r;
@@ -3936,37 +4051,37 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
                     // restore pre-processing and/or add post-processing for the various ICC types
                     switch (camera_icc_type) {
-                    default:
-                        break;
+                        default:
+                            break;
 
-                    case CAMERA_ICC_TYPE_PHASE_ONE:
-                    case CAMERA_ICC_TYPE_LEAF: {
-                        // note the 1/1.8 gamma, it's the gamma that the profile has applied, which we must revert before we can revert the curve
-                        r = phaseOneIccCurve->getVal(pow_F(r, 1.0 / 1.8));
-                        g = phaseOneIccCurve->getVal(pow_F(g, 1.0 / 1.8));
-                        b = phaseOneIccCurve->getVal(pow_F(b, 1.0 / 1.8));
-                        const float mix = 0.25; // may seem a low number, but remember this is linear space, mixing starts 2 stops from clipping
-                        const float maxc = max(r, g, b);
+                        case CAMERA_ICC_TYPE_PHASE_ONE:
+                        case CAMERA_ICC_TYPE_LEAF: {
+                            // note the 1/1.8 gamma, it's the gamma that the profile has applied, which we must revert before we can revert the curve
+                            r = phaseOneIccCurve->getVal(pow_F(r, 1.0 / 1.8));
+                            g = phaseOneIccCurve->getVal(pow_F(g, 1.0 / 1.8));
+                            b = phaseOneIccCurve->getVal(pow_F(b, 1.0 / 1.8));
+                            const float mix = 0.25; // may seem a low number, but remember this is linear space, mixing starts 2 stops from clipping
+                            const float maxc = max(r, g, b);
 
-                        if (maxc > mix) {
-                            float fac = (maxc - mix) / (1.0 - mix);
-                            fac = sqrtf(sqrtf(fac)); // gamma 0.25 to mix in highlight render relatively quick
-                            r = (1.0 - fac) * r + fac * hr;
-                            g = (1.0 - fac) * g + fac * hg;
-                            b = (1.0 - fac) * b + fac * hb;
+                            if (maxc > mix) {
+                                float fac = (maxc - mix) / (1.0 - mix);
+                                fac = sqrtf(sqrtf(fac)); // gamma 0.25 to mix in highlight render relatively quick
+                                r = (1.0 - fac) * r + fac * hr;
+                                g = (1.0 - fac) * g + fac * hg;
+                                b = (1.0 - fac) * b + fac * hb;
+                            }
+
+                            break;
                         }
 
-                        break;
-                    }
-
-                    case CAMERA_ICC_TYPE_NIKON: {
-                        const float lineFac = -0.4;
-                        const float lineSum = 1.35;
-                        r *= r * lineFac + lineSum;
-                        g *= g * lineFac + lineSum;
-                        b *= b * lineFac + lineSum;
-                        break;
-                    }
+                        case CAMERA_ICC_TYPE_NIKON: {
+                            const float lineFac = -0.4;
+                            const float lineSum = 1.35;
+                            r *= r * lineFac + lineSum;
+                            g *= g * lineFac + lineSum;
+                            b *= b * lineFac + lineSum;
+                            break;
+                        }
                     }
 
                     // restore highlight scaling if any
@@ -4023,7 +4138,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         in = embedded;
     } else if (inProfile == "(cameraICC)") {
         // DCPs have higher quality, so use them first
-        *dcpProf = dcpStore->getStdProfile(camName);
+        *dcpProf = DCPStore::getInstance()->getStdProfile(camName);
 
         if (*dcpProf == NULL) {
             in = iccStore->getStdProfile(camName);
@@ -4035,8 +4150,8 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
             normalName = inProfile.substr(5);
         }
 
-        if (dcpStore->isValidDCPFileName(normalName)) {
-            *dcpProf = dcpStore->getProfile(normalName);
+        if (DCPStore::getInstance()->isValidDCPFileName(normalName)) {
+            *dcpProf = DCPStore::getInstance()->getProfile(normalName);
         }
 
         if (*dcpProf == NULL) {
@@ -4280,7 +4395,7 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax )
+void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int width, float* hlmax )
 {
 
     if (method == "Luminance") {
@@ -4300,21 +4415,21 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
 
 void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 {
-BENCHFUN
+//    BENCHFUN
     histcompr = 3;
 
     histogram(65536 >> histcompr);
     histogram.clear();
-    const float refwb[3] = {static_cast<float>(refwb_red),static_cast<float>(refwb_green),static_cast<float>(refwb_blue)};
+    const float refwb[3] = {static_cast<float>(refwb_red  / (1 << histcompr)), static_cast<float>(refwb_green / (1 << histcompr)), static_cast<float>(refwb_blue / (1 << histcompr))};
 
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        LUTu tmphistogram(65536 >> histcompr);
+        LUTu tmphistogram(histogram.getSize());
         tmphistogram.clear();
 #ifdef _OPENMP
-        #pragma omp for nowait
+        #pragma omp for schedule(dynamic,16) nowait
 #endif
 
         for (int i = border; i < H - border; i++) {
@@ -4322,22 +4437,50 @@ BENCHFUN
             getRowStartEnd (i, start, end);
 
             if (ri->getSensorType() == ST_BAYER) {
-                for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb[ri->FC(i,j)] * rawData[i][j]) >> histcompr] += 4;
+                // precalculate factors to avoid expensive per pixel calculations
+                float refwb0 =  refwb[ri->FC(i, start)];
+                float refwb1 =  refwb[ri->FC(i, start + 1)];
+                int j;
+
+                for (j = start; j < end - 1; j += 2) {
+                    tmphistogram[(int)(refwb0 * rawData[i][j])] += 4;
+                    tmphistogram[(int)(refwb1 * rawData[i][j + 1])] += 4;
+                }
+
+                if(j < end) {
+                    tmphistogram[(int)(refwb0 * rawData[i][j])] += 4;
                 }
             } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-                for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb[ri->XTRANSFC(i,j)] * rawData[i][j]) >> histcompr] += 4;
+                // precalculate factors to avoid expensive per pixel calculations
+                float refwb0 =  refwb[ri->XTRANSFC(i, start)];
+                float refwb1 =  refwb[ri->XTRANSFC(i, start + 1)];
+                float refwb2 =  refwb[ri->XTRANSFC(i, start + 2)];
+                float refwb3 =  refwb[ri->XTRANSFC(i, start + 3)];
+                float refwb4 =  refwb[ri->XTRANSFC(i, start + 4)];
+                float refwb5 =  refwb[ri->XTRANSFC(i, start + 5)];
+                int j;
+
+                for (j = start; j < end - 5; j += 6) {
+                    tmphistogram[(int)(refwb0 * rawData[i][j])] += 4;
+                    tmphistogram[(int)(refwb1 * rawData[i][j + 1])] += 4;
+                    tmphistogram[(int)(refwb2 * rawData[i][j + 2])] += 4;
+                    tmphistogram[(int)(refwb3 * rawData[i][j + 3])] += 4;
+                    tmphistogram[(int)(refwb4 * rawData[i][j + 4])] += 4;
+                    tmphistogram[(int)(refwb5 * rawData[i][j + 5])] += 4;
+                }
+
+                for (; j < end; j++) {
+                    tmphistogram[(int)(refwb[ri->XTRANSFC(i, j)] * rawData[i][j])] += 4;
                 }
             } else if (ri->get_colors() == 1) {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[(int)(refwb_red *  rawData[i][j]) >> histcompr]++;
+                    tmphistogram[(int)(refwb_red *  rawData[i][j])]++;
                 }
             } else {
                 for (int j = start; j < end; j++) {
-                    tmphistogram[CLIP((int)(refwb_red *  rawData[i][3 * j + 0])) >> histcompr]++;
-                    tmphistogram[CLIP((int)(refwb_green * rawData[i][3 * j + 1])) >> histcompr] += 2;
-                    tmphistogram[CLIP((int)(refwb_blue * rawData[i][3 * j + 2])) >> histcompr]++;
+                    tmphistogram[CLIP((int)(refwb_red *  rawData[i][3 * j + 0]))]++;
+                    tmphistogram[CLIP((int)(refwb_green * rawData[i][3 * j + 1]))] += 2;
+                    tmphistogram[CLIP((int)(refwb_blue * rawData[i][3 * j + 2]))]++;
                 }
             }
         }
@@ -4354,7 +4497,7 @@ BENCHFUN
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
 {
-BENCHFUN
+//    BENCHFUN
     histRedRaw.clear();
     histGreenRaw.clear();
     histBlueRaw.clear();
@@ -4364,25 +4507,28 @@ BENCHFUN
                             65535.0f / ri->get_white(3)
                           };
 
-    const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0,0) == 3 || FC(0,1) == 3 || FC(1,0) == 3 || FC(1,1) == 3);
+    const bool fourColours = ri->getSensorType() == ST_BAYER && ((mult[1] != mult[3] || cblacksom[1] != cblacksom[3]) || FC(0, 0) == 3 || FC(0, 1) == 3 || FC(1, 0) == 3 || FC(1, 1) == 3);
 
+    constexpr int histoSize = 65536;
     LUTu hist[4];
-    hist[0](65536);
+    hist[0](histoSize);
     hist[0].clear();
+
     if (ri->get_colors() > 1) {
-        hist[1](65536);
+        hist[1](histoSize);
         hist[1].clear();
-        hist[2](65536);
+        hist[2](histoSize);
         hist[2].clear();
     }
+
     if (fourColours) {
-        hist[3](65536);
+        hist[3](histoSize);
         hist[3].clear();
     }
 
 #ifdef _OPENMP
     int numThreads;
-    // reduce the number of threads under certain conditions to avoid overhaed of too many critical regions
+    // reduce the number of threads under certain conditions to avoid overhead of too many critical regions
     numThreads = sqrt((((H - 2 * border) * (W - 2 * border)) / 262144.f));
     numThreads = std::min(std::max(numThreads, 1), omp_get_max_threads());
 
@@ -4391,18 +4537,21 @@ BENCHFUN
     {
         // we need one LUT per color and thread, which corresponds to 1 MB per thread
         LUTu tmphist[4];
-        tmphist[0](65536);
+        tmphist[0](histoSize);
         tmphist[0].clear();
+
         if (ri->get_colors() > 1) {
-            tmphist[1](65536);
+            tmphist[1](histoSize);
             tmphist[1].clear();
-            tmphist[2](65536);
+            tmphist[2](histoSize);
             tmphist[2].clear();
+
             if (fourColours) {
-                tmphist[3](65536);
+                tmphist[3](histoSize);
                 tmphist[3].clear();
             }
         }
+
 #ifdef _OPENMP
         #pragma omp for nowait
 #endif
@@ -4449,9 +4598,11 @@ BENCHFUN
 #endif
         {
             hist[0] += tmphist[0];
+
             if (ri->get_colors() > 1) {
                 hist[1] += tmphist[1];
                 hist[2] += tmphist[2];
+
                 if (fourColours) {
                     hist[3] += tmphist[3];
                 }
@@ -4463,13 +4614,16 @@ BENCHFUN
         int idx;
         idx = CLIP((int)Color::gamma(mult[0] * (i - (cblacksom[0]/*+black_lev[0]*/))));
         histRedRaw[idx >> 8] += hist[0][i];
+
         if (ri->get_colors() > 1) {
             idx = CLIP((int)Color::gamma(mult[1] * (i - (cblacksom[1]/*+black_lev[1]*/))));
             histGreenRaw[idx >> 8] += hist[1][i];
+
             if (fourColours) {
                 idx = CLIP((int)Color::gamma(mult[3] * (i - (cblacksom[3]/*+black_lev[3]*/))));
                 histGreenRaw[idx >> 8] += hist[3][i];
             }
+
             idx = CLIP((int)Color::gamma(mult[2] * (i - (cblacksom[2]/*+black_lev[2]*/))));
             histBlueRaw[idx >> 8] += hist[2][i];
         }
@@ -4507,8 +4661,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 {
-    BENCHFUN
+//    BENCHFUN
     constexpr double clipHigh = 64000.0;
+
     if (ri->get_colors() == 1) {
         rm = gm = bm = 1;
         return;
@@ -4588,6 +4743,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 #ifdef _OPENMP
                     #pragma omp for schedule(dynamic,16) nowait
 #endif
+
                     for (int i = 32; i < H - 32; i++) {
                         for (int j = 32; j < W - 32; j++) {
                             // each loop read 1 rgb triplet value
@@ -5070,11 +5226,4 @@ void RawImageSource::cleanup ()
     delete phaseOneIccCurveInv;
 }
 
-#undef PIX_SORT
-#undef med3x3
-
 } /* namespace */
-
-#undef PIX_SORT
-#undef med3x3
-

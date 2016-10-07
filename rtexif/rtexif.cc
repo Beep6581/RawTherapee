@@ -336,7 +336,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
     return true;
 }
 
-Glib::ustring TagDirectory::getDumpKey (int tagID, const Glib::ustring tagName)
+Glib::ustring TagDirectory::getDumpKey (int tagID, const Glib::ustring &tagName)
 {
     Glib::ustring key;
 
@@ -1553,11 +1553,11 @@ void Tag::toString (char* buffer, int ofs)
             break;
 
         case SLONG:
-            sprintf (b, "%ld", (long)toInt(4 * i + ofs));
+            sprintf (b, "%d", toInt(4 * i + ofs));
             break;
 
         case LONG:
-            sprintf (b, "%lu", (unsigned long)toInt(4 * i + ofs));
+            sprintf (b, "%u", toInt(4 * i + ofs));
             break;
 
         case SRATIONAL:
@@ -2792,6 +2792,7 @@ TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored)
 
 std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 {
+
     std::vector<Tag*> defTags;
 
     defTags.reserve (12);
@@ -2800,7 +2801,7 @@ std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "XResolution"), 300, RATIONAL));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "YResolution"), 300, RATIONAL));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "ResolutionUnit"), 2, SHORT));
-    defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Software"), "RawTherapee"));
+    defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Software"), "RawTherapee " VERSION));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Orientation"), 1, SHORT));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "SamplesPerPixel"), 3, SHORT));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "BitsPerSample"), 8, SHORT));
@@ -2840,7 +2841,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
         cl = new TagDirectory (NULL, ifdAttribs, INTEL);
     }
 
-    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); i++) {
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
         cl->applyChange (i->first, i->second);
     }
 
@@ -2864,7 +2865,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     return size + 6;
 }
 
-int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer)
+int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
 {
 
 // write tiff header
@@ -2875,17 +2876,17 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
         order = root->getOrder ();
     }
 
-    sset2 ((unsigned short)order, buffer + offs, order);
-    offs += 2;
-    sset2 (42, buffer + offs, order);
-    offs += 2;
-    sset4 (8, buffer + offs, order);
-    offs += 4;
-
     TagDirectory* cl;
 
     if (root) {
         cl = (const_cast<TagDirectory*>(root))->clone (NULL);
+        // remove some unknown top level tags which produce warnings when opening a tiff
+        Tag *removeTag = cl->getTag(0x9003);
+        if(removeTag)
+            removeTag->setKeep(false);
+        removeTag = cl->getTag(0x9211);
+        if(removeTag)
+            removeTag->setKeep(false);
     } else {
         cl = new TagDirectory (NULL, ifdAttribs, HOSTORDER);
     }
@@ -2926,7 +2927,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     }
 
 // apply list of changes
-    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); i++) {
+    for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
         cl->applyChange (i->first, i->second);
     }
 
@@ -2956,6 +2957,15 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     }
 
     cl->sort ();
+    bufferSize = cl->calculateSize() + 8;
+    buffer = new unsigned char[bufferSize]; // this has to be deleted in caller
+    sset2 ((unsigned short)order, buffer + offs, order);
+    offs += 2;
+    sset2 (42, buffer + offs, order);
+    offs += 2;
+    sset4 (8, buffer + offs, order);
+    offs += 4;
+
     int endOffs = cl->write (8, buffer);
 
 //  cl->printAll();

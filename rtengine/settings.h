@@ -56,6 +56,7 @@ public:
     Glib::ustring   bruce;                  // default name of Bruce
     Glib::ustring   srgb;                   // default name of SRGB space profile
     Glib::ustring   srgb10;                 // default name of SRGB space profile
+    Glib::ustring   rec2020;                   // default name of rec2020
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
@@ -70,7 +71,7 @@ public:
     int             nrwavlevel;
     bool            daubech;
     bool            ciebadpixgauss;
-    int             CRI_color; // N� for display Lab value  ; 0 disabled
+    int             CRI_color; // Number for display Lab value; 0 = disabled
     int             denoiselabgamma; // 0=gamma 26 11   1=gamma 40 5  2 =gamma 55 10
     //  double          colortoningab; //
     //  double          decaction;

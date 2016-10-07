@@ -129,14 +129,13 @@ public:
 
     // look-up tables for the standard srgb gamma and its inverse (filled by init())
     static LUTf igammatab_srgb;
+    static LUTf igammatab_srgb1;
     static LUTf gammatab_srgb;
-    static LUTf igammatab_55;
-    static LUTf gammatab_55;
-    static LUTf igammatab_4;
-    static LUTf gammatab_4;
+    static LUTf gammatab_srgb1;
 
-    static LUTf igammatab_26_11;
-    static LUTf gammatab_26_11;
+    static LUTf denoiseGammaTab;
+    static LUTf denoiseIGammaTab;
+
     static LUTf igammatab_24_17;
     static LUTf gammatab_24_17a;
     static LUTf gammatab_13_2;
@@ -229,6 +228,55 @@ public:
     */
     static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
 
+    static inline float rgb2s(float r, float g, float b) // fast version if only saturation is needed
+    {
+        float var_Min = min(r, g, b);
+        float var_Max = max(r, g, b);
+        float del_Max = var_Max - var_Min;
+
+        if (del_Max < 0.00001f) {
+            return 0.f;
+        } else {
+            return del_Max / var_Max;
+        }
+    }
+
+    static inline bool rgb2hsvdcp(float r, float g, float b, float &h, float &s, float &v)
+    {
+
+        float var_Min = min(r, g, b);
+
+        if(var_Min < 0.f) {
+            return false;
+        } else {
+            float var_Max = max(r, g, b);
+            float del_Max = var_Max - var_Min;
+            v = var_Max / 65535.f;
+
+            if (fabsf(del_Max) < 0.00001f) {
+                h = 0.f;
+                s = 0.f;
+            } else {
+                s = del_Max / var_Max;
+
+                if ( r == var_Max ) {
+                    h = (g - b) / del_Max;
+                } else if ( g == var_Max ) {
+                    h = 2.f + (b - r) / del_Max;
+                } else { /*if ( b == var_Max ) */
+                    h = 4.f + (r - g) / del_Max;
+                }
+
+                if ( h < 0.f ) {
+                    h += 6.f;
+                } else if ( h > 6.f ) {
+                    h -= 6.f;
+                }
+            }
+
+            return true;
+        }
+    }
 
     /**
     * @brief Convert hue saturation value in red green blue
@@ -240,6 +288,57 @@ public:
     * @param b blue channel [0 ; 65535] (return value)
     */
     static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
+
+    static inline void hsv2rgbdcp (float h, float s, float v, float &r, float &g, float &b)
+    {
+        // special version for dcp which saves 1 division (in caller) and six multiplications (inside this function)
+        int sector = h;  // sector 0 to 5, floor() is very slow, and h is always >0
+        float f = h - sector; // fractional part of h
+
+        v *= 65535.f;
+        float vs = v * s;
+        float p = v - vs;
+        float q = v - f * vs;
+        float t = p + v - q;
+
+        switch (sector) {
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+
+            case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
+
+            default:
+                r = v;
+                g = t;
+                b = p;
+        }
+    }
+
     static void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
 
 
@@ -306,6 +405,7 @@ public:
     * @param rgb_xyz[3][3] transformation matrix to use for the conversion
     */
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]);
+    static void xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]);
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
 #ifdef __SSE2__
     static void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3]);
@@ -325,7 +425,9 @@ public:
     */
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]);
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3]);
-
+#ifdef __SSE2__
+    static void rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3]);
+#endif
 
     /**
     * @brief Convert Lab in xyz
@@ -337,6 +439,7 @@ public:
     * @param z Z coordinate [0 ; 65535] ; can be negative! (return value)
     */
     static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
+    static void L2XYZ(float L, float &x, float &y, float &z);
 
 #ifdef __SSE2__
     static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
@@ -788,6 +891,9 @@ public:
     * @param gammabwb gamma value for red channel [>0]
     */
     static void trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb);
+#ifdef __SSE2__
+    static void trcGammaBWRow (float *r, float *g, float *b, int width, float gammabwr, float gammabwg, float gammabwb);
+#endif
 
 
     /** @brief Compute the B&W constants for the Black and White processing and its GUI
@@ -1000,6 +1106,15 @@ public:
     {
         return (x <= start ? x*slope : exp(log(x) / gamma) * mul - add);
     }
+
+    static inline float gammaf      (float x, float gamma, float start, float slope)
+    {
+        return x <= start ? x * slope : xexpf(xlogf(x) / gamma);
+    }
+
+    //fills a LUT of size 65536 using gamma with slope...
+    static void gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor);
+
     static inline double igamma     (double x, double gamma, double start, double slope, double mul, double add)
     {
         return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
@@ -1014,7 +1129,7 @@ public:
     */
     static inline double gamman      (double x, double gamma)           //standard gamma without slope...
     {
-        return (x = exp(log(x) / gamma));
+        return exp(log(x) / gamma);
     }
 
     /**
@@ -1025,9 +1140,10 @@ public:
     */
     static inline float gammanf      (float x, float gamma)           //standard gamma without slope...
     {
-        return (x = xexpf(xlogf(x) / gamma));
+        return xexpf(xlogf(x) / gamma);
     }
-
+    //fills a LUT of size 65536 using gamma without slope...
+    static void gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float factor);
 
     /**
     * @brief Very simply inverse gamma
@@ -1037,7 +1153,7 @@ public:
     */
     static inline double igamman     (double x, double gamma)           //standard inverse gamma without slope...
     {
-        return (x = exp(log(x) * gamma) );
+        return exp(log(x) * gamma);
     }
 
 
@@ -1076,6 +1192,10 @@ public:
     static inline float  gamma_srgb       (float x)
     {
         return gammatab_srgb[x];
+    }
+    static inline float  gamma_srgbclipped       (float x)
+    {
+        return gamma2curve[x];
     }
     static inline float  gamma            (float x)
     {
