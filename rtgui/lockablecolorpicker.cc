@@ -38,8 +38,8 @@ void LockableColorPicker::updateBackBuffer ()
     int newW, newH;
 
     // -------------------- setting some key constants ---------------------
-    const float circlePadding = 3.f;  // keep this value odd
-    const double opacity = 0.62;
+    constexpr float circlePadding = 3.f;  // keep this value odd
+    constexpr double opacity = 0.62;
     // ---------------------------------------------------------------------
 
     if (validity == Validity::INSIDE) {
@@ -98,7 +98,7 @@ void LockableColorPicker::updateBackBuffer ()
         int maxHRow2 = rtengine::max(h20, h21);
 
         // -------------------- setting some key constants ---------------------
-        const int textPadding = 3;
+        constexpr int textPadding = 3;
         const int textWidth = maxWCol0 + maxWCol1 + textPadding;
         const int textHeight = maxHRow0 + maxHRow1 + maxHRow2 + 2*textPadding;
         // ---------------------------------------------------------------------
@@ -334,7 +334,7 @@ LockableColorPicker::Size LockableColorPicker::getSize ()
 void LockableColorPicker::rollDisplayedValues ()
 {
     if (displayedValues < ColorPickerType::LAB) {
-        displayedValues = (ColorPickerType)((int)displayedValues + 1);
+        displayedValues = (ColorPickerType)(rtengine::toUnderlying(displayedValues) + 1);
     } else {
         displayedValues = ColorPickerType::RGB;
     }
@@ -345,7 +345,7 @@ void LockableColorPicker::rollDisplayedValues ()
 bool LockableColorPicker::incSize ()
 {
     if (size < Size::S30) {
-        size = (Size)((int)size + 5);
+        size = (Size)(rtengine::toUnderlying(size) + 5);
         setDirty(true);
         return true;
     }
@@ -355,7 +355,7 @@ bool LockableColorPicker::incSize ()
 bool LockableColorPicker::decSize ()
 {
     if (size > Size::S5) {
-        size = (Size)((int)size - 5);
+        size = (Size)(rtengine::toUnderlying(size) - 5);
         setDirty(true);
         return true;
     }
