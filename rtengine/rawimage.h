@@ -20,8 +20,10 @@
 #define __RAWIMAGE_H
 
 #include <ctime>
+
 #include "dcraw.h"
 #include "imageio.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
@@ -32,7 +34,8 @@ struct badPix {
     badPix( uint16_t xc, uint16_t yc ): x(xc), y(yc) {}
 };
 
-class PixelsMap
+class PixelsMap :
+    public NonCopyable
 {
     int w; // line width in base_t units
     int h; // height
@@ -48,8 +51,6 @@ public:
         pm = new base_t [h * w ];
         memset(pm, 0, h * w * base_t_size );
     }
-
-    PixelsMap(const PixelsMap&) = delete;
 
     ~PixelsMap()
     {

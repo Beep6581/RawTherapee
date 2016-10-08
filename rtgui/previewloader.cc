@@ -29,7 +29,8 @@
 #define DEBUG(format,args...)
 //#define DEBUG(format,args...) printf("PreviewLoader::%s: " format "\n", __FUNCTION__, ## args)
 
-class PreviewLoader::Impl
+class PreviewLoader::Impl :
+    public rtengine::NonCopyable
 {
 public:
     struct Job {
@@ -80,8 +81,6 @@ public:
 
         threadPool_ = new Glib::ThreadPool(threadCount, 0);
     }
-
-    Impl(const Impl&) = delete;
 
     Glib::ThreadPool* threadPool_;
     MyMutex mutex_;

@@ -50,17 +50,19 @@ My email address is my screen name followed by @yahoo.com. I'm also known as ben
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
 #include "opthelper.h"
+#include "noncopyable.h"
 
 //This is for solving big symmetric positive definite linear problems.
 float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b = true, float *x = NULL, float RMSResidual = 0.0f, void *Pass = NULL, int MaximumIterates = 0, void Preconditioner(float *Product, float *x, void *Pass) = NULL);
 
 //Storage and use class for symmetric matrices, the nonzero contents of which are confined to diagonals.
-class MultiDiagonalSymmetricMatrix
+class MultiDiagonalSymmetricMatrix :
+    public rtengine::NonCopyable
 {
 public:
     MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle);
-    MultiDiagonalSymmetricMatrix(const MultiDiagonalSymmetricMatrix&) = delete;
     ~MultiDiagonalSymmetricMatrix();
 
     /* Storage of matrix data, and a function to create memory for Diagonals[index].
@@ -115,11 +117,11 @@ public:
 
 };
 
-class EdgePreservingDecomposition
+class EdgePreservingDecomposition :
+    public rtengine::NonCopyable
 {
 public:
     EdgePreservingDecomposition(int width, int height);
-    EdgePreservingDecomposition(const EdgePreservingDecomposition&) = delete;
     ~EdgePreservingDecomposition();
 
     //Create an edge preserving blur of Source. Will create and return, or fill into Blur if not NULL. In place not ok.

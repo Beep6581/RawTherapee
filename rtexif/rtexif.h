@@ -28,7 +28,9 @@
 #include <cstdlib>
 #include <cmath>
 #include <glibmm.h>
+
 #include "../rtengine/procparams.h"
+#include "../rtengine/noncopyable.h"
 
 class CacheImageData;
 
@@ -178,7 +180,8 @@ public:
 };
 
 // a class representing a single tag
-class Tag
+class Tag :
+    public rtengine::NonCopyable
 {
 
 protected:
@@ -202,7 +205,6 @@ public:
     Tag (TagDirectory* parent, const TagAttrib* attr, unsigned char *data, TagType t);
     Tag (TagDirectory* parent, const TagAttrib* attr, int data, TagType t);  // create a new tag from array (used
     Tag (TagDirectory* parent, const TagAttrib* attr, const char* data);  // create a new tag from array (used
-    Tag(const Tag&) = delete;
 
     ~Tag ();
     void initType       (unsigned char *data, TagType type);

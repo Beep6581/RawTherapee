@@ -19,11 +19,13 @@
 #ifndef _PROCPARAMS_H_
 #define _PROCPARAMS_H_
 
-#include <glibmm.h>
 #include <vector>
 #include <cstdio>
 #include <cmath>
+
+#include <glibmm.h>
 #include <lcms2.h>
+
 #include "LUT.h"
 #include "coord.h"
 
@@ -1363,7 +1365,7 @@ class PartialProfile
 public:
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;
-    PartialProfile& operator=(PartialProfile& rhs)
+    PartialProfile& operator =(const PartialProfile& rhs)
     {
         pparams = rhs.pparams;
         pedited = rhs.pedited;
