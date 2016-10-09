@@ -353,7 +353,8 @@ void HistogramPanel::toggle_button_full ()
 //
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
-    frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false)
+    val(0), r(0), g(0), b(0), frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false),
+    showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(nullptr)
 {
 
     harih = new HistogramRGBAreaIdleHelper;

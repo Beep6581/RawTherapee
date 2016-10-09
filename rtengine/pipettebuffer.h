@@ -50,7 +50,7 @@ protected:
     void flush();
 
 public:
-    PipetteBuffer(::EditDataProvider *dataProvider);
+    explicit PipetteBuffer(::EditDataProvider *dataProvider);
     ~PipetteBuffer();
 
     /** @brief Getter to know if the pipette buffer is correctly filled */

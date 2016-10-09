@@ -119,7 +119,6 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     getTextSizes (infow, infoh);
 
     int iofs_x = 4, iofs_y = 4;
-    int igap = 2;
     int istartx = prex;
     int istarty = prey;
 
@@ -141,6 +140,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     istarty += iofs_y;
 
     if (!bbIcons.empty()) {
+        int igap = 2;
         int iwidth = 0;
         int iheight = 0;
 
@@ -251,7 +251,6 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
                 fn->set_width (textw * Pango::SCALE);
                 fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
                 backBuffer->draw_layout (gc_, textposx_ex, textposy + tpos, fn);
-                tpos += exlabh;
             }
         }
     }

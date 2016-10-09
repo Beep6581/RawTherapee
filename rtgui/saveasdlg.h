@@ -45,7 +45,7 @@ protected:
     void  putToQueueClicked ();
 
 public:
-    SaveAsDialog (Glib::ustring initialDir);
+    explicit SaveAsDialog (const Glib::ustring &initialDir);
 
     Glib::ustring   getFileName        ();
     Glib::ustring   getDirectory       ();

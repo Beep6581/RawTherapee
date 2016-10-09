@@ -47,7 +47,7 @@ protected:
     Gtk::Image* iBC2, *igBC2;
 
 public:
-    PreviewModePanel (ImageArea* ia);
+    explicit PreviewModePanel (ImageArea* ia);
     ~PreviewModePanel();
 
     void toggleR ();

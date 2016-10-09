@@ -22,15 +22,17 @@
 #define CPLX_WAVELET_DEC_H_INCLUDED
 
 #include <cstddef>
-#include <math.h>
+#include <cmath>
 
 #include "cplx_wavelet_level.h"
 #include "cplx_wavelet_filter_coeffs.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
 
-class wavelet_decomposition
+class wavelet_decomposition :
+    public NonCopyable
 {
 public:
 

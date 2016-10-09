@@ -187,7 +187,7 @@ public:
     {
         return pparams.inTrash;
     }
-    void            setStage (int stage)
+    void            setStage (bool stage)
     {
         if (pparams.inTrash != stage) {
             pparams.inTrash = stage;

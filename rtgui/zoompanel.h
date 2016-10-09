@@ -38,7 +38,7 @@ protected:
 
 public:
 
-    ZoomPanel (ImageArea* iarea);
+    explicit ZoomPanel (ImageArea* iarea);
 
     void zoomInClicked      ();
     void zoomOutClicked     ();

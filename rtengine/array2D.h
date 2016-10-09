@@ -66,8 +66,11 @@
 #include <cstring>
 #include <cstdio>
 
+#include "noncopyable.h"
+
 template<typename T>
-class array2D
+class array2D :
+    public rtengine::NonCopyable
 {
 
 private:

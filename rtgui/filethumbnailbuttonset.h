@@ -44,7 +44,7 @@ public:
     static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_4;
     static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_5;
 
-    FileThumbnailButtonSet (FileBrowserEntry* myEntry);
+    explicit FileThumbnailButtonSet (FileBrowserEntry* myEntry);
     void    setRank (int stars);
     void    setColorLabel (int colorlabel);
     void    setInTrash (bool inTrash);

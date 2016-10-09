@@ -1911,12 +1911,12 @@ public:
     PAAFPointSelectedInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        const char *ps[] = {"Upper-left", "Top", "Upper-right", "Left", "Mid-left", "Center", "Mid-right", "Right", "Lower-left", "Bottom", "Lower-right"};
         int c = t->toInt(0, SHORT);
 
         if( !c ) {
             return "Auto";
         } else {
+            const char *ps[] = {"Upper-left", "Top", "Upper-right", "Left", "Mid-left", "Center", "Mid-right", "Right", "Lower-left", "Bottom", "Lower-right"};
             for( int iBit = 0; iBit < 11; iBit++)
                 if( c & (1 << iBit) ) {
                     return ps[iBit];

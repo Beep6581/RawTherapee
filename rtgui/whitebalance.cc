@@ -104,14 +104,13 @@ static double wbTemp2Slider(double temp)
         const double slope = (double)(CENTERTEMP - MINTEMP) / (MAXTEMP - CENTERTEMP);
         const double y = (temp - CENTERTEMP) / (MAXTEMP - CENTERTEMP);
         double x = pow(y, 0.25); // rough guess of x, will be a little lower
-        double y1;
         double k = 0.1;
         bool add = true;
 
         // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
         // from tests, worst case is about 20 iterations, ie no problem
         for (;;) {
-            y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
+            double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
 
             if (5000 * fabs(y1 - y) < 0.1) {
                 break;

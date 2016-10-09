@@ -230,7 +230,7 @@ protected:
     Gtk::Widget* getSoundPanel ();
 
 public:
-    Preferences (RTWindow *rtwindow);
+    explicit Preferences (RTWindow *rtwindow);
     ~Preferences ();
 
     void savePressed ();

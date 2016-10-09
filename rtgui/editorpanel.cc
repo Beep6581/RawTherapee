@@ -156,7 +156,7 @@ private:
     }
 
 public:
-    MonitorProfileSelector (rtengine::StagedImageProcessor* const& ipc) :
+    explicit MonitorProfileSelector (rtengine::StagedImageProcessor* const& ipc) :
         intentBox (Glib::ustring (), true),
         processor (ipc)
     {

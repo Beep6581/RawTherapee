@@ -487,13 +487,13 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
         untrash->set_sensitive (false);
 
         for (size_t i = 0; i < selected.size(); i++)
-            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage() == 1) {
+            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
                 untrash->set_sensitive (true);
                 break;
             }
 
         for (size_t i = 0; i < selected.size(); i++)
-            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage() == 0) {
+            if (!(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
                 trash->set_sensitive (true);
                 break;
             }
@@ -512,7 +512,6 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
     submenuDF->attach (*Gtk::manage(autoDF = new Gtk::MenuItem (M("FILEBROWSER_AUTODARKFRAME"))), 0, 1, p, p + 1);
     p++;
     submenuDF->attach (*Gtk::manage(thisIsDF = new Gtk::MenuItem (M("FILEBROWSER_MOVETODARKFDIR"))), 0, 1, p, p + 1);
-    p++;
     selectDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectDF));
     autoDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoDF));
     thisIsDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), thisIsDF ));
@@ -527,7 +526,6 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
     submenuFF->attach (*Gtk::manage(autoFF = new Gtk::MenuItem (M("FILEBROWSER_AUTOFLATFIELD"))), 0, 1, p, p + 1);
     p++;
     submenuFF->attach (*Gtk::manage(thisIsFF = new Gtk::MenuItem (M("FILEBROWSER_MOVETOFLATFIELDDIR"))), 0, 1, p, p + 1);
-    p++;
     selectFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectFF));
     autoFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoFF));
     thisIsFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), thisIsFF ));
@@ -612,7 +610,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     entry->addButtonSet (new FileThumbnailButtonSet (entry));
     entry->getThumbButtonSet()->setRank (entry->thumbnail->getRank());
     entry->getThumbButtonSet()->setColorLabel (entry->thumbnail->getColorLabel());
-    entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage() == 1);
+    entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage());
     entry->getThumbButtonSet()->setButtonListener (this);
     entry->resize (getThumbnailHeight());
 
@@ -1134,8 +1132,9 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     bool ctrl  = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
     bool alt   = event->state & GDK_MOD1_MASK;
+#ifdef __WIN32__
     bool altgr = event->state & GDK_MOD2_MASK;
-
+#endif
     if ((event->keyval == GDK_C || event->keyval == GDK_c || event->keyval == GDK_Insert) && ctrl) {
         copyProfile ();
         return true;
@@ -1474,8 +1473,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
             ((entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[0]) && !filter.showRecentlySaved[1]) ||
             ((!entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[1]) && !filter.showRecentlySaved[0]) ||
 
-            (entry->thumbnail->getStage() == 1 && !filter.showTrash) ||
-            (entry->thumbnail->getStage() == 0 && !filter.showNotTrash)) {
+            (entry->thumbnail->getStage() && !filter.showTrash) ||
+            (!entry->thumbnail->getStage() && !filter.showNotTrash)) {
         return false;
     }
 
@@ -1568,11 +1567,11 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
         // no need to notify listeners as item goes to trash, likely to be deleted
 
-        if (tbe[i]->thumbnail->getStage() == 1) {
+        if (tbe[i]->thumbnail->getStage()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (1);
+        tbe[i]->thumbnail->setStage (true);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1592,11 +1591,11 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
     for (size_t i = 0; i < tbe.size(); i++) {
         // if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
 
-        if (tbe[i]->thumbnail->getStage() == 0) {
+        if (!tbe[i]->thumbnail->getStage()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (0);
+        tbe[i]->thumbnail->setStage (false);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1715,7 +1714,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
         FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(actionData);
         tbe.push_back (entry);
 
-        if (entry->thumbnail->getStage() == 0) {
+        if (!entry->thumbnail->getStage()) {
             toTrashRequested (tbe);
         } else {
             fromTrashRequested (tbe);

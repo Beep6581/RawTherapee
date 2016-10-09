@@ -67,13 +67,16 @@ ben_s or nonbasketless. Enjoy!
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
 #include "opthelper.h"
+#include "noncopyable.h"
 
 //This is for solving big symmetric positive definite linear problems.
 float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b = true, float *x = NULL, float RMSResidual = 0.0f, void *Pass = NULL, int MaximumIterates = 0, void Preconditioner(float *Product, float *x, void *Pass) = NULL);
 
 //Storage and use class for symmetric matrices, the nonzero contents of which are confined to diagonals.
-class MultiDiagonalSymmetricMatrix
+class MultiDiagonalSymmetricMatrix :
+    public rtengine::NonCopyable
 {
 public:
     MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle);
@@ -131,7 +134,8 @@ public:
 
 };
 
-class EdgePreservingDecomposition
+class EdgePreservingDecomposition :
+    public rtengine::NonCopyable
 {
 public:
     EdgePreservingDecomposition(int width, int height);

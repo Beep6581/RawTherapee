@@ -4395,7 +4395,7 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int width, float* hlmax )
+void RawImageSource::hlRecovery (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax )
 {
 
     if (method == "Luminance") {
@@ -4403,8 +4403,6 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
     } else if (method == "CIELab blending") {
         HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, imatrices.xyz_cam, imatrices.cam_xyz);
     }
-    /*else if (method=="Color")
-        HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);*/
     else if (method == "Blend") { // derived from Dcraw
         HLRecovery_blend(red, green, blue, width, 65535.0, hlmax);
     }

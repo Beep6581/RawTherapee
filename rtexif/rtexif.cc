@@ -207,13 +207,11 @@ void TagDirectory::printAll (unsigned int level) const
     for (size_t i = 0; i < tags.size(); i++) {
         std::string name = tags[i]->nameToString ();
 
-        if (tags[i]->isDirectory())
+        if (tags[i]->isDirectory()) {
             for (int j = 0; tags[i]->getDirectory(j); j++) {
                 printf ("%s+-- DIRECTORY %s[%d]:\n", prefixStr, name.c_str(), j);
                 tags[i]->getDirectory(j)->printAll (level + 1);
             }
-        else {
-            std::string value = tags[i]->valueToString ();
         }
     }
 }
@@ -696,7 +694,7 @@ void TagDirectory::applyChange (std::string name, std::string value)
 }
 
 TagDirectoryTable::TagDirectoryTable ()
-    : zeroOffset(0), valuesSize(0)
+    : values(nullptr), zeroOffset(0), valuesSize(0), defaultType(INVALID)
 {
 }
 
@@ -1269,9 +1267,8 @@ Tag::~Tag ()
     }
 
     // if there are directories behind the tag, delete them
-    int i = 0;
-
     if (directory) {
+        int i = 0;
         while (directory[i]) {
             delete directory[i++];
         }
@@ -1600,11 +1597,10 @@ std::string Tag::nameToString (int i)
 std::string Tag::valueToString ()
 {
 
-    char buffer[1024];
-
     if (attrib && attrib->interpreter) {
         return attrib->interpreter->toString (this);
     } else {
+        char buffer[1024];
         toString (buffer);
         return buffer;
     }
@@ -2831,7 +2827,6 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     sset2 (42, buffer + offs, order);
     offs += 2;
     sset4 (8, buffer + offs, order);
-    offs += 4;
 
     TagDirectory* cl;
 
@@ -2964,7 +2959,6 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     sset2 (42, buffer + offs, order);
     offs += 2;
     sset4 (8, buffer + offs, order);
-    offs += 4;
 
     int endOffs = cl->write (8, buffer);
 

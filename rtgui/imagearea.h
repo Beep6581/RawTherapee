@@ -70,7 +70,7 @@ public:
     PreviewModePanel* previewModePanel;
     ImageArea* iLinkedImageArea; // used to set a reference to the Before image area, which is set when before/after view is enabled
 
-    ImageArea (ImageAreaPanel* p);
+    explicit ImageArea (ImageAreaPanel* p);
     ~ImageArea ();
 
     rtengine::StagedImageProcessor* getImProcCoordinator() const;
