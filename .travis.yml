@@ -32,6 +32,6 @@ before_install:
 before_script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DWITH_LTO="OFF" -DPROC_TARGET_NUMBER="2"
+  - cmake -DCMAKE_CXX_FLAGS="-std=c++11" -DWITH_LTO="OFF" -DPROC_TARGET_NUMBER="2" ..
 
 script: make
