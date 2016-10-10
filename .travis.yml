@@ -11,10 +11,9 @@ os:
 
 branches:
   only:
-  - travis
+  - master
 
 notifications:
-  email: false
   irc:
     channels:
     - "chat.freenode.net#rawtherapee"
