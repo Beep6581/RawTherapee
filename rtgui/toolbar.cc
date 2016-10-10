@@ -438,7 +438,7 @@ void ToolBar::crop_pressed ()
     bool cropWasBlocked = cropConn.block (true);
     bool wbWasBlocked = true, cpWasBlocked = true;
     if (colPickerTool) {
-        cpConn.block(true);
+        cpWasBlocked = cpConn.block(true);
     }
 
     if (wbTool) {
