@@ -90,7 +90,7 @@ void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, con
         bool softProofCreated = false;
 
         if (softProof) {
-            cmsHPROFILE oprof;
+            cmsHPROFILE oprof = nullptr;
             if(icm.gamma != "default" || icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
                 GammaValues ga;
                 iccStore->getGammaArray(icm, ga);
