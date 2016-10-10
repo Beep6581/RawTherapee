@@ -45,7 +45,7 @@ inline T median(std::array<T, N> array)
     std::nth_element(array.begin(), middle, array.end());
 
     return
-        N % 2
+        (N % 2)
             ? *middle
             : ((*middle + *std::max_element(array.begin(), middle)) / static_cast<T>(2));
 }
