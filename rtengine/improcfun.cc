@@ -6375,7 +6375,7 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w
         Qpro = maxQ;
     }
 
-    EdgePreservingDecomposition epd = EdgePreservingDecomposition(Wid, Hei);
+    EdgePreservingDecomposition epd(Wid, Hei);
 
     #pragma omp parallel for
 
@@ -6479,7 +6479,7 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
     float *a = lab->a[0];
     float *b = lab->b[0];
     unsigned int i, N = lab->W * lab->H;
-    EdgePreservingDecomposition epd = EdgePreservingDecomposition(lab->W, lab->H);
+    EdgePreservingDecomposition epd(lab->W, lab->H);
 
     //Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
     float minL = FLT_MAX;

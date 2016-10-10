@@ -27,6 +27,8 @@
 
 #include <glibmm/threads.h>
 
+#include "../rtengine/noncopyable.h"
+
 #if STRICT_MUTEX && NDEBUG
 using MyMutexBase = Glib::Threads::Mutex;
 #else
@@ -41,14 +43,12 @@ using MyMutexBase = Glib::Threads::RecMutex;
  * It will behave like Glib::Threads::RecMutex (STRICT_MUTEX=0) or Glib::Threads::Mutex (STRICT_MUTEX=1).
  * Debug builds with strict mutexes, will emit a message and crash immediately upon recursive locking.
  */
-class MyMutex : private MyMutexBase
+class MyMutex :
+    public rtengine::NonCopyable,
+    private MyMutexBase
 {
 public:
     class MyLock;
-
-    MyMutex () = default;
-    MyMutex (const MyMutex&) = delete;
-    MyMutex& operator= (const MyMutex&) = delete;
 
     void lock ();
     bool trylock ();
@@ -62,7 +62,8 @@ private:
 #endif
 };
 
-class MyMutex::MyLock
+class MyMutex::MyLock :
+    public rtengine::NonCopyable
 {
 public:
     explicit MyLock (MyMutex& mutex);
@@ -70,9 +71,6 @@ public:
     MyLock (MyMutex& mutex, Glib::Threads::TryLock);
 
     ~MyLock ();
-
-    MyLock (const MyLock&) = delete;
-    MyLock& operator= (const MyLock&) = delete;
 
     void acquire ();
     bool try_acquire ();
@@ -86,13 +84,10 @@ private:
 /**
  * @brief Custom implementation to replace Glib::Threads::RWLock
  */
-class MyRWMutex
+class MyRWMutex :
+    public rtengine::NonCopyable
 {
 public:
-    MyRWMutex () = default;
-    MyRWMutex (const MyRWMutex&) = delete;
-    MyRWMutex& operator= (const MyRWMutex&) = delete;
-
     friend class MyReaderLock;
     friend class MyWriterLock;
 
@@ -113,13 +108,11 @@ private:
 /**
  * @brief Custom implementation to replace Glib::Threads::RWLock::ReaderLock
  */
-class MyReaderLock
+class MyReaderLock :
+    public rtengine::NonCopyable
 {
 public:
     ~MyReaderLock ();
-
-    MyReaderLock (const MyReaderLock&) = delete;
-    MyReaderLock& operator= (const MyReaderLock&) = delete;
 
 #if !TRACE_MYRWMUTEX
     explicit MyReaderLock (MyRWMutex& mutex);
@@ -141,13 +134,11 @@ private:
 /**
  * @brief Custom implementation to replace Glib::Threads::RWLock::WriterLock
  */
-class MyWriterLock
+class MyWriterLock :
+    public rtengine::NonCopyable
 {
 public:
     ~MyWriterLock ();
-
-    MyWriterLock (const MyWriterLock&) = delete;
-    MyWriterLock& operator= (const MyWriterLock&) = delete;
 
 #if !TRACE_MYRWMUTEX
     explicit MyWriterLock (MyRWMutex& mutex);

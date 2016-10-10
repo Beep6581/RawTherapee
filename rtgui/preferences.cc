@@ -591,9 +591,10 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     rgbDenoiseTreadLimitSB->set_digits (0);
     rgbDenoiseTreadLimitSB->set_increments (1, 5);
     rgbDenoiseTreadLimitSB->set_max_length(2);  // Will this be sufficient? :)
-    int maxThreadNumber = 10;
 #ifdef _OPENMP
-    maxThreadNumber = omp_get_max_threads();
+    int maxThreadNumber = omp_get_max_threads();
+#else
+    int maxThreadNumber = 10;
 #endif
     rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
     threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 2);
@@ -914,6 +915,11 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->attach_next_to(*theme, *themelab, Gtk::POS_RIGHT, 1, 1);
     themeGrid->attach_next_to(*fontlab, *theme, Gtk::POS_RIGHT, 1, 1);
     themeGrid->attach_next_to(*fontbutton, *fontlab, Gtk::POS_RIGHT, 1, 1);
+    Gtk::Label* cpfontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT_COLPICKER") + ":") );
+    colorPickerFontButton = Gtk::manage( new Gtk::FontButton ());
+    colorPickerFontButton->set_use_size(true);
+    colorPickerFontButton->set_font_name(options.colorPickerFont);
+
 
     Gtk::Grid* cropcolorGrid = Gtk::manage( new Gtk::Grid () );
     cropcolorGrid->set_column_spacing(4);
@@ -1408,6 +1414,7 @@ void Preferences::storePreferences ()
     moptions.navGuideBrush[3] = butNavGuideCol->get_alpha() / 65535.0;
 
     moptions.font            = fontbutton->get_font_name();
+    moptions.colorPickerFont = colorPickerFontButton->get_font_name();
 #ifdef WIN32
     moptions.gimpDir        = gimpDir->get_filename ();
     moptions.psDir          = psDir->get_filename ();
@@ -1622,6 +1629,7 @@ void Preferences::fillPreferences ()
     butNavGuideCol->set_alpha ( (unsigned short)(moptions.navGuideBrush[3] * 65535.0));
 
     fontbutton->set_font_name(moptions.font);
+    colorPickerFontButton->set_font_name(moptions.colorPickerFont);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
     showExpComp->set_active (moptions.fbShowExpComp);

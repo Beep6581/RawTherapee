@@ -164,10 +164,10 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
 {
 
     bool fileFound = false;
-    unsigned int folder = 0; // folder's own Id
 
     // reload the available profiles from the profile dir
     if (!realPath.empty() && Glib::file_test(realPath, Glib::FILE_TEST_EXISTS) && Glib::file_test (realPath, Glib::FILE_TEST_IS_DIR)) {
+        unsigned int folder = 0; // folder's own Id
 
         // add this entry to the folder list
         folders.push_back(virtualPath);
@@ -488,7 +488,7 @@ void ProfileStore::dumpFolderList()
     printf("Folder list:\n------------\n");
 
     for (unsigned int i = 0; i < folders.size(); i++) {
-        printf(" #%3d - %s\n", i, folders.at(i).c_str());
+        printf(" #%3ud - %s\n", i, folders.at(i).c_str());
     }
 
     printf("\n");

@@ -1121,7 +1121,7 @@ void Retinex::gammaretinexChanged()
         if(gammaretinex->get_active_row_number() == 4) {
             gam->show();
             slope->show();
-        } else if(gammaretinex->get_active_row_number() != 4) {
+        } else /*if(gammaretinex->get_active_row_number() != 4)*/ {
             gam->hide();
             slope->hide();
         }

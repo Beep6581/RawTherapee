@@ -37,7 +37,7 @@ protected:
     std::vector<GradientMilestone> bgGradient;
 
 public:
-    ColoredBar (eRTOrientation orient);
+    explicit ColoredBar (eRTOrientation orient);
 
     void expose(Glib::RefPtr<Gdk::Window> destWindow);
     void expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface);

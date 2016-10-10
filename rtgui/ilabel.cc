@@ -18,7 +18,7 @@
  */
 #include "ilabel.h"
 
-ILabel::ILabel (Glib::ustring lab) : label(lab) {}
+ILabel::ILabel (const Glib::ustring &lab) : label(lab) {}
 
 void ILabel::on_realize()
 {

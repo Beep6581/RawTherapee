@@ -30,8 +30,8 @@
 #define DEBUG(format,args...)
 //#define DEBUG(format,args...) printf("ThumbImageUpdate::%s: " format "\n", __FUNCTION__, ## args)
 
-class
-    ThumbImageUpdater::Impl
+class ThumbImageUpdater::Impl :
+    public rtengine::NonCopyable
 {
 public:
 

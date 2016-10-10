@@ -1112,12 +1112,10 @@ bool DiagonalCurveEditorSubGroup::curveReset(CurveEditor *ce)
     case (DCT_NURBS) :  // = Control cage
         NURBSCurve->reset (dce->NURBSResetCurve, dce->getIdentityValue());
         return true;
-        break;
 
     case (DCT_Spline) : // = Custom
         customCurve->reset (dce->customResetCurve, dce->getIdentityValue());
         return true;
-        break;
 
     case (DCT_Parametric) : {
         DiagonalCurveEditor* dCurve = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
@@ -1132,12 +1130,10 @@ bool DiagonalCurveEditorSubGroup::curveReset(CurveEditor *ce)
         shcSelector->reset();
         paramCurve->reset (dce->paramResetCurve, dce->getIdentityValue());
         return true;
-        break;
     }
 
     default:
         return false;
-        break;
     }
 
     return true;

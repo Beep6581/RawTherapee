@@ -63,8 +63,8 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
-      needsReProcessing(true), imageLoading(false), lastImg(NULL),
-      initial_(true)
+      pparamsSet(false), needsReProcessing(true), imageLoading(false), lastImg(NULL),
+      lastW(0), lastH(0), lastScale(0.0), initial_(true)
 {
 
 

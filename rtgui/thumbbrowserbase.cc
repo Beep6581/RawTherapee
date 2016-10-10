@@ -553,7 +553,6 @@ void ThumbBrowserBase::arrangeFiles ()
 
         int ct = 0;
         int currx = 0;
-        int curry = 0;
 
         while (ct < N) {
             // find widest item in the column
@@ -565,7 +564,7 @@ void ThumbBrowserBase::arrangeFiles ()
                 }
 
             // arrange items in the column
-            curry = 0;
+            int curry = 0;
 
             for (int i = 0; ct < N && i < numOfRows; i++, ct++) {
                 while (ct < N && fd[ct]->filtered) {
@@ -635,12 +634,11 @@ void ThumbBrowserBase::arrangeFiles ()
 
         // arrange files
         int ct = 0;
-        int currx = 0;
         int curry = 0;
 
         while (ct < N) {
             // arrange items in the row
-            currx = 0;
+            int currx = 0;
 
             for (int i = 0; ct < N && i < numOfCols; i++, ct++) {
                 while (ct < N && fd[ct]->filtered) {

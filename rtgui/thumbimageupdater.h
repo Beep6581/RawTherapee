@@ -20,16 +20,20 @@
 #define _THUMBIMAGEUPDATER_
 
 #include <glibmm.h>
-#include "../rtengine/rtengine.h"
-#include "thumbbrowserentrybase.h"
 #include <glib.h>
+
+#include "../rtengine/rtengine.h"
+#include "../rtengine/noncopyable.h"
+
+#include "thumbbrowserentrybase.h"
 
 class ThumbImageUpdateListener
 {
-
 public:
+    virtual ~ThumbImageUpdateListener()
+    {
+    }
 
-    virtual ~ThumbImageUpdateListener() {}
     /**
      * @brief Called when thumbnail image is update
      *
@@ -39,14 +43,15 @@ public:
      *
      * @note no locks are held when called back
      */
-    virtual void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams) {}
+    virtual void updateImage(rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams)
+    {
+    }
 };
 
-class ThumbImageUpdater
+class ThumbImageUpdater :
+    public rtengine::NonCopyable
 {
-
 public:
-
     /**
      * @brief Singleton entry point.
      *

@@ -20,7 +20,7 @@
 #include "multilangmgr.h"
 #include "paramsedited.h"
 
-PartialPasteDlg::PartialPasteDlg (const Glib::ustring& title, Gtk::Window* parent)
+PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent)
     : Gtk::Dialog (title, *parent, true)
 {
     set_default_size(700, 600);

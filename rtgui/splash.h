@@ -44,7 +44,7 @@ private:
 
 public:
     Splash (Gtk::Window& parent, int maxtime);
-    Splash (Gtk::Window& parent);
+    explicit Splash (Gtk::Window& parent);
 
     bool hasReleaseNotes()
     {

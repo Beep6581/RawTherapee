@@ -21,11 +21,26 @@
 
 class PointerMotionListener
 {
+protected:
+    sigc::signal<void> sig_cycle_rgb;
+    sigc::signal<void> sig_cycle_hsv;
 
 public:
-//      virtual void pointerMoved (bool validPos, int x, int y, int r, int g, int b) {}
+    virtual ~PointerMotionListener() {}
     virtual void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b) {}
     virtual void toggleFreeze () {}
+    virtual void getRGBText (int r, int g, int b, Glib::ustring &sR, Glib::ustring &sG, Glib::ustring &sB) { sR = "--"; sG = "--"; sB = "--"; }
+    virtual void getHSVText (float h, float s, float v, Glib::ustring &sH, Glib::ustring &sS, Glib::ustring &sV) { sH = "--"; sS = "--"; sV = "--"; }
+    virtual void getLABText (float l, float a, float b, Glib::ustring &sL, Glib::ustring &sA, Glib::ustring &sB) { sL = "--"; sA = "--"; sB = "--"; }
+
+    sigc::signal<void> signal_cycle_rgb()
+    {
+        return sig_cycle_rgb;
+    }
+    sigc::signal<void> signal_cycle_hsv()
+    {
+        return sig_cycle_hsv;
+    }
 };
 
 #endif

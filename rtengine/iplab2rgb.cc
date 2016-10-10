@@ -338,13 +338,11 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     Image16* image = new Image16 (cw, ch);
     float p1, p2, p3, p4, p5, p6; //primaries
 
-    double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5; //gamma parameters
     double pwr;
     double ts;
     ga6 = 0.0;
     pwr = 1.0 / gampos;
     ts = slpos;
-    int mode = 0, imax = 0;
 
     int t50;
     int select_temp = 1; //5003K
@@ -474,6 +472,9 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
         if(slpos == 0) {
             slpos = eps;
         }
+
+        double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5; //gamma parameters
+        int mode = 0, imax = 0;
 
         Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
         ga4 = g_a3 * ts;

@@ -1324,11 +1324,35 @@ BackBuffer::BackBuffer(int width, int height, Glib::RefPtr<Gdk::Window> referenc
     }
 }
 
+void BackBuffer::setDestPosition(int x, int y)
+{
+    // values will be clamped when used...
+    this->x = x;
+    this->y = y;
+}
+
 void BackBuffer::setSrcOffset(int x, int y)
 {
     // values will be clamped when used...
-    offset.x = x;
-    offset.y = y;
+    offset.set(x, y);
+}
+
+void BackBuffer::setSrcOffset(const rtengine::Coord &newOffset)
+{
+    // values will be clamped when used...
+    offset = newOffset;
+}
+
+void BackBuffer::getSrcOffset(int &x, int &y)
+{
+    // values will be clamped when used...
+    offset.get(x, y);
+}
+
+void BackBuffer::getSrcOffset(rtengine::Coord &offset)
+{
+    // values will be clamped when used...
+    offset = this->offset;
 }
 
 // Note: newW & newH must be > 0
@@ -1342,12 +1366,16 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
 {
     assert(newW && newH);
 
-    bool newSize = w != newW || h != newH;
+    bool newSize = (newW > 0 && w != newW) || (newH > 0 && h != newH);
 
     x = newX;
     y = newY;
-    w = newW;
-    h = newH;
+    if (newH > 0) {
+        w = newW;
+    }
+    if (newH > 0) {
+        h = newH;
+    }
 
     // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
     if (((updateBackBufferSize && newSize) || !surface) && window) {
@@ -1369,14 +1397,18 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, Gdk::Rectangle &rectangl
 // Note: newW & newH must be > 0
 bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize)
 {
-    assert(!newW && !newH);
+    assert(newW && newH);
 
-    bool newSize = w != newW || h != newH;
+    bool newSize = (newW > 0 && w != newW) || (newH > 0 && h != newH);
 
     x = newX;
     y = newY;
-    w = newW;
-    h = newH;
+    if (newH > 0) {
+        w = newW;
+    }
+    if (newH > 0) {
+        h = newH;
+    }
 
     // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
     if ((updateBackBufferSize && newSize) || !surface) {
@@ -1576,4 +1608,3 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
         crDest->fill();
     }
 }
-

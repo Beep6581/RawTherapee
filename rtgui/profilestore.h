@@ -21,11 +21,14 @@
 
 #include <map>
 #include <vector>
+#include <glibmm.h>
+
 #include "../rtengine/rtengine.h"
+#include "../rtengine/noncopyable.h"
+
 #include "threadutils.h"
 #include "paramsedited.h"
 #include "guiutils.h"
-#include <glibmm.h>
 
 
 /** @brief This will implement callback functions for the ProfileStore
@@ -108,7 +111,7 @@ public:
       *
       * @param entry      Pointer to the ProfileStoreEntry object, be it a directory or a file
       */
-    ProfileStoreLabel(const ProfileStoreEntry *entry);
+    explicit ProfileStoreLabel(const ProfileStoreEntry *entry);
     ProfileStoreLabel (const ProfileStoreLabel &other);
 };
 
@@ -118,7 +121,8 @@ public:
   * This store can be queried by the GUI to display a Tree of the profiles available
   * in the user's and system's profile directory and subdirectories.
   */
-class ProfileStore
+class ProfileStore :
+    public rtengine::NonCopyable
 {
 
     typedef enum {
@@ -177,6 +181,7 @@ public:
 
     ProfileStore();
     ~ProfileStore();
+
     bool init ();
     void parseProfiles ();
     int findFolderId(const Glib::ustring &path);

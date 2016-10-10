@@ -27,6 +27,7 @@ class ImageAreaToolListener
 {
 
 public:
+    virtual ~ImageAreaToolListener() {}
     virtual void spotWBselected (int x, int y, Thumbnail* thm = NULL) {}
     virtual int  getSpotWBRectSize ()
     {
@@ -38,7 +39,6 @@ public:
     {
         return NULL;
     }
-    virtual void removeWbTool() = 0;
     virtual CropGUIListener* startCropEditing (Thumbnail* thm = NULL)
     {
         return NULL;

@@ -998,9 +998,6 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
     fc.set_filename(tbe[0]->filename);
     //!!! TODO prevent dialog closing on "enter" key press
 
-    bool filecopymovecomplete;
-    int i_copyindex;
-
     if( fc.run() == Gtk::RESPONSE_OK ) {
         Glib::ustring dest_Dir = fc.get_current_folder();
 
@@ -1029,8 +1026,8 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
             /* comparison of src_Dir and dest_Dir is done per image for compatibility with
             possible future use of Collections as source where each file's source path may be different.*/
 
-            filecopymovecomplete = false;
-            i_copyindex = 1;
+            bool filecopymovecomplete = false;
+            int i_copyindex = 1;
 
             while(!filecopymovecomplete) {
                 // check for filename conflicts at destination - prevent overwriting (actually RT will crash on overwriting attempt)
@@ -1233,8 +1230,6 @@ void FileCatalog::setExportPanel (ExportPanel* expanel)
 void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
 {
 
-    bool success;
-
     RenameDialog* renameDlg = new RenameDialog ((Gtk::Window*)get_toplevel());
 
     for (size_t i = 0; i < tbe.size(); i++) {
@@ -1244,7 +1239,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
         Glib::ustring dirName = Glib::path_get_dirname (tbe[i]->filename);
         Glib::ustring baseName = Glib::path_get_basename (tbe[i]->filename);
 
-        success = false;
+        bool success = false;
 
         do {
             if (renameDlg->run () == Gtk::RESPONSE_OK) {

@@ -88,159 +88,159 @@ Glib::ustring RenameDialog::getNewName ()
     return newName->get_text ();
 }
 
-void RenameDialog::fillTemplateList ()
-{
+//void RenameDialog::fillTemplateList ()
+//{
+//
+//    templateModel->clear ();
+//
+//    for (size_t i = 0; i < options.renameTemplates.size(); i++) {
+//        Gtk::TreeModel::iterator iter = templateModel->append ();
+//        iter->set_value (templateColumns.tmplName, options.renameTemplates[i]);
+//        iter->set_value (templateColumns.rowSeparator, false);
+//    }
+//
+//    // append separator and the manage... item
+//    Gtk::TreeModel::iterator iter = templateModel->append ();
+//    iter->set_value (templateColumns.tmplName, Glib::ustring(""));
+//    iter->set_value (templateColumns.rowSeparator, true);
+//    iter = templateModel->append ();
+//    iter->set_value (templateColumns.tmplName, Glib::ustring(M("FILEBROWSER_ADDDELTEMPLATE")));
+//    iter->set_value (templateColumns.rowSeparator, false);
+//}
 
-    templateModel->clear ();
+//bool RenameDialog::rowSeparatorFunc (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& iter)
+//{
+//
+//    return iter->get_value (templateColumns.rowSeparator);
+//}
 
-    for (size_t i = 0; i < options.renameTemplates.size(); i++) {
-        Gtk::TreeModel::iterator iter = templateModel->append ();
-        iter->set_value (templateColumns.tmplName, options.renameTemplates[i]);
-        iter->set_value (templateColumns.rowSeparator, false);
-    }
+//void RenameDialog::useTemplToggled ()
+//{
+//
+//    templates->set_sensitive (useTmpl->get_active ());
+//
+//    if (useTmpl->get_active () && isTemplSelected ()) {
+//        all->set_sensitive (true);
+//        newName->set_text (applyTemplate (oldName->get_text(), imageData, getActiveTemplate()));
+//    } else {
+//        all->set_sensitive (false);
+//    }
+//
+//    newName->select_region (0, newName->get_text().size());
+//}
 
-    // append separator and the manage... item
-    Gtk::TreeModel::iterator iter = templateModel->append ();
-    iter->set_value (templateColumns.tmplName, Glib::ustring(""));
-    iter->set_value (templateColumns.rowSeparator, true);
-    iter = templateModel->append ();
-    iter->set_value (templateColumns.tmplName, Glib::ustring(M("FILEBROWSER_ADDDELTEMPLATE")));
-    iter->set_value (templateColumns.rowSeparator, false);
-}
+//bool RenameDialog::isTemplSelected ()
+//{
+//
+//    Gtk::TreeModel::iterator iter = templates->get_active();
+//    return iter && iter->get_value (templateColumns.tmplName) != M("FILEBROWSER_ADDDELTEMPLATE");
+//}
 
-bool RenameDialog::rowSeparatorFunc (const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& iter)
-{
+//Glib::ustring RenameDialog::getActiveTemplate ()
+//{
+//
+//    Gtk::TreeModel::iterator iter = templates->get_active();
+//
+//    if (iter && iter->get_value (templateColumns.tmplName) != M("FILEBROWSER_ADDDELTEMPLATE")) {
+//        return iter->get_value (templateColumns.tmplName);
+//    } else {
+//        return "";
+//    }
+//}
 
-    return iter->get_value (templateColumns.rowSeparator);
-}
+//void RenameDialog::tmplSelectionChanged ()
+//{
+//
+//    Gtk::TreeModel::iterator iter = templates->get_active();
+//
+//    if (iter && iter->get_value (templateColumns.tmplName) == M("FILEBROWSER_ADDDELTEMPLATE")) {
+//        RenameTemplateEditor* rte = new RenameTemplateEditor (p);
+//
+//        if (rte->run() == Gtk::RESPONSE_OK) {
+//            fillTemplateList ();
+//        }
+//
+//        delete rte;
+//        // show add/del template dialog
+//    } else {
+//        useTemplToggled ();
+//    }
+//}
 
-void RenameDialog::useTemplToggled ()
-{
+//RenameTemplateEditor::RenameTemplateEditor (Gtk::Window* parent)
+//    : Gtk::Dialog ("Edit rename templates", *parent, true)
+//{
+//
+//    list = Gtk::manage (new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
+//    list->set_headers_visible (false);
+//    get_content_area ()->pack_start (*list);
+//
+//    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+//    templ = Gtk::manage (new Gtk::Entry ());
+//    Gtk::Button* add = Gtk::manage (new Gtk::Button ());
+//    Gtk::Button* del = Gtk::manage (new Gtk::Button ());
+//    add->add (*Gtk::manage (new RTImage ("list-add-small.png")));
+//    del->add (*Gtk::manage (new RTImage ("list-remove-red-small.png")));
+//    hb->pack_start (*templ);
+//    hb->pack_start (*add, Gtk::PACK_SHRINK, 2);
+//    hb->pack_start (*del, Gtk::PACK_SHRINK, 2);
+//
+//    get_content_area ()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
+//
+//    add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
+//
+//    refreshTemplateList ();
+//
+//    add->signal_pressed().connect( sigc::mem_fun(*this, &RenameTemplateEditor::addPressed) );
+//    del->signal_pressed().connect( sigc::mem_fun(*this, &RenameTemplateEditor::delPressed) );
+//
+//    show_all_children ();
+//
+//    set_size_request (-1, 250);
+//}
+//
+//void RenameTemplateEditor::refreshTemplateList ()
+//{
+//
+//    list->remove_all_columns();
+//
+//    for (size_t i = 0; i < options.renameTemplates.size(); i++) {
+//        list->append (options.renameTemplates[i]);
+//    }
+//}
+//
+//void RenameTemplateEditor::addPressed ()
+//{
+//
+//    if (templ->get_text() != "") {
+//        options.renameTemplates.push_back (templ->get_text ());
+//        refreshTemplateList ();
+//        templ->set_text("");
+//    }
+//}
+//
+//void RenameTemplateEditor::delPressed ()
+//{
+//
+//    std::vector<int> sel = list->get_selected ();
+//
+//    for (size_t i = 0; i < sel.size(); i++) {
+//        Glib::ustring toDel = list->get_text (sel[i]);
+//        std::vector<Glib::ustring>::iterator f = std::find (options.renameTemplates.begin(), options.renameTemplates.end(), toDel);
+//
+//        if (f != options.renameTemplates.end()) {
+//            options.renameTemplates.erase (f);
+//        }
+//    }
+//
+//    refreshTemplateList ();
+//}
 
-    templates->set_sensitive (useTmpl->get_active ());
-
-    if (useTmpl->get_active () && isTemplSelected ()) {
-        all->set_sensitive (true);
-        newName->set_text (applyTemplate (oldName->get_text(), imageData, getActiveTemplate()));
-    } else {
-        all->set_sensitive (false);
-    }
-
-    newName->select_region (0, newName->get_text().size());
-}
-
-bool RenameDialog::isTemplSelected ()
-{
-
-    Gtk::TreeModel::iterator iter = templates->get_active();
-    return iter && iter->get_value (templateColumns.tmplName) != M("FILEBROWSER_ADDDELTEMPLATE");
-}
-
-Glib::ustring RenameDialog::getActiveTemplate ()
-{
-
-    Gtk::TreeModel::iterator iter = templates->get_active();
-
-    if (iter && iter->get_value (templateColumns.tmplName) != M("FILEBROWSER_ADDDELTEMPLATE")) {
-        return iter->get_value (templateColumns.tmplName);
-    } else {
-        return "";
-    }
-}
-
-void RenameDialog::tmplSelectionChanged ()
-{
-
-    Gtk::TreeModel::iterator iter = templates->get_active();
-
-    if (iter && iter->get_value (templateColumns.tmplName) == M("FILEBROWSER_ADDDELTEMPLATE")) {
-        RenameTemplateEditor* rte = new RenameTemplateEditor (p);
-
-        if (rte->run() == Gtk::RESPONSE_OK) {
-            fillTemplateList ();
-        }
-
-        delete rte;
-        // show add/del template dialog
-    } else {
-        useTemplToggled ();
-    }
-}
-
-RenameTemplateEditor::RenameTemplateEditor (Gtk::Window* parent)
-    : Gtk::Dialog ("Edit rename templates", *parent, true)
-{
-
-    list = Gtk::manage (new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
-    list->set_headers_visible (false);
-    get_content_area ()->pack_start (*list);
-
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    templ = Gtk::manage (new Gtk::Entry ());
-    Gtk::Button* add = Gtk::manage (new Gtk::Button ());
-    Gtk::Button* del = Gtk::manage (new Gtk::Button ());
-    add->add (*Gtk::manage (new RTImage ("list-add-small.png")));
-    del->add (*Gtk::manage (new RTImage ("list-remove-red-small.png")));
-    hb->pack_start (*templ);
-    hb->pack_start (*add, Gtk::PACK_SHRINK, 2);
-    hb->pack_start (*del, Gtk::PACK_SHRINK, 2);
-
-    get_content_area ()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
-
-    add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
-
-    refreshTemplateList ();
-
-    add->signal_pressed().connect( sigc::mem_fun(*this, &RenameTemplateEditor::addPressed) );
-    del->signal_pressed().connect( sigc::mem_fun(*this, &RenameTemplateEditor::delPressed) );
-
-    show_all_children ();
-
-    set_size_request (-1, 250);
-}
-
-void RenameTemplateEditor::refreshTemplateList ()
-{
-
-    list->remove_all_columns();
-
-    for (size_t i = 0; i < options.renameTemplates.size(); i++) {
-        list->append (options.renameTemplates[i]);
-    }
-}
-
-void RenameTemplateEditor::addPressed ()
-{
-
-    if (templ->get_text() != "") {
-        options.renameTemplates.push_back (templ->get_text ());
-        refreshTemplateList ();
-        templ->set_text("");
-    }
-}
-
-void RenameTemplateEditor::delPressed ()
-{
-
-    std::vector<int> sel = list->get_selected ();
-
-    for (size_t i = 0; i < sel.size(); i++) {
-        Glib::ustring toDel = list->get_text (sel[i]);
-        std::vector<Glib::ustring>::iterator f = std::find (options.renameTemplates.begin(), options.renameTemplates.end(), toDel);
-
-        if (f != options.renameTemplates.end()) {
-            options.renameTemplates.erase (f);
-        }
-    }
-
-    refreshTemplateList ();
-}
-
-Glib::ustring RenameDialog::applyTemplate (const Glib::ustring& oName, const CacheImageData* cid, const Glib::ustring& templ)
-{
-
-    return Glib::ustring ("szeva");
-
-}
+//Glib::ustring RenameDialog::applyTemplate (const Glib::ustring& oName, const CacheImageData* cid, const Glib::ustring& templ)
+//{
+//
+//    return Glib::ustring ("szeva");
+//
+//}
 
 

@@ -34,7 +34,7 @@ public:
     int currTransform;  // coarse rotation from RT, not from shot orientation
     bool fromRaw;
 
-    InspectorBuffer(const Glib::ustring &imgagePath);
+    explicit InspectorBuffer(const Glib::ustring &imgagePath);
     //~InspectorBuffer();
 };
 

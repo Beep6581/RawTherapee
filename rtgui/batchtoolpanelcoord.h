@@ -48,7 +48,7 @@ protected:
 
 public:
 
-    BatchToolPanelCoordinator (FilePanel* parent);
+    explicit BatchToolPanelCoordinator (FilePanel* parent);
 
     // FileSelectionChangeListener interface
     void selectionChanged (const std::vector<Thumbnail*>& selected);

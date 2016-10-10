@@ -20,7 +20,7 @@
 
 Clipboard clipboard;
 
-Clipboard::Clipboard () : partProfile (false) {}
+Clipboard::Clipboard () : partProfile (false), _hasIPTC(false), hasDiagonalCurveDataType(DCT_Empty), hasFlatCurveDataType(FCT_Empty) {}
 
 Clipboard::~Clipboard ()
 {

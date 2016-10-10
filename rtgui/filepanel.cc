@@ -58,7 +58,6 @@ FilePanel::FilePanel () : parent(NULL)
     dirpaned->pack1 (*placespaned, false, false);
 
     tpc = new BatchToolPanelCoordinator (this);
-    tpc->removeWbTool();
     // Location bar
     fileCatalog = Gtk::manage ( new FileCatalog (tpc->coarse, tpc->getToolBar(), this) );
     // Holds the location bar and thumbnails

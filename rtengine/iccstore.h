@@ -43,8 +43,8 @@ public:
     ProfileContent (const ProfileContent& other);
     ProfileContent& operator= (const rtengine::ProfileContent& other);
 
-    ProfileContent (const Glib::ustring& fileName);
-    ProfileContent (cmsHPROFILE hProfile);
+    explicit ProfileContent (const Glib::ustring& fileName);
+    explicit ProfileContent (cmsHPROFILE hProfile);
     cmsHPROFILE toProfile () const;
 };
 

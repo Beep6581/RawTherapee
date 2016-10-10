@@ -68,7 +68,7 @@ protected:
     void notifyListener (bool queueEmptied);
 
 public:
-    BatchQueue (FileCatalog* aFileCatalog);
+    explicit BatchQueue (FileCatalog* aFileCatalog);
     ~BatchQueue ();
 
     void addEntries (const std::vector<BatchQueueEntry*>& entries, bool head = false, bool save = true);

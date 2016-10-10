@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <cairomm/cairomm.h>
 #include "../rtengine/rtengine.h"
+#include "../rtengine/coord.h"
 #include "rtimage.h"
 #include <sstream>
 #include <iostream>
@@ -93,7 +94,7 @@ public:
 class ConnectionBlocker
 {
 public:
-    ConnectionBlocker (sigc::connection& connection) : connection (connection)
+    explicit ConnectionBlocker (sigc::connection& connection) : connection (connection)
     {
         wasBlocked = connection.block();
     }
@@ -115,7 +116,7 @@ private:
     Gtk::Container *pC;
 
 public:
-    ExpanderBox( Gtk::Container *p);
+    explicit ExpanderBox( Gtk::Container *p);
     ~ExpanderBox( )
     {
         delete pC;
@@ -444,33 +445,6 @@ public:
     }
 };
 
-/**
- * @brief Handle point coordinates
- */
-template <class T>
-class Point
-{
-public:
-    T x, y;
-    Point()
-    {
-        x = T(0);
-        y = T(0);
-    }
-
-    Point(T coordX, T coordY)
-    {
-        x = coordX;
-        y = coordY;
-    }
-
-    void setCoords(T coordX, T coordY)
-    {
-        x = coordX;
-        y = coordY;
-    }
-};
-
 class RefCount
 {
 private:
@@ -501,7 +475,7 @@ class BackBuffer : public RefCount
 
 protected:
     int x, y, w, h;  // Rectangle where the colored bar has to be drawn
-    Point<int> offset;  // Offset of the source region to draw, relative to the top left corner
+    rtengine::Coord offset;  // Offset of the source region to draw, relative to the top left corner
     Cairo::RefPtr<Cairo::ImageSurface> surface;
     bool dirty;  // mean that the Surface has to be (re)allocated
 
@@ -516,7 +490,12 @@ public:
     bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
     bool setDrawRectangle(Cairo::Format format, Gdk::Rectangle &rectangle, bool updateBackBufferSize = true);
     bool setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
+    // set the destination drawing location, do not modify other parameters like size and offset. Use setDrawRectangle to set all parameters at the same time
+    void setDestPosition(int x, int y);
     void setSrcOffset(int x, int y);
+    void setSrcOffset(const rtengine::Coord &newOffset);
+    void getSrcOffset(int &x, int &y);
+    void getSrcOffset(rtengine::Coord &offset);
 
     void copyRGBCharData(const unsigned char *srcData, int srcX, int srcY, int srcW, int srcH, int srcRowStride, int dstX, int dstY);
     void copySurface(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *rectangle = NULL);

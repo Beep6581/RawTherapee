@@ -69,7 +69,7 @@ protected:
 
 public:
 
-    ProfilePanel ();
+    explicit ProfilePanel ();
     virtual ~ProfilePanel ();
 
     void setProfileChangeListener (ProfileChangeListener* ppl)

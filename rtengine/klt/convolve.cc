@@ -250,8 +250,8 @@ static void _convolveImageVert(
 
 static void _convolveSeparate(
   _KLT_FloatImage imgin,
-  ConvolutionKernel horiz_kernel,
-  ConvolutionKernel vert_kernel,
+  const ConvolutionKernel &horiz_kernel,
+  const ConvolutionKernel &vert_kernel,
   _KLT_FloatImage imgout)
 {
   /* Create temporary image */

@@ -86,11 +86,10 @@ void MyFlatCurve::get_LUT (LUTf &lut)
     std::vector<double> curveDescr = getPoints ();
     rtengine::FlatCurve rtcurve(curveDescr, periodic, lut.getUpperBound() * 1.2 > 5000 ? 5000 : lut.getUpperBound() * 1.2);
 
-    double t;
     double maxVal = double(lut.getUpperBound());
 
     for (int i = 0; i < size; i++) {
-        t = double(i) / maxVal;
+        double t = double(i) / maxVal;
         lut[i] = rtcurve.getVal (t);
     }
 
@@ -800,13 +799,13 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
     case Gdk::BUTTON_RELEASE:
         if (edited_point == -1) { //curve.type!=FCT_Parametric) {
             if (buttonPressed && event->button.button == 1) {
-                int src, dst;
                 buttonPressed = false;
                 remove_modal_grab ();
 
                 // Removing any deleted point if we were previously modifying the point position
                 if (editedHandle & (FCT_EditedHandle_CPoint | FCT_EditedHandle_CPointX | FCT_EditedHandle_CPointY)) {
                     /* delete inactive points: */
+                    int src, dst;
                     itx = curve.x.begin();
                     ity = curve.y.begin();
                     itlt = curve.leftTangent.begin();

@@ -165,11 +165,11 @@ void MyDiagonalCurve::get_LUT (LUTf &lut)
     // calculate remaining points
     std::vector<double> curveDescr = getPoints ();
     rtengine::DiagonalCurve rtcurve(curveDescr, lut.getUpperBound() * 1.2);
-    double t;
+
     double maxVal = double(lut.getUpperBound());
 
     for (int i = 0; i < size; i++) {
-        t = double(i) / maxVal;
+        double t = double(i) / maxVal;
         lut[i] = rtcurve.getVal (t);
     }
 
@@ -1155,7 +1155,6 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider)
     snapToElmt = -100;
 
     if (curve.type != DCT_Parametric) {
-        std::vector<double>::iterator itx, ity;
         buttonPressed = false;
         /*  get the pointer position  */
         getCursorPosition(Gdk::EventType(Gdk::BUTTON_RELEASE), false, graphY, 0, Gdk::ModifierType(0));

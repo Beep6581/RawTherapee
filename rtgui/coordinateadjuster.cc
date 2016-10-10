@@ -122,9 +122,8 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
 
     axisAdjusters.resize(axis.size());
 
-    AxisAdjuster *currAdjuster = NULL;
-
     for (unsigned int i = 0; i < count; ++i) {
+        AxisAdjuster *currAdjuster = NULL;
         const Axis *currAxis = &(axis.at(i));
         axisAdjusters.at(i) = new AxisAdjuster(this, currAxis, i);
         currAdjuster = axisAdjusters.at(i);

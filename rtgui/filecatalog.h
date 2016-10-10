@@ -43,7 +43,7 @@ class DirEntry
 public:
     Glib::ustring fullName;
 
-    DirEntry (const Glib::ustring& n) : fullName (n) {}
+    explicit DirEntry (const Glib::ustring& n) : fullName (n) {}
 
     bool operator< (DirEntry& other)
     {

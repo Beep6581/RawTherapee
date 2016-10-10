@@ -176,6 +176,22 @@ public:
 
 
     /**
+    * @brief Convert red/green/blue to L*a*b
+    * @brief Convert red/green/blue to hue/saturation/luminance
+    * @param profile output profile name
+    * @param profileW working profile name
+    * @param r red channel [0 ; 65535]
+    * @param g green channel [0 ; 65535]
+    * @param b blue channel [0 ; 65535]
+    * @param L Lab L channel [0 ; 1] (return value)
+    * @param a Lab  a channel [0 ; 1] (return value)
+    * @param b Lab b channel [0; 1] (return value)
+    * @param workingSpace true: compute the Lab value using the Working color space ; false: use the Output color space
+    */
+    static void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
+
+
+    /**
     * @brief Convert red/green/blue to hue/saturation/luminance
     * @param r red channel [0 ; 65535]
     * @param g green channel [0 ; 65535]

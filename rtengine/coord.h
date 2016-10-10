@@ -35,7 +35,7 @@ struct Coord
     Coord () = default;
     Coord (const int x, const int y);
     Coord (const Coord& other) = default;
-    Coord (const PolarCoord& other);
+    explicit Coord (const PolarCoord& other);
 
     Coord& operator= (const Coord& other) = default;
     Coord& operator= (const PolarCoord& other);
@@ -48,7 +48,10 @@ struct Coord
     Coord& operator+= (const Coord& other);
     Coord& operator-= (const Coord& other);
     Coord& operator*= (const double scale);
-
+    bool operator< (const Coord& rhs) const;
+    bool operator> (const Coord& rhs) const;
+    bool operator<=(const Coord& rhs) const;
+    bool operator>=(const Coord& rhs) const;
 };
 
 bool operator== (const Coord& lhs, const Coord& rhs);
@@ -66,7 +69,7 @@ struct PolarCoord
     PolarCoord () = default;
     PolarCoord (const double radius, const double angle);
     PolarCoord (const PolarCoord& other) = default;
-    PolarCoord (const Coord& other);
+    explicit PolarCoord (const Coord& other);
 
     PolarCoord& operator= (const PolarCoord& other) = default;
     PolarCoord& operator= (const Coord& other);
@@ -128,6 +131,26 @@ inline Coord& Coord::operator*= (const double scale)
     x *= scale;
     y *= scale;
     return *this;
+}
+
+inline bool Coord::operator< (const Coord& rhs) const
+{
+    return x < rhs.x && y < rhs.y;
+}
+
+inline bool Coord::operator> (const Coord& rhs) const
+{
+    return x > rhs.x && y > rhs.y;
+}
+
+inline bool Coord::operator<=(const Coord& rhs) const
+{
+    return x <= rhs.x && y <= rhs.y;
+}
+
+inline bool Coord::operator>=(const Coord& rhs) const
+{
+    return x >= rhs.x && y >= rhs.y;
 }
 
 inline bool operator== (const Coord& lhs, const Coord& rhs)

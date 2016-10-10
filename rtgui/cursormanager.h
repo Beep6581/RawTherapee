@@ -26,7 +26,7 @@ enum CursorShape {
     CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal,
     CSResizeTopLeft, CSResizeTopRight, CSResizeBottomLeft, CSResizeBottomRight,
     CSMove2D, CSMove1DH, CSMove1DV, CSMoveRotate,
-    CSSpotWB, CSCropSelect, CSStraighten, CSPlus, CSWait, CSEmpty
+    CSSpotWB, CSAddColPicker, CSCropSelect, CSStraighten, CSPlus, CSWait, CSEmpty
 };
 
 class CursorManager
@@ -51,6 +51,7 @@ private:
     Glib::RefPtr<Gdk::Cursor> cHand;
     Glib::RefPtr<Gdk::Cursor> cClosedHand;
     Glib::RefPtr<Gdk::Cursor> cWB;
+    Glib::RefPtr<Gdk::Cursor> cAddPicker;
     Glib::RefPtr<Gdk::Cursor> cHidden;
     Glib::RefPtr<Gdk::Cursor> cMove2D;
     Glib::RefPtr<Gdk::Cursor> cMove1DH;

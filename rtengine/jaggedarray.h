@@ -17,8 +17,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef JAGGEDARRAY_H
-#define JAGGEDARRAY_H
+#pragma once
+
+#include "noncopyable.h"
 
 namespace rtengine
 {
@@ -50,7 +51,8 @@ inline void freeJaggedArray (T** const a)
 }
 
 template<class T>
-class JaggedArray
+class JaggedArray :
+    public NonCopyable
 {
 public:
     JaggedArray (const int W, const int H, const bool initZero = false)
@@ -65,10 +67,6 @@ public:
         }
     }
 
-    JaggedArray (const JaggedArray&) = delete;
-    JaggedArray& operator= (const JaggedArray&) = delete;
-
-public:
     operator T** const () const
     {
         return a;
@@ -85,5 +83,3 @@ template<class T>
 void freeJaggedArray (JaggedArray<T>&);
 
 } // rtengine
-
-#endif // JAGGEDARRAY_H

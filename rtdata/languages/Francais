@@ -988,7 +988,8 @@ PREFERENCES_REMEMBERZOOMPAN;Se souvenir de niveau de zoom et de la position de l
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Retient le niveau de zoom et la position de l'image courante lors de l'ouverture d'une nouvelle image.\n\nCette option ne fonctionne que dans le mode "Éditeur unique" et quand "Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%" is set to "Idem PP3".
 PREFERENCES_RGBDTL_LABEL;Nombre maximum d'unités de calcul pour la Réduction du bruit
 PREFERENCES_RGBDTL_TOOLTIP;La réduction du bruit nécessite un minimum d'à peu près 128Mo de RAM pour une image de 10MPix ou 512Mo pour une image de 40MPix, ainsi que 128Mo de RAM supplémentaire par unité de calcul. Plus il y aura d'unités de calcul travaillant en parallèle, plus ce sera rapide. Laissez la valeur à "0" pour utiliser automatiquement autant d'unités de calcul que possible.
-PREFERENCES_SELECTFONT;Police de caractère
+PREFERENCES_SELECTFONT;Police générale
+PREFERENCES_SELECTFONT_COLPICKER;Police des pipette à couleur
 PREFERENCES_SELECTLANG;Choix de la langue
 PREFERENCES_SELECTTHEME;Choisissez un thème
 PREFERENCES_SERIALIZE_TIFF_READ;Réglage de lecture des images TIFF
@@ -1089,6 +1090,7 @@ THRESHOLDSELECTOR_HINT;Maintenez la touche <b>Shift</b> appuyée pour déplacer 
 THRESHOLDSELECTOR_T;Haut
 THRESHOLDSELECTOR_TL;Haut-Gauche
 THRESHOLDSELECTOR_TR;Haut-droite
+TOOLBAR_TOOLTIP_COLORPICKER;Ancre de Vérification Couleur\n\nLorque activé:\nCliquez la zone d'image avec le bouton gauche de la souris pour ajouter une ancre\nDéplacez-le en le "tirant" avec le bouton gauche de la souris\nSupprimez une ancre en cliquant dessus avec le bouton droit de la souris\nSupprimez toutes les ancres avec Shift + click avec le bouton droit\nCliquez avec le bouton droit de la souris en dehors de toute ancre pour revenir au mode Déplacement
 TOOLBAR_TOOLTIP_CROP;Sélection du recadrage\nRaccourci: <b>c</b>\nDéplacez le recadrage en utilisant Shift + Glisser
 TOOLBAR_TOOLTIP_HAND;Outil de navigation\nRaccourci: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon\nRaccourci: <b>s</b>\n\nIndiquez la verticale ou l'horizontale en dessinant une ligne à travers l'image de prévisualisation. L'angle de rotation sera affiché près de la ligne guide. Le centre de rotation est le centre géométrique de l'image.

@@ -35,7 +35,6 @@ static double one2one(double val)
 Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1, Gtk::Image *imgIcon2, double2double_fun slider2value_, double2double_fun value2slider_)
 {
 
-    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_hexpand(true);
     set_vexpand(false);
     label = NULL;

@@ -23,7 +23,7 @@
 
 extern Options options;
 
-SaveAsDialog::SaveAsDialog (const Glib::ustring& initialDir, Gtk::Window* parent)
+SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent)
     : Gtk::Dialog (M("GENERAL_SAVE"), *parent)
 {
     Gtk::Box* box = get_content_area ();

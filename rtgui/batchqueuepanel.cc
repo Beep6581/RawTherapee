@@ -24,10 +24,6 @@
 #include "soundman.h"
 #include "rtimage.h"
 
-struct BQProcessLoaded {
-    BatchQueue* bq;
-};
-
 int processLoadedBatchQueueUIThread (void* data)
 {
 

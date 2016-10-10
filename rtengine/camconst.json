@@ -1457,7 +1457,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset
     },
 
-	{ // Quality Β,
+	{ // Quality B,
         "make_model": [ "Panasonic DMC-FZ300", "Panasonic DMC-FZ330" ],
         "dcraw_matrix": [ 8378,-2798,-769,-3068,11410,1877,-538,1792,4623 ], // DNG-V9.1.1
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. Dcraw/RT read the base offset from exif and calculates total BL = BLbase+BLoffset

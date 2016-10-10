@@ -42,6 +42,10 @@ BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolP
         toolPanels.erase (ipi);
     }
 
+    if (toolBar) {
+        toolBar->setBatchMode ();
+    }
+
     toolPanelNotebook->remove_page (*metadataPanel);
     metadataPanel = 0;
     toiM = 0;

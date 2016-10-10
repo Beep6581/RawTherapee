@@ -54,6 +54,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("cross.png");
     Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("closedhand.png");
     Glib::RefPtr<Gdk::Pixbuf> wbpick = RTImage::createFromFile ("gtk-color-picker-small.png");
+    Glib::RefPtr<Gdk::Pixbuf> cpick = RTImage::createFromFile ("gtk-color-picker-add.png");
     Glib::RefPtr<Gdk::Pixbuf> empty = RTImage::createFromFile ("empty.png");
     Glib::RefPtr<Gdk::Pixbuf> move2D = RTImage::createFromFile ("move-2D.png");
     Glib::RefPtr<Gdk::Pixbuf> move1DH = RTImage::createFromFile ("move-1D-h.png");
@@ -62,7 +63,8 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 
     cHand = hand ? Gdk::Cursor::create (cAdd->get_display(), hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
     cClosedHand = close_hand ? Gdk::Cursor::create (cAdd->get_display(), close_hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
-    cWB = wbpick ? Gdk::Cursor::create (cAdd->get_display(), wbpick, 1, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
+    cWB = wbpick ? Gdk::Cursor::create (cAdd->get_display(), wbpick, 3, 15) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
+    cAddPicker = cpick ? Gdk::Cursor::create (cAdd->get_display(), cpick, 3, 18) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
     cHidden = empty ? Gdk::Cursor::create (cAdd->get_display(), empty, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
     cMove2D = move2D ?  Gdk::Cursor::create (cAdd->get_display(), move2D, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
     cMove1DH = move1DH ?  Gdk::Cursor::create (cAdd->get_display(), move1DH, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
@@ -110,6 +112,8 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
         window->set_cursor (cMoveRotate);
     } else if (shape == CSSpotWB) {
         window->set_cursor (cWB);
+    } else if (shape == CSAddColPicker) {
+        window->set_cursor (cAddPicker);
     } else if (shape == CSCropSelect) {
         window->set_cursor (cHand);
     } else if (shape == CSMoveLeft) {

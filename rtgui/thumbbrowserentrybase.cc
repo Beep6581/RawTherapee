@@ -133,7 +133,6 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     getTextSizes (infow, infoh);
 
     int iofs_x = 4, iofs_y = 4;
-    int igap = 2;
     int istartx = prex;
     int istarty = prey;
 
@@ -155,6 +154,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     istarty += iofs_y;
 
     if (!bbIcons.empty()) {
+        int igap = 2;
         int iwidth = 0;
         int iheight = 0;
 
@@ -279,7 +279,6 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
                 cc->move_to(textposx_ex, textposy + tpos);
                 fn->add_to_cairo_context (cc);
                 cc->fill();
-                tpos += exlabh;
             }
         }
     }

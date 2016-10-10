@@ -169,7 +169,7 @@ private:
     }
 
 public:
-    MonitorProfileSelector (rtengine::StagedImageProcessor* const& ipc) :
+    explicit MonitorProfileSelector (rtengine::StagedImageProcessor* const& ipc) :
         intentBox (Glib::ustring (), true),
         processor (ipc)
     {
@@ -324,6 +324,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider (iareapanel->imageArea);
+    tpc->getToolBar()->setLockablePickerToolListener(iareapanel->imageArea);
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
     toolBarPanel->set_name ("EditorTopPanel");
@@ -811,6 +812,7 @@ void EditorPanel::close ()
         if (iareapanel) {
             iareapanel->imageArea->setPreviewHandler (NULL);
             iareapanel->imageArea->setImProcCoordinator (NULL);
+            iareapanel->imageArea->unsubscribe();
         }
 
         rtengine::StagedImageProcessor::destroy (ipc);

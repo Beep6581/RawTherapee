@@ -113,10 +113,9 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
  */
 void CurveEditorGroup::newLine()
 {
-    Gtk::HBox* headerBox;
 
     if (curveEditors.size() > numberOfPackedCurve) {
-        headerBox = Gtk::manage (new Gtk::HBox ());
+        Gtk::HBox* headerBox = Gtk::manage (new Gtk::HBox ());
 
         if (!numberOfPackedCurve) {
             headerBox->pack_start(*curveGroupLabel, Gtk::PACK_SHRINK, 2);

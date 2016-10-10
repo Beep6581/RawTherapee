@@ -96,7 +96,7 @@ protected:
 
 public:
 
-    History (bool bookmarkSupport = true);
+    explicit History (bool bookmarkSupport = true);
 
     void setProfileChangeListener     (ProfileChangeListener* tpc_)
     {
