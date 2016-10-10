@@ -30,7 +30,7 @@ extern Options options;
 LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S15),
   outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
-  r(0.f), g(0.f), b(0.f), rpreview(0.f), gpreview(0.f), bpreview(0.f), h(0.f), s(0.f), v(0.f), L(0.f), a(0.f), bb(0.f)
+  r(0.f), g(0.f), b(0.f), rpreview(0.f), gpreview(0.f), bpreview(0.f), hue(0.f), sat(0.f), val(0.f), L(0.f), a(0.f), bb(0.f)
 {}
 
 void LockableColorPicker::updateBackBuffer ()
@@ -65,7 +65,7 @@ void LockableColorPicker::updateBackBuffer ()
             layout[2][1] = iArea->create_pango_layout(s3);
             break;
         case ColorPickerType::HSV:
-            navigator->getHSVText (h, s, v, s1, s2, s3);
+            navigator->getHSVText (hue, sat, val, s1, s2, s3);
             layout[0][0] = iArea->create_pango_layout(M("NAVIGATOR_H"));
             layout[0][1] = iArea->create_pango_layout(s1);
             layout[1][0] = iArea->create_pango_layout(M("NAVIGATOR_S"));
@@ -274,7 +274,7 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B, c
     gpreview = previewG;
     bpreview = previewB;
 
-    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, h, s, v);
+    rtengine::Color::rgb2hsv(r*65535.f, g*65535.f, b*65535.f, hue, sat, val);
     rtengine::Color::rgb2lab (*outputProfile, *workingProfile, r * 65535.f, g * 65535.f, b * 65535.f, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
 
     if (validity != Validity::OUTSIDE) {

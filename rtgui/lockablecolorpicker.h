@@ -67,7 +67,7 @@ private:
     Validity validity;
     float r, g, b;  // red green blue in [0;1] range
     float rpreview, gpreview, bpreview;
-    float h, s, v;  // hue saturation value in [0;1] range
+    float hue, sat, val;  // hue saturation value in [0;1] range
     float L, a, bb;  // L*a*b value in [0;1] range
 
     void updateBackBuffer ();

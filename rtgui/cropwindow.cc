@@ -567,7 +567,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     }
                 } else if (!(bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
                     // Deleting the hovered picker
-                    for (std::vector<LockableColorPicker*>::iterator i = colorPickers.begin(); i != colorPickers.end(); i++) {
+                    for (std::vector<LockableColorPicker*>::iterator i = colorPickers.begin(); i != colorPickers.end(); ++i) {
                         if (*i == hoveredPicker) {
                             colorPickers.erase(i);
                             delete hoveredPicker;
