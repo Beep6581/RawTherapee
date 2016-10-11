@@ -2535,8 +2535,10 @@ void CropWindow::setCropGUIListener       (CropGUIListener* cgl)
 void CropWindow::setPointerMotionListener (PointerMotionListener* pml)
 {
     pmlistener = pml;
-    pml->signal_cycle_rgb().connect( sigc::mem_fun(*this, &CropWindow::cycleRGB) );
-    pml->signal_cycle_hsv().connect( sigc::mem_fun(*this, &CropWindow::cycleHSV) );
+    if (pml) {
+        pml->signal_cycle_rgb().connect( sigc::mem_fun(*this, &CropWindow::cycleRGB) );
+        pml->signal_cycle_hsv().connect( sigc::mem_fun(*this, &CropWindow::cycleHSV) );
+    }
 }
 
 PointerMotionListener* CropWindow::getPointerMotionListener ()
