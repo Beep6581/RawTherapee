@@ -753,13 +753,13 @@ void WaveletParams::setDefaults()
     hhcurve.push_back(FCT_Linear);
     Chcurve.clear ();
     Chcurve.push_back(FCT_Linear);
-    expcontrast = true;
-    expchroma = true;
-    expedge = true;
-    expresid = true;
-    expfinal = true;
-    exptoning = true;
-    expnoise = true;
+    expcontrast = false;
+    expchroma = false;
+    expedge = false;
+    expresid = false;
+    expfinal = false;
+    exptoning = false;
+    expnoise = false;
 
     for(int i = 0; i < 9; i ++) {
         c[i] = 0;
