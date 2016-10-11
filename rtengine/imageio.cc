@@ -771,39 +771,39 @@ int ImageIO::loadTIFF (Glib::ustring fname)
      * We could use the min/max values set in TIFFTAG_SMINSAMPLEVALUE and
      * TIFFTAG_SMAXSAMPLEVALUE, but for now, we normalize the image to the
      * effective minimum and maximum values
-     *
-    printf("Informations de \"%s\":\n", fname.c_str());
-    uint16 tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
-    if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {
-        printf("   DefaultScale: %d\n", tiffDefaultScale);
-    }
-    else
-        printf("   No DefaultScale value!\n");
-    if (TIFFGetField(in, TIFFTAG_BASELINEEXPOSURE, &tiffBaselineExposure)) {
-        printf("   BaselineExposure: %d\n", tiffBaselineExposure);
-    }
-    else
-        printf("   No BaselineExposure value!\n");
-    if (TIFFGetField(in, TIFFTAG_LINEARRESPONSELIMIT, &tiffLinearResponseLimit)) {
-        printf("   LinearResponseLimit: %d\n", tiffLinearResponseLimit);
-    }
-    else
-        printf("   No LinearResponseLimit value!\n");
+     */
+    if (options.rtSettings.verbose) {
+        printf("Informations of \"%s\":\n", fname.c_str());
+        uint16 tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
+        if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {
+            printf("   DefaultScale: %d\n", tiffDefaultScale);
+        }
+        else
+            printf("   No DefaultScale value!\n");
+        if (TIFFGetField(in, TIFFTAG_BASELINEEXPOSURE, &tiffBaselineExposure)) {
+            printf("   BaselineExposure: %d\n", tiffBaselineExposure);
+        }
+        else
+            printf("   No BaselineExposure value!\n");
+        if (TIFFGetField(in, TIFFTAG_LINEARRESPONSELIMIT, &tiffLinearResponseLimit)) {
+            printf("   LinearResponseLimit: %d\n", tiffLinearResponseLimit);
+        }
+        else
+            printf("   No LinearResponseLimit value!\n");
 
-    uint16 tiffMinValue, tiffMaxValue;
-    if (TIFFGetField(in, TIFFTAG_SMINSAMPLEVALUE, &tiffMinValue)) {
-        printf("   MinValue: %d\n", tiffMinValue);
+        uint16 tiffMinValue, tiffMaxValue;
+        if (TIFFGetField(in, TIFFTAG_SMINSAMPLEVALUE, &tiffMinValue)) {
+            printf("   MinValue: %d\n", tiffMinValue);
+        }
+        else
+            printf("   No minimum value!\n");
+        if (TIFFGetField(in, TIFFTAG_SMAXSAMPLEVALUE, &tiffMaxValue)) {
+            printf("   MaxValue: %d\n\n", tiffMaxValue);
+        }
+        else
+            printf("   No maximum value!\n\n");
+        printf("   Those values are not taken into account, the image data are normalized to a [0;1] range\n\n");
     }
-    else
-        printf("   No minimum value!\n");
-    if (TIFFGetField(in, TIFFTAG_SMAXSAMPLEVALUE, &tiffMaxValue)) {
-        printf("   MaxValue: %d\n\n", tiffMaxValue);
-    }
-    else
-        printf("   No maximum value!\n\n");
-    printf("\n");
-    */
-
 
     char* profdata;
     deleteLoadedProfileData();
@@ -811,30 +811,8 @@ int ImageIO::loadTIFF (Glib::ustring fname)
 
     if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &loadedProfileLength, &profdata)) {
         embProfile = cmsOpenProfileFromMem (profdata, loadedProfileLength);
-
-        // For 32 bits floating point images, gamma is forced to linear in embedded ICC profiles
-        if ( sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT) ) {
-            // Modifying the gammaTRG tags
-            cmsWriteTag(embProfile, cmsSigGreenTRCTag, (void*)Color::linearGammaTRC );
-            cmsWriteTag(embProfile, cmsSigRedTRCTag,   (void*)Color::linearGammaTRC );
-            cmsWriteTag(embProfile, cmsSigBlueTRCTag,  (void*)Color::linearGammaTRC );
-
-            // Saving the profile in the memory
-            cmsUInt32Number bytesNeeded = 0;
-            cmsSaveProfileToMem(embProfile, 0, &bytesNeeded);
-
-            if (bytesNeeded > 0) {
-                loadedProfileData = new char[bytesNeeded + 1];
-                cmsSaveProfileToMem(embProfile, loadedProfileData, &bytesNeeded);
-            }
-
-            loadedProfileLength = (int)bytesNeeded;
-        } else {
-            // Saving the profile in the memory as is
-            loadedProfileData = new char [loadedProfileLength];
-            memcpy (loadedProfileData, profdata, loadedProfileLength);
-        }
-
+        loadedProfileData = new char [loadedProfileLength];
+        memcpy (loadedProfileData, profdata, loadedProfileLength);
     } else {
         embProfile = NULL;
     }
