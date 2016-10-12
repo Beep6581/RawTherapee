@@ -190,7 +190,7 @@ public:
 };
 
 ThumbImageUpdater*
-ThumbImageUpdater::getInstance(void)
+ThumbImageUpdater::getInstance()
 {
     static ThumbImageUpdater instance_;
     return &instance_;
@@ -272,7 +272,7 @@ ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
 }
 
 void
-ThumbImageUpdater::removeAllJobs(void)
+ThumbImageUpdater::removeAllJobs()
 {
     DEBUG("stop");
 

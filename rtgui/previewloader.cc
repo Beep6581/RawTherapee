@@ -167,7 +167,7 @@ PreviewLoader::PreviewLoader():
 {
 }
 
-PreviewLoader* PreviewLoader::getInstance(void)
+PreviewLoader* PreviewLoader::getInstance()
 {
     static PreviewLoader instance_;
     return &instance_;
@@ -191,7 +191,7 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
     }
 }
 
-void PreviewLoader::removeAllJobs(void)
+void PreviewLoader::removeAllJobs()
 {
     DEBUG("stop %d", impl_->nConcurrentThreads);
     MyMutex::MyLock lock(impl_->mutex_);

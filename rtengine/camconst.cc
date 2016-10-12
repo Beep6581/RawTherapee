@@ -321,7 +321,7 @@ parse_error:
 }
 
 bool
-CameraConst::has_dcrawMatrix(void)
+CameraConst::has_dcrawMatrix()
 {
     return dcraw_matrix[0] != 0;
 }
@@ -339,7 +339,7 @@ CameraConst::update_dcrawMatrix(const short *other)
 }
 
 const short *
-CameraConst::get_dcrawMatrix(void)
+CameraConst::get_dcrawMatrix()
 {
     if (!has_dcrawMatrix()) {
         return nullptr;
@@ -349,7 +349,7 @@ CameraConst::get_dcrawMatrix(void)
 }
 
 bool
-CameraConst::has_rawCrop(void)
+CameraConst::has_rawCrop()
 {
     return raw_crop[0] != 0 || raw_crop[1] != 0 || raw_crop[2] != 0 || raw_crop[3] != 0;
 }
@@ -698,7 +698,7 @@ void CameraConstantsStore::init(Glib::ustring baseDir, Glib::ustring userSetting
 }
 
 CameraConstantsStore *
-CameraConstantsStore::getInstance(void)
+CameraConstantsStore::getInstance()
 {
     static CameraConstantsStore instance_;
     return &instance_;

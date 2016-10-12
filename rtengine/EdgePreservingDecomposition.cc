@@ -554,7 +554,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     return true;
 }
 
-void MultiDiagonalSymmetricMatrix::KillIncompleteCholeskyFactorization(void)
+void MultiDiagonalSymmetricMatrix::KillIncompleteCholeskyFactorization()
 {
     delete IncompleteCholeskyFactorization;
 }
