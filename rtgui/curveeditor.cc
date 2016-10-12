@@ -196,10 +196,10 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
     bgHistValid = false;
     remoteDrag = false;
     selected = DCT_Linear;
-    bottomBarCP = NULL;
-    leftBarCP = NULL;
-    curveCP = NULL;
-    relatedWidget = NULL;
+    bottomBarCP = nullptr;
+    leftBarCP = nullptr;
+    curveCP = nullptr;
+    relatedWidget = nullptr;
 
     group = ceGroup;
     subGroup = ceSubGroup;

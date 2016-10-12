@@ -280,7 +280,7 @@ int main(int argc, char **argv)
 #endif
 
     if( !options.rtSettings.verbose ) {
-        TIFFSetWarningHandler(NULL);    // avoid annoying message boxes
+        TIFFSetWarningHandler(nullptr);    // avoid annoying message boxes
     }
 
 #ifndef WIN32
@@ -392,7 +392,7 @@ void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparam
 
 int processLineParams( int argc, char **argv )
 {
-    rtengine::procparams::PartialProfile *rawParams = NULL, *imgParams = NULL;
+    rtengine::procparams::PartialProfile *rawParams = nullptr, *imgParams = nullptr;
     std::vector<Glib::ustring> inputFiles;
     Glib::ustring outputPath = "";
     std::vector<rtengine::procparams::PartialProfile*> processingParams;
@@ -723,8 +723,8 @@ int processLineParams( int argc, char **argv )
         Glib::ustring inputFile = inputFiles[iFile];
         std::cout << "Processing: " << inputFile << std::endl;
 
-        rtengine::InitialImage* ii = NULL;
-        rtengine::ProcessingJob* job = NULL;
+        rtengine::InitialImage* ii = nullptr;
+        rtengine::ProcessingJob* job = nullptr;
         int errorCode;
         bool isRaw = false;
 
@@ -766,7 +766,7 @@ int processLineParams( int argc, char **argv )
             isRaw = false;
         }
 
-        ii = rtengine::InitialImage::load ( inputFile, isRaw, &errorCode, NULL );
+        ii = rtengine::InitialImage::load ( inputFile, isRaw, &errorCode, nullptr );
 
         if (!ii) {
             errors++;
@@ -827,7 +827,7 @@ int processLineParams( int argc, char **argv )
         }
 
         // Process image
-        rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, NULL, options.tunnelMetaData);
+        rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, nullptr, options.tunnelMetaData);
 
         if( !resultImage ) {
             errors++;

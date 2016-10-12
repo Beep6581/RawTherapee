@@ -350,7 +350,7 @@ void Color::init ()
 #ifdef _OPENMP
         #pragma omp section
 #endif
-        linearGammaTRC = cmsBuildGamma(NULL, 1.0);
+        linearGammaTRC = cmsBuildGamma(nullptr, 1.0);
     }
 }
 
@@ -2638,7 +2638,7 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
     MyTime t1e, t2e;
     t1e.set();
     int negat = 0, moreRGB = 0;
-    MunsellDebugInfo* MunsDebugInfo = NULL;
+    MunsellDebugInfo* MunsDebugInfo = nullptr;
 
     if (corMunsell) {
         MunsDebugInfo = new MunsellDebugInfo();

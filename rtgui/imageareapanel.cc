@@ -18,7 +18,7 @@
  */
 #include "imageareapanel.h"
 
-ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL)
+ImageAreaPanel::ImageAreaPanel () : before(nullptr), after(nullptr)
 {
 
     set_border_width (2);

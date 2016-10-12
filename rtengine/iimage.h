@@ -144,7 +144,7 @@ public:
 #if CHECK_BOUNDS
     PlanarPtr() : width_(0), height_(0), ptrs (NULL) {}
 #else
-    PlanarPtr() : ptrs (NULL) {}
+    PlanarPtr() : ptrs (nullptr) {}
 #endif
 
     bool resize(int newSize)
@@ -153,7 +153,7 @@ public:
             ptrs = ab.data;
             return true;
         } else {
-            ptrs = NULL;
+            ptrs = nullptr;
             return false;
         }
     }
@@ -219,8 +219,8 @@ public:
     T* data;
     PlanarPtr<T> v;  // v stands for "value", whatever it represent
 
-    PlanarWhateverData() : rowstride(0), data (NULL) {}
-    PlanarWhateverData(int w, int h) : rowstride(0), data (NULL)
+    PlanarWhateverData() : rowstride(0), data (nullptr) {}
+    PlanarWhateverData(int w, int h) : rowstride(0), data (nullptr)
     {
         allocate(w, h);
     }
@@ -291,7 +291,7 @@ public:
         } else {
             // asking for a new size of 0 is safe and will free memory, if any!
             abData.resize(0);
-            data = NULL;
+            data = nullptr;
             v.resize(0);
             width = height = -1;
 #if CHECK_BOUNDS
@@ -593,7 +593,7 @@ public:
     PlanarPtr<T> b;
 
     PlanarRGBData() : rowstride(0), planestride(0), data (NULL) {}
-    PlanarRGBData(int w, int h) : rowstride(0), planestride(0), data (NULL)
+    PlanarRGBData(int w, int h) : rowstride(0), planestride(0), data (nullptr)
     {
         allocate(w, h);
     }
@@ -683,7 +683,7 @@ public:
         } else {
             // asking for a new size of 0 is safe and will free memory, if any!
             abData.resize(0);
-            data = NULL;
+            data = nullptr;
             r.resize(0);
             g.resize(0);
             b.resize(0);
@@ -1165,7 +1165,7 @@ public:
 #if CHECK_BOUNDS
     ChunkyPtr() : ptr (NULL), width(-1), width_(0), height_(0) {}
 #else
-    ChunkyPtr() : ptr (NULL), width(-1) {}
+    ChunkyPtr() : ptr (nullptr), width(-1) {}
 #endif
     void init(T* base, int w = -1)
     {
@@ -1232,7 +1232,7 @@ public:
     ChunkyPtr<T> b;
 
     ChunkyRGBData() : data (NULL) {}
-    ChunkyRGBData(int w, int h) : data (NULL)
+    ChunkyRGBData(int w, int h) : data (nullptr)
     {
         allocate(w, h);
     }
@@ -1299,10 +1299,10 @@ public:
             g.init(data + 1, width);
             b.init(data + 2, width);
         } else {
-            data = NULL;
-            r.init(NULL);
-            g.init(NULL);
-            b.init(NULL);
+            data = nullptr;
+            r.init(nullptr);
+            g.init(nullptr);
+            b.init(nullptr);
             width = height = -1;
 #if CHECK_BOUNDS
             r.width_ = r.height_ = -1;
@@ -1315,7 +1315,7 @@ public:
     /** Copy the data to another ChunkyRGBData */
     void copyData(ChunkyRGBData<T> *dest)
     {
-        assert (dest != NULL);
+        assert (dest != nullptr);
         // Make sure that the size is the same, reallocate if necessary
         dest->allocate(width, height);
 

@@ -146,7 +146,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
 
         lcmsMutex->lock ();
-        cmsHPROFILE hLab  = cmsCreateLab4Profile(NULL);
+        cmsHPROFILE hLab  = cmsCreateLab4Profile(nullptr);
         cmsHTRANSFORM hTransform = cmsCreateTransform (hLab, TYPE_Lab_DBL, oprofG, TYPE_RGB_8, intent,
                                    cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         cmsCloseProfile(hLab);
@@ -508,8 +508,8 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     Parameters[6] = ga6;
 // 7 parameters for smoother curves
     cmsWhitePointFromTemp(&xyD, t50);
-    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, 5, Parameters);//5 = more smoother than 4
-    cmsHPROFILE oprofdef = cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC); //oprofdef  becomes Outputprofile
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(nullptr, 5, Parameters);//5 = more smoother than 4
+    cmsHPROFILE oprofdef = cmsCreateRGBProfileTHR(nullptr, &xyD, &Primaries, GammaTRC); //oprofdef  becomes Outputprofile
 
     cmsFreeToneCurve(GammaTRC[0]);
 

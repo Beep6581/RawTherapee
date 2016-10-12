@@ -25,7 +25,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 using namespace rtexif;
 
-ExifPanel::ExifPanel () : idata(NULL)
+ExifPanel::ExifPanel () : idata(nullptr)
 {
 
     recursiveOp = true;
@@ -156,7 +156,7 @@ void ExifPanel::setImageData (const ImageMetaData* id)
     idata = id;
     exifTreeModel->clear ();
 
-    const std::vector<Tag*> defTags = ExifManager::getDefaultTIFFTags (NULL);
+    const std::vector<Tag*> defTags = ExifManager::getDefaultTIFFTags (nullptr);
 
     for (size_t i = 0; i < defTags.size(); i++) {
         Tag* defTag = defTags[i];

@@ -40,7 +40,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     colorCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_COLOR"));
     colorCurveEditorG->setCurveListener (this);
 
-    colorShape = static_cast<FlatCurveEditor*>(colorCurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    colorShape = static_cast<FlatCurveEditor*>(colorCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
     colorShape->setCurveColorProvider(this, 1);
     std::vector<GradientMilestone> milestones;
 
@@ -89,7 +89,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     opacityCurveEditorG->setCurveListener (this);
 
     rtengine::ColorToningParams::getDefaultOpacityCurve(defaultCurve);
-    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
     opacityShape->setIdentityValue(0.);
     opacityShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     opacityShape->setBottomBarBgGradient(milestones);
@@ -156,14 +156,14 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     //----------- Sliders + balance ------------------------------
 
-    hlColSat = Gtk::manage (new ThresholdAdjuster (M("TP_COLORTONING_HIGHLIGHT"), 0., 100., 60., M("TP_COLORTONING_STRENGTH"), 1., 0., 360., 80., M("TP_COLORTONING_HUE"), 1., NULL, false));
+    hlColSat = Gtk::manage (new ThresholdAdjuster (M("TP_COLORTONING_HIGHLIGHT"), 0., 100., 60., M("TP_COLORTONING_STRENGTH"), 1., 0., 360., 80., M("TP_COLORTONING_HUE"), 1., nullptr, false));
     hlColSat->setAdjusterListener (this);
     hlColSat->setBgColorProvider(this, 2);
     hlColSat->setUpdatePolicy(RTUP_DYNAMIC);
 
     pack_start( *hlColSat, Gtk::PACK_SHRINK, 0);
 
-    shadowsColSat = Gtk::manage (new ThresholdAdjuster (M("TP_COLORTONING_SHADOWS"), 0., 100., 80., M("TP_COLORTONING_STRENGTH"), 1., 0., 360., 208., M("TP_COLORTONING_HUE"), 1., NULL, false));
+    shadowsColSat = Gtk::manage (new ThresholdAdjuster (M("TP_COLORTONING_SHADOWS"), 0., 100., 80., M("TP_COLORTONING_STRENGTH"), 1., 0., 360., 208., M("TP_COLORTONING_HUE"), 1., nullptr, false));
     shadowsColSat->setAdjusterListener (this);
     shadowsColSat->setBgColorProvider(this, 3);
     shadowsColSat->setUpdatePolicy(RTUP_DYNAMIC);

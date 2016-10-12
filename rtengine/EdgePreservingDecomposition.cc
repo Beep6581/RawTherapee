@@ -27,7 +27,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     float *r = (float*)(buffer + 64);
 
     //Start r and x.
-    if(x == NULL) {
+    if(x == nullptr) {
         x = new float[n];
 
         memset(x, 0, sizeof(float)*n);      //Zero initial guess if x == NULL.
@@ -46,7 +46,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     //s is preconditionment of r. Without, direct to r.
     float *s = r, rs = 0.0f;
 
-    if(Preconditioner != NULL) {
+    if(Preconditioner != nullptr) {
         s = new float[n];
 
         Preconditioner(s, r, Pass);
@@ -114,7 +114,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
             break;
         }
 
-        if(Preconditioner != NULL) {
+        if(Preconditioner != nullptr) {
             Preconditioner(s, r, Pass);
         }
 
@@ -187,7 +187,7 @@ MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int Nu
 {
     n = Dimension;
     m = NumberOfDiagonalsInLowerTriangle;
-    IncompleteCholeskyFactorization = NULL;
+    IncompleteCholeskyFactorization = nullptr;
 
     Diagonals = new float *[m];
     StartRows = new int [m + 1];
@@ -198,7 +198,7 @@ MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int Nu
 
 MultiDiagonalSymmetricMatrix::~MultiDiagonalSymmetricMatrix()
 {
-    if(DiagBuffer != NULL) {
+    if(DiagBuffer != nullptr) {
         free(buffer);
     } else
         for(int i = 0; i < m; i++) {
@@ -218,10 +218,10 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
     if(index == 0) {
         buffer = (char*)calloc( (n + padding) * m * sizeof(float) + (m + 16) * 64 + 63, 1);
 
-        if(buffer == NULL)
+        if(buffer == nullptr)
             // no big memory block available => try to allocate smaller blocks
         {
-            DiagBuffer = NULL;
+            DiagBuffer = nullptr;
         } else {
             DiagBuffer = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
         }
@@ -238,12 +238,12 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
             return false;
         }
 
-    if(DiagBuffer != NULL) {
+    if(DiagBuffer != nullptr) {
         Diagonals[index] = (float*)(DiagBuffer + (index * (n + padding) * sizeof(float)) + ((index + 16) * 64));
     } else {
         Diagonals[index] = new float[DiagonalLength(StartRow)];
 
-        if(Diagonals[index] == NULL) {
+        if(Diagonals[index] == nullptr) {
             printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: memory allocation failed. Out of memory?\n");
             return false;
         }
@@ -675,7 +675,7 @@ EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height)
                 A->CreateDiagonal(3, w) &&
                 A->CreateDiagonal(4, w + 1))) {
         delete A;
-        A = NULL;
+        A = nullptr;
         printf("Error in EdgePreservingDecomposition construction: out of memory.\n");
     } else {
         a0    = A->Diagonals[0];
@@ -694,7 +694,7 @@ EdgePreservingDecomposition::~EdgePreservingDecomposition()
 SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur, bool UseBlurForEdgeStop)
 {
 
-    if(Blur == NULL)
+    if(Blur == nullptr)
         UseBlurForEdgeStop = false, //Use source if there's no supplied Blur.
         Blur = new float[n];
 
@@ -868,7 +868,7 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
     }
 
     //Create a blur here, initialize.
-    if(Blur == NULL) {
+    if(Blur == nullptr) {
         Blur = new float[n];
     }
 
@@ -927,7 +927,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Sour
     //Blur. Also setup memory for Compressed (we can just use u since each element of u is used in one calculation).
     float *u = CreateIteratedBlur(Source, Scale, EdgeStopping, Iterates, Reweightings);
 
-    if(Compressed == NULL) {
+    if(Compressed == nullptr) {
         Compressed = u;
     }
 

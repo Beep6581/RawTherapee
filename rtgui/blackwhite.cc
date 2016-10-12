@@ -1196,7 +1196,7 @@ void BlackWhite::setBatchMode (bool batchMode)
 
     removeIfThere (mixerVBox, RGBLabels, false);
     delete RGBLabels;
-    RGBLabels = NULL;
+    RGBLabels = nullptr;
 
     ToolPanel::setBatchMode (batchMode);
     mixerRed->showEditedCB ();

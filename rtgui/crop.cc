@@ -38,7 +38,7 @@ public:
 Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true)
 {
 
-    clistener = NULL;
+    clistener = nullptr;
 
     maxw = 3000;
     maxh = 2000;

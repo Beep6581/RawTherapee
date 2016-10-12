@@ -174,7 +174,7 @@ protected:
     void reallocAll ();
     void updateLRGBHistograms ();
     void setScale (int prevscale);
-    void updatePreviewImage (int todo, Crop* cropCall = NULL);
+    void updatePreviewImage (int todo, Crop* cropCall = nullptr);
 
     MyMutex mProcessing;
     ProcParams params;

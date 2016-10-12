@@ -2142,7 +2142,7 @@ int Options::saveToFile (Glib::ustring fname)
 
     FILE *f = g_fopen (fname.c_str (), "wt");
 
-    if (f == NULL) {
+    if (f == nullptr) {
         if (options.rtSettings.verbose) {
             printf("Options::saveToFile / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
@@ -2165,7 +2165,7 @@ bool Options::load ()
 
     path = g_getenv("RT_SETTINGS");
 
-    if (path != NULL) {
+    if (path != nullptr) {
         rtdir = Glib::ustring(path);
 
         if (!Glib::path_is_absolute(rtdir)) {
@@ -2199,7 +2199,7 @@ bool Options::load ()
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
     path = g_getenv("RT_CACHE");
 
-    if (path != NULL) {
+    if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
 
         if (!Glib::path_is_absolute(cacheBaseDir)) {

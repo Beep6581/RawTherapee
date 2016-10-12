@@ -28,7 +28,7 @@ class PParamsChangeListener
 
 public:
     virtual     ~PParamsChangeListener() {}
-    virtual void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = NULL) {}
+    virtual void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = nullptr) {}
     virtual void clearParamChanges () {}
 };
 

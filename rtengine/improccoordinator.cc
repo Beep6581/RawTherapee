@@ -32,8 +32,8 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
-      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE), scale(10),
+    : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), previmg(nullptr), workimg(nullptr),
+      ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
       bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
@@ -86,7 +86,7 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), dehaListener(NULL), hListener(NULL),
+      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1)
 
@@ -539,7 +539,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             DCPProfile::ApplyState as;
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
 
-            ipf.rgbProc (oprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
+            ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, colourToningSatLimit , colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as);
 
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
@@ -611,7 +611,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
         histCCurve.clear();
         histLCurve.clear();
-        ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
+        ipf.chromiLuminanceCurve (nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
         ipf.vibrance(nprevl);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
@@ -765,7 +765,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 delete ncie;
             }
 
-            ncie = NULL;
+            ncie = nullptr;
 
             if (CAMBrightCurveJ) {
                 CAMBrightCurveJ.reset();
@@ -849,19 +849,19 @@ void ImProcCoordinator::freeAll ()
             delete oprevi;
         }
 
-        oprevi    = NULL;
+        oprevi    = nullptr;
         delete orig_prev;
-        orig_prev = NULL;
+        orig_prev = nullptr;
         delete oprevl;
-        oprevl    = NULL;
+        oprevl    = nullptr;
         delete nprevl;
-        nprevl    = NULL;
+        nprevl    = nullptr;
 
         if (ncie) {
             delete ncie;
         }
 
-        ncie      = NULL;
+        ncie      = nullptr;
 
         if (imageListener) {
             imageListener->delImage (previmg);
@@ -875,7 +875,7 @@ void ImProcCoordinator::freeAll ()
             delete shmap;
         }
 
-        shmap = NULL;
+        shmap = nullptr;
 
     }
 
@@ -1094,7 +1094,7 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 
     MyMutex::MyLock lock(mProcessing);
 
-    LCPMapper *pLCPMap = NULL;
+    LCPMapper *pLCPMap = nullptr;
 
     if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen() > 0) {
         LCPProfile *pLCPProf = lcpStore->getProfile(params.lensProf.lcpFile);
@@ -1262,7 +1262,7 @@ void ImProcCoordinator::startProcessing ()
     if (!destroying) {
         if (!updaterRunning) {
             updaterThreadStart.lock ();
-            thread = NULL;
+            thread = nullptr;
             updaterRunning = true;
             updaterThreadStart.unlock ();
 

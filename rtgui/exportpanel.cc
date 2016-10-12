@@ -25,7 +25,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ExportPanel::ExportPanel () : listener (NULL)
+ExportPanel::ExportPanel () : listener (nullptr)
 {
 
     set_border_width (4);

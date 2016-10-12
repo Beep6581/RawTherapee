@@ -43,7 +43,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     green.clear ();
     blue.clear ();
 
-    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == NULL)) {
+    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == nullptr)) {
         for (size_t i = 0; i < src.size(); i++) {
             red.push_back   (Coord2D (src[i].x, src[i].y));
             green.push_back (Coord2D (src[i].x, src[i].y));
@@ -234,7 +234,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
                                  double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage)
 {
 
-    LCPMapper *pLCPMap = NULL;
+    LCPMapper *pLCPMap = nullptr;
 
     if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         LCPProfile *pLCPProf = lcpStore->getProfile(params->lensProf.lcpFile);
@@ -703,7 +703,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                      oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-    double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, fullImage ? pLCPMap : NULL) : 1.0;
+    double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, fullImage ? pLCPMap : nullptr) : 1.0;
 
     // smaller crop images are a problem, so only when processing fully
     bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage && pLCPMap->enableCA;
@@ -1005,7 +1005,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 
 double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap)
 {
-    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == NULL)) {
+    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == nullptr)) {
         return 1;
     }
 

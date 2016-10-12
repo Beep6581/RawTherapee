@@ -38,7 +38,7 @@
 using namespace std;
 using namespace rtengine;
 
-BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(NULL), fileCatalog(aFileCatalog), sequence(0), listener(NULL)
+BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
 {
 
     location = THLOC_BATCHQUEUE;
@@ -368,7 +368,7 @@ bool BatchQueue::loadBatchQueue ()
 Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filename )
 {
     timeval tv;
-    gettimeofday(&tv, 0);
+    gettimeofday(&tv, nullptr);
     char mseconds[4];
     sprintf(mseconds, "%d", (int)(tv.tv_usec / 1000));
     time_t rawtime;
@@ -501,7 +501,7 @@ void BatchQueue::selectAll ()
     {
         MYWRITERLOCK(l, entryRW);
 
-        lastClicked = NULL;
+        lastClicked = nullptr;
         selected.clear ();
 
         for (size_t i = 0; i < fd.size(); i++) {
@@ -642,7 +642,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
         MYWRITERLOCK(l, entryRW);
 
         delete processing;
-        processing = NULL;
+        processing = nullptr;
 
         fd.erase (fd.begin());
 
@@ -709,7 +709,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img)
     redraw ();
     notifyListener (queueEmptied);
 
-    return processing ? processing->job : NULL;
+    return processing ? processing->job : nullptr;
 }
 
 // Calculates automatic filename of processed batch entry, but just the base name
@@ -962,7 +962,7 @@ void BatchQueue::error (Glib::ustring msg)
         processing->addButtonSet (bqbs);
         processing->processing = false;
         processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, processing->params);
-        processing = NULL;
+        processing = nullptr;
         redraw ();
     }
 

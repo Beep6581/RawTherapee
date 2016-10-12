@@ -374,7 +374,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     opaCurveEditorG->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultOpacityCurveRG(defaultCurve);
-    opacityShapeRG = static_cast<FlatCurveEditor*>(opaCurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    opacityShapeRG = static_cast<FlatCurveEditor*>(opaCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
     opacityShapeRG->setIdentityValue(0.);
     opacityShapeRG->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
@@ -387,7 +387,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     opacityCurveEditorG->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultOpacityCurveBY(defaultCurve);
-    opacityShapeBY = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    opacityShapeBY = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
     opacityShapeBY->setIdentityValue(0.);
     opacityShapeBY->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
@@ -406,19 +406,19 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     linkedgConn = linkedg->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::linkedgToggled) );
     noiseBox->pack_start(*linkedg);
 
-    level0noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVZERO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., NULL, false));
+    level0noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVZERO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false));
     level0noise->setAdjusterListener (this);
     level0noise->setUpdatePolicy(RTUP_DYNAMIC);
 
-    level1noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVONE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., NULL, false));
+    level1noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVONE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false));
     level1noise->setAdjusterListener (this);
     level1noise->setUpdatePolicy(RTUP_DYNAMIC);
 
-    level2noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., NULL, false));
+    level2noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVTWO"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false));
     level2noise->setAdjusterListener (this);
     level2noise->setUpdatePolicy(RTUP_DYNAMIC);
 
-    level3noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., NULL, false));
+    level3noise = Gtk::manage (new ThresholdAdjuster (M("TP_WAVELET_LEVTHRE"), -30., 100., 0., M("TP_WAVELET_STREN"), 1., 0., 100., 0., M("TP_WAVELET_NOIS"), 1., nullptr, false));
     level3noise->setAdjusterListener (this);
     level3noise->setUpdatePolicy(RTUP_DYNAMIC);
 
@@ -487,7 +487,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     CCWcurveEditorG->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultCCWCurve(defaultCurve);
-    ccshape = static_cast<FlatCurveEditor*>(CCWcurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    ccshape = static_cast<FlatCurveEditor*>(CCWcurveEditorG->addCurve(CT_Flat, "", nullptr, false));
 
     ccshape->setIdentityValue(0.);
     ccshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
@@ -814,7 +814,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     opacityCurveEditorW->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultOpacityCurveW(defaultCurve);
-    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorW->addCurve(CT_Flat, "", NULL, false));
+    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorW->addCurve(CT_Flat, "", nullptr, false));
     opacityShape->setIdentityValue(0.);
     opacityShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     opacityShape->setBottomBarBgGradient(milestonesW);
@@ -833,7 +833,7 @@ Wavelet::Wavelet () : FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), 
     opacityCurveEditorWL->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultOpacityCurveWL(defaultCurve);
-    opacityShapeWL = static_cast<FlatCurveEditor*>(opacityCurveEditorWL->addCurve(CT_Flat, "", NULL, false));
+    opacityShapeWL = static_cast<FlatCurveEditor*>(opacityCurveEditorWL->addCurve(CT_Flat, "", nullptr, false));
     opacityShapeWL->setIdentityValue(0.);
     opacityShapeWL->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));

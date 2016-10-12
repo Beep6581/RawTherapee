@@ -189,7 +189,7 @@ void wavelet_level<T>::destroy(T ** subbands)
             delete[] subbands[1];
         } else {
             for(int j = 1; j < 4; j++) {
-                if(subbands[j] != NULL) {
+                if(subbands[j] != nullptr) {
                     delete[] subbands[j];
                 }
             }

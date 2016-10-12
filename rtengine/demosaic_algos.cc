@@ -104,8 +104,8 @@ void RawImageSource::eahd_demosaic ()
     interpolate_row_g (gh[0], gv[0], 0);
     interpolate_row_g (gh[1], gv[1], 1);
     interpolate_row_g (gh[2], gv[2], 2);
-    interpolate_row_rb (rh[0], bh[0], NULL, gh[0], gh[1], 0);
-    interpolate_row_rb (rv[0], bv[0], NULL, gv[0], gv[1], 0);
+    interpolate_row_rb (rh[0], bh[0], nullptr, gh[0], gh[1], 0);
+    interpolate_row_rb (rv[0], bv[0], nullptr, gv[0], gv[1], 0);
     interpolate_row_rb (rh[1], bh[1], gh[0], gh[1], gh[2], 1);
     interpolate_row_rb (rv[1], bv[1], gv[0], gv[1], gv[2], 1);
 
@@ -138,8 +138,8 @@ void RawImageSource::eahd_demosaic ()
             interpolate_row_rb (rh[(i + 1) % 3], bh[(i + 1) % 3], gh[i % 4], gh[(i + 1) % 4], gh[(i + 2) % 4], i + 1);
             interpolate_row_rb (rv[(i + 1) % 3], bv[(i + 1) % 3], gv[i % 4], gv[(i + 1) % 4], gv[(i + 2) % 4], i + 1);
         } else {
-            interpolate_row_rb (rh[(i + 1) % 3], bh[(i + 1) % 3], gh[i % 4], gh[(i + 1) % 4], NULL, i + 1);
-            interpolate_row_rb (rv[(i + 1) % 3], bv[(i + 1) % 3], gv[i % 4], gv[(i + 1) % 4], NULL, i + 1);
+            interpolate_row_rb (rh[(i + 1) % 3], bh[(i + 1) % 3], gh[i % 4], gh[(i + 1) % 4], nullptr, i + 1);
+            interpolate_row_rb (rv[(i + 1) % 3], bv[(i + 1) % 3], gv[i % 4], gv[(i + 1) % 4], nullptr, i + 1);
         }
 
         convert_to_cielab_row (rh[(i + 1) % 3], gh[(i + 1) % 4], bh[(i + 1) % 3], lLh[(i + 1) % 3], lah[(i + 1) % 3], lbh[(i + 1) % 3]);
@@ -285,9 +285,9 @@ void RawImageSource::eahd_demosaic ()
     // Interpolate R and B
     for (int i = 0; i < H; i++) {
         if (i == 0) {
-            interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp (red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         } else if (i == H - 1) {
-            interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], nullptr, i, 1.0, 1.0, 1.0, 0, W, 1);
         } else {
             interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         }
@@ -550,9 +550,9 @@ void RawImageSource::hphd_demosaic ()
 
     for (int i = 0; i < H; i++) {
         if (i == 0) {
-            interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp (red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         } else if (i == H - 1) {
-            interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], nullptr, i, 1.0, 1.0, 1.0, 0, W, 1);
         } else {
             interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         }
@@ -861,9 +861,9 @@ void RawImageSource::vng4_demosaic ()
             // rm, gm, bm must be recovered
             //interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, 0, W, 1);
         {
-            interpolate_row_rb_mul_pp (red[i], blue[i], NULL, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp (red[i], blue[i], nullptr, green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         } else if (i == H - 1) {
-            interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
+            interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], nullptr, i, 1.0, 1.0, 1.0, 0, W, 1);
         } else {
             interpolate_row_rb_mul_pp (red[i], blue[i], green[i - 1], green[i], green[i + 1], i, 1.0, 1.0, 1.0, 0, W, 1);
         }
@@ -1368,7 +1368,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int i
     float *qix[5];
     float *buffer = (float *)calloc(rr1 * cc1 * 5 * sizeof(float), 1);
 
-    if(buffer == NULL) { // allocation of big block of memory failed, try to get 5 smaller ones
+    if(buffer == nullptr) { // allocation of big block of memory failed, try to get 5 smaller ones
         printf("lmmse_interpolate_omp: allocation of big memory block failed, try to get 5 smaller ones now...\n");
         bool allocationFailed = false;
 
@@ -4047,7 +4047,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
     double progressInc = 36.0 * (1.0 - progress) / ((H * W) / ((ts - 16) * (ts - 16)));
     const int ndir = 4 << (passes > 1);
-    cielab (0, 0, 0, 0, 0, 0, 0, 0);
+    cielab (nullptr, nullptr, nullptr, nullptr, 0, 0, 0, nullptr);
     struct s_minmaxgreen {
         float min;
         float max;

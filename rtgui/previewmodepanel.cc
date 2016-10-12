@@ -220,7 +220,7 @@ void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview)
 
     // this will redraw the linked Before image area
     // which is set when before/after view is enabled
-    if (imageArea->iLinkedImageArea != NULL) {
+    if (imageArea->iLinkedImageArea != nullptr) {
         imageArea->iLinkedImageArea->queue_draw ();
     }
 }
@@ -304,7 +304,7 @@ void PreviewModePanel::buttonToggled_backColor (Gtk::ToggleButton* tbbackColor)
 
     // this will redraw the linked Before image area
     // which is set when before/after view is enabled
-    if (imageArea->iLinkedImageArea != NULL) {
+    if (imageArea->iLinkedImageArea != nullptr) {
         imageArea->iLinkedImageArea->queue_draw ();
     }
 }

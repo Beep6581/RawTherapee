@@ -120,7 +120,7 @@ public:
 #define iccStore ICCStore::getInstance()
 
 inline ProfileContent::ProfileContent () :
-    data(NULL),
+    data(nullptr),
     length(0)
 {
 }

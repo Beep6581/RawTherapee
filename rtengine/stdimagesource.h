@@ -78,7 +78,7 @@ public:
     }
     ImageMatrices* getImageMatrices ()
     {
-        return (ImageMatrices*)NULL;
+        return (ImageMatrices*)nullptr;
     }
     bool        isRAW() const
     {

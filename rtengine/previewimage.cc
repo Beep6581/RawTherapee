@@ -29,11 +29,11 @@ using namespace procparams;
 
 PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext, const PreviewImageMode mode)
 {
-    rtengine::Thumbnail* tpp = NULL;
+    rtengine::Thumbnail* tpp = nullptr;
 
     if (mode == PIM_EmbeddedPreviewOnly || mode == PIM_EmbeddedOrRaw) {
 
-        const unsigned char *data = NULL;
+        const unsigned char *data = nullptr;
 
         int width = -1, height = -1;
 
@@ -107,8 +107,8 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
         int error = rawImage.load(fname, true);
 
         if (!error) {
-            rtengine::Image8 *output = NULL;
-            const unsigned char *data = NULL;
+            rtengine::Image8 *output = nullptr;
+            const unsigned char *data = nullptr;
             int fw, fh;
 
             procparams::ProcParams params;

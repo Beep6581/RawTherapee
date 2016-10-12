@@ -48,8 +48,8 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(
 {
 
     size_t dotpos = fname.find_last_of ('.');
-    root = NULL;
-    iptc = NULL;
+    root = nullptr;
+    iptc = nullptr;
 
     if (ri && (ri->exifBase >= 0 || ri->ciffBase >= 0)) {
         FILE* f = g_fopen (fname.c_str (), "rb");
@@ -205,7 +205,7 @@ void ImageData::extractInfo ()
         orientation = root->getTag ("Orientation")->valueToString ();
     }
 
-    rtexif::TagDirectory* exif = NULL;
+    rtexif::TagDirectory* exif = nullptr;
 
     if (root->getTag ("Exif")) {
         exif = root->getTag ("Exif")->getDirectory ();
@@ -506,7 +506,7 @@ const procparams::IPTCPairs ImageData::getIPTCData () const
     unsigned char buffer[2100];
 
     for (int i = 0; i < 16; i++) {
-        IptcDataSet* ds = iptc_data_get_next_dataset (iptc, NULL, IPTC_RECORD_APP_2, strTags[i].tag);
+        IptcDataSet* ds = iptc_data_get_next_dataset (iptc, nullptr, IPTC_RECORD_APP_2, strTags[i].tag);
 
         if (ds) {
             iptc_dataset_get_data (ds, buffer, 2100);
@@ -518,7 +518,7 @@ const procparams::IPTCPairs ImageData::getIPTCData () const
         }
     }
 
-    IptcDataSet* ds = NULL;
+    IptcDataSet* ds = nullptr;
     std::vector<Glib::ustring> keywords;
 
     while ((ds = iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS))) {
@@ -527,7 +527,7 @@ const procparams::IPTCPairs ImageData::getIPTCData () const
     }
 
     iptcc["Keywords"] = keywords;
-    ds = NULL;
+    ds = nullptr;
     std::vector<Glib::ustring> suppCategories;
 
     while ((ds = iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY))) {
@@ -623,20 +623,20 @@ extern "C" {
         unsigned int iptc_len;
 
         if (!infile) {
-            return NULL;
+            return nullptr;
         }
 
         d = iptc_data_new ();
 
         if (!d) {
-            return NULL;
+            return nullptr;
         }
 
         buf = (unsigned char*)iptc_mem_alloc (d->priv->mem, buf_len);
 
         if (!buf) {
             iptc_data_unref (d);
-            return NULL;
+            return nullptr;
         }
 
         len = iptc_jpeg_read_ps3 (infile, buf, buf_len);
@@ -659,7 +659,7 @@ extern "C" {
 failure:
         iptc_mem_free (d->priv->mem, buf);
         iptc_data_unref (d);
-        return NULL;
+        return nullptr;
     }
 
 }

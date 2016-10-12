@@ -33,10 +33,10 @@
 extern Options options;
 extern Glib::ustring argv0;
 
-Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL), parent(rtwindow)
+Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(nullptr), iprofiles(nullptr), parent(rtwindow)
 {
 
-    splash = NULL;
+    splash = nullptr;
 
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
@@ -1351,7 +1351,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     }
 
     // process directory
-    Glib::Dir* dir = NULL;
+    Glib::Dir* dir = nullptr;
 
     try {
         dir = new Glib::Dir (dirname);
@@ -2044,7 +2044,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
 #endif
 
     Gtk::RC::reparse_all (Gtk::Settings::get_default());
-    GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
+    GdkEventClient event = { GDK_CLIENT_EVENT, nullptr, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
     gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
@@ -2098,7 +2098,7 @@ void Preferences::switchFontTo(Glib::ustring newFont)
     Gtk::RC::parse_string (Glib::ustring::compose(
                                "style \"clearlooks-default\" { font_name = \"%1\" }", newFont));
     Gtk::RC::reparse_all (Gtk::Settings::get_default());
-    GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
+    GdkEventClient event = { GDK_CLIENT_EVENT, nullptr, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
     gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
@@ -2223,7 +2223,7 @@ void Preferences::updateFFinfos()
 bool Preferences::splashClosed(GdkEventAny* event)
 {
     delete splash;
-    splash = NULL;
+    splash = nullptr;
     return true;
 }
 

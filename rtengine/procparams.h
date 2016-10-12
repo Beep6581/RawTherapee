@@ -1318,14 +1318,14 @@ public:
       * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
       * @return Error code (=0 if all supplied filenames where created correctly)
       */
-    int     save        (const Glib::ustring &fname, const Glib::ustring &fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited = NULL);
+    int     save        (const Glib::ustring &fname, const Glib::ustring &fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited = nullptr);
     /**
       * Loads the parameters from a file.
       * @param fname the name of the file
       * @params pedited pointer to a ParamsEdited object (optional) to store which values has been loaded
       * @return Error code (=0 if no error)
       */
-    int     load        (const Glib::ustring &fname, ParamsEdited* pedited = NULL);
+    int     load        (const Glib::ustring &fname, ParamsEdited* pedited = nullptr);
 
     /** Creates a new instance of ProcParams.
       * @return a pointer to the new ProcParams instance. */
@@ -1373,8 +1373,8 @@ public:
     };
 
     PartialProfile      (bool createInstance = false, bool paramsEditedValue = false);
-    PartialProfile      (ProcParams* pp, ParamsEdited* pe = NULL, bool fullCopy = false);
-    PartialProfile      (const ProcParams* pp, const ParamsEdited* pe = NULL);
+    PartialProfile      (ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
+    PartialProfile      (const ProcParams* pp, const ParamsEdited* pe = nullptr);
     void deleteInstance ();
     void clearGeneral   ();
     int  load           (const Glib::ustring &fName);

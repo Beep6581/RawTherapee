@@ -73,7 +73,7 @@ static void** _createArray2D(int ncols, int nrows, int nbytes)
 
   tt = (char **) malloc(nrows * sizeof(void *) +
                         ncols * nrows * nbytes);
-  if (tt == NULL) {
+  if (tt == nullptr) {
     KLTError("(createArray2D) Out of memory");
     exit(1);
   }
@@ -115,9 +115,9 @@ KLT_TrackingContext KLTCreateTrackingContext()
   tc->pyramid_sigma_fact = pyramid_sigma_fact;
   tc->step_factor = step_factor;
   tc->nSkippedPixels = nSkippedPixels;
-  tc->pyramid_last = NULL;
-  tc->pyramid_last_gradx = NULL;
-  tc->pyramid_last_grady = NULL;
+  tc->pyramid_last = nullptr;
+  tc->pyramid_last_gradx = nullptr;
+  tc->pyramid_last_grady = nullptr;
   /* for affine mapping */
   tc->affineConsistencyCheck = affineConsistencyCheck;
   tc->affine_window_width = affine_window_size;
@@ -164,9 +164,9 @@ KLT_FeatureList KLTCreateFeatureList(
   first = (KLT_Feature) (fl->feature + nFeatures);
   for (i = 0 ; i < nFeatures ; i++) {
     fl->feature[i] = first + i;
-    fl->feature[i]->aff_img = NULL;           /* initialization fixed by Sinisa Segvic */
-    fl->feature[i]->aff_img_gradx = NULL;
-    fl->feature[i]->aff_img_grady = NULL;
+    fl->feature[i]->aff_img = nullptr;           /* initialization fixed by Sinisa Segvic */
+    fl->feature[i]->aff_img_gradx = nullptr;
+    fl->feature[i]->aff_img_grady = nullptr;
   }
   /* Return feature list */
   return(fl);
@@ -272,13 +272,13 @@ void KLTPrintTrackingContext(
   fprintf(stderr, "\tnPyramidLevels = %d\n", tc->nPyramidLevels);
   fprintf(stderr, "\tsubsampling = %d\n", tc->subsampling);
 
-  fprintf(stderr, "\n\tpyramid_last = %s\n", (tc->pyramid_last!=NULL) ?
+  fprintf(stderr, "\n\tpyramid_last = %s\n", (tc->pyramid_last!=nullptr) ?
           "points to old image" : "NULL");
   fprintf(stderr, "\tpyramid_last_gradx = %s\n", 
-          (tc->pyramid_last_gradx!=NULL) ?
+          (tc->pyramid_last_gradx!=nullptr) ?
           "points to old image" : "NULL");
   fprintf(stderr, "\tpyramid_last_grady = %s\n",
-          (tc->pyramid_last_grady!=NULL) ?
+          (tc->pyramid_last_grady!=nullptr) ?
           "points to old image" : "NULL");
   fprintf(stderr, "\n\n");
 }
@@ -464,9 +464,9 @@ void KLTFreeFeatureList(
     _KLTFreeFloatImage(fl->feature[indx]->aff_img);
     _KLTFreeFloatImage(fl->feature[indx]->aff_img_gradx);
     _KLTFreeFloatImage(fl->feature[indx]->aff_img_grady);
-    fl->feature[indx]->aff_img = NULL;
-    fl->feature[indx]->aff_img_gradx = NULL;
-    fl->feature[indx]->aff_img_grady = NULL;
+    fl->feature[indx]->aff_img = nullptr;
+    fl->feature[indx]->aff_img_gradx = nullptr;
+    fl->feature[indx]->aff_img_grady = nullptr;
   }
   
   free(fl);
@@ -498,9 +498,9 @@ void KLTStopSequentialMode(
   _KLTFreePyramid((_KLT_Pyramid) tc->pyramid_last);
   _KLTFreePyramid((_KLT_Pyramid) tc->pyramid_last_gradx);
   _KLTFreePyramid((_KLT_Pyramid) tc->pyramid_last_grady);
-  tc->pyramid_last = NULL;
-  tc->pyramid_last_gradx = NULL;
-  tc->pyramid_last_grady = NULL;
+  tc->pyramid_last = nullptr;
+  tc->pyramid_last_gradx = nullptr;
+  tc->pyramid_last_grady = nullptr;
 }
 
 

@@ -187,8 +187,8 @@ std::vector<Glib::ustring> ICCStore::getProfilesFromDir (const Glib::ustring& di
 
     ProfileMap profiles;
 
-    loadProfiles (profilesDir, &profiles, NULL, NULL, false, true);
-    loadProfiles (dirName, &profiles, NULL, NULL, false, true);
+    loadProfiles (profilesDir, &profiles, nullptr, nullptr, false, true);
+    loadProfiles (dirName, &profiles, nullptr, nullptr, false, true);
 
     for (ProfileMap::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile) {
         res.push_back (profile->first);
@@ -201,14 +201,14 @@ cmsHPROFILE ICCStore::makeStdGammaProfile (cmsHPROFILE iprof)
 {
     // forgive me for the messy code, quick hack to change gamma of an ICC profile to the RT standard gamma
     if (!iprof) {
-        return NULL;
+        return nullptr;
     }
 
     cmsUInt32Number bytesNeeded = 0;
-    cmsSaveProfileToMem(iprof, 0, &bytesNeeded);
+    cmsSaveProfileToMem(iprof, nullptr, &bytesNeeded);
 
     if (bytesNeeded == 0) {
-        return NULL;
+        return nullptr;
     }
 
     uint8_t *data = new uint8_t[bytesNeeded + 1];
@@ -407,7 +407,7 @@ cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name) const
 
     // profile does not exist
     if (f == fileStdProfilesFileNames.end ()) {
-        return NULL;
+        return nullptr;
     }
 
     // but there exists one => load it
@@ -464,15 +464,15 @@ void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCD
     profilesDir = Glib::build_filename (rtICCDir, "output");
     fileProfiles.clear();
     fileProfileContents.clear();
-    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, NULL, false, true);
-    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, NULL, false, true);
+    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, nullptr, false, true);
+    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, nullptr, false, true);
 
     // Input profiles
     // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
     stdProfilesDir = Glib::build_filename (rtICCDir, "input");
     fileStdProfiles.clear();
     fileStdProfilesFileNames.clear();
-    loadProfiles (stdProfilesDir, NULL, NULL, &fileStdProfilesFileNames, true, false);
+    loadProfiles (stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true, false);
 }
 
 // Determine the first monitor default profile of operating system, if selected
@@ -515,7 +515,7 @@ void ICCStore::findDefaultMonitorProfile ()
     }
 }
 
-ProfileContent::ProfileContent (const Glib::ustring& fileName) : data(NULL), length(0)
+ProfileContent::ProfileContent (const Glib::ustring& fileName) : data(nullptr), length(0)
 {
 
     FILE* f = g_fopen (fileName.c_str (), "rb");
@@ -542,16 +542,16 @@ ProfileContent::ProfileContent (const ProfileContent& other)
         data = new char[length + 1];
         memcpy (data, other.data, length + 1);
     } else {
-        data = NULL;
+        data = nullptr;
     }
 }
 
-ProfileContent::ProfileContent (cmsHPROFILE hProfile) : data(NULL), length(0)
+ProfileContent::ProfileContent (cmsHPROFILE hProfile) : data(nullptr), length(0)
 {
 
-    if (hProfile != NULL) {
+    if (hProfile != nullptr) {
         cmsUInt32Number bytesNeeded = 0;
-        cmsSaveProfileToMem(hProfile, 0, &bytesNeeded);
+        cmsSaveProfileToMem(hProfile, nullptr, &bytesNeeded);
 
         if (bytesNeeded > 0) {
             data = new char[bytesNeeded + 1];
@@ -573,7 +573,7 @@ ProfileContent& ProfileContent::operator= (const ProfileContent& other)
         data = new char[length + 1];
         memcpy (data, other.data, length + 1);
     } else {
-        data = NULL;
+        data = nullptr;
     }
 
     return *this;
@@ -585,7 +585,7 @@ cmsHPROFILE ProfileContent::toProfile () const
     if (data) {
         return cmsOpenProfileFromMem (data, length);
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 

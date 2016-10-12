@@ -25,7 +25,7 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
     char *p = value;
     char *pc, *plf;
 
-    while ((pc = strchr(p, ':')) != NULL && (plf = strchr(pc, '\n')) != NULL) {
+    while ((pc = strchr(p, ':')) != nullptr && (plf = strchr(pc, '\n')) != nullptr) {
         while (*p == ' ') {
             p++;
         }
@@ -98,7 +98,7 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
             const char *p1 = strchr(val.c_str(), '/');
             int a, b;
 
-            if (p1 == NULL) {
+            if (p1 == nullptr) {
                 a = atoi(val.c_str());
                 b = 1;
             } else {
@@ -135,31 +135,31 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
 
 // table not complete, not all proprietary Kodak tags are known
 const TagAttrib kodakIfdAttribs[] = {
-    {0, AC_WRITE, 0, 0, 0x0001, AUTO, "UnknownEV?", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0003, AUTO, "ExposureValue", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03e9, AUTO, "OriginalFileName", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03eb, AUTO, "SensorLeftBorder", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03ec, AUTO, "SensorTopBorder", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03ed, AUTO, "SensorImageWidth", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03ee, AUTO, "SensorImageHeight", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03f1, AUTO, "TextualInfo", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03fc, AUTO, "WhiteBalance", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x03fd, AUTO, "Processing", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0401, AUTO, "Time", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0414, AUTO, "NCDFileInfo", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0846, AUTO, "ColorTemperature", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0852, AUTO, "WB_RGBMul0", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0853, AUTO, "WB_RGBMul1", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0854, AUTO, "WB_RGBMul2", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0855, AUTO, "WB_RGBMul3", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x085c, AUTO, "WB_RGBCoeffs0", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x085d, AUTO, "WB_RGBCoeffs1", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x085e, AUTO, "WB_RGBCoeffs2", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x085f, AUTO, "WB_RGBCoeffs3", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0ce5, AUTO, "FirmwareVersion", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x1391, AUTO, "ToneCurveFileName", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x1784, AUTO, "ISO", &stdInterpreter},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL }
+    {0, AC_WRITE, 0, nullptr, 0x0001, AUTO, "UnknownEV?", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0003, AUTO, "ExposureValue", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03e9, AUTO, "OriginalFileName", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03eb, AUTO, "SensorLeftBorder", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03ec, AUTO, "SensorTopBorder", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03ed, AUTO, "SensorImageWidth", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03ee, AUTO, "SensorImageHeight", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03f1, AUTO, "TextualInfo", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03fc, AUTO, "WhiteBalance", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x03fd, AUTO, "Processing", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0401, AUTO, "Time", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0414, AUTO, "NCDFileInfo", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0846, AUTO, "ColorTemperature", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0852, AUTO, "WB_RGBMul0", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0853, AUTO, "WB_RGBMul1", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0854, AUTO, "WB_RGBMul2", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0855, AUTO, "WB_RGBMul3", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x085c, AUTO, "WB_RGBCoeffs0", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x085d, AUTO, "WB_RGBCoeffs1", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x085e, AUTO, "WB_RGBCoeffs2", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x085f, AUTO, "WB_RGBCoeffs3", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0ce5, AUTO, "FirmwareVersion", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x1391, AUTO, "ToneCurveFileName", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x1784, AUTO, "ISO", &stdInterpreter},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr }
 };
 
 }

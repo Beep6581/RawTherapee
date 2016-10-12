@@ -54,7 +54,7 @@ protected:
 
 public:
 
-    ImageData (Glib::ustring fname, RawMetaDataLocation* rml = NULL);
+    ImageData (Glib::ustring fname, RawMetaDataLocation* rml = nullptr);
     virtual ~ImageData ();
 
     const rtexif::TagDirectory*   getExifData () const

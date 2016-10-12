@@ -22,7 +22,7 @@
 #include "rtimage.h"
 
 RenameDialog::RenameDialog (Gtk::Window* parent)
-    : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), p(parent), imageData(NULL)
+    : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), p(parent), imageData(nullptr)
 {
 
     Gtk::Table* names = Gtk::manage (new Gtk::Table (2, 2));

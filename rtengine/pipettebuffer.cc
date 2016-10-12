@@ -23,7 +23,7 @@ namespace rtengine
 {
 
 PipetteBuffer::PipetteBuffer(::EditDataProvider *dataProvider) :
-    dataProvider(dataProvider), imgFloatBuffer(NULL), LabBuffer(NULL), singlePlaneBuffer(), ready(false) {}
+    dataProvider(dataProvider), imgFloatBuffer(nullptr), LabBuffer(nullptr), singlePlaneBuffer(), ready(false) {}
 
 PipetteBuffer::~PipetteBuffer()
 {
@@ -46,12 +46,12 @@ void PipetteBuffer::flush()
 {
     if (imgFloatBuffer) {
         delete imgFloatBuffer;
-        imgFloatBuffer = NULL;
+        imgFloatBuffer = nullptr;
     }
 
     if (LabBuffer) {
         delete LabBuffer;
-        LabBuffer = NULL;
+        LabBuffer = nullptr;
     }
 
     singlePlaneBuffer.flushData();
@@ -69,7 +69,7 @@ EditUniqueID PipetteBuffer::getEditID()
 
 void PipetteBuffer::resize(int newWidth, int newHeight)
 {
-    resize(newWidth, newHeight, dataProvider ? dataProvider->getCurrSubscriber() : NULL);
+    resize(newWidth, newHeight, dataProvider ? dataProvider->getCurrSubscriber() : nullptr);
 }
 
 // Resize buffers if they already exist
@@ -85,13 +85,13 @@ void PipetteBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubsc
                 }
             } else if (imgFloatBuffer) {
                 delete imgFloatBuffer;
-                imgFloatBuffer = NULL;
+                imgFloatBuffer = nullptr;
             }
 
             if (newSubscriber->getPipetteBufferType() == BT_LABIMAGE) {
                 if (LabBuffer && (LabBuffer->W != newWidth && LabBuffer->H != newHeight)) {
                     delete LabBuffer;
-                    LabBuffer = NULL;
+                    LabBuffer = nullptr;
                 }
 
                 if (!LabBuffer) {
@@ -99,7 +99,7 @@ void PipetteBuffer::resize(int newWidth, int newHeight, EditSubscriber* newSubsc
                 }
             } else if (LabBuffer) {
                 delete LabBuffer;
-                LabBuffer = NULL;
+                LabBuffer = nullptr;
             }
 
             if (newSubscriber->getPipetteBufferType() == BT_SINGLEPLANE_FLOAT) {
@@ -124,11 +124,11 @@ bool PipetteBuffer::bufferCreated()
         if (subscriber->getEditingType() == ET_PIPETTE) {
             switch (dataProvider->getCurrSubscriber()->getPipetteBufferType()) {
             case (BT_IMAGEFLOAT):
-                return imgFloatBuffer != NULL;
+                return imgFloatBuffer != nullptr;
             case (BT_LABIMAGE):
-                return LabBuffer != NULL;
+                return LabBuffer != nullptr;
             case (BT_SINGLEPLANE_FLOAT):
-                return singlePlaneBuffer.data != NULL;
+                return singlePlaneBuffer.data != nullptr;
             }
         } else {
             return false;
@@ -159,7 +159,7 @@ void PipetteBuffer::getPipetteData(float* v, int x, int y, int squareSize)
             break;
 
         case (BT_SINGLEPLANE_FLOAT):
-            if (singlePlaneBuffer.data != NULL) {
+            if (singlePlaneBuffer.data != nullptr) {
                 singlePlaneBuffer.getPipetteData(v[0], x, y, squareSize, 0);
                 v[1] = v[2] = -1.f;
                 return;

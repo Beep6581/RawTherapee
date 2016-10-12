@@ -97,7 +97,7 @@ public:
 
 template<typename E>
 wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop, int numThreads, int Daub4Len)
-    : coeff0(NULL), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), numThreads(numThreads), m_w(width), m_h(height)
+    : coeff0(nullptr), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), numThreads(numThreads), m_w(width), m_h(height)
 {
 
     //initialize wavelet filters
@@ -219,7 +219,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
             E *tmpLo = wavelet_decomp[lvl]->wavcoeffs[2]; // we can use this as buffer
             wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, coeff0, coeff0, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
             delete wavelet_decomp[lvl];
-            wavelet_decomp[lvl] = NULL;
+            wavelet_decomp[lvl] = nullptr;
         }
 
         delete[] tmpHi;
@@ -261,9 +261,9 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
 
     delete[] tmpHi;
     delete wavelet_decomp[0];
-    wavelet_decomp[0] = NULL;
+    wavelet_decomp[0] = nullptr;
     delete[] coeff0;
-    coeff0 = NULL;
+    coeff0 = nullptr;
 }
 
 };

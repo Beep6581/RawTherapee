@@ -44,10 +44,10 @@ using namespace std;
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     filepanel(filepanel),
     selectedDirectoryId(1),
-    listener(NULL),
-    fslistener(NULL),
+    listener(nullptr),
+    fslistener(nullptr),
     hasValidCurrentEFS(false),
-    filterPanel(NULL),
+    filterPanel(nullptr),
     previewsToLoad(0),
     previewsLoaded(0),
     coarsePanel(cp),
@@ -667,8 +667,8 @@ void FileCatalog::_refreshProgressBar ()
         GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 
         Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-        Gtk::Box* hbb = NULL;
-        Gtk::Label *label = NULL;
+        Gtk::Box* hbb = nullptr;
+        Gtk::Label *label = nullptr;
 
         if( options.mainNBVertical ) {
             hbb = Gtk::manage (new Gtk::VBox ());
@@ -880,7 +880,7 @@ void FileCatalog::refreshHeight ()
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb)
 {
 
-    if (enabled && listener != NULL) {
+    if (enabled && listener != nullptr) {
         bool continueToLoad = true;
 
         for (size_t i = 0; i < tmb.size() && continueToLoad; i++) {

@@ -25,7 +25,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1), inspector(NULL), isInspectorActive(false), location(THLOC_FILEBROWSER)
+    : lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), inspector(nullptr), isInspectorActive(false), location(THLOC_FILEBROWSER)
 {
     inW = -1;
     inH = -1;
@@ -728,7 +728,7 @@ void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
     refreshThumbImages ();
 }
 
-ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(NULL), dirty(true)
+ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(nullptr), dirty(true)
 {
 }
 
@@ -774,7 +774,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
 {
     // GUI already acquired
 
-    ThumbBrowserEntryBase* fileDescr = NULL;
+    ThumbBrowserEntryBase* fileDescr = nullptr;
     bool handled = false;
 
     {

@@ -138,7 +138,7 @@ protected:
 
 
 public:
-    explicit EditorPanel (FilePanel* filePanel = NULL);
+    explicit EditorPanel (FilePanel* filePanel = nullptr);
     virtual ~EditorPanel ();
 
     void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
@@ -167,7 +167,7 @@ public:
     void refreshProcessingState (bool inProcessing); // this is called by setProcessingState in the gtk thread
 
     // PParamsChangeListener interface
-    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = NULL);
+    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = nullptr);
 
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt);

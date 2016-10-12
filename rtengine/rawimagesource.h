@@ -138,7 +138,7 @@ public:
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
     eSensorType getSensorType () const
     {
-        return ri != NULL ? ri->getSensorType() : ST_NONE;
+        return ri != nullptr ? ri->getSensorType() : ST_NONE;
     }
     ColorTemp   getWB       () const
     {

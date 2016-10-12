@@ -623,8 +623,8 @@ void LCurve::setBatchMode (bool batchMode)
     chromaticity->showEditedCB ();
     rstprotection->showEditedCB ();
     curveEditorG->setBatchMode (batchMode);
-    lcshape->setBottomBarColorProvider(NULL, -1);
-    lcshape->setLeftBarColorProvider(NULL, -1);
+    lcshape->setBottomBarColorProvider(nullptr, -1);
+    lcshape->setLeftBarColorProvider(nullptr, -1);
 }
 
 
