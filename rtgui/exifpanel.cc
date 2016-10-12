@@ -582,7 +582,7 @@ void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string pre
     Gtk::TreeModel::iterator iter;
 
     for (iter = root.begin(); iter != root.end(); ++iter)  {
-        if (iter->get_value (exifColumns.edited) == true) {
+        if (iter->get_value (exifColumns.edited)) {
             changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
         } else if (iter->get_value (exifColumns.action) == AC_WRITE && iter->get_value (exifColumns.icon) == delicon) {
             changeList[ prefix + iter->get_value (exifColumns.field_nopango) ] = "#delete";

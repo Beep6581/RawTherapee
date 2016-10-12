@@ -782,7 +782,7 @@ void RawImage::getRgbCam (float rgbcam[3][4])
 bool
 RawImage::get_thumbSwap() const
 {
-    return ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) ? true : false;
+    return (order == 0x4949) == (ntohs(0x1234) == 0x1234);
 }
 
 } //namespace rtengine

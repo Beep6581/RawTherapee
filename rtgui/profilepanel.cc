@@ -153,20 +153,12 @@ ProfilePanel::~ProfilePanel ()
 
 bool ProfilePanel::isCustomSelected()
 {
-    if (profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PCUSTOM") + ")")) {
-        return true;
-    }
-
-    return false;
+    return profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PCUSTOM") + ")");
 }
 
 bool ProfilePanel::isLastSavedSelected()
 {
-    if (profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PLASTSAVED") + ")")) {
-        return true;
-    }
-
-    return false;
+    return profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PLASTSAVED") + ")");
 }
 
 Gtk::TreeIter ProfilePanel::getCustomRow()

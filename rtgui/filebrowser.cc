@@ -1464,8 +1464,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
     }
 
     // return false if basic filter settings are not satisfied
-    if ((filter.showRanked[entry->thumbnail->getRank()] == false ) ||
-            (filter.showCLabeled[entry->thumbnail->getColorLabel()] == false ) ||
+    if ((!filter.showRanked[entry->thumbnail->getRank()] ) ||
+            (!filter.showCLabeled[entry->thumbnail->getColorLabel()] ) ||
 
             ((entry->thumbnail->hasProcParams() && filter.showEdited[0]) && !filter.showEdited[1]) ||
             ((!entry->thumbnail->hasProcParams() && filter.showEdited[1]) && !filter.showEdited[0]) ||
@@ -1515,7 +1515,7 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
             }
         }
 
-        if (MatchEqual == true) {
+        if (MatchEqual) {
             if (iFilenameMatch == 0) { //none of the vFilterStrings found in FileName
                 return false;
             }

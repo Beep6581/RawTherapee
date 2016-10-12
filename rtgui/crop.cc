@@ -1283,7 +1283,7 @@ double Crop::getRatio ()
 
     double r = -1.0;
 
-    if (fixr->get_active() == false) {
+    if (!fixr->get_active()) {
         return r;
     }
 

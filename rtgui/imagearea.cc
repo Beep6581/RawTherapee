@@ -213,7 +213,7 @@ bool ImageArea::on_expose_event(GdkEventExpose* event)
         mainCropWindow->expose (cr);
     }
 
-    if (options.showInfo == true && infotext != "") {
+    if (options.showInfo && infotext != "") {
         int fnw, fnh;
         ilayout->get_pixel_size (fnw, fnh);
         window->draw_pixbuf (get_style()->get_base_gc (Gtk::STATE_NORMAL), ipixbuf, 0, 0, 4, 4, fnw + 8, fnh + 8, Gdk::RGB_DITHER_NONE, 0, 0);

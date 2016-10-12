@@ -165,7 +165,7 @@ void History::historySelectionChanged ()
             tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
 
-        if (blistener && blistenerLock == false) {
+        if (blistener && !blistenerLock) {
             Gtk::TreeModel::Path path = historyModel->get_path (iter);
             path.prev ();
             iter = historyModel->get_iter (path);
@@ -251,9 +251,9 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
             selection->select (newrow);
         }
 
-        if (blistener && row && blistenerLock == false) {
+        if (blistener && row && !blistenerLock) {
             blistener->historyBeforeLineChanged (row[historyColumns.params]);
-        } else if (blistener && size == 0 && blistenerLock == false) {
+        } else if (blistener && size == 0 && !blistenerLock) {
             blistener->historyBeforeLineChanged (newrow[historyColumns.params]);
         }
     }

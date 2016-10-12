@@ -2122,11 +2122,7 @@ void FileCatalog::tbRightPanel_1_toggled ()
 
 bool FileCatalog::CheckSidePanelsVisibility()
 {
-    if(tbLeftPanel_1->get_active() == false && tbRightPanel_1->get_active() == false) {
-        return false;
-    } else {
-        return true;
-    }
+    return !(!tbLeftPanel_1->get_active() && !tbRightPanel_1->get_active());
 }
 void FileCatalog::toggleSidePanels()
 {
@@ -2539,11 +2535,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
         }
     }
 
-    if (fileBrowser->keyPressed(event)) {
-        return true;
-    }
-
-    return false;
+    return fileBrowser->keyPressed(event);
 }
 
 void FileCatalog::showToolBar()

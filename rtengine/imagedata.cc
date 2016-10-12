@@ -570,7 +570,7 @@ std::string ImageMetaData::expcompToString (double expcomp, bool maskZeroexpcomp
 
     char buffer[256];
 
-    if (maskZeroexpcomp == true) {
+    if (maskZeroexpcomp) {
         if (expcomp != 0.0) {
             sprintf (buffer, "%0.2f", expcomp);
             return buffer;

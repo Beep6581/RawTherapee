@@ -2248,7 +2248,7 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
 
                         correctionHueLum = 0.0;
 
-                        if(contin1 == true && contin2 == true) {
+                        if(contin1 && contin2) {
                             correctlum = correctlumprov2 - correctlumprov;
                         }
 

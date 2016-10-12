@@ -74,11 +74,7 @@ inline bool Options::checkProfilePath(Glib::ustring &path)
 
     p = getGlobalProfilePath();
 
-    if (!p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
-        return true;
-    } else {
-        return false;
-    }
+    return !p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS);
 }
 
 bool Options::checkDirPath(Glib::ustring &path, Glib::ustring errString)
@@ -2324,7 +2320,7 @@ bool Options::load ()
 void Options::save ()
 {
 
-    if (options.multiUser == false) {
+    if (!options.multiUser) {
         options.saveToFile (Glib::build_filename(argv0, "options"));
     } else {
         options.saveToFile (Glib::build_filename(rtdir, "options"));

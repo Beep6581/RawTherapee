@@ -845,7 +845,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 }
 
                 //  printf("LevwavL before: %d\n",levwavL);
-                if(cp.contrast == 0.f && cp.tonemap == false && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
+                if(cp.contrast == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
                     while(levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
@@ -2599,7 +2599,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
         float * koe;
         float maxkoe = 0.f;
 
-        if(lipschitz == false) {
+        if(!lipschitz) {
             koe = new float [H_L * W_L];
 
             for (int i = 0; i < W_L * H_L; i++) {
@@ -2732,7 +2732,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
         //take into account local contrast
         float refin = value * exp (expkoef);
 
-        if(cp.link == true  && cp.noiseena) { //combi
+        if(cp.link  && cp.noiseena) { //combi
             {
                 if(level == 0) {
                     refin *= (1.f + cp.lev0s / 50.f);    // we can change this sensibility!
@@ -2775,7 +2775,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                     int k = i * W_L + j;
 
                     if(cp.detectedge) {
-                        if(lipschitz == false) {
+                        if(!lipschitz) {
                             if(cp.eddet > 10.f) {
                                 edge = (aedstr * cp.eddet + bedstr) * (edgePrecalc * (1.f + koe[k])) / (1.f + 0.9f * maxkoe);
                             } else {
@@ -2783,7 +2783,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                             }
                         }
 
-                        if(lipschitz == true) {
+                        if(lipschitz) {
                             if(level < 4) {
                                 edge = 1.f + (edgePrecalc - 1.f) * (koeLi[level * 3][k]) / (1.f + 0.9f * maxkoeLi[level * 3 + dir - 1]);
                             } else {
@@ -2885,7 +2885,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                     int k = i * W_L + j;
 
                     if(cp.detectedge) {
-                        if(lipschitz == false) {
+                        if(!lipschitz) {
                             if(cp.eddet > 10.f) {
                                 edge = (aedstr * cp.eddet + bedstr) * (edgePrecalc * (1.f + koe[k])) / (1.f + 0.9f * maxkoe);
                             } else {
@@ -2893,7 +2893,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                             }
                         }
 
-                        if(lipschitz == true) {
+                        if(lipschitz) {
                             if(level < 4) {
                                 edge = 1.f + (edgePrecalc - 1.f) * (koeLi[level * 3][k]) / (1.f + 0.9f * maxkoeLi[level * 3 + dir - 1]);
                             } else {
@@ -2975,13 +2975,13 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             }
         }
 
-        if(lipschitz == false) {
+        if(!lipschitz) {
             delete [] koe;
         }
     }
 
 
-    if(cp.link == false && cp.noiseena)   { //used both with denoise 1 2 3
+    if(!cp.link && cp.noiseena)   { //used both with denoise 1 2 3
         float refine = 0.f;
 
         for (int i = 0; i < W_L * H_L; i++) {

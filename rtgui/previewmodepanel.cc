@@ -88,9 +88,9 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     previewL->set_active (false);
     previewFocusMask->set_active (false);
 
-    backColor0->set_active (options.bgcolor == 0 ? true : false);
-    backColor1->set_active (options.bgcolor == 1 ? true : false);
-    backColor2->set_active (options.bgcolor == 2 ? true : false);
+    backColor0->set_active (options.bgcolor == 0);
+    backColor1->set_active (options.bgcolor == 1);
+    backColor2->set_active (options.bgcolor == 2);
 
     vbbackColor = Gtk::manage (new Gtk::VBox ());
     vbbackColor->set_border_width (0);

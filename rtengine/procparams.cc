@@ -7549,11 +7549,7 @@ bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b
         }
     }
 
-    if (a.threshold != b.threshold) {
-        return false;
-    }
-
-    return true;
+    return a.threshold == b.threshold;
 }
 
 /*bool operator==(const ExifPairs& a, const ExifPairs& b) {
