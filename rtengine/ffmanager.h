@@ -34,8 +34,6 @@ public:
     std::string maker;  ///< manufacturer
     std::string model;  ///< model
     std::string lens;   ///< lens
-    int iso;            ///< ISO (gain)
-    double shutter;     ///< shutter or exposure time in sec
     double aperture;    ///< aperture in stops
     double focallength; ///< focal length in mm
     time_t timestamp;   ///< seconds since 1 Jan 1970

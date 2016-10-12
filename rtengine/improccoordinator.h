@@ -90,7 +90,6 @@ protected:
     LUTf hltonecurve;
     LUTf shtonecurve;
     LUTf tonecurve;
-    float chaut, redaut, blueaut, maxredaut, maxblueaut,  minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema;
 
     LUTf lumacurve;
     LUTf chroma_acurve;
@@ -327,7 +326,7 @@ public:
     }
 
     struct DenoiseInfoStore {
-        DenoiseInfoStore () : valid(false) {}
+        DenoiseInfoStore () : chM(0), max_r{}, max_b{}, ch_M{}, valid(false)  {}
         float chM;
         float max_r[9];
         float max_b[9];

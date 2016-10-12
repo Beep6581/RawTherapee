@@ -36,16 +36,18 @@ extern const Settings* settings;
 
 inline dfInfo& dfInfo::operator =(const dfInfo &o)
 {
-    pathname = o.pathname;
-    maker = o.maker;
-    model = o.model;
-    iso = o.iso;
-    shutter = o.shutter;
-    timestamp = o.timestamp;
+    if (this != &o) {
+        pathname = o.pathname;
+        maker = o.maker;
+        model = o.model;
+        iso = o.iso;
+        shutter = o.shutter;
+        timestamp = o.timestamp;
 
-    if( ri ) {
-        delete ri;
-        ri = NULL;
+        if( ri ) {
+            delete ri;
+            ri = NULL;
+        }
     }
 
     return *this;

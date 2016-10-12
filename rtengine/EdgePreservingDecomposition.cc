@@ -127,15 +127,13 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 #endif
         {
             float c = 0.0f;
-            float t;
-            float temp;
 #ifdef _OPENMP
             #pragma omp for reduction(+:rs)                            // Summation with error correction
 #endif
 
             for(int ii = 0; ii < n; ii++) {
-                temp = r[ii] * s[ii];
-                t = rs + temp;
+                float temp = r[ii] * s[ii];
+                float t = rs + temp;
 
                 if( fabsf(rs) >= fabsf(temp) ) {
                     c += ((rs - t) + temp);
@@ -183,7 +181,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     return x;
 }
 
-MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle)
+MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle) : buffer(nullptr), DiagBuffer(nullptr)
 {
     n = Dimension;
     m = NumberOfDiagonalsInLowerTriangle;
@@ -306,8 +304,8 @@ SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Pro
 #else
     const int chunkSize = (lm - srm) / (omp_get_num_procs() * 8);
 #endif
-#endif
     #pragma omp parallel
+#endif
     {
         // First fill the big part in the middle
         // This can be done without intermediate stores to memory and it can be parallelized too
@@ -443,8 +441,8 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     }
 
     //It's all initialized? Uhkay. Do the actual math then.
-    int sss, ss, s;
-    int k, MaxStartRow = StartRows[m - 1];  //Handy number.
+    int sss, ss;
+    int MaxStartRow = StartRows[m - 1];  //Handy number.
     float **l = ic->Diagonals;
     float  *d = ic->Diagonals[0];       //Describes D in LDLt.
     int icm = ic->m;
@@ -506,8 +504,8 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 
         //This is a loop over k from 1 to j, inclusive. We'll cover that by looping over the index of the diagonals (s), and get k from it.
         //The first diagonal is d (k = 0), so skip that and have s start at 1. Cover all available s but stop if k exceeds j.
-        s = 1;
-        k = icStartRows[s];
+        int s = 1;
+        int k = icStartRows[s];
 
         while(k <= j) {
             d[j] -= l[s][j - k] * l[s][j - k] * d[j - k];
@@ -713,9 +711,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float 
         a = Blur, g = Source;
     }
 
-    int i;
     int w1 = w - 1, h1 = h - 1;
-//  float eps = 0.02f;
     const float sqreps = 0.0004f;                           // removed eps*eps from inner loop
 
 

@@ -536,6 +536,8 @@ public:
         size = 0;
         upperBound = 0;
         maxs = 0;
+        maxsf = 0.f;
+        clip = 0;
     }
 
     // create an identity LUT (LUT(x) = x) or a scaled identity LUT (LUT(x) = x / divisor)

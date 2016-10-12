@@ -524,7 +524,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
+        } else /*if(params->colorappearance.wbmodel == "RawTCAT02")*/ {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
@@ -1034,7 +1034,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
 //          if(!params->epd.enabled || !params->colorappearance.tonecie  || !settings->autocielab){
                         //  if(!params->epd.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){
-                        int posl, posc;
                         double brli = 327.;
                         double chsacol = 327.;
                         int libr = 0;
@@ -1065,9 +1064,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             jp = true;
 
                             if(pW != 1) { //only with improccoordinator
+                                int posl;
                                 if(libr == 1) {
                                     posl = CLIP((int)(Q * brli));    //40.0 to 100.0 approximative factor for Q  - 327 for J
-                                } else if(libr == 0) {
+                                } else /*if(libr == 0)*/ {
                                     posl = CLIP((int)(J * brli));    //327 for J
                                 }
 
@@ -1077,11 +1077,12 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             chropC = true;
 
                             if(pW != 1) { //only with improccoordinator
+                                int posc;
                                 if(colch == 0) {
                                     posc = CLIP((int)(C * chsacol));    //450.0 approximative factor for s    320 for M
                                 } else if(colch == 1) {
                                     posc = CLIP((int)(s * chsacol));
-                                } else if(colch == 2) {
+                                } else /*if(colch == 2)*/ {
                                     posc = CLIP((int)(M * chsacol));
                                 }
 
@@ -1303,7 +1304,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
                         ncie->C_p[i][j] = (ncie->M_p[i][j]) / co_e;
                         //show histogram in CIECAM mode (Q,J, M,s,C)
-                        int posl, posc;
                         double brli = 327.;
                         double chsacol = 327.;
                         int libr = 0;
@@ -1335,9 +1335,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             jp = true;
 
                             if(pW != 1) { //only with improccoordinator
+                                int posl;
                                 if(libr == 1) {
                                     posl = CLIP((int)(ncie->Q_p[i][j] * brli));    //40.0 to 100.0 approximative factor for Q  - 327 for J
-                                } else if(libr == 0) {
+                                } else /*if(libr == 0)*/ {
                                     posl = CLIP((int)(ncie->J_p[i][j] * brli));    //327 for J
                                 }
 
@@ -1347,12 +1348,13 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             chropC = true;
 
                             if(pW != 1) { //only with improccoordinator
+                                int posc;
                                 if(colch == 0) {
                                     posc = CLIP((int)(ncie->C_p[i][j] * chsacol));    //450.0 approximative factor for s    320 for M
                                 } else if(colch == 1) {
                                     sa_t = 100.f * sqrt(ncie->C_p[i][j] / ncie->Q_p[i][j]);    //Q_p always > 0
                                     posc = CLIP((int)(sa_t * chsacol));
-                                } else if(colch == 2) {
+                                } else /*if(colch == 2)*/ {
                                     posc = CLIP((int)(ncie->M_p[i][j] * chsacol));
                                 }
 
@@ -1822,7 +1824,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
+        } else /*if(params->colorappearance.wbmodel == "RawTCAT02")*/ {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
@@ -2680,8 +2682,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                 for (int i = 0; i < height; i++) { // update CIECAM with new values after tone-mapping
                     for (int j = 0; j < width; j++) {
-                        float xx, yy, zz;
-                        float x, y, z;
 
                         //  if(epdEnabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
                         if(epdEnabled) {
@@ -4663,7 +4663,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                     for (int i = 0; i < tH; i++) {
                         for (int j = 0; j < tW; j++) {
-                            float h, s, l;
                             float r = tmpImage->r(i, j);
                             float g = tmpImage->g(i, j);
                             float b = tmpImage->b(i, j);

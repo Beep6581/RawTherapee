@@ -74,7 +74,8 @@ class array2D :
 {
 
 private:
-    int x, y, owner, flags;
+    int x, y, owner;
+    unsigned int flags;
     T ** ptr;
     T * data;
     bool lock; // useful lock to ensure data is not changed anymore.
@@ -112,7 +113,7 @@ public:
     // use as empty declaration, resize before use!
     // very useful as a member object
     array2D() :
-        x(0), y(0), owner(0), ptr(NULL), data(NULL), lock(0)
+        x(0), y(0), owner(0), ptr(NULL), data(NULL), lock(0), flags(0)
     {
         //printf("got empty array2D init\n");
     }
@@ -285,6 +286,8 @@ public:
         if (this != &rhs)
 
         {
+            flags = rhs.flags;
+            lock = rhs.lock;
             if (!owner) { // we can only copy same size data
                 if ((x != rhs.x) || (y != rhs.y)) {
                     printf(" assignment error in array2D\n");

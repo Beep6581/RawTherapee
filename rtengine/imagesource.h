@@ -41,10 +41,10 @@ class ImageMatrices
 {
 
 public:
-    double rgb_cam[3][3];
-    double cam_rgb[3][3];
-    double xyz_cam[3][3];
-    double cam_xyz[3][3];
+    double rgb_cam[3][3] = {};
+    double cam_rgb[3][3] = {};
+    double xyz_cam[3][3] = {};
+    double cam_xyz[3][3] = {};
 };
 
 class ImageSource : public InitialImage
