@@ -542,7 +542,7 @@ void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
             h_ = 4. + (var_R - var_G) / C;
         }
 
-        h = float(h_ /= 6.0);
+        h = float(h_ / 6.0);
 
         if ( h < 0.f ) {
             h += 1.f;
@@ -923,7 +923,7 @@ void Color::hsv2rgb (float h, float s, float v, int &r, int &g, int &b)
         r1 = t;
         g1 = p;
         b1 = v;
-    } else if (i == 5) {
+    } else /*if (i == 5)*/ {
         r1 = v;
         g1 = p;
         b1 = q;
@@ -1996,7 +1996,6 @@ void Color::skinred ( double J, double h, double sres, double Sp, float dred, fl
     float factorskin, factorsat, factor, factorskinext, interm;
     float scale = 100.0f / 100.1f; //reduction in normal zone
     float scaleext = 1.0f; //reduction in transition zone
-    float protect_redh;
     float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
     float HH;
     bool doskin = false;
@@ -2077,7 +2076,6 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
 
     if(doskin) {
         float factorskin, factorsat, factor, factorskinext;
-        float protect_redh;
         float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
         float chromapro = sres / Sp;
 

@@ -1453,10 +1453,9 @@ void RawImageSource::getFullSize (int& w, int& h, int tr)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getSize (int tran, PreviewProps pp, int& w, int& h)
+void RawImageSource::getSize (PreviewProps pp, int& w, int& h)
 {
 
-    tran = defTransform (tran);
     w = pp.w / pp.skip + (pp.w % pp.skip > 0);
     h = pp.h / pp.skip + (pp.h % pp.skip > 0);
 }
@@ -2123,7 +2122,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 #endif
 
                 for (; j < W - border; j++) {
-                    float H, S, L;
+                    float L;
                     //rgb=>lab
                     Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], L);
                     L *= 32768.f;
@@ -2296,7 +2295,6 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     float **temp = conversionBuffer[2]; // one less dereference
     LUTf dLcurve;
     LUTu hist16RET;
-    float val;
 
     if(dehacontlutili && histLRETI) {
         hist16RET(32768);
@@ -2369,7 +2367,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         // hist16RET.compressTo(histLRETI);
         // also remove declaration and init of dLcurve some lines above then and finally remove this comment :)
         for (int i = 0; i < 32768; i++) {
-            val = (double)i / 32767.0;
+            float val = (double)i / 32767.0;
             dLcurve[i] = val;
         }
 
@@ -2393,14 +2391,8 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
 
                 for (; j < W - border; j++) {
 
-                    float valp;
-                    //   if(chutili) {  // c=f(H)
-                    {
-                        valp = float((chcurve->getVal(conversionBuffer[3][i - border][j - border]) - 0.5f));
-
-                        conversionBuffer[1][i - border][j - border] *= (1.f + 2.f * valp);
-                    }
-                    //    }
+                    float valp = (chcurve->getVal(conversionBuffer[3][i - border][j - border]) - 0.5f);
+                    conversionBuffer[1][i - border][j - border] *= (1.f + 2.f * valp);
 
                 }
             }
@@ -2822,7 +2814,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 
         if(raw.ff_AutoClipControl) {
             // determine maximum calculated value to avoid clipping
-            int clipControlGui = 0;
+//            int clipControlGui = 0;
             float maxval = 0.f;
             // xtrans files have only one black level actually, so we can simplify the code a bit
 #ifdef _OPENMP
@@ -2857,7 +2849,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             // there's only one white level for xtrans
             if(maxval + black[0] > ri->get_white(0)) {
                 limitFactor = ri->get_white(0) / (maxval + black[0]);
-                clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
+//                clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
             }
         } else {
             limitFactor = max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
@@ -4202,7 +4194,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
     for (int col = 0; col < width; col++) {
         float rgb[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio, lratio = 0;
-        float L, C, H, Lfrac;
+        float L, C, H;
 
         // Copy input pixel to rgb so it's easier to access in loops
         rgb[0] = rin[col];
@@ -4290,7 +4282,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
         bin[col] = L + H / 3.0;
 
         if ((L = (rin[col] + gin[col] + bin[col]) / 3) > desatpt) {
-            Lfrac = max(0.0f, (maxave - L) / (maxave - desatpt));
+            float Lfrac = max(0.0f, (maxave - L) / (maxave - desatpt));
             C = Lfrac * 1.732050808 * (rin[col] - gin[col]);
             H = Lfrac * (2 * bin[col] - rin[col] - gin[col]);
             rin[col] = L - H / 6.0 + C / 3.464101615;
@@ -4887,11 +4879,11 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     if (ri->getSensorType() != ST_BAYER) {
         if(ri->getSensorType() == ST_FUJI_XTRANS) {
             int d[9][2] = {{0, 0}, { -1, -1}, { -1, 0}, { -1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-            double rloc, gloc, bloc;
-            int rnbrs, gnbrs, bnbrs;
 
             for (size_t i = 0; i < red.size(); i++) {
                 transformPosition (red[i].x, red[i].y, tran, x, y);
+                double rloc, gloc, bloc;
+                int rnbrs, gnbrs, bnbrs;
                 rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
 
                 for (int k = 0; k < 9; k++) {
@@ -4959,11 +4951,11 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     } else {
 
         int d[9][2] = {{0, 0}, { -1, -1}, { -1, 0}, { -1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-        double rloc, gloc, bloc;
-        int rnbrs, gnbrs, bnbrs;
 
         for (size_t i = 0; i < red.size(); i++) {
             transformPosition (red[i].x, red[i].y, tran, x, y);
+            double rloc, gloc, bloc;
+            int rnbrs, gnbrs, bnbrs;
             rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
 
             for (int k = 0; k < 9; k++) {

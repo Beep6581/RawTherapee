@@ -140,8 +140,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
 {
 
     if (deh.enabled) {//enabled
-        float         mean, stddv, maxtr, mintr;
-        float         delta;
+        float maxtr, mintr;
         constexpr float eps = 2.f;
         bool useHsl = deh.retinexcolorspace == "HSLLOG";
         bool useHslLin = deh.retinexcolorspace == "HSLLIN";
@@ -551,8 +550,8 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             delete [] buffer;
             delete [] srcBuffer;
 
-            mean = 0.f;
-            stddv = 0.f;
+            float mean = 0.f;
+            float stddv = 0.f;
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
             mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
@@ -658,7 +657,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 maxi = maxtr - epsil;
             }
 
-            delta = maxi - mini;
+            float delta = maxi - mini;
             //printf("maxi=%f mini=%f mean=%f std=%f delta=%f maxtr=%f mintr=%f\n", maxi, mini, mean, stddv, delta, maxtr, mintr);
 
             if ( !delta ) {
@@ -691,7 +690,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
             mean_stddv2( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-            float asig, bsig, amax, bmax, amin, bmin;
+            float asig = 0.f, bsig = 0.f, amax = 0.f, bmax = 0.f, amin = 0.f, bmin = 0.f;
 
             if (dehagaintransmissionCurve && mean != 0.f && stddv != 0.f) { //if curve
                 asig = 0.166666f / stddv;
