@@ -63,17 +63,11 @@ protected:
     bool fuji;
     bool d1x;
     int border;
-    //char** hpmap;
-    float** hrmap[3];   // for color propagation
-    char** needhr;      // for color propagation
-    int max_3[3];
     float chmax[4], hlmax[4], clmax[4];
     double initialGain; // initial gain calculated after scale_colors
     double camInitialGain;
     double defGain;
-    bool full;
     cmsHPROFILE camProfile;
-    cmsHPROFILE embProfile;
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.

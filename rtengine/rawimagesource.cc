@@ -423,6 +423,7 @@ extern const Settings* settings;
 
 RawImageSource::RawImageSource ()
     : ImageSource()
+    , W(0), H(0)
     , plistener(NULL)
     , border(4)
     , ri(NULL)
@@ -431,17 +432,40 @@ RawImageSource::RawImageSource ()
     , green(0, 0)
     , red(0, 0)
     , blue(0, 0)
+    , lc00(0.0)
+    , lc01(0.0)
+    , lc02(0.0)
+    , lc10(0.0)
+    , lc11(0.0)
+    , lc12(0.0)
+    , lc20(0.0)
+    , lc21(0.0)
+    , lc22(0.0)
+    , hlmax{}
+    , clmax{}
+    , chmax{}
+    , scale_mul{}
+    , c_black{}
+    , c_white{}
+    , cblacksom{}
+    , ref_pre_mul{}
+    , refwb_red(0.0)
+    , refwb_green(0.0)
+    , refwb_blue(0.0)
+    , rgb_cam{}
+    , cam_rgb{}
+    , xyz_cam{}
+    , cam_xyz{}
+    , fuji(false)
+    , d1x(false)
+    , initialGain(0.0)
+    , camInitialGain(0.0)
+    , defGain(0.0)
+    , threshold(0)
 {
-    hrmap[0] = NULL;
-    hrmap[1] = NULL;
-    hrmap[2] = NULL;
-    //needhr = NULL;
-    //hpmap = NULL;
     camProfile = NULL;
     embProfile = NULL;
     rgbSourceModified = false;
-    hlmax[0] = hlmax[1] = hlmax[2] = hlmax[3] = 0.f;
-    clmax[0] = clmax[1] = clmax[2] = clmax[3] = 0.f;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -460,13 +484,6 @@ RawImageSource::~RawImageSource ()
 
     if( cache ) {
         delete [] cache;
-    }
-
-    if (hrmap[0] != NULL) {
-        int dh = H / HR_SCALE;
-        freeJaggedArray<float>(hrmap[0]);
-        freeJaggedArray<float>(hrmap[1]);
-        freeJaggedArray<float>(hrmap[2]);
     }
 
     if (camProfile) {

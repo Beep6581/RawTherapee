@@ -65,9 +65,7 @@ public:
 protected:
     bool initEq1;
     bool _isDouble;
-#ifndef NDEBUG
-    unsigned int part[5];
-#endif
+
 public:
     Threshold (T bottom, T top, bool startAtOne)
     {

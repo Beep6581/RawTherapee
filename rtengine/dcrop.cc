@@ -1121,7 +1121,7 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
-    parent->imgsrc->getSize (tr, cp, orW, orH);
+    parent->imgsrc->getSize (cp, orW, orH);
 
     int cw = SKIPS(bw, skip);
     int ch = SKIPS(bh, skip);

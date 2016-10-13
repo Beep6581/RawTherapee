@@ -37,6 +37,7 @@ ImProcCoordinator::ImProcCoordinator ()
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
       bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
+      ctColorCurve(),
       hltonecurve(65536),
       shtonecurve(65536),
       tonecurve(65536, 0), //,1);
@@ -901,7 +902,7 @@ void ImProcCoordinator::setScale (int prevscale)
     do {
         prevscale--;
         PreviewProps pp (0, 0, fw, fh, prevscale);
-        imgsrc->getSize (tr, pp, nW, nH);
+        imgsrc->getSize (pp, nW, nH);
     } while(nH < 400 && prevscale > 1 && (nW * nH < 1000000) ); // sctually hardcoded values, perhaps a better choice is possible
 
     if (settings->verbose) {
