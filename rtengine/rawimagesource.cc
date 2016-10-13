@@ -3933,7 +3933,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
             lcmsMutex->unlock ();
         }
 
-        TMatrix toxyz, torgb;
+        TMatrix toxyz = {}, torgb = {};
 
         if (!working_space_is_prophoto) {
             toxyz = iccStore->workingSpaceMatrix ("ProPhoto");
