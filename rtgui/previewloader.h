@@ -21,11 +21,17 @@
 
 #include <set>
 #include <glibmm.h>
+
+#include "../rtengine/noncopyable.h"
+
 #include "filebrowserentry.h"
 
 class PreviewLoaderListener
 {
 public:
+    virtual ~PreviewLoaderListener()
+    {
+    }
 
     /**
      * @brief a preview is ready
@@ -33,18 +39,22 @@ public:
      * @param dir_id directory ID this is for
      * @param fd entry
      */
-    virtual void previewReady (int dir_id, FileBrowserEntry* fd) {}
+    virtual void previewReady(int dir_id, FileBrowserEntry* fd)
+    {
+    }
 
     /**
      * @brief all previews have finished loading
      */
-    virtual void previewsFinished (int dir_id_) {}
+    virtual void previewsFinished(int dir_id_)
+    {
+    }
 };
 
-class PreviewLoader
+class PreviewLoader :
+    public rtengine::NonCopyable
 {
 public:
-
     /**
      * @brief Singleton entry point.
      *

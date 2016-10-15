@@ -30,7 +30,7 @@ protected:
     ImageArea* imageArea;
 
 public:
-    IndicateClippedPanel (ImageArea* ia);
+    explicit IndicateClippedPanel (ImageArea* ia);
 
     void buttonToggled   ();
 

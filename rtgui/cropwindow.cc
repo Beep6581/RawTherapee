@@ -30,6 +30,7 @@
 #include "cursormanager.h"
 #include "options.h"
 #include "imagearea.h"
+#include "lockablecolorpicker.h"
 
 using namespace rtengine;
 
@@ -65,13 +66,13 @@ ZoomStep zoomSteps[] = {
 #define MAXZOOMSTEPS 20
 #define ZOOM11INDEX  13
 
-CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_, bool isDetailWindow)
+CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
     : ObjectMOBuffer(parent), state(SNormal), press_x(0), press_y(0), action_x(0), action_y(0), pickedObject(-1), pickModifierKey(0), rot_deg(0), onResizeArea(false), deleted(false),
-      fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_), cropLabel(Glib::ustring("100%")),
+      fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_), hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
       backColor(options.bgcolor), decorated(true), isFlawnOver(false), titleHeight(30), sideBorderWidth(3), lowerBorderWidth(3),
       upperBorderWidth(1), sepWidth(2), xpos(30), ypos(30), width(0), height(0), imgAreaX(0), imgAreaY(0), imgAreaW(0), imgAreaH(0),
       imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(NULL),
-      pmlistener(NULL), pmhlistener(NULL), observedCropWin(NULL), ipc(ipc_)
+      pmlistener(NULL), pmhlistener(NULL), observedCropWin(NULL)
 {
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
@@ -109,7 +110,14 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
     minWidth = bsw + iw + 2 * sideBorderWidth;
 
     cropHandler.setDisplayHandler(this);
-    cropHandler.newImage (ipc_, isDetailWindow);
+    cropHandler.newImage (parent->getImProcCoordinator(), isDetailWindow);
+}
+
+CropWindow::~CropWindow ()
+{
+    for (auto colorPicker : colorPickers) {
+        delete colorPicker;
+    }
 }
 
 void CropWindow::enable()
@@ -265,6 +273,34 @@ void CropWindow::flawnOver (bool isFlawnOver)
     this->isFlawnOver = isFlawnOver;
 }
 
+void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y)
+{
+    if ((state & GDK_CONTROL_MASK) && onArea(ColorPicker, x, y)) {
+        // resizing a color picker
+        if (direction == GDK_SCROLL_UP) {
+            hoveredPicker->incSize();
+            updateHoveredPicker();
+            iarea->redraw ();
+        }else if (direction == GDK_SCROLL_DOWN) {
+            hoveredPicker->decSize();
+            updateHoveredPicker();
+            iarea->redraw ();
+        }
+    } else {
+        // not over a color picker, we zoom in/out
+        int newCenterX = x;
+        int newCenterY = y;
+
+        screenCoordToImage(newCenterX, newCenterY, newCenterX, newCenterY);
+
+        if (direction == GDK_SCROLL_UP && !isMaxZoom()) {
+            zoomIn (true, newCenterX, newCenterY);
+        } else if (!isMinZoom()) {
+            zoomOut (true, newCenterX, newCenterY);
+        }
+    }
+}
+
 void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
 {
 
@@ -274,7 +310,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
     iarea->grabFocus (this);
 
     if (button == 1) {
-        if (type == GDK_2BUTTON_PRESS && onArea (CropImage, x, y) && (state == SNormal || state == SCropImgMove)) {
+        if (type == GDK_2BUTTON_PRESS && onArea (CropImage, x, y) && iarea->getToolMode () != TMColorPicker && (state == SNormal || state == SCropImgMove)) {
             if (fitZoomEnabled) {
                 if (fitZoom) {
                     state = SNormal;
@@ -308,7 +344,35 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                 press_y = height;
             } else {
                 if (onArea (CropImage, x, y)) {  // events inside of the image domain
-                    if (onArea (CropTopLeft, x, y)) {
+                    if (iarea->getToolMode () == TMColorPicker) {
+                        if (hoveredPicker) {
+                            if ((bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
+                                hoveredPicker->decSize();
+                                updateHoveredPicker();
+                                needRedraw = true;
+                            } else if (!(bstate & GDK_CONTROL_MASK) && (bstate & GDK_SHIFT_MASK)) {
+                                hoveredPicker->rollDisplayedValues();
+                                needRedraw = true;
+                            } else if (!(bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
+                                // Color Picker drag starts
+                                state = SDragPicker;
+                            }
+                        } else {
+                            // Add a new Color Picker
+                            rtengine::Coord imgPos;
+                            screenCoordToImage(x, y, imgPos.x, imgPos.y);
+                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams.output, &cropHandler.colorParams.working);
+                            colorPickers.push_back(newPicker);
+                            hoveredPicker = newPicker;
+                            updateHoveredPicker(&imgPos);
+                            state = SDragPicker;
+                            press_x = x;
+                            press_y = y;
+                            action_x = 0;
+                            action_y = 0;
+                            needRedraw = true;
+                        }
+                    } else if (onArea (CropTopLeft, x, y)) {
                         state = SResizeTL;
                         press_x = x;
                         action_x = cropHandler.cropParams.x;
@@ -430,6 +494,18 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         action_x = 0;
                         action_y = 0;
                     }
+                } else if (iarea->getToolMode () == TMColorPicker && hoveredPicker) {
+                    if ((bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
+                        if (hoveredPicker->decSize()) {
+                            updateHoveredPicker();
+                            needRedraw = true;
+                        }
+                    } else if (!(bstate & GDK_CONTROL_MASK) && (bstate & GDK_SHIFT_MASK)) {
+                        hoveredPicker->rollDisplayedValues();
+                    } else if (!(bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
+                        // Color Picker drag starts
+                        state = SDragPicker;
+                    }
                 }
             }
         }
@@ -473,6 +549,37 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                 action_y = 0;
             }
         }
+        else if (iarea->getToolMode () == TMColorPicker && type == GDK_BUTTON_PRESS && state == SNormal) {
+            if (hoveredPicker) {
+                if((bstate & GDK_CONTROL_MASK) && (bstate & GDK_SHIFT_MASK)) {
+                    // Deleting all pickers !
+                    for (auto colorPicker : colorPickers) {
+                        delete colorPicker;
+                    }
+                    colorPickers.clear();
+                    hoveredPicker = nullptr;
+                    state = SDeletePicker;
+                    needRedraw = true;
+                } else if ((bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
+                    if (hoveredPicker->incSize()) {
+                        updateHoveredPicker();
+                        needRedraw = true;
+                    }
+                } else if (!(bstate & GDK_CONTROL_MASK) && !(bstate & GDK_SHIFT_MASK)) {
+                    // Deleting the hovered picker
+                    for (std::vector<LockableColorPicker*>::iterator i = colorPickers.begin(); i != colorPickers.end(); ++i) {
+                        if (*i == hoveredPicker) {
+                            colorPickers.erase(i);
+                            delete hoveredPicker;
+                            hoveredPicker = nullptr;
+                            state = SDeletePicker;
+                            needRedraw = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     if (needRedraw) {
@@ -506,6 +613,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         }
 
         needRedraw = true;
+    } else if (state == SCropWinMove) {
+        if (iarea->showColorPickers () && !colorPickers.empty()) {
+            needRedraw = true;
+        }
     } else if (state == SCropImgMove) {
         cropHandler.update ();
 
@@ -602,6 +713,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         } else {
             iarea->object = 0;
         }
+    } else if (state == SDeletePicker) {
+        needRedraw = true;
+    } else if (state == SNormal && iarea->getToolMode() == TMColorPicker && !hoveredPicker && button == 3) {
+        iarea->setToolHand ();
     }
 
     if (cropgl && (state == SCropSelecting || state == SResizeH1 || state == SResizeH2 || state == SResizeW1 || state == SResizeW2 || state == SResizeTL || state == SResizeTR || state == SResizeBL || state == SResizeBR || state == SCropMove)) {
@@ -620,7 +735,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         return;
     }
 
-    if (state != SEditDrag3 && state != SEditPick3 && button == 3 && !(bstate & (GDK_SHIFT_MASK|GDK_CONTROL_MASK))) {
+    if (state != SDeletePicker && state != SEditDrag3 && state != SEditPick3 && button == 3 && !(bstate & (GDK_SHIFT_MASK|GDK_CONTROL_MASK))) {
         iarea->pipetteVal[0] = iarea->pipetteVal[1] = iarea->pipetteVal[2] = -1.f;
 
         needRedraw = iarea->object == 1;
@@ -778,6 +893,26 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
         action_x = new_action_x;
         action_y = new_action_y;
         iarea->redraw ();
+    } else if (state == SDragPicker) {
+        Coord imgPos;
+        action_x = x - press_x;
+        action_x = y - press_y;
+        screenCoordToImage (x, y, imgPos.x, imgPos.y);
+        if (imgPos.x < 0) {
+            imgPos.x = 0;
+        }else if (imgPos.x >= iarea->getImProcCoordinator()->getFullWidth()) {
+            imgPos.x = iarea->getImProcCoordinator()->getFullWidth()-1;
+        }
+        if (imgPos.y < 0) {
+            imgPos.y = 0;
+        }else if (imgPos.y >= iarea->getImProcCoordinator()->getFullHeight()) {
+            imgPos.y = iarea->getImProcCoordinator()->getFullHeight()-1;
+        }
+        updateHoveredPicker (&imgPos);
+        iarea->redraw ();
+    } else if (state == SNormal && iarea->getToolMode () == TMColorPicker && onArea(ColorPicker, x, y)) {
+        // TODO: we could set the hovered picker as Highlighted here
+        // Keep this if statement, the onArea will find out the hoveredPicker and will be used to update the cursor
     } else if (editSubscriber) {
         rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
 
@@ -931,6 +1066,16 @@ bool CropWindow::onArea (CursorArea a, int x, int y)
     case CropImage:
         return x >= xpos + imgX + imgAreaX && y >= ypos + imgY + imgAreaY && x < xpos + imgX + imgAreaX + imgW && y < ypos + imgY + imgAreaY + imgH;
 
+    case ColorPicker:
+        for (auto colorPicker : colorPickers) {
+            if (colorPicker->isOver(x, y)) {
+                hoveredPicker = colorPicker;
+                return true;
+            }
+        }
+        hoveredPicker = nullptr;
+        return false;
+
     case CropBorder:
         return
             (x >= xpos + imgAreaX && y >= ypos + imgAreaY && x < xpos + imgAreaX + imgAreaW && y < ypos + imgAreaY + imgAreaH) &&
@@ -1048,6 +1193,8 @@ void CropWindow::updateCursor (int x, int y)
             cursorManager.setCursor (iarea->get_window(), CSMove);
         } else if (onArea (CropResize, x, y)) {
             cursorManager.setCursor (iarea->get_window(), CSResizeDiagonal);
+        } else if (tm == TMColorPicker && hoveredPicker) {
+            cursorManager.setCursor (iarea->get_window(), CSMove);
         } else if (tm == TMHand && (onArea (CropTopLeft, x, y))) {
             cursorManager.setCursor (iarea->get_window(), CSResizeTopLeft);
         } else if (tm == TMHand && (onArea (CropTopRight, x, y))) {
@@ -1083,6 +1230,8 @@ void CropWindow::updateCursor (int x, int y)
                 cursorManager.setCursor (iarea->get_window(), CSCropSelect);
             } else if (tm == TMStraighten) {
                 cursorManager.setCursor (iarea->get_window(), CSStraighten);
+            } else if (tm == TMColorPicker) {
+                cursorManager.setCursor (iarea->get_window(), CSAddColPicker);
             }
         } else {
             int objectID = -1;
@@ -1121,12 +1270,16 @@ void CropWindow::updateCursor (int x, int y)
         cursorManager.setCursor (iarea->get_window(), CSResizeBottomRight);
     } else if (state == SCropWinResize) {
         cursorManager.setCursor (iarea->get_window(), CSResizeDiagonal);
+    } else if (state == SDragPicker) {
+        cursorManager.setCursor (iarea->get_window(), CSMove2D);
     }
 }
 
 void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 {
     MyMutex::MyLock lock(cropHandler.cimg);
+
+    bool isPreviewImg = false;
 
     if (decorated) {
         drawDecoration (cr);
@@ -1640,6 +1793,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 }
 
             }
+
+            isPreviewImg = true;
         } else {
             // cropHandler.cropPixbuf is null
             int cropX, cropY;
@@ -1671,6 +1826,12 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             drawUnscaledSpotRectangle (cr, iarea->getPipetteRectSize ());
         } else if (iarea->getToolMode () == TMSpotWB) {
             drawScaledSpotRectangle (cr, iarea->getSpotWBRectSize ());
+        }
+    }
+
+    if ((state == SNormal || state == SDragPicker) && isPreviewImg && iarea->showColorPickers()) {
+        for (auto colorPicker : colorPickers) {
+            colorPicker->draw(cr);
         }
     }
 
@@ -1888,10 +2049,10 @@ void CropWindow::buttonPressed (LWButton* button, int actionCode, void* actionDa
     } else if (button == bZoom100) { // zoom 100
         zoom11 ();
     } else if (button == bClose) { // close
-        if(ipc->updateTryLock()) {
+        if(iarea->getImProcCoordinator()->updateTryLock()) {
             deleted = true;
             iarea->cropWindowClosed (this);
-            ipc->updateUnLock();
+            iarea->getImProcCoordinator()->updateUnLock();
         }
     }
 }
@@ -1902,6 +2063,31 @@ void CropWindow::redrawNeeded (LWButton* button)
     iarea->redraw ();
 }
 
+void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
+{
+
+    if (!hoveredPicker) {
+        return;
+    }
+
+    rtengine::Coord cropPos;
+    float r=0.f, g=0.f, b=0.f;
+    float rpreview=0.f, gpreview=0.f, bpreview=0.f;
+    if (imgPos) {
+        imageCoordToCropImage(imgPos->x, imgPos->y, cropPos.x, cropPos.y);
+        hoveredPicker->setPosition (*imgPos);
+    } else {
+        rtengine::Coord imgPos2;
+        hoveredPicker->getImagePosition(imgPos2);
+        imageCoordToCropImage(imgPos2.x, imgPos2.y, cropPos.x, cropPos.y);
+    }
+    LockableColorPicker::Validity validity = checkValidity (hoveredPicker, cropPos);
+    hoveredPicker->setValidity (validity);
+    if (validity == LockableColorPicker::Validity::INSIDE) {
+        cropHandler.colorPick(cropPos, r, g, b, rpreview, gpreview, bpreview, hoveredPicker->getSize());
+        hoveredPicker->setRGB (r, g, b, rpreview, gpreview, bpreview);
+    }
+}
 void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
 {
 
@@ -1922,6 +2108,43 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
         }
 
     iarea->redraw ();
+}
+
+LockableColorPicker::Validity CropWindow::checkValidity (LockableColorPicker*  picker, const rtengine::Coord &pos)
+{
+
+    if (!cropHandler.cropPixbuftrue) {
+        return LockableColorPicker::Validity::OUTSIDE;
+    }
+    rtengine::Coord cropTopLeft, cropBottomRight, cropSize;
+    int skip;
+    cropHandler.getWindow(cropTopLeft.x, cropTopLeft.y, cropSize.x, cropSize.y, skip);
+    cropBottomRight = cropTopLeft + cropSize;
+    rtengine::Coord pickerPos, cropPickerPos;
+    picker->getImagePosition(pickerPos);
+    rtengine::Coord minPos(0, 0);
+    rtengine::Coord maxPos(cropHandler.cropPixbuftrue->get_width(), cropHandler.cropPixbuftrue->get_height());
+    rtengine::Coord halfPickerSize((int)picker->getSize()/2, (int)picker->getSize()/2);
+    imageCoordToCropImage (pickerPos.x, pickerPos.y, cropPickerPos.x, cropPickerPos.y);
+    imageCoordToCropImage (cropTopLeft.x, cropTopLeft.y, minPos.x, minPos.y);
+    imageCoordToCropImage (cropBottomRight.x, cropBottomRight.y, maxPos.x, maxPos.y);
+    rtengine::Coord pickerMinPos = cropPickerPos - halfPickerSize;
+    rtengine::Coord pickerMaxPos = cropPickerPos + halfPickerSize;
+    if (pickerMaxPos.x < minPos.x || pickerMaxPos.y < minPos.y || pickerMinPos.x > maxPos.x || pickerMinPos.y > maxPos.y) {
+        return LockableColorPicker::Validity::OUTSIDE;
+    } else if (pickerMinPos >= minPos && pickerMaxPos < maxPos) {
+        return LockableColorPicker::Validity::INSIDE;
+    } else {
+        return LockableColorPicker::Validity::CROSSING;
+    }
+}
+
+void CropWindow::deleteColorPickers ()
+{
+    for (auto colorPicker : colorPickers) {
+        delete colorPicker;
+    }
+    colorPickers.clear();
 }
 
 void CropWindow::screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy)
@@ -1945,8 +2168,8 @@ void CropWindow::screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy)
 
     int cropX, cropY;
     cropHandler.getPosition (cropX, cropY);
-    imgx = cropX + (phyx - xpos - imgX) / zoomSteps[cropZoom].zoom;
-    imgy = cropY + (phyy - ypos - imgY) / zoomSteps[cropZoom].zoom;
+    imgx = cropX + (phyx - xpos - imgX - imgAreaX) / zoomSteps[cropZoom].zoom;
+    imgy = cropY + (phyy - ypos - imgY - imgAreaY) / zoomSteps[cropZoom].zoom;
 }
 
 void CropWindow::screenCoordToCropCanvas (int phyx, int phyy, int& prevx, int& prevy)
@@ -1981,6 +2204,14 @@ void CropWindow::imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phy
     cropHandler.getPosition (cropX, cropY);
     phyx = (imgx - cropX) * zoomSteps[cropZoom].zoom + /*xpos + imgX +*/ crop->getLeftBorder();
     phyy = (imgy - cropY) * zoomSteps[cropZoom].zoom + /*ypos + imgY +*/ crop->getUpperBorder();
+}
+
+void CropWindow::imageCoordToCropImage (int imgx, int imgy, int& phyx, int& phyy)
+{
+    int cropX, cropY;
+    cropHandler.getPosition (cropX, cropY);
+    phyx = (imgx - cropX) * zoomSteps[cropZoom].zoom;
+    phyy = (imgy - cropY) * zoomSteps[cropZoom].zoom;
 }
 
 int CropWindow::scaleValueToImage (int value)
@@ -2220,6 +2451,16 @@ void CropWindow::drawObservedFrame (Cairo::RefPtr<Cairo::Context> cr, int rw, in
 void CropWindow::cropImageUpdated ()
 {
 
+    for (auto colorPicker : colorPickers) {
+        Coord imgPos, cropPos;
+        colorPicker->getImagePosition(imgPos);
+        imageCoordToCropImage(imgPos.x, imgPos.y, cropPos.x, cropPos.y);
+        float r=0.f, g=0.f, b=0.f;
+        float rpreview=0.f, gpreview=0.f, bpreview=0.f;
+        colorPicker->setValidity (checkValidity (colorPicker, cropPos));
+        cropHandler.colorPick(cropPos, r, g, b, rpreview, gpreview, bpreview, colorPicker->getSize());
+        colorPicker->setRGB (r, g, b, rpreview, gpreview, bpreview);
+    }
     iarea->redraw ();
 }
 
@@ -2281,7 +2522,61 @@ void CropWindow::delCropWindowListener (CropWindowListener* l)
         }
 }
 
-EditDataProvider* CropWindow::getImageArea()
+ImageArea* CropWindow::getImageArea()
 {
     return iarea;
+}
+
+void CropWindow::setCropGUIListener       (CropGUIListener* cgl)
+{
+    cropgl = cgl;
+}
+
+void CropWindow::setPointerMotionListener (PointerMotionListener* pml)
+{
+    pmlistener = pml;
+    if (pml) {
+        pml->signal_cycle_rgb().connect( sigc::mem_fun(*this, &CropWindow::cycleRGB) );
+        pml->signal_cycle_hsv().connect( sigc::mem_fun(*this, &CropWindow::cycleHSV) );
+    }
+}
+
+PointerMotionListener* CropWindow::getPointerMotionListener ()
+{
+    return pmlistener;
+}
+
+void CropWindow::setPointerMotionHListener (PointerMotionListener* pml)
+{
+    pmhlistener = pml;
+}
+
+// crop window listeners
+void CropWindow::addCropWindowListener (CropWindowListener* l)
+{
+    listeners.push_back (l);
+}
+
+void CropWindow::cycleRGB ()
+{
+    bool redraw = false;
+    for (auto colorPicker : colorPickers) {
+        redraw |= colorPicker->cycleRGB ();
+    }
+
+    if (redraw) {
+        iarea->redraw ();
+    }
+}
+
+void CropWindow::cycleHSV ()
+{
+    bool redraw = false;
+    for (auto colorPicker : colorPickers) {
+        redraw |= colorPicker->cycleHSV ();
+    }
+
+    if (redraw) {
+        iarea->redraw ();
+    }
 }

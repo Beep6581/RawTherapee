@@ -1080,11 +1080,35 @@ void TextOrIcon::switchTo(TOITypes type)
 
 BackBuffer::BackBuffer() : x(0), y(0), w(0), h(0), offset(0, 0), dirty(true) {}
 
+void BackBuffer::setDestPosition(int x, int y)
+{
+    // values will be clamped when used...
+    this->x = x;
+    this->y = y;
+}
+
 void BackBuffer::setSrcOffset(int x, int y)
 {
     // values will be clamped when used...
-    offset.x = x;
-    offset.y = y;
+    offset.set(x, y);
+}
+
+void BackBuffer::setSrcOffset(const rtengine::Coord &newOffset)
+{
+    // values will be clamped when used...
+    offset = newOffset;
+}
+
+void BackBuffer::getSrcOffset(int &x, int &y)
+{
+    // values will be clamped when used...
+    offset.get(x, y);
+}
+
+void BackBuffer::getSrcOffset(rtengine::Coord &offset)
+{
+    // values will be clamped when used...
+    offset = this->offset;
 }
 
 // Note: newW & newH must be > 0
@@ -1092,12 +1116,16 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
 {
     assert(newW && newH);
 
-    bool newSize = w != newW || h != newH;
+    bool newSize = (newW > 0 && w != newW) || (newH > 0 && h != newH);
 
     x = newX;
     y = newY;
-    w = newW;
-    h = newH;
+    if (newH > 0) {
+        w = newW;
+    }
+    if (newH > 0) {
+        h = newH;
+    }
 
     // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
     if (updateBackBufferSize && newSize && window) {
@@ -1113,14 +1141,18 @@ bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, in
 // Note: newW & newH must be > 0
 bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize)
 {
-    assert(!newW && !newH);
+    assert(newW && newH);
 
-    bool newSize = w != newW || h != newH;
+    bool newSize = (newW > 0 && w != newW) || (newH > 0 && h != newH);
 
     x = newX;
     y = newY;
-    w = newW;
-    h = newH;
+    if (newH > 0) {
+        w = newW;
+    }
+    if (newH > 0) {
+        h = newH;
+    }
 
     // WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
     if (updateBackBufferSize && newSize) {
@@ -1136,7 +1168,7 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
 /*
  * Copy the backbuffer to a Gdk::Window
  */
-void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rectangle)
+void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> &window, GdkRectangle *rectangle)
 {
     if (surface && window) {
         // TODO: look out if window can be different on each call, and if not, store a reference to the window
@@ -1190,7 +1222,7 @@ void BackBuffer::copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle
 /*
  * Copy the BackBuffer to another Cairo::Surface
  */
-void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, GdkRectangle *rectangle)
+void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> &destSurface, GdkRectangle *rectangle)
 {
     if (surface && destSurface) {
         // compute the source offset
@@ -1212,3 +1244,23 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk
     }
 }
 
+void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> &context, GdkRectangle *rectangle)
+{
+    if (surface && context) {
+        // compute the source offset
+        int offsetX = rtengine::LIM<int>(offset.x, 0, surface->get_width());
+        int offsetY = rtengine::LIM<int>(offset.y, 0, surface->get_height());
+
+        // now copy the off-screen Surface to the destination Surface
+        context->set_source(surface, x - offsetX, y - offsetY);
+        context->set_line_width(0.);
+
+        if (rectangle) {
+            context->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
+        } else {
+            context->rectangle(x, y, w, h);
+        }
+
+        context->fill();
+    }
+}

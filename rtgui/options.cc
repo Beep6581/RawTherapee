@@ -292,6 +292,7 @@ void Options::setDefaults ()
 {
 
     font = "sans, 8";
+    colorPickerFont = "sans, 8";
     windowWidth = 1200;
     windowHeight = 680;
     windowX = 0;
@@ -1248,6 +1249,10 @@ int Options::readFromFile (Glib::ustring fname)
                     font            = keyFile.get_string  ("GUI", "Font");
                 }
 
+                if (keyFile.has_key ("GUI", "ColorPickerFont")) {
+                    colorPickerFont = keyFile.get_string  ("GUI", "ColorPickerFont");
+                }
+
                 if (keyFile.has_key ("GUI", "WindowWidth")) {
                     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
                 }
@@ -1979,6 +1984,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Profiles", "CustomProfileBuilderKeys", CPBKeys);
 
         keyFile.set_string  ("GUI", "Font", font);
+        keyFile.set_string  ("GUI", "ColorPickerFont", colorPickerFont);
         keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer ("GUI", "WindowX", windowX);
@@ -2176,9 +2182,9 @@ bool Options::load ()
     } else {
 #ifdef WIN32
         WCHAR pathW[MAX_PATH] = {0};
-        char pathA[MAX_PATH];
 
         if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_LOCAL_APPDATA, false)) {
+            char pathA[MAX_PATH];
             WideCharToMultiByte(CP_UTF8, 0, pathW, -1, pathA, MAX_PATH, 0, 0);
             rtdir = Glib::build_filename(Glib::ustring(pathA), Glib::ustring(CACHEFOLDERNAME));
         }

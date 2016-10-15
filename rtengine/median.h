@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  These median implementations from Floessie and Ingo Weyrich are inspired by this work:
+ *  These median implementations from Flössie and Ingo Weyrich are inspired by this work:
  *
  *  http://ndevilla.free.fr/median/median.pdf
  *  http://pages.ripco.net/~jgamble/nw.html
@@ -45,7 +45,7 @@ inline T median(std::array<T, N> array)
     std::nth_element(array.begin(), middle, array.end());
 
     return
-        N % 2
+        (N % 2)
             ? *middle
             : ((*middle + *std::max_element(array.begin(), middle)) / static_cast<T>(2));
 }

@@ -52,7 +52,6 @@ FilePanel::FilePanel () : parent(NULL)
     dirpaned->pack1 (*placespaned, false, true);
 
     tpc = new BatchToolPanelCoordinator (this);
-    tpc->removeWbTool();
     fileCatalog = Gtk::manage ( new FileCatalog (tpc->coarse, tpc->getToolBar(), this) );
     ribbonPane = Gtk::manage ( new Gtk::Paned() );
     ribbonPane->add(*fileCatalog);

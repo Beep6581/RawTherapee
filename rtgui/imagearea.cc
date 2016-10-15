@@ -88,7 +88,7 @@ void ImageArea::on_resized (Gtk::Allocation& req)
 {
     if (ipc && get_width() > 1) { // sometimes on_resize is called in some init state, causing wrong sizes
         if (!mainCropWindow) {
-            mainCropWindow = new CropWindow (this, ipc, false, false);
+            mainCropWindow = new CropWindow (this, false, false);
             mainCropWindow->setDecorated (false);
             mainCropWindow->setFitZoomEnabled (true);
             mainCropWindow->addCropWindowListener (this);
@@ -106,7 +106,12 @@ void ImageArea::on_resized (Gtk::Allocation& req)
     }
 }
 
-void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_)
+rtengine::StagedImageProcessor* ImageArea::getImProcCoordinator() const
+{
+    return ipc;
+}
+
+void ImageArea::setImProcCoordinator(rtengine::StagedImageProcessor* ipc_)
 {
     if( !ipc_ ) {
         focusGrabber = NULL;
@@ -117,6 +122,7 @@ void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_)
 
         cropWins.clear();
 
+        mainCropWindow->deleteColorPickers ();
         mainCropWindow->setObservedCropWin (NULL);
     }
 
@@ -178,7 +184,6 @@ CropWindow* ImageArea::getCropWindow (int x, int y)
     return cw;
 }
 
-
 void ImageArea::redraw ()
 {
     // dirty prevents multiple updates queued up
@@ -186,6 +191,11 @@ void ImageArea::redraw ()
         dirty = true;
         queue_draw ();
     }
+}
+
+void ImageArea::switchPickerVisibility (bool isVisible)
+{
+    redraw();
 }
 
 bool ImageArea::on_expose_event(GdkEventExpose* event)
@@ -269,18 +279,8 @@ bool ImageArea::on_scroll_event (GdkEventScroll* event)
 {
 
     CropWindow* cw = getCropWindow (event->x, event->y);
-
     if (cw) {
-        int newCenterX = (int)event->x;
-        int newCenterY = (int)event->y;
-
-        cw->screenCoordToImage(newCenterX, newCenterY, newCenterX, newCenterY);
-
-        if (event->direction == GDK_SCROLL_UP && !cw->isMaxZoom()) {
-            cw->zoomIn (true, newCenterX, newCenterY);
-        } else if (!cw->isMinZoom()) {
-            cw->zoomOut (true, newCenterX, newCenterY);
-        }
+        cw->scroll (event->state, event->direction, event->x, event->y);
     }
 
     return true;
@@ -403,7 +403,7 @@ void ImageArea::addCropWindow ()
         return;    // if called but no image is loaded, it would crash
     }
 
-    CropWindow* cw = new CropWindow (this, ipc, true, true);
+    CropWindow* cw = new CropWindow (this, true, true);
     cw->zoom11();
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
@@ -687,6 +687,16 @@ ToolMode ImageArea::getToolMode ()
         return listener->getToolBar()->getTool ();
     } else {
         return TMHand;
+    }
+}
+
+bool ImageArea::showColorPickers ()
+{
+
+    if (listener && listener->getToolBar()) {
+        return listener->getToolBar()->showColorPickers ();
+    } else {
+        return false;
     }
 }
 

@@ -273,7 +273,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                         float maxr = 0.f;
                         float maxb = 0.f;
                         float pondcorrec = 1.0f;
-                        float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
+                        float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
                         int Nb;
                         chaut = 0.f;
                         redaut = 0.f;
@@ -282,7 +282,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                         maxblueaut = 0.f;
                         chromina = 0.f;
                         sigma = 0.f;
-                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
                         float multip = 1.f;
                         float adjustr = 1.f;
 
@@ -490,8 +490,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                         imgsrc->convertColorSpace(provicalc, params.icm, currWB);//for denoise luminance curve
                         int nb = 0;
-                        float chaut = 0.f, redaut = 0.f, blueaut = 0.f, maxredaut = 0.f, maxblueaut = 0.f, minredaut = 0.f, minblueaut = 0.f, nresi = 0.f, highresi = 0.f, chromina = 0.f, sigma = 0.f, lumema = 0.f, sigma_L = 0.f, redyel = 0.f, skinc = 0.f, nsknc = 0.f;
-                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+                        float chaut = 0.f, redaut = 0.f, blueaut = 0.f, maxredaut = 0.f, maxblueaut = 0.f, minredaut = 0.f, minblueaut = 0.f, chromina = 0.f, sigma = 0.f, lumema = 0.f, sigma_L = 0.f, redyel = 0.f, skinc = 0.f, nsknc = 0.f;
+                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
                         Nb[hcr * 3 + wcr] = nb;
                         ch_M[hcr * 3 + wcr] = chaut;
                         max_r[hcr * 3 + wcr] = maxredaut;
@@ -996,13 +996,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         }
     }
 
-    int kall = 2;
     bool wavcontlutili = false;
 
     CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
-    if((params.wavelet.enabled)) {
-        ipf.ip_wavelet(labView, labView, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
+    if(params.wavelet.enabled) {
+        ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
     }
 
     wavCLVCurve.Reset();
@@ -1053,25 +1052,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float CAMMean = NAN;
 
         if (params.sharpening.enabled) {
-            float d;
-            double dd;
-
-            int sk = 1;
-
             if(settings->ciecamfloat) {
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+                float d;
+                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
+                double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
             }
         } else {
-            float d;
-
-            double dd;
-            int sk = 1;
-
             if(settings->ciecamfloat) {
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+                float d;
+                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
+                double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
             }
         }

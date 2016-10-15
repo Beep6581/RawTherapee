@@ -34,7 +34,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 2 degree Standard Observer.
+static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
     {0.0000000, 0.000000, 0.000000}, {0.0000000, 0.000000, 0.000000}, {0.0001299, 0.0003917, 0.0006061},
     {0.0002321, 0.000006965, 0.001086}, {0.0004149, 0.00001239, 0.001946}, {0.0007416, 0.00002202, 0.003846},
     {0.001368, 0.000039, 0.006450001}, {0.002236, 0.000064, 0.01054999}, {0.004243, 0.000120, 0.02005001},
@@ -295,7 +295,7 @@ const double ColorTemp::Solux4100_spect[97] = {
     62.40, 61.373, 59.75, 58.1810, 56.25, 54.395, 51.90, 49.496, 47.05, 44.620
 };
 
-//spectral data for Solux lamp : near Daylight (for example  "Musee d'Orsay") - 4700K
+//spectral data for Solux lamp : near Daylight (for example  "Musée d'Orsay") - 4700K
 const double ColorTemp::Solux4700_spect[97] = {
     0.4590, 0.83, 1.2011, 1.53, 1.8647, 2.15, 2.5338, 3.06, 3.5809, 3.99, 4.4137, 4.82, 5.2228, 5.63, 6.0387, 6.53, 6.9944, 7.55, 8.0266, 8.475, 8.9276, 8.90, 9.7840, 10.20, 10.6390, 11.00, 11.3600, 11.75, 12.1340, 12.36, 12.5880, 12.74, 12.8790,
     13.07, 13.2560, 13.38, 13.5220, 13.41, 13.3070, 13.35, 13.3990, 13.37, 13.3420, 13.39, 13.4220, 13.65, 13.2710, 13.25, 13.2330, 13.12, 13.0110, 12.93, 12.8470, 12.805, 12.7630, 12.66, 12.5760, 12.563, 12.5490,
@@ -1025,7 +1025,7 @@ void ColorTemp::cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, dou
 
 }
 
-void ColorTemp::temp2mulxyz (double tem, double gree, std::string method , double &Xxyz, double &Zxyz)
+void ColorTemp::temp2mulxyz (double tem, double gree, const std::string &method, double &Xxyz, double &Zxyz)
 {
     double xD, yD, x_D, y_D, interm;
     double x, y, z;
@@ -1100,7 +1100,7 @@ void ColorTemp::temp2mulxyz (double tem, double gree, std::string method , doubl
                 x_D = -4.6070e9 / (tem * tem * tem) + 2.9678e6 / (tem * tem) + 0.09911e3 / tem + 0.244063;
             } else if (tem <= 25000) {
                 x_D = -2.0064e9 / (tem * tem * tem) + 1.9018e6 / (tem * tem) + 0.24748e3 / tem + 0.237040;
-            } else if (tem > 25000) {
+            } else /*if (tem > 25000)*/ {
                 x_D = -2.0064e9 / (tem * tem * tem) + 1.9018e6 / (tem * tem) + 0.24748e3 / tem + 0.237040 - ((tem - 25000) / 25000) * 0.025;    //Jacques empirical adjustemnt for very high temp (underwater !)
             }
 
@@ -1135,12 +1135,10 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     //printf("temp=%d  green=%.3f  equal=%.3f\n", (int)temp, (float) green, (float) equal);
 
     //variables for CRI and display Lab, and palette
-    bool CRI_type = false;
     double xD, yD, x_D, y_D, interm;
     double m1, m2;
-    double xp, yp;
 
-    double x, y, z, xx, yy, zz;
+    double x, y, z;
     double Xchk[50], Ychk[50], Zchk[50]; //50 : I think it's a good limit for number of color : for CRI and Palette
     double Xcam02[50], Ycam02[50], Zcam02[50];
     double Xcam02pal[50], Ycam02pal[50], Zcam02pal[50];
@@ -1148,16 +1146,12 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     double XchkLamp[50], YchkLamp[50], ZchkLamp[50];
     double Xcam02Lamp[50], Ycam02Lamp[50], Zcam02Lamp[50];
     double Xpal[50], Ypal[50], Zpal[50];
-    double tempw;
     const double epsilon = 0.008856; //Lab
     const double whiteD50[3] = {0.9646019585, 1.0, 0.8244507152}; //calculate with this tool : spect 5nm
     double CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22; //for CIECAT02
 
     double xr[50], yr[50], zr[50];
     double fx[50], fy[50], fz[50];
-    double Llamp[50], alamp[50], blamp[50];
-    double Lbb[50], abb[50], bbb[50];
-    double Lpal[50], apal[50], bpal[50];
 
     int palet = -1;
     bool palette = false;
@@ -1263,7 +1257,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
                 x_D = -4.6070e9 / (temp * temp * temp) + 2.9678e6 / (temp * temp) + 0.09911e3 / temp + 0.244063;
             } else if (temp <= 25000) {
                 x_D = -2.0064e9 / (temp * temp * temp) + 1.9018e6 / (temp * temp) + 0.24748e3 / temp + 0.237040;
-            } else if (temp > 25000) { // above 25000 it's unknown..then I have modified to adjust for underwater
+            } else /*if (temp > 25000)*/ { // above 25000 it's unknown..then I have modified to adjust for underwater
                 x_D = -2.0064e9 / (temp * temp * temp) + 1.9018e6 / (temp * temp) + 0.24748e3 / temp + 0.237040 - ((temp - 25000) / 25000) * 0.025;    //Jacques empirical adjustemnt for very high temp (underwater !)
             }
 
@@ -1291,8 +1285,6 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     double Xwb = xD / yD;
     double Ywb = 1.0;
     double Zwb = (1.0 - xD - yD) / yD;
-    double correl_temp;
-
 
     if (settings->verbose) {
         // double u=4*xD/(-2*xD+12*yD+3);
@@ -1335,11 +1327,6 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     {
         double x_x, y_y, z_z;
         // illuminants
-        const double* spect_illummax[] = {
-            Daylight5300_spect, Cloudy6200_spect, Shade7600_spect, A2856_spect, FluoF1_spect, FluoF2_spect, FluoF3_spect, FluoF4_spect, FluoF5_spect, FluoF6_spect, FluoF7_spect,
-            FluoF8_spect, FluoF9_spect, FluoF10_spect, FluoF11_spect, FluoF12_spect, HMI_spect, GTI_spect, JudgeIII_spect, Solux3500_spect, Solux4100_spect, Solux4700_spect, NG_Solux4700_spect, NG_CRSSP12WWMR16_spect, NG_CRSSP12WWMR16_spect,
-            Flash5500_spect, Flash6000_spect, Flash6500_spect
-        };
         // color
         const double* spec_colorpalet[] = {
             ColabSkin98_m2_10_spect, ColabSkin95_0_4_spect, ColabSkin91_4_14_spect, ColabSkin90_m1_20_spect,
@@ -1359,13 +1346,18 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         int N_col = sizeof(spec_colorpalet) / sizeof(spec_colorpalet[0]); //number of color
 
         if(palet < 28) {
+            const double* spect_illummax[] = {
+                Daylight5300_spect, Cloudy6200_spect, Shade7600_spect, A2856_spect, FluoF1_spect, FluoF2_spect, FluoF3_spect, FluoF4_spect, FluoF5_spect, FluoF6_spect, FluoF7_spect,
+                FluoF8_spect, FluoF9_spect, FluoF10_spect, FluoF11_spect, FluoF12_spect, HMI_spect, GTI_spect, JudgeIII_spect, Solux3500_spect, Solux4100_spect, Solux4700_spect, NG_Solux4700_spect, NG_CRSSP12WWMR16_spect, NG_CRSSP12WWMR16_spect,
+                Flash5500_spect, Flash6000_spect, Flash6500_spect
+            };
             for(int i = 0; i < N_col; i++)   {
                 spectrum_to_color_xyz_preset(spec_colorpalet[i], spect_illummax[palet], x_x, y_y, z_z);
                 Xpal[i] = x_x;
                 Ypal[i] = y_y;
                 Zpal[i] = z_z;
             }
-        } else if(palet >= 28) {
+        } else /*if(palet >= 28)*/ {
             if(temp < INITIALBLACKBODY) {
                 for(int i = 0; i < N_col; i++) {
                     spectrum_to_color_xyz_blackbody(spec_colorpalet[i], temp, x_x, y_y, z_z);
@@ -1387,8 +1379,8 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             }
         }
 
-        xp = xD;
-        yp = yD;
+        double xp = xD;
+        double yp = yD;
         double Xwbpal = xp / yp; //white balance
         double Ywbpal = 1.0;
         double Zwbpal = (1.0 - xp - yp) / yp;
@@ -1433,6 +1425,8 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 
         //Lab values in function of color and illuminant
         //these values can be compared to preview values when using white-balance (skin / sky / BW)
+        double Lpal[50], apal[50], bpal[50];
+
         for(int i = 0; i < N_col; i++) {
             Lpal[i] = 116.0 * fy[i] - 16.0;
             apal[i] = 500.0 * (fx[i] - fy[i]);
@@ -1464,12 +1458,6 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         int numero_color = settings->CRI_color - 1;
 
         //spectral data illuminant (actually 21): only those necessary (lamp, fluorescent, LED) others CRI=100 (not Flash...)
-        const double* spect_illum[] = {
-            Daylight5300_spect, Cloudy6200_spect, Shade7600_spect, A2856_spect, FluoF1_spect, FluoF2_spect, FluoF3_spect,
-            FluoF4_spect, FluoF5_spect, FluoF6_spect, FluoF7_spect, FluoF8_spect, FluoF9_spect, FluoF10_spect, FluoF11_spect,
-            FluoF12_spect, HMI_spect, GTI_spect, JudgeIII_spect, Solux3500_spect, Solux4100_spect, Solux4700_spect,
-            NG_Solux4700_spect, NG_CRSSP12WWMR16_spect, NG_CRSSP12WWMR16_spect
-        };
         const double* spec_color[] = {
             ColorchechredC3_spect, ColorchechOraA2_spect, ColorchechYelD3_spect, ColorchechGreE2_spect, ColorchechGreB3_spect,
             ColorchechCyaF3_spect, ColorchechPurD2_spect, ColorchechMagE3_spect, ColorchechSkiA138_13_14_spect, ColorchechGraC4_67_spect,
@@ -1479,6 +1467,9 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         };
 
         int N_c = sizeof(spec_color) / sizeof(spec_color[0]); //number of color
+
+        bool CRI_type = false;
+        double tempw;
 
         if      (method == "Fluo F1")              {
             CRI_type = true;
@@ -1569,25 +1560,26 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
         }
 
         if (CRI_type) {
+            const double* spect_illum[] = {
+                Daylight5300_spect, Cloudy6200_spect, Shade7600_spect, A2856_spect, FluoF1_spect, FluoF2_spect, FluoF3_spect,
+                FluoF4_spect, FluoF5_spect, FluoF6_spect, FluoF7_spect, FluoF8_spect, FluoF9_spect, FluoF10_spect, FluoF11_spect,
+                FluoF12_spect, HMI_spect, GTI_spect, JudgeIII_spect, Solux3500_spect, Solux4100_spect, Solux4700_spect,
+                NG_Solux4700_spect, NG_CRSSP12WWMR16_spect, NG_CRSSP12WWMR16_spect
+            };
+
             float DeltaE[50], DeltaEs[8];
             float quadCRI = 0.0f, quadCRIs = 0.0f;
             float CRI_RT = 0.0, CRI[50];
             float CRI_RTs = 0.0, CRIs[8];
 
             for(int i = 0; i < N_c; i++) {
-                spectrum_to_color_xyz_preset(spec_color[i], spect_illum[illum + 3], xx, yy, zz);
-                XchkLamp[i] = xx;
-                YchkLamp[i] = yy;
-                ZchkLamp[i] = zz;
+                spectrum_to_color_xyz_preset(spec_color[i], spect_illum[illum + 3], XchkLamp[i], YchkLamp[i], ZchkLamp[i]);
             }
 
             //calculate XYZ for each color : for Blackbody and Daylight at tempw
             if(tempw <= INITIALBLACKBODY) {
                 for(int i = 0; i < N_c; i++) {
-                    spectrum_to_color_xyz_blackbody(spec_color[i], tempw, xx, yy, zz);
-                    Xchk[i] = xx;
-                    Ychk[i] = yy;
-                    Zchk[i] = zz;
+                    spectrum_to_color_xyz_blackbody(spec_color[i], tempw, Xchk[i], Ychk[i], Zchk[i]);
                 }
 
                 spectrum_to_xyz_blackbody(tempw, x, y, z);//for white point
@@ -1608,18 +1600,15 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
                 m22 = (0.03 - 31.4424 * x_DD + 30.0717 * y_DD) / interm2;
 
                 for(int i = 0; i < N_c; i++) {
-                    spectrum_to_color_xyz_daylight(spec_color[i], m11, m22, xx, yy, zz);
-                    Xchk[i] = xx;
-                    Ychk[i] = yy;
-                    Zchk[i] = zz;
+                    spectrum_to_color_xyz_daylight(spec_color[i], m11, m22, Xchk[i], Ychk[i], Zchk[i]);
                 }
 
                 spectrum_to_xyz_daylight(m11, m22, x, y, z);
             }
 
-            XYZtoCorColorTemp(Xwb, Ywb, Zwb, correl_temp);
-
             if (settings->verbose) {
+                double correl_temp;
+                XYZtoCorColorTemp(Xwb, Ywb, Zwb, correl_temp);
                 printf("Correlated temperature (lamp)=%i\n", (int) correl_temp); //use only for lamp...otherwise It give an information!!
             }
 
@@ -1680,6 +1669,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
                 }
             }
 
+            double Llamp[50], alamp[50], blamp[50];
             for(int i = 0; i < N_c; i++) {
                 Llamp[i] = 116.0 * fy[i] - 16.0;
                 alamp[i] = 500.0 * (fx[i] - fy[i]);
@@ -1711,6 +1701,8 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
                     fz[i] = (903.3 * zr[i] + 16.0) / 116.0;
                 }
             }
+
+            double Lbb[50], abb[50], bbb[50];
 
             for(int i = 0; i < N_c; i++) {
                 Lbb[i] = 116.*fy[i] - 16.;
@@ -1797,7 +1789,7 @@ The next 3 methods are inspired from:
 
 this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-values cie_colour_match[][3] = Observer 2 degree Standard Observer x2, y2, z2
+values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
 E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
 I have increase precision used by J.Walker  and pass to 350nm to 830nm
 */
@@ -1855,7 +1847,7 @@ void ColorTemp::spectrum_to_xyz_preset(const double* spec_intens, double &x, dou
 
     this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-    values cie_colour_match[][3] = 2 degree Standard Observer x2, y2, z2
+    values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
     E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
     I have increased the precision used by J.Walker and pass from 350nm to 830nm
     */

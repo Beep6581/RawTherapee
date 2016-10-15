@@ -59,7 +59,7 @@ std::vector<Glib::ustring> listSubDirs (const Glib::RefPtr<Gio::File>& dir, bool
     } catch (const Glib::Exception& exception) {
 
         if (options.rtSettings.verbose) {
-            std::cerr << "Failed to list subdirectories of \"" << dir->get_basename() << "\": " << exception.what () << std::endl;
+            std::cerr << "Failed to list subdirectories of \"" << dir->get_parse_name() << "\": " << exception.what () << std::endl;
         }
 
     }

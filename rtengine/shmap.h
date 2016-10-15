@@ -21,11 +21,13 @@
 
 #include "imagefloat.h"
 #include "image16.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
 
-class SHMap
+class SHMap :
+    public NonCopyable
 {
 
 public:

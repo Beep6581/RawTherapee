@@ -20,11 +20,13 @@
 #define _CIEIMAGE_H_
 
 #include "image16.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
 
-class CieImage
+class CieImage :
+    public NonCopyable
 {
 private:
     bool fromImage;

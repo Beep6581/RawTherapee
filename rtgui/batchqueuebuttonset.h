@@ -33,7 +33,7 @@ public:
     static Cairo::RefPtr<Cairo::ImageSurface> headIcon;
     static Cairo::RefPtr<Cairo::ImageSurface> tailIcon;
 
-    BatchQueueButtonSet (BatchQueueEntry* myEntry);
+    explicit BatchQueueButtonSet (BatchQueueEntry* myEntry);
 };
 
 #endif

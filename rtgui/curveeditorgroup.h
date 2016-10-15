@@ -154,7 +154,7 @@ protected:
      *                 This variable will be updated with actions in the
      *                 dialogs.
      */
-    CurveEditorSubGroup(Glib::ustring& curveDir);
+    explicit CurveEditorSubGroup(Glib::ustring& curveDir);
 
     Glib::ustring outputFile ();
     Glib::ustring inputFile ();

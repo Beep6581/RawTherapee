@@ -132,6 +132,7 @@ protected:
     Gtk::HBox* hbtheme;
     Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
+    Gtk::FontButton* colorPickerFontButton;
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
 
@@ -230,7 +231,7 @@ protected:
     Gtk::Widget* getSoundPanel ();
 
 public:
-    Preferences (RTWindow *rtwindow);
+    explicit Preferences (RTWindow *rtwindow);
     ~Preferences ();
 
     void savePressed ();

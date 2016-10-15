@@ -138,7 +138,7 @@ protected:
 
 
 public:
-    EditorPanel (FilePanel* filePanel = NULL);
+    explicit EditorPanel (FilePanel* filePanel = NULL);
     virtual ~EditorPanel ();
 
     void open (Thumbnail* tmb, rtengine::InitialImage* isrc);

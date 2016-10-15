@@ -26,11 +26,12 @@
 
 #include <glibmm.h>
 
+#include "../rtgui/threadutils.h"
+
 #include "imagefloat.h"
 #include "curves.h"
 #include "colortemp.h"
-
-#include "../rtgui/threadutils.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
@@ -63,7 +64,7 @@ public:
     using Triple = std::array<double, 3>;
     using Matrix = std::array<Triple, 3>;
 
-    DCPProfile(const Glib::ustring& filename);
+    explicit DCPProfile(const Glib::ustring& filename);
     ~DCPProfile();
 
     explicit operator bool() const;
@@ -145,13 +146,11 @@ private:
     AdobeToneCurve tone_curve;
 };
 
-class DCPStore final
+class DCPStore final :
+    public NonCopyable
 {
 public:
     static DCPStore* getInstance();
-
-    DCPStore(const DCPStore& other) = delete;
-    DCPStore& operator =(const DCPStore& other) = delete;
 
     void init(const Glib::ustring& rt_profile_dir);
 

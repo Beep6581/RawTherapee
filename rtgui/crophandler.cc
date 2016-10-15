@@ -22,6 +22,7 @@
 #include <cstring>
 #include "guiutils.h"
 #include "cropwindow.h"
+#include "imagearea.h"
 #include "../rtengine/dcrop.h"
 #include "../rtengine/refreshmap.h"
 #include "../rtengine/rt_math.h"
@@ -32,6 +33,7 @@ CropHandler::CropHandler ()
     : zoom(10), ww(0), wh(0), imx(-1), imy(-1), imw(0), imh(0), cax(-1), cay(-1),
       cx(0), cy(0), cw(0), ch(0), cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
       cropimg(NULL), cropimgtrue(NULL), cropimg_width(0), cropimg_height(0),
+      cix(0), ciy(0), ciw(0), cih(0), cis(1),
       initial(false), isLowUpdatePriority(false), ipc(NULL), crop(NULL),
       displayHandler(NULL)
 {
@@ -185,6 +187,15 @@ void CropHandler::setZoom (int z, int centerx, int centery)
         } else {
             update ();
         }
+    }
+}
+
+float CropHandler::getZoomFactor ()
+{
+    if (zoom >= 1000) {
+        return zoom / 1000;
+    } else {
+        return 1.f / (float)zoom;
     }
 }
 
@@ -463,6 +474,95 @@ bool CropHandler::getEnabled ()
 {
 
     return enabled;
+}
+
+void CropHandler::colorPick (const rtengine::Coord &pickerPos, float &r, float &g, float &b, float &rpreview, float &gpreview, float &bpreview, LockableColorPicker::Size size)
+{
+
+    if (!cropPixbuf || !cropPixbuftrue) {
+        r = g = b = 0.f;
+        rpreview = gpreview = bpreview = 0.f;
+        return;
+    }
+
+    int xSize = (int)size;
+    int ySize = (int)size;
+    int pixbufW = cropPixbuftrue->get_width();
+    int pixbufH = cropPixbuftrue->get_height();
+    rtengine::Coord topLeftPos(pickerPos.x - xSize/2, pickerPos.y - ySize/2);
+
+    if (topLeftPos.x > pixbufW || topLeftPos.y > pixbufH || topLeftPos.x + xSize < 0 || topLeftPos.y + ySize < 0) {
+        return;
+    }
+
+    // Store the position of the center of the picker
+    int radius = (int)size / 2;
+
+    // X/Width clip
+    if (topLeftPos.x < 0) {
+        xSize += topLeftPos.x;
+        topLeftPos.x = 0;
+    }
+    if (topLeftPos.x + xSize > pixbufW) {
+        xSize = pixbufW - topLeftPos.x;
+    }
+    // Y/Height clip
+    if (topLeftPos.y < 0) {
+        ySize += topLeftPos.y;
+        topLeftPos.y = 0;
+    }
+    if (topLeftPos.y + ySize > pixbufH) {
+        ySize = pixbufH - topLeftPos.y;
+    }
+
+    // Accumulating the data
+    std::uint32_t r2=0, g2=0, b2=0;
+    std::uint32_t count = 0;
+    const guint8* data = cropPixbuftrue->get_pixels();
+    for (int j = topLeftPos.y ; j < topLeftPos.y + ySize ; ++j) {
+        const guint8* data2 = data + cropPixbuftrue->get_rowstride()*j;
+        for (int i = topLeftPos.x ; i < topLeftPos.x + xSize ; ++i) {
+            const guint8* data3 = data2 + i*3;
+            rtengine::Coord currPos(i, j);
+            rtengine::Coord delta = pickerPos - currPos;
+            rtengine::PolarCoord p(delta);
+            if (p.radius <= radius) {
+                r2 += *data3;
+                g2 += *(data3+1);
+                b2 += *(data3+2);
+                ++count;
+            }
+        }
+    }
+
+    // Averaging
+    r = (float)r2 / (float)count / 255.f;
+    g = (float)g2 / (float)count / 255.f;
+    b = (float)b2 / (float)count / 255.f;
+
+    // Accumulating the data
+    r2=0, g2=0, b2=0;
+    count = 0;
+    data = cropPixbuf->get_pixels();
+    for (int j = topLeftPos.y ; j < topLeftPos.y + ySize ; ++j) {
+        const guint8* data2 = data + cropPixbuf->get_rowstride()*j;
+        for (int i = topLeftPos.x ; i < topLeftPos.x + xSize ; ++i) {
+            const guint8* data3 = data2 + i*3;
+            rtengine::Coord currPos(i, j);
+            rtengine::Coord delta = pickerPos - currPos;
+            rtengine::PolarCoord p(delta);
+            if (p.radius <= radius) {
+                r2 += *data3;
+                g2 += *(data3+1);
+                b2 += *(data3+2);
+                ++count;
+            }
+        }
+    }
+    // Averaging
+    rpreview = (float)r2 / (float)count / 255.f;
+    gpreview = (float)g2 / (float)count / 255.f;
+    bpreview = (float)b2 / (float)count / 255.f;
 }
 
 void CropHandler::getSize (int& w, int& h)

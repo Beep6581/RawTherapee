@@ -28,7 +28,9 @@
 #include <cstdlib>
 #include <cmath>
 #include <glibmm.h>
+
 #include "../rtengine/procparams.h"
+#include "../rtengine/noncopyable.h"
 
 class CacheImageData;
 
@@ -178,7 +180,8 @@ public:
 };
 
 // a class representing a single tag
-class Tag
+class Tag :
+    public rtengine::NonCopyable
 {
 
 protected:
@@ -202,6 +205,7 @@ public:
     Tag (TagDirectory* parent, const TagAttrib* attr, unsigned char *data, TagType t);
     Tag (TagDirectory* parent, const TagAttrib* attr, int data, TagType t);  // create a new tag from array (used
     Tag (TagDirectory* parent, const TagAttrib* attr, const char* data);  // create a new tag from array (used
+
     ~Tag ();
     void initType       (unsigned char *data, TagType type);
     void initInt        (int data, TagType t, int count = 1);
@@ -533,7 +537,7 @@ protected:
         double deltaMin = 1000.;
 
         for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); ++r  ) {
-            double lensAperture, dif;
+            double dif;
 
             if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
                 continue;
@@ -548,6 +552,7 @@ protected:
             }
 
             if( maxApertureAtFocal > 0.1) {
+                double lensAperture;
                 if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
                     continue;
                 }
