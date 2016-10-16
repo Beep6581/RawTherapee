@@ -23,13 +23,14 @@
 #include "rt_math.h"
 #include "LUT.h"
 #include "labimage.h"
-#include "iccstore.h"
 #include "iccmatrices.h"
 #include "sleef.c"
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
 
 namespace rtengine
 {
+
+typedef std::array<double, 7> GammaValues;
 
 #ifdef _DEBUG
 
@@ -46,6 +47,7 @@ public:
 };
 
 #endif
+
 
 class Color
 {
@@ -880,21 +882,21 @@ public:
         return h;
     }
 
-
     /**
     * @brief Get the gamma curves' parameters used by LCMS2
     * @param pwr gamma value [>1]
     * @param ts slope [0 ; 20]
     * @param mode [always 0]
     * @imax imax [always 0]
-    * @param gamma0 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
-    * @param gamma1 used in ip2Lab2rgb [0 ; 20], can be superior to 20, but it's quite unusual(return value)
-    * @param gamma2 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
-    * @param gamma3 used in ip2Lab2rgb [0 ; 1], usually near 0.003(return value)
-    * @param gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
-    * @param gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
+    * @param gamma a pointer to an array of 6 double gamma values:
+    *        gamma0 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
+    *        gamma1 used in ip2Lab2rgb [0 ; 20], can be superior to 20, but it's quite unusual(return value)
+    *        gamma2 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
+    *        gamma3 used in ip2Lab2rgb [0 ; 1], usually near 0.003(return value)
+    *        gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
+    *        gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     */
-    static void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5);
+    static void calcGamma (double pwr, double ts, int mode, int imax, GammaValues &gamma);
 
 
     /**

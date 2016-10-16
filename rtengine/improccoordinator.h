@@ -57,8 +57,8 @@ protected:
     Imagefloat *oprevi;
     LabImage *oprevl;
     LabImage *nprevl;
-    Image8 *previmg;
-    Image8 *workimg;
+    Image8 *previmg;  // displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
+    Image8 *workimg;  // internal image in output color space for analysis
     CieImage *ncie;
 
     ImageSource* imgsrc;
@@ -73,8 +73,9 @@ protected:
     ImProcFunctions ipf;
 
     Glib::ustring monitorProfile;
-
     RenderingIntent monitorIntent;
+    bool softProof;
+    bool gamutCheck;
 
     int scale;
     bool highDetailPreprocessComputed;
@@ -179,6 +180,13 @@ protected:
     MyMutex mProcessing;
     ProcParams params;
 
+    // for optimization purpose, the output profile, output rendering intent and
+    // output BPC will trigger a regeneration of the profile on parameter change only
+    // and automatically
+    Glib::ustring lastOutputProfile;
+    RenderingIntent lastOutputIntent;
+    bool lastOutputBPC;
+
     // members of the updater:
     Glib::Thread* thread;
     MyMutex updaterThreadStart;
@@ -256,6 +264,8 @@ public:
 
     void setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent);
     void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const;
+    void setSoftProofing   (bool softProof, bool gamutCheck);
+    void getSoftProofing   (bool &softProof, bool &gamutCheck);
 
     bool updateTryLock ()
     {

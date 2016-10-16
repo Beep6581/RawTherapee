@@ -61,14 +61,6 @@ ImProcFunctions::~ImProcFunctions ()
     if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
-
-    if (output2monitorTransform) {
-        cmsDeleteTransform (output2monitorTransform);
-    }
-
-    if (lab2outputTransform) {
-        cmsDeleteTransform (lab2outputTransform);
-    }
 }
 
 void ImProcFunctions::setScale (double iscale)
@@ -76,24 +68,14 @@ void ImProcFunctions::setScale (double iscale)
     scale = iscale;
 }
 
-void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, const Glib::ustring& monitorProfile, RenderingIntent monitorIntent)
+void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, const Glib::ustring& monitorProfile, RenderingIntent monitorIntent, bool softProof, bool gamutCheck)
 {
     // set up monitor transform
     if (monitorTransform) {
         cmsDeleteTransform (monitorTransform);
     }
 
-    if (output2monitorTransform) {
-        cmsDeleteTransform (output2monitorTransform);
-    }
-
-    if (lab2outputTransform) {
-        cmsDeleteTransform (lab2outputTransform);
-    }
-
     monitorTransform = nullptr;
-    output2monitorTransform = nullptr;
-    lab2outputTransform = nullptr;
 
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
 
@@ -101,20 +83,57 @@ void ImProcFunctions::updateColorProfiles (const ColorManagementParams& icm, con
 
     if (monitor) {
         MyMutex::MyLock lcmsLock (*lcmsMutex);
+
+        cmsUInt32Number flags;
         cmsHPROFILE iprof  = cmsCreateLab4Profile(nullptr);
-        monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent,
-                                               cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
 
-        Glib::ustring outputProfile;
+        bool softProofCreated = false;
 
-        if (!icm.output.empty() && icm.output != ColorManagementParams::NoICMString) {
-            outputProfile = icm.output;
-            cmsHPROFILE jprof = iccStore->getProfile(outputProfile);
-
-            if (jprof) {
-                lab2outputTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, jprof, TYPE_RGB_FLT, icm.outputIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
-                output2monitorTransform = cmsCreateTransform (jprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, monitorIntent, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+        if (softProof) {
+            cmsHPROFILE oprof = nullptr;
+            if(icm.gamma != "default" || icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+                GammaValues ga;
+                iccStore->getGammaArray(icm, ga);
+                oprof = iccStore->createGammaProfile (icm, ga);
             }
+            else if (!icm.output.empty() && icm.output != ColorManagementParams::NoICMString) {
+                if(icm.gamma != "default" || icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+                    GammaValues ga;
+                    iccStore->getGammaArray(icm, ga);
+                    oprof = iccStore->createCustomGammaOutputProfile (icm, ga);
+                } else {
+                    oprof = iccStore->getProfile(icm.output);
+                }
+            }
+
+            if (oprof) {
+                // NOCACHE is for thread safety, NOOPTIMIZE for precision
+                flags = cmsFLAGS_SOFTPROOFING | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+                if (icm.outputBPC) {
+                    flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+                }
+                if (gamutCheck) {
+                    flags |= cmsFLAGS_GAMUTCHECK;
+                }
+                monitorTransform = cmsCreateProofingTransform(
+                                        iprof, TYPE_Lab_FLT,
+                                        monitor, TYPE_RGB_8,
+                                        oprof,
+                                        monitorIntent, icm.outputIntent,
+                                        flags
+                                    );
+                if (monitorTransform) {
+                    softProofCreated = true;
+                }
+            }
+        }
+
+        if (!softProofCreated) {
+            flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+            if (settings->monitorBPC) {
+                flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+            }
+            monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent, flags);
         }
 
         cmsCloseProfile(iprof);

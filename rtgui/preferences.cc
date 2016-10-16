@@ -680,14 +680,18 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     monProfile->append (M("PREFERENCES_PROFILE_NONE"));
     monProfile->set_active (0);
 
-    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles ();
+    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (true);
     for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
         monProfile->append (*profile);
 
-    monIntent->append (M("PREFERENCES_INTENT_RELATIVE"));
+    // same order as the enum
     monIntent->append (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    monIntent->append (M("PREFERENCES_INTENT_RELATIVE"));
     monIntent->append (M("PREFERENCES_INTENT_ABSOLUTE"));
     monIntent->set_active (1);
+
+    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_MONBPC")));
+    monBPC->set_active (true);
 
     iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
 
@@ -698,21 +702,23 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
     int row = 0;
-    colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #if !defined(__APPLE__) // monitor profile not supported on apple
     ++row;
-    colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #if defined(WIN32)
     ++row;
-    colt->attach (*cbAutoMonProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*cbAutoMonProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #endif
 #endif
     ++row;
-    colt->attach (*milabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*milabel, 0, 1, row, row + 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
+
+    mvbcm->pack_start (*monBPC, Gtk::PACK_SHRINK, 4);
 
 #if defined(WIN32)
     autoMonProfileToggled();
@@ -1450,15 +1456,16 @@ void Preferences::storePreferences ()
     switch (monIntent->get_active_row_number ()) {
     default:
     case 0:
-        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
+        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
         break;
     case 1:
-        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
+        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
         break;
     case 2:
         moptions.rtSettings.monitorIntent = rtengine::RI_ABSOLUTE;
         break;
     }
+    moptions.rtSettings.monitorBPC = monBPC->get_active ();
 #if defined(WIN32)
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
 #endif
@@ -1579,16 +1586,17 @@ void Preferences::fillPreferences ()
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
     switch (moptions.rtSettings.monitorIntent) {
     default:
-    case rtengine::RI_RELATIVE:
+    case rtengine::RI_PERCEPTUAL:
         monIntent->set_active (0);
         break;
-    case rtengine::RI_PERCEPTUAL:
+    case rtengine::RI_RELATIVE:
         monIntent->set_active (1);
         break;
     case rtengine::RI_ABSOLUTE:
         monIntent->set_active (2);
         break;
     }
+    monBPC->set_active (moptions.rtSettings.monitorBPC);
 #if defined(WIN32)
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif

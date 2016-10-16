@@ -26,6 +26,7 @@
 #include "../rtengine/improccoordinator.h"
 #include "../rtengine/color.h"
 #include "../rtengine/opthelper.h"
+#include "../rtengine/iccstore.h"
 using namespace rtengine;
 
 extern Options options;

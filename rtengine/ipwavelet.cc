@@ -39,6 +39,7 @@
 #include "opthelper.h"
 #include "median.h"
 #include "EdgePreservingDecomposition.h"
+#include "iccstore.h"
 
 #ifdef _OPENMP
 #include <omp.h>

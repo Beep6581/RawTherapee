@@ -927,6 +927,7 @@ void ColorManagementParams::setDefaults()
     working = "ProPhoto";
     output  = "RT_sRGB";
     outputIntent  = RI_RELATIVE;
+    outputBPC = true;
     gamma  = "default";
     gampos = 2.22;
     slpos = 4.5;
@@ -2660,6 +2661,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             }
 
             keyFile.set_string  ("Color Management", "OutputProfileIntent", intent);
+        }
+
+        if (!pedited || pedited->icm.outputBPC) {
+            keyFile.set_boolean  ("Color Management", "OutputBPC",  icm.outputBPC);
         }
 
         if (!pedited || pedited->icm.gamma) {
@@ -5918,6 +5923,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->icm.outputIntent = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color Management", "OutputBPC"))      {
+                icm.outputBPC      = keyFile.get_boolean ("Color Management", "OutputBPC");
+
+                if (pedited) {
+                    pedited->icm.outputBPC = true;
                 }
             }
 

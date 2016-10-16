@@ -23,6 +23,7 @@
 #include "mytime.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "iccstore.h"
 
 #define pow_F(a,b) (xexpf(b*xlogf(a)))
 
@@ -1647,7 +1648,7 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
     Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);// ro go bo in gamut
 }
 
-void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5)
+void Color::calcGamma (double pwr, double ts, int mode, int imax, GammaValues &gamma)
 {
     //from Dcraw (D.Coffin)
     int i;
@@ -1683,12 +1684,13 @@ void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0
     }
 
     if (!mode--) {
-        gamma0 = g[0];
-        gamma1 = g[1];
-        gamma2 = g[2];
-        gamma3 = g[3];
-        gamma4 = g[4];
-        gamma5 = g[5];
+        gamma[0] = g[0];
+        gamma[1] = g[1];
+        gamma[2] = g[2];
+        gamma[3] = g[3];
+        gamma[4] = g[4];
+        gamma[5] = g[5];
+        gamma[6] = 0.;
         return;
     }
 }
