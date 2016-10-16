@@ -956,7 +956,10 @@ SSEFUNCTION void HistogramArea::updateBackBuffer ()
     Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
-    style->render_background(cr, 0, 0, surface->get_width(), surface->get_height());
+    cr->set_source_rgba (0., 0., 0., 0.);
+    cr->set_operator (Cairo::OPERATOR_CLEAR);
+    cr->paint ();
+    cr->set_operator (Cairo::OPERATOR_OVER);
 
     if (valid) {
         // For RAW mode use the other hists
@@ -1215,6 +1218,8 @@ bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         updateBackBuffer ();
     }
 
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->render_background(cr, winx, winy, winw, winh);
     copySurface(cr, NULL);
 
     return true;

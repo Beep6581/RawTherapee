@@ -210,9 +210,7 @@ void MyDiagonalCurve::draw (int handle)
         return;
     }
 
-    Glib::RefPtr<Gdk::Window > win = get_window();
-
-    if (!surfaceCreated() || !win) {
+    if (!surfaceCreated()) {
         return;
     }
 
@@ -232,7 +230,10 @@ void MyDiagonalCurve::draw (int handle)
     cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
     // clear background
-    style->render_background(cr, 0., 0., double(getWidth()), double(getHeight()));
+    cr->set_source_rgba (0., 0., 0., 0.);
+    cr->set_operator (Cairo::OPERATOR_CLEAR);
+    cr->paint ();
+    cr->set_operator (Cairo::OPERATOR_OVER);
 
     Gdk::RGBA c;
 
@@ -425,7 +426,7 @@ void MyDiagonalCurve::draw (int handle)
         // first the background
         int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
-        leftBar->setDrawRectangle(win, 1, graphY - graphH + 1, bWidth - 2, graphH - 2);
+        leftBar->setDrawRectangle(Cairo::FORMAT_ARGB32, 1, graphY - graphH + 1, bWidth - 2, graphH - 2);
         leftBar->expose(bb);
 
         // now the border
@@ -440,7 +441,7 @@ void MyDiagonalCurve::draw (int handle)
         // first the background
         int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
-        bottomBar->setDrawRectangle(win, graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
+        bottomBar->setDrawRectangle(Cairo::FORMAT_ARGB32, graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
         bottomBar->expose(bb);
 
         // now the border
@@ -497,13 +498,12 @@ void MyDiagonalCurve::draw (int handle)
 
 bool MyDiagonalCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-    Glib::RefPtr<Gdk::Window> win = get_window();
     Gtk::Allocation allocation = get_allocation();
     allocation.set_x(0);
     allocation.set_y(0);
 
     // setDrawRectangle will allocate the backbuffer Surface
-    if (setDrawRectangle(win, allocation)) {
+    if (setDrawRectangle(Cairo::FORMAT_ARGB32, allocation)) {
         setDirty(true);
 
         if (prevGraphW > GRAPH_SIZE || graphW > GRAPH_SIZE) {
@@ -511,6 +511,8 @@ bool MyDiagonalCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         }
     }
 
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->render_background(cr, 0., 0., (double)get_width(), (double)get_height());
     draw (lit_point);
     copySurface(cr);
     return false;
