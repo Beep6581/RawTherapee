@@ -80,16 +80,24 @@ public:
 class ConnectionBlocker
 {
 public:
-    explicit ConnectionBlocker (sigc::connection& connection) : connection (connection)
+    explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr)
     {
-        wasBlocked = connection.block();
+        if (this->connection) {
+            wasBlocked = connection.block();
+        }
+    }
+    explicit ConnectionBlocker (sigc::connection& connection) : connection (&connection)
+    {
+            wasBlocked = connection.block();
     }
     ~ConnectionBlocker ()
     {
-        connection.block(wasBlocked);
+        if (connection) {
+            connection->block(wasBlocked);
+        }
     }
 private:
-    sigc::connection& connection;
+    sigc::connection *connection;
     bool wasBlocked;
 };
 
