@@ -45,7 +45,7 @@ using namespace std;
 namespace rtengine
 {
 
-Curve::Curve () : N(0), x(nullptr), y(nullptr), ypp(nullptr), hashSize(1000 /* has to be initialized to the maximum value */) {}
+Curve::Curve () : N(0), ppn(0), x(nullptr), y(nullptr), mc(0.0), mfc(0.0), msc(0.0), mhc(0.0), ypp(nullptr), x1(0.0), y1(0.0), x2(0.0), y2(0.0), x3(0.0), y3(0.0), firstPointIncluded(false), increment(0.0), nbr_points(0), hashSize(1000 /* has to be initialized to the maximum value */) {}
 
 void Curve::AddPolygons ()
 {
@@ -1435,11 +1435,9 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
             double currY = pCurve->getVal(x) - prevY;
 
             if (dY > 0.000001 || dY < -0.000001) {
-                float r1, g1, b1, r2, g2, b2, ro, go, bo;
+                float r1, g1, b1, r2, g2, b2;
                 Color::hsv2rgb(float(prevY), satur, lr1, r1, g1, b1);
                 Color::hsv2rgb(float(nextY), satur, lr2, r2, g2, b2);
-                bool chr = false;
-                bool lum = true;
                 LUTf dum;
                 float X1, X2, Y1, Y2, Z1, Z2, L1, a_1, b_1, c1, h1;
                 Color::rgbxyz(r2, g2, b2, X2, Y2, Z2, xyz_rgb);

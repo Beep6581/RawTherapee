@@ -140,7 +140,7 @@ inline void RawImageSource::interpolate_row_g (float* agh, float* agv, int i)
 
 inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg, float* cg, float* ng, int i)
 {
-    if (ri->ISRED(i, 0) || ri->ISRED(i, 1)) {
+    if ((ri->ISRED(i, 0) || ri->ISRED(i, 1)) && pg && ng) {
         // RGRGR or GRGRGR line
         for (int j = 0; j < W; j++) {
             if (ri->ISRED(i, j)) {
@@ -172,7 +172,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
 
                 b = cg[j] + b / n;
                 ab[j] = b;
-            } else {
+            } else if(ng && pg) {
                 // linear R-G interp. horizontally
                 int r;
 
@@ -199,7 +199,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
                 ab[j] = b;
             }
         }
-    } else {
+    } else if(ng && pg) {
         // BGBGB or GBGBGB line
         for (int j = 0; j < W; j++) {
             if (ri->ISBLUE(i, j)) {
@@ -265,7 +265,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
 inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip)
 {
 
-    if (ri->ISRED(i, 0) || ri->ISRED(i, 1)) {
+    if ((ri->ISRED(i, 0) || ri->ISRED(i, 1)) && pg && ng) {
         // RGRGR or GRGRGR line
         for (int j = x1, jx = 0; jx < width; j += skip, jx++) {
             if (ri->ISRED(i, j)) {
@@ -324,7 +324,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
                 ab[jx] = b;
             }
         }
-    } else {
+    } else if(pg && ng) {
         // BGBGB or GBGBGB line
         for (int j = x1, jx = 0; jx < width; j += skip, jx++) {
             if (ri->ISBLUE(i, j)) {

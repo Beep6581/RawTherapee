@@ -38,11 +38,10 @@ ImProcCoordinator::ImProcCoordinator ()
       softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
       allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
+      ctColorCurve(),
       hltonecurve(65536),
       shtonecurve(65536),
       tonecurve(65536, 0), //,1);
-      chaut(0.f), redaut(0.f), blueaut(0.f), maxredaut(0.f), maxblueaut(0.f), minredaut(0.f), minblueaut(0.f), nresi(0.f),
-      chromina(0.f), sigma(0.f), lumema(0.f),
       lumacurve(32770, 0), // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
       chroma_acurve(65536, 0),
       chroma_bcurve(65536, 0),
@@ -85,12 +84,12 @@ ImProcCoordinator::ImProcCoordinator ()
       rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
       gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
+      fw(0), fh(0), tr(0),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), dehaListener(NULL), hListener(NULL),
       resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
       butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1)
-
 {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc)
@@ -139,9 +138,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     int readyphase = 0;
 
     bwAutoR = bwAutoG = bwAutoB = -9000.f;
-    chaut = redaut = blueaut = maxredaut = maxblueaut = nresi = highresi = 0.f;
-    chromina = sigma = lumema = 0.f;
-    minredaut = minblueaut = 10000.f;
 
     if (todo == CROP && ipf.needsPCVignetting()) {
         todo |= TRANSFORM;    // Change about Crop does affect TRANSFORM
@@ -444,11 +440,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
                                     params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
-                                    vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale == 1 ? 1 : 1);
+                                    vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, 1);
 
-        CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale == 1 ? 1 : 1);
-        CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale == 1 ? 1 : 1);
-        CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale == 1 ? 1 : 1);
+        CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
+        CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
+        CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
 
 
         opautili = false;
@@ -472,7 +468,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         if(params.blackwhite.enabled) {
-            CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, scale == 1 ? 1 : 1);
+            CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, 1);
         }
 
         colourToningSatLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
@@ -901,7 +897,7 @@ void ImProcCoordinator::setScale (int prevscale)
     do {
         prevscale--;
         PreviewProps pp (0, 0, fw, fh, prevscale);
-        imgsrc->getSize (tr, pp, nW, nH);
+        imgsrc->getSize (pp, nW, nH);
     } while(nH < 400 && prevscale > 1 && (nW * nH < 1000000) ); // sctually hardcoded values, perhaps a better choice is possible
 
     if (settings->verbose) {

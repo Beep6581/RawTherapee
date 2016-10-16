@@ -51,13 +51,9 @@ template<class T> T** allocArray (int W, int H)
 }
 
 #define HR_SCALE 2
-StdImageSource::StdImageSource () : ImageSource(), img(NULL), plistener(NULL)
+StdImageSource::StdImageSource () : ImageSource(), img(NULL), plistener(NULL), full(false), max{}, rgbSourceModified(false)
 {
 
-    hrmap[0] = NULL;
-    hrmap[1] = NULL;
-    hrmap[2] = NULL;
-    needhr = NULL;
     embProfile = NULL;
     idata = NULL;
 }
@@ -66,17 +62,6 @@ StdImageSource::~StdImageSource ()
 {
 
     delete idata;
-
-    if (hrmap[0] != NULL) {
-        int dh = img->getH() / HR_SCALE;
-        freeArray<float>(hrmap[0], dh);
-        freeArray<float>(hrmap[1], dh);
-        freeArray<float>(hrmap[2], dh);
-    }
-
-    if (needhr) {
-        freeArray<char>(needhr, img->getH());
-    }
 
     if (img) {
         delete img;
@@ -311,7 +296,7 @@ void StdImageSource::getFullSize (int& w, int& h, int tr)
     }
 }
 
-void StdImageSource::getSize (int tran, PreviewProps pp, int& w, int& h)
+void StdImageSource::getSize (PreviewProps pp, int& w, int& h)
 {
 
     w = pp.w / pp.skip + (pp.w % pp.skip > 0);

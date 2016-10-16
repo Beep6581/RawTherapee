@@ -25,6 +25,7 @@ RawImage::RawImage(  const Glib::ustring &name )
     , filename(name)
     , profile_data(NULL)
     , allocation(NULL)
+    , rotate_deg(0)
 {
     memset(maximum_c4, 0, sizeof(maximum_c4));
     RT_matrix_from_constant = 0;
