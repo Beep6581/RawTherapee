@@ -41,10 +41,10 @@ class ImageMatrices
 {
 
 public:
-    double rgb_cam[3][3];
-    double cam_rgb[3][3];
-    double xyz_cam[3][3];
-    double cam_xyz[3][3];
+    double rgb_cam[3][3] = {};
+    double cam_rgb[3][3] = {};
+    double xyz_cam[3][3] = {};
+    double cam_xyz[3][3] = {};
 };
 
 class ImageSource : public InitialImage
@@ -100,7 +100,7 @@ public:
     }
 
     virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
-    virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
+    virtual void        getSize     (PreviewProps pp, int& w, int& h) = 0;
     virtual int         getRotateDegree() const
     {
         return 0;

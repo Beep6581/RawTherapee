@@ -107,7 +107,7 @@ public:
 
     static ImageIO* resizeToSameType(int nw, int nh, TypeInterpolation interp, ImageIO* srcImg)
     {
-        ImageIO* imgPtr;
+        ImageIO* imgPtr = nullptr;
 
         if (srcImg->getType() == sImage8) {
             Image8* castedSrcImg = static_cast<Image8*>(srcImg);

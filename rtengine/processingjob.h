@@ -37,7 +37,7 @@ public:
         : fname(fn), isRaw(iR), initialImage(NULL), pparams(pp) {}
 
     ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp)
-        : fname(""), initialImage(iImage), pparams(pp)
+        : fname(""), isRaw(true), initialImage(iImage), pparams(pp)
     {
         iImage->increaseRef();
     }

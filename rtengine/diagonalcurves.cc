@@ -245,7 +245,7 @@ void DiagonalCurve::NURBS_set ()
                 printf("sc_length[%zu/3]=%f \n", it, sc_length[it / 3]);
             }
 
-            printf("NURBS diagonal curve: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f", i, nbr_points, ppn, N, sc_length[i / 3], total_length);
+            printf("NURBS diagonal curve: error detected!\n i=%u nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f", i, nbr_points, ppn, N, sc_length[i / 3], total_length);
             exit(0);
         }
 

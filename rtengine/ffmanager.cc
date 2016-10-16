@@ -31,17 +31,19 @@ extern const Settings* settings;
 
 inline ffInfo& ffInfo::operator =(const ffInfo &o)
 {
-    pathname = o.pathname;
-    maker = o.maker;
-    model = o.model;
-    lens = o.lens;
-    shutter = o.shutter;
-    focallength = o.focallength;
-    timestamp = o.timestamp;
+    if (this != &o) {
+        pathname = o.pathname;
+        maker = o.maker;
+        model = o.model;
+        lens = o.lens;
+        focallength = o.focallength;
+        timestamp = o.timestamp;
+        aperture = o.aperture;
 
-    if( ri ) {
-        delete ri;
-        ri = NULL;
+        if( ri ) {
+            delete ri;
+            ri = NULL;
+        }
     }
 
     return *this;

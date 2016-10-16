@@ -194,27 +194,9 @@ public:
     };
 
     double lumimul[3];
-//      float chau;
-//      float chred;
-//      float chblue;
-//      float maxchred;
-//      float maxchblue;
-//      float minchred;
-//      float minchblue;
-//      float resid;//used by noise_residual
-//      float residred;//used by noise_residual
-//      float residblue;//used by noise_residual
-//      int nb;
-    int nbresid;
-    float redresid;
-    float blueresid;
-//      float maxredresid;//used by noise_residual
-//      float maxblueresid;//used by noise_residual
-//      int comptlevel;
-
 
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
-        : monitorTransform(NULL), lab2outputTransform(NULL), output2monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
+        : monitorTransform(NULL), lab2outputTransform(NULL), output2monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread), lumimul{} {}
     ~ImProcFunctions      ();
 
     void setScale         (double iscale);
