@@ -735,6 +735,7 @@ void Thumbnail::init ()
 }
 
 Thumbnail::Thumbnail () :
+    iColorMatrix{}, cam2xyz{}, scale(1.0), colorMatrix{}, isRaw(true),
     camProfile(nullptr), thumbImg(nullptr),
     camwbRed(1.0), camwbGreen(1.0), camwbBlue(1.0),
     redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0),

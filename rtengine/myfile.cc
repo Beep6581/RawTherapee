@@ -361,7 +361,7 @@ int fscanf (IMFILE* f, const char* s ...)
     // of file data and vsscanf() won't tell us how many characters that
     // were parsed. However, only dcraw.cc code use it and only for "%f" and
     // "%d", so we make a dummy fscanf here just to support dcraw case.
-    char buf[50], *endptr;
+    char buf[50], *endptr = nullptr;
     int copy_sz = f->size - f->pos;
 
     if (copy_sz > sizeof(buf)) {
@@ -377,6 +377,7 @@ int fscanf (IMFILE* f, const char* s ...)
         int i = strtol(buf, &endptr, 10);
 
         if (endptr == buf) {
+            va_end (ap);
             return 0;
         }
 
@@ -386,6 +387,7 @@ int fscanf (IMFILE* f, const char* s ...)
         float f = strtof(buf, &endptr);
 
         if (endptr == buf) {
+            va_end (ap);
             return 0;
         }
 

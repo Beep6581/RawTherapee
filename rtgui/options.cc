@@ -394,8 +394,8 @@ void Options::setDefaults ()
     gimpDir = "";
     psDir = "";
     customEditorProg = "";
+    CPBKeys = CPBKT_TID;
     editorToSendTo = 1;
-    liveThumbnails = true;
     favoriteDirs.clear();
     tpOpen.clear ();
     //crvOpen.clear ();
@@ -1091,10 +1091,6 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("File Browser", "ThumbnailInterpolation")) {
                     thumbInterp    = keyFile.get_integer ("File Browser", "ThumbnailInterpolation");
-                }
-
-                if (keyFile.has_key ("File Browser", "LiveThumbnails")) {
-                    liveThumbnails     = keyFile.get_boolean ("File Browser", "LiveThumbnails");
                 }
 
                 if (keyFile.has_key ("File Browser", "FavoriteDirs")) {
@@ -1894,7 +1890,6 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer_list ("File Browser", "ParseExtensionsEnabled", pextena);
         keyFile.set_integer ("File Browser", "ThumbnailArrangement", fbArrangement);
         keyFile.set_integer ("File Browser", "ThumbnailInterpolation", thumbInterp);
-        keyFile.set_boolean ("File Browser", "LiveThumbnails", liveThumbnails);
         Glib::ArrayHandle<Glib::ustring> pfav = favoriteDirs;
         keyFile.set_string_list ("File Browser", "FavoriteDirs", pfav);
         Glib::ArrayHandle<Glib::ustring> pren = renameTemplates;

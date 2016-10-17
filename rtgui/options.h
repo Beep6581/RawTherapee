@@ -180,9 +180,7 @@ public:
     int editorToSendTo;
     int maxThumbnailHeight;
     std::size_t maxCacheEntries;
-    ThFileType thumbnailFormat;
     int thumbInterp; // 0: nearest, 1: bilinear
-    bool liveThumbnails;
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
@@ -203,7 +201,6 @@ public:
     bool showFileNames;
     bool filmStripShowFileNames;
     bool tabbedUI;
-    int previewSizeTab, previewSizeBrowser;
     bool rememberZoomAndPan;
     int multiDisplayMode;  // 0=none, 1=Edit panels on other display
     std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
@@ -219,7 +216,6 @@ public:
     //int histogramWorking;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
     bool histogramFullMode;
-    bool showProfileSelector;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     bool UseIconNoText;
