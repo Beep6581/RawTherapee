@@ -4132,127 +4132,127 @@ mask_set:
   }
 }
 
-void CLASS remove_zeroes()
-{
-  unsigned row, col, tot, n, r, c;
-
-  for (row=0; row < height; row++)
-    for (col=0; col < width; col++)
-      if (BAYER(row,col) == 0) {
-	tot = n = 0;
-	for (r = row-2; r <= row+2; r++)
-	  for (c = col-2; c <= col+2; c++)
-	    if (r < height && c < width &&
-		FC(r,c) == FC(row,col) && BAYER(r,c))
-	      tot += (n++,BAYER(r,c));
-	if (n) BAYER(row,col) = tot/n;
-      }
-}
+//void CLASS remove_zeroes()
+//{
+//  unsigned row, col, tot, n, r, c;
+//
+//  for (row=0; row < height; row++)
+//    for (col=0; col < width; col++)
+//      if (BAYER(row,col) == 0) {
+//	tot = n = 0;
+//	for (r = row-2; r <= row+2; r++)
+//	  for (c = col-2; c <= col+2; c++)
+//	    if (r < height && c < width &&
+//		FC(r,c) == FC(row,col) && BAYER(r,c))
+//	      tot += (n++,BAYER(r,c));
+//	if (n) BAYER(row,col) = tot/n;
+//      }
+//}
 
 /*
    Seach from the current directory up to the root looking for
    a ".badpixels" file, and fix those pixels now.
  */
-void CLASS bad_pixels (const char *cfname)
-{
-  FILE *fp=0;
-  char *fname, *cp, line[128];
-  int len, time, row, col, r, c, rad, tot, n, fixed=0;
+//void CLASS bad_pixels (const char *cfname)
+//{
+//  FILE *fp=0;
+//  char *fname, *cp, line[128];
+//  int len, time, row, col, r, c, rad, tot, n, fixed=0;
+//
+//  if (!filters) return;
+//  if (cfname)
+//    fp = fopen (cfname, "r");
+//  else {
+//    for (len=32 ; ; len *= 2) {
+//      fname = (char *) malloc (len);
+//      if (!fname) return;
+//      if (getcwd (fname, len-16)) break;
+//      free (fname);
+//      if (errno != ERANGE) return;
+//    }
+//#if defined(WIN32) || defined(DJGPP)
+//    if (fname[1] == ':')
+//      memmove (fname, fname+2, len-2);
+//    for (cp=fname; *cp; cp++)
+//      if (*cp == '\\') *cp = '/';
+//#endif
+//    cp = fname + strlen(fname);
+//    if (cp[-1] == '/') cp--;
+//    while (*fname == '/') {
+//      strcpy (cp, "/.badpixels");
+//      if ((fp = fopen (fname, "r"))) break;
+//      if (cp == fname) break;
+//      while (*--cp != '/');
+//    }
+//    free (fname);
+//  }
+//  if (!fp) return;
+//  while (fgets (line, 128, fp)) {
+//    cp = strchr (line, '#');
+//    if (cp) *cp = 0;
+//    if (sscanf (line, "%d %d %d", &col, &row, &time) != 3) continue;
+//    if ((unsigned) col >= width || (unsigned) row >= height) continue;
+//    if (time > timestamp) continue;
+//    for (tot=n=0, rad=1; rad < 3 && n==0; rad++)
+//      for (r = row-rad; r <= row+rad; r++)
+//	for (c = col-rad; c <= col+rad; c++)
+//	  if ((unsigned) r < height && (unsigned) c < width &&
+//		(r != row || c != col) && fcol(r,c) == fcol(row,col)) {
+//	    tot += BAYER2(r,c);
+//	    n++;
+//	  }
+//    BAYER2(row,col) = tot/n;
+//    if (verbose) {
+//      if (!fixed++)
+//	fprintf (stderr,_("Fixed dead pixels at:"));
+//      fprintf (stderr, " %d,%d", col, row);
+//    }
+//  }
+//  if (fixed) fputc ('\n', stderr);
+//  fclose (fp);
+//}
 
-  if (!filters) return;
-  if (cfname)
-    fp = fopen (cfname, "r");
-  else {
-    for (len=32 ; ; len *= 2) {
-      fname = (char *) malloc (len);
-      if (!fname) return;
-      if (getcwd (fname, len-16)) break;
-      free (fname);
-      if (errno != ERANGE) return;
-    }
-#if defined(WIN32) || defined(DJGPP)
-    if (fname[1] == ':')
-      memmove (fname, fname+2, len-2);
-    for (cp=fname; *cp; cp++)
-      if (*cp == '\\') *cp = '/';
-#endif
-    cp = fname + strlen(fname);
-    if (cp[-1] == '/') cp--;
-    while (*fname == '/') {
-      strcpy (cp, "/.badpixels");
-      if ((fp = fopen (fname, "r"))) break;
-      if (cp == fname) break;
-      while (*--cp != '/');
-    }
-    free (fname);
-  }
-  if (!fp) return;
-  while (fgets (line, 128, fp)) {
-    cp = strchr (line, '#');
-    if (cp) *cp = 0;
-    if (sscanf (line, "%d %d %d", &col, &row, &time) != 3) continue;
-    if ((unsigned) col >= width || (unsigned) row >= height) continue;
-    if (time > timestamp) continue;
-    for (tot=n=0, rad=1; rad < 3 && n==0; rad++)
-      for (r = row-rad; r <= row+rad; r++)
-	for (c = col-rad; c <= col+rad; c++)
-	  if ((unsigned) r < height && (unsigned) c < width &&
-		(r != row || c != col) && fcol(r,c) == fcol(row,col)) {
-	    tot += BAYER2(r,c);
-	    n++;
-	  }
-    BAYER2(row,col) = tot/n;
-    if (verbose) {
-      if (!fixed++)
-	fprintf (stderr,_("Fixed dead pixels at:"));
-      fprintf (stderr, " %d,%d", col, row);
-    }
-  }
-  if (fixed) fputc ('\n', stderr);
-  fclose (fp);
-}
-
-void CLASS subtract (const char *fname)
-{
-  FILE *fp;
-  int dim[3]={0,0,0}, comment=0, number=0, error=0, nd=0, c, row, col;
-  ushort *pixel;
-
-  if (!(fp = fopen (fname, "rb"))) {
-    perror (fname);  return;
-  }
-  if (fgetc(fp) != 'P' || fgetc(fp) != '5') error = 1;
-  while (!error && nd < 3 && (c = fgetc(fp)) != EOF) {
-    if (c == '#')  comment = 1;
-    if (c == '\n') comment = 0;
-    if (comment) continue;
-    if (isdigit(c)) number = 1;
-    if (number) {
-      if (isdigit(c)) dim[nd] = dim[nd]*10 + c -'0';
-      else if (isspace(c)) {
-	number = 0;  nd++;
-      } else error = 1;
-    }
-  }
-  if (error || nd < 3) {
-    fprintf (stderr,_("%s is not a valid PGM file!\n"), fname);
-    fclose (fp);  return;
-  } else if (dim[0] != width || dim[1] != height || dim[2] != 65535) {
-    fprintf (stderr,_("%s has the wrong dimensions!\n"), fname);
-    fclose (fp);  return;
-  }
-  pixel = (ushort *) calloc (width, sizeof *pixel);
-  merror (pixel, "subtract()");
-  for (row=0; row < height; row++) {
-    fread (pixel, 2, width, fp);
-    for (col=0; col < width; col++)
-      BAYER(row,col) = MAX (BAYER(row,col) - ntohs(pixel[col]), 0);
-  }
-  free (pixel);
-  fclose (fp);
-  memset (cblack, 0, sizeof cblack);
-  black = 0;
-}
+//void CLASS subtract (const char *fname)
+//{
+//  FILE *fp;
+//  int dim[3]={0,0,0}, comment=0, number=0, error=0, nd=0, c, row, col;
+//  ushort *pixel;
+//
+//  if (!(fp = fopen (fname, "rb"))) {
+//    perror (fname);  return;
+//  }
+//  if (fgetc(fp) != 'P' || fgetc(fp) != '5') error = 1;
+//  while (!error && nd < 3 && (c = fgetc(fp)) != EOF) {
+//    if (c == '#')  comment = 1;
+//    if (c == '\n') comment = 0;
+//    if (comment) continue;
+//    if (isdigit(c)) number = 1;
+//    if (number) {
+//      if (isdigit(c)) dim[nd] = dim[nd]*10 + c -'0';
+//      else if (isspace(c)) {
+//	number = 0;  nd++;
+//      } else error = 1;
+//    }
+//  }
+//  if (error || nd < 3) {
+//    fprintf (stderr,_("%s is not a valid PGM file!\n"), fname);
+//    fclose (fp);  return;
+//  } else if (dim[0] != width || dim[1] != height || dim[2] != 65535) {
+//    fprintf (stderr,_("%s has the wrong dimensions!\n"), fname);
+//    fclose (fp);  return;
+//  }
+//  pixel = (ushort *) calloc (width, sizeof *pixel);
+//  merror (pixel, "subtract()");
+//  for (row=0; row < height; row++) {
+//    fread (pixel, 2, width, fp);
+//    for (col=0; col < width; col++)
+//      BAYER(row,col) = MAX (BAYER(row,col) - ntohs(pixel[col]), 0);
+//  }
+//  free (pixel);
+//  fclose (fp);
+//  memset (cblack, 0, sizeof cblack);
+//  black = 0;
+//}
 
 void CLASS gamma_curve (double pwr, double ts, int mode, int imax)
 {
@@ -4417,94 +4417,94 @@ void CLASS colorcheck()
 }
 #endif
 
-void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
-{
-  int i;
-  for (i=0; i < sc; i++)
-    temp[i] = 2*base[st*i] + base[st*(sc-i)] + base[st*(i+sc)];
-  for (; i+sc < size; i++)
-    temp[i] = 2*base[st*i] + base[st*(i-sc)] + base[st*(i+sc)];
-  for (; i < size; i++)
-    temp[i] = 2*base[st*i] + base[st*(i-sc)] + base[st*(2*size-2-(i+sc))];
-}
+//void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
+//{
+//  int i;
+//  for (i=0; i < sc; i++)
+//    temp[i] = 2*base[st*i] + base[st*(sc-i)] + base[st*(i+sc)];
+//  for (; i+sc < size; i++)
+//    temp[i] = 2*base[st*i] + base[st*(i-sc)] + base[st*(i+sc)];
+//  for (; i < size; i++)
+//    temp[i] = 2*base[st*i] + base[st*(i-sc)] + base[st*(2*size-2-(i+sc))];
+//}
 
-void CLASS wavelet_denoise()
-{
-  float *fimg=0, *temp, thold, mul[2], avg, diff;
-  int scale=1, size, lev, hpass, lpass, row, col, nc, c, i, wlast, blk[2];
-  ushort *window[4];
-  static const float noise[] =
-  { 0.8002,0.2735,0.1202,0.0585,0.0291,0.0152,0.0080,0.0044 };
-
-  if (verbose) fprintf (stderr,_("Wavelet denoising...\n"));
-
-  while (maximum << scale < 0x10000) scale++;
-  maximum <<= --scale;
-  black <<= scale;
-  FORC4 cblack[c] <<= scale;
-  if ((size = iheight*iwidth) < 0x15550000)
-    fimg = (float *) malloc ((size*3 + iheight + iwidth) * sizeof *fimg);
-  merror (fimg, "wavelet_denoise()");
-  temp = fimg + size*3;
-  if ((nc = colors) == 3 && filters) nc++;
-  FORC(nc) {			/* denoise R,G1,B,G3 individually */
-    for (i=0; i < size; i++)
-      fimg[i] = 256 * sqrt(image[i][c] << scale);
-    for (hpass=lev=0; lev < 5; lev++) {
-      lpass = size*((lev & 1)+1);
-      for (row=0; row < iheight; row++) {
-	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
-	for (col=0; col < iwidth; col++)
-	  fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
-      }
-      for (col=0; col < iwidth; col++) {
-	hat_transform (temp, fimg+lpass+col, iwidth, iheight, 1 << lev);
-	for (row=0; row < iheight; row++)
-	  fimg[lpass + row*iwidth + col] = temp[row] * 0.25;
-      }
-      thold = threshold * noise[lev];
-      for (i=0; i < size; i++) {
-	fimg[hpass+i] -= fimg[lpass+i];
-	if	(fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
-	else if (fimg[hpass+i] >  thold) fimg[hpass+i] -= thold;
-	else	 fimg[hpass+i] = 0;
-	if (hpass) fimg[i] += fimg[hpass+i];
-      }
-      hpass = lpass;
-    }
-    for (i=0; i < size; i++)
-      image[i][c] = CLIP(SQR(fimg[i]+fimg[lpass+i])/0x10000);
-  }
-  if (filters && colors == 3) {  /* pull G1 and G3 closer together */
-    for (row=0; row < 2; row++) {
-      mul[row] = 0.125 * pre_mul[FC(row+1,0) | 1] / pre_mul[FC(row,0) | 1];
-      blk[row] = cblack[FC(row,0) | 1];
-    }
-    for (i=0; i < 4; i++)
-      window[i] = (ushort *) fimg + width*i;
-    for (wlast=-1, row=1; row < height-1; row++) {
-      while (wlast < row+1) {
-	for (wlast++, i=0; i < 4; i++)
-	  window[(i+3) & 3] = window[i];
-	for (col = FC(wlast,1) & 1; col < width; col+=2)
-	  window[2][col] = BAYER(wlast,col);
-      }
-      thold = threshold/512;
-      for (col = (FC(row,0) & 1)+1; col < width-1; col+=2) {
-	avg = ( window[0][col-1] + window[0][col+1] +
-		window[2][col-1] + window[2][col+1] - blk[~row & 1]*4 )
-	      * mul[row & 1] + (window[1][col] + blk[row & 1]) * 0.5;
-	avg = avg < 0 ? 0 : sqrt(avg);
-	diff = sqrt(BAYER(row,col)) - avg;
-	if      (diff < -thold) diff += thold;
-	else if (diff >  thold) diff -= thold;
-	else diff = 0;
-	BAYER(row,col) = CLIP(SQR(avg+diff) + 0.5);
-      }
-    }
-  }
-  free (fimg);
-}
+//void CLASS wavelet_denoise()
+//{
+//  float *fimg=0, *temp, thold, mul[2], avg, diff;
+//  int scale=1, size, lev, hpass, lpass, row, col, nc, c, i, wlast, blk[2];
+//  ushort *window[4];
+//  static const float noise[] =
+//  { 0.8002,0.2735,0.1202,0.0585,0.0291,0.0152,0.0080,0.0044 };
+//
+//  if (verbose) fprintf (stderr,_("Wavelet denoising...\n"));
+//
+//  while (maximum << scale < 0x10000) scale++;
+//  maximum <<= --scale;
+//  black <<= scale;
+//  FORC4 cblack[c] <<= scale;
+//  if ((size = iheight*iwidth) < 0x15550000)
+//    fimg = (float *) malloc ((size*3 + iheight + iwidth) * sizeof *fimg);
+//  merror (fimg, "wavelet_denoise()");
+//  temp = fimg + size*3;
+//  if ((nc = colors) == 3 && filters) nc++;
+//  FORC(nc) {			/* denoise R,G1,B,G3 individually */
+//    for (i=0; i < size; i++)
+//      fimg[i] = 256 * sqrt(image[i][c] << scale);
+//    for (hpass=lev=0; lev < 5; lev++) {
+//      lpass = size*((lev & 1)+1);
+//      for (row=0; row < iheight; row++) {
+//	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
+//	for (col=0; col < iwidth; col++)
+//	  fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
+//      }
+//      for (col=0; col < iwidth; col++) {
+//	hat_transform (temp, fimg+lpass+col, iwidth, iheight, 1 << lev);
+//	for (row=0; row < iheight; row++)
+//	  fimg[lpass + row*iwidth + col] = temp[row] * 0.25;
+//      }
+//      thold = threshold * noise[lev];
+//      for (i=0; i < size; i++) {
+//	fimg[hpass+i] -= fimg[lpass+i];
+//	if	(fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
+//	else if (fimg[hpass+i] >  thold) fimg[hpass+i] -= thold;
+//	else	 fimg[hpass+i] = 0;
+//	if (hpass) fimg[i] += fimg[hpass+i];
+//      }
+//      hpass = lpass;
+//    }
+//    for (i=0; i < size; i++)
+//      image[i][c] = CLIP(SQR(fimg[i]+fimg[lpass+i])/0x10000);
+//  }
+//  if (filters && colors == 3) {  /* pull G1 and G3 closer together */
+//    for (row=0; row < 2; row++) {
+//      mul[row] = 0.125 * pre_mul[FC(row+1,0) | 1] / pre_mul[FC(row,0) | 1];
+//      blk[row] = cblack[FC(row,0) | 1];
+//    }
+//    for (i=0; i < 4; i++)
+//      window[i] = (ushort *) fimg + width*i;
+//    for (wlast=-1, row=1; row < height-1; row++) {
+//      while (wlast < row+1) {
+//	for (wlast++, i=0; i < 4; i++)
+//	  window[(i+3) & 3] = window[i];
+//	for (col = FC(wlast,1) & 1; col < width; col+=2)
+//	  window[2][col] = BAYER(wlast,col);
+//      }
+//      thold = threshold/512;
+//      for (col = (FC(row,0) & 1)+1; col < width-1; col+=2) {
+//	avg = ( window[0][col-1] + window[0][col+1] +
+//		window[2][col-1] + window[2][col+1] - blk[~row & 1]*4 )
+//	      * mul[row & 1] + (window[1][col] + blk[row & 1]) * 0.5;
+//	avg = avg < 0 ? 0 : sqrt(avg);
+//	diff = sqrt(BAYER(row,col)) - avg;
+//	if      (diff < -thold) diff += thold;
+//	else if (diff >  thold) diff -= thold;
+//	else diff = 0;
+//	BAYER(row,col) = CLIP(SQR(avg+diff) + 0.5);
+//      }
+//    }
+//  }
+//  free (fimg);
+//}
 
 void CLASS scale_colors()
 {
@@ -4562,7 +4562,7 @@ skip_block: ;
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dark = black;
   sat = maximum;
-  if (threshold) wavelet_denoise();
+//  if (threshold) wavelet_denoise();
   maximum -= black;
   for (dmin=DBL_MAX, dmax=c=0; c < 4; c++) {
     if (dmin > pre_mul[c])
@@ -4668,440 +4668,440 @@ void CLASS pre_interpolate()
   if (half_size) filters = 0;
 }
 
-void CLASS border_interpolate (int border)
-{
-  unsigned row, col, y, x, f, c, sum[8];
-
-  for (row=0; row < height; row++)
-    for (col=0; col < width; col++) {
-      if (col==border && row >= border && row < height-border)
-	col = width-border;
-      memset (sum, 0, sizeof sum);
-      for (y=row-1; y != row+2; y++)
-	for (x=col-1; x != col+2; x++)
-	  if (y < height && x < width) {
-	    f = fcol(y,x);
-	    sum[f] += image[y*width+x][f];
-	    sum[f+4]++;
-	  }
-      f = fcol(row,col);
-      FORCC if (c != f && sum[c+4])
-	image[row*width+col][c] = sum[c] / sum[c+4];
-    }
-}
+//void CLASS border_interpolate (int border)
+//{
+//  unsigned row, col, y, x, f, c, sum[8];
+//
+//  for (row=0; row < height; row++)
+//    for (col=0; col < width; col++) {
+//      if (col==border && row >= border && row < height-border)
+//	col = width-border;
+//      memset (sum, 0, sizeof sum);
+//      for (y=row-1; y != row+2; y++)
+//	for (x=col-1; x != col+2; x++)
+//	  if (y < height && x < width) {
+//	    f = fcol(y,x);
+//	    sum[f] += image[y*width+x][f];
+//	    sum[f+4]++;
+//	  }
+//      f = fcol(row,col);
+//      FORCC if (c != f && sum[c+4])
+//	image[row*width+col][c] = sum[c] / sum[c+4];
+//    }
+//}
 
 /* RT: delete interpolation functions */
 
 
-void CLASS cielab (ushort rgb[3], short lab[3])
-{
-  int c, i, j, k;
-  float r, xyz[3];
-  static float cbrt[0x10000], xyz_cam[3][4];
+//void CLASS cielab (ushort rgb[3], short lab[3])
+//{
+//  int c, i, j, k;
+//  float r, xyz[3];
+//  static float cbrt[0x10000], xyz_cam[3][4];
+//
+//  if (!rgb) {
+//    for (i=0; i < 0x10000; i++) {
+//      r = i / 65535.0;
+//      cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
+//    }
+//    for (i=0; i < 3; i++)
+//      for (j=0; j < colors; j++)
+//	for (xyz_cam[i][j] = k=0; k < 3; k++)
+//	  xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
+//    return;
+//  }
+//  xyz[0] = xyz[1] = xyz[2] = 0.5;
+//  FORCC {
+//    xyz[0] += xyz_cam[0][c] * rgb[c];
+//    xyz[1] += xyz_cam[1][c] * rgb[c];
+//    xyz[2] += xyz_cam[2][c] * rgb[c];
+//  }
+//  xyz[0] = cbrt[CLIP((int) xyz[0])];
+//  xyz[1] = cbrt[CLIP((int) xyz[1])];
+//  xyz[2] = cbrt[CLIP((int) xyz[2])];
+//  lab[0] = 64 * (116 * xyz[1] - 16);
+//  lab[1] = 64 * 500 * (xyz[0] - xyz[1]);
+//  lab[2] = 64 * 200 * (xyz[1] - xyz[2]);
+//}
+//
+//#define TS 512		/* Tile Size */
+//#define fcol(row,col) xtrans[(row+6) % 6][(col+6) % 6]
+//
+///*
+//   Frank Markesteijn's algorithm for Fuji X-Trans sensors
+// */
+//void CLASS xtrans_interpolate (int passes)
+//{
+//  int c, d, f, g, h, i, v, ng, row, col, top, left, mrow, mcol;
+//  int val, ndir, pass, hm[8], avg[4], color[3][8];
+//  static const short orth[12] = { 1,0,0,1,-1,0,0,-1,1,0,0,1 },
+//	patt[2][16] = { { 0,1,0,-1,2,0,-1,0,1,1,1,-1,0,0,0,0 },
+//			{ 0,1,0,-2,1,0,-2,0,1,1,-2,-2,1,-1,-1,1 } },
+//	dir[4] = { 1,TS,TS+1,TS-1 };
+//  short allhex[3][3][2][8], *hex;
+//  ushort min, max, sgrow, sgcol;
+//  ushort (*rgb)[TS][TS][3], (*rix)[3], (*pix)[4];
+//   short (*lab)    [TS][3], (*lix)[3];
+//   float (*drv)[TS][TS], diff[6], tr;
+//   char (*homo)[TS][TS], *buffer;
+//
+//  if (verbose)
+//    fprintf (stderr,_("%d-pass X-Trans interpolation...\n"), passes);
+//
+//  cielab (0,0);
+//  ndir = 4 << (passes > 1);
+//  buffer = (char *) malloc (TS*TS*(ndir*11+6));
+//  merror (buffer, "xtrans_interpolate()");
+//  rgb  = (ushort(*)[TS][TS][3]) buffer;
+//  lab  = (short (*)    [TS][3])(buffer + TS*TS*(ndir*6));
+//  drv  = (float (*)[TS][TS])   (buffer + TS*TS*(ndir*6+6));
+//  homo = (char  (*)[TS][TS])   (buffer + TS*TS*(ndir*10+6));
+//
+///* Map a green hexagon around each non-green pixel and vice versa:	*/
+//  for (row=0; row < 3; row++)
+//    for (col=0; col < 3; col++)
+//      for (ng=d=0; d < 10; d+=2) {
+//	g = fcol(row,col) == 1;
+//	if (fcol(row+orth[d],col+orth[d+2]) == 1) ng=0; else ng++;
+//	if (ng == 4) { sgrow = row; sgcol = col; }
+//	if (ng == g+1) FORC(8) {
+//	  v = orth[d  ]*patt[g][c*2] + orth[d+1]*patt[g][c*2+1];
+//	  h = orth[d+2]*patt[g][c*2] + orth[d+3]*patt[g][c*2+1];
+//	  allhex[row][col][0][c^(g*2 & d)] = h + v*width;
+//	  allhex[row][col][1][c^(g*2 & d)] = h + v*TS;
+//	}
+//      }
+//
+///* Set green1 and green3 to the minimum and maximum allowed values:	*/
+//  for (row=2; row < height-2; row++)
+//    for (min=~(max=0), col=2; col < width-2; col++) {
+//      if (fcol(row,col) == 1 && (min=~(max=0))) continue;
+//      pix = image + row*width + col;
+//      hex = allhex[row % 3][col % 3][0];
+//      if (!max) FORC(6) {
+//	val = pix[hex[c]][1];
+//	if (min > val) min = val;
+//	if (max < val) max = val;
+//      }
+//      pix[0][1] = min;
+//      pix[0][3] = max;
+//      switch ((row-sgrow) % 3) {
+//	case 1: if (row < height-3) { row++; col--; } break;
+//	case 2: if ((min=~(max=0)) && (col+=2) < width-3 && row > 2) row--;
+//      }
+//    }
+//
+//  for (top=3; top < height-19; top += TS-16)
+//    for (left=3; left < width-19; left += TS-16) {
+//      mrow = MIN (top+TS, height-3);
+//      mcol = MIN (left+TS, width-3);
+//      for (row=top; row < mrow; row++)
+//	for (col=left; col < mcol; col++)
+//	  memcpy (rgb[0][row-top][col-left], image[row*width+col], 6);
+//      FORC3 memcpy (rgb[c+1], rgb[0], sizeof *rgb);
+//
+///* Interpolate green horizontally, vertically, and along both diagonals: */
+//      for (row=top; row < mrow; row++)
+//	for (col=left; col < mcol; col++) {
+//	  if ((f = fcol(row,col)) == 1) continue;
+//	  pix = image + row*width + col;
+//	  hex = allhex[row % 3][col % 3][0];
+//	  color[1][0] = 174 * (pix[  hex[1]][1] + pix[  hex[0]][1]) -
+//			 46 * (pix[2*hex[1]][1] + pix[2*hex[0]][1]);
+//	  color[1][1] = 223 *  pix[  hex[3]][1] + pix[  hex[2]][1] * 33 +
+//			 92 * (pix[      0 ][f] - pix[ -hex[2]][f]);
+//	  FORC(2) color[1][2+c] =
+//		164 * pix[hex[4+c]][1] + 92 * pix[-2*hex[4+c]][1] + 33 *
+//		(2*pix[0][f] - pix[3*hex[4+c]][f] - pix[-3*hex[4+c]][f]);
+//	  FORC4 rgb[c^!((row-sgrow) % 3)][row-top][col-left][1] =
+//		LIM(color[1][c] >> 8,pix[0][1],pix[0][3]);
+//	}
+//
+//      for (pass=0; pass < passes; pass++) {
+//	if (pass == 1)
+//	  memcpy (rgb+=4, buffer, 4*sizeof *rgb);
+//
+///* Recalculate green from interpolated values of closer pixels:	*/
+//	if (pass) {
+//	  for (row=top+2; row < mrow-2; row++)
+//	    for (col=left+2; col < mcol-2; col++) {
+//	      if ((f = fcol(row,col)) == 1) continue;
+//	      pix = image + row*width + col;
+//	      hex = allhex[row % 3][col % 3][1];
+//	      for (d=3; d < 6; d++) {
+//		rix = &rgb[(d-2)^!((row-sgrow) % 3)][row-top][col-left];
+//		val = rix[-2*hex[d]][1] + 2*rix[hex[d]][1]
+//		    - rix[-2*hex[d]][f] - 2*rix[hex[d]][f] + 3*rix[0][f];
+//		rix[0][1] = LIM(val/3,pix[0][1],pix[0][3]);
+//	      }
+//	    }
+//	}
+//
+///* Interpolate red and blue values for solitary green pixels:	*/
+//	for (row=(top-sgrow+4)/3*3+sgrow; row < mrow-2; row+=3)
+//	  for (col=(left-sgcol+4)/3*3+sgcol; col < mcol-2; col+=3) {
+//	    rix = &rgb[0][row-top][col-left];
+//	    h = fcol(row,col+1);
+//	    memset (diff, 0, sizeof diff);
+//	    for (i=1, d=0; d < 6; d++, i^=TS^1, h^=2) {
+//	      for (c=0; c < 2; c++, h^=2) {
+//		g = 2*rix[0][1] - rix[i<<c][1] - rix[-i<<c][1];
+//		color[h][d] = g + rix[i<<c][h] + rix[-i<<c][h];
+//		if (d > 1)
+//		  diff[d] += SQR (rix[i<<c][1] - rix[-i<<c][1]
+//				- rix[i<<c][h] + rix[-i<<c][h]) + SQR(g);
+//	      }
+//	      if (d > 1 && (d & 1))
+//		if (diff[d-1] < diff[d])
+//		  FORC(2) color[c*2][d] = color[c*2][d-1];
+//	      if (d < 2 || (d & 1)) {
+//		FORC(2) rix[0][c*2] = CLIP(color[c*2][d]/2);
+//		rix += TS*TS;
+//	      }
+//	    }
+//	  }
+//
+///* Interpolate red for blue pixels and vice versa:		*/
+//	for (row=top+3; row < mrow-3; row++)
+//	  for (col=left+3; col < mcol-3; col++) {
+//	    if ((f = 2-fcol(row,col)) == 1) continue;
+//	    rix = &rgb[0][row-top][col-left];
+//	    c = (row-sgrow) % 3 ? TS:1;
+//	    h = 3 * (c ^ TS ^ 1);
+//	    for (d=0; d < 4; d++, rix += TS*TS) {
+//	      i = d > 1 || ((d ^ c) & 1) ||
+//		 ((ABS(rix[0][1]-rix[c][1])+ABS(rix[0][1]-rix[-c][1])) <
+//		2*(ABS(rix[0][1]-rix[h][1])+ABS(rix[0][1]-rix[-h][1]))) ? c:h;
+//	      rix[0][f] = CLIP((rix[i][f] + rix[-i][f] +
+//		  2*rix[0][1] - rix[i][1] - rix[-i][1])/2);
+//	    }
+//	  }
+//
+///* Fill in red and blue for 2x2 blocks of green:		*/
+//	for (row=top+2; row < mrow-2; row++) if ((row-sgrow) % 3)
+//	  for (col=left+2; col < mcol-2; col++) if ((col-sgcol) % 3) {
+//	    rix = &rgb[0][row-top][col-left];
+//	    hex = allhex[row % 3][col % 3][1];
+//	    for (d=0; d < ndir; d+=2, rix += TS*TS)
+//	      if (hex[d] + hex[d+1]) {
+//		g = 3*rix[0][1] - 2*rix[hex[d]][1] - rix[hex[d+1]][1];
+//		for (c=0; c < 4; c+=2) rix[0][c] =
+//			CLIP((g + 2*rix[hex[d]][c] + rix[hex[d+1]][c])/3);
+//	      } else {
+//		g = 2*rix[0][1] - rix[hex[d]][1] - rix[hex[d+1]][1];
+//		for (c=0; c < 4; c+=2) rix[0][c] =
+//			CLIP((g + rix[hex[d]][c] + rix[hex[d+1]][c])/2);
+//	      }
+//	  }
+//      }
+//      rgb = (ushort(*)[TS][TS][3]) buffer;
+//      mrow -= top;
+//      mcol -= left;
+//
+///* Convert to CIELab and differentiate in all directions:	*/
+//      for (d=0; d < ndir; d++) {
+//	for (row=2; row < mrow-2; row++)
+//	  for (col=2; col < mcol-2; col++)
+//	    cielab (rgb[d][row][col], lab[row][col]);
+//	for (f=dir[d & 3],row=3; row < mrow-3; row++)
+//	  for (col=3; col < mcol-3; col++) {
+//	    lix = &lab[row][col];
+//	    g = 2*lix[0][0] - lix[f][0] - lix[-f][0];
+//	    drv[d][row][col] = SQR(g)
+//	      + SQR((2*lix[0][1] - lix[f][1] - lix[-f][1] + g*500/232))
+//	      + SQR((2*lix[0][2] - lix[f][2] - lix[-f][2] - g*500/580));
+//	  }
+//      }
+//
+///* Build homogeneity maps from the derivatives:			*/
+//      memset(homo, 0, ndir*TS*TS);
+//      for (row=4; row < mrow-4; row++)
+//	for (col=4; col < mcol-4; col++) {
+//	  for (tr=FLT_MAX, d=0; d < ndir; d++)
+//	    if (tr > drv[d][row][col])
+//		tr = drv[d][row][col];
+//	  tr *= 8;
+//	  for (d=0; d < ndir; d++)
+//	    for (v=-1; v <= 1; v++)
+//	      for (h=-1; h <= 1; h++)
+//		if (drv[d][row+v][col+h] <= tr)
+//		  homo[d][row][col]++;
+//	}
+//
+///* Average the most homogenous pixels for the final result:	*/
+//      if (height-top < TS+4) mrow = height-top+2;
+//      if (width-left < TS+4) mcol = width-left+2;
+//      for (row = MIN(top,8); row < mrow-8; row++)
+//	for (col = MIN(left,8); col < mcol-8; col++) {
+//	  for (d=0; d < ndir; d++)
+//	    for (hm[d]=0, v=-2; v <= 2; v++)
+//	      for (h=-2; h <= 2; h++)
+//		hm[d] += homo[d][row+v][col+h];
+//	  for (d=0; d < ndir-4; d++)
+//	    if (hm[d] < hm[d+4]) hm[d  ] = 0; else
+//	    if (hm[d] > hm[d+4]) hm[d+4] = 0;
+//	  for (max=hm[0],d=1; d < ndir; d++)
+//	    if (max < hm[d]) max = hm[d];
+//	  max -= max >> 3;
+//	  memset (avg, 0, sizeof avg);
+//	  for (d=0; d < ndir; d++)
+//	    if (hm[d] >= max) {
+//	      FORC3 avg[c] += rgb[d][row][col][c];
+//	      avg[3]++;
+//	    }
+//	  FORC3 image[(row+top)*width+col+left][c] = avg[c]/avg[3];
+//	}
+//    }
+//  free(buffer);
+//  border_interpolate(8);
+//}
+//#undef fcol
+//
+//
+//#undef TS
 
-  if (!rgb) {
-    for (i=0; i < 0x10000; i++) {
-      r = i / 65535.0;
-      cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
-    }
-    for (i=0; i < 3; i++)
-      for (j=0; j < colors; j++)
-	for (xyz_cam[i][j] = k=0; k < 3; k++)
-	  xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
-    return;
-  }
-  xyz[0] = xyz[1] = xyz[2] = 0.5;
-  FORCC {
-    xyz[0] += xyz_cam[0][c] * rgb[c];
-    xyz[1] += xyz_cam[1][c] * rgb[c];
-    xyz[2] += xyz_cam[2][c] * rgb[c];
-  }
-  xyz[0] = cbrt[CLIP((int) xyz[0])];
-  xyz[1] = cbrt[CLIP((int) xyz[1])];
-  xyz[2] = cbrt[CLIP((int) xyz[2])];
-  lab[0] = 64 * (116 * xyz[1] - 16);
-  lab[1] = 64 * 500 * (xyz[0] - xyz[1]);
-  lab[2] = 64 * 200 * (xyz[1] - xyz[2]);
-}
-
-#define TS 512		/* Tile Size */
-#define fcol(row,col) xtrans[(row+6) % 6][(col+6) % 6]
-
-/*
-   Frank Markesteijn's algorithm for Fuji X-Trans sensors
- */
-void CLASS xtrans_interpolate (int passes)
-{
-  int c, d, f, g, h, i, v, ng, row, col, top, left, mrow, mcol;
-  int val, ndir, pass, hm[8], avg[4], color[3][8];
-  static const short orth[12] = { 1,0,0,1,-1,0,0,-1,1,0,0,1 },
-	patt[2][16] = { { 0,1,0,-1,2,0,-1,0,1,1,1,-1,0,0,0,0 },
-			{ 0,1,0,-2,1,0,-2,0,1,1,-2,-2,1,-1,-1,1 } },
-	dir[4] = { 1,TS,TS+1,TS-1 };
-  short allhex[3][3][2][8], *hex;
-  ushort min, max, sgrow, sgcol;
-  ushort (*rgb)[TS][TS][3], (*rix)[3], (*pix)[4];
-   short (*lab)    [TS][3], (*lix)[3];
-   float (*drv)[TS][TS], diff[6], tr;
-   char (*homo)[TS][TS], *buffer;
-
-  if (verbose)
-    fprintf (stderr,_("%d-pass X-Trans interpolation...\n"), passes);
-
-  cielab (0,0);
-  ndir = 4 << (passes > 1);
-  buffer = (char *) malloc (TS*TS*(ndir*11+6));
-  merror (buffer, "xtrans_interpolate()");
-  rgb  = (ushort(*)[TS][TS][3]) buffer;
-  lab  = (short (*)    [TS][3])(buffer + TS*TS*(ndir*6));
-  drv  = (float (*)[TS][TS])   (buffer + TS*TS*(ndir*6+6));
-  homo = (char  (*)[TS][TS])   (buffer + TS*TS*(ndir*10+6));
-
-/* Map a green hexagon around each non-green pixel and vice versa:	*/
-  for (row=0; row < 3; row++)
-    for (col=0; col < 3; col++)
-      for (ng=d=0; d < 10; d+=2) {
-	g = fcol(row,col) == 1;
-	if (fcol(row+orth[d],col+orth[d+2]) == 1) ng=0; else ng++;
-	if (ng == 4) { sgrow = row; sgcol = col; }
-	if (ng == g+1) FORC(8) {
-	  v = orth[d  ]*patt[g][c*2] + orth[d+1]*patt[g][c*2+1];
-	  h = orth[d+2]*patt[g][c*2] + orth[d+3]*patt[g][c*2+1];
-	  allhex[row][col][0][c^(g*2 & d)] = h + v*width;
-	  allhex[row][col][1][c^(g*2 & d)] = h + v*TS;
-	}
-      }
-
-/* Set green1 and green3 to the minimum and maximum allowed values:	*/
-  for (row=2; row < height-2; row++)
-    for (min=~(max=0), col=2; col < width-2; col++) {
-      if (fcol(row,col) == 1 && (min=~(max=0))) continue;
-      pix = image + row*width + col;
-      hex = allhex[row % 3][col % 3][0];
-      if (!max) FORC(6) {
-	val = pix[hex[c]][1];
-	if (min > val) min = val;
-	if (max < val) max = val;
-      }
-      pix[0][1] = min;
-      pix[0][3] = max;
-      switch ((row-sgrow) % 3) {
-	case 1: if (row < height-3) { row++; col--; } break;
-	case 2: if ((min=~(max=0)) && (col+=2) < width-3 && row > 2) row--;
-      }
-    }
-
-  for (top=3; top < height-19; top += TS-16)
-    for (left=3; left < width-19; left += TS-16) {
-      mrow = MIN (top+TS, height-3);
-      mcol = MIN (left+TS, width-3);
-      for (row=top; row < mrow; row++)
-	for (col=left; col < mcol; col++)
-	  memcpy (rgb[0][row-top][col-left], image[row*width+col], 6);
-      FORC3 memcpy (rgb[c+1], rgb[0], sizeof *rgb);
-
-/* Interpolate green horizontally, vertically, and along both diagonals: */
-      for (row=top; row < mrow; row++)
-	for (col=left; col < mcol; col++) {
-	  if ((f = fcol(row,col)) == 1) continue;
-	  pix = image + row*width + col;
-	  hex = allhex[row % 3][col % 3][0];
-	  color[1][0] = 174 * (pix[  hex[1]][1] + pix[  hex[0]][1]) -
-			 46 * (pix[2*hex[1]][1] + pix[2*hex[0]][1]);
-	  color[1][1] = 223 *  pix[  hex[3]][1] + pix[  hex[2]][1] * 33 +
-			 92 * (pix[      0 ][f] - pix[ -hex[2]][f]);
-	  FORC(2) color[1][2+c] =
-		164 * pix[hex[4+c]][1] + 92 * pix[-2*hex[4+c]][1] + 33 *
-		(2*pix[0][f] - pix[3*hex[4+c]][f] - pix[-3*hex[4+c]][f]);
-	  FORC4 rgb[c^!((row-sgrow) % 3)][row-top][col-left][1] =
-		LIM(color[1][c] >> 8,pix[0][1],pix[0][3]);
-	}
-
-      for (pass=0; pass < passes; pass++) {
-	if (pass == 1)
-	  memcpy (rgb+=4, buffer, 4*sizeof *rgb);
-
-/* Recalculate green from interpolated values of closer pixels:	*/
-	if (pass) {
-	  for (row=top+2; row < mrow-2; row++)
-	    for (col=left+2; col < mcol-2; col++) {
-	      if ((f = fcol(row,col)) == 1) continue;
-	      pix = image + row*width + col;
-	      hex = allhex[row % 3][col % 3][1];
-	      for (d=3; d < 6; d++) {
-		rix = &rgb[(d-2)^!((row-sgrow) % 3)][row-top][col-left];
-		val = rix[-2*hex[d]][1] + 2*rix[hex[d]][1]
-		    - rix[-2*hex[d]][f] - 2*rix[hex[d]][f] + 3*rix[0][f];
-		rix[0][1] = LIM(val/3,pix[0][1],pix[0][3]);
-	      }
-	    }
-	}
-
-/* Interpolate red and blue values for solitary green pixels:	*/
-	for (row=(top-sgrow+4)/3*3+sgrow; row < mrow-2; row+=3)
-	  for (col=(left-sgcol+4)/3*3+sgcol; col < mcol-2; col+=3) {
-	    rix = &rgb[0][row-top][col-left];
-	    h = fcol(row,col+1);
-	    memset (diff, 0, sizeof diff);
-	    for (i=1, d=0; d < 6; d++, i^=TS^1, h^=2) {
-	      for (c=0; c < 2; c++, h^=2) {
-		g = 2*rix[0][1] - rix[i<<c][1] - rix[-i<<c][1];
-		color[h][d] = g + rix[i<<c][h] + rix[-i<<c][h];
-		if (d > 1)
-		  diff[d] += SQR (rix[i<<c][1] - rix[-i<<c][1]
-				- rix[i<<c][h] + rix[-i<<c][h]) + SQR(g);
-	      }
-	      if (d > 1 && (d & 1))
-		if (diff[d-1] < diff[d])
-		  FORC(2) color[c*2][d] = color[c*2][d-1];
-	      if (d < 2 || (d & 1)) {
-		FORC(2) rix[0][c*2] = CLIP(color[c*2][d]/2);
-		rix += TS*TS;
-	      }
-	    }
-	  }
-
-/* Interpolate red for blue pixels and vice versa:		*/
-	for (row=top+3; row < mrow-3; row++)
-	  for (col=left+3; col < mcol-3; col++) {
-	    if ((f = 2-fcol(row,col)) == 1) continue;
-	    rix = &rgb[0][row-top][col-left];
-	    c = (row-sgrow) % 3 ? TS:1;
-	    h = 3 * (c ^ TS ^ 1);
-	    for (d=0; d < 4; d++, rix += TS*TS) {
-	      i = d > 1 || ((d ^ c) & 1) ||
-		 ((ABS(rix[0][1]-rix[c][1])+ABS(rix[0][1]-rix[-c][1])) <
-		2*(ABS(rix[0][1]-rix[h][1])+ABS(rix[0][1]-rix[-h][1]))) ? c:h;
-	      rix[0][f] = CLIP((rix[i][f] + rix[-i][f] +
-		  2*rix[0][1] - rix[i][1] - rix[-i][1])/2);
-	    }
-	  }
-
-/* Fill in red and blue for 2x2 blocks of green:		*/
-	for (row=top+2; row < mrow-2; row++) if ((row-sgrow) % 3)
-	  for (col=left+2; col < mcol-2; col++) if ((col-sgcol) % 3) {
-	    rix = &rgb[0][row-top][col-left];
-	    hex = allhex[row % 3][col % 3][1];
-	    for (d=0; d < ndir; d+=2, rix += TS*TS)
-	      if (hex[d] + hex[d+1]) {
-		g = 3*rix[0][1] - 2*rix[hex[d]][1] - rix[hex[d+1]][1];
-		for (c=0; c < 4; c+=2) rix[0][c] =
-			CLIP((g + 2*rix[hex[d]][c] + rix[hex[d+1]][c])/3);
-	      } else {
-		g = 2*rix[0][1] - rix[hex[d]][1] - rix[hex[d+1]][1];
-		for (c=0; c < 4; c+=2) rix[0][c] =
-			CLIP((g + rix[hex[d]][c] + rix[hex[d+1]][c])/2);
-	      }
-	  }
-      }
-      rgb = (ushort(*)[TS][TS][3]) buffer;
-      mrow -= top;
-      mcol -= left;
-
-/* Convert to CIELab and differentiate in all directions:	*/
-      for (d=0; d < ndir; d++) {
-	for (row=2; row < mrow-2; row++)
-	  for (col=2; col < mcol-2; col++)
-	    cielab (rgb[d][row][col], lab[row][col]);
-	for (f=dir[d & 3],row=3; row < mrow-3; row++)
-	  for (col=3; col < mcol-3; col++) {
-	    lix = &lab[row][col];
-	    g = 2*lix[0][0] - lix[f][0] - lix[-f][0];
-	    drv[d][row][col] = SQR(g)
-	      + SQR((2*lix[0][1] - lix[f][1] - lix[-f][1] + g*500/232))
-	      + SQR((2*lix[0][2] - lix[f][2] - lix[-f][2] - g*500/580));
-	  }
-      }
-
-/* Build homogeneity maps from the derivatives:			*/
-      memset(homo, 0, ndir*TS*TS);
-      for (row=4; row < mrow-4; row++)
-	for (col=4; col < mcol-4; col++) {
-	  for (tr=FLT_MAX, d=0; d < ndir; d++)
-	    if (tr > drv[d][row][col])
-		tr = drv[d][row][col];
-	  tr *= 8;
-	  for (d=0; d < ndir; d++)
-	    for (v=-1; v <= 1; v++)
-	      for (h=-1; h <= 1; h++)
-		if (drv[d][row+v][col+h] <= tr)
-		  homo[d][row][col]++;
-	}
-
-/* Average the most homogenous pixels for the final result:	*/
-      if (height-top < TS+4) mrow = height-top+2;
-      if (width-left < TS+4) mcol = width-left+2;
-      for (row = MIN(top,8); row < mrow-8; row++)
-	for (col = MIN(left,8); col < mcol-8; col++) {
-	  for (d=0; d < ndir; d++)
-	    for (hm[d]=0, v=-2; v <= 2; v++)
-	      for (h=-2; h <= 2; h++)
-		hm[d] += homo[d][row+v][col+h];
-	  for (d=0; d < ndir-4; d++)
-	    if (hm[d] < hm[d+4]) hm[d  ] = 0; else
-	    if (hm[d] > hm[d+4]) hm[d+4] = 0;
-	  for (max=hm[0],d=1; d < ndir; d++)
-	    if (max < hm[d]) max = hm[d];
-	  max -= max >> 3;
-	  memset (avg, 0, sizeof avg);
-	  for (d=0; d < ndir; d++)
-	    if (hm[d] >= max) {
-	      FORC3 avg[c] += rgb[d][row][col][c];
-	      avg[3]++;
-	    }
-	  FORC3 image[(row+top)*width+col+left][c] = avg[c]/avg[3];
-	}
-    }
-  free(buffer);
-  border_interpolate(8);
-}
-#undef fcol
-
-
-#undef TS
-
-void CLASS median_filter()
-{
-  ushort (*pix)[4];
-  int pass, c, i, j, k, med[9];
-  static const uchar opt[] =	/* Optimal 9-element median search */
-  { 1,2, 4,5, 7,8, 0,1, 3,4, 6,7, 1,2, 4,5, 7,8,
-    0,3, 5,8, 4,7, 3,6, 1,4, 2,5, 4,7, 4,2, 6,4, 4,2 };
-
-  for (pass=1; pass <= med_passes; pass++) {
-    if (verbose)
-      fprintf (stderr,_("Median filter pass %d...\n"), pass);
-    for (c=0; c < 3; c+=2) {
-      for (pix = image; pix < image+width*height; pix++)
-	pix[0][3] = pix[0][c];
-      for (pix = image+width; pix < image+width*(height-1); pix++) {
-	if ((pix-image+1) % width < 2) continue;
-	for (k=0, i = -width; i <= width; i += width)
-	  for (j = i-1; j <= i+1; j++)
-	    med[k++] = pix[j][3] - pix[j][1];
-	for (i=0; i < sizeof opt; i+=2)
-	  if     (med[opt[i]] > med[opt[i+1]])
-	    SWAP (med[opt[i]] , med[opt[i+1]]);
-	pix[0][c] = CLIP(med[4] + pix[0][1]);
-      }
-    }
-  }
-}
-
-void CLASS blend_highlights()
-{
-  int clip=INT_MAX, row, col, c, i, j;
-  static const float trans[2][4][4] =
-  { { { 1,1,1 }, { 1.7320508,-1.7320508,0 }, { -1,-1,2 } },
-    { { 1,1,1,1 }, { 1,-1,1,-1 }, { 1,1,-1,-1 }, { 1,-1,-1,1 } } };
-  static const float itrans[2][4][4] =
-  { { { 1,0.8660254,-0.5 }, { 1,-0.8660254,-0.5 }, { 1,0,1 } },
-    { { 1,1,1,1 }, { 1,-1,1,-1 }, { 1,1,-1,-1 }, { 1,-1,-1,1 } } };
-  float cam[2][4], lab[2][4], sum[2], chratio;
-
-  if ((unsigned) (colors-3) > 1) return;
-  if (verbose) fprintf (stderr,_("Blending highlights...\n"));
-  FORCC if (clip > (i = 65535*pre_mul[c])) clip = i;
-  for (row=0; row < height; row++)
-    for (col=0; col < width; col++) {
-      FORCC if (image[row*width+col][c] > clip) break;
-      if (c == colors) continue;
-      FORCC {
-	cam[0][c] = image[row*width+col][c];
-	cam[1][c] = MIN(cam[0][c],clip);
-      }
-      for (i=0; i < 2; i++) {
-	FORCC for (lab[i][c]=j=0; j < colors; j++)
-	  lab[i][c] += trans[colors-3][c][j] * cam[i][j];
-	for (sum[i]=0,c=1; c < colors; c++)
-	  sum[i] += SQR(lab[i][c]);
-      }
-      chratio = sqrt(sum[1]/sum[0]);
-      for (c=1; c < colors; c++)
-	lab[0][c] *= chratio;
-      FORCC for (cam[0][c]=j=0; j < colors; j++)
-	cam[0][c] += itrans[colors-3][c][j] * lab[0][j];
-      FORCC image[row*width+col][c] = cam[0][c] / colors;
-    }
-}
-
-#define SCALE (4 >> shrink)
-void CLASS recover_highlights()
-{
-  float *map, sum, wgt, grow;
-  int hsat[4], count, spread, change, val, i;
-  unsigned high, wide, mrow, mcol, row, col, kc, c, d, y, x;
-  ushort *pixel;
-  static const signed char dir[8][2] =
-    { {-1,-1}, {-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1} };
-
-  if (verbose) fprintf (stderr,_("Rebuilding highlights...\n"));
-
-  grow = pow (2, 4-highlight);
-  FORCC hsat[c] = 32000 * pre_mul[c];
-  for (kc=0, c=1; c < colors; c++)
-    if (pre_mul[kc] < pre_mul[c]) kc = c;
-  high = height / SCALE;
-  wide =  width / SCALE;
-  map = (float *) calloc (high, wide*sizeof *map);
-  merror (map, "recover_highlights()");
-  FORCC if (c != kc) {
-    memset (map, 0, high*wide*sizeof *map);
-    for (mrow=0; mrow < high; mrow++)
-      for (mcol=0; mcol < wide; mcol++) {
-	sum = wgt = count = 0;
-	for (row = mrow*SCALE; row < (mrow+1)*SCALE; row++)
-	  for (col = mcol*SCALE; col < (mcol+1)*SCALE; col++) {
-	    pixel = image[row*width+col];
-	    if (pixel[c] / hsat[c] == 1 && pixel[kc] > 24000) {
-	      sum += pixel[c];
-	      wgt += pixel[kc];
-	      count++;
-	    }
-	  }
-	if (count == SCALE*SCALE)
-	  map[mrow*wide+mcol] = sum / wgt;
-      }
-    for (spread = 32/grow; spread--; ) {
-      for (mrow=0; mrow < high; mrow++)
-	for (mcol=0; mcol < wide; mcol++) {
-	  if (map[mrow*wide+mcol]) continue;
-	  sum = count = 0;
-	  for (d=0; d < 8; d++) {
-	    y = mrow + dir[d][0];
-	    x = mcol + dir[d][1];
-	    if (y < high && x < wide && map[y*wide+x] > 0) {
-	      sum  += (1 + (d & 1)) * map[y*wide+x];
-	      count += 1 + (d & 1);
-	    }
-	  }
-	  if (count > 3)
-	    map[mrow*wide+mcol] = - (sum+grow) / (count+grow);
-	}
-      for (change=i=0; i < high*wide; i++)
-	if (map[i] < 0) {
-	  map[i] = -map[i];
-	  change = 1;
-	}
-      if (!change) break;
-    }
-    for (i=0; i < high*wide; i++)
-      if (map[i] == 0) map[i] = 1;
-    for (mrow=0; mrow < high; mrow++)
-      for (mcol=0; mcol < wide; mcol++) {
-	for (row = mrow*SCALE; row < (mrow+1)*SCALE; row++)
-	  for (col = mcol*SCALE; col < (mcol+1)*SCALE; col++) {
-	    pixel = image[row*width+col];
-	    if (pixel[c] / hsat[c] > 1) {
-	      val = pixel[kc] * map[mrow*wide+mcol];
-	      if (pixel[c] < val) pixel[c] = CLIP(val);
-	    }
-	  }
-      }
-  }
-  free (map);
-}
-#undef SCALE
+//void CLASS median_filter()
+//{
+//  ushort (*pix)[4];
+//  int pass, c, i, j, k, med[9];
+//  static const uchar opt[] =	/* Optimal 9-element median search */
+//  { 1,2, 4,5, 7,8, 0,1, 3,4, 6,7, 1,2, 4,5, 7,8,
+//    0,3, 5,8, 4,7, 3,6, 1,4, 2,5, 4,7, 4,2, 6,4, 4,2 };
+//
+//  for (pass=1; pass <= med_passes; pass++) {
+//    if (verbose)
+//      fprintf (stderr,_("Median filter pass %d...\n"), pass);
+//    for (c=0; c < 3; c+=2) {
+//      for (pix = image; pix < image+width*height; pix++)
+//	pix[0][3] = pix[0][c];
+//      for (pix = image+width; pix < image+width*(height-1); pix++) {
+//	if ((pix-image+1) % width < 2) continue;
+//	for (k=0, i = -width; i <= width; i += width)
+//	  for (j = i-1; j <= i+1; j++)
+//	    med[k++] = pix[j][3] - pix[j][1];
+//	for (i=0; i < sizeof opt; i+=2)
+//	  if     (med[opt[i]] > med[opt[i+1]])
+//	    SWAP (med[opt[i]] , med[opt[i+1]]);
+//	pix[0][c] = CLIP(med[4] + pix[0][1]);
+//      }
+//    }
+//  }
+//}
+//
+//void CLASS blend_highlights()
+//{
+//  int clip=INT_MAX, row, col, c, i, j;
+//  static const float trans[2][4][4] =
+//  { { { 1,1,1 }, { 1.7320508,-1.7320508,0 }, { -1,-1,2 } },
+//    { { 1,1,1,1 }, { 1,-1,1,-1 }, { 1,1,-1,-1 }, { 1,-1,-1,1 } } };
+//  static const float itrans[2][4][4] =
+//  { { { 1,0.8660254,-0.5 }, { 1,-0.8660254,-0.5 }, { 1,0,1 } },
+//    { { 1,1,1,1 }, { 1,-1,1,-1 }, { 1,1,-1,-1 }, { 1,-1,-1,1 } } };
+//  float cam[2][4], lab[2][4], sum[2], chratio;
+//
+//  if ((unsigned) (colors-3) > 1) return;
+//  if (verbose) fprintf (stderr,_("Blending highlights...\n"));
+//  FORCC if (clip > (i = 65535*pre_mul[c])) clip = i;
+//  for (row=0; row < height; row++)
+//    for (col=0; col < width; col++) {
+//      FORCC if (image[row*width+col][c] > clip) break;
+//      if (c == colors) continue;
+//      FORCC {
+//	cam[0][c] = image[row*width+col][c];
+//	cam[1][c] = MIN(cam[0][c],clip);
+//      }
+//      for (i=0; i < 2; i++) {
+//	FORCC for (lab[i][c]=j=0; j < colors; j++)
+//	  lab[i][c] += trans[colors-3][c][j] * cam[i][j];
+//	for (sum[i]=0,c=1; c < colors; c++)
+//	  sum[i] += SQR(lab[i][c]);
+//      }
+//      chratio = sqrt(sum[1]/sum[0]);
+//      for (c=1; c < colors; c++)
+//	lab[0][c] *= chratio;
+//      FORCC for (cam[0][c]=j=0; j < colors; j++)
+//	cam[0][c] += itrans[colors-3][c][j] * lab[0][j];
+//      FORCC image[row*width+col][c] = cam[0][c] / colors;
+//    }
+//}
+//
+//#define SCALE (4 >> shrink)
+//void CLASS recover_highlights()
+//{
+//  float *map, sum, wgt, grow;
+//  int hsat[4], count, spread, change, val, i;
+//  unsigned high, wide, mrow, mcol, row, col, kc, c, d, y, x;
+//  ushort *pixel;
+//  static const signed char dir[8][2] =
+//    { {-1,-1}, {-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1} };
+//
+//  if (verbose) fprintf (stderr,_("Rebuilding highlights...\n"));
+//
+//  grow = pow (2, 4-highlight);
+//  FORCC hsat[c] = 32000 * pre_mul[c];
+//  for (kc=0, c=1; c < colors; c++)
+//    if (pre_mul[kc] < pre_mul[c]) kc = c;
+//  high = height / SCALE;
+//  wide =  width / SCALE;
+//  map = (float *) calloc (high, wide*sizeof *map);
+//  merror (map, "recover_highlights()");
+//  FORCC if (c != kc) {
+//    memset (map, 0, high*wide*sizeof *map);
+//    for (mrow=0; mrow < high; mrow++)
+//      for (mcol=0; mcol < wide; mcol++) {
+//	sum = wgt = count = 0;
+//	for (row = mrow*SCALE; row < (mrow+1)*SCALE; row++)
+//	  for (col = mcol*SCALE; col < (mcol+1)*SCALE; col++) {
+//	    pixel = image[row*width+col];
+//	    if (pixel[c] / hsat[c] == 1 && pixel[kc] > 24000) {
+//	      sum += pixel[c];
+//	      wgt += pixel[kc];
+//	      count++;
+//	    }
+//	  }
+//	if (count == SCALE*SCALE)
+//	  map[mrow*wide+mcol] = sum / wgt;
+//      }
+//    for (spread = 32/grow; spread--; ) {
+//      for (mrow=0; mrow < high; mrow++)
+//	for (mcol=0; mcol < wide; mcol++) {
+//	  if (map[mrow*wide+mcol]) continue;
+//	  sum = count = 0;
+//	  for (d=0; d < 8; d++) {
+//	    y = mrow + dir[d][0];
+//	    x = mcol + dir[d][1];
+//	    if (y < high && x < wide && map[y*wide+x] > 0) {
+//	      sum  += (1 + (d & 1)) * map[y*wide+x];
+//	      count += 1 + (d & 1);
+//	    }
+//	  }
+//	  if (count > 3)
+//	    map[mrow*wide+mcol] = - (sum+grow) / (count+grow);
+//	}
+//      for (change=i=0; i < high*wide; i++)
+//	if (map[i] < 0) {
+//	  map[i] = -map[i];
+//	  change = 1;
+//	}
+//      if (!change) break;
+//    }
+//    for (i=0; i < high*wide; i++)
+//      if (map[i] == 0) map[i] = 1;
+//    for (mrow=0; mrow < high; mrow++)
+//      for (mcol=0; mcol < wide; mcol++) {
+//	for (row = mrow*SCALE; row < (mrow+1)*SCALE; row++)
+//	  for (col = mcol*SCALE; col < (mcol+1)*SCALE; col++) {
+//	    pixel = image[row*width+col];
+//	    if (pixel[c] / hsat[c] > 1) {
+//	      val = pixel[kc] * map[mrow*wide+mcol];
+//	      if (pixel[c] < val) pixel[c] = CLIP(val);
+//	    }
+//	  }
+//      }
+//  }
+//  free (map);
+//}
+//#undef SCALE
 
 void CLASS tiff_get (unsigned base,
 	unsigned *tag, unsigned *type, unsigned *len, unsigned *save)
@@ -9533,55 +9533,55 @@ notraw:
   if (flip == UINT_MAX) flip = 0;
 }
 
-#ifndef NO_LCMS
-void CLASS apply_profile (const char *input, const char *output)
-{
-  char *prof;
-  cmsHPROFILE hInProfile=0, hOutProfile=0;
-  cmsHTRANSFORM hTransform;
-  FILE *fp;
-  unsigned size;
-
-  if (strcmp (input, "embed"))
-    hInProfile = cmsOpenProfileFromFile (input, "r");
-  else if (profile_length) {
-    prof = (char *) malloc (profile_length);
-    merror (prof, "apply_profile()");
-    fseek (ifp, profile_offset, SEEK_SET);
-    fread (prof, 1, profile_length, ifp);
-    hInProfile = cmsOpenProfileFromMem (prof, profile_length);
-    free (prof);
-  } else
-    fprintf (stderr,_("%s has no embedded profile.\n"), ifname);
-  if (!hInProfile) return;
-  if (!output)
-    hOutProfile = cmsCreate_sRGBProfile();
-  else if ((fp = fopen (output, "rb"))) {
-    fread (&size, 4, 1, fp);
-    fseek (fp, 0, SEEK_SET);
-    oprof = (unsigned *) malloc (size = ntohl(size));
-    merror (oprof, "apply_profile()");
-    fread (oprof, 1, size, fp);
-    fclose (fp);
-    if (!(hOutProfile = cmsOpenProfileFromMem (oprof, size))) {
-      free (oprof);
-      oprof = 0;
-    }
-  } else
-    fprintf (stderr,_("Cannot open file %s!\n"), output);
-  if (!hOutProfile) goto quit;
-  if (verbose)
-    fprintf (stderr,_("Applying color profile...\n"));
-  hTransform = cmsCreateTransform (hInProfile, TYPE_RGBA_16,
-	hOutProfile, TYPE_RGBA_16, INTENT_PERCEPTUAL, 0);
-  cmsDoTransform (hTransform, image, image, width*height);
-  raw_color = 1;		/* Don't use rgb_cam with a profile */
-  cmsDeleteTransform (hTransform);
-  cmsCloseProfile (hOutProfile);
-quit:
-  cmsCloseProfile (hInProfile);
-}
-#endif
+//#ifndef NO_LCMS
+//void CLASS apply_profile (const char *input, const char *output)
+//{
+//  char *prof;
+//  cmsHPROFILE hInProfile=0, hOutProfile=0;
+//  cmsHTRANSFORM hTransform;
+//  FILE *fp;
+//  unsigned size;
+//
+//  if (strcmp (input, "embed"))
+//    hInProfile = cmsOpenProfileFromFile (input, "r");
+//  else if (profile_length) {
+//    prof = (char *) malloc (profile_length);
+//    merror (prof, "apply_profile()");
+//    fseek (ifp, profile_offset, SEEK_SET);
+//    fread (prof, 1, profile_length, ifp);
+//    hInProfile = cmsOpenProfileFromMem (prof, profile_length);
+//    free (prof);
+//  } else
+//    fprintf (stderr,_("%s has no embedded profile.\n"), ifname);
+//  if (!hInProfile) return;
+//  if (!output)
+//    hOutProfile = cmsCreate_sRGBProfile();
+//  else if ((fp = fopen (output, "rb"))) {
+//    fread (&size, 4, 1, fp);
+//    fseek (fp, 0, SEEK_SET);
+//    oprof = (unsigned *) malloc (size = ntohl(size));
+//    merror (oprof, "apply_profile()");
+//    fread (oprof, 1, size, fp);
+//    fclose (fp);
+//    if (!(hOutProfile = cmsOpenProfileFromMem (oprof, size))) {
+//      free (oprof);
+//      oprof = 0;
+//    }
+//  } else
+//    fprintf (stderr,_("Cannot open file %s!\n"), output);
+//  if (!hOutProfile) goto quit;
+//  if (verbose)
+//    fprintf (stderr,_("Applying color profile...\n"));
+//  hTransform = cmsCreateTransform (hInProfile, TYPE_RGBA_16,
+//	hOutProfile, TYPE_RGBA_16, INTENT_PERCEPTUAL, 0);
+//  cmsDoTransform (hTransform, image, image, width*height);
+//  raw_color = 1;		/* Don't use rgb_cam with a profile */
+//  cmsDeleteTransform (hTransform);
+//  cmsCloseProfile (hOutProfile);
+//quit:
+//  cmsCloseProfile (hInProfile);
+//}
+//#endif
 
 /* RT: DNG Float */
 
