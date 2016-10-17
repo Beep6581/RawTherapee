@@ -68,11 +68,10 @@ void RawImageSource::CLASS cfa_linedn(float noise)
     {
 
         // allocate memory and assure the arrays don't have same 64 byte boundary to avoid L1 conflict misses
-        char *buffer = (char*)malloc(4 * TS * TS * sizeof(float) + 3 * 64);
-        float *cfain = (float*)(buffer);
-        float *cfablur = (float*)(buffer + (TS * TS * sizeof(float)) + 1 * 64);
-        float *cfadiff = (float*)(buffer + (2 * TS * TS * sizeof(float)) + 2 * 64);
-        float *cfadn = (float*)(buffer + (3 * TS * TS * sizeof(float)) + 3 * 64);
+        float *cfain = (float*)malloc(4 * TS * TS * sizeof(float) + 3 * 16 * sizeof(float));
+        float *cfablur = (cfain + (TS * TS) + 1 * 16);
+        float *cfadiff = (cfain + (2 * TS * TS) + 2 * 16);
+        float *cfadn = (cfain + (3 * TS * TS) + 3 * 16);
 
 
         float linehvar[4], linevvar[4], noisefactor[4][8][2], coeffsq;
@@ -250,7 +249,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
             }
 
         // clean up
-        free(buffer);
+        free(cfain);
 
 // copy temporary buffer back to image matrix
         #pragma omp for
