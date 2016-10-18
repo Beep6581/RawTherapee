@@ -592,7 +592,7 @@ public:
     PlanarPtr<T> g;
     PlanarPtr<T> b;
 
-    PlanarRGBData() : rowstride(0), planestride(0), data (NULL) {}
+    PlanarRGBData() : rowstride(0), planestride(0), data (nullptr) {}
     PlanarRGBData(int w, int h) : rowstride(0), planestride(0), data (nullptr)
     {
         allocate(w, h);
@@ -711,7 +711,7 @@ public:
     /** Copy the data to another PlanarRGBData */
     void copyData(PlanarRGBData<T> *dest)
     {
-        assert (dest != NULL);
+        assert (dest != nullptr);
         // Make sure that the size is the same, reallocate if necessary
         dest->allocate(width, height);
 
@@ -1231,7 +1231,7 @@ public:
     ChunkyPtr<T> g;
     ChunkyPtr<T> b;
 
-    ChunkyRGBData() : data (NULL) {}
+    ChunkyRGBData() : data (nullptr) {}
     ChunkyRGBData(int w, int h) : data (nullptr)
     {
         allocate(w, h);

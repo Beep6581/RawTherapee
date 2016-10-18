@@ -173,7 +173,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
         else printf("lab2rgb / bpc=false\n");
         lcmsMutex->lock ();
-        cmsHPROFILE LabIProf  = cmsCreateLab4Profile(NULL);
+        cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
         cmsHTRANSFORM hTransform = cmsCreateTransform (LabIProf, TYPE_Lab_DBL, oprofG, TYPE_RGB_8, icm.outputIntent, flags);  // NOCACHE is important for thread safety
         cmsCloseProfile(LabIProf);
         lcmsMutex->unlock ();
@@ -284,7 +284,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
     Image16* image = new Image16 (cw, ch);
 
-    cmsHPROFILE oprof = NULL;
+    cmsHPROFILE oprof = nullptr;
     if (ga) {
         lcmsMutex->lock ();
         iccStore->getGammaArray(icm, *ga);

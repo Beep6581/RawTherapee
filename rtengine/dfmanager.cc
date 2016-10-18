@@ -46,7 +46,7 @@ inline dfInfo& dfInfo::operator =(const dfInfo &o)
 
         if( ri ) {
             delete ri;
-            ri = NULL;
+            ri = nullptr;
         }
     }
 
@@ -140,7 +140,7 @@ void dfInfo::updateRawImage()
 
         if( ri->loadRaw(true)) {
             delete ri;
-            ri = NULL;
+            ri = nullptr;
         } else {
             int H = ri->get_height();
             int W = ri->get_width();
@@ -202,7 +202,7 @@ void dfInfo::updateRawImage()
 
         if( ri->loadRaw(true)) {
             delete ri;
-            ri = NULL;
+            ri = nullptr;
         } else {
             ri->compress_image();
         }
@@ -334,11 +334,11 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
     auto file = Gio::File::create_for_path (filename);
 
     if (!file) {
-        return 0;
+        return nullptr;
     }
 
     if (!file->query_exists ()) {
-        return 0;
+        return nullptr;
     }
 
     try {
@@ -346,11 +346,11 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         auto info = file->query_info ();
 
         if (!info && info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
-            return 0;
+            return nullptr;
         }
 
         if (!options.fbShowHidden && info->is_hidden ()) {
-            return 0;
+            return nullptr;
         }
 
         Glib::ustring ext;
@@ -361,14 +361,14 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         }
 
         if (!options.is_extention_enabled (ext)) {
-            return 0;
+            return nullptr;
         }
 
         RawImage ri (filename);
         int res = ri.loadRaw (false); // Read informations about shot
 
         if (res != 0) {
-            return 0;
+            return nullptr;
         }
 
         dfList_t::iterator iter;
@@ -408,7 +408,7 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 
     } catch(Gio::Error&) {}
 
-    return 0;
+    return nullptr;
 }
 
 void DFManager::getStat( int &totFiles, int &totTemplates)
@@ -435,7 +435,7 @@ void DFManager::getStat( int &totFiles, int &totTemplates)
 dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t )
 {
     if( dfList.empty() ) {
-        return 0;
+        return nullptr;
     }
 
     std::string key( dfInfo::key(mak, mod, isospeed, shut) );
@@ -469,7 +469,7 @@ dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int iso
             }
         }
 
-        return bestD != INFINITY ? &(bestMatch->second) : 0 ;
+        return bestD != INFINITY ? &(bestMatch->second) : nullptr ;
     }
 }
 
@@ -480,7 +480,7 @@ RawImage* DFManager::searchDarkFrame( const std::string &mak, const std::string 
     if( df ) {
         return df->getRawImage();
     } else {
-        return 0;
+        return nullptr;
     }
 }
 
@@ -498,7 +498,7 @@ RawImage* DFManager::searchDarkFrame( const Glib::ustring filename )
         return df->getRawImage();
     }
 
-    return 0;
+    return nullptr;
 }
 std::vector<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
 {
@@ -508,7 +508,7 @@ std::vector<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
         }
     }
 
-    return 0;
+    return nullptr;
 }
 std::vector<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
 {
@@ -527,7 +527,7 @@ std::vector<badPix> *DFManager::getHotPixels ( const std::string &mak, const std
 
         return &df->getHotPixels();
     } else {
-        return 0;
+        return nullptr;
     }
 }
 
@@ -626,7 +626,7 @@ std::vector<badPix> *DFManager::getBadPixels ( const std::string &mak, const std
     }
 
     if(!found) {
-        return 0;
+        return nullptr;
     } else {
         return &(iter->second);
     }

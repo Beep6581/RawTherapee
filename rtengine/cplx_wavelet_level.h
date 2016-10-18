@@ -84,7 +84,7 @@ public:
 
     template<typename E>
     wavelet_level(E * src, E * dst, int level, int subsamp, int w, int h, float *filterV, float *filterH, int len, int offset, int skipcrop, int numThreads)
-        : lvl(level), subsamp_out((subsamp >> level) & 1), numThreads(numThreads), skip(1 << level), bigBlockOfMemory(true), memoryAllocationFailed(false), wavcoeffs(NULL), m_w(w), m_h(h), m_w2(w), m_h2(h)
+        : lvl(level), subsamp_out((subsamp >> level) & 1), numThreads(numThreads), skip(1 << level), bigBlockOfMemory(true), memoryAllocationFailed(false), wavcoeffs(nullptr), m_w(w), m_h(h), m_w2(w), m_h2(h)
     {
         if (subsamp) {
             skip = 1;
@@ -159,7 +159,7 @@ T ** wavelet_level<T>::create(int n)
 {
     T * data = new (std::nothrow) T[3 * n];
 
-    if(data == NULL) {
+    if(data == nullptr) {
         bigBlockOfMemory = false;
     }
 
@@ -171,7 +171,7 @@ T ** wavelet_level<T>::create(int n)
         } else {
             subbands[j] = new (std::nothrow) T[n];
 
-            if(subbands[j] == NULL) {
+            if(subbands[j] == nullptr) {
                 printf("Couldn't allocate memory in level %d of wavelet\n", lvl);
                 memoryAllocationFailed = true;
             }

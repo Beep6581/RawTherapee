@@ -155,17 +155,17 @@ wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int
     E *buffer[2];
     buffer[0] = new (std::nothrow) E[(m_w / 2 + 1) * (m_h / 2 + 1)];
 
-    if(buffer[0] == NULL) {
+    if(buffer[0] == nullptr) {
         memoryAllocationFailed = true;
         return;
     }
 
     buffer[1] = new (std::nothrow) E[(m_w / 2 + 1) * (m_h / 2 + 1)];
 
-    if(buffer[1] == NULL) {
+    if(buffer[1] == nullptr) {
         memoryAllocationFailed = true;
         delete[] buffer[0];
-        buffer[0] = NULL;
+        buffer[0] = nullptr;
         return;
     }
 
@@ -210,7 +210,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
 
         E *tmpHi = new (std::nothrow) E[width * height];
 
-        if(tmpHi == NULL) {
+        if(tmpHi == nullptr) {
             memoryAllocationFailed = true;
             return;
         }
@@ -234,7 +234,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
     } else {                                      // allocate new block of memory
         tmpLo = new (std::nothrow) E[width * height];
 
-        if(tmpLo == NULL) {
+        if(tmpLo == nullptr) {
             memoryAllocationFailed = true;
             return;
         }
@@ -242,7 +242,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
 
     E *tmpHi = new (std::nothrow) E[width * height];
 
-    if(tmpHi == NULL) {
+    if(tmpHi == nullptr) {
         memoryAllocationFailed = true;
 
         if(!wavelet_decomp[0]->bigBlockOfMemoryUsed()) {
