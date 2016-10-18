@@ -947,7 +947,7 @@ void CLASS lossless_jpeg_load_raw()
 void CLASS canon_sraw_load_raw()
 {
   struct jhead jh;
-  short *rp=nullptr, (*ip)[4];
+  short *rp=0, (*ip)[4];
   int jwide, slice, scol, ecol, row, col, jrow=0, jcol=0, pix[3], c;
   int v[3]={0,0,0}, ver, hue;
   char *cp;
@@ -2152,7 +2152,7 @@ void CLASS hasselblad_load_raw()
 
 void CLASS leaf_hdr_load_raw()
 {
-  ushort *pixel=nullptr;
+  ushort *pixel=0;
   unsigned tile=0, r, c, row, col;
 
   if (!filters) {
@@ -3555,7 +3555,7 @@ const char * CLASS foveon_camf_param (const char *block, const char *param)
 	return dp+sget4(cp+4);
     }
   }
-  return nullptr;
+  return 0;
 }
 
 void * CLASS foveon_camf_matrix (unsigned dim[3], const char *name)
@@ -3589,7 +3589,7 @@ void * CLASS foveon_camf_matrix (unsigned dim[3], const char *name)
     return mat;
   }
   fprintf (stderr,_("%s: \"%s\" matrix not found!\n"), ifname, name);
-  return nullptr;
+  return 0;
 }
 
 int CLASS foveon_fixed (void *ptr, int size, const char *name)
@@ -4155,7 +4155,7 @@ void CLASS remove_zeroes()
  */
 void CLASS bad_pixels (const char *cfname)
 {
-  FILE *fp=nullptr;
+  FILE *fp=0;
   char *fname, *cp, line[128];
   int len, time, row, col, r, c, rad, tot, n, fixed=0;
 
@@ -4430,7 +4430,7 @@ void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
 
 void CLASS wavelet_denoise()
 {
-  float *fimg=nullptr, *temp, thold, mul[2], avg, diff;
+  float *fimg=0, *temp, thold, mul[2], avg, diff;
   int scale=1, size, lev, hpass, lpass, row, col, nc, c, i, wlast, blk[2];
   ushort *window[4];
   static const float noise[] =
@@ -4512,7 +4512,7 @@ void CLASS scale_colors()
   int val, dark, sat;
   double dsum[8], dmin, dmax;
   float scale_mul[4], fr, fc;
-  ushort *img=nullptr, *pix;
+  ushort *img=0, *pix;
 
   if (user_mul[0])
     memcpy (pre_mul, user_mul, sizeof pre_mul);
@@ -4748,7 +4748,7 @@ void CLASS xtrans_interpolate (int passes)
   if (verbose)
     fprintf (stderr,_("%d-pass X-Trans interpolation...\n"), passes);
 
-  cielab (nullptr,nullptr);
+  cielab (0,0);
   ndir = 4 << (passes > 1);
   buffer = (char *) malloc (TS*TS*(ndir*11+6));
   merror (buffer, "xtrans_interpolate()");
@@ -7012,7 +7012,7 @@ void CLASS parse_foveon()
 	    case  5:  load_flags = 1;
 	    case  6:  load_raw = &CLASS foveon_sd_load_raw;  break;
 	    case 30:  load_raw = &CLASS foveon_dp_load_raw;  break;
-	    default:  load_raw = nullptr;
+	    default:  load_raw = 0;
 	  }
 	  raw_width  = wide;
 	  raw_height = high;
@@ -8493,7 +8493,7 @@ void CLASS identify()
   memset (white, 0, sizeof white);
   memset (mask, 0, sizeof mask);
   thumb_offset = thumb_length = thumb_width = thumb_height = 0;
-  load_raw = thumb_load_raw = nullptr;
+  load_raw = thumb_load_raw = 0;
   write_thumb = &CLASS jpeg_thumb;
   data_offset = meta_offset = meta_length = tiff_bps = tiff_compress = 0;
   kodak_cbpp = zero_after_ff = dng_version = load_flags = 0;
@@ -8755,7 +8755,7 @@ void CLASS identify()
       case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
       case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
-      default:    load_raw = nullptr;
+      default:    load_raw = 0;
     }
     goto dng_skip;
   }
