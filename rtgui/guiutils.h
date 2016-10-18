@@ -417,10 +417,10 @@ public:
     void getSrcOffset(int &x, int &y);
     void getSrcOffset(rtengine::Coord &offset);
 
-    void copySurface(Glib::RefPtr<Gdk::Window> &window, GdkRectangle *rectangle = NULL);
-    void copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle = NULL);
-    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> &destSurface, GdkRectangle *rectangle = NULL);
-    void copySurface(Cairo::RefPtr<Cairo::Context> &context, GdkRectangle *rectangle = NULL);
+    void copySurface(Glib::RefPtr<Gdk::Window> &window, GdkRectangle *rectangle = nullptr);
+    void copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle = nullptr);
+    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> &destSurface, GdkRectangle *rectangle = nullptr);
+    void copySurface(Cairo::RefPtr<Cairo::Context> &context, GdkRectangle *rectangle = nullptr);
 
     void setDirty(bool isDirty)
     {

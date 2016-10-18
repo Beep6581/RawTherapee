@@ -21,7 +21,7 @@
 #include "multilangmgr.h"
 #include "guiutils.h"
 
-ToolBar::ToolBar () : showColPickers(true), listener (NULL)
+ToolBar::ToolBar () : showColPickers(true), listener (nullptr)
 {
 
     editingMode = false;

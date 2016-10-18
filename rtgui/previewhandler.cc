@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PreviewHandler::PreviewHandler () : image(NULL), previewScale(1.)
+PreviewHandler::PreviewHandler () : image(nullptr), previewScale(1.)
 {
 
     pih = new PreviewHandlerIdleHelper;
@@ -121,7 +121,7 @@ int delImageUI (void* data)
     if (pih->phandler->image) {
         IImage8* oldImg = pih->phandler->image;
         oldImg->getMutex().lock ();
-        pih->phandler->image = NULL;
+        pih->phandler->image = nullptr;
         oldImg->getMutex().unlock ();
     }
 

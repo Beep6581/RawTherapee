@@ -36,7 +36,7 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
-    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(NULL), cropgl(NULL), state(SNormal)
+    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), cropgl(nullptr), state(SNormal)
 {
     thumbnail = thm;
 
@@ -71,7 +71,7 @@ FileBrowserEntry::~FileBrowserEntry ()
         feih->destroyed = true;
     } else {
         delete feih;
-        feih = 0;
+        feih = nullptr;
     }
 
     thumbImageUpdater->removeJobs (this);
@@ -213,7 +213,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
     {
         GThreadLock lock;
 
-        if ( feih == 0 ||
+        if ( feih == nullptr ||
                 feih->destroyed ) {
             img->free();
             return;
@@ -231,7 +231,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
 #if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
     g_idle_add_full (G_PRIORITY_DEFAULT, updateImageUI, param, NULL);
 #else
-    g_idle_add_full (G_PRIORITY_LOW, updateImageUI, param, NULL);
+    g_idle_add_full (G_PRIORITY_LOW, updateImageUI, param, nullptr);
 #endif
 }
 
@@ -252,10 +252,10 @@ void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine:
         GThreadLock lock;
 
         // Check if image has been rotated since last time
-        rotated = preview != NULL && newLandscape != landscape;
+        rotated = preview != nullptr && newLandscape != landscape;
 
         guint8* temp = preview;
-        preview = NULL;
+        preview = nullptr;
         delete [] temp;
         temp = new guint8 [prew * preh * 3];
         memcpy (temp, img->getData(), prew * preh * 3);
@@ -267,7 +267,7 @@ void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine:
 
     img->free ();
 
-    if (parent != NULL) {
+    if (parent != nullptr) {
         if (rotated) {
             parent->thumbRearrangementNeeded();
         } else if (redrawRequests == 0) {
@@ -532,7 +532,7 @@ bool FileBrowserEntry::releaseNotify (int button, int type, int bstate, int x, i
             }
         } else if (cropgl && (state == SCropSelecting || state == SResizeH1 || state == SResizeH2 || state == SResizeW1 || state == SResizeW2 || state == SResizeTL || state == SResizeTR || state == SResizeBL || state == SResizeBR || state == SCropMove)) {
             cropgl->cropManipReady ();
-            cropgl = NULL;
+            cropgl = nullptr;
             iatlistener->cropSelectionReady ();
 
             if (iatlistener->getToolBar()) {

@@ -31,15 +31,15 @@ namespace rtengine
 extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
-    : PipetteBuffer(editDataProvider), origCrop(NULL), laboCrop(NULL), labnCrop(NULL),
-      cropImg(NULL), cbuf_real(NULL), cshmap(NULL), transCrop(NULL), cieCrop(NULL), cbuffer(NULL),
+    : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr),
+      cropImg(nullptr), cbuf_real(nullptr), cshmap(nullptr), transCrop(nullptr), cieCrop(nullptr), cbuffer(nullptr),
       updating(false), newUpdatePending(false), skip(10), padding(0),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
       rqcropx(0), rqcropy(0), rqcropw(-1), rqcroph(-1),
       borderRequested(32), upperBorder(0), leftBorder(0),
       cropAllocated(false),
-      cropImageListener(NULL), parent(parent), isDetailWindow(isDetailWindow)
+      cropImageListener(nullptr), parent(parent), isDetailWindow(isDetailWindow)
 {
     parent->crops.push_back (this);
 }
@@ -77,7 +77,7 @@ void Crop::setListener (DetailedCropListener* il)
 
 EditUniqueID Crop::getCurrEditID()
 {
-    EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : NULL;
+    EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
     return subscriber ? subscriber->getEditID() : EUID_None;
 }
 
@@ -90,17 +90,17 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber)
     MyMutex::MyLock lock(cropMutex);
 
     // At this point, editCrop.dataProvider->currSubscriber is the old subscriber
-    EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : NULL;
+    EditSubscriber *oldSubscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
 
-    if (newSubscriber == NULL || (oldSubscriber != NULL && oldSubscriber->getPipetteBufferType() != newSubscriber->getPipetteBufferType())) {
-        if (PipetteBuffer::imgFloatBuffer != NULL) {
+    if (newSubscriber == nullptr || (oldSubscriber != nullptr && oldSubscriber->getPipetteBufferType() != newSubscriber->getPipetteBufferType())) {
+        if (PipetteBuffer::imgFloatBuffer != nullptr) {
             delete PipetteBuffer::imgFloatBuffer;
-            PipetteBuffer::imgFloatBuffer = NULL;
+            PipetteBuffer::imgFloatBuffer = nullptr;
         }
 
-        if (PipetteBuffer::LabBuffer != NULL) {
+        if (PipetteBuffer::LabBuffer != nullptr) {
             delete PipetteBuffer::LabBuffer;
-            PipetteBuffer::LabBuffer = NULL;
+            PipetteBuffer::LabBuffer = nullptr;
         }
 
         if (PipetteBuffer::singlePlaneBuffer.getW() != -1) {
@@ -164,7 +164,7 @@ void Crop::update (int todo)
         //  printf("x=%d y=%d crow=%d croh=%d skip=%d\n",rqcropx, rqcropy, rqcropw, rqcroph, skip);
         //  printf("trafx=%d trafyy=%d trafwsk=%d trafHs=%d \n",trafx, trafy, trafw*skip, trafh*skip);
 
-        Imagefloat *calclum = NULL;//for Luminance denoise curve
+        Imagefloat *calclum = nullptr;//for Luminance denoise curve
         NoiseCurve noiseLCurve;
         NoiseCurve noiseCCurve;
         float autoNR = (float) settings->nrauto;//
@@ -696,7 +696,7 @@ void Crop::update (int todo)
             delete transCrop;
         }
 
-        transCrop = NULL;
+        transCrop = nullptr;
     }
 
     if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
@@ -955,7 +955,7 @@ void Crop::update (int todo)
                 delete cieCrop;
             }
 
-            cieCrop = NULL;
+            cieCrop = nullptr;
         }
     }
 
@@ -1008,47 +1008,47 @@ void Crop::freeAll ()
     if (cropAllocated) {
         if (origCrop ) {
             delete    origCrop;
-            origCrop = NULL;
+            origCrop = nullptr;
         }
 
         if (transCrop) {
             delete    transCrop;
-            transCrop = NULL;
+            transCrop = nullptr;
         }
 
         if (laboCrop ) {
             delete    laboCrop;
-            laboCrop = NULL;
+            laboCrop = nullptr;
         }
 
         if (labnCrop ) {
             delete    labnCrop;
-            labnCrop = NULL;
+            labnCrop = nullptr;
         }
 
         if (cropImg  ) {
             delete    cropImg;
-            cropImg = NULL;
+            cropImg = nullptr;
         }
 
         if (cieCrop  ) {
             delete    cieCrop;
-            cieCrop = NULL;
+            cieCrop = nullptr;
         }
 
         if (cbuf_real) {
             delete [] cbuf_real;
-            cbuf_real = NULL;
+            cbuf_real = nullptr;
         }
 
         if (cbuffer  ) {
             delete [] cbuffer;
-            cbuffer = NULL;
+            cbuffer = nullptr;
         }
 
         if (cshmap   ) {
             delete    cshmap;
-            cshmap = NULL;
+            cshmap = nullptr;
         }
 
         PipetteBuffer::flush();
@@ -1169,7 +1169,7 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
         //cieCrop is only used in Crop::update, it is destroyed now but will be allocated on first use
         if (cieCrop) {
             delete cieCrop;
-            cieCrop = NULL;
+            cieCrop = nullptr;
         }
 
         if (cbuffer  ) {
@@ -1182,7 +1182,7 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
         if (cshmap   ) {
             delete    cshmap;
-            cshmap = NULL;
+            cshmap = nullptr;
         }
 
         cbuffer = new float*[croph];

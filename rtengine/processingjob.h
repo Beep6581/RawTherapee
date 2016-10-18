@@ -34,7 +34,7 @@ public:
     procparams::ProcParams pparams;
 
     ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp)
-        : fname(fn), isRaw(iR), initialImage(NULL), pparams(pp) {}
+        : fname(fn), isRaw(iR), initialImage(nullptr), pparams(pp) {}
 
     ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp)
         : fname(""), isRaw(true), initialImage(iImage), pparams(pp)

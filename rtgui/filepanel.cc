@@ -28,7 +28,7 @@ int FilePanelInitUI (void* data)
     return 0;
 }
 
-FilePanel::FilePanel () : parent(NULL)
+FilePanel::FilePanel () : parent(nullptr)
 {
 
     dirpaned = Gtk::manage ( new Gtk::HPaned () );
@@ -227,7 +227,7 @@ bool FilePanel::fileSelected (Thumbnail* thm)
     pendingLoadMutex.lock();
     pendingLoad *pl = new pendingLoad();
     pl->complete = false;
-    pl->pc = 0;
+    pl->pc = nullptr;
     pl->thm = thm;
     pendingLoads.push_back(pl);
     pendingLoadMutex.unlock();

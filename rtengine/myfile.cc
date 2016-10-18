@@ -88,7 +88,7 @@ IMFILE* fopen (const char* fname)
 #endif
 
     if ( fd < 0 ) {
-        return 0;
+        return nullptr;
     }
 
     struct stat stat_buffer;
@@ -96,15 +96,15 @@ IMFILE* fopen (const char* fname)
     if ( fstat(fd, &stat_buffer) < 0 ) {
         printf("no stat\n");
         close (fd);
-        return 0;
+        return nullptr;
     }
 
-    void* data = mmap(0, stat_buffer.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    void* data = mmap(nullptr, stat_buffer.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 
     if ( data == MAP_FAILED ) {
         printf("no mmap\n");
         close(fd);
-        return 0;
+        return nullptr;
     }
 
     IMFILE* mf = new IMFILE;
@@ -131,9 +131,9 @@ IMFILE* fopen (const char* fname)
 
             // initialize bzip stream structure
             bz_stream stream;
-            stream.bzalloc = 0;
-            stream.bzfree = 0;
-            stream.opaque = 0;
+            stream.bzalloc = nullptr;
+            stream.bzfree = nullptr;
+            stream.opaque = nullptr;
             ret = BZ2_bzDecompressInit(&stream, 0, 0);
 
             if (ret != BZ_OK) {
@@ -142,7 +142,7 @@ IMFILE* fopen (const char* fname)
                 // allocate initial buffer for decompressed data
                 unsigned int buffer_out_count = 0; // bytes of decompressed data
                 unsigned int buffer_size = 10 * 1024 * 1024; // 10 MB, extended dynamically if needed
-                char* buffer = 0;
+                char* buffer = nullptr;
 
                 stream.next_in = mf->data; // input data address
                 stream.avail_in = mf->size;
@@ -406,7 +406,7 @@ char* fgets (char* s, int n, IMFILE* f)
 
     if (f->pos >= f->size) {
         f->eof = true;
-        return NULL;
+        return nullptr;
     }
 
     int i = 0;

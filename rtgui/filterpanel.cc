@@ -23,7 +23,7 @@
 
 using namespace rtengine;
 
-FilterPanel::FilterPanel () : listener (NULL)
+FilterPanel::FilterPanel () : listener (nullptr)
 {
 
     set_border_width (4);

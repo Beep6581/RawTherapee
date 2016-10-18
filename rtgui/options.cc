@@ -74,11 +74,7 @@ inline bool Options::checkProfilePath(Glib::ustring &path)
 
     p = getGlobalProfilePath();
 
-    if (!p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
-        return true;
-    } else {
-        return false;
-    }
+    return !p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS);
 }
 
 bool Options::checkDirPath(Glib::ustring &path, Glib::ustring errString)
@@ -2145,7 +2141,7 @@ int Options::saveToFile (Glib::ustring fname)
 
     FILE *f = g_fopen (fname.c_str (), "wt");
 
-    if (f == NULL) {
+    if (f == nullptr) {
         if (options.rtSettings.verbose) {
             printf("Options::saveToFile / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
@@ -2168,7 +2164,7 @@ bool Options::load ()
 
     path = g_getenv("RT_SETTINGS");
 
-    if (path != NULL) {
+    if (path != nullptr) {
         rtdir = Glib::ustring(path);
 
         if (!Glib::path_is_absolute(rtdir)) {
@@ -2202,7 +2198,7 @@ bool Options::load ()
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
     path = g_getenv("RT_CACHE");
 
-    if (path != NULL) {
+    if (path != nullptr) {
         cacheBaseDir = Glib::ustring(path);
 
         if (!Glib::path_is_absolute(cacheBaseDir)) {
@@ -2327,7 +2323,7 @@ bool Options::load ()
 void Options::save ()
 {
 
-    if (options.multiUser == false) {
+    if (!options.multiUser) {
         options.saveToFile (Glib::build_filename(argv0, "options"));
     } else {
         options.saveToFile (Glib::build_filename(rtdir, "options"));

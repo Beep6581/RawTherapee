@@ -289,7 +289,7 @@ public:
 };
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
-    : realized(false), iHistoryShow(NULL), iHistoryHide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iBeforeLockON(NULL), iBeforeLockOFF(NULL), beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), openThm(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL)
+    : realized(false), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), openThm(nullptr), ipc(nullptr), beforeIpc(nullptr), isProcessing(false), catalogPane(nullptr)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -310,7 +310,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     leftbox->set_border_width (2);
     leftbox->set_size_request(100, 250);
 
-    histogramPanel = NULL;
+    histogramPanel = nullptr;
 
     profilep = Gtk::manage (new ProfilePanel ());
     ppframe = new Gtk::Frame ();
@@ -365,7 +365,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         hidehp->set_image (*iHistoryShow);
     }
 
-    tbTopPanel_1 = NULL;
+    tbTopPanel_1 = nullptr;
 
     if (!simpleEditor && filePanel) {
         tbTopPanel_1 = new Gtk::ToggleButton ();
@@ -490,7 +490,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->pack_end (*iareapanel->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
     iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
 
-    navPrev = navNext = navSync = NULL;
+    navPrev = navNext = navSync = nullptr;
 
     if (!simpleEditor && !options.tabbedUI) {
         // Navigation buttons
@@ -624,31 +624,31 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 EditorPanel::~EditorPanel ()
 {
 
-    history->setHistoryBeforeLineListener (NULL);
+    history->setHistoryBeforeLineListener (nullptr);
     // the order is important!
-    iareapanel->setBeforeAfterViews (NULL, iareapanel);
+    iareapanel->setBeforeAfterViews (nullptr, iareapanel);
     delete iareapanel;
-    iareapanel = NULL;
+    iareapanel = nullptr;
 
     if (beforeIpc) {
         beforeIpc->stopProcessing ();
     }
 
     delete beforeIarea;
-    beforeIarea = NULL;
+    beforeIarea = nullptr;
 
     if (beforeIpc) {
-        beforeIpc->setPreviewImageListener (NULL);
+        beforeIpc->setPreviewImageListener (nullptr);
     }
 
     delete beforePreviewHandler;
-    beforePreviewHandler = NULL;
+    beforePreviewHandler = nullptr;
 
     if (beforeIpc) {
         rtengine::StagedImageProcessor::destroy (beforeIpc);
     }
 
-    beforeIpc = NULL;
+    beforeIpc = nullptr;
 
     close ();
 
@@ -844,28 +844,28 @@ void EditorPanel::close ()
         tpc->closeImage ();    // this call stops image processing
         tpc->writeOptions ();
         rtengine::ImageSource* is = isrc->getImageSource();
-        is->setProgressListener( NULL );
+        is->setProgressListener( nullptr );
 
         if (ipc) {
-            ipc->setPreviewImageListener (NULL);
+            ipc->setPreviewImageListener (nullptr);
         }
 
         if (beforeIpc) {
-            beforeIpc->setPreviewImageListener (NULL);
+            beforeIpc->setPreviewImageListener (nullptr);
         }
 
         delete previewHandler;
-        previewHandler = NULL;
+        previewHandler = nullptr;
 
         if(iareapanel) {
-            iareapanel->imageArea->setPreviewHandler (NULL);
-            iareapanel->imageArea->setImProcCoordinator (NULL);
+            iareapanel->imageArea->setPreviewHandler (nullptr);
+            iareapanel->imageArea->setImProcCoordinator (nullptr);
             iareapanel->imageArea->unsubscribe();
         }
 
         rtengine::StagedImageProcessor::destroy (ipc);
-        ipc = NULL;
-        navigator->previewWindow->setPreviewHandler (NULL);
+        ipc = nullptr;
+        navigator->previewWindow->setPreviewHandler (nullptr);
 
         // If the file was deleted somewhere, the openThm.descreaseRef delete the object, but we don't know here
         if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
@@ -887,7 +887,7 @@ void EditorPanel::saveProfile ()
         ipc->getParams (&params);
 
         // Will call updateCache, which will update both the cached and sidecar files if necessary
-        openThm->setProcParams (params, NULL, EDITOR);
+        openThm->setProcParams (params, nullptr, EDITOR);
     }
 }
 
@@ -1011,7 +1011,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
 
     if (inProcessingP) {
         if (processingStartedTime == 0) {
-            processingStartedTime = ::time(NULL);
+            processingStartedTime = ::time(nullptr);
         }
 
         s->str = "PROGRESSBAR_PROCESSING";
@@ -1021,12 +1021,12 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         if (ipc && openThm && tpc->getChangedState()) {
             rtengine::procparams::ProcParams pparams;
             ipc->getParams (&pparams);
-            openThm->setProcParams (pparams, NULL, EDITOR, false);
+            openThm->setProcParams (pparams, nullptr, EDITOR, false);
         }
 
         // Ring a sound if it was a long event
         if (processingStartedTime != 0) {
-            time_t curTime = ::time(NULL);
+            time_t curTime = ::time(nullptr);
 
             if (::difftime(curTime, processingStartedTime) > options.sndLngEditProcDoneSecs) {
                 SoundManager::playSoundAsync(options.sndLngEditProcDone);
@@ -1063,7 +1063,7 @@ struct errparams {
 
 void EditorPanel::displayError (Glib::ustring title, Glib::ustring descr)
 {
-    GtkWidget* msgd = gtk_message_dialog_new_with_markup (NULL,
+    GtkWidget* msgd = gtk_message_dialog_new_with_markup (nullptr,
                       GTK_DIALOG_DESTROY_WITH_PARENT,
                       GTK_MESSAGE_ERROR,
                       GTK_BUTTONS_OK,
@@ -1864,29 +1864,29 @@ void EditorPanel::beforeAfterToggled ()
             beforeIpc->stopProcessing ();
         }
 
-        iareapanel->setBeforeAfterViews (NULL, iareapanel);
-        iareapanel->imageArea->iLinkedImageArea = NULL;
+        iareapanel->setBeforeAfterViews (nullptr, iareapanel);
+        iareapanel->imageArea->iLinkedImageArea = nullptr;
         delete beforeIarea;
-        beforeIarea = NULL;
+        beforeIarea = nullptr;
 
         if (beforeIpc) {
-            beforeIpc->setPreviewImageListener (NULL);
+            beforeIpc->setPreviewImageListener (nullptr);
         }
 
         delete beforePreviewHandler;
-        beforePreviewHandler = NULL;
+        beforePreviewHandler = nullptr;
 
         if (beforeIpc) {
             rtengine::StagedImageProcessor::destroy (beforeIpc);
         }
 
-        beforeIpc = NULL;
+        beforeIpc = nullptr;
     }
 
     if (beforeAfter->get_active ()) {
 
         int errorCode = 0;
-        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType() == FT_Raw , &errorCode, NULL);
+        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType() == FT_Raw , &errorCode, nullptr);
 
         if( !beforeImg || errorCode ) {
             return;
@@ -1968,19 +1968,12 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
 bool EditorPanel::CheckSidePanelsVisibility()
 {
     if (tbTopPanel_1) {
-        if(tbTopPanel_1->get_active() == false && tbRightPanel_1->get_active() == false && hidehp->get_active() == false) {
-            return false;
-        }
-
-        return true;
+        return tbTopPanel_1->get_active() || tbRightPanel_1->get_active() || hidehp->get_active();
     }
 
-    if(tbRightPanel_1->get_active() == false && hidehp->get_active() == false) {
-        return false;
-    }
-
-    return true;
+    return tbRightPanel_1->get_active() || hidehp->get_active();
 }
+
 void EditorPanel::toggleSidePanels()
 {
     // Maximize preview panel:
@@ -1996,7 +1989,7 @@ void EditorPanel::toggleSidePanels()
     tbRightPanel_1->set_active (!bAllSidePanelsVisible);
     hidehp->set_active (!bAllSidePanelsVisible);
 
-    if (bAllSidePanelsVisible == false) {
+    if (!bAllSidePanelsVisible) {
         tbShowHideSidePanels->set_image (*iShowHideSidePanels);
     } else {
         tbShowHideSidePanels->set_image (*iShowHideSidePanels_exit);
@@ -2049,7 +2042,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             }
 
             delete histogramPanel;
-            histogramPanel = NULL;
+            histogramPanel = nullptr;
         }
 
         // else no need to create it

@@ -27,7 +27,7 @@ class ProfileChangeListener
 
 public:
     virtual     ~ProfileChangeListener() {}
-    virtual void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = NULL) {}
+    virtual void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr) {}
     virtual void setDefaults    (rtengine::procparams::ProcParams* defparams) {}
 };
 

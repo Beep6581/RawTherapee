@@ -26,7 +26,7 @@ using namespace rtengine::procparams;
 Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTION_LABEL"))
 {
 
-    rlistener = NULL;
+    rlistener = nullptr;
     autoDistor = Gtk::manage (new Gtk::Button (M("TP_DISTORTION_AUTO")));
     autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto.png")));
     autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TIP"));

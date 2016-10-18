@@ -87,7 +87,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
     set_border_width (4);
 
-    releaseNotesSW = NULL;
+    releaseNotesSW = nullptr;
 
     nb = Gtk::manage (new Gtk::Notebook ());
     get_vbox()->pack_start (*nb);
@@ -110,7 +110,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     if ( Glib::file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (buildFileName.c_str (), "rt");
 
-        if (f != NULL) {
+        if (f != nullptr) {
             char* buffer = new char[1024];
             std::ostringstream ostr;
 
@@ -140,7 +140,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     if ( Glib::file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (creditsFileName.c_str (), "rt");
 
-        if (f != NULL) {
+        if (f != nullptr) {
             char* buffer = new char[1024];
             std::ostringstream ostr;
 
@@ -171,7 +171,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     if ( Glib::file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (licenseFileName.c_str (), "rt");
 
-        if (f != NULL) {
+        if (f != nullptr) {
             char* buffer = new char[1024];
             std::ostringstream ostr;
 
@@ -208,7 +208,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     if ( Glib::file_test(releaseNotesFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (releaseNotesFileName.c_str (), "rt");
 
-        if (f != NULL) {
+        if (f != nullptr) {
             char* buffer = new char[1024];
             std::ostringstream ostr;
 

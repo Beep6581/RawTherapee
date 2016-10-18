@@ -43,7 +43,7 @@ _KLT_Pyramid _KLTCreatePyramid(
      
   /* Allocate memory for structure and set parameters */
   pyramid = (_KLT_Pyramid)  malloc(nbytes);
-  if (pyramid == NULL) {
+  if (pyramid == nullptr) {
     KLTError("(_KLTCreatePyramid)  Out of memory");
     exit(1);
   }

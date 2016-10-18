@@ -207,7 +207,7 @@ cmsHPROFILE ICCStore::makeStdGammaProfile (cmsHPROFILE iprof)
     }
 
     cmsUInt32Number bytesNeeded = 0;
-    cmsSaveProfileToMem(iprof, 0, &bytesNeeded);
+    cmsSaveProfileToMem(iprof, nullptr, &bytesNeeded);
 
     if (bytesNeeded == 0) {
         return nullptr;
@@ -522,7 +522,7 @@ cmsHPROFILE ICCStore::createGammaProfile (const procparams::ColorManagementParam
 
     //lcmsMutex->lock ();  Mutex acquired by the caller
     cmsWhitePointFromTemp(&xyD, (double)temp);
-    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters); //5 = smoother than 4
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, Parameters); //5 = smoother than 4
     cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
     cmsFreeToneCurve(GammaTRC[0]);
     //lcmsMutex->unlock ();
@@ -859,7 +859,7 @@ ProfileContent::ProfileContent (cmsHPROFILE hProfile) : data(nullptr), length(0)
 
     if (hProfile != nullptr) {
         cmsUInt32Number bytesNeeded = 0;
-        cmsSaveProfileToMem(hProfile, 0, &bytesNeeded);
+        cmsSaveProfileToMem(hProfile, nullptr, &bytesNeeded);
 
         if (bytesNeeded > 0) {
             data = new char[bytesNeeded + 1];

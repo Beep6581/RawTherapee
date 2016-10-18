@@ -32,10 +32,10 @@ using namespace rtengine;
 CropHandler::CropHandler ()
     : zoom(10), ww(0), wh(0), imx(-1), imy(-1), imw(0), imh(0), cax(-1), cay(-1),
       cx(0), cy(0), cw(0), ch(0), cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
-      cropimg(NULL), cropimgtrue(NULL), cropimg_width(0), cropimg_height(0),
+      cropimg(nullptr), cropimgtrue(nullptr), cropimg_width(0), cropimg_height(0),
       cix(0), ciy(0), ciw(0), cih(0), cis(1),
-      initial(false), isLowUpdatePriority(false), ipc(NULL), crop(NULL),
-      displayHandler(NULL)
+      initial(false), isLowUpdatePriority(false), ipc(nullptr), crop(nullptr),
+      displayHandler(nullptr)
 {
 
     chi = new CropHandlerIdleHelper;
@@ -56,7 +56,7 @@ CropHandler::~CropHandler ()
     if (crop) {
         //crop->destroy ();
         delete crop; // will do the same than destroy, plus delete the object
-        crop = NULL;
+        crop = nullptr;
     }
 
     cimg.lock ();
@@ -86,8 +86,8 @@ void CropHandler::newImage (StagedImageProcessor* ipc_, bool isDetailWindow)
         return;
     }
 
-    EditDataProvider *editDataProvider = NULL;
-    CropWindow *cropWin = displayHandler ? static_cast<CropWindow*>(displayHandler) : NULL;
+    EditDataProvider *editDataProvider = nullptr;
+    CropWindow *cropWin = displayHandler ? static_cast<CropWindow*>(displayHandler) : nullptr;
 
     if (cropWin) {
         editDataProvider = cropWin->getImageArea();
@@ -95,7 +95,7 @@ void CropHandler::newImage (StagedImageProcessor* ipc_, bool isDetailWindow)
 
     crop = ipc->createCrop (editDataProvider, isDetailWindow);
     ipc->setSizeListener (this);
-    crop->setListener (enabled ? this : NULL);
+    crop->setListener (enabled ? this : nullptr);
     initial = true;
 }
 
@@ -306,9 +306,9 @@ int createpixbufs (void* data)
 
     if (!ch->enabled) {
         delete [] ch->cropimg;
-        ch->cropimg = NULL;
+        ch->cropimg = nullptr;
         delete [] ch->cropimgtrue;
-        ch->cropimgtrue = NULL;
+        ch->cropimgtrue = nullptr;
         ch->cimg.unlock ();
         return 0;
     }
@@ -340,9 +340,9 @@ int createpixbufs (void* data)
         }
 
         delete [] ch->cropimg;
-        ch->cropimg = NULL;
+        ch->cropimg = nullptr;
         delete [] ch->cropimgtrue;
-        ch->cropimgtrue = NULL;
+        ch->cropimgtrue = nullptr;
     }
 
     ch->cimg.unlock ();
@@ -380,13 +380,13 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
         delete [] cropimg;
     }
 
-    cropimg = NULL;
+    cropimg = nullptr;
 
     if (cropimgtrue) {
         delete [] cropimgtrue;
     }
 
-    cropimgtrue = NULL;
+    cropimgtrue = nullptr;
 
     if (ax == cropX && ay == cropY && aw == cropW && ah == cropH && askip == (zoom >= 1000 ? 1 : zoom)) {
         cropimg_width = im->getWidth ();
@@ -455,14 +455,14 @@ void CropHandler::setEnabled (bool e)
 
     if (!enabled) {
         if (crop) {
-            crop->setListener (NULL);
+            crop->setListener (nullptr);
         }
 
         cimg.lock ();
         delete [] cropimg;
-        cropimg = NULL;
+        cropimg = nullptr;
         delete [] cropimgtrue;
-        cropimgtrue = NULL;
+        cropimgtrue = nullptr;
         cropPixbuf.clear ();
         cimg.unlock ();
     } else {

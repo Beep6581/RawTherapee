@@ -26,7 +26,7 @@ namespace rtengine
 wavelet_decomposition::~wavelet_decomposition()
 {
     for(int i = 0; i <= lvltot; i++) {
-        if(wavelet_decomp[i] != NULL) {
+        if(wavelet_decomp[i] != nullptr) {
             delete wavelet_decomp[i];
         }
     }
