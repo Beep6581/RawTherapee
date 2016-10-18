@@ -660,11 +660,11 @@ HISTORY_MSG_392;Vlnka - Zůstatek - VB vrátit
 HISTORY_MSG_393;DCP - tabulka vzhledu
 HISTORY_MSG_394;DCP - základní expozice
 HISTORY_MSG_395;DCP - základní tabulka
-HISTORY_MSG_396;Vlnka - Kontrast 
-HISTORY_MSG_397;Vlnka - Barevnost 
+HISTORY_MSG_396;Vlnka - Kontrast
+HISTORY_MSG_397;Vlnka - Barevnost
 HISTORY_MSG_398;Vlnka - Doostření hran
 HISTORY_MSG_399;Vlnka - Zůstatek
-HISTORY_MSG_400;Vlnka - Dokončení 
+HISTORY_MSG_400;Vlnka - Dokončení
 HISTORY_MSG_401;Vlnka - Tónování
 HISTORY_MSG_402;Vlnka - Odšumění
 HISTORY_MSG_403;Vlnka - DH - Citlivost detekce hran
@@ -1265,7 +1265,7 @@ TP_COLORAPP_ADAPTSCENE;Svítivost scény
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolutní jas scény prostředí(cd/m²).\n 1) Vypočítáno z Exifu:\nRychlost závěrky - citlivost - clona - expoziční korekce fotoaparátu.\n 2) Vypočítáno z hodnoty raw bílého bodu a expoziční kompenzace Rawtherapee.
 TP_COLORAPP_ADAPTVIEWING;Svítivost prohlížení (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolutní jas prostředí prohlížení\n(obvykle 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RT vypočítá optimální hodnotu z Exif dat.\nPokud si přejete zadat hodnotu ručně, nejprve zrušte zatržení tohoto pole. 
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RT vypočítá optimální hodnotu z Exif dat.\nPokud si přejete zadat hodnotu ručně, nejprve zrušte zatržení tohoto pole.
 TP_COLORAPP_ALGO;Algoritmus
 TP_COLORAPP_ALGO_ALL;Vše
 TP_COLORAPP_ALGO_JC;Světlost + Barevnost (JC)
@@ -1273,7 +1273,7 @@ TP_COLORAPP_ALGO_JS;Světlost + Nasycení (JS)
 TP_COLORAPP_ALGO_QM;Jas a pestrobarevnost (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Umožňuje vybrat mezi podmnožinou nebo všemi parametry.
 TP_COLORAPP_BADPIXSL;Filtr vypálených/mrtvých pixelů
-TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussovo.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02. 
+TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussovo.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02.
 TP_COLORAPP_BRIGHT;Jas (O)
 TP_COLORAPP_BRIGHT_TOOLTIP;Jas v CIECAM02 bere v potaz svítivost bílé a rozdíly jasů mezi L*a*b* a RGB.
 TP_COLORAPP_CHROMA;Barevnost (C)
