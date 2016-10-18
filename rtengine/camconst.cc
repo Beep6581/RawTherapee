@@ -558,10 +558,20 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
     while ((ret = fread(&buf[datasize], 1, bufsize - datasize, stream)) != 0) {
         datasize += ret;
 
-        if (datasize == bufsize) {
+        if (datasize == bufsize) { // we need more memory
             bufsize += increment;
-            buf = (char *)realloc(buf, bufsize);
-            increment *= 2;
+            void *temp = realloc(buf, bufsize); // try to realloc buffer with new size
+            if(!temp) { // realloc failed
+                temp = malloc(bufsize); // alloc now buffer
+                if (temp) { // alloc worked
+                    memcpy(temp, buf, bufsize - increment); // copy old buffer content to new buffer
+                    free(buf); // free old buffer
+                } else { // alloc didn't work, break
+                    break;
+                }
+            }
+            buf = (char *)temp; // assign new buffer
+            increment *= 2; // double increment
         }
     }
 

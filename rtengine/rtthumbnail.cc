@@ -735,6 +735,7 @@ void Thumbnail::init ()
 }
 
 Thumbnail::Thumbnail () :
+    iColorMatrix{}, cam2xyz{}, scale(1.0), colorMatrix{}, isRaw(true),
     camProfile(nullptr), thumbImg(nullptr),
     camwbRed(1.0), camwbGreen(1.0), camwbBlue(1.0),
     redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0),
@@ -908,7 +909,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     ImProcFunctions ipf (&params, false);
     ipf.setScale (sqrt(double(fw * fw + fh * fh)) / sqrt(double(thumbImg->width * thumbImg->width + thumbImg->height * thumbImg->height))*scale);
-    ipf.updateColorProfiles (params.icm, options.rtSettings.monitorProfile, options.rtSettings.monitorIntent);
+    ipf.updateColorProfiles (params.icm, options.rtSettings.monitorProfile, options.rtSettings.monitorIntent, false, false);
 
     LUTu hist16 (65536);
 

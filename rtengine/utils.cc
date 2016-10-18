@@ -168,9 +168,7 @@ void rotate (unsigned char* img, int& w, int& h, int deg)
                 rotated[3 * (j * h + h - i - 1) + 2] = img[ix++];
             }
 
-        int tmp = w;
-        w = h;
-        h = tmp;
+        std::swap(w,h);
     } else if (deg == 270) {
         for (int i = 0; i < h; i++)
             for (int j = 0; j < w; j++) {
@@ -179,10 +177,8 @@ void rotate (unsigned char* img, int& w, int& h, int deg)
                 rotated[3 * (h * (w - j - 1) + i) + 2] = img[ix++];
             }
 
-        int tmp = w;
-        w = h;
-        h = tmp;
-    } else if (deg == 180)
+        std::swap(w,h);
+    } else /*if (deg == 180) */
         for (int i = 0; i < h; i++)
             for (int j = 0; j < w; j++) {
                 rotated[3 * (w * (h - i - 1) + w - j - 1) + 0] = img[ix++];

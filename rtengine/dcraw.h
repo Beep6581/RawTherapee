@@ -43,14 +43,14 @@ public:
     :exif_base(-1)
     ,ciff_base(-1)
     ,ciff_len(0)
-    ,ifp(nullptr),ofp(nullptr)
+    ,ifp(NULL),ofp(NULL)
     ,order(0x4949)
-    ,ifname(nullptr)
-    ,meta_data(nullptr)
+    ,ifname(NULL)
+    ,meta_data(NULL)
     ,shot_select(0),multi_out(0)
-	,float_raw_image(nullptr)
-    ,image(nullptr)
-    ,bright(1.),threshold(0.)
+	,float_raw_image(NULL)
+    ,image(NULL)
+    ,bright(1.)
     ,half_size(0),four_color_rgb(0),document_mode(0),highlight(0)
     ,verbose(0)
     ,use_auto_wb(0),use_camera_wb(0),use_camera_matrix(1)
@@ -344,23 +344,23 @@ void foveon_make_curves(short **curvep, float dq[3], float div[3], float filt);
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
 
-void xtrans_interpolate (int passes);
-void cielab (ushort rgb[3], short lab[3]);
+//void xtrans_interpolate (int passes);
+//void cielab (ushort rgb[3], short lab[3]);
 
-void remove_zeroes();
-void bad_pixels (const char *cfname);
-void subtract (const char *fname);
+//void remove_zeroes();
+//void bad_pixels (const char *cfname);
+//void subtract (const char *fname);
 void gamma_curve (double pwr, double ts, int mode, int imax);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
 void cam_xyz_coeff (float rgb_cam[3][4], double cam_xyz[4][3]);
-void hat_transform (float *temp, float *base, int st, int size, int sc);
-void wavelet_denoise();
+//void hat_transform (float *temp, float *base, int st, int size, int sc);
+//void wavelet_denoise();
 void scale_colors();
 void pre_interpolate();
-void border_interpolate (int border);
-void median_filter();
-void blend_highlights();
-void recover_highlights();
+//void border_interpolate (int border);
+//void median_filter();
+//void blend_highlights();
+//void recover_highlights();
 void crop_masked_pixels();
 
 void tiff_get (unsigned base,	unsigned *tag, unsigned *type, unsigned *len, unsigned *save);
@@ -397,7 +397,6 @@ void simple_coeff (int index);
 short guess_byte_order (int words);
 float find_green (int bps, int bite, int off0, int off1);
 void identify();
-void apply_profile (const char *input, const char *output);
 void jpeg_thumb() {}  // not needed
 bool dcraw_coeff_overrides(const char make[], const char model[], int iso_speed, short trans[12], int *black_level, int *white_level);
 void shiftXtransMatrix( const int offsy, const int offsx) {

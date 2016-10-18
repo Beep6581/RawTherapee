@@ -544,6 +544,7 @@ public:
     bool working;
     bool output;
     bool outputIntent;
+    bool outputBPC;
     bool gamma;
     bool gampos;
     bool slpos;

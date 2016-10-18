@@ -31,17 +31,19 @@ extern const Settings* settings;
 
 inline ffInfo& ffInfo::operator =(const ffInfo &o)
 {
-    pathname = o.pathname;
-    maker = o.maker;
-    model = o.model;
-    lens = o.lens;
-    shutter = o.shutter;
-    focallength = o.focallength;
-    timestamp = o.timestamp;
+    if (this != &o) {
+        pathname = o.pathname;
+        maker = o.maker;
+        model = o.model;
+        lens = o.lens;
+        focallength = o.focallength;
+        timestamp = o.timestamp;
+        aperture = o.aperture;
 
-    if( ri ) {
-        delete ri;
-        ri = nullptr;
+        if( ri ) {
+            delete ri;
+            ri = NULL;
+        }
     }
 
     return *this;
@@ -131,7 +133,7 @@ void ffInfo::updateRawImage()
 
         if( ri->loadRaw(true)) {
             delete ri;
-            ri = nullptr;
+            ri = NULL;
         } else {
             int H = ri->get_height();
             int W = ri->get_width();
@@ -193,7 +195,7 @@ void ffInfo::updateRawImage()
 
         if( ri->loadRaw(true)) {
             delete ri;
-            ri = nullptr;
+            ri = NULL;
         } else {
             ri->compress_image();
         }
@@ -291,11 +293,11 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
     auto file = Gio::File::create_for_path (filename);
 
     if (!file ) {
-        return nullptr;
+        return 0;
     }
 
     if (!file->query_exists ()) {
-        return nullptr;
+        return 0;
     }
 
     try {
@@ -303,11 +305,11 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         auto info = file->query_info ();
 
         if (!info || info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
-            return nullptr;
+            return 0;
         }
 
         if (!options.fbShowHidden && info->is_hidden ()) {
-            return nullptr;
+            return 0;
         }
 
         Glib::ustring ext;
@@ -319,7 +321,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         }
 
         if (!options.is_extention_enabled (ext)) {
-            return nullptr;
+            return 0;
         }
 
 
@@ -327,7 +329,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         int res = ri.loadRaw (false); // Read informations about shot
 
         if (res != 0) {
-            return nullptr;
+            return 0;
         }
 
         ffList_t::iterator iter;
@@ -367,7 +369,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 
     } catch (Gio::Error&) {}
 
-    return nullptr;
+    return 0;
 }
 
 void FFManager::getStat( int &totFiles, int &totTemplates)
@@ -394,7 +396,7 @@ void FFManager::getStat( int &totFiles, int &totTemplates)
 ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert, time_t t )
 {
     if( ffList.empty() ) {
-        return nullptr;
+        return 0;
     }
 
     std::string key( ffInfo::key(mak, mod, len, focal, apert) );
@@ -428,7 +430,7 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const s
             }
         }
 
-        return bestD != INFINITY ? &(bestMatch->second) : nullptr ;
+        return bestD != INFINITY ? &(bestMatch->second) : 0 ;
     }
 }
 
@@ -439,7 +441,7 @@ RawImage* FFManager::searchFlatField( const std::string &mak, const std::string 
     if( ff ) {
         return ff->getRawImage();
     } else {
-        return nullptr;
+        return 0;
     }
 }
 
@@ -457,7 +459,7 @@ RawImage* FFManager::searchFlatField( const Glib::ustring filename )
         return ff->getRawImage();
     }
 
-    return nullptr;
+    return 0;
 }
 
 

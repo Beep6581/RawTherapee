@@ -46,7 +46,7 @@
 
 // Bitfield of functions to do to the preview image when an event occurs
 // Use those or create new ones for your new events
-#define FIRST            (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
+#define FIRST            (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_MONITOR)  // without HIGHQUAL
 #define ALL              (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
 #define DARKFRAME        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
@@ -61,7 +61,7 @@
 #define DEFRINGE                                                                                                    (M_LUMINANCE|M_COLOR)
 #define DIRPYRDENOISE                                                                                               (M_LUMINANCE|M_COLOR)
 #define DIRPYREQUALIZER                                                                                             (M_LUMINANCE|M_COLOR)
-#define GAMMA                                                                                                       (M_LUMINANCE|M_COLOR)
+#define GAMMA             M_MONITOR
 #define CROP              M_CROP
 #define RESIZE            M_VOID
 #define EXIF              M_VOID
@@ -69,7 +69,7 @@
 #define MINUPDATE         M_MINUPDATE
 #define RETINEX          (M_RETINEX|ALLNORAW)
 #define MONITORTRANSFORM  M_MONITOR
-#define OUTPUTPROFILE    (ALLNORAW|MONITORTRANSFORM)
+#define OUTPUTPROFILE     M_MONITOR
 
 extern int refreshmap[];
 #endif

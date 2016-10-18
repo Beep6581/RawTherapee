@@ -418,6 +418,8 @@ public:
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
+    virtual void        setSoftProofing         (bool softProof, bool gamutCheck) = 0;
+    virtual void        getSoftProofing         (bool &softProof, bool &gamutCheck) = 0;
 
     virtual ~StagedImageProcessor () {}
 

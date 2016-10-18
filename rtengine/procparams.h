@@ -65,9 +65,7 @@ public:
 protected:
     bool initEq1;
     bool _isDouble;
-#ifndef NDEBUG
-    unsigned int part[5];
-#endif
+
 public:
     Threshold (T bottom, T top, bool startAtOne)
     {
@@ -969,6 +967,7 @@ public:
     Glib::ustring working;
     Glib::ustring output;
     RenderingIntent outputIntent;
+    bool outputBPC;
     static const Glib::ustring NoICMString;
 
     Glib::ustring gamma;

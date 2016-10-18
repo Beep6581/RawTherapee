@@ -35,11 +35,13 @@
 
 using namespace rtengine::procparams;
 
-class EditorPanel::MonitorProfileSelector
+class EditorPanel::ColorManagementToolbar
 {
 private:
     MyComboBoxText profileBox;
     PopUpButton intentBox;
+    Gtk::ToggleButton softProof;
+    Gtk::ToggleButton spGamutCheck;
     sigc::connection profileConn, intentConn;
 
     rtengine::StagedImageProcessor* const& processor;
@@ -57,27 +59,49 @@ private:
         profileBox.set_active (0);
 #endif
 
-        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles ();
+        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles (true);
         for (std::vector<Glib::ustring>::const_iterator iterator = profiles.begin (); iterator != profiles.end (); ++iterator) {
             profileBox.append_text (*iterator);
         }
+        profileBox.set_tooltip_text (profileBox.get_active_text ());
     }
 
     void prepareIntentBox ()
     {
-        intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
+        // same order as the enum
         intentBox.addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox.addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
 
-        intentBox.setSelected(0);
+        intentBox.setSelected(1);
         intentBox.show ();
+    }
+
+    void prepareSoftProofingBox ()
+    {
+        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("softProof.png"));
+        softProofImage->set_padding(0, 0);
+        softProof.add(*softProofImage);
+        softProof.set_relief(Gtk::RELIEF_NONE);
+        softProof.set_tooltip_markup(M("SOFTPROOF_TOOLTIP"));
+
+        softProof.set_active(false);
+        softProof.show ();
+
+        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("spGamutCheck.png"));
+        spGamutCheckImage->set_padding(0, 0);
+        spGamutCheck.add(*spGamutCheckImage);
+        spGamutCheck.set_relief(Gtk::RELIEF_NONE);
+        spGamutCheck.set_tooltip_markup(M("SOFTPROOF_GAMUTCHECK_TOOLTIP"));
+
+        spGamutCheck.set_active(false);
+        spGamutCheck.set_sensitive(false);
+        spGamutCheck.show ();
     }
 
     void profileBoxChanged ()
     {
         updateParameters ();
-
-        profileBox.set_tooltip_text (profileBox.get_active_text ());
     }
 
     void intentBoxChanged (int)
@@ -85,7 +109,17 @@ private:
         updateParameters ();
     }
 
-    void updateParameters ()
+    void softProofToggled ()
+    {
+        updateSoftProofParameters ();
+    }
+
+    void spGamutCheckToggled ()
+    {
+        updateSoftProofParameters ();
+    }
+
+    void updateParameters (bool noEvent = false)
     {
         ConnectionBlocker profileBlocker (profileConn);
         ConnectionBlocker intentBlocker (intentConn);
@@ -113,33 +147,46 @@ private:
             profile.clear();
 
             intentBox.set_sensitive (false);
-            intentBox.setSelected (0);
+            intentBox.setSelected (1);
+            softProof.set_sensitive(false);
+            spGamutCheck.set_sensitive(false);
+
+            profileBox.set_tooltip_text ("");
 
         } else {
-            const std::uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
+            const uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
             const bool supportsRelativeColorimetric = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
             const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
             const bool supportsAbsoluteColorimetric = supportedIntents & 1 << INTENT_ABSOLUTE_COLORIMETRIC;
 
             if (supportsPerceptual || supportsRelativeColorimetric || supportsAbsoluteColorimetric) {
                 intentBox.set_sensitive (true);
-                intentBox.setItemSensitivity(0, supportsRelativeColorimetric);
-                intentBox.setItemSensitivity(1, supportsPerceptual);
+                intentBox.setItemSensitivity(0, supportsPerceptual);
+                intentBox.setItemSensitivity(1, supportsRelativeColorimetric);
                 intentBox.setItemSensitivity(2, supportsAbsoluteColorimetric);
+                softProof.set_sensitive(true);
+                spGamutCheck.set_sensitive(true);
             } else {
+                intentBox.setItemSensitivity(0, true);
+                intentBox.setItemSensitivity(1, true);
+                intentBox.setItemSensitivity(2, true);
                 intentBox.set_sensitive (false);
-                intentBox.setSelected (0);
+                intentBox.setSelected (1);
+                softProof.set_sensitive(false);
+                spGamutCheck.set_sensitive(false);
             }
+
+            profileBox.set_tooltip_text (profileBox.get_active_text ());
         }
 
         rtengine::RenderingIntent intent;
         switch (intentBox.getSelected ()) {
         default:
         case 0:
-            intent = rtengine::RI_RELATIVE;
+            intent = rtengine::RI_PERCEPTUAL;
             break;
         case 1:
-            intent = rtengine::RI_PERCEPTUAL;
+            intent = rtengine::RI_RELATIVE;
             break;
         case 2:
             intent = rtengine::RI_ABSOLUTE;
@@ -150,29 +197,61 @@ private:
             return;
         }
 
-        processor->beginUpdateParams ();
+        if (!noEvent) {
+            processor->beginUpdateParams ();
+        }
         processor->setMonitorProfile (profile, intent);
-        processor->endUpdateParams (rtengine::EvMonitorTransform);
+        processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+        if (!noEvent) {
+            processor->endUpdateParams (rtengine::EvMonitorTransform);
+        }
+    }
+
+    void updateSoftProofParameters (bool noEvent = false)
+    {
+        spGamutCheck.set_sensitive(softProof.get_active());
+
+        if (profileBox.get_active_row_number () > 0) {
+            if (!noEvent) {
+                processor->beginUpdateParams ();
+            }
+            processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+            if (!noEvent) {
+                processor->endUpdateParams (rtengine::EvMonitorTransform);
+            }
+        }
     }
 
 public:
-    explicit MonitorProfileSelector (rtengine::StagedImageProcessor* const& ipc) :
+    explicit ColorManagementToolbar (rtengine::StagedImageProcessor* const& ipc) :
         intentBox (Glib::ustring (), true),
         processor (ipc)
     {
         prepareProfileBox ();
         prepareIntentBox ();
+        prepareSoftProofingBox ();
 
         reset ();
 
-        profileConn = profileBox.signal_changed ().connect (sigc::mem_fun (this, &MonitorProfileSelector::profileBoxChanged));
-        intentConn = intentBox.signal_changed ().connect (sigc::mem_fun (this, &MonitorProfileSelector::intentBoxChanged));
+        softProof.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::softProofToggled));
+        spGamutCheck.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::spGamutCheckToggled));;
+        profileConn = profileBox.signal_changed ().connect (sigc::mem_fun (this, &ColorManagementToolbar::profileBoxChanged));
+        intentConn = intentBox.signal_changed ().connect (sigc::mem_fun (this, &ColorManagementToolbar::intentBoxChanged));
     }
 
     void pack_end_in (Gtk::Box* box)
     {
+        box->pack_end (spGamutCheck, Gtk::PACK_SHRINK, 0);
+        box->pack_end (softProof, Gtk::PACK_SHRINK, 0);
         box->pack_end (*intentBox.buttonGroup, Gtk::PACK_SHRINK, 0);
         box->pack_end (profileBox, Gtk::PACK_SHRINK, 0);
+    }
+
+    void updateProcessor()
+    {
+        if (processor) {
+            updateParameters(true);
+        }
     }
 
     void reset ()
@@ -193,10 +272,10 @@ public:
         switch (options.rtSettings.monitorIntent)
         {
         default:
-        case rtengine::RI_RELATIVE:
+        case rtengine::RI_PERCEPTUAL:
             intentBox.setSelected (0);
             break;
-        case rtengine::RI_PERCEPTUAL:
+        case rtengine::RI_RELATIVE:
             intentBox.setSelected (1);
             break;
         case rtengine::RI_ABSOLUTE:
@@ -444,9 +523,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
 
-    // Monitor profile buttons
-    monitorProfile.reset (new MonitorProfileSelector (ipc));
-    monitorProfile->pack_end_in (iops);
+    // Color management toolbar
+    colorMgmtToolBar.reset (new ColorManagementToolbar (ipc));
+    colorMgmtToolBar->pack_end_in (iops);
 
     editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
     editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
@@ -706,6 +785,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     this->isrc = isrc;
     ipc = rtengine::StagedImageProcessor::create (isrc);
     ipc->setProgressListener (this);
+    colorMgmtToolBar->updateProcessor();
     ipc->setPreviewImageListener (previewHandler);
     ipc->setPreviewScale (10);  // Important
     tpc->initImage (ipc, tmb->getType() == FT_Raw);
@@ -754,8 +834,6 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     }
 
     history->resetSnapShotNumber();
-
-    monitorProfile->reset ();
 }
 
 void EditorPanel::close ()

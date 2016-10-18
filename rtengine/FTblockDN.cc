@@ -37,6 +37,7 @@
 #include "opthelper.h"
 #include "cplx_wavelet_dec.h"
 #include "median.h"
+#include "iccstore.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

@@ -423,25 +423,49 @@ extern const Settings* settings;
 
 RawImageSource::RawImageSource ()
     : ImageSource()
-    , plistener(nullptr)
+    , W(0), H(0)
+    , plistener(NULL)
     , border(4)
-    , ri(nullptr)
-    , cache(nullptr)
+    , ri(NULL)
+    , cache(NULL)
     , rawData(0, 0)
     , green(0, 0)
     , red(0, 0)
     , blue(0, 0)
+    , lc00(0.0)
+    , lc01(0.0)
+    , lc02(0.0)
+    , lc10(0.0)
+    , lc11(0.0)
+    , lc12(0.0)
+    , lc20(0.0)
+    , lc21(0.0)
+    , lc22(0.0)
+    , hlmax{}
+    , clmax{}
+    , chmax{}
+    , scale_mul{}
+    , c_black{}
+    , c_white{}
+    , cblacksom{}
+    , ref_pre_mul{}
+    , refwb_red(0.0)
+    , refwb_green(0.0)
+    , refwb_blue(0.0)
+    , rgb_cam{}
+    , cam_rgb{}
+    , xyz_cam{}
+    , cam_xyz{}
+    , fuji(false)
+    , d1x(false)
+    , initialGain(0.0)
+    , camInitialGain(0.0)
+    , defGain(0.0)
+    , threshold(0)
 {
-    hrmap[0] = nullptr;
-    hrmap[1] = nullptr;
-    hrmap[2] = nullptr;
-    //needhr = NULL;
-    //hpmap = NULL;
-    camProfile = nullptr;
-    embProfile = nullptr;
+    camProfile = NULL;
+    embProfile = NULL;
     rgbSourceModified = false;
-    hlmax[0] = hlmax[1] = hlmax[2] = hlmax[3] = 0.f;
-    clmax[0] = clmax[1] = clmax[2] = clmax[3] = 0.f;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -460,13 +484,6 @@ RawImageSource::~RawImageSource ()
 
     if( cache ) {
         delete [] cache;
-    }
-
-    if (hrmap[0] != nullptr) {
-        int dh = H / HR_SCALE;
-        freeJaggedArray<float>(hrmap[0]);
-        freeJaggedArray<float>(hrmap[1]);
-        freeJaggedArray<float>(hrmap[2]);
     }
 
     if (camProfile) {
@@ -872,12 +889,12 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
 DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
 {
-    DCPProfile *dcpProf = nullptr;
+    DCPProfile *dcpProf = NULL;
     cmsHPROFILE dummy;
-    findInputProfile(cmp.input, nullptr, (static_cast<const ImageData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
+    findInputProfile(cmp.input, NULL, (static_cast<const ImageData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
 
-    if (dcpProf == nullptr) {
-        return nullptr;
+    if (dcpProf == NULL) {
+        return NULL;
     }
 
     dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
@@ -1453,10 +1470,9 @@ void RawImageSource::getFullSize (int& w, int& h, int tr)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getSize (int tran, PreviewProps pp, int& w, int& h)
+void RawImageSource::getSize (PreviewProps pp, int& w, int& h)
 {
 
-    tran = defTransform (tran);
     w = pp.w / pp.skip + (pp.w % pp.skip > 0);
     h = pp.h / pp.skip + (pp.h % pp.skip > 0);
 }
@@ -1629,7 +1645,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
         plistener->setProgress (1.0);
     }
 
-    plistener = nullptr; // This must be reset, because only load() is called through progressConnector
+    plistener = NULL; // This must be reset, because only load() is called through progressConnector
     t2.set();
 
     if( settings->verbose ) {
@@ -1648,7 +1664,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     t1.set();
 
     Glib::ustring newDF = raw.dark_frame;
-    RawImage *rid = nullptr;
+    RawImage *rid = NULL;
 
     if (!raw.df_autoselect) {
         if( !raw.dark_frame.empty()) {
@@ -1686,7 +1702,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     //FLATFIELD start
-    RawImage *rif = nullptr;
+    RawImage *rif = NULL;
 
     if (!raw.ff_AutoSelect) {
         if( !raw.ff_file.empty()) {
@@ -1697,7 +1713,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
 
-    bool hasFlatField = (rif != nullptr);
+    bool hasFlatField = (rif != NULL);
 
     if( hasFlatField && settings->verbose) {
         printf( "Flat Field Correction:%s\n", rif->get_filename().c_str());
@@ -1723,7 +1739,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     // If darkframe selected, correct hotpixels found on darkframe
-    bp = nullptr;
+    bp = 0;
 
     if( raw.df_autoselect ) {
         bp = dfm.getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
@@ -1973,7 +1989,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     } else if(retinexParams.gammaretinex == "hig") {
         retinexgamtab = &(Color::gammatab_145_3);
     } else if(retinexParams.gammaretinex == "fre") {
-        double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
+        GammaValues g_a;
         double pwr = 1.0 / retinexParams.gam;
         double gamm = retinexParams.gam;
         double ts = retinexParams.slope;
@@ -1984,21 +2000,21 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         }
 
         int mode = 0, imax = 0;
-        Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
         double add;
 
         if(gamm2 < 1.) {
-            start = g_a2;
-            add = g_a4;
+            start = g_a[2];
+            add = g_a[4];
         } else {
-            start = g_a3;
-            add = g_a4;
+            start = g_a[3];
+            add = g_a[4];
         }
 
-        double mul = 1. + g_a4;
+        double mul = 1. + g_a[4];
 
         lutTonereti(65536);
 
@@ -2123,7 +2139,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 #endif
 
                 for (; j < W - border; j++) {
-                    float H, S, L;
+                    float L;
                     //rgb=>lab
                     Color::rgb2hslfloat(red[i][j], green[i][j], blue[i][j], conversionBuffer[0][i - border][j - border], conversionBuffer[1][i - border][j - border], L);
                     L *= 32768.f;
@@ -2245,7 +2261,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     } else if(deh.gammaretinex == "hig") {
         retinexigamtab = &(Color::igammatab_145_3);
     } else if(deh.gammaretinex == "fre") {
-        double g_a0, g_a1, g_a2, g_a3, g_a4, g_a5;
+        GammaValues g_a;
         double pwr = 1.0 / deh.gam;
         double gamm = deh.gam;
         double gamm2 = gamm;
@@ -2256,18 +2272,18 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
             std::swap(pwr, gamm);
         }
 
-        Color::calcGamma(pwr, ts, mode, imax, g_a0, g_a1, g_a2, g_a3, g_a4, g_a5); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
 
-        double mul = 1. + g_a4;
+        double mul = 1. + g_a[4];
         double add;
         double start;
 
         if(gamm2 < 1.) {
-            start = g_a3;
-            add = g_a3;
+            start = g_a[3];
+            add = g_a[3];
         } else {
-            add = g_a4;
-            start = g_a2;
+            add = g_a[4];
+            start = g_a[2];
         }
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
@@ -2296,7 +2312,6 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     float **temp = conversionBuffer[2]; // one less dereference
     LUTf dLcurve;
     LUTu hist16RET;
-    float val;
 
     if(dehacontlutili && histLRETI) {
         hist16RET(32768);
@@ -2305,7 +2320,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         dLcurve(32768);
     }
 
-    FlatCurve* chcurve = nullptr;//curve c=f(H)
+    FlatCurve* chcurve = NULL;//curve c=f(H)
     bool chutili = false;
 
     if (deh.enabled && deh.retinexMethod == "highli") {
@@ -2314,7 +2329,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         if (!chcurve || chcurve->isIdentity()) {
             if (chcurve) {
                 delete chcurve;
-                chcurve = nullptr;
+                chcurve = NULL;
             }
         } else {
             chutili = true;
@@ -2369,7 +2384,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         // hist16RET.compressTo(histLRETI);
         // also remove declaration and init of dLcurve some lines above then and finally remove this comment :)
         for (int i = 0; i < 32768; i++) {
-            val = (double)i / 32767.0;
+            float val = (double)i / 32767.0;
             dLcurve[i] = val;
         }
 
@@ -2393,14 +2408,8 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
 
                 for (; j < W - border; j++) {
 
-                    float valp;
-                    //   if(chutili) {  // c=f(H)
-                    {
-                        valp = float((chcurve->getVal(conversionBuffer[3][i - border][j - border]) - 0.5f));
-
-                        conversionBuffer[1][i - border][j - border] *= (1.f + 2.f * valp);
-                    }
-                    //    }
+                    float valp = (chcurve->getVal(conversionBuffer[3][i - border][j - border]) - 0.5f);
+                    conversionBuffer[1][i - border][j - border] *= (1.f + 2.f * valp);
 
                 }
             }
@@ -2629,7 +2638,7 @@ void RawImageSource::flushRawData()
 {
     if(cache) {
         delete [] cache;
-        cache = nullptr;
+        cache = 0;
     }
 
     if (rawData) {
@@ -2822,7 +2831,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 
         if(raw.ff_AutoClipControl) {
             // determine maximum calculated value to avoid clipping
-            int clipControlGui = 0;
+//            int clipControlGui = 0;
             float maxval = 0.f;
             // xtrans files have only one black level actually, so we can simplify the code a bit
 #ifdef _OPENMP
@@ -2857,7 +2866,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
             // there's only one white level for xtrans
             if(maxval + black[0] > ri->get_white(0)) {
                 limitFactor = ri->get_white(0) / (maxval + black[0]);
-                clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
+//                clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
             }
         } else {
             limitFactor = max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
@@ -3696,9 +3705,9 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
     copyright[0] = 0;
 
     if (cmsGetProfileInfoASCII(in, cmsInfoCopyright, cmsNoLanguage, cmsNoCountry, copyright, 256) > 0) {
-        if (strstr(copyright, "Phase One") != nullptr) {
+        if (strstr(copyright, "Phase One") != NULL) {
             gammaFac = 0.55556;    // 1.8
-        } else if (strstr(copyright, "Nikon Corporation") != nullptr) {
+        } else if (strstr(copyright, "Nikon Corporation") != NULL) {
             gammaFac = 0.5;
             lineFac = -0.4;
             lineSum = 1.35; // determined in reverse by measuring NX an RT developed colorchecker PNGs
@@ -3767,7 +3776,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         return;
     }
 
-    if (dcpProf != nullptr) {
+    if (dcpProf != NULL) {
         // DCP processing
         const DCPProfile::Triple pre_mul_row = {
             pre_mul[0],
@@ -3784,7 +3793,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         return;
     }
 
-    if (in == nullptr) {
+    if (in == NULL) {
         // use default camprofile, supplied by dcraw
         // in this case we avoid using the slllllooooooowwww lcms
 
@@ -3860,10 +3869,10 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
             camera_icc_type = CAMERA_ICC_TYPE_GENERIC;
 
             // Note: order the identification with the most detailed matching first since the more general ones may also match the more detailed
-            if ((strstr(copyright, "Leaf") != nullptr ||
-                    strstr(copyright, "Phase One A/S") != nullptr ||
-                    strstr(copyright, "Kodak") != nullptr ||
-                    strstr(copyright, "Creo") != nullptr) &&
+            if ((strstr(copyright, "Leaf") != NULL ||
+                    strstr(copyright, "Phase One A/S") != NULL ||
+                    strstr(copyright, "Kodak") != NULL ||
+                    strstr(copyright, "Creo") != NULL) &&
                     (strstr(description, "LF2 ") == description ||
                      strstr(description, "LF3 ") == description ||
                      strstr(description, "LeafLF2") == description ||
@@ -3872,9 +3881,9 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                      strstr(description, "MamiyaLF2") == description ||
                      strstr(description, "MamiyaLF3") == description)) {
                 camera_icc_type = CAMERA_ICC_TYPE_LEAF;
-            } else if (strstr(copyright, "Phase One A/S") != nullptr) {
+            } else if (strstr(copyright, "Phase One A/S") != NULL) {
                 camera_icc_type = CAMERA_ICC_TYPE_PHASE_ONE;
-            } else if (strstr(copyright, "Nikon Corporation") != nullptr) {
+            } else if (strstr(copyright, "Nikon Corporation") != NULL) {
                 camera_icc_type = CAMERA_ICC_TYPE_NIKON;
             }
         }
@@ -3893,7 +3902,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                 transform_via_pcs_lab = true;
                 separate_pcs_lab_highlights = true;
                 // We transform to Lab because we can and that we avoid getting an unnecessary unmatched gamma conversion which we would need to revert.
-                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, nullptr, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, NULL, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
@@ -3917,14 +3926,14 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
         lcmsMutex->unlock ();
 
-        if (hTransform == nullptr) {
+        if (hTransform == NULL) {
             // Fallback: create transform from camera profile. Should not happen normally.
             lcmsMutex->lock ();
             hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
             lcmsMutex->unlock ();
         }
 
-        TMatrix toxyz, torgb;
+        TMatrix toxyz = {}, torgb = {};
 
         if (!working_space_is_prophoto) {
             toxyz = iccStore->workingSpaceMatrix ("ProPhoto");
@@ -4127,8 +4136,8 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 // Determine RAW input and output profiles. Returns TRUE on success
 bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in)
 {
-    in = nullptr; // cam will be taken on NULL
-    *dcpProf = nullptr;
+    in = NULL; // cam will be taken on NULL
+    *dcpProf = NULL;
 
     if (inProfile == "(none)") {
         return false;
@@ -4140,7 +4149,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         // DCPs have higher quality, so use them first
         *dcpProf = DCPStore::getInstance()->getStdProfile(camName);
 
-        if (*dcpProf == nullptr) {
+        if (*dcpProf == NULL) {
             in = iccStore->getStdProfile(camName);
         }
     } else if (inProfile != "(camera)" && inProfile != "") {
@@ -4154,7 +4163,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
             *dcpProf = DCPStore::getInstance()->getProfile(normalName);
         }
 
-        if (*dcpProf == nullptr) {
+        if (*dcpProf == NULL) {
             in = iccStore->getProfile (inProfile);
         }
     }
@@ -4202,7 +4211,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
     for (int col = 0; col < width; col++) {
         float rgb[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio, lratio = 0;
-        float L, C, H, Lfrac;
+        float L, C, H;
 
         // Copy input pixel to rgb so it's easier to access in loops
         rgb[0] = rin[col];
@@ -4290,7 +4299,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
         bin[col] = L + H / 3.0;
 
         if ((L = (rin[col] + gin[col] + bin[col]) / 3) > desatpt) {
-            Lfrac = max(0.0f, (maxave - L) / (maxave - desatpt));
+            float Lfrac = max(0.0f, (maxave - L) / (maxave - desatpt));
             C = Lfrac * 1.732050808 * (rin[col] - gin[col]);
             H = Lfrac * (2 * bin[col] - rin[col] - gin[col]);
             rin[col] = L - H / 6.0 + C / 3.464101615;
@@ -4887,11 +4896,11 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     if (ri->getSensorType() != ST_BAYER) {
         if(ri->getSensorType() == ST_FUJI_XTRANS) {
             int d[9][2] = {{0, 0}, { -1, -1}, { -1, 0}, { -1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-            double rloc, gloc, bloc;
-            int rnbrs, gnbrs, bnbrs;
 
             for (size_t i = 0; i < red.size(); i++) {
                 transformPosition (red[i].x, red[i].y, tran, x, y);
+                double rloc, gloc, bloc;
+                int rnbrs, gnbrs, bnbrs;
                 rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
 
                 for (int k = 0; k < 9; k++) {
@@ -4959,11 +4968,11 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     } else {
 
         int d[9][2] = {{0, 0}, { -1, -1}, { -1, 0}, { -1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-        double rloc, gloc, bloc;
-        int rnbrs, gnbrs, bnbrs;
 
         for (size_t i = 0; i < red.size(); i++) {
             transformPosition (red[i].x, red[i].y, tran, x, y);
+            double rloc, gloc, bloc;
+            int rnbrs, gnbrs, bnbrs;
             rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
 
             for (int k = 0; k < 9; k++) {

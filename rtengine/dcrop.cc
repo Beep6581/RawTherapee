@@ -962,24 +962,14 @@ void Crop::update (int todo)
     // all pipette buffer processing should be finished now
     PipetteBuffer::setReady();
 
-    // switch back to rgb
+    // Computing the preview image, i.e. converting from lab->Monitor color space (soft-proofing disabled) or lab->Output profile->Monitor color space (soft-proofing enabled)
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);
 
     if (cropImageListener) {
-        // this in output space held in parallel to allow analysis like shadow/highlight
-        Glib::ustring outProfile = params.icm.output;
-        Glib::ustring workProfile = params.icm.working;
-        Image8 *cropImgtrue;
+        // Computing the internal image for analysis, i.e. conversion from lab->Output profile (rtSettings.HistogramWorking disabled) or lab->WCS (rtSettings.HistogramWorking enabled)
 
-        if(settings->HistogramWorking) {
-            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, workProfile, RI_RELATIVE, false);  // HOMBRE: was RELATIVE by default in lab2rgb, is it safe to assume we have to use it again ?
-        } else {
-            if (params.icm.output == "" || params.icm.output == ColorManagementParams::NoICMString) {
-                outProfile = "sRGB";
-            }
-
-            cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, outProfile, params.icm.outputIntent, false);
-        }
+        // internal image in output color space for analysis
+        Image8 *cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0, 0, cropw, croph, params.icm);
 
         int finalW = rqcropw;
 
@@ -1121,7 +1111,7 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
-    parent->imgsrc->getSize (tr, cp, orW, orH);
+    parent->imgsrc->getSize (cp, orW, orH);
 
     int cw = SKIPS(bw, skip);
     int ch = SKIPS(bh, skip);

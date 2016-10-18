@@ -93,7 +93,7 @@ public:
     */
     float **Diagonals;
     char *buffer;
-    char *DiagBuffer;
+    float *DiagBuffer;
     int *StartRows;
     bool CreateDiagonal(int index, int StartRow);
     int n, m;   //The matrix is n x n, with m diagonals on the lower triangle. Don't change these. They should be private but aren't for convenience.

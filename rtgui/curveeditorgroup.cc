@@ -355,7 +355,7 @@ void CurveEditorGroup::setTooltip( Glib::ustring ttip)
 void CurveEditorGroup::setBatchMode (bool batchMode)
 {
     for (std::vector<CurveEditor*>::iterator i = curveEditors.begin(); i != curveEditors.end(); ++i) {
-        (*i)->curveType->addEntry("curveType-unchanged.png", M("GENERAL_UNCHANGED"));
+        (*i)->curveType->addEntry("unchanged-18.png", M("GENERAL_UNCHANGED"));
         (*i)->curveType->show();
     }
 }

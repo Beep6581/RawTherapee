@@ -632,6 +632,7 @@ HISTORY_MSG_403;O - NB - Sensibilité des bords
 HISTORY_MSG_404;O - NB - Base amplification
 HISTORY_MSG_405;O - Débruitage - Niveau 4
 HISTORY_MSG_406;O - NB - Pixels voisins
+HISTORY_MSG_443;Compensation du Point Noir de Sortie
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -953,6 +954,7 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
 PREFERENCES_MENUGROUPRANK;Classement
 PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
+PREFERENCES_MONBPC;Compensation du Point Noir pour la transformation L*a*b*->Moniteur
 PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
@@ -1083,6 +1085,8 @@ SAVEDLG_SUBSAMP_3;Meilleure qualité
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profile de sortie
+SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, simule le rendu généré par le profiles de sortie de l'outil ICM. Particulièrement utile pour simuler le rendu en sortie d'imprimante.
 THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
@@ -1456,6 +1460,8 @@ TP_ICM_APPLYLOOKTABLE;Table de recherche
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Utilise la table de recherche (LUT) contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient une.
 TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndu profil ICC avec la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
+TP_ICM_BPC;Compensation du  Point Noir
+TP_ICM_BPC_TOOLTIP;Activez ceci pour faire correspondre le canal Luminosité à l'espace couleur de sortie avec un Point Blanc fixe
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolé
 TP_ICM_DCPILLUMINANT_TOOLTIP;Sélectionne quel illuminant DCP inclus utiliser. La valeur par défaut est "Interpolé", qui est un mix entre les 2 profils inclus basé sur la Balance des Blancs choisie. Ce paramètre n'est actif que si un fichier DCP Bi-Illuminant avec support de l'interpolation est choisi.

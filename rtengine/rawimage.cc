@@ -20,11 +20,12 @@ namespace rtengine
 extern const Settings* settings;
 
 RawImage::RawImage(  const Glib::ustring &name )
-    : data(nullptr)
+    : data(NULL)
     , prefilters(0)
     , filename(name)
-    , profile_data(nullptr)
-    , allocation(nullptr)
+    , profile_data(NULL)
+    , allocation(NULL)
+    , rotate_deg(0)
 {
     memset(maximum_c4, 0, sizeof(maximum_c4));
     RT_matrix_from_constant = 0;
@@ -44,22 +45,22 @@ RawImage::~RawImage()
 
     if(allocation) {
         delete [] allocation;
-        allocation = nullptr;
+        allocation = NULL;
     }
 
     if(float_raw_image) {
         delete [] float_raw_image;
-        float_raw_image = nullptr;
+        float_raw_image = NULL;
     }
 
     if(data) {
         delete [] data;
-        data = nullptr;
+        data = NULL;
     }
 
     if(profile_data) {
         delete [] profile_data;
-        profile_data = nullptr;
+        profile_data = NULL;
     }
 }
 
@@ -400,9 +401,9 @@ skip_block:
 int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistener, double progressRange)
 {
     ifname = filename.c_str();
-    image = nullptr;
+    image = NULL;
     verbose = settings->verbose;
-    oprof = nullptr;
+    oprof = NULL;
 
     ifp = gfopen (ifname);  // Maps to either file map or direct fopen
 
@@ -414,18 +415,18 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
     thumb_length = 0;
     thumb_offset = 0;
-    thumb_load_raw = nullptr;
+    thumb_load_raw = 0;
     use_camera_wb = 0;
     highlight = 1;
     half_size = 0;
-    raw_image = nullptr;
+    raw_image = 0;
 
     //***************** Read ALL raw file info
     identify ();
 
     if (!is_raw) {
         fclose(ifp);
-        ifp = nullptr;
+        ifp = NULL;
 
         if (plistener) {
             plistener->setProgress(1.0 * progressRange);
@@ -531,7 +532,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
             crop_masked_pixels();
             free (raw_image);
-            raw_image = nullptr;
+            raw_image = NULL;
         } else {
             if (cc && cc->has_rawCrop()) { // foveon images
                 int lm, tm, w, h;
@@ -643,7 +644,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
     if ( closeFile ) {
         fclose(ifp);
-        ifp = nullptr;
+        ifp = NULL;
     }
 
     if (plistener) {
@@ -656,7 +657,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 float** RawImage::compress_image()
 {
     if( !image ) {
-        return nullptr;
+        return NULL;
     }
 
     if (isBayer() || isXtrans()) {
@@ -699,7 +700,7 @@ float** RawImage::compress_image()
             }
 
         delete [] float_raw_image;
-        float_raw_image = nullptr;
+        float_raw_image = NULL;
     } else if (filters != 0 && !isXtrans()) {
         #pragma omp parallel for
 
@@ -733,7 +734,7 @@ float** RawImage::compress_image()
     }
 
     free(image); // we don't need this anymore
-    image = nullptr;
+    image = NULL;
     return data;
 }
 
@@ -782,7 +783,7 @@ void RawImage::getRgbCam (float rgbcam[3][4])
 bool
 RawImage::get_thumbSwap() const
 {
-    return (order == 0x4949) == (ntohs(0x1234) == 0x1234);
+    return ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) ? true : false;
 }
 
 } //namespace rtengine

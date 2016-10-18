@@ -326,43 +326,48 @@ Image16::tofloat()
 }
 
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
-void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform)
+void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy)
 {
-    //cmsDoTransform(hTransform, data, data, planestride);
-
-    // LittleCMS cannot parallelize planar setups -- Hombre: LCMS2.4 can! But it we use this new feature, memory allocation have to be modified too
+    // LittleCMS cannot parallelize planar Lab float images
     // so build temporary buffers to allow multi processor execution
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
     {
-        AlignedBuffer<unsigned short> buffer(width * 3);
+        AlignedBuffer<float> bufferLab(width * 3);
+        AlignedBuffer<unsigned short> bufferRGB(width * 3);
 
 #ifdef _OPENMP
         #pragma omp for schedule(static)
 #endif
 
-        for (int y = 0; y < height; y++)
+        for (int y = cy; y < cy + height; y++)
         {
-            unsigned short *p = buffer.data, *pR = r(y), *pG = g(y), *pB = b(y);
+            unsigned short *pRGB, *pR, *pG, *pB;
+            float *pLab, *pL, *pa, *pb;
+
+            pLab= bufferLab.data;
+            pL = labImage.L[y] + cx;
+            pa = labImage.a[y] + cx;
+            pb = labImage.b[y] + cx;
 
             for (int x = 0; x < width; x++) {
-                *(p++) = *(pR++);
-                *(p++) = *(pG++);
-                *(p++) = *(pB++);
+                *(pLab++) = *(pL++)  / 327.68f;
+                *(pLab++) = *(pa++)  / 327.68f;
+                *(pLab++) = *(pb++)  / 327.68f;
             }
 
-            cmsDoTransform (hTransform, buffer.data, buffer.data, width);
+            cmsDoTransform (hTransform, bufferLab.data, bufferRGB.data, width);
 
-            p = buffer.data;
-            pR = r(y);
-            pG = g(y);
-            pB = b(y);
+            pRGB = bufferRGB.data;
+            pR = r(y - cy);
+            pG = g(y - cy);
+            pB = b(y - cy);
 
             for (int x = 0; x < width; x++) {
-                *(pR++) = *(p++);
-                *(pG++) = *(p++);
-                *(pB++) = *(p++);
+                *(pR++) = *(pRGB++);
+                *(pG++) = *(pRGB++);
+                *(pB++) = *(pRGB++);
             }
         } // End of parallelization
     }

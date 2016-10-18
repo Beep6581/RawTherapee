@@ -84,8 +84,8 @@ protected:
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
 
-    class MonitorProfileSelector;
-    std::unique_ptr<MonitorProfileSelector> monitorProfile;
+    class ColorManagementToolbar;
+    std::unique_ptr<ColorManagementToolbar> colorMgmtToolBar;
 
     ImageAreaPanel* iareapanel;
     PreviewHandler* previewHandler;
