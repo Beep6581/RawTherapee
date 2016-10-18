@@ -1968,11 +1968,12 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
 bool EditorPanel::CheckSidePanelsVisibility()
 {
     if (tbTopPanel_1) {
-        return !(!tbTopPanel_1->get_active() && !tbRightPanel_1->get_active() && !hidehp->get_active());
+        return tbTopPanel_1->get_active() || tbRightPanel_1->get_active() || hidehp->get_active();
     }
 
-    return !(!tbRightPanel_1->get_active() && !hidehp->get_active());
+    return tbRightPanel_1->get_active() || hidehp->get_active();
 }
+
 void EditorPanel::toggleSidePanels()
 {
     // Maximize preview panel:

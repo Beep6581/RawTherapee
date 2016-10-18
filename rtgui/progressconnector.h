@@ -90,7 +90,7 @@ class ProgressConnector
 
 public:
 
-    ProgressConnector (): retval( nullptr ), workThread( nullptr ) { }
+    ProgressConnector (): retval( 0 ), workThread( nullptr ) { }
 
     void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler )
     {

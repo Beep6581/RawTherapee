@@ -2123,8 +2123,9 @@ void FileCatalog::tbRightPanel_1_toggled ()
 
 bool FileCatalog::CheckSidePanelsVisibility()
 {
-    return !(!tbLeftPanel_1->get_active() && !tbRightPanel_1->get_active());
+    return tbLeftPanel_1->get_active() || tbRightPanel_1->get_active();
 }
+
 void FileCatalog::toggleSidePanels()
 {
     // toggle left AND right panels
