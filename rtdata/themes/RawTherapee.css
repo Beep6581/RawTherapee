@@ -108,9 +108,12 @@ GtkEventBox .frame {
     color: #363636;
 }
 
-GtkProgressBar {
-    -GtkProgressBar-min-vertical-bar-width: 10;
-    -GtkProgressBar-min-horizontal-bar-height: 10;
+GtkProgressBar.vertical {
+    min-width: 10px;
+}
+
+GtkProgressBar.horizontal {
+    min-height: 10px;
 }
 
 GtkDrawingArea {
@@ -172,7 +175,7 @@ GtkEntry, GtkSpinButton {
     background-color: #262626;
 }
 
-GtkEntry:insensitive, GtkSpinButton:insensitive {
+GtkEntry:disabled, GtkSpinButton:disabled {
     background-color: #363636;
 }
 

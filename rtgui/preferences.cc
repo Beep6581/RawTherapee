@@ -2085,7 +2085,8 @@ void Preferences::switchFontTo(Glib::ustring newFont)
         }
 
         try {
-            cssForced->load_from_data (Glib::ustring::compose("* { font: %1; }", newFont));
+            newFont = Options::formatFontName(newFont);
+            cssForced->load_from_data (Glib::ustring::compose("* { %1 }", newFont));
         } catch (Glib::Error &err) {
             printf("Error: \"%s\"\n", err.what().c_str());
         } catch (...) {

@@ -509,6 +509,7 @@ void ProfileStoreEntry::setValues(Glib::ustring label, PSEType type, unsigned sh
 ProfileStoreLabel::ProfileStoreLabel(const ProfileStoreEntry *entry) : Gtk::Label(entry->label), entry(entry)
 {
     set_alignment(0, 0.5);
+    set_ellipsize(Pango::ELLIPSIZE_END);
     show();
 }
 

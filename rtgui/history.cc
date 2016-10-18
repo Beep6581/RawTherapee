@@ -56,7 +56,9 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
     hTreeView->set_resize_mode(Gtk::RESIZE_QUEUE);
 
     Gtk::CellRendererText *changecrt = Gtk::manage (new Gtk::CellRendererText());
+    changecrt->property_ellipsize() = Pango::ELLIPSIZE_END;
     Gtk::CellRendererText *valuecrt  = Gtk::manage (new Gtk::CellRendererText());
+    valuecrt->property_ellipsize() = Pango::ELLIPSIZE_END;
     Gtk::TreeView::Column *hviewcol = Gtk::manage (new Gtk::TreeView::Column (""));
     hviewcol->pack_start (*changecrt, true);
     hviewcol->add_attribute (changecrt->property_markup (), historyColumns.text);

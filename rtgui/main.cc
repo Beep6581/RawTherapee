@@ -331,14 +331,11 @@ int main(int argc, char **argv)
         if (options.font != "default") {
             try {
                 cssForced = Gtk::CssProvider::create();
-                Glib::ustring font(options.font);
-                size_t pos = font.find(',');
 
-                if (pos != Glib::ustring::npos) {
-                    font = font.replace(pos, 1, " ");
-                }
+                // Reformatting the font parameter
+                Glib::ustring font = Options::formatFontName(options.font);
 
-                cssForced->load_from_data (Glib::ustring::compose("* { font: %1; }", font));
+                cssForced->load_from_data (Glib::ustring::compose("* { %1 }", font));
                 Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             } catch (Glib::Error &err) {
                 printf("Error: \"%s\"\n", err.what().c_str());
