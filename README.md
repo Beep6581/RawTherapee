@@ -29,7 +29,7 @@ Download source code tarballs:
 http://rawtherapee.com/shared/source/
 
 Git handbook:
-http://git-scm.com/book/en/
+https://git-scm.com/book/en/v2
 
 ## Compilation, branches and Git
 Refer to RawPedia for a detailed explanation of how to get the necessary dependencies and how to compile RawTherapee.
