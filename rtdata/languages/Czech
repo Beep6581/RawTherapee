@@ -33,11 +33,8 @@
 #32 2014-10-24 updated by mkyral
 #33 2015-02-22 updated by mkyral
 #34 2015-07-09 updated by mkyral
-#38 2015-11-24 updated by mkyral
-#36 2015-10-26 updated by mkyral
-#37 2015-11-21 updated by mkyral
-#38 2016-07-21 updated by mkyral
-#39 2016-10-18 updated by mkyral
+#35 2015-11-24 updated by mkyral
+#36 2016-10-18 updated by mkyral
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -663,11 +660,11 @@ HISTORY_MSG_392;Vlnka - Zůstatek - VB vrátit
 HISTORY_MSG_393;DCP - tabulka vzhledu
 HISTORY_MSG_394;DCP - základní expozice
 HISTORY_MSG_395;DCP - základní tabulka
-HISTORY_MSG_396;Vlnka - Kontrast
-HISTORY_MSG_397;Vlnka - Barevnost
+HISTORY_MSG_396;Vlnka - Kontrast 
+HISTORY_MSG_397;Vlnka - Barevnost 
 HISTORY_MSG_398;Vlnka - Doostření hran
 HISTORY_MSG_399;Vlnka - Zůstatek
-HISTORY_MSG_400;Vlnka - Dokončení
+HISTORY_MSG_400;Vlnka - Dokončení 
 HISTORY_MSG_401;Vlnka - Tónování
 HISTORY_MSG_402;Vlnka - Odšumění
 HISTORY_MSG_403;Vlnka - DH - Citlivost detekce hran
@@ -682,7 +679,7 @@ HISTORY_MSG_411;Retinex - Síla
 HISTORY_MSG_412;Retinex - Gaussův gradient
 HISTORY_MSG_413;Retinex - Kontrast
 HISTORY_MSG_414;Retinex - Histogram - Lab
-HISTORY_MSG_415;Retinex - přenos
+HISTORY_MSG_415;Retinex - Přenos
 HISTORY_MSG_416;Retinex
 HISTORY_MSG_417;Retinex - Medián přenosu
 HISTORY_MSG_418;Retinex - Práh
@@ -692,7 +689,7 @@ HISTORY_MSG_421;Retinex - Gama
 HISTORY_MSG_422;Retinex - Gama
 HISTORY_MSG_423;Retinex - Sklon gamy
 HISTORY_MSG_424;Retinex - Práh zachování jasů
-HISTORY_MSG_425;Retinex - Základní log
+HISTORY_MSG_425;Retinex - Základ log.
 HISTORY_MSG_426;Retinex - Korekce odstínu
 HISTORY_MSG_427;Výstupní záměr reprodukce
 HISTORY_MSG_428;Záměr reprodukce monitoru
@@ -700,15 +697,15 @@ HISTORY_MSG_429;Retinex - Průchody
 HISTORY_MSG_430;Retinex - Přenos gradientu
 HISTORY_MSG_431;Retinex - Síla gradientu
 HISTORY_MSG_432;Retinex - M - Světla
-HISTORY_MSG_433;Retinex - M - Světla TW
-HISTORY_MSG_434;Retinex - Stíny
-HISTORY_MSG_435;Retinex - Stíny TW
+HISTORY_MSG_433;Retinex - M - Světla tóny
+HISTORY_MSG_434;Retinex - M - Stíny
+HISTORY_MSG_435;Retinex - M - Stíny tóny
 HISTORY_MSG_436;Retinex - M - poloměr
 HISTORY_MSG_437;Retinex - M - Metoda
 HISTORY_MSG_438;Retinex - M - Korekce
 HISTORY_MSG_439;Retinex - Zpracování
 HISTORY_MSG_440;Metoda KdDÚ
-HISTORY_MSG_441;Retinex - přenos zisku
+HISTORY_MSG_441;Retinex - Přenos zisku
 HISTORY_MSG_442;Retinex - Měřítko
 HISTORY_MSG_443;Kompenzace výstupního černého bodu
 HISTORY_NEWSNAPSHOT;Přidat
@@ -1268,7 +1265,7 @@ TP_COLORAPP_ADAPTSCENE;Svítivost scény
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolutní jas scény prostředí(cd/m²).\n 1) Vypočítáno z Exifu:\nRychlost závěrky - citlivost - clona - expoziční korekce fotoaparátu.\n 2) Vypočítáno z hodnoty raw bílého bodu a expoziční kompenzace Rawtherapee.
 TP_COLORAPP_ADAPTVIEWING;Svítivost prohlížení (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolutní jas prostředí prohlížení\n(obvykle 16cd/m²).
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RT vypočítá optimální hodnotu z Exif dat.\nPokud si přejete zadat hodnotu ručně, nejprve zrušte zatržení tohoto pole.
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;Pokud je povoleno (doporučeno), RT vypočítá optimální hodnotu z Exif dat.\nPokud si přejete zadat hodnotu ručně, nejprve zrušte zatržení tohoto pole. 
 TP_COLORAPP_ALGO;Algoritmus
 TP_COLORAPP_ALGO_ALL;Vše
 TP_COLORAPP_ALGO_JC;Světlost + Barevnost (JC)
@@ -1276,7 +1273,7 @@ TP_COLORAPP_ALGO_JS;Světlost + Nasycení (JS)
 TP_COLORAPP_ALGO_QM;Jas a pestrobarevnost (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Umožňuje vybrat mezi podmnožinou nebo všemi parametry.
 TP_COLORAPP_BADPIXSL;Filtr vypálených/mrtvých pixelů
-TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussovo.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02.
+TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussovo.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02. 
 TP_COLORAPP_BRIGHT;Jas (O)
 TP_COLORAPP_BRIGHT_TOOLTIP;Jas v CIECAM02 bere v potaz svítivost bílé a rozdíly jasů mezi L*a*b* a RGB.
 TP_COLORAPP_CHROMA;Barevnost (C)
