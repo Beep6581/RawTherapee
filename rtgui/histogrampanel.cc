@@ -908,6 +908,7 @@ int histupdateUI (void* data)
         return 0;
     }
 
+    haih->harea->setDirty (true);
     haih->harea->updateBackBuffer ();
     haih->harea->queue_draw ();
 
