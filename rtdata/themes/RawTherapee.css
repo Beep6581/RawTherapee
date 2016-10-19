@@ -33,15 +33,11 @@
     -GtkToolButton-icon-spacing: 4;
     -GtkTextView-error-underline-color: #da4453;
     -GtkScrolled-window-overlay-scrolling: FALSE;
-    -GtkToolItemGroup-expander-size: 11;
-    -GtkExpander-expander-size: 16;
-    -GtkTreeView-expander-size: 11;
     -GtkTreeView-horizontal-separator: 4;
     -GtkWidget-text-handle-width: 20;
     -GtkWidget-text-handle-height: 20;
     -GtkDialog-button-spacing: 4;
     -GtkDialog-action-area-border: 0;
-    -GtkStatusbar-shadow-type: none;
     outline-width: 0px;
 }
 
