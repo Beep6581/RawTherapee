@@ -954,8 +954,8 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
 PREFERENCES_MENUGROUPRANK;Classement
 PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
-PREFERENCES_MONBPC;Compensation du Point Noir pour la transformation L*a*b*->Moniteur
 PREFERENCES_MIN;Mini (100x115)
+PREFERENCES_MONBPC;Compensation du Point Noir pour la transformation L*a*b*->Moniteur
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVGUIDEBRUSH;Couleur du cadre dans le Navigateur
