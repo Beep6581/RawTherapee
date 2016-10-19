@@ -18,8 +18,39 @@
   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+ * The Adwaita dark theme is now precompiled as a resource,
+ * the source css can be found here:
+ * https://git.gnome.org/browse/gtk+/tree/gtk/theme/Adwaita/gtk-contained-dark.css
+ * It changed a lot between gtk-3.18 and 3.20 so we need to override some of its
+ * defaults
+ */
+
+/* most of this is imported from Breeze-Dark theme */
 * {
     color: #AAAAAA;
+    padding: 1px;
+    -GtkToolButton-icon-spacing: 4;
+    -GtkTextView-error-underline-color: #da4453;
+    -GtkScrolled-window-overlay-scrolling: FALSE;
+    -GtkTreeView-horizontal-separator: 4;
+    -GtkWidget-text-handle-width: 20;
+    -GtkWidget-text-handle-height: 20;
+    -GtkDialog-button-spacing: 4;
+    -GtkDialog-action-area-border: 0;
+    outline-width: 0px;
+}
+
+button {
+  min-height: 2px;
+  min-width: 2px;
+}
+spinbutton:not(.vertical),
+entry {
+  min-height: 16px;
+  min-width: 80px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .view:selected {
@@ -34,7 +65,9 @@
 /* The headers of these panels */
 .view .button {
     background-color: #363636;
-    padding: 2px;
+    padding: 1px;
+    min-height: 2px;
+    min-width: 2px;
 }
 
 .plainback {
@@ -128,6 +161,44 @@ scale {
 .text-button.button {
     padding: 4px;
 }
+
+/* from Breeze Dark Theme */
+.view text,
+textview text,
+.view {
+  color: #eff0f1;
+  background-color: #232629; }
+  .view text:backdrop,
+  textview text:backdrop,
+  .view:backdrop {
+    color: #eff0f1;
+    background-color: #232629; }
+  .view text:selected:focus,
+  textview text:selected:focus, .view text:selected,
+  textview text:selected,
+  .view:selected:focus,
+  .view:selected {
+    border-radius: 3px; }
+
+textview border {
+  background-color: #232629;
+  background-image: image(#616569);
+  background-repeat: no-repeat; }
+  textview border:backdrop {
+    background-color: #232629; }
+  textview border.bottom {
+    background-size: 100% 1px;
+    background-position: top; }
+  textview border.top {
+    background-size: 100% 1px;
+    background-position: bottom; }
+  textview border.left {
+    background-size: 1px 100%;
+    background-position: right; }
+  textview border.right {
+    background-size: 1px 100%;
+    background-position: left; }
+/* end import from Breeze Dark Theme */
 
 .separator {
     color: #363636;
