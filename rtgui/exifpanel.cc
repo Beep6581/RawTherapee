@@ -53,6 +53,7 @@ ExifPanel::ExifPanel () : idata(NULL)
     Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());
     Gtk::CellRendererText *render_txt = Gtk::manage(new Gtk::CellRendererText());
+    render_txt->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcol->pack_start (*render_pb, false);
     viewcol->pack_start (*render_txt, true);
     viewcol->add_attribute (*render_pb, "pixbuf", exifColumns.icon);
@@ -67,6 +68,7 @@ ExifPanel::ExifPanel () : idata(NULL)
 
     Gtk::TreeView::Column *viewcolv = Gtk::manage(new Gtk::TreeView::Column ("Value"));
     Gtk::CellRendererText *render_txtv = Gtk::manage(new Gtk::CellRendererText());
+    render_txtv->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcolv->pack_start (*render_txtv, true);
     viewcolv->add_attribute (*render_txtv, "markup", exifColumns.value);
 

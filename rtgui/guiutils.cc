@@ -964,6 +964,8 @@ void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &min
 MyComboBoxText::MyComboBoxText ()
 {
     minimumWidth = naturalWidth = 70;
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
 }
 
 bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)

@@ -291,8 +291,8 @@ Glib::ustring Options::findProfilePath (Glib::ustring &profName)
 void Options::setDefaults ()
 {
 
-    font = "sans, 8";
-    colorPickerFont = "sans, 8";
+    font = "sans 8";
+    colorPickerFont = "sans 8";
     windowWidth = 1200;
     windowHeight = 680;
     windowX = 0;
@@ -2335,6 +2335,29 @@ void Options::save ()
     } else {
         options.saveToFile (Glib::build_filename (rtdir, "options"));
     }
+}
+
+Glib::ustring Options::formatFontName (Glib::ustring font)
+{
+    if (font.empty()) {
+        return "";
+    }
+
+    // Reformatting the font parameter
+    Glib::ustring sFont;
+
+    Pango::FontDescription fd(font);
+    sFont = "font-family: \"" + fd.get_family() + "\";";
+    if (fd.get_size()) {
+        sFont += "font-size: " + Glib::ustring::compose("%1pt", 8 /*fd.get_size()*/); // + (fd.get_size_is_absolute() ? "px;" : "pt;");
+    }
+    if (fd.get_style() == Pango::STYLE_ITALIC) {
+        sFont += "font-style: italic;";
+    }
+    if (fd.get_weight() > Pango::WEIGHT_NORMAL) {
+        sFont += "font-weight: bold;";
+    }
+    return sFont;
 }
 
 /*

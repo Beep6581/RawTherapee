@@ -91,7 +91,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     get_content_area()->pack_start (*bottomHBox, Gtk::PACK_SHRINK, 0);
 
     Glib::RefPtr<Gtk::CssProvider> localCSS = Gtk::CssProvider::create();
-    localCSS->load_from_data ("GtkTextView { font: monospace 8; }");
+    localCSS->load_from_data ("GtkTextView { font-family: monospace; font-size: 8pt; }");
 
     // Tab 1: the image
     splashImage = Gtk::manage(new SplashImage ());

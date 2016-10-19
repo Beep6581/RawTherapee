@@ -67,6 +67,7 @@ PlacesBrowser::PlacesBrowser ()
     Gtk::TreeView::Column *iviewcol = Gtk::manage (new Gtk::TreeView::Column (M("MAIN_FRAME_PLACES")));
     Gtk::CellRendererPixbuf *iconCR  = Gtk::manage (new Gtk::CellRendererPixbuf());
     Gtk::CellRendererText *labelCR  = Gtk::manage (new Gtk::CellRendererText());
+    labelCR->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
     iviewcol->pack_start (*iconCR, false);
     iviewcol->pack_start (*labelCR, true);
     iviewcol->add_attribute (*iconCR, "gicon", 0);
