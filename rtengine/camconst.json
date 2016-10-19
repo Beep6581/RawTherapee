@@ -1410,7 +1410,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
     { // Quality b, crop correction
-        "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10 Mark II" ],
+        "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10 Mark II", "OLYMPUS E-M10MarkII" ],
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "raw_crop": [ 0, 0, 4624, 3472 ], // largest valid - full frame is 4640x3472
 //        "raw_crop": [ 4, 4, 4616, 3464 ], // olympus jpeg crop 8, 8, 4608, 3456
