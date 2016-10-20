@@ -2076,11 +2076,17 @@ float ImProcFunctions::Mad(float * DataList, int datalen)
     }
 
     //find median of histogram
+    constexpr int skippedValues = 20;
     int median = 0, count = 0;
-    int skip = (histo[0] + histo[1]);
-    if(skip != datalen) { // skip first 2 values
+    int skip = 0;
+
+    for(int i = 0; i < skippedValues; ++i) {
+        skip += histo[i];
+    }
+
+    if(skip != datalen) { // skip first skippedValues values
         datalen -= skip;
-        median += 2;
+        median += skippedValues;
     }
 
     while (count < datalen / 2) {
@@ -2089,7 +2095,6 @@ float ImProcFunctions::Mad(float * DataList, int datalen)
     }
 
     int count_ = count - histo[median - 1];
-
     // interpolate
     return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
 }
