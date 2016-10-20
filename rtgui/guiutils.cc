@@ -506,12 +506,6 @@ bool ExpanderBox::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) {
 ExpanderBox::ExpanderBox( Gtk::Container *p): pC(p)
 {
     set_name ("ExpanderBox");
-    updateStyle();
-}
-
-void ExpanderBox::on_style_updated ()
-{
-    updateStyle();
 }
 
 void ExpanderBox::setLevel(int level)
@@ -523,11 +517,6 @@ void ExpanderBox::setLevel(int level)
     } else if (level >= 3) {
         set_name("ExpanderBox3");
     }
-}
-
-void ExpanderBox::updateStyle()
-{
-    set_border_width(2);
 }
 
 void ExpanderBox::show_all()
@@ -597,7 +586,6 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
-    updateStyle();
     titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle) );
     titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
     titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
@@ -653,7 +641,6 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
-    updateStyle();
     titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle));
     titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
     titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
@@ -687,18 +674,6 @@ bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event)
     }
 
     return true;
-}
-
-void MyExpander::updateStyle()
-{
-    headerHBox->set_spacing(2);
-    headerHBox->set_border_width(1);
-    set_spacing(0);
-    set_border_width(0);
-
-    if (expBox) {
-        expBox->updateStyle();
-    }
 }
 
 void MyExpander::setLevel (int level)

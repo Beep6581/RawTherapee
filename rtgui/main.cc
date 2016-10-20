@@ -326,23 +326,6 @@ int main(int argc, char **argv)
         } catch (...) {
             printf("Error: Can't load css file \"%s\"\n", filename.c_str());
         }
-
-        // Set the font face and size
-        if (options.font != "default") {
-            try {
-                cssForced = Gtk::CssProvider::create();
-
-                // Reformatting the font parameter
-                Glib::ustring font = Options::formatFontName(options.font);
-
-                cssForced->load_from_data (Glib::ustring::compose("* { %1 }", font));
-                Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-            } catch (Glib::Error &err) {
-                printf("Error: \"%s\"\n", err.what().c_str());
-            } catch (...) {
-                printf("Error: Can't find the font named \"%s\"\n", options.font.c_str());
-            }
-        }
     }
 
 #ifndef NDEBUG

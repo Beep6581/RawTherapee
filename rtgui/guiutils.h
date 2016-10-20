@@ -123,7 +123,6 @@ public:
     }
 
     void setLevel(int level);
-    void updateStyle();
 
     void show() {}
     void show_all();
@@ -133,7 +132,6 @@ public:
     void showBox();
     void hideBox();
 
-    void on_style_updated ();
 //  bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
 };
 
@@ -172,16 +170,6 @@ private:
     bool on_enter_leave_title (GdkEventCrossing* event);
     /// Used to handle the colored background for the Enable button
     bool on_enter_leave_enable (GdkEventCrossing* event);
-    // The part below can probably be removed from here and the CSS file.
-    /// Update the style of this widget, depending in the "slim" option
-    void updateStyle();
-
-    void on_style_updated ()
-    {
-        updateStyle();
-    }
-
-
 
 protected:
     Gtk::Container* child;      /// Gtk::Contained to display below the expander's title

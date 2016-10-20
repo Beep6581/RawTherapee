@@ -45,11 +45,6 @@ void LockableColorPicker::updateBackBuffer ()
     if (validity == Validity::INSIDE) {
         Gtk::DrawingArea *iArea = cropWindow->getImageArea();
 
-        Glib::RefPtr<Pango::Context> pangoContext = iArea->get_pango_context ();
-        Pango::FontDescription fontd(options.colorPickerFont);
-        fontd.set_weight(Pango::WEIGHT_NORMAL);
-        pangoContext->set_font_description (fontd);
-
         Glib::RefPtr<Pango::Layout> layout[3][2];
         Glib::ustring s1, s2, s3;
         PointerMotionListener* navigator = cropWindow->getPointerMotionListener ();

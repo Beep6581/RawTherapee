@@ -67,13 +67,13 @@ frame {
     padding: 4px;
 }
 
-frame > label {
+frame label {
     color: #D8D8D8;
 }
 
 #FileBrowser {
-    padding: 10px;
-    margin: 10px;
+    padding: 2px;
+    margin: 0px;
 }
 
 /* Frames in Preferences */
@@ -90,6 +90,8 @@ eventbox .frame {
 
 window {
 	padding: 0;
+	margin: 0;
+	border: none;
 }
 
 button  {
@@ -108,6 +110,13 @@ box {
 scale {
 	padding: 0;
 	min-height: 5px;
+}
+
+scale slider {
+	/* Slider size is min-width x min-height ; margin have to be half of those values, but negative */
+	min-width: 12px;
+	min-height: 12px;
+	margin: -6px;
 }
 
 /*.EditorTopPanel .button, .ToolBarPanelFileBrowser .button, .EditorZoomPanel .button {*/
@@ -129,8 +138,9 @@ scale {
     padding: 4px;
 }
 
-.separator {
+separator {
     color: #363636;
+	margin: 5px;
 }
 
 progressbar.vertical {
@@ -229,18 +239,18 @@ menuitem {
 }
 
 #MyExpander {
-    margin: 2px;
-    padding: 2px;
+    margin: 0 5px 0 5px;
+    padding: 0;
 }
 
 /* Tool background */
-#ExpanderBox {
+#ExpanderBox > box {
     background-color: #363636;
     border-width: 1px;
     border-style: solid;
     border-radius: 4px;
     border-color: #252525;
-    margin: 2px;
+    margin: 0;
     padding: 3px;
 }
 
@@ -254,8 +264,8 @@ menuitem {
     border-width: 1px;
     border-radius: 4px;
     border-color: #313131;
-    margin: 2px;
-    padding: 2px;
+    margin: 3px;
+    padding: 3px;
 }
 
 #ExpanderBox frame drawingarea {
@@ -266,8 +276,8 @@ menuitem {
     background-color: #414141;
     border: 1px solid #373737;
     border-radius: 4px;
-    margin: 2px;
-    padding: 2px;
+    margin: 3px;
+    padding: 3px;
 }
 
 #ExpanderBox frame frame drawingarea {
@@ -275,11 +285,11 @@ menuitem {
 }
 
 /* Sub-tool (MyExpander) background */
-#ExpanderBox2 {
+#ExpanderBox2 > box {
     background-color: #3B3B3B;
     border: 1px solid #2A2A2A;
     border-radius: 4px;
-    margin: 2px;
+    margin: 0;
     padding: 3px;
 }
 
@@ -291,8 +301,8 @@ menuitem {
     background-color: #414141;
     border: 1px solid #373737;
     border-radius: 4px;
-    margin: 2px;
-    padding: 2px;
+    margin: 3px;
+    padding: 3px;
 }
 
 #ExpanderBox2 frame drawingarea {
@@ -303,26 +313,28 @@ menuitem {
     background-color: #474747;
     border: 1px solid #3D3D3D;
     border-radius: 4px;
-    margin: 2px;
-    padding: 2px;
+    margin: 3px;
+    padding: 3px;
 }
 
 #ExpanderBox2 frame frame drawingarea {
     background-color: #474747;
 }
 
-#MyExpanderTitle {
-    margin: 2px;
-    padding: 3px 1px 3px 1px;
-    font-size: 120%;
+#MyExpanderTitle > box {
+    margin: 2px 0 2px 0;
+    padding: 2px;
 }
+
 #MyExpanderTitle label {
     color: #CCCCCC;
+	padding: 0;
+	margin: 0 3px 0 3px;
 }
 #MyExpanderTitle:hover {
     background-color: #202020;
 }
-#MyExpanderTitle GtkEventBox:hover image {
+#MyExpanderTitle eventbox:hover image {
     background-color: #202020;
     border-radius: 3px;
 }
@@ -335,75 +347,69 @@ menuitem {
 }
 
 /* Editor tab button */
-#MainNotebook > grid label, #MainNotebook > grid image  {
+#MainNotebook grid label, #MainNotebook grid image  {
     /* OK */
     padding: 1px;
 }
 
 /* File Browser right side tabs - Toolbox, Inspector, Fast Export, Filter */
-notebook tabs {
+notebook {
+    padding: 0;
+	margin: 0;
+	border-style: none;
+}
+
+notebook header {
+    box-shadow: none;
     background-color: #383838;
     border-width: 1px;
     border-style: none;
     border-color: #262626;
     border-radius: 0;
-    padding: 3px;
+    padding: 2px;
+	margin: 0;
 }
 
-notebook tabs:hover {
+notebook tabs {
+    padding: 1px;
+	margin: 0;
+}
+
+notebook tab {
+    padding: 1px;
+	margin: 2px;
+	min-height: 15px;
+	min-width: 15px;
+}
+
+notebook tab:hover {
     background-color: #505050;
 }
 
-notebook tabs:active {
+notebook tab:active {
+    padding: 3px;
     border-width: 5px;
     border-color: #989898;
 }
 
 /* Get rid of shitty notebook header shadow */
-notebook header.top tabs {
-    border-bottom-style: solid;
-    padding-bottom: 8px;
-}
-notebook header.right tabs {
-    border-left-style: solid;
-    padding-left: 8px;
-}
-notebook header.bottom tabs {
-    border-top-style: solid;
-    padding-top: 8px;
-}
-notebook header.left tabs {
-    border-right-style: solid;
-    padding-right: 8px;
-}
-
-/* Get rid of notebook frame border - too many borders */
-notebook header.top, notebook header.right, notebook header.bottom, notebook header.left {
-    box-shadow: none;
-    border-width: 1px;
-    border-color: #262626;
-    border-style: none;
-    border-radius: 0;
-    background-color: #383838;
-    padding: 0;
-}
-/* Get rid of notebook header border - too many borders */
 notebook header.top {
-    /* OK */
     border-bottom-style: solid;
+    padding-bottom: 3px;
 }
 notebook header.right {
-    /* OK */
     border-left-style: solid;
+    padding-left: 3px;
 }
 notebook header.bottom {
-    /* OK */
     border-top-style: solid;
+    padding-top: 3px;
 }
 notebook header.left {
-    /* OK */
     border-right-style: solid;
+    padding-right: 3px;
 }
+
 notebook.frame {
     /* OK */
     border-radius: 0;
@@ -411,47 +417,79 @@ notebook.frame {
 }
 
 /* Pad notebooks, makes the other borders look nicer */
-notebook {
+notebook stack {
     /* OK */
     background-color: #484848;
     padding: 0;
+	margin: 0;
 }
 
+paned box {
+	padding: 0;
+	margin: 0;
+	border-style: none;
+}
 
-#MainNotebook.header {
+paned > separator {
+	margin: 0;
+	padding: 0;
+}
+
+#MainNotebook header {
     /* OK */
     background-color: #2A2A2A;
 }
-#MainNotebook > tabs {
+#MainNotebook tabs {
     /* OK */
     background-color: #2A2A2A;
 }
-#MainNotebook > tabs:hover {
+#MainNotebook tab:hover {
     /* OK */
     background-color: #505050;
 }
-#MainNotebook > tabs:active {
+#MainNotebook tab:active {
     /* OK */
     border-color: #989898;
 }
 
-#RightNotebook.header {
+#RightNotebook header {
     /* OK */
-    background-color: #2A2A2A;
+    background-color: #393939;
 }
-#RightNotebook > tabs {
+#RightNotebook tabs {
     /* OK */
-    background-color: #2A2A2A;
+    background-color: #393939;
+	padding-bottom: 5px;
 }
-#RightNotebook > tabs:hover {
+#RightNotebook tab:hover {
     /* OK */
     background-color: #505050;
 }
-#RightNotebook > tabs:active {
+#RightNotebook tab:active {
     /* OK */
-    border-color: #989898;
+    border-color: #A5A5A5;
 }
 
+#LabelRightNotebook {
+	padding: 5px;
+	margin: 2px;
+}
+
+#ToolPanelNotebook header {
+    background-color: #383838;
+    border-color: #262626;
+	padding: 0;
+	margin: 0;
+}
+
+#ToolPanelNotebook header tabs {
+    background-color: #383838;
+}
+
+#ToolPanelNotebook header tab {
+	padding: 3px;
+	margin: 0;
+}
 
 /* All tool panels have a frame except for Meta which unlike the rest is a notebook itself.
  * So we use CSS to make it look like a frame. */
@@ -464,7 +502,7 @@ notebook {
     border-top-width: 0;
 }
 
-#MetaPanelNotebook.header {
+#MetaPanelNotebook header {
     border: 1px solid #262626;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;

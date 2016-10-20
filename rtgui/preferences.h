@@ -129,8 +129,6 @@ protected:
 
     Gtk::ComboBoxText* theme;
     Gtk::CheckButton* chUseSystemTheme;
-    Gtk::FontButton* fontbutton;
-    Gtk::FontButton* colorPickerFontButton;
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
 
@@ -193,7 +191,7 @@ protected:
     Glib::ustring storedValueImg;
 
     Options moptions;
-    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
+    sigc::connection tconn, sconn, usethcon, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
     sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
@@ -206,14 +204,12 @@ protected:
     void workflowUpdate();
     void themeChanged  ();
     void useThemeChanged();
-    void fontChanged   ();
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();
     void bundledProfilesChanged ();
     void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme);
-    void switchFontTo  (Glib::ustring newFont);
     bool splashClosed(GdkEventAny* event);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);

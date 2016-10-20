@@ -309,7 +309,6 @@ public:
     int         saveToFile      (Glib::ustring fname);
     static bool load            ();
     static void save            ();
-    static Glib::ustring formatFontName (Glib::ustring font);
 
     // if multiUser=false, send back the global profile path
     Glib::ustring getPreferredProfilePath();

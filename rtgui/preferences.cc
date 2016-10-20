@@ -724,7 +724,6 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     autoMonProfileToggled();
 #endif
 
-    Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
     Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
 
     view = Gtk::manage (new Gtk::ComboBoxText ());
@@ -912,20 +911,10 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     Gtk::Label* fontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT") + ":") );
     setExpandAlignProperties(fontlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    fontbutton = Gtk::manage( new Gtk::FontButton ());
-    setExpandAlignProperties(fontbutton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    fontbutton->set_use_size(true);
-    fontbutton->set_font_name(options.font);
 
     themeGrid->attach_next_to(*themelab, *chUseSystemTheme, Gtk::POS_BOTTOM, 1, 1);
     themeGrid->attach_next_to(*theme, *themelab, Gtk::POS_RIGHT, 1, 1);
     themeGrid->attach_next_to(*fontlab, *theme, Gtk::POS_RIGHT, 1, 1);
-    themeGrid->attach_next_to(*fontbutton, *fontlab, Gtk::POS_RIGHT, 1, 1);
-    Gtk::Label* cpfontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT_COLPICKER") + ":") );
-    colorPickerFontButton = Gtk::manage( new Gtk::FontButton ());
-    colorPickerFontButton->set_use_size(true);
-    colorPickerFontButton->set_font_name(options.colorPickerFont);
-
 
     Gtk::Grid* cropcolorGrid = Gtk::manage( new Gtk::Grid () );
     cropcolorGrid->set_column_spacing(4);
@@ -1081,7 +1070,6 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
-    fconn = fontbutton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
     usethcon = chUseSystemTheme->signal_clicked ().connect( sigc::mem_fun(*this, &Preferences::useThemeChanged) );
 
     return mvbsd;
@@ -1419,8 +1407,6 @@ void Preferences::storePreferences ()
     moptions.navGuideBrush[2] = NavGuideCol.get_blue();
     moptions.navGuideBrush[3] = butNavGuideCol->get_alpha() / 65535.0;
 
-    moptions.font            = fontbutton->get_font_name();
-    moptions.colorPickerFont = colorPickerFontButton->get_font_name();
 #ifdef WIN32
     moptions.gimpDir        = gimpDir->get_filename ();
     moptions.psDir          = psDir->get_filename ();
@@ -1636,8 +1622,6 @@ void Preferences::fillPreferences ()
     butNavGuideCol->set_rgba(NavGuideCol);
     butNavGuideCol->set_alpha ( (unsigned short)(moptions.navGuideBrush[3] * 65535.0));
 
-    fontbutton->set_font_name(moptions.font);
-    colorPickerFontButton->set_font_name(moptions.colorPickerFont);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
     showExpComp->set_active (moptions.fbShowExpComp);
@@ -1830,11 +1814,6 @@ void Preferences::cancelPressed ()
         switchThemeTo(options.theme);
     }
 
-    // set the initial font back
-    if (fontbutton->get_font_name() != options.font) {
-        switchFontTo(options.font);
-    }
-
     // update the profileStore
     if (useBundledProfiles->get_active () != options.useBundledProfiles) {
         // we have to rescan with the old value;
@@ -2005,12 +1984,6 @@ void Preferences::restoreValue()
     storedValueImg = "";
 }
 
-void Preferences::fontChanged ()
-{
-
-    switchFontTo(fontbutton->get_font_name());
-}
-
 void Preferences::switchThemeTo(Glib::ustring newTheme)
 {
 
@@ -2076,34 +2049,13 @@ void Preferences::workflowUpdate ()
 
 }
 
-void Preferences::switchFontTo(Glib::ustring newFont)
-{
-
-    if (newFont != "default") {
-        if (!cssForced) {
-            cssForced = Gtk::CssProvider::create();
-        }
-
-        try {
-            newFont = Options::formatFontName(newFont);
-            cssForced->load_from_data (Glib::ustring::compose("* { %1 }", newFont));
-        } catch (Glib::Error &err) {
-            printf("Error: \"%s\"\n", err.what().c_str());
-        } catch (...) {
-            printf("Error: Can't find the font named \"%s\"\n", newFont.c_str());
-        }
-    }
-}
-
 void Preferences::useThemeChanged()
 {
 
     if(!chUseSystemTheme->get_active()) {
         theme->set_sensitive(true);
-        fontbutton->set_sensitive(true);
     } else {
         theme->set_sensitive(false);
-        fontbutton->set_sensitive(false);
     }
 }
 

@@ -23,37 +23,9 @@
 using namespace rtengine::procparams;
 
 
-ToolVBox::ToolVBox()
-{
-    updateStyle();
-}
+ToolVBox::ToolVBox() {}
 
-void ToolVBox::updateStyle()
-{
-    set_spacing(1);       // Vertical space between tools
-    set_border_width(3);  // Space separating the tab's frame and the tools
-}
-
-void ToolVBox::on_style_updated ()
-{
-    updateStyle();
-}
-
-ToolParamBlock::ToolParamBlock()
-{
-    updateStyle();
-}
-
-void ToolParamBlock::updateStyle()
-{
-    set_spacing(2);       // Vertical space between parameters in a single tool
-    set_border_width(5);  // Space separating the parameters of a tool and its surrounding frame
-}
-
-void ToolParamBlock::on_style_updated ()
-{
-    updateStyle();
-}
+ToolParamBlock::ToolParamBlock() {}
 
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(NULL), exp(NULL), lastEnabled(true)
 {

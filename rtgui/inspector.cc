@@ -84,8 +84,7 @@ int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
 Inspector::Inspector () : currImage(NULL), zoom(0.0), active(false)
 {
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->add_class(GTK_STYLE_CLASS_BACKGROUND);
-    style->add_class(GTK_STYLE_CLASS_FLAT);
+    set_name("Inspector");
 }
 
 Inspector::~Inspector()

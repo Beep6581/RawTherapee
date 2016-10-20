@@ -291,8 +291,6 @@ Glib::ustring Options::findProfilePath (Glib::ustring &profName)
 void Options::setDefaults ()
 {
 
-    font = "sans 8";
-    colorPickerFont = "sans 8";
     windowWidth = 1200;
     windowHeight = 680;
     windowX = 0;
@@ -1240,14 +1238,6 @@ int Options::readFromFile (Glib::ustring fname)
             }
 
             if (keyFile.has_group ("GUI")) {
-                if (keyFile.has_key ("GUI", "Font")) {
-                    font            = keyFile.get_string  ("GUI", "Font");
-                }
-
-                if (keyFile.has_key ("GUI", "ColorPickerFont")) {
-                    colorPickerFont = keyFile.get_string  ("GUI", "ColorPickerFont");
-                }
-
                 if (keyFile.has_key ("GUI", "WindowWidth")) {
                     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
                 }
@@ -1981,8 +1971,6 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer ("Profiles", "CustomProfileBuilderKeys", CPBKeys);
 
-        keyFile.set_string  ("GUI", "Font", font);
-        keyFile.set_string  ("GUI", "ColorPickerFont", colorPickerFont);
         keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer ("GUI", "WindowX", windowX);
@@ -2335,29 +2323,6 @@ void Options::save ()
     } else {
         options.saveToFile (Glib::build_filename (rtdir, "options"));
     }
-}
-
-Glib::ustring Options::formatFontName (Glib::ustring font)
-{
-    if (font.empty()) {
-        return "";
-    }
-
-    // Reformatting the font parameter
-    Glib::ustring sFont;
-
-    Pango::FontDescription fd(font);
-    sFont = "font-family: \"" + fd.get_family() + "\";";
-    if (fd.get_size()) {
-        sFont += "font-size: " + Glib::ustring::compose("%1pt", 8 /*fd.get_size()*/); // + (fd.get_size_is_absolute() ? "px;" : "pt;");
-    }
-    if (fd.get_style() == Pango::STYLE_ITALIC) {
-        sFont += "font-style: italic;";
-    }
-    if (fd.get_weight() > Pango::WEIGHT_NORMAL) {
-        sFont += "font-weight: bold;";
-    }
-    return sFont;
 }
 
 /*
