@@ -678,7 +678,7 @@ void Crop::update (int todo)
     createBuffer(cropw, croph);
 
     // transform
-    if (needstransform) {
+    if (needstransform || ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) {
         if (!transCrop) {
             transCrop = new Imagefloat (cropw, croph);
         }
@@ -687,6 +687,8 @@ void Crop::update (int todo)
             parent->ipf.transform (baseCrop, transCrop, cropx / skip, cropy / skip, trafx / skip, trafy / skip, SKIPS(parent->fw, skip), SKIPS(parent->fh, skip), parent->getFullWidth(), parent->getFullHeight(),
                                    parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(),
                                    parent->imgsrc->getMetaData()->getFocusDist(), parent->imgsrc->getRotateDegree(), false);
+        else
+            baseCrop->copyData(transCrop);
 
         if (transCrop) {
             baseCrop = transCrop;
@@ -1106,8 +1108,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     int orx, ory, orw, orh;
     ProcParams& params = parent->params;
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
-
-    int tr = getCoarseBitMask(params.coarse);
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;

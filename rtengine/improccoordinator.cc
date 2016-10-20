@@ -372,18 +372,20 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     // Remove transformation if unneeded
     bool needstransform = ipf.needsTransform();
 
-    if (!needstransform && orig_prev != oprevi) {
+    if (!needstransform && !((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) && orig_prev != oprevi) {
         delete oprevi;
         oprevi = orig_prev;
     }
 
-    if (needstransform && orig_prev == oprevi) {
-        oprevi = new Imagefloat (pW, pH);
+    if ((needstransform || ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
+        if(!oprevi || oprevi == orig_prev)
+            oprevi = new Imagefloat (pW, pH);
+        if ((todo & M_TRANSFORM) && needstransform)
+            ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
+                           imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
+        else
+            orig_prev->copyData(oprevi);
     }
-
-    if ((todo & M_TRANSFORM) && needstransform)
-        ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
-                       imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
 
     if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = oprevi->getWidth();
