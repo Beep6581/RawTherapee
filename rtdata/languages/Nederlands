@@ -1375,7 +1375,6 @@ TP_DIRPYRDENOISE_CUR;Curve
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Vergroot (vermenigvuldigt) de waarde van alle chrominantie schuifbalken.\nMet deze curve kun je de sterkte aanpassen van de chromatische ruisonderdrukking. Bijvoorbeeld door de werking te vergroten in gebieden met lage verzadiging en te verminderen in gebieden met hoge verzadiging.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Luminantie ruisonderdrukking. Werkt niet lineair maar modulerend
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kan worden gebruikt op raw en niet-raw afbeeldingen.\n\nVoor niet-raw afbeeldingen geldt dat ruisonderdrukking van de luminantie afhangt van het gamma van het invoerprofiel. Standaard wordt uitgegaan van het gamma van sRGB. Als de afbeelding dus een kleurprofiel heeft met een afwijkend gamma, zal de luminantie ruisonderdrukking verschillen.
 TP_DIRPYRDENOISE_ENH;Verbeteren
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Verbetert de ruisonderdrukking, maar vergroot de verwerkingstijd met ongeveer 20%
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1390,13 +1389,11 @@ TP_DIRPYRDENOISE_LPLABM;Gewogen L* (weinig) + a*b* (normaal)
 TP_DIRPYRDENOISE_LTYPE;Type gereedschap
 TP_DIRPYRDENOISE_LUMA;Luminantie
 TP_DIRPYRDENOISE_LUMAFR;Luminantie
-TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet voor Luminantie- en Fourier transformatie voor betere details bij luminantie
 TP_DIRPYRDENOISE_MAN;Handmatig
 TP_DIRPYRDENOISE_MANU;Handmatig
 TP_DIRPYRDENOISE_MED;Mediaan filter
 TP_DIRPYRDENOISE_MEDMETHOD;Methode
 TP_DIRPYRDENOISE_MEDTYPE;Type
-TP_DIRPYRDENOISE_MED_TOOLTIP;Mediaan ruisonderdrukking
 TP_DIRPYRDENOISE_METHOD;Methode
 TP_DIRPYRDENOISE_METHOD11;Kwaliteit
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;De kwaliteit kan worden aangepast aan de hoeveelheid ruis. \nHoog verbetert de ruisonderdrukking, maar verlengt de verwerkingstijd

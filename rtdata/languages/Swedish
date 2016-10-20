@@ -1248,7 +1248,6 @@ TP_DIRPYRDENOISE_CHROMA;Kroma
 TP_DIRPYRDENOISE_CHROMAFR;Krominans
 TP_DIRPYRDENOISE_CUR;Kurva
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Kroma
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kan användas på rå- och icke-råbilder.\n\nFör icke-råbilder beror brusreduceringen (~luminans) på in-profilens gamma. Gamma hos sRGB antas, och således: om bildens profil har ett annat gammavärde, så kommer brusreduceringen att variera.
 TP_DIRPYRDENOISE_ENH;Förbättrat läge
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Ökar kvaliteten på brusreduceringen till priset av 20 % längre beräkningstid
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1847,11 +1846,9 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modulates action of 'Luminance' denoise
 !TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
-!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 !TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.

@@ -1344,7 +1344,6 @@ TP_DIRPYRDENOISE_CUR;カーブ
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;色度
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;色度のスライダーの値を全て増やします（乗数）\nこれは色度に応じて色ノイズの低減効果の強弱を調節するカーブです。例えば、色度の低い部分で低減効果を高めるとか、色度の高い部分で低減効果を緩める、という具合です。
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;‘輝度’の位置でノイズ低減の強さを加減します
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;rawと非raw画像に使用することができます\n\n非raw画像の場合、輝度ノイズ低減は、入力カラープロファイルのガンマを使って行います。その際sRGBのガンマが想定されていますので、入力画像が異なるガンマのカラープロファイルであれば、輝度ノイズ低減の結果も異なります。
 TP_DIRPYRDENOISE_ENH;強化モード
 TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効果を髙めますが、代わりに演算時間が約20%増えます。
 TP_DIRPYRDENOISE_GAMMA;ガンマ
@@ -1359,13 +1358,11 @@ TP_DIRPYRDENOISE_LPLABM;加重平均 L* (少なめ) + a*b* (普通)
 TP_DIRPYRDENOISE_LTYPE;輝度ノイズの調整法
 TP_DIRPYRDENOISE_LUMA;輝度
 TP_DIRPYRDENOISE_LUMAFR;輝度ノイズ
-TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;輝度の低減で、全体的にはウェーブレット変換、ディテールにはフーリエ変換を使います
 TP_DIRPYRDENOISE_MAN;手動
 TP_DIRPYRDENOISE_MANU;手動
 TP_DIRPYRDENOISE_MED;メディアンフィルター
 TP_DIRPYRDENOISE_MEDMETHOD;方式
 TP_DIRPYRDENOISE_MEDTYPE;フィルターの種類
-TP_DIRPYRDENOISE_MED_TOOLTIP;メディアンフィルターによるノイズ低減を有効にします
 TP_DIRPYRDENOISE_METHOD;方式
 TP_DIRPYRDENOISE_METHOD11;ノイズ低減の質
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;ノイズの状態に応じて低減効果の質を選べます：1-標準　2－高い\n2の方がノイズ低減効果は高くなりますが、その分処理時間が増えます。

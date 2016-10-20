@@ -973,7 +973,6 @@ TP_DEFRINGE_RADIUS;Радиус
 TP_DEFRINGE_THRESHOLD;Порог
 TP_DIRPYRDENOISE_BLUE;Цветность: синий-жёлтый
 TP_DIRPYRDENOISE_CHROMA;Цветность
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Может использоваться как для raw, так и для обычных изображений.\n\nДля не-raw файлов подавление яркостного шума зависит от гаммы входящего цветового профиля, причём подразумевается гамма sRGB. Поэтому, если снимок имеет цветовой профиль с иной гаммой, результаты операции могут варьировать.
 TP_DIRPYRDENOISE_ENH;Улучшенный режим
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Улучшает качество шумоподавления путём увеличения времени обработки на 20%.
 TP_DIRPYRDENOISE_GAMMA;Гамма
@@ -1721,13 +1720,11 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
-!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 !TP_DIRPYRDENOISE_MAN;Manual
 !TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.

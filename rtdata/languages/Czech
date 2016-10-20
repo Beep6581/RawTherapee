@@ -1414,7 +1414,6 @@ TP_DIRPYRDENOISE_CUR;Křivka
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Barevnost
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Zvýší (násobí) hodnoty všech barevných posuvníků.\nKřivka vám umožní nastavit sílu redukce barevného šumu jako funkci barvy. Například pro zvýšení účinku v oblastech s nízkým nasycení a snížení v oblastech s vysokým nasycením.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduluje akci 'jasového' odstranění šumu
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Může být použito jak pro raw tak i pro ostatní obrázky.\n\nPokud je použito pro ostatní obrázky, závisí redukce šumu dle jasu na gamě vstupního barevného profilu. Předpokládá se sRGB gama a proto se může výsledek u obrázků s rozdílnou gamou barevného profilu lišit.
 TP_DIRPYRDENOISE_ENH;Vylepšený režim
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Zvýší kvalitu odstranění šumu, ale zároveň prodlouží dobu zpracování o 20%.
 TP_DIRPYRDENOISE_GAMMA;Gama
@@ -1429,13 +1428,11 @@ TP_DIRPYRDENOISE_LPLABM;Vyvážená L* (trochu) + a*b* (normální)
 TP_DIRPYRDENOISE_LTYPE;Ovládání jasu
 TP_DIRPYRDENOISE_LUMA;Jas
 TP_DIRPYRDENOISE_LUMAFR;Jas
-TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Vlnková transformace na svítivost a Fourierova transformace pro detail svítivosti
 TP_DIRPYRDENOISE_MAN;Ručně
 TP_DIRPYRDENOISE_MANU;Ručně
 TP_DIRPYRDENOISE_MED;Filtr medián
 TP_DIRPYRDENOISE_MEDMETHOD;Metoda mediánu
 TP_DIRPYRDENOISE_MEDTYPE;Typ mediánu
-TP_DIRPYRDENOISE_MED_TOOLTIP;Povolit odstranění šumu Medián
 TP_DIRPYRDENOISE_METHOD;Metoda
 TP_DIRPYRDENOISE_METHOD11;Kvalita
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Kvalita může být přizpůsobena vzoru šumu. Nastavení "Vysoká" vylepší efekt redukce šumu za cenu navýšení času zpracování.

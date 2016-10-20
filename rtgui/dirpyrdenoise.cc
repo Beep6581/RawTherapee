@@ -36,12 +36,9 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     nextred = 0.;
     nextblue = 0.;
 
-    setEnabledTooltipMarkup(M("TP_DIRPYRDENOISE_ENABLED_TOOLTIP"));
-
     std::vector<double> defaultCurve;
 
     Gtk::Frame* lumaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_LUMAFR")) );
-    lumaFrame->set_tooltip_text(M("TP_DIRPYRDENOISE_LUMAFR_TOOLTIP"));
     lumaFrame->set_border_width(0);
     lumaFrame->set_label_align(0.025, 0.5);
 
@@ -200,7 +197,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     median = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_MED") + ":"));
     median->set_active (true);
-    median->set_tooltip_text (M("TP_DIRPYRDENOISE_MED_TOOLTIP"));
     medianFrame->set_label_widget(*median);
 
 

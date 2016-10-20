@@ -1402,7 +1402,6 @@ TP_DIRPYRDENOISE_CUR;Kurve
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Farbe
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Erhöht den Wert aller Chrominanz-Regler und regelt die Chrominanz-Rauschreduzierung als Funktion der Chromatizität. Die Intensität kann über Kontrollpunkte für schwach bis intensiv gesättigte Farben unterschiedlich eingestellt werden.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduliert die Wirkung der Luminanz-Rauschreduzierung
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kann für RAW und Nicht-RAW-Bilder verwendet werden.\n\nBei Nicht-Raw-Bildern hängt die Rauschreduzierung der Luminanz vom Gamma des Eingangsfarbprofils ab. Es wird ein sRGB-Gamma angenommen, daher wird die Luminanz-Rauschreduzierung variieren, wenn das Eingangsbild ein Farbprofil mit anderem Gamma verwendet.
 TP_DIRPYRDENOISE_ENH;Erweiterter Modus
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Erhöht die Qualität der Rauschreduzierung auf Kosten einer um 20% erhöhten Verarbeitungszeit.
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1417,13 +1416,11 @@ TP_DIRPYRDENOISE_LPLABM;Gewichtet L* (wenig) + a*b* (normal)
 TP_DIRPYRDENOISE_LTYPE;Luminanzkontrolle
 TP_DIRPYRDENOISE_LUMA;Luminanz
 TP_DIRPYRDENOISE_LUMAFR;Luminanz
-TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet mit Luminanz- und Fourierumwandlung für Luminanzdetails.
 TP_DIRPYRDENOISE_MAN;Benutzerdefiniert
 TP_DIRPYRDENOISE_MANU;Benutzerdefiniert
 TP_DIRPYRDENOISE_MED;Medianfilter
 TP_DIRPYRDENOISE_MEDMETHOD;Medianmethode
 TP_DIRPYRDENOISE_MEDTYPE;Mediantyp
-TP_DIRPYRDENOISE_MED_TOOLTIP;Medianrauschreduzierung einschalten
 TP_DIRPYRDENOISE_METHOD;Methode
 TP_DIRPYRDENOISE_METHOD11;Qualität
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Einstellung der Qualität der Rauschreduzierung. Die Einstellung “Hoch“ verbessert die Rauschreduzierung auf Kosten der Verarbeitungszeit.

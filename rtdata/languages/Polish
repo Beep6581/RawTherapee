@@ -1120,7 +1120,6 @@ TP_DEFRINGE_THRESHOLD;Próg
 TP_DIRPYRDENOISE_BLUE;Chrominancja - Błękit-żółć
 TP_DIRPYRDENOISE_CHROMA;Chrominancja - Główna
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduluje działanie usuwania szumów luminancji
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Działa z obrazami typu raw i nie-raw.\n\nDla obrazów typu raw, działanie redukcji szumów luminancji zależy od gammy wejściowego profilu ICC. Z góry założona jest gamma sRGB, zatem jeśli obraz wejściowy ma profil o innej gammie można się spodziewać zmian w działaniu rekucji szumów luminancji.
 TP_DIRPYRDENOISE_ENH;Tryb ulepszony
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Ulepsza jakość usuwania szumów kosztem około 20% wzrostu czasu przetwarzania.
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1134,7 +1133,6 @@ TP_DIRPYRDENOISE_LUMA;Luminacja
 TP_DIRPYRDENOISE_MED;Filtr Mediana
 TP_DIRPYRDENOISE_MEDMETHOD;Metoda mediana
 TP_DIRPYRDENOISE_MEDTYPE;Rodzaj mediana
-TP_DIRPYRDENOISE_MED_TOOLTIP;Włącz odszumianie metodą mediana.
 TP_DIRPYRDENOISE_METHOD;Metoda
 TP_DIRPYRDENOISE_METHOD11;Jakość
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Jakość może zostać dopasowana do wzoru szumów. Ustawienie "wysoka" ulepsza odszumianie około 20% wzrostu czasu przetwarzania.
@@ -1766,7 +1764,6 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
-!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 !TP_DIRPYRDENOISE_MAN;Manual
 !TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.

@@ -1080,7 +1080,6 @@ TP_DEFRINGE_THRESHOLD;Праг
 TP_DETAIL_AMOUNT;Количина
 TP_DIRPYRDENOISE_BLUE;Хроминанса: Плава-Жута
 TP_DIRPYRDENOISE_CHROMA;Боја
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Може се употребити за raw или не-raw слике.\n\nЗа слике које нису у raw формату уклањање шума луминансе зависи од гаме улазног профила боја. Подразумева се употреба sRGB профила, па ће ефекат уклањања шума луминансе бити различит уколико се користи профил боја са другом вредношћу гаме.
 TP_DIRPYRDENOISE_ENH;Побољшани режим
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Повећава квалитет уклањања шума на уштрб око 20% времена за обраду.
 TP_DIRPYRDENOISE_GAMMA;Гама
@@ -1854,13 +1853,11 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
-!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 !TP_DIRPYRDENOISE_MAN;Manual
 !TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
 !TP_DIRPYRDENOISE_METM_TOOLTIP;When using the "Luminance only" and "L*a*b*" methods, median filtering will be performed just after the wavelet step in the noise reduction pipeline.\nWhen using the "RGB" mode, it will be performed at the very end of the noise reduction pipeline.

@@ -1165,7 +1165,6 @@ TP_DEFRINGE_THRESHOLD;Umbral
 TP_DIRPYRDENOISE_BLUE;Crominancia: Azul-Amarillo
 TP_DIRPYRDENOISE_CHROMA;Crominancia: Maestra
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Modula la acción de eliminación de ruido 'de luminancia'
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Puede usarse en imágenes Raw y no Raw.\n\nPara imágenes no Raw la reducción del ruido en la luminancia depende de la gamma en el perfil de color de entrada. Se asume la gamma de sRGB, de manera que si la imagen tiene un perfil de color con otra gamma, la reducción del ruido en la luminancia va a variar.
 TP_DIRPYRDENOISE_ENH;Modo mejorado
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Incrementa la calidad de la Reducción de Ruido a costa de un incremento de 20% en el tiempo de procesamiento
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1179,7 +1178,6 @@ TP_DIRPYRDENOISE_LUMA;Luminancia
 TP_DIRPYRDENOISE_MED;Median
 TP_DIRPYRDENOISE_MEDMETHOD;Método Median
 TP_DIRPYRDENOISE_MEDTYPE;Tipo Median
-TP_DIRPYRDENOISE_MED_TOOLTIP;Eliminador de ruido Median activado
 TP_DIRPYRDENOISE_METHOD;Método
 TP_DIRPYRDENOISE_METHOD11;Calidad
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;La Calidad puede ser adaptada a un patrón de ruido. Al seleccionar "Alto" se incrementa el efecto de reducción de ruido a costa de prolongar el tiempo de procesamiento.
@@ -1818,7 +1816,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !TP_DIRPYRDENOISE_LPLABM;Weighted L* (little) + a*b* (normal)
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
-!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 !TP_DIRPYRDENOISE_MAN;Manual
 !TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
