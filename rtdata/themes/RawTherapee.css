@@ -110,6 +110,7 @@ box {
 scale {
 	padding: 0;
 	min-height: 5px;
+	margin: 0 6px 0 6px;  /* have to be half of "scale slider" >> "min-width" for horizontalmargin */
 }
 
 scale slider {
