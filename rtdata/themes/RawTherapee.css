@@ -88,10 +88,10 @@ eventbox .frame {
     border-color: #565656;
 }
 
-window {
+window decoration {
 	padding: 0;
 	margin: 0;
-	border: none;
+	box-shadow: 0 0;
 }
 
 button  {
