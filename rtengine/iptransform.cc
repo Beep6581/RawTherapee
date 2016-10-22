@@ -24,8 +24,7 @@
 #include "mytime.h"
 #include "rt_math.h"
 #include "sleef.c"
-#define BENCHMARK
-#include "StopWatch.h"
+
 using namespace std;
 
 namespace
@@ -644,7 +643,7 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
 
 void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH)
 {
-    BENCHFUN
+
     const bool applyVignetting = needsVignetting();
     const bool applyGradient = needsGradient();
     const bool applyPCVignetting = needsPCVignetting();
