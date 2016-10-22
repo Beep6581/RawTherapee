@@ -380,6 +380,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 
     expsettings->add(*settingsVBox);
+    expsettings->setLevel(2);
 
     neutrHBox = Gtk::manage (new Gtk::HBox ());
     neutrHBox->set_border_width (2);

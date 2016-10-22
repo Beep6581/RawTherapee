@@ -741,7 +741,7 @@ void ThumbBrowserBase::on_style_updated ()
 ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(NULL), dirty(true)
 {
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    set_name("Thumbnail");
+    set_name("FileCatalog");
 }
 
 void ThumbBrowserBase::Internal::setParent (ThumbBrowserBase* p)

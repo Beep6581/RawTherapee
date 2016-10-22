@@ -67,13 +67,26 @@ frame {
     padding: 4px;
 }
 
-frame label {
+frame > label {
     color: #D8D8D8;
 }
 
 #FileBrowser {
     padding: 2px;
     margin: 0px;
+}
+
+#FileCatalog {
+    background-color: #393939;
+}
+#FileCatalog:selected {
+    background-color: #565656;
+}
+
+#BeforeAfterContainer frame {
+    background-color: #262626;
+    padding: 0;
+    margin: 2px;
 }
 
 /* Frames in Preferences */
@@ -84,7 +97,7 @@ frame label {
 }
 
 /* Frames in the toolbox. Not MyExpander frames. */
-eventbox .frame {
+eventbox.frame {
     border-color: #565656;
 }
 
@@ -92,10 +105,23 @@ window decoration {
 	padding: 0;
 	margin: 0;
 	box-shadow: 0 0;
+	border-radius: 0 0 0 0;
 }
 
 button  {
 	padding: 0;
+	min-height: 5px;
+	min-width: 5px;
+	background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+button.flat  {
+	background-image: none;
+}
+button:hover  {
+	background-image: linear-gradient(#444444, #3E3E3E, #393939);
+}
+
+combobox {
 	min-height: 5px;
 	min-width: 5px;
 }
@@ -259,7 +285,13 @@ menuitem {
     background-color: #363636;
 }
 
-#ExpanderBox frame {
+#ExpanderBox frame,
+#ExpanderBox2 frame,
+#ExpanderBox3 frame {
+    padding: 2px 0 0 0;
+	border-style: none;
+}
+#ExpanderBox frame > border {
     background-color: #3B3B3B;
     border-style: solid;
     border-width: 1px;
@@ -269,11 +301,29 @@ menuitem {
     padding: 3px;
 }
 
+#ExpanderBox frame > label, #ExpanderBox frame frame > label,
+#ExpanderBox2 frame > label, #ExpanderBox2 frame frame > label,
+#ExpanderBox3 frame > label, #ExpanderBox3 frame frame > label {
+	margin-left: 7pt;
+	margin-top: 0;
+}
+#ExpanderBox frame > box, #ExpanderBox frame frame > box,
+#ExpanderBox2 frame > box, #ExpanderBox2 frame frame > box,
+#ExpanderBox3 frame > box, #ExpanderBox3 frame frame > box {
+	margin: 2px;
+}
+
+#ExpanderBox > box > checkbutton, #ExpanderBox > box > box,
+#ExpanderBox2 > box > checkbutton, #ExpanderBox2 > box > box,
+#ExpanderBox3 > box > checkbutton, #ExpanderBox3 > box > box {
+	margin-top: 3px;
+}
+
 #ExpanderBox frame drawingarea {
     background-color: #3B3B3B;
 }
 
-#ExpanderBox frame frame {
+#ExpanderBox frame frame > border {
     background-color: #414141;
     border: 1px solid #373737;
     border-radius: 4px;
@@ -298,7 +348,7 @@ menuitem {
     background-color: #3B3B3B;
 }
 
-#ExpanderBox2 frame {
+#ExpanderBox2 frame > border {
     background-color: #414141;
     border: 1px solid #373737;
     border-radius: 4px;
@@ -310,7 +360,7 @@ menuitem {
     background-color: #414141;
 }
 
-#ExpanderBox2 frame frame {
+#ExpanderBox2 frame frame > border {
     background-color: #474747;
     border: 1px solid #3D3D3D;
     border-radius: 4px;
@@ -455,16 +505,17 @@ paned > separator {
 
 #RightNotebook header {
     /* OK */
-    background-color: #393939;
+    background-color: #2A2A2A;
 }
 #RightNotebook tabs {
     /* OK */
-    background-color: #393939;
+    background-color: #2A2A2A;
 	padding-bottom: 5px;
 }
 #RightNotebook tab:hover {
     /* OK */
     background-color: #505050;
+    color: #D6D6D6;
 }
 #RightNotebook tab:active {
     /* OK */

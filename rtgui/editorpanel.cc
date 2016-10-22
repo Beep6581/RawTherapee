@@ -581,11 +581,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     viewpaned->pack2 (*editbox, true, true);
 
-
-    Gtk::Frame* vbfr = Gtk::manage (new Gtk::Frame ());
-    vbfr->add (*viewpaned);
-    vbfr->set_size_request (100, 250);
-    hpanedl->pack2 (*vbfr, true, true);
+    hpanedl->pack2 (*viewpaned, true, true);
 
     hpanedr->pack1 (*hpanedl, true, false);
     hpanedr->pack2 (*vboxright, false, false);
