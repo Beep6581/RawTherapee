@@ -100,6 +100,7 @@ public:
     float   getZoomFactor ();
     double  getFitZoom    ();
     double  getFitCropZoom();
+    bool    isFullDisplay ();
     void    setWSize      (int w, int h);
     void    getWSize      (int& w, int &h);
     void    getAnchorPosition (int& x, int& y);

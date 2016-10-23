@@ -110,6 +110,16 @@ void CropHandler::sizeChanged (int x, int y, int ow, int oh)    // the ipc notif
         */
 }
 
+bool CropHandler::isFullDisplay ()
+{
+    int w, h;
+    getFullImageSize(w, h);
+    if (!w) {
+        return false;
+    }
+    return cropW == w && cropH == h;
+}
+
 double CropHandler::getFitCropZoom ()
 {
     double z1 = (double) wh / cropParams.h;

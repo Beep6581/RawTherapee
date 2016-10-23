@@ -1728,7 +1728,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             if (cropHandler.cropParams.enabled) {
                 int cropX, cropY;
                 cropHandler.getPosition (cropX, cropY);
-                drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom() );
+                drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, cropHandler.isFullDisplay ());
             }
 
             if (observedCropWin) {
@@ -1805,7 +1805,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x + imgAreaX + imgX, y + imgAreaY + imgY, rtengine::min (rough->get_width (), imgAreaW-imgX), rtengine::min (rough->get_height (), imgAreaH-imgY), Gdk::RGB_DITHER_NORMAL, 0, 0);
 
                 if (cropHandler.cropParams.enabled) {
-                    drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom());
+                    drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, cropHandler.isFullDisplay ());
                 }
 
                 if (observedCropWin) {
