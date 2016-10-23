@@ -156,14 +156,15 @@ bool SHCSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     */
 
     // draw the box's borders
-    cr->set_line_width (1.);
-    c = style->get_border_color(state);
-    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-    cr->rectangle (leftMargin + 0.5, 0.5, w - 1, int(float(h) * 5.5f / 7.f + 0.5f) + 1);
-    cr->stroke ();
+    style->render_frame(cr, leftMargin + 0.5, 0.5, w - 1, int(float(h) * 5.5f / 7.f + 0.5f) + 1);
+    //cr->set_line_width (1.);
+    //c = style->get_border_color(state);
+    //cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+    //cr->rectangle (leftMargin + 0.5, 0.5, w - 1, int(float(h) * 5.5f / 7.f + 0.5f) + 1);
+    //cr->stroke ();
 
     // draw sliders
-    //cr->set_line_width (1.);
+    cr->set_line_width (1.);
     for (int i = 0; i < 3; i++) {
         if (i == movingPosition) {
             style->set_state(Gtk::STATE_FLAG_ACTIVE);

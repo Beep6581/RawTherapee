@@ -38,6 +38,7 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
     edited_point = -1;
 
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
+    get_style_context()->add_class("drawingarea");
 
     mcih = new MyCurveIdleHelper;
     mcih->myCurve = this;

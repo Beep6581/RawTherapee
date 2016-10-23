@@ -95,7 +95,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     slider = Gtk::manage (new MyHScale ());
     setExpandAlignProperties(slider, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     slider->set_draw_value (false);
-    slider->set_has_origin(false);  // ------------------ This will remove the colored part on the left of the slider's knob
+    //slider->set_has_origin(false);  // ------------------ This will remove the colored part on the left of the slider's knob
 
     if (vlabel.empty()) {
         // No label, everything goes in a single row

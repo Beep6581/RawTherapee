@@ -25,6 +25,7 @@ PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), image
     zoom(0.0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
 {
     set_name("PreviewWindow");
+    get_style_context()->add_class("drawingarea");
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }
 
@@ -60,12 +61,14 @@ void PreviewWindow::updatePreviewImage ()
         return;
     }
 
-    backBuffer = Cairo::RefPtr<BackBuffer> ( new BackBuffer(W, H, wind) );
+    backBuffer = Cairo::RefPtr<BackBuffer> ( new BackBuffer(W, H, Cairo::FORMAT_ARGB32) );
     Cairo::RefPtr<Cairo::ImageSurface> surface = backBuffer->getSurface();
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
-    style->render_background(cc, 0, 0, W, H);
-    Gdk::RGBA c = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    cc->set_source_rgba (0., 0., 0., 0.);
+    cc->set_operator (Cairo::OPERATOR_CLEAR);
+    cc->paint ();
+    cc->set_operator (Cairo::OPERATOR_OVER);
     cc->set_antialias(Cairo::ANTIALIAS_NONE);
     cc->set_line_join(Cairo::LINE_JOIN_MITER);
 
@@ -86,7 +89,6 @@ void PreviewWindow::updatePreviewImage ()
             }
         }
     }
-    style->render_frame (cc, 0, 0, W, H);
 }
 
 void PreviewWindow::setPreviewHandler (PreviewHandler* ph)
@@ -108,6 +110,8 @@ void PreviewWindow::on_resized (Gtk::Allocation& req)
 
 bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
+    const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->render_background(cr, 0, 0, get_width(), get_height());
 
     if (!backBuffer) {
         return true;
@@ -154,6 +158,8 @@ bool PreviewWindow::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
             cr->stroke ();
         }
     }
+
+    style->render_frame (cr, 0, 0, get_width(), get_height());
 
     return true;
 }

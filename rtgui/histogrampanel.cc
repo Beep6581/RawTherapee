@@ -401,6 +401,7 @@ HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
     val(0), r(0), g(0), b(0), frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false), parent(nullptr)
 {
 
+    get_style_context()->add_class("drawingarea");
     set_name("HistogramRGBArea");
 
     harih = new HistogramRGBAreaIdleHelper;
@@ -488,13 +489,16 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring prof
     window->get_geometry(winx, winy, winw, winh);
 
     // This will create or update the size of the BackBuffer::surface
-    setDrawRectangle(window, 0, 0, winw, winh, true);
+    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, winw, winh, true);
 
     if (surface)  {
         Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
         Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
-        style->render_background (cc, 0, 0, surface->get_width(), surface->get_height());
+        cc->set_source_rgba (0., 0., 0., 0.);
+        cc->set_operator (Cairo::OPERATOR_CLEAR);
+        cc->paint ();
+        cc->set_operator (Cairo::OPERATOR_OVER);
 
         cc->set_antialias(Cairo::ANTIALIAS_NONE);
         cc->set_line_width (1.0);
@@ -547,8 +551,6 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, Glib::ustring prof
                 }
             }
         }
-
-        style->render_frame (cc, 0, 0, surface->get_width(), surface->get_height());
     }
 
     setDirty(false);
@@ -786,6 +788,9 @@ void HistogramRGBArea::on_realize ()
 bool HistogramRGBArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
+    const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->render_background(cr, 0, 0, get_width(), get_height());
+
     // on_realize & updateBackBuffer have to be called before
     if (surface) {
         if (isDirty()) { // not sure this could happen...
@@ -794,6 +799,8 @@ bool HistogramRGBArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 
         copySurface(cr, NULL);
     }
+
+    style->render_frame (cr, 0, 0, get_width(), get_height());
 
     return true;
 }
@@ -822,6 +829,7 @@ HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by 
     bhist(256);
     chist(256);
 
+    get_style_context()->add_class("drawingarea");
     set_name("HistogramArea");
 
     haih = new HistogramAreaIdleHelper;
@@ -951,7 +959,7 @@ SSEFUNCTION void HistogramArea::updateBackBuffer ()
     window->get_geometry(winx, winy, winw, winh);
 
     // This will create or update the size of the BackBuffer::surface
-    setDrawRectangle(window, 0, 0, winw, winh, true);
+    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, winw, winh, true);
 
     Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
@@ -1211,16 +1219,14 @@ bool HistogramArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 
     Glib::RefPtr<Gdk::Window> window = get_window();
 
-    int winx, winy, winw, winh;
-    window->get_geometry(winx, winy, winw, winh);
-
-    if (winw != oldwidth || winh != oldheight || isDirty ()) {
+    if (get_width() != oldwidth || get_height() != oldheight || isDirty ()) {
         updateBackBuffer ();
     }
 
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->render_background(cr, winx, winy, winw, winh);
+    const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    style->render_background(cr, 0, 0, get_width(), get_height());
     copySurface(cr, NULL);
+    style->render_frame (cr, 0, 0, get_width(), get_height());
 
     return true;
 }

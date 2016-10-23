@@ -199,21 +199,27 @@ separator {
     margin: 5px;
 }
 
-progressbar.vertical {
-    min-width: 10px;
+progressbar.vertical trough {
+    min-width: 6px;
+}
+progressbar.vertical trough progress {
+    min-width: 6px;
 }
 
-progressbar.horizontal {
-    min-height: 10px;
+progressbar.horizontal trough {
+    min-height: 6px;
+}
+progressbar.horizontal trough progress {
+    min-height: 6px;
 }
 
-drawingarea {
+.drawingarea {
     border-radius: 0;
     background-color: #363636;
     border: 1px solid #252525;
 }
 
-drawingarea:selected {
+.drawingarea:selected {
     background-color: #565656;
     border-radius: 10px;
 }
@@ -592,6 +598,10 @@ paned > separator {
     border-bottom-width: 0;
     padding: 5px;
     margin: 5px;
+}
+
+#PreviewWindow {
+	border-style: solid none;
 }
 
 .tooltip {

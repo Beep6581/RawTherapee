@@ -113,18 +113,6 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
 
 //---------Brightness / Contrast -------------------------
     brightness = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BRIGHTNESS"), -100, 100, 1, 0));
-    Glib::RefPtr<Gtk::CssProvider> cssProvider = Gtk::CssProvider::create();
-
-    if (cssProvider) {
-        try {
-            cssProvider->load_from_data("scale trough { background-image: linear-gradient(to right, #000 0%, #CCC 100%); }");
-            brightness->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
-        } catch (Glib::Error &err) {
-            printf("Erreur: \"%s\"\n", err.what().c_str());
-        } catch (...) {
-            printf("Erreur inconnu !\n");
-        }
-    }
     pack_start (*brightness);
     contrast   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_CONTRAST"), -100, 100, 1, 0));
     pack_start (*contrast);
