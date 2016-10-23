@@ -87,7 +87,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     reset->set_can_focus(false);
 
     spin = Gtk::manage (new MySpinButton ());
-    setExpandAlignProperties(spin, false, false, Gtk::ALIGN_CENTER, !vlabel.empty() ? Gtk::ALIGN_BASELINE : Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(spin, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     spin->set_input_purpose(Gtk::INPUT_PURPOSE_DIGITS);
 
     reset->set_size_request (-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height() : MIN_RESET_BUTTON_HEIGHT);
@@ -95,7 +95,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     slider = Gtk::manage (new MyHScale ());
     setExpandAlignProperties(slider, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     slider->set_draw_value (false);
-    //slider->set_has_origin(false);  // ------------------ This will remove the colored part on the left of the slider's knob
+    slider->set_has_origin(false);  // ------------------ This will remove the colored part on the left of the slider's knob
 
     if (vlabel.empty()) {
         // No label, everything goes in a single row

@@ -86,6 +86,7 @@ Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(opt
     LAB_L->set_alignment(Gtk::ALIGN_END);
 
     // set font family and size
+    /*
     Glib::ustring fontname;
 
 #ifdef WIN32
@@ -128,6 +129,7 @@ Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(opt
             position->get_style_context()->add_provider(cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER);
         }
     }
+    */
 
     // setup the tables
     Gtk::Table* table0 = Gtk::manage (new Gtk::Table (1, 3)); //rows, cols The main table container

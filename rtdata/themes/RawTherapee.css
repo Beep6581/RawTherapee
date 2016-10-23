@@ -46,7 +46,7 @@ box {
     border-style: none;
     border-radius: 0;
     margin: 0;
-	padding: 0;
+    padding: 0;
 }
 
 grid {
@@ -101,58 +101,87 @@ eventbox.frame {
     border-color: #565656;
 }
 
-window decoration {
-	padding: 0;
-	margin: 0;
-	box-shadow: 0 0;
-	border-radius: 0 0 0 0;
+scrollbar {
+    background-color: #303030;
+}
+scrollbar slider {
+    background-color: #808080;
+}
+scrollbar slider:hover {
+    background-color: #999999;
 }
 
 button  {
-	padding: 0;
-	min-height: 5px;
-	min-width: 5px;
-	background-image: linear-gradient(#343434, #2E2E2E, #292929);
+    padding: 0;
+    min-height: 5px;
+    min-width: 5px;
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
 }
 button.flat  {
-	background-image: none;
+    background-image: none;
 }
+button.popupbutton-arrow {
+    min-width: 18px;
+}
+
 button:hover  {
-	background-image: linear-gradient(#444444, #3E3E3E, #393939);
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+}
+checkbutton > check {
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+
+}
+checkbutton:hover > check {
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+}
+radiobutton > radio {
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+radiobutton:hover > radio {
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
 }
 
 combobox {
-	min-height: 5px;
-	min-width: 5px;
+    min-height: 5px;
+    min-width: 5px;
+    margin-left: 2px;
 }
 
 box {
-	padding: 0;
-	margin: 1px;
-	min-height: 5px;
-	min-width: 5px;
+    padding: 0;
+    margin: 1px;
+    min-height: 5px;
+    min-width: 5px;
 }
 
 scale {
-	padding: 0;
-	min-height: 5px;
-	margin: 0 6px 0 6px;  /* have to be half of "scale slider" >> "min-width" for horizontalmargin */
+    padding: 0;
+    min-height: 5px;
+    margin: 0 7px 0 0;
 }
 
 scale slider {
-	/* Slider size is min-width x min-height ; margin have to be half of those values, but negative */
-	min-width: 12px;
-	min-height: 12px;
-	margin: -6px;
+    /* Slider size is min-width x min-height ; margin have to be half of those values, but negative */
+    min-width: 12px;
+    min-height: 12px;
+    margin: -6px;
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+scale slider:hover {
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+}
+scale trough {
+    margin: 6px 6px;  /* have to be half of "scale slider / min-width min-height" */
+    background-color: #2A2A2A;
 }
 
 /*.EditorTopPanel .button, .ToolBarPanelFileBrowser .button, .EditorZoomPanel .button {*/
 .button {
-     padding: 1px;
-     margin: 1px;
-	 padding: 0;
-	 min-height: 5px;
-	 min-width: 5px;
+    padding: 1px;
+    margin: 1px;
+    padding: 0;
+    min-height: 5px;
+    min-width: 5px;
 }
 
 /* Adjusters */
@@ -167,7 +196,7 @@ scale slider {
 
 separator {
     color: #363636;
-	margin: 5px;
+    margin: 5px;
 }
 
 progressbar.vertical {
@@ -234,7 +263,7 @@ button.Right {
 /* [1.23[-][+]] */
 entry, spinbutton {
     padding: 1px;
-	margin: 0;
+    margin: 0;
     min-height: 10px;
     background-color: #262626;
 }
@@ -261,8 +290,8 @@ menu {
 /* Context menu item */
 menuitem {
     padding: 2px;
-	margin: 0;
-	min-height: 10px;
+    margin: 0;
+    min-height: 10px;
 }
 
 #MyExpander {
@@ -289,7 +318,7 @@ menuitem {
 #ExpanderBox2 frame,
 #ExpanderBox3 frame {
     padding: 2px 0 0 0;
-	border-style: none;
+    border-style: none;
 }
 #ExpanderBox frame > border {
     background-color: #3B3B3B;
@@ -304,19 +333,19 @@ menuitem {
 #ExpanderBox frame > label, #ExpanderBox frame frame > label,
 #ExpanderBox2 frame > label, #ExpanderBox2 frame frame > label,
 #ExpanderBox3 frame > label, #ExpanderBox3 frame frame > label {
-	margin-left: 7pt;
-	margin-top: 0;
+    margin-left: 7pt;
+    margin-top: 0;
 }
 #ExpanderBox frame > box, #ExpanderBox frame frame > box,
 #ExpanderBox2 frame > box, #ExpanderBox2 frame frame > box,
 #ExpanderBox3 frame > box, #ExpanderBox3 frame frame > box {
-	margin: 2px;
+    margin: 2px;
 }
 
 #ExpanderBox > box > checkbutton, #ExpanderBox > box > box,
 #ExpanderBox2 > box > checkbutton, #ExpanderBox2 > box > box,
 #ExpanderBox3 > box > checkbutton, #ExpanderBox3 > box > box {
-	margin-top: 3px;
+    margin-top: 3px;
 }
 
 #ExpanderBox frame drawingarea {
@@ -379,8 +408,8 @@ menuitem {
 
 #MyExpanderTitle label {
     color: #CCCCCC;
-	padding: 0;
-	margin: 0 3px 0 3px;
+    padding: 0;
+    margin: 0 3px 0 3px;
 }
 #MyExpanderTitle:hover {
     background-color: #202020;
@@ -406,8 +435,8 @@ menuitem {
 /* File Browser right side tabs - Toolbox, Inspector, Fast Export, Filter */
 notebook {
     padding: 0;
-	margin: 0;
-	border-style: none;
+    margin: 0;
+    border-style: none;
 }
 
 notebook header {
@@ -418,19 +447,19 @@ notebook header {
     border-color: #262626;
     border-radius: 0;
     padding: 2px;
-	margin: 0;
+    margin: 0;
 }
 
 notebook tabs {
     padding: 1px;
-	margin: 0;
+    margin: 0;
 }
 
 notebook tab {
     padding: 1px;
-	margin: 2px;
-	min-height: 15px;
-	min-width: 15px;
+    margin: 2px;
+    min-height: 15px;
+    min-width: 15px;
 }
 
 notebook tab:hover {
@@ -472,18 +501,18 @@ notebook stack {
     /* OK */
     background-color: #484848;
     padding: 0;
-	margin: 0;
+    margin: 0;
 }
 
 paned box {
-	padding: 0;
-	margin: 0;
-	border-style: none;
+    padding: 0;
+    margin: 0;
+    border-style: none;
 }
 
 paned > separator {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #MainNotebook header {
@@ -510,7 +539,7 @@ paned > separator {
 #RightNotebook tabs {
     /* OK */
     background-color: #2A2A2A;
-	padding-bottom: 5px;
+    padding-bottom: 5px;
 }
 #RightNotebook tab:hover {
     /* OK */
@@ -523,15 +552,15 @@ paned > separator {
 }
 
 #LabelRightNotebook {
-	padding: 5px;
-	margin: 2px;
+    padding: 5px;
+    margin: 2px;
 }
 
 #ToolPanelNotebook header {
     background-color: #383838;
     border-color: #262626;
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 #ToolPanelNotebook header tabs {
@@ -539,8 +568,8 @@ paned > separator {
 }
 
 #ToolPanelNotebook header tab {
-	padding: 3px;
-	margin: 0;
+    padding: 3px;
+    margin: 0;
 }
 
 /* All tool panels have a frame except for Meta which unlike the rest is a notebook itself.

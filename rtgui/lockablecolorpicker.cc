@@ -45,6 +45,14 @@ void LockableColorPicker::updateBackBuffer ()
     if (validity == Validity::INSIDE) {
         Gtk::DrawingArea *iArea = cropWindow->getImageArea();
 
+        Glib::RefPtr<Pango::Context> pangoContext = iArea->get_pango_context ();
+        Pango::FontDescription fontd = pangoContext->get_font_description();
+        // set font family and size
+        fontd.set_family("sans");
+        fontd.set_size(8 * Pango::SCALE);  // 8pt, will be scaled by Gtk depending on the screen's DPI
+        fontd.set_weight(Pango::WEIGHT_NORMAL);
+        pangoContext->set_font_description (fontd);
+
         Glib::RefPtr<Pango::Layout> layout[3][2];
         Glib::ustring s1, s2, s3;
         PointerMotionListener* navigator = cropWindow->getPointerMotionListener ();
