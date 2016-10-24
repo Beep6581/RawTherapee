@@ -938,21 +938,20 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     hbtheme->pack_start (*fontbutton);
     vbftheme->pack_start(*hbtheme, Gtk::PACK_SHRINK, 0);
 
-    Gtk::Label* cpfontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT_COLPICKER") + ":") );
+    Gtk::Label* cpfontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT_COLPICKER") + ":", Gtk::ALIGN_RIGHT) );
     colorPickerFontButton = Gtk::manage( new Gtk::FontButton ());
     colorPickerFontButton->set_use_size(true);
     colorPickerFontButton->set_font_name(options.colorPickerFont);
-
 
     Gtk::HBox* hbcolorchooser = Gtk::manage( new Gtk::HBox () );
     hbcolorchooser->set_spacing(4);
 
     hbcolorchooser->pack_start (*cutOverlayLabel, Gtk::PACK_SHRINK, 0);
     hbcolorchooser->pack_start (*butCropCol, Gtk::PACK_SHRINK, 0);
-    hbcolorchooser->pack_start (*butNavGuideCol, Gtk::PACK_SHRINK, 0);
     hbcolorchooser->pack_start (*navGuideLabel, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_start (*butNavGuideCol, Gtk::PACK_SHRINK, 0);
     hbcolorchooser->pack_start (*cpfontlab, Gtk::PACK_EXPAND_WIDGET, 0);
-    hbcolorchooser->pack_start (*colorPickerFontButton, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_start (*colorPickerFontButton, Gtk::PACK_EXPAND_WIDGET, 0);
     vbftheme->pack_start(*hbcolorchooser, Gtk::PACK_SHRINK, 0);
 
 
