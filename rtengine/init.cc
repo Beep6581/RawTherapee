@@ -35,7 +35,7 @@ namespace rtengine
 
 const Settings* settings;
 
-MyMutex* lcmsMutex = NULL;
+MyMutex* lcmsMutex = nullptr;
 
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir)
 {

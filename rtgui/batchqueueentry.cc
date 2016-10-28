@@ -31,7 +31,7 @@ Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm)
     : ThumbBrowserEntryBase(fname),
-      opreview(NULL), origpw(prevw), origph(prevh), opreviewDone(false),
+      opreview(nullptr), origpw(prevw), origph(prevh), opreviewDone(false),
       job(pjob), progress(0), outFileName(""), sequence(0), forceFormatOpts(false), params(pparams)
 {
 
@@ -64,7 +64,7 @@ BatchQueueEntry::~BatchQueueEntry ()
         delete [] opreview;
     }
 
-    opreview = NULL;
+    opreview = nullptr;
 
     if (thumbnail) {
         thumbnail->decreaseRef ();
@@ -84,7 +84,7 @@ void BatchQueueEntry::refreshThumbnailImage ()
         // creating the image buffer first
         //if (!opreview) opreview = new guint8[(origpw+1) * origph * 3];
         // this will asynchronously compute the original preview and land at this.updateImage
-        batchQueueEntryUpdater.process (NULL, origpw, origph, preh, this, &params, thumbnail);
+        batchQueueEntryUpdater.process (nullptr, origpw, origph, preh, this, &params, thumbnail);
     } else {
         // this will asynchronously land at this.updateImage
         batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);
@@ -133,7 +133,7 @@ void BatchQueueEntry::removeButtonSet ()
 {
 
     delete buttonSet;
-    buttonSet = NULL;
+    buttonSet = nullptr;
 }
 
 std::vector<Glib::RefPtr<Gdk::Pixbuf> > BatchQueueEntry::getIconsOnImageArea ()
@@ -247,7 +247,7 @@ void BatchQueueEntry::_updateImage (guint8* img, int w, int h)
         MYWRITERLOCK(l, lockRW);
 
         prew = w;
-        assert (preview == NULL);
+        assert (preview == nullptr);
         preview = new guint8 [prew * preh * 3];
         memcpy (preview, img, prew * preh * 3);
 

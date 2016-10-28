@@ -26,7 +26,7 @@ using namespace rtengine::procparams;
 
 Glib::ustring eventDescrArray[NUMOFEVENTS];
 
-History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
+History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmnum (1)
 {
 
     blistenerLock = false; // sets default that the Before preview will not be locked
@@ -189,7 +189,7 @@ void History::historySelectionChanged ()
             tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
 
-        if (blistener && blistenerLock == false) {
+        if (blistener && !blistenerLock) {
             Gtk::TreeModel::Path path = historyModel->get_path (iter);
             path.prev ();
             iter = historyModel->get_iter (path);
@@ -276,9 +276,9 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
             selection->select (newrow);
         }
 
-        if (blistener && row && blistenerLock == false) {
+        if (blistener && row && !blistenerLock) {
             blistener->historyBeforeLineChanged (row[historyColumns.params]);
-        } else if (blistener && size == 0 && blistenerLock == false) {
+        } else if (blistener && size == 0 && !blistenerLock) {
             blistener->historyBeforeLineChanged (newrow[historyColumns.params]);
         }
     }

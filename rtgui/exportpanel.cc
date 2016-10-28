@@ -25,7 +25,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ExportPanel::ExportPanel () : listener (NULL)
+ExportPanel::ExportPanel () : listener (nullptr)
 {
 
     /*enabled = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_ENABLE")) );

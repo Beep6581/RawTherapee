@@ -130,7 +130,7 @@ void pgmReadHeaderFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "rb")) == NULL) {
+  if ( (fp = fopen(fname, "rb")) == nullptr) {
     KLTError("(pgmReadHeaderFile) Can't open file named '%s' for reading\n", fname);
     exit(1);
   }
@@ -156,7 +156,7 @@ void ppmReadHeaderFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "rb")) == NULL) {
+  if ( (fp = fopen(fname, "rb")) == nullptr) {
     KLTError("(ppmReadHeaderFile) Can't open file named '%s' for reading\n", fname);
     exit(1);
   }
@@ -188,9 +188,9 @@ unsigned char* pgmRead(
   pgmReadHeader(fp, &magic, ncols, nrows, &maxval);
 
   /* Allocate memory, if necessary, and set pointer */
-  if (img == NULL)  {
+  if (img == nullptr)  {
     ptr = (unsigned char *) malloc(*ncols * *nrows * sizeof(char));
-    if (ptr == NULL) {
+    if (ptr == nullptr) {
       KLTError("(pgmRead) Memory not allocated");
       exit(1);
     }
@@ -226,7 +226,7 @@ unsigned char* pgmReadFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "rb")) == NULL) {
+  if ( (fp = fopen(fname, "rb")) == nullptr) {
     KLTError("(pgmReadFile) Can't open file named '%s' for reading\n", fname);
     exit(1);
   }
@@ -279,7 +279,7 @@ void pgmWriteFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "wb")) == NULL) {
+  if ( (fp = fopen(fname, "wb")) == nullptr) {
     KLTError("(pgmWriteFile) Can't open file named '%s' for writing\n", fname);
     exit(1);
   }
@@ -338,7 +338,7 @@ void ppmWriteFileRGB(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "wb")) == NULL) {
+  if ( (fp = fopen(fname, "wb")) == nullptr) {
     KLTError("(ppmWriteFileRGB) Can't open file named '%s' for writing\n", fname);
     exit(1);
   }

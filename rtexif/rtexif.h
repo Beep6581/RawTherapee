@@ -157,7 +157,7 @@ public:
 
     virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
     virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
-                                    const CacheImageData* cfs, const bool flagMode, Glib::KeyFile *keyFile = NULL, Glib::ustring tagDirName = "") const;
+                                    const CacheImageData* cfs, const bool flagMode, Glib::KeyFile *keyFile = nullptr, Glib::ustring tagDirName = "") const;
     virtual void     sort     ();
 };
 
@@ -293,11 +293,11 @@ public:
     // get subdirectory (there can be several, the last is NULL)
     bool           isDirectory  ()
     {
-        return directory != NULL;
+        return directory != nullptr;
     }
     TagDirectory*  getDirectory (int i = 0)
     {
-        return (directory) ? directory[i] : 0;
+        return (directory) ? directory[i] : nullptr;
     }
 
     MNKind getMakerNoteFormat ()

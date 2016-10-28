@@ -42,10 +42,10 @@ public:
 
     BayerRAWExposure ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void GreenChanged() ;
     void adjusterChanged     (Adjuster* a, double newval);
     void setAdjusterBehavior (bool pexblackadd);

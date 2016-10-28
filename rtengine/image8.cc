@@ -40,7 +40,7 @@ Image8::~Image8 ()
 void Image8::getScanline (int row, unsigned char* buffer, int bps)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
@@ -58,7 +58,7 @@ void Image8::getScanline (int row, unsigned char* buffer, int bps)
 void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 

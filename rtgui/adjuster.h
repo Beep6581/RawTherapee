@@ -81,7 +81,7 @@ public:
 
     int delay;
 
-    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = NULL, Gtk::Image *imgIcon2 = NULL, double2double_fun slider2value = NULL, double2double_fun value2slider = NULL);
+    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1 = nullptr, Gtk::Image *imgIcon2 = nullptr, double2double_fun slider2value = nullptr, double2double_fun value2slider = nullptr);
     virtual ~Adjuster ();
 
     // Add an "Automatic" checkbox next to the reset button.
@@ -91,7 +91,7 @@ public:
     // Send back the value of og the Auto checkbox
     bool getAutoValue ()
     {
-        return automatic != NULL ? automatic->get_active () : false;
+        return automatic != nullptr ? automatic->get_active () : false;
     }
     void setAutoValue (bool a);
     bool notifyListenerAutoToggled ();

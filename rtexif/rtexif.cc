@@ -47,7 +47,7 @@ Interpreter stdInterpreter;
 #define TAG_SUBFILETYPE 0x00fe
 
 TagDirectory::TagDirectory ()
-    : attribs(ifdAttribs), order(HOSTORDER), parent(NULL) {}
+    : attribs(ifdAttribs), order(HOSTORDER), parent(nullptr) {}
 
 TagDirectory::TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border)
     : attribs(ta), order(border), parent(p) {}
@@ -141,7 +141,7 @@ const TagAttrib* TagDirectory::getAttrib (int id)
                 return &attribs[i];
             }
 
-    return NULL;
+    return nullptr;
 }
 
 const TagAttrib* TagDirectory::getAttrib (const char* name)
@@ -153,7 +153,7 @@ const TagAttrib* TagDirectory::getAttrib (const char* name)
                 return &attribs[i];
             }
 
-    return NULL;
+    return nullptr;
 }
 
 const TagAttrib* TagDirectory::getAttribP (const char* name)
@@ -179,7 +179,7 @@ const TagAttrib* TagDirectory::getAttribP (const char* name)
                     if (attribs[i].subdirAttribs && tag && (tagDir = tag->getDirectory())) {
                         return tagDir->getAttribP(n + 1);
                     } else {
-                        return NULL;
+                        return nullptr;
                     }
                 } else {
                     return &attribs[i];
@@ -187,7 +187,7 @@ const TagAttrib* TagDirectory::getAttribP (const char* name)
             }
         }
 
-    return NULL;
+    return nullptr;
 }
 
 void TagDirectory::printAll (unsigned int level) const
@@ -263,13 +263,13 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
     std::vector<const TagDirectory *> tagDirList;
     std::vector<Glib::ustring> tagDirPaths;
 
-    FILE *f = NULL;
+    FILE *f = nullptr;
 
     if (!keyFile) {
         // open the file in write mode
         f = g_fopen (commFName.c_str (), "wt");
 
-        if (f == NULL) {
+        if (f == nullptr) {
             printf("TagDirectory::keyFileDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
             delete kf;
             return false;
@@ -396,7 +396,7 @@ Tag* TagDirectory::getTag (int ID) const
             return tags[i];
         }
 
-    return NULL;
+    return nullptr;
 }
 
 Tag* TagDirectory::getTag (const char* name) const
@@ -409,7 +409,7 @@ Tag* TagDirectory::getTag (const char* name) const
             }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 Tag* TagDirectory::getTagP (const char* name) const
@@ -435,7 +435,7 @@ Tag* TagDirectory::getTagP (const char* name) const
                     if (attribs[i].subdirAttribs && tag && (tagDir = tag->getDirectory())) {
                         return tagDir->getTagP(n + 1);
                     } else {
-                        return NULL;
+                        return nullptr;
                     }
                 } else {
                     return getTag (attribs[i].ID);
@@ -443,7 +443,7 @@ Tag* TagDirectory::getTagP (const char* name) const
             }
         }
 
-    return NULL;
+    return nullptr;
 }
 
 Tag* TagDirectory::findTag (const char* name) const
@@ -471,7 +471,7 @@ Tag* TagDirectory::findTag (const char* name) const
             }
         }
 
-    return NULL;
+    return nullptr;
 }
 
 // Searches a simple value, as either attribute or element
@@ -615,7 +615,7 @@ void TagDirectory::applyChange (std::string name, std::string value)
     // this is a final segment: apply change
     if (dp == std::string::npos) {
 
-        Tag* t = NULL;
+        Tag* t = nullptr;
 
         for (size_t i = 0; i < tags.size(); i++)
             if (tags[i]->nameToString() == fseg) {
@@ -630,7 +630,7 @@ void TagDirectory::applyChange (std::string name, std::string value)
         } else if (t && !t->isDirectory()) {
             t->valueFromString (value);
         } else {
-            const TagAttrib* attrib = NULL;
+            const TagAttrib* attrib = nullptr;
 
             for (int i = 0; attribs[i].ignore != -1; i++)
                 if (!strcmp (attribs[i].name, fseg.c_str())) {
@@ -650,7 +650,7 @@ void TagDirectory::applyChange (std::string name, std::string value)
         // try to find it
         std::string::size_type dp1 = fseg.find_first_of ('[');
         std::string basename = fseg.substr (0, dp1);
-        Tag* t = NULL;
+        Tag* t = nullptr;
         int dirnum = -1;
 
         for (size_t i = 0; i < tags.size(); i++)
@@ -670,7 +670,7 @@ void TagDirectory::applyChange (std::string name, std::string value)
             }
 
         if (!t && value != "#keep" && value != "#delete") {
-            const TagAttrib* attrib = NULL;
+            const TagAttrib* attrib = nullptr;
 
             for (int i = 0; attribs[i].ignore != -1; i++)
                 if (!strcmp (attribs[i].name, fseg.c_str())) {
@@ -760,7 +760,7 @@ int TagDirectoryTable::write (int start, unsigned char* buffer)
 //-----------------------------------------------------------------------------
 
 Tag::Tag (TagDirectory* p, FILE* f, int base)
-    : type(INVALID), count(0), value(NULL), allocOwnMemory(true), attrib(NULL), parent(p), directory(NULL)
+    : type(INVALID), count(0), value(nullptr), allocOwnMemory(true), attrib(nullptr), parent(p), directory(nullptr)
 {
 
     ByteOrder order = getOrder();
@@ -830,7 +830,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             fread (buffer, 1, 2, f);
             directory = new TagDirectory*[2];
             directory[0] = new TagDirectory (parent, f, currPos, pentaxAttribs, strncmp(buffer, "MM", 2) ? INTEL : MOTOROLA);
-            directory[1] = NULL;
+            directory[1] = nullptr;
         } else
             /* SONY uses this tag to write hidden info and pointer to private encrypted tags
             {
@@ -876,7 +876,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             switch( tag ) {
             case 0x0010:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
 
                 if (count == 15360) {
                     directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, BYTE , sonyCameraInfoAttribs, order);
@@ -888,7 +888,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 
             case 0x0114:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
 
                 if (count == 280 || count == 364) {
                     directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, SHORT , sonyCameraSettingsAttribs, MOTOROLA);
@@ -899,7 +899,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                 } else {
                     // Unknown CameraSettings
                     delete [] directory;
-                    directory = NULL;
+                    directory = nullptr;
                     type = INVALID;
                 }
 
@@ -908,7 +908,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 
             case 0x9405:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, SHORT , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
                 break;
@@ -923,21 +923,21 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             case 0x0208:
             case 0x0216:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, BYTE , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
                 break;
 
             case 0x0215:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, LONG , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
                 break;
 
             case 0x005c:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
 
                 if (count == 4) {     // SRInfo
                     directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, BYTE , pentaxSRInfoAttribs, order);
@@ -946,7 +946,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                 } else {
                     // Unknown SRInfo
                     delete [] directory;
-                    directory = NULL;
+                    directory = nullptr;
                     type = INVALID;
                 }
 
@@ -955,7 +955,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 
             case 0x0206:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
 
                 if (count == 21) {     // AEInfo2
                     directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, BYTE , pentaxAEInfo2Attribs, order);
@@ -966,7 +966,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                 } else {
                     // Unknown AEInfo
                     delete [] directory;
-                    directory = NULL;
+                    directory = nullptr;
                     type = INVALID;
                 }
 
@@ -990,7 +990,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                 }
 
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, offsetFirst, BYTE , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
             }
@@ -998,7 +998,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 
             case 0x0239:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, BYTE , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
                 break;
@@ -1016,7 +1016,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             case 0x0098:
             case 0x00a0:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, SSHORT , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
                 break;
@@ -1024,7 +1024,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             case 0x009a:
             case 0x4013:
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, LONG , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
                 break;
@@ -1036,7 +1036,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             switch (tag) {
             case 0x0025: {
                 directory = new TagDirectory*[2];
-                directory[1] = NULL;
+                directory[1] = nullptr;
                 directory[0] = new TagDirectoryTable (parent, f, valuesize, 0, BYTE , attrib->subdirAttribs, order);
                 makerNoteKind = TABLESUBDIR;
                 break;
@@ -1050,7 +1050,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             type = LONG;
             directory = new TagDirectory*[2];
             directory[0] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
-            directory[1] = NULL;
+            directory[1] = nullptr;
         } else {
             goto defsubdirs;
         }
@@ -1090,7 +1090,7 @@ defsubdirs:
         }
 
         // set the terminating NULL
-        directory[sdcount] = NULL;
+        directory[sdcount] = nullptr;
     } else {
         type = INVALID;
     }
@@ -1103,7 +1103,7 @@ defsubdirs:
 
 bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
 {
-    value = NULL;
+    value = nullptr;
     Tag* tmake = parent->getRoot()->findTag("Make");
     std::string make( tmake ? tmake->valueToString() : "");
 
@@ -1123,13 +1123,13 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
             fread (value, 1, 8, f);
             directory = new TagDirectory*[2];
             directory[0] = new TagDirectory (parent, f, base, nikon2Attribs, bom);
-            directory[1] = NULL;
+            directory[1] = nullptr;
         } else if ( model.find("NIKON E990") != std::string::npos ||
                     (model.find("NIKON D1") != std::string::npos && model.size() > 8 && model.at(8) != '0')) {
             makerNoteKind = IFD;
             directory = new TagDirectory*[2];
             directory[0] = new TagDirectory (parent, f, base, nikon3Attribs, bom);
-            directory[1] = NULL;
+            directory[1] = nullptr;
         } else {
             // needs refinement! (embedded tiff header parsing)
             makerNoteKind = NIKON3;
@@ -1145,13 +1145,13 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
             else
                 MakerNoteOrder = rtexif::INTEL;
             directory[0] = new TagDirectory (parent, f, basepos + 10, nikon3Attribs, MakerNoteOrder);
-            directory[1] = NULL;
+            directory[1] = nullptr;
         }
     } else if ( make.find( "Canon" ) != std::string::npos  ) {
         makerNoteKind = IFD;
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, base, canonAttribs, bom);
-        directory[1] = NULL;
+        directory[1] = nullptr;
     } else if ( make.find( "PENTAX" ) != std::string::npos ) {
         makerNoteKind = HEADERIFD;
         valuesize = 6;
@@ -1159,7 +1159,7 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
         fread (value, 1, 6, f);
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, base, pentaxAttribs, bom);
-        directory[1] = NULL;
+        directory[1] = nullptr;
     } else if ( (make.find( "RICOH" ) != std::string::npos ) && (model.find("PENTAX") != std::string::npos) ) {
         makerNoteKind = HEADERIFD;
         valuesize = 10;
@@ -1167,7 +1167,7 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
         fread (value, 1, 10, f);
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, ftell (f) - 10, pentaxAttribs, bom);
-        directory[1] = NULL;
+        directory[1] = nullptr;
     } else if ( make.find( "FUJIFILM" ) != std::string::npos ) {
         makerNoteKind = FUJI;
         valuesize = 12;
@@ -1175,12 +1175,12 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
         fread (value, 1, 12, f);
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, ftell(f) - 12, fujiAttribs, INTEL);
-        directory[1] = NULL;
+        directory[1] = nullptr;
     } else if ( make.find( "KONICA MINOLTA" ) != std::string::npos || make.find( "Minolta" ) != std::string::npos ) {
         makerNoteKind = IFD;
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, base, minoltaAttribs, bom);
-        directory[1] = NULL;
+        directory[1] = nullptr;
     } else if ( make.find( "SONY" ) != std::string::npos ) {
         valuesize = 12;
         value = new unsigned char[12];
@@ -1195,14 +1195,14 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
 
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, base, sonyAttribs, bom );
-        directory[1] = NULL;
+        directory[1] = nullptr;
     } else if ( make.find( "OLYMPUS" ) != std::string::npos ) {
         makerNoteKind = HEADERIFD;
         valuesize = 8;
         value = new unsigned char[12];
         fread (value, 1, 8, f);
         directory = new TagDirectory*[2];
-        directory[1] = NULL;
+        directory[1] = nullptr;
 
         if (!strncmp((char*)value, "OLYMPUS", 7)) {
             makerNoteKind = OLYMPUS2;
@@ -1234,7 +1234,7 @@ Tag* Tag::clone (TagDirectory* parent)
         t->value = new unsigned char [valuesize];
         memcpy (t->value, value, valuesize);
     } else {
-        value = NULL;
+        value = nullptr;
     }
 
     t->makerNoteKind = makerNoteKind;
@@ -1250,9 +1250,9 @@ Tag* Tag::clone (TagDirectory* parent)
             t->directory[i] = directory[i]->clone (parent);
         }
 
-        t->directory[ds] = NULL;
+        t->directory[ds] = nullptr;
     } else {
-        t->directory = NULL;
+        t->directory = nullptr;
     }
 
     return t;
@@ -1719,26 +1719,26 @@ int Tag::write (int offs, int dataOffs, unsigned char* buffer)
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr)
-    : tag(attr ? attr->ID : -1), type(INVALID), count(0), value(NULL), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK)
+    : tag(attr ? attr->ID : -1), type(INVALID), count(0), value(nullptr), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(nullptr), makerNoteKind (NOMK)
 {
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, int data, TagType t)
-    : tag(attr ? attr->ID : -1), type(t), count(1), value(NULL), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK)
+    : tag(attr ? attr->ID : -1), type(t), count(1), value(nullptr), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(nullptr), makerNoteKind (NOMK)
 {
 
     initInt (data, t);
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, unsigned char *data, TagType t)
-    : tag(attr ? attr->ID : -1), type(t), count(1), value(NULL), valuesize(0), keep(true), allocOwnMemory(false), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK)
+    : tag(attr ? attr->ID : -1), type(t), count(1), value(nullptr), valuesize(0), keep(true), allocOwnMemory(false), attrib(attr), parent(p), directory(nullptr), makerNoteKind (NOMK)
 {
 
     initType (data, t);
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, const char* text)
-    : tag(attr ? attr->ID : -1), type(ASCII), count(1), value(NULL), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK)
+    : tag(attr ? attr->ID : -1), type(ASCII), count(1), value(nullptr), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(nullptr), makerNoteKind (NOMK)
 {
 
     initString (text);
@@ -1795,8 +1795,8 @@ void Tag::initSubDir ()
     value = new unsigned char[4];
     setInt (0);
     directory = new TagDirectory*[2];
-    directory[0] = new TagDirectory (parent, attrib ? attrib->subdirAttribs : NULL, parent->getOrder());
-    directory[1] = NULL;
+    directory[0] = new TagDirectory (parent, attrib ? attrib->subdirAttribs : nullptr, parent->getOrder());
+    directory[1] = nullptr;
 }
 
 void Tag::initSubDir (TagDirectory* dir)
@@ -1808,7 +1808,7 @@ void Tag::initSubDir (TagDirectory* dir)
     setInt (0);
     directory = new TagDirectory*[2];
     directory[0] = dir;
-    directory[1] = NULL;
+    directory[1] = nullptr;
 }
 
 void Tag::initMakerNote (MNKind mnk, const TagAttrib* ta)
@@ -1820,7 +1820,7 @@ void Tag::initMakerNote (MNKind mnk, const TagAttrib* ta)
     setInt (0);
     directory = new TagDirectory*[2];
     directory[0] = new TagDirectory (parent, ta, parent->getOrder());
-    directory[1] = NULL;
+    directory[1] = nullptr;
     makerNoteKind = mnk;
 }
 
@@ -1864,14 +1864,14 @@ const TagAttrib* lookupAttrib (const TagAttrib* dir, const char* field)
             return &dir[i];
         }
 
-    return 0;
+    return nullptr;
 }
 
 
 TagDirectory* ExifManager::parseCIFF (FILE* f, int base, int length)
 {
 
-    TagDirectory* root = new TagDirectory (NULL, ifdAttribs, INTEL);
+    TagDirectory* root = new TagDirectory (nullptr, ifdAttribs, INTEL);
     Tag* exif = new Tag (root, lookupAttrib(ifdAttribs, "Exif"));
     exif->initSubDir ();
     Tag* mn = new Tag (exif->getDirectory(), lookupAttrib(exifAttribs, "MakerNote"));
@@ -1920,7 +1920,7 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
 
     TagDirectory* exif = root->getTag("Exif")->getDirectory();
 
-    time_t timestamp = time (NULL);
+    time_t timestamp = time (nullptr);
 
     for (int i = 0; i < numOfTags; i++) {
 
@@ -2149,7 +2149,7 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
         exif->addTag (t);
     }
 
-    if (timestamp != time(NULL)) {
+    if (timestamp != time(nullptr)) {
         struct tm* tim = localtime (&timestamp);
         strftime (buffer, 20, "%Y:%m:%d %H:%M:%S", tim);
         t = new Tag (exif, lookupAttrib(exifAttribs, "DateTimeOriginal"));
@@ -2301,21 +2301,21 @@ parse_leafdata(TagDirectory* root, ByteOrder order)
     // Quick-and-dirty value extractor, no real xml parsing.
     // We could make it more generic, but we just get most important
     // values we know use to be in there.
-    if ((p = strstr(xmp, "xmlns:tiff")) != NULL &&
-            (end = strstr(p, "</rdf:Description>")) != NULL) {
+    if ((p = strstr(xmp, "xmlns:tiff")) != nullptr &&
+            (end = strstr(p, "</rdf:Description>")) != nullptr) {
         *end = '\0';
 
-        while ((p = strstr(p, "<tiff:")) != NULL) {
+        while ((p = strstr(p, "<tiff:")) != nullptr) {
             char *tag = &p[6], *tagend;
 
-            if ((tagend = strchr(tag, '>')) == NULL) {
+            if ((tagend = strchr(tag, '>')) == nullptr) {
                 break;
             }
 
             *tagend = '\0';
             char *val = &tagend[1];
 
-            if ((p = strstr(val, "</tiff:")) == NULL) {
+            if ((p = strstr(val, "</tiff:")) == nullptr) {
                 *tagend = '>';
                 break;
             }
@@ -2333,7 +2333,7 @@ parse_leafdata(TagDirectory* root, ByteOrder order)
                         // and matched against DCP profile
                         char *p1 = strchr(val, '(');
 
-                        if (p1 != NULL) {
+                        if (p1 != nullptr) {
                             *p1 = '\0';
                         }
 
@@ -2345,7 +2345,7 @@ parse_leafdata(TagDirectory* root, ByteOrder order)
                             t->initString (val);
                         }
 
-                        if (p1 != NULL) {
+                        if (p1 != nullptr) {
                             *p1 = '(';
                         }
                     } else {
@@ -2365,21 +2365,21 @@ parse_leafdata(TagDirectory* root, ByteOrder order)
         *end = '<';
     }
 
-    if ((p = strstr(xmp, "xmlns:exif")) != NULL &&
-            (end = strstr(p, "</rdf:Description>")) != NULL) {
+    if ((p = strstr(xmp, "xmlns:exif")) != nullptr &&
+            (end = strstr(p, "</rdf:Description>")) != nullptr) {
         *end = '\0';
 
-        while ((p = strstr(p, "<exif:")) != NULL) {
+        while ((p = strstr(p, "<exif:")) != nullptr) {
             char *tag = &p[6], *tagend;
 
-            if ((tagend = strchr(tag, '>')) == NULL) {
+            if ((tagend = strchr(tag, '>')) == nullptr) {
                 break;
             }
 
             *tagend = '\0';
             char *val = &tagend[1];
 
-            if ((p = strstr(val, "</exif:")) == NULL) {
+            if ((p = strstr(val, "</exif:")) == nullptr) {
                 *tagend = '>';
                 break;
             }
@@ -2512,7 +2512,7 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
     fseek (f, base + firstifd, SEEK_SET);
 
     // first read the IFD directory
-    TagDirectory* root =  new TagDirectory (NULL, f, base, ifdAttribs, order, skipIgnored);
+    TagDirectory* root =  new TagDirectory (nullptr, f, base, ifdAttribs, order, skipIgnored);
 
     // fix ISO issue with nikon and panasonic cameras
     Tag* make = root->getTag ("Make");
@@ -2548,7 +2548,7 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
         if (!exif) {
             // old Kodak cameras may have exif tags in IFD0, reparse and create an exif subdir
             fseek (f, base + firstifd, SEEK_SET);
-            TagDirectory* exifdir =  new TagDirectory (NULL, f, base, exifAttribs, order, true);
+            TagDirectory* exifdir =  new TagDirectory (nullptr, f, base, exifAttribs, order, true);
 
             exif = new Tag (root, root->getAttrib ("Exif"));
             exif->initSubDir(exifdir);
@@ -2591,7 +2591,7 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
         tethered. In single-shot mode they should be exactly the same as the single-shot models.
               */
         Tag *subd = root->getTag(0x14a);
-        Tag *iw = (subd) ? subd->getDirectory()->getTag("ImageWidth") : 0;
+        Tag *iw = (subd) ? subd->getDirectory()->getTag("ImageWidth") : nullptr;
         int sensorWidth = (iw) ? iw->toInt() : 0;
         Tag* tmodel = root->getTag ("Model");
         const char *model = (tmodel) ? (const char *)tmodel->getValue() : "";
@@ -2767,7 +2767,7 @@ TagDirectory* ExifManager::parseJPEG (FILE* f)
 
         if (fread (&c, 1, 1, f) && c == 0xe1) { // APP1 marker found
             if (fread (idbuff, 1, 8, f) < 8) {
-                return NULL;
+                return nullptr;
             }
 
             if (!memcmp(idbuff + 2, exifid, 6)) {   // Exif info found
@@ -2777,7 +2777,7 @@ TagDirectory* ExifManager::parseJPEG (FILE* f)
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored)
@@ -2831,9 +2831,9 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     TagDirectory* cl;
 
     if (root) {
-        cl = (const_cast<TagDirectory*>(root))->clone (NULL);
+        cl = (const_cast<TagDirectory*>(root))->clone (nullptr);
     } else {
-        cl = new TagDirectory (NULL, ifdAttribs, INTEL);
+        cl = new TagDirectory (nullptr, ifdAttribs, INTEL);
     }
 
     for (rtengine::procparams::ExifPairs::const_iterator i = changeList.begin(); i != changeList.end(); ++i) {
@@ -2874,7 +2874,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     TagDirectory* cl;
 
     if (root) {
-        cl = (const_cast<TagDirectory*>(root))->clone (NULL);
+        cl = (const_cast<TagDirectory*>(root))->clone (nullptr);
         // remove some unknown top level tags which produce warnings when opening a tiff
         Tag *removeTag = cl->getTag(0x9003);
         if(removeTag)
@@ -2883,7 +2883,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
         if(removeTag)
             removeTag->setKeep(false);
     } else {
-        cl = new TagDirectory (NULL, ifdAttribs, HOSTORDER);
+        cl = new TagDirectory (nullptr, ifdAttribs, HOSTORDER);
     }
 
 // add tiff strip data

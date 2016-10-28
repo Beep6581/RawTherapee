@@ -156,11 +156,9 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
     const int vblsz = ceil((float)(height + border2) / (ts - border2) + 2 + vz1);
     const int hblsz = ceil((float)(width + border2) / (ts - border2) + 2 + hz1);
 
-    char *buffer1 = (char *) calloc(vblsz * hblsz * (2 * 2 + 1), sizeof(float));
-
     //block CA shift values and weight assigned to block
-    float *blockwt = (float*)buffer1;
-    float (*blockshifts)[2][2] = (float (*)[2][2])(buffer1 + (vblsz * hblsz * sizeof(float)));
+    float* const blockwt = static_cast<float*>(calloc(vblsz * hblsz * (2 * 2 + 1), sizeof(float)));
+    float (*blockshifts)[2][2] = (float (*)[2][2])(blockwt + vblsz * hblsz);
 
     double fitparams[2][2][16];
 
@@ -1013,7 +1011,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
     }
 
     free(Gtmp);
-    free(buffer1);
+    free(blockwt);
     free(RawDataTmp);
 
     if(plistener) {

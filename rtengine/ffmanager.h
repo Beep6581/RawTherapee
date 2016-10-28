@@ -40,10 +40,10 @@ public:
 
 
     ffInfo(const Glib::ustring &name, const std::string &mak, const std::string &mod, const std::string & len, double focal, double apert, time_t t)
-        : pathname(name), maker(mak), model(mod), lens(len), aperture(apert), focallength(focal), timestamp(t), ri(NULL) {}
+        : pathname(name), maker(mak), model(mod), lens(len), aperture(apert), focallength(focal), timestamp(t), ri(nullptr) {}
 
     ffInfo( const ffInfo &o)
-        : pathname(o.pathname), maker(o.maker), model(o.model), lens(o.lens), aperture(o.aperture), focallength(o.focallength), timestamp(o.timestamp), ri(NULL) {}
+        : pathname(o.pathname), maker(o.maker), model(o.model), lens(o.lens), aperture(o.aperture), focallength(o.focallength), timestamp(o.timestamp), ri(nullptr) {}
     ~ffInfo()
     {
         if( ri ) {

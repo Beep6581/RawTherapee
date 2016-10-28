@@ -29,7 +29,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     croph = 0;
 
     Gtk::Table* combos = Gtk::manage (new Gtk::Table (2, 2));
-    Gtk::Label *label = NULL;
+    Gtk::Label *label = nullptr;
 
     appliesTo = Gtk::manage (new MyComboBoxText ());
     appliesTo->append (M("TP_RESIZE_CROPPEDAREA"));

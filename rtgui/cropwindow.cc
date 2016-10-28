@@ -71,8 +71,8 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
       fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_), hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
       backColor(options.bgcolor), decorated(true), isFlawnOver(false), titleHeight(30), sideBorderWidth(3), lowerBorderWidth(3),
       upperBorderWidth(1), sepWidth(2), xpos(30), ypos(30), width(0), height(0), imgAreaX(0), imgAreaY(0), imgAreaW(0), imgAreaH(0),
-      imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(NULL),
-      pmlistener(NULL), pmhlistener(NULL), observedCropWin(NULL)
+      imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(nullptr),
+      pmlistener(nullptr), pmhlistener(nullptr), observedCropWin(nullptr)
 {
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
@@ -86,11 +86,11 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
 
     titleHeight = ih;
 
-    bZoomOut = new LWButton (RTImage::createFromPng ("gtk-zoom-out-small.png"), 0, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoomIn  = new LWButton (RTImage::createFromPng ("gtk-zoom-in-small.png"),  1, NULL, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoom100 = new LWButton (RTImage::createFromPng ("gtk-zoom-100-small.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
+    bZoomOut = new LWButton (RTImage::createFromPng ("gtk-zoom-out-small.png"), 0, nullptr, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoomIn  = new LWButton (RTImage::createFromPng ("gtk-zoom-in-small.png"),  1, nullptr, LWButton::Left, LWButton::Center, "Zoom In");
+    bZoom100 = new LWButton (RTImage::createFromPng ("gtk-zoom-100-small.png"), 2, nullptr, LWButton::Left, LWButton::Center, "Zoom 100/%");
     //bZoomFit = new LWButton (RTImage::createFromPng ("gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (RTImage::createFromPng ("gtk-close-small.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
+    bClose   = new LWButton (RTImage::createFromPng ("gtk-close-small.png"),    4, nullptr, LWButton::Right, LWButton::Center, "Close");
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
@@ -730,7 +730,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
     }
 
     if (deleted) {
-        iarea->flawnOverWindow = NULL;
+        iarea->flawnOverWindow = nullptr;
         delete this;
         return;
     }
@@ -752,7 +752,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
     }
 
     state = SNormal;
-    iarea->grabFocus (NULL);
+    iarea->grabFocus (nullptr);
 
     if (needRedraw) {
         iarea->redraw ();
@@ -1749,7 +1749,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             if (cropHandler.cropParams.enabled) {
                 int cropX, cropY;
                 cropHandler.getPosition (cropX, cropY);
-                drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom() );
+                drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, cropHandler.isFullDisplay ());
             }
 
             if (observedCropWin) {
@@ -1830,7 +1830,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                 cr->fill();
 
                 if (cropHandler.cropParams.enabled) {
-                    drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom());
+                    drawCrop (cr, x + imgAreaX + imgX, y + imgAreaY + imgY, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams, (this == iarea->mainCropWindow), true, cropHandler.isFullDisplay ());
                 }
 
                 if (observedCropWin) {

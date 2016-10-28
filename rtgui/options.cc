@@ -74,11 +74,7 @@ inline bool Options::checkProfilePath (Glib::ustring &path)
 
     p = getGlobalProfilePath();
 
-    if (!p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
-        return true;
-    } else {
-        return false;
-    }
+    return !p.empty() && Glib::file_test (path + paramFileExtension, Glib::FILE_TEST_EXISTS);
 }
 
 bool Options::checkDirPath (Glib::ustring &path, Glib::ustring errString)
@@ -391,8 +387,8 @@ void Options::setDefaults ()
     gimpDir = "";
     psDir = "";
     customEditorProg = "";
+    CPBKeys = CPBKT_TID;
     editorToSendTo = 1;
-    liveThumbnails = true;
     favoriteDirs.clear();
     tpOpen.clear ();
     //crvOpen.clear ();
@@ -1084,10 +1080,6 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("File Browser", "ThumbnailInterpolation")) {
                     thumbInterp    = keyFile.get_integer ("File Browser", "ThumbnailInterpolation");
-                }
-
-                if (keyFile.has_key ("File Browser", "LiveThumbnails")) {
-                    liveThumbnails     = keyFile.get_boolean ("File Browser", "LiveThumbnails");
                 }
 
                 if (keyFile.has_key ("File Browser", "FavoriteDirs")) {
@@ -1882,7 +1874,6 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer_list ("File Browser", "ParseExtensionsEnabled", pextena);
         keyFile.set_integer ("File Browser", "ThumbnailArrangement", fbArrangement);
         keyFile.set_integer ("File Browser", "ThumbnailInterpolation", thumbInterp);
-        keyFile.set_boolean ("File Browser", "LiveThumbnails", liveThumbnails);
         Glib::ArrayHandle<Glib::ustring> pfav = favoriteDirs;
         keyFile.set_string_list ("File Browser", "FavoriteDirs", pfav);
         Glib::ArrayHandle<Glib::ustring> pren = renameTemplates;
@@ -2136,7 +2127,7 @@ int Options::saveToFile (Glib::ustring fname)
 
     FILE *f = g_fopen (fname.c_str (), "wt");
 
-    if (f == NULL) {
+    if (f == nullptr) {
         if (options.rtSettings.verbose) {
             printf ("Options::saveToFile / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
@@ -2159,7 +2150,7 @@ bool Options::load ()
 
     path = g_getenv ("RT_SETTINGS");
 
-    if (path != NULL) {
+    if (path != nullptr) {
         rtdir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (rtdir)) {
@@ -2193,7 +2184,7 @@ bool Options::load ()
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
     path = g_getenv ("RT_CACHE");
 
-    if (path != NULL) {
+    if (path != nullptr) {
         cacheBaseDir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (cacheBaseDir)) {
@@ -2318,7 +2309,7 @@ bool Options::load ()
 void Options::save ()
 {
 
-    if (options.multiUser == false) {
+    if (!options.multiUser) {
         options.saveToFile (Glib::build_filename (argv0, "options"));
     } else {
         options.saveToFile (Glib::build_filename (rtdir, "options"));

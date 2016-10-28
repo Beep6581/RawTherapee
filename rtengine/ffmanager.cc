@@ -42,7 +42,7 @@ inline ffInfo& ffInfo::operator =(const ffInfo &o)
 
         if( ri ) {
             delete ri;
-            ri = NULL;
+            ri = nullptr;
         }
     }
 
@@ -133,7 +133,7 @@ void ffInfo::updateRawImage()
 
         if( ri->loadRaw(true)) {
             delete ri;
-            ri = NULL;
+            ri = nullptr;
         } else {
             int H = ri->get_height();
             int W = ri->get_width();
@@ -195,7 +195,7 @@ void ffInfo::updateRawImage()
 
         if( ri->loadRaw(true)) {
             delete ri;
-            ri = NULL;
+            ri = nullptr;
         } else {
             ri->compress_image();
         }
@@ -293,11 +293,11 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
     auto file = Gio::File::create_for_path (filename);
 
     if (!file ) {
-        return 0;
+        return nullptr;
     }
 
     if (!file->query_exists ()) {
-        return 0;
+        return nullptr;
     }
 
     try {
@@ -305,11 +305,11 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         auto info = file->query_info ();
 
         if (!info || info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
-            return 0;
+            return nullptr;
         }
 
         if (!options.fbShowHidden && info->is_hidden ()) {
-            return 0;
+            return nullptr;
         }
 
         Glib::ustring ext;
@@ -321,7 +321,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         }
 
         if (!options.is_extention_enabled (ext)) {
-            return 0;
+            return nullptr;
         }
 
 
@@ -329,7 +329,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         int res = ri.loadRaw (false); // Read informations about shot
 
         if (res != 0) {
-            return 0;
+            return nullptr;
         }
 
         ffList_t::iterator iter;
@@ -369,7 +369,7 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 
     } catch (Gio::Error&) {}
 
-    return 0;
+    return nullptr;
 }
 
 void FFManager::getStat( int &totFiles, int &totTemplates)
@@ -396,7 +396,7 @@ void FFManager::getStat( int &totFiles, int &totTemplates)
 ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert, time_t t )
 {
     if( ffList.empty() ) {
-        return 0;
+        return nullptr;
     }
 
     std::string key( ffInfo::key(mak, mod, len, focal, apert) );
@@ -430,7 +430,7 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const s
             }
         }
 
-        return bestD != INFINITY ? &(bestMatch->second) : 0 ;
+        return bestD != INFINITY ? &(bestMatch->second) : nullptr ;
     }
 }
 
@@ -441,7 +441,7 @@ RawImage* FFManager::searchFlatField( const std::string &mak, const std::string 
     if( ff ) {
         return ff->getRawImage();
     } else {
-        return 0;
+        return nullptr;
     }
 }
 
@@ -459,7 +459,7 @@ RawImage* FFManager::searchFlatField( const Glib::ustring filename )
         return ff->getRawImage();
     }
 
-    return 0;
+    return nullptr;
 }
 
 

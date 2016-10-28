@@ -34,8 +34,8 @@
 using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf)
-    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
-      pparamsValid(false), needsReProcessing(true), imageLoading(false), lastImg(NULL),
+    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr),
+      pparamsValid(false), needsReProcessing(true), imageLoading(false), lastImg(nullptr),
       lastW(0), lastH(0), lastScale(0), initial_(false)
 {
 
@@ -58,12 +58,12 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     }
 
     delete tpp;
-    tpp = 0;
+    tpp = nullptr;
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
-      pparamsSet(false), needsReProcessing(true), imageLoading(false), lastImg(NULL),
+    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr), pparamsValid(false),
+      pparamsSet(false), needsReProcessing(true), imageLoading(false), lastImg(nullptr),
       lastW(0), lastH(0), lastScale(0.0), initial_(true)
 {
 
@@ -76,7 +76,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::s
     initial_ = false;
 
     delete tpp;
-    tpp = 0;
+    tpp = nullptr;
 }
 
 void Thumbnail::_generateThumbnailImage ()
@@ -84,9 +84,9 @@ void Thumbnail::_generateThumbnailImage ()
 
     //  delete everything loaded into memory
     delete tpp;
-    tpp = NULL;
+    tpp = nullptr;
     delete [] lastImg;
-    lastImg = NULL;
+    lastImg = nullptr;
     tw = -1;
     th = options.maxThumbnailHeight;
     imgRatio = -1.;
@@ -135,7 +135,7 @@ void Thumbnail::_generateThumbnailImage ()
             tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1, TRUE);
         }
 
-        if ( tpp == NULL ) {
+        if ( tpp == nullptr ) {
             quick = false;
             tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, pparams.wb.equal, TRUE);
         }
@@ -210,7 +210,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     static int index = 0; // Will act as unique identifier during the session
 
     // try to load the last saved parameters from the cache or from the paramfile file
-    ProcParams* ldprof = NULL;
+    ProcParams* ldprof = nullptr;
 
     Glib::ustring defProf = getType() == FT_Raw ? options.defProfRaw : options.defProfImg;
 
@@ -225,12 +225,12 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
             imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
         } else {
-            imageMetaData = rtengine::ImageMetaData::fromFile (fname, NULL);
+            imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
         }
 
         Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
 
-        const rtexif::TagDirectory* exifDir = NULL;
+        const rtexif::TagDirectory* exifDir = nullptr;
 
         if (imageMetaData && (exifDir = imageMetaData->getExifData())) {
             Glib::ustring outFName;
@@ -565,15 +565,15 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 
     MyMutex::MyLock lock(mutex);
 
-    if ( tpp == 0 ) {
+    if ( tpp == nullptr ) {
         _loadThumbnail();
 
-        if ( tpp == 0 ) {
-            return 0;
+        if ( tpp == nullptr ) {
+            return nullptr;
         }
     }
 
-    rtengine::IImage8* image = 0;
+    rtengine::IImage8* image = nullptr;
 
     if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL ) {
         // RAW internal thumbnail, no profile yet: just do some rotation etc.
@@ -586,7 +586,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
     tpp->getDimensions(lastW, lastH, lastScale);
 
     delete tpp;
-    tpp = 0;
+    tpp = nullptr;
     return image;
 }
 
@@ -596,20 +596,20 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
     MyMutex::MyLock lock(mutex);
 
     if ( cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL ) {
-        return 0;
+        return nullptr;
     }
 
     _generateThumbnailImage();
 
-    if ( tpp == 0 ) {
-        return 0;
+    if ( tpp == nullptr ) {
+        return nullptr;
     }
 
     rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
     tpp->getDimensions(lastW, lastH, lastScale);
 
     delete tpp;
-    tpp = 0;
+    tpp = nullptr;
     return image;
 }
 
@@ -782,12 +782,12 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
             _loadThumbnail (false);
         }
 
-        if (tpp == NULL) {
+        if (tpp == nullptr) {
             return;
         }
     } else if (!succ) {
         delete tpp;
-        tpp = NULL;
+        tpp = nullptr;
         return;
     }
 

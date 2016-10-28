@@ -59,7 +59,7 @@ InspectorBuffer::~InspectorBuffer() {
 int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
 {
 
-    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, NULL);
+    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, nullptr);
 
     if (!idata) {
         return 0;
@@ -81,7 +81,7 @@ int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
     return deg;
 }
 
-Inspector::Inspector () : currImage(NULL), zoom(0.0), active(false)
+Inspector::Inspector () : currImage(nullptr), zoom(0.0), active(false)
 {
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     set_name("Inspector");
@@ -215,7 +215,7 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
         // deleting the last entries
         for (size_t i = images.size() - 1; i > size_t(options.maxInspectorBuffers - 1); --i) {
             delete images.at(i);
-            images.at(i) = NULL;
+            images.at(i) = nullptr;
         }
 
         // resizing down
@@ -223,14 +223,14 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
     }
 
     if (fullPath.empty()) {
-        currImage = NULL;
+        currImage = nullptr;
         queue_draw();
         return;
     } else {
         bool found = false;
 
         for (size_t i = 0; i < images.size(); ++i) {
-            if (images.at(i) != NULL && images.at(i)->imgPath == fullPath) {
+            if (images.at(i) != nullptr && images.at(i)->imgPath == fullPath) {
                 currImage = images.at(i);
 
                 // rolling the list 1 step to the beginning
@@ -259,7 +259,7 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
                 images.push_back(iBuffer);
                 currImage = images.at(images.size() - 1);
             } else {
-                currImage = NULL;
+                currImage = nullptr;
             }
         }
     }
@@ -268,14 +268,14 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
 void Inspector::deleteBuffers ()
 {
     for (size_t i = 0; i < images.size(); ++i) {
-        if (images.at(i) != NULL) {
+        if (images.at(i) != nullptr) {
             delete images.at(i);
-            images.at(i) = NULL;
+            images.at(i) = nullptr;
         }
     }
 
     images.resize(0);
-    currImage = NULL;
+    currImage = nullptr;
 }
 
 void Inspector::flushBuffers ()

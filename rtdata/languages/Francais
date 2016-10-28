@@ -954,8 +954,8 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
 PREFERENCES_MENUGROUPRANK;Classement
 PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
-PREFERENCES_MONBPC;Compensation du Point Noir pour la transformation L*a*b*->Moniteur
 PREFERENCES_MIN;Mini (100x115)
+PREFERENCES_MONBPC;Compensation du Point Noir pour la transformation L*a*b*->Moniteur
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVGUIDEBRUSH;Couleur du cadre dans le Navigateur
@@ -1316,7 +1316,6 @@ TP_DIRPYRDENOISE_CUR;Courbe
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Chroma
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Augmente (multiplie) la valeur de tousles curseurs de chrominance.\nCette courbe vous permet d'ajuster la force de la réduction de bruit chromatique en fonction de la chromaticité, par exemple pour augmenter l'action dans les zones peu saturées et pour la réduire dans ceux celles très saturées.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Module l'action du débruitage de 'Luminance'
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profil couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profil couleur d'un gamma différent, la réduction de bruit de luminance variera.
 TP_DIRPYRDENOISE_ENH;Mode amélioré
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Augmente la qualité du débruitage, mais augmente le temps de traitement d'environ 20%
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1331,13 +1330,11 @@ TP_DIRPYRDENOISE_LPLABM;L* pondéré (faiblement) + a*b* (normal)
 TP_DIRPYRDENOISE_LTYPE;Contrôle de luminance
 TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYRDENOISE_LUMAFR;Luminance
-TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Ondelettes pour la luminance et transformé de Fourier pour les détails de luminance
 TP_DIRPYRDENOISE_MAN;Manuel
 TP_DIRPYRDENOISE_MANU;Manuel
 TP_DIRPYRDENOISE_MED;Filtre Médian
 TP_DIRPYRDENOISE_MEDMETHOD;Méthode
 TP_DIRPYRDENOISE_MEDTYPE;Type de médiane
-TP_DIRPYRDENOISE_MED_TOOLTIP;Active le débruitage médian
 TP_DIRPYRDENOISE_METHOD;Méthode
 TP_DIRPYRDENOISE_METHOD11;Qualité
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;La qualité peut être adapté à la trame du bruit. Régler sur "haut" augmentera l'effet de la réduction de bruit au prix d'un temps de traitement plus long.

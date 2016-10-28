@@ -3436,7 +3436,7 @@ int ProcParams::write (const Glib::ustring &fname, const Glib::ustring &content)
         FILE *f;
         f = g_fopen (fname.c_str (), "wt");
 
-        if (f == NULL) {
+        if (f == nullptr) {
             error = 1;
         } else {
             fprintf (f, "%s", content.c_str());
@@ -7562,11 +7562,7 @@ bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b
         }
     }
 
-    if (a.threshold != b.threshold) {
-        return false;
-    }
-
-    return true;
+    return a.threshold == b.threshold;
 }
 
 /*bool operator==(const ExifPairs& a, const ExifPairs& b) {
@@ -8023,8 +8019,8 @@ PartialProfile::PartialProfile(bool createInstance, bool paramsEditedValue)
         pparams = new ProcParams();
         pedited = new ParamsEdited(paramsEditedValue);
     } else {
-        pparams = NULL;
-        pedited = NULL;
+        pparams = nullptr;
+        pedited = nullptr;
     }
 }
 
@@ -8048,13 +8044,13 @@ PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe)
     if (pp) {
         pparams = new ProcParams(*pp);
     } else {
-        pparams = NULL;
+        pparams = nullptr;
     }
 
     if (pe) {
         pedited = new ParamsEdited(*pe);
     } else {
-        pedited = NULL;
+        pedited = nullptr;
     }
 }
 
@@ -8079,12 +8075,12 @@ void PartialProfile::deleteInstance ()
 {
     if (pparams) {
         delete pparams;
-        pparams = NULL;
+        pparams = nullptr;
     }
 
     if (pedited) {
         delete pedited;
-        pedited = NULL;
+        pedited = nullptr;
     }
 }
 

@@ -27,7 +27,7 @@ ToolVBox::ToolVBox() {}
 
 ToolParamBlock::ToolParamBlock() {}
 
-FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(NULL), exp(NULL), lastEnabled(true)
+FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(nullptr), exp(nullptr), lastEnabled(true)
 {
     if (!content) {
         return;

@@ -512,7 +512,7 @@ void ToolPanelCoordinator::closeImage ()
 
     if (ipc) {
         ipc->stopProcessing ();
-        ipc = NULL;
+        ipc = nullptr;
     }
 }
 
@@ -642,7 +642,7 @@ void ToolPanelCoordinator::autoCropRequested ()
 rtengine::RawImage* ToolPanelCoordinator::getDF()
 {
     if (!ipc) {
-        return NULL;
+        return nullptr;
     }
 
     const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
@@ -657,13 +657,13 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
         return rtengine::dfm.searchDarkFrame( maker, model, iso, shutter, timestamp);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 rtengine::RawImage* ToolPanelCoordinator::getFF()
 {
     if (!ipc) {
-        return NULL;
+        return nullptr;
     }
 
     const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
@@ -681,7 +681,7 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
         return rtengine::ffm.searchFlatField( maker, model, lens, focallength, aperture, timestamp);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 Glib::ustring ToolPanelCoordinator::GetCurrentImageFilePath()
@@ -760,7 +760,7 @@ void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* o
 {
 
     for (auto toolPanel : toolPanels) {
-        if (toolPanel->getParent() != NULL) {
+        if (toolPanel->getParent() != nullptr) {
             ToolPanel* currentTP = toolPanel;
 
             if (currentTP->getParent() == parent) {

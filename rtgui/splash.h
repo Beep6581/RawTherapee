@@ -48,7 +48,7 @@ public:
 
     bool hasReleaseNotes()
     {
-        return releaseNotesSW != NULL;
+        return releaseNotesSW != nullptr;
     };
     void showReleaseNotes();
     bool on_timer ();

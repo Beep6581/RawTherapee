@@ -52,7 +52,7 @@ namespace
 // Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
 FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 {
-    FILE* f = NULL;
+    FILE* f = nullptr;
 
 #ifdef WIN32
 
@@ -91,13 +91,13 @@ Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid h
 // For only copying the raw input data
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot)
 {
-    if (exifRoot != NULL) {
+    if (exifRoot != nullptr) {
         delete exifRoot;
-        exifRoot = NULL;
+        exifRoot = nullptr;
     }
 
     if (eroot) {
-        rtexif::TagDirectory* td = ((rtexif::TagDirectory*)eroot)->clone (NULL);
+        rtexif::TagDirectory* td = ((rtexif::TagDirectory*)eroot)->clone (nullptr);
 
         // make IPTC and XMP pass through
         td->keepTag(0x83bb);  // IPTC
@@ -115,18 +115,18 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     exifChange.clear();
     exifChange = exif;
 
-    if (exifRoot != NULL) {
+    if (exifRoot != nullptr) {
         delete exifRoot;
-        exifRoot = NULL;
+        exifRoot = nullptr;
     }
 
     if (eroot) {
-        exifRoot = ((rtexif::TagDirectory*)eroot)->clone (NULL);
+        exifRoot = ((rtexif::TagDirectory*)eroot)->clone (nullptr);
     }
 
-    if (iptc != NULL) {
+    if (iptc != nullptr) {
         iptc_data_free (iptc);
-        iptc = NULL;
+        iptc = nullptr;
     }
 
     // build iptc structures for libiptcdata
@@ -184,7 +184,7 @@ void ImageIO::setOutputProfile  (char* pdata, int plen)
         profileData = new char [plen];
         memcpy (profileData, pdata, plen);
     } else {
-        profileData = NULL;
+        profileData = nullptr;
     }
 
     profileLength = plen;
@@ -224,7 +224,7 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
     }
 
     //initializing main structures
-    png_structp png = png_create_read_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
+    png_structp png = png_create_read_struct (PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
     if (!png) {
         fclose (file);
@@ -303,7 +303,7 @@ int ImageIO::loadPNG  (Glib::ustring fname)
     }
 
     //initializing main structures
-    png_structp png = png_create_read_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
+    png_structp png = png_create_read_struct (PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
     if (!png) {
         fclose (file);
@@ -331,7 +331,7 @@ int ImageIO::loadPNG  (Glib::ustring fname)
 
     png_read_info(png, info);
 
-    embProfile = NULL;
+    embProfile = nullptr;
 
     //retrieving image information
     png_uint_32 width, height;
@@ -388,7 +388,7 @@ int ImageIO::loadPNG  (Glib::ustring fname)
 
     for (unsigned int i = 0; i < height; i++) {
 
-        png_read_row (png, (png_byte*)row, NULL);
+        png_read_row (png, (png_byte*)row, nullptr);
 
         if (bit_depth == 16) { // convert scanline to host byte order
             unsigned short* srow = (unsigned short*)row;
@@ -405,7 +405,7 @@ int ImageIO::loadPNG  (Glib::ustring fname)
         }
     }
 
-    png_read_end (png, 0);
+    png_read_end (png, nullptr);
     png_destroy_read_struct (&png, &info, &end_info);
 
     delete [] row;
@@ -489,7 +489,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     if (hasprofile) {
         embProfile = cmsOpenProfileFromMem (loadedProfileData, loadedProfileLength);
     } else {
-        embProfile = NULL;
+        embProfile = nullptr;
     }
 
     jpeg_start_decompress(&cinfo);
@@ -568,7 +568,7 @@ int ImageIO::loadJPEG (Glib::ustring fname)
         if (hasprofile) {
             embProfile = cmsOpenProfileFromMem (loadedProfileData, loadedProfileLength);
         } else {
-            embProfile = NULL;
+            embProfile = nullptr;
         }
 
         jpeg_start_decompress(&cinfo);
@@ -623,7 +623,7 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
     TIFF* in = TIFFOpen(fname.c_str(), "r");
 #endif
 
-    if (in == NULL) {
+    if (in == nullptr) {
         return IMIO_CANNOTREADFILE;
     }
 
@@ -732,7 +732,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
     TIFF* in = TIFFOpen(fname.c_str(), "r");
 #endif
 
-    if (in == NULL) {
+    if (in == nullptr) {
         return IMIO_CANNOTREADFILE;
     }
 
@@ -814,7 +814,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
         loadedProfileData = new char [loadedProfileLength];
         memcpy (loadedProfileData, profdata, loadedProfileLength);
     } else {
-        embProfile = NULL;
+        embProfile = nullptr;
     }
 
     allocate (width, height);
@@ -837,7 +837,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
         if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
             setScanline (row, linebuffer, bitspersample, minValue, maxValue);
         } else {
-            setScanline (row, linebuffer, bitspersample, NULL, NULL);
+            setScanline (row, linebuffer, bitspersample, nullptr, nullptr);
         }
 
         if (pl && !(row % 100)) {
@@ -908,7 +908,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
         pl->setProgress (0.0);
     }
 
-    png_structp png = png_create_write_struct (PNG_LIBPNG_VER_STRING, 0, 0, 0);
+    png_structp png = png_create_write_struct (PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
     if (!png) {
         fclose (file);
@@ -918,7 +918,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
     png_infop info = png_create_info_struct(png);
 
     if (!info) {
-        png_destroy_write_struct (&png, 0);
+        png_destroy_write_struct (&png, nullptr);
         fclose (file);
         return IMIO_HEADERERROR;
     }
@@ -1101,7 +1101,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
         int bytes = 0;
 
-        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (NULL, 0, iptcdata, size, buffer, 65532)) < 0) {
+        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (nullptr, 0, iptcdata, size, buffer, 65532)) < 0) {
             if (iptcdata) {
                 iptc_data_free_buf (iptc, iptcdata);
             }
@@ -1307,23 +1307,23 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
 //TODO Even though we are saving EXIF IFD - MakerNote still comes out screwed.
 
-            if ((tag = exifRoot->getTag (TIFFTAG_MODEL)) != NULL) {
+            if ((tag = exifRoot->getTag (TIFFTAG_MODEL)) != nullptr) {
                 TIFFSetField (out, TIFFTAG_MODEL, tag->getValue());
             }
 
-            if ((tag = exifRoot->getTag (TIFFTAG_MAKE)) != NULL) {
+            if ((tag = exifRoot->getTag (TIFFTAG_MAKE)) != nullptr) {
                 TIFFSetField (out, TIFFTAG_MAKE, tag->getValue());
             }
 
-            if ((tag = exifRoot->getTag (TIFFTAG_DATETIME)) != NULL) {
+            if ((tag = exifRoot->getTag (TIFFTAG_DATETIME)) != nullptr) {
                 TIFFSetField (out, TIFFTAG_DATETIME, tag->getValue());
             }
 
-            if ((tag = exifRoot->getTag (TIFFTAG_ARTIST)) != NULL) {
+            if ((tag = exifRoot->getTag (TIFFTAG_ARTIST)) != nullptr) {
                 TIFFSetField (out, TIFFTAG_ARTIST, tag->getValue());
             }
 
-            if ((tag = exifRoot->getTag (TIFFTAG_COPYRIGHT)) != NULL) {
+            if ((tag = exifRoot->getTag (TIFFTAG_COPYRIGHT)) != nullptr) {
                 TIFFSetField (out, TIFFTAG_COPYRIGHT, tag->getValue());
             }
 
@@ -1420,7 +1420,7 @@ void png_flush(png_structp png_ptr)
     FILE *io_ptr;
     io_ptr = (FILE *)(png_get_io_ptr(png_ptr));
 
-    if (io_ptr != NULL) {
+    if (io_ptr != nullptr) {
         fflush(io_ptr);
     }
 }

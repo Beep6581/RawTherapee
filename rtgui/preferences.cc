@@ -1338,7 +1338,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     }
 
     // process directory
-    Glib::Dir* dir = NULL;
+    Glib::Dir* dir = nullptr;
 
     try {
         dir = new Glib::Dir (dirname);
@@ -2168,7 +2168,7 @@ void Preferences::updateFFinfos()
 bool Preferences::splashClosed(GdkEventAny* event)
 {
     delete splash;
-    splash = NULL;
+    splash = nullptr;
     return true;
 }
 

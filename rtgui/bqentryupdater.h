@@ -53,7 +53,7 @@ protected:
 public:
     BatchQueueEntryUpdater ();
 
-    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams = NULL, Thumbnail* thumbnail = NULL);
+    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams = nullptr, Thumbnail* thumbnail = nullptr);
     void removeJobs (BQEntryUpdateListener* listener);
     void terminate  ();
 

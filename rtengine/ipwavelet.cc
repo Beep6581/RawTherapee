@@ -700,7 +700,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 int height = tilebottom - tiletop;
                 LabImage * labco;
                 float **Lold;
-                float *LoldBuffer = NULL;
+                float *LoldBuffer = nullptr;
 
                 if(numtiles == 1) { // untiled processing => we can use output buffer for labco
                     labco = dst;
@@ -826,7 +826,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                     for(int i = (tileheight + 1) / 2; i < tileheight; i++) {
                         delete [] varhue[i];
-                        varhue[i] = NULL;
+                        varhue[i] = nullptr;
                     }
                 } else { // reduce the varhue array to get faster access in following processing
                     for (int i = 0; i < (tileheight + 1) / 2; i++) {
@@ -846,7 +846,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 }
 
                 //  printf("LevwavL before: %d\n",levwavL);
-                if(cp.contrast == 0.f && cp.tonemap == false && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
+                if(cp.contrast == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L  or edge=> we probably can reduce the number of levels
                     while(levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
@@ -916,21 +916,21 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                             vari[1] = max(0.0001f, vari[1]);
                             vari[2] = max(0.0001f, vari[2]);
                             vari[3] = max(0.0001f, vari[3]);
-                            float* noisevarlum = NULL;  // we need a dummy to pass it to WaveletDenoiseAllL
+                            float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
 
                             WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge);
                         }
 
                         ind = 1;
                         //Flat curve for Contrast=f(H) in levels
-                        FlatCurve* ChCurve = NULL;//curve C=f(H)
+                        FlatCurve* ChCurve = nullptr;//curve C=f(H)
                         bool Chutili = false;
                         ChCurve = new FlatCurve(params->wavelet.Chcurve);
 
                         if (!ChCurve || ChCurve->isIdentity()) {
                             if (ChCurve) {
                                 delete ChCurve;
-                                ChCurve = NULL;
+                                ChCurve = nullptr;
                             }
                         } else {
                             Chutili = true;
@@ -953,14 +953,14 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 }
 
                 //Flat curve for H=f(H) in residual image
-                FlatCurve* hhCurve = NULL;//curve H=f(H)
+                FlatCurve* hhCurve = nullptr;//curve H=f(H)
                 bool hhutili = false;
                 hhCurve = new FlatCurve(params->wavelet.hhcurve);
 
                 if (!hhCurve || hhCurve->isIdentity()) {
                     if (hhCurve) {
                         delete hhCurve;
-                        hhCurve = NULL;
+                        hhCurve = nullptr;
                     }
                 } else {
                     hhutili = true;
@@ -1225,7 +1225,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                     }
                 }
 
-                if(LoldBuffer != NULL) {
+                if(LoldBuffer != nullptr) {
                     delete [] LoldBuffer;
                     delete [] Lold;
                 }
@@ -1237,7 +1237,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         }
 
         for (int i = 0; i < tileheight; i++)
-            if(varhue[i] != NULL) {
+            if(varhue[i] != nullptr) {
                 delete [] varhue[i];
             }
 
@@ -1436,7 +1436,7 @@ float *ImProcFunctions::ContrastDR(float *Source, int skip, struct cont_params &
 {
     int n = W_L * H_L;
 
-    if(Contrast == NULL) {
+    if(Contrast == nullptr) {
         Contrast = new float[n];
     }
 
@@ -1490,7 +1490,7 @@ SSEFUNCTION float *ImProcFunctions::CompressDR(float *Source, int skip, struct c
 
     float *ucr = ContrastDR(Source, skip, cp, W_L, H_L, Compression, DetailBoost, max0, min0, ave, ah, bh, al, bl, factorx);
 
-    if(Compressed == NULL) {
+    if(Compressed == nullptr) {
         Compressed = ucr;
     }
 
@@ -1698,7 +1698,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     float max0 = 0.f;
     float min0 = FLT_MAX;
 
-    if(contrast != 0.f || cp.tonemap  && cp.resena) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if(contrast != 0.f || (cp.tonemap  && cp.resena)) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _RT_NESTED_OPENMP
         #pragma omp parallel for reduction(+:avedbl) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
@@ -1772,7 +1772,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     float *koeLi[12];
     float maxkoeLi[12];
 
-    float *koeLibuffer = NULL;
+    float *koeLibuffer = nullptr;
 
     for(int y = 0; y < 12; y++) {
         maxkoeLi[y] = 0.f;    //9
@@ -2600,7 +2600,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
         float * koe;
         float maxkoe = 0.f;
 
-        if(lipschitz == false) {
+        if(!lipschitz) {
             koe = new float [H_L * W_L];
 
             for (int i = 0; i < W_L * H_L; i++) {
@@ -2733,7 +2733,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
         //take into account local contrast
         float refin = value * exp (expkoef);
 
-        if(cp.link == true  && cp.noiseena) { //combi
+        if(cp.link  && cp.noiseena) { //combi
             {
                 if(level == 0) {
                     refin *= (1.f + cp.lev0s / 50.f);    // we can change this sensibility!
@@ -2776,7 +2776,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                     int k = i * W_L + j;
 
                     if(cp.detectedge) {
-                        if(lipschitz == false) {
+                        if(!lipschitz) {
                             if(cp.eddet > 10.f) {
                                 edge = (aedstr * cp.eddet + bedstr) * (edgePrecalc * (1.f + koe[k])) / (1.f + 0.9f * maxkoe);
                             } else {
@@ -2784,7 +2784,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                             }
                         }
 
-                        if(lipschitz == true) {
+                        if(lipschitz) {
                             if(level < 4) {
                                 edge = 1.f + (edgePrecalc - 1.f) * (koeLi[level * 3][k]) / (1.f + 0.9f * maxkoeLi[level * 3 + dir - 1]);
                             } else {
@@ -2886,7 +2886,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                     int k = i * W_L + j;
 
                     if(cp.detectedge) {
-                        if(lipschitz == false) {
+                        if(!lipschitz) {
                             if(cp.eddet > 10.f) {
                                 edge = (aedstr * cp.eddet + bedstr) * (edgePrecalc * (1.f + koe[k])) / (1.f + 0.9f * maxkoe);
                             } else {
@@ -2894,7 +2894,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
                             }
                         }
 
-                        if(lipschitz == true) {
+                        if(lipschitz) {
                             if(level < 4) {
                                 edge = 1.f + (edgePrecalc - 1.f) * (koeLi[level * 3][k]) / (1.f + 0.9f * maxkoeLi[level * 3 + dir - 1]);
                             } else {
@@ -2976,13 +2976,13 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             }
         }
 
-        if(lipschitz == false) {
+        if(!lipschitz) {
             delete [] koe;
         }
     }
 
 
-    if(cp.link == false && cp.noiseena)   { //used both with denoise 1 2 3
+    if(!cp.link && cp.noiseena)   { //used both with denoise 1 2 3
         float refine = 0.f;
 
         for (int i = 0; i < W_L * H_L; i++) {

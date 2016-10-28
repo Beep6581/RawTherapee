@@ -76,7 +76,7 @@ void IndicateClippedPanel::buttonToggled ()
 
     // this will redraw the linked Before image area
     // which is set when before/after view is enabled
-    if (imageArea->iLinkedImageArea != NULL) {
+    if (imageArea->iLinkedImageArea != nullptr) {
         imageArea->iLinkedImageArea->queue_draw ();
     }
 }

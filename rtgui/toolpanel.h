@@ -67,17 +67,17 @@ protected:
 
 public:
 
-    ToolPanel (Glib::ustring toolName = "", bool need11 = false) : toolName(toolName), listener(NULL), tmp(NULL), batchMode(false), multiImage(false), need100Percent(need11) {}
+    ToolPanel (Glib::ustring toolName = "", bool need11 = false) : toolName(toolName), listener(nullptr), tmp(nullptr), batchMode(false), multiImage(false), need100Percent(need11) {}
     virtual ~ToolPanel() {}
 
     virtual void           setParent       (Gtk::Box* parent) {}
     virtual Gtk::Box*      getParent       ()
     {
-        return NULL;
+        return nullptr;
     }
     virtual MyExpander*    getExpander     ()
     {
-        return NULL;
+        return nullptr;
     }
     virtual void           setExpanded     (bool expanded) {}
     virtual bool           getExpanded     ()
@@ -93,13 +93,13 @@ public:
         listener = tpl;
     }
     virtual void           setEditProvider (EditDataProvider *provider) {}
-    virtual void           read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL) {}
-    virtual void           write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL) {}
+    virtual void           read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) {}
+    virtual void           write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) {}
     virtual void           trimValues      (rtengine::procparams::ProcParams* pp)
     {
         return;
     }
-    virtual void           setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL) {}
+    virtual void           setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) {}
     virtual void           autoOpenCurve   () {}
 
     /** @brief Disable the event broadcasting mechanism
@@ -108,12 +108,12 @@ public:
      */
     bool disableListener ()
     {
-        if (tmp == NULL) {
+        if (tmp == nullptr) {
             tmp = listener;
         }
 
-        bool prevState = listener != NULL;
-        listener = NULL;
+        bool prevState = listener != nullptr;
+        listener = nullptr;
         return prevState;
     }
 
@@ -121,11 +121,11 @@ public:
      */
     void enableListener  ()
     {
-        if (tmp != NULL) {
+        if (tmp != nullptr) {
             listener = tmp;
         }
 
-        tmp = NULL;
+        tmp = nullptr;
     }
 
     virtual void setBatchMode    (bool batchMode)

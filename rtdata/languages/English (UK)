@@ -37,7 +37,10 @@ PREFERENCES_INTENT_ABSOLUTE;Absolute Colourimetric
 PREFERENCES_INTENT_RELATIVE;Relative Colourimetric
 PREFERENCES_MENUGROUPLABEL;Group "Colour label"
 PREFERENCES_NAVGUIDEBRUSH;Navigator guide colour
+PREFERENCES_SELECTFONT_COLPICKER;Select Colour Picker's font
 PREFERENCES_TAB_COLORMGR;Colour Management
+SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colours from the output profile.
+TOOLBAR_TOOLTIP_COLORPICKER;Lockable Colour Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a colour picker\nDrag it around while pressing the left mouse button\nDelete the colour picker with a right mouse button click\nDelete all colour pickers with Shift + Right mouse button click\nRight click away from any colour picker to go back to the Hand tool
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Centre of rotation is the geometrical centre of the image.
 TP_BWMIX_CC_ENABLED;Adjust complementary colour
 TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colours in ROYGCBPM mode.
@@ -65,7 +68,6 @@ TP_COLORTONING_SPLITLR;Saturation 2 colours
 TP_COLORTONING_TWO2;Special chroma '2 colours'
 TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colours:\nMore predictable.
 TP_DIRPYRDENOISE_CTYPE_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the "Preview" method by matching the tile size and centre to the preview size and centre you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on the gamma of the input colour profile. An sRGB gamma is assumed, thus if the image uses an input colour profile of a different gamma, the effects of luminance noise reduction will differ.
 TP_DIRPYRDENOISE_PREVLABEL;Preview size=%1, Centre: Px=%2  Py=%3
 TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Centre: Tx=%2  Ty=%3
 TP_DIRPYREQUALIZER_ALGO;Skin Colour Range
@@ -77,6 +79,7 @@ TP_GRADIENT_CENTER;Centre
 TP_GRADIENT_CENTER_X;Centre X
 TP_GRADIENT_CENTER_Y;Centre Y
 TP_HLREC_COLOR;Colour Propagation
+TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output colour space with a fix White Point
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input colour profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple colour matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
 TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC colour profile file for the camera.
@@ -752,6 +755,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_440;CbDL - Method
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
+!HISTORY_MSG_443;Output Black Point Compensation
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -1063,6 +1067,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MIN;Mini (100x115)
+!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
 !PREFERENCES_MONINTENT;Default monitor intent
 !PREFERENCES_MONPROFILE;Default monitor profile
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
@@ -1101,7 +1106,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
-!PREFERENCES_SELECTFONT;Select font
+!PREFERENCES_SELECTFONT;Select global font
 !PREFERENCES_SELECTLANG;Select language
 !PREFERENCES_SELECTTHEME;Select theme
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
@@ -1196,6 +1201,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 !SAVEDLG_WARNFILENAME;File will be named
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
+!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate de rendering generated by the output profile of the ICM tool. Most useful for simulating printing outputs.
 !THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_BL;Bottom-left
 !THRESHOLDSELECTOR_BR;Bottom-right
@@ -1422,13 +1428,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_DIRPYRDENOISE_LTYPE;Luminance control
 !TP_DIRPYRDENOISE_LUMA;Luminance
 !TP_DIRPYRDENOISE_LUMAFR;Luminance
-!TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Wavelet on luminance and Fourier transform for luminance detail
 !TP_DIRPYRDENOISE_MAN;Manual
 !TP_DIRPYRDENOISE_MANU;Manual
 !TP_DIRPYRDENOISE_MED;Median Filter
 !TP_DIRPYRDENOISE_MEDMETHOD;Median method
 !TP_DIRPYRDENOISE_MEDTYPE;Median type
-!TP_DIRPYRDENOISE_MED_TOOLTIP;Enabled median denoising
 !TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD11;Quality
 !TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Quality can be adapted to the noise pattern. A setting of "high" increases the noise reduction effect at a cost of extended processing time.
@@ -1543,6 +1547,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
+!TP_ICM_BPC;Black Point Compensation
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.

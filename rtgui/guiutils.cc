@@ -545,9 +545,9 @@ void MyExpander::init()
 }
 
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
-    enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
-    child(NULL), headerWidget(NULL), statusImage(NULL),
-    label(NULL), useEnabled(useEnabled)
+    enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
+    child(nullptr), headerWidget(nullptr), statusImage(nullptr),
+    label(nullptr), useEnabled(useEnabled)
 {
     set_spacing(0);
     set_name("MyExpander");
@@ -592,9 +592,9 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 }
 
 MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
-    enabled(false), inconsistent(false), flushEvent(false), expBox(NULL),
-    child(NULL), headerWidget(NULL), statusImage(NULL),
-    label(NULL), useEnabled(useEnabled)
+    enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
+    child(nullptr), headerWidget(nullptr), statusImage(nullptr),
+    label(nullptr), useEnabled(useEnabled)
 {
     set_spacing(0);
     set_name("MyExpander");
@@ -1169,8 +1169,8 @@ void bindCurrentFolder (Gtk::FileChooser& chooser, Glib::ustring& variable)
 TextOrIcon::TextOrIcon (Glib::ustring fname, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type)
 {
 
-    imgIcon = 0;
-    label = 0;
+    imgIcon = nullptr;
+    label = nullptr;
     filename = fname;
     labelText = labelTx;
     tooltipText = tooltipTx;
@@ -1198,7 +1198,7 @@ void TextOrIcon::switchTo(TOITypes type)
         if (!imgIcon) {
             removeIfThere(this, label, false);
             delete label;
-            label = 0;
+            label = nullptr;
             imgIcon = new RTImage (filename);
             pack_start(*imgIcon, Gtk::PACK_SHRINK, 0);
             set_tooltip_markup ("<span font_size=\"large\" font_weight=\"bold\">" + labelText  + "</span>\n" + tooltipText);
@@ -1212,7 +1212,7 @@ void TextOrIcon::switchTo(TOITypes type)
         if (!label) {
             removeIfThere(this, imgIcon, false);
             delete imgIcon;
-            imgIcon = 0;
+            imgIcon = nullptr;
             label = new Gtk::Label (labelText, Gtk::ALIGN_CENTER);
             pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
             set_tooltip_markup (tooltipText);

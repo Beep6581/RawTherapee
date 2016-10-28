@@ -18,7 +18,7 @@
  */
 #include "imageareapanel.h"
 
-ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL)
+ImageAreaPanel::ImageAreaPanel () : before(nullptr), after(nullptr)
 {
 
     imageArea = new ImageArea (this);

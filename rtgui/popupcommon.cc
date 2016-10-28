@@ -27,8 +27,8 @@
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     : selected (-1) // -1 means that the button is invalid
-    , menu (0)
-    , buttonImage (0)
+    , menu (nullptr)
+    , buttonImage (nullptr)
 {
     button = thisButton;
     hasMenu = false;

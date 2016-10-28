@@ -85,12 +85,12 @@ class ProgressConnector
     {
         retval = opStart.emit ();
         g_idle_add (ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool> (opEnd));
-        workThread = 0;
+        workThread = nullptr;
     }
 
 public:
 
-    ProgressConnector (): retval( 0 ), workThread( 0 ) { }
+    ProgressConnector (): retval( 0 ), workThread( nullptr ) { }
 
     void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler )
     {

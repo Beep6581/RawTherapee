@@ -1774,7 +1774,7 @@ float PerceptualToneCurve::get_curve_val(float x, float range[2], float lut[], s
 }
 
 // calculate a single value that represents the contrast of the tone curve
-float PerceptualToneCurve::calculateToneCurveContrastValue(void) const
+float PerceptualToneCurve::calculateToneCurveContrastValue() const
 {
 
     // find linear y = k*x the best approximates the curve, which is the linear scaling/exposure component that does not contribute any contrast
