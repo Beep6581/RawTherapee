@@ -85,7 +85,7 @@ public:
         return displayedCurve;
     }
     //void on_realize ();
-    CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget = NULL, bool periodic = true);
+    CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget = nullptr, bool periodic = true);
 
 protected:
     //void curveTypeToggled ();

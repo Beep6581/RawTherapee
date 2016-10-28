@@ -41,7 +41,7 @@ void Clipboard::setPartialProfile   (const rtengine::procparams::PartialProfile&
     } else {
         if (partProfile.pparams) {
             delete partProfile.pparams;
-            partProfile.pparams = NULL;
+            partProfile.pparams = nullptr;
         }
     }
 
@@ -54,7 +54,7 @@ void Clipboard::setPartialProfile   (const rtengine::procparams::PartialProfile&
     } else {
         if (partProfile.pedited) {
             delete partProfile.pedited;
-            partProfile.pedited = NULL;
+            partProfile.pedited = nullptr;
         }
     }
 }
@@ -74,6 +74,6 @@ void Clipboard::setProcParams (const rtengine::procparams::ProcParams& pparams)
     // delete pedited
     if (partProfile.pedited) {
         delete partProfile.pedited;
-        partProfile.pedited = NULL;
+        partProfile.pedited = nullptr;
     }
 }

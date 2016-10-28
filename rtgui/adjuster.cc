@@ -37,11 +37,11 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
     set_hexpand(true);
     set_vexpand(false);
-    label = NULL;
-    adjusterListener = NULL;
+    label = nullptr;
+    adjusterListener = nullptr;
     afterReset = false;
     blocked = false;
-    automatic = NULL;
+    automatic = nullptr;
     eventPending = false;
     grid = NULL;
     imageIcon1 = imgIcon1;
@@ -70,7 +70,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     set_row_spacing(0);
     set_row_homogeneous(false);
 
-    editedCheckBox = NULL;
+    editedCheckBox = nullptr;
 
     if (!vlabel.empty()) {
         adjustmentName = vlabel;
@@ -155,7 +155,7 @@ Adjuster::~Adjuster ()
     sliderChange.block (true);
     spinChange.block (true);
     delayConnection.block (true);
-    adjusterListener = NULL;
+    adjusterListener = nullptr;
 
     if (automatic) {
         delete automatic;
@@ -186,7 +186,7 @@ void Adjuster::delAutoButton ()
     if (automatic) {
         removeIfThere(grid, automatic);
         delete automatic;
-        automatic = NULL;
+        automatic = nullptr;
     }
 }
 
@@ -242,7 +242,7 @@ void Adjuster::autoToggled ()
         }
     }
 
-    if (adjusterListener != NULL && !blocked) {
+    if (adjusterListener != nullptr && !blocked) {
         adjusterListener->adjusterAutoToggled(this, automatic->get_active());
     }
 }
@@ -250,7 +250,7 @@ void Adjuster::autoToggled ()
 void Adjuster::sliderReleased (GdkEventButton* event)
 {
 
-    if ((event != NULL) && (event->button == 1)) {
+    if ((event != nullptr) && (event->button == 1)) {
         if (delayConnection.connected()) {
             delayConnection.disconnect ();
         }
@@ -262,7 +262,7 @@ void Adjuster::sliderReleased (GdkEventButton* event)
 void Adjuster::spinReleased (GdkEventButton* event)
 {
 
-    if ((event != NULL) && delay == 0) {
+    if ((event != nullptr) && delay == 0) {
         if (delayConnection.connected()) {
             delayConnection.disconnect ();
         }
@@ -304,7 +304,7 @@ void Adjuster::resetValue (bool toInitial)
 void Adjuster::resetPressed (GdkEventButton* event)
 {
 
-    if ((event != NULL) && (event->state & GDK_CONTROL_MASK) && (event->button == 1)) {
+    if ((event != nullptr) && (event->state & GDK_CONTROL_MASK) && (event->button == 1)) {
         resetValue(true);
     } else {
         resetValue(false);
@@ -478,7 +478,7 @@ void Adjuster::setAutoValue (bool a)
 bool Adjuster::notifyListener ()
 {
 
-    if (eventPending && adjusterListener != NULL && !blocked) {
+    if (eventPending && adjusterListener != nullptr && !blocked) {
         adjusterListener->adjusterChanged (this, spin->get_value ());
     }
 
@@ -490,7 +490,7 @@ bool Adjuster::notifyListener ()
 bool Adjuster::notifyListenerAutoToggled ()
 {
 
-    if (adjusterListener != NULL && !blocked) {
+    if (adjusterListener != nullptr && !blocked) {
         adjusterListener->adjusterAutoToggled(this, automatic->get_active());
     }
 

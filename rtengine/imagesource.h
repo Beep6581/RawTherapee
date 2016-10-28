@@ -63,7 +63,7 @@ protected:
 
 public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
-        embProfile(NULL), idata(NULL), dirpyrdenoiseExpComp(INFINITY) {}
+        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
 
     virtual ~ImageSource            () {}
     virtual int         load        (const Glib::ustring &fname, bool batch = false) = 0;
@@ -111,7 +111,7 @@ public:
     virtual bool        isRAW() const = 0;
     virtual DCPProfile* getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
     {
-        return NULL;
+        return nullptr;
     };
 
     virtual void        setProgressListener (ProgressListener* pl) {}

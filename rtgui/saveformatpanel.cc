@@ -20,7 +20,7 @@
 #include "multilangmgr.h"
 #include "guiutils.h"
 
-SaveFormatPanel::SaveFormatPanel () : listener (NULL)
+SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
 {
 
 
@@ -127,7 +127,7 @@ void SaveFormatPanel::init (SaveFormat &sf)
 {
 
     FormatChangeListener* tmp = listener;
-    listener = NULL;
+    listener = nullptr;
 
     if (sf.format == "jpg") {
         format->set_active (0);

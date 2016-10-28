@@ -47,7 +47,7 @@ class CoordinateProvider
 protected:
     CoordinateAdjuster *coordinateAdjuster;
 public:
-    CoordinateProvider() : coordinateAdjuster(NULL) {}
+    CoordinateProvider() : coordinateAdjuster(nullptr) {}
     virtual ~CoordinateProvider() {}
     void setListener(CoordinateAdjuster *adjuster)
     {

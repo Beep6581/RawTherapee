@@ -54,7 +54,7 @@ public:
     SaveFormat saveFormat;
     bool forceFormatOpts;
 
-    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = NULL);
+    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm = nullptr);
     ~BatchQueueEntry ();
 
     void refreshThumbnailImage ();

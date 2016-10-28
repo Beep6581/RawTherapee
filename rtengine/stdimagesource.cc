@@ -51,11 +51,11 @@ template<class T> T** allocArray (int W, int H)
 }
 
 #define HR_SCALE 2
-StdImageSource::StdImageSource () : ImageSource(), img(NULL), plistener(NULL), full(false), max{}, rgbSourceModified(false)
+StdImageSource::StdImageSource () : ImageSource(), img(nullptr), plistener(nullptr), full(false), max{}, rgbSourceModified(false)
 {
 
-    embProfile = NULL;
-    idata = NULL;
+    embProfile = nullptr;
+    idata = nullptr;
 }
 
 StdImageSource::~StdImageSource ()
@@ -163,7 +163,7 @@ int StdImageSource::load (const Glib::ustring &fname, bool batch)
 
     if (error) {
         delete img;
-        img = NULL;
+        img = nullptr;
         return error;
     }
 
@@ -228,7 +228,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 {
 
     bool skipTransform = false;
-    cmsHPROFILE in = NULL;
+    cmsHPROFILE in = nullptr;
     cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 
     if (cmp.input == "(embedded)" || cmp.input == "" || cmp.input == "(camera)" || cmp.input == "(cameraICC)") {
@@ -245,9 +245,9 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
         if (cmp.input != "(none)") {
             in = iccStore->getProfile (cmp.input);
 
-            if (in == NULL && embedded) {
+            if (in == nullptr && embedded) {
                 in = embedded;
-            } else if (in == NULL) {
+            } else if (in == nullptr) {
                 if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
                     skipTransform = true;
                 } else {

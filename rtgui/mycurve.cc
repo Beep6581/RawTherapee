@@ -21,7 +21,7 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(NULL), cursor_type( CSArrow)
+MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(nullptr), cursor_type( CSArrow)
 {
 
     graphX = get_allocation().get_width() - RADIUS * 2;
@@ -30,9 +30,9 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
     prevGraphH = graphH;
     buttonPressed = false;
     snapTo = ST_None;
-    leftBar = NULL;
-    bottomBar = NULL;
-    colorProvider = NULL;
+    leftBar = nullptr;
+    bottomBar = nullptr;
+    colorProvider = nullptr;
     snapToElmt = -100;
     curveIsDirty = true;
     edited_point = -1;
@@ -189,11 +189,11 @@ void MyCurve::on_style_updated ()
 
 void MyCurve::refresh()
 {
-    if (leftBar != NULL) {
+    if (leftBar != nullptr) {
         leftBar->setDirty(true);
     }
 
-    if (bottomBar != NULL) {
+    if (bottomBar != nullptr) {
         bottomBar->setDirty(true);
     }
 

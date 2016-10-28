@@ -23,7 +23,7 @@
 
 using namespace rtengine;
 
-FilterPanel::FilterPanel () : listener (NULL)
+FilterPanel::FilterPanel () : listener (nullptr)
 {
 
     enabled = Gtk::manage (new Gtk::CheckButton (M("EXIFFILTER_METADATAFILTER")));

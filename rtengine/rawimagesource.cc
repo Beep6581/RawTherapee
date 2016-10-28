@@ -424,10 +424,10 @@ extern const Settings* settings;
 RawImageSource::RawImageSource ()
     : ImageSource()
     , W(0), H(0)
-    , plistener(NULL)
+    , plistener(nullptr)
     , border(4)
-    , ri(NULL)
-    , cache(NULL)
+    , ri(nullptr)
+    , cache(nullptr)
     , rawData(0, 0)
     , green(0, 0)
     , red(0, 0)
@@ -463,8 +463,8 @@ RawImageSource::RawImageSource ()
     , defGain(0.0)
     , threshold(0)
 {
-    camProfile = NULL;
-    embProfile = NULL;
+    camProfile = nullptr;
+    embProfile = nullptr;
     rgbSourceModified = false;
 }
 
@@ -889,12 +889,12 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
 DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
 {
-    DCPProfile *dcpProf = NULL;
+    DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
-    findInputProfile(cmp.input, NULL, (static_cast<const ImageData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
+    findInputProfile(cmp.input, nullptr, (static_cast<const ImageData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
 
-    if (dcpProf == NULL) {
-        return NULL;
+    if (dcpProf == nullptr) {
+        return nullptr;
     }
 
     dcpProf->setStep2ApplyState(cmp.working, cmp.toneCurve, cmp.applyLookTable, cmp.applyBaselineExposureOffset, as);
@@ -1645,7 +1645,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
         plistener->setProgress (1.0);
     }
 
-    plistener = NULL; // This must be reset, because only load() is called through progressConnector
+    plistener = nullptr; // This must be reset, because only load() is called through progressConnector
     t2.set();
 
     if( settings->verbose ) {
@@ -1664,7 +1664,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     t1.set();
 
     Glib::ustring newDF = raw.dark_frame;
-    RawImage *rid = NULL;
+    RawImage *rid = nullptr;
 
     if (!raw.df_autoselect) {
         if( !raw.dark_frame.empty()) {
@@ -1702,7 +1702,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     //FLATFIELD start
-    RawImage *rif = NULL;
+    RawImage *rif = nullptr;
 
     if (!raw.ff_AutoSelect) {
         if( !raw.ff_file.empty()) {
@@ -1713,7 +1713,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
 
-    bool hasFlatField = (rif != NULL);
+    bool hasFlatField = (rif != nullptr);
 
     if( hasFlatField && settings->verbose) {
         printf( "Flat Field Correction:%s\n", rif->get_filename().c_str());
@@ -1739,7 +1739,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     // If darkframe selected, correct hotpixels found on darkframe
-    bp = 0;
+    bp = nullptr;
 
     if( raw.df_autoselect ) {
         bp = dfm.getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
@@ -2320,7 +2320,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         dLcurve(32768);
     }
 
-    FlatCurve* chcurve = NULL;//curve c=f(H)
+    FlatCurve* chcurve = nullptr;//curve c=f(H)
     bool chutili = false;
 
     if (deh.enabled && deh.retinexMethod == "highli") {
@@ -2329,7 +2329,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         if (!chcurve || chcurve->isIdentity()) {
             if (chcurve) {
                 delete chcurve;
-                chcurve = NULL;
+                chcurve = nullptr;
             }
         } else {
             chutili = true;
@@ -2638,7 +2638,7 @@ void RawImageSource::flushRawData()
 {
     if(cache) {
         delete [] cache;
-        cache = 0;
+        cache = nullptr;
     }
 
     if (rawData) {
@@ -3705,9 +3705,9 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
     copyright[0] = 0;
 
     if (cmsGetProfileInfoASCII(in, cmsInfoCopyright, cmsNoLanguage, cmsNoCountry, copyright, 256) > 0) {
-        if (strstr(copyright, "Phase One") != NULL) {
+        if (strstr(copyright, "Phase One") != nullptr) {
             gammaFac = 0.55556;    // 1.8
-        } else if (strstr(copyright, "Nikon Corporation") != NULL) {
+        } else if (strstr(copyright, "Nikon Corporation") != nullptr) {
             gammaFac = 0.5;
             lineFac = -0.4;
             lineSum = 1.35; // determined in reverse by measuring NX an RT developed colorchecker PNGs
@@ -3776,7 +3776,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         return;
     }
 
-    if (dcpProf != NULL) {
+    if (dcpProf != nullptr) {
         // DCP processing
         const DCPProfile::Triple pre_mul_row = {
             pre_mul[0],
@@ -3793,7 +3793,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         return;
     }
 
-    if (in == NULL) {
+    if (in == nullptr) {
         // use default camprofile, supplied by dcraw
         // in this case we avoid using the slllllooooooowwww lcms
 
@@ -3869,10 +3869,10 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
             camera_icc_type = CAMERA_ICC_TYPE_GENERIC;
 
             // Note: order the identification with the most detailed matching first since the more general ones may also match the more detailed
-            if ((strstr(copyright, "Leaf") != NULL ||
-                    strstr(copyright, "Phase One A/S") != NULL ||
-                    strstr(copyright, "Kodak") != NULL ||
-                    strstr(copyright, "Creo") != NULL) &&
+            if ((strstr(copyright, "Leaf") != nullptr ||
+                    strstr(copyright, "Phase One A/S") != nullptr ||
+                    strstr(copyright, "Kodak") != nullptr ||
+                    strstr(copyright, "Creo") != nullptr) &&
                     (strstr(description, "LF2 ") == description ||
                      strstr(description, "LF3 ") == description ||
                      strstr(description, "LeafLF2") == description ||
@@ -3881,9 +3881,9 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                      strstr(description, "MamiyaLF2") == description ||
                      strstr(description, "MamiyaLF3") == description)) {
                 camera_icc_type = CAMERA_ICC_TYPE_LEAF;
-            } else if (strstr(copyright, "Phase One A/S") != NULL) {
+            } else if (strstr(copyright, "Phase One A/S") != nullptr) {
                 camera_icc_type = CAMERA_ICC_TYPE_PHASE_ONE;
-            } else if (strstr(copyright, "Nikon Corporation") != NULL) {
+            } else if (strstr(copyright, "Nikon Corporation") != nullptr) {
                 camera_icc_type = CAMERA_ICC_TYPE_NIKON;
             }
         }
@@ -3902,7 +3902,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                 transform_via_pcs_lab = true;
                 separate_pcs_lab_highlights = true;
                 // We transform to Lab because we can and that we avoid getting an unnecessary unmatched gamma conversion which we would need to revert.
-                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, NULL, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, nullptr, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
@@ -3926,7 +3926,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
         lcmsMutex->unlock ();
 
-        if (hTransform == NULL) {
+        if (hTransform == nullptr) {
             // Fallback: create transform from camera profile. Should not happen normally.
             lcmsMutex->lock ();
             hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
@@ -4136,8 +4136,8 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 // Determine RAW input and output profiles. Returns TRUE on success
 bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in)
 {
-    in = NULL; // cam will be taken on NULL
-    *dcpProf = NULL;
+    in = nullptr; // cam will be taken on NULL
+    *dcpProf = nullptr;
 
     if (inProfile == "(none)") {
         return false;
@@ -4149,7 +4149,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         // DCPs have higher quality, so use them first
         *dcpProf = DCPStore::getInstance()->getStdProfile(camName);
 
-        if (*dcpProf == NULL) {
+        if (*dcpProf == nullptr) {
             in = iccStore->getStdProfile(camName);
         }
     } else if (inProfile != "(camera)" && inProfile != "") {
@@ -4163,7 +4163,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
             *dcpProf = DCPStore::getInstance()->getProfile(normalName);
         }
 
-        if (*dcpProf == NULL) {
+        if (*dcpProf == nullptr) {
             in = iccStore->getProfile (inProfile);
         }
     }

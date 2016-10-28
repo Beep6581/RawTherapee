@@ -54,7 +54,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
         if (errorCode) {
             delete job;
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -165,7 +165,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
-    Imagefloat *calclum = NULL ;
+    Imagefloat *calclum = nullptr ;
     params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
     float autoNR = (float) settings->nrauto;//
     float autoNRmax = (float) settings->nrautomax;//
@@ -754,7 +754,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     // update blurmap
-    SHMap* shmap = NULL;
+    SHMap* shmap = nullptr;
 
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh, true);
@@ -858,7 +858,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     DCPProfile::ApplyState as;
     DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
 
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as);
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as);
 
     if (settings->verbose) {
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
@@ -881,13 +881,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // Freeing baseImg because not used anymore
     delete baseImg;
-    baseImg = NULL;
+    baseImg = nullptr;
 
     if (shmap) {
         delete shmap;
     }
 
-    shmap = NULL;
+    shmap = nullptr;
 
     if (pl) {
         pl->setProgress (0.55);
@@ -933,7 +933,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                    params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
-    ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
+    ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
     if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
         ipf.EPDToneMap(labView, 5, 1);
@@ -1071,7 +1071,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     delete cieView;
-    cieView = NULL;
+    cieView = nullptr;
 
 
 
@@ -1147,8 +1147,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         }
     }
 
-    Image16* readyImg = NULL;
-    cmsHPROFILE jprof = NULL;
+    Image16* readyImg = nullptr;
+    cmsHPROFILE jprof = nullptr;
     bool customGamma = false;
     bool useLCMS = false;
     bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
@@ -1163,7 +1163,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         //or selected Free gamma
         useLCMS = false;
 
-        if ((jprof = iccStore->createCustomGammaOutputProfile (params.icm, ga)) == NULL) {
+        if ((jprof = iccStore->createCustomGammaOutputProfile (params.icm, ga)) == nullptr) {
             useLCMS = true;
         }
 
@@ -1179,7 +1179,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     delete labView;
-    labView = NULL;
+    labView = nullptr;
 
 
 
@@ -1229,7 +1229,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             // if iccStore->getProfile send back an object, then iccStore->getContent will do too
             cmsHPROFILE jprof = iccStore->getProfile(params.icm.output); //get outProfile
 
-            if (jprof == NULL) {
+            if (jprof == nullptr) {
                 if (settings->verbose) {
                     printf("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.output.c_str());
                 }
@@ -1243,7 +1243,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             }
         } else {
             // No ICM
-            readyImg->setOutputProfile (NULL, 0);
+            readyImg->setOutputProfile (nullptr, 0);
         }
     }
 
@@ -1286,13 +1286,13 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
 
         if (errorCode) {
             bpl->error (M("MAIN_MSG_CANNOTLOAD"));
-            currentJob = NULL;
+            currentJob = nullptr;
         } else {
             try {
                 currentJob = bpl->imageReady (img);
             } catch (Glib::Exception& ex) {
                 bpl->error (ex.what());
-                currentJob = NULL;
+                currentJob = nullptr;
             }
         }
     }

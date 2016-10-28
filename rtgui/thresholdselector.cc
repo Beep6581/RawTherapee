@@ -79,7 +79,7 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
     assert(minValue < maxValue);
 #endif
 
-    bgCurveProvider = NULL;
+    bgCurveProvider = nullptr;
     separatedSliders = false;
     initalEq1 = startAtOne;
     minValTop = minValBottom = minValue;
@@ -123,7 +123,7 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
     assert(minValue < maxValue);
 #endif
 
-    bgCurveProvider = NULL;
+    bgCurveProvider = nullptr;
     separatedSliders = false;
     initalEq1 = startAtOne;
     minValTop = minValBottom = minValue;

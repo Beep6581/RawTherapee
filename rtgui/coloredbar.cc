@@ -290,5 +290,5 @@ void ColoredBar::clearBgGradient ()
 
 bool ColoredBar::canGetColors()
 {
-    return colorProvider != NULL || bgGradient.size() > 0;
+    return colorProvider != nullptr || bgGradient.size() > 0;
 }

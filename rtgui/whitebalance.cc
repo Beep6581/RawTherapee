@@ -147,7 +147,7 @@ static double wbTemp2Slider(double temp)
     return sval;
 }
 
-WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL")), wbp(NULL), wblistener(NULL)
+WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL")), wbp(nullptr), wblistener(nullptr)
 {
 
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
@@ -834,7 +834,7 @@ WBEntry* WhiteBalance::findWBEntry (Glib::ustring label, enum WB_LabelType lblTy
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int WhiteBalance::_setActiveMethod(Glib::ustring &label, Gtk::TreeModel::Children &children)

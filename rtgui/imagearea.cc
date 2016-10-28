@@ -29,16 +29,16 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true)
 {
 
     infotext = "";
-    cropgl = NULL;
-    pmlistener = NULL;
-    pmhlistener = NULL;
-    focusGrabber = NULL;
-    flawnOverWindow = NULL;
-    mainCropWindow = NULL;
-    previewHandler = NULL;
+    cropgl = nullptr;
+    pmlistener = nullptr;
+    pmhlistener = nullptr;
+    focusGrabber = nullptr;
+    flawnOverWindow = nullptr;
+    mainCropWindow = nullptr;
+    previewHandler = nullptr;
     showClippedH = false;
     showClippedS = false;
-    listener = NULL;
+    listener = nullptr;
 
     zoomPanel = Gtk::manage (new ZoomPanel (this));
     indClippedPanel = Gtk::manage (new IndicateClippedPanel (this));
@@ -49,8 +49,8 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true)
     signal_size_allocate().connect( sigc::mem_fun(*this, &ImageArea::on_resized) );
 
     dirty = false;
-    ipc = NULL;
-    iLinkedImageArea = NULL;
+    ipc = nullptr;
+    iLinkedImageArea = nullptr;
 }
 
 ImageArea::~ImageArea ()
@@ -114,7 +114,7 @@ rtengine::StagedImageProcessor* ImageArea::getImProcCoordinator() const
 void ImageArea::setImProcCoordinator(rtengine::StagedImageProcessor* ipc_)
 {
     if( !ipc_ ) {
-        focusGrabber = NULL;
+        focusGrabber = nullptr;
 
         for (auto cropWin : cropWins) {
             delete cropWin;
@@ -123,7 +123,7 @@ void ImageArea::setImProcCoordinator(rtengine::StagedImageProcessor* ipc_)
         cropWins.clear();
 
         mainCropWindow->deleteColorPickers ();
-        mainCropWindow->setObservedCropWin (NULL);
+        mainCropWindow->setObservedCropWin (nullptr);
     }
 
     ipc = ipc_;
@@ -214,7 +214,7 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         mainCropWindow->expose (cr);
     }
 
-    if (options.showInfo == true && infotext != "") {
+    if (options.showInfo && infotext != "") {
         int fnw, fnh;
         ilayout->get_pixel_size (fnw, fnh);
         Gdk::Cairo::set_source_pixbuf(cr, ipixbuf, 4, 4);
@@ -255,7 +255,7 @@ bool ImageArea::on_motion_notify_event (GdkEventMotion* event)
             cw->pointerMoved (event->state, event->x, event->y);
         } else if (flawnOverWindow) {
             flawnOverWindow->flawnOver(false);
-            flawnOverWindow = NULL;
+            flawnOverWindow = nullptr;
         }
     }
 
@@ -309,7 +309,7 @@ bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event)
 {
     if (flawnOverWindow) {
         flawnOverWindow->flawnOver(false);
-        flawnOverWindow = NULL;
+        flawnOverWindow = nullptr;
     }
 
     if (focusGrabber) {
@@ -358,9 +358,9 @@ void ImageArea::unsubscribe()
     EditDataProvider::unsubscribe();
 
     // Ask the Crops to free-up edit mode buffers
-    mainCropWindow->setEditSubscriber(NULL);
+    mainCropWindow->setEditSubscriber(nullptr);
     for (auto cropWin : cropWins) {
-        cropWin->setEditSubscriber(NULL);
+        cropWin->setEditSubscriber(nullptr);
     }
 
     setToolHand();
@@ -397,7 +397,7 @@ void ImageArea::grabFocus (CropWindow* cw)
 void ImageArea::unGrabFocus ()
 {
 
-    focusGrabber = NULL;
+    focusGrabber = nullptr;
 }
 
 void ImageArea::addCropWindow ()
@@ -508,7 +508,7 @@ void ImageArea::cropWindowSelected (CropWindow* cw)
 void ImageArea::cropWindowClosed (CropWindow* cw)
 {
 
-    focusGrabber = NULL;
+    focusGrabber = nullptr;
     std::list<CropWindow*>::iterator i = std::find (cropWins.begin(), cropWins.end(), cw);
 
     if (i != cropWins.end()) {
@@ -518,7 +518,7 @@ void ImageArea::cropWindowClosed (CropWindow* cw)
     if (!cropWins.empty()) {
         mainCropWindow->setObservedCropWin (cropWins.front());
     } else {
-        mainCropWindow->setObservedCropWin (NULL);
+        mainCropWindow->setObservedCropWin (nullptr);
     }
 
     queue_draw ();

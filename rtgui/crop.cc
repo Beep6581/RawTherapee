@@ -38,7 +38,7 @@ public:
 Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true)
 {
 
-    clistener = NULL;
+    clistener = nullptr;
 
     maxw = 3000;
     maxh = 2000;
@@ -1281,7 +1281,7 @@ double Crop::getRatio ()
 
     double r = -1.0;
 
-    if (fixr->get_active() == false) {
+    if (!fixr->get_active()) {
         return r;
     }
 

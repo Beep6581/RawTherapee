@@ -21,7 +21,7 @@
 #include "multilangmgr.h"
 #include "mycurve.h"
 
-SHCSelector::SHCSelector() : ColoredBar(RTO_Left2Right), movingPosition(-1), tmpX(0.0), tmpPos(0.0), wslider(0.0), cl(NULL)
+SHCSelector::SHCSelector() : ColoredBar(RTO_Left2Right), movingPosition(-1), tmpX(0.0), tmpPos(0.0), wslider(0.0), cl(nullptr)
 {
 
     positions[0] = defaults[0] = 0.25;

@@ -40,7 +40,7 @@ _KLT_FloatImage _KLTCreateFloatImage(
     ncols * nrows * sizeof(float);
 
   floatimg = (_KLT_FloatImage)  malloc(nbytes);
-  if (floatimg == NULL) {
+  if (floatimg == nullptr) {
     KLTError("(_KLTCreateFloatImage)  Out of memory");
     exit(1);
   }

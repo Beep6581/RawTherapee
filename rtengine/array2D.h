@@ -83,19 +83,19 @@ private:
     {
         if ((ptr) && ((h > y) || (4 * h < y))) {
             delete[] ptr;
-            ptr = NULL;
+            ptr = nullptr;
         }
 
         if ((data) && (((h * w) > (x * y)) || ((h * w) < ((x * y) / 4)))) {
             delete[] data;
-            data = NULL;
+            data = nullptr;
         }
 
-        if (ptr == NULL) {
+        if (ptr == nullptr) {
             ptr = new T*[h];
         }
 
-        if (data == NULL) {
+        if (data == nullptr) {
             data = new T[h * w + offset];
         }
 
@@ -113,7 +113,7 @@ public:
     // use as empty declaration, resize before use!
     // very useful as a member object
     array2D() :
-        x(0), y(0), owner(0), ptr(NULL), data(NULL), lock(0), flags(0)
+        x(0), y(0), owner(0), ptr(nullptr), data(nullptr), lock(0), flags(0)
     {
         //printf("got empty array2D init\n");
     }
@@ -151,7 +151,7 @@ public:
         if (owner) {
             data = new T[h * w];
         } else {
-            data = NULL;
+            data = nullptr;
         }
 
         x = w;
@@ -192,12 +192,12 @@ public:
     {
         if ((owner) && (data)) {
             delete[] data;
-            data = NULL;
+            data = nullptr;
         }
 
         if (ptr) {
             delete [] ptr;
-            ptr = NULL;
+            ptr = nullptr;
         }
     }
 

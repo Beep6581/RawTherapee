@@ -23,7 +23,7 @@
 BatchQueueEntryUpdater batchQueueEntryUpdater;
 
 BatchQueueEntryUpdater::BatchQueueEntryUpdater ()
-    : tostop(false), stopped(true), thread(NULL), qMutex(NULL)
+    : tostop(false), stopped(true), thread(nullptr), qMutex(nullptr)
 {
 }
 
@@ -106,7 +106,7 @@ void BatchQueueEntryUpdater::processThread ()
             break;
         }
 
-        rtengine::IImage8* img = NULL;
+        rtengine::IImage8* img = nullptr;
         bool newBuffer = false;
 
         if (current.thumbnail && current.pparams) {
@@ -143,12 +143,12 @@ void BatchQueueEntryUpdater::processThread ()
             int neww = current.newh * current.ow / current.oh;
             guint8* img = new guint8 [current.newh * neww * 3];
             thumbInterp (current.oimg, current.ow, current.oh, img, neww, current.newh);
-            current.listener->updateImage (img, neww, current.newh, current.ow, current.oh, newBuffer ? current.oimg : NULL);
+            current.listener->updateImage (img, neww, current.newh, current.ow, current.oh, newBuffer ? current.oimg : nullptr);
         }
 
         if(current.oimg) {
             delete[] current.oimg;
-            current.oimg = NULL;
+            current.oimg = nullptr;
         }
     }
 

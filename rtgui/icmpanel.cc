@@ -29,7 +29,7 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(NULL), icmplistener(NULL), lastRefFilename(""), camName("")
+ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr), lastRefFilename(""), camName("")
 {
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = lastBlendCMSMatrix = lastgamfree = false;
@@ -401,7 +401,7 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
     dcpIll->set_sensitive (false);
     dcpFrame->set_sensitive(false);
 
-    DCPProfile* dcp = NULL;
+    DCPProfile* dcp = nullptr;
 
     if(dcp_name == "(cameraICC)") {
         dcp = DCPStore::getInstance()->getStdProfile(camName);
@@ -693,7 +693,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->icm.freegamma = freegamma->get_active();
 
-    DCPProfile* dcp = NULL;
+    DCPProfile* dcp = nullptr;
 
     if (ifromfile->get_active() && pp->icm.input.substr(0, 5) == "file:" && DCPStore::getInstance()->isValidDCPFileName(pp->icm.input.substr(5))) {
         dcp = DCPStore::getInstance()->getProfile(pp->icm.input.substr(5));
@@ -1075,7 +1075,7 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta)
     iembedded->set_active (!raw);
     icamera->set_sensitive (raw);
     camName = pMeta->getCamera();
-    icameraICC->set_sensitive (raw && (iccStore->getStdProfile(pMeta->getCamera()) != NULL || DCPStore::getInstance()->getStdProfile(pMeta->getCamera()) != NULL));
+    icameraICC->set_sensitive (raw && (iccStore->getStdProfile(pMeta->getCamera()) != nullptr || DCPStore::getInstance()->getStdProfile(pMeta->getCamera()) != nullptr));
     iembedded->set_sensitive (!raw);
 
     enableListener ();

@@ -184,7 +184,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
 #endif
     {
 
-        if (sharpenParam.edgesonly == false) {
+        if (!sharpenParam.edgesonly) {
             gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
             bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
@@ -327,7 +327,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 {
     // JD: this algorithm maximize clarity of images; it does not play on accutance. It can remove (partialy) the effects of the AA filter)
     // I think we can use this algorithm alone in most cases, or first to clarify image and if you want a very little USM (unsharp mask sharpening) after...
-    if (params->sharpenEdge.enabled == false) {
+    if (!params->sharpenEdge.enabled) {
         return;
     }
 
@@ -564,7 +564,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
 //! \param luminance : Luminance channel of image
 void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
 {
-    if (params->sharpenMicro.enabled == false) {
+    if (!params->sharpenMicro.enabled) {
         return;
     }
 
@@ -949,7 +949,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 #endif
     {
 
-        if (params->sharpening.edgesonly == false) {
+        if (!params->sharpening.edgesonly) {
             gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
             bilateral<float, float> (ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);

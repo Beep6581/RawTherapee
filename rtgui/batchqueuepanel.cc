@@ -106,7 +106,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     Gtk::Image* folderImg = Gtk::manage (new RTImage ("gtk-directory.png"));
     folderImg->show ();
     outdirFolderButton->set_image (*folderImg);
-    outdirFolder = 0;
+    outdirFolder = nullptr;
 #else
     outdirFolder = Gtk::manage (new MyFileChooserButton (M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     hb3->pack_start (*outdirFolder);
@@ -184,7 +184,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
     show_all ();
 
     if (batchQueue->loadBatchQueue ()) {
-        g_idle_add_full (G_PRIORITY_LOW, processLoadedBatchQueueUIThread, batchQueue, NULL);
+        g_idle_add_full (G_PRIORITY_LOW, processLoadedBatchQueueUIThread, batchQueue, nullptr);
     }
 }
 

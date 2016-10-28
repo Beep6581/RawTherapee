@@ -27,7 +27,7 @@ using namespace rtengine::procparams;
 Rotate::Rotate () : FoldableToolPanel(this, "rotate", M("TP_ROTATE_LABEL"))
 {
 
-    rlistener = NULL;
+    rlistener = nullptr;
 
     //TODO the action of the rotation slider is counter-intuitive
     Gtk::Image* irotateL =   Gtk::manage (new RTImage ("rotate-right-2.png"));

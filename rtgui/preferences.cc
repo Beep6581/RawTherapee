@@ -926,7 +926,6 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     colorPickerFontButton->set_use_size(true);
     colorPickerFontButton->set_font_name(options.colorPickerFont);
 
-
     Gtk::Grid* cropcolorGrid = Gtk::manage( new Gtk::Grid () );
     cropcolorGrid->set_column_spacing(4);
     cropcolorGrid->set_row_spacing(4);
@@ -1350,7 +1349,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     }
 
     // process directory
-    Glib::Dir* dir = NULL;
+    Glib::Dir* dir = nullptr;
 
     try {
         dir = new Glib::Dir (dirname);
@@ -2215,7 +2214,7 @@ void Preferences::updateFFinfos()
 bool Preferences::splashClosed(GdkEventAny* event)
 {
     delete splash;
-    splash = NULL;
+    splash = nullptr;
     return true;
 }
 

@@ -226,7 +226,7 @@ bool ExtProgStore::spawnCommandSync (const Glib::ustring& cmd)
 
     try {
 
-        Glib::spawn_command_line_sync (cmd, NULL, NULL, &exitStatus);
+        Glib::spawn_command_line_sync (cmd, nullptr, nullptr, &exitStatus);
 
     } catch (const Glib::Exception& exception) {
 

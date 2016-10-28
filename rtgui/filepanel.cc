@@ -28,7 +28,7 @@ int FilePanelInitUI (void* data)
     return 0;
 }
 
-FilePanel::FilePanel () : parent(NULL)
+FilePanel::FilePanel () : parent(nullptr)
 {
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
@@ -238,7 +238,7 @@ bool FilePanel::fileSelected (Thumbnail* thm)
     pendingLoadMutex.lock();
     pendingLoad *pl = new pendingLoad();
     pl->complete = false;
-    pl->pc = 0;
+    pl->pc = nullptr;
     pl->thm = thm;
     pendingLoads.push_back(pl);
     pendingLoadMutex.unlock();

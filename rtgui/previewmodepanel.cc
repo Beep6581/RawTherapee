@@ -88,9 +88,9 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     previewL->set_active (false);
     previewFocusMask->set_active (false);
 
-    backColor0->set_active (options.bgcolor == 0 ? true : false);
-    backColor1->set_active (options.bgcolor == 1 ? true : false);
-    backColor2->set_active (options.bgcolor == 2 ? true : false);
+    backColor0->set_active (options.bgcolor == 0);
+    backColor1->set_active (options.bgcolor == 1);
+    backColor2->set_active (options.bgcolor == 2);
 
     vbbackColor = Gtk::manage (new Gtk::VBox ());
     vbbackColor->pack_start (*backColor0, Gtk::PACK_SHRINK, 0);
@@ -219,7 +219,7 @@ void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview)
 
     // this will redraw the linked Before image area
     // which is set when before/after view is enabled
-    if (imageArea->iLinkedImageArea != NULL) {
+    if (imageArea->iLinkedImageArea != nullptr) {
         imageArea->iLinkedImageArea->queue_draw ();
     }
 }
@@ -303,7 +303,7 @@ void PreviewModePanel::buttonToggled_backColor (Gtk::ToggleButton* tbbackColor)
 
     // this will redraw the linked Before image area
     // which is set when before/after view is enabled
-    if (imageArea->iLinkedImageArea != NULL) {
+    if (imageArea->iLinkedImageArea != nullptr) {
         imageArea->iLinkedImageArea->queue_draw ();
     }
 }

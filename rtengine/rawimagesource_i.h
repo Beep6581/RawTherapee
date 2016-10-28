@@ -140,7 +140,21 @@ inline void RawImageSource::interpolate_row_g (float* agh, float* agv, int i)
 
 inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg, float* cg, float* ng, int i)
 {
-    if ((ri->ISRED(i, 0) || ri->ISRED(i, 1)) && pg && ng) {
+    const auto getPg = [pg](int index) {
+        return
+            pg
+                ? pg[index]
+                : 0.f;
+    };
+
+    const auto getNg = [ng](int index) {
+        return
+            ng
+                ? ng[index]
+                : 0.f;
+    };
+
+    if ((ri->ISRED(i, 0) || ri->ISRED(i, 1))) {
         // RGRGR or GRGRGR line
         for (int j = 0; j < W; j++) {
             if (ri->ISRED(i, j)) {
@@ -151,28 +165,28 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
                 int n = 0;
 
                 if (i > 0 && j > 0) {
-                    b += rawData[i - 1][j - 1] - pg[j - 1];
+                    b += rawData[i - 1][j - 1] - getPg(j - 1);
                     n++;
                 }
 
                 if (i > 0 && j < W - 1) {
-                    b += rawData[i - 1][j + 1] - pg[j + 1];
+                    b += rawData[i - 1][j + 1] - getPg(j + 1);
                     n++;
                 }
 
                 if (i < H - 1 && j > 0) {
-                    b += rawData[i + 1][j - 1] - ng[j - 1];
+                    b += rawData[i + 1][j - 1] - getNg(j - 1);
                     n++;
                 }
 
                 if (i < H - 1 && j < W - 1) {
-                    b += rawData[i + 1][j + 1] - ng[j + 1];
+                    b += rawData[i + 1][j + 1] - getNg(j + 1);
                     n++;
                 }
 
                 b = cg[j] + b / n;
                 ab[j] = b;
-            } else if(ng && pg) {
+            } else {
                 // linear R-G interp. horizontally
                 int r;
 
@@ -189,17 +203,17 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
                 int b;
 
                 if (i == 0) {
-                    b = ng[j] + rawData[1][j] - cg[j];
+                    b = getNg(j) + rawData[1][j] - cg[j];
                 } else if (i == H - 1) {
-                    b = pg[j] + rawData[H - 2][j] - cg[j];
+                    b = getPg(j) + rawData[H - 2][j] - cg[j];
                 } else {
-                    b = cg[j] + (rawData[i - 1][j] - pg[j] + rawData[i + 1][j] - ng[j]) / 2;
+                    b = cg[j] + (rawData[i - 1][j] - getPg(j) + rawData[i + 1][j] - getNg(j)) / 2;
                 }
 
                 ab[j] = b;
             }
         }
-    } else if(ng && pg) {
+    } else {
         // BGBGB or GBGBGB line
         for (int j = 0; j < W; j++) {
             if (ri->ISBLUE(i, j)) {
@@ -210,22 +224,22 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
                 int n = 0;
 
                 if (i > 0 && j > 0) {
-                    r += rawData[i - 1][j - 1] - pg[j - 1];
+                    r += rawData[i - 1][j - 1] - getPg(j - 1);
                     n++;
                 }
 
                 if (i > 0 && j < W - 1) {
-                    r += rawData[i - 1][j + 1] - pg[j + 1];
+                    r += rawData[i - 1][j + 1] - getPg(j + 1);
                     n++;
                 }
 
                 if (i < H - 1 && j > 0) {
-                    r += rawData[i + 1][j - 1] - ng[j - 1];
+                    r += rawData[i + 1][j - 1] - getNg(j - 1);
                     n++;
                 }
 
                 if (i < H - 1 && j < W - 1) {
-                    r += rawData[i + 1][j + 1] - ng[j + 1];
+                    r += rawData[i + 1][j + 1] - getNg(j + 1);
                     n++;
                 }
 
@@ -249,11 +263,11 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
                 int r;
 
                 if (i == 0) {
-                    r = ng[j] + rawData[1][j] - cg[j];
+                    r = getNg(j) + rawData[1][j] - cg[j];
                 } else if (i == H - 1) {
-                    r = pg[j] + rawData[H - 2][j] - cg[j];
+                    r = getPg(j) + rawData[H - 2][j] - cg[j];
                 } else {
-                    r = cg[j] + (rawData[i - 1][j] - pg[j] + rawData[i + 1][j] - ng[j]) / 2;
+                    r = cg[j] + (rawData[i - 1][j] - getPg(j) + rawData[i + 1][j] - getNg(j)) / 2;
                 }
 
                 ar[j] = r;

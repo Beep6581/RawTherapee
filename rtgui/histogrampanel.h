@@ -128,7 +128,7 @@ protected:
 
 public:
 
-    explicit HistogramArea(FullModeListener *fml = NULL);
+    explicit HistogramArea(FullModeListener *fml = nullptr);
     ~HistogramArea();
 
     void updateBackBuffer ();

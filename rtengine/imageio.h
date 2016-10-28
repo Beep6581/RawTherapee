@@ -97,13 +97,13 @@ private:
             }
         }
 
-        loadedProfileData = NULL;
+        loadedProfileData = nullptr;
     }
 public:
     static Glib::ustring errorMsg[6];
 
-    ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), profileLength(0), loadedProfileData(NULL), loadedProfileDataJpg(false),
-        loadedProfileLength(0), iptc(NULL), exifRoot (NULL), sampleFormat(IIOSF_UNKNOWN),
+    ImageIO () : pl (nullptr), embProfile(nullptr), profileData(nullptr), profileLength(0), loadedProfileData(nullptr), loadedProfileDataJpg(false),
+        loadedProfileLength(0), iptc(nullptr), exifRoot (nullptr), sampleFormat(IIOSF_UNKNOWN),
         sampleArrangement(IIOSA_UNKNOWN) {}
 
     virtual ~ImageIO ();
@@ -137,7 +137,7 @@ public:
 
     virtual int     getBPS      () = 0;
     virtual void    getScanline (int row, unsigned char* buffer, int bps) {}
-    virtual void    setScanline (int row, unsigned char* buffer, int bps, float minValue[3] = NULL, float  maxValue[3] = NULL) {}
+    virtual void    setScanline (int row, unsigned char* buffer, int bps, float minValue[3] = nullptr, float  maxValue[3] = nullptr) {}
 
     virtual bool    readImage   (Glib::ustring &fname, FILE *fh)
     {

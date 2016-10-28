@@ -299,7 +299,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         }
 
         //scene condition for surround
-        if(params->colorappearance.surrsource == true)  {
+        if(params->colorappearance.surrsource)  {
             f  = 0.85;    // if user => source image has surround very dark
             c  = 0.55;
             nc = 0.85;
@@ -526,7 +526,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         int gamu = 0;
         bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 
-        if(params->colorappearance.gamut == true) {
+        if(params->colorappearance.gamut) {
             gamu = 1;    //enabled gamut control
         }
 
@@ -1524,7 +1524,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         }
 
         //scene condition for surround
-        if(params->colorappearance.surrsource == true)  {
+        if(params->colorappearance.surrsource)  {
             f  = 0.85f;    // if user => source image has surround very dark
             c  = 0.55f;
             nc = 0.85f;
@@ -1829,7 +1829,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
         const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 
-        const int gamu = (params->colorappearance.gamut == true) ? 1 : 0;
+        const int gamu = (params->colorappearance.gamut) ? 1 : 0;
         xw = 100.0f * Xw;
         yw = 100.0f * Yw;
         zw = 100.0f * Zw;
@@ -3836,7 +3836,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         float reducac = 0.4f;
                         int preser = 0;
 
-                        if(params->colorToning.lumamode == true) {
+                        if(params->colorToning.lumamode) {
                             preser = 1;
                         }
 
@@ -3897,7 +3897,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         int preser = 0;
 
                         //bool execbal = params->colorToning.method=="Splitbal";
-                        if(params->colorToning.lumamode == true) {
+                        if(params->colorToning.lumamode) {
                             preser = 1;
                         }
 
@@ -3954,14 +3954,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                         float iplow, iphigh;
 
-                        if(twocol == false) {
+                        if(!twocol) {
                             iplow = (float)ctColorCurve.low;
                             iphigh = (float)ctColorCurve.high;
                         }
 
                         int twoc = 0; //integer instead of bool to let more possible choice...other than 2 and 500.
 
-                        if (twocol == false) {
+                        if (!twocol) {
                             twoc = 0;    // 2 colours
                         } else {
                             twoc = 1;    // 500 colours
@@ -4540,7 +4540,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 */
                 int preser = 0;
 
-                if(params->colorToning.lumamode == true) {
+                if(params->colorToning.lumamode) {
                     preser = 1;
                 }
 
@@ -4589,7 +4589,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 float reducac =  0.4f;
                 int preser = 0;
 
-                if(params->colorToning.lumamode == true) {
+                if(params->colorToning.lumamode) {
                     preser = 1;
                 }
 
@@ -4655,7 +4655,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 float iplow, iphigh;
 
-                if(twocol == false) {
+                if(!twocol) {
                     iplow = (float)ctColorCurve.low;
                     iphigh = (float)ctColorCurve.high;
 
@@ -4663,7 +4663,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 int twoc = 0; //integer instead of bool to let more possible choice...other than 2 and 500.
 
-                if(twocol == false) {
+                if(!twocol) {
                     twoc = 0;    // 2 colours
                 } else {
                     twoc = 1;    // 500 colours

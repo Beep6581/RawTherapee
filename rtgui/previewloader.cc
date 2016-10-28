@@ -42,7 +42,7 @@ public:
 
         Job():
             dir_id_(0),
-            listener_(0)
+            listener_(nullptr)
         {}
 
         int dir_id_;
@@ -122,7 +122,7 @@ public:
         // if something got
 // Issue 2406       FileBrowserEntry* fdn = 0;
         try {
-            Thumbnail* tmb = 0;
+            Thumbnail* tmb = nullptr;
             {
                 if (Glib::file_test(j.dir_entry_, Glib::FILE_TEST_EXISTS)) {
                     tmb = cacheMgr->getEntry(j.dir_entry_);
@@ -168,7 +168,7 @@ PreviewLoader::PreviewLoader():
 {
 }
 
-PreviewLoader* PreviewLoader::getInstance(void)
+PreviewLoader* PreviewLoader::getInstance()
 {
     static PreviewLoader instance_;
     return &instance_;
@@ -177,7 +177,7 @@ PreviewLoader* PreviewLoader::getInstance(void)
 void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderListener* l)
 {
     // somebody listening?
-    if ( l != 0 ) {
+    if ( l != nullptr ) {
         {
             MyMutex::MyLock lock(impl_->mutex_);
 
@@ -192,7 +192,7 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
     }
 }
 
-void PreviewLoader::removeAllJobs(void)
+void PreviewLoader::removeAllJobs()
 {
     DEBUG("stop %d", impl_->nConcurrentThreads);
     MyMutex::MyLock lock(impl_->mutex_);

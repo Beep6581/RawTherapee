@@ -15,7 +15,7 @@ CieImage::CieImage (int w, int h) : fromImage(false), W(w), H(h)
 
     // Initialize the pointers to zero
     for (unsigned int c = 0; c < 6; ++c) {
-        data[c] = NULL;
+        data[c] = nullptr;
     }
 
     // Trying to allocate all in one block

@@ -134,7 +134,7 @@ public:
 public:
     PartialPasteDlg (const Glib::ustring &title, Gtk::Window* parent);
 
-    void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE = NULL);
+    void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE = nullptr);
 
     void everythingToggled ();
     void basicToggled ();

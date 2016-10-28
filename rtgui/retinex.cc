@@ -105,7 +105,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     std::vector<double> defaultCurve;
     rtengine::RetinexParams::getDefaulttransmissionCurve(defaultCurve);
-    transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
     transmissionShape->setIdentityValue(0.);
     transmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     transmissionShape->setBottomBarBgGradient(milestones);
@@ -184,7 +184,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 //    std::vector<double> defaultCurve;
     rtengine::RetinexParams::getDefaultgaintransmissionCurve(defaultCurve);
-    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", NULL, false));
+    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", nullptr, false));
     gaintransmissionShape->setIdentityValue(0.);
     gaintransmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     gaintransmissionShape->setBottomBarBgGradient(milestones);

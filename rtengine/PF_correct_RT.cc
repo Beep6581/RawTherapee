@@ -47,7 +47,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, 
 {
     const int halfwin = ceil(2 * radius) + 1;
 
-    FlatCurve* chCurve = NULL;
+    FlatCurve* chCurve = nullptr;
 
     if (params->defringe.huecurve.size() && FlatCurveType(params->defringe.huecurve.at(0)) > FCT_Linear) {
         chCurve = new FlatCurve(params->defringe.huecurve);
@@ -289,7 +289,7 @@ SSEFUNCTION void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * ds
 {
     const int halfwin = ceil(2 * radius) + 1;
 
-    FlatCurve* chCurve = NULL;
+    FlatCurve* chCurve = nullptr;
 
     if (params->defringe.huecurve.size() && FlatCurveType(params->defringe.huecurve.at(0)) > FCT_Linear) {
         chCurve = new FlatCurve(params->defringe.huecurve);

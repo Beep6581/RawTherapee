@@ -108,7 +108,7 @@ public:
     }
 
     // pparamschangelistener interface
-    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = NULL);
+    void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited = nullptr);
     void clearParamChanges ();
 
     void historySelectionChanged ();

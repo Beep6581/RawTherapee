@@ -102,7 +102,7 @@ public:
     const ProfileStoreEntry *entry;
 
 #ifndef NDEBUG
-    ProfileStoreLabel() : Gtk::Label("*** error ***"), entry(NULL) {}
+    ProfileStoreLabel() : Gtk::Label("*** error ***"), entry(nullptr) {}
 #else
     ProfileStoreLabel() : Gtk::Label(""), entry(NULL) {}
 #endif

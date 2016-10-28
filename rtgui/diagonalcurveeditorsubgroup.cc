@@ -35,7 +35,7 @@
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir)
 {
 
-    editedAdjuster = NULL;
+    editedAdjuster = nullptr;
     editedAdjusterValue = 0;
 
     Gtk::PositionType sideStart = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
@@ -365,7 +365,7 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff ()
     bool prevState;
     prevState = editCustomConn.block(true);
     editCustom->set_active(false);
-    customCurve->pipetteMouseOver(NULL, NULL, 0);
+    customCurve->pipetteMouseOver(nullptr, nullptr, 0);
     customCurve->setDirty(true);
 
     if (!prevState) {
@@ -374,7 +374,7 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff ()
 
     prevState = editNURBSConn.block(true);
     editNURBS->set_active(false);
-    NURBSCurve->pipetteMouseOver(NULL, NULL, 0);
+    NURBSCurve->pipetteMouseOver(nullptr, nullptr, 0);
     NURBSCurve->setDirty(true);
 
     if (!prevState) {
@@ -383,7 +383,7 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff ()
 
     prevState = editParamConn.block(true);
     editParam->set_active(false);
-    paramCurve->pipetteMouseOver(NULL, NULL, 0);
+    paramCurve->pipetteMouseOver(nullptr, nullptr, 0);
     paramCurve->setDirty(true);
 
     if (!prevState) {
@@ -405,7 +405,7 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
         paramCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
         paramCurve->setDirty(true);
         float pipetteVal = 0.f;
-        editedAdjuster = NULL;
+        editedAdjuster = nullptr;
         int n = 0;
 
         if (provider->pipetteVal[0] != -1.f) {
@@ -503,7 +503,7 @@ void DiagonalCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provi
         break;
 
     case (DCT_Parametric):
-        editedAdjuster = NULL;
+        editedAdjuster = nullptr;
         break;
 
     case (DCT_NURBS):
@@ -571,7 +571,7 @@ void DiagonalCurveEditorSubGroup::stopNumericalAdjustment()
  */
 void DiagonalCurveEditorSubGroup::refresh(CurveEditor *curveToRefresh)
 {
-    if (curveToRefresh != NULL && curveToRefresh == static_cast<DiagonalCurveEditor*>(parent->displayedCurve)) {
+    if (curveToRefresh != nullptr && curveToRefresh == static_cast<DiagonalCurveEditor*>(parent->displayedCurve)) {
         switch((DiagonalCurveType)(curveToRefresh->curveType->getSelected())) {
         case (DCT_Spline):
             customCurve->refresh();
@@ -613,11 +613,11 @@ void DiagonalCurveEditorSubGroup::switchGUI()
         ColorProvider *barColorProvider = dCurve->getLeftBarColorProvider();
         std::vector<GradientMilestone>  bgGradient = dCurve->getLeftBarBgGradient();
 
-        if (barColorProvider == NULL && bgGradient.size() == 0) {
+        if (barColorProvider == nullptr && bgGradient.size() == 0) {
             // dCurve has no left colored bar, so we delete the object
             if (leftBar) {
                 delete leftBar;
-                leftBar = NULL;
+                leftBar = nullptr;
             }
         } else {
             // dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
@@ -630,7 +630,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
                 leftBar->setColorProvider(barColorProvider, dCurve->getLeftBarCallerId());
                 leftBar->setBgGradient (bgGradient);
             } else {
-                leftBar->setColorProvider(NULL, -1);
+                leftBar->setColorProvider(nullptr, -1);
                 leftBar->setBgGradient (bgGradient);
             }
         }
@@ -638,11 +638,11 @@ void DiagonalCurveEditorSubGroup::switchGUI()
         barColorProvider = dCurve->getBottomBarColorProvider();
         bgGradient = dCurve->getBottomBarBgGradient();
 
-        if (barColorProvider == NULL && bgGradient.size() == 0) {
+        if (barColorProvider == nullptr && bgGradient.size() == 0) {
             // dCurve has no bottom colored bar, so we delete the object
             if (bottomBar) {
                 delete bottomBar;
-                bottomBar = NULL;
+                bottomBar = nullptr;
             }
         } else {
             // dCurve has a ColorProvider or a background gradient defined, so we create/update the object
@@ -655,7 +655,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
                 bottomBar->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
                 bottomBar->setBgGradient (bgGradient);
             } else {
-                bottomBar->setColorProvider(NULL, -1);
+                bottomBar->setColorProvider(nullptr, -1);
                 bottomBar->setBgGradient (bgGradient);
             }
         }
@@ -695,7 +695,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             shcSelector->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
             shcSelector->setBgGradient(bgGradient);
             shcSelector->setMargins( (leftBar ? CBAR_WIDTH + CBAR_MARGIN : RADIUS), RADIUS );
-            paramCurve->setColoredBar(leftBar, NULL);
+            paramCurve->setColoredBar(leftBar, nullptr);
             paramCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editParam, editParamConn);
             parent->pack_start (*paramCurveGrid);
@@ -1122,10 +1122,10 @@ bool DiagonalCurveEditorSubGroup::curveReset(CurveEditor *ce)
         double mileStone[3];
         dCurve->getRangeDefaultMilestones(mileStone[0], mileStone[1], mileStone[2]);
 
-        highlights->resetPressed(NULL);
-        lights->resetPressed(NULL);
-        darks->resetPressed(NULL);
-        shadows->resetPressed(NULL);
+        highlights->resetPressed(nullptr);
+        lights->resetPressed(nullptr);
+        darks->resetPressed(nullptr);
+        shadows->resetPressed(nullptr);
         shcSelector->setDefaults(mileStone[0], mileStone[1], mileStone[2]);
         shcSelector->reset();
         paramCurve->reset (dce->paramResetCurve, dce->getIdentityValue());
