@@ -1044,7 +1044,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         }
 
         s->str = "PROGRESSBAR_PROCESSING";
-        s->val = 0.0;
+        s->val = 1.0;
     } else {
         // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
         if (ipc && openThm && tpc->getChangedState()) {
@@ -1066,7 +1066,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
 
         // Set progress bar "done"
         s->str = "PROGRESSBAR_READY";
-        s->val = 1.0;
+        s->val = 0.0;
 
 #ifdef WIN32
 
