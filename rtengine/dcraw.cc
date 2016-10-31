@@ -9482,12 +9482,14 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 	adobe_coeff (make, model);
-  if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
+  if(!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4)))
 	adobe_coeff (make, model);
   if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
     adobe_coeff (make, model);
   if(!strncmp(make, "Leica", 5) && !strncmp(model, "SL",2))
     adobe_coeff (make, model);
+  if(!strncmp(make, "XIAOYI", 6) && !strncmp(model, "M1",2))
+	adobe_coeff (make, model);
   if (raw_color) adobe_coeff (make, model);
   if (load_raw == &CLASS kodak_radc_load_raw)
     if (raw_color) adobe_coeff ("Apple","Quicktake");
