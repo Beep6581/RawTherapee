@@ -1,5 +1,5 @@
---- dcraw.c	2016-10-11 13:24:24 +0000
-+++ dcraw.cc	2016-10-17 19:32:24 +0000
+--- dcraw.c	2016-10-28 13:45:27 +0000
++++ dcraw.cc	2016-10-31 13:35:15 +0000
 @@ -1,3 +1,16 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -3045,7 +3045,7 @@
    } else if (!strcmp(model,"DSLR-A100")) {
      if (width == 3880) {
        height--;
-@@ -9357,6 +9476,18 @@
+@@ -9357,6 +9476,20 @@
      memcpy (rgb_cam, cmatrix, sizeof cmatrix);
      raw_color = 0;
    }
@@ -3055,16 +3055,18 @@
 +	adobe_coeff (make, model);
 +  if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 +	adobe_coeff (make, model);
-+  if(!strncmp(make, "Pentax", 6) && !strncmp(model, "K10D",4))
++  if(!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4)))
 +	adobe_coeff (make, model);
 +  if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
 +    adobe_coeff (make, model);
 +  if(!strncmp(make, "Leica", 5) && !strncmp(model, "SL",2))
 +    adobe_coeff (make, model);
++  if(!strncmp(make, "XIAOYI", 6) && !strncmp(model, "M1",2))
++	adobe_coeff (make, model);
    if (raw_color) adobe_coeff (make, model);
    if (load_raw == &CLASS kodak_radc_load_raw)
      if (raw_color) adobe_coeff ("Apple","Quicktake");
-@@ -9371,9 +9502,9 @@
+@@ -9371,9 +9504,9 @@
      if (raw_width  < width ) raw_width  = width;
    }
    if (!tiff_bps) tiff_bps = 12;
@@ -3076,7 +3078,7 @@
      is_raw = 0;
  #ifdef NO_JASPER
    if (load_raw == &CLASS redcine_load_raw) {
-@@ -9402,249 +9533,300 @@
+@@ -9402,249 +9535,300 @@
    if (flip == UINT_MAX) flip = 0;
  }
  
@@ -3607,7 +3609,7 @@
  struct tiff_tag {
    ushort tag, type;
    int count;
-@@ -9667,594 +9849,11 @@
+@@ -9667,594 +9851,11 @@
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };
  
