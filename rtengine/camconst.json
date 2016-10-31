@@ -1410,7 +1410,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
     { // Quality b, crop correction
-        "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10 Mark II", "OLYMPUS E-M10MarkII" ],
+        "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10MarkII" ],
         "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
         "raw_crop": [ 0, 0, 4624, 3472 ], // largest valid - full frame is 4640x3472
 //        "raw_crop": [ 4, 4, 4616, 3464 ], // olympus jpeg crop 8, 8, 4608, 3456
@@ -1716,11 +1716,42 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
                     ]
                   }
     },
+    { // Quality C, Color matrix guessed, Intemediate ISOs missing
+        "make_model": [ "Panasonic DMC-LX10", "Panasonic DMC-LX15" ],
+        "dcraw_matrix": [ 7790,-2736,-755,-3452,11870,1769,-628,1647,4898 ], //copy from TZ100 dcp_v8.6 d65
+        "raw_crop": [ 4, 4, -4, -4 ], // full raw frame 5488x3664 exif crop 5472X3648 with 8pixel borders. Set the borders at 4 pixels which added with RT's 4 pixels border gives exactly the official frame.
+        "ranges": {
+           "black": 15, // 15 is BL offset. Dcraw/RT read the base BL from exif and calculates total BL = BLbase+BLoffset.
+           "white": [
+              { "iso": 80, "levels": 2800 }, // gaussian 2800-3000 exif_linearitylimit 2626
+              { "iso": 100, "levels": 3500 }, // gaussian 3500-3700 exif_linearitylimit 3277
+              { "iso": [ 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4060 } // nominal 4095
+                    ]
+                  }
+    },
 
     { // Quality B, per ISO info missing
         "make_model": "PENTAX K-x",
         "dcraw_matrix": [ 8843,-2837,-625,-5025,12644,2668,-411,1234,7410 ], // adobe dcp d65
         "ranges": { "white": 4080 } // nominal at ISO200 4094
+    },
+
+    { // Quality B, Intemediate ISO samples missing, Pentax_DNG WLtags are after BL sutraction and not valid
+        "make_model": [ "RICOH PENTAX K-70", "PENTAX K-70" ],
+        "dcraw_matrix": [ 8050,-2061,-1264,-4359,12953,1515,-1096,1965,6075 ], // PENTAX DNG D65
+		"raw_crop": [ 58, 28, 6022, 4024 ], // full frame 6080x4064, cropped to official DNG raw_crop 28,58,6080,4052, official jpeg crop 6000x4000
+        "ranges": {
+           "white": [
+              { "iso": 100, "levels": 16300 }, // 16319-16377
+              { "iso": 200, "levels": 16250 }, // 16319-16315
+              { "iso": 400, "levels": 16200 }, // 16255-16251
+              { "iso": 800, "levels": 16050 }, // 16255-16120
+              { "iso": 1600, "levels": 15750 }, // 15860
+              { "iso": [ 3200, 6400 ], "levels": 16200 }, // 16350
+              { "iso": [ 12800, 25600 ], "levels": 16100 }, // 16300
+              { "iso": [ 51200, 102400 ], "levels": 16000 } // 16200
+                    ]
+				  }
     },
 
     { // Quality B, intermediate ISOs info missing
@@ -1737,7 +1768,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
               { "iso": 800, "levels": 15360 }, // 15868 or 15364-15370
               { "iso": [ 1600, 3200, 6400, 12800, 25600, 51200 ], "levels": 16300 } // 16383 - pentax dng tag is 15868-15350
                     ]
-                  }
+                 }
     },
 
     { // Quality B, intermediate ISOs info missing
@@ -1919,7 +1950,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 512, "white": 16300 }
     },
     { // Quality A,
-        "make_model": [ "Sony DSC-RX100M3", "Sony DSC-RX100M4" ],
+        "make_model": [ "Sony DSC-RX100M3", "Sony DSC-RX100M4", "Sony DSC-RX100M5" ],
         "dcraw_matrix": [ 6596,-2079,-562,-4782,13016,1933,-970,1581,5181 ], // DNG_v9.1.1 D65
         "ranges": { "black": 800, "white": 16300 }
     },
@@ -1927,6 +1958,19 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "make_model": [ "Sony DSC-RX10M2", "Sony DSC-RX10M3" ],
         "dcraw_matrix": [ 6679,-1825,-745,-5047,13256,1953,-1580,2422,5183 ], // DNG_v9.6 D65
         "ranges": { "black": 800, "white": 16300 }
+    },
+
+    { // Quality C, No proper color data, beta samples, frame set to official jpeg, WL corrections need adobe_coeff setting in dcraw.cc to become active
+        "make_model": "XIAOYI M1",
+        "dcraw_matrix": [ 7158,-1911,-606,-3603,10669,2530,-659,1236,5530 ], // XIAO YI DNG D65
+        "raw_crop": [ 4, 3, 5192, 3896 ], // full raw 5200x3902, official jpeg 5184X3888
+        "ranges": {
+           "white": [
+              { "iso": 100, "levels": 4080 }, // typical 4092-4094
+              { "iso": [ 200, 400, 800, 1600, 3200, 6400 ], "levels": 4080 }, // 4092-4095
+              { "iso": [ 12800, 25600, 51200 ], "levels": 4080 } // 4090-4095
+                    ]
+                  }
     },
 
     /* Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files.
