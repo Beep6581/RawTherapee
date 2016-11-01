@@ -25,12 +25,17 @@
 /*
  * Parent class for all colored bar type; a ColorProvider has to be set
  * thanks to "setColorProvider" to be able to display colors inside the bar
+ *
+ * WARNING: If the color has no gradient defined or can't get colors from the provider,
+ *          the bar will have undefined data, and the calling class will have to draw
+ *          the bar itself, i.e. use render_background (depending on its Gtk::Style)
+ *
  */
-class ColoredBar : public BackBuffer, public ColorCaller
+class ColoredBar : private BackBuffer, public ColorCaller
 {
 
 private:
-    void draw();
+    void updateBackBuffer(Gtk::DrawingArea &drawingArea);
 
 protected:
     eRTOrientation orientation;
@@ -38,11 +43,12 @@ protected:
 
 public:
     explicit ColoredBar (eRTOrientation orient);
+    bool setDrawRectangle(int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
 
-    void expose(Glib::RefPtr<Gdk::Window> destWindow);
-    void expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface);
-    void expose(BackBuffer *backBuffer);
-    void expose(const Cairo::RefPtr< Cairo::Context> &cr);
+    void expose(Gtk::DrawingArea &drawingArea, Glib::RefPtr<Gdk::Window> destWindow);
+    void expose(Gtk::DrawingArea &drawingArea, Cairo::RefPtr<Cairo::ImageSurface> destSurface);
+    void expose(Gtk::DrawingArea &drawingArea, BackBuffer *backBuffer);
+    void expose(Gtk::DrawingArea &drawingArea, const Cairo::RefPtr< Cairo::Context> &cr);
 
     bool canGetColors();
 
@@ -51,6 +57,10 @@ public:
     // by clearing the gradient, the ColorProvider will have to provide colors on a per pixel basis if a ColorProvider
     // has been set, through ColorProvider::colorForValue on next ColoredBar::expose
     void clearBgGradient ();
+
+    void setDirty(bool isDirty) {
+        BackBuffer::setDirty(isDirty);
+    }
 };
 
 #endif

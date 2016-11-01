@@ -516,6 +516,8 @@ ProfileStoreLabel::ProfileStoreLabel(const ProfileStoreEntry *entry) : Gtk::Labe
 ProfileStoreComboBox::ProfileStoreComboBox ()
 {
     updateProfileList();
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
 }
 
 Glib::ustring ProfileStoreComboBox::getCurrentLabel()

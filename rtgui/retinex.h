@@ -47,16 +47,15 @@ protected:
     MyExpander* expsettings;
 
     Gtk::Label* labmdh;
-    Gtk::HBox* dhbox;
-    Gtk::HBox* mapbox;
+    Gtk::Grid* dhgrid;
+    Gtk::Grid* mapgrid;
     Gtk::Label* labmap;
-    Gtk::HBox* viewbox;
+    Gtk::Grid* viewgrid;
     Gtk::Label* labview;
 
     Gtk::Label* labgam;
-    Gtk::HBox* gambox;
+    Gtk::Grid* gamgrid;
     Gtk::Button* neutral;
-    Gtk::HBox* neutrHBox;
 
     MyComboBoxText*   retinexMethod;
     MyComboBoxText*   retinexcolorspace;

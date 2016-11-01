@@ -235,6 +235,8 @@ void MyDiagonalCurve::draw (int handle)
     cr->paint ();
     cr->set_operator (Cairo::OPERATOR_OVER);
 
+    style->render_background(cr, graphX, graphY-graphH, graphW, graphH);
+
     Gdk::RGBA c;
 
     // histogram in the background
@@ -426,8 +428,8 @@ void MyDiagonalCurve::draw (int handle)
         // first the background
         int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
-        leftBar->setDrawRectangle(Cairo::FORMAT_ARGB32, 1, graphY - graphH + 1, bWidth - 2, graphH - 2);
-        leftBar->expose(bb);
+        leftBar->setDrawRectangle(1, graphY - graphH + 1, bWidth - 2, graphH - 2);
+        leftBar->expose(*this, bb);
 
         // now the border
         c = style->get_border_color(state);
@@ -441,8 +443,8 @@ void MyDiagonalCurve::draw (int handle)
         // first the background
         int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
-        bottomBar->setDrawRectangle(Cairo::FORMAT_ARGB32, graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
-        bottomBar->expose(bb);
+        bottomBar->setDrawRectangle(graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
+        bottomBar->expose(*this, bb);
 
         // now the border
         c = style->get_border_color (state);
@@ -511,8 +513,6 @@ bool MyDiagonalCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         }
     }
 
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->render_background(cr, 0., 0., (double)get_width(), (double)get_height());
     draw (lit_point);
     copySurface(cr);
     return false;

@@ -60,7 +60,7 @@ public:
  * have to provide through the ThresholdCurveProvider interface
  *
  */
-class ThresholdSelector : public Gtk::DrawingArea, public ColoredBar
+class ThresholdSelector : public Gtk::DrawingArea, public BackBuffer
 {
 
 public:
@@ -109,12 +109,13 @@ protected:
     void findBoundaries(double &min, double &max);
     double to01(ThreshCursorId cursorId);
     void updateTooltip();
+    void updateBackBuffer();
 
     Gtk::SizeRequestMode get_request_mode_vfunc () const;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
     void on_realize ();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
@@ -124,6 +125,7 @@ protected:
 
 public:
 
+    ColoredBar coloredBar;
     sigc::signal<void> signal_value_changed();
 
     ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,

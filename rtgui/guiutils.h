@@ -277,7 +277,7 @@ class MyComboBox : public Gtk::ComboBox
 
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyComboBox ();
@@ -294,7 +294,7 @@ class MyComboBoxText : public Gtk::ComboBoxText
 
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyComboBoxText ();
@@ -336,7 +336,7 @@ class MyFileChooserButton : public Gtk::FileChooserButton
 protected:
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);
@@ -409,7 +409,7 @@ private:
     int w;
 
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyProgressBar(int width);

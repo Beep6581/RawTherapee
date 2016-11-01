@@ -125,7 +125,11 @@ RTWindow::RTWindow ()
     }
 
     set_title_decorated("");
+    set_resizable(true);
+    set_resize_mode(Gtk::ResizeMode::RESIZE_QUEUE);
+    set_decorated(true);
     set_default_size(options.windowWidth, options.windowHeight);
+    set_hide_titlebar_when_maximized(true);
     set_modal(false);
 
     if (options.windowMaximized) {

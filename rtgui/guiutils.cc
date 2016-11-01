@@ -977,7 +977,7 @@ void MyComboBoxText::get_preferred_width_vfunc (int &minimum_width, int &natural
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
 }
-void MyComboBoxText::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyComboBoxText::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
@@ -1023,7 +1023,7 @@ void MyComboBox::get_preferred_width_vfunc (int &minimum_width, int &natural_wid
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
 }
-void MyComboBox::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyComboBox::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
@@ -1146,7 +1146,7 @@ void MyFileChooserButton::get_preferred_width_vfunc (int &minimum_width, int &na
 {
     minimum_width = natural_width = 35;
 }
-void MyFileChooserButton::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     minimum_width = natural_width = 35;
 }
@@ -1266,7 +1266,7 @@ void MyProgressBar::get_preferred_width_vfunc (int &minimum_width, int &natural_
     natural_width = rtengine::max(w, 50);
 }
 
-void MyProgressBar::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyProgressBar::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
 }

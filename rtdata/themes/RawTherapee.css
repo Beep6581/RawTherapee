@@ -22,6 +22,10 @@
     color: #AAAAAA;
 }
 
+*:disabled {
+    color: #666666;
+}
+
 .view:selected {
     color: #262626;
     background-color: #AAAAAA
@@ -41,20 +45,19 @@
     background-color: #404040;
 }
 
-box {
-    border-width: 0;
-    border-style: none;
-    border-radius: 0;
-    margin: 0;
-    padding: 0;
+window > decoration {
+  box-shadow: none;
+  margin: 0px;
 }
 
-grid {
-    margin: 2px;
-    padding: 0;
+box, grid {
     border-width: 0;
     border-style: none;
     border-radius: 0;
+    margin: 1px;
+    padding: 0;
+    min-height: 5px;
+    min-width: 5px;
 }
 
 /* Affects all frames except in the toolbox */
@@ -147,13 +150,6 @@ combobox {
     margin-left: 2px;
 }
 
-box {
-    padding: 0;
-    margin: 1px;
-    min-height: 5px;
-    min-width: 5px;
-}
-
 scale {
     padding: 0;
     min-height: 5px;
@@ -170,9 +166,18 @@ scale slider {
 scale slider:hover {
     background-image: linear-gradient(#444444, #3E3E3E, #393939);
 }
+scale:disabled slider {
+    background-image: none;
+    background-color: #444;
+    border-color: #282828;
+}
 scale trough {
     margin: 6px 6px;  /* have to be half of "scale slider / min-width min-height" */
     background-color: #2A2A2A;
+}
+scale:disabled trough {
+    background-color: #444;
+    border-color: #282828;
 }
 
 /*.EditorTopPanel .button, .ToolBarPanelFileBrowser .button, .EditorZoomPanel .button {*/
@@ -215,8 +220,12 @@ progressbar.horizontal trough progress {
 
 .drawingarea {
     border-radius: 0;
-    background-color: #363636;
-    border: 1px solid #252525;
+    background-color: #2A2A2A;
+    border: 1px solid #1D1D1D;
+}
+.drawingarea:disabled {
+    background-color: #444;
+    border-color: #282828;
 }
 
 .drawingarea:selected {
@@ -268,7 +277,7 @@ button.Right {
 
 /* [1.23[-][+]] */
 entry, spinbutton {
-    padding: 1px;
+    padding: 0;
     margin: 0;
     min-height: 10px;
     background-color: #262626;
@@ -300,13 +309,17 @@ menuitem {
     min-height: 10px;
 }
 
+#HistogramPanel {
+    margin: 2px 4px;
+}
+
 #MyExpander {
     margin: 0 5px 0 5px;
     padding: 0;
 }
 
 /* Tool background */
-#ExpanderBox > box {
+#ExpanderBox > box, #ExpanderBox > grid {
     background-color: #363636;
     border-width: 1px;
     border-style: solid;
@@ -320,7 +333,7 @@ menuitem {
     background-color: #363636;
 }
 
-#ExpanderBox frame,
+#ExpanderBox  frame,
 #ExpanderBox2 frame,
 #ExpanderBox3 frame {
     padding: 2px 0 0 0;
@@ -336,22 +349,22 @@ menuitem {
     padding: 3px;
 }
 
-#ExpanderBox frame > label, #ExpanderBox frame frame > label,
+#ExpanderBox  frame > label, #ExpanderBox  frame frame > label,
 #ExpanderBox2 frame > label, #ExpanderBox2 frame frame > label,
 #ExpanderBox3 frame > label, #ExpanderBox3 frame frame > label {
     margin-left: 7pt;
     margin-top: 0;
 }
-#ExpanderBox frame > box, #ExpanderBox frame frame > box,
-#ExpanderBox2 frame > box, #ExpanderBox2 frame frame > box,
-#ExpanderBox3 frame > box, #ExpanderBox3 frame frame > box {
+#ExpanderBox  frame > box, #ExpanderBox  frame frame > box, #ExpanderBox  frame > grid, #ExpanderBox  frame frame > grid,
+#ExpanderBox2 frame > box, #ExpanderBox2 frame frame > box, #ExpanderBox2 frame > grid, #ExpanderBox2 frame frame > grid,
+#ExpanderBox3 frame > box, #ExpanderBox3 frame frame > box, #ExpanderBox3 frame > grid, #ExpanderBox3 frame frame > grid {
     margin: 2px;
 }
 
-#ExpanderBox > box > checkbutton, #ExpanderBox > box > box,
-#ExpanderBox2 > box > checkbutton, #ExpanderBox2 > box > box,
-#ExpanderBox3 > box > checkbutton, #ExpanderBox3 > box > box {
-    margin-top: 3px;
+#ExpanderBox  > box > checkbutton, #ExpanderBox  > box > box, #ExpanderBox  > grid > checkbutton, #ExpanderBox  > box > grid, #ExpanderBox  > grid > grid, #ExpanderBox  frame > box > grid, #ExpanderBox  frame > grid > grid, #ExpanderBox  frame > grid > box,
+#ExpanderBox2 > box > checkbutton, #ExpanderBox2 > box > box, #ExpanderBox2 > grid > checkbutton, #ExpanderBox2 > box > grid, #ExpanderBox2 > grid > grid, #ExpanderBox2 frame > box > grid, #ExpanderBox2 frame > grid > grid, #ExpanderBox2 frame > grid > box,
+#ExpanderBox3 > box > checkbutton, #ExpanderBox3 > box > box, #ExpanderBox3 > grid > checkbutton, #ExpanderBox3 > box > grid, #ExpanderBox3 > grid > grid, #ExpanderBox3 frame > box > grid, #ExpanderBox3 frame > grid > grid, #ExpanderBox3 frame > grid > box {
+    margin-top: 2px;
 }
 
 #ExpanderBox frame drawingarea {
@@ -371,7 +384,7 @@ menuitem {
 }
 
 /* Sub-tool (MyExpander) background */
-#ExpanderBox2 > box {
+#ExpanderBox2 > box, #ExpanderBox2 > grid {
     background-color: #3B3B3B;
     border: 1px solid #2A2A2A;
     border-radius: 4px;
@@ -510,7 +523,7 @@ notebook stack {
     margin: 0;
 }
 
-paned box {
+paned box, paned grid {
     padding: 0;
     margin: 0;
     border-style: none;
@@ -601,7 +614,7 @@ paned > separator {
 }
 
 #PreviewWindow {
-	border-style: solid none;
+    border-style: solid none;
 }
 
 .tooltip {

@@ -30,16 +30,12 @@ ThumbBrowserBase::ThumbBrowserBase ()
     inW = -1;
     inH = -1;
 
-    Gtk::HBox* hb1 = Gtk::manage( new Gtk::HBox () );
-    Gtk::HBox* hb2 = Gtk::manage( new Gtk::HBox () );
-    hb1->pack_start (internal);
-    hb1->pack_end (vscroll, Gtk::PACK_SHRINK, 0);
-
-    pack_start (*hb1);
-
-    hb2->pack_start (hscroll);
-
-    pack_start (*hb2, Gtk::PACK_SHRINK, 0);
+    setExpandAlignProperties(&internal, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(&hscroll, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(&vscroll, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    attach (internal, 0, 0, 1, 1);
+    attach (vscroll, 1, 0, 1, 1);
+    attach (hscroll, 0, 1, 1, 1);
 
     internal.setParent (this);
 
@@ -875,6 +871,34 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
 
     return true;
 }
+
+Gtk::SizeRequestMode ThumbBrowserBase::Internal::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height = 20;
+    natural_height = 80;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 200;
+    natural_width = 1000;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc(minimum_height, natural_height);
+}
+
+void ThumbBrowserBase::Internal::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
+
 
 bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event)
 {

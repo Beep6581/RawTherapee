@@ -68,7 +68,7 @@ protected:
     ColoredBar *leftBar;
     ColoredBar *bottomBar;
     CursorShape cursor_type;
-    int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points of for the colored bar
+    int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points or for the colored bar
     int prevGraphW, prevGraphH;         /// previous inner width and height of the editor
     Gdk::ModifierType mod_type;
     int cursorX;        /// X coordinate in the graph of the cursor

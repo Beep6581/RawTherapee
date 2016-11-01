@@ -32,7 +32,6 @@
 
 extern Options options;
 extern Glib::ustring argv0;
-extern Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> css;
 
 Preferences::Preferences  (RTWindow *rtwindow)
@@ -1992,16 +1991,13 @@ void Preferences::switchThemeTo(Glib::ustring newTheme)
     if (!css) {
         css = Gtk::CssProvider::create();
     }
-    bool loaded = true;
 
     try {
         css->load_from_path (filename);
     } catch (Glib::Error &err) {
         printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
-        loaded = false;
     } catch (...) {
         printf("Error: Can't load css file \"%s\"\n", filename.c_str());
-        loaded = false;
     }
 }
 

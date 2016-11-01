@@ -290,3 +290,30 @@ bool PreviewWindow::on_button_release_event (GdkEventButton* event)
 
     return true;
 }
+
+Gtk::SizeRequestMode PreviewWindow::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void PreviewWindow::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height= 50;
+    natural_height = 100;
+}
+
+void PreviewWindow::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 80;
+    natural_width = 120;
+}
+
+void PreviewWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc(minimum_height, natural_height);
+}
+
+void PreviewWindow::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}

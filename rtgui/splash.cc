@@ -31,7 +31,6 @@ extern Glib::ustring versionSuffixString;
 SplashImage::SplashImage ()
 {
     pixbuf = RTImage::createFromFile ("splash.png");
-    set_size_request (pixbuf->get_width(), pixbuf->get_height());
 }
 
 bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
@@ -75,6 +74,31 @@ bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     return true;
 }
 
+Gtk::SizeRequestMode SplashImage::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void SplashImage::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height = natural_height = pixbuf ? pixbuf->get_height() : 100;
+}
+
+void SplashImage::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = pixbuf ? pixbuf->get_width() : 100;
+}
+
+void SplashImage::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc (minimum_height, natural_height);
+}
+
+void SplashImage::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
+
 Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true)
 {
 
@@ -91,7 +115,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     get_content_area()->pack_start (*bottomHBox, Gtk::PACK_SHRINK, 0);
 
     Glib::RefPtr<Gtk::CssProvider> localCSS = Gtk::CssProvider::create();
-    localCSS->load_from_data ("GtkTextView { font-family: monospace; font-size: 8pt; }");
+    localCSS->load_from_data ("textview { font-family: monospace; font-size: 8pt; }");
 
     // Tab 1: the image
     splashImage = Gtk::manage(new SplashImage ());

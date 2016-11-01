@@ -337,7 +337,7 @@ void FlatCurveEditorSubGroup::switchGUI()
             CPointsCurve->setColoredBar(leftBar, bottomBar);
             CPointsCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editCPoints, editCPointsConn);
-            parent->pack_start (*CPointsCurveGrid);
+            parent->attachCurve (CPointsCurveGrid);
             CPointsCurveGrid->check_resize();
             break;
 

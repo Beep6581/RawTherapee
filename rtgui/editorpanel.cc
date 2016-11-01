@@ -49,9 +49,8 @@ private:
 private:
     void prepareProfileBox ()
     {
-        profileBox.set_size_request (100, -1);
         profileBox.setPreferredWidth (90, 150);
-        setExpandAlignProperties (&profileBox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties (&profileBox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         profileBox.append (M ("PREFERENCES_PROFILE_NONE"));
 #ifdef WIN32
@@ -75,7 +74,7 @@ private:
         intentBox.addEntry ("intent-perceptual.png", M ("PREFERENCES_INTENT_PERCEPTUAL"));
         intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox.addEntry ("intent-absolute.png", M ("PREFERENCES_INTENT_ABSOLUTE"));
-        setExpandAlignProperties (intentBox.buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties (intentBox.buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         intentBox.setSelected(1);
         intentBox.show ();
@@ -455,24 +454,24 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->add (*saveButtonImage);
     saveimgas->set_tooltip_markup (M ("MAIN_BUTTON_SAVE_TOOLTIP"));
-    setExpandAlignProperties (saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties (saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("processing.png"));
     queueimg = Gtk::manage (new Gtk::Button ());
     queueimg->add (*queueButtonImage);
     queueimg->set_tooltip_markup (M ("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
-    setExpandAlignProperties (queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties (queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("image-editor.png"));
     sendtogimp = Gtk::manage (new Gtk::Button ());
     sendtogimp->add (*sendToEditorButtonImage);
     sendtogimp->set_tooltip_markup (M ("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
-    setExpandAlignProperties (sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties (sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     // Status box
     progressLabel = Gtk::manage (new MyProgressBar (300));
     progressLabel->set_show_text (true);
-    setExpandAlignProperties (progressLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties (progressLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
     progressLabel->set_fraction (0.0);
 
     // tbRightPanel_1
@@ -483,7 +482,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tbRightPanel_1->set_active (true);
     tbRightPanel_1->set_tooltip_markup (M ("MAIN_TOOLTIP_SHOWHIDERP1"));
     tbRightPanel_1->set_image (*iRightPanel_1_Hide);
-    setExpandAlignProperties (tbRightPanel_1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties (tbRightPanel_1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     // ShowHideSidePanels
     tbShowHideSidePanels = new Gtk::ToggleButton ();
@@ -493,7 +492,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tbShowHideSidePanels->set_active (false);
     tbShowHideSidePanels->set_tooltip_markup (M ("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));
     tbShowHideSidePanels->set_image (*iShowHideSidePanels);
-    setExpandAlignProperties (tbShowHideSidePanels, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties (tbShowHideSidePanels, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     navPrev = navNext = navSync = nullptr;
 
@@ -505,7 +504,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navPrev->add (*navPrevImage);
         navPrev->set_relief (Gtk::RELIEF_NONE);
         navPrev->set_tooltip_markup (M ("MAIN_BUTTON_NAVPREV_TOOLTIP"));
-        setExpandAlignProperties (navPrev, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties (navPrev, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         Gtk::Image *navNextImage = Gtk::manage (new RTImage ("nav-next.png"));
         navNextImage->set_padding (0, 0);
@@ -513,7 +512,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navNext->add (*navNextImage);
         navNext->set_relief (Gtk::RELIEF_NONE);
         navNext->set_tooltip_markup (M ("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
-        setExpandAlignProperties (navNext, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties (navNext, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("nav-sync.png"));
         navSyncImage->set_padding (0, 0);
@@ -521,7 +520,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navSync->add (*navSyncImage);
         navSync->set_relief (Gtk::RELIEF_NONE);
         navSync->set_tooltip_markup (M ("MAIN_BUTTON_NAVSYNC_TOOLTIP"));
-        setExpandAlignProperties (navSync, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        setExpandAlignProperties (navSync, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
     // ==================  PACKING THE BOTTOM WIDGETS =================

@@ -454,7 +454,7 @@ void HistogramRGBArea::get_preferred_height_for_width_vfunc (int width, int &min
     natural_height = bHeight;
 }
 
-void HistogramRGBArea::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void HistogramRGBArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
@@ -882,7 +882,7 @@ void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimu
     natural_height = gHeight;
 }
 
-void HistogramArea::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
 }

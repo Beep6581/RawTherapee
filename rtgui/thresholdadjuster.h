@@ -140,11 +140,11 @@ public:
     }
     void setBgGradient (const std::vector<GradientMilestone> &milestones)
     {
-        tSelector.setBgGradient (milestones);
+        tSelector.coloredBar.setBgGradient (milestones);
     }
     void setBgColorProvider (ColorProvider *cp, int i)
     {
-        tSelector.setColorProvider(cp, i);
+        tSelector.coloredBar.setColorProvider(cp, i);
     }
     void setUpdatePolicy (eUpdatePolicy policy)
     {

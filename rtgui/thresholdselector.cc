@@ -25,7 +25,7 @@
 ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
                                      double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
                                      ThresholdCurveProvider* curveProvider)
-    : ColoredBar(RTO_Left2Right)
+    : coloredBar(RTO_Left2Right)
 {
     positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
     positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
@@ -51,7 +51,7 @@ ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBotto
 
 ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottom,
                                      double defTop, unsigned int precision, bool startAtOne)
-    : ColoredBar(RTO_Left2Right)
+    : coloredBar(RTO_Left2Right)
 {
     positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
     positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
@@ -91,7 +91,7 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
 
 ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottomLeft, double defTopLeft,
                                      double defBottomRight, double defTopRight, unsigned int precision, bool startAtOne)
-    : ColoredBar(RTO_Left2Right)
+    : coloredBar(RTO_Left2Right)
 {
     positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottomLeft;
     positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTopLeft;
@@ -142,9 +142,10 @@ void ThresholdSelector::initValues ()
     secondaryMovedCursor = TS_UNDEFINED;
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
-    style->add_class(GTK_STYLE_CLASS_DEFAULT);
-    style->add_class(GTK_STYLE_CLASS_SCALE);
-    style->add_class(GTK_STYLE_CLASS_SLIDER);
+    style->add_class("drawingarea");
+    style->add_class(GTK_STYLE_CLASS_TROUGH);
+    //style->add_class(GTK_STYLE_CLASS_SCALE);
+    //style->add_class(GTK_STYLE_CLASS_SLIDER);
 
     set_name("ThresholdSelector");
     set_can_focus(false);
@@ -155,7 +156,7 @@ void ThresholdSelector::initValues ()
 
 Gtk::SizeRequestMode ThresholdSelector::get_request_mode_vfunc () const
 {
-    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
 }
 
 void ThresholdSelector::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
@@ -168,7 +169,7 @@ void ThresholdSelector::get_preferred_height_vfunc (int &minimum_height, int &na
 
 void ThresholdSelector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 100;
+    minimum_width = 60;
     natural_width = 150;
 }
 
@@ -177,11 +178,10 @@ void ThresholdSelector::get_preferred_height_for_width_vfunc (int width, int &mi
     natural_height = minimum_height = 23;
 }
 
-void ThresholdSelector::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void ThresholdSelector::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
-
 
 /*
  * Set the position of the sliders without telling it to the listener
@@ -246,10 +246,24 @@ void ThresholdSelector::on_realize()
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::LEAVE_NOTIFY_MASK);
 }
 
-bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
+void ThresholdSelector::updateBackBuffer()
 {
 
-    Gdk::RGBA c;
+    // This will create or update the size of the BackBuffer::surface
+    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, get_width(), get_height(), true);
+
+    if (!surface) {
+        return;
+    }
+
+    Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+
+    cr->set_source_rgba (0., 0., 0., 0.);
+    cr->set_operator (Cairo::OPERATOR_CLEAR);
+    cr->paint ();
+    cr->set_operator (Cairo::OPERATOR_OVER);
+
     double positions01[4];
     int w = get_width ();
     int h = get_height ();
@@ -263,38 +277,21 @@ bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     positions01[TS_BOTTOMRIGHT] = to01(TS_BOTTOMRIGHT);
     positions01[TS_TOPRIGHT]    = to01(TS_TOPRIGHT);
 
-    Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-
     // set the box's colors
     cr->set_line_width (1.0);
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
-    if (is_sensitive() && canGetColors()) {
-        // gradient background
-        Glib::RefPtr<Gdk::Window> win = get_window();
+    if (is_sensitive() && coloredBar.canGetColors()) {
         // this will eventually create/update the off-screen Surface for the gradient area only !
-        setDrawRectangle(win, hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
+        coloredBar.setDrawRectangle(Cairo::FORMAT_ARGB32, hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
         // that we're displaying here
-        ColoredBar::expose(cr);
+        coloredBar.expose(*this, cr);
+    } else {
+        style->render_background(cr, hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
     }
-
-    /*  useless
-    else {
-        // solid background
-
-        // draw the box's background
-        style->render_background(cr, hb+hwslider-0.5, double(int(float(h)*1.5f/7.f))+0.5, iw+1, double(int(float(h)*4.f/7.f)));
-    }
-    */
 
     // draw the box's borders
-    cr->set_line_width (1.);
-    cr->set_antialias(Cairo::ANTIALIAS_NONE);
-    c = style->get_border_color (state);
-    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-    cr->rectangle (hb + hwslider - 0.5, double(int(float(h) * 1.5f / 7.f)) + 0.5, iw + 1, double(int(float(h) * 4.f / 7.f)));
-    cr->stroke ();
+    style->render_frame(cr, hb + hwslider - 0.5, double(int(float(h) * 1.5f / 7.f)) + 0.5, iw + 1, double(int(float(h) * 4.f / 7.f)));
 
     cr->set_line_width (1.);
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
@@ -375,21 +372,18 @@ bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 
     cr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
 
-    if (is_sensitive() && bgGradient.size() > 1) {
+    if (is_sensitive() && coloredBar.canGetColors()) {
         // draw surrounding curve
-        c = style->get_background_color(state);
-        cr->set_source_rgb (c.get_red() * 0.85, c.get_green() * 0.85, c.get_blue() * 0.85);
+        cr->set_source_rgb (0., 0., 0.);
         cr->set_line_width (5.0);
         cr->stroke_preserve();
     }
 
     // draw curve
     if (is_sensitive()) {
-        c = style->get_color(movedCursor != TS_UNDEFINED || litCursor != TS_UNDEFINED ? Gtk::STATE_FLAG_PRELIGHT : Gtk::STATE_FLAG_NORMAL);
-        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+        cr->set_source_rgb (1., 1., 1.);
     } else {
-        c = style->get_background_color(Gtk::STATE_FLAG_INSENSITIVE);
-        cr->set_source_rgb (c.get_red() * 0.85, c.get_green() * 0.85, c.get_blue() * 0.85);
+        cr->set_source_rgba (0., 0., 0., 0.5);
     }
 
     cr->set_line_width (1.5);
@@ -420,6 +414,9 @@ bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     style->set_state(currState);
 
     /*
+     *
+    Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
+
     cr->set_line_width (1.);
     for (int i=0; i<(doubleThresh?4:2); i++) {
         double posX = hb+hwslider+iw*positions01[i]+0.5;
@@ -462,6 +459,21 @@ bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     }
     */
     //}
+}
+
+bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
+{
+
+    // on_realize & updateBackBuffer have to be called before
+    if (get_realized() && get_width() && get_height()) {
+        if (isDirty()) {
+            updateBackBuffer();
+        }
+
+        if (surface) {
+            copySurface(cr);
+        }
+    }
 
     return true;
 }

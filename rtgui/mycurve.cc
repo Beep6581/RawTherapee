@@ -118,7 +118,7 @@ void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_heig
     natural_height = minimum_height;
 }
 
-void MyCurve::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyCurve::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
