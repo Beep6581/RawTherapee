@@ -106,7 +106,7 @@ public:
     explicit RawImage( const Glib::ustring &name );
     ~RawImage();
 
-    int loadRaw (bool loadData = true, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0);
+    int loadRaw (bool loadData = true, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0, unsigned int frameNum = 0);
     void get_colorsCoeff( float* pre_mul_, float* scale_mul_, float* cblack_, bool forceAutoWB );
     void set_prefilters()
     {
@@ -305,6 +305,13 @@ public:
     bool zeroIsBad()
     {
         return zero_is_bad == 1 ? true : false;
+    }
+
+    void setFrameNumber(unsigned int frameNum) {
+        // a single raw file can contain more than one frame.
+        // Variable is_raw holds the number of frames in the raw file
+        // use setFrameNumber() to set the number of the frame [0; is_raw - 1] to be processed
+        shot_select = std::min(std::max(is_raw, 1) - 1, frameNum);
     }
 
 public:

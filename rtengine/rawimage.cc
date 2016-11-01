@@ -398,7 +398,7 @@ skip_block:
     }
 }
 
-int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistener, double progressRange)
+int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistener, double progressRange, unsigned int frameNum)
 {
     ifname = filename.c_str();
     image = nullptr;
@@ -434,6 +434,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
         return 2;
     }
+
+    setFrameNumber(frameNum);
 
     if (flip == 5) {
         this->rotate_deg = 270;
