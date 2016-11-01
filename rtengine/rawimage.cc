@@ -13,7 +13,7 @@
 #else
 #include <netinet/in.h>
 #endif
-
+#include <iostream>
 namespace rtengine
 {
 
@@ -422,6 +422,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
     raw_image = nullptr;
 
     //***************** Read ALL raw file info
+    setFrameNumber(frameNum);
+
     identify ();
 
     if (!is_raw) {
@@ -434,8 +436,6 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
         return 2;
     }
-
-    setFrameNumber(frameNum);
 
     if (flip == 5) {
         this->rotate_deg = 270;
