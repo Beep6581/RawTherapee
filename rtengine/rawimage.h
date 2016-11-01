@@ -311,7 +311,7 @@ public:
         // a single raw file can contain more than one frame.
         // Variable is_raw holds the number of frames in the raw file
         // use setFrameNumber() to set the number of the frame [0; is_raw - 1] to be processed
-        shot_select = std::min(std::max(is_raw, 1) - 1, frameNum);
+        shot_select = std::min(std::max(is_raw, 1u) - 1, frameNum);
     }
 
 public:
