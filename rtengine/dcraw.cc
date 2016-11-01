@@ -8572,7 +8572,7 @@ void CLASS identify()
 	parse_fuji (i);
     }
     load_raw = &CLASS unpacked_load_raw;
-    fseek (ifp, 100+28*(shot_select > 0), SEEK_SET);
+    fseek (ifp, 100+28*(shot_select > 0 && shot_select < is_raw), SEEK_SET);
     parse_tiff (data_offset = get4());
     parse_tiff (thumb_offset+12);
 /*RT*/    exif_base = thumb_offset+12;
