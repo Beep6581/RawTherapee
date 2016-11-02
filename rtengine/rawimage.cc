@@ -423,13 +423,16 @@ int RawImage::loadRaw (bool loadData, unsigned int &imageNum, bool closeFile, Pr
 
     //***************** Read ALL raw file info
     // set the number of the frame to extract. If the number is larger then number of existing frames - 1, dcraw will handle that correctly
-    shot_select = imageNum;
 
     identify ();
+    fclose(ifp);
+    ifp = gfopen (ifname);  // Maps to either file map or direct fopen
 
+    shot_select = imageNum;
+    shot_select = std::min(shot_select, std::max(is_raw, 1u) - 1);
+    identify();
     std::cout << "israw : " << is_raw << std::endl;
     // in case dcraw didn't handle the above mentioned case...
-    shot_select = std::min(shot_select, std::max(is_raw, 1u) - 1);
     imageNum = shot_select;
 
     if (!is_raw) {

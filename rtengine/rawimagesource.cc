@@ -1506,7 +1506,7 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
         plistener->setProgress (0.0);
     }
 
-    unsigned int tempImageNum = 4;
+    unsigned int tempImageNum = 16;
     do {
         tempImageNum --;
         numFrames ++;
