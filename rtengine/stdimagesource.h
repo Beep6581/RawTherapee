@@ -42,7 +42,7 @@ public:
     StdImageSource ();
     ~StdImageSource ();
 
-    int         load        (const Glib::ustring &fname, bool batch = false);
+    int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false);
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
     ColorTemp   getWB       () const
     {

@@ -359,6 +359,7 @@ void ParamsEdited::set (bool v)
     icm.gampos      = v;
     icm.slpos       = v;
     raw.bayersensor.method = v;
+    raw.bayersensor.imageNum = v;
     raw.bayersensor.ccSteps = v;
     raw.bayersensor.exBlack0 = v;
     raw.bayersensor.exBlack1 = v;
@@ -854,6 +855,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
+        raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
         raw.bayersensor.ccSteps = raw.bayersensor.ccSteps && p.raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps;
         raw.bayersensor.exBlack0 = raw.bayersensor.exBlack0 && p.raw.bayersensor.black0 == other.raw.bayersensor.black0;
         raw.bayersensor.exBlack1 = raw.bayersensor.exBlack1 && p.raw.bayersensor.black1 == other.raw.bayersensor.black1;
@@ -2236,6 +2238,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.method           = mods.raw.bayersensor.method;
     }
 
+    if (raw.bayersensor.imageNum) {
+        toEdit.raw.bayersensor.imageNum         = mods.raw.bayersensor.imageNum;
+    }
+
     if (raw.bayersensor.ccSteps) {
         toEdit.raw.bayersensor.ccSteps          = mods.raw.bayersensor.ccSteps;
     }
@@ -2782,7 +2788,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
-    return  method && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
+    return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
             && linenoise && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
 }
 

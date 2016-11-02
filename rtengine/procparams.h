@@ -1171,6 +1171,7 @@ public:
         static const char *methodstring[numMethods];
 
         Glib::ustring method;
+        int imageNum;
         int ccSteps;
         double black0;
         double black1;

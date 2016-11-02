@@ -112,6 +112,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title)
     raw_linenoise       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_LINEDENOISE")));
     raw_greenthresh     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_GREENEQUIL")));
     raw_method          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DMETHOD")));
+    raw_imagenum        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_IMAGENUM")));
     raw_ccSteps         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_FALSECOLOR")));
     raw_dcb_iterations  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBITERATIONS")));
     raw_dcb_enhance     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBENHANCE")));
@@ -201,6 +202,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title)
     vboxes[6]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*hseps[6], Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_method, Gtk::PACK_SHRINK, 2);
+    vboxes[6]->pack_start (*raw_imagenum, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
@@ -340,7 +342,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title)
     exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
     iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
 
-    raw_methodConn         = raw_method->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_methodConn          = raw_method->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_imagenumConn        = raw_imagenum->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_dcb_iterationsConn  = raw_dcb_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_dcb_enhanceConn     = raw_dcb_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -420,6 +423,7 @@ void PartialPasteDlg::rawToggled ()
 {
 
     raw_methodConn.block (true);
+    raw_imagenumConn.block (true);
     raw_ccStepsConn.block (true);
     raw_dcb_iterationsConn.block (true);
     raw_dcb_enhanceConn.block (true);
@@ -446,6 +450,7 @@ void PartialPasteDlg::rawToggled ()
     raw->set_inconsistent (false);
 
     raw_method->set_active (raw->get_active ());
+    raw_imagenum->set_active (raw->get_active ());
     raw_ccSteps->set_active (raw->get_active ());
     raw_dcb_iterations->set_active (raw->get_active ());
     raw_dcb_enhance->set_active (raw->get_active ());
@@ -470,6 +475,7 @@ void PartialPasteDlg::rawToggled ()
     ff_ClipControl->set_active (raw->get_active ());
 
     raw_methodConn.block (false);
+    raw_imagenumConn.block (false);
     raw_ccStepsConn.block (false);
     raw_dcb_iterationsConn.block (false);
     raw_dcb_enhanceConn.block (false);
@@ -847,6 +853,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!raw_method->get_active ()) {
         filterPE.raw.bayersensor.method   = falsePE.raw.bayersensor.method;
         filterPE.raw.xtranssensor.method  = falsePE.raw.xtranssensor.method;
+    }
+
+    if (!raw_imagenum->get_active ()) {
+        filterPE.raw.bayersensor.imageNum = falsePE.raw.bayersensor.imageNum;
     }
 
     if (!raw_ccSteps->get_active ()) {

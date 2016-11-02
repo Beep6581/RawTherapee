@@ -31,6 +31,8 @@ class BayerProcess : public ToolParamBlock, public AdjusterListener, public Fold
 protected:
 
     MyComboBoxText* method;
+    Gtk::HBox *imageNumberBox;
+    MyComboBoxText* imageNumber;
     Adjuster* ccSteps;
     Gtk::VBox *dcbOptions;
     Adjuster* dcbIterations;
@@ -41,9 +43,9 @@ protected:
     Adjuster* lmmseIterations;
 
     bool lastDCBen;
-    int oldSelection;
+    int oldMethod;
     //bool lastALLen;
-    sigc::connection methodconn, dcbEnhconn; //,allEnhconn;
+    sigc::connection methodconn, imagenumberconn, dcbEnhconn; //,allEnhconn;
 public:
 
     BayerProcess ();
@@ -54,6 +56,7 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
     void methodChanged ();
+    void imageNumberChanged ();
     void adjusterChanged     (Adjuster* a, double newval);
     void dcbEnhanceChanged();
     //void allEnhanceChanged();

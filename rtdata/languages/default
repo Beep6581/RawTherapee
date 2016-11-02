@@ -675,6 +675,7 @@ HISTORY_MSG_440;CbDL - Method
 HISTORY_MSG_441;Retinex - Gain transmission
 HISTORY_MSG_442;Retinex - Scale
 HISTORY_MSG_443;Output Black Point Compensation
+HISTORY_MSG_444;Raw Sub-Image
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -864,6 +865,7 @@ PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
 PARTIALPASTE_RAW_DCBITERATIONS;DCB iterations
 PARTIALPASTE_RAW_DMETHOD;Demosaic method
 PARTIALPASTE_RAW_FALSECOLOR;False color suppression
+PARTIALPASTE_RAW_IMAGENUM;Sub-image
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_RETINEX;Retinex
@@ -1647,6 +1649,8 @@ TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to a
 TP_RAW_FALSECOLOR;False color suppression steps
 TP_RAW_HD;Threshold
 TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
+TP_RAW_IMAGENUM;Sub-image
+TP_RAW_IMAGENUM;Some raw files might embed several sub-images (HDR, Pixel-Shift, Dual Sensitivity). Use this button to select the sub-image.\n\nThe last sub-image will be used if you select a value beyond the real sub-image count.
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.

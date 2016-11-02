@@ -38,6 +38,18 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
+    imageNumberBox = Gtk::manage (new Gtk::HBox ());
+    hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_IMAGENUM") + ": ")), Gtk::PACK_SHRINK, 4);
+    imageNumber = Gtk::manage (new MyComboBoxText ());
+    imageNumber->append_text("1");
+    imageNumber->append_text("2");
+    imageNumber->append_text("3");
+    imageNumber->append_text("4");
+    imageNumber->set_active(0);
+    imageNumberBox->set_tooltip_text(M("TP_RAW_IMAGENUM_TOOLTIP"));
+    imageNumberBox->pack_end (*imageNumber, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start( *imageNumberBox, Gtk::PACK_SHRINK, 4);
+
     dcbOptions = Gtk::manage (new Gtk::VBox ());
     dcbOptions->set_border_width(4);
 
@@ -88,6 +100,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     //pack_start( *allOptions, Gtk::PACK_SHRINK, 4);
 
     methodconn = method->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::methodChanged) );
+    imagenumberconn = imageNumber->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::imageNumberChanged) );
     dcbEnhconn = dcbEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::dcbEnhanceChanged), true);
     //allEnhconn = allEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::allEnhanceChanged), true);
 }
@@ -98,26 +111,32 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     disableListener ();
     methodconn.block (true);
     dcbEnhconn.block (true);
+    imagenumberconn.block (true);
     //allEnhconn.block (true);
 
     method->set_active(procparams::RAWParams::BayerSensor::numMethods);
+    imageNumber->set_active(pp->raw.bayersensor.imageNum);
 
-    for( size_t i = 0; i < procparams::RAWParams::BayerSensor::numMethods; i++)
+    for( size_t i = 0; i < procparams::RAWParams::BayerSensor::numMethods; i++) {
         if( pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[i]) {
             method->set_active(i);
-            oldSelection = i;
+            oldMethod = i;
             break;
         }
+    }
 
-    if(pedited ) {
+    if(pedited) {
         ccSteps->setEditedState (pedited->raw.bayersensor.ccSteps ? Edited : UnEdited);
         dcbIterations->setEditedState ( pedited->raw.bayersensor.dcbIterations ? Edited : UnEdited);
         dcbEnhance->set_inconsistent(!pedited->raw.bayersensor.dcbEnhance);
         //allEnhance->set_inconsistent(!pedited->raw.bayersensor.allEnhance);
         lmmseIterations->setEditedState ( pedited->raw.bayersensor.lmmseIterations ? Edited : UnEdited);
 
-        if( !pedited->raw.bayersensor.method ) {
+        if(!pedited->raw.bayersensor.method) {
             method->set_active(procparams::RAWParams::BayerSensor::numMethods);    // No name
+        }
+        if(!pedited->raw.bayersensor.imageNum) {
+            imageNumber->set_active(4);
         }
     }
 
@@ -126,35 +145,36 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     dcbIterations->setValue (pp->raw.bayersensor.dcb_iterations);
     dcbEnhance->set_active(pp->raw.bayersensor.dcb_enhance);
     ccSteps->setValue (pp->raw.bayersensor.ccSteps);
-
-    if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::dcb] ||
-            method->get_active_row_number() == procparams::RAWParams::BayerSensor::numMethods) {
-        dcbOptions->show();
-    } else {
-        dcbOptions->hide();
-    }
-
     lmmseIterations->setValue (pp->raw.bayersensor.lmmse_iterations);
 
-    if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::lmmse] ||
-            method->get_active_row_number() == procparams::RAWParams::BayerSensor::numMethods) {
-        lmmseOptions->show();
-    } else {
-        lmmseOptions->hide();
-    }
+    if (!batchMode) {
+        if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::dcb] ||
+                method->get_active_row_number() == procparams::RAWParams::BayerSensor::numMethods) {
+            dcbOptions->show();
+        } else {
+            dcbOptions->hide();
+        }
+        if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::lmmse] ||
+                method->get_active_row_number() == procparams::RAWParams::BayerSensor::numMethods) {
+            lmmseOptions->show();
+        } else {
+            lmmseOptions->hide();
+        }
 
-    // Flase color suppression is applied to all demozaicing method, so don't hide anything
-    /*if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::eahd] ||
-          pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::hphd] ||
-          pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::vng4])
-        ccSteps->show();
-    else
-        ccSteps->hide();*/
+        // Flase color suppression is applied to all demozaicing method, so don't hide anything
+        /*if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::eahd] ||
+              pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::hphd] ||
+              pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::vng4])
+            ccSteps->show();
+        else
+            ccSteps->hide();*/
+    }
 
     lastDCBen = pp->raw.bayersensor.dcb_enhance;
     //lastALLen = pp->raw.bayersensor.all_enhance;
 
     methodconn.block (false);
+    imagenumberconn.block (false);
     dcbEnhconn.block (false);
     //allEnhconn.block (false);
 
@@ -170,19 +190,24 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.lmmse_iterations = lmmseIterations->getIntValue();
 
     int currentRow = method->get_active_row_number();
-
     if( currentRow >= 0 && currentRow < procparams::RAWParams::BayerSensor::numMethods) {
         pp->raw.bayersensor.method = procparams::RAWParams::BayerSensor::methodstring[currentRow];
     }
 
+    currentRow = imageNumber->get_active_row_number();
+    if (currentRow < 4) {
+        pp->raw.bayersensor.imageNum = currentRow;
+    }
+
+
     if (pedited) {
         pedited->raw.bayersensor.ccSteps = ccSteps->getEditedState ();
         pedited->raw.bayersensor.method = method->get_active_row_number() != procparams::RAWParams::BayerSensor::numMethods;
+        pedited->raw.bayersensor.imageNum = imageNumber->get_active_row_number() < 4;
         pedited->raw.bayersensor.dcbIterations = dcbIterations->getEditedState ();
         pedited->raw.bayersensor.dcbEnhance = !dcbEnhance->get_inconsistent();
         //pedited->raw.bayersensor.allEnhance = !allEnhance->get_inconsistent();
         pedited->raw.bayersensor.lmmseIterations = lmmseIterations->getEditedState ();
-
     }
 }
 
@@ -190,6 +215,8 @@ void BayerProcess::setBatchMode(bool batchMode)
 {
     method->append_text (M("GENERAL_UNCHANGED"));
     method->set_active(procparams::RAWParams::BayerSensor::numMethods); // No name
+    imageNumber->append_text (M("GENERAL_UNCHANGED"));
+    imageNumber->set_active(4);
     dcbOptions->hide();
     lmmseOptions->hide();
     ToolPanel::setBatchMode (batchMode);
@@ -250,15 +277,22 @@ void BayerProcess::methodChanged ()
     if( curSelection >= 0 && curSelection < procparams::RAWParams::BayerSensor::numMethods) {
         methodName = procparams::RAWParams::BayerSensor::methodstring[curSelection];
 
-        if (curSelection == procparams::RAWParams::BayerSensor::mono || oldSelection == procparams::RAWParams::BayerSensor::mono) {
+        if (curSelection == procparams::RAWParams::BayerSensor::mono || oldMethod == procparams::RAWParams::BayerSensor::mono) {
             ppreq = true;
         }
     }
 
-    oldSelection = curSelection;
+    oldMethod = curSelection;
 
     if (listener) {
         listener->panelChanged (ppreq ? EvDemosaicMethodPreProc : EvDemosaicMethod, methodName);
+    }
+}
+
+void BayerProcess::imageNumberChanged ()
+{
+    if (listener) {
+        listener->panelChanged (EvRawImageNum, imageNumber->get_active_text());
     }
 }
 

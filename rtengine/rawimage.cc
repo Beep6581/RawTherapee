@@ -398,7 +398,7 @@ skip_block:
     }
 }
 
-int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistener, double progressRange, unsigned int frameNum)
+int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
 {
     ifname = filename.c_str();
     image = nullptr;
@@ -423,7 +423,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
     //***************** Read ALL raw file info
     // set the number of the frame to extract. If the number is larger then number of existing frames - 1, dcraw will handle that correctly
-    shot_select = frameNum;
+    shot_select = imageNum;
 
     identify ();
 

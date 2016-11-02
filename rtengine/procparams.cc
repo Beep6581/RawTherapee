@@ -879,6 +879,7 @@ void CoarseTransformParams::setDefaults()
 void RAWParams::setDefaults()
 {
     bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
+    bayersensor.imageNum = 0;
     bayersensor.ccSteps = 0;
     bayersensor.dcb_iterations = 2;
     bayersensor.dcb_enhance = true;
@@ -3313,6 +3314,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.bayersensor.method) {
             keyFile.set_string  ("RAW Bayer", "Method", raw.bayersensor.method );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.imageNum) {
+            keyFile.set_integer ("RAW Bayer", "ImageNum", raw.bayersensor.imageNum + 1 );
         }
 
         if (!pedited || pedited->raw.bayersensor.ccSteps) {
@@ -7321,6 +7326,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("RAW Bayer", "ImageNum"))           {
+                raw.bayersensor.imageNum = keyFile.get_integer ("RAW Bayer", "ImageNum") - 1;
+
+                if (pedited) {
+                    pedited->raw.bayersensor.imageNum = true;
+                }
+            }
+
             if (keyFile.has_key ("RAW Bayer", "CcSteps"))          {
                 raw.bayersensor.ccSteps  = keyFile.get_integer ("RAW Bayer", "CcSteps");
 
@@ -7837,6 +7850,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && resize.width == other.resize.width
         && resize.height == other.resize.height
         && raw.bayersensor.method == other.raw.bayersensor.method
+        && raw.bayersensor.imageNum == other.raw.bayersensor.imageNum
         && raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps
         && raw.bayersensor.black0 == other.raw.bayersensor.black0
         && raw.bayersensor.black1 == other.raw.bayersensor.black1

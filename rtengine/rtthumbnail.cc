@@ -281,10 +281,10 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum)
 {
     RawImage *ri = new RawImage (fname);
-    int r = ri->loadRaw(1, 0);
+    int r = ri->loadRaw(1, imageNum, 0);
 
     if( r ) {
         delete ri;

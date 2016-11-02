@@ -1494,7 +1494,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname, bool batch)
+int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 {
 
     MyTime t1, t2;
@@ -1507,7 +1507,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
     }
 
     ri = new RawImage(fname);
-    int errCode = ri->loadRaw (true, true, plistener, 0.8);
+    int errCode = ri->loadRaw (true, imageNum, true, plistener, 0.8);
 
     if (errCode) {
         return errCode;

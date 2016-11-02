@@ -214,7 +214,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         if (settings->verbose) {
             if (imgsrc->getSensorType() == ST_BAYER) {
-                printf("Demosaic Bayer image using method: %s\n", rp.bayersensor.method.c_str());
+                printf("Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
                 printf("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
             }

@@ -110,7 +110,7 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
  * and RT's image data type (Image8, Image16 and Imagefloat), then it will
  * load the image into it
  */
-int StdImageSource::load (const Glib::ustring &fname, bool batch)
+int StdImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 {
 
     fileName = fname;

@@ -682,6 +682,7 @@ public:
 
     public:
         bool method;
+        bool imageNum;
         bool ccSteps;
         bool exBlack0;
         bool exBlack1;
