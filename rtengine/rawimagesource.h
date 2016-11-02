@@ -25,7 +25,7 @@
 #include "curves.h"
 #include "color.h"
 #include "iimage.h"
-
+#include <iostream>
 #define HR_SCALE 2
 
 namespace rtengine
@@ -71,6 +71,9 @@ protected:
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
+    RawImage* riFrames[16] = {nullptr};
+    unsigned int currFrame = 0;
+    unsigned int numFrames = 0;
 
     // to accelerate CIELAB conversion:
     double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
@@ -195,7 +198,11 @@ public:
     static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* hlmax);
     static void init ();
     static void cleanup ();
-
+    void setCurrentFrame(unsigned int frameNum) {
+        currFrame = std::min(numFrames - 1, frameNum);
+        ri = riFrames[currFrame];
+        std::cout << "currFrame : " << currFrame << std::endl;
+    }
 protected:
     typedef unsigned short ushort;
     void processFalseColorCorrection (Imagefloat* i, const int steps);

@@ -102,6 +102,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ImProcFunctions ipf (&params, true);
 
     PreviewProps pp (0, 0, fw, fh, 1);
+    imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
     imgsrc->preprocess( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
     if (params.toneCurve.autoexp) {// this enabled HLRecovery

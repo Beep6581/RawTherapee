@@ -185,6 +185,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
     if ( (todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
+        imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
         imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
 

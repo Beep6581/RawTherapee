@@ -80,6 +80,9 @@ public:
 
     virtual bool        IsrgbSourceModified() const = 0; // tracks whether cached rgb output of demosaic has been modified
 
+    virtual void setCurrentFrame(unsigned int frameNum) = 0;
+
+
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
     virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hlp, const ColorManagementParams &cmp, const RAWParams &raw) = 0;
     virtual eSensorType getSensorType ()

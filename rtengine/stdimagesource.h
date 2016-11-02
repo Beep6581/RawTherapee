@@ -95,6 +95,8 @@ public:
     {
         return rgbSourceModified;
     }
+    void setCurrentFrame(unsigned int frameNum) {}
+
 };
 }
 #endif

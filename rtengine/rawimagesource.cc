@@ -475,8 +475,8 @@ RawImageSource::~RawImageSource ()
 
     delete idata;
 
-    if (ri) {
-        delete ri;
+    for(size_t i = 0; i < numFrames; ++i) {
+        delete riFrames[i];
     }
 
     flushRGB();
@@ -1506,14 +1506,29 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
         plistener->setProgress (0.0);
     }
 
-    ri = new RawImage(fname);
-    int errCode = ri->loadRaw (true, imageNum, true, plistener, 0.8);
+    unsigned int tempImageNum = 4;
+    do {
+        tempImageNum --;
+        numFrames ++;
+        ri = new RawImage(fname);
+        int errCode = ri->loadRaw (true, tempImageNum, true, plistener, 0.8);
+        std::cout << "imagenum : " << tempImageNum <<  " width : " << ri->get_width() << " height : " << ri->get_height() << std::endl;
 
-    if (errCode) {
-        return errCode;
+        if (errCode) {
+            return errCode;
+        }
+        riFrames[tempImageNum] = ri;
+        ri->compress_image();
+        ri->set_prefilters();
+    } while (tempImageNum);
+
+    if(numFrames > 1 ) {
+        if(riFrames[0]->get_width() != riFrames[1]->get_width() || riFrames[0]->get_height() != riFrames[1]->get_height()) {
+            numFrames = 1;
+        }
     }
 
-    ri->compress_image();
+std::cout << "numframes : " << numFrames << std::endl;
 
     if (plistener) {
         plistener->setProgress (0.9);
@@ -1627,7 +1642,6 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
     }*/
 
 
-    ri->set_prefilters();
 
     //Load complete Exif informations
     RawMetaDataLocation rml;
