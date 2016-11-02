@@ -156,7 +156,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
 {
     RawImage *ri = new RawImage(fname);
-    int r = ri->loadRaw(false, false);
+    int r = ri->loadRaw(false, 0, false);
 
     if( r ) {
         delete ri;
