@@ -145,7 +145,7 @@ void ThresholdSelector::initValues ()
     style->add_class("drawingarea");
     style->add_class(GTK_STYLE_CLASS_TROUGH);
     //style->add_class(GTK_STYLE_CLASS_SCALE);
-    //style->add_class(GTK_STYLE_CLASS_SLIDER);
+    style->add_class(GTK_STYLE_CLASS_SLIDER);
 
     set_name("ThresholdSelector");
     set_can_focus(false);

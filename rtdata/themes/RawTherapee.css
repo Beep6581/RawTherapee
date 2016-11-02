@@ -534,6 +534,19 @@ paned > separator {
     padding: 0;
 }
 
+#MainNotebook > header.left tab image {
+    margin: 0.5em 0 0 0;
+}
+#MainNotebook > header.top tab image {
+    margin: 0 0.5em 0 0;
+}
+#MainNotebook > header.left tab {
+    margin: 0.5em 0 0.5em 0;
+}
+#MainNotebook > header.top tab {
+    margin: 0 0.5em 0 0.5em;
+}
+
 #MainNotebook header {
     /* OK */
     background-color: #2A2A2A;

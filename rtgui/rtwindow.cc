@@ -129,7 +129,6 @@ RTWindow::RTWindow ()
     set_resize_mode(Gtk::ResizeMode::RESIZE_QUEUE);
     set_decorated(true);
     set_default_size(options.windowWidth, options.windowHeight);
-    set_hide_titlebar_when_maximized(true);
     set_modal(false);
 
     if (options.windowMaximized) {
@@ -181,10 +180,10 @@ RTWindow::RTWindow ()
             mainNB->set_tab_pos (Gtk::POS_LEFT);
             fpl->set_angle (90);
             fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_BOTTOM, 1, 1);
-            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), *fpl, Gtk::POS_TOP, 1, 1);
+            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_BOTTOM, 1, 1);
         } else {
             fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_LEFT, 1, 1);
-            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), *fpl, Gtk::POS_RIGHT, 1, 1);
+            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_LEFT, 1, 1);
         }
 
         fpanelLabelGrid->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
@@ -217,10 +216,10 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             el->set_angle (90);
             editorLabelGrid->attach_next_to(*el, Gtk::POS_BOTTOM, 1, 1);
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), *el, Gtk::POS_TOP, 1, 1);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_BOTTOM, 1, 1);
         } else {
             editorLabelGrid->attach_next_to(*el, Gtk::POS_LEFT, 1, 1);
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), *el, Gtk::POS_RIGHT, 1, 1);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_LEFT, 1, 1);
         }
 
         editorLabelGrid->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
@@ -240,20 +239,14 @@ RTWindow::RTWindow ()
         //Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));   // unused... but fail to be linked anyway !?
         //Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
-        preferences->set_hexpand(false);
-        preferences->set_vexpand(false);
-        preferences->set_halign(Gtk::ALIGN_CENTER);
-        preferences->set_valign(Gtk::ALIGN_CENTER);
+        setExpandAlignProperties(preferences, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         preferences->set_image (*Gtk::manage(new RTImage ("gtk-preferences.png")));
         preferences->set_tooltip_markup (M("MAIN_BUTTON_PREFERENCES"));
         preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
 
         //btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
         btn_fullscreen = Gtk::manage( new Gtk::Button());
-        btn_fullscreen->set_hexpand(false);
-        btn_fullscreen->set_vexpand(false);
-        btn_fullscreen->set_halign(Gtk::ALIGN_CENTER);
-        btn_fullscreen->set_valign(Gtk::ALIGN_CENTER);
+        setExpandAlignProperties(btn_fullscreen, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         btn_fullscreen->set_tooltip_markup (M("MAIN_BUTTON_FULLSCREEN"));
         btn_fullscreen->set_image (*iFullscreen);
         btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
