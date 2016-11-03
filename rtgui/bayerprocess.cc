@@ -39,7 +39,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
     imageNumberBox = Gtk::manage (new Gtk::HBox ());
-    hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_IMAGENUM") + ": ")), Gtk::PACK_SHRINK, 4);
+    imageNumberBox->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_IMAGENUM") + ": ")), Gtk::PACK_SHRINK, 4);
     imageNumber = Gtk::manage (new MyComboBoxText ());
     imageNumber->append_text("1");
     imageNumber->append_text("2");

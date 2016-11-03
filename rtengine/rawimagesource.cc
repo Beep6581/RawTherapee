@@ -1506,9 +1506,21 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
         plistener->setProgress (0.0);
     }
 
-    unsigned int tempImageNum = 16;
-    do {
-        tempImageNum --;
+    unsigned int tempImageNum = 256;
+    // requesting a subimage which is not available gives subimage 0. We use 256 to access a non existent frame resulting in frame 0
+    ri = new RawImage(fname);
+    int errCode = ri->loadRaw (true, tempImageNum, true, plistener, 0.8);
+    // now tempImageNum is adjusted to the number of last frame
+
+    if (errCode) {
+        return errCode;
+    }
+    ri->compress_image();
+    ri->set_prefilters();
+    riFrames[0] = ri;
+    numFrames ++;
+
+    while (tempImageNum) {
         numFrames ++;
         ri = new RawImage(fname);
         int errCode = ri->loadRaw (true, tempImageNum, true, plistener, 0.8);
@@ -1520,15 +1532,18 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
         riFrames[tempImageNum] = ri;
         ri->compress_image();
         ri->set_prefilters();
-    } while (tempImageNum);
+        tempImageNum --;
+    }
 
-    if(numFrames > 1 ) {
+    if(numFrames > 1 ) { // this disables multi frame support for Fuji S5 until I found a solution to handle different dimensions
         if(riFrames[0]->get_width() != riFrames[1]->get_width() || riFrames[0]->get_height() != riFrames[1]->get_height()) {
             numFrames = 1;
         }
     }
 
 std::cout << "numframes : " << numFrames << std::endl;
+
+    ri = riFrames[0];
 
     if (plistener) {
         plistener->setProgress (0.9);
