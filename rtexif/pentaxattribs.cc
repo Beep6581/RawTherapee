@@ -42,6 +42,7 @@ public:
         choices[3] = "TIFF";
         choices[4] = "RAW";
         choices[5] = "Premium";
+        choices[6] = "RAW (HDR enabled)";
         choices[7] = "RAW (pixel shift enabled)";
         choices[65535] = "n/a";
     }

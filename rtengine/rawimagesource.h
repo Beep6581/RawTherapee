@@ -131,6 +131,8 @@ public:
     void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw); // raw for cblack
+    void        scaleColors_pixelshift(int winx, int winy, int winw, int winh, const RAWParams &raw);
+
 
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
     eSensorType getSensorType () const
@@ -260,6 +262,7 @@ protected:
     void xtransborder_interpolate (int border);
     void xtrans_interpolate (const int passes, const bool useCieLab);
     void fast_xtrans_interpolate ();
+    void pixelshift_simple(int winx, int winy, int winw, int winh);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
 

@@ -1506,6 +1506,7 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
         plistener->setProgress (0.0);
     }
 
+StopWatch Stop1("loadraw");
     unsigned int tempImageNum = 256;
     // requesting a subimage which is not available gives subimage 0. We use 256 to access a non existent frame resulting in frame 0
     ri = new RawImage(fname);
@@ -1544,7 +1545,7 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 std::cout << "numframes : " << numFrames << std::endl;
 
     ri = riFrames[0];
-
+Stop1.stop();
     if (plistener) {
         plistener->setProgress (0.9);
     }
@@ -1948,6 +1949,13 @@ void RawImageSource::demosaic(const RAWParams &raw)
             ahd_demosaic (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
             amaze_demosaic_RT (0, 0, W, H);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple] ) {
+            if(numFrames == 4) {
+                pixelshift_simple(0, 0, W, H);
+                scaleColors_pixelshift( 0, 0, W, H, raw);
+            } else {
+                amaze_demosaic_RT (0, 0, W, H);
+            }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::eahd]) {
@@ -3496,6 +3504,72 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
         chmax[3] = chmax[1];
     }
 
+}
+
+void RawImageSource::scaleColors_pixelshift(int winx, int winy, int winw, int winh, const RAWParams &raw)
+{
+    chmax[0] = chmax[1] = chmax[2] = chmax[3] = 0; //channel maxima
+    float black_lev[4] = {0.f};//black level
+
+    //adjust black level  (eg Canon)
+    bool isMono = false;
+
+    black_lev[0] = raw.bayersensor.black1; //R
+    black_lev[1] = raw.bayersensor.black0; //G1
+    black_lev[2] = raw.bayersensor.black2; //B
+    black_lev[3] = raw.bayersensor.black3; //G2
+
+    for(int i = 0; i < 4 ; i++) {
+        cblacksom[i] = max( c_black[i] + black_lev[i], 0.0f );    // adjust black level
+    }
+
+    initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
+
+    //fprintf(stderr, "recalc: %f [%f %f %f %f]\n", initialGain, scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+    for(int i = 0; i < 4 ; i++) {
+        clmax[i] = (c_white[i] - cblacksom[i]) * scale_mul[i];    // raw clip level
+    }
+
+    // this seems strange, but it works
+
+    // scale image colors
+
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            float tmpchmax[3];
+            tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+
+            for (int row = winy; row < winy + winh; row ++)
+            {
+                for (int col = winx; col < winx + winw; col++) {
+                    float redval = (red[row][col] - cblacksom[0]) * scale_mul[0];
+                    tmpchmax[0] = max(tmpchmax[0], redval);
+                    red[row][col] = redval;
+
+                    float greenval = (green[row][col] - cblacksom[1]) * scale_mul[1];
+                    tmpchmax[1] = max(tmpchmax[1], greenval);
+                    green[row][col] = greenval;
+
+                    float blueval = (blue[row][col] - cblacksom[2]) * scale_mul[2];
+                    tmpchmax[2] = max(tmpchmax[2], blueval);
+                    blue[row][col] = blueval;
+                }
+            }
+
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                chmax[0] = max(tmpchmax[0], chmax[0]);
+                chmax[1] = max(tmpchmax[1], chmax[1]);
+                chmax[2] = max(tmpchmax[2], chmax[2]);
+            }
+        }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
