@@ -24,7 +24,7 @@
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 using namespace std;
 using namespace rtengine;
@@ -41,32 +41,33 @@ BENCHFUN
         plistener->setProgress (progress);
     }
 
-    const int bord = 2;
+    const int bord = 4;
 
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
     for(int i = bord; i < winh - bord; ++i) {
-        for(int j = bord; j< winw - bord; ++j) {
-            int c = FC(i,j);
-            if(c == 0) {
-                red[i][j] = riFrames[0]->data[i][j];
-                green[i][j] = riFrames[3]->data[i][j+1];
-                blue[i][j] = riFrames[2]->data[i+1][j+1];
-            } else if(c & 1) {
-                green[i][j] = riFrames[0]->data[i][j];
-                if(FC(i,j+1) == 0) {
-                    red[i][j] = riFrames[3]->data[i][j+1];
-                    blue[i][j] = riFrames[1]->data[i+1][j];
-                } else {
-                    blue[i][j] = riFrames[3]->data[i][j+1];
-                    red[i][j] = riFrames[1]->data[i+1][j];
-                }
-            } else {
-                blue[i][j] = riFrames[0]->data[i][j];
-                red[i][j] = riFrames[2]->data[i+1][j+1];
-                green[i][j] = riFrames[3]->data[i][j+1];
-            }
+        float *greenDest = green[i];
+        float *nonGreenDest0 = red[i];
+        float *nonGreenDest1 = blue[i];
+        int j = bord;
+        int c = FC(i,j);
+        if (c == 2 || ((c&1) && FC(i,j+1) == 2)) {
+            std::swap(nonGreenDest0, nonGreenDest1);
+        }
+        if(c&1) {
+            greenDest[j] = (riFrames[0]->data[i][j] + riFrames[2]->data[i+1][j+1]) / 2.f;
+            nonGreenDest0[j] = riFrames[3]->data[i][j+1];
+            nonGreenDest1[j] = riFrames[1]->data[i+1][j];
+            j++;
+        }
+        for(; j< winw - bord; j+=2) {
+            nonGreenDest0[j] = riFrames[0]->data[i][j];
+            greenDest[j] = (riFrames[3]->data[i][j+1] + riFrames[1]->data[i+1][j] ) / 2.f;
+            nonGreenDest1[j] = riFrames[2]->data[i+1][j+1];
+            greenDest[j+1] = (riFrames[0]->data[i][j+1] + riFrames[2]->data[i+1][j+2]) / 2.f;
+            nonGreenDest0[j+1] = riFrames[3]->data[i][j+2];
+            nonGreenDest1[j+1] = riFrames[1]->data[i+1][j+1];
         }
     }
 
