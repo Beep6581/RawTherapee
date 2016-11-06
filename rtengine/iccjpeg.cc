@@ -142,7 +142,9 @@ marker_is_icc (jpeg_saved_marker_ptr marker)
         GETJOCTET(marker->data[8]) == 0x49 &&
         GETJOCTET(marker->data[9]) == 0x4C &&
         GETJOCTET(marker->data[10]) == 0x45 &&
-        GETJOCTET(marker->data[11]) == 0x0;
+        GETJOCTET(marker->data[11]) == 0x0
+            ? TRUE
+            : FALSE;
 }
 
 
