@@ -138,8 +138,7 @@ void dfInfo::updateRawImage()
         std::list<Glib::ustring>::iterator iName = pathNames.begin();
         ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
 
-        unsigned int imageNum = 0;
-        if( ri->loadRaw(true, imageNum)) {
+        if( ri->loadRaw(true)) {
             delete ri;
             ri = nullptr;
         } else {
@@ -164,7 +163,7 @@ void dfInfo::updateRawImage()
             for( ++iName; iName != pathNames.end(); ++iName) {
                 RawImage* temp = new RawImage(*iName);
 
-                if( !temp->loadRaw(true,imageNum)) {
+                if( !temp->loadRaw(true)) {
                     temp->compress_image();     //\ TODO would be better working on original, because is temporary
                     nFiles++;
 
@@ -200,9 +199,8 @@ void dfInfo::updateRawImage()
         }
     } else {
         ri = new RawImage(pathname);
-        unsigned int imageNum = 0;
 
-        if( ri->loadRaw(true,imageNum)) {
+        if( ri->loadRaw(true)) {
             delete ri;
             ri = nullptr;
         } else {
@@ -367,8 +365,7 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
         }
 
         RawImage ri (filename);
-        unsigned int imageNum = 0;
-        int res = ri.loadRaw (false, imageNum); // Read informations about shot
+        int res = ri.loadRaw (false); // Read informations about shot
 
         if (res != 0) {
             return nullptr;

@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////
 //
-//      pixelshift
+//  simple pentax pixelshift algorithm
+//  copyright (c) Ingo Weyrich 2016
 //
 //
 //  pixelshift.cc is free software: you can redistribute it and/or modify
@@ -23,7 +24,7 @@
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
 #include "opthelper.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 using namespace std;
 using namespace rtengine;
@@ -35,18 +36,16 @@ BENCHFUN
     double progress = 0.0;
     const bool plistenerActive = plistener;
 
-    //int winx=0, winy=0;
-    //int winw=W, winh=H;
-
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]));
         plistener->setProgress (progress);
     }
 
-
     const int bord = 2;
 
+#ifdef _OPENMP
     #pragma omp parallel for
+#endif
     for(int i = bord; i < winh - bord; ++i) {
         for(int j = bord; j< winw - bord; ++j) {
             int c = FC(i,j);
@@ -71,22 +70,9 @@ BENCHFUN
         }
     }
 
-//                if(plistenerActive && ((++progressCounter) % 16 == 0)) {
-//#ifdef _OPENMP
-//                    #pragma omp critical (updateprogress)
-//#endif
-//                    {
-//                        progress += progressInc;
-//                        progress = min(1.0, progress);
-//                        plistener->setProgress (progress);
-//                    }
-//                }
-
     if(plistenerActive) {
         plistener->setProgress(1.00);
     }
-
-
 
 }
 #undef TS

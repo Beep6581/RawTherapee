@@ -398,7 +398,7 @@ skip_block:
     }
 }
 
-int RawImage::loadRaw (bool loadData, unsigned int &imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
+int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
 {
     ifname = filename.c_str();
     image = nullptr;
@@ -426,10 +426,8 @@ int RawImage::loadRaw (bool loadData, unsigned int &imageNum, bool closeFile, Pr
 
     shot_select = imageNum;
     identify();
-    std::cout << "israw : " << is_raw << std::endl;
     // in case dcraw didn't handle the above mentioned case...
     shot_select = std::min(shot_select, std::max(is_raw, 1u) - 1);
-    imageNum = shot_select;
 
     if (!is_raw) {
         fclose(ifp);

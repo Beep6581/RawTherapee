@@ -1505,47 +1505,52 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
         plistener->setProgressStr ("Decoding...");
         plistener->setProgress (0.0);
     }
-
-StopWatch Stop1("loadraw");
-    unsigned int tempImageNum = 256;
-    // requesting a subimage which is not available gives subimage 0. We use 256 to access a non existent frame resulting in frame 0
+StopWatch Stop1("decode");
     ri = new RawImage(fname);
-    int errCode = ri->loadRaw (true, tempImageNum, true, plistener, 0.8);
-    // now tempImageNum is adjusted to the number of last frame
+    int errCode = ri->loadRaw (false, 0, false);
 
     if (errCode) {
         return errCode;
     }
-    ri->compress_image();
-    ri->set_prefilters();
-    riFrames[0] = ri;
-    numFrames ++;
+    numFrames = ri->getFrameCount();
 
-    while (tempImageNum) {
-        numFrames ++;
-        ri = new RawImage(fname);
-        int errCode = ri->loadRaw (true, tempImageNum, true, plistener, 0.8);
-        std::cout << "imagenum : " << tempImageNum <<  " width : " << ri->get_width() << " height : " << ri->get_height() << std::endl;
-
-        if (errCode) {
-            return errCode;
+    errCode = 0;
+#ifdef _OPENMP
+#pragma omp parallel if(numFrames > 1)
+#endif
+{
+    int errCodeThr = 0;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+    for(unsigned int i = 0; i < numFrames; ++i) {
+        if(i == 0) {
+            riFrames[i] = ri;
+            errCodeThr = riFrames[i]->loadRaw (true, i, true, plistener, 0.8);
+        } else {
+            riFrames[i] = new RawImage(fname);
+            errCodeThr = riFrames[i]->loadRaw (true, i);
         }
-        riFrames[tempImageNum] = ri;
-        ri->compress_image();
-        ri->set_prefilters();
-        tempImageNum --;
+        riFrames[i]->compress_image();
     }
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+{
+    errCode = errCodeThr ? errCodeThr : errCode;
+}
 
+}
+    if(errCode) {
+        return errCode;
+    }
+Stop1.stop();
     if(numFrames > 1 ) { // this disables multi frame support for Fuji S5 until I found a solution to handle different dimensions
         if(riFrames[0]->get_width() != riFrames[1]->get_width() || riFrames[0]->get_height() != riFrames[1]->get_height()) {
             numFrames = 1;
         }
     }
 
-std::cout << "numframes : " << numFrames << std::endl;
-
-    ri = riFrames[0];
-Stop1.stop();
     if (plistener) {
         plistener->setProgress (0.9);
     }
@@ -1657,6 +1662,9 @@ Stop1.stop();
                 initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
     }*/
 
+    for(unsigned int i=0;i < numFrames; ++i) {
+        riFrames[i]->set_prefilters();
+    }
 
 
     //Load complete Exif informations
@@ -1953,7 +1961,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
             if(numFrames == 4) {
                 pixelshift_simple(0, 0, W, H);
                 scaleColors_pixelshift( 0, 0, W, H, raw);
-            } else {
+            } else { // for non pixelshift files use amaze if pixelshift is selected
                 amaze_demosaic_RT (0, 0, W, H);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {

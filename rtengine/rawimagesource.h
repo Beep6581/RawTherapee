@@ -203,7 +203,6 @@ public:
     void setCurrentFrame(unsigned int frameNum) {
         currFrame = std::min(numFrames - 1, frameNum);
         ri = riFrames[currFrame];
-        std::cout << "currFrame : " << currFrame << std::endl;
     }
 protected:
     typedef unsigned short ushort;
