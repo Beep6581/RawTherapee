@@ -1851,7 +1851,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
 
-    if( totBP )
+    if( totBP ) {
         if ( ri->getSensorType() == ST_BAYER ) {
             interpolateBadPixelsBayer( *bitmapBads );
         } else if ( ri->getSensorType() == ST_FUJI_XTRANS ) {
@@ -1859,6 +1859,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         } else {
             interpolateBadPixelsNColours( *bitmapBads, ri->get_colors() );
         }
+    }
 
     if ( ri->getSensorType() == ST_BAYER && raw.bayersensor.linenoise > 0 ) {
         if (plistener) {

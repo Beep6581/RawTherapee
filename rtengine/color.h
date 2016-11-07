@@ -17,14 +17,16 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _COLOR_H_
-#define _COLOR_H_
+#pragma once
+
+#include <array>
 
 #include "rt_math.h"
 #include "LUT.h"
 #include "labimage.h"
 #include "iccmatrices.h"
 #include "sleef.c"
+
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
 
 namespace rtengine
@@ -1680,5 +1682,3 @@ public:
 };
 
 }
-
-#endif
