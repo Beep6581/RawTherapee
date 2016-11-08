@@ -440,6 +440,16 @@ void ImageData::extractInfo ()
                         }
                     }
                 } else if (mnote && (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX")))) {
+                    // ISO at max value supported, check manufacturer specific
+                    if (iso_speed == 65535 || iso_speed == 0) {
+                        rtexif::Tag* baseIsoTag = mnote->getTag("ISO");
+                        if (baseIsoTag) {
+                            std::string isoData = baseIsoTag->valueToString();
+                            if (isoData.size() > 1) {
+                                iso_speed = atoi(isoData.c_str());
+                            }
+                        }
+                    }
                     if (mnote->getTag ("LensType")) {
                         lens = mnote->getTag ("LensType")->valueToString ();
                     }
