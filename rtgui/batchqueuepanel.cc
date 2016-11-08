@@ -204,50 +204,46 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         qsize = batchQueue->getEntries().size();
     }
 
+    Gtk::Grid* grid = Gtk::manage (new Gtk::Grid ());
     if ((forceOrientation == 0 && options.mainNBVertical) || (forceOrientation == 2)) {
-        Gtk::VBox* vbb = Gtk::manage (new Gtk::VBox ());
         Gtk::Label* l;
 
         if(!qsize ) {
-            vbb->pack_start (*Gtk::manage (new RTImage ("processing.png")));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("processing.png")), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")) );
         } else if( start->get_active () ) {
-            vbb->pack_start (*Gtk::manage (new RTImage ("processing-play.png")));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("processing-play.png")), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]"));
         } else {
-            vbb->pack_start (*Gtk::manage (new RTImage ("processing-pause.png")));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("processing-pause.png")), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]" ));
         }
 
         l->set_angle (90);
-        vbb->pack_start (*l);
-        vbb->set_spacing (2);
-        vbb->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
-        vbb->show_all ();
+        grid->attach_next_to(*l, Gtk::POS_TOP, 1, 1);
+        grid->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
+        grid->show_all ();
 
         if (nb) {
-            nb->set_tab_label(*this, *vbb);
+            nb->set_tab_label(*this, *grid);
         }
     } else {
-        Gtk::HBox* hbb = Gtk::manage (new Gtk::HBox ());
-
         if (!qsize ) {
-            hbb->pack_start (*Gtk::manage (new RTImage ("processing.png")));
-            hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") )));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("processing.png")), Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") )), Gtk::POS_RIGHT, 1, 1);
         } else if ( start->get_active () ) {
-            hbb->pack_start (*Gtk::manage (new RTImage ("processing-play.png")));
-            hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("processing-play.png")), Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )), Gtk::POS_RIGHT, 1, 1);
         } else {
-            hbb->pack_start (*Gtk::manage (new RTImage ("processing-pause.png")));
-            hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("processing-pause.png")), Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )), Gtk::POS_RIGHT, 1, 1);
         }
 
-        hbb->set_spacing (2);
-        hbb->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
-        hbb->show_all ();
+        grid->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
+        grid->show_all ();
 
         if (nb) {
-            nb->set_tab_label(*this, *hbb);
+            nb->set_tab_label(*this, *grid);
         }
     }
 }

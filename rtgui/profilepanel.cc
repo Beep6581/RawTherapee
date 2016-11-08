@@ -53,44 +53,40 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), image
     fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
     fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TIP"));
-    fillMode->set_margin_right(2);
-    setExpandAlignProperties(fillMode, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(fillMode, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     // Create the Combobox
     profiles = Gtk::manage (new ProfileStoreComboBox ());
     setExpandAlignProperties(profiles, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-
-    Gtk::Grid* hgrid = Gtk::manage (new Gtk::Grid ());
-    hgrid->show ();
-    setExpandAlignProperties(hgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-
-    pack_start (*hgrid, Gtk::PACK_SHRINK, 4);
-
+    profiles->set_size_request(90);
 
     load = Gtk::manage (new Gtk::Button ());
     load->add (*Gtk::manage (new RTImage ("gtk-open.png")));
     load->get_style_context()->add_class("Left");
     load->set_margin_left(2);
-    setExpandAlignProperties(load, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(load, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     save = Gtk::manage (new Gtk::Button ());
     save->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
     save->get_style_context()->add_class("MiddleH");
-    setExpandAlignProperties(save, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(save, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     copy = Gtk::manage (new Gtk::Button ());
     copy->add (*Gtk::manage (new RTImage ("edit-copy.png")));
     copy->get_style_context()->add_class("MiddleH");
-    setExpandAlignProperties(copy, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(copy, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     paste = Gtk::manage (new Gtk::Button ());
     paste->add (*Gtk::manage (new RTImage ("edit-paste.png")));
     paste->get_style_context()->add_class("Right");
-    setExpandAlignProperties(paste, false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(paste, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    hgrid->attach (*fillMode, 0, 0, 1, 1);
-    hgrid->attach (*profiles, 1, 0, 1, 1);
-    hgrid->attach (*load,     2, 0, 1, 1);
-    hgrid->attach (*save,     3, 0, 1, 1);
-    hgrid->attach (*copy,     4, 0, 1, 1);
-    hgrid->attach (*paste,    5, 0, 1, 1);
+    attach_next_to (*fillMode, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*profiles, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*load, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*save, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*copy, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*paste, Gtk::POS_RIGHT, 1, 1);
+
+    setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    show ();
 
     load->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::load_clicked) );
     save->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::save_clicked) );

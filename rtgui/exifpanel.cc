@@ -58,6 +58,11 @@ ExifPanel::ExifPanel () : idata(nullptr)
     viewcol->pack_start (*render_txt, true);
     viewcol->add_attribute (*render_pb, "pixbuf", exifColumns.icon);
     viewcol->add_attribute (*render_txt, "markup", exifColumns.field);
+    viewcol->set_expand(true);
+    viewcol->set_resizable (true);
+    viewcol->set_fixed_width(35);
+    viewcol->set_min_width(35);
+    viewcol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     render_pb->property_ypad() = 0;
     render_txt->property_ypad() = 0;
@@ -71,6 +76,11 @@ ExifPanel::ExifPanel () : idata(nullptr)
     render_txtv->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcolv->pack_start (*render_txtv, true);
     viewcolv->add_attribute (*render_txtv, "markup", exifColumns.value);
+    viewcolv->set_expand(true);
+    viewcolv->set_resizable (true);
+    viewcol->set_fixed_width(35);
+    viewcolv->set_min_width(35);
+    viewcolv->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     render_txtv->property_ypad() = 0;
 

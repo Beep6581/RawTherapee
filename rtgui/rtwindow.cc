@@ -179,11 +179,11 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             mainNB->set_tab_pos (Gtk::POS_LEFT);
             fpl->set_angle (90);
-            fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_BOTTOM, 1, 1);
-            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_BOTTOM, 1, 1);
+            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_TOP, 1, 1);
+            fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_LEFT, 1, 1);
-            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_LEFT, 1, 1);
+            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_RIGHT, 1, 1);
+            fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_RIGHT, 1, 1);
         }
 
         fpanelLabelGrid->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
@@ -215,11 +215,11 @@ RTWindow::RTWindow ()
 
         if (options.mainNBVertical) {
             el->set_angle (90);
-            editorLabelGrid->attach_next_to(*el, Gtk::POS_BOTTOM, 1, 1);
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_BOTTOM, 1, 1);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_TOP, 1, 1);
+            editorLabelGrid->attach_next_to(*el, Gtk::POS_TOP, 1, 1);
         } else {
-            editorLabelGrid->attach_next_to(*el, Gtk::POS_LEFT, 1, 1);
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_LEFT, 1, 1);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_RIGHT, 1, 1);
+            editorLabelGrid->attach_next_to(*el, Gtk::POS_RIGHT, 1, 1);
         }
 
         editorLabelGrid->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
@@ -437,23 +437,20 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         ep->setParent (this);
 
         // construct closeable tab for the image
-        Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-        hb->pack_start (*Gtk::manage (new RTImage ("rtwindow.png")));
-        hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
-        hb->set_tooltip_markup (name);
+        Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
+        titleGrid->set_tooltip_markup (name);
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
         closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
         closeb->set_relief (Gtk::RELIEF_NONE);
         closeb->set_focus_on_click (false);
-        // make the button as small as possible
-        printf("TODO: make #tabClose as smalla s possible through css\n");
-
         closeb->signal_clicked().connect( sigc::bind (sigc::mem_fun(*this, &RTWindow::remEditorPanel) , ep));
-        hb->pack_end (*closeb);
-        hb->set_spacing (2);
-        hb->show_all ();
 
-        mainNB->append_page (*ep, *hb);
+        titleGrid->attach_next_to(*Gtk::manage (new RTImage ("rtwindow.png")), Gtk::POS_RIGHT, 1, 1);
+        titleGrid->attach_next_to(*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
+        titleGrid->attach_next_to(*closeb, Gtk::POS_RIGHT, 1, 1);
+        titleGrid->show_all ();
+
+        mainNB->append_page (*ep, *titleGrid);
         //ep->setAspect ();
         mainNB->set_current_page (mainNB->page_num (*ep));
         mainNB->set_tab_reorderable (*ep, true);

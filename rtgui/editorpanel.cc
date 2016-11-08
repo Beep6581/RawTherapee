@@ -49,7 +49,7 @@ private:
 private:
     void prepareProfileBox ()
     {
-        profileBox.setPreferredWidth (90, 150);
+        profileBox.set_size_request(90, -1);
         setExpandAlignProperties (&profileBox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         profileBox.append (M ("PREFERENCES_PROFILE_NONE"));

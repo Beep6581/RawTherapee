@@ -273,16 +273,7 @@ public:
  */
 class MyComboBox : public Gtk::ComboBox
 {
-    int naturalWidth, minimumWidth;
-
     bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
-
-public:
-    MyComboBox ();
-
-    void setPreferredWidth (int minimum_width, int natural_width);
 };
 
 /**
@@ -290,16 +281,10 @@ public:
  */
 class MyComboBoxText : public Gtk::ComboBoxText
 {
-    int naturalWidth, minimumWidth;
-
     bool on_scroll_event (GdkEventScroll* event);
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
-    MyComboBoxText ();
-
-    void setPreferredWidth (int minimum_width, int natural_width);
+    MyComboBoxText (bool has_entry = false);
 };
 
 /**
