@@ -22,6 +22,7 @@
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <type_traits>
 
 #include <glibmm.h>
 #include <lcms2.h>
@@ -227,6 +228,22 @@ public:
         } else {
             return std::abs(value[0] - rhs.value[0]) < 1e-10
                    && std::abs(value[1] - rhs.value[1]) < 1e-10;
+        }
+    }
+
+    template<typename U = T, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+    bool operator ==(const Threshold<T> &rhs) const
+    {
+        if (_isDouble) {
+            return
+                value[0] == rhs.value[0]
+                && value[1] == rhs.value[1]
+                && value[2] == rhs.value[2]
+                && value[3] == rhs.value[3];
+        } else {
+            return
+                value[0] == rhs.value[0]
+                && value[1] == rhs.value[1];
         }
     }
 };
