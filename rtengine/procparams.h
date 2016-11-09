@@ -206,7 +206,7 @@ public:
         }
     }*/
 
-    Threshold<T> & operator= (const Threshold<T> &rhs)
+    Threshold<T>& operator =(const Threshold<T> &rhs)
     {
         value[0] = rhs.value[0];
         value[1] = rhs.value[1];
@@ -217,16 +217,17 @@ public:
         return *this;
     }
 
-    bool operator== (const Threshold<T> &rhs) const
+    bool operator ==(const Threshold<T> &rhs) const
     {
-        if (_isDouble)
-            return fabs(value[0] - rhs.value[0]) < 1e-10
-                   && fabs(value[1] - rhs.value[1]) < 1e-10
-                   && fabs(value[2] - rhs.value[2]) < 1e-10
-                   && fabs(value[3] - rhs.value[3]) < 1e-10;
-        else
-            return fabs(value[0] - rhs.value[0]) < 1e-10
-                   && fabs(value[1] - rhs.value[1]) < 1e-10;
+        if (_isDouble) {
+            return std::abs(value[0] - rhs.value[0]) < 1e-10
+                   && std::abs(value[1] - rhs.value[1]) < 1e-10
+                   && std::abs(value[2] - rhs.value[2]) < 1e-10
+                   && std::abs(value[3] - rhs.value[3]) < 1e-10;
+        } else {
+            return std::abs(value[0] - rhs.value[0]) < 1e-10
+                   && std::abs(value[1] - rhs.value[1]) < 1e-10;
+        }
     }
 };
 
