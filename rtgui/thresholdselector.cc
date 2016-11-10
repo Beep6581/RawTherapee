@@ -283,7 +283,7 @@ void ThresholdSelector::updateBackBuffer()
 
     if (is_sensitive() && coloredBar.canGetColors()) {
         // this will eventually create/update the off-screen Surface for the gradient area only !
-        coloredBar.setDrawRectangle(Cairo::FORMAT_ARGB32, hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
+        coloredBar.setDrawRectangle(hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
         // that we're displaying here
         coloredBar.expose(*this, cr);
     } else {
