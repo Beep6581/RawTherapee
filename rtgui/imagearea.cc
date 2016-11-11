@@ -149,16 +149,43 @@ void ImageArea::setInfoText (Glib::ustring text)
     infotext = text;
 
     Glib::RefPtr<Pango::Context> context = get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd(get_style_context()->get_font());
+
+    // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
     fontd.set_size (10 * Pango::SCALE);
     context->set_font_description (fontd);
-    ilayout = create_pango_layout("");
+
+    // create text layout
+    Glib::RefPtr<Pango::Layout> ilayout = create_pango_layout("");
     ilayout->set_markup(text);
+
+    // get size of the text block
     int iw, ih;
     ilayout->get_pixel_size (iw, ih);
-    ipixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, true, 8, iw + 8, ih + 8);
-    ipixbuf->fill (128);
+
+    // create BackBuffer
+    iBackBuffer.setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, iw + 16, ih + 16, true);
+    iBackBuffer.setDestPosition(8, 8);
+
+    Cairo::RefPtr<Cairo::Context> cr = iBackBuffer.getContext();
+
+    // cleaning the back buffer (make it full transparent)
+    cr->set_source_rgba (0., 0., 0., 0.);
+    cr->set_operator (Cairo::OPERATOR_CLEAR);
+    cr->paint ();
+    cr->set_operator (Cairo::OPERATOR_OVER);
+
+    // paint transparent black background
+    cr->set_source_rgba (0., 0., 0., 0.5);
+    cr->paint ();
+
+    // paint text
+    cr->set_source_rgb (1.0, 1.0, 1.0);
+    cr->move_to (8, 8);
+    ilayout->add_to_cairo_context (cr);
+    cr->fill ();
+
 }
 
 void ImageArea::infoEnabled (bool e)
@@ -215,15 +242,7 @@ bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     }
 
     if (options.showInfo && infotext != "") {
-        int fnw, fnh;
-        ilayout->get_pixel_size (fnw, fnh);
-        Gdk::Cairo::set_source_pixbuf(cr, ipixbuf, 4, 4);
-        cr->rectangle(4, 4, fnw + 8, fnh + 8);
-        cr->fill();
-        cr->set_source_rgb (1.0, 1.0, 1.0);
-        cr->move_to (8, 8);
-        ilayout->add_to_cairo_context (cr);
-        cr->fill ();
+        iBackBuffer.copySurface(cr);
     }
 
     for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); ++i) {

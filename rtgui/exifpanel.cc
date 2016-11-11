@@ -449,7 +449,7 @@ void ExifPanel::addPressed ()
     } else {
         tcombo->set_active_text (sel);
 
-        if (tcombo->get_active () < 0) {
+        if (!tcombo->get_active ()) {
             tcombo->append (sel);
             tcombo->set_active_text (sel);
         }

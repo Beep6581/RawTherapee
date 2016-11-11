@@ -24,8 +24,9 @@
 
 class WinDirChangeListener
 {
-
 public:
+    virtual ~WinDirChangeListener() = default;
+
     virtual void winDirChanged () {}
 };
 
