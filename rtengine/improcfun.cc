@@ -2751,13 +2751,14 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Cbuffer[j] = ncie_C_p;
                         hbuffer[j] = ncie->h_p[i][j];
 #else
+                        float xx, yy, zz;
                         Ciecam02::jch2xyz_ciecam02float( xx, yy, zz,
                                                          ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                          xw2, yw2,  zw2,
                                                          f2,  c2, nc2, gamu, pow1n, nbbj, ncbj, flj, czj, dj, awj);
-                        x = (float)xx * 655.35f;
-                        y = (float)yy * 655.35f;
-                        z = (float)zz * 655.35f;
+                        float x = (float)xx * 655.35f;
+                        float y = (float)yy * 655.35f;
+                        float z = (float)zz * 655.35f;
                         float Ll, aa, bb;
                         //convert xyz=>lab
                         Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);

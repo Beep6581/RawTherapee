@@ -701,11 +701,11 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
     int row = 0;
-    colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #if !defined(__APPLE__) // monitor profile not supported on apple
     ++row;
-    colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #if defined(WIN32)
     ++row;
@@ -713,7 +713,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 #endif
 #endif
     ++row;
-    colt->attach (*milabel, 0, 1, row, row + 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*milabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
