@@ -70,6 +70,11 @@ frame {
     padding: 4px;
 }
 
+/* Create space between frame contents and frame border */
+frame border {
+    padding: 4px;
+}
+
 frame > label {
     color: #D8D8D8;
 }
