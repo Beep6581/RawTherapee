@@ -439,13 +439,13 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright = new Gtk::VBox (false, 0);
     vboxright->set_size_request (300, 250);
 
-
     vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vboxright->pack_start (*tpc->toolPanelNotebook);
 
     // Save buttons
     Gtk::Grid *iops = new Gtk::Grid ();
+    iops->set_name ("IopsPanel");
     iops->set_orientation (Gtk::ORIENTATION_HORIZONTAL);
     iops->set_row_spacing (2);
     iops->set_column_spacing (2);

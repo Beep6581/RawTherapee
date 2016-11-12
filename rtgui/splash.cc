@@ -105,17 +105,16 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     releaseNotesSW = nullptr;
 
     nb = Gtk::manage (new Gtk::Notebook ());
+    nb->set_name ("AboutNotebook");
     get_content_area()->pack_start (*nb);
 
     // Add close button to bottom of the notebook
     Gtk::Button* closeButton = Gtk::manage (new Gtk::Button (M("GENERAL_CLOSE")));
     closeButton->signal_clicked().connect( sigc::mem_fun(*this, &Splash::closePressed) );
-    Gtk::HBox* bottomHBox = Gtk::manage (new Gtk::HBox ());
-    bottomHBox->pack_end (*closeButton, Gtk::PACK_SHRINK, 0);
-    get_content_area()->pack_start (*bottomHBox, Gtk::PACK_SHRINK, 0);
+    get_action_area()->pack_start (*closeButton, Gtk::PACK_SHRINK, 0);
 
     Glib::RefPtr<Gtk::CssProvider> localCSS = Gtk::CssProvider::create();
-    localCSS->load_from_data ("textview { font-family: monospace; font-size: 8pt; }");
+    localCSS->load_from_data ("textview { font-family: monospace; }");
 
     // Tab 1: the image
     splashImage = Gtk::manage(new SplashImage ());

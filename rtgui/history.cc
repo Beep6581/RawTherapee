@@ -88,9 +88,6 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
     // Bookmark List
     // ~~~~~~~~~~~~~
 
-    Gtk::HSeparator* hsepb = Gtk::manage (new Gtk::HSeparator ());
-    pack_end (*hsepb, Gtk::PACK_SHRINK, 0);
-
     Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
     addBookmark = Gtk::manage (new Gtk::Button ());  // M("HISTORY_NEWSNAPSHOT")
     setExpandAlignProperties(addBookmark, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);

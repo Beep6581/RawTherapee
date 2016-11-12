@@ -96,6 +96,8 @@ private:
     Gtk::HBox* fltrRecentlySavedBox;
     Gtk::VBox* fltrVbox2;
 
+    Gtk::VSeparator* vSepiLeftPanel;
+
     Gtk::ToggleButton* tbLeftPanel_1;
     Gtk::ToggleButton* tbRightPanel_1;
     Gtk::ToggleButton* bFilterClear;

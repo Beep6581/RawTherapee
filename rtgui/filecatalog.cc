@@ -131,8 +131,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->set_name ("ToolBarPanelFileBrowser");
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
 
-    buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
-
     tbLeftPanel_1 = new Gtk::ToggleButton ();
     iLeftPanel_1_Show = new RTImage("panel-to-right.png");
     iLeftPanel_1_Hide = new RTImage("panel-to-left.png");
@@ -144,8 +142,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     tbLeftPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbLeftPanel_1_toggled) );
     buttonBar->pack_start (*tbLeftPanel_1, Gtk::PACK_SHRINK);
 
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
-
+    vSepiLeftPanel = new Gtk::VSeparator ();
+    buttonBar->pack_start (*vSepiLeftPanel, Gtk::PACK_SHRINK);
 
     iFilterClear = new RTImage ("filterclear.png");
     igFilterClear = new RTImage ("filter.png");
@@ -2084,8 +2082,10 @@ void FileCatalog::tbLeftPanel_1_visible (bool visible)
 {
     if (visible) {
         tbLeftPanel_1->show();
+        vSepiLeftPanel->show();
     } else {
         tbLeftPanel_1->hide();
+        vSepiLeftPanel->hide();
     }
 }
 void FileCatalog::tbRightPanel_1_visible (bool visible)

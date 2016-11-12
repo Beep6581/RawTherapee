@@ -44,6 +44,7 @@ FilePanel::FilePanel () : parent(nullptr)
 
     // The whole left panel. Contains Places, Recent Folders and Folders.
     placespaned = Gtk::manage ( new Gtk::VPaned () );
+    placespaned->set_name ("PlacesPaned");
     placespaned->set_size_request(250, 100);
     placespaned->set_position (options.dirBrowserHeight);
 

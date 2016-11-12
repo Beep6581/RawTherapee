@@ -26,6 +26,10 @@
     color: #666666;
 }
 
+.background {
+    background-color: #484848;
+}
+
 .view:selected {
     color: #262626;
     background-color: #AAAAAA
@@ -659,4 +663,24 @@ paned > separator {
 
 .tooltip {
     padding: 0;
+}
+
+/* Decently sized tabs */
+#PrefNotebook tab, #AboutNotebook tab {
+    padding: 0.8em;
+}
+
+/* Add space between bottom panel and window edge */
+#IopsPanel {
+    padding: 0 2px 2px;
+}
+
+/* The thing you catch with the mouse to resize a panel */
+paned > separator {
+    border: 1px solid #262626;
+}
+
+/* Move places paned (Places and Folders) away from window edges */
+#PlacesPaned {
+    padding: 5px;
 }
