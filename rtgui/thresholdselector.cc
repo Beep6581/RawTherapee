@@ -17,9 +17,11 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cassert>
+#include <cmath>
+
 #include "thresholdselector.h"
 #include "multilangmgr.h"
-#include <cassert>
 #include "mycurve.h"
 
 ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
@@ -606,7 +608,7 @@ void ThresholdSelector::findLitCursor(int posX, int posY)
                 // we use minValTop since if this block is executed, it means that we are in a simple Threshold where both bottom and top range are the same
                 double cursorX = (posX - hb) * (maxValTop - minValTop) / (w - 2 * hb) + minValTop;
 
-                if (cursorX > positions[TS_TOPRIGHT] || abs(cursorX - positions[TS_TOPRIGHT]) < abs(cursorX - positions[TS_TOPLEFT])) {
+                if (cursorX > positions[TS_TOPRIGHT] || std::fabs(cursorX - positions[TS_TOPRIGHT]) < std::fabs(cursorX - positions[TS_TOPLEFT])) {
                     litCursor = TS_TOPRIGHT;
                 }
             }
@@ -619,7 +621,7 @@ void ThresholdSelector::findLitCursor(int posX, int posY)
                 // we use minValTop since if this block is executed, it means that we are in a simple Threshold where both bottom and top range are the same
                 double cursorX = (posX - hb) * (maxValTop - minValTop) / (w - 2 * hb) + minValTop;
 
-                if (cursorX > positions[TS_BOTTOMRIGHT] || abs(cursorX - positions[TS_BOTTOMRIGHT]) < abs(cursorX - positions[TS_BOTTOMLEFT])) {
+                if (cursorX > positions[TS_BOTTOMRIGHT] || std::fabs(cursorX - positions[TS_BOTTOMRIGHT]) < std::fabs(cursorX - positions[TS_BOTTOMLEFT])) {
                     litCursor = TS_BOTTOMRIGHT;
                 }
             }
