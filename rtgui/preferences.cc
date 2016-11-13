@@ -61,10 +61,6 @@ Preferences::Preferences  (RTWindow *rtwindow)
     nb->set_name ("PrefNotebook");
     mainBox->pack_start (*nb);
 
-    Gtk::HBox* buttonpanel = Gtk::manage (new Gtk::HBox ());
-    buttonpanel->set_spacing(8);
-    mainBox->pack_start (*buttonpanel, Gtk::PACK_SHRINK, 0);
-
     Gtk::Button* about  = Gtk::manage (new Gtk::Button (M("GENERAL_ABOUT")));
     Gtk::Button* ok     = Gtk::manage (new Gtk::Button (M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage (new Gtk::Button (M("GENERAL_CANCEL")));
@@ -73,9 +69,10 @@ Preferences::Preferences  (RTWindow *rtwindow)
     ok->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::cancelPressed) );
 
-    buttonpanel->pack_start (*about, Gtk::PACK_SHRINK, 0);
-    buttonpanel->pack_end (*ok, Gtk::PACK_SHRINK, 0);
-    buttonpanel->pack_end (*cancel, Gtk::PACK_SHRINK, 0);
+    get_action_area()->pack_start (*about);
+    get_action_area()->pack_end (*ok);
+    get_action_area()->pack_end (*cancel);
+
     nb->append_page (*getGeneralPanel(),        M("PREFERENCES_TAB_GENERAL"));
     nb->append_page (*getProcParamsPanel(),     M("PREFERENCES_TAB_IMPROC"));
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
