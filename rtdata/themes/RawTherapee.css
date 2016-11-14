@@ -26,17 +26,13 @@
     color: #666666;
 }
 
-.background {
-    background-color: #484848;
-}
-
 .view:selected {
     color: #262626;
     background-color: #AAAAAA
 }
 
 /* The Places and Dir browser panels */
-.view {
+.view, .textview, textview, textview.view {
     background-color: #262626;
 }
 /* The headers of these panels */
@@ -45,9 +41,26 @@
     padding: 2px;
 }
 
+window.background {
+    background-color: #484848;
+}
+
+headerbar {
+    background-color: #262626;
+    padding: 3px;
+    margin: 0;
+    border-radius: 0;
+    background-image: none;
+}
+
 window > decoration {
-  box-shadow: none;
-  margin: 0px;
+    box-shadow: none;
+    margin: 0px;
+    background-color: #484848;
+}
+
+dialog.background {
+    background-color: #484848;
 }
 
 box, grid {
@@ -67,16 +80,40 @@ frame {
     border-radius: 0;
     border-style: solid;
     /*border-style: none none none solid;*/
-    padding: 4px;
+    padding: 0 3px;
+    margin: 3px 0 ;
+    background-color: rgba(0,0,0,0.);
 }
 
 /* Create space between frame contents and frame border */
 frame border {
     padding: 4px;
+    border-radius: 4px;
+    background-color: #383838
 }
 
 frame > label {
     color: #D8D8D8;
+}
+
+tooltip {
+    background-color: rgba(0,0,0,0.95);
+    border-style: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+grid separator, box separator {
+    background-color: rgba(0, 0, 0, 0.17);
+    padding: 0;
+}
+
+grid separator.horizontal, box separator.horizontal {
+    margin: 0.3em 0.45em;
+}
+
+grid separator.vertical, box separator.vertical {
+    margin: 0.45em 0.3em;
 }
 
 #FileBrowser {
@@ -97,11 +134,9 @@ frame > label {
     margin: 2px;
 }
 
-/* Frames in Preferences */
-#PrefNotebook frame {
-    background-color: #3B3B3B;
-    border: 1px solid #505050;
-    border-radius: 4px;
+#BeforeAfterContainer frame border {
+    border-radius: 0;
+    padding: 4px;
 }
 
 /* Frames in the toolbox. Not MyExpander frames. */
@@ -221,6 +256,16 @@ progressbar.horizontal trough {
 }
 progressbar.horizontal trough progress {
     min-height: 6px;
+}
+
+progressbar trough {
+    background-color: #2A2A2A;
+    border-color: #202020;
+}
+
+notebook header progressbar trough {
+    background-color: #202020;
+    border-color: #181818;
 }
 
 .drawingarea {
@@ -496,6 +541,11 @@ notebook tab:active {
     border-color: #989898;
 }
 
+notebook tab button {
+    padding: 0 0;
+    margin: 0 3px;
+}
+
 /* Get rid of shitty notebook header shadow */
 notebook header.top {
     border-bottom-style: solid;
@@ -535,6 +585,7 @@ paned box, paned grid {
 }
 
 paned > separator {
+    border: 1px solid #484848;
     margin: 0;
     padding: 0;
 }
@@ -663,11 +714,7 @@ paned > separator {
 }
 
 #PreviewWindow {
-    border-style: solid none;
-}
-
-.tooltip {
-    padding: 0;
+    border-style: solid;
 }
 
 /* Decently sized tabs */
@@ -675,17 +722,41 @@ paned > separator {
     padding: 0.8em;
 }
 
+#PrefNotebook, #AboutNotebook {
+    padding: 0;
+    margin: 0 0 3pt 0;
+}
+
+#PrefNotebook header, #AboutNotebook header {
+    padding: 0;
+    margin: 0;
+}
+
+#PrefNotebook header tabs, #AboutNotebook header tabs {
+    padding: 0;
+    margin: 0;
+}
+
+#PrefNotebook stack, #AboutNotebook stack {
+    padding: 3pt;
+    margin: 0;
+}
+
 /* Add space between bottom panel and window edge */
 #IopsPanel {
     padding: 0 2px 2px;
 }
 
-/* The thing you catch with the mouse to resize a panel */
-paned > separator {
-    border: 1px solid #262626;
-}
-
 /* Move places paned (Places and Folders) away from window edges */
 #PlacesPaned {
     padding: 5px;
+}
+
+#MainNotebook > header #CloseButton {
+    padding: 0;
+    margin: 0 0 0 0.3em;
+}
+#MainNotebook > header #CloseButton image {
+    padding: 0;
+    margin: 0;
 }

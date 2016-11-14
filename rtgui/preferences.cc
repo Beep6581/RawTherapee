@@ -54,7 +54,6 @@ Preferences::Preferences  (RTWindow *rtwindow)
     set_default_size (options.preferencesWidth, options.preferencesHeight);
 
     Gtk::Box* mainBox = get_content_area ();
-    mainBox->set_spacing(8);
     //set_has_separator (false);
 
     Gtk::Notebook* nb = Gtk::manage (new Gtk::Notebook ());

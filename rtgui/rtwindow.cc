@@ -439,8 +439,10 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         // construct closeable tab for the image
         Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
         titleGrid->set_tooltip_markup (name);
+        RTImage *closebimg = Gtk::manage(new RTImage ("gtk-close.png"));
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-        closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
+        closeb->set_name ("CloseButton");
+        closeb->add (*closebimg);
         closeb->set_relief (Gtk::RELIEF_NONE);
         closeb->set_focus_on_click (false);
         closeb->signal_clicked().connect( sigc::bind (sigc::mem_fun(*this, &RTWindow::remEditorPanel) , ep));

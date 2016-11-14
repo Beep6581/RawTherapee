@@ -49,7 +49,7 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
 
     historyModel = Gtk::ListStore::create (historyColumns);
     hTreeView->set_model (historyModel);
-    //hTreeView->set_headers_visible (false);
+    hTreeView->set_headers_visible (false);
     hTreeView->set_hscroll_policy(Gtk::SCROLL_MINIMUM);
     hTreeView->set_vscroll_policy(Gtk::SCROLL_NATURAL);
     hTreeView->set_size_request(80, -1);
