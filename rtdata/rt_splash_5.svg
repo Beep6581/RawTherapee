@@ -1384,8 +1384,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8308002"
-     inkscape:cx="291.45048"
+     inkscape:zoom="1.7607809"
+     inkscape:cx="184.96363"
      inkscape:cy="103.21"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -1432,10 +1432,10 @@
         </dc:subject>
         <dc:source>www.rawtherapee.com</dc:source>
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-nc-sa/3.0/" />
+           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -1444,8 +1444,6 @@
            rdf:resource="http://creativecommons.org/ns#Notice" />
         <cc:requires
            rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:prohibits
-           rdf:resource="http://creativecommons.org/ns#CommercialUse" />
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
         <cc:requires
@@ -1761,7 +1759,7 @@
          sodipodi:role="line"
          id="tspan10518"
          x="892.45013"
-         y="-4.99089"></tspan></text>
+         y="-4.99089" /></text>
   </g>
   <g
      inkscape:groupmode="layer"
