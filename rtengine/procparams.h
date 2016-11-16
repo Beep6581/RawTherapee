@@ -1182,6 +1182,9 @@ public:
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
+        int pixelshiftMotion;
+        int pixelshiftMotionCorrection;
+        bool pixelshiftShowMotion;
         bool dcb_enhance;
         //bool all_enhance;
     };

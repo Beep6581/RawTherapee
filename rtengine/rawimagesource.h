@@ -81,6 +81,7 @@ protected:
     int threshold;
 
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
+    array2D<float> *rawDataFrames[16] = {nullptr};
 
     // the interpolated green plane:
     array2D<float> green;
@@ -128,9 +129,9 @@ public:
     }
 
     void        processFlatField(const RAWParams &raw, RawImage *riFlatFile, unsigned short black[4]);
-    void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
+    void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData  );
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
-    void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw); // raw for cblack
+    void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData); // raw for cblack
     void        scaleColors_pixelshift(int winx, int winy, int winw, int winh, const RAWParams &raw);
 
 
@@ -205,6 +206,7 @@ public:
         ri = riFrames[currFrame];
     }
 protected:
+    bool pixelShiftColoursScaled = false;
     typedef unsigned short ushort;
     void processFalseColorCorrection (Imagefloat* i, const int steps);
     inline  void convert_row_to_YIQ (const float* const r, const float* const g, const float* const b, float* Y, float* I, float* Q, const int W);
@@ -261,7 +263,7 @@ protected:
     void xtransborder_interpolate (int border);
     void xtrans_interpolate (const int passes, const bool useCieLab);
     void fast_xtrans_interpolate ();
-    void pixelshift_simple(int winx, int winy, int winw, int winh);
+    void pixelshift_simple(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, unsigned int frame, unsigned int method);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
 

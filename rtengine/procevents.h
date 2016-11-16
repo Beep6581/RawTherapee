@@ -471,6 +471,7 @@ enum ProcEvent {
     EvLskal = 441,
     EvOBPCompens = 442,
     EvRawImageNum = 443,
+    EvDemosaicPixelshiftMotion = 444,
     NUMOFEVENTS
 
 };

@@ -1654,6 +1654,11 @@ TP_RAW_IMAGENUM;Some raw files might embed several sub-images (HDR, Pixel-Shift,
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
+TP_RAW_PIXELSHIFTMOTION;Pixelshift motion detection
+TP_RAW_PIXELSHIFTMOTION_TOOLTIP;No tooltip available atm
+TP_RAW_PIXELSHIFTMOTIONCORRECTION;Pixelshift motion correction
+TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
+TP_RAW_PIXELSHIFTSHOWMOTION;Show motion
 TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix

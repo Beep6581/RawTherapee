@@ -41,11 +41,14 @@ protected:
     //Gtk::CheckButton* allEnhance;
     Gtk::VBox *lmmseOptions;
     Adjuster* lmmseIterations;
-
+    Gtk::VBox *pixelShiftOptions;
+    Adjuster* pixelShiftMotion;
+    Adjuster* pixelShiftMotionCorrection;
+    Gtk::CheckButton* pixelShiftShowMotion;
     bool lastDCBen;
     int oldMethod;
     //bool lastALLen;
-    sigc::connection methodconn, imagenumberconn, dcbEnhconn; //,allEnhconn;
+    sigc::connection methodconn, imagenumberconn, dcbEnhconn, pixelShiftShowMotionconn; //,allEnhconn;
 public:
 
     BayerProcess ();
@@ -59,6 +62,7 @@ public:
     void imageNumberChanged ();
     void adjusterChanged     (Adjuster* a, double newval);
     void dcbEnhanceChanged();
+    void pixelShiftShowMotionChanged();
     //void allEnhanceChanged();
 };
 

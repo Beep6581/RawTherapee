@@ -692,6 +692,9 @@ public:
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
+        bool pixelshiftMotion;
+        bool pixelshiftMotionCorrection;
+        bool pixelshiftShowMotion;
         //bool allEnhance;
         bool greenEq;
         bool linenoise;

@@ -1549,6 +1549,7 @@ Stop1.stop();
         if(riFrames[0]->get_width() != riFrames[1]->get_width() || riFrames[0]->get_height() != riFrames[1]->get_height()) {
             numFrames = 1;
         }
+        pixelShiftColoursScaled = false;
     }
 
     if (plistener) {
@@ -1757,7 +1758,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         printf( "Flat Field Correction:%s\n", rif->get_filename().c_str());
     }
 
-    copyOriginalPixels(raw, ri, rid, rif);
+    copyOriginalPixels(raw, ri, rid, rif, rawData);
     //FLATFIELD end
 
 
@@ -1798,7 +1799,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
 
-    scaleColors( 0, 0, W, H, raw); //+ + raw parameters for black level(raw.blackxx)
+    scaleColors( 0, 0, W, H, raw, rawData); //+ + raw parameters for black level(raw.blackxx)
+    if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple] && !pixelShiftColoursScaled) {
+        scaleColors_pixelshift( 0, 0, W, H, raw);
+    }
 
     // Correct vignetting of lens profile
     if (!hasFlatField && lensProf.useVign) {
@@ -1958,11 +1962,11 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
             amaze_demosaic_RT (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple] ) {
+            if(raw.bayersensor.pixelshiftMotion > 0) {
+                amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
+            }
             if(numFrames == 4) {
-                pixelshift_simple(0, 0, W, H);
-                scaleColors_pixelshift( 0, 0, W, H, raw);
-            } else { // for non pixelshift files use amaze if pixelshift is selected
-                amaze_demosaic_RT (0, 0, W, H);
+                pixelshift_simple(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, currFrame, raw.bayersensor.pixelshiftMotionCorrection);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
@@ -3010,7 +3014,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
-void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
+void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData )
 {
     // TODO: Change type of black[] to float to avoid conversions
     unsigned short black[4] = {
@@ -3341,7 +3345,7 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 
 
 // Scale original pixels into the range 0 65535 using black offsets and multipliers
-void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const RAWParams &raw)
+void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData)
 {
     chmax[0] = chmax[1] = chmax[2] = chmax[3] = 0; //channel maxima
     float black_lev[4] = {0.f};//black level
@@ -3555,17 +3559,12 @@ void RawImageSource::scaleColors_pixelshift(int winx, int winy, int winw, int wi
             for (int row = winy; row < winy + winh; row ++)
             {
                 for (int col = winx; col < winx + winw; col++) {
-                    float redval = (red[row][col] - cblacksom[0]) * scale_mul[0];
-                    tmpchmax[0] = max(tmpchmax[0], redval);
-                    red[row][col] = redval;
-
-                    float greenval = (green[row][col] - cblacksom[1]) * scale_mul[1];
-                    tmpchmax[1] = max(tmpchmax[1], greenval);
-                    green[row][col] = greenval;
-
-                    float blueval = (blue[row][col] - cblacksom[2]) * scale_mul[2];
-                    tmpchmax[2] = max(tmpchmax[2], blueval);
-                    blue[row][col] = blueval;
+                    int c = FC(row,col);
+                    for(int frame = 0; frame < 4; ++frame) {
+                        float val = (riFrames[frame]->data[row][col]  - cblacksom[c]) * scale_mul[c];
+                        tmpchmax[c] = max(tmpchmax[c], val);
+                        riFrames[frame]->data[row][col] = val;
+                    }
                 }
             }
 
@@ -3578,6 +3577,7 @@ void RawImageSource::scaleColors_pixelshift(int winx, int winy, int winw, int wi
                 chmax[2] = max(tmpchmax[2], chmax[2]);
             }
         }
+        pixelShiftColoursScaled = true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
