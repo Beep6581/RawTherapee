@@ -516,6 +516,7 @@ ProfileStoreLabel::ProfileStoreLabel(const ProfileStoreEntry *entry) : Gtk::Labe
 ProfileStoreComboBox::ProfileStoreComboBox ()
 {
     updateProfileList();
+    setPreferredWidth(50, 120);
     Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
     cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
     cellRenderer->property_ellipsize_set() = true;

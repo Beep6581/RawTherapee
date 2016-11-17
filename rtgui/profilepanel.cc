@@ -58,7 +58,6 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), image
     // Create the Combobox
     profiles = Gtk::manage (new ProfileStoreComboBox ());
     setExpandAlignProperties(profiles, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    profiles->set_size_request(90);
 
     load = Gtk::manage (new Gtk::Button ());
     load->add (*Gtk::manage (new RTImage ("gtk-open.png")));
