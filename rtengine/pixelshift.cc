@@ -40,7 +40,7 @@ float greenDiff(float a, float b)
 {
     // calculate the difference between to green samples
     // add a small epsilon to avoid division by zero
-    return std::fabs(a - b) / (std::max(a, b) + 0.0001f);
+    return std::fabs(a - b) / (std::max(a, b) + 0.01f);
 
 }
 
@@ -63,7 +63,7 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
     const float motionThreshold = 1.f - (motion / 100.f);
 
     unsigned int offsX = 0, offsY = 0;
-    if(detectMotion && !showMotion) {
+    if(detectMotion) {
         // if motion correction is enabled we have to adjust the offsets for the selected subframe we use for areas with motion
         switch (frame) {
             case 0:
@@ -187,8 +187,8 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
                     // at least one of the tested pixels of the grid is detected as motion
                     if(showMotion) {
                         // if showMotion is enabled make the pixel green
-                        greenDest[j] = 10000.f;
-                        nonGreenDest0[j] = nonGreenDest1[j] = 0.f;
+                        greenDest[j + offsX] = 10000.f;
+                        nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
                     }
                     if(skipNext) {
                         // treat the horizontally next pixel also as motion
