@@ -128,7 +128,6 @@ protected:
     Gtk::ComboBoxText* curveBBoxPosC;
 
     Gtk::ComboBoxText* theme;
-    Gtk::CheckButton* chUseSystemTheme;
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
 
@@ -191,7 +190,7 @@ protected:
     Glib::ustring storedValueImg;
 
     Options moptions;
-    sigc::connection tconn, sconn, usethcon, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
+    sigc::connection tconn, sconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
     sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
@@ -203,7 +202,6 @@ protected:
     void updateFFinfos ();
     void workflowUpdate();
     void themeChanged  ();
-    void useThemeChanged();
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();

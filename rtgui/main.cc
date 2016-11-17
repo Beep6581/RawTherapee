@@ -307,7 +307,7 @@ int main(int argc, char **argv)
 
     Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
 
-    if (!options.useSystemTheme && screen) {
+    if (screen) {
         Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 

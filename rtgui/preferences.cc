@@ -824,9 +824,9 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to(*ckbHistogramWorking, *curveBBoxPosC, Gtk::POS_BOTTOM, 2, 1);
 
     ckbFileBrowserToolbarSingleRow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
-    setExpandAlignProperties(ckbFileBrowserToolbarSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    setExpandAlignProperties(ckbFileBrowserToolbarSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     ckbShowFilmStripToolBar =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWFILMSTRIPTOOLBAR")) );
-    setExpandAlignProperties(ckbShowFilmStripToolBar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    setExpandAlignProperties(ckbShowFilmStripToolBar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     workflowGrid->attach_next_to(*ckbFileBrowserToolbarSingleRow, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*ckbShowFilmStripToolBar, *ckbHistogramWorking, Gtk::POS_BOTTOM, 2, 1);
 
@@ -858,7 +858,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     Gtk::Label* langlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTLANG") + ":") );
     setExpandAlignProperties(langlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     languages = Gtk::manage( new Gtk::ComboBoxText () );
-    setExpandAlignProperties(languages, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    setExpandAlignProperties(languages, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
@@ -871,8 +871,8 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     Gtk::Label* langw = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     setExpandAlignProperties(langw, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    langGrid->attach_next_to(*ckbLangAutoDetect, Gtk::POS_LEFT, 1, 1);
-    langGrid->attach_next_to(*langlab, *ckbLangAutoDetect, Gtk::POS_RIGHT, 1, 1);
+    langGrid->attach_next_to(*ckbLangAutoDetect, Gtk::POS_LEFT, 3, 1);
+    langGrid->attach_next_to(*langlab, *ckbLangAutoDetect, Gtk::POS_BOTTOM, 1, 1);
     langGrid->attach_next_to(*languages, *langlab, Gtk::POS_RIGHT, 1, 1);
     langGrid->attach_next_to(*langw, *languages, Gtk::POS_RIGHT, 1, 1);
     flang->add (*langGrid);
@@ -887,14 +887,10 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->set_row_spacing(4);
     setExpandAlignProperties(themeGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    chUseSystemTheme = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_USESYSTEMTHEME")+" ("+ M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    setExpandAlignProperties(chUseSystemTheme, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    themeGrid->attach_next_to(*chUseSystemTheme, Gtk::POS_LEFT, 2, 1);
-
     Gtk::Label* themelab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTTHEME") + ":") );
     setExpandAlignProperties(themelab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     theme = Gtk::manage( new Gtk::ComboBoxText () );
-    setExpandAlignProperties(theme, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    setExpandAlignProperties(theme, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
     theme->set_active (0);
     std::vector<Glib::ustring> themes;
@@ -904,37 +900,24 @@ Gtk::Widget* Preferences::getGeneralPanel ()
         theme->append (themes[i]);
     }
 
-    Gtk::Label* fontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT") + ":") );
-    setExpandAlignProperties(fontlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-
-    themeGrid->attach_next_to(*themelab, *chUseSystemTheme, Gtk::POS_BOTTOM, 1, 1);
+    themeGrid->attach_next_to(*themelab, Gtk::POS_LEFT, 1, 1);
     themeGrid->attach_next_to(*theme, *themelab, Gtk::POS_RIGHT, 1, 1);
-    themeGrid->attach_next_to(*fontlab, *theme, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::Grid* cropcolorGrid = Gtk::manage( new Gtk::Grid () );
-    cropcolorGrid->set_column_spacing(4);
-    cropcolorGrid->set_row_spacing(4);
     Gtk::Label* cutOverlayLabel = Gtk::manage( new Gtk::Label (M("PREFERENCES_CUTOVERLAYBRUSH") + ":") );
     setExpandAlignProperties(cutOverlayLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     butCropCol = Gtk::manage( new Gtk::ColorButton() );
     setExpandAlignProperties(butCropCol, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     butCropCol->set_use_alpha(true);
-    cropcolorGrid->attach_next_to(*cutOverlayLabel, Gtk::POS_LEFT, 1, 1);
-    cropcolorGrid->attach_next_to(*butCropCol, *cutOverlayLabel, Gtk::POS_RIGHT, 1, 1);
+    themeGrid->attach_next_to(*cutOverlayLabel, *themelab, Gtk::POS_BOTTOM, 1, 1);
+    themeGrid->attach_next_to(*butCropCol, *cutOverlayLabel, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::Grid* navguidecolGrid = Gtk::manage( new Gtk::Grid () );
-    navguidecolGrid->set_column_spacing(4);
-    navguidecolGrid->set_row_spacing(4);
     Gtk::Label* navGuideLabel = Gtk::manage( new Gtk::Label (M("PREFERENCES_NAVGUIDEBRUSH") + ":") );
     setExpandAlignProperties(navGuideLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     butNavGuideCol = Gtk::manage( new Gtk::ColorButton() );
     setExpandAlignProperties(butNavGuideCol, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     butNavGuideCol->set_use_alpha(true);
-    navguidecolGrid->attach_next_to(*navGuideLabel, Gtk::POS_LEFT, 1, 1);
-    navguidecolGrid->attach_next_to(*butNavGuideCol, *navGuideLabel, Gtk::POS_RIGHT, 1, 1);
-
-    themeGrid->attach_next_to(*cropcolorGrid, *themelab, Gtk::POS_BOTTOM, 2, 1);
-    themeGrid->attach_next_to(*navguidecolGrid, *cropcolorGrid, Gtk::POS_RIGHT, 2, 1);
+    themeGrid->attach_next_to(*navGuideLabel, *butCropCol, Gtk::POS_RIGHT, 1, 1);
+    themeGrid->attach_next_to(*butNavGuideCol, *navGuideLabel, Gtk::POS_RIGHT, 1, 1);
 
     ftheme->add (*themeGrid);
     mvbsd->attach_next_to(*ftheme, *flang, Gtk::POS_BOTTOM, 2, 1);
@@ -979,12 +962,12 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     Gtk::Grid* navigationGrid = Gtk::manage( new Gtk::Grid() );
     navigationGrid->set_column_spacing(4);
     navigationGrid->set_row_spacing(4);
-    setExpandAlignProperties(fclip, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(fclip, false, false, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
 
     Gtk::Label* panFactorLabel = Gtk::manage( new Gtk::Label (M("PREFERENCES_PANFACTORLABEL") + ":", Gtk::ALIGN_START));
-    setExpandAlignProperties(panFactorLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    setExpandAlignProperties(panFactorLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     panFactor = Gtk::manage( new Gtk::SpinButton () );
-    setExpandAlignProperties(panFactor, false, false, Gtk::ALIGN_END, Gtk::ALIGN_BASELINE);
+    setExpandAlignProperties(panFactor, true, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     panFactor->set_digits (0);
     panFactor->set_increments (1, 5);
     panFactor->set_range (1, 10);
@@ -1065,7 +1048,6 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
-    usethcon = chUseSystemTheme->signal_clicked ().connect( sigc::mem_fun(*this, &Preferences::useThemeChanged) );
 
     return mvbsd;
 }
@@ -1388,7 +1370,6 @@ void Preferences::storePreferences ()
     moptions.language        = languages->get_active_text ();
     moptions.languageAutoDetect = ckbLangAutoDetect->get_active ();
     moptions.theme           = theme->get_active_text ();
-    moptions.useSystemTheme  = chUseSystemTheme->get_active ();
 
     Gdk::RGBA cropCol = butCropCol->get_rgba();
     moptions.cutOverlayBrush[0] = cropCol.get_red();
@@ -1605,7 +1586,6 @@ void Preferences::fillPreferences ()
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
     theme->set_active_text (moptions.theme);
-    chUseSystemTheme->set_active(moptions.useSystemTheme);
 
     Gdk::RGBA cropCol;
     cropCol.set_rgba(moptions.cutOverlayBrush[0], moptions.cutOverlayBrush[1], moptions.cutOverlayBrush[2]);
@@ -1851,7 +1831,6 @@ void Preferences::themeChanged ()
 {
 
     moptions.theme = theme->get_active_text ();
-    moptions.useSystemTheme = chUseSystemTheme->get_active ();
     RTImage::setPaths(moptions);
     RTImage::updateImages();
     switchThemeTo(theme->get_active_text ());
@@ -2039,16 +2018,6 @@ void Preferences::workflowUpdate ()
         parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);
     }
 
-}
-
-void Preferences::useThemeChanged()
-{
-
-    if(!chUseSystemTheme->get_active()) {
-        theme->set_sensitive(true);
-    } else {
-        theme->set_sensitive(false);
-    }
 }
 
 void Preferences::addExtPressed ()
