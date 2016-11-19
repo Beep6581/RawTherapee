@@ -239,9 +239,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
             releaseNotesSW = Gtk::manage (new Gtk::ScrolledWindow());
             Gtk::TextView *releaseNotesTV = Gtk::manage (new Gtk::TextView (textBuffer));
-            releaseNotesTV->get_style_context()->add_provider(localCSS, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-            // set monospace font to enhance readability of formatted text
             releaseNotesTV->set_left_margin (10);
             releaseNotesTV->set_right_margin (3);
             releaseNotesTV->set_editable(false);
