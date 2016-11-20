@@ -56,7 +56,6 @@ Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
 bool simpleEditor;
-Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
 //Glib::Threads::Thread* mainThread;
 
@@ -313,7 +312,13 @@ int main(int argc, char **argv)
 
         Glib::ustring filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
         if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-            options.theme = "RawTherapee";
+            options.theme = "RawTherapee-GTK";
+            // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
+            if (GTK_MINOR_VERSION < 20) {
+                options.theme = options.theme + "3-_19";
+            } else {
+                options.theme = options.theme + "3-20_";
+            }
             filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
         }
         cssRT = Gtk::CssProvider::create();

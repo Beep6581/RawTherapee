@@ -60,11 +60,21 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
             add(addsetid);
         }
     };
+
+    class ThemeFilename
+    {
+    public:
+        Glib::ustring shortFName;
+        Glib::ustring longFName;
+
+        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName(sfname), longFName(lfname) {}
+    };
+
     Glib::RefPtr<Gtk::TreeStore> behModel;
     BehavColumns behavColumns;
-
-
-protected:
+    std::vector<ThemeFilename> themeFNames;
+    Glib::RefPtr<Glib::Regex> regex;
+    Glib::MatchInfo matchInfo;
     Splash* splash;
     ProfileStoreComboBox* rprofiles;
     Gtk::TreeIter currRawRow; // :)
@@ -198,6 +208,7 @@ protected:
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
+    void parseThemeDir  (Glib::ustring dirname);
     void updateDFinfos ();
     void updateFFinfos ();
     void workflowUpdate();
@@ -209,6 +220,8 @@ protected:
     void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme);
     bool splashClosed(GdkEventAny* event);
+
+    int getThemeRowNumber(Glib::ustring& longThemeFName);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 

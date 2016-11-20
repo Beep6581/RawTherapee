@@ -41,6 +41,8 @@ Preferences::Preferences  (RTWindow *rtwindow)
     , parent (rtwindow)
     , splash (nullptr)
 {
+    regex = Glib::Regex::create("^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$", Glib::RegexCompileFlags::REGEX_CASELESS);
+
     moptions.copyFrom (&options);
 
     /*
@@ -98,6 +100,19 @@ Preferences::~Preferences ()
     profileStore.removeListener(this);
     options.preferencesWidth = get_width();
     options.preferencesHeight = get_height();
+}
+
+int Preferences::getThemeRowNumber(Glib::ustring& longThemeFName)
+{
+
+    if (regex->match(longThemeFName + ".css", matchInfo)) {
+        for (size_t i=0 ; i<themeFNames.size(); ++i) {
+            if (themeFNames.at(i).longFName == longThemeFName) {
+                return (int)i;
+            }
+        }
+    }
+    return -1;
 }
 
 Gtk::Widget* Preferences::getBatchProcPanel ()
@@ -893,11 +908,10 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     setExpandAlignProperties(theme, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
     theme->set_active (0);
-    std::vector<Glib::ustring> themes;
-    parseDir (argv0 + "/themes", themes, ".css");
+    parseThemeDir (Glib::build_filename(argv0, "themes"));
 
-    for (size_t i = 0; i < themes.size(); i++) {
-        theme->append (themes[i]);
+    for (size_t i = 0; i < themeFNames.size(); i++) {
+        theme->append (themeFNames.at(i).shortFName);
     }
 
     themeGrid->attach_next_to(*themelab, Gtk::POS_LEFT, 1, 1);
@@ -1337,6 +1351,59 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     delete dir;
 }
 
+void Preferences::parseThemeDir (Glib::ustring dirname)
+{
+
+    if (dirname.empty()) {
+        return;
+    }
+
+    // process directory
+    Glib::Dir* dir = nullptr;
+
+    try {
+        dir = new Glib::Dir (dirname);
+    } catch (const Glib::Error& e) {
+        return;
+    }
+
+    for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
+        Glib::ustring fname = Glib::build_filename(dirname, *i);
+        Glib::ustring sname = *i;
+
+        bool keepIt = false;
+
+        // ignore directories and filter out unsupported theme
+        if (regex->match(sname, matchInfo) && !Glib::file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= 4) {
+            Glib::ustring fname2 = matchInfo.fetch(1);
+            Glib::ustring minMinor = matchInfo.fetch(2);
+            Glib::ustring maxMinor = matchInfo.fetch(3);
+
+            if (!minMinor.empty()) {
+                guint64 minMinorVal = g_ascii_strtoll(minMinor.c_str(), 0, 0);
+                if ((guint64)GTK_MINOR_VERSION >= minMinorVal) {
+                    keepIt = true;
+                }
+            }
+            if (!maxMinor.empty()) {
+                guint64 maxMinorVal = g_ascii_strtoll(maxMinor.c_str(), 0, 0);
+                if ((guint64)GTK_MINOR_VERSION <= maxMinorVal) {
+                    keepIt = true;
+                }
+            }
+            if (keepIt) {
+                themeFNames.push_back(ThemeFilename(matchInfo.fetch(1), sname.substr(0, sname.size() - 4)));
+            }
+        }
+    }
+    std::sort(themeFNames.begin(), themeFNames.end(), [] (const ThemeFilename& firstDir, const ThemeFilename& secondDir)
+            {
+                return firstDir.longFName < secondDir.longFName;
+            });
+
+    delete dir;
+}
+
 void Preferences::storePreferences ()
 {
 
@@ -1369,7 +1436,7 @@ void Preferences::storePreferences ()
     moptions.shadowThreshold = (int)shThresh->get_value ();
     moptions.language        = languages->get_active_text ();
     moptions.languageAutoDetect = ckbLangAutoDetect->get_active ();
-    moptions.theme           = theme->get_active_text ();
+    moptions.theme           = themeFNames.at(theme->get_active_row_number ()).longFName;
 
     Gdk::RGBA cropCol = butCropCol->get_rgba();
     moptions.cutOverlayBrush[0] = cropCol.get_red();
@@ -1585,7 +1652,8 @@ void Preferences::fillPreferences ()
     ckbHistogramWorking->set_active (moptions.rtSettings.HistogramWorking);
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
-    theme->set_active_text (moptions.theme);
+    int themeNbr = getThemeRowNumber(moptions.theme);
+    theme->set_active (themeNbr==-1 ? 0 : themeNbr);
 
     Gdk::RGBA cropCol;
     cropCol.set_rgba(moptions.cutOverlayBrush[0], moptions.cutOverlayBrush[1], moptions.cutOverlayBrush[2]);
@@ -1783,7 +1851,7 @@ void Preferences::okPressed ()
 void Preferences::cancelPressed ()
 {
     // set the initial theme back
-    if (theme->get_active_text() != options.theme) {
+    if (themeFNames.at(theme->get_active_row_number ()).longFName != options.theme) {
         RTImage::setPaths(options);
         RTImage::updateImages();
         switchThemeTo(options.theme);
@@ -1830,10 +1898,10 @@ void Preferences::aboutPressed ()
 void Preferences::themeChanged ()
 {
 
-    moptions.theme = theme->get_active_text ();
+    moptions.theme = themeFNames.at(theme->get_active_row_number ()).longFName;
     RTImage::setPaths(moptions);
     RTImage::updateImages();
-    switchThemeTo(theme->get_active_text ());
+    switchThemeTo(moptions.theme);
 }
 
 void Preferences::forRAWComboChanged ()
@@ -1961,10 +2029,12 @@ void Preferences::restoreValue()
 void Preferences::switchThemeTo(Glib::ustring newTheme)
 {
 
-    Glib::ustring filename(argv0 + "/themes/" + newTheme + ".css");
+    Glib::ustring filename(Glib::build_filename(argv0, "themes", newTheme + ".css"));
 
     if (!css) {
         css = Gtk::CssProvider::create();
+        Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+        Gtk::StyleContext::add_provider_for_screen(screen, css, GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
 
     try {
