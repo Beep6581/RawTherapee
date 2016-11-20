@@ -41,7 +41,7 @@ Preferences::Preferences  (RTWindow *rtwindow)
     , parent (rtwindow)
     , splash (nullptr)
 {
-    regex = Glib::Regex::create("^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$", Glib::RegexCompileFlags::REGEX_CASELESS);
+    regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
 
     moptions.copyFrom (&options);
 

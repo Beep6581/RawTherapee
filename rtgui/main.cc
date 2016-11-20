@@ -310,8 +310,9 @@ int main(int argc, char **argv)
         Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 
+        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
         Glib::ustring filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
-        if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+        if (!regex->match(options.theme) || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
             options.theme = "RawTherapee-GTK";
             // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
             if (GTK_MINOR_VERSION < 20) {
