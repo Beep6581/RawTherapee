@@ -695,6 +695,7 @@ public:
         bool pixelshiftMotion;
         bool pixelshiftMotionCorrection;
         bool pixelshiftShowMotion;
+        bool pixelshiftBlendMotion;
         //bool allEnhance;
         bool greenEq;
         bool linenoise;

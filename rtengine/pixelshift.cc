@@ -49,19 +49,32 @@ float greenDiff(float a, float b)
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, unsigned int frame, unsigned int gridSize)
+void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, unsigned int frame, unsigned int gridSize, bool blendMotion)
 {
 
     BENCHFUN
+
+    printf("%f\t%f\t%f\t%f\n",scale_mul[0],scale_mul[1],scale_mul[2],scale_mul[3]);
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]));
         plistener->setProgress(0.0);
     }
 
-    // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
-    const float motionThreshold = 1.f - (motion / 100.f);
 
+    LUTf log2Lut(65536);
+    log2Lut[0] = 0;
+    const float lutStrength = 2.f;
+    const float scaleGreen = 1.f / scale_mul[1];
+    for(int i=2; i < 65536; i+=2)
+        log2Lut[i>>1] = 2.f * log2(i) / 100.f;
+    // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
+    float motionThreshold = 1.f - (motion / 100.f);
+    // For 'blend' mode
+    const float blendFactor = 1.f / (1.f - motionThreshold);
+
+    bool checkRedBlue = (gridSize == 5);
+//    bool checkRedBlue = false;
     unsigned int offsX = 0, offsY = 0;
     if(detectMotion) {
         // if motion correction is enabled we have to adjust the offsets for the selected subframe we use for areas with motion
@@ -155,7 +168,7 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
         for(; j < winw - (border + offsX); ++j) {
             offset ^= 1; // 0 => 1 or 1 => 0
 
-            if(detectMotion) {
+            if(detectMotion || blendMotion) {
                 bool skipNext = false;
                 float gridMax;
                 if(gridSize == 1) {
@@ -183,23 +196,125 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
                 lastIndex ++;
                 lastIndex = lastIndex == gridSize ? 0 : lastIndex;
 
-                if (gridMax > motionThreshold) {
-                    // at least one of the tested pixels of the grid is detected as motion
-                    if(showMotion) {
-                        // if showMotion is enabled make the pixel green
-                        greenDest[j + offsX] = 10000.f;
-                        nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
+                // increase motion detection dependent on brightness
+//                float korr = 2.f * log2Lut[((int)riFrames[1 - offset]->data[i - offset + 1][j])>>1];
+                float centerVal = riFrames[1 - offset]->data[i - offset + 1][j] * scaleGreen;
+                if(true || centerVal > 32) {
+                    float korr;
+                    float thresh;
+                    if(blendMotion) {
+                        korr = 0.f;
+                        float average = scaleGreen * (riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1]) / 2.f;
+                        thresh = (5.f / sqrtf(average)) / 0.75f;
+                    } else {
+                        korr = log2Lut[((int)(riFrames[1 - offset]->data[i - offset + 1][j] * scaleGreen))>>1];
+                        thresh = motionThreshold;
                     }
-                    if(skipNext) {
-                        // treat the horizontally next pixel also as motion
-                        j++;
-                        offset ^= 1;
+//                    float korr = log2Lut[((int)(riFrames[1 - offset]->data[i - offset + 1][j] * scaleGreen))>>1];
+//                    float korr = 0.f;
+//                    float average = (riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1])/2.f;
+//                    float motionThreshold = 5.f * sqrtf(3.f*average/(scale_mul[1])) / (average * scaleGreen * 3.f);
+                    if (gridMax > thresh - korr) {
+                        float blend = (gridMax - thresh + korr) * blendFactor;
+                        // at least one of the tested pixels of the grid is detected as motion
+                        if(showMotion) {
+                            // if showMotion is enabled make the pixel green
+                            greenDest[j + offsX] = 1000.f + 25000.f * blend;
+                            nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
+                        } else if(false) {
+                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX],(riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1]) / 2.f);
+                            nonGreenDest0[j + offsX] = intp(blend, nonGreenDest0[j + offsX], riFrames[(offset << 1) + offset]->data[i][j + offset]);
+                            nonGreenDest1[j + offsX] = intp(blend, nonGreenDest1[j + offsX], riFrames[2 - offset]->data[i + 1][j - offset + 1]);
+                        }
+                        if(skipNext) {
+                            // treat the horizontally next pixel also as motion
+                            j++;
+                            offset ^= 1;
+                        }
+                        // do not set the motion pixel values. They have already been set by demosaicer or showMotion
+                        continue;
                     }
-                    // do not set the motion pixel values. They have already been set by demosaicer or showMotion
-                    continue;
                 }
             }
 
+            if(false && detectMotion && checkRedBlue) {
+                float ng1 = riFrames[(offset << 1) + offset]->data[i][j + offset];
+                float ng0 = riFrames[((offset^1) << 1) + (offset^1)]->data[i][j + (offset^1)+1];
+                float ng2 = riFrames[((offset^1) << 1) + (offset^1)]->data[i][j + (offset^1)-1];
+                float diff0 = ng1 - ng0;
+                float diff2 = ng1 - ng2;
+                    float gridMax;
+                if(diff0 * diff2 > 0.f) {
+//                    if(greenDiff(ng1, fabsf(diff0) < fabsf(diff2) ? ng0 : ng2) > motionThreshold ) {
+                    gridMax = greenDiff(ng1, std::max(ng0, ng2));
+//                    gridMax = greenDiff(ng1, ((ng0 + ng2) / 2.f));
+                    if(gridMax > motionThreshold ) {
+                    float factor = 1.f / (1.f - motionThreshold);
+                    float blend = (gridMax - motionThreshold) * factor;
+                    if(showMotion) {
+                            // if showMotion is enabled make the pixel green
+                            greenDest[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
+                            nonGreenDest0[j + offsX] = 20000.f;
+                            continue;
+//                            greenDest[j + offsX+1] = nonGreenDest1[j + offsX+1] = 0.f;
+//                            nonGreenDest0[j + offsX+1] = 20000.f;
+                        }
+                        greenDest[j + offsX] = (riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1]) / 2.f;
+
+//                        greenDest[j + offsX] = intp(blend, greenDest[j + offsX],(riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1]) / 2.f);
+//                        nonGreenDest0[j + offsX] = (ng1 + (diff0 < diff2 ? ng0 : ng2)) / 2.f;
+                        nonGreenDest0[j + offsX] = intp(blend, nonGreenDest0[j + offsX], riFrames[(offset << 1) + offset]->data[i][j + offset]);
+//                        nonGreenDest0[j + offsX] = intp(blend, nonGreenDest0[j + offsX], riFrames[(offset << 1) + offset]->data[i][j + offset]);
+                        nonGreenDest1[j + offsX] = riFrames[2 - offset]->data[i + 1][j - offset + 1];
+
+//                        nonGreenDest1[j + offsX] = intp(blend, nonGreenDest1[j + offsX], riFrames[2 - offset]->data[i + 1][j - offset + 1]);
+
+//                        if(skipNext) {
+//                            // treat the horizontally next pixel also as motion
+//                            j++;
+//                            offset ^= 1;
+//                        }
+                        // do not set the motion pixel values. They have already been set by demosaicer or showMotion
+                        continue;
+                    }
+                }
+                ng1 = riFrames[2 - offset]->data[i + 1][j - offset + 1];
+                ng0 = riFrames[2 - (offset^1)]->data[i + 1][j - (offset^1) + 2];
+                ng2 = riFrames[2 - (offset^1)]->data[i + 1][j - (offset^1)];
+                diff0 = ng1 - ng0;
+                diff2 = ng1 - ng2;
+                if(signbit(diff0) == signbit(diff2)) {
+//                    if(greenDiff(ng1, fabsf(diff0) < fabsf(diff2) ? ng0 : ng2) > motionThreshold ) {
+                    gridMax = greenDiff(ng1, std::max(ng0, ng2));
+//                    gridMax = greenDiff(ng1, ((ng0 + ng2) / 2.f));
+                    if(gridMax > motionThreshold ) {
+                    float factor = 1.f / (1.f - motionThreshold);
+                    float blend = (gridMax - motionThreshold) * factor;
+                    if(showMotion) {
+                            // if showMotion is enabled make the pixel green
+                            greenDest[j + offsX] = nonGreenDest0[j + offsX] = 0.f;
+                            nonGreenDest1[j + offsX] = 20000.f;
+//                            greenDest[j + offsX+1] = nonGreenDest0[j + offsX+1] = 0.f;
+//                            nonGreenDest1[j + offsX+1] = 20000.f;
+continue;
+                        }
+                        greenDest[j + offsX] = (riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1]) / 2.f;
+//                                            greenDest[j + offsX] = intp(blend, greenDest[j + offsX],(riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1]) / 2.f);
+//                        nonGreenDest0[j + offsX] = intp(blend, nonGreenDest0[j + offsX], riFrames[(offset << 1) + offset]->data[i][j + offset]);
+                        nonGreenDest0[j + offsX] = riFrames[(offset << 1) + offset]->data[i][j + offset];
+
+//                        nonGreenDest1[j + offsX] = (ng1 + (diff0 < diff2 ? ng0 : ng2)) / 2.f;
+                        nonGreenDest1[j + offsX] = intp(blend, nonGreenDest1[j + offsX], riFrames[2 - offset]->data[i + 1][j - offset + 1]);
+//                        if(skipNext) {
+//                            // treat the horizontally next pixel also as motion
+//                            j++;
+//                            offset ^= 1;
+//                        }
+                        // do not set the motion pixel values. They have already been set by demosaicer or showMotion
+                        continue;
+                    }
+                }
+            }
             // motion correction disabled or no motion detected => combine the values from the four pixelshift frames
             greenDest[j + offsX] = (riFrames[1 - offset]->data[i - offset + 1][j] + riFrames[3 - offset]->data[i + offset][j + 1]) / 2.f;
             nonGreenDest0[j + offsX] = riFrames[(offset << 1) + offset]->data[i][j + offset];

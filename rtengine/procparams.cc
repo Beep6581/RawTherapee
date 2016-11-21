@@ -888,6 +888,7 @@ void RAWParams::setDefaults()
     bayersensor.pixelshiftMotion = 70;
     bayersensor.pixelshiftMotionCorrection = 3;
     bayersensor.pixelshiftShowMotion = false;
+    bayersensor.pixelshiftBlendMotion = false;
     bayersensor.black0 = 0.0;
     bayersensor.black1 = 0.0;
     bayersensor.black2 = 0.0;
@@ -3377,6 +3378,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotion) {
             keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelshiftShowMotion );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelshiftBlendMotion) {
+            keyFile.set_boolean ("RAW Bayer", "PixelShiftBlendMotion", raw.bayersensor.pixelshiftBlendMotion );
         }
 
         //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
@@ -7458,6 +7463,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelshiftShowMotion = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftBlendMotion"))  {
+                raw.bayersensor.pixelshiftBlendMotion = keyFile.get_boolean("RAW Bayer", "PixelShiftBlendMotion");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelshiftBlendMotion = true;
                 }
             }
 

@@ -45,10 +45,11 @@ protected:
     Adjuster* pixelShiftMotion;
     Adjuster* pixelShiftMotionCorrection;
     Gtk::CheckButton* pixelShiftShowMotion;
+    Gtk::CheckButton* pixelShiftBlendMotion;
     bool lastDCBen;
     int oldMethod;
     //bool lastALLen;
-    sigc::connection methodconn, imagenumberconn, dcbEnhconn, pixelShiftShowMotionconn; //,allEnhconn;
+    sigc::connection methodconn, imagenumberconn, dcbEnhconn, pixelShiftShowMotionconn, pixelShiftBlendMotionconn; //,allEnhconn;
 public:
 
     BayerProcess ();
@@ -63,6 +64,7 @@ public:
     void adjusterChanged     (Adjuster* a, double newval);
     void dcbEnhanceChanged();
     void pixelShiftShowMotionChanged();
+    void pixelShiftBlendMotionChanged();
     //void allEnhanceChanged();
 };
 

@@ -1966,7 +1966,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                 amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
             }
             if(numFrames == 4) {
-                pixelshift_simple(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, currFrame, raw.bayersensor.pixelshiftMotionCorrection);
+                pixelshift_simple(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, currFrame, raw.bayersensor.pixelshiftMotionCorrection, raw.bayersensor.pixelshiftBlendMotion);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
@@ -3561,7 +3561,7 @@ void RawImageSource::scaleColors_pixelshift(int winx, int winy, int winw, int wi
                 for (int col = winx; col < winx + winw; col++) {
                     int c = FC(row,col);
                     for(int frame = 0; frame < 4; ++frame) {
-                        float val = (riFrames[frame]->data[row][col]  - cblacksom[c]) * scale_mul[c];
+                        float val = (riFrames[frame]->data[row][col] - cblacksom[c]) * scale_mul[c];
                         tmpchmax[c] = max(tmpchmax[c], val);
                         riFrames[frame]->data[row][col] = val;
                     }

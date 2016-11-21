@@ -1185,6 +1185,7 @@ public:
         int pixelshiftMotion;
         int pixelshiftMotionCorrection;
         bool pixelshiftShowMotion;
+        bool pixelshiftBlendMotion;
         bool dcb_enhance;
         //bool all_enhance;
     };

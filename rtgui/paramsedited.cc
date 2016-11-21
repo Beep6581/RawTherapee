@@ -373,6 +373,7 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.pixelshiftMotion = v;
     raw.bayersensor.pixelshiftMotionCorrection = v;
     raw.bayersensor.pixelshiftShowMotion = v;
+    raw.bayersensor.pixelshiftBlendMotion = v;
     raw.bayersensor.greenEq = v;
     raw.bayersensor.linenoise = v;
     raw.xtranssensor.method = v;
@@ -872,6 +873,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.pixelshiftMotion = raw.bayersensor.pixelshiftMotion && p.raw.bayersensor.pixelshiftMotion == other.raw.bayersensor.pixelshiftMotion;
         raw.bayersensor.pixelshiftMotionCorrection = raw.bayersensor.pixelshiftMotionCorrection && p.raw.bayersensor.pixelshiftMotionCorrection == other.raw.bayersensor.pixelshiftMotionCorrection;
         raw.bayersensor.pixelshiftShowMotion = raw.bayersensor.pixelshiftShowMotion && p.raw.bayersensor.pixelshiftShowMotion == other.raw.bayersensor.pixelshiftShowMotion;
+        raw.bayersensor.pixelshiftBlendMotion = raw.bayersensor.pixelshiftBlendMotion && p.raw.bayersensor.pixelshiftBlendMotion == other.raw.bayersensor.pixelshiftBlendMotion;
         raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
         raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
@@ -2294,6 +2296,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (raw.bayersensor.pixelshiftShowMotion) {
         toEdit.raw.bayersensor.pixelshiftShowMotion = mods.raw.bayersensor.pixelshiftShowMotion;
+    }
+
+    if (raw.bayersensor.pixelshiftBlendMotion) {
+        toEdit.raw.bayersensor.pixelshiftBlendMotion = mods.raw.bayersensor.pixelshiftBlendMotion;
     }
 
     //if (raw.bayersensor.allEnhance)    toEdit.raw.bayersensor.all_enhance      = mods.raw.bayersensor.all_enhance;

@@ -86,6 +86,9 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftShowMotion = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTSHOWMOTION")));
     pixelShiftOptions->pack_start(*pixelShiftShowMotion);
 
+    pixelShiftBlendMotion = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTADAPTIVE")));
+    pixelShiftOptions->pack_start(*pixelShiftBlendMotion);
+
     pixelShiftMotion = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTMOTION"), 0, 100, 1, 70));
     pixelShiftMotion->setAdjusterListener (this);
     pixelShiftMotion->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTION_TOOLTIP"));
@@ -131,6 +134,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     imagenumberconn = imageNumber->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::imageNumberChanged) );
     dcbEnhconn = dcbEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::dcbEnhanceChanged), true);
     pixelShiftShowMotionconn = pixelShiftShowMotion->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftShowMotionChanged), true);
+    pixelShiftBlendMotionconn = pixelShiftBlendMotion->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftBlendMotionChanged), true);
     //allEnhconn = allEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::allEnhanceChanged), true);
 }
 
@@ -159,6 +163,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         dcbIterations->setEditedState ( pedited->raw.bayersensor.dcbIterations ? Edited : UnEdited);
         dcbEnhance->set_inconsistent(!pedited->raw.bayersensor.dcbEnhance);
         pixelShiftShowMotion->set_inconsistent(!pedited->raw.bayersensor.pixelshiftShowMotion);
+        pixelShiftBlendMotion->set_inconsistent(!pedited->raw.bayersensor.pixelshiftBlendMotion);
         //allEnhance->set_inconsistent(!pedited->raw.bayersensor.allEnhance);
         lmmseIterations->setEditedState ( pedited->raw.bayersensor.lmmseIterations ? Edited : UnEdited);
         pixelShiftMotion->setEditedState ( pedited->raw.bayersensor.pixelshiftMotion ? Edited : UnEdited);
@@ -177,6 +182,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     dcbIterations->setValue (pp->raw.bayersensor.dcb_iterations);
     dcbEnhance->set_active(pp->raw.bayersensor.dcb_enhance);
     pixelShiftShowMotion->set_active(pp->raw.bayersensor.pixelshiftShowMotion);
+    pixelShiftBlendMotion->set_active(pp->raw.bayersensor.pixelshiftBlendMotion);
     ccSteps->setValue (pp->raw.bayersensor.ccSteps);
     lmmseIterations->setValue (pp->raw.bayersensor.lmmse_iterations);
     pixelShiftMotion->setValue (pp->raw.bayersensor.pixelshiftMotion);
@@ -232,6 +238,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.pixelshiftMotion = pixelShiftMotion->getIntValue();
     pp->raw.bayersensor.pixelshiftMotionCorrection = pixelShiftMotionCorrection->getIntValue();
     pp->raw.bayersensor.pixelshiftShowMotion = pixelShiftShowMotion->get_active();
+    pp->raw.bayersensor.pixelshiftBlendMotion = pixelShiftBlendMotion->get_active();
 
     int currentRow = method->get_active_row_number();
     if( currentRow >= 0 && currentRow < procparams::RAWParams::BayerSensor::numMethods) {
@@ -255,6 +262,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelshiftMotion = pixelShiftMotion->getEditedState ();
         pedited->raw.bayersensor.pixelshiftMotionCorrection = pixelShiftMotionCorrection->getEditedState ();
         pedited->raw.bayersensor.pixelshiftShowMotion = !pixelShiftShowMotion->get_inconsistent();
+        pedited->raw.bayersensor.pixelshiftBlendMotion = !pixelShiftBlendMotion->get_inconsistent();
     }
 }
 
@@ -401,6 +409,28 @@ void BayerProcess::pixelShiftShowMotionChanged ()
         listener->panelChanged (EvDemosaicPixelshiftMotion, pixelShiftShowMotion->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }
+
+void BayerProcess::pixelShiftBlendMotionChanged ()
+{
+    if (batchMode) {
+        if (pixelShiftBlendMotion->get_inconsistent()) {
+            pixelShiftBlendMotion->set_inconsistent (false);
+            pixelShiftBlendMotionconn.block (true);
+            pixelShiftBlendMotion->set_active (false);
+            pixelShiftBlendMotionconn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftBlendMotion->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftBlendMotion->get_active ();
+    }
+    pixelShiftMotion->set_sensitive(!pixelShiftBlendMotion->get_active ());
+
+    if (listener) {
+        listener->panelChanged (EvDemosaicPixelshiftMotion, pixelShiftBlendMotion->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
 
 /*void BayerProcess::allEnhanceChanged ()
 {
