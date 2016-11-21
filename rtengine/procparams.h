@@ -1184,8 +1184,12 @@ public:
         int lmmse_iterations;
         int pixelshiftMotion;
         int pixelshiftMotionCorrection;
+        double pixelShiftStddevFactor;
+        double pixelShiftEperIso;
+        double pixelShiftNreadIso;
+        double pixelShiftPrnu;
         bool pixelshiftShowMotion;
-        bool pixelshiftBlendMotion;
+        bool pixelShiftAutomatic;
         bool dcb_enhance;
         //bool all_enhance;
     };

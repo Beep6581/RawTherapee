@@ -694,8 +694,12 @@ public:
         bool lmmseIterations;
         bool pixelshiftMotion;
         bool pixelshiftMotionCorrection;
+        bool pixelShiftStddevFactor;
+        bool pixelShiftEperIso;
+        bool pixelShiftNreadIso;
+        bool pixelShiftPrnu;
         bool pixelshiftShowMotion;
-        bool pixelshiftBlendMotion;
+        bool pixelShiftAutomatic;
         //bool allEnhance;
         bool greenEq;
         bool linenoise;

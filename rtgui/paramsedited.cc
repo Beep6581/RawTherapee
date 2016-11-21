@@ -372,8 +372,12 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.lmmseIterations = v;
     raw.bayersensor.pixelshiftMotion = v;
     raw.bayersensor.pixelshiftMotionCorrection = v;
+    raw.bayersensor.pixelShiftStddevFactor = v;
+    raw.bayersensor.pixelShiftEperIso = v;
+    raw.bayersensor.pixelShiftNreadIso = v;
+    raw.bayersensor.pixelShiftPrnu = v;
     raw.bayersensor.pixelshiftShowMotion = v;
-    raw.bayersensor.pixelshiftBlendMotion = v;
+    raw.bayersensor.pixelShiftAutomatic = v;
     raw.bayersensor.greenEq = v;
     raw.bayersensor.linenoise = v;
     raw.xtranssensor.method = v;
@@ -872,8 +876,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.lmmseIterations = raw.bayersensor.lmmseIterations && p.raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations;
         raw.bayersensor.pixelshiftMotion = raw.bayersensor.pixelshiftMotion && p.raw.bayersensor.pixelshiftMotion == other.raw.bayersensor.pixelshiftMotion;
         raw.bayersensor.pixelshiftMotionCorrection = raw.bayersensor.pixelshiftMotionCorrection && p.raw.bayersensor.pixelshiftMotionCorrection == other.raw.bayersensor.pixelshiftMotionCorrection;
+        raw.bayersensor.pixelShiftStddevFactor = raw.bayersensor.pixelShiftStddevFactor && p.raw.bayersensor.pixelShiftStddevFactor == other.raw.bayersensor.pixelShiftStddevFactor;
+        raw.bayersensor.pixelShiftEperIso = raw.bayersensor.pixelShiftEperIso && p.raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso;
+        raw.bayersensor.pixelShiftNreadIso = raw.bayersensor.pixelShiftNreadIso && p.raw.bayersensor.pixelShiftNreadIso == other.raw.bayersensor.pixelShiftNreadIso;
+        raw.bayersensor.pixelShiftPrnu = raw.bayersensor.pixelShiftPrnu && p.raw.bayersensor.pixelShiftPrnu == other.raw.bayersensor.pixelShiftPrnu;
         raw.bayersensor.pixelshiftShowMotion = raw.bayersensor.pixelshiftShowMotion && p.raw.bayersensor.pixelshiftShowMotion == other.raw.bayersensor.pixelshiftShowMotion;
-        raw.bayersensor.pixelshiftBlendMotion = raw.bayersensor.pixelshiftBlendMotion && p.raw.bayersensor.pixelshiftBlendMotion == other.raw.bayersensor.pixelshiftBlendMotion;
+        raw.bayersensor.pixelShiftAutomatic = raw.bayersensor.pixelShiftAutomatic && p.raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic;
         raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
         raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
@@ -2294,12 +2302,28 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelshiftMotionCorrection = mods.raw.bayersensor.pixelshiftMotionCorrection;
     }
 
+    if (raw.bayersensor.pixelShiftStddevFactor) {
+        toEdit.raw.bayersensor.pixelShiftStddevFactor = mods.raw.bayersensor.pixelShiftStddevFactor;
+    }
+
+    if (raw.bayersensor.pixelShiftEperIso) {
+        toEdit.raw.bayersensor.pixelShiftEperIso = mods.raw.bayersensor.pixelShiftEperIso;
+    }
+
+    if (raw.bayersensor.pixelShiftNreadIso) {
+        toEdit.raw.bayersensor.pixelShiftNreadIso = mods.raw.bayersensor.pixelShiftNreadIso;
+    }
+
+    if (raw.bayersensor.pixelShiftPrnu) {
+        toEdit.raw.bayersensor.pixelShiftPrnu = mods.raw.bayersensor.pixelShiftPrnu;
+    }
+
     if (raw.bayersensor.pixelshiftShowMotion) {
         toEdit.raw.bayersensor.pixelshiftShowMotion = mods.raw.bayersensor.pixelshiftShowMotion;
     }
 
-    if (raw.bayersensor.pixelshiftBlendMotion) {
-        toEdit.raw.bayersensor.pixelshiftBlendMotion = mods.raw.bayersensor.pixelshiftBlendMotion;
+    if (raw.bayersensor.pixelShiftAutomatic) {
+        toEdit.raw.bayersensor.pixelShiftAutomatic = mods.raw.bayersensor.pixelShiftAutomatic;
     }
 
     //if (raw.bayersensor.allEnhance)    toEdit.raw.bayersensor.all_enhance      = mods.raw.bayersensor.all_enhance;

@@ -887,8 +887,12 @@ void RAWParams::setDefaults()
     bayersensor.lmmse_iterations = 2;
     bayersensor.pixelshiftMotion = 70;
     bayersensor.pixelshiftMotionCorrection = 3;
+    bayersensor.pixelShiftStddevFactor = 5.0;
+    bayersensor.pixelShiftEperIso = 0.75;
+    bayersensor.pixelShiftNreadIso = 5.0;
+    bayersensor.pixelShiftPrnu = 1.0;
     bayersensor.pixelshiftShowMotion = false;
-    bayersensor.pixelshiftBlendMotion = false;
+    bayersensor.pixelShiftAutomatic = false;
     bayersensor.black0 = 0.0;
     bayersensor.black1 = 0.0;
     bayersensor.black2 = 0.0;
@@ -3376,12 +3380,28 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("RAW Bayer", "PixelShiftMotionCorrection", raw.bayersensor.pixelshiftMotionCorrection );
         }
 
+        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactor) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftStddevFactor", raw.bayersensor.pixelShiftStddevFactor );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftEperIso) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftEperIso", raw.bayersensor.pixelShiftEperIso );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNreadIso) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftNreadIso", raw.bayersensor.pixelShiftNreadIso );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftPrnu) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftPrnu", raw.bayersensor.pixelShiftPrnu );
+        }
+
         if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotion) {
             keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelshiftShowMotion );
         }
 
-        if (!pedited || pedited->raw.bayersensor.pixelshiftBlendMotion) {
-            keyFile.set_boolean ("RAW Bayer", "PixelShiftBlendMotion", raw.bayersensor.pixelshiftBlendMotion );
+        if (!pedited || pedited->raw.bayersensor.pixelShiftAutomatic) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftAutomatic", raw.bayersensor.pixelShiftAutomatic );
         }
 
         //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
@@ -7458,6 +7478,38 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
  
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftStddevFactor"))  {
+                raw.bayersensor.pixelShiftStddevFactor = keyFile.get_double("RAW Bayer", "PixelShiftStddevFactor");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftStddevFactor = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftEperIso"))  {
+                raw.bayersensor.pixelShiftEperIso = keyFile.get_double("RAW Bayer", "PixelShiftEperIso");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftEperIso = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftNreadIso"))  {
+                raw.bayersensor.pixelShiftNreadIso = keyFile.get_double("RAW Bayer", "PixelShiftNreadIso");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNreadIso = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftPrnu"))  {
+                raw.bayersensor.pixelShiftPrnu = keyFile.get_double("RAW Bayer", "PixelShiftPrnu");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftPrnu = true;
+                }
+            }
+
             if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotion"))  {
                 raw.bayersensor.pixelshiftShowMotion = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotion");
 
@@ -7466,11 +7518,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("RAW Bayer", "PixelShiftBlendMotion"))  {
-                raw.bayersensor.pixelshiftBlendMotion = keyFile.get_boolean("RAW Bayer", "PixelShiftBlendMotion");
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftAutomatic"))  {
+                raw.bayersensor.pixelShiftAutomatic = keyFile.get_boolean("RAW Bayer", "pixelShiftAutomatic");
 
                 if (pedited) {
-                    pedited->raw.bayersensor.pixelshiftBlendMotion = true;
+                    pedited->raw.bayersensor.pixelShiftAutomatic = true;
                 }
             }
 
