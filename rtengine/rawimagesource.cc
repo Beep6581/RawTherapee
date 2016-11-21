@@ -1962,7 +1962,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
             amaze_demosaic_RT (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple] ) {
-            if(raw.bayersensor.pixelshiftMotion > 0) {
+            if(raw.bayersensor.pixelshiftMotion > 0 || raw.bayersensor.pixelshiftBlendMotion) {
                 amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
             }
             if(numFrames == 4) {

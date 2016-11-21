@@ -76,7 +76,7 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
     bool checkRedBlue = (gridSize == 5);
 //    bool checkRedBlue = false;
     unsigned int offsX = 0, offsY = 0;
-    if(detectMotion) {
+    if(detectMotion || blendMotion) {
         // if motion correction is enabled we have to adjust the offsets for the selected subframe we use for areas with motion
         switch (frame) {
             case 0:
@@ -120,7 +120,7 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
         
         float greenDifMax[gridSize];
         // motion detection checks the grid around the pixel for differences in green channels
-        if(detectMotion) {
+        if(detectMotion || blendMotion) {
             if(gridSize == 3) {
                 // compute maximum of differences for first two columns of 3x3 grid
                 greenDifMax[0] =  max(greenDiff(riFrames[0 + offset]->data[i + offset][j - 1], riFrames[2 + offset]->data[i - offset + 1][j]),
