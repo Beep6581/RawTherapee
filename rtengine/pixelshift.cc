@@ -43,7 +43,8 @@ float greenDiff(float a, float b, bool adaptive, float scale, float stddevFactor
     float diff = std::fabs(a - b) / (std::max(a, b) + 0.01f);
     if(adaptive) {
         float avg = (a+b)/2.f;
-        avg *= scale;
+        avg *= scale; // revert the colour scaling
+        prnu *= (avg * eperIso);
         float stddev = sqrtf(avg * eperIso + nreadIso * nreadIso + prnu * prnu);
         float korr = stddevFactor * stddev / (a * scale);
         diff -= korr;
@@ -78,7 +79,8 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
 
 //    const float eperIso = 0.75f * idata->getISOSpeed() / 100;
     eperIso *= (idata->getISOSpeed() / 100);
-    nreadIso *= (idata->getISOSpeed() / 100);
+//    nreadIso *= (idata->getISOSpeed() / 100);
+    prnu /= 100.f;
 //    const float nreadIso = 5.f * idata->getISOSpeed() / 100;
 //    const float prnu = 1.f;
 //    const float stddevFactor = 4.f;

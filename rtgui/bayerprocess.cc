@@ -132,7 +132,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftEperIso->show();
     pixelShiftOptions->pack_start(*pixelShiftEperIso);
 
-    pixelShiftNreadIso = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTNREADISO"), 1.0, 10.0, 0.5, 5.0));
+    pixelShiftNreadIso = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTNREADISO"), 1.0, 10.0, 0.05, 3.45));
     pixelShiftNreadIso->setAdjusterListener (this);
 //    pixelShiftStddevFactor->set_tooltip_markup (M("TP_RAW_PIXELSHIFTSTDDEVFACTOR_TOOLTIP"));
 
