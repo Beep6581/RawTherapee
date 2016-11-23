@@ -1003,8 +1003,8 @@ Camera constants:
         "ranges": { "white": 16300 }
     },
 
-    { // Quality B
-        "make_model": [ "Canon PowerShot G7 X", "Canon PowerShot G7 X Mark II" ],
+    { // Quality B,
+        "make_model": "Canon PowerShot G7 X",
         "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 ], // DNG_V8.7 D65
         //"raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
@@ -1012,8 +1012,8 @@ Camera constants:
         "ranges": { "white": 4080 }
     },
 
-    { // Quality B
-        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G9 X" ],
+    { // Quality B,
+        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G9 X", "Canon PowerShot G7 X Mark II" ],
         "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 ], // DNG_V8.7 D65
         //"raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
@@ -1328,6 +1328,20 @@ Camera constants:
                 { "iso": [ 100, 200 ], "levels": 3950 }, // normal 4080-4095, HR Dpreview 4047, IR 3956
                 { "iso": [ 400, 800, 1600, 3200 ], "levels": 4070 }, // 4070-4095
                 { "iso": [ 6400, 12800, 25600 ], "levels": 4040 } // 4000-4095
+            ]
+        }
+    },
+
+    { // Quality C, 20Mp and 80Mp raw frames, Color matrix copied from EM5MKII which looks to be close.
+        "make_model": "OLYMPUS E-M1MarkII",
+        "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // E-M5II dng_v9.5 D65
+        "raw_crop": [ 8, 8, -16, -8 ], // full raw 5240X3912, jpeg top12,left12,5184x3888, full hires 10400X7792, jpeg crop 8,8,10368x7776
+        "ranges": {
+            "white": [
+                { "iso": [ 64, 100, 125, 160, 200, 250, 320, 400 ], "levels": 4090 }, // normal 4095
+                { "iso": [ 500, 640, 800, 1000, 1600 ], "levels": 4080 }, // 4085-4095
+                { "iso": [ 2000, 2500, 3200, 4000, 5000, 6400 ], "levels": 4060 }, // 4085-4095
+                { "iso": [ 12800, 25600, 51200 ], "levels": 4060 } // guess
             ]
         }
     },
@@ -1698,6 +1712,22 @@ Camera constants:
                 { "iso": [ 3200, 6400 ], "levels": 16200 }, // 16350
                 { "iso": [ 12800, 25600 ], "levels": 16100 }, // 16300
                 { "iso": [ 51200, 102400 ], "levels": 16000 } // 16200
+            ]
+        }
+    },
+
+    { // Quality B, Intemediate ISO samples missing, Pentax_DNG WLtags are after BL sutraction and not valid
+        "make_model": [ "RICOH PENTAX K-1", "PENTAX K-1" ],
+        "dcraw_matrix": [ 8596,-2981,-639,-4202,12046,2431,-685,1424,6122 ], // adobe DNG v9.7 D65
+        //"dcraw_matrix": [ 8566,-2746,-1201,-3612,12204,1550,-893,1680,6264 ], // PENTAX DNG
+        "raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
+        "ranges": {
+            "white": [
+                { "iso": [ 100, 200, 400, 800 ], "levels": 16300 }, // 16380
+                { "iso": [ 1600, 3200 ], "levels": 16250 }, // 16360
+                { "iso": [ 6400, 12800 ], "levels": 16200 }, // 16330
+                { "iso": [ 25600, 51200 ], "levels": 16100 }, // 16300
+                { "iso": 102400, "levels": 16000 } // 16200
             ]
         }
     },
