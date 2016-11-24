@@ -86,7 +86,7 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
             log2Lut[i>>1] = lutStrength * log2(i) / 100.f;
     }
     const float scaleGreen = 1.f / scale_mul[1];
-    eperIso *= (idata->getISOSpeed() / 100);
+    eperIso *= (100 / idata->getISOSpeed());
     prnu /= 100.f;
 
     // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
