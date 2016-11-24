@@ -40,13 +40,14 @@ float greenDiff(float a, float b, bool adaptive, float scale, float stddevFactor
 {
     // calculate the difference between to green samples
     // add a small epsilon to avoid division by zero
-    float diff = std::fabs(a - b) / (std::max(a, b) + 0.01f);
+    float maxVal = std::max(a, b) + 0.01f;
+    float diff = std::fabs(a - b) / maxVal;
     if(adaptive) {
         float avg = (a+b)/2.f;
         avg *= scale; // revert the colour scaling
         prnu *= (avg * eperIso);
         float stddev = sqrtf(avg * eperIso + nreadIso * nreadIso + prnu * prnu);
-        float korr = stddevFactor * stddev / (a * scale);
+        float korr = stddevFactor * stddev / (maxVal * scale);
         diff -= korr;
     }
     return diff;
@@ -77,13 +78,9 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
     for(int i=2; i < 65536; i+=2)
         log2Lut[i>>1] = 2.f * log2(i) / 100.f;
 
-//    const float eperIso = 0.75f * idata->getISOSpeed() / 100;
     eperIso *= (idata->getISOSpeed() / 100);
-//    nreadIso *= (idata->getISOSpeed() / 100);
     prnu /= 100.f;
-//    const float nreadIso = 5.f * idata->getISOSpeed() / 100;
-//    const float prnu = 1.f;
-//    const float stddevFactor = 4.f;
+
     // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
     float motionThreshold = 1.f - (motion / 100.f);
     // For shades of green motion indicators 
