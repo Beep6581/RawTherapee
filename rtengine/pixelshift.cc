@@ -51,7 +51,8 @@ float greenDiff(float a, float b, bool adaptive, float scale, float stddevFactor
         float stddev = sqrtf(avg + nreadIso * nreadIso + prnu * prnu);
 //        float korr = stddevFactor * stddev / (a * scale);      // V0: use G1 not scaled by eperIso
 //        float korr = stddevFactor * stddev / (maxVal * scale); // V1: use max(G1,G2) not scaled by eperIso
-        float korr = stddevFactor * stddev / (gDiff / (eperIso * scale)); // V2: use absolute difference abs(G1-G2) scaled by eperISo
+//        float korr = stddevFactor * stddev / (gDiff / (eperIso * scale)); // V2: use absolute difference abs(G1-G2) scaled by eperISo
+        float korr = stddevFactor * stddev / (gDiff * eperIso * scale); // V3: corrected version of V2
         diff -= korr;
     }
     return diff;
