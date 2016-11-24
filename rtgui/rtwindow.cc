@@ -261,6 +261,7 @@ RTWindow::RTWindow ()
 
         if (options.mainNBVertical) {
             prProgBar.set_orientation(Gtk::ORIENTATION_VERTICAL);
+            prProgBar.set_inverted(true);
             actionGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
             actionGrid->attach_next_to(prProgBar, Gtk::POS_BOTTOM, 1, 1);
             actionGrid->attach_next_to(*preferences, Gtk::POS_BOTTOM, 1, 1);
