@@ -39,24 +39,21 @@ namespace
 float greenDiff(float a, float b, bool adaptive, float scale, float stddevFactor, float eperIso, float nreadIso, float prnu)
 {
     // calculate the difference between to green samples
-    // add a small epsilon to avoid division by zero
-    float maxVal = std::max(a, b) + 0.01f;
     float gDiff = std::fabs(a - b);
-    float diff = gDiff / maxVal;
     if(adaptive) {
-        float avg = (a+b)/2.f;
+        float avg = (a + b) / 2.f;
         avg *= scale; // revert the colour scaling
         avg *= eperIso;
         prnu *= avg;
-        float stddev = sqrtf(avg + nreadIso * nreadIso + prnu * prnu);
-//        float korr = stddevFactor * stddev / (a * scale);      // V0: use G1 not scaled by eperIso
-        float korr = stddevFactor * stddev / (maxVal * scale); // V1: use max(G1,G2) not scaled by eperIso
-//        float korr = stddevFactor * stddev / (gDiff / (eperIso * scale)); // V2: use absolute difference abs(G1-G2) scaled by eperISo
-//        float korr = stddevFactor * stddev / (gDiff * eperIso * scale); // V3: corrected version of V2
-//        float korr = stddevFactor * stddev / (maxVal * scale * eperIso); // V4: use max(G1,G2) scaled by eperIso
-        diff -= korr;
+        float stddev = stddevFactor * sqrtf(avg + nreadIso * nreadIso + prnu * prnu);
+        gDiff *= scale;
+        gDiff *= eperIso;
+        return gDiff - stddev;
+    } else {
+        // add a small epsilon to avoid division by zero
+        float maxVal = std::max(a, b) + 0.01f;
+        return gDiff / maxVal;
     }
-    return diff;
 }
 
 }
@@ -87,7 +84,9 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
             log2Lut[i>>1] = lutStrength * log2(i) / 100.f;
     }
     const float scaleGreen = 1.f / scale_mul[1];
-    eperIso *= (idata->getISOSpeed() / 100.f);
+
+    eperIso *= (100.f / idata->getISOSpeed());
+
     prnu /= 100.f;
 
     // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
