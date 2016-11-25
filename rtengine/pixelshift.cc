@@ -75,6 +75,7 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
     }
 
 
+    printf("Pixelshift parameters : gridSize %d\tadaptive %d\tstdDevFactor %f\telectrons %f\tnread %f\tprnu %f\n",gridSize, adaptive, stddevFactor, eperIso, nreadIso, prnu);
     gridSize += ((gridSize & 1) == 0 ? 1 : 0);
     // Lookup table for non adaptive (slider) mode
     LUTf log2Lut(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
@@ -86,7 +87,7 @@ void RawImageSource::pixelshift_simple(int winx, int winy, int winw, int winh, b
             log2Lut[i>>1] = lutStrength * log2(i) / 100.f;
     }
     const float scaleGreen = 1.f / scale_mul[1];
-    eperIso *= (100 / idata->getISOSpeed());
+    eperIso *= (idata->getISOSpeed() / 100.f);
     prnu /= 100.f;
 
     // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
