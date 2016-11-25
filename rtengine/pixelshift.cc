@@ -256,7 +256,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     }
                     // do not set the motion pixel values. They have already been set by demosaicer or showMotion
                     continue;
-                } else if(showOnlyMask) {
+                } else if(showMotion && showOnlyMask) {
                     greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
                     continue;
                 }
