@@ -1189,6 +1189,7 @@ public:
         double pixelShiftNreadIso;
         double pixelShiftPrnu;
         bool pixelshiftShowMotion;
+        bool pixelshiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
         bool dcb_enhance;
         //bool all_enhance;

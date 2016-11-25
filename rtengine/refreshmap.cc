@@ -471,7 +471,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvLskal
     OUTPUTPROFILE,    // EvOBPCompens
     DARKFRAME,        // EvRawImageNum
-    DEMOSAIC          // EvDemosaicPixelshiftMotion
+    DEMOSAIC,         // EvDemosaicPixelshiftMotion
+    DEMOSAIC          // EvDemosaicPixelshiftMotionMaskOnly
 
 };
 

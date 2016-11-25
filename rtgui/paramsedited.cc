@@ -377,6 +377,7 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.pixelShiftNreadIso = v;
     raw.bayersensor.pixelShiftPrnu = v;
     raw.bayersensor.pixelshiftShowMotion = v;
+    raw.bayersensor.pixelshiftShowMotionMaskOnly = v;
     raw.bayersensor.pixelShiftAutomatic = v;
     raw.bayersensor.greenEq = v;
     raw.bayersensor.linenoise = v;
@@ -881,6 +882,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.pixelShiftNreadIso = raw.bayersensor.pixelShiftNreadIso && p.raw.bayersensor.pixelShiftNreadIso == other.raw.bayersensor.pixelShiftNreadIso;
         raw.bayersensor.pixelShiftPrnu = raw.bayersensor.pixelShiftPrnu && p.raw.bayersensor.pixelShiftPrnu == other.raw.bayersensor.pixelShiftPrnu;
         raw.bayersensor.pixelshiftShowMotion = raw.bayersensor.pixelshiftShowMotion && p.raw.bayersensor.pixelshiftShowMotion == other.raw.bayersensor.pixelshiftShowMotion;
+        raw.bayersensor.pixelshiftShowMotionMaskOnly = raw.bayersensor.pixelshiftShowMotionMaskOnly && p.raw.bayersensor.pixelshiftShowMotionMaskOnly == other.raw.bayersensor.pixelshiftShowMotionMaskOnly;
         raw.bayersensor.pixelShiftAutomatic = raw.bayersensor.pixelShiftAutomatic && p.raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic;
         raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
         raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
@@ -2320,6 +2322,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (raw.bayersensor.pixelshiftShowMotion) {
         toEdit.raw.bayersensor.pixelshiftShowMotion = mods.raw.bayersensor.pixelshiftShowMotion;
+    }
+
+    if (raw.bayersensor.pixelshiftShowMotionMaskOnly) {
+        toEdit.raw.bayersensor.pixelshiftShowMotionMaskOnly = mods.raw.bayersensor.pixelshiftShowMotionMaskOnly;
     }
 
     if (raw.bayersensor.pixelShiftAutomatic) {

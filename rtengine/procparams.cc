@@ -889,10 +889,11 @@ void RAWParams::setDefaults()
     bayersensor.pixelshiftMotionCorrection = 3;
     bayersensor.pixelShiftStddevFactor = 5.0;
     bayersensor.pixelShiftEperIso = 0.75;
-    bayersensor.pixelShiftNreadIso = 5.0;
+    bayersensor.pixelShiftNreadIso = 3.45;
     bayersensor.pixelShiftPrnu = 1.0;
     bayersensor.pixelshiftShowMotion = false;
-    bayersensor.pixelShiftAutomatic = false;
+    bayersensor.pixelshiftShowMotionMaskOnly = false;
+    bayersensor.pixelShiftAutomatic = true;
     bayersensor.black0 = 0.0;
     bayersensor.black1 = 0.0;
     bayersensor.black2 = 0.0;
@@ -3398,6 +3399,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotion) {
             keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelshiftShowMotion );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly) {
+            keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotionMaskOnly", raw.bayersensor.pixelshiftShowMotionMaskOnly );
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftAutomatic) {
@@ -7515,6 +7520,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelshiftShowMotion = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotionMaskOnly"))  {
+                raw.bayersensor.pixelshiftShowMotionMaskOnly = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotionMaskOnly");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly = true;
                 }
             }
 

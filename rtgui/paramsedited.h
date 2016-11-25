@@ -699,6 +699,7 @@ public:
         bool pixelShiftNreadIso;
         bool pixelShiftPrnu;
         bool pixelshiftShowMotion;
+        bool pixelshiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
         //bool allEnhance;
         bool greenEq;
