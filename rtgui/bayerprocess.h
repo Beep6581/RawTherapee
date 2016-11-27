@@ -47,6 +47,7 @@ protected:
     Gtk::CheckButton* pixelShiftShowMotion;
     Gtk::CheckButton* pixelShiftShowMotionMaskOnly;
     Gtk::CheckButton* pixelShiftAutomatic;
+    Gtk::CheckButton* pixelShiftNonGreenHorizontal;
     Adjuster* pixelShiftStddevFactor;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftNreadIso;
@@ -54,7 +55,7 @@ protected:
     bool lastDCBen;
     int oldMethod;
     //bool lastALLen;
-    sigc::connection methodconn, imagenumberconn, dcbEnhconn, pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn; //,allEnhconn;
+    sigc::connection methodconn, imagenumberconn, dcbEnhconn, pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn, pixelShiftNonGreenHorizontalconn; //,allEnhconn;
 public:
 
     BayerProcess ();
@@ -71,6 +72,7 @@ public:
     void pixelShiftShowMotionChanged();
     void pixelShiftShowMotionMaskOnlyChanged();
     void pixelShiftAutomaticChanged();
+    void pixelShiftNonGreenHorizontalChanged();
     //void allEnhanceChanged();
 };
 

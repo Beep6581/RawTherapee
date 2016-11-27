@@ -37,7 +37,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
@@ -1521,7 +1521,7 @@ StopWatch Stop1("decode");
 {
     int errCodeThr = 0;
 #ifdef _OPENMP
-#pragma omp for
+#pragma omp for nowait
 #endif
     for(unsigned int i = 0; i < numFrames; ++i) {
         if(i == 0) {
@@ -1531,7 +1531,7 @@ StopWatch Stop1("decode");
             riFrames[i] = new RawImage(fname);
             errCodeThr = riFrames[i]->loadRaw (true, i);
         }
-        riFrames[i]->compress_image();
+        riFrames[i]->compress_image(i);
     }
 #ifdef _OPENMP
 #pragma omp critical
@@ -1966,7 +1966,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                 amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
             }
             if(numFrames == 4) {
-                pixelshift(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelshiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactor, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu);
+                pixelshift(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelshiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactor, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, raw.bayersensor.pixelShiftNonGreenHorizontal);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
@@ -3520,64 +3520,24 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
 void RawImageSource::scaleColors_pixelshift(int winx, int winy, int winw, int winh, const RAWParams &raw)
 {
-    chmax[0] = chmax[1] = chmax[2] = chmax[3] = 0; //channel maxima
-    float black_lev[4] = {0.f};//black level
-
-    //adjust black level  (eg Canon)
-    bool isMono = false;
-
-    black_lev[0] = raw.bayersensor.black1; //R
-    black_lev[1] = raw.bayersensor.black0; //G1
-    black_lev[2] = raw.bayersensor.black2; //B
-    black_lev[3] = raw.bayersensor.black3; //G2
-
-    for(int i = 0; i < 4 ; i++) {
-        cblacksom[i] = max( c_black[i] + black_lev[i], 0.0f );    // adjust black level
-    }
-
-    initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom, isMono, ri->get_colors()); // recalculate scale colors with adjusted levels
-
-    //fprintf(stderr, "recalc: %f [%f %f %f %f]\n", initialGain, scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
-    for(int i = 0; i < 4 ; i++) {
-        clmax[i] = (c_white[i] - cblacksom[i]) * scale_mul[i];    // raw clip level
-    }
-
-    // this seems strange, but it works
+    BENCHFUN
 
     // scale image colors
 
 #ifdef _OPENMP
-        #pragma omp parallel
+        #pragma omp parallel for schedule(dynamic,64) collapse(2)
 #endif
+    for(int frame = 0; frame < 4; ++frame) {
+        for (int row = winy; row < winy + winh; row ++)
         {
-            float tmpchmax[3];
-            tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
-#ifdef _OPENMP
-            #pragma omp for nowait
-#endif
-
-            for (int row = winy; row < winy + winh; row ++)
-            {
-                for (int col = winx; col < winx + winw; col++) {
-                    int c = FC(row,col);
-                    for(int frame = 0; frame < 4; ++frame) {
-                        float val = (riFrames[frame]->data[row][col] - cblacksom[c]) * scale_mul[c];
-                        tmpchmax[c] = max(tmpchmax[c], val);
-                        riFrames[frame]->data[row][col] = val;
-                    }
-                }
-            }
-
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            {
-                chmax[0] = max(tmpchmax[0], chmax[0]);
-                chmax[1] = max(tmpchmax[1], chmax[1]);
-                chmax[2] = max(tmpchmax[2], chmax[2]);
+            for (int col = winx; col < winx + winw; col++) {
+                int c = FC(row,col);
+                float val = (riFrames[frame]->data[row][col] - cblacksom[c]) * scale_mul[c];
+                riFrames[frame]->data[row][col] = val;
             }
         }
-        pixelShiftColoursScaled = true;
+    }
+    pixelShiftColoursScaled = true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

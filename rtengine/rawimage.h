@@ -119,7 +119,7 @@ public:
     {
         return image;
     }
-    float** compress_image(); // revert to compressed pixels format and release image data
+    float** compress_image(int frameNum); // revert to compressed pixels format and release image data
     float** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
     unsigned prefilters;               // original filters saved ( used for 4 color processing )
     unsigned int getFrameCount() const { return is_raw; }

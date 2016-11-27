@@ -885,7 +885,7 @@ void RAWParams::setDefaults()
     bayersensor.dcb_enhance = true;
     //bayersensor.all_enhance = false;
     bayersensor.lmmse_iterations = 2;
-    bayersensor.pixelshiftMotion = 70;
+    bayersensor.pixelshiftMotion = 0;
     bayersensor.pixelshiftMotionCorrection = 3;
     bayersensor.pixelShiftStddevFactor = 5.0;
     bayersensor.pixelShiftEperIso = 0.75;
@@ -894,6 +894,7 @@ void RAWParams::setDefaults()
     bayersensor.pixelshiftShowMotion = false;
     bayersensor.pixelshiftShowMotionMaskOnly = false;
     bayersensor.pixelShiftAutomatic = true;
+    bayersensor.pixelShiftNonGreenHorizontal = false;
     bayersensor.black0 = 0.0;
     bayersensor.black1 = 0.0;
     bayersensor.black2 = 0.0;
@@ -3407,6 +3408,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftAutomatic) {
             keyFile.set_boolean ("RAW Bayer", "pixelShiftAutomatic", raw.bayersensor.pixelShiftAutomatic );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenHorizontal) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenHorizontal", raw.bayersensor.pixelShiftNonGreenHorizontal );
         }
 
         //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
@@ -7539,6 +7544,13 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenHorizontal"))  {
+                raw.bayersensor.pixelShiftNonGreenHorizontal = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenHorizontal");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenHorizontal = true;
+                }
+            }
             //if (keyFile.has_key ("RAW Bayer", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW Bayer", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
         }
 

@@ -1191,6 +1191,7 @@ public:
         bool pixelshiftShowMotion;
         bool pixelshiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
+        bool pixelShiftNonGreenHorizontal;
         bool dcb_enhance;
         //bool all_enhance;
     };

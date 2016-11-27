@@ -701,6 +701,8 @@ public:
         bool pixelshiftShowMotion;
         bool pixelshiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
+        bool pixelShiftNonGreenHorizontal;
+
         //bool allEnhance;
         bool greenEq;
         bool linenoise;

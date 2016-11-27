@@ -659,7 +659,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
     return 0;
 }
 
-float** RawImage::compress_image()
+float** RawImage::compress_image(int frameNum)
 {
     if( !image ) {
         return nullptr;
@@ -667,11 +667,12 @@ float** RawImage::compress_image()
 
     if (isBayer() || isXtrans()) {
         if (!allocation) {
-            allocation = new float[height * width];
+            // shift the beginning of all frames but the first by 32 floats to avoid cache miss conflicts on CPUs which have <= 4-way associative L1-Cache
+            allocation = new float[height * width + frameNum * 32];
             data = new float*[height];
 
             for (int i = 0; i < height; i++) {
-                data[i] = allocation + i * width;
+                data[i] = allocation + i * width + frameNum * 32;
             }
         }
     } else if (colors == 1) {

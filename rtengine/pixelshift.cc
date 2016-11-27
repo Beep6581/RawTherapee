@@ -36,7 +36,7 @@
 namespace
 {
 
-float greenDiff(float a, float b, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, bool showMotion)
+float colourDiff(float a, float b, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, bool showMotion)
 {
     // calculate the difference between to green samples
     if(adaptive) {
@@ -68,7 +68,7 @@ float greenDiff(float a, float b, bool adaptive, float stddevFactor, float eperI
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, unsigned int gridSize, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, unsigned int gridSize, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, bool checkNonGreenHorizontal)
 {
 
     BENCHFUN
@@ -93,7 +93,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
     const float scaleGreen = 1.f / scale_mul[1];
 
     eperIso *= (100.f / idata->getISOSpeed());
-    eperIso *= scaleGreen;
+    
+    float eperIsoGreen = eperIso * scaleGreen;
 
     prnu /= 100.f;
     stddevFactor *= stddevFactor;
@@ -104,9 +105,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
     // For shades of green motion indicators 
     const float blendFactor = (motion == 0.f ? 1.f : 1.f / (1.f - motionThreshold));
 
-//    bool showOnlyMask = showMotion;
-//    bool checkRedBlue = (gridSize == 5);
-//    bool checkRedBlue = false;
+    bool checkNonGreen = true;
     unsigned int offsX = 0, offsY = 0;
     // We have to adjust the offsets for the selected subframe we use for areas with motion
     switch (frame) {
@@ -128,6 +127,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
             offsY = 0;
     }
 
+    const float thresh = adaptive ? 0.f : motionThreshold;
+
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -138,10 +139,16 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
         float *nonGreenDest1 = blue[i + offsY];
         int j = winx + border - offsX;
         int c = FC(i, j);
+        float scaleNonGreen0 = 1.f / scale_mul[0];
+        float scaleNonGreen2 = 1.f / scale_mul[2];
+        float eperIsoNonGreen0 = eperIso / scale_mul[0];
+        float eperIsoNonGreen2 = eperIso / scale_mul[2];
 
         if (c == 2 || ((c & 1) && FC(i, j + 1) == 2)) {
             // row with blue pixels => swap destination pointers for non green pixels
             std::swap(nonGreenDest0, nonGreenDest1);
+            std::swap(scaleNonGreen0, scaleNonGreen2);
+            std::swap(eperIsoNonGreen0, eperIsoNonGreen2);
         }
 
         // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
@@ -152,39 +159,39 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
         if(detectMotion || adaptive) {
             if(gridSize == 3) {
                 // compute maximum of differences for first two columns of 3x3 grid
-                greenDifMax[0] =  max(greenDiff(riFrames[0 + offset]->data[i + offset][j - 1], riFrames[2 + offset]->data[i - offset + 1][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset][j - 1], riFrames[3 - offset]->data[i + offset - 1][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset + 2][j - 1], riFrames[3 - offset]->data[i + offset + 1][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                greenDifMax[0] =  max(colourDiff(riFrames[0 + offset]->data[i + offset][j - 1], riFrames[2 + offset]->data[i - offset + 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset][j - 1], riFrames[3 - offset]->data[i + offset - 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset + 2][j - 1], riFrames[3 - offset]->data[i + offset + 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                      );
-                greenDifMax[1] =  max(greenDiff(riFrames[1 - offset]->data[i - offset + 1][j], riFrames[3 - offset]->data[i + offset][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset - 1][j], riFrames[2 + offset]->data[i - offset][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset + 1][j], riFrames[2 + offset]->data[i - offset + 2][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                greenDifMax[1] =  max(colourDiff(riFrames[1 - offset]->data[i - offset + 1][j], riFrames[3 - offset]->data[i + offset][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset - 1][j], riFrames[2 + offset]->data[i - offset][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset + 1][j], riFrames[2 + offset]->data[i - offset + 2][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                      );
             } else if(gridSize == 5) {
                 // compute maximum of differences for first four columns of 5x5 grid
-                greenDifMax[0] =  max(greenDiff(riFrames[1 - offset]->data[i - offset - 1][j-2], riFrames[3 - offset]->data[i + offset -2][j - 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset + 1][j-2], riFrames[3 - offset]->data[i + offset][j - 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset + 3][j-2], riFrames[3 - offset]->data[i + offset +2][j - 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset - 1][j-2], riFrames[2 + offset]->data[i - offset][j - 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset + 1][j-2], riFrames[2 + offset]->data[i - offset + 2][j - 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                greenDifMax[0] =  max(colourDiff(riFrames[1 - offset]->data[i - offset - 1][j-2], riFrames[3 - offset]->data[i + offset -2][j - 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset + 1][j-2], riFrames[3 - offset]->data[i + offset][j - 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset + 3][j-2], riFrames[3 - offset]->data[i + offset +2][j - 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset - 1][j-2], riFrames[2 + offset]->data[i - offset][j - 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset + 1][j-2], riFrames[2 + offset]->data[i - offset + 2][j - 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                      );
-                greenDifMax[1] =  max(greenDiff(riFrames[0 + offset]->data[i + offset-2][j - 1], riFrames[2 + offset]->data[i - offset - 1][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset][j - 1], riFrames[2 + offset]->data[i - offset + 1][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset+2][j - 1], riFrames[2 + offset]->data[i - offset + 3][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset][j - 1], riFrames[3 - offset]->data[i + offset - 1][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset + 2][j - 1], riFrames[3 - offset]->data[i + offset + 1][j], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                greenDifMax[1] =  max(colourDiff(riFrames[0 + offset]->data[i + offset-2][j - 1], riFrames[2 + offset]->data[i - offset - 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset][j - 1], riFrames[2 + offset]->data[i - offset + 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset+2][j - 1], riFrames[2 + offset]->data[i - offset + 3][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset][j - 1], riFrames[3 - offset]->data[i + offset - 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset + 2][j - 1], riFrames[3 - offset]->data[i + offset + 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                      );
-                greenDifMax[2] =  max(greenDiff(riFrames[1 - offset]->data[i - offset - 1][j], riFrames[3 - offset]->data[i + offset -2][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset + 1][j], riFrames[3 - offset]->data[i + offset][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset + 3][j], riFrames[3 - offset]->data[i + offset +2][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset - 1][j], riFrames[2 + offset]->data[i - offset][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset + 1][j], riFrames[2 + offset]->data[i - offset + 2][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                greenDifMax[2] =  max(colourDiff(riFrames[1 - offset]->data[i - offset - 1][j], riFrames[3 - offset]->data[i + offset -2][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset + 1][j], riFrames[3 - offset]->data[i + offset][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset + 3][j], riFrames[3 - offset]->data[i + offset +2][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset - 1][j], riFrames[2 + offset]->data[i - offset][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset + 1][j], riFrames[2 + offset]->data[i - offset + 2][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                      );
-                greenDifMax[3] =  max(greenDiff(riFrames[0 + offset]->data[i + offset-2][j + 1], riFrames[2 + offset]->data[i - offset - 1][j+2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset][j + 1], riFrames[2 + offset]->data[i - offset + 1][j+2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[0 + offset]->data[i + offset+2][j + 1], riFrames[2 + offset]->data[i - offset + 3][j+2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset][j + 1], riFrames[3 - offset]->data[i + offset - 1][j+2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                      greenDiff(riFrames[1 - offset]->data[i - offset + 2][j +- 1], riFrames[3 - offset]->data[i + offset + 1][j+2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                greenDifMax[3] =  max(colourDiff(riFrames[0 + offset]->data[i + offset-2][j + 1], riFrames[2 + offset]->data[i - offset - 1][j+2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset][j + 1], riFrames[2 + offset]->data[i - offset + 1][j+2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[0 + offset]->data[i + offset+2][j + 1], riFrames[2 + offset]->data[i - offset + 3][j+2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset][j + 1], riFrames[3 - offset]->data[i + offset - 1][j+2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                      colourDiff(riFrames[1 - offset]->data[i - offset + 2][j +- 1], riFrames[3 - offset]->data[i + offset + 1][j+2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                      );
             }
         }
@@ -193,6 +200,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
         // this is the index for the last column of the grid. Obviously we have to start with gridSize - 1
         int lastIndex = gridSize - 1;
+        float korr = 0.f;
 
         for(; j < winw - (border + offsX); ++j) {
             offset ^= 1; // 0 => 1 or 1 => 0
@@ -202,22 +210,22 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                 float gridMax;
                 if(gridSize == 1) {
                     // compute difference for current pixel and skip next pixel, that's the method from dcrawps
-                    gridMax = greenDiff(riFrames[1 - offset]->data[i - offset + 1][j], riFrames[3 - offset]->data[i + offset][j + 1], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion);
+                    gridMax = colourDiff(riFrames[1 - offset]->data[i - offset + 1][j], riFrames[3 - offset]->data[i + offset][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion);
                     skipNext = !showMotion;
                 } else if(gridSize == 3) {
                     // compute maximum of differences for third column of 3x3 grid and save at position lastIndex
-                    greenDifMax[lastIndex] = max(greenDiff(riFrames[0 + offset]->data[i + offset][j + 1], riFrames[2 + offset]->data[i - offset + 1][j + 2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                                 greenDiff(riFrames[1 - offset]->data[i - offset][j + 1], riFrames[3 - offset]->data[i + offset - 1][j + 2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                                 greenDiff(riFrames[1 - offset]->data[i - offset + 2][j + 1], riFrames[3 - offset]->data[i + offset + 1][j + 2], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                    greenDifMax[lastIndex] = max(colourDiff(riFrames[0 + offset]->data[i + offset][j + 1], riFrames[2 + offset]->data[i - offset + 1][j + 2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                                 colourDiff(riFrames[1 - offset]->data[i - offset][j + 1], riFrames[3 - offset]->data[i + offset - 1][j + 2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                                 colourDiff(riFrames[1 - offset]->data[i - offset + 2][j + 1], riFrames[3 - offset]->data[i + offset + 1][j + 2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                                 );
                     gridMax = max(greenDifMax[0],greenDifMax[1],greenDifMax[2]);
                 } else if(gridSize == 5) {
                     // compute maximum of differences for fifth column of 5x5 grid and save at position lastIndex
-                    greenDifMax[lastIndex] = max(greenDiff(riFrames[1 - offset]->data[i - offset - 1][j+2], riFrames[3 - offset]->data[i + offset -2][j + 3], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                                 greenDiff(riFrames[1 - offset]->data[i - offset + 1][j+2], riFrames[3 - offset]->data[i + offset][j + 3], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                                 greenDiff(riFrames[1 - offset]->data[i - offset + 3][j+2], riFrames[3 - offset]->data[i + offset +2][j + 3], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                                 greenDiff(riFrames[0 + offset]->data[i + offset - 1][j+2], riFrames[2 + offset]->data[i - offset][j + 3], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion),
-                                                 greenDiff(riFrames[0 + offset]->data[i + offset + 1][j+2], riFrames[2 + offset]->data[i - offset + 2][j + 3], adaptive, stddevFactor, eperIso, nreadIso, prnu, showMotion)
+                    greenDifMax[lastIndex] = max(colourDiff(riFrames[1 - offset]->data[i - offset - 1][j+2], riFrames[3 - offset]->data[i + offset -2][j + 3], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                                 colourDiff(riFrames[1 - offset]->data[i - offset + 1][j+2], riFrames[3 - offset]->data[i + offset][j + 3], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                                 colourDiff(riFrames[1 - offset]->data[i - offset + 3][j+2], riFrames[3 - offset]->data[i + offset +2][j + 3], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                                 colourDiff(riFrames[0 + offset]->data[i + offset - 1][j+2], riFrames[2 + offset]->data[i - offset][j + 3], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
+                                                 colourDiff(riFrames[0 + offset]->data[i + offset + 1][j+2], riFrames[2 + offset]->data[i - offset + 2][j + 3], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion)
                                                 );
                     gridMax = max(greenDifMax[0],greenDifMax[1],greenDifMax[2],greenDifMax[3],greenDifMax[4]);
                 }
@@ -226,14 +234,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                 lastIndex = lastIndex == gridSize ? 0 : lastIndex;
 
                 // increase motion detection dependent on brightness
-                float korr;
-                float thresh;
-                if(adaptive) {
-                    korr = 0.f;
-                    thresh = 0;
-                } else {
+                if(!adaptive) {
                     korr = log2Lut[((int)(riFrames[1 - offset]->data[i - offset + 1][j] * scaleGreen))>>1];
-                    thresh = motionThreshold;
                 }
 
                 if (gridMax > thresh - korr) {
@@ -260,6 +262,86 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
                     continue;
                 }
+
+                if(adaptive && checkNonGreenHorizontal) {
+                    float ng1 = riFrames[(offset << 1) + offset]->data[i][j + offset];
+                    float ng0 = riFrames[((offset^1) << 1) + (offset^1)]->data[i][j + (offset^1)+1];
+                    float ng2 = riFrames[((offset^1) << 1) + (offset^1)]->data[i][j + (offset^1)-1];
+                    float diff0 = ng0 - ng1;
+                    float diff2 = ng2 - ng1;
+                    if(diff0 * diff2 >= 0.f) {
+//                        float val = std::abs(diff0) > std::abs(diff2) ? ng0 : ng2;
+                        float val = (ng0 + ng2) / 2.f;
+                        float gridMax = colourDiff(ng1, val, true, stddevFactor, eperIsoNonGreen0, nreadIso, prnu, showMotion);
+                        if(gridMax > 0.f) {
+                            if(showMotion) {
+                                float blend = gridMax * blendFactor;
+                                if(!showOnlyMask) {
+                                    // if showMotion is enabled make the pixel green
+                                    nonGreenDest0[j + offsX] = 1000.f + 25000.f;
+                                    nonGreenDest1[j + offsX] = greenDest[j + offsX] = 0.f;
+                                } else {
+                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f;
+                                }
+                            }
+                            continue;
+                        }
+                    }
+                    ng1 = riFrames[2 - offset]->data[i + 1][j - offset + 1];
+                    ng0 = riFrames[2 - (offset^1)]->data[i + 1][j - (offset^1) + 2];
+                    ng2 = riFrames[2 - (offset^1)]->data[i + 1][j - (offset^1)];
+                    diff0 = ng0 - ng1;
+                    diff2 = ng2 - ng1;
+                    if(diff0 * diff2 >= 0.f) {
+//                        float val = std::abs(diff0) > std::abs(diff2) ? ng0 : ng2;
+                        float val = (ng0 + ng2) / 2.f;
+                        float gridMax = colourDiff(ng1, val, true, stddevFactor, eperIsoNonGreen2, nreadIso, prnu, showMotion);
+                        if(gridMax > 0.f) {
+                            if(showMotion) {
+                                float blend = gridMax * blendFactor;
+                                if(!showOnlyMask) {
+                                    nonGreenDest1[j + offsX] = 1000.f + 25000.f;
+                                    nonGreenDest0[j + offsX] = greenDest[j + offsX] = 0.f;
+                                } else {
+                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f;
+                                }
+                            }
+                            continue;
+                        }
+                    }
+//                    float ngDiff = nonGreenDiff(ng0,ng1,ng2);
+//                    float korr = log2Lut[((int)(riFrames[(offset << 1) + offset]->data[i][j + offset] * scaleNonGreen0))>>1];
+//                    if(ngDiff > 0.5f - korr) {
+//                        if(showMotion) {
+//                            if(!showOnlyMask) {
+//                                // if showMotion is enabled make the pixel green
+//                                nonGreenDest0[j + offsX] = 1000.f + 25000.f;
+//                                nonGreenDest1[j + offsX] = greenDest[j + offsX] = 0.f;
+//                            } else {
+//                                greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f;
+//                            }
+//                        }
+//                        continue;
+//                    }
+//
+//                    ng1 = riFrames[2 - offset]->data[i + 1][j - offset + 1];
+//                    ng0 = riFrames[2 - (offset^1)]->data[i + 1][j - (offset^1) + 2];
+//                    ng2 = riFrames[2 - (offset^1)]->data[i + 1][j - (offset^1)];
+//                    ngDiff = nonGreenDiff(ng0,ng1,ng2);
+//                    korr = log2Lut[((int)(riFrames[2 - offset]->data[i + 1][j - offset + 1] * scaleNonGreen2))>>1];
+//                    if(ngDiff > 0.5f - korr) {
+//                        if(showMotion) {
+//                            if(!showOnlyMask) {
+//                                // if showMotion is enabled make the pixel green
+//                                nonGreenDest0[j + offsX] = 1000.f + 25000.f;
+//                                nonGreenDest1[j + offsX] = greenDest[j + offsX] = 0.f;
+//                            } else {
+//                                greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f;
+//                            }
+//                        }
+//                        continue;
+//                    }
+                }
             }
 
 //            if(false && detectMotion && checkRedBlue) {
@@ -270,9 +352,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 //                float diff2 = ng1 - ng2;
 //                    float gridMax;
 //                if(diff0 * diff2 > 0.f) {
-////                    if(greenDiff(ng1, fabsf(diff0) < fabsf(diff2) ? ng0 : ng2) > motionThreshold ) {
-//                    gridMax = greenDiff(ng1, std::max(ng0, ng2));
-////                    gridMax = greenDiff(ng1, ((ng0 + ng2) / 2.f));
+////                    if(colourDiff(ng1, fabsf(diff0) < fabsf(diff2) ? ng0 : ng2) > motionThreshold ) {
+//                    gridMax = colourDiff(ng1, std::max(ng0, ng2));
+////                    gridMax = colourDiff(ng1, ((ng0 + ng2) / 2.f));
 //                    if(gridMax > motionThreshold ) {
 //                    float factor = 1.f / (1.f - motionThreshold);
 //                    float blend = (gridMax - motionThreshold) * factor;
@@ -309,9 +391,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 //                diff0 = ng1 - ng0;
 //                diff2 = ng1 - ng2;
 //                if(signbit(diff0) == signbit(diff2)) {
-////                    if(greenDiff(ng1, fabsf(diff0) < fabsf(diff2) ? ng0 : ng2) > motionThreshold ) {
-//                    gridMax = greenDiff(ng1, std::max(ng0, ng2));
-////                    gridMax = greenDiff(ng1, ((ng0 + ng2) / 2.f));
+////                    if(colourDiff(ng1, fabsf(diff0) < fabsf(diff2) ? ng0 : ng2) > motionThreshold ) {
+//                    gridMax = colourDiff(ng1, std::max(ng0, ng2));
+////                    gridMax = colourDiff(ng1, ((ng0 + ng2) / 2.f));
 //                    if(gridMax > motionThreshold ) {
 //                    float factor = 1.f / (1.f - motionThreshold);
 //                    float blend = (gridMax - motionThreshold) * factor;
