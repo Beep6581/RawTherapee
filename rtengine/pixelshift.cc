@@ -51,7 +51,7 @@ float colourDiff(float a, float b, bool adaptive, float stddevFactor, float eper
         if(!showMotion) {
             return result;
         } else if(result > 0.f) { // for the motion mask
-            return std::fabs(a - b) / std::max(a, b) + 0.01f;
+            return std::fabs(a - b) / (std::max(a, b) + 0.01f);
         } else {
             return 0.f;
         }
