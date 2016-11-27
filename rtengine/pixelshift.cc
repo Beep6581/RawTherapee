@@ -80,6 +80,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
 
     printf("Pixelshift parameters : gridSize %d\tadaptive %d\tstdDevFactor %f\telectrons %f\tnread %f\tprnu %f\n",gridSize, adaptive, stddevFactor, eperIso, nreadIso, prnu);
+    const bool skip = (gridSize != 1 ? false : true);
     gridSize += ((gridSize & 1) == 0 ? 1 : 0);
     // Lookup table for non adaptive (slider) mode
     LUTf log2Lut(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
@@ -157,7 +158,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
         float greenDifMax[gridSize];
         // motion detection checks the grid around the pixel for differences in green channels
         if(detectMotion || adaptive) {
-            if(gridSize == 3) {
+            if(gridSize < 2) {
                 // compute maximum of differences for first two columns of 3x3 grid
                 greenDifMax[0] =  max(colourDiff(riFrames[0 + offset]->data[i + offset][j - 1], riFrames[2 + offset]->data[i - offset + 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
                                       colourDiff(riFrames[1 - offset]->data[i - offset][j - 1], riFrames[3 - offset]->data[i + offset - 1][j], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),
@@ -208,10 +209,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
             if(detectMotion || adaptive) {
                 bool skipNext = false;
                 float gridMax;
-                if(gridSize == 1) {
+                if(gridSize < 2) {
                     // compute difference for current pixel and skip next pixel, that's the method from dcrawps
                     gridMax = colourDiff(riFrames[1 - offset]->data[i - offset + 1][j], riFrames[3 - offset]->data[i + offset][j + 1], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion);
-                    skipNext = !showMotion;
+                    skipNext = skip && !showMotion ;
                 } else if(gridSize == 3) {
                     // compute maximum of differences for third column of 3x3 grid and save at position lastIndex
                     greenDifMax[lastIndex] = max(colourDiff(riFrames[0 + offset]->data[i + offset][j + 1], riFrames[2 + offset]->data[i - offset + 1][j + 2], adaptive, stddevFactor, eperIsoGreen, nreadIso, prnu, showMotion),

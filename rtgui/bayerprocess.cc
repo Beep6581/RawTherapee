@@ -105,7 +105,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftMotion->show();
     pixelShiftOptions->pack_start(*pixelShiftMotion);
 
-    pixelShiftMotionCorrection = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION"), 1, 5, 2, 3));
+    pixelShiftMotionCorrection = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION"), 0, 5, 1, 3));
     pixelShiftMotionCorrection->setAdjusterListener (this);
     pixelShiftMotionCorrection->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP"));
 
