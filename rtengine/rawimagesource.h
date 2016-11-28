@@ -71,7 +71,7 @@ protected:
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
-    RawImage* riFrames[16] = {nullptr};
+    RawImage* riFrames[4] = {nullptr};
     unsigned int currFrame = 0;
     unsigned int numFrames = 0;
 
@@ -81,7 +81,8 @@ protected:
     int threshold;
 
     array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
-    array2D<float> *rawDataFrames[16] = {nullptr};
+    array2D<float> *rawDataFrames[4] = {nullptr};
+    array2D<float> *rawDataBuffer[3] = {nullptr};
 
     // the interpolated green plane:
     array2D<float> green;
@@ -218,7 +219,7 @@ protected:
     inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
     inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, float r_mul, float g_mul, float b_mul, int x1, int width, int skip);
 
-    void CA_correct_RT  (const double cared, const double cablue, const double caautostrength);
+    void CA_correct_RT  (const double cared, const double cablue, const double caautostrength, array2D<float> &rawData);
     void ddct8x8s(int isgn, float a[8][8]);
     void processRawWhitepoint (float expos, float preser);  // exposure before interpolation
 

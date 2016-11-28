@@ -479,6 +479,10 @@ RawImageSource::~RawImageSource ()
         delete riFrames[i];
     }
 
+    for(size_t i = 0; i < numFrames - 1; ++i) {
+        delete rawDataBuffer[i];
+    }
+
     flushRGB();
     flushRawData();
 
@@ -1758,7 +1762,24 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         printf( "Flat Field Correction:%s\n", rif->get_filename().c_str());
     }
 
-    copyOriginalPixels(raw, ri, rid, rif, rawData);
+    if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]) {
+        int bufferNumber = 0;
+        for(int i=0; i<4; ++i) {
+            if(i==currFrame) {
+                copyOriginalPixels(raw, ri, rid, rif, rawData);
+                rawDataFrames[i] = &rawData;
+            } else {
+                if(!rawDataBuffer[bufferNumber]) {
+                    rawDataBuffer[bufferNumber] = new array2D<float>;
+                }
+                rawDataFrames[i] = rawDataBuffer[bufferNumber];
+                ++bufferNumber;
+                copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
+            }
+        }
+    } else {
+        copyOriginalPixels(raw, ri, rid, rif, rawData);
+    }
     //FLATFIELD end
 
 
@@ -1798,10 +1819,12 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
     }
 
-
-    scaleColors( 0, 0, W, H, raw, rawData); //+ + raw parameters for black level(raw.blackxx)
-    if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple] && !pixelShiftColoursScaled) {
-        scaleColors_pixelshift( 0, 0, W, H, raw);
+    if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]) {
+        for(int i=0; i<4; ++i) {
+            scaleColors( 0, 0, W, H, raw, *rawDataFrames[i]);
+        }
+    } else {
+        scaleColors( 0, 0, W, H, raw, rawData); //+ + raw parameters for black level(raw.blackxx)
     }
 
     // Correct vignetting of lens profile
@@ -1916,8 +1939,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgressStr ("CA Auto Correction...");
             plistener->setProgress (0.0);
         }
-
-        CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength);
+        if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]) {
+            for(int i=0; i<4; ++i) {
+                CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength, *rawDataFrames[i]);
+            }
+        } else {
+            CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength, rawData);
+        }
     }
 
     if ( raw.expos != 1 ) {
