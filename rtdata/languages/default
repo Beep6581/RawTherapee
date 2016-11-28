@@ -1656,6 +1656,7 @@ TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
+TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 TP_RAW_PIXELSHIFTMOTION;Pixelshift motion detection
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 TP_RAW_PIXELSHIFTMOTIONCORRECTION;Pixelshift motion correction
