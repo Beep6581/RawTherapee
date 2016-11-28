@@ -236,7 +236,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
                 // increase motion detection dependent on brightness
                 if(!adaptive) {
-                    korr = log2Lut[((int)((*rawDataFrames)[1 - offset][i - offset + 1][j] * scaleGreen))>>1];
+                    korr = log2Lut[((int)((*rawDataFrames[1 - offset])[i - offset + 1][j] * scaleGreen))>>1];
                 }
 
                 if (gridMax > thresh - korr) {
