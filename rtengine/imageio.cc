@@ -556,10 +556,12 @@ int ImageIO::loadJPEG (Glib::ustring fname)
         jpeg_read_header(&cinfo, TRUE);
 
         //if JPEG is CMYK, then abort reading
-        if (cinfo.jpeg_color_space == JCS_CMYK || cinfo.jpeg_color_space == JCS_YCCK || cinfo.jpeg_color_space == JCS_GRAYSCALE) {
+        if (cinfo.jpeg_color_space == JCS_CMYK || cinfo.jpeg_color_space == JCS_YCCK) {
             jpeg_destroy_decompress(&cinfo);
             return IMIO_READERROR;
         }
+
+        cinfo.out_color_space = JCS_RGB;
 
         deleteLoadedProfileData();
         loadedProfileDataJpg = true;
@@ -677,8 +679,8 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
 
     TIFFClose(in);
 
-    if (photometric == PHOTOMETRIC_RGB) {
-        if ((samplesperpixel == 3 || samplesperpixel == 4) && sampleformat == SAMPLEFORMAT_UINT) {
+    if (photometric == PHOTOMETRIC_RGB || photometric == PHOTOMETRIC_MINISBLACK) {
+        if ((samplesperpixel == 1 || samplesperpixel == 3 || samplesperpixel == 4) && sampleformat == SAMPLEFORMAT_UINT) {
             if (bitspersample == 8) {
                 sFormat = IIOSF_UNSIGNED_CHAR;
                 return IMIO_SUCCESS;
@@ -820,7 +822,7 @@ int ImageIO::loadTIFF (Glib::ustring fname)
     allocate (width, height);
 
     float minValue[3] = {0.f, 0.f, 0.f}, maxValue[3] = {0.f, 0.f, 0.f};
-    unsigned char* linebuffer = new unsigned char[TIFFScanlineSize(in)];
+    unsigned char* linebuffer = new unsigned char[TIFFScanlineSize(in) * (samplesperpixel == 1 ? 3 : 1)];
 
     for (int row = 0; row < height; row++) {
         if (TIFFReadScanline(in, linebuffer, row, 0) < 0) {
@@ -829,10 +831,21 @@ int ImageIO::loadTIFF (Glib::ustring fname)
             return IMIO_READERROR;
         }
 
-        if (samplesperpixel > 3)
+        if (samplesperpixel > 3) {
             for (int i = 0; i < width; i++) {
                 memcpy (linebuffer + i * 3 * bitspersample / 8, linebuffer + i * samplesperpixel * bitspersample / 8, 3 * bitspersample / 8);
             }
+        }
+        else if (samplesperpixel == 1) {
+            const size_t bytes = bitspersample / 8;
+            for (int i = width - 1; i >= 0; --i) {
+                const unsigned char* const src = linebuffer + i * bytes;
+                unsigned char* const dest = linebuffer + i * 3 * bytes;
+                memcpy(dest + 2 * bytes, src, bytes);
+                memcpy(dest + 1 * bytes, src, bytes);
+                memcpy(dest + 0 * bytes, src, bytes);
+            }
+        }
 
         if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
             setScanline (row, linebuffer, bitspersample, minValue, maxValue);
