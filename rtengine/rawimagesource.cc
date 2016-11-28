@@ -1762,7 +1762,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         printf( "Flat Field Correction:%s\n", rif->get_filename().c_str());
     }
 
-    if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]) {
+    if(numFrames == 4) {
         int bufferNumber = 0;
         for(int i=0; i<4; ++i) {
             if(i==currFrame) {
@@ -1819,7 +1819,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
     }
 
-    if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]) {
+    if(numFrames == 4) {
         for(int i=0; i<4; ++i) {
             scaleColors( 0, 0, W, H, raw, *rawDataFrames[i]);
         }
