@@ -517,9 +517,6 @@ ProfileStoreComboBox::ProfileStoreComboBox ()
 {
     updateProfileList();
     setPreferredWidth(50, 120);
-    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
-    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
-    cellRenderer->property_ellipsize_set() = true;
 }
 
 Glib::ustring ProfileStoreComboBox::getCurrentLabel()
@@ -610,7 +607,6 @@ void ProfileStoreComboBox::updateProfileList ()
     // Assign the model to the Combobox
     set_model(refTreeModel);
 
-
     // this will lock the profilestore's entry list too
     const std::vector<const ProfileStoreEntry*> *entryList = profileStore.getFileList();
 
@@ -626,6 +622,10 @@ void ProfileStoreComboBox::updateProfileList ()
     profileStore.releaseFileList();
 
     pack_start(methodColumns.label, false);
+
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+    cellRenderer->property_ellipsize_set() = true;
 }
 
 Gtk::TreeIter ProfileStoreComboBox::findRowFromEntry_ (Gtk::TreeModel::Children childs, const ProfileStoreEntry *pse)
