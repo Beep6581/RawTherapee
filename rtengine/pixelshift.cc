@@ -68,7 +68,7 @@ float colourDiff(float a, float b, bool adaptive, float stddevFactor, float eper
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, unsigned int gridSize, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, bool checkNonGreenHorizontal, bool checkNonGreenVertical)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, unsigned int gridSize, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, float rawWpCorrection, bool checkNonGreenHorizontal, bool checkNonGreenVertical)
 {
 
     BENCHFUN
@@ -93,7 +93,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
     }
     const float scaleGreen = 1.f / scale_mul[1];
 
-    eperIso *= (100.f / idata->getISOSpeed());
+    eperIso *= (100.f / (rawWpCorrection * idata->getISOSpeed()));
     
     float eperIsoGreen = eperIso * scaleGreen;
 

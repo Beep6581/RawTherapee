@@ -916,7 +916,7 @@ void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementP
 /* interpolateBadPixelsBayer: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighbourhood
  */
-int RawImageSource::interpolateBadPixelsBayer( PixelsMap &bitmapBads )
+int RawImageSource::interpolateBadPixelsBayer( PixelsMap &bitmapBads, array2D<float> &rawData )
 {
     static const float eps = 1.f;
     int counter = 0;
@@ -1509,7 +1509,6 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
         plistener->setProgressStr ("Decoding...");
         plistener->setProgress (0.0);
     }
-StopWatch Stop1("decode");
     ri = new RawImage(fname);
     int errCode = ri->loadRaw (false, 0, false);
 
@@ -1548,12 +1547,11 @@ StopWatch Stop1("decode");
     if(errCode) {
         return errCode;
     }
-Stop1.stop();
+
     if(numFrames > 1 ) { // this disables multi frame support for Fuji S5 until I found a solution to handle different dimensions
         if(riFrames[0]->get_width() != riFrames[1]->get_width() || riFrames[0]->get_height() != riFrames[1]->get_height()) {
             numFrames = 1;
         }
-        pixelShiftColoursScaled = false;
     }
 
     if (plistener) {
@@ -1667,7 +1665,7 @@ Stop1.stop();
                 initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
     }*/
 
-    for(unsigned int i=0;i < numFrames; ++i) {
+    for(unsigned int i = 0;i < numFrames; ++i) {
         riFrames[i]->set_prefilters();
     }
 
@@ -1918,7 +1916,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if( totBP )
         if ( ri->getSensorType() == ST_BAYER ) {
-            interpolateBadPixelsBayer( *bitmapBads );
+            if(numFrames == 4) {
+                for(int i = 0; i < 4; ++i) {
+                    interpolateBadPixelsBayer( *bitmapBads, *rawDataFrames[i] );
+                }
+            } else {
+                interpolateBadPixelsBayer( *bitmapBads, rawData );
+            }
         } else if ( ri->getSensorType() == ST_FUJI_XTRANS ) {
             interpolateBadPixelsXtrans( *bitmapBads );
         } else {
@@ -1949,7 +1953,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     if ( raw.expos != 1 ) {
-        processRawWhitepoint(raw.expos, raw.preser);
+        if(numFrames == 4) {
+            for(int i = 0; i < 4; ++i) {
+                processRawWhitepoint(raw.expos, raw.preser, *rawDataFrames[i]);
+            }
+        } else {
+            processRawWhitepoint(raw.expos, raw.preser, rawData);
+        }
     }
 
     if(prepareDenoise && dirpyrdenoiseExpComp == INFINITY) {
@@ -1994,7 +2004,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                 amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
             }
             if(numFrames == 4) {
-                pixelshift(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelshiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactor, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, raw.bayersensor.pixelShiftNonGreenHorizontal, raw.bayersensor.pixelShiftNonGreenVertical);
+                pixelshift(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelshiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactor, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, raw.expos, raw.bayersensor.pixelShiftNonGreenHorizontal, raw.bayersensor.pixelShiftNonGreenVertical);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
@@ -3544,28 +3554,6 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
         chmax[3] = chmax[1];
     }
 
-}
-
-void RawImageSource::scaleColors_pixelshift(int winx, int winy, int winw, int winh, const RAWParams &raw)
-{
-    BENCHFUN
-
-    // scale image colors
-
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,64) collapse(2)
-#endif
-    for(int frame = 0; frame < 4; ++frame) {
-        for (int row = winy; row < winy + winh; row ++)
-        {
-            for (int col = winx; col < winx + winw; col++) {
-                int c = FC(row,col);
-                float val = (riFrames[frame]->data[row][col] - cblacksom[c]) * scale_mul[c];
-                riFrames[frame]->data[row][col] = val;
-            }
-        }
-    }
-    pixelShiftColoursScaled = true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

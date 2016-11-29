@@ -133,8 +133,6 @@ public:
     void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData  );
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData); // raw for cblack
-    void        scaleColors_pixelshift(int winx, int winy, int winw, int winh, const RAWParams &raw);
-
 
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
     eSensorType getSensorType () const
@@ -207,7 +205,6 @@ public:
         ri = riFrames[currFrame];
     }
 protected:
-    bool pixelShiftColoursScaled = false;
     typedef unsigned short ushort;
     void processFalseColorCorrection (Imagefloat* i, const int steps);
     inline  void convert_row_to_YIQ (const float* const r, const float* const g, const float* const b, float* Y, float* I, float* Q, const int W);
@@ -221,9 +218,9 @@ protected:
 
     void CA_correct_RT  (const double cared, const double cablue, const double caautostrength, array2D<float> &rawData);
     void ddct8x8s(int isgn, float a[8][8]);
-    void processRawWhitepoint (float expos, float preser);  // exposure before interpolation
+    void processRawWhitepoint (float expos, float preser, array2D<float> &rawData);  // exposure before interpolation
 
-    int  interpolateBadPixelsBayer( PixelsMap &bitmapBads );
+    int  interpolateBadPixelsBayer( PixelsMap &bitmapBads, array2D<float> &rawData );
     int  interpolateBadPixelsNColours( PixelsMap &bitmapBads, const int colours );
     int  interpolateBadPixelsXtrans( PixelsMap &bitmapBads );
     int  findHotDeadPixels( PixelsMap &bpMap, float thresh, bool findHotPixels, bool findDeadPixels );
@@ -264,7 +261,7 @@ protected:
     void xtransborder_interpolate (int border);
     void xtrans_interpolate (const int passes, const bool useCieLab);
     void fast_xtrans_interpolate ();
-    void pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, unsigned int gridSize, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, bool checkNonGreenHorizontal, bool checkNonGreenVertical);
+    void pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, unsigned int gridSize, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, float rawWpCorrection, bool checkNonGreenHorizontal, bool checkNonGreenVertical);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
 
