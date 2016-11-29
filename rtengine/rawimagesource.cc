@@ -1832,14 +1832,31 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
             LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
+            if(numFrames == 4) {
 #ifdef _OPENMP
-            #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
-            for (int y = 0; y < H; y++) {
-                for (int x = 0; x < W; x++) {
-                    if (rawData[y][x] > 0) {
-                        rawData[y][x] *= map.calcVignetteFac(x, y);
+                for (int y = 0; y < H; y++) {
+                    for (int x = 0; x < W; x++) {
+                        float val = map.calcVignetteFac(x, y);
+                        for(int i = 0; i < 4; ++i) {
+                            if ((*rawDataFrames[i])[y][x] > 0) {
+                                (*rawDataFrames[i])[y][x] *= val;
+                            }
+                        }
+                    }
+                }
+            } else {
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int y = 0; y < H; y++) {
+                    for (int x = 0; x < W; x++) {
+                        if (rawData[y][x] > 0) {
+                            rawData[y][x] *= map.calcVignetteFac(x, y);
+                        }
                     }
                 }
             }
@@ -1910,7 +1927,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
-        green_equilibrate(0.01 * (raw.bayersensor.greenthresh));
+        if(numFrames == 4) {
+            for(int i = 0; i < 4; ++i) {
+                green_equilibrate(0.01 * (raw.bayersensor.greenthresh), *rawDataFrames[i]);
+            }
+        } else {
+            green_equilibrate(0.01 * (raw.bayersensor.greenthresh), rawData);
+        }
     }
 
 

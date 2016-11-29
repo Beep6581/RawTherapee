@@ -227,7 +227,7 @@ protected:
 
     void cfa_linedn (float linenoiselevel);//Emil's line denoise
 
-    void green_equilibrate (float greenthresh);//Emil's green equilibration
+    void green_equilibrate (float greenthresh, array2D<float> &rawData);//Emil's green equilibration
 
     void nodemosaic(bool bw);
     void eahd_demosaic();
