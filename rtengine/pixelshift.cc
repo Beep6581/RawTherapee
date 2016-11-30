@@ -63,6 +63,34 @@ float colourDiff(float a, float b, bool adaptive, float stddevFactor, float eper
     }
 }
 
+float nonGreenDiff(float a, float b, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, bool showMotion)
+{
+    // calculate the difference between to green samples
+    if(adaptive) {
+        float gDiff = a - b;
+        gDiff *= eperIso;
+        gDiff *= gDiff;
+        float avg = (a + b) / 2.f;
+        avg *= eperIso;
+        prnu *= avg;
+        float stddev = stddevFactor * (avg + nreadIso + prnu * prnu);
+        float result = gDiff - stddev;
+        if(!showMotion) {
+            return result;
+        } else if(result > 0.f) { // for the motion mask
+            return std::fabs(a - b) / (std::max(a, b) + 0.01f);
+        } else {
+            return 0.f;
+        }
+    } else {
+        float gDiff = std::fabs(a - b);
+        // add a small epsilon to avoid division by zero
+        float maxVal = std::max(a, b) + 0.01f;
+        return gDiff / maxVal;
+    }
+}
+
+
 }
 
 using namespace std;
@@ -269,7 +297,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     float diff2 = ng2 - ng1;
                     if(diff0 * diff2 >= 0.f) {
                         float val = (ng0 + ng2) / 2.f;
-                        float gridMax = colourDiff(ng1, val, true, stddevFactor, eperIsoNonGreen0, nreadIso, prnu, showMotion);
+                        float gridMax = nonGreenDiff(ng1, val, true, stddevFactor, eperIsoNonGreen0, nreadIso, prnu, showMotion);
                         if(gridMax > 0.f) {
                             if(showMotion) {
                                 float blend = gridMax * blendFactor;
@@ -292,7 +320,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     diff2 = ng2 - ng1;
                     if(diff0 * diff2 >= 0.f) {
                         float val = (ng0 + ng2) / 2.f;
-                        float gridMax = colourDiff(ng1, val, true, stddevFactor, eperIsoNonGreen2, nreadIso, prnu, showMotion);
+                        float gridMax = nonGreenDiff(ng1, val, true, stddevFactor, eperIsoNonGreen2, nreadIso, prnu, showMotion);
                         if(gridMax > 0.f) {
                             if(showMotion) {
                                 float blend = gridMax * blendFactor;
@@ -317,7 +345,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     float diff2 = ng2 - ng1;
                     if(diff0 * diff2 >= 0.f) {
                         float val = (ng0 + ng2) / 2.f;
-                        float gridMax = colourDiff(ng1, val, true, stddevFactor, eperIsoNonGreen0, nreadIso, prnu, showMotion);
+                        float gridMax = nonGreenDiff(ng1, val, true, stddevFactor, eperIsoNonGreen0, nreadIso, prnu, showMotion);
                         if(gridMax > 0.f) {
                             if(showMotion) {
                                 float blend = gridMax * blendFactor;
@@ -341,7 +369,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     diff2 = ng2 - ng1;
                     if(diff0 * diff2 >= 0.f) {
                         float val = (ng0 + ng2) / 2.f;
-                        float gridMax = colourDiff(ng1, val, true, stddevFactor, eperIsoNonGreen2, nreadIso, prnu, showMotion);
+                        float gridMax = nonGreenDiff(ng1, val, true, stddevFactor, eperIsoNonGreen2, nreadIso, prnu, showMotion);
                         if(gridMax > 0.f) {
                             if(showMotion) {
                                 float blend = gridMax * blendFactor;
