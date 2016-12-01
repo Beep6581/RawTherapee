@@ -888,8 +888,8 @@ void RAWParams::setDefaults()
     bayersensor.pixelshiftMotion = 0;
     bayersensor.pixelshiftMotionCorrection = 3;
     bayersensor.pixelShiftStddevFactor = 5.0;
-    bayersensor.pixelShiftEperIso = 0.75;
-    bayersensor.pixelShiftNreadIso = 3.45;
+    bayersensor.pixelShiftEperIso = 0.0;
+    bayersensor.pixelShiftNreadIso = 0.0;
     bayersensor.pixelShiftPrnu = 1.0;
     bayersensor.pixelshiftShowMotion = false;
     bayersensor.pixelshiftShowMotionMaskOnly = false;
