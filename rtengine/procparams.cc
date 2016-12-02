@@ -886,8 +886,8 @@ void RAWParams::setDefaults()
     //bayersensor.all_enhance = false;
     bayersensor.lmmse_iterations = 2;
     bayersensor.pixelShiftMotion = 0;
-    bayersensor.pixelShiftMotionCorrection = RAWParams::BayerSensor::Grid5x5;
-    bayersensor.pixelShiftStddevFactor = 5.0;
+    bayersensor.pixelShiftMotionCorrection = RAWParams::BayerSensor::Grid1x2;
+    bayersensor.pixelShiftStddevFactor = 3.0;
     bayersensor.pixelShiftEperIso = 0.0;
     bayersensor.pixelShiftNreadIso = 0.0;
     bayersensor.pixelShiftPrnu = 1.0;

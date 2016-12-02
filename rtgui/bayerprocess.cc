@@ -116,12 +116,12 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftMotionCorrection->append_text("3x3");
     pixelShiftMotionCorrection->append_text("5x5");
     pixelShiftMotionCorrection->set_active(0);
-    pixelShiftMotionCorrection->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP"));
+//    pixelShiftMotionCorrection->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP"));
     pixelShiftMotionCorrection->show();
     hb2->pack_start(*pixelShiftMotionCorrection);
     pixelShiftOptions->pack_start(*hb2);
 
-    pixelShiftStddevFactor = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTOR"), 2, 8, 0.1, 5));
+    pixelShiftStddevFactor = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTOR"), 2, 8, 0.1, 3));
     pixelShiftStddevFactor->setAdjusterListener (this);
 //    pixelShiftStddevFactor->set_tooltip_markup (M("TP_RAW_PIXELSHIFTSTDDEVFACTOR_TOOLTIP"));
 
