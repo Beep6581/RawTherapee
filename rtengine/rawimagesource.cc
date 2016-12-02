@@ -2023,11 +2023,11 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
             amaze_demosaic_RT (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple] ) {
-            if(raw.bayersensor.pixelshiftMotion > 0 || raw.bayersensor.pixelShiftAutomatic) {
+            if(raw.bayersensor.pixelShiftMotion > 0 || raw.bayersensor.pixelShiftAutomatic) {
                 amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
             }
             if(numFrames == 4) {
-                pixelshift(0, 0, W, H, raw.bayersensor.pixelshiftMotion > 0, raw.bayersensor.pixelshiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelshiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactor, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, ri->get_model(), raw.expos, raw.bayersensor.pixelShiftNonGreenHorizontal, raw.bayersensor.pixelShiftNonGreenVertical);
+                pixelshift(0, 0, W, H, raw.bayersensor.pixelShiftMotion > 0, raw.bayersensor.pixelShiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelShiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactor, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, ri->get_model(), raw.expos, raw.bayersensor.pixelShiftNonGreenHorizontal, raw.bayersensor.pixelShiftNonGreenVertical);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);

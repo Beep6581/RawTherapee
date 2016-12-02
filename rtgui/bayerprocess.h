@@ -43,7 +43,7 @@ protected:
     Adjuster* lmmseIterations;
     Gtk::VBox *pixelShiftOptions;
     Adjuster* pixelShiftMotion;
-    Adjuster* pixelShiftMotionCorrection;
+    MyComboBoxText* pixelShiftMotionCorrection;
     Gtk::CheckButton* pixelShiftShowMotion;
     Gtk::CheckButton* pixelShiftShowMotionMaskOnly;
     Gtk::CheckButton* pixelShiftAutomatic;
@@ -56,7 +56,7 @@ protected:
     bool lastDCBen;
     int oldMethod;
     //bool lastALLen;
-    sigc::connection methodconn, imagenumberconn, dcbEnhconn, pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn, pixelShiftNonGreenHorizontalconn, pixelShiftNonGreenVerticalconn; //,allEnhconn;
+    sigc::connection methodconn, imagenumberconn, psmcconn, dcbEnhconn, pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn, pixelShiftNonGreenHorizontalconn, pixelShiftNonGreenVerticalconn; //,allEnhconn;
 public:
 
     BayerProcess ();
@@ -67,6 +67,7 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
     void methodChanged ();
+    void psMotionCorrectionChanged ();
     void imageNumberChanged ();
     void adjusterChanged     (Adjuster* a, double newval);
     void dcbEnhanceChanged();

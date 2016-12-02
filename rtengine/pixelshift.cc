@@ -96,7 +96,7 @@ float nonGreenDiff(float a, float b, bool adaptive, float stddevFactor, float ep
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, unsigned int gridSize, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, const std::string &model, float rawWpCorrection, bool checkNonGreenHorizontal, bool checkNonGreenVertical)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, RAWParams::BayerSensor::ePSMotionCorrection gridSize_, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, const std::string &model, float rawWpCorrection, bool checkNonGreenHorizontal, bool checkNonGreenVertical)
 {
 
     BENCHFUN
@@ -206,6 +206,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
         plistener->setProgress(0.0);
     }
 
+
+    int gridSize = (int)gridSize_;
 
     const bool skip = (gridSize != 1 ? false : true);
     gridSize += ((gridSize & 1) == 0 ? 1 : 0);

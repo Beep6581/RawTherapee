@@ -471,8 +471,17 @@ enum ProcEvent {
     EvLskal = 441,
     EvOBPCompens = 442,
     EvRawImageNum = 443,
-    EvDemosaicPixelshiftMotion = 444,
-    EvDemosaicPixelshiftMotionMaskOnly = 445,
+    EvPixelShiftMotion = 444,
+    EvPixelShiftMotionCorrection = 445,
+    EvPixelShiftStddevFactor = 446,
+    EvPixelShiftEperIso = 447,
+    EvPixelShiftNreadIso = 448,
+    EvPixelShiftPrnu = 449,
+    EvPixelshiftShowMotion = 450,
+    EvPixelshiftShowMotionMaskOnly = 451,
+    EvPixelShiftAutomatic = 452,
+    EvPixelShiftNonGreenHorizontal = 453,
+    EvPixelShiftNonGreenVertical = 454,
     NUMOFEVENTS
 
 };

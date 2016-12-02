@@ -676,6 +676,17 @@ HISTORY_MSG_441;Retinex - Gain transmission
 HISTORY_MSG_442;Retinex - Scale
 HISTORY_MSG_443;Output Black Point Compensation
 HISTORY_MSG_444;Raw Sub-Image
+HISTORY_MSG_445;EvPixelShiftMotion
+HISTORY_MSG_446;EvPixelShiftMotionCorrection
+HISTORY_MSG_447;EvPixelShiftStddevFactor
+HISTORY_MSG_448;EvPixelShiftEperIso
+HISTORY_MSG_449;EvPixelShiftNreadIso
+HISTORY_MSG_450;EvPixelShiftPrnu
+HISTORY_MSG_451;EvPixelshiftShowMotion
+HISTORY_MSG_452;EvPixelshiftShowMotionMaskOnly
+HISTORY_MSG_453;EvPixelShiftAutomatic
+HISTORY_MSG_454;EvPixelShiftNonGreenHorizontal
+HISTORY_MSG_455;EvPixelShiftNonGreenVertical
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot

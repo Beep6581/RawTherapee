@@ -692,8 +692,8 @@ public:
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
-        bool pixelshiftMotion;
-        bool pixelshiftMotionCorrection;
+        bool pixelShiftMotion;
+        bool pixelShiftMotionCorrection;
         bool pixelShiftStddevFactor;
         bool pixelShiftEperIso;
         bool pixelShiftNreadIso;

@@ -1168,6 +1168,9 @@ public:
         enum eMethod { amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none, pixelshift_simple,
                        numMethods
                      }; // This MUST be the last enum
+        enum ePSMotionCorrection {
+            Grid1x1, Grid1x2, Grid3x3, Grid5x5
+        };
         static const char *methodstring[numMethods];
 
         Glib::ustring method;
@@ -1182,8 +1185,8 @@ public:
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
-        int pixelshiftMotion;
-        int pixelshiftMotionCorrection;
+        int pixelShiftMotion;
+        ePSMotionCorrection pixelShiftMotionCorrection;
         double pixelShiftStddevFactor;
         double pixelShiftEperIso;
         double pixelShiftNreadIso;
