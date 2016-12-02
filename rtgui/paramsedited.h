@@ -703,6 +703,7 @@ public:
         bool pixelShiftAutomatic;
         bool pixelShiftNonGreenHorizontal;
         bool pixelShiftNonGreenVertical;
+        bool pixelShiftNonGreenCross;
 
         //bool allEnhance;
         bool greenEq;

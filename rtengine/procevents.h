@@ -482,6 +482,7 @@ enum ProcEvent {
     EvPixelShiftAutomatic = 452,
     EvPixelShiftNonGreenHorizontal = 453,
     EvPixelShiftNonGreenVertical = 454,
+    EvPixelShiftNonGreenCross = 455,
     NUMOFEVENTS
 
 };

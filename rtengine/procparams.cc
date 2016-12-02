@@ -896,6 +896,7 @@ void RAWParams::setDefaults()
     bayersensor.pixelShiftAutomatic = true;
     bayersensor.pixelShiftNonGreenHorizontal = false;
     bayersensor.pixelShiftNonGreenVertical = false;
+    bayersensor.pixelShiftNonGreenCross = false;
     bayersensor.black0 = 0.0;
     bayersensor.black1 = 0.0;
     bayersensor.black2 = 0.0;
@@ -3417,6 +3418,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenVertical) {
             keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenVertical", raw.bayersensor.pixelShiftNonGreenVertical );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross );
         }
 
         //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
@@ -7565,6 +7570,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenCross"))  {
+                raw.bayersensor.pixelShiftNonGreenCross = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenCross");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenCross = true;
+                }
+            }
+
             //if (keyFile.has_key ("RAW Bayer", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW Bayer", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
         }
 
@@ -8015,6 +8028,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic
         && raw.bayersensor.pixelShiftNonGreenHorizontal == other.raw.bayersensor.pixelShiftNonGreenHorizontal
         && raw.bayersensor.pixelShiftNonGreenVertical == other.raw.bayersensor.pixelShiftNonGreenVertical
+        && raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross
         && raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance
         //&& raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance
         && raw.xtranssensor.method == other.raw.xtranssensor.method

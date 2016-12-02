@@ -98,7 +98,7 @@ float nonGreenDiff(float a, float b, bool adaptive, float stddevFactor, float ep
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, RAWParams::BayerSensor::ePSMotionCorrection gridSize_, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, const std::string &model, float rawWpCorrection, bool checkNonGreenHorizontal, bool checkNonGreenVertical)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool detectMotion, int motion, bool showMotion, bool showOnlyMask, unsigned int frame, RAWParams::BayerSensor::ePSMotionCorrection gridSize_, bool adaptive, float stddevFactor, float eperIso, float nreadIso, float prnu, const std::string &model, float rawWpCorrection, bool checkNonGreenHorizontal, bool checkNonGreenVertical, bool checkNonGreenCross)
 {
 
     BENCHFUN
@@ -272,7 +272,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
     // For shades of green motion indicators
     const float blendFactor = ((adaptive || motion == 0.f) ? 1.f : 1.f / (1.f - motionThreshold));
 
-    bool checkNonGreen = true;
     unsigned int offsX = 0, offsY = 0;
 
     // We have to adjust the offsets for the selected subframe we use for areas with motion
@@ -431,6 +430,68 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
                     // do not set the motion pixel values. They have already been set by demosaicer or showMotion
                     continue;
+                }
+
+                if(adaptive && checkNonGreenCross) {
+                    float ng1 = (*rawDataFrames[(offset << 1) + offset])[i][j + offset];
+                    float ng0 = (*rawDataFrames[((offset ^ 1) << 1) + (offset ^ 1)])[i][j + (offset ^ 1) + 1];
+                    float ng2 = (*rawDataFrames[((offset ^ 1) << 1) + (offset ^ 1)])[i][j + (offset ^ 1) - 1];
+                    float ng3 = (*rawDataFrames[((offset << 1) + offset) ^ 1])[i][j + offset];
+                    float ng4 = (*rawDataFrames[((offset << 1) + offset) ^ 1])[i + 2][j + offset];
+                    float diff0 = ng0 - ng1;
+                    float diff2 = ng2 - ng1;
+                    float diff3 = ng3 - ng1;
+                    float diff4 = ng4 - ng1;
+                    if(diff0 * diff2 >= 0.f && diff3 * diff4 >= 0.f && diff0 * diff3 >= 0.f) {
+                        float val = (ng0 + ng2 + ng3 + ng4) / 4.f;
+                        float gridMax = nonGreenDiff(ng1, val, true, stddevFactor, eperIsoNonGreen0, nRead, prnu, showMotion);
+
+                        if(gridMax > 0.f) {
+                            if(showMotion) {
+                                float blend = gridMax * blendFactor;
+
+                                if(!showOnlyMask) {
+                                    // if showMotion is enabled colourize the pixel
+                                    nonGreenDest0[j + offsX] = 1000.f + 25000.f * blend;
+                                    nonGreenDest1[j + offsX] = greenDest[j + offsX] = 0.f;
+                                } else {
+                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
+                                }
+                            }
+
+                            continue;
+                        }
+                    }
+
+                    ng1 = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1];
+                    ng0 = (*rawDataFrames[2 - (offset ^ 1)])[i + 1][j - (offset ^ 1) + 2];
+                    ng2 = (*rawDataFrames[2 - (offset ^ 1)])[i + 1][j - (offset ^ 1)];
+                    ng3 = (*rawDataFrames[3 - ((offset << 1) + offset)])[i - 1][j - offset + 1];
+                    ng4 = (*rawDataFrames[3 - ((offset << 1) + offset)])[i + 1][j - offset + 1];
+                    diff0 = ng0 - ng1;
+                    diff2 = ng2 - ng1;
+                    diff3 = ng3 - ng1;
+                    diff4 = ng4 - ng1;
+                    if(diff0 * diff2 >= 0.f && diff3 * diff4 >= 0.f && diff0 * diff3 >= 0.f) {
+                        float val = (ng0 + ng2 + ng3 + ng4) / 4.f;
+                        float gridMax = nonGreenDiff(ng1, val, true, stddevFactor, eperIsoNonGreen2, nRead, prnu, showMotion);
+
+                        if(gridMax > 0.f) {
+                            if(showMotion) {
+                                float blend = gridMax * blendFactor;
+
+                                if(!showOnlyMask) {
+                                    // if showMotion is enabled colourize the pixel
+                                    nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
+                                    nonGreenDest0[j + offsX] = greenDest[j + offsX] = 0.f;
+                                } else {
+                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
+                                }
+                            }
+
+                            continue;
+                        }
+                    }
                 }
 
                 if(adaptive && checkNonGreenHorizontal) {

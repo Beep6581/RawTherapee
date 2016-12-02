@@ -381,6 +381,7 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.pixelShiftAutomatic = v;
     raw.bayersensor.pixelShiftNonGreenHorizontal = v;
     raw.bayersensor.pixelShiftNonGreenVertical = v;
+    raw.bayersensor.pixelShiftNonGreenCross = v;
     raw.bayersensor.greenEq = v;
     raw.bayersensor.linenoise = v;
     raw.xtranssensor.method = v;
@@ -888,6 +889,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.pixelShiftAutomatic = raw.bayersensor.pixelShiftAutomatic && p.raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic;
         raw.bayersensor.pixelShiftNonGreenHorizontal = raw.bayersensor.pixelShiftNonGreenHorizontal && p.raw.bayersensor.pixelShiftNonGreenHorizontal == other.raw.bayersensor.pixelShiftNonGreenHorizontal;
         raw.bayersensor.pixelShiftNonGreenVertical = raw.bayersensor.pixelShiftNonGreenVertical && p.raw.bayersensor.pixelShiftNonGreenVertical == other.raw.bayersensor.pixelShiftNonGreenVertical;
+        raw.bayersensor.pixelShiftNonGreenCross = raw.bayersensor.pixelShiftNonGreenCross && p.raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross;
         raw.bayersensor.greenEq = raw.bayersensor.greenEq && p.raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh;
         raw.bayersensor.linenoise = raw.bayersensor.linenoise && p.raw.bayersensor.linenoise == other.raw.bayersensor.linenoise;
         raw.xtranssensor.method = raw.xtranssensor.method && p.raw.xtranssensor.method == other.raw.xtranssensor.method;
@@ -2344,6 +2346,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelShiftNonGreenVertical = mods.raw.bayersensor.pixelShiftNonGreenVertical;
     }
 
+    if (raw.bayersensor.pixelShiftNonGreenCross) {
+        toEdit.raw.bayersensor.pixelShiftNonGreenCross = mods.raw.bayersensor.pixelShiftNonGreenCross;
+    }
+
     //if (raw.bayersensor.allEnhance)    toEdit.raw.bayersensor.all_enhance      = mods.raw.bayersensor.all_enhance;
     if (raw.bayersensor.greenEq) {
         toEdit.raw.bayersensor.greenthresh      = dontforceSet && options.baBehav[ADDSET_PREPROCESS_GREENEQUIL] ? toEdit.raw.bayersensor.greenthresh + mods.raw.bayersensor.greenthresh : mods.raw.bayersensor.greenthresh;
@@ -2857,7 +2863,7 @@ bool RAWParamsEdited::BayerSensor::isUnchanged() const
     return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
             && pixelShiftMotion && pixelShiftMotionCorrection && pixelShiftStddevFactor && pixelShiftEperIso
             && pixelShiftNreadIso && pixelShiftPrnu && pixelshiftShowMotion && pixelshiftShowMotionMaskOnly
-            && pixelShiftAutomatic && pixelShiftNonGreenHorizontal && pixelShiftNonGreenVertical
+            && pixelShiftAutomatic && pixelShiftNonGreenHorizontal && pixelShiftNonGreenVertical && pixelShiftNonGreenCross
             && linenoise && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
 }
 
