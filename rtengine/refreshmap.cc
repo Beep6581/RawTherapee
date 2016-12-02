@@ -472,7 +472,18 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     OUTPUTPROFILE,    // EvOBPCompens
     DARKFRAME,        // EvRawImageNum
     DEMOSAIC,         // EvDemosaicPixelshiftMotion
-    DEMOSAIC          // EvDemosaicPixelshiftMotionMaskOnly
+    DEMOSAIC,         // EvDemosaicPixelshiftMotionMaskOnly
+    DEMOSAIC,         // EvPixelShiftMotion
+    DEMOSAIC,         // EvPixelShiftMotionCorrection
+    DEMOSAIC,         // EvPixelShiftStddevFactor
+    DEMOSAIC,         // EvPixelShiftEperIso
+    DEMOSAIC,         // EvPixelShiftNreadIso
+    DEMOSAIC,         // EvPixelShiftPrnu
+    DEMOSAIC,         // EvPixelshiftShowMotion
+    DEMOSAIC,         // EvPixelshiftShowMotionMaskOnly
+    DEMOSAIC,         // EvPixelShiftAutomatic
+    DEMOSAIC,         // EvPixelShiftNonGreenHorizontal
+    DEMOSAIC          // EvPixelShiftNonGreenVertical
 
 };
 
