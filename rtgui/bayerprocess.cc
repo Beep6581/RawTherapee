@@ -118,6 +118,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftMotionCorrection->append_text("1x2");
     pixelShiftMotionCorrection->append_text("3x3");
     pixelShiftMotionCorrection->append_text("5x5");
+    pixelShiftMotionCorrection->append_text("7x7");
     pixelShiftMotionCorrection->set_active(0);
 //    pixelShiftMotionCorrection->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP"));
     pixelShiftMotionCorrection->show();

@@ -1169,7 +1169,7 @@ public:
                        numMethods
                      }; // This MUST be the last enum
         enum ePSMotionCorrection {
-            Grid1x1, Grid1x2, Grid3x3, Grid5x5
+            Grid1x1, Grid1x2, Grid3x3, Grid5x5, Grid7x7
         };
         static const char *methodstring[numMethods];
 

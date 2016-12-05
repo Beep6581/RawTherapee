@@ -240,6 +240,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
         case RAWParams::BayerSensor::ePSMotionCorrection::Grid5x5:
             gridSize = 5;
+            break;
+
+        case RAWParams::BayerSensor::ePSMotionCorrection::Grid7x7:
+            gridSize = 7;
+            break;
     }
 
     // Lookup table for non adaptive (slider) mode
@@ -382,7 +387,58 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                                       greenDiff((*rawDataFrames[1 - offset])[i - offset + 2][j + 1], (*rawDataFrames[3 - offset])[i + offset + 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
                                       greenDiff((*rawDataFrames[0 + offset])[i + offset + 2][j + 1], (*rawDataFrames[2 + offset])[i - offset + 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
                                      );
+            } else if(gridSize == 7) {
+                // compute maximum of differences for first six columns of 7x7 grid
+                greenDifMax[0] =  max(greenDiff((*rawDataFrames[1 - offset])[i - offset - 2][j - 3], (*rawDataFrames[3 - offset])[i + offset - 3][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset - 2][j - 3], (*rawDataFrames[2 + offset])[i - offset - 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset][j - 3], (*rawDataFrames[3 - offset])[i + offset - 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset][j - 3], (*rawDataFrames[2 + offset])[i - offset + 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 2][j - 3], (*rawDataFrames[3 - offset])[i + offset + 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 2][j - 3], (*rawDataFrames[2 + offset])[i - offset + 3][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 4][j - 3], (*rawDataFrames[3 - offset])[i + offset + 3][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
+                                     );
+                greenDifMax[1] =  max(greenDiff((*rawDataFrames[0 + offset])[i + offset - 3][j - 2], (*rawDataFrames[2 + offset])[i - offset - 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset - 1][j - 2], (*rawDataFrames[3 - offset])[i + offset - 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset - 1][j - 2], (*rawDataFrames[2 + offset])[i - offset][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 1][j - 2], (*rawDataFrames[3 - offset])[i + offset][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 1][j - 2], (*rawDataFrames[2 + offset])[i - offset + 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 3][j - 2], (*rawDataFrames[3 - offset])[i + offset + 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 3][j - 2], (*rawDataFrames[2 + offset])[i - offset + 4][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
+                                     );
+                greenDifMax[2] =  max(greenDiff((*rawDataFrames[1 - offset])[i - offset - 2][j - 1], (*rawDataFrames[3 - offset])[i + offset - 3][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset - 2][j - 1], (*rawDataFrames[2 + offset])[i - offset - 1][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset][j - 1], (*rawDataFrames[3 - offset])[i + offset - 1][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset][j - 1], (*rawDataFrames[2 + offset])[i - offset + 1][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 2][j - 1], (*rawDataFrames[3 - offset])[i + offset + 1][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 2][j - 1], (*rawDataFrames[2 + offset])[i - offset + 3][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 4][j - 1], (*rawDataFrames[3 - offset])[i + offset + 3][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
+                                     );
+                greenDifMax[3] =  max(greenDiff((*rawDataFrames[0 + offset])[i + offset - 3][j], (*rawDataFrames[2 + offset])[i - offset - 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset - 1][j], (*rawDataFrames[3 - offset])[i + offset - 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset - 1][j], (*rawDataFrames[2 + offset])[i - offset][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 1][j], (*rawDataFrames[3 - offset])[i + offset][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 1][j], (*rawDataFrames[2 + offset])[i - offset + 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 3][j], (*rawDataFrames[3 - offset])[i + offset + 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 3][j], (*rawDataFrames[2 + offset])[i - offset + 4][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
+                                     );
+                greenDifMax[4] =  max(greenDiff((*rawDataFrames[1 - offset])[i - offset - 2][j + 1], (*rawDataFrames[3 - offset])[i + offset - 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset - 2][j + 1], (*rawDataFrames[2 + offset])[i - offset - 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset][j + 1], (*rawDataFrames[3 - offset])[i + offset - 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset][j + 1], (*rawDataFrames[2 + offset])[i - offset + 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 2][j + 1], (*rawDataFrames[3 - offset])[i + offset + 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 2][j + 1], (*rawDataFrames[2 + offset])[i - offset + 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 4][j + 1], (*rawDataFrames[3 - offset])[i + offset + 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
+                                     );
+                greenDifMax[5] =  max(greenDiff((*rawDataFrames[0 + offset])[i + offset - 3][j + 2], (*rawDataFrames[2 + offset])[i - offset - 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset - 1][j + 2], (*rawDataFrames[3 - offset])[i + offset - 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset - 1][j + 2], (*rawDataFrames[2 + offset])[i - offset][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 1][j + 2], (*rawDataFrames[3 - offset])[i + offset][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 1][j + 2], (*rawDataFrames[2 + offset])[i - offset + 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[1 - offset])[i - offset + 3][j + 2], (*rawDataFrames[3 - offset])[i + offset + 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                      greenDiff((*rawDataFrames[0 + offset])[i + offset + 3][j + 2], (*rawDataFrames[2 + offset])[i - offset + 4][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
+                                     );
             }
+
         }
 
         offset ^= 1; // 0 => 1 or 1 => 0
@@ -418,7 +474,19 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                                                  greenDiff((*rawDataFrames[1 - offset])[i - offset + 3][j + 2], (*rawDataFrames[3 - offset])[i + offset + 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
                                                 );
                     gridMax = max(greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4]);
+                } else if(gridSize == 7) {
+                    // compute maximum of differences for 7th column of 7x7 grid and save at position lastIndex
+                    greenDifMax[lastIndex] = max(greenDiff((*rawDataFrames[1 - offset])[i - offset - 2][j + 3], (*rawDataFrames[3 - offset])[i + offset - 3][j + 4], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                                 greenDiff((*rawDataFrames[0 + offset])[i + offset - 2][j + 3], (*rawDataFrames[2 + offset])[i - offset - 1][j + 4], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                                 greenDiff((*rawDataFrames[1 - offset])[i - offset][j + 3], (*rawDataFrames[3 - offset])[i + offset - 1][j + 4], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                                 greenDiff((*rawDataFrames[0 + offset])[i + offset][j + 3], (*rawDataFrames[2 + offset])[i - offset + 1][j + 4], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                                 greenDiff((*rawDataFrames[1 - offset])[i - offset + 2][j + 3], (*rawDataFrames[3 - offset])[i + offset + 1][j + 4], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                                 greenDiff((*rawDataFrames[0 + offset])[i + offset + 2][j + 3], (*rawDataFrames[2 + offset])[i - offset + 3][j + 4], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion),
+                                                 greenDiff((*rawDataFrames[1 - offset])[i - offset + 4][j + 3], (*rawDataFrames[3 - offset])[i + offset + 3][j + 4], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion)
+                                                );
+                    gridMax = max(greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4], greenDifMax[5], greenDifMax[6]);
                 }
+
 
                 // adjust index for next column
                 lastIndex ++;
