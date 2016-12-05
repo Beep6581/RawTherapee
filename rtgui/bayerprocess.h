@@ -50,7 +50,9 @@ protected:
     Gtk::CheckButton* pixelShiftNonGreenHorizontal;
     Gtk::CheckButton* pixelShiftNonGreenVertical;
     Gtk::CheckButton* pixelShiftNonGreenCross;
-    Adjuster* pixelShiftStddevFactor;
+    Adjuster* pixelShiftStddevFactorGreen;
+    Adjuster* pixelShiftStddevFactorRed;
+    Adjuster* pixelShiftStddevFactorBlue;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftNreadIso;
     Adjuster* pixelShiftPrnu;

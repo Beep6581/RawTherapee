@@ -473,7 +473,7 @@ enum ProcEvent {
     EvRawImageNum = 443,
     EvPixelShiftMotion = 444,
     EvPixelShiftMotionCorrection = 445,
-    EvPixelShiftStddevFactor = 446,
+    EvPixelShiftStddevFactorGreen = 446,
     EvPixelShiftEperIso = 447,
     EvPixelShiftNreadIso = 448,
     EvPixelShiftPrnu = 449,
@@ -483,6 +483,8 @@ enum ProcEvent {
     EvPixelShiftNonGreenHorizontal = 453,
     EvPixelShiftNonGreenVertical = 454,
     EvPixelShiftNonGreenCross = 455,
+    EvPixelShiftStddevFactorRed = 456,
+    EvPixelShiftStddevFactorBlue = 457,
     NUMOFEVENTS
 
 };

@@ -887,7 +887,9 @@ void RAWParams::setDefaults()
     bayersensor.lmmse_iterations = 2;
     bayersensor.pixelShiftMotion = 0;
     bayersensor.pixelShiftMotionCorrection = RAWParams::BayerSensor::Grid1x2;
-    bayersensor.pixelShiftStddevFactor = 3.0;
+    bayersensor.pixelShiftStddevFactorGreen = 3.0;
+    bayersensor.pixelShiftStddevFactorRed = 3.0;
+    bayersensor.pixelShiftStddevFactorBlue = 3.0;
     bayersensor.pixelShiftEperIso = 0.0;
     bayersensor.pixelShiftNreadIso = 0.0;
     bayersensor.pixelShiftPrnu = 1.0;
@@ -3384,8 +3386,16 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("RAW Bayer", "PixelShiftMotionCorrection", raw.bayersensor.pixelShiftMotionCorrection );
         }
 
-        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactor) {
-            keyFile.set_double ("RAW Bayer", "PixelShiftStddevFactor", raw.bayersensor.pixelShiftStddevFactor );
+        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactorGreen) {
+            keyFile.set_double ("RAW Bayer", "pixelShiftStddevFactorGreen", raw.bayersensor.pixelShiftStddevFactorGreen );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactorRed) {
+            keyFile.set_double ("RAW Bayer", "pixelShiftStddevFactorRed", raw.bayersensor.pixelShiftStddevFactorRed );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactorBlue) {
+            keyFile.set_double ("RAW Bayer", "pixelShiftStddevFactorBlue", raw.bayersensor.pixelShiftStddevFactorBlue );
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftEperIso) {
@@ -7498,11 +7508,27 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
  
-            if (keyFile.has_key ("RAW Bayer", "PixelShiftStddevFactor"))  {
-                raw.bayersensor.pixelShiftStddevFactor = keyFile.get_double("RAW Bayer", "PixelShiftStddevFactor");
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorGreen"))  {
+                raw.bayersensor.pixelShiftStddevFactorGreen = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorGreen");
 
                 if (pedited) {
-                    pedited->raw.bayersensor.pixelShiftStddevFactor = true;
+                    pedited->raw.bayersensor.pixelShiftStddevFactorGreen = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorRed"))  {
+                raw.bayersensor.pixelShiftStddevFactorRed = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorRed");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftStddevFactorRed = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorBlue"))  {
+                raw.bayersensor.pixelShiftStddevFactorBlue = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorBlue");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftStddevFactorBlue = true;
                 }
             }
 
@@ -8019,7 +8045,9 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations
         && raw.bayersensor.pixelShiftMotion == other.raw.bayersensor.pixelShiftMotion
         && raw.bayersensor.pixelShiftMotionCorrection == other.raw.bayersensor.pixelShiftMotionCorrection
-        && raw.bayersensor.pixelShiftStddevFactor == other.raw.bayersensor.pixelShiftStddevFactor
+        && raw.bayersensor.pixelShiftStddevFactorGreen == other.raw.bayersensor.pixelShiftStddevFactorGreen
+        && raw.bayersensor.pixelShiftStddevFactorRed == other.raw.bayersensor.pixelShiftStddevFactorRed
+        && raw.bayersensor.pixelShiftStddevFactorBlue == other.raw.bayersensor.pixelShiftStddevFactorBlue
         && raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso
         && raw.bayersensor.pixelShiftNreadIso == other.raw.bayersensor.pixelShiftNreadIso
         && raw.bayersensor.pixelShiftPrnu == other.raw.bayersensor.pixelShiftPrnu

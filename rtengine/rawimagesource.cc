@@ -1966,7 +1966,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgressStr ("CA Auto Correction...");
             plistener->setProgress (0.0);
         }
-        if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple]) {
+        if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift]) {
             for(int i=0; i<4; ++i) {
                 CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength, *rawDataFrames[i]);
             }
@@ -2022,12 +2022,12 @@ void RawImageSource::demosaic(const RAWParams &raw)
             ahd_demosaic (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
             amaze_demosaic_RT (0, 0, W, H);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift_simple] ) {
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift] ) {
             if(raw.bayersensor.pixelShiftMotion > 0 || raw.bayersensor.pixelShiftAutomatic) {
                 amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
             }
             if(numFrames == 4) {
-                pixelshift(0, 0, W, H, raw.bayersensor.pixelShiftMotion > 0, raw.bayersensor.pixelShiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelShiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactor, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, ri->get_model(), raw.expos, raw.bayersensor.pixelShiftNonGreenHorizontal, raw.bayersensor.pixelShiftNonGreenVertical, raw.bayersensor.pixelShiftNonGreenCross);
+                pixelshift(0, 0, W, H, raw.bayersensor.pixelShiftMotion > 0, raw.bayersensor.pixelShiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelShiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactorGreen, raw.bayersensor.pixelShiftStddevFactorRed, raw.bayersensor.pixelShiftStddevFactorBlue, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, ri->get_model(), raw.expos, raw.bayersensor.pixelShiftNonGreenHorizontal, raw.bayersensor.pixelShiftNonGreenVertical, raw.bayersensor.pixelShiftNonGreenCross);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);

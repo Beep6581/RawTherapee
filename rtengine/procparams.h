@@ -1165,7 +1165,7 @@ public:
     public:
         //enum eMethod{ eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
         //numMethods }; // This MUST be the last enum
-        enum eMethod { amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none, pixelshift_simple,
+        enum eMethod { amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none, pixelshift,
                        numMethods
                      }; // This MUST be the last enum
         enum ePSMotionCorrection {
@@ -1187,7 +1187,9 @@ public:
         int lmmse_iterations;
         int pixelShiftMotion;
         ePSMotionCorrection pixelShiftMotionCorrection;
-        double pixelShiftStddevFactor;
+        double pixelShiftStddevFactorGreen;
+        double pixelShiftStddevFactorRed;
+        double pixelShiftStddevFactorBlue;
         double pixelShiftEperIso;
         double pixelShiftNreadIso;
         double pixelShiftPrnu;

@@ -372,7 +372,9 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.lmmseIterations = v;
     raw.bayersensor.pixelShiftMotion = v;
     raw.bayersensor.pixelShiftMotionCorrection = v;
-    raw.bayersensor.pixelShiftStddevFactor = v;
+    raw.bayersensor.pixelShiftStddevFactorGreen = v;
+    raw.bayersensor.pixelShiftStddevFactorRed = v;
+    raw.bayersensor.pixelShiftStddevFactorBlue = v;
     raw.bayersensor.pixelShiftEperIso = v;
     raw.bayersensor.pixelShiftNreadIso = v;
     raw.bayersensor.pixelShiftPrnu = v;
@@ -880,7 +882,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.lmmseIterations = raw.bayersensor.lmmseIterations && p.raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations;
         raw.bayersensor.pixelShiftMotion = raw.bayersensor.pixelShiftMotion && p.raw.bayersensor.pixelShiftMotion == other.raw.bayersensor.pixelShiftMotion;
         raw.bayersensor.pixelShiftMotionCorrection = raw.bayersensor.pixelShiftMotionCorrection && p.raw.bayersensor.pixelShiftMotionCorrection == other.raw.bayersensor.pixelShiftMotionCorrection;
-        raw.bayersensor.pixelShiftStddevFactor = raw.bayersensor.pixelShiftStddevFactor && p.raw.bayersensor.pixelShiftStddevFactor == other.raw.bayersensor.pixelShiftStddevFactor;
+        raw.bayersensor.pixelShiftStddevFactorGreen = raw.bayersensor.pixelShiftStddevFactorGreen && p.raw.bayersensor.pixelShiftStddevFactorGreen == other.raw.bayersensor.pixelShiftStddevFactorGreen;
+        raw.bayersensor.pixelShiftStddevFactorRed = raw.bayersensor.pixelShiftStddevFactorRed && p.raw.bayersensor.pixelShiftStddevFactorRed == other.raw.bayersensor.pixelShiftStddevFactorRed;
+        raw.bayersensor.pixelShiftStddevFactorBlue = raw.bayersensor.pixelShiftStddevFactorBlue && p.raw.bayersensor.pixelShiftStddevFactorBlue == other.raw.bayersensor.pixelShiftStddevFactorBlue;
         raw.bayersensor.pixelShiftEperIso = raw.bayersensor.pixelShiftEperIso && p.raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso;
         raw.bayersensor.pixelShiftNreadIso = raw.bayersensor.pixelShiftNreadIso && p.raw.bayersensor.pixelShiftNreadIso == other.raw.bayersensor.pixelShiftNreadIso;
         raw.bayersensor.pixelShiftPrnu = raw.bayersensor.pixelShiftPrnu && p.raw.bayersensor.pixelShiftPrnu == other.raw.bayersensor.pixelShiftPrnu;
@@ -2310,8 +2314,16 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelShiftMotionCorrection = mods.raw.bayersensor.pixelShiftMotionCorrection;
     }
 
-    if (raw.bayersensor.pixelShiftStddevFactor) {
-        toEdit.raw.bayersensor.pixelShiftStddevFactor = mods.raw.bayersensor.pixelShiftStddevFactor;
+    if (raw.bayersensor.pixelShiftStddevFactorGreen) {
+        toEdit.raw.bayersensor.pixelShiftStddevFactorGreen = mods.raw.bayersensor.pixelShiftStddevFactorGreen;
+    }
+
+    if (raw.bayersensor.pixelShiftStddevFactorRed) {
+        toEdit.raw.bayersensor.pixelShiftStddevFactorRed = mods.raw.bayersensor.pixelShiftStddevFactorRed;
+    }
+
+    if (raw.bayersensor.pixelShiftStddevFactorBlue) {
+        toEdit.raw.bayersensor.pixelShiftStddevFactorBlue = mods.raw.bayersensor.pixelShiftStddevFactorBlue;
     }
 
     if (raw.bayersensor.pixelShiftEperIso) {
@@ -2861,7 +2873,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 bool RAWParamsEdited::BayerSensor::isUnchanged() const
 {
     return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
-            && pixelShiftMotion && pixelShiftMotionCorrection && pixelShiftStddevFactor && pixelShiftEperIso
+            && pixelShiftMotion && pixelShiftMotionCorrection && pixelShiftStddevFactorGreen && pixelShiftStddevFactorRed && pixelShiftStddevFactorBlue && pixelShiftEperIso
             && pixelShiftNreadIso && pixelShiftPrnu && pixelshiftShowMotion && pixelshiftShowMotionMaskOnly
             && pixelShiftAutomatic && pixelShiftNonGreenHorizontal && pixelShiftNonGreenVertical && pixelShiftNonGreenCross
             && linenoise && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
