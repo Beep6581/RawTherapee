@@ -75,19 +75,6 @@ inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d)
 }
 
 template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d, const _Tp& e)
-{
-    return max(max(a,b,c),std::max(d,e));
-}
-
-template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d, const _Tp& e, const _Tp& f, const _Tp& g)
-{
-    return max(max(a,b,c,d),max(e,f,g));
-}
-
-
-template<typename _Tp>
 inline _Tp intp(_Tp a, _Tp b, _Tp c)
 {
     // calculate a * b + (1 - a) * c
