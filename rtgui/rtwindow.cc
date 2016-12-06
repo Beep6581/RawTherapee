@@ -452,6 +452,11 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         titleGrid->attach_next_to(*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to(*closeb, Gtk::POS_RIGHT, 1, 1);
         titleGrid->show_all ();
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+        titleGrid->set_column_spacing(2);
+#endif
+//GTK318
 
         mainNB->append_page (*ep, *titleGrid);
         //ep->setAspect ();

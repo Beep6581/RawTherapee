@@ -506,6 +506,11 @@ bool ExpanderBox::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) {
 ExpanderBox::ExpanderBox( Gtk::Container *p): pC(p)
 {
     set_name ("ExpanderBox");
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    set_border_width(2);
+#endif
+//GTK318
 }
 
 void ExpanderBox::setLevel(int level)
@@ -586,6 +591,11 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    updateStyle();
+#endif
+//GTK318
     titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle) );
     titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
     titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
@@ -641,6 +651,11 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    updateStyle();
+#endif
+//GTK318
     titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle));
     titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
     titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
@@ -675,6 +690,18 @@ bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event)
 
     return true;
 }
+
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+void MyExpander::updateStyle()
+{
+    headerHBox->set_spacing(2);
+    headerHBox->set_border_width(1);
+    set_spacing(0);
+    set_border_width(0);
+}
+#endif
+//GTK318
 
 void MyExpander::setLevel (int level)
 {

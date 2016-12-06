@@ -178,6 +178,11 @@ private:
     bool on_enter_leave_title (GdkEventCrossing* event);
     /// Used to handle the colored background for the Enable button
     bool on_enter_leave_enable (GdkEventCrossing* event);
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    void updateStyle();
+#endif
+//GTK318
 
 protected:
     Gtk::Container* child;      /// Gtk::Contained to display below the expander's title

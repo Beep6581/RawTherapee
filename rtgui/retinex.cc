@@ -224,6 +224,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     equalFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_EQUAL")));
     setExpandAlignProperties(equalFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    equalFrame->set_border_width(5);
+#endif
+//GTK318
 
     Gtk::Grid *equalGrid = Gtk::manage (new Gtk::Grid());
     setExpandAlignProperties(equalGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -320,6 +325,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     iterFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_ITERF")));
     setExpandAlignProperties(iterFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    iterFrame->set_border_width(5);
+#endif
+//GTK318
 
     Gtk::Grid *iterGrid = Gtk::manage (new Gtk::Grid());
     setExpandAlignProperties(iterGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -359,6 +369,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     tranFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_TRANF")));
     setExpandAlignProperties(tranFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    tranFrame->set_border_width(5);
+#endif
+//GTK318
 
     Gtk::Grid *tranGrid = Gtk::manage (new Gtk::Grid());
     setExpandAlignProperties(tranGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -409,6 +424,11 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     gainFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_GAINOFFS")));
     setExpandAlignProperties(gainFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    gainFrame->set_border_width(5);
+#endif
+//GTK318
 
     Gtk::Grid *gainGrid = Gtk::manage (new Gtk::Grid());
     setExpandAlignProperties(gainGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);

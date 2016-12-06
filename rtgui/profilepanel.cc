@@ -53,6 +53,11 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), image
     fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
     fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TIP"));
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    fillMode->set_margin_right(2);
+#endif
+//GTK318
     setExpandAlignProperties(fillMode, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     // Create the Combobox

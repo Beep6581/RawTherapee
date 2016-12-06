@@ -24,17 +24,21 @@ using namespace rtengine::procparams;
 
 
 ToolVBox::ToolVBox() {
+//GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     set_spacing(1);       // Vertical space between tools
     set_border_width(3);  // Space separating the tab's frame and the tools
 #endif
+//GTK318
 }
 
 ToolParamBlock::ToolParamBlock() {
+//GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     set_spacing(2);       // Vertical space between parameters in a single tool
     set_border_width(5);  // Space separating the parameters of a tool and its surrounding frame
 #endif
+//GTK318
 }
 
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(nullptr), exp(nullptr), lastEnabled(true)
