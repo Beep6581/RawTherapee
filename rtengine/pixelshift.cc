@@ -109,6 +109,19 @@ float nonGreenDiffCross(float right, float left, float top, float bottom, float 
     }
 }
 
+void paintMotionMask(int index, bool showMotion, float gridMax, bool showOnlyMask, float *maskDest, float *nonMaskDest0, float *nonMaskDest1)
+{
+    if(showMotion) {
+        if(!showOnlyMask) {
+            // if showMotion is enabled colourize the pixel
+            maskDest[index] = 1000.f + 25000.f * gridMax;
+            nonMaskDest1[index] = nonMaskDest0[index] = 0.f;
+        } else {
+            maskDest[index] = nonMaskDest0[index] = nonMaskDest1[index] = 1000.f + 25000.f * gridMax;
+        }
+    }
+}
+
 }
 
 using namespace std;
@@ -118,7 +131,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 {
 
     BENCHFUN
-
 
     static const float nReadK3II[] = { 3.4f,  // ISO 100
                                        3.1f,  // ISO 125
@@ -244,7 +256,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
         case RAWParams::BayerSensor::ePSMotionCorrection::Grid7x7:
             gridSize = 7;
-            break;
     }
 
     // Lookup table for non adaptive (slider) mode
@@ -349,7 +360,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
         float greenDifMax[gridSize];
 
-        // motion detection checks the grid around the pixel for differences in green channels
+        // green channel motion detection checks the grid around the pixel for differences in green channels
         if(detectMotion || adaptive) {
             if(gridSize == 3) {
                 // compute maximum of differences for first two columns of 3x3 grid
@@ -499,32 +510,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 
                 if (gridMax > thresh - korr) {
                     // at least one of the tested pixels of the grid is detected as motion
-                    if(showMotion) {
-                        float blend = (gridMax - thresh + korr) * blendFactor;
-
-                        if(!showOnlyMask) {
-                            // if showMotion is enabled make the pixel green
-                            greenDest[j + offsX] = 1000.f + 25000.f * blend;
-                            nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
-                        } else {
-                            greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                        }
-                    }
+                    paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, nonGreenDest0, nonGreenDest1);
 
                     if(skipNext) {
                         // treat the horizontally next pixel also as motion
                         j++;
-                        if(showMotion) {
-                            float blend = (gridMax - thresh + korr) * blendFactor;
-
-                            if(!showOnlyMask) {
-                                // if showMotion is enabled make the pixel green
-                                greenDest[j + offsX] = 1000.f + 25000.f * blend;
-                                nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 0.f;
-                            } else {
-                                greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                            }
-                        }
+                        paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, nonGreenDest0, nonGreenDest1);
                         offset ^= 1;
                     }
 
@@ -541,18 +532,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     float gridMax = nonGreenDiffCross(ngRight, ngLeft, ngTop, ngBottom, ngCentre, stddevFactorNonGreen0, eperIsoNonGreen0, nRead, prnu, showMotion);
 
                     if(gridMax > 0.f) {
-                        if(showMotion) {
-                            float blend = gridMax * blendFactor;
-
-                            if(!showOnlyMask) {
-                                // if showMotion is enabled colourize the pixel
-                                nonGreenDest0[j + offsX] = 1000.f + 25000.f * blend;
-                                nonGreenDest1[j + offsX] = greenDest[j + offsX] = 0.f;
-                            } else {
-                                greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                            }
-                        }
-
+                        paintMotionMask(j + offsX, showMotion, gridMax, showOnlyMask, nonGreenDest0, nonGreenDest1, greenDest);
                         continue;
                     }
 
@@ -564,18 +544,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     gridMax = nonGreenDiffCross(ngRight, ngLeft, ngTop, ngBottom, ngCentre, stddevFactorNonGreen2, eperIsoNonGreen2, nRead, prnu, showMotion);
 
                     if(gridMax > 0.f) {
-                        if(showMotion) {
-                            float blend = gridMax * blendFactor;
-
-                            if(!showOnlyMask) {
-                                // if showMotion is enabled colourize the pixel
-                                nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                                nonGreenDest0[j + offsX] = greenDest[j + offsX] = 0.f;
-                            } else {
-                                greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                            }
-                        }
-
+                        paintMotionMask(j + offsX, showMotion, gridMax, showOnlyMask, nonGreenDest1, nonGreenDest0, greenDest);
                         continue;
                     }
                 }
@@ -585,25 +554,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     float ngRight = (*rawDataFrames[((offset ^ 1) << 1) + (offset ^ 1)])[i][j + (offset ^ 1) + 1];
                     float ngLeft = (*rawDataFrames[((offset ^ 1) << 1) + (offset ^ 1)])[i][j + (offset ^ 1) - 1];
                     float diffRight = ngRight - ngCentre;
-                    float diff2 = ngLeft - ngCentre;
+                    float diffLeft = ngLeft - ngCentre;
 
-                    if(diffRight * diff2 >= 0.f) {
+                    if(diffRight * diffLeft >= 0.f) {
                         float val = (ngRight + ngLeft) / 2.f;
                         float gridMax = nonGreenDiff(ngCentre, val, stddevFactorNonGreen0, eperIsoNonGreen0, nRead, prnu, showMotion);
 
                         if(gridMax > 0.f) {
-                            if(showMotion) {
-                                float blend = gridMax * blendFactor;
-
-                                if(!showOnlyMask) {
-                                    // if showMotion is enabled colourize the pixel
-                                    nonGreenDest0[j + offsX] = 1000.f + 25000.f * blend;
-                                    nonGreenDest1[j + offsX] = greenDest[j + offsX] = 0.f;
-                                } else {
-                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                                }
-                            }
-
+                            paintMotionMask(j + offsX, showMotion, gridMax, showOnlyMask, nonGreenDest0, nonGreenDest1, greenDest);
                             continue;
                         }
                     }
@@ -612,25 +570,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                     ngRight = (*rawDataFrames[2 - (offset ^ 1)])[i + 1][j - (offset ^ 1) + 2];
                     ngLeft = (*rawDataFrames[2 - (offset ^ 1)])[i + 1][j - (offset ^ 1)];
                     diffRight = ngRight - ngCentre;
-                    diff2 = ngLeft - ngCentre;
+                    diffLeft = ngLeft - ngCentre;
 
-                    if(diffRight * diff2 >= 0.f) {
+                    if(diffRight * diffLeft >= 0.f) {
                         float val = (ngRight + ngLeft) / 2.f;
                         float gridMax = nonGreenDiff(ngCentre, val, stddevFactorNonGreen2, eperIsoNonGreen2, nRead, prnu, showMotion);
 
                         if(gridMax > 0.f) {
-                            if(showMotion) {
-                                float blend = gridMax * blendFactor;
-
-                                if(!showOnlyMask) {
-                                    // if showMotion is enabled colourize the pixel
-                                    nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                                    nonGreenDest0[j + offsX] = greenDest[j + offsX] = 0.f;
-                                } else {
-                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                                }
-                            }
-
+                            paintMotionMask(j + offsX, showMotion, gridMax, showOnlyMask, nonGreenDest1, nonGreenDest0, greenDest);
                             continue;
                         }
                     }
@@ -649,18 +596,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                         float gridMax = nonGreenDiff(ngCentre, val, stddevFactorNonGreen0, eperIsoNonGreen0, nRead, prnu, showMotion);
 
                         if(gridMax > 0.f) {
-                            if(showMotion) {
-                                float blend = gridMax * blendFactor;
-
-                                if(!showOnlyMask) {
-                                    // if showMotion is enabled colourize the pixel
-                                    nonGreenDest0[j + offsX] = 1000.f + 25000.f * blend;
-                                    nonGreenDest1[j + offsX] = greenDest[j + offsX] = 0.f;
-                                } else {
-                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                                }
-                            }
-
+                            paintMotionMask(j + offsX, showMotion, gridMax, showOnlyMask, nonGreenDest0, nonGreenDest1, greenDest);
                             continue;
                         }
                     }
@@ -677,18 +613,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
                         float gridMax = nonGreenDiff(ngCentre, val, stddevFactorNonGreen2, eperIsoNonGreen2, nRead, prnu, showMotion);
 
                         if(gridMax > 0.f) {
-                            if(showMotion) {
-                                float blend = gridMax * blendFactor;
-
-                                if(!showOnlyMask) {
-                                    // if showMotion is enabled colourize the pixel
-                                    nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                                    nonGreenDest0[j + offsX] = greenDest[j + offsX] = 0.f;
-                                } else {
-                                    greenDest[j + offsX] = nonGreenDest0[j + offsX] = nonGreenDest1[j + offsX] = 1000.f + 25000.f * blend;
-                                }
-                            }
-
+                            paintMotionMask(j + offsX, showMotion, gridMax, showOnlyMask, nonGreenDest1, nonGreenDest0, greenDest);
                             continue;
                         }
                     }
