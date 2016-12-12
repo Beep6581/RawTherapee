@@ -22,6 +22,7 @@
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <type_traits>
 
 #include <glibmm.h>
 #include <lcms2.h>
@@ -206,7 +207,7 @@ public:
         }
     }*/
 
-    Threshold<T> & operator= (const Threshold<T> &rhs)
+    Threshold<T>& operator =(const Threshold<T> &rhs)
     {
         value[0] = rhs.value[0];
         value[1] = rhs.value[1];
@@ -217,16 +218,34 @@ public:
         return *this;
     }
 
-    bool operator== (const Threshold<T> &rhs) const
+    template<typename U = T>
+    typename std::enable_if<std::is_floating_point<U>::value, bool>::type operator ==(const Threshold<U> &rhs) const
     {
-        if (_isDouble)
-            return fabs(value[0] - rhs.value[0]) < 1e-10
-                   && fabs(value[1] - rhs.value[1]) < 1e-10
-                   && fabs(value[2] - rhs.value[2]) < 1e-10
-                   && fabs(value[3] - rhs.value[3]) < 1e-10;
-        else
-            return fabs(value[0] - rhs.value[0]) < 1e-10
-                   && fabs(value[1] - rhs.value[1]) < 1e-10;
+        if (_isDouble) {
+            return std::fabs(value[0] - rhs.value[0]) < 1e-10
+                   && std::fabs(value[1] - rhs.value[1]) < 1e-10
+                   && std::fabs(value[2] - rhs.value[2]) < 1e-10
+                   && std::fabs(value[3] - rhs.value[3]) < 1e-10;
+        } else {
+            return std::fabs(value[0] - rhs.value[0]) < 1e-10
+                   && std::fabs(value[1] - rhs.value[1]) < 1e-10;
+        }
+    }
+
+    template<typename U = T>
+    typename std::enable_if<std::is_integral<U>::value, bool>::type operator ==(const Threshold<U> &rhs) const
+    {
+        if (_isDouble) {
+            return
+                value[0] == rhs.value[0]
+                && value[1] == rhs.value[1]
+                && value[2] == rhs.value[2]
+                && value[3] == rhs.value[3];
+        } else {
+            return
+                value[0] == rhs.value[0]
+                && value[1] == rhs.value[1];
+        }
     }
 };
 

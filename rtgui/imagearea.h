@@ -41,9 +41,8 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
 protected:
 
     Glib::ustring infotext;
-    Glib::RefPtr<Pango::Layout> ilayout;
     Glib::RefPtr<Pango::Layout> deglayout;
-    Glib::RefPtr<Gdk::Pixbuf>   ipixbuf;
+    BackBuffer iBackBuffer;
     bool showClippedH, showClippedS;
 
     ImageAreaPanel* parent;

@@ -437,7 +437,7 @@ public:
     // you have to check if the surface is created thanks to surfaceCreated before starting to draw on it
     bool surfaceCreated()
     {
-        return surface;
+        return static_cast<bool>(surface);
     }
     Cairo::RefPtr<Cairo::ImageSurface> getSurface()
     {

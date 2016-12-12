@@ -794,12 +794,13 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
 
-                    if (needsVignetting())
+                    if (needsVignetting()) {
                         if(darkening) {
                             vignmul /= std::max(v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                         } else {
                             vignmul *= (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius));
                         }
+                    }
 
                     if (needsGradient()) {
                         vignmul *= calcGradientFactor(gp, cx + x, cy + y);
@@ -963,12 +964,13 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 // multiplier for vignetting correction
                 double vignmul = 1.0;
 
-                if (needsVignetting())
+                if (needsVignetting()) {
                     if(darkening) {
                         vignmul /= std::max(v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                     } else {
                         vignmul = v + mul * tanh (b * (maxRadius - s * r2) / maxRadius);
                     }
+                }
 
                 if (needsGradient()) {
                     vignmul *= calcGradientFactor(gp, cx + x, cy + y);

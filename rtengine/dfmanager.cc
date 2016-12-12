@@ -598,12 +598,13 @@ std::vector<badPix> *DFManager::getBadPixels ( const std::string &mak, const std
             found = true;
         }
 
-        if( settings->verbose )
+        if( settings->verbose ) {
             if(found) {
                 printf("%s.badpixels found\n", s.str().c_str());
             } else {
                 printf("%s.badpixels not found\n", s.str().c_str());
             }
+        }
 
     }
 
@@ -617,12 +618,13 @@ std::vector<badPix> *DFManager::getBadPixels ( const std::string &mak, const std
             found = true;
         }
 
-        if( settings->verbose )
+        if( settings->verbose ) {
             if(found) {
                 printf("%s.badpixels found\n", s.str().c_str());
             } else {
                 printf("%s.badpixels not found\n", s.str().c_str());
             }
+        }
     }
 
     if(!found) {

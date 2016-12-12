@@ -1937,7 +1937,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
 
-    if( totBP )
+    if( totBP ) {
         if ( ri->getSensorType() == ST_BAYER ) {
             if(numFrames == 4) {
                 for(int i = 0; i < 4; ++i) {
@@ -1951,6 +1951,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         } else {
             interpolateBadPixelsNColours( *bitmapBads, ri->get_colors() );
         }
+    }
 
     if ( ri->getSensorType() == ST_BAYER && raw.bayersensor.linenoise > 0 ) {
         if (plistener) {
