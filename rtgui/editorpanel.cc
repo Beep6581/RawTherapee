@@ -326,6 +326,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     profilep = Gtk::manage (new ProfilePanel ());
     ppframe = new Gtk::Frame ();
+    ppframe->set_name("ProfilePanel");
     ppframe->add (*profilep);
     ppframe->set_label (M ("PROFILEPANEL_LABEL"));
     //leftbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
@@ -559,8 +560,10 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     editbox->show_all ();
 
     // build screen
-    hpanedl = Gtk::manage (new Gtk::HPaned());
-    hpanedr = Gtk::manage (new Gtk::HPaned());
+    hpanedl = Gtk::manage (new Gtk::Paned(Gtk::ORIENTATION_HORIZONTAL));
+    hpanedl->set_name("EditorLeftPaned");
+    hpanedr = Gtk::manage (new Gtk::Paned(Gtk::ORIENTATION_HORIZONTAL));
+    hpanedr->set_name("EditorRightPaned");
     leftbox->reference ();
     vboxright->reference ();
 

@@ -80,7 +80,7 @@ frame {
     border-radius: 0;
     border-style: solid;
     /*border-style: none none none solid;*/
-    padding: 0 3px;
+    padding: 0;
     margin: 3px 0 ;
     background-color: rgba(0,0,0,0.);
 }
@@ -360,11 +360,12 @@ menuitem {
 }
 
 #HistogramPanel {
-    margin: 2px 4px;
+    margin: 0;
+    padding: 0;
 }
 
 #MyExpander {
-    margin: 0 5px 0 5px;
+    margin: 0;
     padding: 0;
 }
 
@@ -585,9 +586,26 @@ paned box, paned grid {
 }
 
 paned > separator {
-    border: 1px solid #484848;
+    border-width: 1px;
+    border-color: #484848;
     margin: 0;
     padding: 0;
+}
+paned.horizontal > separator {
+    min-width: 2px;
+    border-style: none solid;
+}
+paned.vertical > separator {
+    min-height: 2px;
+    border-style: solid none;
+}
+
+#PlacesPaned {
+    padding: 0px 0px 5px 5px;
+}
+#PlacesPaned:first-child {
+    padding: 0;
+    margin: 2px 0 4px 4px;
 }
 
 #MainNotebook > header.left tab image {
@@ -606,6 +624,8 @@ paned > separator {
 #MainNotebook header {
     /* OK */
     background-color: #2A2A2A;
+    border: 0;
+    padding: 0;
 }
 #MainNotebook tabs {
     /* OK */
@@ -752,6 +772,18 @@ paned > separator {
     padding: 5px;
 }
 
+#EditorLeftPaned:first-child {
+    padding: 0 0 0 3px;
+}
+
+#EditorLeftPaned:last-child {
+    padding: 10px 0 0 10px;
+}
+
+#EditorRightPaned:last-child {
+    padding: 0 4px 0 0;
+}
+
 #MainNotebook > header #CloseButton {
     padding: 0;
     margin: 0 0 0 0.3em;
@@ -759,4 +791,8 @@ paned > separator {
 #MainNotebook > header #CloseButton image {
     padding: 0;
     margin: 0;
+}
+
+#RightNotebook #ToolPanelNotebook stack {
+    margin: 4px;
 }
