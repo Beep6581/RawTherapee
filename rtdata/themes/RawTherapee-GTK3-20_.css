@@ -139,6 +139,7 @@ grid separator.vertical, box separator.vertical {
     padding: 4px;
 }
 
+
 /* Frames in the toolbox. Not MyExpander frames. */
 eventbox.frame {
     border-color: #565656;
@@ -795,4 +796,12 @@ paned.vertical > separator {
 
 #RightNotebook #ToolPanelNotebook stack {
     margin: 4px;
+}
+
+#RightNotebook #HistoryPanel {
+    padding: 4px;
+}
+
+#RightNotebook scrolledwindow {
+    padding: 4px;
 }

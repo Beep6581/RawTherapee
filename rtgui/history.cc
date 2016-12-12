@@ -42,6 +42,7 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
     hscrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
     Gtk::Frame* histFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_LABEL")));
+    histFrame->set_name ("HistoryPanel");
     histFrame->add (*hscrollw);
 
     hTreeView = Gtk::manage (new Gtk::TreeView ());
@@ -112,6 +113,7 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
     bscrollw->set_size_request (-1, 45);
 
     Gtk::Frame* bmFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_SNAPSHOTS")));
+    bmFrame->set_name("Snapshots");
     Gtk::VBox* bmBox = Gtk::manage (new Gtk::VBox ());
     bmFrame->add (*bmBox);
     bmBox->pack_start (*bscrollw, Gtk::PACK_EXPAND_WIDGET, 4);
