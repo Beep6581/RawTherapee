@@ -444,7 +444,7 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
                 val = 1.f - val;
             }
 
-            val *= (M_PI / 2);
+            val *= M_PIf_2;
 
             if (gp.scale < 1.f) {
                 val = pow3(xsinf(val));
@@ -468,7 +468,7 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
 
             val = gp.bright_top ? 1.f - val : val;
 
-            val *= (M_PI / 2);
+            val *= M_PIf_2;
 
             if (gp.scale < 1.f) {
                 val = pow3(xsinf(val));
@@ -590,7 +590,7 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
         std::swap(a, b);
     }
 
-    float dist = sqrtf(a * a + b * b);
+    float dist = normn(a, b, 2);
     float dist_oe, dist_ie;
     float2 sincosval;
 
@@ -623,7 +623,7 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
     if (dist >= dist_oe) {
         val = pcv.scale;
     } else {
-        val = (M_PI / 2) * (dist - dist_ie) / (dist_oe - dist_ie);
+        val = M_PIf_2 * (dist - dist_ie) / (dist_oe - dist_ie);
 
         if (pcv.scale < 1.f) {
             val = pow4(xcosf(val));
