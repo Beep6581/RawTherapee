@@ -41,6 +41,25 @@
 #include "StopWatch.h"
 
 
+namespace
+{
+
+    bool checkRawImageThumb(const rtengine::RawImage& raw_image)
+    {
+        if (!raw_image.is_supportedThumb()) {
+            return false;
+        }
+
+        const std::size_t length =
+            fdata(raw_image.get_thumbOffset(), raw_image.get_file())[1] != 0xD8 && raw_image.is_ppmThumb()
+                ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
+                : raw_image.get_thumbLength();
+
+        return raw_image.get_thumbOffset() + length < raw_image.get_file()->size;
+    }
+
+}
+
 extern Options options;
 
 namespace rtengine
@@ -175,8 +194,8 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     int err = 1;
 
-    // see if it is something we support
-    if ( ri->is_supportedThumb() && ri->get_thumbOffset() < ri->get_file()->size ) {
+    // See if it is something we support
+    if (checkRawImageThumb(*ri)) {
         const char* data((const char*)fdata(ri->get_thumbOffset(), ri->get_file()));
 
         if ( (unsigned char)data[1] == 0xd8 ) {
@@ -491,6 +510,17 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         tmph = high;
     }
 
+    const bool rotate_90 =
+        rotate
+        && (
+            ri->get_rotateDegree() == 90
+            || ri->get_rotateDegree() == 270
+        );
+
+    if (rotate_90) {
+        std::swap(tmpw, tmph);
+    }
+
     if (fixwh == 1) { // fix height, scale width
         w = tmpw * h / tmph;
     } else {
@@ -501,8 +531,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         delete tpp->thumbImg;
     }
 
-    tpp->thumbImg = nullptr;
-    tpp->thumbImg = resizeTo<Image16>(w, h, TI_Bilinear, tmpImg);
+    if (rotate_90) {
+        tpp->thumbImg = resizeTo<Image16>(h, w, TI_Bilinear, tmpImg);
+    } else {
+        tpp->thumbImg = resizeTo<Image16>(w, h, TI_Bilinear, tmpImg);
+    }
     delete tmpImg;
 
 
@@ -1057,7 +1090,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         }
     }
 
-    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as);
+    LUTu histToneCurve;
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
     // freeing up some memory
     customToneCurve1.Reset();

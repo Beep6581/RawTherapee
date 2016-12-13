@@ -274,37 +274,37 @@ public:
     {
         return profile_data;
     }
-    IMFILE *get_file()
+    IMFILE *get_file() const
     {
         return ifp;
     }
     bool is_supportedThumb() const ;
     bool is_jpegThumb() const ;
     bool is_ppmThumb() const ;
-    int get_thumbOffset()
+    int get_thumbOffset() const
     {
         return int(thumb_offset);
     }
-    int get_thumbWidth()
+    int get_thumbWidth() const
     {
         return int(thumb_width);
     }
-    int get_thumbHeight()
+    int get_thumbHeight() const
     {
         return int(thumb_height);
     }
-    int get_thumbBPS()
+    int get_thumbBPS() const
     {
         return thumb_load_raw ? 16 : 8;
     }
     bool get_thumbSwap() const;
-    unsigned get_thumbLength()
+    unsigned get_thumbLength() const
     {
         return thumb_length;
     }
-    bool zeroIsBad()
+    bool zeroIsBad() const
     {
-        return zero_is_bad == 1 ? true : false;
+        return zero_is_bad == 1;
     }
 
 public:
