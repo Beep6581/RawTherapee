@@ -385,11 +385,12 @@ void RTWindow::on_realize ()
 
 bool RTWindow::on_window_state_event(GdkEventWindowState* event)
 {
+    const int new_window_state = event->new_window_state & ~GDK_WINDOW_STATE_FOCUSED;
 
-    if (!event->new_window_state) {
+    if (!new_window_state) {
         // Window mode
         options.windowMaximized = false;
-    } else if (event->new_window_state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN | GDK_WINDOW_STATE_ICONIFIED)) {
+    } else if (new_window_state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN | GDK_WINDOW_STATE_ICONIFIED)) {
         // Fullscreen mode, save this mode even when window is iconified (minimized) to allow easier restore, not the best solution though...
         options.windowMaximized = true;
     }
