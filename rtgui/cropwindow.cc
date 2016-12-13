@@ -2085,12 +2085,12 @@ void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
     hoveredPicker->setValidity (validity);
 
     {
-    MyMutex::MyLock lock(cropHandler.cimg);
+        MyMutex::MyLock lock(cropHandler.cimg);
 
-    if (validity == LockableColorPicker::Validity::INSIDE) {
-        cropHandler.colorPick(cropPos, r, g, b, rpreview, gpreview, bpreview, hoveredPicker->getSize());
-        hoveredPicker->setRGB (r, g, b, rpreview, gpreview, bpreview);
-    }
+        if (validity == LockableColorPicker::Validity::INSIDE) {
+            cropHandler.colorPick(cropPos, r, g, b, rpreview, gpreview, bpreview, hoveredPicker->getSize());
+            hoveredPicker->setRGB (r, g, b, rpreview, gpreview, bpreview);
+        }
     }
 }
 void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
