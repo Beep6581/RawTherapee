@@ -372,12 +372,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     // Remove transformation if unneeded
     bool needstransform = ipf.needsTransform();
 
-    if (!needstransform && !((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) && orig_prev != oprevi) {
+    if (!needstransform && !((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) && orig_prev != oprevi) {
         delete oprevi;
         oprevi = orig_prev;
     }
 
-    if ((needstransform || ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
+    if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
         if(!oprevi || oprevi == orig_prev)
             oprevi = new Imagefloat (pW, pH);
         if (needstransform)
@@ -387,7 +387,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             orig_prev->copyData(oprevi);
     }
 
-    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+    if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = oprevi->getWidth();
         const int H = oprevi->getHeight();
         LabImage labcbdl(W, H);
