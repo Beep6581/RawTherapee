@@ -485,8 +485,6 @@ enum ProcEvent {
     EvPixelShiftNonGreenCross = 455,
     EvPixelShiftStddevFactorRed = 456,
     EvPixelShiftStddevFactorBlue = 457,
-    EvPixelShiftNonGreenCross2 = 458,
-    EvPixelShiftNonGreenAmaze = 459,
     NUMOFEVENTS
 
 };

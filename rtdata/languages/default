@@ -690,8 +690,6 @@ HISTORY_MSG_455;EvPixelShiftNonGreenVertical
 HISTORY_MSG_456;EvPixelShiftNonGreenCross
 HISTORY_MSG_457;EvPixelShiftStddevFactorRed
 HISTORY_MSG_458;EvPixelShiftStddevFactorBlue
-HISTORY_MSG_459;EvPixelShiftNonGreenCross2
-HISTORY_MSG_460;EvPixelShiftNonGreenAmaze
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1674,8 +1672,6 @@ TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue cross
-TP_RAW_PIXELSHIFTNONGREENCROSS2;Check red/blue experimental
-TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
 TP_RAW_PIXELSHIFTMOTION;Pixelshift motion detection
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size

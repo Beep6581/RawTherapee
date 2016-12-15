@@ -1218,8 +1218,6 @@ public:
         bool pixelShiftNonGreenHorizontal;
         bool pixelShiftNonGreenVertical;
         bool pixelShiftNonGreenCross;
-        bool pixelShiftNonGreenCross2;
-        bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
         //bool all_enhance;
     };
