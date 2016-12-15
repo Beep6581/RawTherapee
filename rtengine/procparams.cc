@@ -899,6 +899,8 @@ void RAWParams::setDefaults()
     bayersensor.pixelShiftNonGreenHorizontal = false;
     bayersensor.pixelShiftNonGreenVertical = false;
     bayersensor.pixelShiftNonGreenCross = false;
+    bayersensor.pixelShiftNonGreenCross2 = false;
+    bayersensor.pixelShiftNonGreenAmaze = false;
     bayersensor.black0 = 0.0;
     bayersensor.black1 = 0.0;
     bayersensor.black2 = 0.0;
@@ -3434,7 +3436,13 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross );
         }
 
-        //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross2) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenCross2", raw.bayersensor.pixelShiftNonGreenCross2 );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenAmaze) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenAmaze", raw.bayersensor.pixelShiftNonGreenAmaze );
+        }
 
         if (!pedited || pedited->raw.xtranssensor.method) {
             keyFile.set_string  ("RAW X-Trans", "Method", raw.xtranssensor.method );
@@ -7604,7 +7612,21 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            //if (keyFile.has_key ("RAW Bayer", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW Bayer", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenCross2"))  {
+                raw.bayersensor.pixelShiftNonGreenCross2 = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenCross2");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenCross2 = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenAmaze"))  {
+                raw.bayersensor.pixelShiftNonGreenAmaze = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenAmaze");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenAmaze = true;
+                }
+            }
         }
 
 // load X-Trans sensors' raw settings
@@ -8057,8 +8079,9 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.pixelShiftNonGreenHorizontal == other.raw.bayersensor.pixelShiftNonGreenHorizontal
         && raw.bayersensor.pixelShiftNonGreenVertical == other.raw.bayersensor.pixelShiftNonGreenVertical
         && raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross
+        && raw.bayersensor.pixelShiftNonGreenCross2 == other.raw.bayersensor.pixelShiftNonGreenCross2
+        && raw.bayersensor.pixelShiftNonGreenAmaze == other.raw.bayersensor.pixelShiftNonGreenAmaze
         && raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance
-        //&& raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance
         && raw.xtranssensor.method == other.raw.xtranssensor.method
         && raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps
         && raw.xtranssensor.blackred == other.raw.xtranssensor.blackred
