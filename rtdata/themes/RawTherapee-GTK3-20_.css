@@ -46,17 +46,22 @@ window.background {
 }
 
 headerbar {
+    box-shadow: none;
     background-color: #262626;
-    padding: 3px;
+    padding: 0;
     margin: 0;
     border-radius: 0;
+    border-style: none none solid none;
     background-image: none;
 }
 
-window > decoration {
+window > decoration, dialog > decoration {
     box-shadow: none;
     margin: 0px;
-    background-color: #484848;
+    border-style: none;
+    border-radius: 0;
+    padding: 3px;
+    background-color: #262626;
 }
 
 dialog.background {
