@@ -28,8 +28,6 @@ using namespace rtengine::procparams;
 SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SHARPENMICRO_LABEL"), true, true)
 {
 
-    setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
-
     amount = Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"), 0, 100, 1, 20));
     amount->setAdjusterListener (this);
 

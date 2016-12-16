@@ -1784,7 +1784,6 @@ TP_SHARPENING_RLD_AMOUNT;Amount
 TP_SHARPENING_RLD_DAMPING;Damping
 TP_SHARPENING_RLD_ITERATIONS;Iterations
 TP_SHARPENING_THRESHOLD;Threshold
-TP_SHARPENING_TOOLTIP;Expect a slightly different effect when using with CIECAM02. If difference is observed, adjust to taste.
 TP_SHARPENING_USM;Unsharp Mask
 TP_SHARPENMICRO_AMOUNT;Quantity
 TP_SHARPENMICRO_LABEL;Microcontrast
