@@ -138,6 +138,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::ComboBoxText* curveBBoxPosC;
 
     Gtk::ComboBoxText* theme;
+    Gtk::FontButton* fontButton;
+    Gtk::FontButton* colorPickerFontButton;
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
 
@@ -200,7 +202,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Glib::ustring storedValueImg;
 
     Options moptions;
-    sigc::connection tconn, sconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
+    sigc::connection tconn, sconn, fconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
     sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
@@ -213,12 +215,14 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     void updateFFinfos ();
     void workflowUpdate();
     void themeChanged  ();
+    void fontChanged   ();
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();
     void bundledProfilesChanged ();
     void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme);
+    void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
     bool splashClosed(GdkEventAny* event);
 
     int getThemeRowNumber(Glib::ustring& longThemeFName);

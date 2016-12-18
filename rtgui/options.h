@@ -135,6 +135,10 @@ public:
     int lastScale;
     int panAccelFactor;
     int lastCropSize;
+    Glib::ustring fontFamily;    // RT's main font family
+    int fontSize;                // RT's main font size (units: pt)
+    Glib::ustring CPFontFamily;  // ColorPicker font family
+    int CPFontSize;              // ColorPicker font size (units: pt)
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;

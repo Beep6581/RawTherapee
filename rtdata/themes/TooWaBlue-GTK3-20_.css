@@ -72,8 +72,6 @@
 * {
     color: @text-color;
     text-shadow: none;
-    font-size: 12px;
-    font-family: Arial;
     outline-style: none; /* removes the ugly dotted focus line */
     border-image: none;
     transition: none;

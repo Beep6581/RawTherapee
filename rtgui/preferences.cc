@@ -32,14 +32,15 @@
 
 extern Options options;
 extern Glib::ustring argv0;
-Glib::RefPtr<Gtk::CssProvider> css;
+Glib::RefPtr<Gtk::CssProvider> themecss;
+Glib::RefPtr<Gtk::CssProvider> fontcss;
 
 Preferences::Preferences  (RTWindow *rtwindow)
     : Gtk::Dialog (M("MAIN_BUTTON_PREFERENCES"), *rtwindow, true)
+    , splash (nullptr)
     , rprofiles (nullptr)
     , iprofiles (nullptr)
     , parent (rtwindow)
-    , splash (nullptr)
 {
     regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
 
@@ -924,6 +925,26 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->attach_next_to(*themelab, Gtk::POS_LEFT, 1, 1);
     themeGrid->attach_next_to(*theme, *themelab, Gtk::POS_RIGHT, 1, 1);
 
+    Gtk::Label* fontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT")) );
+    setExpandAlignProperties(fontlab, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    fontButton = Gtk::manage( new Gtk::FontButton ());
+    setExpandAlignProperties(fontButton, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    fontButton->set_use_size(true);
+    fontButton->set_font_name(Glib::ustring::compose("%1 %2", options.fontFamily == "default" ? "sans" : options.fontFamily, options.fontSize));
+
+    themeGrid->attach_next_to(*fontlab, *theme, Gtk::POS_RIGHT, 1, 1);
+    themeGrid->attach_next_to(*fontButton, *fontlab, Gtk::POS_RIGHT, 1, 1);
+
+    Gtk::Label* cpfontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT_COLPICKER") + ":") );
+    setExpandAlignProperties(cpfontlab, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    colorPickerFontButton = Gtk::manage( new Gtk::FontButton ());
+    setExpandAlignProperties(fontButton, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    colorPickerFontButton->set_use_size(true);
+    colorPickerFontButton->set_font_name(Glib::ustring::compose("%1 %2", options.CPFontFamily == "default" ? "sans" : options.CPFontFamily, options.CPFontSize));
+
+    themeGrid->attach_next_to(*cpfontlab, *fontButton, Gtk::POS_RIGHT, 1, 1);
+    themeGrid->attach_next_to(*colorPickerFontButton, *cpfontlab, Gtk::POS_RIGHT, 1, 1);
+
     Gtk::Label* cutOverlayLabel = Gtk::manage( new Gtk::Label (M("PREFERENCES_CUTOVERLAYBRUSH") + ":") );
     setExpandAlignProperties(cutOverlayLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     butCropCol = Gtk::manage( new Gtk::ColorButton() );
@@ -937,7 +958,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     butNavGuideCol = Gtk::manage( new Gtk::ColorButton() );
     setExpandAlignProperties(butNavGuideCol, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     butNavGuideCol->set_use_alpha(true);
-    themeGrid->attach_next_to(*navGuideLabel, *butCropCol, Gtk::POS_RIGHT, 1, 1);
+    themeGrid->attach_next_to(*navGuideLabel, *butCropCol, Gtk::POS_RIGHT, 2, 1);
     themeGrid->attach_next_to(*butNavGuideCol, *navGuideLabel, Gtk::POS_RIGHT, 1, 1);
 
     ftheme->add (*themeGrid);
@@ -1069,6 +1090,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
+    fconn = fontButton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
 
     return mvbsd;
 }
@@ -1457,6 +1479,14 @@ void Preferences::storePreferences ()
     moptions.navGuideBrush[2] = NavGuideCol.get_blue();
     moptions.navGuideBrush[3] = butNavGuideCol->get_alpha() / 65535.0;
 
+    Pango::FontDescription fd(fontButton->get_font_name());
+    moptions.fontFamily      = fd.get_family();
+    moptions.fontSize        = fd.get_size() / Pango::SCALE;
+
+    Pango::FontDescription cpfd(colorPickerFontButton->get_font_name());
+    moptions.CPFontFamily    = cpfd.get_family();
+    moptions.CPFontSize      = cpfd.get_size() / Pango::SCALE;
+
 #ifdef WIN32
     moptions.gimpDir        = gimpDir->get_filename ();
     moptions.psDir          = psDir->get_filename ();
@@ -1602,6 +1632,7 @@ void Preferences::fillPreferences ()
 {
 
     tconn.block (true);
+    fconn.block (true);
     sconn.block (true);
     dfconn.block (true);
     ffconn.block (true);
@@ -1671,6 +1702,9 @@ void Preferences::fillPreferences ()
     NavGuideCol.set_rgba(moptions.navGuideBrush[0], moptions.navGuideBrush[1], moptions.navGuideBrush[2]);
     butNavGuideCol->set_rgba(NavGuideCol);
     butNavGuideCol->set_alpha ( (unsigned short)(moptions.navGuideBrush[3] * 65535.0));
+
+    fontButton->set_font_name(Glib::ustring::compose("%1 %2", options.fontFamily == "default" ? "sans" : options.fontFamily, options.fontSize));
+    colorPickerFontButton->set_font_name(Glib::ustring::compose("%1 %2", options.CPFontFamily == "default" ? "sans" : options.CPFontFamily, options.CPFontSize));
 
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
@@ -1787,6 +1821,7 @@ void Preferences::fillPreferences ()
 
     addc.block (false);
     setc.block (false);
+    fconn.block (false);
     tconn.block (false);
     sconn.block (false);
     dfconn.block (false);
@@ -1862,6 +1897,12 @@ void Preferences::cancelPressed ()
         RTImage::setPaths(options);
         RTImage::updateImages();
         switchThemeTo(options.theme);
+    }
+
+    // set the initial font back
+    Pango::FontDescription fd(fontButton->get_font_name());
+    if (fd.get_family() != options.fontFamily && (fd.get_size() / Pango::SCALE) != options.fontSize) {
+        switchFontTo(options.fontFamily == "default" ? "sans" : options.fontFamily, options.fontSize);
     }
 
     // update the profileStore
@@ -2038,18 +2079,45 @@ void Preferences::switchThemeTo(Glib::ustring newTheme)
 
     Glib::ustring filename(Glib::build_filename(argv0, "themes", newTheme + ".css"));
 
-    if (!css) {
-        css = Gtk::CssProvider::create();
+    if (!themecss) {
+        themecss = Gtk::CssProvider::create();
         Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-        Gtk::StyleContext::add_provider_for_screen(screen, css, GTK_STYLE_PROVIDER_PRIORITY_USER);
+        Gtk::StyleContext::add_provider_for_screen(screen, themecss, GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
 
     try {
-        css->load_from_path (filename);
+        themecss->load_from_path (filename);
     } catch (Glib::Error &err) {
         printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
     } catch (...) {
         printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+    }
+}
+
+void Preferences::fontChanged ()
+{
+
+    Pango::FontDescription fd(fontButton->get_font_name());
+    switchFontTo(fd.get_family(), fd.get_size() / Pango::SCALE);
+}
+
+void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int newFontSize)
+{
+
+    if (newFontFamily != "default") {
+        if (!fontcss) {
+            fontcss = Gtk::CssProvider::create();
+            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+            Gtk::StyleContext::add_provider_for_screen(screen, fontcss, GTK_STYLE_PROVIDER_PRIORITY_USER);
+        }
+
+        try {
+            fontcss->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize));
+        } catch (Glib::Error &err) {
+            printf("Error: \"%s\"\n", err.what().c_str());
+        } catch (...) {
+            printf("Error: Can't find the font named \"%s\"\n", newFontFamily.c_str());
+        }
     }
 }
 

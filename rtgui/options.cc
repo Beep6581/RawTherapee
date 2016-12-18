@@ -338,6 +338,10 @@ void Options::setDefaults ()
     browserDirPanelOpened = true;
     editorFilmStripOpened = true;
     historyPanelWidth = 330;
+    fontFamily = "default";
+    fontSize = 10;
+    CPFontFamily = "default";
+    CPFontSize = 8;
     lastScale = 5;
     panAccelFactor = 5;
     rememberZoomAndPan = true;
@@ -1309,6 +1313,22 @@ int Options::readFromFile (Glib::ustring fname)
                     historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
                 }
 
+                if (keyFile.has_key ("GUI", "FontFamily")) {
+                    fontFamily        = keyFile.get_string  ("GUI", "FontFamily");
+                }
+
+                if (keyFile.has_key ("GUI", "FontSize")) {
+                    fontSize          = keyFile.get_integer ("GUI", "FontSize");
+                }
+
+                if (keyFile.has_key ("GUI", "CPFontFamily")) {
+                    CPFontFamily      = keyFile.get_string  ("GUI", "CPFontFamily");
+                }
+
+                if (keyFile.has_key ("GUI", "CPFontSize")) {
+                    CPFontSize        = keyFile.get_integer ("GUI", "CPFontSize");
+                }
+
                 if (keyFile.has_key ("GUI", "LastPreviewScale")) {
                     lastScale         = keyFile.get_integer ("GUI", "LastPreviewScale");
                 }
@@ -1977,6 +1997,10 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("GUI", "EditorFilmStripOpened", editorFilmStripOpened);
         keyFile.set_boolean ("GUI", "BrowserDirPanelOpened", browserDirPanelOpened);
         keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
+        keyFile.set_string  ("GUI", "FontFamily", fontFamily);
+        keyFile.set_integer ("GUI", "FontSize", fontSize);
+        keyFile.set_string  ("GUI", "CPFontFamily", CPFontFamily);
+        keyFile.set_integer ("GUI", "CPFontSize", CPFontSize);
         keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
         keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
         keyFile.set_boolean ("GUI", "RememberZoomAndPan", rememberZoomAndPan);

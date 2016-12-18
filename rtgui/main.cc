@@ -56,6 +56,7 @@ Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
 bool simpleEditor;
+Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
 //Glib::Threads::Thread* mainThread;
 
@@ -331,6 +332,19 @@ int main(int argc, char **argv)
             printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
         } catch (...) {
             printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+        }
+
+        // Set the font face and size
+        if (options.fontFamily != "default") {
+            try {
+                cssForced = Gtk::CssProvider::create();
+                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
+                Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            } catch (Glib::Error &err) {
+                printf("Error: \"%s\"\n", err.what().c_str());
+            } catch (...) {
+                printf("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
+            }
         }
     }
 
