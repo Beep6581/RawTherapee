@@ -17,8 +17,7 @@
  *  2014 Jacques Desmis <jdesmis@gmail.com>
  */
 
-#ifndef WAVELET_H_INCLUDED
-#define WAVELET_H_INCLUDED
+#pragma once
 
 #include <gtkmm.h>
 #include "adjuster.h"
@@ -114,10 +113,6 @@ private:
 
     void enableToggled(MyExpander *expander);
 
-    Glib::RefPtr<Gtk::Tooltip> bgTTips;
-    Glib::RefPtr<Gtk::Tooltip> srTTips;
-    Glib::RefPtr<Gdk::Pixbuf> bgPixbuf;
-    Glib::RefPtr<Gdk::Pixbuf> srPixbuf;
     CurveEditorGroup* const curveEditorG;
 
     CurveEditorGroup* const CCWcurveEditorG;
@@ -224,20 +219,13 @@ private:
     sigc::connection  Dirmethodconn;
     MyComboBoxText* const Medgreinf;
     sigc::connection  MedgreinfConn;
-    Gtk::Frame* const contrastSHFrame;
     Gtk::Frame* const chanMixerHLFrame;
     Gtk::Frame* const chanMixerMidFrame;
     Gtk::Frame* const chanMixerShadowsFrame;
 
     Gtk::Label* const wavLabels;
-    Gtk::Label* const daubcoeffLabel;
     Gtk::Label* const labmC;
-    Gtk::Label* const labmch;
-    Gtk::Label* const labmED;
-    Gtk::Label* const labmTM;
-    Gtk::Label* const labmBA;
     Gtk::Label* const labmNP;
-    Gtk::Label* const labmedgr;
     MyExpander* const expchroma;
     MyExpander* const expcontrast;
     MyExpander* const expedge;
@@ -247,42 +235,17 @@ private:
     MyExpander* const expresid;
     MyExpander* const expsettings;
     MyExpander* const exptoning;
-    Gtk::HBox* const ctboxCH;
-    Gtk::HBox* const ctboxED;
-    Gtk::HBox* const ctboxTM;
-    Gtk::HBox* const backgroundHBox;
-    Gtk::HBox* const daubcoeffHBox;
-    Gtk::HBox* const levdirMainHBox;
-    Gtk::HBox* const levdirSubHBox;
-    Gtk::HBox* const tilesizeHBox;
 
-    Gtk::HBox* const ctboxFI;
-    Gtk::HBox* const ctboxNP;
-    Gtk::HBox* const ctboxch;
-    Gtk::HBox* const edbox;
-    Gtk::HBox* const eddebox;
-    Gtk::VBox* const settingsVBox;
-    Gtk::VBox* const contrastSHVBox;
-    Gtk::Label* const tilesizeLabel;
-    Gtk::Label* const levdirMainLabel;
-    Gtk::Label* const backgroundLabel;
-    Gtk::Button* const neutral;
     Gtk::HBox* const neutrHBox;
 
     sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enableFinalConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;
-    sigc::connection expConn,  medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn;
+    sigc::connection medianConn, avoidConn, tmrConn, medianlevConn, linkedgConn, lipstConn, cbenabConn, neutralconn;
     sigc::connection neutralPressedConn;
     sigc::connection contrastPlusPressedConn;
     sigc::connection contrastMinusPressedConn;
     sigc::connection neutralchPressedConn;
 
-    bool lastdisplay, lastdisplaygam, lastdisplayres, lastdisplaychro, lastdisplaylevel, lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab;
+    bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab;
     int nextnlevel;
-    double tr;
-    double br;
-    double tl;
-    double bl;
 };
-
-#endif
