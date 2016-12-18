@@ -534,7 +534,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
             free (raw_image);
             raw_image = nullptr;
         } else {
-            if (cc && cc->has_rawCrop()) { // foveon images
+            if (is_foveon && cc && cc->has_rawCrop()) { // foveon images
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);
                 left_margin = lm;
