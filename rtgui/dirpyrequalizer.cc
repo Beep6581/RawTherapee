@@ -69,8 +69,6 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     cbVBox->pack_start(*cdbox);
     pack_start(*cbVBox);
 
-    setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
-
     Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox(true, 10));
     pack_start(*buttonBox1);
 

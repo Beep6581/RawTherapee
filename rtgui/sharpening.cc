@@ -25,8 +25,6 @@ using namespace rtengine::procparams;
 Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENING_LABEL"), true, true)
 {
 
-    setEnabledTooltipMarkup(M("TP_SHARPENING_TOOLTIP"));
-
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
     Gtk::Label* ml = Gtk::manage (new Gtk::Label (M("TP_SHARPENING_METHOD") + ":"));
