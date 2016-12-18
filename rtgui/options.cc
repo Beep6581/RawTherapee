@@ -356,10 +356,10 @@ void Options::setDefaults ()
     profilePath = "profiles";
     loadSaveProfilePath = "";           // will be corrected in load as otherwise construction fails
     version = "0.0.0.0";                // temporary value; will be correctly set in RTWindow::on_realize
-    thumbSize = 240;
-    thumbSizeTab = 180;
+    thumbSize = 160;
+    thumbSizeTab = 160;
     thumbSizeQueue = 160;
-    sameThumbSize = true;               // preferring speed of switch between file browser and single editor tab
+    sameThumbSize = false;               // preferring speed of switch between file browser and single editor tab
     showHistory = true;
     showFilePanelState = 0;             // Not used anymore ; was the thumb strip state
     showInfo = true;

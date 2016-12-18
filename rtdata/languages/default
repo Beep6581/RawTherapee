@@ -957,7 +957,7 @@ PREFERENCES_FLUOF7;Fluorescent F7
 PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_FORIMAGE;For non-raw photos
 PREFERENCES_FORRAW;For raw photos
-PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 PREFERENCES_GIMPPATH;GIMP installation directory
 PREFERENCES_GREY;Output device's Yb luminance (%)
