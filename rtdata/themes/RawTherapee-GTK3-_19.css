@@ -210,8 +210,6 @@ GtkButton.Right {
 
 /* [1.23[-][+]] */
 GtkEntry, GtkSpinButton {
-    padding: 0;
-    margin: 0;
     background-color: #262626;
 }
 
