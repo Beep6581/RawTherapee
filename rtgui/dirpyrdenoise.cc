@@ -39,7 +39,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     std::vector<double> defaultCurve;
 
     Gtk::Frame* lumaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_LUMAFR")) );
-    lumaFrame->set_tooltip_text(M("TP_DIRPYRDENOISE_LUMAFR_TOOLTIP"));
     lumaFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox * lumaVBox = Gtk::manage ( new Gtk::VBox());
