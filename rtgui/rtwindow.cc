@@ -133,7 +133,7 @@ RTWindow::RTWindow ()
 
     if (options.windowMaximized) {
         maximize();
-        get_style_context()->add_class("maximized");
+        //get_style_context()->add_class("maximized");
     } else {
         unmaximize();
         move(options.windowX, options.windowY);
@@ -386,51 +386,11 @@ void RTWindow::on_realize ()
 
 bool RTWindow::on_window_state_event(GdkEventWindowState* event)
 {
-    /*
-    printf("Window state event:  %s%s%s%s%s%s%s%s%s\n",
-            event->new_window_state & GDK_WINDOW_STATE_WITHDRAWN ? "Withdrawn" : "",
-            event->new_window_state & GDK_WINDOW_STATE_ICONIFIED ? " Iconified" : "",
-            event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED ? " Maximized" : "",
-            event->new_window_state & GDK_WINDOW_STATE_STICKY ? " Sticky" : "",
-            event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN ? " Fullscreen" : "",
-            event->new_window_state & GDK_WINDOW_STATE_ABOVE ? " Above" : "",
-            event->new_window_state & GDK_WINDOW_STATE_BELOW ? " Below" : "",
-            event->new_window_state & GDK_WINDOW_STATE_FOCUSED ? " Focused" : "",
-            event->new_window_state & GDK_WINDOW_STATE_TILED ? " Tiled" : ""
-          );
-    */
-
-    // Return if we get iconified
-    if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
-        return true;
+    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
+        options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     }
 
-    // Then looking for evolutions of GDK_WINDOW_STATE_FULLSCREEN & GDK_WINDOW_STATE_MAXIMIZED only
-    bool isFullScreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
-    bool isMaximized  = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-    bool switchFullScreen = event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN;
-    bool switchMaximized  = event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED;
-
-    if (switchFullScreen) {
-        // Fullscreen mode
-        if (isFullScreen) {
-            get_style_context()->add_class("fullscreen");
-        } else {
-            get_style_context()->remove_class("fullscreen");
-        }
-    }
-    if (switchMaximized) {
-        // Maximized mode
-        if (isMaximized) {
-            options.windowMaximized = true;
-            get_style_context()->add_class("maximized");
-        } else {
-            options.windowMaximized = false;
-            get_style_context()->remove_class("maximized");
-        }
-    }
-
-    return true;
+    return Gtk::Widget::on_window_state_event(event);
 }
 
 void RTWindow::on_mainNB_switch_page(Gtk::Widget* widget, guint page_num)
