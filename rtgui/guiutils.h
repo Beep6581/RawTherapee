@@ -178,11 +178,8 @@ private:
     bool on_enter_leave_title (GdkEventCrossing* event);
     /// Used to handle the colored background for the Enable button
     bool on_enter_leave_enable (GdkEventCrossing* event);
-//GTK318
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+
     void updateStyle();
-#endif
-//GTK318
 
 protected:
     Gtk::Container* child;      /// Gtk::Contained to display below the expander's title
@@ -256,6 +253,8 @@ public:
     /// Add a Gtk::Container for the content of the expander
     /// Warning: do not manually Show/Hide the widget, because this parameter is handled by the click on the Expander's title
     void add  (Gtk::Container& widget);
+
+    void updateVScrollbars(bool hide);
 };
 
 

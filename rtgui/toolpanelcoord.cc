@@ -831,6 +831,10 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide)
     transformPanelSW->set_policy    (Gtk::POLICY_AUTOMATIC, policy);
     rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, policy);
     waveletPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
+
+    for (auto currExp : expList) {
+        currExp->updateVScrollbars(hide);
+    }
 }
 
 void ToolPanelCoordinator::updateTabsHeader (bool useIcons)

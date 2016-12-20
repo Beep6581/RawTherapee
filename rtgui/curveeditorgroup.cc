@@ -74,7 +74,7 @@ void CurveEditorGroup::hideCurrentCurve()
  *     periodic:      for FlatCurve only, ask the curve to be periodic (default: True)
  *
  */
-CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget, bool periodic)
+CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget, bool expandRelatedWidget, bool periodic)
 {
     switch (cType) {
     case (CT_Diagonal): {
@@ -85,6 +85,7 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
         // We add it to the curve editor list
         DiagonalCurveEditor* newCE = diagonalSubGroup->addCurve(curveLabel);
         newCE->relatedWidget = relatedWidget;
+        newCE->expandRelatedWidget = expandRelatedWidget;
         curveEditors.push_back(newCE);
         return (newCE);
     }
@@ -97,6 +98,7 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
         // We add it to the curve editor list
         FlatCurveEditor* newCE = flatSubGroup->addCurve(curveLabel, periodic);
         newCE->relatedWidget = relatedWidget;
+        newCE->expandRelatedWidget = expandRelatedWidget;
         curveEditors.push_back(newCE);
         return (newCE);
     }
@@ -127,10 +129,20 @@ void CurveEditorGroup::newLine()
             currLine->attach(*curveGroupLabel, x++, 0, 1, 1);
         }
 
+        bool rwe = false;
+
         for (int i = numberOfPackedCurve; i < (int)(curveEditors.size()); ++i) {
+            if (curveEditors[i]->relatedWidget != nullptr && curveEditors[i]->expandRelatedWidget) {
+                rwe = true;
+            }
+        }
+
+        for (int i = numberOfPackedCurve; i < (int)(curveEditors.size()); ++i) {
+            setExpandAlignProperties(curveEditors[i]->curveType->buttonGroup, !rwe, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
             currLine->attach(*curveEditors[i]->curveType->buttonGroup, x++, 0, 1, 1);
 
             if (curveEditors[i]->relatedWidget != nullptr) {
+                setExpandAlignProperties(curveEditors[i]->relatedWidget, curveEditors[i]->expandRelatedWidget, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
                 currLine->attach(*curveEditors[i]->relatedWidget, x++, 0, 1, 1);
             }
 
@@ -139,7 +151,7 @@ void CurveEditorGroup::newLine()
 
         if (isHeader) {
             curve_reset = Gtk::manage (new Gtk::Button ());
-            setExpandAlignProperties(curve_reset, false, false, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+            setExpandAlignProperties(curve_reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
             curve_reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
             curve_reset->set_relief (Gtk::RELIEF_NONE);
             curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));

@@ -62,7 +62,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     //curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
     NoiscurveEditorG->setCurveListener (this);
     rtengine::DirPyrDenoiseParams::getDefaultNoisCurve(defaultCurve);
-    lshape = static_cast<FlatCurveEditor*>(NoiscurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    lshape = static_cast<FlatCurveEditor*>(NoiscurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     lshape->setIdentityValue(0.);
     lshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
@@ -150,7 +150,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     CCcurveEditorG = new CurveEditorGroup (options.lastDenoiseCurvesDir, M("TP_DIRPYRDENOISE_CCCURVE"));
     CCcurveEditorG->setCurveListener (this);
     rtengine::DirPyrDenoiseParams::getDefaultCCCurve(defaultCurve);
-    ccshape = static_cast<FlatCurveEditor*>(CCcurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    ccshape = static_cast<FlatCurveEditor*>(CCcurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     ccshape->setIdentityValue(0.);
     ccshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 

@@ -133,6 +133,7 @@ RTWindow::RTWindow ()
 
     if (options.windowMaximized) {
         maximize();
+        get_style_context()->add_class("maximized");
     } else {
         unmaximize();
         move(options.windowX, options.windowY);
@@ -385,14 +386,48 @@ void RTWindow::on_realize ()
 
 bool RTWindow::on_window_state_event(GdkEventWindowState* event)
 {
-    const int new_window_state = event->new_window_state & ~GDK_WINDOW_STATE_FOCUSED;
+    /*
+    printf("Window state event:  %s%s%s%s%s%s%s%s%s\n",
+            event->new_window_state & GDK_WINDOW_STATE_WITHDRAWN ? "Withdrawn" : "",
+            event->new_window_state & GDK_WINDOW_STATE_ICONIFIED ? " Iconified" : "",
+            event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED ? " Maximized" : "",
+            event->new_window_state & GDK_WINDOW_STATE_STICKY ? " Sticky" : "",
+            event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN ? " Fullscreen" : "",
+            event->new_window_state & GDK_WINDOW_STATE_ABOVE ? " Above" : "",
+            event->new_window_state & GDK_WINDOW_STATE_BELOW ? " Below" : "",
+            event->new_window_state & GDK_WINDOW_STATE_FOCUSED ? " Focused" : "",
+            event->new_window_state & GDK_WINDOW_STATE_TILED ? " Tiled" : ""
+          );
+    */
 
-    if (!new_window_state) {
-        // Window mode
-        options.windowMaximized = false;
-    } else if (new_window_state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN | GDK_WINDOW_STATE_ICONIFIED)) {
-        // Fullscreen mode, save this mode even when window is iconified (minimized) to allow easier restore, not the best solution though...
-        options.windowMaximized = true;
+    // Return if we get iconified
+    if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
+        return true;
+    }
+
+    // Then looking for evolutions of GDK_WINDOW_STATE_FULLSCREEN & GDK_WINDOW_STATE_MAXIMIZED only
+    bool isFullScreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
+    bool isMaximized  = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    bool switchFullScreen = event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN;
+    bool switchMaximized  = event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED;
+
+    if (switchFullScreen) {
+        // Fullscreen mode
+        if (isFullScreen) {
+            get_style_context()->add_class("fullscreen");
+        } else {
+            get_style_context()->remove_class("fullscreen");
+        }
+    }
+    if (switchMaximized) {
+        // Maximized mode
+        if (isMaximized) {
+            options.windowMaximized = true;
+            get_style_context()->add_class("maximized");
+        } else {
+            options.windowMaximized = false;
+            get_style_context()->remove_class("maximized");
+        }
     }
 
     return true;

@@ -55,6 +55,12 @@ headerbar {
     background-image: none;
 }
 
+/* Warning: maximized and fullscreen can be set at the same time ! */
+window.maximized > decoration, window.fullscreen > decoration {
+    padding: 0;
+    margin: 0;
+}
+
 window > decoration, dialog > decoration {
     box-shadow: none;
     margin: 0px;
@@ -169,25 +175,20 @@ button  {
 button.flat  {
     background-image: none;
 }
-button.popupbutton-arrow {
-    min-width: 18px;
-}
-
-button:hover  {
-    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+button.flat:checked {
+    background-image:  linear-gradient(#343434, #2E2E2E, #292929);
 }
 checkbutton > check {
     background-image: linear-gradient(#343434, #2E2E2E, #292929);
-
-}
-checkbutton:hover > check {
-    background-image: linear-gradient(#444444, #3E3E3E, #393939);
 }
 radiobutton > radio {
     background-image: linear-gradient(#343434, #2E2E2E, #292929);
 }
-radiobutton:hover > radio {
-    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+button:hover , button.flat:hover, checkbutton:hover > check, radiobutton:hover > radio {
+    background-image: linear-gradient(shade(#343434,1.3), shade(#2E2E2E,1.3), shade(#292929,1.3));
+}
+button.popupbutton-arrow {
+    min-width: 18px;
 }
 
 combobox {
@@ -337,6 +338,10 @@ entry, spinbutton {
     background-color: #262626;
 }
 
+spinbutton entry {
+    padding-right: 6px;
+}
+
 entry:disabled, spinbutton:disabled {
     background-color: #363636;
 }
@@ -371,6 +376,9 @@ menuitem {
 #MyExpander {
     margin: 0;
     padding: 0;
+}
+#MyExpander.withScrollbar {
+    margin-right: 6px;
 }
 
 /* Tool background */
@@ -476,8 +484,8 @@ menuitem {
 }
 
 #MyExpanderTitle > box {
-    margin: 2px 0 2px 0;
-    padding: 2px;
+    margin: 2px 0;
+    padding: 2px 0;
 }
 
 #MyExpanderTitle label {
@@ -798,7 +806,7 @@ paned.vertical > separator {
 }
 
 #RightNotebook #ToolPanelNotebook stack {
-    margin: 4px;
+    margin: 0px;
 }
 
 #RightNotebook #HistoryPanel {

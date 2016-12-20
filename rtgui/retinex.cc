@@ -383,7 +383,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     setExpandAlignProperties(transmissionCurveEditorG, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     transmissionCurveEditorG->setCurveListener (this);
     rtengine::RetinexParams::getDefaulttransmissionCurve(defaultCurve);
-    transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     transmissionShape->setIdentityValue(0.);
     transmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     transmissionShape->setBottomBarBgGradient(milestones);
@@ -438,7 +438,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     setExpandAlignProperties(gaintransmissionCurve, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     gaintransmissionCurve->setCurveListener (this);
     rtengine::RetinexParams::getDefaultgaintransmissionCurve(defaultCurve);
-    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", nullptr, false));
+    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", nullptr, false, false));
     gaintransmissionShape->setIdentityValue(0.);
     gaintransmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     gaintransmissionShape->setBottomBarBgGradient(milestones);
