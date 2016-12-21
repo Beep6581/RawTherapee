@@ -142,12 +142,13 @@ grid separator.vertical, box separator.vertical {
 #BeforeAfterContainer frame {
     background-color: #262626;
     padding: 0;
-    margin: 2px;
+    margin: 1px;
 }
 
 #BeforeAfterContainer frame border {
     border-radius: 0;
-    padding: 4px;
+    margin: 0;
+    padding: 0;
 }
 
 
