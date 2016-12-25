@@ -338,7 +338,13 @@ int main(int argc, char **argv)
         if (options.fontFamily != "default") {
             try {
                 cssForced = Gtk::CssProvider::create();
+                //GTK318
+                #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
+                #else
                 cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
+                #endif
+                //GTK318
                 Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             } catch (Glib::Error &err) {
                 printf("Error: \"%s\"\n", err.what().c_str());
