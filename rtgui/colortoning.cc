@@ -40,7 +40,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     colorCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_COLOR"));
     colorCurveEditorG->setCurveListener (this);
 
-    colorShape = static_cast<FlatCurveEditor*>(colorCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    colorShape = static_cast<FlatCurveEditor*>(colorCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     colorShape->setCurveColorProvider(this, 1);
     std::vector<GradientMilestone> milestones;
 
@@ -89,7 +89,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     opacityCurveEditorG->setCurveListener (this);
 
     rtengine::ColorToningParams::getDefaultOpacityCurve(defaultCurve);
-    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShape->setIdentityValue(0.);
     opacityShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     opacityShape->setBottomBarBgGradient(milestones);
@@ -108,7 +108,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     clCurveEditorG->setCurveListener (this);
 
     rtengine::ColorToningParams::getDefaultCLCurve(defaultCurve);
-    clshape = static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_AB"), irg));
+    clshape = static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_AB"), irg, false));
     clshape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
     clshape->setTooltip(M("TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP"));
 
@@ -128,7 +128,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     cl2CurveEditorG->setCurveListener (this);
 
     rtengine::ColorToningParams::getDefaultCL2Curve(defaultCurve);
-    cl2shape = static_cast<DiagonalCurveEditor*>(cl2CurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_BY"), iby));
+    cl2shape = static_cast<DiagonalCurveEditor*>(cl2CurveEditorG->addCurve(CT_Diagonal, M("TP_COLORTONING_BY"), iby, false));
     cl2shape->setResetCurve(DiagonalCurveType(defaultCurve.at(0)), defaultCurve);
     cl2shape->setTooltip(M("TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP"));
 

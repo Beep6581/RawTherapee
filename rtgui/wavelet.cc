@@ -421,7 +421,7 @@ Wavelet::Wavelet() :
     std::vector<double> defaultCurve;
 
     rtengine::WaveletParams::getDefaultOpacityCurveRG(defaultCurve);
-    opacityShapeRG = static_cast<FlatCurveEditor*>(opaCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    opacityShapeRG = static_cast<FlatCurveEditor*>(opaCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeRG->setIdentityValue(0.);
     opacityShapeRG->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
@@ -433,7 +433,7 @@ Wavelet::Wavelet() :
     opacityCurveEditorG->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultOpacityCurveBY(defaultCurve);
-    opacityShapeBY = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    opacityShapeBY = static_cast<FlatCurveEditor*>(opacityCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeBY->setIdentityValue(0.);
     opacityShapeBY->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
@@ -517,7 +517,7 @@ Wavelet::Wavelet() :
     CCWcurveEditorG->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultCCWCurve(defaultCurve);
-    ccshape = static_cast<FlatCurveEditor*>(CCWcurveEditorG->addCurve(CT_Flat, "", nullptr, false));
+    ccshape = static_cast<FlatCurveEditor*>(CCWcurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
 
     ccshape->setIdentityValue(0.);
     ccshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
@@ -809,7 +809,7 @@ Wavelet::Wavelet() :
     opacityCurveEditorW->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultOpacityCurveW(defaultCurve);
-    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorW->addCurve(CT_Flat, "", nullptr, false));
+    opacityShape = static_cast<FlatCurveEditor*>(opacityCurveEditorW->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShape->setIdentityValue(0.);
     opacityShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     opacityShape->setBottomBarBgGradient(milestones2);
@@ -826,7 +826,7 @@ Wavelet::Wavelet() :
     opacityCurveEditorWL->setCurveListener (this);
 
     rtengine::WaveletParams::getDefaultOpacityCurveWL(defaultCurve);
-    opacityShapeWL = static_cast<FlatCurveEditor*>(opacityCurveEditorWL->addCurve(CT_Flat, "", nullptr, false));
+    opacityShapeWL = static_cast<FlatCurveEditor*>(opacityCurveEditorWL->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeWL->setIdentityValue(0.);
     opacityShapeWL->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));

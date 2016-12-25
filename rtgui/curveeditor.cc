@@ -200,6 +200,7 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
     leftBarCP = nullptr;
     curveCP = nullptr;
     relatedWidget = nullptr;
+    expandRelatedWidget = true;
 
     group = ceGroup;
     subGroup = ceSubGroup;
