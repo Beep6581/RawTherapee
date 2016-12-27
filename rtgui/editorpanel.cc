@@ -1675,8 +1675,7 @@ void EditorPanel::saveAsPressed ()
         fnameOut = saveAsDialog->getFileName ();
 
         options.lastSaveAsPath = saveAsDialog->getDirectory ();
-        options.saveAsDialogWidth = saveAsDialog->get_width ();
-        options.saveAsDialogHeight = saveAsDialog->get_height ();
+        saveAsDialog->get_size(options.saveAsDialogWidth, options.saveAsDialogHeight);
         options.autoSuffix = saveAsDialog->getAutoSuffix ();
         options.saveMethodNum = saveAsDialog->getSaveMethodNum ();
         lastSaveAsFileName = Glib::path_get_basename (removeExtension (fnameOut));
@@ -1745,6 +1744,8 @@ void EditorPanel::saveAsPressed ()
     } while (!fnameOK);
 
     saveAsDialog->hide();
+
+    delete saveAsDialog;
 }
 
 void EditorPanel::queueImgPressed ()

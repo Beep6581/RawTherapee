@@ -101,8 +101,7 @@ Preferences::~Preferences ()
 {
 
     profileStore.removeListener(this);
-    options.preferencesWidth = get_width();
-    options.preferencesHeight = get_height();
+    get_size(options.preferencesWidth, options.preferencesHeight);
 }
 
 Gtk::Widget* Preferences::getBatchProcPanel ()

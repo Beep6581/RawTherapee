@@ -1123,7 +1123,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_GREY05;Yb=05 CIE L#30
@@ -1803,7 +1803,6 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations
 !TP_SHARPENEDGE_THREE;Luminance only
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when using with CIECAM02. If difference is observed, adjust to taste.
 !TP_SHARPENMICRO_AMOUNT;Quantity
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
