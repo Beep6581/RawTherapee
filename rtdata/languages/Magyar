@@ -1317,7 +1317,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_GREY05;Yb=05 CIE L#30
@@ -1856,7 +1856,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity mode</b> allows to vary the contribution of R, G and B channels to the luminosity of the image, without altering image color.
 !TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
 !TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when using with CIECAM02. If difference is observed, adjust to taste.
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple

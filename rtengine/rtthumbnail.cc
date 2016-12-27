@@ -55,7 +55,7 @@ namespace
                 ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
                 : raw_image.get_thumbLength();
 
-        return raw_image.get_thumbOffset() + length < raw_image.get_file()->size;
+        return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
     }
 
 }

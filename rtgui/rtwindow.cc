@@ -685,8 +685,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     ProfilePanel::cleanup();
 
     if (!options.windowMaximized) {
-        options.windowWidth = get_width();
-        options.windowHeight = get_height();
+        get_size(options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
 
