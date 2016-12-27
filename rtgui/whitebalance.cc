@@ -151,6 +151,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 {
 
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    hbox->set_spacing(4);
     hbox->show ();
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_METHOD")));
     lab->show ();
@@ -238,14 +239,19 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     method->pack_start(methodColumns.colIcon, false);
     method->pack_start(methodColumns.colLabel, true);
 
+    std::vector<Gtk::CellRenderer*> cells = method->get_cells();
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(cells.at(1));
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+
     method->set_active (0); // Camera
     method->show ();
-    hbox->pack_start (*lab, Gtk::PACK_SHRINK, 4);
+    hbox->pack_start (*lab, Gtk::PACK_SHRINK, 0);
     hbox->pack_start (*method);
-    pack_start (*hbox, Gtk::PACK_SHRINK, 4);
+    pack_start (*hbox, Gtk::PACK_SHRINK, 0);
     opt = 0;
 
     Gtk::HBox* spotbox = Gtk::manage (new Gtk::HBox ());
+    spotbox->set_spacing(4);
     spotbox->show ();
 
     spotbutton = Gtk::manage (new Gtk::Button ());
@@ -292,10 +298,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
         spotsize->set_active(4);
     }
 
-    spotbox->pack_end (*spotsize, Gtk::PACK_EXPAND_WIDGET, 4);
-    spotbox->pack_end (*slab, Gtk::PACK_SHRINK, 4);
+    spotbox->pack_end (*spotsize, Gtk::PACK_EXPAND_WIDGET, 0);
+    spotbox->pack_end (*slab, Gtk::PACK_SHRINK, 0);
 
-    pack_start (*spotbox, Gtk::PACK_SHRINK, 4);
+    pack_start (*spotbox, Gtk::PACK_SHRINK, 0);
 
     Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
     Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));

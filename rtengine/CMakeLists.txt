@@ -14,7 +14,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc 
     stdimagesource.cc myfile.cc iccjpeg.cc improccoordinator.cc pipettebuffer.cc coord.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc cieimage.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
-    imagedimensions.cc jpeg_memsrc.cc jdatasrc.cc iimage.cc
+    imagedimensions.cc jpeg_ijg/jpeg_memsrc.cc jdatasrc.cc iimage.cc
     EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDN.cc
     PF_correct_RT.cc previewimage.cc ipwavelet.cc
     dirpyr_equalizer.cc

@@ -1684,7 +1684,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREYSC;Scene Yb luminance (%)
 !PREFERENCES_GREYSC18;Yb=18 CIE L#50

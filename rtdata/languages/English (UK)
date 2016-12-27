@@ -1027,7 +1027,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_FLUOF11;Fluorescent F11
 !PREFERENCES_FORIMAGE;For non-raw photos
 !PREFERENCES_FORRAW;For raw photos
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GIMPPATH;GIMP installation directory
 !PREFERENCES_GREY;Output device's Yb luminance (%)
@@ -1794,7 +1794,6 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_SHARPENING_RLD_DAMPING;Damping
 !TP_SHARPENING_RLD_ITERATIONS;Iterations
 !TP_SHARPENING_THRESHOLD;Threshold
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when using with CIECAM02. If difference is observed, adjust to taste.
 !TP_SHARPENING_USM;Unsharp Mask
 !TP_SHARPENMICRO_AMOUNT;Quantity
 !TP_SHARPENMICRO_LABEL;Microcontrast
