@@ -256,7 +256,7 @@ Wavelet::Wavelet() :
     settingsVBox->pack_start(*levdirSubHBox);
 
 // Contrast
-    Gtk::VBox * levBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const levBox = Gtk::manage (new ToolParamBlock());
 
     Gtk::HBox* const buttonBox = Gtk::manage (new Gtk::HBox(true, 10));
     levBox->pack_start(*buttonBox, Gtk::PACK_SHRINK, 2);
@@ -335,7 +335,7 @@ Wavelet::Wavelet() :
     levBox->pack_start(*contrastSHFrame);
 
 // Chromaticity
-    Gtk::VBox * chBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const chBox = Gtk::manage (new ToolParamBlock());
 
     Gtk::Label* const labmch = Gtk::manage(new Gtk::Label(M("TP_WAVELET_CHTYPE") + ":"));
     Gtk::HBox* const ctboxch = Gtk::manage(new Gtk::HBox());
@@ -405,7 +405,7 @@ Wavelet::Wavelet() :
     }
 
 // Toning
-    Gtk::VBox * tonBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const tonBox = Gtk::manage (new ToolParamBlock());
 
     opaCurveEditorG->setCurveListener (this);
 
@@ -434,7 +434,7 @@ Wavelet::Wavelet() :
     tonBox->pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
 // Denoise and Refine
-    Gtk::VBox * noiseBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const noiseBox = Gtk::manage (new ToolParamBlock());
 
     linkedg->set_active (true);
     linkedgConn = linkedg->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::linkedgToggled) );
@@ -458,7 +458,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start( *level3noise, Gtk::PACK_SHRINK, 0);
 
 // Edge Sharpness
-    Gtk::VBox * edgBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const edgBox = Gtk::manage (new ToolParamBlock());
 
     edgval->setAdjusterListener(this);
     edgBox->pack_start(*edgval);
@@ -536,10 +536,8 @@ Wavelet::Wavelet() :
     edgedetectthr->set_tooltip_text (M("TP_WAVELET_EDGEDETECTTHR_TOOLTIP"));
     edgBox->pack_start(*edgedetectthr);
 
-
     edgedetectthr2->setAdjusterListener (this);
     edgBox->pack_start(*edgedetectthr2);
-
 
     edgBox->pack_start(*separatoredge, Gtk::PACK_SHRINK, 2);
 
@@ -551,10 +549,8 @@ Wavelet::Wavelet() :
     edgesensi->setAdjusterListener (this);
     edgBox->pack_start(*edgesensi);
 
-
     edgeampli->setAdjusterListener (this);
     edgBox->pack_start(*edgeampli);
-
 
     Gtk::VBox* const ctboxES = Gtk::manage (new Gtk::VBox());
 
@@ -575,7 +571,7 @@ Wavelet::Wavelet() :
     edgBox->pack_start(*ctboxES);
 
 // Gamut
-    Gtk::VBox * conBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const conBox = Gtk::manage (new ToolParamBlock());
 
     median->set_active (true);
     medianConn = median->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::medianToggled) );
@@ -625,7 +621,7 @@ Wavelet::Wavelet() :
     conBox->pack_start(*avoid);
 
 // Residual Image
-    Gtk::VBox * resBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const resBox = Gtk::manage (new ToolParamBlock());
 
     rescon->setAdjusterListener (this);
     resBox->pack_start(*rescon, Gtk::PACK_SHRINK);
@@ -826,7 +822,7 @@ Wavelet::Wavelet() :
     tmr->set_tooltip_text (M("TP_WAVELET_BALCHRO_TOOLTIP"));
     tmrConn = tmr->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::tmrToggled) );
 
-    Gtk::VBox * finalBox = Gtk::manage (new ToolParamBlock());
+    Gtk::VBox* const finalBox = Gtk::manage (new ToolParamBlock());
 
     finalBox->pack_start (*ctboxBA);
     finalBox->pack_start(*balance);
