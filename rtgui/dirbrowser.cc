@@ -80,6 +80,7 @@ DirBrowser::DirBrowser () : dirTreeModel(),
 
     dirtree = Gtk::manage ( new Gtk::TreeView() );
     scrolledwindow4 = Gtk::manage ( new Gtk::ScrolledWindow() );
+    crt.property_ellipsize() = Pango::ELLIPSIZE_END;
 
 //   dirtree->set_flags(Gtk::CAN_FOCUS);
     dirtree->set_headers_visible();

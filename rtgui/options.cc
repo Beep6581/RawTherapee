@@ -287,8 +287,6 @@ Glib::ustring Options::findProfilePath (Glib::ustring &profName)
 void Options::setDefaults ()
 {
 
-    font = "sans, 8";
-    colorPickerFont = "sans, 8";
     windowWidth = 1200;
     windowHeight = 680;
     windowX = 0;
@@ -340,6 +338,10 @@ void Options::setDefaults ()
     browserDirPanelOpened = true;
     editorFilmStripOpened = true;
     historyPanelWidth = 330;
+    fontFamily = "default";
+    fontSize = 10;
+    CPFontFamily = "default";
+    CPFontSize = 8;
     lastScale = 5;
     panAccelFactor = 5;
     rememberZoomAndPan = true;
@@ -375,7 +377,6 @@ void Options::setDefaults ()
     lastSaveAsPath = "";
     overwriteOutputFile = false;        // if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
     theme = "RawTherapee";
-    useSystemTheme = false;
     maxThumbnailHeight = 250;
     maxCacheEntries = 20000;
     thumbInterp = 1;
@@ -791,10 +792,6 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("General", "Theme")) {
                     theme           = keyFile.get_string ("General", "Theme");
-                }
-
-                if (keyFile.has_key ("General", "UseSystemTheme")) {
-                    useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
                 }
 
                 if ( keyFile.has_key ("General", "DarkFramesPath")) {
@@ -1232,14 +1229,6 @@ int Options::readFromFile (Glib::ustring fname)
             }
 
             if (keyFile.has_group ("GUI")) {
-                if (keyFile.has_key ("GUI", "Font")) {
-                    font            = keyFile.get_string  ("GUI", "Font");
-                }
-
-                if (keyFile.has_key ("GUI", "ColorPickerFont")) {
-                    colorPickerFont = keyFile.get_string  ("GUI", "ColorPickerFont");
-                }
-
                 if (keyFile.has_key ("GUI", "WindowWidth")) {
                     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
                 }
@@ -1322,6 +1311,22 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("GUI", "HistoryPanelWidth")) {
                     historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
+                }
+
+                if (keyFile.has_key ("GUI", "FontFamily")) {
+                    fontFamily        = keyFile.get_string  ("GUI", "FontFamily");
+                }
+
+                if (keyFile.has_key ("GUI", "FontSize")) {
+                    fontSize          = keyFile.get_integer ("GUI", "FontSize");
+                }
+
+                if (keyFile.has_key ("GUI", "CPFontFamily")) {
+                    CPFontFamily      = keyFile.get_string  ("GUI", "CPFontFamily");
+                }
+
+                if (keyFile.has_key ("GUI", "CPFontSize")) {
+                    CPFontSize        = keyFile.get_integer ("GUI", "CPFontSize");
                 }
 
                 if (keyFile.has_key ("GUI", "LastPreviewScale")) {
@@ -1846,7 +1851,6 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("General", "Language", language);
         keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);
         keyFile.set_string  ("General", "Theme", theme);
-        keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
         keyFile.set_string  ("General", "Version", VERSION);
         keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
@@ -1972,8 +1976,6 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer ("Profiles", "CustomProfileBuilderKeys", CPBKeys);
 
-        keyFile.set_string  ("GUI", "Font", font);
-        keyFile.set_string  ("GUI", "ColorPickerFont", colorPickerFont);
         keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer ("GUI", "WindowX", windowX);
@@ -1995,6 +1997,10 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("GUI", "EditorFilmStripOpened", editorFilmStripOpened);
         keyFile.set_boolean ("GUI", "BrowserDirPanelOpened", browserDirPanelOpened);
         keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
+        keyFile.set_string  ("GUI", "FontFamily", fontFamily);
+        keyFile.set_integer ("GUI", "FontSize", fontSize);
+        keyFile.set_string  ("GUI", "CPFontFamily", CPFontFamily);
+        keyFile.set_integer ("GUI", "CPFontSize", CPFontSize);
         keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
         keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
         keyFile.set_boolean ("GUI", "RememberZoomAndPan", rememberZoomAndPan);

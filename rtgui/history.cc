@@ -42,6 +42,7 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
     hscrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
     Gtk::Frame* histFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_LABEL")));
+    histFrame->set_name ("HistoryPanel");
     histFrame->add (*hscrollw);
 
     hTreeView = Gtk::manage (new Gtk::TreeView ());
@@ -49,14 +50,16 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
 
     historyModel = Gtk::ListStore::create (historyColumns);
     hTreeView->set_model (historyModel);
-    //hTreeView->set_headers_visible (false);
+    hTreeView->set_headers_visible (false);
     hTreeView->set_hscroll_policy(Gtk::SCROLL_MINIMUM);
     hTreeView->set_vscroll_policy(Gtk::SCROLL_NATURAL);
     hTreeView->set_size_request(80, -1);
     hTreeView->set_resize_mode(Gtk::RESIZE_QUEUE);
 
     Gtk::CellRendererText *changecrt = Gtk::manage (new Gtk::CellRendererText());
+    changecrt->property_ellipsize() = Pango::ELLIPSIZE_END;
     Gtk::CellRendererText *valuecrt  = Gtk::manage (new Gtk::CellRendererText());
+    valuecrt->property_ellipsize() = Pango::ELLIPSIZE_END;
     Gtk::TreeView::Column *hviewcol = Gtk::manage (new Gtk::TreeView::Column (""));
     hviewcol->pack_start (*changecrt, true);
     hviewcol->add_attribute (changecrt->property_markup (), historyColumns.text);
@@ -86,9 +89,6 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
     // Bookmark List
     // ~~~~~~~~~~~~~
 
-    Gtk::HSeparator* hsepb = Gtk::manage (new Gtk::HSeparator ());
-    pack_end (*hsepb, Gtk::PACK_SHRINK, 0);
-
     Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
     addBookmark = Gtk::manage (new Gtk::Button ());  // M("HISTORY_NEWSNAPSHOT")
     setExpandAlignProperties(addBookmark, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -113,6 +113,7 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
     bscrollw->set_size_request (-1, 45);
 
     Gtk::Frame* bmFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_SNAPSHOTS")));
+    bmFrame->set_name("Snapshots");
     Gtk::VBox* bmBox = Gtk::manage (new Gtk::VBox ());
     bmFrame->add (*bmBox);
     bmBox->pack_start (*bscrollw, Gtk::PACK_EXPAND_WIDGET, 4);

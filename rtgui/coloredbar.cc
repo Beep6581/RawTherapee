@@ -27,17 +27,22 @@ ColoredBar::ColoredBar (eRTOrientation orient)
     this->x = this->y = this->w = this->h = 0;
 }
 
+bool ColoredBar::setDrawRectangle(int newX, int newY, int newW, int newH, bool updateBackBufferSize)
+{
+    return BackBuffer::setDrawRectangle(Cairo::FORMAT_ARGB32, newX, newY, newW, newH, updateBackBufferSize);
+}
+
 /*
  * Redraw the bar to a Cairo::ImageSurface
  */
-void ColoredBar::expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface)
+void ColoredBar::expose(Gtk::DrawingArea &drawingArea, Cairo::RefPtr<Cairo::ImageSurface> destSurface)
 {
     // look out if the Surface has to be redrawn
     if (!surfaceCreated() || !destSurface) {
         return;
     }
 
-    draw();
+    updateBackBuffer(drawingArea);
     Gdk::Rectangle rect(x, y, w, h);
     copySurface(destSurface, &rect);
 }
@@ -45,26 +50,26 @@ void ColoredBar::expose(Cairo::RefPtr<Cairo::ImageSurface> destSurface)
 /*
  * Redraw the bar to a Gdk::Window
  */
-void ColoredBar::expose(Glib::RefPtr<Gdk::Window> destWindow)
+void ColoredBar::expose(Gtk::DrawingArea &drawingArea, Glib::RefPtr<Gdk::Window> destWindow)
 {
     // look out if the Surface has to be redrawn
     if (!surfaceCreated() || !destWindow) {
         return;
     }
 
-    draw();
+    updateBackBuffer(drawingArea);
     Gdk::Rectangle rect(x, y, w, h);
     copySurface(destWindow, &rect);
 }
 
-void ColoredBar::expose(const Cairo::RefPtr< Cairo::Context> &cr)
+void ColoredBar::expose(Gtk::DrawingArea &drawingArea, const Cairo::RefPtr< Cairo::Context> &cr)
 {
     // look out if the Surface has to be redrawn
     if (!surfaceCreated()) {
         return;
     }
 
-    draw();
+    updateBackBuffer(drawingArea);
     Gdk::Rectangle rect(x, y, w, h);
     copySurface(cr, &rect);
 }
@@ -72,19 +77,19 @@ void ColoredBar::expose(const Cairo::RefPtr< Cairo::Context> &cr)
 /*
  * Redraw the bar to a Gdk::Window
  */
-void ColoredBar::expose(BackBuffer *backBuffer)
+void ColoredBar::expose(Gtk::DrawingArea &drawingArea, BackBuffer *backBuffer)
 {
     // look out if the Surface has to be redrawn
     if (!surfaceCreated() || !backBuffer) {
         return;
     }
 
-    draw();
+    updateBackBuffer(drawingArea);
     Gdk::Rectangle rect(x, y, w, h);
     copySurface(backBuffer, &rect);
 }
 
-void ColoredBar::draw()
+void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
 {
     if (isDirty()) {
         Cairo::RefPtr<Cairo::Context> cr = getContext();
@@ -126,9 +131,7 @@ void ColoredBar::draw()
         } else {
             // ask the ColorProvider to provide colors :) for each pixels
             if (colorProvider) {
-                unsigned char *dst;
                 unsigned char *surfaceData = surface->get_data();
-                int surfW = getWidth();
 
                 cr->set_antialias(Cairo::ANTIALIAS_NONE);
                 cr->set_line_width(1.);
@@ -137,13 +140,14 @@ void ColoredBar::draw()
                 case (RTO_Left2Right):
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
+                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             double x_ = double(      px);
                             //double y_ = double((h-1)-py);  unused
                             double x01 = x_        / double(w - 1);
                             double y01 = double(py) / double(h - 1);
                             colorProvider->colorForValue (x01, y01, CCET_BACKGROUND, colorCallerId, this);
 
-                            rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
+                            rtengine::poke01_d(pixel, ccRed, ccGreen, ccBlue);
                         }
                     }
 
@@ -152,13 +156,14 @@ void ColoredBar::draw()
                 case (RTO_Right2Left):
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
+                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             //double x_ = double((w-1)-px);  unused
                             //double y_ = double((h-1)-py);  unused
                             double x01 = double(px) / double(w - 1);
                             double y01 = double(py) / double(h - 1);
                             colorProvider->colorForValue (x01, y01, CCET_BACKGROUND, colorCallerId, this);
 
-                            rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
+                            rtengine::poke01_d(pixel, ccRed, ccGreen, ccBlue);
                         }
                     }
 
@@ -167,13 +172,14 @@ void ColoredBar::draw()
                 case (RTO_Bottom2Top):
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
+                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             //double x_ = double((w-1)-px);  unused
                             //double y_ = double((h-1)-py);  unused
                             double x01 = double(px) / double(w - 1);
                             double y01 = double(py) / double(h - 1);
                             colorProvider->colorForValue (y01, x01, CCET_BACKGROUND, colorCallerId, this);
 
-                            rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
+                            rtengine::poke01_d(pixel, ccRed, ccGreen, ccBlue);
                         }
                     }
 
@@ -183,91 +189,19 @@ void ColoredBar::draw()
                 default:
                     for (int py = 0; py < h; ++py) {
                         for (int px = 0; px < w; ++px) {
+                        	unsigned char *pixel = surfaceData + (py * w + px) * 4;
                             double x_ = double(      px);
                             double y_ = double(      py);
                             double x01 = x_ / double(w - 1);
                             double y01 = y_ / double(h - 1);
                             colorProvider->colorForValue (y01, x01, CCET_BACKGROUND, colorCallerId, this);
 
-                            rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
+                            rtengine::poke01_d(pixel, ccRed, ccGreen, ccBlue);
                         }
                     }
 
                     break;
                 }
-
-
-
-                /*
-                                unsigned char *dst;
-                                unsigned char *surfaceData = surface->get_data();
-                                int surfW = getWidth();
-
-                                cr->set_antialias(Cairo::ANTIALIAS_NONE);
-                                cr->set_line_width(1.);
-                                switch (orientation) {
-                                    case (RTO_Left2Right):
-                                        for (int py=0; py<h; ++py, ++py) {
-                                            dst = surfaceData + ((y+py)*surfW+x)*4;
-                                            for (int px=0; px<w; ++px, ++px) {
-                                                double x_ = double(      px);
-                                                //double y_ = double((h-1)-py);  unused
-                                                double x01 = x_        /double(w-1);
-                                                double y01 = double(py)/double(h-1);
-                                                colorProvider->colorForValue (x01, y01, CCET_BACKGROUND, colorCallerId, this);
-
-                                                rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
-                                            }
-                                        }
-                                        break;
-                                    case (RTO_Right2Left):
-                                        for (int py=0; py<h; ++py, ++py) {
-                                            dst = surfaceData + ((y+py)*surfW+x)*4;
-                                            for (int px=0; px<w; ++px, ++px) {
-                                                //double x_ = double((w-1)-px);  unused
-                                                //double y_ = double((h-1)-py);  unused
-                                                double x01 = double(px)/double(w-1);
-                                                double y01 = double(py)/double(h-1);
-                                                colorProvider->colorForValue (x01, y01, CCET_BACKGROUND, colorCallerId, this);
-
-                                                rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
-                                            }
-                                        }
-                                        break;
-                                    case (RTO_Bottom2Top):
-                                        for (int py=0; py<h; ++py, ++py) {
-                                            dst = surfaceData + ((y+py)*surfW+x)*4;
-                                            for (int px=0; px<w; ++px, ++px) {
-                                                //double x_ = double((w-1)-px);  unused
-                                                //double y_ = double((h-1)-py);  unused
-                                                double x01 = double(px)/double(w-1);
-                                                double y01 = double(py)/double(h-1);
-                                                colorProvider->colorForValue (y01, x01, CCET_BACKGROUND, colorCallerId, this);
-
-                                                rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
-                                            }
-                                        }
-                                        break;
-                                    case (RTO_Top2Bottom):
-                                    default:
-                                        for (int py=0; py<h; ++py, ++py) {
-                                            dst = surfaceData + ((y+py)*surfW+x)*4;
-                                            for (int px=0; px<w; ++px, ++px) {
-                                                double x_ = double(      px);
-                                                double y_ = double(      py);
-                                                double x01 = x_/double(w-1);
-                                                double y01 = y_/double(h-1);
-                                                colorProvider->colorForValue (y01, x01, CCET_BACKGROUND, colorCallerId, this);
-
-                                                rtengine::poke01_d(surfaceData, ccRed, ccGreen, ccBlue);
-                                            }
-                                        }
-                                        break;
-                                }
-
-                 */
-
-
             }
         }
 

@@ -26,12 +26,13 @@
 #include "multilangmgr.h"
 #include "rtimage.h"
 
-CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), curve_reset(nullptr),
+CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)
 {
 
     // We set the label to the one provided as parameter, even if it's an empty string
     curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties(curveGroupLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 }
 
 CurveEditorGroup::~CurveEditorGroup()
@@ -117,43 +118,55 @@ void CurveEditorGroup::newLine()
 {
 
     if (curveEditors.size() > numberOfPackedCurve) {
-        Gtk::HBox* headerBox = Gtk::manage (new Gtk::HBox ());
+        Gtk::Grid* currLine = Gtk::manage (new Gtk::Grid ());
+        setExpandAlignProperties(currLine, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+        bool isHeader = false;
+        int x = 0;
 
         if (!numberOfPackedCurve) {
-            headerBox->pack_start(*curveGroupLabel, Gtk::PACK_SHRINK, 2);
-
-            curve_reset = Gtk::manage (new Gtk::Button ());
-            curve_reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
-            curve_reset->set_relief (Gtk::RELIEF_NONE);
-            curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));
-            curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::curveResetPressed) );
-
-            headerBox->pack_end (*curve_reset, Gtk::PACK_SHRINK, 0);
+            isHeader = true;
+            currLine->attach(*curveGroupLabel, x++, 0, 1, 1);
         }
-
-        int j = numberOfPackedCurve;
 
         bool rwe = false;
 
-        for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
+        for (int i = numberOfPackedCurve; i < (int)(curveEditors.size()); ++i) {
             if (curveEditors[i]->relatedWidget != nullptr && curveEditors[i]->expandRelatedWidget) {
                 rwe = true;
             }
         }
 
-        for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
+        for (int i = numberOfPackedCurve; i < (int)(curveEditors.size()); ++i) {
+            setExpandAlignProperties(curveEditors[i]->curveType->buttonGroup, !rwe, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+            currLine->attach(*curveEditors[i]->curveType->buttonGroup, x++, 0, 1, 1);
+
             if (curveEditors[i]->relatedWidget != nullptr) {
-                headerBox->pack_end (*curveEditors[i]->relatedWidget, curveEditors[i]->expandRelatedWidget ? Gtk::PACK_EXPAND_WIDGET : Gtk::PACK_SHRINK, 2);
+                setExpandAlignProperties(curveEditors[i]->relatedWidget, curveEditors[i]->expandRelatedWidget, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+                currLine->attach(*curveEditors[i]->relatedWidget, x++, 0, 1, 1);
             }
 
-            headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, rwe ? Gtk::PACK_SHRINK : Gtk::PACK_EXPAND_WIDGET, 2);
             numberOfPackedCurve++;
         }
 
-        pack_start (*headerBox, Gtk::PACK_SHRINK, 2);
+        if (isHeader) {
+            curve_reset = Gtk::manage (new Gtk::Button ());
+            setExpandAlignProperties(curve_reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+            curve_reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+            curve_reset->set_relief (Gtk::RELIEF_NONE);
+            curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));
+            curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::curveResetPressed) );
+
+            currLine->attach(*curve_reset, x++, 0, 1, 1);
+        }
+
+        attach(*currLine, 0, line++, 1, 1);
     }
+}
 
-
+void CurveEditorGroup::attachCurve (Gtk::Grid* curve)
+{
+    attach(*curve, 0, line, 1, 1);
 }
 
 /*

@@ -131,8 +131,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->set_name ("ToolBarPanelFileBrowser");
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
 
-    buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
-
     tbLeftPanel_1 = new Gtk::ToggleButton ();
     iLeftPanel_1_Show = new RTImage("panel-to-right.png");
     iLeftPanel_1_Hide = new RTImage("panel-to-left.png");
@@ -144,8 +142,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     tbLeftPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbLeftPanel_1_toggled) );
     buttonBar->pack_start (*tbLeftPanel_1, Gtk::PACK_SHRINK);
 
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
-
+    vSepiLeftPanel = new Gtk::VSeparator ();
+    buttonBar->pack_start (*vSepiLeftPanel, Gtk::PACK_SHRINK);
 
     iFilterClear = new RTImage ("filterclear.png");
     igFilterClear = new RTImage ("filter.png");
@@ -673,17 +671,11 @@ void FileCatalog::_refreshProgressBar ()
         GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 
         Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-        Gtk::Box* hbb = nullptr;
+        Gtk::Grid* grid = Gtk::manage (new Gtk::Grid ());
         Gtk::Label *label = nullptr;
 
-        if( options.mainNBVertical ) {
-            hbb = Gtk::manage (new Gtk::VBox ());
-        } else {
-            hbb = Gtk::manage (new Gtk::HBox ());
-        }
-
         if (!previewsToLoad ) {
-            hbb->pack_start (*Gtk::manage (new RTImage ("gtk-directory.png")));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
             int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
 
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") +
@@ -691,7 +683,7 @@ void FileCatalog::_refreshProgressBar ()
                                                  + Glib::ustring::format(previewsLoaded) +
                                                  (filteredCount != previewsLoaded ? "]" : ")")));
         } else {
-            hbb->pack_start (*Gtk::manage (new RTImage ("gtk-find.png")));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gtk-find.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
             filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
         }
@@ -700,13 +692,12 @@ void FileCatalog::_refreshProgressBar ()
             label->set_angle(90);
         }
 
-        hbb->pack_start (*label);
-        hbb->set_spacing (2);
-        hbb->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-        hbb->show_all ();
+        grid->attach_next_to(*label, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+        grid->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+        grid->show_all ();
 
         if (nb) {
-            nb->set_tab_label(*filepanel, *hbb);
+            nb->set_tab_label(*filepanel, *grid);
         }
     }
 }
@@ -2091,8 +2082,10 @@ void FileCatalog::tbLeftPanel_1_visible (bool visible)
 {
     if (visible) {
         tbLeftPanel_1->show();
+        vSepiLeftPanel->show();
     } else {
         tbLeftPanel_1->hide();
+        vSepiLeftPanel->hide();
     }
 }
 void FileCatalog::tbRightPanel_1_visible (bool visible)

@@ -31,6 +31,11 @@ private:
 public:
     SplashImage ();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 };
 
 //class Splash : public Gtk::Window {

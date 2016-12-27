@@ -307,13 +307,20 @@ int main(int argc, char **argv)
 
     Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
 
-    if (!options.useSystemTheme && screen) {
+    if (screen) {
         Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 
+        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
         Glib::ustring filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
-        if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-            options.theme = "RawTherapee";
+        if (!regex->match(options.theme + ".css") || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+            options.theme = "RawTherapee-GTK";
+            // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
+            if (GTK_MINOR_VERSION < 20) {
+                options.theme = options.theme + "3-_19";
+            } else {
+                options.theme = options.theme + "3-20_";
+            }
             filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
         }
         cssRT = Gtk::CssProvider::create();
@@ -328,22 +335,21 @@ int main(int argc, char **argv)
         }
 
         // Set the font face and size
-        if (options.font != "default") {
+        if (options.fontFamily != "default") {
             try {
                 cssForced = Gtk::CssProvider::create();
-                Glib::ustring font(options.font);
-                size_t pos = font.find(',');
-
-                if (pos != Glib::ustring::npos) {
-                    font = font.replace(pos, 1, " ");
-                }
-
-                cssForced->load_from_data (Glib::ustring::compose("* { font: %1; }", font));
+                //GTK318
+                #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
+                #else
+                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
+                #endif
+                //GTK318
                 Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             } catch (Glib::Error &err) {
                 printf("Error: \"%s\"\n", err.what().c_str());
             } catch (...) {
-                printf("Error: Can't find the font named \"%s\"\n", options.font.c_str());
+                printf("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
             }
         }
     }

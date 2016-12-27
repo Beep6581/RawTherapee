@@ -60,11 +60,21 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
             add(addsetid);
         }
     };
+
+    class ThemeFilename
+    {
+    public:
+        Glib::ustring shortFName;
+        Glib::ustring longFName;
+
+        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName(sfname), longFName(lfname) {}
+    };
+
     Glib::RefPtr<Gtk::TreeStore> behModel;
     BehavColumns behavColumns;
-
-
-protected:
+    std::vector<ThemeFilename> themeFNames;
+    Glib::RefPtr<Glib::Regex> regex;
+    Glib::MatchInfo matchInfo;
     Splash* splash;
     ProfileStoreComboBox* rprofiles;
     Gtk::TreeIter currRawRow; // :)
@@ -128,8 +138,7 @@ protected:
     Gtk::ComboBoxText* curveBBoxPosC;
 
     Gtk::ComboBoxText* theme;
-    Gtk::CheckButton* chUseSystemTheme;
-    Gtk::FontButton* fontbutton;
+    Gtk::FontButton* fontButton;
     Gtk::FontButton* colorPickerFontButton;
     Gtk::ColorButton* butCropCol;
     Gtk::ColorButton* butNavGuideCol;
@@ -193,7 +202,7 @@ protected:
     Glib::ustring storedValueImg;
 
     Options moptions;
-    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
+    sigc::connection tconn, sconn, fconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
     sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
@@ -201,11 +210,11 @@ protected:
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
+    void parseThemeDir  (Glib::ustring dirname);
     void updateDFinfos ();
     void updateFFinfos ();
     void workflowUpdate();
     void themeChanged  ();
-    void useThemeChanged();
     void fontChanged   ();
     void forRAWComboChanged ();
     void forImageComboChanged ();
@@ -213,8 +222,10 @@ protected:
     void bundledProfilesChanged ();
     void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme);
-    void switchFontTo  (Glib::ustring newFont);
+    void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
     bool splashClosed(GdkEventAny* event);
+
+    int getThemeRowNumber(Glib::ustring& longThemeFName);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 

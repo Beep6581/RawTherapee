@@ -898,7 +898,7 @@ PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne (à désactiver pour les écrans de faible résolution)
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne\n(à désactiver pour les écrans de faible résolution)
 PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FILMSIMULATION;Simulation de Film
 PREFERENCES_FLATFIELD;Champ Uniforme
@@ -990,7 +990,7 @@ PREFERENCES_REMEMBERZOOMPAN;Se souvenir de niveau de zoom et de la position de l
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Retient le niveau de zoom et la position de l'image courante lors de l'ouverture d'une nouvelle image.\n\nCette option ne fonctionne que dans le mode "Éditeur unique" et quand "Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%" is set to "Idem PP3".
 PREFERENCES_RGBDTL_LABEL;Nombre maximum d'unités de calcul pour la Réduction du bruit
 PREFERENCES_RGBDTL_TOOLTIP;La réduction du bruit nécessite un minimum d'à peu près 128Mo de RAM pour une image de 10MPix ou 512Mo pour une image de 40MPix, ainsi que 128Mo de RAM supplémentaire par unité de calcul. Plus il y aura d'unités de calcul travaillant en parallèle, plus ce sera rapide. Laissez la valeur à "0" pour utiliser automatiquement autant d'unités de calcul que possible.
-PREFERENCES_SELECTFONT;Police générale
+PREFERENCES_SELECTFONT;Police principale
 PREFERENCES_SELECTFONT_COLPICKER;Police des pipette à couleur
 PREFERENCES_SELECTLANG;Choix de la langue
 PREFERENCES_SELECTTHEME;Choisissez un thème

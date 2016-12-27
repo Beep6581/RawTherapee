@@ -128,6 +128,48 @@ GtkImage {
     padding: 1px;
 }
 
+
+
+
+
+GtkScale.slider {
+    margin: 1px;
+}
+GtkScale.slider:hover {
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+}
+GtkScale.slider:insensitive {
+    background-image: none;
+    background-color: #444;
+    border-color: #282828;
+}
+GtkScale.trough {
+    background-color: #2A2A2A;
+}
+GtkScale.trough:insensitive {
+    background-color: #444;
+    border-color: #282828;
+}
+
+
+
+GtkLabel {
+    margin: 0 1px;
+}
+
+
+GtkButton {
+    padding: 0;
+    margin: 1px;
+}
+GtkButton, GtkButton.flat:hover {
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+GtkButton.flat, GtkCheckButton {
+    background-image: none;
+}
+
 /* Vertical group of buttons in 1 column */
 GtkButton.Top {
     border-radius: 10px 4px 0 0;
@@ -168,7 +210,6 @@ GtkButton.Right {
 
 /* [1.23[-][+]] */
 GtkEntry, GtkSpinButton {
-    padding: 1px;
     background-color: #262626;
 }
 

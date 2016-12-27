@@ -31,7 +31,6 @@ extern Glib::ustring versionSuffixString;
 SplashImage::SplashImage ()
 {
     pixbuf = RTImage::createFromFile ("splash.png");
-    set_size_request (pixbuf->get_width(), pixbuf->get_height());
 }
 
 bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
@@ -75,23 +74,47 @@ bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     return true;
 }
 
+Gtk::SizeRequestMode SplashImage::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void SplashImage::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height = natural_height = pixbuf ? pixbuf->get_height() : 100;
+}
+
+void SplashImage::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = natural_width = pixbuf ? pixbuf->get_width() : 100;
+}
+
+void SplashImage::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc (minimum_height, natural_height);
+}
+
+void SplashImage::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
+
 Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true)
 {
 
     releaseNotesSW = nullptr;
 
     nb = Gtk::manage (new Gtk::Notebook ());
+    nb->set_name ("AboutNotebook");
     get_content_area()->pack_start (*nb);
 
     // Add close button to bottom of the notebook
     Gtk::Button* closeButton = Gtk::manage (new Gtk::Button (M("GENERAL_CLOSE")));
     closeButton->signal_clicked().connect( sigc::mem_fun(*this, &Splash::closePressed) );
-    Gtk::HBox* bottomHBox = Gtk::manage (new Gtk::HBox ());
-    bottomHBox->pack_end (*closeButton, Gtk::PACK_SHRINK, 0);
-    get_content_area()->pack_start (*bottomHBox, Gtk::PACK_SHRINK, 0);
+    get_action_area()->pack_start (*closeButton, Gtk::PACK_SHRINK, 0);
 
     Glib::RefPtr<Gtk::CssProvider> localCSS = Gtk::CssProvider::create();
-    localCSS->load_from_data ("GtkTextView { font: monospace 8; }");
+    localCSS->load_from_data ("textview { font-family: monospace; }");
 
     // Tab 1: the image
     splashImage = Gtk::manage(new SplashImage ());
@@ -216,9 +239,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
             releaseNotesSW = Gtk::manage (new Gtk::ScrolledWindow());
             Gtk::TextView *releaseNotesTV = Gtk::manage (new Gtk::TextView (textBuffer));
-            releaseNotesTV->get_style_context()->add_provider(localCSS, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-            // set monospace font to enhance readability of formatted text
             releaseNotesTV->set_left_margin (10);
             releaseNotesTV->set_right_margin (3);
             releaseNotesTV->set_editable(false);

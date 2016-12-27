@@ -53,10 +53,16 @@ ExifPanel::ExifPanel () : idata(nullptr)
     Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());
     Gtk::CellRendererText *render_txt = Gtk::manage(new Gtk::CellRendererText());
+    render_txt->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcol->pack_start (*render_pb, false);
     viewcol->pack_start (*render_txt, true);
     viewcol->add_attribute (*render_pb, "pixbuf", exifColumns.icon);
     viewcol->add_attribute (*render_txt, "markup", exifColumns.field);
+    viewcol->set_expand(true);
+    viewcol->set_resizable (true);
+    viewcol->set_fixed_width(35);
+    viewcol->set_min_width(35);
+    viewcol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     render_pb->property_ypad() = 0;
     render_txt->property_ypad() = 0;
@@ -67,8 +73,14 @@ ExifPanel::ExifPanel () : idata(nullptr)
 
     Gtk::TreeView::Column *viewcolv = Gtk::manage(new Gtk::TreeView::Column ("Value"));
     Gtk::CellRendererText *render_txtv = Gtk::manage(new Gtk::CellRendererText());
+    render_txtv->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcolv->pack_start (*render_txtv, true);
     viewcolv->add_attribute (*render_txtv, "markup", exifColumns.value);
+    viewcolv->set_expand(true);
+    viewcolv->set_resizable (true);
+    viewcol->set_fixed_width(35);
+    viewcolv->set_min_width(35);
+    viewcolv->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     render_txtv->property_ypad() = 0;
 

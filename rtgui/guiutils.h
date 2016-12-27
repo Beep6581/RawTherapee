@@ -131,7 +131,6 @@ public:
     }
 
     void setLevel(int level);
-    void updateStyle();
 
     void show() {}
     void show_all();
@@ -141,7 +140,6 @@ public:
     void showBox();
     void hideBox();
 
-    void on_style_updated ();
 //  bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
 };
 
@@ -180,16 +178,8 @@ private:
     bool on_enter_leave_title (GdkEventCrossing* event);
     /// Used to handle the colored background for the Enable button
     bool on_enter_leave_enable (GdkEventCrossing* event);
-    // The part below can probably be removed from here and the CSS file.
-    /// Update the style of this widget, depending in the "slim" option
+
     void updateStyle();
-
-    void on_style_updated ()
-    {
-        updateStyle();
-    }
-
-
 
 protected:
     Gtk::Container* child;      /// Gtk::Contained to display below the expander's title
@@ -263,6 +253,8 @@ public:
     /// Add a Gtk::Container for the content of the expander
     /// Warning: do not manually Show/Hide the widget, because this parameter is handled by the click on the Expander's title
     void add  (Gtk::Container& widget);
+
+    void updateVScrollbars(bool hide);
 };
 
 
@@ -289,7 +281,7 @@ class MyComboBox : public Gtk::ComboBox
 
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyComboBox ();
@@ -306,10 +298,10 @@ class MyComboBoxText : public Gtk::ComboBoxText
 
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
-    MyComboBoxText ();
+    MyComboBoxText (bool has_entry = false);
 
     void setPreferredWidth (int minimum_width, int natural_width);
 };
@@ -348,7 +340,7 @@ class MyFileChooserButton : public Gtk::FileChooserButton
 protected:
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);
@@ -421,7 +413,7 @@ private:
     int w;
 
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyProgressBar(int width);

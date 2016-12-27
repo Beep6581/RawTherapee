@@ -30,6 +30,7 @@ class SpotWBListener
 {
 
 public:
+    virtual ~SpotWBListener () {}
     virtual void spotWBRequested (int size) {}
 };
 

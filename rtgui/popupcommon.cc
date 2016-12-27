@@ -86,6 +86,7 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
         arrowButton->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
         button->get_style_context()->add_class("Left");
         arrowButton->get_style_context()->add_class("Right");
+        arrowButton->get_style_context()->add_class("popupbutton-arrow");
         hasMenu = true;
     }
 

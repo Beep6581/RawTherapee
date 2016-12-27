@@ -38,6 +38,7 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
     edited_point = -1;
 
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
+    get_style_context()->add_class("drawingarea");
 
     mcih = new MyCurveIdleHelper;
     mcih->myCurve = this;
@@ -117,7 +118,7 @@ void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_heig
     natural_height = minimum_height;
 }
 
-void MyCurve::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyCurve::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
 }

@@ -46,7 +46,10 @@ void LockableColorPicker::updateBackBuffer ()
         Gtk::DrawingArea *iArea = cropWindow->getImageArea();
 
         Glib::RefPtr<Pango::Context> pangoContext = iArea->get_pango_context ();
-        Pango::FontDescription fontd(options.colorPickerFont);
+        Pango::FontDescription fontd = pangoContext->get_font_description();
+        // set font family and size
+        fontd.set_family(options.CPFontFamily == "default" ? "sans" : options.CPFontFamily);
+        fontd.set_size((options.CPFontFamily == "default" ? 8 : options.CPFontSize) * Pango::SCALE);
         fontd.set_weight(Pango::WEIGHT_NORMAL);
         pangoContext->set_font_description (fontd);
 

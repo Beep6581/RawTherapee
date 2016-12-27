@@ -29,7 +29,7 @@ public:
     virtual void shcChanged () {}
 };
 
-class SHCSelector : public Gtk::DrawingArea, public ColoredBar
+class SHCSelector : public Gtk::DrawingArea, BackBuffer
 {
 
 protected:
@@ -47,7 +47,7 @@ protected:
     int rightMargin;
 
     const static int hb = 3;  // horizontal border
-    const static int vb = 2;  // vertical border
+    const static int vb = 4;  // vertical border
 
     SHCListener* cl;
 
@@ -55,14 +55,17 @@ protected:
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
     void on_realize();
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_button_press_event (GdkEventButton* event);
     bool on_button_release_event (GdkEventButton* event);
     bool on_motion_notify_event (GdkEventMotion* event);
+    void updateBackBuffer();
 
 public:
+
+    ColoredBar coloredBar;
 
     SHCSelector();
 

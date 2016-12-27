@@ -41,7 +41,6 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     Gtk::PositionType sideStart = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
     Gtk::PositionType sideEnd = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_RIGHT : Gtk::POS_BOTTOM;
     bool vExpand = options.curvebboxpos == 0 || options.curvebboxpos == 2;
-    bool hExpand = !vExpand;
 
     valLinear = (int)DCT_Linear;
     valUnchanged = (int)DCT_Unchanged;
@@ -605,7 +604,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
 
     if (dCurve) {
 
-        // Initializing GUI values + repacking the appropriated widget
+        // Initializing GUI values + attaching the appropriated widget
         //dCurve->typeconn.block(true);
 
         // first we update the colored bar
@@ -667,7 +666,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             customCurve->setColoredBar(leftBar, bottomBar);
             customCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editCustom, editCustomConn);
-            parent->pack_start (*customCurveGrid);
+            parent->attachCurve (customCurveGrid);
             customCurveGrid->check_resize();
             break;
 
@@ -692,13 +691,13 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             darks->setLabel(label[1]);
             shadows->setValue (dCurve->paramCurveEd.at(7));
             shadows->setLabel(label[0]);
-            shcSelector->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
-            shcSelector->setBgGradient(bgGradient);
+            shcSelector->coloredBar.setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
+            shcSelector->coloredBar.setBgGradient(bgGradient);
             shcSelector->setMargins( (leftBar ? CBAR_WIDTH + CBAR_MARGIN : RADIUS), RADIUS );
             paramCurve->setColoredBar(leftBar, nullptr);
             paramCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editParam, editParamConn);
-            parent->pack_start (*paramCurveGrid);
+            parent->attachCurve (paramCurveGrid);
             break;
         }
 
@@ -708,7 +707,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             NURBSCurve->setColoredBar(leftBar, bottomBar);
             NURBSCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editNURBS, editNURBSConn);
-            parent->pack_start (*NURBSCurveGrid);
+            parent->attachCurve (NURBSCurveGrid);
             NURBSCurveGrid->check_resize();
             break;
 

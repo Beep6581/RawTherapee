@@ -27,6 +27,8 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
+#define THEMEREGEXSTR      "^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$"
+
 // Default bundled profile name to use for Raw images
 #ifdef WIN32
 #define DEFPROFILE_RAW      "${G}\\Default"
@@ -119,8 +121,6 @@ public:
     bool browserDirPanelOpened;
     bool editorFilmStripOpened;
     int historyPanelWidth;
-    Glib::ustring font;
-    Glib::ustring colorPickerFont;
     int windowWidth;
     int windowHeight;
     int windowX;
@@ -135,6 +135,10 @@ public:
     int lastScale;
     int panAccelFactor;
     int lastCropSize;
+    Glib::ustring fontFamily;    // RT's main font family
+    int fontSize;                // RT's main font size (units: pt)
+    Glib::ustring CPFontFamily;  // ColorPicker font family
+    int CPFontSize;              // ColorPicker font size (units: pt)
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;
@@ -162,7 +166,6 @@ public:
     Glib::ustring language;
     bool languageAutoDetect;
     Glib::ustring theme;
-    bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
     bool forceFormatOpts;

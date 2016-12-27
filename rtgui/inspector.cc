@@ -84,8 +84,7 @@ int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
 Inspector::Inspector () : currImage(nullptr), zoom(0.0), active(false)
 {
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    style->add_class(GTK_STYLE_CLASS_BACKGROUND);
-    style->add_class(GTK_STYLE_CLASS_FLAT);
+    set_name("Inspector");
 }
 
 Inspector::~Inspector()
@@ -295,5 +294,33 @@ void Inspector::setActive(bool state)
     }
 
     active = state;
+}
+
+
+Gtk::SizeRequestMode Inspector::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void Inspector::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height= 50;
+    natural_height = 300;
+}
+
+void Inspector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 50;
+    natural_width = 200;
+}
+
+void Inspector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc(minimum_height, natural_height);
+}
+
+void Inspector::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
 }
 

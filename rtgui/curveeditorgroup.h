@@ -39,7 +39,7 @@ class FlatCurveEditorSubGroup;
  * - to start a new line of curve button, use the 'newLine' method
  * - if you add more than one curve, you must add a "CurveEditor* ce" parameter to your listener
  */
-class CurveEditorGroup : public Gtk::VBox, public CurveListener
+class CurveEditorGroup : public Gtk::Grid, public CurveListener
 {
 
     friend class CurveEditor;
@@ -49,6 +49,7 @@ class CurveEditorGroup : public Gtk::VBox, public CurveListener
 
 private:
     Glib::ustring& curveDir;
+    int line;
 
 protected:
     Gtk::Label* curveGroupLabel;
@@ -86,6 +87,7 @@ public:
     }
     //void on_realize ();
     CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget = nullptr, bool expandRelatedWidget = true, bool periodic = true);
+    void attachCurve (Gtk::Grid* curve);
 
 protected:
     //void curveTypeToggled ();

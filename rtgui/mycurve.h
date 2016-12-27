@@ -68,7 +68,7 @@ protected:
     ColoredBar *leftBar;
     ColoredBar *bottomBar;
     CursorShape cursor_type;
-    int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points of for the colored bar
+    int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points or for the colored bar
     int prevGraphW, prevGraphH;         /// previous inner width and height of the editor
     Gdk::ModifierType mod_type;
     int cursorX;        /// X coordinate in the graph of the cursor
@@ -143,7 +143,7 @@ public:
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
     void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
-    void get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 };
 
 class MyCurveIdleHelper

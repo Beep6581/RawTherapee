@@ -67,8 +67,8 @@ protected:
     Gtk::ToggleButton* tbBeforeLock;
     //bool bAllSidePanelsVisible;
     Gtk::ToggleButton* beforeAfter;
-    Gtk::HPaned* hpanedl;
-    Gtk::HPaned* hpanedr;
+    Gtk::Paned* hpanedl;
+    Gtk::Paned* hpanedr;
     Gtk::Image *iHistoryShow, *iHistoryHide;
     Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
     Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;

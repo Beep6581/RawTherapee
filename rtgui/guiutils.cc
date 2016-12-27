@@ -506,12 +506,11 @@ bool ExpanderBox::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) {
 ExpanderBox::ExpanderBox( Gtk::Container *p): pC(p)
 {
     set_name ("ExpanderBox");
-    updateStyle();
-}
-
-void ExpanderBox::on_style_updated ()
-{
-    updateStyle();
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    set_border_width(2);
+#endif
+//GTK318
 }
 
 void ExpanderBox::setLevel(int level)
@@ -523,11 +522,6 @@ void ExpanderBox::setLevel(int level)
     } else if (level >= 3) {
         set_name("ExpanderBox3");
     }
-}
-
-void ExpanderBox::updateStyle()
-{
-    set_border_width(2);
 }
 
 void ExpanderBox::show_all()
@@ -598,6 +592,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
     updateStyle();
+
     titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle) );
     titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
     titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
@@ -654,6 +649,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     pack_start(*titleEvBox, Gtk::PACK_EXPAND_WIDGET, 0);
 
     updateStyle();
+
     titleEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_toggle));
     titleEvBox->signal_enter_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
     titleEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_title), false);
@@ -691,13 +687,24 @@ bool MyExpander::on_enter_leave_enable (GdkEventCrossing* event)
 
 void MyExpander::updateStyle()
 {
+    updateVScrollbars(options.hideTPVScrollbar);
+
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     headerHBox->set_spacing(2);
     headerHBox->set_border_width(1);
     set_spacing(0);
     set_border_width(0);
+#endif
+//GTK318
+}
 
-    if (expBox) {
-        expBox->updateStyle();
+void MyExpander::updateVScrollbars(bool hide)
+{
+    if (hide) {
+        get_style_context()->remove_class("withScrollbar");
+    } else {
+        get_style_context()->add_class("withScrollbar");
     }
 }
 
@@ -961,9 +968,11 @@ void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &min
     natural_height = minimum_height = 50;
 }
 
-MyComboBoxText::MyComboBoxText ()
+MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)
 {
     minimumWidth = naturalWidth = 70;
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
 }
 
 bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
@@ -1000,7 +1009,7 @@ void MyComboBoxText::get_preferred_width_vfunc (int &minimum_width, int &natural
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
 }
-void MyComboBoxText::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyComboBoxText::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
@@ -1046,7 +1055,7 @@ void MyComboBox::get_preferred_width_vfunc (int &minimum_width, int &natural_wid
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
 }
-void MyComboBox::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyComboBox::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     natural_width = rtengine::max(naturalWidth, 10);
     minimum_width = rtengine::max(minimumWidth, 10);
@@ -1169,7 +1178,7 @@ void MyFileChooserButton::get_preferred_width_vfunc (int &minimum_width, int &na
 {
     minimum_width = natural_width = 35;
 }
-void MyFileChooserButton::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     minimum_width = natural_width = 35;
 }
@@ -1289,7 +1298,7 @@ void MyProgressBar::get_preferred_width_vfunc (int &minimum_width, int &natural_
     natural_width = rtengine::max(w, 50);
 }
 
-void MyProgressBar::get_preferred_width_for_height_vfunc (int width, int &minimum_width, int &natural_width) const
+void MyProgressBar::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
