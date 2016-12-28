@@ -213,7 +213,7 @@ my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
      * This makes it unsafe to use this manager and a different source
      * manager serially with the same JPEG object.  Caveat programmer.
      */
-    if (cinfo->src == NULL) { /* first time for this JPEG object? */
+    if (cinfo->src == nullptr) { /* first time for this JPEG object? */
         cinfo->src = (struct jpeg_source_mgr *)
                      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                              sizeof(my_source_mgr));
@@ -231,7 +231,7 @@ my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
     src->pub.term_source = my_term_source;
     src->infile = infile;
     src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
-    src->pub.next_input_byte = NULL; /* until buffer loaded */
+    src->pub.next_input_byte = nullptr; /* until buffer loaded */
 }
 
 METHODDEF(void)
@@ -338,7 +338,7 @@ format_message (j_common_ptr cinfo, char * buffer)
 {
     struct jpeg_error_mgr * err = cinfo->err;
     int msg_code = err->msg_code;
-    const char * msgtext = NULL;
+    const char * msgtext = nullptr;
     const char * msgptr;
     char ch;
     boolean isstring;
@@ -346,14 +346,14 @@ format_message (j_common_ptr cinfo, char * buffer)
     /* Look up message string in proper table */
     if (msg_code > 0 && msg_code <= err->last_jpeg_message) {
         msgtext = err->jpeg_message_table[msg_code];
-    } else if (err->addon_message_table != NULL &&
+    } else if (err->addon_message_table != nullptr &&
                msg_code >= err->first_addon_message &&
                msg_code <= err->last_addon_message) {
         msgtext = err->addon_message_table[msg_code - err->first_addon_message];
     }
 
     /* Defend against bogus message number */
-    if (msgtext == NULL) {
+    if (msgtext == nullptr) {
         err->msg_parm.i[0] = msg_code;
         msgtext = err->jpeg_message_table[0];
     }
@@ -419,7 +419,7 @@ my_jpeg_std_error (struct jpeg_error_mgr * err)
     err->jpeg_message_table = jpeg_std_message_table;
     err->last_jpeg_message = (int) JMSG_LASTMSGCODE - 1;
 
-    err->addon_message_table = NULL;
+    err->addon_message_table = nullptr;
     err->first_addon_message = 0; /* for safety */
     err->last_addon_message = 0;
 

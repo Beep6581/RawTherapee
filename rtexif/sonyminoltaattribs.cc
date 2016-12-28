@@ -541,513 +541,515 @@ public:
 };
 SAAntiBlurInterpreter saAntiBlurInterpreter;
 
-class SALensIDInterpreter : public IntLensInterpreter< int >
+class SALensIDInterpreter : public IntLensInterpreter<int>
 {
 public:
     SALensIDInterpreter ()
     {
-        choices.insert(p_t(0, "Minolta AF 28-85mm f/3.5-4.5 New"));
-        choices.insert(p_t(1, "Minolta AF 80-200mm f/2.8 HS-APO G"));
-        choices.insert(p_t(2, "Minolta AF 28-70mm f/2.8 G"));
-        choices.insert(p_t(3, "Minolta AF 28-80mm f/4-5.6"));
-        choices.insert(p_t(4, "Minolta AF 85mm f/1.4G"));
-        choices.insert(p_t(5, "Minolta AF 35-70mm f/3.5-4.5 [II]"));
-        choices.insert(p_t(6, "Minolta AF 24-85mm f/3.5-4.5 [New]"));
-        choices.insert(p_t(7, "Minolta AF 100-300mm f/4.5-5.6 APO [New] or 100-400mm or Sigma Lens"));
-        choices.insert(p_t(7, "Minolta AF 100-400mm f/4.5-6.7 APO"));
-        choices.insert(p_t(7, "Sigma AF 100-300mm f/4 EX DG IF"));
-        choices.insert(p_t(8, "Minolta AF 70-210mm f/4.5-5.6 [II]"));
-        choices.insert(p_t(9, "Minolta AF 50mm f/3.5 Macro"));
-        choices.insert(p_t(10, "Minolta AF 28-105mm f/3.5-4.5 [New]"));
-        choices.insert(p_t(11, "Minolta AF 300mm f/4 HS-APO G"));
-        choices.insert(p_t(12, "Minolta AF 100mm f/2.8 Soft Focus"));
-        choices.insert(p_t(13, "Minolta AF 75-300mm f/4.5-5.6 (New or II)"));
-        choices.insert(p_t(14, "Minolta AF 100-400mm f/4.5-6.7 APO"));
-        choices.insert(p_t(15, "Minolta AF 400mm f/4.5 HS-APO G"));
-        choices.insert(p_t(16, "Minolta AF 17-35mm f/3.5 G"));
-        choices.insert(p_t(17, "Minolta AF 20-35mm f/3.5-4.5"));
-        choices.insert(p_t(18, "Minolta AF 28-80mm f/3.5-5.6 II"));
-        choices.insert(p_t(19, "Minolta AF 35mm f/1.4 G"));
-        choices.insert(p_t(20, "Minolta/Sony 135mm f/2.8 [T4.5] STF"));
-        choices.insert(p_t(22, "Minolta AF 35-80mm f/4-5.6 II"));
-        choices.insert(p_t(23, "Minolta AF 200mm f/4 Macro APO G"));
-        choices.insert(p_t(24, "Minolta/Sony AF 24-105mm f/3.5-4.5 (D) or Sigma or Tamron Lens"));
-        choices.insert(p_t(24, "Sigma 18-50mm f/2.8"));
-        choices.insert(p_t(24, "Sigma 17-70mm f/2.8-4.5 (D)"));
-        choices.insert(p_t(24, "Sigma 20-40mm f/2.8 EX DG Aspherical IF"));
-        choices.insert(p_t(24, "Sigma 18-200mm f/3.5-6.3 DC"));
-        choices.insert(p_t(24, "Sigma DC 18-125mm f/4-5,6 D"));
-        choices.insert(p_t(24, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(25, "Minolta AF 100-300mm f/4.5-5.6 APO (D) or Sigma Lens"));
-        choices.insert(p_t(25, "Sigma 100-300mm f/4 EX (APO (D) or D IF)"));
-        choices.insert(p_t(25, "Sigma 70mm f/2.8 EX DG Macro"));
-        choices.insert(p_t(25, "Sigma 20mm f/1.8 EX DG Aspherical RF"));
-        choices.insert(p_t(25, "Sigma 30mm f/1.4 EX DC"));
-        choices.insert(p_t(25, "Sigma 24mm f/1.8 EX DG ASP Macro"));
-        choices.insert(p_t(27, "Minolta AF 85mm f/1.4 G (D)"));
-        choices.insert(p_t(28, "Minolta/Sony AF 100mm f/2.8 Macro (D) or Tamron Lens"));
-        choices.insert(p_t(28, "Tamron SP AF 90mm f/2.8 Di Macro"));
-        choices.insert(p_t(28, "Tamron SP AF 180mm f/3.5 Di LD [IF] Macro"));
-        choices.insert(p_t(29, "Minolta/Sony AF 75-300mm f/4.5-5.6 (D)"));
-        choices.insert(p_t(30, "Minolta AF 28-80mm f/3.5-5.6 (D) or Sigma Lens"));
-        choices.insert(p_t(30, "Sigma AF 10-20mm f/4-5.6 EX DC"));
-        choices.insert(p_t(30, "Sigma AF 12-24mm f/4.5-5.6 EX DG"));
-        choices.insert(p_t(30, "Sigma 28-70mm EX DG f/2.8"));
-        choices.insert(p_t(30, "Sigma 55-200mm f/4-5.6 DC"));
-        choices.insert(p_t(31, "Minolta/Sony AF 50mm f/2.8 Macro (D) or f/3.5"));
-        choices.insert(p_t(31, "Minolta/Sony AF 50mm f/3.5 Macro"));
-        choices.insert(p_t(32, "Minolta/Sony AF 300mm f/2.8 G or 1.5x Teleconverter"));
-        choices.insert(p_t(33, "Minolta/Sony AF 70-200mm f/2.8 G"));
-        choices.insert(p_t(35, "Minolta AF 85mm f/1.4 G (D) Limited"));
-        choices.insert(p_t(36, "Minolta AF 28-100mm f/3.5-5.6 (D)"));
-        choices.insert(p_t(38, "Minolta AF 17-35mm f/2.8-4 (D)"));
-        choices.insert(p_t(39, "Minolta AF 28-75mm f/2.8 (D)"));
-        choices.insert(p_t(40, "Minolta/Sony AF DT 18-70mm f/3.5-5.6 (D)"));
-        choices.insert(p_t(41, "Minolta/Sony AF DT 11-18mm f/4.5-5.6 (D) or Tamron Lens"));
-        choices.insert(p_t(41, "Tamron SP AF 11-18mm f/4.5-5.6 Di II LD Aspherical IF"));
-        choices.insert(p_t(42, "Minolta/Sony AF DT 18-200mm f/3.5-6.3 (D)"));
-        choices.insert(p_t(43, "Sony 35mm f/1.4 G (SAL35F14G)"));
-        choices.insert(p_t(44, "Sony 50mm f/1.4 (SAL50F14)"));
-        choices.insert(p_t(45, "Carl Zeiss Planar T* 85mm f/1.4 ZA (SAL85F14Z)"));
-        choices.insert(p_t(46, "Carl Zeiss Vario-Sonnar T* DT 16-80mm f/3.5-4.5 ZA (SAL1680Z)"));
-        choices.insert(p_t(47, "Carl Zeiss Sonnar T* 135mm f/1.8 ZA (SAL135F18Z)"));
-        choices.insert(p_t(48, "Carl Zeiss Vario-Sonnar T* 24-70mm f/2.8 ZA SSM (SAL2470Z) or ZA SSM II"));
-        choices.insert(p_t(48, "Carl Zeiss Vario-Sonnar T* 24-70mm f/2.8 ZA SSM II (SAL2470Z2)"));
-        choices.insert(p_t(49, "Sony DT 55-200mm f/4-5.6 (SAL55200)"));
-        choices.insert(p_t(50, "Sony DT 18-250mm f/3.5-6.3 (SAL18250)"));
-        choices.insert(p_t(51, "Sony DT 16-105mm f/3.5-5.6 (SAL16105)"));
-        choices.insert(p_t(52, "Sony 70-300mm f/4.5-5.6 G SSM (SAL70300G) or G SSM II or Tamron Lens"));
-        choices.insert(p_t(52, "Sony 70-300mm f/4.5-5.6 G SSM II (SAL70300G2)"));
-        choices.insert(p_t(52, "Tamron SP 70-300mm f/4-5.6 Di USD"));
-        choices.insert(p_t(53, "Sony 70-400mm f/4-5.6 G SSM (SAL70400G)"));
-        choices.insert(p_t(54, "Carl Zeiss Vario-Sonnar T* 16-35mm f/2.8 ZA SSM (SAL1635Z) or ZA SSM II"));
-        choices.insert(p_t(54, "Carl Zeiss Vario-Sonnar T* 16-35mm f/2.8 ZA SSM II (SAL1635Z2)"));
-        choices.insert(p_t(55, "Sony DT 18-55mm f/3.5-5.6 SAM (SAL1855) or SAM II"));
-        choices.insert(p_t(55, "Sony DT 18-55mm f/3.5-5.6 SAM II (SAL18552)"));
-        choices.insert(p_t(56, "Sony DT 55-200mm f/4-5.6 SAM (SAL55200-2)"));
-        choices.insert(p_t(57, "Sony DT 50mm f/1.8 SAM (SAL50F18) or Tamron Lens or Commlite CM-EF-NEX adapter"));
-        choices.insert(p_t(57, "Tamron SP AF 60mm f/2 Di II LD [IF] Macro 1:1"));
-        choices.insert(p_t(57, "Tamron 18-270mm f/3.5-6.3 Di II PZD"));
-        choices.insert(p_t(58, "Sony DT 30mm f/2.8 Macro SAM (SAL30M28)"));
-        choices.insert(p_t(59, "Sony 28-75mm f/2.8 SAM (SAL2875)"));
-        choices.insert(p_t(60, "Carl Zeiss Distagon T* 24mm f/2 ZA SSM (SAL24F20Z)"));
-        choices.insert(p_t(61, "Sony 85mm f/2.8 SAM (SAL85F28)"));
-        choices.insert(p_t(62, "Sony DT 35mm f/1.8 SAM (SAL35F18)"));
-        choices.insert(p_t(63, "Sony DT 16-50mm f/2.8 SSM (SAL1650)"));
-        choices.insert(p_t(64, "Sony 500mm f/4 G SSM (SAL500F40G)"));
-        choices.insert(p_t(65, "Sony DT 18-135mm f/3.5-5.6 SAM (SAL18135)"));
-        choices.insert(p_t(66, "Sony 300mm f/2.8 G SSM II (SAL300F28G2)"));
-        choices.insert(p_t(67, "Sony 70-200mm f/2.8 G SSM II (SAL70200G2)"));
-        choices.insert(p_t(68, "Sony DT 55-300mm f/4.5-5.6 SAM (SAL55300)"));
-        choices.insert(p_t(69, "Sony 70-400mm f/4-5.6 G SSM II (SAL70400G2)"));
-        choices.insert(p_t(70, "Carl Zeiss Planar T* 50mm f/1.4 ZA SSM (SAL50F14Z)"));
-        choices.insert(p_t(128, "Tamron or Sigma Lens (128)"));
-        choices.insert(p_t(128, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro"));
-        choices.insert(p_t(128, "Tamron AF 28-300mm f/3.5-6.3 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(128, "Tamron 80-300mm f/3.5-6.3"));
-        choices.insert(p_t(128, "Tamron AF 28-200mm f/3.8-5.6 XR Di Aspherical [IF] Macro"));
-        choices.insert(p_t(128, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"));
-        choices.insert(p_t(128, "Sigma AF 50-150mm f/2.8 EX DC APO HSM II"));
-        choices.insert(p_t(128, "Sigma 10-20mm f/3.5 EX DC HSM"));
-        choices.insert(p_t(128, "Sigma 70-200mm f/2.8 II EX DG APO MACRO HSM"));
-        choices.insert(p_t(128, "Sigma 10mm f/2.8 EX DC HSM Fisheye"));
-        choices.insert(p_t(128, "Sigma 50mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(128, "Sigma 85mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(128, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
-        choices.insert(p_t(128, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
-        choices.insert(p_t(128, "Sigma 17-50mm f/2.8 EX DC HSM"));
-        choices.insert(p_t(128, "Sigma 17-70mm f/2.8-4 DC Macro HSM"));
-        choices.insert(p_t(128, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert(p_t(128, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
-        choices.insert(p_t(128, "Tamron AF 28-105mm f/4-5.6 [IF]"));
-        choices.insert(p_t(128, "Sigma 35mm f/1.4 DG HSM"));
-        choices.insert(p_t(128, "Sigma 18-35mm f/1.8 DC HSM"));
-        choices.insert(p_t(128, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"));
-        choices.insert(p_t(129, "Tamron Lens (129)"));
-        choices.insert(p_t(129, "Tamron 200-400mm f/5.6 LD"));
-        choices.insert(p_t(129, "Tamron 70-300mm f/4-5.6 LD"));
-        choices.insert(p_t(131, "Tamron 20-40mm f/2.7-3.5 SP Aspherical IF"));
-        choices.insert(p_t(135, "Vivitar 28-210mm f/3.5-5.6"));
-        choices.insert(p_t(136, "Tokina EMZ M100 AF 100mm f/3.5"));
-        choices.insert(p_t(137, "Cosina 70-210mm f/2.8-4 AF"));
-        choices.insert(p_t(138, "Soligor 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(139, "Tokina AF 28-300mm f/4-6.3"));
-        choices.insert(p_t(142, "Voigtlander 70-300mm f/4.5-5.6"));
-        choices.insert(p_t(146, "Voigtlander Macro APO-Lanthar 125mm f/2.5 SL"));
-        choices.insert(p_t(194, "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical [IF]"));
-        choices.insert(p_t(203, "Tamron SP 70-200mm f/2.8 Di USD"));
-        choices.insert(p_t(204, "Tamron SP 24-70mm f/2.8 Di USD"));
-        choices.insert(p_t(213, "Tamron 16-300mm f/3.5-6.3 Di II PZD"));
-        choices.insert(p_t(214, "Tamron SP 150-600mm f/5-6.3 Di USD"));
-        choices.insert(p_t(224, "Tamron SP 90mm f/2.8 Di Macro 1:1 USD"));
-        choices.insert(p_t(255, "Tamron Lens (255)"));
-        choices.insert(p_t(255, "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical"));
-        choices.insert(p_t(255, "Tamron AF 18-250mm f/3.5-6.3 XR Di II LD"));
-        choices.insert(p_t(255, "Tamron AF 55-200mm f/4-5.6 Di II LD Macro"));
-        choices.insert(p_t(255, "Tamron AF 70-300mm f/4-5.6 Di LD Macro 1:2"));
-        choices.insert(p_t(255, "Tamron SP AF 200-500mm f/5.0-6.3 Di LD IF"));
-        choices.insert(p_t(255, "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical IF"));
-        choices.insert(p_t(255, "Tamron SP AF 70-200mm f/2.8 Di LD IF Macro"));
-        choices.insert(p_t(255, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical IF"));
-        choices.insert(p_t(255, "Tamron AF 90-300mm f/4.5-5.6 Telemacro"));
-        choices.insert(p_t(1868, "Sigma MC-11 Adapter"));
-        choices.insert(p_t(2550, "Minolta AF 50mm f/1.7"));
-        choices.insert(p_t(2551, "Minolta AF 35-70mm f/4 or Other Lens"));
-        choices.insert(p_t(2551, "Sigma UC AF 28-70mm f/3.5-4.5"));
-        choices.insert(p_t(2551, "Sigma AF 28-70mm f/2.8"));
-        choices.insert(p_t(2551, "Sigma M-AF 70-200mm f/2.8 EX Aspherical"));
-        choices.insert(p_t(2551, "Quantaray M-AF 35-80mm f/4-5.6"));
-        choices.insert(p_t(2551, "Tokina 28-70mm f/2.8-4.5 AF"));
-        choices.insert(p_t(2552, "Minolta AF 28-85mm f/3.5-4.5 or Other Lens"));
-        choices.insert(p_t(2552, "Tokina 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(2552, "Tokina 28-70mm f/2.8 AT-X"));
-        choices.insert(p_t(2552, "Tokina 80-400mm f/4.5-5.6 AT-X AF II 840"));
-        choices.insert(p_t(2552, "Tokina AF PRO 28-80mm f/2.8 AT-X 280"));
-        choices.insert(p_t(2552, "Tokina AT-X PRO [II] AF 28-70mm f/2.6-2.8 270"));
-        choices.insert(p_t(2552, "Tamron AF 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(2552, "Angenieux AF 28-70mm f/2.6"));
-        choices.insert(p_t(2552, "Tokina AT-X 17 AF 17mm f/3.5"));
-        choices.insert(p_t(2552, "Tokina 20-35mm f/3.5-4.5 II AF"));
-        choices.insert(p_t(2553, "Minolta AF 28-135mm f/4-4.5 or Sigma Lens"));
-        choices.insert(p_t(2553, "Sigma ZOOM-alpha 35-135mm f/3.5-4.5"));
-        choices.insert(p_t(2553, "Sigma 28-105mm f/2.8-4 Aspherical"));
-        choices.insert(p_t(2553, "Sigma 28-105mm f/4-5.6 UC"));
-        choices.insert(p_t(2554, "Minolta AF 35-105mm f/3.5-4.5"));
-        choices.insert(p_t(2555, "Minolta AF 70-210mm f/4 Macro or Sigma Lens"));
-        choices.insert(p_t(2555, "Sigma 70-210mm f/4-5.6 APO"));
-        choices.insert(p_t(2555, "Sigma M-AF 70-200mm f/2.8 EX APO"));
-        choices.insert(p_t(2555, "Sigma 75-200mm f/2.8-3.5"));
-        choices.insert(p_t(2556, "Minolta AF 135mm f/2.8"));
-        choices.insert(p_t(2557, "Minolta/Sony AF 28mm f/2.8"));
-        choices.insert(p_t(2558, "Minolta AF 24-50mm f/4"));
-        choices.insert(p_t(2560, "Minolta AF 100-200mm f/4.5"));
-        choices.insert(p_t(2561, "Minolta AF 75-300mm f/4.5-5.6 or Sigma Lens"));
-        choices.insert(p_t(2561, "Sigma 70-300mm f/4-5.6 DL Macro"));
-        choices.insert(p_t(2561, "Sigma 300mm f/4 APO Macro"));
-        choices.insert(p_t(2561, "Sigma AF 500mm f/4.5 APO"));
-        choices.insert(p_t(2561, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"));
-        choices.insert(p_t(2561, "Tokina AT-X AF 300mm f/4"));
-        choices.insert(p_t(2561, "Tokina AT-X AF 400mm f/5.6 SD"));
-        choices.insert(p_t(2561, "Tokina AF 730 II 75-300mm f/4.5-5.6"));
-        choices.insert(p_t(2561, "Sigma 800mm f/5.6 APO"));
-        choices.insert(p_t(2561, "Sigma AF 400mm f/5.6 APO Macro"));
-        choices.insert(p_t(2562, "Minolta AF 50mm f/1.4 [New]"));
-        choices.insert(p_t(2563, "Minolta AF 300mm f/2.8 APO or Sigma Lens"));
-        choices.insert(p_t(2563, "Sigma AF 50-500mm f/4-6.3 EX DG APO"));
-        choices.insert(p_t(2563, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"));
-        choices.insert(p_t(2563, "Sigma AF 500mm f/4.5 EX DG APO"));
-        choices.insert(p_t(2563, "Sigma 400mm f/5.6 APO"));
-        choices.insert(p_t(2564, "Minolta AF 50mm f/2.8 Macro or Sigma Lens"));
-        choices.insert(p_t(2564, "Sigma 50mm f/2.8 EX Macro"));
-        choices.insert(p_t(2565, "Minolta AF 600mm f/4 APO"));
-        choices.insert(p_t(2566, "Minolta AF 24mm f/2.8 or Sigma Lens"));
-        choices.insert(p_t(2566, "Sigma 17-35mm f/2.8-4 EX Aspherical"));
-        choices.insert(p_t(2572, "Minolta/Sony AF 500mm f/8 Reflex"));
-        choices.insert(p_t(2578, "Minolta/Sony AF 16mm f/2.8 Fisheye or Sigma Lens"));
-        choices.insert(p_t(2578, "Sigma 8mm f/4 EX [DG] Fisheye"));
-        choices.insert(p_t(2578, "Sigma 14mm f/3.5"));
-        choices.insert(p_t(2578, "Sigma 15mm f/2.8 Fisheye"));
-        choices.insert(p_t(2579, "Minolta/Sony AF 20mm f/2.8 or Tokina Lens"));
-        choices.insert(p_t(2579, "Tokina AT-X Pro DX 11-16mm f/2.8"));
-        choices.insert(p_t(2581, "Minolta AF 100mm f/2.8 Macro [New] or Sigma or Tamron Lens"));
-        choices.insert(p_t(2581, "Sigma AF 90mm f/2.8 Macro"));
-        choices.insert(p_t(2581, "Sigma AF 105mm f/2.8 EX [DG] Macro"));
-        choices.insert(p_t(2581, "Sigma 180mm f/5.6 Macro"));
-        choices.insert(p_t(2581, "Sigma 180mm f/3.5 EX DG Macro"));
-        choices.insert(p_t(2581, "Tamron 90mm f/2.8 Macro"));
-        choices.insert(p_t(2585, "Minolta AF 35-105mm f/3.5-4.5 New or Tamron Lens"));
-        choices.insert(p_t(2585, "Beroflex 35-135mm f/3.5-4.5"));
-        choices.insert(p_t(2585, "Tamron 24-135mm f/3.5-5.6"));
-        choices.insert(p_t(2588, "Minolta AF 70-210mm f/3.5-4.5"));
-        choices.insert(p_t(2589, "Minolta AF 80-200mm f/2.8 APO or Tokina Lens"));
-        choices.insert(p_t(2589, "Tokina 80-200mm f/2.8"));
-        choices.insert(p_t(2590, "Minolta AF 200mm f/2.8 G APO + Minolta AF 1.4x APO or Other Lens + 1.4x"));
-        choices.insert(p_t(2590, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 1.4x APO"));
-        choices.insert(p_t(2591, "Minolta AF 35mm f/1.4"));
-        choices.insert(p_t(2592, "Minolta AF 85mm f/1.4 G (D)"));
-        choices.insert(p_t(2593, "Minolta AF 200mm f/2.8 APO"));
-        choices.insert(p_t(2594, "Minolta AF 3x-1x f/1.7-2.8 Macro"));
-        choices.insert(p_t(2596, "Minolta AF 28mm f/2"));
-        choices.insert(p_t(2597, "Minolta AF 35mm f/2 [New]"));
-        choices.insert(p_t(2598, "Minolta AF 100mm f/2"));
-        choices.insert(p_t(2601, "Minolta AF 200mm f/2.8 G APO + Minolta AF 2x APO or Other Lens + 2x"));
-        choices.insert(p_t(2601, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 2x APO"));
-        choices.insert(p_t(2604, "Minolta AF 80-200mm f/4.5-5.6"));
-        choices.insert(p_t(2605, "Minolta AF 35-80mm f/4-5.6"));
-        choices.insert(p_t(2606, "Minolta AF 100-300mm f/4.5-5.6"));
-        choices.insert(p_t(2607, "Minolta AF 35-80mm f/4-5.6"));
-        choices.insert(p_t(2608, "Minolta AF 300mm f/2.8 HS-APO G"));
-        choices.insert(p_t(2609, "Minolta AF 600mm f/4 HS-APO G"));
-        choices.insert(p_t(2612, "Minolta AF 200mm f/2.8 HS-APO G"));
-        choices.insert(p_t(2613, "Minolta AF 50mm f/1.7 New"));
-        choices.insert(p_t(2615, "Minolta AF 28-105mm f/3.5-4.5 xi"));
-        choices.insert(p_t(2616, "Minolta AF 35-200mm f/4.5-5.6 xi"));
-        choices.insert(p_t(2618, "Minolta AF 28-80mm f/4-5.6 xi"));
-        choices.insert(p_t(2619, "Minolta AF 80-200mm f/4.5-5.6 xi"));
-        choices.insert(p_t(2620, "Minolta AF 28-70mm f/2.8 G"));
-        choices.insert(p_t(2621, "Minolta AF 100-300mm f/4.5-5.6 xi"));
-        choices.insert(p_t(2624, "Minolta AF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert(p_t(2628, "Minolta AF 80-200mm f/2.8 HS-APO G"));
-        choices.insert(p_t(2629, "Minolta AF 85mm f/1.4 New"));
-        choices.insert(p_t(2631, "Minolta/Sony AF 100-300mm f/4.5-5.6 APO"));
-        choices.insert(p_t(2632, "Minolta AF 24-50mm f/4 New"));
-        choices.insert(p_t(2638, "Minolta AF 50mm f/2.8 Macro New"));
-        choices.insert(p_t(2639, "Minolta AF 100mm f/2.8 Macro"));
-        choices.insert(p_t(2641, "Minolta/Sony AF 20mm f/2.8 New"));
-        choices.insert(p_t(2642, "Minolta AF 24mm f/2.8 New"));
-        choices.insert(p_t(2644, "Minolta AF 100-400mm f/4.5-6.7 APO"));
-        choices.insert(p_t(2662, "Minolta AF 50mm f/1.4 New"));
-        choices.insert(p_t(2667, "Minolta AF 35mm f/2 New"));
-        choices.insert(p_t(2668, "Minolta AF 28mm f/2 New"));
-        choices.insert(p_t(2672, "Minolta AF 24-105mm f/3.5-4.5 (D)"));
-        choices.insert(p_t(3046, "Metabones Canon EF Speed Booster"));
-        choices.insert(p_t(4567, "Tokina 70-210mm f/4-5.6"));
-        choices.insert(p_t(4571, "Vivitar 70-210mm f/4.5-5.6"));
-        choices.insert(p_t(4574, "2x Teleconverter or Tamron or Tokina Lens"));
-        choices.insert(p_t(4574, "Tamron SP AF 90mm f/2.5"));
-        choices.insert(p_t(4574, "Tokina RF 500mm f/8.0 x2"));
-        choices.insert(p_t(4574, "Tokina 300mm f/2.8 x2"));
-        choices.insert(p_t(4575, "1.4x Teleconverter"));
-        choices.insert(p_t(4585, "Tamron SP AF 300mm f/2.8 LD IF"));
-        choices.insert(p_t(4586, "Tamron SP AF 35-105mm f/2.8 LD Aspherical IF"));
-        choices.insert(p_t(4587, "Tamron AF 70-210mm f/2.8 SP LD"));
-        choices.insert(p_t(4812, "Metabones Canon EF Speed Booster Ultra"));
-        choices.insert(p_t(6118, "Canon EF Adapter"));
-        choices.insert(p_t(6553, "E-Mount, T-Mount, Other Lens or no lens"));
-        choices.insert(p_t(6553, "Sony E 16mm f/2.8"));
-        choices.insert(p_t(6553, "Sony E 18-55mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(6553, "Sony E 55-210mm f/4.5-6.3 OSS"));
-        choices.insert(p_t(6553, "Sony E 18-200mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(6553, "Sony E 30mm f/3.5 Macro"));
-        choices.insert(p_t(6553, "Sony E 24mm f/1.8 ZA"));
-        choices.insert(p_t(6553, "Sony E 50mm f/1.8 OSS"));
-        choices.insert(p_t(6553, "Sony E 16-70mm f/4 ZA OSS"));
-        choices.insert(p_t(6553, "Sony E 10-18mm f/4 OSS"));
-        choices.insert(p_t(6553, "Sony E PZ 16-50mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(6553, "Sony FE 35mm f/2.8 ZA"));
-        choices.insert(p_t(6553, "Sony FE 24-70mm f/4 ZA OSS"));
-        choices.insert(p_t(6553, "Sony E 18-200mm f/3.5-6.3 OSS LE"));
-        choices.insert(p_t(6553, "Sony E 20mm f/2.8"));
-        choices.insert(p_t(6553, "Sony E 35mm f/1.8 OSS"));
-        choices.insert(p_t(6553, "Sony E PZ 18-105mm f/4 G OSS"));
-        choices.insert(p_t(6553, "Sony FE 90mm f/2.8 Macro G OSS"));
-        choices.insert(p_t(6553, "Sony E 18-50mm f/4-5.6"));
-        choices.insert(p_t(6553, "Sony E PZ 18-200mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(6553, "Sony FE 55mm f/1.8 ZA"));
-        choices.insert(p_t(6553, "Sony FE 70-200mm f/4 G OSS"));
-        choices.insert(p_t(6553, "Sony FE 16-35mm f/4 ZA OSS"));
-        choices.insert(p_t(6553, "Sony FE 28-70mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(6553, "Sony FE 35mm f/1.4 ZA"));
-        choices.insert(p_t(6553, "Sony FE 24-240mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(6553, "Sony FE 28mm f/2"));
-        choices.insert(p_t(6553, "Sony FE PZ 28-135mm f/4 G OSS"));
-        choices.insert(p_t(6553, "Sony FE 24-70mm f/2.8 GM"));
-        choices.insert(p_t(6553, "Sony FE 85mm f/1.4 GM"));
-        choices.insert(p_t(6553, "Sony FE 50mm f/1.8"));
-        choices.insert(p_t(6553, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"));
-        choices.insert(p_t(6553, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"));
-        choices.insert(p_t(6553, "Sony FE 70-300mm f/4.5-5.6 G OSS"));
-        choices.insert(p_t(6553, "Sony FE 70-200mm f/2.8 GM OSS"));
-        choices.insert(p_t(6553, "Sigma 19mm f/2.8 [EX] DN"));
-        choices.insert(p_t(6553, "Sigma 30mm f/2.8 [EX] DN"));
-        choices.insert(p_t(6553, "Sigma 60mm f/2.8 DN"));
-        choices.insert(p_t(6553, "Sigma 30mm f/1.4 DC DN | C"));
-        choices.insert(p_t(6553, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
-        choices.insert(p_t(6553, "Zeiss Batis 25mm f/2"));
-        choices.insert(p_t(6553, "Zeiss Batis 85mm f/1.8"));
-        choices.insert(p_t(6553, "Zeiss Batis 18mm f/2.8"));
-        choices.insert(p_t(6553, "Zeiss Loxia 21mm f/2.8"));
-        choices.insert(p_t(6553, "Zeiss Loxia 35mm f/2"));
-        choices.insert(p_t(6553, "Zeiss Loxia 50mm f/2"));
-        choices.insert(p_t(6553, "Zeiss Touit 12mm f/2.8"));
-        choices.insert(p_t(6553, "Zeiss Touit 32mm f/1.8"));
-        choices.insert(p_t(6553, "Zeiss Touit 50mm f/2.8 Macro"));
-        choices.insert(p_t(6553, "Arax MC 35mm f/2.8 Tilt+Shift"));
-        choices.insert(p_t(6553, "Arax MC 80mm f/2.8 Tilt+Shift"));
-        choices.insert(p_t(6553, "Zenitar MF 16mm f/2.8 Fisheye M42"));
-        choices.insert(p_t(6553, "Samyang 500mm Mirror f/8.0"));
-        choices.insert(p_t(6553, "Pentacon Auto 135mm f/2.8"));
-        choices.insert(p_t(6553, "Pentacon Auto 29mm f/2.8"));
-        choices.insert(p_t(6553, "Helios 44-2 58mm f/2.0"));
-        choices.insert(p_t(18688, "Sigma MC-11 Adapter"));
-        choices.insert(p_t(25501, "Minolta AF 50mm f/1.7"));
-        choices.insert(p_t(25511, "Minolta AF 35-70mm f/4 or Other Lens"));
-        choices.insert(p_t(25511, "Sigma UC AF 28-70mm f/3.5-4.5"));
-        choices.insert(p_t(25511, "Sigma AF 28-70mm f/2.8"));
-        choices.insert(p_t(25511, "Sigma M-AF 70-200mm f/2.8 EX Aspherical"));
-        choices.insert(p_t(25511, "Quantaray M-AF 35-80mm f/4-5.6"));
-        choices.insert(p_t(25511, "Tokina 28-70mm f/2.8-4.5 AF"));
-        choices.insert(p_t(25521, "Minolta AF 28-85mm f/3.5-4.5 or Other Lens"));
-        choices.insert(p_t(25521, "Tokina 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(25521, "Tokina 28-70mm f/2.8 AT-X"));
-        choices.insert(p_t(25521, "Tokina 80-400mm f/4.5-5.6 AT-X AF II 840"));
-        choices.insert(p_t(25521, "Tokina AF PRO 28-80mm f/2.8 AT-X 280"));
-        choices.insert(p_t(25521, "Tokina AT-X PRO [II] AF 28-70mm f/2.6-2.8 270"));
-        choices.insert(p_t(25521, "Tamron AF 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(25521, "Angenieux AF 28-70mm f/2.6"));
-        choices.insert(p_t(25521, "Tokina AT-X 17 AF 17mm f/3.5"));
-        choices.insert(p_t(25521, "Tokina 20-35mm f/3.5-4.5 II AF"));
-        choices.insert(p_t(25531, "Minolta AF 28-135mm f/4-4.5 or Sigma Lens"));
-        choices.insert(p_t(25531, "Sigma ZOOM-alpha 35-135mm f/3.5-4.5"));
-        choices.insert(p_t(25531, "Sigma 28-105mm f/2.8-4 Aspherical"));
-        choices.insert(p_t(25531, "Sigma 28-105mm f/4-5.6 UC"));
-        choices.insert(p_t(25541, "Minolta AF 35-105mm f/3.5-4.5"));
-        choices.insert(p_t(25551, "Minolta AF 70-210mm f/4 Macro or Sigma Lens"));
-        choices.insert(p_t(25551, "Sigma 70-210mm f/4-5.6 APO"));
-        choices.insert(p_t(25551, "Sigma M-AF 70-200mm f/2.8 EX APO"));
-        choices.insert(p_t(25551, "Sigma 75-200mm f/2.8-3.5"));
-        choices.insert(p_t(25561, "Minolta AF 135mm f/2.8"));
-        choices.insert(p_t(25571, "Minolta/Sony AF 28mm f/2.8"));
-        choices.insert(p_t(25581, "Minolta AF 24-50mm f/4"));
-        choices.insert(p_t(25601, "Minolta AF 100-200mm f/4.5"));
-        choices.insert(p_t(25611, "Minolta AF 75-300mm f/4.5-5.6 or Sigma Lens"));
-        choices.insert(p_t(25611, "Sigma 70-300mm f/4-5.6 DL Macro"));
-        choices.insert(p_t(25611, "Sigma 300mm f/4 APO Macro"));
-        choices.insert(p_t(25611, "Sigma AF 500mm f/4.5 APO"));
-        choices.insert(p_t(25611, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"));
-        choices.insert(p_t(25611, "Tokina AT-X AF 300mm f/4"));
-        choices.insert(p_t(25611, "Tokina AT-X AF 400mm f/5.6 SD"));
-        choices.insert(p_t(25611, "Tokina AF 730 II 75-300mm f/4.5-5.6"));
-        choices.insert(p_t(25611, "Sigma 800mm f/5.6 APO"));
-        choices.insert(p_t(25611, "Sigma AF 400mm f/5.6 APO Macro"));
-        choices.insert(p_t(25621, "Minolta AF 50mm f/1.4 [New]"));
-        choices.insert(p_t(25631, "Minolta AF 300mm f/2.8 APO or Sigma Lens"));
-        choices.insert(p_t(25631, "Sigma AF 50-500mm f/4-6.3 EX DG APO"));
-        choices.insert(p_t(25631, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"));
-        choices.insert(p_t(25631, "Sigma AF 500mm f/4.5 EX DG APO"));
-        choices.insert(p_t(25631, "Sigma 400mm f/5.6 APO"));
-        choices.insert(p_t(25641, "Minolta AF 50mm f/2.8 Macro or Sigma Lens"));
-        choices.insert(p_t(25641, "Sigma 50mm f/2.8 EX Macro"));
-        choices.insert(p_t(25651, "Minolta AF 600mm f/4 APO"));
-        choices.insert(p_t(25661, "Minolta AF 24mm f/2.8 or Sigma Lens"));
-        choices.insert(p_t(25661, "Sigma 17-35mm f/2.8-4 EX Aspherical"));
-        choices.insert(p_t(25721, "Minolta/Sony AF 500mm f/8 Reflex"));
-        choices.insert(p_t(25781, "Minolta/Sony AF 16mm f/2.8 Fisheye or Sigma Lens"));
-        choices.insert(p_t(25781, "Sigma 8mm f/4 EX [DG] Fisheye"));
-        choices.insert(p_t(25781, "Sigma 14mm f/3.5"));
-        choices.insert(p_t(25781, "Sigma 15mm f/2.8 Fisheye"));
-        choices.insert(p_t(25791, "Minolta/Sony AF 20mm f/2.8 or Tokina Lens"));
-        choices.insert(p_t(25791, "Tokina AT-X Pro DX 11-16mm f/2.8"));
-        choices.insert(p_t(25811, "Minolta AF 100mm f/2.8 Macro [New] or Sigma or Tamron Lens"));
-        choices.insert(p_t(25811, "Sigma AF 90mm f/2.8 Macro"));
-        choices.insert(p_t(25811, "Sigma AF 105mm f/2.8 EX [DG] Macro"));
-        choices.insert(p_t(25811, "Sigma 180mm f/5.6 Macro"));
-        choices.insert(p_t(25811, "Sigma 180mm f/3.5 EX DG Macro"));
-        choices.insert(p_t(25811, "Tamron 90mm f/2.8 Macro"));
-        choices.insert(p_t(25851, "Beroflex 35-135mm f/3.5-4.5"));
-        choices.insert(p_t(25858, "Minolta AF 35-105mm f/3.5-4.5 New or Tamron Lens"));
-        choices.insert(p_t(25858, "Tamron 24-135mm f/3.5-5.6"));
-        choices.insert(p_t(25881, "Minolta AF 70-210mm f/3.5-4.5"));
-        choices.insert(p_t(25891, "Minolta AF 80-200mm f/2.8 APO or Tokina Lens"));
-        choices.insert(p_t(25891, "Tokina 80-200mm f/2.8"));
-        choices.insert(p_t(25901, "Minolta AF 200mm f/2.8 G APO + Minolta AF 1.4x APO or Other Lens + 1.4x"));
-        choices.insert(p_t(25901, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 1.4x APO"));
-        choices.insert(p_t(25911, "Minolta AF 35mm f/1.4"));
-        choices.insert(p_t(25921, "Minolta AF 85mm f/1.4 G (D)"));
-        choices.insert(p_t(25931, "Minolta AF 200mm f/2.8 APO"));
-        choices.insert(p_t(25941, "Minolta AF 3x-1x f/1.7-2.8 Macro"));
-        choices.insert(p_t(25961, "Minolta AF 28mm f/2"));
-        choices.insert(p_t(25971, "Minolta AF 35mm f/2 [New]"));
-        choices.insert(p_t(25981, "Minolta AF 100mm f/2"));
-        choices.insert(p_t(26011, "Minolta AF 200mm f/2.8 G APO + Minolta AF 2x APO or Other Lens + 2x"));
-        choices.insert(p_t(26011, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 2x APO"));
-        choices.insert(p_t(26041, "Minolta AF 80-200mm f/4.5-5.6"));
-        choices.insert(p_t(26051, "Minolta AF 35-80mm f/4-5.6"));
-        choices.insert(p_t(26061, "Minolta AF 100-300mm f/4.5-5.6"));
-        choices.insert(p_t(26071, "Minolta AF 35-80mm f/4-5.6"));
-        choices.insert(p_t(26081, "Minolta AF 300mm f/2.8 HS-APO G"));
-        choices.insert(p_t(26091, "Minolta AF 600mm f/4 HS-APO G"));
-        choices.insert(p_t(26121, "Minolta AF 200mm f/2.8 HS-APO G"));
-        choices.insert(p_t(26131, "Minolta AF 50mm f/1.7 New"));
-        choices.insert(p_t(26151, "Minolta AF 28-105mm f/3.5-4.5 xi"));
-        choices.insert(p_t(26161, "Minolta AF 35-200mm f/4.5-5.6 xi"));
-        choices.insert(p_t(26181, "Minolta AF 28-80mm f/4-5.6 xi"));
-        choices.insert(p_t(26191, "Minolta AF 80-200mm f/4.5-5.6 xi"));
-        choices.insert(p_t(26201, "Minolta AF 28-70mm f/2.8 G"));
-        choices.insert(p_t(26211, "Minolta AF 100-300mm f/4.5-5.6 xi"));
-        choices.insert(p_t(26241, "Minolta AF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert(p_t(26281, "Minolta AF 80-200mm f/2.8 HS-APO G"));
-        choices.insert(p_t(26291, "Minolta AF 85mm f/1.4 New"));
-        choices.insert(p_t(26311, "Minolta/Sony AF 100-300mm f/4.5-5.6 APO"));
-        choices.insert(p_t(26321, "Minolta AF 24-50mm f/4 New"));
-        choices.insert(p_t(26381, "Minolta AF 50mm f/2.8 Macro New"));
-        choices.insert(p_t(26391, "Minolta AF 100mm f/2.8 Macro"));
-        choices.insert(p_t(26411, "Minolta/Sony AF 20mm f/2.8 New"));
-        choices.insert(p_t(26421, "Minolta AF 24mm f/2.8 New"));
-        choices.insert(p_t(26441, "Minolta AF 100-400mm f/4.5-6.7 APO"));
-        choices.insert(p_t(26621, "Minolta AF 50mm f/1.4 New"));
-        choices.insert(p_t(26671, "Minolta AF 35mm f/2 New"));
-        choices.insert(p_t(26681, "Minolta AF 28mm f/2 New"));
-        choices.insert(p_t(26721, "Minolta AF 24-105mm f/3.5-4.5 (D)"));
-        choices.insert(p_t(30464, "Metabones Canon EF Speed Booster"));
-        choices.insert(p_t(45671, "Tokina 70-210mm f/4-5.6"));
-        choices.insert(p_t(45711, "Vivitar 70-210mm f/4.5-5.6"));
-        choices.insert(p_t(45741, "2x Teleconverter or Tamron or Tokina Lens"));
-        choices.insert(p_t(45741, "Tamron SP AF 90mm f/2.5"));
-        choices.insert(p_t(45741, "Tokina RF 500mm f/8.0 x2"));
-        choices.insert(p_t(45741, "Tokina 300mm f/2.8 x2"));
-        choices.insert(p_t(45751, "1.4x Teleconverter"));
-        choices.insert(p_t(45851, "Tamron SP AF 300mm f/2.8 LD IF"));
-        choices.insert(p_t(45861, "Tamron SP AF 35-105mm f/2.8 LD Aspherical IF"));
-        choices.insert(p_t(45871, "Tamron AF 70-210mm f/2.8 SP LD"));
-        choices.insert(p_t(48128, "Metabones Canon EF Speed Booster Ultra"));
-        choices.insert(p_t(61184, "Canon EF Adapter"));
-        choices.insert(p_t(65535, "E-Mount, T-Mount, Other Lens or no lens"));
-        choices.insert(p_t(65535, "Sony E 16mm f/2.8"));
-        choices.insert(p_t(65535, "Sony E 18-55mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(65535, "Sony E 55-210mm f/4.5-6.3 OSS"));
-        choices.insert(p_t(65535, "Sony E 18-200mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(65535, "Sony E 30mm f/3.5 Macro"));
-        choices.insert(p_t(65535, "Sony E 24mm f/1.8 ZA"));
-        choices.insert(p_t(65535, "Sony E 50mm f/1.8 OSS"));
-        choices.insert(p_t(65535, "Sony E 16-70mm f/4 ZA OSS"));
-        choices.insert(p_t(65535, "Sony E 10-18mm f/4 OSS"));
-        choices.insert(p_t(65535, "Sony E PZ 16-50mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(65535, "Sony FE 35mm f/2.8 ZA"));
-        choices.insert(p_t(65535, "Sony FE 24-70mm f/4 ZA OSS"));
-        choices.insert(p_t(65535, "Sony E 18-200mm f/3.5-6.3 OSS LE"));
-        choices.insert(p_t(65535, "Sony E 20mm f/2.8"));
-        choices.insert(p_t(65535, "Sony E 35mm f/1.8 OSS"));
-        choices.insert(p_t(65535, "Sony E PZ 18-105mm f/4 G OSS"));
-        choices.insert(p_t(65535, "Sony FE 90mm f/2.8 Macro G OSS"));
-        choices.insert(p_t(65535, "Sony E 18-50mm f/4-5.6"));
-        choices.insert(p_t(65535, "Sony E PZ 18-200mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(65535, "Sony FE 55mm f/1.8 ZA"));
-        choices.insert(p_t(65535, "Sony FE 70-200mm f/4 G OSS"));
-        choices.insert(p_t(65535, "Sony FE 16-35mm f/4 ZA OSS"));
-        choices.insert(p_t(65535, "Sony FE 28-70mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(65535, "Sony FE 35mm f/1.4 ZA"));
-        choices.insert(p_t(65535, "Sony FE 24-240mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(65535, "Sony FE 28mm f/2"));
-        choices.insert(p_t(65535, "Sony FE PZ 28-135mm f/4 G OSS"));
-        choices.insert(p_t(65535, "Sony FE 24-70mm f/2.8 GM"));
-        choices.insert(p_t(65535, "Sony FE 85mm f/1.4 GM"));
-        choices.insert(p_t(65535, "Sony FE 50mm f/1.8"));
-        choices.insert(p_t(65535, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"));
-        choices.insert(p_t(65535, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"));
-        choices.insert(p_t(65535, "Sony FE 70-300mm f/4.5-5.6 G OSS"));
-        choices.insert(p_t(65535, "Sony FE 70-200mm f/2.8 GM OSS"));
-        choices.insert(p_t(65535, "Sigma 19mm f/2.8 [EX] DN"));
-        choices.insert(p_t(65535, "Sigma 30mm f/2.8 [EX] DN"));
-        choices.insert(p_t(65535, "Sigma 60mm f/2.8 DN"));
-        choices.insert(p_t(65535, "Sigma 30mm f/1.4 DC DN | C"));
-        choices.insert(p_t(65535, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
-        choices.insert(p_t(65535, "Zeiss Batis 25mm f/2"));
-        choices.insert(p_t(65535, "Zeiss Batis 85mm f/1.8"));
-        choices.insert(p_t(65535, "Zeiss Batis 18mm f/2.8"));
-        choices.insert(p_t(65535, "Zeiss Loxia 21mm f/2.8"));
-        choices.insert(p_t(65535, "Zeiss Loxia 35mm f/2"));
-        choices.insert(p_t(65535, "Zeiss Loxia 50mm f/2"));
-        choices.insert(p_t(65535, "Zeiss Touit 12mm f/2.8"));
-        choices.insert(p_t(65535, "Zeiss Touit 32mm f/1.8"));
-        choices.insert(p_t(65535, "Zeiss Touit 50mm f/2.8 Macro"));
-        choices.insert(p_t(65535, "Arax MC 35mm f/2.8 Tilt+Shift"));
-        choices.insert(p_t(65535, "Arax MC 80mm f/2.8 Tilt+Shift"));
-        choices.insert(p_t(65535, "Zenitar MF 16mm f/2.8 Fisheye M42"));
-        choices.insert(p_t(65535, "Samyang 500mm Mirror f/8.0"));
-        choices.insert(p_t(65535, "Pentacon Auto 135mm f/2.8"));
-        choices.insert(p_t(65535, "Pentacon Auto 29mm f/2.8"));
-        choices.insert(p_t(65535, "Helios 44-2 58mm f/2.0"));
+        choices = {
+            {0, "Minolta AF 28-85mm f/3.5-4.5 New"},
+            {1, "Minolta AF 80-200mm f/2.8 HS-APO G"},
+            {2, "Minolta AF 28-70mm f/2.8 G"},
+            {3, "Minolta AF 28-80mm f/4-5.6"},
+            {4, "Minolta AF 85mm f/1.4G"},
+            {5, "Minolta AF 35-70mm f/3.5-4.5 [II]"},
+            {6, "Minolta AF 24-85mm f/3.5-4.5 [New]"},
+            {7, "Minolta AF 100-300mm f/4.5-5.6 APO [New] or 100-400mm or Sigma Lens"},
+            {7, "Minolta AF 100-400mm f/4.5-6.7 APO"},
+            {7, "Sigma AF 100-300mm f/4 EX DG IF"},
+            {8, "Minolta AF 70-210mm f/4.5-5.6 [II]"},
+            {9, "Minolta AF 50mm f/3.5 Macro"},
+            {10, "Minolta AF 28-105mm f/3.5-4.5 [New]"},
+            {11, "Minolta AF 300mm f/4 HS-APO G"},
+            {12, "Minolta AF 100mm f/2.8 Soft Focus"},
+            {13, "Minolta AF 75-300mm f/4.5-5.6 (New or II)"},
+            {14, "Minolta AF 100-400mm f/4.5-6.7 APO"},
+            {15, "Minolta AF 400mm f/4.5 HS-APO G"},
+            {16, "Minolta AF 17-35mm f/3.5 G"},
+            {17, "Minolta AF 20-35mm f/3.5-4.5"},
+            {18, "Minolta AF 28-80mm f/3.5-5.6 II"},
+            {19, "Minolta AF 35mm f/1.4 G"},
+            {20, "Minolta/Sony 135mm f/2.8 [T4.5] STF"},
+            {22, "Minolta AF 35-80mm f/4-5.6 II"},
+            {23, "Minolta AF 200mm f/4 Macro APO G"},
+            {24, "Minolta/Sony AF 24-105mm f/3.5-4.5 (D) or Sigma or Tamron Lens"},
+            {24, "Sigma 18-50mm f/2.8"},
+            {24, "Sigma 17-70mm f/2.8-4.5 (D)"},
+            {24, "Sigma 20-40mm f/2.8 EX DG Aspherical IF"},
+            {24, "Sigma 18-200mm f/3.5-6.3 DC"},
+            {24, "Sigma DC 18-125mm f/4-5,6 D"},
+            {24, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"},
+            {25, "Minolta AF 100-300mm f/4.5-5.6 APO (D) or Sigma Lens"},
+            {25, "Sigma 100-300mm f/4 EX (APO (D) or D IF)"},
+            {25, "Sigma 70mm f/2.8 EX DG Macro"},
+            {25, "Sigma 20mm f/1.8 EX DG Aspherical RF"},
+            {25, "Sigma 30mm f/1.4 EX DC"},
+            {25, "Sigma 24mm f/1.8 EX DG ASP Macro"},
+            {27, "Minolta AF 85mm f/1.4 G (D)"},
+            {28, "Minolta/Sony AF 100mm f/2.8 Macro (D) or Tamron Lens"},
+            {28, "Tamron SP AF 90mm f/2.8 Di Macro"},
+            {28, "Tamron SP AF 180mm f/3.5 Di LD [IF] Macro"},
+            {29, "Minolta/Sony AF 75-300mm f/4.5-5.6 (D)"},
+            {30, "Minolta AF 28-80mm f/3.5-5.6 (D) or Sigma Lens"},
+            {30, "Sigma AF 10-20mm f/4-5.6 EX DC"},
+            {30, "Sigma AF 12-24mm f/4.5-5.6 EX DG"},
+            {30, "Sigma 28-70mm EX DG f/2.8"},
+            {30, "Sigma 55-200mm f/4-5.6 DC"},
+            {31, "Minolta/Sony AF 50mm f/2.8 Macro (D) or f/3.5"},
+            {31, "Minolta/Sony AF 50mm f/3.5 Macro"},
+            {32, "Minolta/Sony AF 300mm f/2.8 G or 1.5x Teleconverter"},
+            {33, "Minolta/Sony AF 70-200mm f/2.8 G"},
+            {35, "Minolta AF 85mm f/1.4 G (D) Limited"},
+            {36, "Minolta AF 28-100mm f/3.5-5.6 (D)"},
+            {38, "Minolta AF 17-35mm f/2.8-4 (D)"},
+            {39, "Minolta AF 28-75mm f/2.8 (D)"},
+            {40, "Minolta/Sony AF DT 18-70mm f/3.5-5.6 (D)"},
+            {41, "Minolta/Sony AF DT 11-18mm f/4.5-5.6 (D) or Tamron Lens"},
+            {41, "Tamron SP AF 11-18mm f/4.5-5.6 Di II LD Aspherical IF"},
+            {42, "Minolta/Sony AF DT 18-200mm f/3.5-6.3 (D)"},
+            {43, "Sony 35mm f/1.4 G (SAL35F14G)"},
+            {44, "Sony 50mm f/1.4 (SAL50F14)"},
+            {45, "Carl Zeiss Planar T* 85mm f/1.4 ZA (SAL85F14Z)"},
+            {46, "Carl Zeiss Vario-Sonnar T* DT 16-80mm f/3.5-4.5 ZA (SAL1680Z)"},
+            {47, "Carl Zeiss Sonnar T* 135mm f/1.8 ZA (SAL135F18Z)"},
+            {48, "Carl Zeiss Vario-Sonnar T* 24-70mm f/2.8 ZA SSM (SAL2470Z) or ZA SSM II"},
+            {48, "Carl Zeiss Vario-Sonnar T* 24-70mm f/2.8 ZA SSM II (SAL2470Z2)"},
+            {49, "Sony DT 55-200mm f/4-5.6 (SAL55200)"},
+            {50, "Sony DT 18-250mm f/3.5-6.3 (SAL18250)"},
+            {51, "Sony DT 16-105mm f/3.5-5.6 (SAL16105)"},
+            {52, "Sony 70-300mm f/4.5-5.6 G SSM (SAL70300G) or G SSM II or Tamron Lens"},
+            {52, "Sony 70-300mm f/4.5-5.6 G SSM II (SAL70300G2)"},
+            {52, "Tamron SP 70-300mm f/4-5.6 Di USD"},
+            {53, "Sony 70-400mm f/4-5.6 G SSM (SAL70400G)"},
+            {54, "Carl Zeiss Vario-Sonnar T* 16-35mm f/2.8 ZA SSM (SAL1635Z) or ZA SSM II"},
+            {54, "Carl Zeiss Vario-Sonnar T* 16-35mm f/2.8 ZA SSM II (SAL1635Z2)"},
+            {55, "Sony DT 18-55mm f/3.5-5.6 SAM (SAL1855) or SAM II"},
+            {55, "Sony DT 18-55mm f/3.5-5.6 SAM II (SAL18552)"},
+            {56, "Sony DT 55-200mm f/4-5.6 SAM (SAL55200-2)"},
+            {57, "Sony DT 50mm f/1.8 SAM (SAL50F18) or Tamron Lens or Commlite CM-EF-NEX adapter"},
+            {57, "Tamron SP AF 60mm f/2 Di II LD [IF] Macro 1:1"},
+            {57, "Tamron 18-270mm f/3.5-6.3 Di II PZD"},
+            {58, "Sony DT 30mm f/2.8 Macro SAM (SAL30M28)"},
+            {59, "Sony 28-75mm f/2.8 SAM (SAL2875)"},
+            {60, "Carl Zeiss Distagon T* 24mm f/2 ZA SSM (SAL24F20Z)"},
+            {61, "Sony 85mm f/2.8 SAM (SAL85F28)"},
+            {62, "Sony DT 35mm f/1.8 SAM (SAL35F18)"},
+            {63, "Sony DT 16-50mm f/2.8 SSM (SAL1650)"},
+            {64, "Sony 500mm f/4 G SSM (SAL500F40G)"},
+            {65, "Sony DT 18-135mm f/3.5-5.6 SAM (SAL18135)"},
+            {66, "Sony 300mm f/2.8 G SSM II (SAL300F28G2)"},
+            {67, "Sony 70-200mm f/2.8 G SSM II (SAL70200G2)"},
+            {68, "Sony DT 55-300mm f/4.5-5.6 SAM (SAL55300)"},
+            {69, "Sony 70-400mm f/4-5.6 G SSM II (SAL70400G2)"},
+            {70, "Carl Zeiss Planar T* 50mm f/1.4 ZA SSM (SAL50F14Z)"},
+            {128, "Tamron or Sigma Lens (128)"},
+            {128, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro"},
+            {128, "Tamron AF 28-300mm f/3.5-6.3 XR Di LD Aspherical [IF] Macro"},
+            {128, "Tamron 80-300mm f/3.5-6.3"},
+            {128, "Tamron AF 28-200mm f/3.8-5.6 XR Di Aspherical [IF] Macro"},
+            {128, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"},
+            {128, "Sigma AF 50-150mm f/2.8 EX DC APO HSM II"},
+            {128, "Sigma 10-20mm f/3.5 EX DC HSM"},
+            {128, "Sigma 70-200mm f/2.8 II EX DG APO MACRO HSM"},
+            {128, "Sigma 10mm f/2.8 EX DC HSM Fisheye"},
+            {128, "Sigma 50mm f/1.4 EX DG HSM"},
+            {128, "Sigma 85mm f/1.4 EX DG HSM"},
+            {128, "Sigma 24-70mm f/2.8 IF EX DG HSM"},
+            {128, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"},
+            {128, "Sigma 17-50mm f/2.8 EX DC HSM"},
+            {128, "Sigma 17-70mm f/2.8-4 DC Macro HSM"},
+            {128, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"},
+            {128, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"},
+            {128, "Tamron AF 28-105mm f/4-5.6 [IF]"},
+            {128, "Sigma 35mm f/1.4 DG HSM"},
+            {128, "Sigma 18-35mm f/1.8 DC HSM"},
+            {128, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"},
+            {129, "Tamron Lens (129)"},
+            {129, "Tamron 200-400mm f/5.6 LD"},
+            {129, "Tamron 70-300mm f/4-5.6 LD"},
+            {131, "Tamron 20-40mm f/2.7-3.5 SP Aspherical IF"},
+            {135, "Vivitar 28-210mm f/3.5-5.6"},
+            {136, "Tokina EMZ M100 AF 100mm f/3.5"},
+            {137, "Cosina 70-210mm f/2.8-4 AF"},
+            {138, "Soligor 19-35mm f/3.5-4.5"},
+            {139, "Tokina AF 28-300mm f/4-6.3"},
+            {142, "Voigtlander 70-300mm f/4.5-5.6"},
+            {146, "Voigtlander Macro APO-Lanthar 125mm f/2.5 SL"},
+            {194, "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical [IF]"},
+            {203, "Tamron SP 70-200mm f/2.8 Di USD"},
+            {204, "Tamron SP 24-70mm f/2.8 Di USD"},
+            {213, "Tamron 16-300mm f/3.5-6.3 Di II PZD"},
+            {214, "Tamron SP 150-600mm f/5-6.3 Di USD"},
+            {224, "Tamron SP 90mm f/2.8 Di Macro 1:1 USD"},
+            {255, "Tamron Lens (255)"},
+            {255, "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical"},
+            {255, "Tamron AF 18-250mm f/3.5-6.3 XR Di II LD"},
+            {255, "Tamron AF 55-200mm f/4-5.6 Di II LD Macro"},
+            {255, "Tamron AF 70-300mm f/4-5.6 Di LD Macro 1:2"},
+            {255, "Tamron SP AF 200-500mm f/5.0-6.3 Di LD IF"},
+            {255, "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical IF"},
+            {255, "Tamron SP AF 70-200mm f/2.8 Di LD IF Macro"},
+            {255, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical IF"},
+            {255, "Tamron AF 90-300mm f/4.5-5.6 Telemacro"},
+            {1868, "Sigma MC-11 Adapter"},
+            {2550, "Minolta AF 50mm f/1.7"},
+            {2551, "Minolta AF 35-70mm f/4 or Other Lens"},
+            {2551, "Sigma UC AF 28-70mm f/3.5-4.5"},
+            {2551, "Sigma AF 28-70mm f/2.8"},
+            {2551, "Sigma M-AF 70-200mm f/2.8 EX Aspherical"},
+            {2551, "Quantaray M-AF 35-80mm f/4-5.6"},
+            {2551, "Tokina 28-70mm f/2.8-4.5 AF"},
+            {2552, "Minolta AF 28-85mm f/3.5-4.5 or Other Lens"},
+            {2552, "Tokina 19-35mm f/3.5-4.5"},
+            {2552, "Tokina 28-70mm f/2.8 AT-X"},
+            {2552, "Tokina 80-400mm f/4.5-5.6 AT-X AF II 840"},
+            {2552, "Tokina AF PRO 28-80mm f/2.8 AT-X 280"},
+            {2552, "Tokina AT-X PRO [II] AF 28-70mm f/2.6-2.8 270"},
+            {2552, "Tamron AF 19-35mm f/3.5-4.5"},
+            {2552, "Angenieux AF 28-70mm f/2.6"},
+            {2552, "Tokina AT-X 17 AF 17mm f/3.5"},
+            {2552, "Tokina 20-35mm f/3.5-4.5 II AF"},
+            {2553, "Minolta AF 28-135mm f/4-4.5 or Sigma Lens"},
+            {2553, "Sigma ZOOM-alpha 35-135mm f/3.5-4.5"},
+            {2553, "Sigma 28-105mm f/2.8-4 Aspherical"},
+            {2553, "Sigma 28-105mm f/4-5.6 UC"},
+            {2554, "Minolta AF 35-105mm f/3.5-4.5"},
+            {2555, "Minolta AF 70-210mm f/4 Macro or Sigma Lens"},
+            {2555, "Sigma 70-210mm f/4-5.6 APO"},
+            {2555, "Sigma M-AF 70-200mm f/2.8 EX APO"},
+            {2555, "Sigma 75-200mm f/2.8-3.5"},
+            {2556, "Minolta AF 135mm f/2.8"},
+            {2557, "Minolta/Sony AF 28mm f/2.8"},
+            {2558, "Minolta AF 24-50mm f/4"},
+            {2560, "Minolta AF 100-200mm f/4.5"},
+            {2561, "Minolta AF 75-300mm f/4.5-5.6 or Sigma Lens"},
+            {2561, "Sigma 70-300mm f/4-5.6 DL Macro"},
+            {2561, "Sigma 300mm f/4 APO Macro"},
+            {2561, "Sigma AF 500mm f/4.5 APO"},
+            {2561, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"},
+            {2561, "Tokina AT-X AF 300mm f/4"},
+            {2561, "Tokina AT-X AF 400mm f/5.6 SD"},
+            {2561, "Tokina AF 730 II 75-300mm f/4.5-5.6"},
+            {2561, "Sigma 800mm f/5.6 APO"},
+            {2561, "Sigma AF 400mm f/5.6 APO Macro"},
+            {2562, "Minolta AF 50mm f/1.4 [New]"},
+            {2563, "Minolta AF 300mm f/2.8 APO or Sigma Lens"},
+            {2563, "Sigma AF 50-500mm f/4-6.3 EX DG APO"},
+            {2563, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"},
+            {2563, "Sigma AF 500mm f/4.5 EX DG APO"},
+            {2563, "Sigma 400mm f/5.6 APO"},
+            {2564, "Minolta AF 50mm f/2.8 Macro or Sigma Lens"},
+            {2564, "Sigma 50mm f/2.8 EX Macro"},
+            {2565, "Minolta AF 600mm f/4 APO"},
+            {2566, "Minolta AF 24mm f/2.8 or Sigma Lens"},
+            {2566, "Sigma 17-35mm f/2.8-4 EX Aspherical"},
+            {2572, "Minolta/Sony AF 500mm f/8 Reflex"},
+            {2578, "Minolta/Sony AF 16mm f/2.8 Fisheye or Sigma Lens"},
+            {2578, "Sigma 8mm f/4 EX [DG] Fisheye"},
+            {2578, "Sigma 14mm f/3.5"},
+            {2578, "Sigma 15mm f/2.8 Fisheye"},
+            {2579, "Minolta/Sony AF 20mm f/2.8 or Tokina Lens"},
+            {2579, "Tokina AT-X Pro DX 11-16mm f/2.8"},
+            {2581, "Minolta AF 100mm f/2.8 Macro [New] or Sigma or Tamron Lens"},
+            {2581, "Sigma AF 90mm f/2.8 Macro"},
+            {2581, "Sigma AF 105mm f/2.8 EX [DG] Macro"},
+            {2581, "Sigma 180mm f/5.6 Macro"},
+            {2581, "Sigma 180mm f/3.5 EX DG Macro"},
+            {2581, "Tamron 90mm f/2.8 Macro"},
+            {2585, "Minolta AF 35-105mm f/3.5-4.5 New or Tamron Lens"},
+            {2585, "Beroflex 35-135mm f/3.5-4.5"},
+            {2585, "Tamron 24-135mm f/3.5-5.6"},
+            {2588, "Minolta AF 70-210mm f/3.5-4.5"},
+            {2589, "Minolta AF 80-200mm f/2.8 APO or Tokina Lens"},
+            {2589, "Tokina 80-200mm f/2.8"},
+            {2590, "Minolta AF 200mm f/2.8 G APO + Minolta AF 1.4x APO or Other Lens + 1.4x"},
+            {2590, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 1.4x APO"},
+            {2591, "Minolta AF 35mm f/1.4"},
+            {2592, "Minolta AF 85mm f/1.4 G (D)"},
+            {2593, "Minolta AF 200mm f/2.8 APO"},
+            {2594, "Minolta AF 3x-1x f/1.7-2.8 Macro"},
+            {2596, "Minolta AF 28mm f/2"},
+            {2597, "Minolta AF 35mm f/2 [New]"},
+            {2598, "Minolta AF 100mm f/2"},
+            {2601, "Minolta AF 200mm f/2.8 G APO + Minolta AF 2x APO or Other Lens + 2x"},
+            {2601, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 2x APO"},
+            {2604, "Minolta AF 80-200mm f/4.5-5.6"},
+            {2605, "Minolta AF 35-80mm f/4-5.6"},
+            {2606, "Minolta AF 100-300mm f/4.5-5.6"},
+            {2607, "Minolta AF 35-80mm f/4-5.6"},
+            {2608, "Minolta AF 300mm f/2.8 HS-APO G"},
+            {2609, "Minolta AF 600mm f/4 HS-APO G"},
+            {2612, "Minolta AF 200mm f/2.8 HS-APO G"},
+            {2613, "Minolta AF 50mm f/1.7 New"},
+            {2615, "Minolta AF 28-105mm f/3.5-4.5 xi"},
+            {2616, "Minolta AF 35-200mm f/4.5-5.6 xi"},
+            {2618, "Minolta AF 28-80mm f/4-5.6 xi"},
+            {2619, "Minolta AF 80-200mm f/4.5-5.6 xi"},
+            {2620, "Minolta AF 28-70mm f/2.8 G"},
+            {2621, "Minolta AF 100-300mm f/4.5-5.6 xi"},
+            {2624, "Minolta AF 35-80mm f/4-5.6 Power Zoom"},
+            {2628, "Minolta AF 80-200mm f/2.8 HS-APO G"},
+            {2629, "Minolta AF 85mm f/1.4 New"},
+            {2631, "Minolta/Sony AF 100-300mm f/4.5-5.6 APO"},
+            {2632, "Minolta AF 24-50mm f/4 New"},
+            {2638, "Minolta AF 50mm f/2.8 Macro New"},
+            {2639, "Minolta AF 100mm f/2.8 Macro"},
+            {2641, "Minolta/Sony AF 20mm f/2.8 New"},
+            {2642, "Minolta AF 24mm f/2.8 New"},
+            {2644, "Minolta AF 100-400mm f/4.5-6.7 APO"},
+            {2662, "Minolta AF 50mm f/1.4 New"},
+            {2667, "Minolta AF 35mm f/2 New"},
+            {2668, "Minolta AF 28mm f/2 New"},
+            {2672, "Minolta AF 24-105mm f/3.5-4.5 (D)"},
+            {3046, "Metabones Canon EF Speed Booster"},
+            {4567, "Tokina 70-210mm f/4-5.6"},
+            {4571, "Vivitar 70-210mm f/4.5-5.6"},
+            {4574, "2x Teleconverter or Tamron or Tokina Lens"},
+            {4574, "Tamron SP AF 90mm f/2.5"},
+            {4574, "Tokina RF 500mm f/8.0 x2"},
+            {4574, "Tokina 300mm f/2.8 x2"},
+            {4575, "1.4x Teleconverter"},
+            {4585, "Tamron SP AF 300mm f/2.8 LD IF"},
+            {4586, "Tamron SP AF 35-105mm f/2.8 LD Aspherical IF"},
+            {4587, "Tamron AF 70-210mm f/2.8 SP LD"},
+            {4812, "Metabones Canon EF Speed Booster Ultra"},
+            {6118, "Canon EF Adapter"},
+            {6553, "E-Mount, T-Mount, Other Lens or no lens"},
+            {6553, "Sony E 16mm f/2.8"},
+            {6553, "Sony E 18-55mm f/3.5-5.6 OSS"},
+            {6553, "Sony E 55-210mm f/4.5-6.3 OSS"},
+            {6553, "Sony E 18-200mm f/3.5-6.3 OSS"},
+            {6553, "Sony E 30mm f/3.5 Macro"},
+            {6553, "Sony E 24mm f/1.8 ZA"},
+            {6553, "Sony E 50mm f/1.8 OSS"},
+            {6553, "Sony E 16-70mm f/4 ZA OSS"},
+            {6553, "Sony E 10-18mm f/4 OSS"},
+            {6553, "Sony E PZ 16-50mm f/3.5-5.6 OSS"},
+            {6553, "Sony FE 35mm f/2.8 ZA"},
+            {6553, "Sony FE 24-70mm f/4 ZA OSS"},
+            {6553, "Sony E 18-200mm f/3.5-6.3 OSS LE"},
+            {6553, "Sony E 20mm f/2.8"},
+            {6553, "Sony E 35mm f/1.8 OSS"},
+            {6553, "Sony E PZ 18-105mm f/4 G OSS"},
+            {6553, "Sony FE 90mm f/2.8 Macro G OSS"},
+            {6553, "Sony E 18-50mm f/4-5.6"},
+            {6553, "Sony E PZ 18-200mm f/3.5-6.3 OSS"},
+            {6553, "Sony FE 55mm f/1.8 ZA"},
+            {6553, "Sony FE 70-200mm f/4 G OSS"},
+            {6553, "Sony FE 16-35mm f/4 ZA OSS"},
+            {6553, "Sony FE 28-70mm f/3.5-5.6 OSS"},
+            {6553, "Sony FE 35mm f/1.4 ZA"},
+            {6553, "Sony FE 24-240mm f/3.5-6.3 OSS"},
+            {6553, "Sony FE 28mm f/2"},
+            {6553, "Sony FE PZ 28-135mm f/4 G OSS"},
+            {6553, "Sony FE 24-70mm f/2.8 GM"},
+            {6553, "Sony FE 85mm f/1.4 GM"},
+            {6553, "Sony FE 50mm f/1.8"},
+            {6553, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"},
+            {6553, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"},
+            {6553, "Sony FE 70-300mm f/4.5-5.6 G OSS"},
+            {6553, "Sony FE 70-200mm f/2.8 GM OSS"},
+            {6553, "Sigma 19mm f/2.8 [EX] DN"},
+            {6553, "Sigma 30mm f/2.8 [EX] DN"},
+            {6553, "Sigma 60mm f/2.8 DN"},
+            {6553, "Sigma 30mm f/1.4 DC DN | C"},
+            {6553, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
+            {6553, "Zeiss Batis 25mm f/2"},
+            {6553, "Zeiss Batis 85mm f/1.8"},
+            {6553, "Zeiss Batis 18mm f/2.8"},
+            {6553, "Zeiss Loxia 21mm f/2.8"},
+            {6553, "Zeiss Loxia 35mm f/2"},
+            {6553, "Zeiss Loxia 50mm f/2"},
+            {6553, "Zeiss Touit 12mm f/2.8"},
+            {6553, "Zeiss Touit 32mm f/1.8"},
+            {6553, "Zeiss Touit 50mm f/2.8 Macro"},
+            {6553, "Arax MC 35mm f/2.8 Tilt+Shift"},
+            {6553, "Arax MC 80mm f/2.8 Tilt+Shift"},
+            {6553, "Zenitar MF 16mm f/2.8 Fisheye M42"},
+            {6553, "Samyang 500mm Mirror f/8.0"},
+            {6553, "Pentacon Auto 135mm f/2.8"},
+            {6553, "Pentacon Auto 29mm f/2.8"},
+            {6553, "Helios 44-2 58mm f/2.0"},
+            {18688, "Sigma MC-11 Adapter"},
+            {25501, "Minolta AF 50mm f/1.7"},
+            {25511, "Minolta AF 35-70mm f/4 or Other Lens"},
+            {25511, "Sigma UC AF 28-70mm f/3.5-4.5"},
+            {25511, "Sigma AF 28-70mm f/2.8"},
+            {25511, "Sigma M-AF 70-200mm f/2.8 EX Aspherical"},
+            {25511, "Quantaray M-AF 35-80mm f/4-5.6"},
+            {25511, "Tokina 28-70mm f/2.8-4.5 AF"},
+            {25521, "Minolta AF 28-85mm f/3.5-4.5 or Other Lens"},
+            {25521, "Tokina 19-35mm f/3.5-4.5"},
+            {25521, "Tokina 28-70mm f/2.8 AT-X"},
+            {25521, "Tokina 80-400mm f/4.5-5.6 AT-X AF II 840"},
+            {25521, "Tokina AF PRO 28-80mm f/2.8 AT-X 280"},
+            {25521, "Tokina AT-X PRO [II] AF 28-70mm f/2.6-2.8 270"},
+            {25521, "Tamron AF 19-35mm f/3.5-4.5"},
+            {25521, "Angenieux AF 28-70mm f/2.6"},
+            {25521, "Tokina AT-X 17 AF 17mm f/3.5"},
+            {25521, "Tokina 20-35mm f/3.5-4.5 II AF"},
+            {25531, "Minolta AF 28-135mm f/4-4.5 or Sigma Lens"},
+            {25531, "Sigma ZOOM-alpha 35-135mm f/3.5-4.5"},
+            {25531, "Sigma 28-105mm f/2.8-4 Aspherical"},
+            {25531, "Sigma 28-105mm f/4-5.6 UC"},
+            {25541, "Minolta AF 35-105mm f/3.5-4.5"},
+            {25551, "Minolta AF 70-210mm f/4 Macro or Sigma Lens"},
+            {25551, "Sigma 70-210mm f/4-5.6 APO"},
+            {25551, "Sigma M-AF 70-200mm f/2.8 EX APO"},
+            {25551, "Sigma 75-200mm f/2.8-3.5"},
+            {25561, "Minolta AF 135mm f/2.8"},
+            {25571, "Minolta/Sony AF 28mm f/2.8"},
+            {25581, "Minolta AF 24-50mm f/4"},
+            {25601, "Minolta AF 100-200mm f/4.5"},
+            {25611, "Minolta AF 75-300mm f/4.5-5.6 or Sigma Lens"},
+            {25611, "Sigma 70-300mm f/4-5.6 DL Macro"},
+            {25611, "Sigma 300mm f/4 APO Macro"},
+            {25611, "Sigma AF 500mm f/4.5 APO"},
+            {25611, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"},
+            {25611, "Tokina AT-X AF 300mm f/4"},
+            {25611, "Tokina AT-X AF 400mm f/5.6 SD"},
+            {25611, "Tokina AF 730 II 75-300mm f/4.5-5.6"},
+            {25611, "Sigma 800mm f/5.6 APO"},
+            {25611, "Sigma AF 400mm f/5.6 APO Macro"},
+            {25621, "Minolta AF 50mm f/1.4 [New]"},
+            {25631, "Minolta AF 300mm f/2.8 APO or Sigma Lens"},
+            {25631, "Sigma AF 50-500mm f/4-6.3 EX DG APO"},
+            {25631, "Sigma AF 170-500mm f/5-6.3 APO Aspherical"},
+            {25631, "Sigma AF 500mm f/4.5 EX DG APO"},
+            {25631, "Sigma 400mm f/5.6 APO"},
+            {25641, "Minolta AF 50mm f/2.8 Macro or Sigma Lens"},
+            {25641, "Sigma 50mm f/2.8 EX Macro"},
+            {25651, "Minolta AF 600mm f/4 APO"},
+            {25661, "Minolta AF 24mm f/2.8 or Sigma Lens"},
+            {25661, "Sigma 17-35mm f/2.8-4 EX Aspherical"},
+            {25721, "Minolta/Sony AF 500mm f/8 Reflex"},
+            {25781, "Minolta/Sony AF 16mm f/2.8 Fisheye or Sigma Lens"},
+            {25781, "Sigma 8mm f/4 EX [DG] Fisheye"},
+            {25781, "Sigma 14mm f/3.5"},
+            {25781, "Sigma 15mm f/2.8 Fisheye"},
+            {25791, "Minolta/Sony AF 20mm f/2.8 or Tokina Lens"},
+            {25791, "Tokina AT-X Pro DX 11-16mm f/2.8"},
+            {25811, "Minolta AF 100mm f/2.8 Macro [New] or Sigma or Tamron Lens"},
+            {25811, "Sigma AF 90mm f/2.8 Macro"},
+            {25811, "Sigma AF 105mm f/2.8 EX [DG] Macro"},
+            {25811, "Sigma 180mm f/5.6 Macro"},
+            {25811, "Sigma 180mm f/3.5 EX DG Macro"},
+            {25811, "Tamron 90mm f/2.8 Macro"},
+            {25851, "Beroflex 35-135mm f/3.5-4.5"},
+            {25858, "Minolta AF 35-105mm f/3.5-4.5 New or Tamron Lens"},
+            {25858, "Tamron 24-135mm f/3.5-5.6"},
+            {25881, "Minolta AF 70-210mm f/3.5-4.5"},
+            {25891, "Minolta AF 80-200mm f/2.8 APO or Tokina Lens"},
+            {25891, "Tokina 80-200mm f/2.8"},
+            {25901, "Minolta AF 200mm f/2.8 G APO + Minolta AF 1.4x APO or Other Lens + 1.4x"},
+            {25901, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 1.4x APO"},
+            {25911, "Minolta AF 35mm f/1.4"},
+            {25921, "Minolta AF 85mm f/1.4 G (D)"},
+            {25931, "Minolta AF 200mm f/2.8 APO"},
+            {25941, "Minolta AF 3x-1x f/1.7-2.8 Macro"},
+            {25961, "Minolta AF 28mm f/2"},
+            {25971, "Minolta AF 35mm f/2 [New]"},
+            {25981, "Minolta AF 100mm f/2"},
+            {26011, "Minolta AF 200mm f/2.8 G APO + Minolta AF 2x APO or Other Lens + 2x"},
+            {26011, "Minolta AF 600mm f/4 HS-APO G + Minolta AF 2x APO"},
+            {26041, "Minolta AF 80-200mm f/4.5-5.6"},
+            {26051, "Minolta AF 35-80mm f/4-5.6"},
+            {26061, "Minolta AF 100-300mm f/4.5-5.6"},
+            {26071, "Minolta AF 35-80mm f/4-5.6"},
+            {26081, "Minolta AF 300mm f/2.8 HS-APO G"},
+            {26091, "Minolta AF 600mm f/4 HS-APO G"},
+            {26121, "Minolta AF 200mm f/2.8 HS-APO G"},
+            {26131, "Minolta AF 50mm f/1.7 New"},
+            {26151, "Minolta AF 28-105mm f/3.5-4.5 xi"},
+            {26161, "Minolta AF 35-200mm f/4.5-5.6 xi"},
+            {26181, "Minolta AF 28-80mm f/4-5.6 xi"},
+            {26191, "Minolta AF 80-200mm f/4.5-5.6 xi"},
+            {26201, "Minolta AF 28-70mm f/2.8 G"},
+            {26211, "Minolta AF 100-300mm f/4.5-5.6 xi"},
+            {26241, "Minolta AF 35-80mm f/4-5.6 Power Zoom"},
+            {26281, "Minolta AF 80-200mm f/2.8 HS-APO G"},
+            {26291, "Minolta AF 85mm f/1.4 New"},
+            {26311, "Minolta/Sony AF 100-300mm f/4.5-5.6 APO"},
+            {26321, "Minolta AF 24-50mm f/4 New"},
+            {26381, "Minolta AF 50mm f/2.8 Macro New"},
+            {26391, "Minolta AF 100mm f/2.8 Macro"},
+            {26411, "Minolta/Sony AF 20mm f/2.8 New"},
+            {26421, "Minolta AF 24mm f/2.8 New"},
+            {26441, "Minolta AF 100-400mm f/4.5-6.7 APO"},
+            {26621, "Minolta AF 50mm f/1.4 New"},
+            {26671, "Minolta AF 35mm f/2 New"},
+            {26681, "Minolta AF 28mm f/2 New"},
+            {26721, "Minolta AF 24-105mm f/3.5-4.5 (D)"},
+            {30464, "Metabones Canon EF Speed Booster"},
+            {45671, "Tokina 70-210mm f/4-5.6"},
+            {45711, "Vivitar 70-210mm f/4.5-5.6"},
+            {45741, "2x Teleconverter or Tamron or Tokina Lens"},
+            {45741, "Tamron SP AF 90mm f/2.5"},
+            {45741, "Tokina RF 500mm f/8.0 x2"},
+            {45741, "Tokina 300mm f/2.8 x2"},
+            {45751, "1.4x Teleconverter"},
+            {45851, "Tamron SP AF 300mm f/2.8 LD IF"},
+            {45861, "Tamron SP AF 35-105mm f/2.8 LD Aspherical IF"},
+            {45871, "Tamron AF 70-210mm f/2.8 SP LD"},
+            {48128, "Metabones Canon EF Speed Booster Ultra"},
+            {61184, "Canon EF Adapter"},
+            {65535, "E-Mount, T-Mount, Other Lens or no lens"},
+            {65535, "Sony E 16mm f/2.8"},
+            {65535, "Sony E 18-55mm f/3.5-5.6 OSS"},
+            {65535, "Sony E 55-210mm f/4.5-6.3 OSS"},
+            {65535, "Sony E 18-200mm f/3.5-6.3 OSS"},
+            {65535, "Sony E 30mm f/3.5 Macro"},
+            {65535, "Sony E 24mm f/1.8 ZA"},
+            {65535, "Sony E 50mm f/1.8 OSS"},
+            {65535, "Sony E 16-70mm f/4 ZA OSS"},
+            {65535, "Sony E 10-18mm f/4 OSS"},
+            {65535, "Sony E PZ 16-50mm f/3.5-5.6 OSS"},
+            {65535, "Sony FE 35mm f/2.8 ZA"},
+            {65535, "Sony FE 24-70mm f/4 ZA OSS"},
+            {65535, "Sony E 18-200mm f/3.5-6.3 OSS LE"},
+            {65535, "Sony E 20mm f/2.8"},
+            {65535, "Sony E 35mm f/1.8 OSS"},
+            {65535, "Sony E PZ 18-105mm f/4 G OSS"},
+            {65535, "Sony FE 90mm f/2.8 Macro G OSS"},
+            {65535, "Sony E 18-50mm f/4-5.6"},
+            {65535, "Sony E PZ 18-200mm f/3.5-6.3 OSS"},
+            {65535, "Sony FE 55mm f/1.8 ZA"},
+            {65535, "Sony FE 70-200mm f/4 G OSS"},
+            {65535, "Sony FE 16-35mm f/4 ZA OSS"},
+            {65535, "Sony FE 28-70mm f/3.5-5.6 OSS"},
+            {65535, "Sony FE 35mm f/1.4 ZA"},
+            {65535, "Sony FE 24-240mm f/3.5-6.3 OSS"},
+            {65535, "Sony FE 28mm f/2"},
+            {65535, "Sony FE PZ 28-135mm f/4 G OSS"},
+            {65535, "Sony FE 24-70mm f/2.8 GM"},
+            {65535, "Sony FE 85mm f/1.4 GM"},
+            {65535, "Sony FE 50mm f/1.8"},
+            {65535, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"},
+            {65535, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"},
+            {65535, "Sony FE 70-300mm f/4.5-5.6 G OSS"},
+            {65535, "Sony FE 70-200mm f/2.8 GM OSS"},
+            {65535, "Sigma 19mm f/2.8 [EX] DN"},
+            {65535, "Sigma 30mm f/2.8 [EX] DN"},
+            {65535, "Sigma 60mm f/2.8 DN"},
+            {65535, "Sigma 30mm f/1.4 DC DN | C"},
+            {65535, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
+            {65535, "Zeiss Batis 25mm f/2"},
+            {65535, "Zeiss Batis 85mm f/1.8"},
+            {65535, "Zeiss Batis 18mm f/2.8"},
+            {65535, "Zeiss Loxia 21mm f/2.8"},
+            {65535, "Zeiss Loxia 35mm f/2"},
+            {65535, "Zeiss Loxia 50mm f/2"},
+            {65535, "Zeiss Touit 12mm f/2.8"},
+            {65535, "Zeiss Touit 32mm f/1.8"},
+            {65535, "Zeiss Touit 50mm f/2.8 Macro"},
+            {65535, "Arax MC 35mm f/2.8 Tilt+Shift"},
+            {65535, "Arax MC 80mm f/2.8 Tilt+Shift"},
+            {65535, "Zenitar MF 16mm f/2.8 Fisheye M42"},
+            {65535, "Samyang 500mm Mirror f/8.0"},
+            {65535, "Pentacon Auto 135mm f/2.8"},
+            {65535, "Pentacon Auto 29mm f/2.8"},
+            {65535, "Helios 44-2 58mm f/2.0"}
+        };
     }
 
     virtual std::string toString (Tag* t)
@@ -1067,7 +1069,7 @@ public:
             focalLength = focalLengthTag->toDouble();
         }
 
-        double *liArray = NULL;
+        double *liArray = nullptr;
 
         if (lensInfoTag) {
             liArray = lensInfoTag->toDoubleArray();
@@ -1173,7 +1175,7 @@ public:
             focalLength = focalLengthTag->toDouble();
         }
 
-        double *liArray = NULL;
+        double *liArray = nullptr;
 
         if (lensInfoTag) {
             liArray = lensInfoTag->toDoubleArray();
@@ -1966,7 +1968,7 @@ public:
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
-        int a;
+        int a = 0;
 
         if (astype == BYTE) {
             a = t->getValue()[ofs];
@@ -1975,7 +1977,7 @@ public:
         }
 
         // Decode the value
-        if(a > 0.) {
+        if(a > 0) {
             return pow(2., 6. - (double(a) / 8.));
         } else {
             return 0.;
@@ -1984,7 +1986,7 @@ public:
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
@@ -2026,7 +2028,7 @@ public:
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
-        int a;
+        int a = 0;
 
         if (astype == BYTE) {
             a = t->getValue()[ofs];
@@ -2035,7 +2037,7 @@ public:
         }
 
         // Decode the value
-        if(a > 0.) {
+        if(a > 0) {
             return pow(2., (double(a) / 8. - 1.) / 2.);
         } else {
             return 0.;
@@ -2044,7 +2046,7 @@ public:
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
@@ -2085,7 +2087,7 @@ public:
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
@@ -2235,7 +2237,7 @@ public:
     }
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
-        int a;
+        int a = 0;
 
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
@@ -2253,226 +2255,226 @@ public:
 SAColorTemperatureSettingInterpreter saColorTemperatureSettingInterpreter;
 
 const TagAttrib minoltaAttribs[] = {
-    {0, AC_WRITE, 0, 0, 0x0000, AUTO, "MakerNoteVersion", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0001, AUTO, "MinoltaCameraSettingsOld", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0003, AUTO, "MinoltaCameraSettings", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0004, AUTO, "MinoltaCameraSettings7D", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0018, AUTO, "ImageStabilization", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0040, AUTO, "CompressedImageSize", &stdInterpreter},
-    {1, AC_WRITE, 0, 0, 0x0081, AUTO, "PreviewImage", &stdInterpreter},
-    {1, AC_WRITE, 0, 0, 0x0088, AUTO, "PreviewImageStart", &stdInterpreter},
-    {1, AC_WRITE, 0, 0, 0x0089, AUTO, "PreviewImageLength", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0100, AUTO, "SceneMode", &saSceneModeInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0101, AUTO, "ColorMode", &saColorModeInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0102, AUTO, "MinoltaQuality", &maQualityInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0103, AUTO, "MinoltaImageSize", &maImageSizeInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0104, AUTO, "FlashExposureComp", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0105, AUTO, "Teleconverter", &maTeleconverterInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0107, AUTO, "ImageStabilization", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 0x010a, AUTO, "ZoneMatching", &saZoneMatchingInterpreter},
-    {0, AC_WRITE, 0, 0, 0x010b, AUTO, "ColorTemperature", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x010c, AUTO, "LensID", &saLensIDInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0113, AUTO, "ImageStabilization", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0114, AUTO, "MinoltaCameraSettings", &stdInterpreter},
-    {1, AC_WRITE, 0, 0, 0x0e00, AUTO, "PrintIM", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0f00, AUTO, "MinoltaCameraSettings2", &stdInterpreter},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    {0, AC_WRITE, 0, nullptr, 0x0000, AUTO, "MakerNoteVersion", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0001, AUTO, "MinoltaCameraSettingsOld", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0003, AUTO, "MinoltaCameraSettings", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0004, AUTO, "MinoltaCameraSettings7D", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0018, AUTO, "ImageStabilization", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0040, AUTO, "CompressedImageSize", &stdInterpreter},
+    {1, AC_WRITE, 0, nullptr, 0x0081, AUTO, "PreviewImage", &stdInterpreter},
+    {1, AC_WRITE, 0, nullptr, 0x0088, AUTO, "PreviewImageStart", &stdInterpreter},
+    {1, AC_WRITE, 0, nullptr, 0x0089, AUTO, "PreviewImageLength", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0100, AUTO, "SceneMode", &saSceneModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0101, AUTO, "ColorMode", &saColorModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0102, AUTO, "MinoltaQuality", &maQualityInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0103, AUTO, "MinoltaImageSize", &maImageSizeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0104, AUTO, "FlashExposureComp", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0105, AUTO, "Teleconverter", &maTeleconverterInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0107, AUTO, "ImageStabilization", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x010a, AUTO, "ZoneMatching", &saZoneMatchingInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x010b, AUTO, "ColorTemperature", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x010c, AUTO, "LensID", &saLensIDInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0113, AUTO, "ImageStabilization", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0114, AUTO, "MinoltaCameraSettings", &stdInterpreter},
+    {1, AC_WRITE, 0, nullptr, 0x0e00, AUTO, "PrintIM", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0f00, AUTO, "MinoltaCameraSettings2", &stdInterpreter},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 const TagAttrib sonyAttribs[] = {
     {0, AC_WRITE, 0, sonyCameraInfoAttribs, 0x0010, AUTO, "CameraInfo", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0102, AUTO, "Quality", &maQualityInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0104, AUTO, "FlashExposureComp", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0106, AUTO, "TeleConverter", &maTeleconverterInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0102, AUTO, "Quality", &maQualityInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0104, AUTO, "FlashExposureComp", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0106, AUTO, "TeleConverter", &maTeleconverterInterpreter},
     {0, AC_WRITE, 0, sonyCameraSettingsAttribs, 0x0114, AUTO, "SonyCameraSettings", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0115, AUTO, "WhiteBalance", &saWhiteBalanceInterpreter},
-    {1, AC_WRITE, 0, 0, 0x0e00, AUTO, "PrintIM", &stdInterpreter},
-    {1, AC_WRITE, 0, 0, 0x2001, AUTO, "PreviewImage", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x2009, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction},
-    {0, AC_WRITE, 0, 0, 0x200a, AUTO, "AutoHDR", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x200b, AUTO, "MultiFrameNoiseReduction", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x200e, AUTO, "PictureEffect", &saPictureEffectInterpreter},
-    {0, AC_WRITE, 0, 0, 0x2011, AUTO, "VignettingCorrection", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x2012, AUTO, "LateralChromaticAberration", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x2013, AUTO, "DistortionCorrection", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb020, AUTO, "ColorReproduction", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb021, AUTO, "ColorTemperature", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb022, AUTO, "ColorCompensationFilter", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb023, AUTO, "SceneMode", &saSceneModeInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb024, AUTO, "ZoneMatching", &saZoneMatchingInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb025, AUTO, "DynamicRangeOptimizer", &saDynamicRangeOptimizerInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb026, AUTO, "ImageStabilization", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb027, AUTO, "LensID", &saLensIDInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0115, AUTO, "WhiteBalance", &saWhiteBalanceInterpreter},
+    {1, AC_WRITE, 0, nullptr, 0x0e00, AUTO, "PrintIM", &stdInterpreter},
+    {1, AC_WRITE, 0, nullptr, 0x2001, AUTO, "PreviewImage", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x2009, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction},
+    {0, AC_WRITE, 0, nullptr, 0x200a, AUTO, "AutoHDR", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x200b, AUTO, "MultiFrameNoiseReduction", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x200e, AUTO, "PictureEffect", &saPictureEffectInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x2011, AUTO, "VignettingCorrection", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x2012, AUTO, "LateralChromaticAberration", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x2013, AUTO, "DistortionCorrection", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb020, AUTO, "ColorReproduction", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb021, AUTO, "ColorTemperature", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb022, AUTO, "ColorCompensationFilter", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb023, AUTO, "SceneMode", &saSceneModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb024, AUTO, "ZoneMatching", &saZoneMatchingInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb025, AUTO, "DynamicRangeOptimizer", &saDynamicRangeOptimizerInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb026, AUTO, "ImageStabilization", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb027, AUTO, "LensID", &saLensIDInterpreter},
     {0, AC_WRITE, 0, minoltaAttribs, 0xb028, AUTO, "MinoltaMakerNote", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb029, AUTO, "ColorMode", &saColorModeInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb040, AUTO, "Macro", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb041, AUTO, "ExposureMode", &saExposureModeInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb042, AUTO, "FocusMode", &saFocusMode},
-    {0, AC_WRITE, 0, 0, 0xb043, AUTO, "AFMode", &saAFMode},
-    {0, AC_WRITE, 0, 0, 0xb044, AUTO, "AFIlluminator", &saAFIlluminator},
-    {0, AC_WRITE, 0, 0, 0xb047, AUTO, "Quality", &saQualityInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb048, AUTO, "FlashLevel", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb049, AUTO, "ReleaseMode", &saReleaseModeInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb04a, AUTO, "SequenceNumber", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb04b, AUTO, "AntiBlur", &saAntiBlurInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb04e, AUTO, "LongExposureNoiseReduction", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb04f, AUTO, "DynamicRangeOptimizer", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0xb050, AUTO, "HighISONoiseReduction2", &saHighISONoiseReduction2},
-    {0, AC_WRITE, 0, 0, 0xb052, AUTO, "IntelligentAuto", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb029, AUTO, "ColorMode", &saColorModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb040, AUTO, "Macro", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb041, AUTO, "ExposureMode", &saExposureModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb042, AUTO, "FocusMode", &saFocusMode},
+    {0, AC_WRITE, 0, nullptr, 0xb043, AUTO, "AFMode", &saAFMode},
+    {0, AC_WRITE, 0, nullptr, 0xb044, AUTO, "AFIlluminator", &saAFIlluminator},
+    {0, AC_WRITE, 0, nullptr, 0xb047, AUTO, "Quality", &saQualityInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb048, AUTO, "FlashLevel", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb049, AUTO, "ReleaseMode", &saReleaseModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb04a, AUTO, "SequenceNumber", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb04b, AUTO, "AntiBlur", &saAntiBlurInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb04e, AUTO, "LongExposureNoiseReduction", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb04f, AUTO, "DynamicRangeOptimizer", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0xb050, AUTO, "HighISONoiseReduction2", &saHighISONoiseReduction2},
+    {0, AC_WRITE, 0, nullptr, 0xb052, AUTO, "IntelligentAuto", &stdInterpreter},
     {0, AC_WRITE, 0, sonyTag9405Attribs, 0x9405, AUTO, "Tag9405", &stdInterpreter},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 const TagAttrib sonyTag9405Attribs[] = {
-    {0, AC_WRITE, 0, 0, 0x005d, AUTO, "LensFormat", &stdInterpreter},  // 9405b start here
-    {0, AC_WRITE, 0, 0, 0x005e, AUTO, "LensMount", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0060, SHORT, "LensType2", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0062, SHORT, "LensType", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0603, AUTO, "LensFormat", &stdInterpreter},  // 9405a start here
-    {0, AC_WRITE, 0, 0, 0x0604, AUTO, "LensMount", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0605, SHORT, "LensType2", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 0x0608, SHORT, "LensType", &stdInterpreter},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    {0, AC_WRITE, 0, nullptr, 0x005d, AUTO, "LensFormat", &stdInterpreter},  // 9405b start here
+    {0, AC_WRITE, 0, nullptr, 0x005e, AUTO, "LensMount", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0060, SHORT, "LensType2", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0062, SHORT, "LensType", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0603, AUTO, "LensFormat", &stdInterpreter},  // 9405a start here
+    {0, AC_WRITE, 0, nullptr, 0x0604, AUTO, "LensMount", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0605, SHORT, "LensType2", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 0x0608, SHORT, "LensType", &stdInterpreter},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 const TagAttrib sonyCameraInfoAttribs[] = {
-    {0, AC_WRITE, 0, 0, 14, SHORT, "FocalLength", &saExposureTimeInterpreter},
-    {0, AC_WRITE, 0, 0, 16, SHORT, "FocalLengthTeleZoom", &saExposureTimeInterpreter},
-    {0, AC_WRITE, 0, 0, 25, AUTO, "FocusStatus", &saCameraInfoFocusStatusInterpreter},
-    {0, AC_WRITE, 0, 0, 28, AUTO, "AFPointSelected", &saCameraInfoAFPointSelected},
-    {0, AC_WRITE, 0, 0, 29, AUTO, "FocusMode", &saFocusMode2},
-    {0, AC_WRITE, 0, 0, 32, AUTO, "AFPoint", &saCameraInfoAFPoint},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    {0, AC_WRITE, 0, nullptr, 14, SHORT, "FocalLength", &saExposureTimeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 16, SHORT, "FocalLengthTeleZoom", &saExposureTimeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 25, AUTO, "FocusStatus", &saCameraInfoFocusStatusInterpreter},
+    {0, AC_WRITE, 0, nullptr, 28, AUTO, "AFPointSelected", &saCameraInfoAFPointSelected},
+    {0, AC_WRITE, 0, nullptr, 29, AUTO, "FocusMode", &saFocusMode2},
+    {0, AC_WRITE, 0, nullptr, 32, AUTO, "AFPoint", &saCameraInfoAFPoint},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 const TagAttrib sonyCameraInfo2Attribs[] = {
-    {0, AC_WRITE, 0, 0, 304, AUTO, "AFMicroAdjValue", &saAFMicroAdjValueInterpreter},
-    {0, AC_WRITE, 0, 0, 305, AUTO, "AFMicroAdjMode", &saAFMicroAdjModeInterpreter},
-    {0, AC_WRITE, 0, 0, 305, AUTO, "AFMicroAdjRegisteredLenses", &saAFMicroAdjRegisteredLensesInterpreter},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    {0, AC_WRITE, 0, nullptr, 304, AUTO, "AFMicroAdjValue", &saAFMicroAdjValueInterpreter},
+    {0, AC_WRITE, 0, nullptr, 305, AUTO, "AFMicroAdjMode", &saAFMicroAdjModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 305, AUTO, "AFMicroAdjRegisteredLenses", &saAFMicroAdjRegisteredLensesInterpreter},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 const TagAttrib sonyCameraSettingsAttribs[] = {
-    {0, AC_WRITE, 0, 0,  0, AUTO, "ExposureTime", &saExposureTimeInterpreter},
-    {0, AC_WRITE, 0, 0,  1, AUTO, "FNumber", &saFNumberInterpreter},
-    {0, AC_WRITE, 0, 0,  4, AUTO, "DriveMode", &saDriveMode},
-    {0, AC_WRITE, 0, 0,  6, AUTO, "WhiteBalanceFineTune", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 16, AUTO, "FocusModeSetting", &saFocusMode},
-    {0, AC_WRITE, 0, 0, 17, AUTO, "AFAreaMode", &saAFAreaMode},
-    {0, AC_WRITE, 0, 0, 18, AUTO, "AFPointSelected", &saAFPointSelected},
-    {0, AC_WRITE, 0, 0, 21, AUTO, "MeteringMode", &saMeteringMode1_4},
-    {0, AC_WRITE, 0, 0, 22, AUTO, "ISOSetting", &saISOSettingInterpreter},
-    {0, AC_WRITE, 0, 0, 24, AUTO, "DynamicRangeOptimizerMode", &saDynamicRangeOptimizerMode},
-    {0, AC_WRITE, 0, 0, 25, AUTO, "DynamicRangeOptimizerLevel", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 26, AUTO, "CreativeStyle", &saCreativeStyle},
-    {0, AC_WRITE, 0, 0, 28, AUTO, "Sharpness", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 29, AUTO, "Contrast", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 30, AUTO, "Saturation", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 31, AUTO, "ZoneMatchingValue", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 34, AUTO, "Brightness", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 35, AUTO, "FlashMode", &saFlashMode},
-    {0, AC_WRITE, 0, 0, 40, AUTO, "PrioritySetupShutterRelease", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 41, AUTO, "AFIlluminator", &saAFIlluminator},
-    {0, AC_WRITE, 0, 0, 42, AUTO, "AFWithShutter", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 43, AUTO, "LongExposureNoiseReduction", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 44, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction3},
-    {0, AC_WRITE, 0, 0, 45, AUTO, "ImageStyle", &saImageStyleInterpreter},
-    {0, AC_WRITE, 0, 0, 60, AUTO, "ExposureProgram", &saExposureProgram},
-    {0, AC_WRITE, 0, 0, 61, AUTO, "ImageStabilization", &saOnOffInterpreter},
-    {0, AC_WRITE, 0, 0, 63, AUTO, "Rotation", &saRotation},
-    {0, AC_WRITE, 0, 0, 77, AUTO, "FocusMode", &saFocusMode},
-    {0, AC_WRITE, 0, 0, 83, AUTO, "FocusStatus", &saFocusStatusInterpreter},
-    {0, AC_WRITE, 0, 0, 84, AUTO, "SonyImageSize", &saSonyImageSize},
-    {0, AC_WRITE, 0, 0, 85, AUTO, "AspectRatio", &saAspectRatio},
-    {0, AC_WRITE, 0, 0, 86, AUTO, "Quality", &saQualityInterpreter2},
-    {0, AC_WRITE, 0, 0, 88, AUTO, "ExposureLevelIncrements", &saExposureLevelIncrements},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    {0, AC_WRITE, 0, nullptr,  0, AUTO, "ExposureTime", &saExposureTimeInterpreter},
+    {0, AC_WRITE, 0, nullptr,  1, AUTO, "FNumber", &saFNumberInterpreter},
+    {0, AC_WRITE, 0, nullptr,  4, AUTO, "DriveMode", &saDriveMode},
+    {0, AC_WRITE, 0, nullptr,  6, AUTO, "WhiteBalanceFineTune", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 16, AUTO, "FocusModeSetting", &saFocusMode},
+    {0, AC_WRITE, 0, nullptr, 17, AUTO, "AFAreaMode", &saAFAreaMode},
+    {0, AC_WRITE, 0, nullptr, 18, AUTO, "AFPointSelected", &saAFPointSelected},
+    {0, AC_WRITE, 0, nullptr, 21, AUTO, "MeteringMode", &saMeteringMode1_4},
+    {0, AC_WRITE, 0, nullptr, 22, AUTO, "ISOSetting", &saISOSettingInterpreter},
+    {0, AC_WRITE, 0, nullptr, 24, AUTO, "DynamicRangeOptimizerMode", &saDynamicRangeOptimizerMode},
+    {0, AC_WRITE, 0, nullptr, 25, AUTO, "DynamicRangeOptimizerLevel", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 26, AUTO, "CreativeStyle", &saCreativeStyle},
+    {0, AC_WRITE, 0, nullptr, 28, AUTO, "Sharpness", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 29, AUTO, "Contrast", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 30, AUTO, "Saturation", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 31, AUTO, "ZoneMatchingValue", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 34, AUTO, "Brightness", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 35, AUTO, "FlashMode", &saFlashMode},
+    {0, AC_WRITE, 0, nullptr, 40, AUTO, "PrioritySetupShutterRelease", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 41, AUTO, "AFIlluminator", &saAFIlluminator},
+    {0, AC_WRITE, 0, nullptr, 42, AUTO, "AFWithShutter", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 43, AUTO, "LongExposureNoiseReduction", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 44, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction3},
+    {0, AC_WRITE, 0, nullptr, 45, AUTO, "ImageStyle", &saImageStyleInterpreter},
+    {0, AC_WRITE, 0, nullptr, 60, AUTO, "ExposureProgram", &saExposureProgram},
+    {0, AC_WRITE, 0, nullptr, 61, AUTO, "ImageStabilization", &saOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 63, AUTO, "Rotation", &saRotation},
+    {0, AC_WRITE, 0, nullptr, 77, AUTO, "FocusMode", &saFocusMode},
+    {0, AC_WRITE, 0, nullptr, 83, AUTO, "FocusStatus", &saFocusStatusInterpreter},
+    {0, AC_WRITE, 0, nullptr, 84, AUTO, "SonyImageSize", &saSonyImageSize},
+    {0, AC_WRITE, 0, nullptr, 85, AUTO, "AspectRatio", &saAspectRatio},
+    {0, AC_WRITE, 0, nullptr, 86, AUTO, "Quality", &saQualityInterpreter2},
+    {0, AC_WRITE, 0, nullptr, 88, AUTO, "ExposureLevelIncrements", &saExposureLevelIncrements},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 const TagAttrib sonyCameraSettingsAttribs2[] = {
-    {0, AC_WRITE, 0, 0,  0, AUTO, "ExposureTime", &saExposureTimeInterpreter},
-    {0, AC_WRITE, 0, 0,  1, AUTO, "FNumber", &saFNumberInterpreter},
-    {0, AC_WRITE, 0, 0, 11, AUTO, "ColorTemperatureSetting", &saColorTemperatureSettingInterpreter},
-    {0, AC_WRITE, 0, 0, 15, AUTO, "FocusMode", &saFocusMode2},
-    {0, AC_WRITE, 0, 0, 16, AUTO, "AFAreaMode", &saAFAreaMode},
-    {0, AC_WRITE, 0, 0, 17, AUTO, "AFPointSelected", &saAFPointSelected2},
-    {0, AC_WRITE, 0, 0, 19, AUTO, "MeteringMode", &saMeteringMode1_4},
-    {0, AC_WRITE, 0, 0, 20, AUTO, "ISOSetting", &saISOSettingInterpreter},
-    {0, AC_WRITE, 0, 0, 22, AUTO, "DynamicRangeOptimizerMode", &saDynamicRangeOptimizerMode},
-    {0, AC_WRITE, 0, 0, 23, AUTO, "DynamicRangeOptimizerLevel", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 24, AUTO, "CreativeStyle", &saCreativeStyle2},
-    {0, AC_WRITE, 0, 0, 25, AUTO, "Sharpness", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 26, AUTO, "Contrast", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 27, AUTO, "Saturation", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 35, AUTO, "FlashMode", &saFlashMode},
-    {0, AC_WRITE, 0, 0, 38, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction4},
-    {0, AC_WRITE, 0, 0, 60, AUTO, "ExposureProgram", &saExposureProgram},
-    {0, AC_WRITE, 0, 0, 63, AUTO, "Rotation", &saRotation},
-    {0, AC_WRITE, 0, 0, 83, AUTO, "FocusStatus", &saFocusStatusInterpreter},
-    {0, AC_WRITE, 0, 0, 84, AUTO, "SonyImageSize", &saSonyImageSize},
-    {0, AC_WRITE, 0, 0, 85, AUTO, "AspectRatio", &saAspectRatio},
-    {0, AC_WRITE, 0, 0, 86, AUTO, "Quality", &saQualityInterpreter2},
-    {0, AC_WRITE, 0, 0, 88, AUTO, "ExposureLevelIncrements", &saExposureLevelIncrements},
-    {0, AC_WRITE, 0, 0, 126, AUTO, "DriveMode", &saDriveMode2},
-    {0, AC_WRITE, 0, 0, 131, AUTO, "ColorSpace", &saColorSpace5_6},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    {0, AC_WRITE, 0, nullptr,  0, AUTO, "ExposureTime", &saExposureTimeInterpreter},
+    {0, AC_WRITE, 0, nullptr,  1, AUTO, "FNumber", &saFNumberInterpreter},
+    {0, AC_WRITE, 0, nullptr, 11, AUTO, "ColorTemperatureSetting", &saColorTemperatureSettingInterpreter},
+    {0, AC_WRITE, 0, nullptr, 15, AUTO, "FocusMode", &saFocusMode2},
+    {0, AC_WRITE, 0, nullptr, 16, AUTO, "AFAreaMode", &saAFAreaMode},
+    {0, AC_WRITE, 0, nullptr, 17, AUTO, "AFPointSelected", &saAFPointSelected2},
+    {0, AC_WRITE, 0, nullptr, 19, AUTO, "MeteringMode", &saMeteringMode1_4},
+    {0, AC_WRITE, 0, nullptr, 20, AUTO, "ISOSetting", &saISOSettingInterpreter},
+    {0, AC_WRITE, 0, nullptr, 22, AUTO, "DynamicRangeOptimizerMode", &saDynamicRangeOptimizerMode},
+    {0, AC_WRITE, 0, nullptr, 23, AUTO, "DynamicRangeOptimizerLevel", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 24, AUTO, "CreativeStyle", &saCreativeStyle2},
+    {0, AC_WRITE, 0, nullptr, 25, AUTO, "Sharpness", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 26, AUTO, "Contrast", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 27, AUTO, "Saturation", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 35, AUTO, "FlashMode", &saFlashMode},
+    {0, AC_WRITE, 0, nullptr, 38, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction4},
+    {0, AC_WRITE, 0, nullptr, 60, AUTO, "ExposureProgram", &saExposureProgram},
+    {0, AC_WRITE, 0, nullptr, 63, AUTO, "Rotation", &saRotation},
+    {0, AC_WRITE, 0, nullptr, 83, AUTO, "FocusStatus", &saFocusStatusInterpreter},
+    {0, AC_WRITE, 0, nullptr, 84, AUTO, "SonyImageSize", &saSonyImageSize},
+    {0, AC_WRITE, 0, nullptr, 85, AUTO, "AspectRatio", &saAspectRatio},
+    {0, AC_WRITE, 0, nullptr, 86, AUTO, "Quality", &saQualityInterpreter2},
+    {0, AC_WRITE, 0, nullptr, 88, AUTO, "ExposureLevelIncrements", &saExposureLevelIncrements},
+    {0, AC_WRITE, 0, nullptr, 126, AUTO, "DriveMode", &saDriveMode2},
+    {0, AC_WRITE, 0, nullptr, 131, AUTO, "ColorSpace", &saColorSpace5_6},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 const TagAttrib sonyCameraSettingsAttribs3[] = {
-    {0, AC_WRITE, 0, 0,  0, AUTO, "ShutterSpeedSetting", &saExposureTimeInterpreter},
-    {0, AC_WRITE, 0, 0,  1, AUTO, "ApertureSetting", &saFNumberInterpreter},
-    {0, AC_WRITE, 0, 0,  2, AUTO, "ISOSetting", &saISOSettingInterpreter},
-    {0, AC_WRITE, 0, 0,  3, AUTO, "ExposureCompensationSet", &saExposureCompSetInterpreter},
-    {0, AC_WRITE, 0, 0,  3, AUTO, "DriveModeSetting", &saDriveMode3},
-    {0, AC_WRITE, 0, 0,  5, AUTO, "ExposureProgram", &saExposureProgram2},
-    {0, AC_WRITE, 0, 0,  6, AUTO, "FocusModeSetting", &saFocusModeSetting3},
-    {0, AC_WRITE, 0, 0,  7, AUTO, "MeteringMode", &saMeteringMode1_3},
-    {0, AC_WRITE, 0, 0,  9, AUTO, "SonyImageSize", &saSonyImageSize3},
-    {0, AC_WRITE, 0, 0, 10, AUTO, "AspectRatio", &saAspectRatio2},
-    {0, AC_WRITE, 0, 0, 11, AUTO, "Quality", &saQualityInterpreter3},
-    {0, AC_WRITE, 0, 0, 12, AUTO, "DynamicRangeOptimizerSetting", &saDynamicRangeOptimizerSetting},
-    {0, AC_WRITE, 0, 0, 14, AUTO, "ColorSpace", &saColorSpace1_2},
-    {0, AC_WRITE, 0, 0, 15, AUTO, "CreativeStyleSetting", &saCreativeStyleSetting},
-    {0, AC_WRITE, 0, 0, 16, AUTO, "Contrast", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 17, AUTO, "Saturation", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 18, AUTO, "Sharpness", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 22, AUTO, "WhiteBalance", &saWhiteBalanceSettingInterpreter},
-    {0, AC_WRITE, 0, 0, 23, AUTO, "ColorTemperatureSetting", &saColorTemperatureSettingInterpreter},
-    {0, AC_WRITE, 0, 0, 23, AUTO, "ColorCompensationFilterSet", &stdInterpreter},
-    {0, AC_WRITE, 0, 0, 32, AUTO, "FlashMode", &saFlashMode2},
-    {0, AC_WRITE, 0, 0, 33, AUTO, "FlashControl", &saFlashControl},
-    {0, AC_WRITE, 0, 0, 35, AUTO, "FlashExposureCompSet", &saExposureCompSetInterpreter},
-    {0, AC_WRITE, 0, 0, 36, AUTO, "AFAreaMode", &saAFAreaMode2},
-    {0, AC_WRITE, 0, 0, 37, AUTO, "LongExposureNoiseReduction", &saOnOffInterpreter2},
-    {0, AC_WRITE, 0, 0, 38, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction5},
-    {0, AC_WRITE, 0, 0, 39, AUTO, "SmileShutterMode", &saSmileShutterMode},
-    {0, AC_WRITE, 0, 0, 40, AUTO, "RedEyeReduction", &saOnOffInterpreter2},
-    {0, AC_WRITE, 0, 0, 45, AUTO, "HDRSetting", &saOnOffInterpreter3},
-    {0, AC_WRITE, 0, 0, 46, AUTO, "HDRLevel", &saHDRLevel},
-    {0, AC_WRITE, 0, 0, 47, AUTO, "ViewingMode", &saViewingMode},
-    {0, AC_WRITE, 0, 0, 48, AUTO, "FaceDetection", &saOnOffInterpreter2},
-    {0, AC_WRITE, 0, 0, 49, AUTO, "SmileShutter", &saOnOffInterpreter2},
-    {0, AC_WRITE, 0, 0, 50, AUTO, "SweepPanoramaSize", &saSweepPanoramaSize},
-    {0, AC_WRITE, 0, 0, 51, AUTO, "SweepPanoramaDirection", &saSweepPanoramaDirection},
-    {0, AC_WRITE, 0, 0, 52, AUTO, "DriveMode", &saDriveMode3},
-    {0, AC_WRITE, 0, 0, 53, AUTO, "MultiFrameNoiseReduction", &saOnOffInterpreter4},
-    {0, AC_WRITE, 0, 0, 54, AUTO, "LiveViewAFSetting", &saLiveViewAFSetting},
-    {0, AC_WRITE, 0, 0, 56, AUTO, "PanoramaSize3D", &saPanoramaSize3D},
-    {0, AC_WRITE, 0, 0, 131, AUTO, "AFButtonPressed", &saNoYesInterpreter},
-    {0, AC_WRITE, 0, 0, 132, AUTO, "LiveViewMetering", &saLiveViewMetering},
-    {0, AC_WRITE, 0, 0, 133, AUTO, "ViewingMode2", &saViewingMode},
-    {0, AC_WRITE, 0, 0, 134, AUTO, "AELock", &saOnOffInterpreter5},
-    {0, AC_WRITE, 0, 0, 135, AUTO, "FlashAction", &saFlashAction},
-    {0, AC_WRITE, 0, 0, 139, AUTO, "LiveViewFocusMode", &saLiveViewFocusMode},
-    {0, AC_WRITE, 0, 0, 153, AUTO, "LensMount", &saLensMount},
-    {0, AC_WRITE, 0, 0, 643, AUTO, "AFButtonPressed", &saNoYesInterpreter},
-    {0, AC_WRITE, 0, 0, 644, AUTO, "LiveViewMetering", &saLiveViewMetering},
-    {0, AC_WRITE, 0, 0, 645, AUTO, "ViewingMode2", &saViewingMode},
-    {0, AC_WRITE, 0, 0, 646, AUTO, "AELock", &saOnOffInterpreter5},
-    {0, AC_WRITE, 0, 0, 647, AUTO, "FlashAction", &saFlashAction},
-    {0, AC_WRITE, 0, 0, 651, AUTO, "LiveViewFocusMode", &saLiveViewFocusMode},
-    {0, AC_WRITE, 0, 0, 1015, SHORT, "LensType2", &saLensID2Interpreter},
-    { -1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
+    {0, AC_WRITE, 0, nullptr,  0, AUTO, "ShutterSpeedSetting", &saExposureTimeInterpreter},
+    {0, AC_WRITE, 0, nullptr,  1, AUTO, "ApertureSetting", &saFNumberInterpreter},
+    {0, AC_WRITE, 0, nullptr,  2, AUTO, "ISOSetting", &saISOSettingInterpreter},
+    {0, AC_WRITE, 0, nullptr,  3, AUTO, "ExposureCompensationSet", &saExposureCompSetInterpreter},
+    {0, AC_WRITE, 0, nullptr,  3, AUTO, "DriveModeSetting", &saDriveMode3},
+    {0, AC_WRITE, 0, nullptr,  5, AUTO, "ExposureProgram", &saExposureProgram2},
+    {0, AC_WRITE, 0, nullptr,  6, AUTO, "FocusModeSetting", &saFocusModeSetting3},
+    {0, AC_WRITE, 0, nullptr,  7, AUTO, "MeteringMode", &saMeteringMode1_3},
+    {0, AC_WRITE, 0, nullptr,  9, AUTO, "SonyImageSize", &saSonyImageSize3},
+    {0, AC_WRITE, 0, nullptr, 10, AUTO, "AspectRatio", &saAspectRatio2},
+    {0, AC_WRITE, 0, nullptr, 11, AUTO, "Quality", &saQualityInterpreter3},
+    {0, AC_WRITE, 0, nullptr, 12, AUTO, "DynamicRangeOptimizerSetting", &saDynamicRangeOptimizerSetting},
+    {0, AC_WRITE, 0, nullptr, 14, AUTO, "ColorSpace", &saColorSpace1_2},
+    {0, AC_WRITE, 0, nullptr, 15, AUTO, "CreativeStyleSetting", &saCreativeStyleSetting},
+    {0, AC_WRITE, 0, nullptr, 16, AUTO, "Contrast", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 17, AUTO, "Saturation", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 18, AUTO, "Sharpness", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 22, AUTO, "WhiteBalance", &saWhiteBalanceSettingInterpreter},
+    {0, AC_WRITE, 0, nullptr, 23, AUTO, "ColorTemperatureSetting", &saColorTemperatureSettingInterpreter},
+    {0, AC_WRITE, 0, nullptr, 23, AUTO, "ColorCompensationFilterSet", &stdInterpreter},
+    {0, AC_WRITE, 0, nullptr, 32, AUTO, "FlashMode", &saFlashMode2},
+    {0, AC_WRITE, 0, nullptr, 33, AUTO, "FlashControl", &saFlashControl},
+    {0, AC_WRITE, 0, nullptr, 35, AUTO, "FlashExposureCompSet", &saExposureCompSetInterpreter},
+    {0, AC_WRITE, 0, nullptr, 36, AUTO, "AFAreaMode", &saAFAreaMode2},
+    {0, AC_WRITE, 0, nullptr, 37, AUTO, "LongExposureNoiseReduction", &saOnOffInterpreter2},
+    {0, AC_WRITE, 0, nullptr, 38, AUTO, "HighISONoiseReduction", &saHighISONoiseReduction5},
+    {0, AC_WRITE, 0, nullptr, 39, AUTO, "SmileShutterMode", &saSmileShutterMode},
+    {0, AC_WRITE, 0, nullptr, 40, AUTO, "RedEyeReduction", &saOnOffInterpreter2},
+    {0, AC_WRITE, 0, nullptr, 45, AUTO, "HDRSetting", &saOnOffInterpreter3},
+    {0, AC_WRITE, 0, nullptr, 46, AUTO, "HDRLevel", &saHDRLevel},
+    {0, AC_WRITE, 0, nullptr, 47, AUTO, "ViewingMode", &saViewingMode},
+    {0, AC_WRITE, 0, nullptr, 48, AUTO, "FaceDetection", &saOnOffInterpreter2},
+    {0, AC_WRITE, 0, nullptr, 49, AUTO, "SmileShutter", &saOnOffInterpreter2},
+    {0, AC_WRITE, 0, nullptr, 50, AUTO, "SweepPanoramaSize", &saSweepPanoramaSize},
+    {0, AC_WRITE, 0, nullptr, 51, AUTO, "SweepPanoramaDirection", &saSweepPanoramaDirection},
+    {0, AC_WRITE, 0, nullptr, 52, AUTO, "DriveMode", &saDriveMode3},
+    {0, AC_WRITE, 0, nullptr, 53, AUTO, "MultiFrameNoiseReduction", &saOnOffInterpreter4},
+    {0, AC_WRITE, 0, nullptr, 54, AUTO, "LiveViewAFSetting", &saLiveViewAFSetting},
+    {0, AC_WRITE, 0, nullptr, 56, AUTO, "PanoramaSize3D", &saPanoramaSize3D},
+    {0, AC_WRITE, 0, nullptr, 131, AUTO, "AFButtonPressed", &saNoYesInterpreter},
+    {0, AC_WRITE, 0, nullptr, 132, AUTO, "LiveViewMetering", &saLiveViewMetering},
+    {0, AC_WRITE, 0, nullptr, 133, AUTO, "ViewingMode2", &saViewingMode},
+    {0, AC_WRITE, 0, nullptr, 134, AUTO, "AELock", &saOnOffInterpreter5},
+    {0, AC_WRITE, 0, nullptr, 135, AUTO, "FlashAction", &saFlashAction},
+    {0, AC_WRITE, 0, nullptr, 139, AUTO, "LiveViewFocusMode", &saLiveViewFocusMode},
+    {0, AC_WRITE, 0, nullptr, 153, AUTO, "LensMount", &saLensMount},
+    {0, AC_WRITE, 0, nullptr, 643, AUTO, "AFButtonPressed", &saNoYesInterpreter},
+    {0, AC_WRITE, 0, nullptr, 644, AUTO, "LiveViewMetering", &saLiveViewMetering},
+    {0, AC_WRITE, 0, nullptr, 645, AUTO, "ViewingMode2", &saViewingMode},
+    {0, AC_WRITE, 0, nullptr, 646, AUTO, "AELock", &saOnOffInterpreter5},
+    {0, AC_WRITE, 0, nullptr, 647, AUTO, "FlashAction", &saFlashAction},
+    {0, AC_WRITE, 0, nullptr, 651, AUTO, "LiveViewFocusMode", &saLiveViewFocusMode},
+    {0, AC_WRITE, 0, nullptr, 1015, SHORT, "LensType2", &saLensID2Interpreter},
+    { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 
 /*const TagAttrib sonyDNGMakerNote[]={

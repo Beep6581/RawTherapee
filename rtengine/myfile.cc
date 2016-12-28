@@ -88,7 +88,7 @@ IMFILE* fopen (const char* fname)
 #endif
 
     if ( fd < 0 ) {
-        return 0;
+        return nullptr;
     }
 
     struct stat stat_buffer;
@@ -96,15 +96,15 @@ IMFILE* fopen (const char* fname)
     if ( fstat(fd, &stat_buffer) < 0 ) {
         printf("no stat\n");
         close (fd);
-        return 0;
+        return nullptr;
     }
 
-    void* data = mmap(0, stat_buffer.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    void* data = mmap(nullptr, stat_buffer.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 
     if ( data == MAP_FAILED ) {
         printf("no mmap\n");
         close(fd);
-        return 0;
+        return nullptr;
     }
 
     IMFILE* mf = new IMFILE;
@@ -131,9 +131,9 @@ IMFILE* fopen (const char* fname)
 
             // initialize bzip stream structure
             bz_stream stream;
-            stream.bzalloc = 0;
-            stream.bzfree = 0;
-            stream.opaque = 0;
+            stream.bzalloc = nullptr;
+            stream.bzfree = nullptr;
+            stream.opaque = nullptr;
             ret = BZ2_bzDecompressInit(&stream, 0, 0);
 
             if (ret != BZ_OK) {
@@ -142,7 +142,7 @@ IMFILE* fopen (const char* fname)
                 // allocate initial buffer for decompressed data
                 unsigned int buffer_out_count = 0; // bytes of decompressed data
                 unsigned int buffer_size = 10 * 1024 * 1024; // 10 MB, extended dynamically if needed
-                char* buffer = 0;
+                char* buffer = nullptr;
 
                 stream.next_in = mf->data; // input data address
                 stream.avail_in = mf->size;
@@ -361,7 +361,7 @@ int fscanf (IMFILE* f, const char* s ...)
     // of file data and vsscanf() won't tell us how many characters that
     // were parsed. However, only dcraw.cc code use it and only for "%f" and
     // "%d", so we make a dummy fscanf here just to support dcraw case.
-    char buf[50], *endptr;
+    char buf[50], *endptr = nullptr;
     int copy_sz = f->size - f->pos;
 
     if (copy_sz > sizeof(buf)) {
@@ -377,6 +377,7 @@ int fscanf (IMFILE* f, const char* s ...)
         int i = strtol(buf, &endptr, 10);
 
         if (endptr == buf) {
+            va_end (ap);
             return 0;
         }
 
@@ -386,6 +387,7 @@ int fscanf (IMFILE* f, const char* s ...)
         float f = strtof(buf, &endptr);
 
         if (endptr == buf) {
+            va_end (ap);
             return 0;
         }
 
@@ -404,7 +406,7 @@ char* fgets (char* s, int n, IMFILE* f)
 
     if (f->pos >= f->size) {
         f->eof = true;
-        return NULL;
+        return nullptr;
     }
 
     int i = 0;

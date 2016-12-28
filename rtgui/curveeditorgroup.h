@@ -85,7 +85,7 @@ public:
         return displayedCurve;
     }
     //void on_realize ();
-    CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget = NULL, bool periodic = true);
+    CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget = nullptr, bool expandRelatedWidget = true, bool periodic = true);
 
 protected:
     //void curveTypeToggled ();
@@ -154,7 +154,7 @@ protected:
      *                 This variable will be updated with actions in the
      *                 dialogs.
      */
-    CurveEditorSubGroup(Glib::ustring& curveDir);
+    explicit CurveEditorSubGroup(Glib::ustring& curveDir);
 
     Glib::ustring outputFile ();
     Glib::ustring inputFile ();

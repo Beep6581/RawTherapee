@@ -33,7 +33,7 @@
 #include "edit.h"
 
 class ImageAreaPanel;
-class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider
+class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider, public LockablePickerToolListener
 {
 
     friend class ZoomPanel;
@@ -41,9 +41,8 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
 protected:
 
     Glib::ustring infotext;
-    Glib::RefPtr<Pango::Layout> ilayout;
     Glib::RefPtr<Pango::Layout> deglayout;
-    Glib::RefPtr<Gdk::Pixbuf>   ipixbuf;
+    BackBuffer iBackBuffer;
     bool showClippedH, showClippedS;
 
     ImageAreaPanel* parent;
@@ -70,10 +69,11 @@ public:
     PreviewModePanel* previewModePanel;
     ImageArea* iLinkedImageArea; // used to set a reference to the Before image area, which is set when before/after view is enabled
 
-    ImageArea (ImageAreaPanel* p);
+    explicit ImageArea (ImageAreaPanel* p);
     ~ImageArea ();
 
-    void setImProcCoordinator (rtengine::StagedImageProcessor* ipc_);
+    rtengine::StagedImageProcessor* getImProcCoordinator() const;
+    void setImProcCoordinator(rtengine::StagedImageProcessor* ipc_);
     void setPreviewModePanel(PreviewModePanel* previewModePanel_)
     {
         previewModePanel = previewModePanel_;
@@ -122,6 +122,7 @@ public:
     void cropWindowSelected (CropWindow* cw);
     void cropWindowClosed   (CropWindow* cw);
     ToolMode getToolMode    ();
+    bool showColorPickers   ();
     void setToolHand        ();
     void straightenReady    (double rotDeg);
     void spotWBSelected     (int x, int y);
@@ -142,6 +143,9 @@ public:
     void cropWindowSizeChanged (CropWindow* cw);
     void cropZoomChanged       (CropWindow* cw);
     void initialImageArrived   (CropWindow* cw) ;
+
+    // LockablePickerToolListener interface
+    void switchPickerVisibility (bool isVisible);
 
     CropWindow* getMainCropWindow ()
     {

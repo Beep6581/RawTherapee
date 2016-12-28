@@ -71,7 +71,7 @@ ThresholdAdjuster::ThresholdAdjuster (Glib::ustring label, double minValue, doub
 void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
 {
 
-    adjusterListener = NULL;
+    adjusterListener = nullptr;
     afterReset = false;
     blocked = false;
 
@@ -90,7 +90,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
         editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &ThresholdAdjuster::editedToggled) );
         hbox->pack_start (*editedCheckBox);
     } else {
-        editedCheckBox = NULL;
+        editedCheckBox = nullptr;
     }
 
     hbox->pack_start (*this->label);
@@ -121,7 +121,7 @@ ThresholdAdjuster::~ThresholdAdjuster ()
 
     selectorChange.disconnect();
     delayConnection.block(true);
-    adjusterListener = NULL;
+    adjusterListener = nullptr;
 }
 
 void ThresholdAdjuster::setDefault (double bottom, double top)
@@ -163,7 +163,7 @@ void ThresholdAdjuster::resetPressed (GdkEventButton* event)
 
     afterReset = true;
 
-    if ((event != NULL) && (event->state & GDK_CONTROL_MASK) && (event->button == 1))
+    if ((event != nullptr) && (event->state & GDK_CONTROL_MASK) && (event->button == 1))
         // CTRL pressed : resetting to current default value
     {
         tSelector.reset();
@@ -260,7 +260,7 @@ void ThresholdAdjuster::getValue (Glib::ustring& bottomLeft, Glib::ustring& topL
 bool ThresholdAdjuster::notifyListener ()
 {
 
-    if (adjusterListener != NULL && !blocked) {
+    if (adjusterListener != nullptr && !blocked) {
         GThreadLock lock;
         sendToListener();
     }

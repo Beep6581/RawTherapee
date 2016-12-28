@@ -54,7 +54,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
         if (errorCode) {
             delete job;
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -165,7 +165,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
-    Imagefloat *calclum = NULL ;
+    Imagefloat *calclum = nullptr ;
     params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
     float autoNR = (float) settings->nrauto;//
     float autoNRmax = (float) settings->nrautomax;//
@@ -273,7 +273,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                         float maxr = 0.f;
                         float maxb = 0.f;
                         float pondcorrec = 1.0f;
-                        float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
+                        float chaut, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc;
                         int Nb;
                         chaut = 0.f;
                         redaut = 0.f;
@@ -282,7 +282,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                         maxblueaut = 0.f;
                         chromina = 0.f;
                         sigma = 0.f;
-                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
                         float multip = 1.f;
                         float adjustr = 1.f;
 
@@ -490,8 +490,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                         imgsrc->convertColorSpace(provicalc, params.icm, currWB);//for denoise luminance curve
                         int nb = 0;
-                        float chaut = 0.f, redaut = 0.f, blueaut = 0.f, maxredaut = 0.f, maxblueaut = 0.f, minredaut = 0.f, minblueaut = 0.f, nresi = 0.f, highresi = 0.f, chromina = 0.f, sigma = 0.f, lumema = 0.f, sigma_L = 0.f, redyel = 0.f, skinc = 0.f, nsknc = 0.f;
-                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+                        float chaut = 0.f, redaut = 0.f, blueaut = 0.f, maxredaut = 0.f, maxblueaut = 0.f, minredaut = 0.f, minblueaut = 0.f, chromina = 0.f, sigma = 0.f, lumema = 0.f, sigma_L = 0.f, redyel = 0.f, skinc = 0.f, nsknc = 0.f;
+                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
                         Nb[hcr * 3 + wcr] = nb;
                         ch_M[hcr * 3 + wcr] = chaut;
                         max_r[hcr * 3 + wcr] = maxredaut;
@@ -754,7 +754,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     // update blurmap
-    SHMap* shmap = NULL;
+    SHMap* shmap = nullptr;
 
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh, true);
@@ -862,7 +862,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     DCPProfile::ApplyState as;
     DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
 
-    ipf.rgbProc (baseImg, labView, NULL, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as);
+    LUTu histToneCurve;
+
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
     if (settings->verbose) {
         printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
@@ -885,13 +887,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // Freeing baseImg because not used anymore
     delete baseImg;
-    baseImg = NULL;
+    baseImg = nullptr;
 
     if (shmap) {
         delete shmap;
     }
 
-    shmap = NULL;
+    shmap = nullptr;
 
     if (pl) {
         pl->setProgress (0.55);
@@ -937,7 +939,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                    params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
-    ipf.chromiLuminanceCurve (NULL, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
+    ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
     if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
         ipf.EPDToneMap(labView, 5, 1);
@@ -1000,13 +1002,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         }
     }
 
-    int kall = 2;
     bool wavcontlutili = false;
 
     CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
-    if((params.wavelet.enabled)) {
-        ipf.ip_wavelet(labView, labView, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
+    if(params.wavelet.enabled) {
+        ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
     }
 
     wavCLVCurve.Reset();
@@ -1057,32 +1058,26 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float CAMMean = NAN;
 
         if (params.sharpening.enabled) {
-            float d;
-            double dd;
-
-            int sk = 1;
-
             if(settings->ciecamfloat) {
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+                float d;
+                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
+                double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
             }
         } else {
-            float d;
-
-            double dd;
-            int sk = 1;
-
             if(settings->ciecamfloat) {
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, sk, 1);
+                float d;
+                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
+                double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
             }
         }
     }
 
     delete cieView;
-    cieView = NULL;
+    cieView = nullptr;
 
 
 
@@ -1158,215 +1153,31 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         }
     }
 
-    Image16* readyImg = NULL;
-    cmsHPROFILE jprof = NULL;
+    Image16* readyImg = nullptr;
+    cmsHPROFILE jprof = nullptr;
     bool customGamma = false;
     bool useLCMS = false;
+    bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
 
     if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
-        cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
 
-        cmsToneCurve* GammaTRC[3] = { NULL, NULL, NULL };
-        cmsFloat64Number Parameters[7];
-        double ga0, ga1, ga2, ga3, ga4, ga5, ga6;
+        GammaValues ga;
         //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.outputIntent, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0, ga1, ga2, ga3, ga4, ga5, ga6, params.blackwhite.enabled );
+        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly, &ga);
         customGamma = true;
 
         //or selected Free gamma
         useLCMS = false;
-        bool pro = false;
-        Glib::ustring chpro, outProfile;
-        bool present_space[10] = {false, false, false, false, false, false, false, false, false, false};
-        std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
 
-        //test if files are in system
-        for (int j = 0; j < 10; j++) {
-            // one can modify "option" [Color Management] to adapt the profile's name if they are different for windows, MacOS, Linux ??
-            // some of them are actually provided by RT, thanks to Jacques Desmis
-            if     (j == 0) {
-                chpro = options.rtSettings.prophoto;
-            } else if(j == 1) {
-                chpro = options.rtSettings.adobe;
-            } else if(j == 2) {
-                chpro = options.rtSettings.widegamut;
-            } else if(j == 3) {
-                chpro = options.rtSettings.beta;
-            } else if(j == 4) {
-                chpro = options.rtSettings.best;
-            } else if(j == 5) {
-                chpro = options.rtSettings.bruce;
-            } else if(j == 6) {
-                chpro = options.rtSettings.srgb;
-            } else if(j == 7) {
-                chpro = options.rtSettings.srgb10;    //gamma 1.0
-            } else if(j == 8) {
-                chpro = options.rtSettings.prophoto10;    //gamma 1.0
-            } else if(j == 9) {
-                chpro = options.rtSettings.rec2020;
-            }
-
-            for (unsigned int i = 0; i < opnames.size(); i++) {
-                if(chpro.compare(opnames[i]) == 0) {
-                    present_space[j] = true;
-                }
-            }
-
-            if (!present_space[j] && settings->verbose) {
-                printf("Missing file: %s\n", chpro.c_str());
-            }
-        }
-
-        if (params.icm.freegamma && params.icm.gampos < 1.35) {
-            pro = true;    //select profil with gammaTRC modified :
-        } else if (params.icm.gamma == "linear_g1.0" || (params.icm.gamma == "High_g1.3_s3.35")) {
-            pro = true;    //pro=0  RT_sRGB || Prophoto
-        }
-
-        // Check that output profiles exist, otherwise use LCMS2
-        // Use the icc/icm profiles associated to possible working profiles, set in "options"
-        if      (params.icm.working == "ProPhoto"  && present_space[0] && !pro) {
-            outProfile = options.rtSettings.prophoto;
-        } else if (params.icm.working == "Adobe RGB" && present_space[1]        ) {
-            outProfile = options.rtSettings.adobe;
-        } else if (params.icm.working == "WideGamut" && present_space[2]        ) {
-            outProfile = options.rtSettings.widegamut;
-        } else if (params.icm.working == "Beta RGB"  && present_space[3]        ) {
-            outProfile = options.rtSettings.beta;
-        } else if (params.icm.working == "BestRGB"   && present_space[4]        ) {
-            outProfile = options.rtSettings.best;
-        } else if (params.icm.working == "BruceRGB"  && present_space[5]        ) {
-            outProfile = options.rtSettings.bruce;
-        } else if (params.icm.working == "sRGB"      && present_space[6] && !pro) {
-            outProfile = options.rtSettings.srgb;
-        } else if (params.icm.working == "sRGB"      && present_space[7] &&  pro) {
-            outProfile = options.rtSettings.srgb10;
-        } else if (params.icm.working == "ProPhoto"  && present_space[8] &&  pro) {
-            outProfile = options.rtSettings.prophoto10;
-        } else if (params.icm.working == "Rec2020"  && present_space[9]) {
-            outProfile = options.rtSettings.rec2020;
-        } else {
-            // Should not occurs
-            if (settings->verbose) {
-                printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", params.icm.working.c_str() );
-            }
-
+        if ((jprof = iccStore->createCustomGammaOutputProfile (params.icm, ga)) == nullptr) {
             useLCMS = true;
         }
 
-        //begin adaptation rTRC gTRC bTRC
-        //"jprof" profile has the same characteristics than RGB values, but TRC are adapted... for applying profile
-        if (!useLCMS) {
-            if (settings->verbose) {
-                printf("Output Gamma - profile: \"%s\"\n", outProfile.c_str()  );    //c_str()
-            }
-
-            jprof = iccStore->getProfile(outProfile); //get output profile
-
-            if (jprof == NULL) {
-                useLCMS = true;
-
-                if (settings->verbose) {
-                    printf("\"%s\" ICC output profile not found!\n", outProfile.c_str());
-                }
-            } else {
-                Parameters[0] = ga0;
-                Parameters[1] = ga1;
-                Parameters[2] = ga2;
-                Parameters[3] = ga3;
-                Parameters[4] = ga4;
-                Parameters[5] = ga5;
-                Parameters[6] = ga6;
-                // 7 parameters for smoother curves
-                //change desc Tag , to "free gamma", or "BT709", etc.
-                cmsContext ContextID = cmsGetProfileContextID(jprof);//modification TAG
-                DescriptionMLU  = cmsMLUalloc(ContextID, 1);
-                CopyrightMLU    = cmsMLUalloc(ContextID, 1);//for ICC
-                DmndMLU = cmsMLUalloc(ContextID, 1); //for ICC
-                DmddMLU = cmsMLUalloc(ContextID, 1); // for ICC
-
-
-                // instruction with //ICC are used for generate icc profile
-                if (DescriptionMLU == NULL) {
-                    printf("Description error\n");
-                }
-
-                cmsMLUsetWide(CopyrightMLU, "en", "US", L"General Public License - AdobeRGB compatible")    ;//adapt to profil
-                cmsMLUsetWide(DmndMLU,      "en", "US", L"RawTherapee") ;
-                cmsMLUsetWide(DmddMLU,      "en", "US", L"RTMedium")    ;   //adapt to profil
-
-                //display Tag desc with : selection of gamma and Primaries
-                if (!params.icm.freegamma) {
-                    std::wstring gammaStr;
-
-                    if(params.icm.gamma == "High_g1.3_s3.35") {
-                        gammaStr = std::wstring(L"GammaTRC: High g=1.3 s=3.35");
-                    } else if (params.icm.gamma == "Low_g2.6_s6.9") {
-                        gammaStr = std::wstring(L"GammaTRC: Low g=2.6 s=6.9");
-                    } else if (params.icm.gamma == "sRGB_g2.4_s12.92") {
-                        gammaStr = std::wstring(L"GammaTRC: sRGB g=2.4 s=12.92");
-                    } else if (params.icm.gamma == "BT709_g2.2_s4.5") {
-                        gammaStr = std::wstring(L"GammaTRC: BT709 g=2.2 s=4.5");
-                    } else if (params.icm.gamma == "linear_g1.0") {
-                        gammaStr = std::wstring(L"GammaTRC: Linear g=1.0");
-                    } else if (params.icm.gamma == "standard_g2.2") {
-                        gammaStr = std::wstring(L"GammaTRC: g=2.2");
-                    } else if (params.icm.gamma == "standard_g1.8") {
-                        gammaStr = std::wstring(L"GammaTRC: g=1.8");
-                    }
-
-                    cmsMLUsetWide(DescriptionMLU,  "en", "US", gammaStr.c_str());
-
-                    //for elaboration ICC profiles
-                    //  else if (params.icm.gamma== "sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Medium gamma sRGB(AdobeRGB compatible)");
-                    //  else if (params.icm.gamma== "BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma BT709(IEC61966 equivalent)");
-                    //  else if (params.icm.gamma== "sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma sRGB(IEC61966 equivalent)");
-                    //  else if (params.icm.gamma== "linear_g1.0" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma Linear1.0(IEC61966 equivalent)");
-                    //else if (params.icm.gamma==   "BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma BT709(Prophoto compatible)");
-                    //  else if (params.icm.gamma== "sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma sRGB(Prophoto compatible)");
-                    //  else if (params.icm.gamma== "linear_g1.0" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma Linear1.0(Prophoto compatible)");
-                } else {
-                    // create description with gamma + slope + primaries
-                    std::wostringstream gammaWs;
-                    gammaWs.precision(2);
-                    gammaWs << "Manual GammaTRC: g=" << (float)params.icm.gampos << " s=" << (float)params.icm.slpos;
-                    cmsMLUsetWide(DescriptionMLU,  "en", "US", gammaWs.str().c_str());
-                }
-
-                cmsWriteTag(jprof, cmsSigProfileDescriptionTag,  DescriptionMLU);//desc changed
-                //  cmsWriteTag(jprof, cmsSigCopyrightTag,           CopyrightMLU);
-                //  cmsWriteTag(jprof, cmsSigDeviceMfgDescTag, DmndMLU);
-                //  cmsWriteTag(jprof, cmsSigDeviceModelDescTag, DmddMLU);
-
-                // Calculate output profile's rTRC bTRC gTRC
-                GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters);
-                cmsWriteTag(jprof, cmsSigGreenTRCTag, (void*)GammaTRC[1] );
-                cmsWriteTag(jprof, cmsSigRedTRCTag,   (void*)GammaTRC[0] );
-                cmsWriteTag(jprof, cmsSigBlueTRCTag,  (void*)GammaTRC[2] );
-                //for generation ICC profiles : here Prophoto ==> Large
-                //  if(params.icm.gamma==   "BT709_g2.2_s4.5") cmsSaveProfileToFile(jprof, "RT_sRGB_gBT709.icm");
-                //  else if (params.icm.gamma== "sRGB_g2.4_s12.92") cmsSaveProfileToFile(jprof, "RT_Medium_gsRGB.icc");
-                //  else if (params.icm.gamma== "linear_g1.0") cmsSaveProfileToFile(jprof, "RT_Large_g10.icc");
-
-
-            }
-        }
-
-        if (GammaTRC[0]) {
-            cmsFreeToneCurve(GammaTRC[0]);
-        }
     } else {
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
 
-        //  readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, params.blackwhite.enabled);
-        bool bwonly = params.blackwhite.enabled &&  !params.colorToning.enabled ;
-
-        if(autili || butili ) {
-            bwonly = false;
-        }
-
-        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output, params.icm.outputIntent, bwonly);
+        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly);
 
         if (settings->verbose) {
             printf("Output profile_: \"%s\"\n", params.icm.output.c_str());
@@ -1374,21 +1185,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     delete labView;
-    labView = NULL;
+    labView = nullptr;
 
 
 
-    if(!autili && !butili ) {
-        if(params.blackwhite.enabled &&  !params.colorToning.enabled ) {//force BW r=g=b
-            if (settings->verbose) {
-                printf("Force BW\n");
-            }
+    if(bwonly) { //force BW r=g=b
+        if (settings->verbose) {
+            printf("Force BW\n");
+        }
 
-            for (int ccw = 0; ccw < cw; ccw++) {
-                for (int cch = 0; cch < ch; cch++) {
-                    readyImg->r(cch, ccw) = readyImg->g(cch, ccw);
-                    readyImg->b(cch, ccw) = readyImg->g(cch, ccw);
-                }
+        for (int ccw = 0; ccw < cw; ccw++) {
+            for (int cch = 0; cch < ch; cch++) {
+                readyImg->r(cch, ccw) = readyImg->g(cch, ccw);
+                readyImg->b(cch, ccw) = readyImg->g(cch, ccw);
             }
         }
     }
@@ -1414,42 +1223,33 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // Setting the output curve to readyImg
     if (customGamma) {
         if (!useLCMS) {
-            // use corrected sRGB profile in order to apply a good TRC if present, otherwise use LCMS2 profile generated by lab2rgb16b
+            // use corrected sRGB profile in order to apply a good TRC if present, otherwise use LCMS2 profile generated by lab2rgb16 w/ gamma
             ProfileContent pc(jprof);
             readyImg->setOutputProfile (pc.data, pc.length);
         }
     } else {
-        // use RT_sRGB.icm profile if present, otherwise use LCMS2 profile generate by lab2rgb16b
-        Glib::ustring outputProfile;
+        // use the selected output profile if present, otherwise use LCMS2 profile generate by lab2rgb16 w/ gamma
 
         if (params.icm.output != "" && params.icm.output != ColorManagementParams::NoICMString) {
-            outputProfile = params.icm.output;
-
-            /*  if we'd wanted the RT_sRGB profile we would have selected it
-            else {
-            // use RT_sRGB.icm profile if present, otherwise use LCMS2 profile generate by lab2rgb16b
-            if (settings->verbose) printf("No output profiles set ; looking for the default sRGB profile (\"%s\")...\n", options.rtSettings.srgb.c_str());
-            outputProfile = options.rtSettings.srgb;
-            }*/
 
             // if iccStore->getProfile send back an object, then iccStore->getContent will do too
-            cmsHPROFILE jprof = iccStore->getProfile(outputProfile); //get outProfile
+            cmsHPROFILE jprof = iccStore->getProfile(params.icm.output); //get outProfile
 
-            if (jprof == NULL) {
+            if (jprof == nullptr) {
                 if (settings->verbose) {
-                    printf("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", outputProfile.c_str());
+                    printf("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.output.c_str());
                 }
             } else {
                 if (settings->verbose) {
-                    printf("Using \"%s\" output profile\n", outputProfile.c_str());
+                    printf("Using \"%s\" output profile\n", params.icm.output.c_str());
                 }
 
-                ProfileContent pc = iccStore->getContent (outputProfile);
+                ProfileContent pc = iccStore->getContent (params.icm.output);
                 readyImg->setOutputProfile (pc.data, pc.length);
             }
         } else {
             // No ICM
-            readyImg->setOutputProfile (NULL, 0);
+            readyImg->setOutputProfile (nullptr, 0);
         }
     }
 
@@ -1492,13 +1292,13 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
 
         if (errorCode) {
             bpl->error (M("MAIN_MSG_CANNOTLOAD"));
-            currentJob = NULL;
+            currentJob = nullptr;
         } else {
             try {
                 currentJob = bpl->imageReady (img);
             } catch (Glib::Exception& ex) {
                 bpl->error (ex.what());
-                currentJob = NULL;
+                currentJob = nullptr;
             }
         }
     }

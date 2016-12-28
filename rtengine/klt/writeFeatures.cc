@@ -56,7 +56,7 @@ void KLTWriteFeatureListToPPM(
   redimg = (uchar *)  malloc(nbytes);
   grnimg = (uchar *)  malloc(nbytes);
   bluimg = (uchar *)  malloc(nbytes);
-  if (redimg == NULL || grnimg == NULL || bluimg == NULL) {
+  if (redimg == nullptr || grnimg == nullptr || bluimg == nullptr) {
     KLTError("(KLTWriteFeaturesToPPM)  Out of memory\n");
     exit(1);
   }
@@ -104,9 +104,9 @@ static FILE* _printSetupTxt(
   int i;
 
   /* Either open file or use stderr */
-  if (fname == NULL)  fp = stderr;
+  if (fname == nullptr)  fp = stderr;
   else  fp = fopen(fname, "wb");
-  if (fp == NULL) {
+  if (fp == nullptr) {
     KLTError("(KLTWriteFeatures) "
              "Can't open file '%s' for writing\n", fname);
     exit(1);
@@ -134,12 +134,12 @@ static FILE* _printSetupBin(
   const char *fname) 	/* Input: filename */
 {
   FILE *fp;
-  if (fname == NULL) {
+  if (fname == nullptr) {
     KLTError("(KLTWriteFeatures) Can't write binary data to stderr");
     exit(1);
   }
   fp = fopen(fname, "wb");
-  if (fp == NULL) {
+  if (fp == nullptr) {
     KLTError("(KLTWriteFeatures) "
              "Can't open file '%s' for writing", fname);
     exit(1);
@@ -351,13 +351,13 @@ void KLTWriteFeatureList(
   char type;
   int i;
 
-  if (KLT_verbose >= 1 && fname != NULL)  {
+  if (KLT_verbose >= 1 && fname != nullptr)  {
     fprintf(stderr,  
             "(KLT) Writing feature list to %s file: '%s'\n", 
-            (fmt == NULL ? "binary" : "text"), fname);
+            (fmt == nullptr ? "binary" : "text"), fname);
   }
 
-  if (fmt != NULL) {  /* text file or stderr */
+  if (fmt != nullptr) {  /* text file or stderr */
     fp = _printSetupTxt(fname, fmt, format, &type);
     _printHeader(fp, format, FEATURE_LIST, 0, fl->nFeatures);
 	
@@ -389,13 +389,13 @@ void KLTWriteFeatureHistory(
   char type;
   int i;
 
-  if (KLT_verbose >= 1 && fname != NULL)  {
+  if (KLT_verbose >= 1 && fname != nullptr)  {
     fprintf(stderr,  
             "(KLT) Writing feature history to %s file: '%s'\n", 
-            (fmt == NULL ? "binary" : "text"), fname);
+            (fmt == nullptr ? "binary" : "text"), fname);
   }
 
-  if (fmt != NULL) {  /* text file or stderr */
+  if (fmt != nullptr) {  /* text file or stderr */
     fp = _printSetupTxt(fname, fmt, format, &type);
     _printHeader(fp, format, FEATURE_HISTORY, fh->nFrames, 0);
 	
@@ -428,13 +428,13 @@ void KLTWriteFeatureTable(
   char type;
   int i, j;
 
-  if (KLT_verbose >= 1 && fname != NULL)  {
+  if (KLT_verbose >= 1 && fname != nullptr)  {
     fprintf(stderr,  
             "(KLT) Writing feature table to %s file: '%s'\n", 
-            (fmt == NULL ? "binary" : "text"), fname);
+            (fmt == nullptr ? "binary" : "text"), fname);
   }
 
-  if (fmt != NULL) {  /* text file or stderr */
+  if (fmt != nullptr) {  /* text file or stderr */
     fp = _printSetupTxt(fname, fmt, format, &type);
     _printHeader(fp, format, FEATURE_TABLE, ft->nFrames, ft->nFeatures);
 
@@ -475,18 +475,18 @@ static structureType _readHeader(
   fread(line, sizeof(char), BINHEADERLENGTH, fp);
   line[BINHEADERLENGTH] = 0;
   if (strcmp(line, binheader_fl) == 0)  {
-    assert(nFeatures != NULL);
+    assert(nFeatures != nullptr);
     fread(nFeatures, sizeof(int), 1, fp);
     *binary = TRUE;
     return FEATURE_LIST;
   } else if (strcmp(line, binheader_fh) == 0)  {
-    assert(nFrames != NULL);
+    assert(nFrames != nullptr);
     fread(nFrames, sizeof(int), 1, fp);
     *binary = TRUE;
     return FEATURE_HISTORY;
   } else if (strcmp(line, binheader_ft) == 0)  {
-    assert(nFrames != NULL);
-    assert(nFeatures != NULL);
+    assert(nFrames != nullptr);
+    assert(nFeatures != nullptr);
     fread(nFrames, sizeof(int), 1, fp);
     fread(nFeatures, sizeof(int), 1, fp);
     *binary = TRUE;
@@ -525,9 +525,9 @@ static structureType _readHeader(
   /* and the parameters passed, exit now before we attempt */
   /* to write to non-allocated memory.  Higher routine should */
   /* detect and handle this error. */
-  if ((id == FEATURE_LIST && nFeatures == NULL) ||
-      (id == FEATURE_HISTORY && nFrames == NULL) ||
-      (id == FEATURE_TABLE && (nFeatures == NULL || nFrames == NULL)))
+  if ((id == FEATURE_LIST && nFeatures == nullptr) ||
+      (id == FEATURE_HISTORY && nFrames == nullptr) ||
+      (id == FEATURE_TABLE && (nFeatures == nullptr || nFrames == nullptr)))
     return id;
 
   /* Read nFeatures and nFrames */
@@ -627,21 +627,21 @@ KLT_FeatureList KLTReadFeatureList(
   int i;
 
   fp = fopen(fname, "rb");
-  if (fp == NULL) {
+  if (fp == nullptr) {
         KLTError("(KLTReadFeatureList) Can't open file '%s' "
                             "for reading", fname);
         exit(1);
   }
   if (KLT_verbose >= 1) 
     fprintf(stderr,  "(KLT) Reading feature list from '%s'\n", fname);
-  id = _readHeader(fp, NULL, &nFeatures, &binary);
+  id = _readHeader(fp, nullptr, &nFeatures, &binary);
   if (id != FEATURE_LIST) {
     KLTError("(KLTReadFeatureList) File '%s' does not contain "
              "a FeatureList", fname);
     exit(1);
   }
 
-  if (fl_in == NULL)  {
+  if (fl_in == nullptr)  {
     fl = KLTCreateFeatureList(nFeatures);
     fl->nFeatures = nFeatures;
   }
@@ -690,20 +690,20 @@ KLT_FeatureHistory KLTReadFeatureHistory(
   int i;
 
   fp = fopen(fname, "rb");
-  if (fp == NULL) {
+  if (fp == nullptr) {
         KLTError("(KLTReadFeatureHistory) Can't open file '%s' "
                             "for reading", fname);
         exit(1);
   }
   if (KLT_verbose >= 1) fprintf(stderr,  "(KLT) Reading feature history from '%s'\n", fname);
-  id = _readHeader(fp, &nFrames, NULL, &binary);
+  id = _readHeader(fp, &nFrames, nullptr, &binary);
   if (id != FEATURE_HISTORY) {
         KLTError("(KLTReadFeatureHistory) File '%s' does not contain "
                                       "a FeatureHistory", fname);
         exit(1);
   }
 
-  if (fh_in == NULL)  {
+  if (fh_in == nullptr)  {
     fh = KLTCreateFeatureHistory(nFrames);
     fh->nFrames = nFrames;
   }
@@ -753,7 +753,7 @@ KLT_FeatureTable KLTReadFeatureTable(
   int i, j;
 
   fp = fopen(fname, "rb");
-  if (fp == NULL) {
+  if (fp == nullptr) {
         KLTError("(KLTReadFeatureTable) Can't open file '%s' "
                             "for reading", fname);
         exit(1);
@@ -766,7 +766,7 @@ KLT_FeatureTable KLTReadFeatureTable(
         exit(1);
   }
 
-  if (ft_in == NULL)  {
+  if (ft_in == nullptr)  {
     ft = KLTCreateFeatureTable(nFrames, nFeatures);
     ft->nFrames = nFrames;
     ft->nFeatures = nFeatures;

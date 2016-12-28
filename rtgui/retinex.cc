@@ -105,7 +105,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     std::vector<double> defaultCurve;
     rtengine::RetinexParams::getDefaulttransmissionCurve(defaultCurve);
-    transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     transmissionShape->setIdentityValue(0.);
     transmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     transmissionShape->setBottomBarBgGradient(milestones);
@@ -184,7 +184,7 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 //    std::vector<double> defaultCurve;
     rtengine::RetinexParams::getDefaultgaintransmissionCurve(defaultCurve);
-    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", NULL, false));
+    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", nullptr, false, false));
     gaintransmissionShape->setIdentityValue(0.);
     gaintransmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
     gaintransmissionShape->setBottomBarBgGradient(milestones);
@@ -1121,7 +1121,7 @@ void Retinex::gammaretinexChanged()
         if(gammaretinex->get_active_row_number() == 4) {
             gam->show();
             slope->show();
-        } else if(gammaretinex->get_active_row_number() != 4) {
+        } else /*if(gammaretinex->get_active_row_number() != 4)*/ {
             gam->hide();
             slope->hide();
         }

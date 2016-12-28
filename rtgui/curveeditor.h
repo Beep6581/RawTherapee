@@ -66,6 +66,7 @@ protected:
     CurveEditorGroup* group;
     CurveEditorSubGroup* subGroup;
     Gtk::Widget* relatedWidget;
+    bool expandRelatedWidget;
 
     std::vector<double> tempCurve;
     sigc::connection typeconn;

@@ -17,20 +17,20 @@ calculates A x where x is some vector. Stops when rms residual < RMSResidual or 
 Stops at n iterates if MaximumIterates = 0 since that many iterates gives exact solution. Applicable to symmetric positive
 definite problems only, which is what unconstrained smooth optimization pretty much always is.
 Parameter pass can be passed through, containing whatever info you like it to contain (matrix info?).
-Takes less memory with OkToModify_b = true, and Preconditioner = NULL. */
+Takes less memory with OkToModify_b = true, and Preconditioner = nullptr. */
 float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b,
                                float *x, float RMSResidual, void *Pass, int MaximumIterates, void Preconditioner(float *Product, float *x, void *Pass))
 {
     int iterate, i;
 
-    char* buffer = (char*)malloc(2 * n * sizeof(float) + 128);
-    float *r = (float*)(buffer + 64);
+    float* buffer = (float*)malloc(2 * n * sizeof(float) + 128);
+    float *r = (buffer + 16);
 
     //Start r and x.
-    if(x == NULL) {
+    if(x == nullptr) {
         x = new float[n];
 
-        memset(x, 0, sizeof(float)*n);      //Zero initial guess if x == NULL.
+        memset(x, 0, sizeof(float)*n);      //Zero initial guess if x == nullptr.
         memcpy(r, b, sizeof(float)*n);
     } else {
         Ax(r, x, Pass);
@@ -46,7 +46,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     //s is preconditionment of r. Without, direct to r.
     float *s = r, rs = 0.0f;
 
-    if(Preconditioner != NULL) {
+    if(Preconditioner != nullptr) {
         s = new float[n];
 
         Preconditioner(s, r, Pass);
@@ -61,7 +61,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     }
 
     //Search direction d.
-    float *d = (float*)(buffer + n * sizeof(float) + 128);
+    float *d = (buffer + n + 32);
 
     memcpy(d, s, sizeof(float)*n);
 
@@ -114,7 +114,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
             break;
         }
 
-        if(Preconditioner != NULL) {
+        if(Preconditioner != nullptr) {
             Preconditioner(s, r, Pass);
         }
 
@@ -127,15 +127,13 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 #endif
         {
             float c = 0.0f;
-            float t;
-            float temp;
 #ifdef _OPENMP
             #pragma omp for reduction(+:rs)                            // Summation with error correction
 #endif
 
             for(int ii = 0; ii < n; ii++) {
-                temp = r[ii] * s[ii];
-                t = rs + temp;
+                float temp = r[ii] * s[ii];
+                float t = rs + temp;
 
                 if( fabsf(rs) >= fabsf(temp) ) {
                     c += ((rs - t) + temp);
@@ -183,11 +181,11 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
     return x;
 }
 
-MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle)
+MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle) : buffer(nullptr), DiagBuffer(nullptr)
 {
     n = Dimension;
     m = NumberOfDiagonalsInLowerTriangle;
-    IncompleteCholeskyFactorization = NULL;
+    IncompleteCholeskyFactorization = nullptr;
 
     Diagonals = new float *[m];
     StartRows = new int [m + 1];
@@ -198,7 +196,7 @@ MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int Nu
 
 MultiDiagonalSymmetricMatrix::~MultiDiagonalSymmetricMatrix()
 {
-    if(DiagBuffer != NULL) {
+    if(DiagBuffer != nullptr) {
         free(buffer);
     } else
         for(int i = 0; i < m; i++) {
@@ -218,12 +216,12 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
     if(index == 0) {
         buffer = (char*)calloc( (n + padding) * m * sizeof(float) + (m + 16) * 64 + 63, 1);
 
-        if(buffer == NULL)
+        if(buffer == nullptr)
             // no big memory block available => try to allocate smaller blocks
         {
-            DiagBuffer = NULL;
+            DiagBuffer = nullptr;
         } else {
-            DiagBuffer = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
+            DiagBuffer = (float*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
         }
     }
 
@@ -238,12 +236,12 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
             return false;
         }
 
-    if(DiagBuffer != NULL) {
-        Diagonals[index] = (float*)(DiagBuffer + (index * (n + padding) * sizeof(float)) + ((index + 16) * 64));
+    if(DiagBuffer != nullptr) {
+        Diagonals[index] = (DiagBuffer + (index * (n + padding)) + ((index + 16) * 16));
     } else {
         Diagonals[index] = new float[DiagonalLength(StartRow)];
 
-        if(Diagonals[index] == NULL) {
+        if(Diagonals[index] == nullptr) {
             printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: memory allocation failed. Out of memory?\n");
             return false;
         }
@@ -306,8 +304,8 @@ SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Pro
 #else
     const int chunkSize = (lm - srm) / (omp_get_num_procs() * 8);
 #endif
-#endif
     #pragma omp parallel
+#endif
     {
         // First fill the big part in the middle
         // This can be done without intermediate stores to memory and it can be parallelized too
@@ -443,8 +441,8 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     }
 
     //It's all initialized? Uhkay. Do the actual math then.
-    int sss, ss, s;
-    int k, MaxStartRow = StartRows[m - 1];  //Handy number.
+    int sss, ss;
+    int MaxStartRow = StartRows[m - 1];  //Handy number.
     float **l = ic->Diagonals;
     float  *d = ic->Diagonals[0];       //Describes D in LDLt.
     int icm = ic->m;
@@ -506,8 +504,8 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 
         //This is a loop over k from 1 to j, inclusive. We'll cover that by looping over the index of the diagonals (s), and get k from it.
         //The first diagonal is d (k = 0), so skip that and have s start at 1. Cover all available s but stop if k exceeds j.
-        s = 1;
-        k = icStartRows[s];
+        int s = 1;
+        int k = icStartRows[s];
 
         while(k <= j) {
             d[j] -= l[s][j - k] * l[s][j - k] * d[j - k];
@@ -554,7 +552,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     return true;
 }
 
-void MultiDiagonalSymmetricMatrix::KillIncompleteCholeskyFactorization(void)
+void MultiDiagonalSymmetricMatrix::KillIncompleteCholeskyFactorization()
 {
     delete IncompleteCholeskyFactorization;
 }
@@ -675,7 +673,7 @@ EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height)
                 A->CreateDiagonal(3, w) &&
                 A->CreateDiagonal(4, w + 1))) {
         delete A;
-        A = NULL;
+        A = nullptr;
         printf("Error in EdgePreservingDecomposition construction: out of memory.\n");
     } else {
         a0    = A->Diagonals[0];
@@ -694,7 +692,7 @@ EdgePreservingDecomposition::~EdgePreservingDecomposition()
 SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur, bool UseBlurForEdgeStop)
 {
 
-    if(Blur == NULL)
+    if(Blur == nullptr)
         UseBlurForEdgeStop = false, //Use source if there's no supplied Blur.
         Blur = new float[n];
 
@@ -713,9 +711,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float 
         a = Blur, g = Source;
     }
 
-    int i;
     int w1 = w - 1, h1 = h - 1;
-//  float eps = 0.02f;
     const float sqreps = 0.0004f;                           // removed eps*eps from inner loop
 
 
@@ -868,7 +864,7 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
     }
 
     //Create a blur here, initialize.
-    if(Blur == NULL) {
+    if(Blur == nullptr) {
         Blur = new float[n];
     }
 
@@ -927,7 +923,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Sour
     //Blur. Also setup memory for Compressed (we can just use u since each element of u is used in one calculation).
     float *u = CreateIteratedBlur(Source, Scale, EdgeStopping, Iterates, Reweightings);
 
-    if(Compressed == NULL) {
+    if(Compressed == nullptr) {
         Compressed = u;
     }
 

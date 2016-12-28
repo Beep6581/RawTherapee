@@ -44,13 +44,14 @@ class ExtProgStore
     MyMutex mtx;  // covers actions
     std::vector<ExtProgAction> actions;
 
+#ifdef WIN32
     bool searchProgram (const Glib::ustring& name,
                         const Glib::ustring& exePath,
                         const Glib::ustring& exePath86,
                         int maxVer,
                         bool allowRaw,
                         bool allowQueueProcess);
-
+#endif
 public:
     static ExtProgStore* getInstance();
 

@@ -577,7 +577,7 @@ bool Spot::drag1 (const int modifierKey)
         //printf("sourceCircle / deltaPrevImage = %d / %d\n", editProvider->deltaImage.x, editProvider->deltaImage.y);
         int lastRadius = spots.at (activeSpot).radius;
         rtengine::Coord currPos = editProvider->posImage + editProvider->deltaImage;
-        rtengine::PolarCoord currPolar = currPos - spots.at (activeSpot).sourcePos;
+        rtengine::PolarCoord currPolar (currPos - spots.at (activeSpot).sourcePos);
         spots.at (activeSpot).radius = LIM<int> (int (currPolar.radius), SpotParams::minRadius, SpotParams::maxRadius);
 
         if (spots.at (activeSpot).radius != lastRadius) {
@@ -587,7 +587,7 @@ bool Spot::drag1 (const int modifierKey)
         //printf("targetCircle / deltaPrevImage = %d / %d\n", editProvider->deltaImage.x, editProvider->deltaImage.y);
         int lastRadius = spots.at (activeSpot).radius;
         rtengine::Coord currPos = editProvider->posImage + editProvider->deltaImage;
-        rtengine::PolarCoord currPolar = currPos - spots.at (activeSpot).targetPos;
+        rtengine::PolarCoord currPolar (currPos - spots.at (activeSpot).targetPos);
         spots.at (activeSpot).radius = LIM<int> (int (currPolar.radius), SpotParams::minRadius, SpotParams::maxRadius);
 
         if (spots.at (activeSpot).radius != lastRadius) {
@@ -597,7 +597,7 @@ bool Spot::drag1 (const int modifierKey)
         //printf("sourceFeatherCircle / deltaPrevImage = %d / %d\n", editProvider->deltaImage.x, editProvider->deltaImage.y);
         float currFeather = spots.at (activeSpot).feather;
         rtengine::Coord currPos = editProvider->posImage + editProvider->deltaImage;
-        rtengine::PolarCoord currPolar = currPos -spots.at (activeSpot).sourcePos;
+        rtengine::PolarCoord currPolar (currPos -spots.at (activeSpot).sourcePos);
         spots.at (activeSpot).feather = LIM01<float> ((currPolar.radius - double (spots.at (activeSpot).radius)) / double (spots.at (activeSpot).radius));
 
         if (spots.at (activeSpot).feather != currFeather) {
@@ -607,7 +607,7 @@ bool Spot::drag1 (const int modifierKey)
         //printf("targetFeatherCircle / deltaPrevImage = %d / %d\n", editProvider->deltaImage.x, editProvider->deltaImage.y);
         float currFeather = spots.at (activeSpot).feather;
         rtengine::Coord currPos = editProvider->posImage + editProvider->deltaImage;
-        rtengine::PolarCoord currPolar = currPos - spots.at (activeSpot).targetPos;
+        rtengine::PolarCoord currPolar (currPos - spots.at (activeSpot).targetPos);
         spots.at (activeSpot).feather = LIM01<float> ((currPolar.radius - double (spots.at (activeSpot).radius)) / double (spots.at (activeSpot).radius));
 
         if (spots.at (activeSpot).feather != currFeather) {

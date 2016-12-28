@@ -453,7 +453,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvLhighl
     DEMOSAIC,         // EvLbaselog
     DEMOSAIC,         // EvRetinexlhcurve
-    ALLNORAW,         // EvOIntent
+    OUTPUTPROFILE,    // EvOIntent
     MONITORTRANSFORM, // EvMonitorTransform: no history message
     RETINEX,          // EvLiter
     RETINEX,          // EvLgrad
@@ -469,6 +469,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvcbdlMethod
     RETINEX,          // EvRetinexgaintransmission
     RETINEX,          // EvLskal
+    OUTPUTPROFILE,    // EvOBPCompens
     SPOT              // EvSpotEnabled
 };
 

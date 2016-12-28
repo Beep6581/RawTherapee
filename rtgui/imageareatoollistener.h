@@ -27,21 +27,21 @@ class ImageAreaToolListener
 {
 
 public:
-    virtual void spotWBselected (int x, int y, Thumbnail* thm = NULL) {}
+    virtual ~ImageAreaToolListener() {}
+    virtual void spotWBselected (int x, int y, Thumbnail* thm = nullptr) {}
     virtual int  getSpotWBRectSize ()
     {
         return 8;
     }
     virtual void cropSelectionReady () {}
-    virtual void rotateSelectionReady (double rotate_deg, Thumbnail* thm = NULL) {}
+    virtual void rotateSelectionReady (double rotate_deg, Thumbnail* thm = nullptr) {}
     virtual ToolBar* getToolBar ()
     {
-        return NULL;
+        return nullptr;
     }
-    virtual void removeWbTool() = 0;
-    virtual CropGUIListener* startCropEditing (Thumbnail* thm = NULL)
+    virtual CropGUIListener* startCropEditing (Thumbnail* thm = nullptr)
     {
-        return NULL;
+        return nullptr;
     }
 };
 

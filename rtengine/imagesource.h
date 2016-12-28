@@ -41,10 +41,10 @@ class ImageMatrices
 {
 
 public:
-    double rgb_cam[3][3];
-    double cam_rgb[3][3];
-    double xyz_cam[3][3];
-    double cam_xyz[3][3];
+    double rgb_cam[3][3] = {};
+    double cam_rgb[3][3] = {};
+    double xyz_cam[3][3] = {};
+    double cam_xyz[3][3] = {};
 };
 
 class ImageSource : public InitialImage
@@ -63,7 +63,7 @@ protected:
 
 public:
     ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
-        embProfile(NULL), idata(NULL), dirpyrdenoiseExpComp(INFINITY) {}
+        embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
 
     virtual ~ImageSource            () {}
     virtual int         load        (const Glib::ustring &fname, bool batch = false) = 0;
@@ -100,7 +100,7 @@ public:
     }
 
     virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
-    virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
+    virtual void        getSize     (PreviewProps pp, int& w, int& h) = 0;
     virtual int         getRotateDegree() const
     {
         return 0;
@@ -111,7 +111,7 @@ public:
     virtual bool        isRAW() const = 0;
     virtual DCPProfile* getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
     {
-        return NULL;
+        return nullptr;
     };
 
     virtual void        setProgressListener (ProgressListener* pl) {}

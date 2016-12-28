@@ -179,9 +179,9 @@ static void _enforceMinimumDistance(
           featurelist->feature[indx]->x   = -1;
           featurelist->feature[indx]->y   = -1;
           featurelist->feature[indx]->val = KLT_NOT_FOUND;
-	  featurelist->feature[indx]->aff_img = NULL;
-	  featurelist->feature[indx]->aff_img_gradx = NULL;
-	  featurelist->feature[indx]->aff_img_grady = NULL;
+	  featurelist->feature[indx]->aff_img = nullptr;
+	  featurelist->feature[indx]->aff_img_gradx = nullptr;
+	  featurelist->feature[indx]->aff_img_grady = nullptr;
 	  featurelist->feature[indx]->aff_x = -1.0;
 	  featurelist->feature[indx]->aff_y = -1.0;
 	  featurelist->feature[indx]->aff_Axx = 1.0;
@@ -217,9 +217,9 @@ static void _enforceMinimumDistance(
       featurelist->feature[indx]->x   = (KLT_locType) x;
       featurelist->feature[indx]->y   = (KLT_locType) y;
       featurelist->feature[indx]->val = (int) val;
-      featurelist->feature[indx]->aff_img = NULL;
-      featurelist->feature[indx]->aff_img_gradx = NULL;
-      featurelist->feature[indx]->aff_img_grady = NULL;
+      featurelist->feature[indx]->aff_img = nullptr;
+      featurelist->feature[indx]->aff_img_gradx = nullptr;
+      featurelist->feature[indx]->aff_img_grady = nullptr;
       featurelist->feature[indx]->aff_x = -1.0;
       featurelist->feature[indx]->aff_y = -1.0;
       featurelist->feature[indx]->aff_Axx = 1.0;
@@ -340,12 +340,12 @@ void _KLTSelectGoodFeatures(
 
   /* Create temporary images, etc. */
   if (mode == REPLACING_SOME && 
-      tc->sequentialMode && tc->pyramid_last != NULL)  {
+      tc->sequentialMode && tc->pyramid_last != nullptr)  {
     floatimg = ((_KLT_Pyramid) tc->pyramid_last)->img[0];
     gradx = ((_KLT_Pyramid) tc->pyramid_last_gradx)->img[0];
     grady = ((_KLT_Pyramid) tc->pyramid_last_grady)->img[0];
-    assert(gradx != NULL);
-    assert(grady != NULL);
+    assert(gradx != nullptr);
+    assert(grady != nullptr);
   } else  {
     floatimages_created = TRUE;
     floatimg = _KLTCreateFloatImage(ncols, nrows);

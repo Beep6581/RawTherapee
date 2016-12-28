@@ -43,7 +43,7 @@ public:
     * @param size Number of elements of size T to allocate, i.e. allocated size will be sizeof(T)*size ; set it to 0 if you want to defer the allocation
     * @param align Expressed in bytes; SSE instructions need 128 bits alignment, which mean 16 bytes, which is the default value
     */
-    AlignedBuffer (size_t size = 0, size_t align = 16) : real(NULL), alignment(align), allocatedSize(0), unitSize(0), data(NULL), inUse(false)
+    AlignedBuffer (size_t size = 0, size_t align = 16) : real(nullptr), alignment(align), allocatedSize(0), unitSize(0), data(nullptr), inUse(false)
     {
         if (size) {
             resize(size);
@@ -78,8 +78,8 @@ public:
                     free(real);
                 }
 
-                real = NULL;
-                data = NULL;
+                real = nullptr;
+                data = nullptr;
                 inUse = false;
                 allocatedSize = 0;
                 unitSize = 0;
@@ -93,7 +93,15 @@ public:
                 // we're freeing the memory and allocate it again if the new size is bigger.
 
                 if (allocatedSize < oldAllocatedSize) {
-                    real = realloc(real, allocatedSize + alignment);
+                    void *temp = realloc(real, allocatedSize + alignment);
+                    if (temp) { // realloc succeeded
+                        real = temp;
+                    } else { // realloc failed => free old buffer and allocate new one
+                        if (real) {
+                            free (real);
+                        }
+                        real = malloc(allocatedSize + alignment);
+                    }
                 } else {
                     if (real) {
                         free (real);
@@ -109,7 +117,7 @@ public:
                 } else {
                     allocatedSize = 0;
                     unitSize = 0;
-                    data = NULL;
+                    data = nullptr;
                     inUse = false;
                     return false;
                 }
@@ -143,7 +151,7 @@ private:
     size_t size;
 
 public:
-    AlignedBufferMP(size_t sizeP)
+    explicit AlignedBufferMP(size_t sizeP)
     {
         size = sizeP;
     }

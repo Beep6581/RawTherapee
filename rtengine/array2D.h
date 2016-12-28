@@ -66,12 +66,16 @@
 #include <cstring>
 #include <cstdio>
 
+#include "noncopyable.h"
+
 template<typename T>
-class array2D
+class array2D :
+    public rtengine::NonCopyable
 {
 
 private:
-    int x, y, owner, flags;
+    int x, y, owner;
+    unsigned int flags;
     T ** ptr;
     T * data;
     bool lock; // useful lock to ensure data is not changed anymore.
@@ -79,19 +83,19 @@ private:
     {
         if ((ptr) && ((h > y) || (4 * h < y))) {
             delete[] ptr;
-            ptr = NULL;
+            ptr = nullptr;
         }
 
         if ((data) && (((h * w) > (x * y)) || ((h * w) < ((x * y) / 4)))) {
             delete[] data;
-            data = NULL;
+            data = nullptr;
         }
 
-        if (ptr == NULL) {
+        if (ptr == nullptr) {
             ptr = new T*[h];
         }
 
-        if (data == NULL) {
+        if (data == nullptr) {
             data = new T[h * w + offset];
         }
 
@@ -109,7 +113,7 @@ public:
     // use as empty declaration, resize before use!
     // very useful as a member object
     array2D() :
-        x(0), y(0), owner(0), ptr(NULL), data(NULL), lock(0)
+        x(0), y(0), owner(0), ptr(nullptr), data(nullptr), lock(0), flags(0)
     {
         //printf("got empty array2D init\n");
     }
@@ -147,7 +151,7 @@ public:
         if (owner) {
             data = new T[h * w];
         } else {
-            data = NULL;
+            data = nullptr;
         }
 
         x = w;
@@ -188,12 +192,12 @@ public:
     {
         if ((owner) && (data)) {
             delete[] data;
-            data = NULL;
+            data = nullptr;
         }
 
         if (ptr) {
             delete [] ptr;
-            ptr = NULL;
+            ptr = nullptr;
         }
     }
 
@@ -282,6 +286,8 @@ public:
         if (this != &rhs)
 
         {
+            flags = rhs.flags;
+            lock = rhs.lock;
             if (!owner) { // we can only copy same size data
                 if ((x != rhs.x) || (y != rhs.y)) {
                     printf(" assignment error in array2D\n");

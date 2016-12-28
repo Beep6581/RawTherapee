@@ -39,10 +39,10 @@ public:
 
 
     dfInfo(const Glib::ustring &name, const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
-        : pathname(name), maker(mak), model(mod), iso(iso), shutter(shut), timestamp(t), ri(NULL) {}
+        : pathname(name), maker(mak), model(mod), iso(iso), shutter(shut), timestamp(t), ri(nullptr) {}
 
     dfInfo( const dfInfo &o)
-        : pathname(o.pathname), maker(o.maker), model(o.model), iso(o.iso), shutter(o.shutter), timestamp(o.timestamp), ri(NULL) {}
+        : pathname(o.pathname), maker(o.maker), model(o.model), iso(o.iso), shutter(o.shutter), timestamp(o.timestamp), ri(nullptr) {}
     ~dfInfo()
     {
         if( ri ) {

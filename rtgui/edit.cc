@@ -20,7 +20,7 @@
 #include "edit.h"
 #include "rtimage.h"
 
-ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(NULL), objectMode(OM_255), dataProvider(dataProvider) {}
+ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {}
 
 ObjectMOBuffer::~ObjectMOBuffer()
 {
@@ -69,7 +69,7 @@ EditSubscriber *ObjectMOBuffer::getEditSubscriber () {
     if (dataProvider) {
         return dataProvider->getCurrSubscriber();
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -1035,7 +1035,7 @@ void OPIcon::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short i
     }
 }
 
-EditSubscriber::EditSubscriber (EditType editType) : ID(EUID_None), editingType(editType), bufferType(BT_SINGLEPLANE_FLOAT), provider(NULL), action(ES_ACTION_NONE) {}
+EditSubscriber::EditSubscriber (EditType editType) : ID(EUID_None), editingType(editType), bufferType(BT_SINGLEPLANE_FLOAT), provider(nullptr), action(ES_ACTION_NONE) {}
 
 void EditSubscriber::setEditProvider(EditDataProvider *provider)
 {
@@ -1107,7 +1107,7 @@ bool EditSubscriber::isPicking()
 //--------------------------------------------------------------------------------------------------
 
 
-EditDataProvider::EditDataProvider() : currSubscriber(NULL), object(0), posScreen(-1, -1), posImage(-1, -1),
+EditDataProvider::EditDataProvider() : currSubscriber(nullptr), object(0), posScreen(-1, -1), posImage(-1, -1),
     deltaScreen(0, 0), deltaImage(0, 0), deltaPrevScreen(0, 0), deltaPrevImage(0, 0)
 {
     pipetteVal[0] = pipetteVal[1] = pipetteVal[2] = 0.f;
@@ -1124,7 +1124,7 @@ void EditDataProvider::subscribe(EditSubscriber *subscriber)
 
 void EditDataProvider::unsubscribe()
 {
-    currSubscriber = NULL;
+    currSubscriber = nullptr;
 }
 
 void EditDataProvider::switchOffEditMode()

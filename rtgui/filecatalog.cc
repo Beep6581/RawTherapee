@@ -44,10 +44,10 @@ using namespace std;
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     filepanel(filepanel),
     selectedDirectoryId(1),
-    listener(NULL),
-    fslistener(NULL),
+    listener(nullptr),
+    fslistener(nullptr),
     hasValidCurrentEFS(false),
-    filterPanel(NULL),
+    filterPanel(nullptr),
     previewsToLoad(0),
     previewsLoaded(0),
     coarsePanel(cp),
@@ -667,8 +667,8 @@ void FileCatalog::_refreshProgressBar ()
         GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 
         Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-        Gtk::Box* hbb = NULL;
-        Gtk::Label *label = NULL;
+        Gtk::Box* hbb = nullptr;
+        Gtk::Label *label = nullptr;
 
         if( options.mainNBVertical ) {
             hbb = Gtk::manage (new Gtk::VBox ());
@@ -880,7 +880,7 @@ void FileCatalog::refreshHeight ()
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb)
 {
 
-    if (enabled && listener != NULL) {
+    if (enabled && listener != nullptr) {
         bool continueToLoad = true;
 
         for (size_t i = 0; i < tmb.size() && continueToLoad; i++) {
@@ -989,9 +989,6 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
     fc.set_filename(tbe[0]->filename);
     //!!! TODO prevent dialog closing on "enter" key press
 
-    bool filecopymovecomplete;
-    int i_copyindex;
-
     if( fc.run() == Gtk::RESPONSE_OK ) {
         Glib::ustring dest_Dir = fc.get_current_folder();
 
@@ -1020,8 +1017,8 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
             /* comparison of src_Dir and dest_Dir is done per image for compatibility with
             possible future use of Collections as source where each file's source path may be different.*/
 
-            filecopymovecomplete = false;
-            i_copyindex = 1;
+            bool filecopymovecomplete = false;
+            int i_copyindex = 1;
 
             while(!filecopymovecomplete) {
                 // check for filename conflicts at destination - prevent overwriting (actually RT will crash on overwriting attempt)
@@ -1179,6 +1176,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                 params.icm.working             = options.fastexport_icm_working      ;
                 params.icm.output              = options.fastexport_icm_output       ;
                 params.icm.outputIntent        = options.fastexport_icm_outputIntent ;
+                params.icm.outputBPC           = options.fastexport_icm_outputBPC    ;
                 params.icm.gamma               = options.fastexport_icm_gamma        ;
                 params.resize.enabled          = options.fastexport_resize_enabled   ;
                 params.resize.scale            = options.fastexport_resize_scale     ;
@@ -1224,8 +1222,6 @@ void FileCatalog::setExportPanel (ExportPanel* expanel)
 void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
 {
 
-    bool success;
-
     RenameDialog* renameDlg = new RenameDialog ((Gtk::Window*)get_toplevel());
 
     for (size_t i = 0; i < tbe.size(); i++) {
@@ -1235,7 +1231,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe)
         Glib::ustring dirName = Glib::path_get_dirname (tbe[i]->filename);
         Glib::ustring baseName = Glib::path_get_basename (tbe[i]->filename);
 
-        success = false;
+        bool success = false;
 
         do {
             if (renameDlg->run () == Gtk::RESPONSE_OK) {
@@ -2127,12 +2123,9 @@ void FileCatalog::tbRightPanel_1_toggled ()
 
 bool FileCatalog::CheckSidePanelsVisibility()
 {
-    if(tbLeftPanel_1->get_active() == false && tbRightPanel_1->get_active() == false) {
-        return false;
-    } else {
-        return true;
-    }
+    return tbLeftPanel_1->get_active() || tbRightPanel_1->get_active();
 }
+
 void FileCatalog::toggleSidePanels()
 {
     // toggle left AND right panels
@@ -2544,11 +2537,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
         }
     }
 
-    if (fileBrowser->keyPressed(event)) {
-        return true;
-    }
-
-    return false;
+    return fileBrowser->keyPressed(event);
 }
 
 void FileCatalog::showToolBar()

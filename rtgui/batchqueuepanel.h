@@ -55,7 +55,7 @@ class BatchQueuePanel : public Gtk::VBox,
 
 public:
 
-    BatchQueuePanel (FileCatalog* aFileCatalog);
+    explicit BatchQueuePanel (FileCatalog* aFileCatalog);
 
     void setParent (RTWindow* p)
     {

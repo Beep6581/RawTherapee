@@ -32,7 +32,7 @@ class PLDBridge : public rtengine::ProgressListener
     rtengine::ProgressListener* pl;
 
 public:
-    PLDBridge ( rtengine::ProgressListener* pb)
+    explicit PLDBridge ( rtengine::ProgressListener* pb)
         : pl(pb) {}
 
     // ProgressListener interface
@@ -85,12 +85,12 @@ class ProgressConnector
     {
         retval = opStart.emit ();
         g_idle_add (ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool> (opEnd));
-        workThread = 0;
+        workThread = nullptr;
     }
 
 public:
 
-    ProgressConnector (): workThread( 0 ) { }
+    ProgressConnector (): retval( 0 ), workThread( nullptr ) { }
 
     void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler )
     {

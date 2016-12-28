@@ -39,10 +39,10 @@ void ProfilePanel::cleanup ()
     delete partialProfileDlg;
 }
 
-ProfilePanel::ProfilePanel (bool readOnly) : storedPProfile(NULL), lastFilename(""), imagePath("")
+ProfilePanel::ProfilePanel (bool readOnly) : storedPProfile(nullptr), lastFilename(""), imagePath("")
 {
 
-    tpc = NULL;
+    tpc = nullptr;
 
     profileFillModeOnImage  = new RTImage("profile-filled.png");
     profileFillModeOffImage = new RTImage("profile-partial.png");
@@ -109,8 +109,8 @@ ProfilePanel::ProfilePanel (bool readOnly) : storedPProfile(NULL), lastFilename(
 
     paste->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::paste_clicked) );
 
-    custom = NULL;
-    lastsaved = NULL;
+    custom = nullptr;
+    lastsaved = nullptr;
     dontupdate = false;
 
     profileStore.addListener(this);
@@ -153,20 +153,12 @@ ProfilePanel::~ProfilePanel ()
 
 bool ProfilePanel::isCustomSelected()
 {
-    if (profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PCUSTOM") + ")")) {
-        return true;
-    }
-
-    return false;
+    return profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PCUSTOM") + ")");
 }
 
 bool ProfilePanel::isLastSavedSelected()
 {
-    if (profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PLASTSAVED") + ")")) {
-        return true;
-    }
-
-    return false;
+    return profiles->getCurrentLabel() == Glib::ustring ("(" + M("PROFILEPANEL_PLASTSAVED") + ")");
 }
 
 Gtk::TreeIter ProfilePanel::getCustomRow()
@@ -217,7 +209,7 @@ void ProfilePanel::storeCurrentValue ()
         const ProfileStoreEntry *entry = profiles->getSelectedEntry();
         const PartialProfile *currProfile;
 
-        if (entry && (currProfile = profileStore.getProfile(entry)) != NULL) {
+        if (entry && (currProfile = profileStore.getProfile(entry)) != nullptr) {
             // now storedPProfile has the current entry's values
             storedPProfile = new PartialProfile(currProfile->pparams, currProfile->pedited, true);
         } else {
@@ -276,7 +268,7 @@ void ProfilePanel::restoreValue ()
     if (storedPProfile) {
         storedPProfile->deleteInstance();
         delete storedPProfile;
-        storedPProfile = NULL;
+        storedPProfile = nullptr;
     }
 }
 
@@ -345,7 +337,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
                 toSave = lastsaved;
             } else {
                 const ProfileStoreEntry* entry = profiles->getSelectedEntry();
-                toSave = entry ? profileStore.getProfile (profiles->getSelectedEntry()) : NULL;
+                toSave = entry ? profileStore.getProfile (profiles->getSelectedEntry()) : nullptr;
             }
 
             if (toSave) {
@@ -415,7 +407,7 @@ void ProfilePanel::copy_clicked (GdkEventButton* event)
         toSave = lastsaved;
     } else {
         const ProfileStoreEntry* entry = profiles->getSelectedEntry();
-        toSave = entry ? profileStore.getProfile (entry) : NULL;
+        toSave = entry ? profileStore.getProfile (entry) : nullptr;
     }
 
     // toSave has to be a complete procparams
@@ -529,7 +521,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
             if (event->state & Gdk::CONTROL_MASK)
                 // custom.pparams = loadedFile.pparams filtered by ( loadedFile.pedited & partialPaste.pedited )
             {
-                partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active() ? custom->pedited : NULL, &pp, &pe);
+                partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active() ? custom->pedited : nullptr, &pp, &pe);
             } else {
                 // custom.pparams = loadedFile.pparams filtered by ( loadedFile.pedited )
                 pe.combine(*custom->pparams, pp, true);
@@ -544,7 +536,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
             // we delete custom
             custom->deleteInstance();
             delete custom;
-            custom = NULL;
+            custom = nullptr;
         }
     }
 
@@ -628,7 +620,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
         if (event->state & Gdk::CONTROL_MASK)
             // custom.pparams = clipboard.pparams filtered by ( clipboard.pedited & partialPaste.pedited )
         {
-            partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active() ? custom->pedited : NULL, &pp, &pe);
+            partialProfileDlg->applyPaste (custom->pparams, !fillMode->get_active() ? custom->pedited : nullptr, &pp, &pe);
         } else {
             // custom.pparams = clipboard.pparams filtered by ( clipboard.pedited )
             pe.combine(*custom->pparams, pp, true);
@@ -641,7 +633,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
         if (event->state & Gdk::CONTROL_MASK)
             // custom.pparams = clipboard.pparams filtered by ( partialPaste.pedited )
         {
-            partialProfileDlg->applyPaste (custom->pparams, NULL, &pp, NULL);
+            partialProfileDlg->applyPaste (custom->pparams, nullptr, &pp, nullptr);
         } else {
             // custom.pparams = clipboard.pparams non filtered
             *custom->pparams = pp;
@@ -738,21 +730,21 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
 void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams* lastSaved)
 {
 
-    const ProfileStoreEntry *pse = NULL;
-    const PartialProfile *defprofile = NULL;
+    const ProfileStoreEntry *pse = nullptr;
+    const PartialProfile *defprofile = nullptr;
 
     bool ccPrevState = changeconn.block(true);
 
     if (custom) {
         custom->deleteInstance();
         delete custom;
-        custom = NULL;
+        custom = nullptr;
     }
 
     if (lastsaved) {
         lastsaved->deleteInstance();
         delete lastsaved;
-        lastsaved = NULL;
+        lastsaved = nullptr;
     }
 
     if (lastSaved) {

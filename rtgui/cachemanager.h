@@ -24,11 +24,14 @@
 
 #include <glibmm/ustring.h>
 
+#include "../rtengine/noncopyable.h"
+
 #include "threadutils.h"
 
 class Thumbnail;
 
-class CacheManager
+class CacheManager :
+    public rtengine::NonCopyable
 {
 private:
     using Entries = std::map<std::string, Thumbnail*>;
@@ -41,12 +44,7 @@ private:
 
     void applyCacheSizeLimitation () const;
 
-    CacheManager () = default;
-    CacheManager (const CacheManager&) = delete;
-    CacheManager& operator= (const CacheManager&) = delete;
-
 public:
-
     static CacheManager* getInstance ();
 
     void        init        ();
@@ -69,7 +67,6 @@ public:
                                        const Glib::ustring& fname,
                                        const Glib::ustring& fext,
                                        const Glib::ustring& md5) const;
-
 };
 
 #define cacheMgr CacheManager::getInstance()

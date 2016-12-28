@@ -61,13 +61,16 @@
 
 #include <cstring>
 #include <cstdint>
+#include <cassert>
+
 #ifndef NDEBUG
 #include <glibmm.h>
 #include <fstream>
 #endif
+
 #include "opthelper.h"
-#include <assert.h>
 #include "rt_math.h"
+#include "noncopyable.h"
 
 // Bit representations of flags
 enum {
@@ -85,7 +88,8 @@ using LUTd = LUT<double>;
 using LUTuc = LUT<uint8_t>;
 
 template<typename T>
-class LUT
+class LUT :
+    public rtengine::NonCopyable
 {
 protected:
     // list of variables ordered to improve cache speed
@@ -532,6 +536,8 @@ public:
         size = 0;
         upperBound = 0;
         maxs = 0;
+        maxsf = 0.f;
+        clip = 0;
     }
 
     // create an identity LUT (LUT(x) = x) or a scaled identity LUT (LUT(x) = x / divisor)

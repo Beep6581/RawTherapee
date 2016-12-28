@@ -20,7 +20,7 @@
 #include "multilangmgr.h"
 #include "paramsedited.h"
 
-PartialPasteDlg::PartialPasteDlg (Glib::ustring title)
+PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title)
 {
 
     set_modal (true);

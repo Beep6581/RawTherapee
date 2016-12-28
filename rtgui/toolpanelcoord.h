@@ -232,7 +232,7 @@ public:
     void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
     // profilechangelistener interface
-    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = NULL);
+    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
     void setDefaults    (rtengine::procparams::ProcParams* defparams);
 
     // DirSelectionListener interface
@@ -289,21 +289,15 @@ public:
     void saveInputICCReference (Glib::ustring fname, bool apply_wb);
 
     // imageareatoollistener interface
-    void spotWBselected (int x, int y, Thumbnail* thm = NULL);
+    void spotWBselected (int x, int y, Thumbnail* thm = nullptr);
     void cropSelectionReady ();
-    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = NULL);
+    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = nullptr);
     ToolBar* getToolBar ()
     {
         return toolBar;
     }
-    void removeWbTool()
-    {
-        if (toolBar) {
-            toolBar->removeWbTool();
-        }
-    }
     int  getSpotWBRectSize ();
-    CropGUIListener* startCropEditing (Thumbnail* thm = NULL)
+    CropGUIListener* startCropEditing (Thumbnail* thm = nullptr)
     {
         return crop;
     }

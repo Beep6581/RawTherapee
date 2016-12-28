@@ -50,7 +50,7 @@ const Glib::ustring* getOriginalExtension (const ThumbBrowserEntryBase* entry)
 
     const Glib::ustring::size_type pos = basename.find_last_of ('.');
     if (pos >= basename.length () - 1) {
-        return NULL;
+        return nullptr;
     }
 
     const Glib::ustring extension = basename.substr (pos + 1);
@@ -62,12 +62,12 @@ const Glib::ustring* getOriginalExtension (const ThumbBrowserEntryBase* entry)
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 ThumbBrowserEntryBase* selectOriginalEntry (ThumbBrowserEntryBase* original, ThumbBrowserEntryBase* candidate)
 {
-    if (original == NULL) {
+    if (original == nullptr) {
         return candidate;
     }
 
@@ -97,7 +97,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
         const Glib::ustring::size_type pos = basename.find_last_of ('.');
         if (pos >= basename.length () - 1) {
-            (*entry)->setOriginal (NULL);
+            (*entry)->setOriginal (nullptr);
             continue;
         }
 
@@ -109,7 +109,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
     // Find the original image for each bucket
     for (BasenameIterator bucket = byBasename.begin (); bucket != byBasename.end (); ++bucket) {
         const EntryVector& entries = bucket->second;
-        ThumbBrowserEntryBase* original = NULL;
+        ThumbBrowserEntryBase* original = nullptr;
 
         // Select the most likely original in a first pass...
         for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
@@ -118,7 +118,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
         // ...and link all other images to it in a second pass.
         for (EntryIterator entry = entries.begin (); entry != entries.end (); ++entry) {
-            (*entry)->setOriginal (*entry != original ? original : NULL);
+            (*entry)->setOriginal (*entry != original ? original : nullptr);
         }
     }
 }
@@ -126,7 +126,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 }
 
 FileBrowser::FileBrowser ()
-    : tbl(NULL), numFiltered(0), partialPasteDlg(M("PARTIALPASTE_DIALOGLABEL"))
+    : tbl(nullptr), numFiltered(0), partialPasteDlg(M("PARTIALPASTE_DIALOGLABEL"))
 {
 
     fbih = new FileBrowserIdleHelper;
@@ -225,12 +225,12 @@ FileBrowser::FileBrowser ()
 #if defined(WIN32)
     Gtk::manage(miOpenDefaultViewer = new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
 #else
-    miOpenDefaultViewer = NULL;
+    miOpenDefaultViewer = nullptr;
 #endif
 
     // Build a list of menu items
     mMenuExtProgs.clear();
-    amiExtProg = NULL;
+    amiExtProg = nullptr;
 
     for (const auto& action : extProgStore->getActions ()) {
         if (action.target == 1 || action.target == 2) {
@@ -239,7 +239,7 @@ FileBrowser::FileBrowser ()
     }
 
     // Attach them to menu
-    if (!mMenuExtProgs.empty() || miOpenDefaultViewer != NULL) {
+    if (!mMenuExtProgs.empty() || miOpenDefaultViewer != nullptr) {
         amiExtProg = new Gtk::MenuItem*[mMenuExtProgs.size()];
         int itemNo = 0;
 
@@ -248,7 +248,7 @@ FileBrowser::FileBrowser ()
             p++;
             Gtk::Menu* submenuExtProg = Gtk::manage (new Gtk::Menu());
 
-            if (miOpenDefaultViewer != NULL) {
+            if (miOpenDefaultViewer != nullptr) {
                 submenuExtProg->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
             }
@@ -261,7 +261,7 @@ FileBrowser::FileBrowser ()
             submenuExtProg->show_all ();
             menuExtProg->set_submenu (*submenuExtProg);
         } else {
-            if (miOpenDefaultViewer != NULL) {
+            if (miOpenDefaultViewer != nullptr) {
                 pmenu->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
             }
@@ -417,7 +417,7 @@ FileBrowser::FileBrowser ()
         amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
     }
 
-    if (miOpenDefaultViewer != NULL) {
+    if (miOpenDefaultViewer != nullptr) {
         miOpenDefaultViewer->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), miOpenDefaultViewer));
     }
 
@@ -487,13 +487,13 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
         untrash->set_sensitive (false);
 
         for (size_t i = 0; i < selected.size(); i++)
-            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage() == 1) {
+            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
                 untrash->set_sensitive (true);
                 break;
             }
 
         for (size_t i = 0; i < selected.size(); i++)
-            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage() == 0) {
+            if (!(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
                 trash->set_sensitive (true);
                 break;
             }
@@ -512,7 +512,6 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
     submenuDF->attach (*Gtk::manage(autoDF = new Gtk::MenuItem (M("FILEBROWSER_AUTODARKFRAME"))), 0, 1, p, p + 1);
     p++;
     submenuDF->attach (*Gtk::manage(thisIsDF = new Gtk::MenuItem (M("FILEBROWSER_MOVETODARKFDIR"))), 0, 1, p, p + 1);
-    p++;
     selectDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectDF));
     autoDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoDF));
     thisIsDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), thisIsDF ));
@@ -527,7 +526,6 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry)
     submenuFF->attach (*Gtk::manage(autoFF = new Gtk::MenuItem (M("FILEBROWSER_AUTOFLATFIELD"))), 0, 1, p, p + 1);
     p++;
     submenuFF->attach (*Gtk::manage(thisIsFF = new Gtk::MenuItem (M("FILEBROWSER_MOVETOFLATFIELDDIR"))), 0, 1, p, p + 1);
-    p++;
     selectFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectFF));
     autoFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoFF));
     thisIsFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), thisIsFF ));
@@ -612,7 +610,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     entry->addButtonSet (new FileThumbnailButtonSet (entry));
     entry->getThumbButtonSet()->setRank (entry->thumbnail->getRank());
     entry->getThumbButtonSet()->setColorLabel (entry->thumbnail->getColorLabel());
-    entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage() == 1);
+    entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage());
     entry->getThumbButtonSet()->setButtonListener (this);
     entry->resize (getThumbnailHeight());
 
@@ -659,7 +657,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
             }
 
             if (lastClicked == entry) {
-                lastClicked = NULL;
+                lastClicked = nullptr;
             }
 
             redraw ();
@@ -667,7 +665,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
             return (static_cast<FileBrowserEntry*>(entry));
         }
 
-    return NULL;
+    return nullptr;
 }
 
 void FileBrowser::close ()
@@ -702,7 +700,7 @@ void FileBrowser::close ()
         fd.clear ();
     }
 
-    lastClicked = NULL;
+    lastClicked = nullptr;
 }
 
 void FileBrowser::menuColorlabelActivated (Gtk::MenuItem* m)
@@ -792,7 +790,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     else if (m == rename) {
         tbl->renameRequested (mselected);
     } else if (m == selall) {
-        lastClicked = NULL;
+        lastClicked = nullptr;
         {
             MYWRITERLOCK(l, entryRW);
 
@@ -823,7 +821,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             rtengine::procparams::ProcParams pp = mselected[i]->thumbnail->getProcParams();
             pp.raw.df_autoselect = true;
             pp.raw.dark_frame.clear();
-            mselected[i]->thumbnail->setProcParams(pp, NULL, FILEBROWSER, false);
+            mselected[i]->thumbnail->setProcParams(pp, nullptr, FILEBROWSER, false);
         }
 
         if (!mselected.empty() && bppcl) {
@@ -851,7 +849,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                     rtengine::procparams::ProcParams pp = mselected[i]->thumbnail->getProcParams();
                     pp.raw.dark_frame = fc.get_filename();
                     pp.raw.df_autoselect = false;
-                    mselected[i]->thumbnail->setProcParams(pp, NULL, FILEBROWSER, false);
+                    mselected[i]->thumbnail->setProcParams(pp, nullptr, FILEBROWSER, false);
                 }
 
                 if (bppcl) {
@@ -900,7 +898,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             rtengine::procparams::ProcParams pp = mselected[i]->thumbnail->getProcParams();
             pp.raw.ff_AutoSelect = true;
             pp.raw.ff_file.clear();
-            mselected[i]->thumbnail->setProcParams(pp, NULL, FILEBROWSER, false);
+            mselected[i]->thumbnail->setProcParams(pp, nullptr, FILEBROWSER, false);
         }
 
         if (!mselected.empty() && bppcl) {
@@ -927,7 +925,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                     rtengine::procparams::ProcParams pp = mselected[i]->thumbnail->getProcParams();
                     pp.raw.ff_file = fc.get_filename();
                     pp.raw.ff_AutoSelect = false;
-                    mselected[i]->thumbnail->setProcParams(pp, NULL, FILEBROWSER, false);
+                    mselected[i]->thumbnail->setProcParams(pp, nullptr, FILEBROWSER, false);
                 }
 
                 if (bppcl) {
@@ -989,7 +987,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, NULL, FILEBROWSER);
+            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER);
         }
 
         if (!mselected.empty() && bppcl) {
@@ -1007,7 +1005,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         }
 
         //queue_draw ();
-    } else if (miOpenDefaultViewer != NULL && m == miOpenDefaultViewer) {
+    } else if (miOpenDefaultViewer != nullptr && m == miOpenDefaultViewer) {
         openDefaultViewer(1);
     }
 }
@@ -1090,7 +1088,7 @@ void FileBrowser::partPasteProfile ()
                 // copying read only clipboard PartialProfile to a temporary one, initialized to the thumb's ProcParams
                 mselected[i]->thumbnail->createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
                 rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
-                rtengine::procparams::PartialProfile pastedPartProf(&mselected[i]->thumbnail->getProcParams (), NULL);
+                rtengine::procparams::PartialProfile pastedPartProf(&mselected[i]->thumbnail->getProcParams (), nullptr);
 
                 // pushing the selected values of the clipboard PartialProfile to the temporary PartialProfile
                 partialPasteDlg.applyPaste (pastedPartProf.pparams, pastedPartProf.pedited, cbPartProf.pparams, cbPartProf.pedited);
@@ -1134,8 +1132,9 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     bool ctrl  = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
     bool alt   = event->state & GDK_MOD1_MASK;
+#ifdef __WIN32__
     bool altgr = event->state & GDK_MOD2_MASK;
-
+#endif
     if ((event->keyval == GDK_C || event->keyval == GDK_c || event->keyval == GDK_Insert) && ctrl) {
         copyProfile ();
         return true;
@@ -1439,7 +1438,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter)
                 selected.erase (j);
 
                 if (lastClicked == fd[i]) {
-                    lastClicked = NULL;
+                    lastClicked = nullptr;
                 }
 
                 selchanged = true;
@@ -1460,13 +1459,13 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
 
     FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(entryb);
 
-    if (filter.showOriginal && entry->getOriginal() != NULL) {
+    if (filter.showOriginal && entry->getOriginal() != nullptr) {
         return false;
     }
 
     // return false if basic filter settings are not satisfied
-    if ((filter.showRanked[entry->thumbnail->getRank()] == false ) ||
-            (filter.showCLabeled[entry->thumbnail->getColorLabel()] == false ) ||
+    if ((!filter.showRanked[entry->thumbnail->getRank()] ) ||
+            (!filter.showCLabeled[entry->thumbnail->getColorLabel()] ) ||
 
             ((entry->thumbnail->hasProcParams() && filter.showEdited[0]) && !filter.showEdited[1]) ||
             ((!entry->thumbnail->hasProcParams() && filter.showEdited[1]) && !filter.showEdited[0]) ||
@@ -1474,8 +1473,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
             ((entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[0]) && !filter.showRecentlySaved[1]) ||
             ((!entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[1]) && !filter.showRecentlySaved[0]) ||
 
-            (entry->thumbnail->getStage() == 1 && !filter.showTrash) ||
-            (entry->thumbnail->getStage() == 0 && !filter.showNotTrash)) {
+            (entry->thumbnail->getStage() && !filter.showTrash) ||
+            (!entry->thumbnail->getStage() && !filter.showNotTrash)) {
         return false;
     }
 
@@ -1516,7 +1515,7 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
             }
         }
 
-        if (MatchEqual == true) {
+        if (MatchEqual) {
             if (iFilenameMatch == 0) { //none of the vFilterStrings found in FileName
                 return false;
             }
@@ -1568,11 +1567,11 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
         // no need to notify listeners as item goes to trash, likely to be deleted
 
-        if (tbe[i]->thumbnail->getStage() == 1) {
+        if (tbe[i]->thumbnail->getStage()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (1);
+        tbe[i]->thumbnail->setStage (true);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1592,11 +1591,11 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
     for (size_t i = 0; i < tbe.size(); i++) {
         // if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
 
-        if (tbe[i]->thumbnail->getStage() == 0) {
+        if (!tbe[i]->thumbnail->getStage()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (0);
+        tbe[i]->thumbnail->setStage (false);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1715,7 +1714,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
         FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(actionData);
         tbe.push_back (entry);
 
-        if (entry->thumbnail->getStage() == 0) {
+        if (!entry->thumbnail->getStage()) {
             toTrashRequested (tbe);
         } else {
             fromTrashRequested (tbe);

@@ -144,7 +144,7 @@ protected:
 
 public:
 
-    HistogramArea(FullModeListener *fml = NULL);
+    explicit HistogramArea(FullModeListener *fml = nullptr);
     ~HistogramArea();
 
     void renderHistogram ();

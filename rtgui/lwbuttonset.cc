@@ -18,7 +18,7 @@
  */
 #include "lwbuttonset.h"
 
-LWButtonSet::LWButtonSet () : aw(0), ah(0)
+LWButtonSet::LWButtonSet () : aw(0), ah(0), ax(0), ay(0)
 {
 }
 

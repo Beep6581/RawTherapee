@@ -35,11 +35,13 @@
 
 using namespace rtengine::procparams;
 
-class EditorPanel::MonitorProfileSelector
+class EditorPanel::ColorManagementToolbar
 {
 private:
     MyComboBoxText profileBox;
     PopUpButton intentBox;
+    Gtk::ToggleButton softProof;
+    Gtk::ToggleButton spGamutCheck;
     sigc::connection profileConn, intentConn;
 
     rtengine::StagedImageProcessor* const& processor;
@@ -57,27 +59,49 @@ private:
         profileBox.set_active (0);
 #endif
 
-        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles ();
+        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles (true);
         for (std::vector<Glib::ustring>::const_iterator iterator = profiles.begin (); iterator != profiles.end (); ++iterator) {
             profileBox.append_text (*iterator);
         }
+        profileBox.set_tooltip_text (profileBox.get_active_text ());
     }
 
     void prepareIntentBox ()
     {
-        intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
+        // same order as the enum
         intentBox.addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox.addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
         intentBox.addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
 
-        intentBox.setSelected(0);
+        intentBox.setSelected(1);
         intentBox.show ();
+    }
+
+    void prepareSoftProofingBox ()
+    {
+        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("softProof.png"));
+        softProofImage->set_padding(0, 0);
+        softProof.add(*softProofImage);
+        softProof.set_relief(Gtk::RELIEF_NONE);
+        softProof.set_tooltip_markup(M("SOFTPROOF_TOOLTIP"));
+
+        softProof.set_active(false);
+        softProof.show ();
+
+        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("spGamutCheck.png"));
+        spGamutCheckImage->set_padding(0, 0);
+        spGamutCheck.add(*spGamutCheckImage);
+        spGamutCheck.set_relief(Gtk::RELIEF_NONE);
+        spGamutCheck.set_tooltip_markup(M("SOFTPROOF_GAMUTCHECK_TOOLTIP"));
+
+        spGamutCheck.set_active(false);
+        spGamutCheck.set_sensitive(false);
+        spGamutCheck.show ();
     }
 
     void profileBoxChanged ()
     {
         updateParameters ();
-
-        profileBox.set_tooltip_text (profileBox.get_active_text ());
     }
 
     void intentBoxChanged (int)
@@ -85,7 +109,17 @@ private:
         updateParameters ();
     }
 
-    void updateParameters ()
+    void softProofToggled ()
+    {
+        updateSoftProofParameters ();
+    }
+
+    void spGamutCheckToggled ()
+    {
+        updateSoftProofParameters ();
+    }
+
+    void updateParameters (bool noEvent = false)
     {
         ConnectionBlocker profileBlocker (profileConn);
         ConnectionBlocker intentBlocker (intentConn);
@@ -113,33 +147,46 @@ private:
             profile.clear();
 
             intentBox.set_sensitive (false);
-            intentBox.setSelected (0);
+            intentBox.setSelected (1);
+            softProof.set_sensitive(false);
+            spGamutCheck.set_sensitive(false);
+
+            profileBox.set_tooltip_text ("");
 
         } else {
-            const std::uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
+            const uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
             const bool supportsRelativeColorimetric = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
             const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
             const bool supportsAbsoluteColorimetric = supportedIntents & 1 << INTENT_ABSOLUTE_COLORIMETRIC;
 
             if (supportsPerceptual || supportsRelativeColorimetric || supportsAbsoluteColorimetric) {
                 intentBox.set_sensitive (true);
-                intentBox.setItemSensitivity(0, supportsRelativeColorimetric);
-                intentBox.setItemSensitivity(1, supportsPerceptual);
+                intentBox.setItemSensitivity(0, supportsPerceptual);
+                intentBox.setItemSensitivity(1, supportsRelativeColorimetric);
                 intentBox.setItemSensitivity(2, supportsAbsoluteColorimetric);
+                softProof.set_sensitive(true);
+                spGamutCheck.set_sensitive(true);
             } else {
+                intentBox.setItemSensitivity(0, true);
+                intentBox.setItemSensitivity(1, true);
+                intentBox.setItemSensitivity(2, true);
                 intentBox.set_sensitive (false);
-                intentBox.setSelected (0);
+                intentBox.setSelected (1);
+                softProof.set_sensitive(false);
+                spGamutCheck.set_sensitive(false);
             }
+
+            profileBox.set_tooltip_text (profileBox.get_active_text ());
         }
 
         rtengine::RenderingIntent intent;
         switch (intentBox.getSelected ()) {
         default:
         case 0:
-            intent = rtengine::RI_RELATIVE;
+            intent = rtengine::RI_PERCEPTUAL;
             break;
         case 1:
-            intent = rtengine::RI_PERCEPTUAL;
+            intent = rtengine::RI_RELATIVE;
             break;
         case 2:
             intent = rtengine::RI_ABSOLUTE;
@@ -150,29 +197,61 @@ private:
             return;
         }
 
-        processor->beginUpdateParams ();
+        if (!noEvent) {
+            processor->beginUpdateParams ();
+        }
         processor->setMonitorProfile (profile, intent);
-        processor->endUpdateParams (rtengine::EvMonitorTransform);
+        processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+        if (!noEvent) {
+            processor->endUpdateParams (rtengine::EvMonitorTransform);
+        }
+    }
+
+    void updateSoftProofParameters (bool noEvent = false)
+    {
+        spGamutCheck.set_sensitive(softProof.get_active());
+
+        if (profileBox.get_active_row_number () > 0) {
+            if (!noEvent) {
+                processor->beginUpdateParams ();
+            }
+            processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+            if (!noEvent) {
+                processor->endUpdateParams (rtengine::EvMonitorTransform);
+            }
+        }
     }
 
 public:
-    MonitorProfileSelector (rtengine::StagedImageProcessor* const& ipc) :
+    explicit ColorManagementToolbar (rtengine::StagedImageProcessor* const& ipc) :
         intentBox (Glib::ustring (), true),
         processor (ipc)
     {
         prepareProfileBox ();
         prepareIntentBox ();
+        prepareSoftProofingBox ();
 
         reset ();
 
-        profileConn = profileBox.signal_changed ().connect (sigc::mem_fun (this, &MonitorProfileSelector::profileBoxChanged));
-        intentConn = intentBox.signal_changed ().connect (sigc::mem_fun (this, &MonitorProfileSelector::intentBoxChanged));
+        softProof.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::softProofToggled));
+        spGamutCheck.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::spGamutCheckToggled));;
+        profileConn = profileBox.signal_changed ().connect (sigc::mem_fun (this, &ColorManagementToolbar::profileBoxChanged));
+        intentConn = intentBox.signal_changed ().connect (sigc::mem_fun (this, &ColorManagementToolbar::intentBoxChanged));
     }
 
     void pack_end_in (Gtk::Box* box)
     {
+        box->pack_end (spGamutCheck, Gtk::PACK_SHRINK, 0);
+        box->pack_end (softProof, Gtk::PACK_SHRINK, 0);
         box->pack_end (*intentBox.buttonGroup, Gtk::PACK_SHRINK, 0);
         box->pack_end (profileBox, Gtk::PACK_SHRINK, 0);
+    }
+
+    void updateProcessor()
+    {
+        if (processor) {
+            updateParameters(true);
+        }
     }
 
     void reset ()
@@ -193,10 +272,10 @@ public:
         switch (options.rtSettings.monitorIntent)
         {
         default:
-        case rtengine::RI_RELATIVE:
+        case rtengine::RI_PERCEPTUAL:
             intentBox.setSelected (0);
             break;
-        case rtengine::RI_PERCEPTUAL:
+        case rtengine::RI_RELATIVE:
             intentBox.setSelected (1);
             break;
         case rtengine::RI_ABSOLUTE:
@@ -210,7 +289,7 @@ public:
 };
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
-    : realized(false), iHistoryShow(NULL), iHistoryHide(NULL), iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL), iRightPanel_1_Show(NULL), iRightPanel_1_Hide(NULL), iBeforeLockON(NULL), iBeforeLockOFF(NULL), beforePreviewHandler(NULL), beforeIarea(NULL), beforeBox(NULL), afterBox(NULL), afterHeaderBox(NULL), parent(NULL), openThm(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL)
+    : realized(false), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), openThm(nullptr), ipc(nullptr), beforeIpc(nullptr), isProcessing(false), catalogPane(nullptr)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -231,7 +310,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     leftbox->set_border_width (2);
     leftbox->set_size_request(100, 250);
 
-    histogramPanel = NULL;
+    histogramPanel = nullptr;
 
     profilep = Gtk::manage (new ProfilePanel ());
     ppframe = new Gtk::Frame ();
@@ -286,7 +365,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         hidehp->set_image (*iHistoryShow);
     }
 
-    tbTopPanel_1 = NULL;
+    tbTopPanel_1 = nullptr;
 
     if (!simpleEditor && filePanel) {
         tbTopPanel_1 = new Gtk::ToggleButton ();
@@ -313,6 +392,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider(iareapanel->imageArea);
+    tpc->getToolBar()->setLockablePickerToolListener(iareapanel->imageArea);
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);
@@ -410,7 +490,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->pack_end (*iareapanel->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
     iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
 
-    navPrev = navNext = navSync = NULL;
+    navPrev = navNext = navSync = nullptr;
 
     if (!simpleEditor && !options.tabbedUI) {
         // Navigation buttons
@@ -443,9 +523,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
 
-    // Monitor profile buttons
-    monitorProfile.reset (new MonitorProfileSelector (ipc));
-    monitorProfile->pack_end_in (iops);
+    // Color management toolbar
+    colorMgmtToolBar.reset (new ColorManagementToolbar (ipc));
+    colorMgmtToolBar->pack_end_in (iops);
 
     editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
     editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
@@ -544,31 +624,31 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 EditorPanel::~EditorPanel ()
 {
 
-    history->setHistoryBeforeLineListener (NULL);
+    history->setHistoryBeforeLineListener (nullptr);
     // the order is important!
-    iareapanel->setBeforeAfterViews (NULL, iareapanel);
+    iareapanel->setBeforeAfterViews (nullptr, iareapanel);
     delete iareapanel;
-    iareapanel = NULL;
+    iareapanel = nullptr;
 
     if (beforeIpc) {
         beforeIpc->stopProcessing ();
     }
 
     delete beforeIarea;
-    beforeIarea = NULL;
+    beforeIarea = nullptr;
 
     if (beforeIpc) {
-        beforeIpc->setPreviewImageListener (NULL);
+        beforeIpc->setPreviewImageListener (nullptr);
     }
 
     delete beforePreviewHandler;
-    beforePreviewHandler = NULL;
+    beforePreviewHandler = nullptr;
 
     if (beforeIpc) {
         rtengine::StagedImageProcessor::destroy (beforeIpc);
     }
 
-    beforeIpc = NULL;
+    beforeIpc = nullptr;
 
     close ();
 
@@ -705,6 +785,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     this->isrc = isrc;
     ipc = rtengine::StagedImageProcessor::create (isrc);
     ipc->setProgressListener (this);
+    colorMgmtToolBar->updateProcessor();
     ipc->setPreviewImageListener (previewHandler);
     ipc->setPreviewScale (10);  // Important
     tpc->initImage (ipc, tmb->getType() == FT_Raw);
@@ -753,8 +834,6 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc)
     }
 
     history->resetSnapShotNumber();
-
-    monitorProfile->reset ();
 }
 
 void EditorPanel::close ()
@@ -765,28 +844,28 @@ void EditorPanel::close ()
         tpc->closeImage ();    // this call stops image processing
         tpc->writeOptions ();
         rtengine::ImageSource* is = isrc->getImageSource();
-        is->setProgressListener( NULL );
+        is->setProgressListener( nullptr );
 
         if (ipc) {
-            ipc->setPreviewImageListener (NULL);
+            ipc->setPreviewImageListener (nullptr);
         }
 
         if (beforeIpc) {
-            beforeIpc->setPreviewImageListener (NULL);
+            beforeIpc->setPreviewImageListener (nullptr);
         }
 
         delete previewHandler;
-        previewHandler = NULL;
+        previewHandler = nullptr;
 
         if(iareapanel) {
-            iareapanel->imageArea->setPreviewHandler (NULL);
-            iareapanel->imageArea->setImProcCoordinator (NULL);
+            iareapanel->imageArea->setPreviewHandler (nullptr);
+            iareapanel->imageArea->setImProcCoordinator (nullptr);
             iareapanel->imageArea->unsubscribe();
         }
 
         rtengine::StagedImageProcessor::destroy (ipc);
-        ipc = NULL;
-        navigator->previewWindow->setPreviewHandler (NULL);
+        ipc = nullptr;
+        navigator->previewWindow->setPreviewHandler (nullptr);
 
         // If the file was deleted somewhere, the openThm.descreaseRef delete the object, but we don't know here
         if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
@@ -808,7 +887,7 @@ void EditorPanel::saveProfile ()
         ipc->getParams (&params);
 
         // Will call updateCache, which will update both the cached and sidecar files if necessary
-        openThm->setProcParams (params, NULL, EDITOR);
+        openThm->setProcParams (params, nullptr, EDITOR);
     }
 }
 
@@ -932,7 +1011,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
 
     if (inProcessingP) {
         if (processingStartedTime == 0) {
-            processingStartedTime = ::time(NULL);
+            processingStartedTime = ::time(nullptr);
         }
 
         s->str = "PROGRESSBAR_PROCESSING";
@@ -942,12 +1021,12 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         if (ipc && openThm && tpc->getChangedState()) {
             rtengine::procparams::ProcParams pparams;
             ipc->getParams (&pparams);
-            openThm->setProcParams (pparams, NULL, EDITOR, false);
+            openThm->setProcParams (pparams, nullptr, EDITOR, false);
         }
 
         // Ring a sound if it was a long event
         if (processingStartedTime != 0) {
-            time_t curTime = ::time(NULL);
+            time_t curTime = ::time(nullptr);
 
             if (::difftime(curTime, processingStartedTime) > options.sndLngEditProcDoneSecs) {
                 SoundManager::playSoundAsync(options.sndLngEditProcDone);
@@ -984,7 +1063,7 @@ struct errparams {
 
 void EditorPanel::displayError (Glib::ustring title, Glib::ustring descr)
 {
-    GtkWidget* msgd = gtk_message_dialog_new_with_markup (NULL,
+    GtkWidget* msgd = gtk_message_dialog_new_with_markup (nullptr,
                       GTK_DIALOG_DESTROY_WITH_PARENT,
                       GTK_MESSAGE_ERROR,
                       GTK_BUTTONS_OK,
@@ -1560,8 +1639,7 @@ void EditorPanel::saveAsPressed ()
         fnameOut = saveAsDialog->getFileName ();
 
         options.lastSaveAsPath = saveAsDialog->getDirectory ();
-        options.saveAsDialogWidth = saveAsDialog->get_width ();
-        options.saveAsDialogHeight = saveAsDialog->get_height ();
+        saveAsDialog->get_size(options.saveAsDialogWidth, options.saveAsDialogHeight);
         options.autoSuffix = saveAsDialog->getAutoSuffix ();
         options.saveMethodNum = saveAsDialog->getSaveMethodNum ();
         lastSaveAsFileName = Glib::path_get_basename (removeExtension (fnameOut));
@@ -1630,6 +1708,8 @@ void EditorPanel::saveAsPressed ()
     } while (!fnameOK);
 
     saveAsDialog->hide();
+
+    delete saveAsDialog;
 }
 
 void EditorPanel::queueImgPressed ()
@@ -1785,29 +1865,29 @@ void EditorPanel::beforeAfterToggled ()
             beforeIpc->stopProcessing ();
         }
 
-        iareapanel->setBeforeAfterViews (NULL, iareapanel);
-        iareapanel->imageArea->iLinkedImageArea = NULL;
+        iareapanel->setBeforeAfterViews (nullptr, iareapanel);
+        iareapanel->imageArea->iLinkedImageArea = nullptr;
         delete beforeIarea;
-        beforeIarea = NULL;
+        beforeIarea = nullptr;
 
         if (beforeIpc) {
-            beforeIpc->setPreviewImageListener (NULL);
+            beforeIpc->setPreviewImageListener (nullptr);
         }
 
         delete beforePreviewHandler;
-        beforePreviewHandler = NULL;
+        beforePreviewHandler = nullptr;
 
         if (beforeIpc) {
             rtengine::StagedImageProcessor::destroy (beforeIpc);
         }
 
-        beforeIpc = NULL;
+        beforeIpc = nullptr;
     }
 
     if (beforeAfter->get_active ()) {
 
         int errorCode = 0;
-        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType() == FT_Raw , &errorCode, NULL);
+        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType() == FT_Raw , &errorCode, nullptr);
 
         if( !beforeImg || errorCode ) {
             return;
@@ -1889,19 +1969,12 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
 bool EditorPanel::CheckSidePanelsVisibility()
 {
     if (tbTopPanel_1) {
-        if(tbTopPanel_1->get_active() == false && tbRightPanel_1->get_active() == false && hidehp->get_active() == false) {
-            return false;
-        }
-
-        return true;
+        return tbTopPanel_1->get_active() || tbRightPanel_1->get_active() || hidehp->get_active();
     }
 
-    if(tbRightPanel_1->get_active() == false && hidehp->get_active() == false) {
-        return false;
-    }
-
-    return true;
+    return tbRightPanel_1->get_active() || hidehp->get_active();
 }
+
 void EditorPanel::toggleSidePanels()
 {
     // Maximize preview panel:
@@ -1917,7 +1990,7 @@ void EditorPanel::toggleSidePanels()
     tbRightPanel_1->set_active (!bAllSidePanelsVisible);
     hidehp->set_active (!bAllSidePanelsVisible);
 
-    if (bAllSidePanelsVisible == false) {
+    if (!bAllSidePanelsVisible) {
         tbShowHideSidePanels->set_image (*iShowHideSidePanels);
     } else {
         tbShowHideSidePanels->set_image (*iShowHideSidePanels_exit);
@@ -1970,7 +2043,7 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             }
 
             delete histogramPanel;
-            histogramPanel = NULL;
+            histogramPanel = nullptr;
         }
 
         // else no need to create it

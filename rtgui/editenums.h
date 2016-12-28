@@ -21,9 +21,9 @@
 
 enum ImgEditState {SNormal, SCropMove, SHandMove, SResizeW1, SResizeW2, SResizeH1, SResizeH2, SResizeTL, SResizeTR, SResizeBL, SResizeBR,
                    SCropSelecting, SRotateSelecting, SCropWinMove, SCropFrameMove, SCropImgMove, SCropWinResize, SObservedMove,
-                   SEditDrag1, SEditDrag2, SEditDrag3, SEditPick1, SEditPick2, SEditPick3
+                   SEditDrag1, SEditDrag2, SEditDrag3, SEditPick1, SEditPick2, SEditPick3, SDragPicker, SDeletePicker
                   };
-enum CursorArea  {CropWinButtons, CropToolBar, CropImage, CropBorder, CropTop, CropTopLeft, CropTopRight, CropBottom, CropBottomLeft,
+enum CursorArea  {CropWinButtons, CropToolBar, CropImage, ColorPicker, CropBorder, CropTop, CropTopLeft, CropTopRight, CropBottom, CropBottomLeft,
                   CropBottomRight, CropLeft, CropRight, CropInside, CropResize, CropObserved
                  };
 

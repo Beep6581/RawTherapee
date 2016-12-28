@@ -19,11 +19,14 @@
 #ifndef _PROCPARAMS_H_
 #define _PROCPARAMS_H_
 
-#include <glibmm.h>
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <type_traits>
+
+#include <glibmm.h>
 #include <lcms2.h>
+
 #include "LUT.h"
 #include "coord.h"
 
@@ -63,9 +66,7 @@ public:
 protected:
     bool initEq1;
     bool _isDouble;
-#ifndef NDEBUG
-    unsigned int part[5];
-#endif
+
 public:
     Threshold (T bottom, T top, bool startAtOne)
     {
@@ -206,7 +207,7 @@ public:
         }
     }*/
 
-    Threshold<T> & operator= (const Threshold<T> &rhs)
+    Threshold<T>& operator =(const Threshold<T> &rhs)
     {
         value[0] = rhs.value[0];
         value[1] = rhs.value[1];
@@ -217,16 +218,34 @@ public:
         return *this;
     }
 
-    bool operator== (const Threshold<T> &rhs) const
+    template<typename U = T>
+    typename std::enable_if<std::is_floating_point<U>::value, bool>::type operator ==(const Threshold<U> &rhs) const
     {
-        if (_isDouble)
-            return fabs(value[0] - rhs.value[0]) < 1e-10
-                   && fabs(value[1] - rhs.value[1]) < 1e-10
-                   && fabs(value[2] - rhs.value[2]) < 1e-10
-                   && fabs(value[3] - rhs.value[3]) < 1e-10;
-        else
-            return fabs(value[0] - rhs.value[0]) < 1e-10
-                   && fabs(value[1] - rhs.value[1]) < 1e-10;
+        if (_isDouble) {
+            return std::fabs(value[0] - rhs.value[0]) < 1e-10
+                   && std::fabs(value[1] - rhs.value[1]) < 1e-10
+                   && std::fabs(value[2] - rhs.value[2]) < 1e-10
+                   && std::fabs(value[3] - rhs.value[3]) < 1e-10;
+        } else {
+            return std::fabs(value[0] - rhs.value[0]) < 1e-10
+                   && std::fabs(value[1] - rhs.value[1]) < 1e-10;
+        }
+    }
+
+    template<typename U = T>
+    typename std::enable_if<std::is_integral<U>::value, bool>::type operator ==(const Threshold<U> &rhs) const
+    {
+        if (_isDouble) {
+            return
+                value[0] == rhs.value[0]
+                && value[1] == rhs.value[1]
+                && value[2] == rhs.value[2]
+                && value[3] == rhs.value[3];
+        } else {
+            return
+                value[0] == rhs.value[0]
+                && value[1] == rhs.value[1];
+        }
     }
 };
 
@@ -1016,6 +1035,7 @@ public:
     Glib::ustring working;
     Glib::ustring output;
     RenderingIntent outputIntent;
+    bool outputBPC;
     static const Glib::ustring NoICMString;
 
     Glib::ustring gamma;
@@ -1366,14 +1386,14 @@ public:
       * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
       * @return Error code (=0 if all supplied filenames where created correctly)
       */
-    int     save        (const Glib::ustring &fname, const Glib::ustring &fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited = NULL);
+    int     save        (const Glib::ustring &fname, const Glib::ustring &fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited = nullptr);
     /**
       * Loads the parameters from a file.
       * @param fname the name of the file
       * @params pedited pointer to a ParamsEdited object (optional) to store which values has been loaded
       * @return Error code (=0 if no error)
       */
-    int     load        (const Glib::ustring &fname, ParamsEdited* pedited = NULL);
+    int     load        (const Glib::ustring &fname, ParamsEdited* pedited = nullptr);
 
     /** Creates a new instance of ProcParams.
       * @return a pointer to the new ProcParams instance. */
@@ -1413,7 +1433,7 @@ class PartialProfile
 public:
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;
-    PartialProfile& operator=(PartialProfile& rhs)
+    PartialProfile& operator =(const PartialProfile& rhs)
     {
         pparams = rhs.pparams;
         pedited = rhs.pedited;
@@ -1421,8 +1441,8 @@ public:
     };
 
     PartialProfile      (bool createInstance = false, bool paramsEditedValue = false);
-    PartialProfile      (ProcParams* pp, ParamsEdited* pe = NULL, bool fullCopy = false);
-    PartialProfile      (const ProcParams* pp, const ParamsEdited* pe = NULL);
+    PartialProfile      (ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
+    PartialProfile      (const ProcParams* pp, const ParamsEdited* pe = nullptr);
     void deleteInstance ();
     void clearGeneral   ();
     int  load           (const Glib::ustring &fName);

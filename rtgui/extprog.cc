@@ -102,7 +102,7 @@ void ExtProgStore::init ()
 #endif
 
 }
-
+#ifdef WIN32
 bool ExtProgStore::searchProgram (const Glib::ustring& name,
                                   const Glib::ustring& exePath,
                                   const Glib::ustring& exePath86,
@@ -111,7 +111,6 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
                                   bool allowQueueProcess)
 {
 
-#ifdef WIN32
     // get_user_special_dir crashes on some Windows configurations.
     static Glib::ustring progFilesDir, progFilesDirx86;
 
@@ -196,10 +195,10 @@ bool ExtProgStore::searchProgram (const Glib::ustring& name,
         return true;
     }
 
-#endif
 
     return false;
 }
+#endif
 
 bool ExtProgStore::spawnCommandAsync (const Glib::ustring& cmd)
 {
@@ -227,7 +226,7 @@ bool ExtProgStore::spawnCommandSync (const Glib::ustring& cmd)
 
     try {
 
-        Glib::spawn_command_line_sync (cmd, NULL, NULL, &exitStatus);
+        Glib::spawn_command_line_sync (cmd, nullptr, nullptr, &exitStatus);
 
     } catch (const Glib::Exception& exception) {
 

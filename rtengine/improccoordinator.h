@@ -58,8 +58,8 @@ protected:
     Imagefloat *spotprevi;
     LabImage *oprevl;
     LabImage *nprevl;
-    Image8 *previmg;
-    Image8 *workimg;
+    Image8 *previmg;  // displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
+    Image8 *workimg;  // internal image in output color space for analysis
     CieImage *ncie;
 
     ImageSource* imgsrc;
@@ -75,8 +75,9 @@ protected:
     PreviewProps previewProps;
 
     Glib::ustring monitorProfile;
-
     RenderingIntent monitorIntent;
+    bool softProof;
+    bool gamutCheck;
 
     int scale;
     bool highDetailPreprocessComputed;
@@ -92,7 +93,6 @@ protected:
     LUTf hltonecurve;
     LUTf shtonecurve;
     LUTf tonecurve;
-    float chaut, redaut, blueaut, maxredaut, maxblueaut,  minredaut, minblueaut, nresi, highresi, chromina, sigma, lumema;
 
     LUTf lumacurve;
     LUTf chroma_acurve;
@@ -176,10 +176,17 @@ protected:
     void reallocAll ();
     void updateLRGBHistograms ();
     void setScale (int prevscale);
-    void updatePreviewImage (int todo, Crop* cropCall = NULL);
+    void updatePreviewImage (int todo, Crop* cropCall = nullptr);
 
     MyMutex mProcessing;
     ProcParams params;
+
+    // for optimization purpose, the output profile, output rendering intent and
+    // output BPC will trigger a regeneration of the profile on parameter change only
+    // and automatically
+    Glib::ustring lastOutputProfile;
+    RenderingIntent lastOutputIntent;
+    bool lastOutputBPC;
 
     // members of the updater:
     Glib::Thread* thread;
@@ -258,6 +265,8 @@ public:
 
     void setMonitorProfile (const Glib::ustring& profile, RenderingIntent intent);
     void getMonitorProfile (Glib::ustring& profile, RenderingIntent& intent) const;
+    void setSoftProofing   (bool softProof, bool gamutCheck);
+    void getSoftProofing   (bool &softProof, bool &gamutCheck);
 
     bool updateTryLock ()
     {
@@ -329,7 +338,7 @@ public:
     }
 
     struct DenoiseInfoStore {
-        DenoiseInfoStore () : valid(false) {}
+        DenoiseInfoStore () : chM(0), max_r{}, max_b{}, ch_M{}, valid(false)  {}
         float chM;
         float max_r[9];
         float max_b[9];

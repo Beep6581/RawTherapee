@@ -71,7 +71,7 @@ class Thumbnail
     void            _loadThumbnail (bool firstTrial = true);
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
-    int             infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml = NULL);
+    int             infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml = nullptr);
     void            loadThumbnail (bool firstTrial = true);
     void            generateExifDateTimeStrings ();
 
@@ -89,7 +89,7 @@ public:
     // Use this to create params on demand for update ; if flaggingMode=true, the procparams is created for a file being flagged (inTrash, rank, colorLabel)
     rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB, bool flaggingMode = false);
 
-    void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe = NULL, int whoChangedIt = -1, bool updateCacheNow = true);
+    void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe = nullptr, int whoChangedIt = -1, bool updateCacheNow = true);
     void              clearProcParams (int whoClearedIt = -1);
     void              loadProcParams ();
 
@@ -112,7 +112,7 @@ public:
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
     rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
     rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
-    void            getThumbnailSize        (int &w, int &h, const rtengine::procparams::ProcParams *pparams = NULL);
+    void            getThumbnailSize        (int &w, int &h, const rtengine::procparams::ProcParams *pparams = nullptr);
     void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
 
     const Glib::ustring&  getExifString ();
@@ -187,7 +187,7 @@ public:
     {
         return pparams.inTrash;
     }
-    void            setStage (int stage)
+    void            setStage (bool stage)
     {
         if (pparams.inTrash != stage) {
             pparams.inTrash = stage;

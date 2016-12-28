@@ -163,7 +163,7 @@ void LCPPersModel::print() const
 LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP,
                      int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
 {
-    if (pProf == NULL) {
+    if (pProf == nullptr) {
         return;
     }
 
@@ -182,7 +182,7 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
     bool mirrorY = (rot == 180 || rot == 270);
     //printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
 
-    pProf->calcParams(vignette ? 0 : 1, focalLength, focusDist, aperture, &mc, NULL, NULL);
+    pProf->calcParams(vignette ? 0 : 1, focalLength, focusDist, aperture, &mc, nullptr, nullptr);
     mc.prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
 
     if (!vignette) {
@@ -276,12 +276,12 @@ float LCPMapper::calcVignetteFac(int x, int y) const
                                                    + 2.*aVig[0] * aVig[2] - 3.*param0Sqr * aVig[1]) * rsqr * rsqr));
 }
 
-LCPProfile::LCPProfile(Glib::ustring fname)
+LCPProfile::LCPProfile(const Glib::ustring &fname)
 {
     const int BufferSize = 8192;
     char buf[BufferSize];
 
-    XML_Parser parser = XML_ParserCreate(NULL);
+    XML_Parser parser = XML_ParserCreate(nullptr);
 
     if (!parser) {
         throw "Couldn't allocate memory for XML parser";
@@ -296,7 +296,7 @@ LCPProfile::LCPProfile(Glib::ustring fname)
     sensorFormatFactor = 1;
 
     for (int i = 0; i < MaxPersModelCount; i++) {
-        aPersModel[i] = NULL;
+        aPersModel[i] = nullptr;
     }
 
     persModelCount = 0;
@@ -400,7 +400,7 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
     float euler = exp(1.0);
 
     // find the frames with the least distance, focal length wise
-    LCPPersModel *pLow = NULL, *pHigh = NULL;
+    LCPPersModel *pLow = nullptr, *pHigh = nullptr;
 
     float focalLengthLog = log(focalLength); //, apertureLog=aperture>0 ? log(aperture) : 0;
     float focusDistLog = focusDist > 0 ? log(focusDist) + euler : 0;
@@ -410,11 +410,11 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
         float f = aPersModel[pm]->focLen;
 
         if (aPersModel[pm]->hasModeData(mode)) {
-            if (f <= focalLength && (pLow == NULL || f > pLow->focLen || (focusDist == 0 && f == pLow->focLen && pLow->focDist > aPersModel[pm]->focDist))) {
+            if (f <= focalLength && (pLow == nullptr || f > pLow->focLen || (focusDist == 0 && f == pLow->focLen && pLow->focDist > aPersModel[pm]->focDist))) {
                 pLow = aPersModel[pm];
             }
 
-            if (f >= focalLength && (pHigh == NULL || f < pHigh->focLen || (focusDist == 0 && f == pHigh->focLen && pHigh->focDist < aPersModel[pm]->focDist))) {
+            if (f >= focalLength && (pHigh == nullptr || f < pHigh->focLen || (focusDist == 0 && f == pHigh->focLen && pHigh->focDist < aPersModel[pm]->focDist))) {
                 pHigh = aPersModel[pm];
             }
         }
@@ -488,7 +488,7 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
         }
     }
 
-    if (pLow != NULL && pHigh != NULL) {
+    if (pLow != nullptr && pHigh != nullptr) {
         // average out the factors, linear interpolation in logarithmic scale
         float facLow = 0.5;
         bool focLenOnSpot = false; // pretty often, since max/min are often as frames in LCP
@@ -555,7 +555,7 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
     // clean up tagname
     const char* src = strrchr(el, ':');
 
-    if (src == NULL) {
+    if (src == nullptr) {
         src = const_cast<char*>(el);
     } else {
         src++;
@@ -621,11 +621,11 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
 
     // some profiles (espc. Pentax) have a different structure that is attributes based
     // simulate tags by feeding them in
-    if (parseAttr && attr != NULL) {
+    if (parseAttr && attr != nullptr) {
         for (int i = 0; attr[i]; i += 2) {
             const char* nameStart = strrchr(attr[i], ':');
 
-            if (nameStart == NULL) {
+            if (nameStart == nullptr) {
                 nameStart = const_cast<char*>(attr[i]);
             } else {
                 nameStart++;
@@ -772,7 +772,7 @@ void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el)
         pProf->inPerspect = false;
     } else if (strstr(el, ":li")) {
         pProf->aPersModel[pProf->persModelCount] = pProf->pCurPersModel;
-        pProf->pCurPersModel = NULL;
+        pProf->pCurPersModel = nullptr;
         pProf->persModelCount++;
     }
 }
@@ -787,7 +787,7 @@ LCPStore* LCPStore::getInstance()
 LCPProfile* LCPStore::getProfile (Glib::ustring filename)
 {
     if (filename.length() == 0 || !isValidLCPFileName(filename)) {
-        return NULL;
+        return nullptr;
     }
 
     MyMutex::MyLock lock(mtx);

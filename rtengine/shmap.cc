@@ -30,7 +30,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-SHMap::SHMap (int w, int h, bool multiThread) : W(w), H(h), multiThread(multiThread)
+SHMap::SHMap (int w, int h, bool multiThread) : max_f(0.f), min_f(0.f), avg(0.f), W(w), H(h), multiThread(multiThread)
 {
 
     map = new float*[H];

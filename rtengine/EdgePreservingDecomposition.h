@@ -67,13 +67,16 @@ ben_s or nonbasketless. Enjoy!
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
 #include "opthelper.h"
+#include "noncopyable.h"
 
 //This is for solving big symmetric positive definite linear problems.
-float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b = true, float *x = NULL, float RMSResidual = 0.0f, void *Pass = NULL, int MaximumIterates = 0, void Preconditioner(float *Product, float *x, void *Pass) = NULL);
+float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b = true, float *x = nullptr, float RMSResidual = 0.0f, void *Pass = nullptr, int MaximumIterates = 0, void Preconditioner(float *Product, float *x, void *Pass) = nullptr);
 
 //Storage and use class for symmetric matrices, the nonzero contents of which are confined to diagonals.
-class MultiDiagonalSymmetricMatrix
+class MultiDiagonalSymmetricMatrix :
+    public rtengine::NonCopyable
 {
 public:
     MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle);
@@ -90,7 +93,7 @@ public:
     */
     float **Diagonals;
     char *buffer;
-    char *DiagBuffer;
+    float *DiagBuffer;
     int *StartRows;
     bool CreateDiagonal(int index, int StartRow);
     int n, m;   //The matrix is n x n, with m diagonals on the lower triangle. Don't change these. They should be private but aren't for convenience.
@@ -131,7 +134,8 @@ public:
 
 };
 
-class EdgePreservingDecomposition
+class EdgePreservingDecomposition :
+    public rtengine::NonCopyable
 {
 public:
     EdgePreservingDecomposition(int width, int height);
@@ -139,16 +143,16 @@ public:
 
     //Create an edge preserving blur of Source. Will create and return, or fill into Blur if not NULL. In place not ok.
     //If UseBlurForEdgeStop is true, supplied not NULL Blur is used to calculate the edge stopping function instead of Source.
-    float *CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur = NULL, bool UseBlurForEdgeStop = false);
+    float *CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur = nullptr, bool UseBlurForEdgeStop = false);
 
     //Iterates CreateBlur such that the smoothness term approaches a specific norm via iteratively reweighted least squares. In place not ok.
-    float *CreateIteratedBlur(float *Source, float Scale, float EdgeStopping, int Iterates, int Reweightings, float *Blur = NULL);
+    float *CreateIteratedBlur(float *Source, float Scale, float EdgeStopping, int Iterates, int Reweightings, float *Blur = nullptr);
 
     /*Lowers global contrast while preserving or boosting local contrast. Can fill into Compressed. The smaller Compression
     the more compression is applied, with Compression = 1 giving no effect and above 1 the opposite effect. You can totally
     use Compression = 1 and play with DetailBoost for some really sweet unsharp masking. If working on luma/grey, consider giving it a logarithm.
     In place calculation to save memory (Source == Compressed) is totally ok. Reweightings > 0 invokes CreateIteratedBlur instead of CreateBlur. */
-    float *CompressDynamicRange(float *Source, float Scale = 1.0f, float EdgeStopping = 1.4f, float CompressionExponent = 0.8f, float DetailBoost = 0.1f, int Iterates = 20, int Reweightings = 0, float *Compressed = NULL);
+    float *CompressDynamicRange(float *Source, float Scale = 1.0f, float EdgeStopping = 1.4f, float CompressionExponent = 0.8f, float DetailBoost = 0.1f, int Iterates = 20, int Reweightings = 0, float *Compressed = nullptr);
 
 private:
     MultiDiagonalSymmetricMatrix *A;    //The equations are simple enough to not mandate a matrix class, but fast solution NEEDS a complicated preconditioner.

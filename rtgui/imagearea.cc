@@ -29,16 +29,16 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true)
 {
 
     infotext = "";
-    cropgl = NULL;
-    pmlistener = NULL;
-    pmhlistener = NULL;
-    focusGrabber = NULL;
-    flawnOverWindow = NULL;
-    mainCropWindow = NULL;
-    previewHandler = NULL;
+    cropgl = nullptr;
+    pmlistener = nullptr;
+    pmhlistener = nullptr;
+    focusGrabber = nullptr;
+    flawnOverWindow = nullptr;
+    mainCropWindow = nullptr;
+    previewHandler = nullptr;
     showClippedH = false;
     showClippedS = false;
-    listener = NULL;
+    listener = nullptr;
 
     zoomPanel = Gtk::manage (new ZoomPanel (this));
     indClippedPanel = Gtk::manage (new IndicateClippedPanel (this));
@@ -49,8 +49,8 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true)
     signal_size_allocate().connect( sigc::mem_fun(*this, &ImageArea::on_resized) );
 
     dirty = false;
-    ipc = NULL;
-    iLinkedImageArea = NULL;
+    ipc = nullptr;
+    iLinkedImageArea = nullptr;
 }
 
 ImageArea::~ImageArea ()
@@ -88,7 +88,7 @@ void ImageArea::on_resized (Gtk::Allocation& req)
 {
     if (ipc && get_width() > 1) { // sometimes on_resize is called in some init state, causing wrong sizes
         if (!mainCropWindow) {
-            mainCropWindow = new CropWindow (this, ipc, false, false);
+            mainCropWindow = new CropWindow (this, false, false);
             mainCropWindow->setDecorated (false);
             mainCropWindow->setFitZoomEnabled (true);
             mainCropWindow->addCropWindowListener (this);
@@ -106,10 +106,15 @@ void ImageArea::on_resized (Gtk::Allocation& req)
     }
 }
 
-void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_)
+rtengine::StagedImageProcessor* ImageArea::getImProcCoordinator() const
+{
+    return ipc;
+}
+
+void ImageArea::setImProcCoordinator(rtengine::StagedImageProcessor* ipc_)
 {
     if( !ipc_ ) {
-        focusGrabber = NULL;
+        focusGrabber = nullptr;
 
         for (auto cropWin : cropWins) {
             delete cropWin;
@@ -117,7 +122,8 @@ void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_)
 
         cropWins.clear();
 
-        mainCropWindow->setObservedCropWin (NULL);
+        mainCropWindow->deleteColorPickers ();
+        mainCropWindow->setObservedCropWin (nullptr);
     }
 
     ipc = ipc_;
@@ -143,16 +149,43 @@ void ImageArea::setInfoText (Glib::ustring text)
     infotext = text;
 
     Glib::RefPtr<Pango::Context> context = get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd(get_default_style()->get_font());
+
+    // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
     fontd.set_size (9 * Pango::SCALE);
     context->set_font_description (fontd);
-    ilayout = create_pango_layout("");
+
+    // create text layout
+    Glib::RefPtr<Pango::Layout> ilayout = create_pango_layout("");
     ilayout->set_markup(text);
+
+    // get size of the text block
     int iw, ih;
     ilayout->get_pixel_size (iw, ih);
-    ipixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, true, 8, iw + 8, ih + 8);
-    ipixbuf->fill (128);
+
+    // create BackBuffer
+    iBackBuffer.setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, iw + 16, ih + 16, true);
+    iBackBuffer.setDestPosition(8, 8);
+
+    Cairo::RefPtr<Cairo::Context> cr = iBackBuffer.getContext();
+
+    // cleaning the back buffer (make it full transparent)
+    cr->set_source_rgba (0., 0., 0., 0.);
+    cr->set_operator (Cairo::OPERATOR_CLEAR);
+    cr->paint ();
+    cr->set_operator (Cairo::OPERATOR_OVER);
+
+    // paint transparent black background
+    cr->set_source_rgba (0., 0., 0., 0.5);
+    cr->paint ();
+
+    // paint text
+    cr->set_source_rgb (1.0, 1.0, 1.0);
+    cr->move_to (8, 8);
+    ilayout->add_to_cairo_context (cr);
+    cr->fill ();
+
 }
 
 void ImageArea::infoEnabled (bool e)
@@ -178,7 +211,6 @@ CropWindow* ImageArea::getCropWindow (int x, int y)
     return cw;
 }
 
-
 void ImageArea::redraw ()
 {
     // dirty prevents multiple updates queued up
@@ -186,6 +218,11 @@ void ImageArea::redraw ()
         dirty = true;
         queue_draw ();
     }
+}
+
+void ImageArea::switchPickerVisibility (bool isVisible)
+{
+    redraw();
 }
 
 bool ImageArea::on_expose_event(GdkEventExpose* event)
@@ -196,21 +233,14 @@ bool ImageArea::on_expose_event(GdkEventExpose* event)
         return true;
     }
 
-    Glib::RefPtr<Gdk::Window> window = get_window();
     Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
 
     if (mainCropWindow) {
         mainCropWindow->expose (cr);
     }
 
-    if (options.showInfo == true && infotext != "") {
-        int fnw, fnh;
-        ilayout->get_pixel_size (fnw, fnh);
-        window->draw_pixbuf (get_style()->get_base_gc (Gtk::STATE_NORMAL), ipixbuf, 0, 0, 4, 4, fnw + 8, fnh + 8, Gdk::RGB_DITHER_NONE, 0, 0);
-        cr->set_source_rgb (1.0, 1.0, 1.0);
-        cr->move_to (8, 8);
-        ilayout->add_to_cairo_context (cr);
-        cr->fill ();
+    if (options.showInfo && infotext != "") {
+        iBackBuffer.copySurface(cr);
     }
 
     for (std::list<CropWindow*>::reverse_iterator i = cropWins.rbegin(); i != cropWins.rend(); ++i) {
@@ -242,7 +272,7 @@ bool ImageArea::on_motion_notify_event (GdkEventMotion* event)
             cw->pointerMoved (event->state, event->x, event->y);
         } else if (flawnOverWindow) {
             flawnOverWindow->flawnOver(false);
-            flawnOverWindow = NULL;
+            flawnOverWindow = nullptr;
         }
     }
 
@@ -269,18 +299,8 @@ bool ImageArea::on_scroll_event (GdkEventScroll* event)
 {
 
     CropWindow* cw = getCropWindow (event->x, event->y);
-
     if (cw) {
-        int newCenterX = (int)event->x;
-        int newCenterY = (int)event->y;
-
-        cw->screenCoordToImage(newCenterX, newCenterY, newCenterX, newCenterY);
-
-        if (event->direction == GDK_SCROLL_UP && !cw->isMaxZoom()) {
-            cw->zoomIn (true, newCenterX, newCenterY);
-        } else if (!cw->isMinZoom()) {
-            cw->zoomOut (true, newCenterX, newCenterY);
-        }
+        cw->scroll (event->state, event->direction, event->x, event->y);
     }
 
     return true;
@@ -306,7 +326,7 @@ bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event)
 {
     if (flawnOverWindow) {
         flawnOverWindow->flawnOver(false);
-        flawnOverWindow = NULL;
+        flawnOverWindow = nullptr;
     }
 
     if (focusGrabber) {
@@ -355,9 +375,9 @@ void ImageArea::unsubscribe()
     EditDataProvider::unsubscribe();
 
     // Ask the Crops to free-up edit mode buffers
-    mainCropWindow->setEditSubscriber(NULL);
+    mainCropWindow->setEditSubscriber(nullptr);
     for (auto cropWin : cropWins) {
-        cropWin->setEditSubscriber(NULL);
+        cropWin->setEditSubscriber(nullptr);
     }
 
     setToolHand();
@@ -394,7 +414,7 @@ void ImageArea::grabFocus (CropWindow* cw)
 void ImageArea::unGrabFocus ()
 {
 
-    focusGrabber = NULL;
+    focusGrabber = nullptr;
 }
 
 void ImageArea::addCropWindow ()
@@ -403,7 +423,7 @@ void ImageArea::addCropWindow ()
         return;    // if called but no image is loaded, it would crash
     }
 
-    CropWindow* cw = new CropWindow (this, ipc, true, true);
+    CropWindow* cw = new CropWindow (this, true, true);
     cw->zoom11();
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
@@ -505,7 +525,7 @@ void ImageArea::cropWindowSelected (CropWindow* cw)
 void ImageArea::cropWindowClosed (CropWindow* cw)
 {
 
-    focusGrabber = NULL;
+    focusGrabber = nullptr;
     std::list<CropWindow*>::iterator i = std::find (cropWins.begin(), cropWins.end(), cw);
 
     if (i != cropWins.end()) {
@@ -515,7 +535,7 @@ void ImageArea::cropWindowClosed (CropWindow* cw)
     if (!cropWins.empty()) {
         mainCropWindow->setObservedCropWin (cropWins.front());
     } else {
-        mainCropWindow->setObservedCropWin (NULL);
+        mainCropWindow->setObservedCropWin (nullptr);
     }
 
     queue_draw ();
@@ -687,6 +707,16 @@ ToolMode ImageArea::getToolMode ()
         return listener->getToolBar()->getTool ();
     } else {
         return TMHand;
+    }
+}
+
+bool ImageArea::showColorPickers ()
+{
+
+    if (listener && listener->getToolBar()) {
+        return listener->getToolBar()->showColorPickers ();
+    } else {
+        return false;
     }
 }
 

@@ -47,7 +47,7 @@ Imagefloat::~Imagefloat ()
 void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, float *minValue, float *maxValue)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 
@@ -146,7 +146,7 @@ void Imagefloat::setScanline (int row, unsigned char* buffer, int bps, float *mi
 void Imagefloat::getScanline (int row, unsigned char* buffer, int bps)
 {
 
-    if (data == NULL) {
+    if (data == nullptr) {
         return;
     }
 

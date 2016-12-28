@@ -51,32 +51,17 @@ template<class T> T** allocArray (int W, int H)
 }
 
 #define HR_SCALE 2
-StdImageSource::StdImageSource () : ImageSource(), img(NULL), plistener(NULL)
+StdImageSource::StdImageSource () : ImageSource(), img(nullptr), plistener(nullptr), full(false), max{}, rgbSourceModified(false)
 {
 
-    hrmap[0] = NULL;
-    hrmap[1] = NULL;
-    hrmap[2] = NULL;
-    needhr = NULL;
-    embProfile = NULL;
-    idata = NULL;
+    embProfile = nullptr;
+    idata = nullptr;
 }
 
 StdImageSource::~StdImageSource ()
 {
 
     delete idata;
-
-    if (hrmap[0] != NULL) {
-        int dh = img->getH() / HR_SCALE;
-        freeArray<float>(hrmap[0], dh);
-        freeArray<float>(hrmap[1], dh);
-        freeArray<float>(hrmap[2], dh);
-    }
-
-    if (needhr) {
-        freeArray<char>(needhr, img->getH());
-    }
 
     if (img) {
         delete img;
@@ -178,7 +163,7 @@ int StdImageSource::load (const Glib::ustring &fname, bool batch)
 
     if (error) {
         delete img;
-        img = NULL;
+        img = nullptr;
         return error;
     }
 
@@ -243,7 +228,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 {
 
     bool skipTransform = false;
-    cmsHPROFILE in = NULL;
+    cmsHPROFILE in = nullptr;
     cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 
     if (cmp.input == "(embedded)" || cmp.input == "" || cmp.input == "(camera)" || cmp.input == "(cameraICC)") {
@@ -260,9 +245,9 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
         if (cmp.input != "(none)") {
             in = iccStore->getProfile (cmp.input);
 
-            if (in == NULL && embedded) {
+            if (in == nullptr && embedded) {
                 in = embedded;
-            } else if (in == NULL) {
+            } else if (in == nullptr) {
                 if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
                     skipTransform = true;
                 } else {
@@ -311,7 +296,7 @@ void StdImageSource::getFullSize (int& w, int& h, int tr)
     }
 }
 
-void StdImageSource::getSize (int tran, PreviewProps pp, int& w, int& h)
+void StdImageSource::getSize (PreviewProps pp, int& w, int& h)
 {
 
     w = pp.w / pp.skip + (pp.w % pp.skip > 0);

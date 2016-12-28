@@ -46,11 +46,11 @@ private:
 
 public:
     Splash (Gtk::Window& parent, int maxtime);
-    Splash (Gtk::Window& parent);
+    explicit Splash (Gtk::Window& parent);
 
     bool hasReleaseNotes()
     {
-        return releaseNotesSW != NULL;
+        return releaseNotesSW != nullptr;
     };
     void showReleaseNotes();
     bool on_timer ();

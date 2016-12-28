@@ -22,15 +22,17 @@
 #define CPLX_WAVELET_DEC_H_INCLUDED
 
 #include <cstddef>
-#include <math.h>
+#include <cmath>
 
 #include "cplx_wavelet_level.h"
 #include "cplx_wavelet_filter_coeffs.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
 
-class wavelet_decomposition
+class wavelet_decomposition :
+    public NonCopyable
 {
 public:
 
@@ -95,7 +97,7 @@ public:
 
 template<typename E>
 wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop, int numThreads, int Daub4Len)
-    : coeff0(NULL), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), numThreads(numThreads), m_w(width), m_h(height)
+    : coeff0(nullptr), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), numThreads(numThreads), m_w(width), m_h(height)
 {
 
     //initialize wavelet filters
@@ -153,17 +155,17 @@ wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int
     E *buffer[2];
     buffer[0] = new (std::nothrow) E[(m_w / 2 + 1) * (m_h / 2 + 1)];
 
-    if(buffer[0] == NULL) {
+    if(buffer[0] == nullptr) {
         memoryAllocationFailed = true;
         return;
     }
 
     buffer[1] = new (std::nothrow) E[(m_w / 2 + 1) * (m_h / 2 + 1)];
 
-    if(buffer[1] == NULL) {
+    if(buffer[1] == nullptr) {
         memoryAllocationFailed = true;
         delete[] buffer[0];
-        buffer[0] = NULL;
+        buffer[0] = nullptr;
         return;
     }
 
@@ -208,7 +210,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
 
         E *tmpHi = new (std::nothrow) E[width * height];
 
-        if(tmpHi == NULL) {
+        if(tmpHi == nullptr) {
             memoryAllocationFailed = true;
             return;
         }
@@ -217,7 +219,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
             E *tmpLo = wavelet_decomp[lvl]->wavcoeffs[2]; // we can use this as buffer
             wavelet_decomp[lvl]->reconstruct_level(tmpLo, tmpHi, coeff0, coeff0, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
             delete wavelet_decomp[lvl];
-            wavelet_decomp[lvl] = NULL;
+            wavelet_decomp[lvl] = nullptr;
         }
 
         delete[] tmpHi;
@@ -232,7 +234,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
     } else {                                      // allocate new block of memory
         tmpLo = new (std::nothrow) E[width * height];
 
-        if(tmpLo == NULL) {
+        if(tmpLo == nullptr) {
             memoryAllocationFailed = true;
             return;
         }
@@ -240,7 +242,7 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
 
     E *tmpHi = new (std::nothrow) E[width * height];
 
-    if(tmpHi == NULL) {
+    if(tmpHi == nullptr) {
         memoryAllocationFailed = true;
 
         if(!wavelet_decomp[0]->bigBlockOfMemoryUsed()) {
@@ -259,9 +261,9 @@ void wavelet_decomposition::reconstruct(E * dst, const float blend)
 
     delete[] tmpHi;
     delete wavelet_decomp[0];
-    wavelet_decomp[0] = NULL;
+    wavelet_decomp[0] = nullptr;
     delete[] coeff0;
-    coeff0 = NULL;
+    coeff0 = nullptr;
 }
 
 };

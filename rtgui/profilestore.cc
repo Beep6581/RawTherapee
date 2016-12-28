@@ -26,7 +26,7 @@ ProfileStore profileStore;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ProfileStore::ProfileStore () : parseMutex(NULL), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(NULL), internalDefaultEntry(NULL)
+ProfileStore::ProfileStore () : parseMutex(nullptr), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(nullptr), internalDefaultEntry(nullptr)
 {
     internalDefaultProfile = new AutoPartialProfile();
     internalDefaultProfile->set(true);
@@ -65,7 +65,7 @@ ProfileStore::~ProfileStore ()
     delete internalDefaultProfile;
     lock.release();
     delete parseMutex;
-    parseMutex = NULL;
+    parseMutex = nullptr;
 }
 
 /*
@@ -142,7 +142,7 @@ void ProfileStore::_parseProfiles ()
 
 
     // Check if the default profiles has been found.
-    if (findEntryFromFullPathU(options.defProfRaw) == NULL) {
+    if (findEntryFromFullPathU(options.defProfRaw) == nullptr) {
         options.setDefProfRawMissing(true);
 
         if (options.rtSettings.verbose) {
@@ -150,7 +150,7 @@ void ProfileStore::_parseProfiles ()
         }
     }
 
-    if (findEntryFromFullPathU(options.defProfImg) == NULL) {
+    if (findEntryFromFullPathU(options.defProfImg) == nullptr) {
         options.setDefProfImgMissing(true);
 
         if (options.rtSettings.verbose) {
@@ -164,10 +164,10 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
 {
 
     bool fileFound = false;
-    unsigned int folder = 0; // folder's own Id
 
     // reload the available profiles from the profile dir
     if (!realPath.empty() && Glib::file_test(realPath, Glib::FILE_TEST_EXISTS) && Glib::file_test (realPath, Glib::FILE_TEST_IS_DIR)) {
+        unsigned int folder = 0; // folder's own Id
 
         // add this entry to the folder list
         folders.push_back(virtualPath);
@@ -186,7 +186,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
         }
 
         // walking through the directory
-        Glib::Dir* dir = NULL;
+        Glib::Dir* dir = nullptr;
         dir = new Glib::Dir (realPath);
 
         for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
@@ -271,7 +271,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
 {
 
     if (path.empty()) {
-        return NULL;
+        return nullptr;
     }
 
     if (path == DEFPROFILE_INTERNAL) {
@@ -298,7 +298,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
         path = path.substr(0, path.length() - fName.length());
     } else {
         // path is malformed, returning NULL;
-        return NULL;
+        return nullptr;
     }
 
     path = Glib::path_get_dirname(path);
@@ -307,7 +307,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
     int parentFolderId = findFolderId(path);
 
     if (parentFolderId == -1) {
-        return NULL;
+        return nullptr;
     }
 
     // 2. find the entry that match the given filename and parentFolderId
@@ -317,7 +317,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 /** Protected version of findEntryFromFullPathU */
@@ -333,13 +333,13 @@ const PartialProfile* ProfileStore::getProfile (Glib::ustring path)
     if (!init())
         // I don't even know if this situation can occur
     {
-        return NULL;
+        return nullptr;
     }
 
     const ProfileStoreEntry *pse = findEntryFromFullPath(path);
 
     if (!pse) {
-        return NULL;
+        return nullptr;
     }
 
     return getProfile(pse);
@@ -351,7 +351,7 @@ const PartialProfile* ProfileStore::getProfile (const ProfileStoreEntry* entry)
     if (!init())
         // I don't even know if this situation can occur
     {
-        return NULL;
+        return nullptr;
     }
 
     MyMutex::MyLock lock(*parseMutex);
@@ -369,7 +369,7 @@ const PartialProfile* ProfileStore::getProfile (const ProfileStoreEntry* entry)
 #ifndef NDEBUG
         printf("WARNING! Profile not found!\n");
 #endif
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -406,7 +406,7 @@ const ProcParams* ProfileStore::getDefaultProcParams (bool isRaw)
     if (!init())
         // I don't even know if this situation can occur
     {
-        return NULL;
+        return nullptr;
     }
 
     //Note: the mutex is locked in getProfile, called below
@@ -431,7 +431,7 @@ const PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw)
     if (!init())
         // I don't even know if this situation can occur
     {
-        return NULL;
+        return nullptr;
     }
 
     //Note: the mutex is locked in getProfile, called below
@@ -488,7 +488,7 @@ void ProfileStore::dumpFolderList()
     printf("Folder list:\n------------\n");
 
     for (unsigned int i = 0; i < folders.size(); i++) {
-        printf(" #%3d - %s\n", i, folders.at(i).c_str());
+        printf(" #%3ud - %s\n", i, folders.at(i).c_str());
     }
 
     printf("\n");
@@ -538,7 +538,7 @@ const ProfileStoreEntry* ProfileStoreComboBox::getSelectedEntry()
     if (currRow) {
         return currRow[methodColumns.profileStoreEntry];
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 

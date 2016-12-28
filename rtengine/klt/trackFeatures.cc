@@ -317,7 +317,7 @@ static _FloatWindow _allocateFloatWindow(
   _FloatWindow fw;
 
   fw = (_FloatWindow) malloc(width*height*sizeof(float));
-  if (fw == NULL) {
+  if (fw == nullptr) {
    KLTError("(_allocateFloatWindow) Out of memory.");
    exit(1);
   }
@@ -1291,7 +1291,7 @@ void KLTTrackFeatures(
 
 	/* Process first image by converting to float, smoothing, computing */
 	/* pyramid, and computing gradient pyramids */
-	if (tc->sequentialMode && tc->pyramid_last != NULL)  {
+	if (tc->sequentialMode && tc->pyramid_last != nullptr)  {
 		pyramid1 = (_KLT_Pyramid) tc->pyramid_last;
 		pyramid1_gradx = (_KLT_Pyramid) tc->pyramid_last_gradx;
 		pyramid1_grady = (_KLT_Pyramid) tc->pyramid_last_grady;
@@ -1301,8 +1301,8 @@ void KLTTrackFeatures(
 			ncols, nrows, pyramid1->ncols[0], pyramid1->nrows[0]);
                         exit(1);
                 }
-		assert(pyramid1_gradx != NULL);
-		assert(pyramid1_grady != NULL);
+		assert(pyramid1_gradx != nullptr);
+		assert(pyramid1_grady != nullptr);
 	} else  {
 		floatimg1_created = TRUE;
 		floatimg1 = _KLTCreateFloatImage(ncols, nrows);
@@ -1398,9 +1398,9 @@ void KLTTrackFeatures(
 				if( featurelist->feature[indx]->aff_img ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img);
 				if( featurelist->feature[indx]->aff_img_gradx ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_gradx);
 				if( featurelist->feature[indx]->aff_img_grady ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_grady);
-				featurelist->feature[indx]->aff_img = NULL;
-				featurelist->feature[indx]->aff_img_gradx = NULL;
-				featurelist->feature[indx]->aff_img_grady = NULL;
+				featurelist->feature[indx]->aff_img = nullptr;
+				featurelist->feature[indx]->aff_img_gradx = nullptr;
+				featurelist->feature[indx]->aff_img_grady = nullptr;
 
 			} else if (_outOfBounds(xlocout, ylocout, ncols, nrows, tc->borderx, tc->bordery))  {
 				featurelist->feature[indx]->x   = -1.0;
@@ -1409,9 +1409,9 @@ void KLTTrackFeatures(
 				if( featurelist->feature[indx]->aff_img ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img);
 				if( featurelist->feature[indx]->aff_img_gradx ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_gradx);
 				if( featurelist->feature[indx]->aff_img_grady ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_grady);
-				featurelist->feature[indx]->aff_img = NULL;
-				featurelist->feature[indx]->aff_img_gradx = NULL;
-				featurelist->feature[indx]->aff_img_grady = NULL;
+				featurelist->feature[indx]->aff_img = nullptr;
+				featurelist->feature[indx]->aff_img_gradx = nullptr;
+				featurelist->feature[indx]->aff_img_grady = nullptr;
 			} else if (val == KLT_SMALL_DET)  {
 				featurelist->feature[indx]->x   = -1.0;
 				featurelist->feature[indx]->y   = -1.0;
@@ -1419,9 +1419,9 @@ void KLTTrackFeatures(
 				if( featurelist->feature[indx]->aff_img ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img);
 				if( featurelist->feature[indx]->aff_img_gradx ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_gradx);
 				if( featurelist->feature[indx]->aff_img_grady ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_grady);
-				featurelist->feature[indx]->aff_img = NULL;
-				featurelist->feature[indx]->aff_img_gradx = NULL;
-				featurelist->feature[indx]->aff_img_grady = NULL;
+				featurelist->feature[indx]->aff_img = nullptr;
+				featurelist->feature[indx]->aff_img_gradx = nullptr;
+				featurelist->feature[indx]->aff_img_grady = nullptr;
 			} else if (val == KLT_LARGE_RESIDUE)  {
 				featurelist->feature[indx]->x   = -1.0;
 				featurelist->feature[indx]->y   = -1.0;
@@ -1429,9 +1429,9 @@ void KLTTrackFeatures(
 				if( featurelist->feature[indx]->aff_img ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img);
 				if( featurelist->feature[indx]->aff_img_gradx ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_gradx);
 				if( featurelist->feature[indx]->aff_img_grady ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_grady);
-				featurelist->feature[indx]->aff_img = NULL;
-				featurelist->feature[indx]->aff_img_gradx = NULL;
-				featurelist->feature[indx]->aff_img_grady = NULL;
+				featurelist->feature[indx]->aff_img = nullptr;
+				featurelist->feature[indx]->aff_img_gradx = nullptr;
+				featurelist->feature[indx]->aff_img_grady = nullptr;
 			} else if (val == KLT_MAX_ITERATIONS)  {
 				featurelist->feature[indx]->x   = -1.0;
 				featurelist->feature[indx]->y   = -1.0;
@@ -1439,9 +1439,9 @@ void KLTTrackFeatures(
 				if( featurelist->feature[indx]->aff_img ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img);
 				if( featurelist->feature[indx]->aff_img_gradx ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_gradx);
 				if( featurelist->feature[indx]->aff_img_grady ) _KLTFreeFloatImage(featurelist->feature[indx]->aff_img_grady);
-				featurelist->feature[indx]->aff_img = NULL;
-				featurelist->feature[indx]->aff_img_gradx = NULL;
-				featurelist->feature[indx]->aff_img_grady = NULL;
+				featurelist->feature[indx]->aff_img = nullptr;
+				featurelist->feature[indx]->aff_img_gradx = nullptr;
+				featurelist->feature[indx]->aff_img_grady = nullptr;
 			} else  {
 				featurelist->feature[indx]->x = xlocout;
 				featurelist->feature[indx]->y = ylocout;
@@ -1497,9 +1497,9 @@ void KLTTrackFeatures(
 							_KLTFreeFloatImage(featurelist->feature[indx]->aff_img);
 							_KLTFreeFloatImage(featurelist->feature[indx]->aff_img_gradx);
 							_KLTFreeFloatImage(featurelist->feature[indx]->aff_img_grady);
-							featurelist->feature[indx]->aff_img = NULL;
-							featurelist->feature[indx]->aff_img_gradx = NULL;
-							featurelist->feature[indx]->aff_img_grady = NULL;
+							featurelist->feature[indx]->aff_img = nullptr;
+							featurelist->feature[indx]->aff_img_gradx = nullptr;
+							featurelist->feature[indx]->aff_img_grady = nullptr;
 						}else{
 							/*featurelist->feature[indx]->x = xlocout;*/
 							/*featurelist->feature[indx]->y = ylocout;*/

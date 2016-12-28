@@ -42,7 +42,7 @@ public:
     // Should only be created once, auto-creates window on correct display
     static EditWindow* getInstance(RTWindow* p);
 
-    EditWindow (RTWindow* p);
+    explicit EditWindow (RTWindow* p);
 
     void addEditorPanel (EditorPanel* ep, const std::string &name);
     void remEditorPanel (EditorPanel* ep);

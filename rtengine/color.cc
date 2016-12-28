@@ -23,6 +23,7 @@
 #include "mytime.h"
 #include "sleef.c"
 #include "opthelper.h"
+#include "iccstore.h"
 
 #define pow_F(a,b) (xexpf(b*xlogf(a)))
 
@@ -350,7 +351,7 @@ void Color::init ()
 #ifdef _OPENMP
         #pragma omp section
 #endif
-        linearGammaTRC = cmsBuildGamma(NULL, 1.0);
+        linearGammaTRC = cmsBuildGamma(nullptr, 1.0);
     }
 }
 
@@ -359,6 +360,153 @@ void Color::cleanup ()
     if (linearGammaTRC) {
         cmsFreeToneCurve(linearGammaTRC);
     }
+}
+
+void Color::rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace)
+{
+    double xyz_rgb[3][3];
+    const double ep = 216.0 / 24389.0;
+    const double ka = 24389.0 / 27.0;
+
+    double var_R = r / 65535.0;
+    double var_G = g / 65535.0;
+    double var_B = b / 65535.0;
+
+    Glib::ustring profileCalc;
+    profileCalc = "sRGB"; //default
+
+    if (workingSpace) {
+        profileCalc = profileW;    //display working
+    }
+
+    else {// if you want display = output space
+        if (profile == "RT_sRGB" || profile == "RT_sRGB_gBT709" || profile == "RT_sRGB_g10") {
+            profileCalc = "sRGB";
+        }
+
+        if (profile == "ProPhoto" || profile == "RT_Large_gBT709" || profile == "RT_Large_g10"  || profile == "RT_Large_gsRGB") {
+            profileCalc = "ProPhoto";
+        }
+
+        if (profile == "AdobeRGB1998" || profile == "RT_Medium_gsRGB") {
+            profileCalc = "Adobe RGB";
+        }
+
+        if (profile == "WideGamutRGB") {
+            profileCalc = "WideGamut";
+        }
+    }
+
+    if (workingSpace) {//display working
+        if (profileW == "sRGB") { //apply sRGB inverse gamma
+
+            if ( var_R > 0.04045 ) {
+                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            } else {
+                var_R = var_R / 12.92;
+            }
+
+            if ( var_G > 0.04045 ) {
+                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            } else {
+                var_G = var_G / 12.92;
+            }
+
+            if ( var_B > 0.04045 ) {
+                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            } else {
+                var_B = var_B / 12.92;
+            }
+        } else if (profileW == "ProPhoto") { // apply inverse gamma 1.8
+            var_R = pow ( var_R, 1.8);
+            var_G = pow ( var_G, 1.8);
+            var_B = pow ( var_B, 1.8);
+        } else { // apply inverse gamma 2.2
+            var_R = pow ( var_R, 2.2);
+            var_G = pow ( var_G, 2.2);
+            var_B = pow ( var_B, 2.2);
+        }
+    } else { //display outout profile
+
+        if (profile == "RT_sRGB" || profile == "RT_Large_gsRGB"  || profile == "RT_Medium_gsRGB") { //apply sRGB inverse gamma
+            if ( var_R > 0.04045 ) {
+                var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            } else {
+                var_R = var_R / 12.92;
+            }
+
+            if ( var_G > 0.04045 ) {
+                var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            } else {
+                var_G = var_G / 12.92;
+            }
+
+            if ( var_B > 0.04045 ) {
+                var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
+            } else {
+                var_B = var_B / 12.92;
+            }
+        }
+
+        else if (profile == "RT_sRGB_gBT709"  || profile == "RT_Large_gBT709") { //
+            if ( var_R > 0.0795 ) {
+                var_R = pow ( ( ( var_R + 0.0954 ) / 1.0954 ), 2.2);
+            } else {
+                var_R = var_R / 4.5;
+            }
+
+            if ( var_G > 0.0795 ) {
+                var_G = pow ( ( ( var_G + 0.0954 ) / 1.0954 ), 2.2);
+            } else {
+                var_G = var_G / 4.5;
+            }
+
+            if ( var_B > 0.0795 ) {
+                var_B = pow ( ( ( var_B + 0.0954 ) / 1.0954 ), 2.2);
+            } else {
+                var_B = var_B / 4.5;
+            }
+
+        } else if (profile == "ProPhoto") { // apply inverse gamma 1.8
+
+            var_R = pow ( var_R, 1.8);
+            var_G = pow ( var_G, 1.8);
+            var_B = pow ( var_B, 1.8);
+        } else if (profile == "RT_sRGB_g10"  || profile == "RT_Large_g10") { // apply inverse gamma 1.8
+
+            var_R = pow ( var_R, 1.);
+            var_G = pow ( var_G, 1.);
+            var_B = pow ( var_B, 1.);
+        }
+
+        else {// apply inverse gamma 2.2
+            var_R = pow ( var_R, 2.2);
+            var_G = pow ( var_G, 2.2);
+            var_B = pow ( var_B, 2.2);
+        }
+    }
+
+    // TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileW);
+
+    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profileCalc);
+
+    for (int m = 0; m < 3; m++)
+        for (int n = 0; n < 3; n++) {
+            xyz_rgb[m][n] = wprof[m][n];
+        }
+
+    double varxx, varyy, varzz;
+    double var_X = ( xyz_rgb[0][0] * var_R + xyz_rgb[0][1] * var_G + xyz_rgb[0][2] * var_B ) / Color::D50x;
+    double var_Y = ( xyz_rgb[1][0] * var_R + xyz_rgb[1][1] * var_G + xyz_rgb[1][2] * var_B ) ;
+    double var_Z = ( xyz_rgb[2][0] * var_R + xyz_rgb[2][1] * var_G + xyz_rgb[2][2] * var_B ) / Color::D50z;
+
+    varxx = var_X > ep ? cbrt(var_X) : ( ka * var_X  +  16.0) / 116.0 ;
+    varyy = var_Y > ep ? cbrt(var_Y) : ( ka * var_Y  +  16.0) / 116.0 ;
+    varzz = var_Z > ep ? cbrt(var_Z) : ( ka * var_Z  +  16.0) / 116.0 ;
+    LAB_l = ( 116 * varyy ) - 16;
+    LAB_a = 500 * ( varxx - varyy );
+    LAB_b = 200 * ( varyy - varzz );
+
 }
 
 void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
@@ -395,7 +543,7 @@ void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l)
             h_ = 4. + (var_R - var_G) / C;
         }
 
-        h = float(h_ /= 6.0);
+        h = float(h_ / 6.0);
 
         if ( h < 0.f ) {
             h += 1.f;
@@ -776,7 +924,7 @@ void Color::hsv2rgb (float h, float s, float v, int &r, int &g, int &b)
         r1 = t;
         g1 = p;
         b1 = v;
-    } else if (i == 5) {
+    } else /*if (i == 5)*/ {
         r1 = v;
         g1 = p;
         b1 = q;
@@ -1500,7 +1648,7 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
     Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);// ro go bo in gamut
 }
 
-void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5)
+void Color::calcGamma (double pwr, double ts, int mode, int imax, GammaValues &gamma)
 {
     //from Dcraw (D.Coffin)
     int i;
@@ -1536,12 +1684,13 @@ void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0
     }
 
     if (!mode--) {
-        gamma0 = g[0];
-        gamma1 = g[1];
-        gamma2 = g[2];
-        gamma3 = g[3];
-        gamma4 = g[4];
-        gamma5 = g[5];
+        gamma[0] = g[0];
+        gamma[1] = g[1];
+        gamma[2] = g[2];
+        gamma[3] = g[3];
+        gamma[4] = g[4];
+        gamma[5] = g[5];
+        gamma[6] = 0.;
         return;
     }
 }
@@ -1849,7 +1998,6 @@ void Color::skinred ( double J, double h, double sres, double Sp, float dred, fl
     float factorskin, factorsat, factor, factorskinext, interm;
     float scale = 100.0f / 100.1f; //reduction in normal zone
     float scaleext = 1.0f; //reduction in transition zone
-    float protect_redh;
     float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
     float HH;
     bool doskin = false;
@@ -1930,7 +2078,6 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
 
     if(doskin) {
         float factorskin, factorsat, factor, factorskinext;
-        float protect_redh;
         float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
         float chromapro = sres / Sp;
 
@@ -2101,7 +2248,7 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
 
                         correctionHueLum = 0.0;
 
-                        if(contin1 == true && contin2 == true) {
+                        if(contin1 && contin2) {
                             correctlum = correctlumprov2 - correctlumprov;
                         }
 
@@ -2491,7 +2638,7 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
     MyTime t1e, t2e;
     t1e.set();
     int negat = 0, moreRGB = 0;
-    MunsellDebugInfo* MunsDebugInfo = NULL;
+    MunsellDebugInfo* MunsDebugInfo = nullptr;
 
     if (corMunsell) {
         MunsDebugInfo = new MunsellDebugInfo();
@@ -2610,8 +2757,8 @@ SSEFUNCTION  void Color::LabGamutMunsell(float *labL, float *laba, float *labb, 
         printf("   Gamut              : G1negat=%iiter G165535=%iiter \n", negat, moreRGB);
 
         if (MunsDebugInfo) {
-            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%i\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
-            printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%i\n", MunsDebugInfo->maxdhuelum[0] , MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
+            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
+            printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhuelum[0] , MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
         } else {
             printf("   Munsell correction wasn't requested\n");
         }

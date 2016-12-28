@@ -89,7 +89,7 @@ public:
     static const int MaxPersModelCount = 3000;
     LCPPersModel* aPersModel[MaxPersModelCount];  // Do NOT use std::list or something, it's buggy in GCC!
 
-    LCPProfile(Glib::ustring fname);
+    explicit LCPProfile(const Glib::ustring &fname);
 
     void calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const;  // Interpolates between the persModels frames
 

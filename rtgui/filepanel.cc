@@ -28,7 +28,7 @@ int FilePanelInitUI (void* data)
     return 0;
 }
 
-FilePanel::FilePanel () : parent(NULL)
+FilePanel::FilePanel () : parent(nullptr)
 {
 
     dirpaned = Gtk::manage ( new Gtk::HPaned () );
@@ -52,7 +52,6 @@ FilePanel::FilePanel () : parent(NULL)
     dirpaned->pack1 (*placespaned, false, true);
 
     tpc = new BatchToolPanelCoordinator (this);
-    tpc->removeWbTool();
     fileCatalog = Gtk::manage ( new FileCatalog (tpc->coarse, tpc->getToolBar(), this) );
     ribbonPane = Gtk::manage ( new Gtk::Paned() );
     ribbonPane->add(*fileCatalog);
@@ -228,7 +227,7 @@ bool FilePanel::fileSelected (Thumbnail* thm)
     pendingLoadMutex.lock();
     pendingLoad *pl = new pendingLoad();
     pl->complete = false;
-    pl->pc = 0;
+    pl->pc = nullptr;
     pl->thm = thm;
     pendingLoads.push_back(pl);
     pendingLoadMutex.unlock();

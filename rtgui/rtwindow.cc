@@ -79,12 +79,12 @@ osx_open_file_cb (GtkosxApplication *app, gchar *path_, gpointer data)
 #endif // __APPLE__
 
 RTWindow::RTWindow ()
-    : mainNB(NULL)
-    , bpanel(NULL)
-    , splash(NULL)
-    , btn_fullscreen(NULL)
-    , epanel(NULL)
-    , fpanel(NULL)
+    : mainNB(nullptr)
+    , bpanel(nullptr)
+    , splash(nullptr)
+    , btn_fullscreen(nullptr)
+    , epanel(nullptr)
+    , fpanel(nullptr)
 {
 
     cacheMgr->init ();
@@ -143,19 +143,19 @@ RTWindow::RTWindow ()
     signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
 
     if(simpleEditor) {
-        epanel = Gtk::manage( new EditorPanel (NULL) );
+        epanel = Gtk::manage( new EditorPanel (nullptr) );
         epanel->setParent (this);
         add (*epanel);
         show_all ();
 
-        pldBridge = NULL; // No progress listener
+        pldBridge = nullptr; // No progress listener
 
         CacheManager* cm = CacheManager::getInstance();
         Thumbnail* thm = cm->getEntry( argv1 );
 
         if(thm) {
             int error;
-            rtengine::InitialImage *ii = rtengine::InitialImage::load(argv1, thm->getType() == FT_Raw, &error, NULL);
+            rtengine::InitialImage *ii = rtengine::InitialImage::load(argv1, thm->getType() == FT_Raw, &error, nullptr);
             epanel->open( thm, ii );
         }
     } else {
@@ -299,7 +299,7 @@ RTWindow::~RTWindow()
         delete pldBridge;
     }
 
-    pldBridge = NULL;
+    pldBridge = nullptr;
 #if defined(__APPLE__)
     g_object_unref (osxApp);
 #endif
@@ -379,7 +379,7 @@ void RTWindow::on_realize ()
                 splash->show ();
             } else {
                 delete splash;
-                splash = NULL;
+                splash = nullptr;
             }
         }
     }
@@ -552,7 +552,7 @@ bool RTWindow::keyPressed (GdkEventKey* event)
 #endif
 
     if (try_quit) {
-        if (!on_delete_event(0)) {
+        if (!on_delete_event(nullptr)) {
             gtk_main_quit();
         }
     }
@@ -690,8 +690,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     ProfilePanel::cleanup();
 
     if (!options.windowMaximized) {
-        options.windowWidth = get_width();
-        options.windowHeight = get_height();
+        get_size(options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
 
@@ -844,7 +843,7 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 bool RTWindow::splashClosed(GdkEventAny* event)
 {
     delete splash;
-    splash = NULL;
+    splash = nullptr;
     return true;
 }
 

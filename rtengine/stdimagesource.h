@@ -32,8 +32,6 @@ protected:
     ColorTemp wb;
     ProgressListener* plistener;
     bool full;
-    float** hrmap[3];
-    char** needhr;
     int max[3];
     bool rgbSourceModified;
 
@@ -66,7 +64,7 @@ public:
     }
 
     void        getFullSize (int& w, int& h, int tr = TR_NONE);
-    void        getSize     (int tran, PreviewProps pp, int& w, int& h);
+    void        getSize     (PreviewProps pp, int& w, int& h);
 
     ImageData*  getImageData ()
     {
@@ -78,7 +76,7 @@ public:
     }
     ImageMatrices* getImageMatrices ()
     {
-        return (ImageMatrices*)NULL;
+        return (ImageMatrices*)nullptr;
     }
     bool        isRAW() const
     {

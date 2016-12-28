@@ -77,7 +77,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
 //  int skip=1; //scale==1 ? 1 : 16;
     bool skinCurveIsSet = false;
-    DiagonalCurve* dcurve = NULL;
+    DiagonalCurve* dcurve = nullptr;
     dcurve = new DiagonalCurve (params->vibrance.skintonescurve, CURVES_MIN_POLY_POINTS);
 
     if (dcurve) {
@@ -85,14 +85,14 @@ void ImProcFunctions::vibrance (LabImage* lab)
             skinCurveIsSet = true;
         } else {
             delete dcurve;
-            dcurve = NULL;
+            dcurve = nullptr;
         }
     }
 
     if (!skinCurveIsSet && !params->vibrance.pastels && !params->vibrance.saturated) {
         if (dcurve) {
             delete dcurve;
-            dcurve = NULL;
+            dcurve = nullptr;
         }
 
         return;
@@ -117,7 +117,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
     if (dcurve) {
         delete dcurve;
-        dcurve = NULL;
+        dcurve = nullptr;
     }
 
 
@@ -180,7 +180,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
 
 #ifdef _DEBUG
-    MunsellDebugInfo* MunsDebugInfo = NULL;
+    MunsellDebugInfo* MunsDebugInfo = nullptr;
 
     if (avoidcolorshift) {
         MunsDebugInfo = new MunsellDebugInfo();
@@ -744,7 +744,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
         printf("   Gamut: G1negat=%iiter G165535=%iiter G2negsat=%iiter G265535=%iiter\n", negat, moreRGB, negsat, moresat);
 
         if (MunsDebugInfo) {
-            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%i\n", MunsDebugInfo->maxdhue[0], MunsDebugInfo->maxdhue[1], MunsDebugInfo->maxdhue[2], MunsDebugInfo->maxdhue[3], MunsDebugInfo->depass);
+            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0], MunsDebugInfo->maxdhue[1], MunsDebugInfo->maxdhue[2], MunsDebugInfo->maxdhue[3], MunsDebugInfo->depass);
         }
     }
 

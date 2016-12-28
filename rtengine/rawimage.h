@@ -20,8 +20,10 @@
 #define __RAWIMAGE_H
 
 #include <ctime>
+
 #include "dcraw.h"
 #include "imageio.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
@@ -32,7 +34,8 @@ struct badPix {
     badPix( uint16_t xc, uint16_t yc ): x(xc), y(yc) {}
 };
 
-class PixelsMap
+class PixelsMap :
+    public NonCopyable
 {
     int w; // line width in base_t units
     int h; // height
@@ -48,6 +51,7 @@ public:
         pm = new base_t [h * w ];
         memset(pm, 0, h * w * base_t_size );
     }
+
     ~PixelsMap()
     {
         delete [] pm;
@@ -99,10 +103,10 @@ class RawImage: public DCraw
 {
 public:
 
-    RawImage(  const Glib::ustring &name );
+    explicit RawImage( const Glib::ustring &name );
     ~RawImage();
 
-    int loadRaw (bool loadData = true, bool closeFile = true, ProgressListener *plistener = 0, double progressRange = 1.0);
+    int loadRaw (bool loadData = true, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0);
     void get_colorsCoeff( float* pre_mul_, float* scale_mul_, float* cblack_, bool forceAutoWB );
     void set_prefilters()
     {
@@ -270,37 +274,37 @@ public:
     {
         return profile_data;
     }
-    IMFILE *get_file()
+    IMFILE *get_file() const
     {
         return ifp;
     }
     bool is_supportedThumb() const ;
     bool is_jpegThumb() const ;
     bool is_ppmThumb() const ;
-    int get_thumbOffset()
+    int get_thumbOffset() const
     {
         return int(thumb_offset);
     }
-    int get_thumbWidth()
+    int get_thumbWidth() const
     {
         return int(thumb_width);
     }
-    int get_thumbHeight()
+    int get_thumbHeight() const
     {
         return int(thumb_height);
     }
-    int get_thumbBPS()
+    int get_thumbBPS() const
     {
         return thumb_load_raw ? 16 : 8;
     }
     bool get_thumbSwap() const;
-    unsigned get_thumbLength()
+    unsigned get_thumbLength() const
     {
         return thumb_length;
     }
-    bool zeroIsBad()
+    bool zeroIsBad() const
     {
-        return zero_is_bad == 1 ? true : false;
+        return zero_is_bad == 1;
     }
 
 public:

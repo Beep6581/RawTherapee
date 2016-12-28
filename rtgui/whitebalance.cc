@@ -104,14 +104,13 @@ static double wbTemp2Slider(double temp)
         const double slope = (double)(CENTERTEMP - MINTEMP) / (MAXTEMP - CENTERTEMP);
         const double y = (temp - CENTERTEMP) / (MAXTEMP - CENTERTEMP);
         double x = pow(y, 0.25); // rough guess of x, will be a little lower
-        double y1;
         double k = 0.1;
         bool add = true;
 
         // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
         // from tests, worst case is about 20 iterations, ie no problem
         for (;;) {
-            y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
+            double y1 = x * slope + (1.0 - slope) * pow(x, 4.0);
 
             if (5000 * fabs(y1 - y) < 0.1) {
                 break;
@@ -148,10 +147,11 @@ static double wbTemp2Slider(double temp)
     return sval;
 }
 
-WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL")), wbp(NULL), wblistener(NULL)
+WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL")), wbp(nullptr), wblistener(nullptr)
 {
 
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    hbox->set_spacing(4);
     hbox->show ();
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_METHOD")));
     lab->show ();
@@ -239,14 +239,19 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     method->pack_start(methodColumns.colIcon, false);
     method->pack_start(methodColumns.colLabel, true);
 
+    std::vector<Gtk::CellRenderer*> cells = method->get_cells();
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(cells.at(1));
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+
     method->set_active (0); // Camera
     method->show ();
-    hbox->pack_start (*lab, Gtk::PACK_SHRINK, 4);
+    hbox->pack_start (*lab, Gtk::PACK_SHRINK, 0);
     hbox->pack_start (*method);
-    pack_start (*hbox, Gtk::PACK_SHRINK, 4);
+    pack_start (*hbox, Gtk::PACK_SHRINK, 0);
     opt = 0;
 
     Gtk::HBox* spotbox = Gtk::manage (new Gtk::HBox ());
+    spotbox->set_spacing(4);
     spotbox->show ();
 
     spotbutton = Gtk::manage (new Gtk::Button (M("TP_WBALANCE_SPOTWB")));
@@ -292,10 +297,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
         spotsize->set_active(4);
     }
 
-    spotbox->pack_end (*spotsize, Gtk::PACK_EXPAND_WIDGET, 4);
-    spotbox->pack_end (*slab, Gtk::PACK_SHRINK, 4);
+    spotbox->pack_end (*spotsize, Gtk::PACK_EXPAND_WIDGET, 0);
+    spotbox->pack_end (*slab, Gtk::PACK_SHRINK, 0);
 
-    pack_start (*spotbox, Gtk::PACK_SHRINK, 4);
+    pack_start (*spotbox, Gtk::PACK_SHRINK, 0);
 
     Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
     Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
@@ -834,7 +839,7 @@ WBEntry* WhiteBalance::findWBEntry (Glib::ustring label, enum WB_LabelType lblTy
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 int WhiteBalance::_setActiveMethod(Glib::ustring &label, Gtk::TreeModel::Children &children)

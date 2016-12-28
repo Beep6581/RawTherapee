@@ -46,8 +46,6 @@ protected:
     Gtk::Label *lH, *lS, *lV;
     Gtk::Label *lLAB_A, *lLAB_B, *lLAB_L;
 
-    void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b);
-
     void setInvalid (int fullWidth = -1, int fullHeight = -1);
 
 public:
@@ -58,6 +56,10 @@ public:
     // pointermotionlistener interface
     //  void pointerMoved (bool validPos, int x, int y, int r, int g, int b);
     void pointerMoved (bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b);
+
+    void getRGBText (int r, int g, int b, Glib::ustring &sR, Glib::ustring &sG, Glib::ustring &sB);
+    void getHSVText (float h, float s, float v, Glib::ustring &sH, Glib::ustring &sS, Glib::ustring &sV);
+    void getLABText (float l, float a, float b, Glib::ustring &sL, Glib::ustring &sA, Glib::ustring &sB);
 
 };
 

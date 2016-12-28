@@ -33,7 +33,8 @@
 #32 2014-10-24 updated by mkyral
 #33 2015-02-22 updated by mkyral
 #34 2015-07-09 updated by mkyral
-#38 2015-11-24 updated by mkyral
+#35 2015-11-24 updated by mkyral
+#36 2016-10-18 updated by mkyral
 
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
@@ -203,6 +204,7 @@ FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky.\nZkratka: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky.\nZkratka: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Zobrazit Exif informace.\n\nZkratky:\n<b>i</b> - režim více karet editoru,\n<b>Alt-i</b> - režim jedné karty editoru.
 FILEBROWSER_SHOWNOTTRASHHINT;Zobrazit pouze nesmazané obrázky.
+FILEBROWSER_SHOWORIGINALHINT;Zobrazí pouze originální  obrázky.\n\nPokud existuje několik obrázků se stejným názvem, ale rozdílnými příponami, bude jako originál vybrán ten, jehož přípona je nejvýše v seznamu příponve Volby > Prohlížeč souborů > Analyzované přípony.
 FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené jednou hvězdičkou.\nZkratka: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené dvěma hvězdičkami.\nZkratka: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Ukázat obrázky hodnocené třemi hvězdičkami.\nZkratka: <b>3</b>
@@ -231,6 +233,7 @@ FILECHOOSER_FILTER_SAME;Stejný formát jako aktuální fotka
 FILECHOOSER_FILTER_TIFF;Soubory TIFF
 GENERAL_ABOUT;O programu
 GENERAL_AFTER;Poté
+GENERAL_APPLY;Použít
 GENERAL_ASIMAGE;Jako obrázek
 GENERAL_AUTO;Automaticky
 GENERAL_BEFORE;Před
@@ -246,6 +249,7 @@ GENERAL_NA;n/a
 GENERAL_NO;Ne
 GENERAL_NONE;Nic
 GENERAL_OK;OK
+GENERAL_OPEN;Otevřít
 GENERAL_PORTRAIT;Na výšku
 GENERAL_SAVE;Uložit
 GENERAL_UNCHANGED;(Beze změny)
@@ -289,8 +293,8 @@ HISTORY_MSG_23;Doostření - Práh
 HISTORY_MSG_24;Doostření - Pouze okraje
 HISTORY_MSG_25;Doostření - Poloměr detekce okrajů
 HISTORY_MSG_26;Doostření - Tolerance okrajů
-HISTORY_MSG_27;Doostření - Omezení haló art.
-HISTORY_MSG_28;Doostření - Míra omezení haló art.
+HISTORY_MSG_27;Doostření - Omezení halo efektu
+HISTORY_MSG_28;Doostření - Míra omezení halo efektu
 HISTORY_MSG_29;Doostření - Metoda
 HISTORY_MSG_30;RLD - Poloměr
 HISTORY_MSG_31;RLD - Míra
@@ -428,6 +432,7 @@ HISTORY_MSG_162;Mapování tónů
 HISTORY_MSG_163;RGB křivky - Červená
 HISTORY_MSG_164;RGB křivky - Zelená
 HISTORY_MSG_165;RGB křivky - Modrá
+HISTORY_MSG_166;Expozice - Obnovení
 HISTORY_MSG_167;Metoda demozajkování
 HISTORY_MSG_168;L*a*b* - CC křivka
 HISTORY_MSG_169;L*a*b* - CH Křivka
@@ -627,7 +632,7 @@ HISTORY_MSG_363;Vlnka - Zůstatek - Síla komprese
 HISTORY_MSG_364;Vlnka - Dokončení - Vyrovnání kontrastu
 HISTORY_MSG_365;Vlnka - Dokončení - Vyvážení rozdílů
 HISTORY_MSG_366;Vlnka - Zůstatek - Gama komprese
-HISTORY_MSG_367;Vlnka - DH - Křivka místního kontrastu
+HISTORY_MSG_367;Vlnka - Finální "Po" křivka kontrastu
 HISTORY_MSG_368;Vlnka - Dokončení - Vyrovnání kontrastu
 HISTORY_MSG_369;Vlnka - Dokončení - Metoda vyvážení
 HISTORY_MSG_370;Vlnka - Dokončení - Křivka místního kontrastu
@@ -638,8 +643,8 @@ HISTORY_MSG_374;Doostření MR - Práh
 HISTORY_MSG_375;Doostření MR - Pouze hrany
 HISTORY_MSG_376;Doostření  MR- Poloměr detekce hran
 HISTORY_MSG_377;Doostření MR - Tolerance hran
-HISTORY_MSG_378;Doostření MR - Omezení haló art.
-HISTORY_MSG_379;Doostření MR - Míra omezení haló art.
+HISTORY_MSG_378;Doostření MR - Omezení halo efektu
+HISTORY_MSG_379;Doostření MR - Míra omezení halo efektu
 HISTORY_MSG_380;Doostření - Metoda
 HISTORY_MSG_381;Doostření RDL - Poloměr
 HISTORY_MSG_382;Doostření RDL  - Míra
@@ -668,14 +673,14 @@ HISTORY_MSG_404;Vlnka - DH - Základní zesílení
 HISTORY_MSG_405;Vlnka - Odšumění - Úroveň 4
 HISTORY_MSG_406;Vlnka - DH - Sousední pixely
 HISTORY_MSG_407;Retinex - Metoda
-HISTORY_MSG_408;Retinex - Sousední
-HISTORY_MSG_409;Retinex - Zisk
+HISTORY_MSG_408;Retinex - Poloměr
+HISTORY_MSG_409;Retinex - Kontrast
 HISTORY_MSG_410;Retinex - Posun
 HISTORY_MSG_411;Retinex - Síla
-HISTORY_MSG_412;Retinex - Míra
-HISTORY_MSG_413;Retinex - odchylka
+HISTORY_MSG_412;Retinex - Gaussův gradient
+HISTORY_MSG_413;Retinex - Kontrast
 HISTORY_MSG_414;Retinex - Histogram - Lab
-HISTORY_MSG_415;Retinex - přenos
+HISTORY_MSG_415;Retinex - Přenos
 HISTORY_MSG_416;Retinex
 HISTORY_MSG_417;Retinex - Medián přenosu
 HISTORY_MSG_418;Retinex - Práh
@@ -685,8 +690,25 @@ HISTORY_MSG_421;Retinex - Gama
 HISTORY_MSG_422;Retinex - Gama
 HISTORY_MSG_423;Retinex - Sklon gamy
 HISTORY_MSG_424;Retinex - Práh zachování jasů
-HISTORY_MSG_425;Retinex - Základní log
+HISTORY_MSG_425;Retinex - Základ log.
 HISTORY_MSG_426;Retinex - Korekce odstínu
+HISTORY_MSG_427;Výstupní záměr reprodukce
+HISTORY_MSG_428;Záměr reprodukce monitoru
+HISTORY_MSG_429;Retinex - Průchody
+HISTORY_MSG_430;Retinex - Přenos gradientu
+HISTORY_MSG_431;Retinex - Síla gradientu
+HISTORY_MSG_432;Retinex - M - Světla
+HISTORY_MSG_433;Retinex - M - Světla tóny
+HISTORY_MSG_434;Retinex - M - Stíny
+HISTORY_MSG_435;Retinex - M - Stíny tóny
+HISTORY_MSG_436;Retinex - M - poloměr
+HISTORY_MSG_437;Retinex - M - Metoda
+HISTORY_MSG_438;Retinex - M - Korekce
+HISTORY_MSG_439;Retinex - Zpracování
+HISTORY_MSG_440;Metoda KdDÚ
+HISTORY_MSG_441;Retinex - Přenos zisku
+HISTORY_MSG_442;Retinex - Měřítko
+HISTORY_MSG_443;Kompenzace výstupního černého bodu
 HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSNAPSHOT_TOOLTIP;Zkratka: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snímek
@@ -739,6 +761,7 @@ MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronizovat prohlížeč souborů s editorem pro 
 MAIN_BUTTON_PREFERENCES;Volby
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Vložit současný obrázek do fronty zpracování.\nZkratka: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Uložit současný obrázek.\nZkratka: <b>Ctrl+s</b>
+MAIN_BUTTON_SENDTOEDITOR;Upravit obrázek v externím editoru
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editovat současný obrázek v externím editoru.\nZkratka: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Zobrazit/skrýt všechny postranní panely.\nZkratka: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Ukončit mód celé obrazovky
@@ -803,6 +826,7 @@ MAIN_TOOLTIP_SHOWHIDERP1;Zobrazit/skrýt pravý panel.\nZkratka: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Zobrazit/skrýt horní panel.\nZkratka: <b>Shift-l</b>
 MAIN_TOOLTIP_THRESHOLD;Práh
 MAIN_TOOLTIP_TOGGLE;Přepnout pohled <b>Před</b> a <b>Po</b>.\nZkratka: <b>Shift-b</b>
+MONITOR_PROFILE_SYSTEM;Nastavení systému
 NAVIGATOR_B;B:
 NAVIGATOR_G;G:
 NAVIGATOR_H;H:
@@ -862,6 +886,7 @@ PARTIALPASTE_PREPROCESS_DEADPIXFILT;Filtr mrtvých pixelů
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Vyrovnání zelené
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtr vypálených pixelů
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
+PARTIALPASTE_PRSHARPENING;Doostření po změně velikosti
 PARTIALPASTE_RAWCACORR_AUTO;Automatická korekce CA
 PARTIALPASTE_RAWCACORR_CABLUE;CA modrá
 PARTIALPASTE_RAWCACORR_CARED;CA červená
@@ -1010,6 +1035,9 @@ PREFERENCES_MENUGROUPRANK;Skupina "Hodnocení"
 PREFERENCES_MENUOPTIONS;Volby místní nabídky
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Velmi malá (100x115)
+PREFERENCES_MONBPC;Kompenzace černého bodu pro L*a*b*->Přizpůsobení pro monitor
+PREFERENCES_MONINTENT;Výchozí záměr monitoru
+PREFERENCES_MONPROFILE;Výchozí profil monitoru
 PREFERENCES_MULTITAB;Mód více karet editoru
 PREFERENCES_MULTITABDUALMON;Mód více karet editoru ve vlastním okně
 PREFERENCES_NAVGUIDEBRUSH;Barva vodítek navigátoru
@@ -1024,10 +1052,12 @@ PREFERENCES_OVERLAY_FILENAMES;Překrýt jména souborů na náhledech v prohlí�
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Překrýt jména souborů na náhledech v editoru
 PREFERENCES_OVERWRITEOUTPUTFILE;Přepsat existující soubory
 PREFERENCES_PANFACTORLABEL;Zrychlení posunu výřezu
-PREFERENCES_PARSEDEXT;Zachytávané přípony
+PREFERENCES_PARSEDEXT;Analyzované přípony
 PREFERENCES_PARSEDEXTADD;Přidat příponu
 PREFERENCES_PARSEDEXTADDHINT;Vymazat označenou příponu ze seznamu.
 PREFERENCES_PARSEDEXTDELHINT;Vymazat označenou příponu ze seznamu.
+PREFERENCES_PARSEDEXTDOWNHINT;Vybranou příponu posunout na seznamu níže.
+PREFERENCES_PARSEDEXTUPHINT;Vybranou příponu posunout na seznamu výše.
 PREFERENCES_PREVDEMO;Metoda demozajkování náhledu
 PREFERENCES_PREVDEMO_FAST;Rychlá
 PREFERENCES_PREVDEMO_LABEL;Metoda demozajkování pro náhled při přiblížení menším než 100%:
@@ -1038,13 +1068,15 @@ PREFERENCES_PROFILEPRCACHE;Profil v mezipaměti
 PREFERENCES_PROFILEPRFILE;Profil uložený se zdrojovým souborem
 PREFERENCES_PROFILESAVECACHE;Ukládat parametry zpracování do mezipaměti
 PREFERENCES_PROFILESAVEINPUT;Ukládat parametry zpracování spolu se zdrojovým souborem
+PREFERENCES_PROFILE_NONE;Nic
 PREFERENCES_PROPERTY;Vlastnost
 PREFERENCES_PSPATH;Instalační složka Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Zapamatovat si procento přiblížení a posun obrázku
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Zapamatovat si procento přiblížení a posun aktuálního obrázku a použít tyto hodnoty při otevírání nového obrázku.\n\nTato volba funguje pouze v režimu "Mód jedné karty editoru" a volba "Metoda demozajkování pro náhled při přiblížení menším než 100%" je nastavena na "Stejně jako v PP3".
 PREFERENCES_RGBDTL_LABEL;Maximální počet vláken pro redukci šumu a úrovně vlnky
 PREFERENCES_RGBDTL_TOOLTIP;Pro automatické nastavení maximálního možného počtu vláken ponechte nastaveno na "0". Čím více vláken běží paralelně, tím rychlejší je výpočet. Paměťové nároky najdete na RawPedii.
-PREFERENCES_SELECTFONT;Vybrat písmo
+PREFERENCES_SELECTFONT;Vyberte globální písmo
+PREFERENCES_SELECTFONT_COLPICKER;Vybrat písmo pro Průzkumníka barev
 PREFERENCES_SELECTLANG;Volba jazyka
 PREFERENCES_SELECTTHEME;Zvolit vzhled
 PREFERENCES_SERIALIZE_TIFF_READ;Nastavení čtení Tiff
@@ -1140,6 +1172,8 @@ SAVEDLG_SUBSAMP_TOOLTIP;Nejlepší komprese:\nJ:a:b 4:2:0\nh/v 2/2\nO polovinu s
 SAVEDLG_TIFFUNCOMPRESSED;Nekomprimovaný TIFF
 SAVEDLG_WARNFILENAME;Soubor bude pojmenován
 SHCSELECTOR_TOOLTIP;Klikněte pravým tlačítkem myši pro obnovení výchozí pozice těchto tří posuvníků.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Pokud je aktivní, indikuje šedou barvou pixely, které se dostaly mimo paletu výstupního profilu.
+SOFTPROOF_TOOLTIP;Jemně korekční\nPokud je aktivní. můžete simulovat vykreslení generované výstupním profilem nástroje ICM. Velmi užitečné pro simulaci tiskových výstupů.
 THRESHOLDSELECTOR_B;Dole
 THRESHOLDSELECTOR_BL;Dole vlevo
 THRESHOLDSELECTOR_BR;Dole vpravo
@@ -1147,8 +1181,9 @@ THRESHOLDSELECTOR_HINT;Držte klávesu <b>Shift</b> pro přesun individuálních
 THRESHOLDSELECTOR_T;Nahoře
 THRESHOLDSELECTOR_TL;Nahoře vlevo
 THRESHOLDSELECTOR_TR;Nahoře vpravo
+TOOLBAR_TOOLTIP_COLORPICKER;Uzamykatelný Průzkumník barev\n\nPokud je povolen:\nPřidáte průzkumníka barev kliknutím levým tlačítkem myši do náhledu\nPodržením levého tlačítka myši a tažením průzkumníka přesunete\nPokud na průzkumníka kliknete pravým tlačítkem, dojde k jeho smazání\nSmazání všech průzkumníků po stisknutí klávesy Shift a pravého tlačítka myši\nKliknutím pravým tlačítkem kdekoli mimo průzkumníka přepne zpět na nástroj posunu
 TOOLBAR_TOOLTIP_CROP;<b>Oříznutí</b> výběru.\nZkratka: <b>c</b>\nOblast výřezu posunete pomocí <b>Shift + tažení myši</b>
-TOOLBAR_TOOLTIP_HAND;Nástroj ruka.\nZkratka: <b>h</b>
+TOOLBAR_TOOLTIP_HAND;Posun.\nZkratka: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Vyznačení <b>roviny</b> / <b>rotace</b>.\nZkratka: <b>s</b>\n\nZobrazení míry rotace pomocí vodící linky na náhledu snímky. Úhel rotace je zobrazen vedle vodící linky. Střed rotace je geometrický střed snímku.
 TOOLBAR_TOOLTIP_WB;Bodové vyvážení bílé.\nZkratka: <b>w</b>
 TP_BWMIX_ALGO;Algoritmus OYCPM
@@ -1214,6 +1249,10 @@ TP_BWMIX_VAL;L
 TP_CACORRECTION_BLUE;Modrá
 TP_CACORRECTION_LABEL;Korekce chromatické aberace
 TP_CACORRECTION_RED;Červená
+TP_CBDL_AFT;Po černobílé
+TP_CBDL_BEF;Před černobílou
+TP_CBDL_METHOD;Umístění procesu
+TP_CBDL_METHOD_TOOLTIP;Vyberte, zda bude nástroj Kontrast dle detailu úrovní po nástroji Černobílá, což znamená, že bude pracovat v prostoru L*a*b, nebo před ním, což znamená, že bude pracovat v RGB prostoru.
 TP_CHMIXER_BLUE;Modrý kanál
 TP_CHMIXER_GREEN;Zelený kanál
 TP_CHMIXER_LABEL;Míchání kanálů
@@ -1235,7 +1274,7 @@ TP_COLORAPP_ALGO_JS;Světlost + Nasycení (JS)
 TP_COLORAPP_ALGO_QM;Jas a pestrobarevnost (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Umožňuje vybrat mezi podmnožinou nebo všemi parametry.
 TP_COLORAPP_BADPIXSL;Filtr vypálených/mrtvých pixelů
-TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussový.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02.
+TP_COLORAPP_BADPIXSL_TOOLTIP;Potlačení vypálených/mrtvých (jasně zabarvených) pixelů.\n0 = Bez efektu\n1 = Medián\n2 = Gaussovo.\nPopřípadě obrázek upravte tak, aby jste se vyhnuli velmi tmavým stínům.\n\nTyto artefakty vznikají díky omezením CIECAM02.
 TP_COLORAPP_BRIGHT;Jas (O)
 TP_COLORAPP_BRIGHT_TOOLTIP;Jas v CIECAM02 bere v potaz svítivost bílé a rozdíly jasů mezi L*a*b* a RGB.
 TP_COLORAPP_CHROMA;Barevnost (C)
@@ -1354,6 +1393,12 @@ TP_DARKFRAME_LABEL;Tmavý snímek
 TP_DEFRINGE_LABEL;Odstranění lemu
 TP_DEFRINGE_RADIUS;Poloměr
 TP_DEFRINGE_THRESHOLD;Práh
+TP_DIRPYRDENOISE_3X3;3×3
+TP_DIRPYRDENOISE_3X3_SOFT;3×3 jemný
+TP_DIRPYRDENOISE_5X5;5×5
+TP_DIRPYRDENOISE_5X5_SOFT;5×5 jemný
+TP_DIRPYRDENOISE_7X7;7×7
+TP_DIRPYRDENOISE_9X9;9×9
 TP_DIRPYRDENOISE_ABM;Pouze barevnost
 TP_DIRPYRDENOISE_AUT;Automatická celková
 TP_DIRPYRDENOISE_AUTO;Automatická celková
@@ -1369,7 +1414,6 @@ TP_DIRPYRDENOISE_CUR;Křivka
 TP_DIRPYRDENOISE_CURVEEDITOR_CC;Barevnost
 TP_DIRPYRDENOISE_CURVEEDITOR_CC_TOOLTIP;Zvýší (násobí) hodnoty všech barevných posuvníků.\nKřivka vám umožní nastavit sílu redukce barevného šumu jako funkci barvy. Například pro zvýšení účinku v oblastech s nízkým nasycení a snížení v oblastech s vysokým nasycením.
 TP_DIRPYRDENOISE_CURVEEDITOR_L_TOOLTIP;Moduluje akci 'jasového' odstranění šumu
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Může být použito jak pro raw tak i pro ostatní obrázky.\n\nPokud je použito pro ostatní obrázky, závisí redukce šumu dle jasu na gamě vstupního barevného profilu. Předpokládá se sRGB gama a proto se může výsledek u obrázků s rozdílnou gamou barevného profilu lišit.
 TP_DIRPYRDENOISE_ENH;Vylepšený režim
 TP_DIRPYRDENOISE_ENH_TOOLTIP;Zvýší kvalitu odstranění šumu, ale zároveň prodlouží dobu zpracování o 20%.
 TP_DIRPYRDENOISE_GAMMA;Gama
@@ -1384,22 +1428,22 @@ TP_DIRPYRDENOISE_LPLABM;Vyvážená L* (trochu) + a*b* (normální)
 TP_DIRPYRDENOISE_LTYPE;Ovládání jasu
 TP_DIRPYRDENOISE_LUMA;Jas
 TP_DIRPYRDENOISE_LUMAFR;Jas
-TP_DIRPYRDENOISE_LUMAFR_TOOLTIP;Vlnková transformace na svítivost a Fourierova transformace pro detail svítivosti
 TP_DIRPYRDENOISE_MAN;Ručně
 TP_DIRPYRDENOISE_MANU;Ručně
 TP_DIRPYRDENOISE_MED;Filtr medián
 TP_DIRPYRDENOISE_MEDMETHOD;Metoda mediánu
 TP_DIRPYRDENOISE_MEDTYPE;Typ mediánu
-TP_DIRPYRDENOISE_MED_TOOLTIP;Povolit odstranění šumu Medián
 TP_DIRPYRDENOISE_METHOD;Metoda
 TP_DIRPYRDENOISE_METHOD11;Kvalita
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;Kvalita může být přizpůsobena vzoru šumu. Nastavení "Vysoká" vylepší efekt redukce šumu za cenu navýšení času zpracování.
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pro raw obrázky může být použita jak RGB tak i L*a*b* metoda.\n\nPro ostatní obrázky bude vždy použita metoda L*a*b* bez ohledu na výběr.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Pokud je použito 'Pouze Jas' a 'L*a*b*' metody, bude při odstranění šumu použit filtr medián hned po vlnkové transformaci.\nPokud je použit "RGB" mód, bude filtr použit až na úplný závěr procesu redukce šumu.
+TP_DIRPYRDENOISE_MET_TOOLTIP;Aplikuje filtr medián požadované velikosti okna. Čím větší velikost okna, tím déle bude zpracování trvat.\n\n3×3 jemný: upraví 5 pixelů v okně 3x3 pixely.\n3×3: upraví 9 pixelů v okně 3x3 pixely.\n5×5 jemný; upraví 13 pixelů v okně 5x5 pixelů.\n5×5: upraví 25 pixelů v okně 5x5 pixelů.\n7×7: upraví 49 pixelů v okně 7x7 pixelů.\n9×9: upraví 81 pixelů v okně 9x9 pixelů.\n\nV některých případech může být větší kvality dosaženo pomocí několika průběhů s menšími okny než jedním průběhem s velkým oknem.
 TP_DIRPYRDENOISE_NOISELABEL;Náhled šumu: Průměr=%1  Výšky=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Náhled šumu: Průměr= -   Výšky= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Zobrazuje zbývající úroveň zašumění části obrázku viditelného v <b>náhledu</b> po vlnkové transformaci.\n\n>300 Hodně šumu\n100-300 Šum\n50-100 Málo šumu\n<50 Velmi málo šumu\n\nUpozornění:  hodnoty RGB a L*a*b* režimu se budou lišit. Protože v RGB režimu nedochází ke kompletnímu oddělení jasu a barev jsou RGB hodnoty jméně přesné
 TP_DIRPYRDENOISE_PASSES;Počet průchodů mediánu
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Aplikování tří průchodů  filtru medián s oknem 3×3 často vede k lepšímu výsledku než jednou aplikovaný filtr medián s oknem 7×7.
 TP_DIRPYRDENOISE_PON;Více zónová automatika
 TP_DIRPYRDENOISE_PRE;Více zónový náhled
 TP_DIRPYRDENOISE_PREV;Náhled
@@ -1464,6 +1508,7 @@ TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Běžný vážený
 TP_EXPOS_BLACKPOINT_LABEL;Raw černé body
 TP_EXPOS_WHITEPOINT_LABEL;Raw bílé body
 TP_FILMSIMULATION_LABEL;Simulace filmu
+TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee je nakonfigurován aby hledal Hald CLUT obrázky pro nástroj Simulace filmu ve složce, jejíž načítání trvá velmi dlouho.\nZkontrolujte prosím nastavení v menu Volby > Zpracování obrázku > Simulace filmu.\nNastavená složka by měla buď obsahovat jen a pouze Hald CLUT obrázky nebo být prázdná, pokud nechcete nástroj Simulace filmu používat.\n\nVíce informací získáte v článku o nástroji Simulace filmu na RawPedii.\n\nChcete zrušit právě probíhající prohledávání složky?
 TP_FILMSIMULATION_STRENGTH;Síla
 TP_FILMSIMULATION_ZEROCLUTSFOUND;Nastavte složku HaldCLUT v nastaveních
 TP_FLATFIELD_AUTOSELECT;Automatický výběr
@@ -1513,6 +1558,8 @@ TP_ICM_APPLYLOOKTABLE;Tabulka vzhledu
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Použije vloženou DCP tabulku vzhledu. Nastavení je dostupné pouze pokud ji vybrané DCP obsahuje.
 TP_ICM_BLENDCMSMATRIX;Smísení ICC světel s matici
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Povolit obnovení vypálených jasů při použití ICC profilů založených na LUT.
+TP_ICM_BPC;Kompenzace černého bodu
+TP_ICM_BPC_TOOLTIP;Povolte pokud chcete, aby se kanál svítivosti vešel do výstupního barevného prostoru s pevným bílým bodem
 TP_ICM_DCPILLUMINANT;Osvětlení
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolované
 TP_ICM_DCPILLUMINANT_TOOLTIP;Vyberte které vložené DCP osvětlení se má použít. Ve výchozím stavu se použije "interpolované", což je mix mezi dvěma osvětleními založenými na vyvážení bílé. Nastavené je dostupné pouze v případě, že je povoleno dvojité DCP osvětlení s podporou interpolace.
@@ -1531,6 +1578,7 @@ TP_ICM_INPUTPROFILE;Vstupní profil
 TP_ICM_LABEL;Správa barev
 TP_ICM_NOICM;Bez ICM: sRGB výstup
 TP_ICM_OUTPUTPROFILE;Výstupní barevný prostor
+TP_ICM_PROFILEINTENT;Záměr reprodukce
 TP_ICM_SAVEREFERENCE;Uložit referenční obrázek pro profilování
 TP_ICM_SAVEREFERENCE_APPLYWB;Aplikovat vyvážení bílé
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Obecně se vyvážení bílé aplikuje při ukládání obrázku pro vytvoření ICC profilů a neaplikuje při vytváření DCP profilů.
@@ -1584,6 +1632,7 @@ TP_LENSPROFILE_LABEL;Korekční profil objektivu
 TP_LENSPROFILE_USECA;Korekce chromatické aberace
 TP_LENSPROFILE_USEDIST;Korekce zkreslení
 TP_LENSPROFILE_USEVIGN;Korekce vinětace
+TP_NEUTRAL;Obnovit
 TP_NEUTRAL_TIP;Nastaví posuvníky expozice na neutrální hodnoty,\nPoužije stejné kontroly jako volba "Automatické úrovně" bez ohledu na to, zda jsou nebo nejsou Automatické úrovně použity.
 TP_PCVIGNETTE_FEATHER;Rozptyl
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Rozptyl:\n0 = pouze rohy,\n50 = napůl do středu,\n100 = do středu.
@@ -1610,6 +1659,7 @@ TP_PRSHARPENING_TOOLTIP;Obrázek po zmenšení doostří. Funguje pouze pokud je
 TP_RAWCACORR_AUTO;Automatická korekce
 TP_RAWCACORR_CABLUE;Modrá
 TP_RAWCACORR_CARED;Červená
+TP_RAWCACORR_CASTR;Síla
 TP_RAWEXPOS_BLACKS;Úrovně černé
 TP_RAWEXPOS_BLACK_0;Zelená 1 (řídící)
 TP_RAWEXPOS_BLACK_1;Červená
@@ -1654,51 +1704,83 @@ TP_RESIZE_WIDTH;Šířka
 TP_RETINEX_CONTEDIT_HSL;HSV korekce histogramu
 TP_RETINEX_CONTEDIT_LAB;Histogram korekce L*a*b*
 TP_RETINEX_CONTEDIT_LH;Korekce odstínu
+TP_RETINEX_CONTEDIT_MAP;Korekce masky
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Jas dle jasu L=f(L).\nUpraví raw data pro snížení výskytu halo efektu a vzniku artefaktů.
 TP_RETINEX_CURVEEDITOR_LH;Síla=f(O)
 TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Síla dle odstínu Síla=f(O)\nPokud je použita retinex metoda "světla"  působí tato křivka také na barevnost.
+TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
+TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;Tato křivka může být aplikována samostatně, nebo spolu s Gaussovou nebo vlnkovou maskou.\nPozor na artefakty!
+TP_RETINEX_EQUAL;Korekce
 TP_RETINEX_FREEGAMMA;Volná gama
 TP_RETINEX_GAIN;Zisk
+TP_RETINEX_GAINOFFS;Zisk a posun (jasu)
+TP_RETINEX_GAINTRANSMISSION;Přenos zisku
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Zesílí nebo zeslabí mapu přenosu pro dosažení jasu.\nÚsečka: přenos -min od 0. průměr. a hodnot (max).\nPořadnice: zisk.
 TP_RETINEX_GAIN_TOOLTIP;Působí na obnovený obrázek.\n\nToto je velmi odlišné od ostatních nastavení. Použito pro černé nebo bílé pixely a pro vyvážení histogramu.
 TP_RETINEX_GAMMA;Gama
 TP_RETINEX_GAMMA_FREE;Volná
 TP_RETINEX_GAMMA_HIGH;Vysoká
 TP_RETINEX_GAMMA_LOW;Nízká
 TP_RETINEX_GAMMA_MID;Střední
-TP_RETINEX_GAMMA_NONE;Nic
+TP_RETINEX_GAMMA_NONE;Žádná
 TP_RETINEX_GAMMA_TOOLTIP;Obnoví tóny aplikováním gamy před a po Retinex. To je odlišné od Retinex křivek nebo ostatních křivek (Lab, Expozice, atd.)
+TP_RETINEX_GRAD;Přenos gradientu
+TP_RETINEX_GRADS;Gradient síly
+TP_RETINEX_GRADS_TOOLTIP;Pokud je posuvník na nule jsou všechny průchody stejné,\nPokud je větší než nula, tak je Síla s přibývajícími průběhy omezována. A obráceně.
+TP_RETINEX_GRAD_TOOLTIP;Pokud je posuvník na nule jsou všechny průchody stejné,\nPokud je větší než nula, tak jsou Odchylka a Práh s přibývajícími průběhy omezovány. A obráceně.
 TP_RETINEX_HIGH;Silné
 TP_RETINEX_HIGHLIG;Světla
 TP_RETINEX_HIGHLIGHT;Práh světel
 TP_RETINEX_HIGHLIGHT_TOOLTIP;Zvýší působení algoritmu Silné.\nMůže vyžadovat nové přizpůsobení "Sousedních pixelů" a zvýšení "Korekce bílého bodu" v kartě Raw -> Raw bílé body.
 TP_RETINEX_HSLSPACE_LIN;HSV - Lineární
 TP_RETINEX_HSLSPACE_LOG;HSV - Logaritmická
+TP_RETINEX_ITER;Průchody (Mapování tónů)
+TP_RETINEX_ITERF;Mapování tónů
+TP_RETINEX_ITER_TOOLTIP;Simuluje operátor Mapování tónů.\nVyšší hodnoty prodlužují čas zpracování.
 TP_RETINEX_LABEL;Retinex
+TP_RETINEX_LABEL_MASK;Maska
 TP_RETINEX_LABSPACE;L*a*b*
 TP_RETINEX_LOW;Slabé
+TP_RETINEX_MAP;Metoda masky
+TP_RETINEX_MAP_GAUS;Gaussova maska
+TP_RETINEX_MAP_MAPP;Ostrá maska (částečná vlnka)
+TP_RETINEX_MAP_MAPT;Ostrá maska (kompletní vlnka)
+TP_RETINEX_MAP_METHOD_TOOLTIP;Použít masku generovanou Gaussovou funkcí výše (poloměr, metoda) pro omezení halo efektu a artefaktů.\n\nPouze křivka: na masku je aplikována diagonální křivka kontrastu.\nPozor na artefakty!\n\nGaussova maska: originální maska je upravena Gaussovým rozostřením.\nRychlé.\n\nOstrá maska: na originální masku se použije vlnka.\nPomalé.
+TP_RETINEX_MAP_NONE;Žádná
 TP_RETINEX_MEDIAN;Přenos filtru mediánu
 TP_RETINEX_METHOD;Metoda
-TP_RETINEX_METHOD_TOOLTIP;Slabé = Posílí slabé světlo,\nJednolité = vyvážená akce,\nSilné = Posílí silné světlo,\nSvětla = Odstraní purpurovou ve světlech.
+TP_RETINEX_METHOD_TOOLTIP;Slabé = Posílí slabé světlo,\nJednolité = Vyvážená akce,\nSilné = Posílí silné světlo,\nSvětla = Odstraní purpurovou ve světlech.
 TP_RETINEX_MLABEL;Obnovený bez závoje Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Mělo by být poblíž min=0 max=32768\nObnovený obraz bez příměsí.
-TP_RETINEX_NEIGHBOR;Sousední pixely
+TP_RETINEX_NEIGHBOR;Poloměr
 TP_RETINEX_NEUTRAL;Obnovit
 TP_RETINEX_NEUTRAL_TIP;Obnoví původní hodnoty u všech posuvníků a křivek.
-TP_RETINEX_OFFSET;Posun
+TP_RETINEX_OFFSET;Posun (jasu)
+TP_RETINEX_SCALES;Gaussův gradient
+TP_RETINEX_SCALES_TOOLTIP;Pokud je posuvník na nule jsou všechny průchody stejné,\nPokud je větší než nula, tak jsou Rozsah a Průměr s přibývajícími průběhy omezovány. A obráceně.
 TP_RETINEX_SETTINGS;Nastavení
+TP_RETINEX_SKAL;Měřítko
 TP_RETINEX_SLOPE;Sklon volné gamy
 TP_RETINEX_STRENGTH;Síla
 TP_RETINEX_THRESHOLD;Práh
 TP_RETINEX_THRESHOLD_TOOLTIP;Omezuje Vstup/Výstup.\nVstup = zdroj obrázku,\nVýstup = gauss obrázku.
 TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Průměr=%3 Sigma=%4
 TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
-TP_RETINEX_TLABEL_TOOLTIP;Výsledek Mapy přenosu .\nMin a Max jsou použity Odchylkou.\nPrůměr a Sigma\nTm=Min TM=Max Mapy přenosu.
+TP_RETINEX_TLABEL_TOOLTIP;Výsledek Mapy přenosu .\nMin a Max jsou použity Odchylkou.\nPrůměr a Sigma\nTm=Min TM=Max mapy přenosu.
+TP_RETINEX_TRANF;Přenos
 TP_RETINEX_TRANSMISSION;Mapa přenosu
 TP_RETINEX_TRANSMISSION_TOOLTIP;Přenos podle přenosu.\nÚsečka: přenos z negativních hodnot (min), průměru a kladných hodnot (max).\nPořadnice: zesílení nebo zeslabení.
 TP_RETINEX_UNIFORM;Jednolité
-TP_RETINEX_VARIANCE;Odchylka
+TP_RETINEX_VARIANCE;Kontrast
 TP_RETINEX_VARIANCE_TOOLTIP;Nízká odchylka zvyšuje místní kontrast a nasycení, ale může vést ke vzniku artefaktů.
+TP_RETINEX_VIEW;Zpracování
+TP_RETINEX_VIEW_MASK;Maska
+TP_RETINEX_VIEW_METHOD_TOOLTIP;Běžné - běžné zobrazení.\nMaska -  zobrazí masku.\nNeostrá maska - zobrazí obrázek s neostrou maskou s velkým poloměrem.\nPřenos - Auto/Pevný - zobrazí soubor mapy přenosu před jakoukoli úpravou kontrastu a jasu.\n\nUpozornění: maska neodpovídá realitě. Je zesílena, aby byla lépe vidět.
+TP_RETINEX_VIEW_NONE;Běžné
+TP_RETINEX_VIEW_TRAN;Přenos - Automatický
+TP_RETINEX_VIEW_TRAN2;Přenos - Pevný
+TP_RETINEX_VIEW_UNSHARP;Maskování rozostření
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Kanál
 TP_RGBCURVES_GREEN;G
@@ -1725,7 +1807,7 @@ TP_SHARPENEDGE_THREE;Pouze jas
 TP_SHARPENING_AMOUNT;Míra
 TP_SHARPENING_EDRADIUS;Poloměr
 TP_SHARPENING_EDTOLERANCE;Tolerance k hranám
-TP_SHARPENING_HALOCONTROL;Omezení haló artefatů
+TP_SHARPENING_HALOCONTROL;Omezení halo efektu
 TP_SHARPENING_HCAMOUNT;Míra
 TP_SHARPENING_LABEL;Doostření
 TP_SHARPENING_METHOD;Metoda
@@ -1983,83 +2065,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!GENERAL_APPLY;Apply
-!GENERAL_OPEN;Open
-!HISTORY_MSG_166;Exposure - Reset
-!HISTORY_MSG_427;Output rendering intent
-!HISTORY_MSG_428;Monitor rendering intent
-!HISTORY_MSG_429;Retinex - Iterations
-!HISTORY_MSG_430;Retinex - Transmission Gradient
-!HISTORY_MSG_431;Retinex - Strength Gradient
-!HISTORY_MSG_432;Retinex - M - Highlights
-!HISTORY_MSG_433;Retinex - M - Highlights TW
-!HISTORY_MSG_434;Retinex - M - Shadows
-!HISTORY_MSG_435;Retinex - M - Shadows TW
-!HISTORY_MSG_436;Retinex - M - Radius
-!HISTORY_MSG_437;Retinex - M - Method
-!HISTORY_MSG_438;Retinex - M - Equalizer
-!HISTORY_MSG_439;Retinex - Process
-!HISTORY_MSG_440;CbDL - Method
-!HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_442;Retinex - Scale
-!MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-!MONITOR_PROFILE_SYSTEM;System default
-!PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
-!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
-!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
-!PREFERENCES_PROFILE_NONE;None
-!TP_CBDL_AFT;After Black-and-White
-!TP_CBDL_BEF;Before Black-and-White
-!TP_CBDL_METHOD;Process located
-!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
-!TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
-!TP_DIRPYRDENOISE_5X5;5×5
-!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
-!TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9×9
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
-!TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
-!TP_ICM_PROFILEINTENT;Rendering Intent
-!TP_NEUTRAL;Reset
-!TP_RAWCACORR_CASTR;Strength
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
-!TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
-!TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
-!TP_RETINEX_EQUAL;Equalizer
-!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
-!TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
-!TP_RETINEX_GRAD;Transmission gradient
-!TP_RETINEX_GRADS;Strength gradient
-!TP_RETINEX_GRADS_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Strength is reduced when iterations increase, and conversely.
-!TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Variance and Threshold are reduced when iterations increase, and conversely.
-!TP_RETINEX_ITER;Iterations (Tone-mapping)
-!TP_RETINEX_ITERF;Tone mapping
-!TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
-!TP_RETINEX_LABEL_MASK;Mask
-!TP_RETINEX_MAP;Mask method
-!TP_RETINEX_MAP_GAUS;Gaussian mask
-!TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
-!TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
-!TP_RETINEX_MAP_METHOD_TOOLTIP;Use the mask generated by the Gaussian function above (Radius, Method) to reduce halos and artifacts.\n\nCurve only: apply a diagonal contrast curve on the mask.\nBeware of artifacts!\n\nGaussian mask: generate and use a Gaussian blur of the original mask.\nQuick.\n\nSharp mask: generate and use a wavelet on the original mask.\nSlow.
-!TP_RETINEX_MAP_NONE;None
-!TP_RETINEX_SCALES;Gaussian gradient
-!TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
-!TP_RETINEX_SKAL;Scale
-!TP_RETINEX_TRANF;Transmission
-!TP_RETINEX_VIEW;Process
-!TP_RETINEX_VIEW_MASK;Mask
-!TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
-!TP_RETINEX_VIEW_NONE;Standard
-!TP_RETINEX_VIEW_TRAN;Transmission - Auto
-!TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
-!TP_RETINEX_VIEW_UNSHARP;Unsharp mask

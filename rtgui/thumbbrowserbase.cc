@@ -25,7 +25,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1), inspector(NULL), isInspectorActive(false), location(THLOC_FILEBROWSER)
+    : lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), inspector(nullptr), isInspectorActive(false), location(THLOC_FILEBROWSER)
 {
     inW = -1;
     inH = -1;
@@ -559,7 +559,6 @@ void ThumbBrowserBase::arrangeFiles ()
 
         int ct = 0;
         int currx = 0;
-        int curry = 0;
 
         while (ct < N) {
             // find widest item in the column
@@ -571,7 +570,7 @@ void ThumbBrowserBase::arrangeFiles ()
                 }
 
             // arrange items in the column
-            curry = 0;
+            int curry = 0;
 
             for (int i = 0; ct < N && i < numOfRows; i++, ct++) {
                 while (ct < N && fd[ct]->filtered) {
@@ -641,12 +640,11 @@ void ThumbBrowserBase::arrangeFiles ()
 
         // arrange files
         int ct = 0;
-        int currx = 0;
         int curry = 0;
 
         while (ct < N) {
             // arrange items in the row
-            currx = 0;
+            int currx = 0;
 
             for (int i = 0; ct < N && i < numOfCols; i++, ct++) {
                 while (ct < N && fd[ct]->filtered) {
@@ -730,7 +728,7 @@ void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
     refreshThumbImages ();
 }
 
-ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(NULL), dirty(true)
+ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(nullptr), dirty(true)
 {
 }
 
@@ -776,7 +774,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
 {
     // GUI already acquired
 
-    ThumbBrowserEntryBase* fileDescr = NULL;
+    ThumbBrowserEntryBase* fileDescr = nullptr;
     bool handled = false;
 
     {

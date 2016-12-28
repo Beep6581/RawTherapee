@@ -30,8 +30,8 @@
 #define DEBUG(format,args...)
 //#define DEBUG(format,args...) printf("ThumbImageUpdate::%s: " format "\n", __FUNCTION__, ## args)
 
-class
-    ThumbImageUpdater::Impl
+class ThumbImageUpdater::Impl :
+    public rtengine::NonCopyable
 {
 public:
 
@@ -47,10 +47,10 @@ public:
         {}
 
         Job():
-            tbe_(0),
-            priority_(NULL),
+            tbe_(nullptr),
+            priority_(nullptr),
             upgrade_(false),
-            listener_(0)
+            listener_(nullptr)
         {}
 
         ThumbBrowserEntryBase* tbe_;
@@ -156,7 +156,7 @@ public:
 
         // unlock and do processing; will relock on block exit, then call listener
         double scale = 1.0;
-        rtengine::IImage8* img = 0;
+        rtengine::IImage8* img = nullptr;
         Thumbnail* thm = j.tbe_->thumbnail;
 
         if ( j.upgrade_ ) {
@@ -190,7 +190,7 @@ public:
 };
 
 ThumbImageUpdater*
-ThumbImageUpdater::getInstance(void)
+ThumbImageUpdater::getInstance()
 {
     static ThumbImageUpdater instance_;
     return &instance_;
@@ -205,7 +205,7 @@ void
 ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l)
 {
     // nobody listening?
-    if ( l == 0 ) {
+    if ( l == nullptr ) {
         return;
     }
 
@@ -272,7 +272,7 @@ ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
 }
 
 void
-ThumbImageUpdater::removeAllJobs(void)
+ThumbImageUpdater::removeAllJobs()
 {
     DEBUG("stop");
 

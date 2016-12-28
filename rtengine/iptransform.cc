@@ -24,7 +24,66 @@
 #include "mytime.h"
 #include "rt_math.h"
 #include "sleef.c"
+
 using namespace std;
+
+namespace
+{
+
+float pow3(float x)
+{
+    return x * x * x;
+}
+
+float pow4(float x)
+{
+    return (x * x) * (x * x);
+}
+
+float pown(float x, int n)
+{
+
+    switch (n) {
+        case 0:
+            return 1;
+
+        case 2:
+            return x * x;
+
+        case 4:
+            return pow4(x);
+
+        case 6:
+            return (x * x) * pow4(x);
+
+        case 8:
+            return pow4(x) * pow4(x);
+
+        default:
+            return pow_F(x, n);
+    }
+}
+
+float normn(float a, float b, int n)
+{
+    switch (n) {
+        case 2:
+            return sqrtf(a * a + b * b);
+
+        case 4:
+            return sqrtf(sqrtf(pow4(a) + pow4(b)));
+
+        case 6:
+            return sqrtf(xcbrtf(pow3(a) * pow3(a) + pow3(b) * pow3(b)));
+
+        case 8:
+            return sqrtf(sqrtf(sqrtf(pow4(a) * pow4(a) + pow4(b) * pow4(b))));
+
+        default:
+            return pow_F(pown(a, n) + pown(b, n), 1.f / n);
+    }
+}
+}
 
 namespace rtengine
 {
@@ -43,7 +102,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     green.clear ();
     blue.clear ();
 
-    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == NULL)) {
+    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == nullptr)) {
         for (size_t i = 0; i < src.size(); i++) {
             red.push_back   (Coord2D (src[i].x, src[i].y));
             green.push_back (Coord2D (src[i].x, src[i].y));
@@ -234,7 +293,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
                                  double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage)
 {
 
-    LCPMapper *pLCPMap = NULL;
+    LCPMapper *pLCPMap = nullptr;
 
     if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         LCPProfile *pLCPProf = lcpStore->getProfile(params->lensProf.lcpFile);
@@ -382,13 +441,15 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
             float val = ((float)(gy - gp.top_edge_0) * gp.ys_inv);
 
             if (gp.bright_top) {
-                val = 1.0 - val;
+                val = 1.f - val;
             }
 
-            if (gp.scale < 1.0) {
-                val = pow(xsinf(val * M_PI / 2), 3);
+            val *= M_PIf_2;
+
+            if (gp.scale < 1.f) {
+                val = pow3(xsinf(val));
             } else {
-                val = 1.0 - pow(xcosf(val * M_PI / 2), 3);
+                val = 1.f - pow3(xcosf(val));
             }
 
             return gp.scale + val * (1.0 - gp.scale);
@@ -396,7 +457,7 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
     } else {
         int gy = gp.transpose ? x : y;
         int gx = gp.transpose ? gp.h - y - 1 : x;
-        float top_edge = gp.yc - gp.ys / 2.0 - gp.ta * (gx - gp.xc);
+        float top_edge = gp.top_edge_0 - gp.ta * (gx - gp.xc);
 
         if (gy < top_edge) {
             return gp.topmul;
@@ -405,14 +466,14 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
         } else {
             float val = ((float)(gy - top_edge) * gp.ys_inv);
 
-            if (gp.bright_top) {
-                val = 1.0 - val;
-            }
+            val = gp.bright_top ? 1.f - val : val;
 
-            if (gp.scale < 1.0) {
-                val = pow(xsinf(val * M_PI / 2), 3);
+            val *= M_PIf_2;
+
+            if (gp.scale < 1.f) {
+                val = pow3(xsinf(val));
             } else {
-                val = 1.0 - pow(xcosf(val * M_PI / 2), 3);
+                val = 1.f - pow3(xcosf(val));
             }
 
             return gp.scale + val * (1.0 - gp.scale);
@@ -459,7 +520,7 @@ static void calcPCVignetteParams(int fW, int fH, int oW, int oH, const PCVignett
     pcv.sepmix = 0;
     pcv.oe_a = sqrt(2.0) * long_side * 0.5;
     pcv.oe_b = pcv.oe_a * short_side / long_side;
-    pcv.ie_mul = 1.0 / sqrt(2.0);
+    pcv.ie_mul = (1.0 / sqrt(2.0)) * (1.0 - pcv.feather);
     pcv.is_super_ellipse_mode = false;
     pcv.is_portrait = (pcv.w < pcv.h);
 
@@ -471,10 +532,10 @@ static void calcPCVignetteParams(int fW, int fH, int oW, int oH, const PCVignett
         pcv.sepmix = (sepf - pcv.sep) * 0.5; // 0.0 to 1.0
         pcv.oe1_a = powf(2.0, 1.0 / pcv.sep) * long_side * 0.5;
         pcv.oe1_b = pcv.oe1_a * short_side / long_side;
-        pcv.ie1_mul = 1.0 / powf(2.0, 1.0 / pcv.sep);
+        pcv.ie1_mul = (1.0 / powf(2.0, 1.0 / pcv.sep)) * (1.0 - pcv.feather);
         pcv.oe2_a = powf(2.0, 1.0 / (pcv.sep + 2)) * long_side * 0.5;
         pcv.oe2_b = pcv.oe2_a * short_side / long_side;
-        pcv.ie2_mul = 1.0 / powf(2.0, 1.0 / (pcv.sep + 2));
+        pcv.ie2_mul = (1.0 / powf(2.0, 1.0 / (pcv.sep + 2))) * (1.0 - pcv.feather);
     }
 
     if (roundness > 0.5) {
@@ -496,7 +557,7 @@ static void calcPCVignetteParams(int fW, int fH, int oW, int oH, const PCVignett
 static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
 {
 
-    float fo = 1.0;
+    float fo = 1.f;
 
     if (x < pcv.x1 || x > pcv.x2 || y < pcv.y1 || y > pcv.y2) {
         /*
@@ -517,23 +578,19 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
 
         fo = sqrtf(dist_x * dist_x + dist_y * dist_y) * pcv.fadeout_mul;
 
-        if (fo >= 1.0) {
-            return 1.0;
+        if (fo >= 1.f) {
+            return 1.f;
         }
     }
 
-    float val, a, b;
+    float a = fabs((x - pcv.x1) - pcv.w * 0.5f);
+    float b = fabs((y - pcv.y1) - pcv.h * 0.5f);
 
-    if (pcv.is_portrait) {
-        a = fabs((y - pcv.y1) - pcv.h * 0.5);
-        b = fabs((x - pcv.x1) - pcv.w * 0.5);
-    } else {
-        a = fabs((x - pcv.x1) - pcv.w * 0.5);
-        b = fabs((y - pcv.y1) - pcv.h * 0.5);
+    if(pcv.is_portrait) {
+        std::swap(a, b);
     }
 
-    float angle = xatan2f(b, a);
-    float dist = sqrtf(a * a + b * b);
+    float dist = normn(a, b, 2);
     float dist_oe, dist_ie;
     float2 sincosval;
 
@@ -546,37 +603,39 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
     }
 
     if (pcv.is_super_ellipse_mode) {
-        float dist_oe1 = pcv.oe1_a * pcv.oe1_b / pow_F(pow(pcv.oe1_b * sincosval.y, pcv.sep) + pow(pcv.oe1_a * sincosval.x, pcv.sep), 1.0 / pcv.sep);
-        float dist_oe2 = pcv.oe2_a * pcv.oe2_b / pow_F(pow(pcv.oe2_b * sincosval.y, pcv.sep + 2) + pow(pcv.oe2_a * sincosval.x, pcv.sep + 2), 1.0 / (pcv.sep + 2));
-        float dist_ie1 = pcv.ie1_mul * dist_oe1 * (1.0 - pcv.feather);
-        float dist_ie2 = pcv.ie2_mul * dist_oe2 * (1.0 - pcv.feather);
-        dist_oe = dist_oe1 * (1.0 - pcv.sepmix) + dist_oe2 * pcv.sepmix;
-        dist_ie = dist_ie1 * (1.0 - pcv.sepmix) + dist_ie2 * pcv.sepmix;
+        float dist_oe1 = pcv.oe1_a * pcv.oe1_b / normn(pcv.oe1_b * sincosval.y, pcv.oe1_a * sincosval.x, pcv.sep);
+        float dist_oe2 = pcv.oe2_a * pcv.oe2_b / normn(pcv.oe2_b * sincosval.y, pcv.oe2_a * sincosval.x, pcv.sep + 2);
+        float dist_ie1 = pcv.ie1_mul * dist_oe1;
+        float dist_ie2 = pcv.ie2_mul * dist_oe2;
+        dist_oe = dist_oe1 * (1.f - pcv.sepmix) + dist_oe2 * pcv.sepmix;
+        dist_ie = dist_ie1 * (1.f - pcv.sepmix) + dist_ie2 * pcv.sepmix;
     } else {
         dist_oe = pcv.oe_a * pcv.oe_b / sqrtf(SQR(pcv.oe_b * sincosval.y) + SQR(pcv.oe_a * sincosval.x));
-        dist_ie = pcv.ie_mul * dist_oe * (1.0 - pcv.feather);
+        dist_ie = pcv.ie_mul * dist_oe;
     }
 
     if (dist <= dist_ie) {
-        return 1.0;
+        return 1.f;
     }
+
+    float val;
 
     if (dist >= dist_oe) {
         val = pcv.scale;
     } else {
-        val = (dist - dist_ie) / (dist_oe - dist_ie);
+        val = M_PIf_2 * (dist - dist_ie) / (dist_oe - dist_ie);
 
-        if (pcv.scale < 1.0) {
-            val = pow(xcosf(val * M_PI / 2), 4);
+        if (pcv.scale < 1.f) {
+            val = pow4(xcosf(val));
         } else {
-            val = 1 - pow(xsinf(val * M_PI / 2), 4);
+            val = 1 - pow4(xsinf(val));
         }
 
-        val = pcv.scale + val * (1.0 - pcv.scale);
+        val = pcv.scale + val * (1.f - pcv.scale);
     }
 
-    if (fo < 1.0) {
-        val = 1.0 * fo + val * (1.0 - fo);
+    if (fo < 1.f) {
+        val = fo + val * (1.f - fo);
     }
 
     return val;
@@ -584,6 +643,7 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
 
 void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH)
 {
+
     const bool applyVignetting = needsVignetting();
     const bool applyGradient = needsGradient();
     const bool applyPCVignetting = needsPCVignetting();
@@ -703,7 +763,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                      oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-    double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, fullImage ? pLCPMap : NULL) : 1.0;
+    double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, fullImage ? pLCPMap : nullptr) : 1.0;
 
     // smaller crop images are a problem, so only when processing fully
     bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage && pLCPMap->enableCA;
@@ -794,12 +854,13 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
 
-                    if (needsVignetting())
+                    if (needsVignetting()) {
                         if(darkening) {
                             vignmul /= std::max(v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                         } else {
                             vignmul *= (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius));
                         }
+                    }
 
                     if (needsGradient()) {
                         vignmul *= calcGradientFactor(gp, cx + x, cy + y);
@@ -963,12 +1024,13 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 // multiplier for vignetting correction
                 double vignmul = 1.0;
 
-                if (needsVignetting())
+                if (needsVignetting()) {
                     if(darkening) {
                         vignmul /= std::max(v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                     } else {
                         vignmul = v + mul * tanh (b * (maxRadius - s * r2) / maxRadius);
                     }
+                }
 
                 if (needsGradient()) {
                     vignmul *= calcGradientFactor(gp, cx + x, cy + y);
@@ -1005,7 +1067,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 
 double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap)
 {
-    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == NULL)) {
+    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == nullptr)) {
         return 1;
     }
 

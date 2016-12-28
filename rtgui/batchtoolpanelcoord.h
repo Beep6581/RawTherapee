@@ -48,7 +48,7 @@ protected:
 
 public:
 
-    BatchToolPanelCoordinator (FilePanel* parent);
+    explicit BatchToolPanelCoordinator (FilePanel* parent);
 
     // FileSelectionChangeListener interface
     void selectionChanged (const std::vector<Thumbnail*>& selected);
@@ -57,7 +57,7 @@ public:
     void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
     // profilechangelistener interface
-    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = NULL);
+    void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
 
     // wbprovider interface
     void getAutoWB (double& temp, double& green, double equal);
@@ -71,10 +71,10 @@ public:
     void endBatchPParamsChange();
 
     // imageareatoollistener interface
-    void spotWBselected (int x, int y, Thumbnail* thm = NULL);
+    void spotWBselected (int x, int y, Thumbnail* thm = nullptr);
     void cropSelectionReady ();
-    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = NULL);
-    CropGUIListener* startCropEditing (Thumbnail* thm = NULL);
+    void rotateSelectionReady (double rotate_deg, Thumbnail* thm = nullptr);
+    CropGUIListener* startCropEditing (Thumbnail* thm = nullptr);
 
     void optionsChanged ();
 };

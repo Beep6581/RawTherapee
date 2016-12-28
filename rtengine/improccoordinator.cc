@@ -23,6 +23,7 @@
 #include "../rtgui/ppversion.h"
 #include "colortemp.h"
 #include "improcfun.h"
+#include "iccstore.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -32,16 +33,15 @@ namespace rtengine
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : orig_prev(NULL), oprevi(NULL), spotprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
-      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), previewProps(-1, -1, -1, -1, 1), monitorIntent(RI_RELATIVE), scale(10),
-      highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
-      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
+    : orig_prev(nullptr), oprevi(nullptr), spotprevi(nullptr), oprevl(nullptr), nprevl(nullptr), previmg(nullptr), workimg(nullptr),
+      ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), ipf(&params, true), previewProps(-1, -1, -1, -1, 1), monitorIntent(RI_RELATIVE),
+      softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
+      allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
+      ctColorCurve(),
       hltonecurve(65536),
       shtonecurve(65536),
       tonecurve(65536, 0), //,1);
-      chaut(0.f), redaut(0.f), blueaut(0.f), maxredaut(0.f), maxblueaut(0.f), minredaut(0.f), minblueaut(0.f), nresi(0.f),
-      chromina(0.f), sigma(0.f), lumema(0.f),
       lumacurve(32770, 0), // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
       chroma_acurve(65536, 0),
       chroma_bcurve(65536, 0),
@@ -84,12 +84,12 @@ ImProcCoordinator::ImProcCoordinator ()
       rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
       gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
+      fw(0), fh(0), tr(0),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), acListener(NULL), abwListener(NULL), actListener(NULL), adnListener(NULL), awavListener(NULL), dehaListener(NULL), hListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1)
-
+      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
+      resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f)
 {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc)
@@ -138,9 +138,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     int readyphase = 0;
 
     bwAutoR = bwAutoG = bwAutoB = -9000.f;
-    chaut = redaut = blueaut = maxredaut = maxblueaut = nresi = highresi = 0.f;
-    chromina = sigma = lumema = 0.f;
-    minredaut = minblueaut = 10000.f;
 
     if (todo == CROP && ipf.needsPCVignetting()) {
         todo |= TRANSFORM;    // Change about Crop does affect TRANSFORM
@@ -375,20 +372,22 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     // Remove transformation if unneeded
     bool needstransform = ipf.needsTransform();
 
-    if (!needstransform && orig_prev != oprevi) {
+    if (!needstransform && !((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) && orig_prev != oprevi) {
         delete oprevi;
         spotprevi = oprevi = orig_prev;
     }
 
-    if (needstransform && orig_prev == oprevi) {
-        spotprevi = oprevi = new Imagefloat (pW, pH);
+    if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) ) {
+        if(!oprevi || oprevi == orig_prev)
+            spotprevi = oprevi = new Imagefloat (pW, pH);
+        if (needstransform)
+            ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
+                           imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
+        else
+            orig_prev->copyData(oprevi);
     }
 
-    if ((todo & M_TRANSFORM) && needstransform)
-        ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
-                       imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
-
-    if ((todo & (M_TRANSFORM))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+    if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = oprevi->getWidth();
         const int H = oprevi->getHeight();
         LabImage labcbdl(W, H);
@@ -461,11 +460,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
                                     params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
-                                    vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale == 1 ? 1 : 1);
+                                    vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, 1);
 
-        CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, /*scale==1 ? 1 :*/ 1);
-        CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, /*scale==1 ? 1 :*/ 1);
-        CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, /*scale==1 ? 1 :*/ 1);
+        CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
+        CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
+        CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
 
 
         opautili = false;
@@ -489,7 +488,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         if(params.blackwhite.enabled) {
-            CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, scale == 1 ? 1 : 1);
+            CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW, 1);
         }
 
         colourToningSatLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
@@ -557,8 +556,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             DCPProfile::ApplyState as;
             DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
 
-            ipf.rgbProc (spotprevi, oprevl, NULL, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, colourToningSatLimit , colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as);
+            ipf.rgbProc (spotprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
+                         rCurve, gCurve, bCurve, colourToningSatLimit , colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as, histToneCurve);
 
             if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
                 if (settings->verbose) {
@@ -629,7 +628,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         //   ipf.MSR(nprevl, nprevl->W, nprevl->H, 1);
         histCCurve.clear();
         histLCurve.clear();
-        ipf.chromiLuminanceCurve (NULL, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
+        ipf.chromiLuminanceCurve (nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
         ipf.vibrance(nprevl);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
@@ -783,7 +782,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 delete ncie;
             }
 
-            ncie = NULL;
+            ncie = nullptr;
 
             if (CAMBrightCurveJ) {
                 CAMBrightCurveJ.reset();
@@ -796,8 +795,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     }
 
     // Update the monitor color transform if necessary
-    if (todo & M_MONITOR) {
-        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent);
+    if ((todo & M_MONITOR) || (lastOutputProfile!=params.icm.output) || lastOutputIntent!=params.icm.outputIntent || lastOutputBPC!=params.icm.outputBPC) {
+        lastOutputProfile = params.icm.output;
+        lastOutputIntent = params.icm.outputIntent;
+        lastOutputBPC = params.icm.outputBPC;
+        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent, softProof, gamutCheck);
     }
 
     // process crop, if needed
@@ -812,20 +814,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         MyMutex::MyLock prevImgLock(previmg->getMutex());
 
         try {
+            // Computing the preview image, i.e. converting from WCS->Monitor color space (soft-proofing disabled) or WCS->Output profile->Monitor color space (soft-proofing enabled)
             ipf.lab2monitorRgb (nprevl, previmg);
+
+            // Computing the internal image for analysis, i.e. conversion from WCS->Output profile
             delete workimg;
-            Glib::ustring outProfile = params.icm.output;
-
-            if(settings->HistogramWorking) {
-                Glib::ustring workProfile = params.icm.working;
-                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, workProfile, RI_RELATIVE, true);  // HOMBRE: was RELATIVE by default in lab2rgb, is it safe to assume we have to use it again ?
-            } else {
-                if (params.icm.output.empty() || params.icm.output == ColorManagementParams::NoICMString) {
-                    outProfile = "sRGB";
-                }
-
-                workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, outProfile, params.icm.outputIntent, false);
-            }
+            workimg = ipf.lab2rgb (nprevl, 0, 0, pW, pH, params.icm);
         } catch(char * str) {
             progress ("Error converting file...", 0);
             return;
@@ -871,18 +865,19 @@ void ImProcCoordinator::freeAll ()
         if (oprevi && oprevi != orig_prev) {
             delete oprevi;
         }
-        oprevi    = NULL;
 
+        oprevi    = nullptr;
         delete orig_prev;
-        orig_prev = NULL;
+        orig_prev = nullptr;
         delete oprevl;
-        oprevl    = NULL;
+        oprevl    = nullptr;
         delete nprevl;
-        nprevl    = NULL;
+        nprevl    = nullptr;
 
         if (ncie) {
             delete ncie;
         }
+
         ncie      = NULL;
 
         if (imageListener) {
@@ -897,7 +892,7 @@ void ImProcCoordinator::freeAll ()
             delete shmap;
         }
 
-        shmap = NULL;
+        shmap = nullptr;
 
     }
 
@@ -927,7 +922,7 @@ void ImProcCoordinator::setScale (int prevscale)
     do {
         prevscale--;
         PreviewProps pp (0, 0, fw, fh, prevscale);
-        imgsrc->getSize (tr, pp, nW, nH);
+        imgsrc->getSize (pp, nW, nH);
     } while(nH < 400 && prevscale > 1 && (nW * nH < 1000000) ); // actually hardcoded values, perhaps a better choice is possible
 
     if (settings->verbose) {
@@ -1116,7 +1111,7 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 
     MyMutex::MyLock lock(mProcessing);
 
-    LCPMapper *pLCPMap = NULL;
+    LCPMapper *pLCPMap = nullptr;
 
     if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen() > 0) {
         LCPProfile *pLCPProf = lcpStore->getProfile(params.lensProf.lcpFile);
@@ -1154,6 +1149,18 @@ void ImProcCoordinator::getMonitorProfile (Glib::ustring& profile, RenderingInte
 {
     profile = monitorProfile;
     intent = monitorIntent;
+}
+
+void ImProcCoordinator::setSoftProofing (bool softProof, bool gamutCheck)
+{
+    this->softProof = softProof;
+    this->gamutCheck = gamutCheck;
+}
+
+void ImProcCoordinator::getSoftProofing (bool &softProof, bool &gamutCheck)
+{
+    softProof = this->softProof;
+    gamutCheck = this->gamutCheck;
 }
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool apply_wb)
@@ -1284,7 +1291,7 @@ void ImProcCoordinator::startProcessing ()
     if (!destroying) {
         if (!updaterRunning) {
             updaterThreadStart.lock ();
-            thread = NULL;
+            thread = nullptr;
             updaterRunning = true;
             updaterThreadStart.unlock ();
 

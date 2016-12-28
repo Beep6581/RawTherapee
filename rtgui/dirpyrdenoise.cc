@@ -36,12 +36,9 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     nextred = 0.;
     nextblue = 0.;
 
-    setEnabledTooltipMarkup(M("TP_DIRPYRDENOISE_ENABLED_TOOLTIP"));
-
     std::vector<double> defaultCurve;
 
     Gtk::Frame* lumaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_LUMAFR")) );
-    lumaFrame->set_tooltip_text(M("TP_DIRPYRDENOISE_LUMAFR_TOOLTIP"));
     lumaFrame->set_border_width(0);
     lumaFrame->set_label_align(0.025, 0.5);
 
@@ -67,7 +64,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     //curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
     NoiscurveEditorG->setCurveListener (this);
     rtengine::DirPyrDenoiseParams::getDefaultNoisCurve(defaultCurve);
-    lshape = static_cast<FlatCurveEditor*>(NoiscurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    lshape = static_cast<FlatCurveEditor*>(NoiscurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     lshape->setIdentityValue(0.);
     lshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
@@ -157,7 +154,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     CCcurveEditorG = new CurveEditorGroup (options.lastDenoiseCurvesDir, M("TP_DIRPYRDENOISE_CCCURVE"));
     CCcurveEditorG->setCurveListener (this);
     rtengine::DirPyrDenoiseParams::getDefaultCCCurve(defaultCurve);
-    ccshape = static_cast<FlatCurveEditor*>(CCcurveEditorG->addCurve(CT_Flat, "", NULL, false));
+    ccshape = static_cast<FlatCurveEditor*>(CCcurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
     ccshape->setIdentityValue(0.);
     ccshape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
 
@@ -200,7 +197,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     median = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_MED") + ":"));
     median->set_active (true);
-    median->set_tooltip_text (M("TP_DIRPYRDENOISE_MED_TOOLTIP"));
     medianFrame->set_label_widget(*median);
 
 

@@ -17,19 +17,22 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _COLOR_H_
-#define _COLOR_H_
+#pragma once
+
+#include <array>
 
 #include "rt_math.h"
 #include "LUT.h"
 #include "labimage.h"
-#include "iccstore.h"
 #include "iccmatrices.h"
 #include "sleef.c"
+
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
 
 namespace rtengine
 {
+
+typedef std::array<double, 7> GammaValues;
 
 #ifdef _DEBUG
 
@@ -46,6 +49,7 @@ public:
 };
 
 #endif
+
 
 class Color
 {
@@ -173,6 +177,22 @@ public:
     {
         return r * 0.2126729 + g * 0.7151521 + b * 0.0721750;
     }
+
+
+    /**
+    * @brief Convert red/green/blue to L*a*b
+    * @brief Convert red/green/blue to hue/saturation/luminance
+    * @param profile output profile name
+    * @param profileW working profile name
+    * @param r red channel [0 ; 65535]
+    * @param g green channel [0 ; 65535]
+    * @param b blue channel [0 ; 65535]
+    * @param L Lab L channel [0 ; 1] (return value)
+    * @param a Lab  a channel [0 ; 1] (return value)
+    * @param b Lab b channel [0; 1] (return value)
+    * @param workingSpace true: compute the Lab value using the Working color space ; false: use the Output color space
+    */
+    static void rgb2lab (Glib::ustring profile, Glib::ustring profileW, int r, int g, int b, float &LAB_l, float &LAB_a, float &LAB_b, bool workingSpace);
 
 
     /**
@@ -864,21 +884,21 @@ public:
         return h;
     }
 
-
     /**
     * @brief Get the gamma curves' parameters used by LCMS2
     * @param pwr gamma value [>1]
     * @param ts slope [0 ; 20]
     * @param mode [always 0]
     * @imax imax [always 0]
-    * @param gamma0 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
-    * @param gamma1 used in ip2Lab2rgb [0 ; 20], can be superior to 20, but it's quite unusual(return value)
-    * @param gamma2 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
-    * @param gamma3 used in ip2Lab2rgb [0 ; 1], usually near 0.003(return value)
-    * @param gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
-    * @param gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
+    * @param gamma a pointer to an array of 6 double gamma values:
+    *        gamma0 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
+    *        gamma1 used in ip2Lab2rgb [0 ; 20], can be superior to 20, but it's quite unusual(return value)
+    *        gamma2 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
+    *        gamma3 used in ip2Lab2rgb [0 ; 1], usually near 0.003(return value)
+    *        gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
+    *        gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     */
-    static void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5);
+    static void calcGamma (double pwr, double ts, int mode, int imax, GammaValues &gamma);
 
 
     /**
@@ -1662,5 +1682,3 @@ public:
 };
 
 }
-
-#endif

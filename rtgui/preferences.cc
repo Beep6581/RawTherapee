@@ -33,10 +33,10 @@
 extern Options options;
 extern Glib::ustring argv0;
 
-Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL), parent(rtwindow)
+Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(nullptr), iprofiles(nullptr), parent(rtwindow)
 {
 
-    splash = NULL;
+    splash = nullptr;
 
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
@@ -105,8 +105,7 @@ Preferences::~Preferences ()
 {
 
     profileStore.removeListener(this);
-    options.preferencesWidth = get_width();
-    options.preferencesHeight = get_height();
+    get_size(options.preferencesWidth, options.preferencesHeight);
 }
 
 Gtk::Widget* Preferences::getBatchProcPanel ()
@@ -609,9 +608,10 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     rgbDenoiseTreadLimitSB->set_digits (0);
     rgbDenoiseTreadLimitSB->set_increments (1, 5);
     rgbDenoiseTreadLimitSB->set_max_length(2);  // Will this be sufficient? :)
-    int maxThreadNumber = 10;
 #ifdef _OPENMP
-    maxThreadNumber = omp_get_max_threads();
+    int maxThreadNumber = omp_get_max_threads();
+#else
+    int maxThreadNumber = 10;
 #endif
     rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
     threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 2);
@@ -698,14 +698,18 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
     monProfile->set_active (0);
 
-    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles ();
+    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (true);
     for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
         monProfile->append_text (*profile);
 
-    monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
+    // same order as the enum
     monIntent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     monIntent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
     monIntent->set_active (1);
+
+    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_MONBPC")));
+    monBPC->set_active (true);
 
     iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
 
@@ -717,20 +721,22 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
     int row = 0;
     colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #if !defined(__APPLE__) // monitor profile not supported on apple
     ++row;
     colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #if defined(WIN32)
     ++row;
-    colt->attach (*cbAutoMonProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*cbAutoMonProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #endif
 #endif
     ++row;
     colt->attach (*milabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
+
+    mvbcm->pack_start (*monBPC, Gtk::PACK_SHRINK, 4);
 
 #if defined(WIN32)
     autoMonProfileToggled();
@@ -931,14 +937,20 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     hbtheme->pack_start (*fontbutton);
     vbftheme->pack_start(*hbtheme, Gtk::PACK_SHRINK, 0);
 
+    Gtk::Label* cpfontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT_COLPICKER") + ":", Gtk::ALIGN_RIGHT) );
+    colorPickerFontButton = Gtk::manage( new Gtk::FontButton ());
+    colorPickerFontButton->set_use_size(true);
+    colorPickerFontButton->set_font_name(options.colorPickerFont);
 
     Gtk::HBox* hbcolorchooser = Gtk::manage( new Gtk::HBox () );
     hbcolorchooser->set_spacing(4);
 
     hbcolorchooser->pack_start (*cutOverlayLabel, Gtk::PACK_SHRINK, 0);
     hbcolorchooser->pack_start (*butCropCol, Gtk::PACK_SHRINK, 0);
-    hbcolorchooser->pack_end (*butNavGuideCol, Gtk::PACK_SHRINK, 0);
-    hbcolorchooser->pack_end (*navGuideLabel, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_start (*navGuideLabel, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_start (*butNavGuideCol, Gtk::PACK_SHRINK, 0);
+    hbcolorchooser->pack_start (*cpfontlab, Gtk::PACK_EXPAND_WIDGET, 0);
+    hbcolorchooser->pack_start (*colorPickerFontButton, Gtk::PACK_EXPAND_WIDGET, 0);
     vbftheme->pack_start(*hbcolorchooser, Gtk::PACK_SHRINK, 0);
 
 
@@ -1343,7 +1355,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     }
 
     // process directory
-    Glib::Dir* dir = NULL;
+    Glib::Dir* dir = nullptr;
 
     try {
         dir = new Glib::Dir (dirname);
@@ -1414,6 +1426,7 @@ void Preferences::storePreferences ()
     moptions.navGuideBrush[3] = butNavGuideCol->get_alpha() / 65535.0;
 
     moptions.font            = fontbutton->get_font_name();
+    moptions.colorPickerFont = colorPickerFontButton->get_font_name();
 #ifdef WIN32
     moptions.gimpDir        = gimpDir->get_filename ();
     moptions.psDir          = psDir->get_filename ();
@@ -1449,15 +1462,16 @@ void Preferences::storePreferences ()
     switch (monIntent->get_active_row_number ()) {
     default:
     case 0:
-        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
+        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
         break;
     case 1:
-        moptions.rtSettings.monitorIntent = rtengine::RI_PERCEPTUAL;
+        moptions.rtSettings.monitorIntent = rtengine::RI_RELATIVE;
         break;
     case 2:
         moptions.rtSettings.monitorIntent = rtengine::RI_ABSOLUTE;
         break;
     }
+    moptions.rtSettings.monitorBPC = monBPC->get_active ();
 #if defined(WIN32)
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
 #endif
@@ -1578,16 +1592,17 @@ void Preferences::fillPreferences ()
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
     switch (moptions.rtSettings.monitorIntent) {
     default:
-    case rtengine::RI_RELATIVE:
+    case rtengine::RI_PERCEPTUAL:
         monIntent->set_active (0);
         break;
-    case rtengine::RI_PERCEPTUAL:
+    case rtengine::RI_RELATIVE:
         monIntent->set_active (1);
         break;
     case rtengine::RI_ABSOLUTE:
         monIntent->set_active (2);
         break;
     }
+    monBPC->set_active (moptions.rtSettings.monitorBPC);
 #if defined(WIN32)
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
@@ -1629,6 +1644,7 @@ void Preferences::fillPreferences ()
     butNavGuideCol->set_alpha ( (unsigned short)(moptions.navGuideBrush[3] * 65535.0));
 
     fontbutton->set_font_name(moptions.font);
+    colorPickerFontButton->set_font_name(moptions.colorPickerFont);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
     showExpComp->set_active (moptions.fbShowExpComp);
@@ -2034,7 +2050,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface)
 #endif
 
     Gtk::RC::reparse_all (Gtk::Settings::get_default());
-    GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
+    GdkEventClient event = { GDK_CLIENT_EVENT, nullptr, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
     gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
@@ -2088,7 +2104,7 @@ void Preferences::switchFontTo(Glib::ustring newFont)
     Gtk::RC::parse_string (Glib::ustring::compose(
                                "style \"clearlooks-default\" { font_name = \"%1\" }", newFont));
     Gtk::RC::reparse_all (Gtk::Settings::get_default());
-    GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
+    GdkEventClient event = { GDK_CLIENT_EVENT, nullptr, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
     gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
@@ -2213,7 +2229,7 @@ void Preferences::updateFFinfos()
 bool Preferences::splashClosed(GdkEventAny* event)
 {
     delete splash;
-    splash = NULL;
+    splash = nullptr;
     return true;
 }
 

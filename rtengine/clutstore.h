@@ -7,16 +7,16 @@
 
 #include "cache.h"
 #include "alignedbuffer.h"
+#include "noncopyable.h"
 
 namespace rtengine
 {
 
-class HaldCLUT
+class HaldCLUT final :
+    public NonCopyable
 {
 public:
     HaldCLUT();
-    HaldCLUT(const HaldCLUT& other) = delete;
-    HaldCLUT& operator =(const HaldCLUT& other) = delete;
     ~HaldCLUT();
 
     bool load(const Glib::ustring& filename);
@@ -51,13 +51,11 @@ private:
     Glib::ustring clut_profile;
 };
 
-class CLUTStore
+class CLUTStore final :
+    public NonCopyable
 {
 public:
     static CLUTStore& getInstance();
-
-    CLUTStore(const CLUTStore& other) = delete;
-    CLUTStore& operator =(const CLUTStore& other) = delete;
 
     std::shared_ptr<HaldCLUT> getClut(const Glib::ustring& filename);
 

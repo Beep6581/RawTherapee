@@ -21,7 +21,7 @@
 #include "imagearea.h"
 #include "cursormanager.h"
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), imgX(0), imgY(0), imgW(0), imgH(0), zoom(0.0), isMoving(false), needsUpdate(false)
+PreviewWindow::PreviewWindow () : previewHandler(nullptr), mainCropWin(nullptr), imageArea(nullptr), imgX(0), imgY(0), imgW(0), imgH(0), zoom(0.0), isMoving(false), needsUpdate(false)
 {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
@@ -223,10 +223,10 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event)
     int x, y, w, h;
     getObservedFrameArea (x, y, w, h);
     if (x>imgX || y>imgY || w < imgW || h < imgH) {
-        bool inside = event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
-        bool moreInside = event->x > x + 6 && event->x < x + w - 1 - 6 && event->y > y + 6 && event->y < y + h - 1 - 6;
 
         if (!isMoving) {
+            bool inside = event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
+            bool moreInside = event->x > x + 6 && event->x < x + w - 1 - 6 && event->y > y + 6 && event->y < y + h - 1 - 6;
             isMoving = true;
 
             if (!inside || moreInside) {

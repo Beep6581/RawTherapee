@@ -22,7 +22,7 @@
 #include <cstdio>
 #include <jpeglib.h>
 #include <jerror.h>
-#include "jpeg.h"
+#include "../jpeg.h"
 
 
 /* Expanded data source object for memory input */
@@ -155,7 +155,7 @@ jpeg_memory_src (j_decompress_ptr cinfo, const JOCTET * buffer, size_t bufsize)
      * This makes it unsafe to use this manager and a different source
      * manager serially with the same JPEG object.  Caveat programmer.
      */
-    if (cinfo->src == NULL) { /* first time for this JPEG object? */
+    if (cinfo->src == nullptr) { /* first time for this JPEG object? */
         cinfo->src = (struct jpeg_source_mgr *)
                      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                              sizeof(my_source_mgr));

@@ -63,17 +63,11 @@ protected:
     bool fuji;
     bool d1x;
     int border;
-    //char** hpmap;
-    float** hrmap[3];   // for color propagation
-    char** needhr;      // for color propagation
-    int max_3[3];
     float chmax[4], hlmax[4], clmax[4];
     double initialGain; // initial gain calculated after scale_colors
     double camInitialGain;
     double defGain;
-    bool full;
     cmsHPROFILE camProfile;
-    cmsHPROFILE embProfile;
     bool rgbSourceModified;
 
     RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
@@ -97,12 +91,10 @@ protected:
     void hphd_horizontal     (float** hpmap, int row_from, int row_to);
     void hphd_green          (float** hpmap);
     void processFalseColorCorrectionThread (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
-    void hlRecovery          (std::string method, float* red, float* green, float* blue, int width, float* hlmax);
+    void hlRecovery          (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
     void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
-    void updateHLRecoveryMap_ColorPropagation ();
-    void HLRecovery_ColorPropagation (float* red, float* green, float* blue, int i, int sx1, int width, int skip);
     unsigned FC(int row, int col)
     {
         return ri->FC(row, col);
@@ -140,7 +132,7 @@ public:
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
     eSensorType getSensorType () const
     {
-        return ri != NULL ? ri->getSensorType() : ST_NONE;
+        return ri != nullptr ? ri->getSensorType() : ST_NONE;
     }
     ColorTemp   getWB       () const
     {
@@ -159,7 +151,7 @@ public:
     }
 
     void        getFullSize (int& w, int& h, int tr = TR_NONE);
-    void        getSize     (int tran, PreviewProps pp, int& w, int& h);
+    void        getSize     (PreviewProps pp, int& w, int& h);
     int         getRotateDegree() const
     {
         return ri->get_rotateDegree();
@@ -188,7 +180,7 @@ public:
 
     void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
-    static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName)
+    static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName)
     {
         colorSpaceConversion_ (im, cmp, wb, pre_mul, embedded, camprofile, cam, camName);
     }

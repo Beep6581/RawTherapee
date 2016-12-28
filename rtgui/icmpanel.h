@@ -25,6 +25,7 @@
 #include "guiutils.h"
 
 #include "toolpanel.h"
+#include "popupbutton.h"
 #include "../rtengine/imagedata.h"
 
 class ICMPanelListener
@@ -53,6 +54,8 @@ protected:
     sigc::connection beoconn;
     bool lastApplyHueSatMap;
     sigc::connection hsmconn;
+    bool lastobpc;
+    sigc::connection obpcconn;
     bool lastBlendCMSMatrix;
     bool isBatchMode;
     sigc::connection blendcmsconn;
@@ -60,6 +63,7 @@ protected:
 private:
     Gtk::VBox       *  iVBox;
 
+    Gtk::CheckButton*  obpc;
     Gtk::CheckButton*  freegamma;
     Gtk::RadioButton*  inone;
 
@@ -78,7 +82,7 @@ private:
     MyComboBoxText*    wgamma;
 
     MyComboBoxText*    onames;
-    MyComboBoxText*    ointent;
+    PopUpButton*       ointent;
     Gtk::RadioButton*  ofromdir;
     Gtk::RadioButton*  ofromfile;
     Gtk::RadioButton*  iunchanged;
@@ -95,19 +99,21 @@ private:
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
+    void updateRenderingIntent (const Glib::ustring &profile);
 public:
     ICMPanel ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = NULL);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = NULL);
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
     void adjusterChanged (Adjuster* a, double newval);
     void setAdjusterBehavior (bool gammaadd, bool slopeadd);
 
     void wpChanged ();
     void opChanged ();
-    void oiChanged ();
+    void oiChanged (int n);
+    void oBPCChanged ();
     void ipChanged ();
     void gpChanged ();
     void GamChanged ();

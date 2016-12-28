@@ -208,10 +208,12 @@ public:
     virtual void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy) = 0;
     /// Convert the image coords to the widget's DrawingArea (i.e. preview area) coords
     virtual void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy) = 0;
-    /// Convert the image coords to the crop's canvas coords
+    /// Convert the image coords to the crop's canvas coords (full image + padding)
     virtual void imageCoordToCropCanvas (int imgx, int imgy, int& phyx, int& phyy) = 0;
-    /// Convert the image coords to the edit buffer coords
+    /// Convert the image coords to the edit buffer coords  (includes borders)
     virtual void imageCoordToCropBuffer (int imgx, int imgy, int& phyx, int& phyy) = 0;
+    /// Convert the image coords to the displayed image coords  (no borders here)
+    virtual void imageCoordToCropImage (int imgx, int imgy, int& phyx, int& phyy) = 0;
     /// Convert a size value from the preview's scale to the image's scale
     virtual int scaleValueToImage (int value) = 0;
     /// Convert a size value from the preview's scale to the image's scale
@@ -463,7 +465,7 @@ protected:
     } action;                /// object mode only, ignored in Pipette mode
 
 public:
-    EditSubscriber (EditType editType);
+    explicit EditSubscriber (EditType editType);
     virtual ~EditSubscriber () {}
 
     void               setEditProvider(EditDataProvider *provider);

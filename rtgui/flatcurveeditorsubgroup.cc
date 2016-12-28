@@ -171,7 +171,7 @@ void FlatCurveEditorSubGroup::stopNumericalAdjustment()
  */
 void FlatCurveEditorSubGroup::refresh(CurveEditor *curveToRefresh)
 {
-    if (curveToRefresh != NULL && curveToRefresh == static_cast<FlatCurveEditor*>(parent->displayedCurve)) {
+    if (curveToRefresh != nullptr && curveToRefresh == static_cast<FlatCurveEditor*>(parent->displayedCurve)) {
         switch(FlatCurveType(curveToRefresh->curveType->getSelected())) {
         case (FCT_MinMaxCPoints):
             CPointsCurve->refresh();
@@ -192,7 +192,7 @@ void FlatCurveEditorSubGroup::editModeSwitchedOff ()
     // toggling off all edit buttons, even if only one is toggle on
     bool prevState = editCPointsConn.block(true);
     editCPoints->set_active(false);
-    CPointsCurve->pipetteMouseOver(NULL, NULL, 0);
+    CPointsCurve->pipetteMouseOver(nullptr, nullptr, 0);
     CPointsCurve->setDirty(true);
 
     if (!prevState) {
@@ -288,11 +288,11 @@ void FlatCurveEditorSubGroup::switchGUI()
         ColorProvider *barColorProvider = dCurve->getLeftBarColorProvider();
         std::vector<GradientMilestone>  bgGradient = dCurve->getLeftBarBgGradient();
 
-        if (barColorProvider == NULL && bgGradient.size() == 0) {
+        if (barColorProvider == nullptr && bgGradient.size() == 0) {
             // dCurve has no left colored bar, so we delete the object
             if (leftBar) {
                 delete leftBar;
-                leftBar = NULL;
+                leftBar = nullptr;
             }
         } else {
             // dCurve has a ColorProvider or a background gradient defined, so we create/update the object
@@ -305,7 +305,7 @@ void FlatCurveEditorSubGroup::switchGUI()
                 leftBar->setColorProvider(barColorProvider, dCurve->getLeftBarCallerId());
                 leftBar->setBgGradient (bgGradient);
             } else {
-                leftBar->setColorProvider(NULL, -1);
+                leftBar->setColorProvider(nullptr, -1);
                 leftBar->setBgGradient (bgGradient);
             }
         }
@@ -313,11 +313,11 @@ void FlatCurveEditorSubGroup::switchGUI()
         barColorProvider = dCurve->getBottomBarColorProvider();
         bgGradient = dCurve->getBottomBarBgGradient();
 
-        if (barColorProvider == NULL && bgGradient.size() == 0) {
+        if (barColorProvider == nullptr && bgGradient.size() == 0) {
             // dCurve has no bottom colored bar, so we delete the object
             if (bottomBar) {
                 delete bottomBar;
-                bottomBar = NULL;
+                bottomBar = nullptr;
             }
         } else {
             // dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
@@ -330,7 +330,7 @@ void FlatCurveEditorSubGroup::switchGUI()
                 bottomBar->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
                 bottomBar->setBgGradient (bgGradient);
             } else {
-                bottomBar->setColorProvider(NULL, -1);
+                bottomBar->setColorProvider(nullptr, -1);
                 bottomBar->setBgGradient (bgGradient);
             }
         }
