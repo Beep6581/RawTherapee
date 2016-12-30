@@ -955,7 +955,9 @@ PREFERENCES_MENUGROUPRANK;Classement
 PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MIN;Mini (100x115)
-PREFERENCES_MONBPC;Compensation du Point Noir pour la transformation L*a*b*->Moniteur
+PREFERENCES_MONBPC;Compensation du Point Noir
+PREFERENCES_MONITOR;Moniteur
+PREFERENCES_MONPROFILE_WARNOSX;Due à des limitations de MacOS, seul sRGB est supporté.
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVGUIDEBRUSH;Couleur du cadre dans le Navigateur
@@ -978,6 +980,7 @@ PREFERENCES_PREVDEMO;Méthode de Dématriçage de l'Aperçu
 PREFERENCES_PREVDEMO_FAST;Rapide
 PREFERENCES_PREVDEMO_LABEL;Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%:
 PREFERENCES_PREVDEMO_SIDECAR;Idem PP3
+PREFERENCES_PRINTER;Imprimante (épreuvage écran)
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
@@ -985,6 +988,9 @@ PREFERENCES_PROFILEPRFILE;Profil accolé au fichier d'entrée
 PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Cache
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
 PREFERENCES_PROPERTY;Propriété
+PREFERENCES_PRTBPC;Compensation du Point Noir
+PREFERENCES_PRTINTENT;Intention de rendu
+PREFERENCES_PRTPROFILE;Profile couleur
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Se souvenir de niveau de zoom et de la position de l'image
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Retient le niveau de zoom et la position de l'image courante lors de l'ouverture d'une nouvelle image.\n\nCette option ne fonctionne que dans le mode "Éditeur unique" et quand "Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%" is set to "Idem PP3".

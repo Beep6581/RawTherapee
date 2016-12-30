@@ -1001,9 +1001,11 @@ PREFERENCES_MENUGROUPRANK;Group "Rank"
 PREFERENCES_MENUOPTIONS;Context Menu Options
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Mini (100x115)
-PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-PREFERENCES_MONINTENT;Default monitor intent
-PREFERENCES_MONPROFILE;Default monitor profile
+PREFERENCES_MONBPC;Black Point Compensation
+PREFERENCES_MONITOR;Monitor
+PREFERENCES_MONINTENT;Default rendering intent
+PREFERENCES_MONPROFILE;Default profile
+PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
@@ -1028,6 +1030,7 @@ PREFERENCES_PREVDEMO;Preview Demosaic Method
 PREFERENCES_PREVDEMO_FAST;Fast
 PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+PREFERENCES_PRINTER;Printer (soft-proofing)
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Processing profile loading priority
 PREFERENCES_PROFILEPRCACHE;Profile in cache
@@ -1036,6 +1039,9 @@ PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 PREFERENCES_PROFILE_NONE;None
 PREFERENCES_PROPERTY;Property
+PREFERENCES_PRTBPC;Black Point Compensation
+PREFERENCES_PRTINTENT;Rendering intent
+PREFERENCES_PRTPROFILE;Color profile
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
