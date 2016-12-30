@@ -557,9 +557,11 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
+    setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     headerHBox = Gtk::manage( new Gtk::HBox());
     headerHBox->set_can_focus(false);
+    setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
         statusImage = Gtk::manage(new Gtk::Image(disabledPBuf));
@@ -578,6 +580,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     statusImage->set_can_focus(false);
 
     if (titleWidget) {
+        setExpandAlignProperties(titleWidget, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
         headerHBox->pack_start(*titleWidget, Gtk::PACK_EXPAND_WIDGET, 0);
         headerWidget = titleWidget;
     }
@@ -606,9 +609,11 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
+    setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     headerHBox = Gtk::manage( new Gtk::HBox());
     headerHBox->set_can_focus(false);
+    setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
 
     if (useEnabled) {
@@ -635,7 +640,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     }
 
     label = Gtk::manage(new Gtk::Label());
-    label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
     headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
