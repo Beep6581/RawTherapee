@@ -723,6 +723,10 @@ float** RawImage::compress_image()
                 this->data[row][col] = image[row * width + col][0];
             }
     } else {
+        if(get_maker() == "Sigma" && dng_version) { // Hack to prevent sigma dng files from crashing
+            height -= top_margin;
+            width -= left_margin;
+        }
         #pragma omp parallel for
 
         for (int row = 0; row < height; row++)

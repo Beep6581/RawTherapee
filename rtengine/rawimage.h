@@ -356,6 +356,10 @@ public:
         return (xtrans[(row) % 6][(col) % 6]);
     }
 
+    unsigned DNGVERSION ( ) const
+    {
+        return dng_version;
+    }
 };
 
 }
