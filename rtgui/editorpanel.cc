@@ -38,15 +38,19 @@ using namespace rtengine::procparams;
 class EditorPanel::ColorManagementToolbar
 {
 private:
+#if !defined(__APPLE__) // monitor profile not supported on apple
     MyComboBoxText profileBox;
+#endif
     PopUpButton intentBox;
     Gtk::ToggleButton softProof;
     Gtk::ToggleButton spGamutCheck;
-    sigc::connection profileConn, intentConn;
+    sigc::connection profileConn, intentConn, softproofConn;
+    bool canSProof;
 
     rtengine::StagedImageProcessor* const& processor;
 
 private:
+#if !defined(__APPLE__) // monitor profile not supported on apple
     void prepareProfileBox ()
     {
         profileBox.set_size_request (100, -1);
@@ -58,13 +62,13 @@ private:
 #else
         profileBox.set_active (0);
 #endif
-
-        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles (true);
-        for (std::vector<Glib::ustring>::const_iterator iterator = profiles.begin (); iterator != profiles.end (); ++iterator) {
-            profileBox.append_text (*iterator);
+        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
+        for (const auto profile: profiles) {
+            profileBox.append_text (profile);
         }
         profileBox.set_tooltip_text (profileBox.get_active_text ());
     }
+#endif
 
     void prepareIntentBox ()
     {
@@ -86,6 +90,7 @@ private:
         softProof.set_tooltip_markup(M("SOFTPROOF_TOOLTIP"));
 
         softProof.set_active(false);
+        softProof.set_sensitive(canSProof);
         softProof.show ();
 
         Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("spGamutCheck.png"));
@@ -121,12 +126,15 @@ private:
 
     void updateParameters (bool noEvent = false)
     {
+#if !defined(__APPLE__) // monitor profile not supported on apple
         ConnectionBlocker profileBlocker (profileConn);
+#endif
         ConnectionBlocker intentBlocker (intentConn);
 
         Glib::ustring profile;
 
-#ifdef WIN32
+#if !defined(__APPLE__) // monitor profile not supported on apple
+    #ifdef WIN32
         if (profileBox.get_active_row_number () == 1) {
             profile = rtengine::iccStore->getDefaultMonitorProfileName ();
             if (profile.empty ()) {
@@ -138,10 +146,14 @@ private:
         } else if (profileBox.get_active_row_number () > 1) {
             profile = profileBox.get_active_text ();
         }
-#else
+    #else
         profile = profileBox.get_active_row_number () > 0 ? profileBox.get_active_text () : Glib::ustring ();
+    #endif
+#else
+        profile = "RT_sRGB";
 #endif
 
+#if !defined(__APPLE__) // monitor profile not supported on apple
         if (profileBox.get_active_row_number () == 0) {
 
             profile.clear();
@@ -164,8 +176,8 @@ private:
                 intentBox.setItemSensitivity(0, supportsPerceptual);
                 intentBox.setItemSensitivity(1, supportsRelativeColorimetric);
                 intentBox.setItemSensitivity(2, supportsAbsoluteColorimetric);
-                softProof.set_sensitive(true);
-                spGamutCheck.set_sensitive(true);
+                softProof.set_sensitive(canSProof);
+                spGamutCheck.set_sensitive(canSProof);
             } else {
                 intentBox.setItemSensitivity(0, true);
                 intentBox.setItemSensitivity(1, true);
@@ -178,7 +190,7 @@ private:
 
             profileBox.set_tooltip_text (profileBox.get_active_text ());
         }
-
+#endif
         rtengine::RenderingIntent intent;
         switch (intentBox.getSelected ()) {
         default:
@@ -209,9 +221,18 @@ private:
 
     void updateSoftProofParameters (bool noEvent = false)
     {
-        spGamutCheck.set_sensitive(softProof.get_active());
+        if (!canSProof) {
+            ConnectionBlocker profileBlocker (softproofConn);
+            softProof.set_active(false);
+            softProof.set_sensitive(false);
+        } else {
+            softProof.set_sensitive(profileBox.get_active_row_number () > 0);
+        }
+        spGamutCheck.set_sensitive(softProof.get_sensitive() && softProof.get_active());
 
+#if !defined(__APPLE__) // monitor profile not supported on apple
         if (profileBox.get_active_row_number () > 0) {
+#endif
             if (!noEvent) {
                 processor->beginUpdateParams ();
             }
@@ -219,23 +240,30 @@ private:
             if (!noEvent) {
                 processor->endUpdateParams (rtengine::EvMonitorTransform);
             }
+#if !defined(__APPLE__) // monitor profile not supported on apple
         }
+#endif
     }
 
 public:
     explicit ColorManagementToolbar (rtengine::StagedImageProcessor* const& ipc) :
         intentBox (Glib::ustring (), true),
+        canSProof(!options.rtSettings.printerProfile.empty() && options.rtSettings.printerProfile != "None"),  // assuming the printer profile exist!
         processor (ipc)
     {
+#if !defined(__APPLE__) // monitor profile not supported on apple
         prepareProfileBox ();
+#endif
         prepareIntentBox ();
         prepareSoftProofingBox ();
 
         reset ();
 
-        softProof.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::softProofToggled));
-        spGamutCheck.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::spGamutCheckToggled));;
+        softproofConn = softProof.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::softProofToggled));
+        spGamutCheck.signal_toggled().connect(sigc::mem_fun (this, &ColorManagementToolbar::spGamutCheckToggled));
+#if !defined(__APPLE__) // monitor profile not supported on apple
         profileConn = profileBox.signal_changed ().connect (sigc::mem_fun (this, &ColorManagementToolbar::profileBoxChanged));
+#endif
         intentConn = intentBox.signal_changed ().connect (sigc::mem_fun (this, &ColorManagementToolbar::intentBoxChanged));
     }
 
@@ -244,7 +272,15 @@ public:
         box->pack_end (spGamutCheck, Gtk::PACK_SHRINK, 0);
         box->pack_end (softProof, Gtk::PACK_SHRINK, 0);
         box->pack_end (*intentBox.buttonGroup, Gtk::PACK_SHRINK, 0);
+#if !defined(__APPLE__) // monitor profile not supported on apple
         box->pack_end (profileBox, Gtk::PACK_SHRINK, 0);
+#endif
+    }
+
+    void canSoftProof(bool canSP)
+    {
+        canSProof = canSP;
+        updateSoftProofParameters();
     }
 
     void updateProcessor()
@@ -256,17 +292,19 @@ public:
 
     void reset ()
     {
-        ConnectionBlocker profileBlocker (profileConn);
         ConnectionBlocker intentBlocker (intentConn);
+#if !defined(__APPLE__) // monitor profile not supported on apple
+        ConnectionBlocker profileBlocker (profileConn);
 
-#ifdef WIN32
+    #ifdef WIN32
         if (options.rtSettings.autoMonitorProfile) {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 1);
         } else {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
         }
-#else
+    #else
         setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
+    #endif
 #endif
 
         switch (options.rtSettings.monitorIntent)
@@ -2015,6 +2053,11 @@ void EditorPanel::tbShowHideSidePanels_managestate()
     tbShowHideSidePanels->set_active (!bAllSidePanelsVisible);
 
     ShowHideSidePanelsconn.block (false);
+}
+
+void EditorPanel::updateProfiles(const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
+{
+    colorMgmtToolBar->canSoftProof(!printerProfile.empty() && printerProfile != "None");
 }
 
 void EditorPanel::updateTPVScrollbar (bool hide)

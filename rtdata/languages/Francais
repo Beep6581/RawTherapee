@@ -861,6 +861,7 @@ PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CLUTSCACHE;Cache HaldCLUT
 PREFERENCES_CLUTSCACHE_LABEL;Nombre maximum de chache CLUT
 PREFERENCES_CLUTSDIR;Dossier HaldCLUT
+PREFERENCES_CMMBPC;Compensation du point noir
 PREFERENCES_CURVEBBOXPOS;Position des boutons copier/coller des courbes
 PREFERENCES_CURVEBBOXPOS_ABOVE;Au-dessus
 PREFERENCES_CURVEBBOXPOS_BELOW;En-dessous
@@ -926,8 +927,8 @@ PREFERENCES_GREYSC;Luminance Yb de la scène (%)
 PREFERENCES_GREYSC18;Yb=18 CIE L#50
 PREFERENCES_GREYSCA;Automatique
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramme dans le panneau de gauche
-PREFERENCES_HISTOGRAMWORKING;Utiliser le profile de travail pour l'histograme principal et le Navigateur
-PREFERENCES_HISTOGRAM_TOOLTIP;Si activé, le profile couleur de travail est utilisé pour les données d'histograme et le panneau Navigateur, sinon le profil de travail de sortie "gamma-corrigé" est utilisé.
+PREFERENCES_HISTOGRAMWORKING;Utiliser le profil de travail pour l'histograme principal et le Navigateur
+PREFERENCES_HISTOGRAM_TOOLTIP;Si activé, le profil couleur de travail est utilisé pour les données d'histograme et le panneau Navigateur, sinon le profil de travail de sortie "gamma-corrigé" est utilisé.
 PREFERENCES_HLTHRESHOLD;Seuil pour le dépassement de domaine supérieur
 PREFERENCES_ICCDIR;Dossier des profils ICC
 PREFERENCES_IMG_RELOAD_NEEDED;Ces changements nécessitent un rechargement de l'image (ou l'ouverture d'une autre image) pour prendre effet.
@@ -955,7 +956,10 @@ PREFERENCES_MENUGROUPRANK;Classement
 PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MIN;Mini (100x115)
-PREFERENCES_MONBPC;Compensation du Point Noir pour la transformation L*a*b*->Moniteur
+PREFERENCES_MONINTENT;Intention de rendu par défaut
+PREFERENCES_MONITOR;Moniteur
+PREFERENCES_MONPROFILE;Profil couleur par défaut
+PREFERENCES_MONPROFILE_WARNOSX;Due à des limitations de MacOS, seul sRGB est supporté.
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVGUIDEBRUSH;Couleur du cadre dans le Navigateur
@@ -978,6 +982,7 @@ PREFERENCES_PREVDEMO;Méthode de Dématriçage de l'Aperçu
 PREFERENCES_PREVDEMO_FAST;Rapide
 PREFERENCES_PREVDEMO_LABEL;Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%:
 PREFERENCES_PREVDEMO_SIDECAR;Idem PP3
+PREFERENCES_PRINTER;Imprimante (Épreuvage Écran)
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
@@ -985,6 +990,8 @@ PREFERENCES_PROFILEPRFILE;Profil accolé au fichier d'entrée
 PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Cache
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
 PREFERENCES_PROPERTY;Propriété
+PREFERENCES_PRTINTENT;Intention de rendu
+PREFERENCES_PRTPROFILE;Profil couleur
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Se souvenir de niveau de zoom et de la position de l'image
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Retient le niveau de zoom et la position de l'image courante lors de l'ouverture d'une nouvelle image.\n\nCette option ne fonctionne que dans le mode "Éditeur unique" et quand "Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%" is set to "Idem PP3".
@@ -1085,8 +1092,8 @@ SAVEDLG_SUBSAMP_3;Meilleure qualité
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profile de sortie
-SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, simule le rendu généré par le profiles de sortie de l'outil ICM. Particulièrement utile pour simuler le rendu en sortie d'imprimante.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profil de sortie
+SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, simule le rendu généré par le profile de sortie de l'outil ICM. Particulièrement utile pour simuler le rendu en sortie d'imprimante.
 THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
@@ -1463,7 +1470,7 @@ TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolé
 TP_ICM_DCPILLUMINANT_TOOLTIP;Sélectionne quel illuminant DCP inclus utiliser. La valeur par défaut est "Interpolé", qui est un mix entre les 2 profils inclus basé sur la Balance des Blancs choisie. Ce paramètre n'est actif que si un fichier DCP Bi-Illuminant avec support de l'interpolation est choisi.
 TP_ICM_INPUTCAMERA;Celui de l'appareil photo
-TP_ICM_INPUTCAMERAICC;Sél. auto du profile de l'APN
+TP_ICM_INPUTCAMERAICC;Sél. auto du profil de l'APN
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils d'entrée DCP ou ICC spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareils photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
 TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur incluses dans le fichier RAW, les matrices de couleur simple fournies par RawTherapee ou celles de DCRaw
 TP_ICM_INPUTCUSTOM;Personnel
@@ -1929,8 +1936,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RETINEX;Retinex
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_PROFILE_NONE;None

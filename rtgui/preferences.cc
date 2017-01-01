@@ -685,9 +685,26 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 
     Gtk::VBox* mvbcm = Gtk::manage (new Gtk::VBox ());
     mvbcm->set_border_width (4);
+    mvbcm->set_spacing (4);
 
     iccDir = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_ICCDIR") + ":", Gtk::ALIGN_LEFT));
+
+    Gtk::HBox* iccdhb = Gtk::manage (new Gtk::HBox ());
+    iccdhb->set_spacing(4);
+
+    iccdhb->pack_start(*pdlabel, Gtk::PACK_SHRINK);
+    iccdhb->pack_start(*iccDir, Gtk::PACK_EXPAND_WIDGET);
+
+    iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
+
+    mvbcm->pack_start(*iccdhb, Gtk::PACK_SHRINK);
+
+    //-------------------------  MONITOR ----------------------
+
+    Gtk::Frame* fmonitor = Gtk::manage( new Gtk::Frame (M("PREFERENCES_MONITOR")) );
+    Gtk::VBox* vbmonitor = Gtk::manage( new Gtk::VBox () );
+    vbmonitor->set_border_width (4);
 
     monProfile = Gtk::manage (new Gtk::ComboBoxText ());
     Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONPROFILE") + ":", Gtk::ALIGN_LEFT));
@@ -695,52 +712,110 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     monIntent = Gtk::manage (new Gtk::ComboBoxText ());
     Gtk::Label* milabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONINTENT")+":", Gtk::ALIGN_LEFT));
 
+    monProfile->set_size_request(80, -1);
     monProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
     monProfile->set_active (0);
 
-    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (true);
-    for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
-        monProfile->append_text (*profile);
+    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
+    for (const auto profile : profiles) {
+        monProfile->append_text (profile);
+    }
 
     // same order as the enum
     monIntent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
     monIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
     monIntent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
     monIntent->set_active (1);
+    monIntent->set_size_request(80, -1);
 
-    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_MONBPC")));
+    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CMMBPC")));
     monBPC->set_active (true);
-
-    iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
 
 #if defined(WIN32) // Auto-detection not implemented for Linux, see issue 851
     cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
     autoMonProfileConn  = cbAutoMonProfile->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::autoMonProfileToggled));
-#endif
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
+#else
+    Gtk::Table* colt = Gtk::manage (new Gtk::Table (2, 2));
+#endif
     int row = 0;
-    colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
-#if !defined(__APPLE__) // monitor profile not supported on apple
-    ++row;
     colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+#if defined(__APPLE__) // monitor profile not supported on apple
+    colt->attach (*Gtk::manage (new Gtk::Label (M("PREFERENCES_MONPROFILE_WARNOSX"), Gtk::ALIGN_LEFT)), 1, 2, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+#else
     colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+#endif
 #if defined(WIN32)
     ++row;
     colt->attach (*cbAutoMonProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #endif
-#endif
     ++row;
     colt->attach (*milabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
+    vbmonitor->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
-    mvbcm->pack_start (*monBPC, Gtk::PACK_SHRINK, 4);
+    vbmonitor->pack_start (*monBPC, Gtk::PACK_SHRINK, 4);
 
 #if defined(WIN32)
     autoMonProfileToggled();
 #endif
+
+    fmonitor->add(*vbmonitor);
+
+    mvbcm->pack_start(*fmonitor, Gtk::PACK_SHRINK);
+
+    //-------------------------  PRINTER ----------------------
+
+    Gtk::Frame* fprinter = Gtk::manage( new Gtk::Frame (M("PREFERENCES_PRINTER")) );
+    Gtk::VBox* vbprinter = Gtk::manage( new Gtk::VBox () );
+    vbprinter->set_border_width (4);
+    prtProfile = Gtk::manage (new Gtk::ComboBoxText ());
+    Gtk::Label* pplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_PRTPROFILE") + ":", Gtk::ALIGN_LEFT));
+
+    prtIntent = Gtk::manage (new Gtk::ComboBoxText ());
+    Gtk::Label* pilabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_PRTINTENT")+":", Gtk::ALIGN_LEFT));
+
+    prtProfile->set_size_request(80, -1);
+    prtProfile->append_text (M("PREFERENCES_PROFILE_NONE"));
+    prtProfile->set_active (0);
+
+    const std::vector<Glib::ustring> prtprofiles = rtengine::ICCStore::getInstance ()->getProfiles (rtengine::ICCStore::ProfileType::PRINTER);
+    for (const auto prtprofile : prtprofiles)
+        prtProfile->append_text (prtprofile);
+
+    // same order as the enum
+    prtIntent->append_text (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    prtIntent->append_text (M("PREFERENCES_INTENT_RELATIVE"));
+    prtIntent->append_text (M("PREFERENCES_INTENT_ABSOLUTE"));
+    prtIntent->set_active (1);
+    prtIntent->set_size_request(80, -1);
+
+    prtBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CMMBPC")));
+    prtBPC->set_active (true);
+
+    Gtk::Table* coltp = Gtk::manage (new Gtk::Table (2, 2));
+    row = 0;
+#if !defined(__APPLE__) // monitor profile not supported on apple
+    coltp->attach (*pplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    coltp->attach (*prtProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+#endif
+    ++row;
+    coltp->attach (*pilabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    coltp->attach (*prtIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+    vbprinter->pack_start (*coltp, Gtk::PACK_SHRINK, 4);
+
+    vbprinter->pack_start (*prtBPC, Gtk::PACK_SHRINK, 4);
+
+#if defined(WIN32)
+    autoMonProfileToggled();
+#endif
+
+    fprinter->add(*vbprinter);
+
+    mvbcm->pack_start(*fprinter, Gtk::PACK_SHRINK);
+
+    //-------------------------  CIECAM ----------------------
 
     Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
     vbdp->set_border_width (4);
@@ -790,7 +865,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     vbcielab->pack_start (*colo, Gtk::PACK_EXPAND_WIDGET, 4);
     fcielab->add (*vbcielab);
 
-    mvbcm->pack_start (*fcielab, Gtk::PACK_SHRINK, 4);
+    mvbcm->pack_start (*fcielab, Gtk::PACK_SHRINK);
 
     return mvbcm;
 }
@@ -1457,8 +1532,31 @@ void Preferences::storePreferences ()
     moptions.CPBPath = txtCustProfBuilderPath->get_text();
     moptions.CPBKeys = CPBKeyType(custProfBuilderLabelType->get_active_row_number());
 
+    if (!prtProfile->get_active_row_number()) {
+        moptions.rtSettings.printerProfile = "";
+    } else {
+        moptions.rtSettings.printerProfile = prtProfile->get_active_text ();
+    }
+    switch (prtIntent->get_active_row_number ()) {
+    default:
+    case 0:
+        moptions.rtSettings.printerIntent = rtengine::RI_PERCEPTUAL;
+        break;
+    case 1:
+        moptions.rtSettings.printerIntent = rtengine::RI_RELATIVE;
+        break;
+    case 2:
+        moptions.rtSettings.printerIntent = rtengine::RI_ABSOLUTE;
+        break;
+    }
+    moptions.rtSettings.printerBPC = prtBPC->get_active ();
+
 #if !defined(__APPLE__) // monitor profile not supported on apple
-    moptions.rtSettings.monitorProfile      = monProfile->get_active_text ();
+    if (!monProfile->get_active_row_number()) {
+        moptions.rtSettings.monitorProfile = "";
+    } else {
+        moptions.rtSettings.monitorProfile = monProfile->get_active_text ();
+    }
     switch (monIntent->get_active_row_number ()) {
     default:
     case 0:
@@ -1587,6 +1685,21 @@ void Preferences::fillPreferences ()
     panFactor->set_value (moptions.panAccelFactor);
     rememberZoomPanCheckbutton->set_active (moptions.rememberZoomAndPan);
     ctiffserialize->set_active(moptions.serializeTiffRead);
+
+    setActiveTextOrIndex (*prtProfile, moptions.rtSettings.printerProfile, 0);
+    switch (moptions.rtSettings.printerIntent) {
+    default:
+    case rtengine::RI_PERCEPTUAL:
+        prtIntent->set_active (0);
+        break;
+    case rtengine::RI_RELATIVE:
+        prtIntent->set_active (1);
+        break;
+    case rtengine::RI_ABSOLUTE:
+        prtIntent->set_active (2);
+        break;
+    }
+    prtBPC->set_active (moptions.rtSettings.printerBPC);
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
@@ -2094,6 +2207,14 @@ void Preferences::workflowUpdate ()
     if(moptions.histogramPosition != options.histogramPosition) {
         // Update the position of the Histogram
         parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);
+    }
+
+    if(  moptions.rtSettings.printerProfile != options.rtSettings.printerProfile
+       ||moptions.rtSettings.printerBPC     != options.rtSettings.printerBPC
+       ||moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent)
+    {
+        // Update the position of the Histogram
+        parent->updateProfiles(moptions.rtSettings.printerProfile, moptions.rtSettings.printerIntent, moptions.rtSettings.printerBPC);
     }
 
 }
