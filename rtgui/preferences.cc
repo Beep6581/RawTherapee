@@ -728,7 +728,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     monIntent->set_active (1);
     monIntent->set_size_request(80, -1);
 
-    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_MONBPC")));
+    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CMMBPC")));
     monBPC->set_active (true);
 
 #if defined(WIN32) // Auto-detection not implemented for Linux, see issue 851
@@ -791,7 +791,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     prtIntent->set_active (1);
     prtIntent->set_size_request(80, -1);
 
-    prtBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_PRTBPC")));
+    prtBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CMMBPC")));
     prtBPC->set_active (true);
 
     Gtk::Table* coltp = Gtk::manage (new Gtk::Table (2, 2));
@@ -2207,6 +2207,14 @@ void Preferences::workflowUpdate ()
     if(moptions.histogramPosition != options.histogramPosition) {
         // Update the position of the Histogram
         parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);
+    }
+
+    if(  moptions.rtSettings.printerProfile != options.rtSettings.printerProfile
+       ||moptions.rtSettings.printerBPC     != options.rtSettings.printerBPC
+       ||moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent)
+    {
+        // Update the position of the Histogram
+        parent->updateProfiles(moptions.rtSettings.printerProfile, moptions.rtSettings.printerIntent, moptions.rtSettings.printerBPC);
     }
 
 }
