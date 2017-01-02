@@ -796,10 +796,8 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 
     Gtk::Table* coltp = Gtk::manage (new Gtk::Table (2, 2));
     row = 0;
-#if !defined(__APPLE__) // monitor profile not supported on apple
     coltp->attach (*pplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     coltp->attach (*prtProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
-#endif
     ++row;
     coltp->attach (*pilabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     coltp->attach (*prtIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
