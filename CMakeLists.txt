@@ -256,6 +256,7 @@ find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
+find_package (KLT)
 
 # link witz bzip
 if (WITH_BZIP)

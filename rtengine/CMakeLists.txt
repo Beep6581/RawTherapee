@@ -20,11 +20,17 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc 
     dirpyr_equalizer.cc
     calc_distort.cc lcp.cc dcp.cc ipretinex.cc
     cJSON.c camconst.cc
-    klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
-    klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
     clutstore.cc
     ciecam02.cc
     )
+
+if (NOT KLT_FOUND)
+    set (RTENGINESOURCEFILES ${RTENGINESOURCEFILES}
+	klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
+	klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
+    )
+    set (KLT_LIBRARIES)
+endif ()
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -40,6 +46,6 @@ set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}"
 
 target_link_libraries (rtengine rtexif ${EXTRA_LIB} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
     ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES} ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES} ${ZLIB_LIBRARIES})
+    ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES} ${ZLIB_LIBRARIES} ${KLT_LIBRARIES})
 
 install (FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
