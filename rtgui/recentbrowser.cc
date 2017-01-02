@@ -54,8 +54,8 @@ void RecentBrowser::selectionChanged ()
 void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
 {
 
-    size_t numFolders = options.recentFolders.size();
-    size_t i;
+    ssize_t numFolders = options.recentFolders.size();
+    ssize_t i = -1;
 
     if(numFolders > 0) { // search entry and move to top if it exists
         for(i = 0; i < numFolders; ++i) {
@@ -81,8 +81,10 @@ void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustri
         recentDirs->remove_text (i);
     }
 
-    recentDirs->prepend (dirname);
-    recentDirs->set_active_text (dirname);
+    if(i != 0) {
+        recentDirs->prepend (dirname);
+    }
+    recentDirs->set_active (0);
 
     conn.block (false);
 }
