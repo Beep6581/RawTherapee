@@ -684,66 +684,148 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 {
 
     Gtk::VBox* mvbcm = Gtk::manage (new Gtk::VBox ());
+    mvbcm->set_spacing (4);
 
     iccDir = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(iccDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_ICCDIR") + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties(pdlabel, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    Gtk::Grid* iccdgrid = Gtk::manage (new Gtk::Grid ());
+    setExpandAlignProperties (iccdgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    iccdgrid->set_column_spacing (4);
+
+    iccdgrid->attach (*pdlabel, 0, 0, 1, 1);
+    iccdgrid->attach (*iccDir, 1, 0, 1, 1);
+
+    iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
+
+    mvbcm->pack_start(*iccdgrid, Gtk::PACK_SHRINK);
+
+    //-------------------------  MONITOR ----------------------
+
+    Gtk::Frame* fmonitor = Gtk::manage( new Gtk::Frame (M("PREFERENCES_MONITOR")) );
+    Gtk::Grid* gmonitor = Gtk::manage( new Gtk::Grid () );
+    gmonitor->set_column_spacing (4);
 
     monProfile = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties(monProfile, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONPROFILE") + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties(mplabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     monIntent = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties(monIntent, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* milabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONINTENT")+":", Gtk::ALIGN_START));
+    setExpandAlignProperties(milabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     monProfile->append (M("PREFERENCES_PROFILE_NONE"));
     monProfile->set_active (0);
 
-    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (true);
-    for (std::vector<Glib::ustring>::const_iterator profile = profiles.begin (); profile != profiles.end (); ++profile)
-        monProfile->append (*profile);
+    const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
+    for (const auto profile : profiles) {
+        monProfile->append (profile);
+    }
 
     // same order as the enum
     monIntent->append (M("PREFERENCES_INTENT_PERCEPTUAL"));
     monIntent->append (M("PREFERENCES_INTENT_RELATIVE"));
     monIntent->append (M("PREFERENCES_INTENT_ABSOLUTE"));
     monIntent->set_active (1);
+    monIntent->set_size_request(120, -1);
 
-    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_MONBPC")));
+    monBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CMMBPC")));
+    setExpandAlignProperties(monBPC, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     monBPC->set_active (true);
-
-    iccDir->signal_selection_changed ().connect (sigc::mem_fun (this, &Preferences::iccDirChanged));
 
 #if defined(WIN32) // Auto-detection not implemented for Linux, see issue 851
     cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
+    setExpandAlignProperties(cbAutoMonProfile, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     autoMonProfileConn  = cbAutoMonProfile->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::autoMonProfileToggled));
 #endif
 
-    Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
     int row = 0;
-    colt->attach (*pdlabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*iccDir, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
-#if !defined(__APPLE__) // monitor profile not supported on apple
+    gmonitor->attach (*mplabel, 0, row, 1, 1);
+#if defined(__APPLE__) // monitor profile not supported on apple
+    Gtk::Label *osxwarn = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONPROFILE_WARNOSX"), Gtk::ALIGN_LEFT));
+    setExpandAlignProperties(osxwarn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    gmonitor->attach (*osxwarn, 1, row, 1, 1);
+#else
+    gmonitor->attach (*monProfile, 1, row, 1, 1);
+#endif
     ++row;
-    colt->attach (*mplabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*monProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #if defined(WIN32)
+    gmonitor->attach (*cbAutoMonProfile, 1, row, 1, 1);
     ++row;
-    colt->attach (*cbAutoMonProfile, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 #endif
-#endif
+    gmonitor->attach (*milabel, 0, row, 1, 1);
+    gmonitor->attach (*monIntent, 1, row, 1, 1);
     ++row;
-    colt->attach (*milabel, 0, 1, row, row + 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colt->attach (*monIntent, 1, 2, row, row + 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
-
-    mvbcm->pack_start (*monBPC, Gtk::PACK_SHRINK, 4);
+    gmonitor->attach (*monBPC, 0, row, 2, 1);
 
 #if defined(WIN32)
     autoMonProfileToggled();
 #endif
 
+    fmonitor->add(*gmonitor);
+
+    mvbcm->pack_start(*fmonitor, Gtk::PACK_SHRINK);
+
+    //-------------------------  PRINTER ----------------------
+
+    Gtk::Frame* fprinter = Gtk::manage( new Gtk::Frame (M("PREFERENCES_PRINTER")) );
+    Gtk::Grid* gprinter = Gtk::manage( new Gtk::Grid () );
+    gprinter->set_column_spacing (4);
+    prtProfile = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties(prtProfile, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    Gtk::Label* pplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_PRTPROFILE") + ":"));
+    setExpandAlignProperties(pplabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    prtIntent = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties(prtIntent, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    Gtk::Label* pilabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_PRTINTENT")+":"));
+    setExpandAlignProperties(pilabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    prtProfile->append (M("PREFERENCES_PROFILE_NONE"));
+    prtProfile->set_active (0);
+
+    const std::vector<Glib::ustring> prtprofiles = rtengine::ICCStore::getInstance ()->getProfiles (rtengine::ICCStore::ProfileType::PRINTER);
+    for (const auto prtprofile : prtprofiles)
+        prtProfile->append (prtprofile);
+
+    // same order as the enum
+    prtIntent->append (M("PREFERENCES_INTENT_PERCEPTUAL"));
+    prtIntent->append (M("PREFERENCES_INTENT_RELATIVE"));
+    prtIntent->append (M("PREFERENCES_INTENT_ABSOLUTE"));
+    prtIntent->set_active (1);
+
+    prtBPC = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CMMBPC")));
+    setExpandAlignProperties(prtBPC, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    prtBPC->set_active (true);
+
+    row = 0;
+    gprinter->attach (*pplabel, 0, row, 1, 1);
+    gprinter->attach (*prtProfile, 1, row, 1, 1);
+    ++row;
+    gprinter->attach (*pilabel, 0, row, 1, 1);
+    gprinter->attach (*prtIntent, 1, row, 1, 1);
+    ++row;
+    gprinter->attach (*prtBPC, 0, row, 2, 1);
+
+#if defined(WIN32)
+    autoMonProfileToggled();
+#endif
+
+    fprinter->add(*gprinter);
+
+    mvbcm->pack_start(*fprinter, Gtk::PACK_SHRINK);
+
+    //-------------------------  CIECAM ----------------------
+
     Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties(viewlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     view = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties(view, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     view->append (M("PREFERENCES_D50"));
     view->append (M("PREFERENCES_D55"));
     view->append (M("PREFERENCES_D60"));
@@ -754,7 +836,9 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     view->append (M("PREFERENCES_FLUOF11"));
 
     Gtk::Label* greylab = Gtk::manage (new Gtk::Label (M("PREFERENCES_GREY") + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties(greylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     grey = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties(grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     grey->append (M("PREFERENCES_GREY05"));
     grey->append (M("PREFERENCES_GREY10"));
     grey->append (M("PREFERENCES_GREY15"));
@@ -764,27 +848,31 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     grey->append (M("PREFERENCES_GREY40"));
 
     Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties(greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     greySc = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties(greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     greySc->append (M("PREFERENCES_GREYSCA"));
     greySc->append (M("PREFERENCES_GREYSC18"));
 
     Gtk::Frame* fcielab = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CIEART_FRAME")) );
-    Gtk::VBox* vbcielab = Gtk::manage( new Gtk::VBox () );
+    setExpandAlignProperties(fcielab, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    Gtk::Grid* colo = Gtk::manage (new Gtk::Grid ());
+    setExpandAlignProperties(colo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     Gtk::Label* lreloadneeded1 = Gtk::manage (new Gtk::Label (M("PREFERENCES_IMG_RELOAD_NEEDED"), Gtk::ALIGN_START));
-    Gtk::Table* colo = Gtk::manage (new Gtk::Table (4, 2));
-    colo->attach (*viewlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colo->attach (*view, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colo->attach (*greylab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colo->attach (*grey, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    colo->attach (*greySclab, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    colo->attach (*greySc, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    setExpandAlignProperties(lreloadneeded1, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    colo->attach (*lreloadneeded1, 0, 0, 2, 1);
+    colo->attach (*viewlab, 0, 1, 1, 1);
+    colo->attach (*view, 1, 1, 1, 1);
+    colo->attach (*greylab, 0, 2, 1, 1);
+    colo->attach (*grey, 1, 2, 1, 1);
+    colo->attach (*greySclab, 0, 3, 1, 1);
+    colo->attach (*greySc, 1, 3, 1, 1);
     cbciecamfloat = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_CIEART_LABEL")));
-    colo->attach (*cbciecamfloat, 0, 1, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    setExpandAlignProperties(cbciecamfloat, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    colo->attach (*cbciecamfloat, 0, 4, 2, 1);
     cbciecamfloat->set_tooltip_markup (M("PREFERENCES_CIEART_TOOLTIP"));
-    vbcielab->pack_start (*lreloadneeded1, Gtk::PACK_SHRINK, 4);
-    vbcielab->pack_start (*colo, Gtk::PACK_EXPAND_WIDGET, 4);
-    fcielab->add (*vbcielab);
+    fcielab->add (*colo);
 
     mvbcm->pack_start (*fcielab, Gtk::PACK_SHRINK, 4);
 
@@ -814,6 +902,9 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     editorLayout->append (M("PREFERENCES_MULTITAB"));
     editorLayout->append (M("PREFERENCES_MULTITABDUALMON"));
     editorLayout->set_active (2);
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(editorLayout->get_first_cell());
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+    cellRenderer->property_ellipsize_set() = true;
     editorLayout->signal_changed().connect (sigc::mem_fun(*this, &Preferences::layoutComboChanged));
     layoutComboChanged(); // update the tooltip
     Gtk::Label* lNextStart = Gtk::manage( new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
@@ -1516,8 +1607,31 @@ void Preferences::storePreferences ()
     moptions.CPBPath = txtCustProfBuilderPath->get_text();
     moptions.CPBKeys = CPBKeyType(custProfBuilderLabelType->get_active_row_number());
 
+    if (!prtProfile->get_active_row_number()) {
+        moptions.rtSettings.printerProfile = "";
+    } else {
+        moptions.rtSettings.printerProfile = prtProfile->get_active_text ();
+    }
+    switch (prtIntent->get_active_row_number ()) {
+    default:
+    case 0:
+        moptions.rtSettings.printerIntent = rtengine::RI_PERCEPTUAL;
+        break;
+    case 1:
+        moptions.rtSettings.printerIntent = rtengine::RI_RELATIVE;
+        break;
+    case 2:
+        moptions.rtSettings.printerIntent = rtengine::RI_ABSOLUTE;
+        break;
+    }
+    moptions.rtSettings.printerBPC = prtBPC->get_active ();
+
 #if !defined(__APPLE__) // monitor profile not supported on apple
-    moptions.rtSettings.monitorProfile      = monProfile->get_active_text ();
+    if (!monProfile->get_active_row_number()) {
+        moptions.rtSettings.monitorProfile = "";
+    } else {
+        moptions.rtSettings.monitorProfile = monProfile->get_active_text ();
+    }
     switch (monIntent->get_active_row_number ()) {
     default:
     case 0:
@@ -1647,6 +1761,21 @@ void Preferences::fillPreferences ()
     panFactor->set_value (moptions.panAccelFactor);
     rememberZoomPanCheckbutton->set_active (moptions.rememberZoomAndPan);
     ctiffserialize->set_active(moptions.serializeTiffRead);
+
+    setActiveTextOrIndex (*prtProfile, moptions.rtSettings.printerProfile, 0);
+    switch (moptions.rtSettings.printerIntent) {
+    default:
+    case rtengine::RI_PERCEPTUAL:
+        prtIntent->set_active (0);
+        break;
+    case rtengine::RI_RELATIVE:
+        prtIntent->set_active (1);
+        break;
+    case rtengine::RI_ABSOLUTE:
+        prtIntent->set_active (2);
+        break;
+    }
+    prtBPC->set_active (moptions.rtSettings.printerBPC);
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
     setActiveTextOrIndex (*monProfile, moptions.rtSettings.monitorProfile, 0);
@@ -2166,6 +2295,14 @@ void Preferences::workflowUpdate ()
     if(moptions.histogramPosition != options.histogramPosition) {
         // Update the position of the Histogram
         parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);
+    }
+
+    if(  moptions.rtSettings.printerProfile != options.rtSettings.printerProfile
+       ||moptions.rtSettings.printerBPC     != options.rtSettings.printerBPC
+       ||moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent)
+    {
+        // Update the position of the Histogram
+        parent->updateProfiles(moptions.rtSettings.printerProfile, moptions.rtSettings.printerIntent, moptions.rtSettings.printerBPC);
     }
 
 }

@@ -553,9 +553,13 @@ public:
 
 inline void setActiveTextOrIndex (Gtk::ComboBoxText& comboBox, const Glib::ustring& text, int index)
 {
-    comboBox.set_active_text (text);
+    bool valueSet = false;
+    if (!text.empty()) {
+        comboBox.set_active_text (text);
+        valueSet = true;
+    }
 
-    if (comboBox.get_active_row_number () < 0) {
+    if (!valueSet || comboBox.get_active_row_number () < 0) {
         comboBox.set_active (index);
     }
 }

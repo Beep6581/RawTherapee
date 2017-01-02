@@ -781,7 +781,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         lastOutputProfile = params.icm.output;
         lastOutputIntent = params.icm.outputIntent;
         lastOutputBPC = params.icm.outputBPC;
-        ipf.updateColorProfiles(params.icm, monitorProfile, monitorIntent, softProof, gamutCheck);
+        ipf.updateColorProfiles(monitorProfile, monitorIntent, softProof, gamutCheck);
     }
 
     // process crop, if needed

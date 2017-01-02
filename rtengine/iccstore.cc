@@ -165,16 +165,20 @@ std::vector<Glib::ustring> getWorkingProfiles ()
     return res;
 }
 
-std::vector<Glib::ustring> ICCStore::getProfiles (const bool onlyRgb) const
+std::vector<Glib::ustring> ICCStore::getProfiles (const ProfileType type) const
 {
 
     MyMutex::MyLock lock (mutex_);
 
     std::vector<Glib::ustring> res;
 
-    for (ProfileMap::const_iterator profile = fileProfiles.begin (); profile != fileProfiles.end (); ++profile) {
-        if (!onlyRgb || (onlyRgb && cmsGetColorSpace (profile->second) == cmsSigRgbData))
-        res.push_back (profile->first);
+    for (const auto profile : fileProfiles) {
+        if (  (type==ICCStore::ProfileType::MONITOR && cmsGetDeviceClass(profile.second) == cmsSigDisplayClass && cmsGetColorSpace (profile.second) == cmsSigRgbData)
+           || (type==ICCStore::ProfileType::PRINTER && cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
+           || (type==ICCStore::ProfileType::OUTPUT  && cmsGetDeviceClass(profile.second) == cmsSigDisplayClass && cmsGetColorSpace (profile.second) == cmsSigRgbData) )
+        {
+            res.push_back (profile.first);
+        }
     }
 
     return res;

@@ -193,7 +193,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     onames->append (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
-    std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
+    std::vector<Glib::ustring> opnames = iccStore->getProfiles (rtengine::ICCStore::ProfileType::OUTPUT);
 
     for (size_t i = 0; i < opnames.size(); i++) {
         onames->append (opnames[i]);

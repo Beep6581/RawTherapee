@@ -746,6 +746,10 @@ paned.vertical > separator {
     border-radius: 3px;
 }
 
+#MetaPanelNotebook stack > box > scrolledwindow > viewport {
+    margin-left: 15px;
+}
+
 #PreviewWindow {
     border-style: solid;
 }

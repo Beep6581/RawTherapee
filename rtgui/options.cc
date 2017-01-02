@@ -632,6 +632,9 @@ void Options::setDefaults ()
     rtSettings.leveldnliss = 0;
     rtSettings.leveldnautsimpl = 0;
 
+    rtSettings.printerProfile = Glib::ustring();
+    rtSettings.printerIntent = rtengine::RI_RELATIVE;
+    rtSettings.printerBPC = true;
     rtSettings.monitorProfile = Glib::ustring();
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
@@ -1450,6 +1453,18 @@ int Options::readFromFile (Glib::ustring fname)
                     rtSettings.iccDirectory         = keyFile.get_string ("Color Management", "ICCDirectory");
                 }
 
+                if (keyFile.has_key ("Color Management", "PrinterIntent")) {
+                    rtSettings.printerIntent   = static_cast<rtengine::RenderingIntent>(keyFile.get_integer("Color Management", "PrinterIntent"));
+                }
+
+                if (keyFile.has_key ("Color Management", "PrinterBPC")) {
+                    rtSettings.printerBPC           = keyFile.get_boolean("Color Management", "PrinterBPC");
+                }
+
+                if (keyFile.has_key ("Color Management", "PrinterProfile")) {
+                    rtSettings.printerProfile       = keyFile.get_string ("Color Management", "PrinterProfile");
+                }
+
                 if (keyFile.has_key ("Color Management", "MonitorProfile")) {
                     rtSettings.monitorProfile       = keyFile.get_string ("Color Management", "MonitorProfile");
                 }
@@ -2034,6 +2049,10 @@ int Options::saveToFile (Glib::ustring fname)
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
         keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
+
+        keyFile.set_string  ("Color Management", "PrinterProfile", rtSettings.printerProfile);
+        keyFile.set_integer ("Color Management", "PrinterIntent", rtSettings.printerIntent);
+        keyFile.set_boolean ("Color Management", "PrinterBPC", rtSettings.printerBPC);
 
         keyFile.set_string  ("Color Management", "ICCDirectory", rtSettings.iccDirectory);
         keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
