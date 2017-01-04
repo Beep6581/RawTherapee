@@ -158,23 +158,23 @@ IPTCPanel::IPTCPanel ()
     iptc->pack_start(*hsep3, Gtk::PACK_EXPAND_WIDGET, 0);
     // --------------------------
 
-    Gtk::Label* authl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHOR") + ":") );
-    authl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
-    author = Gtk::manage( new Gtk::Entry () );
-    authl->set_tooltip_text (M("IPTCPANEL_CREDITHINT"));
-    author->set_tooltip_text (M("IPTCPANEL_CREDITHINT"));
-    iptc->pack_start(*authl, Gtk::PACK_EXPAND_PADDING, 0);
-    iptc->pack_start(*author, Gtk::PACK_EXPAND_WIDGET, 0);
+    Gtk::Label* creatorLbl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHOR") + ":") );
+    creatorLbl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+    creator = Gtk::manage( new Gtk::Entry () );
+    creatorLbl->set_tooltip_text (M("IPTCPANEL_CREATORHINT"));
+    creator->set_tooltip_text (M("IPTCPANEL_CREATORHINT"));
+    iptc->pack_start(*creatorLbl, Gtk::PACK_EXPAND_PADDING, 0);
+    iptc->pack_start(*creator, Gtk::PACK_EXPAND_WIDGET, 0);
 
     // --------------------------
 
-    Gtk::Label* aupl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHORSPOSITION") + ":") );
-    aupl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
-    authorPos = Gtk::manage(  new Gtk::Entry () );
-    aupl->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
-    authorPos->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
-    iptc->pack_start(*aupl, Gtk::PACK_EXPAND_PADDING, 0);
-    iptc->pack_start(*authorPos, Gtk::PACK_EXPAND_WIDGET, 0);
+    Gtk::Label* creatorJobTitleLbl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHORSPOSITION") + ":") );
+    creatorJobTitleLbl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+    creatorJobTitle = Gtk::manage(  new Gtk::Entry () );
+    creatorJobTitleLbl->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
+    creatorJobTitle->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
+    iptc->pack_start(*creatorJobTitleLbl, Gtk::PACK_EXPAND_PADDING, 0);
+    iptc->pack_start(*creatorJobTitle, Gtk::PACK_EXPAND_WIDGET, 0);
 
     // --------------------------
 
@@ -326,8 +326,8 @@ IPTCPanel::IPTCPanel ()
     conns[2] = headline->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
     conns[3] = instructions->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
     conns[4] = category->get_entry()->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
-    conns[5] = author->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
-    conns[6] = authorPos->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
+    conns[5] = creator->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
+    conns[6] = creatorJobTitle->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
     conns[7] = credit->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
     conns[8] = source->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
     conns[9] = copyright->signal_changed().connect( sigc::mem_fun(*this, &IPTCPanel::updateChangeList) );
@@ -342,8 +342,8 @@ IPTCPanel::IPTCPanel ()
     keyword->get_entry()->set_max_length (64);
     captionWriter->set_max_length (32);
     instructions->set_max_length (256);
-    author->set_max_length (32);
-    authorPos->set_max_length (32);
+    creator->set_max_length (32);
+    creatorJobTitle->set_max_length (32);
     credit->set_max_length (32);
     source->set_max_length (32);
     copyright->set_max_length (128);
@@ -531,8 +531,8 @@ void IPTCPanel::updateChangeList ()
         changeList["SupplementalCategories"].push_back (suppCategories->get_text (i));
     }
 
-    changeList["Author"         ].push_back (author->get_text ());
-    changeList["AuthorsPosition"].push_back (authorPos->get_text ());
+    changeList["Creator"        ].push_back (creator->get_text ());
+    changeList["CreatorJobTitle"].push_back (creatorJobTitle->get_text ());
     changeList["Credit"         ].push_back (credit->get_text ());
     changeList["Source"         ].push_back (source->get_text ());
     changeList["Copyright"      ].push_back (copyright->get_text ());
@@ -560,8 +560,8 @@ void IPTCPanel::applyChangeList ()
     keywords->clear_items ();
     category->get_entry()->set_text ("");
     suppCategories->clear_items ();
-    author->set_text ("");
-    authorPos->set_text ("");
+    creator->set_text ("");
+    creatorJobTitle->set_text ("");
     credit->set_text ("");
     source->set_text ("");
     copyright->set_text ("");
@@ -593,10 +593,10 @@ void IPTCPanel::applyChangeList ()
             for (unsigned int j = 0; j < i->second.size(); j++) {
                 suppCategories->append_text (i->second.at(j));
             }
-        else if (i->first == "Author" && !i->second.empty()) {
-            author->set_text (i->second.at(0));
-        } else if (i->first == "AuthorsPosition" && !i->second.empty()) {
-            authorPos->set_text (i->second.at(0));
+        else if (i->first == "Creator" && !i->second.empty()) {
+            creator->set_text (i->second.at(0));
+        } else if (i->first == "CreatorJobTitle" && !i->second.empty()) {
+            creatorJobTitle->set_text (i->second.at(0));
         } else if (i->first == "Credit" && !i->second.empty()) {
             credit->set_text (i->second.at(0));
         } else if (i->first == "Source" && !i->second.empty()) {

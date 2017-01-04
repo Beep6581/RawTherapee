@@ -46,8 +46,8 @@ private:
     Gtk::Button*    addSC;
     Gtk::Button*    delSC;
 
-    Gtk::Entry*     author;
-    Gtk::Entry*     authorPos;
+    Gtk::Entry*     creator;
+    Gtk::Entry*     creatorJobTitle;
     Gtk::Entry*     credit;
     Gtk::Entry*     source;
     Gtk::Entry*     copyright;
