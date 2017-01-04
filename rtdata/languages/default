@@ -706,7 +706,7 @@ IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file.
 IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
 IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Rights Usage field.
+IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
 IPTCPANEL_KEYWORDS;Keywords
 IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard.
