@@ -1442,8 +1442,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tone
 TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
 TP_DISTORTION_AMOUNT;Amount
-TP_DISTORTION_AUTO;Auto Distortion Correction
-TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
+TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 TP_DISTORTION_LABEL;Distortion Correction
 TP_EPD_EDGESTOPPING;Edge stopping
 TP_EPD_GAMMA;Gamma
@@ -1550,7 +1549,7 @@ TP_ICM_LABEL;Color Management
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_PROFILEINTENT;Rendering Intent
-TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
+TP_ICM_SAVEREFERENCE;Save Reference Image
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.

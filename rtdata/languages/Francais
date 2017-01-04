@@ -1378,8 +1378,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;A -100, les tons chairs sont ciblés.\nA 0 tous 
 TP_DIRPYREQUALIZER_THRESHOLD;Seuil
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image.
 TP_DISTORTION_AMOUNT;Quantité
-TP_DISTORTION_AUTO;Correction auto de la distorsion
-TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distorsion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Arrêt des bords
 TP_EPD_GAMMA;Gamma
@@ -1484,7 +1482,6 @@ TP_ICM_INPUTPROFILE;Profil d'entrée
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Pas d'ICM: sortie sRGB
 TP_ICM_OUTPUTPROFILE;Profil de sortie
-TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_SAVEREFERENCE_APPLYWB;Appliquer la balance des blancs
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Généralement, applique la balance des blancs lors de l'enregistrement d'images pour créer des profils ICC, et n'applique pas la balance des blancs pour créer des profils DCP.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Sauvegarde une image TIFF linéaire avant que le profil d'entrée ne soit appliqué. Le résultat peut être utilisé à des fins de calibrage, pour générer un profil APN.
@@ -1955,8 +1952,10 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYRDENOISE_PASSES;Median iterations
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_NEUTRAL;Reset
 !TP_RAWCACORR_CASTR;Strength
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL

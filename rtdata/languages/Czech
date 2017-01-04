@@ -1471,8 +1471,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Hodnota -100:  zaměřeno na pleťové tóny.\nH
 TP_DIRPYREQUALIZER_THRESHOLD;Práh
 TP_DIRPYREQUALIZER_TOOLTIP;Počet pokusů pro redukci artefaktů vzniklých přenosem barvy (odstín, barevnost a jas) pleti na zbytek obrázku.
 TP_DISTORTION_AMOUNT;Míra
-TP_DISTORTION_AUTO;Automatická korekce zkreslení
-TP_DISTORTION_AUTO_TIP;Automatická korekce zkreslení objektivu pro některé fotoaparáty (Micro 4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Korekce zkreslení
 TP_EPD_EDGESTOPPING;Zachování hran
 TP_EPD_GAMMA;Gama
@@ -1579,7 +1577,6 @@ TP_ICM_LABEL;Správa barev
 TP_ICM_NOICM;Bez ICM: sRGB výstup
 TP_ICM_OUTPUTPROFILE;Výstupní barevný prostor
 TP_ICM_PROFILEINTENT;Záměr reprodukce
-TP_ICM_SAVEREFERENCE;Uložit referenční obrázek pro profilování
 TP_ICM_SAVEREFERENCE_APPLYWB;Aplikovat vyvážení bílé
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Obecně se vyvážení bílé aplikuje při ukládání obrázku pro vytvoření ICC profilů a neaplikuje při vytváření DCP profilů.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Uloží lineární TIFF obrázek před aplikováním vstupního profilu. Výsledek může být použit pro kalibraci a generování profilu fotoaparátu.
@@ -2065,3 +2062,15 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_ICM_SAVEREFERENCE;Save Reference Image

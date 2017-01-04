@@ -1056,8 +1056,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;A -100 i toni della pelle sono elaborati.\nA 0 t
 TP_DIRPYREQUALIZER_THRESHOLD;Soglia
 TP_DIRPYREQUALIZER_TOOLTIP;Tenta di ridurre gli artefatti dovuti alle transizioni tra colori (tonalità, croma, luma) dell'incarnato e del resto dell'immagine
 TP_DISTORTION_AMOUNT;Quantità
-TP_DISTORTION_AUTO; Autocorrezione Distorsione
-TP_DISTORTION_AUTO_TIP;Corregge la distorsione delle ottiche automaticamente per alcune fotocamere (Micro 4/3, alcune compatte, ecc.)
 TP_DISTORTION_LABEL;Distorsione
 TP_EPD_EDGESTOPPING;Blocco ai Bordi
 TP_EPD_LABEL;Tone Mapping
@@ -1144,7 +1142,6 @@ TP_ICM_INPUTPROFILE;Profilo di ingresso
 TP_ICM_LABEL;Gestione Colore
 TP_ICM_NOICM;Nessun ICM: uscita in sRGB
 TP_ICM_OUTPUTPROFILE;Profilo di Uscita
-TP_ICM_SAVEREFERENCE;Salva riferimento per la profilazione
 TP_ICM_SAVEREFERENCE_TOOLTIP;Salva l'immagine TIFF lineare prima che sia applicato il profilo colore. Il risultato può essere utilizzato per la calibrazione e generazione del profilo della fotocamera.
 TP_ICM_TONECURVE;Usa la curva tono del DCP
 TP_ICM_TONECURVE_TOOLTIP;Utilizza le curve tono incluse nel DCP. Questa opzione è abilitata solo se il DCP selezionato possiede una curva tono.
@@ -1598,6 +1595,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1623,9 +1621,10 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
@@ -1635,7 +1634,10 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
@@ -1750,6 +1752,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
@@ -1770,6 +1773,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_NEUTRAL;Reset

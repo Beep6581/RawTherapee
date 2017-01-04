@@ -1467,8 +1467,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden v
 TP_DIRPYREQUALIZER_THRESHOLD;Schwelle
 TP_DIRPYREQUALIZER_TOOLTIP;Verringert Artefakte an den Übergängen\nzwischen Hautfarbtöne und dem Rest\ndes Bildes.
 TP_DISTORTION_AMOUNT;Intensität
-TP_DISTORTION_AUTO;Autom. Verzeichnungskorrektur
-TP_DISTORTION_AUTO_TIP;Objektivverzeichnungen automatisch korrigieren\n(nur für Kameras wie z.B. Micro 4/3 und einigen\nKompaktkameras verfügbar)
 TP_DISTORTION_LABEL;Verzeichnungskorrektur
 TP_EPD_EDGESTOPPING;Kantenschutz
 TP_EPD_GAMMA;Gamma
@@ -1575,7 +1573,6 @@ TP_ICM_LABEL;Farbmanagement
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_PROFILEINTENT;Rendering Intent
-TP_ICM_SAVEREFERENCE;Referenzbild für Profil speichern
 TP_ICM_SAVEREFERENCE_APPLYWB;Weißabgleich anwenden
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Um ICC-Profile zu erstellen, den Weißabgleich beim Speichern anwenden. Um DCP-Profile zu erstellen, den Weißabgleich NICHT beim Speichern anwenden.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Speichert das lineare TIFF-Bild bevor das\nEingangsfarbprofil angewendet wird. Das\nErgebnis kann zu Kalibrierungsaufgaben\nund zum Erstellen von Kameraprofilen\nverwendet werden.
@@ -2061,3 +2058,15 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_ICM_SAVEREFERENCE;Save Reference Image
