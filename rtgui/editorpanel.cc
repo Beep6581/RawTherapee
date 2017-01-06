@@ -225,8 +225,10 @@ private:
             ConnectionBlocker profileBlocker (softproofConn);
             softProof.set_active(false);
             softProof.set_sensitive(false);
+#if !defined(__APPLE__) // monitor profile not supported on apple
         } else {
             softProof.set_sensitive(profileBox.get_active_row_number () > 0);
+#endif
         }
         spGamutCheck.set_sensitive(softProof.get_sensitive() && softProof.get_active());
 
