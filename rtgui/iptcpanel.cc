@@ -33,26 +33,26 @@ IPTCPanel::IPTCPanel ()
     iptc->set_border_width (3);
     iptc->set_spacing(3);
 
-    Gtk::Label* capl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CAPTION") + ":") );
+    Gtk::Label* capl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_DESCRIPTION") + ":") );
     capl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
     captionText = Gtk::TextBuffer::create ();
     captionView = Gtk::manage( new Gtk::TextView (captionText) );
     Gtk::ScrolledWindow* scrolledWindowc = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindowc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowc->add(*captionView);
-    capl->set_tooltip_text (M("IPTCPANEL_CAPTIONHINT"));
-    captionView->set_tooltip_text (M("IPTCPANEL_CAPTIONHINT"));
+    capl->set_tooltip_text (M("IPTCPANEL_DESCRIPTIONHINT"));
+    captionView->set_tooltip_text (M("IPTCPANEL_DESCRIPTIONHINT"));
     captionView->set_size_request(32, 80);
     iptc->pack_start(*capl, Gtk::PACK_EXPAND_PADDING, 0);
     iptc->pack_start(*scrolledWindowc, Gtk::PACK_EXPAND_WIDGET, 0);
 
     // --------------------------
 
-    Gtk::Label* capwl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CAPTIONWRITER") + ":") );
+    Gtk::Label* capwl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_DESCRIPTIONWRITER") + ":") );
     capwl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
     captionWriter = Gtk::manage( new Gtk::Entry () );
-    capwl->set_tooltip_text (M("IPTCPANEL_CAPTIONWRITERHINT"));
-    captionWriter->set_tooltip_text (M("IPTCPANEL_CAPTIONWRITERHINT"));
+    capwl->set_tooltip_text (M("IPTCPANEL_DESCRIPTIONWRITERHINT"));
+    captionWriter->set_tooltip_text (M("IPTCPANEL_DESCRIPTIONWRITERHINT"));
     iptc->pack_start(*capwl, Gtk::PACK_EXPAND_PADDING, 0);
     iptc->pack_start(*captionWriter, Gtk::PACK_EXPAND_WIDGET, 0);
 
@@ -158,7 +158,7 @@ IPTCPanel::IPTCPanel ()
     iptc->pack_start(*hsep3, Gtk::PACK_EXPAND_WIDGET, 0);
     // --------------------------
 
-    Gtk::Label* creatorLbl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHOR") + ":") );
+    Gtk::Label* creatorLbl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CREATOR") + ":") );
     creatorLbl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
     creator = Gtk::manage( new Gtk::Entry () );
     creatorLbl->set_tooltip_text (M("IPTCPANEL_CREATORHINT"));
@@ -168,11 +168,11 @@ IPTCPanel::IPTCPanel ()
 
     // --------------------------
 
-    Gtk::Label* creatorJobTitleLbl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHORSPOSITION") + ":") );
+    Gtk::Label* creatorJobTitleLbl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CREATORJOBTITLE") + ":") );
     creatorJobTitleLbl->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
     creatorJobTitle = Gtk::manage(  new Gtk::Entry () );
-    creatorJobTitleLbl->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
-    creatorJobTitle->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
+    creatorJobTitleLbl->set_tooltip_text (M("IPTCPANEL_CREATORJOBTITLEHINT"));
+    creatorJobTitle->set_tooltip_text (M("IPTCPANEL_CREATORJOBTITLEHINT"));
     iptc->pack_start(*creatorJobTitleLbl, Gtk::PACK_EXPAND_PADDING, 0);
     iptc->pack_start(*creatorJobTitle, Gtk::PACK_EXPAND_WIDGET, 0);
 
