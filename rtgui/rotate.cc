@@ -37,10 +37,8 @@ Rotate::Rotate () : FoldableToolPanel(this, "rotate", M("TP_ROTATE_LABEL"))
     degree->setAdjusterListener (this);
     pack_start (*degree);
 
-    selectStraight = Gtk::manage (new Gtk::Button ());
-    selectStraight->set_tooltip_text(M("TP_ROTATE_SELECTLINE"));
-    Gtk::Image* selimg = Gtk::manage (new RTImage ("straighten-small.png"));
-    selectStraight->set_image (*selimg);
+    selectStraight = Gtk::manage (new Gtk::Button (M("TP_ROTATE_SELECTLINE")));
+    selectStraight->set_image (*Gtk::manage (new RTImage ("straighten-small.png")));
     pack_start (*selectStraight, Gtk::PACK_SHRINK, 2);
 
     selectStraight->signal_pressed().connect( sigc::mem_fun(*this, &Rotate::selectStraightPressed) );
