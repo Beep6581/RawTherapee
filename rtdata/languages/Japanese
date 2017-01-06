@@ -1399,8 +1399,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100　肌色トーンの調整が目的にな�
 TP_DIRPYREQUALIZER_THRESHOLD;しきい値
 TP_DIRPYREQUALIZER_TOOLTIP;肌色（色相、色度、明度）と他の色の間の遷移でアーティファクトが発生するのを軽減します
 TP_DISTORTION_AMOUNT;適用量
-TP_DISTORTION_AUTO;自動歪曲収差補正
-TP_DISTORTION_AUTO_TIP;(試用) 自動レンズ収差補正 (M4/3, 一部のコンデジ, etc.)
 TP_DISTORTION_LABEL;歪曲収差補正
 TP_EPD_EDGESTOPPING;エッジ停止
 TP_EPD_GAMMA;ガンマ
@@ -1503,7 +1501,6 @@ TP_ICM_INPUTPROFILE;入力プロファイル
 TP_ICM_LABEL;カラー・マネジメント
 TP_ICM_NOICM;No ICM: sRGB 出力
 TP_ICM_OUTPUTPROFILE;出力プロファイル
-TP_ICM_SAVEREFERENCE;プロファイリングを参照する画像を保存
 TP_ICM_SAVEREFERENCE_APPLYWB;ホワイトバランスを適用
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;一般的に、ICCプロファイルを作成するための画像を保存する際に適用するホワイトバランスです、DCPプロファイルを作成する時は適用しません。
 TP_ICM_SAVEREFERENCE_TOOLTIP;入力プロファイルが適用される前のリニアなTIFF画像を保存します。キャリブレーション目的やカメラプロファイルの作成などに使います。
@@ -1956,12 +1953,17 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RETINEX;Retinex
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
@@ -1980,10 +1982,12 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_DIRPYRDENOISE_9X9;9×9
 !TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_NEUTRAL;Reset
 !TP_RAWCACORR_CASTR;Strength
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL

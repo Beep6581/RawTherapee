@@ -463,7 +463,6 @@ TP_ICM_INPUTPROFILE;Vstupný profil
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Bez správy farieb: sRGB výstup
 TP_ICM_OUTPUTPROFILE;Výstupný profil
-TP_ICM_SAVEREFERENCE;Uložiť referenčný obrázok pre tvorbu profilu
 TP_ICM_WORKINGPROFILE;Pracovný profil
 TP_IMPULSEDENOISE_LABEL;Impulzná redukcia šumu
 TP_IMPULSEDENOISE_THRESH;Prah
@@ -1139,6 +1138,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1209,9 +1209,10 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
@@ -1225,7 +1226,10 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
@@ -1541,8 +1545,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_DISTORTION_AUTO;Auto Distortion Correction
-!TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_GAMMA;Gamma
 !TP_EPD_LABEL;Tone Mapping
@@ -1626,6 +1629,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
