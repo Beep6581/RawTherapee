@@ -746,7 +746,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     int row = 0;
     gmonitor->attach (*mplabel, 0, row, 1, 1);
 #if defined(__APPLE__) // monitor profile not supported on apple
-    Gtk::Label *osxwarn = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONPROFILE_WARNOSX"), Gtk::ALIGN_LEFT));
+    Gtk::Label *osxwarn = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONPROFILE_WARNOSX"), Gtk::ALIGN_START));
     setExpandAlignProperties(osxwarn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     gmonitor->attach (*osxwarn, 1, row, 1, 1);
 #else
