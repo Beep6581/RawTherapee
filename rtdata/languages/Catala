@@ -362,47 +362,23 @@ HISTORY_MSG_173;RS - Detall de la luminància
 HISTORY_NEWSNAPSHOT;Afegeix
 HISTORY_SNAPSHOT;Instantània
 HISTORY_SNAPSHOTS;Instantànies
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
-IPTCPANEL_AUTHORSPOSITIONHINT;Títol del(s) creador(s) de l'objecte (By-line Title).
-IPTCPANEL_CAPTION;Text descriptiu
-IPTCPANEL_CAPTIONHINT;Un text de descripció de les dades (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Autor de la descripció
-IPTCPANEL_CAPTIONWRITERHINT;Nom de qui ha escrit, editat o corregit la imatge o la descripció (Writer - Editor).
 IPTCPANEL_CATEGORY;Classificació
-IPTCPANEL_CATEGORYHINT;Classificació de la imatge, segons el proveïdor (Category).
 IPTCPANEL_CITY;Ciutat
-IPTCPANEL_CITYHINT;Ciutat d'origen de la imatge (City).
 IPTCPANEL_COPYHINT;Copiar dades actuals IPTC al portapapers
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Qualsevol notificació necessària sobre copyright (Copyright Notice).
 IPTCPANEL_COUNTRY;País
-IPTCPANEL_COUNTRYHINT;Nom del país o lloc on va ser creada la imatge (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Crèdit
 IPTCPANEL_CREDITHINT;Identitat del proveïdor de la imatge, no necessàriament el propietari/creador (Credit).
 IPTCPANEL_DATECREATED;Data de creació
-IPTCPANEL_DATECREATEDHINT;Data en què va ser creat el contingut intel·lectual de la imatge; Format: AAAAMMDD (Date Created).
 IPTCPANEL_EMBEDDED;Encastat
 IPTCPANEL_EMBEDDEDHINT;Restaurar les dades IPTC encastades al fitxer d'imatge
 IPTCPANEL_HEADLINE;Capçalera
-IPTCPANEL_HEADLINEHINT;Una nota publicable que és una sinopsi dels continguts de la imatge (Headline).
 IPTCPANEL_INSTRUCTIONS;Instruccions
-IPTCPANEL_INSTRUCTIONSHINT;Altres instruccions editorials sobre l'ús de la imatge (Special Instructions).
 IPTCPANEL_KEYWORDS;Paraules clau
-IPTCPANEL_KEYWORDSHINT;Paraules clau que faciliten la recerca de la imatge (Keywords).
 IPTCPANEL_PASTEHINT;Enganxa les dades IPTC del portapapers
-IPTCPANEL_PROVINCE;Regió
-IPTCPANEL_PROVINCEHINT;Regió/Estat d'origen de la imatge (Province-State).
 IPTCPANEL_RESET;Reinici
 IPTCPANEL_RESETHINT;Reinici perfil per omissió
 IPTCPANEL_SOURCE;Font
-IPTCPANEL_SOURCEHINT;Propietari original del contingut intel·lectual de la imatge (Source).
-IPTCPANEL_SUPPCATEGORIES;Classif. detallada
-IPTCPANEL_SUPPCATEGORIESHINT;Precisió sobre el tema de la imatge (Supplemental Categories).
 IPTCPANEL_TITLE;Títol
-IPTCPANEL_TITLEHINT;Referència breu de la imatge (Object Name).
-IPTCPANEL_TRANSREFERENCE;Refer. transmissió
-IPTCPANEL_TRANSREFERENCEHINT;Codi que indica el lloc de la transmissió original (Original Transmission Reference).
 MAIN_BUTTON_FULLSCREEN;Pantalla sencera
 MAIN_BUTTON_PREFERENCES;Preferències
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Afeg. imatge actual a la cua de procés.\nDrecera: <b>Ctrl+B</b>
@@ -733,8 +709,6 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Més fi
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Llindar
 TP_DISTORTION_AMOUNT;Quantitat
-TP_DISTORTION_AUTO;Auto correcció de distorsió
-TP_DISTORTION_AUTO_TIP;(Experimental) Correc. automàtica de distorsió de lent per algunes càmeres (M4/3, algunes compactes DC, etc.)
 TP_DISTORTION_LABEL;Distorsió
 TP_EPD_EDGESTOPPING;Aturant a les vores
 TP_EPD_LABEL;Mapejant tons
@@ -803,7 +777,6 @@ TP_ICM_INPUTPROFILE;Perfil d'entrada
 TP_ICM_LABEL;Gestió de color
 TP_ICM_NOICM;No cap ICM: Sortida  sRGB
 TP_ICM_OUTPUTPROFILE;Perfil de sortida
-TP_ICM_SAVEREFERENCE;Desa com a imatge de ref. als perfils
 TP_ICM_TONECURVE;Usa la corba de to DCP.
 TP_ICM_TONECURVE_TOOLTIP;Habilita l'ús de corbes de to incloses en els perfils DCP.
 TP_ICM_WORKINGPROFILE;Perfil de treball
@@ -1308,6 +1281,31 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
@@ -1362,6 +1360,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1407,9 +1406,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
@@ -1420,7 +1420,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
@@ -1695,6 +1698,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EPD_TOOLTIP;Tone mapping is possible in L*a*b* mode (standard) and CIECAM02 mode.\n\nWhen in L*a*b* mode, tone mapping can also be used on the residual image of the Wavelet Levels tool.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
@@ -1733,6 +1737,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.

@@ -276,47 +276,23 @@ HISTORY_NEWSNAPSHOT;新建快照
 HISTORY_NEWSNAPSHOT_TOOLTIP;快捷键：<b>Alt-s</b>
 HISTORY_SNAPSHOT;快照
 HISTORY_SNAPSHOTS;系列快照
-IPTCPANEL_AUTHOR;作者
-IPTCPANEL_AUTHORSPOSITION;作者职位
-IPTCPANEL_AUTHORSPOSITIONHINT;作者头衔
-IPTCPANEL_CAPTION;标题
-IPTCPANEL_CAPTIONHINT;文字说明
-IPTCPANEL_CAPTIONWRITER;说明作者
-IPTCPANEL_CAPTIONWRITERHINT;参与创作人员
 IPTCPANEL_CATEGORY;类别
-IPTCPANEL_CATEGORYHINT;提供者所认为的作品类别
 IPTCPANEL_CITY;城市
-IPTCPANEL_CITYHINT;图片来自城市
 IPTCPANEL_COPYHINT;将IPTC设置复制到剪贴板
-IPTCPANEL_COPYRIGHT;版权
-IPTCPANEL_COPYRIGHTHINT;版权信息
 IPTCPANEL_COUNTRY;国家
-IPTCPANEL_COUNTRYHINT;图片来自国家
 IPTCPANEL_CREDIT;提供者
 IPTCPANEL_CREDITHINT;图片提供者，未必是作者
 IPTCPANEL_DATECREATED;创作日期
-IPTCPANEL_DATECREATEDHINT;图片创作日期，格式：年月日补零(YYYYMMDD)
 IPTCPANEL_EMBEDDED;内嵌
 IPTCPANEL_EMBEDDEDHINT;将IPTC数据重置为图片内嵌数据
 IPTCPANEL_HEADLINE;摘要
-IPTCPANEL_HEADLINEHINT;可发布的内容简介
 IPTCPANEL_INSTRUCTIONS;指令
-IPTCPANEL_INSTRUCTIONSHINT;写给编辑的特殊要求
 IPTCPANEL_KEYWORDS;关键词
-IPTCPANEL_KEYWORDSHINT;用于信息索引
 IPTCPANEL_PASTEHINT;粘贴剪贴板内的IPTC设置
-IPTCPANEL_PROVINCE;省份
-IPTCPANEL_PROVINCEHINT;图片来自省份
 IPTCPANEL_RESET;重置
 IPTCPANEL_RESETHINT;重置为默认配置
 IPTCPANEL_SOURCE;来源
-IPTCPANEL_SOURCEHINT;图片内容知识产权所有人
-IPTCPANEL_SUPPCATEGORIES;附加类别
-IPTCPANEL_SUPPCATEGORIESHINT;进一步细分类别
 IPTCPANEL_TITLE;标题
-IPTCPANEL_TITLEHINT;作品的名称
-IPTCPANEL_TRANSREFERENCE;传输基准
-IPTCPANEL_TRANSREFERENCEHINT;原始发送地点代码
 MAIN_BUTTON_FULLSCREEN;全屏幕
 MAIN_BUTTON_PREFERENCES;参数设置
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;将当前图片放入处理序列中\n快捷键: <b>Ctrl+b</b>
@@ -625,8 +601,6 @@ TP_DIRPYREQUALIZER_LUMAFINEST;最佳
 TP_DIRPYREQUALIZER_LUMANEUTRAL;自然
 TP_DIRPYREQUALIZER_THRESHOLD;阀值
 TP_DISTORTION_AMOUNT;程度
-TP_DISTORTION_AUTO;自动畸变矫正
-TP_DISTORTION_AUTO_TIP;自动进行一些相机的镜头畸变矫正
 TP_DISTORTION_LABEL;畸变
 TP_EPD_LABEL;色阶映射
 TP_EPD_SCALE;拉伸
@@ -695,7 +669,6 @@ TP_ICM_INPUTPROFILE;输入配置
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: sRGB配置
 TP_ICM_OUTPUTPROFILE;输出配置
-TP_ICM_SAVEREFERENCE;保存参考图片用于生成配置信息
 TP_ICM_TONECURVE;使用 DCP 色调曲线
 TP_ICM_WORKINGPROFILE;当前配置
 TP_IMPULSEDENOISE_LABEL;降低电磁干扰
@@ -1224,6 +1197,31 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
@@ -1290,6 +1288,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1354,9 +1353,10 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
@@ -1372,7 +1372,10 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
@@ -1634,6 +1637,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_GAMMA;Gamma
 !TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
@@ -1673,6 +1677,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.

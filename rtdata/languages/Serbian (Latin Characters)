@@ -460,47 +460,23 @@ HISTORY_NEWSNAPSHOT_TOOLTIP;Prečica: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snimak
 HISTORY_SNAPSHOTS;Snimak
 HRESHOLDSELECTOR_BL;Dole-levo
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Zvanje autora
-IPTCPANEL_AUTHORSPOSITIONHINT;Zvanje jednog ili više autora (jedno po redi).
-IPTCPANEL_CAPTION;Naziv
-IPTCPANEL_CAPTIONHINT;Kratak opis dela (naslov — abstrakt).
-IPTCPANEL_CAPTIONWRITER;Pisac naslova
-IPTCPANEL_CAPTIONWRITERHINT;Ime osobe koje je uključena u pisanje, uređivanje ili ispravljanje slike/nazica/apstrakta (pisac — urednik).
 IPTCPANEL_CATEGORY;Kategorija
-IPTCPANEL_CATEGORYHINT;Određuje šta se nalazi na slici (kategorija).
 IPTCPANEL_CITY;Grad
-IPTCPANEL_CITYHINT;Grad u kome je slika nastalo (grad).
 IPTCPANEL_COPYHINT;Koppiraj IPTC pšodešavanja u ostavu
-IPTCPANEL_COPYRIGHT;Autorska prava
-IPTCPANEL_COPYRIGHTHINT;Beleška o autorskim pravima nad delom (beleška o autorskim pravima).
 IPTCPANEL_COUNTRY;Država
-IPTCPANEL_COUNTRYHINT;Ime države/osnovnog mesta gde je nastala slika (država — naziv mesta).
 IPTCPANEL_CREDIT;Zasluge
 IPTCPANEL_CREDITHINT;Ukazuje da onaj ko izdaje sliku ne mora biti autor/vlasnik (Zasluge).
 IPTCPANEL_DATECREATED;Datum nastanka
-IPTCPANEL_DATECREATEDHINT;Datum kada je stavljeno vlasništvo nad intelektualni sadržaj slike; Format: GGGGMMDD (datum nastanka).
 IPTCPANEL_EMBEDDED;Ugnježđeno
 IPTCPANEL_EMBEDDEDHINT;Vrati polja na IPTC podatke ugnježđene u sliku
 IPTCPANEL_HEADLINE;Naslov
-IPTCPANEL_HEADLINEHINT;Naziv koji ukazuje na vezu sa sadržajem slike i pod kojim se ona izdaje (naslov).
 IPTCPANEL_INSTRUCTIONS;Uputstva
-IPTCPANEL_INSTRUCTIONSHINT;Ostala uputstva urednika vezana za upotrebu slike (specijalna uputstva).
 IPTCPANEL_KEYWORDS;Ključne reči
-IPTCPANEL_KEYWORDSHINT;Reči koje ukazuju na razne podatke o slici (ključne reči).
 IPTCPANEL_PASTEHINT;Ubaci IPTC podešavanja iz ostave
-IPTCPANEL_PROVINCE;Pokrajina
-IPTCPANEL_PROVINCEHINT;Pokrajina/država gde je nastala slika (provincija — država).
 IPTCPANEL_RESET;Vrati
 IPTCPANEL_RESETHINT;Postavlja podrazumevane vrednosti profila
 IPTCPANEL_SOURCE;Izvor
-IPTCPANEL_SOURCEHINT;Prvobitni vlasnik inntelektualnog sadržaja na slici (izvor).
-IPTCPANEL_SUPPCATEGORIES;Dop. kategorije
-IPTCPANEL_SUPPCATEGORIESHINT;Dodatno određuje motiv na slici (dodatne kategorije).
 IPTCPANEL_TITLE;Natpis
-IPTCPANEL_TITLEHINT;Kratni naziv slike (ime objekta).
-IPTCPANEL_TRANSREFERENCE;Ref. prenosa
-IPTCPANEL_TRANSREFERENCEHINT;Kod kojji predstavlja mesto prvobitnog prenosa (referenca prvog prenosa).
 MAIN_BUTTON_FULLSCREEN;Ceo ekran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Šalje vas na narednu sliku u odnosu na otvorenu u prozoru za uređivanje.\nPrečica: <b>Shift-F4</b>\n\nTakođe, omoguća vam da idete na narednu sliku u odnosu na trenutno izabranu u razgledaču ili filmskoj traci.\nPrečica: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Šalje vas na prethodnu sliku u odnosu na otvorenu u prozoru za uređivanje.\nPrečica: <b>Shift-F3</b>\n\nnTakođe, omoguća vam da idete na narednu sliku u odnosu na trenutno izabranu u razgledaču ili filmskoj traci.\nPrečica: <b>F3</b>
@@ -1100,8 +1076,6 @@ TP_DIRPYREQUALIZER_LUMAFINEST;fino
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutralno
 TP_DIRPYREQUALIZER_THRESHOLD;Prag
 TP_DISTORTION_AMOUNT;Količina
-TP_DISTORTION_AUTO;Sam ispravi izobličenja
-TP_DISTORTION_AUTO_TIP;(Eksperimentalno) Automatski ispravlja izobličenja nekih aparata (M4/3, neki kompakti, i dr.)
 TP_DISTORTION_LABEL;Izobličenja
 TP_EPD_EDGESTOPPING;Izoštravanje ivice
 TP_EPD_LABEL;Mapiranje tonova
@@ -1207,7 +1181,6 @@ TP_ICM_INPUTPROFILE;Ulazni profil
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: sRGB izlaz
 TP_ICM_OUTPUTPROFILE;Izlazni profil
-TP_ICM_SAVEREFERENCE;Sačuvaj sliku kao referencu za profil
 TP_ICM_SAVEREFERENCE_TOOLTIP;Sačuvaj linearnu TIFF sliku pre primene ulaznog profila. Rezultat može da se koristi za kalibraciju i izradu profila foto-aparata.
 TP_ICM_TONECURVE;Koristi DCP krivu tonova
 TP_ICM_TONECURVE_TOOLTIP;Upotrebljava ugrađenu DCP krivu tonova. Ovo podešavanje je omogućeno samo ako izabrani DCP ima krivu tonova.
@@ -1684,6 +1657,31 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
@@ -1718,6 +1716,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1745,9 +1744,10 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
@@ -1758,7 +1758,10 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
@@ -1884,6 +1887,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
@@ -1906,6 +1910,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_PREPROCESS_DEADPIXFILT;Dead pixel filter

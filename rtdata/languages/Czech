@@ -713,47 +713,23 @@ HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSNAPSHOT_TOOLTIP;Zkratka: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snímek
 HISTORY_SNAPSHOTS;Snímky
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Autorova pozice
-IPTCPANEL_AUTHORSPOSITIONHINT;Titul/pozice autora nebo autorů obrázku (By-line Title).
-IPTCPANEL_CAPTION;Popis
-IPTCPANEL_CAPTIONHINT;Textový popis dat (Popis - Shrnutí)
-IPTCPANEL_CAPTIONWRITER;Popisovač
-IPTCPANEL_CAPTIONWRITERHINT;Jméno osoby, která vložila, změnila nebo opravila obrázek nebo popis/shrnutí (Autor - Editor)
 IPTCPANEL_CATEGORY;Kategorie
-IPTCPANEL_CATEGORYHINT;Obsah obrázku dle názoru dodavatele (Kategorie).
 IPTCPANEL_CITY;Město
-IPTCPANEL_CITYHINT;Místo vzniku obrázku (Město).
 IPTCPANEL_COPYHINT;Zkopíruj IPTC nastavení do schránky.
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Autorská práva (Copyright Notice).
 IPTCPANEL_COUNTRY;Země
-IPTCPANEL_COUNTRYHINT;Jméno země/lokace kde byl obrázek vytvořen (Země - Lokace).
 IPTCPANEL_CREDIT;Zásluhy
 IPTCPANEL_CREDITHINT;Dodavatel obrázku, ne nutně vlastník/autor (Credit).
 IPTCPANEL_DATECREATED;Datum vytvoření
-IPTCPANEL_DATECREATEDHINT;Datum kdy byl duševní obsah obrázku vytvořen; Formát: RRRRMMDD (Datum vytvoření).
 IPTCPANEL_EMBEDDED;Uložené
 IPTCPANEL_EMBEDDEDHINT;Obnov IPTC data z obrázku.
 IPTCPANEL_HEADLINE;Nadpis
-IPTCPANEL_HEADLINEHINT;Zveřejnitelný krátký popis obrázku (Nadpis).
 IPTCPANEL_INSTRUCTIONS;Instrukce
-IPTCPANEL_INSTRUCTIONSHINT;Další instrukce vztahující se k obrázku (Speciální instrukce).
 IPTCPANEL_KEYWORDS;Klíčová slova
-IPTCPANEL_KEYWORDSHINT;Jednoslovná hesla popisující obrázek (Klíčová slova).
 IPTCPANEL_PASTEHINT;Vložit IPTC nastavení ze schránky.
-IPTCPANEL_PROVINCE;Kraj
-IPTCPANEL_PROVINCEHINT;Kraj/stát kde byl obrázek vytvořen (Kraj-Stát).
 IPTCPANEL_RESET;Obnovit
 IPTCPANEL_RESETHINT;Obnovit výchozí profil.
 IPTCPANEL_SOURCE;Zdroj
-IPTCPANEL_SOURCEHINT;Původní vlastník intelektuálního obsahu obrázku (Zdroj).
-IPTCPANEL_SUPPCATEGORIES;Dodat. kategorie
-IPTCPANEL_SUPPCATEGORIESHINT;Upřesňující popis obsahu obrázku (Dodatečné kategorie).
 IPTCPANEL_TITLE;Titulek
-IPTCPANEL_TITLEHINT;Zkrácený popis obrázku (Jméno obrázku).
-IPTCPANEL_TRANSREFERENCE;Trans. reference
-IPTCPANEL_TRANSREFERENCEHINT;Kód místa, odkud byl převzat originální obrázek (Original Transmission Reference).
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Přejít k dalšímu obrázku relativnímu k obrázku otevřenému v editoru.\nZkratka: <b>Shift-F4</b>\n\nPřejít k dalšímu obrázku relativnímu k vybranému náhledu v prohlížeči souborů nebo na filmovém pásu:\nZkratka: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Přejít k předchozímu obrázku relativnímu k obrázku otevřenému v editoru.\nZkratka: <b>Shift-F3</b>\n\nPřejít k předchozímu obrázku relativnímu k vybranému náhledu v prohlížeči souborů nebo na filmovém pásu:\nZkratka: <b>F3</b>
@@ -1035,9 +1011,7 @@ PREFERENCES_MENUGROUPRANK;Skupina "Hodnocení"
 PREFERENCES_MENUOPTIONS;Volby místní nabídky
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Velmi malá (100x115)
-PREFERENCES_MONBPC;Kompenzace černého bodu pro L*a*b*->Přizpůsobení pro monitor
 PREFERENCES_MONINTENT;Výchozí záměr monitoru
-PREFERENCES_MONPROFILE;Výchozí profil monitoru
 PREFERENCES_MULTITAB;Mód více karet editoru
 PREFERENCES_MULTITABDUALMON;Mód více karet editoru ve vlastním okně
 PREFERENCES_NAVGUIDEBRUSH;Barva vodítek navigátoru
@@ -1471,8 +1445,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Hodnota -100:  zaměřeno na pleťové tóny.\nH
 TP_DIRPYREQUALIZER_THRESHOLD;Práh
 TP_DIRPYREQUALIZER_TOOLTIP;Počet pokusů pro redukci artefaktů vzniklých přenosem barvy (odstín, barevnost a jas) pleti na zbytek obrázku.
 TP_DISTORTION_AMOUNT;Míra
-TP_DISTORTION_AUTO;Automatická korekce zkreslení
-TP_DISTORTION_AUTO_TIP;Automatická korekce zkreslení objektivu pro některé fotoaparáty (Micro 4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Korekce zkreslení
 TP_EPD_EDGESTOPPING;Zachování hran
 TP_EPD_GAMMA;Gama
@@ -1579,7 +1551,6 @@ TP_ICM_LABEL;Správa barev
 TP_ICM_NOICM;Bez ICM: sRGB výstup
 TP_ICM_OUTPUTPROFILE;Výstupní barevný prostor
 TP_ICM_PROFILEINTENT;Záměr reprodukce
-TP_ICM_SAVEREFERENCE;Uložit referenční obrázek pro profilování
 TP_ICM_SAVEREFERENCE_APPLYWB;Aplikovat vyvážení bílé
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Obecně se vyvážení bílé aplikuje při ukládání obrázku pro vytvoření ICC profilů a neaplikuje při vytváření DCP profilů.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Uloží lineární TIFF obrázek před aplikováním vstupního profilu. Výsledek může být použit pro kalibraci a generování profilu fotoaparátu.
@@ -2065,3 +2036,41 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_ICM_SAVEREFERENCE;Save Reference Image
