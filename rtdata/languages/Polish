@@ -521,47 +521,23 @@ HISTORY_NEWSNAPSHOT;Nowa migawka
 HISTORY_NEWSNAPSHOT_TOOLTIP;Skrót: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Migawka
 HISTORY_SNAPSHOTS;Migawki
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Stanowisko
-IPTCPANEL_AUTHORSPOSITIONHINT;Stanowisko lub funkcja autora lub autorów dzieła (By-line Title).
-IPTCPANEL_CAPTION;Tytuł
-IPTCPANEL_CAPTIONHINT;Tekstowy opis treści (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Autor opisu
-IPTCPANEL_CAPTIONWRITERHINT;Imię i nazwisko osoby biorące udział w opracowywaniu, edytowanie lub korygowania obrazu lub opisu (Writer - Editor).
 IPTCPANEL_CATEGORY;Kategoria
-IPTCPANEL_CATEGORYHINT;Identyfikuje temat zdjęcia w opinii jego dostawcy (Category).
 IPTCPANEL_CITY;Miasto
-IPTCPANEL_CITYHINT;Miasto w którym wykonano zdjęcie (City).
 IPTCPANEL_COPYHINT;Kopiuje ustawienia IPTC do schowka
-IPTCPANEL_COPYRIGHT;Prawa autorskie
-IPTCPANEL_COPYRIGHTHINT;Ważne uwagi o prawach autorskich (Copyright Notice).
 IPTCPANEL_COUNTRY;Kraj
-IPTCPANEL_COUNTRYHINT;Nazwa kraju lub lokalizacji, gdzie zostało wykonane zdjęcie (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Zasługa
 IPTCPANEL_CREDITHINT;Identyfikuje dostawcę zdjęcia, niekoniecznie właściciela lub autora (Credit).
 IPTCPANEL_DATECREATED;Data utworzenia
-IPTCPANEL_DATECREATEDHINT;Data powstania intelektualnej treści zdjęcia. Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Osadzony
 IPTCPANEL_EMBEDDEDHINT;Resetuje dane IPTC do domyślnych ustawień osadzonych w orginalnym zdjęciu
 IPTCPANEL_HEADLINE;Nagłówek
-IPTCPANEL_HEADLINEHINT;Gotowy do opublikowania wpis streszczający zawratość zdjęcia (Headline).
 IPTCPANEL_INSTRUCTIONS;Instrukcje
-IPTCPANEL_INSTRUCTIONSHINT;Inne wskazówki redakcyjne dotyczące korzystania z obrazu (Special Instructions).
 IPTCPANEL_KEYWORDS;Słowa kluczowe
-IPTCPANEL_KEYWORDSHINT;Wskazuje konkretne treści możliwe do odszukania (Keywords).
 IPTCPANEL_PASTEHINT;Wstawia ustawienia IPTC ze schowka
-IPTCPANEL_PROVINCE;Stan, województwo, dystrykt itd.
-IPTCPANEL_PROVINCEHINT;Województwo, gmina, stan gdzie zostało wykonane zdjęcie (Province-State).
 IPTCPANEL_RESET;Reset
 IPTCPANEL_RESETHINT;Resetuje do domyślnych ustawień profilu
 IPTCPANEL_SOURCE;Źródło
-IPTCPANEL_SOURCEHINT;Pierwotny właściciel treści intelektualnych zdjęcia (Source).
-IPTCPANEL_SUPPCATEGORIES;Dodatkowe kategorie tematyczne
-IPTCPANEL_SUPPCATEGORIESHINT;Doprecyzowuje kategorie tematyczne zdjęcia (Supplemental Categories).
 IPTCPANEL_TITLE;Tytuł
-IPTCPANEL_TITLEHINT;Skrócony temat odniesienia zdjęcia (Object Name).
-IPTCPANEL_TRANSREFERENCE;Kod ident. zlecenie
-IPTCPANEL_TRANSREFERENCEHINT;Numer badź kod identyfikujący zlecenie utworzony zazwyczaj przez fotografa przy transmisji umożliwiający śledzenie obrazu w obiegu.
 MAIN_BUTTON_FULLSCREEN;Pełen ekran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Przejdź do następnego zdjęcia względem zdjęcia otwartego w Edytorze.\nSkrót: <b>Shift-F4</b>\n\nAby przejść do następnego zdjęcia względem miniaturki wybranej w Nawigatorze Zdjęć:\nSkrót: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Przejdź do poprzedniego zdjęcia wzgledem zdjęcia otwartego w Edytorze.\nSkrót: <b>Shift-F3</b> \n\nAby przejść do poprzedniego zdjęcia względem miniaturki wybranej w Nawigatorze Zdjęć:\nSkrót: <b>F3</b>
@@ -1655,6 +1631,31 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet

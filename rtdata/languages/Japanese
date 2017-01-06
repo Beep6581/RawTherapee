@@ -669,47 +669,23 @@ HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
 HISTORY_SNAPSHOT;スナップショット
 HISTORY_SNAPSHOTS;スナップショット
-IPTCPANEL_AUTHOR;作成者
-IPTCPANEL_AUTHORSPOSITION;作成者の肩書
-IPTCPANEL_AUTHORSPOSITIONHINT;作成者の肩書または作品の作成者(署名 タイトル).
-IPTCPANEL_CAPTION;キャプション、説明文
-IPTCPANEL_CAPTIONHINT;データのテキストによる説明 (説明--要約)
-IPTCPANEL_CAPTIONWRITER;説明記入者
-IPTCPANEL_CAPTIONWRITERHINT;画像を編集修正する人、または説明/要約の執筆に係わる人の名前 (作家--編集者).
 IPTCPANEL_CATEGORY;カテゴリ
-IPTCPANEL_CATEGORYHINT;提供者の見解で画像の主題を決めます (カテゴリ).
 IPTCPANEL_CITY;都市
-IPTCPANEL_CITYHINT;撮影された都市 (市町村).
 IPTCPANEL_COPYHINT;IPTC設定をクリップボードにコピー
-IPTCPANEL_COPYRIGHT;著作権
-IPTCPANEL_COPYRIGHTHINT;著作権表示 (著作権情報).
 IPTCPANEL_COUNTRY;撮影国
-IPTCPANEL_COUNTRYHINT;国名、/画像が撮影・作成された国 (国--撮影国).
 IPTCPANEL_CREDIT;クレジット
 IPTCPANEL_CREDITHINT;所有者/作成者に限らず、画像の提供元の識別 (クレジット).
 IPTCPANEL_DATECREATED;作成日
-IPTCPANEL_DATECREATEDHINT;画像の知的内容が作成された日付; フォーマット: JJJJMMTT (作成日).
 IPTCPANEL_EMBEDDED;埋め込み
 IPTCPANEL_EMBEDDEDHINT;画像に埋め込まれたIPTCデータにリセット
 IPTCPANEL_HEADLINE;見出し
-IPTCPANEL_HEADLINEHINT;画像の内容の概要を示す記入項目 (タイトル).
 IPTCPANEL_INSTRUCTIONS;編集注記
-IPTCPANEL_INSTRUCTIONSHINT;画像の使用に関するその他の特記事項 (編集注記).
 IPTCPANEL_KEYWORDS;キーワード
-IPTCPANEL_KEYWORDSHINT;情報検索に使用する単語 (キーワード).
 IPTCPANEL_PASTEHINT;IPTC設定をクリップボードから貼り付け
-IPTCPANEL_PROVINCE;州・都道府県
-IPTCPANEL_PROVINCEHINT;撮影された地域/州・都道府県(地域--州・都道府県).
 IPTCPANEL_RESET;リセット
 IPTCPANEL_RESETHINT;デフォルトのプロファイルにリセット
 IPTCPANEL_SOURCE;ソース
-IPTCPANEL_SOURCEHINT;画像の著作権保有者 (ソース).
-IPTCPANEL_SUPPCATEGORIES;カテゴリ補助
-IPTCPANEL_SUPPCATEGORIESHINT;さらに細かく画像の主題 (カテゴリ補助).
 IPTCPANEL_TITLE;タイトル
-IPTCPANEL_TITLEHINT;画像のタイトルを簡略に (タイトル).
-IPTCPANEL_TRANSREFERENCE;送信証明
-IPTCPANEL_TRANSREFERENCEHINT;オリジナルの送信証明の位置を表すコード (オリジナル 送信証明).
 MAIN_BUTTON_FULLSCREEN;フルスクリーン
 MAIN_BUTTON_NAVNEXT_TOOLTIP;エディタで開いている画像に対応する次の画像に移動します\nショートカット: <b>Shift-F4</b>\n\nファイルブラウザで選択したサムネイルに対応する次の画像に移動するには\nショートカット: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;エディタで開いている画像に対応する前の画像に移動します\nショートカット: <b>Shift-F3</b>\n\nファイルブラウザで選択したサムネイルに対応する前の画像に移動するには\nショートカット: <b>F3</b>
@@ -1949,6 +1925,31 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening

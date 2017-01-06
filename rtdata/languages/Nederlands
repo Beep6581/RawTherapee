@@ -685,47 +685,23 @@ HISTORY_NEWSNAPSHOT;Nieuw
 HISTORY_NEWSNAPSHOT_TOOLTIP;Sneltoets: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Nieuw
 HISTORY_SNAPSHOTS;Snapshots
-IPTCPANEL_AUTHOR;Auteur
-IPTCPANEL_AUTHORSPOSITION;Positie van de maker
-IPTCPANEL_AUTHORSPOSITIONHINT;Titel van de maker(s) van het object (By-line Title)
-IPTCPANEL_CAPTION;Omschrijving
-IPTCPANEL_CAPTIONHINT;Tekstuele omschrijving van de data (Omschrijving - abstract)
-IPTCPANEL_CAPTIONWRITER;Maker van de omschrijving
-IPTCPANEL_CAPTIONWRITERHINT;De naam van de persoon betrokken bij het schrijven, bewerken of corrigeren van de foto of omschrijving (Schrijver - Editor)
 IPTCPANEL_CATEGORY;Categorie
-IPTCPANEL_CATEGORYHINT;Beschrijft het onderwerp van de foto volgens de mening van de maker (Categorie)
 IPTCPANEL_CITY;Plaats
-IPTCPANEL_CITYHINT;Plaats van de opname (Plaats)
 IPTCPANEL_COPYHINT;Kopieer IPTC-instellingen naar klembord
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Eventuele vereiste copyright-meldingen (Copyright-melding)
 IPTCPANEL_COUNTRY;Land
-IPTCPANEL_COUNTRYHINT;De naam van het land/primaire locatie waar de foto werd genomen (Land - Primaire locatienaam)
 IPTCPANEL_CREDIT;Credit
 IPTCPANEL_CREDITHINT;Naam van de leverancier van de foto, niet noodzakelijkerwijs de eigenaar/maker (Credit)
 IPTCPANEL_DATECREATED;Opnamedatum
-IPTCPANEL_DATECREATEDHINT;Datum waarop de foto werd genomen; formaat: JJJJMMDD (Opnamedatum)
 IPTCPANEL_EMBEDDED;Ingebed
 IPTCPANEL_EMBEDDEDHINT;Keer terug naar IPTC-data die in de foto zijn opgeslagen
 IPTCPANEL_HEADLINE;Titel
-IPTCPANEL_HEADLINEHINT;Samenvatting van de inhoud van de foto (Titel)
 IPTCPANEL_INSTRUCTIONS;Instructies
-IPTCPANEL_INSTRUCTIONSHINT;Andere instructies mbt. beeldgebruik (Speciale Instructies)
 IPTCPANEL_KEYWORDS;Sleutelwoorden
-IPTCPANEL_KEYWORDSHINT;Gebruikt om sleutelwoorden mee te geven tbv. zoekdoeleinden (Sleutelwoorden)
 IPTCPANEL_PASTEHINT;Plak IPTC-instellingen van klembord
-IPTCPANEL_PROVINCE;Provincie
-IPTCPANEL_PROVINCEHINT;De provincie/staat/departement waar de foto werd genomen (Provincie-Staat)
 IPTCPANEL_RESET;Standaardwaarden
 IPTCPANEL_RESETHINT;Terug naar standaardwaarden
 IPTCPANEL_SOURCE;Bron
-IPTCPANEL_SOURCEHINT;De oorspronkelijke eigenaar van de foto (Bron)
-IPTCPANEL_SUPPCATEGORIES;Extra categorieën
-IPTCPANEL_SUPPCATEGORIESHINT;Verdere verfijning van het onderwerp van de foto (Extra categorieën)
 IPTCPANEL_TITLE;Titel
-IPTCPANEL_TITLEHINT;Een korte referentienaam voor de foto (Objectnaam)
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
-IPTCPANEL_TRANSREFERENCEHINT;Een code die de locatie van de oorspronkelijke transmissie representeert (Original Transmission Reference)
 MAIN_BUTTON_FULLSCREEN;Volledig scherm
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigeer naar de volgende afbeelding relatief ten opzichte van de geopende afbeelding in de Editor\nSneltoets: <b>Shift-F4</b>\n\nNavigeer naar de volgende afbeelding relatief ten opzichte van de miniatuur geselecteerd in de Bestandsnavigator\nSneltoets: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigeer naar de vorige afbeelding relatief ten opzichte van de geopende afbeelding in de Editor\nSneltoets: <b>Shift-F3</b> \n\nNavigeer naar de vorige afbeelding relatief ten opzichte van de miniatuur geselecteerd in de Bestandsnavigator\nSneltoets: <b>F3</b>
@@ -2028,6 +2004,31 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile

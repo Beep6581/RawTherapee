@@ -170,47 +170,23 @@ HISTORY_MSG_81;Resize enabled
 HISTORY_NEWSNAPSHOT;Uusi pikakuva
 HISTORY_SNAPSHOT;Pikakuva
 HISTORY_SNAPSHOTS;Pikakuvat
-IPTCPANEL_AUTHOR;Kuvaaja
-IPTCPANEL_AUTHORSPOSITION;Kuvaajan titteli
-IPTCPANEL_AUTHORSPOSITIONHINT;(Author position) Kuvaajan titteli.
-IPTCPANEL_CAPTION;Aihe
-IPTCPANEL_CAPTIONHINT;(Caption) Kuvaus kohteesta.
-IPTCPANEL_CAPTIONWRITER;Kuvauksen kirjoittaja
-IPTCPANEL_CAPTIONWRITERHINT;(Caption Writer) Kuvauksen kirjoittajan nimi.
 IPTCPANEL_CATEGORY;Aiheryhmä
-IPTCPANEL_CATEGORYHINT;(Category) Aiheryhmän 3-kirjaiminen koodi.
 IPTCPANEL_CITY;Kaupunki
-IPTCPANEL_CITYHINT;(City) Kaupunki jossa kuva on otettu.
 IPTCPANEL_COPYHINT;Kopioi IPTC tiedot leikepöydälle
-IPTCPANEL_COPYRIGHT;Tekijänoikeudet
-IPTCPANEL_COPYRIGHTHINT;(Copyright) Tekijänoikeustiedot.
 IPTCPANEL_COUNTRY;Maa
-IPTCPANEL_COUNTRYHINT;(Country) Maa jossa kuva on otettu.
 IPTCPANEL_CREDIT;Välittäjä
 IPTCPANEL_CREDITHINT;(Credit) Välittäjän tiedot.
 IPTCPANEL_DATECREATED;Päivämäärä
-IPTCPANEL_DATECREATEDHINT;(Date Created) Päivämäärä jolloin kuva on otettu.
 IPTCPANEL_EMBEDDED;Kuvan oma
 IPTCPANEL_EMBEDDEDHINT;Palauta kuvan IPTC tiedot
 IPTCPANEL_HEADLINE;Julkaistava otsikko
-IPTCPANEL_HEADLINEHINT;(Headline) Julkaistava otsikko.
 IPTCPANEL_INSTRUCTIONS;Ohjeet
-IPTCPANEL_INSTRUCTIONSHINT;(Instructions) Ohjeet ja rajoitukset.
 IPTCPANEL_KEYWORDS;Avainsanat
-IPTCPANEL_KEYWORDSHINT;(Keywords) Kohdetta kuvaavia avainsanoja.
 IPTCPANEL_PASTEHINT;Liitä IPTC tiedot leikepöydältä
-IPTCPANEL_PROVINCE;Maakunta
-IPTCPANEL_PROVINCEHINT;(Province) Maakunta jossa kuva on otettu.
 IPTCPANEL_RESET;Palauta
 IPTCPANEL_RESETHINT;Palauta profiilin oletukseen
 IPTCPANEL_SOURCE;Lähde
-IPTCPANEL_SOURCEHINT;(Source) Kuvan lähde.
-IPTCPANEL_SUPPCATEGORIES;Tarkempi aiheryhmä
-IPTCPANEL_SUPPCATEGORIESHINT;(Supplemental Categories) Tarkempi aiheryhmä.
 IPTCPANEL_TITLE;Otsikko
-IPTCPANEL_TITLEHINT;(Title) Otsikko.
-IPTCPANEL_TRANSREFERENCE;Alkuperäviite
-IPTCPANEL_TRANSREFERENCEHINT;(Original Transmission Reference) Alkuperäviite.
 MAIN_BUTTON_PREFERENCES;Asetukset
 MAIN_BUTTON_SAVE;Tallenna kuva
 MAIN_BUTTON_SENDTOEDITOR;Avaa ulkoisessa ohjelmassa
@@ -956,6 +932,31 @@ TP_WBALANCE_TEMPERATURE;Lämpötila [K]
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>

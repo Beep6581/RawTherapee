@@ -474,47 +474,23 @@ HISTORY_NEWSNAPSHOT;Aggiungi
 HISTORY_NEWSNAPSHOT_TOOLTIP;Scorciatoia: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Istantanea
 HISTORY_SNAPSHOTS;Istantanee
-IPTCPANEL_AUTHOR;Autore
-IPTCPANEL_AUTHORSPOSITION;Qualifica dell'Autore
-IPTCPANEL_AUTHORSPOSITIONHINT;Titolo del creatore o creatori dell'opera (By-line Title).
-IPTCPANEL_CAPTION;Didascalia
-IPTCPANEL_CAPTIONHINT;Una descrizione testuale dei dati (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Autore della didascalia
-IPTCPANEL_CAPTIONWRITERHINT;Il nome della persona impegnata nella scrittura, modifica o correzione dell'immagine o della descrizione riassuntiva (Writer - Editor).
 IPTCPANEL_CATEGORY;Categoria
-IPTCPANEL_CATEGORYHINT;Identifica il soggetto dell'immagine secondo l'opinione del fornitore (Category).
 IPTCPANEL_CITY;Città
-IPTCPANEL_CITYHINT;Città di origine dell'immagine (City).
 IPTCPANEL_COPYHINT;Copia le impostazioni IPTC negli appunti
-IPTCPANEL_COPYRIGHT;Diritto d'autore
-IPTCPANEL_COPYRIGHTHINT;Qualsiasi annotazione necessaria riguardante il diritto d'autore (Copyright Notice).
 IPTCPANEL_COUNTRY;Stato
-IPTCPANEL_COUNTRYHINT;Il nome dello stato/confederazione in cui l'immagine è stata creata (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Riconoscimento
 IPTCPANEL_CREDITHINT;Identifica il fornitore dell'immagine, non necessariamente il possessore/creatore (Credit).
 IPTCPANEL_DATECREATED;Data di creazione
-IPTCPANEL_DATECREATEDHINT;La data in cui è stato creato il contenuto intellettuale dell'immagine; Formato: AAAAMMGG (Date Created).
 IPTCPANEL_EMBEDDED;Incorporato
 IPTCPANEL_EMBEDDEDHINT;Ripristina i dati IPTC incorporati nel file d'immagine
 IPTCPANEL_HEADLINE;Intestazione
-IPTCPANEL_HEADLINEHINT;Una didascalia pubblicabile che esprime una sinossi del contenuto dell'immagine (Headline).
 IPTCPANEL_INSTRUCTIONS;Istruzioni
-IPTCPANEL_INSTRUCTIONSHINT;Altre istruzioni editoriali riguardanti l'uso dell'immagine (Special Instructions).
 IPTCPANEL_KEYWORDS;Parole Chiave
-IPTCPANEL_KEYWORDSHINT;Usate per indicare parole emblematiche al fine di recuperare informazioni specifiche (Keywords).
 IPTCPANEL_PASTEHINT;Incolla le impostazioni IPTC dagli appunti
-IPTCPANEL_PROVINCE;Provincia
-IPTCPANEL_PROVINCEHINT;La provincia/regione da cui l'immagine proviene (Province-State).
 IPTCPANEL_RESET;Ripristina
 IPTCPANEL_RESETHINT;Ripristina il profilo predefinito
 IPTCPANEL_SOURCE;Origine
-IPTCPANEL_SOURCEHINT;Il possessore originario del contenuto intellettuale rappresentato nell'immagine (Source).
-IPTCPANEL_SUPPCATEGORIES;Categorie agg.
-IPTCPANEL_SUPPCATEGORIESHINT;Ulteriore miglioramento del soggetto dell'immagine (Supplemental Categories).
 IPTCPANEL_TITLE;Titolo
-IPTCPANEL_TITLEHINT;Un'abbreviazione che alluda all'immagine (Object Name).
-IPTCPANEL_TRANSREFERENCE;Riferimento Trasm.
-IPTCPANEL_TRANSREFERENCEHINT;Un codice che rappresenta l'ubicazione da cui è avvenuta la trasmissione originaria (Original Transmission Reference).
 MAIN_BUTTON_FULLSCREEN;Schermo intero
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Passa all'immagine successiva rispetto all'immagine aperta per la Modifica\nScorciatoia: <b>Shift-F4</b>\n\nPer passare all'immagine successiva rispetto alla miniatura selezionata nel Navigatore o nel Rullino:\nScorciatoia: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Passa all'immagine precedente rispetto all'immagine aperta per la Modifica\nScorciatoia: <b>Shift-F3</b>\n\nPer passare all'immagine precedente rispetto alla miniatura selezionata nel Navigatore o nel Rullino:\nScorciatoia: <b>F3</b>
@@ -1571,6 +1547,31 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet

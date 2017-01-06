@@ -276,47 +276,23 @@ HISTORY_NEWSNAPSHOT;新建快照
 HISTORY_NEWSNAPSHOT_TOOLTIP;快捷键：<b>Alt-s</b>
 HISTORY_SNAPSHOT;快照
 HISTORY_SNAPSHOTS;系列快照
-IPTCPANEL_AUTHOR;作者
-IPTCPANEL_AUTHORSPOSITION;作者职位
-IPTCPANEL_AUTHORSPOSITIONHINT;作者头衔
-IPTCPANEL_CAPTION;标题
-IPTCPANEL_CAPTIONHINT;文字说明
-IPTCPANEL_CAPTIONWRITER;说明作者
-IPTCPANEL_CAPTIONWRITERHINT;参与创作人员
 IPTCPANEL_CATEGORY;类别
-IPTCPANEL_CATEGORYHINT;提供者所认为的作品类别
 IPTCPANEL_CITY;城市
-IPTCPANEL_CITYHINT;图片来自城市
 IPTCPANEL_COPYHINT;将IPTC设置复制到剪贴板
-IPTCPANEL_COPYRIGHT;版权
-IPTCPANEL_COPYRIGHTHINT;版权信息
 IPTCPANEL_COUNTRY;国家
-IPTCPANEL_COUNTRYHINT;图片来自国家
 IPTCPANEL_CREDIT;提供者
 IPTCPANEL_CREDITHINT;图片提供者，未必是作者
 IPTCPANEL_DATECREATED;创作日期
-IPTCPANEL_DATECREATEDHINT;图片创作日期，格式：年月日补零(YYYYMMDD)
 IPTCPANEL_EMBEDDED;内嵌
 IPTCPANEL_EMBEDDEDHINT;将IPTC数据重置为图片内嵌数据
 IPTCPANEL_HEADLINE;摘要
-IPTCPANEL_HEADLINEHINT;可发布的内容简介
 IPTCPANEL_INSTRUCTIONS;指令
-IPTCPANEL_INSTRUCTIONSHINT;写给编辑的特殊要求
 IPTCPANEL_KEYWORDS;关键词
-IPTCPANEL_KEYWORDSHINT;用于信息索引
 IPTCPANEL_PASTEHINT;粘贴剪贴板内的IPTC设置
-IPTCPANEL_PROVINCE;省份
-IPTCPANEL_PROVINCEHINT;图片来自省份
 IPTCPANEL_RESET;重置
 IPTCPANEL_RESETHINT;重置为默认配置
 IPTCPANEL_SOURCE;来源
-IPTCPANEL_SOURCEHINT;图片内容知识产权所有人
-IPTCPANEL_SUPPCATEGORIES;附加类别
-IPTCPANEL_SUPPCATEGORIESHINT;进一步细分类别
 IPTCPANEL_TITLE;标题
-IPTCPANEL_TITLEHINT;作品的名称
-IPTCPANEL_TRANSREFERENCE;传输基准
-IPTCPANEL_TRANSREFERENCEHINT;原始发送地点代码
 MAIN_BUTTON_FULLSCREEN;全屏幕
 MAIN_BUTTON_PREFERENCES;参数设置
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;将当前图片放入处理序列中\n快捷键: <b>Ctrl+b</b>
@@ -1221,6 +1197,31 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).

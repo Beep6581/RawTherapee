@@ -170,47 +170,23 @@ HISTORY_MSG_81;Resize enabled
 HISTORY_NEWSNAPSHOT;Νέο στιγμιότυπο
 HISTORY_SNAPSHOT;Στιγμιότυπο
 HISTORY_SNAPSHOTS;Στιγμιότυπα
-IPTCPANEL_AUTHOR;Συγγραφέας
-IPTCPANEL_AUTHORSPOSITION;Θέση δημιουργού
-IPTCPANEL_AUTHORSPOSITIONHINT;Τίτλος που αποδίδεται από τον/τους δημιουργό/γους (Ανα γραμμή τίτλος).
-IPTCPANEL_CAPTION;Λεζάντα
-IPTCPANEL_CAPTIONHINT;Μια λεκτική περιγραφή των στοιχείων (Λεζάντα - Περίληψη).
-IPTCPANEL_CAPTIONWRITER;Συγγραφέας λεζάντας
-IPTCPANEL_CAPTIONWRITERHINT;Το όνομα του προσώπου που ασχολήθηκε με την συγγραφή, επεξεργασία ή διόρθωση της εικόνας ή λεζάντας/περίληψης (Συγγραφέας - Επιμελητής).
 IPTCPANEL_CATEGORY;Κατηγορία
-IPTCPANEL_CATEGORYHINT;Ταυτοποιεί το θέμα της εικόνας βάση της άποψης του παροχέα (Κατηγορία).
 IPTCPANEL_CITY;Πόλη
-IPTCPANEL_CITYHINT;Πόλη προέλευσης εικόνας (Πόλη).
 IPTCPANEL_COPYHINT;Αντιγραφή ρυθμίσεων IPTC στην περιοχή αποκομμάτων
-IPTCPANEL_COPYRIGHT;Πνευματική ιδιοκτησία
-IPTCPANEL_COPYRIGHTHINT;Όποιο απαραίτητο σχόλιο περι πνευματικής ιδιοκτησίας (Σχόλια περι πνευματική ιδιοκτησία).
 IPTCPANEL_COUNTRY;Χώρα
-IPTCPANEL_COUNTRYHINT;Χώρα/αρχική τοποθεσία δημιουργίας εικόνας (Χώρα/αρχική τοποθεσία).
 IPTCPANEL_CREDIT;Εύσημα
 IPTCPANEL_CREDITHINT;Ταυτοποιεί τον παροχέα της εικόνας, όχι απραίτητα δημιουργό/ιδιοκτήτη (Εύσημα).
 IPTCPANEL_DATECREATED;Ημερομηνία δημιουργίας
-IPTCPANEL_DATECREATEDHINT;Η ημερομηνία δημιουργίας του πνευματικού περιεχομένου; Τύπος: JJJJMMTT (Ημερομηνία δημιουργίας).
 IPTCPANEL_EMBEDDED;Ενσωματωμένο
 IPTCPANEL_EMBEDDEDHINT;Επαναφορά στοιχείων IPTC αρχείου εικόνας
 IPTCPANEL_HEADLINE;Επικεφαλίδα
-IPTCPANEL_HEADLINEHINT;Ένας δημοσιεύσιμος τίτλος που παρέχει μια σύνοψη των περιεχομένων της εικόνας (Επικεφαλίδα).
 IPTCPANEL_INSTRUCTIONS;Οδηγίες
-IPTCPANEL_INSTRUCTIONSHINT;Άλλες οδηγίες επιμέλειας που αφορούν την χρήση της εικόνας (Ειδικίες οδηγίες).
 IPTCPANEL_KEYWORDS;Λέξεις-κλειδιά
-IPTCPANEL_KEYWORDSHINT;Χρησιμοποιούνται ενδεικτικά ως λέξεις ανάκτησης(Λέξεις-κλειδιά).
 IPTCPANEL_PASTEHINT;Επικόλληση ρυθμίσεων IPTC από την περιοχή αποκομμάτων
-IPTCPANEL_PROVINCE;Επαρχία
-IPTCPANEL_PROVINCEHINT;Επαρχία/Πολιτεία/Νομός προέλευσης της εικόνας (Επαρχία/Πολιτεία/Νομός).
 IPTCPANEL_RESET;Επαναφορά
 IPTCPANEL_RESETHINT;Επαναφορά προεπιλεγμένου προφίλ
 IPTCPANEL_SOURCE;Πηγή
-IPTCPANEL_SOURCEHINT;Αυθεντικός ιδιοκτήτης πνευματικού περιεχομένου της εικόνας (Πηγή).
-IPTCPANEL_SUPPCATEGORIES;Συμπληρ. Κατηγορίες
-IPTCPANEL_SUPPCATEGORIESHINT;Προσδιορίζουν επιπλέον το θέμα της εικόνας (Συμπληρωματικές κατηγορίες).
 IPTCPANEL_TITLE;Τίτλος
-IPTCPANEL_TITLEHINT;Μια σύντομη αναφορά για την εικόνα (Όνομα αντικειμένου).
-IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
-IPTCPANEL_TRANSREFERENCEHINT;Ένας κωδικός που αντιπροσωπέυει την τοποθεσία αυθεντικής μετάδοσης (Κωδικός Αυθεντικής Μετάδοσης).
 MAIN_BUTTON_PREFERENCES;Ρυθμίσεις
 MAIN_BUTTON_SAVE;Αποθήκευση εικόνας
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
@@ -954,6 +930,31 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>

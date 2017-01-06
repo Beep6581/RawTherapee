@@ -348,47 +348,23 @@ HISTORY_MSG_165;RGB görbék - B
 HISTORY_NEWSNAPSHOT;Új
 HISTORY_SNAPSHOT;Pillanatkép
 HISTORY_SNAPSHOTS;Pillanatképek
-IPTCPANEL_AUTHOR;Szerző
-IPTCPANEL_AUTHORSPOSITION;Szerző titulusa
-IPTCPANEL_AUTHORSPOSITIONHINT;A kép létrehozójának munkaköre illetve titulusa (By-line Title)
-IPTCPANEL_CAPTION;Leírás
-IPTCPANEL_CAPTIONHINT;A kép szöveges leírása (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Író
-IPTCPANEL_CAPTIONWRITERHINT;A leírást és az adatok rögzítését/szerkesztését/javítását végző személy neve (Writer - Editor)
 IPTCPANEL_CATEGORY;Kategória
-IPTCPANEL_CATEGORYHINT;A kép témáját azonosítja (Category)
 IPTCPANEL_CITY;Város
-IPTCPANEL_CITYHINT;A város, ahonnan a kép származik (City)
 IPTCPANEL_COPYHINT;IPTC beállítások másolása a vágólapra
-IPTCPANEL_COPYRIGHT;Szerzői jog
-IPTCPANEL_COPYRIGHTHINT;Szerzői joggal kapcsolatos megjegyzések (Copyright Notice)
 IPTCPANEL_COUNTRY;Ország
-IPTCPANEL_COUNTRYHINT;Az ország, ahonnan a kép származik (Country - Primary Location Name)
 IPTCPANEL_CREDIT;Rendelkező
 IPTCPANEL_CREDITHINT;A kép kibocsájtójának neve (nem feltétlenül a szerző) (Credit)
 IPTCPANEL_DATECREATED;Dátum
-IPTCPANEL_DATECREATEDHINT;A kép rögzítésének dátuma; formátum: ééééhhnn (Date Created)
 IPTCPANEL_EMBEDDED;Beágyazott
 IPTCPANEL_EMBEDDEDHINT;A betöltött képbe ágyazott információk kiolvasása
 IPTCPANEL_HEADLINE;Főcím
-IPTCPANEL_HEADLINEHINT;A kép témájának összegzése (Headline)
 IPTCPANEL_INSTRUCTIONS;Útmutatás
-IPTCPANEL_INSTRUCTIONSHINT;Egyéb, a képre vonatkozó szerkesztési útmutatás (Special Instructions)
 IPTCPANEL_KEYWORDS;Kulcsszavak
-IPTCPANEL_KEYWORDSHINT;Kategorizáláshoz/szűréshez használatos, a képre vonatkozó kulcsszavak (Keywords)
 IPTCPANEL_PASTEHINT;IPTC beállítások beillesztése a vágólapról
-IPTCPANEL_PROVINCE;Régió
-IPTCPANEL_PROVINCEHINT;A megye/állam/régió, ahonnan a kép származik (Province-State)
 IPTCPANEL_RESET;Visszaállítás
 IPTCPANEL_RESETHINT;Visszatérés az aktuális profil alapértékéhez
 IPTCPANEL_SOURCE;Forrás
-IPTCPANEL_SOURCEHINT;A kép szellemi tartalmának eredeti tulajdonosa (Source)
-IPTCPANEL_SUPPCATEGORIES;További kategóriák
-IPTCPANEL_SUPPCATEGORIESHINT;A kép finomabb, részletesebb kategorizálását teszi lehetővé (Supplemental Categories)
 IPTCPANEL_TITLE;Címke
-IPTCPANEL_TITLEHINT;A kép rövid azonosítója (Object Name)
-IPTCPANEL_TRANSREFERENCE;Továbbítás helye
-IPTCPANEL_TRANSREFERENCEHINT;A továbbítás helyének megjelölése (Original Transmission Reference)
 MAIN_BUTTON_FULLSCREEN;Teljes képernyő
 MAIN_BUTTON_PREFERENCES;Beállítások
 MAIN_BUTTON_PUTTOQUEUE;Feldolgozási sorba helyez
@@ -1234,6 +1210,31 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).

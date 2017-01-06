@@ -2,7 +2,6 @@
 #01 Developers should add translations to this file and then run the 'generateTranslationDiffs' Bash script to update other locales.
 #02 Translators please append a comment here with the current date and your name(s) as used in the RawTherapee forum or GitHub page, e.g.:
 #03 2525-12-24 Zager and Evans
-
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;License
@@ -2035,4 +2034,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
-

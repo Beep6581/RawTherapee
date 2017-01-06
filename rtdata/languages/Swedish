@@ -654,47 +654,23 @@ HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOT_TOOLTIP;Kortkommando: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Bokmärke
 HISTORY_SNAPSHOTS;Bokmärken
-IPTCPANEL_AUTHOR;Upphovsman
-IPTCPANEL_AUTHORSPOSITION;Upphovmannens position
-IPTCPANEL_AUTHORSPOSITIONHINT;Titeln på upphovsmannen/männen (byline)
-IPTCPANEL_CAPTION;Rubrik
-IPTCPANEL_CAPTIONHINT;En beskrivning av informationen
-IPTCPANEL_CAPTIONWRITER;Upphovsman
-IPTCPANEL_CAPTIONWRITERHINT;Namnet på den person som är involverad i att skapa, redigera eller korrigera bilden
 IPTCPANEL_CATEGORY;Kategori
-IPTCPANEL_CATEGORYHINT;Identifierar bildens titel enligt tillhandahållaren.
 IPTCPANEL_CITY;Stad
-IPTCPANEL_CITYHINT;Staden där bilden togs
 IPTCPANEL_COPYHINT;Kopiera IPTC-inställningarna till klippbordet
-IPTCPANEL_COPYRIGHT;Upphovsrätt
-IPTCPANEL_COPYRIGHTHINT;Nödvändig upphovsrättslig information
 IPTCPANEL_COUNTRY;Land
-IPTCPANEL_COUNTRYHINT;Namnet på landet/platsen där bilden togs
 IPTCPANEL_CREDIT;Erkännande
 IPTCPANEL_CREDITHINT;Identifierar tillhandahållaren av bilden, ej nödvändigtvis upphovsmannen
 IPTCPANEL_DATECREATED;Skapad datum
-IPTCPANEL_DATECREATEDHINT;Datumet då innehållet av bilden skapades. Format: ÅÅÅÅMMDD.
 IPTCPANEL_EMBEDDED;Inbäddad
 IPTCPANEL_EMBEDDEDHINT;Återställ IPTC-informationen till innehållet i bildfilen.
 IPTCPANEL_HEADLINE;Rubrik
-IPTCPANEL_HEADLINEHINT;En sammanfattning av vad bilden innehåller.
 IPTCPANEL_INSTRUCTIONS;Instruktioner
-IPTCPANEL_INSTRUCTIONSHINT;Andra instruktioner som rör användandet av bilden.
 IPTCPANEL_KEYWORDS;Nyckelord
-IPTCPANEL_KEYWORDSHINT;Indikerar nyckelord
 IPTCPANEL_PASTEHINT;Klistra in IPTC-inställningar från klippbordet
-IPTCPANEL_PROVINCE;Provins
-IPTCPANEL_PROVINCEHINT;Den provins eller stat från vilken bilden härrör.
 IPTCPANEL_RESET;Återställ
 IPTCPANEL_RESETHINT;Återställ till standardprofilen
 IPTCPANEL_SOURCE;Källa
-IPTCPANEL_SOURCEHINT;Den ursprungliga ägaren av innehållet.
-IPTCPANEL_SUPPCATEGORIES;Övriga kategorier
-IPTCPANEL_SUPPCATEGORIESHINT;Ytterligare beskrivning av bilden
 IPTCPANEL_TITLE;Titel
-IPTCPANEL_TITLEHINT;En kortfattad bildreferens
-IPTCPANEL_TRANSREFERENCE;Överföringsreferens
-IPTCPANEL_TRANSREFERENCEHINT;En kod som representerar platsen för överföring
 ISTORY_MSG_372;PRS USM - Radie
 MAIN_BUTTON_FULLSCREEN;Helskärm
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Flytta till nästa bild relativt den bild som är öppen i redigeringsvyn\nKortkommando: <b>Shift-F4</b>\n\nFlytta till nästa bild relativt den valda miniatyrbilden i filvyn\nKortkommando: <b>F4</b>
@@ -1942,6 +1918,31 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_425;Retinex - Log base
 !HISTORY_MSG_427;Output rendering intent
 !HISTORY_MSG_428;Monitor rendering intent
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PREFERENCES_CMMBPC;Black point compensation

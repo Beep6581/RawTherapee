@@ -460,47 +460,23 @@ HISTORY_NEWSNAPSHOT_TOOLTIP;Prečica: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snimak
 HISTORY_SNAPSHOTS;Snimak
 HRESHOLDSELECTOR_BL;Dole-levo
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Zvanje autora
-IPTCPANEL_AUTHORSPOSITIONHINT;Zvanje jednog ili više autora (jedno po redi).
-IPTCPANEL_CAPTION;Naziv
-IPTCPANEL_CAPTIONHINT;Kratak opis dela (naslov — abstrakt).
-IPTCPANEL_CAPTIONWRITER;Pisac naslova
-IPTCPANEL_CAPTIONWRITERHINT;Ime osobe koje je uključena u pisanje, uređivanje ili ispravljanje slike/nazica/apstrakta (pisac — urednik).
 IPTCPANEL_CATEGORY;Kategorija
-IPTCPANEL_CATEGORYHINT;Određuje šta se nalazi na slici (kategorija).
 IPTCPANEL_CITY;Grad
-IPTCPANEL_CITYHINT;Grad u kome je slika nastalo (grad).
 IPTCPANEL_COPYHINT;Koppiraj IPTC pšodešavanja u ostavu
-IPTCPANEL_COPYRIGHT;Autorska prava
-IPTCPANEL_COPYRIGHTHINT;Beleška o autorskim pravima nad delom (beleška o autorskim pravima).
 IPTCPANEL_COUNTRY;Država
-IPTCPANEL_COUNTRYHINT;Ime države/osnovnog mesta gde je nastala slika (država — naziv mesta).
 IPTCPANEL_CREDIT;Zasluge
 IPTCPANEL_CREDITHINT;Ukazuje da onaj ko izdaje sliku ne mora biti autor/vlasnik (Zasluge).
 IPTCPANEL_DATECREATED;Datum nastanka
-IPTCPANEL_DATECREATEDHINT;Datum kada je stavljeno vlasništvo nad intelektualni sadržaj slike; Format: GGGGMMDD (datum nastanka).
 IPTCPANEL_EMBEDDED;Ugnježđeno
 IPTCPANEL_EMBEDDEDHINT;Vrati polja na IPTC podatke ugnježđene u sliku
 IPTCPANEL_HEADLINE;Naslov
-IPTCPANEL_HEADLINEHINT;Naziv koji ukazuje na vezu sa sadržajem slike i pod kojim se ona izdaje (naslov).
 IPTCPANEL_INSTRUCTIONS;Uputstva
-IPTCPANEL_INSTRUCTIONSHINT;Ostala uputstva urednika vezana za upotrebu slike (specijalna uputstva).
 IPTCPANEL_KEYWORDS;Ključne reči
-IPTCPANEL_KEYWORDSHINT;Reči koje ukazuju na razne podatke o slici (ključne reči).
 IPTCPANEL_PASTEHINT;Ubaci IPTC podešavanja iz ostave
-IPTCPANEL_PROVINCE;Pokrajina
-IPTCPANEL_PROVINCEHINT;Pokrajina/država gde je nastala slika (provincija — država).
 IPTCPANEL_RESET;Vrati
 IPTCPANEL_RESETHINT;Postavlja podrazumevane vrednosti profila
 IPTCPANEL_SOURCE;Izvor
-IPTCPANEL_SOURCEHINT;Prvobitni vlasnik inntelektualnog sadržaja na slici (izvor).
-IPTCPANEL_SUPPCATEGORIES;Dop. kategorije
-IPTCPANEL_SUPPCATEGORIESHINT;Dodatno određuje motiv na slici (dodatne kategorije).
 IPTCPANEL_TITLE;Natpis
-IPTCPANEL_TITLEHINT;Kratni naziv slike (ime objekta).
-IPTCPANEL_TRANSREFERENCE;Ref. prenosa
-IPTCPANEL_TRANSREFERENCEHINT;Kod kojji predstavlja mesto prvobitnog prenosa (referenca prvog prenosa).
 MAIN_BUTTON_FULLSCREEN;Ceo ekran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Šalje vas na narednu sliku u odnosu na otvorenu u prozoru za uređivanje.\nPrečica: <b>Shift-F4</b>\n\nTakođe, omoguća vam da idete na narednu sliku u odnosu na trenutno izabranu u razgledaču ili filmskoj traci.\nPrečica: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Šalje vas na prethodnu sliku u odnosu na otvorenu u prozoru za uređivanje.\nPrečica: <b>Shift-F3</b>\n\nnTakođe, omoguća vam da idete na narednu sliku u odnosu na trenutno izabranu u razgledaču ili filmskoj traci.\nPrečica: <b>F3</b>
@@ -1681,6 +1657,31 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>
