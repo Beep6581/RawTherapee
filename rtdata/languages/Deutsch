@@ -31,6 +31,7 @@
 #30 2016-09-30 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1234
 #31 2016-12-01 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1408
 #32 2016-12-29 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1464
+#33 2016-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -709,53 +710,54 @@ HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
 HISTORY_SNAPSHOTS;Schnappschüsse
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Pos. des Autors
-IPTCPANEL_AUTHORSPOSITIONHINT;Titel des Autors oder der Autoren (By-line Title)
+IPTCPANEL_AUTHOR;Ersteller
+IPTCPANEL_AUTHORSPOSITION;Ersteller-Titel
+IPTCPANEL_AUTHORSPOSITIONHINT;Titel des Erstellers. Üblicherweise die\nBerufsbezeichnung. (By-line Title)
 IPTCPANEL_CAPTION;Bildbeschreibung
 IPTCPANEL_CAPTIONHINT;Beschreibung des Bildinhaltes (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Ersteller
-IPTCPANEL_CAPTIONWRITERHINT;Name der Person die beim Bild mitgewirkt hat (Writer - Editor)
+IPTCPANEL_CAPTIONWRITER;Autor / Redakteur
+IPTCPANEL_CAPTIONWRITERHINT;Name der Person die, die Bildbeschreibung\nerstellt oder geändert hat. (Writer / Editor)
 IPTCPANEL_CATEGORY;Kategorie
-IPTCPANEL_CATEGORYHINT;3-stelliger Code, der die Kategorie des Bildes beschreibt (Category).
+IPTCPANEL_CATEGORYHINT;3-stelliger Code, der die Kategorie des\nBildes beschreibt. (Category).
 IPTCPANEL_CITY;Stadt
 IPTCPANEL_CITYHINT;Aufnahmeort: Stadt (City)
-IPTCPANEL_COPYHINT;IPTC-Werte in die Zwischenablage kopieren
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Urheberrechtshinweis (Copyright Notice)
+IPTCPANEL_COPYHINT;IPTC-Werte in die Zwischenablage kopieren.
+IPTCPANEL_COPYRIGHT;Urheberrechtsvermerk
+IPTCPANEL_COPYRIGHTHINT;Enthält jeglichen notwendigen Urheberrechts-\nvermerk. (Copyright Notice)
 IPTCPANEL_COUNTRY;Land
 IPTCPANEL_COUNTRYHINT;Aufnahmeort: Land (Country - Primary Location Name)
-IPTCPANEL_CREDIT;Bildrechte
-IPTCPANEL_CREDITHINT;Identifiziert den Anbieter des Bildes, es muss nicht der Eigentümer sein (Credit)
+IPTCPANEL_CREATORHINT;Name des Erstellers des Bildes (By-line)
+IPTCPANEL_CREDIT;Anbieter
+IPTCPANEL_CREDITHINT;Identifiziert den Anbieter des Bildes, das muss\nnicht der Eigentümer sein. (Credit)
 IPTCPANEL_DATECREATED;Erstellt am
 IPTCPANEL_DATECREATEDHINT;Erstellungsdatum des Bildes\nFormat: JJJJMMTT
 IPTCPANEL_EMBEDDED;Eingebettet
 IPTCPANEL_EMBEDDEDHINT;Setzt auf die im Bild eingebetteten IPTC-Daten zurück.
-IPTCPANEL_HEADLINE;Bildtitel
-IPTCPANEL_HEADLINEHINT;Eine Beschreibung über den Inhalt des Bildes. Kann auch als Überschrift dienen.
-IPTCPANEL_INSTRUCTIONS;Hinweise
-IPTCPANEL_INSTRUCTIONSHINT;Besondere Hinweise bezüglich der Nutzung des Bildes (Special Instructions)
-IPTCPANEL_KEYWORDS;Schlagwörter
-IPTCPANEL_KEYWORDSHINT;Stichwörter für das spätere Wiederfinden der Bilder (Keywords)
+IPTCPANEL_HEADLINE;Überschrift
+IPTCPANEL_HEADLINEHINT;Kurzbeschreibung des Bildes. (Headline)
+IPTCPANEL_INSTRUCTIONS;Spezielle Anweisungen
+IPTCPANEL_INSTRUCTIONSHINT;Weitere redaktionelle Anweisungen bezüglich des Gebrauchs\ndes Bildes, wie z. B. Sperrfristen, Nutzungsbeschränkungen\noder Warnungen. (Special Instructions)
+IPTCPANEL_KEYWORDS;Stichwörter
+IPTCPANEL_KEYWORDSHINT;Stichwörter für das spätere Wiederfinden\nder Bilder. (Keywords)
 IPTCPANEL_PASTEHINT;IPTC-Werte aus der Zwischenablage einfügen
-IPTCPANEL_PROVINCE;Provinz
-IPTCPANEL_PROVINCEHINT;Aufnahmeort: Provinz (Province-State)
+IPTCPANEL_PROVINCE;Bundesland / Kanton
+IPTCPANEL_PROVINCEHINT;Aufnahmeort: Bundesland / Kanton (Province-State)
 IPTCPANEL_RESET;Zurücksetzen
 IPTCPANEL_RESETHINT;Auf die im Profil gespeicherten Werte zurücksetzen
 IPTCPANEL_SOURCE;Quelle
 IPTCPANEL_SOURCEHINT;Der ursprüngliche Eigentümer des Bildes (Source)
-IPTCPANEL_SUPPCATEGORIES;Zus. Kategorien
-IPTCPANEL_SUPPCATEGORIESHINT;Zusätzliche wählbare Bildoptimierungen
-IPTCPANEL_TITLE;Titel
-IPTCPANEL_TITLEHINT;Kurztitel des Bildes (Object Name)
-IPTCPANEL_TRANSREFERENCE;Übertragungsref
-IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertragung definiert (Original Transmission Reference)
+IPTCPANEL_SUPPCATEGORIES;Andere Kategorien
+IPTCPANEL_SUPPCATEGORIESHINT;Frei wählbare Kategorien (Supplemental Category)
+IPTCPANEL_TITLE;Objekt-Name
+IPTCPANEL_TITLEHINT;Objektname des Bildes. z.B. Dateiname (Object Name)
+IPTCPANEL_TRANSREFERENCE;Original-Übertragungs-Referenz
+IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertragung\ndefiniert. (Original Transmission Reference)
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
-MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
-MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
-MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten Bildes in der Dateiverwaltung und des Filmstreifens. Es werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. Das Miniaturbild des geöffneten Bildes wird nicht angezeigt, wenn es herausgefiltert wurde.\nTaste: <b>y</b>
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten\nBildes in der Dateiverwaltung und des Filmstreifens.\nEs werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. Das\nMiniaturbild des geöffneten Bildes wird nicht angezeigt,\nwenn es herausgefiltert wurde.\nTaste: <b>y</b>
 MAIN_BUTTON_PREFERENCES;Einstellungen
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild in Warteschlange hinzufügen\nTaste: <b>Strg</b> + <b>b</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild zur Warteschlange hinzufügen\nTaste: <b>Strg</b> + <b>b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern\nTaste: <b>Strg</b> + <b>s</b>
 MAIN_BUTTON_SENDTOEDITOR;Bild im externen Editor öffnen
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen\nTaste: <b>Strg</b> + <b>e</b>
@@ -807,7 +809,7 @@ MAIN_TAB_WAVELET_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Hintergrundfarbe der Vorschau basierend auf dem: <b>Oberflächendesign</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Hintergrundfarbe der Vorschau: <b>Schwarz\n</b>Taste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Hintergrundfarbe der Vorschau: <b>Weiß</b>\nTaste: <b>9</b>
-MAIN_TOOLTIP_BEFOREAFTERLOCK;Vorher-Ansicht <b>Sperren</b>/<b>Entsperren</b>\n\n<b>Gesperrt</b>: Friert die Vorher-Ansicht ein, so dass sich die Gesamtwirkung mehrerer Bearbeitungsschritte beurteilen lässt.\n\n<b>Entsperrt</b>: Die Vorher-Ansicht hinkt dem aktuellen Bild immer einen Bearbeitungsschritt hinterher.
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher-Ansicht:</b> Sperren / Entsperren\n\n<b>Gesperrt</b>: Friert die Vorher-Ansicht ein, so\ndass sich die Gesamtwirkung mehrerer\nBearbeitungsschritte beurteilen lässt.\n\n<b>Entsperrt</b>: Die Vorher-Ansicht hinkt dem\naktuellen Bild immer einen Bearbeitungs-\nschritt hinterher.
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden\nTaste: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten\nTaste: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten\nTaste: <b>&gt;</b>
@@ -837,28 +839,28 @@ NAVIGATOR_XY_FULL;Breite = %1, Höhe = %2
 NAVIGATOR_XY_NA;x: --, y: --
 OPTIONS_DEFIMG_MISSING;Die Standard-Profile für <b>Nicht-RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
 OPTIONS_DEFRAW_MISSING;Die Standard-Profile für <b>RAW-Bilder</b> wurden nicht gefunden oder nicht festgelegt.\n\nBitte prüfen Sie das Profil-Verzeichnis, es fehlt möglicherweise oder ist beschädigt.\n\nEs werden stattdessen interne Standardwerte verwendet.
-PARTIALPASTE_BASICGROUP;Grundeinstellungen
+PARTIALPASTE_BASICGROUP;Basisparameter
 PARTIALPASTE_CACORRECTION;Farbsaum entfernen
 PARTIALPASTE_CHANNELMIXER;RGB-Kanalmixer
 PARTIALPASTE_CHANNELMIXERBW;Schwarz/Weiß
 PARTIALPASTE_COARSETRANS;Drehen / Spiegeln
 PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
-PARTIALPASTE_COLORGROUP;Farbeinstellungen
+PARTIALPASTE_COLORGROUP;Farbparameter
 PARTIALPASTE_COLORTONING;Farbanpassungen
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-Füllen
-PARTIALPASTE_COMPOSITIONGROUP;Gestaltungseinstellungen
+PARTIALPASTE_COMPOSITIONGROUP;Gestaltungsparameter
 PARTIALPASTE_CROP;Ausschnitt
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Dunkelbild: Automatische Auswahl
 PARTIALPASTE_DARKFRAMEFILE;Dunkelbild: Datei
 PARTIALPASTE_DEFRINGE;Farbsaum entfernen (Defringe)
-PARTIALPASTE_DETAILGROUP;Detaileinstellungen
+PARTIALPASTE_DETAILGROUP;Detailparameter
 PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofils
 PARTIALPASTE_DIRPYRDENOISE;Rauschreduzierung
 PARTIALPASTE_DIRPYREQUALIZER;Detailebenenkontrast
 PARTIALPASTE_DISTORTION;Verzeichnungskorrektur
 PARTIALPASTE_EPD;Dynamikkompression
 PARTIALPASTE_EQUALIZER;Anzahl der Ebenen
-PARTIALPASTE_EVERYTHING;Alle Einstellungen aktivieren / deaktivieren
+PARTIALPASTE_EVERYTHING;Alle Parameter aktivieren / deaktivieren
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
 PARTIALPASTE_FILMSIMULATION;Filmsimulation
@@ -914,7 +916,7 @@ PREFERENCES_AUTLISMAX;Max.-Durchschnitt aller Kacheln
 PREFERENCES_AUTLISSTD;Hoch
 PREFERENCES_AUTLISVLOW;Keine
 PREFERENCES_AUTLOW;Niedrig
-PREFERENCES_AUTOMONPROFILE;Autom. das für den aktuellen Monitor festgelegte Profil verwenden
+PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden.
 PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHADDALL;Alle hinzufügen
@@ -937,6 +939,7 @@ PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CLUTSCACHE;HaldCLUT-Zwischenspeicher
 PREFERENCES_CLUTSCACHE_LABEL;Maximale Anzahl CLUTs im Zwischenspeicher
 PREFERENCES_CLUTSDIR;HaldCLUT-Verzeichnis
+PREFERENCES_CMMBPC;Schwarzpunkt-Kompensation
 PREFERENCES_CURVEBBOXPOS;Position der Kurven-Buttons
 PREFERENCES_CURVEBBOXPOS_ABOVE;Oben
 PREFERENCES_CURVEBBOXPOS_BELOW;Unten
@@ -1003,7 +1006,7 @@ PREFERENCES_GREYSC18;Yb = 18 CIE L#49
 PREFERENCES_GREYSCA;Automatisch
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm linksseitig
 PREFERENCES_HISTOGRAMWORKING;Das Arbeitsprofil zur Darstellung des Haupthistogramms verwenden
-PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert wird das Arbeitsprofil für die Darstellung des Haupthistogramms, andernfalls das des gammakorrigierten Ausgangsprofil, verwendet.
+PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert wird das Arbeitsprofil für die Darstellung des\nHaupthistogramms, andernfalls das des gammakorrigierten\nAusgangsprofil, verwendet.
 PREFERENCES_HLTHRESHOLD;Lichter - Schwelle
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMG_RELOAD_NEEDED;Änderungen werden nur auf neu geöffnete Bilder angewendet
@@ -1031,9 +1034,10 @@ PREFERENCES_MENUGROUPRANK;Untermenü Bewertung
 PREFERENCES_MENUOPTIONS;Menüoptionen
 PREFERENCES_METADATA;Metadaten
 PREFERENCES_MIN;Mini (100x115)
-PREFERENCES_MONBPC;Schwarzpunkt-Kompensation für die L*a*b* -> Monitorumwandlung
 PREFERENCES_MONINTENT;Standard-Rendering-Intent
-PREFERENCES_MONPROFILE;Standard-Monitor-Profil
+PREFERENCES_MONITOR;Monitor
+PREFERENCES_MONPROFILE;Standardfarbprofil
+PREFERENCES_MONPROFILE_WARNOSX;Aufgrund einer MacOS-Limitierung wird nur sRGB unterstützt.
 PREFERENCES_MULTITAB;Multi-Reitermodus
 PREFERENCES_MULTITABDUALMON;Multi-Reitermodus (auf zweitem Monitor, wenn verfügbar)
 PREFERENCES_NAVGUIDEBRUSH;Farbe der Navigationshilfe
@@ -1041,7 +1045,7 @@ PREFERENCES_NAVIGATIONFRAME;Navigation
 PREFERENCES_NOISE;Rauschreduzierung
 PREFERENCES_OUTDIR;Ausgabeverzeichnis
 PREFERENCES_OUTDIRFOLDER;In dieses Verzeichnis speichern
-PREFERENCES_OUTDIRFOLDERHINT;Alle Dateien im ausgewähltem Verzeichnis speichern.
+PREFERENCES_OUTDIRFOLDERHINT;Alle Dateien im ausgewählten Verzeichnis speichern.
 PREFERENCES_OUTDIRTEMPLATE;Dynamisches Verzeichnis verwenden
 PREFERENCES_OUTDIRTEMPLATEHINT;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
 PREFERENCES_OVERLAY_FILENAMES;Bildinformationen überlagern die Miniaturbilder in der Dateiverwaltung
@@ -1058,6 +1062,7 @@ PREFERENCES_PREVDEMO;Farbinterpolation
 PREFERENCES_PREVDEMO_FAST;Schnell
 PREFERENCES_PREVDEMO_LABEL;Demosaikmethode für 100%-Ansicht
 PREFERENCES_PREVDEMO_SIDECAR;Wie im Bildverarbeitungsprofil vorgegeben
+PREFERENCES_PRINTER;Drucker (Soft-Proofing)
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
 PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher
@@ -1066,9 +1071,11 @@ PREFERENCES_PROFILESAVECACHE;Verarbeitungsparameter im Zwischenspeicher speicher
 PREFERENCES_PROFILESAVEINPUT;Verarbeitungsparameter zusammen mit Datei speichern (Sidecar)
 PREFERENCES_PROFILE_NONE;Kein Farbprofil
 PREFERENCES_PROPERTY;Eigenschaft
+PREFERENCES_PRTINTENT;Rendering-Intent
+PREFERENCES_PRTPROFILE;Farbprofil
 PREFERENCES_PSPATH;Adobe Photoshop Installationsverzeichnis
 PREFERENCES_REMEMBERZOOMPAN;Zoom und Bildposition merken
-PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten des vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n“Demosaikmethode für 100%-Ansicht“ muss auf “Wie im Bildverarbeitungsprofil vorgegeben“ eingestellt sein.
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten\ndes vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n“Demosaikmethode für 100%-Ansicht“ muss auf “Wie im Bild-\nverarbeitungsprofil vorgegeben“ eingestellt sein.
 PREFERENCES_RGBDTL_LABEL;Maximale Anzahl Threads für Rauschreduzierung
 PREFERENCES_RGBDTL_TOOLTIP;Die Rauschreduzierung benötigt mindestens 128MB RAM für ein 10 Megapixel-Bild oder 512MB für ein 40 Megapixel-Bild, und zusätzlich 128MB RAM pro Thread. Je mehr Threads parallel ablaufen, desto schneller ist die Berechnung. Bei Einstellung "0" werden so viele Threads wie möglich benutzt.
 PREFERENCES_SELECTFONT;Schriftart
@@ -1168,7 +1175,7 @@ SAVEDLG_SUBSAMP_TOOLTIP;Beste Kompression: 4:2:0\nAusgeglichen: 4:2:2\nBeste Qua
 SAVEDLG_TIFFUNCOMPRESSED;Unkomprimiertes TIFF
 SAVEDLG_WARNFILENAME;Die Datei wird gespeichert als
 SHCSELECTOR_TOOLTIP;Um die 3 Regler zurückzusetzen, rechte Maustaste klicken.
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Wenn eingeschaltet, werden die Pixel, die\naußerhalb des Gamut-Farbbereichs liegen,\nin Grau angezeigt
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Wenn eingeschaltet, werden die Pixel, die\naußerhalb des Gamut-Farbbereichs liegen,\nin Grau angezeigt.
 SOFTPROOF_TOOLTIP;<b>Soft-Proofing:</b>\n\nWenn eingeschaltet, wird das Rendern mit dem\nAusgabefarbprofil simuliert.\nVorzugsweise für die Simulation der Druckausgabe.
 THRESHOLDSELECTOR_B;Unten
 THRESHOLDSELECTOR_BL;Unten-Links
@@ -1177,7 +1184,7 @@ THRESHOLDSELECTOR_HINT;<b>Umschalt</b>-Taste halten, um individuelle\nKontrollpu
 THRESHOLDSELECTOR_T;Oben
 THRESHOLDSELECTOR_TL;Oben-Links
 THRESHOLDSELECTOR_TR;Oben-Rechts
-TOOLBAR_TOOLTIP_COLORPICKER;<b>Farbwähler</b>\n\nWenn eingeschaltet:\n\n- Klicken Sie mit der linken Maustaste in das Bild um einen Farbwähler\nzu setzen.\n- Mit gedrückter linker Maustaste können Sie den Farbwähler verschieben.\n- Zum Enfernen klicken Sie mit der rechten Maustaste auf den Farbwähler.\n- Um alle Farbwähler zu entfernen, klicken Sie bei gedrückter Umschalttaste\ndie rechte Maustaste.\n- Durch Klicken mit der rechten Maustaste in einen leeren Bereich wird wieder\nauf das Handwerkzeug umgeschaltet.
+TOOLBAR_TOOLTIP_COLORPICKER;<b>Farbwähler</b>\n\nWenn eingeschaltet:\n- Mit der linken Maustaste können Sie einen Farbwähler setzen.\n- Zum Verschieben, linke Maustaste festhalten.\n- Umschalttaste + Rechts-Klick entfernt alle Farbwähler.\n- Rechts-Klick in einen freien Bereich schaltet auf das Hand-Werkzeug zurück.
 TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen\nTaste: <b>c</b>\n\nZum Verschieben des Ausschnitts,\nUmschalttaste festhalten.
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug\nTaste: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Ausrichten / Drehen\nTaste: <b>s</b>\n\nRichtet das Bild entlang einer Leitlinie aus.
@@ -1811,7 +1818,6 @@ TP_SHARPENING_RLD_AMOUNT;Intensität
 TP_SHARPENING_RLD_DAMPING;Dämpfung
 TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwelle
-TP_SHARPENING_TOOLTIP;Ergibt einen leicht geänderten Effekt, wenn CIECAM02 verwendet wird.
 TP_SHARPENING_USM;Unschärfemaskierung
 TP_SHARPENMICRO_AMOUNT;Intensität
 TP_SHARPENMICRO_LABEL;Mikrokontrast
