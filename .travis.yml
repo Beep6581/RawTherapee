@@ -17,6 +17,7 @@ notifications:
   irc:
     channels:
     - "chat.freenode.net#rawtherapee"
+    skip_join: true
     template:
     - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
   email:
