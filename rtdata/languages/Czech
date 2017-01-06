@@ -1035,9 +1035,7 @@ PREFERENCES_MENUGROUPRANK;Skupina "Hodnocení"
 PREFERENCES_MENUOPTIONS;Volby místní nabídky
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Velmi malá (100x115)
-PREFERENCES_MONBPC;Kompenzace černého bodu pro L*a*b*->Přizpůsobení pro monitor
 PREFERENCES_MONINTENT;Výchozí záměr monitoru
-PREFERENCES_MONPROFILE;Výchozí profil monitoru
 PREFERENCES_MULTITAB;Mód více karet editoru
 PREFERENCES_MULTITABDUALMON;Mód více karet editoru ve vlastním okně
 PREFERENCES_NAVGUIDEBRUSH;Barva vodítek navigátoru
@@ -2068,6 +2066,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PRTINTENT;Rendering intent

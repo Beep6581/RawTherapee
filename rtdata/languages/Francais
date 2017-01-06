@@ -957,9 +957,7 @@ PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Intention de rendu par défaut
-PREFERENCES_MONITOR;Moniteur
-PREFERENCES_MONPROFILE;Profil couleur par défaut
-PREFERENCES_MONPROFILE_WARNOSX;Due à des limitations de MacOS, seul sRGB est supporté.
+PREFERENCES_MONPROFILE_WARNOSX;Due à des limitations de macOS, seul sRGB est supporté.
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_NAVGUIDEBRUSH;Couleur du cadre dans le Navigateur
@@ -982,7 +980,6 @@ PREFERENCES_PREVDEMO;Méthode de Dématriçage de l'Aperçu
 PREFERENCES_PREVDEMO_FAST;Rapide
 PREFERENCES_PREVDEMO_LABEL;Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%:
 PREFERENCES_PREVDEMO_SIDECAR;Idem PP3
-PREFERENCES_PRINTER;Imprimante (Épreuvage Écran)
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
@@ -1933,8 +1930,11 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RETINEX;Retinex
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
 !PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.

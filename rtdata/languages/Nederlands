@@ -1008,7 +1008,6 @@ PREFERENCES_MENUOPTIONS;Menu-opties
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Standaard monitor weergave
-PREFERENCES_MONPROFILE;Standaard monitor profiel
 PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
 PREFERENCES_NAVGUIDEBRUSH;Navigator randkleur
@@ -2031,6 +2030,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_443;Output Black Point Compensation
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PRTINTENT;Rendering intent
