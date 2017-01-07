@@ -773,7 +773,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 
     previewsLoaded++;
 
-    g_idle_add (refreshProgressBarUI, this);
+    _refreshProgressBar();
 }
 
 int prevfinished (void* data)
