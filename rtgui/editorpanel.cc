@@ -239,12 +239,14 @@ private:
 #if !defined(__APPLE__) // monitor profile not supported on apple
         if (profileBox.get_active_row_number () > 0) {
 #endif
-            if (!noEvent) {
-                processor->beginUpdateParams ();
-            }
-            processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
-            if (!noEvent) {
-                processor->endUpdateParams (rtengine::EvMonitorTransform);
+            if (processor) {
+                if (!noEvent) {
+                    processor->beginUpdateParams ();
+                }
+                processor->setSoftProofing (softProof.get_sensitive() && softProof.get_active(), spGamutCheck.get_sensitive() && spGamutCheck.get_active());
+                if (!noEvent) {
+                    processor->endUpdateParams (rtengine::EvMonitorTransform);
+                }
             }
 #if !defined(__APPLE__) // monitor profile not supported on apple
         }
