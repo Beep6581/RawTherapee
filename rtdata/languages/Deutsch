@@ -31,7 +31,8 @@
 #30 2016-09-30 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1234
 #31 2016-12-01 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1408
 #32 2016-12-29 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1464
-#33 2016-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
+#33 2017-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
+#34 2017-01-07 IPTC (TooWaBoo) RT4.2.1492
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -711,23 +712,47 @@ HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
 HISTORY_SNAPSHOTS;Schnappschüsse
 IPTCPANEL_CATEGORY;Kategorie
+IPTCPANEL_CATEGORYHINT;Beschreibt das Thema des Bildes nach\nMeinung des Anbieters.
 IPTCPANEL_CITY;Stadt
+IPTCPANEL_CITYHINT;Tragen Sie den Namen der Stadt ein, in dem\ndieses Bild aufgenommen wurde.
 IPTCPANEL_COPYHINT;IPTC-Werte in die Zwischenablage kopieren.
+IPTCPANEL_COPYRIGHT;Urheberrechtsvermerk
+IPTCPANEL_COPYRIGHTHINT;Enthält jeglichen notwendigen Urheberrechtsvermerk wie\nz.B. © Copyright 2014 Erika Mustermann, all rights reserved.
 IPTCPANEL_COUNTRY;Land
-IPTCPANEL_CREATORHINT;Name des Erstellers des Bildes (By-line)
-IPTCPANEL_CREDIT;Anbieter
-IPTCPANEL_CREDITHINT;Identifiziert den Anbieter des Bildes, das muss\nnicht der Eigentümer sein. (Credit)
-IPTCPANEL_DATECREATED;Erstellt am
+IPTCPANEL_COUNTRYHINT;Tragen Sie den Namen des Landes ein, in dem\ndieses Bild aufgenommen wurde.
+IPTCPANEL_CREATOR;Ersteller
+IPTCPANEL_CREATORHINT;Tragen Sie den Namen der Person ein,\ndie dieses Bild erstellt hat.
+IPTCPANEL_CREATORJOBTITLE;Berufsbezeichnung des Erstellers
+IPTCPANEL_CREATORJOBTITLEHINT;Geben Sie die Berufsbezeichnung der Person ein,\ndie im Feld Ersteller aufgeführt ist.
+IPTCPANEL_CREDIT;Danksagung
+IPTCPANEL_CREDITHINT;Geben Sie ein, wer aufgeführt werden muss,\nwenn das Bild veröffentlicht wird.
+IPTCPANEL_DATECREATED;Erstellungsdatum
+IPTCPANEL_DATECREATEDHINT;Geben Sie das Erstellungdatum des Bildes ein.
+IPTCPANEL_DESCRIPTION;Beschreibung
+IPTCPANEL_DESCRIPTIONHINT;Beschreiben Sie kurz "Wer", "Was" und "Warum",\nwas passiert in dem Bild und welche Rolle\nspielen die dargestellten Personen.
+IPTCPANEL_DESCRIPTIONWRITER;Verfasser der Beschreibung
+IPTCPANEL_DESCRIPTIONWRITERHINT;Tragen Sie den Namen der Person ein, die beim\nSchreiben, Ändern oder Korrigieren der Bildbe-\nschreibung involviert war.
 IPTCPANEL_EMBEDDED;Eingebettet
 IPTCPANEL_EMBEDDEDHINT;Setzt auf die im Bild eingebetteten IPTC-Daten zurück.
 IPTCPANEL_HEADLINE;Überschrift
-IPTCPANEL_INSTRUCTIONS;Spezielle Anweisungen
+IPTCPANEL_HEADLINEHINT;Tragen Sie eine kurze veröffentlichbare\nSynopsis, oder eine Zusammenfassung\ndes Bildinhalts ein.
+IPTCPANEL_INSTRUCTIONS;Anweisungen
+IPTCPANEL_INSTRUCTIONSHINT;Geben Sie weitere redaktionelle Anweisungen bezüglich\ndes Gebrauchs des Bildes ein, wie z. B. Sperrfristen,\nNutzungsbeschränkungen oder Warnungen, die nicht\nschon im Urheberrechtsvermerk aufgeführt sind.
 IPTCPANEL_KEYWORDS;Stichwörter
+IPTCPANEL_KEYWORDSHINT;Geben Sie beliebig viele Schlüsselwörter\nvon Ausdrücken oder Phrasen ein, um das\nThema des Bildes zu beschreiben.
 IPTCPANEL_PASTEHINT;IPTC-Werte aus der Zwischenablage einfügen
+IPTCPANEL_PROVINCE;Bundesland / Kanton
+IPTCPANEL_PROVINCEHINT;Tragen Sie den Namen des Bundeslandes / Kanton\nein, in dem dieses Bild aufgenommen wurde.
 IPTCPANEL_RESET;Zurücksetzen
 IPTCPANEL_RESETHINT;Auf die im Profil gespeicherten Werte zurücksetzen
 IPTCPANEL_SOURCE;Quelle
-IPTCPANEL_TITLE;Objekt-Name
+IPTCPANEL_SOURCEHINT;Tragen Sie den Namen einer Person oder einer\nFirma ein, von der Sie das Bild erhalten haben\nund die eine wesentliche Rolle in der Lieferkette\nspielt.
+IPTCPANEL_SUPPCATEGORIES;Weitere Kategorien
+IPTCPANEL_SUPPCATEGORIESHINT;Weitere Kategorien um das Thema\ndes Bildes genauer zu spezifizieren.
+IPTCPANEL_TITLE;Titel
+IPTCPANEL_TITLEHINT;Geben Sie einen kurzen lesbaren Namen\nfür das Bild ein, z.B. den Dateinamen.
+IPTCPANEL_TRANSREFERENCE;Verarbeitungs-ID
+IPTCPANEL_TRANSREFERENCEHINT;Geben Sie eine Kennung zur Kontrolle oder\nVerfolgung des Arbeitsablaufes ein.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
@@ -2042,31 +2067,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
-!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
-!IPTCPANEL_COPYRIGHT;Copyright notice
-!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
-!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
-!IPTCPANEL_CREATOR;Creator
-!IPTCPANEL_CREATORJOBTITLE;Creator's job title
-!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
-!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
-!IPTCPANEL_DESCRIPTION;Description
-!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
-!IPTCPANEL_DESCRIPTIONWRITER;Description writer
-!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
-!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
-!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
-!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
-!IPTCPANEL_PROVINCE;Province or state
-!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
-!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
-!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
-!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
-!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
-!IPTCPANEL_TRANSREFERENCE;Job ID
-!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
