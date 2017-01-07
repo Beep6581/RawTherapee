@@ -28,6 +28,7 @@ Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTIO
 
     rlistener = nullptr;
     autoDistor = Gtk::manage (new Gtk::Button (M("GENERAL_AUTO")));
+    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto.png")));
     autoDistor->set_alignment(0.5f, 0.5f);
     autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TIP"));
     idConn = autoDistor->signal_pressed().connect( sigc::mem_fun(*this, &Distortion::idPressed) );

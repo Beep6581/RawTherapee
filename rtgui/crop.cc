@@ -71,8 +71,7 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true)
 
     pack_start (*hb2, Gtk::PACK_SHRINK, 4);
 
-    selectCrop = Gtk::manage (new Gtk::Button ());
-    selectCrop->set_tooltip_text(M("TP_CROP_SELECTCROP"));
+    selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
     selectCrop->set_image (*Gtk::manage (new RTImage ("crop.png")));
 
     pack_start (*selectCrop, Gtk::PACK_SHRINK, 2);
