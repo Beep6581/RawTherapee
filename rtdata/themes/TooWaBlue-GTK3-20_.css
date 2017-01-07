@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016 TooWaBoo
-  Version 2.27 - requires RT 4.2.1445 or higher
+  Version 2.28 - requires RT 4.2.1445 or higher
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 @define-color text-hl-color rgb(210,210,210);           /*** Active text color * Default: rgb(210,210,210) ***/
 
 @define-color bg-highlighted-text-color rgb(35,99,166); /*** Highlighted text color background* Default: rgb(35,99,166) ***/
-@define-color highlighted-text-color rgb(210,210,210);  /*** Highlighted text color * Default: rgb(35,99,166) ***/
+@define-color highlighted-text-color rgb(210,210,210);  /*** Highlighted text color * Default: rgb(210,210,210) ***/
 
 @define-color bg-image rgb(70,70,70);                   /*** Image area & File Browser background * Default: rgb(70,70,70) ***/
 
@@ -43,7 +43,7 @@
 @define-color bg-button-hover rgba(0,0,0,.25);
 @define-color bg-button-active rgba(0,0,0,.60);
 
-@define-color winHeaderbar rgb(50,50,50);
+@define-color winHeaderbar rgb(55,55,55);
 @define-color winTitle rgb(190,190,190);
 
 @define-color bg-tooltip rgb(185,185,185);
@@ -348,7 +348,7 @@ filechooser list row:selected {
 
 #fullButton,
 #histButton {
-    padding: 5px;
+    padding: 5px 4px;
     margin: 0;
     border-color: @bg-light-grey;
     border-style: solid;
@@ -361,7 +361,7 @@ filechooser list row:selected {
     border-radius: 0;
 }
 #fullButton {
-    padding: 5px 5px 6px;
+    padding: 5px 4px 6px;
 }
 #EditorLeftPaned #fullButton,
 #EditorLeftPaned #histButton {
@@ -591,86 +591,83 @@ progressbar.horizontal trough progress {
     border: none;
     border-radius: 6px;
 }
-#MainNotebook > header.top > grid > progressbar {
-    margin-right: 5px;
-}
-#MainNotebook > header.left > grid > progressbar {
-    margin-bottom: 5px;
-}
+
 /*** end ***************************************************************************************/
 
 /*** Notebook **********************************************************************************/
-notebook {
+notebook,
+notebook header,
+notebook tabs,
+notebook tab,
+notebook stack {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
     padding: 0;
     margin: 0;
-    border: none;
+    min-width: 0;
+    min-height: 0;
 }
 notebook header {
-    box-shadow: none;
     background-color: @bg-dark-grey;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    margin: 0;
+    padding: 0 5px;
 }
-notebook stack {
-    background-color: @bg-light-grey;
-    padding: 0;
-    margin: 0;
-}
-dialog notebook stack {
-    background-color: @bg-grey;
-    padding: 0;
-    margin: 0;
+notebook header.left {
+    padding: 5px 0;
 }
 notebook tabs {
-    background-color: @bg-dark-grey;
-    padding: 6px;
-    margin:0;
+    background-color: transparent;
 }
 notebook tab {
     background-color: transparent;
-    border: none;
-    min-height: 0;
+    margin: 5px;
+}
+notebook header tab > grid > image {
+    min-height: 28px;
     min-width: 0;
-    box-shadow: none;
+    padding: 0 3px;
 }
-
-notebook header.top tab label {
-    padding: 3px 4px;
+notebook header.left tab > grid > image {
+    min-height: 0;
+    min-width: 28px;
+    padding: 3px 0;
 }
-notebook header.left tab label {
-    padding: 4px 3px;
-}
-notebook header tab:hover {
-    box-shadow: none;
+notebook header tab label {
+    margin: 3px;
 }
 notebook header tab:hover label {
     color: @headline-hl;
 }
-
-notebook header.top tab {
-    padding: 3px 6px;
-}
-notebook header.top tab:checked {
+notebook header tab:checked {
     box-shadow: 0 3px @accent-color2;
-}
-
-notebook header.left tab {
-    padding: 5px 1px;
 }
 notebook header.left tab:checked {
     box-shadow: 3px 0 @accent-color2;
 }
-
 notebook > header > tabs > arrow {
     background-color: transparent;
+    border-radius: 2px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0 2px;
+    margin: 6px 0;
+}
+notebook > header.left > tabs > arrow {
+    padding: 2px 0;
+    margin: 0 6px;
 }
 notebook > header > tabs > arrow:hover {
     background-color: rgba(255,255,255,.1);
 }
 notebook > header > tabs > arrow:active {
     background-color: transparent;
+}
+
+notebook stack {
+    background-color: @bg-light-grey;
+}
+dialog notebook stack {
+    background-color: @bg-grey;
 }
 /*?win*/
 #MainNotebook > stack > :nth-child(1) {
@@ -684,11 +681,7 @@ notebook > header > tabs > arrow:active {
 #MainNotebook > stack > :nth-child(2) > :nth-child(2) {
     margin-bottom: 4px;
 }
-#MainNotebook header.left tabs image {
-    min-width: 32px;
-    min-height: 0;
-    padding: 2px 0;
-}
+
 
 /* Adds a line on top of the notebook as a separtor for the titlebar (only on CSD) */
 dialog.csd #PrefNotebook > header,
@@ -698,20 +691,23 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 /**/
 
-#ToolPanelNotebook > header tab {
-    padding: 3px 4px;
+#ToolPanelNotebook > header tab image {
+    min-height: 28px;
+    min-width: 30px;
 }
 #ToolPanelNotebook > header tabs {
     margin-bottom: 3px;
 }
 
+#RightNotebook {
+    margin: 5px 0 0 0;
+}
 #RightNotebook > header {
-    margin: 5px 5px 0 0;
+    margin: 0 5px 0 0;
 }
 #RightNotebook > stack {
     background-color: @bg-grey;
     padding: 0;
-    margin-top: 5px;
 }
 #RightNotebook > stack > :nth-child(3),
 #RightNotebook > stack > :nth-child(4) {
@@ -720,23 +716,29 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #PrefNotebook header {
-    padding: 0;
     margin: -8px -8px 4px;
 }
 #AboutNotebook header {
-    padding: 0;
     margin: -8px -8px 8px;
 }
 #AboutNotebook stack > * > * > * {
     background-color: @dark-grey;
 }
 
-#PrefNotebook header.top tab label, #AboutNotebook header.top tab label {
-    padding: 0;
-}
-
 /* All tool panels have a frame except for Meta which unlike the rest is a notebook itself.
  * So we use CSS to make it look like a frame. */
+
+#MetaPanelNotebook header {
+    background-color: @bg-grey;
+    padding: 4px;
+    margin: 6px 6px 0;
+}
+#MetaPanelNotebook > header > tabs {
+    background-color: @bg-dark-grey;
+}
+#MetaPanelNotebook > header > tab {
+    background-color: @bg-dark-grey;
+}
 
 #MetaPanelNotebook > stack > box {
     border: none;
@@ -756,20 +758,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 #MetaPanelNotebook > stack > box:nth-child(2) > scrolledwindow > viewport.frame {
     padding: 0 0 0 10px;
-}
-#MetaPanelNotebook header {
-    border: none;
-    background-color: @bg-grey;
-    border-radius: 0;
-    padding: 4px;
-    margin: 6px 6px 0;
-}
-#MetaPanelNotebook > header > tabs {
-    background-color: @bg-dark-grey;
-}
-#MetaPanelNotebook > header tab {
-    margin: 0 4px;
-    padding: 2px 4px;
 }
 
 #MetaPanelNotebook separator {
@@ -1043,11 +1031,9 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border: none;
     padding: 0;
     margin: 0;
-    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.50);
+    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.50), 0 0 0 1px @bg-dark-grey;
 }
-.popup {
-    box-shadow: 0 0 0 1px @bg-dark-grey;
-}
+
 menu {
     background-color: @bg-dark-grey;
     border: 1px solid @accent-color;
@@ -1084,13 +1070,15 @@ menu image {
 }
 
 /*** Selection popup list (used in filechooser) ***/
-entry > window > frame {box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.50);
+entry > window > frame {
     background-color: @bg-dark-grey;
 }
 entry > window > frame > border {
     background-color: @bg-dark-grey;
     padding: 1px;
     border: 1px solid @accent-color;
+}
+.csd entry > window > frame > border {
     margin: 1px;
 }
 /* end */
@@ -1098,13 +1086,15 @@ entry > window > frame > border {
 /*** end ***************************************************************************************/
 
 /*** Popover *** Context menu filechooser ******************************************************/
+.csd popover.background {
+    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
+}
 popover.background {
     background-color: @bg-dark-grey;
     border-color: @accent-color;
     border-radius: 0;
     padding: 0;
     margin: 0;
-    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
 }
 popover.background > box {
     padding: 0;
@@ -1420,10 +1410,10 @@ popover button.text-button:active {
 
 /* Titlebar & Notebook buttons */
 #MainNotebook > header.top > grid > button {
-    margin: 0 5px 0 0;
+    margin: 0 0 0 5px;
 }
 #MainNotebook > header.left > grid > button {
-    margin: 0 0 5px 0;
+    margin: 5px 0 0 0;
 }
 
 headerbar button.titlebutton image {
@@ -1448,7 +1438,7 @@ messagedialog headerbar button.titlebutton {
 
 #MainNotebook tab #CloseButton {
     padding: 0;
-    margin: 0;
+    margin: 4px 1px;
     min-height: 18px;
     min-width: 18px;
 }
@@ -1718,14 +1708,14 @@ entry:focus > selection  {
     border-radius: 4px 4px 0 0;
     border: none;
     padding: 0;
-    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px rgb(25,25,25);
+    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px rgb(30,30,30);
     margin: 10px;
 }
 headerbar {
     background-color: @winHeaderbar;
     box-shadow: inset 0 1px rgba(200,200,200,.13);
     background-image: linear-gradient(shade(@winHeaderbar,1.14), shade(@winHeaderbar,.86));
-    border-bottom: 1px solid rgb(25,25,25);
+    border-bottom: 1px solid rgb(30,30,30);
     border-radius: 4px 4px 0 0;
     min-height: 0;
     padding: 4px 5px 3px;
@@ -1743,7 +1733,7 @@ headerbar .title{
 
 /* Window in background */
 :not(.popup):not(tooltip) > decoration:backdrop {
-    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.3), 0 0 0 1px rgb(25,25,25);
+    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.3), 0 0 0 1px rgb(30,30,30);
 }
 headerbar:backdrop {
     box-shadow: inset 0 1px rgba(200,200,200,.11);
@@ -1756,9 +1746,9 @@ headerbar .title:backdrop {
 
 /*** end ***************************************************************************************/
 
-/* TooWaBoo's personal settings */
+/* TooWaBoo's personal settings * /
 #PartialPaste {min-width: 811px; min-height: 589px;}
-/*
 tooltip {background-color: transparent; border: none;}
 tooltip label {color: transparent;}
 / * end */
+
