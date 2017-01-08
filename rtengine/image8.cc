@@ -67,7 +67,7 @@ void Image8::setScanline (int row, unsigned char* buffer, int bps, float *minVal
 
     switch (sampleFormat) {
     case (IIOSF_UNSIGNED_CHAR):
-        memcpy (data + row * width * 3, buffer, width * 3);
+        memcpy (data + row * width * 3u, buffer, width * 3);
         break;
 
     case (IIOSF_UNSIGNED_SHORT): {
