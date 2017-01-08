@@ -1,5 +1,5 @@
---- dcraw.c	2017-01-06 20:50:39 +0000
-+++ dcraw.cc	2017-01-08 15:38:38 +0000
+--- dcraw.c	2016-10-28 13:45:27 +0000
++++ dcraw.cc	2016-10-31 13:35:15 +0000
 @@ -1,3 +1,16 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -2935,7 +2935,7 @@
        case 0:
        case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
        case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
-+      case 8:     if(tiff_samples == 1) load_raw = &CLASS  deflate_dng_load_raw;  break;
++      case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
        case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
        default:    load_raw = 0;
      }
