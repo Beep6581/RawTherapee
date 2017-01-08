@@ -8753,7 +8753,7 @@ void CLASS identify()
       case 0:
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
       case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
-      case 8:     if(tiff_samples == 1) load_raw = &CLASS  deflate_dng_load_raw;  break;
+      case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;
     }
