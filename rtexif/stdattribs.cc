@@ -445,11 +445,16 @@ public:
     UserCommentInterpreter () {}
     virtual std::string toString (Tag* t)
     {
-        char *buffer = new char[t->getCount()];
+        int count = t->getCount();
+        if(count <= 8) {
+            return "";
+        }
 
-        if (!strncmp((char*)t->getValue(), "ASCII\0\0\0", 8)) {
-            strncpy (buffer, (char*)t->getValue() + 8, t->getCount() - 8);
-            buffer[t->getCount() - 8] = '\0';
+        char *buffer = new char[count - 7];
+
+        if (!strncmp((char*)t->getValue(), "ASCII\0\0\0", 8)) { // TODO: this compares only up to the first \0, remaining \0\0 are ignored
+            strncpy (buffer, (char*)t->getValue() + 8, count - 8);
+            buffer[count - 8] = '\0';
         } else {
             buffer[0] = 0;
         }
