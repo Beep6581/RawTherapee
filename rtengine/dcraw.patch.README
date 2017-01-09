@@ -1,8 +1,7 @@
 Patch for vanilla dcraw.  Please run this against any new dcraw version copied here.
  Instructions for patching:
-1) Download newest dcraw.c file, and copy to this folder.
-2) Run 'patch -p0 < dcraw.patch' to patch the file.  If there are any rejections, please fix them manually.
-3) Move the patched dcraw.c to dcraw.cc
-4) Re-copy the vanilla downloaded dcraw.c back to this folder, and update the patch: 'diff -u dcraw.c dcraw.cc > dcraw.patch'
 
-
+1) Create the patch: 'diff -u dcraw.c dcraw.cc > dcraw.patch'
+2) Download newest dcraw.c file, and copy to this folder.
+3) Run 'patch -p0 < dcraw.patch' to patch the file.  If there are any rejections, please fix them manually.
+4) Move the patched dcraw.c to dcraw.cc

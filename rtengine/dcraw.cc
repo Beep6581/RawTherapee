@@ -9727,10 +9727,28 @@ static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max
 }
 
 void CLASS deflate_dng_load_raw() {
+    float_raw_image = new float[raw_width * raw_height];
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+    for (size_t i = 0; i < raw_width * raw_height; ++i)
+      float_raw_image[i] = 0.0f;
+
+  if(tiff_samples != 1) {
+    fprintf(stderr, "deflate_dng_load_raw %s: demosaiced float dng files are not supported\n",ifname);
+    return;
+  }
+
   struct tiff_ifd * ifd = &tiff_ifd[0];
   while (ifd < &tiff_ifd[tiff_nifds] && ifd->offset != data_offset) ++ifd;
   if (ifd == &tiff_ifd[tiff_nifds]) {
-    fprintf(stderr, "DNG Deflate: Raw image not found???\n");
+    fprintf(stderr, "deflate_dng_load_raw %s: Raw image not found???\n",ifname);
+    return;
+  }
+
+  if (ifd->sample_format != 3) {  // no floating point data
+    fprintf(stderr, "deflate_dng_load_raw %s: Only float format is supported for deflate compressed dng files\n",ifname);
     return;
   }
 
@@ -9740,16 +9758,6 @@ void CLASS deflate_dng_load_raw() {
     case 34894: predFactor = 2; break;
     case 34895: predFactor = 4; break;
 	default: predFactor = 0; break;
-  }
-
-  if (ifd->sample_format == 3) {  // Floating point data
-    float_raw_image = new float[raw_width * raw_height];
-
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-    for (size_t i = 0; i < raw_width * raw_height; ++i)
-      float_raw_image[i] = 0.0f;
   }
 
   // NOTE: This reader is based on the official DNG SDK from Adobe.
