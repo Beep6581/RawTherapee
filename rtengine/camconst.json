@@ -1784,7 +1784,7 @@ Camera constants:
         "make_model": [ "RICOH PENTAX K-1", "PENTAX K-1" ],
         "dcraw_matrix": [ 8596,-2981,-639,-4202,12046,2431,-685,1424,6122 ], // adobe DNG v9.7 D65
         //"dcraw_matrix": [ 8566,-2746,-1201,-3612,12204,1550,-893,1680,6264 ], // PENTAX DNG
-        "raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
+        //"raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
         "ranges": {
             "white": [
                 { "iso": [ 100, 200, 400, 800 ], "levels": 16300 }, // 16380

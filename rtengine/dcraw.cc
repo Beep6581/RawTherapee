@@ -8743,6 +8743,10 @@ void CLASS identify()
   if (width == 7424 && !strcmp(model,"645D"))
     { height  = 5502;   width  = 7328; filters = 0x61616161; top_margin = 29;
       left_margin = 48; }
+  if (width == 7392 && !strncmp(model,"K-1",3))
+    { left_margin = 6; width  = 7376; if(!dng_version) {top_margin = 18; height -= top_margin; }}
+  if (width == 4832 && !strncmp(model,"K-1",3)) // K-1 APS-C format
+     if(!dng_version) {top_margin = 18; height -= top_margin; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
   if (dng_version) {
