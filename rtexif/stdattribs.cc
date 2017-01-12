@@ -447,12 +447,12 @@ public:
     {
         int count = t->getCount();
         if(count <= 8) {
-            return "";
+            return std::string();
         }
-
+        count = std::min(count, 65535); // limit to 65535 chars to avoid crashes in case of corrupted metadata
         char *buffer = new char[count - 7];
 
-        if (!strncmp((char*)t->getValue(), "ASCII\0\0\0", 8)) { // TODO: this compares only up to the first \0, remaining \0\0 are ignored
+        if (!memcmp((char*)t->getValue(), "ASCII\0\0\0", 8)) {
             strncpy (buffer, (char*)t->getValue() + 8, count - 8);
             buffer[count - 8] = '\0';
         } else {
