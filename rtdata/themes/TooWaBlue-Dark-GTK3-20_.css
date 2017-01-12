@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016 TooWaBoo
-  Version 2.28 - requires RT 4.2.1445 or higher
+  Version 2.31 - requires RT 4.2.1445 or higher
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -215,27 +215,31 @@ frame > checkbutton label{
 /*** end ***************************************************************************************/
 
 /*** Lists & Views *****************************************************************************/
-.view {
+textview.view, treeview.view {
     background-color: @bg-dark-grey;
     border-color: @view-grid-border;
-    padding: 2px;
+    padding: 1px;
     margin: 0;
 }
-.view:hover {
+#RightNotebook > stack > :nth-child(3) treeview {
+    border: 1px solid @bg-dark-grey;
+    border-bottom: none;
+}
+#PrefNotebook textview:selected:hover, #PrefNotebook treeview:selected:hover,
+textview:hover, treeview:hover {
     background-color: @bg-list-hover;
 }
-.view:selected {
+textview:selected, treeview:selected {
     color: @text-hl-color;
     background-color: @accent-color;
-    border-color: transparent;
+    border-top-color: transparent;
+}
+#PrefNotebook textview:selected, #PrefNotebook treeview:selected {
+    color: @text-color;
+    background-color: @bg-dark-grey;
 }
 
-#PrefNotebook .view {
-    min-height: 12px;
-    padding: 1px;
-}
-
-#PlacesPaned .view {
+#PlacesPaned treeview {
     padding-left: 5px;
     padding-right: 0;
     -gtk-icon-style: symbolic;
@@ -299,10 +303,14 @@ filechooser * {
 }
 filechooser #pathbarbox {
     border: none;
+    background-color: @bg-dark-grey;
 }
 
 filechooser box {
     border-color: transparent;
+}
+filechooser > box > paned > box {
+    border: 1px solid @bg-dark-grey;
 }
 
 filechooser placessidebar {
@@ -319,7 +327,7 @@ filechooser list {
 }
 filechooser list row {
     margin: 0;
-    min-height: 25px;
+    min-height: 23px;
 }
 filechooser list row label{
     margin: 0;
@@ -375,7 +383,7 @@ separator {
 }
 grid separator.horizontal, box separator.horizontal {
     margin: 2px 0;
-    padding: 0
+    padding: 0;
 }
 grid separator.vertical, box separator.vertical {
     margin: 0 3px;
@@ -475,7 +483,7 @@ menu separator {
 /*** Scrollbar *********************************************************************************/
 scrollbar {
     background-color: rgba(0,0,0,.30);
-    border: none;
+    border: none;margin: 0;
 }
 scrollbar slider {
     background-color: @text-color;
@@ -542,7 +550,7 @@ scale:disabled trough {
 /*** Progressbar *******************************************************************************/
 progressbar.vertical {
     min-width: 0;
-    margin-right: 6px
+    margin-right: 7px;
 }
 progressbar.vertical text {
     color: transparent;
@@ -618,19 +626,24 @@ notebook header.left {
 notebook tabs {
     background-color: transparent;
 }
-notebook tab {
+notebook header tab {
     background-color: transparent;
     margin: 5px;
+    padding: 0 4px;
+}
+notebook header.left tab {
+    padding: 4px 0;
 }
 notebook header tab > grid > image {
     min-height: 28px;
     min-width: 0;
-    padding: 0 3px;
+    padding: 0 2px 0 0;
+    margin: 0;
 }
 notebook header.left tab > grid > image {
     min-height: 0;
     min-width: 28px;
-    padding: 3px 0;
+    padding: 2px 0 0;
 }
 notebook header tab label {
     margin: 3px;
@@ -691,12 +704,18 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 /**/
 
-#ToolPanelNotebook > header tab image {
-    min-height: 28px;
-    min-width: 30px;
-}
 #ToolPanelNotebook > header tabs {
     margin-bottom: 3px;
+}
+#ToolPanelNotebook > header tab {
+    margin: 5px 3px;
+    padding: 0 5px;
+}
+#ToolPanelNotebook > header tab image{
+    min-height: 30px;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
 }
 
 #RightNotebook {
@@ -774,18 +793,27 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0 4px;
     background-color: @bg-dark-grey;
     margin: 0;
+    border-radius: 0;
 }
 
 #MetaPanelNotebook > stack > box:nth-child(2) > scrolledwindow scrolledwindow {
     background-color: @bg-dark-grey;
     padding: 0;
     margin: 0;
-    border-radius: 2px;
 }
-#MetaPanelNotebook textview,
-#MetaPanelNotebook text {
+#MetaPanelNotebook .view {
+    border: 1px solid @bg-dark-grey;
+    padding: 2px;
+    margin: 0;
+}
+#MetaPanelNotebook textview.view {
     background-color: @bg-dark-grey;
-    padding: 2px 5px;
+    padding: 1px 4px;
+    margin: 0;
+}
+#MetaPanelNotebook text {
+    background-color: transparent;
+    padding: 0;
     margin: 0;
 }
 
@@ -823,18 +851,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin: 5px 0 0;
 }
 
-#FileBrowser entry + button {
-    margin: 0 0 0 2px;
-    padding: 2px;
-}
-#FileBrowser entry + button,
-#FileBrowser entry {
-    min-height: 15px;
-    min-width: 15px;
-}
-#FileBrowser label {
-    margin: 0 4px 0 10px;
-}
 #ToolBarPanelFileBrowser {
     margin: 3px -1px;
     min-height: 0;
@@ -854,6 +870,26 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     background-color: transparent;
     background-image: none;
     box-shadow: none;
+}
+
+#ToolBarPanelFileBrowser entry + button.flat,
+#FileBrowser entry + button.flat {
+    min-height: 20px;
+    min-width: 19px;
+    margin: 0 0 0 -20px;
+    border-radius: 0 2px 2px 0;
+    border: 1px solid transparent;
+}
+#ToolBarPanelFileBrowser entry,
+#FileBrowser entry {
+    min-height: 20px;
+    min-width: 144px;
+    margin: 0 -1px 0 0;
+    padding: 0 24px 0 4px;
+}
+#ToolBarPanelFileBrowser label,
+#FileBrowser label {
+    margin: 0 4px 0 6px;
 }
 /*** end ***************************************************************************************/
 
@@ -996,7 +1032,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     border: none;
     border-radius: 0;
     margin: 0;
-    padding: 7px;
+    padding: 6px;
 }
 
     /* Sub-tool (MyExpander) */
@@ -1183,6 +1219,8 @@ scale + button.flat {
 }
 /**/
 
+#ToolBarPanelFileBrowser entry + button:hover,
+#FileBrowser entry + button:hover,
 button.flat:hover,
 button:hover  {
     border: 1px solid @bg-button-border;
@@ -1191,6 +1229,8 @@ button:hover  {
     background-color: @bg-button-hover;
 }
 
+#ToolBarPanelFileBrowser entry + button:active,
+#FileBrowser entry + button:active,
 button.flat:active,
 button.flat:checked,
 button:active,
@@ -1297,6 +1337,10 @@ dialog combobox .combo,
 
 .popupbutton-arrow {
     min-width: 0;
+}
+
+button.color {
+    padding: 3px;
 }
 
 /* Save, Cancel, OK ... buttons */
@@ -1438,7 +1482,7 @@ messagedialog headerbar button.titlebutton {
 
 #MainNotebook tab #CloseButton {
     padding: 0;
-    margin: 4px 1px;
+    margin: 4px -3px 4px 1px;
     min-height: 18px;
     min-width: 18px;
 }
@@ -1486,104 +1530,63 @@ radiobutton {
     min-height: 16px;
 }
 check,
-check row,
-radio,
-radio row {
-    border: none;
+radio {
+    border: 1.16px solid shade(@text-color, .9);
     background-image: none;
-    border-radius: 0;
+    background-color: transparent;
     margin: 0;
     padding: 0;
-    min-height: 16px;
+    min-height: 14px;
     min-width: 14px;
     box-shadow: none;
-    -gtk-icon-source: none;
     background-repeat: no-repeat;
+    -gtk-icon-shadow: none;
 }
-
 radiobutton label,
 checkbutton label {
     margin: 0 6px 0 6px;
     padding: 0;
 }
-frame > checkbutton check{
-    margin-left: 6px;
-    padding: 0;
+check,
+check:indeterminate {
+    border-radius: 2px;
+}
+check:checked {
+    padding: 0 2px 0 0;
+    min-width: 12px;
+}
+radio{
+    border-radius: 20px;
+}
+check:disabled,
+radio:disabled {
+    border-color: rgb(120,120,120);
 }
 
-#PartialPaste checkbutton {
-    padding: 0;
+frame > checkbutton check{
+    margin-left: 6px;
 }
-#PartialPaste check {
+
+#PartialPaste checkbutton:not(#PartialPasteHeader) {
+    padding: 0;
     margin-left: 14px;
 }
-#PartialPasteHeader check {
+#PartialPasteHeader {
     margin-left: 6px;
 }
 #PrefNotebook checkbutton {
     padding: 0;
 }
+#PrefNotebook radiobutton,
 #PrefNotebook stack > box:nth-child(3) checkbutton,
 #PrefNotebook stack > box:nth-child(4) checkbutton {
     padding: 3px 0;
 }
-#PrefNotebook radiobutton {
-    padding: 3px 0;
-}
-/* What a lousy checkbox without label in White Picture :-) */
+
 #MyExpander button + checkbutton:last-child {
     margin-left: 4px;
 }
 
-check,
-check row {
-    background-image: url("images/twb/checkbox-unchecked.png");
-}
-check:checked,
-check row:checked {
-    background-image: url("images/twb/checkbox-checked.png");
-}
-check:disabled,
-check row:disabled {
-    background-image: url("images/twb/checkbox-unchecked-disabled.png");
-}
-check:checked:disabled,
-check row:checked:disabled {
-    background-image: url("images/twb/checkbox-checked-disabled.png");
-}
-check:indeterminate,
-check row:indeterminate {
-    background-image: url("images/twb/checkbox-inconsistent.png");
-}
-check:indeterminate:disabled,
-check row:indeterminate:disabled {
-    background-image: url("images/twb/checkbox-inconsistent-disabled.png");
-}
-
-radio,
-radio row {
-    background-image: url("images/twb/radio-unchecked.png");
-}
-radio:checked,
-radio row:checked {
-    background-image: url("images/twb/radio-checked.png");
-}
-radio:disabled,
-radio row:disabled {
-    background-image: url("images/twb/radio-unchecked-disabled.png");
-}
-radio:checked:disabled,
-radio row:checked:disabled {
-    background-image: url("images/twb/radio-checked-disabled.png");
-}
-radio:indeterminate,
-radio row:indeterminate {
-    background-image: url("images/twb/radio-inconsistent.png");
-}
-radio:indeterminate:disabled,
-radio row:indeterminate:disabled {
-    background-image: url("images/twb/radio-inconsistent-disabled.png");
-}
 /*** end ***************************************************************************************/
 
 /*** Entry & Spinbutton ************************************************************************/
@@ -1621,6 +1624,7 @@ spinbutton {
     color: @text-tbEntry;
     box-shadow: inset 1px  1px rgba(0, 0, 0, .12), 0 1px rgba(255 , 255, 255, 0.12);
 }
+#MyExpander checkbutton + label + spinbutton,
 #MyExpander button + label + spinbutton {
     margin: 3px 0; /* Needed for Reset & and Auto button height*/
 }
@@ -1697,6 +1701,13 @@ entry:focus > selection  {
     background-color: @bg-highlighted-text-color;
     color: @highlighted-text-color;
 }
+
+.view entry {
+    background-color: @bg-dark-grey;
+    margin: 0 -1px;
+    border: none;
+    box-shadow: none;
+}
     /* end*/
 
 /*** end ***************************************************************************************/
@@ -1708,14 +1719,14 @@ entry:focus > selection  {
     border-radius: 4px 4px 0 0;
     border: none;
     padding: 0;
-    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px rgb(30,30,30);
+    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
     margin: 10px;
 }
 headerbar {
-    background-color: @winHeaderbar;
+    background-color: shade(@winHeaderbar,1.12);
     box-shadow: inset 0 1px rgba(200,200,200,.13);
     background-image: linear-gradient(shade(@winHeaderbar,1.14), shade(@winHeaderbar,.86));
-    border-bottom: 1px solid rgb(30,30,30);
+    border-bottom: 1px solid @bg-dark-grey;
     border-radius: 4px 4px 0 0;
     min-height: 0;
     padding: 4px 5px 3px;
@@ -1733,22 +1744,16 @@ headerbar .title{
 
 /* Window in background */
 :not(.popup):not(tooltip) > decoration:backdrop {
-    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.3), 0 0 0 1px rgb(30,30,30);
+    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.3), 0 0 0 1px @bg-dark-grey;
 }
 headerbar:backdrop {
-    box-shadow: inset 0 1px rgba(200,200,200,.11);
-    background-image: linear-gradient(shade(@winHeaderbar,1.07), shade(@winHeaderbar,.93));
+    box-shadow: none;
+    background-image: none;
 }
 headerbar .title:backdrop {
-    color: alpha(@winTitle,.55);
+    color: alpha(@winTitle,.60);
 }
 /**/
 
 /*** end ***************************************************************************************/
-
-/* TooWaBoo's personal settings * /
-#PartialPaste {min-width: 811px; min-height: 589px;}
-tooltip {background-color: transparent; border: none;}
-tooltip label {color: transparent;}
-/ * end */
 
