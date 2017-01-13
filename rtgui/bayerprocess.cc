@@ -83,17 +83,45 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
 
     pixelShiftOptions = Gtk::manage (new Gtk::VBox ());
     pixelShiftOptions->set_border_width(4);
+
     pixelShiftShowMotion = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTSHOWMOTION")));
+    pixelShiftShowMotion->set_tooltip_text (M("TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP"));
     pixelShiftOptions->pack_start(*pixelShiftShowMotion);
 
     pixelShiftShowMotionMaskOnly = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY")));
+    pixelShiftShowMotionMaskOnly->set_tooltip_text (M("TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP"));
     pixelShiftOptions->pack_start(*pixelShiftShowMotionMaskOnly);
 
     pixelShiftAutomatic = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTADAPTIVE")));
     pixelShiftOptions->pack_start(*pixelShiftAutomatic);
 
+    pixelShiftGreen = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTGREEN")));
+    pixelShiftOptions->pack_start(*pixelShiftGreen);
+
+    pixelShiftBlur = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTBLUR")));
+    pixelShiftBlur->set_tooltip_text (M("TP_RAW_PIXELSHIFTBLUR_TOOLTIP"));
+    pixelShiftOptions->pack_start(*pixelShiftBlur);
+
+    pixelShiftHoleFill = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTHOLEFILL")));
+    pixelShiftHoleFill->set_tooltip_text (M("TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP"));
+    pixelShiftOptions->pack_start(*pixelShiftHoleFill);
+
+    pixelShiftMedian = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTMEDIAN")));
+    pixelShiftMedian->set_tooltip_text (M("TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP"));
+    pixelShiftOptions->pack_start(*pixelShiftMedian);
+
+    pixelShiftMedian3 = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTMEDIAN3")));
+    pixelShiftMedian3->set_tooltip_text (M("TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP"));
+    pixelShiftOptions->pack_start(*pixelShiftMedian3);
+
     pixelShiftNonGreenCross = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTNONGREENCROSS")));
     pixelShiftOptions->pack_start(*pixelShiftNonGreenCross);
+
+    pixelShiftNonGreenCross2 = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTNONGREENCROSS2")));
+    pixelShiftOptions->pack_start(*pixelShiftNonGreenCross2);
+
+    pixelShiftNonGreenAmaze = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTNONGREENAMAZE")));
+    pixelShiftOptions->pack_start(*pixelShiftNonGreenAmaze);
 
     pixelShiftNonGreenHorizontal = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTNONGREENHORIZONTAL")));
     pixelShiftOptions->pack_start(*pixelShiftNonGreenHorizontal);
@@ -101,9 +129,12 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftNonGreenVertical = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTNONGREENVERTICAL")));
     pixelShiftOptions->pack_start(*pixelShiftNonGreenVertical);
 
+    pixelShiftExp0 = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTEXP0")));
+    pixelShiftOptions->pack_start(*pixelShiftExp0);
+
     pixelShiftMotion = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTMOTION"), 0, 100, 1, 70));
     pixelShiftMotion->setAdjusterListener (this);
-    pixelShiftMotion->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTION_TOOLTIP"));
+    pixelShiftMotion->set_tooltip_text (M("TP_RAW_PIXELSHIFTMOTION_TOOLTIP"));
 
     if (pixelShiftMotion->delay < options.adjusterMaxDelay) {
         pixelShiftMotion->delay = options.adjusterMaxDelay;
@@ -119,13 +150,14 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftMotionCorrection->append_text("3x3");
     pixelShiftMotionCorrection->append_text("5x5");
     pixelShiftMotionCorrection->append_text("7x7");
+    pixelShiftMotionCorrection->append_text("3x3 new");
     pixelShiftMotionCorrection->set_active(0);
 //    pixelShiftMotionCorrection->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP"));
     pixelShiftMotionCorrection->show();
     hb2->pack_start(*pixelShiftMotionCorrection);
     pixelShiftOptions->pack_start(*hb2);
 
-    pixelShiftStddevFactorGreen = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN"), 2, 8, 0.1, 3));
+    pixelShiftStddevFactorGreen = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN"), 2, 8, 0.1, 5));
     pixelShiftStddevFactorGreen->setAdjusterListener (this);
 
     if (pixelShiftStddevFactorGreen->delay < options.adjusterMaxDelay) {
@@ -135,7 +167,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftStddevFactorGreen->show();
     pixelShiftOptions->pack_start(*pixelShiftStddevFactorGreen);
 
-    pixelShiftStddevFactorRed = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTORRED"), 1, 8, 0.1, 3));
+    pixelShiftStddevFactorRed = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTORRED"), 1, 8, 0.1, 5));
     pixelShiftStddevFactorRed->setAdjusterListener (this);
 
     if (pixelShiftStddevFactorRed->delay < options.adjusterMaxDelay) {
@@ -145,7 +177,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftStddevFactorRed->show();
     pixelShiftOptions->pack_start(*pixelShiftStddevFactorRed);
 
-    pixelShiftStddevFactorBlue = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE"), 1, 8, 0.1, 3));
+    pixelShiftStddevFactorBlue = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE"), 1, 8, 0.1, 5));
     pixelShiftStddevFactorBlue->setAdjusterListener (this);
 
     if (pixelShiftStddevFactorBlue->delay < options.adjusterMaxDelay) {
@@ -186,6 +218,36 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftPrnu->show();
     pixelShiftOptions->pack_start(*pixelShiftPrnu);
 
+    pixelShiftSigma = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSIGMA"), 0.5, 2.5, 0.1, 1.0));
+    pixelShiftSigma->setAdjusterListener (this);
+
+    if (pixelShiftSigma->delay < options.adjusterMaxDelay) {
+        pixelShiftSigma->delay = options.adjusterMaxDelay;
+    }
+
+    pixelShiftSigma->show();
+    pixelShiftOptions->pack_start(*pixelShiftSigma);
+
+    pixelShiftSum = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTMASKTHRESHOLD"), 1.0, 8.0, 0.1, 3.0));
+    pixelShiftSum->setAdjusterListener (this);
+
+    if (pixelShiftSum->delay < options.adjusterMaxDelay) {
+        pixelShiftSum->delay = options.adjusterMaxDelay;
+    }
+
+    pixelShiftSum->show();
+    pixelShiftOptions->pack_start(*pixelShiftSum);
+
+    pixelShiftRedBlueWeight = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTREDBLUEWEIGHT"), 0.1, 1.0, 0.1, 0.7));
+    pixelShiftRedBlueWeight->setAdjusterListener (this);
+
+    if (pixelShiftRedBlueWeight->delay < options.adjusterMaxDelay) {
+        pixelShiftRedBlueWeight->delay = options.adjusterMaxDelay;
+    }
+
+    pixelShiftRedBlueWeight->show();
+    pixelShiftOptions->pack_start(*pixelShiftRedBlueWeight);
+
     pack_start( *pixelShiftOptions, Gtk::PACK_SHRINK, 4);
 
 
@@ -216,8 +278,15 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftAutomaticconn = pixelShiftAutomatic->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftAutomaticChanged), true);
     pixelShiftNonGreenHorizontalconn = pixelShiftNonGreenHorizontal->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftNonGreenHorizontalChanged), true);
     pixelShiftNonGreenVerticalconn = pixelShiftNonGreenVertical->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftNonGreenVerticalChanged), true);
+    pixelShiftHoleFillconn = pixelShiftHoleFill->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftHoleFillChanged), true);
+    pixelShiftMedianconn = pixelShiftMedian->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftMedianChanged), true);
+    pixelShiftMedian3conn = pixelShiftMedian3->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftMedian3Changed), true);
+    pixelShiftGreenconn = pixelShiftGreen->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftGreenChanged), true);
+    pixelShiftBlurconn = pixelShiftBlur->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftBlurChanged), true);
+    pixelShiftExp0conn = pixelShiftExp0->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftExp0Changed), true);
     pixelShiftNonGreenCrossconn = pixelShiftNonGreenCross->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftNonGreenCrossChanged), true);
-    //allEnhconn = allEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::allEnhanceChanged), true);
+    pixelShiftNonGreenCross2conn = pixelShiftNonGreenCross2->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftNonGreenCross2Changed), true);
+    pixelShiftNonGreenAmazeconn = pixelShiftNonGreenAmaze->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftNonGreenAmazeChanged), true);
 }
 
 
@@ -250,8 +319,15 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         pixelShiftAutomatic->set_inconsistent(!pedited->raw.bayersensor.pixelShiftAutomatic);
         pixelShiftNonGreenHorizontal->set_inconsistent(!pedited->raw.bayersensor.pixelShiftNonGreenHorizontal);
         pixelShiftNonGreenVertical->set_inconsistent(!pedited->raw.bayersensor.pixelShiftNonGreenVertical);
+        pixelShiftHoleFill->set_inconsistent(!pedited->raw.bayersensor.pixelShiftHoleFill);
+        pixelShiftMedian->set_inconsistent(!pedited->raw.bayersensor.pixelShiftMedian);
+        pixelShiftMedian3->set_inconsistent(!pedited->raw.bayersensor.pixelShiftMedian3);
+        pixelShiftGreen->set_inconsistent(!pedited->raw.bayersensor.pixelShiftGreen);
+        pixelShiftBlur->set_inconsistent(!pedited->raw.bayersensor.pixelShiftBlur);
+        pixelShiftExp0->set_inconsistent(!pedited->raw.bayersensor.pixelShiftExp0);
         pixelShiftNonGreenCross->set_inconsistent(!pedited->raw.bayersensor.pixelShiftNonGreenCross);
-        //allEnhance->set_inconsistent(!pedited->raw.bayersensor.allEnhance);
+        pixelShiftNonGreenCross2->set_inconsistent(!pedited->raw.bayersensor.pixelShiftNonGreenCross2);
+        pixelShiftNonGreenAmaze->set_inconsistent(!pedited->raw.bayersensor.pixelShiftNonGreenAmaze);
         lmmseIterations->setEditedState ( pedited->raw.bayersensor.lmmseIterations ? Edited : UnEdited);
         pixelShiftMotion->setEditedState ( pedited->raw.bayersensor.pixelShiftMotion ? Edited : UnEdited);
         pixelShiftStddevFactorGreen->setEditedState ( pedited->raw.bayersensor.pixelShiftStddevFactorGreen ? Edited : UnEdited);
@@ -260,6 +336,9 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         pixelShiftEperIso->setEditedState ( pedited->raw.bayersensor.pixelShiftEperIso ? Edited : UnEdited);
         pixelShiftNreadIso->setEditedState ( pedited->raw.bayersensor.pixelShiftNreadIso ? Edited : UnEdited);
         pixelShiftPrnu->setEditedState ( pedited->raw.bayersensor.pixelShiftPrnu ? Edited : UnEdited);
+        pixelShiftSigma->setEditedState ( pedited->raw.bayersensor.pixelShiftSigma ? Edited : UnEdited);
+        pixelShiftSum->setEditedState ( pedited->raw.bayersensor.pixelShiftSum ? Edited : UnEdited);
+        pixelShiftRedBlueWeight->setEditedState ( pedited->raw.bayersensor.pixelShiftRedBlueWeight ? Edited : UnEdited);
 
         if(!pedited->raw.bayersensor.method) {
             method->set_active(procparams::RAWParams::BayerSensor::numMethods);    // No name
@@ -281,7 +360,15 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     pixelShiftAutomatic->set_active(pp->raw.bayersensor.pixelShiftAutomatic);
     pixelShiftNonGreenHorizontal->set_active(pp->raw.bayersensor.pixelShiftNonGreenHorizontal);
     pixelShiftNonGreenVertical->set_active(pp->raw.bayersensor.pixelShiftNonGreenVertical);
+    pixelShiftHoleFill->set_active(pp->raw.bayersensor.pixelShiftHoleFill);
+    pixelShiftMedian->set_active(pp->raw.bayersensor.pixelShiftMedian);
+    pixelShiftMedian3->set_active(pp->raw.bayersensor.pixelShiftMedian3);
+    pixelShiftGreen->set_active(pp->raw.bayersensor.pixelShiftGreen);
+    pixelShiftBlur->set_active(pp->raw.bayersensor.pixelShiftBlur);
+    pixelShiftExp0->set_active(pp->raw.bayersensor.pixelShiftExp0);
     pixelShiftNonGreenCross->set_active(pp->raw.bayersensor.pixelShiftNonGreenCross);
+    pixelShiftNonGreenCross2->set_active(pp->raw.bayersensor.pixelShiftNonGreenCross2);
+    pixelShiftNonGreenAmaze->set_active(pp->raw.bayersensor.pixelShiftNonGreenAmaze);
     ccSteps->setValue (pp->raw.bayersensor.ccSteps);
     lmmseIterations->setValue (pp->raw.bayersensor.lmmse_iterations);
     pixelShiftMotion->setValue (pp->raw.bayersensor.pixelShiftMotion);
@@ -292,6 +379,9 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     pixelShiftEperIso->setValue (pp->raw.bayersensor.pixelShiftEperIso);
     pixelShiftNreadIso->setValue (pp->raw.bayersensor.pixelShiftNreadIso);
     pixelShiftPrnu->setValue (pp->raw.bayersensor.pixelShiftPrnu);
+    pixelShiftSigma->setValue (pp->raw.bayersensor.pixelShiftSigma);
+    pixelShiftSum->setValue (pp->raw.bayersensor.pixelShiftSum);
+    pixelShiftRedBlueWeight->setValue (pp->raw.bayersensor.pixelShiftRedBlueWeight);
 
     if (!batchMode) {
         if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::dcb] ||
@@ -349,12 +439,23 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.pixelShiftEperIso = pixelShiftEperIso->getValue();
     pp->raw.bayersensor.pixelShiftNreadIso = pixelShiftNreadIso->getValue();
     pp->raw.bayersensor.pixelShiftPrnu = pixelShiftPrnu->getValue();
+    pp->raw.bayersensor.pixelShiftSigma = pixelShiftSigma->getValue();
+    pp->raw.bayersensor.pixelShiftSum = pixelShiftSum->getValue();
+    pp->raw.bayersensor.pixelShiftRedBlueWeight = pixelShiftRedBlueWeight->getValue();
     pp->raw.bayersensor.pixelshiftShowMotion = pixelShiftShowMotion->get_active();
     pp->raw.bayersensor.pixelshiftShowMotionMaskOnly = pixelShiftShowMotionMaskOnly->get_active();
     pp->raw.bayersensor.pixelShiftAutomatic = pixelShiftAutomatic->get_active();
     pp->raw.bayersensor.pixelShiftNonGreenHorizontal = pixelShiftNonGreenHorizontal->get_active();
     pp->raw.bayersensor.pixelShiftNonGreenVertical = pixelShiftNonGreenVertical->get_active();
+    pp->raw.bayersensor.pixelShiftHoleFill = pixelShiftHoleFill->get_active();
+    pp->raw.bayersensor.pixelShiftMedian = pixelShiftMedian->get_active();
+    pp->raw.bayersensor.pixelShiftMedian3 = pixelShiftMedian3->get_active();
+    pp->raw.bayersensor.pixelShiftGreen = pixelShiftGreen->get_active();
+    pp->raw.bayersensor.pixelShiftBlur = pixelShiftBlur->get_active();
+    pp->raw.bayersensor.pixelShiftExp0 = pixelShiftExp0->get_active();
     pp->raw.bayersensor.pixelShiftNonGreenCross = pixelShiftNonGreenCross->get_active();
+    pp->raw.bayersensor.pixelShiftNonGreenCross2 = pixelShiftNonGreenCross2->get_active();
+    pp->raw.bayersensor.pixelShiftNonGreenAmaze = pixelShiftNonGreenAmaze->get_active();
 
     int currentRow = method->get_active_row_number();
     if( currentRow >= 0 && currentRow < procparams::RAWParams::BayerSensor::numMethods) {
@@ -383,12 +484,23 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelShiftEperIso = pixelShiftEperIso->getEditedState ();
         pedited->raw.bayersensor.pixelShiftNreadIso = pixelShiftNreadIso->getEditedState ();
         pedited->raw.bayersensor.pixelShiftPrnu = pixelShiftPrnu->getEditedState ();
+        pedited->raw.bayersensor.pixelShiftSigma = pixelShiftSigma->getEditedState ();
+        pedited->raw.bayersensor.pixelShiftSum = pixelShiftSum->getEditedState ();
+        pedited->raw.bayersensor.pixelShiftRedBlueWeight = pixelShiftRedBlueWeight->getEditedState ();
         pedited->raw.bayersensor.pixelshiftShowMotion = !pixelShiftShowMotion->get_inconsistent();
         pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly = !pixelShiftShowMotionMaskOnly->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftAutomatic = !pixelShiftAutomatic->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftNonGreenHorizontal = !pixelShiftNonGreenHorizontal->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftNonGreenVertical = !pixelShiftNonGreenVertical->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftHoleFill = !pixelShiftHoleFill->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftMedian = !pixelShiftMedian->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftMedian3 = !pixelShiftMedian3->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftGreen = !pixelShiftGreen->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftBlur = !pixelShiftBlur->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftExp0 = !pixelShiftExp0->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftNonGreenCross = !pixelShiftNonGreenCross->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftNonGreenCross2 = !pixelShiftNonGreenCross2->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftNonGreenAmaze = !pixelShiftNonGreenAmaze->get_inconsistent();
     }
 }
 
@@ -414,6 +526,9 @@ void BayerProcess::setBatchMode(bool batchMode)
     pixelShiftEperIso->showEditedCB ();
     pixelShiftNreadIso->showEditedCB ();
     pixelShiftPrnu->showEditedCB ();
+    pixelShiftSigma->showEditedCB ();
+    pixelShiftSum->showEditedCB ();
+    pixelShiftRedBlueWeight->showEditedCB ();
 }
 
 void BayerProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
@@ -427,6 +542,9 @@ void BayerProcess::setDefaults(const rtengine::procparams::ProcParams* defParams
     pixelShiftEperIso->setDefault( defParams->raw.bayersensor.pixelShiftEperIso);
     pixelShiftNreadIso->setDefault( defParams->raw.bayersensor.pixelShiftNreadIso);
     pixelShiftPrnu->setDefault( defParams->raw.bayersensor.pixelShiftPrnu);
+    pixelShiftSigma->setDefault( defParams->raw.bayersensor.pixelShiftSigma);
+    pixelShiftSum->setDefault( defParams->raw.bayersensor.pixelShiftSum);
+    pixelShiftRedBlueWeight->setDefault( defParams->raw.bayersensor.pixelShiftRedBlueWeight);
     ccSteps->setDefault (defParams->raw.bayersensor.ccSteps);
 
     if (pedited) {
@@ -439,6 +557,9 @@ void BayerProcess::setDefaults(const rtengine::procparams::ProcParams* defParams
         pixelShiftEperIso->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftEperIso ? Edited : UnEdited);
         pixelShiftNreadIso->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftNreadIso ? Edited : UnEdited);
         pixelShiftPrnu->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftPrnu ? Edited : UnEdited);
+        pixelShiftSigma->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftSigma ? Edited : UnEdited);
+        pixelShiftSum->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftSum ? Edited : UnEdited);
+        pixelShiftRedBlueWeight->setDefaultEditedState( pedited->raw.bayersensor.pixelShiftRedBlueWeight ? Edited : UnEdited);
         ccSteps->setDefaultEditedState(pedited->raw.bayersensor.ccSteps ? Edited : UnEdited);
     } else {
         dcbIterations->setDefaultEditedState( Irrelevant );
@@ -450,6 +571,9 @@ void BayerProcess::setDefaults(const rtengine::procparams::ProcParams* defParams
         pixelShiftEperIso->setDefaultEditedState( Irrelevant );
         pixelShiftNreadIso->setDefaultEditedState( Irrelevant );
         pixelShiftPrnu->setDefaultEditedState( Irrelevant );
+        pixelShiftSigma->setDefaultEditedState( Irrelevant );
+        pixelShiftSum->setDefaultEditedState( Irrelevant );
+        pixelShiftRedBlueWeight->setDefaultEditedState( Irrelevant );
         ccSteps->setDefaultEditedState(Irrelevant );
     }
 }
@@ -477,6 +601,12 @@ void BayerProcess::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvPixelShiftNreadIso, a->getTextValue() );
         } else if (a == pixelShiftPrnu) {
             listener->panelChanged (EvPixelShiftPrnu, a->getTextValue() );
+        } else if (a == pixelShiftSigma) {
+            listener->panelChanged (EvPixelShiftSigma, a->getTextValue() );
+        } else if (a == pixelShiftSum) {
+            listener->panelChanged (EvPixelShiftSum, a->getTextValue() );
+        } else if (a == pixelShiftRedBlueWeight) {
+            listener->panelChanged (EvPixelShiftRedBlueWeight, a->getTextValue() );
         }
     }
 }
@@ -631,12 +761,23 @@ void BayerProcess::pixelShiftAutomaticChanged ()
     pixelShiftEperIso->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNreadIso->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftPrnu->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftSigma->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftSum->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftRedBlueWeight->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftStddevFactorGreen->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftStddevFactorRed->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftStddevFactorBlue->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenHorizontal->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenVertical->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftHoleFill->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftMedian->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftMedian3->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMedian->get_active());
+    pixelShiftGreen->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftBlur->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftExp0->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenCross->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftNonGreenCross2->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftNonGreenAmaze->set_sensitive(pixelShiftAutomatic->get_active ());
 
     if (listener) {
         listener->panelChanged (EvPixelShiftAutomatic, pixelShiftAutomatic->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
@@ -684,6 +825,128 @@ void BayerProcess::pixelShiftNonGreenVerticalChanged ()
     }
 }
 
+void BayerProcess::pixelShiftHoleFillChanged ()
+{
+    if (batchMode) {
+        if (pixelShiftHoleFill->get_inconsistent()) {
+            pixelShiftHoleFill->set_inconsistent (false);
+            pixelShiftHoleFillconn.block (true);
+            pixelShiftHoleFill->set_active (false);
+            pixelShiftHoleFillconn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftHoleFill->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftHoleFill->get_active ();
+    }
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftHoleFill, pixelShiftHoleFill->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void BayerProcess::pixelShiftMedianChanged ()
+{
+    if (batchMode) {
+        if (pixelShiftMedian->get_inconsistent()) {
+            pixelShiftMedian->set_inconsistent (false);
+            pixelShiftMedianconn.block (true);
+            pixelShiftMedian->set_active (false);
+            pixelShiftMedianconn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftMedian->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftMedian->get_active ();
+    }
+
+    pixelShiftMedian3->set_sensitive(pixelShiftMedian->get_active ());
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftMedian, pixelShiftMedian->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void BayerProcess::pixelShiftMedian3Changed ()
+{
+    if (batchMode) {
+        if (pixelShiftMedian3->get_inconsistent()) {
+            pixelShiftMedian3->set_inconsistent (false);
+            pixelShiftMedian3conn.block (true);
+            pixelShiftMedian3->set_active (false);
+            pixelShiftMedian3conn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftMedian3->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftMedian3->get_active ();
+    }
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftMedian3, pixelShiftMedian3->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void BayerProcess::pixelShiftGreenChanged ()
+{
+    if (batchMode) {
+        if (pixelShiftGreen->get_inconsistent()) {
+            pixelShiftGreen->set_inconsistent (false);
+            pixelShiftGreenconn.block (true);
+            pixelShiftGreen->set_active (false);
+            pixelShiftGreenconn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftGreen->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftGreen->get_active ();
+    }
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftGreen, pixelShiftGreen->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void BayerProcess::pixelShiftBlurChanged ()
+{
+    if (batchMode) {
+        if (pixelShiftBlur->get_inconsistent()) {
+            pixelShiftBlur->set_inconsistent (false);
+            pixelShiftBlurconn.block (true);
+            pixelShiftBlur->set_active (false);
+            pixelShiftBlurconn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftBlur->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftBlur->get_active ();
+    }
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftBlur, pixelShiftBlur->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void BayerProcess::pixelShiftExp0Changed ()
+{
+    if (batchMode) {
+        if (pixelShiftExp0->get_inconsistent()) {
+            pixelShiftExp0->set_inconsistent (false);
+            pixelShiftExp0conn.block (true);
+            pixelShiftExp0->set_active (false);
+            pixelShiftExp0conn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftExp0->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftExp0->get_active ();
+    }
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftExp0, pixelShiftExp0->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
 void BayerProcess::pixelShiftNonGreenCrossChanged ()
 {
     if (batchMode) {
@@ -704,21 +967,42 @@ void BayerProcess::pixelShiftNonGreenCrossChanged ()
     }
 }
 
-
-/*void BayerProcess::allEnhanceChanged ()
+void BayerProcess::pixelShiftNonGreenCross2Changed ()
 {
     if (batchMode) {
-        if (allEnhance->get_inconsistent()) {
-            allEnhance->set_inconsistent (false);
-            allEnhconn.block (true);
-            allEnhance->set_active (false);
-            allEnhconn.block (false);
+        if (pixelShiftNonGreenCross2->get_inconsistent()) {
+            pixelShiftNonGreenCross2->set_inconsistent (false);
+            pixelShiftNonGreenCross2conn.block (true);
+            pixelShiftNonGreenCross2->set_active (false);
+            pixelShiftNonGreenCross2conn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftNonGreenCross2->set_inconsistent (true);
         }
-        else if (lastALLen)
-            allEnhance->set_inconsistent (true);
 
-        lastALLen = allEnhance->get_active ();
+        lastDCBen = pixelShiftNonGreenCross2->get_active ();
     }
-    if (listener)
-        listener->panelChanged (EvDemosaicALLEnhanced, allEnhance->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
-}*/
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftGreenAmaze, pixelShiftNonGreenCross2->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void BayerProcess::pixelShiftNonGreenAmazeChanged ()
+{
+    if (batchMode) {
+        if (pixelShiftNonGreenAmaze->get_inconsistent()) {
+            pixelShiftNonGreenAmaze->set_inconsistent (false);
+            pixelShiftNonGreenAmazeconn.block (true);
+            pixelShiftNonGreenAmaze->set_active (false);
+            pixelShiftNonGreenAmazeconn.block (false);
+        } else if (lastDCBen) {
+            pixelShiftNonGreenAmaze->set_inconsistent (true);
+        }
+
+        lastDCBen = pixelShiftNonGreenAmaze->get_active ();
+    }
+
+    if (listener) {
+        listener->panelChanged (EvPixelShiftNonGreenAmaze, pixelShiftNonGreenAmaze->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}

@@ -485,6 +485,17 @@ enum ProcEvent {
     EvPixelShiftNonGreenCross = 455,
     EvPixelShiftStddevFactorRed = 456,
     EvPixelShiftStddevFactorBlue = 457,
+    EvPixelShiftGreenAmaze = 458,
+    EvPixelShiftNonGreenAmaze = 459,
+    EvPixelShiftGreen = 460,
+    EvPixelShiftRedBlueWeight = 461,
+    EvPixelShiftBlur = 462,
+    EvPixelShiftSigma = 463,
+    EvPixelShiftSum = 464,
+    EvPixelShiftExp0 = 465,
+    EvPixelShiftHoleFill = 466,
+    EvPixelShiftMedian = 467,
+    EvPixelShiftMedian3 = 468,
     NUMOFEVENTS
 
 };

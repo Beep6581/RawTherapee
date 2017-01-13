@@ -1188,7 +1188,7 @@ public:
                        numMethods
                      }; // This MUST be the last enum
         enum ePSMotionCorrection {
-            Grid1x1, Grid1x2, Grid3x3, Grid5x5, Grid7x7
+            Grid1x1, Grid1x2, Grid3x3, Grid5x5, Grid7x7, Grid3x3New
         };
         static const char *methodstring[numMethods];
 
@@ -1212,12 +1212,23 @@ public:
         double pixelShiftEperIso;
         double pixelShiftNreadIso;
         double pixelShiftPrnu;
+        double pixelShiftSigma;
+        double pixelShiftSum;
+        double pixelShiftRedBlueWeight;
         bool pixelshiftShowMotion;
         bool pixelshiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
         bool pixelShiftNonGreenHorizontal;
         bool pixelShiftNonGreenVertical;
+        bool pixelShiftHoleFill;
+        bool pixelShiftMedian;
+        bool pixelShiftMedian3;
+        bool pixelShiftGreen;
+        bool pixelShiftBlur;
+        bool pixelShiftExp0;
         bool pixelShiftNonGreenCross;
+        bool pixelShiftNonGreenCross2;
+        bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
         //bool all_enhance;
     };

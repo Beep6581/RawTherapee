@@ -690,6 +690,16 @@ HISTORY_MSG_455;EvPixelShiftNonGreenVertical
 HISTORY_MSG_456;EvPixelShiftNonGreenCross
 HISTORY_MSG_457;EvPixelShiftStddevFactorRed
 HISTORY_MSG_458;EvPixelShiftStddevFactorBlue
+HISTORY_MSG_459;EvPixelShiftGreenAmaze
+HISTORY_MSG_460;EvPixelShiftNonGreenAmaze
+HISTORY_MSG_461;EvPixelShiftGreen
+HISTORY_MSG_462;EvPixelShiftRedBlueWeight
+HISTORY_MSG_463;EvPixelShiftBlur
+HISTORY_MSG_464;EvPixelShiftSigma
+HISTORY_MSG_465;EvPixelShiftSum
+HISTORY_MSG_466;EvPixelShiftExp0
+HISTORY_MSG_467;EvPixelShiftHoleFill
+HISTORY_MSG_468;EvPixelShiftMedian
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1671,9 +1681,23 @@ TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (ste
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
+TP_RAW_PIXELSHIFTMEDIAN;Median
+TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
+TP_RAW_PIXELSHIFTHOLEFILL;3x3 new: Fill holes
+TP_RAW_PIXELSHIFTBLUR;3x3 new: Blur
+TP_RAW_PIXELSHIFTEXP0;Experimental
+TP_RAW_PIXELSHIFTGREEN;Check dual green
 TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue cross
-TP_RAW_PIXELSHIFTMOTION;Pixelshift motion detection
+TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
+TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
+TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
+TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
+TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image
 TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
 TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
 TP_RAW_PIXELSHIFTSHOWMOTION;Show motion
@@ -1684,6 +1708,9 @@ TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 TP_RAW_PIXELSHIFTEPERISO;e per ISO
 TP_RAW_PIXELSHIFTNREADISO;nRead
 TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+TP_RAW_PIXELSHIFTSIGMA;Blur sigma
+TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
+TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix

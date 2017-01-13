@@ -700,12 +700,23 @@ public:
         bool pixelShiftEperIso;
         bool pixelShiftNreadIso;
         bool pixelShiftPrnu;
+        bool pixelShiftSigma;
+        bool pixelShiftSum;
+        bool pixelShiftRedBlueWeight;
         bool pixelshiftShowMotion;
         bool pixelshiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
         bool pixelShiftNonGreenHorizontal;
         bool pixelShiftNonGreenVertical;
+        bool pixelShiftHoleFill;
+        bool pixelShiftMedian;
+        bool pixelShiftMedian3;
+        bool pixelShiftGreen;
+        bool pixelShiftBlur;
+        bool pixelShiftExp0;
         bool pixelShiftNonGreenCross;
+        bool pixelShiftNonGreenCross2;
+        bool pixelShiftNonGreenAmaze;
 
         //bool allEnhance;
         bool greenEq;

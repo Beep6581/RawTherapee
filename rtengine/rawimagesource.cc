@@ -2022,13 +2022,107 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd] ) {
             ahd_demosaic (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
-            amaze_demosaic_RT (0, 0, W, H);
+            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift] ) {
-            if(raw.bayersensor.pixelShiftMotion > 0 || raw.bayersensor.pixelShiftAutomatic) {
-                amaze_demosaic_RT (0, 0, W, H); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
-            }
-            if(numFrames == 4) {
-                pixelshift(0, 0, W, H, raw.bayersensor.pixelShiftMotion > 0, raw.bayersensor.pixelShiftMotion, raw.bayersensor.pixelshiftShowMotion, raw.bayersensor.pixelshiftShowMotionMaskOnly, currFrame, raw.bayersensor.pixelShiftMotionCorrection, raw.bayersensor.pixelShiftAutomatic, raw.bayersensor.pixelShiftStddevFactorGreen, raw.bayersensor.pixelShiftStddevFactorRed, raw.bayersensor.pixelShiftStddevFactorBlue, raw.bayersensor.pixelShiftEperIso, raw.bayersensor.pixelShiftNreadIso, raw.bayersensor.pixelShiftPrnu, ri->get_model(), raw.expos, raw.bayersensor.pixelShiftNonGreenHorizontal, raw.bayersensor.pixelShiftNonGreenVertical, raw.bayersensor.pixelShiftNonGreenCross);
+            if(numFrames != 4) { // fallback for non pixelshift files
+                amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
+            } else {
+                if(!raw.bayersensor.pixelshiftShowMotion || raw.bayersensor.pixelShiftNonGreenAmaze || raw.bayersensor.pixelShiftNonGreenCross2) {
+                    if((raw.bayersensor.pixelShiftMotion > 0 || raw.bayersensor.pixelShiftAutomatic) && numFrames == 4) {
+                        if(raw.bayersensor.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
+                            if(!raw.bayersensor.pixelShiftMedian3) {
+                                amaze_demosaic_RT (0, 0, W, H, *(rawDataFrames[0]), red, green, blue);
+                                multi_array2D<float,3> redTmp(W,H);
+                                multi_array2D<float,3> greenTmp(W,H);
+                                multi_array2D<float,3> blueTmp(W,H);
+                                for(int i=0;i<3;i++) {
+                                    amaze_demosaic_RT (0, 0, W, H, *(rawDataFrames[i+1]), redTmp[i], greenTmp[i], blueTmp[i]);
+                                }
+                #pragma omp parallel for schedule(dynamic,16)
+                                for(int i=border;i<H-border;i++) {
+                                    for(int j=border;j<W-border;j++) {
+                                        red[i][j] = median(red[i][j],redTmp[0][i+1][j],redTmp[1][i+1][j+1],redTmp[2][i][j+1]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        green[i][j] = median(green[i][j],greenTmp[0][i+1][j],greenTmp[1][i+1][j+1],greenTmp[2][i][j+1]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        blue[i][j] = median(blue[i][j],blueTmp[0][i+1][j],blueTmp[1][i+1][j+1],blueTmp[2][i][j+1]);
+                                    }
+                                }
+                            } else {
+                                multi_array2D<float,3> redTmp(W,H);
+                                multi_array2D<float,3> greenTmp(W,H);
+                                multi_array2D<float,3> blueTmp(W,H);
+                                for(int i=0, frameIndex = 0;i<4;++i) {
+                                    if(i != currFrame) {
+                                        amaze_demosaic_RT (0, 0, W, H, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex]);
+                                        ++frameIndex;
+                                    }
+                                }
+                                unsigned int offsX0 = 0, offsY0 = 0;
+                                unsigned int offsX1 = 0, offsY1 = 0;
+                                unsigned int offsX2 = 0, offsY2 = 0;
+
+                                // We have to adjust the offsets for the selected subframe we exclude from median
+                                switch (currFrame) {
+                                    case 0:
+                                        offsY0 = 1;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 1;
+                                        offsY2 = 0;
+                                        offsX2 = 1;
+                                        break;
+
+                                    case 1:
+                                        offsY0 = 0;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 1;
+                                        offsY2 = 0;
+                                        offsX2 = 1;
+                                        break;
+
+                                    case 2:
+                                        offsY0 = 0;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 0;
+                                        offsY2 = 0;
+                                        offsX2 = 1;
+                                        break;
+
+                                    case 3:
+                                        offsY0 = 0;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 0;
+                                        offsY2 = 1;
+                                        offsX2 = 1;
+                                }
+
+                #pragma omp parallel for schedule(dynamic,16)
+                                for(int i=border;i<H-border;i++) {
+                                    for(int j=border;j<W-border;j++) {
+                                        red[i][j] = median(redTmp[0][i+offsY0][j+offsX0],redTmp[1][i+offsY1][j+offsX1],redTmp[2][i+offsY2][j+offsX2]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        green[i][j] = median(greenTmp[0][i+offsY0][j+offsX0],greenTmp[1][i+offsY1][j+offsX1],greenTmp[2][i+offsY2][j+offsX2]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        blue[i][j] = median(blueTmp[0][i+offsY0][j+offsX0],blueTmp[1][i+offsY1][j+offsX1],blueTmp[2][i+offsY2][j+offsX2]);
+                                    }
+                                }
+                            }
+                        } else {
+                            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
+                        }
+                    } else {
+                        amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
+                    }
+                }
+                pixelshift(0, 0, W, H, raw.bayersensor, raw.bayersensor.pixelShiftExp0 ? 0: currFrame, ri->get_model(), raw.expos);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);

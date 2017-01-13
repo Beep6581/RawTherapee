@@ -50,16 +50,30 @@ protected:
     Gtk::CheckButton* pixelShiftNonGreenHorizontal;
     Gtk::CheckButton* pixelShiftNonGreenVertical;
     Gtk::CheckButton* pixelShiftNonGreenCross;
+    Gtk::CheckButton* pixelShiftNonGreenCross2;
+    Gtk::CheckButton* pixelShiftNonGreenAmaze;
+    Gtk::CheckButton* pixelShiftGreen;
+    Gtk::CheckButton* pixelShiftBlur;
+    Gtk::CheckButton* pixelShiftExp0;
+    Gtk::CheckButton* pixelShiftHoleFill;
+    Gtk::CheckButton* pixelShiftMedian;
+    Gtk::CheckButton* pixelShiftMedian3;
     Adjuster* pixelShiftStddevFactorGreen;
     Adjuster* pixelShiftStddevFactorRed;
     Adjuster* pixelShiftStddevFactorBlue;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftNreadIso;
     Adjuster* pixelShiftPrnu;
+    Adjuster* pixelShiftSigma;
+    Adjuster* pixelShiftSum;
+    Adjuster* pixelShiftRedBlueWeight;
     bool lastDCBen;
     int oldMethod;
     //bool lastALLen;
-    sigc::connection methodconn, imagenumberconn, psmcconn, dcbEnhconn, pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn, pixelShiftNonGreenHorizontalconn, pixelShiftNonGreenVerticalconn, pixelShiftNonGreenCrossconn; //,allEnhconn;
+    sigc::connection methodconn, imagenumberconn, psmcconn, dcbEnhconn,
+                     pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn,
+                     pixelShiftNonGreenHorizontalconn, pixelShiftNonGreenVerticalconn, pixelShiftHoleFillconn, pixelShiftMedianconn, pixelShiftMedian3conn, pixelShiftNonGreenCrossconn,
+                     pixelShiftNonGreenCross2conn, pixelShiftNonGreenAmazeconn, pixelShiftGreenconn, pixelShiftBlurconn, pixelShiftExp0conn;
 public:
 
     BayerProcess ();
@@ -79,8 +93,15 @@ public:
     void pixelShiftAutomaticChanged();
     void pixelShiftNonGreenHorizontalChanged();
     void pixelShiftNonGreenVerticalChanged();
+    void pixelShiftHoleFillChanged();
+    void pixelShiftMedianChanged();
+    void pixelShiftMedian3Changed();
+    void pixelShiftGreenChanged();
+    void pixelShiftBlurChanged();
+    void pixelShiftExp0Changed();
     void pixelShiftNonGreenCrossChanged();
-    //void allEnhanceChanged();
+    void pixelShiftNonGreenCross2Changed();
+    void pixelShiftNonGreenAmazeChanged();
 };
 
 #endif
