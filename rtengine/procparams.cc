@@ -3462,7 +3462,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftMedian3) {
-            keyFile.set_boolean ("RAW Bayer", "pixelShiftMedian", raw.bayersensor.pixelShiftMedian3 );
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftMedian3", raw.bayersensor.pixelShiftMedian3 );
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftGreen) {
