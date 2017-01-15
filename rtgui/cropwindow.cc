@@ -61,9 +61,10 @@ ZoomStep zoomSteps[] = {
     {"500%",  5.0,     5000},
     {"600%",  6.0,     6000},
     {"700%",  7.0,     7000},
-    {"800%",  8.0,     8000}
+    {"800%",  8.0,     8000},
+    {"1600%", 16.0,    16000}
 };
-#define MAXZOOMSTEPS 20
+#define MAXZOOMSTEPS 21
 #define ZOOM11INDEX  13
 
 CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
