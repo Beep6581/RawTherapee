@@ -405,6 +405,9 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     pixelShiftSum->setValue (pp->raw.bayersensor.pixelShiftSum);
     pixelShiftRedBlueWeight->setValue (pp->raw.bayersensor.pixelShiftRedBlueWeight);
 
+    pixelShiftHoleFill->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMotionCorrection->get_active_row_number() == 5);
+    pixelShiftBlur->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMotionCorrection->get_active_row_number() == 5);
+
     if (!batchMode) {
         if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::dcb] ||
                 method->get_active_row_number() == procparams::RAWParams::BayerSensor::numMethods) {
@@ -815,11 +818,11 @@ void BayerProcess::pixelShiftAutomaticChanged ()
     pixelShiftStddevFactorBlue->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenHorizontal->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenVertical->set_sensitive(pixelShiftAutomatic->get_active ());
-    pixelShiftHoleFill->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftHoleFill->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMotionCorrection->get_active_row_number() == 5);
     pixelShiftMedian->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftMedian3->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMedian->get_active());
     pixelShiftGreen->set_sensitive(pixelShiftAutomatic->get_active ());
-    pixelShiftBlur->set_sensitive(pixelShiftAutomatic->get_active ());
+    pixelShiftBlur->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMotionCorrection->get_active_row_number() == 5);
     pixelShiftExp0->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenCross->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenCross2->set_sensitive(pixelShiftAutomatic->get_active ());
