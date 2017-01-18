@@ -244,8 +244,7 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 #if defined WIN32
 
     auto executable = Glib::build_filename (options.gimpDir, "bin", "gimp-win-remote");
-    auto cmdLine = Glib::ustring::compose ("\"%1\" gimp-2.4.exe \"%2\"", executable, fileName);
-    auto success = spawnCommandAsync (cmdLine);
+    auto success = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
 
 #elif defined __APPLE__
 
@@ -262,19 +261,25 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
 
 #endif
 
+#ifdef WIN32
+    if ((uintptr_t)success > 32) {
+        return true;
+    }
+#else
     if (success) {
         return true;
     }
+
+#endif
 
 #ifdef WIN32
 
     for (auto ver = 12; ver >= 0; --ver) {
 
         executable = Glib::build_filename (options.gimpDir, "bin", Glib::ustring::compose (Glib::ustring("gimp-2.%1.exe"), ver));
-        cmdLine = Glib::ustring::compose ("\"%1\" \"%2\"", executable, fileName);
-        success = spawnCommandAsync (cmdLine);
+        auto success = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
 
-        if (success) {
+        if ((uintptr_t)success > 32) {
             return true;
         }
     }
@@ -318,17 +323,22 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
 {
 #if defined WIN32
 
-    const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+    const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\"");
+    auto success = ShellExecute( NULL, "open", cmdLine.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
+    if ((uintptr_t)success > 32) {
+        return true;
+    }
 
 #elif defined __APPLE__
 
     const auto cmdLine = options.customEditorProg + Glib::ustring(" \"") + fileName + Glib::ustring("\"");
+    return spawnCommandAsync (cmdLine);
 
 #else
 
     const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + fileName + Glib::ustring("\"");
+    return spawnCommandAsync (cmdLine);
 
 #endif
 
-    return spawnCommandAsync (cmdLine);
 }
