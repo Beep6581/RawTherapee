@@ -31,6 +31,7 @@
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
 #include "gauss.h"
+#include "median.h"
 #define BENCHMARK
 #include "StopWatch.h"
 
@@ -1162,9 +1163,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
 // now that the temporary planes are filled for easy access we do the motion detection
-
+    int sum0 = 0;
+    int sum1 = 0;
+    float pixelcount = ((winh - (border + offsY) - (winy + border - offsY)) * (winw - (border + offsX) - (winx + border - offsX))) / 2.f;
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel for reduction(+:sum0,sum1) schedule(dynamic,16)
 #endif
 
     for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
@@ -1338,6 +1341,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 }
 
                 if (gridMax > thresh - korr) {
+                    if(offset == 0) {
+                        sum0 ++;
+                    } else {
+                        sum1 ++;
+                    }
+
                     if(nOf3x3) {
                         psMask[i][j] = 1.f;
                     } else if((offset == (frame & 1)) && checkNonGreenVertical) {
@@ -1357,7 +1366,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                             j++;
                             paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, redDest, blueDest);
                         }
-
                         // do not set the motion pixel values. They have already been set by demosaicer or showMotion
                         continue;
                     }
@@ -1547,6 +1555,20 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             }
 
             if(adaptive && experimental0) { // for experiments
+//                float green1Median, green2Median;
+//                green1Median = median(psG1[ i - 1 ][ j - 1 ],psG1[ i - 1 ][ j + 1 ],psG1[ i ][ j ],psG1[ i + 1 ][ j -1 ],psG1[ i + 1 ][ j + 1 ]);
+//                green2Median = median(psG2[ i - 1 ][ j - 1 ],psG2[ i - 1 ][ j + 1 ],psG2[ i ][ j ],psG2[ i + 1 ][ j -1 ],psG2[ i + 1 ][ j + 1 ]);
+//                float greenDiffMedian = nonGreenDiff(green1Median, green2Median, stddevFactorGreen * 0.36f, eperIsoGreen, nRead, prnu, showMotion);
+//
+//                if(greenDiffMedian > 0.f) {
+//                    if(nOf3x3) {
+//                        psMask[i][j] = 1.f;
+//                    } else {
+//                        paintMotionMask(j + offsX, showMotion, greenDiffMedian, showOnlyMask, greenDest, redDest, blueDest);
+//                    }
+//
+//                    continue;
+//                }
 
             }
 
@@ -1560,6 +1582,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             }
         }
     }
+
+    float percent0 = 100.f * sum0 / pixelcount;
+    float percent1 = 100.f * sum1 / pixelcount;
+
+    std::cout << fileName <<  " : Green detections at stddev " << std::setprecision( 2 ) << bayerParams.pixelShiftStddevFactorGreen << " : Frame 1/3 : " << std::setprecision( 6 ) << sum0 << " (" << percent0 << "%)" << " Frame 2/4 : " << sum1 << " (" << percent1 << "%)" << std::endl;
 
     if(adaptive && nOf3x3) {
         if(blurMap) {
@@ -1623,9 +1650,15 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
                     red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
                 } else {
-                    red[i + offsY][j + offsX] = psRed[i][j];
-                    green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) / 2.f;
-                    blue[i + offsY][j + offsX] = psBlue[i][j];
+                    if(blurMap && experimental0) {
+                        red[i + offsY][j + offsX] = intp(psMask[i][j], red[i + offsY][j + offsX], psRed[i][j] );
+                        green[i + offsY][j + offsX] = intp(psMask[i][j],green[i + offsY][j + offsX],(psG1[i][j] + psG2[i][j]) / 2.f);
+                        blue[i + offsY][j + offsX] = intp(psMask[i][j],blue[i + offsY][j + offsX], psBlue[i][j]);
+                    } else {
+                        red[i + offsY][j + offsX] = psRed[i][j];
+                        green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) / 2.f;
+                        blue[i + offsY][j + offsX] = psBlue[i][j];
+                    }
                 }
             }
         }

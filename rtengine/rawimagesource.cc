@@ -2027,10 +2027,18 @@ void RawImageSource::demosaic(const RAWParams &raw)
             if(numFrames != 4) { // fallback for non pixelshift files
                 amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
             } else {
-                if(!raw.bayersensor.pixelshiftShowMotion || raw.bayersensor.pixelShiftNonGreenAmaze || raw.bayersensor.pixelShiftNonGreenCross2) {
-                    if((raw.bayersensor.pixelShiftMotion > 0 || raw.bayersensor.pixelShiftAutomatic) && numFrames == 4) {
-                        if(raw.bayersensor.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
-                            if(!raw.bayersensor.pixelShiftMedian3) {
+                RAWParams::BayerSensor bayerParams = raw.bayersensor;
+                if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic) {
+                    bayerParams.setPixelShiftDefaults();
+                } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
+                    bayerParams.pixelShiftMotion = 0;
+                    bayerParams.pixelShiftAutomatic = false;
+                    bayerParams.pixelshiftShowMotion = false;
+                }
+                if(!bayerParams.pixelshiftShowMotion || bayerParams.pixelShiftNonGreenAmaze || bayerParams.pixelShiftNonGreenCross2 || (bayerParams.pixelShiftBlur && bayerParams.pixelShiftExp0)) {
+                    if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic) && numFrames == 4) {
+                        if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
+                            if(!bayerParams.pixelShiftMedian3) {
                                 amaze_demosaic_RT (0, 0, W, H, *(rawDataFrames[0]), red, green, blue);
                                 multi_array2D<float,3> redTmp(W,H);
                                 multi_array2D<float,3> greenTmp(W,H);
@@ -2122,7 +2130,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                         amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
                     }
                 }
-                pixelshift(0, 0, W, H, raw.bayersensor, raw.bayersensor.pixelShiftExp0 ? 0: currFrame, ri->get_model(), raw.expos);
+                pixelshift(0, 0, W, H, bayerParams, currFrame, ri->get_model(), raw.expos);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);

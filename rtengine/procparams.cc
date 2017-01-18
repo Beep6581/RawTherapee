@@ -875,6 +875,33 @@ void CoarseTransformParams::setDefaults()
     hflip = false;
     vflip = false;
 }
+void RAWParams::BayerSensor::setPixelShiftDefaults()
+{
+    pixelShiftMotion = 0;
+    pixelShiftMotionCorrection = RAWParams::BayerSensor::Grid3x3New;
+    pixelShiftMotionCorrectionMethod = RAWParams::BayerSensor::Automatic;
+    pixelShiftStddevFactorGreen = 5.0;
+    pixelShiftStddevFactorRed = 5.0;
+    pixelShiftStddevFactorBlue = 5.0;
+    pixelShiftEperIso = 0.0;
+    pixelShiftNreadIso = 0.0;
+    pixelShiftPrnu = 1.0;
+    pixelShiftSigma = 1.0;
+    pixelShiftSum = 3.0;
+    pixelShiftRedBlueWeight = 0.7;
+    pixelShiftAutomatic = true;
+    pixelShiftNonGreenHorizontal = false;
+    pixelShiftNonGreenVertical = false;
+    pixelShiftHoleFill = true;
+    pixelShiftMedian = false;
+    pixelShiftMedian3 = false;
+    pixelShiftGreen = true;
+    pixelShiftBlur = true;
+    pixelShiftExp0 = false;
+    pixelShiftNonGreenCross = true;
+    pixelShiftNonGreenCross2 = false;
+    pixelShiftNonGreenAmaze = false;
+}
 
 void RAWParams::setDefaults()
 {
@@ -887,6 +914,7 @@ void RAWParams::setDefaults()
     bayersensor.lmmse_iterations = 2;
     bayersensor.pixelShiftMotion = 0;
     bayersensor.pixelShiftMotionCorrection = RAWParams::BayerSensor::Grid3x3New;
+    bayersensor.pixelShiftMotionCorrectionMethod = RAWParams::BayerSensor::Automatic;
     bayersensor.pixelShiftStddevFactorGreen = 5.0;
     bayersensor.pixelShiftStddevFactorRed = 5.0;
     bayersensor.pixelShiftStddevFactorBlue = 5.0;
@@ -939,6 +967,10 @@ void RAWParams::setDefaults()
     hotPixelFilter = false;
     deadPixelFilter = false;
     hotdeadpix_thresh = 100;
+    bayersensor.setPixelShiftDefaults();
+    bayersensor.pixelshiftShowMotion = false;
+    bayersensor.pixelshiftShowMotionMaskOnly = false;
+
 }
 
 void ColorManagementParams::setDefaults()
@@ -3395,6 +3427,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftMotionCorrection) {
             keyFile.set_integer ("RAW Bayer", "PixelShiftMotionCorrection", raw.bayersensor.pixelShiftMotionCorrection );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod) {
+            keyFile.set_integer ("RAW Bayer", "PixelShiftMotionCorrectionMethod", raw.bayersensor.pixelShiftMotionCorrectionMethod );
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactorGreen) {
@@ -7561,6 +7597,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
  
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftMotionCorrectionMethod"))  {
+                raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)keyFile.get_integer("RAW Bayer", "PixelShiftMotionCorrectionMethod");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = true;
+                }
+            }
+
             if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorGreen"))  {
                 raw.bayersensor.pixelShiftStddevFactorGreen = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorGreen");
 
@@ -8184,6 +8228,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations
         && raw.bayersensor.pixelShiftMotion == other.raw.bayersensor.pixelShiftMotion
         && raw.bayersensor.pixelShiftMotionCorrection == other.raw.bayersensor.pixelShiftMotionCorrection
+        && raw.bayersensor.pixelShiftMotionCorrectionMethod == other.raw.bayersensor.pixelShiftMotionCorrectionMethod
         && raw.bayersensor.pixelShiftStddevFactorGreen == other.raw.bayersensor.pixelShiftStddevFactorGreen
         && raw.bayersensor.pixelShiftStddevFactorRed == other.raw.bayersensor.pixelShiftStddevFactorRed
         && raw.bayersensor.pixelShiftStddevFactorBlue == other.raw.bayersensor.pixelShiftStddevFactorBlue

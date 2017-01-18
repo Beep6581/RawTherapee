@@ -1190,6 +1190,9 @@ public:
         enum ePSMotionCorrection {
             Grid1x1, Grid1x2, Grid3x3, Grid5x5, Grid7x7, Grid3x3New
         };
+        enum ePSMotionCorrectionMethod {
+            Off, Automatic, Custom
+        };
         static const char *methodstring[numMethods];
 
         Glib::ustring method;
@@ -1206,6 +1209,7 @@ public:
         int lmmse_iterations;
         int pixelShiftMotion;
         ePSMotionCorrection pixelShiftMotionCorrection;
+        ePSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
         double pixelShiftStddevFactorGreen;
         double pixelShiftStddevFactorRed;
         double pixelShiftStddevFactorBlue;
@@ -1231,6 +1235,9 @@ public:
         bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
         //bool all_enhance;
+
+        void setPixelShiftDefaults();
+
     };
 
     /**

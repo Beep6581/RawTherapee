@@ -694,6 +694,7 @@ public:
         bool lmmseIterations;
         bool pixelShiftMotion;
         bool pixelShiftMotionCorrection;
+        bool pixelShiftMotionCorrectionMethod;
         bool pixelShiftStddevFactorGreen;
         bool pixelShiftStddevFactorRed;
         bool pixelShiftStddevFactorBlue;

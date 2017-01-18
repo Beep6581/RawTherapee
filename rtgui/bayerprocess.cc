@@ -50,6 +50,18 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     imageNumberBox->pack_end (*imageNumber, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *imageNumberBox, Gtk::PACK_SHRINK, 4);
 
+    pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
+    ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
+    ccSteps->setAdjusterListener (this);
+
+    if (ccSteps->delay < options.adjusterMaxDelay) {
+        ccSteps->delay = options.adjusterMaxDelay;
+    }
+
+    ccSteps->show();
+    pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);
+
+
     dcbOptions = Gtk::manage (new Gtk::VBox ());
     dcbOptions->set_border_width(4);
 
@@ -81,16 +93,30 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     lmmseOptions->pack_start(*lmmseIterations);
     pack_start( *lmmseOptions, Gtk::PACK_SHRINK, 4);
 
+    pixelShiftFrame = Gtk::manage (new Gtk::VBox ());
+    pixelShiftFrame->set_border_width(0);
+
+    Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
+    hb3->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_PIXELSHIFTMOTIONMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
+    pixelShiftMotionMethod = Gtk::manage (new MyComboBoxText ());
+    pixelShiftMotionMethod->append_text("Off");
+    pixelShiftMotionMethod->append_text("Automatic");
+    pixelShiftMotionMethod->append_text("Custom");
+    pixelShiftMotionMethod->set_active(1);
+    pixelShiftMotionMethod->show();
+    hb3->pack_start(*pixelShiftMotionMethod);
+    pixelShiftFrame->pack_start(*hb3);
+
     pixelShiftOptions = Gtk::manage (new Gtk::VBox ());
-    pixelShiftOptions->set_border_width(4);
+    pixelShiftOptions->set_border_width(0);
 
     pixelShiftShowMotion = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTSHOWMOTION")));
     pixelShiftShowMotion->set_tooltip_text (M("TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP"));
-    pixelShiftOptions->pack_start(*pixelShiftShowMotion);
+    pixelShiftFrame->pack_start(*pixelShiftShowMotion);
 
     pixelShiftShowMotionMaskOnly = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY")));
     pixelShiftShowMotionMaskOnly->set_tooltip_text (M("TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP"));
-    pixelShiftOptions->pack_start(*pixelShiftShowMotionMaskOnly);
+    pixelShiftFrame->pack_start(*pixelShiftShowMotionMaskOnly);
 
     pixelShiftAutomatic = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_PIXELSHIFTADAPTIVE")));
     pixelShiftOptions->pack_start(*pixelShiftAutomatic);
@@ -142,8 +168,9 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftMotion->show();
     pixelShiftOptions->pack_start(*pixelShiftMotion);
 
+
     Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
-    hb2->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_PIXELSHIFTMOTIONCORRECTION") + ": ")), Gtk::PACK_SHRINK, 4);
+    hb2->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_PIXELSHIFTMOTIONCORRECTION") + ": ")), Gtk::PACK_SHRINK, 0);
     pixelShiftMotionCorrection = Gtk::manage (new MyComboBoxText ());
     pixelShiftMotionCorrection->append_text("1x1");
     pixelShiftMotionCorrection->append_text("1x2");
@@ -152,7 +179,6 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftMotionCorrection->append_text("7x7");
     pixelShiftMotionCorrection->append_text("3x3 new");
     pixelShiftMotionCorrection->set_active(0);
-//    pixelShiftMotionCorrection->set_tooltip_markup (M("TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP"));
     pixelShiftMotionCorrection->show();
     hb2->pack_start(*pixelShiftMotionCorrection);
     pixelShiftOptions->pack_start(*hb2);
@@ -218,7 +244,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftPrnu->show();
     pixelShiftOptions->pack_start(*pixelShiftPrnu);
 
-    pixelShiftSigma = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSIGMA"), 0.5, 2.5, 0.1, 1.0));
+    pixelShiftSigma = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTSIGMA"), 0.5, 25, 0.1, 1.0));
     pixelShiftSigma->setAdjusterListener (this);
 
     if (pixelShiftSigma->delay < options.adjusterMaxDelay) {
@@ -248,19 +274,10 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftRedBlueWeight->show();
     pixelShiftOptions->pack_start(*pixelShiftRedBlueWeight);
 
-    pack_start( *pixelShiftOptions, Gtk::PACK_SHRINK, 4);
+    pixelShiftFrame->pack_start(*pixelShiftOptions);
+    pixelShiftOptions->hide();
 
-
-    pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
-    ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
-    ccSteps->setAdjusterListener (this);
-
-    if (ccSteps->delay < options.adjusterMaxDelay) {
-        ccSteps->delay = options.adjusterMaxDelay;
-    }
-
-    ccSteps->show();
-    pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);
+    pack_start( *pixelShiftFrame, Gtk::PACK_SHRINK, 4);
 
     //pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
     //allOptions = Gtk::manage (new Gtk::VBox ());
@@ -273,6 +290,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     psmcconn = pixelShiftMotionCorrection->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::psMotionCorrectionChanged) );
     imagenumberconn = imageNumber->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::imageNumberChanged) );
     dcbEnhconn = dcbEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::dcbEnhanceChanged), true);
+    pixelShiftMotionMethodConn = pixelShiftMotionMethod->signal_changed().connect( sigc::mem_fun(*this, &BayerProcess::pixelShiftMotionMethodChanged) );
     pixelShiftShowMotionconn = pixelShiftShowMotion->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftShowMotionChanged), true);
     pixelShiftShowMotionMaskOnlyconn = pixelShiftShowMotionMaskOnly->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftShowMotionMaskOnlyChanged), true);
     pixelShiftAutomaticconn = pixelShiftAutomatic->signal_toggled().connect ( sigc::mem_fun(*this, &BayerProcess::pixelShiftAutomaticChanged), true);
@@ -349,6 +367,9 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         if(!pedited->raw.bayersensor.pixelShiftMotionCorrection) {
             pixelShiftMotionCorrection->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        if(!pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod) {
+            pixelShiftMotionMethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
     }
 
     //allEnhance->set_active(pp->raw.bayersensor.all_enhance);
@@ -373,6 +394,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     lmmseIterations->setValue (pp->raw.bayersensor.lmmse_iterations);
     pixelShiftMotion->setValue (pp->raw.bayersensor.pixelShiftMotion);
     pixelShiftMotionCorrection->set_active ((int)pp->raw.bayersensor.pixelShiftMotionCorrection);
+    pixelShiftMotionMethod->set_active ((int)pp->raw.bayersensor.pixelShiftMotionCorrectionMethod);
     pixelShiftStddevFactorGreen->setValue (pp->raw.bayersensor.pixelShiftStddevFactorGreen);
     pixelShiftStddevFactorRed->setValue (pp->raw.bayersensor.pixelShiftStddevFactorRed);
     pixelShiftStddevFactorBlue->setValue (pp->raw.bayersensor.pixelShiftStddevFactorBlue);
@@ -398,9 +420,14 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         }
         if (pp->raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::pixelshift] ||
                 method->get_active_row_number() == procparams::RAWParams::BayerSensor::numMethods) {
-            pixelShiftOptions->show();
+            if(pp->raw.bayersensor.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Custom) {
+                pixelShiftOptions->show();
+            } else {
+                pixelShiftOptions->hide();
+            }
+            pixelShiftFrame->show();
         } else {
-            pixelShiftOptions->hide();
+            pixelShiftFrame->hide();
         }
 
         // Flase color suppression is applied to all demozaicing method, so don't hide anything
@@ -433,6 +460,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.lmmse_iterations = lmmseIterations->getIntValue();
     pp->raw.bayersensor.pixelShiftMotion = pixelShiftMotion->getIntValue();
     pp->raw.bayersensor.pixelShiftMotionCorrection = (RAWParams::BayerSensor::ePSMotionCorrection)pixelShiftMotionCorrection->get_active_row_number();
+    pp->raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)pixelShiftMotionMethod->get_active_row_number();
     pp->raw.bayersensor.pixelShiftStddevFactorGreen = pixelShiftStddevFactorGreen->getValue();
     pp->raw.bayersensor.pixelShiftStddevFactorRed = pixelShiftStddevFactorRed->getValue();
     pp->raw.bayersensor.pixelShiftStddevFactorBlue = pixelShiftStddevFactorBlue->getValue();
@@ -478,6 +506,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.lmmseIterations = lmmseIterations->getEditedState ();
         pedited->raw.bayersensor.pixelShiftMotion = pixelShiftMotion->getEditedState ();
         pedited->raw.bayersensor.pixelShiftMotionCorrection = pixelShiftMotionCorrection->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = pixelShiftMotionMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->raw.bayersensor.pixelShiftStddevFactorGreen = pixelShiftStddevFactorGreen->getEditedState ();
         pedited->raw.bayersensor.pixelShiftStddevFactorRed = pixelShiftStddevFactorRed->getEditedState ();
         pedited->raw.bayersensor.pixelShiftStddevFactorBlue = pixelShiftStddevFactorBlue->getEditedState ();
@@ -510,6 +539,8 @@ void BayerProcess::setBatchMode(bool batchMode)
     method->set_active(procparams::RAWParams::BayerSensor::numMethods); // No name
     pixelShiftMotionCorrection->append_text (M("GENERAL_UNCHANGED"));
     pixelShiftMotionCorrection->set_active (4);
+    pixelShiftMotionMethod->append_text (M("GENERAL_UNCHANGED"));
+    pixelShiftMotionMethod->set_active (4);
     imageNumber->append_text (M("GENERAL_UNCHANGED"));
     imageNumber->set_active(4);
     dcbOptions->hide();
@@ -613,26 +644,16 @@ void BayerProcess::adjusterChanged (Adjuster* a, double newval)
 
 void BayerProcess::psMotionCorrectionChanged ()
 {
-    int curSelection = pixelShiftMotionCorrection->get_active_row_number();
-    Glib::ustring sGrid;
-    switch (curSelection) {
-    case 0:
-        sGrid = "1x1";
-        break;
-    case 1:
-        sGrid = "1x2";
-        break;
-    case 2:
-        sGrid = "3x3";
-        break;
-    case 3:
-    default:
-        sGrid = "5x5";
-        break;
+    if(pixelShiftMotionCorrection->get_active_row_number() == 5) {
+        pixelShiftBlur->set_sensitive(true);
+        pixelShiftHoleFill->set_sensitive(true);
+    } else {
+        pixelShiftBlur->set_sensitive(false);
+        pixelShiftHoleFill->set_sensitive(false);
     }
 
     if (listener) {
-        listener->panelChanged (EvPixelShiftMotionCorrection, sGrid);
+        listener->panelChanged (EvPixelShiftMotionCorrection, pixelShiftMotionCorrection->get_active_text());
     }
 }
 
@@ -653,9 +674,14 @@ void BayerProcess::methodChanged ()
     }
 
     if ( curSelection == procparams::RAWParams::BayerSensor::pixelshift) {
-        pixelShiftOptions->show();
+        if(pixelShiftMotionMethod->get_active_row_number() == 2) {
+            pixelShiftOptions->show();
+        } else {
+            pixelShiftOptions->hide();
+        }
+        pixelShiftFrame->show();
     } else {
-        pixelShiftOptions->hide();
+        pixelShiftFrame->hide();
     }
 
     Glib::ustring methodName = "";
@@ -700,6 +726,26 @@ void BayerProcess::dcbEnhanceChanged ()
 
     if (listener) {
         listener->panelChanged (EvDemosaicDCBEnhanced, dcbEnhance->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void BayerProcess::pixelShiftMotionMethodChanged ()
+{
+    if(pixelShiftMotionMethod->get_active_row_number() == 0) {
+        pixelShiftOptions->hide();
+        pixelShiftShowMotion->hide();
+        pixelShiftShowMotionMaskOnly->hide();
+    } else if(pixelShiftMotionMethod->get_active_row_number() == 2) {
+        pixelShiftOptions->show();
+        pixelShiftShowMotion->show();
+        pixelShiftShowMotionMaskOnly->show();
+    } else {
+        pixelShiftOptions->hide();
+        pixelShiftShowMotion->show();
+        pixelShiftShowMotionMaskOnly->show();
+    }
+    if (listener) {
+        listener->panelChanged (EvPixelShiftMotionMethod, pixelShiftMotionMethod->get_active_text());
     }
 }
 

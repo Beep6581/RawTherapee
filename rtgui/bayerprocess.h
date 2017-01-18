@@ -41,9 +41,11 @@ protected:
     //Gtk::CheckButton* allEnhance;
     Gtk::VBox *lmmseOptions;
     Adjuster* lmmseIterations;
+    Gtk::VBox *pixelShiftFrame;
     Gtk::VBox *pixelShiftOptions;
     Adjuster* pixelShiftMotion;
     MyComboBoxText* pixelShiftMotionCorrection;
+    MyComboBoxText* pixelShiftMotionMethod;
     Gtk::CheckButton* pixelShiftShowMotion;
     Gtk::CheckButton* pixelShiftShowMotionMaskOnly;
     Gtk::CheckButton* pixelShiftAutomatic;
@@ -73,7 +75,7 @@ protected:
     sigc::connection methodconn, imagenumberconn, psmcconn, dcbEnhconn,
                      pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn,
                      pixelShiftNonGreenHorizontalconn, pixelShiftNonGreenVerticalconn, pixelShiftHoleFillconn, pixelShiftMedianconn, pixelShiftMedian3conn, pixelShiftNonGreenCrossconn,
-                     pixelShiftNonGreenCross2conn, pixelShiftNonGreenAmazeconn, pixelShiftGreenconn, pixelShiftBlurconn, pixelShiftExp0conn;
+                     pixelShiftNonGreenCross2conn, pixelShiftNonGreenAmazeconn, pixelShiftGreenconn, pixelShiftBlurconn, pixelShiftExp0conn, pixelShiftMotionMethodConn;
 public:
 
     BayerProcess ();
@@ -102,6 +104,7 @@ public:
     void pixelShiftNonGreenCrossChanged();
     void pixelShiftNonGreenCross2Changed();
     void pixelShiftNonGreenAmazeChanged();
+    void pixelShiftMotionMethodChanged();
 };
 
 #endif

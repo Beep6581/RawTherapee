@@ -496,6 +496,7 @@ enum ProcEvent {
     EvPixelShiftHoleFill = 466,
     EvPixelShiftMedian = 467,
     EvPixelShiftMedian3 = 468,
+    EvPixelShiftMotionMethod = 469,
     NUMOFEVENTS
 
 };
