@@ -224,6 +224,34 @@ void vflip (unsigned char* img, int w, int h)
     delete [] flipped;
 }
 
+/**
+ * Return lower case extension without the "." or "" if the given name contains no "."
+ */
+Glib::ustring getFileExtension(const Glib::ustring &fname) {
+    // issue 3598 do not use casefold() to compare ignoring case - it seems to mangle sharp-s character and length of string
+    // simply get extension first, then use lowercase()
+    const Glib::ustring::size_type lastdot = fname.find_last_of ('.');
+    if( Glib::ustring::npos == lastdot ) {
+        return "";
+    }
+    return fname.substr(lastdot + 1).lowercase();
+}
+
+bool hasJpegExtension(const Glib::ustring &fname) {
+   const Glib::ustring extension = getFileExtension(fname);
+   return ((extension == "jpg") || (extension == "jpeg"));
+}
+
+bool hasTiffExtension(const Glib::ustring &fname) {
+   const Glib::ustring extension = getFileExtension(fname);
+   return ((extension == "tif") || (extension == "tiff"));
+}
+
+bool hasPngExtension(const Glib::ustring &fname) {
+   const Glib::ustring extension = getFileExtension(fname);
+   return (extension == "png");
+}
+
 }
 
 
