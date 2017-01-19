@@ -906,6 +906,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const float threshold = bayerParams.pixelShiftSum;
     const bool experimental0 = bayerParams.pixelShiftExp0;
     const bool holeFill = bayerParams.pixelShiftHoleFill;
+    const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmooth;
 
     static const float nReadK3II[] = { 3.4f,  // ISO 100
                                        3.1f,  // ISO 125
@@ -1650,7 +1651,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
                     red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
                 } else {
-                    if(blurMap && experimental0) {
+                    if(smoothTransitions) {
                         red[i + offsY][j + offsX] = intp(psMask[i][j], red[i + offsY][j + offsX], psRed[i][j] );
                         green[i + offsY][j + offsX] = intp(psMask[i][j],green[i + offsY][j + offsX],(psG1[i][j] + psG2[i][j]) / 2.f);
                         blue[i + offsY][j + offsX] = intp(psMask[i][j],blue[i + offsY][j + offsX], psBlue[i][j]);

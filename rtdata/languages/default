@@ -701,6 +701,7 @@ HISTORY_MSG_466;EvPixelShiftExp0
 HISTORY_MSG_467;EvPixelShiftHoleFill
 HISTORY_MSG_468;EvPixelShiftMedian
 HISTORY_MSG_469;EvPixelShiftMotionMethod
+HISTORY_MSG_470;EvPixelShiftSmooth
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1686,6 +1687,7 @@ TP_RAW_PIXELSHIFTMEDIAN;Median
 TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
 TP_RAW_PIXELSHIFTHOLEFILL;3x3 new: Fill holes
 TP_RAW_PIXELSHIFTBLUR;3x3 new: Blur
+TP_RAW_PIXELSHIFTSMOOTH;3x3 new: Smooth transitions
 TP_RAW_PIXELSHIFTEXP0;Experimental
 TP_RAW_PIXELSHIFTGREEN;Check dual green
 TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue cross
@@ -1695,6 +1697,7 @@ TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
 TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions (requires 3x3 new Blur)
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
 TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion

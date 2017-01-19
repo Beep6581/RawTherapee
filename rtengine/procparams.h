@@ -1229,6 +1229,7 @@ public:
         bool pixelShiftMedian3;
         bool pixelShiftGreen;
         bool pixelShiftBlur;
+        bool pixelShiftSmooth;
         bool pixelShiftExp0;
         bool pixelShiftNonGreenCross;
         bool pixelShiftNonGreenCross2;
