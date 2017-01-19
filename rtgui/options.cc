@@ -2377,7 +2377,7 @@ bool Options::has_retained_extention (Glib::ustring fname)
 bool Options::is_extention_enabled (Glib::ustring ext)
 {
     for (int j = 0; j < (int)parseExtensions.size(); j++)
-        if (parseExtensions[j].casefold() == ext.casefold()) {
+        if (parseExtensions[j].casefold() == ext.casefold()) { // issue 3598 REVIEW OK - no change required
             return j >= (int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
         }
 

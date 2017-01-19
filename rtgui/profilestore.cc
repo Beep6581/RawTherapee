@@ -277,13 +277,14 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
     if (path == DEFPROFILE_INTERNAL) {
         return internalDefaultEntry;
     }
+    // consistently apply casefold() to make sure dot position is correct
+    const Glib::ustring::size_type lastdot = path.casefold().find_last_of ('.');
 
-    size_t lastdot = path.find_last_of ('.');
-
-    if (lastdot != Glib::ustring::npos && lastdot <= path.size() - 4 && !path.casefold().compare (lastdot, 4, paramFileExtension))
+    if ((lastdot != Glib::ustring::npos) && (lastdot <= path.casefold().size() - 4) && (!path.casefold().compare (lastdot, 4, paramFileExtension)))
         // removing the extension
     {
-        path = path.substr(0, lastdot);
+        // now use dot position without casefold()
+        path = path.substr(0, path.find_last_of ('.'));
     }
 
     // dir separator may come from options file and may be \ or /, we convert them to G_DIR_SEPARATOR_S
