@@ -1441,19 +1441,11 @@ void png_flush(png_structp png_ptr)
 int ImageIO::load (Glib::ustring fname)
 {
 
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return IMIO_FILETYPENOTSUPPORTED;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    if (hasPngExtension(fname)) {
         return loadPNG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-               !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    } else if (hasJpegExtension(fname)) {
         return loadJPEG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         return loadTIFF (fname);
     } else {
         return IMIO_FILETYPENOTSUPPORTED;
@@ -1462,20 +1454,11 @@ int ImageIO::load (Glib::ustring fname)
 
 int ImageIO::save (Glib::ustring fname)
 {
-
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return IMIO_FILETYPENOTSUPPORTED;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    if (hasPngExtension(fname)) {
         return savePNG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-               !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    } else if (hasJpegExtension(fname)) {
         return saveJPEG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         return saveTIFF (fname);
     } else {
         return IMIO_FILETYPENOTSUPPORTED;

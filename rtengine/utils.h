@@ -19,6 +19,7 @@
 #pragma once
 
 #include <type_traits>
+#include <glibmm.h>
 
 namespace rtengine
 {
@@ -41,5 +42,25 @@ typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
 {
     return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
+
+/**
+ * Return lower case extension without the "." or "" if the given name contains no "."
+ */
+Glib::ustring getFileExtension(const Glib::ustring &fname);
+
+/**
+ * Return true if file has .jpeg or .jpg extension (ignoring case)
+ */
+bool hasJpegExtension(const Glib::ustring &fname);
+
+/**
+ * Return true if file has .tiff or .tif extension (ignoring case)
+ */
+bool hasTiffExtension(const Glib::ustring &fname);
+
+/**
+ * Return true if file has .png extension (ignoring case)
+ */
+bool hasPngExtension(const Glib::ustring &fname);
 
 }
