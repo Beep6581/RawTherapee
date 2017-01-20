@@ -29,7 +29,7 @@ using namespace std;
 namespace rtengine
 {
 
-void poke255_uc(unsigned char* &dest, unsigned char r, unsigned char g, unsigned char b)
+void poke255_uc(unsigned char*& dest, unsigned char r, unsigned char g, unsigned char b)
 {
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
     *(dest++) = b;
@@ -44,7 +44,7 @@ void poke255_uc(unsigned char* &dest, unsigned char r, unsigned char g, unsigned
 #endif
 }
 
-void poke01_d(unsigned char* &dest, double r, double g, double b)
+void poke01_d(unsigned char*& dest, double r, double g, double b)
 {
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
     *(dest++) = (unsigned char)(b * 255.);
@@ -59,7 +59,7 @@ void poke01_d(unsigned char* &dest, double r, double g, double b)
 #endif
 }
 
-void poke01_f(unsigned char* &dest, float r, float g, float b)
+void poke01_f(unsigned char*& dest, float r, float g, float b)
 {
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
     *(dest++) = (unsigned char)(b * 255.f);
@@ -74,9 +74,8 @@ void poke01_f(unsigned char* &dest, float r, float g, float b)
 #endif
 }
 
-void bilinearInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
+void bilinearInterp(const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
 {
-
     int ix = 0;
 
     for (int i = 0; i < dh; i++) {
@@ -132,9 +131,8 @@ void bilinearInterp (const unsigned char* src, int sw, int sh, unsigned char* ds
     }
 }
 
-void nearestInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
+void nearestInterp(const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh)
 {
-
     int ix = 0;
 
     for (int i = 0; i < dh; i++) {
@@ -150,9 +148,8 @@ void nearestInterp (const unsigned char* src, int sw, int sh, unsigned char* dst
     }
 }
 
-void rotate (unsigned char* img, int& w, int& h, int deg)
+void rotate(unsigned char* img, int& w, int& h, int deg)
 {
-
     if (deg == 0) {
         return;
     }
@@ -186,13 +183,12 @@ void rotate (unsigned char* img, int& w, int& h, int deg)
                 rotated[3 * (w * (h - i - 1) + w - j - 1) + 2] = img[ix++];
             }
 
-    memcpy (img, rotated, 3 * w * h);
-    delete [] rotated;
+    memcpy(img, rotated, 3 * w * h);
+    delete[] rotated;
 }
 
-void hflip (unsigned char* img, int w, int h)
+void hflip(unsigned char* img, int w, int h)
 {
-
     unsigned char* flipped = new unsigned char[3 * w * h];
     int ix = 0;
 
@@ -203,13 +199,12 @@ void hflip (unsigned char* img, int w, int h)
             flipped[3 * (w * i + w - 1 - j) + 2] = img[ix++];
         }
 
-    memcpy (img, flipped, 3 * w * h);
-    delete [] flipped;
+    memcpy(img, flipped, 3 * w * h);
+    delete[] flipped;
 }
 
-void vflip (unsigned char* img, int w, int h)
+void vflip(unsigned char* img, int w, int h)
 {
-
     unsigned char* flipped = new unsigned char[3 * w * h];
     int ix = 0;
 
@@ -220,38 +215,34 @@ void vflip (unsigned char* img, int w, int h)
             flipped[3 * (w * (h - 1 - i) + j) + 2] = img[ix++];
         }
 
-    memcpy (img, flipped, 3 * w * h);
-    delete [] flipped;
+    memcpy(img, flipped, 3 * w * h);
+    delete[] flipped;
 }
 
-/**
- * Return lower case extension without the "." or "" if the given name contains no "."
- */
-Glib::ustring getFileExtension(const Glib::ustring &fname) {
-    // issue 3598 do not use casefold() to compare ignoring case - it seems to mangle sharp-s character and length of string
-    // simply get extension first, then use lowercase()
-    const Glib::ustring::size_type lastdot = fname.find_last_of ('.');
-    if( Glib::ustring::npos == lastdot ) {
-        return "";
-    }
-    return fname.substr(lastdot + 1).lowercase();
+Glib::ustring getFileExtension(const Glib::ustring& filename)
+{
+    const Glib::ustring::size_type lastdot_pos = filename.find_last_of('.');
+    return
+        lastdot_pos != Glib::ustring::npos
+            ? filename.substr(lastdot_pos + 1).lowercase()
+            : Glib::ustring();
 }
 
-bool hasJpegExtension(const Glib::ustring &fname) {
-   const Glib::ustring extension = getFileExtension(fname);
-   return ((extension == "jpg") || (extension == "jpeg"));
+bool hasJpegExtension(const Glib::ustring& filename)
+{
+   const Glib::ustring extension = getFileExtension(filename);
+   return extension == "jpg" || extension == "jpeg";
 }
 
-bool hasTiffExtension(const Glib::ustring &fname) {
-   const Glib::ustring extension = getFileExtension(fname);
-   return ((extension == "tif") || (extension == "tiff"));
+bool hasTiffExtension(const Glib::ustring& filename)
+{
+   const Glib::ustring extension = getFileExtension(filename);
+   return extension == "tif" || extension == "tiff";
 }
 
-bool hasPngExtension(const Glib::ustring &fname) {
-   const Glib::ustring extension = getFileExtension(fname);
-   return (extension == "png");
+bool hasPngExtension(const Glib::ustring& filename)
+{
+   return getFileExtension(filename) == "png";
 }
 
 }
-
-
