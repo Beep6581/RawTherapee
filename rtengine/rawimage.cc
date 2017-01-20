@@ -539,7 +539,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
             free (raw_image);
             raw_image = nullptr;
         } else {
-            if (cc && cc->has_rawCrop()) { // foveon images
+            if (is_foveon && cc && cc->has_rawCrop()) { // foveon images
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);
                 left_margin = lm;
@@ -729,6 +729,10 @@ float** RawImage::compress_image(int frameNum)
                 this->data[row][col] = image[row * width + col][0];
             }
     } else {
+        if(get_maker() == "Sigma" && dng_version) { // Hack to prevent sigma dng files from crashing
+            height -= top_margin;
+            width -= left_margin;
+        }
         #pragma omp parallel for
 
         for (int row = 0; row < height; row++)

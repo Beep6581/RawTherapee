@@ -97,7 +97,6 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     dcpIll->show ();
     dcpTemperatures[0] = 0;
     dcpTemperatures[1] = 0;
-    ignoreDcpSignal = true;
     dcpIllHBox->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
     dcpIllHBox->pack_start(*dcpIll);
 
@@ -131,7 +130,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     //iVBox->pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 2);
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
-    saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+    saveRef->set_alignment (0.5f, 0.5f);
     saveRef->set_tooltip_markup (M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
     iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK, 2);
 
@@ -181,7 +180,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
-    std::vector<Glib::ustring> opnames = iccStore->getProfiles ();
+    std::vector<Glib::ustring> opnames = iccStore->getProfiles (rtengine::ICCStore::ProfileType::OUTPUT);
 
     for (size_t i = 0; i < opnames.size(); i++) {
         onames->append_text (opnames[i]);
@@ -295,11 +294,11 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
 
     oldip = "";
 
-    wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
-    onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
-    ointent->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::oiChanged) );
-    wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
-    dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
+    wnamesconn = wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
+    onamesconn = onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
+    ointentconn = ointent->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::oiChanged) );
+    wgammaconn = wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
+    dcpillconn = dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
 
     obpcconn = obpc->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::oBPCChanged) );
     gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
@@ -347,6 +346,7 @@ void ICMPanel::updateRenderingIntent (const Glib::ustring &profile) {
 
 void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
 {
+    ConnectionBlocker dcpillconn_(dcpillconn);
 
     if (isBatchMode) {
         dcpFrame->set_sensitive(true);
@@ -359,7 +359,6 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
 
         if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
             int curr_active = dcpIll->get_active_row_number();
-            ignoreDcpSignal = true;
             dcpIll->clear_items ();
             dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
             dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
@@ -368,7 +367,6 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
             dcpTemperatures[0] = 0;
             dcpTemperatures[1] = 0;
             dcpIll->set_active (curr_active);
-            ignoreDcpSignal = false;
         }
 
         if (dcpIll->get_active_row_number() == -1 && dcpIlluminant == -1) {
@@ -425,7 +423,6 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
                 sprintf(tempstr1, "%.0fK", illuminants.temperature_1);
                 sprintf(tempstr2, "%.0fK", illuminants.temperature_2);
                 int curr_active = dcpIll->get_active_row_number();
-                ignoreDcpSignal = true;
                 dcpIll->clear_items ();
                 dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
                 dcpIll->append_text (tempstr1);
@@ -433,7 +430,6 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
                 dcpTemperatures[0] = illuminants.temperature_1;
                 dcpTemperatures[1] = illuminants.temperature_2;
                 dcpIll->set_active (curr_active);
-                ignoreDcpSignal = false;
             }
 
             if (dcpIlluminant > 2) {
@@ -441,22 +437,16 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
             }
 
             if (dcpIll->get_active_row_number() == -1 && dcpIlluminant == -1) {
-                ignoreDcpSignal = true;
                 dcpIll->set_active(0);
-                ignoreDcpSignal = false;
             } else if (dcpIlluminant >= 0 && dcpIlluminant != dcpIll->get_active_row_number()) {
-                ignoreDcpSignal = true;
                 dcpIll->set_active(dcpIlluminant);
-                ignoreDcpSignal = false;
             }
 
             dcpIll->set_sensitive (true);
             dcpIllLabel->set_sensitive (true);
         } else {
             if (dcpIll->get_active_row_number() != -1) {
-                ignoreDcpSignal = true;
                 dcpIll->set_active(-1);
-                ignoreDcpSignal = false;
             }
         }
     }
@@ -464,7 +454,6 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
     if (!dcpIllLabel->get_sensitive() && dcpIll->get_active_row_number() != 0) {
         if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
             int curr_active = dcpIll->get_active_row_number();
-            ignoreDcpSignal = true;
             dcpIll->clear_items ();
             dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
             dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
@@ -477,7 +466,6 @@ void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name)
             dcpTemperatures[0] = 0;
             dcpTemperatures[1] = 0;
             dcpIll->set_active (curr_active);
-            ignoreDcpSignal = false;
         }
     }
 }
@@ -487,14 +475,19 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener ();
 
-    obpcconn.block (true);
-    ipc.block (true);
-    gamcsconn.block (true);
-    tcurveconn.block(true);
-    ltableconn.block(true);
-    beoconn.block(true);
-    hsmconn.block(true);
-    blendcmsconn.block(true);
+    ConnectionBlocker obpcconn_(obpcconn);
+    ConnectionBlocker ipc_(ipc);
+    ConnectionBlocker gamcsconn_(gamcsconn);
+    ConnectionBlocker tcurveconn_(tcurveconn);
+    ConnectionBlocker ltableconn_(ltableconn);
+    ConnectionBlocker beoconn_(beoconn);
+    ConnectionBlocker hsmconn_(hsmconn);
+    ConnectionBlocker blendcmsconn_(blendcmsconn);
+    ConnectionBlocker wnamesconn_(wnamesconn);
+    ConnectionBlocker onamesconn_(onamesconn);
+    ConnectionBlocker ointentconn_(ointentconn);
+    ConnectionBlocker wgammaconn_(wgammaconn);
+    ConnectionBlocker dcpillconn_(dcpillconn);
 
     if(pp->icm.input.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.input);
@@ -626,15 +619,6 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     }
 
-    blendcmsconn.block(false);
-    tcurveconn.block(false);
-    ltableconn.block(false);
-    beoconn.block(false);
-    hsmconn.block(false);
-    gamcsconn.block (false);
-    ipc.block (false);
-    obpcconn.block (false);
-
     enableListener ();
 }
 
@@ -661,11 +645,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->icm.working = wnames->get_active_text ();
     pp->icm.gamma = wgamma->get_active_text ();
-    pp->icm.dcpIlluminant = dcpIll->get_active_row_number();
-
-    if (pp->icm.dcpIlluminant < 0) {
-        pp->icm.dcpIlluminant = 0;
-    }
+    pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
 
     if (onames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -681,33 +661,10 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->icm.freegamma = freegamma->get_active();
-
-    DCPProfile* dcp = nullptr;
-
-    if (ifromfile->get_active() && pp->icm.input.substr(0, 5) == "file:" && DCPStore::getInstance()->isValidDCPFileName(pp->icm.input.substr(5))) {
-        dcp = DCPStore::getInstance()->getProfile(pp->icm.input.substr(5));
-    } else if(icameraICC->get_active()) {
-        dcp = DCPStore::getInstance()->getStdProfile(camName);
-    }
-
-    if (dcp) {
-        if (dcp->getHasToneCurve()) {
-            pp->icm.toneCurve = ckbToneCurve->get_active ();
-        }
-
-        if (dcp->getHasLookTable()) {
-            pp->icm.applyLookTable = ckbApplyLookTable->get_active ();
-        }
-
-        if (dcp->getHasBaselineExposureOffset()) {
-            pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active ();
-        }
-
-        if (dcp->getHasHueSatMap()) {
-            pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active ();
-        }
-    }
-
+    pp->icm.toneCurve = ckbToneCurve->get_active ();
+    pp->icm.applyLookTable = ckbApplyLookTable->get_active ();
+    pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active ();
+    pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active ();
     pp->icm.blendCMSMatrix = ckbBlendCMSMatrix->get_active ();
     pp->icm.gampos = (double) gampos->getValue();
     pp->icm.slpos = (double) slpos->getValue();
@@ -786,7 +743,7 @@ void ICMPanel::gpChanged ()
 
 void ICMPanel::dcpIlluminantChanged()
 {
-    if (listener && !ignoreDcpSignal) {
+    if (listener) {
         listener->panelChanged (EvDCPIlluminant, dcpIll->get_active_text ());
     }
 }
@@ -1145,7 +1102,6 @@ void ICMPanel::setBatchMode (bool batchMode)
 {
 
     isBatchMode = true;
-    ignoreDcpSignal = false;
     ToolPanel::setBatchMode (batchMode);
     iunchanged = Gtk::manage (new Gtk::RadioButton (M("GENERAL_UNCHANGED")));
     iunchanged->set_group (opts);

@@ -521,47 +521,23 @@ HISTORY_NEWSNAPSHOT;Nowa migawka
 HISTORY_NEWSNAPSHOT_TOOLTIP;Skrot: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Migawka
 HISTORY_SNAPSHOTS;Migawki
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Stanowisko
-IPTCPANEL_AUTHORSPOSITIONHINT;Stanowisko lub funkcja autora lub autorow dziela (By-line Title).
-IPTCPANEL_CAPTION;Tytul
-IPTCPANEL_CAPTIONHINT;Tekstowy opis tresci (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Autor opisu
-IPTCPANEL_CAPTIONWRITERHINT;Imie i nazwisko osoby biorace udzial w opracowywaniu, edytowanie lub korygowania obrazu lub opisu (Writer - Editor).
 IPTCPANEL_CATEGORY;Kategoria
-IPTCPANEL_CATEGORYHINT;Identyfikuje temat zdjecia w opinii jego dostawcy (Category).
 IPTCPANEL_CITY;Miasto
-IPTCPANEL_CITYHINT;Miasto w ktorym wykonano zdjecie (City).
 IPTCPANEL_COPYHINT;Kopiuje ustawienia IPTC do schowka
-IPTCPANEL_COPYRIGHT;Prawa autorskie
-IPTCPANEL_COPYRIGHTHINT;Wazne uwagi o prawach autorskich (Copyright Notice).
 IPTCPANEL_COUNTRY;Kraj
-IPTCPANEL_COUNTRYHINT;Nazwa kraju lub lokalizacji, gdzie zostalo wykonane zdjecie (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Zasluga
 IPTCPANEL_CREDITHINT;Identyfikuje dostawce zdjecia, niekoniecznie wlasciciela lub autora (Credit).
 IPTCPANEL_DATECREATED;Data utworzenia
-IPTCPANEL_DATECREATEDHINT;Data powstania intelektualnej tresci zdjecia. Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Osadzony
 IPTCPANEL_EMBEDDEDHINT;Resetuje dane IPTC do domyslnych ustawien osadzonych w orginalnym zdjeciu
 IPTCPANEL_HEADLINE;Naglowek
-IPTCPANEL_HEADLINEHINT;Gotowy do opublikowania wpis streszczajacy zawratosc zdjecia (Headline).
 IPTCPANEL_INSTRUCTIONS;Instrukcje
-IPTCPANEL_INSTRUCTIONSHINT;Inne wskazowki redakcyjne dotyczace korzystania z obrazu (Special Instructions).
 IPTCPANEL_KEYWORDS;Slowa kluczowe
-IPTCPANEL_KEYWORDSHINT;Wskazuje konkretne tresci mozliwe do odszukania (Keywords).
 IPTCPANEL_PASTEHINT;Wstawia ustawienia IPTC ze schowka
-IPTCPANEL_PROVINCE;Stan, wojewodztwo, dystrykt itd.
-IPTCPANEL_PROVINCEHINT;Wojewodztwo, gmina, stan gdzie zostalo wykonane zdjecie (Province-State).
 IPTCPANEL_RESET;Reset
 IPTCPANEL_RESETHINT;Resetuje do domyslnych ustawien profilu
 IPTCPANEL_SOURCE;Zrodlo
-IPTCPANEL_SOURCEHINT;Pierwotny wlasciciel tresci intelektualnych zdjecia (Source).
-IPTCPANEL_SUPPCATEGORIES;Dodatkowe kategorie tematyczne
-IPTCPANEL_SUPPCATEGORIESHINT;Doprecyzowuje kategorie tematyczne zdjecia (Supplemental Categories).
 IPTCPANEL_TITLE;Tytul
-IPTCPANEL_TITLEHINT;Skrocony temat odniesienia zdjecia (Object Name).
-IPTCPANEL_TRANSREFERENCE;Kod ident. zlecenie
-IPTCPANEL_TRANSREFERENCEHINT;Numer badz kod identyfikujacy zlecenie utworzony zazwyczaj przez fotografa przy transmisji umozliwiajacy sledzenie obrazu w obiegu.
 MAIN_BUTTON_FULLSCREEN;Pelen ekran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Przejdz do nastepnego zdjecia wzgledem zdjecia otwartego w Edytorze.\nSkrot: <b>Shift-F4</b>\n\nAby przejsc do nastepnego zdjecia wzgledem miniaturki wybranej w Nawigatorze Zdjec:\nSkrot: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Przejdz do poprzedniego zdjecia wzgledem zdjecia otwartego w Edytorze.\nSkrot: <b>Shift-F3</b> \n\nAby przejsc do poprzedniego zdjecia wzgledem miniaturki wybranej w Nawigatorze Zdjec:\nSkrot: <b>F3</b>
@@ -1159,8 +1135,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Przy -100 oddzialywanie efektu odbywa sie wylacz
 TP_DIRPYREQUALIZER_THRESHOLD;Prog
 TP_DIRPYREQUALIZER_TOOLTIP;Zapobiega artefaktom w strefach przejscia pomiedzy odcieniom skory (hue, chrominancja, luminancja) a pozostalym odcieniom.
 TP_DISTORTION_AMOUNT;Sila
-TP_DISTORTION_AUTO;Automatyczna korekcja dystorsji
-TP_DISTORTION_AUTO_TIP;(Eksperymentalne) Automatyczna korekcja dystorsji obiektywu dla niektorych aparatow (M4/3, kompakty DC, itp.)
 TP_DISTORTION_LABEL;Dystorsja
 TP_EPD_EDGESTOPPING;Wyszukiwanie krawedzi
 TP_EPD_LABEL;Tone Mapping
@@ -1255,7 +1229,6 @@ TP_ICM_INPUTPROFILE;Profil wejsciowy
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Brak ICM: Wyjscie sRGB
 TP_ICM_OUTPUTPROFILE;Profil wyjsciowy
-TP_ICM_SAVEREFERENCE;Zapisz obraz wzorcowy dla profilowania
 TP_ICM_SAVEREFERENCE_TOOLTIP;Zapisz liniowy obraz TIFF zanim profil wejsciowy zostanie zastosowany. Obraz ten mozna uzyc do kalibracji oraz do wytworzenia profilu aparatu.
 TP_ICM_TONECURVE;Uzyj krzywa tonalna z DCP
 TP_ICM_TONECURVE_TOOLTIP;Wlacz aby uzyc krzywa tonalna znajdujaca sie w profilu DCP. Opcja ta jest tylko aktywna jesli profil DCP zawiera krzywa tonalna.
@@ -1658,6 +1631,31 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
@@ -1676,6 +1674,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1684,7 +1683,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREYSC;Scene Yb luminance (%)
 !PREFERENCES_GREYSC18;Yb=18 CIE L#50
@@ -1700,9 +1699,10 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
@@ -1712,7 +1712,10 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
@@ -1778,6 +1781,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
@@ -1791,6 +1795,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_NEUTRAL;Reset

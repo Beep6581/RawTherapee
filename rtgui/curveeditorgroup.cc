@@ -73,7 +73,7 @@ void CurveEditorGroup::hideCurrentCurve()
  *     periodic:      for FlatCurve only, ask the curve to be periodic (default: True)
  *
  */
-CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget, bool periodic)
+CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget, bool expandRelatedWidget, bool periodic)
 {
     switch (cType) {
     case (CT_Diagonal): {
@@ -84,6 +84,7 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
         // We add it to the curve editor list
         DiagonalCurveEditor* newCE = diagonalSubGroup->addCurve(curveLabel);
         newCE->relatedWidget = relatedWidget;
+        newCE->expandRelatedWidget = expandRelatedWidget;
         curveEditors.push_back(newCE);
         return (newCE);
     }
@@ -96,6 +97,7 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
         // We add it to the curve editor list
         FlatCurveEditor* newCE = flatSubGroup->addCurve(curveLabel, periodic);
         newCE->relatedWidget = relatedWidget;
+        newCE->expandRelatedWidget = expandRelatedWidget;
         curveEditors.push_back(newCE);
         return (newCE);
     }
@@ -131,20 +133,21 @@ void CurveEditorGroup::newLine()
         }
 
         int j = numberOfPackedCurve;
-        bool hasRelatedWidget = false;
+
+        bool rwe = false;
 
         for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
-            if (curveEditors[i]->relatedWidget != nullptr) {
-                hasRelatedWidget = true;
+            if (curveEditors[i]->relatedWidget != nullptr && curveEditors[i]->expandRelatedWidget) {
+                rwe = true;
             }
         }
 
         for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
             if (curveEditors[i]->relatedWidget != nullptr) {
-                headerBox->pack_end (*curveEditors[i]->relatedWidget, Gtk::PACK_EXPAND_WIDGET, 2);
+                headerBox->pack_end (*curveEditors[i]->relatedWidget, curveEditors[i]->expandRelatedWidget ? Gtk::PACK_EXPAND_WIDGET : Gtk::PACK_SHRINK, 2);
             }
 
-            headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, hasRelatedWidget ? Gtk::PACK_SHRINK : Gtk::PACK_EXPAND_WIDGET, 2);
+            headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, rwe ? Gtk::PACK_SHRINK : Gtk::PACK_EXPAND_WIDGET, 2);
             numberOfPackedCurve++;
         }
 

@@ -170,47 +170,23 @@ HISTORY_MSG_81;Resize enabled
 HISTORY_NEWSNAPSHOT;Tilføj...
 HISTORY_SNAPSHOT;Snapshot
 HISTORY_SNAPSHOTS;Snapshots
-IPTCPANEL_AUTHOR;Forfatter
-IPTCPANEL_AUTHORSPOSITION;Forfatterens stilling
-IPTCPANEL_AUTHORSPOSITIONHINT;Stillingsbetegnelse for skaberen eller skaberne af objektet (byline titel).
-IPTCPANEL_CAPTION;Billedtekst
-IPTCPANEL_CAPTIONHINT;En beskrivelse af informationerne i tekstform.
-IPTCPANEL_CAPTIONWRITER;Skribent på billedtekst
-IPTCPANEL_CAPTIONWRITERHINT;Navnet på den person, der har været indblandet i at skrive, redigere eller korrekturlæse billedet eller billedteksten.
 IPTCPANEL_CATEGORY;Kategori
-IPTCPANEL_CATEGORYHINT;Identificerer billedets emne efter skaberens mening.
 IPTCPANEL_CITY;By
-IPTCPANEL_CITYHINT;Byen, hvor billedet er taget..
 IPTCPANEL_COPYHINT;Kopier IPTC-indstillinger til udklipsholder.
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Enhver nødvendig copyright-oplysning.
 IPTCPANEL_COUNTRY;Land
-IPTCPANEL_COUNTRYHINT;Navnet på det land, hvor billedet blev taget.
 IPTCPANEL_CREDIT;Anerkendelse
 IPTCPANEL_CREDITHINT;Identificerer den, der stiller billedet til rådighed, ikke nødvendigvis ejeren/skaberen.
 IPTCPANEL_DATECREATED;Dato skabt
-IPTCPANEL_DATECREATEDHINT;Den dato, hvor det intellektuelle indhold i billedet blev skabt; Format: ÅÅÅÅMMDD (Date Created).
 IPTCPANEL_EMBEDDED;Indlejret
 IPTCPANEL_EMBEDDEDHINT;Genskab til indlejrede IPTC-data i billedfilen
 IPTCPANEL_HEADLINE;Overskrift
-IPTCPANEL_HEADLINEHINT;En indførsel, som kan udgives og giver en opsummering af billedets indhold.
 IPTCPANEL_INSTRUCTIONS;Instruktioner
-IPTCPANEL_INSTRUCTIONSHINT;Andre redaktionelle instruktioner angående billedets brug.
 IPTCPANEL_KEYWORDS;Søgeord
-IPTCPANEL_KEYWORDSHINT;Bruges til at angive særlige søgbare ord.
 IPTCPANEL_PASTEHINT;Indsæt IPTC-indstillinger fra udklipsholder
-IPTCPANEL_PROVINCE;Provins
-IPTCPANEL_PROVINCEHINT;Provinsen/delstaten, hvor billedet stammer fra.
 IPTCPANEL_RESET;Genskab
 IPTCPANEL_RESETHINT;Genskab til profilstandard
 IPTCPANEL_SOURCE;Kilde
-IPTCPANEL_SOURCEHINT;Den originale ejer af billedets intellektuelle indhold.
-IPTCPANEL_SUPPCATEGORIES;Suppl. katergorier
-IPTCPANEL_SUPPCATEGORIESHINT;Yderligere angivelse af billedets emne.
 IPTCPANEL_TITLE;Titel
-IPTCPANEL_TITLEHINT;En kort beskrivelse af billedet.
-IPTCPANEL_TRANSREFERENCE;Overleveringsreference
-IPTCPANEL_TRANSREFERENCEHINT;En kode, der repræsenterer placeringen for den originale overlevering.
 MAIN_BUTTON_PREFERENCES;Indstillinger
 MAIN_BUTTON_SAVE;Gem billede
 MAIN_BUTTON_SENDTOEDITOR;Send til redigeringsprogram
@@ -396,7 +372,6 @@ TP_ICM_INPUTPROFILE;Input profil
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: sRGB output
 TP_ICM_OUTPUTPROFILE;Output profil
-TP_ICM_SAVEREFERENCE;Gem referencebillede til profilering
 TP_ICM_WORKINGPROFILE;Arbejdsprofil
 TP_RAW_DMETHOD;Metode
 TP_RAW_FALSECOLOR;Antal trin til undertrykkelse af forkert farve
@@ -956,6 +931,31 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1088,6 +1088,7 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1123,7 +1124,7 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_GREY05;Yb=05 CIE L#30
@@ -1159,9 +1160,10 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
@@ -1177,8 +1179,11 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
 !PREFERENCES_PROPERTY;Property
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
@@ -1513,8 +1518,7 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_DISTORTION_AUTO;Auto Distortion Correction
-!TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_GAMMA;Gamma
 !TP_EPD_LABEL;Tone Mapping
@@ -1598,6 +1602,7 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
@@ -1803,7 +1808,6 @@ TP_WBALANCE_TEMPERATURE;Temperatur
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations
 !TP_SHARPENEDGE_THREE;Luminance only
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when using with CIECAM02. If difference is observed, adjust to taste.
 !TP_SHARPENMICRO_AMOUNT;Quantity
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5

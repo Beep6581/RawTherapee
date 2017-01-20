@@ -84,6 +84,12 @@ class ICCStore
 
 public:
 
+    enum class ProfileType {
+        MONITOR,
+        PRINTER,
+        OUTPUT  // (actually correspond to the same profiles than with MONITOR)
+    };
+
     static ICCStore* getInstance ();
 
     void init (const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir);
@@ -112,7 +118,7 @@ public:
     cmsHPROFILE      getXYZProfile  () const;
     cmsHPROFILE      getsRGBProfile () const;
 
-    std::vector<Glib::ustring> getProfiles (const bool onlyRgb = false) const;
+    std::vector<Glib::ustring> getProfiles (const ProfileType type = ProfileType::MONITOR) const;
     std::vector<Glib::ustring> getProfilesFromDir (const Glib::ustring& dirName) const;
 
     uint8_t     getInputIntents  (cmsHPROFILE profile) const;

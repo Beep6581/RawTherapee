@@ -1291,7 +1291,7 @@ public:
         b.height_ = height;
 #endif
 
-        abData.resize(width * height * 3);
+        abData.resize(width * height * 3u);
 
         if (!abData.isEmpty()) {
             data = abData.data;

@@ -41,6 +41,25 @@
 #include "StopWatch.h"
 
 
+namespace
+{
+
+    bool checkRawImageThumb(const rtengine::RawImage& raw_image)
+    {
+        if (!raw_image.is_supportedThumb()) {
+            return false;
+        }
+
+        const std::size_t length =
+            fdata(raw_image.get_thumbOffset(), raw_image.get_file())[1] != 0xD8 && raw_image.is_ppmThumb()
+                ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
+                : raw_image.get_thumbLength();
+
+        return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
+    }
+
+}
+
 extern Options options;
 
 namespace rtengine
@@ -176,8 +195,8 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     int err = 1;
 
-    // see if it is something we support
-    if ( ri->is_supportedThumb() && ri->get_thumbOffset() < ri->get_file()->size ) {
+    // See if it is something we support
+    if (checkRawImageThumb(*ri)) {
         const char* data((const char*)fdata(ri->get_thumbOffset(), ri->get_file()));
 
         if ( (unsigned char)data[1] == 0xd8 ) {
@@ -452,6 +471,10 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
             int left_margin = ri->get_leftmargin();
             firstgreen += left_margin;
             int top_margin = ri->get_topmargin();
+            if(ri->get_maker() == "Sigma" && ri->DNGVERSION()) { // Hack to prevent sigma dng files from crashing
+                tmpw = (width - 2 - left_margin) / hskip;
+                tmph = (height - 2 - top_margin) / vskip;
+            }
 
             for (int row = 1 + top_margin, y = 0; row < iheight + top_margin  - 1 && y < tmph; row += vskip, y++) {
                 rofs = row * iwidth;
@@ -496,6 +519,17 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         tmph = high;
     }
 
+    const bool rotate_90 =
+        rotate
+        && (
+            ri->get_rotateDegree() == 90
+            || ri->get_rotateDegree() == 270
+        );
+
+    if (rotate_90) {
+        std::swap(tmpw, tmph);
+    }
+
     if (fixwh == 1) { // fix height, scale width
         w = tmpw * h / tmph;
     } else {
@@ -506,8 +540,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         delete tpp->thumbImg;
     }
 
-    tpp->thumbImg = nullptr;
-    tpp->thumbImg = resizeTo<Image16>(w, h, TI_Bilinear, tmpImg);
+    if (rotate_90) {
+        tpp->thumbImg = resizeTo<Image16>(h, w, TI_Bilinear, tmpImg);
+    } else {
+        tpp->thumbImg = resizeTo<Image16>(w, h, TI_Bilinear, tmpImg);
+    }
     delete tmpImg;
 
 
@@ -914,7 +951,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     ImProcFunctions ipf (&params, false);
     ipf.setScale (sqrt(double(fw * fw + fh * fh)) / sqrt(double(thumbImg->width * thumbImg->width + thumbImg->height * thumbImg->height))*scale);
-    ipf.updateColorProfiles (params.icm, options.rtSettings.monitorProfile, options.rtSettings.monitorIntent, false, false);
+    ipf.updateColorProfiles (options.rtSettings.monitorProfile, options.rtSettings.monitorIntent, false, false);
 
     LUTu hist16 (65536);
 

@@ -170,47 +170,23 @@ HISTORY_MSG_81;Resize enabled
 HISTORY_NEWSNAPSHOT;Νέο στιγμιότυπο
 HISTORY_SNAPSHOT;Στιγμιότυπο
 HISTORY_SNAPSHOTS;Στιγμιότυπα
-IPTCPANEL_AUTHOR;Συγγραφέας
-IPTCPANEL_AUTHORSPOSITION;Θέση δημιουργού
-IPTCPANEL_AUTHORSPOSITIONHINT;Τίτλος που αποδίδεται από τον/τους δημιουργό/γους (Ανα γραμμή τίτλος).
-IPTCPANEL_CAPTION;Λεζάντα
-IPTCPANEL_CAPTIONHINT;Μια λεκτική περιγραφή των στοιχείων (Λεζάντα - Περίληψη).
-IPTCPANEL_CAPTIONWRITER;Συγγραφέας λεζάντας
-IPTCPANEL_CAPTIONWRITERHINT;Το όνομα του προσώπου που ασχολήθηκε με την συγγραφή, επεξεργασία ή διόρθωση της εικόνας ή λεζάντας/περίληψης (Συγγραφέας - Επιμελητής).
 IPTCPANEL_CATEGORY;Κατηγορία
-IPTCPANEL_CATEGORYHINT;Ταυτοποιεί το θέμα της εικόνας βάση της άποψης του παροχέα (Κατηγορία).
 IPTCPANEL_CITY;Πόλη
-IPTCPANEL_CITYHINT;Πόλη προέλευσης εικόνας (Πόλη).
 IPTCPANEL_COPYHINT;Αντιγραφή ρυθμίσεων IPTC στην περιοχή αποκομμάτων
-IPTCPANEL_COPYRIGHT;Πνευματική ιδιοκτησία
-IPTCPANEL_COPYRIGHTHINT;Όποιο απαραίτητο σχόλιο περι πνευματικής ιδιοκτησίας (Σχόλια περι πνευματική ιδιοκτησία).
 IPTCPANEL_COUNTRY;Χώρα
-IPTCPANEL_COUNTRYHINT;Χώρα/αρχική τοποθεσία δημιουργίας εικόνας (Χώρα/αρχική τοποθεσία).
 IPTCPANEL_CREDIT;Εύσημα
 IPTCPANEL_CREDITHINT;Ταυτοποιεί τον παροχέα της εικόνας, όχι απραίτητα δημιουργό/ιδιοκτήτη (Εύσημα).
 IPTCPANEL_DATECREATED;Ημερομηνία δημιουργίας
-IPTCPANEL_DATECREATEDHINT;Η ημερομηνία δημιουργίας του πνευματικού περιεχομένου; Τύπος: JJJJMMTT (Ημερομηνία δημιουργίας).
 IPTCPANEL_EMBEDDED;Ενσωματωμένο
 IPTCPANEL_EMBEDDEDHINT;Επαναφορά στοιχείων IPTC αρχείου εικόνας
 IPTCPANEL_HEADLINE;Επικεφαλίδα
-IPTCPANEL_HEADLINEHINT;Ένας δημοσιεύσιμος τίτλος που παρέχει μια σύνοψη των περιεχομένων της εικόνας (Επικεφαλίδα).
 IPTCPANEL_INSTRUCTIONS;Οδηγίες
-IPTCPANEL_INSTRUCTIONSHINT;Άλλες οδηγίες επιμέλειας που αφορούν την χρήση της εικόνας (Ειδικίες οδηγίες).
 IPTCPANEL_KEYWORDS;Λέξεις-κλειδιά
-IPTCPANEL_KEYWORDSHINT;Χρησιμοποιούνται ενδεικτικά ως λέξεις ανάκτησης(Λέξεις-κλειδιά).
 IPTCPANEL_PASTEHINT;Επικόλληση ρυθμίσεων IPTC από την περιοχή αποκομμάτων
-IPTCPANEL_PROVINCE;Επαρχία
-IPTCPANEL_PROVINCEHINT;Επαρχία/Πολιτεία/Νομός προέλευσης της εικόνας (Επαρχία/Πολιτεία/Νομός).
 IPTCPANEL_RESET;Επαναφορά
 IPTCPANEL_RESETHINT;Επαναφορά προεπιλεγμένου προφίλ
 IPTCPANEL_SOURCE;Πηγή
-IPTCPANEL_SOURCEHINT;Αυθεντικός ιδιοκτήτης πνευματικού περιεχομένου της εικόνας (Πηγή).
-IPTCPANEL_SUPPCATEGORIES;Συμπληρ. Κατηγορίες
-IPTCPANEL_SUPPCATEGORIESHINT;Προσδιορίζουν επιπλέον το θέμα της εικόνας (Συμπληρωματικές κατηγορίες).
 IPTCPANEL_TITLE;Τίτλος
-IPTCPANEL_TITLEHINT;Μια σύντομη αναφορά για την εικόνα (Όνομα αντικειμένου).
-IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
-IPTCPANEL_TRANSREFERENCEHINT;Ένας κωδικός που αντιπροσωπέυει την τοποθεσία αυθεντικής μετάδοσης (Κωδικός Αυθεντικής Μετάδοσης).
 MAIN_BUTTON_PREFERENCES;Ρυθμίσεις
 MAIN_BUTTON_SAVE;Αποθήκευση εικόνας
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
@@ -396,7 +372,6 @@ TP_ICM_INPUTPROFILE;Προφίλ εισαγωγής
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: sRGB output
 TP_ICM_OUTPUTPROFILE;Προφίλ εξόδου
-TP_ICM_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφορά για δημιουργία προφίλ.
 TP_ICM_WORKINGPROFILE;Παρόν προφίλ
 TP_RAW_DMETHOD;Μέθοδος
 TP_RAW_FALSECOLOR;Βήματα καταστολής σφαλμένων χρωμάτων
@@ -955,6 +930,31 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1087,6 +1087,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1122,7 +1123,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
 !PREFERENCES_FLUOF11;Fluorescent F11
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Editor's panel and the File Browser
+!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_GREY;Output device's Yb luminance (%)
 !PREFERENCES_GREY05;Yb=05 CIE L#30
@@ -1158,9 +1159,10 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 !PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs In Own Window Mode
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
@@ -1176,8 +1178,11 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
 !PREFERENCES_PROFILE_NONE;None
 !PREFERENCES_PROPERTY;Property
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
@@ -1512,8 +1517,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_DISTORTION_AUTO;Auto Distortion Correction
-!TP_DISTORTION_AUTO_TIP;Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.).
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_GAMMA;Gamma
 !TP_EPD_LABEL;Tone Mapping
@@ -1597,6 +1601,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
@@ -1802,7 +1807,6 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations
 !TP_SHARPENEDGE_THREE;Luminance only
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when using with CIECAM02. If difference is observed, adjust to taste.
 !TP_SHARPENMICRO_AMOUNT;Quantity
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5

@@ -690,8 +690,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     ProfilePanel::cleanup();
 
     if (!options.windowMaximized) {
-        options.windowWidth = get_width();
-        options.windowHeight = get_height();
+        get_size(options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
 
@@ -796,15 +795,22 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
+void RTWindow::updateProfiles(const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
+{
+    epanel->updateProfiles(printerProfile, printerIntent, printerBPC);
+
+    for(auto panel : epanels) {
+        panel.second->updateProfiles(printerProfile, printerIntent, printerBPC);
+    }
+}
+
 void RTWindow::updateTPVScrollbar (bool hide)
 {
     fpanel->updateTPVScrollbar (hide);
     epanel->updateTPVScrollbar (hide);
 
-    std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
-
-    for(itr = epanels.begin(); itr != epanels.end(); ++itr) {
-        ((*itr).second)->updateTPVScrollbar (hide);
+    for(auto panel : epanels) {
+        panel.second->updateTPVScrollbar (hide);
     }
 }
 
@@ -813,10 +819,8 @@ void RTWindow::updateTabsUsesIcons (bool useIcons)
     fpanel->updateTabsUsesIcons (useIcons);
     epanel->updateTabsUsesIcons (useIcons);
 
-    std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
-
-    for(itr = epanels.begin(); itr != epanels.end(); ++itr) {
-        ((*itr).second)->updateTabsUsesIcons (useIcons);
+    for(auto panel : epanels) {
+        panel.second->updateTabsUsesIcons (useIcons);
     }
 }
 
@@ -834,10 +838,8 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 {
     epanel->updateHistogramPosition (oldPosition, newPosition);
 
-    std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
-
-    for(itr = epanels.begin(); itr != epanels.end(); ++itr) {
-        ((*itr).second)->updateHistogramPosition (oldPosition, newPosition);
+    for(auto panel : epanels) {
+        panel.second->updateHistogramPosition (oldPosition, newPosition);
     }
 }
 
