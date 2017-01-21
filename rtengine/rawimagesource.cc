@@ -1635,7 +1635,8 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
     rml.ciffBase = ri->get_ciffBase();
     rml.ciffLength = ri->get_ciffLen();
     idata = new ImageData (fname, &rml);
-
+	Glib::ustring nana = ri->get_filename();
+	printf("nana=%s \n", nana.c_str());
     green(W, H);
     red(W, H);
     blue(W, H);

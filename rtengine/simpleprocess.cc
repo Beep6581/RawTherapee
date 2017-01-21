@@ -29,6 +29,10 @@
 #include "rawimagesource.h"
 #include "../rtgui/multilangmgr.h"
 #include "mytime.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #undef THREAD_PRIORITY_NORMAL
 
 namespace rtengine
@@ -40,7 +44,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     errorCode = 0;
 
-    ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
+    ProcessingJobImpl* job = static_cast<ProcessingJobImpl*> (pjob);
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_PROCESSING");
@@ -63,7 +67,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // acquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
 
-    int tr = getCoarseBitMask(params.coarse);
+    int tr = getCoarseBitMask (params.coarse);
     int fw, fh;
     imgsrc->getFullSize (fw, fh, tr);
 
@@ -102,13 +106,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ImProcFunctions ipf (&params, true);
 
     PreviewProps pp (0, 0, fw, fh, 1);
-    imgsrc->preprocess( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
+    imgsrc->preprocess ( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
     if (params.toneCurve.autoexp) {// this enabled HLRecovery
-        LUTu histRedRaw(256), histGreenRaw(256), histBlueRaw(256);
-        imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
+        LUTu histRedRaw (256), histGreenRaw (256), histBlueRaw (256);
+        imgsrc->getRAWHistogram (histRedRaw, histGreenRaw, histBlueRaw);
 
-        if (ToneCurveParams::HLReconstructionNecessary(histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
+        if (ToneCurveParams::HLReconstructionNecessary (histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
             params.toneCurve.hrenabled = true;
             // WARNING: Highlight Reconstruction is being forced 'on', should we force a method here too?
         }
@@ -118,13 +122,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         pl->setProgress (0.20);
     }
 
-    imgsrc->demosaic( params.raw);
+    imgsrc->demosaic ( params.raw);
 
     if (pl) {
         pl->setProgress (0.30);
     }
 
-    if(params.retinex.enabled) { //enabled Retinex
+    if (params.retinex.enabled) { //enabled Retinex
         LUTf cdcurve (65536, 0);
         LUTf mapcurve (65536, 0);
         LUTu dummy;
@@ -134,18 +138,18 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         bool mapcontlutili = false;
         bool useHsl = false;
 //        multi_array2D<float, 3> conversionBuffer(1, 1);
-        multi_array2D<float, 4> conversionBuffer(1, 1);
-        imgsrc->retinexPrepareBuffers(params.icm, params.retinex, conversionBuffer, dummy);
-        imgsrc->retinexPrepareCurves(params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
+        multi_array2D<float, 4> conversionBuffer (1, 1);
+        imgsrc->retinexPrepareBuffers (params.icm, params.retinex, conversionBuffer, dummy);
+        imgsrc->retinexPrepareCurves (params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
         float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
-        imgsrc->retinex( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
+        imgsrc->retinex ( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
     }
 
     if (pl) {
         pl->setProgress (0.40);
     }
 
-    imgsrc->HLRecovery_Global( params.toneCurve );
+    imgsrc->HLRecovery_Global ( params.toneCurve );
 
 
     if (pl) {
@@ -159,25 +163,25 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         currWB = imgsrc->getWB ();
     } else if (params.wb.method == "Auto") {
         double rm, gm, bm;
-        imgsrc->getAutoWBMultipliers(rm, gm, bm);
-        currWB.update(rm, gm, bm, params.wb.equal);
+        imgsrc->getAutoWBMultipliers (rm, gm, bm);
+        currWB.update (rm, gm, bm, params.wb.equal);
     }
 
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
     Imagefloat *calclum = nullptr ;
-    params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
+    params.dirpyrDenoise.getCurves (noiseLCurve, noiseCCurve);
     float autoNR = (float) settings->nrauto;//
     float autoNRmax = (float) settings->nrautomax;//
     int tilesize;
     int overlap;
 
-    if(settings->leveldnti == 0) {
+    if (settings->leveldnti == 0) {
         tilesize = 1024;
         overlap = 128;
     }
 
-    if(settings->leveldnti == 1) {
+    if (settings->leveldnti == 1) {
         tilesize = 768;
         overlap = 96;
     }
@@ -188,7 +192,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ipf.Tile_calc (tilesize, overlap, 2, fw, fh, numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip);
     int nbtl = numtiles_W * numtiles_H;
 
-    if((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT") || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) {
+    if ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT") || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) {
         nbtl = 9;
     }
 
@@ -204,28 +208,28 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     float *pcsk = new float [nbtl];
 
     //  printf("expert=%d\n",settings->leveldnautsimpl);
-    if(settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "PON") {
+    if (settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "PON") {
         MyTime t1pone, t2pone;
         t1pone.set();
         int crW, crH;
 
-        if(settings->leveldnv == 0) {
+        if (settings->leveldnv == 0) {
             crW = 100;
             crH = 100;
         }
 
-        if(settings->leveldnv == 1) {
+        if (settings->leveldnv == 1) {
             crW = 250;
             crH = 250;
         }
 
-        if(settings->leveldnv == 2) {
-            crW = int(tileWskip / 2);
-            crH = int(tileHskip / 2);
+        if (settings->leveldnv == 2) {
+            crW = int (tileWskip / 2);
+            crH = int (tileHskip / 2);
         }
 
         //  if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int(1.15f*(tileWskip/2));}//adapted to scale of preview
-        if(settings->leveldnv == 3) {
+        if (settings->leveldnv == 3) {
             crW = tileWskip - 10;
             crH = tileHskip - 10;
         }
@@ -233,7 +237,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float lowdenoise = 1.f;
         int levaut = settings->leveldnaut;
 
-        if(levaut == 1) { //Standard
+        if (levaut == 1) { //Standard
             lowdenoise = 0.7f;
         }
 
@@ -242,9 +246,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 //      Imagefloat *origCropPart;//init auto noise
 //          origCropPart = new Imagefloat (crW, crH);//allocate memory
         if (params.dirpyrDenoise.enabled) {//evaluate Noise
-            LUTf gamcurve(65536, 0);
+            LUTf gamcurve (65536, 0);
             float gam, gamthresh, gamslope;
-            ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
+            ipf.RGB_denoise_infoGamCurve (params.dirpyrDenoise, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
             #pragma omp parallel
             {
                 Imagefloat *origCropPart;//init auto noise
@@ -253,23 +257,23 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 int skipP = 1;
                 #pragma omp for schedule(dynamic) collapse(2) nowait
 
-                for(int wcr = 0; wcr < numtiles_W; wcr++) {
-                    for(int hcr = 0; hcr < numtiles_H; hcr++) {
+                for (int wcr = 0; wcr < numtiles_W; wcr++) {
+                    for (int hcr = 0; hcr < numtiles_H; hcr++) {
                         int beg_tileW = wcr * tileWskip + tileWskip / 2.f - crW / 2.f;
                         int beg_tileH = hcr * tileHskip + tileHskip / 2.f - crH / 2.f;
                         PreviewProps ppP (beg_tileW , beg_tileH, crW, crH, skipP);
                         imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
 
                         // we only need image reduced to 1/4 here
-                        for(int ii = 0; ii < crH; ii += 2) {
-                            for(int jj = 0; jj < crW; jj += 2) {
-                                provicalc->r(ii >> 1, jj >> 1) = origCropPart->r(ii, jj);
-                                provicalc->g(ii >> 1, jj >> 1) = origCropPart->g(ii, jj);
-                                provicalc->b(ii >> 1, jj >> 1) = origCropPart->b(ii, jj);
+                        for (int ii = 0; ii < crH; ii += 2) {
+                            for (int jj = 0; jj < crW; jj += 2) {
+                                provicalc->r (ii >> 1, jj >> 1) = origCropPart->r (ii, jj);
+                                provicalc->g (ii >> 1, jj >> 1) = origCropPart->g (ii, jj);
+                                provicalc->b (ii >> 1, jj >> 1) = origCropPart->b (ii, jj);
                             }
                         }
 
-                        imgsrc->convertColorSpace(provicalc, params.icm, currWB);//for denoise luminance curve
+                        imgsrc->convertColorSpace (provicalc, params.icm, currWB); //for denoise luminance curve
                         float maxr = 0.f;
                         float maxb = 0.f;
                         float pondcorrec = 1.0f;
@@ -282,7 +286,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                         maxblueaut = 0.f;
                         chromina = 0.f;
                         sigma = 0.f;
-                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+                        ipf.RGB_denoise_info (origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope, params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
                         float multip = 1.f;
                         float adjustr = 1.f;
 
@@ -304,27 +308,27 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                             adjustr = 1.f / 1.2f;
                         }
 
-                        if(!imgsrc->isRAW()) {
+                        if (!imgsrc->isRAW()) {
                             multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good fot gamma=1
                         }
 
-                        float maxmax = max(maxredaut, maxblueaut);
+                        float maxmax = max (maxredaut, maxblueaut);
                         float delta;
                         int mode = 2;
                         int lissage = settings->leveldnliss;
                         ipf.calcautodn_info (chaut, delta, Nb, levaut, maxmax, lumema, chromina, mode, lissage, redyel, skinc, nsknc);
 
                         //    printf("PROCESS cha=%f red=%f bl=%f redM=%f bluM=%f chrom=%f sigm=%f lum=%f sigL=%f\n",chaut,redaut,blueaut, maxredaut, maxblueaut, chromina, sigma, lumema, sigma_L);
-                        if(maxredaut > maxblueaut) {
+                        if (maxredaut > maxblueaut) {
                             maxr = (delta) / ((autoNRmax * multip * adjustr * lowdenoise) / 2.f);
 
-                            if(minblueaut <= minredaut  && minblueaut < chaut) {
+                            if (minblueaut <= minredaut  && minblueaut < chaut) {
                                 maxb = (-chaut + minblueaut) / (autoNRmax * multip * adjustr * lowdenoise);
                             }
                         } else {
                             maxb = (delta) / ((autoNRmax * multip * adjustr * lowdenoise) / 2.f);
 
-                            if(minredaut <= minblueaut  && minredaut < chaut) {
+                            if (minredaut <= minblueaut  && minredaut < chaut) {
                                 maxr = (-chaut + minredaut) / (autoNRmax * multip * adjustr * lowdenoise);
                             }
                         }//maxb mxr - empirical evaluation red / blue
@@ -347,45 +351,45 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
             int liss = settings->leveldnliss; //smooth result around mean
 
-            if(liss == 2 || liss == 3) {
+            if (liss == 2 || liss == 3) {
                 // I smooth only mean and not delta (max)
                 float nchm = 0.f;
                 float koef = 0.4f; //between 0.1 to 0.9
 
-                if(liss == 3) {
+                if (liss == 3) {
                     koef = 0.0f;    //quasi auto for mean Ch
                 }
 
-                for(int wcr = 0; wcr < numtiles_W; wcr++) {
-                    for(int hcr = 0; hcr < numtiles_H; hcr++) {
+                for (int wcr = 0; wcr < numtiles_W; wcr++) {
+                    for (int hcr = 0; hcr < numtiles_H; hcr++) {
                         nchm += ch_M[hcr * numtiles_W + wcr];
                     }
                 }
 
                 nchm /= (numtiles_H * numtiles_W);
 
-                for(int wcr = 0; wcr < numtiles_W; wcr++) {
-                    for(int hcr = 0; hcr < numtiles_H; hcr++) {
+                for (int wcr = 0; wcr < numtiles_W; wcr++) {
+                    for (int hcr = 0; hcr < numtiles_H; hcr++) {
                         ch_M[hcr * numtiles_W + wcr] = nchm + (ch_M[hcr * numtiles_W + wcr] - nchm) * koef;
                     }
                 }
             }
 
-            if(liss == 3) { //same as auto but with much cells
+            if (liss == 3) { //same as auto but with much cells
                 float MaxR = 0.f;
                 float MaxB = 0.f;
                 float MaxRMoy = 0.f;
                 float MaxBMoy = 0.f;
 
-                for(int k = 0; k < nbtl; k++) {
+                for (int k = 0; k < nbtl; k++) {
                     MaxBMoy += max_b[k];
                     MaxRMoy += max_r[k];
 
-                    if(max_r[k] > MaxR) {
+                    if (max_r[k] > MaxR) {
                         MaxR = max_r[k];
                     }
 
-                    if(max_b[k] > MaxB) {
+                    if (max_b[k] > MaxB) {
                         MaxB = max_b[k];
                     }
 
@@ -394,8 +398,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 MaxBMoy /= nbtl;
                 MaxRMoy /= nbtl;
 
-                for(int k = 0; k < nbtl; k++) {
-                    if(MaxR > MaxB) {
+                for (int k = 0; k < nbtl; k++) {
+                    if (MaxR > MaxB) {
                         max_r[k] = MaxRMoy + (MaxR - MaxRMoy) * 0.66f; //#std Dev
                         //max_b[k]=MinB;
                         max_b[k] = MaxBMoy + (MaxB - MaxBMoy) * 0.66f;
@@ -411,35 +415,35 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
             if (settings->verbose) {
                 t2pone.set();
-                printf("Info denoise ponderated performed in %d usec:\n", t2pone.etime(t1pone));
+                printf ("Info denoise ponderated performed in %d usec:\n", t2pone.etime (t1pone));
             }
 
         }
     }
 
 
-    if((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) {
+    if ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) {
         MyTime t1aue, t2aue;
         t1aue.set();
         int crW, crH;
 
-        if(settings->leveldnv == 0) {
+        if (settings->leveldnv == 0) {
             crW = 100;
             crH = 100;
         }
 
-        if(settings->leveldnv == 1) {
+        if (settings->leveldnv == 1) {
             crW = 250;
             crH = 250;
         }
 
-        if(settings->leveldnv == 2) {
-            crW = int(tileWskip / 2);
-            crH = int(tileHskip / 2);
+        if (settings->leveldnv == 2) {
+            crW = int (tileWskip / 2);
+            crH = int (tileHskip / 2);
         }
 
         //  if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int(1.15f*(tileWskip/2));}//adapted to scale of preview
-        if(settings->leveldnv == 3) {
+        if (settings->leveldnv == 3) {
             crW = tileWskip - 10;
             crH = tileHskip - 10;
         }
@@ -447,14 +451,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float lowdenoise = 1.f;
         int levaut = settings->leveldnaut;
 
-        if(levaut == 1) { //Standard
+        if (levaut == 1) { //Standard
             lowdenoise = 0.7f;
         }
 
         if (params.dirpyrDenoise.enabled) {//evaluate Noise
-            LUTf gamcurve(65536, 0);
+            LUTf gamcurve (65536, 0);
             float gam, gamthresh, gamslope;
-            ipf.RGB_denoise_infoGamCurve(params.dirpyrDenoise, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
+            ipf.RGB_denoise_infoGamCurve (params.dirpyrDenoise, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope);
             int Nb[9];
             int  coordW[3];//coordonate of part of image to mesure noise
             int  coordH[3];
@@ -474,24 +478,24 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                 #pragma omp for schedule(dynamic) collapse(2) nowait
 
-                for(int wcr = 0; wcr <= 2; wcr++) {
-                    for(int hcr = 0; hcr <= 2; hcr++) {
+                for (int wcr = 0; wcr <= 2; wcr++) {
+                    for (int hcr = 0; hcr <= 2; hcr++) {
                         PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
                         imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw);
 
                         // we only need image reduced to 1/4 here
-                        for(int ii = 0; ii < crH; ii += 2) {
-                            for(int jj = 0; jj < crW; jj += 2) {
-                                provicalc->r(ii >> 1, jj >> 1) = origCropPart->r(ii, jj);
-                                provicalc->g(ii >> 1, jj >> 1) = origCropPart->g(ii, jj);
-                                provicalc->b(ii >> 1, jj >> 1) = origCropPart->b(ii, jj);
+                        for (int ii = 0; ii < crH; ii += 2) {
+                            for (int jj = 0; jj < crW; jj += 2) {
+                                provicalc->r (ii >> 1, jj >> 1) = origCropPart->r (ii, jj);
+                                provicalc->g (ii >> 1, jj >> 1) = origCropPart->g (ii, jj);
+                                provicalc->b (ii >> 1, jj >> 1) = origCropPart->b (ii, jj);
                             }
                         }
 
-                        imgsrc->convertColorSpace(provicalc, params.icm, currWB);//for denoise luminance curve
+                        imgsrc->convertColorSpace (provicalc, params.icm, currWB); //for denoise luminance curve
                         int nb = 0;
                         float chaut = 0.f, redaut = 0.f, blueaut = 0.f, maxredaut = 0.f, maxblueaut = 0.f, minredaut = 0.f, minblueaut = 0.f, chromina = 0.f, sigma = 0.f, lumema = 0.f, sigma_L = 0.f, redyel = 0.f, skinc = 0.f, nsknc = 0.f;
-                        ipf.RGB_denoise_info(origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
+                        ipf.RGB_denoise_info (origCropPart, provicalc, imgsrc->isRAW(), gamcurve, gam, gamthresh, gamslope,  params.dirpyrDenoise, imgsrc->getDirPyrDenoiseExpComp(), chaut, nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut, chromina, sigma, lumema, sigma_L, redyel, skinc, nsknc);
                         Nb[hcr * 3 + wcr] = nb;
                         ch_M[hcr * 3 + wcr] = chaut;
                         max_r[hcr * 3 + wcr] = maxredaut;
@@ -545,7 +549,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 adjustr = 1.f / 1.2f;
             }
 
-            if(!imgsrc->isRAW()) {
+            if (!imgsrc->isRAW()) {
                 multip = 2.f;    //take into account gamma for TIF / JPG approximate value...not good fot gamma=1
             }
 
@@ -553,17 +557,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             int mode = 1;
             int lissage = settings->leveldnliss;
 
-            for(int k = 0; k < 9; k++) {
-                float maxmax = max(max_r[k], max_b[k]);
+            for (int k = 0; k < 9; k++) {
+                float maxmax = max (max_r[k], max_b[k]);
                 ipf.calcautodn_info (ch_M[k], delta[k], Nb[k], levaut, maxmax, lumL[k], chromC[k], mode, lissage, ry[k], sk[k], pcsk[k] );
                 //  printf("ch_M=%f delta=%f\n",ch_M[k], delta[k]);
             }
 
-            for(int k = 0; k < 9; k++) {
-                if(max_r[k] > max_b[k]) {
+            for (int k = 0; k < 9; k++) {
+                if (max_r[k] > max_b[k]) {
                     //printf("R delta=%f  koef=%f\n",delta[k],autoNRmax*multip*adjustr*lowdenoise);
                     Max_R[k] = (delta[k]) / ((autoNRmax * multip * adjustr * lowdenoise) / 2.f);
-                    Min_B[k] = -(ch_M[k] - min_b[k]) / (autoNRmax * multip * adjustr * lowdenoise);
+                    Min_B[k] = - (ch_M[k] - min_b[k]) / (autoNRmax * multip * adjustr * lowdenoise);
                     Max_B[k] = 0.f;
                     Min_R[k] = 0.f;
                 } else {
@@ -575,7 +579,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 }
             }
 
-            for(int k = 0; k < 9; k++) {
+            for (int k = 0; k < 9; k++) {
                 //  printf("ch_M= %f Max_R=%f Max_B=%f min_r=%f min_b=%f\n",ch_M[k],Max_R[k], Max_B[k],Min_R[k], Min_B[k]);
                 chM += ch_M[k];
                 MaxBMoy += Max_B[k];
@@ -583,19 +587,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 MinRMoy += Min_R[k];
                 MinBMoy += Min_B[k];
 
-                if(Max_R[k] > MaxR) {
+                if (Max_R[k] > MaxR) {
                     MaxR = Max_R[k];
                 }
 
-                if(Max_B[k] > MaxB) {
+                if (Max_B[k] > MaxB) {
                     MaxB = Max_B[k];
                 }
 
-                if(Min_R[k] < MinR) {
+                if (Min_R[k] < MinR) {
                     MinR = Min_R[k];
                 }
 
-                if(Min_B[k] < MinB) {
+                if (Min_B[k] < MinB) {
                     MinB = Min_B[k];
                 }
 
@@ -607,7 +611,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             MinBMoy /= 9;
             MinRMoy /= 9;
 
-            if(MaxR > MaxB) {
+            if (MaxR > MaxB) {
                 maxr = MaxRMoy + (MaxR - MaxRMoy) * 0.66f; //#std Dev
                 //  maxb=MinB;
                 maxb = MinBMoy + (MinB - MinBMoy) * 0.66f;
@@ -628,7 +632,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
         if (settings->verbose) {
             t2aue.set();
-            printf("Info denoise auto performed in %d usec:\n", t2aue.etime(t1aue));
+            printf ("Info denoise auto performed in %d usec:\n", t2aue.etime (t1aue));
         }
 
         //end evaluate noise
@@ -664,7 +668,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // at this stage, we can flush the raw data to free up quite an important amount of memory
     // commented out because it makes the application crash when batch processing...
     // TODO: find a better place to flush rawData and rawRGB
-    if(flush) {
+    if (flush) {
         imgsrc->flushRawData();
         imgsrc->flushRGB();
     }
@@ -679,13 +683,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     DirPyrDenoiseParams denoiseParams = params.dirpyrDenoise;   // make a copy because we cheat here
 
-    if(denoiseParams.Lmethod == "CUR") {
-        if(noiseLCurve) {
+    if (denoiseParams.Lmethod == "CUR") {
+        if (noiseLCurve) {
             denoiseParams.luma = 0.5f;
         } else {
             denoiseParams.luma = 0.0f;
         }
-    } else if(denoiseParams.Lmethod == "SLI") {
+    } else if (denoiseParams.Lmethod == "SLI") {
         noiseLCurve.Reset();
     }
 
@@ -694,15 +698,15 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         calclum = new Imagefloat ((fw + 1) / 2, (fh + 1) / 2); //for luminance denoise curve
         #pragma omp parallel for
 
-        for(int ii = 0; ii < fh; ii += 2) {
-            for(int jj = 0; jj < fw; jj += 2) {
-                calclum->r(ii >> 1, jj >> 1) = baseImg->r(ii, jj);
-                calclum->g(ii >> 1, jj >> 1) = baseImg->g(ii, jj);
-                calclum->b(ii >> 1, jj >> 1) = baseImg->b(ii, jj);
+        for (int ii = 0; ii < fh; ii += 2) {
+            for (int jj = 0; jj < fw; jj += 2) {
+                calclum->r (ii >> 1, jj >> 1) = baseImg->r (ii, jj);
+                calclum->g (ii >> 1, jj >> 1) = baseImg->g (ii, jj);
+                calclum->b (ii >> 1, jj >> 1) = baseImg->b (ii, jj);
             }
         }
 
-        imgsrc->convertColorSpace(calclum, params.icm, currWB);
+        imgsrc->convertColorSpace (calclum, params.icm, currWB);
     }
 
     if (denoiseParams.enabled) {
@@ -711,7 +715,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 //      ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), denoiseParams, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, lldenoiseutili);
         float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
         int kall = 2;
-        ipf.RGB_denoise(kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+        ipf.RGB_denoise (kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
 
     }
 
@@ -727,7 +731,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] sk;
     delete [] pcsk;
 
-    imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+    imgsrc->convertColorSpace (baseImg, params.icm, currWB);
 
     // perform first analysis
     LUTu hist16 (65536);
@@ -747,10 +751,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
         const int W = baseImg->getWidth();
         const int H = baseImg->getHeight();
-        LabImage labcbdl(W, H);
-        ipf.rgb2lab(*baseImg, labcbdl, params.icm.working);
+        LabImage labcbdl (W, H);
+        ipf.rgb2lab (*baseImg, labcbdl, params.icm.working);
         ipf.dirpyrequalizer (&labcbdl, 1);
-        ipf.lab2rgb(labcbdl, *baseImg, params.icm.working);
+        ipf.lab2rgb (labcbdl, *baseImg, params.icm.working);
     }
 
     // update blurmap
@@ -758,7 +762,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh, true);
-        double radius = sqrt (double(fw * fw + fh * fh)) / 2.0;
+        double radius = sqrt (double (fw * fw + fh * fh)) / 2.0;
         double shradius = params.sh.radius;
 
         if (!params.sh.hq) {
@@ -775,7 +779,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LUTf curve (65536, 0);
     LUTf satcurve (65536, 0);
     LUTf lhskcurve (65536, 0);
-    LUTf lumacurve(32770, 0); // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
+    LUTf lumacurve (32770, 0); // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
     LUTf clcurve (65536, 0);
     LUTf clToningcurve;
     LUTf cl2Toningcurve;
@@ -804,7 +808,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     bool opautili = false;
 
-    if(params.colorToning.enabled) {
+    if (params.colorToning.enabled) {
         TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
         double wp[3][3] = {
             {wprof[0][0], wprof[0][1], wprof[0][2]},
@@ -817,35 +821,35 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
             {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
-        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+        params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, wip, opautili);
         clToningcurve (65536, 0);
-        CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, 1);
+        CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, 1);
         cl2Toningcurve (65536, 0);
-        CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, 1);
+        CurveFactory::curveToning (params.colorToning.cl2curve, cl2Toningcurve, 1);
     }
 
     LabImage* labView = new LabImage (fw, fh);
 
-    if(params.blackwhite.enabled) {
+    if (params.blackwhite.enabled) {
         CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
     }
 
     double rrm, ggm, bbm;
     float autor, autog, autob;
-    float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
-    float satLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
+    float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
+    float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
 
-    if(params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+    if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
         float moyS = 0.f;
         float eqty = 0.f;
         ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
         float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
 
-        if(satp >= 0.92f) {
+        if (satp >= 0.92f) {
             satp = 0.92f;    //avoid values too high (out of gamut)
         }
 
-        if(satp <= 0.15f) {
+        if (satp <= 0.15f) {
             satp = 0.15f;    //avoid too low values
         }
 
@@ -856,14 +860,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
     DCPProfile::ApplyState as;
-    DCPProfile *dcpProf = imgsrc->getDCP(params.icm, currWB, as);
+    DCPProfile *dcpProf = imgsrc->getDCP (params.icm, currWB, as);
 
     LUTu histToneCurve;
 
     ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
     if (settings->verbose) {
-        printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
+        printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
     }
 
     // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
@@ -900,7 +904,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // start tile processing...???
 
 
-    if(params.labCurve.contrast != 0) { //only use hist16 for contrast
+    if (params.labCurve.contrast != 0) { //only use hist16 for contrast
         hist16.clear();
 
 #ifdef _OPENMP
@@ -915,7 +919,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
             for (int i = 0; i < fh; i++)
                 for (int j = 0; j < fw; j++) {
-                    hist16thr[(int)((labView->L[i][j]))]++;
+                    hist16thr[ (int) ((labView->L[i][j]))]++;
                 }
 
             #pragma omp critical
@@ -929,42 +933,656 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, lumacurve, dummy, 1, utili);
 
     bool clcutili;
-    CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, 1);
+    CurveFactory::curveCL (clcutili, params.labCurve.clcurve, clcurve, 1);
 
     bool autili, butili, ccutili, cclutili;
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                    params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
+    bool locutili = false;
+    bool locallutili = false;
+
+    if (params.locallab.enabled) {
+        MyTime t1, t2;
+        t1.set();
+
+        //Glib::ustring datalab = imgsrc->getFileName() + ".mip";
+
+        Glib::ustring pop = options.getUserProfilePath() + "/";
+        Glib::ustring datalab;
+
+        if (options.mip == MI_opt) {
+            datalab = pop + Glib::path_get_basename (imgsrc->getFileName () + ".mip");
+        }
+
+        if (options.mip == MI_prev) {
+            datalab = imgsrc->getFileName() + ".mip";
+        }
+
+
+        LocretigainCurve locRETgainCurve;
+        LocLHCurve loclhCurve;
+
+        LocretigainCurverab locRETgainCurverab;
+        LUTf lllocalcurve (65536, 0);
+
+        int realspot = params.locallab.nbspot;
+        int maxspot = settings->nspot + 1;
+        ifstream fic0 (datalab, ios::in);
+        float** shbuffer;
+        int versionmip = 0;
+        std::string delim[69] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+                                 "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+                                 "&", "#", "{", "[", "]", "}", "$", "*", "?", ">", "!", ";", "<"",(", ")", "+", "-"
+                                };
+
+        if (params.locallab.inverssha) {
+            shbuffer   = new float*[fh];
+
+            for (int i = 0; i < fh; i++) {
+                shbuffer[i] = new float[fw];
+            }
+        }
+
+        if (fic0) {//normally we don't use here but ??
+            //find the version mip
+            string line;
+            string spotline;
+            int cont = 0;
+
+            while (getline (fic0, line)) {
+                spotline = line;
+                std::size_t pos = spotline.find ("=");
+                std::size_t posend = spotline.find ("@"); //in case of for futur use
+
+                if (spotline.substr (0, pos) == "Mipversion") {
+                    string strversion = spotline.substr (pos + 1, (posend - pos));
+                    versionmip = std::stoi (strversion.c_str());
+                }
+
+                if (spotline.substr (0, pos) == "Spot") {
+                    cont = 0;
+                }
+
+
+            }
+
+            fic0.close();
+        }
+
+        ifstream fich (datalab, ios::in);
+
+        if (fich && versionmip != 0) {
+            std::string inser;
+
+            int **dataspots;
+            dataspots = new int*[60];
+
+            for (int i = 0; i < 60; i++) {
+                dataspots[i] = new int[maxspot];
+            }
+
+
+            std::string *retistrs;
+            retistrs = new std::string[maxspot];
+            std::string *llstrs;
+
+            llstrs = new std::string[maxspot];
+            std::string *lhstrs;
+
+            lhstrs = new std::string[maxspot];
+
+            {
+                dataspots[2][0] =  params.locallab.circrad;
+                dataspots[3][0] =  params.locallab.locX;
+                dataspots[4][0] =  params.locallab.locY;
+                dataspots[5][0] =  params.locallab.locYT;
+                dataspots[6][0] =  params.locallab.locXL;
+                dataspots[7][0] =  params.locallab.centerX;
+                dataspots[8][0] =  params.locallab.centerY;
+                dataspots[9][0] =  params.locallab.lightness;
+                dataspots[10][0] =  params.locallab.contrast;
+                dataspots[11][0] =  params.locallab.chroma;
+                dataspots[12][0] =  params.locallab.sensi;
+                dataspots[13][0] =  params.locallab.transit;
+
+                if (!params.locallab.invers) {
+                    dataspots[14][0] =  0;
+                } else {
+                    dataspots[14][0] =  1;
+                }
+
+                if (params.locallab.Smethod == "IND") {
+                    dataspots[15][0] =  0;
+                } else if (params.locallab.Smethod == "SYM") {
+                    dataspots[15][0] =  1;
+                } else if (params.locallab.Smethod == "INDSL") {
+                    dataspots[15][0] =  2;
+                } else if (params.locallab.Smethod == "SYMSL") {
+                    dataspots[15][0] =  3;
+                }
+
+                dataspots[17][0] =  params.locallab.radius;
+                dataspots[18][0] =  params.locallab.strength;
+                dataspots[19][0] =  params.locallab.sensibn;
+
+                if (!params.locallab.inversrad) {
+                    dataspots[20][0] =  0;
+                } else {
+                    dataspots[20][0] =  1;
+                }
+
+                dataspots[21][0] = params.locallab.str;
+                dataspots[22][0] = params.locallab.chrrt;
+                dataspots[23][0] = params.locallab.neigh;
+                dataspots[24][0] = params.locallab.vart;
+                dataspots[25][0] = params.locallab.sensih;
+
+                if (!params.locallab.inversret) {
+                    dataspots[26][0] =  0;
+                } else {
+                    dataspots[26][0] =  1;
+                }
+
+                if (params.locallab.retinexMethod == "low") {
+                    dataspots[27][0] =  0;
+                } else if (params.locallab.retinexMethod == "uni") {
+                    dataspots[27][0] =  1;
+                } else if (params.locallab.retinexMethod == "high") {
+                    dataspots[27][0] =  2;
+                }
+
+
+                dataspots[28][0] = params.locallab.sharradius;
+                dataspots[29][0] = params.locallab.sharamount;
+                dataspots[30][0] = params.locallab.shardamping;
+                dataspots[31][0] = params.locallab.shariter;
+                dataspots[32][0] = params.locallab.sensisha;
+
+                if (!params.locallab.inverssha) {
+                    dataspots[33][0] =  0;
+                } else {
+                    dataspots[33][0] =  1;
+                }
+
+                if (params.locallab.qualityMethod == "std") {
+                    dataspots[34][0] =  0;
+                } else if (params.locallab.qualityMethod == "enh") {
+                    dataspots[34][0] =  1;
+                } else if (params.locallab.qualityMethod == "enhden") {
+                    dataspots[34][0] =  2;
+                }
+
+                dataspots[35][0] = params.locallab.thres;
+                dataspots[36][0] = params.locallab.proxi;
+
+                dataspots[37][0] = params.locallab.noiselumf;
+                dataspots[38][0] = params.locallab.noiselumc;
+                dataspots[39][0] = params.locallab.noisechrof;
+                dataspots[40][0] = params.locallab.noisechroc;
+
+                dataspots[41][0] = params.locallab.mult[0];
+                dataspots[42][0] = params.locallab.mult[1];
+                dataspots[43][0] = params.locallab.mult[2];
+                dataspots[44][0] = params.locallab.mult[3];
+                dataspots[45][0] = params.locallab.mult[4];
+                dataspots[46][0] = params.locallab.threshold;
+                dataspots[47][0] = params.locallab.sensicb;
+
+                if (!params.locallab.activlum) {
+                    dataspots[48][0] =  0;
+                } else {
+                    dataspots[48][0] =  1;
+                }
+
+                dataspots[49][0] = params.locallab.stren;
+                dataspots[50][0] = params.locallab.gamma;
+                dataspots[51][0] = params.locallab.estop;
+                dataspots[52][0] = params.locallab.scaltm;
+                dataspots[53][0] = params.locallab.rewei;
+                dataspots[54][0] = params.locallab.sensitm;
+                dataspots[55][0] = params.locallab.retrab;
+
+                if (!params.locallab.curvactiv) {
+                    dataspots[56][0] =  0;
+                } else {
+                    dataspots[56][0] =  1;
+                }
+
+                dataspots[57][0] = 100.f * params.locallab.hueref;
+                dataspots[58][0] = params.locallab.chromaref;
+                dataspots[59][0] = params.locallab.lumaref;
+
+                //curve Reti local
+                int siz = params.locallab.localTgaincurve.size();
+
+                if (siz > 69) {
+                    siz = 69;//avoid crash
+                }
+
+                int s_cur[siz + 1];
+                int s_datcur[siz + 1];
+
+                for (int j = 0; j < siz; j++) {
+                    s_datcur[j] = (int)  (1000. * params.locallab.localTgaincurve[j]);
+                }
+
+                std::string cur_str = "";
+
+                for (int j = 0; j < siz; j++) {
+                    cur_str = cur_str + std::to_string (s_datcur[j]) + delim[j];
+                }
+
+                inser = retistrs[0] = cur_str + "@";
+
+                int sizl = params.locallab.llcurve.size();
+
+                if (sizl > 69) {
+                    sizl = 69;
+                }
+
+                int s_curl[sizl + 1];
+                int s_datcurl[sizl + 1];
+
+                for (int j = 0; j < sizl; j++) {
+                    s_datcurl[j] = (int)  (1000. * params.locallab.llcurve[j]);
+                }
+
+                std::string ll_str = "";
+
+                for (int j = 0; j < sizl; j++) {
+                    ll_str = ll_str + std::to_string (s_datcurl[j]) + delim[j];
+                }
+
+                llstrs[0] = ll_str + "@";
+
+
+                int sizh = params.locallab.LHcurve.size();
+
+                if (sizh > 69) {
+                    sizh = 69;
+                }
+
+                int s_curh[sizh + 1];
+                int s_datcurh[sizh + 1];
+
+                for (int j = 0; j < sizh; j++) {
+                    s_datcurh[j] = (int)  (1000. * params.locallab.LHcurve[j]);
+                }
+
+                std::string lh_str = "";
+
+                for (int j = 0; j < sizl; j++) {
+                    lh_str = lh_str + std::to_string (s_datcurh[j]) + delim[j];
+                }
+
+                lhstrs[0] = lh_str + "@";
+
+
+            }
+            locallutili = false;
+
+
+            int ns;
+            int realsp = params.locallab.nbspot;
+
+            if (fich) {
+
+                std::string line;
+                std::string spotline;
+                int cont = 0;
+                int sizecu;
+                int sizell;
+                int sizelh;
+
+                while (getline (fich, line)) {
+                    spotline = line;
+                    std::size_t pos = spotline.find ("=");
+                    std::size_t posend = spotline.find ("@"); //in case of for futur use
+
+                    if (spotline.substr (0, pos) == "Mipversion") {
+                        std::string strversion = spotline.substr (pos + 1, (posend - pos));
+                        versionmip = std::stoi (strversion.c_str());
+                    }
+
+                    if (spotline.substr (0, pos) == "Spot") {
+                        cont = 0;
+                    }
+
+                    cont++;
+                    std::string str3 = spotline.substr (pos + 1, (posend - pos));
+
+                    if (cont == 1) {
+                        ns =  std::stoi (str3.c_str());
+                    }
+
+                    if (cont >= 2  && cont < 16) {
+                        dataspots[cont][ns] = std::stoi (str3.c_str());
+
+                    }
+
+                    if (spotline.substr (0, pos) == "Currentspot") {
+                        dataspots[16][0] = std::stoi (str3.c_str());
+                    }
+
+                    if (cont > 16  && cont < 60) {
+                        dataspots[cont][ns] = std::stoi (str3.c_str());
+
+                    }
+
+                    if (spotline.substr (0, pos) == "curveReti") {
+                        std::string curstr;
+                        int longecur;
+                        std::string strend = spotline.substr (posend - 1, 1);
+                        std::size_t posz = spotline.find (strend);
+                        int longe;
+
+                        for (int sl = 0; sl < 69; sl++) {
+                            if (delim[sl] == strend) {
+                                longe = sl + 1;
+                            }
+                        }
+
+                        retistrs[ns] = str3;
+                        sizecu = longe;
+                        //        printf("lec simpl str=%s ns=%i  si=%i\n",  retistrs[ns].c_str(), ns, sizecu);
+                    }
+
+                    if (spotline.substr (0, pos) == "curveLL") {
+                        std::string curstrl;
+                        int longecurl;
+                        std::string strendl = spotline.substr (posend - 1, 1);
+                        std::size_t poszl = spotline.find (strendl);
+                        int longel;
+
+                        for (int sl = 0; sl < 69; sl++) {
+                            if (delim[sl] == strendl) {
+                                longel = sl + 1;
+                            }
+                        }
+
+                        llstrs[ns] = str3;
+                        sizell = longel;
+                        // printf("lecture strLL=%s ns=%i  si=%i\n",  llstr[ns].c_str(), ns, sizell);
+
+                    }
+
+                    if (spotline.substr (0, pos) == "curveLH") {
+                        std::string curstrh;
+                        int longecurh;
+                        std::string strendh = spotline.substr (posend - 1, 1);
+                        std::size_t poszh = spotline.find (strendh);
+                        int longeh;
+
+                        for (int sh = 0; sh < 69; sh++) {
+                            if (delim[sh] == strendh) {
+                                longeh = sh + 1;
+                            }
+                        }
+
+                        lhstrs[ns] = str3;
+                        sizelh = longeh;
+                        //printf("lecture strLH=%s ns=%i  si=%i\n",  lhstr[ns].c_str(), ns, sizelh);
+                    }
+
+                }
+
+                fich.close();
+            }
+
+
+            for (int sp = 1; sp < maxspot; sp++) { //spots default
+                params.locallab.hueref = INFINITY;
+                params.locallab.chromaref = INFINITY;
+                params.locallab.lumaref = INFINITY;
+
+                params.locallab.circrad = dataspots[2][sp];
+                params.locallab.locX = dataspots[3][sp];
+                params.locallab.locY = dataspots[4][sp];
+                params.locallab.locYT = dataspots[5][sp];
+                params.locallab.locXL = dataspots[6][sp];
+                params.locallab.centerX = dataspots[7][sp];
+                params.locallab.centerY = dataspots[8][sp];
+                params.locallab.lightness = dataspots[9][sp];
+                params.locallab.contrast = dataspots[10][sp];
+                params.locallab.chroma = dataspots[11][sp];
+                params.locallab.sensi = dataspots[12][sp];
+                params.locallab.transit = dataspots[13][sp];
+
+                if (dataspots[14][sp] ==  0) {
+                    params.locallab.invers = false;
+                } else {
+                    params.locallab.invers = true;
+                }
+
+                if (dataspots[15][sp] ==  0) {
+                    params.locallab.Smethod = "IND" ;
+                } else if (dataspots[15][sp] ==  1) {
+                    params.locallab.Smethod = "SYM" ;
+                } else if (dataspots[15][sp] ==  2) {
+                    params.locallab.Smethod = "INDSL";
+                } else if (dataspots[15][sp] ==  3) {
+                    params.locallab.Smethod = "SYMSL";
+                }
+
+                params.locallab.radius = dataspots[17][sp];
+                params.locallab.strength = dataspots[18][sp];
+                params.locallab.sensibn = dataspots[19][sp];
+
+                if (dataspots[20][sp] ==  0) {
+                    params.locallab.inversrad = false;
+                } else {
+                    params.locallab.inversrad = true;
+                }
+
+                params.locallab.str = dataspots[21][sp];
+                params.locallab.chrrt = dataspots[22][sp];
+                params.locallab.neigh = dataspots[23][sp];
+                params.locallab.vart = dataspots[24][sp];
+                params.locallab.sensih = dataspots[25][sp];
+
+                if (dataspots[26][sp] ==  0) {
+                    params.locallab.inversret = false;
+                } else {
+                    params.locallab.inversret = true;
+                }
+
+                if (dataspots[27][sp] ==  0) {
+                    params.locallab.retinexMethod = "low" ;
+                } else if (dataspots[27][sp] ==  1) {
+                    params.locallab.retinexMethod = "uni" ;
+                } else if (dataspots[27][sp] ==  2) {
+                    params.locallab.retinexMethod = "high";
+                }
+
+                params.locallab.sharradius = dataspots[28][sp];
+                params.locallab.sharamount = dataspots[29][sp];
+                params.locallab.shardamping = dataspots[30][sp];
+                params.locallab.shariter = dataspots[31][sp];
+                params.locallab.sensisha = dataspots[32][sp];
+
+                if (dataspots[33][sp] ==  0) {
+                    params.locallab.inverssha = false;
+                } else {
+                    params.locallab.inverssha = true;
+                }
+
+                if (dataspots[34][sp] ==  0) {
+                    params.locallab.qualityMethod = "std" ;
+                } else if (dataspots[34][sp] ==  1) {
+                    params.locallab.qualityMethod = "enh" ;
+                } else if (dataspots[34][sp] ==  2) {
+                    params.locallab.qualityMethod = "enhden" ;
+                }
+
+                params.locallab.thres = dataspots[35][sp];
+                params.locallab.proxi = dataspots[36][sp];
+
+                params.locallab.noiselumf = dataspots[37][sp];
+                params.locallab.noiselumc = dataspots[38][sp];
+                params.locallab.noisechrof = dataspots[39][sp];
+                params.locallab.noisechroc = dataspots[40][sp];
+
+                params.locallab.mult[0] = dataspots[41][sp];
+                params.locallab.mult[1] = dataspots[42][sp];
+                params.locallab.mult[2] = dataspots[43][sp];
+                params.locallab.mult[3] = dataspots[44][sp];
+                params.locallab.mult[4] = dataspots[45][sp];
+                params.locallab.threshold = dataspots[46][sp];
+                params.locallab.sensicb = dataspots[47][sp];
+
+                if (dataspots[48][sp] ==  0) {
+                    params.locallab.activlum = false;
+                } else {
+                    params.locallab.activlum = true;
+                }
+
+                params.locallab.stren = dataspots[49][sp];
+                params.locallab.gamma = dataspots[50][sp];
+                params.locallab.estop = dataspots[51][sp];
+                params.locallab.scaltm = dataspots[52][sp];
+                params.locallab.rewei = dataspots[53][sp];
+                params.locallab.sensitm = dataspots[54][sp];
+                params.locallab.retrab = dataspots[55][sp];
+
+                if (dataspots[56][sp] ==  0) {
+                    params.locallab.curvactiv = false;
+                } else {
+                    params.locallab.curvactiv = true;
+                }
+
+                params.locallab.hueref = ((float) dataspots[57][sp]) / 100.f;
+                params.locallab.chromaref = dataspots[58][sp];
+                params.locallab.lumaref = dataspots[59][sp];
+
+
+                int *s_datc;
+                s_datc = new int[70];
+                int siz;
+
+                ipf.strcurv_data (retistrs[sp], s_datc, siz);
+                std::vector<double>   cretiend;
+
+                for (int j = 0; j < siz; j++) {
+                    cretiend.push_back ((double) (s_datc[j]) / 1000.);
+                }
+
+                delete [] s_datc;
+
+                int *s_datcl;
+                s_datcl = new int[70];
+                int sizl;
+
+                ipf.strcurv_data (llstrs[sp], s_datcl, sizl);
+
+
+                std::vector<double>   cllend;
+
+                for (int j = 0; j < sizl; j++) {
+                    cllend.push_back ((double) (s_datcl[j]) / 1000.);
+                }
+
+                delete [] s_datcl;
+
+
+                int *s_datch;
+                s_datch = new int[70];
+                int sizh;
+
+                ipf.strcurv_data (lhstrs[sp], s_datch, sizh);
+
+
+                std::vector<double>   clhend;
+
+                for (int j = 0; j < sizh; j++) {
+                    clhend.push_back ((double) (s_datch[j]) / 1000.);
+                }
+
+
+                params.locallab.localTgaincurve.clear();
+                params.locallab.llcurve.clear();
+                params.locallab.LHcurve.clear();
+
+                params.locallab.localTgaincurve = cretiend;
+                params.locallab.llcurve = cllend;
+                params.locallab.LHcurve = clhend;
+
+
+
+                params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve);
+                bool locallutili = false;
+                CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, 1);
+
+                ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                lllocalcurve.clear();
+            }
+
+
+
+            for (int i = 0; i < 60; i++) {
+                delete [] dataspots[i];
+            }
+
+            delete [] dataspots;
+
+
+
+
+            delete [] retistrs;
+            delete [] llstrs;
+            delete [] lhstrs;
+
+            if (params.locallab.inverssha) {
+
+                for (int i = 0; i < fh; i++) {
+                    delete [] shbuffer[i];
+                }
+
+                delete [] shbuffer;
+            }
+
+
+        }
+
+        t2.set();
+
+        if ( settings->verbose ) {
+            printf ("Total local:- %d usec\n", t2.etime (t1));
+        }
+
+    }
+
     ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
-    if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
-        ipf.EPDToneMap(labView, 5, 1);
+
+    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
+        ipf.EPDToneMap (labView, 5, 1);
     }
 
 
-    ipf.vibrance(labView);
+    ipf.vibrance (labView);
 
-    if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
+    if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
         ipf.impulsedenoise (labView);
     }
 
     // for all treatments Defringe, Sharpening, Contrast detail ,Microcontrast they are activated if "CIECAM" function are disabled
 
-    if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
+    if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
         ipf.defringe (labView);
     }
 
     if (params.sharpenEdge.enabled) {
-        ipf.MLsharpen(labView);
+        ipf.MLsharpen (labView);
     }
 
     if (params.sharpenMicro.enabled) {
-        if((params.colorappearance.enabled && !settings->autocielab) ||  (!params.colorappearance.enabled)) {
+        if ((params.colorappearance.enabled && !settings->autocielab) ||  (!params.colorappearance.enabled)) {
             ipf.MLmicrocontrast (labView);    //!params.colorappearance.sharpcie
         }
     }
 
-    if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
+    if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
 
         float **buffer = new float*[fh];
 
@@ -988,22 +1606,22 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     WavOpacityCurveW waOpacityCurveW;
     WavOpacityCurveWL waOpacityCurveWL;
 
-    params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL );
+    params.wavelet.getCurves (wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL );
 
 
     // directional pyramid wavelet
-    if(params.dirpyrequalizer.cbdlMethod == "aft") {
-        if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
+    if (params.dirpyrequalizer.cbdlMethod == "aft") {
+        if ((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
             ipf.dirpyrequalizer (labView, 1);    //TODO: this is the luminance tonecurve, not the RGB one
         }
     }
 
     bool wavcontlutili = false;
 
-    CurveFactory::curveWavContL(wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
+    CurveFactory::curveWavContL (wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
-    if(params.wavelet.enabled) {
-        ipf.ip_wavelet(labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
+    if (params.wavelet.enabled) {
+        ipf.ip_wavelet (labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
     }
 
     wavCLVCurve.Reset();
@@ -1013,7 +1631,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int f_w = 1, f_h = 1;
     int begh = 0, endh = fh;
 
-    if(params.colorappearance.tonecie || params.colorappearance.enabled) {
+    if (params.colorappearance.tonecie || params.colorappearance.enabled) {
         f_w = fw;
         f_h = fh;
     }
@@ -1032,21 +1650,21 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         customColCurve3,
         1);
 
-    if(params.colorappearance.enabled) {
+    if (params.colorappearance.enabled) {
         double adap;
         float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
         float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
         float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed
         float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
 
-        if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {
+        if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {
             adap = 2000.;
         }//if no exif data or wrong
         else {
             float E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
             E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-            E_V += log2(params.raw.expos);// exposure raw white point ; log2 ==> linear to EV
-            adap = powf(2.f, E_V - 3.f); //cd / m2
+            E_V += log2 (params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
+            adap = powf (2.f, E_V - 3.f); //cd / m2
         }
 
         LUTf CAMBrightCurveJ;
@@ -1054,17 +1672,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         float CAMMean = NAN;
 
         if (params.sharpening.enabled) {
-            if(settings->ciecamfloat) {
+            if (settings->ciecamfloat) {
                 float d;
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
+                ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
                 double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
             }
         } else {
-            if(settings->ciecamfloat) {
+            if (settings->ciecamfloat) {
                 float d;
-                ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
+                ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1, 1);
             } else {
                 double dd;
                 ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1, 1);
@@ -1087,7 +1705,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     int imw, imh;
-    double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
+    double tmpScale = ipf.resizeScale (&params, fw, fh, imw, imh);
     bool labResize = params.resize.enabled && params.resize.method != "Nearest" && tmpScale != 1.0;
     LabImage *tmplab;
 
@@ -1100,11 +1718,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cw = params.crop.w;
         ch = params.crop.h;
 
-        if(labResize) { // crop lab data
-            tmplab = new LabImage(cw, ch);
+        if (labResize) { // crop lab data
+            tmplab = new LabImage (cw, ch);
 
-            for(int row = 0; row < ch; row++) {
-                for(int col = 0; col < cw; col++) {
+            for (int row = 0; row < ch; row++) {
+                for (int col = 0; col < cw; col++) {
                     tmplab->L[row][col] = labView->L[row + cy][col + cx];
                     tmplab->a[row][col] = labView->a[row + cy][col + cx];
                     tmplab->b[row][col] = labView->b[row + cy][col + cx];
@@ -1120,16 +1738,16 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if (labResize) { // resize lab data
         // resize image
-        tmplab = new LabImage(imw, imh);
+        tmplab = new LabImage (imw, imh);
         ipf.Lanczos (labView, tmplab, tmpScale);
         delete labView;
         labView = tmplab;
         cw = labView->W;
         ch = labView->H;
 
-        if(params.prsharpening.enabled) {
-            for(int i = 0; i < ch; i++)
-                for(int j = 0; j < cw; j++) {
+        if (params.prsharpening.enabled) {
+            for (int i = 0; i < ch; i++)
+                for (int j = 0; j < cw; j++) {
                     labView->L[i][j] = labView->L[i][j] < 0.f ? 0.f : labView->L[i][j];
                 }
 
@@ -1155,7 +1773,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     bool useLCMS = false;
     bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili ;
 
-    if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+    if (params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
 
         GammaValues ga;
         //  if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
@@ -1176,7 +1794,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm, bwonly);
 
         if (settings->verbose) {
-            printf("Output profile_: \"%s\"\n", params.icm.output.c_str());
+            printf ("Output profile_: \"%s\"\n", params.icm.output.c_str());
         }
     }
 
@@ -1185,15 +1803,15 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 
 
-    if(bwonly) { //force BW r=g=b
+    if (bwonly) { //force BW r=g=b
         if (settings->verbose) {
-            printf("Force BW\n");
+            printf ("Force BW\n");
         }
 
         for (int ccw = 0; ccw < cw; ccw++) {
             for (int cch = 0; cch < ch; cch++) {
-                readyImg->r(cch, ccw) = readyImg->g(cch, ccw);
-                readyImg->b(cch, ccw) = readyImg->g(cch, ccw);
+                readyImg->r (cch, ccw) = readyImg->g (cch, ccw);
+                readyImg->b (cch, ccw) = readyImg->g (cch, ccw);
             }
         }
     }
@@ -1220,7 +1838,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (customGamma) {
         if (!useLCMS) {
             // use corrected sRGB profile in order to apply a good TRC if present, otherwise use LCMS2 profile generated by lab2rgb16 w/ gamma
-            ProfileContent pc(jprof);
+            ProfileContent pc (jprof);
             readyImg->setOutputProfile (pc.data, pc.length);
         }
     } else {
@@ -1229,15 +1847,15 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         if (params.icm.output != "" && params.icm.output != ColorManagementParams::NoICMString) {
 
             // if iccStore->getProfile send back an object, then iccStore->getContent will do too
-            cmsHPROFILE jprof = iccStore->getProfile(params.icm.output); //get outProfile
+            cmsHPROFILE jprof = iccStore->getProfile (params.icm.output); //get outProfile
 
             if (jprof == nullptr) {
                 if (settings->verbose) {
-                    printf("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.output.c_str());
+                    printf ("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.output.c_str());
                 }
             } else {
                 if (settings->verbose) {
-                    printf("Using \"%s\" output profile\n", params.icm.output.c_str());
+                    printf ("Using \"%s\" output profile\n", params.icm.output.c_str());
                 }
 
                 ProfileContent pc = iccStore->getContent (params.icm.output);
@@ -1287,7 +1905,7 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
         IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData, true);
 
         if (errorCode) {
-            bpl->error (M("MAIN_MSG_CANNOTLOAD"));
+            bpl->error (M ("MAIN_MSG_CANNOTLOAD"));
             currentJob = nullptr;
         } else {
             try {
@@ -1306,10 +1924,10 @@ void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, boo
     if (bpl)
 #if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
         // See Issue 2384 "Very bad response time on win7/64 using gcc 4.8 when queue is running"
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
 
 #else
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
 #endif
 
 }

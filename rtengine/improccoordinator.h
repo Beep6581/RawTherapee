@@ -51,6 +51,8 @@ class ImProcCoordinator : public StagedImageProcessor
 {
 
     friend class Crop;
+private:
+
 
 protected:
     Imagefloat *orig_prev;
@@ -87,12 +89,14 @@ protected:
     // Precomputed values used by DetailedCrop ----------------------------------------------
 
     float bwAutoR, bwAutoG, bwAutoB;
+    int coordX, coordY, localX, localY;
     float CAMMean;
     LUTf hltonecurve;
     LUTf shtonecurve;
     LUTf tonecurve;
 
     LUTf lumacurve;
+//    LUTf localcurve;
     LUTf chroma_acurve;
     LUTf chroma_bcurve;
     LUTf satcurve;
@@ -102,6 +106,7 @@ protected:
     multi_array2D<float, 4> conversionBuffer;
     LUTf wavclCurve;
     LUTf clToningcurve;
+    LUTf lllocalcurve;
     LUTf cl2Toningcurve;
     LUTf Noisecurve;
     LUTf NoiseCCcurve;
@@ -135,6 +140,9 @@ protected:
     WavOpacityCurveWL waOpacityCurveWL;
     RetinextransmissionCurve dehatransmissionCurve;
     RetinexgaintransmissionCurve dehagaintransmissionCurve;
+    LocretigainCurve locRETgainCurve;
+    LocretigainCurverab locRETgainCurverab;
+    LocLHCurve loclhCurve;
 
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
@@ -156,6 +164,8 @@ protected:
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
+    localListener* aloListener;
+
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
@@ -193,8 +203,10 @@ protected:
     int  changeSinceLast;
     bool updaterRunning;
     ProcParams nextParams;
+    ProcParams nextParams2;
     bool destroying;
     bool utili;
+    bool locutili;
     bool autili;
     bool butili;
     bool ccutili;
@@ -202,6 +214,82 @@ protected:
     bool clcutili;
     bool opautili;
     bool wavcontlutili;
+    bool locallutili;
+    int **dataspot;
+    std::string *retistr;
+    std::string *llstr;
+    std::string *lhstr;
+
+    LUTi circrads;
+    LUTi centerx;
+    LUTi centery;
+    LUTi locx;
+    LUTi locy;
+    LUTi locxl;
+    LUTi locyt;
+    LUTi lights;
+    LUTi contrs;
+    LUTi chroms;
+    LUTi sensis;
+    LUTi transits;
+    LUTi inverss;
+	LUTi curvactivs;
+    LUTi smeths;
+    LUTi curens;
+    LUTi radiuss;
+    LUTi strengths;
+    LUTi sensibns;
+    LUTi inversrads;
+    LUTi strs;
+    LUTi chrrts;
+    LUTi neighs;
+    LUTi varts;
+    LUTi sensihs;
+    LUTi inversrets;
+    LUTi retinexs;
+    LUTi sps;
+    LUTi sharradiuss;
+    LUTi sharamounts;
+    LUTi shardampings;
+    LUTi inversshas;
+    LUTi shariters;
+    LUTi sensishas;
+    LUTi qualitys;
+    LUTi thress;
+    LUTi proxis;
+    LUTi noiselumfs;
+    LUTi noiselumcs;
+    LUTi noisechrofs;
+    LUTi noisechrocs;
+    LUTi mult0s;
+    LUTi mult1s;
+    LUTi mult2s;
+    LUTi mult3s;
+    LUTi mult4s;
+    LUTi thresholds;
+    LUTi sensicbs;
+    LUTi activlums;
+    LUTi strens;
+    LUTi gammas;
+    LUTi estops;
+    LUTi scaltms;
+    LUTi reweis;
+    LUTi sensitms;
+
+    int versionmip;
+    LUTi sizeretics;
+    LUTi reticurvs;
+    LUTi retrabs;
+    LUTi llcurvs;
+    LUTi sizellcs;
+    LUTi lhcurvs;
+    LUTi sizelhcs;
+
+    LUTf huerefs;
+    LUTf chromarefs;
+    LUTf lumarefs;
+
+
     void startProcessing ();
     void process ();
     float colourToningSatLimit;
@@ -218,12 +306,14 @@ public:
         *dst = params;
     }
 
-    void        startProcessing(int changeCode);
+    void        startProcessing (int changeCode);
     ProcParams* beginUpdateParams ();
     void        endUpdateParams (ProcEvent change);  // must be called after beginUpdateParams, triggers update
     void        endUpdateParams (int changeFlags);
     void        stopProcessing ();
+//    void updatePreviewImage (int todo, Crop* cropCall = NULL);
 
+    std::string *retistrsav;
 
     void setPreviewScale    (int scale)
     {
@@ -299,7 +389,7 @@ public:
     {
         aeListener = ael;
     }
-    void setHistogramListener(HistogramListener *h)
+    void setHistogramListener (HistogramListener *h)
     {
         hListener = h;
     }
@@ -311,6 +401,11 @@ public:
     {
         abwListener = abw;
     }
+    void setlocalListener   (localListener* alo)
+    {
+        aloListener = alo;
+    }
+
     void setAutoColorTonListener   (AutoColorTonListener* bwct)
     {
         actListener = bwct;
@@ -336,7 +431,7 @@ public:
     }
 
     struct DenoiseInfoStore {
-        DenoiseInfoStore () : chM(0), max_r{}, max_b{}, ch_M{}, valid(false)  {}
+        DenoiseInfoStore () : chM (0), max_r{}, max_b{}, ch_M{}, valid (false)  {}
         float chM;
         float max_r[9];
         float max_b[9];

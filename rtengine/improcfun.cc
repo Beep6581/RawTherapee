@@ -78,6 +78,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
     monitorTransform = nullptr;
 
     cmsHPROFILE monitor = nullptr;
+
     if (!monitorProfile.empty()) {
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
         monitor = iccStore->getProfile (monitorProfile);
@@ -96,6 +97,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
 
         if (softProof) {
             cmsHPROFILE oprof = nullptr;
+
             if (!settings->printerProfile.empty()) {
                 oprof = iccStore->getProfile(settings->printerProfile);
             }
@@ -103,19 +105,23 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
             if (oprof) {
                 // NOCACHE is for thread safety, NOOPTIMIZE for precision
                 flags = cmsFLAGS_SOFTPROOFING | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+
                 if (settings->printerBPC) {
                     flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
                 }
+
                 if (gamutCheck) {
                     flags |= cmsFLAGS_GAMUTCHECK;
                 }
+
                 monitorTransform = cmsCreateProofingTransform(
-                                        iprof, TYPE_Lab_FLT,
-                                        monitor, TYPE_RGB_8,
-                                        oprof,
-                                        monitorIntent, settings->printerIntent,
-                                        flags
-                                    );
+                                       iprof, TYPE_Lab_FLT,
+                                       monitor, TYPE_RGB_8,
+                                       oprof,
+                                       monitorIntent, settings->printerIntent,
+                                       flags
+                                   );
+
                 if (monitorTransform) {
                     softProofCreated = true;
                 }
@@ -124,9 +130,11 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
 
         if (!softProofCreated) {
             flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+
             if (settings->monitorBPC) {
                 flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
             }
+
             monitorTransform = cmsCreateTransform (iprof, TYPE_Lab_FLT, monitor, TYPE_RGB_8, monitorIntent, flags);
         }
 
@@ -195,6 +203,7 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
         }
     }
 }
+
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params ,
@@ -535,7 +544,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else /*if(params->colorappearance.wbmodel == "RawTCAT02")*/ {
+        } else { /*if(params->colorappearance.wbmodel == "RawTCAT02")*/
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
@@ -1076,9 +1085,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
                             if(pW != 1) { //only with improccoordinator
                                 int posl;
+
                                 if(libr == 1) {
                                     posl = CLIP((int)(Q * brli));    //40.0 to 100.0 approximative factor for Q  - 327 for J
-                                } else /*if(libr == 0)*/ {
+                                } else { /*if(libr == 0)*/
                                     posl = CLIP((int)(J * brli));    //327 for J
                                 }
 
@@ -1089,11 +1099,12 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
                             if(pW != 1) { //only with improccoordinator
                                 int posc;
+
                                 if(colch == 0) {
                                     posc = CLIP((int)(C * chsacol));    //450.0 approximative factor for s    320 for M
                                 } else if(colch == 1) {
                                     posc = CLIP((int)(s * chsacol));
-                                } else /*if(colch == 2)*/ {
+                                } else { /*if(colch == 2)*/
                                     posc = CLIP((int)(M * chsacol));
                                 }
 
@@ -1347,9 +1358,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
                             if(pW != 1) { //only with improccoordinator
                                 int posl;
+
                                 if(libr == 1) {
                                     posl = CLIP((int)(ncie->Q_p[i][j] * brli));    //40.0 to 100.0 approximative factor for Q  - 327 for J
-                                } else /*if(libr == 0)*/ {
+                                } else { /*if(libr == 0)*/
                                     posl = CLIP((int)(ncie->J_p[i][j] * brli));    //327 for J
                                 }
 
@@ -1360,12 +1372,13 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
                             if(pW != 1) { //only with improccoordinator
                                 int posc;
+
                                 if(colch == 0) {
                                     posc = CLIP((int)(ncie->C_p[i][j] * chsacol));    //450.0 approximative factor for s    320 for M
                                 } else if(colch == 1) {
                                     sa_t = 100.f * sqrt(ncie->C_p[i][j] / ncie->Q_p[i][j]);    //Q_p always > 0
                                     posc = CLIP((int)(sa_t * chsacol));
-                                } else /*if(colch == 2)*/ {
+                                } else { /*if(colch == 2)*/
                                     posc = CLIP((int)(ncie->M_p[i][j] * chsacol));
                                 }
 
@@ -1835,7 +1848,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else /*if(params->colorappearance.wbmodel == "RawTCAT02")*/ {
+        } else { /*if(params->colorappearance.wbmodel == "RawTCAT02")*/
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
@@ -3004,7 +3017,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             static_cast<float>( wprof[2][2] / Color::D50z)
         }
     };
-    float maxFactorToxyz = max(toxyz[1][0],toxyz[1][1],toxyz[1][2]);
+    float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
     float equalR = maxFactorToxyz / toxyz[1][0];
     float equalG = maxFactorToxyz / toxyz[1][1];
     float equalB = maxFactorToxyz / toxyz[1][2];
@@ -3331,6 +3344,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         float out_rgbx[4 * TS] ALIGNED16; // Line buffer for CLUT
 
         LUTu histToneCurveThr;
+
         if(toneCurveHistSize > 0) {
             histToneCurveThr(toneCurveHistSize);
             histToneCurveThr.clear();
@@ -3484,9 +3498,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         rtemp[ti * TS + tj] = tonecurve[ rtemp[ti * TS + tj] ];
                         gtemp[ti * TS + tj] = tonecurve[ gtemp[ti * TS + tj] ];
                         btemp[ti * TS + tj] = tonecurve[ btemp[ti * TS + tj] ];
+
                         if(histToneCurveThr) {
                             int y = CLIP<int>(lumimulf[0] * Color::gamma2curve[rtemp[ti * TS + tj]] + lumimulf[1] * Color::gamma2curve[gtemp[ti * TS + tj]] + lumimulf[2] * Color::gamma2curve[btemp[ti * TS + tj]]);
-                            histToneCurveThr[y>>histToneCurveCompression]++;
+                            histToneCurveThr[y >> histToneCurveCompression]++;
                         }
                     }
                 }
@@ -3731,7 +3746,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     //gamut control : Lab values are in gamut
                                     Color::gamutLchonly(HH, sincosval, Lpro, Chpro, rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], wip, highlight, 0.15f, 0.96f);
 #endif
-                                //end of gamut control
+                                    //end of gamut control
                                 } else {
                                     float x_, y_, z_;
                                     //calculate RGB with L_2 and old value of a and b
@@ -4134,20 +4149,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 // --------------------------------------------------
 
 #ifndef __SSE2__
+
                                 //gamma correction: pseudo TRC curve
                                 if (hasgammabw) {
                                     Color::trcGammaBW (r, g, b, gammabwr, gammabwg, gammabwb);
                                 }
+
 #endif
                                 rtemp[ti * TS + tj] = r;
                                 gtemp[ti * TS + tj] = g;
                                 btemp[ti * TS + tj] = b;
                             }
+
 #ifdef __SSE2__
+
                             if (hasgammabw) {
                                 //gamma correction: pseudo TRC curve
                                 Color::trcGammaBWRow (&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], tW - jstart, gammabwr, gammabwg, gammabwb);
                             }
+
 #endif
 
                         }
@@ -4185,6 +4205,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                     } else {
                                         L *= (1.f + valparam);    //for negative
                                     }
+
                                     L *= 32768.f;
                                 }
 
@@ -4206,17 +4227,22 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 Color::xyz2r(X, Y, Z, newRed, wip);
                                 rtemp[ti * TS + tj] = gtemp[ti * TS + tj] = btemp[ti * TS + tj] = newRed;
 #ifndef __SSE2__
+
                                 if (hasgammabw) {
                                     //gamma correction: pseudo TRC curve
                                     Color::trcGammaBW (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], gammabwr, gammabwg, gammabwb);
                                 }
+
 #endif
                             }
+
 #ifdef __SSE2__
+
                             if (hasgammabw) {
                                 //gamma correction: pseudo TRC curve
                                 Color::trcGammaBWRow (&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], tW - jstart, gammabwr, gammabwg, gammabwb);
                             }
+
 #endif
                         }
                     }
@@ -4413,13 +4439,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         if (editWhateverBuffer) {
             free (editWhateverBuffer);
         }
+
 #ifdef _OPENMP
-#pragma omp critical
-{
-    if(toneCurveHistSize > 0) {
-        histToneCurve += histToneCurveThr;
-    }
-}
+        #pragma omp critical
+        {
+            if(toneCurveHistSize > 0) {
+                histToneCurve += histToneCurveThr;
+            }
+        }
 #endif // _OPENMP
     }
 
@@ -4483,17 +4510,22 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     tmpImage->r(i, j) = tmpImage->g(i, j) = tmpImage->b(i, j) = CLIP((bwr * tmpImage->r(i, j) + bwg * tmpImage->g(i, j) + bwb * tmpImage->b(i, j)) * kcorec);
 
 #ifndef __SSE2__
+
                     //gamma correction: pseudo TRC curve
                     if (hasgammabw) {
                         Color::trcGammaBW (tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), gammabwr, gammabwg, gammabwb);
                     }
+
 #endif
                 }
+
 #ifdef __SSE2__
+
                 if (hasgammabw) {
                     //gamma correction: pseudo TRC curve
                     Color::trcGammaBWRow (tmpImage->r(i), tmpImage->g(i), tmpImage->b(i), tW, gammabwr, gammabwg, gammabwb);
                 }
+
 #endif
             }
         }
@@ -6492,6 +6524,109 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w
     */
 }
 
+void ImProcFunctions::EPDToneMaplocal(LabImage *lab, LabImage *tmp1, unsigned int Iterates, int skip)
+{
+
+    float stren = ((float)params->locallab.stren) / 100.f;
+    float edgest = ((float)params->locallab.estop) / 100.f;
+    float sca  = ((float)params->locallab.scaltm) / 10.f;
+    float gamm = ((float)params->locallab.gamma) / 100.f;
+    float rew = ((float)params->locallab.rewei);
+    //Pointers to whole data and size of it.
+    float *L = lab->L[0];
+    float *a = lab->a[0];
+    float *b = lab->b[0];
+    unsigned int i, N = lab->W * lab->H;
+    int WW = lab->W ;
+    int HH = lab->H ;
+    EdgePreservingDecomposition epd(lab->W, lab->H);
+
+    //Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
+    float minL = FLT_MAX;
+    float maxL = 0.f;
+    #pragma omp parallel
+    {
+        float lminL = FLT_MAX;
+        float lmaxL = 0.f;
+        #pragma omp for
+
+        for(i = 0; i < N; i++) {
+            if(L[i] < lminL) {
+                lminL = L[i];
+            }
+
+            if(L[i] > lmaxL) {
+                lmaxL = L[i];
+            }
+        }
+
+        #pragma omp critical
+
+        if(lminL < minL) {
+            minL = lminL;
+        }
+
+        if(lmaxL > maxL) {
+            maxL = lmaxL;
+        }
+
+    }
+
+    if(minL > 0.0f) {
+        minL = 0.0f;    //Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
+    }
+
+    #pragma omp parallel for
+
+    for(i = 0; i < N; i++)
+        //{L[i] = (L[i] - minL)/32767.0f;
+    {
+        L[i] = (L[i] - minL) / maxL;
+        L[i] *= gamm;
+    }
+
+    //Some interpretations.
+    float Compression = expf(-stren);       //This modification turns numbers symmetric around 0 into exponents.
+    float DetailBoost = stren;
+
+    if(stren < 0.0f) {
+        DetailBoost = 0.0f;    //Go with effect of exponent only if uncompressing.
+    }
+
+    //Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
+    if(Iterates == 0) {
+        Iterates = (unsigned int)(edgest * 15.0f);
+    }
+
+    /* Debuggery. Saves L for toying with outside of RT.
+    char nm[64];
+    sprintf(nm, "%ux%ufloat.bin", lab->W, lab->H);
+    FILE *f = fopen(nm, "wb");
+    fwrite(L, N, sizeof(float), f);
+    fclose(f);*/
+
+    epd.CompressDynamicRange(L, sca / float(skip), edgest, Compression, DetailBoost, Iterates, rew, L);
+
+    //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
+    float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
+#ifdef _OPENMP
+    #pragma omp parallel for            // removed schedule(dynamic,10)
+#endif
+
+    for(int i = 0; i < N; i++) {
+        int x = i / WW;
+        int y = i - x * WW;
+
+        tmp1->L[x][y] = L[i] * maxL * (1.f / gamm) + minL;
+        tmp1->a[x][y] = s  * a[i];
+        tmp1->b[x][y] = s  * b[i];
+
+    }
+}
+
+
+
+
 
 //Map tones by way of edge preserving decomposition. Is this the right way to include source?
 //#include "EdgePreservingDecomposition.cc"
@@ -6600,6 +6735,12 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
         L[ii] = L[ii] * maxL * (1.f / gamm) + minL;
     }
 }
+
+
+
+
+
+
 
 
 void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double defgain, double clip,

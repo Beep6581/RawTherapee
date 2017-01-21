@@ -36,6 +36,7 @@ public:
 
     SHMap (int w, int h, bool multiThread);
     ~SHMap ();
+    void updateLab (LabImage* img, double radius, bool hq, int skip);
 
     void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);
     void updateL (float** L, double radius, bool hq, int skip);
@@ -44,6 +45,7 @@ public:
 private:
     int W, H;
     bool multiThread;
+    void fillLuminanceLab( LabImage * img, float **luminance);
 
     void fillLuminance( Imagefloat * img, float **luminance, double lumi[3] );
     void fillLuminanceL( float ** L, float **luminance );

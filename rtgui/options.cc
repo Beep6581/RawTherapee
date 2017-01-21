@@ -184,6 +184,10 @@ void Options::updatePaths()
         lastWaveletCurvesDir = preferredPath;
     }
 
+    if (lastlocalCurvesDir.empty() || !Glib::file_test (lastlocalCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastlocalCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+        lastlocalCurvesDir = preferredPath;
+    }
+
     if (lastPFCurvesDir.empty() || !Glib::file_test (lastPFCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test (lastPFCurvesDir, Glib::FILE_TEST_IS_DIR)) {
         lastPFCurvesDir = preferredPath;
     }
@@ -421,6 +425,8 @@ void Options::setDefaults ()
     histogramFullMode = false;
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
+    mip = MI_opt;
+
     rgbDenoiseThreadLimit = 0;
 #if defined( _OPENMP ) && defined( __x86_64__ )
     clutCacheSize = omp_get_num_procs();
@@ -605,6 +611,20 @@ void Options::setDefaults ()
         0, // ADDSET_RETI_VART
         0, // ADDSET_RETI_GAM
         0, // ADDSET_RETI_SLO
+        0,  // ADDSET_LOCALLAB_DEGREE
+        0,  // ADDSET_LOCALLAB_LOCY
+        0,  // ADDSET_LOCALLAB_LOCX
+        0,  // ADDSET_LOCALLAB_LOCYY
+        0,  // ADDSET_LOCALLAB_LOCXL
+        0,  // ADDSET_LOCALLAB_CENTER
+        0,  // ADDSET_LOCALLAB_LIGHTNESS
+        0,  // ADDSET_LOCALLAB_CONTRAST
+        0,  // ADDSET_LOCALLAB_CHROMA
+        0,  // ADDSET_LOCALLAB_RADIUS
+        0,  // ADDSET_LOCALLAB_TRANSIT
+        0,  // ADDSET_LOCALLAB_STRENGTH
+        0,  // ADDSET_LOCALLAB_SENSI
+
     };
 
     rtSettings.darkFramesPath = "";
@@ -666,6 +686,14 @@ void Options::setDefaults ()
     rtSettings.ed_lipinfl = 0.8; //between 0.5 to 0.9
     rtSettings.ed_lipampl = 1.1; //between 1 and 2
 
+//locallab
+    rtSettings.nspot = 8;//between 1 and ??
+    rtSettings.locdelay = false;//true enabled delay 200 for selection spot
+    rtSettings.cropsleep = 50;//generate a pause of 50 µs for dcrop (100%)to avoid crash when moving window, between 0 to ??
+    rtSettings.reduchigh = 0.85;//transition for luminance in scope
+    rtSettings.reduclow = 0.85;//transition for luminance out scope
+
+// end locallab
 
     rtSettings.ciecamfloat = true;
     rtSettings.protectred = 60;
@@ -700,6 +728,7 @@ void Options::setDefaults ()
     lastRetinexDir = "";
     lastDenoiseCurvesDir = "";
     lastWaveletCurvesDir = "";
+    lastlocalCurvesDir = "";
     lastPFCurvesDir = "";
     lastHsvCurvesDir = "";
     lastToneCurvesDir = "";
@@ -823,6 +852,27 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("General", "BotRight")) {
                     rtSettings.bot_right          = keyFile.get_double ("General", "BotRight");
+                }
+
+                if (keyFile.has_key ("General", "Nspot")) {
+                    rtSettings.nspot          = keyFile.get_integer ("General", "Nspot");
+                }
+
+                if (keyFile.has_key ("General", "Cropsleep")) {
+                    rtSettings.cropsleep          = keyFile.get_integer ("General", "Cropsleep");
+                }
+
+                if (keyFile.has_key ("General", "Reduchigh")) {
+                    rtSettings.reduchigh          = keyFile.get_double ("General", "Reduchigh");
+                }
+
+                if (keyFile.has_key ("General", "Reduclow")) {
+                    rtSettings.reduclow          = keyFile.get_double ("General", "Reduclow");
+                }
+
+
+                if (keyFile.has_key ("General", "Locdelay")) {
+                    rtSettings.locdelay          = keyFile.get_boolean ("General", "Locdelay");
                 }
 
                 if (keyFile.has_key ("General", "EDdetec")) {
@@ -1222,6 +1272,10 @@ int Options::readFromFile (Glib::ustring fname)
                     prevdemo             = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
                 }
 
+                if (keyFile.has_key ("Profiles", "Mipfiles")) {
+                    mip             = (mip_t)keyFile.get_integer ("Profiles", "Mipfiles");
+                }
+
                 if (keyFile.has_key ("Performance", "Daubechies")) {
                     rtSettings.daubech         = keyFile.get_boolean ("Performance", "Daubechies");
                 }
@@ -1454,11 +1508,11 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Color Management", "PrinterIntent")) {
-                    rtSettings.printerIntent   = static_cast<rtengine::RenderingIntent>(keyFile.get_integer("Color Management", "PrinterIntent"));
+                    rtSettings.printerIntent   = static_cast<rtengine::RenderingIntent> (keyFile.get_integer ("Color Management", "PrinterIntent"));
                 }
 
                 if (keyFile.has_key ("Color Management", "PrinterBPC")) {
-                    rtSettings.printerBPC           = keyFile.get_boolean("Color Management", "PrinterBPC");
+                    rtSettings.printerBPC           = keyFile.get_boolean ("Color Management", "PrinterBPC");
                 }
 
                 if (keyFile.has_key ("Color Management", "PrinterProfile")) {
@@ -1486,7 +1540,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Color Management", "MonitorBPC")) {
-                    rtSettings.monitorBPC           = keyFile.get_boolean("Color Management", "MonitorBPC");
+                    rtSettings.monitorBPC           = keyFile.get_boolean ("Color Management", "MonitorBPC");
                 }
 
                 if (keyFile.has_key ("Color Management", "CRI")) {
@@ -1791,6 +1845,8 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet (keyFile, "Dialogs", "LastRetinexDir", lastRetinexDir);
                 safeDirGet (keyFile, "Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
+                safeDirGet (keyFile, "Dialogs", "LastlocalCurvesDir", lastlocalCurvesDir);
+
                 safeDirGet (keyFile, "Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
@@ -1825,7 +1881,7 @@ bool Options::safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& sec
                           const Glib::ustring& entryName, Glib::ustring& destination)
 {
     try {
-    
+
         if (keyFile.has_key (section, entryName) && !keyFile.get_string (section, entryName).empty ()) {
             destination = keyFile.get_string (section, entryName);
             return true;
@@ -1879,6 +1935,12 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_double ("General", "EDLow", rtSettings.ed_low);
         keyFile.set_double ("General", "EDLipinfl", rtSettings.ed_lipinfl);
         keyFile.set_double ("General", "EDLipampl", rtSettings.ed_lipampl);
+
+        keyFile.set_integer ("General", "Nspot", rtSettings.nspot);
+        keyFile.set_boolean ("General", "Locdelay", rtSettings.locdelay);
+        keyFile.set_integer ("General", "Cropsleep", rtSettings.cropsleep);
+        keyFile.set_double ("General", "Reduchigh", rtSettings.reduchigh);
+        keyFile.set_double ("General", "Reduclow", rtSettings.reduclow);
 
 
         keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
@@ -1990,6 +2052,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
         keyFile.set_string  ("Profiles", "CustomProfileBuilderPath", CPBPath);
         keyFile.set_integer ("Profiles", "CustomProfileBuilderKeys", CPBKeys);
+        keyFile.set_integer ("Profiles", "Mipfiles", mip);
 
         keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
@@ -2147,6 +2210,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string ("Dialogs", "LastRetinexDir", lastRetinexDir);
         keyFile.set_string ("Dialogs", "LastDenoiseCurvesDir", lastDenoiseCurvesDir);
         keyFile.set_string ("Dialogs", "LastWaveletCurvesDir", lastWaveletCurvesDir);
+        keyFile.set_string ("Dialogs", "LastlocalCurvesDir", lastlocalCurvesDir);
         keyFile.set_string ("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
         keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
         keyFile.set_string ("Dialogs", "LastBWCurvesDir", lastBWCurvesDir);

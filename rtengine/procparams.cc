@@ -46,11 +46,11 @@ const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMe
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes] = {/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
 std::vector<WBEntry*> WBParams::wbEntries;
 
-bool ToneCurveParams::HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
+bool ToneCurveParams::HLReconstructionNecessary (LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw)
 {
     if (options.rtSettings.verbose)
-        printf("histRedRaw[  0]=%07d, histGreenRaw[  0]=%07d, histBlueRaw[  0]=%07d\nhistRedRaw[255]=%07d, histGreenRaw[255]=%07d, histBlueRaw[255]=%07d\n",
-               histRedRaw[0], histGreenRaw[0], histBlueRaw[0], histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
+        printf ("histRedRaw[  0]=%07d, histGreenRaw[  0]=%07d, histBlueRaw[  0]=%07d\nhistRedRaw[255]=%07d, histGreenRaw[255]=%07d, histBlueRaw[255]=%07d\n",
+                histRedRaw[0], histGreenRaw[0], histBlueRaw[0], histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
 
     return histRedRaw[255] > 50 || histGreenRaw[255] > 50 || histBlueRaw[255] > 50 || histRedRaw[0] > 50 || histGreenRaw[0] > 50 || histBlueRaw[0] > 50;
 }
@@ -58,40 +58,40 @@ bool ToneCurveParams::HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGree
 void WBParams::init()
 {
     // Creation of the different methods and its associated temperature value
-    wbEntries.push_back(new WBEntry("Camera"              , WBT_CAMERA,      M("TP_WBALANCE_CAMERA"),        0, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Auto"                , WBT_AUTO,        M("TP_WBALANCE_AUTO"),          0, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Daylight"            , WBT_DAYLIGHT,    M("TP_WBALANCE_DAYLIGHT"),   5300, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Cloudy"              , WBT_CLOUDY,      M("TP_WBALANCE_CLOUDY"),     6200, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Shade"               , WBT_SHADE,       M("TP_WBALANCE_SHADE"),      7600, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Water 1"             , WBT_WATER,       M("TP_WBALANCE_WATER1"),    35000, 0.3f,   1.1f));
-    wbEntries.push_back(new WBEntry("Water 2"             , WBT_WATER,       M("TP_WBALANCE_WATER2"),    48000, 0.63f, 1.38f));
-    wbEntries.push_back(new WBEntry("Tungsten"            , WBT_TUNGSTEN,    M("TP_WBALANCE_TUNGSTEN"),   2856, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F1"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO1"),      6430, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F2"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO2"),      4230, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F3"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO3"),      3450, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F4"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO4"),      2940, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F5"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO5"),      6350, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F6"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO6"),      4150, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F7"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO7"),      6500, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F8"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO8"),      5020, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F9"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO9"),      4330, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F10"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO10"),     5300, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F11"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO11"),     4000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F12"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO12"),     3000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("HMI Lamp"            , WBT_LAMP,        M("TP_WBALANCE_HMI"),        4800, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("GTI Lamp"            , WBT_LAMP,        M("TP_WBALANCE_GTI"),        5000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("JudgeIII Lamp"       , WBT_LAMP,        M("TP_WBALANCE_JUDGEIII"),   5100, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Solux Lamp 3500K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX35"),    3480, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Solux Lamp 4100K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX41"),    3930, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Solux Lamp 4700K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX47"),    4700, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("NG Solux Lamp 4700K" , WBT_LAMP,        M("TP_WBALANCE_SOLUX47_NG"), 4480, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("LED LSI Lumelex 2040", WBT_LED,         M("TP_WBALANCE_LED_LSI"),    2970, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("LED CRS SP12 WWMR16" , WBT_LED,         M("TP_WBALANCE_LED_CRS"),    3050, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Flash 5500K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH55"),    5500, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Flash 6000K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH60"),    6000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Flash 6500K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH65"),    6500, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Camera"              , WBT_CAMERA,      M ("TP_WBALANCE_CAMERA"),        0, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Auto"                , WBT_AUTO,        M ("TP_WBALANCE_AUTO"),          0, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Daylight"            , WBT_DAYLIGHT,    M ("TP_WBALANCE_DAYLIGHT"),   5300, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Cloudy"              , WBT_CLOUDY,      M ("TP_WBALANCE_CLOUDY"),     6200, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Shade"               , WBT_SHADE,       M ("TP_WBALANCE_SHADE"),      7600, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Water 1"             , WBT_WATER,       M ("TP_WBALANCE_WATER1"),    35000, 0.3f,   1.1f));
+    wbEntries.push_back (new WBEntry ("Water 2"             , WBT_WATER,       M ("TP_WBALANCE_WATER2"),    48000, 0.63f, 1.38f));
+    wbEntries.push_back (new WBEntry ("Tungsten"            , WBT_TUNGSTEN,    M ("TP_WBALANCE_TUNGSTEN"),   2856, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F1"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO1"),      6430, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F2"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO2"),      4230, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F3"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO3"),      3450, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F4"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO4"),      2940, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F5"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO5"),      6350, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F6"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO6"),      4150, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F7"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO7"),      6500, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F8"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO8"),      5020, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F9"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO9"),      4330, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F10"            , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO10"),     5300, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F11"            , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO11"),     4000, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Fluo F12"            , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO12"),     3000, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("HMI Lamp"            , WBT_LAMP,        M ("TP_WBALANCE_HMI"),        4800, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("GTI Lamp"            , WBT_LAMP,        M ("TP_WBALANCE_GTI"),        5000, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("JudgeIII Lamp"       , WBT_LAMP,        M ("TP_WBALANCE_JUDGEIII"),   5100, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Solux Lamp 3500K"    , WBT_LAMP,        M ("TP_WBALANCE_SOLUX35"),    3480, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Solux Lamp 4100K"    , WBT_LAMP,        M ("TP_WBALANCE_SOLUX41"),    3930, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Solux Lamp 4700K"    , WBT_LAMP,        M ("TP_WBALANCE_SOLUX47"),    4700, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("NG Solux Lamp 4700K" , WBT_LAMP,        M ("TP_WBALANCE_SOLUX47_NG"), 4480, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("LED LSI Lumelex 2040", WBT_LED,         M ("TP_WBALANCE_LED_LSI"),    2970, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("LED CRS SP12 WWMR16" , WBT_LED,         M ("TP_WBALANCE_LED_CRS"),    3050, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Flash 5500K"         , WBT_FLASH,       M ("TP_WBALANCE_FLASH55"),    5500, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Flash 6000K"         , WBT_FLASH,       M ("TP_WBALANCE_FLASH60"),    6000, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Flash 6500K"         , WBT_FLASH,       M ("TP_WBALANCE_FLASH65"),    6500, 1.f,     1.f));
     // Should remain the last one
-    wbEntries.push_back(new WBEntry("Custom"              , WBT_CUSTOM,      M("TP_WBALANCE_CUSTOM"),        0, 1.f,     1.f));
+    wbEntries.push_back (new WBEntry ("Custom"              , WBT_CUSTOM,      M ("TP_WBALANCE_CUSTOM"),        0, 1.f,     1.f));
 }
 
 void WBParams::cleanup()
@@ -102,15 +102,15 @@ void WBParams::cleanup()
 }
 
 // Maps crop to resized width (e.g. smaller previews)
-void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const
+void CropParams::mapToResized (int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const
 {
     x1 = 0, x2 = resizedWidth, y1 = 0, y2 = resizedHeight;
 
     if (enabled) {
-        x1 = min(resizedWidth - 1,  max(0, x / scale));
-        y1 = min(resizedHeight - 1, max(0, y / scale));
-        x2 = min(resizedWidth,    max(0, (x + w) / scale));
-        y2 = min(resizedHeight,   max(0, (y + h) / scale));
+        x1 = min (resizedWidth - 1,  max (0, x / scale));
+        y1 = min (resizedHeight - 1, max (0, y / scale));
+        x2 = min (resizedWidth,    max (0, (x + w) / scale));
+        y2 = min (resizedHeight,   max (0, (y + h) / scale));
     }
 }
 
@@ -119,7 +119,7 @@ RetinexParams::RetinexParams ()
     setDefaults ();
 }
 
-void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
+void RetinexParams::getDefaulttransmissionCurve (std::vector<double> &curve)
 {
     double v[12] =   {   0.00, 0.50, 0.35, 0.35,
                          0.60, 0.75, 0.35, 0.35,
@@ -127,14 +127,14 @@ void RetinexParams::getDefaulttransmissionCurve(std::vector<double> &curve)
                      };
 
 
-    curve.resize(13);
-    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    curve.resize (13);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
-void RetinexParams::getDefaultgaintransmissionCurve(std::vector<double> &curve)
+void RetinexParams::getDefaultgaintransmissionCurve (std::vector<double> &curve)
 {
     double v[16] = { 0.00, 0.1, 0.35, 0.00,
                      0.25, 0.25, 0.35, 0.35,
@@ -143,11 +143,11 @@ void RetinexParams::getDefaultgaintransmissionCurve(std::vector<double> &curve)
                    };
 
 
-    curve.resize(17);
-    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    curve.resize (17);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
@@ -183,88 +183,88 @@ void RetinexParams::setDefaults()
     gammaretinex = "none";
     medianmap = false;
     cdcurve.clear();
-    cdcurve.push_back(DCT_Linear);
+    cdcurve.push_back (DCT_Linear);
     cdHcurve.clear();
-    cdHcurve.push_back(DCT_Linear);
+    cdHcurve.push_back (DCT_Linear);
     lhcurve.clear();
-    lhcurve.push_back(DCT_Linear);
+    lhcurve.push_back (DCT_Linear);
     mapcurve.clear();
-    mapcurve.push_back(DCT_Linear);
-    getDefaultgaintransmissionCurve(gaintransmissionCurve);
+    mapcurve.push_back (DCT_Linear);
+    getDefaultgaintransmissionCurve (gaintransmissionCurve);
 
-    getDefaulttransmissionCurve(transmissionCurve);
+    getDefaulttransmissionCurve (transmissionCurve);
 }
 
-void RetinexParams::getCurves(RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const
+void RetinexParams::getCurves (RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const
 {
-    transmissionCurveLUT.Set(this->transmissionCurve);
-    gaintransmissionCurveLUT.Set(this->gaintransmissionCurve);
+    transmissionCurveLUT.Set (this->transmissionCurve);
+    gaintransmissionCurveLUT.Set (this->gaintransmissionCurve);
 
 }
 
 
-ColorToningParams::ColorToningParams () : hlColSat(60, 80, false), shadowsColSat(80, 208, false)
+ColorToningParams::ColorToningParams () : hlColSat (60, 80, false), shadowsColSat (80, 208, false)
 {
     setDefaults();
 }
 
-void ColorToningParams::getDefaultColorCurve(std::vector<double> &curve)
+void ColorToningParams::getDefaultColorCurve (std::vector<double> &curve)
 {
     double v[8] = { 0.050, 0.62, 0.25, 0.25,
                     0.585, 0.11, 0.25, 0.25
                   };
 
-    curve.resize(9);
-    curve.at(0) = double(FCT_MinMaxCPoints);
+    curve.resize (9);
+    curve.at (0) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
 
-void ColorToningParams::getDefaultOpacityCurve(std::vector<double> &curve)
+void ColorToningParams::getDefaultOpacityCurve (std::vector<double> &curve)
 {
     double v[16] = { 0.00, 0.3, 0.35, 0.00,
                      0.25, 0.8, 0.35, 0.35,
                      0.70, 0.8, 0.35, 0.35,
                      1.00, 0.3, 0.00, 0.00
                    };
-    curve.resize(17);
-    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    curve.resize (17);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
-void ColorToningParams::getDefaultCLCurve(std::vector<double> &curve)
+void ColorToningParams::getDefaultCLCurve (std::vector<double> &curve)
 {
     double v[6] = { 0.00, 0.00,
                     0.35, 0.65,
                     1.00, 1.00
                   };
 
-    curve.resize(7);
-    curve.at(0) = double(DCT_NURBS);
+    curve.resize (7);
+    curve.at (0) = double (DCT_NURBS);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
-void ColorToningParams::getDefaultCL2Curve(std::vector<double> &curve)
+void ColorToningParams::getDefaultCL2Curve (std::vector<double> &curve)
 {
     double v[6] = { 0.00, 0.00,
                     0.35, 0.65,
                     1.00, 1.00
                   };
 
-    curve.resize(7);
-    curve.at(0) = double(DCT_NURBS);
+    curve.resize (7);
+    curve.at (0) = double (DCT_NURBS);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
@@ -274,13 +274,13 @@ void ColorToningParams::setDefaults()
     autosat = true;
     method = "Lab";
 
-    getDefaultColorCurve(colorCurve);
-    getDefaultOpacityCurve(opacityCurve);
-    getDefaultCLCurve(clcurve);
-    getDefaultCL2Curve(cl2curve);
+    getDefaultColorCurve (colorCurve);
+    getDefaultOpacityCurve (opacityCurve);
+    getDefaultCLCurve (clcurve);
+    getDefaultCL2Curve (cl2curve);
 
-    hlColSat.setValues(60, 80);
-    shadowsColSat.setValues(80, 208);
+    hlColSat.setValues (60, 80);
+    shadowsColSat.setValues (80, 208);
     balance = 0;
     satProtectionThreshold = 30;
     saturatedOpacity = 80;
@@ -300,14 +300,14 @@ void ColorToningParams::setDefaults()
     bluehigh = 0.0;
 }
 
-void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const
+void ColorToningParams::mixerToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const
 {
     // check if non null first
     if (!redlow && !greenlow && !bluelow && !redmed && !greenmed && !bluemed && !redhigh && !greenhigh && !bluehigh) {
-        colorCurve.resize(1);
-        colorCurve.at(0) = FCT_Linear;
-        opacityCurve.resize(1);
-        opacityCurve.at(0) = FCT_Linear;
+        colorCurve.resize (1);
+        colorCurve.at (0) = FCT_Linear;
+        opacityCurve.resize (1);
+        opacityCurve.at (0) = FCT_Linear;
         return;
     }
 
@@ -320,11 +320,11 @@ void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vecto
     float minTmp, maxTmp;
 
     // Fill the shadow mixer values of the Color TOning tool
-    low[0] = float(redlow  ) / 100.f; // [-1. ; +1.]
-    low[1] = float(greenlow) / 100.f; // [-1. ; +1.]
-    low[2] = float(bluelow ) / 100.f; // [-1. ; +1.]
-    minTmp = min<float>(low[0], low[1], low[2]);
-    maxTmp = max<float>(low[0], low[1], low[2]);
+    low[0] = float (redlow  ) / 100.f; // [-1. ; +1.]
+    low[1] = float (greenlow) / 100.f; // [-1. ; +1.]
+    low[2] = float (bluelow ) / 100.f; // [-1. ; +1.]
+    minTmp = min<float> (low[0], low[1], low[2]);
+    maxTmp = max<float> (low[0], low[1], low[2]);
 
     if (maxTmp - minTmp > 0.005f) {
         float v[3];
@@ -362,11 +362,11 @@ void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vecto
     }
 
     // Fill the mid-tones mixer values of the Color TOning tool
-    med[0] = float(redmed  ) / 100.f; // [-1. ; +1.]
-    med[1] = float(greenmed) / 100.f; // [-1. ; +1.]
-    med[2] = float(bluemed ) / 100.f; // [-1. ; +1.]
-    minTmp = min<float>(med[0], med[1], med[2]);
-    maxTmp = max<float>(med[0], med[1], med[2]);
+    med[0] = float (redmed  ) / 100.f; // [-1. ; +1.]
+    med[1] = float (greenmed) / 100.f; // [-1. ; +1.]
+    med[2] = float (bluemed ) / 100.f; // [-1. ; +1.]
+    minTmp = min<float> (med[0], med[1], med[2]);
+    maxTmp = max<float> (med[0], med[1], med[2]);
 
     if (maxTmp - minTmp > 0.005f) {
         float v[3];
@@ -404,11 +404,11 @@ void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vecto
     }
 
     // Fill the highlight mixer values of the Color TOning tool
-    high[0] = float(redhigh  ) / 100.f; // [-1. ; +1.]
-    high[1] = float(greenhigh) / 100.f; // [-1. ; +1.]
-    high[2] = float(bluehigh ) / 100.f; // [-1. ; +1.]
-    minTmp = min<float>(high[0], high[1], high[2]);
-    maxTmp = max<float>(high[0], high[1], high[2]);
+    high[0] = float (redhigh  ) / 100.f; // [-1. ; +1.]
+    high[1] = float (greenhigh) / 100.f; // [-1. ; +1.]
+    high[2] = float (bluehigh ) / 100.f; // [-1. ; +1.]
+    minTmp = min<float> (high[0], high[1], high[2]);
+    maxTmp = max<float> (high[0], high[1], high[2]);
 
     if (maxTmp - minTmp > 0.005f) {
         float v[3];
@@ -454,100 +454,100 @@ void ColorToningParams::mixerToCurve(std::vector<double> &colorCurve, std::vecto
 
 
 
-    colorCurve.resize( medSat != 0.f ? 13 : 9 );
-    colorCurve.at(0) = FCT_MinMaxCPoints;
-    opacityCurve.resize(13);
-    opacityCurve.at(0) = FCT_MinMaxCPoints;
+    colorCurve.resize ( medSat != 0.f ? 13 : 9 );
+    colorCurve.at (0) = FCT_MinMaxCPoints;
+    opacityCurve.resize (13);
+    opacityCurve.at (0) = FCT_MinMaxCPoints;
 
     float h, s, l;
     int idx = 1;
 
     if (lowSat == 0.f) {
         if (medSat != 0.f) {
-            Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+            Color::rgb2hsl (med[0], med[1], med[2], h, s, l);
         } else { // highSat can't be null if the 2 other ones are!
-            Color::rgb2hsl(high[0], high[1], high[2], h, s, l);
+            Color::rgb2hsl (high[0], high[1], high[2], h, s, l);
         }
     } else {
-        Color::rgb2hsl(low[0], low[1], low[2], h, s, l);
+        Color::rgb2hsl (low[0], low[1], low[2], h, s, l);
     }
 
-    colorCurve.at(idx++)  = xPosLow;
-    colorCurve.at(idx++)  = h;
-    colorCurve.at(idx++)  = 0.35;
-    colorCurve.at(idx++)  = 0.35;
+    colorCurve.at (idx++)  = xPosLow;
+    colorCurve.at (idx++)  = h;
+    colorCurve.at (idx++)  = 0.35;
+    colorCurve.at (idx++)  = 0.35;
 
     if (medSat != 0.f) {
-        Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
-        colorCurve.at(idx++)  = xPosMed;
-        colorCurve.at(idx++)  = h;
-        colorCurve.at(idx++)  = 0.35;
-        colorCurve.at(idx++)  = 0.35;
+        Color::rgb2hsl (med[0], med[1], med[2], h, s, l);
+        colorCurve.at (idx++)  = xPosMed;
+        colorCurve.at (idx++)  = h;
+        colorCurve.at (idx++)  = 0.35;
+        colorCurve.at (idx++)  = 0.35;
     }
 
     if (highSat == 0.f) {
         if (medSat != 0.f) {
-            Color::rgb2hsl(med[0], med[1], med[2], h, s, l);
+            Color::rgb2hsl (med[0], med[1], med[2], h, s, l);
         } else { // lowSat can't be null if the 2 other ones are!
-            Color::rgb2hsl(low[0], low[1], low[2], h, s, l);
+            Color::rgb2hsl (low[0], low[1], low[2], h, s, l);
         }
     } else {
-        Color::rgb2hsl(high[0], high[1], high[2], h, s, l);
+        Color::rgb2hsl (high[0], high[1], high[2], h, s, l);
     }
 
-    colorCurve.at(idx++)  = xPosHigh;
-    colorCurve.at(idx++)  = h;
-    colorCurve.at(idx++)  = 0.35;
-    colorCurve.at(idx)    = 0.35;
+    colorCurve.at (idx++)  = xPosHigh;
+    colorCurve.at (idx++)  = h;
+    colorCurve.at (idx++)  = 0.35;
+    colorCurve.at (idx)    = 0.35;
 
-    opacityCurve.at(1)  = xPosLow;
-    opacityCurve.at(2)  = double(lowSat);
-    opacityCurve.at(3)  = 0.35;
-    opacityCurve.at(4)  = 0.35;
-    opacityCurve.at(5)  = xPosMed;
-    opacityCurve.at(6)  = double(medSat);
-    opacityCurve.at(7)  = 0.35;
-    opacityCurve.at(8)  = 0.35;
-    opacityCurve.at(9)  = xPosHigh;
-    opacityCurve.at(10) = double(highSat);
-    opacityCurve.at(11) = 0.35;
-    opacityCurve.at(12) = 0.35;
+    opacityCurve.at (1)  = xPosLow;
+    opacityCurve.at (2)  = double (lowSat);
+    opacityCurve.at (3)  = 0.35;
+    opacityCurve.at (4)  = 0.35;
+    opacityCurve.at (5)  = xPosMed;
+    opacityCurve.at (6)  = double (medSat);
+    opacityCurve.at (7)  = 0.35;
+    opacityCurve.at (8)  = 0.35;
+    opacityCurve.at (9)  = xPosHigh;
+    opacityCurve.at (10) = double (highSat);
+    opacityCurve.at (11) = 0.35;
+    opacityCurve.at (12) = 0.35;
 }
 
-void ColorToningParams::slidersToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const
+void ColorToningParams::slidersToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const
 {
     if (hlColSat.value[0] == 0 && shadowsColSat.value[0] == 0) { // if both opacity are null, set both curves to Linear
-        colorCurve.resize(1);
-        colorCurve.at(0) = FCT_Linear;
-        opacityCurve.resize(1);
-        opacityCurve.at(0) = FCT_Linear;
+        colorCurve.resize (1);
+        colorCurve.at (0) = FCT_Linear;
+        opacityCurve.resize (1);
+        opacityCurve.at (0) = FCT_Linear;
         return;
     }
 
-    colorCurve.resize(9);
-    colorCurve.at(0) = FCT_MinMaxCPoints;
-    colorCurve.at(1) = 0.26 + 0.12 * double(balance) / 100.;
-    colorCurve.at(2) = double(shadowsColSat.value[1]) / 360.;
-    colorCurve.at(3) = 0.35;
-    colorCurve.at(4) = 0.35;
-    colorCurve.at(5) = 0.64 + 0.12 * double(balance) / 100.;
-    colorCurve.at(6) = double(hlColSat.value[1]) / 360.;
-    colorCurve.at(7) = 0.35;
-    colorCurve.at(8) = 0.35;
+    colorCurve.resize (9);
+    colorCurve.at (0) = FCT_MinMaxCPoints;
+    colorCurve.at (1) = 0.26 + 0.12 * double (balance) / 100.;
+    colorCurve.at (2) = double (shadowsColSat.value[1]) / 360.;
+    colorCurve.at (3) = 0.35;
+    colorCurve.at (4) = 0.35;
+    colorCurve.at (5) = 0.64 + 0.12 * double (balance) / 100.;
+    colorCurve.at (6) = double (hlColSat.value[1]) / 360.;
+    colorCurve.at (7) = 0.35;
+    colorCurve.at (8) = 0.35;
 
-    opacityCurve.resize(9);
-    opacityCurve.at(0) = FCT_MinMaxCPoints;
-    opacityCurve.at(1) = colorCurve.at(1);
-    opacityCurve.at(2) = double(shadowsColSat.value[0]) / 100.;
-    opacityCurve.at(3) = 0.35;
-    opacityCurve.at(4) = 0.35;
-    opacityCurve.at(5) = colorCurve.at(5);
-    opacityCurve.at(6) = double(hlColSat.value[0]) / 100.;
-    opacityCurve.at(7) = 0.35;
-    opacityCurve.at(8) = 0.35;
+    opacityCurve.resize (9);
+    opacityCurve.at (0) = FCT_MinMaxCPoints;
+    opacityCurve.at (1) = colorCurve.at (1);
+    opacityCurve.at (2) = double (shadowsColSat.value[0]) / 100.;
+    opacityCurve.at (3) = 0.35;
+    opacityCurve.at (4) = 0.35;
+    opacityCurve.at (5) = colorCurve.at (5);
+    opacityCurve.at (6) = double (hlColSat.value[0]) / 100.;
+    opacityCurve.at (7) = 0.35;
+    opacityCurve.at (8) = 0.35;
 }
 
-void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const
+void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const
 {
     float satur = 0.8f;
     float lumin = 0.5f; //middle of luminance for optimization of gamut - no real importance...as we work in XYZ and gamut control
@@ -556,85 +556,84 @@ void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurv
     std::vector<double> cCurve, oCurve;
 
     if (method == "RGBSliders" || method == "Splitlr") {
-        slidersToCurve(cCurve, oCurve);
+        slidersToCurve (cCurve, oCurve);
     } else if (method == "Splitco") {
-        mixerToCurve(cCurve, oCurve);
+        mixerToCurve (cCurve, oCurve);
     } else {
         cCurve = this->colorCurve;
         oCurve = this->opacityCurve;
     }
 
-    if(method == "Lab") {
-        if(twocolor == "Separ") {
+    if (method == "Lab") {
+        if (twocolor == "Separ") {
             satur = 0.9f;
         }
 
-        if(twocolor == "All"  || twocolor == "Two") {
+        if (twocolor == "All"  || twocolor == "Two") {
             satur = 0.9f;
         }
 
-        colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
-        opacityCurveLUT.Set(oCurve, opautili);
-    } else if(method == "Splitlr" || method == "Splitco") {
-        colorCurveLUT.SetXYZ(cCurve, xyz_rgb, rgb_xyz, satur, lumin);
-        opacityCurveLUT.Set(oCurve, opautili);
-    } else if(method.substr(0, 3) == "RGB") {
-        colorCurveLUT.SetRGB(cCurve, xyz_rgb, rgb_xyz);
-        opacityCurveLUT.Set(oCurve, opautili);
+        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        opacityCurveLUT.Set (oCurve, opautili);
+    } else if (method == "Splitlr" || method == "Splitco") {
+        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        opacityCurveLUT.Set (oCurve, opautili);
+    } else if (method.substr (0, 3) == "RGB") {
+        colorCurveLUT.SetRGB (cCurve, xyz_rgb, rgb_xyz);
+        opacityCurveLUT.Set (oCurve, opautili);
     }
 }
 //WaveletParams::WaveletParams (): hueskin(-5, 25, 170, 120, false), hueskin2(-260, -250, -130, -140, false), hllev(50, 75, 100, 98, false), bllev(0, 2, 50, 25, false), pastlev(0, 2, 30, 20, false), satlev(30, 45, 130, 100, false), edgcont(0, 20, 100, 75, false){
 
-WaveletParams::WaveletParams (): hueskin(-5, 25, 170, 120, false), hueskin2(-260, -250, -130, -140, false), hllev(50, 75, 100, 98, false), bllev(0, 2, 50, 25, false),
-    pastlev(0, 2, 30, 20, false), satlev(30, 45, 130, 100, false),  edgcont(bl, tl, br, tr, false), /* edgcont(0, 10, 75, 40, false),*/level0noise(0, 0, false), level1noise(0, 0, false), level2noise(0, 0, false), level3noise(0, 0, false)
+WaveletParams::WaveletParams (): hueskin (-5, 25, 170, 120, false), hueskin2 (-260, -250, -130, -140, false), hllev (50, 75, 100, 98, false), bllev (0, 2, 50, 25, false),
+    pastlev (0, 2, 30, 20, false), satlev (30, 45, 130, 100, false),  edgcont (bl, tl, br, tr, false), /* edgcont(0, 10, 75, 40, false),*/level0noise (0, 0, false), level1noise (0, 0, false), level2noise (0, 0, false), level3noise (0, 0, false)
 {
     setDefaults ();
 }
 
-void WaveletParams::getDefaultOpacityCurveRG(std::vector<double> &curve)
+void WaveletParams::getDefaultOpacityCurveRG (std::vector<double> &curve)
 {
     double v[8] = { 0.0, 0.50, 0.35, 0.35,
                     1.00, 0.50, 0.35, 0.35
                   };
 
-    curve.resize(9);
-    curve.at(0) = double(FCT_MinMaxCPoints);
+    curve.resize (9);
+    curve.at (0) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
-void WaveletParams::getDefaultOpacityCurveBY(std::vector<double> &curve)
+void WaveletParams::getDefaultOpacityCurveBY (std::vector<double> &curve)
 {
     double v[8] = { 0.0, 0.50, 0.35, 0.35,
                     1.00, 0.50, 0.35, 0.35
                   };
 
-    curve.resize(9);
-    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    curve.resize (9);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
-
-void WaveletParams::getDefaultOpacityCurveW(std::vector<double> &curve)
+void WaveletParams::getDefaultOpacityCurveW (std::vector<double> &curve)
 {
     double v[16] = { 0.00, 0.35, 0.35, 0.00,
                      0.35, 0.75, 0.35, 0.35,
                      0.60, 0.75, 0.35, 0.35,
                      1.00, 0.35, 0.00, 0.00
                    };
-    curve.resize(17);
-    curve.at(0) = double(FCT_MinMaxCPoints);
+    curve.resize (17);
+    curve.at (0) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
-void WaveletParams::getDefaultOpacityCurveWL(std::vector<double> &curve)
+void WaveletParams::getDefaultOpacityCurveWL (std::vector<double> &curve)
 {
     double v[8] = { 0.0, 0.50, 0.35, 0.35,
                     1.00, 0.50, 0.35, 0.35
@@ -644,47 +643,47 @@ void WaveletParams::getDefaultOpacityCurveWL(std::vector<double> &curve)
                       0.42, 0.53, 0.35, 0.35,
                       1.00, 0.15, 0.00, 0.00 };
                   */
-    curve.resize(9);
-    curve.at(0) = double(FCT_MinMaxCPoints);
+    curve.resize (9);
+    curve.at (0) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
 
-void WaveletParams::getDefaultCCWCurve(std::vector<double> &curve)
+void WaveletParams::getDefaultCCWCurve (std::vector<double> &curve)
 {
     double v[12] = { 0.0, 0.25, 0.35, 0.35,
                      0.50, 0.75, 0.35, 0.35, 0.90, 0.0, 0.35, 0.35
                    };
 
-    curve.resize(13);
-    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    curve.resize (13);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 
 }
 
-void WaveletParams::getCurves(WavCurve &cCurve, WavOpacityCurveRG &opacityCurveLUTRG, WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const
+void WaveletParams::getCurves (WavCurve &cCurve, WavOpacityCurveRG &opacityCurveLUTRG, WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const
 {
-    cCurve.Set(this->ccwcurve);
-    opacityCurveLUTRG.Set(this->opacityCurveRG);
-    opacityCurveLUTBY.Set(this->opacityCurveBY);
-    opacityCurveLUTW.Set(this->opacityCurveW);
-    opacityCurveLUTWL.Set(this->opacityCurveWL);
+    cCurve.Set (this->ccwcurve);
+    opacityCurveLUTRG.Set (this->opacityCurveRG);
+    opacityCurveLUTBY.Set (this->opacityCurveBY);
+    opacityCurveLUTW.Set (this->opacityCurveW);
+    opacityCurveLUTWL.Set (this->opacityCurveWL);
 
 }
 
 void WaveletParams::setDefaults()
 {
-    getDefaultCCWCurve(ccwcurve);
-    getDefaultOpacityCurveRG(opacityCurveRG);
-    getDefaultOpacityCurveBY(opacityCurveBY);
-    getDefaultOpacityCurveW(opacityCurveW);
-    getDefaultOpacityCurveWL(opacityCurveWL);
+    getDefaultCCWCurve (ccwcurve);
+    getDefaultOpacityCurveRG (opacityCurveRG);
+    getDefaultOpacityCurveBY (opacityCurveBY);
+    getDefaultOpacityCurveW (opacityCurveW);
+    getDefaultOpacityCurveWL (opacityCurveWL);
     enabled = false;
     median = false;
     medianlev = false;
@@ -698,7 +697,7 @@ void WaveletParams::setDefaults()
     balance = 0;
     iter = 0;
     wavclCurve.clear ();
-    wavclCurve.push_back(DCT_Linear);
+    wavclCurve.push_back (DCT_Linear);
 
     Lmethod          = "4_";
     CHmethod         = "without";
@@ -730,8 +729,8 @@ void WaveletParams::setDefaults()
     thr          = 35;
     thrH         = 65;
     skinprotect = 0.;
-    hueskin.setValues(-5, 25, 170, 120);
-    hueskin2.setValues(-260, -250, -130, -140);
+    hueskin.setValues (-5, 25, 170, 120);
+    hueskin2.setValues (-260, -250, -130, -140);
     threshold = 5;
     threshold2 = 4;
     edgedetect = 90;
@@ -739,20 +738,20 @@ void WaveletParams::setDefaults()
     edgedetectthr2 = 0;
     edgesensi = 60;
     edgeampli = 10;
-    hllev.setValues(50, 75, 100, 98);
-    bllev.setValues(0, 2, 50, 25);
-    pastlev.setValues(0, 2, 30, 20);
-    satlev.setValues(30, 45, 130, 100);
+    hllev.setValues (50, 75, 100, 98);
+    bllev.setValues (0, 2, 50, 25);
+    pastlev.setValues (0, 2, 30, 20);
+    satlev.setValues (30, 45, 130, 100);
 //  edgcont.setValues(bl, tl, br, tr);
-    edgcont.setValues(0, 10, 75, 40);
-    level0noise.setValues(0, 0);
-    level1noise.setValues(0, 0);
-    level2noise.setValues(0, 0);
-    level3noise.setValues(0, 0);
+    edgcont.setValues (0, 10, 75, 40);
+    level0noise.setValues (0, 0);
+    level1noise.setValues (0, 0);
+    level2noise.setValues (0, 0);
+    level3noise.setValues (0, 0);
     hhcurve.clear ();
-    hhcurve.push_back(FCT_Linear);
+    hhcurve.push_back (FCT_Linear);
     Chcurve.clear ();
-    Chcurve.push_back(FCT_Linear);
+    Chcurve.push_back (FCT_Linear);
     expcontrast = false;
     expchroma = false;
     expedge = false;
@@ -761,11 +760,11 @@ void WaveletParams::setDefaults()
     exptoning = false;
     expnoise = false;
 
-    for(int i = 0; i < 9; i ++) {
+    for (int i = 0; i < 9; i ++) {
         c[i] = 0;
     }
 
-    for(int i = 0; i < 9; i ++) {
+    for (int i = 0; i < 9; i ++) {
         ch[i] = 0;
     }
 
@@ -777,20 +776,20 @@ DirPyrDenoiseParams::DirPyrDenoiseParams ()
     setDefaults ();
 }
 
-void DirPyrDenoiseParams::getDefaultNoisCurve(std::vector<double> &curve)
+void DirPyrDenoiseParams::getDefaultNoisCurve (std::vector<double> &curve)
 {
     double v[8] = { 0.05, 0.15, 0.35, 0.35,
                     0.55, 0.04, 0.35, 0.35
                   };
-    curve.resize(9);
-    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    curve.resize (9);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
-void DirPyrDenoiseParams::getDefaultCCCurve(std::vector<double> &curve)
+void DirPyrDenoiseParams::getDefaultCCCurve (std::vector<double> &curve)
 {
     //  double v[8]= { 0.15, 0.00,0.35,0.35,
     //                 0.60, 0.05,0.35,0.35};
@@ -798,11 +797,11 @@ void DirPyrDenoiseParams::getDefaultCCCurve(std::vector<double> &curve)
                     0.35, 0.05, 0.35, 0.35
                   };
 
-    curve.resize(9);
-    curve.at(0 ) = double(FCT_MinMaxCPoints);
+    curve.resize (9);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
 
     for (size_t i = 1; i < curve.size(); ++i) {
-        curve.at(i) = v[i - 1];
+        curve.at (i) = v[i - 1];
     }
 }
 
@@ -810,8 +809,8 @@ void DirPyrDenoiseParams::getDefaultCCCurve(std::vector<double> &curve)
 void DirPyrDenoiseParams::setDefaults()
 {
 
-    getDefaultNoisCurve(lcurve);
-    getDefaultCCCurve(cccurve);
+    getDefaultNoisCurve (lcurve);
+    getDefaultCCCurve (cccurve);
 
     enabled = false;
     enhance = false;
@@ -834,10 +833,10 @@ void DirPyrDenoiseParams::setDefaults()
     gamma = 1.7;
 }
 
-void DirPyrDenoiseParams::getCurves(NoiseCurve &lCurve, NoiseCurve &cCurve) const
+void DirPyrDenoiseParams::getCurves (NoiseCurve &lCurve, NoiseCurve &cCurve) const
 {
-    lCurve.Set(this->lcurve);
-    cCurve.Set(this->cccurve);
+    lCurve.Set (this->lcurve);
+    cCurve.Set (this->cccurve);
 }
 
 void ToneCurveParams::setDefaults()
@@ -853,9 +852,9 @@ void ToneCurveParams::setDefaults()
     hlcomprthresh = 33;
     shcompr       = 50;
     curve.clear ();
-    curve.push_back(DCT_Linear);
+    curve.push_back (DCT_Linear);
     curve2.clear ();
-    curve2.push_back(DCT_Linear);
+    curve2.push_back (DCT_Linear);
     curveMode     = ToneCurveParams::TC_MODE_STD;
     curveMode2    = ToneCurveParams::TC_MODE_STD;
     hrenabled = false;
@@ -874,6 +873,173 @@ void CoarseTransformParams::setDefaults()
     rotate = 0;
     hflip = false;
     vflip = false;
+}
+
+void LocallabParams::setDefaults()
+{
+    enabled = false;
+    degree = 0;
+    locY = 250;
+    locX = 250;
+    locYT = 250;
+    locXL = 250;
+    centerX = 0;
+    centerY = 0;
+    circrad = 18;
+    qualityMethod = "std";
+    proxi = 1;
+    thres = 60;
+    lightness = 0;
+    contrast = 0;
+    chroma = 0;
+    noiselumf = 0;
+    noiselumc = 0;
+    noisechrof = 0;
+    noisechroc = 0;
+    sharradius = 40;
+    sharamount = 75;
+    shardamping = 75;
+    shariter = 30;
+    sensi = 19;
+    sensih = 19;
+    retrab = 500;
+    sensicb = 19;
+    sensibn = 60;
+    sensitm = 40;
+    sensisha = 19;
+    transit = 60;
+    chrrt = 0;
+    avoid = false;
+    Smethod = "IND";
+    retinexMethod = "high";
+    invers = false;
+    curvactiv = false;
+    activlum = false;
+    radius = 0;
+    inversrad = false;
+    inversret = false;
+    inverssha = false;
+    strength = 0;
+    stren = 0;
+    gamma = 100;
+    estop = 140;
+    scaltm = 3;
+    rewei = 0;
+    hueref = INFINITY;
+    chromaref = INFINITY;
+    lumaref = INFINITY;
+    str = 0;
+    neigh = 50;
+    vart = 200;
+    nbspot = 1;
+    anbspot = 0;
+    llcurve.clear ();
+    llcurve.push_back (DCT_Linear);
+    expcolor = true;
+    expblur = true;
+    exptonemap = true;
+    expreti = true;
+    expsharp = true;
+    expcbdl = true;
+    expdenoi = true;
+
+    for (int i = 0; i < 5; i ++) {
+        mult[i] = 100;
+    }
+
+    threshold = 20;
+
+    getDefaultLocalgainCurveT (localTgaincurve);
+    getDefaultLocalgainCurveTrab (localTgaincurverab);
+    getDefaultLLCurve (llcurve);
+    getDefaultLHCurve (LHcurve);
+
+}
+
+void LocallabParams::getDefaultLocalgainCurveT (std::vector<double> &curve)
+{
+
+
+    double v[12] =   {   0.00, 0.12, 0.35, 0.35,
+                         0.70, 0.50, 0.35, 0.35,
+                         1.00, 0.12, 0.35, 0.35,
+                     };
+
+
+    curve.resize (13);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
+
+    for (size_t i = 1; i < curve.size(); ++i) {
+        curve.at (i) = v[i - 1];
+    }
+
+}
+
+void LocallabParams::getDefaultLHCurve (std::vector<double> &curve)
+{
+
+    /*
+        double v[12] =   {   0.00, 0.12, 0.35, 0.35,
+                             0.70, 0.50, 0.35, 0.35,
+                             1.00, 0.12, 0.35, 0.35,
+                         };
+    */
+    double v[24] =   {   0.00, 0.50, 0.35, 0.35,
+                         0.166, 0.50, 0.35, 0.35,
+                         0.333, 0.50, 0.35, 0.35,
+                         0.50, 0.50, 0.35, 0.35,
+                         0.666, 0.50, 0.35, 0.35,
+                         0.833, 0.50, 0.35, 0.35,
+                     };
+
+    curve.resize (25);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
+
+    for (size_t i = 1; i < curve.size(); ++i) {
+        curve.at (i) = v[i - 1];
+    }
+
+}
+
+void LocallabParams::getDefaultLocalgainCurveTrab (std::vector<double> &curve)
+{
+
+    double v[12] =   {   0.00, 0.12, 0.35, 0.35,
+                         0.70, 0.50, 0.35, 0.35,
+                         1.00, 0.12, 0.35, 0.35,
+                     };
+
+
+    curve.resize (13);
+    curve.at (0 ) = double (FCT_MinMaxCPoints);
+
+    for (size_t i = 1; i < curve.size(); ++i) {
+        curve.at (i) = v[i - 1];
+    }
+
+}
+
+void LocallabParams::getDefaultLLCurve (std::vector<double> &curve)
+{
+    double v[4] = { 0.00, 0.00,
+                    //  0.499, 0.501,
+                    1.00, 1.00
+                  };
+
+    curve.resize (5);
+    curve.at (0) = double (DCT_NURBS);
+
+    for (size_t i = 1; i < curve.size(); ++i) {
+        curve.at (i) = v[i - 1];
+    }
+}
+
+
+void LocallabParams::getCurves (LocretigainCurve &cTgainCurve, LocretigainCurverab &cTgainCurverab, LocLHCurve &lhCurve) const
+{
+    cTgainCurve.Set (this->localTgaincurve);
+    cTgainCurverab.Set (this->localTgaincurverab);
+    lhCurve.Set (this->LHcurve);
 }
 
 void RAWParams::setDefaults()
@@ -976,32 +1142,32 @@ void ProcParams::setDefaults ()
     labCurve.lcredsk = true;
     labCurve.rstprotection   = 0;
     labCurve.lcurve.clear ();
-    labCurve.lcurve.push_back(DCT_Linear);
+    labCurve.lcurve.push_back (DCT_Linear);
     labCurve.acurve.clear ();
-    labCurve.acurve.push_back(DCT_Linear);
+    labCurve.acurve.push_back (DCT_Linear);
     labCurve.bcurve.clear ();
-    labCurve.bcurve.push_back(DCT_Linear);
+    labCurve.bcurve.push_back (DCT_Linear);
     labCurve.cccurve.clear ();
-    labCurve.cccurve.push_back(DCT_Linear);
+    labCurve.cccurve.push_back (DCT_Linear);
     labCurve.chcurve.clear ();
-    labCurve.chcurve.push_back(FCT_Linear);
+    labCurve.chcurve.push_back (FCT_Linear);
     labCurve.lhcurve.clear ();
-    labCurve.lhcurve.push_back(FCT_Linear);
+    labCurve.lhcurve.push_back (FCT_Linear);
     labCurve.hhcurve.clear ();
-    labCurve.hhcurve.push_back(FCT_Linear);
+    labCurve.hhcurve.push_back (FCT_Linear);
 
     labCurve.lccurve.clear ();
-    labCurve.lccurve.push_back(DCT_Linear);
+    labCurve.lccurve.push_back (DCT_Linear);
     labCurve.clcurve.clear ();
-    labCurve.clcurve.push_back(DCT_Linear);
+    labCurve.clcurve.push_back (DCT_Linear);
 
     rgbCurves.lumamode          = false;
     rgbCurves.rcurve.clear ();
-    rgbCurves.rcurve.push_back(DCT_Linear);
+    rgbCurves.rcurve.push_back (DCT_Linear);
     rgbCurves.gcurve.clear ();
-    rgbCurves.gcurve.push_back(DCT_Linear);
+    rgbCurves.gcurve.push_back (DCT_Linear);
     rgbCurves.bcurve.clear ();
-    rgbCurves.bcurve.push_back(DCT_Linear);
+    rgbCurves.bcurve.push_back (DCT_Linear);
 
     colorToning.setDefaults();
 
@@ -1018,7 +1184,7 @@ void ProcParams::setDefaults ()
     sharpening.enabled          = false;
     sharpening.radius           = 0.5;
     sharpening.amount           = 200;
-    sharpening.threshold.setValues(20, 80, 2000, 1200);
+    sharpening.threshold.setValues (20, 80, 2000, 1200);
     sharpening.edgesonly        = false;
     sharpening.edges_radius     = 1.9;
     sharpening.edges_tolerance  = 1800;
@@ -1033,7 +1199,7 @@ void ProcParams::setDefaults ()
     prsharpening.enabled          = false;
     prsharpening.radius           = 0.5;
     prsharpening.amount           = 200;
-    prsharpening.threshold.setValues(20, 80, 2000, 1200);
+    prsharpening.threshold.setValues (20, 80, 2000, 1200);
     prsharpening.edgesonly        = false;
     prsharpening.edges_radius     = 1.9;
     prsharpening.edges_tolerance  = 1800;
@@ -1048,12 +1214,12 @@ void ProcParams::setDefaults ()
     vibrance.enabled            = false;
     vibrance.pastels            = 0;
     vibrance.saturated          = 0;
-    vibrance.psthreshold.setValues(0, 75);
+    vibrance.psthreshold.setValues (0, 75);
     vibrance.protectskins       = false;
     vibrance.avoidcolorshift    = true;
     vibrance.pastsattog         = true;
     vibrance.skintonescurve.clear ();
-    vibrance.skintonescurve.push_back(DCT_Linear);
+    vibrance.skintonescurve.push_back (DCT_Linear);
 
     wb.method       = "Camera";
     wb.temperature  = 6504;
@@ -1085,13 +1251,13 @@ void ProcParams::setDefaults ()
     colorappearance.tonecie       = false;
 //   colorappearance.sharpcie      = false;
     colorappearance.curve.clear ();
-    colorappearance.curve.push_back(DCT_Linear);
+    colorappearance.curve.push_back (DCT_Linear);
     colorappearance.curve2.clear ();
-    colorappearance.curve2.push_back(DCT_Linear);
+    colorappearance.curve2.push_back (DCT_Linear);
     colorappearance.curveMode     = ColorAppearanceParams::TC_MODE_LIGHT;
     colorappearance.curveMode2    = ColorAppearanceParams::TC_MODE_LIGHT;
     colorappearance.curve3.clear ();
-    colorappearance.curve3.push_back(DCT_Linear);
+    colorappearance.curve3.push_back (DCT_Linear);
     colorappearance.curveMode3    = ColorAppearanceParams::TC_MODE_CHROMA;
 
     impulseDenoise.enabled      = false;
@@ -1101,31 +1267,31 @@ void ProcParams::setDefaults ()
     defringe.radius             = 2.0;
     defringe.threshold          = 13;
     defringe.huecurve.resize (25);
-    defringe.huecurve.at(0)     = FCT_MinMaxCPoints;
-    defringe.huecurve.at(1)     = 0.166666667;
-    defringe.huecurve.at(2)     = 0.;
-    defringe.huecurve.at(3)     = 0.35;
-    defringe.huecurve.at(4)     = 0.35;
-    defringe.huecurve.at(5)     = 0.347;
-    defringe.huecurve.at(6)     = 0.;
-    defringe.huecurve.at(7)     = 0.35;
-    defringe.huecurve.at(8)     = 0.35;
-    defringe.huecurve.at(9)     = 0.513667426;
-    defringe.huecurve.at(10)    = 0;
-    defringe.huecurve.at(11)    = 0.35;
-    defringe.huecurve.at(12)    = 0.35;
-    defringe.huecurve.at(13)    = 0.668944571;
-    defringe.huecurve.at(14)    = 0.;
-    defringe.huecurve.at(15)    = 0.35;
-    defringe.huecurve.at(16)    = 0.35;
-    defringe.huecurve.at(17)    = 0.8287775246;
-    defringe.huecurve.at(18)    = 0.97835991;
-    defringe.huecurve.at(19)    = 0.35;
-    defringe.huecurve.at(20)    = 0.35;
-    defringe.huecurve.at(21)    = 0.9908883827;
-    defringe.huecurve.at(22)    = 0.;
-    defringe.huecurve.at(23)    = 0.35;
-    defringe.huecurve.at(24)    = 0.35;
+    defringe.huecurve.at (0)     = FCT_MinMaxCPoints;
+    defringe.huecurve.at (1)     = 0.166666667;
+    defringe.huecurve.at (2)     = 0.;
+    defringe.huecurve.at (3)     = 0.35;
+    defringe.huecurve.at (4)     = 0.35;
+    defringe.huecurve.at (5)     = 0.347;
+    defringe.huecurve.at (6)     = 0.;
+    defringe.huecurve.at (7)     = 0.35;
+    defringe.huecurve.at (8)     = 0.35;
+    defringe.huecurve.at (9)     = 0.513667426;
+    defringe.huecurve.at (10)    = 0;
+    defringe.huecurve.at (11)    = 0.35;
+    defringe.huecurve.at (12)    = 0.35;
+    defringe.huecurve.at (13)    = 0.668944571;
+    defringe.huecurve.at (14)    = 0.;
+    defringe.huecurve.at (15)    = 0.35;
+    defringe.huecurve.at (16)    = 0.35;
+    defringe.huecurve.at (17)    = 0.8287775246;
+    defringe.huecurve.at (18)    = 0.97835991;
+    defringe.huecurve.at (19)    = 0.35;
+    defringe.huecurve.at (20)    = 0.35;
+    defringe.huecurve.at (21)    = 0.9908883827;
+    defringe.huecurve.at (22)    = 0.;
+    defringe.huecurve.at (23)    = 0.35;
+    defringe.huecurve.at (24)    = 0.35;
 
     dirpyrDenoise.setDefaults();
 
@@ -1220,10 +1386,10 @@ void ProcParams::setDefaults ()
     blackwhite.filter = "None";
     blackwhite.setting = "NormalContrast";
     blackwhite.beforeCurve.clear ();
-    blackwhite.beforeCurve.push_back(DCT_Linear);
+    blackwhite.beforeCurve.push_back (DCT_Linear);
     blackwhite.beforeCurveMode     = BlackWhiteParams::TC_MODE_STD_BW;
     blackwhite.afterCurve.clear ();
-    blackwhite.afterCurve.push_back(DCT_Linear);
+    blackwhite.afterCurve.push_back (DCT_Linear);
     blackwhite.afterCurveMode     = BlackWhiteParams::TC_MODE_STD_BW;
     blackwhite.algo          = "SP";
 
@@ -1242,13 +1408,13 @@ void ProcParams::setDefaults ()
     dirpyrequalizer.cbdlMethod = "bef";
 
 
-    for(int i = 0; i < 6; i ++) {
+    for (int i = 0; i < 6; i ++) {
         dirpyrequalizer.mult[i] = 1.0;
     }
 
     dirpyrequalizer.threshold = 0.2;
     dirpyrequalizer.skinprotect = 0.;
-    dirpyrequalizer.hueskin.setValues(-5, 25, 170, 120);        //default (b_l 0, t_l 30, b_r 170, t_r 120);
+    dirpyrequalizer.hueskin.setValues (-5, 25, 170, 120);       //default (b_l 0, t_l 30, b_r 170, t_r 120);
 //   dirpyrequalizer.algo = "FI";
 
     hsvequalizer.hcurve.clear ();
@@ -1268,58 +1434,58 @@ void ProcParams::setDefaults ()
     rank = 0;
     colorlabel = 0;
     inTrash = false;
-
+    prot = 1;
     ppVersion = PPVERSION;
 }
 
-static Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
+static Glib::ustring expandRelativePath (const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
-    if (embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+    if (embedded_fname == "" || !Glib::path_is_absolute (procparams_fname)) {
         return embedded_fname;
     }
 
     if (prefix != "") {
-        if (embedded_fname.length() < prefix.length() || embedded_fname.substr(0, prefix.length()) != prefix) {
+        if (embedded_fname.length() < prefix.length() || embedded_fname.substr (0, prefix.length()) != prefix) {
             return embedded_fname;
         }
 
-        embedded_fname = embedded_fname.substr(prefix.length());
+        embedded_fname = embedded_fname.substr (prefix.length());
     }
 
-    if (Glib::path_is_absolute(embedded_fname)) {
+    if (Glib::path_is_absolute (embedded_fname)) {
         return prefix + embedded_fname;
     }
 
-    Glib::ustring absPath = prefix + Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S + embedded_fname;
+    Glib::ustring absPath = prefix + Glib::path_get_dirname (procparams_fname) + G_DIR_SEPARATOR_S + embedded_fname;
     return absPath;
 }
 
-static Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
+static Glib::ustring relativePathIfInside (const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
 {
-    if (fnameAbsolute || embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+    if (fnameAbsolute || embedded_fname == "" || !Glib::path_is_absolute (procparams_fname)) {
         return embedded_fname;
     }
 
     Glib::ustring prefix = "";
 
-    if (embedded_fname.length() > 5 && embedded_fname.substr(0, 5) == "file:") {
-        embedded_fname = embedded_fname.substr(5);
+    if (embedded_fname.length() > 5 && embedded_fname.substr (0, 5) == "file:") {
+        embedded_fname = embedded_fname.substr (5);
         prefix = "file:";
     }
 
-    if (!Glib::path_is_absolute(embedded_fname)) {
+    if (!Glib::path_is_absolute (embedded_fname)) {
         return prefix + embedded_fname;
     }
 
-    Glib::ustring dir1 = Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S;
-    Glib::ustring dir2 = Glib::path_get_dirname(embedded_fname) + G_DIR_SEPARATOR_S;
+    Glib::ustring dir1 = Glib::path_get_dirname (procparams_fname) + G_DIR_SEPARATOR_S;
+    Glib::ustring dir2 = Glib::path_get_dirname (embedded_fname) + G_DIR_SEPARATOR_S;
 
-    if (dir2.substr(0, dir1.length()) != dir1) {
+    if (dir2.substr (0, dir1.length()) != dir1) {
         // it's in a different directory, ie not inside
         return prefix + embedded_fname;
     }
 
-    return prefix + embedded_fname.substr(dir1.length());
+    return prefix + embedded_fname.substr (dir1.length());
 }
 
 int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, bool fnameAbsolute, ParamsEdited* pedited)
@@ -1404,29 +1570,29 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ustring method;
 
             switch (toneCurve.curveMode) {
-            case (ToneCurveParams::TC_MODE_STD):
-                method = "Standard";
-                break;
+                case (ToneCurveParams::TC_MODE_STD):
+                    method = "Standard";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_FILMLIKE):
-                method = "FilmLike";
-                break;
+                case (ToneCurveParams::TC_MODE_FILMLIKE):
+                    method = "FilmLike";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
-                method = "SatAndValueBlending";
-                break;
+                case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
+                    method = "SatAndValueBlending";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
-                method = "WeightedStd";
-                break;
+                case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
+                    method = "WeightedStd";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_LUMINANCE):
-                method = "Luminance";
-                break;
+                case (ToneCurveParams::TC_MODE_LUMINANCE):
+                    method = "Luminance";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_PERCEPTUAL):
-                method = "Perceptual";
-                break;
+                case (ToneCurveParams::TC_MODE_PERCEPTUAL):
+                    method = "Perceptual";
+                    break;
             }
 
             keyFile.set_string  ("Exposure", "CurveMode", method);
@@ -1436,29 +1602,29 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ustring method;
 
             switch (toneCurve.curveMode2) {
-            case (ToneCurveParams::TC_MODE_STD):
-                method = "Standard";
-                break;
+                case (ToneCurveParams::TC_MODE_STD):
+                    method = "Standard";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_FILMLIKE):
-                method = "FilmLike";
-                break;
+                case (ToneCurveParams::TC_MODE_FILMLIKE):
+                    method = "FilmLike";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
-                method = "SatAndValueBlending";
-                break;
+                case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
+                    method = "SatAndValueBlending";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
-                method = "WeightedStd";
-                break;
+                case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
+                    method = "WeightedStd";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_LUMINANCE):
-                method = "Luminance";
-                break;
+                case (ToneCurveParams::TC_MODE_LUMINANCE):
+                    method = "Luminance";
+                    break;
 
-            case (ToneCurveParams::TC_MODE_PERCEPTUAL):
-                method = "Perceptual";
-                break;
+                case (ToneCurveParams::TC_MODE_PERCEPTUAL):
+                    method = "Perceptual";
+                    break;
             }
 
             keyFile.set_string  ("Exposure", "CurveMode2", method);
@@ -1466,12 +1632,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->toneCurve.curve) {
             Glib::ArrayHandle<double> tcurve = toneCurve.curve;
-            keyFile.set_double_list("Exposure", "Curve", tcurve);
+            keyFile.set_double_list ("Exposure", "Curve", tcurve);
         }
 
         if (!pedited || pedited->toneCurve.curve2) {
             Glib::ArrayHandle<double> tcurve = toneCurve.curve2;
-            keyFile.set_double_list("Exposure", "Curve2", tcurve);
+            keyFile.set_double_list ("Exposure", "Curve2", tcurve);
         }
 
         //save retinex
@@ -1568,22 +1734,22 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->retinex.cdcurve)  {
             Glib::ArrayHandle<double> cdcurve = retinex.cdcurve;
-            keyFile.set_double_list("Retinex", "CDCurve", cdcurve);
+            keyFile.set_double_list ("Retinex", "CDCurve", cdcurve);
         }
 
         if (!pedited || pedited->retinex.mapcurve)  {
             Glib::ArrayHandle<double> mapcurve = retinex.mapcurve;
-            keyFile.set_double_list("Retinex", "MAPCurve", mapcurve);
+            keyFile.set_double_list ("Retinex", "MAPCurve", mapcurve);
         }
 
         if (!pedited || pedited->retinex.cdHcurve)  {
             Glib::ArrayHandle<double> cdHcurve = retinex.cdHcurve;
-            keyFile.set_double_list("Retinex", "CDHCurve", cdHcurve);
+            keyFile.set_double_list ("Retinex", "CDHCurve", cdHcurve);
         }
 
         if (!pedited || pedited->retinex.lhcurve)  {
             Glib::ArrayHandle<double> lhcurve = retinex.lhcurve;
-            keyFile.set_double_list("Retinex", "LHCurve", lhcurve);
+            keyFile.set_double_list ("Retinex", "LHCurve", lhcurve);
         }
 
         if (!pedited || pedited->retinex.highlights) {
@@ -1608,28 +1774,28 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->retinex.transmissionCurve)  {
             Glib::ArrayHandle<double> transmissionCurve = retinex.transmissionCurve;
-            keyFile.set_double_list("Retinex", "TransmissionCurve", transmissionCurve);
+            keyFile.set_double_list ("Retinex", "TransmissionCurve", transmissionCurve);
         }
 
         if (!pedited || pedited->retinex.gaintransmissionCurve)  {
             Glib::ArrayHandle<double> gaintransmissionCurve = retinex.gaintransmissionCurve;
-            keyFile.set_double_list("Retinex", "GainTransmissionCurve", gaintransmissionCurve);
+            keyFile.set_double_list ("Retinex", "GainTransmissionCurve", gaintransmissionCurve);
         }
 
         // save channel mixer
         if (!pedited || pedited->chmixer.red[0] || pedited->chmixer.red[1] || pedited->chmixer.red[2]) {
             Glib::ArrayHandle<int> rmix (chmixer.red, 3, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Channel Mixer", "Red",   rmix);
+            keyFile.set_integer_list ("Channel Mixer", "Red",   rmix);
         }
 
         if (!pedited || pedited->chmixer.green[0] || pedited->chmixer.green[1] || pedited->chmixer.green[2]) {
             Glib::ArrayHandle<int> gmix (chmixer.green, 3, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Channel Mixer", "Green", gmix);
+            keyFile.set_integer_list ("Channel Mixer", "Green", gmix);
         }
 
         if (!pedited || pedited->chmixer.blue[0] || pedited->chmixer.blue[1] || pedited->chmixer.blue[2]) {
             Glib::ArrayHandle<int> bmix (chmixer.blue, 3, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
+            keyFile.set_integer_list ("Channel Mixer", "Blue",  bmix);
         }
 
         //save Black & White
@@ -1707,28 +1873,28 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->blackwhite.luminanceCurve) {
             Glib::ArrayHandle<double> luminanceCurve = blackwhite.luminanceCurve;
-            keyFile.set_double_list("Black & White", "LuminanceCurve", luminanceCurve);
+            keyFile.set_double_list ("Black & White", "LuminanceCurve", luminanceCurve);
         }
 
         if (!pedited || pedited->blackwhite.beforeCurveMode) {
             Glib::ustring mode;
 
             switch (blackwhite.beforeCurveMode) {
-            case (BlackWhiteParams::TC_MODE_STD_BW):
-                mode  = "Standard";
-                break;
+                case (BlackWhiteParams::TC_MODE_STD_BW):
+                    mode  = "Standard";
+                    break;
 
-            case (BlackWhiteParams::TC_MODE_FILMLIKE_BW):
-                mode  = "FilmLike";
-                break;
+                case (BlackWhiteParams::TC_MODE_FILMLIKE_BW):
+                    mode  = "FilmLike";
+                    break;
 
-            case (BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW):
-                mode = "SatAndValueBlending";
-                break;
+                case (BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW):
+                    mode = "SatAndValueBlending";
+                    break;
 
-            case (BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW):
-                mode = "WeightedStd";
-                break;
+                case (BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW):
+                    mode = "WeightedStd";
+                    break;
             }
 
             keyFile.set_string  ("Black & White", "BeforeCurveMode", mode);
@@ -1738,16 +1904,16 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ustring mode;
 
             switch (blackwhite.afterCurveMode) {
-            case (BlackWhiteParams::TC_MODE_STD_BW):
-                mode = "Standard";
-                break;
+                case (BlackWhiteParams::TC_MODE_STD_BW):
+                    mode = "Standard";
+                    break;
 
-            case (BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW):
-                mode = "WeightedStd";
-                break;
+                case (BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW):
+                    mode = "WeightedStd";
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
 
             keyFile.set_string  ("Black & White", "AfterCurveMode", mode);
@@ -1755,12 +1921,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->blackwhite.beforeCurve) {
             Glib::ArrayHandle<double> tcurvebw = blackwhite.beforeCurve;
-            keyFile.set_double_list("Black & White", "BeforeCurve", tcurvebw);
+            keyFile.set_double_list ("Black & White", "BeforeCurve", tcurvebw);
         }
 
         if (!pedited || pedited->blackwhite.afterCurve) {
             Glib::ArrayHandle<double> tcurvebw = blackwhite.afterCurve;
-            keyFile.set_double_list("Black & White", "AfterCurve", tcurvebw);
+            keyFile.set_double_list ("Black & White", "AfterCurve", tcurvebw);
         }
 
         // save luma curve
@@ -1790,47 +1956,47 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->labCurve.lcurve)  {
             Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
-            keyFile.set_double_list("Luminance Curve", "LCurve", lcurve);
+            keyFile.set_double_list ("Luminance Curve", "LCurve", lcurve);
         }
 
         if (!pedited || pedited->labCurve.acurve)  {
             Glib::ArrayHandle<double> acurve = labCurve.acurve;
-            keyFile.set_double_list("Luminance Curve", "aCurve", acurve);
+            keyFile.set_double_list ("Luminance Curve", "aCurve", acurve);
         }
 
         if (!pedited || pedited->labCurve.bcurve)  {
             Glib::ArrayHandle<double> bcurve = labCurve.bcurve;
-            keyFile.set_double_list("Luminance Curve", "bCurve", bcurve);
+            keyFile.set_double_list ("Luminance Curve", "bCurve", bcurve);
         }
 
         if (!pedited || pedited->labCurve.cccurve)  {
             Glib::ArrayHandle<double> cccurve = labCurve.cccurve;
-            keyFile.set_double_list("Luminance Curve", "ccCurve", cccurve);
+            keyFile.set_double_list ("Luminance Curve", "ccCurve", cccurve);
         }
 
         if (!pedited || pedited->labCurve.chcurve)  {
             Glib::ArrayHandle<double> chcurve = labCurve.chcurve;
-            keyFile.set_double_list("Luminance Curve", "chCurve", chcurve);
+            keyFile.set_double_list ("Luminance Curve", "chCurve", chcurve);
         }
 
         if (!pedited || pedited->labCurve.lhcurve)  {
             Glib::ArrayHandle<double> lhcurve = labCurve.lhcurve;
-            keyFile.set_double_list("Luminance Curve", "lhCurve", lhcurve);
+            keyFile.set_double_list ("Luminance Curve", "lhCurve", lhcurve);
         }
 
         if (!pedited || pedited->labCurve.hhcurve)  {
             Glib::ArrayHandle<double> hhcurve = labCurve.hhcurve;
-            keyFile.set_double_list("Luminance Curve", "hhCurve", hhcurve);
+            keyFile.set_double_list ("Luminance Curve", "hhCurve", hhcurve);
         }
 
         if (!pedited || pedited->labCurve.lccurve)  {
             Glib::ArrayHandle<double> lccurve = labCurve.lccurve;
-            keyFile.set_double_list("Luminance Curve", "LcCurve", lccurve);
+            keyFile.set_double_list ("Luminance Curve", "LcCurve", lccurve);
         }
 
         if (!pedited || pedited->labCurve.clcurve)  {
             Glib::ArrayHandle<double> clcurve = labCurve.clcurve;
-            keyFile.set_double_list("Luminance Curve", "ClCurve", clcurve);
+            keyFile.set_double_list ("Luminance Curve", "ClCurve", clcurve);
         }
 
         // save sharpening
@@ -1852,7 +2018,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->sharpening.threshold) {
             Glib::ArrayHandle<int> thresh (sharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Sharpening",   "Threshold", thresh);
+            keyFile.set_integer_list ("Sharpening",   "Threshold", thresh);
         }
 
         if (!pedited || pedited->sharpening.edgesonly) {
@@ -1906,7 +2072,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->vibrance.psthreshold) {
             Glib::ArrayHandle<int> thresh (vibrance.psthreshold.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Vibrance", "PSThreshold", thresh);
+            keyFile.set_integer_list ("Vibrance", "PSThreshold", thresh);
         }
 
         if (!pedited || pedited->vibrance.protectskins) {
@@ -1923,7 +2089,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->vibrance.skintonescurve)  {
             Glib::ArrayHandle<double> skintonescurve = vibrance.skintonescurve;
-            keyFile.set_double_list("Vibrance", "SkinTonesCurve", skintonescurve);
+            keyFile.set_double_list ("Vibrance", "SkinTonesCurve", skintonescurve);
         }
 
         //save edge sharpening
@@ -2090,13 +2256,13 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ustring method;
 
             switch (colorappearance.curveMode) {
-            case (ColorAppearanceParams::TC_MODE_LIGHT):
-                method = "Lightness";
-                break;
+                case (ColorAppearanceParams::TC_MODE_LIGHT):
+                    method = "Lightness";
+                    break;
 
-            case (ColorAppearanceParams::TC_MODE_BRIGHT):
-                method = "Brightness";
-                break;
+                case (ColorAppearanceParams::TC_MODE_BRIGHT):
+                    method = "Brightness";
+                    break;
             }
 
             keyFile.set_string  ("Color appearance", "CurveMode", method);
@@ -2106,13 +2272,13 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ustring method;
 
             switch (colorappearance.curveMode2) {
-            case (ColorAppearanceParams::TC_MODE_LIGHT):
-                method = "Lightness";
-                break;
+                case (ColorAppearanceParams::TC_MODE_LIGHT):
+                    method = "Lightness";
+                    break;
 
-            case (ColorAppearanceParams::TC_MODE_BRIGHT):
-                method = "Brightness";
-                break;
+                case (ColorAppearanceParams::TC_MODE_BRIGHT):
+                    method = "Brightness";
+                    break;
             }
 
             keyFile.set_string  ("Color appearance", "CurveMode2", method);
@@ -2122,17 +2288,17 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ustring method;
 
             switch (colorappearance.curveMode3) {
-            case (ColorAppearanceParams::TC_MODE_CHROMA):
-                method = "Chroma";
-                break;
+                case (ColorAppearanceParams::TC_MODE_CHROMA):
+                    method = "Chroma";
+                    break;
 
-            case (ColorAppearanceParams::TC_MODE_SATUR):
-                method = "Saturation";
-                break;
+                case (ColorAppearanceParams::TC_MODE_SATUR):
+                    method = "Saturation";
+                    break;
 
-            case (ColorAppearanceParams::TC_MODE_COLORF):
-                method = "Colorfullness";
-                break;
+                case (ColorAppearanceParams::TC_MODE_COLORF):
+                    method = "Colorfullness";
+                    break;
 
             }
 
@@ -2141,17 +2307,17 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->colorappearance.curve) {
             Glib::ArrayHandle<double> tcurve = colorappearance.curve;
-            keyFile.set_double_list("Color appearance", "Curve", tcurve);
+            keyFile.set_double_list ("Color appearance", "Curve", tcurve);
         }
 
         if (!pedited || pedited->colorappearance.curve2) {
             Glib::ArrayHandle<double> tcurve = colorappearance.curve2;
-            keyFile.set_double_list("Color appearance", "Curve2", tcurve);
+            keyFile.set_double_list ("Color appearance", "Curve2", tcurve);
         }
 
         if (!pedited || pedited->colorappearance.curve3) {
             Glib::ArrayHandle<double> tcurve = colorappearance.curve3;
-            keyFile.set_double_list("Color appearance", "Curve3", tcurve);
+            keyFile.set_double_list ("Color appearance", "Curve3", tcurve);
         }
 
 
@@ -2180,7 +2346,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->defringe.huecurve)  {
             Glib::ArrayHandle<double> huecurve = defringe.huecurve;
-            keyFile.set_double_list("Defringing", "HueCurve", huecurve);
+            keyFile.set_double_list ("Defringing", "HueCurve", huecurve);
         }
 
         // save dirpyrDenoise
@@ -2223,7 +2389,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         // never save 'auto chroma preview mode' to pp3
         if (!pedited || pedited->dirpyrDenoise.Cmethod) {
-            if(dirpyrDenoise.Cmethod == "PRE") {
+            if (dirpyrDenoise.Cmethod == "PRE") {
                 dirpyrDenoise.Cmethod = "MAN";
             }
 
@@ -2231,7 +2397,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
         if (!pedited || pedited->dirpyrDenoise.C2method) {
-            if(dirpyrDenoise.C2method == "PREV") {
+            if (dirpyrDenoise.C2method == "PREV") {
                 dirpyrDenoise.C2method = "MANU";
             }
 
@@ -2272,12 +2438,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->dirpyrDenoise.lcurve)  {
             Glib::ArrayHandle<double> lcurve = dirpyrDenoise.lcurve;
-            keyFile.set_double_list("Directional Pyramid Denoising", "LCurve", lcurve);
+            keyFile.set_double_list ("Directional Pyramid Denoising", "LCurve", lcurve);
         }
 
         if (!pedited || pedited->dirpyrDenoise.cccurve)  {
             Glib::ArrayHandle<double> cccurve = dirpyrDenoise.cccurve;
-            keyFile.set_double_list("Directional Pyramid Denoising", "CCCurve", cccurve);
+            keyFile.set_double_list ("Directional Pyramid Denoising", "CCCurve", cccurve);
         }
 
         //Save epd.
@@ -2418,7 +2584,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         // lens profile
         if (!pedited || pedited->lensProf.lcpFile) {
-            keyFile.set_string  ("LensProfile", "LCPFile", relativePathIfInside(fname, fnameAbsolute, lensProf.lcpFile));
+            keyFile.set_string  ("LensProfile", "LCPFile", relativePathIfInside (fname, fnameAbsolute, lensProf.lcpFile));
         }
 
         if (!pedited || pedited->lensProf.useDist) {
@@ -2466,6 +2632,282 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         if (!pedited || pedited->gradient.centerY) {
             keyFile.set_integer ("Gradient", "CenterY", gradient.centerY);
         }
+
+        // save Local lab
+        if (!pedited || pedited->locallab.enabled) {
+            keyFile.set_boolean ("Locallab", "Enabled", locallab.enabled);
+        }
+
+        if (!pedited || pedited->locallab.expcolor) {
+            keyFile.set_boolean ("Locallab", "Expcolor", locallab.expcolor);
+        }
+
+        if (!pedited || pedited->locallab.expblur) {
+            keyFile.set_boolean ("Locallab", "Expblur", locallab.expblur);
+        }
+
+        if (!pedited || pedited->locallab.exptonemap) {
+            keyFile.set_boolean ("Locallab", "Exptonemap", locallab.exptonemap);
+        }
+
+        if (!pedited || pedited->locallab.expreti) {
+            keyFile.set_boolean ("Locallab", "Expreti", locallab.expreti);
+        }
+
+        if (!pedited || pedited->locallab.expsharp) {
+            keyFile.set_boolean ("Locallab", "Expsharp", locallab.expsharp);
+        }
+
+        if (!pedited || pedited->locallab.expcbdl) {
+            keyFile.set_boolean ("Locallab", "Expcbdl", locallab.expcbdl);
+        }
+
+        if (!pedited || pedited->locallab.expdenoi) {
+            keyFile.set_boolean ("Locallab", "Expdenoi", locallab.expdenoi);
+        }
+
+        if (!pedited || pedited->locallab.localTgaincurve)  {
+            Glib::ArrayHandle<double> localTgaincurve = locallab.localTgaincurve;
+            keyFile.set_double_list ("Locallab", "TgainCurve", localTgaincurve);
+        }
+
+        if (!pedited || pedited->locallab.llcurve)  {
+            Glib::ArrayHandle<double> llcurve = locallab.llcurve;
+            keyFile.set_double_list ("Locallab", "LLCurve", llcurve);
+        }
+
+        if (!pedited || pedited->locallab.LHcurve)  {
+            Glib::ArrayHandle<double> LHcurve = locallab.LHcurve;
+            keyFile.set_double_list ("Locallab", "LHCurve", LHcurve);
+        }
+
+        if (!pedited || pedited->locallab.localTgaincurverab)  {
+            Glib::ArrayHandle<double> localTgaincurverab = locallab.localTgaincurverab;
+            keyFile.set_double_list ("Locallab", "TgainCurverab", localTgaincurverab);
+        }
+
+        if (!pedited || pedited->locallab.avoid) {
+            keyFile.set_boolean ("Locallab", "Avoid", locallab.avoid);
+        }
+
+        if (!pedited || pedited->locallab.invers) {
+            keyFile.set_boolean ("Locallab", "Invers", locallab.invers);
+        }
+
+        if (!pedited || pedited->locallab.curvactiv) {
+            keyFile.set_boolean ("Locallab", "Curvactiv", locallab.curvactiv);
+        }
+
+        if (!pedited || pedited->locallab.activlum) {
+            keyFile.set_boolean ("Locallab", "activlum", locallab.activlum);
+        }
+
+        if (!pedited || pedited->locallab.inversrad) {
+            keyFile.set_boolean ("Locallab", "Inversrad", locallab.inversrad);
+        }
+
+        if (!pedited || pedited->locallab.inverssha) {
+            keyFile.set_boolean ("Locallab", "Inverssha", locallab.inverssha);
+        }
+
+        if (!pedited || pedited->locallab.inversret) {
+            keyFile.set_boolean ("Locallab", "Inversret", locallab.inversret);
+        }
+
+        if (!pedited || pedited->locallab.degree) {
+            keyFile.set_double  ("Locallab", "Degree", locallab.degree);
+        }
+
+        if (!pedited || pedited->locallab.Smethod) {
+            keyFile.set_string ("Locallab", "Smethod", locallab.Smethod);
+        }
+
+        if (!pedited || pedited->locallab.retinexMethod) {
+            keyFile.set_string ("Locallab", "retinexMethod", locallab.retinexMethod);
+        }
+
+        if (!pedited || pedited->locallab.qualityMethod) {
+            keyFile.set_string ("Locallab", "qualityMethod", locallab.qualityMethod);
+        }
+
+        if (!pedited || pedited->locallab.locY) {
+            keyFile.set_integer ("Locallab", "LocY", locallab.locY);
+        }
+
+        if (!pedited || pedited->locallab.locX) {
+            keyFile.set_integer ("Locallab", "LocX", locallab.locX);
+        }
+
+        if (!pedited || pedited->locallab.locYT) {
+            keyFile.set_integer ("Locallab", "LocYT", locallab.locYT);
+        }
+
+        if (!pedited || pedited->locallab.locXL) {
+            keyFile.set_integer ("Locallab", "LocXL", locallab.locXL);
+        }
+
+        if (!pedited || pedited->locallab.centerX) {
+            keyFile.set_integer ("Locallab", "CenterX", locallab.centerX);
+        }
+
+        if (!pedited || pedited->locallab.centerY) {
+            keyFile.set_integer ("Locallab", "CenterY", locallab.centerY);
+        }
+
+        if (!pedited || pedited->locallab.circrad) {
+            keyFile.set_integer ("Locallab", "Circrad", locallab.circrad);
+        }
+
+        if (!pedited || pedited->locallab.thres) {
+            keyFile.set_integer ("Locallab", "Thres", locallab.thres);
+        }
+
+        if (!pedited || pedited->locallab.proxi) {
+            keyFile.set_integer ("Locallab", "Proxi", locallab.proxi);
+        }
+
+        if (!pedited || pedited->locallab.lightness) {
+            keyFile.set_integer ("Locallab", "Lightness", locallab.lightness);
+        }
+
+        if (!pedited || pedited->locallab.contrast) {
+            keyFile.set_integer ("Locallab", "Contrast", locallab.contrast);
+        }
+
+        if (!pedited || pedited->locallab.chroma) {
+            keyFile.set_integer ("Locallab", "Chroma", locallab.chroma);
+        }
+
+        if (!pedited || pedited->locallab.noiselumf) {
+            keyFile.set_integer ("Locallab", "noiselumf", locallab.noiselumf);
+        }
+
+        if (!pedited || pedited->locallab.noiselumc) {
+            keyFile.set_integer ("Locallab", "noiselumc", locallab.noiselumc);
+        }
+
+        if (!pedited || pedited->locallab.noisechrof) {
+            keyFile.set_integer ("Locallab", "noisechrof", locallab.noisechrof);
+        }
+
+        if (!pedited || pedited->locallab.noisechroc) {
+            keyFile.set_integer ("Locallab", "noisechroc", locallab.noisechroc);
+        }
+
+        if (!pedited || pedited->locallab.sharradius) {
+            keyFile.set_integer ("Locallab", "Sharradius", locallab.sharradius);
+        }
+
+        if (!pedited || pedited->locallab.sharamount) {
+            keyFile.set_integer ("Locallab", "Sharamount", locallab.sharamount);
+        }
+
+        if (!pedited || pedited->locallab.shardamping) {
+            keyFile.set_integer ("Locallab", "Shardamping", locallab.shardamping);
+        }
+
+        if (!pedited || pedited->locallab.shariter) {
+            keyFile.set_integer ("Locallab", "Shariter", locallab.shariter);
+        }
+
+        if (!pedited || pedited->locallab.sensi) {
+            keyFile.set_integer ("Locallab", "Sensi", locallab.sensi);
+        }
+
+        if (!pedited || pedited->locallab.sensitm) {
+            keyFile.set_integer ("Locallab", "Sensitm", locallab.sensitm);
+        }
+
+        if (!pedited || pedited->locallab.sensisha) {
+            keyFile.set_integer ("Locallab", "Sensisha", locallab.sensisha);
+        }
+
+        if (!pedited || pedited->locallab.sensih) {
+            keyFile.set_integer ("Locallab", "Sensih", locallab.sensih);
+        }
+
+        if (!pedited || pedited->locallab.retrab) {
+            keyFile.set_integer ("Locallab", "Retrab", locallab.retrab);
+        }
+
+
+        if (!pedited || pedited->locallab.sensicb) {
+            keyFile.set_integer ("Locallab", "Sensicb", locallab.sensicb);
+        }
+
+        if (!pedited || pedited->locallab.sensibn) {
+            keyFile.set_integer ("Locallab", "Sensibn", locallab.sensibn);
+        }
+
+        if (!pedited || pedited->locallab.transit) {
+            keyFile.set_integer ("Locallab", "Transit", locallab.transit);
+        }
+
+        if (!pedited || pedited->locallab.chrrt) {
+            keyFile.set_integer ("Locallab", "Chrrt", locallab.chrrt);
+        }
+
+        if (!pedited || pedited->locallab.str) {
+            keyFile.set_integer ("Locallab", "Str", locallab.str);
+        }
+
+        if (!pedited || pedited->locallab.neigh) {
+            keyFile.set_integer ("Locallab", "Neigh", locallab.neigh);
+        }
+
+        if (!pedited || pedited->locallab.nbspot) {
+            keyFile.set_integer ("Locallab", "Nbspot", locallab.nbspot);
+        }
+
+        if (!pedited || pedited->locallab.anbspot) {
+            keyFile.set_integer ("Locallab", "ANbspot", locallab.anbspot);
+        }
+
+        if (!pedited || pedited->locallab.vart) {
+            keyFile.set_integer ("Locallab", "Vart", locallab.vart);
+        }
+
+        if (!pedited || pedited->locallab.radius) {
+            keyFile.set_integer ("Locallab", "Radius", locallab.radius);
+        }
+
+        if (!pedited || pedited->locallab.strength) {
+            keyFile.set_integer ("Locallab", "Strength", locallab.strength);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            std::stringstream ss;
+            ss << "Mult" << i;
+
+            if (!pedited || pedited->locallab.mult[i]) {
+                keyFile.set_integer ("Locallab", ss.str(), locallab.mult[i]);
+            }
+        }
+
+        if (!pedited || pedited->locallab.threshold) {
+            keyFile.set_integer ("Locallab", "Threshold", locallab.threshold);
+        }
+
+        if (!pedited || pedited->locallab.stren) {
+            keyFile.set_integer ("Locallab", "Stren", locallab.stren);
+        }
+
+        if (!pedited || pedited->locallab.gamma) {
+            keyFile.set_integer ("Locallab", "Gamma", locallab.gamma);
+        }
+
+        if (!pedited || pedited->locallab.estop) {
+            keyFile.set_integer ("Locallab", "Estop", locallab.estop);
+        }
+
+        if (!pedited || pedited->locallab.scaltm) {
+            keyFile.set_integer ("Locallab", "Scaltm", locallab.scaltm);
+        }
+
+        if (!pedited || pedited->locallab.rewei) {
+            keyFile.set_integer ("Locallab", "Rewei", locallab.rewei);
+        }
+
 
         // save post-crop vignette
         if (!pedited || pedited->pcvignette.enabled) {
@@ -2561,7 +3003,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->prsharpening.threshold) {
             Glib::ArrayHandle<int> thresh (prsharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("PostResizeSharpening",   "Threshold", thresh);
+            keyFile.set_integer_list ("PostResizeSharpening",   "Threshold", thresh);
         }
 
         if (!pedited || pedited->prsharpening.edgesonly) {
@@ -2603,7 +3045,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         // save color management settings
         if (!pedited || pedited->icm.input) {
-            keyFile.set_string  ("Color Management", "InputProfile",   relativePathIfInside(fname, fnameAbsolute, icm.input));
+            keyFile.set_string  ("Color Management", "InputProfile",   relativePathIfInside (fname, fnameAbsolute, icm.input));
         }
 
         if (!pedited || pedited->icm.toneCurve) {
@@ -2642,22 +3084,22 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             Glib::ustring intent;
 
             switch (icm.outputIntent) {
-            default:
-            case RI_PERCEPTUAL:
-                intent = "Perceptual";
-                break;
+                default:
+                case RI_PERCEPTUAL:
+                    intent = "Perceptual";
+                    break;
 
-            case RI_RELATIVE:
-                intent = "Relative";
-                break;
+                case RI_RELATIVE:
+                    intent = "Relative";
+                    break;
 
-            case RI_SATURATION:
-                intent = "Saturation";
-                break;
+                case RI_SATURATION:
+                    intent = "Saturation";
+                    break;
 
-            case RI_ABSOLUTE:
-                intent = "Absolute";
-                break;
+                case RI_ABSOLUTE:
+                    intent = "Absolute";
+                    break;
             }
 
             keyFile.set_string  ("Color Management", "OutputProfileIntent", intent);
@@ -2782,21 +3224,21 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Wavelet", "Expnoise", wavelet.expnoise);
         }
 
-        for(int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             std::stringstream ss;
             ss << "Contrast" << (i + 1);
 
             if (!pedited || pedited->wavelet.c[i]) {
-                keyFile.set_integer("Wavelet", ss.str(), wavelet.c[i]);
+                keyFile.set_integer ("Wavelet", ss.str(), wavelet.c[i]);
             }
         }
 
-        for(int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             std::stringstream ss;
             ss << "Chroma" << (i + 1);
 
             if (!pedited || pedited->wavelet.ch[i]) {
-                keyFile.set_integer("Wavelet", ss.str(), wavelet.ch[i]);
+                keyFile.set_integer ("Wavelet", ss.str(), wavelet.ch[i]);
             }
         }
 
@@ -2810,37 +3252,37 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->wavelet.hllev) {
             Glib::ArrayHandle<int> thresh (wavelet.hllev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Wavelet",   "HLRange", thresh);
+            keyFile.set_integer_list ("Wavelet",   "HLRange", thresh);
         }
 
         if (!pedited || pedited->wavelet.bllev) {
             Glib::ArrayHandle<int> thresh (wavelet.bllev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Wavelet",   "SHRange", thresh);
+            keyFile.set_integer_list ("Wavelet",   "SHRange", thresh);
         }
 
         if (!pedited || pedited->wavelet.edgcont) {
             Glib::ArrayHandle<int> thresh (wavelet.edgcont.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Wavelet",   "Edgcont", thresh);
+            keyFile.set_integer_list ("Wavelet",   "Edgcont", thresh);
         }
 
         if (!pedited || pedited->wavelet.level0noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level0noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list("Wavelet",   "Level0noise", thresh);
+            keyFile.set_double_list ("Wavelet",   "Level0noise", thresh);
         }
 
         if (!pedited || pedited->wavelet.level1noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level1noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list("Wavelet",   "Level1noise", thresh);
+            keyFile.set_double_list ("Wavelet",   "Level1noise", thresh);
         }
 
         if (!pedited || pedited->wavelet.level2noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level2noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list("Wavelet",   "Level2noise", thresh);
+            keyFile.set_double_list ("Wavelet",   "Level2noise", thresh);
         }
 
         if (!pedited || pedited->wavelet.level3noise) {
             Glib::ArrayHandle<double> thresh (wavelet.level3noise.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_double_list("Wavelet",   "Level3noise", thresh);
+            keyFile.set_double_list ("Wavelet",   "Level3noise", thresh);
         }
 
 
@@ -2910,52 +3352,52 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->wavelet.ccwcurve)  {
             Glib::ArrayHandle<double> ccwcurve = wavelet.ccwcurve;
-            keyFile.set_double_list("Wavelet", "ContrastCurve", ccwcurve);
+            keyFile.set_double_list ("Wavelet", "ContrastCurve", ccwcurve);
         }
 
         if (!pedited || pedited->wavelet.pastlev) {
             Glib::ArrayHandle<int> thresh (wavelet.pastlev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Wavelet",   "Pastlev", thresh);
+            keyFile.set_integer_list ("Wavelet",   "Pastlev", thresh);
         }
 
         if (!pedited || pedited->wavelet.satlev) {
             Glib::ArrayHandle<int> thresh (wavelet.satlev.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Wavelet",   "Satlev", thresh);
+            keyFile.set_integer_list ("Wavelet",   "Satlev", thresh);
         }
 
         if (!pedited || pedited->wavelet.opacityCurveRG) {
             Glib::ArrayHandle<double> curve = wavelet.opacityCurveRG;
-            keyFile.set_double_list("Wavelet", "OpacityCurveRG", curve);
+            keyFile.set_double_list ("Wavelet", "OpacityCurveRG", curve);
         }
 
         if (!pedited || pedited->wavelet.opacityCurveBY) {
             Glib::ArrayHandle<double> curve = wavelet.opacityCurveBY;
-            keyFile.set_double_list("Wavelet", "OpacityCurveBY", curve);
+            keyFile.set_double_list ("Wavelet", "OpacityCurveBY", curve);
         }
 
         if (!pedited || pedited->wavelet.opacityCurveW) {
             Glib::ArrayHandle<double> curve = wavelet.opacityCurveW;
-            keyFile.set_double_list("Wavelet", "OpacityCurveW", curve);
+            keyFile.set_double_list ("Wavelet", "OpacityCurveW", curve);
         }
 
         if (!pedited || pedited->wavelet.opacityCurveWL) {
             Glib::ArrayHandle<double> curve = wavelet.opacityCurveWL;
-            keyFile.set_double_list("Wavelet", "OpacityCurveWL", curve);
+            keyFile.set_double_list ("Wavelet", "OpacityCurveWL", curve);
         }
 
         if (!pedited || pedited->wavelet.hhcurve) {
             Glib::ArrayHandle<double> curve = wavelet.hhcurve;
-            keyFile.set_double_list("Wavelet", "HHcurve", curve);
+            keyFile.set_double_list ("Wavelet", "HHcurve", curve);
         }
 
         if (!pedited || pedited->wavelet.Chcurve) {
             Glib::ArrayHandle<double> curve = wavelet.Chcurve;
-            keyFile.set_double_list("Wavelet", "CHcurve", curve);
+            keyFile.set_double_list ("Wavelet", "CHcurve", curve);
         }
 
         if (!pedited || pedited->wavelet.wavclCurve)  {
             Glib::ArrayHandle<double> wavclCurve = wavelet.wavclCurve;
-            keyFile.set_double_list("Wavelet", "WavclCurve", wavclCurve);
+            keyFile.set_double_list ("Wavelet", "WavclCurve", wavclCurve);
         }
 
 
@@ -2986,7 +3428,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->wavelet.hueskin) {
             Glib::ArrayHandle<int> thresh (wavelet.hueskin.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Wavelet",   "Hueskin", thresh);
+            keyFile.set_integer_list ("Wavelet",   "Hueskin", thresh);
         }
 
         if (!pedited || pedited->wavelet.edgrad) {
@@ -3046,7 +3488,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->wavelet.hueskin2) {
             Glib::ArrayHandle<int> thresh (wavelet.hueskin2.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Wavelet",   "HueRange", thresh);
+            keyFile.set_integer_list ("Wavelet",   "HueRange", thresh);
         }
 
         if (!pedited || pedited->wavelet.contrast) {
@@ -3067,12 +3509,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_string  ("Directional Pyramid Equalizer", "cbdlMethod",  dirpyrequalizer.cbdlMethod);
         }
 
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             std::stringstream ss;
             ss << "Mult" << i;
 
             if (!pedited || pedited->dirpyrequalizer.mult[i]) {
-                keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
+                keyFile.set_double ("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
             }
         }
 
@@ -3087,28 +3529,28 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         //  if (!pedited || pedited->dirpyrequalizer.algo) keyFile.set_string ("Directional Pyramid Equalizer", "Algorithm", dirpyrequalizer.algo);
         if (!pedited || pedited->dirpyrequalizer.hueskin) {
             Glib::ArrayHandle<int> thresh (dirpyrequalizer.hueskin.value, 4, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("Directional Pyramid Equalizer",   "Hueskin", thresh);
+            keyFile.set_integer_list ("Directional Pyramid Equalizer",   "Hueskin", thresh);
         }
 
         // save hsv wavelet parameters
         if (!pedited || pedited->hsvequalizer.hcurve) {
             Glib::ArrayHandle<double> hcurve = hsvequalizer.hcurve;
-            keyFile.set_double_list("HSV Equalizer", "HCurve", hcurve);
+            keyFile.set_double_list ("HSV Equalizer", "HCurve", hcurve);
         }
 
         if (!pedited || pedited->hsvequalizer.scurve) {
             Glib::ArrayHandle<double> scurve = hsvequalizer.scurve;
-            keyFile.set_double_list("HSV Equalizer", "SCurve", scurve);
+            keyFile.set_double_list ("HSV Equalizer", "SCurve", scurve);
         }
 
         if (!pedited || pedited->hsvequalizer.vcurve) {
             Glib::ArrayHandle<double> vcurve = hsvequalizer.vcurve;
-            keyFile.set_double_list("HSV Equalizer", "VCurve", vcurve);
+            keyFile.set_double_list ("HSV Equalizer", "VCurve", vcurve);
         }
 
         //save film simulation parameters
         if ( !pedited || pedited->filmSimulation.enabled ) {
-            keyFile.set_boolean( "Film Simulation", "Enabled", filmSimulation.enabled );
+            keyFile.set_boolean ( "Film Simulation", "Enabled", filmSimulation.enabled );
         }
 
         if ( !pedited || pedited->filmSimulation.clutFilename ) {
@@ -3116,7 +3558,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
         if ( !pedited || pedited->filmSimulation.strength ) {
-            keyFile.set_integer( "Film Simulation", "Strength", filmSimulation.strength );
+            keyFile.set_integer ( "Film Simulation", "Strength", filmSimulation.strength );
         }
 
 
@@ -3126,17 +3568,17 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->rgbCurves.rcurve) {
             Glib::ArrayHandle<double> RGBrcurve = rgbCurves.rcurve;
-            keyFile.set_double_list("RGB Curves", "rCurve", RGBrcurve);
+            keyFile.set_double_list ("RGB Curves", "rCurve", RGBrcurve);
         }
 
         if (!pedited || pedited->rgbCurves.gcurve) {
             Glib::ArrayHandle<double> RGBgcurve = rgbCurves.gcurve;
-            keyFile.set_double_list("RGB Curves", "gCurve", RGBgcurve);
+            keyFile.set_double_list ("RGB Curves", "gCurve", RGBgcurve);
         }
 
         if (!pedited || pedited->rgbCurves.bcurve) {
             Glib::ArrayHandle<double> RGBbcurve = rgbCurves.bcurve;
-            keyFile.set_double_list("RGB Curves", "bCurve", RGBbcurve);
+            keyFile.set_double_list ("RGB Curves", "bCurve", RGBbcurve);
         }
 
         // save Color Toning
@@ -3210,12 +3652,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->colorToning.opacityCurve) {
             Glib::ArrayHandle<double> curve = colorToning.opacityCurve;
-            keyFile.set_double_list("ColorToning", "OpacityCurve", curve);
+            keyFile.set_double_list ("ColorToning", "OpacityCurve", curve);
         }
 
         if (!pedited || pedited->colorToning.colorCurve) {
             Glib::ArrayHandle<double> curve = colorToning.colorCurve;
-            keyFile.set_double_list("ColorToning", "ColorCurve", curve);
+            keyFile.set_double_list ("ColorToning", "ColorCurve", curve);
         }
 
         if (!pedited || pedited->colorToning.satprotectionthreshold) {
@@ -3232,27 +3674,27 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->colorToning.hlColSat) {
             Glib::ArrayHandle<int> thresh (colorToning.hlColSat.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("ColorToning", "HighlightsColorSaturation", thresh);
+            keyFile.set_integer_list ("ColorToning", "HighlightsColorSaturation", thresh);
         }
 
         if (!pedited || pedited->colorToning.shadowsColSat) {
             Glib::ArrayHandle<int> thresh (colorToning.shadowsColSat.value, 2, Glib::OWNERSHIP_NONE);
-            keyFile.set_integer_list("ColorToning", "ShadowsColorSaturation", thresh);
+            keyFile.set_integer_list ("ColorToning", "ShadowsColorSaturation", thresh);
         }
 
         if (!pedited || pedited->colorToning.clcurve)  {
             Glib::ArrayHandle<double> clcurve = colorToning.clcurve;
-            keyFile.set_double_list("ColorToning", "ClCurve", clcurve);
+            keyFile.set_double_list ("ColorToning", "ClCurve", clcurve);
         }
 
         if (!pedited || pedited->colorToning.cl2curve)  {
             Glib::ArrayHandle<double> cl2curve = colorToning.cl2curve;
-            keyFile.set_double_list("ColorToning", "Cl2Curve", cl2curve);
+            keyFile.set_double_list ("ColorToning", "Cl2Curve", cl2curve);
         }
 
         // save raw parameters
         if (!pedited || pedited->raw.darkFrame) {
-            keyFile.set_string  ("RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame) );
+            keyFile.set_string  ("RAW", "DarkFrame", relativePathIfInside (fname, fnameAbsolute, raw.dark_frame) );
         }
 
         if (!pedited || pedited->raw.dfAuto) {
@@ -3260,7 +3702,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
         if (!pedited || pedited->raw.ff_file) {
-            keyFile.set_string  ("RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file) );
+            keyFile.set_string  ("RAW", "FlatFieldFile", relativePathIfInside (fname, fnameAbsolute, raw.ff_file) );
         }
 
         if (!pedited || pedited->raw.ff_AutoSelect) {
@@ -3408,7 +3850,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         sPParams = keyFile.to_data();
 
-    } catch(Glib::KeyFileError&) {}
+    } catch (Glib::KeyFileError&) {}
 
     if (sPParams.empty ()) {
         return 1;
@@ -3449,7 +3891,7 @@ int ProcParams::write (const Glib::ustring &fname, const Glib::ustring &content)
 
 int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 {
-    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
+    setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
 
     if (fname.empty()) {
         return 1;
@@ -3460,7 +3902,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
     try {
 
         if (pedited) {
-            pedited->set(false);
+            pedited->set (false);
         }
 
         FILE* f = g_fopen (fname.c_str (), "rt");
@@ -3676,6 +4118,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
+
+
+
+
         if (keyFile.has_group ("HLRecovery")) {
             if (keyFile.has_key ("HLRecovery", "Enabled"))  {
                 toneCurve.hrenabled  = keyFile.get_boolean ("HLRecovery", "Enabled");
@@ -3694,6 +4140,549 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
         }
 
+
+        // load Local Lab
+        if (keyFile.has_group ("Locallab")) {
+            if (keyFile.has_key ("Locallab", "Enabled"))  {
+                locallab.enabled  = keyFile.get_boolean ("Locallab", "Enabled");
+
+                if (pedited) {
+                    pedited->locallab.enabled = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Expcolor")) {
+                locallab.expcolor = keyFile.get_boolean ("Locallab", "Expcolor");
+
+                if (pedited) {
+                    pedited->locallab.expcolor = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Expblur")) {
+                locallab.expblur = keyFile.get_boolean ("Locallab", "Expblur");
+
+                if (pedited) {
+                    pedited->locallab.expblur = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Exptonemap")) {
+                locallab.exptonemap = keyFile.get_boolean ("Locallab", "Exptonemap");
+
+                if (pedited) {
+                    pedited->locallab.exptonemap = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Expreti")) {
+                locallab.expreti = keyFile.get_boolean ("Locallab", "Expreti");
+
+                if (pedited) {
+                    pedited->locallab.expreti = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Expsharp")) {
+                locallab.expsharp = keyFile.get_boolean ("Locallab", "Expsharp");
+
+                if (pedited) {
+                    pedited->locallab.expsharp = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Expdenoi")) {
+                locallab.expdenoi = keyFile.get_boolean ("Locallab", "Expdenoi");
+
+                if (pedited) {
+                    pedited->locallab.expdenoi = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Avoid"))  {
+                locallab.avoid  = keyFile.get_boolean ("Locallab", "Avoid");
+
+                if (pedited) {
+                    pedited->locallab.avoid = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "TgainCurve")) {
+                locallab.localTgaincurve = keyFile.get_double_list ("Locallab", "TgainCurve");
+
+                if (pedited) {
+                    pedited->locallab.localTgaincurve = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "LLCurve")) {
+                locallab.llcurve = keyFile.get_double_list ("Locallab", "LLCurve");
+
+                if (pedited) {
+                    pedited->locallab.llcurve = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "LHCurve")) {
+                locallab.LHcurve = keyFile.get_double_list ("Locallab", "LHCurve");
+
+                if (pedited) {
+                    pedited->locallab.LHcurve = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "TgainCurverab")) {
+                locallab.localTgaincurverab = keyFile.get_double_list ("Locallab", "TgainCurverab");
+
+                if (pedited) {
+                    pedited->locallab.localTgaincurverab = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Invers"))  {
+                locallab.invers  = keyFile.get_boolean ("Locallab", "Invers");
+
+                if (pedited) {
+                    pedited->locallab.invers = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Curvactiv"))  {
+                locallab.curvactiv  = keyFile.get_boolean ("Locallab", "Curvactiv");
+
+                if (pedited) {
+                    pedited->locallab.curvactiv = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "activlum"))  {
+                locallab.activlum  = keyFile.get_boolean ("Locallab", "activlum");
+
+                if (pedited) {
+                    pedited->locallab.activlum = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Inversrad"))  {
+                locallab.inversrad  = keyFile.get_boolean ("Locallab", "Inversrad");
+
+                if (pedited) {
+                    pedited->locallab.inversrad = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Inverssha"))  {
+                locallab.inverssha  = keyFile.get_boolean ("Locallab", "Inverssha");
+
+                if (pedited) {
+                    pedited->locallab.inverssha = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Inversret"))  {
+                locallab.inversret  = keyFile.get_boolean ("Locallab", "Inversret");
+
+                if (pedited) {
+                    pedited->locallab.inversret = true;
+                }
+            }
+
+
+            if (keyFile.has_key ("Locallab", "Degree"))   {
+                locallab.degree   = keyFile.get_double ("Locallab", "Degree");
+
+                if (pedited) {
+                    pedited->locallab.degree = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Smethod"))  {
+                locallab.Smethod  = keyFile.get_string ("Locallab", "Smethod");
+
+                if (pedited) {
+                    pedited->locallab.Smethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "retinexMethod"))  {
+                locallab.retinexMethod  = keyFile.get_string ("Locallab", "retinexMethod");
+
+                if (pedited) {
+                    pedited->locallab.retinexMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "qualityMethod"))  {
+                locallab.qualityMethod  = keyFile.get_string ("Locallab", "qualityMethod");
+
+                if (pedited) {
+                    pedited->locallab.qualityMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "LocY"))  {
+                locallab.locY  = keyFile.get_integer ("Locallab", "LocY");
+
+                if (pedited) {
+                    pedited->locallab.locY = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "LocX")) {
+                locallab.locX = keyFile.get_integer  ("Locallab", "LocX");
+
+                if (pedited) {
+                    pedited->locallab.locX = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "LocYT"))  {
+                locallab.locYT  = keyFile.get_integer ("Locallab", "LocYT");
+
+                if (pedited) {
+                    pedited->locallab.locYT = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "LocXL")) {
+                locallab.locXL = keyFile.get_integer  ("Locallab", "LocXL");
+
+                if (pedited) {
+                    pedited->locallab.locXL = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "CenterX"))  {
+                locallab.centerX  = keyFile.get_integer ("Locallab", "CenterX");
+
+                if (pedited) {
+                    pedited->locallab.centerX = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "CenterY"))  {
+                locallab.centerY  = keyFile.get_integer ("Locallab", "CenterY");
+
+                if (pedited) {
+                    pedited->locallab.centerY = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Circrad"))  {
+                locallab.circrad  = keyFile.get_integer ("Locallab", "Circrad");
+
+                if (pedited) {
+                    pedited->locallab.circrad = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Thres"))  {
+                locallab.thres  = keyFile.get_integer ("Locallab", "Thres");
+
+                if (pedited) {
+                    pedited->locallab.thres = true;
+                }
+            }
+
+
+            if (keyFile.has_key ("Locallab", "Proxi"))  {
+                locallab.proxi  = keyFile.get_integer ("Locallab", "Proxi");
+
+                if (pedited) {
+                    pedited->locallab.proxi = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Chroma"))  {
+                locallab.chroma  = keyFile.get_integer ("Locallab", "Chroma");
+
+                if (pedited) {
+                    pedited->locallab.chroma = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "noiselumf"))  {
+                locallab.noiselumf  = keyFile.get_integer ("Locallab", "noiselumf");
+
+                if (pedited) {
+                    pedited->locallab.noiselumf = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "noiselumc"))  {
+                locallab.noiselumc  = keyFile.get_integer ("Locallab", "noiselumc");
+
+                if (pedited) {
+                    pedited->locallab.noiselumc = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "noisechrof"))  {
+                locallab.noisechrof  = keyFile.get_integer ("Locallab", "noisechrof");
+
+                if (pedited) {
+                    pedited->locallab.noisechrof = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "noisechroc"))  {
+                locallab.noisechroc  = keyFile.get_integer ("Locallab", "noisechroc");
+
+                if (pedited) {
+                    pedited->locallab.noisechroc = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sharradius"))  {
+                locallab.sharradius  = keyFile.get_integer ("Locallab", "Sharradius");
+
+                if (pedited) {
+                    pedited->locallab.sharradius = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sharamount"))  {
+                locallab.sharamount  = keyFile.get_integer ("Locallab", "Sharamount");
+
+                if (pedited) {
+                    pedited->locallab.sharamount = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Shardamping"))  {
+                locallab.shardamping  = keyFile.get_integer ("Locallab", "Shardamping");
+
+                if (pedited) {
+                    pedited->locallab.shardamping = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Shariter"))  {
+                locallab.shariter  = keyFile.get_integer ("Locallab", "Shariter");
+
+                if (pedited) {
+                    pedited->locallab.shariter = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sensi"))  {
+                locallab.sensi  = keyFile.get_integer ("Locallab", "Sensi");
+
+                if (pedited) {
+                    pedited->locallab.sensi = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sensitm"))  {
+                locallab.sensitm  = keyFile.get_integer ("Locallab", "Sensitm");
+
+                if (pedited) {
+                    pedited->locallab.sensitm = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sensisha"))  {
+                locallab.sensisha  = keyFile.get_integer ("Locallab", "Sensisha");
+
+                if (pedited) {
+                    pedited->locallab.sensisha = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sensih"))  {
+                locallab.sensih  = keyFile.get_integer ("Locallab", "Sensih");
+
+                if (pedited) {
+                    pedited->locallab.sensih = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Retrab"))  {
+                locallab.retrab  = keyFile.get_integer ("Locallab", "Retrab");
+
+                if (pedited) {
+                    pedited->locallab.retrab = true;
+                }
+            }
+
+
+            //RAS
+
+
+            if (keyFile.has_key ("Locallab", "Sensicb"))  {
+                locallab.sensicb  = keyFile.get_integer ("Locallab", "Sensicb");
+
+                if (pedited) {
+                    pedited->locallab.sensicb = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sensibn"))  {
+                locallab.sensibn  = keyFile.get_integer ("Locallab", "Sensibn");
+
+                if (pedited) {
+                    pedited->locallab.sensibn = true;
+                }
+            }
+
+
+            if (keyFile.has_key ("Locallab", "Transit"))  {
+                locallab.transit  = keyFile.get_integer ("Locallab", "Transit");
+
+                if (pedited) {
+                    pedited->locallab.transit = true;
+                }
+            }
+
+
+            if (keyFile.has_key ("Locallab", "Chrrt"))  {
+                locallab.chrrt  = keyFile.get_integer ("Locallab", "Chrrt");
+
+                if (pedited) {
+                    pedited->locallab.chrrt = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Str"))  {
+                locallab.str  = keyFile.get_integer ("Locallab", "Str");
+
+                if (pedited) {
+                    pedited->locallab.str = true;
+                }
+            }
+
+
+//AFT
+            if (keyFile.has_key ("Locallab", "Neigh"))  {
+                locallab.neigh  = keyFile.get_integer ("Locallab", "Neigh");
+
+                if (pedited) {
+                    pedited->locallab.neigh = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Nbspot"))  {
+                locallab.nbspot  = keyFile.get_integer ("Locallab", "Nbspot");
+
+                if (pedited) {
+                    pedited->locallab.nbspot = true;
+                }
+            }
+
+
+//AFT
+            if (keyFile.has_key ("Locallab", "ANbspot"))  {
+                locallab.anbspot  = keyFile.get_integer ("Locallab", "ANbspot");
+
+                if (pedited) {
+                    pedited->locallab.anbspot = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Vart"))  {
+                locallab.vart  = keyFile.get_integer ("Locallab", "Vart");
+
+                if (pedited) {
+                    pedited->locallab.vart = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Lightness"))  {
+                locallab.lightness  = keyFile.get_integer ("Locallab", "Lightness");
+
+                if (pedited) {
+                    pedited->locallab.lightness = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Contrast"))  {
+                locallab.contrast  = keyFile.get_integer ("Locallab", "Contrast");
+
+                if (pedited) {
+                    pedited->locallab.contrast = true;
+                }
+            }
+
+//IND
+            if (keyFile.has_key ("Locallab", "Radius"))  {
+                locallab.radius  = keyFile.get_integer ("Locallab", "Radius");
+
+                if (pedited) {
+                    pedited->locallab.radius = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Strength"))  {
+                locallab.strength  = keyFile.get_integer ("Locallab", "Strength");
+
+                if (pedited) {
+                    pedited->locallab.strength = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Stren"))  {
+                locallab.stren  = keyFile.get_integer ("Locallab", "Stren");
+
+                if (pedited) {
+                    pedited->locallab.stren = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Gamma"))  {
+                locallab.gamma  = keyFile.get_integer ("Locallab", "Gamma");
+
+                if (pedited) {
+                    pedited->locallab.gamma = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Estop"))  {
+                locallab.estop  = keyFile.get_integer ("Locallab", "Estop");
+
+                if (pedited) {
+                    pedited->locallab.estop = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Scaltm"))  {
+                locallab.scaltm  = keyFile.get_integer ("Locallab", "Scaltm");
+
+                if (pedited) {
+                    pedited->locallab.scaltm = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Rewei"))  {
+                locallab.rewei  = keyFile.get_integer ("Locallab", "Rewei");
+
+                if (pedited) {
+                    pedited->locallab.rewei = true;
+                }
+            }
+
+            for (int i = 0; i < 5; i ++) {
+                std::stringstream ss;
+                ss << "Mult" << i;
+
+                if (keyFile.has_key ("Locallab", ss.str())) {
+                    locallab.mult[i]  = keyFile.get_integer ("Locallab", ss.str());
+
+                    if (pedited) {
+                        pedited->locallab.mult[i]   = true;
+                    }
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Threshold"))   {
+                locallab.threshold = keyFile.get_integer ("Locallab", "Threshold");
+
+                if (pedited) {
+                    pedited->locallab.threshold = true;
+                }
+            }
+
+        }
+
         // load channel mixer curve
         if (keyFile.has_group ("Channel Mixer")) {
             if (keyFile.has_key ("Channel Mixer", "Red") && keyFile.has_key ("Channel Mixer", "Green") && keyFile.has_key ("Channel Mixer", "Blue")) {
@@ -3706,9 +4695,9 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 Glib::ArrayHandle<int> rmix = keyFile.get_integer_list ("Channel Mixer", "Red");
                 Glib::ArrayHandle<int> gmix = keyFile.get_integer_list ("Channel Mixer", "Green");
                 Glib::ArrayHandle<int> bmix = keyFile.get_integer_list ("Channel Mixer", "Blue");
-                memcpy (chmixer.red, rmix.data(), 3 * sizeof(int));
-                memcpy (chmixer.green, gmix.data(), 3 * sizeof(int));
-                memcpy (chmixer.blue, bmix.data(), 3 * sizeof(int));
+                memcpy (chmixer.red, rmix.data(), 3 * sizeof (int));
+                memcpy (chmixer.green, gmix.data(), 3 * sizeof (int));
+                memcpy (chmixer.blue, bmix.data(), 3 * sizeof (int));
             }
         }
 
@@ -4380,11 +5369,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Sharpening", "Threshold"))            {
                 if (ppVersion < 302) {
-                    int thresh = min(keyFile.get_integer ("Sharpening", "Threshold"), 2000);
-                    sharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
+                    int thresh = min (keyFile.get_integer ("Sharpening", "Threshold"), 2000);
+                    sharpening.threshold.setValues (thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
                 } else {
                     Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Sharpening", "Threshold");
-                    sharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+                    sharpening.threshold.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 2000), min (thresh.data()[3], 2000));
                 }
 
                 if (pedited) {
@@ -4572,10 +5561,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             if (keyFile.has_key ("Vibrance", "PSThreshold"))            {
                 if (ppVersion < 302) {
                     int thresh = keyFile.get_integer ("Vibrance", "PSThreshold");
-                    vibrance.psthreshold.setValues(thresh, thresh);
+                    vibrance.psthreshold.setValues (thresh, thresh);
                 } else {
                     Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Vibrance", "PSThreshold");
-                    vibrance.psthreshold.setValues(thresh.data()[0], thresh.data()[1]);
+                    vibrance.psthreshold.setValues (thresh.data()[0], thresh.data()[1]);
                 }
 
                 if (pedited) {
@@ -4699,7 +5688,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (ppVersion < 310) {
-                defringe.threshold =  sqrt(defringe.threshold * 33.f / 5.f);
+                defringe.threshold =  sqrt (defringe.threshold * 33.f / 5.f);
             }
 
             if (keyFile.has_key ("Defringing", "HueCurve"))       {
@@ -5075,7 +6064,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             // never load 'auto chroma preview mode' from pp3
-            if(dirpyrDenoise.Cmethod == "PRE") {
+            if (dirpyrDenoise.Cmethod == "PRE") {
                 dirpyrDenoise.Cmethod = "MAN";
             }
 
@@ -5087,7 +6076,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if(dirpyrDenoise.C2method == "PREV") {
+            if (dirpyrDenoise.C2method == "PREV") {
                 dirpyrDenoise.C2method = "MANU";
             }
 
@@ -5174,7 +6163,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
         //Load EPD.
         if (keyFile.has_group ("EPD")) {
-            if(keyFile.has_key("EPD", "Enabled"))             {
+            if (keyFile.has_key ("EPD", "Enabled"))             {
                 epd.enabled = keyFile.get_boolean ("EPD", "Enabled");
 
                 if (pedited) {
@@ -5182,7 +6171,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if(keyFile.has_key("EPD", "Strength"))            {
+            if (keyFile.has_key ("EPD", "Strength"))            {
                 epd.strength = keyFile.get_double ("EPD", "Strength");
 
                 if (pedited) {
@@ -5190,7 +6179,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if(keyFile.has_key("EPD", "Gamma"))                {
+            if (keyFile.has_key ("EPD", "Gamma"))                {
                 epd.gamma = keyFile.get_double ("EPD", "Gamma");
 
                 if (pedited) {
@@ -5198,7 +6187,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if(keyFile.has_key("EPD", "EdgeStopping"))        {
+            if (keyFile.has_key ("EPD", "EdgeStopping"))        {
                 epd.edgeStopping = keyFile.get_double ("EPD", "EdgeStopping");
 
                 if (pedited) {
@@ -5206,7 +6195,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if(keyFile.has_key("EPD", "Scale"))               {
+            if (keyFile.has_key ("EPD", "Scale"))               {
                 epd.scale = keyFile.get_double ("EPD", "Scale");
 
                 if (pedited) {
@@ -5214,7 +6203,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if(keyFile.has_key("EPD", "ReweightingIterates")) {
+            if (keyFile.has_key ("EPD", "ReweightingIterates")) {
                 epd.reweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates");
 
                 if (pedited) {
@@ -5456,7 +6445,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
         // lens profile
         if (keyFile.has_group ("LensProfile")) {
             if (keyFile.has_key ("LensProfile", "LCPFile")) {
-                lensProf.lcpFile = expandRelativePath(fname, "", keyFile.get_string ("LensProfile", "LCPFile"));
+                lensProf.lcpFile = expandRelativePath (fname, "", keyFile.get_string ("LensProfile", "LCPFile"));
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
@@ -5741,11 +6730,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("PostResizeSharpening", "Threshold"))            {
                 if (ppVersion < 302) {
-                    int thresh = min(keyFile.get_integer ("PostResizeSharpening", "Threshold"), 2000);
-                    prsharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
+                    int thresh = min (keyFile.get_integer ("PostResizeSharpening", "Threshold"), 2000);
+                    prsharpening.threshold.setValues (thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
                 } else {
                     Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("PostResizeSharpening", "Threshold");
-                    prsharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+                    prsharpening.threshold.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 2000), min (thresh.data()[3], 2000));
                 }
 
                 if (pedited) {
@@ -5836,8 +6825,9 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
         // load color management settings
         if (keyFile.has_group ("Color Management")) {
+
             if (keyFile.has_key ("Color Management", "InputProfile"))   {
-                icm.input          = expandRelativePath(fname, "file:", keyFile.get_string ("Color Management", "InputProfile"));
+                icm.input          = expandRelativePath (fname, "file:", keyFile.get_string ("Color Management", "InputProfile"));
 
                 if (pedited) {
                     pedited->icm.input = true;
@@ -6469,7 +7459,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Hueskin"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Hueskin");
-                wavelet.hueskin.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                wavelet.hueskin.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->wavelet.hueskin = true;
@@ -6478,7 +7468,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "HueRange"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "HueRange");
-                wavelet.hueskin2.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                wavelet.hueskin2.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->wavelet.hueskin2 = true;
@@ -6487,7 +7477,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "HLRange"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "HLRange");
-                wavelet.hllev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                wavelet.hllev.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->wavelet.hllev = true;
@@ -6496,7 +7486,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "SHRange"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "SHRange");
-                wavelet.bllev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                wavelet.bllev.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->wavelet.bllev = true;
@@ -6505,7 +7495,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Edgcont"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Edgcont");
-                wavelet.edgcont.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                wavelet.edgcont.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->wavelet.edgcont = true;
@@ -6514,7 +7504,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Level0noise"))   {
                 Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level0noise");
-                wavelet.level0noise.setValues(thresh.data()[0], thresh.data()[1]);
+                wavelet.level0noise.setValues (thresh.data()[0], thresh.data()[1]);
 
                 if (pedited) {
                     pedited->wavelet.level0noise = true;
@@ -6523,7 +7513,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Level1noise"))   {
                 Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level1noise");
-                wavelet.level1noise.setValues(thresh.data()[0], thresh.data()[1]);
+                wavelet.level1noise.setValues (thresh.data()[0], thresh.data()[1]);
 
                 if (pedited) {
                     pedited->wavelet.level1noise = true;
@@ -6532,7 +7522,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Level2noise"))   {
                 Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level2noise");
-                wavelet.level2noise.setValues(thresh.data()[0], thresh.data()[1]);
+                wavelet.level2noise.setValues (thresh.data()[0], thresh.data()[1]);
 
                 if (pedited) {
                     pedited->wavelet.level2noise = true;
@@ -6541,7 +7531,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Level3noise"))   {
                 Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level3noise");
-                wavelet.level3noise.setValues(thresh.data()[0], thresh.data()[1]);
+                wavelet.level3noise.setValues (thresh.data()[0], thresh.data()[1]);
 
                 if (pedited) {
                     pedited->wavelet.level3noise = true;
@@ -6551,7 +7541,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Pastlev"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Pastlev");
-                wavelet.pastlev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                wavelet.pastlev.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->wavelet.pastlev = true;
@@ -6560,7 +7550,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "Satlev"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Satlev");
-                wavelet.satlev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                wavelet.satlev.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->wavelet.satlev = true;
@@ -6568,7 +7558,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
 
-            if(keyFile.has_key ("Wavelet", "Skinprotect")) {
+            if (keyFile.has_key ("Wavelet", "Skinprotect")) {
                 wavelet.skinprotect = keyFile.get_double ("Wavelet", "Skinprotect");
 
                 if (pedited) {
@@ -6592,11 +7582,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            for(int i = 0; i < 9; i ++) {
+            for (int i = 0; i < 9; i ++) {
                 std::stringstream ss;
                 ss << "Contrast" << (i + 1);
 
-                if(keyFile.has_key ("Wavelet", ss.str())) {
+                if (keyFile.has_key ("Wavelet", ss.str())) {
                     wavelet.c[i] = keyFile.get_integer ("Wavelet", ss.str());
 
                     if (pedited) {
@@ -6605,11 +7595,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            for(int i = 0; i < 9; i ++) {
+            for (int i = 0; i < 9; i ++) {
                 std::stringstream ss;
                 ss << "Chroma" << (i + 1);
 
-                if(keyFile.has_key ("Wavelet", ss.str())) {
+                if (keyFile.has_key ("Wavelet", ss.str())) {
                     wavelet.ch[i] = keyFile.get_integer ("Wavelet", ss.str());
 
                     if (pedited) {
@@ -6692,7 +7682,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
             if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin"))   {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
-                dirpyrequalizer.hueskin.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                dirpyrequalizer.hueskin.setValues (thresh.data()[0], thresh.data()[1], min (thresh.data()[2], 300), min (thresh.data()[3], 300));
 
                 if (pedited) {
                     pedited->dirpyrequalizer.hueskin = true;
@@ -6700,12 +7690,12 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (ppVersion < 316) {
-                for(int i = 0; i < 5; i ++) {
+                for (int i = 0; i < 5; i ++) {
                     std::stringstream ss;
                     ss << "Mult" << i;
 
-                    if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) {
-                        if(i == 4) {
+                    if (keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) {
+                        if (i == 4) {
                             dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", ss.str());
 
                             if (pedited) {
@@ -6724,11 +7714,11 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 dirpyrequalizer.mult[4] = 1.0;
             } else {
                 // 5 level wavelet + dedicated threshold parameter
-                for(int i = 0; i < 6; i ++) {
+                for (int i = 0; i < 6; i ++) {
                     std::stringstream ss;
                     ss << "Mult" << i;
 
-                    if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) {
+                    if (keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) {
                         dirpyrequalizer.mult[i]  = keyFile.get_double ("Directional Pyramid Equalizer", ss.str());
 
                         if (pedited) {
@@ -6737,7 +7727,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     }
                 }
 
-                if(keyFile.has_key ("Directional Pyramid Equalizer", "Threshold"))   {
+                if (keyFile.has_key ("Directional Pyramid Equalizer", "Threshold"))   {
                     dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", "Threshold");
 
                     if (pedited) {
@@ -6745,7 +7735,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     }
                 }
 
-                if(keyFile.has_key ("Directional Pyramid Equalizer", "Skinprotect")) {
+                if (keyFile.has_key ("Directional Pyramid Equalizer", "Skinprotect")) {
                     dirpyrequalizer.skinprotect = keyFile.get_double ("Directional Pyramid Equalizer", "Skinprotect");
 
                     if (pedited) {
@@ -6756,28 +7746,28 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
         }
 
         // load CLUT parameters
-        if ( keyFile.has_group( "Film Simulation" ) ) {
-            if ( keyFile.has_key( "Film Simulation", "Enabled" ) )      {
-                filmSimulation.enabled = keyFile.get_boolean( "Film Simulation", "Enabled" );
+        if ( keyFile.has_group ( "Film Simulation" ) ) {
+            if ( keyFile.has_key ( "Film Simulation", "Enabled" ) )      {
+                filmSimulation.enabled = keyFile.get_boolean ( "Film Simulation", "Enabled" );
 
                 if ( pedited ) {
                     pedited->filmSimulation.enabled = true;
                 }
             }
 
-            if ( keyFile.has_key( "Film Simulation", "ClutFilename" ) ) {
-                filmSimulation.clutFilename = keyFile.get_string( "Film Simulation", "ClutFilename" );
+            if ( keyFile.has_key ( "Film Simulation", "ClutFilename" ) ) {
+                filmSimulation.clutFilename = keyFile.get_string ( "Film Simulation", "ClutFilename" );
 
                 if ( pedited ) {
                     pedited->filmSimulation.clutFilename = true;
                 }
             }
 
-            if ( keyFile.has_key( "Film Simulation", "Strength" ) )     {
+            if ( keyFile.has_key ( "Film Simulation", "Strength" ) )     {
                 if (ppVersion < 321) {
-                    filmSimulation.strength = int(keyFile.get_double( "Film Simulation", "Strength" ) * 100 + 0.1);
+                    filmSimulation.strength = int (keyFile.get_double ( "Film Simulation", "Strength" ) * 100 + 0.1);
                 } else {
-                    filmSimulation.strength = keyFile.get_integer( "Film Simulation", "Strength" );
+                    filmSimulation.strength = keyFile.get_integer ( "Film Simulation", "Strength" );
                 }
 
                 if ( pedited ) {
@@ -6934,7 +7924,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("ColorToning", "HighlightsColorSaturation")) {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "HighlightsColorSaturation");
-                colorToning.hlColSat.setValues(thresh.data()[0], thresh.data()[1]);
+                colorToning.hlColSat.setValues (thresh.data()[0], thresh.data()[1]);
 
                 if (pedited) {
                     pedited->colorToning.hlColSat = true;
@@ -6943,7 +7933,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("ColorToning", "ShadowsColorSaturation")) {
                 Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "ShadowsColorSaturation");
-                colorToning.shadowsColSat.setValues(thresh.data()[0], thresh.data()[1]);
+                colorToning.shadowsColSat.setValues (thresh.data()[0], thresh.data()[1]);
 
                 if (pedited) {
                     pedited->colorToning.shadowsColSat = true;
@@ -7066,7 +8056,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
         // load raw settings
         if (keyFile.has_group ("RAW")) {
             if (keyFile.has_key ("RAW", "DarkFrame"))                {
-                raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "DarkFrame" ));
+                raw.dark_frame = expandRelativePath (fname, "", keyFile.get_string  ("RAW", "DarkFrame" ));
 
                 if (pedited) {
                     pedited->raw.darkFrame = true;
@@ -7082,7 +8072,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW", "FlatFieldFile"))            {
-                raw.ff_file = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "FlatFieldFile" ));
+                raw.ff_file = expandRelativePath (fname, "", keyFile.get_string  ("RAW", "FlatFieldFile" ));
 
                 if (pedited) {
                     pedited->raw.ff_file = true;
@@ -7195,7 +8185,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW", "PreExposure"))              {
-                raw.expos = keyFile.get_double("RAW", "PreExposure");
+                raw.expos = keyFile.get_double ("RAW", "PreExposure");
 
                 if (pedited) {
                     pedited->raw.exPos = true;
@@ -7203,7 +8193,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW", "PrePreserv"))               {
-                raw.preser = keyFile.get_double("RAW", "PrePreserv");
+                raw.preser = keyFile.get_double ("RAW", "PrePreserv");
 
                 if (pedited) {
                     pedited->raw.exPreser = true;
@@ -7244,7 +8234,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "DCBIterations"))    {
-                    raw.bayersensor.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations");
+                    raw.bayersensor.dcb_iterations = keyFile.get_integer ("RAW", "DCBIterations");
 
                     if (pedited) {
                         pedited->raw.bayersensor.dcbIterations = true;
@@ -7252,7 +8242,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "DCBEnhance"))       {
-                    raw.bayersensor.dcb_enhance = keyFile.get_boolean("RAW", "DCBEnhance");
+                    raw.bayersensor.dcb_enhance = keyFile.get_boolean ("RAW", "DCBEnhance");
 
                     if (pedited) {
                         pedited->raw.bayersensor.dcbEnhance = true;
@@ -7260,7 +8250,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "LMMSEIterations"))  {
-                    raw.bayersensor.lmmse_iterations = keyFile.get_integer("RAW", "LMMSEIterations");
+                    raw.bayersensor.lmmse_iterations = keyFile.get_integer ("RAW", "LMMSEIterations");
 
                     if (pedited) {
                         pedited->raw.bayersensor.lmmseIterations = true;
@@ -7268,7 +8258,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "PreBlackzero"))     {
-                    raw.bayersensor.black0 = keyFile.get_double("RAW", "PreBlackzero");
+                    raw.bayersensor.black0 = keyFile.get_double ("RAW", "PreBlackzero");
 
                     if (pedited) {
                         pedited->raw.bayersensor.exBlack0 = true;
@@ -7276,7 +8266,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "PreBlackone"))      {
-                    raw.bayersensor.black1 = keyFile.get_double("RAW", "PreBlackone");
+                    raw.bayersensor.black1 = keyFile.get_double ("RAW", "PreBlackone");
 
                     if (pedited) {
                         pedited->raw.bayersensor.exBlack1 = true;
@@ -7284,7 +8274,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "PreBlacktwo"))      {
-                    raw.bayersensor.black2 = keyFile.get_double("RAW", "PreBlacktwo");
+                    raw.bayersensor.black2 = keyFile.get_double ("RAW", "PreBlacktwo");
 
                     if (pedited) {
                         pedited->raw.bayersensor.exBlack2 = true;
@@ -7292,7 +8282,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "PreBlackthree"))    {
-                    raw.bayersensor.black3 = keyFile.get_double("RAW", "PreBlackthree");
+                    raw.bayersensor.black3 = keyFile.get_double ("RAW", "PreBlackthree");
 
                     if (pedited) {
                         pedited->raw.bayersensor.exBlack3 = true;
@@ -7300,7 +8290,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if (keyFile.has_key ("RAW", "PreTwoGreen"))      {
-                    raw.bayersensor.twogreen = keyFile.get_boolean("RAW", "PreTwoGreen");
+                    raw.bayersensor.twogreen = keyFile.get_boolean ("RAW", "PreTwoGreen");
 
                     if (pedited) {
                         pedited->raw.bayersensor.exTwoGreen = true;
@@ -7330,7 +8320,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PreBlack0"))        {
-                raw.bayersensor.black0 = keyFile.get_double("RAW Bayer", "PreBlack0");
+                raw.bayersensor.black0 = keyFile.get_double ("RAW Bayer", "PreBlack0");
 
                 if (pedited) {
                     pedited->raw.bayersensor.exBlack0 = true;
@@ -7338,7 +8328,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PreBlack1"))        {
-                raw.bayersensor.black1 = keyFile.get_double("RAW Bayer", "PreBlack1");
+                raw.bayersensor.black1 = keyFile.get_double ("RAW Bayer", "PreBlack1");
 
                 if (pedited) {
                     pedited->raw.bayersensor.exBlack1 = true;
@@ -7346,7 +8336,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PreBlack2"))        {
-                raw.bayersensor.black2 = keyFile.get_double("RAW Bayer", "PreBlack2");
+                raw.bayersensor.black2 = keyFile.get_double ("RAW Bayer", "PreBlack2");
 
                 if (pedited) {
                     pedited->raw.bayersensor.exBlack2 = true;
@@ -7354,7 +8344,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PreBlack3"))        {
-                raw.bayersensor.black3 = keyFile.get_double("RAW Bayer", "PreBlack3");
+                raw.bayersensor.black3 = keyFile.get_double ("RAW Bayer", "PreBlack3");
 
                 if (pedited) {
                     pedited->raw.bayersensor.exBlack3 = true;
@@ -7362,7 +8352,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PreTwoGreen"))      {
-                raw.bayersensor.twogreen = keyFile.get_boolean("RAW Bayer", "PreTwoGreen");
+                raw.bayersensor.twogreen = keyFile.get_boolean ("RAW Bayer", "PreTwoGreen");
 
                 if (pedited) {
                     pedited->raw.bayersensor.exTwoGreen = true;
@@ -7386,7 +8376,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "DCBIterations"))    {
-                raw.bayersensor.dcb_iterations = keyFile.get_integer("RAW Bayer", "DCBIterations");
+                raw.bayersensor.dcb_iterations = keyFile.get_integer ("RAW Bayer", "DCBIterations");
 
                 if (pedited) {
                     pedited->raw.bayersensor.dcbIterations = true;
@@ -7394,7 +8384,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "DCBEnhance"))       {
-                raw.bayersensor.dcb_enhance = keyFile.get_boolean("RAW Bayer", "DCBEnhance");
+                raw.bayersensor.dcb_enhance = keyFile.get_boolean ("RAW Bayer", "DCBEnhance");
 
                 if (pedited) {
                     pedited->raw.bayersensor.dcbEnhance = true;
@@ -7402,7 +8392,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "LMMSEIterations"))  {
-                raw.bayersensor.lmmse_iterations = keyFile.get_integer("RAW Bayer", "LMMSEIterations");
+                raw.bayersensor.lmmse_iterations = keyFile.get_integer ("RAW Bayer", "LMMSEIterations");
 
                 if (pedited) {
                     pedited->raw.bayersensor.lmmseIterations = true;
@@ -7431,7 +8421,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW X-Trans", "PreBlackRed"))      {
-                raw.xtranssensor.blackred = keyFile.get_double("RAW X-Trans", "PreBlackRed");
+                raw.xtranssensor.blackred = keyFile.get_double ("RAW X-Trans", "PreBlackRed");
 
                 if (pedited) {
                     pedited->raw.xtranssensor.exBlackRed = true;
@@ -7439,7 +8429,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW X-Trans", "PreBlackGreen"))    {
-                raw.xtranssensor.blackgreen = keyFile.get_double("RAW X-Trans", "PreBlackGreen");
+                raw.xtranssensor.blackgreen = keyFile.get_double ("RAW X-Trans", "PreBlackGreen");
 
                 if (pedited) {
                     pedited->raw.xtranssensor.exBlackGreen = true;
@@ -7447,7 +8437,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW X-Trans", "PreBlackBlue"))     {
-                raw.xtranssensor.blackblue = keyFile.get_double("RAW X-Trans", "PreBlackBlue");
+                raw.xtranssensor.blackblue = keyFile.get_double ("RAW X-Trans", "PreBlackBlue");
 
                 if (pedited) {
                     pedited->raw.xtranssensor.exBlackBlue = true;
@@ -7487,7 +8477,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             for (unsigned int i = 0; i < keys.size(); i++) {
                 // does this key already exist?
-                element = iptc.find(keys[i]);
+                element = iptc.find (keys[i]);
 
                 if (element != iptc.end()) {
                     // it already exist so we cleanup the values
@@ -7501,7 +8491,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     std::vector<Glib::ustring>::iterator currLoadedTagValue = currIptc.begin();
                     currLoadedTagValue != currIptc.end();
                     ++currLoadedTagValue) {
-                    iptc[keys[i]].push_back(currLoadedTagValue->data());
+                    iptc[keys[i]].push_back (currLoadedTagValue->data());
                 }
 
                 if (pedited) {
@@ -7525,22 +8515,22 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
     return 0;
 }
 
-const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
+const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring ("No ICM: sRGB output");
 
-bool operator==(const WaveletParams & a, const WaveletParams & b)
+bool operator== (const WaveletParams & a, const WaveletParams & b)
 {
-    if(a.enabled != b.enabled) {
+    if (a.enabled != b.enabled) {
         return false;
     }
 
-    for(int i = 0; i < 9; i++) {
-        if(a.c[i] != b.c[i]) {
+    for (int i = 0; i < 9; i++) {
+        if (a.c[i] != b.c[i]) {
             return false;
         }
     }
 
-    for(int i = 0; i < 9; i++) {
-        if(a.ch[i] != b.ch[i]) {
+    for (int i = 0; i < 9; i++) {
+        if (a.ch[i] != b.ch[i]) {
             return false;
         }
     }
@@ -7550,20 +8540,37 @@ bool operator==(const WaveletParams & a, const WaveletParams & b)
 
 
 
-bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b)
+bool operator== (const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b)
 {
-    if(a.enabled != b.enabled) {
+    if (a.enabled != b.enabled) {
         return false;
     }
 
-    for(int i = 0; i < 6; i++) {
-        if(a.mult[i] != b.mult[i]) {
+    for (int i = 0; i < 6; i++) {
+        if (a.mult[i] != b.mult[i]) {
             return false;
         }
     }
 
     return a.threshold == b.threshold;
 }
+
+
+bool operator== (const LocallabParams & a, const LocallabParams & b)
+{
+    if (a.enabled != b.enabled) {
+        return false;
+    }
+
+    for (int i = 0; i < 5; i++) {
+        if (a.mult[i] != b.mult[i]) {
+            return false;
+        }
+    }
+
+    return a.threshold == b.threshold;
+}
+
 
 /*bool operator==(const ExifPairs& a, const ExifPairs& b) {
 
@@ -7795,6 +8802,71 @@ bool ProcParams::operator== (const ProcParams& other)
         && gradient.strength == other.gradient.strength
         && gradient.centerX == other.gradient.centerX
         && gradient.centerY == other.gradient.centerY
+        && locallab.enabled == other.locallab.enabled
+        && locallab.avoid == other.locallab.avoid
+        && locallab.invers == other.locallab.invers
+        && locallab.curvactiv == other.locallab.curvactiv
+        && locallab.activlum == other.locallab.activlum
+        && locallab.inversrad == other.locallab.inversrad
+        && locallab.inversret == other.locallab.inversret
+        && locallab.inverssha == other.locallab.inverssha
+        && locallab.degree == other.locallab.degree
+        && locallab.Smethod == other.locallab.Smethod
+        && locallab.retinexMethod == other.locallab.retinexMethod
+        && locallab.qualityMethod == other.locallab.qualityMethod
+        && locallab.locY == other.locallab.locY
+        && locallab.locX == other.locallab.locX
+        && locallab.locYT == other.locallab.locYT
+        && locallab.locXL == other.locallab.locXL
+        && locallab.centerX == other.locallab.centerX
+        && locallab.centerY == other.locallab.centerY
+        && locallab.circrad == other.locallab.circrad
+        && locallab.thres == other.locallab.thres
+        && locallab.proxi == other.locallab.proxi
+        && locallab.lightness == other.locallab.lightness
+        && locallab.contrast == other.locallab.contrast
+        && locallab.chroma == other.locallab.chroma
+        && locallab.noiselumf == other.locallab.noiselumf
+        && locallab.noiselumc == other.locallab.noiselumc
+        && locallab.noisechrof == other.locallab.noisechrof
+        && locallab.noisechroc == other.locallab.noisechroc
+        && locallab.sharradius == other.locallab.sharradius
+        && locallab.sharamount == other.locallab.sharamount
+        && locallab.shardamping == other.locallab.shardamping
+        && locallab.shariter == other.locallab.shariter
+        && locallab.sensi == other.locallab.sensi
+        && locallab.sensitm == other.locallab.sensitm
+        && locallab.sensih == other.locallab.sensih
+        && locallab.retrab == other.locallab.retrab
+        && locallab.sensicb == other.locallab.sensicb
+        && locallab.sensibn == other.locallab.sensibn
+        && locallab.sensisha == other.locallab.sensisha
+        && locallab.radius == other.locallab.radius
+        && locallab.strength == other.locallab.strength
+        && locallab.stren == other.locallab.stren
+        && locallab.gamma == other.locallab.gamma
+        && locallab.estop == other.locallab.estop
+        && locallab.scaltm == other.locallab.scaltm
+        && locallab.rewei == other.locallab.rewei
+        && locallab.transit == other.locallab.transit
+        && locallab.chrrt == other.locallab.chrrt
+        && locallab.str == other.locallab.str
+        && locallab.neigh == other.locallab.neigh
+        && locallab.nbspot == other.locallab.nbspot
+        && locallab.anbspot == other.locallab.anbspot
+        && locallab.vart == other.locallab.vart
+        && locallab.threshold == other.locallab.threshold
+        && locallab.expcolor == other.locallab.expcolor
+        && locallab.expblur == other.locallab.expblur
+        && locallab.exptonemap == other.locallab.exptonemap
+        && locallab.expreti == other.locallab.expreti
+        && locallab.expsharp == other.locallab.expsharp
+        && locallab.expcbdl == other.locallab.expcbdl
+        && locallab.expdenoi == other.locallab.expdenoi
+        && locallab.localTgaincurve == other.locallab.localTgaincurve
+        && locallab.localTgaincurverab == other.locallab.localTgaincurverab
+        && locallab.llcurve == other.locallab.llcurve
+        && locallab.LHcurve == other.locallab.LHcurve
         && pcvignette.enabled == other.pcvignette.enabled
         && pcvignette.strength == other.pcvignette.strength
         && pcvignette.feather == other.pcvignette.feather
@@ -7806,9 +8878,9 @@ bool ProcParams::operator== (const ProcParams& other)
         && vignetting.strength == other.vignetting.strength
         && vignetting.centerX == other.vignetting.centerX
         && vignetting.centerY == other.vignetting.centerY
-        && !memcmp (&chmixer.red, &other.chmixer.red, 3 * sizeof(int))
-        && !memcmp (&chmixer.green, &other.chmixer.green, 3 * sizeof(int))
-        && !memcmp (&chmixer.blue, &other.chmixer.blue, 3 * sizeof(int))
+        && !memcmp (&chmixer.red, &other.chmixer.red, 3 * sizeof (int))
+        && !memcmp (&chmixer.green, &other.chmixer.green, 3 * sizeof (int))
+        && !memcmp (&chmixer.blue, &other.chmixer.blue, 3 * sizeof (int))
         && blackwhite.mixerRed == other.blackwhite.mixerRed
         && blackwhite.mixerOrange == other.blackwhite.mixerOrange
         && blackwhite.mixerYellow == other.blackwhite.mixerYellow
@@ -8010,45 +9082,45 @@ bool ProcParams::operator== (const ProcParams& other)
 bool ProcParams::operator!= (const ProcParams& other)
 {
 
-    return !(*this == other);
+    return ! (*this == other);
 }
 
-PartialProfile::PartialProfile(bool createInstance, bool paramsEditedValue)
+PartialProfile::PartialProfile (bool createInstance, bool paramsEditedValue)
 {
     if (createInstance) {
         pparams = new ProcParams();
-        pedited = new ParamsEdited(paramsEditedValue);
+        pedited = new ParamsEdited (paramsEditedValue);
     } else {
         pparams = nullptr;
         pedited = nullptr;
     }
 }
 
-PartialProfile::PartialProfile(ProcParams* pp, ParamsEdited* pe, bool fullCopy)
+PartialProfile::PartialProfile (ProcParams* pp, ParamsEdited* pe, bool fullCopy)
 {
     if (fullCopy && pp) {
-        pparams = new ProcParams(*pp);
+        pparams = new ProcParams (*pp);
     } else {
         pparams = pp;
     }
 
     if (fullCopy && pe) {
-        pedited = new ParamsEdited(*pe);
+        pedited = new ParamsEdited (*pe);
     } else {
         pedited = pe;
     }
 }
 
-PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe)
+PartialProfile::PartialProfile (const ProcParams* pp, const ParamsEdited* pe)
 {
     if (pp) {
-        pparams = new ProcParams(*pp);
+        pparams = new ProcParams (*pp);
     } else {
         pparams = nullptr;
     }
 
     if (pe) {
-        pedited = new ParamsEdited(*pe);
+        pedited = new ParamsEdited (*pe);
     } else {
         pedited = nullptr;
     }
@@ -8067,7 +9139,7 @@ int PartialProfile::load (const Glib::ustring &fName)
     if (fName == DEFPROFILE_INTERNAL) {
         return 0;
     } else {
-        return pparams->load(fName, pedited);
+        return pparams->load (fName, pedited);
     }
 }
 
@@ -8097,17 +9169,17 @@ void PartialProfile::clearGeneral ()
     }
 }
 
-const void PartialProfile::applyTo(ProcParams *destParams) const
+const void PartialProfile::applyTo (ProcParams *destParams) const
 {
     if (destParams && pparams && pedited) {
-        pedited->combine(*destParams, *pparams, true);
+        pedited->combine (*destParams, *pparams, true);
     }
 }
 
-void PartialProfile::set(bool v)
+void PartialProfile::set (bool v)
 {
     if (pedited) {
-        pedited->set(v);
+        pedited->set (v);
     }
 }
 

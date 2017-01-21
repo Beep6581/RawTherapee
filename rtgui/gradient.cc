@@ -146,6 +146,8 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
 
     int imW=0;
     int imH=0;
+	
+	
     if (fullWidth != -1 && fullHeight != -1) {
         imW = fullWidth;
         imH = fullHeight;

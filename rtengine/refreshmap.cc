@@ -468,8 +468,75 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvviewMethod
     ALLNORAW,         // EvcbdlMethod
     RETINEX,          // EvRetinexgaintransmission
-    RETINEX,          // EvLskal
-    OUTPUTPROFILE     // EvOBPCompens
+    RETINEX,         //EvLskal
+    OUTPUTPROFILE,     // EvOBPCompens
+    LUMINANCECURVE, //EvlocallabEnabled
+    LUMINANCECURVE, //EvlocallablocY
+    LUMINANCECURVE, //EvlocallablocX
+    LUMINANCECURVE,//   EvlocallabCenter
+    LUMINANCECURVE, //EvlocallabDegree
+    LUMINANCECURVE, //Evlocallablightness
+    LUMINANCECURVE, //Evlocallabcontrast
+    LUMINANCECURVE, //Evlocallabchroma
+    LUMINANCECURVE, //Evlocallabtransit
+    LUMINANCECURVE, //Evlocallabavoid
+    LUMINANCECURVE, //EvlocallablocYT
+    LUMINANCECURVE, //EvlocallablocXL
+    LUMINANCECURVE, //EvlocallabSmet
+    LUMINANCECURVE, //Evlocallabinvers
+    LUMINANCECURVE, //Evlocallabradius
+    LUMINANCECURVE, //Evlocallabinversrad
+    LUMINANCECURVE, //Evlocallabstrength
+    LUMINANCECURVE,  //Evlocallabsensi
+    LUMINANCECURVE,  //EvlocallabretinexMethod
+    LUMINANCECURVE,  //Evlocallabstr
+    LUMINANCECURVE,  //Evlocallabneigh
+    LUMINANCECURVE,  //Evlocallabvart
+    LUMINANCECURVE,  //EvlocallabCTgainCurve
+    LUMINANCECURVE,  //Evlocallabchrrt
+    LUMINANCECURVE,  //Evlocallabinversret
+    LUMINANCECURVE,  //Evlocallabsensih
+    LUMINANCECURVE,  //Evlocallabnbspot
+    LUMINANCECURVE,  //Evlocallabactivlum
+    LUMINANCECURVE,  //Evlocallabanbspot
+    LUMINANCECURVE,  //Evlocallabsharradius
+    LUMINANCECURVE,  //Evlocallabsharamount
+    LUMINANCECURVE,  //Evlocallabshardamping
+    LUMINANCECURVE,  //Evlocallabshariter
+    LUMINANCECURVE,  //Evlocallabsensis
+    LUMINANCECURVE,  //Evlocallabinverssha
+    LUMINANCECURVE,  //Evlocallabcircrad
+    LUMINANCECURVE,  //Evlocallabthres
+    LUMINANCECURVE,  //Evlocallabproxi
+    LUMINANCECURVE,  //EvlocallabqualityMethod
+    LUMINANCECURVE,  //Evlocallabnoiselumf
+    LUMINANCECURVE,  //Evlocallabnoiselumc
+    LUMINANCECURVE,  //Evlocallabnoisechrof
+    LUMINANCECURVE,  //Evlocallabnoisechroc
+    LUMINANCECURVE,  //EvlocallabThresho
+    LUMINANCECURVE,  //EvlocallabEqualizer
+    LUMINANCECURVE,  //Evlocallabsensicb
+    LUMINANCECURVE,  //Evlocallabsensibn
+    LUMINANCECURVE,  //Evlocallabstren
+    LUMINANCECURVE,  //Evlocallabgamma
+    LUMINANCECURVE,  //Evlocallabestop
+    LUMINANCECURVE,  //Evlocallabscaltm
+    LUMINANCECURVE,  //Evlocallabrewei
+    LUMINANCECURVE,  //Evlocallabsensitm
+    LUMINANCECURVE,  //EvlocallabCTgainCurverab
+    LUMINANCECURVE,  //Evlocallabretrab
+    LUMINANCECURVE,  //Evlocallabllshape
+    LUMINANCECURVE,  //Evlocenacolor
+    LUMINANCECURVE,  //Evlocenablur
+    LUMINANCECURVE,  //Evlocenatonemap
+    LUMINANCECURVE,  //Evlocenareti
+    LUMINANCECURVE,  //Evlocenasharp
+    LUMINANCECURVE,  //Evlocenacbdl
+    LUMINANCECURVE,  //Evlocenadenoi
+    LUMINANCECURVE,  //EvlocallabLHshape
+    LUMINANCECURVE  //Evlocallabcurvactiv
+
+
 
 };
 

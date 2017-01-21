@@ -33,6 +33,7 @@
 #include "../rtgui/threadutils.h"
 #include "settings.h"
 #include "LUT.h"
+
 /**
  * @file
  * This file contains the main functionality of the RawTherapee engine.
@@ -310,6 +311,16 @@ public :
 
 };
 
+class localListener
+{
+public :
+    virtual ~localListener() {}
+    virtual void localChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, int sp, int maxdat) {}
+    virtual void localretChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, int sp, int maxdat) {}
+
+};
+
+
 class WaveletListener
 {
 public :
@@ -411,6 +422,7 @@ public:
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
+    virtual void        setlocalListener        (localListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;

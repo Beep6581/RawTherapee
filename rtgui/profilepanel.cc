@@ -458,7 +458,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
 
     if (result == Gtk::RESPONSE_OK) {
         Glib::ustring fname = dialog.get_filename();
-
+		printf("fname=%s\n", fname.c_str());
         if (event->state & Gdk::CONTROL_MASK) {
             // opening the partial paste dialog window
             partialProfileDlg->set_title(M("PROFILEPANEL_LOADPPASTE"));

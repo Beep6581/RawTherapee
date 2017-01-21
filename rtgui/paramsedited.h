@@ -413,6 +413,78 @@ class DistortionParamsEdited
 public:
     bool amount;
 };
+class LocallabParamsEdited
+{
+
+public:
+    bool enabled;
+    bool degree;
+    bool locY;
+    bool locX;
+    bool locYT;
+    bool locXL;
+    bool centerX;
+    bool centerY;
+    bool circrad;
+    bool thres;
+    bool proxi;
+    bool qualityMethod;
+    bool lightness;
+    bool contrast;
+    bool chroma;
+    bool noiselumf;
+    bool noiselumc;
+    bool noisechrof;
+    bool noisechroc;
+    bool sharradius;
+    bool sharamount;
+    bool shardamping;
+    bool shariter;
+    bool sensi;
+    bool sensih;
+    bool retrab;
+    bool sensicb;
+    bool sensibn;
+    bool sensitm;
+    bool sensisha;
+    bool radius;
+    bool strength;
+    bool stren;
+    bool gamma;
+    bool estop;
+    bool scaltm;
+    bool rewei;
+    bool transit;
+    bool avoid;
+    bool Smethod;
+    bool retinexMethod;
+    bool str;
+    bool neigh;
+    bool nbspot;
+    bool anbspot;
+    bool vart;
+    bool activlum;
+    bool invers;
+    bool curvactiv;
+    bool inversrad;
+    bool inversret;
+    bool inverssha;
+    bool localTgaincurve;
+    bool localTgaincurverab;
+    bool llcurve;
+    bool LHcurve;
+    bool chrrt;
+    bool mult[5];
+    bool threshold;
+    bool expcolor;
+    bool expblur;
+    bool exptonemap;
+    bool expreti;
+    bool expsharp;
+    bool expcbdl;
+    bool expdenoi;
+
+};
 
 class LensProfParamsEdited
 {
@@ -768,6 +840,7 @@ public:
     LensProfParamsEdited          lensProf;
     PerspectiveParamsEdited       perspective;
     GradientParamsEdited          gradient;
+    LocallabParamsEdited          locallab;
     PCVignetteParamsEdited        pcvignette;
     CACorrParamsEdited            cacorrection;
     VignettingParamsEdited        vignetting;

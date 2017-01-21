@@ -160,6 +160,7 @@ void BatchToolPanelCoordinator::initSession ()
             distortion->setAdjusterBehavior (false);
             perspective->setAdjusterBehavior (false);
             gradient->setAdjusterBehavior (false, false, false, false);
+            locallab->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
             sharpening->setAdjusterBehavior (false);
@@ -199,6 +200,7 @@ void BatchToolPanelCoordinator::initSession ()
             distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
             perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
+            locallab->setAdjusterBehavior (options.baBehav[ADDSET_LOCALLAB_DEGREE], options.baBehav[ADDSET_LOCALLAB_LOCY], options.baBehav[ADDSET_LOCALLAB_LOCX], options.baBehav[ADDSET_LOCALLAB_LOCYT], options.baBehav[ADDSET_LOCALLAB_LOCXL], options.baBehav[ADDSET_LOCALLAB_CENTER], options.baBehav[ADDSET_LOCALLAB_LIGHTNESS], options.baBehav[ADDSET_LOCALLAB_CONTRAST], options.baBehav[ADDSET_LOCALLAB_CHROMA], options.baBehav[ADDSET_LOCALLAB_SENSI], options.baBehav[ADDSET_LOCALLAB_RADIUS], options.baBehav[ADDSET_LOCALLAB_STRENGTH], options.baBehav[ADDSET_LOCALLAB_TRANSIT]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
             sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
@@ -452,6 +454,62 @@ void BatchToolPanelCoordinator::initSession ()
 
             if (options.baBehav[ADDSET_GRADIENT_CENTER]) {
                 pparams.gradient.centerY = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_DEGREE]) {
+                pparams.locallab.degree = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_LOCY]) {
+                pparams.locallab.locY = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_LOCX]) {
+                pparams.locallab.locX = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_LOCYT]) {
+                pparams.locallab.locYT = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_LOCXL]) {
+                pparams.locallab.locXL = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_CENTER]) {
+                pparams.locallab.centerX = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_CENTER]) {
+                pparams.locallab.centerY = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_LIGHTNESS]) {
+                pparams.locallab.lightness = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_CONTRAST]) {
+                pparams.locallab.contrast = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_CHROMA]) {
+                pparams.locallab.chroma = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_SENSI]) {
+                pparams.locallab.sensi = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_RADIUS]) {
+                pparams.locallab.radius = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_STRENGTH]) {
+                pparams.locallab.strength = 0;
+            }
+
+            if (options.baBehav[ADDSET_LOCALLAB_TRANSIT]) {
+                pparams.locallab.transit = 0;
             }
 
             if (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH]) {

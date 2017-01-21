@@ -92,6 +92,14 @@ public:
     double          ed_low;
     double          ed_lipinfl;
     double          ed_lipampl;
+
+    int             nspot;
+    bool            locdelay;
+    int             cropsleep;
+    double          reduchigh;
+    double          reduclow;
+
+
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */
     static Settings* create  ();

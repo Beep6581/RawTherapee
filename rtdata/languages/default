@@ -675,6 +675,71 @@ HISTORY_MSG_440;CbDL - Method
 HISTORY_MSG_441;Retinex - Gain transmission
 HISTORY_MSG_442;Retinex - Scale
 HISTORY_MSG_443;Output Black Point Compensation
+HISTORY_MSG_444;Local L*a*b*
+HISTORY_MSG_445;Local - Bottom
+HISTORY_MSG_446;Local - Right
+HISTORY_MSG_447;Local - Center
+HISTORY_MSG_448;Local - Lightness/
+HISTORY_MSG_449;Local - Lightness
+HISTORY_MSG_450;Local - Contrast
+HISTORY_MSG_451;Local - Chrominance
+HISTORY_MSG_452;Local - Transition
+HISTORY_MSG_453;Local - Avoid color shift
+HISTORY_MSG_454;Local - Top
+HISTORY_MSG_455;Local - Left
+HISTORY_MSG_456;Local - Method
+HISTORY_MSG_457;Local - Color Inverse
+HISTORY_MSG_458;Local - Radius
+HISTORY_MSG_459;Local - Blur Inverse
+HISTORY_MSG_460;Local - Noise
+HISTORY_MSG_461;Local - Scope
+HISTORY_MSG_462;Local - Retinex method
+HISTORY_MSG_463;Local - Retinex strength
+HISTORY_MSG_464;Local - Retinex radius
+HISTORY_MSG_465;Local - Retinex contrast
+HISTORY_MSG_466;Local - Retinex Gain curve
+HISTORY_MSG_467;Local - Retinex chroma
+HISTORY_MSG_468;Local - Retinex Inverse
+HISTORY_MSG_469;Local - Hue scope
+HISTORY_MSG_470;Local - Spot
+HISTORY_MSG_471;Local - Blur Luminance only
+HISTORY_MSG_472;Local - Update GUI and Mip -1
+HISTORY_MSG_473;Local - Sh Radius
+HISTORY_MSG_474;Local - Sh Amount
+HISTORY_MSG_475;Local - Sh Damping
+HISTORY_MSG_476;Local - Sh Iterations
+HISTORY_MSG_477;Local - Sh Scope
+HISTORY_MSG_478;Local - Sh Inverse
+HISTORY_MSG_479;Local - Spot size
+HISTORY_MSG_480;Local - Hue theshold
+HISTORY_MSG_481;Local - Hue proximity
+HISTORY_MSG_482;Local - Quality
+HISTORY_MSG_483;Local - Noise lum f
+HISTORY_MSG_484;Local - Noise lum c
+HISTORY_MSG_485;Local - Noise chro f
+HISTORY_MSG_486;Local - Noise chro c
+HISTORY_MSG_487;Local - cbdl threshold
+HISTORY_MSG_488;Local - cbdl mult
+HISTORY_MSG_489;Local - cbdl scope
+HISTORY_MSG_490;Local - Blur scope
+HISTORY_MSG_491;Local - TM strength
+HISTORY_MSG_492;Local - TM gamma
+HISTORY_MSG_493;Local - TM edge stopping
+HISTORY_MSG_494;Local - TM scale
+HISTORY_MSG_495;Local - TM Reweighting
+HISTORY_MSG_496;Local - TM scope
+HISTORY_MSG_497;Local - Update GUI and Mip -2
+HISTORY_MSG_498;Local - Update GUI and Mip -3
+HISTORY_MSG_499;Local - LL Curve
+HISTORY_MSG_500;Local - Color and light
+HISTORY_MSG_501;Local - Blur and noise
+HISTORY_MSG_502;Local - Tone mapping
+HISTORY_MSG_503;Local - Retinex
+HISTORY_MSG_504;Local - Sharpening
+HISTORY_MSG_505;Local - CBDL
+HISTORY_MSG_506;Local - Denoise
+HISTORY_MSG_507;Local - LH Curve
+HISTORY_MSG_508;Local - Enable curve
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -846,6 +911,7 @@ PARTIALPASTE_IPTCINFO;IPTC
 PARTIALPASTE_LABCURVE;L*a*b* adjustments
 PARTIALPASTE_LENSGROUP;Lens Related Settings
 PARTIALPASTE_LENSPROFILE;Lens correction profile
+PARTIALPASTE_LOCALLAB;Local L*a*b*
 PARTIALPASTE_METAGROUP;Metadata
 PARTIALPASTE_PCVIGNETTE;Vignette filter
 PARTIALPASTE_PERSPECTIVE;Perspective
@@ -1003,6 +1069,11 @@ PREFERENCES_MENUGROUPRANK;Group "Rank"
 PREFERENCES_MENUOPTIONS;Context Menu Options
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Mini (100x115)
+PREFERENCES_MIP;Mip Profiles
+PREFERENCES_MIP_LABEL;Mip profiles:
+PREFERENCES_MIP_OPT;In Profiles - near Cache
+PREFERENCES_MIP_PREV;Next Input file
+PREFERENCES_MIP_TOOLTIP;Next input file allow multiple sessions of the same file, but do not allow path with NON ASCII characters.\nIn Profiles - near Cache, allow NON ASCII characters in path, but allow only one session for the same file.
 PREFERENCES_MONINTENT;Default rendering intent
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Default color profile
@@ -1603,7 +1674,82 @@ TP_LENSPROFILE_LABEL;Lens Correction Profile
 TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
-TP_NEUTRAL;Reset
+TP_LOCALLAB_ACTIV;Blur luminance only
+TP_LOCALLAB_AVOID;Avoid color shift
+TP_LOCALLAB_BLUFR;Blur & Noise
+TP_LOCALLAB_CENTER_X;Center X
+TP_LOCALLAB_CENTER_Y;Center Y
+TP_LOCALLAB_CBDL;Contrast by detail levels
+TP_LOCALLAB_CHROMA;Chrominance
+TP_LOCALLAB_CHRRT;Chroma
+TP_LOCALLAB_CIRCRADIUS;Spot size
+TP_LOCALLAB_COFR;Color & Light
+TP_LOCALLAB_CONTRAST;Contrast
+TP_LOCALLAB_CURV;Enable curves
+TP_LOCALLAB_DENOIS;Denoise
+TP_LOCALLAB_LUM;Curves
+TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
+TP_LOCALLAB_NOISELUMFINE;Luminance fine
+TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse
+TP_LOCALLAB_NOISECHROFINE;Chroma fine
+TP_LOCALLAB_NOISECHROCOARSE;Chroma coarse
+TP_LOCALLAB_GAM;Gamma
+TP_LOCALLAB_ESTOP;Edge stopping
+TP_LOCALLAB_SCALTM;Scale
+TP_LOCALLAB_REWEI;Reweighting iterates
+TP_LOCALLAB_INDSL;Independent (mouse + sliders)
+TP_LOCALLAB_IND;Independent (mouse)
+TP_LOCALLAB_INVERS;Inverse
+TP_LOCALLAB_LABEL;Local L*a*b*
+TP_LOCALLAB_NEUTRAL;Reset
+TP_LOCALLAB_NEUTRAL_TIP;Reset Current Control point
+TP_LOCALLAB_NBSPOT;Control points
+TP_LOCALLAB_NBSPOT_TOOLTIP;Add multiple control points and select
+TP_LOCALLAB_STD;Quality Standard
+TP_LOCALLAB_ENH;Quality Enhanced
+TP_LOCALLAB_ENHDEN;Quality Enhanced + chroma denoise
+TP_LOCALLAB_THRES;Hue threshold
+TP_LOCALLAB_PROXI;Hue proximity radius
+TP_LOCALLAB_ANBSPOT;Help to Move Control point
+TP_LOCALLAB_ANBSPOT_TOOLTIP;Provisory control (I hope somebody can help to manage events!! and suppress this bad function)
+TP_LOCALLAB_LIGHTNESS;Lightness
+TP_LOCALLAB_METHOD_TOOLTIP;Default - standard.\nIf you select Enhanced or enhanced chroma denoise - only for Color Light-Sharpening-Retinex-CBDL in normal mode, algorithm will detect the variations of hue in the select area and improve shape detection.\nHue threshold define since what value is exclude (* 100 radians).\nHue proximity radius define the radius around each point to calculate variations.\nEnhanced and Hue threshold significantly increases processing times.
+TP_LOCALLAB_RADIUS;Radius
+TP_LOCALLAB_RETI;Retinex
+TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
+TP_LOCRETI_METHOD;Method
+TP_LOCALLAB_STREN;Strength
+TP_LOCALLAB_TM;Tone Mapping
+TP_LOCALLAB_STR;Strength
+TP_LOCALLAB_NEIGH;Radius
+TP_LOCALLAB_VART;Contrast
+TP_LOCALLAB_SENSI;Scope
+TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SENSIH;Hue Scope
+TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SHARP;Sharpening
+TP_LOCALLAB_SHARRADIUS;Radius
+TP_LOCALLAB_SHARAMOUNT;Amount
+TP_LOCALLAB_SHARDAMPING;Damping
+TP_LOCALLAB_SHARITER;Iterations
+TP_LOCALLAB_SENSIS;Scope
+TP_LOCALLAB_SENSICB;Scope
+TP_LOCALLAB_SENSIBN;Scope
+TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
+TP_LOCALLAB_SHFR;Shape
+TP_LOCALLAB_STRENGTH;Noise
+TP_LOCALLAB_STYPE;Shape method
+TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
+TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
+TP_LOCALLAB_SYM;Symmetrical (mouse)
+TP_LOCALLAB_TRANSIT;Transition
+TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
+TP_LOCAL_HEIGHT;Bottom
+TP_LOCAL_HEIGHT_T;Top
+TP_LOCAL_WIDTH;Right
+TP_LOCAL_WIDTH_L;Left
+TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\n
+TP_NEUTRAL;Neutral
 TP_NEUTRAL_TIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
 TP_PCVIGNETTE_FEATHER;Feather
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering:\n0 = corners only,\n50 = halfway to center,\n100 = to center.

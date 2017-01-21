@@ -23,6 +23,10 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
+
+//#define BENCHMARK
+//#include "StopWatch.h"
+
 using namespace std;
 
 namespace rtengine
@@ -114,7 +118,7 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
     float damping = sharpenParam.deconvdamping / 5.0;
     bool needdamp = sharpenParam.deconvdamping > 0;
     double sigma = sharpenParam.deconvradius / scale;
-
+    //  printf("sigma=%f \n", sigma);
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -149,6 +153,76 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
     delete [] tmpI[0];
 
 }
+
+void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo)
+{
+    // BENCHFUN
+
+    if (amo < 1) {
+        return;
+    }
+
+    float *tmpI[H] ALIGNED16;
+
+    tmpI[0] = new float[W * H];
+
+    for (int i = 1; i < H; i++) {
+        tmpI[i] = tmpI[i - 1] + W;
+    }
+
+    for (int i = 0; i < H; i++) {
+        for(int j = 0; j < W; j++) {
+            tmpI[i][j] = luminance[i][j];
+        }
+    }
+
+    float damping = (float) damp / 5.0;
+    bool needdamp = damp > 0;
+    double sigma = radi / scale;
+
+    if(sigma < 0.26f) {
+        sigma = 0.26f;
+    }
+
+    int itera = ite;
+    // printf("OK 2 damp=%f sigam=%f  iter=%i\n", damping, sigma, itera);
+
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        for (int k = 0; k < itera; k++) {
+            if (!needdamp) {
+                // apply gaussian blur and divide luminance by result of gaussian blur
+                gaussianBlur (tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+            } else {
+                // apply gaussian blur + damping
+                gaussianBlur (tmpI, tmp, W, H, sigma);
+                dcdamping (tmp, luminance, damping, W, H);
+            }
+
+            gaussianBlur (tmp, tmpI, W, H, sigma, nullptr, GAUSS_MULT);
+        } // end for
+
+        float p2 = (float) amo / 100.0;
+        float p1 = 1.0 - p2;
+
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int i = 0; i < H; i++)
+            for (int j = 0; j < W; j++) {
+                loctemp[i][j] = luminance[i][j] * p1 + max(tmpI[i][j], 0.0f) * p2;
+            }
+    } // end parallel
+
+    delete [] tmpI[0];
+
+}
+
+
+
 
 void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam)
 {

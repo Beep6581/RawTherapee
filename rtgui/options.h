@@ -52,13 +52,14 @@ public:
     int tiffBits;
     bool tiffUncompressed;
     bool saveParams;
-    SaveFormat () : format("jpg"), pngBits(8), pngCompression(6), jpegQuality(90), jpegSubSamp(2), tiffBits(8), tiffUncompressed(true), saveParams(true) {};
+    SaveFormat () : format ("jpg"), pngBits (8), pngCompression (6), jpegQuality (90), jpegSubSamp (2), tiffBits (8), tiffUncompressed (true), saveParams (true) {};
 };
 
 enum ThFileType {FT_Invalid = -1, FT_None = 0, FT_Raw = 1, FT_Jpeg = 2, FT_Tiff = 3, FT_Png = 4, FT_Custom = 5, FT_Tiff16 = 6, FT_Png16 = 7, FT_Custom16 = 8};
 enum PPLoadLocation {PLL_Cache = 0, PLL_Input = 1};
 enum CPBKeyType {CPBKT_TID = 0, CPBKT_NAME = 1, CPBKT_TID_NAME = 2};
 enum prevdemo_t {PD_Sidecar = 1, PD_Fast = 0};
+enum mip_t {MI_prev = 0, MI_opt = 1};
 
 class Options
 {
@@ -68,8 +69,8 @@ private:
     bool defProfImgMissing;
     Glib::ustring userProfilePath;
     Glib::ustring globalProfilePath;
-    bool checkProfilePath(Glib::ustring &path);
-    bool checkDirPath(Glib::ustring &path, Glib::ustring errString);
+    bool checkProfilePath (Glib::ustring &path);
+    bool checkDirPath (Glib::ustring &path, Glib::ustring errString);
     void updatePaths();
     int getString (const char* src, char* dst);
     void error (int line);
@@ -84,8 +85,8 @@ private:
      * @param destination destination variable to store to
      * @return @c true if @p destination was changed
      */
-    bool safeDirGet(const Glib::KeyFile& keyFile, const Glib::ustring& section,
-                    const Glib::ustring& entryName, Glib::ustring& destination);
+    bool safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& section,
+                     const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
 
@@ -234,6 +235,7 @@ public:
     bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
     prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
     bool serializeTiffRead;
+    mip_t mip; // MIP
 
     bool menuGroupRank;
     bool menuGroupLabel;
@@ -287,6 +289,7 @@ public:
     Glib::ustring lastRetinexDir;
     Glib::ustring lastDenoiseCurvesDir;
     Glib::ustring lastWaveletCurvesDir;
+    Glib::ustring lastlocalCurvesDir;
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;
@@ -319,9 +322,9 @@ public:
     {
         return globalProfilePath;
     }
-    Glib::ustring findProfilePath(Glib::ustring &profName);
+    Glib::ustring findProfilePath (Glib::ustring &profName);
     bool        has_retained_extention (Glib::ustring fname);
-    bool        is_extention_enabled(Glib::ustring ext);
+    bool        is_extention_enabled (Glib::ustring ext);
     bool        is_defProfRawMissing()
     {
         return defProfRawMissing;
@@ -330,11 +333,11 @@ public:
     {
         return defProfImgMissing;
     }
-    void        setDefProfRawMissing(bool value)
+    void        setDefProfRawMissing (bool value)
     {
         defProfRawMissing = value;
     }
-    void        setDefProfImgMissing(bool value)
+    void        setDefProfImgMissing (bool value)
     {
         defProfImgMissing = value;
     }

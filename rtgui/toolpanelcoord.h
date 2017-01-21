@@ -53,6 +53,7 @@
 #include "vignetting.h"
 #include "retinex.h"
 #include "gradient.h"
+#include "locallab.h"
 #include "pcvignette.h"
 #include "toolbar.h"
 #include "lensgeom.h"
@@ -100,6 +101,7 @@ protected:
     WhiteBalance* whitebalance;
     Vignetting* vignetting;
     Gradient* gradient;
+    Locallab* locallab;
     Retinex*  retinex;
     PCVignette* pcvignette;
     LensGeometry* lensgeom;
@@ -308,7 +310,7 @@ public:
     void toolSelected (ToolMode tool);
     void editModeSwitchedOff ();
 
-    void setEditProvider(EditDataProvider *provider);
+    void setEditProvider (EditDataProvider *provider);
 };
 
 #endif

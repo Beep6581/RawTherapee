@@ -12,7 +12,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc 
     loadinitial.cc procparams.cc rawimagesource.cc demosaic_algos.cc shmap.cc simpleprocess.cc refreshmap.cc
     fast_demo.cc amaze_demosaic_RT.cc CA_correct_RT.cc cfa_linedn_RT.cc green_equil_RT.cc hilite_recon.cc expo_before_b.cc
     stdimagesource.cc myfile.cc iccjpeg.cc improccoordinator.cc pipettebuffer.cc coord.cc
-    processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc cieimage.cc
+    processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc cieimage.cc iplocallab.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
     imagedimensions.cc jpeg_ijg/jpeg_memsrc.cc jdatasrc.cc iimage.cc
     EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDN.cc
