@@ -199,6 +199,7 @@ FILECHOOSER_FILTER_SAME;Même format que la photo
 FILECHOOSER_FILTER_TIFF;Fichiers TIFF
 GENERAL_ABOUT;À propos
 GENERAL_AFTER;Après
+GENERAL_APPLY;Appliquer
 GENERAL_ASIMAGE;Comme l'image
 GENERAL_AUTO;Automatique
 GENERAL_BEFORE;Avant
@@ -214,6 +215,7 @@ GENERAL_NA;indisponible
 GENERAL_NO;Non
 GENERAL_NONE;Aucun
 GENERAL_OK;OK
+GENERAL_OPEN;Ouvrir
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
 GENERAL_UNCHANGED;(Inchangé)
@@ -2035,9 +2037,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!GENERAL_APPLY;Apply
-!GENERAL_OPEN;Open
