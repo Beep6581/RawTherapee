@@ -2035,7 +2035,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                     bayerParams.pixelShiftAutomatic = false;
                     bayerParams.pixelshiftShowMotion = false;
                 }
-                if(!bayerParams.pixelshiftShowMotion || bayerParams.pixelShiftNonGreenAmaze || bayerParams.pixelShiftNonGreenCross2 || (bayerParams.pixelShiftBlur && bayerParams.pixelShiftExp0)) {
+                if(!bayerParams.pixelshiftShowMotion || bayerParams.pixelShiftNonGreenAmaze || bayerParams.pixelShiftNonGreenCross2 || (bayerParams.pixelShiftBlur && bayerParams.pixelShiftSmooth)) {
                     if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic) && numFrames == 4) {
                         if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
                             if(!bayerParams.pixelShiftMedian3) {

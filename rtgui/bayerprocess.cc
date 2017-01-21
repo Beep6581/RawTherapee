@@ -831,7 +831,6 @@ void BayerProcess::pixelShiftAutomaticChanged ()
     pixelShiftNonGreenHorizontal->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftNonGreenVertical->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftHoleFill->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMotionCorrection->get_active_row_number() == 5);
-    pixelShiftMedian->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftMedian3->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMedian->get_active());
     pixelShiftGreen->set_sensitive(pixelShiftAutomatic->get_active ());
     pixelShiftBlur->set_sensitive(pixelShiftAutomatic->get_active () && pixelShiftMotionCorrection->get_active_row_number() == 5);
