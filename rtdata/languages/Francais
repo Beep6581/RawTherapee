@@ -37,8 +37,6 @@ DIRBROWSER_FOLDERS;Répertoires
 EDITWINDOW_TITLE;Édition d'image
 EDIT_OBJECT_TOOLTIP;Affiche des éléments dans la fenêtre de prévisualisation qui vous permettront d'ajuster cet outil.
 EDIT_PIPETTE_TOOLTIP;Pour ajouter un point d'ajustement de la courbe, maintenez la touche Ctrl préssée et cliquez dans l'image avec le bouton gauche.\nPour ajuster le point, pressez la touche Ctrl lors du clic-gauche sur la zone correspondande dans l'apperçu, puis relachez Ctrl (sauf si vous désirez un control plus fin) et tout en gardant le bouton gauche appuyé, déplacez le curseur vers le haut ou le bas pour ajuster la position du point.
-ENERAL_APPLY;Appliquer
-ENERAL_OPEN;Ouvrir
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_EXPOSURECOMPENSATION;Compensation d'exposition (EV)
