@@ -906,7 +906,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const float threshold = bayerParams.pixelShiftSum;
     const bool experimental0 = bayerParams.pixelShiftExp0;
     const bool holeFill = bayerParams.pixelShiftHoleFill;
-    const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmooth;
+    const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0.;
+    const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
 
     static const float nReadK3II[] = { 3.4f,  // ISO 100
                                        3.1f,  // ISO 125
@@ -1638,12 +1639,34 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         #pragma omp parallel for schedule(dynamic,16)
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
+#ifdef __SSE2__
+            if(!(showMotion && showOnlyMask) && smoothTransitions) {
+                if(smoothFactor == 0.f) {
+                    for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
+                        psMask[i][j] = 1.f;
+                    }
+                } else {
+                    vfloat zerov = F2V(0.f);
+                    vfloat smoothv = F2V(smoothFactor);
+                    int j = winx + border - offsX;
+                    for(; j < winw - (border + offsX)- 3; j += 4) {
+                        vfloat blendv = LVFU(psMask[i][j]);
+                        blendv = vmaxf(blendv, zerov);
+                        blendv = pow_F(blendv, smoothv);
+                        STVFU(psMask[i][j], blendv);
+                    }
+                    for(; j < winw - (border + offsX); ++j) {
+                        psMask[i][j] = pow_F(std::max(psMask[i][j],0.f),smoothFactor);
+                    }
+                }
+            }
+#endif
             float *greenDest = green[i + offsY];
             float *redDest = red[i + offsY];
             float *blueDest = blue[i + offsY];
 
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
-                if(mask[i][j] == 255 ) {
+                if(mask[i][j] == 255) {
                     paintMotionMask(j + offsX, showMotion, 0.5f, showOnlyMask, greenDest, redDest, blueDest);
                     continue;
                 }
@@ -1652,9 +1675,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                     red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
                 } else {
                     if(smoothTransitions) {
-                        red[i + offsY][j + offsX] = intp(psMask[i][j], red[i + offsY][j + offsX], psRed[i][j] );
-                        green[i + offsY][j + offsX] = intp(psMask[i][j],green[i + offsY][j + offsX],(psG1[i][j] + psG2[i][j]) / 2.f);
-                        blue[i + offsY][j + offsX] = intp(psMask[i][j],blue[i + offsY][j + offsX], psBlue[i][j]);
+#ifdef __SSE2__
+                        float blend = psMask[i][j];
+#else
+                        float blend =  pow_F(std::max(psMask[i][j],0.f),smoothFactor);
+#endif
+                        red[i + offsY][j + offsX] = intp(blend, red[i + offsY][j + offsX], psRed[i][j] );
+                        green[i + offsY][j + offsX] = intp(blend, green[i + offsY][j + offsX],(psG1[i][j] + psG2[i][j]) / 2.f);
+                        blue[i + offsY][j + offsX] = intp(blend, blue[i + offsY][j + offsX], psBlue[i][j]);
                     } else {
                         red[i + offsY][j + offsX] = psRed[i][j];
                         green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) / 2.f;

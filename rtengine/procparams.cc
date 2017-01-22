@@ -897,7 +897,7 @@ void RAWParams::BayerSensor::setPixelShiftDefaults()
     pixelShiftMedian3 = false;
     pixelShiftGreen = true;
     pixelShiftBlur = true;
-    pixelShiftSmooth = true;
+    pixelShiftSmoothFactor = 0.7;
     pixelShiftExp0 = false;
     pixelShiftNonGreenCross = true;
     pixelShiftNonGreenCross2 = false;
@@ -3485,7 +3485,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftSmooth) {
-            keyFile.set_boolean ("RAW Bayer", "pixelShiftSmooth", raw.bayersensor.pixelShiftSmooth );
+            keyFile.set_double ("RAW Bayer", "pixelShiftSmoothFactor", raw.bayersensor.pixelShiftSmoothFactor );
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftExp0) {
@@ -7736,8 +7736,8 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("RAW Bayer", "pixelShiftSmooth"))  {
-                raw.bayersensor.pixelShiftSmooth = keyFile.get_boolean("RAW Bayer", "pixelShiftSmooth");
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftSmoothFactor"))  {
+                raw.bayersensor.pixelShiftSmoothFactor = keyFile.get_double("RAW Bayer", "pixelShiftSmoothFactor");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftSmooth = true;
@@ -8235,7 +8235,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.pixelShiftMedian3 == other.raw.bayersensor.pixelShiftMedian3
         && raw.bayersensor.pixelShiftGreen == other.raw.bayersensor.pixelShiftGreen
         && raw.bayersensor.pixelShiftBlur == other.raw.bayersensor.pixelShiftBlur
-        && raw.bayersensor.pixelShiftSmooth == other.raw.bayersensor.pixelShiftSmooth
+        && raw.bayersensor.pixelShiftSmoothFactor == other.raw.bayersensor.pixelShiftSmoothFactor
         && raw.bayersensor.pixelShiftExp0 == other.raw.bayersensor.pixelShiftExp0
         && raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross
         && raw.bayersensor.pixelShiftNonGreenCross2 == other.raw.bayersensor.pixelShiftNonGreenCross2

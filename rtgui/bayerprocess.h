@@ -56,11 +56,11 @@ protected:
     Gtk::CheckButton* pixelShiftNonGreenAmaze;
     Gtk::CheckButton* pixelShiftGreen;
     Gtk::CheckButton* pixelShiftBlur;
-    Gtk::CheckButton* pixelShiftSmooth;
     Gtk::CheckButton* pixelShiftExp0;
     Gtk::CheckButton* pixelShiftHoleFill;
     Gtk::CheckButton* pixelShiftMedian;
     Gtk::CheckButton* pixelShiftMedian3;
+    Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftStddevFactorGreen;
     Adjuster* pixelShiftStddevFactorRed;
     Adjuster* pixelShiftStddevFactorBlue;
@@ -101,7 +101,6 @@ public:
     void pixelShiftMedian3Changed();
     void pixelShiftGreenChanged();
     void pixelShiftBlurChanged();
-    void pixelShiftSmoothChanged();
     void pixelShiftExp0Changed();
     void pixelShiftNonGreenCrossChanged();
     void pixelShiftNonGreenCross2Changed();
