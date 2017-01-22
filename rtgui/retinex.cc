@@ -998,10 +998,12 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 void Retinex::retinexMethodChanged()
 {
 
-    if(retinexMethod->get_active_row_number() == 3) {
-        highl->show();
-    } else {
-        highl->hide();
+    if (!batchMode) {
+        if(retinexMethod->get_active_row_number() == 3) {
+            highl->show();
+        } else {
+            highl->hide();
+        }
     }
 
     if (listener) {
@@ -1014,28 +1016,29 @@ void Retinex::retinexMethodChanged()
 void Retinex::mapMethodChanged()
 {
 
-    if(mapMethod->get_active_row_number() == 1  /*|| mapMethod->get_active_row_number() == 2*/) {
-        curveEditormap->show();
-        highlights->show();
-        h_tonalwidth->show();
-        shadows->show();
-        s_tonalwidth->show();
-        radius->show();
-    } else if(mapMethod->get_active_row_number() == 2  || mapMethod->get_active_row_number() == 3) {
-        curveEditormap->show();
-        highlights->show();
-        h_tonalwidth->show();
-        shadows->show();
-        s_tonalwidth->show();
-        radius->hide();
-    } else {
-        curveEditormap->hide();
-        highlights->hide();
-        h_tonalwidth->hide();
-        shadows->hide();
-        s_tonalwidth->hide();
-        radius->hide();
-
+    if (!batchMode) {
+        if(mapMethod->get_active_row_number() == 1  /*|| mapMethod->get_active_row_number() == 2*/) {
+            curveEditormap->show();
+            highlights->show();
+            h_tonalwidth->show();
+            shadows->show();
+            s_tonalwidth->show();
+            radius->show();
+        } else if(mapMethod->get_active_row_number() == 2  || mapMethod->get_active_row_number() == 3) {
+            curveEditormap->show();
+            highlights->show();
+            h_tonalwidth->show();
+            shadows->show();
+            s_tonalwidth->show();
+            radius->hide();
+        } else {
+            curveEditormap->hide();
+            highlights->hide();
+            h_tonalwidth->hide();
+            shadows->hide();
+            s_tonalwidth->hide();
+            radius->hide();
+        }
     }
 
     if (listener) {
