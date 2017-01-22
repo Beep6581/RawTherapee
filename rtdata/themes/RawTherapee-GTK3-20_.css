@@ -1,8 +1,8 @@
 /*
   This file is part of RawTherapee.
 
-  Copyright (c) 2015 DrSlony
-  Copyright (c) 2016 Hombre
+  Copyright (c) 2015-2017 DrSlony
+  Copyright (c) 2016-2017 Hombre
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,11 @@
   You should have received a copy of the GNU General Public License
   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+/* Scrollbar stuck workaround */
+scrollbar:not(.overlay-indicator):hover {
+    min-width: 1px;
+}
 
 * {
     color: #AAAAAA;
