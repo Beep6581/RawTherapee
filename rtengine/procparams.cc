@@ -5332,7 +5332,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Crop", "W"))          {
-                crop.w          = std::max(keyFile.get_integer ("Crop", "W"),1);
+                crop.w          = std::max(keyFile.get_integer("Crop", "W"), 1);
 
                 if (pedited) {
                     pedited->crop.w = true;
@@ -5340,7 +5340,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Crop", "H"))          {
-                crop.h          = std::max(keyFile.get_integer ("Crop", "H"),1);
+                crop.h          = std::max(keyFile.get_integer("Crop", "H"), 1);
 
                 if (pedited) {
                     pedited->crop.h = true;

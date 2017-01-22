@@ -909,8 +909,11 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 {
+    if (getW() < 1 || getH() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
-    FILE *file = g_fopen_withBinaryAndLock (fname);
+    FILE* const file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -1003,8 +1006,11 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 {
+    if (getW() < 1 || getH() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
-    FILE *file = g_fopen_withBinaryAndLock (fname);
+    FILE* const file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -1190,6 +1196,9 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
 int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 {
+    if (getW() < 1 || getH() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
     //TODO: Handling 32 bits floating point output images!
     bool writeOk = true;

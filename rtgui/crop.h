@@ -27,9 +27,10 @@
 
 class CropPanelListener
 {
-
 public:
-    virtual void cropSelectRequested () {}
+    virtual ~CropPanelListener() = default;
+
+    virtual void cropSelectRequested() = 0;
 };
 
 class CropRatio
@@ -42,7 +43,6 @@ public:
 
 class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener
 {
-
 protected:
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;
@@ -70,7 +70,6 @@ protected:
     std::vector<CropRatio>   cropratio;
 
 public:
-
     Crop ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
