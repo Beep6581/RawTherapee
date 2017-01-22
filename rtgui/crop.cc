@@ -210,10 +210,10 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true)
     guide->append_text (M("TP_CROP_GTEPASSPORT"));
     guide->set_active (0);
 
-    w->set_range (0, maxw);
-    h->set_range (0, maxh);
-    x->set_range (0, maxw);
-    y->set_range (0, maxh);
+    w->set_range (1, maxw);
+    h->set_range (1, maxh);
+    x->set_range (0, maxw - 1);
+    y->set_range (0, maxh - 1);
 
     x->set_digits (0);
     x->set_increments (1, 100);
@@ -328,8 +328,8 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     x->set_value (pp->crop.x);
     y->set_value (pp->crop.y);
-    w->set_value (pp->crop.w);
-    h->set_value (pp->crop.h);
+    w->set_value (std::max(pp->crop.w,1));
+    h->set_value (std::max(pp->crop.h,1));
 
     nx = pp->crop.x;
     ny = pp->crop.y;
@@ -706,10 +706,10 @@ void Crop::setDimensions (int mw, int mh)
     bool wconnWasBlocked = wconn.block (true);
     bool hconnWasBlocked = hconn.block (true);
 
-    w->set_range (0, maxw);
-    h->set_range (0, maxh);
-    x->set_range (0, maxw);
-    y->set_range (0, maxh);
+    w->set_range (1, maxw);
+    h->set_range (1, maxh);
+    x->set_range (0, maxw - 1);
+    y->set_range (0, maxh - 1);
 
     if (!xconnWasBlocked) {
         xconn.block (false);
