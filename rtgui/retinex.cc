@@ -1141,7 +1141,6 @@ void Retinex::mapMethodChanged()
             s_tonalwidth->hide();
             radius->hide();
         }
-        }
     }
 
     if (listener) {
