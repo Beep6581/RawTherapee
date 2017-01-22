@@ -37,8 +37,6 @@ DIRBROWSER_FOLDERS;Répertoires
 EDITWINDOW_TITLE;Édition d'image
 EDIT_OBJECT_TOOLTIP;Affiche des éléments dans la fenêtre de prévisualisation qui vous permettront d'ajuster cet outil.
 EDIT_PIPETTE_TOOLTIP;Pour ajouter un point d'ajustement de la courbe, maintenez la touche Ctrl préssée et cliquez dans l'image avec le bouton gauche.\nPour ajuster le point, pressez la touche Ctrl lors du clic-gauche sur la zone correspondande dans l'apperçu, puis relachez Ctrl (sauf si vous désirez un control plus fin) et tout en gardant le bouton gauche appuyé, déplacez le curseur vers le haut ou le bas pour ajuster la position du point.
-ENERAL_APPLY;Appliquer
-ENERAL_OPEN;Ouvrir
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_EXPOSURECOMPENSATION;Compensation d'exposition (EV)
@@ -624,7 +622,7 @@ HISTORY_MSG_389;O - Résiduel - BC bleu moyen
 HISTORY_MSG_390;O - Résiduel - BC vert bas
 HISTORY_MSG_391;O - Résiduel - BC bleu bas
 HISTORY_MSG_392;O - Résiduel - BC Réinitialiser
-HISTORY_MSG_393;DCP - Table de recherche (LUT)
+HISTORY_MSG_393;DCP - Table de corresp. (LUT)
 HISTORY_MSG_394;DCP - Exposition de base
 HISTORY_MSG_395;DCP - Table de base
 HISTORY_MSG_396;O - Contrast
@@ -1526,8 +1524,8 @@ TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Exposition de base
 TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Utilise l'offset d'exposition de base contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient un.
 TP_ICM_APPLYHUESATMAP;Table de base
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Utilise la table de base (HueSatMap) contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient une.
-TP_ICM_APPLYLOOKTABLE;Table de recherche
-TP_ICM_APPLYLOOKTABLE_TOOLTIP;Utilise la table de recherche (LUT) contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient une.
+TP_ICM_APPLYLOOKTABLE;Table de correspondance
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;Utilise la table de correspondance (LUT) contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient une.
 TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndu profil ICC avec la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
 TP_ICM_BPC;Compensation du  Point Noir

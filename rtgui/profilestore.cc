@@ -284,8 +284,8 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
     if (
         lastdot_pos != Glib::ustring::npos
         && lastdot_pos <= casefolded_path.size() - 4
-        && !casefolded_path.compare(lastdot_pos, 4, paramFileExtension))
-    {
+        && !casefolded_path.compare(lastdot_pos, 4, paramFileExtension)
+    ) {
         // removing the extension
         // now use dot position without casefold()
         path = path.substr(0, path.find_last_of('.'));

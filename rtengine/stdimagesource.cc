@@ -117,22 +117,19 @@ int StdImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 
     switch (sFormat) {
     case (IIOSF_UNSIGNED_CHAR): {
-        Image8 *img_8 = new Image8 ();
-        img = img_8;
+        img = new Image8;
         break;
     }
 
     case (IIOSF_UNSIGNED_SHORT): {
-        Image16 *img_16 = new Image16 ();
-        img = img_16;
+        img = new Image16;
         break;
     }
 
     case (IIOSF_LOGLUV24):
     case (IIOSF_LOGLUV32):
     case (IIOSF_FLOAT): {
-        Imagefloat *img_float = new Imagefloat ();
-        img = img_float;
+        img = new Imagefloat;
         break;
     }
 

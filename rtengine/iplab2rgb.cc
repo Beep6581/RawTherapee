@@ -144,7 +144,6 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
     Image8* image = new Image8 (cw, ch);
     Glib::ustring profile;
-    cmsHPROFILE oprof = iccStore->getProfile (profile);
 
     bool standard_gamma;
 
@@ -158,6 +157,8 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
         standard_gamma = false;
     }
+
+    cmsHPROFILE oprof = iccStore->getProfile (profile);
 
     if (oprof) {
         cmsHPROFILE oprofG = oprof;
