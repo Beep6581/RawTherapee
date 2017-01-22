@@ -1852,10 +1852,14 @@ void Preferences::fillPreferences ()
 
     if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
         gimpDir->set_current_folder (moptions.gimpDir);
+    } else {
+        gimpDir->set_current_folder ("");
     }
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
+    } else {
+        psDir->set_current_folder ("");
     }
 
 #elif defined __APPLE__

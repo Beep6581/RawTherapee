@@ -863,14 +863,16 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     skal->setValue  (pp->retinex.skal);
 
-    if(pp->retinex.iter == 1)   {
-        grad->set_sensitive(false);
-        scal->set_sensitive(false);
-        grads->set_sensitive(false);
-    } else {
-        grad->set_sensitive(true);
-        scal->set_sensitive(true);
-        grads->set_sensitive(true);
+    if (!batchMode) {
+        if(pp->retinex.iter == 1)   {
+            grad->set_sensitive(false);
+            scal->set_sensitive(false);
+            grads->set_sensitive(false);
+        } else {
+            grad->set_sensitive(true);
+            scal->set_sensitive(true);
+            grads->set_sensitive(true);
+        }
     }
 
     setEnabled (pp->retinex.enabled);
@@ -1138,7 +1140,7 @@ void Retinex::mapMethodChanged()
             shadows->hide();
             s_tonalwidth->hide();
             radius->hide();
-
+        }
         }
     }
 
@@ -1149,7 +1151,6 @@ void Retinex::mapMethodChanged()
 
 void Retinex::viewMethodChanged()
 {
-
     if (!batchMode) {
         if(viewMethod->get_active_row_number() == 1 || viewMethod->get_active_row_number() == 2) {
             //vart->hide();
@@ -1172,7 +1173,6 @@ void Retinex::viewMethodChanged()
             gain->hide();
             offs->hide();
             transmissionCurveEditorG->show();
-
             //vart->hide();
             curveEditorGH->hide();
         } else {
@@ -1373,20 +1373,21 @@ void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, boo
 void Retinex::adjusterChanged (Adjuster* a, double newval)
 {
 
+    if (a==iter && !batchMode) {
+        if(iter->getIntValue() > 1) {
+            scal->set_sensitive(true);
+            grad->set_sensitive(true);
+            grads->set_sensitive(true);
+        } else {
+            scal->set_sensitive(false);
+            grad->set_sensitive(false);
+            grads->set_sensitive(false);
+        }
+    }
+
     if (!listener || !getEnabled()) {
         return;
     }
-
-    if(iter->getTextValue() > "1") {
-        scal->set_sensitive(true);
-        grad->set_sensitive(true);
-        grads->set_sensitive(true);
-    } else {
-        scal->set_sensitive(false);
-        grad->set_sensitive(false);
-        grads->set_sensitive(false);
-    }
-
 
     if (a == neigh) {
         listener->panelChanged (EvLneigh, neigh->getTextValue());

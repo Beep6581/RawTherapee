@@ -269,7 +269,6 @@ int ProfileStore::findFolderId(const Glib::ustring &path)
   */
 const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path)
 {
-
     if (path.empty()) {
         return nullptr;
     }
@@ -278,12 +277,18 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
         return internalDefaultEntry;
     }
 
-    size_t lastdot = path.find_last_of ('.');
+    // consistently apply casefold() to make sure dot position is correct
+    const Glib::ustring casefolded_path = path.casefold();
+    const Glib::ustring::size_type lastdot_pos = casefolded_path.find_last_of('.');
 
-    if (lastdot != Glib::ustring::npos && lastdot <= path.size() - 4 && !path.casefold().compare (lastdot, 4, paramFileExtension))
-        // removing the extension
+    if (
+        lastdot_pos != Glib::ustring::npos
+        && lastdot_pos <= casefolded_path.size() - 4
+        && !casefolded_path.compare(lastdot_pos, 4, paramFileExtension))
     {
-        path = path.substr(0, lastdot);
+        // removing the extension
+        // now use dot position without casefold()
+        path = path.substr(0, path.find_last_of('.'));
     }
 
     // dir separator may come from options file and may be \ or /, we convert them to G_DIR_SEPARATOR_S
