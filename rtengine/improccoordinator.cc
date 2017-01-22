@@ -712,17 +712,29 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
              *  2017 Jacques Desmis <jdesmis@gmail.com>
              */
 
+            bool isascii = true;
+            Glib::ustring datainterm = imgsrc->getFileName() + ".mip";
+            ofstream finterm (datainterm, ios::out);
 
-            //  Glib::ustring datalab = imgsrc->getFileName() + ".mip";
+            if (finterm.fail()) {
+                printf ("Non ascii Mip file..switch to Profiles\n");
+                isascii = false;
+            } else {
+                printf ("ascii Mip file!\n");
+            }
+
+            finterm.close();
+
             //  printf("mip file=%s \n", datalab.c_str());
             Glib::ustring pop = options.getUserProfilePath() + "/";
             Glib::ustring datal;
 
-            if (options.mip == MI_opt) {
+
+            if (options.mip == MI_opt || !isascii) {
                 datal = pop + Glib::path_get_basename (imgsrc->getFileName () + ".mip");
             }
 
-            if (options.mip == MI_prev) {
+            if (options.mip == MI_prev && isascii) {
                 datal = imgsrc->getFileName() + ".mip";
             }
 
