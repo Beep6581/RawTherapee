@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2014 Maciej Dworak www.londonlight.org -->
+<!-- Copyright 2017 Maciej Dworak www.rawtherapee.com -->
 <application>
     <id type="desktop">rawtherapee.desktop</id>
     <metadata_license>CC-BY-SA-4.0</metadata_license>
@@ -15,7 +15,9 @@
         </p>
     </description>
     <screenshots>
-        <screenshot type="default">http://rawtherapee.com/images/screenshots/rt-42_07-hdr-landscape.jpg</screenshot>
+        <screenshot type="default">http://rawpedia.rawtherapee.com/images/9/99/Rt-5-misty1.jpg</screenshot>
+        <screenshot>http://rawpedia.rawtherapee.com/images/2/2f/Rt-5-cc24-lcp.jpg</screenshot>
+        <screenshot>http://rawtherapee.com/images/screenshots/rt-42_07-hdr-landscape.jpg</screenshot>
         <screenshot>http://rawtherapee.com/images/screenshots/rt-42_03-macro-detail-toning.jpg</screenshot>
         <screenshot>http://rawtherapee.com/images/screenshots/rt-42_05-cow-bw-toning.jpg</screenshot>
         <screenshot>http://rawtherapee.com/images/screenshots/rt-42_08-fb-metadata.jpg</screenshot>
