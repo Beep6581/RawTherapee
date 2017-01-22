@@ -326,10 +326,10 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         guide->set_active (8);
     }
 
-    x->set_value (pp->crop.x);
-    y->set_value (pp->crop.y);
-    w->set_value (std::max(pp->crop.w,1));
-    h->set_value (std::max(pp->crop.h,1));
+    x->set_value(pp->crop.x);
+    y->set_value(pp->crop.y);
+    w->set_value(std::max(pp->crop.w, 1));
+    h->set_value(std::max(pp->crop.h, 1));
 
     nx = pp->crop.x;
     ny = pp->crop.y;
