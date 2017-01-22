@@ -803,6 +803,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     prtBPC->set_active (true);
 
     row = 0;
+    gprinter->attach (*pplabel, 0, row, 1, 1);
     gprinter->attach (*prtProfile, 1, row, 1, 1);
     ++row;
     gprinter->attach (*pilabel, 0, row, 1, 1);
