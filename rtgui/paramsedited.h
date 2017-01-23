@@ -472,6 +472,7 @@ public:
     bool localTgaincurve;
     bool localTgaincurverab;
     bool llcurve;
+    bool cccurve;
     bool LHcurve;
     bool chrrt;
     bool mult[5];

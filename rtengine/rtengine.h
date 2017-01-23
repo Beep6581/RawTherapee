@@ -315,8 +315,8 @@ class localListener
 {
 public :
     virtual ~localListener() {}
-    virtual void localChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, int sp, int maxdat) {}
-    virtual void localretChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, int sp, int maxdat) {}
+    virtual void localChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, int sp, int maxdat) {}
+    virtual void localretChanged (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, int sp, int maxdat) {}
 
 };
 
@@ -376,7 +376,7 @@ public:
     virtual void        endUpdateParams (ProcEvent change) = 0;
     virtual void        endUpdateParams (int changeFlags) = 0;
     // Starts a minimal update
-    virtual void        startProcessing(int changeCode) = 0;
+    virtual void        startProcessing (int changeCode) = 0;
     /** Stops image processing. When it returns, the image processing is already stopped. */
     virtual void        stopProcessing () = 0;
     /** Sets the scale of the preview image. The larger the number is, the faster the image updates are (typical values are 4-5).
@@ -508,7 +508,7 @@ public:
                    * @param img is the result of the last ProcessingJob
                    * @return the next ProcessingJob to process */
     virtual ProcessingJob* imageReady (IImage16* img) = 0;
-    virtual void error(Glib::ustring message) = 0;
+    virtual void error (Glib::ustring message) = 0;
 };
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
    * When it finishes, it calls the BatchProcessingListener with the resulting image and asks for the next job. It the listener gives a new job, it goes on

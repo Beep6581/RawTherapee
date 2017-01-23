@@ -933,6 +933,7 @@ public:
     std::vector<double>   localTgaincurve;
     std::vector<double>   localTgaincurverab;
     std::vector<double> llcurve;
+    std::vector<double> cccurve;
     std::vector<double> LHcurve;
 
     double mult[5];
@@ -948,6 +949,7 @@ public:
     static void getDefaultLocalgainCurveTrab (std::vector<double> &curve);
     static void getDefaultLLCurve (std::vector<double> &curve);
     static void getDefaultLHCurve (std::vector<double> &curve);
+    static void getDefaultCCCurve (std::vector<double> &curve);
 
 };
 

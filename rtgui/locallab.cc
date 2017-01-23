@@ -171,6 +171,7 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     std::vector<double> defaultCurve2;
     std::vector<double> defaultCurve2rab;
     std::vector<double> defaultCurve3;
+    std::vector<double> defaultCurve4;
 
     irg   = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
 
@@ -186,6 +187,14 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     llshape->setBottomBarBgGradient (milestones);
     llshape->setLeftBarBgGradient (milestones);
 
+    rtengine::LocallabParams::getDefaultCCCurve (defaultCurve4);
+    ccshape = static_cast<DiagonalCurveEditor*> (llCurveEditorG->addCurve (CT_Diagonal, "C(C)"));
+    ccshape->setResetCurve (DiagonalCurveType (defaultCurve4.at (0)), defaultCurve4);
+    ccshape->setTooltip (M ("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    milestones.push_back ( GradientMilestone (0., 0., 0., 0.) );
+    milestones.push_back ( GradientMilestone (1., 1., 1., 1.) );
+    ccshape->setBottomBarBgGradient (milestones);
+    ccshape->setLeftBarBgGradient (milestones);
 
     rtengine::LocallabParams::getDefaultLHCurve (defaultCurve3);
 
@@ -909,6 +918,21 @@ bool Locallab::localretComputed_ ()
 
     llshape->setCurve (cll);
 
+
+    int *s_datcc;
+    s_datcc = new int[70];
+    int sizc;
+    ImProcFunctions::strcurv_data (nextcc_str2, s_datcc, sizc);
+    std::vector<double>   ccc;
+
+    for (int j = 0; j < sizc; j++) {
+        ccc.push_back ((double) (s_datcc[j]) / 1000.);
+    }
+
+    delete [] s_datcc;
+
+    ccshape->setCurve (ccc);
+
     int *s_datch;
     s_datch = new int[70];
     int sizh;
@@ -984,6 +1008,10 @@ bool Locallab::localretComputed_ ()
 
     if (listener) {//for curve
         listener->panelChanged (Evlocallabllshape, M ("HISTORY_CUSTOMCURVE"));
+    }
+
+    if (listener) {//for curve
+        listener->panelChanged (Evlocallabccshape, M ("HISTORY_CUSTOMCURVE"));
     }
 
     if (listener) {//for curve
@@ -1165,6 +1193,22 @@ bool Locallab::localComputed_ ()
     delete [] s_datcl;
     llshape->setCurve (cll);
 
+    //CCcurv
+    int *s_datcc;
+    s_datcc = new int[70];
+    int sizc;
+    ImProcFunctions::strcurv_data (nextcc_str, s_datcc, sizc);
+
+
+    std::vector<double>   ccc;
+
+    for (int j = 0; j < sizc; j++) {
+        ccc.push_back ((double) (s_datcc[j]) / 1000.);
+    }
+
+    delete [] s_datcc;
+    ccshape->setCurve (ccc);
+
 
     //LHcurv
     int *s_datch;
@@ -1289,10 +1333,14 @@ bool Locallab::localComputed_ ()
         listener->panelChanged (EvlocallabLHshape, M ("HISTORY_CUSTOMCURVE"));
     }
 
+    if (listener) {//for curve LH
+        listener->panelChanged (Evlocallabccshape, M ("HISTORY_CUSTOMCURVE"));
+    }
+
     return false;
 }
 
-void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, int sp, int maxdat)
+void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, int sp, int maxdat)
 {
     for (int i = 2; i < 60; i++) { //58
         nextdatasp[i] = datasp[i][sp];
@@ -1301,17 +1349,19 @@ void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_
     nextstr = datastr;
     nextll_str = ll_str;
     nextlh_str = lh_str;
+    nextcc_str = cc_str;
 
     nextlength = maxdat;
     g_idle_add (localChangedUI, this);
 }
 
-void Locallab::localretChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, int sp, int maxdat)
+void Locallab::localretChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, int sp, int maxdat)
 {
     nextlength = maxdat;
     nextstr2 = datastr;
     nextll_str2 = ll_str;
     nextlh_str2 = lh_str;
+    nextcc_str2 = cc_str;
 
     g_idle_add (localretChangedUI, this);
 }
@@ -1389,6 +1439,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         inverssha->set_inconsistent (multiImage && !pedited->locallab.inverssha);
         cTgainshape->setUnChanged  (!pedited->locallab.localTgaincurve);
         llshape->setUnChanged  (!pedited->locallab.llcurve);
+        ccshape->setUnChanged  (!pedited->locallab.cccurve);
         LHshape->setUnChanged  (!pedited->locallab.LHcurve);
         inversret->set_inconsistent (multiImage && !pedited->locallab.inversret);
         cTgainshaperab->setUnChanged  (!pedited->locallab.localTgaincurverab);
@@ -1483,6 +1534,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     cTgainshape->setCurve (pp->locallab.localTgaincurve);
     cTgainshaperab->setCurve (pp->locallab.localTgaincurverab);
     llshape->setCurve (pp->locallab.llcurve);
+    ccshape->setCurve (pp->locallab.cccurve);
     LHshape->setCurve (pp->locallab.LHcurve);
     lastactivlum = pp->locallab.activlum;
     lastanbspot = pp->locallab.anbspot;
@@ -1726,6 +1778,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.localTgaincurve       = cTgainshape->getCurve ();
     pp->locallab.localTgaincurverab       = cTgainshaperab->getCurve ();
     pp->locallab.llcurve       = llshape->getCurve ();
+    pp->locallab.cccurve       = ccshape->getCurve ();
     pp->locallab.LHcurve       = LHshape->getCurve ();
     pp->locallab.expcolor      = expcolor->getEnabled();
     pp->locallab.expblur      = expblur->getEnabled();
@@ -1798,6 +1851,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.localTgaincurve        = !cTgainshape->isUnChanged ();
         pedited->locallab.localTgaincurverab        = !cTgainshaperab->isUnChanged ();
         pedited->locallab.llcurve        = !llshape->isUnChanged ();
+        pedited->locallab.cccurve        = !ccshape->isUnChanged ();
         pedited->locallab.LHcurve        = !LHshape->isUnChanged ();
         pedited->locallab.expcolor     = !expcolor->get_inconsistent();
         pedited->locallab.expblur     = !expblur->get_inconsistent();
@@ -1905,6 +1959,17 @@ void Locallab::curveChanged (CurveEditor* ce)
 
             adjusterChanged (retrab, strval);
 
+        } else if (ce == ccshape) {
+            listener->panelChanged (Evlocallabccshape, M ("HISTORY_CUSTOMCURVE"));
+            int strval = retrab->getValue();
+            //update MIP
+            retrab->setValue (strval + 1);
+            adjusterChanged (retrab, strval + 1);
+            usleep (10000); //to test
+            retrab->setValue (strval);
+
+            adjusterChanged (retrab, strval);
+
         }
 
     }
@@ -1912,9 +1977,11 @@ void Locallab::curveChanged (CurveEditor* ce)
 
 void Locallab::retinexMethodChanged()
 {
-    retrab->hide();
-    LocalcurveEditorgainTrab->hide();
-    //  llCurveEditorG2->hide();
+    if (!batchMode) {
+
+        retrab->hide();
+        LocalcurveEditorgainTrab->hide();
+    }
 
     if (listener) {
         listener->panelChanged (EvlocallabretinexMethod, retinexMethod->get_active_text ());
@@ -2021,9 +2088,11 @@ void Locallab::inversChanged ()
     if (invers->get_active ()) {
         sensi->hide();
         llCurveEditorG->hide();
+        curvactiv->hide();
     } else {
         sensi->show();
         llCurveEditorG->show();
+        curvactiv->show();
     }
 
     if (listener) {
