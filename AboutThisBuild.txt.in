@@ -1,6 +1,7 @@
+Version: ${GIT_DESCRIBE}
 Branch: ${GIT_BRANCH}
-Version: ${GIT_VERSION_SUFFIX}
-Changeset: ${GIT_CHANGESET}
+Commit: ${GIT_COMMIT}
+Commit date: ${GIT_COMMIT_DATE}
 Compiler: ${COMPILER_INFO}
 Processor: ${PROC_LABEL}
 System: ${SYSTEM}
@@ -11,4 +12,3 @@ Build flags: ${CXX_FLAGS}
 Link flags: ${LFLAGS}
 OpenMP support: ${OPTION_OMP}
 MMAP support: ${WITH_MYFILE_MMAP}
-

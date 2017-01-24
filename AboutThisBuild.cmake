@@ -22,30 +22,67 @@ if (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
         message(STATUS "git command found: ${GIT_CMD}")
     endif ()
 
+    # Get version description.
+    # Depending on whether you checked out a branch (dev) or a tag (release),
+    # "git describe" will return "5.0-gtk2-2-g12345678" or "5.0-gtk2", respectively.
+    execute_process(COMMAND ${GIT_CMD} describe --tags --always OUTPUT_VARIABLE GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+
+    # Get branch name.
+    # Will return empty if you checked out a commit or tag. Empty string handled later.
     execute_process(COMMAND ${GIT_CMD} symbolic-ref --short -q HEAD OUTPUT_VARIABLE GIT_BRANCH OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-    execute_process(COMMAND ${GIT_CMD} describe --tags --always OUTPUT_VARIABLE GIT_VERSION_WHOLE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-    string(REGEX REPLACE "-g.*" "" GIT_VERSION ${GIT_VERSION_WHOLE})
-    string(REPLACE "-" "." GIT_VERSION ${GIT_VERSION})
-    execute_process(COMMAND ${GIT_CMD} rev-parse --verify HEAD OUTPUT_VARIABLE GIT_CHANGESET OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-    string(REGEX REPLACE ".*-(.*)-g.*" "\\1" GIT_TAGDISTANCE ${GIT_VERSION_WHOLE})
+
+    # Get commit hash.
+    execute_process(COMMAND ${GIT_CMD} rev-parse --short --verify HEAD OUTPUT_VARIABLE GIT_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+
+    # Get commit date, YYYY-MM-DD.
+    execute_process(COMMAND ${GIT_CMD} show -s --format=%cd --date=format:%Y-%m-%d OUTPUT_VARIABLE GIT_COMMIT_DATE OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+
+    # Get number of commits since tagging. This is what "GIT_DESCRIBE" uses.
+    # Works when checking out branch, tag or commit.
+    # Get a list of all tags in repo:
+    execute_process(COMMAND ${GIT_CMD} tag --merged HEAD OUTPUT_VARIABLE GIT_TAG WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+    # Replace newlines with semicolons so that it can be split:
+    string(REPLACE "\n" ";" GIT_TAG_LIST "${GIT_TAG}")
+    execute_process(COMMAND ${GIT_CMD} rev-list --count HEAD --not ${GIT_TAG_LIST} OUTPUT_VARIABLE GIT_COMMITS_SINCE_TAG OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+
+    # Get number of commits since branching.
+    # Works when checking out branch, tag or commit.
+    execute_process(COMMAND ${GIT_CMD} rev-list --count HEAD --not --tags OUTPUT_VARIABLE GIT_COMMITS_SINCE_BRANCH OUTPUT_STRIP_TRAILING_WHITESPACE WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+
+    # If user checked-out something which is not a branch, use the description as branch name.
+    if (GIT_BRANCH STREQUAL "")
+        set (GIT_BRANCH "${GIT_DESCRIBE}")
+    endif()
+
+    # Create numeric version.
+    # This version is nonsense, either don't use it at all or use it only where you have no other choice, e.g. Inno Setup's VersionInfoVersion.
+    # Strip everything after hyphen, e.g. "5.0-gtk2" -> "5.0", "5.1-rc1" -> "5.1" (ergo BS).
+    if (GIT_COMMITS_SINCE_TAG STREQUAL "")
+        set (GIT_NUMERIC_VERSION_BS "0.0.0")
+    else ()
+        string(REGEX REPLACE "-.*" "" GIT_NUMERIC_VERSION_BS ${GIT_DESCRIBE})
+        set(GIT_NUMERIC_VERSION_BS "${GIT_NUMERIC_VERSION_BS}.${GIT_COMMITS_SINCE_TAG}")
+    endif ()
+
+    message(STATUS "Git checkout information:")
+    message(STATUS "	Commit description:	${GIT_DESCRIBE}")
+    message(STATUS "	Branch:			${GIT_BRANCH}")
+    message(STATUS "	Commit:			${GIT_COMMIT}")
+    message(STATUS "	Commit date:		${GIT_COMMIT_DATE}")
+    message(STATUS "	Commits since tag:	${GIT_COMMITS_SINCE_TAG}")
+    message(STATUS "	Commits since branch:	${GIT_COMMITS_SINCE_BRANCH}")
+    message(STATUS "	Version (unreliable):	${GIT_NUMERIC_VERSION_BS}")
+
     if (NOT DEFINED CACHE_NAME_SUFFIX)
-        string(REGEX REPLACE "-.*" "" CACHE_NAME_SUFFIX ${GIT_VERSION_WHOLE})
+        set(CACHE_NAME_SUFFIX "${GIT_DESCRIBE}")
         message(STATUS "CACHE_NAME_SUFFIX was not defined, it is now \"${CACHE_NAME_SUFFIX}\"")
-    elseif (CACHE_NAME_SUFFIX STREQUAL "latesttag")
-        string(REGEX REPLACE "-.*" "" CACHE_NAME_SUFFIX ${GIT_VERSION_WHOLE})
-        message(STATUS "CACHE_NAME_SUFFIX was \"latesttag\", it is now \"${CACHE_NAME_SUFFIX}\"")
     else ()
         message(STATUS "CACHE_NAME_SUFFIX is \"${CACHE_NAME_SUFFIX}\"")
     endif ()
+
 else (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
     include("${PROJECT_SOURCE_DIR}/ReleaseInfo.cmake")
 endif (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
-
-if (VERSION_SUFFIX STREQUAL "")
-    set (GIT_VERSION_SUFFIX "${GIT_VERSION}")
-else ()
-    set (GIT_VERSION_SUFFIX "${GIT_VERSION} ${VERSION_SUFFIX}")
-endif ()
 
 # build version.h from template
 configure_file ("${PROJECT_SOURCE_DIR}/rtgui/version.h.in" "${CMAKE_BINARY_DIR}/rtgui/version.h")

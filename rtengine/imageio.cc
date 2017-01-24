@@ -1351,7 +1351,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         }
 
-        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " VERSION);
+        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " RTVERSION);
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);

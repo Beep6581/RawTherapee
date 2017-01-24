@@ -27,7 +27,6 @@ extern Glib::ustring argv0;
 extern Glib::ustring creditsPath;
 extern Glib::ustring licensePath;
 extern Glib::ustring versionString;
-extern Glib::ustring versionSuffixString;
 
 SplashImage::SplashImage ()
 {
@@ -69,10 +68,6 @@ bool SplashImage::on_expose_event (GdkEventExpose* event)
 
     int w, h;
     Glib::ustring versionStr(versionString);
-
-    if (!versionSuffixString.empty()) {
-        versionStr += " " + versionSuffixString;
-    }
 
     version = create_pango_layout (versionStr);
     version->set_markup("<span foreground=\"white\">" + versionStr + "</span>");
