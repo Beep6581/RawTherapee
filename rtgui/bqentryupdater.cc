@@ -120,11 +120,11 @@ void BatchQueueEntryUpdater::processThread ()
                 int prevh = img->getHeight();
 #ifndef NDEBUG
 
-                if (current.ow != img->getW() || current.oh != img->getH()) {
-                    printf("WARNING!  Expected image size: %dx%d ; image size is: %dx%d\n", current.ow, current.oh, img->getW(), img->getH());
+                if (current.ow != img->getWidth() || current.oh != img->getHeight()) {
+                    printf("WARNING!  Expected image size: %dx%d ; image size is: %dx%d\n", current.ow, current.oh, img->getWidth(), img->getHeight());
                 }
 
-                assert ((current.ow + 1)*current.oh >= img->getW()*img->getH());
+                assert ((current.ow + 1)*current.oh >= img->getWidth()*img->getHeight());
 #endif
                 current.ow = prevw;
                 current.oh = prevh;

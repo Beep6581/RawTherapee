@@ -203,7 +203,7 @@ void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Prev
     int maxx = width; // Source image
     int maxy = height; // Source image
     int mtran = tran & TR_ROT;
-    int skip = pp.skip;
+    int skip = pp.getSkip();
 
     // improve speed by integrating the area division into the multipliers
     // switched to using ints for the red/green/blue channel buffer.
