@@ -909,7 +909,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 {
-    if (getW() < 1 || getH() < 1) {
+    if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
     }
 
@@ -949,8 +949,8 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 
     png_set_compression_level(png, compression);
 
-    int width = getW ();
-    int height = getH ();
+    int width = getWidth ();
+    int height = getHeight ();
 
     if (bps < 0) {
         bps = getBPS ();
@@ -1006,7 +1006,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 {
-    if (getW() < 1 || getH() < 1) {
+    if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
     }
 
@@ -1054,8 +1054,8 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
     jpeg_stdio_dest (&cinfo, file);
 
-    int width = getW ();
-    int height = getH ();
+    int width = getWidth ();
+    int height = getHeight ();
 
     cinfo.image_width  = width;
     cinfo.image_height = height;
@@ -1196,14 +1196,14 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
 int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 {
-    if (getW() < 1 || getH() < 1) {
+    if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
     }
 
     //TODO: Handling 32 bits floating point output images!
     bool writeOk = true;
-    int width = getW ();
-    int height = getH ();
+    int width = getWidth ();
+    int height = getHeight ();
 
     if (bps < 0) {
         bps = getBPS ();

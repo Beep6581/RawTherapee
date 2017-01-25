@@ -98,16 +98,16 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     if (inspectorMode) {
         // Special case, meaning that we want a full sized thumbnail image (e.g. for the Inspector feature)
-        w = img->width;
-        h = img->height;
+        w = img->getWidth();
+        h = img->getHeight();
         tpp->scale = 1.;
     } else {
         if (fixwh == 1) {
-            w = h * img->width / img->height;
-            tpp->scale = (double)img->height / h;
+            w = h * img->getWidth() / img->getHeight();
+            tpp->scale = (double)img->getHeight() / h;
         } else {
-            h = w * img->height / img->width;
-            tpp->scale = (double)img->width / w;
+            h = w * img->getHeight() / img->getWidth();
+            tpp->scale = (double)img->getWidth() / w;
         }
     }
 
@@ -223,16 +223,16 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     if (inspectorMode) {
         // Special case, meaning that we want a full sized thumbnail image (e.g. for the Inspector feature)
-        w = img->width;
-        h = img->height;
+        w = img->getWidth();
+        h = img->getHeight();
         tpp->scale = 1.;
     } else {
         if (fixwh == 1) {
-            w = h * img->width / img->height;
-            tpp->scale = (double)img->height / h;
+            w = h * img->getWidth() / img->getHeight();
+            tpp->scale = (double)img->getHeight() / h;
         } else {
-            h = w * img->height / img->width;
-            tpp->scale = (double)img->width / w;
+            h = w * img->getHeight() / img->getWidth();
+            tpp->scale = (double)img->getWidth() / w;
         }
     }
 
@@ -260,8 +260,8 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         if (suffix != "mos" && suffix != "mef" && suffix != "iiq")  {
             tpp->thumbImg->rotate(ri->get_rotateDegree());
             // width/height may have changed after rotating
-            w = tpp->thumbImg->width;
-            h = tpp->thumbImg->height;
+            w = tpp->thumbImg->getWidth();
+            h = tpp->thumbImg->getHeight();
         }
     }
 
@@ -810,9 +810,9 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
         rwidth = rheight;
-        rheight = thumbImg->height * rwidth / thumbImg->width;
+        rheight = thumbImg->getHeight() * rwidth / thumbImg->getWidth();
     } else {
-        rwidth = thumbImg->width * rheight / thumbImg->height;
+        rwidth = thumbImg->getWidth() * rheight / thumbImg->getHeight();
     }
 
     Image8* baseImg = resizeTo<Image8>(rwidth, rheight, interp, thumbImg);
@@ -889,9 +889,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
         rwidth = rheight;
-        rheight = int(size_t(thumbImg->height) * size_t(rwidth) / size_t(thumbImg->width));
+        rheight = int(size_t(thumbImg->getHeight()) * size_t(rwidth) / size_t(thumbImg->getWidth()));
     } else {
-        rwidth = int(size_t(thumbImg->width) * size_t(rheight) / size_t(thumbImg->height));
+        rwidth = int(size_t(thumbImg->getWidth()) * size_t(rheight) / size_t(thumbImg->getHeight()));
     }
 
 
@@ -899,8 +899,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     if (params.coarse.rotate) {
         baseImg->rotate (params.coarse.rotate);
-        rwidth = baseImg->width;
-        rheight = baseImg->height;
+        rwidth = baseImg->getWidth();
+        rheight = baseImg->getHeight();
     }
 
     if (params.coarse.hflip) {
@@ -940,12 +940,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
 
-    int fw = baseImg->width;
-    int fh = baseImg->height;
+    int fw = baseImg->getWidth();
+    int fh = baseImg->getHeight();
     //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
 
     ImProcFunctions ipf (&params, false);
-    ipf.setScale (sqrt(double(fw * fw + fh * fh)) / sqrt(double(thumbImg->width * thumbImg->width + thumbImg->height * thumbImg->height))*scale);
+    ipf.setScale (sqrt(double(fw * fw + fh * fh)) / sqrt(double(thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
     ipf.updateColorProfiles (options.rtSettings.monitorProfile, options.rtSettings.monitorIntent, false, false);
 
     LUTu hist16 (65536);
@@ -1206,9 +1206,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // calculate scale
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
-        myscale = scale * thumbImg->width / fh;
+        myscale = scale * thumbImg->getWidth() / fh;
     } else {
-        myscale = scale * thumbImg->height / fh;
+        myscale = scale * thumbImg->getHeight() / fh;
     }
 
     myscale = 1.0 / myscale;
@@ -1238,9 +1238,9 @@ int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight,
     int rwidth;
 
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
-        ratio = (float)(thumbImg->height) / (float)(thumbImg->width);
+        ratio = (float)(thumbImg->getHeight()) / (float)(thumbImg->getWidth());
     } else {
-        ratio = (float)(thumbImg->width) / (float)(thumbImg->height);
+        ratio = (float)(thumbImg->getWidth()) / (float)(thumbImg->getHeight());
     }
 
     rwidth = (int)(ratio * (float)rheight);
@@ -1251,8 +1251,8 @@ int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight,
 void Thumbnail::getDimensions (int& w, int& h, double& scaleFac)
 {
     if (thumbImg) {
-        w = thumbImg->width;
-        h = thumbImg->height;
+        w = thumbImg->getWidth();
+        h = thumbImg->getHeight();
         scaleFac = scale;
     } else {
         w = 0;
@@ -1314,11 +1314,11 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
             points.push_back (Coord2D (j, i));
         }
 
-    int fw = thumbImg->width, fh = thumbImg->height;
+    int fw = thumbImg->getWidth(), fh = thumbImg->getHeight();
 
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
-        fw = thumbImg->height;
-        fh = thumbImg->width;
+        fw = thumbImg->getHeight();
+        fh = thumbImg->getWidth();
     }
 
     ImProcFunctions ipf (&params, false);
@@ -1343,8 +1343,8 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
 void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty)
 {
 
-    int W = thumbImg->width;
-    int H = thumbImg->height;
+    int W = thumbImg->getWidth();
+    int H = thumbImg->getHeight();
     int sw = W, sh = H;
 
     if ((tran & TR_ROT) == TR_R90 || (tran & TR_ROT) == TR_R270) {
@@ -1386,12 +1386,12 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         return nullptr;
     }
 
-    if (thumbImg->width < trim_width) {
+    if (thumbImg->getWidth() < trim_width) {
         return nullptr;
     }
 
     // to utilize the 8 bit color range of the thumbnail we brighten it and apply gamma correction
-    unsigned char* tmpdata = new unsigned char[thumbImg->height * trim_width];
+    unsigned char* tmpdata = new unsigned char[thumbImg->getHeight() * trim_width];
     int ix = 0, max;
 
     if (gammaCorrected) {
@@ -1417,7 +1417,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         }
 
         // Go down till we cut off that many pixels
-        unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
+        unsigned long cutoff = thumbImg->getHeight() * thumbImg->getHeight() * 4 * BurnOffPct;
 
         int max_;
         unsigned long sum = 0;
@@ -1434,8 +1434,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         if (thumbImg->getType() == sImage8) {
             Image8 *image = static_cast<Image8*>(thumbImg);
 
-            for (int i = 0; i < thumbImg->height; i++)
-                for (int j = (thumbImg->width - trim_width) / 2; j < trim_width + (thumbImg->width - trim_width) / 2; j++) {
+            for (int i = 0; i < thumbImg->getHeight(); i++)
+                for (int j = (thumbImg->getWidth() - trim_width) / 2; j < trim_width + (thumbImg->getWidth() - trim_width) / 2; j++) {
                     unsigned short r_, g_, b_;
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
@@ -1448,8 +1448,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         } else if (thumbImg->getType() == sImage16) {
             Image16 *image = static_cast<Image16*>(thumbImg);
 
-            for (int i = 0; i < thumbImg->height; i++)
-                for (int j = (thumbImg->width - trim_width) / 2; j < trim_width + (thumbImg->width - trim_width) / 2; j++) {
+            for (int i = 0; i < thumbImg->getHeight(); i++)
+                for (int j = (thumbImg->getWidth() - trim_width) / 2; j < trim_width + (thumbImg->getWidth() - trim_width) / 2; j++) {
                     unsigned short r_, g_, b_;
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
@@ -1462,8 +1462,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         } else if (thumbImg->getType() == sImagefloat) {
             Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
 
-            for (int i = 0; i < thumbImg->height; i++)
-                for (int j = (thumbImg->width - trim_width) / 2; j < trim_width + (thumbImg->width - trim_width) / 2; j++) {
+            for (int i = 0; i < thumbImg->getHeight(); i++)
+                for (int j = (thumbImg->getWidth() - trim_width) / 2; j < trim_width + (thumbImg->getWidth() - trim_width) / 2; j++) {
                     unsigned short r_, g_, b_;
                     image->convertTo(image->r(i, j), r_);
                     image->convertTo(image->g(i, j), g_);
@@ -1482,8 +1482,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             Image8 *image = static_cast<Image8*>(thumbImg);
             unsigned char max_ = 0;
 
-            for (int row = 0; row < image->height; row++)
-                for (int col = 0; col < image->width; col++) {
+            for (int row = 0; row < image->getHeight(); row++)
+                for (int col = 0; col < image->getWidth(); col++) {
                     if (image->r(row, col) > max_) {
                         max_ = image->r(row, col);
                     }
@@ -1506,8 +1506,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             scaleForSave = 65535 * 8192 / max;
 
             // Correction and gamma to 8 Bit
-            for (int i = 0; i < image->height; i++)
-                for (int j = (image->width - trim_width) / 2; j < trim_width + (image->width - trim_width) / 2; j++) {
+            for (int i = 0; i < image->getHeight(); i++)
+                for (int j = (image->getWidth() - trim_width) / 2; j < trim_width + (image->getWidth() - trim_width) / 2; j++) {
                     unsigned short rtmp, gtmp, btmp;
                     image->convertTo(image->r(i, j), rtmp);
                     image->convertTo(image->g(i, j), gtmp);
@@ -1521,8 +1521,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             Image16 *image = static_cast<Image16*>(thumbImg);
             unsigned short max_ = 0;
 
-            for (int row = 0; row < image->height; row++)
-                for (int col = 0; col < image->width; col++) {
+            for (int row = 0; row < image->getHeight(); row++)
+                for (int col = 0; col < image->getWidth(); col++) {
                     if (image->r(row, col) > max_) {
                         max_ = image->r(row, col);
                     }
@@ -1545,8 +1545,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             scaleForSave = 65535 * 8192 / max;
 
             // Correction and gamma to 8 Bit
-            for (int i = 0; i < image->height; i++)
-                for (int j = (image->width - trim_width) / 2; j < trim_width + (image->width - trim_width) / 2; j++) {
+            for (int i = 0; i < image->getHeight(); i++)
+                for (int j = (image->getWidth() - trim_width) / 2; j < trim_width + (image->getWidth() - trim_width) / 2; j++) {
                     unsigned short rtmp, gtmp, btmp;
                     image->convertTo(image->r(i, j), rtmp);
                     image->convertTo(image->g(i, j), gtmp);
@@ -1560,8 +1560,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
             float max_ = 0.f;
 
-            for (int row = 0; row < image->height; row++)
-                for (int col = 0; col < image->width; col++) {
+            for (int row = 0; row < image->getHeight(); row++)
+                for (int col = 0; col < image->getWidth(); col++) {
                     if (image->r(row, col) > max_) {
                         max_ = image->r(row, col);
                     }
@@ -1584,8 +1584,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             scaleForSave = 65535 * 8192 / max;
 
             // Correction and gamma to 8 Bit
-            for (int i = 0; i < image->height; i++)
-                for (int j = (image->width - trim_width) / 2; j < trim_width + (image->width - trim_width) / 2; j++) {
+            for (int i = 0; i < image->getHeight(); i++)
+                for (int j = (image->getWidth() - trim_width) / 2; j < trim_width + (image->getWidth() - trim_width) / 2; j++) {
                     unsigned short rtmp, gtmp, btmp;
                     image->convertTo(image->r(i, j), rtmp);
                     image->convertTo(image->g(i, j), gtmp);
@@ -1617,7 +1617,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         }
 
         if (cdf_min != -1) {
-            hist[i] = (cdf - cdf_min) * 255 / ((thumbImg->height * trim_width) - cdf_min);
+            hist[i] = (cdf - cdf_min) * 255 / ((thumbImg->getHeight() * trim_width) - cdf_min);
         }
     }
 
@@ -1645,8 +1645,8 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format)
 
     fwrite (thumbImg->getType(), sizeof (char), strlen(thumbImg->getType()), f);
     fputc ('\n', f);
-    guint32 w = guint32(thumbImg->width);
-    guint32 h = guint32(thumbImg->height);
+    guint32 w = guint32(thumbImg->getWidth());
+    guint32 h = guint32(thumbImg->getHeight());
     fwrite (&w, sizeof (guint32), 1, f);
     fwrite (&h, sizeof (guint32), 1, f);
 
