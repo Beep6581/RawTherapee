@@ -1,8 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef _LOCALLAB_H_
-#define _LOCALLAB_H_
 
 #include <gtkmm.h>
 #include "adjuster.h"
@@ -19,62 +17,70 @@
 #include "../rtengine/improcfun.h"
 
 
-class Locallab : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::localListener, public CurveListener, public EditSubscriber, public ColorProvider
+class Locallab :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::localListener,
+    public CurveListener,
+    public EditSubscriber,
+    public ColorProvider
+
 {
 private:
     int lastObject;
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
     void enableToggled (MyExpander *expander);
 
-protected:
-//   Gtk::CheckButton* enabled;
+//protected:
     Gtk::HBox *editHBox;
     Gtk::ToggleButton* edit;
-    Adjuster* degree;
-    Adjuster* locX;
-    Adjuster* locY;
-    Adjuster* locXL;
-    Adjuster* locYT;
-    Adjuster* centerX;
-    Adjuster* centerY;
-    Adjuster* circrad;
-    Adjuster* lightness;
-    Adjuster* contrast;
-    Adjuster* chroma;
-    Adjuster* sensi;
-    Adjuster* sensih;
-    Adjuster* radius;
-    Adjuster* strength;
-    Adjuster* transit;
-    Adjuster* str;
-    Adjuster* neigh;
-    Adjuster* vart;
-    Adjuster* chrrt;
+
     Adjuster* nbspot;
-    Adjuster* anbspot;
-    Adjuster* maxn;
-    Adjuster* sharradius;
-    Adjuster* sharamount;
-    Adjuster* shardamping;
-    Adjuster* shariter;
-    Adjuster* sensisha;
-    Adjuster* thres;
-    Adjuster* proxi;
-    Adjuster* noiselumf;
-    Adjuster* noiselumc;
-    Adjuster* noisechrof;
-    Adjuster* noisechroc;
     Adjuster* multiplier[5];
-    Adjuster* threshold;
-    Adjuster* sensicb;
-    Adjuster* sensibn;
-    Adjuster* stren;
-    Adjuster* gamma;
-    Adjuster* estop;
-    Adjuster* scaltm;
-    Adjuster* rewei;
-    Adjuster* sensitm;
-    Adjuster* retrab;
+
+    Adjuster* const degree;
+    Adjuster* const locX;
+    Adjuster* const locY;
+    Adjuster* const locXL;
+    Adjuster* const locYT;
+    Adjuster* const centerX;
+    Adjuster* const centerY;
+    Adjuster* const circrad;
+    Adjuster* const lightness;
+    Adjuster* const contrast;
+    Adjuster* const chroma;
+    Adjuster* const sensi;
+    Adjuster* const sensih;
+    Adjuster* const radius;
+    Adjuster* const strength;
+    Adjuster* const transit;
+    Adjuster* const str;
+    Adjuster* const neigh;
+    Adjuster* const vart;
+    Adjuster* const chrrt;
+    Adjuster* const anbspot;
+    Adjuster* const sharradius;
+    Adjuster* const sharamount;
+    Adjuster* const shardamping;
+    Adjuster* const shariter;
+    Adjuster* const sensisha;
+    Adjuster* const thres;
+    Adjuster* const proxi;
+    Adjuster* const noiselumf;
+    Adjuster* const noiselumc;
+    Adjuster* const noisechrof;
+    Adjuster* const noisechroc;
+    Adjuster* const threshold;
+    Adjuster* const sensicb;
+    Adjuster* const sensibn;
+    Adjuster* const stren;
+    Adjuster* const gamma;
+    Adjuster* const estop;
+    Adjuster* const scaltm;
+    Adjuster* const rewei;
+    Adjuster* const sensitm;
+    Adjuster* const retrab;
 
     MyExpander* const expcolor;
     MyExpander* const expblur;
@@ -91,37 +97,45 @@ protected:
     sigc::connection enablecolorConn, enableblurConn, enabletonemapConn;
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
+    sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
 
-    Gtk::CheckButton* avoid;
-    MyComboBoxText*   Smethod;
-    sigc::connection  Smethodconn;
-    Gtk::HBox* ctboxS;
-    Gtk::CheckButton* invers;
-    Gtk::CheckButton* curvactiv;
-    Gtk::CheckButton* inversrad;
-    Gtk::CheckButton* inversret;
-    Gtk::CheckButton* activlum;
-    Gtk::CheckButton* inverssha;
+    Gtk::HBox* const ctboxS;
+
+    Gtk::CheckButton* const avoid;
+    Gtk::CheckButton* const invers;
+    Gtk::CheckButton* const curvactiv;
+    Gtk::CheckButton* const inversrad;
+    Gtk::CheckButton* const inversret;
+    Gtk::CheckButton* const activlum;
+    Gtk::CheckButton* const inverssha;
 
     Gtk::Button* neutral;
     Gtk::HBox* neutrHBox;
-
     Gtk::Button* neutral1;
     Gtk::HBox* neutrHBox1;
 
-    MyComboBoxText*   retinexMethod;
-    MyComboBoxText*   qualityMethod;
-    Gtk::Label* labmdh;
-    Gtk::HBox* dhbox;
-    CurveEditorGroup* LocalcurveEditorgainT;
+    MyComboBoxText*   const Smethod;
+    sigc::connection  Smethodconn;
+    MyComboBoxText*   const retinexMethod;
+    sigc::connection retinexMethodConn;
+    MyComboBoxText*   const qualityMethod;
+    sigc::connection qualityMethodConn;
+
+
+    Gtk::Label* const labmdh;
+    Gtk::HBox* const dhbox;
+
+    CurveEditorGroup* const LocalcurveEditorgainT;
     FlatCurveEditor* cTgainshape;
-    CurveEditorGroup* LocalcurveEditorgainTrab;
+    CurveEditorGroup* const LocalcurveEditorgainTrab;
     FlatCurveEditor* cTgainshaperab;
-    CurveEditorGroup* llCurveEditorG;
+    CurveEditorGroup* const llCurveEditorG;
     DiagonalCurveEditor* llshape;
     DiagonalCurveEditor* ccshape;
     Gtk::Image* irg;
     FlatCurveEditor* LHshape;
+
+
 
     int nextdatasp[60];
     int nextlength;
@@ -144,7 +158,6 @@ protected:
     rtengine::Coord draggedCenter;
     bool lastavoid, lastinvers, lastinversrad, lastinversret, lastactivlum, lastinverssha, lastcurvactiv;
     int lastanbspot;
-    sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn, retinexMethodConn, qualityMethodConn, neutralconn, neutralconn1;
 
     void editToggled ();
 
@@ -199,4 +212,3 @@ public:
     void switchOffEditMode ();
 };
 
-#endif

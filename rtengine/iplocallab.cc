@@ -4302,7 +4302,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                 float chromat = sqrt (SQR (bufcolorig->a[loy - begy - 1][lox - begx - 1]) +  SQR (bufcolorig->b[loy - begy - 1][lox - begx - 1]));
                                 float ch;
                                 float ampli = 12.f;
-                                ch = (cclocalcurve[chromat * adjustr])  / ((chromat + 0.00001f) / adjustr); //ch between 0 and 0 50 or more
+                                ch = (cclocalcurve[chromat * adjustr])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
 
                                 if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
                                     chprov = 100.f * ch - 100.f;

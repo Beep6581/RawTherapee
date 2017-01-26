@@ -36,14 +36,82 @@ using namespace rtengine::procparams;
 extern Options options;
 
 
-Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABEL"), false, true), EditSubscriber (ET_OBJECTS), lastObject (-1), draggedPointOldAngle (-1000.),
+
+Locallab::Locallab ():
+    FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABEL"), false, true),
+    EditSubscriber (ET_OBJECTS), lastObject (-1), draggedPointOldAngle (-1000.),
     expcolor (new MyExpander (true, M ("TP_LOCALLAB_COFR"))),
     expblur (new MyExpander (true, M ("TP_LOCALLAB_BLUFR"))),
     exptonemap (new MyExpander (true, M ("TP_LOCALLAB_TM"))),
     expreti (new MyExpander (true, M ("TP_LOCALLAB_RETI"))),
     expsharp (new MyExpander (true, M ("TP_LOCALLAB_SHARP"))),
     expcbdl (new MyExpander (true, M ("TP_LOCALLAB_CBDL"))),
-    expdenoi (new MyExpander (true, M ("TP_LOCALLAB_DENOIS")))
+    expdenoi (new MyExpander (true, M ("TP_LOCALLAB_DENOIS"))),
+
+    llCurveEditorG (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_LUM"))),
+    LocalcurveEditorgainT (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_TRANSMISSIONGAIN"))),
+    LocalcurveEditorgainTrab (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_TRANSMISSIONGAINRAB"))),
+
+
+    anbspot (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ANBSPOT"), 0, 1, 1, 0))),
+    locX (Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH"), 0, 1500, 1, 250))),
+    locXL (Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH_L"), 0, 1500, 1, 250))),
+    degree (Gtk::manage (new Adjuster (M ("TP_LOCAL_DEGREE"), -180, 180, 1, 0))),
+    locY (Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT"), 0, 1500, 1, 250))),
+    locYT (Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT_T"), 0, 1500, 1, 250))),
+    centerX (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0))),
+    centerY (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
+    circrad (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CIRCRADIUS"), 4, 100, 1, 18))),
+    thres (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_THRES"), 1, 315, 1, 60))),
+    proxi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_PROXI"), 1, 8, 1, 1))),
+    lightness (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0))),
+    contrast (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
+    chroma (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
+    sensi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
+    radius (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_RADIUS"), 0, 100, 1, 0) )),
+    strength (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0) )),
+    sensibn (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 60))),
+    transit (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),
+    stren (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STREN"), -100, 200, 1, 0))),
+    gamma (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_GAM"), 80, 150, 1, 100))),
+    estop (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ESTOP"), 10, 400, 1, 140))),
+    scaltm (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SCALTM"), 1, 100, 1, 3))),
+    rewei (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_REWEI"), 0, 9, 1, 0))),
+    sensitm (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
+    str (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
+    neigh (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NEIGH"), 14, 150, 1, 50))),
+    vart (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_VART"), 50, 500, 1, 200))),
+    chrrt (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
+    sensih (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIH"), 0, 100, 1, 19))),
+    retrab (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_RETRAB"), 0, 10000, 1, 500))),
+    threshold (Gtk::manage ( new Adjuster (M ("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20) )),
+    sensicb (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSICB"), 0, 100, 1, 19))),
+    sharradius (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARRADIUS"), 42, 250, 1, 4))),
+    sharamount (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 75))),
+    shardamping (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75))),
+    shariter (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
+    sensisha (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19))),
+    noiselumf (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISELUMFINE"), 0, 100, 1, 0))),
+    noiselumc (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISELUMCOARSE"), 0, 100, 1, 0))),
+    noisechrof (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISECHROFINE"), 0, 100, 1, 0))),
+    noisechroc (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISECHROCOARSE"), 0, 100, 1, 0))),
+
+    Smethod (Gtk::manage (new MyComboBoxText ())),
+    qualityMethod (Gtk::manage (new MyComboBoxText ())),
+    retinexMethod (Gtk::manage (new MyComboBoxText ())),
+
+    labmdh (Gtk::manage (new Gtk::Label (M ("TP_LOCRETI_METHOD") + ":"))),
+    ctboxS (Gtk::manage (new Gtk::HBox ())),
+    dhbox (Gtk::manage (new Gtk::HBox ())),
+
+    avoid (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_AVOID")))),
+    activlum (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_ACTIV")))),
+    invers (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
+    curvactiv (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_CURV")))),
+    inversrad (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
+    inversret (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
+    inverssha (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS"))))
+
 
 {
     CurveListener::setMulti (true);
@@ -60,7 +128,7 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
 
     realnbspot = options.rtSettings.nspot;
 
-    nbspot  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NBSPOT"), 1, realnbspot, 1, 1));
+    nbspot = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NBSPOT"), 1, realnbspot, 1, 1));
 
     if (options.rtSettings.locdelay) {
 
@@ -74,7 +142,6 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     nbspot->set_tooltip_text (M ("TP_LOCALLAB_NBSPOT_TOOLTIP"));
 
 
-    anbspot  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ANBSPOT"), 0, 1, 1, 0));
     anbspot->setAdjusterListener (this);
     anbspot->set_tooltip_text (M ("TP_LOCALLAB_ANBSPOT_TOOLTIP"));
 
@@ -108,12 +175,10 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     shapeVBox->set_spacing (2);
     shapeVBox->set_border_width (4);
 
-    ctboxS = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* labmS = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_STYPE") + ":"));
     ctboxS->pack_start (*labmS, Gtk::PACK_SHRINK, 4);
     ctboxS->set_tooltip_markup (M ("TP_LOCALLAB_STYPE_TOOLTIP"));
 
-    Smethod = Gtk::manage (new MyComboBoxText ());
     Smethod->append (M ("TP_LOCALLAB_IND"));
     Smethod->append (M ("TP_LOCALLAB_SYM"));
     Smethod->append (M ("TP_LOCALLAB_INDSL"));
@@ -121,39 +186,30 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     Smethod->set_active (0);
     Smethodconn = Smethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::SmethodChanged) );
 
-    locX = Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH"), 0, 1500, 1, 250));
     //locX->set_tooltip_text (M("TP_LOCAL_WIDTH_TOOLTIP"));
     locX->setAdjusterListener (this);
 
-    locXL = Gtk::manage (new Adjuster (M ("TP_LOCAL_WIDTH_L"), 0, 1500, 1, 250));
     //locX->set_tooltip_text (M("TP_LOCAL_WIDTH_TOOLTIP"));
     locXL->setAdjusterListener (this);
 
-    degree = Gtk::manage (new Adjuster (M ("TP_LOCAL_DEGREE"), -180, 180, 1, 0));
     //degree->set_tooltip_text (M("TP_LOCAL_DEGREE_TOOLTIP"));
     degree->setAdjusterListener (this);
 
-    locY = Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT"), 0, 1500, 1, 250));
     //locY->set_tooltip_text (M("TP_LOCAL_HEIGHT_TOOLTIP"));
     locY->setAdjusterListener (this);
 
-    locYT = Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT_T"), 0, 1500, 1, 250));
     //locY->set_tooltip_text (M("TP_LOCAL_HEIGHT_TOOLTIP"));
     locYT->setAdjusterListener (this);
 
-    centerX = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0));
     //centerX->set_tooltip_text (M("TP_LOCALLAB_CENTER_X_TOOLTIP"));
     centerX->setAdjusterListener (this);
 
-    centerY = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0));
     //centerY->set_tooltip_text (M("TP_LOCALLAB_CENTER_Y_TOOLTIP"));
     centerY->setAdjusterListener (this);
 
-    circrad = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CIRCRADIUS"), 4, 100, 1, 18));
     circrad->setAdjusterListener (this);
 
 
-    qualityMethod = Gtk::manage (new MyComboBoxText ());
     qualityMethod->append (M ("TP_LOCALLAB_STD"));
     qualityMethod->append (M ("TP_LOCALLAB_ENH"));
     qualityMethod->append (M ("TP_LOCALLAB_ENHDEN"));
@@ -161,10 +217,8 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     qualityMethodConn = qualityMethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::qualityMethodChanged) );
     qualityMethod->set_tooltip_markup (M ("TP_LOCALLAB_METHOD_TOOLTIP"));
 
-    thres = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_THRES"), 1, 315, 1, 60));
     thres->setAdjusterListener (this);
 
-    proxi = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_PROXI"), 1, 8, 1, 1));
     proxi->setAdjusterListener (this);
     std::vector<GradientMilestone> milestones;
     std::vector<double> defaultCurve;
@@ -175,7 +229,6 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
 
     irg   = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
 
-    llCurveEditorG = new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_LUM"));
     llCurveEditorG->setCurveListener (this);
 
     rtengine::LocallabParams::getDefaultLLCurve (defaultCurve);
@@ -190,7 +243,7 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     rtengine::LocallabParams::getDefaultCCCurve (defaultCurve4);
     ccshape = static_cast<DiagonalCurveEditor*> (llCurveEditorG->addCurve (CT_Diagonal, "C(C)"));
     ccshape->setResetCurve (DiagonalCurveType (defaultCurve4.at (0)), defaultCurve4);
-    ccshape->setTooltip (M ("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+    ccshape->setTooltip (M ("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     milestones.push_back ( GradientMilestone (0., 0., 0., 0.) );
     milestones.push_back ( GradientMilestone (1., 1., 1., 1.) );
     ccshape->setBottomBarBgGradient (milestones);
@@ -220,55 +273,42 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
 
 
 
-    lightness = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0));
     //lightness->set_tooltip_text (M("TP_LOCALLAB_LIGHTNESS_TOOLTIP"));
     lightness->setAdjusterListener (this);
 
-    contrast = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0));
     //contrast->set_tooltip_text (M("TP_LOCALLAB_CONTRAST_TOOLTIP"));
     contrast->setAdjusterListener (this);
 
-    chroma = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0));
     //chroma->set_tooltip_text (M("TP_LOCALLAB_CHROMA_TOOLTIP"));
     chroma->setAdjusterListener (this);
 
-    sensi = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19));
     sensi->set_tooltip_text (M ("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensi->setAdjusterListener (this);
 
-    radius = Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_RADIUS"), 0, 100, 1, 0) );
     //radius->set_tooltip_text (M("TP_LOCALLAB_RADIUS_TOOLTIP"));
     radius->setAdjusterListener (this);
-    strength = Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0) );
     //radius->set_tooltip_text (M("TP_LOCALLAB_RADIUS_TOOLTIP"));
     strength->setAdjusterListener (this);
 
 
-    sensibn = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 60));
     sensibn->set_tooltip_text (M ("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensibn->setAdjusterListener (this);
 
-    activlum = Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_ACTIV")));
     activlum->set_active (false);
     activlumConn  = activlum->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::activlumChanged) );
 
-    transit = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60));
     transit->set_tooltip_text (M ("TP_LOCALLAB_TRANSIT_TOOLTIP"));
     transit->setAdjusterListener (this);
 
-    invers = Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")));
     invers->set_active (false);
     inversConn  = invers->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversChanged) );
 
-    curvactiv   = Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_CURV")));
     curvactiv->set_active (false);
     curvactivConn  = curvactiv->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::curvactivChanged) );
 
-    inversrad = Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")));
     inversrad->set_active (false);
     inversradConn  = inversrad->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversradChanged) );
 
-    inversret = Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")));
     inversret->set_active (false);
     inversretConn  = inversret->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversretChanged) );
 
@@ -277,22 +317,16 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     tmBox->set_border_width (4);
     tmBox->set_spacing (2);
 
-    stren  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STREN"), -100, 200, 1, 0));
     stren->setAdjusterListener (this);
 
-    gamma  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_GAM"), 80, 150, 1, 100));
     gamma->setAdjusterListener (this);
 
-    estop  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ESTOP"), 10, 400, 1, 140));
     estop->setAdjusterListener (this);
 
-    scaltm  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SCALTM"), 1, 100, 1, 3));
     scaltm->setAdjusterListener (this);
 
-    rewei  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_REWEI"), 0, 9, 1, 0));
     rewei->setAdjusterListener (this);
 
-    sensitm = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 40));
     sensitm->set_tooltip_text (M ("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensitm->setAdjusterListener (this);
 
@@ -304,12 +338,8 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     retiBox->set_border_width (4);
     retiBox->set_spacing (2);
 
-    dhbox = Gtk::manage (new Gtk::HBox ());
-    labmdh = Gtk::manage (new Gtk::Label (M ("TP_LOCRETI_METHOD") + ":"));
     dhbox->pack_start (*labmdh, Gtk::PACK_SHRINK, 1);
 
-    retinexMethod = Gtk::manage (new MyComboBoxText ());
-//   retinexMethod->append (M("TP_WAVE_NONE"));
     retinexMethod->append (M ("TP_RETINEX_LOW"));
     retinexMethod->append (M ("TP_RETINEX_UNIFORM"));
     retinexMethod->append (M ("TP_RETINEX_HIGH"));
@@ -317,23 +347,15 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     retinexMethodConn = retinexMethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::retinexMethodChanged) );
     retinexMethod->set_tooltip_markup (M ("TP_LOCRETI_METHOD_TOOLTIP"));
 
-    str  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STR"), 0, 100, 1, 0));
     str->setAdjusterListener (this);
-    neigh  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NEIGH"), 14, 150, 1, 50));
     neigh->setAdjusterListener (this);
-    vart  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_VART"), 50, 500, 1, 200));
     vart->setAdjusterListener (this);
-    chrrt  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0));
     chrrt->setAdjusterListener (this);
-    sensih = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIH"), 0, 100, 1, 19));
     sensih->set_tooltip_text (M ("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensih->setAdjusterListener (this);
-    retrab  = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_RETRAB"), 0, 10000, 1, 500));
     retrab->setAdjusterListener (this);
 
-//    std::vector<double> defaultCurve;
 
-    LocalcurveEditorgainT = new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_TRANSMISSIONGAIN"));
     LocalcurveEditorgainT->setCurveListener (this);
     rtengine::LocallabParams::getDefaultLocalgainCurveT (defaultCurve2);
 
@@ -343,21 +365,7 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     cTgainshape->setIdentityValue (0.);
     cTgainshape->setResetCurve (FlatCurveType (defaultCurve2.at (0)), defaultCurve2);
     cTgainshape->setTooltip (M ("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
-    /*
-        cTgainshape->setCurveColorProvider(this, 1);
-        milestones.clear();
 
-        for (int i = 0; i < 7; i++) {
-            float R, G, B;
-            float x = float(i) * (1.0f / 6.0);
-            Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-            milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
-        }
-
-        cTgainshape->setBottomBarBgGradient(milestones);
-    */
-
-    LocalcurveEditorgainTrab = new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_TRANSMISSIONGAINRAB"));
     LocalcurveEditorgainTrab->setCurveListener (this);
 
     rtengine::LocallabParams::getDefaultLocalgainCurveTrab (defaultCurve2rab);
@@ -375,12 +383,9 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     LocalcurveEditorgainTrab->curveListComplete();
     LocalcurveEditorgainTrab->show();
 
-//    retiFrame->add(*retiBox);
-//    pack_start (*retiFrame);
 
 // end reti
 
-    avoid = Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_AVOID")));
     avoid->set_active (false);
     avoidConn  = avoid->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::avoidChanged) );
     pack_start (*nbspot);
@@ -456,33 +461,25 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
     cbdlVBox->pack_start (*separator3, Gtk::PACK_SHRINK, 2);
 
-    threshold = Gtk::manage ( new Adjuster (M ("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20) );
     threshold->setAdjusterListener (this);
     cbdlVBox->pack_start (*threshold);
 
-    sensicb = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSICB"), 0, 100, 1, 19));
     sensicb->set_tooltip_text (M ("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensicb->setAdjusterListener (this);
     cbdlVBox->pack_start (*sensicb);
 
-    sharradius = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARRADIUS"), 42, 250, 1, 4));
     sharradius->setAdjusterListener (this);
 
-    sharamount = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 75));
     sharamount->setAdjusterListener (this);
 
-    shardamping = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75));
     shardamping->setAdjusterListener (this);
 
-    shariter = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30));
     shariter->setAdjusterListener (this);
 
 
-    sensisha = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIS"), 0, 100, 1, 19));
     sensisha->set_tooltip_text (M ("TP_LOCALLAB_SENSIS_TOOLTIP"));
     sensisha->setAdjusterListener (this);
 
-    inverssha = Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")));
     inverssha->set_active (false);
     inversshaConn  = inverssha->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversshaChanged) );
 
@@ -497,16 +494,12 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     denoisVBox->set_spacing (2);
     denoisVBox->set_border_width (4);
 
-    noiselumf = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISELUMFINE"), 0, 100, 1, 0));
     noiselumf->setAdjusterListener (this);
 
-    noiselumc = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISELUMCOARSE"), 0, 100, 1, 0));
     noiselumc->setAdjusterListener (this);
 
-    noisechrof = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISECHROFINE"), 0, 100, 1, 0));
     noisechrof->setAdjusterListener (this);
 
-    noisechroc = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISECHROCOARSE"), 0, 100, 1, 0));
     noisechroc->setAdjusterListener (this);
 
     denoisVBox->pack_start (*noiselumf);
@@ -535,12 +528,9 @@ Locallab::Locallab (): FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABE
     colorVBox->pack_start (*curvactiv);
 
     colorVBox->pack_start (*llCurveEditorG, Gtk::PACK_SHRINK, 2);
-    //  colorVBox->pack_start(*llCurveEditorG2, Gtk::PACK_SHRINK, 2);
 
     colorVBox->pack_start (*invers);
 
-//    colorFrame->add(*colorVBox);
-//    pack_start (*colorFrame);
     expcolor->add (*colorVBox);
     pack_start (*expcolor);
 
@@ -679,7 +669,6 @@ Locallab::~Locallab()
     delete LocalcurveEditorgainT;
     delete LocalcurveEditorgainTrab;
     delete llCurveEditorG;
-//    delete llCurveEditorG2;
 
 }
 void Locallab::foldAllButMe (GdkEventButton* event, MyExpander *expander)
