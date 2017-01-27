@@ -921,7 +921,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const float redBlueWeight = bayerParams.pixelShiftRedBlueWeight + 1.f;
     const bool blurMap = bayerParams.pixelShiftBlur;
     const float sigma = bayerParams.pixelShiftSigma;
-    const float threshold = bayerParams.pixelShiftSum;
+    const float threshold = bayerParams.pixelShiftSum + 9.f;
     const bool experimental0 = bayerParams.pixelShiftExp0;
     const bool holeFill = bayerParams.pixelShiftHoleFill;
     const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0.;
@@ -1656,14 +1656,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             for(int v = -1; v <= 1; v++) {
                 for(int h = -1; h < 1; h++) {
-                    v3sum[1 + h] += (psMask[i + v][j + h] - 1.f);
+                    v3sum[1 + h] += (psMask[i + v][j + h]);
                 }
             }
 
             float blocksum = v3sum[0] + v3sum[1];
 
             for(int voffset = 2; j < winw - (border + offsX); ++j, ++voffset) {
-                float colSum = psMask[i - 1][j + 1] + psMask[i][j + 1] + psMask[i + 1][j + 1] - 3.f;
+                float colSum = psMask[i - 1][j + 1] + psMask[i][j + 1] + psMask[i + 1][j + 1];
                 voffset = voffset == 3 ? 0 : voffset;  // faster than voffset %= 3;
                 blocksum -= v3sum[voffset];
                 blocksum += colSum;
