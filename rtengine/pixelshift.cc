@@ -169,18 +169,22 @@ void floodFill4Impl(int y, int x, int xStart, int xEnd, int yStart, int yEnd, ar
             auto yUp = y - 1, yDown = y + 1;
             bool lastXUp = false, lastXDown = false, firstXUp = false, firstXDown = false;
             mask[y][x] = 0;
+
             if(yUp >= yStart && mask[yUp][x] == 255) {
                 coordStack.emplace(x, yUp);
                 firstXUp = lastXUp = true;
             }
+
             if(yDown < yEnd && mask[yDown][x] == 255) {
                 coordStack.emplace(x, yDown);
                 firstXDown = lastXDown = true;
             }
+
             auto xr = x + 1;
-            
+
             while(xr < xEnd && mask[y][xr] == 255) {
                 mask[y][xr] = 0;
+
                 if(yUp >= yStart && mask[yUp][xr] == 255) {
                     if(!lastXUp) {
                         coordStack.emplace(xr, yUp);
@@ -189,6 +193,7 @@ void floodFill4Impl(int y, int x, int xStart, int xEnd, int yStart, int yEnd, ar
                 } else {
                     lastXUp = false;
                 }
+
                 if(yDown < yEnd && mask[yDown][xr] == 255) {
                     if(!lastXDown) {
                         coordStack.emplace(xr, yDown);
@@ -197,14 +202,17 @@ void floodFill4Impl(int y, int x, int xStart, int xEnd, int yStart, int yEnd, ar
                 } else {
                     lastXDown = false;
                 }
+
                 xr++;
             }
 
             auto xl = x - 1;
             lastXUp = firstXUp;
             lastXDown = firstXDown;
+
             while(xl >= xStart && mask[y][xl] == 255) {
                 mask[y][xl] = 0;
+
                 if(yUp >= yStart && mask[yUp][xl] == 255) {
                     if(!lastXUp) {
                         coordStack.emplace(xl, yUp);
@@ -213,6 +221,7 @@ void floodFill4Impl(int y, int x, int xStart, int xEnd, int yStart, int yEnd, ar
                 } else {
                     lastXUp = false;
                 }
+
                 if(yDown < yEnd && mask[yDown][xl] == 255) {
                     if(!lastXDown) {
                         coordStack.emplace(xl, yDown);
@@ -221,8 +230,10 @@ void floodFill4Impl(int y, int x, int xStart, int xEnd, int yStart, int yEnd, ar
                 } else {
                     lastXDown = false;
                 }
+
                 xl--;
             }
+
             mask[y][x] = 0;
         }
     }
@@ -232,55 +243,61 @@ void floodFill4(int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &ma
 {
     #pragma omp parallel
     {
-    std::stack<std::pair<uint16_t, uint16_t>, std::vector<std::pair<uint16_t, uint16_t>>> coordStack;
+        std::stack<std::pair<uint16_t, uint16_t>, std::vector<std::pair<uint16_t, uint16_t>>> coordStack;
 
-    #pragma omp for schedule(dynamic,128) nowait
-    for(uint16_t i = yStart;i<yEnd;i++)
-        floodFill4Impl(i, xStart, xStart, xEnd, yStart, yEnd, mask, coordStack);
+        #pragma omp for schedule(dynamic,128) nowait
 
-    #pragma omp for schedule(dynamic,128) nowait
-    for(int16_t i = yEnd-1; i >= 0 ;i--)
-        floodFill4Impl(i, xEnd - 1, xStart, xEnd, yStart, yEnd, mask, coordStack);
-
-    #pragma omp sections nowait
-    {
-        #pragma omp section
+        for(uint16_t i = yStart; i < yEnd; i++)
         {
-            uint16_t i = yStart;
+            floodFill4Impl(i, xStart, xStart, xEnd, yStart, yEnd, mask, coordStack);
+        }
 
-            for(uint16_t j = xStart; j < xEnd; j++)
+        #pragma omp for schedule(dynamic,128) nowait
+
+        for(int16_t i = yEnd - 1; i >= 0 ; i--)
+        {
+            floodFill4Impl(i, xEnd - 1, xStart, xEnd, yStart, yEnd, mask, coordStack);
+        }
+
+        #pragma omp sections nowait
+        {
+            #pragma omp section
             {
-                floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
+                uint16_t i = yStart;
+
+                for(uint16_t j = xStart; j < xEnd; j++)
+                {
+                    floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
+                }
+            }
+            #pragma omp section
+            {
+                uint16_t i = yStart;
+
+                for(uint16_t j = xEnd - 1; j >= xStart; j--)
+                {
+                    floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
+                }
+            }
+            #pragma omp section
+            {
+                uint16_t i = yEnd;
+
+                for(uint16_t j = xStart; j < xEnd; j++)
+                {
+                    floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
+                }
+            }
+            #pragma omp section
+            {
+                uint16_t i = yEnd;
+
+                for(uint16_t j = xEnd - 1; j >= xStart; j--)
+                {
+                    floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
+                }
             }
         }
-        #pragma omp section
-        {
-            uint16_t i = yStart;
-
-            for(uint16_t j = xEnd - 1; j >= xStart; j--)
-            {
-                floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
-            }
-        }
-        #pragma omp section
-        {
-            uint16_t i = yEnd;
-
-            for(uint16_t j = xStart; j < xEnd; j++)
-            {
-                floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
-            }
-        }
-        #pragma omp section
-        {
-            uint16_t i = yEnd;
-
-            for(uint16_t j = xEnd - 1; j >= xStart; j--)
-            {
-                floodFill4Impl(i, j, xStart, xEnd, yStart, yEnd, mask, coordStack);
-            }
-        }
-    }
     }
 }
 
@@ -900,7 +917,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const bool checkNonGreenAmaze = bayerParams.pixelShiftNonGreenAmaze;
     const bool checkNonGreenCross2 = bayerParams.pixelShiftNonGreenCross2;
     const bool checkGreen = bayerParams.pixelShiftGreen;
-    const float redBlueWeight = bayerParams.pixelShiftRedBlueWeight;
+    const float greenWeight = 2.f;
+    const float redBlueWeight = bayerParams.pixelShiftRedBlueWeight + 1.f;
     const bool blurMap = bayerParams.pixelShiftBlur;
     const float sigma = bayerParams.pixelShiftSigma;
     const float threshold = bayerParams.pixelShiftSum;
@@ -1077,8 +1095,13 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
     nRead *= pow(2.f, nreadIso);
-    eperIsoModel *= pow(2.f, eperIso);
-    eperIso = eperIsoModel * (100.f / (rawWpCorrection * idata->getISOSpeed()));
+    eperIsoModel *= pow(2.f, eperIso * 0.5f);
+
+    if(adaptive && experimental0) {
+        eperIso = eperIsoModel * sqrtf(100.f / (rawWpCorrection * idata->getISOSpeed()));
+    } else {
+        eperIso = eperIsoModel * (100.f / (rawWpCorrection * idata->getISOSpeed()));
+    }
 
     float eperIsoRed = eperIso / scale_mul[0];
     float eperIsoGreen = eperIso * scaleGreen;
@@ -1128,8 +1151,16 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     array2D<float> psG1(winw + 32, winh);
     array2D<float> psG2(winw + 32, winh);
     array2D<float> psBlue(winw + 32, winh);
+    array2D<float> psMask(winw, winh);
 
-    array2D<float> psMask(winw, winh, ARRAY2D_CLEAR_DATA);
+    // Fill the mask with value 1.0
+    // We work in 1.0 to 2.0 range to avoid performance issues caused by denormal numbers in gaussian blur
+    for(int i = 0; i < winh; ++i) {
+        for(int j = 0; j < winw; ++j) {
+            psMask[i][j] = 1.f;
+        }
+    }
+
 // fill channels psRed, psG1, psG2 and psBlue
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -1165,433 +1196,447 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
 // now that the temporary planes are filled for easy access we do the motion detection
-    int sum0 = 0;
-    int sum1 = 0;
+    int sum[2] = {0};
+
     float pixelcount = ((winh - (border + offsY) - (winy + border - offsY)) * (winw - (border + offsX) - (winx + border - offsX))) / 2.f;
+
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(+:sum0,sum1) schedule(dynamic,16)
+    #pragma omp parallel
+#endif
+    {
+        int sumThr[2] = {0};
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16) nowait
 #endif
 
-    for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
-        float *greenDest = green[i + offsY];
-        float *redDest = red[i + offsY];
-        float *blueDest = blue[i + offsY];
-        int j = winx + border - offsX;
+        for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
+            float *greenDest = green[i + offsY];
+            float *redDest = red[i + offsY];
+            float *blueDest = blue[i + offsY];
+            int j = winx + border - offsX;
 
-        float greenDifMax[gridSize]; // Here we store the maximum differences per Column
+            float greenDifMax[gridSize]; // Here we store the maximum differences per Column
 
-        // green channel motion detection checks the grid around the pixel for differences in green channels
-        if(detectMotion || (adaptive && checkGreen)) {
-            if(gridSize == 3) {
-                // compute maximum of differences for first two columns of 3x3 grid
-                greenDifMax[0] =  std::max({greenDiff(psG1[i - 1][j - 1], psG2[i - 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j - 1], psG2[ i ][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j - 1], psG2[i + 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[1] =  std::max({greenDiff(psG1[i - 1][ j ], psG2[i - 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][ j ], psG2[ i ][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][ j ], psG2[i + 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-            } else if(gridSize == 5) {
-                // compute maximum of differences for first four columns of 5x5 grid
-                greenDifMax[0] =  std::max({greenDiff(psG1[i - 2][j - 2], psG2[i - 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j - 2], psG2[i - 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j - 2], psG2[ i ][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j - 2], psG2[i + 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j - 2], psG2[i + 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[1] =  std::max({greenDiff(psG1[i - 2][j - 1], psG2[i - 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j - 1], psG2[i - 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j - 1], psG2[ i ][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j - 1], psG2[i + 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j - 1], psG2[i + 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[2] =  std::max({greenDiff(psG1[i - 2][ j ], psG2[i - 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][ j ], psG2[i - 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][ j ], psG2[ i ][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][ j ], psG2[i + 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][ j ], psG2[i + 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[3] =  std::max({greenDiff(psG1[i - 2][j + 1], psG2[i - 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j + 1], psG2[i - 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j + 1], psG2[ i ][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j + 1], psG2[i + 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j + 1], psG2[i + 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-            } else if(gridSize == 7) {
-                // compute maximum of differences for first six columns of 7x7 grid
-                greenDifMax[0] =  std::max({greenDiff(psG1[i - 3][j - 3], psG2[i - 3][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 2][j - 3], psG2[i - 2][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j - 3], psG2[i - 1][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j - 3], psG2[ i ][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j - 3], psG2[i + 1][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j - 3], psG2[i + 2][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 3][j - 3], psG2[i + 3][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[1] =  std::max({greenDiff(psG1[i - 3][j - 2], psG2[i - 3][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 2][j - 2], psG2[i - 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j - 2], psG2[i - 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j - 2], psG2[ i ][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j - 2], psG2[i + 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j - 2], psG2[i + 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 3][j - 2], psG2[i + 3][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[2] =  std::max({greenDiff(psG1[i - 3][j - 1], psG2[i - 3][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 2][j - 1], psG2[i - 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j - 1], psG2[i - 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j - 1], psG2[ i ][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j - 1], psG2[i + 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j - 1], psG2[i + 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 3][j - 1], psG2[i + 3][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[3] =  std::max({greenDiff(psG1[i - 3][ j ], psG2[i - 3][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 2][ j ], psG2[i - 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][ j ], psG2[i - 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][ j ], psG2[ i ][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][ j ], psG2[i + 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][ j ], psG2[i + 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 3][ j ], psG2[i + 3][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[4] =  std::max({greenDiff(psG1[i - 3][j + 1], psG2[i - 3][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 2][j + 1], psG2[i - 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j + 1], psG2[i - 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j + 1], psG2[ i ][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j + 1], psG2[i + 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j + 1], psG2[i + 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 3][j + 1], psG2[i + 3][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
-                greenDifMax[5] =  std::max({greenDiff(psG1[i - 3][j + 2], psG2[i - 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 2][j + 2], psG2[i - 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i - 1][j + 2], psG2[i - 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[ i ][j + 2], psG2[ i ][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 1][j + 2], psG2[i + 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 2][j + 2], psG2[i + 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                            greenDiff(psG1[i + 3][j + 2], psG2[i + 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                           });
+            // green channel motion detection checks the grid around the pixel for differences in green channels
+            if(detectMotion || (adaptive && checkGreen)) {
+                if(gridSize == 3) {
+                    // compute maximum of differences for first two columns of 3x3 grid
+                    greenDifMax[0] =  std::max({greenDiff(psG1[i - 1][j - 1], psG2[i - 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j - 1], psG2[ i ][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j - 1], psG2[i + 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[1] =  std::max({greenDiff(psG1[i - 1][ j ], psG2[i - 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][ j ], psG2[ i ][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][ j ], psG2[i + 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                } else if(gridSize == 5) {
+                    // compute maximum of differences for first four columns of 5x5 grid
+                    greenDifMax[0] =  std::max({greenDiff(psG1[i - 2][j - 2], psG2[i - 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j - 2], psG2[i - 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j - 2], psG2[ i ][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j - 2], psG2[i + 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j - 2], psG2[i + 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[1] =  std::max({greenDiff(psG1[i - 2][j - 1], psG2[i - 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j - 1], psG2[i - 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j - 1], psG2[ i ][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j - 1], psG2[i + 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j - 1], psG2[i + 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[2] =  std::max({greenDiff(psG1[i - 2][ j ], psG2[i - 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][ j ], psG2[i - 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][ j ], psG2[ i ][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][ j ], psG2[i + 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][ j ], psG2[i + 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[3] =  std::max({greenDiff(psG1[i - 2][j + 1], psG2[i - 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j + 1], psG2[i - 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j + 1], psG2[ i ][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j + 1], psG2[i + 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j + 1], psG2[i + 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                } else if(gridSize == 7) {
+                    // compute maximum of differences for first six columns of 7x7 grid
+                    greenDifMax[0] =  std::max({greenDiff(psG1[i - 3][j - 3], psG2[i - 3][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 2][j - 3], psG2[i - 2][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j - 3], psG2[i - 1][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j - 3], psG2[ i ][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j - 3], psG2[i + 1][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j - 3], psG2[i + 2][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 3][j - 3], psG2[i + 3][j - 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[1] =  std::max({greenDiff(psG1[i - 3][j - 2], psG2[i - 3][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 2][j - 2], psG2[i - 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j - 2], psG2[i - 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j - 2], psG2[ i ][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j - 2], psG2[i + 1][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j - 2], psG2[i + 2][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 3][j - 2], psG2[i + 3][j - 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[2] =  std::max({greenDiff(psG1[i - 3][j - 1], psG2[i - 3][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 2][j - 1], psG2[i - 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j - 1], psG2[i - 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j - 1], psG2[ i ][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j - 1], psG2[i + 1][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j - 1], psG2[i + 2][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 3][j - 1], psG2[i + 3][j - 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[3] =  std::max({greenDiff(psG1[i - 3][ j ], psG2[i - 3][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 2][ j ], psG2[i - 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][ j ], psG2[i - 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][ j ], psG2[ i ][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][ j ], psG2[i + 1][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][ j ], psG2[i + 2][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 3][ j ], psG2[i + 3][ j ], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[4] =  std::max({greenDiff(psG1[i - 3][j + 1], psG2[i - 3][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 2][j + 1], psG2[i - 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j + 1], psG2[i - 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j + 1], psG2[ i ][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j + 1], psG2[i + 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j + 1], psG2[i + 2][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 3][j + 1], psG2[i + 3][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                    greenDifMax[5] =  std::max({greenDiff(psG1[i - 3][j + 2], psG2[i - 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 2][j + 2], psG2[i - 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i - 1][j + 2], psG2[i - 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[ i ][j + 2], psG2[ i ][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 1][j + 2], psG2[i + 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 2][j + 2], psG2[i + 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                greenDiff(psG1[i + 3][j + 2], psG2[i + 3][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                               });
+                }
+
             }
 
-        }
 
+            // this is the index for the last column of the grid. Obviously we have to start with gridSize - 1
+            int lastIndex = gridSize - 1;
+            float korr = 0.f;
+            int c = FC(i, j);
+            bool blueRow = false;
 
-        // this is the index for the last column of the grid. Obviously we have to start with gridSize - 1
-        int lastIndex = gridSize - 1;
-        float korr = 0.f;
-        int c = FC(i, j);
-        bool blueRow = false;
+            if (c == 2 || ((c & 1) && FC(i, j + 1) == 2)) {
+                // row with blue pixels => swap destination pointers for non green pixels
+                blueRow = true;
+            }
 
-        if (c == 2 || ((c & 1) && FC(i, j + 1) == 2)) {
-            // row with blue pixels => swap destination pointers for non green pixels
-            blueRow = true;
-        }
-
-        // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-        unsigned int offset = (c & 1);
+            // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
+            unsigned int offset = (c & 1);
 //        offset ^= 1; // 0 => 1 or 1 => 0
 
-        for(; j < winw - (border + offsX); ++j) {
-            bool greenFromPs = false;
-            offset ^= 1; // 0 => 1 or 1 => 0
+            for(; j < winw - (border + offsX); ++j) {
+                bool greenFromPs = false;
+                offset ^= 1; // 0 => 1 or 1 => 0
 
-            if(detectMotion || (adaptive && checkGreen)) {
-                bool skipNext = false;
-                float gridMax;
+                if(detectMotion || (adaptive && checkGreen)) {
+                    bool skipNext = false;
+                    float gridMax;
 
-                if(gridSize < 2) {
-                    // compute difference for current pixel and skip next pixel, that's roughly the method from dcrawps
-                    gridMax = greenDiff(psG1[i][j], psG2[i][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i);
-                    skipNext = skip;
-                } else if(gridSize == 3) {
-                    // compute maximum of differences for third column of 3x3 grid and save at position lastIndex
-                    greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 1][j + 1], psG2[i - 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[ i ][j + 1], psG2[ i ][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i + 1][j + 1], psG2[i + 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                                      });
-                    // calculate maximum of whole grid by calculating maximum of grid column max values
-                    gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2]});
-                } else if(gridSize == 5) {
-                    // compute maximum of differences for fifth column of 5x5 grid and save at position lastIndex
-                    greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 2][j + 2], psG2[i - 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i - 1][j + 2], psG2[i - 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[ i ][j + 2], psG2[ i ][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i + 1][j + 2], psG2[i + 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i + 2][j + 2], psG2[i + 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
-                                                      });
-                    // calculate maximum of whole grid by calculating maximum of grid column max values
-                    gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4]});
-                } else if(gridSize == 7) {
-                    // compute maximum of differences for 7th column of 7x7 grid and save at position lastIndex
-                    greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 3][j + 3], psG2[i - 3][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i - 2][j + 3], psG2[i - 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i - 1][j + 3], psG2[i - 1][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[ i ][j + 3], psG2[ i ][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i + 1][j + 3], psG2[i + 1][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i + 2][j + 3], psG2[i + 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                       greenDiff(psG1[i + 3][j + 3], psG2[i + 3][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
-                                                      });
-                    // calculate maximum of whole grid by calculating maximum of grid column max values
-                    gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4], greenDifMax[5], greenDifMax[6]});
-                }
-
-
-                // adjust index for next column
-                lastIndex ++;
-                lastIndex = lastIndex == gridSize ? 0 : lastIndex;
-
-                // increase motion detection dependent on brightness
-                if(!adaptive) {
-                    korr = log2Lut[((int)(psG1[i][j] * scaleGreen)) >> 1];
-                }
-
-                if (gridMax > thresh - korr) {
-                    if(offset == 0) {
-                        sum0 ++;
-                    } else {
-                        sum1 ++;
+                    if(gridSize < 2) {
+                        // compute difference for current pixel and skip next pixel, that's roughly the method from dcrawps
+                        gridMax = greenDiff(psG1[i][j], psG2[i][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i);
+                        skipNext = skip;
+                    } else if(gridSize == 3) {
+                        // compute maximum of differences for third column of 3x3 grid and save at position lastIndex
+                        greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 1][j + 1], psG2[i - 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[ i ][j + 1], psG2[ i ][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i + 1][j + 1], psG2[i + 1][j + 1], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                                          });
+                        // calculate maximum of whole grid by calculating maximum of grid column max values
+                        gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2]});
+                    } else if(gridSize == 5) {
+                        // compute maximum of differences for fifth column of 5x5 grid and save at position lastIndex
+                        greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 2][j + 2], psG2[i - 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i - 1][j + 2], psG2[i - 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[ i ][j + 2], psG2[ i ][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i + 1][j + 2], psG2[i + 1][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i + 2][j + 2], psG2[i + 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i)
+                                                          });
+                        // calculate maximum of whole grid by calculating maximum of grid column max values
+                        gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4]});
+                    } else if(gridSize == 7) {
+                        // compute maximum of differences for 7th column of 7x7 grid and save at position lastIndex
+                        greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 3][j + 3], psG2[i - 3][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i - 2][j + 3], psG2[i - 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i - 1][j + 3], psG2[i - 1][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[ i ][j + 3], psG2[ i ][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i + 1][j + 3], psG2[i + 1][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i + 2][j + 3], psG2[i + 2][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                           greenDiff(psG1[i + 3][j + 3], psG2[i + 3][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
+                                                          });
+                        // calculate maximum of whole grid by calculating maximum of grid column max values
+                        gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4], greenDifMax[5], greenDifMax[6]});
                     }
 
-                    if(nOf3x3) {
-                        psMask[i][j] = 1.f;
-                    } else if((offset == (frame & 1)) && checkNonGreenVertical) {
-                        if(frame > 1) {
-                            green[i + offsY][j + offsX] = blueRow ? psG1[i][j] : psG2[i][j];
+
+                    // adjust index for next column
+                    lastIndex ++;
+                    lastIndex = lastIndex == gridSize ? 0 : lastIndex;
+
+                    if(!adaptive) {
+                        // increase motion detection dependent on brightness
+                        korr = log2Lut[((int)(psG1[i][j] * scaleGreen)) >> 1];
+                    }
+
+                    if (gridMax > thresh - korr) {
+                        sumThr[offset] ++;
+
+                        if(nOf3x3) {
+                            psMask[i][j] = greenWeight;
+                        } else if((offset == (frame & 1)) && checkNonGreenVertical) {
+                            if(frame > 1) {
+                                green[i + offsY][j + offsX] = blueRow ? psG1[i][j] : psG2[i][j];
+                            } else {
+                                green[i + offsY][j + offsX] = blueRow ? psG2[i][j] : psG1[i][j];;
+                            }
+
+                            continue;
                         } else {
-                            green[i + offsY][j + offsX] = blueRow ? psG2[i][j] : psG1[i][j];;
-                        }
-
-                        continue;
-                    } else {
-                        // at least one of the tested green pixels of the grid is detected as motion
-                        paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, redDest, blueDest);
-
-                        if(skipNext) {
-                            // treat the horizontally next pixel also as motion
-                            j++;
+                            // at least one of the tested green pixels of the grid is detected as motion
                             paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, redDest, blueDest);
+
+                            if(skipNext) {
+                                // treat the horizontally next pixel also as motion
+                                j++;
+                                paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, redDest, blueDest);
+                            }
+
+                            // do not set the motion pixel values. They have already been set by demosaicer or showMotion
+                            continue;
                         }
-                        // do not set the motion pixel values. They have already been set by demosaicer or showMotion
-                        continue;
                     }
                 }
-            }
 
-            if(adaptive && checkNonGreenCross) {
-                // check red cross
-                float redTop    = psRed[i - 1][ j ];
-                float redLeft   = psRed[ i ][j - 1];
-                float redCentre = psRed[ i ][ j ];
-                float redRight  = psRed[ i ][j + 1];
-                float redBottom = psRed[i + 1][ j ];
-                float redDiff = nonGreenDiffCross(redRight, redLeft, redTop, redBottom, redCentre, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
+                if(adaptive) {
+                    if(checkNonGreenCross) {
+                        // check red cross
+                        float redTop    = psRed[i - 1][ j ];
+                        float redLeft   = psRed[ i ][j - 1];
+                        float redCentre = psRed[ i ][ j ];
+                        float redRight  = psRed[ i ][j + 1];
+                        float redBottom = psRed[i + 1][ j ];
+                        float redDiff = nonGreenDiffCross(redRight, redLeft, redTop, redBottom, redCentre, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
 
-                if(redDiff > 0.f) {
-                    if(nOf3x3) {
-                        psMask[i][j] = redBlueWeight;
-                    } else {
-                        paintMotionMask(j + offsX, showMotion, redDiff, showOnlyMask, redDest, blueDest, greenDest);
-                    }
+                        if(redDiff > 0.f) {
+                            if(nOf3x3) {
+                                psMask[i][j] = redBlueWeight;
+                            } else {
+                                paintMotionMask(j + offsX, showMotion, redDiff, showOnlyMask, redDest, blueDest, greenDest);
+                            }
 
-                    continue;
-                }
-
-                // check blue cross
-                float blueTop    = psBlue[i - 1][ j ];
-                float blueLeft   = psBlue[ i ][j - 1];
-                float blueCentre = psBlue[ i ][ j ];
-                float blueRight  = psBlue[ i ][j + 1];
-                float blueBottom = psBlue[i + 1][ j ];
-                float blueDiff = nonGreenDiffCross(blueRight, blueLeft, blueTop, blueBottom, blueCentre, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
-
-                if(blueDiff > 0.f) {
-                    if(nOf3x3) {
-                        psMask[i][j] = redBlueWeight;
-                    } else {
-                        paintMotionMask(j + offsX, showMotion, blueDiff, showOnlyMask, blueDest, redDest, greenDest);
-                    }
-
-                    continue;
-
-                }
-            }
-
-            if(adaptive && checkNonGreenHorizontal) {
-                float redLeft    = psRed[ i ][j - 1];
-                float redCentre  = psRed[ i ][ j ];
-                float redRight   = psRed[ i ][j + 1];
-
-                float redDiffLeft = redLeft - redCentre;
-                float redDiffRight = redRight - redCentre;
-
-                if(redDiffLeft * redDiffRight >= 0.f) {
-                    float redAvg = (redRight + redLeft) / 2.f;
-                    float redDiffHor = nonGreenDiff(redCentre, redAvg, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
-
-                    if(redDiffHor > 0.f) {
-                        if(nOf3x3) {
-                            psMask[i][j] = redBlueWeight;
-                        } else {
-                            paintMotionMask(j + offsX, showMotion, redDiffHor, showOnlyMask, redDest, blueDest, greenDest);
+                            continue;
                         }
 
-                        continue;
+                        // check blue cross
+                        float blueTop    = psBlue[i - 1][ j ];
+                        float blueLeft   = psBlue[ i ][j - 1];
+                        float blueCentre = psBlue[ i ][ j ];
+                        float blueRight  = psBlue[ i ][j + 1];
+                        float blueBottom = psBlue[i + 1][ j ];
+                        float blueDiff = nonGreenDiffCross(blueRight, blueLeft, blueTop, blueBottom, blueCentre, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
+
+                        if(blueDiff > 0.f) {
+                            if(nOf3x3) {
+                                psMask[i][j] = redBlueWeight;
+                            } else {
+                                paintMotionMask(j + offsX, showMotion, blueDiff, showOnlyMask, blueDest, redDest, greenDest);
+                            }
+
+                            continue;
+
+                        }
                     }
-                }
 
-                float blueLeft    = psBlue[ i ][j - 1];
-                float blueCentre  = psBlue[ i ][ j ];
-                float blueRight   = psBlue[ i ][j + 1];
+                    if(checkNonGreenHorizontal) {
+                        float redLeft    = psRed[ i ][j - 1];
+                        float redCentre  = psRed[ i ][ j ];
+                        float redRight   = psRed[ i ][j + 1];
 
-                float blueDiffLeft = blueLeft - blueCentre;
-                float blueDiffRight = blueRight - blueCentre;
+                        float redDiffLeft = redLeft - redCentre;
+                        float redDiffRight = redRight - redCentre;
 
-                if(blueDiffLeft * blueDiffRight >= 0.f) {
-                    float blueAvg = (blueRight + blueLeft) / 2.f;
-                    float blueDiffHor = nonGreenDiff(blueCentre, blueAvg, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
+                        if(redDiffLeft * redDiffRight >= 0.f) {
+                            float redAvg = (redRight + redLeft) / 2.f;
+                            float redDiffHor = nonGreenDiff(redCentre, redAvg, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
 
-                    if(blueDiffHor > 0.f) {
-                        if(nOf3x3) {
-                            psMask[i][j] = redBlueWeight;
-                        } else {
-                            paintMotionMask(j + offsX, showMotion, blueDiffHor, showOnlyMask, blueDest, redDest, greenDest);
+                            if(redDiffHor > 0.f) {
+                                if(nOf3x3) {
+                                    psMask[i][j] = redBlueWeight;
+                                } else {
+                                    paintMotionMask(j + offsX, showMotion, redDiffHor, showOnlyMask, redDest, blueDest, greenDest);
+                                }
+
+                                continue;
+                            }
                         }
 
-                        continue;
+                        float blueLeft    = psBlue[ i ][j - 1];
+                        float blueCentre  = psBlue[ i ][ j ];
+                        float blueRight   = psBlue[ i ][j + 1];
+
+                        float blueDiffLeft = blueLeft - blueCentre;
+                        float blueDiffRight = blueRight - blueCentre;
+
+                        if(blueDiffLeft * blueDiffRight >= 0.f) {
+                            float blueAvg = (blueRight + blueLeft) / 2.f;
+                            float blueDiffHor = nonGreenDiff(blueCentre, blueAvg, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
+
+                            if(blueDiffHor > 0.f) {
+                                if(nOf3x3) {
+                                    psMask[i][j] = redBlueWeight;
+                                } else {
+                                    paintMotionMask(j + offsX, showMotion, blueDiffHor, showOnlyMask, blueDest, redDest, greenDest);
+                                }
+
+                                continue;
+                            }
+                        }
                     }
-                }
-            }
 
-            if(adaptive && checkNonGreenVertical) {
-                // check red vertically
-                float redTop    = psRed[i - 1][ j ];
-                float redCentre = psRed[ i ][ j ];
-                float redBottom = psRed[i + 1][ j ];
+                    if(checkNonGreenVertical) {
+                        // check red vertically
+                        float redTop    = psRed[i - 1][ j ];
+                        float redCentre = psRed[ i ][ j ];
+                        float redBottom = psRed[i + 1][ j ];
 
-                float redDiffTop = redTop - redCentre;
-                float redDiffBottom = redBottom - redCentre;
+                        float redDiffTop = redTop - redCentre;
+                        float redDiffBottom = redBottom - redCentre;
 
-                if(redDiffTop * redDiffBottom >= 0.f) {
-                    float redAvg = (redTop + redBottom) / 2.f;
-                    float redDiff = nonGreenDiff(redCentre, redAvg, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
+                        if(redDiffTop * redDiffBottom >= 0.f) {
+                            float redAvg = (redTop + redBottom) / 2.f;
+                            float redDiff = nonGreenDiff(redCentre, redAvg, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
 
-                    if(redDiff > 0.f) {
-                        if(nOf3x3) {
-                            psMask[i][j] = redBlueWeight;
-                        } else {
-                            paintMotionMask(j + offsX, showMotion, redDiff, showOnlyMask, redDest, blueDest, greenDest);
+                            if(redDiff > 0.f) {
+                                if(nOf3x3) {
+                                    psMask[i][j] = redBlueWeight;
+                                } else {
+                                    paintMotionMask(j + offsX, showMotion, redDiff, showOnlyMask, redDest, blueDest, greenDest);
+                                }
+
+                                continue;
+                            }
                         }
 
-                        continue;
+                        // check blue vertically
+                        float blueTop    = psBlue[i - 1][ j ];
+                        float blueCentre = psBlue[ i ][ j ];
+                        float blueBottom = psBlue[i + 1][ j ];
+
+                        float blueDiffTop = blueTop - blueCentre;
+                        float blueDiffBottom = blueBottom - blueCentre;
+
+                        if(blueDiffTop * blueDiffBottom >= 0.f) {
+                            float blueAvg = (blueTop + blueBottom) / 2.f;
+                            float blueDiff = nonGreenDiff(blueCentre, blueAvg, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
+
+                            if(blueDiff > 0.f) {
+                                if(nOf3x3) {
+                                    psMask[i][j] = redBlueWeight;
+                                } else {
+                                    paintMotionMask(j + offsX, showMotion, blueDiff, showOnlyMask, blueDest, redDest, greenDest);
+                                }
+
+                                continue;
+                            }
+                        }
                     }
-                }
 
-                // check blue vertically
-                float blueTop    = psBlue[i - 1][ j ];
-                float blueCentre = psBlue[ i ][ j ];
-                float blueBottom = psBlue[i + 1][ j ];
+                    if(checkNonGreenAmaze) {
+                        // check current pixel against amaze
+                        float redCentre  = psRed[ i ][ j ];
+                        float redAmaze   = red[i + offsY][j + offsX];
 
-                float blueDiffTop = blueTop - blueCentre;
-                float blueDiffBottom = blueBottom - blueCentre;
+                        float redDiffAmaze = nonGreenDiff(redCentre, redAmaze, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
 
-                if(blueDiffTop * blueDiffBottom >= 0.f) {
-                    float blueAvg = (blueTop + blueBottom) / 2.f;
-                    float blueDiff = nonGreenDiff(blueCentre, blueAvg, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
+                        if(redDiffAmaze > 0.f) {
+                            if(nOf3x3) {
+                                psMask[i][j] = redBlueWeight;
+                            } else {
+                                paintMotionMask(j + offsX, showMotion, redDiffAmaze, showOnlyMask, redDest, blueDest, greenDest);
+                            }
 
-                    if(blueDiff > 0.f) {
-                        if(nOf3x3) {
-                            psMask[i][j] = redBlueWeight;
-                        } else {
-                            paintMotionMask(j + offsX, showMotion, blueDiff, showOnlyMask, blueDest, redDest, greenDest);
+                            continue;
                         }
 
-                        continue;
-                    }
-                }
-            }
+                        float blueCentre  = psBlue[ i ][ j ];
+                        float blueAmaze   = blue[i + offsY][j + offsX];
 
-            if(adaptive && checkNonGreenAmaze) {
-                // check current pixel against amaze
-                float redCentre  = psRed[ i ][ j ];
-                float redAmaze   = red[i + offsY][j + offsX];
+                        float blueDiffAmaze = nonGreenDiff(blueCentre, blueAmaze, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
 
-                float redDiffAmaze = nonGreenDiff(redCentre, redAmaze, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
+                        if(blueDiffAmaze > 0.f) {
+                            if(nOf3x3) {
+                                psMask[i][j] = redBlueWeight;
+                            } else {
+                                paintMotionMask(j + offsX, showMotion, blueDiffAmaze, showOnlyMask, blueDest, redDest, greenDest);
+                            }
 
-                if(redDiffAmaze > 0.f) {
-                    if(nOf3x3) {
-                        psMask[i][j] = redBlueWeight;
-                    } else {
-                        paintMotionMask(j + offsX, showMotion, redDiffAmaze, showOnlyMask, redDest, blueDest, greenDest);
+                            continue;
+                        }
                     }
 
-                    continue;
-                }
+                    if(checkNonGreenCross2) { // for green amaze
+                        float greenCentre = (psG1[ i ][ j ] + psG2[ i ][ j ]) / 2.f;
+                        float greenAmaze = green[i + offsY][j + offsX];
+                        float greenDiffAmaze = nonGreenDiff(greenCentre, greenAmaze, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion);
 
-                float blueCentre  = psBlue[ i ][ j ];
-                float blueAmaze   = blue[i + offsY][j + offsX];
+                        if(greenDiffAmaze > 0.f) {
+                            if(nOf3x3) {
+                                psMask[i][j] = greenWeight;
+                            } else {
+                                paintMotionMask(j + offsX, showMotion, greenDiffAmaze, showOnlyMask, greenDest, redDest, blueDest);
+                            }
 
-                float blueDiffAmaze = nonGreenDiff(blueCentre, blueAmaze, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
-
-                if(blueDiffAmaze > 0.f) {
-                    if(nOf3x3) {
-                        psMask[i][j] = redBlueWeight;
-                    } else {
-                        paintMotionMask(j + offsX, showMotion, blueDiffAmaze, showOnlyMask, blueDest, redDest, greenDest);
+                            continue;
+                        }
                     }
 
-                    continue;
-                }
-            }
+                    if(experimental0) { // for experiments
+                        //                float green1Median, green2Median;
+                        //                green1Median = median(psG1[ i - 1 ][ j - 1 ],psG1[ i - 1 ][ j + 1 ],psG1[ i ][ j ],psG1[ i + 1 ][ j -1 ],psG1[ i + 1 ][ j + 1 ]);
+                        //                green2Median = median(psG2[ i - 1 ][ j - 1 ],psG2[ i - 1 ][ j + 1 ],psG2[ i ][ j ],psG2[ i + 1 ][ j -1 ],psG2[ i + 1 ][ j + 1 ]);
+                        //                float greenDiffMedian = nonGreenDiff(green1Median, green2Median, stddevFactorGreen * 0.36f, eperIsoGreen, nRead, prnu, showMotion);
+                        //
+                        //                if(greenDiffMedian > 0.f) {
+                        //                    if(nOf3x3) {
+                        //                        psMask[i][j] = 1.f;
+                        //                    } else {
+                        //                        paintMotionMask(j + offsX, showMotion, greenDiffMedian, showOnlyMask, greenDest, redDest, blueDest);
+                        //                    }
+                        //
+                        //                    continue;
+                        //                }
 
-            if(adaptive && checkNonGreenCross2) { // for green amaze
-                float greenCentre = (psG1[ i ][ j ] + psG2[ i ][ j ]) / 2.f;
-                float greenAmaze = green[i + offsY][j + offsX];
-                float greenDiffAmaze = nonGreenDiff(greenCentre, greenAmaze, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion);
-
-                if(greenDiffAmaze > 0.f) {
-                    if(nOf3x3) {
-                        psMask[i][j] = 1.f;
-                    } else {
-                        paintMotionMask(j + offsX, showMotion, greenDiffAmaze, showOnlyMask, greenDest, redDest, blueDest);
                     }
-
-                    continue;
                 }
-            }
 
-            if(adaptive && experimental0) { // for experiments
-//                float green1Median, green2Median;
-//                green1Median = median(psG1[ i - 1 ][ j - 1 ],psG1[ i - 1 ][ j + 1 ],psG1[ i ][ j ],psG1[ i + 1 ][ j -1 ],psG1[ i + 1 ][ j + 1 ]);
-//                green2Median = median(psG2[ i - 1 ][ j - 1 ],psG2[ i - 1 ][ j + 1 ],psG2[ i ][ j ],psG2[ i + 1 ][ j -1 ],psG2[ i + 1 ][ j + 1 ]);
-//                float greenDiffMedian = nonGreenDiff(green1Median, green2Median, stddevFactorGreen * 0.36f, eperIsoGreen, nRead, prnu, showMotion);
-//
-//                if(greenDiffMedian > 0.f) {
-//                    if(nOf3x3) {
-//                        psMask[i][j] = 1.f;
-//                    } else {
-//                        paintMotionMask(j + offsX, showMotion, greenDiffMedian, showOnlyMask, greenDest, redDest, blueDest);
-//                    }
-//
-//                    continue;
-//                }
-
-            }
-
-            if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
-                red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
-            } else if(!(adaptive && nOf3x3)) {
-                // no motion detected, replace the a priori demosaiced values by the pixelshift combined values
-                red[i + offsY][j + offsX] = psRed[i][j];
-                green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) / 2.f;
-                blue[i + offsY][j + offsX] = psBlue[i][j];
+                if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
+                    red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
+                } else if(!(adaptive && nOf3x3)) {
+                    // no motion detected, replace the a priori demosaiced values by the pixelshift combined values
+                    red[i + offsY][j + offsX] = psRed[i][j];
+                    green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) / 2.f;
+                    blue[i + offsY][j + offsX] = psBlue[i][j];
+                }
             }
         }
+
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            sum[0] += sumThr[0];
+            sum[1] += sumThr[0];
+        }
     }
+    float percent0 = 100.f * sum[0] / pixelcount;
+    float percent1 = 100.f * sum[1] / pixelcount;
 
-    float percent0 = 100.f * sum0 / pixelcount;
-    float percent1 = 100.f * sum1 / pixelcount;
-
-    std::cout << fileName <<  " : Green detections at stddev " << std::setprecision( 2 ) << bayerParams.pixelShiftStddevFactorGreen << " : Frame 1/3 : " << std::setprecision( 6 ) << sum0 << " (" << percent0 << "%)" << " Frame 2/4 : " << sum1 << " (" << percent1 << "%)" << std::endl;
+    std::cout << fileName <<  " : Green detections at stddev " << std::setprecision( 2 ) << bayerParams.pixelShiftStddevFactorGreen << " : Frame 1/3 : " << std::setprecision( 6 ) << sum[0] << " (" << percent0 << "%)" << " Frame 2/4 : " << sum[1] << " (" << percent1 << "%)" << std::endl;
 
     if(adaptive && nOf3x3) {
         if(blurMap) {
+            StopWatch Stop1("Blur");
             #pragma omp parallel
             {
                 gaussianBlur(psMask, psMask, winw, winh, sigma);
@@ -1611,14 +1656,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             for(int v = -1; v <= 1; v++) {
                 for(int h = -1; h < 1; h++) {
-                    v3sum[1 + h] += psMask[i + v][j + h];
+                    v3sum[1 + h] += (psMask[i + v][j + h] - 1.f);
                 }
             }
 
             float blocksum = v3sum[0] + v3sum[1];
 
             for(int voffset = 2; j < winw - (border + offsX); ++j, ++voffset) {
-                float colSum = psMask[i - 1][j + 1] + psMask[i][j + 1] + psMask[i + 1][j + 1];
+                float colSum = psMask[i - 1][j + 1] + psMask[i][j + 1] + psMask[i + 1][j + 1] - 3.f;
                 voffset = voffset == 3 ? 0 : voffset;  // faster than voffset %= 3;
                 blocksum -= v3sum[voffset];
                 blocksum += colSum;
@@ -1640,26 +1685,31 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
 #ifdef __SSE2__
+
             if(!(showMotion && showOnlyMask) && smoothTransitions) {
                 if(smoothFactor == 0.f) {
                     for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
-                        psMask[i][j] = 1.f;
+                        psMask[i][j] = greenWeight - 1.f;
                     }
                 } else {
                     vfloat zerov = F2V(0.f);
+                    vfloat onev = F2V(1.f);
                     vfloat smoothv = F2V(smoothFactor);
                     int j = winx + border - offsX;
-                    for(; j < winw - (border + offsX)- 3; j += 4) {
-                        vfloat blendv = LVFU(psMask[i][j]);
+
+                    for(; j < winw - (border + offsX) - 3; j += 4) {
+                        vfloat blendv = LVFU(psMask[i][j]) - onev;
                         blendv = vmaxf(blendv, zerov);
                         blendv = pow_F(blendv, smoothv);
                         STVFU(psMask[i][j], blendv);
                     }
+
                     for(; j < winw - (border + offsX); ++j) {
-                        psMask[i][j] = pow_F(std::max(psMask[i][j],0.f),smoothFactor);
+                        psMask[i][j] = pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
                     }
                 }
             }
+
 #endif
             float *greenDest = green[i + offsY];
             float *redDest = red[i + offsY];
@@ -1678,10 +1728,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #ifdef __SSE2__
                         float blend = psMask[i][j];
 #else
-                        float blend =  pow_F(std::max(psMask[i][j],0.f),smoothFactor);
+                        float blend =  pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
                         red[i + offsY][j + offsX] = intp(blend, red[i + offsY][j + offsX], psRed[i][j] );
-                        green[i + offsY][j + offsX] = intp(blend, green[i + offsY][j + offsX],(psG1[i][j] + psG2[i][j]) / 2.f);
+                        green[i + offsY][j + offsX] = intp(blend, green[i + offsY][j + offsX], (psG1[i][j] + psG2[i][j]) / 2.f);
                         blue[i + offsY][j + offsX] = intp(blend, blue[i + offsY][j + offsX], psBlue[i][j]);
                     } else {
                         red[i + offsY][j + offsX] = psRed[i][j];
