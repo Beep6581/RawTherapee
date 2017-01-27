@@ -1095,7 +1095,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
     nRead *= pow(2.f, nreadIso);
-    eperIsoModel *= pow(2.f, eperIso * 0.5f);
+    eperIsoModel *= pow(2.f, eperIso);
 
     if(adaptive && experimental0) {
         eperIso = eperIsoModel * sqrtf(100.f / (rawWpCorrection * idata->getISOSpeed()));
