@@ -404,10 +404,10 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cr, const G
     if (selected || framed) {
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         cr->move_to (radius, 0);
-        cr->arc (exp_width - 1 - radius, radius, radius, -M_PI / 2, 0);
-        cr->arc (exp_width - 1 - radius, exp_height - 1 - radius, radius, 0, M_PI / 2);
-        cr->arc (radius, exp_height - 1 - radius, radius, M_PI / 2, M_PI);
-        cr->arc (radius, radius, radius, M_PI, -M_PI / 2);
+        cr->arc (exp_width - 1 - radius, radius, radius, -rtengine::RT_PI / 2, 0);
+        cr->arc (exp_width - 1 - radius, exp_height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
+        cr->arc (radius, exp_height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
+        cr->arc (radius, radius, radius, rtengine::RT_PI, -rtengine::RT_PI / 2);
         cr->close_path ();
 
         if (selected) {
@@ -424,10 +424,10 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cr, const G
     if (framed) {
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         cr->move_to (+2 + 0.5 + radius, +2 + 0.5);
-        cr->arc (-2 + 0.5 + exp_width - 1 - radius, +2 + 0.5 + radius, radius, -M_PI / 2, 0);
-        cr->arc (-2 + 0.5 + exp_width - 1 - radius, -2 + 0.5 + exp_height - 1 - radius, radius, 0, M_PI / 2);
-        cr->arc (+2 + 0.5 + radius, -2 + exp_height - 1 - radius, radius, M_PI / 2, M_PI);
-        cr->arc (+2 + 0.5 + radius, +2 + radius, radius, M_PI, -M_PI / 2);
+        cr->arc (-2 + 0.5 + exp_width - 1 - radius, +2 + 0.5 + radius, radius, -rtengine::RT_PI / 2, 0);
+        cr->arc (-2 + 0.5 + exp_width - 1 - radius, -2 + 0.5 + exp_height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
+        cr->arc (+2 + 0.5 + radius, -2 + exp_height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
+        cr->arc (+2 + 0.5 + radius, +2 + radius, radius, rtengine::RT_PI, -rtengine::RT_PI / 2);
         cr->close_path ();
         cr->set_source_rgb (fg.get_red_p(), fg.get_green_p(), fg.get_blue_p());
         cr->set_line_width (2.0);

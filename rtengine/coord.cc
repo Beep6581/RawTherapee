@@ -27,7 +27,7 @@ namespace rtengine
 Coord& Coord::operator= (const PolarCoord& other)
 {
     const auto radius = other.radius;
-    const auto angle = other.angle / 180.0 * M_PI;
+    const auto angle = other.angle / 180.0 * rtengine::RT_PI;
 
     x = radius * std::cos (angle);
     y = radius * std::sin (angle);
@@ -41,7 +41,7 @@ PolarCoord& PolarCoord::operator= (const Coord& other)
     const double y = other.y;
 
     radius = rtengine::norm2 (x, y);
-    angle = std::atan2 (y, x) * 180.0 / M_PI;
+    angle = std::atan2 (y, x) * 180.0 / rtengine::RT_PI;
 
     return *this;
 }

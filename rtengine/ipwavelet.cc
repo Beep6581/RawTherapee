@@ -1058,7 +1058,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         }
 
                         for (int i = 0; i < overlap; i++) {
-                            float mask = SQR(sin((M_PI * i) / (2 * overlap)));
+                            float mask = SQR(sin((rtengine::RT_PI * i) / (2 * overlap)));
 
                             if (tiletop > 0) {
                                 Vmask[i] = mask;

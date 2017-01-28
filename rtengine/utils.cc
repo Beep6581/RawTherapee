@@ -245,4 +245,19 @@ bool hasPngExtension(const Glib::ustring& filename)
    return getFileExtension(filename) == "png";
 }
 
+void swab(const void* from, void* to, ssize_t n)
+{
+    // Adapted from glibc
+    const char* char_from = static_cast<const char*>(from);
+    char* char_to = static_cast<char*>(to);
+
+    n &= ~static_cast<ssize_t>(1);
+
+    while (n > 1) {
+        const char b0 = char_from[--n], b1 = char_from[--n];
+        char_to[n] = b0;
+        char_to[n + 1] = b1;
+    }
+}
+
 }

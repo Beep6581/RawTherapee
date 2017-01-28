@@ -191,7 +191,7 @@ void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*M_PI);
+        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
         cr->stroke();
     }
 }
@@ -225,7 +225,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
         }
 
         if (filled && state != INSENSITIVE) {
-            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*M_PI);
+            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
             if (innerLineWidth > 0.) {
                 cr->fill_preserve();
@@ -234,7 +234,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
                 cr->fill();
             }
         } else if (innerLineWidth > 0.) {
-            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*M_PI);
+            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
             if (state == INSENSITIVE) {
                 std::valarray<double> ds(1);
@@ -274,7 +274,7 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short 
         } else {
             cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
         }
-        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*M_PI);
+        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*rtengine::RT_PI);
 
         if (filled) {
             if (innerLineWidth > 0.) {
