@@ -380,7 +380,7 @@ else (WIN32)
                                       -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 endif (WIN32)
 
-list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/AboutThisBuild.cmake")
+list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/UpdateInfo.cmake")
 
 add_custom_target(UpdateInfo ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
