@@ -331,7 +331,7 @@ if (OUT_OF_SOURCE_BUILD)
     endforeach(f)
 endif ()
 
-## BEGIN: Generating AboutThisBuild.txt
+## BEGIN: Create AboutThisBuild.txt and other version-dependent files.
 # set the bit number information of the platform
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
   set(PROC_BIT_DEPTH 32 bits)
@@ -382,9 +382,9 @@ endif (WIN32)
 
 list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/AboutThisBuild.cmake")
 
-add_custom_target(AboutFile ALL
+add_custom_target(UpdateInfo ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
-    COMMENT "Creating the about file")
+    COMMENT "Creating AboutThisBuild.txt and other version-dependent files")
 
 ## END: Generating AboutThisBuild.txt
 
