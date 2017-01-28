@@ -54,6 +54,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <strings.h>
 #include <sys/types.h>
 
 #if defined(DJGPP) || defined(__MINGW32__)
@@ -326,7 +327,7 @@ void CLASS read_shorts (ushort *pixel, int count)
 {
   if (fread (pixel, 2, count, ifp) < count) derror();
   if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
-	  swab ((char*)pixel, (char*)pixel, count*2);
+	  rtengine::swab ((char*)pixel, (char*)pixel, count*2);
 }
 
 void CLASS cubic_spline (const int *x_, const int *y_, const int len)
@@ -1047,7 +1048,7 @@ void CLASS ljpeg_idct (struct jhead *jh)
     47,55,62,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63 };
 
   if (!cs[0])
-    FORC(106) cs[c] = cos((c & 31)*M_PI/16)/2;
+    FORC(106) cs[c] = cos((c & 31)*rtengine::RT_PI/16)/2;
   memset (work, 0, sizeof work);
   work[0][0][0] = jh->vpred[0] += ljpeg_diff (jh->huff[0]) * jh->quant[0];
   for (i=1; i < 64; i++ ) {
@@ -1059,8 +1060,8 @@ void CLASS ljpeg_idct (struct jhead *jh)
       coef -= (1 << len) - 1;
     ((float *)work)[zigzag[i]] = coef * jh->quant[i];
   }
-  FORC(8) work[0][0][c] *= M_SQRT1_2;
-  FORC(8) work[0][c][0] *= M_SQRT1_2;
+  FORC(8) work[0][0][c] *= rtengine::RT_SQRT1_2;
+  FORC(8) work[0][c][0] *= rtengine::RT_SQRT1_2;
   for (i=0; i < 8; i++)
     for (j=0; j < 8; j++)
       FORC(8) work[1][i][j] += work[0][i][c] * cs[(j*2+1)*c];
@@ -2614,7 +2615,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
-  swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
+  rtengine::swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
   cinfo->src->next_input_byte = jpeg_buffer;
   cinfo->src->bytes_in_buffer = nbytes;
   return TRUE;
@@ -3627,7 +3628,7 @@ short * CLASS foveon_make_curve (double max, double mul, double filt)
   double x;
 
   if (!filt) filt = 0.8;
-  size = 4*M_PI*max / filt;
+  size = 4*rtengine::RT_PI*max / filt;
   if (size == UINT_MAX) size--;
   curve = (short *) calloc (size+1, sizeof *curve);
   merror (curve, "foveon_make_curve()");

@@ -434,10 +434,10 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const G
 
     if (selected || framed) {
         cc->move_to (radius, 0);
-        cc->arc (exp_width - 1 - radius, radius, radius, -M_PI / 2, 0);
-        cc->arc (exp_width - 1 - radius, exp_height - 1 - radius, radius, 0, M_PI / 2);
-        cc->arc (radius, exp_height - 1 - radius, radius, M_PI / 2, M_PI);
-        cc->arc (radius, radius, radius, M_PI, -M_PI / 2);
+        cc->arc (exp_width - 1 - radius, radius, radius, -rtengine::RT_PI / 2, 0);
+        cc->arc (exp_width - 1 - radius, exp_height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
+        cc->arc (radius, exp_height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
+        cc->arc (radius, radius, radius, rtengine::RT_PI, -rtengine::RT_PI / 2);
         cc->close_path ();
 
         if (selected) {
@@ -452,10 +452,10 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cc, const G
 
     if (framed) {
         cc->move_to (+2 + 0.5 + radius, +2 + 0.5);
-        cc->arc (-2 + 0.5 + exp_width - 1 - radius, +2 + 0.5 + radius, radius, -M_PI / 2, 0);
-        cc->arc (-2 + 0.5 + exp_width - 1 - radius, -2 + 0.5 + exp_height - 1 - radius, radius, 0, M_PI / 2);
-        cc->arc (+2 + 0.5 + radius, -2 + exp_height - 1 - radius, radius, M_PI / 2, M_PI);
-        cc->arc (+2 + 0.5 + radius, +2 + radius, radius, M_PI, -M_PI / 2);
+        cc->arc (-2 + 0.5 + exp_width - 1 - radius, +2 + 0.5 + radius, radius, -rtengine::RT_PI / 2, 0);
+        cc->arc (-2 + 0.5 + exp_width - 1 - radius, -2 + 0.5 + exp_height - 1 - radius, radius, 0, rtengine::RT_PI / 2);
+        cc->arc (+2 + 0.5 + radius, -2 + exp_height - 1 - radius, radius, rtengine::RT_PI / 2, rtengine::RT_PI);
+        cc->arc (+2 + 0.5 + radius, +2 + radius, radius, rtengine::RT_PI, -rtengine::RT_PI / 2);
         cc->close_path ();
         cc->set_source_rgb (fg.get_red(), fg.get_green(), fg.get_blue());
         cc->set_line_width (2.0);
