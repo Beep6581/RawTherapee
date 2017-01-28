@@ -85,7 +85,7 @@ else (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
 endif (REL_INFO_FILE STREQUAL REL_INFO_FILE-NOTFOUND)
 
 if (WIN32)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    if (BIT_DEPTH EQUAL 4)
         set(BUILD_BIT_DEPTH 32)
         # 32 bits builds has to be installable on 64 bits system, to support WinXP/64.
         set(ARCHITECTURE_ALLOWED "x86 x64 ia64")
@@ -93,7 +93,7 @@ if (WIN32)
         set(INSTALL_MODE "")
         # set part of the output archive name
         set(SYSTEM_NAME "WinXP")
-    elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    elseif (BIT_DEPTH EQUAL 8)
         set(BUILD_BIT_DEPTH 64)
         # Restricting the 64 bits builds to 64 bits systems only
         set(ARCHITECTURE_ALLOWED "x64 ia64")
@@ -101,7 +101,7 @@ if (WIN32)
         set(INSTALL_MODE "x64 ia64")
         # set part of the output archive name
         set(SYSTEM_NAME "WinVista")
-    endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    endif (BIT_DEPTH EQUAL 4)
 
     configure_file ("${PROJECT_SOURCE_DIR}/tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_BINARY_DIR}/rtdata/WindowsInnoSetup.iss")
 endif (WIN32)

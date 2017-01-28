@@ -367,7 +367,9 @@ if (WIN32)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
                                       -DCXX_FLAGS:STRING="${CXX_FLAGS}"
                                       -DLFLAGS:STRING="${LFLAGS}"
-                                      -DCOMPILER_INFO:STRING="${COMPILER_INFO}")
+                                      -DCOMPILER_INFO:STRING="${COMPILER_INFO}"
+                                      -DCMAKE_INSTALL_PREFIX:STRING="${CMAKE_INSTALL_PREFIX}"
+                                      -DBIT_DEPTH:STRING="${CMAKE_SIZEOF_VOID_P}")
 elseif (APPLE)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
                                       -DCXX_FLAGS:STRING=${CXX_FLAGS}
