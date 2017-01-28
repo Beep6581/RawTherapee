@@ -103,7 +103,7 @@ if (WIN32)
         set(SYSTEM_NAME "WinVista")
     endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
-    configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/../tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_CURRENT_BINARY_DIR}/WindowsInnoSetup.iss")
+    configure_file ("${PROJECT_SOURCE_DIR}/tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_BINARY_DIR}/rtdata/WindowsInnoSetup.iss")
 endif (WIN32)
 
 # build version.h from template
