@@ -1040,7 +1040,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const bool skip = (gridSize_ == RAWParams::BayerSensor::ePSMotionCorrection::Grid1x2);
     int gridSize = 1;
     bool nOf3x3 = false;
-
     switch (gridSize_) {
         case RAWParams::BayerSensor::ePSMotionCorrection::Grid1x1:
         case RAWParams::BayerSensor::ePSMotionCorrection::Grid1x2:
@@ -1063,6 +1062,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             gridSize = 1;
             nOf3x3 = true;
     }
+
+    if(adaptive && blurMap && nOf3x3 && smoothFactor == 0.f && !showMotion) {
+        if(plistener) {
+            plistener->setProgress(1.0);
+        }
+        return;
+    }
+
 
     // Lookup table for non adaptive (slider) mode
     LUTf log2Lut(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
@@ -1151,15 +1158,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     array2D<float> psG1(winw + 32, winh);
     array2D<float> psG2(winw + 32, winh);
     array2D<float> psBlue(winw + 32, winh);
-    array2D<float> psMask(winw, winh);
-
-    // Fill the mask with value 1.0
-    // We work in 1.0 to 2.0 range to avoid performance issues caused by denormal numbers in gaussian blur
-    for(int i = 0; i < winh; ++i) {
-        for(int j = 0; j < winw; ++j) {
-            psMask[i][j] = 1.f;
-        }
-    }
 
 // fill channels psRed, psG1, psG2 and psBlue
 #ifdef _OPENMP
@@ -1199,6 +1197,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     int sum[2] = {0};
 
     float pixelcount = ((winh - (border + offsY) - (winy + border - offsY)) * (winw - (border + offsX) - (winx + border - offsX))) / 2.f;
+
+    array2D<float> psMask(winw, winh);
+
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -1323,10 +1324,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
             unsigned int offset = (c & 1);
-//        offset ^= 1; // 0 => 1 or 1 => 0
 
             for(; j < winw - (border + offsX); ++j) {
-                bool greenFromPs = false;
+                psMask[i][j] = 1.f;
+
                 offset ^= 1; // 0 => 1 or 1 => 0
 
                 if(detectMotion || (adaptive && checkGreen)) {
@@ -1345,6 +1346,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                                           });
                         // calculate maximum of whole grid by calculating maximum of grid column max values
                         gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2]});
+                        // adjust index for next column
+                        lastIndex ++;
+                        lastIndex = lastIndex == gridSize ? 0 : lastIndex;
                     } else if(gridSize == 5) {
                         // compute maximum of differences for fifth column of 5x5 grid and save at position lastIndex
                         greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 2][j + 2], psG2[i - 2][j + 2], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
@@ -1355,6 +1359,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                                           });
                         // calculate maximum of whole grid by calculating maximum of grid column max values
                         gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4]});
+                        // adjust index for next column
+                        lastIndex ++;
+                        lastIndex = lastIndex == gridSize ? 0 : lastIndex;
                     } else if(gridSize == 7) {
                         // compute maximum of differences for 7th column of 7x7 grid and save at position lastIndex
                         greenDifMax[lastIndex] = std::max({greenDiff(psG1[i - 3][j + 3], psG2[i - 3][j + 3], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i),
@@ -1367,12 +1374,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                                           });
                         // calculate maximum of whole grid by calculating maximum of grid column max values
                         gridMax = std::max({greenDifMax[0], greenDifMax[1], greenDifMax[2], greenDifMax[3], greenDifMax[4], greenDifMax[5], greenDifMax[6]});
+                        // adjust index for next column
+                        lastIndex ++;
+                        lastIndex = lastIndex == gridSize ? 0 : lastIndex;
                     }
-
-
-                    // adjust index for next column
-                    lastIndex ++;
-                    lastIndex = lastIndex == gridSize ? 0 : lastIndex;
 
                     if(!adaptive) {
                         // increase motion detection dependent on brightness
@@ -1391,7 +1396,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                 green[i + offsY][j + offsX] = blueRow ? psG2[i][j] : psG1[i][j];;
                             }
 
-                            continue;
                         } else {
                             // at least one of the tested green pixels of the grid is detected as motion
                             paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, redDest, blueDest);
@@ -1401,10 +1405,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                 j++;
                                 paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, redDest, blueDest);
                             }
-
-                            // do not set the motion pixel values. They have already been set by demosaicer or showMotion
-                            continue;
                         }
+                        // do not set the motion pixel values. They have already been set by demosaicer or showMotion
+                        continue;
                     }
                 }
 
@@ -1592,20 +1595,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                     }
 
                     if(experimental0) { // for experiments
-                        //                float green1Median, green2Median;
-                        //                green1Median = median(psG1[ i - 1 ][ j - 1 ],psG1[ i - 1 ][ j + 1 ],psG1[ i ][ j ],psG1[ i + 1 ][ j -1 ],psG1[ i + 1 ][ j + 1 ]);
-                        //                green2Median = median(psG2[ i - 1 ][ j - 1 ],psG2[ i - 1 ][ j + 1 ],psG2[ i ][ j ],psG2[ i + 1 ][ j -1 ],psG2[ i + 1 ][ j + 1 ]);
-                        //                float greenDiffMedian = nonGreenDiff(green1Median, green2Median, stddevFactorGreen * 0.36f, eperIsoGreen, nRead, prnu, showMotion);
-                        //
-                        //                if(greenDiffMedian > 0.f) {
-                        //                    if(nOf3x3) {
-                        //                        psMask[i][j] = 1.f;
-                        //                    } else {
-                        //                        paintMotionMask(j + offsX, showMotion, greenDiffMedian, showOnlyMask, greenDest, redDest, blueDest);
-                        //                    }
-                        //
-                        //                    continue;
-                        //                }
 
                     }
                 }
@@ -1629,6 +1618,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             sum[1] += sumThr[0];
         }
     }
+
+
     float percent0 = 100.f * sum[0] / pixelcount;
     float percent1 = 100.f * sum[1] / pixelcount;
 
@@ -1636,7 +1627,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
     if(adaptive && nOf3x3) {
         if(blurMap) {
-            StopWatch Stop1("Blur");
             #pragma omp parallel
             {
                 gaussianBlur(psMask, psMask, winw, winh, sigma);
@@ -1645,6 +1635,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
         array2D<uint8_t> mask(W, H, ARRAY2D_CLEAR_DATA);
         array2D<uint8_t> maskInv(W, H, ARRAY2D_CLEAR_DATA);
+
         #pragma omp parallel for schedule(dynamic,16)
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
@@ -1681,32 +1672,25 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             xorMasks(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), maskInv, mask);
         }
 
+
         #pragma omp parallel for schedule(dynamic,16)
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
 #ifdef __SSE2__
 
             if(!(showMotion && showOnlyMask) && smoothTransitions) {
-                if(smoothFactor == 0.f) {
-                    for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
-                        psMask[i][j] = greenWeight - 1.f;
-                    }
-                } else {
-                    vfloat zerov = F2V(0.f);
-                    vfloat onev = F2V(1.f);
-                    vfloat smoothv = F2V(smoothFactor);
-                    int j = winx + border - offsX;
+                vfloat onev = F2V(1.f);
+                vfloat smoothv = F2V(smoothFactor);
+                int j = winx + border - offsX;
 
-                    for(; j < winw - (border + offsX) - 3; j += 4) {
-                        vfloat blendv = LVFU(psMask[i][j]) - onev;
-                        blendv = vmaxf(blendv, zerov);
-                        blendv = pow_F(blendv, smoothv);
-                        STVFU(psMask[i][j], blendv);
-                    }
+                for(; j < winw - (border + offsX) - 3; j += 4) {
+                    vfloat blendv = vmaxf(LVFU(psMask[i][j]), onev) - onev;
+                    blendv = pow_F(blendv, smoothv);
+                    STVFU(psMask[i][j], blendv);
+                }
 
-                    for(; j < winw - (border + offsX); ++j) {
-                        psMask[i][j] = pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
-                    }
+                for(; j < winw - (border + offsX); ++j) {
+                    psMask[i][j] = pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
                 }
             }
 
@@ -1718,10 +1702,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
                 if(mask[i][j] == 255) {
                     paintMotionMask(j + offsX, showMotion, 0.5f, showOnlyMask, greenDest, redDest, blueDest);
-                    continue;
-                }
-
-                if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
+                } else if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
                     red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
                 } else {
                     if(smoothTransitions) {
