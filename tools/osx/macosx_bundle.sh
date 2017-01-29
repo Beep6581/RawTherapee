@@ -33,12 +33,33 @@ fi
 
 # update project version
 if test -x "$(which git)" -a -d "${PROJECT_SOURCE_DIR}/.git"; then
-    # This is what the version ought to look like to be accurate in the git universe:
-    PROJECT_FULL_VERSION="$(git describe --tags --always | sed 's/-g.*//')_$(git symbolic-ref --short -q HEAD)"
-    # outputs: 4.2-677-g904467b_master
-    # but Apple requirements https://goo.gl/eWDQv6 state we should use this:
-    PROJECT_VERSION="$(git describe --tags --always | sed -e 's/-g.*//' -e 's/-/./')"
-    # outputs: 4.2.677
+    ### This section is copied from tools/generateReleaseInfo
+    # Get version description.
+    # Depending on whether you checked out a branch (dev) or a tag (release),
+    # "git describe" will return "5.0-gtk2-2-g12345678" or "5.0-gtk2", respectively.
+    gitDescribe="$(git describe --tags --always)"
+
+    # Apple requires a numeric version of the form n.n.n
+    # https://goo.gl/eWDQv6
+
+    # Get number of commits since tagging. This is what gitDescribe uses.
+    # Works when checking out branch, tag or commit.
+    gitCommitsSinceTag="$(git rev-list --count HEAD --not $(git tag --merged HEAD))"
+
+    # Create numeric version.
+    # This version is nonsense, either don't use it at all or use it only where you have no other choice, e.g. Inno Setup's VersionInfoVersion.
+    # Strip everything after hyphen, e.g. "5.0-gtk2" -> "5.0", "5.1-rc1" -> "5.1" (ergo BS).
+    if [[ -z $gitCommitsSinceTag ]]; then
+        gitVersionNumericBS="0.0.0"
+    else
+        gitVersionNumericBS="${gitDescribe%%-*}" # Remove everything after first hyphen.
+        gitVersionNumericBS="${gitVersionNumericBS}.${gitCommitsSinceTag}" # Remove everything until after first hyphen: 5.0
+    fi
+    ### Copy end.
+
+    PROJECT_FULL_VERSION="$gitDescribe"
+    PROJECT_VERSION="$gitVersionNumericBS"
+
 fi
 
 # if not specify CMAKE_OSX_DEPLOYMENT_TARGET when compiling,
@@ -85,7 +106,7 @@ ETC="${MACOS}"/etc
 EXECUTABLE="${MACOS}"/rawtherapee
 
 message "Removing old files"
-rm -rf "${APP}" ${PROJECT_NAME}_*.dmg
+rm -rf "${APP}" "${PROJECT_NAME}_*.dmg"
 
 message "Creating bundle container"
 install -d  "${RESOURCES}" \
@@ -163,7 +184,7 @@ install -m 0755 "${PROJECT_SOURCE_DATA_DIR}"/executable_loader.in "${MACOS}"/raw
 cp "${PROJECT_SOURCE_DATA_DIR}"/{rawtherapee,profile}.icns "${RESOURCES}"
 cp "${PROJECT_SOURCE_DATA_DIR}"/PkgInfo "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/Info.plist.in "${CONTENTS}"/Info.plist
-sed -i "" -e "s|@version@|${PROJECT_VERSION}|
+sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
 "${CONTENTS}"/Info.plist
