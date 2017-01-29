@@ -958,7 +958,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                        1.5f   // ISO > 51200 (we get a max ISO value of 65535 from dcraw)
                                      };
 
-    static const float ePerIsoK3II = 4 * 0.35f;
+    static const float ePerIsoK3II = 0.35f;
 
     static const float nReadK1[] = {   3.45f, // ISO 100
                                        3.15f, // ISO 125
@@ -996,7 +996,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                        2.4f   // ISO 204800
                                    };
 
-    static const float ePerIsoK1 = 4 * 0.75f;
+    static const float ePerIsoK1 = 0.75f;
 
     static const float nReadK70[] = {  4.0f, // ISO 100
                                        4.0f, // ISO 125
@@ -1029,7 +1029,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                        3.0f   // ISO > 51200 (we get a max ISO value of 65535 from dcraw)
                                     };
 
-    static const float ePerIsoK70 = 4 * 0.5f;
+    static const float ePerIsoK70 = 0.5f;
 
     if (plistener) {
         plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift]));
@@ -1110,9 +1110,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         eperIso = eperIsoModel * (100.f / (rawWpCorrection * idata->getISOSpeed()));
     }
 
-    float eperIsoRed = eperIso / scale_mul[0];
-    float eperIsoGreen = eperIso * scaleGreen;
-    float eperIsoBlue = eperIso / scale_mul[2];
+    std::cout << "WL: " << c_white[0] << " BL: " << c_black[0] << " ePerIso multiplicator: " << (65535.f / (c_white[0] - c_black[0])) << std::endl;
+
+    float eperIsoRed = (eperIso / scale_mul[0]) * (65535.f / (c_white[0]- c_black[0]));
+    float eperIsoGreen = (eperIso * scaleGreen) * (65535.f / (c_white[1]- c_black[1]));
+    float eperIsoBlue = (eperIso / scale_mul[2]) * (65535.f / (c_white[2]- c_black[2]));
 
 //    printf("Pixelshift parameters : gridSize %d\tadaptive %d\tstdDevFactorGreen %f\telectrons %1.8f\tnread %f\tprnu %1.1f%%\n", gridSize, adaptive, stddevFactorGreen, eperIso, nRead, prnu);
 
