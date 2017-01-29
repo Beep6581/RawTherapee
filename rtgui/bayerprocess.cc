@@ -224,7 +224,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftStddevFactorBlue->show();
     pixelShiftOptions->pack_start(*pixelShiftStddevFactorBlue);
 
-    pixelShiftEperIso = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTEPERISO"), -2.0, 2.0, 0.05, 0.0));
+    pixelShiftEperIso = Gtk::manage (new Adjuster (M("TP_RAW_PIXELSHIFTEPERISO"), -5.0, 5.0, 0.05, 0.0));
     pixelShiftEperIso->setAdjusterListener (this);
 
     if (pixelShiftEperIso->delay < options.adjusterMaxDelay) {
