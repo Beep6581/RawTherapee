@@ -72,5 +72,5 @@ printf '%s\n' "Git information extracted:" \
               "  Commit date:		${gitCommitDate}" \
               "  Commits since tag:	${gitCommitsSinceTag}" \
               "  Commits since branch:	${gitCommitsSinceBranch}" \
-              "  Unreliable verison:	${gitVersionNumericBS}" \
+              "  Unreliable version:	${gitVersionNumericBS}" \
               ""
