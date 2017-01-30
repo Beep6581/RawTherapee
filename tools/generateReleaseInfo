@@ -65,12 +65,12 @@ set(GIT_COMMITS_SINCE_BRANCH $gitCommitsSinceBranch)
 set(GIT_VERSION_NUMERIC_BS $gitVersionNumericBS)
 EOF
 
-printf '%s\n' "Git information extracted:" \
-              "  Description:		${gitDescribe}" \
+printf '%s\n' "Git checkout information:" \
+              "  Commit description:	${gitDescribe}" \
               "  Branch:		${gitBranch}" \
               "  Commit:		${gitCommit}" \
               "  Commit date:		${gitCommitDate}" \
               "  Commits since tag:	${gitCommitsSinceTag}" \
               "  Commits since branch:	${gitCommitsSinceBranch}" \
-              "  Unreliable version:	${gitVersionNumericBS}" \
+              "  Version (unreliable):	${gitVersionNumericBS}" \
               ""
