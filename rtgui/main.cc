@@ -85,11 +85,7 @@ Glib::ustring fname_to_utf8 (const char* fname)
 }
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
-#ifdef WIN32
-static Glib::RecMutex myGdkRecMutex;
-#else
 static Glib::Threads::RecMutex myGdkRecMutex;
-#endif
 
 static void myGdkLockEnter()
 {
