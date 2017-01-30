@@ -278,7 +278,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
         try {
 
             kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
-            kf->set_string ("RT General", "AppVersion", VERSION);
+            kf->set_string ("RT General", "AppVersion", RTVERSION);
             kf->set_integer("RT General", "ProcParamsVersion", PPVERSION);
             kf->set_string ("RT General", "ImageFileName", imageFName);
             kf->set_string ("RT General", "OutputProfileFileName", profileFName);
@@ -2797,7 +2797,7 @@ std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "XResolution"), 300, RATIONAL));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "YResolution"), 300, RATIONAL));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "ResolutionUnit"), 2, SHORT));
-    defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Software"), "RawTherapee " VERSION));
+    defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Software"), "RawTherapee " RTVERSION));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "Orientation"), 1, SHORT));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "SamplesPerPixel"), 3, SHORT));
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs, "BitsPerSample"), 8, SHORT));

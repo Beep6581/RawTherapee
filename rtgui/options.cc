@@ -46,8 +46,7 @@ Glib::ustring Options::rtdir;
 Glib::ustring Options::cacheBaseDir;
 
 Options options;
-Glib::ustring versionString       = VERSION;
-Glib::ustring versionSuffixString = VERSION_SUFFIX;
+Glib::ustring versionString       = RTVERSION;
 Glib::ustring paramFileExtension = ".pp3";
 
 Options::Options ()
@@ -1864,7 +1863,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("General", "Theme", theme);
         keyFile.set_boolean ("General", "SlimUI", slimUI);
         keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
-        keyFile.set_string  ("General", "Version", VERSION);
+        keyFile.set_string  ("General", "Version", RTVERSION);
         keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
         keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
