@@ -3801,9 +3801,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
         float dhueret = ared * lp.sensh + bred; //delta hue retinex
 
-        constexpr float maxh = 4.f; //amplification contrast above mean
+        constexpr float maxh = 2.5f; // 4 amplification contrast above mean
 
-        constexpr float maxl = 3.f; //reductio contrast under mean
+        constexpr float maxl = 2.5f; // 3 reductio contrast under mean
 
         float multh = (float) fabs (lp.cont) * (maxh - 1.f) / 100.f + 1.f;
 
@@ -4498,9 +4498,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             LabImage *bufcontorig;
             float **buflightc;
             int bfh, bfw;
-            float clighc = 1.f;
+            float clighc = 0.f;
             const float localtype = lumaref;
             float reducac;
+            float corered;
 
             if (lp.sens < 30.f) {
                 reducac = 0.2f * (lp.sens / 100.f);
@@ -4561,7 +4562,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 #endif
                 float maxc = -10000.f;
                 float minc = +10000.f;
-                float core = 0.f;
+                //    float core = 0.f;
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
@@ -4574,40 +4575,42 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                             bufcontorig->L[loy - begy - 1][lox - begx - 1] = original->L[y][x];//fill square buffer with datas
 
                             //slider contrast
-                            clighc = 0.f;
+                            clighc = 1.f;
+                            corered = 0.f;
 
                             if (lp.cont != 0.f  && lp.curvact) {
+
                                 float cL;
-                                float amplil = 10.f;
+                                float amplil = 20.f;
                                 float prov100 = bufcontorig->L[loy - begy - 1][lox - begx - 1] / 32768.f;
                                 float prov = prov100 * 100.f;
 
                                 if (prov > localtype) {
                                     if (prov >= localtype && prov < 50.f + localtype / 2.f) {
-                                        core = (lco.alsup2 * prov + lco.blsup2) ;
-
+                                        float core = (lco.alsup2 * prov + lco.blsup2) ;
+                                        corered = prov + pm * (prov - localtype) * (core);
                                     } else {
-                                        core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
+                                        float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
+                                        corered = prov + pm * (prov - localtype) * (core);
 
                                     }
                                 }  else {
                                     if (2.f * prov > localtype && prov < localtype)  {
-                                        core = (lco.alsup * prov + lco.blsup) ;
+                                        float core = (lco.alsup * prov + lco.blsup) ;
+                                        corered = prov - pm * (localtype - prov) * core;
                                     } else if (2.f * prov <= localtype) {
-                                        core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
+                                        float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
+                                        corered = prov - pm * (localtype - prov) * core;
+
                                     }
                                 }
 
-                                //   cL = pm * core;
-                                cL = pm * core;
-                                core = 0.f;
+                                cL = corered / prov;
 
-                                if (cL > 0.f) {
-                                    clighc = 100.f * cL;
-
+                                if (cL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
+                                    clighc = 100.f * cL - 100.f;
                                 } else {
-                                    clighc = 100.f * cL ;
-
+                                    clighc = CLIPLIG (amplil * cL - amplil); //ampli = 25.f arbitrary empirical coefficient between 5 and 150
                                 }
 
                                 buflightc[loy - begy - 1][lox - begx - 1] = clighc;
