@@ -41,7 +41,6 @@ News Relevant to Package Maintainers
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math
 - Use -o3
-- Use -DCMAKE_CXX_FLAGS="-std=c++11"
 - For stable builds (RT5) use -DCACHE_NAME_SUFFIX=""
 - For development builds use -DCACHE_NAME_SUFFIX="5-dev"
 - Windows builders should compile on a drive letter which users are most unlikely to have, such as Y:, due to the "There is no disk in the drive" error (issue #3544).
