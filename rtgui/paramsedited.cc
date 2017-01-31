@@ -310,6 +310,7 @@ void ParamsEdited::set (bool v)
     locallab.thres = v;
     locallab.proxi = v;
     locallab.qualityMethod = v;
+    locallab.qualitycurveMethod = v;
     locallab.lightness = v;
     locallab.contrast = v;
     locallab.chroma = v;
@@ -881,6 +882,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.thres = locallab.thres && p.locallab.thres == other.locallab.thres;
         locallab.proxi = locallab.proxi && p.locallab.proxi == other.locallab.proxi;
         locallab.qualityMethod = locallab.qualityMethod && p.locallab.qualityMethod == other.locallab.qualityMethod;
+        locallab.qualitycurveMethod = locallab.qualitycurveMethod && p.locallab.qualitycurveMethod == other.locallab.qualitycurveMethod;
         locallab.lightness = locallab.lightness && p.locallab.lightness == other.locallab.lightness;
         locallab.contrast = locallab.contrast && p.locallab.contrast == other.locallab.contrast;
         locallab.chroma = locallab.chroma && p.locallab.chroma == other.locallab.chroma;
@@ -2227,6 +2229,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (locallab.qualityMethod) {
         toEdit.locallab.qualityMethod   = mods.locallab.qualityMethod;
+    }
+
+    if (locallab.qualitycurveMethod) {
+        toEdit.locallab.qualitycurveMethod   = mods.locallab.qualitycurveMethod;
     }
 
     if (locallab.centerX) {

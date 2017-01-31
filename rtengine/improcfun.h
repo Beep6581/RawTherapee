@@ -72,6 +72,7 @@ class ImProcFunctions
     bool needsLCP           ();
 //   static cmsUInt8Number* Mempro = NULL;
 
+
     inline void interpolateTransformCubic (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul)
     {
         const double A = -0.85;
@@ -284,7 +285,7 @@ public:
     void InverseBlurNoise_Local (const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
     void Reti_Local (int call, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params& lp, float **deltE, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy, int chro);
     void InverseReti_Local (const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy, int chro);
-    void Contrast_Local (int call, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra &lco, float lumaref, float av, const struct local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);
+    void Contrast_Local (int call, LabImage * bufcontorig, float ** buflightc, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra &lco, float lumaref, float av, const struct local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);
     void cbdl_Local (int call, int sp, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);
     void BlurNoise_Local (int call, int sp, LabImage* tmp1, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);
     void TM_Local (int call, int sp, LabImage* tmp1, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);
@@ -293,7 +294,7 @@ public:
 
     void DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
 
-    void ColorLight_Local (int call, LabImage * bufcolorig, LabImage * bufcoltra, int sp, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, float chprov, const local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);
+    void ColorLight_Local (int call, LabImage * bufcolorig, LabImage * bufcoltra, float **buflight, float **bufchro,  float ** buflightslid, int sp, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, float chprov, float cligh, const local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);
     void InverseColorLight_Local (const struct local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
 
     void Sharp_Local (int call, int sp, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params& lp, float **deltE, LabImage* original, LabImage* transformed, int cx, int cy);

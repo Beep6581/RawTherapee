@@ -279,6 +279,7 @@ protected:
     LUTi scaltms;
     LUTi reweis;
     LUTi sensitms;
+    LUTi qualitycurves;
 
     int versionmip;
     LUTi sizeretics;

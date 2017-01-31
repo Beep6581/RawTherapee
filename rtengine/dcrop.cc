@@ -957,6 +957,14 @@ void Crop::update (int todo)
                             params.locallab.curvactiv = true;
                         }
 
+                        if (parent->qualitycurves[sp] ==  0) {
+                            params.locallab.qualitycurveMethod = "none" ;
+                        } else if (parent->qualitycurves[sp] ==  1) {
+                            params.locallab.qualitycurveMethod = "std" ;
+                        } else if (parent->qualitycurves[sp] ==  2) {
+                            params.locallab.qualitycurveMethod = "enh" ;
+                        }
+
                         std::vector<double>   cretie;
 
                         for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1174,6 +1182,17 @@ void Crop::update (int todo)
                     params.locallab.curvactiv = true;
                     parent->curvactivs[sp] = 1;
 
+                }
+
+                if (parent->qualitycurves[sp] ==  0) {
+                    params.locallab.qualitycurveMethod = "none" ;
+                    parent->qualitycurves[sp] =  0;
+                } else if (parent->qualitycurves[sp] ==  1) {
+                    params.locallab.qualitycurveMethod = "std" ;
+                    parent->qualitycurves[sp] =  1;
+                } else if (parent->qualitycurves[sp] ==  2) {
+                    params.locallab.qualitycurveMethod = "enh" ;
+                    parent->qualitycurves[sp] =  2;
                 }
 
                 std::vector<double>   ccret;

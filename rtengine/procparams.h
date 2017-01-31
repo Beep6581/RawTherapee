@@ -877,6 +877,7 @@ public:
     int     thres;
     int     proxi;
     Glib::ustring qualityMethod;
+    Glib::ustring qualitycurveMethod;
     bool expcolor;
     bool expblur;
     bool exptonemap;

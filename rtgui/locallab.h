@@ -100,6 +100,23 @@ private:
     sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
 
     Gtk::HBox* const ctboxS;
+    Gtk::HBox* const qualbox;
+    Gtk::HBox* const qualcurvbox;
+
+    Gtk::Frame* const artifFrame;
+    Gtk::Frame* const shapeFrame;
+    Gtk::Frame* const superFrame;
+
+    Gtk::VBox* const artifVBox;
+    Gtk::VBox* const shapeVBox;
+    Gtk::VBox* const tmBox;
+    Gtk::VBox* const retiBox;
+    Gtk::VBox* const colorVBox;
+    Gtk::VBox* const blurrVBox;
+    Gtk::VBox* const sharpVBox;
+    Gtk::VBox* const cbdlVBox;
+    Gtk::VBox* const denoisVBox;
+    Gtk::VBox* const superVBox;
 
     Gtk::CheckButton* const avoid;
     Gtk::CheckButton* const invers;
@@ -120,9 +137,15 @@ private:
     sigc::connection retinexMethodConn;
     MyComboBoxText*   const qualityMethod;
     sigc::connection qualityMethodConn;
+    MyComboBoxText*   const qualitycurveMethod;
+    sigc::connection qualitycurveMethodConn;
 
 
     Gtk::Label* const labmdh;
+    Gtk::Label* const labqual;
+    Gtk::Label* const labqualcurv;
+    Gtk::Label* const labmS;
+
     Gtk::HBox* const dhbox;
 
     CurveEditorGroup* const LocalcurveEditorgainT;
@@ -137,7 +160,7 @@ private:
 
 
 
-    int nextdatasp[60];
+    int nextdatasp[61];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
@@ -197,6 +220,7 @@ public:
     void setEditProvider (EditDataProvider* provider);
     void retinexMethodChanged();
     void qualityMethodChanged();
+    void qualitycurveMethodChanged();
     void lumaneutralPressed ();
     void lumacontrastPlusPressed ();
     void lumacontrastMinusPressed ();

@@ -1018,9 +1018,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             std::string inser;
 
             int **dataspots;
-            dataspots = new int*[60];
+            dataspots = new int*[61];
 
-            for (int i = 0; i < 60; i++) {
+            for (int i = 0; i < 61; i++) {
                 dataspots[i] = new int[maxspot];
             }
 
@@ -1154,9 +1154,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                     dataspots[56][0] =  1;
                 }
 
-                dataspots[57][0] = 100.f * params.locallab.hueref;
-                dataspots[58][0] = params.locallab.chromaref;
-                dataspots[59][0] = params.locallab.lumaref;
+                if (params.locallab.qualitycurveMethod == "none") {
+                    dataspots[57][0] =  0;
+                } else if (params.locallab.qualitycurveMethod == "std") {
+                    dataspots[57][0] =  1;
+                } else if (params.locallab.qualitycurveMethod == "enh") {
+                    dataspots[57][0] =  2;
+                }
+
+                dataspots[58][0] = 100.f * params.locallab.hueref;
+                dataspots[59][0] = params.locallab.chromaref;
+                dataspots[60][0] = params.locallab.lumaref;
 
                 //curve Reti local
                 int siz = params.locallab.localTgaincurve.size();
@@ -1294,7 +1302,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                         dataspots[16][0] = std::stoi (str3.c_str());
                     }
 
-                    if (cont > 16  && cont < 60) {
+                    if (cont > 16  && cont < 61) {
                         dataspots[cont][ns] = std::stoi (str3.c_str());
 
                     }
@@ -1498,9 +1506,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                     params.locallab.curvactiv = true;
                 }
 
-                params.locallab.hueref = ((float) dataspots[57][sp]) / 100.f;
-                params.locallab.chromaref = dataspots[58][sp];
-                params.locallab.lumaref = dataspots[59][sp];
+                if (dataspots[57][sp] ==  0) {
+                    params.locallab.qualitycurveMethod = "none" ;
+                } else if (dataspots[57][sp] ==  1) {
+                    params.locallab.qualitycurveMethod = "std" ;
+                } else if (dataspots[57][sp] ==  2) {
+                    params.locallab.qualitycurveMethod = "enh" ;
+                }
+
+                params.locallab.hueref = ((float) dataspots[58][sp]) / 100.f;
+                params.locallab.chromaref = dataspots[59][sp];
+                params.locallab.lumaref = dataspots[60][sp];
 
 
                 int *s_datc;
@@ -1587,7 +1603,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 
 
-            for (int i = 0; i < 60; i++) {
+            for (int i = 0; i < 61; i++) {
                 delete [] dataspots[i];
             }
 

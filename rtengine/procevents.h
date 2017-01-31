@@ -536,6 +536,7 @@ enum ProcEvent {
     EvlocallabLHshape = 506,
     Evlocallabcurvactiv = 507,
     Evlocallabccshape = 508,
+    EvlocallabqualitycurveMethod = 509,
 
     NUMOFEVENTS
 

@@ -62,8 +62,8 @@ Locallab::Locallab ():
     centerX (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0))),
     centerY (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
     circrad (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CIRCRADIUS"), 4, 100, 1, 18))),
-    thres (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_THRES"), 1, 315, 1, 60))),
-    proxi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_PROXI"), 1, 8, 1, 1))),
+    thres (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_THRES"), 1, 35, 1, 18))),
+    proxi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_PROXI"), 0, 60, 1, 20))),
     lightness (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0))),
     contrast (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
@@ -99,10 +99,33 @@ Locallab::Locallab ():
     Smethod (Gtk::manage (new MyComboBoxText ())),
     qualityMethod (Gtk::manage (new MyComboBoxText ())),
     retinexMethod (Gtk::manage (new MyComboBoxText ())),
+    qualitycurveMethod (Gtk::manage (new MyComboBoxText ())),
+
+    shapeFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_SHFR")))),
+    artifFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_ARTIF")))),
+    superFrame (Gtk::manage (new Gtk::Frame ())),
+
+    artifVBox (Gtk::manage (new Gtk::VBox ())),
+    shapeVBox (Gtk::manage (new Gtk::VBox ())),
+    tmBox (Gtk::manage (new Gtk::VBox())),
+    retiBox (Gtk::manage (new Gtk::VBox())),
+    colorVBox (Gtk::manage ( new Gtk::VBox())),
+    blurrVBox (Gtk::manage ( new Gtk::VBox())),
+    sharpVBox (Gtk::manage ( new Gtk::VBox())),
+    cbdlVBox (Gtk::manage ( new Gtk::VBox())),
+    denoisVBox (Gtk::manage ( new Gtk::VBox())),
+    superVBox (Gtk::manage (new Gtk::VBox ())),
+
 
     labmdh (Gtk::manage (new Gtk::Label (M ("TP_LOCRETI_METHOD") + ":"))),
+    labqual (Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_QUAL_METHOD") + ":"))),
+    labqualcurv (Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
+    labmS (Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_STYPE") + ":"))),
+
     ctboxS (Gtk::manage (new Gtk::HBox ())),
     dhbox (Gtk::manage (new Gtk::HBox ())),
+    qualbox (Gtk::manage (new Gtk::HBox ())),
+    qualcurvbox (Gtk::manage (new Gtk::HBox ())),
 
     avoid (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_AVOID")))),
     activlum (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_ACTIV")))),
@@ -145,8 +168,6 @@ Locallab::Locallab ():
     anbspot->setAdjusterListener (this);
     anbspot->set_tooltip_text (M ("TP_LOCALLAB_ANBSPOT_TOOLTIP"));
 
-
-    Gtk::Frame* shapeFrame = Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_SHFR")) );
     shapeFrame->set_border_width (0);
     shapeFrame->set_label_align (0.025, 0.5);
 
@@ -171,11 +192,9 @@ Locallab::Locallab ():
     expdenoi->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expdenoi) );
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expdenoi) );
 
-    Gtk::VBox *shapeVBox = Gtk::manage ( new Gtk::VBox());
     shapeVBox->set_spacing (2);
     shapeVBox->set_border_width (4);
 
-    Gtk::Label* labmS = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_STYPE") + ":"));
     ctboxS->pack_start (*labmS, Gtk::PACK_SHRINK, 4);
     ctboxS->set_tooltip_markup (M ("TP_LOCALLAB_STYPE_TOOLTIP"));
 
@@ -228,6 +247,15 @@ Locallab::Locallab ():
     std::vector<double> defaultCurve4;
 
     irg   = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
+
+    qualitycurveMethod->append (M ("TP_LOCALLAB_CURVNONE"));
+    qualitycurveMethod->append (M ("TP_LOCALLAB_CURVCURR"));
+    qualitycurveMethod->append (M ("TP_LOCALLAB_CURVENH"));
+    qualitycurveMethod->set_active (0);
+    qualitycurveMethodConn = qualitycurveMethod->signal_changed().connect ( sigc::mem_fun (*this, &Locallab::qualitycurveMethodChanged) );
+    qualitycurveMethod->set_tooltip_markup (M ("TP_LOCALLAB_CURVEMETHOD_TOOLTIP"));
+
+
 
     llCurveEditorG->setCurveListener (this);
 
@@ -313,7 +341,6 @@ Locallab::Locallab ():
     inversretConn  = inversret->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversretChanged) );
 
 //tone mapping local
-    Gtk::VBox * tmBox = Gtk::manage (new Gtk::VBox());
     tmBox->set_border_width (4);
     tmBox->set_spacing (2);
 
@@ -334,7 +361,6 @@ Locallab::Locallab ():
 
 
 //retinex local
-    Gtk::VBox * retiBox = Gtk::manage (new Gtk::VBox());
     retiBox->set_border_width (4);
     retiBox->set_spacing (2);
 
@@ -403,26 +429,24 @@ Locallab::Locallab ():
     shapeVBox->pack_start (*centerY);
     shapeVBox->pack_start (*circrad);
     //shapeVBox->pack_start (*activlum);
-    shapeVBox->pack_start (*qualityMethod);
-    // shapeVBox->pack_start (*thres);
-    // shapeVBox->pack_start (*proxi);
+    qualbox->pack_start (*labqual, Gtk::PACK_SHRINK, 4);
+    qualbox->pack_start (*qualityMethod);
+    shapeVBox->pack_start (*qualbox);
+//    shapeVBox->pack_start (*thres);
+//    shapeVBox->pack_start (*proxi);
 
     shapeFrame->add (*shapeVBox);
     pack_start (*shapeFrame);
 
-    Gtk::VBox *colorVBox = Gtk::manage ( new Gtk::VBox());
     colorVBox->set_spacing (2);
     colorVBox->set_border_width (4);
 
-    Gtk::VBox *blurrVBox = Gtk::manage ( new Gtk::VBox());
     blurrVBox->set_spacing (2);
     blurrVBox->set_border_width (4);
 
-    Gtk::VBox *sharpVBox = Gtk::manage ( new Gtk::VBox());
     sharpVBox->set_spacing (2);
     sharpVBox->set_border_width (4);
 
-    Gtk::VBox *cbdlVBox = Gtk::manage ( new Gtk::VBox());
     cbdlVBox->set_spacing (2);
     cbdlVBox->set_border_width (4);
 
@@ -490,7 +514,6 @@ Locallab::Locallab ():
     sharpVBox->pack_start (*sensisha);
     sharpVBox->pack_start (*inverssha);
 
-    Gtk::VBox *denoisVBox = Gtk::manage ( new Gtk::VBox());
     denoisVBox->set_spacing (2);
     denoisVBox->set_border_width (4);
 
@@ -519,16 +542,39 @@ Locallab::Locallab ():
     neutrHBox1->pack_start (*neutral1);
     pack_start (*neutrHBox1);
 
+    superFrame->set_label_align (0.025, 0.5);
+    Gtk::VBox *superVBox = Gtk::manage ( new Gtk::VBox());
+    superVBox->set_spacing (2);
+    superFrame->set_label_widget (*curvactiv);
 
 
-    colorVBox->pack_start (*lightness);
-    colorVBox->pack_start (*contrast);
+    superVBox->pack_start (*lightness);
+//    colorVBox->pack_start (*curvactiv);
+    superVBox->pack_start (*contrast);
+    superFrame->add (*superVBox);
+    colorVBox->pack_start (*superFrame);
+
     colorVBox->pack_start (*chroma);
     colorVBox->pack_start (*sensi);
-    colorVBox->pack_start (*curvactiv);
+
+    qualcurvbox->pack_start (*labqualcurv, Gtk::PACK_SHRINK, 4);
+    qualcurvbox->pack_start (*qualitycurveMethod);
+
+    colorVBox->pack_start (*qualcurvbox);
+
 
     colorVBox->pack_start (*llCurveEditorG, Gtk::PACK_SHRINK, 2);
+    artifFrame->set_border_width (0);
+    artifFrame->set_label_align (0.025, 0.5);
 
+    artifVBox->set_spacing (2);
+    artifVBox->set_border_width (4);
+
+    artifVBox->pack_start (*thres);
+    artifVBox->pack_start (*proxi);
+    artifFrame->add (*artifVBox);
+
+    colorVBox->pack_start (*artifFrame);
     colorVBox->pack_start (*invers);
 
     expcolor->add (*colorVBox);
@@ -759,6 +805,7 @@ void Locallab::neutral_pressed ()
     centerY->resetValue (false);
     circrad->resetValue (false);
     qualityMethod->set_active (0);
+    qualitycurveMethod->set_active (0);
     thres->resetValue (false);
     proxi->resetValue (false);
     lightness->resetValue (false);
@@ -1150,6 +1197,14 @@ bool Locallab::localComputed_ ()
         curvactiv->set_active (true);
     }
 
+    if (nextdatasp[57] == 0) {
+        qualitycurveMethod->set_active (0);
+    } else if (nextdatasp[57] == 1) {
+        qualitycurveMethod->set_active (1);
+    } else if (nextdatasp[57] == 2) {
+        qualitycurveMethod->set_active (2);
+    }
+
     int *s_datc;
     s_datc = new int[70];
     int siz;
@@ -1291,7 +1346,10 @@ bool Locallab::localComputed_ ()
 
     if (listener) {//for quality method
         listener->panelChanged (EvlocallabqualityMethod, qualityMethod->get_active_text ());
+    }
 
+    if (listener) {//for quality method
+        listener->panelChanged (EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text ());
     }
 
     if (listener) {//for inverse retinex
@@ -1331,7 +1389,7 @@ bool Locallab::localComputed_ ()
 
 void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 60; i++) { //58
+    for (int i = 2; i < 61; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -1452,6 +1510,10 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
             qualityMethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->locallab.qualitycurveMethod) {
+            qualitycurveMethod->set_active_text (M ("GENERAL_UNCHANGED"));
+        }
+
     }
 
     setEnabled (pp->locallab.enabled);
@@ -1459,6 +1521,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     Smethodconn.block (true);
     retinexMethodConn.block (true);
     qualityMethodConn.block (true);
+    qualitycurveMethodConn.block (true);
 
     avoidConn.block (true);
     avoid->set_active (pp->locallab.avoid);
@@ -1595,6 +1658,16 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     qualityMethodChanged ();
     qualityMethodConn.block (false);
 
+    if (pp->locallab.qualitycurveMethod == "none") {
+        qualitycurveMethod->set_active (0);
+    } else if (pp->locallab.qualitycurveMethod == "std") {
+        qualitycurveMethod->set_active (1);
+    } else if (pp->locallab.qualitycurveMethod == "enh") {
+        qualitycurveMethod->set_active (2);
+    }
+
+    qualitycurveMethodChanged ();
+    qualitycurveMethodConn.block (false);
 
     anbspot->hide();
 
@@ -1788,6 +1861,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.Smethod  = Smethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.retinexMethod    = retinexMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.qualityMethod    = qualityMethod->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->locallab.qualitycurveMethod    = qualitycurveMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->locallab.locY = locY->getEditedState ();
         pedited->locallab.locX = locX->getEditedState ();
         pedited->locallab.locYT = locYT->getEditedState ();
@@ -1872,6 +1946,14 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pp->locallab.qualityMethod = "enh";
     } else if (qualityMethod->get_active_row_number() == 2) {
         pp->locallab.qualityMethod = "enhden";
+    }
+
+    if (qualitycurveMethod->get_active_row_number() == 0) {
+        pp->locallab.qualitycurveMethod = "none";
+    } else if (qualitycurveMethod->get_active_row_number() == 1) {
+        pp->locallab.qualitycurveMethod = "std";
+    } else if (qualitycurveMethod->get_active_row_number() == 2) {
+        pp->locallab.qualitycurveMethod = "enh";
     }
 
 
@@ -1980,6 +2062,7 @@ void Locallab::retinexMethodChanged()
 void Locallab::qualityMethodChanged()
 {
     if (!batchMode) {
+        /*
         if (qualityMethod->get_active_row_number() == 0) { //STD
             proxi->hide();
             thres->hide();
@@ -1987,10 +2070,30 @@ void Locallab::qualityMethodChanged()
             proxi->show();
             thres->show();
         }
+        */
     }
 
     if (listener) {
         listener->panelChanged (EvlocallabqualityMethod, qualityMethod->get_active_text ());
+    }
+}
+
+void Locallab::qualitycurveMethodChanged()
+{
+    if (!batchMode) {
+        /*
+        if (qualitycurveMethod->get_active_row_number() == 0  || qualitycurveMethod->get_active_row_number() == 1) { //None or STD
+            artifFrame->hide();
+        } else if (qualitycurveMethod->get_active_row_number() == 0 && qualityMethod->get_active_row_number() >= 1) {
+            artifFrame->show();
+        } else if (qualitycurveMethod->get_active_row_number() == 2){
+            artifFrame->show();
+        }
+        */
+    }
+
+    if (listener) {
+        listener->panelChanged (EvlocallabqualitycurveMethod, qualitycurveMethod->get_active_text ());
     }
 }
 
@@ -2078,10 +2181,18 @@ void Locallab::inversChanged ()
         sensi->hide();
         llCurveEditorG->hide();
         curvactiv->hide();
+        qualitycurveMethod->hide();
+        artifFrame->hide();
+        labqualcurv->hide();
+
     } else {
         sensi->show();
         llCurveEditorG->show();
         curvactiv->show();
+        qualitycurveMethod->show();
+        artifFrame->show();
+        labqualcurv->show();
+
     }
 
     if (listener) {

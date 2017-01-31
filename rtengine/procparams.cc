@@ -887,8 +887,9 @@ void LocallabParams::setDefaults()
     centerY = 0;
     circrad = 18;
     qualityMethod = "std";
-    proxi = 1;
-    thres = 60;
+    qualitycurveMethod = "none";
+    proxi = 20;
+    thres = 18;
     lightness = 0;
     contrast = 0;
     chroma = 0;
@@ -2753,6 +2754,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_string ("Locallab", "qualityMethod", locallab.qualityMethod);
         }
 
+        if (!pedited || pedited->locallab.qualitycurveMethod) {
+            keyFile.set_string ("Locallab", "qualitycurveMethod", locallab.qualitycurveMethod);
+        }
+
         if (!pedited || pedited->locallab.locY) {
             keyFile.set_integer ("Locallab", "LocY", locallab.locY);
         }
@@ -4348,6 +4353,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->locallab.qualityMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "qualitycurveMethod"))  {
+                locallab.qualitycurveMethod  = keyFile.get_string ("Locallab", "qualitycurveMethod");
+
+                if (pedited) {
+                    pedited->locallab.qualitycurveMethod = true;
                 }
             }
 
@@ -8845,6 +8858,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.Smethod == other.locallab.Smethod
         && locallab.retinexMethod == other.locallab.retinexMethod
         && locallab.qualityMethod == other.locallab.qualityMethod
+        && locallab.qualitycurveMethod == other.locallab.qualitycurveMethod
         && locallab.locY == other.locallab.locY
         && locallab.locX == other.locallab.locX
         && locallab.locYT == other.locallab.locYT

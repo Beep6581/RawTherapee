@@ -429,6 +429,7 @@ public:
     bool thres;
     bool proxi;
     bool qualityMethod;
+    bool qualitycurveMethod;
     bool lightness;
     bool contrast;
     bool chroma;

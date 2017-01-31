@@ -360,78 +360,6 @@ SSEFUNCTION void ImProcFunctions :: cbdl_local_temp(float ** src, float ** dst, 
     }
 
     float **tmpHue, **tmpChr;
-    /*
-        if(skinprot != 0.f) {
-            // precalculate hue and chroma, use SSE, if available
-            // by precalculating these values we can greatly reduce the number of calculations in idirpyr_eq_channel()
-            // but we need two additional buffers for this preprocessing
-            tmpHue = new float*[srcheight];
-
-            for (int i = 0; i < srcheight; i++) {
-                tmpHue[i] = new float[srcwidth];
-            }
-
-    #ifdef __SSE2__
-            #pragma omp parallel for
-
-            for(int i = 0; i < srcheight; i++) {
-                int j;
-
-                for(j = 0; j < srcwidth - 3; j += 4) {
-                    _mm_storeu_ps(&tmpHue[i][j], xatan2f(LVFU(l_b[i][j]), LVFU(l_a[i][j])));
-                }
-
-                for(; j < srcwidth; j++) {
-                    tmpHue[i][j] = xatan2f(l_b[i][j], l_a[i][j]);
-                }
-            }
-
-    #else
-            #pragma omp parallel for
-
-            for(int i = 0; i < srcheight; i++) {
-                for(int j = 0; j < srcwidth; j++) {
-                    tmpHue[i][j] = xatan2f(l_b[i][j], l_a[i][j]);
-                }
-            }
-
-    #endif
-            tmpChr = new float*[srcheight];
-
-            for (int i = 0; i < srcheight; i++) {
-                tmpChr[i] = new float[srcwidth];
-            }
-
-    #ifdef __SSE2__
-            #pragma omp parallel
-            {
-                __m128 div = _mm_set1_ps(327.68f);
-                #pragma omp for
-
-                for(int i = 0; i < srcheight; i++) {
-                    int j;
-
-                    for(j = 0; j < srcwidth - 3; j += 4) {
-                        _mm_storeu_ps(&tmpChr[i][j], _mm_sqrt_ps(SQRV(LVFU(l_b[i][j])) + SQRV(LVFU(l_a[i][j]))) / div);
-                    }
-
-                    for(; j < srcwidth; j++) {
-                        tmpChr[i][j] = sqrtf(SQR((l_b[i][j])) + SQR((l_a[i][j]))) / 327.68f;
-                    }
-                }
-            }
-    #else
-            #pragma omp parallel for
-
-            for(int i = 0; i < srcheight; i++) {
-                for(int j = 0; j < srcwidth; j++) {
-                    tmpChr[i][j] = sqrtf(SQR((l_b[i][j])) + SQR((l_a[i][j]))) / 327.68f;
-                }
-            }
-
-    #endif
-        }
-    */
     // with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
     float ** buffer = dirpyrlo[lastlevel - 1];
 
@@ -442,21 +370,6 @@ SSEFUNCTION void ImProcFunctions :: cbdl_local_temp(float ** src, float ** dst, 
     scale = scalesloc[0];
 
     idirpyr_eq_channel_loc(dirpyrlo[0], dst, loctemp, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold, tmpHue, tmpChr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice );
-    /*
-        if(skinprot != 0.f) {
-            for (int i = 0; i < srcheight; i++) {
-                delete [] tmpChr[i];
-            }
-
-            delete [] tmpChr;
-
-            for (int i = 0; i < srcheight; i++) {
-                delete [] tmpHue[i];
-            }
-
-            delete [] tmpHue;
-        }
-    */
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     #pragma omp parallel for
 
