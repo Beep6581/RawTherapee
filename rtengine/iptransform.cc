@@ -299,7 +299,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
         LCPProfile *pLCPProf = lcpStore->getProfile(params->lensProf.lcpFile);
 
         if (pLCPProf) pLCPMap = new LCPMapper(pLCPProf, focalLen, focalLen35mm, focusDist, 0, false, params->lensProf.useDist,
-                                                  original->width, original->height, params->coarse, rawRotationDeg);
+                                                  original->getWidth(), original->getHeight(), params->coarse, rawRotationDeg);
     }
 
     if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
@@ -663,17 +663,17 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
     struct pcv_params pcv;
 
     if (applyPCVignetting) {
-        //fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->width, transformed->height, cx, cy, params->crop.w, params->crop.h);
+        //fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->getWidth(), transformed->getHeight(), cx, cy, params->crop.w, params->crop.h);
         calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
     bool darkening = (params->vignetting.amount <= 0.0);
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 
-    for (int y = 0; y < transformed->height; y++) {
+    for (int y = 0; y < transformed->getHeight(); y++) {
         double vig_y_d = (double) (y + cy) - vig_h2 ;
 
-        for (int x = 0; x < transformed->width; x++) {
+        for (int x = 0; x < transformed->getWidth(); x++) {
             double factor = 1.0;
 
             if (applyVignetting) {
@@ -779,8 +779,8 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
     bool darkening = (params->vignetting.amount <= 0.0);
     #pragma omp parallel for if (multiThread)
 
-    for (int y = 0; y < transformed->height; y++) {
-        for (int x = 0; x < transformed->width; x++) {
+    for (int y = 0; y < transformed->getHeight(); y++) {
+        for (int x = 0; x < transformed->getWidth(); x++) {
             double x_d = x, y_d = y;
 
             if (enableLCPDist) {
@@ -849,7 +849,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                 yc -= sy;
 
                 // Convert only valid pixels
-                if (yc >= 0 && yc < original->height && xc >= 0 && xc < original->width) {
+                if (yc >= 0 && yc < original->getHeight() && xc >= 0 && xc < original->getWidth()) {
 
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
@@ -870,7 +870,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                         vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
                     }
 
-                    if (yc > 0 && yc < original->height - 2 && xc > 0 && xc < original->width - 2) {
+                    if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
                         // all interpolation pixels inside image
                         if (enableCA) {
                             interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
@@ -879,10 +879,10 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                         }
                     } else {
                         // edge pixels
-                        int y1 = LIM(yc,   0, original->height - 1);
-                        int y2 = LIM(yc + 1, 0, original->height - 1);
-                        int x1 = LIM(xc,   0, original->width - 1);
-                        int x2 = LIM(xc + 1, 0, original->width - 1);
+                        int y1 = LIM(yc,   0, original->getHeight() - 1);
+                        int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
+                        int x1 = LIM(xc,   0, original->getWidth() - 1);
+                        int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
 
                         if (enableCA) {
                             chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
@@ -956,8 +956,8 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
     // main cycle
     #pragma omp parallel for if (multiThread)
 
-    for (int y = 0; y < transformed->height; y++) {
-        for (int x = 0; x < transformed->width; x++) {
+    for (int y = 0; y < transformed->getHeight(); y++) {
+        for (int x = 0; x < transformed->getWidth(); x++) {
             double x_d = x, y_d = y;
 
             if (pLCPMap && params->lensProf.useDist) {
@@ -1019,7 +1019,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             yc -= sy;
 
             // Convert only valid pixels
-            if (yc >= 0 && yc < original->height && xc >= 0 && xc < original->width) {
+            if (yc >= 0 && yc < original->getHeight() && xc >= 0 && xc < original->getWidth()) {
 
                 // multiplier for vignetting correction
                 double vignmul = 1.0;
@@ -1040,17 +1040,17 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                     vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
                 }
 
-                if (yc < original->height - 1 && xc < original->width - 1) {
+                if (yc < original->getHeight() - 1 && xc < original->getWidth() - 1) {
                     // all interpolation pixels inside image
                     transformed->r(y, x) = vignmul * (original->r(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r(yc, xc + 1) * Dx * (1.0 - Dy) + original->r(yc + 1, xc) * (1.0 - Dx) * Dy + original->r(yc + 1, xc + 1) * Dx * Dy);
                     transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
                     transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
                 } else {
                     // edge pixels
-                    int y1 = LIM(yc,   0, original->height - 1);
-                    int y2 = LIM(yc + 1, 0, original->height - 1);
-                    int x1 = LIM(xc,   0, original->width - 1);
-                    int x2 = LIM(xc + 1, 0, original->width - 1);
+                    int y1 = LIM(yc,   0, original->getHeight() - 1);
+                    int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
+                    int x1 = LIM(xc,   0, original->getWidth() - 1);
+                    int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
                     transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
                     transformed->g(y, x) = vignmul * (original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
                     transformed->b(y, x) = vignmul * (original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
