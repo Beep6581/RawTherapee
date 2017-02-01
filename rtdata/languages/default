@@ -703,6 +703,7 @@ HISTORY_MSG_468;EvPixelShiftMedian
 HISTORY_MSG_469;EvPixelShiftMedian3
 HISTORY_MSG_470;EvPixelShiftMotionMethod
 HISTORY_MSG_471;EvPixelShiftSmooth
+HISTORY_MSG_472;EvPixelShiftLmmse
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1694,6 +1695,7 @@ TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
 TP_RAW_PIXELSHIFTHOLEFILL;3x3 new: Fill holes
 TP_RAW_PIXELSHIFTBLUR;3x3 new: Blur
 TP_RAW_PIXELSHIFTSMOOTH;3x3 new: Smooth transitions
+TP_RAW_PIXELSHIFTLMMSE;Use lmmse for motion parts
 TP_RAW_PIXELSHIFTEXP0;Experimental
 TP_RAW_PIXELSHIFTGREEN;Check dual green
 TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue cross

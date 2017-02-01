@@ -394,6 +394,7 @@ void ParamsEdited::set (bool v)
     raw.bayersensor.pixelShiftBlur = v;
     raw.bayersensor.pixelShiftSmooth = v;
     raw.bayersensor.pixelShiftExp0 = v;
+    raw.bayersensor.pixelShiftLmmse = v;
     raw.bayersensor.pixelShiftNonGreenCross = v;
     raw.bayersensor.pixelShiftNonGreenCross2 = v;
     raw.bayersensor.pixelShiftNonGreenAmaze = v;
@@ -917,6 +918,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.bayersensor.pixelShiftBlur = raw.bayersensor.pixelShiftBlur && p.raw.bayersensor.pixelShiftBlur == other.raw.bayersensor.pixelShiftBlur;
         raw.bayersensor.pixelShiftSmooth = raw.bayersensor.pixelShiftSmooth && p.raw.bayersensor.pixelShiftSmoothFactor == other.raw.bayersensor.pixelShiftSmoothFactor;
         raw.bayersensor.pixelShiftExp0 = raw.bayersensor.pixelShiftExp0 && p.raw.bayersensor.pixelShiftExp0 == other.raw.bayersensor.pixelShiftExp0;
+        raw.bayersensor.pixelShiftLmmse = raw.bayersensor.pixelShiftLmmse && p.raw.bayersensor.pixelShiftLmmse == other.raw.bayersensor.pixelShiftLmmse;
         raw.bayersensor.pixelShiftNonGreenCross = raw.bayersensor.pixelShiftNonGreenCross && p.raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross;
         raw.bayersensor.pixelShiftNonGreenCross2 = raw.bayersensor.pixelShiftNonGreenCross2 && p.raw.bayersensor.pixelShiftNonGreenCross2 == other.raw.bayersensor.pixelShiftNonGreenCross2;
         raw.bayersensor.pixelShiftNonGreenAmaze = raw.bayersensor.pixelShiftNonGreenAmaze && p.raw.bayersensor.pixelShiftNonGreenAmaze == other.raw.bayersensor.pixelShiftNonGreenAmaze;
@@ -2428,6 +2430,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.bayersensor.pixelShiftExp0 = mods.raw.bayersensor.pixelShiftExp0;
     }
 
+    if (raw.bayersensor.pixelShiftLmmse) {
+        toEdit.raw.bayersensor.pixelShiftLmmse = mods.raw.bayersensor.pixelShiftLmmse;
+    }
+
     if (raw.bayersensor.pixelShiftNonGreenCross) {
         toEdit.raw.bayersensor.pixelShiftNonGreenCross = mods.raw.bayersensor.pixelShiftNonGreenCross;
     }
@@ -2952,7 +2958,7 @@ bool RAWParamsEdited::BayerSensor::isUnchanged() const
     return  method && imageNum && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ &&  greenEq
             && pixelShiftMotion && pixelShiftMotionCorrection && pixelShiftMotionCorrectionMethod && pixelShiftStddevFactorGreen && pixelShiftStddevFactorRed && pixelShiftStddevFactorBlue && pixelShiftEperIso
             && pixelShiftNreadIso && pixelShiftPrnu && pixelShiftSigma && pixelShiftSum && pixelShiftRedBlueWeight && pixelshiftShowMotion && pixelshiftShowMotionMaskOnly
-            && pixelShiftAutomatic && pixelShiftNonGreenHorizontal && pixelShiftNonGreenVertical && pixelShiftHoleFill && pixelShiftMedian && pixelShiftMedian3 && pixelShiftNonGreenCross && pixelShiftNonGreenCross2 && pixelShiftNonGreenAmaze && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftExp0
+            && pixelShiftAutomatic && pixelShiftNonGreenHorizontal && pixelShiftNonGreenVertical && pixelShiftHoleFill && pixelShiftMedian && pixelShiftMedian3 && pixelShiftNonGreenCross && pixelShiftNonGreenCross2 && pixelShiftNonGreenAmaze && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftExp0 && pixelShiftLmmse
             && linenoise && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
 }
 

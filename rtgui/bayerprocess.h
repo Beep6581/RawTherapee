@@ -60,6 +60,7 @@ protected:
     Gtk::CheckButton* pixelShiftHoleFill;
     Gtk::CheckButton* pixelShiftMedian;
     Gtk::CheckButton* pixelShiftMedian3;
+    Gtk::CheckButton* pixelShiftLmmse;
     Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftStddevFactorGreen;
     Adjuster* pixelShiftStddevFactorRed;
@@ -76,7 +77,7 @@ protected:
     sigc::connection methodconn, imagenumberconn, psmcconn, dcbEnhconn,
                      pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn,
                      pixelShiftNonGreenHorizontalconn, pixelShiftNonGreenVerticalconn, pixelShiftHoleFillconn, pixelShiftMedianconn, pixelShiftMedian3conn, pixelShiftNonGreenCrossconn,
-                     pixelShiftNonGreenCross2conn, pixelShiftNonGreenAmazeconn, pixelShiftGreenconn, pixelShiftBlurconn, pixelShiftSmoothconn, pixelShiftExp0conn, pixelShiftMotionMethodConn;
+                     pixelShiftNonGreenCross2conn, pixelShiftNonGreenAmazeconn, pixelShiftGreenconn, pixelShiftBlurconn, pixelShiftSmoothconn, pixelShiftExp0conn, pixelShiftLmmseconn, pixelShiftMotionMethodConn;
 public:
 
     BayerProcess ();
@@ -102,6 +103,7 @@ public:
     void pixelShiftGreenChanged();
     void pixelShiftBlurChanged();
     void pixelShiftExp0Changed();
+    void pixelShiftLmmseChanged();
     void pixelShiftNonGreenCrossChanged();
     void pixelShiftNonGreenCross2Changed();
     void pixelShiftNonGreenAmazeChanged();

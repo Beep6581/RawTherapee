@@ -1231,6 +1231,7 @@ public:
         bool pixelShiftBlur;
         double pixelShiftSmoothFactor;
         bool pixelShiftExp0;
+        bool pixelShiftLmmse;
         bool pixelShiftNonGreenCross;
         bool pixelShiftNonGreenCross2;
         bool pixelShiftNonGreenAmaze;

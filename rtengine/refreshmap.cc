@@ -497,7 +497,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvPixelShiftMedian
     DEMOSAIC,         // EvPixelShiftMedian3
     DEMOSAIC,         // EvPixelShiftMotionMethod
-    DEMOSAIC          // EvPixelShiftSmooth
+    DEMOSAIC,         // EvPixelShiftSmooth
+    DEMOSAIC          // EvPixelShiftLmmse
 
 };
 
