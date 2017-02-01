@@ -622,13 +622,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
             for (int i = 0; i < TS; ++i) {
                 float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
-                float vmask = (i1 < border ? SQR(sin((M_PI * i1) / (2 * border))) : 1.0f);
-                float vmask2 = (i1 < 2 * border ? SQR(sin((M_PI * i1) / (2 * border))) : 1.0f);
+                float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
 
                 for (int j = 0; j < TS; ++j) {
                     float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
-                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((M_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
-                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((M_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
 
                 }
             }
@@ -1512,7 +1512,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                 }
 
                                 for (int i = 0; i < overlap; ++i) {
-                                    float mask = SQR(xsinf((M_PI * i) / (2 * overlap)));
+                                    float mask = SQR(xsinf((rtengine::RT_PI * i) / (2 * overlap)));
 
                                     if (tiletop > 0) {
                                         Vmask[i] = mask;

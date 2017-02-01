@@ -12,10 +12,11 @@
 #define SLEEFSSEAVX
 
 #include <assert.h>
-#include <math.h>
+//#include <math.h>
 //#include <bits/nan.h>
 //#include <bits/inf.h>
 //#include "sleefsseavx.h"
+#include "rt_math.h"
 #ifdef __SSE2__
 #include "helpersse2.h"
 
@@ -51,8 +52,8 @@
 #define L2Lf 1.428606765330187045e-06f
 #define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
 
-#define INFINITYf ((float)INFINITY)
-#define NANf ((float)NAN)
+#define INFINITYf ((float)rtengine::RT_INFINITY)
+#define NANf ((float)rtengine::RT_NAN)
 
 //
 
@@ -259,7 +260,7 @@ static INLINE vdouble xldexp(vdouble x, vint q) { return vldexp(x, q); }
 static INLINE vint xilogb(vdouble d) {
   vdouble e = vcast_vd_vi(vsubi(vilogbp1(vabs(d)), vcast_vi_i(1)));
   e = vsel(vmask_eq(d, vcast_vd_d(0)), vcast_vd_d(-2147483648.0), e);
-  e = vsel(vmask_eq(vabs(d), vcast_vd_d(INFINITY)), vcast_vd_d(2147483647), e);
+  e = vsel(vmask_eq(vabs(d), vcast_vd_d(rtengine::RT_INFINITY)), vcast_vd_d(2147483647), e);
   return vrint_vi_vd(e);
 }
 
@@ -267,7 +268,7 @@ static INLINE vdouble xsin(vdouble d) {
   vint q;
   vdouble u, s;
 
-  q = vrint_vi_vd(vmul(d, vcast_vd_d(M_1_PI)));
+  q = vrint_vi_vd(vmul(d, vcast_vd_d(rtengine::RT_1_PI)));
 
   u = vcast_vd_vi(q);
   d = vadd(d, vmul(u, vcast_vd_d(-PI4_A*4)));
@@ -297,7 +298,7 @@ static INLINE vdouble xcos(vdouble d) {
   vint q;
   vdouble u, s;
 
-  q = vrint_vi_vd(vsub(vmul(d, vcast_vd_d(M_1_PI)), vcast_vd_d(0.5)));
+  q = vrint_vi_vd(vsub(vmul(d, vcast_vd_d(rtengine::RT_1_PI)), vcast_vd_d(0.5)));
   q = vaddi(vaddi(q, q), vcast_vi_i(1));
 
   u = vcast_vd_vi(q);
@@ -330,7 +331,7 @@ static INLINE vdouble2 xsincos(vdouble d) {
   vdouble u, s, t, rx, ry;
   vdouble2 r;
 
-  q = vrint_vi_vd(vmul(d, vcast_vd_d(M_2_PI)));
+  q = vrint_vi_vd(vmul(d, vcast_vd_d(rtengine::RT_2_PI)));
 
   s = d;
 
@@ -374,8 +375,8 @@ static INLINE vdouble2 xsincos(vdouble d) {
   r.y = vreinterpret_vd_vm(vxorm(vandm(m, vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(r.y)));
 
   m = vmask_isinf(d);
-  r.x = vsel(m, vcast_vd_d(NAN), r.x);
-  r.y = vsel(m, vcast_vd_d(NAN), r.y);
+  r.x = vsel(m, vcast_vd_d(rtengine::RT_NAN), r.x);
+  r.y = vsel(m, vcast_vd_d(rtengine::RT_NAN), r.y);
 
   return r;
 }
@@ -385,7 +386,7 @@ static INLINE vdouble xtan(vdouble d) {
   vdouble u, s, x;
   vmask m;
 
-  q = vrint_vi_vd(vmul(d, vcast_vd_d(M_2_PI)));
+  q = vrint_vi_vd(vmul(d, vcast_vd_d(rtengine::RT_2_PI)));
 
   u = vcast_vd_vi(q);
   x = vadd(d, vmul(u, vcast_vd_d(-PI4_A*2)));
@@ -417,7 +418,7 @@ static INLINE vdouble xtan(vdouble d) {
 
   u = vsel(m, vrec(u), u);
 
-  u = vsel(vmask_isinf(d), vcast_vd_d(NAN), u);
+  u = vsel(vmask_isinf(d), vcast_vd_d(rtengine::RT_NAN), u);
 
   return u;
 }
@@ -459,7 +460,7 @@ static INLINE vdouble atan2k(vdouble y, vdouble x) {
   u = vmla(u, t, vcast_vd_d(-0.333333333333311110369124));
 
   t = vadd(s, vmul(s, vmul(t, u)));
-  t = vadd(t, vmul(vcast_vd_vi(q), vcast_vd_d(M_PI/2)));
+  t = vadd(t, vmul(vcast_vd_vi(q), vcast_vd_d(rtengine::RT_PI/2)));
 
   return t;
 }
@@ -468,11 +469,11 @@ static INLINE vdouble xatan2(vdouble y, vdouble x) {
   vdouble r = atan2k(vabs(y), x);
 
   r = vmulsign(r, x);
-  r = vsel(vorm(vmask_isinf(x), vmask_eq(x, vcast_vd_d(0))), vsub(vcast_vd_d(M_PI/2), visinf2(x, vmulsign(vcast_vd_d(M_PI/2), x))), r);
-  r = vsel(vmask_isinf(y), vsub(vcast_vd_d(M_PI/2), visinf2(x, vmulsign(vcast_vd_d(M_PI/4), x))), r);
-  r = vsel(vmask_eq(y, vcast_vd_d(0)), vsel(vmask_eq(vsign(x), vcast_vd_d(-1.0)), vcast_vd_d(M_PI), vcast_vd_d(0)), r);
+  r = vsel(vorm(vmask_isinf(x), vmask_eq(x, vcast_vd_d(0))), vsub(vcast_vd_d(rtengine::RT_PI/2), visinf2(x, vmulsign(vcast_vd_d(rtengine::RT_PI/2), x))), r);
+  r = vsel(vmask_isinf(y), vsub(vcast_vd_d(rtengine::RT_PI/2), visinf2(x, vmulsign(vcast_vd_d(rtengine::RT_PI/4), x))), r);
+  r = vsel(vmask_eq(y, vcast_vd_d(0)), vsel(vmask_eq(vsign(x), vcast_vd_d(-1.0)), vcast_vd_d(rtengine::RT_PI), vcast_vd_d(0)), r);
 
-  return vsel(vorm(vmask_isnan(x), vmask_isnan(y)), vcast_vd_d(NAN), vmulsign(r, y));
+  return vsel(vorm(vmask_isnan(x), vmask_isnan(y)), vcast_vd_d(rtengine::RT_NAN), vmulsign(r, y));
 }
 
 static INLINE vdouble xasin(vdouble d) {
@@ -481,7 +482,7 @@ static INLINE vdouble xasin(vdouble d) {
   y = vsub(vcast_vd_d(1), d);
   x = vmul(x, y);
   x = vsqrt(x);
-  x = vsel(vmask_isnan(x), vcast_vd_d(NAN), atan2k(vabs(d), x));
+  x = vsel(vmask_isnan(x), vcast_vd_d(rtengine::RT_NAN), atan2k(vabs(d), x));
   return vmulsign(x, d);
 }
 
@@ -492,7 +493,7 @@ static INLINE vdouble xacos(vdouble d) {
   x = vmul(x, y);
   x = vsqrt(x);
   x = vmulsign(atan2k(x, vabs(d)), d);
-  y = (vdouble)vandm(vmask_lt(d, vcast_vd_d(0)), (vmask)vcast_vd_d(M_PI));
+  y = (vdouble)vandm(vmask_lt(d, vcast_vd_d(0)), (vmask)vcast_vd_d(rtengine::RT_PI));
   x = vadd(x, y);
   return x;
 }
@@ -531,7 +532,7 @@ static INLINE vdouble xatan(vdouble s) {
 
   t = vadd(s, vmul(s, vmul(t, u)));
 
-  t = vsel(vmaski_eq(vandi(q, vcast_vi_i(1)), vcast_vi_i(1)), vsub(vcast_vd_d(M_PI/2), t), t);
+  t = vsel(vmaski_eq(vandi(q, vcast_vi_i(1)), vcast_vi_i(1)), vsub(vcast_vd_d(rtengine::RT_PI/2), t), t);
   t = vsel(vmaski_eq(vandi(q, vcast_vi_i(2)), vcast_vi_i(2)), vneg(t), t);
 
   return t;
@@ -559,9 +560,9 @@ static INLINE vdouble xlog(vdouble d) {
 
   x = vadd(vmul(x, t), vmul(vcast_vd_d(0.693147180559945286226764), vcast_vd_vi(e)));
 
-  x = vsel(vmask_ispinf(d), vcast_vd_d(INFINITY), x);
-  x = vsel(vmask_gt(vcast_vd_d(0), d), vcast_vd_d(NAN), x);
-  x = vsel(vmask_eq(d, vcast_vd_d(0)), vcast_vd_d(-INFINITY), x);
+  x = vsel(vmask_ispinf(d), vcast_vd_d(rtengine::RT_INFINITY), x);
+  x = vsel(vmask_gt(vcast_vd_d(0), d), vcast_vd_d(rtengine::RT_NAN), x);
+  x = vsel(vmask_eq(d, vcast_vd_d(0)), vcast_vd_d(-rtengine::RT_INFINITY), x);
 
   return x;
 }
@@ -659,7 +660,7 @@ static INLINE vdouble xpow(vdouble x, vdouble y) {
 
   vdouble result = expk(mul_ds(logk(vabs(x)), y));
 
-  //result = vsel(vmask_isnan(result), vcast_vd_d(INFINITY), result);
+  //result = vsel(vmask_isnan(result), vcast_vd_d(rtengine::RT_INFINITY), result);
 
   result = vmul(result,
 		vsel(vmask_gt(x, vcast_vd_d(0)),
@@ -668,7 +669,7 @@ static INLINE vdouble xpow(vdouble x, vdouble y) {
 			  vsel(yisodd,
 			       vcast_vd_d(-1),
 			       vcast_vd_d(1)),
-			  vcast_vd_d(NAN))));
+			  vcast_vd_d(rtengine::RT_NAN))));
 
   vdouble efx = vreinterpret_vd_vm(vxorm(vreinterpret_vm_vd(vsub(vabs(x), vcast_vd_d(1))), vsignbit(y)));
 
@@ -677,17 +678,17 @@ static INLINE vdouble xpow(vdouble x, vdouble y) {
 		     vcast_vd_d(0),
 		     vsel(vmask_eq(efx, vcast_vd_d(0)),
 			  vcast_vd_d(1.0),
-			  vcast_vd_d(INFINITY))),
+			  vcast_vd_d(rtengine::RT_INFINITY))),
 		result);
 
   result = vsel(vorm(vmask_isinf(x), vmask_eq(x, vcast_vd_d(0))),
 		vmul(vsel(yisodd, vsign(x), vcast_vd_d(1)),
 		     vsel(vmask_lt(vsel(vmask_eq(x, vcast_vd_d(0)), vneg(y), y), vcast_vd_d(0)),
 			  vcast_vd_d(0),
-			  vcast_vd_d(INFINITY))),
+			  vcast_vd_d(rtengine::RT_INFINITY))),
 		result);
 
-  result = vsel(vorm(vmask_isnan(x), vmask_isnan(y)), vcast_vd_d(NAN), result);
+  result = vsel(vorm(vmask_isnan(x), vmask_isnan(y)), vcast_vd_d(rtengine::RT_NAN), result);
 
   result = vsel(vorm(vmask_eq(y, vcast_vd_d(0)), vmask_eq(x, vcast_vd_d(1))), vcast_vd_d(1), result);
 
@@ -733,9 +734,9 @@ static INLINE vdouble xsinh(vdouble x) {
   d = add2_dd(d, div_dd(dd(vcast_vd_d(-1), vcast_vd_d(0)), d));
   y = vmul(vadd(d.x, d.y), vcast_vd_d(0.5));
 
-  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(INFINITY), y);
+  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(rtengine::RT_INFINITY), y);
   y = vmulsign(y, x);
-  y = vsel(vmask_isnan(x), vcast_vd_d(NAN), y);
+  y = vsel(vmask_isnan(x), vcast_vd_d(rtengine::RT_NAN), y);
 
   return y;
 }
@@ -745,8 +746,8 @@ static INLINE vdouble xcosh(vdouble x) {
   d = add2_dd(d, div_dd(dd(vcast_vd_d(1), vcast_vd_d(0)), d));
   vdouble y = vmul(vadd(d.x, d.y), vcast_vd_d(0.5));
 
-  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(INFINITY), y);
-  y = vsel(vmask_isnan(x), vcast_vd_d(NAN), y);
+  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(rtengine::RT_INFINITY), y);
+  y = vsel(vmask_isnan(x), vcast_vd_d(rtengine::RT_NAN), y);
 
   return y;
 }
@@ -760,7 +761,7 @@ static INLINE vdouble xtanh(vdouble x) {
 
   y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(1.0), y);
   y = vmulsign(y, x);
-  y = vsel(vmask_isnan(x), vcast_vd_d(NAN), y);
+  y = vsel(vmask_isnan(x), vcast_vd_d(rtengine::RT_NAN), y);
 
   return y;
 }
@@ -797,9 +798,9 @@ static INLINE vdouble xasinh(vdouble x) {
   vdouble2 d = logk2(add2_ds(sqrt_d(add2_ds(mul_ss(y, y),  vcast_vd_d(1))), y));
   y = vadd(d.x, d.y);
 
-  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(INFINITY), y);
+  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(rtengine::RT_INFINITY), y);
   y = vmulsign(y, x);
-  y = vsel(vmask_isnan(x), vcast_vd_d(NAN), y);
+  y = vsel(vmask_isnan(x), vcast_vd_d(rtengine::RT_NAN), y);
 
   return y;
 }
@@ -808,10 +809,10 @@ static INLINE vdouble xacosh(vdouble x) {
   vdouble2 d = logk2(add2_ds(sqrt_d(add2_ds(mul_ss(x, x), vcast_vd_d(-1))), x));
   vdouble y = vadd(d.x, d.y);
 
-  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(INFINITY), y);
+  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(rtengine::RT_INFINITY), y);
   y = vsel(vmask_eq(x, vcast_vd_d(1.0)), vcast_vd_d(0.0), y);
-  y = vsel(vmask_lt(x, vcast_vd_d(1.0)), vcast_vd_d(NAN), y);
-  y = vsel(vmask_isnan(x), vcast_vd_d(NAN), y);
+  y = vsel(vmask_lt(x, vcast_vd_d(1.0)), vcast_vd_d(rtengine::RT_NAN), y);
+  y = vsel(vmask_isnan(x), vcast_vd_d(rtengine::RT_NAN), y);
 
   return y;
 }
@@ -819,11 +820,11 @@ static INLINE vdouble xacosh(vdouble x) {
 static INLINE vdouble xatanh(vdouble x) {
   vdouble y = vabs(x);
   vdouble2 d = logk2(div_dd(add2_ss(vcast_vd_d(1), y), add2_ss(vcast_vd_d(1), -y)));
-  y = vsel(vmask_gt(y, vcast_vd_d(1.0)), vcast_vd_d(NAN), vsel(vmask_eq(y, vcast_vd_d(1.0)), vcast_vd_d(INFINITY), vmul(vadd(d.x, d.y), vcast_vd_d(0.5))));
+  y = vsel(vmask_gt(y, vcast_vd_d(1.0)), vcast_vd_d(rtengine::RT_NAN), vsel(vmask_eq(y, vcast_vd_d(1.0)), vcast_vd_d(rtengine::RT_INFINITY), vmul(vadd(d.x, d.y), vcast_vd_d(0.5))));
 
-  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(NAN), y);
+  y = vsel(vorm(vmask_isinf(x), vmask_isnan(y)), vcast_vd_d(rtengine::RT_NAN), y);
   y = vmulsign(y, x);
-  y = vsel(vmask_isnan(x), vcast_vd_d(NAN), y);
+  y = vsel(vmask_isnan(x), vcast_vd_d(rtengine::RT_NAN), y);
 
   return y;
 }
@@ -864,14 +865,14 @@ static INLINE vdouble xcbrt(vdouble d) {
 
 static INLINE vdouble xexp2(vdouble a) {
   vdouble u = expk(mul_ds(dd(vcast_vd_d(0.69314718055994528623), vcast_vd_d(2.3190468138462995584e-17)), a));
-  u = vsel(vmask_ispinf(a), vcast_vd_d(INFINITY), u);
+  u = vsel(vmask_ispinf(a), vcast_vd_d(rtengine::RT_INFINITY), u);
   u = vsel(vmask_isminf(a), vcast_vd_d(0), u);
   return u;
 }
 
 static INLINE vdouble xexp10(vdouble a) {
   vdouble u = expk(mul_ds(dd(vcast_vd_d(2.3025850929940459011), vcast_vd_d(-2.1707562233822493508e-16)), a));
-  u = vsel(vmask_ispinf(a), vcast_vd_d(INFINITY), u);
+  u = vsel(vmask_ispinf(a), vcast_vd_d(rtengine::RT_INFINITY), u);
   u = vsel(vmask_isminf(a), vcast_vd_d(0), u);
   return u;
 }
@@ -879,7 +880,7 @@ static INLINE vdouble xexp10(vdouble a) {
 static INLINE vdouble xexpm1(vdouble a) {
   vdouble2 d = add2_ds(expk2(dd(a, vcast_vd_d(0))), vcast_vd_d(-1.0));
   vdouble x = d.x + d.y;
-  x = vsel(vmask_ispinf(a), vcast_vd_d(INFINITY), x);
+  x = vsel(vmask_ispinf(a), vcast_vd_d(rtengine::RT_INFINITY), x);
   x = vsel(vmask_isminf(a), vcast_vd_d(-1), x);
   return x;
 }
@@ -888,9 +889,9 @@ static INLINE vdouble xlog10(vdouble a) {
   vdouble2 d = mul_dd(logk(a), dd(vcast_vd_d(0.43429448190325176116), vcast_vd_d(6.6494347733425473126e-17)));
   vdouble x = d.x + d.y;
 
-  x = vsel(vmask_ispinf(a), vcast_vd_d(INFINITY), x);
-  x = vsel(vmask_gt(vcast_vd_d(0), a), vcast_vd_d(NAN), x);
-  x = vsel(vmask_eq(a, vcast_vd_d(0)), vcast_vd_d(-INFINITY), x);
+  x = vsel(vmask_ispinf(a), vcast_vd_d(rtengine::RT_INFINITY), x);
+  x = vsel(vmask_gt(vcast_vd_d(0), a), vcast_vd_d(rtengine::RT_NAN), x);
+  x = vsel(vmask_eq(a, vcast_vd_d(0)), vcast_vd_d(-rtengine::RT_INFINITY), x);
 
   return x;
 }
@@ -899,9 +900,9 @@ static INLINE vdouble xlog1p(vdouble a) {
   vdouble2 d = logk2(add2_ss(a, vcast_vd_d(1)));
   vdouble x = d.x + d.y;
 
-  x = vsel(vmask_ispinf(a), vcast_vd_d(INFINITY), x);
-  x = vsel(vmask_gt(vcast_vd_d(-1), a), vcast_vd_d(NAN), x);
-  x = vsel(vmask_eq(a, vcast_vd_d(-1)), vcast_vd_d(-INFINITY), x);
+  x = vsel(vmask_ispinf(a), vcast_vd_d(rtengine::RT_INFINITY), x);
+  x = vsel(vmask_gt(vcast_vd_d(-1), a), vcast_vd_d(rtengine::RT_NAN), x);
+  x = vsel(vmask_eq(a, vcast_vd_d(-1)), vcast_vd_d(-rtengine::RT_INFINITY), x);
 
   return x;
 }
@@ -1005,7 +1006,7 @@ static INLINE vfloat xsinf(vfloat d) {
   vint2 q;
   vfloat u, s;
 
-  q = vrint_vi2_vf(vmulf(d, vcast_vf_f((float)M_1_PI)));
+  q = vrint_vi2_vf(vmulf(d, vcast_vf_f((float)rtengine::RT_1_PI)));
 
   u = vcast_vf_vi2(q);
   d = vmlaf(u, vcast_vf_f(-PI4_Af*4), d);
@@ -1031,7 +1032,7 @@ static INLINE vfloat xcosf(vfloat d) {
   vint2 q;
   vfloat u, s;
 
-  q = vrint_vi2_vf(vsubf(vmulf(d, vcast_vf_f((float)M_1_PI)), vcast_vf_f(0.5f)));
+  q = vrint_vi2_vf(vsubf(vmulf(d, vcast_vf_f((float)rtengine::RT_1_PI)), vcast_vf_f(0.5f)));
   q = vaddi2(vaddi2(q, q), vcast_vi2_i(1));
 
   u = vcast_vf_vi2(q);
@@ -1060,7 +1061,7 @@ static INLINE vfloat2 xsincosf(vfloat d) {
   vfloat u, s, t, rx, ry;
   vfloat2 r;
 
-  q = vrint_vi2_vf(vmulf(d, vcast_vf_f((float)M_2_PI)));
+  q = vrint_vi2_vf(vmulf(d, vcast_vf_f((float)rtengine::RT_2_PI)));
 
   s = d;
 
@@ -1100,8 +1101,8 @@ static INLINE vfloat2 xsincosf(vfloat d) {
   r.y = vreinterpret_vf_vm(vxorm(vandm(m, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
 
   m = vmaskf_isinf(d);
-  r.x = vself(m, vcast_vf_f(NAN), r.x);
-  r.y = vself(m, vcast_vf_f(NAN), r.y);
+  r.x = vself(m, vcast_vf_f(rtengine::RT_NAN), r.x);
+  r.y = vself(m, vcast_vf_f(rtengine::RT_NAN), r.y);
 
   return r;
 }
@@ -1111,7 +1112,7 @@ static INLINE vfloat xtanf(vfloat d) {
   vmask m;
   vfloat u, s, x;
 
-  q = vrint_vi2_vf(vmulf(d, vcast_vf_f((float)(2 * M_1_PI))));
+  q = vrint_vi2_vf(vmulf(d, vcast_vf_f((float)(2 * rtengine::RT_1_PI))));
 
   x = d;
 
@@ -1165,7 +1166,7 @@ static INLINE vfloat xatanf(vfloat s) {
 
   t = vaddf(s, vmulf(s, vmulf(t, u)));
 
-  t = vself(vmaski2_eq(vandi2(q, vcast_vi2_i(1)), vcast_vi2_i(1)), vsubf(vcast_vf_f((float)(M_PI/2)), t), t);
+  t = vself(vmaski2_eq(vandi2(q, vcast_vi2_i(1)), vcast_vi2_i(1)), vsubf(vcast_vf_f((float)(rtengine::RT_PI/2)), t), t);
   t = vself(vmaski2_eq(vandi2(q, vcast_vi2_i(2)), vcast_vi2_i(2)), vnegf(t), t);
 
   return t;
@@ -1197,7 +1198,7 @@ static INLINE vfloat atan2kf(vfloat y, vfloat x) {
   u = vmlaf(u, t, vcast_vf_f(-0.333331018686294555664062f));
 
   t = vaddf(s, vmulf(s, vmulf(t, u)));
-  t = vaddf(t, vmulf(vcast_vf_vi2(q), vcast_vf_f((float)(M_PI/2))));
+  t = vaddf(t, vmulf(vcast_vf_vi2(q), vcast_vf_f((float)(rtengine::RT_PI/2))));
 
   return t;
 }
@@ -1206,9 +1207,9 @@ static INLINE vfloat xatan2f(vfloat y, vfloat x) {
   vfloat r = atan2kf(vabsf(y), x);
 
   r = vmulsignf(r, x);
-  r = vself(vorm(vmaskf_isinf(x), vmaskf_eq(x, vcast_vf_f(0.0f))), vsubf(vcast_vf_f((float)(M_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(M_PI/2)), x))), r);
-  r = vself(vmaskf_isinf(y), vsubf(vcast_vf_f((float)(M_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(M_PI/4)), x))), r);
-  r = vself(vmaskf_eq(y, vcast_vf_f(0.0f)), vselfzero(vmaskf_eq(vsignf(x), vcast_vf_f(-1.0f)), vcast_vf_f((float)M_PI)), r);
+  r = vself(vorm(vmaskf_isinf(x), vmaskf_eq(x, vcast_vf_f(0.0f))), vsubf(vcast_vf_f((float)(rtengine::RT_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(rtengine::RT_PI/2)), x))), r);
+  r = vself(vmaskf_isinf(y), vsubf(vcast_vf_f((float)(rtengine::RT_PI/2)), visinf2f(x, vmulsignf(vcast_vf_f((float)(rtengine::RT_PI/4)), x))), r);
+  r = vself(vmaskf_eq(y, vcast_vf_f(0.0f)), vselfzero(vmaskf_eq(vsignf(x), vcast_vf_f(-1.0f)), vcast_vf_f((float)rtengine::RT_PI)), r);
 
   return vself(vorm(vmaskf_isnan(x), vmaskf_isnan(y)), vcast_vf_f(NANf), vmulsignf(r, y));
 }
@@ -1230,7 +1231,7 @@ static INLINE vfloat xacosf(vfloat d) {
   x = vmulf(x, y);
   x = vsqrtf(x);
   x = vmulsignf(atan2kf(x, vabsf(d)), d);
-  y = (vfloat)vandm(vmaskf_lt(d, vcast_vf_f(0.0f)), (vmask)vcast_vf_f((float)M_PI));
+  y = (vfloat)vandm(vmaskf_lt(d, vcast_vf_f(0.0f)), (vmask)vcast_vf_f((float)rtengine::RT_PI));
   x = vaddf(x, y);
   return x;
 }

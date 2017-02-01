@@ -124,13 +124,13 @@ void LockableColorPicker::updateBackBuffer ()
         // black background of the whole color picker
         bbcr->set_line_width (0.);
         bbcr->set_source_rgba (0., 0., 0., opacity);
-        bbcr->arc_negative (center, center, center, 0., (double)M_PI);
+        bbcr->arc_negative (center, center, center, 0., (double)rtengine::RT_PI);
         bbcr->line_to (0, 2. * center + textHeight);
-        bbcr->arc_negative (2. * textPadding, 2. * center + textHeight, 2. * textPadding, (double)M_PI, (double)M_PI / 2.);
+        bbcr->arc_negative (2. * textPadding, 2. * center + textHeight, 2. * textPadding, (double)rtengine::RT_PI, (double)rtengine::RT_PI / 2.);
         bbcr->line_to (textWidth, 2. * center + textHeight + 2. * textPadding);
-        bbcr->arc_negative (textWidth, 2. * center + textHeight, 2. * textPadding, (double)M_PI / 2., 0.);
+        bbcr->arc_negative (textWidth, 2. * center + textHeight, 2. * textPadding, (double)rtengine::RT_PI / 2., 0.);
         bbcr->line_to (textWidth + 2. * textPadding, 2. * center + 2. * textPadding);
-        bbcr->arc_negative (textWidth, 2. * center + 2. * textPadding, 2. * textPadding, 0., (double)M_PI * 1.5);
+        bbcr->arc_negative (textWidth, 2. * center + 2. * textPadding, 2. * textPadding, 0., (double)rtengine::RT_PI * 1.5);
         bbcr->line_to (2. * center, 2. * center);
         bbcr->close_path();
         bbcr->set_line_join (Cairo::LINE_JOIN_BEVEL);
@@ -138,13 +138,13 @@ void LockableColorPicker::updateBackBuffer ()
         bbcr->fill ();
 
         // light grey circle around the color mark
-        bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)M_PI);
+        bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)rtengine::RT_PI);
         bbcr->set_source_rgb (0.75, 0.75, 0.75);
         bbcr->set_line_width (circlePadding - 2.);
         bbcr->stroke ();
 
         // spot disc with picked color
-        bbcr->arc (center, center, center - circlePadding, 0., 2. * (double)M_PI);
+        bbcr->arc (center, center, center - circlePadding, 0., 2. * (double)rtengine::RT_PI);
         bbcr->set_source_rgb (rpreview, gpreview, bpreview);  // <- set the picker color here
         bbcr->set_line_width (0.);
         bbcr->fill();
@@ -223,7 +223,7 @@ void LockableColorPicker::updateBackBuffer ()
         float center = (float)size / 2.f + circlePadding;
 
         // light grey circle around the color mark
-        bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)M_PI);
+        bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)rtengine::RT_PI);
         bbcr->set_source_rgba (0., 0., 0., opacity);
         bbcr->set_line_width(circlePadding);
         bbcr->stroke_preserve();

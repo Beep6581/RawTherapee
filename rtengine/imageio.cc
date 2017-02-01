@@ -895,7 +895,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
         char swapped[line_length];
 
         for ( int row = 0; row < height; ++row ) {
-            ::swab(((char*)buffer) + (row * line_length), swapped, line_length);
+            ::rtengine::swab(((char*)buffer) + (row * line_length), swapped, line_length);
             setScanline(row, (unsigned char*)&swapped[0], bps);
         }
     } else {

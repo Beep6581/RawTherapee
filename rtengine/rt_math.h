@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <limits>
 #include <cmath>
 #include <cstdint>
 
@@ -10,6 +11,21 @@ namespace rtengine
 constexpr int MAXVAL = 0xffff;
 constexpr float MAXVALF = static_cast<float>(MAXVAL);  // float version of MAXVAL
 constexpr double MAXVALD = static_cast<double>(MAXVAL); // double version of MAXVAL
+
+constexpr double RT_PI = 3.14159265358979323846; // pi
+constexpr double RT_PI_2 = 1.57079632679489661923; // pi/2
+constexpr double RT_1_PI = 0.31830988618379067154; // 1/pi
+constexpr double RT_2_PI = 0.63661977236758134308; // 2/pi
+constexpr double RT_SQRT1_2 = 0.70710678118654752440; // 1/sqrt(2)
+
+constexpr double RT_INFINITY = std::numeric_limits<double>::infinity();
+constexpr double RT_NAN = std::numeric_limits<double>::quiet_NaN();
+
+constexpr float RT_PI_F = RT_PI;
+constexpr float RT_PI_F_2 = RT_PI_2;
+
+constexpr float RT_INFINITY_F = std::numeric_limits<float>::infinity();
+constexpr float RT_NAN_F = std::numeric_limits<float>::quiet_NaN();
 
 template <typename _Tp>
 inline _Tp SQR (_Tp x)

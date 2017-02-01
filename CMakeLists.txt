@@ -21,8 +21,8 @@ endif ()
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
 # Set required C and C++ standards and check GCC version
-SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
   message(FATAL_ERROR "Building RawTherapee requires using GCC version 4.9 or higher!")
