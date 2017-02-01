@@ -843,6 +843,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     prtBPC->set_active (true);
 
     row = 0;
+    gprinter->attach (*pplabel, 0, row, 1, 1);
     gprinter->attach (*prtProfile, 1, row, 1, 1);
     ++row;
     gprinter->attach (*pilabel, 0, row, 1, 1);
@@ -1915,10 +1916,14 @@ void Preferences::fillPreferences ()
 
     if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
         gimpDir->set_current_folder (moptions.gimpDir);
+    } else {
+        gimpDir->set_current_folder ("");
     }
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
+    } else {
+        psDir->set_current_folder ("");
     }
 
 #elif defined __APPLE__

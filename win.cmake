@@ -22,9 +22,6 @@ set(CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix (leave 
 # This line will let you chose the target number, and the associated processor
 set(PROC_TARGET_NUMBER 0 CACHE STRING "Target Processor")
 
-# To add a version suffix (text) after the standard version number, e.g. for patched builds
-set(VERSION_SUFFIX "" CACHE STRING "For patched builds, use this string to add a version suffix (text); KEEP EMPTY FOR RELEASE BULDS")
-
 # If you want to force the target processor name when PROC_TARGET_NUMBER = 0 or 2,
 # uncomment the next line and replace labelWithoutQuotes by its value
 #set (PROC_LABEL labelWithoutQuotes CACHE STRING "Target Processor label")

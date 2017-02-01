@@ -74,27 +74,19 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
     sFormat = IIOSF_UNKNOWN;
     sArrangement = IIOSA_UNKNOWN;
 
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-            !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    if (hasJpegExtension(fname)) {
         // For now, png and jpeg files are converted to unsigned short by the loader itself,
         // but there should be functions that read the sample format first, like the TIFF case below
         sFormat = IIOSF_UNSIGNED_CHAR;
         sArrangement = IIOSA_CHUNKY;
         return;
-    } else if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    } else if (hasPngExtension(fname)) {
         int result = ImageIO::getPNGSampleFormat (fname, sFormat, sArrangement);
 
         if (result == IMIO_SUCCESS) {
             return;
         }
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         int result = ImageIO::getTIFFSampleFormat (fname, sFormat, sArrangement);
 
         if (result == IMIO_SUCCESS) {
@@ -125,22 +117,19 @@ int StdImageSource::load (const Glib::ustring &fname, bool batch)
 
     switch (sFormat) {
     case (IIOSF_UNSIGNED_CHAR): {
-        Image8 *img_8 = new Image8 ();
-        img = img_8;
+        img = new Image8;
         break;
     }
 
     case (IIOSF_UNSIGNED_SHORT): {
-        Image16 *img_16 = new Image16 ();
-        img = img_16;
+        img = new Image16;
         break;
     }
 
     case (IIOSF_LOGLUV24):
     case (IIOSF_LOGLUV32):
     case (IIOSF_FLOAT): {
-        Imagefloat *img_float = new Imagefloat ();
-        img = img_float;
+        img = new Imagefloat;
         break;
     }
 

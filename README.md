@@ -41,4 +41,4 @@ Windows:
 http://rawpedia.rawtherapee.com/Windows
 
 OS X:
-http://rawpedia.rawtherapee.com/OS_X
+http://rawpedia.rawtherapee.com/macOS

@@ -29,7 +29,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
 add_library (rtengine ${RTENGINESOURCEFILES})
-add_dependencies (rtengine AboutFile)
+add_dependencies (rtengine UpdateInfo)
 
 #It may be nice to store library version too
 IF (BUILD_SHARED_LIBS)

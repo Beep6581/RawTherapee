@@ -36,7 +36,7 @@ CURVEEDITOR_TYPE;Type:
 DIRBROWSER_FOLDERS;Répertoires
 EDITWINDOW_TITLE;Édition d'image
 EDIT_OBJECT_TOOLTIP;Affiche des éléments dans la fenêtre de prévisualisation qui vous permettront d'ajuster cet outil.
-EDIT_PIPETTE_TOOLTIP;Pour ajouter un point d'ajustement de la courbe, maintenez la touche Ctrl préssée et cliquez dans l'image avec le bouton gauche.\nPour ajuster le point, pressez la touche Ctrl lors du clic-gauche sur la zone correspondande dans l'apperçu, puis relachez Ctrl (sauf si vous désirez un control plus fin) et tout en gardant le bouton gauche appuyé, déplacez le curseur vers le haut ou le bas pour ajuster la position du point.
+EDIT_PIPETTE_TOOLTIP;Pour ajouter un point d'ajustement de la courbe, maintenez la touche Ctrl pressée et cliquez dans l'image avec le bouton gauche.\nPour ajuster le point, pressez la touche Ctrl lors du clic-gauche sur la zone correspondante dans l'aperçu, puis relachez Ctrl (sauf si vous désirez un contrôle plus fin) et tout en gardant le bouton gauche appuyé, déplacez le curseur vers le haut ou le bas pour ajuster la position du point.
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_EXPOSURECOMPENSATION;Compensation d'exposition (EV)
@@ -79,7 +79,7 @@ EXPORT_BYPASS_SHARPENING;Ignorer la netteté
 EXPORT_BYPASS_SHARPENMICRO;Ignorer netteté des microcontrastes
 EXPORT_BYPASS_SH_HQ;Ignorer Ombres/Hautes lumières (HQ)
 EXPORT_FASTEXPORTOPTIONS;<b>Options d'Export Rapide</b>
-EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateur de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désir une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
+EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateurs de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désire une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
 EXPORT_MAXHEIGHT;Hauteur maximum:
 EXPORT_MAXWIDTH;Largeur maximum:
 EXPORT_PUTTOQUEUEFAST;Mettre dans la file de traitement\npour Export Rapide
@@ -168,6 +168,7 @@ FILEBROWSER_SHOWEDITEDHINT;Afficher les images éditées\nRaccourci: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Afficher les images non éditées\nRaccourci: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF.\nRaccourci: <b>i</b>\n\nRaccourcis dans le mode Éditeur Unique: <b>Alt-i</b>
 FILEBROWSER_SHOWNOTTRASHHINT;Voir uniquement les images non supprimées
+FILEBROWSER_SHOWORIGINALHINT;Voir seulement les images originales.\n\nQuand plusieurs images éxistent avec le même nom de fichier mais des extensions différentes, celle considéré originale est celle dont l'extention est au plus dans la liste des extensions dans Préférences > Navigateur de fichiers > Extensions considérées.
 FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile\nRaccourci: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles\nRaccourci: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles\nRaccourci: <b>3</b>
@@ -196,6 +197,7 @@ FILECHOOSER_FILTER_SAME;Même format que la photo
 FILECHOOSER_FILTER_TIFF;Fichiers TIFF
 GENERAL_ABOUT;À propos
 GENERAL_AFTER;Après
+GENERAL_APPLY;Appliquer
 GENERAL_ASIMAGE;Comme l'image
 GENERAL_AUTO;Automatique
 GENERAL_BEFORE;Avant
@@ -211,6 +213,7 @@ GENERAL_NA;indisponible
 GENERAL_NO;Non
 GENERAL_NONE;Aucun
 GENERAL_OK;OK
+GENERAL_OPEN;Ouvrir
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
 GENERAL_UNCHANGED;(Inchangé)
@@ -320,7 +323,7 @@ HISTORY_MSG_89;Réd. de bruit
 HISTORY_MSG_90;Réd. de bruit - Luminance
 HISTORY_MSG_91;Réd. de bruit - Chrominance Maître
 HISTORY_MSG_92;Réd. de bruit - Gamma
-HISTORY_MSG_93;Param. Contraste par niv. de détail
+HISTORY_MSG_93;CpND - Valeur
 HISTORY_MSG_94;Contraste par niveau de détail
 HISTORY_MSG_95;Lab - Chromaticité
 HISTORY_MSG_96;Courbe 'a'
@@ -393,6 +396,7 @@ HISTORY_MSG_162;Compression Tonale
 HISTORY_MSG_163;Courbes RVB - Rouge
 HISTORY_MSG_164;Courbes RVB - Vert
 HISTORY_MSG_165;Courbes RVB - Bleu
+HISTORY_MSG_166;Exposition - Réinit.
 HISTORY_MSG_167;Algorithme de dématriçage
 HISTORY_MSG_168;Courbe 'CC'
 HISTORY_MSG_169;Courbe 'CT'
@@ -474,7 +478,7 @@ HISTORY_MSG_245;Vignet. - Centre
 HISTORY_MSG_246;Courbe 'CL'
 HISTORY_MSG_247;Courbe 'LT'
 HISTORY_MSG_248;Courbe 'TT'
-HISTORY_MSG_249;Seuil Contraste par niv. de détail
+HISTORY_MSG_249;CpND - Seuil
 HISTORY_MSG_250;Réd. de bruit - Amélioré
 HISTORY_MSG_251;N&amp;B - Algorithme
 HISTORY_MSG_252;CpND - Tons chair
@@ -618,7 +622,7 @@ HISTORY_MSG_389;O - Résiduel - BC bleu moyen
 HISTORY_MSG_390;O - Résiduel - BC vert bas
 HISTORY_MSG_391;O - Résiduel - BC bleu bas
 HISTORY_MSG_392;O - Résiduel - BC Réinitialiser
-HISTORY_MSG_393;DCP - Table de recherche (LUT)
+HISTORY_MSG_393;DCP - Table de corresp. (LUT)
 HISTORY_MSG_394;DCP - Exposition de base
 HISTORY_MSG_395;DCP - Table de base
 HISTORY_MSG_396;O - Contrast
@@ -632,28 +636,89 @@ HISTORY_MSG_403;O - NB - Sensibilité des bords
 HISTORY_MSG_404;O - NB - Base amplification
 HISTORY_MSG_405;O - Débruitage - Niveau 4
 HISTORY_MSG_406;O - NB - Pixels voisins
+HISTORY_MSG_407;Retinex - Méthode
+HISTORY_MSG_408;Retinex - Rayon
+HISTORY_MSG_409;Retinex - Contraste
+HISTORY_MSG_410;Retinex - Décalage
+HISTORY_MSG_411;Retinex - Force
+HISTORY_MSG_412;Retinex - Gradient Gaussien
+HISTORY_MSG_413;Retinex - Contraste
+HISTORY_MSG_414;Retinex - Histogramme - Lab
+HISTORY_MSG_415;Retinex - Transmission
+HISTORY_MSG_416;Retinex
+HISTORY_MSG_417;Retinex - Transmission Médiane
+HISTORY_MSG_418;Retinex - Seuil
+HISTORY_MSG_419;Retinex - Espace couleur
+HISTORY_MSG_420;Retinex - Histogramme - TSV
+HISTORY_MSG_421;Retinex - Gamma
+HISTORY_MSG_422;Retinex - Gamma
+HISTORY_MSG_423;Retinex - Pente Gamma
+HISTORY_MSG_424;Retinex - Seuille HL
+HISTORY_MSG_425;Retinex - Base Log
+HISTORY_MSG_426;Retinex - Égaliseur de teinte
+HISTORY_MSG_427;Intention de rendu de sortie
+HISTORY_MSG_428;Intention de rendu du moniteur
+HISTORY_MSG_429;Retinex - Itérations
+HISTORY_MSG_430;Retinex - Gradient de Transmission
+HISTORY_MSG_431;Retinex - Gradient de Force
+HISTORY_MSG_432;Retinex - M - Hautes lumières
+HISTORY_MSG_433;Retinex - M - Hautes lumières TW
+HISTORY_MSG_434;Retinex - M - Ombres
+HISTORY_MSG_435;Retinex - M - Ombres TW
+HISTORY_MSG_436;Retinex - M - Rayon
+HISTORY_MSG_437;Retinex - M - Méthode
+HISTORY_MSG_438;Retinex - M - Égaliseur
+HISTORY_MSG_439;Retinex - Traitement
+HISTORY_MSG_440;CpND - Méthode
+HISTORY_MSG_441;Retinex - Gain de Tansmission
+HISTORY_MSG_442;Retinex - Échelle
 HISTORY_MSG_443;Compensation du Point Noir de Sortie
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
 HISTORY_SNAPSHOTS;Captures
 IPTCPANEL_CATEGORY;Catégorie
+IPTCPANEL_CATEGORYHINT;Identifie le sujet de l'image selon l'opinion du fournisseur.
 IPTCPANEL_CITY;Ville
+IPTCPANEL_CITYHINT;Entrez les nom de la ville photographiée dans cette image.
 IPTCPANEL_COPYHINT;Copie les réglages IPTC dans le presse-papier
+IPTCPANEL_COPYRIGHT;Note de Copyright
+IPTCPANEL_COPYRIGHTHINT;Entrez une Note sur le détenteur actuelle du Copyright pour cette image (ex: ©2008 Jean Dupont).
 IPTCPANEL_COUNTRY;Pays
+IPTCPANEL_COUNTRYHINT;Enterez le nom du pays photographié dans cette image.
+IPTCPANEL_CREATOR;Créateur
+IPTCPANEL_CREATORHINT;Enterez le nom de la personne qui a créé cette image.
+IPTCPANEL_CREATORJOBTITLE;Métier du créateur
+IPTCPANEL_CREATORJOBTITLEHINT;Enterez le métier et/ou la fonction de la personne indiquée dans le champs Créateur.
 IPTCPANEL_CREDIT;Crédit
 IPTCPANEL_CREDITHINT;Identifie le fournisseur de l'image, pas nécessairement le propriétaire/créateur (Crédit).
 IPTCPANEL_DATECREATED;Date de création
+IPTCPANEL_DATECREATEDHINT;Entrez la date à laquelle la photo a été prise.
+IPTCPANEL_DESCRIPTION;Description
+IPTCPANEL_DESCRIPTIONHINT;Enterez une "légende" descrivant le qui, quoi et pourquoi de ce qui arrive dans cette image, cela peut inclure le nom des personnes, et/ou leur rôle dans l'action qui a lieu dans l'image.
+IPTCPANEL_DESCRIPTIONWRITER;Rédacteur de la description
+IPTCPANEL_DESCRIPTIONWRITERHINT;Enterez le nom de la personne impliquée dans la rédaction, édition ou correction de la description de cette image.
 IPTCPANEL_EMBEDDED;Incorporés
 IPTCPANEL_EMBEDDEDHINT;Réinitialise selon les données IPTC incorporées dans le fichier image
 IPTCPANEL_HEADLINE;Titre
+IPTCPANEL_HEADLINEHINT;Enterez un bref synopsis publiable ou résumé du contenu de l'image.
 IPTCPANEL_INSTRUCTIONS;Instructions
+IPTCPANEL_INSTRUCTIONSHINT;Enterez les informations à propos des embargos, ou autre restrictions non couvertes par le champs Copyright.
 IPTCPANEL_KEYWORDS;Mots clés
+IPTCPANEL_KEYWORDSHINT;Enterez un nombre quelconque de mots clés, termes or phrases utilisés pour exprimer le sujet de l'image.
 IPTCPANEL_PASTEHINT;Colle les réglages IPTC du presse-papier
+IPTCPANEL_PROVINCE;Province or État
+IPTCPANEL_PROVINCEHINT;Enterez le nom de la province ou de l'État photographiée dans cette image.
 IPTCPANEL_RESET;Réinitialisation
 IPTCPANEL_RESETHINT;Réinitialise selon le profil par défaut
 IPTCPANEL_SOURCE;Source
+IPTCPANEL_SOURCEHINT;Enterez ou éditez le nom de la personne ou du tiers qui a un rôle dans la chaîne de transmission du contenu, comme une personne ou entité de qui vous avez reçu cette image.
+IPTCPANEL_SUPPCATEGORIES;Catégories supplémentaires
+IPTCPANEL_SUPPCATEGORIESHINT;Description approfondie du sujet de l'image.
 IPTCPANEL_TITLE;Titre
+IPTCPANEL_TITLEHINT;Enterez un nom court et humainement lisible pour l'image, cela peut être le nom du fichier.
+IPTCPANEL_TRANSREFERENCE;ID du travail
+IPTCPANEL_TRANSREFERENCEHINT;Enterez un nombre ou identifiant servant au contrôle du flux de travail ou au suivi.
 MAIN_BUTTON_FULLSCREEN;Plein écran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F4</b>\n\nPour naviguer à l'image Suivante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédente relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédente relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F3</b>
@@ -661,6 +726,7 @@ MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronise le Navigateur de fichiers avec l'Éditeu
 MAIN_BUTTON_PREFERENCES;Préférences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement\nRaccourci: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante\nRaccourci: <b>Ctrl+s</b>
+MAIN_BUTTON_SENDTOEDITOR;Éditer l'image dans un éditeur extenre
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe\nRaccourci: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Afficher/Cacher les 2 panneaux latéraux\nRaccourci: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
@@ -725,6 +791,7 @@ MAIN_TOOLTIP_SHOWHIDERP1;Afficher/Cacher le panneau droit\nRaccourci: <b>Alt-l</
 MAIN_TOOLTIP_SHOWHIDETP1;Afficher/Cacher le panneau supérieur\nRaccourci: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Seuil
 MAIN_TOOLTIP_TOGGLE;Comparaison avant/après\nRaccourci: <b>Shift-b</b>
+MONITOR_PROFILE_SYSTEM;Système par défaut
 NAVIGATOR_B;B:
 NAVIGATOR_G;V:
 NAVIGATOR_H;T:
@@ -784,6 +851,7 @@ PARTIALPASTE_PREPROCESS_DEADPIXFILT;Filtrage des pixels morts
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtrage des pixels chauds
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
+PARTIALPASTE_PRSHARPENING;Netteté post-redim.
 PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
 PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
 PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
@@ -797,6 +865,7 @@ PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
 PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
 PARTIALPASTE_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 PARTIALPASTE_RESIZE;Redimentionnement
+PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_RGBCURVES;Courbes RVB
 PARTIALPASTE_ROTATION;Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
@@ -933,6 +1002,8 @@ PREFERENCES_MENUOPTIONS;Options du menu
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Intention de rendu par défaut
+PREFERENCES_MONITOR;Moniteur
+PREFERENCES_MONPROFILE;Profil couleur par défaut
 PREFERENCES_MONPROFILE_WARNOSX;Due à des limitations de macOS, seul sRGB est supporté.
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
@@ -952,16 +1023,20 @@ PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
 PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
+PREFERENCES_PARSEDEXTDOWNHINT;Déplacer l'extension sélectionnée plus bas dans la liste.
+PREFERENCES_PARSEDEXTUPHINT;Déplacer l'extension sélectionnée plus haut dans la liste.
 PREFERENCES_PREVDEMO;Méthode de Dématriçage de l'Aperçu
 PREFERENCES_PREVDEMO_FAST;Rapide
 PREFERENCES_PREVDEMO_LABEL;Méthode de dématriçage utilisé pour l'aperçu à un zoom <100%:
 PREFERENCES_PREVDEMO_SIDECAR;Idem PP3
+PREFERENCES_PRINTER;Imprimante (Épreuvage Écran)
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
 PREFERENCES_PROFILEPRFILE;Profil accolé au fichier d'entrée
 PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Cache
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
+PREFERENCES_PROFILE_NONE;Aucun
 PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PRTINTENT;Intention de rendu
 PREFERENCES_PRTPROFILE;Profil couleur
@@ -1006,6 +1081,7 @@ PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Panneau des outils:
 PREFERENCES_TP_USEICONORTEXT;Utiliser des icônes au lieu de textes
 PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
+PREFERENCES_TUNNELMETADATA;Copier les données Exif/IPTC/XMP tel quel dans le fichier de sortie
 PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profils fournis
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_VIEW;Point blanc du périphérique sortie (moniteur, TV, projecteur,...)
@@ -1062,6 +1138,7 @@ SAVEDLG_SUBSAMP;Sous-échantillonnage
 SAVEDLG_SUBSAMP_1;Meilleure compression
 SAVEDLG_SUBSAMP_2;Équilibré
 SAVEDLG_SUBSAMP_3;Meilleure qualité
+SAVEDLG_SUBSAMP_TOOLTIP;Meilleurs compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma divisé par deux horizontalement et verticalement.\n\nÉquilibré:\nJ:a:b 4:2:2\nh/v 2/1\nChroma divisé par deux horizontalement.\n\nMeilleurs qualité:\nJ:a:b 4:4:4\nh/v 1/1\nPas de sous-échantillonnage chroma.
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
@@ -1142,6 +1219,10 @@ TP_BWMIX_VAL;L
 TP_CACORRECTION_BLUE;Bleu
 TP_CACORRECTION_LABEL;Aberration chromatique
 TP_CACORRECTION_RED;Rouge
+TP_CBDL_AFT;Après Noir-et-Blanc
+TP_CBDL_BEF;Avant Noir-et-Blanc
+TP_CBDL_METHOD;Traitement effectué
+TP_CBDL_METHOD_TOOLTIP;Choisissez selon que l'outil Contraste par Niveaux de Détail doit intervenir après l'outil Noir-et-Blanc, ce qui le fera opéré dans l'espace L*a*b*, ou avant lui, ce qui le fera opérer dans l'espace RVB.
 TP_CHMIXER_BLUE;Bleu
 TP_CHMIXER_GREEN;Vert
 TP_CHMIXER_LABEL;Mixage des canaux
@@ -1240,6 +1321,7 @@ TP_COLORTONING_LUMAMODE_TOOLTIP;Si activé, lorsque vous changez la couleur (rou
 TP_COLORTONING_METHOD;Méthode
 TP_COLORTONING_METHOD_TOOLTIP;Mixage Lab - RVB courbes - RVB curseurs utilise une interpolation\nBalance couleur(ombres / tons moyens / hautes lumières)\nSaturation 2 couleurs utilise couleurs directes\nDans tous les méthodes vous pouvez activer Noir et Blanc
 TP_COLORTONING_MIDTONES;Tons Moyens
+TP_COLORTONING_NEUTRAL;Réinit. curseurs
 TP_COLORTONING_NEUTRAL_TIP;Réinitialise toutes les valeurs (Ombres, Tons moyens, Hautes lumières) à leur valeur par défaut.
 TP_COLORTONING_OPACITY;Opacité
 TP_COLORTONING_RGBCURVES;RVB - Courbes
@@ -1281,6 +1363,12 @@ TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
+TP_DIRPYRDENOISE_3X3;3×3
+TP_DIRPYRDENOISE_3X3_SOFT;3×3 doux
+TP_DIRPYRDENOISE_5X5;5×5
+TP_DIRPYRDENOISE_5X5_SOFT;5×5 doux
+TP_DIRPYRDENOISE_7X7;7×7
+TP_DIRPYRDENOISE_9X9;9×9
 TP_DIRPYRDENOISE_ABM;Chroma uniquement
 TP_DIRPYRDENOISE_AUT;Global automatique
 TP_DIRPYRDENOISE_AUTO;Global automatique
@@ -1320,10 +1408,13 @@ TP_DIRPYRDENOISE_METHOD11;Qualité
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;La qualité peut être adapté à la trame du bruit. Régler sur "haut" augmentera l'effet de la réduction de bruit au prix d'un temps de traitement plus long.
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
 TP_DIRPYRDENOISE_METM_TOOLTIP;Lorsque vous utilisez les méthodes "Luminance seulement" et "Lab", un filtrage médian sera effectué juste après l'étape des ondelettes dans le pipeline de la réduction de bruit.\nEm mode "RVB", il sera effectué à la toute fin du pipeline de la réduction de bruit.
+TP_DIRPYRDENOISE_MET_TOOLTIP;Applique un filtre médian de la taille de "fenêtre" désirée. Plus cette taille est grande, plus cela prendra de temps.\n\n3×3 doux: traite 5 pixels dans une fenêtre de 3×3 pixels.\n3×3: traite 9 pixels dans une fenêtre de 3×3 pixels.\n5×5 doux: traite 13 pixels dans une fenêtre de 5×5 pixels.\n5×5: traite 25 pixels dans une fenêtre de 5×5 pixels.\n7×7: traite 49 pixels dans une fenêtre de 7×7 pixels.\n9×9: traite 81 pixels dans une fenêtre 9×9 pixels.\n\nIl est parfois possible d'atteindre une meilleurs qualité en appliquant plusieurs itérations d'une petite fenêtre qu'une seule itération d'une grande.
 TP_DIRPYRDENOISE_NOISELABEL;Bruit de l'aperçu: Moyen=%1  Haut=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Bruit de l'aperçu: Moyen= -   Haut= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Affiche les niveaux de bruit résiduel de la partie de l'image visible dans l'<b>aperçu</b> après les ondelettes.\n\n>300 Très bruité\n100-300 Bruité\n50-100 Peu bruité\n<50 Très peu bruité\n\nAttention, les valeurs diffèreront entre le mode RVB et L*a*b*. Les valeurs RVB sont moins précises car le mode RVB ne séparent pas complètement la luminance et la chrominance.
 TP_DIRPYRDENOISE_PASSE;Itérations
+TP_DIRPYRDENOISE_PASSES;Itérations
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Appliquer trois itérations avec une taille de fenêtre de 3×3 aboutit souvent à de meilleurs résultats qu'une seule itération avec une taille de fenêtre de 7×7.
 TP_DIRPYRDENOISE_PON;Multi-zones auto
 TP_DIRPYRDENOISE_PRE;Aperçu multi-zones
 TP_DIRPYRDENOISE_PREV;Aperçu
@@ -1351,6 +1442,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;A -100, les tons chairs sont ciblés.\nA 0 tous 
 TP_DIRPYREQUALIZER_THRESHOLD;Seuil
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image.
 TP_DISTORTION_AMOUNT;Quantité
+TP_DISTORTION_AUTO_TIP;Corrige automatiquement la distortion optique dans les fichiers raw en opérant une mise en correspondance avec le fichier JPEG incorporé, si elle existe, et sur laquelle la correction de la distortion a été appliqué par le boitier.
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Arrêt des bords
 TP_EPD_GAMMA;Gamma
@@ -1386,6 +1478,7 @@ TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Standard Pondéré
 TP_EXPOS_BLACKPOINT_LABEL;Points Noir Raw
 TP_EXPOS_WHITEPOINT_LABEL;Points Blanc Raw
 TP_FILMSIMULATION_LABEL;Simulation de Film
+TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee est configuré pour rechercher les images Hald CLUT, qui sont utilisées pour l'outil Simulation de Film, dans un dossier qui prends trop de temps à se charger.\nAllez dans Préférences > Traitement de l'image > Simulation de Film\npour voir quel dossier est utilisé. Vous devriez soit pointer RawTherapee vers un dossier qui ne contient que les images Hald CLUT et rien d'autre, ou un dossier vide si vous ne voulez pas utiliser l'outil Simulation de Film.\n\nLisez l'article Simulation de Film dans RawPedia pour plus d'information.\n\nVoulez-vous abandonner la recherche maintenant?
 TP_FILMSIMULATION_STRENGTH;Force
 TP_FILMSIMULATION_ZEROCLUTSFOUND;Veuillez préciser le dossier contenant\nles fichiers HaldCLUT dans les Préférences
 TP_FLATFIELD_AUTOSELECT;Sélection automatique
@@ -1431,8 +1524,8 @@ TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Exposition de base
 TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Utilise l'offset d'exposition de base contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient un.
 TP_ICM_APPLYHUESATMAP;Table de base
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Utilise la table de base (HueSatMap) contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient une.
-TP_ICM_APPLYLOOKTABLE;Table de recherche
-TP_ICM_APPLYLOOKTABLE_TOOLTIP;Utilise la table de recherche (LUT) contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient une.
+TP_ICM_APPLYLOOKTABLE;Table de correspondance
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;Utilise la table de correspondance (LUT) contenu dans le profil DCP. Ce réglage n'est possible que si le profil DCP sélectionné en contient une.
 TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndu profil ICC avec la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
 TP_ICM_BPC;Compensation du  Point Noir
@@ -1455,6 +1548,8 @@ TP_ICM_INPUTPROFILE;Profil d'entrée
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Pas d'ICM: sortie sRGB
 TP_ICM_OUTPUTPROFILE;Profil de sortie
+TP_ICM_PROFILEINTENT;Intention de Rendu
+TP_ICM_SAVEREFERENCE;Sauver Image de Référence.
 TP_ICM_SAVEREFERENCE_APPLYWB;Appliquer la balance des blancs
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Généralement, applique la balance des blancs lors de l'enregistrement d'images pour créer des profils ICC, et n'applique pas la balance des blancs pour créer des profils DCP.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Sauvegarde une image TIFF linéaire avant que le profil d'entrée ne soit appliqué. Le résultat peut être utilisé à des fins de calibrage, pour générer un profil APN.
@@ -1507,6 +1602,7 @@ TP_LENSPROFILE_LABEL;Profil de correction d'objectif
 TP_LENSPROFILE_USECA;Corr. de l'aber. chromatique
 TP_LENSPROFILE_USEDIST;Corr. de la distortion
 TP_LENSPROFILE_USEVIGN;Corr. du vignettage
+TP_NEUTRAL;Réinit.
 TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
 TP_PCVIGNETTE_FEATHER;Étendue
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Étendue: 0=bords uniquement, 50=mi-chemin du centre, 100=jusqu'au centre
@@ -1533,6 +1629,7 @@ TP_PRSHARPENING_TOOLTIP;Augmente la netteté de l'image après le redimentionnem
 TP_RAWCACORR_AUTO;Correction automatique
 TP_RAWCACORR_CABLUE;Bleu
 TP_RAWCACORR_CARED;Rouge
+TP_RAWCACORR_CASTR;force
 TP_RAWEXPOS_BLACKS;Niveaux de noir
 TP_RAWEXPOS_BLACK_0;Vert 1 (maître)
 TP_RAWEXPOS_BLACK_1;Rouge
@@ -1574,6 +1671,86 @@ TP_RESIZE_SCALE;Échelle
 TP_RESIZE_SPECIFY;Préciser:
 TP_RESIZE_W;L:
 TP_RESIZE_WIDTH;Largeur
+TP_RETINEX_CONTEDIT_HSL;Égaliseur d'histogramme TSV
+TP_RETINEX_CONTEDIT_LAB;Égaliseur d'histogramme L*a*b*
+TP_RETINEX_CONTEDIT_LH;Égaliseur de teinte
+TP_RETINEX_CONTEDIT_MAP;Égaliseur de masque
+TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance en fonction de la luminance L=f(L)\nCorrige les données raw pour réduire halos et artéfacts.
+TP_RETINEX_CURVEEDITOR_LH;Force=f(T)
+TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Force en fonction de la Teinte Force=f(T)\nCette courbe agit également sur le chroma lors de l'utilisation de la méthode Retinex "Hautes Lumières".
+TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
+TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;Cette courbe peut être appliquée seule ou avec un masque Gaussion ou un masque d'ondelettes.\nAttention aux artéfacts!
+TP_RETINEX_EQUAL;Égaliseur
+TP_RETINEX_FREEGAMMA;Gamma manuel
+TP_RETINEX_GAIN;Gain
+TP_RETINEX_GAINOFFS;Gain et Décalage (brillance)
+TP_RETINEX_GAINTRANSMISSION;Gain sur Transmission
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplifie ou réduit le canal transmission pour atteindre la luminance souhaitée.\nAbscisses: transmission ; min = 0, max = valeurs.\nOrdonnées: gain.
+TP_RETINEX_GAIN_TOOLTIP;Agit sur l'image recomposée.\n\nCeci est très différent des autres paramètres. Utilisé pour les pixels noirs et blancs, et pour aider à balancer l'histogramme.
+TP_RETINEX_GAMMA;Gamma
+TP_RETINEX_GAMMA_FREE;Manuel
+TP_RETINEX_GAMMA_HIGH;Haute
+TP_RETINEX_GAMMA_LOW;Bas
+TP_RETINEX_GAMMA_MID;Milieu
+TP_RETINEX_GAMMA_NONE;Aucun
+TP_RETINEX_GAMMA_TOOLTIP;Restaure les tonalités en appliquant une transformation gamma avant et après Retinex. Différent des courbes Retinex ou autres courbes (Lab, Exposition, etc.).
+TP_RETINEX_GRAD;Gradient de transmission
+TP_RETINEX_GRADS;Gradient de force
+TP_RETINEX_GRADS_TOOLTIP;Si curseur à 0, toutes les itérations sont identiques.\nSi > 0, la Force est réduite à chaque nouvelle itération, et inversement.
+TP_RETINEX_GRAD_TOOLTIP;Si curseur à 0, toutes les itérations sont identiques.\nSi > 0, la Variance et le Seuil sont réduit à chaque nouvelle itération, et inversement.
+TP_RETINEX_HIGH;Haut
+TP_RETINEX_HIGHLIG;Hautes-lumières
+TP_RETINEX_HIGHLIGHT;Seuil des Hautes-lumières
+TP_RETINEX_HIGHLIGHT_TOOLTIP;Augment l'action de l'algoritme "Haut".\nPeut nécessiter que vous réajustiez "Pixels environnants" et d'augmenter la "Correction du point blanc" dans l'outil Raw -> Point Blanc Raw.
+TP_RETINEX_HSLSPACE_LIN;TSV-Linéaire
+TP_RETINEX_HSLSPACE_LOG;TSV-Logarithmique
+TP_RETINEX_ITER;Itérations
+TP_RETINEX_ITERF;Compression tonale
+TP_RETINEX_ITER_TOOLTIP;Simule une compression tonale.\nLes valeurs hautes augmentent le temps de traitement.
+TP_RETINEX_LABEL;Retinex
+TP_RETINEX_LABEL_MASK;Masque
+TP_RETINEX_LABSPACE;L*a*b*
+TP_RETINEX_LOW;Bas
+TP_RETINEX_MAP;Méthode de masquage
+TP_RETINEX_MAP_GAUS;Masque gaussien
+TP_RETINEX_MAP_MAPP;Masque pointu (ondelettes partielles)
+TP_RETINEX_MAP_MAPT;Masque pointu (ondelettes totales)
+TP_RETINEX_MAP_METHOD_TOOLTIP;Utilise le masque généré par la fonction Gaussienne ci-dessus (Rayon, Méthode) pour réduire les halos et artéfacts.\n\nCourbe seulement: applique une courbe de contraste diagonale sur le masque.\nAttention aux artéfacts!\n\nMasque gaussien: génère et utilise le masque original modifié par flou gaussien.\nRapide.\n\nMasque pointu: génère et utilise une ondelette sur le masque original.\nLent.
+TP_RETINEX_MAP_NONE;Aucune
+TP_RETINEX_MEDIAN;Filtre médian
+TP_RETINEX_METHOD;Méthode
+TP_RETINEX_METHOD_TOOLTIP;Bas = Renforce les basses lumières.\nUniforme = Action uniforme.\nHaut = Renforce les hautes-lumières.\nHautes-lumières = Retire le magenta des hautes lumières.
+TP_RETINEX_MLABEL;Recomposition sans 'brume' Min=%1 Max=%2
+TP_RETINEX_MLABEL_TOOLTIP;Devrait être proche de min=0 max=32768\nImage recomposée sans mélange.
+TP_RETINEX_NEIGHBOR;Rayon
+TP_RETINEX_NEUTRAL;Réinit.
+TP_RETINEX_NEUTRAL_TIP;Réinitialise tous les curseurs et courbes à leur valeur par défaut.
+TP_RETINEX_OFFSET;Décalage (brillance)
+TP_RETINEX_SCALES;Gradient gaussien
+TP_RETINEX_SCALES_TOOLTIP;Si le curseur est à 0, toutes les itérations sont identiques.\nSi > 0, l'Échelle et le Rayon sont réduit à chaque nouvelle itération, et inversement.
+TP_RETINEX_SETTINGS;Réglages
+TP_RETINEX_SKAL;Échelle
+TP_RETINEX_SLOPE;Pente du gamma manuel
+TP_RETINEX_STRENGTH;Force
+TP_RETINEX_THRESHOLD;Seuil
+TP_RETINEX_THRESHOLD_TOOLTIP;Limite entrée/sortie.\nEntrée = image source,\nSortie = image gaussienne.
+TP_RETINEX_TLABEL;CT Min=%1 Max=%2 Moyen=%3 Sigma=%4
+TP_RETINEX_TLABEL2;CT Tm=%1 TM=%2
+TP_RETINEX_TLABEL_TOOLTIP;Résultat du calcul de transmission.\nMin et Max sont utilisés par Variance.\nMoyen et Sigma.\nTm=Min TM=Niveau maximum de transmission.
+TP_RETINEX_TRANF;Transmission
+TP_RETINEX_TRANSMISSION;Modulation du canal 'transmission'
+TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission en fonction de la transmission.\nAbscisses: transmission des valeurs négatives (min), moyennes, et positives (max).\nOrdonnées: amplification ou réduction.
+TP_RETINEX_UNIFORM;Uniforme
+TP_RETINEX_VARIANCE;Contraste
+TP_RETINEX_VARIANCE_TOOLTIP;Une faible variance augmente le contraste local et la saturation, mais peut conduire à des artéfacts.
+TP_RETINEX_VIEW;Traitement
+TP_RETINEX_VIEW_MASK;Masque
+TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard: Affichage normal.\nMasque: Affiche le masque.\nMasque flou: Affiche l'image avec un masque flou à grand rayon.\nTransmission - Auto/Fixé: Affiche les données de Transmission, avant toute action sur le contraste et la brillance.\n\nAttention: le masque ne correspond pas au rendu final, mais est amplifié pour le rendre plus visible.
+TP_RETINEX_VIEW_NONE;Standard
+TP_RETINEX_VIEW_TRAN;Transmission - Auto
+TP_RETINEX_VIEW_TRAN2;Transmission - Fixé
+TP_RETINEX_VIEW_UNSHARP;Masque flou
 TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;V
@@ -1858,184 +2035,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!GENERAL_APPLY;Apply
-!GENERAL_OPEN;Open
-!HISTORY_MSG_166;Exposure - Reset
-!HISTORY_MSG_407;Retinex - Method
-!HISTORY_MSG_408;Retinex - Radius
-!HISTORY_MSG_409;Retinex - Contrast
-!HISTORY_MSG_410;Retinex - Offset
-!HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Gaussian Gradient
-!HISTORY_MSG_413;Retinex - Contrast
-!HISTORY_MSG_414;Retinex - Histogram - Lab
-!HISTORY_MSG_415;Retinex - Transmission
-!HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission Median
-!HISTORY_MSG_418;Retinex - Threshold
-!HISTORY_MSG_419;Retinex - Color space
-!HISTORY_MSG_420;Retinex - Histogram - HSL
-!HISTORY_MSG_421;Retinex - Gamma
-!HISTORY_MSG_422;Retinex - Gamma
-!HISTORY_MSG_423;Retinex - Gamma slope
-!HISTORY_MSG_424;Retinex - HL threshold
-!HISTORY_MSG_425;Retinex - Log base
-!HISTORY_MSG_426;Retinex - Hue equalizer
-!HISTORY_MSG_427;Output rendering intent
-!HISTORY_MSG_428;Monitor rendering intent
-!HISTORY_MSG_429;Retinex - Iterations
-!HISTORY_MSG_430;Retinex - Transmission Gradient
-!HISTORY_MSG_431;Retinex - Strength Gradient
-!HISTORY_MSG_432;Retinex - M - Highlights
-!HISTORY_MSG_433;Retinex - M - Highlights TW
-!HISTORY_MSG_434;Retinex - M - Shadows
-!HISTORY_MSG_435;Retinex - M - Shadows TW
-!HISTORY_MSG_436;Retinex - M - Radius
-!HISTORY_MSG_437;Retinex - M - Method
-!HISTORY_MSG_438;Retinex - M - Equalizer
-!HISTORY_MSG_439;Retinex - Process
-!HISTORY_MSG_440;CbDL - Method
-!HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_442;Retinex - Scale
-!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
-!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
-!IPTCPANEL_COPYRIGHT;Copyright notice
-!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
-!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
-!IPTCPANEL_CREATOR;Creator
-!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
-!IPTCPANEL_CREATORJOBTITLE;Creator's job title
-!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
-!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
-!IPTCPANEL_DESCRIPTION;Description
-!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
-!IPTCPANEL_DESCRIPTIONWRITER;Description writer
-!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
-!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
-!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
-!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
-!IPTCPANEL_PROVINCE;Province or state
-!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
-!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
-!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
-!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
-!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
-!IPTCPANEL_TRANSREFERENCE;Job ID
-!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-!MONITOR_PROFILE_SYSTEM;System default
-!PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RETINEX;Retinex
-!PREFERENCES_MONITOR;Monitor
-!PREFERENCES_MONPROFILE;Default color profile
-!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
-!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
-!PREFERENCES_PRINTER;Printer (Soft-Proofing)
-!PREFERENCES_PROFILE_NONE;None
-!PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
-!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
-!TP_CBDL_AFT;After Black-and-White
-!TP_CBDL_BEF;Before Black-and-White
-!TP_CBDL_METHOD;Process located
-!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
-!TP_COLORTONING_NEUTRAL;Reset sliders
-!TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
-!TP_DIRPYRDENOISE_5X5;5×5
-!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
-!TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9×9
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_PASSES;Median iterations
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
-!TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
-!TP_ICM_PROFILEINTENT;Rendering Intent
-!TP_ICM_SAVEREFERENCE;Save Reference Image
-!TP_NEUTRAL;Reset
-!TP_RAWCACORR_CASTR;Strength
-!TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
-!TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
-!TP_RETINEX_CONTEDIT_LH;Hue equalizer
-!TP_RETINEX_CONTEDIT_MAP;Mask equalizer
-!TP_RETINEX_CURVEEDITOR_CD;L=f(L)
-!TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
-!TP_RETINEX_CURVEEDITOR_LH;Strength=f(H)
-!TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Strength according to hue Strength=f(H)\nThis curve also acts on chroma when using the "Highlight" retinex method.
-!TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
-!TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!
-!TP_RETINEX_EQUAL;Equalizer
-!TP_RETINEX_FREEGAMMA;Free gamma
-!TP_RETINEX_GAIN;Gain
-!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
-!TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
-!TP_RETINEX_GAIN_TOOLTIP;Acts on the restored image.\n\nThis is very different from the others settings. Used for black or white pixels, and to help balance the histogram.
-!TP_RETINEX_GAMMA;Gamma
-!TP_RETINEX_GAMMA_FREE;Free
-!TP_RETINEX_GAMMA_HIGH;High
-!TP_RETINEX_GAMMA_LOW;Low
-!TP_RETINEX_GAMMA_MID;Middle
-!TP_RETINEX_GAMMA_NONE;None
-!TP_RETINEX_GAMMA_TOOLTIP;Restore tones by applying gamma before and after Retinex. Different from Retinex curves or others curves (Lab, Exposure, etc.).
-!TP_RETINEX_GRAD;Transmission gradient
-!TP_RETINEX_GRADS;Strength gradient
-!TP_RETINEX_GRADS_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Strength is reduced when iterations increase, and conversely.
-!TP_RETINEX_GRAD_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Variance and Threshold are reduced when iterations increase, and conversely.
-!TP_RETINEX_HIGH;High
-!TP_RETINEX_HIGHLIG;Highlight
-!TP_RETINEX_HIGHLIGHT;Highlight threshold
-!TP_RETINEX_HIGHLIGHT_TOOLTIP;Increase action of High algorithm.\nMay require you to re-adjust "Neighboring pixels" and to increase the "White-point correction" in the Raw tab -> Raw White Points tool.
-!TP_RETINEX_HSLSPACE_LIN;HSL-Linear
-!TP_RETINEX_HSLSPACE_LOG;HSL-Logarithmic
-!TP_RETINEX_ITER;Iterations (Tone-mapping)
-!TP_RETINEX_ITERF;Tone mapping
-!TP_RETINEX_ITER_TOOLTIP;Simulate a tone-mapping operator.\nHigh values increase the processing time.
-!TP_RETINEX_LABEL;Retinex
-!TP_RETINEX_LABEL_MASK;Mask
-!TP_RETINEX_LABSPACE;L*a*b*
-!TP_RETINEX_LOW;Low
-!TP_RETINEX_MAP;Mask method
-!TP_RETINEX_MAP_GAUS;Gaussian mask
-!TP_RETINEX_MAP_MAPP;Sharp mask (wavelet partial)
-!TP_RETINEX_MAP_MAPT;Sharp mask (wavelet total)
-!TP_RETINEX_MAP_METHOD_TOOLTIP;Use the mask generated by the Gaussian function above (Radius, Method) to reduce halos and artifacts.\n\nCurve only: apply a diagonal contrast curve on the mask.\nBeware of artifacts!\n\nGaussian mask: generate and use a Gaussian blur of the original mask.\nQuick.\n\nSharp mask: generate and use a wavelet on the original mask.\nSlow.
-!TP_RETINEX_MAP_NONE;None
-!TP_RETINEX_MEDIAN;Transmission median filter
-!TP_RETINEX_METHOD;Method
-!TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\nHighlights = Remove magenta in highlights.
-!TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
-!TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
-!TP_RETINEX_NEIGHBOR;Radius
-!TP_RETINEX_NEUTRAL;Reset
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
-!TP_RETINEX_OFFSET;Offset (brightness)
-!TP_RETINEX_SCALES;Gaussian gradient
-!TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
-!TP_RETINEX_SETTINGS;Settings
-!TP_RETINEX_SKAL;Scale
-!TP_RETINEX_SLOPE;Free gamma slope
-!TP_RETINEX_STRENGTH;Strength
-!TP_RETINEX_THRESHOLD;Threshold
-!TP_RETINEX_THRESHOLD_TOOLTIP;Limits in/out.\nIn = image source,\nOut = image gauss.
-!TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
-!TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
-!TP_RETINEX_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nMean and Sigma.\nTm=Min TM=Max of transmission map.
-!TP_RETINEX_TRANF;Transmission
-!TP_RETINEX_TRANSMISSION;Transmission map
-!TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
-!TP_RETINEX_UNIFORM;Uniform
-!TP_RETINEX_VARIANCE;Contrast
-!TP_RETINEX_VARIANCE_TOOLTIP;Low variance increase local contrast and saturation, but can lead to artifacts.
-!TP_RETINEX_VIEW;Process
-!TP_RETINEX_VIEW_MASK;Mask
-!TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal display.\nMask -  Displays the mask.\nUnsharp mask - Displays the image with a high radius unsharp mask.\nTransmission - Auto/Fixed - Displays the file transmission-map, before any action on contrast and brightness.\n\nAttention: the mask does not correspond to reality, but is amplified to make it more visible.
-!TP_RETINEX_VIEW_NONE;Standard
-!TP_RETINEX_VIEW_TRAN;Transmission - Auto
-!TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
-!TP_RETINEX_VIEW_UNSHARP;Unsharp mask

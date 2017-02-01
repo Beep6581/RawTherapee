@@ -909,8 +909,11 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 {
+    if (getW() < 1 || getH() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
-    FILE *file = g_fopen_withBinaryAndLock (fname);
+    FILE* const file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -1003,8 +1006,11 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 {
+    if (getW() < 1 || getH() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
-    FILE *file = g_fopen_withBinaryAndLock (fname);
+    FILE* const file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -1190,6 +1196,9 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
 int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 {
+    if (getW() < 1 || getH() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
     //TODO: Handling 32 bits floating point output images!
     bool writeOk = true;
@@ -1342,7 +1351,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         }
 
-        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " VERSION);
+        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " RTVERSION);
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
@@ -1441,19 +1450,11 @@ void png_flush(png_structp png_ptr)
 int ImageIO::load (Glib::ustring fname)
 {
 
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return IMIO_FILETYPENOTSUPPORTED;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    if (hasPngExtension(fname)) {
         return loadPNG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-               !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    } else if (hasJpegExtension(fname)) {
         return loadJPEG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         return loadTIFF (fname);
     } else {
         return IMIO_FILETYPENOTSUPPORTED;
@@ -1462,20 +1463,11 @@ int ImageIO::load (Glib::ustring fname)
 
 int ImageIO::save (Glib::ustring fname)
 {
-
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return IMIO_FILETYPENOTSUPPORTED;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    if (hasPngExtension(fname)) {
         return savePNG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-               !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    } else if (hasJpegExtension(fname)) {
         return saveJPEG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         return saveTIFF (fname);
     } else {
         return IMIO_FILETYPENOTSUPPORTED;
