@@ -45,7 +45,7 @@
 #define CLIPC(a) ((a)>-42000?((a)<42000?(a):42000):-42000)  // limit a and b  to 130 probably enough ?
 #define CLIPL(x) LIM(x,0.f,40000.f) // limit L to about L=120 probably enough ?
 #define CLIPLOC(x) LIM(x,0.f,32767.f)
-#define CLIPLIG(x) LIM(x,0.f, 100.f)
+#define CLIPLIG(x) LIM(x,0.f, 99.5f)
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 
 namespace rtengine
@@ -1832,12 +1832,13 @@ struct local_contra {
     float al, bl;
 };
 
-void ImProcFunctions::Contrast_Local (int call, LabImage * bufcontorig, float ** buflightc, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, float av, const struct local_params & lp, float **deltE, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontorig, float ** buflightc, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, float av, const struct local_params & lp, float **deltE, LabImage * original, LabImage * transformed, int cx, int cy)
 {
     // BENCHFUN
 // contrast - perhaps for 4 areas   if need
 // I tried shmap adaptaed to Lab, but no real gain and artifacts
     const float localtype = lumaref; // always spot area
+    //  const float localtype = ave; // always spot area
     const float ach = (float)lp.trans / 100.f;
     float reducac;
 
@@ -1923,27 +1924,31 @@ void ImProcFunctions::Contrast_Local (int call, LabImage * bufcontorig, float **
 
                 for (int x = 0; x < transformed->W; x++) {
                     int lox = cx + x;
-#ifdef __SSE2__
-                    float rhue = atan2Buffer[x];
-                    float rchro = sqrtBuffer[x];
-#else
-                    float rhue = xatan2f (original->b[y][x], original->a[y][x]);
-                    float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
-#endif
-                    int zone;
                     int begx = int (lp.xc - lp.lxL);
                     int begy = int (lp.yc - lp.lyT);
 
                     if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                        //         float localFactor = 1.f;
-                        //         calcTransition (lox, loy, ach, lp, zone, localFactor);
+
+#ifdef __SSE2__
+                        float rhue = atan2Buffer[x];
+                        float rchro = sqrtBuffer[x];
+#else
+                        float rhue = xatan2f (original->b[y][x], original->a[y][x]);
+                        float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
+#endif
                         //prepare shape detection
                         float khu = 0.f;
                         float kch = 1.f;
                         bool kzon = false;
                         float fach = 1.f;
 
-                        float cli = (buflightc[loy - begy - 1][lox - begx - 1]);
+                        float cli = 1.f;
+
+                        if (lp.curvact == true) {
+
+                            cli = (buflightc[loy - begy - 1][lox - begx - 1]);
+                        }
+
                         //parameters for linear interpolation in function of real hue
                         float apluscligh = (1.f - cli) / delhu;
                         float bpluscligh = 1.f - apluscligh * hueplus;
@@ -1951,6 +1956,7 @@ void ImProcFunctions::Contrast_Local (int call, LabImage * bufcontorig, float **
                         float bmoinscligh = 1.f - amoinscligh * huemoins;
 
                         float realcligh = 1.f;
+                        float realcligh2 = cli;
 
 
 
@@ -1981,7 +1987,7 @@ void ImProcFunctions::Contrast_Local (int call, LabImage * bufcontorig, float **
 
 
                         // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                        if (lp.sens < 20.f) { //to try...
+                        if (lp.sens < 100.f) { //to try...
                             //hue detection
                             if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                                 if (rhue >= hueplus - delhu )  {
@@ -2092,10 +2098,14 @@ void ImProcFunctions::Contrast_Local (int call, LabImage * bufcontorig, float **
                             falL *= pow (rchro / kcr, lp.iterat / 10.f);
                         }
 
+                        int zone;
+
                         float localFactor = 1.f;
                         calcTransition (lox, loy, ach, lp, zone, localFactor);
 
                         float kdiff = 1.f;
+                        float modu =  1.f ;//realclig / cli;
+                        float localty = localtype;
 
                         if (rL > 0.01f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
 
@@ -2109,113 +2119,103 @@ void ImProcFunctions::Contrast_Local (int call, LabImage * bufcontorig, float **
 
                                 case 1: { // inside transition zone
                                     if (lp.curvact == false) {
-
-                                        if (original->L[y][x] < 32768.f) {
-                                            float factorx = localFactor;
-                                            float prov100 = original->L[y][x] / 32768.f;
-                                            float prov = prov100 * 100.f;
-                                            bool contin = true;
+                                        modu = 1.f;
+                                    } else {
+                                        modu = realcligh / (cli + 0.001f);//avoid divide by zero
+                                    }
 
 
-                                            if (contin) {
 
-                                                if (prov > localtype) {
-                                                    if (prov >= localtype && prov < 50.f + localtype / 2.f) {
-                                                        float core = (lco.alsup2 * prov + lco.blsup2) ;
-                                                        core *= factorx;
+                                    if (original->L[y][x] < 32768.f) {
+                                        float factorx = localFactor;
+                                        float prov100 = original->L[y][x] / 32768.f;
+                                        float prov = prov100 * 100.f;
+                                        bool contin = true;
 
-                                                        transformed->L[y][x] = 327.68f * (prov + pm * (prov - localtype) * (core) * kch * fach * falL);
-                                                    } else {
-                                                        float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
 
-                                                        core *= factorx;
+                                        if (contin) {
 
-                                                        transformed->L[y][x] = 327.68f * (prov + pm * (prov - localtype) * (core) * kch * fach * falL);
-                                                    }
-                                                } else  { //inferior
-                                                    if (2.f * prov > localtype && prov < localtype)  {
-                                                        float core = (lco.alsup * prov + lco.blsup) ;
-                                                        core *= factorx;
+                                            if (prov > localty) {
+                                                if (prov >= localty && prov < 50.f + localty / 2.f) {
+                                                    float core = (lco.alsup2 * prov + lco.blsup2) ;
+                                                    core *= factorx;
 
-                                                        transformed->L[y][x] = 327.68f * (prov - pm * (localtype - prov) * core * kch * fach * falL);
-                                                    } else if (2.f * prov <= localtype) {
-                                                        float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
+                                                    transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * (core) * kch * fach * falL * modu);
+                                                } else {
+                                                    float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
 
-                                                        core *= factorx;
+                                                    core *= factorx;
 
-                                                        transformed->L[y][x] = 327.68f * (prov - pm * (localtype - prov) * core * kch * fach * falL);
-                                                    }
+                                                    transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * (core) * kch * fach * falL * modu);
+                                                }
+                                            } else  { //inferior
+                                                if (2.f * prov > localty && prov < localty)  {
+                                                    float core = (lco.alsup * prov + lco.blsup) ;
+                                                    core *= factorx;
+
+                                                    transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
+                                                } else if (2.f * prov <= localtype) {
+                                                    float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
+
+                                                    core *= factorx;
+
+                                                    transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
                                                 }
                                             }
-                                        } else {
-                                            transformed->L[y][x] = original->L[y][x];
                                         }
-
-                                        break;
-                                    } else {
-                                        float lumnew = bufcontorig->L[loy - begy - 1][lox - begx - 1];
-
-                                        float factorx = localFactor;
-                                        float fli = 1.f;
-                                        fli = ((100.f + realcligh * falL ) / 100.f);//luma transition
-                                        float lightcont = lumnew;
-                                        float diflc = lightcont * fli  - original->L[y][x];
-                                        kdiff *= fach * kch;
-                                        diflc *= kdiff ;
-                                        diflc *= factorx; //transition
-
-                                        transformed->L[y][x] = CLIPL (1.f * (original->L[y][x] + diflc));
-
                                     }
+
+
+                                    else {
+                                        transformed->L[y][x] = original->L[y][x];
+                                    }
+
+                                    break;
                                 }
 
                                 case 2: { // inside selection => full effect, no transition
                                     if (lp.curvact == false) {
-
-                                        if (original->L[y][x] < 32768.f) {
-                                            float prov100 = original->L[y][x] / 32768.f;
-                                            float prov = prov100 * 100.f;
-
-                                            bool contin = true;
-
-                                            if (contin) {
+                                        modu = 1.f;
+                                    } else {
+                                        modu = realcligh / (cli + 0.001f);
+                                    }
 
 
 
-                                                if (prov > localtype  ) {
-                                                    if (prov >= localtype && prov < 50.f + localtype / 2.f) {
-                                                        float core = (lco.alsup2 * prov + lco.blsup2) ;
-                                                        transformed->L[y][x] = 327.68f * (prov + pm * (prov - localtype) * core * kch * fach * falL);
-                                                    } else {
-                                                        float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
-                                                        transformed->L[y][x] = 327.68f * (prov + pm * (prov - localtype) * core * kch * fach * falL);
-                                                    }
-                                                } else  { //inferior
-                                                    if (2.f * prov > localtype && prov < localtype)  {
-                                                        float core = (lco.alsup * prov + lco.blsup) ;
-                                                        transformed->L[y][x] = 327.68f * (prov - pm * (localtype - prov) * core * kch * fach * falL);
-                                                    } else if (2.f * prov <= localtype) {
-                                                        float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
-                                                        transformed->L[y][x] = 327.68f * (prov - pm * (localtype - prov) * core * kch * fach * falL);
-                                                    }
+
+                                    if (original->L[y][x] < 32768.f) {
+                                        float prov100 = original->L[y][x] / 32768.f;
+                                        float prov = prov100 * 100.f;
+
+                                        bool contin = true;
+
+                                        if (contin) {
+
+
+
+                                            if (prov > localty  ) {
+                                                if (prov >= localty && prov < 50.f + localty / 2.f) {
+                                                    float core = (lco.alsup2 * prov + lco.blsup2) ;
+                                                    transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * core * kch * fach * falL * modu);
+                                                } else {
+                                                    float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
+                                                    transformed->L[y][x] = 327.68f * (prov + pm * (prov - localty) * core * kch * fach * falL * modu);
+                                                }
+                                            } else  { //inferior
+                                                if (2.f * prov > localty && prov < localty)  {
+                                                    float core = (lco.alsup * prov + lco.blsup) ;
+                                                    transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
+                                                } else if (2.f * prov <= localtype) {
+                                                    float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
+                                                    transformed->L[y][x] = 327.68f * (prov - pm * (localty - prov) * core * kch * fach * falL * modu);
                                                 }
                                             }
-                                        } else {
-                                            transformed->L[y][x] = original->L[y][x];
                                         }
                                     }
 
                                     else {
-                                        float lumnew = bufcontorig->L[loy - begy - 1][lox - begx - 1];
-                                        float fli = 1.f;
-                                        fli = ((100.f + realcligh * falL ) / 100.f);//luma transition
-                                        float lightcont = lumnew;
-                                        float diflc = lightcont * fli  - original->L[y][x];
-                                        kdiff *= fach * kch;
-                                        diflc *= kdiff ;
-                                        transformed->L[y][x] = CLIPL (1.f * (original->L[y][x] + diflc));
+                                        transformed->L[y][x] = original->L[y][x];
                                     }
-
                                 }
                             }
                         }
@@ -3737,7 +3737,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 }
             }
 
-        } else if (lp.inv || lp.invret) { //exterior
+        } else if (lp.inv || lp.invret) { //exterior || lp.curvact
             ave = 0.f;
             n = 0;
             #pragma omp parallel for reduction(+:ave,n)
@@ -3801,7 +3801,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
         float dhueret = ared * lp.sensh + bred; //delta hue retinex
 
-        constexpr float maxh = 2.5f; // 4 amplification contrast above mean
+        constexpr float maxh = 3.5f; // 3.5 amplification contrast above mean
 
         constexpr float maxl = 2.5f; // 3 reductio contrast under mean
 
@@ -4391,7 +4391,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                 ch = (cclocalcurve[chromat * adjustr ])  / ((chromat + 0.00001f) * adjustr); //ch between 0 and 0 50 or more
 
                                 if (ch <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                    chpro = 100.f * ch - 100.f;
+                                    chpro = 99.f * ch - 99.f;
                                 } else {
                                     chpro = CLIPCHRO (ampli * ch - ampli); //ampli = 25.f arbitrary empirical coefficient between 5 and 50
                                 }
@@ -4413,7 +4413,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                 lL = lighLnew / lighL;
 
                                 if (lL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                    clighL = 100.f * lL - 100.f;
+                                    clighL = 99.f * lL - 99.f;
                                 } else {
                                     clighL = CLIPLIG (amplil * lL - amplil); //ampli = 25.f arbitrary empirical coefficient between 5 and 150
                                 }
@@ -4500,6 +4500,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             int bfh, bfw;
             float clighc = 0.f;
             const float localtype = lumaref;
+            //         const float localtype = ave;
             float reducac;
             float corered;
 
@@ -4527,9 +4528,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             ImProcFunctions::secondeg_begin (reducac, vi, lco.aa, lco.bb);//parabolic
             ImProcFunctions::secondeg_end (reducac, vinf, lco.aaa, lco.bbb, lco.ccc);//parabolic
 
-
-
-
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
                 int GW = transformed->W;
                 int GH = transformed->H;
@@ -4552,8 +4550,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 for (int ir = 0; ir < bfh; ir++) //fill with 0
                     for (int jr = 0; jr < bfw; jr++) {
                         bufcontorig->L[ir][jr] = 0.f;
-                        bufcontorig->a[ir][jr] = 0.f;
-                        bufcontorig->b[ir][jr] = 0.f;
+                        //   bufcontorig->a[ir][jr] = 0.f;
+                        //   bufcontorig->b[ir][jr] = 0.f;
 
                     }
 
@@ -4563,6 +4561,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 float maxc = -10000.f;
                 float minc = +10000.f;
                 //    float core = 0.f;
+                float localty;
+                localty = localtype;
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
@@ -4578,29 +4578,31 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                             clighc = 1.f;
                             corered = 0.f;
 
+
                             if (lp.cont != 0.f  && lp.curvact) {
 
                                 float cL;
-                                float amplil = 20.f;
+                                float amplil = 150.f;
                                 float prov100 = bufcontorig->L[loy - begy - 1][lox - begx - 1] / 32768.f;
                                 float prov = prov100 * 100.f;
+                                cL = 1.f;
 
-                                if (prov > localtype) {
-                                    if (prov >= localtype && prov < 50.f + localtype / 2.f) {
+                                if (prov > localty) {
+                                    if (prov >= localty && prov < 50.f + localty / 2.f) {
                                         float core = (lco.alsup2 * prov + lco.blsup2) ;
-                                        corered = prov + pm * (prov - localtype) * (core);
+                                        corered = prov + pm * (prov - localty) * (core);
                                     } else {
                                         float core = lco.aDY * (lco.aaa * prov100 * prov100 + lco.bbb * prov100 + lco.ccc);
-                                        corered = prov + pm * (prov - localtype) * (core);
+                                        corered = prov + pm * (prov - localty) * (core);
 
                                     }
                                 }  else {
-                                    if (2.f * prov > localtype && prov < localtype)  {
+                                    if (2.f * prov > localty && prov < localty)  {
                                         float core = (lco.alsup * prov + lco.blsup) ;
-                                        corered = prov - pm * (localtype - prov) * core;
-                                    } else if (2.f * prov <= localtype) {
+                                        corered = prov - pm * (localty - prov) * core;
+                                    } else if (2.f * prov <= localty) {
                                         float core = prov * lco.alinf * (lco.aa * prov100 * prov100 + lco.bb * prov100);
-                                        corered = prov - pm * (localtype - prov) * core;
+                                        corered = prov - pm * (localty - prov) * core;
 
                                     }
                                 }
@@ -4608,23 +4610,33 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                 cL = corered / prov;
 
                                 if (cL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
-                                    clighc = 100.f * cL - 100.f;
+                                    clighc = 99.f * cL - 99.f;
                                 } else {
-                                    clighc = CLIPLIG (amplil * cL - amplil); //ampli = 25.f arbitrary empirical coefficient between 5 and 150
+                                    clighc = CLIPLIG (amplil * cL - amplil); //arbitrary empirical coefficient between 5 and 150
+                                }
+
+
+                                if (clighc > maxc) {
+                                    maxc = clighc;
+                                }
+
+                                if (clighc < minc) {
+                                    minc = clighc;
                                 }
 
                                 buflightc[loy - begy - 1][lox - begx - 1] = clighc;
 
                             }
-
-
                         }
                     }
+
+                printf ("min=%2.2f max=%f", minc, maxc);
+
 
             }
 
 
-            Contrast_Local (call, bufcontorig, buflightc, moy, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, av, lp, deltE, original, transformed, cx, cy);
+            Contrast_Local (call, ave, bufcontorig, buflightc, moy, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, av, lp, deltE, original, transformed, cx, cy);
 
             if (call <= 3) {
 
