@@ -886,7 +886,7 @@ void LocallabParams::setDefaults()
     centerX = 0;
     centerY = 0;
     circrad = 18;
-    qualityMethod = "std";
+    qualityMethod = "enhden";
     qualitycurveMethod = "none";
     proxi = 20;
     thres = 18;

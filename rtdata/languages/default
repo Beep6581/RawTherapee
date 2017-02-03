@@ -1677,6 +1677,7 @@ TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
+TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, and Retinex.
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BLUFR;Blur & Noise
 TP_LOCALLAB_CENTER_X;Center X

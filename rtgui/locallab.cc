@@ -428,12 +428,22 @@ Locallab::Locallab ():
     shapeVBox->pack_start (*centerX);
     shapeVBox->pack_start (*centerY);
     shapeVBox->pack_start (*circrad);
-    //shapeVBox->pack_start (*activlum);
     qualbox->pack_start (*labqual, Gtk::PACK_SHRINK, 4);
     qualbox->pack_start (*qualityMethod);
     shapeVBox->pack_start (*qualbox);
-//    shapeVBox->pack_start (*thres);
-//    shapeVBox->pack_start (*proxi);
+    shapeVBox->pack_start (*transit);
+
+    artifFrame->set_border_width (0);
+    artifFrame->set_label_align (0.025, 0.5);
+    artifFrame->set_tooltip_text (M ("TP_LOCALLAB_ARTIF_TOOLTIP"));
+
+    artifVBox->set_spacing (2);
+    artifVBox->set_border_width (4);
+
+    artifVBox->pack_start (*thres);
+    artifVBox->pack_start (*proxi);
+    artifFrame->add (*artifVBox);
+    shapeVBox->pack_start (*artifFrame);
 
     shapeFrame->add (*shapeVBox);
     pack_start (*shapeFrame);
@@ -549,7 +559,6 @@ Locallab::Locallab ():
 
 
     superVBox->pack_start (*lightness);
-//    colorVBox->pack_start (*curvactiv);
     superVBox->pack_start (*contrast);
     superFrame->add (*superVBox);
     colorVBox->pack_start (*superFrame);
@@ -564,17 +573,6 @@ Locallab::Locallab ():
 
 
     colorVBox->pack_start (*llCurveEditorG, Gtk::PACK_SHRINK, 2);
-    artifFrame->set_border_width (0);
-    artifFrame->set_label_align (0.025, 0.5);
-
-    artifVBox->set_spacing (2);
-    artifVBox->set_border_width (4);
-
-    artifVBox->pack_start (*thres);
-    artifVBox->pack_start (*proxi);
-    artifFrame->add (*artifVBox);
-
-    colorVBox->pack_start (*artifFrame);
     colorVBox->pack_start (*invers);
 
     expcolor->add (*colorVBox);
@@ -627,7 +625,7 @@ Locallab::Locallab ():
     pack_start (*expdenoi);
 
 
-    pack_start (*transit);
+//    pack_start (*transit);
     pack_start (*avoid);//keep avoid clor shift in case of
 
     neutrHBox = Gtk::manage (new Gtk::HBox ());
