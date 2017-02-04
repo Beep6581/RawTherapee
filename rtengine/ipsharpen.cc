@@ -16,13 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "bilateral.h"
 #include "rtengine.h"
 #include "improcfun.h"
 #include "gauss.h"
-#include "bilateral2.h"
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
+
+#define BENCHMARK
+#include "StopWatch.h"
+
 using namespace std;
 
 namespace rtengine
@@ -151,7 +155,7 @@ void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, int W, i
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &sharpenParam)
-{
+{ BENCHFUN
 
     if (!sharpenParam.enabled) {
         return;
@@ -187,7 +191,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
         if (!sharpenParam.edgesonly) {
             gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
-            bilateral<float, float> (lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread);
+            Bilateral(lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread).compute();
             gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
         }
     }
@@ -952,7 +956,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
         if (!params->sharpening.edgesonly) {
             gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
-            bilateral<float, float> (ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
+            Bilateral(ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread).compute();
             gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
         }
     }
