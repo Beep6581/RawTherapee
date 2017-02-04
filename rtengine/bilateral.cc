@@ -44,7 +44,7 @@ constexpr T elem(T** source, const LUTf& ec, int i, int j, int a, int b)
 }
 
 #define BL_BEGIN(a,b)   LUTf ec(0x20000); \
-                        fillEc(sensitivity, a, ec); \
+                        fillEc(sensitivity, ec); \
                         int rstart = b; \
                         int rend = height-b; \
                         int cstart = b; \
@@ -138,13 +138,13 @@ constexpr T elem(T** source, const LUTf& ec, int i, int j, int a, int b)
                                                             a21 * suly(source, ec, i, j, 4, -5) + a22 * suly(source, ec, i, j, 4, -4) + a23 * suly(source, ec, i, j, 4, -3) + a24 * suly(source, ec, i, j, 4, -2) + a25 * suly(source, ec, i, j, 4, -1) + a26 * suly(source, ec, i, j, 4, 0) + a25 * suly(source, ec, i, j, 4, 1) + a24 * suly(source, ec, i, j, 4, 2) + a23 * suly(source, ec, i, j, 4, 3) + a22 * suly(source, ec, i, j, 4, 4) + a21 * suly(source, ec, i, j, 4, 5) + \
                                                             a11 * suly(source, ec, i, j, 5, -5) + a12 * suly(source, ec, i, j, 5, -4) + a13 * suly(source, ec, i, j, 5, -3) + a14 * suly(source, ec, i, j, 5, -2) + a15 * suly(source, ec, i, j, 5, -1) + a16 * suly(source, ec, i, j, 5, 0) + a15 * suly(source, ec, i, j, 5, 1) + a14 * suly(source, ec, i, j, 5, 2) + a13 * suly(source, ec, i, j, 5, 3) + a12 * suly(source, ec, i, j, 5, 4) + a11 * suly(source, ec, i, j, 5, 5); \
 
-void fillEc(double sensitivity, double a, LUTf& ec)
+void fillEc(double sensitivity, LUTf& ec)
 {
     const double sensitivity_square_times_two = sensitivity * sensitivity * 2.0;
 
     for (int i=0; i<0x20000; i++) {
         const double i_biased = i - 0x10000;
-        ec[i] = std::exp(-i_biased * i_biased / sensitivity_square_times_two) * a;
+        ec[i] = std::exp(-i_biased * i_biased / sensitivity_square_times_two);
     }
 }
 
@@ -161,7 +161,7 @@ public:
         int _height,
         double _sigma,
         double _sensitivity,
-        bool _multi_thread
+        LUTf &_ec
     ) :
         source(_source),
         destination(_destination),
@@ -170,16 +170,15 @@ public:
         height(_height),
         sigma(_sigma),
         sensitivity(_sensitivity),
-        multi_thread(_multi_thread)
+        ec(_ec)
     {
     }
 
     void compute()
     {
-    //parallel if (multi_thread)
         if (sigma < 0.45)
 #ifdef _OPENMP
-            #pragma omp  for
+            #pragma omp for
 #endif
             for (int i = 0; i < height; i++) {
                 memcpy(buffer[i], source[i], width * sizeof(float));
@@ -231,33 +230,39 @@ public:
     }
 
 private:
-    void blOper3(int a, int b, int c, int d)
+    void blOper3(int border, float c00, float c01, float c11)
     {
-        LUTf ec(0x20000);
-        fillEc(sensitivity, a, ec);
 
-        const auto suly = [this, &ec](int i, int j, int a, int b) {
+#ifdef _OPENMP
+            #pragma omp single
+#endif
+{
+        // Same LUT for all threads, filled by only one thread
+        fillEc(sensitivity, ec);
+}
+
+        const auto suly = [this](int i, int j, int a, int b) {
             return ec[source[i - a][j - b] - source[i][j] + 65536.0f];
         };
 
-        const auto elem = [this, &ec, &suly](int i, int j, int a, int b) {
+        const auto elem = [this, &suly](int i, int j, int a, int b) {
             return source[i - a][j - b] * suly(i, j, a, b);
         };
 
-        const int rstart = b;
-        const int rend = height - b;
-        const int cstart = b;
-        const int cend = width - b;
+        const int rstart = border;
+        const int rend = height - border;
+        const int cstart = border;
+        const int cend = width - border;
 
         #pragma omp for
         for (int i = rstart; i < rend; ++i) {
             for (int j = cstart; j < cend; ++j) {
-                float v = b * elem(i, j, -1, -1) + c * elem(i, j, -1, 0) + b * elem(i, j, -1, 1) +
-                    c * elem(i, j, 0, -1) + d * elem(i, j, 0, 0) + c * elem(i, j, 0, 1) +
-                    b * elem(i, j, 1, -1) + c * elem(i, j, 1, 0) + b * elem(i, j, 1, 1);
-                v /= b * suly(i, j, -1, -1) + c * suly(i, j, -1, 0) + b * suly(i, j, -1, 1) +
-                    c * suly(i, j, 0, -1) + d * suly(i, j, 0, 0) + c * suly(i, j, 0, 1) +
-                    b * suly(i, j, 1, -1) + c * suly(i, j, 1, 0) + b * suly(i, j, 1, 1);
+                float v = c11 * elem(i, j, -1, -1) + c01 * elem(i, j, -1, 0) + c11 * elem(i, j, -1, 1) +
+                          c01 * elem(i, j, 0, -1)  + c00 * elem(i, j, 0, 0)  + c01 * elem(i, j, 0, 1) +
+                          c11 * elem(i, j, 1, -1)  + c01 * elem(i, j, 1, 0)  + c11 * elem(i, j, 1, 1);
+                v /= c11 * suly(i, j, -1, -1) + c01 * suly(i, j, -1, 0) + c11 * suly(i, j, -1, 1) +
+                     c01 * suly(i, j, 0, -1)  + c00 * suly(i, j, 0, 0)  + c01 * suly(i, j, 0, 1) +
+                     c11 * suly(i, j, 1, -1)  + c01 * suly(i, j, 1, 0)  + c11 * suly(i, j, 1, 1);
                 buffer[i][j] = v;
             }
         }
@@ -277,13 +282,13 @@ private:
     // sigma = 0.5
     void bilateral05()
     {
-        blOper3(318, 1, 7, 55);
+        blOper3(1, 55, 7, 1);
     }
 
     // sigma = 0.6
     void bilateral06()
     {
-        blOper3(768, 1, 4, 16);
+        blOper3(1, 16, 4, 1);
     }
 
     // sigma = 0.7
@@ -502,7 +507,7 @@ private:
     const int height;
     const double sigma;
     const double sensitivity;
-    const bool multi_thread;
+    LUTf &ec;
 };
 
 rtengine::Bilateral::Bilateral(
@@ -513,7 +518,7 @@ rtengine::Bilateral::Bilateral(
     int height,
     double sigma,
     double sensitivity,
-    bool multi_thread
+    LUTf &ec
 ) :
     implementation(
         new Implementation(
@@ -524,7 +529,7 @@ rtengine::Bilateral::Bilateral(
             height,
             sigma,
             sensitivity,
-            multi_thread
+            ec
         )
     )
 {

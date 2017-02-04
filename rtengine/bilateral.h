@@ -22,6 +22,7 @@
 #include <memory>
 
 #include "noncopyable.h"
+#include "LUT.h"
 
 namespace rtengine
 {
@@ -38,7 +39,7 @@ public:
         int height,
         double sigma,
         double sensitivity,
-        bool multi_thread
+        LUTf &ec
     );
     ~Bilateral();
 

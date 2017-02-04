@@ -183,6 +183,8 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
         }
     }
 
+    LUTf ec(0x20000);
+
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -191,7 +193,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
         if (!sharpenParam.edgesonly) {
             gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
-            Bilateral(lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, multiThread).compute();
+            Bilateral(lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, ec).compute();
             gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
         }
     }
@@ -948,6 +950,8 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
         }
     }
 
+    LUTf ec(0x20000);
+
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -956,7 +960,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
         if (!params->sharpening.edgesonly) {
             gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
-            Bilateral(ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread).compute();
+            Bilateral(ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, ec).compute();
             gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
         }
     }
