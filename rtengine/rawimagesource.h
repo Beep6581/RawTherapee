@@ -264,6 +264,7 @@ protected:
     void pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &model, float rawWpCorrection);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
+    void getRawValues(int x, int y, int &R, int &G, int &B);
 
 };
 }

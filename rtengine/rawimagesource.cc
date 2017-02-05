@@ -5460,6 +5460,21 @@ void RawImageSource::init ()
     }
 }
 
+void RawImageSource::getRawValues(int x, int y, int &R, int &G, int &B)
+{
+    int xnew = x + border;
+    int ynew = y + border;
+    int c = FC(ynew,xnew);
+    int val = rawData[ynew][xnew] / scale_mul[c];
+    if(c == 0) {
+        R = val; G = 0; B = 0;
+    } else if(c == 2) {
+        R = 0; G = 0; B = val;
+    } else {
+        R = 0; G = val; B = 0;
+    }
+}
+
 void RawImageSource::cleanup ()
 {
     delete phaseOneIccCurve;
