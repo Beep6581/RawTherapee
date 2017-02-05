@@ -879,7 +879,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         int t_estop = 140;
                         int t_scaltm = 3;
                         int t_rewei = 0;
-                        int t_sensitm = 40;
+                        int t_sensitm = 19;
 
                         //versionmip = 10002 Reticurv
                         int t_retrab = 500;
@@ -1521,7 +1521,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_estop = 140;
                     int t_scaltm = 3;
                     int t_rewei = 0;
-                    int t_sensitm = 40;
+                    int t_sensitm = 19;
 
                     //10002 curve
                     int t_retrab = 500;
