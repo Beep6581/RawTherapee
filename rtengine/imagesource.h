@@ -160,7 +160,7 @@ public:
     {
         return this;
     }
-    virtual void getRawValues(int x, int y, int &R, int &G, int &B) = 0;
+    virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
 };
 }
 #endif

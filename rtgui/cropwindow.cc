@@ -1045,7 +1045,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                     ipc->getParams(&params);
                     if(params.raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::none]) {
                         ImageSource *isrc = static_cast<ImageSource*>(ipc->getInitialImage());
-                        isrc->getRawValues(mx, my, rval, gval, bval);
+                        isrc->getRawValues(mx, my, params.coarse.rotate, rval, gval, bval);
                     }
                 }
                 //      pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);

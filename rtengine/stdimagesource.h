@@ -97,7 +97,7 @@ public:
     }
     void setCurrentFrame(unsigned int frameNum) {}
 
-    void getRawValues(int x, int y, int &R, int &G, int &B) { R = G = B = 0;}
+    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) { R = G = B = 0;}
 
 
 };

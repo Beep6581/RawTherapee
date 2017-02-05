@@ -5460,10 +5460,25 @@ void RawImageSource::init ()
     }
 }
 
-void RawImageSource::getRawValues(int x, int y, int &R, int &G, int &B)
+void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int &B)
 {
     int xnew = x + border;
     int ynew = y + border;
+    rotate += ri->get_rotateDegree();
+    rotate %= 360;
+    if (rotate == 90) {
+        std::swap(xnew,ynew);
+        ynew = H - 1 - ynew;
+    } else if (rotate == 180) {
+        xnew = W - 1 - xnew;
+        ynew = H - 1 - ynew;
+    } else if (rotate == 270) {
+        std::swap(xnew,ynew);
+        ynew = H - 1 - ynew;
+        xnew = W - 1 - xnew;
+        ynew = H - 1 - ynew;
+    }
+
     int c = FC(ynew,xnew);
     int val = round(rawData[ynew][xnew] / scale_mul[c]);
     if(c == 0) {
