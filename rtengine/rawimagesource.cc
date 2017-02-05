@@ -5465,7 +5465,7 @@ void RawImageSource::getRawValues(int x, int y, int &R, int &G, int &B)
     int xnew = x + border;
     int ynew = y + border;
     int c = FC(ynew,xnew);
-    int val = rawData[ynew][xnew] / scale_mul[c];
+    int val = round(rawData[ynew][xnew] / scale_mul[c]);
     if(c == 0) {
         R = val; G = 0; B = 0;
     } else if(c == 2) {
