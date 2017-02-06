@@ -775,12 +775,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                             float factorx = localFactor;
                             float difL = 0.f;
 
-                            if (call <= 3) {
-                                difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
-                            } else  {
-                                difL = loctemp[y][x] - original->L[y][x];
-
-                            }
+                            difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
 
                             //float difL = loctemp[y][x] - original->L[y][x];
                             difL *= factorx;
@@ -790,16 +785,8 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                         }
 
                         case 2: { // inside selection => full effect, no transition
-                            // float difL = loctemp[y][x] - original->L[y][x];
                             float difL = 0.f;
-
-                            if (call <= 3) {
-
-                                //       bufsh[loy - begy - 1][lox - begx - 1]
-                                difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
-                            } else  {
-                                difL = loctemp[y][x] - original->L[y][x];
-                            }
+                            difL = loctemp[loy - begy][lox - begx] * fli * falL - original->L[y][x];
 
                             transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
                         }
@@ -1063,12 +1050,9 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                             float factorx = localFactor;
                             float difL, difa, difb;
 
-                            if (call <= 3) {
-                                difL = tmp1->L[loy - begy][lox - begx] * fli * falL - original->L[y][x];
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-
-                            }
+                            difL = tmp1->L[loy - begy][lox - begx] * fli * falL - original->L[y][x];
+                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
 
                             difL *= factorx;
                             difa *= factorx;
@@ -1086,13 +1070,9 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                         case 2: { // inside selection => full effect, no transition
                             float difL, difa, difb;
 
-                            if (call <= 3) {
-
-                                difL = tmp1->L[loy - begy][lox - begx] * fli * falL - original->L[y][x];
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-
-                            }
+                            difL = tmp1->L[loy - begy][lox - begx] * fli * falL - original->L[y][x];
+                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
 
                             transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
 
@@ -1783,27 +1763,23 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                                     if (chro == 0) {
                                         float difL;
 
-                                        if (call <= 3) {
-                                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                            difL *= factorx * (100.f + realstr * falL) / 100.f;
-                                            difL *= kch * fach;
+                                        difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                                        difL *= factorx * (100.f + realstr * falL) / 100.f;
+                                        difL *= kch * fach;
 
-                                            transformed->L[y][x] = original->L[y][x] + difL;
-                                        }
+                                        transformed->L[y][x] = original->L[y][x] + difL;
                                     }
 
                                     if (chro == 1) {
                                         float difa, difb;
 
-                                        if (call <= 3) {
-                                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                            difa *= factorx * (100.f + realstrch * falu * falL) / 100.f;
-                                            difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
-                                            transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
-                                            transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+                                        difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                                        difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                                        difa *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                        difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                        transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                                        transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
 
-                                        }
                                     }
 
                                     break;
@@ -1814,26 +1790,22 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                                     if (chro == 0) {
                                         float difL;
 
-                                        if (call <= 3) {
-                                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                            difL *= (100.f + realstr * falL) / 100.f;
-                                            difL *= kch * fach;
-                                            transformed->L[y][x] = original->L[y][x] + difL;
+                                        difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                                        difL *= (100.f + realstr * falL) / 100.f;
+                                        difL *= kch * fach;
+                                        transformed->L[y][x] = original->L[y][x] + difL;
 
-                                        }
                                     }
 
                                     if (chro == 1) {
                                         float difa, difb;
 
-                                        if (call <= 3) {
-                                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-                                            difa *= (100.f + realstrch * falu * falL) / 100.f;
-                                            difb *= (100.f + realstrch * falu * falL) / 100.f;
-                                            transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
-                                            transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
-                                        }
+                                        difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                                        difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                                        difa *= (100.f + realstrch * falu * falL) / 100.f;
+                                        difb *= (100.f + realstrch * falu * falL) / 100.f;
+                                        transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                                        transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
 
                                     }
                                 }
@@ -2220,8 +2192,6 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                                         modu = realcligh / (cli + 0.001f);//avoid divide by zero
                                     }
 
-
-
                                     if (original->L[y][x] < 32768.f) {
                                         float factorx = localFactor;
                                         float prov100 = original->L[y][x] / 32768.f;
@@ -2286,7 +2256,6 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                                         bool contin = true;
 
                                         if (contin) {
-
 
 
                                             if (prov > localty  ) {
@@ -2862,7 +2831,6 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
 
                         }
 
-                        //float difL = loctemp[y][x] - original->L[y][x];
                         difL *= factorx;
                         transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
 
@@ -2870,7 +2838,6 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                     }
 
                     case 2: { // inside selection => full effect, no transition
-                        // float difL = loctemp[y][x] - original->L[y][x];
                         float difL;
 
                         if (call == 2) {
@@ -2944,7 +2911,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
     //luma
     constexpr float lumdelta = 11.f; //11
     float modlum = lumdelta * multlum;
-//  printf("multlum=%f modlum=%f\n", multlum, modlum);
 
     // constant and varaibles to prepare shape detection
     if (lumaref + modlum >= 100.f) {
@@ -3280,18 +3246,15 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                                         if ( (rhue > -2.79f && rhue < -1.11f) && (rchro < 35.f * multchro)) {
                                             realchro *= 0.9f;
                                             realcurv *= 0.9f;
-                                            //   realcligh *= 0.9f;
                                         } else {
                                             realchro = 1.f;
                                             realcurv = 1.f;
-                                            //   realcligh = 1.f;
 
                                         }
                                     }
                                 } else {
                                     realchro = lp.chro;
                                     realcurv = cchro;
-                                    //   realcligh = cligh;
 
                                 }
 
@@ -3301,19 +3264,16 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                                             if ( (rhue > -0.09f && rhue < 1.59f) && (rchro < 55.f * multchroskin)) {
                                                 realchro *= 0.9f;
                                                 realcurv *= 0.9f;
-                                                //     realcligh *= 0.9f;
 
                                             } else {
                                                 realchro = 1.f;
                                                 realcurv = 1.f;
-                                                //     realcligh = 1.f;
 
                                             }
                                         }
                                     } else {
                                         realchro = lp.chro;
                                         realcurv = cchro;
-                                        //  realcligh = cligh;
 
                                     }
                                 }
@@ -3395,7 +3355,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                                 }
 
                                 case 1: { // inside transition zone
-                                    // float lumnew = original->L[y][x];
                                     float lumnew = bufcolorig->L[loy - begy][lox - begx];
 
                                     float lightcont;
@@ -3434,7 +3393,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                                     }
 
                                     if (lp.ligh != 0.f && lp.curvact == false) {
-                                        // calclight (bufcolorig->L[loy - begy - 1][lox - begx - 1], lp.ligh , lumnew, true);//replace L-curve
                                         calclight (lumnew, lp.ligh , lumnew, true);//replace L-curve
                                         lightcont = lumnew;
 
@@ -3466,7 +3424,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                                     diflc *= kdiff ;
 
                                     diflc *= factorx; //transition lightness
-                                    //   transformed->L[y][x] = CLIPL(bufcolorig->L[loy - begy - 1][lox - begx - 1] + diflc);
                                     transformed->L[y][x] = CLIPL (1.f * (original->L[y][x] + diflc));
 
 
@@ -3558,7 +3515,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                                     } else {
                                         transformed->b[y][x] = CLIPC (original->b[y][x] * fac);
                                         transformed->a[y][x] = CLIPC (original->b[y][x] * fac) * kab;
-
                                     }
 
                                 }
@@ -3832,7 +3788,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
 #ifdef _OPENMP
-//           #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -4083,8 +4039,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                 int bfw = int (lp.lx + lp.lxL) + del;
                 bufwv = new LabImage (bfw, bfh);
+
 #ifdef _OPENMP
-                //          #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
                 for (int ir = 0; ir < bfh; ir++) //fill with 0
@@ -4097,7 +4054,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
 #ifdef _OPENMP
-//           #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -4263,6 +4220,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 delete Ldecomp;
                 delete adecomp;
                 delete bdecomp;
+
                 bufwv = nullptr;
                 Ldecomp = nullptr;
                 adecomp = nullptr;
@@ -4367,11 +4325,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                     }
 
-#ifdef _OPENMP
-//           #pragma omp parallel for
-#endif
                 clighmax = 0.f;
                 clighmin = 100000.f;
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
@@ -4560,14 +4519,15 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                     }
 
-#ifdef _OPENMP
-//           #pragma omp parallel for
-#endif
                 float maxc = -10000.f;
                 float minc = +10000.f;
-                //    float core = 0.f;
                 float localty;
                 localty = localtype;
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
@@ -4620,22 +4580,22 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                     clighc = CLIPLIG (amplil * cL - amplil); //arbitrary empirical coefficient between 5 and 150
                                 }
 
+                                /*
+                                                                if (clighc > maxc) {
+                                                                    maxc = clighc;
+                                                                }
 
-                                if (clighc > maxc) {
-                                    maxc = clighc;
-                                }
-
-                                if (clighc < minc) {
-                                    minc = clighc;
-                                }
-
+                                                                if (clighc < minc) {
+                                                                    minc = clighc;
+                                                                }
+                                */
                                 buflightc[loy - begy][lox - begx] = clighc;
 
                             }
                         }
                     }
 
-                printf ("min=%2.2f max=%2.2f", minc, maxc);
+                //            printf ("min=%2.2f max=%2.2f", minc, maxc);
 
 
             }
@@ -4669,7 +4629,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             InverseContrast_Local (ave, lco, lp, original, transformed, cx, cy);
         }
 
-        //     }
 
 // end contrast interior and exterior
 
@@ -4689,7 +4648,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             int Hd = bfh;
             int Wd = bfw;
 
-            if (call <= 3) { //simpleprocess
+            if (call <= 3) { //simpleprocess dcrop improcc
 
                 bufgb = new LabImage (bfw, bfh);
                 buflight   = new float*[bfh];//for lightness reti
@@ -4710,7 +4669,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
 #ifdef _OPENMP
-//           #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -4729,14 +4688,15 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 tmp1 = new LabImage (bfw, bfh);
                 ImProcFunctions::EPDToneMaplocal (bufgb, tmp1, 5 , 1);
-            } else {
+            } /*else { //stay here in case of
+
                 tmp = new LabImage (transformed->W, transformed->H);
                 tmp->CopyFrom (original);
                 tmp1 = new LabImage (transformed->W, transformed->H);
                 ImProcFunctions::EPDToneMaplocal (tmp, tmp1, 5 , sk);
                 delete tmp;
             }
-
+*/
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
@@ -4750,6 +4710,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
             float maxc = -10000.f;
             float minc = +10000.f;
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
 
             for (int y = 0; y < transformed->H ; y++) //{
                 for (int x = 0; x < transformed->W; x++) {
@@ -4814,7 +4777,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float **buflight;
 
 
-            if (call <= 3) { //call from simpleprocess
+            if (call <= 3) { //call from simpleprocess dcrop improcc
                 bufsh   = new float*[bfh];
 
                 for (int i = 0; i < bfh; i++) {
@@ -4841,7 +4804,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
 #ifdef _OPENMP
-//           #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -4871,6 +4834,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 ImProcFunctions::cbdl_local_temp (bufsh, bufsh, loctemp, bfw, bfh, lp.mulloc, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
                 float maxc = -10000.f;
                 float minc = +10000.f;
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
@@ -4882,25 +4848,26 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
                             float rL;
                             rL = CLIPRET ((loctemp[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
+                            /*
+                                                        if (rL > maxc) {
+                                                            maxc = rL;
+                                                        }
 
-                            if (rL > maxc) {
-                                maxc = rL;
-                            }
-
-                            if (rL < minc) {
-                                minc = rL;
-                            }
-
+                                                        if (rL < minc) {
+                                                            minc = rL;
+                                                        }
+                            */
 
                             buflight[loy - begy][lox - begx]  = rL;
 
                         }
                     }
 
-                printf ("min=%2.2f max=%2.2f", minc, maxc);
+//                printf ("min=%2.2f max=%2.2f", minc, maxc);
 
 
-            } else { //call from dcrop.cc
+            } /* else { //call from dcrop.cc
+
                 loctemp = new float*[GH];//allocate temp
 
                 for (int i = 0; i < GH; i++) {
@@ -4910,7 +4877,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 ImProcFunctions::cbdl_local_temp (original->L, original->L, loctemp, GW, GH, lp.mulloc, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
 
             }
-
+*/
 
             // I initialize these variable in case of !
             float hueplus = hueref + dhue;
@@ -4951,7 +4918,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 delete [] buflight;
 
-            } else {
+            } /* else {
+
                 for (int i = 0; i < GH; i++) {
                     delete [] loctemp[i];
                 }
@@ -4959,7 +4927,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 delete [] loctemp;
 
             }
-
+*/
 
 
         }
@@ -4995,7 +4963,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
 #ifdef _OPENMP
-//           #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -5165,12 +5133,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     bufchro[i] = new float[bfw];
                 }
 
-                /*                bufreti   = new float*[bfh];
-
-                                for (int i = 0; i < bfh; i++) {
-                                    bufreti[i] = new float[bfw];
-                                }
-                */
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
@@ -5185,7 +5147,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
 #ifdef _OPENMP
-//           #pragma omp parallel for
+                #pragma omp parallel for
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
@@ -5223,7 +5185,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
             LabImage *tmpl;
 
-            //    LabImage *tmpl = new LabImage(Wd, Hd);
             if (!lp.invret && call <= 3) {
 
 
@@ -5239,7 +5200,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 tmpl = new LabImage (Wd, Hd);
 
-            } else {
+            } /* else {
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -5254,14 +5216,14 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
             }
-
+*/
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
             ImProcFunctions::MSRLocal (orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-#ifdef _OPENMP
-            //   #pragma omp parallel for schedule(dynamic,16)
-#endif
             float maxc = -10000000.f;
             float minc = +10000.f;
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
 
             for (int ir = 0; ir < Hd; ir += 1)
                 for (int jr = 0; jr < Wd; jr += 1) {
@@ -5312,7 +5274,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                             orig1[ir][jr] = sqrt (SQR (bufreti->a[ir][jr]) + SQR (bufreti->b[ir][jr]));
                         }
 
-                } else {
+                } /* else {
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -5324,17 +5286,17 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                             orig1[ir][jr] = sqrt (SQR (transformed->a[ir][jr]) + SQR (transformed->b[ir][jr]));
                         }
                 }
-
+*/
                 ImProcFunctions::MSRLocal (orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 1, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                 if (!lp.invret && call <= 3) {
 
-#ifdef _OPENMP
-                    //                #pragma omp parallel for schedule(dynamic,16)
-#endif
 
                     float maxch = -10000000.f;
                     float minch = +10000.f;
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
 
                     for (int ir = 0; ir < Hd; ir += 1)
                         for (int jr = 0; jr < Wd; jr += 1) {
@@ -5369,7 +5331,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 //                    printf ("minch=%2.2f maxch=%2.2f", minch, maxch);
 
 
-                } else {
+                } /* else {
+
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -5385,6 +5348,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         }
                 }
+*/
 
                 if (!lp.invret) {
 
