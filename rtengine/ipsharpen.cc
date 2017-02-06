@@ -174,6 +174,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     // Rest is UNSHARP MASK
     int W = lab->W, H = lab->H;
     float** b3 = nullptr;
+    Bilateral *bilateral = nullptr;
 
     if (sharpenParam.edgesonly) {
         b3 = new float*[H];
@@ -181,9 +182,9 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
         for (int i = 0; i < H; i++) {
             b3[i] = new float[W];
         }
-    }
 
-    LUTf ec(0x20000);
+        bilateral = new Bilateral(lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance);
+    }
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -193,7 +194,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
         if (!sharpenParam.edgesonly) {
             gaussianBlur (lab->L, b2, W, H, sharpenParam.radius / scale);
         } else {
-            Bilateral(lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance, ec).compute();
+            bilateral->compute();
             gaussianBlur (b3, b2, W, H, sharpenParam.radius / scale);
         }
     }
@@ -201,6 +202,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
 
     if (sharpenParam.edgesonly) {
         base = b3;
+        delete bilateral;
     }
 
     if (!sharpenParam.halocontrol) {
@@ -941,6 +943,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
     int W = ncie->W, H = ncie->H;
     float** b3;
+    Bilateral *bilateral = nullptr;
 
     if (params->sharpening.edgesonly) {
         b3 = new float*[H];
@@ -948,9 +951,9 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
         for (int i = 0; i < H; i++) {
             b3[i] = new float[W];
         }
+        bilateral = new Bilateral(ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance);
     }
 
-    LUTf ec(0x20000);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -960,7 +963,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
         if (!params->sharpening.edgesonly) {
             gaussianBlur (ncie->sh_p, b2, W, H, params->sharpening.radius / scale);
         } else {
-            Bilateral(ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, ec).compute();
+            bilateral->compute();
             gaussianBlur (b3, b2, W, H, params->sharpening.radius / scale);
         }
     }
@@ -969,6 +972,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
     if (params->sharpening.edgesonly) {
         base = b3;
+        delete bilateral;
     }
 
     if (!params->sharpening.halocontrol) {

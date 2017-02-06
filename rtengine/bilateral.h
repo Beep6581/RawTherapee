@@ -38,8 +38,7 @@ public:
         int width,
         int height,
         double sigma,
-        double sensitivity,
-        LUTf &ec
+        double sensitivity
     );
     ~Bilateral();
 

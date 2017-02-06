@@ -43,9 +43,7 @@ constexpr T elem(T** source, const LUTf& ec, int i, int j, int a, int b)
     return source[i - a][j - b] * suly(source, ec, i, j, a, b);
 }
 
-#define BL_BEGIN(a,b)   LUTf ec(0x20000); \
-                        fillEc(sensitivity, ec); \
-                        int rstart = b; \
+#define BL_BEGIN(a,b)   int rstart = b; \
                         int rend = height-b; \
                         int cstart = b; \
                         int cend = width-b;
@@ -141,6 +139,7 @@ constexpr T elem(T** source, const LUTf& ec, int i, int j, int a, int b)
 void fillEc(double sensitivity, LUTf& ec)
 {
     const double sensitivity_square_times_two = sensitivity * sensitivity * 2.0;
+    ec(0x20000);
 
     for (int i=0; i<0x20000; i++) {
         const double i_biased = i - 0x10000;
@@ -160,18 +159,16 @@ public:
         int _width,
         int _height,
         double _sigma,
-        double _sensitivity,
-        LUTf &_ec
+        double _sensitivity
     ) :
         source(_source),
         destination(_destination),
         buffer(_buffer),
         width(_width),
         height(_height),
-        sigma(_sigma),
-        sensitivity(_sensitivity),
-        ec(_ec)
+        sigma(_sigma)
     {
+        fillEc(_sensitivity, ec);
     }
 
     void compute()
@@ -232,14 +229,6 @@ public:
 private:
     void blOper3(int border, float c00, float c01, float c11)
     {
-
-#ifdef _OPENMP
-            #pragma omp single
-#endif
-{
-        // Same LUT for all threads, filled by only one thread
-        fillEc(sensitivity, ec);
-}
 
         const auto suly = [this](int i, int j, int a, int b) {
             return ec[source[i - a][j - b] - source[i][j] + 65536.0f];
@@ -506,8 +495,7 @@ private:
     const int width;
     const int height;
     const double sigma;
-    const double sensitivity;
-    LUTf &ec;
+    LUTf ec;
 };
 
 rtengine::Bilateral::Bilateral(
@@ -517,8 +505,7 @@ rtengine::Bilateral::Bilateral(
     int width,
     int height,
     double sigma,
-    double sensitivity,
-    LUTf &ec
+    double sensitivity
 ) :
     implementation(
         new Implementation(
@@ -528,8 +515,7 @@ rtengine::Bilateral::Bilateral(
             width,
             height,
             sigma,
-            sensitivity,
-            ec
+            sensitivity
         )
     )
 {
