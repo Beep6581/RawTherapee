@@ -5479,7 +5479,7 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         ynew = H - 1 - ynew;
     }
 
-    int c = FC(ynew,xnew);
+    int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew,xnew) : ri->FC(ynew,xnew);
     int val = round(rawData[ynew][xnew] / scale_mul[c]);
     if(c == 0) {
         R = val; G = 0; B = 0;

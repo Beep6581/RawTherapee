@@ -1043,7 +1043,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                 if(ipc) {
                     procparams::ProcParams params;
                     ipc->getParams(&params);
-                    if(params.raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::none]) {
+                    if(params.raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::none] || params.raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::none]) {
                         ImageSource *isrc = static_cast<ImageSource*>(ipc->getInitialImage());
                         isrc->getRawValues(mx, my, params.coarse.rotate, rval, gval, bval);
                     }
