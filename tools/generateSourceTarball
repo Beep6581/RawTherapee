@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
+# Run from the root of the cloned repository.
+# This script is used to generate a source code tarball which includes commit
+# metadata so that RawTherapee can be compiled without needing to install git.
+# It is meant to be used every time a release is made after creating an
+# annotated tag in git.
+# It is your job to checkout the tag before running this script.
 
-if [[ ! "$1" ]]; then
-  printf "%s\n" "Usage: $0 <git tag>" "Example: $0 4.2"
-  exit
+./tools/generateReleaseInfo
+ret=$?
+if [[ $ret -ne 0 ]]; then
+    printf '%s\n' "Something went wrong while running tools/generateReleaseInfo" "Aborting."
+    exit 1
 fi
+desc="$(grep GIT_DESCRIBE ReleaseInfo.cmake)" # Gets whole string: set(GIT_DESCRIBE 5.0-gtk2-1-g96bf9129)
+desc="${desc#*GIT_DESCRIBE }" # Removes front: 5.0-gtk2-1-g96bf9129)
+desc="${desc%)}" # Removes back: 5.0-gtk2-1-g96bf9129
 
-git checkout "$1" || exit 0
-tools/generateReleaseInfo
-mkdir rawtherapee-"$1"
-mv ReleaseInfo.cmake rawtherapee-"$1"
-#hg archive -X ".hg*" -X "rtgui/config.h" -X "rtgui/version.h" -X "rtdata/rawtherapee.desktop" rawtherapee-"$1".tar
-git archive --format=tar "$1" > rawtherapee-"$1".tar
-tar --append --file=rawtherapee-"$1".tar rawtherapee-"$1"/ReleaseInfo.cmake
-xz -z -9e rawtherapee-"$1".tar
-rm -r rawtherapee-"$1"
-git checkout
+mkdir "rawtherapee-${desc}" || exit 1
+mv ReleaseInfo.cmake "rawtherapee-${desc}" || exit 1
+git archive --format=tar --prefix="rawtherapee-${desc}/" -o "rawtherapee-${desc}.tar" HEAD || exit 1
+tar --append --file="rawtherapee-${desc}.tar" "rawtherapee-${desc}/ReleaseInfo.cmake" || exit 1
+xz -z -9e "rawtherapee-${desc}.tar" || exit 1
+rm -r "rawtherapee-${desc}"

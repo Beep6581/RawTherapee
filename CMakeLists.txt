@@ -331,7 +331,7 @@ if (OUT_OF_SOURCE_BUILD)
     endforeach(f)
 endif ()
 
-## BEGIN: Generating AboutThisBuild.txt
+## BEGIN: Create AboutThisBuild.txt and other version-dependent files.
 # set the bit number information of the platform
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
   set(PROC_BIT_DEPTH 32 bits)
@@ -359,7 +359,6 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
                             -DPROC_LABEL:STRING="${PROC_LABEL}"
                             -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
                             -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                            -DVERSION_SUFFIX:STRING=${VERSION_SUFFIX}
                             -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
                             -DOPTION_OMP:STRING=${OPTION_OMP}
                             -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
@@ -368,7 +367,9 @@ if (WIN32)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
                                       -DCXX_FLAGS:STRING="${CXX_FLAGS}"
                                       -DLFLAGS:STRING="${LFLAGS}"
-                                      -DCOMPILER_INFO:STRING="${COMPILER_INFO}")
+                                      -DCOMPILER_INFO:STRING="${COMPILER_INFO}"
+                                      -DCMAKE_INSTALL_PREFIX:STRING="${CMAKE_INSTALL_PREFIX}"
+                                      -DBIT_DEPTH:STRING="${CMAKE_SIZEOF_VOID_P}")
 elseif (APPLE)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
                                       -DCXX_FLAGS:STRING=${CXX_FLAGS}
@@ -381,11 +382,11 @@ else (WIN32)
                                       -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 endif (WIN32)
 
-list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/AboutThisBuild.cmake")
+list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/UpdateInfo.cmake")
 
-add_custom_target(AboutFile ALL
+add_custom_target(UpdateInfo ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
-    COMMENT "Creating the about file")
+    COMMENT "Creating AboutThisBuild.txt and other version-dependent files")
 
 ## END: Generating AboutThisBuild.txt
 

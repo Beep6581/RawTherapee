@@ -89,11 +89,7 @@ Glib::ustring fname_to_utf8 (const char* fname)
 }
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
-#ifdef WIN32
-static Glib::RecMutex myGdkRecMutex;
-#else
 static Glib::Threads::RecMutex myGdkRecMutex;
-#endif
 
 static void myGdkLockEnter()
 {
@@ -214,7 +210,7 @@ int main(int argc, char **argv)
                     SetConsoleCtrlHandler( NULL, true );
                     // Set title of console
                     char consoletitle[128];
-                    sprintf(consoletitle, "RawTherapee %s Console", VERSION);
+                    sprintf(consoletitle, "RawTherapee %s Console", RTVERSION);
                     SetConsoleTitle(consoletitle);
                     // increase size of screen buffer
                     COORD c;
@@ -240,7 +236,7 @@ int main(int argc, char **argv)
                     consoleOpened = true;
 
                     // printing RT's version in every case, particularly useful for the 'verbose' mode, but also for the batch processing
-                    std::cout << "RawTherapee, version " << VERSION << std::endl;
+                    std::cout << "RawTherapee, version " << RTVERSION << std::endl;
                     std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
                 }
             }
@@ -263,7 +259,7 @@ int main(int argc, char **argv)
 
     if (argc > 1 || options.rtSettings.verbose) {
         // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-        std::cout << "RawTherapee, version " << VERSION << std::endl;
+        std::cout << "RawTherapee, version " << RTVERSION << std::endl;
 #ifdef WIN32
         std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
 #endif

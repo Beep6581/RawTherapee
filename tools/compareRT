@@ -37,8 +37,8 @@ for rtDir in "${rtDirs[@]}"; do
     c=1
     pp3name=${pp3%.*}
     pp3name=${pp3name#*/}
-    v+=("$(grep "Changeset:.*" "${rtDir}/AboutThisBuild.txt" | sed "s/Changeset: //")")
-    printf "%s\n" "Developing images using RawTherapee changeset ${v[$i]} - ${rtDir}"
+    v+=("$(grep "Commit:.*" "${rtDir}/AboutThisBuild.txt" | sed "s/Commit: //")")
+    printf "%s\n" "Developing images using RawTherapee commit ${v[$i]} - ${rtDir}"
     for img in "${imgs[@]}"; do
         printf "%s" "${c}/${#imgs[@]} - "
         "${rtDir}rawtherapee" -o "${outDir}${img%.*}_${v[i]}_${pp3%.*}.tif" -p "${pp3}" -t -Y -c "$img" | grep Processing

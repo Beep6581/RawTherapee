@@ -26,7 +26,7 @@
 #include "../rtgui/paramsedited.h"
 #include "../rtgui/options.h"
 #include <locale.h>
-#define APPVERSION VERSION
+#define APPVERSION RTVERSION
 
 using namespace std;
 extern Options options;
