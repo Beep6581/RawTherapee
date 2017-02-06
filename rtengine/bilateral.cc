@@ -26,7 +26,7 @@
 
 #include "bilateral.h"
 #include "rtengine.h"
-#include "array2D.h"
+#include "LUT.h"
 
 namespace
 {
@@ -136,17 +136,6 @@ constexpr T elem(T** source, const LUTf& ec, int i, int j, int a, int b)
                                                             a21 * suly(source, ec, i, j, 4, -5) + a22 * suly(source, ec, i, j, 4, -4) + a23 * suly(source, ec, i, j, 4, -3) + a24 * suly(source, ec, i, j, 4, -2) + a25 * suly(source, ec, i, j, 4, -1) + a26 * suly(source, ec, i, j, 4, 0) + a25 * suly(source, ec, i, j, 4, 1) + a24 * suly(source, ec, i, j, 4, 2) + a23 * suly(source, ec, i, j, 4, 3) + a22 * suly(source, ec, i, j, 4, 4) + a21 * suly(source, ec, i, j, 4, 5) + \
                                                             a11 * suly(source, ec, i, j, 5, -5) + a12 * suly(source, ec, i, j, 5, -4) + a13 * suly(source, ec, i, j, 5, -3) + a14 * suly(source, ec, i, j, 5, -2) + a15 * suly(source, ec, i, j, 5, -1) + a16 * suly(source, ec, i, j, 5, 0) + a15 * suly(source, ec, i, j, 5, 1) + a14 * suly(source, ec, i, j, 5, 2) + a13 * suly(source, ec, i, j, 5, 3) + a12 * suly(source, ec, i, j, 5, 4) + a11 * suly(source, ec, i, j, 5, 5); \
 
-void fillEc(double sensitivity, LUTf& ec)
-{
-    const double sensitivity_square_times_two = sensitivity * sensitivity * 2.0;
-    ec(0x20000);
-
-    for (int i=0; i<0x20000; i++) {
-        const double i_biased = i - 0x10000;
-        ec[i] = std::exp(-i_biased * i_biased / sensitivity_square_times_two);
-    }
-}
-
 }
 
 class rtengine::Bilateral::Implementation final
@@ -166,9 +155,15 @@ public:
         buffer(_buffer),
         width(_width),
         height(_height),
-        sigma(_sigma)
+        sigma(_sigma),
+        ec(0x20000)
     {
-        fillEc(_sensitivity, ec);
+        const double sensitivity_square_times_two = _sensitivity * _sensitivity * 2.0;
+
+        for (int i=0; i<0x20000; i++) {
+            const double i_biased = i - 0x10000;
+            ec[i] = std::exp(-i_biased * i_biased / sensitivity_square_times_two);
+        }
     }
 
     void compute()
@@ -495,7 +490,7 @@ private:
     const int width;
     const int height;
     const double sigma;
-    LUTf ec;
+    const LUTf ec;
 };
 
 rtengine::Bilateral::Bilateral(

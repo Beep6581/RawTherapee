@@ -174,7 +174,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
     // Rest is UNSHARP MASK
     int W = lab->W, H = lab->H;
     float** b3 = nullptr;
-    Bilateral *bilateral = nullptr;
+    std::unique_ptr<Bilateral> bilateral;
 
     if (sharpenParam.edgesonly) {
         b3 = new float*[H];
@@ -183,7 +183,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
             b3[i] = new float[W];
         }
 
-        bilateral = new Bilateral(lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance);
+        bilateral.reset(new Bilateral(lab->L, (float**)b3, b2, W, H, sharpenParam.edges_radius / scale, sharpenParam.edges_tolerance));
     }
 
 #ifdef _OPENMP
@@ -202,7 +202,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2, SharpeningParams &s
 
     if (sharpenParam.edgesonly) {
         base = b3;
-        delete bilateral;
+        bilateral.reset(); // Free 512kB of memory early
     }
 
     if (!sharpenParam.halocontrol) {
@@ -943,7 +943,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
     int W = ncie->W, H = ncie->H;
     float** b3;
-    Bilateral *bilateral = nullptr;
+    std::unique_ptr<Bilateral> bilateral;
 
     if (params->sharpening.edgesonly) {
         b3 = new float*[H];
@@ -951,7 +951,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
         for (int i = 0; i < H; i++) {
             b3[i] = new float[W];
         }
-        bilateral = new Bilateral(ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance);
+        bilateral.reset(new Bilateral(ncie->sh_p, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance));
     }
 
 
@@ -972,7 +972,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
 
     if (params->sharpening.edgesonly) {
         base = b3;
-        delete bilateral;
+        bilateral.reset(); // Free 512kB of memory early
     }
 
     if (!params->sharpening.halocontrol) {

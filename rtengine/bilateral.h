@@ -22,7 +22,6 @@
 #include <memory>
 
 #include "noncopyable.h"
-#include "LUT.h"
 
 namespace rtengine
 {
