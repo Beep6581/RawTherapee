@@ -1,21 +1,21 @@
 if (WIN32)
-  cmake_minimum_required(VERSION 2.8.4)
+    cmake_minimum_required(VERSION 2.8.4)
 else (WIN32)
-  cmake_minimum_required(VERSION 2.6)
+    cmake_minimum_required(VERSION 2.6)
 endif (WIN32)
 
 # must stay before the 'project' command
 if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
-  set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
-  # users building with Eclipse should set CMAKE_ECLIPSE_VERSION through the command line to their current version of Eclipse
-  #set(CMAKE_ECLIPSE_VERSION "4.6.0" CACHE STRING "Eclipse version" FORCE)
+    set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
+    # users building with Eclipse should set CMAKE_ECLIPSE_VERSION through the command line to their current version of Eclipse
+    #set(CMAKE_ECLIPSE_VERSION "4.6.0" CACHE STRING "Eclipse version" FORCE)
 endif()
 
 PROJECT(RawTherapee)
 
 # the default target is 'Debug'
 if (CMAKE_BUILD_TYPE STREQUAL "")
-  set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+    set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 
 string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
@@ -25,19 +25,19 @@ SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
-  message(FATAL_ERROR "Building RawTherapee requires using GCC version 4.9 or higher!")
+    message(FATAL_ERROR "Building RawTherapee requires using GCC version 4.9 or higher!")
 endif()
 
 # We might want to build using the old C++ ABI, even when using a new GCC version
 if (USE_OLD_CXX_ABI)
-  add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
+    add_definitions (-D_GLIBCXX_USE_CXX11_ABI=0)
 endif()
 
 if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-  add_definitions (-D_DEBUG)
+    add_definitions (-D_DEBUG)
 else ()
-  add_definitions (-DNDEBUG)
-  add_definitions (-D_DNDEBUG)
+    add_definitions (-DNDEBUG)
+    add_definitions (-D_DNDEBUG)
 endif ()
 
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
@@ -59,10 +59,10 @@ include (ProcessorTargets.cmake)
 set (PROC_LABEL "undefined" CACHE STRING "Target processor label, unused if PROC_TARGET_NUMBER = 0 or 2")
 set (PROC_FLAGS "" CACHE STRING "Target processor related build/link flags")
 if ((NOT(PROC_TARGET_NUMBER EQUAL 0)) AND (NOT(PROC_TARGET_NUMBER EQUAL 2)))
-	set (PROC_LABEL ${PROC_TARGET_${PROC_TARGET_NUMBER}_LABEL})
+    set (PROC_LABEL ${PROC_TARGET_${PROC_TARGET_NUMBER}_LABEL})
 endif ()
 if (NOT(PROC_TARGET_NUMBER EQUAL 0))
-	set (PROC_FLAGS ${PROC_TARGET_${PROC_TARGET_NUMBER}_FLAGS})
+    set (PROC_FLAGS ${PROC_TARGET_${PROC_TARGET_NUMBER}_FLAGS})
 endif ()
 if (UNIX AND PROC_LABEL STREQUAL "undefined")
     execute_process(COMMAND uname -p OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE cpu)
@@ -75,7 +75,7 @@ endif ()
 
 # if it exists, the PROC_FORCED_LABEL value is loaded in PROC_LABEL to override the one of ProcessorTargets
 if (DEFINED PROC_FORCED_LABEL)
-  set (PROC_LABEL ${PROC_FORCED_LABEL})
+    set (PROC_LABEL ${PROC_FORCED_LABEL})
 endif (DEFINED PROC_FORCED_LABEL)
 
 # adding the proc flags to the build flags
@@ -94,7 +94,7 @@ endif (WIN32)
 
 if (APPLE)
     if (CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]" OR
-        CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
+            CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib")
         message (STATUS "CMAKE_CXX_COMPILER is MacPorts GCC.\n   CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
     endif ()
@@ -144,11 +144,11 @@ if (NOT DEFINED LIBDIR)
     else (BUILD_BUNDLE)
         # Respect CMAKE_INSTALL_LIBDIR if set
         if (DEFINED CMAKE_INSTALL_LIBDIR)
-	    if (IS_ABSOLUTE "${LIBDIR}")
-            	set (LIBDIR "${CMAKE_INSTALL_LIBDIR}")
-	    else (IS_ABSOLUTE "${LIBDIR}")
-		set (LIBDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-	    endif (IS_ABSOLUTE "${LIBDIR}")
+            if (IS_ABSOLUTE "${LIBDIR}")
+                set (LIBDIR "${CMAKE_INSTALL_LIBDIR}")
+            else (IS_ABSOLUTE "${LIBDIR}")
+                set (LIBDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+            endif (IS_ABSOLUTE "${LIBDIR}")
         else (DEFINED CMAKE_INSTALL_LIBDIR)
             set (LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
         endif (DEFINED CMAKE_INSTALL_LIBDIR)
@@ -198,9 +198,7 @@ if (NOT DEFINED APPDATADIR)
 endif (NOT DEFINED APPDATADIR)
 
 # non-bundle builds has to use absolute paths
-if (NOT BUILD_BUNDLE AND
-    NOT (IS_ABSOLUTE "${BINDIR}" AND IS_ABSOLUTE "${DATADIR}" AND IS_ABSOLUTE "${LIBDIR}" AND
-    IS_ABSOLUTE "${DOCDIR}" AND IS_ABSOLUTE "${CREDITSDIR}" AND IS_ABSOLUTE "${LICENCEDIR}"))
+if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${BINDIR}" AND IS_ABSOLUTE "${DATADIR}" AND IS_ABSOLUTE "${LIBDIR}" AND IS_ABSOLUTE "${DOCDIR}" AND IS_ABSOLUTE "${CREDITSDIR}" AND IS_ABSOLUTE "${LICENCEDIR}"))
     message (FATAL_ERROR "The paths has to be absolute or use -DBUILD_BUNDLE=ON")
 endif ()
 
@@ -242,7 +240,7 @@ if (WIN32)
     if (MINGW)
         add_definitions (-D__MINGW32__)
     endif (MINGW)
-	if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
         add_definitions (-DWINVER=0x0501)
     endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
     set (EXTRA_LIB "-lws2_32 -lshlwapi")
@@ -259,12 +257,12 @@ find_package (ZLIB REQUIRED)
 
 # link witz bzip
 if (WITH_BZIP)
-  find_package(BZip2)
-  if (BZIP2_FOUND)
-    add_definitions (-DBZIP_SUPPORT)
-    set (EXTRA_INCDIR ${BZIP2_INCLUDE_DIR})
-    set (EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
-  endif (BZIP2_FOUND)
+    find_package(BZip2)
+    if (BZIP2_FOUND)
+        add_definitions (-DBZIP_SUPPORT)
+        set (EXTRA_INCDIR ${BZIP2_INCLUDE_DIR})
+        set (EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
+    endif (BZIP2_FOUND)
 endif (WITH_BZIP)
 
 #Check for libcanberra-gtk3 (sound events on Linux)
@@ -273,7 +271,7 @@ if (UNIX AND (NOT APPLE))
 endif (UNIX AND (NOT APPLE))
 
 if (WITH_MYFILE_MMAP)
-	add_definitions (-DMYFILE_MMAP)
+    add_definitions (-DMYFILE_MMAP)
 endif (WITH_MYFILE_MMAP)
 
 if (WITH_LTO)
@@ -327,26 +325,26 @@ if (OUT_OF_SOURCE_BUILD)
     foreach(f ${OOSB_FILES})
         if (EXISTS "${f}")
             message (SEND_ERROR "Generated \"${f}\" found inside the source tree. Please remove it as it is a relic of the old build system and prevents valid compilation now.")
-	endif ()
+        endif ()
     endforeach(f)
 endif ()
 
 ## BEGIN: Create AboutThisBuild.txt and other version-dependent files.
 # set the bit number information of the platform
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-  set(PROC_BIT_DEPTH 32 bits)
+    set(PROC_BIT_DEPTH 32 bits)
 elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(PROC_BIT_DEPTH 64 bits)
+    set(PROC_BIT_DEPTH 64 bits)
 endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
 # Get comiler name and version
 # only cmake > 2.8.7 knows CMAKE_*_COMPILER_VERSION
 if (CMAKE_VERSION VERSION_GREATER 2.8.7)
-  get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
-  set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
+    get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+    set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
 else ()
-  execute_process(COMMAND gcc -dumpversion OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set(COMPILER_INFO "gcc ${GCC_VERSION}")
+    execute_process(COMMAND gcc -dumpversion OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(COMPILER_INFO "gcc ${GCC_VERSION}")
 endif ()
 
 # Get c++ and linker flags for rtengine (the gui's c++ flags may have less flags)
@@ -354,32 +352,32 @@ set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}} $
 set(LFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
 
 set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
-                            -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
-                            -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-                            -DPROC_LABEL:STRING="${PROC_LABEL}"
-                            -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
-                            -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                            -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
-                            -DOPTION_OMP:STRING=${OPTION_OMP}
-                            -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
+    -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
+    -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
+    -DPROC_LABEL:STRING="${PROC_LABEL}"
+    -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
+    -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+    -DOPTION_OMP:STRING=${OPTION_OMP}
+    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
 
 if (WIN32)
-  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
-                                      -DCXX_FLAGS:STRING="${CXX_FLAGS}"
-                                      -DLFLAGS:STRING="${LFLAGS}"
-                                      -DCOMPILER_INFO:STRING="${COMPILER_INFO}"
-                                      -DCMAKE_INSTALL_PREFIX:STRING="${CMAKE_INSTALL_PREFIX}"
-                                      -DBIT_DEPTH:STRING="${CMAKE_SIZEOF_VOID_P}")
+    list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
+        -DCXX_FLAGS:STRING="${CXX_FLAGS}"
+        -DLFLAGS:STRING="${LFLAGS}"
+        -DCOMPILER_INFO:STRING="${COMPILER_INFO}"
+        -DCMAKE_INSTALL_PREFIX:STRING="${CMAKE_INSTALL_PREFIX}"
+        -DBIT_DEPTH:STRING="${CMAKE_SIZEOF_VOID_P}")
 elseif (APPLE)
-  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
-                                      -DCXX_FLAGS:STRING=${CXX_FLAGS}
-                                      -DLFLAGS:STRING=${LFLAGS}
-                                      -DCOMPILER_INFO:STRING=${COMPILER_INFO})
+    list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
+        -DCXX_FLAGS:STRING=${CXX_FLAGS}
+        -DLFLAGS:STRING=${LFLAGS}
+        -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 else (WIN32)
-  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
-                                      -DCXX_FLAGS:STRING=${CXX_FLAGS}
-                                      -DLFLAGS:STRING=${LFLAGS}
-                                      -DCOMPILER_INFO:STRING=${COMPILER_INFO})
+    list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
+        -DCXX_FLAGS:STRING=${CXX_FLAGS}
+        -DLFLAGS:STRING=${LFLAGS}
+        -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 endif (WIN32)
 
 list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/UpdateInfo.cmake")
@@ -398,8 +396,8 @@ if (WIN32)
     install (DIRECTORY "licenses" DESTINATION "${LICENCEDIR}")
 endif (WIN32)
 if (UNIX)
-  install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
-  install (FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
+    install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
+    install (FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif (UNIX)
 
 add_subdirectory (rtexif)
