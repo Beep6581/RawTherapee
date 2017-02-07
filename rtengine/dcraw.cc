@@ -9791,20 +9791,22 @@ void CLASS deflate_dng_load_raw() {
     }
     uLongf dstLen = tile_width * tile_length * 4;
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp parallel
 #endif
 {
     Bytef * cBuffer = new Bytef[maxCompressed];
     Bytef * uBuffer = new Bytef[dstLen];
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp for collapse(2) nowait
 #endif
     for (size_t y = 0; y < raw_height; y += tile_length) {
       for (size_t x = 0; x < raw_width; x += tile_width) {
 		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp critical
+#endif
 {
         fseek(ifp, tileOffsets[t], SEEK_SET);
         fread(cBuffer, 1, tileBytes[t], ifp);
