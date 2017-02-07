@@ -3765,7 +3765,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
 //Blur and noise
-        if ((radius >= GAUSS_SKIP && (lp.rad >= 1. || lp.stren > 0.1))  && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+
+//printf("rad=%f gaus=%f\n", radius, GAUSS_SKIP);
+        if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1)  && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             LabImage *tmp1;
             LabImage *bufgb;
             int GW = transformed->W;
