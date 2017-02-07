@@ -68,7 +68,7 @@ Locallab::Locallab ():
     contrast (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
     sensi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
-    radius (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_RADIUS"), 0, 100, 1, 0) )),
+    radius (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_RADIUS"), 1, 100, 1, 1) )),
     strength (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0) )),
     sensibn (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 60))),
     transit (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_TRANSIT"), 5, 95, 1, 60))),

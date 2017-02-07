@@ -916,7 +916,7 @@ void LocallabParams::setDefaults()
     invers = false;
     curvactiv = false;
     activlum = false;
-    radius = 0;
+    radius = 1;
     inversrad = false;
     inversret = false;
     inverssha = false;

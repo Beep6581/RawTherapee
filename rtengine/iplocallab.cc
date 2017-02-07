@@ -3766,12 +3766,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 //Blur and noise
 
-//printf("rad=%f gaus=%f\n", radius, GAUSS_SKIP);
         if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1)  && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             LabImage *tmp1;
             LabImage *bufgb;
             int GW = transformed->W;
             int GH = transformed->H;
+            printf ("rad=%f gaus=%f call=%i skip=%i\n", radius, GAUSS_SKIP, call, sk);
 
             if (call == 2  && !lp.invrad) { //simpleprocess
                 int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
