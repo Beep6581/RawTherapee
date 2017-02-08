@@ -1745,7 +1745,7 @@ TP_LOCALLAB_SENSIS;Scope
 TP_LOCALLAB_SENSICB;Scope
 TP_LOCALLAB_SENSIBN;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
-TP_LOCALLAB_SHFR;Shape
+TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_STRENGTH;Noise
 TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.

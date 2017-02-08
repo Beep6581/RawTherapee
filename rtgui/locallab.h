@@ -89,6 +89,7 @@ private:
     MyExpander* const expsharp;
     MyExpander* const expcbdl;
     MyExpander* const expdenoi;
+    MyExpander* const expsettings;
 
 
     sigc::connection lumaneutralPressedConn;

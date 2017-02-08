@@ -938,13 +938,13 @@ void LocallabParams::setDefaults()
     llcurve.push_back (DCT_Linear);
     cccurve.clear ();
     cccurve.push_back (DCT_Linear);
-    expcolor = true;
-    expblur = true;
-    exptonemap = true;
-    expreti = true;
-    expsharp = true;
-    expcbdl = true;
-    expdenoi = true;
+    expcolor = false;
+    expblur = false;
+    exptonemap = false;
+    expreti = false;
+    expsharp = false;
+    expcbdl = false;
+    expdenoi = false;
 
     for (int i = 0; i < 5; i ++) {
         mult[i] = 100;

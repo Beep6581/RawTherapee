@@ -47,6 +47,7 @@ Locallab::Locallab ():
     expsharp (new MyExpander (true, M ("TP_LOCALLAB_SHARP"))),
     expcbdl (new MyExpander (true, M ("TP_LOCALLAB_CBDL"))),
     expdenoi (new MyExpander (true, M ("TP_LOCALLAB_DENOIS"))),
+    expsettings (new MyExpander (false, M ("TP_LOCALLAB_SETTINGS"))),
 
     llCurveEditorG (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_LUM"))),
     LocalcurveEditorgainT (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_TRANSMISSIONGAIN"))),
@@ -170,6 +171,9 @@ Locallab::Locallab ():
 
     shapeFrame->set_border_width (0);
     shapeFrame->set_label_align (0.025, 0.5);
+
+    expsettings->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expsettings) );
+
 
     expcolor->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expcolor) );
     enablecolorConn = expcolor->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expcolor) );
@@ -414,7 +418,7 @@ Locallab::Locallab ():
 
     avoid->set_active (false);
     avoidConn  = avoid->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::avoidChanged) );
-    pack_start (*nbspot);
+    shapeVBox->pack_start (*nbspot);
     pack_start (*anbspot);
     anbspot->hide();//keep anbspot  - i used it to test diffrent algo...
     ctboxS->pack_start (*Smethod);
@@ -445,8 +449,11 @@ Locallab::Locallab ():
     artifFrame->add (*artifVBox);
     shapeVBox->pack_start (*artifFrame);
 
-    shapeFrame->add (*shapeVBox);
-    pack_start (*shapeFrame);
+//   shapeFrame->add (*shapeVBox);
+//   pack_start (*shapeFrame);
+
+    expsettings->add (*shapeVBox);
+    pack_start (*expsettings);
 
     colorVBox->set_spacing (2);
     colorVBox->set_border_width (4);
@@ -717,7 +724,8 @@ Locallab::~Locallab()
 }
 void Locallab::foldAllButMe (GdkEventButton* event, MyExpander *expander)
 {
-    if (event->button == 2) {
+    if (event->button == 3) {
+        expsettings->set_expanded (expsettings == expander);
         expcolor->set_expanded (expcolor == expander);
         expblur->set_expanded (expblur == expander);
         exptonemap->set_expanded (exptonemap == expander);
@@ -765,6 +773,7 @@ void Locallab::enableToggled (MyExpander *expander)
 
 void Locallab::writeOptions (std::vector<int> &tpOpen)
 {
+    tpOpen.push_back (expsettings->get_expanded ());
     tpOpen.push_back (expcolor->get_expanded ());
     tpOpen.push_back (expblur->get_expanded ());
     tpOpen.push_back (exptonemap->get_expanded ());
@@ -777,16 +786,15 @@ void Locallab::writeOptions (std::vector<int> &tpOpen)
 
 void Locallab::updateToolState (std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() == 7) {
-        expcolor->set_expanded (tpOpen.at (0));
-        expblur->set_expanded (tpOpen.at (1));
-        exptonemap->set_expanded (tpOpen.at (2));
-        expreti->set_expanded (tpOpen.at (3));
-        expsharp->set_expanded (tpOpen.at (4));
-        expcbdl->set_expanded (tpOpen.at (5));
-        expdenoi->set_expanded (tpOpen.at (6));
-
-
+    if (tpOpen.size() == 8) {
+        expsettings->set_expanded (tpOpen.at (0));
+        expcolor->set_expanded (tpOpen.at (1));
+        expblur->set_expanded (tpOpen.at (2));
+        exptonemap->set_expanded (tpOpen.at (3));
+        expreti->set_expanded (tpOpen.at (4));
+        expsharp->set_expanded (tpOpen.at (5));
+        expcbdl->set_expanded (tpOpen.at (6));
+        expdenoi->set_expanded (tpOpen.at (7));
     }
 }
 
