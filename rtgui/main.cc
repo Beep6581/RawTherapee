@@ -181,6 +181,9 @@ int main (int argc, char **argv)
 #ifdef WIN32
     bool consoleOpened = false;
 
+    // suppression of annoying error boxes
+    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
+
     if (argc > 1 || options.rtSettings.verbose) {
         if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
             bool stdoutRedirectedtoFile = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0001);

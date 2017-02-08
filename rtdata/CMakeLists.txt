@@ -49,16 +49,16 @@ install (DIRECTORY ${IMAGESDIR} DESTINATION "${DATADIR}" FILES_MATCHING PATTERN 
 install (FILES ${OPTIONSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME options)
 
 if (WIN32)
-  install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
+    install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
 endif (WIN32)
 
 if (APPLE)
     # CMake escapes first item quote character. Do not remove 'DUMMY_VARIABLE='.
     set (MACOSX_BUNDLE_COMMAND  DUMMY_VARIABLE=
-                                PROJECT_NAME="${PROJECT_NAME}"
-                                PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}"
-                                CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
-                                GTK_PREFIX="${GTK_PREFIX}")
+        PROJECT_NAME="${PROJECT_NAME}"
+        PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}"
+        CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+        GTK_PREFIX="${GTK_PREFIX}")
     if (PROC_BIT_DEPTH MATCHES 32)
         list (APPEND MACOSX_BUNDLE_COMMAND PROC_BIT_DEPTH=32)
     elseif (PROC_BIT_DEPTH MATCHES 64)
