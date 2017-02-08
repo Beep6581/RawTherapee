@@ -3670,7 +3670,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
 
-        if ((!lp.inv  || !lp.invret)  && hueref == INFINITY && chromaref == INFINITY && lumaref == INFINITY) {
+        if ((!lp.inv && !lp.invret)  && hueref == INFINITY && chromaref == INFINITY && lumaref == INFINITY) {
             //evaluate hue, chroma, luma in center spot
             int spotSize = 0.88623f * max (1,  lp.cir / sk); //18
             //O.88623 = sqrt(PI / 4) ==> sqare equal to circle
