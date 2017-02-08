@@ -3625,7 +3625,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
         GW = transformed->W;
         GH = transformed->H;
-        float **deltE;
+        float **deltE = nullptr;
 
         if (lp.qualmet >= 1) {
 
@@ -5536,7 +5536,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             }
         }
 
-        if (lp.qualmet == 1) {
+        if (deltE) {
 
             for (int i = 0; i < GH; i++) {
                 delete [] deltE[i];
