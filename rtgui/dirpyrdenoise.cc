@@ -327,22 +327,24 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
 DirPyrDenoise::~DirPyrDenoise ()
 {
+    idle_register.destroy();
+
     delete NoiscurveEditorG;
     delete CCcurveEditorG;
+}
 
-}
-int chromaChangedUI (void* data)
-{
-    (static_cast<DirPyrDenoise*>(data))->chromaComputed_ ();
-    return 0;
-}
 void DirPyrDenoise::chromaChanged (double autchroma, double autred, double autblue)
 {
     nextchroma = autchroma;
-//  printf("CHROM=%f\n",nextchroma);
     nextred = autred;
     nextblue = autblue;
-    add_idle(chromaChangedUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<DirPyrDenoise*>(data)->chromaComputed_();
+        return false;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool DirPyrDenoise::chromaComputed_ ()
@@ -356,12 +358,6 @@ bool DirPyrDenoise::chromaComputed_ ()
     updateNoiseLabel ();
     return false;
 }
-int TilePrevChangedUI (void* data)
-{
-    (static_cast<DirPyrDenoise*>(data))->TilePrevComputed_ ();
-    return 0;
-}
-
 
 void DirPyrDenoise::noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP)
 {
@@ -372,10 +368,14 @@ void DirPyrDenoise::noiseTilePrev (int tileX, int tileY, int prevX, int prevY, i
     nextsizeT = sizeT;
     nextsizeP = sizeP;
 
-    add_idle(TilePrevChangedUI, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<DirPyrDenoise*>(data)->TilePrevComputed_();
+        return false;
+    };
 
-
+    idle_register.add(func, this);
 }
+
 bool DirPyrDenoise::TilePrevComputed_ ()
 {
 
@@ -385,6 +385,7 @@ bool DirPyrDenoise::TilePrevComputed_ ()
     updatePrevLabel ();
     return false;
 }
+
 void DirPyrDenoise::updateTileLabel ()
 {
     if (!batchMode) {
@@ -422,19 +423,17 @@ void DirPyrDenoise::updatePrevLabel ()
     }
 }
 
-
-int noiseChangedUI (void* data)
-{
-    (static_cast<DirPyrDenoise*>(data))->noiseComputed_ ();
-    return 0;
-}
-
-
 void DirPyrDenoise::noiseChanged (double nresid, double highresid)
 {
     nextnresid = nresid;
     nexthighresid = highresid;
-    add_idle(noiseChangedUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<DirPyrDenoise*>(data)->noiseComputed_();
+        return false;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool DirPyrDenoise::noiseComputed_ ()

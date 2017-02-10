@@ -18,6 +18,7 @@
  */
 #include "dirbrowser.h"
 
+#include <iostream>
 #include <cstring>
 
 #ifdef WIN32

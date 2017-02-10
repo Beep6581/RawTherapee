@@ -19,6 +19,7 @@
 #include "cachemanager.h"
 
 #include <memory>
+#include <iostream>
 
 #include <glib/gstdio.h>
 #include <giomm.h>

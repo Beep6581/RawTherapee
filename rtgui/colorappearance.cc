@@ -424,6 +424,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel(this, "colorappearance",
 
 ColorAppearance::~ColorAppearance ()
 {
+    idle_register.destroy();
+
     delete curveEditorG;
     delete curveEditorG2;
     delete curveEditorG3;
@@ -1002,15 +1004,17 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 
     }
 }
-int autoCamChangedUI (void* data)
-{
-    (static_cast<ColorAppearance*>(data))->autoCamComputed_ ();
-    return 0;
-}
+
 void ColorAppearance::autoCamChanged (double ccam)
 {
     nextCcam = ccam;
-    add_idle (autoCamChangedUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ColorAppearance*>(data)->autoCamComputed_();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool ColorAppearance::autoCamComputed_ ()
@@ -1023,15 +1027,17 @@ bool ColorAppearance::autoCamComputed_ ()
 
     return false;
 }
-int adapCamChangedUI (void* data)
-{
-    (static_cast<ColorAppearance*>(data))->adapCamComputed_ ();
-    return 0;
-}
+
 void ColorAppearance::adapCamChanged (double cadap)
 {
     nextCadap = cadap;
-    add_idle (adapCamChangedUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ColorAppearance*>(data)->adapCamComputed_();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool ColorAppearance::adapCamComputed_ ()

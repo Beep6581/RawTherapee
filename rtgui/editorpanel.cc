@@ -35,6 +35,44 @@
 
 using namespace rtengine::procparams;
 
+namespace
+{
+
+struct spparams {
+    double val;
+    Glib::ustring str;
+    MyProgressBar *pProgress;
+    Glib::RefPtr<Gtk::CssProvider> cssProvider;
+};
+
+int setprogressStrUI ( void *p )
+{
+    spparams *s = static_cast<spparams*> (p);
+
+    if ( ! s->str.empty() ) {
+        s->pProgress->set_text ( M (s->str) );
+    }
+
+    if ( s->val >= 0 ) {
+        s->pProgress->set_fraction ( s->val );
+
+        if (s->cssProvider) {
+            if ( s->val < 1.0 ) {
+                s->cssProvider->load_from_data ("ProgressBar { background-color: red }");
+            } else {
+                s->cssProvider->load_from_data ("ProgressBar { background-color: grey }");
+            }
+
+            s->pProgress->get_style_context()->set_background (s->pProgress->get_window());
+        }
+    }
+
+    delete s;
+    return FALSE;
+}
+
+}
+
 class EditorPanel::ColorManagementToolbar
 {
 private:
@@ -683,6 +721,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
 EditorPanel::~EditorPanel ()
 {
+    idle_register.destroy();
 
     history->setHistoryBeforeLineListener (nullptr);
     // the order is important!
@@ -1017,46 +1056,12 @@ void EditorPanel::setProgressState (bool inProcessing)
     g_idle_add (setProgressStateUIThread, p);
 }
 
-struct spparams {
-    double val;
-    Glib::ustring str;
-    MyProgressBar *pProgress;
-    Glib::RefPtr<Gtk::CssProvider> cssProvider;
-
-};
-
-int setprogressStrUI ( void *p )
-{
-    spparams *s = static_cast<spparams*> (p);
-
-    if ( ! s->str.empty() ) {
-        s->pProgress->set_text ( M (s->str) );
-    }
-
-    if ( s->val >= 0 ) {
-        s->pProgress->set_fraction ( s->val );
-
-        if (s->cssProvider) {
-            if ( s->val < 1.0 ) {
-                s->cssProvider->load_from_data ("ProgressBar { background-color: red }");
-            } else {
-                s->cssProvider->load_from_data ("ProgressBar { background-color: grey }");
-            }
-
-            s->pProgress->get_style_context()->set_background (s->pProgress->get_window());
-        }
-    }
-
-    delete s;
-    return 0;
-}
-
 void EditorPanel::setProgress (double p)
 {
     spparams *s = new spparams;
     s->val = p;
     s->pProgress = progressLabel;
-    add_idle (setprogressStrUI, s);
+    idle_register.add(setprogressStrUI, s);
 }
 
 void EditorPanel::setProgressStr (Glib::ustring str)
@@ -1065,7 +1070,7 @@ void EditorPanel::setProgressStr (Glib::ustring str)
     s->str = str;
     s->val = -1;
     s->pProgress = progressLabel;
-    add_idle (setprogressStrUI, s);
+    idle_register.add(setprogressStrUI, s);
 }
 
 // This is only called from the ThreadUI, so within the gtk thread

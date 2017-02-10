@@ -22,12 +22,6 @@
 #include "inspector.h"
 #include "placesbrowser.h"
 
-int FilePanelInitUI (void* data)
-{
-    (static_cast<FilePanel*>(data))->init ();
-    return 0;
-}
-
 FilePanel::FilePanel () : parent(nullptr)
 {
 
@@ -143,13 +137,21 @@ FilePanel::FilePanel () : parent(nullptr)
     fileCatalog->setFileSelectionChangeListener (tpc);
 
     fileCatalog->setFileSelectionListener (this);
-    add_idle (FilePanelInitUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FilePanel*>(data)->init();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 
     show_all ();
 }
 
 FilePanel::~FilePanel ()
 {
+    idle_register.destroy();
+
     rightNotebookSwitchConn.disconnect();
 
     if (inspectorPanel) {

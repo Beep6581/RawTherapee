@@ -19,9 +19,7 @@
 #ifndef __GUI_UTILS_
 #define __GUI_UTILS_
 
-#include <iostream>
-#include <set>
-#include <sstream>
+#include <map>
 
 #include <gtkmm.h>
 

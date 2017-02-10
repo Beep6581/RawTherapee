@@ -28,10 +28,61 @@
 #include "guiutils.h"
 #include "colorprovider.h"
 
-class ColorAppearance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoCamListener, public CurveListener,  public ColorProvider
+class ColorAppearance final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::AutoCamListener,
+    public CurveListener,
+    public ColorProvider
 {
+public:
+    ColorAppearance ();
+    ~ColorAppearance ();
 
-protected:
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void setBatchMode   (bool batchMode);
+    void adjusterChanged     (Adjuster* a, double newval);
+    void adjusterAutoToggled (Adjuster* a, bool newval);
+//    void adjusterAdapToggled (Adjuster* a, bool newval);
+    void enabledChanged      ();
+    void surroundChanged     ();
+    void wbmodelChanged      ();
+    void algoChanged         ();
+    void surrsource_toggled  ();
+    void gamut_toggled       ();
+//   void badpix_toggled       ();
+    void datacie_toggled     ();
+    void tonecie_toggled     ();
+//    void sharpcie_toggled     ();
+    void autoCamChanged (double ccam);
+    bool autoCamComputed_ ();
+    void adapCamChanged (double cadap);
+    bool adapCamComputed_ ();
+
+    void curveChanged        (CurveEditor* ce);
+    void curveMode1Changed   ();
+    bool curveMode1Changed_  ();
+    void curveMode2Changed   ();
+    bool curveMode2Changed_  ();
+    void curveMode3Changed   ();
+    bool curveMode3Changed_  ();
+
+    void expandCurve         (bool isExpanded);
+    bool isCurveExpanded     ();
+    void autoOpenCurve       ();
+
+    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
+
+private:
+    bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+
     Glib::RefPtr<Gtk::Tooltip> bgTTips;
     Glib::RefPtr<Gtk::Tooltip> srTTips;
     Glib::RefPtr<Gdk::Pixbuf> bgPixbuf;
@@ -83,56 +134,10 @@ protected:
     bool lastAutoAdapscen;
     bool lastsurr;
     bool lastgamut;
-//  bool lastbadpix;
     bool lastdatacie;
     bool lasttonecie;
-// bool lastsharpcie;
-    bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
-    bool srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
-public:
-
-    ColorAppearance ();
-    ~ColorAppearance ();
-
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void adjusterChanged     (Adjuster* a, double newval);
-    void adjusterAutoToggled (Adjuster* a, bool newval);
-//    void adjusterAdapToggled (Adjuster* a, bool newval);
-    void enabledChanged      ();
-    void surroundChanged     ();
-    void wbmodelChanged      ();
-    void algoChanged         ();
-    void surrsource_toggled  ();
-    void gamut_toggled       ();
-//   void badpix_toggled       ();
-    void datacie_toggled     ();
-    void tonecie_toggled     ();
-//    void sharpcie_toggled     ();
-    void autoCamChanged (double ccam);
-    bool autoCamComputed_ ();
-    void adapCamChanged (double cadap);
-    bool adapCamComputed_ ();
-
-    void curveChanged        (CurveEditor* ce);
-    void curveMode1Changed   ();
-    bool curveMode1Changed_  ();
-    void curveMode2Changed   ();
-    bool curveMode2Changed_  ();
-    void curveMode3Changed   ();
-    bool curveMode3Changed_  ();
-
-    void expandCurve         (bool isExpanded);
-    bool isCurveExpanded     ();
-    void autoOpenCurve       ();
-
-    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
+    IdleRegister idle_register;
 };
 
 #endif
