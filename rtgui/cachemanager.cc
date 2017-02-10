@@ -35,8 +35,8 @@
 namespace
 {
 
-constexpr auto cacheDirMode = 511;
-constexpr auto cacheDirs = { "profiles", "images", "aehistograms", "embprofiles", "data" };
+constexpr int cacheDirMode = 0777;
+constexpr const char* cacheDirs[] = { "profiles", "images", "aehistograms", "embprofiles", "data" };
 
 }
 
