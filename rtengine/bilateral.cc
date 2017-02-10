@@ -56,19 +56,6 @@ constexpr T elem(T** source, const LUTf& ec, int i, int j, int a, int b)
                                 else \
                                     destination[i][j] = buffer[i][j];
 
-#define BL_OPER5(a11,a12,a13,a21,a22,a23,a31,a32,a33) for (int i=rstart; i<rend; i++) { \
-                                                        for (int j=cstart; j<cend; j++) { \
-                                                       float v = a11 * elem(source, ec, i, j, -2, -2) + a12 * elem(source, ec, i, j, -2, -1) + a13 * elem(source, ec, i, j, -2, 0) + a12 * elem(source, ec, i, j, -2, 1) + a11 * elem(source, ec, i, j, -2, 2) + \
-                                                            a21 * elem(source, ec, i, j, -1, -2) + a22 * elem(source, ec, i, j, -1, -1) + a23 * elem(source, ec, i, j, -1, 0) + a22 * elem(source, ec, i, j, -1, 1) + a21 * elem(source, ec, i, j, -1, 2) + \
-                                                            a31 * elem(source, ec, i, j, 0, -2) + a32 * elem(source, ec, i, j, 0, -1) + a33 * elem(source, ec, i, j, 0, 0) + a32 * elem(source, ec, i, j, 0, 1) + a31 * elem(source, ec, i, j, 0, 2) + \
-                                                            a21 * elem(source, ec, i, j, 1, -2) + a22 * elem(source, ec, i, j, 1, -1) + a23 * elem(source, ec, i, j, 1, 0) + a22 * elem(source, ec, i, j, 1, 1) + a21 * elem(source, ec, i, j, 1, 2) + \
-                                                            a11 * elem(source, ec, i, j, 2, -2) + a12 * elem(source, ec, i, j, 2, -1) + a13 * elem(source, ec, i, j, 2, 0) + a12 * elem(source, ec, i, j, 2, 1) + a11 * elem(source, ec, i, j, 2, 2); \
-                                                       v /= a11 * suly(source, ec, i, j, -2, -2) + a12 * suly(source, ec, i, j, -2, -1) + a13 * suly(source, ec, i, j, -2, 0) + a12 * suly(source, ec, i, j, -2, 1) + a11 * suly(source, ec, i, j, -2, 2) + \
-                                                            a21 * suly(source, ec, i, j, -1, -2) + a22 * suly(source, ec, i, j, -1, -1) + a23 * suly(source, ec, i, j, -1, 0) + a22 * suly(source, ec, i, j, -1, 1) + a21 * suly(source, ec, i, j, -1, 2) + \
-                                                            a31 * suly(source, ec, i, j, 0, -2) + a32 * suly(source, ec, i, j, 0, -1) + a33 * suly(source, ec, i, j, 0, 0) + a32 * suly(source, ec, i, j, 0, 1) + a31 * suly(source, ec, i, j, 0, 2) + \
-                                                            a21 * suly(source, ec, i, j, 1, -2) + a22 * suly(source, ec, i, j, 1, -1) + a23 * suly(source, ec, i, j, 1, 0) + a22 * suly(source, ec, i, j, 1, 1) + a21 * suly(source, ec, i, j, 1, 2) + \
-                                                            a11 * suly(source, ec, i, j, 2, -2) + a12 * suly(source, ec, i, j, 2, -1) + a13 * suly(source, ec, i, j, 2, 0) + a12 * suly(source, ec, i, j, 2, 1) + a11 * suly(source, ec, i, j, 2, 2);
-
 #define BL_OPER7(a11,a12,a13,a14,a21,a22,a23,a24,a31,a32,a33,a34,a41,a42,a43,a44) \
                                                       for (int i=rstart; i<rend; i++) { \
                                                           for (int j=cstart; j<cend; j++) { \
@@ -224,7 +211,6 @@ public:
 private:
     void blOper3(int border, float c00, float c01, float c11)
     {
-
         const auto suly = [this](int i, int j, int a, int b) {
             return ec[source[i - a][j - b] - source[i][j] + 65536.0f];
         };
@@ -263,6 +249,50 @@ private:
         }
     }
 
+    void blOper5(int border, float c00, float c01, float c02, float c11, float c12, float c22)
+    {
+        const auto suly = [this](int i, int j, int a, int b) {
+            return ec[source[i - a][j - b] - source[i][j] + 65536.0f];
+        };
+
+        const auto elem = [this, &suly](int i, int j, int a, int b) {
+            return source[i - a][j - b] * suly(i, j, a, b);
+        };
+
+        const int rstart = border;
+        const int rend = height - border;
+        const int cstart = border;
+        const int cend = width - border;
+
+        #pragma omp for
+        for (int i = rstart; i < rend; ++i) {
+            for (int j = cstart; j < cend; ++j) {
+                float v = c00 * elem(i, j, -2, -2) + c01 * elem(i, j, -2, -1) + c02 * elem(i, j, -2, 0) + c01 * elem(i, j, -2, 1) + c00 * elem(i, j, -2, 2) +
+                     c01 * elem(i, j, -1, -2) + c11 * elem(i, j, -1, -1) + c12 * elem(i, j, -1, 0) + c11 * elem(i, j, -1, 1) + c01 * elem(i, j, -1, 2) +
+                     c02 * elem(i, j, 0, -2) + c12 * elem(i, j, 0, -1) + c22 * elem(i, j, 0, 0) + c12 * elem(i, j, 0, 1) + c02 * elem(i, j, 0, 2) +
+                     c01 * elem(i, j, 1, -2) + c11 * elem(i, j, 1, -1) + c12 * elem(i, j, 1, 0) + c11 * elem(i, j, 1, 1) + c01 * elem(i, j, 1, 2) +
+                     c00 * elem(i, j, 2, -2) + c01 * elem(i, j, 2, -1) + c02 * elem(i, j, 2, 0) + c01 * elem(i, j, 2, 1) + c00 * elem(i, j, 2, 2);
+                v /= c00 * suly(i, j, -2, -2) + c01 * suly(i, j, -2, -1) + c02 * suly(i, j, -2, 0) + c01 * suly(i, j, -2, 1) + c00 * suly(i, j, -2, 2) +
+                     c01 * suly(i, j, -1, -2) + c11 * suly(i, j, -1, -1) + c12 * suly(i, j, -1, 0) + c11 * suly(i, j, -1, 1) + c01 * suly(i, j, -1, 2) +
+                     c02 * suly(i, j, 0, -2) + c12 * suly(i, j, 0, -1) + c22 * suly(i, j, 0, 0) + c12 * suly(i, j, 0, 1) + c02 * suly(i, j, 0, 2) +
+                     c01 * suly(i, j, 1, -2) + c11 * suly(i, j, 1, -1) + c12 * suly(i, j, 1, 0) + c11 * suly(i, j, 1, 1) + c01 * suly(i, j, 1, 2) +
+                     c00 * suly(i, j, 2, -2) + c01 * suly(i, j, 2, -1) + c02 * suly(i, j, 2, 0) + c01 * suly(i, j, 2, 1) + c00 * suly(i, j, 2, 2);
+                buffer[i][j] = v;
+            }
+        }
+
+        #pragma omp for
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                if (i<rstart || j<cstart || i>=rend || j>=cend) {
+                    destination[i][j] = source[i][j];
+                } else {
+                    destination[i][j] = buffer[i][j];
+                }
+            }
+        }
+    }
+
     // sigma = 0.5
     void bilateral05()
     {
@@ -278,45 +308,25 @@ private:
     // sigma = 0.7
     void bilateral07()
     {
-        BL_BEGIN(366, 2)
-        #pragma omp for
-        BL_OPER5(0, 0, 1, 0, 8, 21, 1, 21, 59)
-        BL_FREE
-        #pragma omp for
-        BL_END(2)
+        blOper5(2, 0, 1, 2, 6, 12, 22);
     }
 
     // sigma = 0.8
     void bilateral08()
     {
-        BL_BEGIN(753, 2)
-        #pragma omp for
-        BL_OPER5(0, 0, 1, 0, 5, 10, 1, 10, 23)
-        BL_FREE
-        #pragma omp for
-        BL_END(2)
+        blOper5(2, 0, 0, 1, 5, 10, 23);
     }
 
     // sigma = 0.9
     void bilateral09()
     {
-        BL_BEGIN(595, 2)
-        #pragma omp for
-        BL_OPER5(0, 1, 2, 1, 6, 12, 2, 12, 22)
-        BL_FREE
-        #pragma omp for
-        BL_END(2)
+        blOper5(2, 0, 1, 2, 6, 12, 22);
     }
 
     // sigma = 1.0
     void bilateral10()
     {
-        BL_BEGIN(910, 2)
-        #pragma omp for
-        BL_OPER5(0, 1, 2, 1, 4, 7, 2, 7, 12)
-        BL_FREE
-        #pragma omp for
-        BL_END(2)
+        blOper5(2, 0, 1, 2, 4, 7, 12);
     }
 
     // sigma = 1.1
