@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _CROP_H_
-#define _CROP_H_
+#pragma once
 
 #include "improccoordinator.h"
 #include "rtengine.h"
@@ -57,19 +56,18 @@ protected:
     bool updating;         /// Flag telling if an updater thread is currently processing
     bool newUpdatePending; /// Flag telling the updater thread that a new update is pending
     int skip;
-    int padding;           /// Minimum space allowed around image in the display area
     int cropx, cropy, cropw, croph;         /// size of the detail crop image ('skip' taken into account), with border
     int trafx, trafy, trafw, trafh;         /// the size and position to get from the imagesource that is transformed to the requested crop area
     int rqcropx, rqcropy, rqcropw, rqcroph; /// size of the requested detail crop image (the image might be smaller) (without border)
-    int borderRequested;                    /// requested extra border size for image processing
+    const int borderRequested;              /// requested extra border size for image processing
     int upperBorder, leftBorder;            /// extra border size really allocated for image processing
 
     bool cropAllocated;
     DetailedCropListener* cropImageListener;
 
     MyMutex cropMutex;
-    ImProcCoordinator* parent;
-    bool isDetailWindow;
+    ImProcCoordinator* const parent;
+    const bool isDetailWindow;
     EditUniqueID getCurrEditID();
     bool setCropSizes (int cropX, int cropY, int cropW, int cropH, int skip, bool internal);
     void freeAll ();
@@ -78,19 +76,8 @@ public:
     Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
     virtual ~Crop    ();
 
-    void mLock       ()
-    {
-        cropMutex.lock();
-    }
-    void mUnlock     ()
-    {
-        cropMutex.lock();
-    }
     void setEditSubscriber(EditSubscriber* newSubscriber);
-    bool hasListener ()
-    {
-        return cropImageListener;
-    }
+    bool hasListener();
     void update      (int todo);
     void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip)
     {
@@ -106,22 +93,8 @@ public:
 
     void setListener    (DetailedCropListener* il);
     void destroy        ();
-    int  get_skip       ()
-    {
-        return skip;
-    }
-    int getPadding      ()
-    {
-        return padding;
-    }
-    int  getLeftBorder  ()
-    {
-        return leftBorder;
-    }
-    int  getUpperBorder ()
-    {
-        return upperBorder;
-    }
+    int get_skip();
+    int getLeftBorder();
+    int getUpperBorder();
 };
 }
-#endif
