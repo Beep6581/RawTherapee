@@ -249,14 +249,14 @@ private:
         }
     }
 
-    void blOper5(int border, float c00, float c01, float c02, float c11, float c12, float c22)
+    void blOper5(int border, float c00, float c01, float c11, float c02, float c12, float c22)
     {
         const auto suly = [this](int i, int j, int a, int b) {
             return ec[source[i - a][j - b] - source[i][j] + 65536.0f];
         };
 
-        const auto elem = [this, &suly](int i, int j, int a, int b) {
-            return source[i - a][j - b] * suly(i, j, a, b);
+        const auto elem = [this](int i, int j, int a, int b) {
+            return source[i - a][j - b] * ec[source[i - a][j - b] - source[i][j] + 65536.0f];
         };
 
         const int rstart = border;
@@ -267,16 +267,18 @@ private:
         #pragma omp for
         for (int i = rstart; i < rend; ++i) {
             for (int j = cstart; j < cend; ++j) {
-                float v = c22 * elem(i, j, -2, -2) + c12 * elem(i, j, -2, -1) + c02 * elem(i, j, -2, 0) + c12 * elem(i, j, -2, 1) + c22 * elem(i, j, -2, 2) +
-                     c12 * elem(i, j, -1, -2) + c11 * elem(i, j, -1, -1) + c01 * elem(i, j, -1, 0) + c11 * elem(i, j, -1, 1) + c12 * elem(i, j, -1, 2) +
-                     c02 * elem(i, j, 0, -2) + c01 * elem(i, j, 0, -1) + c00 * elem(i, j, 0, 0) + c01 * elem(i, j, 0, 1) + c02 * elem(i, j, 0, 2) +
-                     c12 * elem(i, j, 1, -2) + c11 * elem(i, j, 1, -1) + c01 * elem(i, j, 1, 0) + c11 * elem(i, j, 1, 1) + c12 * elem(i, j, 1, 2) +
-                     c22 * elem(i, j, 2, -2) + c12 * elem(i, j, 2, -1) + c02 * elem(i, j, 2, 0) + c12 * elem(i, j, 2, 1) + c22 * elem(i, j, 2, 2);
-                v /= c22 * suly(i, j, -2, -2) + c12 * suly(i, j, -2, -1) + c02 * suly(i, j, -2, 0) + c12 * suly(i, j, -2, 1) + c22 * suly(i, j, -2, 2) +
-                     c12 * suly(i, j, -1, -2) + c11 * suly(i, j, -1, -1) + c01 * suly(i, j, -1, 0) + c11 * suly(i, j, -1, 1) + c12 * suly(i, j, -1, 2) +
-                     c02 * suly(i, j, 0, -2) + c01 * suly(i, j, 0, -1) + c00 * suly(i, j, 0, 0) + c01 * suly(i, j, 0, 1) + c02 * suly(i, j, 0, 2) +
-                     c12 * suly(i, j, 1, -2) + c11 * suly(i, j, 1, -1) + c01 * suly(i, j, 1, 0) + c11 * suly(i, j, 1, 1) + c12 * suly(i, j, 1, 2) +
-                     c22 * suly(i, j, 2, -2) + c12 * suly(i, j, 2, -1) + c02 * suly(i, j, 2, 0) + c12 * suly(i, j, 2, 1) + c22 * suly(i, j, 2, 2);
+                float v = c22 * (elem(i, j, -2, -2) + elem(i, j, -2, 2) + elem(i, j, 2, -2) + elem(i, j, 2, 2)) + 
+                          c12 * (elem(i, j, -2, -1) + elem(i, j, -2, 1) + elem(i, j, -1, -2) + elem(i, j, -1, 2) + elem(i, j, 1, -2) + elem(i, j, 1, 2) + elem(i, j, 2, -1) + elem(i, j, 2, 1)) +
+                          c02 * (elem(i, j, -2, 0) + elem(i, j, 0, -2) + elem(i, j, 0, 2) + elem(i, j, 2, 0)) + 
+                          c11 * (elem(i, j, -1, -1) + elem(i, j, -1, 1) + elem(i, j, 1, -1) + elem(i, j, 1, 1)) + 
+                          c01 * (elem(i, j, -1, 0) + elem(i, j, 0, -1) + elem(i, j, 0, 1) + elem(i, j, 1, 0)) +
+                          c00 * source[i][j];
+                v /= c22 * (suly(i, j, -2, -2) + suly(i, j, -2, 2) + suly(i, j, 2, -2) + suly(i, j, 2, 2)) + 
+                     c12 * (suly(i, j, -2, -1) + suly(i, j, -2, 1) + suly(i, j, -1, -2) + suly(i, j, -1, 2) + suly(i, j, 1, -2) + suly(i, j, 1, 2) + suly(i, j, 2, -1) + suly(i, j, 2, 1)) +
+                     c02 * (suly(i, j, -2, 0) + suly(i, j, 0, -2) + suly(i, j, 0, 2) + suly(i, j, 2, 0)) + 
+                     c11 * (suly(i, j, -1, -1) + suly(i, j, -1, 1) + suly(i, j, 1, -1) + suly(i, j, 1, 1)) + 
+                     c01 * (suly(i, j, -1, 0) + suly(i, j, 0, -1) + suly(i, j, 0, 1) + suly(i, j, 1, 0)) +
+                     c00;
                 buffer[i][j] = v;
             }
         }
