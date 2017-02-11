@@ -267,16 +267,16 @@ private:
         #pragma omp for
         for (int i = rstart; i < rend; ++i) {
             for (int j = cstart; j < cend; ++j) {
-                float v = c00 * elem(i, j, -2, -2) + c01 * elem(i, j, -2, -1) + c02 * elem(i, j, -2, 0) + c01 * elem(i, j, -2, 1) + c00 * elem(i, j, -2, 2) +
-                     c01 * elem(i, j, -1, -2) + c11 * elem(i, j, -1, -1) + c12 * elem(i, j, -1, 0) + c11 * elem(i, j, -1, 1) + c01 * elem(i, j, -1, 2) +
-                     c02 * elem(i, j, 0, -2) + c12 * elem(i, j, 0, -1) + c22 * elem(i, j, 0, 0) + c12 * elem(i, j, 0, 1) + c02 * elem(i, j, 0, 2) +
-                     c01 * elem(i, j, 1, -2) + c11 * elem(i, j, 1, -1) + c12 * elem(i, j, 1, 0) + c11 * elem(i, j, 1, 1) + c01 * elem(i, j, 1, 2) +
-                     c00 * elem(i, j, 2, -2) + c01 * elem(i, j, 2, -1) + c02 * elem(i, j, 2, 0) + c01 * elem(i, j, 2, 1) + c00 * elem(i, j, 2, 2);
-                v /= c00 * suly(i, j, -2, -2) + c01 * suly(i, j, -2, -1) + c02 * suly(i, j, -2, 0) + c01 * suly(i, j, -2, 1) + c00 * suly(i, j, -2, 2) +
-                     c01 * suly(i, j, -1, -2) + c11 * suly(i, j, -1, -1) + c12 * suly(i, j, -1, 0) + c11 * suly(i, j, -1, 1) + c01 * suly(i, j, -1, 2) +
-                     c02 * suly(i, j, 0, -2) + c12 * suly(i, j, 0, -1) + c22 * suly(i, j, 0, 0) + c12 * suly(i, j, 0, 1) + c02 * suly(i, j, 0, 2) +
-                     c01 * suly(i, j, 1, -2) + c11 * suly(i, j, 1, -1) + c12 * suly(i, j, 1, 0) + c11 * suly(i, j, 1, 1) + c01 * suly(i, j, 1, 2) +
-                     c00 * suly(i, j, 2, -2) + c01 * suly(i, j, 2, -1) + c02 * suly(i, j, 2, 0) + c01 * suly(i, j, 2, 1) + c00 * suly(i, j, 2, 2);
+                float v = c22 * elem(i, j, -2, -2) + c12 * elem(i, j, -2, -1) + c02 * elem(i, j, -2, 0) + c12 * elem(i, j, -2, 1) + c22 * elem(i, j, -2, 2) +
+                     c12 * elem(i, j, -1, -2) + c11 * elem(i, j, -1, -1) + c01 * elem(i, j, -1, 0) + c11 * elem(i, j, -1, 1) + c12 * elem(i, j, -1, 2) +
+                     c02 * elem(i, j, 0, -2) + c01 * elem(i, j, 0, -1) + c00 * elem(i, j, 0, 0) + c01 * elem(i, j, 0, 1) + c02 * elem(i, j, 0, 2) +
+                     c12 * elem(i, j, 1, -2) + c11 * elem(i, j, 1, -1) + c01 * elem(i, j, 1, 0) + c11 * elem(i, j, 1, 1) + c12 * elem(i, j, 1, 2) +
+                     c22 * elem(i, j, 2, -2) + c12 * elem(i, j, 2, -1) + c02 * elem(i, j, 2, 0) + c12 * elem(i, j, 2, 1) + c22 * elem(i, j, 2, 2);
+                v /= c22 * suly(i, j, -2, -2) + c12 * suly(i, j, -2, -1) + c02 * suly(i, j, -2, 0) + c12 * suly(i, j, -2, 1) + c22 * suly(i, j, -2, 2) +
+                     c12 * suly(i, j, -1, -2) + c11 * suly(i, j, -1, -1) + c01 * suly(i, j, -1, 0) + c11 * suly(i, j, -1, 1) + c12 * suly(i, j, -1, 2) +
+                     c02 * suly(i, j, 0, -2) + c01 * suly(i, j, 0, -1) + c00 * suly(i, j, 0, 0) + c01 * suly(i, j, 0, 1) + c02 * suly(i, j, 0, 2) +
+                     c12 * suly(i, j, 1, -2) + c11 * suly(i, j, 1, -1) + c01 * suly(i, j, 1, 0) + c11 * suly(i, j, 1, 1) + c12 * suly(i, j, 1, 2) +
+                     c22 * suly(i, j, 2, -2) + c12 * suly(i, j, 2, -1) + c02 * suly(i, j, 2, 0) + c12 * suly(i, j, 2, 1) + c22 * suly(i, j, 2, 2);
                 buffer[i][j] = v;
             }
         }
@@ -308,25 +308,25 @@ private:
     // sigma = 0.7
     void bilateral07()
     {
-        blOper5(2, 0, 1, 2, 6, 12, 22);
+        blOper5(2, 0.275768f, 0.11634f, 0.049081f, 0.008344f, 0.00352f, 0.000252f);
     }
 
     // sigma = 0.8
     void bilateral08()
     {
-        blOper5(2, 0, 0, 1, 5, 10, 23);
+        blOper5(2, 23, 10, 5, 1, 0, 0);
     }
 
     // sigma = 0.9
     void bilateral09()
     {
-        blOper5(2, 0, 1, 2, 6, 12, 22);
+        blOper5(2, 22, 12, 6, 2, 1, 0);
     }
 
     // sigma = 1.0
     void bilateral10()
     {
-        blOper5(2, 0, 1, 2, 4, 7, 12);
+        blOper5(2, 12, 7, 4, 2, 1, 0);
     }
 
     // sigma = 1.1
