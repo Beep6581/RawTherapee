@@ -11,8 +11,7 @@
 /*RT*/#define DJGPP
 
 #include "opthelper.h"
-#include <iostream>
-#include <fstream>
+
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2016 by Dave Coffin, dcoffin a cybercom o net

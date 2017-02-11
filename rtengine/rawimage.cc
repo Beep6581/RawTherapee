@@ -14,8 +14,6 @@
 #include <netinet/in.h>
 #endif
 
-#include <iostream>
-
 namespace rtengine
 {
 
