@@ -14,6 +14,8 @@
 #include <netinet/in.h>
 #endif
 
+#include <iostream>
+
 namespace rtengine
 {
 
@@ -433,6 +435,10 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
         }
 
         return 2;
+    }
+
+    if(xtransCompressed) {
+        parse_xtrans_header();
     }
 
     if (flip == 5) {

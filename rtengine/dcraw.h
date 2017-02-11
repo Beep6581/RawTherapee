@@ -89,8 +89,51 @@ protected:
     unsigned black, cblack[4102], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags;
+    bool xtransCompressed = false;
+    struct xtrans_params
+    {
+        char        *q_table;        /* quantization table */
+        int         q_point[5];      /* quantization points */
+        int         max_bits;
+        int         min_value;
+        int         raw_bits;
+        int         total_values;
+        int			maxDiff;
+        ushort      line_width;
+    };
+
+    struct int_pair {
+        int value1;
+        int value2;
+    };
+
+    enum _xt_lines
+    {
+        _R0=0,_R1,_R2,_R3,_R4,
+        _G0,_G1,_G2,_G3,_G4,_G5,_G6,_G7,
+        _B0,_B1,_B2,_B3,_B4,
+        _ltotal
+    };
+
+    struct xtrans_block {
+        int         cur_bit;         // current bit being read (from left to right)
+        int         cur_pos;         // current position in a buffer
+        INT64       cur_buf_offset;  // offset of this buffer in a file
+        unsigned	max_read_size;	 // Amount of data to be read
+        int         cur_buf_size;    // buffer size
+        uchar       *cur_buf;        // currently read block
+        IMFILE      *input;
+        struct int_pair grad_even[3][41];    // tables of gradients
+        struct int_pair grad_odd[3][41];
+        ushort		*linealloc;
+        ushort      *linebuf[_ltotal];
+    };
+
+    int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits;
+
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
+    unsigned raw_size;
     ushort *raw_image;
     float * float_raw_image;
     ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
@@ -226,6 +269,25 @@ void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
 void packed_dng_load_raw();
 void deflate_dng_load_raw();
+void init_xtrans(struct xtrans_params* info);
+void fuji_fill_buffer(struct xtrans_block *info);
+void init_xtrans_block(struct xtrans_block* info, const struct xtrans_params *params, INT64 raw_offset, unsigned dsize);
+void copy_line_to_xtrans(struct xtrans_block* info, int cur_line, int cur_block, int cur_block_width);
+void fuji_zerobits(struct xtrans_block* info, int *count);
+void fuji_read_code(struct xtrans_block* info, int *data, int bits_to_read);
+int bitDiff(int value1, int value2);
+int fuji_decode_sample_even(struct xtrans_block* info, const struct xtrans_params * params, ushort* line_buf, int pos, struct int_pair* grads);
+int fuji_decode_sample_odd(struct xtrans_block* info, const struct xtrans_params * params, ushort* line_buf, int pos, struct int_pair* grads);
+void fuji_decode_interpolation_even(int line_width, ushort* line_buf, int pos);
+void xtrans_extend_generic(ushort *linebuf[_ltotal], int line_width, int start, int end);
+void xtrans_extend_red(ushort *linebuf[_ltotal], int line_width);
+void xtrans_extend_green(ushort *linebuf[_ltotal], int line_width);
+void xtrans_extend_blue(ushort *linebuf[_ltotal], int line_width);
+void xtrans_decode_block(struct xtrans_block* info, const struct xtrans_params *params, int cur_line);
+void xtrans_decode_strip(const struct xtrans_params* info_common, int cur_block, INT64 raw_offset, unsigned dsize);
+void xtrans_compressed_load_raw();
+void xtrans_decode_loop(const struct xtrans_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
+void parse_xtrans_header();
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();
