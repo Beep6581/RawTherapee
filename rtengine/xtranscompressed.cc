@@ -771,5 +771,5 @@ void CLASS parse_xtrans_header()
 	raw_width         = h_raw_width;
 	raw_height        = h_raw_height;
 	data_offset += 16;
-	load_raw = &xtrans_compressed_load_raw;
+	load_raw = &CLASS xtrans_compressed_load_raw;
 }
