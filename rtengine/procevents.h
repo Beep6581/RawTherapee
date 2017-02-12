@@ -470,6 +470,7 @@ enum ProcEvent {
     EvRetinexgaintransmission = 440,
     EvLskal = 441,
     EvOBPCompens = 442,
+    EvWBtempBias = 443,
     NUMOFEVENTS
 
 };

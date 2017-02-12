@@ -993,6 +993,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!HISTORY_MSG_444;WB - Temp bias
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -2037,6 +2038,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_WBALANCE_SOLUX41;Solux 4100K
 !TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 !TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
+!TP_WBALANCE_TEMPBIAS;AWB temperature bias
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !TP_WBALANCE_TUNGSTEN;Tungsten
 !TP_WBALANCE_WATER1;UnderWater 1
 !TP_WBALANCE_WATER2;UnderWater 2

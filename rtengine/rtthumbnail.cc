@@ -162,6 +162,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             tpp->greenAWBMul = avg_g / double(n);
             tpp->blueAWBMul  = avg_b / double(n);
             tpp->wbEqual = wbEq;
+            tpp->wbTempBias = 0.0;
 
             cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
         }
@@ -735,6 +736,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->greenAWBMul = ri->get_rgb_cam(1, 0) * reds + ri->get_rgb_cam(1, 1) * greens + ri->get_rgb_cam(1, 2) * blues;
     tpp->blueAWBMul  = ri->get_rgb_cam(2, 0) * reds + ri->get_rgb_cam(2, 1) * greens + ri->get_rgb_cam(2, 2) * blues;
     tpp->wbEqual = wbEq;
+    tpp->wbTempBias = 0.0;
 
     ColorTemp cTemp;
     cTemp.mul2temp(tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
@@ -776,7 +778,7 @@ Thumbnail::Thumbnail () :
     camProfile(nullptr), thumbImg(nullptr),
     camwbRed(1.0), camwbGreen(1.0), camwbBlue(1.0),
     redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0),
-    autoWBTemp(2700), autoWBGreen(1.0), wbEqual(-1.0),
+    autoWBTemp(2700), autoWBGreen(1.0), wbEqual(-1.0), wbTempBias(0.0),
     embProfileLength(0), embProfileData(nullptr), embProfile(nullptr),
     redMultiplier(1.0), greenMultiplier(1.0), blueMultiplier(1.0),
     defGain(1.0),
@@ -839,11 +841,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     BENCHFUN
 
     // check if the WB's equalizer value has changed
-    if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4)) {
+    if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {
         wbEqual = params.wb.equal;
+        wbTempBias = params.wb.tempBias;
         // recompute the autoWB
         ColorTemp cTemp;
         cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+        autoWBTemp += autoWBTemp * wbTempBias;
     }
 
     // compute WB multipliers
@@ -1272,15 +1276,17 @@ void Thumbnail::getCamWB (double& temp, double& green)
     green = currWB.getGreen ();
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green, double equal)
+void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
 {
 
-    if (equal != wbEqual) {
+    if (equal != wbEqual || tempBias != wbTempBias) {
         // compute the values depending on equal
         ColorTemp cTemp;
         wbEqual = equal;
+        wbTempBias = tempBias;
         // compute autoWBTemp and autoWBGreen
         cTemp.mul2temp(redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+        autoWBTemp += autoWBTemp * tempBias;
     }
 
     temp = autoWBTemp;

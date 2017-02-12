@@ -252,10 +252,10 @@ public:
     void writeOptions       ();
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal)
+    void getAutoWB (double& temp, double& green, double equal, double tempBias)
     {
         if (ipc) {
-            ipc->getAutoWB (temp, green, equal);
+            ipc->getAutoWB (temp, green, equal, tempBias);
         }
     }
     void getCamWB (double& temp, double& green)

@@ -34,7 +34,7 @@ extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), previmg(nullptr), workimg(nullptr),
-      ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), ipf(&params, true), monitorIntent(RI_RELATIVE),
+      ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), lastAwbTempBias(0.0), ipf(&params, true), monitorIntent(RI_RELATIVE),
       softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
       allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
@@ -284,15 +284,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB ();
         } else if (params.wb.method == "Auto") {
-            if (lastAwbEqual != params.wb.equal) {
+            if (lastAwbEqual != params.wb.equal || lastAwbTempBias != params.wb.tempBias) {
                 double rm, gm, bm;
                 imgsrc->getAutoWBMultipliers(rm, gm, bm);
 
                 if (rm != -1.) {
-                    autoWB.update(rm, gm, bm, params.wb.equal);
+                    autoWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
                     lastAwbEqual = params.wb.equal;
+                    lastAwbTempBias = params.wb.tempBias;
                 } else {
                     lastAwbEqual = -1.;
+                    lastAwbTempBias = 0.0;
                     autoWB.useDefaults(params.wb.equal);
                 }
 
@@ -1011,21 +1013,23 @@ void ImProcCoordinator::progress (Glib::ustring str, int pr)
       }*/
 }
 
-bool ImProcCoordinator::getAutoWB (double& temp, double& green, double equal)
+bool ImProcCoordinator::getAutoWB (double& temp, double& green, double equal, double tempBias)
 {
 
     if (imgsrc) {
-        if (lastAwbEqual != equal) {
+        if (lastAwbEqual != equal || lastAwbTempBias != tempBias) {
 // Issue 2500            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
 
             if (rm != -1) {
-                autoWB.update(rm, gm, bm, equal);
+                autoWB.update(rm, gm, bm, equal, tempBias);
                 lastAwbEqual = equal;
+                lastAwbTempBias = tempBias;
             } else {
                 lastAwbEqual = -1.;
                 autoWB.useDefaults(equal);
+                lastAwbTempBias = 0.0;
             }
         }
 
@@ -1162,15 +1166,17 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
     if (params.wb.method == "Camera") {
         currWB = imgsrc->getWB ();
     } else if (params.wb.method == "Auto") {
-        if (lastAwbEqual != params.wb.equal) {
+        if (lastAwbEqual != params.wb.equal || lastAwbTempBias != params.wb.tempBias) {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
 
             if (rm != -1.) {
-                autoWB.update(rm, gm, bm, params.wb.equal);
+                autoWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
                 lastAwbEqual = params.wb.equal;
+                lastAwbTempBias = params.wb.tempBias;
             } else {
                 lastAwbEqual = -1.;
+                lastAwbTempBias = 0.0;
                 autoWB.useDefaults(params.wb.equal);
             }
         }

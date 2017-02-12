@@ -546,8 +546,9 @@ public:
     int temperature;
     double green;
     double equal;
+    double tempBias;
 
-    WBEntry(const Glib::ustring &p, enum WBTypes t, const Glib::ustring &l, int temp, double green, double equal) : ppLabel(p), type(t), GUILabel(l), temperature(temp), green(green), equal(equal) {};
+    WBEntry(const Glib::ustring &p, enum WBTypes t, const Glib::ustring &l, int temp, double green, double equal, double bias) : ppLabel(p), type(t), GUILabel(l), temperature(temp), green(green), equal(equal), tempBias(bias) {};
 };
 
 class WBParams
@@ -559,6 +560,7 @@ public:
     int             temperature;
     double          green;
     double          equal;
+    double          tempBias;
 
     static void     init();
     static void     cleanup();

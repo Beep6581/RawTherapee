@@ -604,6 +604,7 @@ void Options::setDefaults ()
         0, // ADDSET_RETI_VART
         0, // ADDSET_RETI_GAM
         0, // ADDSET_RETI_SLO
+        0, // ADDSET_WB_TEMPBIAS
     };
 
     rtSettings.darkFramesPath = "";

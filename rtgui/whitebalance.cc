@@ -232,6 +232,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
         custom_green = 1.0;
         custom_equal = 1.0;
+        custom_tempBias = 0.0;
     }
 
     //Add the model columns to the Combo (which is a kind of view),
@@ -313,13 +314,17 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
     equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
+    tempBias = Gtk::manage (new Adjuster(M("TP_WBALANCE_TEMPBIAS"), -0.5, 0.5, 0.01, 0.0));
     cache_customTemp (0);
     cache_customGreen (0);
     cache_customEqual (0);
+    cache_customTempBias (0);
     equal->set_tooltip_markup (M("TP_WBALANCE_EQBLUERED_TOOLTIP"));
+    tempBias->set_tooltip_markup (M("TP_WBALANCE_TEMPBIAS_TOOLTIP"));
     temp->show ();
     green->show ();
     equal->show ();
+    tempBias->show ();
 
     /*  Gtk::HBox* boxgreen = Gtk::manage (new Gtk::HBox ());
     boxgreen->show ();
@@ -332,10 +337,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     //pack_start (*boxgreen);
     pack_start (*green);
     pack_start (*equal);
+    pack_start (*tempBias);
 
     temp->setAdjusterListener (this);
     green->setAdjusterListener (this);
     equal->setAdjusterListener (this);
+    tempBias->setAdjusterListener (this);
 
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
@@ -348,6 +355,7 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
     int tVal = (int)temp->getValue();
     double gVal = green->getValue();
     double eVal = equal->getValue();
+    double tempBiasVal = tempBias->getValue();
     Gtk::TreeModel::Row row = getActiveMethod();
 
     if (row == refTreeModel->children().end()) {
@@ -358,11 +366,16 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
     WBEntry* ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
     WBEntry* wbCustom = findWBEntry ("Custom", WBLT_PP);
 
-    if (!ppMethod || (ppMethod->ppLabel != wbCustom->ppLabel && !(a == equal && ppMethod->type == WBT_AUTO)) ) {
+    if (!ppMethod || (ppMethod->ppLabel != wbCustom->ppLabel && !((a == equal || a == tempBias) && ppMethod->type == WBT_AUTO)) ) {
         methconn.block(true);
         opt = setActiveMethod(wbCustom->GUILabel);
         cache_customWB (tVal, gVal);
-        cache_customEqual(eVal);
+        if (a != equal) {
+            cache_customEqual(eVal);
+        }
+        if (a != tempBias) {
+            cache_customTempBias(tempBiasVal);
+        }
         methconn.block(false);
     }
 
@@ -373,12 +386,16 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
         cache_customGreen (gVal);
     } else if (a == equal) {
         cache_customEqual (eVal);
+    } else if (a == tempBias) {
+        cache_customTempBias (tempBiasVal);
+    }
 
+    if (a == equal || a == tempBias) {
         // Recomputing AutoWB if it's the current method
         if (wbp && ppMethod->type == WBT_AUTO) {
             double ctemp = -1.0;
             double cgreen = -1.0;
-            wbp->getAutoWB (ctemp, cgreen, eVal);
+            wbp->getAutoWB (ctemp, cgreen, eVal, tempBiasVal);
 
             if (ctemp != -1.0) {
                 // Set the automatics temperature value only if in SET mode
@@ -401,6 +418,8 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvWBGreen, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
         } else if (a == equal) {
             listener->panelChanged (EvWBequal, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
+        } else if (a == tempBias) {
+            listener->panelChanged (EvWBtempBias, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
         }
     }
 }
@@ -442,11 +461,13 @@ void WhiteBalance::optChanged ()
                     temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
                     green->setValue (green->getAddMode() ? 0.0 : cgreen);
                     equal->setValue (equal->getAddMode() ? 0.0 : 1.0);
+                    tempBias->setValue (tempBias->getAddMode() ? 0.0 : 0.0);
 
                     if (batchMode) {
                         temp->setEditedState (UnEdited);
                         green->setEditedState (UnEdited);
                         equal->setEditedState (UnEdited);
+                        tempBias->setEditedState (UnEdited);
                     }
                 }
 
@@ -460,9 +481,9 @@ void WhiteBalance::optChanged ()
                         // equal remain as is
                     }
 
-                    if (!batchMode || equal->getEditedState()) {
+                    if (!batchMode || equal->getEditedState() || tempBias->getEditedState()) {
                         double ctemp, cgreen;
-                        wbp->getAutoWB (ctemp, cgreen, equal->getValue());
+                        wbp->getAutoWB (ctemp, cgreen, equal->getValue(), tempBias->getValue());
 
                         if (ctemp != -1.0) {
                             temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
@@ -478,16 +499,19 @@ void WhiteBalance::optChanged ()
                     temp->setValue (temp->getAddMode() ? 0.0 : custom_temp);
                     green->setValue (green->getAddMode() ? 0.0 : custom_green);
                     equal->setValue (equal->getAddMode() ? 0.0 : custom_equal);
+                    tempBias->setValue (tempBias->getAddMode() ? 0.0 : custom_tempBias);
                 } else {
                     cache_customTemp (temp->getValue());
                     cache_customGreen (green->getValue());
                     cache_customEqual (equal->getValue());
+                    cache_customTempBias (tempBias->getValue());
                 }
 
                 if (batchMode) {
                     temp->setEditedState (Edited);
                     green->setEditedState (Edited);
                     equal->setEditedState (Edited);
+                    tempBias->setEditedState (Edited);
                 }
 
                 break;
@@ -506,11 +530,13 @@ void WhiteBalance::optChanged ()
                 temp->setValue  ( temp->getAddMode() ? 0.0 : (double)(currMethod->temperature));
                 green->setValue (green->getAddMode() ? 0.0 : (double)(currMethod->green));
                 equal->setValue (equal->getAddMode() ? 0.0 : (double)(currMethod->equal));
+                tempBias->setValue (tempBias->getAddMode() ? 0.0 : (double)(currMethod->tempBias));
 
                 if (batchMode) {
                     temp->setEditedState (Edited);
                     green->setEditedState (Edited);
                     equal->setEditedState (Edited);
+                    tempBias->setEditedState (Edited);
                 }
 
                 break;
@@ -546,12 +572,14 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     methconn.block (true);
     equal->setValue (pp->wb.equal);
+    tempBias->setValue (pp->wb.tempBias);
 
     if (pedited) {
         // By default, temperature and green are said "UnEdited", but it may change later
         temp->setEditedState (UnEdited);
         green->setEditedState (UnEdited);
         equal->setEditedState (pedited->wb.equal ? Edited : UnEdited);
+        tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
     }
 
     if (pedited && !pedited->wb.method) {
@@ -571,9 +599,11 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             temp->setValue (temp->getAddMode() ? 0.0 : pp->wb.temperature);
             green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
+            tempBias->setValue (tempBias->getAddMode() ? 0.0 : pp->wb.tempBias);
             cache_customTemp (pp->wb.temperature);
             cache_customGreen (pp->wb.green);
             cache_customEqual (pp->wb.equal);
+            cache_customTempBias (pp->wb.tempBias);
 
             if (pedited) {
                 // The user may have changed the temperature and green value
@@ -595,10 +625,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
                     // Set the camera's green value, or 0.0 if in ADD mode
                     green->setValue (green->getAddMode() ? 0.0 : cgreen);
                     equal->setValue (equal->getAddMode() ? 0.0 : 1.);
+                    tempBias->setValue (tempBias->getAddMode() ? 0.0 : 0.0);
                 } else {
                     temp->setValue (temp->getAddMode() ? 0.0 : pp->wb.temperature);
                     green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
                     equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
+                    tempBias->setValue (equal->getAddMode() ? 0.0 : pp->wb.tempBias);
                 }
             }
 
@@ -607,7 +639,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         case WBT_AUTO:
             // the equalizer's value is restored for the AutoWB
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
-
+            tempBias->setValue (tempBias->getAddMode() ? 0.0 : pp->wb.tempBias);
+            
             // set default values first if in ADD mode, otherwise keep the current ones
             if (temp->getAddMode() ) {
                 temp->setValue (0.0);
@@ -621,7 +654,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             if (wbp) {
                 double ctemp = -1.0;
                 double cgreen = -1.0;
-                wbp->getAutoWB (ctemp, cgreen, pp->wb.equal);
+                wbp->getAutoWB (ctemp, cgreen, pp->wb.equal, pp->wb.tempBias);
 
                 if (ctemp != -1.0) {
                     // Set the automatics temperature if in SET mode
@@ -663,11 +696,13 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             // Set the stored temperature, or 0.0 if in ADD mode
             green->setValue(green->getAddMode() ? 0.0 : pp->wb.green);
             equal->setValue(equal->getAddMode() ? 0.0 : pp->wb.equal);
+            tempBias->setValue(equal->getAddMode() ? 0.0 : pp->wb.tempBias);
 
             // The user may have changed the green value even for predefined WB values
             if (pedited) {
                 green->setEditedState (pedited->wb.green ? Edited : UnEdited);
                 equal->setEditedState (pedited->wb.equal ? Edited : UnEdited);
+                tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
             }
 
             //cache_customGreen (pp->wb.green);
@@ -688,6 +723,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.temperature = temp->getEditedState ();
         pedited->wb.green = green->getEditedState ();
         pedited->wb.equal = equal->getEditedState ();
+        pedited->wb.tempBias = tempBias->getEditedState ();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
     }
 
@@ -700,11 +736,14 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.temperature = temp->getIntValue ();
     pp->wb.green = green->getValue ();
     pp->wb.equal = equal->getValue ();
+    pp->wb.tempBias = tempBias->getValue ();
 }
 
 void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
+    
     equal->setDefault (defParams->wb.equal);
+    tempBias->setDefault (defParams->wb.tempBias);
 
     if (wbp && defParams->wb.method == "Camera") {
         double ctemp;
@@ -721,7 +760,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         // but wbp is not ready to provide!
         double ctemp;
         double cgreen;
-        wbp->getAutoWB (ctemp, cgreen, defParams->wb.equal);
+        wbp->getAutoWB (ctemp, cgreen, defParams->wb.equal, defParams->wb.tempBias);
 
         if (ctemp != -1.0) {
             temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
@@ -740,10 +779,12 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         temp->setDefaultEditedState (pedited->wb.temperature ? Edited : UnEdited);
         green->setDefaultEditedState (pedited->wb.green ? Edited : UnEdited);
         equal->setDefaultEditedState (pedited->wb.equal ? Edited : UnEdited);
+        tempBias->setDefaultEditedState (pedited->wb.tempBias ? Edited : UnEdited);
     } else {
         temp->setDefaultEditedState (Irrelevant);
         green->setDefaultEditedState (Irrelevant);
         equal->setDefaultEditedState (Irrelevant);
+        tempBias->setDefaultEditedState (Irrelevant);
     }
 }
 
@@ -754,6 +795,7 @@ void WhiteBalance::setBatchMode (bool batchMode)
     temp->showEditedCB ();
     green->showEditedCB ();
     equal->showEditedCB ();
+    tempBias->showEditedCB ();
     Gtk::TreeModel::Row row = *(refTreeModel->append());
     row[methodColumns.colId] = WBParams::wbEntries.size();
     row[methodColumns.colLabel] = M("GENERAL_UNCHANGED");
@@ -776,6 +818,7 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
     opt = setActiveMethod(wbValues->GUILabel);
     cache_customWB (vtemp, vgreen); // sequence in which this call is made is important; must be before "method->set_active (2);"
     cache_customEqual(equal->getValue());
+    cache_customTempBias(tempBias->getValue());
     temp->setEditedState (Edited);
     green->setEditedState (Edited);
     methconn.block(false);
@@ -785,12 +828,13 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
     }
 }
 
-void WhiteBalance::setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd)
+void WhiteBalance::setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd)
 {
 
     temp->setAddMode(tempadd);
     green->setAddMode(greenadd);
     equal->setAddMode(equaladd);
+    tempBias->setAddMode(tempbiasadd);
 }
 
 void WhiteBalance::trimValues (rtengine::procparams::ProcParams* pp)
@@ -799,6 +843,7 @@ void WhiteBalance::trimValues (rtengine::procparams::ProcParams* pp)
     temp->trimValue(pp->wb.temperature);
     green->trimValue(pp->wb.green);
     equal->trimValue(pp->wb.equal);
+    tempBias->trimValue(pp->wb.tempBias);
 }
 
 inline void WhiteBalance::cache_customTemp(int temp)
@@ -813,6 +858,11 @@ void WhiteBalance::cache_customGreen(double green)
 void WhiteBalance::cache_customEqual(double equal)
 {
     custom_equal = equal;
+}
+
+void WhiteBalance::cache_customTempBias(double tempBias)
+{
+    custom_tempBias = tempBias;
 }
 
 void WhiteBalance::cache_customWB(int temp, double green)

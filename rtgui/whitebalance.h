@@ -65,6 +65,7 @@ protected:
     Adjuster* temp;
     Adjuster* green;
     Adjuster* equal;
+    Adjuster* tempBias;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -76,10 +77,12 @@ protected:
     int custom_temp;
     double custom_green;
     double custom_equal;
+    double custom_tempBias;
     void cache_customWB    (int temp, double green); //cache custom WB setting to allow its recall
     void cache_customTemp  (int temp);               //cache Temperature only to allow its recall
     void cache_customGreen (double green);           //cache Green only to allow its recall
     void cache_customEqual (double equal);           //cache Equal only to allow its recall
+    void cache_customTempBias (double tempBias);     //cache TempBias only to allow its recall
 
     int  setActiveMethod   (Glib::ustring label);
     int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
@@ -115,7 +118,7 @@ public:
     }
     void setWB (int temp, double green);
 
-    void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd);
+    void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
