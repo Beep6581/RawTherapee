@@ -9018,9 +9018,6 @@ canon_a5:
     if (filters == 9)
       FORC(36) ((char *)xtrans)[c] =
 	xtrans_abs[(c/6+top_margin) % 6][(c+left_margin) % 6];
-	if(filters == 9 && raw_height * raw_width * 2 != raw_size) {
-        xtransCompressed = true;
-	}
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
     width  = 2312;
@@ -9870,7 +9867,7 @@ struct tiff_hdr {
   char desc[512], make[64], model[64], soft[32], date[20], artist[64];
 };
 
-#include "xtranscompressed.cc"
+#include "fujicompressed.cc"
 
 /* RT: Delete from here */
 /*RT*/#undef SQR
