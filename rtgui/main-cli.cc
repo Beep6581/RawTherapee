@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <locale.h>
 #include "options.h"
+#include "../rtengine/icons.h"
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
@@ -82,29 +83,6 @@ Glib::ustring fname_to_utf8 (const char* fname)
 
 }
 
-// This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
-#ifdef WIN32
-static Glib::RecMutex myGdkRecMutex;
-#else
-static Glib::Threads::RecMutex myGdkRecMutex;
-#endif
-
-static void myGdkLockEnter()
-{
-    myGdkRecMutex.lock();
-}
-static void myGdkLockLeave()
-{
-    // Automatic gdk_flush for non main tread
-#if AUTO_GDK_FLUSH
-    //if (Glib::Thread::self() != mainThread) {
-    //    gdk_flush();
-    //}
-
-#endif
-    myGdkRecMutex.unlock();
-}
-
 /* Process line command options
  * Returns
  *  0 if process in batch has executed
@@ -115,14 +93,13 @@ static void myGdkLockLeave()
  *  -3 if at least one required procparam file was not found */
 int processLineParams( int argc, char **argv );
 
+bool dontLoadCache( int argc, char **argv );
+
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
 
-    Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
-    gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
-    gdk_threads_init();
     Gio::init ();
 
     //mainThread = Glib::Threads::Thread::self();
@@ -169,10 +146,14 @@ int main(int argc, char **argv)
     licensePath = LICENCE_SEARCH_PATH;
 #endif
 
-    if (!Options::load ()) {
+    bool quickstart = dontLoadCache(argc, argv);
+
+    if (!Options::load (quickstart)) {
         printf("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!\n");
         return -2;
     }
+
+    rtengine::setPaths(options);
 
     TIFFSetWarningHandler(nullptr);    // avoid annoying message boxes
 
@@ -185,25 +166,87 @@ int main(int argc, char **argv)
 
 #endif
 
-#if not RT_CMDLINE
-    extProgStore->init();
-    SoundManager::init();
+#ifdef WIN32
+    bool consoleOpened = false;
+
+    if (argc > 1 || options.rtSettings.verbose) {
+        if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
+            bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
+            bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
+
+            // no console, if stdout and stderr both are redirected to file
+            if( !(stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
+                // check if parameter -w was passed.
+                // We have to do that in this step, because it controls whether to open a console to show the output of following steps
+                bool Console = true;
+
+                for(int i = 1; i < argc; i++)
+                    if(!strcmp(argv[i], "-w")) {
+                        Console = false;
+                        break;
+                    }
+
+                if(Console) {
+                    AllocConsole();
+                    AttachConsole( GetCurrentProcessId() ) ;
+                    // Don't allow CTRL-C in console to terminate RT
+                    SetConsoleCtrlHandler( NULL, true );
+                    // Set title of console
+                    char consoletitle[128];
+                    sprintf(consoletitle, "RawTherapee %s Console", VERSION);
+                    SetConsoleTitle(consoletitle);
+                    // increase size of screen buffer
+                    COORD c;
+                    c.X = 200;
+                    c.Y = 1000;
+                    SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), c );
+                    // Disable console-Cursor
+                    CONSOLE_CURSOR_INFO cursorInfo;
+                    cursorInfo.dwSize = 100;
+                    cursorInfo.bVisible = false;
+                    SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursorInfo );
+
+                    if(!stdoutRedirectedtoFile) {
+                        freopen( "CON", "w", stdout ) ;
+                    }
+
+                    if(!stderrRedirectedtoFile) {
+                        freopen( "CON", "w", stderr ) ;
+                    }
+
+                    freopen( "CON", "r", stdin ) ;
+
+                    consoleOpened = true;
+
+                    // printing RT's version in every case, particularly useful for the 'verbose' mode, but also for the batch processing
+                    std::cout << "RawTherapee, version " << VERSION << ", command line" << std::endl;
+                    std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+                }
+            }
+        }
+    }
 #endif
 
-    // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-    std::cout << "RawTherapee, version " << VERSION << std::endl;
-    if (argc > 1) {
-        int ret = processLineParams( argc, argv);
+    int ret = 0;
 
-        if( ret <= 0 ) {
-            return ret;
-        }
+    // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
+    std::cout << "RawTherapee, version " << VERSION << ", command line" << std::endl;
+    if (argc > 1) {
+        ret = processLineParams(argc, argv);
     }
     else {
         std::cout << "Terminating without anything to do." << std::endl;
     }
 
-    return 0;
+#ifdef WIN32
+    if(consoleOpened) {
+        printf("Press any key to exit RawTherapee\n");
+        FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+        getch();
+    }
+#endif
+
+    return ret;
 }
 
 void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparams)
@@ -215,6 +258,18 @@ void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparam
     }
 
     return;
+}
+
+
+bool dontLoadCache( int argc, char **argv )
+{
+    for( int iArg = 1; iArg < argc; iArg++) {
+        if( argv[iArg][0] == '-' && argv[iArg][1] == 'q' ) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 int processLineParams( int argc, char **argv )
@@ -290,6 +345,9 @@ int processLineParams( int argc, char **argv )
 
             case 'd':
                 useDefault = true;
+                break;
+
+            case 'q':
                 break;
 
             case 'Y':
@@ -432,6 +490,7 @@ int processLineParams( int argc, char **argv )
                 std::cout << "Options:" << std::endl;
                 std::cout << "  " << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] -c <input>" << std::endl;
                 std::cout << std::endl;
+                std::cout << "  -q               Quick Start mode : do not load cached files to speedup start time." << std::endl;
                 std::cout << "  -c <files>       Specify one or more input files." << std::endl;
                 std::cout << "                   -c must be the last option." << std::endl;
                 std::cout << "  -o <file>|<dir>  Set output file or folder." << std::endl;

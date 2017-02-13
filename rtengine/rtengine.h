@@ -435,8 +435,9 @@ public:
   * @brief Initializes the RT engine
   * @param s is a struct of basic settings
   * @param baseDir base directory of RT's installation dir
-  * @param userSettingsDir RT's base directory in the user's settings dir */
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir);
+  * @param userSettingsDir RT's base directory in the user's settings dir
+  * @param loadAll if false, don't load the various dependencies (profiles, HALDClut files, ...), they'll be loaded from disk each time they'll be used (launching time improvement) */
+int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll = true);
 
 /** Cleanup the RT engine (static variables) */
 void cleanup ();

@@ -2177,7 +2177,7 @@ int Options::saveToFile (Glib::ustring fname)
     }
 }
 
-bool Options::load ()
+bool Options::load (bool lightweight)
 {
 
     // Find the application data path
@@ -2338,7 +2338,7 @@ bool Options::load ()
 
     langMgr.load (localeTranslation, new MultiLangMgr (languageTranslation, new MultiLangMgr (defaultTranslation)));
 
-    rtengine::init (&options.rtSettings, argv0, rtdir);
+    rtengine::init (&options.rtSettings, argv0, rtdir, !lightweight);
 
     return true;
 }

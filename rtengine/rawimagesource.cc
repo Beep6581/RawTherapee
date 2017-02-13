@@ -894,6 +894,9 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &
     findInputProfile(cmp.input, nullptr, (static_cast<const ImageData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
 
     if (dcpProf == nullptr) {
+        if (settings->verbose) {
+            printf("Can't load DCP profile '%s'!\n", cmp.input.c_str());
+        }
         return nullptr;
     }
 

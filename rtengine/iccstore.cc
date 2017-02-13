@@ -767,7 +767,7 @@ uint8_t ICCStore::getProofIntents (cmsHPROFILE profile) const
 }
 
 // Reads all profiles from the given profiles dir
-void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCDir)
+void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCDir, bool loadAll)
 {
 
     MyMutex::MyLock lock (mutex_);
@@ -776,15 +776,19 @@ void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCD
     profilesDir = Glib::build_filename (rtICCDir, "output");
     fileProfiles.clear();
     fileProfileContents.clear();
-    loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
-    loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
+    if (loadAll) {
+        loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
+        loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
+    }
 
     // Input profiles
     // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
     stdProfilesDir = Glib::build_filename (rtICCDir, "input");
     fileStdProfiles.clear();
     fileStdProfilesFileNames.clear();
-    loadProfiles (stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true);
+    if (loadAll) {
+        loadProfiles (stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true);
+    }
 }
 
 // Determine the first monitor default profile of operating system, if selected

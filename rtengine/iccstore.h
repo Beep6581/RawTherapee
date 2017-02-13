@@ -92,7 +92,7 @@ public:
 
     static ICCStore* getInstance ();
 
-    void init (const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir);
+    void init (const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir, bool loadAll);
 
     static void getGammaArray(const procparams::ColorManagementParams &icm, GammaValues &ga);
     static cmsHPROFILE makeStdGammaProfile (cmsHPROFILE iprof);

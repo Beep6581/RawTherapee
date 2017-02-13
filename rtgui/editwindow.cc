@@ -23,6 +23,7 @@
 #include <gtk/gtk.h>
 #include "rtimage.h"
 #include "threadutils.h"
+#include "../rtengine/icons.h"
 
 // Check if the system has more than one display and option is set
 bool EditWindow::isMultiDisplayEnabled()
@@ -59,7 +60,7 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
 {
 
     Glib::ustring fName = "rt-logo-tiny.png";
-    Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
+    Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName);
 
     try {
         set_default_icon_from_file (fullPath);

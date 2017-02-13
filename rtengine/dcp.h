@@ -75,6 +75,7 @@ public:
     bool getHasBaselineExposureOffset() const;
 
     Illuminants getIlluminants() const;
+    bool isValid();
 
     void apply(
         Imagefloat* img,
@@ -130,6 +131,7 @@ private:
     bool has_tone_curve;
     bool has_baseline_exposure_offset;
     bool will_interpolate;
+    bool valid;
     Matrix forward_matrix_1;
     Matrix forward_matrix_2;
     double temperature_1;
@@ -152,7 +154,7 @@ class DCPStore final :
 public:
     static DCPStore* getInstance();
 
-    void init(const Glib::ustring& rt_profile_dir);
+    void init(const Glib::ustring& rt_profile_dir, bool loadAll = true);
 
     bool isValidDCPFileName(const Glib::ustring& filename) const;
 

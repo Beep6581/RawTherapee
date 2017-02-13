@@ -406,6 +406,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     has_tone_curve(false),
     has_baseline_exposure_offset(false),
     will_interpolate(false),
+    valid(false),
     baseline_exposure_offset(0.0)
 {
     constexpr int tiff_float_size = 4;
@@ -691,6 +692,11 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     FILE* const file = g_fopen(filename.c_str(), "rb");
 
+    if (file == nullptr) {
+        printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        return;
+    }
+
     std::unique_ptr<TagDirectory> tagDir(ExifManager::parseTIFF(file, false));
 
     Tag* tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_1));
@@ -738,6 +744,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     if (!tag) {
         std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
+        fclose(file);
         return;
     }
 
@@ -935,6 +942,8 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     if (file) {
         fclose(file);
     }
+
+    valid = true;
 }
 
 DCPProfile::~DCPProfile()
@@ -1683,13 +1692,18 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
     }
 }
 
+bool DCPProfile::isValid()
+{
+    return valid;
+}
+
 DCPStore* DCPStore::getInstance()
 {
     static DCPStore instance;
     return &instance;
 }
 
-void DCPStore::init(const Glib::ustring& rt_profile_dir)
+void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 {
     MyMutex::MyLock lock(mutex);
 
@@ -1770,9 +1784,12 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 
     DCPProfile* const res = new DCPProfile(filename);
 
-    if (*res) {
+    if (res->isValid()) {
         // Add profile
         profile_cache[filename] = res;
+        if (options.rtSettings.verbose) {
+            printf("DCP profile '%s' loaded from disk\n", filename.c_str());
+        }
         return res;
     }
 
