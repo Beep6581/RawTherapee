@@ -364,15 +364,11 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 }
 BlackWhite::~BlackWhite ()
 {
+    idle_register.destroy();
+
     delete luminanceCEG;
     delete beforeCurveCEG;
     delete afterCurveCEG;
-}
-
-int BWChangedUI (void* data)
-{
-    (static_cast<BlackWhite*>(data))->BWComputed_ ();
-    return 0;
 }
 
 void BlackWhite::BWChanged  (double redbw, double greenbw, double bluebw)
@@ -380,7 +376,13 @@ void BlackWhite::BWChanged  (double redbw, double greenbw, double bluebw)
     nextredbw = redbw;
     nextgreenbw = greenbw;
     nextbluebw = bluebw;
-    add_idle (BWChangedUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<BlackWhite*>(data)->BWComputed_();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool BlackWhite::BWComputed_ ()

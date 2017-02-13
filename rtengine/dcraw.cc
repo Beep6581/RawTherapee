@@ -11,6 +11,7 @@
 /*RT*/#define DJGPP
 
 #include "opthelper.h"
+
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2016 by Dave Coffin, dcoffin a cybercom o net
@@ -2011,7 +2012,7 @@ void CLASS hasselblad_correct()
                                             {bhu-1,0},{bhu-1,bwu/2},{bhu-1,bwu-1}};
             for (col = 0; col < bw; col++) {
                 for (i = 0; i < 9; i++) {
-                    ushort dist = (ushort)sqrt(abs(corners[i][0] - row) * abs(corners[i][0] - row) + abs(corners[i][1] - col) * abs(corners[i][1] - col));
+                    ushort dist = (ushort)sqrt(abs((int)(corners[i][0] - row)) * abs((int)(corners[i][0] - row)) + abs((int)(corners[i][1] - col)) * abs((int)(corners[i][1] - col)));
                     ushort weight = dist > maxdist ? 0 : maxdist - dist;
                     corners_weight[9*(row*bw+col)+i] = weight;
                 }
@@ -6264,6 +6265,7 @@ void CLASS apply_tiff()
       tile_width    = tiff_ifd[i].tile_width;
       tile_length   = tiff_ifd[i].tile_length;
       shutter       = tiff_ifd[i].shutter;
+      raw_size      = tiff_ifd[i].bytes;
       raw = i;
     }
   }
@@ -9016,6 +9018,9 @@ canon_a5:
     if (filters == 9)
       FORC(36) ((char *)xtrans)[c] =
 	xtrans_abs[(c/6+top_margin) % 6][(c+left_margin) % 6];
+	if(filters == 9 && raw_height * raw_width * 2 != raw_size) {
+        xtransCompressed = true;
+	}
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
     width  = 2312;
@@ -9791,20 +9796,22 @@ void CLASS deflate_dng_load_raw() {
     }
     uLongf dstLen = tile_width * tile_length * 4;
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp parallel
 #endif
 {
     Bytef * cBuffer = new Bytef[maxCompressed];
     Bytef * uBuffer = new Bytef[dstLen];
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp for collapse(2) nowait
 #endif
     for (size_t y = 0; y < raw_height; y += tile_length) {
       for (size_t x = 0; x < raw_width; x += tile_width) {
 		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp critical
+#endif
 {
         fseek(ifp, tileOffsets[t], SEEK_SET);
         fread(cBuffer, 1, tileBytes[t], ifp);
@@ -9862,6 +9869,8 @@ struct tiff_hdr {
   unsigned gps[26];
   char desc[512], make[64], model[64], soft[32], date[20], artist[64];
 };
+
+#include "xtranscompressed.cc"
 
 /* RT: Delete from here */
 /*RT*/#undef SQR

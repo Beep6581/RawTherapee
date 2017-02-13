@@ -33,44 +33,20 @@ public:
     virtual void cropSelectRequested() = 0;
 };
 
-class CropRatio
-{
-
-public:
+struct CropRatio {
     Glib::ustring label;
     double value;
 };
 
-class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener
+class Crop final :
+    public ToolParamBlock,
+    public CropGUIListener,
+    public FoldableToolPanel,
+    public rtengine::SizeListener
 {
-protected:
-    Gtk::CheckButton* fixr;
-    MyComboBoxText* ratio;
-    MyComboBoxText* orientation;
-    MyComboBoxText* guide;
-    Gtk::Button* selectCrop;
-    CropPanelListener* clistener;
-    int opt;
-    MySpinButton* x;
-    MySpinButton* y;
-    MySpinButton* w;
-    MySpinButton* h;
-    MySpinButton* ppi;
-    Gtk::Label* sizecm;
-    Gtk::Label* sizein;
-    Gtk::VBox* ppibox;
-    Gtk::VBox* sizebox;
-    int maxw, maxh;
-    double nx, ny;
-    int nw, nh;
-    int lastRotationDeg;
-    sigc::connection xconn, yconn, wconn, hconn, fconn, rconn, oconn, gconn;
-    bool wDirty, hDirty, xDirty, yDirty, lastFixRatio;
-    void adjustCropToRatio();
-    std::vector<CropRatio>   cropratio;
-
 public:
-    Crop ();
+    Crop();
+    ~Crop();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
@@ -116,6 +92,34 @@ public:
     void hFlipCrop          ();
     void vFlipCrop          ();
     void rotateCrop         (int deg, bool hflip, bool vflip);
+
+private:
+    Gtk::CheckButton* fixr;
+    MyComboBoxText* ratio;
+    MyComboBoxText* orientation;
+    MyComboBoxText* guide;
+    Gtk::Button* selectCrop;
+    CropPanelListener* clistener;
+    int opt;
+    MySpinButton* x;
+    MySpinButton* y;
+    MySpinButton* w;
+    MySpinButton* h;
+    MySpinButton* ppi;
+    Gtk::Label* sizecm;
+    Gtk::Label* sizein;
+    Gtk::VBox* ppibox;
+    Gtk::VBox* sizebox;
+    int maxw, maxh;
+    double nx, ny;
+    int nw, nh;
+    int lastRotationDeg;
+    sigc::connection xconn, yconn, wconn, hconn, fconn, rconn, oconn, gconn;
+    bool wDirty, hDirty, xDirty, yDirty, lastFixRatio;
+    void adjustCropToRatio();
+    std::vector<CropRatio>   cropratio;
+
+    IdleRegister idle_register;
 };
 
 #endif

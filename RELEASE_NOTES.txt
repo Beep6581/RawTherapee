@@ -1,8 +1,17 @@
-RAWTHERAPEE 5 RELEASE NOTES
----------------------------
+RAWTHERAPEE 5 DEVELOPMENT RELEASE NOTES
+---------------------------------------
 RawTherapee provides you with a selection of powerful tools with which you can practice the art of developing raw photos. Be sure to read RawPedia to understand how each tool works so that you may make the most of it.
 http://rawpedia.rawtherapee.com/
 A great place to start is the "Getting Started" article. Click on "Main page" in the top-left corner when you have finished reading that article to see all other articles.
+
+This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
+
+While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
+- Development versions only had limited testing, so there may be bugs unknown to us.
+- You should report these bugs so that they get fixed for the next stable release. See
+  www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
+- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
+- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
 
 News Relevant to Photographers
 ------------------------------
@@ -15,32 +24,18 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to meaningful axes (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New Features:
-- Wavelets tool.
-- Retinex tool.
-- Monitor profile and rendering intent support.
-- Print soft-proofing support.
-- Automatic chroma noise reduction, manual luminance noise reduction using sliders and curves.
-- The "Inspect" tab in the File Browser lets you see a 100% preview of the image whose thumbnail your mouse cursor hovers over, which is either the largest JPEG image embedded in the raw file or the image itself when hovering over non-raw images.
-- The curve pipette allows you to pick the right point of a curve by clicking in the preview, and input/output values so that you can set the desired output value for a given input value.
-- Post-resize sharpening, to give your photos that subtle crispness after resizing them.
-- Dual-illuminant DCP support with curves, base tables, look tables and baseline exposure.
-- New exposure tone curve modes "Luminance" and "Perceptual".
-- Queue processing will stop if an error is encountered while saving, e.g. if you run out of disk space.
-- The Contrast by Detail Levels tool received the "Process Locate Before/After Black-and-White" option.
-- Rec. 2020 ICC profile added.
-- The Navigator can show RGB, HSV and L*a*b* values in a range of 0-255, 0-1 or %.
-- The Lockable Color Picker allows you to place multiple sample points over the preview to measure colors and see them change in real time as you manipulate the image. They support the same ranges as the Navigator.
-- Grayscale JPEG and TIFF images are now supported.
-- 32-bit TIFF files are supported.
-- In addition to these new features, RawTherapee received over two years worth of amazing speedups, code cleanups and bug fixes, making it faster and more stable than ever before!
+New features since 5.0-r1:
+- 
 
 News Relevant to Package Maintainers
 ------------------------------------
-- Branch "master" uses GTK2, branch "gtk3" requires GTK+ >=3.16.
-- There are known bugs using GTK+ versions 3.20-3.22 where scrollbars may appear stuck (issue #3545) and where the Retinex tool's "Gain and Offset" panel may appear under the "Transmission" panel (issue #3525) until the user hovers the mouse cursor over a curve button. For this reason we recommend using GTK+ 3.16-3.18 if possible.
+- To get the latest development version, use the "dev" branch.
+- All development now uses GTK3, requiring version >=3.16. There are known bugs using GTK+ versions 3.20-3.22 where scrollbars may appear stuck (issue #3545) and where the Retinex tool's "Gain and Offset" panel may appear under the "Transmission" panel (issue #3525) until the user hovers the mouse cursor over a curve button. For this reason we recommend using GTK+ 3.16-3.18 if possible.
+- GTK2 is no longer supported. Use branch "gtk2" if you want to compile a GTK2 version, but remember that there will be no improvements to it after 5.0-r1.
+- Branches "master" and "gtk3" are dead, do not use them.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
-- Use -DCMAKE_CXX_FLAGS="-std=c++11"
+- Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
+- Use -o3, it will make RawTherapee faster with no known side-effects.
 - For stable builds (RT5) use -DCACHE_NAME_SUFFIX=""
 - For development builds use -DCACHE_NAME_SUFFIX="5-dev"
 - Windows builders should compile on a drive letter which users are most unlikely to have, such as Y:, due to the "There is no disk in the drive" error (issue #3544).
@@ -50,9 +45,6 @@ News Relevant to Developers
 - Use C++11
 - Code must be run through astyle.
 - Commits automatically trigger a compilation using Travis CI.
-
-Complete revision history available on GitHub:
-https://github.com/Beep6581/RawTherapee/commits/
 
 DOCUMENTATION
 -------------

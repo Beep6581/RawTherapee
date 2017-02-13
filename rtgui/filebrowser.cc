@@ -585,7 +585,6 @@ void FileBrowser::addEntry (FileBrowserEntry* entry)
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry)
 {
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     entry->selected = false;
     entry->drawable = false;
     entry->framed = editedFiles.find (entry->filename) != editedFiles.end();

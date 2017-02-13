@@ -1,0 +1,881 @@
+/*
+  This file is part of RawTherapee.
+
+  Copyright (c) 2016 TooWaBoo (v1.19.4)
+  Many thanks to the RawTherapee Developer Team for this great piece of software
+
+  RawTherapee is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  RawTherapee is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*** Change me *** rgb(red,green,blue) *** allowed values from 0 to 255 for each color ***/
+
+@define-color accent-color rgb(35,99,166);      /*** Highlight/selected color for  Tab indicator, List, Dropdown menu, Borders ... ***/
+@define-color text-hl-color rgb(210,210,210);   /*** Highlight/selected text color ***/
+
+@define-color accent-color2 rgb(35,99,166);     /*** Slider, Progressbar, Scrollbar ***/
+@define-color accent-color4 rgb(35,99,166);     /*** Slider knob ***/
+
+@define-color accent-color3 rgb(35,99,166);     /*** Selected thumbnail background color ***/
+@define-color text-hl-color3 rgb(210,210,210);  /*** Selected thumbnail text color ***/
+
+/*** Change me end ************************************************************************/
+
+@define-color text-color rgb(180,180,180);
+@define-color text-hl-color2 rgb(192,192,192);
+@define-color text-tbEntry rgb(192,192,192);
+@define-color bg-dark-grey rgb(36,36,36);
+@define-color bg-grey rgb(70,70,70);
+@define-color bg-light-grey rgb(88,88,88);
+@define-color border-color rgba(255,255,255,.25);
+@define-color bg-list-hover rgba(255,255,255,.065);
+@define-color bg-scale-entry rgba(0,0,0,.14);
+@define-color bg-button-border rgba(0,0,0,.48);
+@define-color bg-button-border-hover rgba(0,0,0,.58);
+@define-color bg-entry-border rgba(0,0,0,.40);
+@define-color bg-button-hover rgba(0,0,0,.22);
+@define-color bg-spin-button-hover rgba(0,0,0,.25);
+@define-color bg-entry-IPTC @bg-dark-grey;
+@define-color view-grid-border rgb(64,64,64);
+
+* {
+    color: @text-color;
+    transition: none;
+    text-shadow: none;
+    icon-shadow: none;
+    box-shadow: none;
+    outline-style: none; /* removes the ugly dotted focus line */
+    border-image: none;
+    -GtkCheckButton-indicator-size: 16;
+    -GtkCheckMenuItem-indicator-size: 16;
+    -GtkCheckButton-indicator-spacing: 2;
+}
+
+.undershoot {
+    background-image: none; /* removes the dotted scrollbar line */
+}
+GtkWindow {
+    background-color: @bg-light-grey;
+}
+GtkDialog {
+    background-color: @bg-grey;
+    -GtkDialog-content-area-spacing: 7;
+    -GtkDialog-action-area-border: 0;
+    -GtkDialog-content-area-border: 8;
+}
+
+GtkFontChooser,
+GtkColorChooser {
+    -GtkDialog-action-area-border: 4;
+    -GtkDialog-content-area-border: 0;
+}
+
+.frame {
+    border: none;
+}
+#PrefNotebook > .frame {
+    border: 1px solid rgba(0,0,0,.50);
+    border-top: none;
+}
+#BatchQueueButtonsMainContainer GtkFrame {
+    padding: 4px 4px 4px 10px;
+}
+
+/*** Add space between buttons and image area***/
+#BeforeAfterContainer GtkFrame {
+    padding: 2px 0 4px;
+}
+/*** Add space between before/after image ***/
+#BeforeAfterContainer GtkContainer:nth-child(1) > GtkContainer:nth-child(2) GtkFrame {
+    padding-right: 14px;
+}
+
+/*** Menu bubble box ***/
+GtkPopover {
+    background-color: @bg-grey;
+    border: 1px solid @accent-color;
+    border-radius: 0;
+}
+
+.menu {
+    background-color: @bg-dark-grey;
+    border: 1px solid @accent-color;
+}
+.menu > .menuitem {
+    padding: 2px 4px;
+}
+.menu > .menuitem:hover {
+    background-color: @accent-color;
+}
+.menu > .menuitem:hover > * > *,
+.menu > .menuitem:hover > * {
+    color: @text-hl-color;
+}
+
+GtkNotebook {
+    padding: 4px;
+    background-color: @bg-light-grey;
+}
+GtkDialog GtkNotebook  {
+    padding: 2px 0 0;
+}
+#PrefNotebook  {
+    padding: 4px 8px;
+}
+#RightNotebook {
+    padding: 0 0 0 4px;
+}
+
+GtkPaned {
+    -GtkPaned-handle-size: 4px;
+    background-color: transparent;
+}
+.pane-separator {
+    background-color: @bg-light-grey;
+}
+GtkDialog .pane-separator {
+    background-color: @bg-grey;
+}
+
+/*** Separator ***/
+.separator {
+    color: @bg-light-grey;
+}
+GtkDialog .separator {
+    color: @border-color;
+}
+#RightNotebook .separator {
+    color: @bg-dark-grey;
+}
+    /*** Navigator ***/
+#Navigator .separator {
+    color: @view-grid-border;
+}
+/*** end ***/
+
+/*** Background color image area***/
+GtkDrawingArea {
+    background-color: @bg-grey;
+    border: 1px solid rgba(0,0,0,.32);
+}
+/*** Histogram ***/
+#HistogramPanel,
+#HistogramArea {
+    background-color: @bg-dark-grey;
+    border: none;
+}
+/*** Histogram RGB-Bar***/
+#HistogramRGBArea {
+    background-color: rgb(128,128,128);
+    border: none;
+}
+/*** Navigator ***/
+#Navigator GtkDrawingArea {
+    background-color: @bg-dark-grey;
+    border: 1px solid @bg-dark-grey;
+}
+#Navigator {
+    background-color: @bg-dark-grey;
+    border-top: 156px solid @bg-light-grey;
+}
+
+#RightNotebook GtkDrawingArea {
+    background-color: @bg-dark-grey;
+}
+
+/*** Label ***/
+ .label {
+    padding: 0 4px;
+}
+    /*** Increase space between labels in navigater ***/
+#Navigator .label {
+    padding: 6px 0 3px;
+}
+#Navigator GtkTable .label {
+    padding: 0 0 4px;
+}
+    /***/
+GtkDialog .label,
+#ToolPanelNotebook .label,
+.notebook tab .label {
+    padding: 0 1px;
+}
+.button .label {
+    padding: 0;
+}
+
+    /*** Add left and right space between frame and labels ***/
+.frame > .label,
+#ToolPanelNotebook .frame > .label {
+    padding: 4px;
+}
+#BatchQueueButtonsMainContainer GtkFrame:nth-child(3) > .label{
+    padding: 2px 0px 4px;
+}
+
+#MyExpanderTitle .label {
+    padding: 2px 3px;
+}
+/*** end ***/
+
+.tooltip {
+    border-radius: 0;
+    padding: 0;
+}
+.tooltip.background {
+    background-color: @bg-dark-grey;
+    border: 1px solid @accent-color;
+}
+
+/*** PartialPaste ***/
+#PartialPaste:nth-child(2) {
+    background-color: @bg-light-grey;
+    border: 1px solid rgba(0,0,0,.50);
+}
+#PartialPaste > .frame {
+    padding: 8px 10px;
+}
+#PartialPasteHeaderSep {
+    color: rgb(192,192,192);
+}
+#PartialPasteHeader .label {
+    color: rgb(213,213,213);
+}
+/*** end ***/
+
+/*** Scrollbar ***/
+.scrollbar.trough {
+    background-color: rgba(0,0,0,.38);
+    background-image: none;
+    border: none;
+}
+.scrollbar.slider:active {
+    background-color: shade(@accent-color2,1.12);
+}
+
+/*** end ***/
+
+/*** Scale & Progressbar ***/
+.scale {
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), 0 1px rgba(242, 242, 242, 0.1);
+    -GtkRange-trough-border: 6;
+    -GtkScale-slider-length: 15;
+    -GtkRange-slider-width: 15;
+}
+.scale.trough,
+#ToolPanelNotebook .scale.trough {
+    background-color: @bg-scale-entry;
+    border-color: @bg-dark-grey;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), 0 1px rgba(242, 242, 242, 0.1);
+}
+.scale.trough.highlight,
+#ToolPanelNotebook .scale.trough.highlight {
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), 0 1px rgba(242, 242, 242, 0.1);
+    background-image: none;
+    background-color: @accent-color2;
+    border: 1px solid @bg-dark-grey;
+    color: @text-hl-color2;
+}
+.scale.slider,
+#ToolPanelNotebook .scale.slider {
+    background-image: linear-gradient(to bottom, shade (@accent-color4,1.15), shade (@accent-color4,.85));
+    border: 1px solid shade(@bg-dark-grey, 1.25);
+    box-shadow: none;
+}
+.scale.fine-tune {
+    -GtkRange-trough-border: 5;
+}
+.scale.scale-has-marks-below {
+    -GtkRange-trough-border: 6;
+    -GtkScale-slider-length: 6;
+    -GtkRange-slider-width: 19;
+}
+.scale.slider.scale-has-marks-below {
+    border-radius: 0 0 20px 20px;
+    border: 1px solid @bg-dark-grey;
+}
+.scale.fine-tune.scale-has-marks-below {
+    -GtkRange-trough-border: 5;
+}
+.scale.slider:hover,
+#ToolPanelNotebook .scale.slider:hover {
+    background-image: linear-gradient(to bottom, shade (@accent-color4,1.25), shade (@accent-color4,.95));
+}
+
+.scale.slider:active,
+#ToolPanelNotebook .scale.slider:active {
+    background-image: linear-gradient(to bottom, shade (@accent-color4,1.25), shade (@accent-color4,.95));
+}
+
+GtkProgressBar {
+    -GtkProgressBar-min-vertical-bar-width: 8;
+    -GtkProgressBar-min-horizontal-bar-height: 8;
+    -GtkProgressBar-yspacing: 4px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), 0 1px rgba(242, 242, 242, 0.1);
+}
+.progressbar {
+    background-image: none;
+    background-color: @accent-color2;
+    border-color: @bg-dark-grey;
+}
+GtkProgressBar.trough {
+    background-image: none;
+    background-color: @bg-scale-entry;
+}
+#MainNotebook > GtkGrid GtkProgressBar {
+    box-shadow: none;
+}
+#MainNotebook > GtkGrid GtkProgressBar.trough {
+    background-image: none;
+    background-color: @bg-dark-grey;
+    border-color: @bg-dark-grey;
+}
+/*** end ***/
+
+/*** Load/Save ***/
+GtkFileChooserWidget {
+    background-color: @bg-grey;
+}
+GtkFileChooserWidget > GtkBox {
+    border-bottom-color: @bg-dark-grey;
+}
+GtkFileChooserWidget GtkBox {
+    background-color: transparent;
+}
+GtkFileChooserWidget GtkListBox * {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+GtkFileChooserWidget GtkListBox {
+    background-color: @bg-dark-grey;
+}
+GtkFileChooserWidget .list-row * {
+    padding: 1px 4px;
+}
+GtkFileChooserWidget .list-row:hover {
+    background-color: @bg-list-hover;
+}
+GtkFileChooserWidget .list-row:hover * {
+    color: @text-hl-color2;
+}
+GtkFileChooserWidget .list-row:selected {
+    background-color: @accent-color;
+}
+GtkFileChooserWidget .list-row:selected * {
+    color: @text-hl-color;
+}
+/*** end ***/
+
+/*** Tab Bars ***/
+.notebook tab, .notebook.header {
+    background-color: @bg-dark-grey;
+    border-color: @bg-dark-grey;
+}
+#MainNotebook tab {
+    padding: 5px;
+}
+.notebook tab.top {
+    border-width: 0 0 5px 0;
+}
+.notebook tab.left {
+    border-width: 0 5px 0 0;
+}
+#RightNotebook tab.left,
+#PrefNotebook tab,
+GtkDialog tab {
+    padding: 9px;
+}
+#ToolPanelNotebook tab {
+    padding: 10px 4px 7px;
+}
+#MetaPanelNotebook tab {
+    padding: 8px 4px;
+}
+
+.notebook tab:active {
+    border-color: @accent-color;
+}
+
+/*** end ***/
+
+/*** File Browser ***/
+#FileBrowser GtkDrawingArea {
+    background-color: @bg-grey;
+}
+#FileBrowser GtkDrawingArea:selected {
+    background-color: @accent-color3;
+    color: @text-hl-color3;
+}
+/*** end ***/
+
+/*** Image ***/
+GtkImage {
+    padding: 0;
+}
+#MainNotebook > GtkGrid GtkImage  {
+    padding: 1px;
+}
+
+#ToolPanelNotebook GtkImage{
+    padding: 0 4px;
+}
+#MyExpanderTitle GtkImage{
+    padding: 0;
+}
+
+#ToolPanelNotebook tab GtkImage,
+#ToolPanelNotebook .button GtkImage {
+    padding: 1px 0;
+}
+
+GtkDialog .button GtkImage{
+    padding: 0;
+}
+GtkFileChooserWidget .button GtkImage{
+    padding: 0 4px;
+}
+/*** end ***/
+
+/*** Toolpanel ***/
+#ToolPanelNotebook {
+    background-color: @bg-dark-grey;
+    padding: 0;
+    border-top: 4px solid @bg-dark-grey;
+}
+
+#ToolPanelNotebook GtkScrolledWindow GtkViewport.frame {
+    padding: 0 4px;
+}
+#ToolPanelNotebook .separator {
+    color: transparent;
+}
+#ToolPanelNotebook GtkFrame,
+#PrefNotebook GtkFrame {
+    border: 1px solid @border-color;
+    border-radius: 0;
+    padding: 5px;
+}
+
+#ToolPanelNotebook GtkDrawingArea {
+    background-color: @bg-dark-grey;
+    border-color: @bg-light-grey;
+    color: @text-color;
+}
+#ToolPanelNotebook GtkDrawingArea {
+    border-radius: 1px; /* BUG: if 0, scale mini sliders look funny */
+}
+
+#ExpanderBox #ExpanderBox,
+#ExpanderBox2,
+#ExpanderBox3 {
+    border: 1px solid @border-color;
+}
+
+#ExpanderBox,
+#ExpanderBox2,
+#ExpanderBox3 {
+    background-color: @bg-grey;
+    border-radius: 0;
+}
+
+#MyExpanderTitle .label {
+    color: @text-color;
+}
+#MyExpanderTitle:hover .label {
+    color: @text-hl-color2;
+}
+/*** end ***/
+
+/*** View ***/
+.view {
+    background-color: @bg-dark-grey;
+    border-color: @view-grid-border;
+}
+#PrefNotebook .view {
+    background-color: @bg-grey;
+}
+#MainNotebook .view.cell:nth-child(2) {
+    padding: 1px 0px 1px 4px;
+}
+.view row:hover {
+    background-color: @bg-list-hover;
+    color: @text-hl-color2;
+}
+#PrefNotebook .view row:hover {
+    background-color: @bg-light-grey;
+    color: @text-hl-color2;
+}
+.view row:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+}
+#PrefNotebook .view row:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+}
+/*** end ***/
+
+/*** Metadata ***/
+#MetaPanelNotebook {
+    padding: 8px 11px 0;
+}
+#MetaPanelNotebook GtkScrolledWindow GtkViewport.frame {
+    padding: 8px 10px;
+}
+#MetaPanelNotebook.frame {
+    background-color: @bg-grey;
+    border-bottom: none;
+    border-top: 4px solid @bg-dark-grey;
+    border-left: 9px solid @bg-dark-grey;
+    border-right: 9px solid @bg-dark-grey;
+}
+#MetaPanelNotebook .separator {
+    color: @border-color;
+}
+#MetaPanelNotebook.header {
+    background-color: @bg-dark-grey;
+
+}
+#MetaPanelNotebook GtkTreeView {
+    padding: 1px;
+    background-color: @bg-grey;
+}
+#MetaPanelNotebook .frame GtkTreeView {
+    padding: 0px;
+    background-color: @bg-entry-IPTC;
+}
+#MetaPanelNotebook GtkTreeView:hover,
+#MetaPanelNotebook .frame GtkTreeView:hover {
+    background-color: @bg-list-hover;
+    color: @text-hl-color;
+}
+#MetaPanelNotebook GtkTreeView:selected,
+#MetaPanelNotebook .frame GtkTreeView:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+}
+#MetaPanelNotebook GtkTextView {
+    color: @text-color;
+    background-color: @bg-entry-IPTC;
+    padding: 2px 4px;
+}
+/*** end ***/
+
+/*** Entry ***/
+.entry {
+    background-image: none;
+    background-color: @bg-scale-entry;
+    border: 1px solid @bg-entry-border;
+    border-radius: 0;
+    padding: 2px 4px;
+    color: @text-color;
+    box-shadow: inset 1px 1px rgba(0, 0, 0, 0.08), 0 1px rgba(242 , 242, 242, 0.1);
+}
+#FileBrowser .entry {
+    padding: 3px 4px;
+}
+.entry:focused:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+}
+.entry:not(:focused):not(:insensitive) {/*Workaround*/
+    color: @text-color;
+    background-color: transparent;
+}
+.entry:not(:selected):not(:insensitive) {
+    color: @text-color;
+    background-color: @bg-scale-entry;
+}
+#ToolPanelNotebook .entry {
+    padding: 0 4px 0 8px;
+    border-radius: 20px 0 0 20px;
+    background-color: rgba(255,255,255,.12);
+    border: 1px solid rgba(0,0,0,.46);
+    color: @text-tbEntry;
+    box-shadow: inset 1px  1px rgba(0, 0, 0, .12), 0 1px rgba(255 , 255, 255, 0.12);
+}
+#ToolPanelNotebook .entry:focused:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+}
+#ToolPanelNotebook .entry:not(:focused):not(:insensitive) {/*Workaround*/
+    color: @text-tbEntry;
+    background-color: transparent;
+}
+#ToolPanelNotebook  .entry:not(:selected):not(:insensitive) {
+    color: @text-tbEntry;
+    background-color: rgba(255,255,255,.12);
+}
+
+#MetaPanelNotebook .entry {
+    color: @text-color;
+    background-color: @bg-entry-IPTC;
+    border: none;
+    border-radius: 0;
+    padding: 2px 4px;
+    box-shadow: none;
+}
+#MetaPanelNotebook .entry:focused:selected {
+    color: @text-hl-color;
+    background-color: @accent-color;
+    box-shadow: none;
+}
+#MetaPanelNotebook .entry:not(:focused):not(:insensitive) {/*Workaround*/
+    color: @text-color;
+    background-color: transparent;
+    box-shadow: none;
+}
+#MetaPanelNotebook  .entry:not(:selected):not(:insensitive) {
+    color: @text-color;
+    background-color: @bg-entry-IPTC;
+    box-shadow: none;
+}
+/*** end ***/
+
+/*** Buttons ***/
+.button {
+    background-color: transparent;
+    border: 1px solid @bg-button-border;
+    border-radius: 0;
+    padding: 3px 4px;
+    box-shadow: inset 0 1px rgba(242, 242, 242, 0.1), 0 1px rgba(242, 242, 242, 0.1);
+    background-image: linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.14) 40%, rgba(0,0,0,.26));
+}
+.message-dialog .dialog-action-area .button {
+    padding: 6px;
+ }
+
+.button.Left + .button:not(.image-button).Right {
+    border-left: none;
+}
+GtkComboBox .button {
+    padding: 4px 3px;
+}
+#ToolPanelNotebook .button,
+GtkDialog .button,
+#BatchQueueButtonsMainContainer .button {
+    padding: 0px 3px;
+}
+#BatchQueueButtons .button {
+    padding-top: 6px;
+    padding-bottom: 6px
+}
+#BeforeAfterContainer .button {
+    padding: 2px;
+}
+    
+    /*** Fix: Space between first Retinex Comboboxes ***/
+GtkLabel + GtkComboBox + GtkComboBox {
+    padding-left: 4px;
+}
+
+.text-button {
+    padding: 0 2px 0 0;
+}
+#PartialPaste .text-button {
+    padding: 0 8px 0 2px;
+    -GtkCheckButton-indicator-spacing: 1;
+}
+#ToolPanelNotebook GtkFrame > .text-button {
+    padding: 0 3px 0 0;
+}
+
+.button.text-button {
+    padding: 5px 12px;
+}
+#ToolPanelNotebook .button.text-button,
+#PrefNotebook .button.text-button,
+GtkFileChooserWidget .button.text-button,
+#RightNotebook .button.text-button {
+    padding: 3px 4px;
+}
+GtkPopover .button.text-button {
+    padding: 2px 4px;
+}
+
+.spinbutton .button {
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 2px;
+    box-shadow: none;
+}
+#ToolPanelNotebook .spinbutton .button {
+    padding: 0;
+}
+
+.button:hover {
+    background-color: rgba(0, 0, 0,.18);
+}
+#ToolPanelNotebook .spinbutton .button:hover {
+    background-color: @bg-spin-button-hover;
+}
+
+.button:active,
+.button:checked {
+    background-image: linear-gradient(to bottom, rgb(41,41,41), rgb(37,37,37) 40%, rgb(25,25,25));
+    background-color: transparent;
+    border-color: black;
+}
+
+#MainNotebook > GtkGrid .button {
+    padding: 2px;
+    border: 4px solid @bg-dark-grey;
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+}
+#MainNotebook tab .button {
+    padding: 1px;
+    border-top: 4px solid @bg-dark-grey;
+    border-bottom: 4px solid @bg-dark-grey;
+    border-left: none;
+    border-right: none;
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+}
+#MainNotebook > GtkGrid .button:hover,
+#MainNotebook tab .button:hover {
+    background-color: rgba(255,255,255,.20);
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.12);
+    background-image: linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.12) 40%, rgba(0,0,0,.24));
+}
+#MainNotebook > GtkGrid .button:active,
+#MainNotebook tab .button:active {
+    background-color: rgba(255,255,255,.27);
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.12);
+    background-image: linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.12) 40%, rgba(0,0,0,.24));
+}
+.view .button {
+    background-color: rgb(20,20,20);
+    padding: 1px 5px 2px;
+    background-image: none;
+    border-color: black;
+    box-shadow: none;
+}
+.menu .button.bottom,
+.menu .button.bottom:insensitive {
+    background-color: rgb(20,20,20);
+    border-color: @accent-color;
+    border-width: 0 1px 1px 1px;
+    background-image: none;
+    box-shadow: none;
+}
+.menu .button.top,
+.menu .button.top:insensitive {
+    background-color: rgb(20,20,20);
+    border-color: @accent-color;
+    border-width: 1px 1px 0 1px;
+    background-image: none;
+    box-shadow: none;
+}
+#fullButton,
+#histButton {
+    padding: 5px;
+    border: none;
+    background-color: @bg-dark-grey;
+    background-image: none;
+    box-shadow: none;
+}
+/*** end ***/
+
+/*** Check & Radio buttons ***/
+.check,
+.check row {
+    -gtk-icon-source: url("images/twb/checkbox-unchecked.png");
+}
+.check:checked,
+.check row:checked {
+    -gtk-icon-source: url("images/twb/checkbox-checked.png");
+}
+.check:insensitive,
+.check row:insensitive {
+    -gtk-icon-source: url("images/twb/checkbox-unchecked-disabled.png");
+}
+.check:checked:insensitive,
+.check row:checked:insensitive {
+    -gtk-icon-source: url("images/twb/checkbox-checked-disabled.png");
+}
+.check:inconsistent,
+.check row:inconsistent {
+    -gtk-icon-source: url("images/twb/checkbox-inconsistent.png");
+}
+.check:inconsistent:insensitive,
+.check row:inconsistent:insensitive {
+    -gtk-icon-source: url("images/twb/checkbox-inconsistent-disabled.png");
+}
+
+.radio,
+.radio row {
+    -gtk-icon-source: url("images/twb/radio-unchecked.png");
+}
+.radio:checked,
+.radio row:checked {
+    -gtk-icon-source: url("images/twb/radio-checked.png");
+}
+.radio:insensitive,
+.radio row:insensitive {
+    -gtk-icon-source: url("images/twb/radio-unchecked-disabled.png");
+}
+.radio:checked:insensitive,
+.radio row:checked:insensitive {
+    -gtk-icon-source: url("images/twb/radio-checked-disabled.png");
+}
+.radio:inconsistent,
+.radio row:inconsistent {
+    -gtk-icon-source: url("images/twb/radio-inconsistent.png");
+}
+.radio:inconsistent:insensitive,
+.radio row:inconsistent:insensitive {
+    -gtk-icon-source: url("images/twb/radio-inconsistent-disabled.png");
+}
+/*** end ***/
+
+/*** Disabled Items  ***/
+
+*:insensitive,
+#ToolPanelNotebook *:insensitive {
+    color: rgb(128,128,128);
+    box-shadow: none;
+}
+#ToolPanelNotebook .entry:insensitive {
+    color: rgb(144,144,144);
+    background-color: rgba(255,255,255,.06);
+    box-shadow: none;
+}
+.button:insensitive {
+    background-image: none;
+    background-color: rgba(0,0,0,.10);
+    border-color: rgba(0,0,0,.30);
+    box-shadow: none;
+}
+.spinbutton .button:insensitive {
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+.scale.slider:insensitive,
+.scale.trough.highlight:insensitive,
+.scale.trough:insensitive,
+#ToolPanelNotebook .scale.slider:insensitive,
+#ToolPanelNotebook .scale.trough.highlight:insensitive,
+#ToolPanelNotebook .scale.trough:insensitive {
+    background-color: rgb(65,65,65);
+    box-shadow: none;
+    background-image: none;
+}
+/*** end ***/

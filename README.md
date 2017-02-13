@@ -40,5 +40,5 @@ http://rawpedia.rawtherapee.com/Linux
 Windows:
 http://rawpedia.rawtherapee.com/Windows
 
-OS X:
+macOS:
 http://rawpedia.rawtherapee.com/macOS

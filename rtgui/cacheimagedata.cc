@@ -203,7 +203,7 @@ int CacheImageData::save (const Glib::ustring& fname)
     } catch (Glib::Error&) {}
 
     keyFile.set_string  ("General", "MD5", md5);
-    keyFile.set_string  ("General", "Version", VERSION); // Application's version
+    keyFile.set_string  ("General", "Version", RTVERSION);
     keyFile.set_boolean ("General", "Supported", supported);
     keyFile.set_integer ("General", "Format", format);
     keyFile.set_boolean ("General", "RecentlySaved", recentlySaved);

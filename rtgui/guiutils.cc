@@ -44,6 +44,53 @@ guint add_idle (GSourceFunc function, gpointer data)
     //gtk_main_iteration_do(false);
 }
 
+IdleRegister::~IdleRegister()
+{
+    destroy();
+}
+
+void IdleRegister::add(GSourceFunc function, gpointer data)
+{
+    struct DataWrapper {
+        IdleRegister* const self;
+        GSourceFunc function;
+        gpointer data;
+    };
+
+    const auto dispatch = [](gpointer data) -> gboolean {
+        DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
+
+        if (!data_wrapper->function(data_wrapper->data)) {
+            data_wrapper->self->mutex.lock();
+            data_wrapper->self->ids.erase(data_wrapper);
+            data_wrapper->self->mutex.unlock();
+
+            delete data_wrapper;
+            return FALSE;
+        }
+
+        return TRUE;
+    };
+
+    DataWrapper* const data_wrapper = new DataWrapper{
+        this,
+        function,
+        data
+    };
+
+    mutex.lock();
+    ids[data_wrapper] = add_idle(dispatch, data_wrapper);
+    mutex.unlock();
+}
+
+void IdleRegister::destroy()
+{
+    mutex.lock();
+    for (const auto id : ids) {
+        g_source_remove(id.second);
+    }
+    mutex.unlock();
+}
 
 /*
 gboolean giveMeAGo(void* data) {

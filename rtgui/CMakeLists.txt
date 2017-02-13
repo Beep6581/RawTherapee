@@ -1,7 +1,6 @@
 # common source files for both CLI and non-CLI execautables
 set (CLISOURCEFILES
     paramsedited.cc options.cc multilangmgr.cc pathutils.cc edit.cc threadutils.cc
-    #cachemanager.cc cacheimagedata.cc
     main-cli.cc)
 
 set (NONCLISOURCEFILES
@@ -72,8 +71,8 @@ add_executable (rth ${EXTRA_SRC_NONCLI} ${NONCLISOURCEFILES})
 add_executable (rth-cli ${EXTRA_SRC_CLI} ${CLISOURCEFILES})
 
 # add dependencies to executables targets
-add_dependencies (rth AboutFile)
-add_dependencies (rth-cli AboutFile)
+add_dependencies (rth UpdateInfo)
+add_dependencies (rth-cli UpdateInfo)
 
 # set executables targets properties, i.e. output filename and compile flags
 set_target_properties (rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)
@@ -81,11 +80,12 @@ set_target_properties (rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUT
 
 # add linked libraries dependencies to executables targets
 target_link_libraries (rth rtengine ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${TIFF_LIBRARIES} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
-   ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTK_LIBRARIES} ${GTKMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES}
-   ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES} ${CANBERRA-GTK_LIBRARIES} ${EXTRA_LIB_RTGUI})
+    ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTK_LIBRARIES} ${GTKMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES}
+    ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES} ${CANBERRA-GTK_LIBRARIES} ${EXTRA_LIB_RTGUI})
+
 target_link_libraries (rth-cli rtengine ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${TIFF_LIBRARIES} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
-   ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${CAIROMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES}
-   ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES} ${EXTRA_LIB_RTGUI})
+    ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${CAIROMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES}
+    ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES} ${EXTRA_LIB_RTGUI})
 
 # install executables
 install (TARGETS rth DESTINATION ${BINDIR})

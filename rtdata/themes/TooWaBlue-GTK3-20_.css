@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.40 - requires RT 5.0
+  Version 2.42 - requires RT 5.0
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -69,7 +69,6 @@
     outline-style: none; /* removes the ugly dashed focus line */
     border-image: none;
     transition: none;
-    /* -gtk-dpi: 120; */
 }
 
 *:disabled {
@@ -77,10 +76,10 @@
 }
 
 #ToolPanelNotebook {
-    min-width: 23em
+    min-width: 23em;
 }
 #HistoryPanel {
-    min-width: 17.83333em
+    min-width: 17.83334em;
 }
 
 window.background {
@@ -107,7 +106,7 @@ messagedialog {
 tooltip {
     background-color: @bg-tooltip;
     border: 1px solid @border-tooltip;
-    border-radius: 0.33333em;
+    border-radius: 0.33334em;
     padding: 0;
     margin: 0;
     box-shadow: none;
@@ -205,7 +204,7 @@ dialog frame > label {
     padding: 0.16667em 0.5em;
 }
 #BatchQueueButtonsMainContainer frame > border {
-    margin-bottom: 0.8334em;
+    margin-bottom: 0.83334em;
 }
 #BatchQueueButtonsMainContainer frame:nth-child(3) > border {
     padding-left: 0.91667em;
@@ -232,10 +231,6 @@ textview.view, treeview.view {
     padding: 0.16667em;
     margin: 0;
 }
-#RightNotebook > stack > :nth-child(3) treeview {
-    border: 1px solid @bg-dark-grey;
-    border-bottom: none;
-}
 textview:hover, treeview:hover {
     background-color: @bg-list-hover;
 }
@@ -245,8 +240,13 @@ textview:selected, treeview:selected {
     border-top-color: transparent;
 }
 
+#RightNotebook > stack > :nth-child(3) treeview {
+    border: 1px solid @bg-dark-grey;
+    border-bottom: none;
+}
+
 #PlacesPaned > :nth-child(1) treeview {
-    padding: 0.0834em 0 0.0834em 0.5em;
+    padding: 0.08334em 0 0.08334em 0.5em;
     -gtk-icon-style: symbolic;
 }
 
@@ -257,7 +257,7 @@ textview:selected, treeview:selected {
     margin-top: 1.75em;
 }
 #HistoryPanel > label {
-    margin: 0 0 -1.3334em 0;
+    margin: 0 0 -1.33334em 0;
     padding: 0;
 }
 
@@ -285,7 +285,7 @@ textview:selected, treeview:selected {
 
 /*Corrects the space for the snapshot view of the paned separator*/
 #Snapshots {
-    margin-top: -0.3334em;
+    margin-top: -0.33334em;
 }
 /**/
 
@@ -381,7 +381,7 @@ filechooser list row:selected {
     border-radius: 0;
 }
 #fullButton {
-    padding: 0.47em 0.41667em 0.58333em;
+    padding: 0.47em 0.41667em 0.58334em;
 }
 #EditorLeftPaned #fullButton,
 #EditorLeftPaned #histButton {
@@ -433,7 +433,7 @@ paned.vertical > separator {
 dialog paned.horizontal > separator {
     background-color: @bg-grey;
     border-color:  @bg-grey;
-    min-width: 0.33333em;
+    min-width: 0.33334em;
 }
 
 menu separator {
@@ -451,13 +451,13 @@ menu separator {
 #IopsPanel separator,
 #FileBrowser separator {
     background-color: shade(@bg-light-grey,.75);
-    margin-top: 0.33333em;
-    margin-bottom: 0.33333em;
+    margin-top: 0.33334em;
+    margin-bottom: 0.33334em;
 }
 
 #MyExpander separator {
     background-color: shade(@bg-grey,.7);
-    margin: 0.33333em 0.66667em;
+    margin: 0.33334em 0.66667em;
 }
 
 #PlacesPaned .view.separator {
@@ -474,7 +474,7 @@ menu separator {
 }
 
 #PartialPaste separator.vertical {
-    margin: 0 0.33333em;
+    margin: 0 0.33334em;
     padding: 0;
 }
 
@@ -498,7 +498,7 @@ menu separator {
 
 /*** Scrollbar *********************************************************************************/
 scrollbar {
-    background-color: rgba(0,0,0,.45);
+    background-color: rgba(0,0,0,.40);
     border: none;
     margin: 0;
     padding: 0;
@@ -542,7 +542,7 @@ scrollbar.horizontal.hovering.fine-tune slider {
 scrollbar.horizontal.overlay-indicator:not(.hovering) slider {
     min-width: 2em;
     min-height: 0.25em;
-    border-width: 0.0834em;
+    border-width: 0.08334em;
     border-radius: 0.25em;
     margin: 0 0.16667em;
 }
@@ -562,7 +562,7 @@ scrollbar.vertical.hovering.fine-tune slider {
 scrollbar.vertical.overlay-indicator:not(.hovering) slider {
     min-width: 0.25em;
     min-height: 2em;
-    border-width: 0.0834em;
+    border-width: 0.08334em;
     border-radius: 0.5em;
     margin: 0.16667em 0;
 }
@@ -573,11 +573,8 @@ scrollbar slider:hover {
 }
 
 /* Scrollbar stuck workaround */
-scrollbar:not(.overlay-indicator).horizontal:hover slider {
-    min-width: calc(2em - 0.0001px);
-}
-scrollbar:not(.overlay-indicator).vertical:hover slider {
-    min-height: calc(2em - 0.0001px);
+scrollbar:not(.overlay-indicator):hover {
+    min-width: 1px;
 }
 
 /*** end ***************************************************************************************/
@@ -585,7 +582,7 @@ scrollbar:not(.overlay-indicator).vertical:hover slider {
 /*** Scale**************************************************************************************/
 scale {
     padding: 0;
-    min-height: 1.83333em;
+    min-height: 1.83334em;
     margin: 0 0.25em;
 }
 
@@ -593,8 +590,8 @@ scale slider {
     /* Slider size is min-width x min-height; margin have to be half of those values, but negative */
     min-width: 1em;
     min-height: 1em;
-    margin: calc(-0.3334em - 1px);
-    border-radius: 0.83333em;
+    margin: calc(-0.33334em - 1px);
+    border-radius: 0.83334em;
     background-image: linear-gradient(to bottom, shade (@accent-color4,1.15), shade (@accent-color4,.85));
     border: 1px solid @bg-dark-grey;
     box-shadow: none;
@@ -637,12 +634,10 @@ scale:disabled trough {
 /*** Progressbar *******************************************************************************/
 progressbar.vertical {
     min-width: 0;
-    margin-right: 0.58333em;
+    min-height: 9em;
 }
 progressbar.vertical text {
     color: transparent;
-    margin-right: -0.83333em;
-    min-width: 0;
 }
 
 progressbar.vertical trough {
@@ -663,7 +658,7 @@ progressbar.horizontal trough {
     background-color: transparent;
     border: none;
     border-radius: 0.5em;
-    margin-top: 0.58333em;
+    margin-top: 0.58334em;
 }
 progressbar.horizontal trough progress {
     min-height: 0.41667em;
@@ -716,25 +711,25 @@ notebook tabs {
 notebook header tab {
     background-color: transparent;
     margin: 0.41667em 0.25em;
-    padding: 0 0.3334em;
+    padding: 0 0.33334em;
 }
 notebook header.left tab {
     margin: 0.25em 0.41667em;
-    padding: 0.3334em 0;
+    padding: 0.33334em 0;
 }
 notebook header tab > grid > image {
-    min-height: 2.33333em;
+    min-height: 2.33334em;
     min-width: 0;
     padding: 0 0.16667em 0 0;
     margin: 0;
 }
 notebook header.left tab > grid > image {
     min-height: 0;
-    min-width: 2.33333em;
+    min-width: 2.33334em;
     padding: 0.16667em 0 0;
 }
 notebook header tab label {
-    margin: 0.33333em;
+    margin: 0.33334em;
 }
 notebook header tab:hover label {
     color: @headline-hl;
@@ -747,7 +742,7 @@ notebook header.left tab:checked {
 }
 notebook > header > tabs > arrow {
     background-color: transparent;
-    border-radius: 0.16667em;
+    border-radius: 0.2em;
     min-width: 0;
     min-height: 0;
     padding: 0 0.16667em;
@@ -776,7 +771,7 @@ dialog notebook stack {
     padding: 0.41667em;
 }
 #MainNotebook > stack > :nth-child(2) > :nth-child(2) {
-    margin-bottom: 0.3334em;
+    margin-bottom: 0.33334em;
 }
 
 
@@ -784,17 +779,17 @@ dialog notebook stack {
 dialog.csd #PrefNotebook > header,
 dialog.csd #AboutNotebook > header,
 window.csd:not(.fullscreen) #MainNotebook > header.top {
-    border-top: 0.083333em solid rgba(200,200,200,.18);
+    border-top: 0.083334em solid rgba(200,200,200,.18);
 }
 /**/
 
 #ToolPanelNotebook > header tabs {
-    margin-bottom: 0.33333em;
+    margin-bottom: 0.33334em;
 }
 
 #ToolPanelNotebook > header tab image{
     min-height: 2.5em;
-    min-width: 2em;
+    min-width: calc(1.66667em + 6px);
     padding: 0;
     margin: 0;
 }
@@ -813,7 +808,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #PrefNotebook header {
-    margin: -0.66667em -0.66667em 0.3334em;
+    margin: -0.66667em -0.66667em 0.33334em;
 }
 #AboutNotebook header {
     margin: -0.66667em -0.66667em 0.66667em;
@@ -827,14 +822,15 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #MetaPanelNotebook header {
     background-color: @bg-grey;
-    padding: 0.33333em;
+    padding: 0.33334em;
     margin: 0 0.5em 0;
 }
 #MetaPanelNotebook > header > tabs {
     background-color: @bg-dark-grey;
+    padding-left: 0.33334em;
 }
-#MetaPanelNotebook > header > tab {
-    background-color: @bg-dark-grey;
+#MetaPanelNotebook > header tab label{
+    margin: 0.08334em;
 }
 
 #MetaPanelNotebook > stack > box {
@@ -842,11 +838,11 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     background-color: @bg-grey;
     border-radius: 0;
     border-top-style: none;
-    padding: 0 0.33333em 0.25em;
+    padding: 0 0.33334em 0.25em;
     margin: 0 0.5em -0.5em;
 }
 #MetaPanelNotebook > stack > box:nth-child(1) > scrolledwindow {
-    margin: 0 0 0.33333em;
+    margin: 0 0 0.33334em;
     padding: 0;
 }
 
@@ -862,10 +858,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-top: 0;
     margin-bottom: 0;
     min-height: 1.66667em;
-    min-width: 0.83333em;
+    min-width: 0.83334em;
 }
 #MetaPanelNotebook entry {
-    padding: 0 0.33333em;
+    padding: 0 0.33334em;
     background-color: @bg-dark-grey;
     margin: 0;
     border-radius: 0;
@@ -883,7 +879,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 #MetaPanelNotebook textview.view {
     background-color: @bg-dark-grey;
-    padding: 0.08333em 0.33333em;
+    padding: 0.08334em 0.33334em;
     margin: 0;
 }
 #MetaPanelNotebook text {
@@ -904,7 +900,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 }
 
 #MetaPanelNotebook label {
-    padding: 0.0834em 0;
+    padding: 0.08334em 0;
 }
 
 /*** end ***************************************************************************************/
@@ -934,7 +930,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #ToolBarPanelFileBrowser > box > button,
 #ToolBarPanelFileBrowser > button {
-    margin: 0 0.0834em;
+    margin: 0 0.08334em;
 }
 #ToolBarPanelFileBrowser > box > box > button {
     min-height: 0.91667em;
@@ -952,7 +948,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     min-height: 1.66667em;
     min-width: 1.66667em;
     margin: 0 0 0 -1.66667em;
-    border-radius: 0 0.16667em 0.16667em 0;
+    border-radius: 0 0.2em 0.2em 0;
     border: 1px solid transparent;
     padding: 0;
 }
@@ -961,11 +957,11 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     min-height: 1.66667em;
     min-width: 12em;
     margin: 0 -2px 0 0;
-    padding: 0 2em 0 0.33333em;
+    padding: 0 2em 0 0.33334em;
 }
 #ToolBarPanelFileBrowser label,
 #FileBrowser label {
-    margin: 0 0.33333em 0 0.5em;
+    margin: 0 0.33334em 0 0.5em;
 }
 /*** end ***************************************************************************************/
 
@@ -1005,8 +1001,8 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #BeforeAfterContainer button {
     min-height: 1.66667em;
     min-width: 1.66667em;
-    margin: 0.25em 0 0.3334em;
-    padding: 0 0 0 0.0834em;
+    margin: 0.25em 0 0.33334em;
+    padding: 0 0 0 0.08334em;
 }
 /**/
 
@@ -1016,7 +1012,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     min-height: 0;
 }
 #EditorTopPanel button {
-    margin: 0 0.0834em;
+    margin: 0 0.08334em;
     min-height: 2.16667em;
     min-width: 2.16667em;
 }
@@ -1027,14 +1023,14 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #EditorTopPanel > box > button.image-button:not(:nth-child(6)) {
     min-width: 0;
-    padding-left: 0.33333em;
-    padding-right: 0.33333em;
+    padding-left: 0.33334em;
+    padding-right: 0.33334em;
 }
 #EditorTopPanel > box > button.image-button:nth-child(6) {
     -gtk-icon-shadow: none;
 }
 #EditorTopPanel > box > box > button {
-    min-height: 0.64em;
+    min-height: 0.625em;
     min-width: 0;
     margin: 0 0.16667em;
     padding: 0 0.16667em;
@@ -1052,7 +1048,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #EditorTopPanel > box > box > button:checked {
     background-color: transparent;
     background-image: none;
-    border: 1px solid @bg-dark-grey;
+    border: 1px solid @bg-button-border;
     box-shadow: none;
 }
 
@@ -1065,8 +1061,8 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0 2px 0 3px;
 }
 #EditorZoomPanel button {
-    margin-left: 0.0834em;
-    margin-right: 0.0834em;
+    margin-left: 0.08334em;
+    margin-right: 0.08334em;
 }
 /*** end ***************************************************************************************/
 
@@ -1126,7 +1122,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #MyExpanderTitle > box {
     margin: 0;
-    padding: 0.33333em 0;
+    padding: 0.33334em 0;
 }
 
 #MyExpanderTitle label {
@@ -1167,7 +1163,7 @@ menu > .bottom:hover {
 }
 
 menuitem {
-    padding: 0 0.33333em;
+    padding: 0 0.33334em;
     margin: 1px;
     min-height: 2em;
 }
@@ -1182,7 +1178,7 @@ menuitem:hover > * {
 menu image {
     min-height: 2em;
     padding: 0;
-    margin: 0 0.33333em 0 0;
+    margin: 0 0.33334em 0 0;
 }
 
 /*** Selection popup list (used in filechooser) ***/
@@ -1239,7 +1235,7 @@ button {
     min-width: 2.16667em;
     margin: 0;
     padding: 0; /* x */
-    border-radius: 0.16667em;
+    border-radius: 0.2em;
     border: 1px solid @bg-button-border;
     background-color: transparent;
     box-shadow: inset 0 1px rgba(242, 242, 242, 0.1);
@@ -1262,19 +1258,19 @@ button.flat {
 /* Resetbutton Queue & Save as*/
 dialog scale + button.flat,
 scale + button.flat {
-    min-height: 1.33333em;
+    min-height: 1.33334em;
     min-width: 1.25em;
     margin: 0.25em 0 0.16667em 0.16667em;
-    padding: 0 0 0 0.0834em;
+    padding: 0 0 0 0.08334em;
     -gtk-icon-shadow: none;
 }
 
 /* Resetbutton */
 #MyExpander button.flat {
-    min-height: 1.33333em;
+    min-height: 1.33334em;
     min-width: 1.25em;
-    margin: 0.08333em 0 0.08333em 0.16667em;
-    padding: 0 0 0 0.0834em;
+    margin: 0.08334em 0 0.08334em 0.16667em;
+    padding: 0 0 0 0.08334em;
     -gtk-icon-shadow: none;
 }
 
@@ -1286,7 +1282,7 @@ scale + button.flat {
 }
 #MyExpander spinbutton + button.flat {
     margin: 0 0 0 0.16667em;
-    padding-top: 0.08333em;
+    padding-top: 0.08334em;
 }
 /**/
 
@@ -1295,7 +1291,7 @@ scale + button.flat {
 #MyExpander button.flat:first-child {
     min-height: 2.16667em;
     min-width: 2.16667em;
-    margin: 0.08333em;
+    margin: 0.08334em;
     padding: 0;
 }
 /**/
@@ -1304,7 +1300,7 @@ scale + button.flat {
 #FileBrowser entry + button:hover,
 button.flat:hover,
 button:hover  {
-    border: 1px solid @bg-button-border;
+    border-color: @bg-button-border;
     box-shadow: inset 0 1px rgba(242, 242, 242, 0.1);
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: @bg-button-hover;
@@ -1316,8 +1312,8 @@ button.flat:active,
 button.flat:checked,
 button:active,
 button:checked {
-    border-color: black;
-    box-shadow: inset 0 1px rgba(242, 242, 242, 0.1);
+    border-color: @bg-button-border;
+    box-shadow: inset 0 1px rgba(242, 242, 242, 0.08);
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: @bg-button-active;
 }
@@ -1333,7 +1329,7 @@ button.MiddleH {
 /* Applies special styles in main notebook */
 #ProfilePanel {
     margin-bottom: -2px;
-    padding-bottom: 0.41667em
+    padding-bottom: 0.41667em;
 }
 #ProfilePanel combobox {
     margin-left: 0.16667em;
@@ -1359,7 +1355,7 @@ combobox .combo,
 dialog combobox .combo,
 #ToolPanelNotebook combobox .combo,
 #BatchQueueButtonsMainContainer combobox .combo {
-    padding: 0 0.20833em;
+    padding: 0 0.208334em;
 }
 /**/
 
@@ -1377,7 +1373,7 @@ dialog combobox .combo,
 #MyExpander label + * > button:not(.flat).Left,
 #MyExpander label + combobox:not(:first-child):not(:only-child),
 #MyExpander label + button:not(.flat):not(spinbutton) {
-    margin-left: 0.33333em;
+    margin-left: 0.33334em;
 }
 
 /* Arrow toggle combo button */
@@ -1385,8 +1381,8 @@ dialog combobox .combo,
 #MyExpander button:not(.flat).Left + button:not(.flat).Right {
     border-left: none;
     margin-left: 0;
-    padding-left: 0.33333em;
-    padding-right: 0.33333em;
+    padding-left: 0.33334em;
+    padding-right: 0.33334em;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
@@ -1394,7 +1390,7 @@ dialog combobox .combo,
 #MyExpander button:not(.flat).Left {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    min-width: 2.33333em;
+    min-width: 2.16667em;
 }
 /**/
 
@@ -1402,8 +1398,8 @@ dialog combobox .combo,
 #PrefNotebook stack > box:nth-child(4) combobox,
 #MyExpander button.flat,
 #MyExpander button {
-    margin-top: 0.115em;
-    margin-bottom: 0.115em;
+    margin-top: 0.08334em;
+    margin-bottom: 0.08334em;
 }
 /**/
 #MyExpander button.text-button label {
@@ -1429,11 +1425,11 @@ button.color {
 /* Save, Cancel, OK ... buttons */
 .dialog-action-area button {
     min-height: 2.16667em;
-    margin-top: 0.33333em;
+    margin-top: 0.33334em;
 }
 messagedialog .dialog-action-area button {
     margin: 0 0.66667em 0.66667em 0.66667em;
-    min-height: 1.83333em;
+    min-height: 1.83334em;
 }
 messagedialog .dialog-action-area button:not(:only-child):nth-child(1) {
     margin-right: 0.25em;
@@ -1457,7 +1453,8 @@ window .view button {
     background-image: none;
     box-shadow: none;
     min-height: 2em;
-    padding: 0 0.33333em;
+     min-width: 1.33334em;
+    padding: 0 0.33334em;
 }
 dialog .view button.text-button label,
 window .view button.text-button label {
@@ -1497,22 +1494,22 @@ window .view header button,
     padding: 0;
  }
 .path-bar button:first-child {
-    border-top-left-radius: 0.16667em;
-    border-bottom-left-radius: 0.16667em;
+    border-top-left-radius: 0.2em;
+    border-bottom-left-radius: 0.2em;
     min-width: 2em;
     margin: 0;
     padding: 0;
 }
 .path-bar button:last-child {
-    border-top-right-radius: 0.16667em;
-    border-bottom-right-radius: 0.16667em;
+    border-top-right-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
     min-width: 2em;
     margin: 0;
     padding: 0;
 }
 .path-bar button label {
     margin: 0;
-    padding: 0 0.33333em;
+    padding: 0 0.33334em;
 }
 /**/
 
@@ -1560,13 +1557,13 @@ headerbar button.titlebutton image {
     margin: 0;
 }
 headerbar button.titlebutton {
-    margin: 0 0 0 0.33333em;
+    margin: 0 0 0 0.33334em;
     background-image: none;
     border: 1px solid transparent;
     background-color: transparent;
     box-shadow: none;
-    min-width: 1.5em;
-    min-height: 1.5em;
+    min-width: 1.55em;
+    min-height: 1.55em;
     padding: 0;
 }
 messagedialog headerbar button.titlebutton {
@@ -1577,7 +1574,7 @@ messagedialog headerbar button.titlebutton {
 
 #MainNotebook tab #CloseButton {
     padding: 0;
-    margin: 0.3334em -3px 0.3334em 0.0834em;
+    margin: 0.33334em -3px 0.33334em 0.08334em;
     min-width: 1.5em;
     min-height: 1.5em;
 }
@@ -1585,26 +1582,26 @@ messagedialog headerbar button.titlebutton {
 #MainNotebook tab #CloseButton:hover,
 headerbar button.titlebutton:hover{
     border-color: rgba(0,0,0,.8);
-    box-shadow: inset 0 1px rgba(242, 242, 242, 0.1);
+    box-shadow: inset 0 1px rgba(242, 242, 242, 0.11);
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
-    background-color: rgba(128, 128, 128,.15);
+    background-color: rgba(128, 128, 128,.20);
 }
 #MainNotebook > header > grid > button:active,
 headerbar button.titlebutton:active{
     border-color: rgba(0,0,0,.8);
-    box-shadow: inset 0 1px rgba(242, 242, 242, 0.1);
+    box-shadow: inset 0 1px rgba(242, 242, 242, 0.15);
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
-    background-color: rgba(128, 128, 128,.30);
+    background-color: rgba(128, 128, 128,.40);
 }
 #MainNotebook tab #CloseButton:hover,
 headerbar button.titlebutton.close:hover{
-    border-color: rgba(0,0,0,.9);
+    border-color: rgba(0,0,0,.8);
     background-image: linear-gradient(to bottom, rgb(180,0,0), rgb(160,0,0) 40%, rgb(130,0,0));
-    box-shadow: inset 0 1px rgba(242, 242, 242, 0.3);
+    box-shadow: inset 0 1px rgba(242, 242, 242, 0.32);
 }
 #MainNotebook tab #CloseButton:active,
 headerbar button.titlebutton.close:active{
-    border-color: rgba(0,0,0,.9);
+    border-color: rgba(0,0,0,.8);
     background-image: linear-gradient(to bottom, rgb(215,0,0), rgb(185,0,0) 40%, rgb(150,0,0));
     box-shadow: inset 0 1px rgba(242, 242, 242, 0.4);
 }
@@ -1616,17 +1613,17 @@ headerbar button.titlebutton.close:active{
 checkbox {
     padding:0;
     margin:0;
-    min-height: 1.16667em;
+    min-height: 2em;
 }
 checkbutton,
 radiobutton {
-    padding: 0.41667em 0;
+    padding: 0;
     margin: 0;
-    min-height: 1.16667em;
+    min-height: 2em;
 }
 check,
 radio {
-    border: calc(0.08334em + 0.18px) solid shade(@text-color, .9);
+    border: calc(0.083334em + 0.18px) solid shade(@text-color, .9);
     background-image: none;
     background-color: transparent;
     margin: 0;
@@ -1667,24 +1664,26 @@ frame > checkbutton check{
 }
 
 #PartialPaste checkbutton:not(#PartialPasteHeader) {
-    padding: 0.0834em 0;
+    min-height: 1.4em;
     margin-left: 1.16667em;
 }
 #PartialPasteHeader {
-    padding: 0.0834em 0;
+    min-height: 1.4em;
     margin-left: 0.5em;
 }
 #PrefNotebook checkbutton {
-    padding: 0;
+    min-height: 1.16667em;
 }
-#PrefNotebook radiobutton,
 #PrefNotebook stack > box:nth-child(3) checkbutton,
 #PrefNotebook stack > box:nth-child(4) checkbutton {
-    padding: 0.25em 0;
+    min-height: 2em;
+}
+#PrefNotebook radiobutton {
+    min-height: 2em;
 }
 
 #MyExpander button + checkbutton:last-child {
-    margin-left: 0.33333em;
+    margin-left: 0.33334em;
 }
 
 /*** end ***************************************************************************************/
@@ -1693,11 +1692,11 @@ frame > checkbutton check{
 #MyExpander entry,
 entry {
     margin: 0;
-    padding: 0 0.33333em;
+    padding: 0 0.33334em;
     min-height: 1.66667em;
     min-width: 0;
-    border-radius: 0.16667em;
-    box-shadow: inset 1px 1px rgba(0, 0, 0, 0.08), 0 1px rgba(242 , 242, 242, 0.1);
+    border-radius: 0.2em;
+    box-shadow: inset 1px 1px rgba(0, 0, 0, 0.08), 0 1px rgba(242, 242, 242, 0.1);
     border: 1px solid @bg-entry-border;
     background-color: @bg-scale-entry;
 }
@@ -1707,29 +1706,29 @@ spinbutton {
     padding: 0;
     min-height: 1.66667em;
     min-width: 0;
-    border-radius: 0.16667em;
+    border-radius: 0.2em;
     background-color: @bg-scale-entry;
     border: 1px solid @bg-entry-border;
-    box-shadow: inset 1px 1px rgba(0, 0, 0, 0.08), 0 1px rgba(242 , 242, 242, 0.1);
+    box-shadow: inset 1px 1px rgba(0, 0, 0, 0.08), 0 1px rgba(242, 242, 242, 0.1);
 }
 
 #MyExpander spinbutton {
     margin: 0.16667em 0;
     padding: 0;
-    min-height: 1.35em;
+    min-height: 1.33334em;
     min-width: 0;
-    border-top-left-radius: 1.83333em;
-    border-bottom-left-radius: 1.83333em;
+    border-top-left-radius: 1.83334em;
+    border-bottom-left-radius: 1.83334em;
     background-color: shade(@bg-grey, 1.33);
     border: 1px solid @bg-button-border;
     color: @text-tbEntry;
-    box-shadow: inset 1px  1px rgba(0, 0, 0, .12), 0 1px rgba(255 , 255, 255, 0.12);
+    box-shadow: inset 1px  1px rgba(0, 0, 0, .12), 0 1px rgba(255, 255, 255, 0.12);
 }
 #MyExpander button + label + spinbutton {
-    margin: 0.29em 0; /* Needed for Reset & and Auto button height*/
+    margin: 0.25em 0; /* Needed for Reset & and Auto button height*/
 }
 #MyExpander checkbutton + label + spinbutton {
-    margin: 0.41667em 0; /* Needed for Reset & and Auto checkbox button height*/
+    margin: 0.33334em 0; /* Needed for Reset & and Auto checkbox button height*/
 }
 
 #MyExpander image + spinbutton {
@@ -1742,7 +1741,7 @@ spinbutton button {
     padding: 0;
     margin: 0;
     min-height: 0;
-    min-width: 1.33333em;
+    min-width: 1.33334em;
     background-image: none;
     background-color: transparent;
     border: none;
@@ -1752,7 +1751,7 @@ spinbutton button {
 }
 #MyExpander spinbutton entry,
 spinbutton entry {
-    padding: 0 0.33333em;
+    padding: 0 0.33334em;
     margin: 0;
     min-height: 0;
     min-width: 0;
@@ -1761,7 +1760,7 @@ spinbutton entry {
     background-color: transparent;
 }
 #MyExpander spinbutton entry {
-    padding: 0 0.33333em 0 0.83333em;
+    padding: 0 0.33334em 0 0.83334em;
 }
 
 #BatchQueueButtonsMainContainer spinbutton button:hover,
@@ -1824,7 +1823,7 @@ entry:focus > selection  {
     border: none;
     padding: 0;
     box-shadow: 0 0.25em 0.75em 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
-    margin: 0.83333em;
+    margin: 0.83334em;
 }
 headerbar {
     background-color: shade(@winHeaderbar,1.12);
@@ -1833,7 +1832,7 @@ headerbar {
     border-bottom: 1px solid @bg-dark-grey;
     border-radius: 0.41667em 0.41667em 0 0;
     min-height: 2.16667em;
-    padding: 0.08333em 0.41667em 0;
+    padding: 0.08334em 0.41667em 0;
     margin: 0;
 }
 messagedialog headerbar {

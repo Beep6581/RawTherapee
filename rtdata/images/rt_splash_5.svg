@@ -21,7 +21,7 @@
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <title
-     id="title5575">RawTherapee logo white font white glow</title>
+     id="title5575">RawTherapee Splash Screen</title>
   <defs
      id="defs4">
     <linearGradient
@@ -1384,16 +1384,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.7607809"
-     inkscape:cx="184.96363"
+     inkscape:zoom="1.7154742"
+     inkscape:cx="290.94671"
      inkscape:cy="103.21"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1025"
-     inkscape:window-x="-8"
-     inkscape:window-y="-3"
+     inkscape:window-height="1023"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -1403,12 +1403,63 @@
      inkscape:bbox-nodes="true"
      inkscape:bbox-paths="true"
      inkscape:snap-page="true"
-     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-edge-midpoints="false"
      inkscape:snap-bbox-midpoints="true"
      showborder="true"
      borderlayer="false"
      inkscape:showpageshadow="true"
-     inkscape:snap-global="false" />
+     inkscape:snap-global="true"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="30,0"
+       orientation="1,0"
+       id="guide3665"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="0,321"
+       orientation="0,1"
+       id="guide3667"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="522,0"
+       orientation="1,0"
+       id="guide3669"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="0,25"
+       orientation="0,1"
+       id="guide3671"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="244.625,239.9831"
+       orientation="0,1"
+       id="guide3673" />
+    <sodipodi:guide
+       position="29.875,33.6125"
+       orientation="0,1"
+       id="guide3675" />
+    <sodipodi:guide
+       position="173.0169,189.5"
+       orientation="1,0"
+       id="guide3677" />
+    <sodipodi:guide
+       position="378.98311,131.125"
+       orientation="1,0"
+       id="guide3679" />
+    <sodipodi:guide
+       position="273,270.5"
+       orientation="0,1"
+       id="guide3687" />
+    <sodipodi:guide
+       position="54.738059,35.335001"
+       orientation="0,1"
+       id="guide4367" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -1417,17 +1468,17 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>RawTherapee logo white font white glow</dc:title>
+        <dc:title>RawTherapee Splash Screen</dc:title>
         <dc:creator>
           <cc:Agent>
-            <dc:title>RawTherapee</dc:title>
+            <dc:title>Morgan Hardwood</dc:title>
           </cc:Agent>
         </dc:creator>
         <dc:subject>
           <rdf:Bag>
             <rdf:li>rawtherapee</rdf:li>
             <rdf:li>logo</rdf:li>
-            <rdf:li>white</rdf:li>
+            <rdf:li>splash</rdf:li>
           </rdf:Bag>
         </dc:subject>
         <dc:source>www.rawtherapee.com</dc:source>
@@ -1647,40 +1698,11 @@
            y="152.4408"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1" /></flowRegion><flowPara
          id="flowPara3763"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1">Select the desired element and apply one of the effects in the Filter Editor. You might need to ungroup the element before applying. For example to set the RT ring to have a colorful glow, select it and enable the &quot;ring glow&quot;. You can change the flood color of the &quot;ring shadow&quot; effect to make it white if you want to make the logo usable on a dark background.</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1">Apply glow effects using filters. You might need to ungroup the circle elements before applying. You can change the flood color of the &quot;ring shadow&quot; effect to make it white if you want to make the logo usable on a dark background.</flowPara><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
          id="flowPara3676" /><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         id="flowPara3678">For logo specifics, refer to rt_logo.svg</flowPara></flowRoot>    <text
-       sodipodi:linespacing="125%"
-       id="text3929-7"
-       y="16.646875"
-       x="154.37589"
-       style="font-size:64px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4749);enable-background:new;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       xml:space="preserve"
-       transform="matrix(1.1792004,0,-0.04117843,1.1792004,-114.37084,-179.98059)"><tspan
-         style="font-size:69px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-3px;fill:#ffffff;fill-opacity:1;font-family:Eras-UltraBlk;-inkscape-font-specification:Eras-UltraBlk"
-         y="16.646875"
-         x="154.37589"
-         id="tspan3931"
-         sodipodi:role="line"
-         rotate="0 0 0 0"
-         dx="0">Raw</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:64px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4749);enable-background:new;font-family:Eras-Medium;-inkscape-font-specification:Eras-Medium"
-       x="303.17801"
-       y="16.646875"
-       id="text3935-5"
-       sodipodi:linespacing="125%"
-       transform="matrix(1.1792004,0,-0.04117843,1.1792004,-114.37084,-179.98059)"><tspan
-         sodipodi:role="line"
-         id="tspan3937"
-         x="303.17801"
-         y="16.646875"
-         style="font-size:68px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:4px;fill:#ffffff;fill-opacity:1;font-family:Eras-Medium;-inkscape-font-specification:Eras-Medium"
-         rotate="0 0 0 0 0 0 0 0 0">Therapee</tspan></text>
-    <flowRoot
+         id="flowPara4320">For logo specifics, refer to rt_logo.svg</flowPara></flowRoot>    <flowRoot
        transform="translate(362.47572,-12.572881)"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;line-height:125%;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
        id="flowRoot11563"
@@ -1693,19 +1715,25 @@
            width="255.35268"
            id="rect11567" /></flowRegion><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         id="flowPara11575">&quot;Raw&quot; font Eras-UltraBlk, 69px, -3px spacing between characters, skewed 2° to the right.</flowPara><flowPara
+         id="flowPara4343">&quot;Raw&quot;: font ITC Eras Std Ultra, appears in Inkscape as</flowPara><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         id="flowPara11579">&quot;Therapee&quot; font Eras-Medium, 68px, 4px spacing between characters, skewed 2° to the right.</flowPara><flowPara
+         id="flowPara4357">  ITC Eras Standard - Ultra-Bold,</flowPara><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         id="flowPara11581">Both have a dropshadow with an opacity of 0.40 and Gaussian blur standard deviation of 3.5.</flowPara><flowPara
+         id="flowPara4345">  60pt, -3px spacing between characters.</flowPara><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         id="flowPara11591">Version number Eras bold 64 or less.</flowPara><flowPara
+         id="flowPara4347">&quot;Therapee&quot;: font ITC Eras Std Medium, appears in Inkscape as</flowPara><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         id="flowPara11585">Eras font from &quot;freefonts-0.10&quot;:</flowPara><flowPara
+         id="flowPara4361">  ITC Eras Standard - Medium,</flowPara><flowPara
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
-         id="flowPara10541">ftp://ftp.gimp.org/pub/gimp/fonts/</flowPara></flowRoot>    <text
+         id="flowPara4349">  60pt, +1px spacing between characters.</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
+         id="flowPara4351">Version: font ITC Eras Std Bold, appears in Inkscape as</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
+         id="flowPara4365">  ITC Eras Standard - Bold,</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;text-align:justify;text-anchor:start;fill:#ffffff;fill-opacity:1"
+         id="flowPara4353">  64pt, skewed -3°.</flowPara></flowRoot>    <text
        xml:space="preserve"
-       style="font-size:6px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Salter;-inkscape-font-specification:Salter Medium"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:6px;line-height:125%;font-family:Salter;-inkscape-font-specification:'Salter Medium';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        x="157.31409"
        y="246.19589"
        id="text11593"
@@ -1714,19 +1742,7 @@
          id="tspan11595"
          x="157.31409"
          y="246.19589"
-         style="font-size:6px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:1px;fill:#ffcc00;fill-opacity:1;font-family:OxygenSans;-inkscape-font-specification:OxygenSans">RawTherapee splash screen design version 1.0 from 2014-05-03 | www.rawtherapee.com</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:100px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Eras-Medium;-inkscape-font-specification:Eras-Medium Bold"
-       x="67.395546"
-       y="89.97583"
-       id="text4743"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4745"
-         x="67.395546"
-         y="89.97583"
-         style="font-size:16px;letter-spacing:1px;word-spacing:5px;fill:#ffffff;fill-opacity:1">GNU GPLv3</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6px;font-family:OxygenSans;-inkscape-font-specification:OxygenSans;letter-spacing:1px;fill:#ffcc00;fill-opacity:1">RawTherapee splash screen design version 1.1 from 2017-01-28 | www.rawtherapee.com</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot4759"
@@ -1737,19 +1753,7 @@
            height="102.29827"
            x="-53.53928"
            y="224.58057" /></flowRegion><flowPara
-         id="flowPara4765" /></flowRoot>    <flowRoot
-       xml:space="preserve"
-       id="flowRoot10508"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:80px;line-height:125%;font-family:Eras;-inkscape-font-specification:'Eras Bold';text-align:end;letter-spacing:-0.05px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter10964);"
-       transform="translate(-32.241264,-248.35625)"><flowRegion
-         id="flowRegion10510"><rect
-           id="rect10512"
-           width="51.421597"
-           height="91.457291"
-           x="315.61359"
-           y="180.29274"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:80px;font-family:Eras;-inkscape-font-specification:'Eras Bold';fill:#ffffff;" /></flowRegion><flowPara
-         id="flowPara10514">5</flowPara></flowRoot>    <text
+         id="flowPara4765" /></flowRoot>    <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;line-height:125%;font-family:Daniel;-inkscape-font-specification:Daniel;text-align:end;letter-spacing:-0.05px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="892.45013"
@@ -1760,6 +1764,56 @@
          id="tspan10518"
          x="892.45013"
          y="-4.99089" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:80px;line-height:125%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Ultra-Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749)"
+       x="61.72514"
+       y="-157.9659"
+       id="text3655"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3657"
+         x="61.72514"
+         y="-157.9659"
+         style="font-size:75px;letter-spacing:-3px;word-spacing:0px"
+         dx="0">Raw</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:70px;line-height:125%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Medium';letter-spacing:1px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749)"
+       x="239.99272"
+       y="-157.9659"
+       id="text3659"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3661"
+         x="239.99272"
+         y="-157.9659"
+         style="font-size:75px;letter-spacing:1px">Therapee</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:10px;line-height:125%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Medium';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="65.505142"
+       y="87.844109"
+       id="text3683"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3685"
+         x="65.505142"
+         y="87.844109"
+         style="font-size:15px">GNU GPLv3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749)"
+       x="283.85016"
+       y="2.2370076"
+       id="text3689"
+       sodipodi:linespacing="125%"
+       transform="matrix(1,0,0.05240778,1,1.2558473,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3691"
+         x="283.85016"
+         y="2.2370076"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:80px;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold'">5</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"

@@ -36,7 +36,7 @@ CURVEEDITOR_TYPE;Type:
 DIRBROWSER_FOLDERS;Répertoires
 EDITWINDOW_TITLE;Édition d'image
 EDIT_OBJECT_TOOLTIP;Affiche des éléments dans la fenêtre de prévisualisation qui vous permettront d'ajuster cet outil.
-EDIT_PIPETTE_TOOLTIP;Pour ajouter un point d'ajustement de la courbe, maintenez la touche Ctrl préssée et cliquez dans l'image avec le bouton gauche.\nPour ajuster le point, pressez la touche Ctrl lors du clic-gauche sur la zone correspondande dans l'apperçu, puis relachez Ctrl (sauf si vous désirez un control plus fin) et tout en gardant le bouton gauche appuyé, déplacez le curseur vers le haut ou le bas pour ajuster la position du point.
+EDIT_PIPETTE_TOOLTIP;Pour ajouter un point d'ajustement de la courbe, maintenez la touche Ctrl pressée et cliquez dans l'image avec le bouton gauche.\nPour ajuster le point, pressez la touche Ctrl lors du clic-gauche sur la zone correspondante dans l'aperçu, puis relachez Ctrl (sauf si vous désirez un contrôle plus fin) et tout en gardant le bouton gauche appuyé, déplacez le curseur vers le haut ou le bas pour ajuster la position du point.
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_EXPOSURECOMPENSATION;Compensation d'exposition (EV)
@@ -79,7 +79,7 @@ EXPORT_BYPASS_SHARPENING;Ignorer la netteté
 EXPORT_BYPASS_SHARPENMICRO;Ignorer netteté des microcontrastes
 EXPORT_BYPASS_SH_HQ;Ignorer Ombres/Hautes lumières (HQ)
 EXPORT_FASTEXPORTOPTIONS;<b>Options d'Export Rapide</b>
-EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateur de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désir une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
+EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateurs de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désire une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
 EXPORT_MAXHEIGHT;Hauteur maximum:
 EXPORT_MAXWIDTH;Largeur maximum:
 EXPORT_PUTTOQUEUEFAST;Mettre dans la file de traitement\npour Export Rapide

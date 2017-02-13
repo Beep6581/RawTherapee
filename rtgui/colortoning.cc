@@ -324,6 +324,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
 ColorToning::~ColorToning()
 {
+    idle_register.destroy();
+
     delete colorCurveEditorG;
     delete opacityCurveEditorG;
     delete clCurveEditorG;
@@ -650,19 +652,18 @@ void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, doubl
                                 Glib::ustring::compose(Glib::ustring(M("TP_COLORTONING_HUE") + ": %1" + "\n" + M("TP_COLORTONING_STRENGTH") + ": %2"), int(newTop), int(newBottom)));
 }
 
-int CTChanged_UI (void* data)
-{
-    (static_cast<ColorToning*>(data))->CTComp_ ();
-    return 0;
-}
-
-
 void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
 {
     nextbw = bwct;
     nextsatth = satthres;
     nextsatpr = satprot;
-    add_idle (CTChanged_UI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ColorToning*>(data)->CTComp_();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool ColorToning::CTComp_ ()

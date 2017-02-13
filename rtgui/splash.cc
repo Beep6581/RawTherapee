@@ -26,7 +26,6 @@
 extern Glib::ustring creditsPath;
 extern Glib::ustring licensePath;
 extern Glib::ustring versionString;
-extern Glib::ustring versionSuffixString;
 
 SplashImage::SplashImage ()
 {
@@ -52,10 +51,6 @@ bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 
     int w, h;
     Glib::ustring versionStr(versionString);
-
-    if (!versionSuffixString.empty()) {
-        versionStr += " " + versionSuffixString;
-    }
 
     version = create_pango_layout (versionStr);
     version->set_text(versionStr);
