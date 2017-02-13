@@ -944,7 +944,7 @@ void CLASS fuji_decode_loop (const struct fuji_compressed_params* common_info, i
 {
 
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic,1) // dynamic scheduling is faster if count > number of cores (e.g. count for GFX 50S is 12)
 #endif
 
     for (int cur_block = 0; cur_block < count ; cur_block++) {
