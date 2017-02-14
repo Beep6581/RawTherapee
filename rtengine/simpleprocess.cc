@@ -948,15 +948,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (params.locallab.enabled) {
         MyTime t1, t2;
         t1.set();
-        CacheManager*   cachemgr;           // parent
+        CacheManager*   cachemgr;
 
-        CacheImageData  cfs;                // cache entry corresponding to the thumbnai
+        CacheImageData  cfs;
         cfs.md5 = cachemgr->getMD5 (imgsrc->getFileName());
         std::string mdfive = cfs.md5;
 
-        //Glib::ustring datalab = imgsrc->getFileName() + ".mip";
-
-        // Glib::ustring pop = options.getUserProfilePath() + "/";
         Glib::ustring pop = options.cacheBaseDir + "/mip/";
 
         Glib::ustring datalab;
@@ -1331,7 +1328,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                         retistrs[ns] = str3;
                         sizecu = longe;
-                        //        printf("lec simpl str=%s ns=%i  si=%i\n",  retistrs[ns].c_str(), ns, sizecu);
                     }
 
                     if (spotline.substr (0, pos) == "curveLL") {
@@ -1349,7 +1345,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                         llstrs[ns] = str3;
                         sizell = longel;
-                        // printf("lecture strLL=%s ns=%i  si=%i\n",  llstr[ns].c_str(), ns, sizell);
 
                     }
 
@@ -1368,7 +1363,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                         lhstrs[ns] = str3;
                         sizelh = longeh;
-                        //printf("lecture strLH=%s ns=%i  si=%i\n",  lhstr[ns].c_str(), ns, sizelh);
                     }
 
                     if (spotline.substr (0, pos) == "curveCC") {
@@ -1386,7 +1380,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                         ccstrs[ns] = str3;
                         sizecc = longec;
-                        //printf("lecture strCC=%s ns=%i  si=%i\n",  ccstr[ns].c_str(), ns, sizecc);
                     }
 
                 }

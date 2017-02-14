@@ -98,9 +98,6 @@ struct local_params {
     bool sharpena;
     bool cbdlena;
     bool denoiena;
-
-
-
 };
 
 static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, struct local_params& lp)
@@ -323,7 +320,6 @@ void ImProcFunctions::strcurv_data (std::string retistr, int *s_datc, int &siz)
     std::size_t posend = retistr.find ("@");
 
     std::string strend = retistr.substr (posend - 1, 1);
-    //    printf("stren=%s posz=%i\n", strend.c_str(), posz);
     int longe;
 
     for (int sl = 0; sl < 69; sl++) {
@@ -334,7 +330,6 @@ void ImProcFunctions::strcurv_data (std::string retistr, int *s_datc, int &siz)
 
     s_size = longe;
 
-    // printf("sp=%i stren=%s reti=%s long=%i\n", sp, strend.c_str(), retistr[sp].c_str(), longe);
 
     int s_cur[s_size + 1];
     int s_datcu[s_size + 1];
@@ -1894,7 +1889,6 @@ struct local_contra {
     float bb;
     float aaa, bbb;
     float ccc;
-//    float DY;
     float dx, dy;
     float ah, bh;
     float al, bl;
@@ -2912,7 +2906,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
     constexpr float lumdelta = 11.f; //11
     float modlum = lumdelta * multlum;
 
-    // constant and varaibles to prepare shape detection
+    // constant and variables to prepare shape detection
     if (lumaref + modlum >= 100.f) {
         modlum = (100.f - lumaref) / 2.f;
     }
@@ -2930,7 +2924,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
     float vi = (lumaref - modlum) / 100.f;
     ImProcFunctions::secondeg_begin (reducac, vi, aa, bb);//parabolic
     ImProcFunctions::secondeg_end (reducac, vinf, aaa, bbb, ccc);//parabolic
-//  printf("vi=%f aa=%f bb=%f vinf=%f aaa=%f bbb=%f ccc=%f\n", vi,aa,bb, vinf, aaa, bbb, ccc);
     float vinf2 = (lumaref + modlum) / 100.f;
     float vi2 = (lumaref - modlum) / 100.f;
     float aaaa, bbbb, cccc, aO, bO;
@@ -3557,7 +3550,6 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
                         calclight (original->L[y][x], lp.ligh , lumnew, false);
                     }
 
-                    //    float lightcont = localcurve[original->L[y][x]]; //apply lightness
                     float lightcont = lumnew ; //original->L[y][x] + (lp.ligh /100.f)*original->L[y][x] ; //apply lightness
 
 
@@ -3577,10 +3569,8 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
                         calclight (original->L[y][x], lp.ligh , lumnew, false);
                     }
 
-                    //    float lightcont = localcurve[original->L[y][x]]; //apply lightness
-                    float lightcont = lumnew ; //original->L[y][x] + (lp.ligh /100.f)*original->L[y][x] ; //apply lightness
+                    float lightcont = lumnew ; //apply lightness
 
-                    //float lightcont = localcurve[original->L[y][x]]; //apply lightness
                     float diflc = lightcont - original->L[y][x];
                     diflc *= factorx;
                     transformed->L[y][x] = original->L[y][x] + diflc;
@@ -3771,7 +3761,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             LabImage *bufgb;
             int GW = transformed->W;
             int GH = transformed->H;
-            printf ("rad=%f gaus=%f call=%i skip=%i\n", radius, GAUSS_SKIP, call, sk);
+            //  printf ("rad=%f gaus=%f call=%i skip=%i\n", radius, GAUSS_SKIP, call, sk);
 
             if (call == 2  && !lp.invrad) { //simpleprocess
                 int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone

@@ -720,12 +720,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
              */
 
             bool isascii = true;
-            CacheManager*   cachemgr;           // parent
+            CacheManager*   cachemgr;
 
-            CacheImageData  cfs;                // cache entry corresponding to the thumbnai
+            CacheImageData  cfs;
             cfs.md5 = cachemgr->getMD5 (imgsrc->getFileName());
             std::string mdfive = cfs.md5;
-//          printf("md5=%s \n", mdfive.c_str());
 
 
             Glib::ustring datainterm = imgsrc->getFileName() + ".ii";//extansion ii arbitrary to test if mip file is possible
@@ -749,8 +748,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            //  printf("mip file=%s \n", datalab.c_str());
-            //   Glib::ustring pop = options.getUserProfilePath() + "/";
             Glib::ustring pop = options.cacheBaseDir + "/mip/";
 
             Glib::ustring datal;
@@ -817,7 +814,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             ifstream fic (datal, ios::in);
             bool reinit = false;
 
-            //printf("versionmip=%i  nbspot=%i\n", versionmip, params.locallab.nbspot) ;
 
 
             if (fic.fail() || versionmip == 0  || params.locallab.nbspot == 0) { //initialize mip with default values if no file or old file to prevent crash
@@ -1346,7 +1342,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         retistr[ns] = str3;
                         sizecu = longe;
 
-                        //   printf("lecture str=%s ns=%i  si=%i\n",  retistr[ns].c_str(), ns, sizecu);
                     }
 
                     if (excurvll && spotline.substr (0, pos) == "curveLL") {
@@ -1364,7 +1359,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                         llstr[ns] = str3;
                         sizell = longel;
-                        //    printf("lecture strLL=%s ns=%i  si=%i\n",  llstr[ns].c_str(), ns, sizell);
                     }
 
 
@@ -1383,7 +1377,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                         lhstr[ns] = str3;
                         sizelh = longeh;
-                        //printf("lecture strLH=%s ns=%i  si=%i\n",  lhstr[ns].c_str(), ns, sizelh);
                     }
 
                     if (excurvcc && spotline.substr (0, pos) == "curveCC") {
@@ -1401,7 +1394,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                         ccstr[ns] = str3;
                         sizecc = longec;
-                        //    printf("lecture strCC=%s ns=%i  si=%i\n",  ccstr[ns].c_str(), ns, sizecc);
                     }
 
 

@@ -837,15 +837,12 @@ void Crop::update (int todo)
 
         if (needslocal ) {
             // if (tyty ) {
-            //Glib::ustring datalab2 = parent->imgsrc->getFileName() + ".mip";
-            //  Glib::ustring pop = options.getUserProfilePath() + "/";
 
-            CacheManager*   cachemgr;           // parent
+            CacheManager*   cachemgr;
 
-            CacheImageData  cfs;                // cache entry corresponding to the thumbnai
+            CacheImageData  cfs;
             cfs.md5 = cachemgr->getMD5 (parent->imgsrc->getFileName());
             std::string mdfive = cfs.md5;
-            //  printf("md5=%s \n", mdfive.c_str());
 
             Glib::ustring pop = options.cacheBaseDir + "/mip/";
 
