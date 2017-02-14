@@ -949,7 +949,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
         //Glib::ustring datalab = imgsrc->getFileName() + ".mip";
 
-        Glib::ustring pop = options.getUserProfilePath() + "/";
+        // Glib::ustring pop = options.getUserProfilePath() + "/";
+        Glib::ustring pop = options.cacheBaseDir + "/mip/";
+
         Glib::ustring datalab;
 
         if (options.mip == MI_opt) {

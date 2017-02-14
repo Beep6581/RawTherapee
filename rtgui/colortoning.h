@@ -13,12 +13,43 @@
 #include "thresholdadjuster.h"
 #include "colorprovider.h"
 
-class ColorToning : public ToolParamBlock, public FoldableToolPanel,  public rtengine::AutoColorTonListener, public CurveListener, public ColorProvider,
-    public ThresholdAdjusterListener, public AdjusterListener
+class ColorToning final :
+    public ToolParamBlock,
+    public FoldableToolPanel,
+    public rtengine::AutoColorTonListener,
+    public CurveListener,
+    public ColorProvider,
+    public ThresholdAdjusterListener,
+    public AdjusterListener
 {
+public:
+    ColorToning ();
+    ~ColorToning();
+    void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setBatchMode          (bool batchMode);
+    void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void trimValues            (rtengine::procparams::ProcParams* pp);
+    void adjusterChanged       (Adjuster* a, double newval);
+    void adjusterChanged       (ThresholdAdjuster* a, double newBottom, double newTop);
+    void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
+    void neutral_pressed       ();
+    //void neutralCurves_pressed ();
+    void autoColorTonChanged   (int bwct, int satthres, int satprot);
+    bool CTComp_               ();
 
-protected:
-    //Gtk::HSeparator* splitSep;
+    void enabledChanged        ();
+    void curveChanged          (CurveEditor* ce);
+    void autosatChanged        ();
+    void autoOpenCurve         ();
+    void methodChanged         ();
+    void twocolorChanged       (bool changedbymethod);
+    void twoColorChangedByGui  ();
+    void lumamodeChanged       ();
+
+    void colorForValue         (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+
+private:
     Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
     CurveEditorGroup* colorCurveEditorG;
@@ -57,7 +88,6 @@ protected:
     Gtk::Image* irg;
 
     Gtk::Button* neutral;
-    //Gtk::Button* neutralCurves;
     Gtk::HBox* neutrHBox;
     Gtk::HBox* chromaHbox;
     Gtk::Label* chroLabel;
@@ -75,32 +105,7 @@ protected:
     bool lastLumamode;
     sigc::connection lumamodeConn;
 
-public:
-    ColorToning ();
-    ~ColorToning();
-    void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode          (bool batchMode);
-    void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void trimValues            (rtengine::procparams::ProcParams* pp);
-    void adjusterChanged       (Adjuster* a, double newval);
-    void adjusterChanged       (ThresholdAdjuster* a, double newBottom, double newTop);
-    void setAdjusterBehavior   (bool splitAdd, bool satThresholdAdd, bool satOpacityAdd, bool strprotectAdd, bool balanceAdd);
-    void neutral_pressed       ();
-    //void neutralCurves_pressed ();
-    void autoColorTonChanged   (int bwct, int satthres, int satprot);
-    bool CTComp_               ();
-
-    void enabledChanged        ();
-    void curveChanged          (CurveEditor* ce);
-    void autosatChanged        ();
-    void autoOpenCurve         ();
-    void methodChanged         ();
-    void twocolorChanged       (bool changedbymethod);
-    void twoColorChangedByGui  ();
-    void lumamodeChanged       ();
-
-    void colorForValue         (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    IdleRegister idle_register;
 };
 
 #endif

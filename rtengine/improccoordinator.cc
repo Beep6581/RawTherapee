@@ -739,7 +739,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
 
             //  printf("mip file=%s \n", datalab.c_str());
-            Glib::ustring pop = options.getUserProfilePath() + "/";
+            //   Glib::ustring pop = options.getUserProfilePath() + "/";
+            Glib::ustring pop = options.cacheBaseDir + "/mip/";
+
             Glib::ustring datal;
 
 

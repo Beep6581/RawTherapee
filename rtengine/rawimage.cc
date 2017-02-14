@@ -435,6 +435,10 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
         return 2;
     }
 
+    if(xtransCompressed) {
+        parse_xtrans_header();
+    }
+
     if (flip == 5) {
         this->rotate_deg = 270;
     } else if (flip == 3) {

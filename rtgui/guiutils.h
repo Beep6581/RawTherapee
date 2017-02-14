@@ -19,13 +19,17 @@
 #ifndef __GUI_UTILS_
 #define __GUI_UTILS_
 
+#include <map>
+
 #include <gtkmm.h>
+
 #include <cairomm/cairomm.h>
-#include "../rtengine/rtengine.h"
+
 #include "../rtengine/coord.h"
+#include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
+
 #include "rtimage.h"
-#include <sstream>
-#include <iostream>
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
@@ -39,6 +43,20 @@ gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
 
 guint add_idle (GSourceFunc function, gpointer data);
+
+class IdleRegister final :
+    public rtengine::NonCopyable
+{
+public:
+    ~IdleRegister();
+
+    void add(GSourceFunc function, gpointer data);
+    void destroy();
+
+private:
+    std::map<void*, guint> ids;
+    MyMutex mutex;
+};
 
 // TODO: The documentation says gdk_threads_enter and gdk_threads_leave should be replaced
 // by g_main_context_invoke(), g_idle_add() and related functions, but this will require more extensive changes.

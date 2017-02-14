@@ -741,6 +741,7 @@ HISTORY_MSG_506;Local - Denoise
 HISTORY_MSG_507;Local - LH Curve
 HISTORY_MSG_508;Local - Enable super
 HISTORY_MSG_509;Local - CC curve
+HISTORY_MSG_510;Local - curve method
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot

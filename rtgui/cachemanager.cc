@@ -19,6 +19,7 @@
 #include "cachemanager.h"
 
 #include <memory>
+#include <iostream>
 
 #include <glib/gstdio.h>
 #include <giomm.h>
@@ -35,8 +36,8 @@
 namespace
 {
 
-constexpr auto cacheDirMode = 511;
-constexpr auto cacheDirs = { "profiles", "images", "aehistograms", "embprofiles", "data" };
+constexpr int cacheDirMode = 0777;
+constexpr const char* cacheDirs[] = { "profiles", "images", "aehistograms", "embprofiles", "data", "mip" };
 
 }
 
@@ -60,7 +61,7 @@ void CacheManager::init ()
     }
 
     if (error != 0 && options.rtSettings.verbose) {
-        std::cerr << "Failed to create all cache directories: " << g_strerror(errno) << std::endl;
+        std::cerr << "Failed to create all cache directories: " << g_strerror (errno) << std::endl;
     }
 }
 
@@ -76,6 +77,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
 
         // if it is open, return it
         const auto iterator = openEntries.find (fname);
+
         if (iterator != openEntries.end ()) {
 
             auto cachedThumbnail = iterator->second;
@@ -99,9 +101,11 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
         CacheImageData imageData;
 
         const auto error = imageData.load (cacheName);
+
         if (error == 0 && imageData.supported) {
 
             thumbnail.reset (new Thumbnail (this, fname, &imageData));
+
             if (!thumbnail->isSupported ()) {
                 thumbnail.reset ();
             }
@@ -112,6 +116,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
     if (!thumbnail) {
 
         thumbnail.reset (new Thumbnail (this, fname, md5));
+
         if (!thumbnail->isSupported ()) {
             thumbnail.reset ();
         }
@@ -123,6 +128,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
         MyMutex::MyLock lock (mutex);
 
         const auto iterator = openEntries.find (fname);
+
         if (iterator != openEntries.end ()) {
 
             auto cachedThumbnail = iterator->second;
@@ -145,6 +151,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname)
 
     // check if it is opened
     auto iterator = openEntries.find (fname);
+
     if (iterator == openEntries.end ()) {
         deleteFiles (fname, getMD5 (fname), true, true);
         return;
@@ -190,12 +197,13 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
     error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
 
     if (error != 0 && options.rtSettings.verbose) {
-        std::cerr << "Failed to rename all files for cache entry '" << oldfilename << "': " << g_strerror(errno) << std::endl;
+        std::cerr << "Failed to rename all files for cache entry '" << oldfilename << "': " << g_strerror (errno) << std::endl;
     }
 
     // check if it is opened
     // if it is open, update md5
     const auto iterator = openEntries.find (oldfilename);
+
     if (iterator == openEntries.end ()) {
         return;
     }
@@ -256,12 +264,13 @@ void CacheManager::deleteDir (const Glib::ustring& dirName) const
         Glib::Dir dir (Glib::build_filename (baseDir, dirName));
 
         auto error = 0;
+
         for (auto entry = dir.begin (); entry != dir.end (); ++entry) {
             error |= g_remove (Glib::build_filename (baseDir, dirName, *entry).c_str ());
         }
 
         if (error != 0 && options.rtSettings.verbose) {
-            std::cerr << "Failed to delete all entries in cache directory '" << dirName << "': " << g_strerror(errno) << std::endl;
+            std::cerr << "Failed to delete all entries in cache directory '" << dirName << "': " << g_strerror (errno) << std::endl;
         }
 
     } catch (Glib::Error&) {}
@@ -289,7 +298,7 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
     }
 
     if (error != 0 && options.rtSettings.verbose) {
-        std::cerr << "Failed to delete all files for cache entry '" << fname << "': " << g_strerror(errno) << std::endl;
+        std::cerr << "Failed to delete all files for cache entry '" << fname << "': " << g_strerror (errno) << std::endl;
     }
 }
 
@@ -302,9 +311,10 @@ std::string CacheManager::getMD5 (const Glib::ustring& fname)
 
 #ifdef WIN32
 
-        std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
+        std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*> (g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
 
         WIN32_FILE_ATTRIBUTE_DATA fileAttr;
+
         if (GetFileAttributesExW (wfname.get (), GetFileExInfoStandard, &fileAttr)) {
             // We use name, size and creation time to identify a file.
             const auto identifier = Glib::ustring::compose ("%1-%2-%3-%4", fileAttr.nFileSizeLow, fileAttr.ftCreationTime.dwHighDateTime, fileAttr.ftCreationTime.dwLowDateTime, fname);
@@ -313,8 +323,7 @@ std::string CacheManager::getMD5 (const Glib::ustring& fname)
 
 #else
 
-        try
-        {
+        try {
 
             if (auto info = file->query_info ()) {
                 // We only use name and size to identify a file.
@@ -322,7 +331,7 @@ std::string CacheManager::getMD5 (const Glib::ustring& fname)
                 return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, identifier);
             }
 
-        } catch(Gio::Error&) {}
+        } catch (Gio::Error&) {}
 
 #endif
 
@@ -332,9 +341,9 @@ std::string CacheManager::getMD5 (const Glib::ustring& fname)
 }
 
 Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subDir,
-                                              const Glib::ustring& fname,
-                                              const Glib::ustring& fext,
-                                              const Glib::ustring& md5) const
+        const Glib::ustring& fname,
+        const Glib::ustring& fext,
+        const Glib::ustring& md5) const
 {
     const auto dirName = Glib::build_filename (baseDir, subDir);
     const auto baseName = Glib::path_get_basename (fname) + "." + md5;
@@ -363,8 +372,7 @@ void CacheManager::applyCacheSizeLimitation () const
         return;
     }
 
-    std::sort (files.begin (), files.end (), [] (const FNameMTime& lhs, const FNameMTime& rhs)
-    {
+    std::sort (files.begin (), files.end (), [] (const FNameMTime & lhs, const FNameMTime & rhs) {
         return lhs.second < rhs.second;
     });
 

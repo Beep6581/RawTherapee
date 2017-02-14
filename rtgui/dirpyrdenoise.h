@@ -28,10 +28,58 @@
 #include "guiutils.h"
 #include "options.h"
 
-class DirPyrDenoise : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoChromaListener, public CurveListener, public ColorProvider
+class DirPyrDenoise final :
+    public ToolParamBlock,
+    public AdjusterListener,
+    public FoldableToolPanel,
+    public rtengine::AutoChromaListener,
+    public CurveListener,
+    public ColorProvider
 {
+public:
+    DirPyrDenoise ();
+    ~DirPyrDenoise ();
 
-protected:
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void setBatchMode   (bool batchMode);
+    void curveChanged   (CurveEditor* ce);
+    void setEditProvider     (EditDataProvider *provider);
+    void autoOpenCurve  ();
+
+    void adjusterChanged (Adjuster* a, double newval);
+    void enabledChanged  ();
+    void enhanceChanged  ();
+    void medianChanged  ();
+    void autochromaChanged  ();
+    void chromaChanged (double autchroma, double autred, double autblue);
+    bool chromaComputed_ ();
+    void noiseChanged (double nresid, double highresid);
+    bool noiseComputed_ ();
+    void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP);
+    bool TilePrevComputed_ ();
+
+//    void perform_toggled  ();
+    void updateNoiseLabel      ();
+    void LmethodChanged      ();
+    void CmethodChanged      ();
+    void C2methodChanged      ();
+    void updateTileLabel      ();
+    void updatePrevLabel      ();
+
+    void dmethodChanged      ();
+    void medmethodChanged      ();
+    void methodmedChanged      ();
+    void rgbmethodChanged      ();
+    void smethodChanged      ();
+    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+
+    void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd, bool passesadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
+    Glib::ustring getSettingString ();
+
+private:
     CurveEditorGroup* NoiscurveEditorG;
     CurveEditorGroup* CCcurveEditorG;
     Adjuster* luma;
@@ -92,50 +140,7 @@ protected:
     int nextsizeT;
     int nextsizeP;
 
-public:
-
-    DirPyrDenoise ();
-    ~DirPyrDenoise ();
-
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-    void curveChanged   (CurveEditor* ce);
-    void setEditProvider     (EditDataProvider *provider);
-    void autoOpenCurve  ();
-
-    void adjusterChanged (Adjuster* a, double newval);
-    void enabledChanged  ();
-    void enhanceChanged  ();
-    void medianChanged  ();
-    void autochromaChanged  ();
-    void chromaChanged (double autchroma, double autred, double autblue);
-    bool chromaComputed_ ();
-    void noiseChanged (double nresid, double highresid);
-    bool noiseComputed_ ();
-    void noiseTilePrev (int tileX, int tileY, int prevX, int prevY, int sizeT, int sizeP);
-    bool TilePrevComputed_ ();
-
-//    void perform_toggled  ();
-    void updateNoiseLabel      ();
-    void LmethodChanged      ();
-    void CmethodChanged      ();
-    void C2methodChanged      ();
-    void updateTileLabel      ();
-    void updatePrevLabel      ();
-
-    void dmethodChanged      ();
-    void medmethodChanged      ();
-    void methodmedChanged      ();
-    void rgbmethodChanged      ();
-    void smethodChanged      ();
-    virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
-
-    void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd, bool passesadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
-    Glib::ustring getSettingString ();
-
+    IdleRegister idle_register;
 };
 
 #endif

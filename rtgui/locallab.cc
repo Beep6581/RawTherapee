@@ -1037,27 +1037,27 @@ bool Locallab::localretComputed_ ()
 //    printf("G2 anbspot=%i\n", anbspot->getValue());
 
     if (listener) { //for all sliders
-        listener->panelChanged (Evlocallabanbspot, anbspot->getTextValue());
+        listener->panelChanged (Evlocallabanbspot, "");//anbspot->getTextValue());
     }
 
     if (listener) {//for curve
-        listener->panelChanged (EvlocallabCTgainCurverab, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (EvlocallabCTgainCurverab, M (""));
     }
 
     if (listener) {//for curve
-        listener->panelChanged (EvlocallabCTgainCurve, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (EvlocallabCTgainCurve, M (""));
     }
 
     if (listener) {//for curve
-        listener->panelChanged (Evlocallabllshape, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (Evlocallabllshape, M (""));
     }
 
     if (listener) {//for curve
-        listener->panelChanged (Evlocallabccshape, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (Evlocallabccshape, M (""));
     }
 
     if (listener) {//for curve
-        listener->panelChanged (EvlocallabLHshape, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (EvlocallabLHshape, M (""));
     }
 
 
@@ -1331,11 +1331,11 @@ bool Locallab::localComputed_ ()
 
     //add events for each cases
     if (listener) { //for all sliders
-        listener->panelChanged (Evlocallabanbspot, anbspot->getTextValue());
+        listener->panelChanged (Evlocallabanbspot, "");//anbspot->getTextValue());
     }
 
     if (listener) {//for curve
-        listener->panelChanged (EvlocallabCTgainCurverab, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (EvlocallabCTgainCurverab, M (""));
     }
 
     if (listener) {//for inverse color
@@ -1375,19 +1375,19 @@ bool Locallab::localComputed_ ()
     }
 
     if (listener) {//for curve reti
-        listener->panelChanged (EvlocallabCTgainCurve, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (EvlocallabCTgainCurve, M (""));
     }
 
     if (listener) {//for curve LL
-        listener->panelChanged (Evlocallabllshape, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (Evlocallabllshape, M (""));
     }
 
     if (listener) {//for curve LH
-        listener->panelChanged (EvlocallabLHshape, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (EvlocallabLHshape, M (""));
     }
 
     if (listener) {//for curve LH
-        listener->panelChanged (Evlocallabccshape, M ("HISTORY_CUSTOMCURVE"));
+        listener->panelChanged (Evlocallabccshape, M (""));
     }
 
     return false;
@@ -2000,7 +2000,7 @@ void Locallab::curveChanged (CurveEditor* ce)
 
     if (listener && getEnabled()) {
         if (ce == cTgainshape) {
-            listener->panelChanged (EvlocallabCTgainCurve, M ("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvlocallabCTgainCurve, M ("HISTORY_CUSTOMCURVE"));//HISTORY_CUSTOMCURVE
             int strval = retrab->getValue();
             //update MIP
             retrab->setValue (strval + 1);
@@ -2012,9 +2012,9 @@ void Locallab::curveChanged (CurveEditor* ce)
         }
 
         else if (ce == cTgainshaperab) {
-            listener->panelChanged (EvlocallabCTgainCurverab, M ("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvlocallabCTgainCurverab, M (""));
         } else if (ce == LHshape) {
-            listener->panelChanged (EvlocallabLHshape, M ("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvlocallabLHshape, M (""));
             int strval = retrab->getValue();
             //update MIP
             retrab->setValue (strval + 1);
@@ -2612,7 +2612,7 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
         } else if (a == sensih) {
             listener->panelChanged (Evlocallabsensih, sensih->getTextValue());
         } else if (a == retrab) {
-            listener->panelChanged (Evlocallabretrab, retrab->getTextValue());
+            listener->panelChanged (Evlocallabretrab, "");//retrab->getTextValue());
         } else if (a == radius) {
             listener->panelChanged (Evlocallabradius, radius->getTextValue());
         } else if (a == strength) {
@@ -2638,7 +2638,7 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
         } else if (a == nbspot) {
             listener->panelChanged (Evlocallabnbspot, nbspot->getTextValue());
         } else if (a == anbspot) {
-            listener->panelChanged (Evlocallabanbspot, anbspot->getTextValue());
+            listener->panelChanged (Evlocallabanbspot, "");//anbspot->getTextValue());
         } else if (a == vart) {
             listener->panelChanged (Evlocallabvart, vart->getTextValue());
         } else if (a == chrrt) {

@@ -36,37 +36,12 @@ public:
 };
 
 class FileCatalog;
-class BatchQueue  : public ThumbBrowserBase,
+
+class BatchQueue final :
+    public ThumbBrowserBase,
     public rtengine::BatchProcessingListener,
     public LWButtonListener
 {
-
-protected:
-    int getMaxThumbnailHeight() const;
-    void saveThumbnailHeight (int height);
-    int  getThumbnailHeight ();
-
-    BatchQueueEntry* processing;  // holds the currently processed image
-    FileCatalog* fileCatalog;
-    int sequence; // holds the current sequence index
-
-    Glib::ustring nameTemplate;
-
-    MyImageMenuItem* cancel;
-    MyImageMenuItem* head;
-    MyImageMenuItem* tail;
-    Gtk::MenuItem* selall;
-    Gtk::MenuItem* open;
-    Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
-    Gtk::Menu pmenu;
-
-    BatchQueueListener* listener;
-
-    Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
-    Glib::ustring getTempFilenameForParams( const Glib::ustring &filename );
-    bool saveBatchQueue ();
-    void notifyListener (bool queueEmptied);
-
 public:
     explicit BatchQueue (FileCatalog* aFileCatalog);
     ~BatchQueue ();
@@ -106,6 +81,34 @@ public:
 
     static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence = 0);
     static int calcMaxThumbnailHeight();
+
+protected:
+    int getMaxThumbnailHeight() const;
+    void saveThumbnailHeight (int height);
+    int  getThumbnailHeight ();
+
+    Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
+    Glib::ustring getTempFilenameForParams( const Glib::ustring &filename );
+    bool saveBatchQueue ();
+    void notifyListener (bool queueEmptied);
+
+    BatchQueueEntry* processing;  // holds the currently processed image
+    FileCatalog* fileCatalog;
+    int sequence; // holds the current sequence index
+
+    Glib::ustring nameTemplate;
+
+    MyImageMenuItem* cancel;
+    MyImageMenuItem* head;
+    MyImageMenuItem* tail;
+    Gtk::MenuItem* selall;
+    Gtk::MenuItem* open;
+    Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
+    Gtk::Menu pmenu;
+
+    BatchQueueListener* listener;
+
+    IdleRegister idle_register;
 };
 
 #endif
