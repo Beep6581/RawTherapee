@@ -1075,7 +1075,7 @@ PREFERENCES_MIP;Mip Profiles
 PREFERENCES_MIP_LABEL;Mip profiles:
 PREFERENCES_MIP_OPT;Mip files in cache
 PREFERENCES_MIP_PREV;Next Input file
-PREFERENCES_MIP_TOOLTIP;Next input file allow multiple sessions of the same file, but do not allow path with NON ASCII characters.\nMip files in Cache, allow NON ASCII characters in path, but allow only one session for the same file.
+PREFERENCES_MIP_TOOLTIP;Next input file allow multiple sessions of the same file, but do not allow path with NON ASCII characters.\nMip files in Cache, allow NON ASCII characters in path, allow multi session for the same file.
 PREFERENCES_MONINTENT;Default rendering intent
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Default color profile

@@ -26,6 +26,9 @@
 #include <fstream>
 #include <string>
 #include <unistd.h>
+#include "../rtgui/cachemanager.h"
+#include "../rtgui/cacheimagedata.h"
+
 //#include <chrono>
 // "ceil" rounding
 //#define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
@@ -836,12 +839,20 @@ void Crop::update (int todo)
             // if (tyty ) {
             //Glib::ustring datalab2 = parent->imgsrc->getFileName() + ".mip";
             //  Glib::ustring pop = options.getUserProfilePath() + "/";
+
+            CacheManager*   cachemgr;           // parent
+
+            CacheImageData  cfs;                // cache entry corresponding to the thumbnai
+            cfs.md5 = cachemgr->getMD5 (parent->imgsrc->getFileName());
+            std::string mdfive = cfs.md5;
+            //  printf("md5=%s \n", mdfive.c_str());
+
             Glib::ustring pop = options.cacheBaseDir + "/mip/";
 
             Glib::ustring datalab;
 
             if (options.mip == MI_opt) {
-                datalab = pop + Glib::path_get_basename (parent->imgsrc->getFileName () + ".mip");
+                datalab = pop + Glib::path_get_basename (parent->imgsrc->getFileName () + "." + mdfive + ".mip");
             }
 
             if (options.mip == MI_prev) {

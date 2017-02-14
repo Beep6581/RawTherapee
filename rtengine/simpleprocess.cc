@@ -32,6 +32,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "../rtgui/cachemanager.h"
+#include "../rtgui/cacheimagedata.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -946,6 +948,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (params.locallab.enabled) {
         MyTime t1, t2;
         t1.set();
+        CacheManager*   cachemgr;           // parent
+
+        CacheImageData  cfs;                // cache entry corresponding to the thumbnai
+        cfs.md5 = cachemgr->getMD5 (imgsrc->getFileName());
+        std::string mdfive = cfs.md5;
 
         //Glib::ustring datalab = imgsrc->getFileName() + ".mip";
 
@@ -955,7 +962,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         Glib::ustring datalab;
 
         if (options.mip == MI_opt) {
-            datalab = pop + Glib::path_get_basename (imgsrc->getFileName () + ".mip");
+            datalab = pop + Glib::path_get_basename (imgsrc->getFileName () + "." + mdfive + ".mip");
         }
 
         if (options.mip == MI_prev) {

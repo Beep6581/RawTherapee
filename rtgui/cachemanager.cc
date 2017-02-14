@@ -195,6 +195,7 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
     error |= g_rename (getCacheFileName ("aehistograms", oldfilename, "", oldmd5).c_str (), getCacheFileName ("aehistograms", newfilename, "", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("embprofiles", oldfilename, ".icc", oldmd5).c_str (), getCacheFileName ("embprofiles", newfilename, ".icc", newmd5).c_str ());
     error |= g_rename (getCacheFileName ("data", oldfilename, ".txt", oldmd5).c_str (), getCacheFileName ("data", newfilename, ".txt", newmd5).c_str ());
+    error |= g_rename (getCacheFileName ("mip", oldfilename, ".mip", oldmd5).c_str (), getCacheFileName ("mip", newfilename, ".mip", newmd5).c_str ());
 
     if (error != 0 && options.rtSettings.verbose) {
         std::cerr << "Failed to rename all files for cache entry '" << oldfilename << "': " << g_strerror (errno) << std::endl;
@@ -255,6 +256,8 @@ void CacheManager::clearProfiles () const
     MyMutex::MyLock lock (mutex);
 
     deleteDir ("profiles");
+    deleteDir ("mip");
+
 }
 
 void CacheManager::deleteDir (const Glib::ustring& dirName) const
@@ -295,6 +298,8 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
 
     if (purgeProfile) {
         error |= g_remove (getCacheFileName ("profiles", fname, paramFileExtension, md5).c_str ());
+        error |= g_remove (getCacheFileName ("mip", fname, ".mip", md5).c_str ());
+
     }
 
     if (error != 0 && options.rtSettings.verbose) {

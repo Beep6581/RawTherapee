@@ -26,6 +26,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "../rtgui/cachemanager.h"
+#include "../rtgui/cacheimagedata.h"
+
 #include "iccstore.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -717,6 +720,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
              */
 
             bool isascii = true;
+            CacheManager*   cachemgr;           // parent
+
+            CacheImageData  cfs;                // cache entry corresponding to the thumbnai
+            cfs.md5 = cachemgr->getMD5 (imgsrc->getFileName());
+            std::string mdfive = cfs.md5;
+//          printf("md5=%s \n", mdfive.c_str());
+
+
             Glib::ustring datainterm = imgsrc->getFileName() + ".ii";//extansion ii arbitrary to test if mip file is possible
 
             ofstream finterm (datainterm, ios::out);
@@ -744,9 +755,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             Glib::ustring datal;
 
-
             if (options.mip == MI_opt || !isascii) {
-                datal = pop + Glib::path_get_basename (imgsrc->getFileName () + ".mip");
+                datal = pop + Glib::path_get_basename (imgsrc->getFileName () + "." + mdfive + ".mip");
             }
 
             if (options.mip == MI_prev && isascii) {//&& isascii
