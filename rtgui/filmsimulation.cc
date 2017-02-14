@@ -11,6 +11,18 @@ using namespace rtengine::procparams;
 namespace
 {
 
+Glib::ustring stripPrefixDir(const Glib::ustring &filename,
+                             Glib::ustring dir)
+{
+    if (!Glib::str_has_suffix(dir, G_DIR_SEPARATOR_S)) {
+        dir += G_DIR_SEPARATOR_S;
+    }
+    if (Glib::str_has_prefix(filename, dir)) {
+        return filename.substr(dir.size());
+    } 
+    return filename;
+}
+
 bool notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
 {
     static enum
@@ -116,7 +128,12 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
     setEnabled (pp->filmSimulation.enabled);
 
     if ( !pp->filmSimulation.clutFilename.empty() ) {
-        m_clutComboBox->setSelectedClut( pp->filmSimulation.clutFilename );
+        Glib::ustring full_filename(pp->filmSimulation.clutFilename);
+        if ( !Glib::path_is_absolute(full_filename) ) {
+            full_filename = Glib::build_filename(options.clutsDir,
+                                                 full_filename);
+        }
+        m_clutComboBox->setSelectedClut( full_filename );
     }
 
     m_strength->setValue( pp->filmSimulation.strength );
@@ -157,7 +174,8 @@ void FilmSimulation::write( rtengine::procparams::ProcParams* pp, ParamsEdited* 
     Glib::ustring clutFName = m_clutComboBox->getSelectedClut();
 
     if ( clutFName != "NULL" ) { // We do not want to set "NULL" in clutFilename, even if "unedited"
-        pp->filmSimulation.clutFilename = clutFName;
+        pp->filmSimulation.clutFilename = stripPrefixDir(clutFName,
+                                                         options.clutsDir);
     }
 
     pp->filmSimulation.strength = m_strength->getValue();
