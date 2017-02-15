@@ -374,24 +374,7 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
     } else if (a == equal) {
         cache_customEqual (eVal);
 
-        // Recomputing AutoWB if it's the current method
-        if (wbp && ppMethod->type == WBT_AUTO) {
-            double ctemp = -1.0;
-            double cgreen = -1.0;
-            wbp->getAutoWB (ctemp, cgreen, eVal);
-
-            if (ctemp != -1.0) {
-                // Set the automatics temperature value only if in SET mode
-                if (temp->getEditedState()  && !temp->getAddMode() ) {
-                    temp->setValue (ctemp);
-                }
-
-                // Set the automatics green value only if in SET mode
-                if (green->getEditedState() && !green->getAddMode()) {
-                    green->setValue (cgreen);
-                }
-            }
-        }
+        // Recomputing AutoWB if it's the current method will happen in improccoordinator.cc
     }
 
     if (listener) {
@@ -460,15 +443,7 @@ void WhiteBalance::optChanged ()
                         // equal remain as is
                     }
 
-                    if (!batchMode || equal->getEditedState()) {
-                        double ctemp, cgreen;
-                        wbp->getAutoWB (ctemp, cgreen, equal->getValue());
-
-                        if (ctemp != -1.0) {
-                            temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
-                            green->setValue (green->getAddMode() ? 0.0 : cgreen);
-                        }
-                    }
+                    // Recomputing AutoWB will happen in improccoordinator.cc
                 }
 
                 break;
@@ -617,32 +592,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
                 green->setValue (0.0);
             }
 
-            // then check for the correct ones, if possible
-            if (wbp) {
-                double ctemp = -1.0;
-                double cgreen = -1.0;
-                wbp->getAutoWB (ctemp, cgreen, pp->wb.equal);
-
-                if (ctemp != -1.0) {
-                    // Set the automatics temperature if in SET mode
-                    if (!pedited || (pedited->wb.temperature && !temp->getAddMode()) ) {
-                        temp->setValue  (ctemp);
-
-                        if (pedited) {
-                            temp->setEditedState (Edited);
-                        }
-                    }
-
-                    // Set the automatics green value if in SET mode
-                    if (!pedited || (pedited->wb.green       && !green->getAddMode())) {
-                        green->setValue (cgreen);
-
-                        if (pedited) {
-                            green->setEditedState (Edited);
-                        }
-                    }
-                }
-            }
+            // Recomputing AutoWB will happen in improccoordinator.cc
 
             break;
 
@@ -716,25 +666,11 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
             temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
             green->setDefault (green->getAddMode() ? 0 : cgreen);
         }
-    } else if (wbp && defParams->wb.method == "Auto") {
-        // this setDefaults method is called too early ; the wbp has been set,
-        // but wbp is not ready to provide!
-        double ctemp;
-        double cgreen;
-        wbp->getAutoWB (ctemp, cgreen, defParams->wb.equal);
-
-        if (ctemp != -1.0) {
-            temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
-            green->setDefault (green->getAddMode() ? 0 : cgreen);
-        } else {
-            // 6504 & 1.0 = same values as in ProcParams::setDefaults
-            temp->setDefault (temp->getAddMode() ? 0 : 6504);
-            green->setDefault (green->getAddMode() ? 0 : 1.0);
-        }
     } else {
         temp->setDefault (defParams->wb.temperature);
         green->setDefault (defParams->wb.green);
     }
+    // Recomputing AutoWB if it's the current method will happen in improccoordinator.cc
 
     if (pedited) {
         temp->setDefaultEditedState (pedited->wb.temperature ? Edited : UnEdited);
@@ -883,4 +819,15 @@ int WhiteBalance::setActiveMethod(Glib::ustring label)
 inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
 {
     return *(method->get_active());
+}
+
+void WhiteBalance::WBChanged(double temperature, double greenVal)
+{
+    GThreadLock lock;
+    disableListener();
+    temp->setValue(temperature);
+    green->setValue(greenVal);
+    temp->setDefault(temperature);
+    green->setDefault(greenVal);
+    enableListener();
 }
