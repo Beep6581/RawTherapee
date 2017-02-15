@@ -313,9 +313,8 @@ public :
 class AutoWBListener
 {
 public :
-    virtual ~AutoWBListener() {}
-    virtual void WBChanged (double temp, double green) {}
-
+    virtual ~AutoWBListener() = default;
+    virtual void WBChanged(double temp, double green) = 0;
 };
 
 class WaveletListener
