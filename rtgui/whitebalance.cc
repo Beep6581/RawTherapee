@@ -884,3 +884,11 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
 {
     return *(method->get_active());
 }
+
+void WhiteBalance::WBChanged(double temperature, double greenVal)
+{
+    disableListener();
+    temp->setValue(temperature);
+    green->setValue(greenVal);
+    enableListener();
+}
