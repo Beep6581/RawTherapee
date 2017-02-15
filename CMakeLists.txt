@@ -111,6 +111,8 @@ option (OPTION_OMP "Build with OpenMP support" ON)
 option (STRICT_MUTEX "True (recommended): MyMutex will behave like POSIX Mutex; False: MyMutex will behave like POSIX RecMutex; Note: forced to ON for Debug builds" ON)
 option (TRACE_MYRWMUTEX "Trace RT's custom R/W Mutex (Debug builds only); redirecting std::out to a file is strongly recommended!" OFF)
 option (AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI thread; set it ON if you experience X Server warning/errors" OFF)
+set (HALIDE_PATH "" CACHE PATH "Path to halide's build output directory")
+option (OPTION_HALIDE_OPENCL "Build Halide pipelines with OpenCL support for GPU acceleration" ON)
 
 # set install directories
 if (WIN32 OR APPLE)
