@@ -307,12 +307,17 @@ std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ust
 {
     std::shared_ptr<rtengine::HaldCLUT> result;
 
-    if (!cache.get(filename, result)) {
+    const Glib::ustring full_filename =
+        !Glib::path_is_absolute(filename)
+            ? Glib::ustring(Glib::build_filename(options.clutsDir, filename))
+            : filename;
+
+    if (!cache.get(full_filename, result)) {
         std::unique_ptr<rtengine::HaldCLUT> clut(new rtengine::HaldCLUT);
 
-        if (clut->load(filename)) {
+        if (clut->load(full_filename)) {
             result = std::move(clut);
-            cache.insert(filename, result);
+            cache.insert(full_filename, result);
         }
     }
 
