@@ -34,7 +34,7 @@ public:
     virtual void spotWBRequested (int size) {}
 };
 
-class WhiteBalance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class WhiteBalance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoWBListener
 {
 
     enum WB_LabelType {
@@ -117,6 +117,7 @@ public:
         wblistener = l;
     }
     void setWB (int temp, double green);
+    void WBChanged           (double temp, double green);
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);

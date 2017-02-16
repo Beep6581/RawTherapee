@@ -310,6 +310,13 @@ public :
 
 };
 
+class AutoWBListener
+{
+public :
+    virtual ~AutoWBListener() = default;
+    virtual void WBChanged(double temp, double green) = 0;
+};
+
 class WaveletListener
 {
 public :
@@ -411,6 +418,7 @@ public:
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
+    virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;

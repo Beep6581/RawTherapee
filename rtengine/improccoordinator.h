@@ -157,6 +157,8 @@ protected:
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
+    AutoWBListener* awbListener;
+
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
@@ -311,6 +313,10 @@ public:
     void setAutoBWListener   (AutoBWListener* abw)
     {
         abwListener = abw;
+    }
+    void setAutoWBListener   (AutoWBListener* awb)
+    {
+        awbListener = awb;
     }
     void setAutoColorTonListener   (AutoColorTonListener* bwct)
     {
