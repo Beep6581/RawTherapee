@@ -59,6 +59,7 @@ public:
     void clearAll () const;
     void clearImages () const;
     void clearProfiles () const;
+    void clearmip () const;
     void clearFromCache (const Glib::ustring& fname, bool purge) const;
 
     static std::string getMD5 (const Glib::ustring& fname);

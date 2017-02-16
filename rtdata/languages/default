@@ -963,7 +963,8 @@ PREFERENCES_BEHSETALL;All to 'Set'
 PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
 PREFERENCES_BLACKBODY;Tungsten
 PREFERENCES_CACHECLEARALL;Clear All
-PREFERENCES_CACHECLEARPROFILES;Clear Processing Profiles
+PREFERENCES_CACHECLEARPROFILES;Clear pp3
+PREFERENCES_CACHECLEARMIP;Clear mip
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
 PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options

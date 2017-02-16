@@ -256,6 +256,13 @@ void CacheManager::clearProfiles () const
     MyMutex::MyLock lock (mutex);
 
     deleteDir ("profiles");
+
+}
+
+void CacheManager::clearmip () const
+{
+    MyMutex::MyLock lock (mutex);
+
     deleteDir ("mip");
 
 }

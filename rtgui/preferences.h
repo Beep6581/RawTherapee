@@ -152,6 +152,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::SpinButton*   maxRecentFolders;
     Gtk::Button*       clearThumbnails;
     Gtk::Button*       clearProfiles;
+    Gtk::Button*       clearmip;
     Gtk::Button*       clearAll;
     Gtk::Entry*     extension;
     Gtk::TreeView*  extensions;
@@ -263,6 +264,7 @@ public:
     void darkFrameChanged ();
     void flatFieldChanged ();
     void clearProfilesPressed ();
+    void clearmipPressed ();
     void clearThumbImagesPressed ();
     void clearAllPressed ();
 
