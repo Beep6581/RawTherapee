@@ -369,6 +369,8 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
     if (!ppMethod || (ppMethod->ppLabel != wbCustom->ppLabel && !((a == equal || a == tempBias) && ppMethod->type == WBT_AUTO)) ) {
         methconn.block(true);
         opt = setActiveMethod(wbCustom->GUILabel);
+        tempBias->set_sensitive(false);
+        
         cache_customWB (tVal, gVal);
         if (a != equal) {
             cache_customEqual(eVal);
@@ -430,9 +432,12 @@ void WhiteBalance::optChanged ()
             temp->setEditedState (UnEdited);
             green->setEditedState (UnEdited);
             equal->setEditedState (UnEdited);
+            tempBias->setEditedState (UnEdited);
         } else {
             int methodId = findWBEntryId (row[methodColumns.colLabel], WBLT_GUI);
             WBEntry* currMethod = WBParams::wbEntries[methodId];
+
+            tempBias->set_sensitive(currMethod->type == WBT_AUTO);
 
             switch (currMethod->type) {
             case WBT_CAMERA:
@@ -442,13 +447,11 @@ void WhiteBalance::optChanged ()
                     temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
                     green->setValue (green->getAddMode() ? 0.0 : cgreen);
                     equal->setValue (equal->getAddMode() ? 0.0 : 1.0);
-                    tempBias->setValue (tempBias->getAddMode() ? 0.0 : 0.0);
 
                     if (batchMode) {
                         temp->setEditedState (UnEdited);
                         green->setEditedState (UnEdited);
                         equal->setEditedState (UnEdited);
-                        tempBias->setEditedState (UnEdited);
                     }
                 }
 
@@ -472,19 +475,16 @@ void WhiteBalance::optChanged ()
                     temp->setValue (temp->getAddMode() ? 0.0 : custom_temp);
                     green->setValue (green->getAddMode() ? 0.0 : custom_green);
                     equal->setValue (equal->getAddMode() ? 0.0 : custom_equal);
-                    tempBias->setValue (tempBias->getAddMode() ? 0.0 : custom_tempBias);
                 } else {
                     cache_customTemp (temp->getValue());
                     cache_customGreen (green->getValue());
                     cache_customEqual (equal->getValue());
-                    cache_customTempBias (tempBias->getValue());
                 }
 
                 if (batchMode) {
                     temp->setEditedState (Edited);
                     green->setEditedState (Edited);
                     equal->setEditedState (Edited);
-                    tempBias->setEditedState (Edited);
                 }
 
                 break;
@@ -503,13 +503,11 @@ void WhiteBalance::optChanged ()
                 temp->setValue  ( temp->getAddMode() ? 0.0 : (double)(currMethod->temperature));
                 green->setValue (green->getAddMode() ? 0.0 : (double)(currMethod->green));
                 equal->setValue (equal->getAddMode() ? 0.0 : (double)(currMethod->equal));
-                tempBias->setValue (tempBias->getAddMode() ? 0.0 : (double)(currMethod->tempBias));
 
                 if (batchMode) {
                     temp->setEditedState (Edited);
                     green->setEditedState (Edited);
                     equal->setEditedState (Edited);
-                    tempBias->setEditedState (Edited);
                 }
 
                 break;
@@ -546,6 +544,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     methconn.block (true);
     equal->setValue (pp->wb.equal);
     tempBias->setValue (pp->wb.tempBias);
+    tempBias->set_sensitive(true);
 
     if (pedited) {
         // By default, temperature and green are said "UnEdited", but it may change later
@@ -598,13 +597,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
                     // Set the camera's green value, or 0.0 if in ADD mode
                     green->setValue (green->getAddMode() ? 0.0 : cgreen);
                     equal->setValue (equal->getAddMode() ? 0.0 : 1.);
-                    tempBias->setValue (tempBias->getAddMode() ? 0.0 : 0.0);
                 } else {
                     temp->setValue (temp->getAddMode() ? 0.0 : pp->wb.temperature);
                     green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
                     equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
-                    tempBias->setValue (equal->getAddMode() ? 0.0 : pp->wb.tempBias);
                 }
+                tempBias->setValue (equal->getAddMode() ? 0.0 : pp->wb.tempBias);
             }
 
             break;
@@ -656,6 +654,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             //cache_customGreen (pp->wb.green);
             break;
         }
+
+        tempBias->set_sensitive(wbValues->type == WBT_AUTO);
     }
 
     methconn.block (false);
