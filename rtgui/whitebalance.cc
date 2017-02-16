@@ -232,7 +232,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
         custom_green = 1.0;
         custom_equal = 1.0;
-        custom_tempBias = 0.0;
     }
 
     //Add the model columns to the Combo (which is a kind of view),
@@ -320,7 +319,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     cache_customTemp (0);
     cache_customGreen (0);
     cache_customEqual (0);
-    cache_customTempBias (0);
     equal->set_tooltip_markup (M("TP_WBALANCE_EQBLUERED_TOOLTIP"));
     tempBias->set_tooltip_markup (M("TP_WBALANCE_TEMPBIAS_TOOLTIP"));
     temp->show ();
@@ -377,9 +375,6 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
         if (a != equal) {
             cache_customEqual(eVal);
         }
-        if (a != tempBias) {
-            cache_customTempBias(tempBiasVal);
-        }
         methconn.block(false);
     }
 
@@ -390,8 +385,6 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
         cache_customGreen (gVal);
     } else if (a == equal) {
         cache_customEqual (eVal);
-    } else if (a == tempBias) {
-        cache_customTempBias (tempBiasVal);
     }
 
         // Recomputing AutoWB if it's the current method will happen in improccoordinator.cc
@@ -577,7 +570,6 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             cache_customTemp (pp->wb.temperature);
             cache_customGreen (pp->wb.green);
             cache_customEqual (pp->wb.equal);
-            cache_customTempBias (pp->wb.tempBias);
 
             if (pedited) {
                 // The user may have changed the temperature and green value
@@ -754,7 +746,6 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
     opt = setActiveMethod(wbValues->GUILabel);
     cache_customWB (vtemp, vgreen); // sequence in which this call is made is important; must be before "method->set_active (2);"
     cache_customEqual(equal->getValue());
-    cache_customTempBias(tempBias->getValue());
     temp->setEditedState (Edited);
     green->setEditedState (Edited);
     methconn.block(false);
@@ -794,11 +785,6 @@ void WhiteBalance::cache_customGreen(double green)
 void WhiteBalance::cache_customEqual(double equal)
 {
     custom_equal = equal;
-}
-
-void WhiteBalance::cache_customTempBias(double tempBias)
-{
-    custom_tempBias = tempBias;
 }
 
 void WhiteBalance::cache_customWB(int temp, double green)
