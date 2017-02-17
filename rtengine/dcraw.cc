@@ -9,7 +9,7 @@
 /*RT*/#define NO_JASPER
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
-/*RT*/#include <jpeglib.h>
+/*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
 
@@ -2707,7 +2707,7 @@ void CLASS lossy_dng_load_raw()
     if (tile_length < INT_MAX)
       fseek (ifp, get4(), SEEK_SET);
     /*RT jpeg_stdio_src (&cinfo, ifp); */
-    /*RT*/jpeg_mem_src(&cinfo, fdata(ftell(ifp), ifp), ifp->size - ftell(ifp));
+    /*RT*/jpeg_memory_src(&cinfo, fdata(ftell(ifp), ifp), ifp->size - ftell(ifp));
     jpeg_read_header (&cinfo, TRUE);
     jpeg_start_decompress (&cinfo);
     buf = (*cinfo.mem->alloc_sarray)
@@ -2727,7 +2727,7 @@ void CLASS lossy_dng_load_raw()
   jpeg_destroy_decompress (&cinfo);
   maximum = 0xffff;
 }
-// RT #endif
+/*RT #endif */
 
 void CLASS kodak_dc120_load_raw()
 {
