@@ -57,10 +57,13 @@ public:
     ColorTemp (double t, double g, double e, const Glib::ustring &m);
     ColorTemp (double mulr, double mulg, double mulb, double e);
 
-    void update (const double rmul, const double gmul, const double bmul, const double equal)
+    void update (const double rmul, const double gmul, const double bmul, const double equal, const double tempBias=0.0)
     {
         this->equal = equal;
         mul2temp (rmul, gmul, bmul, this->equal, temp, green);
+        if (tempBias != 0.0 && tempBias >= -1.0 && tempBias <= 1.0) {
+            temp += temp * tempBias;
+        }
     }
     void useDefaults (const double equal)
     {

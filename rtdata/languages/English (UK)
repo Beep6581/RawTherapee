@@ -758,6 +758,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!HISTORY_MSG_444;WB - Temp bias
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -2023,6 +2024,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 !TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 !TP_WBALANCE_SPOTWB;Spot WB
+!TP_WBALANCE_TEMPBIAS;AWB temperature bias
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !TP_WBALANCE_TEMPERATURE;Temperature
 !TP_WBALANCE_TUNGSTEN;Tungsten
 !TP_WBALANCE_WATER1;UnderWater 1
