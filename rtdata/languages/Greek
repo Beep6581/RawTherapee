@@ -1114,7 +1114,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLATFIELD;Flat-Field
 !PREFERENCES_FLATFIELDFOUND;Found
@@ -1188,7 +1188,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
-!PREFERENCES_SELECTFONT;Select global font
+!PREFERENCES_SELECTFONT;Select main font
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
