@@ -9,6 +9,7 @@
 /*RT*/#define NO_JASPER
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
+/*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
 
@@ -2604,7 +2605,7 @@ void CLASS kodak_radc_load_raw()
 
 #ifdef NO_JPEG
 void CLASS kodak_jpeg_load_raw() {}
-void CLASS lossy_dng_load_raw() {}
+// RT void CLASS lossy_dng_load_raw() {}
 #else
 
 METHODDEF(boolean)
@@ -2661,6 +2662,7 @@ void CLASS kodak_jpeg_load_raw()
 }
 
 void CLASS gamma_curve (double pwr, double ts, int mode, int imax);
+/*RT*/#endif
 
 void CLASS lossy_dng_load_raw()
 {
@@ -2704,7 +2706,8 @@ void CLASS lossy_dng_load_raw()
     fseek (ifp, save+=4, SEEK_SET);
     if (tile_length < INT_MAX)
       fseek (ifp, get4(), SEEK_SET);
-    jpeg_stdio_src (&cinfo, ifp);
+    /*RT jpeg_stdio_src (&cinfo, ifp); */
+    /*RT*/jpeg_memory_src(&cinfo, fdata(ftell(ifp), ifp), ifp->size - ftell(ifp));
     jpeg_read_header (&cinfo, TRUE);
     jpeg_start_decompress (&cinfo);
     buf = (*cinfo.mem->alloc_sarray)
@@ -2724,7 +2727,7 @@ void CLASS lossy_dng_load_raw()
   jpeg_destroy_decompress (&cinfo);
   maximum = 0xffff;
 }
-#endif
+/*RT #endif */
 
 void CLASS kodak_dc120_load_raw()
 {
@@ -9525,8 +9528,8 @@ dng_skip:
   }
 #endif
 #ifdef NO_JPEG
-  if (load_raw == &CLASS kodak_jpeg_load_raw ||
-      load_raw == &CLASS lossy_dng_load_raw) {
+  if (load_raw == &CLASS kodak_jpeg_load_raw /* RT ||
+      load_raw == &CLASS lossy_dng_load_raw*/) {
     fprintf (stderr,_("%s: You must link dcraw with %s!!\n"),
 	ifname, "libjpeg");
     is_raw = 0;
