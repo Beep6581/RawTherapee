@@ -1767,15 +1767,31 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
 
         if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
+            StopWatch Stop1("lcp vignette correction");
             LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
-if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < H; y++) {
-                    for (int x = 0; x < W; x++) {
+                    int x = 0;
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+                    vfloat yv = F2V(y);
+                    vfloat fourv = F2V(4.f);
+                    vfloat onev = F2V(1.f);
+                    vfloat xv = _mm_set_ps(3,2,1,0);
+                    for (; x < W-3; x+=4) {
+                        vfloat vignFactorv = map.calcVignetteFac(xv, yv);
+                        vfloat rawValv = LVFU(rawData[y][x]);
+                        rawValv *= vself(vmaskf_gt(rawValv, ZEROV), vignFactorv, onev);
+                        STVFU(rawData[y][x], rawValv);
+                        xv += fourv;
+                    }
+#endif
+                    for (; x < W; x++) {
                         if (rawData[y][x] > 0) {
                             rawData[y][x] *= map.calcVignetteFac(x, y);
                         }
@@ -1783,7 +1799,7 @@ if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || 
                 }
             } else if(ri->get_colors() == 3) {
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < H; y++) {

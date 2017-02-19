@@ -21,10 +21,9 @@
 #define _LCP_
 
 #include "imagefloat.h"
-#include "../rtgui/threadutils.h"
+#include "opthelper.h"
 #include <glibmm.h>
 #include <map>
-#include <list>
 #include <string>
 #include <expat.h>
 
@@ -40,8 +39,13 @@ public:
     double meanErr;
     bool badErr;
 
-    double x0, y0, fx, fy; // prepared params
-
+    float x0, y0, fx, fy; // prepared params
+    float rfx, rfy;
+    float vignParam[4];
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    vfloat vignParamv[4] ALIGNED16;
+    vfloat x0v, y0v, rfxv, rfyv;
+#endif
     LCPModelCommon();
     bool empty() const;  // is it empty
     void print() const;  // printf all values
@@ -133,6 +137,9 @@ public:
     void  correctDistortion(double& x, double& y) const;  // MUST be the first stage
     void  correctCA(double& x, double& y, int channel) const;
     float calcVignetteFac  (int x, int y) const;  // MUST be in RAW
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    vfloat calcVignetteFac(vfloat x, vfloat y) const;
+#endif
 };
 }
 #endif

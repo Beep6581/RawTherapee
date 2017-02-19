@@ -19,32 +19,28 @@
 #include <cstring>
 
 #include "lcp.h"
-#include "iccmatrices.h"
-#include "iccstore.h"
-#include "rawimagesource.h"
-#include "improcfun.h"
-#include "rt_math.h"
+#include <glib/gstdio.h>
 
 #ifdef WIN32
 #include <windows.h>
-// for GCC32
-#ifndef _WIN32_IE
-#define _WIN32_IE 0x0600
-#endif
 #include <shlobj.h>
 #endif
 
 
 using namespace std;
 using namespace rtengine;
-using namespace rtexif;
 
 
 LCPModelCommon::LCPModelCommon()
 {
     focLenX = focLenY = -1;
     imgXCenter = imgYCenter = 0.5;
-    x0 = y0 = fx = fy = meanErr = 0;
+    x0 = y0 = fx = fy = rfx = rfy = meanErr = 0;
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    x0v = y0v = rfxv = rfyv = ZEROV;
+#endif
+
     badErr = false;
 
     for (int i = 0; i < 5; i++) {
@@ -66,7 +62,7 @@ void LCPModelCommon::print() const
     printf("param: %g/%g/%g/%g/%g\n", param[0], param[1], param[2], param[3], param[4]);
 }
 
-// weightened merge two parameters
+// weighted merge two parameters
 void LCPModelCommon::merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA)
 {
     float facB = 1 - facA;
@@ -81,6 +77,20 @@ void LCPModelCommon::merge(const LCPModelCommon& a, const LCPModelCommon& b, flo
     for (int i = 0; i < 5; i++) {
         param[i] = facA * a.param[i] + facB * b.param[i];
     }
+
+    double param0Sqr = param[0] * param[0];
+
+    vignParam[0] = - param[0];
+    vignParam[1] = param0Sqr - param[1];
+    vignParam[2] = param0Sqr * param[0] - 2. * param[0] * param[1] + param[2];
+    vignParam[3] = param0Sqr * param0Sqr + param[1] * param[1] + 2. * param[0] * param[2] - 3. * param0Sqr * param[1];
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    vignParamv[0] = F2V(vignParam[0]);
+    vignParamv[1] = F2V(vignParam[1]);
+    vignParamv[2] = F2V(vignParam[2]);
+    vignParamv[3] = F2V(vignParam[3]);
+#endif // __SSE2__
 }
 
 void LCPModelCommon::prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY)
@@ -113,6 +123,15 @@ void LCPModelCommon::prepareParams(int fullWidth, int fullHeight, float focalLen
         fx = focLenX * Dmax;
         fy = focLenY * Dmax;
     }
+    rfx = 1.0 / fx;
+    rfy = 1.0 / fy;
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+    x0v = F2V(x0);
+    y0v = F2V(y0);
+    rfxv = F2V(rfx);
+    rfyv = F2V(rfy);
+#endif
 
     //printf("FW %i /X0 %g   FH %i /Y0 %g  %g\n",fullWidth,x0,fullHeight,y0, imgYCenter);
 }
@@ -264,17 +283,24 @@ void LCPMapper::correctCA(double& x, double& y, int channel) const
 float LCPMapper::calcVignetteFac(int x, int y) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
-    double xd = ((double)x - mc.x0) / mc.fx, yd = ((double)y - mc.y0) / mc.fy;
+    float xd = ((float)x - mc.x0) * mc.rfx, yd = ((float)y - mc.y0) * mc.rfy;
 
-    const float* aVig = mc.param;
-    double rsqr      = xd * xd + yd * yd;
-    double param0Sqr = aVig[0] * aVig[0];
+    const float* vignParam = mc.vignParam;
+    float rsqr = xd * xd + yd * yd;
 
-    return 1. + rsqr * (-aVig[0] + rsqr * ((param0Sqr - aVig[1])
-                                           - (param0Sqr * aVig[0] - 2.*aVig[0] * aVig[1] + aVig[2]) * rsqr
-                                           + (param0Sqr * param0Sqr + aVig[1] * aVig[1]
-                                                   + 2.*aVig[0] * aVig[2] - 3.*param0Sqr * aVig[1]) * rsqr * rsqr));
+    return 1.f + rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
 }
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+vfloat LCPMapper::calcVignetteFac(vfloat x, vfloat y) const
+{
+    // No need for swapXY, since vignette is in RAW and always before rotation
+    vfloat xd = (x - mc.x0v) * mc.rfxv, yd = (y - mc.y0v) * mc.rfyv;
+    vfloat rsqr = xd * xd + yd * yd;
+
+    return F2V(1.f) + rsqr * (mc.vignParamv[0] + rsqr * (mc.vignParamv[1] - mc.vignParamv[2] * rsqr + mc.vignParamv[3] * rsqr * rsqr));
+}
+#endif
 
 LCPProfile::LCPProfile(const Glib::ustring &fname)
 {
