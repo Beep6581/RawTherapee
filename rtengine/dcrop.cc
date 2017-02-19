@@ -113,7 +113,7 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber)
             PipetteBuffer::LabBuffer = nullptr;
         }
 
-        if (PipetteBuffer::singlePlaneBuffer.getW() != -1) {
+        if (PipetteBuffer::singlePlaneBuffer.getWidth() != -1) {
             PipetteBuffer::singlePlaneBuffer.flushData();
         }
     }

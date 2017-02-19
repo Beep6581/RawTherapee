@@ -17,47 +17,47 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _IMAGEDIMENSIONS_
-#define _IMAGEDIMENSIONS_
+#pragma once
 
 class PreviewProps
 {
 public:
-    int x, y, w, h, skip;
-    PreviewProps (int _x, int _y, int _w, int _h, int _skip)
-        : x(_x), y(_y), w(_w), h(_h), skip(_skip) {}
+    PreviewProps(int _x, int _y, int _width, int _height, int _skip);
+
+    int getX() const;
+    int getY() const;
+    int getWidth() const;
+    int getHeight() const;
+    int getSkip() const;
+
+private:
+    int x;
+    int y;
+    int width;
+    int height;
+    int skip;
 };
 
 /*
- * Description of an image dimension, with getter and setter
+ * Description of an image dimension, with getter
  */
 class ImageDimensions
 {
-
 public:
+    ImageDimensions();
+
+    int getWidth() const
+    {
+        return width;
+    }
+    int getHeight() const
+    {
+        return height;
+    }
+
+    void transform(const PreviewProps& pp, int tran, int& sx1, int& sy1, int& sx2, int& sy2) const;
+
+protected:
     int width;
     int height;
-
-public:
-    ImageDimensions() : width(-1), height(-1) {}
-    int getW       ()
-    {
-        return width;
-    }
-    int getH       ()
-    {
-        return height;
-    }
-    int getWidth   () const
-    {
-        return width;
-    }
-    int getHeight  () const
-    {
-        return height;
-    }
-    void transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
 };
-
-
-#endif

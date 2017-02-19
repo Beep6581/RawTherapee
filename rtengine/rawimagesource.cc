@@ -101,10 +101,10 @@ void transLineFuji (const float* const red, const float* const green, const floa
                 int y = i + j - fw;
                 int x = fw - i + j;
 
-                if (x >= 0 && y < image->height && y >= 0 && x < image->width) {
-                    image->r(image->height - 1 - y, image->width - 1 - x) = red[j];
-                    image->g(image->height - 1 - y, image->width - 1 - x) = green[j];
-                    image->b(image->height - 1 - y, image->width - 1 - x) = blue[j];
+                if (x >= 0 && y < image->getHeight() && y >= 0 && x < image->getWidth()) {
+                    image->r(image->getHeight() - 1 - y, image->getWidth() - 1 - x) = red[j];
+                    image->g(image->getHeight() - 1 - y, image->getWidth() - 1 - x) = green[j];
+                    image->b(image->getHeight() - 1 - y, image->getWidth() - 1 - x) = blue[j];
                 }
             }
 
@@ -115,10 +115,10 @@ void transLineFuji (const float* const red, const float* const green, const floa
                 int y = i + j - fw;
                 int x = fw - i + j;
 
-                if (x >= 0 && x < image->height && y >= 0 && y < image->width) {
-                    image->r(image->height - 1 - x, y) = red[j];
-                    image->g(image->height - 1 - x, y) = green[j];
-                    image->b(image->height - 1 - x, y) = blue[j];
+                if (x >= 0 && x < image->getHeight() && y >= 0 && y < image->getWidth()) {
+                    image->r(image->getHeight() - 1 - x, y) = red[j];
+                    image->g(image->getHeight() - 1 - x, y) = green[j];
+                    image->b(image->getHeight() - 1 - x, y) = blue[j];
                 }
             }
 
@@ -129,10 +129,10 @@ void transLineFuji (const float* const red, const float* const green, const floa
                 int y = i + j - fw;
                 int x = fw - i + j;
 
-                if (x >= 0 && y < image->width && y >= 0 && x < image->height) {
-                    image->r(x, image->width - 1 - y) = red[j];
-                    image->g(x, image->width - 1 - y) = green[j];
-                    image->b(x, image->width - 1 - y) = blue[j];
+                if (x >= 0 && y < image->getWidth() && y >= 0 && x < image->getHeight()) {
+                    image->r(x, image->getWidth() - 1 - y) = red[j];
+                    image->g(x, image->getWidth() - 1 - y) = green[j];
+                    image->b(x, image->getWidth() - 1 - y) = blue[j];
                 }
             }
 
@@ -144,7 +144,7 @@ void transLineFuji (const float* const red, const float* const green, const floa
                 int y = i + j - fw;
                 int x = fw - i + j;
 
-                if (x >= 0 && y < image->height && y >= 0 && x < image->width) {
+                if (x >= 0 && y < image->getHeight() && y >= 0 && x < image->getWidth()) {
                     image->r(y, x) = red[j];
                     image->g(y, x) = green[j];
                     image->b(y, x) = blue[j];
@@ -499,17 +499,18 @@ RawImageSource::~RawImageSource ()
 
 void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &ssy1, int &width, int &height, int &fw)
 {
-
-    pp.x += border;
-    pp.y += border;
+    int pp_x = pp.getX() + border;
+    int pp_y = pp.getY() + border;
+    int pp_width = pp.getWidth();
+    int pp_height = pp.getHeight();
 
     if (d1x) {
         if ((tran & TR_ROT) == TR_R90 || (tran & TR_ROT) == TR_R270) {
-            pp.x /= 2;
-            pp.w = pp.w / 2 + 1;
+            pp_x /= 2;
+            pp_width = pp_width / 2 + 1;
         } else {
-            pp.y /= 2;
-            pp.h = pp.h / 2 + 1;
+            pp_y /= 2;
+            pp_height = pp_height / 2 + 1;
         }
     }
 
@@ -527,44 +528,44 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
         sh = w;
     }
 
-    if( pp.w > sw - 2 * border) {
-        pp.w = sw - 2 * border;
+    if( pp_width > sw - 2 * border) {
+        pp_width = sw - 2 * border;
     }
 
-    if( pp.h > sh - 2 * border) {
-        pp.h = sh - 2 * border;
+    if( pp_height > sh - 2 * border) {
+        pp_height = sh - 2 * border;
     }
 
-    int ppx = pp.x, ppy = pp.y;
+    int ppx = pp_x, ppy = pp_y;
 
     if (tran & TR_HFLIP) {
-        ppx = sw - pp.x - pp.w;
+        ppx = sw - pp_x - pp_width;
     }
 
     if (tran & TR_VFLIP) {
-        ppy = sh - pp.y - pp.h;
+        ppy = sh - pp_y - pp_height;
     }
 
     int sx1 = ppx;        // assuming it's >=0
     int sy1 = ppy;        // assuming it's >=0
-    int sx2 = max(ppx + pp.w, w - 1);
-    int sy2 = max(ppy + pp.h, h - 1);
+    int sx2 = max(ppx + pp_width, w - 1);
+    int sy2 = max(ppy + pp_height, h - 1);
 
     if ((tran & TR_ROT) == TR_R180) {
-        sx1 = max(w - ppx - pp.w, 0);
-        sy1 = max(h - ppy - pp.h, 0);
-        sx2 = min(sx1 + pp.w, w - 1);
-        sy2 = min(sy1 + pp.h, h - 1);
+        sx1 = max(w - ppx - pp_width, 0);
+        sy1 = max(h - ppy - pp_height, 0);
+        sx2 = min(sx1 + pp_width, w - 1);
+        sy2 = min(sy1 + pp_height, h - 1);
     } else if ((tran & TR_ROT) == TR_R90) {
         sx1 = ppy;
-        sy1 = max(h - ppx - pp.w, 0);
-        sx2 = min(sx1 + pp.h, w - 1);
-        sy2 = min(sy1 + pp.w, h - 1);
+        sy1 = max(h - ppx - pp_width, 0);
+        sx2 = min(sx1 + pp_height, w - 1);
+        sy2 = min(sy1 + pp_width, h - 1);
     } else if ((tran & TR_ROT) == TR_R270) {
-        sx1 = max(w - ppy - pp.h, 0);
+        sx1 = max(w - ppy - pp_height, 0);
         sy1 = ppx;
-        sx2 = min(sx1 + pp.h, w - 1);
-        sy2 = min(sy1 + pp.w, h - 1);
+        sx2 = min(sx1 + pp_height, w - 1);
+        sy2 = min(sy1 + pp_width, h - 1);
     }
 
     if (fuji) {
@@ -574,14 +575,14 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
         ssy1 = (sy1 - sx2 ) / 2 + ri->get_FujiWidth();
         int ssx2 = (sx2 + sy2) / 2 + 1;
         int ssy2 = (sy2 - sx1) / 2 + ri->get_FujiWidth();
-        fw   = (sx2 - sx1) / 2 / pp.skip;
-        width  = (ssx2 - ssx1) / pp.skip + ((ssx2 - ssx1) % pp.skip > 0);
-        height = (ssy2 - ssy1) / pp.skip + ((ssy2 - ssy1) % pp.skip > 0);
+        fw   = (sx2 - sx1) / 2 / pp.getSkip();
+        width  = (ssx2 - ssx1) / pp.getSkip() + ((ssx2 - ssx1) % pp.getSkip() > 0);
+        height = (ssy2 - ssy1) / pp.getSkip() + ((ssy2 - ssy1) % pp.getSkip() > 0);
     } else {
         ssx1 = sx1;
         ssy1 = sy1;
-        width  = (sx2 - sx1) / pp.skip + ((sx2 - sx1) % pp.skip > 0);
-        height = (sy2 - sy1) / pp.skip + ((sy2 - sy1) % pp.skip > 0);
+        width  = (sx2 - sx1) / pp.getSkip() + ((sx2 - sx1) % pp.getSkip() > 0);
+        height = (sy2 - sy1) / pp.getSkip() + ((sy2 - sy1) % pp.getSkip() > 0);
     }
 }
 
@@ -674,11 +675,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     int maximwidth, maximheight;
 
     if ((tran & TR_ROT) == TR_R90 || (tran & TR_ROT) == TR_R270) {
-        maximwidth = image->height;
-        maximheight = image->width;
+        maximwidth = image->getHeight();
+        maximheight = image->getWidth();
     } else {
-        maximwidth = image->width;
-        maximheight = image->height;
+        maximwidth = image->getWidth();
+        maximheight = image->getHeight();
     }
 
     if (d1x) {
@@ -699,7 +700,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         imheight = maximheight;
     }
 
-    int maxx = this->W, maxy = this->H, skip = pp.skip;
+    int maxx = this->W, maxy = this->H, skip = pp.getSkip();
 
     // raw clip levels after white balance
     hlmax[0] = clmax[0] * rm;
@@ -818,18 +819,18 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 #endif
 
     if (fuji) {
-        int a = ((tran & TR_ROT) == TR_R90 && image->width % 2 == 0) || ((tran & TR_ROT) == TR_R180 && image->height % 2 + image->width % 2 == 1) || ((tran & TR_ROT) == TR_R270 && image->height % 2 == 0);
+        int a = ((tran & TR_ROT) == TR_R90 && image->getWidth() % 2 == 0) || ((tran & TR_ROT) == TR_R180 && image->getHeight() % 2 + image->getWidth() % 2 == 1) || ((tran & TR_ROT) == TR_R270 && image->getHeight() % 2 == 0);
 
         // first row
-        for (int j = 1 + a; j < image->width - 1; j += 2) {
+        for (int j = 1 + a; j < image->getWidth() - 1; j += 2) {
             image->r(0, j) = (image->r(1, j) + image->r(0, j + 1) + image->r(0, j - 1)) / 3;
             image->g(0, j) = (image->g(1, j) + image->g(0, j + 1) + image->g(0, j - 1)) / 3;
             image->b(0, j) = (image->b(1, j) + image->b(0, j + 1) + image->b(0, j - 1)) / 3;
         }
 
         // other rows
-        for (int i = 1; i < image->height - 1; i++) {
-            for (int j = 2 - (a + i + 1) % 2; j < image->width - 1; j += 2) {
+        for (int i = 1; i < image->getHeight() - 1; i++) {
+            for (int j = 2 - (a + i + 1) % 2; j < image->getWidth() - 1; j += 2) {
                 // edge-adaptive interpolation
                 double dh = (ABS(image->r(i, j + 1) - image->r(i, j - 1)) + ABS(image->g(i, j + 1) - image->g(i, j - 1)) + ABS(image->b(i, j + 1) - image->b(i, j - 1))) / 1.0;
                 double dv = (ABS(image->r(i + 1, j) - image->r(i - 1, j)) + ABS(image->g(i + 1, j) - image->g(i - 1, j)) + ABS(image->b(i + 1, j) - image->b(i - 1, j))) / 1.0;
@@ -848,20 +849,20 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             }
 
             // last pixel
-            if (2 - (a + i + image->width) % 2 == 2) {
-                image->r(i, image->width - 1) = (image->r(i + 1, image->width - 1) + image->r(i - 1, image->width - 1) + image->r(i, image->width - 2)) / 3;
-                image->g(i, image->width - 1) = (image->g(i + 1, image->width - 1) + image->g(i - 1, image->width - 1) + image->g(i, image->width - 2)) / 3;
-                image->b(i, image->width - 1) = (image->b(i + 1, image->width - 1) + image->b(i - 1, image->width - 1) + image->b(i, image->width - 2)) / 3;
+            if (2 - (a + i + image->getWidth()) % 2 == 2) {
+                image->r(i, image->getWidth() - 1) = (image->r(i + 1, image->getWidth() - 1) + image->r(i - 1, image->getWidth() - 1) + image->r(i, image->getWidth() - 2)) / 3;
+                image->g(i, image->getWidth() - 1) = (image->g(i + 1, image->getWidth() - 1) + image->g(i - 1, image->getWidth() - 1) + image->g(i, image->getWidth() - 2)) / 3;
+                image->b(i, image->getWidth() - 1) = (image->b(i + 1, image->getWidth() - 1) + image->b(i - 1, image->getWidth() - 1) + image->b(i, image->getWidth() - 2)) / 3;
             }
         }
 
         // last row
-        int b = (a == 1 && image->height % 2) || (a == 0 && image->height % 2 == 0);
+        int b = (a == 1 && image->getHeight() % 2) || (a == 0 && image->getHeight() % 2 == 0);
 
-        for (int j = 1 + b; j < image->width - 1; j += 2) {
-            image->r(image->height - 1, j) = (image->r(image->height - 2, j) + image->r(image->height - 1, j + 1) + image->r(image->height - 1, j - 1)) / 3;
-            image->g(image->height - 1, j) = (image->g(image->height - 2, j) + image->g(image->height - 1, j + 1) + image->g(image->height - 1, j - 1)) / 3;
-            image->b(image->height - 1, j) = (image->b(image->height - 2, j) + image->b(image->height - 1, j + 1) + image->b(image->height - 1, j - 1)) / 3;
+        for (int j = 1 + b; j < image->getWidth() - 1; j += 2) {
+            image->r(image->getHeight() - 1, j) = (image->r(image->getHeight() - 2, j) + image->r(image->getHeight() - 1, j + 1) + image->r(image->getHeight() - 1, j - 1)) / 3;
+            image->g(image->getHeight() - 1, j) = (image->g(image->getHeight() - 2, j) + image->g(image->getHeight() - 1, j + 1) + image->g(image->getHeight() - 1, j - 1)) / 3;
+            image->b(image->getHeight() - 1, j) = (image->b(image->getHeight() - 2, j) + image->b(image->getHeight() - 1, j + 1) + image->b(image->getHeight() - 1, j - 1)) / 3;
         }
     }
 
@@ -875,7 +876,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 
     // Colour correction (only when running on full resolution)
-    if(pp.skip == 1) {
+    if(pp.getSkip() == 1) {
         switch(ri->getSensorType()) {
             case ST_BAYER:
                 processFalseColorCorrection (image, raw.bayersensor.ccSteps);
@@ -1472,9 +1473,8 @@ void RawImageSource::getFullSize (int& w, int& h, int tr)
 
 void RawImageSource::getSize (PreviewProps pp, int& w, int& h)
 {
-
-    w = pp.w / pp.skip + (pp.w % pp.skip > 0);
-    h = pp.h / pp.skip + (pp.h % pp.skip > 0);
+    w = pp.getWidth() / pp.getSkip() + (pp.getWidth() % pp.getSkip() > 0);
+    h = pp.getHeight() / pp.getSkip() + (pp.getHeight() % pp.getSkip() > 0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3514,7 +3514,7 @@ int RawImageSource::defTransform (int tran)
 void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to)
 {
 
-    const int W = im->width;
+    const int W = im->getWidth();
     constexpr float onebynine = 1.f / 9.f;
 
 #ifdef __SSE2__
@@ -3661,7 +3661,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
 void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int steps)
 {
 
-    if (im->height < 4 || steps < 1) {
+    if (im->getHeight() < 4 || steps < 1) {
         return;
     }
 
@@ -3671,14 +3671,14 @@ void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int ste
         multi_array2D<float, 5> buffer (W, 3);
         int tid = omp_get_thread_num();
         int nthreads = omp_get_num_threads();
-        int blk = (im->height - 2) / nthreads;
+        int blk = (im->getHeight() - 2) / nthreads;
 
         for (int t = 0; t < steps; t++) {
 
             if (tid < nthreads - 1) {
                 processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, 1 + (tid + 1)*blk);
             } else {
-                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, im->height - 1);
+                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, im->getHeight() - 1);
             }
 
             #pragma omp barrier
@@ -3688,7 +3688,7 @@ void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int ste
     multi_array2D<float, 5> buffer (W, 3);
 
     for (int t = 0; t < steps; t++) {
-        processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 , im->height - 1);
+        processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 , im->getHeight() - 1);
     }
 
 #endif
@@ -3812,8 +3812,8 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         #pragma omp parallel for
 #endif
 
-        for (int i = 0; i < im->height; i++)
-            for (int j = 0; j < im->width; j++) {
+        for (int i = 0; i < im->getHeight(); i++)
+            for (int j = 0; j < im->getWidth(); j++) {
 
                 float newr = mat[0][0] * im->r(i, j) + mat[0][1] * im->g(i, j) + mat[0][2] * im->b(i, j);
                 float newg = mat[1][0] * im->r(i, j) + mat[1][1] * im->g(i, j) + mat[1][2] * im->b(i, j);
@@ -3945,18 +3945,18 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         #pragma omp parallel
 #endif
         {
-            AlignedBuffer<float> buffer(im->width * 3);
-            AlignedBuffer<float> hl_buffer(im->width * 3);
-            AlignedBuffer<float> hl_scale(im->width);
+            AlignedBuffer<float> buffer(im->getWidth() * 3);
+            AlignedBuffer<float> hl_buffer(im->getWidth() * 3);
+            AlignedBuffer<float> hl_scale(im->getWidth());
 #ifdef _OPENMP
             #pragma omp for schedule(static)
 #endif
 
-            for ( int h = 0; h < im->height; ++h ) {
+            for ( int h = 0; h < im->getHeight(); ++h ) {
                 float *p = buffer.data, *pR = im->r(h), *pG = im->g(h), *pB = im->b(h);
 
                 // Apply pre-processing
-                for ( int w = 0; w < im->width; ++w ) {
+                for ( int w = 0; w < im->getWidth(); ++w ) {
                     float r = *(pR++);
                     float g = *(pG++);
                     float b = *(pB++);
@@ -4027,10 +4027,10 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                 }
 
                 // Run icc transform
-                cmsDoTransform (hTransform, buffer.data, buffer.data, im->width);
+                cmsDoTransform (hTransform, buffer.data, buffer.data, im->getWidth());
 
                 if (separate_pcs_lab_highlights) {
-                    cmsDoTransform (hTransform, hl_buffer.data, hl_buffer.data, im->width);
+                    cmsDoTransform (hTransform, hl_buffer.data, hl_buffer.data, im->getWidth());
                 }
 
                 // Apply post-processing
@@ -4039,7 +4039,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
                 pG = im->g(h);
                 pB = im->b(h);
 
-                for ( int w = 0; w < im->width; ++w ) {
+                for ( int w = 0; w < im->getWidth(); ++w ) {
 
                     float r, g, b, hr, hg, hb;
 
