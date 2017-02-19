@@ -1,8 +1,8 @@
 diff --git a/lib/iconv.c b/lib/iconv.c
-index 3785296..24a0f07 100644
+index 31853a7..630a498 100644
 --- a/lib/iconv.c
 +++ b/lib/iconv.c
-@@ -607,4 +607,25 @@ strong_alias (libiconv, iconv)
+@@ -611,4 +611,25 @@ strong_alias (libiconv, iconv)
  strong_alias (libiconv_close, iconv_close)
  #endif
  
