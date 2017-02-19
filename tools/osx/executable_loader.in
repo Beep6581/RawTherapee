@@ -6,17 +6,16 @@ etc="${cwd}"/etc
 
 # for different os x versions
 # see https://github.com/Beep6581/RawTherapee/issues/1779
-cups_dir=/tmp/RT4
+cups_dir=/tmp/RT5
 install -d ${cups_dir}
 cp -f /usr/lib/libcups.2.dylib ${cups_dir}
 
 export DYLD_LIBRARY_PATH="${cwd}"/lib:${cups_dir}
 export GTK_EXE_PREFIX="${cwd}"
 export GTK_DATA_PREFIX="${cwd}"
-export GTK_IM_MODULE_FILE="${etc}"/gtk-2.0/gtk.immodules
-export GDK_PIXBUF_MODULE_FILE="${etc}"/gtk-2.0/gdk-pixbuf.loaders
+export GTK_IM_MODULE_FILE="${etc}"/gtk-3.0/gtk.immodules
+export GDK_PIXBUF_MODULE_FILE="${etc}"/gtk-3.0/gdk-pixbuf.loaders
 export XDG_DATA_DIRS="${cwd}"/share
-export PANGO_RC_FILE="${etc}"/pango/pangorc
 
 # environment variables for X11 backend
 if test -d "${etc}"/fonts; then

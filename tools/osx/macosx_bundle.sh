@@ -11,7 +11,7 @@
 # - GTK_PREFIX
 
 function message {
-    printf '\e[34m-- %s\e[m\n' "$*"
+    printf '\e[35m-- %s\e[m\n' "$*"
 }
 
 function GetDependencies {
@@ -69,18 +69,6 @@ if test ! -n "${MINIMUM_SYSTEM_VERSION}"; then
     MINIMUM_SYSTEM_VERSION="$(sw_vers -productVersion | cut -d. -f-2)"
 fi
 
-# check for pango-querymodules. Pango 1.38.0 and above do not include it.
-# https://github.com/Homebrew/homebrew/issues/44764#issuecomment-146795820
-PangoVer="$(brew list --versions pango)"
-PangoVer="${PangoVer//./}"
-# Only check the first 4 digits, so that "1.36.99" (13699) doesn't test greater than "1.38.0" (1380)
-PangoVer="${PangoVer:0:4}"
-if [[ "$PangoVer" -ge "1380" ]]; then
-    ExistPangoQuerymodules="false"
-else
-    ExistPangoQuerymodules="true"
-fi
-
 case ${PROC_BIT_DEPTH} in
     64) arch=x86_64;;
     32) arch=i386;;
@@ -122,32 +110,33 @@ CheckLink "${EXECUTABLE}"
 
 message "Copying library modules from ${GTK_PREFIX}"
 ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/gdk-pixbuf-2.0
-ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/gtk-2.0
-ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/pango
+ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/gtk-3.0
 
 message "Removing static libraries and cache files"
 find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read; do rm "${REPLY}"; done
 
 message "Copying configuration files from ${GTK_PREFIX}"
-install -d "${ETC}"/{gtk-2.0,pango}
-cp "${GTK_PREFIX}"/etc/gtk-2.0/im-multipress.conf "${ETC}"/gtk-2.0
-"${GTK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}"/gtk-2.0/gdk-pixbuf.loaders
-"${GTK_PREFIX}"/bin/gtk-query-immodules-2.0  "${LIB}"/gtk-2.0/*/immodules/*.so      > "${ETC}"/gtk-2.0/gtk.immodules
-sed -i "" -e "s|${PWD}|/tmp|" "${ETC}"/gtk-2.0/gdk-pixbuf.loaders \
-"${ETC}"/gtk-2.0/gtk.immodules
-if [[ "$ExistPangoQuerymodules" = "true" ]]; then
-    "${GTK_PREFIX}"/bin/pango-querymodules       "${LIB}"/pango/*/modules/*.so          > "${ETC}"/pango/pango.modules
-    sed -i "" -e "s|${PWD}|/tmp|" "${ETC}"/pango/pango.modules
-    printf "[Pango]\nModuleFiles = /tmp/${ETC}/pango/pango.modules" > "${ETC}"/pango/pangorc
-fi
+install -d "${ETC}"/gtk-3.0
+cp "${GTK_PREFIX}"/etc/gtk-3.0/im-multipress.conf "${ETC}"/gtk-3.0
+"${GTK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${GTK_PREFIX}"/bin/gtk-query-immodules-3.0  "${LIB}"/gtk-3.0/*/immodules/*.so      > "${ETC}"/gtk-3.0/gtk.immodules
+sed -i "" -e "s|${PWD}|/tmp|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders \
+"${ETC}"/gtk-3.0/gtk.immodules
+
+ditto {"${GTK_PREFIX}","${MACOS}"}/share/glib-2.0/schemas
+"${GTK_PREFIX}"/bin/glib-compile-schemas "${MACOS}"/share/glib-2.0/schemas
 
 message "Copying shared files from ${GTK_PREFIX}"
 cp -R "${GTK_PREFIX}"/share/mime "${MACOS}"/share
-# gtk themes
-ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Mac/gtk-2.0-key/gtkrc
-ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Clearlooks/gtk-2.0/gtkrc
-install -d "${MACOS}"/share/themes/Raleigh/gtk-2.0
-(cd "${MACOS}"/share/themes/Raleigh/gtk-2.0 && ln -s ../../Clearlooks/gtk-2.0/gtkrc)
+# gtk3 themes
+ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
+ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Default/gtk-3.0/gtk-keys.css
+ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Adwaita/gtk-3.0/gtk.css
+# Adwaita icons
+iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
+for f in "${iconfolders[@]}"; do ditto {"${GTK_PREFIX}","${MACOS}"}/share/icons/Adwaita/"$f"; done
+ditto {"${GTK_PREFIX}","${MACOS}"}/share/icons/Adwaita/index.theme
+"${GTK_PREFIX}"/bin/gtk-update-icon-cache-3.0 "${MACOS}"/share/icons/Adwaita
 # fontconfig files (X11 backend only)
 if otool -L "${EXECUTABLE}" | grep -sq 'libgtk-x11-2.0'; then
     message "Installing fontconfig files (Your library is X11 backend. 'FONTCONFIG_PATH' will be set by executable loader.)"
@@ -196,7 +185,7 @@ function CreateDmg {
     local srcdir="$(mktemp -dt $$)"
 
     message "Preparing disk image sources at ${srcdir}"
-    mv "${APP}" "${srcdir}"
+    cp -R "${APP}" "${srcdir}"
     cp AboutThisBuild.txt "${srcdir}"
     ln -s /Applications "${srcdir}"
 
@@ -221,3 +210,6 @@ function CreateDmg {
     rm -rf "${srcdir}"
 }
 CreateDmg
+
+message "Packing disk image for distribution"
+zip -m "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
