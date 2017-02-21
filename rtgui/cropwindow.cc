@@ -2320,7 +2320,7 @@ void CropWindow::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     if (action_x != press_x || action_y != press_y) {
         double arg = (press_x - action_x) / sqrt(double((press_x - action_x) * (press_x - action_x) + (press_y - action_y) * (press_y - action_y)));
         double sol1, sol2;
-        double pi = M_PI;
+        double pi = rtengine::RT_PI;
 
         if (press_y > action_y) {
             sol1 = acos(arg) * 180 / pi;
