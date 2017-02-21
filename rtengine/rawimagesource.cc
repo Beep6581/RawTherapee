@@ -1771,31 +1771,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < H; y++) {
-                    int x = 0;
-
-#if defined( __SSE2__ ) && defined( __x86_64__ )
-                    vfloat yv = F2V(y);
-                    vfloat fourv = F2V(4.f);
-                    vfloat onev = F2V(1.f);
-                    vfloat xv = _mm_set_ps(3,2,1,0);
-                    for (; x < W-3; x+=4) {
-                        vfloat vignFactorv = map.calcVignetteFac(xv, yv);
-                        vfloat rawValv = LVFU(rawData[y][x]);
-                        rawValv *= vself(vmaskf_gt(rawValv, ZEROV), vignFactorv, onev);
-                        STVFU(rawData[y][x], rawValv);
-                        xv += fourv;
-                    }
-#endif
-                    for (; x < W; x++) {
-                        if (rawData[y][x] > 0) {
-                            rawData[y][x] *= map.calcVignetteFac(x, y);
-                        }
-                    }
+                    map.processVignetteLine(W, y, rawData[y]);
                 }
             } else if(ri->get_colors() == 3) {
 #ifdef _OPENMP
@@ -1803,14 +1785,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 #endif
 
                 for (int y = 0; y < H; y++) {
-                    for (int x = 0; x < W; x++) {
-                        float vignFactor = map.calcVignetteFac(x, y);
-                        for(int c = 0;c < 3; ++c) {
-                            if (rawData[y][3 * x + c] > 0) {
-                                rawData[y][3 * x + c] *= vignFactor;
-                            }
-                        }
-                    }
+                    map.processVignetteLine3Channels(W, y, rawData[y]);
                 }
             }
         }

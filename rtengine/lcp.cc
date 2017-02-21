@@ -37,10 +37,6 @@ LCPModelCommon::LCPModelCommon()
     imgXCenter = imgYCenter = 0.5;
     x0 = y0 = fx = fy = rfx = rfy = meanErr = 0;
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
-    x0v = y0v = rfxv = rfyv = ZEROV;
-#endif
-
     badErr = false;
 
     for (int i = 0; i < 5; i++) {
@@ -85,12 +81,6 @@ void LCPModelCommon::merge(const LCPModelCommon& a, const LCPModelCommon& b, flo
     vignParam[2] = param0Sqr * param[0] - 2. * param[0] * param[1] + param[2];
     vignParam[3] = param0Sqr * param0Sqr + param[1] * param[1] + 2. * param[0] * param[2] - 3. * param0Sqr * param[1];
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
-    vignParamv[0] = F2V(vignParam[0]);
-    vignParamv[1] = F2V(vignParam[1]);
-    vignParamv[2] = F2V(vignParam[2]);
-    vignParamv[3] = F2V(vignParam[3]);
-#endif // __SSE2__
 }
 
 void LCPModelCommon::prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY)
@@ -125,13 +115,6 @@ void LCPModelCommon::prepareParams(int fullWidth, int fullHeight, float focalLen
     }
     rfx = 1.0 / fx;
     rfy = 1.0 / fy;
-
-#if defined( __SSE2__ ) && defined( __x86_64__ )
-    x0v = F2V(x0);
-    y0v = F2V(y0);
-    rfxv = F2V(rfx);
-    rfyv = F2V(rfy);
-#endif
 
     //printf("FW %i /X0 %g   FH %i /Y0 %g  %g\n",fullWidth,x0,fullHeight,y0, imgYCenter);
 }
@@ -288,19 +271,65 @@ float LCPMapper::calcVignetteFac(int x, int y) const
     const float* vignParam = mc.vignParam;
     float rsqr = xd * xd + yd * yd;
 
-    return 1.f + rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
+    return rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
 }
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
-vfloat LCPMapper::calcVignetteFac(vfloat x, vfloat y) const
+SSEFUNCTION void LCPMapper::processVignetteLine(int width, int y, float *line) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
-    vfloat xd = (x - mc.x0v) * mc.rfxv, yd = (y - mc.y0v) * mc.rfyv;
-    vfloat rsqr = xd * xd + yd * yd;
+    float yd = ((float)y - mc.y0) * mc.rfy;
+    yd *= yd;
+    int x = 0;
+#ifdef __SSE2__
+    const vfloat fourv = F2V(4.f);
+    const vfloat zerov = F2V(0.f);
+    const vfloat ydv = F2V(yd);
+    const vfloat p0 = F2V(mc.vignParam[0]);
+    const vfloat p1 = F2V(mc.vignParam[1]);
+    const vfloat p2 = F2V(mc.vignParam[2]);
+    const vfloat p3 = F2V(mc.vignParam[3]);
+    const vfloat x0v = F2V(mc.x0);
+    const vfloat rfxv = F2V(mc.rfx);
 
-    return F2V(1.f) + rsqr * (mc.vignParamv[0] + rsqr * (mc.vignParamv[1] - mc.vignParamv[2] * rsqr + mc.vignParamv[3] * rsqr * rsqr));
+    vfloat xv = _mm_setr_ps(0.f, 1.f, 2.f, 3.f);
+    for (; x < width-3; x+=4) {
+        vfloat xdv = (xv - x0v) * rfxv;
+        vfloat rsqr = xdv * xdv + ydv;
+        vfloat vignFactorv = rsqr * (p0 + rsqr * (p1 - p2 * rsqr + p3 * rsqr * rsqr));
+        vfloat valv = LVFU(line[x]);
+        valv += valv * vselfzero(vmaskf_gt(valv, zerov), vignFactorv);
+        STVFU(line[x], valv);
+        xv += fourv;
+    }
+#endif // __SSE2__
+    for (; x < width; x++) {
+        if (line[x] > 0) {
+            float xd = ((float)x - mc.x0) * mc.rfx;
+            const float* vignParam = mc.vignParam;
+            float rsqr = xd * xd + yd;
+            line[x] += line[x] * rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
+        }
+    }
 }
-#endif
+
+SSEFUNCTION void LCPMapper::processVignetteLine3Channels(int width, int y, float *line) const
+{
+    // No need for swapXY, since vignette is in RAW and always before rotation
+    float yd = ((float)y - mc.y0) * mc.rfy;
+    yd *= yd;
+    const float* vignParam = mc.vignParam;
+    for (int x = 0; x < width; x++) {
+        float xd = ((float)x - mc.x0) * mc.rfx;
+        float rsqr = xd * xd + yd;
+        float vignetteFactor = rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
+        for(int c = 0;c < 3; ++c) {
+            if (line[3*x+c] > 0) {
+                line[3*x+c] += line[3*x+c] * vignetteFactor;
+            }
+        }
+    }
+}
+
 
 LCPProfile::LCPProfile(const Glib::ustring &fname)
 {
