@@ -836,5 +836,5 @@ paned.vertical > separator {
 }
 
 #PartialPasteHeaderSep {
-    color: #D8D8D8;
+    background-color: #D8D8D8;
 }
