@@ -60,7 +60,7 @@ public:
     void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal);
+    void getAutoWB (double& temp, double& green, double equal, double tempBias);
     void getCamWB (double& temp, double& green);
 
     // thumbnaillistener interface

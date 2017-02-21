@@ -15,6 +15,7 @@ Developement contributors, in last name alphabetical order:
   Flössie
   Jean-Christophe Frisch
   Ilias Giarimis
+  Alberto Griggio
   Steve Herrell
   Philippe Hupé
   Wolfgang Kuehnel

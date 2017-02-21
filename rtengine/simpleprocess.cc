@@ -165,8 +165,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         currWB = imgsrc->getWB ();
     } else if (params.wb.method == "Auto") {
         double rm, gm, bm;
-        imgsrc->getAutoWBMultipliers (rm, gm, bm);
-        currWB.update (rm, gm, bm, params.wb.equal);
+        imgsrc->getAutoWBMultipliers(rm, gm, bm);
+        currWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
     }
 
     NoiseCurve noiseLCurve;

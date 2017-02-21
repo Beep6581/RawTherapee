@@ -234,6 +234,7 @@ public:
     bool temperature;
     bool green;
     bool equal;
+    bool tempBias;
 };
 
 /*class ColorShiftParamsEdited {

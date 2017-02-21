@@ -536,9 +536,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,  //EvlocallabLHshape
     LUMINANCECURVE,  //Evlocallabcurvactiv
     LUMINANCECURVE,  //Evlocallabccshape
-    LUMINANCECURVE  //EvlocallabqualitycurveMethod
-
-
+    LUMINANCECURVE,  //EvlocallabqualitycurveMethod
+    ALLNORAW          // EvWBtempBias
 
 };
 

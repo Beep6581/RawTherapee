@@ -321,6 +321,13 @@ public :
 };
 
 
+class AutoWBListener
+{
+public :
+    virtual ~AutoWBListener() = default;
+    virtual void WBChanged(double temp, double green) = 0;
+};
+
 class WaveletListener
 {
 public :
@@ -407,7 +414,7 @@ public:
       * @return a pointer to the Crop object that handles the image data trough its own pipeline */
     virtual DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) = 0;
 
-    virtual bool        getAutoWB   (double& temp, double& green, double equal) = 0;
+    virtual bool        getAutoWB   (double& temp, double& green, double equal, double tempBias) = 0;
     virtual void        getCamWB    (double& temp, double& green) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
@@ -423,6 +430,7 @@ public:
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setlocalListener        (localListener* l) = 0;
+    virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;

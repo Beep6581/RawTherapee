@@ -624,7 +624,7 @@ void Options::setDefaults ()
         0,  // ADDSET_LOCALLAB_TRANSIT
         0,  // ADDSET_LOCALLAB_STRENGTH
         0,  // ADDSET_LOCALLAB_SENSI
-
+        0, // ADDSET_WB_TEMPBIAS
     };
 
     rtSettings.darkFramesPath = "";

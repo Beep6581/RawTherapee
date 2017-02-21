@@ -72,6 +72,7 @@ protected:
     ColorTemp autoWB;
 
     double lastAwbEqual;
+    double lastAwbTempBias;
 
     ImProcFunctions ipf;
 
@@ -167,6 +168,7 @@ protected:
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
     localListener* aloListener;
+    AutoWBListener* awbListener;
 
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
@@ -354,7 +356,7 @@ public:
 
     DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow);
 
-    bool getAutoWB   (double& temp, double& green, double equal);
+    bool getAutoWB   (double& temp, double& green, double equal, double tempBias);
     void getCamWB    (double& temp, double& green);
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
@@ -414,6 +416,10 @@ public:
         aloListener = alo;
     }
 
+    void setAutoWBListener   (AutoWBListener* awb)
+    {
+        awbListener = awb;
+    }
     void setAutoColorTonListener   (AutoColorTonListener* bwct)
     {
         actListener = bwct;
