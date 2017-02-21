@@ -17,36 +17,52 @@
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _LCP_
-#define _LCP_
+#pragma once
+
+#include <array>
+#include <map>
+#include <string>
+
+#include <glibmm.h>
+#include <expat.h>
 
 #include "imagefloat.h"
 #include "opthelper.h"
-#include <glibmm.h>
-#include <map>
-#include <string>
-#include <expat.h>
 
 namespace rtengine
 {
+
 // Perspective model common data, also used for Vignette and Fisheye
-class LCPModelCommon
+class LCPModelCommon final
 {
 public:
-    float focLenX, focLenY, imgXCenter, imgYCenter;
-    float param[5];  // k1..k5, resp. alpha1..5
-    float scaleFac;  // alpha0
-    double meanErr;
-    bool badErr;
-
-    float x0, y0, fx, fy; // prepared params
-    float rfx, rfy;
-    float vignParam[4];
     LCPModelCommon();
     bool empty() const;  // is it empty
     void print() const;  // printf all values
     void merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA);
     void prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY);
+
+//private:
+    using Param = std::array<float, 5>;
+    using VignParam = std::array<float, 4>;
+
+    float foc_len_x;
+    float foc_len_y;
+    float img_center_x;
+    float img_center_y;
+    Param param;  // k1..k5, resp. alpha1..5
+    float scale_factor;  // alpha0
+    double mean_error;
+    bool bad_error;
+
+    // prepared params
+    float x0;
+    float y0;
+    float fx;
+    float fy;
+    float rfx;
+    float rfy;
+    VignParam vign_param;
 };
 
 class LCPPersModel
@@ -136,5 +152,5 @@ public:
     void processVignetteLine(int width, int y, float *line) const;
     void processVignetteLine3Channels(int width, int y, float *line) const;
 };
+
 }
-#endif
