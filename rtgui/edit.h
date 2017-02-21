@@ -171,8 +171,8 @@ protected:
     // instead of pointing to the EditSubscriber directly
     EditDataProvider* dataProvider;
 
-    void createBuffer(int width, int height);
-    void resize(int newWidth, int newHeight);
+    void createBuffer (int width, int height);
+    void resize (int newWidth, int newHeight);
     void flush();
     EditSubscriber *getEditSubscriber ();
 
@@ -189,7 +189,7 @@ public:
     // return true if the buffer has been allocated
     bool bufferCreated();
 
-    int getObjectID(const rtengine::Coord& location);
+    int getObjectID (const rtengine::Coord& location);
 };
 
 
@@ -353,6 +353,50 @@ public:
     void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
 };
 
+class Arcellipse : public Geometry
+{
+public:
+    rtengine::Coord center;
+//    rtengine::Coord scalx;
+//    rtengine::Coord scaly;
+
+    double radius;
+    double radius2;
+    double translax;
+    double translay;
+    bool filled;
+    bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
+    double scalx;
+    double scaly;
+    double begang;
+    double endang;
+
+    Arcellipse ();
+    Arcellipse (rtengine::Coord& center, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled = false, bool radiusInImageSpace = false);
+    Arcellipse (int centerX, int centerY, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled = false, bool radiusInImageSpace = false);
+
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+};
+
+class Beziers : public Geometry
+{
+public:
+    rtengine::Coord begin;
+    rtengine::Coord inter;
+    rtengine::Coord end;
+
+    Beziers ();
+    Beziers (rtengine::Coord& begin, rtengine::Coord& inter, rtengine::Coord& end);
+    Beziers (float beginX, float beginY, float interX, float interY, float endX, float endY);
+
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+};
+
+
 class Line : public Geometry
 {
 public:
@@ -390,10 +434,10 @@ public:
 
     Rectangle ();
 
-    void setXYWH(int left, int top, int width, int height);
-    void setXYXY(int left, int top, int right, int bottom);
-    void setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight);
-    void setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight);
+    void setXYWH (int left, int top, int width, int height);
+    void setXYXY (int left, int top, int right, int bottom);
+    void setXYWH (rtengine::Coord topLeft, rtengine::Coord widthHeight);
+    void setXYXY (rtengine::Coord topLeft, rtengine::Coord bottomRight);
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
@@ -409,13 +453,13 @@ private:
     Cairo::RefPtr<Cairo::ImageSurface> draggedImg;
     Cairo::RefPtr<Cairo::ImageSurface> insensitiveImg;
 
-    static void setPaths(Options &opt);
+    static void setPaths (Options &opt);
     static void updateImages();
-    void changeImage(Glib::ustring &newImage);
-    static Glib::ustring findIconAbsolutePath(const Glib::ustring &iconFName);
+    void changeImage (Glib::ustring &newImage);
+    static Glib::ustring findIconAbsolutePath (const Glib::ustring &iconFName);
     void drawImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drawMOImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
-    void drivenPointToRectangle(const rtengine::Coord &pos, rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H);
+    void drivenPointToRectangle (const rtengine::Coord &pos, rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H);
 
 public:
     DrivenPoint drivenPoint;
@@ -468,9 +512,9 @@ public:
     explicit EditSubscriber (EditType editType);
     virtual ~EditSubscriber () {}
 
-    void               setEditProvider(EditDataProvider *provider);
+    void               setEditProvider (EditDataProvider *provider);
     EditDataProvider*  getEditProvider ();
-    void               setEditID(EditUniqueID ID, BufferType buffType);
+    void               setEditID (EditUniqueID ID, BufferType buffType);
     bool               isCurrentSubscriber();
     virtual void       subscribe();
     virtual void       unsubscribe();
@@ -587,94 +631,112 @@ public:
     EditDataProvider();
     virtual ~EditDataProvider() {}
 
-    virtual void        subscribe(EditSubscriber *subscriber);
+    virtual void        subscribe (EditSubscriber *subscriber);
     virtual void        unsubscribe();         /// Occurs when the subscriber has been switched off first
     virtual void        switchOffEditMode ();  /// Occurs when the user want to stop the editing mode
-    virtual CursorShape getCursor(int objectID);
+    virtual CursorShape getCursor (int objectID);
     int                 getPipetteRectSize ();
     EditSubscriber*     getCurrSubscriber();
     virtual void        getImageSize (int &w, int&h) = 0;
 };
 
-inline EditDataProvider* ObjectMOBuffer::getDataProvider () {
+inline EditDataProvider* ObjectMOBuffer::getDataProvider ()
+{
     return dataProvider;
 }
 
-inline ObjectMode ObjectMOBuffer::getObjectMode () {
+inline ObjectMode ObjectMOBuffer::getObjectMode ()
+{
     return objectMode;
 }
 
-inline Cairo::RefPtr<Cairo::ImageSurface>& ObjectMOBuffer::getObjectMap () {
+inline Cairo::RefPtr<Cairo::ImageSurface>& ObjectMOBuffer::getObjectMap ()
+{
     return objectMap;
 }
 
-inline void RGBColor::setColor (double r, double g, double b) {
+inline void RGBColor::setColor (double r, double g, double b)
+{
     this->r = r;
     this->g = g;
     this->b = b;
 }
 
-inline void RGBColor::setColor (char r, char g, char b) {
+inline void RGBColor::setColor (char r, char g, char b)
+{
     this->r = double (r) / 255.;
     this->g = double (g) / 255.;
     this->b = double (b) / 255.;
 }
 
-inline double RGBColor::getR () {
+inline double RGBColor::getR ()
+{
     return r;
 }
 
-inline double RGBColor::getG () {
+inline double RGBColor::getG ()
+{
     return g;
 }
 
-inline double RGBColor::getB () {
+inline double RGBColor::getB ()
+{
     return b;
 }
 
-inline void RGBAColor::setColor (double r, double g, double b, double a) {
+inline void RGBAColor::setColor (double r, double g, double b, double a)
+{
     RGBColor::setColor (r, g, b);
     this->a = a;
 }
 
-inline void RGBAColor::setColor (char r, char g, char b, char a) {
+inline void RGBAColor::setColor (char r, char g, char b, char a)
+{
     RGBColor::setColor (r, g, b);
     this->a = double (a) / 255.;
 }
 
-inline double RGBAColor::getA () {
+inline double RGBAColor::getA ()
+{
     return a;
 }
 
-inline void Geometry::setInnerLineColor (double r, double g, double b) {
+inline void Geometry::setInnerLineColor (double r, double g, double b)
+{
     innerLineColor.setColor (r, g, b);
     flags &= ~F_AUTO_COLOR;
 }
 
-inline void Geometry::setInnerLineColor (char r, char g, char b) {
+inline void Geometry::setInnerLineColor (char r, char g, char b)
+{
     innerLineColor.setColor (r, g, b);
     flags &= ~F_AUTO_COLOR;
 }
 
-inline void Geometry::setOuterLineColor (double r, double g, double b) {
+inline void Geometry::setOuterLineColor (double r, double g, double b)
+{
     outerLineColor.setColor (r, g, b);
     flags &= ~F_AUTO_COLOR;
 }
 
-inline double Geometry::getOuterLineWidth () {
+inline double Geometry::getOuterLineWidth ()
+{
     return double (innerLineWidth) + 2.;
 }
 
-inline void Geometry::setOuterLineColor (char r, char g, char b) {
+inline void Geometry::setOuterLineColor (char r, char g, char b)
+{
     outerLineColor.setColor (r, g, b);
     flags &= ~F_AUTO_COLOR;
 }
 
-inline double Geometry::getMouseOverLineWidth () {
+inline double Geometry::getMouseOverLineWidth ()
+{
     return getOuterLineWidth () + 2.;
 }
 
-inline void Geometry::setAutoColor (bool aColor) {
+inline void Geometry::setAutoColor (bool aColor)
+{
     if (aColor) {
         flags |= F_AUTO_COLOR;
     } else {
@@ -682,11 +744,13 @@ inline void Geometry::setAutoColor (bool aColor) {
     }
 }
 
-inline bool Geometry::isVisible () {
+inline bool Geometry::isVisible ()
+{
     return flags & F_VISIBLE;
 }
 
-inline void Geometry::setVisible (bool visible) {
+inline void Geometry::setVisible (bool visible)
+{
     if (visible) {
         flags |= F_VISIBLE;
     } else {
@@ -694,11 +758,13 @@ inline void Geometry::setVisible (bool visible) {
     }
 }
 
-inline bool Geometry::isHoverable () {
+inline bool Geometry::isHoverable ()
+{
     return flags & F_HOVERABLE;
 }
 
-inline void Geometry::setHoverable (bool hoverable) {
+inline void Geometry::setHoverable (bool hoverable)
+{
     if (hoverable) {
         flags |= F_HOVERABLE;
     } else {
@@ -706,152 +772,220 @@ inline void Geometry::setHoverable (bool hoverable) {
     }
 }
 
-inline void Geometry::setActive (bool active) {
+inline void Geometry::setActive (bool active)
+{
     if (active) {
         flags |= (F_VISIBLE | F_HOVERABLE);
     } else {
-        flags &= ~(F_VISIBLE | F_HOVERABLE);
+        flags &= ~ (F_VISIBLE | F_HOVERABLE);
     }
 }
 
-inline EditDataProvider* EditSubscriber::getEditProvider () {
+inline EditDataProvider* EditSubscriber::getEditProvider ()
+{
     return provider;
 }
 
-inline CursorShape EditSubscriber::getCursor (const int objectID) {
+inline CursorShape EditSubscriber::getCursor (const int objectID)
+{
     return CSOpenHand;
 }
 
-inline bool EditSubscriber::mouseOver (const int modifierKey) {
+inline bool EditSubscriber::mouseOver (const int modifierKey)
+{
     return false;
 }
 
-inline bool EditSubscriber::button1Pressed (const int modifierKey) {
+inline bool EditSubscriber::button1Pressed (const int modifierKey)
+{
     return false;
 }
 
-inline bool EditSubscriber::button1Released () {
+inline bool EditSubscriber::button1Released ()
+{
     return false;
 }
 
-inline bool EditSubscriber::button2Pressed (const int modifierKey) {
+inline bool EditSubscriber::button2Pressed (const int modifierKey)
+{
     return false;
 }
 
-inline bool EditSubscriber::button2Released () {
+inline bool EditSubscriber::button2Released ()
+{
     return false;
 }
 
-inline bool EditSubscriber::button3Pressed (const int modifierKey) {
+inline bool EditSubscriber::button3Pressed (const int modifierKey)
+{
     return false;
 }
 
-inline bool EditSubscriber::button3Released () {
+inline bool EditSubscriber::button3Released ()
+{
     return false;
 }
 
-inline bool EditSubscriber::drag1 (const int modifierKey) {
+inline bool EditSubscriber::drag1 (const int modifierKey)
+{
     return false;
 }
 
-inline bool EditSubscriber::drag2 (const int modifierKey) {
+inline bool EditSubscriber::drag2 (const int modifierKey)
+{
     return false;
 }
 
-inline bool EditSubscriber::drag3 (const int modifierKey) {
+inline bool EditSubscriber::drag3 (const int modifierKey)
+{
     return false;
 }
 
-inline bool EditSubscriber::pick1 (const bool picked) {
+inline bool EditSubscriber::pick1 (const bool picked)
+{
     return false;
 }
 
-inline bool EditSubscriber::pick2 (const bool picked) {
+inline bool EditSubscriber::pick2 (const bool picked)
+{
     return false;
 }
 
-inline bool EditSubscriber::pick3 (const bool picked) {
+inline bool EditSubscriber::pick3 (const bool picked)
+{
     return false;
 }
 
-inline const std::vector<Geometry*>& EditSubscriber::getVisibleGeometry () {
+inline const std::vector<Geometry*>& EditSubscriber::getVisibleGeometry ()
+{
     return visibleGeometry;
 }
 
-inline const std::vector<Geometry*>& EditSubscriber::getMouseOverGeometry () {
+inline const std::vector<Geometry*>& EditSubscriber::getMouseOverGeometry ()
+{
     return mouseOverGeometry;
 }
 
-inline int EditDataProvider::getPipetteRectSize () {
+inline int EditDataProvider::getPipetteRectSize ()
+{
     return 8; // TODO: make a GUI
 }
 
 inline Geometry::Geometry () :
-        innerLineColor (char (255), char (255), char (255)), outerLineColor (
-                char (0), char (0), char (0)), flags (
-                F_VISIBLE | F_HOVERABLE | F_AUTO_COLOR), innerLineWidth (1.5f), datum (
-                IMAGE), state (NORMAL) {
+    innerLineColor (char (255), char (255), char (255)), outerLineColor (
+        char (0), char (0), char (0)), flags (
+            F_VISIBLE | F_HOVERABLE | F_AUTO_COLOR), innerLineWidth (1.5f), datum (
+                IMAGE), state (NORMAL)
+{
 }
 
 inline Circle::Circle () :
-        center (100, 100), radius (10), filled (false), radiusInImageSpace (
-                false) {
+    center (100, 100), radius (10), filled (false), radiusInImageSpace (
+        false)
+{
+}
+
+inline Arcellipse::Arcellipse () :
+    center (100, 100), radius (10), radius2 (10), translax (0), translay (0), filled (false), radiusInImageSpace (
+        false)
+{
 }
 
 inline Rectangle::Rectangle () :
-        topLeft (0, 0), bottomRight (10, 10), filled (false) {
+    topLeft (0, 0), bottomRight (10, 10), filled (false)
+{
 }
 
 inline Polyline::Polyline () :
-        filled (false) {
+    filled (false)
+{
 }
 
 inline Line::Line () :
-        begin (10, 10), end (100, 100) {
+    begin (10, 10), end (100, 100)
+{
+}
+inline Beziers::Beziers () :
+    begin (10, 10), inter (50, 50), end (100, 100)
+{
 }
 
 inline RGBAColor::RGBAColor () :
-        RGBColor (0., 0., 0.), a (0.) {
+    RGBColor (0., 0., 0.), a (0.)
+{
 }
 
 inline RGBColor::RGBColor () :
-        r (0.), g (0.), b (0.) {
+    r (0.), g (0.), b (0.)
+{
 }
 
 inline RGBColor::RGBColor (double r, double g, double b) :
-        r (r), g (g), b (b) {
+    r (r), g (g), b (b)
+{
 }
 
 inline RGBColor::RGBColor (char r, char g, char b) :
-        r (double (r) / 255.), g (double (g) / 255.), b (double (b) / 255.) {
+    r (double (r) / 255.), g (double (g) / 255.), b (double (b) / 255.)
+{
 }
 
 inline RGBAColor::RGBAColor (double r, double g, double b, double a) :
-        RGBColor (r, g, b), a (a) {
+    RGBColor (r, g, b), a (a)
+{
 }
 
 inline RGBAColor::RGBAColor (char r, char g, char b, char a) :
-        RGBColor (r, g, b), a (double (a) / 255.) {
+    RGBColor (r, g, b), a (double (a) / 255.)
+{
 }
 
 inline Circle::Circle (rtengine::Coord& center, int radius, bool filled,
-        bool radiusInImageSpace) :
-        center (center), radius (radius), filled (filled), radiusInImageSpace (
-                radiusInImageSpace) {
+                       bool radiusInImageSpace) :
+    center (center), radius (radius), filled (filled), radiusInImageSpace (
+        radiusInImageSpace)
+{
 }
 
 inline Circle::Circle (int centerX, int centerY, int radius, bool filled,
-        bool radiusInImageSpace) :
-        center (centerX, centerY), radius (radius), filled (filled), radiusInImageSpace (
-                radiusInImageSpace) {
+                       bool radiusInImageSpace) :
+    center (centerX, centerY), radius (radius), filled (filled), radiusInImageSpace (
+        radiusInImageSpace)
+{
+}
+
+inline Arcellipse::Arcellipse (rtengine::Coord& center, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled,
+                               bool radiusInImageSpace) :
+    center (center), radius (radius),  radius2 (radius2), translax (translax), translay (translay), scalx (scalx), scaly (scaly), begang (begang), endang (endang), filled (filled), radiusInImageSpace (
+        radiusInImageSpace)
+{
+}
+
+inline Arcellipse::Arcellipse (int centerX, int centerY, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled,
+                               bool radiusInImageSpace) :
+    center (centerX, centerY), radius (radius),  radius2 (radius2), translax (translax), translay (translay), scalx (scalx), scaly (scaly), begang (begang), endang (endang), filled (filled), radiusInImageSpace (
+        radiusInImageSpace)
+{
+}
+
+inline Beziers::Beziers (rtengine::Coord& begin, rtengine::Coord& inter, rtengine::Coord& end) :
+    begin (begin), inter (inter), end (end)
+{
+}
+
+inline Beziers::Beziers (float beginX, float beginY, float interX, float interY, float endX, float endY) :
+    begin (beginX, beginY), inter (interX, interY), end (endX, endY)
+{
 }
 
 inline Line::Line (rtengine::Coord& begin, rtengine::Coord& end) :
-        begin (begin), end (end) {
+    begin (begin), end (end)
+{
 }
 
 inline Line::Line (int beginX, int beginY, int endX, int endY) :
-        begin (beginX, beginY), end (endX, endY) {
+    begin (beginX, beginY), end (endX, endY)
+{
 }
 
 #endif

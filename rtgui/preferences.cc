@@ -993,8 +993,25 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to (*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
     workflowGrid->attach_next_to (*ckbUseIconNoText, *ckbHideTPVScrollbar, Gtk::POS_RIGHT, 1, 1);
 
+
     fworklflow->add (*workflowGrid);
     mvbsd->attach_next_to (*fworklflow, Gtk::POS_TOP, 2, 1);
+
+    // ---------------------------------------------
+
+    Gtk::Frame* flocal = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_LOCAL")) );
+    setExpandAlignProperties (flocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    Gtk::Grid* localGrid = Gtk::manage ( new Gtk::Grid() );
+    localGrid->set_column_spacing (4);
+    localGrid->set_row_spacing (4);
+    setExpandAlignProperties (localGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+
+    ckbShowdelimspot =  Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_LOCALSHOWDELIMSPOT")) );
+    setExpandAlignProperties (ckbShowdelimspot, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    localGrid->attach_next_to (*ckbShowdelimspot, Gtk::POS_LEFT, 3, 1);
+
+    flocal->add (*localGrid);
+    mvbsd->attach_next_to (*flocal, *fworklflow, Gtk::POS_BOTTOM, 2, 1);
 
     // ---------------------------------------------
 
@@ -1029,7 +1046,8 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     langGrid->attach_next_to (*languages, *langlab, Gtk::POS_RIGHT, 1, 1);
     langGrid->attach_next_to (*langw, *languages, Gtk::POS_RIGHT, 1, 1);
     flang->add (*langGrid);
-    mvbsd->attach_next_to (*flang, *fworklflow, Gtk::POS_BOTTOM, 2, 1);
+//  mvbsd->attach_next_to (*flang, *fworklflow, Gtk::POS_BOTTOM, 2, 1);
+    mvbsd->attach_next_to (*flang, *flocal, Gtk::POS_BOTTOM, 2, 1);
 
     // ---------------------------------------------
 
@@ -1781,6 +1799,7 @@ void Preferences::storePreferences ()
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
+    moptions.showdelimspot = ckbShowdelimspot->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
@@ -1988,6 +2007,7 @@ void Preferences::fillPreferences ()
 //   ckbHistogramWorking->set_active(moptions.histogramWorking==1);
     ckbFileBrowserToolbarSingleRow->set_active (moptions.FileBrowserToolbarSingleRow);
     ckbShowFilmStripToolBar->set_active (moptions.showFilmStripToolBar);
+    ckbShowdelimspot->set_active (moptions.showdelimspot);
     ckbHideTPVScrollbar->set_active (moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active (moptions.UseIconNoText);
 

@@ -651,6 +651,12 @@ Locallab::Locallab ():
     // Instantiating the Editing geometry; positions will be initialized later
     Line  *hLine, *vLine, *locYLine[2], *locXLine[2];
     Circle *centerCircle;
+//   Arcellipse *oneellipse;
+
+    Beziers *onebeziers[3];
+    Beziers *twobeziers[3];
+    Beziers *thrbeziers[3];
+    Beziers *foubeziers[3];
 
     // Visible geometry
     locXLine[0] = new Line();
@@ -671,11 +677,80 @@ Locallab::Locallab ():
     centerCircle->radius = circrad->getValue(); //19;
     centerCircle->filled = false;
 
+    if (options.showdelimspot) {
+        onebeziers[0] = new Beziers();
+        onebeziers[0]->datum = Geometry::IMAGE;
+        onebeziers[0]->innerLineWidth = 1;
+
+        onebeziers[1] = new Beziers();
+        onebeziers[1]->datum = Geometry::IMAGE;
+        onebeziers[1]->innerLineWidth = 1;
+
+        onebeziers[2] = new Beziers();
+        onebeziers[2]->datum = Geometry::IMAGE;
+        onebeziers[2]->innerLineWidth = 1;
+
+        twobeziers[0] = new Beziers();
+        twobeziers[0]->datum = Geometry::IMAGE;
+        twobeziers[0]->innerLineWidth = 1;
+
+        twobeziers[1] = new Beziers();
+        twobeziers[1]->datum = Geometry::IMAGE;
+        twobeziers[1]->innerLineWidth = 1;
+
+        twobeziers[2] = new Beziers();
+        twobeziers[2]->datum = Geometry::IMAGE;
+        twobeziers[2]->innerLineWidth = 1;
+
+        thrbeziers[0] = new Beziers();
+        thrbeziers[0]->datum = Geometry::IMAGE;
+        thrbeziers[0]->innerLineWidth = 1;
+
+        thrbeziers[1] = new Beziers();
+        thrbeziers[1]->datum = Geometry::IMAGE;
+        thrbeziers[1]->innerLineWidth = 1;
+
+        thrbeziers[2] = new Beziers();
+        thrbeziers[2]->datum = Geometry::IMAGE;
+        thrbeziers[2]->innerLineWidth = 1;
+
+        foubeziers[0] = new Beziers();
+        foubeziers[0]->datum = Geometry::IMAGE;
+        foubeziers[0]->innerLineWidth = 1;
+
+        foubeziers[1] = new Beziers();
+        foubeziers[1]->datum = Geometry::IMAGE;
+        foubeziers[1]->innerLineWidth = 1;
+
+        foubeziers[2] = new Beziers();
+        foubeziers[2]->datum = Geometry::IMAGE;
+        foubeziers[2]->innerLineWidth = 1;
+    }
+
+    // oneellipse->radiusInImageSpace = true;
+    // oneellipse->radius = locX->getValue();
+    // oneellipse->filled = false;
+
     EditSubscriber::visibleGeometry.push_back ( locXLine[0] );
     EditSubscriber::visibleGeometry.push_back ( locXLine[1] );
     EditSubscriber::visibleGeometry.push_back ( locYLine[0] );
     EditSubscriber::visibleGeometry.push_back ( locYLine[1] );
     EditSubscriber::visibleGeometry.push_back ( centerCircle );
+
+    if (options.showdelimspot) {
+        EditSubscriber::visibleGeometry.push_back ( onebeziers[0] );
+        EditSubscriber::visibleGeometry.push_back ( onebeziers[1] );
+        EditSubscriber::visibleGeometry.push_back ( onebeziers[2] );
+        EditSubscriber::visibleGeometry.push_back ( twobeziers[0] );
+        EditSubscriber::visibleGeometry.push_back ( twobeziers[1] );
+        EditSubscriber::visibleGeometry.push_back ( twobeziers[2] );
+        EditSubscriber::visibleGeometry.push_back ( thrbeziers[0] );
+        EditSubscriber::visibleGeometry.push_back ( thrbeziers[1] );
+        EditSubscriber::visibleGeometry.push_back ( thrbeziers[2] );
+        EditSubscriber::visibleGeometry.push_back ( foubeziers[0] );
+        EditSubscriber::visibleGeometry.push_back ( foubeziers[1] );
+        EditSubscriber::visibleGeometry.push_back ( foubeziers[2] );
+    }
 
     // MouseOver geometry
     locXLine[0] = new Line();
@@ -696,6 +771,60 @@ Locallab::Locallab ():
     centerCircle->radius = circrad->getValue();//19;
     centerCircle->filled = true;
 
+    if (options.showdelimspot) {
+        onebeziers[0]   = new Beziers();
+        onebeziers[0]->datum = Geometry::IMAGE;
+        onebeziers[0]->innerLineWidth = 1;
+
+        onebeziers[1]   = new Beziers();
+        onebeziers[1]->datum = Geometry::IMAGE;
+        onebeziers[1]->innerLineWidth = 1;
+
+        onebeziers[2]   = new Beziers();
+        onebeziers[2]->datum = Geometry::IMAGE;
+        onebeziers[2]->innerLineWidth = 1;
+
+        twobeziers[0] = new Beziers();
+        twobeziers[0]->datum = Geometry::IMAGE;
+        twobeziers[0]->innerLineWidth = 1;
+
+        twobeziers[1] = new Beziers();
+        twobeziers[1]->datum = Geometry::IMAGE;
+        twobeziers[1]->innerLineWidth = 1;
+
+        twobeziers[2] = new Beziers();
+        twobeziers[2]->datum = Geometry::IMAGE;
+        twobeziers[2]->innerLineWidth = 1;
+
+        thrbeziers[0] = new Beziers();
+        thrbeziers[0]->datum = Geometry::IMAGE;
+        thrbeziers[0]->innerLineWidth = 1;
+
+        thrbeziers[1] = new Beziers();
+        thrbeziers[1]->datum = Geometry::IMAGE;
+        thrbeziers[1]->innerLineWidth = 1;
+
+        thrbeziers[2] = new Beziers();
+        thrbeziers[2]->datum = Geometry::IMAGE;
+        thrbeziers[2]->innerLineWidth = 1;
+
+        foubeziers[0] = new Beziers();
+        foubeziers[0]->datum = Geometry::IMAGE;
+        foubeziers[0]->innerLineWidth = 1;
+
+        foubeziers[1] = new Beziers();
+        foubeziers[1]->datum = Geometry::IMAGE;
+        foubeziers[1]->innerLineWidth = 1;
+
+        foubeziers[2] = new Beziers();
+        foubeziers[2]->datum = Geometry::IMAGE;
+        foubeziers[2]->innerLineWidth = 1;
+    }
+
+//   oneellipse->radiusInImageSpace = true;
+//   oneellipse->radius = 10;//locX->getValue();
+//    oneellipse->filled = false;
+
     EditSubscriber::mouseOverGeometry.push_back ( locXLine[0] );
     EditSubscriber::mouseOverGeometry.push_back ( locXLine[1] );
 
@@ -703,6 +832,21 @@ Locallab::Locallab ():
     EditSubscriber::mouseOverGeometry.push_back ( locYLine[1] );
 
     EditSubscriber::mouseOverGeometry.push_back ( centerCircle );
+
+    if (options.showdelimspot) {
+        EditSubscriber::mouseOverGeometry.push_back ( onebeziers[0] );
+        EditSubscriber::mouseOverGeometry.push_back ( onebeziers[1] );
+        EditSubscriber::mouseOverGeometry.push_back ( onebeziers[2] );
+        EditSubscriber::mouseOverGeometry.push_back ( twobeziers[0] );
+        EditSubscriber::mouseOverGeometry.push_back ( twobeziers[1] );
+        EditSubscriber::mouseOverGeometry.push_back ( twobeziers[2] );
+        EditSubscriber::mouseOverGeometry.push_back ( thrbeziers[0] );
+        EditSubscriber::mouseOverGeometry.push_back ( thrbeziers[1] );
+        EditSubscriber::mouseOverGeometry.push_back ( thrbeziers[2] );
+        EditSubscriber::mouseOverGeometry.push_back ( foubeziers[0] );
+        EditSubscriber::mouseOverGeometry.push_back ( foubeziers[1] );
+        EditSubscriber::mouseOverGeometry.push_back ( foubeziers[2] );
+    }
 
     show_all();
 }
@@ -1733,7 +1877,7 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
     double decayX = (locX_) * (double (imW)) / 2000.;
     double decayXL = (locXL_) * (double (imW)) / 2000.;
     rtengine::Coord origin (imW / 2 + centerX_ * imW / 2000.f, imH / 2 + centerY_ * imH / 2000.f);
-//   printf("deX=%f dexL=%f deY=%f deyT=%f\n", decayX, decayXL, decayY, decayYT);
+//   printf("deX=%f dexL=%f deY=%f deyT=%f locX=%i locY=%i\n", decayX, decayXL, decayY, decayYT, locX_, locY_);
 
     if (Smethod->get_active_row_number() == 1 || Smethod->get_active_row_number() == 3) {
         decayYT = decayY;
@@ -1742,6 +1886,8 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
 
     Line *currLine;
     Circle *currCircle;
+    //  Arcellipse *currArcellipse;
+    Beziers *currBeziers;
     double decay;
     const auto updateLine = [&] (Geometry * geometry, const float radius, const float begin, const float end) {
         const auto line = static_cast<Line*> (geometry);
@@ -1763,31 +1909,134 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
         const auto circle = static_cast<Circle*> (geometry);
         circle->center = origin;
         circle->radius = circrad_;
-
     };
 
+    const auto updateBeziers = [&] (Geometry * geometry, const double dX_, const double dI_, const double dY_,  const float begi, const float inte, const float en) {
+        const auto beziers = static_cast<Beziers*> (geometry);
+        beziers->begin = PolarCoord (dX_, begi);
+        beziers->begin += origin;//0
+        beziers->inter = PolarCoord (dI_, inte);
+        beziers->inter += origin;//0
+        beziers->end = PolarCoord (dY_,  en);
+        beziers->end += origin;
+        //  printf("dX=%f dI=%f dY=%f begx=%i begy=%i intx=%i inty=%i endx=%i endy=%i\n", dX_, dI_, dY_, beziers->begin.x, beziers->begin.y, beziers->inter.x, beziers->inter.y, beziers->end.x, beziers->end.y);
+    };
+
+    /*
+        const auto updateArcellipse = [&] (Geometry * geometry, const double dX_, const double dY_, const float kbegang, const float kendang) {
+            const auto arcellipse = static_cast<Arcellipse*> (geometry);
+            arcellipse->center = origin;
+            arcellipse->radius = dY_;
+            arcellipse->radius2 = dX_;
+            arcellipse->translax = (double) imW /2.; //dX_ - dY_;
+            arcellipse->translay = (double) imH /2.;
+            arcellipse->scalx = dX_ / dY_; // double(locX_) / double (locY_); //arcellipse->radius2 / arcellipse->radius ; // dX_ / dY_;
+            arcellipse->scaly = 1.; //dX_ / dY_; //locY_/locX_;
+            arcellipse->begang = kbegang * M_PI;
+            arcellipse->endang = kendang * M_PI;
+
+
+        };
+    */
+    double dimline = 100.;
+
+    if (options.showdelimspot) {
+        dimline = 500.;
+    }
+
+
     decay = decayX;
-    updateLineWithDecay (visibleGeometry.at (0), 100., 90., 0.);
-    updateLineWithDecay (mouseOverGeometry.at (0), 100., 90., 0.);
+    updateLineWithDecay (visibleGeometry.at (0), dimline, 90., 0.);
+    updateLineWithDecay (mouseOverGeometry.at (0), dimline, 90., 0.);
 
     decay = decayXL;
 
-    updateLineWithDecay (visibleGeometry.at (1), 100., 90., 180.);
-    updateLineWithDecay (mouseOverGeometry.at (1), 100., 90., 180.);
+    updateLineWithDecay (visibleGeometry.at (1), dimline, 90., 180.);
+    updateLineWithDecay (mouseOverGeometry.at (1), dimline, 90., 180.);
 
     decay = decayYT;
-    updateLineWithDecay (visibleGeometry.at (2), 100., 180., 270.);
-    updateLineWithDecay (mouseOverGeometry.at (2), 100., 180., 270.);
+    updateLineWithDecay (visibleGeometry.at (2), dimline, 180., 270.);
+    updateLineWithDecay (mouseOverGeometry.at (2), dimline, 180., 270.);
 
     decay = decayY;
 
-    updateLineWithDecay (visibleGeometry.at (3), 100., 180, 90.);
-    updateLineWithDecay (mouseOverGeometry.at (3), 100., 180., 90.);
+    updateLineWithDecay (visibleGeometry.at (3), dimline, 180, 90.);
+    updateLineWithDecay (mouseOverGeometry.at (3), dimline, 180., 90.);
 
 
     updateCircle (visibleGeometry.at (4));
     updateCircle (mouseOverGeometry.at (4));
 
+    //double decay10 = ((decayX * decayY)/ sqrt(0.03107 * SQR(decayX) + SQR(decayY)))/0.9848;
+    //double decay5 = ((decayX * decayY)/ sqrt(0.007655 * SQR(decayX) + SQR(decayY)))/0.9659;
+    if (options.showdelimspot) {
+        //this decayww evaluate approximation of a point in the ellipse for an angle alpha
+        double decay15 = 1.07854 * ((decayX * decayY) / sqrt (0.07179 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.07854 = 1 / cos(15)
+        double decay30 = 1.15473 * ((decayX * decayY) / sqrt (0.33335 * SQR (decayX) + SQR (decayY)));
+        double decay60 = 2. * ((decayX * decayY) / sqrt (3.0 * SQR (decayX) + SQR (decayY)));
+        double decay75 = 3.86398 * ((decayX * decayY) / sqrt (13.929 * SQR (decayX) + SQR (decayY)));
+
+        double decay15L = 1.07854 * ((decayXL * decayY) / sqrt (0.07179 * SQR (decayXL) + SQR (decayY)));
+        double decay30L = 1.15473 * ((decayXL * decayY) / sqrt (0.33335 * SQR (decayXL) + SQR (decayY)));
+        double decay60L = 2. * ((decayXL * decayY) / sqrt (3.0 * SQR (decayXL) + SQR (decayY)));
+        double decay75L = 3.86398 * ((decayXL * decayY) / sqrt (13.929 * SQR (decayXL) + SQR (decayY)));
+
+        double decay15LT = 1.07854 * ((decayXL * decayYT) / sqrt (0.07179 * SQR (decayXL) + SQR (decayYT)));
+        double decay30LT = 1.15473 * ((decayXL * decayYT) / sqrt (0.33335 * SQR (decayXL) + SQR (decayYT)));
+        double decay60LT = 2. * ((decayXL * decayYT) / sqrt (3.0 * SQR (decayXL) + SQR (decayYT)));
+        double decay75LT = 3.86398 * ((decayXL * decayYT) / sqrt (13.929 * SQR (decayXL) + SQR (decayYT)));
+
+        double decay15T = 1.07854 * ((decayX * decayYT) / sqrt (0.07179 * SQR (decayX) + SQR (decayYT)));
+        double decay30T = 1.15473 * ((decayX * decayYT) / sqrt (0.33335 * SQR (decayX) + SQR (decayYT)));
+        double decay60T = 2. * ((decayX * decayYT) / sqrt (3.0 * SQR (decayX) + SQR (decayYT)));
+        double decay75T = 3.86398 * ((decayX * decayYT) / sqrt (13.929 * SQR (decayX) + SQR (decayYT)));
+
+        double decay45 = (1.414 * decayX * decayY) / sqrt (SQR (decayX) + SQR (decayY));
+        double decay45L = (1.414 * decayXL * decayY) / sqrt (SQR (decayXL) + SQR (decayY));
+        double decay45LT = (1.414 * decayXL * decayYT) / sqrt (SQR (decayXL) + SQR (decayYT));
+        double decay45T = (1.414 * decayX * decayYT) / sqrt (SQR (decayX) + SQR (decayYT));
+
+        //printf("decayX=%f decayY=%f decay10=%f decay45=%f oriX=%i origY=%i\n", decayX, decayY, decay10, decay45, origin.x, origin.y);
+        updateBeziers (visibleGeometry.at (5), decayX, decay15  , decay30, 0., 15., 30.);
+        updateBeziers (mouseOverGeometry.at (5), decayX, decay15 , decay30, 0., 15., 30.);
+
+        updateBeziers (visibleGeometry.at (6), decay30, decay45 , decay60, 30., 45., 60.);
+        updateBeziers (mouseOverGeometry.at (6), decay30, decay45 , decay60, 30., 45., 60.);
+
+        updateBeziers (visibleGeometry.at (7), decay60, decay75 , decayY, 60., 75., 90.);
+        updateBeziers (mouseOverGeometry.at (7), decay60, decay75 , decayY, 60., 75., 90.);
+
+        updateBeziers (visibleGeometry.at (8), decayY, decay75L  , decay60L, 90., 105., 120.);
+        updateBeziers (mouseOverGeometry.at (8), decayY, decay75L , decay60L, 90., 105., 120.);
+
+        updateBeziers (visibleGeometry.at (9), decay60L, decay45L  , decay30L, 120., 135., 150.);
+        updateBeziers (mouseOverGeometry.at (9), decay60L, decay45L , decay30L, 120., 135., 150.);
+
+        updateBeziers (visibleGeometry.at (10), decay30L, decay15L  , decayXL, 150., 165., 180.);
+        updateBeziers (mouseOverGeometry.at (10), decay30L, decay15L , decayXL, 150., 165., 180.);
+
+        updateBeziers (visibleGeometry.at (11), decayXL, decay15LT  , decay30LT, 180., 195., 210.);
+        updateBeziers (mouseOverGeometry.at (11), decayXL, decay15LT , decay30LT, 180., 195., 210.);
+
+        updateBeziers (visibleGeometry.at (12), decay30LT, decay45LT  , decay60LT, 210., 225., 240.);
+        updateBeziers (mouseOverGeometry.at (12), decay30LT, decay45LT , decay60LT, 210., 225., 240.);
+
+        updateBeziers (visibleGeometry.at (13), decay60LT, decay75LT  , decayYT, 240., 255., 270.);
+        updateBeziers (mouseOverGeometry.at (13), decay60LT, decay75LT , decayYT, 240., 255., 270.);
+
+        updateBeziers (visibleGeometry.at (14), decayYT, decay75T  , decay60T, 270., 285., 300.);
+        updateBeziers (mouseOverGeometry.at (14), decayYT, decay75T , decay60T, 270., 285., 300.);
+
+        updateBeziers (visibleGeometry.at (15), decay60T, decay45T  , decay30T, 300., 315., 330.);
+        updateBeziers (mouseOverGeometry.at (15), decay60T, decay45T , decay30T, 300., 315., 330.);
+
+        updateBeziers (visibleGeometry.at (16), decay30T, decay15T  , decayX, 330., 345., 360.);
+        updateBeziers (mouseOverGeometry.at (16), decay30T, decay15T , decayX, 330., 345., 360.);
+
+    }
+
+    //  updateArcellipse (visibleGeometry.at (5), decayX, decayY, 0., 0.5);
+    //  updateArcellipse (mouseOverGeometry.at (5), decayX, decayY, 0., 0.5);
 
 }
 
@@ -2963,13 +3212,16 @@ bool Locallab::mouseOver (int modifierKey)
             if (lastObject == 2 || lastObject == 3) {
                 EditSubscriber::visibleGeometry.at (2)->state = Geometry::NORMAL;
                 EditSubscriber::visibleGeometry.at (3)->state = Geometry::NORMAL;
+
             } else if (lastObject == 0 || lastObject == 1) {
                 EditSubscriber::visibleGeometry.at (0)->state = Geometry::NORMAL;
                 EditSubscriber::visibleGeometry.at (1)->state = Geometry::NORMAL;
+
             }
 
             else {
-                EditSubscriber::visibleGeometry.at (lastObject)->state = Geometry::NORMAL;
+                EditSubscriber::visibleGeometry.at (4)->state = Geometry::NORMAL;
+//               EditSubscriber::visibleGeometry.at (lastObject)->state = Geometry::NORMAL;
             }
         }
 
@@ -2977,13 +3229,16 @@ bool Locallab::mouseOver (int modifierKey)
             if (editProvider->object == 2 || editProvider->object == 3) {
                 EditSubscriber::visibleGeometry.at (2)->state = Geometry::PRELIGHT;
                 EditSubscriber::visibleGeometry.at (3)->state = Geometry::PRELIGHT;
+
             } else if (editProvider->object == 0 || editProvider->object == 1) {
                 EditSubscriber::visibleGeometry.at (0)->state = Geometry::PRELIGHT;
                 EditSubscriber::visibleGeometry.at (1)->state = Geometry::PRELIGHT;
+
             }
 
             else {
-                EditSubscriber::visibleGeometry.at (editProvider->object)->state = Geometry::PRELIGHT;
+                EditSubscriber::visibleGeometry.at (4)->state = Geometry::PRELIGHT;
+                //              EditSubscriber::visibleGeometry.at (editProvider->object)->state = Geometry::PRELIGHT;
             }
         }
 
@@ -3039,6 +3294,7 @@ bool Locallab::button1Pressed (int modifierKey)
                 if (lastObject == 2) {
                     //draggedlocYOffset = -draggedlocYOffset;
                     draggedlocYOffset -= (locYT->getValue() / 2000. * verti);
+
                 }
             } else if (lastObject == 3) {
                 // Dragging a line to change the angle
@@ -3062,6 +3318,7 @@ bool Locallab::button1Pressed (int modifierKey)
                 if (lastObject == 3) {
                     draggedlocYOffset = -draggedlocYOffset;
                     draggedlocYOffset -= (locY->getValue() / 2000. * verti);
+
                 }
 
             }
@@ -3095,6 +3352,7 @@ bool Locallab::button1Pressed (int modifierKey)
         if (Smethod->get_active_row_number() == 0  || Smethod->get_active_row_number() == 2) {
             if (lastObject == 0) {
                 // Dragging a line to change the angle
+
                 PolarCoord draggedPoint;
                 rtengine::Coord currPos;
                 currPos = provider->posImage;
@@ -3110,12 +3368,13 @@ bool Locallab::button1Pressed (int modifierKey)
 
                 //     draggedPoint.setFromCartesian(centerPos, currPos);
                 // compute the projected value of the dragged point
-                printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
+                //printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
                 draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
                 //  if (lastObject==1)
                 //      draggedlocXOffset = -draggedlocXOffset;//-
                 draggedlocXOffset -= (locX->getValue() / 2000. * horiz);
             } else if (lastObject == 1) {
+
                 // Dragging a line to change the angle
                 PolarCoord draggedPoint;
                 rtengine::Coord currPos;
@@ -3128,7 +3387,7 @@ bool Locallab::button1Pressed (int modifierKey)
                 draggedPoint = currPos - centerPos;
 
                 //     draggedPoint.setFromCartesian(centerPos, currPos);
-                printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
+                // printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
                 draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
 
                 if (lastObject == 1) {
@@ -3152,7 +3411,7 @@ bool Locallab::button1Pressed (int modifierKey)
                 draggedPoint = currPos - centerPos;
 
                 //    draggedPoint.setFromCartesian(centerPos, currPos);
-                printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
+                //printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
                 draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
 
                 if (lastObject == 1) {
@@ -3220,8 +3479,10 @@ bool Locallab::button1Pressed (int modifierKey)
             if (lastObject == 0 || lastObject == 1) {
                 EditSubscriber::visibleGeometry.at (0)->state = Geometry::NORMAL;
                 EditSubscriber::visibleGeometry.at (1)->state = Geometry::NORMAL;
+
             } else {
-                EditSubscriber::visibleGeometry.at (lastObject)->state = Geometry::NORMAL;
+                EditSubscriber::visibleGeometry.at (4)->state = Geometry::NORMAL;
+//               EditSubscriber::visibleGeometry.at (lastObject)->state = Geometry::NORMAL;
             }
         }
 
@@ -3385,7 +3646,7 @@ bool Locallab::drag1 (int modifierKey)
 
     if (Smethod->get_active_row_number() == 0 || Smethod->get_active_row_number() == 2) {
         //else if (lastObject==0) {
-        if (lastObject == 0) {
+        if (lastObject == 0) {// >=4
             // Dragging the upper or lower locY bar
             PolarCoord draggedPoint;
             rtengine::Coord currPos;
@@ -3401,7 +3662,7 @@ bool Locallab::drag1 (int modifierKey)
             //    draggedPoint.setFromCartesian(centerPos, currPos);
             double currDraggedStrOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
 
-            if (lastObject == 0)
+            if (lastObject == 0) //>=4
                 // Dragging the upper locY bar
             {
                 currDraggedStrOffset -= draggedlocXOffset;
