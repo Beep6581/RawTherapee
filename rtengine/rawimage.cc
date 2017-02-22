@@ -4,15 +4,17 @@
  *  Created on: 20/nov/2010
  */
 
-#include "rawimage.h"
-#include "settings.h"
-#include "camconst.h"
-#include "utils.h"
+#include <strings.h>
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
+
+#include "rawimage.h"
+#include "settings.h"
+#include "camconst.h"
+#include "utils.h"
 
 namespace rtengine
 {

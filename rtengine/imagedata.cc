@@ -16,9 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <strings.h>
+#include <glib/gstdio.h>
+
 #include "imagedata.h"
 #include "iptcpairs.h"
-#include <glib/gstdio.h>
 
 using namespace rtengine;
 
