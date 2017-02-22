@@ -241,6 +241,10 @@ Glib::ustring Options::findProfilePath (Glib::ustring &profName)
         return profName;
     }
 
+    if (profName == DEFPROFILE_DYNAMIC) {
+        return profName;
+    }
+
     Glib::ustring p = profName.substr (0, 4);
 
     if (p == "${U}") {

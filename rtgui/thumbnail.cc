@@ -30,6 +30,7 @@
 #include "profilestore.h"
 #include "batchqueue.h"
 #include "extprog.h"
+#include "dynamicprofile.h"
 
 using namespace rtengine::procparams;
 
@@ -217,7 +218,23 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
 
-    if (!options.CPBPath.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+    if (defProf == DEFPROFILE_DYNAMIC && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+        rtengine::ImageMetaData* imageMetaData;
+        if (getType() == FT_Raw) {
+            rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
+            imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
+        } else {
+            imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
+        }
+        PartialProfile *pp = loadDynamicProfile(imageMetaData);
+        if (options.paramsLoadLocation == PLL_Input) {
+            pp->pparams->save(fname + paramFileExtension);
+        } else {
+            pp->pparams->save(getCacheFileName ("profiles", paramFileExtension));
+        }
+        pp->deleteInstance();
+        delete pp;
+    } else if (defProf != DEFPROFILE_DYNAMIC && !options.CPBPath.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
         // First generate the communication file, with general values and EXIF metadata
         rtengine::ImageMetaData* imageMetaData;
 

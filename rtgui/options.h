@@ -39,6 +39,8 @@
 #define DEFPROFILE_IMG      "Neutral"
 // Profile name to use for internal values' profile
 #define DEFPROFILE_INTERNAL "Neutral"
+// Special name for the Dynamic profile
+#define DEFPROFILE_DYNAMIC "Dynamic"
 
 class SaveFormat
 {

@@ -26,7 +26,7 @@ ProfileStore profileStore;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ProfileStore::ProfileStore () : parseMutex(nullptr), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(nullptr), internalDefaultEntry(nullptr)
+ProfileStore::ProfileStore () : parseMutex(nullptr), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(nullptr), internalDefaultEntry(nullptr), internalDynamicEntry(nullptr)
 {
     internalDefaultProfile = new AutoPartialProfile();
     internalDefaultProfile->set(true);
@@ -63,6 +63,8 @@ ProfileStore::~ProfileStore ()
     partProfiles.clear ();
     clearFileList();
     delete internalDefaultProfile;
+    delete internalDefaultEntry;
+    delete internalDynamicEntry;
     lock.release();
     delete parseMutex;
     parseMutex = nullptr;
@@ -140,6 +142,10 @@ void ProfileStore::_parseProfiles ()
     entries.push_back(internalDefaultEntry);
     partProfiles[internalDefaultEntry] = internalDefaultProfile;
 
+    if (!internalDynamicEntry) {
+        internalDynamicEntry = new ProfileStoreEntry(Glib::ustring("(") + M("PROFILEPANEL_PDYNAMIC") + Glib::ustring(")"), PSET_FILE, 0, 0);
+        // do not add it to the entries. This is here only for the preferences dialog
+    }
 
     // Check if the default profiles has been found.
     if (findEntryFromFullPathU(options.defProfRaw) == nullptr) {
@@ -273,7 +279,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
         return nullptr;
     }
 
-    if (path == DEFPROFILE_INTERNAL) {
+    if (path == DEFPROFILE_INTERNAL || path == DEFPROFILE_DYNAMIC) {
         return internalDefaultEntry;
     }
 
@@ -603,7 +609,6 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
   */
 void ProfileStoreComboBox::updateProfileList ()
 {
-
     // clear items
     clear();
     refTreeModel.clear();
@@ -622,6 +627,7 @@ void ProfileStoreComboBox::updateProfileList ()
         // special case for the Internal default entry
         addRow(profileStore.getInternalDefaultPSE());
     }
+    addRow(profileStore.getInternalDynamicPSE());
 
     // releasing the profilestore's entry list mutex
     profileStore.releaseFileList();
@@ -710,6 +716,11 @@ Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath (Glib::ustring path)
         return row;
     }
 
+    if (path == DEFPROFILE_DYNAMIC) {
+        row = findRowFromEntry(profileStore.getInternalDynamicPSE());
+        return row;
+    }
+    
     // removing the filename
     Glib::ustring fName = Glib::path_get_basename(path);
 
@@ -758,6 +769,10 @@ Glib::ustring ProfileStoreComboBox::getFullPathFromActiveRow()
             return Glib::ustring(DEFPROFILE_INTERNAL);
         }
 
+        if (currEntry == profileStore.getInternalDynamicPSE()) {
+            return Glib::ustring(DEFPROFILE_DYNAMIC);
+        }
+        
         path = Glib::build_filename(profileStore.getPathFromId(currEntry->parentFolderId), currEntry->label);
     }
 

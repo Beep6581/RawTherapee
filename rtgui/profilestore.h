@@ -144,6 +144,7 @@ private:
     StoreState storeState;
     rtengine::procparams::AutoPartialProfile *internalDefaultProfile;
     ProfileStoreEntry *internalDefaultEntry;
+    ProfileStoreEntry *internalDynamicEntry;
 
     /** Alphabetically ordered list of folder and files through Gtk::Label sub-class;
       * ready to be used in Menu and Combobox
@@ -198,6 +199,11 @@ public:
         return internalDefaultEntry;
     }
 
+    const ProfileStoreEntry*                     getInternalDynamicPSE()
+    {
+        return internalDynamicEntry;
+    }
+    
     void addListener(ProfileStoreListener *listener);
     void removeListener(ProfileStoreListener *listener);
 
