@@ -37,7 +37,7 @@ static inline float Lanc(float x, float a)
     } else if (x * x > a * a) {
         return 0.0f;
     } else {
-        x = static_cast<float>(M_PI) * x;
+        x = static_cast<float>(rtengine::RT_PI) * x;
         return a * xsinf(x) * xsinf(x / a) / (x * x);
     }
 }

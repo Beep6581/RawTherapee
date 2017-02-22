@@ -12,7 +12,8 @@
 
 #include <assert.h>
 #include <stdint.h>
-#include <math.h>
+//#include <math.h>
+#include "rt_math.h"
 //#include <bits/nan.h>
 //#include <bits/inf.h>
 
@@ -56,9 +57,9 @@ __inline double mla(double x, double y, double z) { return x * y + z; }
 __inline double xrint(double x) { return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5); }
 
 __inline int xisnan(double x) { return x != x; }
-__inline int xisinf(double x) { return x == INFINITY || x == -INFINITY; }
-__inline int xisminf(double x) { return x == -INFINITY; }
-__inline int xispinf(double x) { return x == INFINITY; }
+__inline int xisinf(double x) { return x == rtengine::RT_INFINITY || x == -rtengine::RT_INFINITY; }
+__inline int xisminf(double x) { return x == -rtengine::RT_INFINITY; }
+__inline int xispinf(double x) { return x == rtengine::RT_INFINITY; }
 
 __inline double ldexpk(double x, int q) {
   double u;
@@ -87,7 +88,7 @@ __inline int ilogbp1(double d) {
 __inline int xilogb(double d) {
   int e = ilogbp1(xfabs(d)) - 1;
   e = d == 0 ? (-2147483647 - 1) : e;
-  e = d == INFINITY || d == -INFINITY ? 2147483647 : e;
+  e = d == rtengine::RT_INFINITY || d == -rtengine::RT_INFINITY ? 2147483647 : e;
   return e;
 }
 
@@ -309,7 +310,7 @@ __inline double atan2k(double y, double x) {
   u = u * t + (-0.333333333333311110369124);
 
   t = u * t * s + s;
-  t = q * (M_PI/2) + t;
+  t = q * (rtengine::RT_PI_2) + t;
 
   return t;
 }
@@ -318,11 +319,11 @@ __inline double xatan2(double y, double x) {
   double r = atan2k(xfabs(y), x);
 
   r = mulsign(r, x);
-  if (xisinf(x) || x == 0) r = M_PI/2 - (xisinf(x) ? (sign(x) * (M_PI  /2)) : 0);
-  if (xisinf(y)          ) r = M_PI/2 - (xisinf(x) ? (sign(x) * (M_PI*1/4)) : 0);
-  if (             y == 0) r = (sign(x) == -1 ? M_PI : 0);
+  if (xisinf(x) || x == 0) r = rtengine::RT_PI_2 - (xisinf(x) ? (sign(x) * (rtengine::RT_PI_2)) : 0);
+  if (xisinf(y)          ) r = rtengine::RT_PI_2 - (xisinf(x) ? (sign(x) * (rtengine::RT_PI*1/4)) : 0);
+  if (             y == 0) r = (sign(x) == -1 ? rtengine::RT_PI : 0);
 
-  return xisnan(x) || xisnan(y) ? NAN : mulsign(r, y);
+  return xisnan(x) || xisnan(y) ? rtengine::RT_NAN : mulsign(r, y);
 }
 
 __inline double xasin(double d) {
@@ -330,7 +331,7 @@ __inline double xasin(double d) {
 }
 
 __inline double xacos(double d) {
-  return mulsign(atan2k(sqrt((1+d)*(1-d)), xfabs(d)), d) + (d < 0 ? M_PI : 0);
+  return mulsign(atan2k(sqrt((1+d)*(1-d)), xfabs(d)), d) + (d < 0 ? rtengine::RT_PI : 0);
 }
 
 __inline double xatan(double s) {
@@ -374,7 +375,7 @@ __inline double xsin(double d) {
   int q;
   double u, s;
 
-  q = (int)xrint(d * M_1_PI);
+  q = (int)xrint(d * rtengine::RT_1_PI);
 
   d = mla(q, -PI4_A*4, d);
   d = mla(q, -PI4_B*4, d);
@@ -403,7 +404,7 @@ __inline double xcos(double d) {
   int q;
   double u, s;
 
-  q = 1 + 2*(int)xrint(d * M_1_PI - 0.5);
+  q = 1 + 2*(int)xrint(d * rtengine::RT_1_PI - 0.5);
 
   d = mla(q, -PI4_A*2, d);
   d = mla(q, -PI4_B*2, d);
@@ -433,7 +434,7 @@ __inline double2 xsincos(double d) {
   double u, s, t;
   double2 r;
 
-  q = (int)xrint(d * (2 * M_1_PI));
+  q = (int)xrint(d * (2 * rtengine::RT_1_PI));
 
   s = d;
 
@@ -469,7 +470,7 @@ __inline double2 xsincos(double d) {
   if ((q & 2) != 0) { r.x = -r.x; }
   if (((q+1) & 2) != 0) { r.y = -r.y; }
 
-  if (xisinf(d)) { r.x = r.y = NAN; }
+  if (xisinf(d)) { r.x = r.y = rtengine::RT_NAN; }
 
   return r;
 }
@@ -478,7 +479,7 @@ __inline double xtan(double d) {
   int q;
   double u, s, x;
 
-  q = (int)xrint(d * (2 * M_1_PI));
+  q = (int)xrint(d * (2 * rtengine::RT_1_PI));
 
   x = mla(q, -PI4_A*2, d);
   x = mla(q, -PI4_B*2, x);
@@ -508,7 +509,7 @@ __inline double xtan(double d) {
 
   if ((q & 1) != 0) u = 1.0 / u;
 
-  if (xisinf(d)) u = NAN;
+  if (xisinf(d)) u = rtengine::RT_NAN;
 
   return u;
 }
@@ -534,9 +535,9 @@ __inline double xlog(double d) {
 
   x = x * t + 0.693147180559945286226764 * e;
 
-  if (xisinf(d)) x = INFINITY;
-  if (d < 0) x = NAN;
-  if (d == 0) x = -INFINITY;
+  if (xisinf(d)) x = rtengine::RT_INFINITY;
+  if (d < 0) x = rtengine::RT_NAN;
+  if (d == 0) x = -rtengine::RT_INFINITY;
 
   return x;
 }
@@ -625,13 +626,13 @@ __inline double xpow(double x, double y) {
 
   double result = expk(mul_ds(logk(xfabs(x)), y));
 
-  result = xisnan(result) ? INFINITY : result;
-  result *=  (x >= 0 ? 1 : (!yisint ? NAN : (yisodd ? -1 : 1)));
+  result = xisnan(result) ? rtengine::RT_INFINITY : result;
+  result *=  (x >= 0 ? 1 : (!yisint ? rtengine::RT_NAN : (yisodd ? -1 : 1)));
 
   double efx = mulsign(xfabs(x) - 1, y);
-  if (xisinf(y)) result = efx < 0 ? 0.0 : (efx == 0 ? 1.0 : INFINITY);
-  if (xisinf(x) || x == 0) result = (yisodd ? sign(x) : 1) * ((x == 0 ? -y : y) < 0 ? 0 : INFINITY);
-  if (xisnan(x) || xisnan(y)) result = NAN;
+  if (xisinf(y)) result = efx < 0 ? 0.0 : (efx == 0 ? 1.0 : rtengine::RT_INFINITY);
+  if (xisinf(x) || x == 0) result = (yisodd ? sign(x) : 1) * ((x == 0 ? -y : y) < 0 ? 0 : rtengine::RT_INFINITY);
+  if (xisnan(x) || xisnan(y)) result = rtengine::RT_NAN;
   if (y == 0 || x == 1) result = 1;
 
   return result;
@@ -670,9 +671,9 @@ __inline double xsinh(double x) {
   d = add2_dd(d, div_dd(dd(-1, 0), d));
   y = (d.x + d.y) * 0.5;
 
-  y = xisinf(x) || xisnan(y) ? INFINITY : y;
+  y = xisinf(x) || xisnan(y) ? rtengine::RT_INFINITY : y;
   y = mulsign(y, x);
-  y = xisnan(x) ? NAN : y;
+  y = xisnan(x) ? rtengine::RT_NAN : y;
 
   return y;
 }
@@ -682,8 +683,8 @@ __inline double xcosh(double x) {
   d = add2_dd(d, div_dd(dd(1, 0), d));
   double y = (d.x + d.y) * 0.5;
 
-  y = xisinf(x) || xisnan(y) ? INFINITY : y;
-  y = xisnan(x) ? NAN : y;
+  y = xisinf(x) || xisnan(y) ? rtengine::RT_INFINITY : y;
+  y = xisnan(x) ? rtengine::RT_NAN : y;
 
   return y;
 }
@@ -697,7 +698,7 @@ __inline double xtanh(double x) {
 
   y = xisinf(x) || xisnan(y) ? 1.0 : y;
   y = mulsign(y, x);
-  y = xisnan(x) ? NAN : y;
+  y = xisnan(x) ? rtengine::RT_NAN : y;
 
   return y;
 }
@@ -732,9 +733,9 @@ __inline double xasinh(double x) {
   double2 d = logk2(add2_ds(sqrt_d(add2_ds(mul_ss(y, y),  1)), y));
   y = d.x + d.y;
 
-  y = xisinf(x) || xisnan(y) ? INFINITY : y;
+  y = xisinf(x) || xisnan(y) ? rtengine::RT_INFINITY : y;
   y = mulsign(y, x);
-  y = xisnan(x) ? NAN : y;
+  y = xisnan(x) ? rtengine::RT_NAN : y;
 
   return y;
 }
@@ -743,10 +744,10 @@ __inline double xacosh(double x) {
   double2 d = logk2(add2_ds(sqrt_d(add2_ds(mul_ss(x, x), -1)), x));
   double y = d.x + d.y;
 
-  y = xisinf(x) || xisnan(y) ? INFINITY : y;
+  y = xisinf(x) || xisnan(y) ? rtengine::RT_INFINITY : y;
   y = x == 1.0 ? 0.0 : y;
-  y = x < 1.0 ? NAN : y;
-  y = xisnan(x) ? NAN : y;
+  y = x < 1.0 ? rtengine::RT_NAN : y;
+  y = xisnan(x) ? rtengine::RT_NAN : y;
 
   return y;
 }
@@ -754,11 +755,11 @@ __inline double xacosh(double x) {
 __inline double xatanh(double x) {
   double y = xfabs(x);
   double2 d = logk2(div_dd(add2_ss(1, y), add2_ss(1, -y)));
-  y = y > 1.0 ? NAN : (y == 1.0 ? INFINITY : (d.x + d.y) * 0.5);
+  y = y > 1.0 ? rtengine::RT_NAN : (y == 1.0 ? rtengine::RT_INFINITY : (d.x + d.y) * 0.5);
 
-  y = xisinf(x) || xisnan(y) ? NAN : y;
+  y = xisinf(x) || xisnan(y) ? rtengine::RT_NAN : y;
   y = mulsign(y, x);
-  y = xisnan(x) ? NAN : y;
+  y = xisnan(x) ? rtengine::RT_NAN : y;
 
   return y;
 }
@@ -809,7 +810,7 @@ __inline double xsqrt(double d) { // max error : 0.5 ulp
   // You can change xfma to fma if fma is correctly implemented
   x = xfma(d * x, d * x, -d) * (x * -0.5) + d * x;
 
-  return d == INFINITY ? INFINITY : x * q;
+  return d == rtengine::RT_INFINITY ? rtengine::RT_INFINITY : x * q;
 }
 
 __inline double xcbrt(double d) { // max error : 2 ulps
@@ -842,14 +843,14 @@ __inline double xcbrt(double d) { // max error : 2 ulps
 
 __inline double xexp2(double a) {
   double u = expk(mul_ds(dd(0.69314718055994528623, 2.3190468138462995584e-17), a));
-  if (xispinf(a)) u = INFINITY;
+  if (xispinf(a)) u = rtengine::RT_INFINITY;
   if (xisminf(a)) u = 0;
   return u;
 }
 
 __inline double xexp10(double a) {
   double u = expk(mul_ds(dd(2.3025850929940459011, -2.1707562233822493508e-16), a));
-  if (xispinf(a)) u = INFINITY;
+  if (xispinf(a)) u = rtengine::RT_INFINITY;
   if (xisminf(a)) u = 0;
   return u;
 }
@@ -857,7 +858,7 @@ __inline double xexp10(double a) {
 __inline double xexpm1(double a) {
   double2 d = add2_ds(expk2(dd(a, 0)), -1.0);
   double x = d.x + d.y;
-  if (xispinf(a)) x = INFINITY;
+  if (xispinf(a)) x = rtengine::RT_INFINITY;
   if (xisminf(a)) x = -1;
   return x;
 }
@@ -866,9 +867,9 @@ __inline double xlog10(double a) {
   double2 d = mul_dd(logk(a), dd(0.43429448190325176116, 6.6494347733425473126e-17));
   double x = d.x + d.y;
 
-  if (xisinf(a)) x = INFINITY;
-  if (a < 0) x = NAN;
-  if (a == 0) x = -INFINITY;
+  if (xisinf(a)) x = rtengine::RT_INFINITY;
+  if (a < 0) x = rtengine::RT_NAN;
+  if (a == 0) x = -rtengine::RT_INFINITY;
 
   return x;
 }
@@ -877,9 +878,9 @@ __inline double xlog1p(double a) {
   double2 d = logk2(add2_ss(a, 1));
   double x = d.x + d.y;
 
-  if (xisinf(a)) x = INFINITY;
-  if (a < -1) x = NAN;
-  if (a == -1) x = -INFINITY;
+  if (xisinf(a)) x = rtengine::RT_INFINITY;
+  if (a < -1) x = rtengine::RT_NAN;
+  if (a == -1) x = -rtengine::RT_INFINITY;
 
   return x;
 }
@@ -895,11 +896,6 @@ __inline double xlog1p(double a) {
 #define L2Lf 1.428606765330187045e-06f
 
 #define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
-#define M_PIf ((float)M_PI)
-#define M_PIf_2 ((float)M_PI_2)
-
-#define INFINITYf ((float)INFINITY)
-#define NANf ((float)NAN)
 
 __inline int32_t floatToRawIntBits(float d) {
   union {
@@ -932,9 +928,9 @@ __inline float mlaf(float x, float y, float z) { return x * y + z; }
 __inline float xrintf(float x) { return x < 0 ? (int)(x - 0.5f) : (int)(x + 0.5f); }
 
 __inline int xisnanf(float x) { return x != x; }
-__inline int xisinff(float x) { return x == INFINITYf || x == -INFINITYf; }
-__inline int xisminff(float x) { return x == -INFINITYf; }
-__inline int xispinff(float x) { return x == INFINITYf; }
+__inline int xisinff(float x) { return x == rtengine::RT_INFINITY_F || x == -rtengine::RT_INFINITY_F; }
+__inline int xisminff(float x) { return x == -rtengine::RT_INFINITY_F; }
+__inline int xispinff(float x) { return x == rtengine::RT_INFINITY_F; }
 
 __inline int ilogbp1f(float d) {
   int m = d < 5.421010862427522E-20f;
@@ -988,7 +984,7 @@ __inline float xsinf(float d) {
   int q;
   float u, s;
 
-  q = (int)xrintf(d * (float)M_1_PI);
+  q = (int)xrintf(d * (float)rtengine::RT_1_PI);
 
   d = mlaf(q, -PI4_Af*4, d);
   d = mlaf(q, -PI4_Bf*4, d);
@@ -1013,7 +1009,7 @@ __inline float xcosf(float d) {
   int q;
   float u, s;
 
-  q = 1 + 2*(int)xrintf(d * (float)M_1_PI - 0.5f);
+  q = 1 + 2*(int)xrintf(d * (float)rtengine::RT_1_PI - 0.5f);
 
   d = mlaf(q, -PI4_Af*2, d);
   d = mlaf(q, -PI4_Bf*2, d);
@@ -1039,7 +1035,7 @@ __inline float2 xsincosf(float d) {
   float u, s, t;
   float2 r;
 
-  q = (int)rint(d * ((float)(2 * M_1_PI)));
+  q = (int)rint(d * ((float)(2 * rtengine::RT_1_PI)));
 
   s = d;
 
@@ -1071,7 +1067,7 @@ __inline float2 xsincosf(float d) {
   if ((q & 2) != 0) { r.x = -r.x; }
   if (((q+1) & 2) != 0) { r.y = -r.y; }
 
-  if (xisinff(d)) { r.x = r.y = NANf; }
+  if (xisinff(d)) { r.x = r.y = rtengine::RT_NAN_F; }
 
   return r;
 }
@@ -1080,7 +1076,7 @@ __inline float xtanf(float d) {
   int q;
   float u, s, x;
 
-  q = (int)xrintf(d * (float)(2 * M_1_PI));
+  q = (int)xrintf(d * (float)(2 * rtengine::RT_1_PI));
 
   x = d;
 
@@ -1104,7 +1100,7 @@ __inline float xtanf(float d) {
 
   if ((q & 1) != 0) u = 1.0f / u;
 
-  if (xisinff(d)) u = NANf;
+  if (xisinff(d)) u = rtengine::RT_NAN_F;
 
   return u;
 }
@@ -1156,18 +1152,18 @@ __inline float atan2kf(float y, float x) {
 
   t = u * t;
   t = mlaf(t,s,s);
-  return mlaf(q,(float)(M_PIf_2),t);
+  return mlaf(q,(float)(rtengine::RT_PI_F_2),t);
 }
 
 __inline float xatan2f(float y, float x) {
   float r = atan2kf(xfabsf(y), x);
 
   r = mulsignf(r, x);
-  if (xisinff(x) || x == 0) r = M_PIf/2 - (xisinff(x) ? (signf(x) * (float)(M_PIf*.5f)) : 0);
-  if (xisinff(y)          ) r = M_PIf/2 - (xisinff(x) ? (signf(x) * (float)(M_PIf*.25f)) : 0);
-  if (              y == 0) r = (signf(x) == -1 ? M_PIf : 0);
+  if (xisinff(x) || x == 0) r = rtengine::RT_PI_F/2 - (xisinff(x) ? (signf(x) * (float)(rtengine::RT_PI_F*.5f)) : 0);
+  if (xisinff(y)          ) r = rtengine::RT_PI_F/2 - (xisinff(x) ? (signf(x) * (float)(rtengine::RT_PI_F*.25f)) : 0);
+  if (              y == 0) r = (signf(x) == -1 ? rtengine::RT_PI_F : 0);
 
-  return xisnanf(x) || xisnanf(y) ? NANf : mulsignf(r, y);
+  return xisnanf(x) || xisnanf(y) ? rtengine::RT_NAN_F : mulsignf(r, y);
 }
 
 __inline float xasinf(float d) {
@@ -1175,7 +1171,7 @@ __inline float xasinf(float d) {
 }
 
 __inline float xacosf(float d) {
-  return mulsignf(atan2kf(sqrtf((1.0f+d)*(1.0f-d)), fabsf(d)), d) + (d < 0 ? (float)M_PI : 0.0f);
+  return mulsignf(atan2kf(sqrtf((1.0f+d)*(1.0f-d)), fabsf(d)), d) + (d < 0 ? (float)rtengine::RT_PI : 0.0f);
 }
 
 __inline float xlogf(float d) {
@@ -1196,9 +1192,9 @@ __inline float xlogf(float d) {
 
   x = x * t + 0.693147180559945286226764f * e;
 
-  if (xisinff(d)) x = INFINITYf;
-  if (d < 0) x = NANf;
-  if (d == 0) x = -INFINITYf;
+  if (xisinff(d)) x = rtengine::RT_INFINITY_F;
+  if (d < 0) x = rtengine::RT_NAN_F;
+  if (d == 0) x = -rtengine::RT_INFINITY_F;
 
   return x;
 }
