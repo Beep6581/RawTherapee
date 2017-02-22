@@ -39,8 +39,8 @@ public:
     LCPModelCommon();
     bool empty() const;  // is it empty
     void print() const;  // printf all values
-    void merge (const LCPModelCommon& a, const LCPModelCommon& b, float facA);
-    void prepareParams (int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY);
+    void merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA);
+    void prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY);
 
 //private:
     using Param = std::array<float, 5>;
@@ -75,7 +75,7 @@ public:
     LCPModelCommon vignette;  // vignette (may be empty)
 
     LCPPersModel();
-    bool hasModeData (int mode) const;
+    bool hasModeData(int mode) const;
     void print() const;
 };
 
@@ -88,11 +88,11 @@ class LCPProfile
     LCPPersModel* pCurPersModel;
     LCPModelCommon* pCurCommon;
 
-    static void XMLCALL XmlStartHandler (void *pLCPProfile, const char *el, const char **attr);
+    static void XMLCALL XmlStartHandler(void *pLCPProfile, const char *el, const char **attr);
     static void XMLCALL XmlTextHandler (void *pLCPProfile, const XML_Char *s, int len);
     static void XMLCALL XmlEndHandler  (void *pLCPProfile, const char *el);
 
-    int filterBadFrames (double maxAvgDevFac, int minFramesLeft);
+    int filterBadFrames(double maxAvgDevFac, int minFramesLeft);
 
 public:
     // Common data
@@ -105,9 +105,9 @@ public:
     static const int MaxPersModelCount = 3000;
     LCPPersModel* aPersModel[MaxPersModelCount];  // Do NOT use std::list or something, it's buggy in GCC!
 
-    explicit LCPProfile (const Glib::ustring &fname);
+    explicit LCPProfile(const Glib::ustring &fname);
 
-    void calcParams (int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const; // Interpolates between the persModels frames
+    void calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const;  // Interpolates between the persModels frames
 
     void print() const;
 };
@@ -121,8 +121,8 @@ class LCPStore
 
 public:
     Glib::ustring getDefaultCommonDirectory() const;
-    bool isValidLCPFileName (Glib::ustring filename) const;
-    LCPProfile* getProfile (Glib::ustring filename);
+    bool isValidLCPFileName(Glib::ustring filename) const;
+    LCPProfile* getProfile(Glib::ustring filename);
 
     static LCPStore* getInstance();
 };
@@ -143,13 +143,14 @@ public:
     bool enableCA;  // is the mapper capable if CA correction?
 
     // precalculates the mapper.
-    LCPMapper (LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
-               const CoarseTransformParams& coarse, int rawRotationDeg);
+    LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
+              const CoarseTransformParams& coarse, int rawRotationDeg);
 
-    void correctDistortion (double& x, double& y) const; // MUST be the first stage
-    void correctCA (double& x, double& y, int channel) const;
-    void processVignetteLine (int width, int y, float *line) const;
-    void processVignetteLine3Channels (int width, int y, float *line) const;
+    void  correctDistortion(double& x, double& y) const;  // MUST be the first stage
+    void  correctCA(double& x, double& y, int channel) const;
+    float calcVignetteFac  (int x, int y) const;  // MUST be in RAW
+    void processVignetteLine(int width, int y, float *line) const;
+    void processVignetteLine3Channels(int width, int y, float *line) const;
 };
 
 }
