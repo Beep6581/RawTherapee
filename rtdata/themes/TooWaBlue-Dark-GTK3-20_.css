@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.44 - requires RT 5.0
+  Version 2.45 - requires RT 5.0
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -488,7 +488,8 @@ menu separator {
 }
 
 #PartialPasteHeader label {
-    color: @headline-frame;
+    color: @headline-big;
+    font-weight: bold;
 }
 #PartialPasteHeader {
     margin: 0.5em 0 0 0;
@@ -1016,12 +1017,13 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-right: 0;
 }
 
-#EditorTopPanel > box > button.image-button:not(:nth-child(6)) {
+#EditorTopPanel > box:nth-child(9) > button.image-button:not(:nth-child(6)) {
     min-width: 0;
     padding-left: 0.33334em;
     padding-right: 0.33334em;
 }
-#EditorTopPanel > box > button.image-button:nth-child(6) {
+
+#EditorTopPanel > box:nth-child(9) > button.image-button:nth-child(6) {
     -gtk-icon-shadow: none;
 }
 #EditorTopPanel > box > box > button {
