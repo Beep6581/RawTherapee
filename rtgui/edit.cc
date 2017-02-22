@@ -481,15 +481,16 @@ void Beziers::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
 {
     if ((flags & F_VISIBLE) && state != INSENSITIVE) {
         RGBColor color;
-
-        if (flags & F_AUTO_COLOR) {
-            color = getOuterLineColor();
-        } else {
-            color = outerLineColor;
-        }
-
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
-        cr->set_line_width ( getOuterLineWidth() );
+        /*
+                if (flags & F_AUTO_COLOR) {
+                    color = getOuterLineColor();
+                } else {
+                    color = outerLineColor;
+                }
+        */
+        //      cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        //   cr->set_line_width ( getOuterLineWidth() );
+        cr->set_line_width ( innerLineWidth );
 
         rtengine::Coord begin_ = begin;
         rtengine::Coord inter_ = inter;
@@ -520,6 +521,7 @@ void Beziers::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
 void Beziers::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if ((flags & F_VISIBLE) && innerLineWidth > 0.) {
+        /*
         if (state != INSENSITIVE) {
             RGBColor color;
 
@@ -531,7 +533,7 @@ void Beziers::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
 
             cr->set_source_rgb (color.getR(), color.getG(), color.getB());
         }
-
+        */
         cr->set_line_width (innerLineWidth);
 
         rtengine::Coord begin_ = begin;
@@ -557,20 +559,22 @@ void Beziers::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
         cr->move_to (begin_.x + 0.5, begin_.y + 0.5);
         cr->curve_to (begin_.x + 0.5, begin_.y + 0.5, inter_.x + 0.5, inter_.y + 0.5, end_.x + 0.5, end_.y + 0.5);
         cr->restore();
-
-        if (state == INSENSITIVE) {
-            std::valarray<double> ds (1);
-            ds[0] = 4;
-            cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
-            cr->stroke_preserve();
-            cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
-            cr->set_dash (ds, 0);
-            cr->stroke();
-            ds.resize (0);
-            cr->set_dash (ds, 0);
-        } else {
-            cr->stroke();
-        }
+        cr->stroke();
+        /*
+                if (state == INSENSITIVE) {
+                    std::valarray<double> ds (1);
+                    ds[0] = 4;
+                    cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+                    cr->stroke_preserve();
+                    cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
+                    cr->set_dash (ds, 0);
+                    cr->stroke();
+                    ds.resize (0);
+                    cr->set_dash (ds, 0);
+                } else {
+                    cr->stroke();
+                }
+                */
     }
 }
 
@@ -597,12 +601,13 @@ void Beziers::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short
         }
 
         // setting the color to the objet's ID
+        /*
         if (objectBuffer->getObjectMode() == OM_255) {
             cr->set_source_rgba (0., 0., 0., ((id + 1) & 0xFF) / 255.);
         } else {
             cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
         }
-
+        */
         cr->save();
 
         cr->move_to (begin_.x + 0.5, begin_.y + 0.5);

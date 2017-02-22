@@ -657,7 +657,7 @@ Locallab::Locallab ():
     Beziers *twobeziers[3];
     Beziers *thrbeziers[3];
     Beziers *foubeziers[3];
-
+    float innw = 0.7f;
     // Visible geometry
     locXLine[0] = new Line();
     locXLine[0]->innerLineWidth = 2;
@@ -680,51 +680,51 @@ Locallab::Locallab ():
     if (options.showdelimspot) {
         onebeziers[0] = new Beziers();
         onebeziers[0]->datum = Geometry::IMAGE;
-        onebeziers[0]->innerLineWidth = 1;
+        onebeziers[0]->innerLineWidth = innw;
 
         onebeziers[1] = new Beziers();
         onebeziers[1]->datum = Geometry::IMAGE;
-        onebeziers[1]->innerLineWidth = 1;
+        onebeziers[1]->innerLineWidth = innw;
 
         onebeziers[2] = new Beziers();
         onebeziers[2]->datum = Geometry::IMAGE;
-        onebeziers[2]->innerLineWidth = 1;
+        onebeziers[2]->innerLineWidth = innw;
 
         twobeziers[0] = new Beziers();
         twobeziers[0]->datum = Geometry::IMAGE;
-        twobeziers[0]->innerLineWidth = 1;
+        twobeziers[0]->innerLineWidth = innw;
 
         twobeziers[1] = new Beziers();
         twobeziers[1]->datum = Geometry::IMAGE;
-        twobeziers[1]->innerLineWidth = 1;
+        twobeziers[1]->innerLineWidth = innw;
 
         twobeziers[2] = new Beziers();
         twobeziers[2]->datum = Geometry::IMAGE;
-        twobeziers[2]->innerLineWidth = 1;
+        twobeziers[2]->innerLineWidth = innw;
 
         thrbeziers[0] = new Beziers();
         thrbeziers[0]->datum = Geometry::IMAGE;
-        thrbeziers[0]->innerLineWidth = 1;
+        thrbeziers[0]->innerLineWidth = innw;
 
         thrbeziers[1] = new Beziers();
         thrbeziers[1]->datum = Geometry::IMAGE;
-        thrbeziers[1]->innerLineWidth = 1;
+        thrbeziers[1]->innerLineWidth = innw;
 
         thrbeziers[2] = new Beziers();
         thrbeziers[2]->datum = Geometry::IMAGE;
-        thrbeziers[2]->innerLineWidth = 1;
+        thrbeziers[2]->innerLineWidth = innw;
 
         foubeziers[0] = new Beziers();
         foubeziers[0]->datum = Geometry::IMAGE;
-        foubeziers[0]->innerLineWidth = 1;
+        foubeziers[0]->innerLineWidth = innw;
 
         foubeziers[1] = new Beziers();
         foubeziers[1]->datum = Geometry::IMAGE;
-        foubeziers[1]->innerLineWidth = 1;
+        foubeziers[1]->innerLineWidth = innw;
 
         foubeziers[2] = new Beziers();
         foubeziers[2]->datum = Geometry::IMAGE;
-        foubeziers[2]->innerLineWidth = 1;
+        foubeziers[2]->innerLineWidth = innw;
     }
 
     // oneellipse->radiusInImageSpace = true;
@@ -774,51 +774,51 @@ Locallab::Locallab ():
     if (options.showdelimspot) {
         onebeziers[0]   = new Beziers();
         onebeziers[0]->datum = Geometry::IMAGE;
-        onebeziers[0]->innerLineWidth = 1;
+        onebeziers[0]->innerLineWidth = innw;
 
         onebeziers[1]   = new Beziers();
         onebeziers[1]->datum = Geometry::IMAGE;
-        onebeziers[1]->innerLineWidth = 1;
+        onebeziers[1]->innerLineWidth = innw;
 
         onebeziers[2]   = new Beziers();
         onebeziers[2]->datum = Geometry::IMAGE;
-        onebeziers[2]->innerLineWidth = 1;
+        onebeziers[2]->innerLineWidth = innw;
 
         twobeziers[0] = new Beziers();
         twobeziers[0]->datum = Geometry::IMAGE;
-        twobeziers[0]->innerLineWidth = 1;
+        twobeziers[0]->innerLineWidth = innw;
 
         twobeziers[1] = new Beziers();
         twobeziers[1]->datum = Geometry::IMAGE;
-        twobeziers[1]->innerLineWidth = 1;
+        twobeziers[1]->innerLineWidth = innw;
 
         twobeziers[2] = new Beziers();
         twobeziers[2]->datum = Geometry::IMAGE;
-        twobeziers[2]->innerLineWidth = 1;
+        twobeziers[2]->innerLineWidth = innw;
 
         thrbeziers[0] = new Beziers();
         thrbeziers[0]->datum = Geometry::IMAGE;
-        thrbeziers[0]->innerLineWidth = 1;
+        thrbeziers[0]->innerLineWidth = innw;
 
         thrbeziers[1] = new Beziers();
         thrbeziers[1]->datum = Geometry::IMAGE;
-        thrbeziers[1]->innerLineWidth = 1;
+        thrbeziers[1]->innerLineWidth = innw;
 
         thrbeziers[2] = new Beziers();
         thrbeziers[2]->datum = Geometry::IMAGE;
-        thrbeziers[2]->innerLineWidth = 1;
+        thrbeziers[2]->innerLineWidth = innw;
 
         foubeziers[0] = new Beziers();
         foubeziers[0]->datum = Geometry::IMAGE;
-        foubeziers[0]->innerLineWidth = 1;
+        foubeziers[0]->innerLineWidth = innw;
 
         foubeziers[1] = new Beziers();
         foubeziers[1]->datum = Geometry::IMAGE;
-        foubeziers[1]->innerLineWidth = 1;
+        foubeziers[1]->innerLineWidth = innw;
 
         foubeziers[2] = new Beziers();
         foubeziers[2]->datum = Geometry::IMAGE;
-        foubeziers[2]->innerLineWidth = 1;
+        foubeziers[2]->innerLineWidth = innw;
     }
 
 //   oneellipse->radiusInImageSpace = true;
