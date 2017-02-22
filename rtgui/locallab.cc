@@ -1967,8 +1967,6 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
     updateCircle (visibleGeometry.at (4));
     updateCircle (mouseOverGeometry.at (4));
 
-    //double decay10 = ((decayX * decayY)/ sqrt(0.03107 * SQR(decayX) + SQR(decayY)))/0.9848;
-    //double decay5 = ((decayX * decayY)/ sqrt(0.007655 * SQR(decayX) + SQR(decayY)))/0.9659;
     if (options.showdelimspot) {
         //this decayww evaluate approximation of a point in the ellipse for an angle alpha
         double decay15 = 1.07854 * ((decayX * decayY) / sqrt (0.07179 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.07854 = 1 / cos(15)

@@ -329,7 +329,6 @@ void Arcellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
         }
 
         cr->save();
-        cr->move_to (center_.x , center_.y);
         cr->translate (translax_, translay_);
 
         cr->scale (scalx_, scaly_);
@@ -383,7 +382,6 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
 
         if (filled && state != INSENSITIVE) {
             cr->save();
-            cr->move_to (center_.x , center_.y);
 
             cr->translate (translax_, translay_);
 
@@ -402,7 +400,6 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
             }
         } else if (innerLineWidth > 0.) {
             cr->save();
-            cr->move_to (center_.x , center_.y);
 
             cr->translate (translax_ , translay_);
 
@@ -457,7 +454,6 @@ void Arcellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned sh
         }
 
         cr->save();
-        cr->move_to (center_.x , center_.y);
 
         cr->translate (translax_ , translay_);
 
