@@ -146,9 +146,8 @@ public:
     LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
               const CoarseTransformParams& coarse, int rawRotationDeg);
 
-    void  correctDistortion(double& x, double& y) const;  // MUST be the first stage
-    void  correctCA(double& x, double& y, int channel) const;
-    float calcVignetteFac  (int x, int y) const;  // MUST be in RAW
+    void correctDistortion(double& x, double& y) const;  // MUST be the first stage
+    void correctCA(double& x, double& y, int channel) const;
     void processVignetteLine(int width, int y, float *line) const;
     void processVignetteLine3Channels(int width, int y, float *line) const;
 };

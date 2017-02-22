@@ -265,17 +265,6 @@ void LCPMapper::correctCA(double& x, double& y, int channel) const
     }
 }
 
-float LCPMapper::calcVignetteFac(int x, int y) const
-{
-    // No need for swapXY, since vignette is in RAW and always before rotation
-    float xd = ((float)x - mc.x0) * mc.rfx, yd = ((float)y - mc.y0) * mc.rfy;
-
-    const LCPModelCommon::VignParam vignParam = mc.vign_param;
-    float rsqr = xd * xd + yd * yd;
-
-    return rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
-}
-
 SSEFUNCTION void LCPMapper::processVignetteLine(int width, int y, float *line) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
