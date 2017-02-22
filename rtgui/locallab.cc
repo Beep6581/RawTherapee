@@ -3287,7 +3287,7 @@ bool Locallab::button1Pressed (int modifierKey)
                 currPos.y = p;
                 draggedPoint = currPos - centerPos;
                 // compute the projected value of the dragged point
-                draggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+                draggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
                 if (lastObject == 2) {
                     //draggedlocYOffset = -draggedlocYOffset;
@@ -3311,7 +3311,7 @@ bool Locallab::button1Pressed (int modifierKey)
 
                 // draggedPoint.setFromCartesian(centerPos, currPos);
                 // compute the projected value of the dragged point
-                draggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+                draggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
                 if (lastObject == 3) {
                     draggedlocYOffset = -draggedlocYOffset;
@@ -3337,7 +3337,7 @@ bool Locallab::button1Pressed (int modifierKey)
 
                 //    draggedPoint.setFromCartesian(centerPos, currPos);
                 // compute the projected value of the dragged point
-                draggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+                draggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
                 if (lastObject == 3) {
                     draggedlocYOffset = -draggedlocYOffset;
@@ -3367,7 +3367,7 @@ bool Locallab::button1Pressed (int modifierKey)
                 //     draggedPoint.setFromCartesian(centerPos, currPos);
                 // compute the projected value of the dragged point
                 //printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
-                draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
+                draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
                 //  if (lastObject==1)
                 //      draggedlocXOffset = -draggedlocXOffset;//-
                 draggedlocXOffset -= (locX->getValue() / 2000. * horiz);
@@ -3386,7 +3386,7 @@ bool Locallab::button1Pressed (int modifierKey)
 
                 //     draggedPoint.setFromCartesian(centerPos, currPos);
                 // printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
-                draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
+                draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
 
                 if (lastObject == 1) {
                     draggedlocXOffset = -draggedlocXOffset;    //-
@@ -3410,7 +3410,7 @@ bool Locallab::button1Pressed (int modifierKey)
 
                 //    draggedPoint.setFromCartesian(centerPos, currPos);
                 //printf ("rad=%f ang=%f\n", draggedPoint.radius, draggedPoint.angle - degree->getValue());
-                draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
+                draggedlocXOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
 
                 if (lastObject == 1) {
                     draggedlocXOffset = -draggedlocXOffset;    //-
@@ -3520,7 +3520,7 @@ bool Locallab::drag1 (int modifierKey)
             draggedPoint = currPos - centerPos;
 
             //  draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+            double currDraggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
             if (lastObject == 2) {
                 currDraggedlocYOffset -= draggedlocYOffset;
@@ -3558,7 +3558,7 @@ bool Locallab::drag1 (int modifierKey)
             draggedPoint = currPos - centerPos;
 
             //  draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+            double currDraggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
             //  if (lastObject==2)
             // Dragging the upper locY bar
@@ -3604,7 +3604,7 @@ bool Locallab::drag1 (int modifierKey)
             draggedPoint = currPos - centerPos;
 
             //   draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+            double currDraggedlocYOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
             if (lastObject == 2)
                 // Dragging the upper locY bar
@@ -3658,7 +3658,7 @@ bool Locallab::drag1 (int modifierKey)
             draggedPoint = currPos - centerPos;
 
             //    draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedStrOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
+            double currDraggedStrOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
 
             if (lastObject == 0) //>=4
                 // Dragging the upper locY bar
@@ -3698,7 +3698,7 @@ bool Locallab::drag1 (int modifierKey)
             draggedPoint = currPos - centerPos;
 
             //draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedStrOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
+            double currDraggedStrOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
 
             if (lastObject == 0)
                 // Dragging the upper locY bar
@@ -3742,7 +3742,7 @@ bool Locallab::drag1 (int modifierKey)
             draggedPoint = currPos - centerPos;
 
             // draggedPoint.setFromCartesian(centerPos, currPos);
-            double currDraggedStrOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*M_PI);
+            double currDraggedStrOffset = draggedPoint.radius * sin ((draggedPoint.angle - degree->getValue() + 90.) / 180.*rtengine::RT_PI);
 
             if (lastObject == 0)
                 // Dragging the upper locY bar

@@ -252,8 +252,8 @@ inline static float calcLocalFactor (const float lox, const float loy, const flo
     float belip = sqrt ((SQR ((lox - lcx) / kelip) + SQR (loy - lcy))); //determine position ellipse ==> a and b
     float aelip = belip * kelip;
     float degrad = aelip / dx;
-    float ap = M_PI / (1.f - ach);
-    float bp = M_PI - ap;
+    float ap = rtengine::RT_PI / (1.f - ach);
+    float bp = rtengine::RT_PI - ap;
     return 0.5f * (1.f + xcosf (degrad * ap + bp)); //trigo cos transition
 
 }
@@ -418,7 +418,7 @@ void ImProcFunctions::addGaNoise (LabImage *lab, LabImage *dst, const float mean
                 float u1f = u1 * randFactor;
                 float u2f = u2 * randFactor;
 
-                float2 sincosval = xsincosf (2.f * M_PI * u2f);
+                float2 sincosval = xsincosf (2.f * rtengine::RT_PI * u2f);
                 float factor = sqrtf (-2.f * xlogf (u1f));
                 z0 = factor * sincosval.y;
                 z1 = factor * sincosval.x;
@@ -623,8 +623,8 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                     float deltachro = fabs (rchro - chromaref);
                     float deltahue = fabs (rhue - hueref);
 
-                    if (deltahue > M_PI) {
-                        deltahue = - (deltahue - 2.f * M_PI);
+                    if (deltahue > rtengine::RT_PI) {
+                        deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                     }
 
                     float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
@@ -647,7 +647,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                     // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
                     if (lp.senscb < 100.f) { //to try...
                         //hue detection
-                        if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                             if (rhue >= hueplus - delhu )  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -664,7 +664,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
 
 
                             kzon = true;
-                        } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -682,7 +682,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                             kzon = true;
                         }
 
-                        if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins ) {
+                        if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -699,7 +699,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                             }
 
                             kzon = true;
-                        } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -903,8 +903,8 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                     float deltachro = fabs (rchro - chromaref);
                     float deltahue = fabs (rhue - hueref);
 
-                    if (deltahue > M_PI) {
-                        deltahue = - (deltahue - 2.f * M_PI);
+                    if (deltahue > rtengine::RT_PI) {
+                        deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                     }
 
                     float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
@@ -927,7 +927,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                     // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
                     if (lp.senstm < 100.f) { //to try...
                         //hue detection
-                        if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                             if (rhue >= hueplus - delhu )  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -944,7 +944,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 
 
                             kzon = true;
-                        } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -962,7 +962,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                             kzon = true;
                         }
 
-                        if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins ) {
+                        if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -978,7 +978,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                             }
 
                             kzon = true;
-                        } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
 
@@ -1171,8 +1171,8 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 float deltachro = fabs (rchro - chromaref);
                 float deltahue = fabs (rhue - hueref);
 
-                if (deltahue > M_PI) {
-                    deltahue = - (deltahue - 2.f * M_PI);
+                if (deltahue > rtengine::RT_PI) {
+                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                 }
 
                 float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
@@ -1195,7 +1195,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
                 if (lp.sensbn < 20.f) { //to try...
                     //hue detection
-                    if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                         if (rhue >= hueplus - delhu )  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue < huemoins + delhu)  {
@@ -1206,7 +1206,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 
 
                         kzon = true;
-                    } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -1218,7 +1218,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                         kzon = true;
                     }
 
-                    if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins ) {
+                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -1228,7 +1228,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                         }
 
                         kzon = true;
-                    } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -1552,8 +1552,8 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                         float deltachro = fabs (rchro - chromaref);
                         float deltahue = fabs (rhue - hueref);
 
-                        if (deltahue > M_PI) {
-                            deltahue = - (deltahue - 2.f * M_PI);
+                        if (deltahue > rtengine::RT_PI) {
+                            deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                         }
 
                         float deltaE = 20.f * deltahue + deltachro; //between 0 and 280
@@ -1581,7 +1581,7 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
 
                         //transition = difficult to avoid artifact with scope on flat area (sky...)
                         //hue detection
-                        if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                             if (rhue >= hueplus - delhu)  {
                                 realstr = aplus * rhue + bplus;
                                 realstrch = aplusch * rhue + bplusch;
@@ -1600,7 +1600,7 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                             }
 
                             kzon = true;
-                        } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realstr = aplus * rhue + bplus;
                                 realstrch = aplusch * rhue + bplusch;
@@ -1621,7 +1621,7 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                             kzon = true;
                         }
 
-                        if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins) {
+                        if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realstr = aplus * rhue + bplus;
                                 realstrch = aplusch * rhue + bplusch;
@@ -1640,7 +1640,7 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                             }
 
                             kzon = true;
-                        } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realstr = aplus * rhue + bplus;
                                 realstrch = aplusch * rhue + bplusch;
@@ -2026,8 +2026,8 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                         float deltachro = fabs (rchro - chromaref);
                         float deltahue = fabs (rhue - hueref);
 
-                        if (deltahue > M_PI) {
-                            deltahue = - (deltahue - 2.f * M_PI);
+                        if (deltahue > rtengine::RT_PI) {
+                            deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                         }
 
                         float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
@@ -2051,7 +2051,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                         // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
                         if (lp.sens < 100.f) { //to try...
                             //hue detection
-                            if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                            if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                                 if (rhue >= hueplus - delhu )  {
                                     realcligh = apluscligh * rhue + bpluscligh;
 
@@ -2068,7 +2068,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
 
 
                                 kzon = true;
-                            } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                            } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                                 if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                     realcligh = apluscligh * rhue + bpluscligh;
 
@@ -2086,7 +2086,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                                 kzon = true;
                             }
 
-                            if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins ) {
+                            if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
                                 if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                     realcligh = apluscligh * rhue + bpluscligh;
 
@@ -2101,7 +2101,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                                 }
 
                                 kzon = true;
-                            } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                            } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                                 if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                     realcligh = apluscligh * rhue + bpluscligh;
 
@@ -2479,8 +2479,8 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                 float deltachro = fabs (rchro - chromaref);
                 float deltahue = fabs (rhue - hueref);
 
-                if (deltahue > M_PI) {
-                    deltahue = - (deltahue - 2.f * M_PI);
+                if (deltahue > rtengine::RT_PI) {
+                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                 }
 
                 float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
@@ -2503,7 +2503,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                 // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
                 if (lp.senssha < 20.f) { //to try...
                     //hue detection
-                    if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                         if (rhue >= hueplus - delhu )  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue < huemoins + delhu)  {
@@ -2514,7 +2514,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
 
 
                         kzon = true;
-                    } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -2526,7 +2526,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                         kzon = true;
                     }
 
-                    if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins ) {
+                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -2536,7 +2536,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                         }
 
                         kzon = true;
-                    } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -2699,8 +2699,8 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                 float deltachro = fabs (rchro - chromaref);
                 float deltahue = fabs (rhue - hueref);
 
-                if (deltahue > M_PI) {
-                    deltahue = - (deltahue - 2.f * M_PI);
+                if (deltahue > rtengine::RT_PI) {
+                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                 }
 
                 float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
@@ -2723,7 +2723,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                 // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
                 if (lp.senssha < 20.f) { //to try...
                     //hue detection
-                    if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                         if (rhue >= hueplus - delhu )  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue < huemoins + delhu)  {
@@ -2734,7 +2734,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
 
 
                         kzon = true;
-                    } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -2746,7 +2746,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                         kzon = true;
                     }
 
-                    if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins ) {
+                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -2756,7 +2756,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                         }
 
                         kzon = true;
-                    } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
                         } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
@@ -3047,8 +3047,8 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
 
                         float deltahue = fabs (rhue - hueref);
 
-                        if (deltahue > M_PI) {
-                            deltahue = - (deltahue - 2.f * M_PI);
+                        if (deltahue > rtengine::RT_PI) {
+                            deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                         }
 
                         //pseudo deltaE
@@ -3079,7 +3079,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                         //transition = difficult to avoid artifact with scope on flat area (sky...)
                         //hue detection
                         //for each quart calculate realchro, realcligh,... in function of Hue pixel
-                        if ((hueref + dhue) < M_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                             if (rhue >= hueplus - delhu)  {
                                 realchro = aplus * rhue + bplus;
                                 realcurv = apluscurv * rhue + bpluscurv;
@@ -3106,7 +3106,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                             }
 
                             kzon = true;
-                        } else if ((hueref + dhue) >= M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realchro = aplus * rhue + bplus;
                                 realcurv = apluscurv * rhue + bpluscurv;
@@ -3137,7 +3137,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                             kzon = true;
                         }
 
-                        if ((hueref - dhue) > -M_PI && rhue < hueplus && rhue > huemoins) {
+                        if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realchro = aplus * rhue + bplus;
                                 realcurv = apluscurv * rhue + bpluscurv;
@@ -3166,7 +3166,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                             }
 
                             kzon = true;
-                        } else if ((hueref - dhue) <= -M_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realchro = aplus * rhue + bplus;
                                 realcurv = apluscurv * rhue + bpluscurv;
@@ -3733,7 +3733,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 // we must here detect : general case, skin, sky,...foliages ???
 // delta dhue, luminance and chroma
-        constexpr float ared = (M_PI - 0.05f) / 100.f;
+        constexpr float ared = (rtengine::RT_PI - 0.05f) / 100.f;
 
         constexpr float bred = 0.05f;
 
@@ -3834,12 +3834,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 float hueplus = hueref + dhue;
                 float huemoins = hueref - dhue;
 
-                if (hueplus > M_PI) {
-                    hueplus = hueref + dhue - 2.f * M_PI;
+                if (hueplus > rtengine::RT_PI) {
+                    hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
                 }
 
-                if (huemoins < -M_PI) {
-                    huemoins = hueref - dhue + 2.f * M_PI;
+                if (huemoins < -rtengine::RT_PI) {
+                    huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
                 }
 
                 BlurNoise_Local (call, sp, tmp1, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, deltE, original, transformed, cx, cy);
@@ -4231,12 +4231,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float huemoins = hueref - dhue;
 
             //printf("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhue);
-            if (hueplus > M_PI) {
-                hueplus = hueref + dhue - 2.f * M_PI;
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
             }
 
-            if (huemoins < -M_PI) {
-                huemoins = hueref - dhue + 2.f * M_PI;
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
             LabImage *bufcolorig;
@@ -4443,12 +4443,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
-            if (hueplus > M_PI) {
-                hueplus = hueref + dhue - 2.f * M_PI;
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
             }
 
-            if (huemoins < -M_PI) {
-                huemoins = hueref - dhue + 2.f * M_PI;
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
             LabImage *bufcontorig;
@@ -4692,12 +4692,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
-            if (hueplus > M_PI) {
-                hueplus = hueref + dhue - 2.f * M_PI;
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
             }
 
-            if (huemoins < -M_PI) {
-                huemoins = hueref - dhue + 2.f * M_PI;
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
             float maxc = -10000.f;
@@ -4875,12 +4875,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
-            if (hueplus > M_PI) {
-                hueplus = hueref + dhue - 2.f * M_PI;
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
             }
 
-            if (huemoins < -M_PI) {
-                huemoins = hueref - dhue + 2.f * M_PI;
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
             cbdl_Local (call, sp, buflight, loctemp, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, deltE, original, transformed, cx, cy);
@@ -4998,12 +4998,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
-            if (hueplus > M_PI) {
-                hueplus = hueref + dhue - 2.f * M_PI;
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
             }
 
-            if (huemoins < -M_PI) {
-                huemoins = hueref - dhue + 2.f * M_PI;
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
             //sharpen ellipse and transition
@@ -5059,12 +5059,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
-            if (hueplus > M_PI) {
-                hueplus = hueref + dhue - 2.f * M_PI;
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhue - 2.f * rtengine::RT_PI;
             }
 
-            if (huemoins < -M_PI) {
-                huemoins = hueref - dhue + 2.f * M_PI;
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
             InverseSharp_Local (sp, loctemp, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, deltE, original, transformed, cx, cy);
@@ -5096,12 +5096,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float hueplus = hueref + dhueret;
             float huemoins = hueref - dhueret;
 
-            if (hueplus > M_PI) {
-                hueplus = hueref + dhueret - 2.f * M_PI;
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhueret - 2.f * rtengine::RT_PI;
             }
 
-            if (huemoins < -M_PI) {
-                huemoins = hueref - dhueret + 2.f * M_PI;
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhueret + 2.f * rtengine::RT_PI;
             }
 
             int Hd, Wd;
