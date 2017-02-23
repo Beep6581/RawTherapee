@@ -3594,13 +3594,12 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
 void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, double & hueref, double & chromaref, double & lumaref)
 {
     if (params->locallab.enabled) {
-        //always calculate hueref, chromaref, lumaref  before others operations
+        //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         int GW = transformed->W;
         int GH = transformed->H;
         struct local_params lp;
         calcLocalParams (oW, oH, params->locallab, lp);
 
-//begin contrast and evalue hue
 // double precision for large summations
         double ave = 0.;
         double aveA = 0.;
@@ -3685,22 +3684,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
         double ave = 0.;
         int n = 0;
         float av;
-        /*
-        //begin contrast and evalue hue
-        // double precision for large summations
-                double ave = 0.;
-        /*        double aveA = 0.;
-                double aveB = 0.;
-                double aveL = 0.;
-                double aveChro = 0.;
-        // int precision for the counters
-                int n = 0;
-                int nab = 0;
-        // single precision for the result
-                float av, avA, avB, avL;
-        */
-//evauate mean luminance for contrast : actually one area
-// evaluate also hue
         int levred;
         bool noiscfactiv = false;
 
@@ -3712,42 +3695,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             noiscfactiv = false;
         }
 
-        /*
-                int spotSize = 0.88623f * max (1,  lp.cir / sk); //18
-                //O.88623 = sqrt(PI / 4) ==> sqare equal to circle
-
-                // very small region, don't use omp here
-                for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
-                    for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
-                        aveL += original->L[y - cy][x - cx];
-                        aveA += original->a[y - cy][x - cx];
-                        aveB += original->b[y - cy][x - cx];
-                        aveChro += sqrtf (SQR (original->b[y - cy][x - cx]) + SQR (original->a[y - cy][x - cx]));
-
-                        nab++;
-                    }
-                }
-        */
-        /*
-                if ((!lp.inv && !lp.invret)  && hueref == INFINITY && chromaref == INFINITY && lumaref == INFINITY) {
-                    //evaluate hue, chroma, luma in center spot
-                    int spotSize = 0.88623f * max (1,  lp.cir / sk); //18
-                    //O.88623 = sqrt(PI / 4) ==> sqare equal to circle
-
-                    // very small region, don't use omp here
-                    for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
-                        for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
-                            aveL += original->L[y - cy][x - cx];
-                            aveA += original->a[y - cy][x - cx];
-                            aveB += original->b[y - cy][x - cx];
-                            aveChro += sqrtf (SQR (original->b[y - cy][x - cx]) + SQR (original->a[y - cy][x - cx]));
-
-                            nab++;
-                        }
-                    }
-
-                } else
-                    */
         if (lp.inv || lp.invret) { //exterior || lp.curvact
             ave = 0.f;
             n = 0;
@@ -3778,33 +3725,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             av = ave / 327.68f;
         }
 
-        /*
-                aveL = aveL / nab;
-                aveA = aveA / nab;
-                aveB = aveB / nab;
-                aveChro = aveChro / nab;
-                aveChro /= 327.68f;
-                avA = aveA / 327.68f;
-                avB = aveB / 327.68f;
-                avL = aveL / 327.68f;
-                hueref = xatan2f (avB, avA);   //mean hue
-                chromaref = aveChro;
-                lumaref = avL;
-        */
-//INFINITY to solve crop problem when Ref is outside preview
-        /*
-                if (hueref == INFINITY) {
-                    hueref = xatan2f (avB, avA);   //mean hue
-                }
-
-                if (chromaref == INFINITY) {
-                    chromaref = aveChro;
-                }
-
-                if (lumaref == INFINITY) {
-                    lumaref = avL;
-                }
-        */
 //        printf ("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f\n", call, sp, hueref, chromaref, lumaref);
         struct local_contra lco;
 

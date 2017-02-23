@@ -44,15 +44,6 @@ ImProcCoordinator::ImProcCoordinator ()
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN), coordX (0), coordY (0), localX (0), localY (0),
       dataspot (nullptr), retistr (nullptr), retistrsav (nullptr), llstr (nullptr), lhstr (nullptr), ccstr (nullptr),
-      /*
-      =======
-      : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), previmg(nullptr), workimg(nullptr),
-      ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), lastAwbTempBias(0.0), ipf(&params, true), monitorIntent(RI_RELATIVE),
-      softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
-      allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
-
-      >>>>>>> dev
-      */
       ctColorCurve(),
 //      localcurve(65536, 0),
       hltonecurve (65536),
@@ -1238,7 +1229,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 lhstr[0] = lh_str + "@";
                 //end local L = f(H)
-
+                //spot references
+                dataspot[58][0] = huerefs[0] = 100.f * params.locallab.hueref;
+                dataspot[59][0] = chromarefs[0] = params.locallab.chromaref;
+                dataspot[60][0] = lumarefs[0] = params.locallab.lumaref;
 
 
 
@@ -1765,10 +1759,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
 
             for (int sp = 1; sp < maxspot; sp++) { //spots default
-                params.locallab.hueref = INFINITY;
-                params.locallab.chromaref = INFINITY;
+                params.locallab.hueref = dataspot[58][sp] / 100.;
+                params.locallab.chromaref = dataspot[59][sp];
                 bool locutili = locutili;
-                params.locallab.lumaref = INFINITY;
+                params.locallab.lumaref = dataspot[60][sp];
                 params.locallab.circrad = circrads[sp] = dataspot[2][sp];
                 params.locallab.locX = locx[sp] = dataspot[3][sp];
                 params.locallab.locY = locy[sp] = dataspot[4][sp];
@@ -2018,13 +2012,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 params.locallab.hueref = huer;
                 params.locallab.chromaref = chromar;
                 params.locallab.lumaref = lumar;
-                ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                 dataspot[58][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
                 dataspot[59][sp] = chromarefs[sp] = params.locallab.chromaref;
                 dataspot[60][sp] = lumarefs[sp] = params.locallab.lumaref;
-                nextParams.locallab.hueref = params.locallab.hueref;
-                nextParams.locallab.chromaref = params.locallab.chromaref;
-                nextParams.locallab.lumaref = params.locallab.lumaref;
+
+                ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
 
@@ -2322,27 +2314,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, sca); //scale == 1 ? 1 : 16);
             CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, sca); //scale == 1 ? 1 : 16);
-            double huere, chromare, lumare;
-            ipf.calc_ref (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, huere, chromare, lumare);
-            huer = huere;
-            chromar = chromare;
-            lumar = lumare ;
-            params.locallab.hueref = huer;
-            params.locallab.chromaref = chromar;
-            params.locallab.lumaref = lumar;
-
-            ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref );
+            params.locallab.hueref = huerefs[0] / 100.;
 
             dataspot[58][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
-            dataspot[59][sp] = chromarefs[sp] = params.locallab.chromaref;
-            dataspot[60][sp] = lumarefs[sp] = params.locallab.lumaref;
+            dataspot[59][sp] = chromarefs[sp] = params.locallab.chromaref = chromarefs[0];
+            dataspot[60][sp] = lumarefs[sp] = params.locallab.lumaref =  lumarefs[0];
+
+            ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref );
             lllocalcurve.clear();
             cclocalcurve.clear();
-
-            nextParams.locallab.hueref = params.locallab.hueref;
-            nextParams.locallab.chromaref = params.locallab.chromaref;
-            nextParams.locallab.lumaref = params.locallab.lumaref;
-
 
             ofstream fou (datal, ios::out | ios::trunc);
 

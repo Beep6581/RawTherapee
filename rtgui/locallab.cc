@@ -96,6 +96,9 @@ Locallab::Locallab ():
     noiselumc (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISELUMCOARSE"), 0, 100, 1, 0))),
     noisechrof (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISECHROFINE"), 0, 100, 1, 0))),
     noisechroc (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NOISECHROCOARSE"), 0, 100, 1, 0))),
+    hueref (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_HUEREF"), -3.15, 3.15, 0.01, 0))),
+    chromaref (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHROMAREF"), 0, 200, 0.01, 0))),
+    lumaref (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LUMAMAREF"), 0, 100, 0.01, 0))),
 
     Smethod (Gtk::manage (new MyComboBoxText ())),
     qualityMethod (Gtk::manage (new MyComboBoxText ())),
@@ -420,7 +423,19 @@ Locallab::Locallab ():
     avoidConn  = avoid->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::avoidChanged) );
     shapeVBox->pack_start (*nbspot);
     pack_start (*anbspot);
+
+    hueref->setAdjusterListener (this);
+    chromaref->setAdjusterListener (this);
+    lumaref->setAdjusterListener (this);
+
+    pack_start (*hueref);
+    pack_start (*chromaref);
+    pack_start (*lumaref);
+
     anbspot->hide();//keep anbspot  - i used it to test diffrent algo...
+    hueref->hide();
+    chromaref->hide();
+    lumaref->hide();
     ctboxS->pack_start (*Smethod);
     shapeVBox->pack_start (*ctboxS);
 
@@ -541,6 +556,7 @@ Locallab::Locallab ():
     noisechrof->setAdjusterListener (this);
 
     noisechroc->setAdjusterListener (this);
+
 
     denoisVBox->pack_start (*noiselumf);
     denoisVBox->pack_start (*noiselumc);
@@ -1355,6 +1371,11 @@ bool Locallab::localComputed_ ()
         qualitycurveMethod->set_active (2);
     }
 
+    double intermed = 0.01 * (double) nextdatasp[58];
+    hueref->setValue (intermed);
+    chromaref->setValue (nextdatasp[59]);
+    lumaref->setValue (nextdatasp[60]);
+
     int *s_datc;
     s_datc = new int[70];
     int siz;
@@ -1622,6 +1643,9 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         nbspot->setEditedState (pedited->locallab.nbspot ? Edited : UnEdited);
         anbspot->setEditedState (pedited->locallab.anbspot ? Edited : UnEdited);
+        hueref->setEditedState (pedited->locallab.hueref ? Edited : UnEdited);
+        chromaref->setEditedState (pedited->locallab.chromaref ? Edited : UnEdited);
+        lumaref->setEditedState (pedited->locallab.lumaref ? Edited : UnEdited);
         transit->setEditedState (pedited->locallab.transit ? Edited : UnEdited);
         str->setEditedState (pedited->locallab.str ? Edited : UnEdited);
         neigh->setEditedState (pedited->locallab.neigh ? Edited : UnEdited);
@@ -1731,6 +1755,9 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     neigh->setValue (pp->locallab.neigh);
     nbspot->setValue (pp->locallab.nbspot);
     anbspot->setValue (pp->locallab.anbspot);
+    hueref->setValue (pp->locallab.hueref);
+    chromaref->setValue (pp->locallab.chromaref);
+    lumaref->setValue (pp->locallab.lumaref);
     vart->setValue (pp->locallab.vart);
     chrrt->setValue (pp->locallab.chrrt);
     cTgainshape->setCurve (pp->locallab.localTgaincurve);
@@ -1820,6 +1847,9 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     qualitycurveMethodConn.block (false);
 
     anbspot->hide();
+    hueref->hide();
+    chromaref->hide();
+    lumaref->hide();
 
     if (pp->locallab.Smethod == "SYM" || pp->locallab.Smethod == "SYMSL") {
         locXL->setValue (locX->getValue());
@@ -2088,6 +2118,9 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.neigh = neigh->getIntValue ();
     pp->locallab.nbspot = nbspot->getIntValue ();
     pp->locallab.anbspot = anbspot->getIntValue ();
+    pp->locallab.hueref = hueref->getValue ();
+    pp->locallab.chromaref = chromaref->getValue ();
+    pp->locallab.lumaref = lumaref->getValue ();
     pp->locallab.vart = vart->getIntValue ();
     pp->locallab.chrrt = chrrt->getIntValue ();
     pp->locallab.localTgaincurve       = cTgainshape->getCurve ();
@@ -2162,6 +2195,10 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.neigh = neigh->getEditedState ();
         pedited->locallab.nbspot = nbspot->getEditedState ();
         pedited->locallab.anbspot = anbspot->getEditedState ();
+        pedited->locallab.hueref = hueref->getEditedState ();
+        pedited->locallab.chromaref = chromaref->getEditedState ();
+        pedited->locallab.lumaref = lumaref->getEditedState ();
+
         pedited->locallab.vart = vart->getEditedState ();
         pedited->locallab.chrrt = chrrt->getEditedState ();
         pedited->locallab.localTgaincurve        = !cTgainshape->isUnChanged ();
@@ -2649,6 +2686,10 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
     neigh->setDefault (defParams->locallab.neigh);
     nbspot->setDefault (defParams->locallab.nbspot);
     anbspot->setDefault (defParams->locallab.anbspot);
+    hueref->setDefault (defParams->locallab.hueref);
+    chromaref->setDefault (defParams->locallab.chromaref);
+    lumaref->setDefault (defParams->locallab.lumaref);
+
     vart->setDefault (defParams->locallab.vart);
     chrrt->setDefault (defParams->locallab.chrrt);
 
@@ -2700,6 +2741,9 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         neigh->setDefaultEditedState (pedited->locallab.neigh ? Edited : UnEdited);
         nbspot->setDefaultEditedState (pedited->locallab.nbspot ? Edited : UnEdited);
         anbspot->setDefaultEditedState (pedited->locallab.anbspot ? Edited : UnEdited);
+        hueref->setDefaultEditedState (pedited->locallab.hueref ? Edited : UnEdited);
+        chromaref->setDefaultEditedState (pedited->locallab.chromaref ? Edited : UnEdited);
+        lumaref->setDefaultEditedState (pedited->locallab.lumaref ? Edited : UnEdited);
         vart->setDefaultEditedState (pedited->locallab.vart ? Edited : UnEdited);
         chrrt->setDefaultEditedState (pedited->locallab.chrrt ? Edited : UnEdited);
 
@@ -2750,6 +2794,9 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         neigh->setDefaultEditedState (Irrelevant);
         nbspot->setDefaultEditedState (Irrelevant);
         anbspot->setDefaultEditedState (Irrelevant);
+        hueref->setDefaultEditedState (Irrelevant);
+        chromaref->setDefaultEditedState (Irrelevant);
+        lumaref->setDefaultEditedState (Irrelevant);
         vart->setDefaultEditedState (Irrelevant);
         chrrt->setDefaultEditedState (Irrelevant);
 
@@ -2768,6 +2815,9 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
 
     updateGeometry (int (centerX->getValue()), int (centerY->getValue()), int (circrad->getValue()), (int)locY->getValue(), degree->getValue(), (int)locX->getValue(), (int)locYT->getValue(), (int)locXL->getValue());
     anbspot->hide();
+    hueref->hide();
+    chromaref->hide();
+    lumaref->hide();
 
     if (listener && getEnabled()) {
         if (a == degree) {
@@ -2886,6 +2936,12 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
             listener->panelChanged (Evlocallabnbspot, nbspot->getTextValue());
         } else if (a == anbspot) {
             listener->panelChanged (Evlocallabanbspot, "");//anbspot->getTextValue());
+        } else if (a == hueref) {
+            listener->panelChanged (Evlocallabhueref, "");//anbspot->getTextValue());
+        } else if (a == chromaref) {
+            listener->panelChanged (Evlocallabchromaref, "");//anbspot->getTextValue());
+        } else if (a == lumaref) {
+            listener->panelChanged (Evlocallablumaref, "");//anbspot->getTextValue());
         } else if (a == vart) {
             listener->panelChanged (Evlocallabvart, vart->getTextValue());
         } else if (a == chrrt) {
@@ -3018,6 +3074,10 @@ void Locallab::trimValues (rtengine::procparams::ProcParams * pp)
     neigh->trimValue (pp->locallab.neigh);
     nbspot->trimValue (pp->locallab.nbspot);
     anbspot->trimValue (pp->locallab.anbspot);
+    hueref->trimValue (pp->locallab.hueref);
+    chromaref->trimValue (pp->locallab.chromaref);
+    lumaref->trimValue (pp->locallab.lumaref);
+
     vart->trimValue (pp->locallab.vart);
     chrrt->trimValue (pp->locallab.chrrt);
 
@@ -3074,6 +3134,9 @@ void Locallab::setBatchMode (bool batchMode)
     neigh->showEditedCB ();
     nbspot->showEditedCB ();
     anbspot->showEditedCB ();
+    hueref->showEditedCB ();
+    chromaref->showEditedCB ();
+    lumaref->showEditedCB ();
     vart->showEditedCB ();
     LocalcurveEditorgainT->setBatchMode (batchMode);
     LocalcurveEditorgainTrab->setBatchMode (batchMode);

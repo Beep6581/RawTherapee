@@ -538,6 +538,10 @@ enum ProcEvent {
     Evlocallabccshape = 508,
     EvlocallabqualitycurveMethod = 509,
     EvWBtempBias = 510,
+    Evlocallabhueref = 511,
+    Evlocallabchromaref = 512,
+    Evlocallablumaref = 513,
+
     NUMOFEVENTS
 
 

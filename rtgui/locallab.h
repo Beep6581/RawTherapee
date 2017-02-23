@@ -81,6 +81,9 @@ private:
     Adjuster* const rewei;
     Adjuster* const sensitm;
     Adjuster* const retrab;
+    Adjuster* const hueref;
+    Adjuster* const chromaref;
+    Adjuster* const lumaref;
 
     MyExpander* const expcolor;
     MyExpander* const expblur;

@@ -464,6 +464,9 @@ public:
     bool neigh;
     bool nbspot;
     bool anbspot;
+    bool hueref;
+    bool chromaref;
+    bool lumaref;
     bool vart;
     bool activlum;
     bool invers;

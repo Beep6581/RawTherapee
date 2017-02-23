@@ -1033,23 +1033,12 @@ void Crop::update (int todo)
                         CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve2, sca);
                         localcutili = false;
                         CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve2, sca);
-                        /*
-                                                                        params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
-                                                                        params.locallab.chromaref = parent->chromarefs[sp];
-                                                                        params.locallab.lumaref = parent->lumarefs[sp];
-                                                                        */
 
-                        double huere, chromare, lumare;
-                        //       params.locallab.hueref = parent->huer;
-                        //      params.locallab.chromaref = parent->chromar;
-                        //      params.locallab.lumaref = parent->lumar;
-                        // printf("dcr1 sp=%i huer=%f \n", sp,parent->huerefs[sp] / 100.f );
-                        parent->ipf.calc_ref (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, cclocalcurve2, huere, chromare, lumare);
+                        params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
+                        params.locallab.chromaref = parent->chromarefs[sp];
+                        params.locallab.lumaref = parent->lumarefs[sp];
 
-
-                        params.locallab.hueref = huere ; //parent->huer;
-                        params.locallab.chromaref = chromare; //parent->chromar;
-                        params.locallab.lumaref = lumare; //parent->lumar;
+                        //printf ("dcr1 sp=%i huer=%f \n", sp, parent->huerefs[sp] / 100.f );
 
                         parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, cclocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                         lllocalcurve2.clear();
@@ -1283,19 +1272,10 @@ void Crop::update (int todo)
                 CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve2, sca); // skip == 1 ? 1 : 16);
 
 
-                //      params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
-                //     params.locallab.chromaref = parent->chromarefs[sp];
-                //      params.locallab.lumaref = parent->lumarefs[sp];
-                //      printf("dcr2   sp=%i huer=%f \n", sp, parent->huerefs[sp] / 100.f);
-
-                double huere, chromare, lumare;
-                parent->ipf.calc_ref (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, cclocalcurve2, huere, chromare, lumare);
-
-
-                params.locallab.hueref = huere; //parent->huer;
-                params.locallab.chromaref = chromare;//parent->chromar;
-                params.locallab.lumaref = lumare;//parent->lumar;
-
+                params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
+                params.locallab.chromaref = parent->chromarefs[sp];
+                params.locallab.lumaref = parent->lumarefs[sp];
+                //   printf ("dcr2   sp=%i huer=%f \n", sp, parent->huerefs[sp] / 100.f);
                 parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, cclocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
 
                 lllocalcurve2.clear();
