@@ -487,3 +487,16 @@ GtkNotebook {
 .tooltip {
     padding: 0;
 }
+
+
+/* make the "partial profile" dialog a little bit more readable */
+#PartialPasteHeader {
+    margin: 1.5em 0 0 0;
+    padding: 0;
+    font-weight: bold;
+    color: #363636;
+}
+
+#PartialPasteHeaderSep {
+    color: #D8D8D8;
+}
