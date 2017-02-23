@@ -1769,32 +1769,22 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
             LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
-if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < H; y++) {
-                    for (int x = 0; x < W; x++) {
-                        if (rawData[y][x] > 0) {
-                            rawData[y][x] *= map.calcVignetteFac(x, y);
-                        }
-                    }
+                    map.processVignetteLine(W, y, rawData[y]);
                 }
             } else if(ri->get_colors() == 3) {
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < H; y++) {
-                    for (int x = 0; x < W; x++) {
-                        float vignFactor = map.calcVignetteFac(x, y);
-                        for(int c = 0;c < 3; ++c) {
-                            if (rawData[y][3 * x + c] > 0) {
-                                rawData[y][3 * x + c] *= vignFactor;
-                            }
-                        }
-                    }
+                    map.processVignetteLine3Channels(W, y, rawData[y]);
                 }
             }
         }
