@@ -165,8 +165,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         currWB = imgsrc->getWB ();
     } else if (params.wb.method == "Auto") {
         double rm, gm, bm;
-        imgsrc->getAutoWBMultipliers(rm, gm, bm);
-        currWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
+        imgsrc->getAutoWBMultipliers (rm, gm, bm);
+        currWB.update (rm, gm, bm, params.wb.equal, params.wb.tempBias);
     }
 
     NoiseCurve noiseLCurve;
@@ -1596,6 +1596,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
                 CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, 1);
                 CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, 1);
+                double huere, chromare, lumare;
+
+                ipf.calc_ref (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, huere, chromare, lumare);
+                params.locallab.hueref = huere;
+                params.locallab.chromaref = chromare;
+                params.locallab.lumaref = lumare;
 
                 ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                 lllocalcurve.clear();

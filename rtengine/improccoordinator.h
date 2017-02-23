@@ -299,7 +299,7 @@ protected:
     LUTf chromarefs;
     LUTf lumarefs;
 
-
+    double huer, chromar, lumar;
     void startProcessing ();
     void process ();
     float colourToningSatLimit;

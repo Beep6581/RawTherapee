@@ -40,19 +40,19 @@ extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : orig_prev (nullptr), oprevi (nullptr), oprevl (nullptr), nprevl (nullptr), previmg (nullptr), workimg (nullptr),
-      ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias(0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
+      ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN), coordX (0), coordY (0), localX (0), localY (0),
       dataspot (nullptr), retistr (nullptr), retistrsav (nullptr), llstr (nullptr), lhstr (nullptr), ccstr (nullptr),
-	  /*
-=======
-    : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), previmg(nullptr), workimg(nullptr),
+      /*
+      =======
+      : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), previmg(nullptr), workimg(nullptr),
       ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), lastAwbTempBias(0.0), ipf(&params, true), monitorIntent(RI_RELATIVE),
       softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
       allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
->>>>>>> dev
-*/
+      >>>>>>> dev
+      */
       ctColorCurve(),
 //      localcurve(65536, 0),
       hltonecurve (65536),
@@ -166,7 +166,9 @@ ImProcCoordinator::ImProcCoordinator ()
       lumarefs (500, -100000.f),
       chromarefs (500, -100000.f),
       huerefs (500, -100000.f),
-
+      huer (0),
+      chromar (0),
+      lumar (0),
 
       rCurve(),
       gCurve(),
@@ -177,7 +179,7 @@ ImProcCoordinator::ImProcCoordinator ()
       fw (0), fh (0), tr (0),
       fullw (1), fullh (1),
       pW (-1), pH (-1),
-      plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener(nullptr), aloListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), hListener (nullptr),
+      plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener (nullptr), aloListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), hListener (nullptr),
       resultValid (false), lastOutputProfile ("BADFOOD"), lastOutputIntent (RI__COUNT), lastOutputBPC (false), thread (nullptr), changeSinceLast (0), updaterRunning (false), destroying (false), utili (false), autili (false), wavcontlutili (false),
       butili (false), ccutili (false), cclutili (false), clcutili (false), opautili (false), conversionBuffer (1, 1), colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f)
 
@@ -381,13 +383,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 imgsrc->getAutoWBMultipliers (rm, gm, bm);
 
                 if (rm != -1.) {
-                    autoWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
+                    autoWB.update (rm, gm, bm, params.wb.equal, params.wb.tempBias);
                     lastAwbEqual = params.wb.equal;
                     lastAwbTempBias = params.wb.tempBias;
                 } else {
                     lastAwbEqual = -1.;
                     lastAwbTempBias = 0.0;
-                    autoWB.useDefaults(params.wb.equal);
+                    autoWB.useDefaults (params.wb.equal);
                 }
 
                 //double rr,gg,bb;
@@ -399,8 +401,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         params.wb.temperature = currWB.getTemp ();
         params.wb.green = currWB.getGreen ();
-        if(params.wb.method == "Auto" && awbListener) {
-            awbListener->WBChanged(params.wb.temperature, params.wb.green);
+
+        if (params.wb.method == "Auto" && awbListener) {
+            awbListener->WBChanged (params.wb.temperature, params.wb.green);
         }
 
         int tr = getCoarseBitMask (params.coarse);
@@ -2007,7 +2010,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve);
                 CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, sca); //scale == 1 ? 1 : 16);
                 CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, sca); //scale == 1 ? 1 : 16);
-
+                double huere, chromare, lumare;
+                ipf.calc_ref (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, huere, chromare, lumare);
+                huer = huere;
+                chromar = chromare;
+                lumar = lumare ;
+                params.locallab.hueref = huer;
+                params.locallab.chromaref = chromar;
+                params.locallab.lumaref = lumar;
                 ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                 dataspot[58][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
                 dataspot[59][sp] = chromarefs[sp] = params.locallab.chromaref;
@@ -2312,8 +2322,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, sca); //scale == 1 ? 1 : 16);
             CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, sca); //scale == 1 ? 1 : 16);
+            double huere, chromare, lumare;
+            ipf.calc_ref (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, huere, chromare, lumare);
+            huer = huere;
+            chromar = chromare;
+            lumar = lumare ;
+            params.locallab.hueref = huer;
+            params.locallab.chromaref = chromar;
+            params.locallab.lumaref = lumar;
 
-            ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+            ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref );
+
             dataspot[58][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
             dataspot[59][sp] = chromarefs[sp] = params.locallab.chromaref;
             dataspot[60][sp] = lumarefs[sp] = params.locallab.lumaref;
@@ -2908,12 +2927,12 @@ bool ImProcCoordinator::getAutoWB (double& temp, double& green, double equal, do
             imgsrc->getAutoWBMultipliers (rm, gm, bm);
 
             if (rm != -1) {
-                autoWB.update(rm, gm, bm, equal, tempBias);
+                autoWB.update (rm, gm, bm, equal, tempBias);
                 lastAwbEqual = equal;
                 lastAwbTempBias = tempBias;
             } else {
                 lastAwbEqual = -1.;
-                autoWB.useDefaults(equal);
+                autoWB.useDefaults (equal);
                 lastAwbTempBias = 0.0;
             }
         }
@@ -3056,13 +3075,13 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring & fname, bool
             imgsrc->getAutoWBMultipliers (rm, gm, bm);
 
             if (rm != -1.) {
-                autoWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
+                autoWB.update (rm, gm, bm, params.wb.equal, params.wb.tempBias);
                 lastAwbEqual = params.wb.equal;
                 lastAwbTempBias = params.wb.tempBias;
             } else {
                 lastAwbEqual = -1.;
                 lastAwbTempBias = 0.0;
-                autoWB.useDefaults(params.wb.equal);
+                autoWB.useDefaults (params.wb.equal);
             }
         }
 
@@ -3107,11 +3126,11 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring & fname, bool
     // image may contain out of range samples, clip them to avoid wrap-arounds
     #pragma omp parallel for
 
-    for(int i = 0; i < im->getHeight(); i++) {
-        for(int j = 0; j < im->getWidth(); j++) {
-            im->r(i, j) = CLIP(im->r(i, j));
-            im->g(i, j) = CLIP(im->g(i, j));
-            im->b(i, j) = CLIP(im->b(i, j));
+    for (int i = 0; i < im->getHeight(); i++) {
+        for (int j = 0; j < im->getWidth(); j++) {
+            im->r (i, j) = CLIP (im->r (i, j));
+            im->g (i, j) = CLIP (im->g (i, j));
+            im->b (i, j) = CLIP (im->b (i, j));
         }
     }
 
