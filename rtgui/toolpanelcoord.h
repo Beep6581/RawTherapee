@@ -158,6 +158,7 @@ protected:
     ToolVBox* transformPanel;
     ToolVBox* rawPanel;
     ToolVBox* waveletPanel;
+    ToolVBox* locallabPanel;
     Gtk::Notebook* metadataPanel;
     ExifPanel* exifpanel;
     IPTCPanel* iptcpanel;
@@ -170,6 +171,7 @@ protected:
     TextOrIcon* toiR;
     TextOrIcon* toiM;
     TextOrIcon* toiW;
+    TextOrIcon* toiL;
 
     Gtk::Label* labelE;
     Gtk::Label* labelD;
@@ -184,8 +186,8 @@ protected:
     Gtk::Image* imgIconT;
     Gtk::Image* imgIconR;
     Gtk::Image* imgIconM;
-    Gtk::Image* imgPanelEnd[6];
-    Gtk::VBox* vbPanelEnd[6];
+    Gtk::Image* imgPanelEnd[7];
+    Gtk::VBox* vbPanelEnd[7];
 
     Gtk::ScrolledWindow* exposurePanelSW;
     Gtk::ScrolledWindow* detailsPanelSW;
@@ -193,6 +195,7 @@ protected:
     Gtk::ScrolledWindow* transformPanelSW;
     Gtk::ScrolledWindow* rawPanelSW;
     Gtk::ScrolledWindow* waveletPanelSW;
+    Gtk::ScrolledWindow* locallabPanelSW;
 
     std::vector<MyExpander*> expList;
 
