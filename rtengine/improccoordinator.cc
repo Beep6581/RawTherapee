@@ -1230,11 +1230,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 lhstr[0] = lh_str + "@";
                 //end local L = f(H)
                 //spot references
+                /*
                 dataspot[58][0] = huerefs[0] = 100.f * params.locallab.hueref;
                 dataspot[59][0] = chromarefs[0] = params.locallab.chromaref;
                 dataspot[60][0] = lumarefs[0] = params.locallab.lumaref;
-
-
+                printf("dataspot58-0=%i\n", dataspot[58][0]);
+                */
 
                 if (params.locallab.anbspot == 0) {
                     //update GUI and MIP after current spot ==> params, shift with the other alolistener
@@ -2015,7 +2016,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 dataspot[58][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
                 dataspot[59][sp] = chromarefs[sp] = params.locallab.chromaref;
                 dataspot[60][sp] = lumarefs[sp] = params.locallab.lumaref;
-
+                //printf("sp=%i huerefsp=%f\n", sp, huerefs[sp]);
                 ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
@@ -2314,12 +2315,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, sca); //scale == 1 ? 1 : 16);
             CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, sca); //scale == 1 ? 1 : 16);
-            params.locallab.hueref = huerefs[0] / 100.;
+            params.locallab.hueref = huerefs[sp] / 100.;
+            params.locallab.chromaref = chromarefs[sp];
+            params.locallab.lumaref = lumarefs[sp];
 
-            dataspot[58][sp] = huerefs[sp] = 100.f * params.locallab.hueref;
-            dataspot[59][sp] = chromarefs[sp] = params.locallab.chromaref = chromarefs[0];
-            dataspot[60][sp] = lumarefs[sp] = params.locallab.lumaref =  lumarefs[0];
-
+//          printf("sp=%i hueres=%i\n",sp, huerefs[sp]);
             ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref );
             lllocalcurve.clear();
             cclocalcurve.clear();

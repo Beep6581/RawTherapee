@@ -3725,7 +3725,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             av = ave / 327.68f;
         }
 
-//        printf ("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f\n", call, sp, hueref, chromaref, lumaref);
+        //printf ("call= %i sp=%i hueref=%f chromaref=%f lumaref=%f\n", call, sp, hueref, chromaref, lumaref);
         struct local_contra lco;
 
 // we must here detect : general case, skin, sky,...foliages ???
