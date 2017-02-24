@@ -468,6 +468,7 @@ Locallab::Locallab ():
 //   pack_start (*shapeFrame);
 
     expsettings->add (*shapeVBox);
+    expsettings->setLevel (2);
     pack_start (*expsettings);
 
     colorVBox->set_spacing (2);
@@ -599,6 +600,7 @@ Locallab::Locallab ():
     colorVBox->pack_start (*invers);
 
     expcolor->add (*colorVBox);
+    expcolor->setLevel (2);
     pack_start (*expcolor);
 
     blurrVBox->pack_start (*radius);
@@ -608,6 +610,7 @@ Locallab::Locallab ():
 
     blurrVBox->pack_start (*inversrad);
     expblur->add (*blurrVBox);
+    expblur->setLevel (2);
     pack_start (*expblur);
 
     tmBox->pack_start (*stren);
@@ -618,6 +621,7 @@ Locallab::Locallab ():
     tmBox->pack_start (*sensitm);
 
     exptonemap->add (*tmBox);
+    exptonemap->setLevel (2);
     pack_start (*exptonemap);
 
 
@@ -635,16 +639,20 @@ Locallab::Locallab ():
     retiBox->pack_start (*inversret);
 
     expreti->add (*retiBox);
+    expreti->setLevel (2);
     pack_start (*expreti);
 
 
     expsharp->add (*sharpVBox);
+    expsharp->setLevel (2);
     pack_start (*expsharp);
 
     expcbdl->add (*cbdlVBox);
+    expcbdl->setLevel (2);
     pack_start (*expcbdl);
 
     expdenoi->add (*denoisVBox);
+    expdenoi->setLevel (2);
     pack_start (*expdenoi);
 
 
