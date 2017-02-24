@@ -172,7 +172,7 @@ Locallab::Locallab ():
     anbspot->setAdjusterListener (this);
     anbspot->set_tooltip_text (M ("TP_LOCALLAB_ANBSPOT_TOOLTIP"));
 
-    shapeFrame->set_border_width (0);
+    // shapeFrame->set_border_width (0);
     shapeFrame->set_label_align (0.025, 0.5);
 
     expsettings->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expsettings) );
@@ -199,8 +199,8 @@ Locallab::Locallab ():
     expdenoi->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expdenoi) );
     enabledenoiConn = expdenoi->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expdenoi) );
 
-    shapeVBox->set_spacing (2);
-    shapeVBox->set_border_width (4);
+    //  shapeVBox->set_spacing (2);
+    //  shapeVBox->set_border_width (4);
 
     ctboxS->pack_start (*labmS, Gtk::PACK_SHRINK, 4);
     ctboxS->set_tooltip_markup (M ("TP_LOCALLAB_STYPE_TOOLTIP"));
@@ -348,8 +348,8 @@ Locallab::Locallab ():
     inversretConn  = inversret->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversretChanged) );
 
 //tone mapping local
-    tmBox->set_border_width (4);
-    tmBox->set_spacing (2);
+    //  tmBox->set_border_width (4);
+    //  tmBox->set_spacing (2);
 
     stren->setAdjusterListener (this);
 
@@ -368,8 +368,8 @@ Locallab::Locallab ():
 
 
 //retinex local
-    retiBox->set_border_width (4);
-    retiBox->set_spacing (2);
+    //  retiBox->set_border_width (4);
+    //  retiBox->set_spacing (2);
 
     dhbox->pack_start (*labmdh, Gtk::PACK_SHRINK, 1);
 
@@ -452,12 +452,12 @@ Locallab::Locallab ():
     shapeVBox->pack_start (*qualbox);
     shapeVBox->pack_start (*transit);
 
-    artifFrame->set_border_width (0);
+//   artifFrame->set_border_width (0);
     artifFrame->set_label_align (0.025, 0.5);
     artifFrame->set_tooltip_text (M ("TP_LOCALLAB_ARTIF_TOOLTIP"));
 
-    artifVBox->set_spacing (2);
-    artifVBox->set_border_width (4);
+    //  artifVBox->set_spacing (2);
+//   artifVBox->set_border_width (4);
 
     artifVBox->pack_start (*thres);
     artifVBox->pack_start (*proxi);
@@ -472,16 +472,16 @@ Locallab::Locallab ():
     pack_start (*expsettings);
 
     colorVBox->set_spacing (2);
-    colorVBox->set_border_width (4);
+//   colorVBox->set_border_width (4);
 
-    blurrVBox->set_spacing (2);
-    blurrVBox->set_border_width (4);
+    //  blurrVBox->set_spacing (2);
+//   blurrVBox->set_border_width (4);
 
-    sharpVBox->set_spacing (2);
-    sharpVBox->set_border_width (4);
+//   sharpVBox->set_spacing (2);
+//    sharpVBox->set_border_width (4);
 
-    cbdlVBox->set_spacing (2);
-    cbdlVBox->set_border_width (4);
+//   cbdlVBox->set_spacing (2);
+//    cbdlVBox->set_border_width (4);
 
 
     Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox (true, 10));
@@ -547,8 +547,8 @@ Locallab::Locallab ():
     sharpVBox->pack_start (*sensisha);
     sharpVBox->pack_start (*inverssha);
 
-    denoisVBox->set_spacing (2);
-    denoisVBox->set_border_width (4);
+    // denoisVBox->set_spacing (2);
+    //  denoisVBox->set_border_width (4);
 
     noiselumf->setAdjusterListener (this);
 
@@ -565,7 +565,7 @@ Locallab::Locallab ():
     denoisVBox->pack_start (*noisechroc);
 
     neutrHBox1 = Gtk::manage (new Gtk::HBox ());
-    neutrHBox1->set_border_width (2);
+//   neutrHBox1->set_border_width (2);
 
     neutral1 = Gtk::manage (new Gtk::Button (M ("TP_LOCALLAB_NEUTRAL")));
     RTImage *resetImg1 = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
@@ -578,7 +578,7 @@ Locallab::Locallab ():
 
     superFrame->set_label_align (0.025, 0.5);
     Gtk::VBox *superVBox = Gtk::manage ( new Gtk::VBox());
-    superVBox->set_spacing (2);
+//   superVBox->set_spacing (2);
     superFrame->set_label_widget (*curvactiv);
 
 
@@ -660,7 +660,7 @@ Locallab::Locallab ():
     pack_start (*avoid);//keep avoid clor shift in case of
 
     neutrHBox = Gtk::manage (new Gtk::HBox ());
-    neutrHBox->set_border_width (2);
+//   neutrHBox->set_border_width (2);
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_LOCALLAB_NEUTRAL")));
     RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
