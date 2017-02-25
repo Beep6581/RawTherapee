@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.45 - requires RT 5.0
+  Version 2.46 - requires RT 5.0
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -787,6 +787,11 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 
 #ToolPanelNotebook > header tabs {
     margin-bottom: 0.33334em;
+}
+
+#ToolPanelNotebook > header tab{
+    margin-left: 0.08333em;
+    margin-right: 0.08333em;
 }
 
 #ToolPanelNotebook > header tab image{
