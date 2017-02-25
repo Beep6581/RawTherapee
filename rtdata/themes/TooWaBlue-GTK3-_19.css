@@ -1,7 +1,7 @@
 /*
   This file is part of RawTherapee.
 
-  Copyright (c) 2016 TooWaBoo (v1.19.4)
+  Copyright (c) 2016 TooWaBoo (v1.19.5)
   Many thanks to the RawTherapee Developer Team for this great piece of software
 
   RawTherapee is free software: you can redistribute it and/or modify
@@ -397,7 +397,7 @@ GtkDialog tab {
     padding: 9px;
 }
 #ToolPanelNotebook tab {
-    padding: 10px 4px 7px;
+    padding: 10px 2px 7px;
 }
 #MetaPanelNotebook tab {
     padding: 8px 4px;
