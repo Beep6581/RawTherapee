@@ -64,7 +64,7 @@ fi
 
 # if not specify CMAKE_OSX_DEPLOYMENT_TARGET when compiling,
 # 'MINIMUM_VERSION' will be used host OS X version.
-MINIMUM_SYSTEM_VERSION="$(otool -l "${CMAKE_BUILD_TYPE}"/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')"
+MINIMUM_SYSTEM_VERSION="$(otool -l "${CMAKE_BUILD_TYPE}"/MacOS/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')"
 if test ! -n "${MINIMUM_SYSTEM_VERSION}"; then
     MINIMUM_SYSTEM_VERSION="$(sw_vers -productVersion | cut -d. -f-2)"
 fi
@@ -89,8 +89,8 @@ APP="${PROJECT_NAME}".app
 CONTENTS="${APP}"/Contents
 RESOURCES="${CONTENTS}"/Resources
 MACOS="${CONTENTS}"/MacOS
-LIB="${MACOS}"/lib
-ETC="${MACOS}"/etc
+LIB="${CONTENTS}"/lib
+ETC="${RESOURCES}"/etc
 EXECUTABLE="${MACOS}"/rawtherapee
 
 message "Removing old files"
@@ -103,7 +103,8 @@ install -d  "${RESOURCES}" \
 "${ETC}"
 
 message "Copying release files"
-ditto "${CMAKE_BUILD_TYPE}" "${MACOS}"
+ditto "${CMAKE_BUILD_TYPE}"/MacOS "${MACOS}"
+ditto "${CMAKE_BUILD_TYPE}"/Resources "${RESOURCES}"
 
 message "Copying dependencies from ${GTK_PREFIX}"
 CheckLink "${EXECUTABLE}"
@@ -123,20 +124,19 @@ cp "${GTK_PREFIX}"/etc/gtk-3.0/im-multipress.conf "${ETC}"/gtk-3.0
 sed -i "" -e "s|${PWD}|/tmp|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders \
 "${ETC}"/gtk-3.0/gtk.immodules
 
-ditto {"${GTK_PREFIX}","${MACOS}"}/share/glib-2.0/schemas
-"${GTK_PREFIX}"/bin/glib-compile-schemas "${MACOS}"/share/glib-2.0/schemas
+ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
+"${GTK_PREFIX}"/bin/glib-compile-schemas "${RESOURCES}"/share/glib-2.0/schemas
 
 message "Copying shared files from ${GTK_PREFIX}"
-cp -R "${GTK_PREFIX}"/share/mime "${MACOS}"/share
+ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/mime
 # gtk3 themes
-ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
-ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Default/gtk-3.0/gtk-keys.css
-ditto {"${GTK_PREFIX}","${MACOS}"}/share/themes/Adwaita/gtk-3.0/gtk.css
-# Adwaita icons
+ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
+ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
+# Adwaita icons (Do Retina displays require higher resolution icons?)
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
-for f in "${iconfolders[@]}"; do ditto {"${GTK_PREFIX}","${MACOS}"}/share/icons/Adwaita/"$f"; done
-ditto {"${GTK_PREFIX}","${MACOS}"}/share/icons/Adwaita/index.theme
-"${GTK_PREFIX}"/bin/gtk-update-icon-cache-3.0 "${MACOS}"/share/icons/Adwaita
+for f in "${iconfolders[@]}"; do ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/"$f"; done
+ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
+"${GTK_PREFIX}"/bin/gtk-update-icon-cache-3.0 "${RESOURCES}"/share/icons/Adwaita
 # fontconfig files (X11 backend only)
 if otool -L "${EXECUTABLE}" | grep -sq 'libgtk-x11-2.0'; then
     message "Installing fontconfig files (Your library is X11 backend. 'FONTCONFIG_PATH' will be set by executable loader.)"
@@ -206,10 +206,11 @@ function CreateDmg {
     message "Creating disk image"
     hdiutil create -format UDBZ -srcdir "${srcdir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}".dmg
 
+    # zip .dmg for re-distribution
+    zip "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
+    rm "${dmg_name}.dmg"
+
     message "Removing disk image caches"
     rm -rf "${srcdir}"
 }
-CreateDmg
-
-message "Packing disk image for distribution"
-zip -m "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
+# CreateDmg
