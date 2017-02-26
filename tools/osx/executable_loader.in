@@ -2,7 +2,10 @@
 
 cwd="$(cd "$(dirname "$0")"; pwd)"
 app="${cwd%/Contents/*}"
-etc="${cwd}"/etc
+contents="${app}/Contents"
+res="${contents}"/Resources
+lib="${contents}"/lib
+etc="${res}"/etc
 
 # for different os x versions
 # see https://github.com/Beep6581/RawTherapee/issues/1779
@@ -10,12 +13,15 @@ cups_dir=/tmp/RT5
 install -d ${cups_dir}
 cp -f /usr/lib/libcups.2.dylib ${cups_dir}
 
-export DYLD_LIBRARY_PATH="${cwd}"/lib:${cups_dir}
+export DYLD_LIBRARY_PATH="${lib}":${cups_dir}
 export GTK_EXE_PREFIX="${cwd}"
 export GTK_DATA_PREFIX="${cwd}"
 export GTK_IM_MODULE_FILE="${etc}"/gtk-3.0/gtk.immodules
 export GDK_PIXBUF_MODULE_FILE="${etc}"/gtk-3.0/gdk-pixbuf.loaders
-export XDG_DATA_DIRS="${cwd}"/share
+export XDG_DATA_DIRS="${res}"/share
+
+export RT_SETTINGS="$HOME/Library/Application Support/RawTherapee/config"
+export RT_CACHE="$HOME/Library/Application Support/RawTherapee/cache"
 
 # environment variables for X11 backend
 if test -d "${etc}"/fonts; then
