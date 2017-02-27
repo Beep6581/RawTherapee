@@ -173,9 +173,15 @@ std::vector<Glib::ustring> ICCStore::getProfiles (const ProfileType type) const
     std::vector<Glib::ustring> res;
 
     for (const auto profile : fileProfiles) {
-        if (  (type==ICCStore::ProfileType::MONITOR && cmsGetDeviceClass(profile.second) == cmsSigDisplayClass && cmsGetColorSpace (profile.second) == cmsSigRgbData)
-           || (type==ICCStore::ProfileType::PRINTER && cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
-           || (type==ICCStore::ProfileType::OUTPUT  && cmsGetDeviceClass(profile.second) == cmsSigDisplayClass && cmsGetColorSpace (profile.second) == cmsSigRgbData) )
+        if (  (type==ICCStore::ProfileType::MONITOR
+               && cmsGetDeviceClass(profile.second) == cmsSigDisplayClass
+               && cmsGetColorSpace (profile.second) == cmsSigRgbData)
+           || (type==ICCStore::ProfileType::PRINTER
+               && cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
+           || (type==ICCStore::ProfileType::OUTPUT
+               && (cmsGetDeviceClass(profile.second) == cmsSigDisplayClass || cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
+               && cmsGetColorSpace (profile.second) == cmsSigRgbData)
+           )
         {
             res.push_back (profile.first);
         }

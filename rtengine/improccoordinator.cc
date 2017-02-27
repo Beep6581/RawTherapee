@@ -801,7 +801,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         MyMutex::MyLock prevImgLock(previmg->getMutex());
 
         try {
-            // Computing the preview image, i.e. converting from WCS->Monitor color space (soft-proofing disabled) or WCS->Output profile->Monitor color space (soft-proofing enabled)
+            // Computing the preview image, i.e. converting from WCS->Monitor color space (soft-proofing disabled) or WCS->Printer profile->Monitor color space (soft-proofing enabled)
             ipf.lab2monitorRgb (nprevl, previmg);
 
             // Computing the internal image for analysis, i.e. conversion from WCS->Output profile
