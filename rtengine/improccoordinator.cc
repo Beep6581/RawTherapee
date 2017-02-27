@@ -1225,8 +1225,8 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
     // image may contain out of range samples, clip them to avoid wrap-arounds
     #pragma omp parallel for
 
-    for(int i = 0; i < im->height; i++) {
-        for(int j = 0; j < im->width; j++) {
+    for(int i = 0; i < im->getHeight(); i++) {
+        for(int j = 0; j < im->getWidth(); j++) {
             im->r(i, j) = CLIP(im->r(i, j));
             im->g(i, j) = CLIP(im->g(i, j));
             im->b(i, j) = CLIP(im->b(i, j));

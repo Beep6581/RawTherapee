@@ -9,6 +9,7 @@
 /*RT*/#define NO_JASPER
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
+/*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
 
@@ -54,6 +55,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <strings.h>
 #include <sys/types.h>
 
 #if defined(DJGPP) || defined(__MINGW32__)
@@ -326,7 +328,7 @@ void CLASS read_shorts (ushort *pixel, int count)
 {
   if (fread (pixel, 2, count, ifp) < count) derror();
   if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
-	  swab ((char*)pixel, (char*)pixel, count*2);
+	  rtengine::swab ((char*)pixel, (char*)pixel, count*2);
 }
 
 void CLASS cubic_spline (const int *x_, const int *y_, const int len)
@@ -1047,7 +1049,7 @@ void CLASS ljpeg_idct (struct jhead *jh)
     47,55,62,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63 };
 
   if (!cs[0])
-    FORC(106) cs[c] = cos((c & 31)*M_PI/16)/2;
+    FORC(106) cs[c] = cos((c & 31)*rtengine::RT_PI/16)/2;
   memset (work, 0, sizeof work);
   work[0][0][0] = jh->vpred[0] += ljpeg_diff (jh->huff[0]) * jh->quant[0];
   for (i=1; i < 64; i++ ) {
@@ -1059,8 +1061,8 @@ void CLASS ljpeg_idct (struct jhead *jh)
       coef -= (1 << len) - 1;
     ((float *)work)[zigzag[i]] = coef * jh->quant[i];
   }
-  FORC(8) work[0][0][c] *= M_SQRT1_2;
-  FORC(8) work[0][c][0] *= M_SQRT1_2;
+  FORC(8) work[0][0][c] *= rtengine::RT_SQRT1_2;
+  FORC(8) work[0][c][0] *= rtengine::RT_SQRT1_2;
   for (i=0; i < 8; i++)
     for (j=0; j < 8; j++)
       FORC(8) work[1][i][j] += work[0][i][c] * cs[(j*2+1)*c];
@@ -2604,7 +2606,7 @@ void CLASS kodak_radc_load_raw()
 
 #ifdef NO_JPEG
 void CLASS kodak_jpeg_load_raw() {}
-void CLASS lossy_dng_load_raw() {}
+// RT void CLASS lossy_dng_load_raw() {}
 #else
 
 METHODDEF(boolean)
@@ -2614,7 +2616,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
-  swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
+  rtengine::swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
   cinfo->src->next_input_byte = jpeg_buffer;
   cinfo->src->bytes_in_buffer = nbytes;
   return TRUE;
@@ -2661,6 +2663,7 @@ void CLASS kodak_jpeg_load_raw()
 }
 
 void CLASS gamma_curve (double pwr, double ts, int mode, int imax);
+/*RT*/#endif
 
 void CLASS lossy_dng_load_raw()
 {
@@ -2704,7 +2707,8 @@ void CLASS lossy_dng_load_raw()
     fseek (ifp, save+=4, SEEK_SET);
     if (tile_length < INT_MAX)
       fseek (ifp, get4(), SEEK_SET);
-    jpeg_stdio_src (&cinfo, ifp);
+    /*RT jpeg_stdio_src (&cinfo, ifp); */
+    /*RT*/jpeg_memory_src(&cinfo, fdata(ftell(ifp), ifp), ifp->size - ftell(ifp));
     jpeg_read_header (&cinfo, TRUE);
     jpeg_start_decompress (&cinfo);
     buf = (*cinfo.mem->alloc_sarray)
@@ -2724,7 +2728,7 @@ void CLASS lossy_dng_load_raw()
   jpeg_destroy_decompress (&cinfo);
   maximum = 0xffff;
 }
-#endif
+/*RT #endif */
 
 void CLASS kodak_dc120_load_raw()
 {
@@ -3627,7 +3631,7 @@ short * CLASS foveon_make_curve (double max, double mul, double filt)
   double x;
 
   if (!filt) filt = 0.8;
-  size = 4*M_PI*max / filt;
+  size = 4*rtengine::RT_PI*max / filt;
   if (size == UINT_MAX) size--;
   curve = (short *) calloc (size+1, sizeof *curve);
   merror (curve, "foveon_make_curve()");
@@ -9525,8 +9529,8 @@ dng_skip:
   }
 #endif
 #ifdef NO_JPEG
-  if (load_raw == &CLASS kodak_jpeg_load_raw ||
-      load_raw == &CLASS lossy_dng_load_raw) {
+  if (load_raw == &CLASS kodak_jpeg_load_raw /* RT ||
+      load_raw == &CLASS lossy_dng_load_raw*/) {
     fprintf (stderr,_("%s: You must link dcraw with %s!!\n"),
 	ifname, "libjpeg");
     is_raw = 0;

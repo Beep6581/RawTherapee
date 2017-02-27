@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.44 - requires RT 5.0
+  Version 2.45 - requires RT 5.0
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@
 @define-color bg-button-border rgba(0,0,0,.60);
 @define-color bg-entry-border rgba(0,0,0,.40);
 @define-color view-grid-border rgba(255,255,255,0.15);
-@define-color headline-big rgb(190,190,190);
+@define-color headline-big rgb(195,195,195);
 @define-color headline-hl rgb(230,230,230);
 @define-color headline-frame rgb(215,215,215);
 /***********************************************************************************************/
@@ -488,7 +488,8 @@ menu separator {
 }
 
 #PartialPasteHeader label {
-    color: @headline-frame;
+    color: @headline-big;
+    font-weight: bold;
 }
 #PartialPasteHeader {
     margin: 0.5em 0 0 0;
@@ -1016,12 +1017,13 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-right: 0;
 }
 
-#EditorTopPanel > box > button.image-button:not(:nth-child(6)) {
+#EditorTopPanel > box:nth-child(9) > button.image-button:not(:nth-child(6)) {
     min-width: 0;
     padding-left: 0.33334em;
     padding-right: 0.33334em;
 }
-#EditorTopPanel > box > button.image-button:nth-child(6) {
+
+#EditorTopPanel > box:nth-child(9) > button.image-button:nth-child(6) {
     -gtk-icon-shadow: none;
 }
 #EditorTopPanel > box > box > button {
@@ -1850,5 +1852,4 @@ headerbar .title:backdrop {
     color: alpha(@winTitle,.60);
 }
 /**/
-
 /*** end ***************************************************************************************/

@@ -90,7 +90,6 @@ namespace rtengine
 #undef CLIPTOC
 
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
-#define RT_PI 3.141592653589
 
 bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef,
                                   const LCPMapper *pLCPMap)
@@ -122,19 +121,19 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    double cost = cos(params->rotate.degree * RT_PI / 180.0);
-    double sint = sin(params->rotate.degree * RT_PI / 180.0);
+    double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
+    double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
-    double vpteta  = fabs(vpalpha - RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-oW * oW * tan(vpalpha) * tan(vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan(vpalpha) * sqrt(16 * maxRadius * maxRadius + oW * oW * tan(vpalpha) * tan(vpalpha))) / (maxRadius * maxRadius * 8)));
+    double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
+    double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-oW * oW * tan(vpalpha) * tan(vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan(vpalpha) * sqrt(16 * maxRadius * maxRadius + oW * oW * tan(vpalpha) * tan(vpalpha))) / (maxRadius * maxRadius * 8)));
     double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
-    double hpteta  = fabs(hpalpha - RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-oH * oH * tan(hpalpha) * tan(hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan(hpalpha) * sqrt(16 * maxRadius * maxRadius + oH * oH * tan(hpalpha) * tan(hpalpha))) / (maxRadius * maxRadius * 8)));
+    double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
+    double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-oH * oH * tan(hpalpha) * tan(hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan(hpalpha) * sqrt(16 * maxRadius * maxRadius + oH * oH * tan(hpalpha) * tan(hpalpha))) / (maxRadius * maxRadius * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
     double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
@@ -299,7 +298,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
         LCPProfile *pLCPProf = lcpStore->getProfile(params->lensProf.lcpFile);
 
         if (pLCPProf) pLCPMap = new LCPMapper(pLCPProf, focalLen, focalLen35mm, focusDist, 0, false, params->lensProf.useDist,
-                                                  original->width, original->height, params->coarse, rawRotationDeg);
+                                                  original->getWidth(), original->getHeight(), params->coarse, rawRotationDeg);
     }
 
     if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
@@ -351,14 +350,14 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
     double gradient_span = gradient.feather / 100.0;
     double gradient_center_x = gradient.centerX / 200.0 + 0.5;
     double gradient_center_y = gradient.centerY / 200.0 + 0.5;
-    double gradient_angle = gradient.degree / 180.0 * M_PI;
+    double gradient_angle = gradient.degree / 180.0 * rtengine::RT_PI;
     //fprintf(stderr, "%f %f %f %f %f %d %d\n", gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
-    // make 0.0 <= gradient_angle < 2 * M_PI
-    gradient_angle = fmod(gradient_angle, 2 * M_PI);
+    // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
+    gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
 
     if (gradient_angle < 0.0) {
-        gradient_angle += 2.0 * M_PI;
+        gradient_angle += 2.0 * rtengine::RT_PI;
     }
 
     gp.bright_top = false;
@@ -372,24 +371,24 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
         // (actually we could transpose only for 90 degrees, but this way we avoid
         // division with extremely small numbers
         gp.transpose = true;
-        gradient_angle += 0.5 * M_PI;
+        gradient_angle += 0.5 * rtengine::RT_PI;
         cosgrad = cos(gradient_angle);
         double gxc = gradient_center_x;
         gradient_center_x = 1.0 - gradient_center_y;
         gradient_center_y = gxc;
     }
 
-    gradient_angle = fmod(gradient_angle, 2 * M_PI);
+    gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
 
-    if (gradient_angle > 0.5 * M_PI && gradient_angle < M_PI) {
-        gradient_angle += M_PI;
+    if (gradient_angle > 0.5 * rtengine::RT_PI && gradient_angle < rtengine::RT_PI) {
+        gradient_angle += rtengine::RT_PI;
         gp.bright_top = true;
-    } else if (gradient_angle >= M_PI && gradient_angle < 1.5 * M_PI) {
-        gradient_angle -= M_PI;
+    } else if (gradient_angle >= rtengine::RT_PI && gradient_angle < 1.5 * rtengine::RT_PI) {
+        gradient_angle -= rtengine::RT_PI;
         gp.bright_top = true;
     }
 
-    if (fabs(gradient_angle) < 0.001 || fabs(gradient_angle - 2 * M_PI) < 0.001) {
+    if (fabs(gradient_angle) < 0.001 || fabs(gradient_angle - 2 * rtengine::RT_PI) < 0.001) {
         gradient_angle = 0;
         gp.angle_is_zero = true;
     }
@@ -444,7 +443,7 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
                 val = 1.f - val;
             }
 
-            val *= M_PIf_2;
+            val *= rtengine::RT_PI_F_2;
 
             if (gp.scale < 1.f) {
                 val = pow3(xsinf(val));
@@ -468,7 +467,7 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
 
             val = gp.bright_top ? 1.f - val : val;
 
-            val *= M_PIf_2;
+            val *= rtengine::RT_PI_F_2;
 
             if (gp.scale < 1.f) {
                 val = pow3(xsinf(val));
@@ -623,7 +622,7 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
     if (dist >= dist_oe) {
         val = pcv.scale;
     } else {
-        val = M_PIf_2 * (dist - dist_ie) / (dist_oe - dist_ie);
+        val = rtengine::RT_PI_F_2 * (dist - dist_ie) / (dist_oe - dist_ie);
 
         if (pcv.scale < 1.f) {
             val = pow4(xcosf(val));
@@ -663,17 +662,17 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
     struct pcv_params pcv;
 
     if (applyPCVignetting) {
-        //fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->width, transformed->height, cx, cy, params->crop.w, params->crop.h);
+        //fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->getWidth(), transformed->getHeight(), cx, cy, params->crop.w, params->crop.h);
         calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
     bool darkening = (params->vignetting.amount <= 0.0);
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 
-    for (int y = 0; y < transformed->height; y++) {
+    for (int y = 0; y < transformed->getHeight(); y++) {
         double vig_y_d = (double) (y + cy) - vig_h2 ;
 
-        for (int x = 0; x < transformed->width; x++) {
+        for (int x = 0; x < transformed->getWidth(); x++) {
             double factor = 1.0;
 
             if (applyVignetting) {
@@ -746,20 +745,20 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
     double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    double cost = cos(params->rotate.degree * RT_PI / 180.0);
-    double sint = sin(params->rotate.degree * RT_PI / 180.0);
+    double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
+    double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
-    double vpteta  = fabs(vpalpha - RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
+    double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
+    double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
                      oW * tan(vpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oW * tan(vpalpha)))) / (SQR(maxRadius) * 8)));
     double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
-    double hpteta  = fabs(hpalpha - RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
+    double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
+    double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
                      oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
@@ -779,8 +778,8 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
     bool darkening = (params->vignetting.amount <= 0.0);
     #pragma omp parallel for if (multiThread)
 
-    for (int y = 0; y < transformed->height; y++) {
-        for (int x = 0; x < transformed->width; x++) {
+    for (int y = 0; y < transformed->getHeight(); y++) {
+        for (int x = 0; x < transformed->getWidth(); x++) {
             double x_d = x, y_d = y;
 
             if (enableLCPDist) {
@@ -849,7 +848,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                 yc -= sy;
 
                 // Convert only valid pixels
-                if (yc >= 0 && yc < original->height && xc >= 0 && xc < original->width) {
+                if (yc >= 0 && yc < original->getHeight() && xc >= 0 && xc < original->getWidth()) {
 
                     // multiplier for vignetting correction
                     double vignmul = 1.0;
@@ -870,7 +869,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                         vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
                     }
 
-                    if (yc > 0 && yc < original->height - 2 && xc > 0 && xc < original->width - 2) {
+                    if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
                         // all interpolation pixels inside image
                         if (enableCA) {
                             interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
@@ -879,10 +878,10 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                         }
                     } else {
                         // edge pixels
-                        int y1 = LIM(yc,   0, original->height - 1);
-                        int y2 = LIM(yc + 1, 0, original->height - 1);
-                        int x1 = LIM(xc,   0, original->width - 1);
-                        int x2 = LIM(xc + 1, 0, original->width - 1);
+                        int y1 = LIM(yc,   0, original->getHeight() - 1);
+                        int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
+                        int x1 = LIM(xc,   0, original->getWidth() - 1);
+                        int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
 
                         if (enableCA) {
                             chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
@@ -934,19 +933,19 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
     double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    double cost = cos(params->rotate.degree * RT_PI / 180.0);
-    double sint = sin(params->rotate.degree * RT_PI / 180.0);
+    double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
+    double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90 - vpdeg) / 180.0 * RT_PI;
-    double vpteta  = fabs(vpalpha - RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-oW * oW * tan(vpalpha) * tan(vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan(vpalpha) * sqrt(16 * maxRadius * maxRadius + oW * oW * tan(vpalpha) * tan(vpalpha))) / (maxRadius * maxRadius * 8)));
+    double vpalpha = (90 - vpdeg) / 180.0 * rtengine::RT_PI;
+    double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-oW * oW * tan(vpalpha) * tan(vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan(vpalpha) * sqrt(16 * maxRadius * maxRadius + oW * oW * tan(vpalpha) * tan(vpalpha))) / (maxRadius * maxRadius * 8)));
     double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90 - hpdeg) / 180.0 * RT_PI;
-    double hpteta  = fabs(hpalpha - RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-oH * oH * tan(hpalpha) * tan(hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan(hpalpha) * sqrt(16 * maxRadius * maxRadius + oH * oH * tan(hpalpha) * tan(hpalpha))) / (maxRadius * maxRadius * 8)));
+    double hpalpha = (90 - hpdeg) / 180.0 * rtengine::RT_PI;
+    double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-oH * oH * tan(hpalpha) * tan(hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan(hpalpha) * sqrt(16 * maxRadius * maxRadius + oH * oH * tan(hpalpha) * tan(hpalpha))) / (maxRadius * maxRadius * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
     double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
@@ -956,8 +955,8 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
     // main cycle
     #pragma omp parallel for if (multiThread)
 
-    for (int y = 0; y < transformed->height; y++) {
-        for (int x = 0; x < transformed->width; x++) {
+    for (int y = 0; y < transformed->getHeight(); y++) {
+        for (int x = 0; x < transformed->getWidth(); x++) {
             double x_d = x, y_d = y;
 
             if (pLCPMap && params->lensProf.useDist) {
@@ -1019,7 +1018,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             yc -= sy;
 
             // Convert only valid pixels
-            if (yc >= 0 && yc < original->height && xc >= 0 && xc < original->width) {
+            if (yc >= 0 && yc < original->getHeight() && xc >= 0 && xc < original->getWidth()) {
 
                 // multiplier for vignetting correction
                 double vignmul = 1.0;
@@ -1040,17 +1039,17 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                     vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
                 }
 
-                if (yc < original->height - 1 && xc < original->width - 1) {
+                if (yc < original->getHeight() - 1 && xc < original->getWidth() - 1) {
                     // all interpolation pixels inside image
                     transformed->r(y, x) = vignmul * (original->r(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r(yc, xc + 1) * Dx * (1.0 - Dy) + original->r(yc + 1, xc) * (1.0 - Dx) * Dy + original->r(yc + 1, xc + 1) * Dx * Dy);
                     transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
                     transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
                 } else {
                     // edge pixels
-                    int y1 = LIM(yc,   0, original->height - 1);
-                    int y2 = LIM(yc + 1, 0, original->height - 1);
-                    int x1 = LIM(xc,   0, original->width - 1);
-                    int x2 = LIM(xc + 1, 0, original->width - 1);
+                    int y1 = LIM(yc,   0, original->getHeight() - 1);
+                    int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
+                    int x1 = LIM(xc,   0, original->getWidth() - 1);
+                    int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
                     transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
                     transformed->g(y, x) = vignmul * (original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
                     transformed->b(y, x) = vignmul * (original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);

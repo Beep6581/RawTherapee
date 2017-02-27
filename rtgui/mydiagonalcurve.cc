@@ -481,12 +481,12 @@ void MyDiagonalCurve::draw (int handle)
             double x = double(graphX + 1) + double((graphW - 2) * curve.x.at(i)); // project (curve.x.at(i), 0, 1, graphW);
             double y = double(graphY - 1) - double((graphH - 2) * curve.y.at(i)); // project (curve.y.at(i), 0, 1, graphH);
 
-            cr->arc (x, y, RADIUS + 0.5, 0, 2 * M_PI);
+            cr->arc (x, y, RADIUS + 0.5, 0, 2 * rtengine::RT_PI);
             cr->fill ();
 
             if (i == edited_point) {
                 cr->set_line_width(2.);
-                cr->arc (x, y, RADIUS + 3.5, 0, 2 * M_PI);
+                cr->arc (x, y, RADIUS + 3.5, 0, 2 * rtengine::RT_PI);
                 cr->stroke();
                 cr->set_line_width(1.);
             }

@@ -33,6 +33,8 @@
 #32 2016-12-29 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1464
 #33 2017-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
 #34 2017-01-07 IPTC (TooWaBoo) RT4.2.1492
+#35 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
+#36 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -707,6 +709,7 @@ HISTORY_MSG_440;(Detailebenenkontrast)\nProzessreihenfolge
 HISTORY_MSG_441;(Retinex) - Einstellungen\nVerstärkung und Ausgleich\nTransmissionsverstärkung
 HISTORY_MSG_442;(Retinex) - Einstellungen\nTransmission - Skalierung
 HISTORY_MSG_443;(Farbmanagement)\nAusgabeprofil\nSchwarzpunkt-Kompensation
+HISTORY_MSG_444;(Weißabgleich)\nAWB-Temperatur-Korrektur
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1080,7 +1083,7 @@ PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und
 PREFERENCES_RGBDTL_LABEL;Maximale Anzahl Threads für Rauschreduzierung
 PREFERENCES_RGBDTL_TOOLTIP;Die Rauschreduzierung benötigt mindestens 128MB RAM für ein 10 Megapixel-Bild oder 512MB für ein 40 Megapixel-Bild, und zusätzlich 128MB RAM pro Thread. Je mehr Threads parallel ablaufen, desto schneller ist die Berechnung. Bei Einstellung "0" werden so viele Threads wie möglich benutzt.
 PREFERENCES_SELECTFONT;Schriftart
-PREFERENCES_SELECTFONT_COLPICKER;Schriftart für den Farbwähler
+PREFERENCES_SELECTFONT_COLPICKER;Schriftart für die Farbwähler
 PREFERENCES_SELECTLANG;Sprache
 PREFERENCES_SELECTTHEME;Oberflächendesign (erfordert Neustart)
 PREFERENCES_SERIALIZE_TIFF_READ;TIFF-Bilder
@@ -1185,7 +1188,7 @@ THRESHOLDSELECTOR_HINT;<b>Umschalt</b>-Taste halten, um individuelle\nKontrollpu
 THRESHOLDSELECTOR_T;Oben
 THRESHOLDSELECTOR_TL;Oben-Links
 THRESHOLDSELECTOR_TR;Oben-Rechts
-TOOLBAR_TOOLTIP_COLORPICKER;<b>Farbwähler</b>\n\nWenn eingeschaltet:\n- Mit der linken Maustaste können Sie einen Farbwähler setzen.\n- Zum Verschieben, linke Maustaste festhalten.\n- Umschalttaste + Rechts-Klick entfernt alle Farbwähler.\n- Rechts-Klick in einen freien Bereich schaltet auf das Hand-Werkzeug zurück.
+TOOLBAR_TOOLTIP_COLORPICKER;<b>Farbwähler</b>\n\nWenn eingeschaltet:\n- Mit der linken Maustaste können Sie einen Farbwähler setzen.\n- Zum Verschieben, linke Maustaste festhalten.\n- Umschalttaste + Rechts-Klick entfernt alle Farbwähler.\n- Rechts-Klick auf den Farbwählerbutton blendet die Farbwähler ein/aus\n- Rechts-Klick in einen freien Bereich schaltet auf das Hand-Werkzeug zurück.
 TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen\nTaste: <b>c</b>\n\nZum Verschieben des Ausschnitts,\nUmschalttaste festhalten.
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug\nTaste: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Ausrichten / Drehen\nTaste: <b>s</b>\n\nRichtet das Bild entlang einer Leitlinie aus.
@@ -1753,7 +1756,7 @@ TP_RETINEX_MAP_METHOD_TOOLTIP;<b>Keine:</b> Wendet die Maske, die mit der gaußs
 TP_RETINEX_MAP_NONE;Keine
 TP_RETINEX_MEDIAN;Medianfilter
 TP_RETINEX_METHOD;Methode
-TP_RETINEX_METHOD_TOOLTIP;<b>Schatten</b> wirkt sich auf dunkle Bereiche aus.\n\n<b>Schatten &amp; Lichter</b> wirkt sich auf dunkle und helle Bereiche aus.\n\n<b>Lichter</b> wirkt sich auf helle Bereiche aus.\n\n<b>Spitzlichter</b> wirkt sich auf sehr helle Bereiche aus und reduziert\nMagenta-Falschfarben.
+TP_RETINEX_METHOD_TOOLTIP;<b>Schatten</b> wirkt sich auf dunkle Bereiche aus.\n\n<b>Schatten / Lichter</b> wirkt sich auf dunkle und helle Bereiche aus.\n\n<b>Lichter</b> wirkt sich auf helle Bereiche aus.\n\n<b>Spitzlichter</b> wirkt sich auf sehr helle Bereiche aus und reduziert\nMagenta-Falschfarben.
 TP_RETINEX_MLABEL;Schleierred: Min = %1, Max = %2
 TP_RETINEX_MLABEL_TOOLTIP;Sollte nahe bei Min = 0 und Max = 32768 sein
 TP_RETINEX_NEIGHBOR;Radius
@@ -1774,7 +1777,7 @@ TP_RETINEX_TLABEL_TOOLTIP;Ergebnis der Transmissionskurve: Min, Max, Mittel und 
 TP_RETINEX_TRANF;Transmission
 TP_RETINEX_TRANSMISSION;Transmissionskurve
 TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission in Abhängigkeit der Transmission.\n\n<b>x-Achse:</b> Transmission negativer Werte (Min),\nMittel und positiver Werte (Max).\n\n<b>y-Achse:</b> Verstärkung oder Abschwächung.
-TP_RETINEX_UNIFORM;Schatten & Lichter
+TP_RETINEX_UNIFORM;Schatten / Lichter
 TP_RETINEX_VARIANCE;Kontrast
 TP_RETINEX_VARIANCE_TOOLTIP;Niedrige Werte erhöhen den lokalen\nKontrast und die Sättigung, können\naber zu Artefakten führen.
 TP_RETINEX_VIEW;Vorschau
@@ -2054,6 +2057,8 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (Vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Manuell setzen
+TP_WBALANCE_TEMPBIAS;AWB-Temperatur-Korrektur
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Prozentuale Korrektur der Farbtemperatur des automatischen\nWeißabgleichs in Richtung wärmer oder kälter.\nDer Korreturwert berechnet sich aus:\nAWB-Temperatur + AWB-Temperatur * AWB-Temperatur-Korrektur
 TP_WBALANCE_TEMPERATURE;Farbtemperatur
 TP_WBALANCE_TUNGSTEN;Glühlampe
 TP_WBALANCE_WATER1;Unterwasser 1
@@ -2066,11 +2071,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>Alt</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_444;WB - Temp bias
-!TP_WBALANCE_TEMPBIAS;AWB temperature bias
-!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
