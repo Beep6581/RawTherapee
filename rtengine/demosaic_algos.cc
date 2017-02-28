@@ -3329,8 +3329,8 @@ void RawImageSource::fill_border( float (*cache )[3], int border, int x0, int y0
 
 // saves red and blue
 
-// change buffer[3] -> buffer[2],  possibly to buffer[1] if split 
-// into two loops, one for R and another for B, could also be smaller because 
+// change buffer[3] -> buffer[2],  possibly to buffer[1] if split
+// into two loops, one for R and another for B, could also be smaller because
 // there is no need for green pixels pass
 // this would decrease the amount of needed memory
 // from megapixels*2 records to megapixels*0.5
@@ -3369,8 +3369,8 @@ void RawImageSource::dcb_hid(float (*image)[3], int x0, int y0)
         for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col, c = FC(y0 - TILEBORDER + row, x0 - TILEBORDER + col); col < colMax; col += 2, indx += 2) {
             assert(indx - u - 1 >= 0 && indx + u + 1 < u * u && c >= 0 && c < 3);
 
-			image[indx][1] = 0.25*(image[indx-1][1]+image[indx+1][1]+image[indx-u][1]+image[indx+u][1]);
-		}
+            image[indx][1] = 0.25*(image[indx-1][1]+image[indx+1][1]+image[indx-u][1]+image[indx+u][1]);
+        }
 }
 
 // missing colours are interpolated
@@ -3385,10 +3385,10 @@ void RawImageSource::dcb_color(float (*image)[3], int x0, int y0)
         for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col, c = 2 - FC(y0 - TILEBORDER + row, x0 - TILEBORDER + col); col < colMax; col += 2, indx += 2) {
             assert(indx >= 0 && indx < u * u && c >= 0 && c < 4);
 
-			
-//Jacek comment: one multiplication less			
-			image[indx][c] = image[indx][1] + 
-							   ( image[indx + u + 1][c] + image[indx + u - 1][c] + image[indx - u + 1][c] + image[indx - u - 1][c]
+
+//Jacek comment: one multiplication less
+            image[indx][c] = image[indx][1] +
+                               ( image[indx + u + 1][c] + image[indx + u - 1][c] + image[indx - u + 1][c] + image[indx - u - 1][c]
                               - (image[indx + u + 1][1] + image[indx + u - 1][1] + image[indx - u + 1][1] + image[indx - u - 1][1]) ) * 0.25f;
 
 /* original
@@ -3396,23 +3396,23 @@ void RawImageSource::dcb_color(float (*image)[3], int x0, int y0)
                                - image[indx + u + 1][1] - image[indx + u - 1][1] - image[indx - u + 1][1] - image[indx - u - 1][1]
                                + image[indx + u + 1][c] + image[indx + u - 1][c] + image[indx - u + 1][c] + image[indx - u - 1][c] ) * 0.25f;
 */
-	   }
+       }
 
     // red or blue in green pixels
     for (int row = rowMin; row < rowMax; row++)
         for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin + 1) & 1), indx = row * CACHESIZE + col, c = FC(y0 - TILEBORDER + row, x0 - TILEBORDER + col + 1), d = 2 - c; col < colMax; col += 2, indx += 2) {
             assert(indx >= 0 && indx < u * u && c >= 0 && c < 4);
 
-//Jacek comment: two multiplications (in total) less			
+//Jacek comment: two multiplications (in total) less
             image[indx][c] = image[indx][1] + (image[indx + 1][c] + image[indx - 1][c] - (image[indx + 1][1] + image[indx - 1][1])) * 0.5f;
             image[indx][d] = image[indx][1] + (image[indx + u][d] + image[indx - u][d] - (image[indx + u][1] + image[indx - u][1])) * 0.5f;
-			
-			
+
+
 /* original
             image[indx][c] = (2.f * image[indx][1] - image[indx + 1][1] - image[indx - 1][1] + image[indx + 1][c] + image[indx - 1][c]) * 0.5f;
             image[indx][d] = (2.f * image[indx][1] - image[indx + u][1] - image[indx - u][1] + image[indx + u][d] + image[indx - u][d]) * 0.5f;
 */
-		}
+        }
 }
 
 // green correction
@@ -3425,14 +3425,14 @@ void RawImageSource::dcb_hid2(float (*image)[3], int x0, int y0)
     for (int row = rowMin; row < rowMax; row++) {
         for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col, c = FC(y0 - TILEBORDER + row, x0 - TILEBORDER + col); col < colMax; col += 2, indx += 2) {
             assert(indx - v >= 0 && indx + v < u * u);
- 
-//Jacek comment: one multiplication less 
+
+//Jacek comment: one multiplication less
             image[indx][1] = image[indx][c] +
-							 (image[indx + v][1] + image[indx - v][1] + image[indx - 2][1] + image[indx + 2][1] 
-						   - (image[indx + v][c] + image[indx - v][c] + image[indx - 2][c] + image[indx + 2][c])) * 0.25f;
+                             (image[indx + v][1] + image[indx - v][1] + image[indx - 2][1] + image[indx + 2][1]
+                           - (image[indx + v][c] + image[indx - v][c] + image[indx - 2][c] + image[indx + 2][c])) * 0.25f;
 
 /* original
-			image[indx][1] = (image[indx + v][1] + image[indx - v][1] + image[indx - 2][1] + image[indx + 2][1]) * 0.25f +
+            image[indx][1] = (image[indx + v][1] + image[indx - v][1] + image[indx - 2][1] + image[indx + 2][1]) * 0.25f +
                              image[indx][c] - ( image[indx + v][c] + image[indx - v][c] + image[indx - 2][c] + image[indx + 2][c]) * 0.25f;
 */
         }
@@ -3446,7 +3446,7 @@ void RawImageSource::dcb_hid2(float (*image)[3], int x0, int y0)
 // saved in image[][3]
 
 // seems at least 2 persons implemented some code, as this one has different coding style, could be unified
-// I don't know if *pix is faster than a loop working on image[] directly 
+// I don't know if *pix is faster than a loop working on image[] directly
 void RawImageSource::dcb_map(float (*image)[3], uint8_t *map, int x0, int y0)
 {
     const int u = 3 * CACHESIZE;
@@ -3565,27 +3565,27 @@ void RawImageSource::dcb_correction2(float (*image)[3], uint8_t *map, int x0, in
 
             assert(indx >= 0 && indx < u * u);
 
-// Jacek comment: works now, and has 3 float mults and 9 float adds		
-			image[indx][1] =  image[indx][c] +
-					((16.f - current) * (image[indx - 1][1] + image[indx + 1][1] - (image[indx + 2][c] + image[indx - 2][c])) 
-							+ current * (image[indx - u][1] + image[indx + u][1] - (image[indx + v][c] + image[indx - v][c]))) * 0.03125f;			
-			
-			
+// Jacek comment: works now, and has 3 float mults and 9 float adds
+            image[indx][1] =  image[indx][c] +
+                    ((16.f - current) * (image[indx - 1][1] + image[indx + 1][1] - (image[indx + 2][c] + image[indx - 2][c]))
+                            + current * (image[indx - u][1] + image[indx + u][1] - (image[indx + v][c] + image[indx - v][c]))) * 0.03125f;
+
+
             // 4 float mults and 9 float adds
-			// Jacek comment: not mathematically identical to original
-/*            image[indx][1] = 16.f * image[indx][c] + 
+            // Jacek comment: not mathematically identical to original
+/*            image[indx][1] = 16.f * image[indx][c] +
                              ((16.f - current) * ((image[indx - 1][1] + image[indx + 1][1])
                                                   - (image[indx + 2][c] + image[indx - 2][c]))
                               + current * ((image[indx - u][1] + image[indx + u][1]) - (image[indx + v][c] + image[indx - v][c]))) * 0.03125f;
 */
             // 7 float mults and 10 float adds
-			// original code
-/*           
+            // original code
+/*
             image[indx][1] = ((16.f - current) * ((image[indx - 1][1] + image[indx + 1][1]) * 0.5f
                                                   + image[indx][c] - (image[indx + 2][c] + image[indx - 2][c]) * 0.5f)
                               + current * ((image[indx - u][1] + image[indx + u][1]) * 0.5f + image[indx][c] - (image[indx + v][c] + image[indx - v][c]) * 0.5f)) * 0.0625f;
 */
-		}
+        }
     }
 }
 
@@ -3618,7 +3618,7 @@ void RawImageSource::dcb_refinement(float (*image)[3], uint8_t *map, int x0, int
             h2 = 2.f * image[indx + 1][1] / (1.f + image[indx + 2][c] + currPix);
 
             g2 = h0 + h1 + h2;
-		
+
             // new green value
             assert(indx >= 0 && indx < u * u);
             currPix *= (current * g1 + (16.f - current) * g2) / 48.f;
@@ -3698,7 +3698,7 @@ void RawImageSource::dcb_color_full(float (*image)[3], int x0, int y0, float (*c
         }
 }
 
-// DCB demosaicing main routine 
+// DCB demosaicing main routine
 void RawImageSource::dcb_demosaic(int iterations, bool dcb_enhance)
 {
 BENCHFUN
@@ -3750,7 +3750,7 @@ BENCHFUN
 
         copy_to_buffer(buffer, tile);
         dcb_hid(tile, x0, y0);
-	  
+
         for (int i = iterations; i > 0; i--) {
             dcb_hid2(tile, x0, y0);
             dcb_hid2(tile, x0, y0);
@@ -3773,19 +3773,19 @@ BENCHFUN
         dcb_map(tile, map, x0, y0);
         restore_from_buffer(tile, buffer);
 
-		if (!dcb_enhance) 
-			dcb_color(tile, x0, y0);
-		else 
-		{
-			memset(chrm, 0, CACHESIZE * CACHESIZE * sizeof * chrm);
+        if (!dcb_enhance)
+            dcb_color(tile, x0, y0);
+        else
+        {
+            memset(chrm, 0, CACHESIZE * CACHESIZE * sizeof * chrm);
             dcb_refinement(tile, map, x0, y0);
             dcb_color_full(tile, x0, y0, chrm);
         }
 
  /*
         dcb_hid(tile, buffer, buffer2, x0, y0);
-		dcb_color(tile, x0, y0);
-		
+        dcb_color(tile, x0, y0);
+
         copy_to_buffer(buffer, tile);
 
         for (int i = iterations; i > 0; i--) {
@@ -3811,7 +3811,7 @@ BENCHFUN
         restore_from_buffer(tile, buffer);
         dcb_color_full(tile, x0, y0, chrm);
 
-		if (dcb_enhance) {
+        if (dcb_enhance) {
             dcb_refinement(tile, x0, y0);
             dcb_color_full(tile, x0, y0, chrm);
          }
