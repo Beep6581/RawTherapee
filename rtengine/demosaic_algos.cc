@@ -38,7 +38,7 @@
 #include "sleef.c"
 #include "opthelper.h"
 #include "median.h"
-#define BENCHMARK
+//#define BENCHMARK
 #include "StopWatch.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -3772,7 +3772,7 @@ BENCHFUN
         dcb_correction(tile, map, x0, y0);
         dcb_map(tile, map, x0, y0);
         restore_from_buffer(tile, buffer);
-        
+
 		if (!dcb_enhance) 
 			dcb_color(tile, x0, y0);
 		else 
