@@ -27,71 +27,57 @@ constexpr float RT_PI_F_2 = RT_PI_2;
 constexpr float RT_INFINITY_F = std::numeric_limits<float>::infinity();
 constexpr float RT_NAN_F = std::numeric_limits<float>::quiet_NaN();
 
-template <typename _Tp>
-inline _Tp SQR (_Tp x)
+template <typename T>
+inline T SQR (T x)
 {
 //      return std::pow(x,2); Slower than:
     return x * x;
 }
 
-template<typename _Tp>
-inline const _Tp& min(const _Tp& a, const _Tp& b)
+template<typename T>
+inline const T& min(const T& a, const T& b)
 {
     return std::min(a, b);
 }
 
-template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b)
+template<typename T, typename... ARGS>
+inline const T& min(const T& a, const T& b, const ARGS&... args)
+{
+    return min(min(a, b), args...);
+}
+
+template<typename T>
+inline const T& max(const T& a, const T& b)
 {
     return std::max(a, b);
 }
 
+template<typename T, typename... ARGS>
+inline const T& max(const T& a, const T& b, const ARGS&... args)
+{
+    return max(max(a, b), args...);
+}
 
-template<typename _Tp>
-inline const _Tp& LIM(const _Tp& a, const _Tp& b, const _Tp& c)
+template<typename T>
+inline const T& LIM(const T& a, const T& b, const T& c)
 {
     return std::max(b, std::min(a, c));
 }
 
-template<typename _Tp>
-inline _Tp LIM01(const _Tp& a)
+template<typename T>
+inline T LIM01(const T& a)
 {
-    return std::max(_Tp(0), std::min(a, _Tp(1)));
+    return std::max(T(0), std::min(a, T(1)));
 }
 
-template<typename _Tp>
-inline _Tp CLIP(const _Tp& a)
+template<typename T>
+inline T CLIP(const T& a)
 {
-    return LIM(a, static_cast<_Tp>(0), static_cast<_Tp>(MAXVAL));
+    return LIM(a, static_cast<T>(0), static_cast<T>(MAXVAL));
 }
 
-
-template<typename _Tp>
-inline const _Tp& min(const _Tp& a, const _Tp& b, const _Tp& c)
-{
-    return std::min(c, std::min(a, b));
-}
-
-template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c)
-{
-    return std::max(c, std::max(a, b));
-}
-
-template<typename _Tp>
-inline const _Tp& min(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d)
-{
-    return std::min(d, std::min(c, std::min(a, b)));
-}
-
-template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d)
-{
-    return std::max(d, std::max(c, std::max(a, b)));
-}
-
-template<typename _Tp>
-inline _Tp intp(_Tp a, _Tp b, _Tp c)
+template<typename T>
+inline T intp(T a, T b, T c)
 {
     // calculate a * b + (1 - a) * c
     // following is valid:
