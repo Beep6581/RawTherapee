@@ -31,7 +31,7 @@ set (BASESOURCEFILES
     dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc sharpenedge.cc sharpenmicro.cc colorappearance.cc
     filmsimulation.cc prsharpening.cc
-    dynamicprofile.cc)
+    dynamicprofile.cc dynamicprofilepanel.cc)
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 

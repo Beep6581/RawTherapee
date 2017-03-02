@@ -627,7 +627,6 @@ void ProfileStoreComboBox::updateProfileList ()
         // special case for the Internal default entry
         addRow(profileStore.getInternalDefaultPSE());
     }
-    addRow(profileStore.getInternalDynamicPSE());
 
     // releasing the profilestore's entry list mutex
     profileStore.releaseFileList();
