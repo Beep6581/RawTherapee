@@ -20,52 +20,57 @@
 #define _DYNAMICPROFILE_H_
 
 #include <glibmm.h>
-
+#include <vector>
 #include "options.h"
 
 
 class DynamicProfileEntry {
 public:
+    template <class T>
+    struct Range {
+        T min;
+        T max;
+        explicit Range(T l=T(), T u=T()): min(l), max(u) {}
+
+        bool operator()(T val) const
+        {
+            return val >= min && val <= max;
+        }
+    };
+
+    template <class T>
+    struct Optional {
+        T value;
+        bool enabled;
+        explicit Optional(T v=T(), bool e=false): value(v), enabled(e) {}
+
+        bool operator()(const T &val) const
+        {
+            return !enabled || value == val;
+        }
+    };
+    
     DynamicProfileEntry();
     bool matches(const rtengine::ImageMetaData *im);
     bool operator<(const DynamicProfileEntry &other) const;
 
     int serial_number;
-
-    bool has_iso;
-    int iso_min;
-    int iso_max;
-
-    bool has_fnumber;
-    double fnumber_min;
-    double fnumber_max;
-
-    bool has_focallen;
-    double focallen_min;
-    double focallen_max;
-
-    bool has_shutterspeed;
-    double shutterspeed_min;
-    double shutterspeed_max;
-
-    bool has_expcomp;
-    double expcomp_min;
-    double expcomp_max;
-
-    bool has_make;
-    std::string make;
-
-    bool has_model;
-    std::string model;
-
-    bool has_lens;
-    std::string lens;
-
+    Range<int> iso;
+    Range<double> fnumber;
+    Range<double> focallen;
+    Range<double> shutterspeed;
+    Range<double> expcomp;
+    Optional<Glib::ustring> make;
+    Optional<Glib::ustring> model;
+    Optional<Glib::ustring> lens;
     Glib::ustring profilepath;
 };
 
 
 bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out);
+bool storeDynamicProfileEntries(
+    const std::vector<DynamicProfileEntry> &entries);
+
 rtengine::procparams::PartialProfile *loadDynamicProfile(
     const rtengine::ImageMetaData *im);
 

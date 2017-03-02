@@ -23,17 +23,26 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace {
+
+const int ISO_MAX = 512000;
+const double FNUMBER_MAX = 100.0;
+const double FOCALLEN_MAX = 10000.0;
+const double SHUTTERSPEED_MIN = 1.0/10000.0;
+const double SHUTTERSPEED_MAX = 1000.0;
+const double EXPCOMP_MIN = -20.0;
+const double EXPCOMP_MAX = 20.0;
+
+} // namespace
+
+
 DynamicProfileEntry::DynamicProfileEntry():
     serial_number(0),
-    has_iso(false), iso_min(0), iso_max(1000000),
-    has_fnumber(false), fnumber_min(0.0), fnumber_max(1000.0),
-    has_focallen(false), focallen_min(0.0), focallen_max(1000000.0),
-    has_shutterspeed(false), shutterspeed_min(1000.0), shutterspeed_max(1.0/1000000.0),
-    has_expcomp(false), expcomp_min(-100.0), expcomp_max(100.0),
-    has_make(false), make(""),
-    has_model(false), model(""),
-    has_lens(false), lens(""),
-    profilepath("")
+    iso(0, ISO_MAX),
+    fnumber(0, FNUMBER_MAX),
+    focallen(0, FOCALLEN_MAX),
+    shutterspeed(SHUTTERSPEED_MIN, SHUTTERSPEED_MAX),
+    expcomp(EXPCOMP_MIN, EXPCOMP_MAX)
 {
 }
 
@@ -46,61 +55,102 @@ bool DynamicProfileEntry::operator<(const DynamicProfileEntry &other) const
 
 bool DynamicProfileEntry::matches(const rtengine::ImageMetaData *im)
 {
-    if (has_iso) {
-        int iso = im->getISOSpeed();
-        if (iso < iso_min || iso > iso_max) {
-            return false;
-        }
-    }
-    if (has_fnumber) {
-        double fnumber = im->getFNumber();
-        if (fnumber < fnumber_min || fnumber > fnumber_max) {
-            return false;
-        }
-    }
-    if (has_focallen) {
-        double focallen = im->getFocalLen();
-        if (focallen < focallen_min || focallen > focallen_max) {
-            return false;
-        }
-    }
-    if (has_shutterspeed) {
-        double shutterspeed = im->getShutterSpeed();
-        if (shutterspeed < shutterspeed_min || shutterspeed > shutterspeed_max){
-            return false;
-        }
-    }
-    if (has_expcomp) {
-        double expcomp = im->getExpComp();
-        if (expcomp < expcomp_min || expcomp > expcomp_max) {
-            return false;
-        }
-    }
-    if (has_make) {
-        if (im->getMake() != make) {
-            return false;
-        }
-    }
-    if (has_model) {
-        if (im->getModel() != model) {
-            return false;
-        }
-    }
-    if (has_lens) {
-        if (im->getLens() != lens) {
-            return false;
-        }
-    }
-    return true;
+    return (iso(im->getISOSpeed())
+            && fnumber(im->getFNumber())
+            && focallen(im->getFocalLen())
+            && shutterspeed(im->getShutterSpeed())
+            && expcomp(im->getExpComp())
+            && make(im->getMake())
+            && model(im->getModel())
+            && lens(im->getLens()));
 }
+
+namespace {
+
+void get_int_range(DynamicProfileEntry::Range<int> &dest,
+                   const Glib::KeyFile &kf, const Glib::ustring &group,
+                   const Glib::ustring &key)
+{
+    try {
+        int min = kf.get_integer(group, key + "_min");
+        int max = kf.get_integer(group, key + "_max");
+        if (min <= max) {
+            dest.min = min;
+            dest.max = max;
+        }
+    } catch (Glib::KeyFileError &e) {
+    }
+}
+
+
+void get_double_range(DynamicProfileEntry::Range<double> &dest,
+                      const Glib::KeyFile &kf, const Glib::ustring &group,
+                      const Glib::ustring &key)
+{
+    try {
+        int min = kf.get_double(group, key + "_min");
+        int max = kf.get_double(group, key + "_max");
+        if (min <= max) {
+            dest.min = min;
+            dest.max = max;
+        }
+    } catch (Glib::KeyFileError &e) {
+    }
+}
+
+
+void get_optional(DynamicProfileEntry::Optional<Glib::ustring> &dest,
+                  const Glib::KeyFile &kf, const Glib::ustring &group,
+                  const Glib::ustring &key)
+{
+    try {
+        bool e = kf.get_boolean(group, key + "_enabled");
+        if (e) {
+            Glib::ustring s = kf.get_string(group, key + "_value");
+            dest.enabled = e;
+            dest.value = s;
+        }
+    } catch (Glib::KeyFileError &) {
+    }
+}
+
+void set_int_range(Glib::KeyFile &kf, const Glib::ustring &group,
+                   const Glib::ustring &key,
+                   const DynamicProfileEntry::Range<int> &val)
+{
+    kf.set_integer(group, key + "_min", val.min);
+    kf.set_integer(group, key + "_max", val.max);
+}
+
+void set_double_range(Glib::KeyFile &kf, const Glib::ustring &group,
+                      const Glib::ustring &key,
+                      const DynamicProfileEntry::Range<double> &val)
+{
+    kf.set_double(group, key + "_min", val.min);
+    kf.set_double(group, key + "_max", val.max);
+}
+
+void set_optional(Glib::KeyFile &kf, const Glib::ustring &group,
+                  const Glib::ustring &key,
+                  const DynamicProfileEntry::Optional<Glib::ustring> &val)
+{
+    kf.set_boolean(group, key + "_enabled", val.enabled);
+    kf.set_string(group, key + "_value", val.value);
+}
+
+} // namespace
 
 
 bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out)
 {
     out.clear();
     Glib::KeyFile kf;
-    if (!kf.load_from_file(
-            Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"))) {
+    try {
+        if (!kf.load_from_file(
+                Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"))) {
+            return false;
+        }
+    } catch (Glib::Error &e) {
         return false;
     }
     printf("loading dynamic profiles...\n");
@@ -120,39 +170,45 @@ bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out)
         out.emplace_back(DynamicProfileEntry());
         DynamicProfileEntry &entry = out.back();
         entry.serial_number = serial;
-        entry.has_iso = kf.get_boolean(group, "has_iso");
-        entry.iso_min = kf.get_integer(group, "iso_min");
-        entry.iso_max = kf.get_integer(group, "iso_max");
-
-        entry.has_fnumber = kf.get_boolean(group, "has_fnumber");
-        entry.fnumber_min = kf.get_double(group, "fnumber_min");
-        entry.fnumber_max = kf.get_double(group, "fnumber_max");
-
-        entry.has_focallen = kf.get_boolean(group, "has_focallen");
-        entry.focallen_min = kf.get_double(group, "focallen_min");
-        entry.focallen_max = kf.get_double(group, "focallen_max");
-
-        entry.has_shutterspeed = kf.get_boolean(group, "has_shutterspeed");
-        entry.shutterspeed_min = kf.get_double(group, "shutterspeed_min");
-        entry.shutterspeed_max = kf.get_double(group, "shutterspeed_max");
-
-        entry.has_expcomp = kf.get_boolean(group, "has_expcomp");
-        entry.expcomp_min = kf.get_double(group, "expcomp_min");
-        entry.expcomp_max = kf.get_double(group, "expcomp_max");
-
-        entry.has_make = kf.get_boolean(group, "has_make");
-        entry.make = kf.get_string(group, "make");
-
-        entry.has_model = kf.get_boolean(group, "has_model");
-        entry.model = kf.get_string(group, "model");
-
-        entry.has_lens = kf.get_boolean(group, "has_lens");
-        entry.lens = kf.get_string(group, "lens");
-
-        entry.profilepath = kf.get_string(group, "profilepath");
+        get_int_range(entry.iso, kf, group, "iso");
+        get_double_range(entry.fnumber, kf, group, "fnumber");
+        get_double_range(entry.focallen, kf, group, "focallen");
+        get_double_range(entry.shutterspeed, kf, group, "shutterspeed");
+        get_double_range(entry.expcomp, kf, group, "expcomp");
+        get_optional(entry.make, kf, group, "make");
+        get_optional(entry.model, kf, group, "model");
+        get_optional(entry.lens, kf, group, "lens");
+        try {
+            entry.profilepath = kf.get_string(group, "profilepath");
+        } catch (Glib::KeyFileError &) {
+            out.pop_back();
+        }
     }
     std::sort(out.begin(), out.end());
     return true;
+}
+
+
+bool storeDynamicProfileEntries(const std::vector<DynamicProfileEntry> &entries)
+{
+    printf("saving dynamic profiles...\n");
+    Glib::KeyFile kf;
+    for (auto &entry : entries) {
+        std::ostringstream buf;
+        buf << "entry " << entry.serial_number;
+        Glib::ustring group = buf.str();
+        set_int_range(kf, group, "iso", entry.iso);
+        set_double_range(kf, group, "fnumber", entry.fnumber);
+        set_double_range(kf, group, "focallen", entry.focallen);
+        set_double_range(kf, group, "shutterspeed", entry.shutterspeed);
+        set_double_range(kf, group, "expcomp", entry.expcomp);
+        set_optional(kf, group, "make", entry.make);
+        set_optional(kf, group, "model", entry.model);
+        set_optional(kf, group, "lens", entry.lens);
+        kf.set_string(group, "profilepath", entry.profilepath);
+    }
+    return kf.save_to_file(
+        Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"));
 }
 
 
@@ -177,4 +233,3 @@ PartialProfile *loadDynamicProfile(const ImageMetaData *im)
     }
     return ret;
 }
-
