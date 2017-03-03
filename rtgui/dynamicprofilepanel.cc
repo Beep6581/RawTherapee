@@ -33,24 +33,6 @@ Glib::ustring to_str(V n)
     return buf.str();
 }
 
-
-int to_int(const Glib::ustring &s)
-{
-    std::istringstream buf(s);
-    int r = -1;
-    buf >> r;
-    return r;
-}
-
-
-double to_double(const Glib::ustring &s)
-{
-    std::istringstream buf(s);
-    double r = 0.0;
-    buf >> r;
-    return r;
-}
-
 } // namespace
 
 
@@ -207,6 +189,7 @@ void DynamicProfilePanel::EditDialog::add_optional(const Glib::ustring &name,
     field = Gtk::manage(new Gtk::Entry());
     hb->pack_start(*field, true, true, 2);
     get_content_area()->pack_start(*hb, Gtk::PACK_SHRINK, 4);
+    field->set_tooltip_text(M("DYNPROFILEEDITOR_ENTRY_TOOLTIP"));
 }
 
 
