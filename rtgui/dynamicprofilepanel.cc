@@ -158,6 +158,8 @@ void DynamicProfilePanel::EditDialog::set_ranges()
     DOIT_(shutterspeed);
     DOIT_(expcomp);
 #undef DOIT_
+    shutterspeed_min_->set_digits(4);
+    shutterspeed_max_->set_digits(4);
 
     profilepath_->setInternalEntry();
 }

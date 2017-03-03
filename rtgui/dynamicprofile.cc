@@ -30,7 +30,6 @@ namespace {
 const int ISO_MAX = 512000;
 const double FNUMBER_MAX = 100.0;
 const double FOCALLEN_MAX = 10000.0;
-const double SHUTTERSPEED_MIN = 1.0/10000.0;
 const double SHUTTERSPEED_MAX = 1000.0;
 const double EXPCOMP_MIN = -20.0;
 const double EXPCOMP_MAX = 20.0;
@@ -59,7 +58,7 @@ DynamicProfileEntry::DynamicProfileEntry():
     iso(0, ISO_MAX),
     fnumber(0, FNUMBER_MAX),
     focallen(0, FOCALLEN_MAX),
-    shutterspeed(SHUTTERSPEED_MIN, SHUTTERSPEED_MAX),
+    shutterspeed(0, SHUTTERSPEED_MAX),
     expcomp(EXPCOMP_MIN, EXPCOMP_MAX)
 {
 }
