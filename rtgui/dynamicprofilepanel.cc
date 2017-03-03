@@ -207,10 +207,9 @@ DynamicProfilePanel::DynamicProfilePanel():
 {
     add(vbox_);
 
-    //Add the TreeView, inside a ScrolledWindow, with the button underneath:
+    treeview_.set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
     scrolledwindow_.add(treeview_);
 
-    //Only show the scrollbars when they are necessary:
     scrolledwindow_.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
     vbox_.pack_start(scrolledwindow_);
@@ -234,11 +233,9 @@ DynamicProfilePanel::DynamicProfilePanel():
     button_delete_.signal_clicked().connect(
         sigc::mem_fun(*this, &DynamicProfilePanel::on_button_delete));
 
-    //Create the Tree model:
     treemodel_ = Gtk::ListStore::create(columns_);
     treeview_.set_model(treemodel_);
 
-    //Add the TreeView's view columns:
     auto cell = Gtk::manage(new Gtk::CellRendererText());
     int cols_count = treeview_.append_column(
         M("DYNPROFILEEDITOR_PROFILE"), *cell);
@@ -374,8 +371,13 @@ void DynamicProfilePanel::render_profilepath(
     auto row = *iter;                                                   \
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell); \
     DynamicProfileEntry::Range<tp> r = row[columns_. name];         \
-    auto value = to_str(r.min) + " - " + to_str(r.max); \
-    ct->property_text() = value;
+    DynamicProfileEntry dflt;                                       \
+    if (r.min > dflt.name.min || r.max < dflt.name.max) {               \
+        auto value = to_str(r.min) + " - " + to_str(r.max);             \
+        ct->property_text() = value;                                    \
+    } else {                                                            \
+        ct->property_text() = "";                                       \
+    }
 
 void DynamicProfilePanel::render_iso(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
