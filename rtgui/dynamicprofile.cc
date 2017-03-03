@@ -18,6 +18,7 @@
  */
 
 #include "dynamicprofile.h"
+#include "profilestore.h"
 #include <stdlib.h>
 #include <glibmm/regex.h>
 
@@ -235,13 +236,13 @@ PartialProfile *loadDynamicProfile(const ImageMetaData *im)
             if (entry.matches(im)) {
                 printf("found matching profile %s\n",
                        entry.profilepath.c_str());
-                PartialProfile p(true, true);
-                if (!p.load(options.findProfilePath(entry.profilepath))) {
-                    p.applyTo(ret->pparams);
+                const PartialProfile *p =
+                    profileStore.getProfile(entry.profilepath);
+                if (p != nullptr) {
+                    p->applyTo(ret->pparams);
                 } else {
                     printf("ERROR loading matching profile\n");
                 }
-                p.deleteInstance();
             }
         }
     }

@@ -19,6 +19,7 @@
 
 #include "dynamicprofilepanel.h"
 #include "multilangmgr.h"
+#include "profilestore.h"
 #include <sstream>
 #include <iomanip>
 
@@ -377,7 +378,12 @@ void DynamicProfilePanel::render_profilepath(
     auto row = *iter;
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
     auto value = row[columns_.profilepath];
-    ct->property_text() = value;
+    auto pse = profileStore.findEntryFromFullPath(value);
+    if (pse != nullptr) {
+        ct->property_text() = pse->label;
+    } else {
+        ct->property_text() = value;
+    }
 }
 
 

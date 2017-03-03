@@ -227,13 +227,17 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
         }
         PartialProfile *pp = loadDynamicProfile(imageMetaData);
+        int err = 0;
         if (options.paramsLoadLocation == PLL_Input) {
-            pp->pparams->save(fname + paramFileExtension);
+            err = pp->pparams->save(fname + paramFileExtension);
         } else {
-            pp->pparams->save(getCacheFileName ("profiles", paramFileExtension));
+            err = pp->pparams->save(getCacheFileName ("profiles", paramFileExtension));
         }
         pp->deleteInstance();
         delete pp;
+        if (!err) {
+            loadProcParams();
+        }
     } else if (defProf != DEFPROFILE_DYNAMIC && !options.CPBPath.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
         // First generate the communication file, with general values and EXIF metadata
         rtengine::ImageMetaData* imageMetaData;
