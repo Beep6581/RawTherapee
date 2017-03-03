@@ -34,7 +34,6 @@ private:
     void add_entry(const DynamicProfileEntry &entry);
     DynamicProfileEntry to_entry(Gtk::TreeModel::Row row, int serial=0);
     
-    //Signal handlers:
     void on_button_quit();
     void on_button_up();
     void on_button_down();
@@ -42,7 +41,6 @@ private:
     void on_button_edit();
     void on_button_delete();
 
-    //Tree model columns:
     class DynamicProfileColumns: public Gtk::TreeModel::ColumnRecord {
     public:
         DynamicProfileColumns()
@@ -52,8 +50,7 @@ private:
             add(focallen);
             add(shutterspeed);
             add(expcomp);
-            add(make);
-            add(model);
+            add(camera);
             add(lens);
             add(profilepath);
         }
@@ -63,9 +60,8 @@ private:
         Gtk::TreeModelColumn<DynamicProfileEntry::Range<double>> focallen;
         Gtk::TreeModelColumn<DynamicProfileEntry::Range<double>> shutterspeed;
         Gtk::TreeModelColumn<DynamicProfileEntry::Range<double>> expcomp;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Optional<Glib::ustring>> make;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Optional<Glib::ustring>> model;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Optional<Glib::ustring>> lens;
+        Gtk::TreeModelColumn<DynamicProfileEntry::Optional> camera;
+        Gtk::TreeModelColumn<DynamicProfileEntry::Optional> lens;
         Gtk::TreeModelColumn<Glib::ustring> profilepath;
     };
 
@@ -80,10 +76,8 @@ private:
                              const Gtk::TreeModel::iterator& iter);
     void render_expcomp(Gtk::CellRenderer* cell,
                         const Gtk::TreeModel::iterator& iter);
-    void render_make(Gtk::CellRenderer* cell,
-                     const Gtk::TreeModel::iterator& iter);
-    void render_model(Gtk::CellRenderer* cell,
-                      const Gtk::TreeModel::iterator& iter);
+    void render_camera(Gtk::CellRenderer* cell,
+                       const Gtk::TreeModel::iterator& iter);
     void render_lens(Gtk::CellRenderer* cell,
                      const Gtk::TreeModel::iterator& iter);
     void render_profilepath(Gtk::CellRenderer* cell,
@@ -117,14 +111,11 @@ private:
         Gtk::SpinButton *expcomp_min_;
         Gtk::SpinButton *expcomp_max_;
 
-        Gtk::CheckButton *has_make;
-        Gtk::Entry *make;
-        
-        Gtk::CheckButton *has_model;
-        Gtk::Entry *model;
+        Gtk::CheckButton *has_camera_;
+        Gtk::Entry *camera_;
 
-        Gtk::CheckButton *has_lens;
-        Gtk::Entry *lens;
+        Gtk::CheckButton *has_lens_;
+        Gtk::Entry *lens_;
 
         ProfileStoreComboBox *profilepath_;
     };

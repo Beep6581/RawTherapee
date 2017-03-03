@@ -68,9 +68,8 @@ DynamicProfilePanel::EditDialog::EditDialog(const Glib::ustring &title,
     hb->pack_start(*profilepath_, true, true, 2);
     get_content_area()->pack_start(*hb, Gtk::PACK_SHRINK, 4);
 
-    add_optional(M("DYNPROFILEEDITOR_CAMERA_MAKE"), has_make, make);
-    add_optional(M("DYNPROFILEEDITOR_CAMERA_MODEL"), has_model, model);
-    add_optional(M("EXIFFILTER_LENS"), has_lens, lens);
+    add_optional(M("EXIFFILTER_CAMERA"), has_camera_, camera_);
+    add_optional(M("EXIFFILTER_LENS"), has_lens_, lens_);
             
     add_range(M("EXIFFILTER_ISO"), iso_min_, iso_max_);
     add_range(M("EXIFFILTER_APERTURE"), fnumber_min_, fnumber_max_);
@@ -105,14 +104,11 @@ void DynamicProfilePanel::EditDialog::set_entry(
     expcomp_min_->set_value(entry.expcomp.min);
     expcomp_max_->set_value(entry.expcomp.max);
 
-    has_make->set_active(entry.make.enabled);
-    make->set_text(entry.make.value);
+    has_camera_->set_active(entry.camera.enabled);
+    camera_->set_text(entry.camera.value);
 
-    has_model->set_active(entry.model.enabled);
-    model->set_text(entry.model.value);
-
-    has_lens->set_active(entry.lens.enabled);
-    lens->set_text(entry.lens.value);
+    has_lens_->set_active(entry.lens.enabled);
+    lens_->set_text(entry.lens.value);
 
     profilepath_->updateProfileList();
     if (!profilepath_->setActiveRowFromFullPath(entry.profilepath)) {
@@ -139,14 +135,11 @@ DynamicProfileEntry DynamicProfilePanel::EditDialog::get_entry()
     ret.expcomp.min = expcomp_min_->get_value();
     ret.expcomp.max = expcomp_max_->get_value();
 
-    ret.make.enabled = has_make->get_active();
-    ret.make.value = make->get_text();
+    ret.camera.enabled = has_camera_->get_active();
+    ret.camera.value = camera_->get_text();
 
-    ret.model.enabled = has_model->get_active();
-    ret.model.value = model->get_text();
-
-    ret.lens.enabled = has_lens->get_active();
-    ret.lens.value = lens->get_text();
+    ret.lens.enabled = has_lens_->get_active();
+    ret.lens.value = lens_->get_text();
  
     ret.profilepath = profilepath_->getFullPathFromActiveRow();
 
@@ -273,21 +266,12 @@ DynamicProfilePanel::DynamicProfilePanel():
     }
     cell = Gtk::manage(new Gtk::CellRendererText());
     cols_count = treeview_.append_column(
-        M("DYNPROFILEEDITOR_CAMERA_MAKE"), *cell);
+        M("EXIFFILTER_CAMERA"), *cell);
     col = treeview_.get_column(cols_count - 1);
     if (col) {
         col->set_cell_data_func(
             *cell, sigc::mem_fun(
-                *this, &DynamicProfilePanel::render_make));
-    }
-    cell = Gtk::manage(new Gtk::CellRendererText());
-    cols_count = treeview_.append_column(
-        M("DYNPROFILEEDITOR_CAMERA_MODEL"), *cell);
-    col = treeview_.get_column(cols_count - 1);
-    if (col) {
-        col->set_cell_data_func(
-            *cell, sigc::mem_fun(
-                *this, &DynamicProfilePanel::render_model));
+                *this, &DynamicProfilePanel::render_camera));
     }
     cell = Gtk::manage(new Gtk::CellRendererText());
     cols_count = treeview_.append_column(M("EXIFFILTER_LENS"), *cell);
@@ -358,8 +342,7 @@ void DynamicProfilePanel::update_entry(Gtk::TreeModel::Row row,
     row[columns_.focallen] = entry.focallen;
     row[columns_.shutterspeed] = entry.shutterspeed;
     row[columns_.expcomp] = entry.expcomp;
-    row[columns_.make] = entry.make;
-    row[columns_.model] = entry.model;
+    row[columns_.camera] = entry.camera;
     row[columns_.lens] = entry.lens;
     row[columns_.profilepath] = entry.profilepath;
 }
@@ -381,8 +364,7 @@ DynamicProfileEntry DynamicProfilePanel::to_entry(Gtk::TreeModel::Row row,
     ret.focallen = row[columns_.focallen];
     ret.shutterspeed = row[columns_.shutterspeed];
     ret.expcomp = row[columns_.expcomp];
-    ret.make = row[columns_.make];
-    ret.model = row[columns_.model];
+    ret.camera = row[columns_.camera];
     ret.lens = row[columns_.lens];
     ret.profilepath = row[columns_.profilepath];
     return ret;
@@ -445,24 +427,17 @@ void DynamicProfilePanel::render_expcomp(
 #define RENDER_OPTIONAL_(name) \
     auto row = *iter; \
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell); \
-    DynamicProfileEntry::Optional<Glib::ustring> o = row[columns_. name]; \
+    DynamicProfileEntry::Optional o = row[columns_. name]; \
     if (o.enabled) { \
         ct->property_text() = o.value; \
     } else { \
         ct->property_text() = ""; \
     }
 
-void DynamicProfilePanel::render_make(
+void DynamicProfilePanel::render_camera(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_OPTIONAL_(make);
-}
-
-
-void DynamicProfilePanel::render_model(
-    Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
-{
-    RENDER_OPTIONAL_(model);
+    RENDER_OPTIONAL_(camera);
 }
 
 

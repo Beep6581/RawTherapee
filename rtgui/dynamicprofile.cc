@@ -19,6 +19,7 @@
 
 #include "dynamicprofile.h"
 #include <stdlib.h>
+#include <glibmm/regex.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -34,6 +35,22 @@ const double EXPCOMP_MIN = -20.0;
 const double EXPCOMP_MAX = 20.0;
 
 } // namespace
+
+
+bool DynamicProfileEntry::Optional::operator()(const Glib::ustring &val) const
+{
+    if (!enabled) {
+        return true;
+    }
+    if (value.find("re:") == 0) {
+        // this is a regexp
+        return Glib::Regex::match_simple(value.substr(3), val,
+                                         Glib::REGEX_CASELESS);
+    } else {
+        // normal string comparison
+        return value.casefold() == val.casefold();
+    }
+}
 
 
 DynamicProfileEntry::DynamicProfileEntry():
@@ -60,8 +77,7 @@ bool DynamicProfileEntry::matches(const rtengine::ImageMetaData *im)
             && focallen(im->getFocalLen())
             && shutterspeed(im->getShutterSpeed())
             && expcomp(im->getExpComp())
-            && make(im->getMake())
-            && model(im->getModel())
+            && camera(im->getCamera())
             && lens(im->getLens()));
 }
 
@@ -99,7 +115,7 @@ void get_double_range(DynamicProfileEntry::Range<double> &dest,
 }
 
 
-void get_optional(DynamicProfileEntry::Optional<Glib::ustring> &dest,
+void get_optional(DynamicProfileEntry::Optional &dest,
                   const Glib::KeyFile &kf, const Glib::ustring &group,
                   const Glib::ustring &key)
 {
@@ -132,7 +148,7 @@ void set_double_range(Glib::KeyFile &kf, const Glib::ustring &group,
 
 void set_optional(Glib::KeyFile &kf, const Glib::ustring &group,
                   const Glib::ustring &key,
-                  const DynamicProfileEntry::Optional<Glib::ustring> &val)
+                  const DynamicProfileEntry::Optional &val)
 {
     kf.set_boolean(group, key + "_enabled", val.enabled);
     kf.set_string(group, key + "_value", val.value);
@@ -175,8 +191,7 @@ bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out)
         get_double_range(entry.focallen, kf, group, "focallen");
         get_double_range(entry.shutterspeed, kf, group, "shutterspeed");
         get_double_range(entry.expcomp, kf, group, "expcomp");
-        get_optional(entry.make, kf, group, "make");
-        get_optional(entry.model, kf, group, "model");
+        get_optional(entry.camera, kf, group, "camera");
         get_optional(entry.lens, kf, group, "lens");
         try {
             entry.profilepath = kf.get_string(group, "profilepath");
@@ -202,8 +217,7 @@ bool storeDynamicProfileEntries(const std::vector<DynamicProfileEntry> &entries)
         set_double_range(kf, group, "focallen", entry.focallen);
         set_double_range(kf, group, "shutterspeed", entry.shutterspeed);
         set_double_range(kf, group, "expcomp", entry.expcomp);
-        set_optional(kf, group, "make", entry.make);
-        set_optional(kf, group, "model", entry.model);
+        set_optional(kf, group, "camera", entry.camera);
         set_optional(kf, group, "lens", entry.lens);
         kf.set_string(group, "profilepath", entry.profilepath);
     }

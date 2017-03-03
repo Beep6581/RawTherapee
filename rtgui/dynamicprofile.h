@@ -38,16 +38,13 @@ public:
         }
     };
 
-    template <class T>
     struct Optional {
-        T value;
+        Glib::ustring value;
         bool enabled;
-        explicit Optional(T v=T(), bool e=false): value(v), enabled(e) {}
+        explicit Optional(const Glib::ustring v="", bool e=false):
+            value(v), enabled(e) {}
 
-        bool operator()(const T &val) const
-        {
-            return !enabled || value == val;
-        }
+        bool operator()(const Glib::ustring &val) const;
     };
     
     DynamicProfileEntry();
@@ -60,9 +57,8 @@ public:
     Range<double> focallen;
     Range<double> shutterspeed;
     Range<double> expcomp;
-    Optional<Glib::ustring> make;
-    Optional<Glib::ustring> model;
-    Optional<Glib::ustring> lens;
+    Optional camera;
+    Optional lens;
     Glib::ustring profilepath;
 };
 
