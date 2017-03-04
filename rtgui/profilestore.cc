@@ -42,6 +42,7 @@ bool ProfileStore::init ()
         storeState = STORESTATE_BEINGINITIALIZED;
         parseMutex = new MyMutex();
         _parseProfiles ();
+        loadDynamicProfileRules(dynamicRules);
         storeState = STORESTATE_INITIALIZED;
     }
 

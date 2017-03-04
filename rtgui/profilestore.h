@@ -29,6 +29,7 @@
 #include "threadutils.h"
 #include "paramsedited.h"
 #include "guiutils.h"
+#include "dynamicprofile.h"
 
 
 /** @brief This will implement callback functions for the ProfileStore
@@ -161,6 +162,9 @@ private:
     /** List of the client of this store */
     std::list<ProfileStoreListener*> listeners;
 
+    /** cache for dynamic profile rules */
+    std::vector<DynamicProfileRule> dynamicRules;
+
     /** @brief Method to recursively parse a profile folder with a level depth arbitrarily limited to 3
       *
       * @param realPath       current full path of the scanned directory ; e.g.:  ~/MyProfiles/
@@ -203,7 +207,12 @@ public:
     {
         return internalDynamicEntry;
     }
-    
+
+    std::vector<DynamicProfileRule> &getDynamicProfileRules()
+    {
+        return dynamicRules;
+    }
+
     void addListener(ProfileStoreListener *listener);
     void removeListener(ProfileStoreListener *listener);
 

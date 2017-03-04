@@ -308,11 +308,8 @@ DynamicProfilePanel::DynamicProfilePanel():
     
     show_all_children();
 
-    std::vector<DynamicProfileRule> rules;
-    if (loadDynamicProfileRules(rules)) {
-        for (auto &r : rules) {
-            add_rule(r);
-        }
+    for (auto &r : profileStore.getDynamicProfileRules()) {
+        add_rule(r);
     }
 }
 
@@ -514,13 +511,15 @@ void DynamicProfilePanel::on_button_edit()
 
 void DynamicProfilePanel::save()
 {
-    std::vector<DynamicProfileRule> rules;
+    auto &rules = profileStore.getDynamicProfileRules();
+    rules.clear();
     int serial = 1;
     for (auto row : treemodel_->children()) {
         rules.emplace_back(to_rule(row, serial++));
     }
     if (!storeDynamicProfileRules(rules)) {
         printf("Error in saving dynamic profile rules\n");
+        rules.clear();
     } else {
         printf("Saved %d dynamic profile rules\n", int(rules.size()));
     }
