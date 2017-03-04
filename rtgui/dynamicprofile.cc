@@ -37,7 +37,7 @@ const double EXPCOMP_MAX = 20.0;
 } // namespace
 
 
-bool DynamicProfileEntry::Optional::operator()(const Glib::ustring &val) const
+bool DynamicProfileRule::Optional::operator()(const Glib::ustring &val) const
 {
     if (!enabled) {
         return true;
@@ -53,7 +53,7 @@ bool DynamicProfileEntry::Optional::operator()(const Glib::ustring &val) const
 }
 
 
-DynamicProfileEntry::DynamicProfileEntry():
+DynamicProfileRule::DynamicProfileRule():
     serial_number(0),
     iso(0, ISO_MAX),
     fnumber(0, FNUMBER_MAX),
@@ -64,13 +64,13 @@ DynamicProfileEntry::DynamicProfileEntry():
 }
 
 
-bool DynamicProfileEntry::operator<(const DynamicProfileEntry &other) const
+bool DynamicProfileRule::operator<(const DynamicProfileRule &other) const
 {
     return serial_number < other.serial_number;
 }
 
 
-bool DynamicProfileEntry::matches(const rtengine::ImageMetaData *im)
+bool DynamicProfileRule::matches(const rtengine::ImageMetaData *im)
 {
     return (iso(im->getISOSpeed())
             && fnumber(im->getFNumber())
@@ -83,7 +83,7 @@ bool DynamicProfileEntry::matches(const rtengine::ImageMetaData *im)
 
 namespace {
 
-void get_int_range(DynamicProfileEntry::Range<int> &dest,
+void get_int_range(DynamicProfileRule::Range<int> &dest,
                    const Glib::KeyFile &kf, const Glib::ustring &group,
                    const Glib::ustring &key)
 {
@@ -99,7 +99,7 @@ void get_int_range(DynamicProfileEntry::Range<int> &dest,
 }
 
 
-void get_double_range(DynamicProfileEntry::Range<double> &dest,
+void get_double_range(DynamicProfileRule::Range<double> &dest,
                       const Glib::KeyFile &kf, const Glib::ustring &group,
                       const Glib::ustring &key)
 {
@@ -115,7 +115,7 @@ void get_double_range(DynamicProfileEntry::Range<double> &dest,
 }
 
 
-void get_optional(DynamicProfileEntry::Optional &dest,
+void get_optional(DynamicProfileRule::Optional &dest,
                   const Glib::KeyFile &kf, const Glib::ustring &group,
                   const Glib::ustring &key)
 {
@@ -132,7 +132,7 @@ void get_optional(DynamicProfileEntry::Optional &dest,
 
 void set_int_range(Glib::KeyFile &kf, const Glib::ustring &group,
                    const Glib::ustring &key,
-                   const DynamicProfileEntry::Range<int> &val)
+                   const DynamicProfileRule::Range<int> &val)
 {
     kf.set_integer(group, key + "_min", val.min);
     kf.set_integer(group, key + "_max", val.max);
@@ -140,7 +140,7 @@ void set_int_range(Glib::KeyFile &kf, const Glib::ustring &group,
 
 void set_double_range(Glib::KeyFile &kf, const Glib::ustring &group,
                       const Glib::ustring &key,
-                      const DynamicProfileEntry::Range<double> &val)
+                      const DynamicProfileRule::Range<double> &val)
 {
     kf.set_double(group, key + "_min", val.min);
     kf.set_double(group, key + "_max", val.max);
@@ -148,7 +148,7 @@ void set_double_range(Glib::KeyFile &kf, const Glib::ustring &group,
 
 void set_optional(Glib::KeyFile &kf, const Glib::ustring &group,
                   const Glib::ustring &key,
-                  const DynamicProfileEntry::Optional &val)
+                  const DynamicProfileRule::Optional &val)
 {
     kf.set_boolean(group, key + "_enabled", val.enabled);
     kf.set_string(group, key + "_value", val.value);
@@ -157,7 +157,7 @@ void set_optional(Glib::KeyFile &kf, const Glib::ustring &group,
 } // namespace
 
 
-bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out)
+bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out)
 {
     out.clear();
     Glib::KeyFile kf;
@@ -172,29 +172,29 @@ bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out)
     printf("loading dynamic profiles...\n");
     auto groups = kf.get_groups();
     for (auto group : groups) {
-        // groups are of the form "entry N", where N is a positive integer
-        if (group.find("entry ") != 0) {
+        // groups are of the form "rule N", where N is a positive integer
+        if (group.find("rule ") != 0) {
             return false;
         }
-        std::istringstream buf(group.c_str() + 6);
+        std::istringstream buf(group.c_str() + 5);
         int serial = 0;
         if (!(buf >> serial) || !buf.eof()) {
             return false;
         }
-        printf(" loading entry %d\n", serial);
+        printf(" loading rule %d\n", serial);
         
-        out.emplace_back(DynamicProfileEntry());
-        DynamicProfileEntry &entry = out.back();
-        entry.serial_number = serial;
-        get_int_range(entry.iso, kf, group, "iso");
-        get_double_range(entry.fnumber, kf, group, "fnumber");
-        get_double_range(entry.focallen, kf, group, "focallen");
-        get_double_range(entry.shutterspeed, kf, group, "shutterspeed");
-        get_double_range(entry.expcomp, kf, group, "expcomp");
-        get_optional(entry.camera, kf, group, "camera");
-        get_optional(entry.lens, kf, group, "lens");
+        out.emplace_back(DynamicProfileRule());
+        DynamicProfileRule &rule = out.back();
+        rule.serial_number = serial;
+        get_int_range(rule.iso, kf, group, "iso");
+        get_double_range(rule.fnumber, kf, group, "fnumber");
+        get_double_range(rule.focallen, kf, group, "focallen");
+        get_double_range(rule.shutterspeed, kf, group, "shutterspeed");
+        get_double_range(rule.expcomp, kf, group, "expcomp");
+        get_optional(rule.camera, kf, group, "camera");
+        get_optional(rule.lens, kf, group, "lens");
         try {
-            entry.profilepath = kf.get_string(group, "profilepath");
+            rule.profilepath = kf.get_string(group, "profilepath");
         } catch (Glib::KeyFileError &) {
             out.pop_back();
         }
@@ -204,22 +204,22 @@ bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out)
 }
 
 
-bool storeDynamicProfileEntries(const std::vector<DynamicProfileEntry> &entries)
+bool storeDynamicProfileRules(const std::vector<DynamicProfileRule> &rules)
 {
     printf("saving dynamic profiles...\n");
     Glib::KeyFile kf;
-    for (auto &entry : entries) {
+    for (auto &rule : rules) {
         std::ostringstream buf;
-        buf << "entry " << entry.serial_number;
+        buf << "rule " << rule.serial_number;
         Glib::ustring group = buf.str();
-        set_int_range(kf, group, "iso", entry.iso);
-        set_double_range(kf, group, "fnumber", entry.fnumber);
-        set_double_range(kf, group, "focallen", entry.focallen);
-        set_double_range(kf, group, "shutterspeed", entry.shutterspeed);
-        set_double_range(kf, group, "expcomp", entry.expcomp);
-        set_optional(kf, group, "camera", entry.camera);
-        set_optional(kf, group, "lens", entry.lens);
-        kf.set_string(group, "profilepath", entry.profilepath);
+        set_int_range(kf, group, "iso", rule.iso);
+        set_double_range(kf, group, "fnumber", rule.fnumber);
+        set_double_range(kf, group, "focallen", rule.focallen);
+        set_double_range(kf, group, "shutterspeed", rule.shutterspeed);
+        set_double_range(kf, group, "expcomp", rule.expcomp);
+        set_optional(kf, group, "camera", rule.camera);
+        set_optional(kf, group, "lens", rule.lens);
+        kf.set_string(group, "profilepath", rule.profilepath);
     }
     return kf.save_to_file(
         Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"));
@@ -229,14 +229,14 @@ bool storeDynamicProfileEntries(const std::vector<DynamicProfileEntry> &entries)
 PartialProfile *loadDynamicProfile(const ImageMetaData *im)
 {
     PartialProfile *ret = new PartialProfile(true, true);
-    std::vector<DynamicProfileEntry> entries;
-    if (loadDynamicProfileEntries(entries)) {
-        for (auto &entry : entries) {
-            if (entry.matches(im)) {
+    std::vector<DynamicProfileRule> rules;
+    if (loadDynamicProfileRules(rules)) {
+        for (auto &rule : rules) {
+            if (rule.matches(im)) {
                 printf("found matching profile %s\n",
-                       entry.profilepath.c_str());
+                       rule.profilepath.c_str());
                 const PartialProfile *p =
-                    profileStore.getProfile(entry.profilepath);
+                    profileStore.getProfile(rule.profilepath);
                 if (p != nullptr) {
                     p->applyTo(ret->pparams);
                 } else {

@@ -69,40 +69,40 @@ DynamicProfilePanel::EditDialog::EditDialog(const Glib::ustring &title,
 }
 
 
-void DynamicProfilePanel::EditDialog::set_entry(
-    const DynamicProfileEntry &entry)
+void DynamicProfilePanel::EditDialog::set_rule(
+    const DynamicProfileRule &rule)
 {
-    iso_min_->set_value(entry.iso.min);
-    iso_max_->set_value(entry.iso.max);
+    iso_min_->set_value(rule.iso.min);
+    iso_max_->set_value(rule.iso.max);
 
-    fnumber_min_->set_value(entry.fnumber.min);
-    fnumber_max_->set_value(entry.fnumber.max);
+    fnumber_min_->set_value(rule.fnumber.min);
+    fnumber_max_->set_value(rule.fnumber.max);
 
-    focallen_min_->set_value(entry.focallen.min);
-    focallen_max_->set_value(entry.focallen.max);
+    focallen_min_->set_value(rule.focallen.min);
+    focallen_max_->set_value(rule.focallen.max);
 
-    shutterspeed_min_->set_value(entry.shutterspeed.min);
-    shutterspeed_max_->set_value(entry.shutterspeed.max);
+    shutterspeed_min_->set_value(rule.shutterspeed.min);
+    shutterspeed_max_->set_value(rule.shutterspeed.max);
 
-    expcomp_min_->set_value(entry.expcomp.min);
-    expcomp_max_->set_value(entry.expcomp.max);
+    expcomp_min_->set_value(rule.expcomp.min);
+    expcomp_max_->set_value(rule.expcomp.max);
 
-    has_camera_->set_active(entry.camera.enabled);
-    camera_->set_text(entry.camera.value);
+    has_camera_->set_active(rule.camera.enabled);
+    camera_->set_text(rule.camera.value);
 
-    has_lens_->set_active(entry.lens.enabled);
-    lens_->set_text(entry.lens.value);
+    has_lens_->set_active(rule.lens.enabled);
+    lens_->set_text(rule.lens.value);
 
     profilepath_->updateProfileList();
-    if (!profilepath_->setActiveRowFromFullPath(entry.profilepath)) {
+    if (!profilepath_->setActiveRowFromFullPath(rule.profilepath)) {
         profilepath_->setInternalEntry();
     }
 }
         
 
-DynamicProfileEntry DynamicProfilePanel::EditDialog::get_entry()
+DynamicProfileRule DynamicProfilePanel::EditDialog::get_rule()
 {
-    DynamicProfileEntry ret;
+    DynamicProfileRule ret;
     ret.iso.min = iso_min_->get_value_as_int();
     ret.iso.max = iso_max_->get_value_as_int();
 
@@ -131,27 +131,27 @@ DynamicProfileEntry DynamicProfilePanel::EditDialog::get_entry()
 
 void DynamicProfilePanel::EditDialog::set_ranges()
 {
-    DynamicProfileEntry default_entry;
+    DynamicProfileRule default_rule;
     iso_min_->set_digits(0);
     iso_max_->set_digits(0);
     iso_min_->set_increments(1, 10);
     iso_max_->set_increments(1, 10);
-    iso_min_->set_range(default_entry.iso.min, default_entry.iso.max);
-    iso_max_->set_range(default_entry.iso.min, default_entry.iso.max);
-    iso_min_->set_value(default_entry.iso.min);
-    iso_max_->set_value(default_entry.iso.max);
+    iso_min_->set_range(default_rule.iso.min, default_rule.iso.max);
+    iso_max_->set_range(default_rule.iso.min, default_rule.iso.max);
+    iso_min_->set_value(default_rule.iso.min);
+    iso_max_->set_value(default_rule.iso.max);
 
 #define DOIT_(name)                                     \
     name ## _min_->set_digits(1);                       \
     name ## _max_->set_digits(1);                       \
     name ## _min_->set_increments(0.1, 1);              \
     name ## _max_->set_increments(0.1, 1);              \
-    name ## _min_->set_range(default_entry. name .min,  \
-                             default_entry. name .max); \
-    name ## _max_->set_range(default_entry. name .min,  \
-                             default_entry. name .max); \
-    name ## _min_->set_value(default_entry. name .min); \
-    name ## _max_->set_value(default_entry. name .max)
+    name ## _min_->set_range(default_rule. name .min,  \
+                             default_rule. name .max); \
+    name ## _max_->set_range(default_rule. name .min,  \
+                             default_rule. name .max); \
+    name ## _min_->set_value(default_rule. name .min); \
+    name ## _max_->set_value(default_rule. name .max)
 
     DOIT_(fnumber);
     DOIT_(focallen);
@@ -308,39 +308,39 @@ DynamicProfilePanel::DynamicProfilePanel():
     
     show_all_children();
 
-    std::vector<DynamicProfileEntry> entries;
-    if (loadDynamicProfileEntries(entries)) {
-        for (auto &e : entries) {
-            add_entry(e);
+    std::vector<DynamicProfileRule> rules;
+    if (loadDynamicProfileRules(rules)) {
+        for (auto &r : rules) {
+            add_rule(r);
         }
     }
 }
 
 
-void DynamicProfilePanel::update_entry(Gtk::TreeModel::Row row,
-                                       const DynamicProfileEntry &entry)
+void DynamicProfilePanel::update_rule(Gtk::TreeModel::Row row,
+                                       const DynamicProfileRule &rule)
 {
-    row[columns_.iso] = entry.iso;
-    row[columns_.fnumber] = entry.fnumber;
-    row[columns_.focallen] = entry.focallen;
-    row[columns_.shutterspeed] = entry.shutterspeed;
-    row[columns_.expcomp] = entry.expcomp;
-    row[columns_.camera] = entry.camera;
-    row[columns_.lens] = entry.lens;
-    row[columns_.profilepath] = entry.profilepath;
+    row[columns_.iso] = rule.iso;
+    row[columns_.fnumber] = rule.fnumber;
+    row[columns_.focallen] = rule.focallen;
+    row[columns_.shutterspeed] = rule.shutterspeed;
+    row[columns_.expcomp] = rule.expcomp;
+    row[columns_.camera] = rule.camera;
+    row[columns_.lens] = rule.lens;
+    row[columns_.profilepath] = rule.profilepath;
 }
 
-void DynamicProfilePanel::add_entry(const DynamicProfileEntry &entry)
+void DynamicProfilePanel::add_rule(const DynamicProfileRule &rule)
 {
     auto row = *(treemodel_->append());
-    update_entry(row, entry);
+    update_rule(row, rule);
 }
 
 
-DynamicProfileEntry DynamicProfilePanel::to_entry(Gtk::TreeModel::Row row,
+DynamicProfileRule DynamicProfilePanel::to_rule(Gtk::TreeModel::Row row,
                                                   int serial)
 {
-    DynamicProfileEntry ret;
+    DynamicProfileRule ret;
     ret.serial_number = serial;
     ret.iso = row[columns_.iso];
     ret.fnumber = row[columns_.fnumber];
@@ -372,8 +372,8 @@ void DynamicProfilePanel::render_profilepath(
 #define RENDER_RANGE_(tp, name, prec)                              \
     auto row = *iter;                                                   \
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell); \
-    DynamicProfileEntry::Range<tp> r = row[columns_. name];         \
-    DynamicProfileEntry dflt;                                       \
+    DynamicProfileRule::Range<tp> r = row[columns_. name];         \
+    DynamicProfileRule dflt;                                       \
     if (r.min > dflt.name.min || r.max < dflt.name.max) {               \
         auto value = to_str(r.min, prec) + " - " + to_str(r.max, prec);      \
         ct->property_text() = value;                                    \
@@ -420,7 +420,7 @@ void DynamicProfilePanel::render_expcomp(
 #define RENDER_OPTIONAL_(name) \
     auto row = *iter; \
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell); \
-    DynamicProfileEntry::Optional o = row[columns_. name]; \
+    DynamicProfileRule::Optional o = row[columns_. name]; \
     if (o.enabled) { \
         ct->property_text() = o.value; \
     } else { \
@@ -488,8 +488,8 @@ void DynamicProfilePanel::on_button_new()
                  static_cast<Gtk::Window &>(*get_toplevel())); 
     int status = d.run();
     if (status == 1) {
-        DynamicProfileEntry entry = d.get_entry();
-        add_entry(entry);
+        DynamicProfileRule rule = d.get_rule();
+        add_rule(rule);
     }
 }
 
@@ -504,24 +504,24 @@ void DynamicProfilePanel::on_button_edit()
                  static_cast<Gtk::Window &>(*get_toplevel()));
     auto it = s->get_selected();
     Gtk::TreeModel::Row row = *(s->get_selected());
-    d.set_entry(to_entry(row));
+    d.set_rule(to_rule(row));
     int status = d.run();
     if (status == 1) {
-        update_entry(row, d.get_entry());
+        update_rule(row, d.get_rule());
     }
 }
 
 
 void DynamicProfilePanel::save()
 {
-    std::vector<DynamicProfileEntry> entries;
+    std::vector<DynamicProfileRule> rules;
     int serial = 1;
     for (auto row : treemodel_->children()) {
-        entries.emplace_back(to_entry(row, serial++));
+        rules.emplace_back(to_rule(row, serial++));
     }
-    if (!storeDynamicProfileEntries(entries)) {
+    if (!storeDynamicProfileRules(rules)) {
         printf("Error in saving dynamic profile rules\n");
     } else {
-        printf("Saved %d dynamic profile rules\n", int(entries.size()));
+        printf("Saved %d dynamic profile rules\n", int(rules.size()));
     }
 }

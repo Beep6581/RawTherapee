@@ -24,7 +24,7 @@
 #include "options.h"
 
 
-class DynamicProfileEntry {
+class DynamicProfileRule {
 public:
     template <class T>
     struct Range {
@@ -47,9 +47,9 @@ public:
         bool operator()(const Glib::ustring &val) const;
     };
     
-    DynamicProfileEntry();
+    DynamicProfileRule();
     bool matches(const rtengine::ImageMetaData *im);
-    bool operator<(const DynamicProfileEntry &other) const;
+    bool operator<(const DynamicProfileRule &other) const;
 
     int serial_number;
     Range<int> iso;
@@ -63,9 +63,9 @@ public:
 };
 
 
-bool loadDynamicProfileEntries(std::vector<DynamicProfileEntry> &out);
-bool storeDynamicProfileEntries(
-    const std::vector<DynamicProfileEntry> &entries);
+bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out);
+bool storeDynamicProfileRules(
+    const std::vector<DynamicProfileRule> &rules);
 
 rtengine::procparams::PartialProfile *loadDynamicProfile(
     const rtengine::ImageMetaData *im);

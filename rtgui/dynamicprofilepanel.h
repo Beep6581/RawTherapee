@@ -29,10 +29,10 @@ public:
     void save();
 
 private:
-    void update_entry(Gtk::TreeModel::Row row,
-                      const DynamicProfileEntry &entry);
-    void add_entry(const DynamicProfileEntry &entry);
-    DynamicProfileEntry to_entry(Gtk::TreeModel::Row row, int serial=0);
+    void update_rule(Gtk::TreeModel::Row row,
+                      const DynamicProfileRule &rule);
+    void add_rule(const DynamicProfileRule &rule);
+    DynamicProfileRule to_rule(Gtk::TreeModel::Row row, int serial=0);
     
     void on_button_quit();
     void on_button_up();
@@ -55,13 +55,13 @@ private:
             add(profilepath);
         }
 
-        Gtk::TreeModelColumn<DynamicProfileEntry::Range<int>> iso;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Range<double>> fnumber;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Range<double>> focallen;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Range<double>> shutterspeed;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Range<double>> expcomp;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Optional> camera;
-        Gtk::TreeModelColumn<DynamicProfileEntry::Optional> lens;
+        Gtk::TreeModelColumn<DynamicProfileRule::Range<int>> iso;
+        Gtk::TreeModelColumn<DynamicProfileRule::Range<double>> fnumber;
+        Gtk::TreeModelColumn<DynamicProfileRule::Range<double>> focallen;
+        Gtk::TreeModelColumn<DynamicProfileRule::Range<double>> shutterspeed;
+        Gtk::TreeModelColumn<DynamicProfileRule::Range<double>> expcomp;
+        Gtk::TreeModelColumn<DynamicProfileRule::Optional> camera;
+        Gtk::TreeModelColumn<DynamicProfileRule::Optional> lens;
         Gtk::TreeModelColumn<Glib::ustring> profilepath;
     };
 
@@ -86,8 +86,8 @@ private:
     class EditDialog: public Gtk::Dialog {
     public:
         EditDialog(const Glib::ustring &title, Gtk::Window &parent);
-        void set_entry(const DynamicProfileEntry &entry);
-        DynamicProfileEntry get_entry();
+        void set_rule(const DynamicProfileRule &rule);
+        DynamicProfileRule get_rule();
 
     private:
         void set_ranges();
