@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.45 - requires RT 5.0
+  Version 2.47 - requires RT 5.0
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -76,10 +76,10 @@
 }
 
 #ToolPanelNotebook {
-    min-width: 23em;
+    min-width: 24em;
 }
 #HistoryPanel {
-    min-width: 17.83334em;
+    min-width: 18em;
 }
 
 window.background {
@@ -789,9 +789,18 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-bottom: 0.33334em;
 }
 
+#ToolPanelNotebook > header tab {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 0.33334em;
+}
+#ToolPanelNotebook > header tab + tab {
+    margin-left: 0.25em;
+}
+
 #ToolPanelNotebook > header tab image{
     min-height: 2.5em;
-    min-width: calc(1.66667em + 6px);
+    min-width: 2em;
     padding: 0;
     margin: 0;
 }
@@ -1374,6 +1383,13 @@ dialog combobox .combo,
     margin-left: 0.33334em;
 }
 
+buttonbox:not(.dialog-action-area) button{
+    margin: 0.16667em 0 0.33334em 0.16667em;
+}
+#PrefNotebook buttonbox:not(.dialog-action-area) {
+    margin-right: -5px;
+}
+
 /* Arrow toggle combo button */
 #IopsPanel button:not(.flat).Left + button:not(.flat).Right,
 #MyExpander button:not(.flat).Left + button:not(.flat).Right {
@@ -1393,7 +1409,7 @@ dialog combobox .combo,
 /**/
 
 /* Add extra top and bottom space to buttons in toolbox & Preferences*/
-#PrefNotebook stack > box:nth-child(4) combobox,
+#PrefNotebook stack > box:nth-child(5) combobox,
 #MyExpander button.flat,
 #MyExpander button {
     margin-top: 0.08334em;
@@ -1476,10 +1492,10 @@ dialog .view button {
     color: @headline-hl;
 }
 
-dialog .view header button:not(:last-child):not(:only-child),
-window .view header button:not(:last-child):not(:only-child),
-.path-bar button:not(:last-child):not(:only-child) {
-    border-right: none;
+dialog .view header button:not(:first-child):not(:only-child),
+window .view header button:not(:first-child):not(:only-child),
+.path-bar button:not(:first-child):not(:only-child) {
+    border-left: none;
 }
 dialog .view header button,
 window .view header button,
@@ -1665,8 +1681,8 @@ frame > checkbutton check{
 #PrefNotebook checkbutton {
     min-height: 1.16667em;
 }
-#PrefNotebook stack > box:nth-child(3) checkbutton,
-#PrefNotebook stack > box:nth-child(4) checkbutton {
+#PrefNotebook stack > box:nth-child(4) checkbutton,
+#PrefNotebook stack > box:nth-child(5) checkbutton {
     min-height: 1.83334em;
 }
 #PrefNotebook radiobutton {
