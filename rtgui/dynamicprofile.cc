@@ -104,8 +104,8 @@ void get_double_range(DynamicProfileEntry::Range<double> &dest,
                       const Glib::ustring &key)
 {
     try {
-        int min = kf.get_double(group, key + "_min");
-        int max = kf.get_double(group, key + "_max");
+        double min = kf.get_double(group, key + "_min");
+        double max = kf.get_double(group, key + "_max");
         if (min <= max) {
             dest.min = min;
             dest.max = max;

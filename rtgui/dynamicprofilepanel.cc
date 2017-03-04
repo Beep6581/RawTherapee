@@ -26,10 +26,10 @@
 namespace {
 
 template <class V>
-Glib::ustring to_str(V n)
+Glib::ustring to_str(V n, int precision=1)
 {
     std::ostringstream buf;
-    buf << std::setprecision(1) << std::fixed << n;
+    buf << std::setprecision(precision) << std::fixed << n;
     return buf.str();
 }
 
@@ -369,13 +369,13 @@ void DynamicProfilePanel::render_profilepath(
 }
 
 
-#define RENDER_RANGE_(tp, name)                                          \
+#define RENDER_RANGE_(tp, name, prec)                              \
     auto row = *iter;                                                   \
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell); \
     DynamicProfileEntry::Range<tp> r = row[columns_. name];         \
     DynamicProfileEntry dflt;                                       \
     if (r.min > dflt.name.min || r.max < dflt.name.max) {               \
-        auto value = to_str(r.min) + " - " + to_str(r.max);             \
+        auto value = to_str(r.min, prec) + " - " + to_str(r.max, prec);      \
         ct->property_text() = value;                                    \
     } else {                                                            \
         ct->property_text() = "";                                       \
@@ -384,35 +384,35 @@ void DynamicProfilePanel::render_profilepath(
 void DynamicProfilePanel::render_iso(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(int, iso);
+    RENDER_RANGE_(int, iso, 0);
 }
 
 
 void DynamicProfilePanel::render_fnumber(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, fnumber);
+    RENDER_RANGE_(double, fnumber, 1);
 }
 
 
 void DynamicProfilePanel::render_focallen(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, focallen);
+    RENDER_RANGE_(double, focallen, 1);
 }
 
 
 void DynamicProfilePanel::render_shutterspeed(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, shutterspeed);
+    RENDER_RANGE_(double, shutterspeed, 4);
 }
 
 
 void DynamicProfilePanel::render_expcomp(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, expcomp);
+    RENDER_RANGE_(double, expcomp, 1);
 }
 
 #undef RENDER_RANGE_
