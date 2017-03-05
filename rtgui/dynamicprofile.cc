@@ -238,7 +238,8 @@ PartialProfile *loadDynamicProfile(const ImageMetaData *im)
             if (p != nullptr) {
                 p->applyTo(ret->pparams);
             } else {
-                printf("ERROR loading matching profile\n");
+                printf("ERROR loading matching profile from: %s\n",
+                       rule.profilepath.c_str());
             }
         }
     }
