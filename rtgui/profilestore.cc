@@ -577,12 +577,12 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     // creating and assigning the custom Label object
                     newSubMenu[methodColumns.label] = entry->label;
                     newSubMenu[methodColumns.profileStoreEntry] = entry;
-
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION == 18
                     // HACK: Workaround for bug in Gtk+ 3.18...
                     Gtk::TreeModel::Row menuHeader = *(refTreeModel->append(newSubMenu->children()));
-                    menuHeader[methodColumns.label] = entry->label;
+                    menuHeader[methodColumns.label] = "-";
                     menuHeader[methodColumns.profileStoreEntry] = entry;
-
+#endif
                     refreshProfileList_ (&newSubMenu, entry->folderId, false, entryList);
                 } else {
                     refreshProfileList_ (parentRow, entry->folderId, true, entryList);
