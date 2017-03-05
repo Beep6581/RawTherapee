@@ -217,8 +217,16 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
+    bool create = (!hasProcParams() || forceCPB);
 
-    if (defProf == DEFPROFILE_DYNAMIC && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+    Glib::ustring outFName;
+    if (options.paramsLoadLocation == PLL_Input) {
+        outFName = fname + paramFileExtension;
+    } else {
+        outFName = getCacheFileName("profiles", paramFileExtension);
+    }
+
+    if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
         rtengine::ImageMetaData* imageMetaData;
         if (getType() == FT_Raw) {
             rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
@@ -227,18 +235,15 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
         }
         PartialProfile *pp = loadDynamicProfile(imageMetaData);
-        int err = 0;
-        if (options.paramsLoadLocation == PLL_Input) {
-            err = pp->pparams->save(fname + paramFileExtension);
-        } else {
-            err = pp->pparams->save(getCacheFileName ("profiles", paramFileExtension));
-        }
+        int err = pp->pparams->save(outFName);
         pp->deleteInstance();
         delete pp;
         if (!err) {
             loadProcParams();
         }
-    } else if (defProf != DEFPROFILE_DYNAMIC && !options.CPBPath.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+    }
+    
+    if (!options.CPBPath.empty() && !defaultPparamsPath.empty() && create && cfs && cfs->exifValid) {
         // First generate the communication file, with general values and EXIF metadata
         rtengine::ImageMetaData* imageMetaData;
 
@@ -254,14 +259,6 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         const rtexif::TagDirectory* exifDir = nullptr;
 
         if (imageMetaData && (exifDir = imageMetaData->getExifData())) {
-            Glib::ustring outFName;
-
-            if (options.paramsLoadLocation == PLL_Input) {
-                outFName = fname + paramFileExtension;
-            } else {
-                outFName = getCacheFileName("profiles", paramFileExtension);
-            }
-
             exifDir->CPBDump(tmpFileName, fname, outFName,
                              defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
                              cfs,
