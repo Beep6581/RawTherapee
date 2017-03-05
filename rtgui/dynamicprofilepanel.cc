@@ -20,20 +20,9 @@
 #include "dynamicprofilepanel.h"
 #include "multilangmgr.h"
 #include "profilestore.h"
+#include "../rtengine/rtengine.h"
 #include <sstream>
 #include <iomanip>
-
-namespace {
-
-template <class V>
-Glib::ustring to_str(V n, int precision=1)
-{
-    std::ostringstream buf;
-    buf << std::setprecision(precision) << std::fixed << n;
-    return buf.str();
-}
-
-} // namespace
 
 
 //-----------------------------------------------------------------------------
@@ -366,50 +355,67 @@ void DynamicProfilePanel::render_profilepath(
 }
 
 
-#define RENDER_RANGE_(tp, name, prec)                              \
+#define RENDER_RANGE_(tp, name, tostr)                              \
     auto row = *iter;                                                   \
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell); \
     DynamicProfileRule::Range<tp> r = row[columns_. name];         \
     DynamicProfileRule dflt;                                       \
     if (r.min > dflt.name.min || r.max < dflt.name.max) {               \
-        auto value = to_str(r.min, prec) + " - " + to_str(r.max, prec);      \
+        auto value = tostr(r.min) + " - " + tostr(r.max);               \
         ct->property_text() = value;                                    \
     } else {                                                            \
         ct->property_text() = "";                                       \
     }
 
+
+namespace {
+
+template <class V>
+Glib::ustring to_str(V n, int precision=1)
+{
+    std::ostringstream buf;
+    buf << std::setprecision(precision) << std::fixed << n;
+    return buf.str();
+}
+
+} // namespace
+
 void DynamicProfilePanel::render_iso(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(int, iso, 0);
+    RENDER_RANGE_(int, iso, to_str);
 }
 
 
 void DynamicProfilePanel::render_fnumber(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, fnumber, 1);
+    RENDER_RANGE_(double, fnumber,
+                  [](double f)
+                  { return std::string("f/") +
+                          rtengine::ImageMetaData::apertureToString(f); });
 }
 
 
 void DynamicProfilePanel::render_focallen(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, focallen, 1);
+    RENDER_RANGE_(double, focallen, to_str);
 }
 
 
 void DynamicProfilePanel::render_shutterspeed(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, shutterspeed, 4);
+    RENDER_RANGE_(double, shutterspeed,
+                  rtengine::ImageMetaData::shutterToString);
 }
 
 
 void DynamicProfilePanel::render_expcomp(
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
-    RENDER_RANGE_(double, expcomp, 1);
+    RENDER_RANGE_(double, expcomp, to_str);
 }
 
 #undef RENDER_RANGE_
