@@ -208,9 +208,14 @@ public:
         return internalDynamicEntry;
     }
 
-    std::vector<DynamicProfileRule> &getDynamicProfileRules()
+    const std::vector<DynamicProfileRule> &getDynamicProfileRules() const
     {
         return dynamicRules;
+    }
+
+    void setDynamicProfileRules(const std::vector<DynamicProfileRule> &r)
+    {
+        dynamicRules = r;
     }
 
     void addListener(ProfileStoreListener *listener);

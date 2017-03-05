@@ -48,7 +48,7 @@ public:
     };
     
     DynamicProfileRule();
-    bool matches(const rtengine::ImageMetaData *im);
+    bool matches(const rtengine::ImageMetaData *im) const;
     bool operator<(const DynamicProfileRule &other) const;
 
     int serial_number;
