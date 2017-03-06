@@ -20,13 +20,14 @@
 #include "options.h"
 #include "toolpanel.h"
 #include "guiutils.h"
+#include "dynamicprofile.h"
 
 ProfileStore profileStore;
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ProfileStore::ProfileStore () : parseMutex(nullptr), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(nullptr), internalDefaultEntry(nullptr), internalDynamicEntry(nullptr)
+ProfileStore::ProfileStore () : parseMutex(nullptr), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(nullptr), internalDefaultEntry(nullptr), internalDynamicEntry(nullptr), dynamicRules(new std::vector<DynamicProfileRule>())
 {
     internalDefaultProfile = new AutoPartialProfile();
     internalDefaultProfile->set(true);
@@ -42,7 +43,7 @@ bool ProfileStore::init ()
         storeState = STORESTATE_BEINGINITIALIZED;
         parseMutex = new MyMutex();
         _parseProfiles ();
-        loadDynamicProfileRules(dynamicRules);
+        loadDynamicProfileRules(*dynamicRules);
         storeState = STORESTATE_INITIALIZED;
     }
 
@@ -505,6 +506,20 @@ void ProfileStore::dumpFolderList()
 
     printf("\n");
 }
+
+
+const std::vector<DynamicProfileRule> &ProfileStore::getDynamicProfileRules() const
+{
+    return *dynamicRules;
+}
+
+
+void ProfileStore::setDynamicProfileRules(const std::vector<DynamicProfileRule> &r)
+{
+    *dynamicRules = r;
+}
+
+
 
 ProfileStoreEntry::ProfileStoreEntry() : label(""), type(PSET_FOLDER), parentFolderId(0), folderId(0) {}
 

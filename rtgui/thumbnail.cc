@@ -217,14 +217,12 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
-    bool create = (!hasProcParams() || forceCPB);
+    const bool create = (!hasProcParams() || forceCPB);
 
-    Glib::ustring outFName;
-    if (options.paramsLoadLocation == PLL_Input) {
-        outFName = fname + paramFileExtension;
-    } else {
-        outFName = getCacheFileName("profiles", paramFileExtension);
-    }
+    const Glib::ustring outFName =
+        (options.paramsLoadLocation == PLL_Input) ?
+        fname + paramFileExtension :
+        getCacheFileName("profiles", paramFileExtension);
 
     if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
         rtengine::ImageMetaData* imageMetaData;
