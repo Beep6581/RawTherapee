@@ -1078,6 +1078,7 @@ PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 PREFERENCES_TAB_SOUND;Sounds
+PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 PREFERENCES_TIMAX;High
 PREFERENCES_TINB;Number of tiles
 PREFERENCES_TISTD;Standard
@@ -1105,6 +1106,7 @@ PROFILEPANEL_PCUSTOM;Custom
 PROFILEPANEL_PFILE;From file
 PROFILEPANEL_PINTERNAL;Neutral
 PROFILEPANEL_PLASTSAVED;Last Saved
+PROFILEPANEL_PDYNAMIC;Dynamic
 PROFILEPANEL_SAVEDLGLABEL;Save Processing Parameters...
 PROFILEPANEL_SAVEPPASTE;Parameters to save
 PROFILEPANEL_TOOLTIPCOPY;Copy current processing profile to clipboard.\n<b>Ctrl-click</b> to select the parameters to copy.
@@ -2037,3 +2039,12 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
+DYNPROFILEEDITOR_PROFILE;Processing Profile
+DYNPROFILEEDITOR_MOVE_UP;Move Up
+DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+DYNPROFILEEDITOR_NEW;New
+DYNPROFILEEDITOR_EDIT;Edit
+DYNPROFILEEDITOR_DELETE;Delete
+DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.

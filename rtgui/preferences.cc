@@ -82,6 +82,7 @@ Preferences::Preferences  (RTWindow *rtwindow)
 
     nb->append_page (*getGeneralPanel(),        M("PREFERENCES_TAB_GENERAL"));
     nb->append_page (*getProcParamsPanel(),     M("PREFERENCES_TAB_IMPROC"));
+    nb->append_page (*getDynProfilePanel(), M("PREFERENCES_TAB_DYNAMICPROFILE"));
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(), M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
@@ -420,6 +421,14 @@ void Preferences::behSetRadioToggled (const Glib::ustring& path)
     iter->set_value (behavColumns.badd, false);
 }
 
+
+Gtk::Widget *Preferences::getDynProfilePanel()
+{
+    dynProfilePanel = Gtk::manage(new DynamicProfilePanel());
+    return dynProfilePanel;
+}
+
+
 Gtk::Widget* Preferences::getProcParamsPanel ()
 {
 
@@ -429,11 +438,13 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     Gtk::VBox* vbpp = Gtk::manage (new Gtk::VBox ());
     Gtk::Label* drlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FORRAW") + ":", Gtk::ALIGN_START));
     rprofiles = Gtk::manage (new ProfileStoreComboBox ());
+    rprofiles->addRow(profileStore.getInternalDynamicPSE());
     setExpandAlignProperties(rprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     rprofiles->set_size_request(50, -1);
     rpconn = rprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forRAWComboChanged) );
     Gtk::Label* drimg = Gtk::manage (new Gtk::Label (M("PREFERENCES_FORIMAGE") + ":", Gtk::ALIGN_START));
     iprofiles = Gtk::manage (new ProfileStoreComboBox ());
+    iprofiles->addRow(profileStore.getInternalDynamicPSE());
     iprofiles->set_size_request(50, -1);
     setExpandAlignProperties(iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     ipconn = iprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forImageComboChanged) );
@@ -2020,6 +2031,7 @@ void Preferences::okPressed ()
     options.copyFrom (&moptions);
     options.filterOutParsedExtensions();
     Options::save ();
+    dynProfilePanel->save();
     hide ();
 }
 
@@ -2181,6 +2193,8 @@ void Preferences::updateProfileList()
 {
     rprofiles->updateProfileList();
     iprofiles->updateProfileList();
+    rprofiles->addRow(profileStore.getInternalDynamicPSE());
+    iprofiles->addRow(profileStore.getInternalDynamicPSE());
 }
 
 void Preferences::restoreValue()

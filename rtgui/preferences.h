@@ -24,6 +24,7 @@
 #include "options.h"
 #include <vector>
 #include "rtwindow.h"
+#include "dynamicprofilepanel.h"
 
 class Preferences : public Gtk::Dialog, public ProfileStoreListener
 {
@@ -201,6 +202,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ckbHideTPVScrollbar;
     Gtk::CheckButton* ckbUseIconNoText;
 
+    DynamicProfilePanel *dynProfilePanel;
+
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
 
@@ -239,6 +242,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::Widget* getBatchProcPanel ();
     Gtk::Widget* getPerformancePanel ();
     Gtk::Widget* getSoundPanel ();
+    Gtk::Widget* getDynProfilePanel ();
 
 public:
     explicit Preferences (RTWindow *rtwindow);
