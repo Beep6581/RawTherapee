@@ -169,7 +169,9 @@ bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out)
     } catch (Glib::Error &e) {
         return false;
     }
-    printf("loading dynamic profiles...\n");
+    if (options.rtSettings.verbose) {
+        printf("loading dynamic profiles...\n");
+    }
     auto groups = kf.get_groups();
     for (auto group : groups) {
         // groups are of the form "rule N", where N is a positive integer
@@ -181,7 +183,9 @@ bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out)
         if (!(buf >> serial) || !buf.eof()) {
             return false;
         }
-        printf(" loading rule %d\n", serial);
+        if (options.rtSettings.verbose) {
+            printf(" loading rule %d\n", serial);
+        }
         
         out.emplace_back(DynamicProfileRule());
         DynamicProfileRule &rule = out.back();
@@ -206,7 +210,9 @@ bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out)
 
 bool storeDynamicProfileRules(const std::vector<DynamicProfileRule> &rules)
 {
-    printf("saving dynamic profiles...\n");
+    if (options.rtSettings.verbose) {
+        printf("saving dynamic profiles...\n");
+    }
     Glib::KeyFile kf;
     for (auto &rule : rules) {
         std::ostringstream buf;
@@ -231,8 +237,10 @@ PartialProfile *loadDynamicProfile(const ImageMetaData *im)
     PartialProfile *ret = new PartialProfile(true, true);
     for (auto &rule : profileStore.getDynamicProfileRules()) { 
         if (rule.matches(im)) {
-            printf("found matching profile %s\n",
-                   rule.profilepath.c_str());
+            if (options.rtSettings.verbose) {
+                printf("found matching profile %s\n",
+                       rule.profilepath.c_str());
+            }
             const PartialProfile *p =
                 profileStore.getProfile(rule.profilepath);
             if (p != nullptr) {
