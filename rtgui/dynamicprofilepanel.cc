@@ -526,6 +526,8 @@ void DynamicProfilePanel::save()
         printf("Error in saving dynamic profile rules\n");
     } else {
         profileStore.setDynamicProfileRules(rules);
-        printf("Saved %d dynamic profile rules\n", int(rules.size()));
+        if (options.rtSettings.verbose) {
+            printf("Saved %d dynamic profile rules\n", int(rules.size()));
+        }
     }
 }
