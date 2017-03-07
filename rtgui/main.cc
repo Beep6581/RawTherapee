@@ -83,6 +83,8 @@ Glib::ustring fname_to_utf8 (const char* fname)
 #endif
 }
 
+bool fast_export = false;
+
 }
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
@@ -537,6 +539,10 @@ int processLineParams( int argc, char **argv )
                 compression = -1;
                 break;
 
+            case 'f':
+                fast_export = true;
+                break;
+
             case 'c': // MUST be last option
                 while (iArg + 1 < argc) {
                     iArg++;
@@ -845,7 +851,7 @@ int processLineParams( int argc, char **argv )
             continue;
         }
 
-        job = rtengine::ProcessingJob::create (ii, currentParams);
+        job = rtengine::ProcessingJob::create (ii, currentParams, fast_export);
 
         if( !job ) {
             errors++;

@@ -1094,7 +1094,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
             // controlling time and resource consuming tasks
             // and also those which effect is not pronounced after reducing the image size
             // TODO!!! could expose selections below via preferences
-            if (fastmode) {
+            if (fastmode && false) {
                 if (options.fastexport_bypass_sharpening         ) {
                     params.sharpening.enabled          = false;
                 }
@@ -1187,7 +1187,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                 params.resize.height           = options.fastexport_resize_height    ;
             }
 
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params);
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode);
 
             int pw;
             int ph = BatchQueue::calcMaxThumbnailHeight();

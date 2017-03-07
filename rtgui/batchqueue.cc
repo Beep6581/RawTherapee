@@ -34,6 +34,9 @@
 #include "guiutils.h"
 #include "rtimage.h"
 #include <sys/time.h>
+
+#include "../rtengine/processingjob.h"
+
 using namespace std;
 using namespace rtengine;
 
@@ -227,7 +230,7 @@ bool BatchQueue::saveBatchQueue ()
 
         // The column's header is mandatory (the first line will be skipped when loaded)
         file << "input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
-             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|<end of line>"
+             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|fast export|<end of line>"
              << std::endl;
 
         // method is already running with entryLock, so no need to lock again
@@ -242,6 +245,7 @@ bool BatchQueue::saveBatchQueue ()
                  << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
                  << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
+                 << static_cast<ProcessingJobImpl *>(entry->job)->fast << '|'
                  << std::endl;
         }
     }
@@ -308,6 +312,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto tiffUncompressed = nextIntOr (options.saveFormat.tiffUncompressed);
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
+            const auto fast = nextIntOr(false);
 
             rtengine::procparams::ProcParams pparams;
 
@@ -319,7 +324,7 @@ bool BatchQueue::loadBatchQueue ()
             if (!thumb)
                 continue;
 
-            auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams);
+            auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams, fast);
 
             auto prevh = getMaxThumbnailHeight ();
             auto prevw = prevh;

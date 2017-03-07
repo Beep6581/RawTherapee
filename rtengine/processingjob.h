@@ -32,12 +32,13 @@ public:
     bool isRaw;
     InitialImage* initialImage;
     procparams::ProcParams pparams;
+    bool fast;
 
-    ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp)
-        : fname(fn), isRaw(iR), initialImage(nullptr), pparams(pp) {}
+    ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp, bool ff)
+        : fname(fn), isRaw(iR), initialImage(nullptr), pparams(pp), fast(ff) {}
 
-    ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp)
-        : fname(""), isRaw(true), initialImage(iImage), pparams(pp)
+    ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp, bool ff)
+        : fname(""), isRaw(true), initialImage(iImage), pparams(pp), fast(ff)
     {
         iImage->increaseRef();
     }

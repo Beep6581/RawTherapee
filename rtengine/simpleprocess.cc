@@ -41,7 +41,7 @@ class ImageProcessor {
 public:
     ImageProcessor(ProcessingJob* pjob, int& errorCode,
                    ProgressListener* pl, bool tunnelMetaData, bool flush):
-        pjob(pjob),
+        job(static_cast<ProcessingJobImpl*>(pjob)),
         errorCode(errorCode),
         pl(pl),
         tunnelMetaData(tunnelMetaData),
@@ -55,9 +55,9 @@ public:
     {
     }
 
-    Image16 *operator()(bool fast)
+    Image16 *operator()()
     {
-        if (!fast) {
+        if (!job->fast) {
             return normal_pipeline();
         } else {
             return fast_pipeline();
@@ -81,29 +81,34 @@ private:
 
     Image16 *fast_pipeline()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         if (!job->pparams.resize.enabled) {
             return normal_pipeline();
         }
+
+        pl = nullptr;
         
         if (!stage_1()) {
             return nullptr;
         }
+        stage_calc_denoise();
+        printf("after calc denoise\n"); fflush(stdout);
         stage_2();
         stage_4();
+        printf("after 4\n"); fflush(stdout);
         stage_early_resize();
-        stage_calc_denoise();
+        printf("after early resize\n"); fflush(stdout);
         stage_3();
+        printf("after 3\n"); fflush(stdout);
         stage_5();
+        printf("after 5\n"); fflush(stdout);
         stage_6();
+        printf("after 6\n"); fflush(stdout);
         return stage_7();
     }
 
     bool stage_1()
     {
         errorCode = 0;
-
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
 
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_PROCESSING");
@@ -235,7 +240,6 @@ private:
 
     void stage_calc_denoise()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
         
@@ -714,7 +718,6 @@ private:
 
     void stage_2()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
         
@@ -753,7 +756,6 @@ private:
 
     void stage_3()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
         
@@ -826,7 +828,6 @@ private:
 
     void stage_4()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
 
@@ -849,7 +850,6 @@ private:
 
     void stage_5()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
 
@@ -994,7 +994,6 @@ private:
 
     void stage_6()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
         
@@ -1192,7 +1191,6 @@ private:
 
     Image16 *stage_7()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
         
@@ -1389,7 +1387,6 @@ private:
 
     void stage_early_resize()
     {
-        ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
         
@@ -1435,14 +1432,16 @@ private:
             tmplab = resized;
             params.resize.enabled = false;
 
-            if (params.prsharpening.enabled) {
-                params.sharpening = params.prsharpening;
-            }
-
+            params.sharpening = params.prsharpening;
             params.wavelet.strength =
                 int(float(params.wavelet.strength) * tmpScale);
             params.dirpyrDenoise.luma *= tmpScale;
-            // params.dirpyrDenoise.smethod = "shal";
+            params.dirpyrDenoise.smethod = "shal";
+
+            for (int i = 0; i < 6; ++i) {
+                auto &n = params.dirpyrequalizer.mult[i];
+                n = 1.0 + (n - 1.0) * tmpScale;
+            }
             
             fw = imw;
             fh = imh;
@@ -1455,7 +1454,7 @@ private:
     }
 
 private:
-    ProcessingJob* pjob;
+    ProcessingJobImpl* job;
     int& errorCode;
     ProgressListener* pl;
     bool tunnelMetaData;
@@ -1534,7 +1533,7 @@ private:
 IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData, bool flush)
 {
     ImageProcessor proc(pjob, errorCode, pl, tunnelMetaData, flush);
-    return proc(true);
+    return proc();
 }
 
 void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
