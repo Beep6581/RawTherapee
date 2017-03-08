@@ -279,6 +279,7 @@ public:
     int           fastexport_resize_dataspec;
     int           fastexport_resize_width;
     int           fastexport_resize_height;
+    bool fastexport_use_fast_pipeline;
 
     // Dialog settings
     Glib::ustring lastIccDir;

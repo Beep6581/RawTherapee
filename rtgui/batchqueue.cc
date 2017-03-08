@@ -35,8 +35,6 @@
 #include "rtimage.h"
 #include <sys/time.h>
 
-#include "../rtengine/processingjob.h"
-
 using namespace std;
 using namespace rtengine;
 
@@ -245,7 +243,7 @@ bool BatchQueue::saveBatchQueue ()
                  << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
                  << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
-                 << static_cast<ProcessingJobImpl *>(entry->job)->fast << '|'
+                 << entry->job->fastPipeline() << '|'
                  << std::endl;
         }
     }

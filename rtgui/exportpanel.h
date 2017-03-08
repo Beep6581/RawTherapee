@@ -38,6 +38,7 @@ protected:
 
     //Gtk::CheckButton* enabled;
     Gtk::CheckButton* bypass_ALL;
+    Gtk::CheckButton* use_fast_pipeline;
     Gtk::CheckButton* bypass_sharpenEdge;
     Gtk::CheckButton* bypass_sharpenMicro;
     Gtk::CheckButton* bypass_sharpening;

@@ -67,16 +67,12 @@ public:
 private:
     Image16 *normal_pipeline()
     {
-        if (!stage_1()) {
+        if (!stage_init()) {
             return nullptr;
         }
-        stage_calc_denoise();
-        stage_2();
-        stage_3();
-        stage_4();
-        stage_5();
-        stage_6();
-        return stage_7();
+        stage_denoise();
+        stage_transform();
+        return stage_finish();
     }
 
     Image16 *fast_pipeline()
@@ -87,26 +83,16 @@ private:
 
         pl = nullptr;
         
-        if (!stage_1()) {
+        if (!stage_init()) {
             return nullptr;
         }
-        stage_calc_denoise();
-        printf("after calc denoise\n"); fflush(stdout);
-        stage_2();
-        stage_4();
-        printf("after 4\n"); fflush(stdout);
+        stage_transform();
         stage_early_resize();
-        printf("after early resize\n"); fflush(stdout);
-        stage_3();
-        printf("after 3\n"); fflush(stdout);
-        stage_5();
-        printf("after 5\n"); fflush(stdout);
-        stage_6();
-        printf("after 6\n"); fflush(stdout);
-        return stage_7();
+        stage_denoise();
+        return stage_finish();
     }
 
-    bool stage_1()
+    bool stage_init()
     {
         errorCode = 0;
 
@@ -230,19 +216,6 @@ private:
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
         }
 
-        // // AG begin
-        // baseImg = new Imagefloat (fw, fh);
-        // imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
-        // // AG end
-
-        return true;
-    }
-
-    void stage_calc_denoise()
-    {
-        procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
-        
         calclum = nullptr ;
         params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
         autoNR = (float) settings->nrauto;//
@@ -713,14 +686,6 @@ private:
             //end evaluate noise
         }
 
-        // return true;
-    }
-
-    void stage_2()
-    {
-        procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
-        
         baseImg = new Imagefloat (fw, fh);
         imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
 
@@ -752,9 +717,11 @@ private:
             imgsrc->flushRawData();
             imgsrc->flushRGB();
         }
+
+        return true;
     }
 
-    void stage_3()
+    void stage_denoise()
     {
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
@@ -816,17 +783,9 @@ private:
         delete [] ry;
         delete [] sk;
         delete [] pcsk;
-
-        // imgsrc->convertColorSpace(baseImg, params.icm, currWB);
-
-        // // perform first analysis
-        // hist16 (65536);
-
-        // ipf.firstAnalysis (baseImg, params, hist16);
     }
 
-
-    void stage_4()
+    void stage_transform()
     {
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
@@ -848,7 +807,7 @@ private:
         }
     }
 
-    void stage_5()
+    Image16 *stage_finish()
     {
         procparams::ProcParams& params = job->pparams;
         ImProcFunctions ipf (&params, true);
@@ -990,13 +949,7 @@ private:
         if (pl) {
             pl->setProgress (0.55);
         }
-    }
 
-    void stage_6()
-    {
-        procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
-        
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         // start tile processing...???
@@ -1187,13 +1140,7 @@ private:
         if (pl) {
             pl->setProgress (0.60);
         }
-    }
 
-    Image16 *stage_7()
-    {
-        procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
-        
         int imw, imh;
         double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
         bool labResize = params.resize.enabled && params.resize.method != "Nearest" && tmpScale != 1.0;
@@ -1392,12 +1339,10 @@ private:
         
         int imw, imh;
         double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
-        // bool resize = params.resize.enabled;
 
         LabImage *tmplab = new LabImage(fw, fh);
         ipf.rgb2lab(*baseImg, *tmplab, params.icm.working);
 
-        // crop and convert to rgb16
         int cx = 0, cy = 0, cw = fw, ch = fh;
 
         if (params.crop.enabled) {
@@ -1438,9 +1383,10 @@ private:
             params.dirpyrDenoise.luma *= tmpScale;
             params.dirpyrDenoise.smethod = "shal";
 
+            const double dirpyreq_scale = min(tmpScale * 1.5, 1.0);
             for (int i = 0; i < 6; ++i) {
                 auto &n = params.dirpyrequalizer.mult[i];
-                n = 1.0 + (n - 1.0) * tmpScale;
+                n = 1.0 + (n - 1.0) * dirpyreq_scale;
             }
             
             fw = imw;

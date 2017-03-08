@@ -483,6 +483,8 @@ public:
       * gets invalid, you must not use it any more. Dont call this function while the job is being processed.
       * @param job is the job to destroy */
     static void destroy (ProcessingJob* job);
+
+    virtual bool fastPipeline() const = 0;
 };
 
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It returns when it is ready, so it can be slow.

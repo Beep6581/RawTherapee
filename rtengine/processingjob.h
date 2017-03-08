@@ -49,6 +49,8 @@ public:
             initialImage->decreaseRef();
         }
     }
+
+    bool fastPipeline() const { return fast; }
 };
 
 }
