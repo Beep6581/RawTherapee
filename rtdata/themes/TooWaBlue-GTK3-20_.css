@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.47 - requires RT 5.0
+  Version 2.48 - requires RT 5.0
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@
 }
 
 #ToolPanelNotebook {
-    min-width: 24em;
+    min-width: 24.08334em;
 }
 #HistoryPanel {
     min-width: 18em;
@@ -795,7 +795,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0 0.33334em;
 }
 #ToolPanelNotebook > header tab + tab {
-    margin-left: 0.25em;
+    margin-left: 0.33333em;
 }
 
 #ToolPanelNotebook > header tab image{
@@ -901,6 +901,11 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin: 0;
 }
 
+#MetaPanelNotebook combobox button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+}
 #MetaPanelNotebook combobox + button,
 #MetaPanelNotebook combobox + button + button {
     margin-left: 0.16667em;
@@ -1095,6 +1100,9 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     background-color: shade(@bg-grey,.85);
     border-color: @bg-dark-grey;
     background-image: none;
+}
+#ThresholdAdjuster {
+    margin: 0.08334em 0 0.16667em 0;
 }
 
 #ToolPanelNotebook scrolledwindow viewport.frame {
@@ -1349,13 +1357,14 @@ button.MiddleH {
 }
 /**/
 
-/* Base format for Toolbox and dialogs */
+/* Button base format for Toolbox and dialogs */
 dialog button,
 #MyExpander button,
 #BatchQueueButtonsMainContainer button {
     min-height: 1.66667em;
     min-width: 0;
     padding: 0 0.375em;
+    margin: 0.08334em 0;
 }
 combobox .combo,
 dialog combobox .combo,
@@ -1384,7 +1393,7 @@ dialog combobox .combo,
 }
 
 buttonbox:not(.dialog-action-area) button{
-    margin: 0.16667em 0 0.33334em 0.16667em;
+    margin: 0.08334em 0 0.33334em 0.16667em;
 }
 #PrefNotebook buttonbox:not(.dialog-action-area) {
     margin-right: -5px;
@@ -1408,13 +1417,6 @@ buttonbox:not(.dialog-action-area) button{
 }
 /**/
 
-/* Add extra top and bottom space to buttons in toolbox & Preferences*/
-#PrefNotebook stack > box:nth-child(5) combobox,
-#MyExpander button.flat,
-#MyExpander button {
-    margin-top: 0.08334em;
-    margin-bottom: 0.08334em;
-}
 /**/
 #MyExpander button.text-button label {
     margin: 0;/* x */
@@ -1469,6 +1471,7 @@ window .view button {
     min-height: 2em;
     min-width: 1.33334em;
     padding: 0 0.33334em;
+    margin: 0;
 }
 dialog .view button.text-button label,
 window .view button.text-button label {
@@ -1504,6 +1507,7 @@ window .view header button,
 }
 
 #pathbarbox button:last-child {
+    min-height: 2em;
     min-width: 2em;
     margin: 0;
     padding: 0;
@@ -1535,7 +1539,7 @@ popover button.text-button {
     border: 0.08334em solid @border-color;
     box-shadow: none;
     background-image: none;
-    margin: 0;
+    margin: 0.083334em 0;
     min-height: 1.66667em;
     padding: 0 0.66667em;
 }
@@ -1625,17 +1629,14 @@ headerbar button.titlebutton.close:active{
 /*** end ***************************************************************************************/
 
 /*** Ckeckbox & Radio **************************************************************************/
-checkbox {
-    padding:0;
-    margin:0;
-    min-height: 2em;
-}
+checkbox,
 checkbutton,
 radiobutton {
     padding: 0;
     margin: 0;
-    min-height: 2em;
+    min-height: 2em;;
 }
+
 check,
 radio {
     border: calc(0.083334em + 0.18px) solid shade(@text-color, .9);
@@ -1678,16 +1679,6 @@ frame > checkbutton check{
     min-height: 1.4em;
     margin-left: 0.5em;
 }
-#PrefNotebook checkbutton {
-    min-height: 1.16667em;
-}
-#PrefNotebook stack > box:nth-child(4) checkbutton,
-#PrefNotebook stack > box:nth-child(5) checkbutton {
-    min-height: 1.83334em;
-}
-#PrefNotebook radiobutton {
-    min-height: 2em;
-}
 
 #MyExpander button + checkbutton:last-child {
     margin-left: 0.33334em;
@@ -1698,7 +1689,7 @@ frame > checkbutton check{
 /*** Entry & Spinbutton ************************************************************************/
 #MyExpander entry,
 entry {
-    margin: 0;
+    margin: 0.08334em 0;
     padding: 0 0.33334em;
     min-height: 1.66667em;
     min-width: 0;
@@ -1709,7 +1700,7 @@ entry {
 }
 
 spinbutton {
-    margin: 0;
+    margin: 0.08334em 0;
     padding: 0;
     min-height: 1.66667em;
     min-width: 0;
