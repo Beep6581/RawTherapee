@@ -42,7 +42,7 @@ constexpr const T& min(const T& a)
 template<typename T>
 constexpr const T& min(const T& a, const T& b)
 {
-    return a < b ? a : b;
+    return b < a ? b : a;
 }
 
 template<typename T, typename... ARGS>
