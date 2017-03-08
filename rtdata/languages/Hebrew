@@ -450,6 +450,15 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard.
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
 !CURVEEDITOR_TYPE;Type:
+!DYNPROFILEEDITOR_DELETE;Delete
+!DYNPROFILEEDITOR_EDIT;Edit
+!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+!DYNPROFILEEDITOR_MOVE_UP;Move Up
+!DYNPROFILEEDITOR_NEW;New
+!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+!DYNPROFILEEDITOR_PROFILE;Processing Profile
 !EDITWINDOW_TITLE;Image Edit
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
@@ -1207,6 +1216,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;After seconds
 !PREFERENCES_STDAUT;Standard
+!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_TIMAX;High
@@ -1230,6 +1240,7 @@ TP_WBALANCE_TEMPERATURE;מידת חום
 !PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_MYPROFILES;My profiles
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...

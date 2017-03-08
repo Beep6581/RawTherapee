@@ -2074,6 +2074,17 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!DYNPROFILEEDITOR_DELETE;Delete
+!DYNPROFILEEDITOR_EDIT;Edit
+!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+!DYNPROFILEEDITOR_MOVE_UP;Move Up
+!DYNPROFILEEDITOR_NEW;New
+!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+!DYNPROFILEEDITOR_PROFILE;Processing Profile
 !HISTORY_MSG_444;WB - Temp bias
+!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PROFILEPANEL_PDYNAMIC;Dynamic
 !TP_WBALANCE_TEMPBIAS;AWB temperature bias
 !TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
