@@ -213,4 +213,4 @@ function CreateDmg {
     message "Removing disk image caches"
     rm -rf "${srcdir}"
 }
-# CreateDmg
+CreateDmg
