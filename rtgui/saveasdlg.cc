@@ -21,6 +21,8 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
+#include "../rtengine/utils.h"
+
 extern Options options;
 
 SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent)
@@ -217,41 +219,57 @@ SaveFormat SaveAsDialog::getFormat ()
 
 void SaveAsDialog::okPressed ()
 {
-
     fname = fchooser->get_filename();
 
-    // checking if the filename field is empty. The user have to click Cancel if he don't want to specify a filename
     // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the filename entry and
     //     click on a folder in the list, the filename field is empty but get_filename will return the folder's path :/
-    if (!fname.length() || Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_EMPTYFILENAME") + "</b>";
-        Gtk::MessageDialog msgd (*this, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
-        msgd.run ();
+    if (Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
+        fname = fchooser->get_current_name();
+    }
+
+    // Checking if the filename field is empty. The user have to click Cancel if he don't want to specify a filename
+    if (fname.empty()) {
+        Gtk::MessageDialog(
+            *this,
+            Glib::ustring("<b>")
+                + M("MAIN_MSG_EMPTYFILENAME")
+                + "</b>",
+            true,
+            Gtk::MESSAGE_WARNING,
+            Gtk::BUTTONS_OK,
+            true
+        ).run();
         return;
     }
 
-    // resolve extension ambiguities
-    SaveFormat sf = formatOpts->getFormat ();
-    Glib::ustring extLower = getExtension (fname).lowercase ();
-    bool extIsEmpty = (extLower == "");
-    bool extIsJpeg  = (extLower == "jpg" || extLower == "jpeg" || extLower == "jpe");
-    bool extIsTiff  = (extLower == "tif" || extLower == "tiff");
-    bool extIsPng   = (extLower == "png");
+    if (getExtension(fname).empty()) {
+        // Extension is either empty or unfamiliar
+        fname += '.' + formatOpts->getFormat().format;
+    } else if (
+        !rtengine::hasJpegExtension(fname)
+        && !rtengine::hasTiffExtension(fname)
+        && !rtengine::hasPngExtension(fname)
+    ) {
+        // Create dialog to warn user that the filename may have two extensions on the end
+        Gtk::MessageDialog msgd(
+            *this,
+            Glib::ustring("<b>")
+                + M("GENERAL_WARNING")
+                + ": "
+                + M("SAVEDLG_WARNFILENAME")
+                + " \""
+                + Glib::path_get_basename (fname)
+                + '.'
+                + formatOpts->getFormat().format
+                + "\"</b>",
+            true,
+            Gtk::MESSAGE_WARNING,
+            Gtk::BUTTONS_OK_CANCEL,
+            true
+        );
 
-    if (extIsEmpty || !(extIsJpeg || extIsTiff || extIsPng)) {
-        // extension is either empty or unfamiliar.
-        fname += Glib::ustring (".") + sf.format;
-    } else if (    !(sf.format == "jpg" && extIsJpeg)
-                   && !(sf.format == "tif" && extIsTiff)
-                   && !(sf.format == "png" && extIsPng )    ) {
-        // create dialog to warn user that the filename may have two extensions on the end.
-        Glib::ustring msg_ = Glib::ustring ("<b>") + M("GENERAL_WARNING") + ": "
-                             + M("SAVEDLG_WARNFILENAME") + " \"" + Glib::path_get_basename (fname)
-                             + "." + sf.format + "\"</b>";
-        Gtk::MessageDialog msgd (*this, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
-
-        if (msgd.run () == Gtk::RESPONSE_OK) {
-            fname += Glib::ustring (".") + sf.format;
+        if (msgd.run() == Gtk::RESPONSE_OK) {
+            fname += "." + formatOpts->getFormat().format;
         } else {
             return;
         }
