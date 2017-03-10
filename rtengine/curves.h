@@ -994,8 +994,9 @@ inline void LuminanceToneCurve::Apply(float &r, float &g, float &b) const
     assert (lutToneCurve);
 
     float currLuminance = r * 0.2126729f + g * 0.7151521f + b * 0.0721750f;
-    float newLuminance = lutToneCurve[currLuminance];
-    float coef = newLuminance / currLuminance;
+    const float newLuminance = lutToneCurve[currLuminance];
+    currLuminance = currLuminance == 0.f ? 0.00001f : currLuminance;
+    const float coef = newLuminance / currLuminance;
     r = LIM<float>(r * coef, 0.f, 65535.f);
     g = LIM<float>(g * coef, 0.f, 65535.f);
     b = LIM<float>(b * coef, 0.f, 65535.f);

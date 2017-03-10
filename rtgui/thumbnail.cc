@@ -30,6 +30,7 @@
 #include "profilestore.h"
 #include "batchqueue.h"
 #include "extprog.h"
+#include "dynamicprofile.h"
 
 using namespace rtengine::procparams;
 
@@ -216,8 +217,31 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
+    const bool create = (!hasProcParams() || forceCPB);
 
-    if (!options.CPBPath.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+    const Glib::ustring outFName =
+        (options.paramsLoadLocation == PLL_Input) ?
+        fname + paramFileExtension :
+        getCacheFileName("profiles", paramFileExtension);
+
+    if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
+        rtengine::ImageMetaData* imageMetaData;
+        if (getType() == FT_Raw) {
+            rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
+            imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
+        } else {
+            imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
+        }
+        PartialProfile *pp = loadDynamicProfile(imageMetaData);
+        int err = pp->pparams->save(outFName);
+        pp->deleteInstance();
+        delete pp;
+        if (!err) {
+            loadProcParams();
+        }
+    }
+    
+    if (!options.CPBPath.empty() && !defaultPparamsPath.empty() && create && cfs && cfs->exifValid) {
         // First generate the communication file, with general values and EXIF metadata
         rtengine::ImageMetaData* imageMetaData;
 
@@ -233,14 +257,6 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         const rtexif::TagDirectory* exifDir = nullptr;
 
         if (imageMetaData && (exifDir = imageMetaData->getExifData())) {
-            Glib::ustring outFName;
-
-            if (options.paramsLoadLocation == PLL_Input) {
-                outFName = fname + paramFileExtension;
-            } else {
-                outFName = getCacheFileName("profiles", paramFileExtension);
-            }
-
             exifDir->CPBDump(tmpFileName, fname, outFName,
                              defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
                              cfs,

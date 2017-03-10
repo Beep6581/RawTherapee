@@ -972,6 +972,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
+!DYNPROFILEEDITOR_DELETE;Delete
+!DYNPROFILEEDITOR_EDIT;Edit
+!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+!DYNPROFILEEDITOR_MOVE_UP;Move Up
+!DYNPROFILEEDITOR_NEW;New
+!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+!DYNPROFILEEDITOR_PROFILE;Processing Profile
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
@@ -1437,6 +1446,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_STDAUT;Standard
+!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
@@ -1451,6 +1461,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_MYPROFILES;My profiles
+!PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added

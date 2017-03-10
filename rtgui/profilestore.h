@@ -31,6 +31,9 @@
 #include "guiutils.h"
 
 
+// forward decl
+class DynamicProfileRule;
+
 /** @brief This will implement callback functions for the ProfileStore
   *
   */
@@ -144,6 +147,7 @@ private:
     StoreState storeState;
     rtengine::procparams::AutoPartialProfile *internalDefaultProfile;
     ProfileStoreEntry *internalDefaultEntry;
+    ProfileStoreEntry *internalDynamicEntry;
 
     /** Alphabetically ordered list of folder and files through Gtk::Label sub-class;
       * ready to be used in Menu and Combobox
@@ -159,6 +163,9 @@ private:
 
     /** List of the client of this store */
     std::list<ProfileStoreListener*> listeners;
+
+    /** cache for dynamic profile rules */
+    std::unique_ptr<std::vector<DynamicProfileRule>> dynamicRules;
 
     /** @brief Method to recursively parse a profile folder with a level depth arbitrarily limited to 3
       *
@@ -197,6 +204,14 @@ public:
     {
         return internalDefaultEntry;
     }
+
+    const ProfileStoreEntry*                     getInternalDynamicPSE()
+    {
+        return internalDynamicEntry;
+    }
+
+    const std::vector<DynamicProfileRule> &getDynamicProfileRules() const;
+    void setDynamicProfileRules(const std::vector<DynamicProfileRule> &r);
 
     void addListener(ProfileStoreListener *listener);
     void removeListener(ProfileStoreListener *listener);
