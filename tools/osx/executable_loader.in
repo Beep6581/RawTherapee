@@ -4,7 +4,7 @@ cwd="$(cd "$(dirname "$0")"; pwd)"
 app="${cwd%/Contents/*}"
 contents="${app}/Contents"
 res="${contents}"/Resources
-lib="${contents}"/lib
+lib="${contents}"/Frameworks
 etc="${res}"/etc
 
 # for different os x versions

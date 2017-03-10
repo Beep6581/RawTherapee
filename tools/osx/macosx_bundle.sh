@@ -89,7 +89,7 @@ APP="${PROJECT_NAME}".app
 CONTENTS="${APP}"/Contents
 RESOURCES="${CONTENTS}"/Resources
 MACOS="${CONTENTS}"/MacOS
-LIB="${CONTENTS}"/lib
+LIB="${CONTENTS}"/Frameworks
 ETC="${RESOURCES}"/etc
 EXECUTABLE="${MACOS}"/rawtherapee
 
