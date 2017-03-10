@@ -36,48 +36,43 @@ protected:
     Adjuster* ccSteps;
     Gtk::VBox *dcbOptions;
     Adjuster* dcbIterations;
-    Gtk::CheckButton* dcbEnhance;
-    //Gtk::VBox *allOptions;
-    //Gtk::CheckButton* allEnhance;
+    MyCheckButton* dcbEnhance;
     Gtk::VBox *lmmseOptions;
     Adjuster* lmmseIterations;
     Gtk::VBox *pixelShiftFrame;
     Gtk::VBox *pixelShiftOptions;
+    MyComboBoxText* pixelShiftMotionMethod;
+    MyCheckButton* pixelShiftShowMotion;
+    MyCheckButton* pixelShiftShowMotionMaskOnly;
+    MyCheckButton* pixelShiftNonGreenCross;
+    MyCheckButton* pixelShiftGreen;
+    MyCheckButton* pixelShiftBlur;
+    MyCheckButton* pixelShiftHoleFill;
+    MyCheckButton* pixelShiftMedian;
+    MyCheckButton* pixelShiftLmmse;
+    MyCheckButton* pixelShiftEqualBright;
+    Adjuster* pixelShiftSmooth;
+    Adjuster* pixelShiftEperIso;
+    Adjuster* pixelShiftSigma;
+#ifdef PIXELSHIFTDEV
+    Adjuster* pixelShiftSum;
     Adjuster* pixelShiftMotion;
     MyComboBoxText* pixelShiftMotionCorrection;
-    MyComboBoxText* pixelShiftMotionMethod;
-    Gtk::CheckButton* pixelShiftShowMotion;
-    Gtk::CheckButton* pixelShiftShowMotionMaskOnly;
-    Gtk::CheckButton* pixelShiftAutomatic;
-    Gtk::CheckButton* pixelShiftNonGreenHorizontal;
-    Gtk::CheckButton* pixelShiftNonGreenVertical;
-    Gtk::CheckButton* pixelShiftNonGreenCross;
-    Gtk::CheckButton* pixelShiftNonGreenCross2;
-    Gtk::CheckButton* pixelShiftNonGreenAmaze;
-    Gtk::CheckButton* pixelShiftGreen;
-    Gtk::CheckButton* pixelShiftBlur;
-    Gtk::CheckButton* pixelShiftExp0;
-    Gtk::CheckButton* pixelShiftHoleFill;
-    Gtk::CheckButton* pixelShiftMedian;
-    Gtk::CheckButton* pixelShiftMedian3;
-    Gtk::CheckButton* pixelShiftLmmse;
-    Adjuster* pixelShiftSmooth;
+    MyCheckButton* pixelShiftAutomatic;
+    MyCheckButton* pixelShiftNonGreenHorizontal;
+    MyCheckButton* pixelShiftNonGreenVertical;
+    MyCheckButton* pixelShiftNonGreenCross2;
+    MyCheckButton* pixelShiftNonGreenAmaze;
+    MyCheckButton* pixelShiftExp0;
+    MyCheckButton* pixelShiftMedian3;
     Adjuster* pixelShiftStddevFactorGreen;
     Adjuster* pixelShiftStddevFactorRed;
     Adjuster* pixelShiftStddevFactorBlue;
-    Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftNreadIso;
     Adjuster* pixelShiftPrnu;
-    Adjuster* pixelShiftSigma;
-    Adjuster* pixelShiftSum;
     Adjuster* pixelShiftRedBlueWeight;
-    bool lastDCBen;
+#endif
     int oldMethod;
-    //bool lastALLen;
-    sigc::connection methodconn, imagenumberconn, psmcconn, dcbEnhconn,
-                     pixelShiftShowMotionconn, pixelShiftShowMotionMaskOnlyconn, pixelShiftAutomaticconn,
-                     pixelShiftNonGreenHorizontalconn, pixelShiftNonGreenVerticalconn, pixelShiftHoleFillconn, pixelShiftMedianconn, pixelShiftMedian3conn, pixelShiftNonGreenCrossconn,
-                     pixelShiftNonGreenCross2conn, pixelShiftNonGreenAmazeconn, pixelShiftGreenconn, pixelShiftBlurconn, pixelShiftSmoothconn, pixelShiftExp0conn, pixelShiftLmmseconn, pixelShiftMotionMethodConn;
 public:
 
     BayerProcess ();
@@ -88,26 +83,29 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
     void methodChanged ();
-    void psMotionCorrectionChanged ();
     void imageNumberChanged ();
     void adjusterChanged     (Adjuster* a, double newval);
     void dcbEnhanceChanged();
     void pixelShiftShowMotionChanged();
     void pixelShiftShowMotionMaskOnlyChanged();
-    void pixelShiftAutomaticChanged();
-    void pixelShiftNonGreenHorizontalChanged();
-    void pixelShiftNonGreenVerticalChanged();
     void pixelShiftHoleFillChanged();
     void pixelShiftMedianChanged();
     void pixelShiftMedian3Changed();
     void pixelShiftGreenChanged();
     void pixelShiftBlurChanged();
-    void pixelShiftExp0Changed();
     void pixelShiftLmmseChanged();
+    void pixelShiftEqualBrightChanged();
     void pixelShiftNonGreenCrossChanged();
+    void pixelShiftMotionMethodChanged();
+#ifdef PIXELSHIFTDEV
+    void psMotionCorrectionChanged ();
+    void pixelShiftAutomaticChanged();
+    void pixelShiftNonGreenHorizontalChanged();
+    void pixelShiftNonGreenVerticalChanged();
+    void pixelShiftExp0Changed();
     void pixelShiftNonGreenCross2Changed();
     void pixelShiftNonGreenAmazeChanged();
-    void pixelShiftMotionMethodChanged();
+#endif
 };
 
 #endif

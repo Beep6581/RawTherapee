@@ -24,6 +24,7 @@
 #include "../rtengine/coord.h"
 #include <sstream>
 #include <iostream>
+#include <sigc++/slot.h>
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
@@ -260,6 +261,24 @@ public:
 };
 
 /**
+ * @brief subclass of Gtk::CheckButton in order to handle the last active state
+ */
+class MyCheckButton : public Gtk::CheckButton
+{
+
+    bool lastActive = false;
+    sigc::connection myConnection;
+public:
+    using CheckButton::CheckButton;
+    void setLastActive() {lastActive = get_active();};
+    void setLastActive(bool active) {lastActive = active;};
+    bool getLastActive() {return lastActive;};
+    void connect(const sigc::connection &connection) {myConnection = connection;};
+    void block(bool blocked) {myConnection.block(blocked);};
+};
+
+
+/**
  * @brief subclass of Gtk::ComboBox in order to handle the scrollwheel
  */
 class MyComboBox : public Gtk::ComboBox
@@ -278,9 +297,12 @@ class MyComboBoxText : public Gtk::ComboBoxText
 {
 
     bool on_scroll_event (GdkEventScroll* event);
+    sigc::connection myConnection;
 
 public:
     MyComboBoxText ();
+    void connect(const sigc::connection &connection) {myConnection = connection;};
+    void block(bool blocked) {myConnection.block(blocked);};
 };
 
 /**

@@ -45,7 +45,7 @@ float greenDiff(float a, float b, bool adaptive, float stddevFactor, float eperI
         float gDiff = a - b;
         gDiff *= eperIso;
         gDiff *= gDiff;
-        float avg = (a + b) / 2.f;
+        float avg = (a + b) * 0.5f;
         avg *= eperIso;
         prnu *= avg;
         float stddev = stddevFactor * (avg + nreadIso + prnu * prnu);
@@ -96,17 +96,17 @@ float nonGreenDiff(float a, float b, float stddevFactor, float eperIso, float nr
 float nonGreenDiffCross(float right, float left, float top, float bottom, float centre, float stddevFactor, float eperIso, float nreadIso, float prnu, bool showMotion)
 {
     // check non green cross
-    float hDiff = (right + left) / 2.f - centre;
+    float hDiff = (right + left) * 0.5f - centre;
     hDiff *= eperIso;
     hDiff *= hDiff;
-    float vDiff = (top + bottom) / 2.f - centre;
+    float vDiff = (top + bottom) * 0.5f - centre;
     vDiff *= eperIso;
     vDiff *= vDiff;
-    float avg = (right + left + top + bottom) / 4.f;
+    float avg = ((right + left) + (top + bottom)) * 0.25f;
     avg *= eperIso;
     prnu *= avg;
     float stddev = stddevFactor * (avg + nreadIso + prnu * prnu);
-    float result = std::min(hDiff - stddev, vDiff - stddev);
+    float result = std::min(hDiff, vDiff) - stddev;
 
     if(!showMotion) {
         return result;
@@ -896,21 +896,31 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, bool det
 #else
 void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &model, float rawWpCorrection)
 {
-
+#ifdef PIXELSHIFTDEV
     BENCHFUN
-
+#endif
     const bool detectMotion = bayerParams.pixelShiftMotion > 0;
     const int motion = bayerParams.pixelShiftMotion;
     const bool showMotion = bayerParams.pixelshiftShowMotion;
-    const bool showOnlyMask = bayerParams.pixelshiftShowMotionMaskOnly;
+    const bool showOnlyMask = bayerParams.pixelshiftShowMotionMaskOnly && showMotion;
     const RAWParams::BayerSensor::ePSMotionCorrection gridSize_ = bayerParams.pixelShiftMotionCorrection;
     const bool adaptive = bayerParams.pixelShiftAutomatic;
+#ifdef PIXELSHIFTDEV
     float stddevFactorGreen = bayerParams.pixelShiftStddevFactorGreen;
     float stddevFactorRed = bayerParams.pixelShiftStddevFactorRed;
     float stddevFactorBlue = bayerParams.pixelShiftStddevFactorBlue;
-    float eperIso = bayerParams.pixelShiftEperIso;
     float nreadIso =  bayerParams.pixelShiftNreadIso;
     float prnu = bayerParams.pixelShiftPrnu;
+    const float redBlueWeight = bayerParams.pixelShiftRedBlueWeight + 1.f;
+#else
+    float stddevFactorGreen = 5.f;
+    float stddevFactorRed = 5.f;
+    float stddevFactorBlue = 5.f;
+    float nreadIso =  0.f;
+    float prnu = 1.f;
+    const float redBlueWeight = 0.7f + 1.f;
+#endif
+    float eperIso = bayerParams.pixelShiftEperIso;
     const bool checkNonGreenHorizontal = bayerParams.pixelShiftNonGreenHorizontal;
     const bool checkNonGreenVertical = bayerParams.pixelShiftNonGreenVertical;
     const bool checkNonGreenCross = bayerParams.pixelShiftNonGreenCross;
@@ -918,13 +928,18 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const bool checkNonGreenCross2 = bayerParams.pixelShiftNonGreenCross2;
     const bool checkGreen = bayerParams.pixelShiftGreen;
     const float greenWeight = 2.f;
-    const float redBlueWeight = bayerParams.pixelShiftRedBlueWeight + 1.f;
     const bool blurMap = bayerParams.pixelShiftBlur;
     const float sigma = bayerParams.pixelShiftSigma;
+#ifdef PIXELSHIFTDEV
     const float threshold = bayerParams.pixelShiftSum + 9.f;
+#else
+    const float threshold = 3.f + 9.f;
+#endif
     const bool experimental0 = bayerParams.pixelShiftExp0;
     const bool holeFill = bayerParams.pixelShiftHoleFill;
-    const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0.;
+    const bool equalBrightness = bayerParams.pixelShiftEqualBright;
+    const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0. && !showOnlyMask;
+    const bool automatic = bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic;
     const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
 
     static const float nReadK3II[] = { 3.4f,  // ISO 100
@@ -1040,6 +1055,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const bool skip = (gridSize_ == RAWParams::BayerSensor::ePSMotionCorrection::Grid1x2);
     int gridSize = 1;
     bool nOf3x3 = false;
+
     switch (gridSize_) {
         case RAWParams::BayerSensor::ePSMotionCorrection::Grid1x1:
         case RAWParams::BayerSensor::ePSMotionCorrection::Grid1x2:
@@ -1067,6 +1083,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         if(plistener) {
             plistener->setProgress(1.0);
         }
+
         return;
     }
 
@@ -1110,11 +1127,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         eperIso = eperIsoModel * (100.f / (rawWpCorrection * idata->getISOSpeed()));
     }
 
+#ifdef PIXELSHIFTDEV
     std::cout << "WL: " << c_white[0] << " BL: " << c_black[0] << " ePerIso multiplicator: " << (65535.f / (c_white[0] - c_black[0])) << std::endl;
-
-    float eperIsoRed = (eperIso / scale_mul[0]) * (65535.f / (c_white[0]- c_black[0]));
-    float eperIsoGreen = (eperIso * scaleGreen) * (65535.f / (c_white[1]- c_black[1]));
-    float eperIsoBlue = (eperIso / scale_mul[2]) * (65535.f / (c_white[2]- c_black[2]));
+#endif
+    float eperIsoRed = (eperIso / scale_mul[0]) * (65535.f / (c_white[0] - c_black[0]));
+    float eperIsoGreen = (eperIso * scaleGreen) * (65535.f / (c_white[1] - c_black[1]));
+    float eperIsoBlue = (eperIso / scale_mul[2]) * (65535.f / (c_white[2] - c_black[2]));
 
 //    printf("Pixelshift parameters : gridSize %d\tadaptive %d\tstdDevFactorGreen %f\telectrons %1.8f\tnread %f\tprnu %1.1f%%\n", gridSize, adaptive, stddevFactorGreen, eperIso, nRead, prnu);
 
@@ -1161,6 +1179,90 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     array2D<float> psG2(winw + 32, winh);
     array2D<float> psBlue(winw + 32, winh);
 
+// calculate average green brightness for each frame
+    double greenBrightness[4] = {};
+
+    if(equalBrightness) {
+        LUT<uint32_t> *histo[4];
+
+        for(int i = 0; i < 4; ++i) {
+            histo[i] = new LUT<uint32_t>(65536);
+            histo[i]->clear();
+        }
+
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            LUT<uint32_t> *histoThr[4];
+
+            for(int i = 0; i < 4; ++i) {
+                histoThr[i] = new LUT<uint32_t>(65536);
+                histoThr[i]->clear();
+            }
+
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for(int i = winy + 1; i < winh - 1; ++i) {
+                int j = winx + 1;
+                int c = FC(i, j);
+
+                // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
+                unsigned int offset = (c & 1);
+                offset ^= 1; // 0 => 1 or 1 => 0
+
+                for(; j < winw - 1; ++j) {
+                    offset ^= 1; // 0 => 1 or 1 => 0
+
+                    // store the values from the 4 frames into 4 different temporary planes
+                    float green1 = (*rawDataFrames[1 - offset])[i - offset + 1][j];
+                    float green2 = (*rawDataFrames[3 - offset])[i + offset][j + 1];
+                    (*histoThr[1 - offset])[green1]++;
+                    (*histoThr[3 - offset])[green2]++;
+                }
+            }
+
+            #pragma omp critical
+            {
+                for(int i = 0; i < 4; ++i) {
+                    (*histo[i]) += (*histoThr[i]);
+                    delete histoThr[i];
+                }
+            }
+        }
+
+        float medians[4];
+
+        for(int i = 0; i < 4; ++i) {
+            //find median of histogram
+            uint32_t median = 0, count = 0;
+            uint32_t datalen = (winh - 2) * (winw - 2) / 2;
+
+            while (count < datalen / 2) {
+                count += (*histo[i])[median];
+                ++median;
+            }
+
+            medians[i] = (median +  median - 1) / 2.f;
+            delete histo[i];
+        }
+
+        const float medianMaster = medians[frame];
+
+        for(int i = 0; i < 4; ++i) {
+            greenBrightness[i] = medianMaster / medians[i];
+        }
+
+#ifdef PIXELSHIFTDEV
+        std::cout << "brightness factors by median : " << greenBrightness[0] << " " << greenBrightness[1] << " " << greenBrightness[2] << " " << greenBrightness[3] << std::endl;
+#endif
+
+    } else {
+        greenBrightness[0] = greenBrightness[1] = greenBrightness[2] = greenBrightness[3] = 1.f;
+    }
+
 // fill channels psRed, psG1, psG2 and psBlue
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -1188,16 +1290,17 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             offset ^= 1; // 0 => 1 or 1 => 0
 
             // store the values from the 4 frames into 4 different temporary planes
-            greenDest1[j] = (*rawDataFrames[1 - offset])[i - offset + 1][j];
-            greenDest2[j] = (*rawDataFrames[3 - offset])[i + offset][j + 1];
-            nonGreenDest0[j] = (*rawDataFrames[(offset << 1) + offset])[i][j + offset];
-            nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1];
+            greenDest1[j] = (*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset];
+            greenDest2[j] = (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset];
+            nonGreenDest0[j] = (*rawDataFrames[(offset << 1) + offset])[i][j + offset] * greenBrightness[(offset << 1) + offset];
+            nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * greenBrightness[2 - offset];
         }
     }
 
 // now that the temporary planes are filled for easy access we do the motion detection
+#ifdef PIXELSHIFTDEV
     int sum[2] = {0};
-
+#endif 
     float pixelcount = ((winh - (border + offsY) - (winy + border - offsY)) * (winw - (border + offsX) - (winx + border - offsX))) / 2.f;
 
     array2D<float> psMask(winw, winh);
@@ -1207,7 +1310,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     #pragma omp parallel
 #endif
     {
+#ifdef PIXELSHIFTDEV
         int sumThr[2] = {0};
+#endif
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16) nowait
 #endif
@@ -1220,7 +1325,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             float greenDifMax[gridSize]; // Here we store the maximum differences per Column
 
+
             // green channel motion detection checks the grid around the pixel for differences in green channels
+#ifdef PIXELSHIFTDEV
+
             if(detectMotion || (adaptive && checkGreen)) {
                 if(gridSize == 3) {
                     // compute maximum of differences for first two columns of 3x3 grid
@@ -1312,6 +1420,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             }
 
+#endif
 
             // this is the index for the last column of the grid. Obviously we have to start with gridSize - 1
             int lastIndex = gridSize - 1;
@@ -1336,9 +1445,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                     bool skipNext = false;
                     float gridMax;
 
+#ifdef PIXELSHIFTDEV
+
                     if(gridSize < 2) {
                         // compute difference for current pixel and skip next pixel, that's roughly the method from dcrawps
+#endif
                         gridMax = greenDiff(psG1[i][j], psG2[i][j], adaptive, stddevFactorGreen, eperIsoGreen, nRead, prnu, showMotion, j, i);
+#ifdef PIXELSHIFTDEV
+
                         skipNext = skip;
                     } else if(gridSize == 3) {
                         // compute maximum of differences for third column of 3x3 grid and save at position lastIndex
@@ -1386,12 +1500,19 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         korr = log2Lut[((int)(psG1[i][j] * scaleGreen)) >> 1];
                     }
 
+#endif
+
                     if (gridMax > thresh - korr) {
+#ifdef PIXELSHIFTDEV
                         sumThr[offset] ++;
 
                         if(nOf3x3) {
+#endif
                             psMask[i][j] = greenWeight;
-                        } else if((offset == (frame & 1)) && checkNonGreenVertical) {
+#ifdef PIXELSHIFTDEV
+                        }
+
+                        else if((offset == (frame & 1)) && checkNonGreenVertical) {
                             if(frame > 1) {
                                 green[i + offsY][j + offsX] = blueRow ? psG1[i][j] : psG2[i][j];
                             } else {
@@ -1408,6 +1529,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                                 paintMotionMask(j + offsX, showMotion, (gridMax - thresh + korr) * blendFactor, showOnlyMask, greenDest, redDest, blueDest);
                             }
                         }
+
+#endif
                         // do not set the motion pixel values. They have already been set by demosaicer or showMotion
                         continue;
                     }
@@ -1424,12 +1547,17 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         float redDiff = nonGreenDiffCross(redRight, redLeft, redTop, redBottom, redCentre, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
 
                         if(redDiff > 0.f) {
+#ifdef PIXELSHIFTDEV
+
                             if(nOf3x3) {
+#endif
                                 psMask[i][j] = redBlueWeight;
+#ifdef PIXELSHIFTDEV
                             } else {
                                 paintMotionMask(j + offsX, showMotion, redDiff, showOnlyMask, redDest, blueDest, greenDest);
                             }
 
+#endif
                             continue;
                         }
 
@@ -1442,16 +1570,23 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         float blueDiff = nonGreenDiffCross(blueRight, blueLeft, blueTop, blueBottom, blueCentre, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
 
                         if(blueDiff > 0.f) {
+#ifdef PIXELSHIFTDEV
+
                             if(nOf3x3) {
+#endif
                                 psMask[i][j] = redBlueWeight;
+#ifdef PIXELSHIFTDEV
                             } else {
                                 paintMotionMask(j + offsX, showMotion, blueDiff, showOnlyMask, blueDest, redDest, greenDest);
                             }
 
+#endif
                             continue;
 
                         }
                     }
+
+#ifdef PIXELSHIFTDEV
 
                     if(checkNonGreenHorizontal) {
                         float redLeft    = psRed[ i ][j - 1];
@@ -1599,9 +1734,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                     if(experimental0) { // for experiments
 
                     }
+
+#endif
                 }
 
-                if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
+                if(showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
                     red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
                 } else if(!(adaptive && nOf3x3)) {
                     // no motion detected, replace the a priori demosaiced values by the pixelshift combined values
@@ -1612,6 +1749,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             }
         }
 
+#ifdef PIXELSHIFTDEV
+
 #ifdef _OPENMP
         #pragma omp critical
 #endif
@@ -1619,13 +1758,16 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             sum[0] += sumThr[0];
             sum[1] += sumThr[0];
         }
+#endif
     }
 
 
+#ifdef PIXELSHIFTDEV
     float percent0 = 100.f * sum[0] / pixelcount;
     float percent1 = 100.f * sum[1] / pixelcount;
 
     std::cout << fileName <<  " : Green detections at stddev " << std::setprecision( 2 ) << bayerParams.pixelShiftStddevFactorGreen << " : Frame 1/3 : " << std::setprecision( 6 ) << sum[0] << " (" << percent0 << "%)" << " Frame 2/4 : " << sum[1] << " (" << percent1 << "%)" << std::endl;
+#endif
 
     if(adaptive && nOf3x3) {
         if(blurMap) {
@@ -1641,9 +1783,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         #pragma omp parallel for schedule(dynamic,16)
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
-            float *greenDest = green[i + offsY];
-            float *redDest = red[i + offsY];
-            float *blueDest = blue[i + offsY];
             int j = winx + border - offsX;
             float v3sum[3] = {0.f};
 
@@ -1680,7 +1819,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
 #ifdef __SSE2__
 
-            if(!(showMotion && showOnlyMask) && smoothTransitions) {
+            if(smoothTransitions) {
                 vfloat onev = F2V(1.f);
                 vfloat smoothv = F2V(smoothFactor);
                 int j = winx + border - offsX;
@@ -1704,7 +1843,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
                 if(mask[i][j] == 255) {
                     paintMotionMask(j + offsX, showMotion, 0.5f, showOnlyMask, greenDest, redDest, blueDest);
-                } else if(showMotion && showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
+                } else if(showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
                     red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
                 } else {
                     if(smoothTransitions) {
@@ -1714,11 +1853,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         float blend =  pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
                         red[i + offsY][j + offsX] = intp(blend, red[i + offsY][j + offsX], psRed[i][j] );
-                        green[i + offsY][j + offsX] = intp(blend, green[i + offsY][j + offsX], (psG1[i][j] + psG2[i][j]) / 2.f);
+                        green[i + offsY][j + offsX] = intp(blend, green[i + offsY][j + offsX], (psG1[i][j] + psG2[i][j]) * 0.5f);
                         blue[i + offsY][j + offsX] = intp(blend, blue[i + offsY][j + offsX], psBlue[i][j]);
                     } else {
                         red[i + offsY][j + offsX] = psRed[i][j];
-                        green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) / 2.f;
+                        green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) * 0.5f;
                         blue[i + offsY][j + offsX] = psBlue[i][j];
                     }
                 }

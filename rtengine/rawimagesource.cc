@@ -2029,7 +2029,9 @@ void RawImageSource::demosaic(const RAWParams &raw)
             } else {
                 RAWParams::BayerSensor bayerParams = raw.bayersensor;
                 if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic) {
+                    bool pixelShiftEqualBright = bayerParams.pixelShiftEqualBright;
                     bayerParams.setPixelShiftDefaults();
+                    bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
                 } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
                     bayerParams.pixelShiftMotion = 0;
                     bayerParams.pixelShiftAutomatic = false;
@@ -2038,7 +2040,9 @@ void RawImageSource::demosaic(const RAWParams &raw)
                 if(!bayerParams.pixelshiftShowMotion || bayerParams.pixelShiftNonGreenAmaze || bayerParams.pixelShiftNonGreenCross2 || (bayerParams.pixelShiftBlur && bayerParams.pixelShiftSmoothFactor > 0.0)) {
                     if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic) && numFrames == 4) {
                         if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
+#ifdef PIXELSHIFTDEV
                             if(!bayerParams.pixelShiftMedian3) {
+#endif
                                 if(bayerParams.pixelShiftLmmse) {
                                     lmmse_interpolate_omp(W, H, *(rawDataFrames[0]), red, green, blue, raw.bayersensor.lmmse_iterations);
                                 } else {
@@ -2066,6 +2070,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                                         blue[i][j] = median(blue[i][j],blueTmp[0][i+1][j],blueTmp[1][i+1][j+1],blueTmp[2][i][j+1]);
                                     }
                                 }
+#ifdef PIXELSHIFTDEV
                             } else {
                                 multi_array2D<float,3> redTmp(W,H);
                                 multi_array2D<float,3> greenTmp(W,H);
@@ -2135,6 +2140,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                                     }
                                 }
                             }
+#endif
                         } else {
                             if(bayerParams.pixelShiftLmmse) {
                                 lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);

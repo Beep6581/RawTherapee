@@ -704,6 +704,7 @@ HISTORY_MSG_469;EvPixelShiftMedian3
 HISTORY_MSG_470;EvPixelShiftMotionMethod
 HISTORY_MSG_471;EvPixelShiftSmooth
 HISTORY_MSG_472;EvPixelShiftLmmse
+HISTORY_MSG_473;EvPixelShiftEqualBright
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1692,20 +1693,24 @@ TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 TP_RAW_PIXELSHIFTMEDIAN;Median
 TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
-TP_RAW_PIXELSHIFTHOLEFILL;3x3 new: Fill holes
-TP_RAW_PIXELSHIFTBLUR;3x3 new: Blur
-TP_RAW_PIXELSHIFTSMOOTH;3x3 new: Smooth transitions
+TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
+TP_RAW_PIXELSHIFTBLUR;Blur motion mask
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Default radius of 1.0 usually fits good for base ISO. Increase value for high ISO shots,\n5.0 is a good starting point for high ISO shots.\nWatch motion mask while changing the value.
+TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
+TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use lmmse instead of amaze for motion areas.\nUseful for High ISO images.
 TP_RAW_PIXELSHIFTLMMSE;Use lmmse for motion parts
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
 TP_RAW_PIXELSHIFTEXP0;Experimental
-TP_RAW_PIXELSHIFTGREEN;Check dual green
-TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue cross
+TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
+TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
 TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
 TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
 TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
 TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
-TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions (requires 3x3 new Blur)\nSet to 0 to disable smooth transitions\nSet to 1 to get Amaze or Median
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with and without motion.\nSet to 0 to disable smooth transitions\nSet to 1 to get Amaze/lmmse or Median
 TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
 TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
 TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion
@@ -1718,10 +1723,11 @@ TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show mask only
 TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
-TP_RAW_PIXELSHIFTEPERISO;e per ISO
+TP_RAW_PIXELSHIFTEPERISO;ISO adaption
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 TP_RAW_PIXELSHIFTNREADISO;nRead
 TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-TP_RAW_PIXELSHIFTSIGMA;Blur sigma
+TP_RAW_PIXELSHIFTSIGMA;Blur radius
 TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
 TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
