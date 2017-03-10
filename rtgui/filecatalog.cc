@@ -1129,25 +1129,27 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                     params.wavelet.enabled     = false;
                 }
 
-                //if (options.fastexport_bypass_raw_bayer_all_enhance   ) params.raw.bayersensor.all_enhance       = false;
-                if (options.fastexport_bypass_raw_bayer_dcb_iterations  ) {
-                    params.raw.bayersensor.dcb_iterations    = 0;
-                }
+                if (!options.fastexport_use_fast_pipeline) {
+                    //if (options.fastexport_bypass_raw_bayer_all_enhance   ) params.raw.bayersensor.all_enhance       = false;
+                    if (options.fastexport_bypass_raw_bayer_dcb_iterations  ) {
+                        params.raw.bayersensor.dcb_iterations    = 0;
+                    }
 
-                if (options.fastexport_bypass_raw_bayer_dcb_enhance     ) {
-                    params.raw.bayersensor.dcb_enhance       = false;
-                }
+                    if (options.fastexport_bypass_raw_bayer_dcb_enhance     ) {
+                        params.raw.bayersensor.dcb_enhance       = false;
+                    }
 
-                if (options.fastexport_bypass_raw_bayer_lmmse_iterations) {
-                    params.raw.bayersensor.lmmse_iterations  = 0;
-                }
+                    if (options.fastexport_bypass_raw_bayer_lmmse_iterations) {
+                        params.raw.bayersensor.lmmse_iterations  = 0;
+                    }
 
-                if (options.fastexport_bypass_raw_bayer_linenoise       ) {
-                    params.raw.bayersensor.linenoise         = 0;
-                }
+                    if (options.fastexport_bypass_raw_bayer_linenoise       ) {
+                        params.raw.bayersensor.linenoise         = 0;
+                    }
 
-                if (options.fastexport_bypass_raw_bayer_greenthresh     ) {
-                    params.raw.bayersensor.greenthresh       = 0;
+                    if (options.fastexport_bypass_raw_bayer_greenthresh     ) {
+                        params.raw.bayersensor.greenthresh       = 0;
+                    }
                 }
 
                 if (options.fastexport_bypass_raw_ccSteps        ) {
@@ -1170,14 +1172,18 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                     params.raw.ff_file = "";
                 }
 
-                params.raw.bayersensor.method  = options.fastexport_raw_bayer_method ;
-                params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
-                params.icm.input               = options.fastexport_icm_input        ;
-                params.icm.working             = options.fastexport_icm_working      ;
-                params.icm.output              = options.fastexport_icm_output       ;
-                params.icm.outputIntent        = options.fastexport_icm_outputIntent ;
-                params.icm.outputBPC           = options.fastexport_icm_outputBPC    ;
-                params.icm.gamma               = options.fastexport_icm_gamma        ;
+
+                if (!options.fastexport_use_fast_pipeline) {
+                    params.raw.bayersensor.method  = options.fastexport_raw_bayer_method ;
+                    params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
+                    params.icm.input               = options.fastexport_icm_input        ;
+                    params.icm.working             = options.fastexport_icm_working      ;
+                    params.icm.output              = options.fastexport_icm_output       ;
+                    params.icm.outputIntent        = options.fastexport_icm_outputIntent ;
+                    params.icm.outputBPC           = options.fastexport_icm_outputBPC    ;
+                    params.icm.gamma               = options.fastexport_icm_gamma        ;
+                }
+                
                 params.resize.enabled          = options.fastexport_resize_enabled   ;
                 params.resize.scale            = options.fastexport_resize_scale     ;
                 params.resize.appliesTo        = options.fastexport_resize_appliesTo ;

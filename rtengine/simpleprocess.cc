@@ -1381,8 +1381,8 @@ private:
             params.wavelet.strength =
                 int(float(params.wavelet.strength) * tmpScale);
             params.dirpyrDenoise.luma *= tmpScale;
+            
             params.dirpyrDenoise.smethod = "shal";
-            params.dirpyrDenoise.median = false;
 
             const double dirpyreq_scale = min(tmpScale * 1.5, 1.0);
             for (int i = 0; i < 6; ++i) {
