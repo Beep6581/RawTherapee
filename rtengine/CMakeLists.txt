@@ -24,6 +24,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc 
     klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
     clutstore.cc
     ciecam02.cc
+    pixelshift.cc
     )
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")

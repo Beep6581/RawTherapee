@@ -112,7 +112,7 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::CA_correct_RT(const double cared, const double cablue, const double caautostrength)
+void RawImageSource::CA_correct_RT(const double cared, const double cablue, const double caautostrength, array2D<float> &rawData)
 {
 // multithreaded and partly vectorized by Ingo Weyrich
     constexpr int ts = 128;

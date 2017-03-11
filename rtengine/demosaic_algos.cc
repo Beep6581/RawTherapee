@@ -1316,7 +1316,7 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 // Adapted to RawTherapee by Jacques Desmis 3/2013
 // Improved speed and reduced memory consumption by Ingo Weyrich 2/2015
 //TODO Tiles to reduce memory consumption
-SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
+SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
 {
     const int width = winw, height = winh;
     const int ba = 10;

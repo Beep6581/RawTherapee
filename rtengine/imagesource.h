@@ -66,7 +66,7 @@ public:
         embProfile(nullptr), idata(nullptr), dirpyrdenoiseExpComp(INFINITY) {}
 
     virtual ~ImageSource            () {}
-    virtual int         load        (const Glib::ustring &fname, bool batch = false) = 0;
+    virtual int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false) = 0;
     virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true) {};
     virtual void        demosaic    (const RAWParams &raw) {};
     virtual void        retinex       (ColorManagementParams cmp, RetinexParams  deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
@@ -79,6 +79,9 @@ public:
     virtual void        MSR(LabImage* lab, LUTf & mapcurve, bool &mapcontlutili, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
     virtual bool        IsrgbSourceModified() const = 0; // tracks whether cached rgb output of demosaic has been modified
+
+    virtual void setCurrentFrame(unsigned int frameNum) = 0;
+
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
     virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hlp, const ColorManagementParams &cmp, const RAWParams &raw) = 0;
@@ -157,6 +160,7 @@ public:
     {
         return this;
     }
+    virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
 };
 }
 #endif

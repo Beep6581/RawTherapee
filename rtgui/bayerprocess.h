@@ -31,19 +31,48 @@ class BayerProcess : public ToolParamBlock, public AdjusterListener, public Fold
 protected:
 
     MyComboBoxText* method;
+    Gtk::HBox *imageNumberBox;
+    MyComboBoxText* imageNumber;
     Adjuster* ccSteps;
     Gtk::VBox *dcbOptions;
     Adjuster* dcbIterations;
-    Gtk::CheckButton* dcbEnhance;
-    //Gtk::VBox *allOptions;
-    //Gtk::CheckButton* allEnhance;
+    MyCheckButton* dcbEnhance;
     Gtk::VBox *lmmseOptions;
     Adjuster* lmmseIterations;
-
-    bool lastDCBen;
-    int oldSelection;
-    //bool lastALLen;
-    sigc::connection methodconn, dcbEnhconn; //,allEnhconn;
+    Gtk::VBox *pixelShiftFrame;
+    Gtk::VBox *pixelShiftOptions;
+    MyComboBoxText* pixelShiftMotionMethod;
+    MyCheckButton* pixelShiftShowMotion;
+    MyCheckButton* pixelShiftShowMotionMaskOnly;
+    MyCheckButton* pixelShiftNonGreenCross;
+    MyCheckButton* pixelShiftGreen;
+    MyCheckButton* pixelShiftBlur;
+    MyCheckButton* pixelShiftHoleFill;
+    MyCheckButton* pixelShiftMedian;
+    MyCheckButton* pixelShiftLmmse;
+    MyCheckButton* pixelShiftEqualBright;
+    Adjuster* pixelShiftSmooth;
+    Adjuster* pixelShiftEperIso;
+    Adjuster* pixelShiftSigma;
+#ifdef PIXELSHIFTDEV
+    Adjuster* pixelShiftSum;
+    Adjuster* pixelShiftMotion;
+    MyComboBoxText* pixelShiftMotionCorrection;
+    MyCheckButton* pixelShiftAutomatic;
+    MyCheckButton* pixelShiftNonGreenHorizontal;
+    MyCheckButton* pixelShiftNonGreenVertical;
+    MyCheckButton* pixelShiftNonGreenCross2;
+    MyCheckButton* pixelShiftNonGreenAmaze;
+    MyCheckButton* pixelShiftExp0;
+    MyCheckButton* pixelShiftMedian3;
+    Adjuster* pixelShiftStddevFactorGreen;
+    Adjuster* pixelShiftStddevFactorRed;
+    Adjuster* pixelShiftStddevFactorBlue;
+    Adjuster* pixelShiftNreadIso;
+    Adjuster* pixelShiftPrnu;
+    Adjuster* pixelShiftRedBlueWeight;
+#endif
+    int oldMethod;
 public:
 
     BayerProcess ();
@@ -54,9 +83,29 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
     void methodChanged ();
+    void imageNumberChanged ();
     void adjusterChanged     (Adjuster* a, double newval);
     void dcbEnhanceChanged();
-    //void allEnhanceChanged();
+    void pixelShiftShowMotionChanged();
+    void pixelShiftShowMotionMaskOnlyChanged();
+    void pixelShiftHoleFillChanged();
+    void pixelShiftMedianChanged();
+    void pixelShiftMedian3Changed();
+    void pixelShiftGreenChanged();
+    void pixelShiftBlurChanged();
+    void pixelShiftLmmseChanged();
+    void pixelShiftEqualBrightChanged();
+    void pixelShiftNonGreenCrossChanged();
+    void pixelShiftMotionMethodChanged();
+#ifdef PIXELSHIFTDEV
+    void psMotionCorrectionChanged ();
+    void pixelShiftAutomaticChanged();
+    void pixelShiftNonGreenHorizontalChanged();
+    void pixelShiftNonGreenVerticalChanged();
+    void pixelShiftExp0Changed();
+    void pixelShiftNonGreenCross2Changed();
+    void pixelShiftNonGreenAmazeChanged();
+#endif
 };
 
 #endif

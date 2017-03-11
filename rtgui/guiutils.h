@@ -291,6 +291,24 @@ public:
 };
 
 /**
+ * @brief subclass of Gtk::CheckButton in order to handle the last active state
+ */
+class MyCheckButton : public Gtk::CheckButton
+{
+
+    bool lastActive = false;
+    sigc::connection myConnection;
+public:
+    using CheckButton::CheckButton;
+    void setLastActive() {lastActive = get_active();};
+    void setLastActive(bool active) {lastActive = active;};
+    bool getLastActive() {return lastActive;};
+    void connect(const sigc::connection &connection) {myConnection = connection;};
+    void block(bool blocked) {myConnection.block(blocked);};
+};
+
+
+/**
  * @brief subclass of Gtk::ComboBox in order to handle the scrollwheel
  */
 class MyComboBox : public Gtk::ComboBox
@@ -313,6 +331,7 @@ public:
 class MyComboBoxText : public Gtk::ComboBoxText
 {
     int naturalWidth, minimumWidth;
+    sigc::connection myConnection;
 
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
@@ -322,6 +341,8 @@ public:
     MyComboBoxText (bool has_entry = false);
 
     void setPreferredWidth (int minimum_width, int natural_width);
+    void connect(const sigc::connection &connection) {myConnection = connection;};
+    void block(bool blocked) {myConnection.block(blocked);};
 };
 
 /**

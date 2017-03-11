@@ -37,7 +37,7 @@
 #include <omp.h>
 #endif
 #include "opthelper.h"
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #undef CLIPD
@@ -475,8 +475,12 @@ RawImageSource::~RawImageSource ()
 
     delete idata;
 
-    if (ri) {
-        delete ri;
+    for(size_t i = 0; i < numFrames; ++i) {
+        delete riFrames[i];
+    }
+
+    for(size_t i = 0; i < numFrames - 1; ++i) {
+        delete rawDataBuffer[i];
     }
 
     flushRGB();
@@ -913,7 +917,7 @@ void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementP
 /* interpolateBadPixelsBayer: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighbourhood
  */
-int RawImageSource::interpolateBadPixelsBayer( PixelsMap &bitmapBads )
+int RawImageSource::interpolateBadPixelsBayer( PixelsMap &bitmapBads, array2D<float> &rawData )
 {
     static const float eps = 1.f;
     int counter = 0;
@@ -1494,7 +1498,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname, bool batch)
+int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 {
 
     MyTime t1, t2;
@@ -1505,15 +1509,50 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
         plistener->setProgressStr ("Decoding...");
         plistener->setProgress (0.0);
     }
-
     ri = new RawImage(fname);
-    int errCode = ri->loadRaw (true, true, plistener, 0.8);
+    int errCode = ri->loadRaw (false, 0, false);
 
     if (errCode) {
         return errCode;
     }
+    numFrames = ri->getFrameCount();
 
-    ri->compress_image();
+    errCode = 0;
+#ifdef _OPENMP
+#pragma omp parallel if(numFrames > 1)
+#endif
+{
+    int errCodeThr = 0;
+#ifdef _OPENMP
+#pragma omp for nowait
+#endif
+    for(unsigned int i = 0; i < numFrames; ++i) {
+        if(i == 0) {
+            riFrames[i] = ri;
+            errCodeThr = riFrames[i]->loadRaw (true, i, true, plistener, 0.8);
+        } else {
+            riFrames[i] = new RawImage(fname);
+            errCodeThr = riFrames[i]->loadRaw (true, i);
+        }
+        riFrames[i]->compress_image(i);
+    }
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+{
+    errCode = errCodeThr ? errCodeThr : errCode;
+}
+
+}
+    if(errCode) {
+        return errCode;
+    }
+
+    if(numFrames > 1 ) { // this disables multi frame support for Fuji S5 until I found a solution to handle different dimensions
+        if(riFrames[0]->get_width() != riFrames[1]->get_width() || riFrames[0]->get_height() != riFrames[1]->get_height()) {
+            numFrames = 1;
+        }
+    }
 
     if (plistener) {
         plistener->setProgress (0.9);
@@ -1626,8 +1665,10 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
                 initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
     }*/
 
+    for(unsigned int i = 0;i < numFrames; ++i) {
+        riFrames[i]->set_prefilters();
+    }
 
-    ri->set_prefilters();
 
     //Load complete Exif informations
     RawMetaDataLocation rml;
@@ -1719,7 +1760,24 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         printf( "Flat Field Correction:%s\n", rif->get_filename().c_str());
     }
 
-    copyOriginalPixels(raw, ri, rid, rif);
+    if(numFrames == 4) {
+        int bufferNumber = 0;
+        for(int i=0; i<4; ++i) {
+            if(i==currFrame) {
+                copyOriginalPixels(raw, ri, rid, rif, rawData);
+                rawDataFrames[i] = &rawData;
+            } else {
+                if(!rawDataBuffer[bufferNumber]) {
+                    rawDataBuffer[bufferNumber] = new array2D<float>;
+                }
+                rawDataFrames[i] = rawDataBuffer[bufferNumber];
+                ++bufferNumber;
+                copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
+            }
+        }
+    } else {
+        copyOriginalPixels(raw, ri, rid, rif, rawData);
+    }
     //FLATFIELD end
 
 
@@ -1759,8 +1817,13 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
     }
 
-
-    scaleColors( 0, 0, W, H, raw); //+ + raw parameters for black level(raw.blackxx)
+    if(numFrames == 4) {
+        for(int i=0; i<4; ++i) {
+            scaleColors( 0, 0, W, H, raw, *rawDataFrames[i]);
+        }
+    } else {
+        scaleColors( 0, 0, W, H, raw, rawData); //+ + raw parameters for black level(raw.blackxx)
+    }
 
     // Correct vignetting of lens profile
     if (!hasFlatField && lensProf.useVign) {
@@ -1770,13 +1833,25 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
 
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
-
+                if(numFrames == 4) {
+                    for(int i = 0; i < 4; ++i) {
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < H; y++) {
-                    map.processVignetteLine(W, y, rawData[y]);
+                        for (int y = 0; y < H; y++) {
+                            map.processVignetteLine(W, y, (*rawDataFrames[i])[y]);
+                        }
+                    }
+                } else {
+
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for (int y = 0; y < H; y++) {
+                        map.processVignetteLine(W, y, rawData[y]);
+                    }
                 }
             } else if(ri->get_colors() == 3) {
 #ifdef _OPENMP
@@ -1854,13 +1929,25 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgress (0.0);
         }
 
-        green_equilibrate(0.01 * (raw.bayersensor.greenthresh));
+        if(numFrames == 4) {
+            for(int i = 0; i < 4; ++i) {
+                green_equilibrate(0.01 * (raw.bayersensor.greenthresh), *rawDataFrames[i]);
+            }
+        } else {
+            green_equilibrate(0.01 * (raw.bayersensor.greenthresh), rawData);
+        }
     }
 
 
     if( totBP ) {
         if ( ri->getSensorType() == ST_BAYER ) {
-            interpolateBadPixelsBayer( *bitmapBads );
+            if(numFrames == 4) {
+                for(int i = 0; i < 4; ++i) {
+                    interpolateBadPixelsBayer( *bitmapBads, *rawDataFrames[i] );
+                }
+            } else {
+                interpolateBadPixelsBayer( *bitmapBads, rawData );
+            }
         } else if ( ri->getSensorType() == ST_FUJI_XTRANS ) {
             interpolateBadPixelsXtrans( *bitmapBads );
         } else {
@@ -1882,12 +1969,23 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgressStr ("CA Auto Correction...");
             plistener->setProgress (0.0);
         }
-
-        CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength);
+        if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift]) {
+            for(int i=0; i<4; ++i) {
+                CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength, *rawDataFrames[i]);
+            }
+        } else {
+            CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength, rawData);
+        }
     }
 
     if ( raw.expos != 1 ) {
-        processRawWhitepoint(raw.expos, raw.preser);
+        if(numFrames == 4) {
+            for(int i = 0; i < 4; ++i) {
+                processRawWhitepoint(raw.expos, raw.preser, *rawDataFrames[i]);
+            }
+        } else {
+            processRawWhitepoint(raw.expos, raw.preser, rawData);
+        }
     }
 
     if(prepareDenoise && dirpyrdenoiseExpComp == INFINITY) {
@@ -1926,7 +2024,142 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::ahd] ) {
             ahd_demosaic (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze] ) {
-            amaze_demosaic_RT (0, 0, W, H);
+            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift] ) {
+            if(numFrames != 4) { // fallback for non pixelshift files
+                amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue);
+            } else {
+                RAWParams::BayerSensor bayerParams = raw.bayersensor;
+                if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic) {
+                    bool pixelShiftEqualBright = bayerParams.pixelShiftEqualBright;
+                    bayerParams.setPixelShiftDefaults();
+                    bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
+                } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
+                    bayerParams.pixelShiftMotion = 0;
+                    bayerParams.pixelShiftAutomatic = false;
+                    bayerParams.pixelshiftShowMotion = false;
+                }
+                if(!bayerParams.pixelshiftShowMotion || bayerParams.pixelShiftNonGreenAmaze || bayerParams.pixelShiftNonGreenCross2 || (bayerParams.pixelShiftBlur && bayerParams.pixelShiftSmoothFactor > 0.0)) {
+                    if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic) && numFrames == 4) {
+                        if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
+#ifdef PIXELSHIFTDEV
+                            if(!bayerParams.pixelShiftMedian3) {
+#endif
+                                if(bayerParams.pixelShiftLmmse) {
+                                    lmmse_interpolate_omp(W, H, *(rawDataFrames[0]), red, green, blue, raw.bayersensor.lmmse_iterations);
+                                } else {
+                                    amaze_demosaic_RT (0, 0, W, H, *(rawDataFrames[0]), red, green, blue);
+                                }
+                                multi_array2D<float,3> redTmp(W,H);
+                                multi_array2D<float,3> greenTmp(W,H);
+                                multi_array2D<float,3> blueTmp(W,H);
+                                for(int i=0;i<3;i++) {
+                                    if(bayerParams.pixelShiftLmmse) {
+                                        lmmse_interpolate_omp(W, H, *(rawDataFrames[i+1]), redTmp[i], greenTmp[i], blueTmp[i], raw.bayersensor.lmmse_iterations);
+                                    } else {
+                                        amaze_demosaic_RT (0, 0, W, H, *(rawDataFrames[i+1]), redTmp[i], greenTmp[i], blueTmp[i]);
+                                    }
+                                }
+                #pragma omp parallel for schedule(dynamic,16)
+                                for(int i=border;i<H-border;i++) {
+                                    for(int j=border;j<W-border;j++) {
+                                        red[i][j] = median(red[i][j],redTmp[0][i+1][j],redTmp[1][i+1][j+1],redTmp[2][i][j+1]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        green[i][j] = median(green[i][j],greenTmp[0][i+1][j],greenTmp[1][i+1][j+1],greenTmp[2][i][j+1]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        blue[i][j] = median(blue[i][j],blueTmp[0][i+1][j],blueTmp[1][i+1][j+1],blueTmp[2][i][j+1]);
+                                    }
+                                }
+#ifdef PIXELSHIFTDEV
+                            } else {
+                                multi_array2D<float,3> redTmp(W,H);
+                                multi_array2D<float,3> greenTmp(W,H);
+                                multi_array2D<float,3> blueTmp(W,H);
+                                for(int i=0, frameIndex = 0;i<4;++i) {
+                                    if(i != currFrame) {
+                                        if(bayerParams.pixelShiftLmmse) {
+                                            lmmse_interpolate_omp(W, H, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex], raw.bayersensor.lmmse_iterations);
+                                        } else {
+                                            amaze_demosaic_RT (0, 0, W, H, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex]);
+                                        }
+                                        ++frameIndex;
+                                    }
+                                }
+                                unsigned int offsX0 = 0, offsY0 = 0;
+                                unsigned int offsX1 = 0, offsY1 = 0;
+                                unsigned int offsX2 = 0, offsY2 = 0;
+
+                                // We have to adjust the offsets for the selected subframe we exclude from median
+                                switch (currFrame) {
+                                    case 0:
+                                        offsY0 = 1;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 1;
+                                        offsY2 = 0;
+                                        offsX2 = 1;
+                                        break;
+
+                                    case 1:
+                                        offsY0 = 0;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 1;
+                                        offsY2 = 0;
+                                        offsX2 = 1;
+                                        break;
+
+                                    case 2:
+                                        offsY0 = 0;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 0;
+                                        offsY2 = 0;
+                                        offsX2 = 1;
+                                        break;
+
+                                    case 3:
+                                        offsY0 = 0;
+                                        offsX0 = 0;
+                                        offsY1 = 1;
+                                        offsX1 = 0;
+                                        offsY2 = 1;
+                                        offsX2 = 1;
+                                }
+
+                #pragma omp parallel for schedule(dynamic,16)
+                                for(int i=border;i<H-border;i++) {
+                                    for(int j=border;j<W-border;j++) {
+                                        red[i][j] = median(redTmp[0][i+offsY0][j+offsX0],redTmp[1][i+offsY1][j+offsX1],redTmp[2][i+offsY2][j+offsX2]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        green[i][j] = median(greenTmp[0][i+offsY0][j+offsX0],greenTmp[1][i+offsY1][j+offsX1],greenTmp[2][i+offsY2][j+offsX2]);
+                                    }
+                                    for(int j=border;j<W-border;j++) {
+                                        blue[i][j] = median(blueTmp[0][i+offsY0][j+offsX0],blueTmp[1][i+offsY1][j+offsX1],blueTmp[2][i+offsY2][j+offsX2]);
+                                    }
+                                }
+                            }
+#endif
+                        } else {
+                            if(bayerParams.pixelShiftLmmse) {
+                                lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
+                            } else {
+                                amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
+                            }
+                        }
+                    } else {
+                        if(bayerParams.pixelShiftLmmse) {
+                            lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
+                        } else {
+                            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
+                        }
+                    }
+                }
+                pixelshift(0, 0, W, H, bayerParams, currFrame, ri->get_model(), raw.expos);
+            }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::dcb] ) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::eahd]) {
@@ -1934,7 +2167,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::igv]) {
             igv_interpolate(W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::lmmse]) {
-            lmmse_interpolate_omp(W, H, raw.bayersensor.lmmse_iterations);
+            lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::fast] ) {
             fast_demosaic (0, 0, W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::mono] ) {
@@ -2973,7 +3206,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
-void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
+void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData )
 {
     // TODO: Change type of black[] to float to avoid conversions
     unsigned short black[4] = {
@@ -3304,7 +3537,7 @@ SSEFUNCTION void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur
 
 
 // Scale original pixels into the range 0 65535 using black offsets and multipliers
-void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const RAWParams &raw)
+void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData)
 {
     chmax[0] = chmax[1] = chmax[2] = chmax[3] = 0; //channel maxima
     float black_lev[4] = {0.f};//black level
@@ -5232,6 +5465,36 @@ void RawImageSource::init ()
 
         phaseOneIccCurve = new DiagonalCurve(cForwardPoints, CURVES_MIN_POLY_POINTS);
         phaseOneIccCurveInv = new DiagonalCurve(cInversePoints, CURVES_MIN_POLY_POINTS);
+    }
+}
+
+void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int &B)
+{
+    int xnew = x + border;
+    int ynew = y + border;
+    rotate += ri->get_rotateDegree();
+    rotate %= 360;
+    if (rotate == 90) {
+        std::swap(xnew,ynew);
+        ynew = H - 1 - ynew;
+    } else if (rotate == 180) {
+        xnew = W - 1 - xnew;
+        ynew = H - 1 - ynew;
+    } else if (rotate == 270) {
+        std::swap(xnew,ynew);
+        ynew = H - 1 - ynew;
+        xnew = W - 1 - xnew;
+        ynew = H - 1 - ynew;
+    }
+
+    int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew,xnew) : ri->FC(ynew,xnew);
+    int val = round(rawData[ynew][xnew] / scale_mul[c]);
+    if(c == 0) {
+        R = val; G = 0; B = 0;
+    } else if(c == 2) {
+        R = 0; G = 0; B = val;
+    } else {
+        R = 0; G = val; B = 0;
     }
 }
 
