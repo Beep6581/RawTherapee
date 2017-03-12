@@ -1518,32 +1518,39 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
     numFrames = ri->getFrameCount();
 
     errCode = 0;
-#ifdef _OPENMP
-#pragma omp parallel if(numFrames > 1)
-#endif
-{
-    int errCodeThr = 0;
-#ifdef _OPENMP
-#pragma omp for nowait
-#endif
-    for(unsigned int i = 0; i < numFrames; ++i) {
-        if(i == 0) {
-            riFrames[i] = ri;
-            errCodeThr = riFrames[i]->loadRaw (true, i, true, plistener, 0.8);
-        } else {
-            riFrames[i] = new RawImage(fname);
-            errCodeThr = riFrames[i]->loadRaw (true, i);
-        }
-        riFrames[i]->compress_image(i);
-    }
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-{
-    errCode = errCodeThr ? errCodeThr : errCode;
-}
 
-}
+    if(numFrames > 1) {
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            int errCodeThr = 0;
+#ifdef _OPENMP
+            #pragma omp for nowait
+#endif
+            for(unsigned int i = 0; i < numFrames; ++i) {
+                if(i == 0) {
+                    riFrames[i] = ri;
+                    errCodeThr = riFrames[i]->loadRaw (true, i, true, plistener, 0.8);
+                } else {
+                    riFrames[i] = new RawImage(fname);
+                    errCodeThr = riFrames[i]->loadRaw (true, i);
+                }
+                riFrames[i]->compress_image(i);
+            }
+#ifdef _OPENMP
+            #pragma omp critical
+#endif
+            {
+                errCode = errCodeThr ? errCodeThr : errCode;
+            }
+        }
+    } else {
+        riFrames[0] = ri;
+        errCode = riFrames[0]->loadRaw (true, 0, true, plistener, 0.8);
+        riFrames[0]->compress_image(0);
+    }
+
     if(errCode) {
         return errCode;
     }
