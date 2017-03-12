@@ -243,6 +243,13 @@ scale trough {
     margin: 6px 6px;  /* have to be half of "scale slider / min-width min-height" */
     background-color: #2A2A2A;
 }
+scale.fine-tune trough {
+    margin: 5px;
+    padding: 1px;
+}
+scale.fine-tune trough highlight {
+    margin: -2px;
+}
 scale:disabled trough {
     background-color: #444;
     border-color: #282828;
