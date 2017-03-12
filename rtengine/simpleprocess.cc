@@ -1378,10 +1378,14 @@ private:
             params.resize.enabled = false;
 
             params.sharpening = params.prsharpening;
+            params.impulseDenoise.thresh = 
+                int(float(params.impulseDenoise.thresh) * tmpScale);
+            if (tmpScale < 0.5) {
+                params.impulseDenoise.enabled = false;
+            }
             params.wavelet.strength =
                 int(float(params.wavelet.strength) * tmpScale);
             params.dirpyrDenoise.luma *= tmpScale;
-            
             params.dirpyrDenoise.smethod = "shal";
 
             const double dirpyreq_scale = min(tmpScale * 1.5, 1.0);
