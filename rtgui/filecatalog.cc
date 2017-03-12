@@ -1183,14 +1183,20 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                     params.icm.outputBPC           = options.fastexport_icm_outputBPC    ;
                     params.icm.gamma               = options.fastexport_icm_gamma        ;
                 }
+
+                if (params.resize.enabled) {
+                    params.resize.width = rtengine::min(params.resize.width, options.fastexport_resize_width)     ;
+                    params.resize.height = rtengine::min(params.resize.height, options.fastexport_resize_height)    ;
+                } else {
+                    params.resize.width = options.fastexport_resize_width;
+                    params.resize.height = options.fastexport_resize_height;
+                }
                 
                 params.resize.enabled          = options.fastexport_resize_enabled   ;
                 params.resize.scale            = options.fastexport_resize_scale     ;
                 params.resize.appliesTo        = options.fastexport_resize_appliesTo ;
                 params.resize.method           = options.fastexport_resize_method    ;
                 params.resize.dataspec         = options.fastexport_resize_dataspec  ;
-                params.resize.width = rtengine::min(params.resize.width, options.fastexport_resize_width)     ;
-                params.resize.height = rtengine::min(params.resize.height, options.fastexport_resize_height)    ;
             }
 
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);
