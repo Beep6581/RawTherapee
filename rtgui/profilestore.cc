@@ -20,13 +20,14 @@
 #include "options.h"
 #include "toolpanel.h"
 #include "guiutils.h"
+#include "dynamicprofile.h"
 
 ProfileStore profileStore;
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ProfileStore::ProfileStore () : parseMutex(nullptr), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(nullptr), internalDefaultEntry(nullptr)
+ProfileStore::ProfileStore () : parseMutex(nullptr), storeState(STORESTATE_NOTINITIALIZED), internalDefaultProfile(nullptr), internalDefaultEntry(nullptr), internalDynamicEntry(nullptr), dynamicRules(new std::vector<DynamicProfileRule>())
 {
     internalDefaultProfile = new AutoPartialProfile();
     internalDefaultProfile->set(true);
@@ -42,6 +43,7 @@ bool ProfileStore::init ()
         storeState = STORESTATE_BEINGINITIALIZED;
         parseMutex = new MyMutex();
         _parseProfiles ();
+        loadDynamicProfileRules(*dynamicRules);
         storeState = STORESTATE_INITIALIZED;
     }
 
@@ -63,6 +65,8 @@ ProfileStore::~ProfileStore ()
     partProfiles.clear ();
     clearFileList();
     delete internalDefaultProfile;
+    delete internalDefaultEntry;
+    delete internalDynamicEntry;
     lock.release();
     delete parseMutex;
     parseMutex = nullptr;
@@ -140,6 +144,10 @@ void ProfileStore::_parseProfiles ()
     entries.push_back(internalDefaultEntry);
     partProfiles[internalDefaultEntry] = internalDefaultProfile;
 
+    if (!internalDynamicEntry) {
+        internalDynamicEntry = new ProfileStoreEntry(Glib::ustring("(") + M("PROFILEPANEL_PDYNAMIC") + Glib::ustring(")"), PSET_FILE, 0, 0);
+        // do not add it to the entries. This is here only for the preferences dialog
+    }
 
     // Check if the default profiles has been found.
     if (findEntryFromFullPathU(options.defProfRaw) == nullptr) {
@@ -273,7 +281,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
         return nullptr;
     }
 
-    if (path == DEFPROFILE_INTERNAL) {
+    if (path == DEFPROFILE_INTERNAL || path == DEFPROFILE_DYNAMIC) {
         return internalDefaultEntry;
     }
 
@@ -499,6 +507,20 @@ void ProfileStore::dumpFolderList()
     printf("\n");
 }
 
+
+const std::vector<DynamicProfileRule> &ProfileStore::getDynamicProfileRules() const
+{
+    return *dynamicRules;
+}
+
+
+void ProfileStore::setDynamicProfileRules(const std::vector<DynamicProfileRule> &r)
+{
+    *dynamicRules = r;
+}
+
+
+
 ProfileStoreEntry::ProfileStoreEntry() : label(""), type(PSET_FOLDER), parentFolderId(0), folderId(0) {}
 
 ProfileStoreEntry::ProfileStoreEntry(Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder) : label(label), type(type), parentFolderId(parentFolder), folderId(folder) {}
@@ -570,12 +592,12 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
                     // creating and assigning the custom Label object
                     newSubMenu[methodColumns.label] = entry->label;
                     newSubMenu[methodColumns.profileStoreEntry] = entry;
-
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION == 18
                     // HACK: Workaround for bug in Gtk+ 3.18...
                     Gtk::TreeModel::Row menuHeader = *(refTreeModel->append(newSubMenu->children()));
-                    menuHeader[methodColumns.label] = entry->label;
+                    menuHeader[methodColumns.label] = "-";
                     menuHeader[methodColumns.profileStoreEntry] = entry;
-
+#endif
                     refreshProfileList_ (&newSubMenu, entry->folderId, false, entryList);
                 } else {
                     refreshProfileList_ (parentRow, entry->folderId, true, entryList);
@@ -603,7 +625,6 @@ void ProfileStoreComboBox::refreshProfileList_ (Gtk::TreeModel::Row *parentRow, 
   */
 void ProfileStoreComboBox::updateProfileList ()
 {
-
     // clear items
     clear();
     refTreeModel.clear();
@@ -710,6 +731,11 @@ Gtk::TreeIter ProfileStoreComboBox::findRowFromFullPath (Glib::ustring path)
         return row;
     }
 
+    if (path == DEFPROFILE_DYNAMIC) {
+        row = findRowFromEntry(profileStore.getInternalDynamicPSE());
+        return row;
+    }
+    
     // removing the filename
     Glib::ustring fName = Glib::path_get_basename(path);
 
@@ -758,6 +784,10 @@ Glib::ustring ProfileStoreComboBox::getFullPathFromActiveRow()
             return Glib::ustring(DEFPROFILE_INTERNAL);
         }
 
+        if (currEntry == profileStore.getInternalDynamicPSE()) {
+            return Glib::ustring(DEFPROFILE_DYNAMIC);
+        }
+        
         path = Glib::build_filename(profileStore.getPathFromId(currEntry->parentFolderId), currEntry->label);
     }
 

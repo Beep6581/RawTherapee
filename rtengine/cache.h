@@ -19,11 +19,12 @@
 
 #pragma once
 
-#include <map>
-#include <unordered_map>
-#include <list>
-#include <type_traits>
 #include <algorithm>
+#include <list>
+#include <map>
+#include <memory>
+#include <type_traits>
+#include <unordered_map>
 
 #include "../rtgui/threadutils.h"
 
@@ -87,9 +88,9 @@ public:
             lru_list.splice(
                 lru_list.begin(),
                 lru_list,
-                store_it->second.lru_list_it
+                store_it->second->lru_list_it
             );
-            value = store_it->second.value;
+            value = store_it->second->value;
         }
         mutex.unlock();
 
@@ -139,7 +140,7 @@ public:
         mutex.lock();
         if (hook) {
             for (const auto& entry : store) {
-                hook->onRemove(entry.first, entry.second.value);
+                hook->onRemove(entry.first, entry.second->value);
             }
         }
         lru_list.clear();
@@ -152,13 +153,13 @@ private:
 
     using Store = typename std::conditional<
         cache_helper::has_hash<K>::value,
-        std::unordered_map<K, Value>,
-        std::map<K, Value>
+        std::unordered_map<K, std::unique_ptr<Value>>,
+        std::map<K, std::unique_ptr<Value>>
     >::type;
     using StoreIterator = typename Store::iterator;
     using StoreConstIterator = typename Store::const_iterator;
 
-    typedef std::list<StoreIterator> LruList;
+    using LruList = std::list<StoreIterator>;
     using LruListIterator = typename LruList::iterator;
 
     struct Value {
@@ -176,7 +177,7 @@ private:
     {
         const StoreIterator store_it = lru_list.back();
         if (hook) {
-            hook->onDiscard(store_it->first, store_it->second.value);
+            hook->onDiscard(store_it->first, store_it->second->value);
         }
         store.erase(store_it);
         lru_list.pop_back();
@@ -193,23 +194,25 @@ private:
                     discard();
                 }
                 lru_list.push_front(store.end());
-                const Value v = {
-                    value,
-                    lru_list.begin()
-                };
-                lru_list.front() = store.emplace(key, v).first;
+                std::unique_ptr<Value> v(
+                    new Value{
+                        value,
+                        lru_list.begin()
+                    }
+                );
+                lru_list.front() = store.emplace(key, std::move(v)).first;
             }
         } else {
             if (mode == Mode::UNCOND || mode == Mode::KNOWN) {
                 if (hook) {
-                    hook->onDisplace(key, store_it->second.value);
+                    hook->onDisplace(key, store_it->second->value);
                 }
                 lru_list.splice(
                     lru_list.begin(),
                     lru_list,
-                    store_it->second.lru_list_it
+                    store_it->second->lru_list_it
                 );
-                store_it->second.value = value;
+                store_it->second->value = value;
             }
         }
         mutex.unlock();
@@ -220,9 +223,9 @@ private:
     void remove(const StoreIterator& store_it)
     {
         if (hook) {
-            hook->onRemove(store_it->first, store_it->second.value);
+            hook->onRemove(store_it->first, store_it->second->value);
         }
-        lru_list.erase(store_it->second.lru_list_it);
+        lru_list.erase(store_it->second->lru_list_it);
         store.erase(store_it);
     }
 

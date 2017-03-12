@@ -50,30 +50,39 @@ window.background {
     background-color: #484848;
 }
 
-headerbar {
-    box-shadow: none;
-    background-color: #262626;
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-    border-style: none none solid none;
+/*** Window decoration *********************************************************/
+@define-color winHeaderbar rgb(50,50,50);
+
+:not(.popup):not(tooltip) > decoration {
+    background-color: #484848;
     background-image: none;
-}
-
-/* Warning: maximized and fullscreen can be set at the same time ! */
-window.maximized > decoration, window.fullscreen > decoration {
+    border-radius: 5px 5px 0 0;
+    border: none;
     padding: 0;
+    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px #242424;
+    margin: 10px;
+}
+headerbar {
+    background-color: shade(@winHeaderbar,1.12);
+    box-shadow: inset 0 1px rgba(200,200,200,.13);
+    background-image: linear-gradient(shade(@winHeaderbar,1.14), shade(@winHeaderbar,.86));
+    border-bottom: 1px solid #242424;
+    border-radius: 5px 5px 0 0;
+    min-height: 26px;
+    padding: 1px 5px 0;
     margin: 0;
 }
-
-window > decoration, dialog > decoration {
-    box-shadow: none;
-    margin: 0px;
-    border-style: none;
-    border-radius: 0;
-    padding: 3px;
-    background-color: #262626;
+.csd #MainNotebook > header.top {
+    border-top: 1px solid #484848;
 }
+
+/* Window state */
+.maximized > headerbar {
+    border-radius: 0;
+}
+/**/
+
+/*** End Window decoration *****************************************************/
 
 dialog.background {
     background-color: #484848;
@@ -196,6 +205,12 @@ button:hover , button.flat:hover, checkbutton:hover > check, radiobutton:hover >
 button.popupbutton-arrow {
     min-width: 18px;
 }
+/* Save, Cancel, OK ... buttons */
+.dialog-action-area button {
+    min-height: 24px;
+    margin-top: 6px;
+}
+/**/
 
 combobox {
     min-height: 5px;

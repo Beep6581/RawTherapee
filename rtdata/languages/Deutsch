@@ -35,6 +35,7 @@
 #34 2017-01-07 IPTC (TooWaBoo) RT4.2.1492
 #35 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
 #36 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
+#37 2017-03-06 Dynamisches Profil (TooWaBoo)
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -70,6 +71,15 @@ CURVEEDITOR_TOOLTIPPASTE;Kurve aus Zwischenablage einfügen
 CURVEEDITOR_TOOLTIPSAVE;Kurve speichern
 CURVEEDITOR_TYPE;Typ:
 DIRBROWSER_FOLDERS;Ordner
+DYNPROFILEEDITOR_DELETE;Löschen
+DYNPROFILEEDITOR_EDIT;Ändern
+DYNPROFILEEDITOR_EDIT_RULE;Profilregel ändern
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Groß-/Kleinschreibung wird NICHT berücksichtigt.\nFür einen regulären Ausdruck benutzen Sie bitte\n"re:" als Prefix.
+DYNPROFILEEDITOR_MOVE_DOWN;Runter
+DYNPROFILEEDITOR_MOVE_UP;Hoch
+DYNPROFILEEDITOR_NEW;Neu
+DYNPROFILEEDITOR_NEW_RULE;Profilregel erstellen
+DYNPROFILEEDITOR_PROFILE;Profil
 EDITWINDOW_TITLE;Bildbearbeitung
 EDIT_OBJECT_TOOLTIP;Schaltet das Einstellungswerkzeug\nim Vorschaubild ein/aus
 EDIT_PIPETTE_TOOLTIP;Um einen Punkt der Kurve hinzuzufügen, halten Sie die Strg-Taste gedrückt und klicken mit der linke Maustaste auf die gewünschte Stelle in der Vorschau.\nUm den Punkt anzupassen, halten Sie die Strg-Taste gedrückt und klicken Sie mit der linken Maustaste auf den entsprechenden Bereich in der Vorschau. Dann lassen Sie die Strg-Taste los (es sei denn, Sie möchten eine Feineinstellung vornehmen) und bewegen die Maus bei gedrückter linker Maustaste nach oben oder unten, um den Punkt auf der Kurve zu bewegen.
@@ -1108,6 +1118,7 @@ PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
 PREFERENCES_TAB_COLORMGR;Farbmanagement
+PREFERENCES_TAB_DYNAMICPROFILE;Dynamisches Profil
 PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_PERFORMANCE;Performance & Qualität
@@ -1136,6 +1147,7 @@ PROFILEPANEL_MODE_TIP;Ist der Button aktiviert, werden Teilprofile\nals vollstä
 PROFILEPANEL_MYPROFILES;Meine Profile
 PROFILEPANEL_PASTEPPASTE;Einzufügende Parameter
 PROFILEPANEL_PCUSTOM;Benutzerdefiniert
+PROFILEPANEL_PDYNAMIC;Dynamisches Profil
 PROFILEPANEL_PFILE;Aus Datei
 PROFILEPANEL_PINTERNAL;Neutral
 PROFILEPANEL_PLASTSAVED;Zuletzt gespeichert
@@ -2071,3 +2083,4 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>Alt</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
+

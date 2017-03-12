@@ -9236,6 +9236,8 @@ int PartialProfile::load (const Glib::ustring &fName)
 
     if (fName == DEFPROFILE_INTERNAL) {
         return 0;
+    } else if (fName == DEFPROFILE_DYNAMIC) {
+        return -1; // should not happen here
     } else {
         return pparams->load (fName, pedited);
     }
