@@ -208,10 +208,13 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Glib::ustring storedValueImg;
 
     Options moptions;
-    sigc::connection tconn, sconn, fconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
+    sigc::connection tconn, sconn, fconn, cpfconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
     sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
     Glib::ustring initialTheme;
-    Glib::ustring initialFont;
+    Glib::ustring initialFontFamily;
+    int initialFontSize;
+    bool newFont;
+    bool newCPFont;
 
     void fillPreferences ();
     void storePreferences ();
@@ -222,6 +225,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     void workflowUpdate();
     void themeChanged  ();
     void fontChanged   ();
+    void cpFontChanged ();
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();
