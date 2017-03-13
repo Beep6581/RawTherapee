@@ -1369,39 +1369,73 @@ private:
             params.crop.enabled = false;
         }
 
-        if (params.resize.enabled) {
-            // resize image
-            LabImage *resized = new LabImage(imw, imh);
-            ipf.Lanczos(tmplab, resized, tmpScale);
-            delete tmplab;
-            tmplab = resized;
-            params.resize.enabled = false;
+        assert(params.resize.enabled);
 
-            params.sharpening = params.prsharpening;
-            params.impulseDenoise.thresh = 
-                int(float(params.impulseDenoise.thresh) * tmpScale);
-            if (tmpScale < 0.5) {
-                params.impulseDenoise.enabled = false;
-            }
-            params.wavelet.strength =
-                int(float(params.wavelet.strength) * tmpScale);
-            params.dirpyrDenoise.luma *= tmpScale;
-            //params.dirpyrDenoise.smethod = "shal";
+        // resize image
+        LabImage *resized = new LabImage(imw, imh);
+        ipf.Lanczos(tmplab, resized, tmpScale);
+        delete tmplab;
+        tmplab = resized;
 
-            const double dirpyreq_scale = min(tmpScale * 1.5, 1.0);
-            for (int i = 0; i < 6; ++i) {
-                auto &n = params.dirpyrequalizer.mult[i];
-                n = 1.0 + (n - 1.0) * dirpyreq_scale;
-            }
+        adjust_procparams(tmpScale);
             
-            fw = imw;
-            fh = imh;
-        }
+        fw = imw;
+        fh = imh;
 
         delete baseImg;
         baseImg = new Imagefloat(fw, fh);
         ipf.lab2rgb(*tmplab, *baseImg, params.icm.working);
         delete tmplab;
+    }
+
+    void adjust_procparams(double scale_factor)
+    {
+        procparams::ProcParams& params = job->pparams;
+        procparams::ProcParams defaultparams;
+
+#define ADJUST_RADIUS_(n, f)                                              \
+        do {                                                            \
+            auto delta = (params. n - defaultparams. n) * f;            \
+            params. n = defaultparams. n + delta;                       \
+        } while (false)
+        
+        params.resize.enabled = false;
+
+        if (params.prsharpening.enabled) {
+            params.sharpening = params.prsharpening;
+        } else {
+            ADJUST_RADIUS_(sharpening.radius, scale_factor);
+        }
+        params.impulseDenoise.thresh = 
+            int(float(params.impulseDenoise.thresh) * scale_factor);
+        if (scale_factor < 0.5) {
+            params.impulseDenoise.enabled = false;
+        }
+        params.wavelet.strength =
+            int(float(params.wavelet.strength) * scale_factor);
+        params.dirpyrDenoise.luma *= scale_factor;
+        //params.dirpyrDenoise.smethod = "shal";
+        for (auto &p : params.dirpyrDenoise.lcurve) {
+            p *= scale_factor;
+        }
+        for (auto &p : params.dirpyrDenoise.cccurve) {
+            p *= scale_factor;
+        }
+        
+        params.epd.scale *= scale_factor;
+        params.epd.edgeStopping *= scale_factor;
+
+        const double dirpyreq_scale = min(scale_factor * 1.5, 1.0);
+        for (int i = 0; i < 6; ++i) {
+            ADJUST_RADIUS_(dirpyrequalizer.mult[i], dirpyreq_scale);
+            // auto &n = params.dirpyrequalizer.mult[i];
+            // n = 1.0 + (n - 1.0) * dirpyreq_scale;
+        }
+
+        ADJUST_RADIUS_(defringe.radius, scale_factor);
+        ADJUST_RADIUS_(sh.radius, scale_factor);
+
+#undef ADJUST_RADIUS_
     }
 
 private:
