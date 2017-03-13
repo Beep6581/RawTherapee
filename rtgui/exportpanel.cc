@@ -38,8 +38,11 @@ ExportPanel::ExportPanel () : listener (nullptr)
     labExportTitle->set_alignment(Gtk::ALIGN_START);
     pack_start(*labExportTitle, Gtk::PACK_SHRINK, 4);
 
+    Gtk::RadioButton::Group pipeline_group;
+    use_fast_pipeline       = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M("EXPORT_USE_FAST_PIPELINE")));
+    use_normal_pipeline     = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M("EXPORT_USE_NORMAL_PIPELINE")));
+    bypass_box = Gtk::manage(new Gtk::VBox());
     bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_ALL")));
-    use_fast_pipeline       = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_USE_FAST_PIPELINE")));
     use_fast_pipeline->set_tooltip_text(M("EXPORT_USE_FAST_PIPELINE_TIP"));
     bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENING")));
     bypass_sharpenEdge      = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENEDGE")));
@@ -98,19 +101,28 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ----------------------------------------------------------------
 
     // start global packing
+    Gtk::HBox* lblbox = Gtk::manage (new Gtk::HBox ());
+    lblbox->pack_start (*Gtk::manage (new Gtk::Label (M("EXPORT_PIPELINE"))), Gtk::PACK_SHRINK, 4);
+    pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
     pack_start(*use_fast_pipeline   , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_ALL          , Gtk::PACK_SHRINK, 4);
-    pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sharpening   , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sharpenEdge  , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sharpenMicro , Gtk::PACK_SHRINK, 4);
+    pack_start(*use_normal_pipeline   , Gtk::PACK_SHRINK, 4);
+
+    bypass_box->pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
+    lblbox = Gtk::manage (new Gtk::HBox ());
+    lblbox->pack_start (*Gtk::manage (new Gtk::Label (M("EXPORT_BYPASS"))), Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_ALL          , Gtk::PACK_SHRINK, 4);
+    // bypass_box->pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sharpening   , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sharpenEdge  , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sharpenMicro , Gtk::PACK_SHRINK, 4);
     //pack_start(*bypass_lumaDenoise  , Gtk::PACK_SHRINK, 4);
     //pack_start(*bypass_colorDenoise , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_defringe     , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_dirpyrDenoise, Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sh_hq        , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_dirpyrequalizer , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_wavelet , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_defringe     , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_dirpyrDenoise, Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sh_hq        , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_dirpyrequalizer , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_wavelet , Gtk::PACK_SHRINK, 4);
 
     bayerFrameVBox->pack_start(*hb_raw_bayer_method, Gtk::PACK_SHRINK, 4);
     //bayerFrameVBox->pack_start(*bypass_raw_all_enhance , Gtk::PACK_SHRINK, 4);
@@ -124,12 +136,14 @@ ExportPanel::ExportPanel () : listener (nullptr)
     xtransFrameVBox->pack_start(*hb_raw_xtrans_method, Gtk::PACK_SHRINK, 4);
     xtransFrame->add(*xtransFrameVBox);
 
-    pack_start(*bypass_raw_ccSteps     , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_raw_ca         , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_ccSteps     , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_ca         , Gtk::PACK_SHRINK, 4);
 
-    pack_start(*bypass_raw_df         , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_raw_ff         , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_df         , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_ff         , Gtk::PACK_SHRINK, 4);
 
+    pack_start(*bypass_box, Gtk::PACK_SHRINK);    
+    
     pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);
 
     // Resize options
@@ -179,6 +193,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     pack_start(*vboxpe, Gtk::PACK_SHRINK, 0);
 
 
+    use_fast_pipeline->signal_toggled().connect(sigc::mem_fun(*this, &ExportPanel::use_fast_pipeline_toggled));
     btnFastExport->signal_clicked().connect( sigc::mem_fun(*this, &ExportPanel::FastExportPressed) );
     //btnExportLoadSettings->signal_clicked().connect( sigc::mem_fun(*this, &ExportPanel::LoadSettings) );
     //btnExportSaveSettings->signal_clicked().connect( sigc::mem_fun(*this, &ExportPanel::SaveSettings) );
@@ -347,6 +362,7 @@ void ExportPanel::LoadDefaultSettings()
     MaxHeight->set_value(options.fastexport_resize_height);
 
     use_fast_pipeline->set_active(options.fastexport_use_fast_pipeline);
+    bypass_box->set_sensitive(!options.fastexport_use_fast_pipeline);
 }
 
 void ExportPanel::LoadSettings()
@@ -426,6 +442,11 @@ void ExportPanel::bypassALL_Toggled()
     bypass_raw_caConn.block               (false);
     bypass_raw_dfConn.block               (false);
     bypass_raw_ffConn.block               (false);
+}
+
+void ExportPanel::use_fast_pipeline_toggled()
+{
+    bypass_box->set_sensitive(!use_fast_pipeline->get_active());
 }
 
 /*

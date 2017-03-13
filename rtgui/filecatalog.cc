@@ -1095,41 +1095,41 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
             // and also those which effect is not pronounced after reducing the image size
             // TODO!!! could expose selections below via preferences
             if (fastmode) {
-                if (options.fastexport_bypass_sharpening         ) {
-                    params.sharpening.enabled          = false;
-                }
-
-                if (options.fastexport_bypass_sharpenEdge        ) {
-                    params.sharpenEdge.enabled         = false;
-                }
-
-                if (options.fastexport_bypass_sharpenMicro       ) {
-                    params.sharpenMicro.enabled        = false;
-                }
-
-                //if (options.fastexport_bypass_lumaDenoise      ) params.lumaDenoise.enabled         = false;
-                //if (options.fastexport_bypass_colorDenoise     ) params.colorDenoise.enabled        = false;
-                if (options.fastexport_bypass_defringe           ) {
-                    params.defringe.enabled            = false;
-                }
-
-                if (options.fastexport_bypass_dirpyrDenoise      ) {
-                    params.dirpyrDenoise.enabled       = false;
-                }
-
-                if (options.fastexport_bypass_sh_hq              ) {
-                    params.sh.hq                       = false;
-                }
-
-                if (options.fastexport_bypass_dirpyrequalizer    ) {
-                    params.dirpyrequalizer.enabled     = false;
-                }
-
-                if (options.fastexport_bypass_wavelet    ) {
-                    params.wavelet.enabled     = false;
-                }
-
                 if (!options.fastexport_use_fast_pipeline) {
+                    if (options.fastexport_bypass_sharpening         ) {
+                        params.sharpening.enabled          = false;
+                    }
+
+                    if (options.fastexport_bypass_sharpenEdge        ) {
+                        params.sharpenEdge.enabled         = false;
+                    }
+
+                    if (options.fastexport_bypass_sharpenMicro       ) {
+                        params.sharpenMicro.enabled        = false;
+                    }
+
+                    //if (options.fastexport_bypass_lumaDenoise      ) params.lumaDenoise.enabled         = false;
+                    //if (options.fastexport_bypass_colorDenoise     ) params.colorDenoise.enabled        = false;
+                    if (options.fastexport_bypass_defringe           ) {
+                        params.defringe.enabled            = false;
+                    }
+
+                    if (options.fastexport_bypass_dirpyrDenoise      ) {
+                        params.dirpyrDenoise.enabled       = false;
+                    }
+
+                    if (options.fastexport_bypass_sh_hq              ) {
+                        params.sh.hq                       = false;
+                    }
+
+                    if (options.fastexport_bypass_dirpyrequalizer    ) {
+                        params.dirpyrequalizer.enabled     = false;
+                    }
+
+                    if (options.fastexport_bypass_wavelet    ) {
+                        params.wavelet.enabled     = false;
+                    }
+
                     //if (options.fastexport_bypass_raw_bayer_all_enhance   ) params.raw.bayersensor.all_enhance       = false;
                     if (options.fastexport_bypass_raw_bayer_dcb_iterations  ) {
                         params.raw.bayersensor.dcb_iterations    = 0;
@@ -1150,30 +1150,28 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                     if (options.fastexport_bypass_raw_bayer_greenthresh     ) {
                         params.raw.bayersensor.greenthresh       = 0;
                     }
-                }
 
-                if (options.fastexport_bypass_raw_ccSteps        ) {
-                    params.raw.bayersensor.ccSteps = params.raw.xtranssensor.ccSteps = 0;
-                }
+                    if (options.fastexport_bypass_raw_ccSteps        ) {
+                        params.raw.bayersensor.ccSteps = params.raw.xtranssensor.ccSteps = 0;
+                    }
 
-                if (options.fastexport_bypass_raw_ca             ) {
-                    params.raw.ca_autocorrect = false;
-                    params.raw.cared = 0;
-                    params.raw.cablue = 0;
-                }
+                    if (options.fastexport_bypass_raw_ca             ) {
+                        params.raw.ca_autocorrect = false;
+                        params.raw.cared = 0;
+                        params.raw.cablue = 0;
+                    }
 
-                if (options.fastexport_bypass_raw_df             ) {
-                    params.raw.df_autoselect  = false;
-                    params.raw.dark_frame = "";
-                }
+                    if (options.fastexport_bypass_raw_df             ) {
+                        params.raw.df_autoselect  = false;
+                        params.raw.dark_frame = "";
+                    }
 
-                if (options.fastexport_bypass_raw_ff             ) {
-                    params.raw.ff_AutoSelect  = false;
-                    params.raw.ff_file = "";
-                }
+                    if (options.fastexport_bypass_raw_ff             ) {
+                        params.raw.ff_AutoSelect  = false;
+                        params.raw.ff_file = "";
+                    }
 
 
-                if (!options.fastexport_use_fast_pipeline) {
                     params.raw.bayersensor.method  = options.fastexport_raw_bayer_method ;
                     params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
                     params.icm.input               = options.fastexport_icm_input        ;

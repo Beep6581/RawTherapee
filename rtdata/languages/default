@@ -89,7 +89,10 @@ EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 EXPORT_BYPASS_SHARPENING;Bypass Sharpening
 EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
-EXPORT_USE_FAST_PIPELINE;Enable Special "Fast-Export" Processing Pipeline
+EXPORT_PIPELINE;Processing pipeline
+EXPORT_BYPASS;Processing steps to bypass
+EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
 EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
