@@ -1435,6 +1435,14 @@ private:
         ADJUST_RADIUS_(defringe.radius, scale_factor);
         ADJUST_RADIUS_(sh.radius, scale_factor);
 
+        if (params.raw.xtranssensor.method ==
+            procparams::RAWParams::XTransSensor::methodstring[
+                procparams::RAWParams::XTransSensor::threePass]) {
+            params.raw.xtranssensor.method =
+                procparams::RAWParams::XTransSensor::methodstring[
+                    procparams::RAWParams::XTransSensor::onePass];
+        }
+
 #undef ADJUST_RADIUS_
     }
 
