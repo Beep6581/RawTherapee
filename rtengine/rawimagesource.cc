@@ -1536,7 +1536,6 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
                     riFrames[i] = new RawImage(fname);
                     errCodeThr = riFrames[i]->loadRaw (true, i);
                 }
-                riFrames[i]->compress_image(i);
             }
 #ifdef _OPENMP
             #pragma omp critical
@@ -1548,10 +1547,13 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
     } else {
         riFrames[0] = ri;
         errCode = riFrames[0]->loadRaw (true, 0, true, plistener, 0.8);
-        riFrames[0]->compress_image(0);
     }
 
-    if(errCode) {
+    if(!errCode) {
+        for(unsigned int i = 0; i < numFrames; ++i) {
+            riFrames[i]->compress_image(i);
+        }
+    } else {
         return errCode;
     }
 
