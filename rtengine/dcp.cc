@@ -1709,6 +1709,11 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
     file_std_profiles.clear();
 
+    if (!loadAll) {
+        profileDir.assign (rt_profile_dir);
+        return;
+    }
+
     if (!rt_profile_dir.empty()) {
         std::deque<Glib::ustring> dirs = {
             rt_profile_dir
@@ -1731,10 +1736,8 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
                 return;
             }
 
-            dirname += '/';
-
             for (const Glib::ustring& sname : *dir) {
-                const Glib::ustring fname = dirname + sname;
+                const Glib::ustring fname = Glib::build_filename(dirname, sname);
 
                 if (!Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
                     // File
@@ -1797,15 +1800,25 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
     return nullptr;
 }
 
-DCPProfile* DCPStore::getStdProfile(const Glib::ustring& cam_short_name) const
+DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_name) const
 {
-    const Glib::ustring name = cam_short_name.uppercase();
+    const Glib::ustring name = requested_cam_short_name.uppercase();
 
     // Warning: do NOT use map.find(), since it does not seem to work reliably here
-    for (const auto& file_std_profile : file_std_profiles)
+    for (const auto& file_std_profile : file_std_profiles) {
         if (file_std_profile.first == name) {
             return getProfile(file_std_profile.second);
         }
+    }
+
+    // profile not found, looking if we're in loadAll=false mode
+    if (!profileDir.empty()) {
+        const Glib::ustring fname = Glib::build_filename(profileDir, requested_cam_short_name + Glib::ustring(".dcp"));
+
+        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
+            return getProfile(fname);
+        }
+    }
 
     return nullptr;
 }

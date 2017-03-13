@@ -65,6 +65,7 @@ class ICCStore
 
     // these contain profiles from user/system directory (supplied on init)
     Glib::ustring profilesDir;
+    Glib::ustring userICCDir;
     ProfileMap fileProfiles;
     ContentMap fileProfileContents;
 
@@ -74,6 +75,8 @@ class ICCStore
     ProfileMap fileStdProfiles;
 
     Glib::ustring defaultMonitorProfile;
+
+    bool loadAll;
 
     const cmsHPROFILE xyz;
     const cmsHPROFILE srgb;
@@ -102,8 +105,8 @@ public:
 
     // Main monitors standard profile name, from OS
     void findDefaultMonitorProfile ();
-    cmsHPROFILE getDefaultMonitorProfile () const;
-    Glib::ustring getDefaultMonitorProfileName () const;
+    cmsHPROFILE getDefaultMonitorProfile ();
+    Glib::ustring getDefaultMonitorProfileName ();
 
     cmsHPROFILE      workingSpace (const Glib::ustring& name) const;
     cmsHPROFILE      workingSpaceGamma (const Glib::ustring& name) const;
@@ -111,8 +114,8 @@ public:
     TMatrix          workingSpaceInverseMatrix (const Glib::ustring& name) const;
 
     bool             outputProfileExist (const Glib::ustring& name) const;
-    cmsHPROFILE      getProfile         (const Glib::ustring& name) const;
-    cmsHPROFILE      getStdProfile      (const Glib::ustring& name) const;
+    cmsHPROFILE      getProfile         (const Glib::ustring& name);
+    cmsHPROFILE      getStdProfile      (const Glib::ustring& name);
     ProfileContent   getContent         (const Glib::ustring& name) const;
 
     cmsHPROFILE      getXYZProfile  () const;
@@ -121,13 +124,13 @@ public:
     std::vector<Glib::ustring> getProfiles (const ProfileType type = ProfileType::MONITOR) const;
     std::vector<Glib::ustring> getProfilesFromDir (const Glib::ustring& dirName) const;
 
-    uint8_t     getInputIntents  (cmsHPROFILE profile) const;
-    uint8_t     getOutputIntents (cmsHPROFILE profile) const;
-    uint8_t     getProofIntents  (cmsHPROFILE profile) const;
+    uint8_t     getInputIntents  (cmsHPROFILE profile);
+    uint8_t     getOutputIntents (cmsHPROFILE profile);
+    uint8_t     getProofIntents  (cmsHPROFILE profile);
 
-    uint8_t     getInputIntents  (const Glib::ustring& name) const;
-    uint8_t     getOutputIntents (const Glib::ustring& name) const;
-    uint8_t     getProofIntents  (const Glib::ustring& name) const;
+    uint8_t     getInputIntents  (const Glib::ustring& name);
+    uint8_t     getOutputIntents (const Glib::ustring& name);
+    uint8_t     getProofIntents  (const Glib::ustring& name);
 };
 
 #define iccStore ICCStore::getInstance()
@@ -143,27 +146,27 @@ inline ProfileContent::~ProfileContent ()
     delete [] data;
 }
 
-inline cmsHPROFILE ICCStore::getDefaultMonitorProfile () const
+inline cmsHPROFILE ICCStore::getDefaultMonitorProfile ()
 {
     return getProfile (defaultMonitorProfile);
 }
 
-inline Glib::ustring ICCStore::getDefaultMonitorProfileName () const
+inline Glib::ustring ICCStore::getDefaultMonitorProfileName ()
 {
     return defaultMonitorProfile;
 }
 
-inline uint8_t ICCStore::getInputIntents (const Glib::ustring &name) const
+inline uint8_t ICCStore::getInputIntents (const Glib::ustring &name)
 {
     return getInputIntents (getProfile (name));
 }
 
-inline uint8_t ICCStore::getOutputIntents (const Glib::ustring &name) const
+inline uint8_t ICCStore::getOutputIntents (const Glib::ustring &name)
 {
     return getOutputIntents (getProfile (name));
 }
 
-inline uint8_t ICCStore::getProofIntents (const Glib::ustring &name) const
+inline uint8_t ICCStore::getProofIntents (const Glib::ustring &name)
 {
     return getProofIntents (getProfile (name));
 }

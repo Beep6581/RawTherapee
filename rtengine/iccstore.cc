@@ -36,6 +36,7 @@ namespace rtengine
 {
 extern const Settings* settings;
 
+// not recursive
 void loadProfiles (const Glib::ustring& dirName,
                    std::map<Glib::ustring, cmsHPROFILE>* profiles,
                    std::map<Glib::ustring, ProfileContent>* profileContents,
@@ -94,6 +95,60 @@ void loadProfiles (const Glib::ustring& dirName,
             }
         }
     } catch (Glib::Exception&) {}
+}
+
+// version dedicated to single profile load when loadAll==false (cli version "-q" mode)
+bool loadProfile (Glib::ustring profile, const Glib::ustring dirName,
+                  std::map<Glib::ustring, cmsHPROFILE>* profiles,
+                  std::map<Glib::ustring, ProfileContent>* profileContents)
+{
+    if (dirName.empty () || profiles == nullptr) {
+        return false;
+    }
+
+    try {
+
+        Glib::Dir dir (dirName);
+
+        for (Glib::DirIterator entry = dir.begin (); entry != dir.end (); ++entry) {
+
+            const Glib::ustring fileName = *entry;
+
+            if (fileName.size () < 4) {
+                continue;
+            }
+
+            const Glib::ustring extension = fileName.substr (fileName.size () - 4).casefold ();
+
+            if (extension.compare (".icc") != 0 && extension.compare (".icm") != 0) {
+                continue;
+            }
+
+            const Glib::ustring filePath = Glib::build_filename (dirName, fileName);
+
+            if (!Glib::file_test (filePath, Glib::FILE_TEST_IS_REGULAR)) {
+                continue;
+            }
+
+            Glib::ustring name = fileName.substr (0, fileName.size() - 4);
+
+            if (name == profile) {
+                const ProfileContent content (filePath);
+                const cmsHPROFILE profile = content.toProfile ();
+
+                if (profile) {
+                    profiles->insert (std::make_pair (name, profile));
+
+                    if (profileContents) {
+                        profileContents->insert (std::make_pair (name, content));
+                    }
+                    return true;
+                }
+            }
+        }
+    } catch (Glib::Exception&) {}
+
+    return false;
 }
 
 inline void getSupportedIntent (cmsHPROFILE profile, cmsUInt32Number intent, cmsUInt32Number direction, uint8_t& result)
@@ -305,6 +360,7 @@ ICCStore* ICCStore::getInstance ()
 }
 
 ICCStore::ICCStore () :
+    loadAll(true),
     xyz (createXYZProfile ()),
     srgb (cmsCreate_sRGBProfile ())
 {
@@ -674,7 +730,7 @@ bool ICCStore::outputProfileExist (const Glib::ustring& name) const
     return fileProfiles.find(name) != fileProfiles.end();
 }
 
-cmsHPROFILE ICCStore::getProfile (const Glib::ustring& name) const
+cmsHPROFILE ICCStore::getProfile (const Glib::ustring& name)
 {
 
     MyMutex::MyLock lock (mutex_);
@@ -695,12 +751,21 @@ cmsHPROFILE ICCStore::getProfile (const Glib::ustring& name) const
 
             return profile;
         }
+    } else if (!loadAll) {
+        // look for a standard profile
+        if (!loadProfile (name, profilesDir, &fileProfiles, &fileProfileContents)) {
+            loadProfile (name, userICCDir, &fileProfiles, &fileProfileContents);
+        }
+        const ProfileMap::const_iterator r = fileProfiles.find (name);
+        if (r != fileProfiles.end ()) {
+            return r->second;
+        }
     }
 
     return nullptr;
 }
 
-cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name) const
+cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name)
 {
 
     const Glib::ustring nameUpper = name.uppercase ();
@@ -712,6 +777,15 @@ cmsHPROFILE ICCStore::getStdProfile (const Glib::ustring& name) const
     // return profile from store
     if (r != fileStdProfiles.end ()) {
         return r->second;
+    } else if (!loadAll) {
+        // directory not scanned, so looking and adding now...
+        if (!loadProfile (name, profilesDir, &fileProfiles, &fileProfileContents)) {
+            loadProfile (name, userICCDir, &fileProfiles, &fileProfileContents);
+        }
+        const ProfileMap::const_iterator r = fileProfiles.find (name);
+        if (r != fileProfiles.end ()) {
+            return r->second;
+        }
     }
 
     // profile is not yet in store
@@ -745,21 +819,21 @@ ProfileContent ICCStore::getContent (const Glib::ustring& name) const
     return r != fileProfileContents.end () ? r->second : ProfileContent();
 }
 
-uint8_t ICCStore::getInputIntents (cmsHPROFILE profile) const
+uint8_t ICCStore::getInputIntents (cmsHPROFILE profile)
 {
     MyMutex::MyLock lock (mutex_);
 
     return getSupportedIntents (profile, LCMS_USED_AS_INPUT);
 }
 
-uint8_t ICCStore::getOutputIntents (cmsHPROFILE profile) const
+uint8_t ICCStore::getOutputIntents (cmsHPROFILE profile)
 {
     MyMutex::MyLock lock (mutex_);
 
     return getSupportedIntents (profile, LCMS_USED_AS_OUTPUT);
 }
 
-uint8_t ICCStore::getProofIntents (cmsHPROFILE profile) const
+uint8_t ICCStore::getProofIntents (cmsHPROFILE profile)
 {
     MyMutex::MyLock lock (mutex_);
 
@@ -772,13 +846,16 @@ void ICCStore::init (const Glib::ustring& usrICCDir, const Glib::ustring& rtICCD
 
     MyMutex::MyLock lock (mutex_);
 
+    this->loadAll = loadAll;
+
     // RawTherapee's profiles take precedence if a user's profile of the same name exists
     profilesDir = Glib::build_filename (rtICCDir, "output");
+    userICCDir = usrICCDir;
     fileProfiles.clear();
     fileProfileContents.clear();
     if (loadAll) {
         loadProfiles (profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
-        loadProfiles (usrICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
+        loadProfiles (userICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
     }
 
     // Input profiles

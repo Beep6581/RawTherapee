@@ -165,6 +165,7 @@ private:
     DCPStore() = default;
 
     mutable MyMutex mutex;
+    Glib::ustring profileDir;
 
     // these contain standard profiles from RT. keys are all in uppercase, file path is value
     std::map<Glib::ustring, Glib::ustring> file_std_profiles;
