@@ -1367,7 +1367,7 @@ private:
                 }
             }
 
-            tmplab.swap(cropped);
+            tmplab = std::move(cropped);
             params.crop.enabled = false;
         }
 
@@ -1377,7 +1377,7 @@ private:
         {
             std::unique_ptr<LabImage> resized(new LabImage(imw, imh));
             ipf.Lanczos(tmplab.get(), resized.get(), scale_factor);
-            tmplab.swap(resized);
+            tmplab = std::move(resized);
         }
 
         adjust_procparams(scale_factor);
