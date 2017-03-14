@@ -37,6 +37,14 @@ extern const Settings* settings;
 
 namespace {
 
+template <typename T>
+void adjust_radius(const T &default_param, double scale_factor, T &param)
+{
+    const double delta = (param - default_param) * scale_factor;
+    param = default_param + delta;
+}
+    
+
 class ImageProcessor {
 public:
     ImageProcessor(ProcessingJob* pjob, int& errorCode,
@@ -1338,20 +1346,18 @@ private:
         ImProcFunctions ipf (&params, true);
         
         int imw, imh;
-        double tmpScale = ipf.resizeScale(&params, fw, fh, imw, imh);
+        double scale_factor = ipf.resizeScale(&params, fw, fh, imw, imh);
 
-        LabImage *tmplab = new LabImage(fw, fh);
+        std::unique_ptr<LabImage> tmplab(new LabImage(fw, fh));
         ipf.rgb2lab(*baseImg, *tmplab, params.icm.working);
 
-        int cx = 0, cy = 0, cw = fw, ch = fh;
-
         if (params.crop.enabled) {
-            cx = params.crop.x;
-            cy = params.crop.y;
-            cw = params.crop.w;
-            ch = params.crop.h;
+            int cx = params.crop.x;
+            int cy = params.crop.y;
+            int cw = params.crop.w;
+            int ch = params.crop.h;
 
-            LabImage *cropped = new LabImage(cw, ch);
+            std::unique_ptr<LabImage> cropped(new LabImage(cw, ch));
 
             for(int row = 0; row < ch; row++) {
                 for(int col = 0; col < cw; col++) {
@@ -1361,23 +1367,20 @@ private:
                 }
             }
 
-            delete tmplab;
-            tmplab = cropped;
-            cx = 0;
-            cy = 0;
-
+            tmplab.swap(cropped);
             params.crop.enabled = false;
         }
 
         assert(params.resize.enabled);
 
         // resize image
-        LabImage *resized = new LabImage(imw, imh);
-        ipf.Lanczos(tmplab, resized, tmpScale);
-        delete tmplab;
-        tmplab = resized;
+        {
+            std::unique_ptr<LabImage> resized(new LabImage(imw, imh));
+            ipf.Lanczos(tmplab.get(), resized.get(), scale_factor);
+            tmplab.swap(resized);
+        }
 
-        adjust_procparams(tmpScale);
+        adjust_procparams(scale_factor);
             
         fw = imw;
         fh = imh;
@@ -1385,34 +1388,26 @@ private:
         delete baseImg;
         baseImg = new Imagefloat(fw, fh);
         ipf.lab2rgb(*tmplab, *baseImg, params.icm.working);
-        delete tmplab;
     }
 
     void adjust_procparams(double scale_factor)
     {
-        procparams::ProcParams& params = job->pparams;
+        procparams::ProcParams &params = job->pparams;
         procparams::ProcParams defaultparams;
 
-#define ADJUST_RADIUS_(n, f)                                              \
-        do {                                                            \
-            auto delta = (params. n - defaultparams. n) * f;            \
-            params. n = defaultparams. n + delta;                       \
-        } while (false)
-        
         params.resize.enabled = false;
 
         if (params.prsharpening.enabled) {
             params.sharpening = params.prsharpening;
         } else {
-            ADJUST_RADIUS_(sharpening.radius, scale_factor);
+            adjust_radius(defaultparams.sharpening.radius, scale_factor,
+                          params.sharpening.radius);
         }
-        params.impulseDenoise.thresh = 
-            int(float(params.impulseDenoise.thresh) * scale_factor);
+        params.impulseDenoise.thresh *= scale_factor;
         if (scale_factor < 0.5) {
             params.impulseDenoise.enabled = false;
         }
-        params.wavelet.strength =
-            int(float(params.wavelet.strength) * scale_factor);
+        params.wavelet.strength *= scale_factor;
         params.dirpyrDenoise.luma *= scale_factor;
         //params.dirpyrDenoise.smethod = "shal";
         for (auto &p : params.dirpyrDenoise.lcurve) {
@@ -1427,13 +1422,13 @@ private:
 
         const double dirpyreq_scale = min(scale_factor * 1.5, 1.0);
         for (int i = 0; i < 6; ++i) {
-            ADJUST_RADIUS_(dirpyrequalizer.mult[i], dirpyreq_scale);
-            // auto &n = params.dirpyrequalizer.mult[i];
-            // n = 1.0 + (n - 1.0) * dirpyreq_scale;
+            adjust_radius(defaultparams.dirpyrequalizer.mult[i], dirpyreq_scale,
+                          params.dirpyrequalizer.mult[i]);
         }
 
-        ADJUST_RADIUS_(defringe.radius, scale_factor);
-        ADJUST_RADIUS_(sh.radius, scale_factor);
+        adjust_radius(defaultparams.defringe.radius, scale_factor,
+                      params.defringe.radius);
+        adjust_radius(defaultparams.sh.radius, scale_factor, params.sh.radius);
 
         if (params.raw.xtranssensor.method ==
             procparams::RAWParams::XTransSensor::methodstring[
@@ -1442,8 +1437,6 @@ private:
                 procparams::RAWParams::XTransSensor::methodstring[
                     procparams::RAWParams::XTransSensor::onePass];
         }
-
-#undef ADJUST_RADIUS_
     }
 
 private:

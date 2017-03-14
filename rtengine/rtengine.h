@@ -461,6 +461,7 @@ class ProcessingJob
 {
 
 public:
+    virtual ~ProcessingJob() {}
 
     /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately.
