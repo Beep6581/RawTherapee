@@ -1418,7 +1418,7 @@ private:
         }
         
         params.epd.scale *= scale_factor;
-        params.epd.edgeStopping *= scale_factor;
+        //params.epd.edgeStopping *= scale_factor;
 
         const double dirpyreq_scale = min(scale_factor * 1.5, 1.0);
         for (int i = 0; i < 6; ++i) {
