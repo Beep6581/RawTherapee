@@ -1368,7 +1368,6 @@ private:
             }
 
             tmplab = std::move(cropped);
-            params.crop.enabled = false;
         }
 
         assert(params.resize.enabled);
@@ -1396,6 +1395,7 @@ private:
         procparams::ProcParams defaultparams;
 
         params.resize.enabled = false;
+        params.crop.enabled = false;
 
         if (params.prsharpening.enabled) {
             params.sharpening = params.prsharpening;
