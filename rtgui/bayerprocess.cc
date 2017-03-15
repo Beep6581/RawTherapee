@@ -101,10 +101,10 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
     hb3->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_PIXELSHIFTMOTIONMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     pixelShiftMotionMethod = Gtk::manage (new MyComboBoxText ());
-    pixelShiftMotionMethod->append("Off");
-    pixelShiftMotionMethod->append("Automatic");
-    pixelShiftMotionMethod->append("Custom");
-    pixelShiftMotionMethod->set_active(1);
+    pixelShiftMotionMethod->append(M("TP_RAW_PIXELSHIFTMM_OFF"));
+    pixelShiftMotionMethod->append(M("TP_RAW_PIXELSHIFTMM_AUTO"));
+    pixelShiftMotionMethod->append(M("TP_RAW_PIXELSHIFTMM_CUSTOM"));
+    pixelShiftMotionMethod->set_active(RAWParams::BayerSensor::ePSMotionCorrectionMethod::Automatic);
     pixelShiftMotionMethod->show();
     hb3->pack_start(*pixelShiftMotionMethod);
     pixelShiftFrame->pack_start(*hb3);
@@ -762,7 +762,7 @@ void BayerProcess::methodChanged ()
     }
 
     if ( curSelection == procparams::RAWParams::BayerSensor::pixelshift) {
-        if(pixelShiftMotionMethod->get_active_row_number() == 2) {
+        if(pixelShiftMotionMethod->get_active_row_number() == RAWParams::BayerSensor::ePSMotionCorrectionMethod::Custom) {
             pixelShiftOptions->show();
         } else {
             pixelShiftOptions->hide();
@@ -819,11 +819,11 @@ void BayerProcess::dcbEnhanceChanged ()
 
 void BayerProcess::pixelShiftMotionMethodChanged ()
 {
-    if(pixelShiftMotionMethod->get_active_row_number() == 0) {
+    if(pixelShiftMotionMethod->get_active_row_number() == RAWParams::BayerSensor::ePSMotionCorrectionMethod::Off) {
         pixelShiftOptions->hide();
         pixelShiftShowMotion->hide();
         pixelShiftShowMotionMaskOnly->hide();
-    } else if(pixelShiftMotionMethod->get_active_row_number() == 2) {
+    } else if(pixelShiftMotionMethod->get_active_row_number() == RAWParams::BayerSensor::ePSMotionCorrectionMethod::Custom) {
         pixelShiftOptions->show();
         pixelShiftShowMotion->show();
         pixelShiftShowMotionMaskOnly->show();
