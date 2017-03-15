@@ -92,8 +92,11 @@ float nonGreenDiff(float a, float b, float stddevFactor, float eperIso, float nr
 }
 #endif
 
-float nonGreenDiffCross(float right, float left, float top, float bottom, float centre, float stddevFactor, float eperIso, float nreadIso, float prnu, bool showMotion)
+float nonGreenDiffCross(float right, float left, float top, float bottom, float centre, float clippedVal, float stddevFactor, float eperIso, float nreadIso, float prnu, bool showMotion)
 {
+    if(rtengine::max(right, left, top, bottom, centre) > clippedVal) {
+        return 0.f;
+    }
     // check non green cross
     float hDiff = (right + left) * 0.5f - centre;
     hDiff *= eperIso;
@@ -549,6 +552,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     float eperIsoGreen = (eperIso * scaleGreen) * (65535.f / (c_white[1] - c_black[1]));
     float eperIsoBlue = (eperIso / scale_mul[2]) * (65535.f / (c_white[2] - c_black[2]));
 
+    const float clippedRed = 65535.f / scale_mul[0];
+    const float clippedBlue = 65535.f / scale_mul[2];
+
     prnu /= 100.f;
     stddevFactorGreen *= stddevFactorGreen;
     stddevFactorRed *= stddevFactorRed;
@@ -615,7 +621,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             }
 
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
+            #pragma omp for schedule(dynamic,16) nowait
 #endif
 
             for(int i = winy + 1; i < winh - 1; ++i) {
@@ -683,35 +689,32 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         int j = winx + 1;
         int c = FC(i, j);
 
-        if (c == 2 || ((c & 1) && FC(i, j + 1) == 2)) {
+        if ((c + FC(i, j + 1)) == 3) {
             // row with blue pixels => swap destination pointers for non green pixels
             std::swap(nonGreenDest0, nonGreenDest1);
             std::swap(greenDest1, greenDest2);
         }
 
         // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-        unsigned int offset = (c & 1);
-        offset ^= 1; // 0 => 1 or 1 => 0
+        unsigned int offset = c & 1;
 
         for(; j < winw - 1; ++j) {
-            offset ^= 1; // 0 => 1 or 1 => 0
-
             // store the values from the 4 frames into 4 different temporary planes
             greenDest1[j] = (*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset];
             greenDest2[j] = (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset];
             nonGreenDest0[j] = (*rawDataFrames[(offset << 1) + offset])[i][j + offset] * greenBrightness[(offset << 1) + offset];
             nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * greenBrightness[2 - offset];
+            offset ^= 1; // 0 => 1 or 1 => 0
         }
     }
 
 // now that the temporary planes are filled for easy access we do the motion detection
 #ifdef PIXELSHIFTDEV
     int sum[2] = {0};
-#endif 
     float pixelcount = ((winh - (border + offsY) - (winy + border - offsY)) * (winw - (border + offsX) - (winx + border - offsX))) / 2.f;
+#endif
 
     array2D<float> psMask(winw, winh);
-
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -732,10 +735,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
 #ifdef PIXELSHIFTDEV
             float greenDifMax[gridSize]; // Here we store the maximum differences per Column
-#endif
 
             // green channel motion detection checks the grid around the pixel for differences in green channels
-#ifdef PIXELSHIFTDEV
 
             if(detectMotion || (adaptive && checkGreen)) {
                 if(gridSize == 3) {
@@ -828,24 +829,22 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             }
 
-#endif
-
             // this is the index for the last column of the grid. Obviously we have to start with gridSize - 1
-#ifdef PIXELSHIFTDEV
             int lastIndex = gridSize - 1;
+            float korr = 0.f;
+            bool blueRow = false;
 #endif
 
-            float korr = 0.f;
             int c = FC(i, j);
-            bool blueRow = false;
 
+#ifdef PIXELSHIFTDEV
             if (c == 2 || ((c & 1) && FC(i, j + 1) == 2)) {
                 // row with blue pixels => swap destination pointers for non green pixels
                 blueRow = true;
             }
-
+#endif
             // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-            unsigned int offset = (c & 1);
+            unsigned int offset = c & 1;
 
             for(; j < winw - (border + offsX); ++j) {
                 psMask[i][j] = 1.f;
@@ -962,7 +961,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         float redCentre = psRed[ i ][ j ];
                         float redRight  = psRed[ i ][j + 1];
                         float redBottom = psRed[i + 1][ j ];
-                        float redDiff = nonGreenDiffCross(redRight, redLeft, redTop, redBottom, redCentre, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
+                        float redDiff = nonGreenDiffCross(redRight, redLeft, redTop, redBottom, redCentre, clippedRed, stddevFactorRed, eperIsoRed, nRead, prnu, showMotion);
 
                         if(redDiff > 0.f) {
 #ifdef PIXELSHIFTDEV
@@ -985,7 +984,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         float blueCentre = psBlue[ i ][ j ];
                         float blueRight  = psBlue[ i ][j + 1];
                         float blueBottom = psBlue[i + 1][ j ];
-                        float blueDiff = nonGreenDiffCross(blueRight, blueLeft, blueTop, blueBottom, blueCentre, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
+                        float blueDiff = nonGreenDiffCross(blueRight, blueLeft, blueTop, blueBottom, blueCentre, clippedBlue, stddevFactorBlue, eperIsoBlue, nRead, prnu, showMotion);
 
                         if(blueDiff > 0.f) {
 #ifdef PIXELSHIFTDEV
