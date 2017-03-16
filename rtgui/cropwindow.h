@@ -114,6 +114,19 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     // Used by the mainCropWindow only
     void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw = 0, int rh = 0);
 
+    struct ZoomStep {
+        Glib::ustring label;
+        double zoom;
+        int czoom;
+
+        explicit ZoomStep(const Glib::ustring &l="", double z=0.0, int cz=0):
+            label(l), zoom(z), czoom(cz) {}
+    };
+    std::vector<ZoomStep> zoomSteps;
+    size_t zoom11index;
+
+    void initZoomSteps();
+    
 public:
     CropHandler cropHandler;
     CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow);
