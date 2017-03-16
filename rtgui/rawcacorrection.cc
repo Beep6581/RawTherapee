@@ -124,13 +124,13 @@ void RAWCACorr::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
     if (c == caAutocorrect) {
         if (!batchMode) {
-            caStrength->set_sensitive(caAutocorrect->get_active ());
+            caStrength->set_sensitive(caAutocorrect->getLastActive ());
             // disable Red and Blue sliders when caAutocorrect is enabled
-            caRed->set_sensitive(!caAutocorrect->get_active ());
-            caBlue->set_sensitive(!caAutocorrect->get_active ());
+            caRed->set_sensitive(!caAutocorrect->getLastActive ());
+            caBlue->set_sensitive(!caAutocorrect->getLastActive ());
         }
         if (listener) {
-            listener->panelChanged (EvPreProcessAutoCA, caAutocorrect->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+            listener->panelChanged (EvPreProcessAutoCA, caAutocorrect->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
     }
 }
