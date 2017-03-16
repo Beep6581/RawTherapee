@@ -116,7 +116,7 @@ void CropWindow::initZoomSteps()
     }
     zoom11index = zoomSteps.size();
     for (int s = 1; s <= 8; ++s) {
-        sprintf(lbl, "%d00", s);
+        sprintf(lbl, "%d00%%", s);
         zoomSteps.push_back(ZoomStep(lbl, s, s * 1000));
     }
 }
