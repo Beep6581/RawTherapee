@@ -21,11 +21,12 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
 
-class BayerProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class BayerProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel
 {
 
 protected:
@@ -36,21 +37,21 @@ protected:
     Adjuster* ccSteps;
     Gtk::VBox *dcbOptions;
     Adjuster* dcbIterations;
-    MyCheckButton* dcbEnhance;
+    CheckBox* dcbEnhance;
     Gtk::VBox *lmmseOptions;
     Adjuster* lmmseIterations;
     Gtk::VBox *pixelShiftFrame;
     Gtk::VBox *pixelShiftOptions;
     MyComboBoxText* pixelShiftMotionMethod;
-    MyCheckButton* pixelShiftShowMotion;
-    MyCheckButton* pixelShiftShowMotionMaskOnly;
-    MyCheckButton* pixelShiftNonGreenCross;
-    MyCheckButton* pixelShiftGreen;
-    MyCheckButton* pixelShiftBlur;
-    MyCheckButton* pixelShiftHoleFill;
-    MyCheckButton* pixelShiftMedian;
-    MyCheckButton* pixelShiftLmmse;
-    MyCheckButton* pixelShiftEqualBright;
+    CheckBox* pixelShiftShowMotion;
+    CheckBox* pixelShiftShowMotionMaskOnly;
+    CheckBox* pixelShiftNonGreenCross;
+    CheckBox* pixelShiftGreen;
+    CheckBox* pixelShiftBlur;
+    CheckBox* pixelShiftHoleFill;
+    CheckBox* pixelShiftMedian;
+    CheckBox* pixelShiftLmmse;
+    CheckBox* pixelShiftEqualBright;
     Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftSigma;
@@ -58,13 +59,13 @@ protected:
     Adjuster* pixelShiftSum;
     Adjuster* pixelShiftMotion;
     MyComboBoxText* pixelShiftMotionCorrection;
-    MyCheckButton* pixelShiftAutomatic;
-    MyCheckButton* pixelShiftNonGreenHorizontal;
-    MyCheckButton* pixelShiftNonGreenVertical;
-    MyCheckButton* pixelShiftNonGreenCross2;
-    MyCheckButton* pixelShiftNonGreenAmaze;
-    MyCheckButton* pixelShiftExp0;
-    MyCheckButton* pixelShiftMedian3;
+    CheckBox* pixelShiftAutomatic;
+    CheckBox* pixelShiftNonGreenHorizontal;
+    CheckBox* pixelShiftNonGreenVertical;
+    CheckBox* pixelShiftNonGreenCross2;
+    CheckBox* pixelShiftNonGreenAmaze;
+    CheckBox* pixelShiftExp0;
+    CheckBox* pixelShiftMedian3;
     Adjuster* pixelShiftStddevFactorGreen;
     Adjuster* pixelShiftStddevFactorRed;
     Adjuster* pixelShiftStddevFactorBlue;
@@ -84,27 +85,11 @@ public:
 
     void methodChanged ();
     void imageNumberChanged ();
-    void adjusterChanged     (Adjuster* a, double newval);
-    void dcbEnhanceChanged();
-    void pixelShiftShowMotionChanged();
-    void pixelShiftShowMotionMaskOnlyChanged();
-    void pixelShiftHoleFillChanged();
-    void pixelShiftMedianChanged();
-    void pixelShiftMedian3Changed();
-    void pixelShiftGreenChanged();
-    void pixelShiftBlurChanged();
-    void pixelShiftLmmseChanged();
-    void pixelShiftEqualBrightChanged();
-    void pixelShiftNonGreenCrossChanged();
+    void adjusterChanged (Adjuster* a, double newval);
+    void checkBoxToggled (CheckBox* c, CheckValue newval);
     void pixelShiftMotionMethodChanged();
 #ifdef PIXELSHIFTDEV
     void psMotionCorrectionChanged ();
-    void pixelShiftAutomaticChanged();
-    void pixelShiftNonGreenHorizontalChanged();
-    void pixelShiftNonGreenVerticalChanged();
-    void pixelShiftExp0Changed();
-    void pixelShiftNonGreenCross2Changed();
-    void pixelShiftNonGreenAmazeChanged();
 #endif
 };
 
