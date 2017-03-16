@@ -361,8 +361,12 @@ void ExportPanel::LoadDefaultSettings()
     MaxWidth->set_value(options.fastexport_resize_width);
     MaxHeight->set_value(options.fastexport_resize_height);
 
-    use_fast_pipeline->set_active(options.fastexport_use_fast_pipeline);
-    bypass_box->set_sensitive(!options.fastexport_use_fast_pipeline);
+    if (options.fastexport_use_fast_pipeline) {
+        use_fast_pipeline->set_active(true);
+        bypass_box->set_sensitive(false);
+    } else {
+        use_normal_pipeline->set_active(true);
+    }
 }
 
 void ExportPanel::LoadSettings()
