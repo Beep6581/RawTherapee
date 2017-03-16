@@ -1980,10 +1980,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
         if(numFrames == 4 && raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::pixelshift]) {
             for(int i=0; i<4; ++i) {
-                CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength, *rawDataFrames[i]);
+                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 10.0 - raw.caautostrength, *rawDataFrames[i]);
             }
         } else {
-            CA_correct_RT(raw.cared, raw.cablue, 10.0 - raw.caautostrength, rawData);
+            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 10.0 - raw.caautostrength, rawData);
         }
     }
 
