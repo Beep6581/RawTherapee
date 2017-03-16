@@ -768,6 +768,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     else if (m == develop) {
         tbl->developRequested (mselected, false);
     } else if (m == developfast) {
+        if (exportPanel) {
+            // force saving export panel settings
+            exportPanel->setExportPanelListener(nullptr);
+            exportPanel->FastExportPressed();
+            exportPanel->setExportPanelListener(this);
+        }
         tbl->developRequested (mselected, true);
     }
 
