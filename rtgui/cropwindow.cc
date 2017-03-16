@@ -93,31 +93,22 @@ CropWindow::~CropWindow ()
 
 void CropWindow::initZoomSteps()
 {
-    zoomSteps.push_back(ZoomStep("  1%", 0.01, 999));
-    zoomSteps.push_back(ZoomStep("  2%", 0.02, 500));
-    zoomSteps.push_back(ZoomStep("  5%", 0.05, 200));
-    zoomSteps.push_back(ZoomStep("  6%", 1.0/15.0, 150));
-    zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120));
+    zoomSteps.push_back(ZoomStep("  1%", 0.01, 999, true));
+    zoomSteps.push_back(ZoomStep("  2%", 0.02, 500, true));
+    zoomSteps.push_back(ZoomStep("  5%", 0.05, 200, true));
+    zoomSteps.push_back(ZoomStep("  6%", 1.0/15.0, 150, true));
+    zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120, true));
     char lbl[64];
-    for (int s = 100; s >= 50; s -= 5) {
+    for (int s = 100; s >= 11; --s) {
         float z = 10./float(s);
         sprintf(lbl, "% 2d%%", int(z * 100));
-        zoomSteps.push_back(ZoomStep(lbl, z, s));
-    }
-    for (int s = 45; s >= 27; s -= 3) {
-        float z = 10./float(s);
-        sprintf(lbl, "% 2d%%", int(z * 100));
-        zoomSteps.push_back(ZoomStep(lbl, z, s));
-    }
-    for (int s = 25; s >= 11; --s) {
-        float z = 10./float(s);
-        sprintf(lbl, "% 2d%%", int(z * 100));
-        zoomSteps.push_back(ZoomStep(lbl, z, s));
+        bool is_major = (s == s/10 * 10);
+        zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
     }
     zoom11index = zoomSteps.size();
     for (int s = 1; s <= 8; ++s) {
         sprintf(lbl, "%d00%%", s);
-        zoomSteps.push_back(ZoomStep(lbl, s, s * 1000));
+        zoomSteps.push_back(ZoomStep(lbl, s, s * 1000, true));
     }
 }
 
@@ -1928,7 +1919,11 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY)
         }
     }
 
-    changeZoom (cropZoom + 1, true, x, y);
+    int z = cropZoom + 1;
+    while (z < int(zoomSteps.size()) && !zoomSteps[z].is_major) {
+        ++z;
+    }
+    changeZoom (z, true, x, y);
     fitZoom = false;
 }
 
@@ -1944,7 +1939,11 @@ void CropWindow::zoomOut (bool toCursor, int cursorX, int cursorY)
     }
 
     zoomVersion = exposeVersion;
-    changeZoom (cropZoom - 1, true, x, y);
+    int z = cropZoom - 1;
+    while (z >= 0 && !zoomSteps[z].is_major) {
+        --z;
+    }
+    changeZoom (z, true, x, y);
     fitZoom = false;
 }
 

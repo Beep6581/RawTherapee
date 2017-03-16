@@ -118,9 +118,11 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
         Glib::ustring label;
         double zoom;
         int czoom;
+        bool is_major;
 
-        explicit ZoomStep(const Glib::ustring &l="", double z=0.0, int cz=0):
-            label(l), zoom(z), czoom(cz) {}
+        explicit ZoomStep(const Glib::ustring &l="", double z=0.0,
+                          int cz=0, bool m=false):
+            label(l), zoom(z), czoom(cz), is_major(m) {}
     };
     std::vector<ZoomStep> zoomSteps;
     size_t zoom11index;
