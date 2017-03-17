@@ -2159,7 +2159,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
                                 amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue); // for non pixelshift files use amaze if pixelshift is selected. We need it also for motion correction
                             }
                         }
-                    } else {
+                    } else if(bayerParams.pixelShiftMotionCorrectionMethod != RAWParams::BayerSensor::Off) {
                         if(bayerParams.pixelShiftLmmse) {
                             lmmse_interpolate_omp(W, H, rawData, red, green, blue, raw.bayersensor.lmmse_iterations);
                         } else {
