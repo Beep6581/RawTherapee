@@ -96,15 +96,9 @@ void CheckBox::setValue (bool active)
 {
 
     ConnectionBlocker blocker (conn);
-    if (active) {
-        set_inconsistent (false);
-        set_active(true);
-        lastActive = true;
-    } else {
-        set_inconsistent (false);
-        set_active(true);
-        lastActive = false;
-    }
+    set_inconsistent (false);
+    set_active(active);
+    lastActive = active;
 }
 
 CheckValue CheckBox::getValue ()
