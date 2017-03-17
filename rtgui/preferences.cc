@@ -214,22 +214,22 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
 
     mi = behModel->append ();
-
-    mi->set_value (behavColumns.label, M ("TP_LOCALLAB_LABEL"));
-    //  appendBehavList (mi, M("TP_LOCALLAB_DEGREE"), ADDSET_LOCALLAB_DEGREE, false);
-    appendBehavList (mi, M ("TP_LOCAL_HEIGHT"), ADDSET_LOCALLAB_LOCY, false);
-    appendBehavList (mi, M ("TP_LOCAL_WIDTH"), ADDSET_LOCALLAB_LOCX, false);
-    appendBehavList (mi, M ("TP_LOCAL_HEIGHT_T"), ADDSET_LOCALLAB_LOCYT, false);
-    appendBehavList (mi, M ("TP_LOCAL_WIDTH_L"), ADDSET_LOCALLAB_LOCXL, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_CENTER_X") + ", " + M ("TP_LOCALLAB_CENTER_Y"), ADDSET_LOCALLAB_CENTER, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_LIGHTNESS"), ADDSET_LOCALLAB_LIGHTNESS, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_CONTRAST"), ADDSET_LOCALLAB_CONTRAST, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_CHROMA"), ADDSET_LOCALLAB_CHROMA, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_SENSI"), ADDSET_LOCALLAB_SENSI, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_RADIUS"), ADDSET_LOCALLAB_RADIUS, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_STRENGTH"), ADDSET_LOCALLAB_STRENGTH, false);
-    appendBehavList (mi, M ("TP_LOCALLAB_TRANSIT"), ADDSET_LOCALLAB_TRANSIT, false);
-
+    /*
+        mi->set_value (behavColumns.label, M ("TP_LOCALLAB_LABEL"));
+        //  appendBehavList (mi, M("TP_LOCALLAB_DEGREE"), ADDSET_LOCALLAB_DEGREE, false);
+        appendBehavList (mi, M ("TP_LOCAL_HEIGHT"), ADDSET_LOCALLAB_LOCY, false);
+        appendBehavList (mi, M ("TP_LOCAL_WIDTH"), ADDSET_LOCALLAB_LOCX, false);
+        appendBehavList (mi, M ("TP_LOCAL_HEIGHT_T"), ADDSET_LOCALLAB_LOCYT, false);
+        appendBehavList (mi, M ("TP_LOCAL_WIDTH_L"), ADDSET_LOCALLAB_LOCXL, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_CENTER_X") + ", " + M ("TP_LOCALLAB_CENTER_Y"), ADDSET_LOCALLAB_CENTER, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_LIGHTNESS"), ADDSET_LOCALLAB_LIGHTNESS, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_CONTRAST"), ADDSET_LOCALLAB_CONTRAST, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_CHROMA"), ADDSET_LOCALLAB_CHROMA, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_SENSI"), ADDSET_LOCALLAB_SENSI, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_RADIUS"), ADDSET_LOCALLAB_RADIUS, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_STRENGTH"), ADDSET_LOCALLAB_STRENGTH, false);
+        appendBehavList (mi, M ("TP_LOCALLAB_TRANSIT"), ADDSET_LOCALLAB_TRANSIT, false);
+    */
 
 
     mi = behModel->append ();

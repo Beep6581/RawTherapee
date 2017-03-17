@@ -615,19 +615,6 @@ void Options::setDefaults ()
         0, // ADDSET_RETI_VART
         0, // ADDSET_RETI_GAM
         0, // ADDSET_RETI_SLO
-        0,  // ADDSET_LOCALLAB_DEGREE
-        0,  // ADDSET_LOCALLAB_LOCY
-        0,  // ADDSET_LOCALLAB_LOCX
-        0,  // ADDSET_LOCALLAB_LOCYY
-        0,  // ADDSET_LOCALLAB_LOCXL
-        0,  // ADDSET_LOCALLAB_CENTER
-        0,  // ADDSET_LOCALLAB_LIGHTNESS
-        0,  // ADDSET_LOCALLAB_CONTRAST
-        0,  // ADDSET_LOCALLAB_CHROMA
-        0,  // ADDSET_LOCALLAB_RADIUS
-        0,  // ADDSET_LOCALLAB_TRANSIT
-        0,  // ADDSET_LOCALLAB_STRENGTH
-        0,  // ADDSET_LOCALLAB_SENSI
         0, // ADDSET_WB_TEMPBIAS
     };
 

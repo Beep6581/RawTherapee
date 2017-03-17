@@ -2212,7 +2212,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
     if (locallab.degree) {
-        toEdit.locallab.degree        = dontforceSet && options.baBehav[ADDSET_LOCALLAB_DEGREE] ? toEdit.locallab.degree + mods.locallab.degree : mods.locallab.degree;
+        toEdit.locallab.degree        = mods.locallab.degree; //dontforceSet && options.baBehav[ADDSET_LOCALLAB_DEGREE] ? toEdit.locallab.degree + mods.locallab.degree : mods.locallab.degree;
     }
 
     if (locallab.locY) {
