@@ -109,16 +109,16 @@ Locallab::Locallab ():
     artifFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_ARTIF")))),
     superFrame (Gtk::manage (new Gtk::Frame ())),
 
-    artifVBox (Gtk::manage (new Gtk::VBox ())),
-    shapeVBox (Gtk::manage (new Gtk::VBox ())),
-    tmBox (Gtk::manage (new Gtk::VBox())),
-    retiBox (Gtk::manage (new Gtk::VBox())),
-    colorVBox (Gtk::manage ( new Gtk::VBox())),
-    blurrVBox (Gtk::manage ( new Gtk::VBox())),
-    sharpVBox (Gtk::manage ( new Gtk::VBox())),
-    cbdlVBox (Gtk::manage ( new Gtk::VBox())),
-    denoisVBox (Gtk::manage ( new Gtk::VBox())),
-    superVBox (Gtk::manage (new Gtk::VBox ())),
+    //  artifVBox (Gtk::manage (new Gtk::VBox ())),
+//   shapeVBox (Gtk::manage (new Gtk::VBox ())),
+//   tmBox (Gtk::manage (new Gtk::VBox())),
+    //  retiBox (Gtk::manage (new Gtk::VBox())),
+    //  colorVBox (Gtk::manage ( new Gtk::VBox())),
+    // blurrVBox (Gtk::manage ( new Gtk::VBox())),
+//   sharpVBox (Gtk::manage ( new Gtk::VBox())),
+//   cbdlVBox (Gtk::manage ( new Gtk::VBox())),
+//   denoisVBox (Gtk::manage ( new Gtk::VBox())),
+//   superVBox (Gtk::manage (new Gtk::VBox ())),
 
 
     labmdh (Gtk::manage (new Gtk::Label (M ("TP_LOCRETI_METHOD") + ":"))),
@@ -411,10 +411,10 @@ Locallab::Locallab ():
 
 
 // end reti
-
+    ToolParamBlock* const shapeBox = Gtk::manage (new ToolParamBlock());
     avoid->set_active (false);
     avoidConn  = avoid->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::avoidChanged) );
-    shapeVBox->pack_start (*nbspot);
+    shapeBox->pack_start (*nbspot);
     pack_start (*anbspot);
 
     hueref->setAdjusterListener (this);
@@ -430,31 +430,32 @@ Locallab::Locallab ():
     chromaref->hide();
     lumaref->hide();
     ctboxS->pack_start (*Smethod);
-    shapeVBox->pack_start (*ctboxS);
+    shapeBox->pack_start (*ctboxS);
 
-    shapeVBox->pack_start (*locX);
-    shapeVBox->pack_start (*locXL);
+    shapeBox->pack_start (*locX);
+    shapeBox->pack_start (*locXL);
     //pack_start (*degree);
-    shapeVBox->pack_start (*locY);
-    shapeVBox->pack_start (*locYT);
-    shapeVBox->pack_start (*centerX);
-    shapeVBox->pack_start (*centerY);
-    shapeVBox->pack_start (*circrad);
+    shapeBox->pack_start (*locY);
+    shapeBox->pack_start (*locYT);
+    shapeBox->pack_start (*centerX);
+    shapeBox->pack_start (*centerY);
+    shapeBox->pack_start (*circrad);
     qualbox->pack_start (*labqual, Gtk::PACK_SHRINK, 4);
     qualbox->pack_start (*qualityMethod);
-    shapeVBox->pack_start (*qualbox);
-    shapeVBox->pack_start (*transit);
+    shapeBox->pack_start (*qualbox);
+    shapeBox->pack_start (*transit);
 
     artifFrame->set_label_align (0.025, 0.5);
     artifFrame->set_tooltip_text (M ("TP_LOCALLAB_ARTIF_TOOLTIP"));
 
+    ToolParamBlock* const artifBox = Gtk::manage (new ToolParamBlock());
 
-    artifVBox->pack_start (*thres);
-    artifVBox->pack_start (*proxi);
-    artifFrame->add (*artifVBox);
-    shapeVBox->pack_start (*artifFrame);
+    artifBox->pack_start (*thres);
+    artifBox->pack_start (*proxi);
+    artifFrame->add (*artifBox);
+    shapeBox->pack_start (*artifFrame);
 
-    expsettings->add (*shapeVBox);
+    expsettings->add (*shapeBox);
     expsettings->setLevel (2);
     pack_start (*expsettings);
 
@@ -473,8 +474,9 @@ Locallab::Locallab ():
     Gtk::Button * lumacontrastPlusButton = Gtk::manage (new Gtk::Button (M ("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS")));
     buttonBox1->pack_start (*lumacontrastPlusButton);
     lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect ( sigc::mem_fun (*this, &Locallab::lumacontrastPlusPressed));
+    ToolParamBlock* const cbdlBox = Gtk::manage (new ToolParamBlock());
 
-    cbdlVBox->pack_start (*buttonBox1);
+    cbdlBox->pack_start (*buttonBox1);
 
     for (int i = 0; i < 5; i++) {
         Glib::ustring ss;
@@ -488,18 +490,18 @@ Locallab::Locallab ():
 
         multiplier[i] = Gtk::manage ( new Adjuster (ss, 0, 400, 1, 100) );
         multiplier[i]->setAdjusterListener (this);
-        cbdlVBox->pack_start (*multiplier[i]);
+        cbdlBox->pack_start (*multiplier[i]);
     }
 
     Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
-    cbdlVBox->pack_start (*separator3, Gtk::PACK_SHRINK, 2);
+    cbdlBox->pack_start (*separator3, Gtk::PACK_SHRINK, 2);
 
     threshold->setAdjusterListener (this);
-    cbdlVBox->pack_start (*threshold);
+    cbdlBox->pack_start (*threshold);
 
     sensicb->set_tooltip_text (M ("TP_LOCALLAB_SENSIH_TOOLTIP"));
     sensicb->setAdjusterListener (this);
-    cbdlVBox->pack_start (*sensicb);
+    cbdlBox->pack_start (*sensicb);
 
     sharradius->setAdjusterListener (this);
 
@@ -515,13 +517,14 @@ Locallab::Locallab ():
 
     inverssha->set_active (false);
     inversshaConn  = inverssha->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversshaChanged) );
+    ToolParamBlock* const sharpBox = Gtk::manage (new ToolParamBlock());
 
-    sharpVBox->pack_start (*sharradius);
-    sharpVBox->pack_start (*sharamount);
-    sharpVBox->pack_start (*shardamping);
-    sharpVBox->pack_start (*shariter);
-    sharpVBox->pack_start (*sensisha);
-    sharpVBox->pack_start (*inverssha);
+    sharpBox->pack_start (*sharradius);
+    sharpBox->pack_start (*sharamount);
+    sharpBox->pack_start (*shardamping);
+    sharpBox->pack_start (*shariter);
+    sharpBox->pack_start (*sensisha);
+    sharpBox->pack_start (*inverssha);
 
 
     noiselumf->setAdjusterListener (this);
@@ -531,11 +534,12 @@ Locallab::Locallab ():
     noisechrof->setAdjusterListener (this);
 
     noisechroc->setAdjusterListener (this);
+    ToolParamBlock* const denoisBox = Gtk::manage (new ToolParamBlock());
 
-    denoisVBox->pack_start (*noiselumf);
-    denoisVBox->pack_start (*noiselumc);
-    denoisVBox->pack_start (*noisechrof);
-    denoisVBox->pack_start (*noisechroc);
+    denoisBox->pack_start (*noiselumf);
+    denoisBox->pack_start (*noiselumc);
+    denoisBox->pack_start (*noisechrof);
+    denoisBox->pack_start (*noisechroc);
 
     neutrHBox1 = Gtk::manage (new Gtk::HBox ());
 
@@ -549,40 +553,45 @@ Locallab::Locallab ():
     pack_start (*neutrHBox1);
 
     superFrame->set_label_align (0.025, 0.5);
-    Gtk::VBox *superVBox = Gtk::manage ( new Gtk::VBox());
+    //  Gtk::VBox *superVBox = Gtk::manage ( new Gtk::VBox());
+    ToolParamBlock* const superBox = Gtk::manage (new ToolParamBlock());
+
     superFrame->set_label_widget (*curvactiv);
+    ToolParamBlock* const colorBox = Gtk::manage (new ToolParamBlock());
 
 
-    superVBox->pack_start (*lightness);
-    superVBox->pack_start (*contrast);
-    superFrame->add (*superVBox);
-    colorVBox->pack_start (*superFrame);
+    superBox->pack_start (*lightness);
+    superBox->pack_start (*contrast);
+    superFrame->add (*superBox);
+    colorBox->pack_start (*superFrame);
 
-    colorVBox->pack_start (*chroma);
-    colorVBox->pack_start (*sensi);
+    colorBox->pack_start (*chroma);
+    colorBox->pack_start (*sensi);
 
     qualcurvbox->pack_start (*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start (*qualitycurveMethod);
 
-    colorVBox->pack_start (*qualcurvbox);
+    colorBox->pack_start (*qualcurvbox);
 
 
-    colorVBox->pack_start (*llCurveEditorG, Gtk::PACK_SHRINK, 2);
-    colorVBox->pack_start (*invers);
+    colorBox->pack_start (*llCurveEditorG, Gtk::PACK_SHRINK, 2);
+    colorBox->pack_start (*invers);
 
-    expcolor->add (*colorVBox);
+    expcolor->add (*colorBox);
     expcolor->setLevel (2);
     pack_start (*expcolor);
+    ToolParamBlock* const blurrBox = Gtk::manage (new ToolParamBlock());
 
-    blurrVBox->pack_start (*radius);
-    blurrVBox->pack_start (*strength);
-    blurrVBox->pack_start (*sensibn);
-    blurrVBox->pack_start (*activlum);
+    blurrBox->pack_start (*radius);
+    blurrBox->pack_start (*strength);
+    blurrBox->pack_start (*sensibn);
+    blurrBox->pack_start (*activlum);
 
-    blurrVBox->pack_start (*inversrad);
-    expblur->add (*blurrVBox);
+    blurrBox->pack_start (*inversrad);
+    expblur->add (*blurrBox);
     expblur->setLevel (2);
     pack_start (*expblur);
+    ToolParamBlock* const tmBox = Gtk::manage (new ToolParamBlock());
 
     tmBox->pack_start (*stren);
     tmBox->pack_start (*gamma);
@@ -595,6 +604,7 @@ Locallab::Locallab ():
     exptonemap->setLevel (2);
     pack_start (*exptonemap);
 
+    ToolParamBlock* const retiBox = Gtk::manage (new ToolParamBlock());
 
     retiBox->pack_start (*retinexMethod);
     retiBox->pack_start (*str);
@@ -614,15 +624,15 @@ Locallab::Locallab ():
     pack_start (*expreti);
 
 
-    expsharp->add (*sharpVBox);
+    expsharp->add (*sharpBox);
     expsharp->setLevel (2);
     pack_start (*expsharp);
 
-    expcbdl->add (*cbdlVBox);
+    expcbdl->add (*cbdlBox);
     expcbdl->setLevel (2);
     pack_start (*expcbdl);
 
-    expdenoi->add (*denoisVBox);
+    expdenoi->add (*denoisBox);
     expdenoi->setLevel (2);
     pack_start (*expdenoi);
 

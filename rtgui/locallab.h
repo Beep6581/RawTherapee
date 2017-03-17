@@ -110,18 +110,18 @@ private:
     Gtk::Frame* const artifFrame;
     Gtk::Frame* const shapeFrame;
     Gtk::Frame* const superFrame;
-
-    Gtk::VBox* const artifVBox;
-    Gtk::VBox* const shapeVBox;
-    Gtk::VBox* const tmBox;
-    Gtk::VBox* const retiBox;
-    Gtk::VBox* const colorVBox;
-    Gtk::VBox* const blurrVBox;
-    Gtk::VBox* const sharpVBox;
-    Gtk::VBox* const cbdlVBox;
-    Gtk::VBox* const denoisVBox;
-    Gtk::VBox* const superVBox;
-
+    /*
+        Gtk::VBox* const artifVBox;
+        Gtk::VBox* const shapeVBox;
+        Gtk::VBox* const tmBox;
+        Gtk::VBox* const retiBox;
+        Gtk::VBox* const colorVBox;
+        Gtk::VBox* const blurrVBox;
+        Gtk::VBox* const sharpVBox;
+        Gtk::VBox* const cbdlVBox;
+        Gtk::VBox* const denoisVBox;
+        Gtk::VBox* const superVBox;
+    */
     Gtk::CheckButton* const avoid;
     Gtk::CheckButton* const invers;
     Gtk::CheckButton* const curvactiv;
