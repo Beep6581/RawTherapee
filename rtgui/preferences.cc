@@ -1895,13 +1895,13 @@ void Preferences::fillPreferences ()
     if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
         gimpDir->set_current_folder (moptions.gimpDir);
     } else {
-        gimpDir->set_current_folder ("");
+        gimpDir->set_current_folder (Glib::get_home_dir());
     }
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
     } else {
-        psDir->set_current_folder ("");
+        psDir->set_current_folder (Glib::get_home_dir());
     }
 
 #elif defined __APPLE__
@@ -1909,6 +1909,8 @@ void Preferences::fillPreferences ()
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
+    } else {
+        psDir->set_current_folder (Glib::get_home_dir());
     }
 
 #endif
