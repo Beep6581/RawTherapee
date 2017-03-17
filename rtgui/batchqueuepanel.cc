@@ -115,6 +115,8 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
 
     if (Glib::file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) {
         outdirFolder->set_current_folder (options.savePathFolder);
+    } else {
+        outdirFolder->set_current_folder (Glib::get_home_dir());
     }
 
     outdirFolderButton = 0;
