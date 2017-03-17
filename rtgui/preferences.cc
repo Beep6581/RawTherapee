@@ -1132,11 +1132,17 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     navigationGrid->attach_next_to(*panFactorLabel, Gtk::POS_LEFT, 1, 1);
     navigationGrid->attach_next_to(*panFactor, *panFactorLabel, Gtk::POS_RIGHT, 1, 1);
 
+    Gtk::HBox *zoombox = Gtk::manage(new Gtk::HBox());
     rememberZoomPanCheckbutton = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_REMEMBERZOOMPAN")) );
-    setExpandAlignProperties(rememberZoomPanCheckbutton, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     rememberZoomPanCheckbutton->set_tooltip_text(M("PREFERENCES_REMEMBERZOOMPAN_TOOLTIP"));
+    extendedZoomLevelsCheckbutton = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_EXTENDEDZOOMLEVELS")) );
+    extendedZoomLevelsCheckbutton->set_tooltip_text(M("PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP"));
+    zoombox->set_spacing(10);
+    zoombox->pack_start(*rememberZoomPanCheckbutton);
+    zoombox->pack_start(*extendedZoomLevelsCheckbutton);
+    setExpandAlignProperties(zoombox, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
-    navigationGrid->attach_next_to(*rememberZoomPanCheckbutton, *panFactorLabel, Gtk::POS_BOTTOM, 2, 1);
+    navigationGrid->attach_next_to(*zoombox, *panFactorLabel, Gtk::POS_BOTTOM, 2, 1);
 
     fnav->add (*navigationGrid);
     mvbsd->attach_next_to(*fnav, *fclip, Gtk::POS_RIGHT, 1, 1);
@@ -1570,6 +1576,7 @@ void Preferences::storePreferences ()
     moptions.dateFormat          = dateformat->get_text();
     moptions.panAccelFactor      = (int)panFactor->get_value();
     moptions.rememberZoomAndPan = rememberZoomPanCheckbutton->get_active();
+    moptions.extendedZoomLevelsForFit = extendedZoomLevelsCheckbutton->get_active();
     moptions.fbShowDateTime  = showDateTime->get_active ();
     moptions.fbShowBasicExif = showBasicExif->get_active ();
     moptions.fbShowExpComp   = showExpComp->get_active ();
@@ -1792,6 +1799,7 @@ void Preferences::fillPreferences ()
     dateformat->set_text (moptions.dateFormat);
     panFactor->set_value (moptions.panAccelFactor);
     rememberZoomPanCheckbutton->set_active (moptions.rememberZoomAndPan);
+    extendedZoomLevelsCheckbutton->set_active (moptions.extendedZoomLevelsForFit);
     ctiffserialize->set_active(moptions.serializeTiffRead);
 
     setActiveTextOrIndex (*prtProfile, moptions.rtSettings.printerProfile, 0);

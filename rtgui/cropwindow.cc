@@ -103,7 +103,9 @@ void CropWindow::initZoomSteps()
         float z = 10./float(s);
         sprintf(lbl, "% 2d%%", int(z * 100));
         bool is_major = (s == s/10 * 10);
-        zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
+        if (is_major || options.extendedZoomLevelsForFit) {
+            zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
+        }
     }
     zoom11index = zoomSteps.size();
     for (int s = 1; s <= 8; ++s) {

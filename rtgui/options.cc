@@ -348,6 +348,7 @@ void Options::setDefaults ()
     lastScale = 5;
     panAccelFactor = 5;
     rememberZoomAndPan = true;
+    extendedZoomLevelsForFit = false;
     lastCropSize = 1;
     fbOnlyRaw = false;
     fbShowDateTime = true;
@@ -1348,6 +1349,10 @@ int Options::readFromFile (Glib::ustring fname)
                     rememberZoomAndPan        = keyFile.get_boolean ("GUI", "RememberZoomAndPan");
                 }
 
+                if (keyFile.has_key ("GUI", "ExtendedZoomLevelsForFit")) {
+                    extendedZoomLevelsForFit  = keyFile.get_boolean ("GUI", "ExtendedZoomLevelsForFit");
+                }
+                
                 if (keyFile.has_key ("GUI", "LastCropSize")) {
                     lastCropSize      = keyFile.get_integer ("GUI", "LastCropSize");
                 }
@@ -2023,6 +2028,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
         keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
         keyFile.set_boolean ("GUI", "RememberZoomAndPan", rememberZoomAndPan);
+        keyFile.set_boolean ("GUI", "ExtendedZoomLevelsForFit", extendedZoomLevelsForFit);
         keyFile.set_integer ("GUI", "LastCropSize", lastCropSize);
         keyFile.set_boolean ("GUI", "ShowHistory", showHistory);
         keyFile.set_integer ("GUI", "ShowFilePanelState", showFilePanelState);
