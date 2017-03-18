@@ -497,7 +497,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
     if (useNoiseLCurve || useNoiseCCurve) {
         int hei = calclum->height;
         int wid = calclum->width;
-        TMatrix wprofi = iccStore->workingSpaceMatrix (params->icm.working);
+        TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
         const float wpi[3][3] = {
             {static_cast<float>(wprofi[0][0]), static_cast<float>(wprofi[0][1]), static_cast<float>(wprofi[0][2])},
@@ -764,7 +764,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 }
             }
 
-            TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
             //inverse matrix user select
             const float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
@@ -772,7 +772,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
             };
 
-            TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
             const float wp[3][3] = {
                 {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
@@ -3117,7 +3117,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
     float** bcalc;
     hei = provicalc->height;
     wid = provicalc->width;
-    TMatrix wprofi = iccStore->workingSpaceMatrix (params->icm.working);
+    TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
     const float wpi[3][3] = {
         {static_cast<float>(wprofi[0][0]), static_cast<float>(wprofi[0][1]), static_cast<float>(wprofi[0][2])},
@@ -3192,7 +3192,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
         {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},

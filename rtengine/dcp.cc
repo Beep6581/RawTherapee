@@ -997,7 +997,7 @@ void DCPProfile::apply(
 ) const
 {
 
-    const TMatrix work_matrix = iccStore->workingSpaceInverseMatrix(working_space);
+    const TMatrix work_matrix = ICCStore::getInstance()->workingSpaceInverseMatrix(working_space);
 
     const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
 
@@ -1119,7 +1119,7 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
         as_out.data->already_pro_photo = false;
         TMatrix mWork;
 
-        mWork = iccStore->workingSpaceMatrix (working_space);
+        mWork = ICCStore::getInstance()->workingSpaceMatrix (working_space);
         memset(as_out.data->pro_photo, 0, sizeof(as_out.data->pro_photo));
 
         for (int i = 0; i < 3; i++)
@@ -1128,7 +1128,7 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
                     as_out.data->pro_photo[i][j] += prophoto_xyz[i][k] * mWork[k][j];
                 }
 
-        mWork = iccStore->workingSpaceInverseMatrix (working_space);
+        mWork = ICCStore::getInstance()->workingSpaceInverseMatrix (working_space);
         memset(as_out.data->work, 0, sizeof(as_out.data->work));
 
         for (int i = 0; i < 3; i++)

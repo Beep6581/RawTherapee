@@ -40,8 +40,8 @@ MyMutex* lcmsMutex = nullptr;
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll)
 {
     settings = s;
-    iccStore->init (s->iccDirectory, Glib::build_filename (baseDir, "iccprofiles"), loadAll);
-    iccStore->findDefaultMonitorProfile();
+    ICCStore::getInstance()->init (s->iccDirectory, Glib::build_filename (baseDir, "iccprofiles"), loadAll);
+    ICCStore::getInstance()->findDefaultMonitorProfile();
     DCPStore::getInstance()->init (Glib::build_filename (baseDir, "dcpprofiles"), loadAll);
 
     CameraConstantsStore::getInstance ()->init (baseDir, userSettingsDir);

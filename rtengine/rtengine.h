@@ -442,13 +442,6 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
 /** Cleanup the RT engine (static variables) */
 void cleanup ();
 
-/** Returns the available working profile names
-  * @return a vector of the available working profile names */
-std::vector<Glib::ustring> getWorkingProfiles ();
-/** Returns the available output gammas
-  * @return a vector of the available gamma names */
-std::vector<Glib::ustring> getGamma ();
-
 /** This class  holds all the necessary informations to accomplish the full processing of the image */
 class ProcessingJob
 {

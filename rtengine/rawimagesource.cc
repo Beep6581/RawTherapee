@@ -1557,7 +1557,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool batch)
                 imatrices.xyz_cam[i][j] += xyz_sRGB[i][k] * imatrices.rgb_cam[k][j];
             }
 
-    camProfile = iccStore->createFromMatrix (imatrices.xyz_cam, false, "Camera");
+    camProfile = ICCStore::getInstance()->createFromMatrix (imatrices.xyz_cam, false, "Camera");
     inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
 
     for (int c = 0; c < 4; c++) {
@@ -2168,7 +2168,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
 
         }
     } else {
-        TMatrix wprof = iccStore->workingSpaceMatrix (cmp.working);
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (cmp.working);
         float wp[3][3] = {
             {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
             {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
@@ -2445,7 +2445,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
         }
 
     } else {
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (cmp.working);
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working);
 
         double wip[3][3] = {
             {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -3802,7 +3802,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         // in this case we avoid using the slllllooooooowwww lcms
 
         // Calculate matrix for direct conversion raw>working space
-        TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
+        TMatrix work = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working);
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
         for (int i = 0; i < 3; i++)
@@ -3894,7 +3894,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
 
         // Initialize transform
         cmsHTRANSFORM hTransform;
-        cmsHPROFILE prophoto = iccStore->workingSpace("ProPhoto"); // We always use Prophoto to apply the ICC profile to minimize problems with clipping in LUT conversion.
+        cmsHPROFILE prophoto = ICCStore::getInstance()->workingSpace("ProPhoto"); // We always use Prophoto to apply the ICC profile to minimize problems with clipping in LUT conversion.
         bool transform_via_pcs_lab = false;
         bool separate_pcs_lab_highlights = false;
         lcmsMutex->lock ();
@@ -3940,8 +3940,8 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, ColorManagementParam
         TMatrix toxyz = {}, torgb = {};
 
         if (!working_space_is_prophoto) {
-            toxyz = iccStore->workingSpaceMatrix ("ProPhoto");
-            torgb = iccStore->workingSpaceInverseMatrix (cmp.working); //sRGB .. Adobe...Wide...
+            toxyz = ICCStore::getInstance()->workingSpaceMatrix ("ProPhoto");
+            torgb = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.working); //sRGB .. Adobe...Wide...
         }
 
 #ifdef _OPENMP
@@ -4154,7 +4154,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         *dcpProf = DCPStore::getInstance()->getStdProfile(camName);
 
         if (*dcpProf == nullptr) {
-            in = iccStore->getStdProfile(camName);
+            in = ICCStore::getInstance()->getStdProfile(camName);
         }
     } else if (inProfile != "(camera)" && inProfile != "") {
         Glib::ustring normalName = inProfile;
@@ -4168,7 +4168,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         }
 
         if (*dcpProf == nullptr) {
-            in = iccStore->getProfile (inProfile);
+            in = ICCStore::getInstance()->getProfile (inProfile);
         }
     }
 
