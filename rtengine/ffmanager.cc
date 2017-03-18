@@ -130,14 +130,13 @@ void ffInfo::updateRawImage()
     if( !pathNames.empty() ) {
         std::list<Glib::ustring>::iterator iName = pathNames.begin();
         ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
-
         if( ri->loadRaw(true)) {
             delete ri;
             ri = nullptr;
         } else {
             int H = ri->get_height();
             int W = ri->get_width();
-            ri->compress_image();
+            ri->compress_image(0);
             int rSize = W * ((ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) ? 1 : 3);
             acc_t **acc = new acc_t*[H];
 
@@ -157,7 +156,7 @@ void ffInfo::updateRawImage()
                 RawImage* temp = new RawImage(*iName);
 
                 if( !temp->loadRaw(true)) {
-                    temp->compress_image();     //\ TODO would be better working on original, because is temporary
+                    temp->compress_image(0);     //\ TODO would be better working on original, because is temporary
                     nFiles++;
 
                     if( ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS ) {
@@ -192,12 +191,11 @@ void ffInfo::updateRawImage()
         }
     } else {
         ri = new RawImage(pathname);
-
         if( ri->loadRaw(true)) {
             delete ri;
             ri = nullptr;
         } else {
-            ri->compress_image();
+            ri->compress_image(0);
         }
     }
 

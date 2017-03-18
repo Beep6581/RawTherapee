@@ -30,12 +30,11 @@
 
 #include "rt_math.h"
 #include "rawimagesource.h"
-
 namespace rtengine
 {
 
 //void green_equilibrate()//for dcraw implementation
-void RawImageSource::green_equilibrate(float thresh)
+void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
 {
     // thresh = threshold for performing green equilibration; max percentage difference of G1 vs G2
     // G1-G2 differences larger than this will be assumed to be Nyquist texture, and left untouched
@@ -79,7 +78,7 @@ void RawImageSource::green_equilibrate(float thresh)
     */
     //now smooth the cfa data
 #ifdef _OPENMP
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
     for (int rr = 4; rr < height - 4; rr++)
@@ -99,8 +98,8 @@ void RawImageSource::green_equilibrate(float thresh)
             float d1 = (o1_1 + o1_2 + o1_3 + o1_4) * 0.25f;
             float d2 = (o2_1 + o2_2 + o2_3 + o2_4) * 0.25f;
 
-            float c1 = (fabs(o1_1 - o1_2) + fabs(o1_1 - o1_3) + fabs(o1_1 - o1_4) + fabs(o1_2 - o1_3) + fabs(o1_3 - o1_4) + fabs(o1_2 - o1_4)) / 6.0;
-            float c2 = (fabs(o2_1 - o2_2) + fabs(o2_1 - o2_3) + fabs(o2_1 - o2_4) + fabs(o2_2 - o2_3) + fabs(o2_3 - o2_4) + fabs(o2_2 - o2_4)) / 6.0;
+            float c1 = (fabs(o1_1 - o1_2) + fabs(o1_1 - o1_3) + fabs(o1_1 - o1_4) + fabs(o1_2 - o1_3) + fabs(o1_3 - o1_4) + fabs(o1_2 - o1_4)) / 6.f;
+            float c2 = (fabs(o2_1 - o2_2) + fabs(o2_1 - o2_3) + fabs(o2_1 - o2_4) + fabs(o2_2 - o2_3) + fabs(o2_3 - o2_4) + fabs(o2_2 - o2_4)) / 6.f;
             //%%%%%%%%%%%%%%%%%%%%%%
 
             //vote1=(checker[rr-2][cc]+checker[rr][cc-2]+checker[rr][cc+2]+checker[rr+2][cc]);
@@ -111,10 +110,10 @@ void RawImageSource::green_equilibrate(float thresh)
                 //pixel interpolation
                 float gin = cfa[rr][cc];
 
-                float gse = (cfa[rr + 1][cc + 1]) + 0.5 * (cfa[rr][cc] - cfa[rr + 2][cc + 2]);
-                float gnw = (cfa[rr - 1][cc - 1]) + 0.5 * (cfa[rr][cc] - cfa[rr - 2][cc - 2]);
-                float gne = (cfa[rr - 1][cc + 1]) + 0.5 * (cfa[rr][cc] - cfa[rr - 2][cc + 2]);
-                float gsw = (cfa[rr + 1][cc - 1]) + 0.5 * (cfa[rr][cc] - cfa[rr + 2][cc - 2]);
+                float gse = (cfa[rr + 1][cc + 1]) + 0.5f * (cfa[rr][cc] - cfa[rr + 2][cc + 2]);
+                float gnw = (cfa[rr - 1][cc - 1]) + 0.5f * (cfa[rr][cc] - cfa[rr - 2][cc - 2]);
+                float gne = (cfa[rr - 1][cc + 1]) + 0.5f * (cfa[rr][cc] - cfa[rr - 2][cc + 2]);
+                float gsw = (cfa[rr + 1][cc - 1]) + 0.5f * (cfa[rr][cc] - cfa[rr + 2][cc - 2]);
 
 
 

@@ -185,6 +185,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
     if ( (todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
+        imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
         imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
 
@@ -214,7 +215,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         if (settings->verbose) {
             if (imgsrc->getSensorType() == ST_BAYER) {
-                printf("Demosaic Bayer image using method: %s\n", rp.bayersensor.method.c_str());
+                printf("Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
                 printf("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
             }
