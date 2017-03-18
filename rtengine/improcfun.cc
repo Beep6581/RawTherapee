@@ -142,8 +142,8 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
     lumimul[0] = wprof[1][0];
     lumimul[1] = wprof[1][1];
     lumimul[2] = wprof[1][2];
-    int W = original->width;
-    int H = original->height;
+    int W = original->getWidth();
+    int H = original->getHeight();
 
     float lumimulf[3] = {static_cast<float>(lumimul[0]), static_cast<float>(lumimul[1]), static_cast<float>(lumimul[2])};
 
@@ -2875,8 +2875,8 @@ void ImProcFunctions::moyeqt (Imagefloat* working, float &moyS, float &eqty)
 {
     BENCHFUN
 
-    int tHh = working->height;
-    int tWw = working->width;
+    int tHh = working->getHeight();
+    int tWw = working->getWidth();
     double moy = 0.0;
     double sqrs = 0.0;
 
@@ -3271,11 +3271,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     bool hasgammabw = gammabwr != 1.f || gammabwg != 1.f || gammabwb != 1.f;
 
     if (hasColorToning || blackwhite || (params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled)) {
-        tmpImage = new Imagefloat(working->width, working->height);
+        tmpImage = new Imagefloat(working->getWidth(), working->getHeight());
     }
 
-    int W = working->width;
-    int H = working->height;
+    int W = working->getWidth();
+    int H = working->getHeight();
 
     // For tonecurve histogram
     int toneCurveHistSize = histToneCurve ? histToneCurve.getSize() : 0;
@@ -3340,12 +3340,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
-        for(int ii = 0; ii < working->height; ii += TS)
-            for(int jj = 0; jj < working->width; jj += TS) {
+        for(int ii = 0; ii < working->getHeight(); ii += TS)
+            for(int jj = 0; jj < working->getWidth(); jj += TS) {
                 istart = ii;
                 jstart = jj;
-                tH = min(ii + TS, working->height);
-                tW = min(jj + TS, working->width);
+                tH = min(ii + TS, working->getHeight());
+                tW = min(jj + TS, working->getWidth());
 
 
                 for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -4425,8 +4425,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     // starting a new tile processing with a 'reduction' clause for the auto mixer computing
     if (blackwhite) {//channel-mixer
-        int tW = working->width;
-        int tH = working->height;
+        int tW = working->getWidth();
+        int tH = working->getHeight();
 
         if (algm == 2) { //channel-mixer
             //end auto chmix
@@ -6924,7 +6924,7 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
             return 0.0;
         }
 
-        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1, 1.0, FALSE);
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1, 1.0, FALSE, 0);
 
         if (!raw) {
             delete thumb;

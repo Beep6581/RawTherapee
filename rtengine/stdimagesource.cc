@@ -102,7 +102,7 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
  * and RT's image data type (Image8, Image16 and Imagefloat), then it will
  * load the image into it
  */
-int StdImageSource::load (const Glib::ustring &fname, bool batch)
+int StdImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 {
 
     fileName = fname;
@@ -276,20 +276,19 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 void StdImageSource::getFullSize (int& w, int& h, int tr)
 {
 
-    w = img->width;
-    h = img->height;
+    w = img->getWidth();
+    h = img->getHeight();
 
     if ((tr & TR_ROT) == TR_R90 || (tr & TR_ROT) == TR_R270) {
-        w = img->height;
-        h = img->width;
+        w = img->getHeight();
+        h = img->getWidth();
     }
 }
 
 void StdImageSource::getSize (PreviewProps pp, int& w, int& h)
 {
-
-    w = pp.w / pp.skip + (pp.w % pp.skip > 0);
-    h = pp.h / pp.skip + (pp.h % pp.skip > 0);
+    w = pp.getWidth() / pp.getSkip() + (pp.getWidth() % pp.getSkip() > 0);
+    h = pp.getHeight() / pp.getSkip() + (pp.getHeight() % pp.getSkip() > 0);
 }
 
 void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)

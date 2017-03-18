@@ -142,6 +142,15 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !CURVEEDITOR_TOOLTIPSAVE;Save current curve.
 !CURVEEDITOR_TYPE;Type:
 !DIRBROWSER_FOLDERS;Folders
+!DYNPROFILEEDITOR_DELETE;Delete
+!DYNPROFILEEDITOR_EDIT;Edit
+!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+!DYNPROFILEEDITOR_MOVE_UP;Move Up
+!DYNPROFILEEDITOR_NEW;New
+!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+!DYNPROFILEEDITOR_PROFILE;Processing Profile
 !EDITWINDOW_TITLE;Image Edit
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
@@ -758,6 +767,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!HISTORY_MSG_444;WB - Temp bias
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -1018,7 +1028,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_EXPAUT;Expert
 !PREFERENCES_EXTERNALEDITOR;External Editor
 !PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILEFORMAT;File format
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLATFIELD;Flat-Field
@@ -1112,7 +1122,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
-!PREFERENCES_SELECTFONT;Select global font
+!PREFERENCES_SELECTFONT;Select main font
 !PREFERENCES_SELECTLANG;Select language
 !PREFERENCES_SELECTTHEME;Select theme
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
@@ -1136,6 +1146,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_STARTUPIMDIR;Image Directory at Startup
 !PREFERENCES_STDAUT;Standard
 !PREFERENCES_TAB_BROWSER;File Browser
+!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_GENERAL;General
 !PREFERENCES_TAB_IMPROC;Image Processing
 !PREFERENCES_TAB_PERFORMANCE;Performance & Quality
@@ -1164,6 +1175,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PROFILEPANEL_MYPROFILES;My profiles
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
 !PROFILEPANEL_PCUSTOM;Custom
+!PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PFILE;From file
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_PLASTSAVED;Last Saved
@@ -2023,6 +2035,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 !TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 !TP_WBALANCE_SPOTWB;Spot WB
+!TP_WBALANCE_TEMPBIAS;AWB temperature bias
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !TP_WBALANCE_TEMPERATURE;Temperature
 !TP_WBALANCE_TUNGSTEN;Tungsten
 !TP_WBALANCE_WATER1;UnderWater 1

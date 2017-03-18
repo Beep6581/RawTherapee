@@ -44,7 +44,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-void RawImageSource::processRawWhitepoint(float expos, float preser)
+void RawImageSource::processRawWhitepoint(float expos, float preser, array2D<float> &rawData)
 {
     MyTime t1e, t2e;
 

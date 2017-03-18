@@ -241,6 +241,10 @@ Glib::ustring Options::findProfilePath (Glib::ustring &profName)
         return profName;
     }
 
+    if (profName == DEFPROFILE_DYNAMIC) {
+        return profName;
+    }
+
     Glib::ustring p = profName.substr (0, 4);
 
     if (p == "${U}") {
@@ -604,6 +608,7 @@ void Options::setDefaults ()
         0, // ADDSET_RETI_VART
         0, // ADDSET_RETI_GAM
         0, // ADDSET_RETI_SLO
+        0, // ADDSET_WB_TEMPBIAS
     };
 
     rtSettings.darkFramesPath = "";

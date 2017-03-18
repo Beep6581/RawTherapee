@@ -40,7 +40,7 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
-const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none" };
+const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes] = {/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
@@ -58,40 +58,40 @@ bool ToneCurveParams::HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGree
 void WBParams::init()
 {
     // Creation of the different methods and its associated temperature value
-    wbEntries.push_back(new WBEntry("Camera"              , WBT_CAMERA,      M("TP_WBALANCE_CAMERA"),        0, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Auto"                , WBT_AUTO,        M("TP_WBALANCE_AUTO"),          0, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Daylight"            , WBT_DAYLIGHT,    M("TP_WBALANCE_DAYLIGHT"),   5300, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Cloudy"              , WBT_CLOUDY,      M("TP_WBALANCE_CLOUDY"),     6200, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Shade"               , WBT_SHADE,       M("TP_WBALANCE_SHADE"),      7600, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Water 1"             , WBT_WATER,       M("TP_WBALANCE_WATER1"),    35000, 0.3f,   1.1f));
-    wbEntries.push_back(new WBEntry("Water 2"             , WBT_WATER,       M("TP_WBALANCE_WATER2"),    48000, 0.63f, 1.38f));
-    wbEntries.push_back(new WBEntry("Tungsten"            , WBT_TUNGSTEN,    M("TP_WBALANCE_TUNGSTEN"),   2856, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F1"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO1"),      6430, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F2"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO2"),      4230, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F3"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO3"),      3450, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F4"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO4"),      2940, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F5"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO5"),      6350, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F6"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO6"),      4150, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F7"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO7"),      6500, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F8"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO8"),      5020, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F9"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO9"),      4330, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F10"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO10"),     5300, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F11"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO11"),     4000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Fluo F12"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO12"),     3000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("HMI Lamp"            , WBT_LAMP,        M("TP_WBALANCE_HMI"),        4800, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("GTI Lamp"            , WBT_LAMP,        M("TP_WBALANCE_GTI"),        5000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("JudgeIII Lamp"       , WBT_LAMP,        M("TP_WBALANCE_JUDGEIII"),   5100, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Solux Lamp 3500K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX35"),    3480, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Solux Lamp 4100K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX41"),    3930, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Solux Lamp 4700K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX47"),    4700, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("NG Solux Lamp 4700K" , WBT_LAMP,        M("TP_WBALANCE_SOLUX47_NG"), 4480, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("LED LSI Lumelex 2040", WBT_LED,         M("TP_WBALANCE_LED_LSI"),    2970, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("LED CRS SP12 WWMR16" , WBT_LED,         M("TP_WBALANCE_LED_CRS"),    3050, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Flash 5500K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH55"),    5500, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Flash 6000K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH60"),    6000, 1.f,     1.f));
-    wbEntries.push_back(new WBEntry("Flash 6500K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH65"),    6500, 1.f,     1.f));
+    wbEntries.push_back(new WBEntry("Camera"              , WBT_CAMERA,      M("TP_WBALANCE_CAMERA"),        0, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Auto"                , WBT_AUTO,        M("TP_WBALANCE_AUTO"),          0, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Daylight"            , WBT_DAYLIGHT,    M("TP_WBALANCE_DAYLIGHT"),   5300, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Cloudy"              , WBT_CLOUDY,      M("TP_WBALANCE_CLOUDY"),     6200, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Shade"               , WBT_SHADE,       M("TP_WBALANCE_SHADE"),      7600, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Water 1"             , WBT_WATER,       M("TP_WBALANCE_WATER1"),    35000, 0.3f,   1.1f, 0.f));
+    wbEntries.push_back(new WBEntry("Water 2"             , WBT_WATER,       M("TP_WBALANCE_WATER2"),    48000, 0.63f, 1.38f, 0.f));
+    wbEntries.push_back(new WBEntry("Tungsten"            , WBT_TUNGSTEN,    M("TP_WBALANCE_TUNGSTEN"),   2856, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F1"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO1"),      6430, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F2"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO2"),      4230, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F3"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO3"),      3450, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F4"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO4"),      2940, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F5"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO5"),      6350, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F6"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO6"),      4150, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F7"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO7"),      6500, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F8"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO8"),      5020, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F9"             , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO9"),      4330, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F10"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO10"),     5300, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F11"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO11"),     4000, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Fluo F12"            , WBT_FLUORESCENT, M("TP_WBALANCE_FLUO12"),     3000, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("HMI Lamp"            , WBT_LAMP,        M("TP_WBALANCE_HMI"),        4800, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("GTI Lamp"            , WBT_LAMP,        M("TP_WBALANCE_GTI"),        5000, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("JudgeIII Lamp"       , WBT_LAMP,        M("TP_WBALANCE_JUDGEIII"),   5100, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Solux Lamp 3500K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX35"),    3480, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Solux Lamp 4100K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX41"),    3930, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Solux Lamp 4700K"    , WBT_LAMP,        M("TP_WBALANCE_SOLUX47"),    4700, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("NG Solux Lamp 4700K" , WBT_LAMP,        M("TP_WBALANCE_SOLUX47_NG"), 4480, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("LED LSI Lumelex 2040", WBT_LED,         M("TP_WBALANCE_LED_LSI"),    2970, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("LED CRS SP12 WWMR16" , WBT_LED,         M("TP_WBALANCE_LED_CRS"),    3050, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Flash 5500K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH55"),    5500, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Flash 6000K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH60"),    6000, 1.f,     1.f, 0.f));
+    wbEntries.push_back(new WBEntry("Flash 6500K"         , WBT_FLASH,       M("TP_WBALANCE_FLASH65"),    6500, 1.f,     1.f, 0.f));
     // Should remain the last one
-    wbEntries.push_back(new WBEntry("Custom"              , WBT_CUSTOM,      M("TP_WBALANCE_CUSTOM"),        0, 1.f,     1.f));
+    wbEntries.push_back(new WBEntry("Custom"              , WBT_CUSTOM,      M("TP_WBALANCE_CUSTOM"),        0, 1.f,     1.f, 0.f));
 }
 
 void WBParams::cleanup()
@@ -875,10 +875,41 @@ void CoarseTransformParams::setDefaults()
     hflip = false;
     vflip = false;
 }
+void RAWParams::BayerSensor::setPixelShiftDefaults()
+{
+    pixelShiftMotion = 0;
+    pixelShiftMotionCorrection = RAWParams::BayerSensor::Grid3x3New;
+    pixelShiftMotionCorrectionMethod = RAWParams::BayerSensor::Automatic;
+    pixelShiftStddevFactorGreen = 5.0;
+    pixelShiftStddevFactorRed = 5.0;
+    pixelShiftStddevFactorBlue = 5.0;
+    pixelShiftEperIso = 0.0;
+    pixelShiftNreadIso = 0.0;
+    pixelShiftPrnu = 1.0;
+    pixelShiftSigma = 1.0;
+    pixelShiftSum = 3.0;
+    pixelShiftRedBlueWeight = 0.7;
+    pixelShiftAutomatic = true;
+    pixelShiftNonGreenHorizontal = false;
+    pixelShiftNonGreenVertical = false;
+    pixelShiftHoleFill = true;
+    pixelShiftMedian = false;
+    pixelShiftMedian3 = false;
+    pixelShiftGreen = true;
+    pixelShiftBlur = true;
+    pixelShiftSmoothFactor = 0.7;
+    pixelShiftExp0 = false;
+    pixelShiftLmmse = false;
+    pixelShiftEqualBright = false;
+    pixelShiftNonGreenCross = true;
+    pixelShiftNonGreenCross2 = false;
+    pixelShiftNonGreenAmaze = false;
+}
 
 void RAWParams::setDefaults()
 {
     bayersensor.method = RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::amaze];
+    bayersensor.imageNum = 0;
     bayersensor.ccSteps = 0;
     bayersensor.dcb_iterations = 2;
     bayersensor.dcb_enhance = true;
@@ -913,6 +944,10 @@ void RAWParams::setDefaults()
     hotPixelFilter = false;
     deadPixelFilter = false;
     hotdeadpix_thresh = 100;
+    bayersensor.setPixelShiftDefaults();
+    bayersensor.pixelshiftShowMotion = false;
+    bayersensor.pixelshiftShowMotionMaskOnly = false;
+
 }
 
 void ColorManagementParams::setDefaults()
@@ -1059,6 +1094,7 @@ void ProcParams::setDefaults ()
     wb.temperature  = 6504;
     wb.green        = 1.0;
     wb.equal        = 1.0;
+    wb.tempBias     = 0.0;
     colorappearance.enabled       = false;
     colorappearance.degree        = 90;
     colorappearance.autodegree    = true;
@@ -1983,6 +2019,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->wb.equal) {
             keyFile.set_double  ("White Balance", "Equal",       wb.equal);
+        }
+
+        if (!pedited || pedited->wb.tempBias) {
+            keyFile.set_double  ("White Balance", "TemperatureBias", wb.tempBias);
         }
 
         /*
@@ -3315,6 +3355,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_string  ("RAW Bayer", "Method", raw.bayersensor.method );
         }
 
+        if (!pedited || pedited->raw.bayersensor.imageNum) {
+            keyFile.set_integer ("RAW Bayer", "ImageNum", raw.bayersensor.imageNum + 1 );
+        }
+
         if (!pedited || pedited->raw.bayersensor.ccSteps) {
             keyFile.set_integer ("RAW Bayer", "CcSteps", raw.bayersensor.ccSteps);
         }
@@ -3359,7 +3403,121 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("RAW Bayer", "LMMSEIterations", raw.bayersensor.lmmse_iterations );
         }
 
-        //if (!pedited || pedited->raw.bayersensor.allEnhance)    keyFile.set_boolean ("RAW Bayer", "ALLEnhance", raw.bayersensor.all_enhance );
+        if (!pedited || pedited->raw.bayersensor.pixelShiftMotion) {
+            keyFile.set_integer ("RAW Bayer", "PixelShiftMotion", raw.bayersensor.pixelShiftMotion );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftMotionCorrection) {
+            keyFile.set_integer ("RAW Bayer", "PixelShiftMotionCorrection", raw.bayersensor.pixelShiftMotionCorrection );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod) {
+            keyFile.set_integer ("RAW Bayer", "PixelShiftMotionCorrectionMethod", raw.bayersensor.pixelShiftMotionCorrectionMethod );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactorGreen) {
+            keyFile.set_double ("RAW Bayer", "pixelShiftStddevFactorGreen", raw.bayersensor.pixelShiftStddevFactorGreen );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactorRed) {
+            keyFile.set_double ("RAW Bayer", "pixelShiftStddevFactorRed", raw.bayersensor.pixelShiftStddevFactorRed );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftStddevFactorBlue) {
+            keyFile.set_double ("RAW Bayer", "pixelShiftStddevFactorBlue", raw.bayersensor.pixelShiftStddevFactorBlue );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftEperIso) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftEperIso", raw.bayersensor.pixelShiftEperIso );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNreadIso) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftNreadIso", raw.bayersensor.pixelShiftNreadIso );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftPrnu) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftPrnu", raw.bayersensor.pixelShiftPrnu );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftSigma) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftSigma", raw.bayersensor.pixelShiftSigma );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftSum) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftSum", raw.bayersensor.pixelShiftSum );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftRedBlueWeight) {
+            keyFile.set_double ("RAW Bayer", "PixelShiftRedBlueWeight", raw.bayersensor.pixelShiftRedBlueWeight );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotion) {
+            keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelshiftShowMotion );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly) {
+            keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotionMaskOnly", raw.bayersensor.pixelshiftShowMotionMaskOnly );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftAutomatic) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftAutomatic", raw.bayersensor.pixelShiftAutomatic );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenHorizontal) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenHorizontal", raw.bayersensor.pixelShiftNonGreenHorizontal );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenVertical) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenVertical", raw.bayersensor.pixelShiftNonGreenVertical );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftHoleFill) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftHoleFill", raw.bayersensor.pixelShiftHoleFill );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftMedian) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftMedian", raw.bayersensor.pixelShiftMedian );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftMedian3) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftMedian3", raw.bayersensor.pixelShiftMedian3 );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftGreen) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftGreen", raw.bayersensor.pixelShiftGreen );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftBlur) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftBlur", raw.bayersensor.pixelShiftBlur );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftSmooth) {
+            keyFile.set_double ("RAW Bayer", "pixelShiftSmoothFactor", raw.bayersensor.pixelShiftSmoothFactor );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftExp0) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftExp0", raw.bayersensor.pixelShiftExp0 );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftLmmse) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftLmmse", raw.bayersensor.pixelShiftLmmse );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftEqualBright) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftEqualBright", raw.bayersensor.pixelShiftEqualBright );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenCross", raw.bayersensor.pixelShiftNonGreenCross );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross2) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenCross2", raw.bayersensor.pixelShiftNonGreenCross2 );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenAmaze) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftNonGreenAmaze", raw.bayersensor.pixelShiftNonGreenAmaze );
+        }
 
         if (!pedited || pedited->raw.xtranssensor.method) {
             keyFile.set_string  ("RAW X-Trans", "Method", raw.xtranssensor.method );
@@ -4662,6 +4820,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->wb.equal = true;
+                }
+            }
+
+            if (keyFile.has_key ("White Balance", "TemperatureBias"))       {
+                wb.tempBias = keyFile.get_double ("White Balance", "TemperatureBias");
+
+                if (pedited) {
+                    pedited->wb.tempBias = true;
                 }
             }
         }
@@ -7321,6 +7487,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("RAW Bayer", "ImageNum"))           {
+                raw.bayersensor.imageNum = keyFile.get_integer ("RAW Bayer", "ImageNum") - 1;
+
+                if (pedited) {
+                    pedited->raw.bayersensor.imageNum = true;
+                }
+            }
+
             if (keyFile.has_key ("RAW Bayer", "CcSteps"))          {
                 raw.bayersensor.ccSteps  = keyFile.get_integer ("RAW Bayer", "CcSteps");
 
@@ -7409,7 +7583,237 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            //if (keyFile.has_key ("RAW Bayer", "ALLEnhance"))     { raw.bayersensor.all_enhance = keyFile.get_boolean("RAW Bayer", "ALLEnhance"); if (pedited) pedited->raw.bayersensor.allEnhance = true; }
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftMotion"))  {
+                raw.bayersensor.pixelShiftMotion = keyFile.get_integer("RAW Bayer", "PixelShiftMotion");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftMotion = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftMotionCorrection"))  {
+                raw.bayersensor.pixelShiftMotionCorrection = (RAWParams::BayerSensor::ePSMotionCorrection)keyFile.get_integer("RAW Bayer", "PixelShiftMotionCorrection");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftMotionCorrection = true;
+                }
+            }
+ 
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftMotionCorrectionMethod"))  {
+                raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)keyFile.get_integer("RAW Bayer", "PixelShiftMotionCorrectionMethod");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorGreen"))  {
+                raw.bayersensor.pixelShiftStddevFactorGreen = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorGreen");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftStddevFactorGreen = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorRed"))  {
+                raw.bayersensor.pixelShiftStddevFactorRed = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorRed");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftStddevFactorRed = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorBlue"))  {
+                raw.bayersensor.pixelShiftStddevFactorBlue = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorBlue");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftStddevFactorBlue = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftEperIso"))  {
+                raw.bayersensor.pixelShiftEperIso = keyFile.get_double("RAW Bayer", "PixelShiftEperIso");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftEperIso = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftNreadIso"))  {
+                raw.bayersensor.pixelShiftNreadIso = keyFile.get_double("RAW Bayer", "PixelShiftNreadIso");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNreadIso = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftPrnu"))  {
+                raw.bayersensor.pixelShiftPrnu = keyFile.get_double("RAW Bayer", "PixelShiftPrnu");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftPrnu = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftSigma"))  {
+                raw.bayersensor.pixelShiftSigma = keyFile.get_double("RAW Bayer", "PixelShiftSigma");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftSigma = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftSum"))  {
+                raw.bayersensor.pixelShiftSum = keyFile.get_double("RAW Bayer", "PixelShiftSum");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftSum = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftRedBlueWeight"))  {
+                raw.bayersensor.pixelShiftRedBlueWeight = keyFile.get_double("RAW Bayer", "PixelShiftRedBlueWeight");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftRedBlueWeight = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotion"))  {
+                raw.bayersensor.pixelshiftShowMotion = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotion");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelshiftShowMotion = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotionMaskOnly"))  {
+                raw.bayersensor.pixelshiftShowMotionMaskOnly = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotionMaskOnly");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftAutomatic"))  {
+                raw.bayersensor.pixelShiftAutomatic = keyFile.get_boolean("RAW Bayer", "pixelShiftAutomatic");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftAutomatic = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenHorizontal"))  {
+                raw.bayersensor.pixelShiftNonGreenHorizontal = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenHorizontal");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenHorizontal = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenVertical"))  {
+                raw.bayersensor.pixelShiftNonGreenVertical = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenVertical");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenVertical = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftHoleFill"))  {
+                raw.bayersensor.pixelShiftHoleFill = keyFile.get_boolean("RAW Bayer", "pixelShiftHoleFill");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftHoleFill = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftMedian"))  {
+                raw.bayersensor.pixelShiftMedian = keyFile.get_boolean("RAW Bayer", "pixelShiftMedian");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftMedian = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftMedian3"))  {
+                raw.bayersensor.pixelShiftMedian3 = keyFile.get_boolean("RAW Bayer", "pixelShiftMedian3");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftMedian3 = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftGreen"))  {
+                raw.bayersensor.pixelShiftGreen = keyFile.get_boolean("RAW Bayer", "pixelShiftGreen");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftGreen = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftBlur"))  {
+                raw.bayersensor.pixelShiftBlur = keyFile.get_boolean("RAW Bayer", "pixelShiftBlur");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftBlur = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftSmoothFactor"))  {
+                raw.bayersensor.pixelShiftSmoothFactor = keyFile.get_double("RAW Bayer", "pixelShiftSmoothFactor");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftSmooth = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftExp0"))  {
+                raw.bayersensor.pixelShiftExp0 = keyFile.get_boolean("RAW Bayer", "pixelShiftExp0");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftExp0 = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftLmmse"))  {
+                raw.bayersensor.pixelShiftLmmse = keyFile.get_boolean("RAW Bayer", "pixelShiftLmmse");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftLmmse = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftEqualBright"))  {
+                raw.bayersensor.pixelShiftEqualBright = keyFile.get_boolean("RAW Bayer", "pixelShiftEqualBright");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftEqualBright = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenCross"))  {
+                raw.bayersensor.pixelShiftNonGreenCross = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenCross");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenCross = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenCross2"))  {
+                raw.bayersensor.pixelShiftNonGreenCross2 = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenCross2");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenCross2 = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenAmaze"))  {
+                raw.bayersensor.pixelShiftNonGreenAmaze = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenAmaze");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftNonGreenAmaze = true;
+                }
+            }
         }
 
 // load X-Trans sensors' raw settings
@@ -7837,6 +8241,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && resize.width == other.resize.width
         && resize.height == other.resize.height
         && raw.bayersensor.method == other.raw.bayersensor.method
+        && raw.bayersensor.imageNum == other.raw.bayersensor.imageNum
         && raw.bayersensor.ccSteps == other.raw.bayersensor.ccSteps
         && raw.bayersensor.black0 == other.raw.bayersensor.black0
         && raw.bayersensor.black1 == other.raw.bayersensor.black1
@@ -7845,8 +8250,38 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.twogreen == other.raw.bayersensor.twogreen
         && raw.bayersensor.greenthresh == other.raw.bayersensor.greenthresh
         && raw.bayersensor.linenoise == other.raw.bayersensor.linenoise
-        && raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance
         && raw.bayersensor.dcb_iterations == other.raw.bayersensor.dcb_iterations
+        && raw.bayersensor.lmmse_iterations == other.raw.bayersensor.lmmse_iterations
+        && raw.bayersensor.pixelShiftMotion == other.raw.bayersensor.pixelShiftMotion
+        && raw.bayersensor.pixelShiftMotionCorrection == other.raw.bayersensor.pixelShiftMotionCorrection
+        && raw.bayersensor.pixelShiftMotionCorrectionMethod == other.raw.bayersensor.pixelShiftMotionCorrectionMethod
+        && raw.bayersensor.pixelShiftStddevFactorGreen == other.raw.bayersensor.pixelShiftStddevFactorGreen
+        && raw.bayersensor.pixelShiftStddevFactorRed == other.raw.bayersensor.pixelShiftStddevFactorRed
+        && raw.bayersensor.pixelShiftStddevFactorBlue == other.raw.bayersensor.pixelShiftStddevFactorBlue
+        && raw.bayersensor.pixelShiftEperIso == other.raw.bayersensor.pixelShiftEperIso
+        && raw.bayersensor.pixelShiftNreadIso == other.raw.bayersensor.pixelShiftNreadIso
+        && raw.bayersensor.pixelShiftPrnu == other.raw.bayersensor.pixelShiftPrnu
+        && raw.bayersensor.pixelShiftSigma == other.raw.bayersensor.pixelShiftSigma
+        && raw.bayersensor.pixelShiftSum == other.raw.bayersensor.pixelShiftSum
+        && raw.bayersensor.pixelShiftRedBlueWeight == other.raw.bayersensor.pixelShiftRedBlueWeight
+        && raw.bayersensor.pixelshiftShowMotion == other.raw.bayersensor.pixelshiftShowMotion
+        && raw.bayersensor.pixelshiftShowMotionMaskOnly == other.raw.bayersensor.pixelshiftShowMotionMaskOnly
+        && raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic
+        && raw.bayersensor.pixelShiftNonGreenHorizontal == other.raw.bayersensor.pixelShiftNonGreenHorizontal
+        && raw.bayersensor.pixelShiftNonGreenVertical == other.raw.bayersensor.pixelShiftNonGreenVertical
+        && raw.bayersensor.pixelShiftHoleFill == other.raw.bayersensor.pixelShiftHoleFill
+        && raw.bayersensor.pixelShiftMedian == other.raw.bayersensor.pixelShiftMedian
+        && raw.bayersensor.pixelShiftMedian3 == other.raw.bayersensor.pixelShiftMedian3
+        && raw.bayersensor.pixelShiftGreen == other.raw.bayersensor.pixelShiftGreen
+        && raw.bayersensor.pixelShiftBlur == other.raw.bayersensor.pixelShiftBlur
+        && raw.bayersensor.pixelShiftSmoothFactor == other.raw.bayersensor.pixelShiftSmoothFactor
+        && raw.bayersensor.pixelShiftExp0 == other.raw.bayersensor.pixelShiftExp0
+        && raw.bayersensor.pixelShiftLmmse == other.raw.bayersensor.pixelShiftLmmse
+        && raw.bayersensor.pixelShiftEqualBright == other.raw.bayersensor.pixelShiftEqualBright
+        && raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross
+        && raw.bayersensor.pixelShiftNonGreenCross2 == other.raw.bayersensor.pixelShiftNonGreenCross2
+        && raw.bayersensor.pixelShiftNonGreenAmaze == other.raw.bayersensor.pixelShiftNonGreenAmaze
+        && raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance
         && raw.xtranssensor.method == other.raw.xtranssensor.method
         && raw.xtranssensor.ccSteps == other.raw.xtranssensor.ccSteps
         && raw.xtranssensor.blackred == other.raw.xtranssensor.blackred
@@ -8066,6 +8501,8 @@ int PartialProfile::load (const Glib::ustring &fName)
 
     if (fName == DEFPROFILE_INTERNAL) {
         return 0;
+    } else if (fName == DEFPROFILE_DYNAMIC) {
+        return -1; // should not happen here
     } else {
         return pparams->load(fName, pedited);
     }

@@ -450,6 +450,15 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard.
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
 !CURVEEDITOR_TYPE;Type:
+!DYNPROFILEEDITOR_DELETE;Delete
+!DYNPROFILEEDITOR_EDIT;Edit
+!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+!DYNPROFILEEDITOR_MOVE_UP;Move Up
+!DYNPROFILEEDITOR_NEW;New
+!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+!DYNPROFILEEDITOR_PROFILE;Processing Profile
 !EDITWINDOW_TITLE;Image Edit
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
@@ -930,6 +939,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output Black Point Compensation
+!HISTORY_MSG_444;WB - Temp bias
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1114,7 +1124,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLATFIELD;Flat-Field
 !PREFERENCES_FLATFIELDFOUND;Found
@@ -1188,7 +1198,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
-!PREFERENCES_SELECTFONT;Select global font
+!PREFERENCES_SELECTFONT;Select main font
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
@@ -1206,6 +1216,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;After seconds
 !PREFERENCES_STDAUT;Standard
+!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_TIMAX;High
@@ -1229,6 +1240,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_MYPROFILES;My profiles
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
@@ -2029,6 +2041,8 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_WBALANCE_SOLUX41;Solux 4100K
 !TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 !TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
+!TP_WBALANCE_TEMPBIAS;AWB temperature bias
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !TP_WBALANCE_TUNGSTEN;Tungsten
 !TP_WBALANCE_WATER1;UnderWater 1
 !TP_WBALANCE_WATER2;UnderWater 2

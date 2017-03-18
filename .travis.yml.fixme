@@ -1,0 +1,44 @@
+sudo: required
+dist: trusty
+
+language: cpp
+
+compiler:
+  - gcc
+
+os:
+  - linux
+
+#branches:
+#  only:
+#  - master
+
+notifications:
+  irc:
+    channels:
+    - "chat.freenode.net#rawtherapee"
+    skip_join: true
+    template:
+    - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
+  email:
+    on_success: change
+    on_failure: always
+
+env:
+  global:
+  - OMP_NUM_THREADS=4
+
+before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ xenial main"
+  - sudo apt-get -qq update
+  - sudo apt-get install gcc-6 g++-6
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-6
+  - sudo apt-get install build-essential cmake curl git libbz2-dev libcanberra-gtk3-dev libexiv2-dev libexpat-dev libfftw3-dev libglibmm-2.4-dev libgtk-3-dev libgtkmm-3.0-dev libiptcdata0-dev libjpeg8-dev liblcms2-dev libpng12-dev libsigc++-2.0-dev libtiff5-dev zlib1g-dev
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" -DWITH_LTO="OFF" -DPROC_TARGET_NUMBER="2" ..
+
+script: make

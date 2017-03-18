@@ -495,8 +495,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
     //printf("NL=%f \n",noisevarL);
     if (useNoiseLCurve || useNoiseCCurve) {
-        int hei = calclum->height;
-        int wid = calclum->width;
+        int hei = calclum->getHeight();
+        int wid = calclum->getWidth();
         TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
         const float wpi[3][3] = {
@@ -573,7 +573,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
         calclum = nullptr;
     }
 
-    const short int imheight = src->height, imwidth = src->width;
+    const short int imheight = src->getHeight(), imwidth = src->getWidth();
 
     if (dnparams.luma != 0 || dnparams.chroma != 0 || dnparams.methodmed == "Lab" || dnparams.methodmed == "Lonly") {
         // gamma transform for input data
@@ -622,13 +622,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
             for (int i = 0; i < TS; ++i) {
                 float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
-                float vmask = (i1 < border ? SQR(sin((M_PI * i1) / (2 * border))) : 1.0f);
-                float vmask2 = (i1 < 2 * border ? SQR(sin((M_PI * i1) / (2 * border))) : 1.0f);
+                float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
 
                 for (int j = 0; j < TS; ++j) {
                     float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
-                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((M_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
-                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((M_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
 
                 }
             }
@@ -1512,7 +1512,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                 }
 
                                 for (int i = 0; i < overlap; ++i) {
-                                    float mask = SQR(xsinf((M_PI * i) / (2 * overlap)));
+                                    float mask = SQR(xsinf((rtengine::RT_PI * i) / (2 * overlap)));
 
                                     if (tiletop > 0) {
                                         Vmask[i] = mask;
@@ -1717,8 +1717,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 #pragma omp parallel for
 #endif
 
-                for (int i = 0; i < dst->height; ++i) {
-                    for (int j = 0; j < dst->width; ++j) {
+                for (int i = 0; i < dst->getHeight(); ++i) {
+                    for (int j = 0; j < dst->getWidth(); ++j) {
                         dst->r(i, j) = Color::gammatab_srgb[ dst->r(i, j) ];
                         dst->g(i, j) = Color::gammatab_srgb[ dst->g(i, j) ];
                         dst->b(i, j) = Color::gammatab_srgb[ dst->b(i, j) ];
@@ -1746,7 +1746,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 //median 3x3 in complement on RGB
     if (dnparams.methodmed == "RGB" && dnparams.median) {
 //printf("RGB den\n");
-        int wid = dst->width, hei = dst->height;
+        int wid = dst->getWidth(), hei = dst->getHeight();
         float** tm;
         tm = new float*[hei];
 
@@ -3115,8 +3115,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
     float** lumcalc;
     float** acalc;
     float** bcalc;
-    hei = provicalc->height;
-    wid = provicalc->width;
+    hei = provicalc->getHeight();
+    wid = provicalc->getWidth();
     TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
     const float wpi[3][3] = {
@@ -3165,7 +3165,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    const int imheight = src->height, imwidth = src->width;
+    const int imheight = src->getHeight(), imwidth = src->getWidth();
 
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 

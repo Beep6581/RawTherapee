@@ -169,6 +169,9 @@ int main(int argc, char **argv)
 #ifdef WIN32
     bool consoleOpened = false;
 
+    // suppression of annoying error boxes
+    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
+
     if (argc > 1 || options.rtSettings.verbose) {
         if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
             bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
@@ -577,7 +580,7 @@ int processLineParams( int argc, char **argv )
         rawParams = new rtengine::procparams::PartialProfile(true, true);
         Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
 
-        if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfRaw.substr(5) + paramFileExtension))) {
+        if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfRaw.substr(5) + paramFileExtension)))) {
             std::cerr << "Error: default raw processing profile not found" << std::endl;
             rawParams->deleteInstance();
             delete rawParams;
@@ -588,7 +591,7 @@ int processLineParams( int argc, char **argv )
         imgParams = new rtengine::procparams::PartialProfile(true);
         profPath = options.findProfilePath(options.defProfImg);
 
-        if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfImg.substr(5) + paramFileExtension))) {
+        if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfImg.substr(5) + paramFileExtension)))) {
             std::cerr << "Error: default non-raw processing profile not found" << std::endl;
             imgParams->deleteInstance();
             delete imgParams;
@@ -660,9 +663,19 @@ int processLineParams( int argc, char **argv )
 
         if (useDefault) {
             if (isRaw) {
+                if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
+                    rawParams->deleteInstance();
+                    delete rawParams;
+                    rawParams = loadDynamicProfile(ii->getMetaData());
+                }
                 std::cout << "  Merging default raw processing profile" << std::endl;
                 rawParams->applyTo(&currentParams);
-            } else {
+             } else {
+                if (options.defProfImg == DEFPROFILE_DYNAMIC) {
+                    imgParams->deleteInstance();
+                    delete imgParams;
+                    imgParams = loadDynamicProfile(ii->getMetaData());
+                }
                 std::cout << "  Merging default non-raw processing profile" << std::endl;
                 imgParams->applyTo(&currentParams);
             }

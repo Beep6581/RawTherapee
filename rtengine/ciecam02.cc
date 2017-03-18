@@ -577,7 +577,7 @@ void Ciecam02::Aab_to_rgbfloat( vfloat &r, vfloat &g, vfloat &b, vfloat A, vfloa
 
 void Ciecam02::calculate_ab( double &aa, double &bb, double h, double e, double t, double nbb, double a )
 {
-    double hrad = (h * M_PI) / 180.0;
+    double hrad = (h * rtengine::RT_PI) / 180.0;
     double sinh = sin( hrad );
     double cosh = cos( hrad );
     double x = (a / nbb) + 0.305;
@@ -605,7 +605,7 @@ void Ciecam02::calculate_ab( double &aa, double &bb, double h, double e, double 
 }
 void Ciecam02::calculate_abfloat( float &aa, float &bb, float h, float e, float t, float nbb, float a )
 {
-    float2 sincosval = xsincosf((h * M_PI) / 180.0f);
+    float2 sincosval = xsincosf((h * rtengine::RT_PI) / 180.0f);
     float sinh = sincosval.x;
     float cosh = sincosval.y;
     float x = (a / nbb) + 0.305f;
@@ -643,7 +643,7 @@ void Ciecam02::calculate_abfloat( float &aa, float &bb, float h, float e, float 
 #ifdef __SSE2__
 void Ciecam02::calculate_abfloat( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vfloat t, vfloat nbb, vfloat a )
 {
-    vfloat2 sincosval = xsincosf((h * F2V(M_PI)) / F2V(180.0f));
+    vfloat2 sincosval = xsincosf((h * F2V(rtengine::RT_PI)) / F2V(180.0f));
     vfloat sinh = sincosval.x;
     vfloat cosh = sincosval.y;
     vfloat x = (a / nbb) + F2V(0.305f);
@@ -794,7 +794,7 @@ void Ciecam02::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q, 
     ca = rpa - ((12.0 * gpa) / 11.0) + (bpa / 11.0);
     cb = (1.0 / 9.0) * (rpa + gpa - (2.0 * bpa));
 
-    myh = (180.0 / M_PI) * atan2( cb, ca );
+    myh = (180.0 / rtengine::RT_PI) * atan2( cb, ca );
 
     if ( myh < 0.0 ) {
         myh += 360.0;
@@ -831,7 +831,7 @@ void Ciecam02::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q, 
 
     J = 100.0 * pow( a / aw, c * cz );
 
-    e = ((12500.0 / 13.0) * nc * ncb) * (cos( ((myh * M_PI) / 180.0) + 2.0 ) + 3.8);
+    e = ((12500.0 / 13.0) * nc * ncb) * (cos( ((myh * rtengine::RT_PI) / 180.0) + 2.0 ) + 3.8);
     t = (e * sqrt( (ca * ca) + (cb * cb) )) / (rpa + gpa + ((21.0 / 20.0) * bpa));
 
     C = pow( t, 0.9 ) * sqrt( J / 100.0 )
@@ -881,7 +881,7 @@ void Ciecam02::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q,
     myh = xatan2f( cb, ca );
 
     if ( myh < 0.0f ) {
-        myh += (2.f * M_PI);
+        myh += (2.f * rtengine::RT_PI);
     }
 
     a = ((2.0f * rpa) + gpa + (0.05f * bpa) - 0.305f) * nbb;
@@ -902,7 +902,7 @@ void Ciecam02::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q,
     M = C * pfl;
     Q = (Q == 0.f ? 0.0001f : Q); // avoid division by zero
     s = 100.0f * sqrtf( M / Q );
-    h = (myh * 180.f) / (float)M_PI;
+    h = (myh * 180.f) / (float)rtengine::RT_PI;
 }
 #ifdef __SSE2__
 void Ciecam02::xyz2jchqms_ciecam02float( vfloat &J, vfloat &C, vfloat &h, vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
@@ -938,7 +938,7 @@ void Ciecam02::xyz2jchqms_ciecam02float( vfloat &J, vfloat &C, vfloat &h, vfloat
     cb = F2V(0.11111111f) * (rpa + gpa - (bpa + bpa));
 
     vfloat myh = xatan2f( cb, ca );
-    vfloat temp = F2V(M_PI);
+    vfloat temp = F2V(rtengine::RT_PI);
     temp += temp;
     temp += myh;
     myh = vself(vmaskf_lt(myh, ZEROV), temp, myh);
@@ -958,7 +958,7 @@ void Ciecam02::xyz2jchqms_ciecam02float( vfloat &J, vfloat &C, vfloat &h, vfloat
     M = C * pfl;
     Q = _mm_max_ps(Q, F2V(0.0001f)); // avoid division by zero
     s = F2V(100.0f) * _mm_sqrt_ps( M / Q );
-    h = (myh * F2V(180.f)) / F2V(M_PI);
+    h = (myh * F2V(180.f)) / F2V(rtengine::RT_PI);
 }
 #endif
 
@@ -1000,7 +1000,7 @@ void Ciecam02::xyz2jch_ciecam02float( float &J, float &C, float &h, float aw, fl
     myh = xatan2f( cb, ca );
 
     if ( myh < 0.0f ) {
-        myh += (2.f * M_PI);
+        myh += (2.f * rtengine::RT_PI);
     }
 
     a = ((2.0f * rpa) + gpa + (0.05f * bpa) - 0.305f) * nbb;
@@ -1017,7 +1017,7 @@ void Ciecam02::xyz2jch_ciecam02float( float &J, float &C, float &h, float aw, fl
     C = pow_F( t, 0.9f ) * J * pow1;
 
     J *= J * 100.0f;
-    h = (myh * 180.f) / (float)M_PI;
+    h = (myh * 180.f) / (float)rtengine::RT_PI;
 }
 
 
@@ -1034,7 +1034,7 @@ void Ciecam02::jch2xyz_ciecam02( double &x, double &y, double &z, double J, doub
     double e, t;
     gamu = 1;
     xyz_to_cat02( rw, gw, bw, xw, yw, zw, gamu );
-    e = ((12500.0 / 13.0) * nc * ncb) * (cos( ((h * M_PI) / 180.0) + 2.0 ) + 3.8);
+    e = ((12500.0 / 13.0) * nc * ncb) * (cos( ((h * rtengine::RT_PI) / 180.0) + 2.0 ) + 3.8);
     a = pow( J / 100.0, 1.0 / (c * cz) ) * aw;
     t = pow( C / (sqrt( J / 100) * pow( 1.64 - pow( 0.29, n ), 0.73 )), 10.0 / 9.0 );
 
@@ -1068,7 +1068,7 @@ void Ciecam02::jch2xyz_ciecam02float( float &x, float &y, float &z, float J, flo
     float e, t;
     gamu = 1;
     xyz_to_cat02float( rw, gw, bw, xw, yw, zw, gamu );
-    e = ((961.53846f) * nc * ncb) * (xcosf( ((h * M_PI) / 180.0f) + 2.0f ) + 3.8f);
+    e = ((961.53846f) * nc * ncb) * (xcosf( ((h * rtengine::RT_PI) / 180.0f) + 2.0f ) + 3.8f);
     a = pow_F( J / 100.0f, 1.0f / (c * cz) ) * aw;
     t = pow_F( 10.f * C / (sqrtf( J ) * pow1), 1.1111111f );
 
@@ -1102,7 +1102,7 @@ void Ciecam02::jch2xyz_ciecam02float( vfloat &x, vfloat &y, vfloat &z, vfloat J,
     vfloat a, ca, cb;
     vfloat e, t;
     xyz_to_cat02float( rw, gw, bw, xw, yw, zw);
-    e = ((F2V(961.53846f)) * nc * ncb) * (xcosf( ((h * F2V(M_PI)) / F2V(180.0f)) + F2V(2.0f) ) + F2V(3.8f));
+    e = ((F2V(961.53846f)) * nc * ncb) * (xcosf( ((h * F2V(rtengine::RT_PI)) / F2V(180.0f)) + F2V(2.0f) ) + F2V(3.8f));
     a = pow_F( J / F2V(100.0f), reccmcz ) * aw;
     t = pow_F( F2V(10.f) * C / (_mm_sqrt_ps( J ) * pow1), F2V(1.1111111f) );
 

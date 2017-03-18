@@ -38,6 +38,7 @@
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
+#include "dynamicprofile.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>

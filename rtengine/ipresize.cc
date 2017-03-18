@@ -37,7 +37,7 @@ static inline float Lanc(float x, float a)
     } else if (x * x > a * a) {
         return 0.0f;
     } else {
-        x = static_cast<float>(M_PI) * x;
+        x = static_cast<float>(rtengine::RT_PI) * x;
         return a * xsinf(x) * xsinf(x / a) / (x * x);
     }
 }
@@ -53,18 +53,18 @@ void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
     #pragma omp parallel
     {
         // storage for precomputed parameters for horisontal interpolation
-        float * wwh = new float[support * dst->width];
-        int * jj0 = new int[dst->width];
-        int * jj1 = new int[dst->width];
+        float * wwh = new float[support * dst->getWidth()];
+        int * jj0 = new int[dst->getWidth()];
+        int * jj1 = new int[dst->getWidth()];
 
         // temporal storage for vertically-interpolated row of pixels
-        float * lr = new float[src->width];
-        float * lg = new float[src->width];
-        float * lb = new float[src->width];
+        float * lr = new float[src->getWidth()];
+        float * lg = new float[src->getWidth()];
+        float * lb = new float[src->getWidth()];
 
         // Phase 1: precompute coefficients for horisontal interpolation
 
-        for (int j = 0; j < dst->width; j++) {
+        for (int j = 0; j < dst->getWidth(); j++) {
 
             // x coord of the center of pixel on src image
             float x0 = (static_cast<float>(j) + 0.5f) * delta - 0.5f;
@@ -76,7 +76,7 @@ void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
             float ws = 0.0f;
 
             jj0[j] = max(0, static_cast<int>(floorf(x0 - a / sc)) + 1);
-            jj1[j] = min(src->width, static_cast<int>(floorf(x0 + a / sc)) + 1);
+            jj1[j] = min(src->getWidth(), static_cast<int>(floorf(x0 + a / sc)) + 1);
 
             // calculate weights
             for (int jj = jj0[j]; jj < jj1[j]; jj++) {
@@ -95,7 +95,7 @@ void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
         // Phase 2: do actual interpolation
         #pragma omp for
 
-        for (int i = 0; i < dst->height; i++) {
+        for (int i = 0; i < dst->getHeight(); i++) {
 
             // y coord of the center of pixel on src image
             float y0 = (static_cast<float>(i) + 0.5f) * delta - 0.5f;
@@ -107,7 +107,7 @@ void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
             float ws = 0.0f;
 
             int ii0 = max(0, static_cast<int>(floorf(y0 - a / sc)) + 1);
-            int ii1 = min(src->height, static_cast<int>(floorf(y0 + a / sc)) + 1);
+            int ii1 = min(src->getHeight(), static_cast<int>(floorf(y0 + a / sc)) + 1);
 
             // calculate weights for vertical interpolation
             for (int ii = ii0; ii < ii1; ii++) {
@@ -123,7 +123,7 @@ void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
             }
 
             // Do vertical interpolation. Store results.
-            for (int j = 0; j < src->width; j++) {
+            for (int j = 0; j < src->getWidth(); j++) {
 
                 float r = 0.0f, g = 0.0f, b = 0.0f;
 
@@ -141,7 +141,7 @@ void ImProcFunctions::Lanczos(const Image16* src, Image16* dst, float scale)
             }
 
             // Do horizontal interpolation
-            for(int j = 0; j < dst->width; j++) {
+            for(int j = 0; j < dst->getWidth(); j++) {
 
                 float * wh = wwh + support * j;
 
@@ -407,13 +407,13 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale)
         #pragma omp parallel for if (multiThread)
 #endif
 
-        for (int i = 0; i < dst->height; i++) {
+        for (int i = 0; i < dst->getHeight(); i++) {
             int sy = i / dScale;
-            sy = LIM(sy, 0, src->height - 1);
+            sy = LIM(sy, 0, src->getHeight() - 1);
 
-            for (int j = 0; j < dst->width; j++) {
+            for (int j = 0; j < dst->getWidth(); j++) {
                 int sx = j / dScale;
-                sx = LIM(sx, 0, src->width - 1);
+                sx = LIM(sx, 0, src->getWidth() - 1);
                 dst->r(i, j) = src->r(sy, sx);
                 dst->g(i, j) = src->g(sy, sx);
                 dst->b(i, j) = src->b(sy, sx);

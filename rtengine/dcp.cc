@@ -1024,8 +1024,8 @@ void DCPProfile::apply(
         #pragma omp parallel for
 #endif
 
-        for (int y = 0; y < img->height; ++y) {
-            for (int x = 0; x < img->width; x++) {
+        for (int y = 0; y < img->getHeight(); ++y) {
+            for (int x = 0; x < img->getWidth(); x++) {
                 const float& newr = mat[0][0] * img->r(y, x) + mat[0][1] * img->g(y, x) + mat[0][2] * img->b(y, x);
                 const float& newg = mat[1][0] * img->r(y, x) + mat[1][1] * img->g(y, x) + mat[1][2] * img->b(y, x);
                 const float& newb = mat[2][0] * img->r(y, x) + mat[2][1] * img->g(y, x) + mat[2][2] * img->b(y, x);
@@ -1062,8 +1062,8 @@ void DCPProfile::apply(
         #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-        for (int y = 0; y < img->height; ++y) {
-            for (int x = 0; x < img->width; x++) {
+        for (int y = 0; y < img->getHeight(); ++y) {
+            for (int x = 0; x < img->getWidth(); x++) {
                 float newr = pro_photo[0][0] * img->r(y, x) + pro_photo[0][1] * img->g(y, x) + pro_photo[0][2] * img->b(y, x);
                 float newg = pro_photo[1][0] * img->r(y, x) + pro_photo[1][1] * img->g(y, x) + pro_photo[1][2] * img->b(y, x);
                 float newb = pro_photo[2][0] * img->r(y, x) + pro_photo[2][1] * img->g(y, x) + pro_photo[2][2] * img->b(y, x);
