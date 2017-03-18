@@ -30,6 +30,7 @@
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
 #include "gauss.h"
+#include "median.h"
 #define BENCHMARK
 #include "StopWatch.h"
 
@@ -307,11 +308,151 @@ void floodFill4(int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &ma
 
 using namespace std;
 using namespace rtengine;
-void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParams, unsigned int frame, const std::string &model, float rawWpCorrection)
+void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RAWParams::BayerSensor &bayerParamsIn, unsigned int frame, const std::string &model, float rawWpCorrection)
 {
 #ifdef PIXELSHIFTDEV
     BENCHFUN
 #endif
+
+    if(numFrames != 4) { // fallback for non pixelshift files
+        amaze_demosaic_RT (0, 0, winw, winh, rawData, red, green, blue);
+        return;
+    }
+
+    RAWParams::BayerSensor bayerParams = bayerParamsIn;
+
+#ifndef PIXELSHIFTDEV
+    bayerParams.pixelShiftAutomatic = true;
+#endif
+
+    if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic) {
+        bool pixelShiftEqualBright = bayerParams.pixelShiftEqualBright;
+        bayerParams.setPixelShiftDefaults();
+        bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
+    } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
+        bayerParams.pixelShiftMotion = 0;
+        bayerParams.pixelShiftAutomatic = false;
+        bayerParams.pixelshiftShowMotion = false;
+    }
+
+    if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic)) {
+        if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
+#ifdef PIXELSHIFTDEV
+            if(!bayerParams.pixelShiftMedian3) {
+#endif
+                if(bayerParams.pixelShiftLmmse) {
+                    lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
+                } else {
+                    amaze_demosaic_RT (0, 0, winw, winh, *(rawDataFrames[0]), red, green, blue);
+                }
+                multi_array2D<float,3> redTmp(W,H);
+                multi_array2D<float,3> greenTmp(W,H);
+                multi_array2D<float,3> blueTmp(W,H);
+                for(int i=0;i<3;i++) {
+                    if(bayerParams.pixelShiftLmmse) {
+                        lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i+1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.lmmse_iterations);
+                    } else {
+                        amaze_demosaic_RT (0, 0, winw, winh, *(rawDataFrames[i+1]), redTmp[i], greenTmp[i], blueTmp[i]);
+                    }
+                }
+                #pragma omp parallel for schedule(dynamic,16)
+                for(int i=border;i<H-border;i++) {
+                    for(int j=border;j<W-border;j++) {
+                        red[i][j] = median(red[i][j],redTmp[0][i+1][j],redTmp[1][i+1][j+1],redTmp[2][i][j+1]);
+                    }
+                    for(int j=border;j<W-border;j++) {
+                        green[i][j] = median(green[i][j],greenTmp[0][i+1][j],greenTmp[1][i+1][j+1],greenTmp[2][i][j+1]);
+                    }
+                    for(int j=border;j<W-border;j++) {
+                        blue[i][j] = median(blue[i][j],blueTmp[0][i+1][j],blueTmp[1][i+1][j+1],blueTmp[2][i][j+1]);
+                    }
+                }
+#ifdef PIXELSHIFTDEV
+            } else {
+                multi_array2D<float,3> redTmp(W,H);
+                multi_array2D<float,3> greenTmp(W,H);
+                multi_array2D<float,3> blueTmp(W,H);
+                for(int i=0, frameIndex = 0;i<4;++i) {
+                    if(i != currFrame) {
+                        if(bayerParams.pixelShiftLmmse) {
+                            lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex], raw.bayersensor.lmmse_iterations);
+                        } else {
+                            amaze_demosaic_RT (0, 0, winw, winh, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex]);
+                        }
+                        ++frameIndex;
+                    }
+                }
+                unsigned int offsX0 = 0, offsY0 = 0;
+                unsigned int offsX1 = 0, offsY1 = 0;
+                unsigned int offsX2 = 0, offsY2 = 0;
+
+                // We have to adjust the offsets for the selected subframe we exclude from median
+                switch (currFrame) {
+                    case 0:
+                        offsY0 = 1;
+                        offsX0 = 0;
+                        offsY1 = 1;
+                        offsX1 = 1;
+                        offsY2 = 0;
+                        offsX2 = 1;
+                        break;
+
+                    case 1:
+                        offsY0 = 0;
+                        offsX0 = 0;
+                        offsY1 = 1;
+                        offsX1 = 1;
+                        offsY2 = 0;
+                        offsX2 = 1;
+                        break;
+
+                    case 2:
+                        offsY0 = 0;
+                        offsX0 = 0;
+                        offsY1 = 1;
+                        offsX1 = 0;
+                        offsY2 = 0;
+                        offsX2 = 1;
+                        break;
+
+                    case 3:
+                        offsY0 = 0;
+                        offsX0 = 0;
+                        offsY1 = 1;
+                        offsX1 = 0;
+                        offsY2 = 1;
+                        offsX2 = 1;
+                }
+
+                #pragma omp parallel for schedule(dynamic,16)
+                for(int i=border;i<H-border;i++) {
+                    for(int j=border;j<W-border;j++) {
+                        red[i][j] = median(redTmp[0][i+offsY0][j+offsX0],redTmp[1][i+offsY1][j+offsX1],redTmp[2][i+offsY2][j+offsX2]);
+                    }
+                    for(int j=border;j<W-border;j++) {
+                        green[i][j] = median(greenTmp[0][i+offsY0][j+offsX0],greenTmp[1][i+offsY1][j+offsX1],greenTmp[2][i+offsY2][j+offsX2]);
+                    }
+                    for(int j=border;j<W-border;j++) {
+                        blue[i][j] = median(blueTmp[0][i+offsY0][j+offsX0],blueTmp[1][i+offsY1][j+offsX1],blueTmp[2][i+offsY2][j+offsX2]);
+                    }
+                }
+            }
+#endif
+        } else {
+            if(bayerParams.pixelShiftLmmse) {
+                lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
+            } else {
+                amaze_demosaic_RT (0, 0, winw, winh, rawData, red, green, blue);
+            }
+        }
+    } else if(bayerParams.pixelShiftMotionCorrectionMethod != RAWParams::BayerSensor::Off) {
+        if(bayerParams.pixelShiftLmmse) {
+            lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
+        } else {
+            amaze_demosaic_RT (0, 0, winw, winh, rawData, red, green, blue);
+        }
+    }
+
     const int motion = bayerParams.pixelShiftMotion;
     const bool showMotion = bayerParams.pixelshiftShowMotion;
     const bool showOnlyMask = bayerParams.pixelshiftShowMotionMaskOnly && showMotion;
@@ -1244,11 +1385,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 for(; j < winw - (border + offsX) - 3; j += 4) {
                     vfloat blendv = vmaxf(LVFU(psMask[i][j]), onev) - onev;
                     blendv = pow_F(blendv, smoothv);
+                    blendv = vself(vmaskf_eq(smoothv, ZEROV), onev, blendv);
                     STVFU(psMask[i][j], blendv);
                 }
 
                 for(; j < winw - (border + offsX); ++j) {
-                    psMask[i][j] = pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
+                    psMask[i][j] = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
                 }
             }
 
@@ -1267,7 +1409,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #ifdef __SSE2__
                         float blend = psMask[i][j];
 #else
-                        float blend =  pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
+                        float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
                         red[i + offsY][j + offsX] = intp(blend, red[i + offsY][j + offsX], psRed[i][j] );
                         green[i + offsY][j + offsX] = intp(blend, green[i + offsY][j + offsX], (psG1[i][j] + psG2[i][j]) * 0.5f);
