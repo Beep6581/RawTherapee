@@ -372,6 +372,12 @@ public:
         choices[37] = "128000";
         choices[38] = "160000";
         choices[39] = "204800";
+        choices[40] = "256000";
+        choices[41] = "320000";
+        choices[42] = "409600";
+        choices[43] = "512000";
+        choices[44] = "640000";
+        choices[45] = "819200";
         choices[50] = "50";
         choices[100] = "100";
         choices[200] = "200";
