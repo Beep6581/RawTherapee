@@ -458,13 +458,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         opautili = false;
 
         if(params.colorToning.enabled) {
-            TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
             double wp[3][3] = {
                 {wprof[0][0], wprof[0][1], wprof[0][2]},
                 {wprof[1][0], wprof[1][1], wprof[1][2]},
                 {wprof[2][0], wprof[2][1], wprof[2][2]}
             };
-            TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params.icm.working);
             double wip[3][3] = {
                 {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
                 {wiprof[1][0], wiprof[1][1], wiprof[1][2]},

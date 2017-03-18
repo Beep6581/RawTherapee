@@ -406,6 +406,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     has_tone_curve(false),
     has_baseline_exposure_offset(false),
     will_interpolate(false),
+    valid(false),
     baseline_exposure_offset(0.0)
 {
     constexpr int tiff_float_size = 4;
@@ -691,6 +692,11 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     FILE* const file = g_fopen(filename.c_str(), "rb");
 
+    if (file == nullptr) {
+        printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        return;
+    }
+
     std::unique_ptr<TagDirectory> tagDir(ExifManager::parseTIFF(file, false));
 
     Tag* tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_1));
@@ -738,6 +744,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     if (!tag) {
         std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
+        fclose(file);
         return;
     }
 
@@ -935,6 +942,8 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     if (file) {
         fclose(file);
     }
+
+    valid = true;
 }
 
 DCPProfile::~DCPProfile()
@@ -988,7 +997,7 @@ void DCPProfile::apply(
 ) const
 {
 
-    const TMatrix work_matrix = iccStore->workingSpaceInverseMatrix(working_space);
+    const TMatrix work_matrix = ICCStore::getInstance()->workingSpaceInverseMatrix(working_space);
 
     const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
 
@@ -1110,7 +1119,7 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
         as_out.data->already_pro_photo = false;
         TMatrix mWork;
 
-        mWork = iccStore->workingSpaceMatrix (working_space);
+        mWork = ICCStore::getInstance()->workingSpaceMatrix (working_space);
         memset(as_out.data->pro_photo, 0, sizeof(as_out.data->pro_photo));
 
         for (int i = 0; i < 3; i++)
@@ -1119,7 +1128,7 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
                     as_out.data->pro_photo[i][j] += prophoto_xyz[i][k] * mWork[k][j];
                 }
 
-        mWork = iccStore->workingSpaceInverseMatrix (working_space);
+        mWork = ICCStore::getInstance()->workingSpaceInverseMatrix (working_space);
         memset(as_out.data->work, 0, sizeof(as_out.data->work));
 
         for (int i = 0; i < 3; i++)
@@ -1683,17 +1692,27 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
     }
 }
 
+bool DCPProfile::isValid()
+{
+    return valid;
+}
+
 DCPStore* DCPStore::getInstance()
 {
     static DCPStore instance;
     return &instance;
 }
 
-void DCPStore::init(const Glib::ustring& rt_profile_dir)
+void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 {
     MyMutex::MyLock lock(mutex);
 
     file_std_profiles.clear();
+
+    if (!loadAll) {
+        profileDir.assign (rt_profile_dir);
+        return;
+    }
 
     if (!rt_profile_dir.empty()) {
         std::deque<Glib::ustring> dirs = {
@@ -1717,10 +1736,8 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir)
                 return;
             }
 
-            dirname += '/';
-
             for (const Glib::ustring& sname : *dir) {
-                const Glib::ustring fname = dirname + sname;
+                const Glib::ustring fname = Glib::build_filename(dirname, sname);
 
                 if (!Glib::file_test(fname, Glib::FILE_TEST_IS_DIR)) {
                     // File
@@ -1770,9 +1787,12 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 
     DCPProfile* const res = new DCPProfile(filename);
 
-    if (*res) {
+    if (res->isValid()) {
         // Add profile
         profile_cache[filename] = res;
+        if (options.rtSettings.verbose) {
+            printf("DCP profile '%s' loaded from disk\n", filename.c_str());
+        }
         return res;
     }
 
@@ -1780,15 +1800,25 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
     return nullptr;
 }
 
-DCPProfile* DCPStore::getStdProfile(const Glib::ustring& cam_short_name) const
+DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_name) const
 {
-    const Glib::ustring name = cam_short_name.uppercase();
+    const Glib::ustring name = requested_cam_short_name.uppercase();
 
     // Warning: do NOT use map.find(), since it does not seem to work reliably here
-    for (const auto& file_std_profile : file_std_profiles)
+    for (const auto& file_std_profile : file_std_profiles) {
         if (file_std_profile.first == name) {
             return getProfile(file_std_profile.second);
         }
+    }
+
+    // profile not found, looking if we're in loadAll=false mode
+    if (!profileDir.empty()) {
+        const Glib::ustring fname = Glib::build_filename(profileDir, requested_cam_short_name + Glib::ustring(".dcp"));
+
+        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
+            return getProfile(fname);
+        }
+    }
 
     return nullptr;
 }

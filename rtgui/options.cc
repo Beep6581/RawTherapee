@@ -2181,7 +2181,7 @@ int Options::saveToFile (Glib::ustring fname)
     }
 }
 
-bool Options::load ()
+bool Options::load (bool lightweight)
 {
 
     // Find the application data path
@@ -2320,7 +2320,7 @@ bool Options::load ()
     // out which are the parent translations.  Furthermore, there must be a file <Language> for each locale <Language> (<LC>) -- you cannot have
     // 'French (CA)' unless there is a file 'French'.
 
-    Glib::ustring defaultTranslation = argv0 + "/languages/default";
+    Glib::ustring defaultTranslation = Glib::build_filename (argv0, "languages", "default");
     Glib::ustring languageTranslation = "";
     Glib::ustring localeTranslation = "";
 
@@ -2332,17 +2332,17 @@ bool Options::load ()
         std::vector<Glib::ustring> langPortions = Glib::Regex::split_simple (" ", options.language);
 
         if (langPortions.size() >= 1) {
-            languageTranslation = argv0 + "/languages/" + langPortions.at (0);
+            languageTranslation = Glib::build_filename (argv0, "languages", langPortions.at (0));
         }
 
         if (langPortions.size() >= 2) {
-            localeTranslation = argv0 + "/languages/" + options.language;
+            localeTranslation = Glib::build_filename (argv0, "languages", options.language);
         }
     }
 
     langMgr.load (localeTranslation, new MultiLangMgr (languageTranslation, new MultiLangMgr (defaultTranslation)));
 
-    rtengine::init (&options.rtSettings, argv0, rtdir);
+    rtengine::init (&options.rtSettings, argv0, rtdir, !lightweight);
 
     return true;
 }

@@ -218,7 +218,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
     bool skipTransform = false;
     cmsHPROFILE in = nullptr;
-    cmsHPROFILE out = iccStore->workingSpace (cmp.working);
+    cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.working);
 
     if (cmp.input == "(embedded)" || cmp.input == "" || cmp.input == "(camera)" || cmp.input == "(cameraICC)") {
         if (embedded) {
@@ -227,12 +227,12 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
             if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
                 skipTransform = true;
             } else {
-                in = iccStore->getsRGBProfile ();
+                in = ICCStore::getInstance()->getsRGBProfile ();
             }
         }
     } else {
         if (cmp.input != "(none)") {
-            in = iccStore->getProfile (cmp.input);
+            in = ICCStore::getInstance()->getProfile (cmp.input);
 
             if (in == nullptr && embedded) {
                 in = embedded;
@@ -240,7 +240,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
                 if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
                     skipTransform = true;
                 } else {
-                    in = iccStore->getsRGBProfile ();
+                    in = ICCStore::getInstance()->getsRGBProfile ();
                 }
             }
         }
@@ -249,7 +249,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
     if (!skipTransform && in) {
         if(in == embedded && cmsGetColorSpace(in) != cmsSigRgbData) { // if embedded profile is not an RGB profile, use sRGB
             printf("embedded profile is not an RGB profile, using sRGB as input profile\n");
-            in = iccStore->getsRGBProfile ();
+            in = ICCStore::getInstance()->getsRGBProfile ();
         }
 
         lcmsMutex->lock ();

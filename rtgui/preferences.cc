@@ -22,6 +22,7 @@
 #include "splash.h"
 #include "cachemanager.h"
 #include "addsetids.h"
+#include "../rtengine/icons.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include <sstream>
@@ -2071,7 +2072,7 @@ void Preferences::cancelPressed ()
 {
     // set the initial theme back
     if (themeFNames.at(theme->get_active_row_number ()).longFName != options.theme) {
-        RTImage::setPaths(options);
+        rtengine::setPaths(options);
         RTImage::updateImages();
         switchThemeTo(options.theme);
     }
@@ -2128,7 +2129,7 @@ void Preferences::themeChanged ()
 {
 
     moptions.theme = themeFNames.at(theme->get_active_row_number ()).longFName;
-    RTImage::setPaths(moptions);
+    rtengine::setPaths(moptions);
     RTImage::updateImages();
     switchThemeTo(moptions.theme);
 }

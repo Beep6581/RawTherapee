@@ -429,7 +429,7 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
     hist.clear();
 
     // Set up factors to calc the lightness
-    TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
 
     float facRed   = wprof[1][0];
     float facGreen = wprof[1][1];
