@@ -22,6 +22,7 @@
 #include "splash.h"
 #include "cachemanager.h"
 #include "addsetids.h"
+#include "../rtengine/icons.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include <sstream>
@@ -1903,13 +1904,13 @@ void Preferences::fillPreferences ()
     if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
         gimpDir->set_current_folder (moptions.gimpDir);
     } else {
-        gimpDir->set_current_folder ("");
+        gimpDir->set_current_folder (Glib::get_home_dir());
     }
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
     } else {
-        psDir->set_current_folder ("");
+        psDir->set_current_folder (Glib::get_home_dir());
     }
 
 #elif defined __APPLE__
@@ -1917,6 +1918,8 @@ void Preferences::fillPreferences ()
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
+    } else {
+        psDir->set_current_folder (Glib::get_home_dir());
     }
 
 #endif
@@ -2077,7 +2080,7 @@ void Preferences::cancelPressed ()
 {
     // set the initial theme back
     if (themeFNames.at(theme->get_active_row_number ()).longFName != options.theme) {
-        RTImage::setPaths(options);
+        rtengine::setPaths(options);
         RTImage::updateImages();
         switchThemeTo(options.theme);
     }
@@ -2134,7 +2137,7 @@ void Preferences::themeChanged ()
 {
 
     moptions.theme = themeFNames.at(theme->get_active_row_number ()).longFName;
-    RTImage::setPaths(moptions);
+    rtengine::setPaths(moptions);
     RTImage::updateImages();
     switchThemeTo(moptions.theme);
 }

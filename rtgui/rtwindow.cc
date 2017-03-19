@@ -24,6 +24,7 @@
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
+#include "../rtengine/icons.h"
 
 #if defined(__APPLE__)
 static gboolean
@@ -93,7 +94,7 @@ RTWindow::RTWindow ()
     ProfilePanel::init (this);
 
     Glib::ustring fName = "rt-logo-small.png";
-    Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
+    Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName);
 
     try {
         set_default_icon_from_file (fullPath);

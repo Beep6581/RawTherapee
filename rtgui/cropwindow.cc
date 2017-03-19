@@ -112,6 +112,7 @@ void CropWindow::initZoomSteps()
         sprintf(lbl, "%d00%%", s);
         zoomSteps.push_back(ZoomStep(lbl, s, s * 1000, true));
     }
+    zoomSteps.push_back(ZoomStep("1600%", 16, 16000, true));
 }
 
 void CropWindow::enable()
@@ -1028,9 +1029,21 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             int imheight = cropHandler.cropPixbuf->get_height();
             guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy * cropHandler.cropPixbuf->get_rowstride() + vx * 3;
 
+            int rval = pix[0];
+            int gval = pix[1];
+            int bval = pix[2];
             if (vx < imwidth && vy < imheight) {
+                rtengine::StagedImageProcessor* ipc = iarea->getImProcCoordinator();
+                if(ipc) {
+                    procparams::ProcParams params;
+                    ipc->getParams(&params);
+                    if(params.raw.bayersensor.method == RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::none] || params.raw.xtranssensor.method == RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::none]) {
+                        ImageSource *isrc = static_cast<ImageSource*>(ipc->getInitialImage());
+                        isrc->getRawValues(mx, my, params.coarse.rotate, rval, gval, bval);
+                    }
+                }
                 //      pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
-                pmlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+                pmlistener->pointerMoved (true, cropHandler.colorParams.output, cropHandler.colorParams.working, mx, my, rval, gval, bval);
 
                 if (pmhlistener)
                     //    pmhlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
