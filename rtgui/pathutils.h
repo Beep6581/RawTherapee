@@ -16,26 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _RTIMAGE_
-#define _RTIMAGE_
+#ifndef __PATH_UTILS_
+#define __PATH_UTILS_
 
-#include <gtkmm/image.h>
+#include <gtkmm.h>
+#include <cairomm/cairomm.h>
+#include "../rtengine/rtengine.h"
+#include "../rtengine/coord.h"
+#include "rtimage.h"
+#include <sstream>
+#include <iostream>
 
-class Options;
-
-/**
- * @brief A derived class of Gtk::Image in order to handle theme-related icon sets.
- */
-class RTImage : public Gtk::Image
-{
-public:
-    RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
-
-    void changeImage (const Glib::ustring& imageName);
-    static void updateImages ();
-
-    static Glib::RefPtr<Gdk::Pixbuf> createFromFile (const Glib::ustring& fileName);
-    static Cairo::RefPtr<Cairo::ImageSurface> createFromPng (const Glib::ustring& fileName);
-};
+// Removed from guiutils because used by rawtherapee-cli
+Glib::ustring removeExtension (const Glib::ustring& filename);
+Glib::ustring getExtension (const Glib::ustring& filename);
 
 #endif

@@ -31,11 +31,13 @@
 
 #include "rtimage.h"
 
+// for convenience...
+#include "pathutils.h"
+
+
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
 void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh);
-Glib::ustring removeExtension (const Glib::ustring& filename);
-Glib::ustring getExtension (const Glib::ustring& filename);
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename);
 void writeFailed (Gtk::Window& parent, const std::string& filename);
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
@@ -313,6 +315,7 @@ public:
 class MyComboBoxText : public Gtk::ComboBoxText
 {
     int naturalWidth, minimumWidth;
+    sigc::connection myConnection;
 
     bool on_scroll_event (GdkEventScroll* event);
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
@@ -322,6 +325,8 @@ public:
     MyComboBoxText (bool has_entry = false);
 
     void setPreferredWidth (int minimum_width, int natural_width);
+    void connect(const sigc::connection &connection) { myConnection = connection; }
+    void block(bool blocked) { myConnection.block(blocked); }
 };
 
 /**

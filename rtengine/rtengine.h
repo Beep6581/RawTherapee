@@ -443,18 +443,12 @@ public:
   * @brief Initializes the RT engine
   * @param s is a struct of basic settings
   * @param baseDir base directory of RT's installation dir
-  * @param userSettingsDir RT's base directory in the user's settings dir */
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir);
+  * @param userSettingsDir RT's base directory in the user's settings dir
+  * @param loadAll if false, don't load the various dependencies (profiles, HALDClut files, ...), they'll be loaded from disk each time they'll be used (launching time improvement) */
+int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll = true);
 
 /** Cleanup the RT engine (static variables) */
 void cleanup ();
-
-/** Returns the available working profile names
-  * @return a vector of the available working profile names */
-std::vector<Glib::ustring> getWorkingProfiles ();
-/** Returns the available output gammas
-  * @return a vector of the available gamma names */
-std::vector<Glib::ustring> getGamma ();
 
 /** This class  holds all the necessary informations to accomplish the full processing of the image */
 class ProcessingJob

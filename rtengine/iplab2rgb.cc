@@ -158,7 +158,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         standard_gamma = false;
     }
 
-    cmsHPROFILE oprof = iccStore->getProfile (profile);
+    cmsHPROFILE oprof = ICCStore::getInstance()->getProfile (profile);
 
     if (oprof) {
         cmsHPROFILE oprofG = oprof;
@@ -216,7 +216,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
     } else {
 
-        const auto xyz_rgb = iccStore->workingSpaceInverseMatrix (profile);
+        const auto xyz_rgb = ICCStore::getInstance()->workingSpaceInverseMatrix (profile);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -286,11 +286,11 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
     cmsHPROFILE oprof = nullptr;
     if (ga) {
         lcmsMutex->lock ();
-        iccStore->getGammaArray(icm, *ga);
-        oprof = iccStore->createGammaProfile(icm, *ga);
+        ICCStore::getInstance()->getGammaArray(icm, *ga);
+        oprof = ICCStore::getInstance()->createGammaProfile(icm, *ga);
         lcmsMutex->unlock ();
     } else {
-        oprof = iccStore->getProfile (icm.output);
+        oprof = ICCStore::getInstance()->getProfile (icm.output);
     }
 
     if (oprof) {

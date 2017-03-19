@@ -42,6 +42,7 @@ public:
         choices[3] = "TIFF";
         choices[4] = "RAW";
         choices[5] = "Premium";
+        choices[6] = "RAW (HDR enabled)";
         choices[7] = "RAW (pixel shift enabled)";
         choices[65535] = "n/a";
     }
@@ -371,6 +372,12 @@ public:
         choices[37] = "128000";
         choices[38] = "160000";
         choices[39] = "204800";
+        choices[40] = "256000";
+        choices[41] = "320000";
+        choices[42] = "409600";
+        choices[43] = "512000";
+        choices[44] = "640000";
+        choices[45] = "819200";
         choices[50] = "50";
         choices[100] = "100";
         choices[200] = "200";

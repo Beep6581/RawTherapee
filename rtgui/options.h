@@ -40,7 +40,7 @@
 // Profile name to use for internal values' profile
 #define DEFPROFILE_INTERNAL "Neutral"
 // Special name for the Dynamic profile
-#define DEFPROFILE_DYNAMIC "Dynamic"
+#define DEFPROFILE_DYNAMIC  "Dynamic"
 
 struct SaveFormat
 {
@@ -317,7 +317,7 @@ public:
     void        setDefaults     ();
     int         readFromFile    (Glib::ustring fname);
     int         saveToFile      (Glib::ustring fname);
-    static bool load            ();
+    static bool load            (bool lightweight = false);
     static void save            ();
 
     // if multiUser=false, send back the global profile path
