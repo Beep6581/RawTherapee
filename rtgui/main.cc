@@ -204,8 +204,7 @@ int main(int argc, char **argv)
                         break;
                     }
 
-                if(Console) {
-                    AllocConsole();
+                if(Console && AllocConsole()) {
                     AttachConsole( GetCurrentProcessId() ) ;
                     // Don't allow CTRL-C in console to terminate RT
                     SetConsoleCtrlHandler( NULL, true );
@@ -243,16 +242,18 @@ int main(int argc, char **argv)
             }
         }
 
-        int ret = processLineParams( argc, argv);
+        if(argc > 1) {
+            int ret = processLineParams( argc, argv);
 
-        if( ret <= 0 ) {
-            if(consoleOpened) {
-                printf("Press any key to exit RawTherapee\n");
-                FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-                getch();
+            if( ret <= 0 ) {
+                if(consoleOpened) {
+                    printf("Press any key to exit RawTherapee\n");
+                    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+                    getch();
+                }
+
+                return ret;
             }
-
-            return ret;
         }
     }
 
