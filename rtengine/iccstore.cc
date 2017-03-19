@@ -70,7 +70,7 @@ void loadProfiles(
 
             const Glib::ustring extension = rtengine::getFileExtension(fileName);
 
-            if (extension != ".icc" && extension != ".icm") {
+            if (extension != "icc" && extension != "icm") {
                 continue;
             }
 
@@ -131,7 +131,7 @@ bool loadProfile(
 
             const Glib::ustring extension = rtengine::getFileExtension(fileName);
 
-            if (extension != ".icc" && extension != ".icm") {
+            if (extension != "icc" && extension != "icm") {
                 continue;
             }
 
