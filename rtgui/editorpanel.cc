@@ -96,12 +96,12 @@ private:
 
         profileBox.append (M ("PREFERENCES_PROFILE_NONE"));
 #ifdef WIN32
-        profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + rtengine::iccStore->getDefaultMonitorProfileName() + ")");
+        profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + rtengine::ICCStore::getInstance()->getDefaultMonitorProfileName() + ")");
         profileBox.set_active (options.rtSettings.autoMonitorProfile ? 1 : 0);
 #else
         profileBox.set_active (0);
 #endif
-        const std::vector<Glib::ustring> profiles = rtengine::iccStore->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
+        const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
         for (const auto profile: profiles) {
             profileBox.append (profile);
         }
@@ -176,7 +176,7 @@ private:
 #if !defined(__APPLE__) // monitor profile not supported on apple
     #ifdef WIN32
         if (profileBox.get_active_row_number () == 1) {
-            profile = rtengine::iccStore->getDefaultMonitorProfileName ();
+            profile = rtengine::ICCStore::getInstance()->getDefaultMonitorProfileName ();
             if (profile.empty ()) {
                 profile = options.rtSettings.monitorProfile;
             }
@@ -206,7 +206,7 @@ private:
             profileBox.set_tooltip_text ("");
 
         } else {
-            const uint8_t supportedIntents = rtengine::iccStore->getProofIntents (profile);
+            const uint8_t supportedIntents = rtengine::ICCStore::getInstance()->getProofIntents (profile);
             const bool supportsRelativeColorimetric = supportedIntents & 1 << INTENT_RELATIVE_COLORIMETRIC;
             const bool supportsPerceptual = supportedIntents & 1 << INTENT_PERCEPTUAL;
             const bool supportsAbsoluteColorimetric = supportedIntents & 1 << INTENT_ABSOLUTE_COLORIMETRIC;

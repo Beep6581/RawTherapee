@@ -176,7 +176,8 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
 {
     RawImage *ri = new RawImage(fname);
-    int r = ri->loadRaw(false, false);
+    unsigned int imageNum = 0;
+    int r = ri->loadRaw(false, imageNum, false);
 
     if( r ) {
         delete ri;
@@ -290,7 +291,9 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     rml.ciffLength = -1;
 
     RawImage ri(fname);
-    int r = ri.loadRaw(false);
+    unsigned int imageNum = 0;
+
+    int r = ri.loadRaw(false, imageNum);
 
     if( !r ) {
         rml.exifBase = ri.get_exifBase();
@@ -301,10 +304,12 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum)
 {
     RawImage *ri = new RawImage (fname);
-    int r = ri->loadRaw(1, 0);
+    unsigned int tempImageNum = 0;
+
+    int r = ri->loadRaw(1, tempImageNum, 0);
 
     if( r ) {
         delete ri;
@@ -770,7 +775,7 @@ void Thumbnail::init ()
                 cam2xyz[i][j] += xyz_sRGB[i][k] * colorMatrix[k][j];
             }
 
-    camProfile = iccStore->createFromMatrix (cam2xyz, false, "Camera");
+    camProfile = ICCStore::getInstance()->createFromMatrix (cam2xyz, false, "Camera");
 }
 
 Thumbnail::Thumbnail () :
@@ -1033,13 +1038,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     bool opautili = false;
 
     if(params.colorToning.enabled) {
-        TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
         double wp[3][3] = {
             {wprof[0][0], wprof[0][1], wprof[0][2]},
             {wprof[1][0], wprof[1][1], wprof[1][2]},
             {wprof[2][0], wprof[2][1], wprof[2][2]}
         };
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params.icm.working);
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params.icm.working);
         double wip[3][3] = {
             {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
             {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
