@@ -1951,6 +1951,8 @@ void CropWindow::zoomOut (bool toCursor, int cursorX, int cursorY)
     if (toCursor) {
         x = cursorX;
         y = cursorY;
+    } else {
+        screenCoordToImage(xpos + imgX + imgW / 2, ypos + imgY + imgH / 2, x, y);
     }
 
     zoomVersion = exposeVersion;
@@ -1980,6 +1982,8 @@ void CropWindow::zoom11 ()
         }
 
         zoomVersion = exposeVersion;
+    } else {
+        screenCoordToImage(xpos + imgX + imgW / 2, ypos + imgY + imgH / 2, x, y);
     }
 
     changeZoom (zoom11index, true, x, y);
