@@ -759,6 +759,7 @@ public:
 
     public:
         bool method;
+        bool imageNum;
         bool ccSteps;
         bool exBlack0;
         bool exBlack1;
@@ -768,6 +769,36 @@ public:
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
+        bool pixelShiftMotion;
+        bool pixelShiftMotionCorrection;
+        bool pixelShiftMotionCorrectionMethod;
+        bool pixelShiftStddevFactorGreen;
+        bool pixelShiftStddevFactorRed;
+        bool pixelShiftStddevFactorBlue;
+        bool pixelShiftEperIso;
+        bool pixelShiftNreadIso;
+        bool pixelShiftPrnu;
+        bool pixelShiftSigma;
+        bool pixelShiftSum;
+        bool pixelShiftRedBlueWeight;
+        bool pixelshiftShowMotion;
+        bool pixelshiftShowMotionMaskOnly;
+        bool pixelShiftAutomatic;
+        bool pixelShiftNonGreenHorizontal;
+        bool pixelShiftNonGreenVertical;
+        bool pixelShiftHoleFill;
+        bool pixelShiftMedian;
+        bool pixelShiftMedian3;
+        bool pixelShiftGreen;
+        bool pixelShiftBlur;
+        bool pixelShiftSmooth;
+        bool pixelShiftExp0;
+        bool pixelShiftLmmse;
+        bool pixelShiftEqualBright;
+        bool pixelShiftNonGreenCross;
+        bool pixelShiftNonGreenCross2;
+        bool pixelShiftNonGreenAmaze;
+
         //bool allEnhance;
         bool greenEq;
         bool linenoise;

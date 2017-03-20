@@ -400,7 +400,7 @@ skip_block:
     }
 }
 
-int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistener, double progressRange)
+int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
 {
     ifname = filename.c_str();
     image = nullptr;
@@ -424,7 +424,12 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
     raw_image = nullptr;
 
     //***************** Read ALL raw file info
-    identify ();
+    // set the number of the frame to extract. If the number is larger then number of existing frames - 1, dcraw will handle that correctly
+
+    shot_select = imageNum;
+    identify();
+    // in case dcraw didn't handle the above mentioned case...
+    shot_select = std::min(shot_select, std::max(is_raw, 1u) - 1);
 
     if (!is_raw) {
         fclose(ifp);
@@ -660,7 +665,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
     return 0;
 }
 
-float** RawImage::compress_image()
+float** RawImage::compress_image(int frameNum)
 {
     if( !image ) {
         return nullptr;
@@ -668,11 +673,12 @@ float** RawImage::compress_image()
 
     if (isBayer() || isXtrans()) {
         if (!allocation) {
-            allocation = new float[height * width];
+            // shift the beginning of all frames but the first by 32 floats to avoid cache miss conflicts on CPUs which have <= 4-way associative L1-Cache
+            allocation = new float[height * width + frameNum * 32];
             data = new float*[height];
 
             for (int i = 0; i < height; i++) {
-                data[i] = allocation + i * width;
+                data[i] = allocation + i * width + frameNum * 32;
             }
         }
     } else if (colors == 1) {

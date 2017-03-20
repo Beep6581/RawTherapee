@@ -2496,8 +2496,8 @@ void PerceptualToneCurve::initApplyState (PerceptualToneCurveState & state, Glib
         state.isProphoto = true;
     } else {
         state.isProphoto = false;
-        TMatrix Work = iccStore->workingSpaceMatrix (workingSpace);
-        memset (state.Working2Prophoto, 0, sizeof (state.Working2Prophoto));
+        TMatrix Work = ICCStore::getInstance()->workingSpaceMatrix(workingSpace);
+        memset(state.Working2Prophoto, 0, sizeof(state.Working2Prophoto));
 
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
@@ -2505,8 +2505,8 @@ void PerceptualToneCurve::initApplyState (PerceptualToneCurveState & state, Glib
                     state.Working2Prophoto[i][j] += prophoto_xyz[i][k] * Work[k][j];
                 }
 
-        Work = iccStore->workingSpaceInverseMatrix (workingSpace);
-        memset (state.Prophoto2Working, 0, sizeof (state.Prophoto2Working));
+        Work = ICCStore::getInstance()->workingSpaceInverseMatrix (workingSpace);
+        memset(state.Prophoto2Working, 0, sizeof(state.Prophoto2Working));
 
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)

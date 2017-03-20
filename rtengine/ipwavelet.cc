@@ -148,7 +148,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     // init variables to display Munsell corrections
     MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
 #endif
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
     double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},

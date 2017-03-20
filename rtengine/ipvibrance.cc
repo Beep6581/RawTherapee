@@ -170,7 +170,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
     const bool protectskins = params->vibrance.protectskins;
     const bool avoidcolorshift = params->vibrance.avoidcolorshift;
 
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
     //inverse matrix user select
     const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},

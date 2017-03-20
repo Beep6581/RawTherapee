@@ -22,6 +22,7 @@
 #include "splash.h"
 #include "cachemanager.h"
 #include "addsetids.h"
+#include "../rtengine/icons.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include <sstream>
@@ -1136,7 +1137,6 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     butNavGuideCol->set_use_alpha (true);
     themeGrid->attach_next_to (*navGuideLabel, *butCropCol, Gtk::POS_RIGHT, 2, 1);
     themeGrid->attach_next_to (*butNavGuideCol, *navGuideLabel, Gtk::POS_RIGHT, 1, 1);
-//>>>>>>> dev
 
     ftheme->add (*themeGrid);
     mvbsd->attach_next_to (*ftheme, *flang, Gtk::POS_BOTTOM, 2, 1);
@@ -2159,8 +2159,8 @@ void Preferences::okPressed ()
 void Preferences::cancelPressed ()
 {
     // set the initial theme back
-    if (themeFNames.at (theme->get_active_row_number ()).longFName != options.theme) {
-        RTImage::setPaths (options);
+    if (themeFNames.at(theme->get_active_row_number ()).longFName != options.theme) {
+        rtengine::setPaths(options);
         RTImage::updateImages();
         switchThemeTo (options.theme);
     }
@@ -2217,8 +2217,8 @@ void Preferences::aboutPressed ()
 void Preferences::themeChanged ()
 {
 
-    moptions.theme = themeFNames.at (theme->get_active_row_number ()).longFName;
-    RTImage::setPaths (moptions);
+    moptions.theme = themeFNames.at(theme->get_active_row_number ()).longFName;
+    rtengine::setPaths(moptions);
     RTImage::updateImages();
     switchThemeTo (moptions.theme);
 }

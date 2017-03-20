@@ -1288,12 +1288,19 @@ public:
     public:
         //enum eMethod{ eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
         //numMethods }; // This MUST be the last enum
-        enum eMethod { amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none,
+        enum eMethod { amaze, igv, lmmse, eahd, hphd, vng4, dcb, ahd, fast, mono, none, pixelshift,
                        numMethods
                      }; // This MUST be the last enum
+        enum ePSMotionCorrection {
+            Grid1x1, Grid1x2, Grid3x3, Grid5x5, Grid7x7, Grid3x3New
+        };
+        enum ePSMotionCorrectionMethod {
+            Off, Automatic, Custom
+        };
         static const char *methodstring[numMethods];
 
         Glib::ustring method;
+        int imageNum;
         int ccSteps;
         double black0;
         double black1;
@@ -1304,8 +1311,40 @@ public:
         int greenthresh;
         int dcb_iterations;
         int lmmse_iterations;
+        int pixelShiftMotion;
+        ePSMotionCorrection pixelShiftMotionCorrection;
+        ePSMotionCorrectionMethod pixelShiftMotionCorrectionMethod;
+        double pixelShiftStddevFactorGreen;
+        double pixelShiftStddevFactorRed;
+        double pixelShiftStddevFactorBlue;
+        double pixelShiftEperIso;
+        double pixelShiftNreadIso;
+        double pixelShiftPrnu;
+        double pixelShiftSigma;
+        double pixelShiftSum;
+        double pixelShiftRedBlueWeight;
+        bool pixelshiftShowMotion;
+        bool pixelshiftShowMotionMaskOnly;
+        bool pixelShiftAutomatic;
+        bool pixelShiftNonGreenHorizontal;
+        bool pixelShiftNonGreenVertical;
+        bool pixelShiftHoleFill;
+        bool pixelShiftMedian;
+        bool pixelShiftMedian3;
+        bool pixelShiftGreen;
+        bool pixelShiftBlur;
+        double pixelShiftSmoothFactor;
+        bool pixelShiftExp0;
+        bool pixelShiftLmmse;
+        bool pixelShiftEqualBright;
+        bool pixelShiftNonGreenCross;
+        bool pixelShiftNonGreenCross2;
+        bool pixelShiftNonGreenAmaze;
         bool dcb_enhance;
         //bool all_enhance;
+
+        void setPixelShiftDefaults();
+
     };
 
     /**

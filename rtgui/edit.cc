@@ -18,7 +18,7 @@
  */
 
 #include "edit.h"
-#include "rtimage.h"
+#include "../rtengine/icons.h"
 
 ObjectMOBuffer::ObjectMOBuffer (EditDataProvider *dataProvider) : objectMap (nullptr), objectMode (OM_255), dataProvider (dataProvider) {}
 
@@ -1165,23 +1165,23 @@ OPIcon::OPIcon (Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustr
                 Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint (drivenPoint)
 {
     if (!normalImage.empty()) {
-        normalImg = Cairo::ImageSurface::create_from_png ( RTImage::findIconAbsolutePath (normalImage) );
+        normalImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(normalImage) );
     }
 
     if (!prelightImage.empty()) {
-        prelightImg = Cairo::ImageSurface::create_from_png ( RTImage::findIconAbsolutePath (prelightImage) );
+        prelightImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(prelightImage) );
     }
 
     if (!activeImage.empty()) {
-        activeImg = Cairo::ImageSurface::create_from_png ( RTImage::findIconAbsolutePath (activeImage) );
+        activeImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(activeImage) );
     }
 
     if (!draggedImage.empty()) {
-        draggedImg = Cairo::ImageSurface::create_from_png ( RTImage::findIconAbsolutePath (draggedImage) );
+        draggedImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(draggedImage) );
     }
 
     if (!insensitiveImage.empty()) {
-        insensitiveImg = Cairo::ImageSurface::create_from_png ( RTImage::findIconAbsolutePath (insensitiveImage) );
+        insensitiveImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(insensitiveImage) );
     }
 }
 

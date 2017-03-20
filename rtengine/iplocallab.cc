@@ -5374,7 +5374,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 // Gamut and Munsell control - very important do not desactivated to avoid crash
         if (params->locallab.avoid) {
-            TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
             float wip[3][3] = {
                 {static_cast<float> (wiprof[0][0]), static_cast<float> (wiprof[0][1]), static_cast<float> (wiprof[0][2])},
                 {static_cast<float> (wiprof[1][0]), static_cast<float> (wiprof[1][1]), static_cast<float> (wiprof[1][2])},

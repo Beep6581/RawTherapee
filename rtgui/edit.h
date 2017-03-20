@@ -453,10 +453,8 @@ private:
     Cairo::RefPtr<Cairo::ImageSurface> draggedImg;
     Cairo::RefPtr<Cairo::ImageSurface> insensitiveImg;
 
-    static void setPaths (Options &opt);
     static void updateImages();
-    void changeImage (Glib::ustring &newImage);
-    static Glib::ustring findIconAbsolutePath (const Glib::ustring &iconFName);
+    void changeImage(Glib::ustring &newImage);
     void drawImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drawMOImage (const Cairo::RefPtr<Cairo::ImageSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drivenPointToRectangle (const rtengine::Coord &pos, rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H);

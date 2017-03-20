@@ -101,20 +101,21 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     iptc        = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_IPTCINFO")));
 
     // options in raw:
-    raw_expos           = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWEXPOS_LINEAR")));
-    raw_preser          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWEXPOS_PRESER")));
-    raw_black           = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWEXPOS_BLACK")));
-    raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWCACORR_AUTO")));
-    raw_cared           = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWCACORR_CARED")));
-    raw_cablue          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAWCACORR_CABLUE")));
-    raw_hotpix_filt     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_HOTPIXFILT")));
-    raw_deadpix_filt    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_DEADPIXFILT")));
-    raw_linenoise       = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_LINEDENOISE")));
-    raw_greenthresh     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PREPROCESS_GREENEQUIL")));
-    raw_method          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_DMETHOD")));
-    raw_ccSteps         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_FALSECOLOR")));
-    raw_dcb_iterations  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_DCBITERATIONS")));
-    raw_dcb_enhance     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_DCBENHANCE")));
+    raw_expos           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_LINEAR")));
+    raw_preser          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_PRESER")));
+    raw_black           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_BLACK")));
+    raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AUTO")));
+    raw_cared           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CARED")));
+    raw_cablue          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CABLUE")));
+    raw_hotpix_filt     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_HOTPIXFILT")));
+    raw_deadpix_filt    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_DEADPIXFILT")));
+    raw_linenoise       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_LINEDENOISE")));
+    raw_greenthresh     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_GREENEQUIL")));
+    raw_method          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DMETHOD")));
+    raw_imagenum        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_IMAGENUM")));
+    raw_ccSteps         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_FALSECOLOR")));
+    raw_dcb_iterations  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBITERATIONS")));
+    raw_dcb_enhance     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBENHANCE")));
     //raw_all_enhance   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_ALLENHANCE")));
     raw_lmmse_iterations = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_RAW_LMMSEITERATIONS")));
 
@@ -202,6 +203,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[6]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*hseps[6], Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_method, Gtk::PACK_SHRINK, 2);
+    vboxes[6]->pack_start (*raw_imagenum, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
@@ -317,34 +319,35 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
     //gamcsconn      = gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
-    vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
-    chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
-    chmixerbwConn   = blackwhite->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
-    hsveqConn       = hsveq->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
-    filmSimulationConn = filmSimulation->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
-    rgbcurvesConn   = rgbcurves->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
-    colortoningConn = colortoning->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
+    vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+    chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+    chmixerbwConn   = blackwhite->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+    hsveqConn       = hsveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+    filmSimulationConn = filmSimulation->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+    rgbcurvesConn   = rgbcurves->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+    colortoningConn = colortoning->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
 
-    distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
-    cacorrConn      = cacorr->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
-    vignettingConn  = vignetting->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
-    lcpConn         = lcp->signal_toggled().connect (sigc::bind (sigc::mem_fun (*lens, &Gtk::CheckButton::set_inconsistent), true));
+    distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));
+    cacorrConn      = cacorr->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));
+    vignettingConn  = vignetting->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));
+    lcpConn         = lcp->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));
 
-    coarserotConn   = coarserot->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
-    finerotConn     = finerot->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
-    cropConn        = crop->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
-    resizeConn      = resize->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
-    prsharpeningConn = prsharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
-    perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
-    commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun (*composition, &Gtk::CheckButton::set_inconsistent), true));
+    coarserotConn   = coarserot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    finerotConn     = finerot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    cropConn        = crop->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    resizeConn      = resize->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    prsharpeningConn = prsharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
+    commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 
-    exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun (*meta, &Gtk::CheckButton::set_inconsistent), true));
-    iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun (*meta, &Gtk::CheckButton::set_inconsistent), true));
+    exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
+    iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*meta, &Gtk::CheckButton::set_inconsistent), true));
 
-    raw_methodConn         = raw_method->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_dcb_iterationsConn  = raw_dcb_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_dcb_enhanceConn     = raw_dcb_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_methodConn          = raw_method->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_imagenumConn        = raw_imagenum->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_dcb_iterationsConn  = raw_dcb_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_dcb_enhanceConn     = raw_dcb_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     //raw_all_enhanceConn     = raw_all_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_lmmse_iterationsConn  = raw_lmmse_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun (*raw, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -421,6 +424,7 @@ void PartialPasteDlg::rawToggled ()
 {
 
     raw_methodConn.block (true);
+    raw_imagenumConn.block (true);
     raw_ccStepsConn.block (true);
     raw_dcb_iterationsConn.block (true);
     raw_dcb_enhanceConn.block (true);
@@ -447,6 +451,7 @@ void PartialPasteDlg::rawToggled ()
     raw->set_inconsistent (false);
 
     raw_method->set_active (raw->get_active ());
+    raw_imagenum->set_active (raw->get_active ());
     raw_ccSteps->set_active (raw->get_active ());
     raw_dcb_iterations->set_active (raw->get_active ());
     raw_dcb_enhance->set_active (raw->get_active ());
@@ -471,6 +476,7 @@ void PartialPasteDlg::rawToggled ()
     ff_ClipControl->set_active (raw->get_active ());
 
     raw_methodConn.block (false);
+    raw_imagenumConn.block (false);
     raw_ccStepsConn.block (false);
     raw_dcb_iterationsConn.block (false);
     raw_dcb_enhanceConn.block (false);
@@ -856,6 +862,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!raw_method->get_active ()) {
         filterPE.raw.bayersensor.method   = falsePE.raw.bayersensor.method;
         filterPE.raw.xtranssensor.method  = falsePE.raw.xtranssensor.method;
+    }
+
+    if (!raw_imagenum->get_active ()) {
+        filterPE.raw.bayersensor.imageNum = falsePE.raw.bayersensor.imageNum;
     }
 
     if (!raw_ccSteps->get_active ()) {

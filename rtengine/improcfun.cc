@@ -81,9 +81,9 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
 
     if (!monitorProfile.empty()) {
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
-        monitor = iccStore->getProfile (monitorProfile);
+        monitor = ICCStore::getInstance()->getProfile (monitorProfile);
 #else
-        monitor = iccStore->getProfile ("RT_sRGB");
+        monitor = ICCStore::getInstance()->getProfile ("RT_sRGB");
 #endif
     }
 
@@ -99,7 +99,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
             cmsHPROFILE oprof = nullptr;
 
             if (!settings->printerProfile.empty()) {
-                oprof = iccStore->getProfile(settings->printerProfile);
+                oprof = ICCStore::getInstance()->getProfile(settings->printerProfile);
             }
 
             if (oprof) {
@@ -145,7 +145,7 @@ void ImProcFunctions::updateColorProfiles (const Glib::ustring& monitorProfile, 
 void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const ProcParams &params, LUTu & histogram)
 {
 
-    TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
 
     lumimul[0] = wprof[1][0];
     lumimul[1] = wprof[1][1];
@@ -566,7 +566,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 #endif
         {
             //matrix for current working space
-            TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
             double wip[3][3] = {
                 {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
                 {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
@@ -1298,7 +1298,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             #pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh, nc2,f2,c2, gamu, highlight,pW)
 #endif
             {
-                TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params->icm.working);
+                TMatrix wiprofa = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
                 double wipa[3][3] = {
                     {wiprofa[0][0], wiprofa[0][1], wiprofa[0][2]},
                     {wiprofa[1][0], wiprofa[1][1], wiprofa[1][2]},
@@ -1904,7 +1904,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
 
         //matrix for current working space
-        TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
         const float wip[3][3] = {
             {(float)wiprof[0][0], (float)wiprof[0][1], (float)wiprof[0][2]},
             {(float)wiprof[1][0], (float)wiprof[1][1], (float)wiprof[1][2]},
@@ -2999,8 +2999,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     bool processLCE = params->sh.enabled && shmap && params->sh.localcontrast > 0;
     double lceamount = params->sh.localcontrast / 200.0;
 
-    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
 
     float toxyz[3][3] = {
         {
@@ -3115,8 +3115,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             clutAndWorkingProfilesAreSame = hald_clut->getProfile() == params->icm.working;
 
             if ( !clutAndWorkingProfilesAreSame ) {
-                xyz2clut = iccStore->workingSpaceInverseMatrix( hald_clut->getProfile() );
-                clut2xyz = iccStore->workingSpaceMatrix( hald_clut->getProfile() );
+                xyz2clut = ICCStore::getInstance()->workingSpaceInverseMatrix( hald_clut->getProfile() );
+                clut2xyz = ICCStore::getInstance()->workingSpaceMatrix( hald_clut->getProfile() );
 
 #ifdef __SSE2__
 
@@ -5674,14 +5674,14 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
     const bool gamutLch = settings->gamutLch;
     const float amountchroma = (float) settings->amchroma;
 
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
     double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
     };
 
-    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
     double wp[3][3] = {
         {wprof[0][0], wprof[0][1], wprof[0][2]},
         {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -7065,7 +7065,7 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
             return 0.0;
         }
 
-        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1, 1.0, FALSE);
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1, 1.0, FALSE, 0);
 
         if (!raw) {
             delete thumb;
@@ -7124,7 +7124,7 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
 
 void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace)
 {
-    TMatrix wprof = iccStore->workingSpaceMatrix( workingSpace );
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix( workingSpace );
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
         {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
@@ -7150,7 +7150,7 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
 
 SSEFUNCTION void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace)
 {
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix( workingSpace );
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix( workingSpace );
     const float wip[3][3] = {
         {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
         {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},

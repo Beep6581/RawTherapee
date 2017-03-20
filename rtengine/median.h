@@ -64,6 +64,15 @@ inline vfloat median(std::array<vfloat, 3> array)
 }
 #endif
 
+
+template<typename T>
+inline T median(std::array<T, 4> array)
+{
+    float val1 = std::max(std::min(array[0], array[1]), std::min(array[2], array[3]));
+    float val2 = std::min(std::max(array[0], array[1]), std::max(array[2], array[3]));
+    return (val1 + val2) / 2.f;
+}
+
 template<typename T>
 inline T median(std::array<T, 5> array)
 {
