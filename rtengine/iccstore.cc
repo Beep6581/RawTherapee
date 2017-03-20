@@ -1,12 +1,12 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright(c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
- *(at your option) any later version.
+ *  (at your option) any later version.
  *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -223,7 +223,7 @@ rtengine::ProfileContent::ProfileContent(const Glib::ustring& fileName)
     d[length] = 0;
     fclose(f);
 
-    data.assign(d, length + 1);
+    data.assign(d, length);
     delete[] d;
 }
 
@@ -236,7 +236,7 @@ rtengine::ProfileContent::ProfileContent(cmsHPROFILE hProfile)
         if (bytesNeeded > 0) {
             char* d = new char[bytesNeeded + 1];
             cmsSaveProfileToMem(hProfile, d, &bytesNeeded);
-            data.assign(d, bytesNeeded + 1);
+            data.assign(d, bytesNeeded);
             delete[] d;
         }
     }
@@ -247,7 +247,7 @@ cmsHPROFILE rtengine::ProfileContent::toProfile() const
 
     return
         !data.empty()
-            ? cmsOpenProfileFromMem(data.data(), data.size())
+            ? cmsOpenProfileFromMem(data.c_str(), data.size())
             : nullptr;
 }
 
@@ -690,7 +690,7 @@ cmsHPROFILE rtengine::ICCStore::getXYZProfile() const
 
 cmsHPROFILE rtengine::ICCStore::getsRGBProfile() const
 {
-    return implementation->getXYZProfile();
+    return implementation->getsRGBProfile();
 }
 
 std::vector<Glib::ustring> rtengine::ICCStore::getProfiles(ProfileType type) const
@@ -1025,7 +1025,8 @@ cmsHPROFILE rtengine::ICCStore::createFromMatrix(const double matrix[3][3], bool
     return p;
 }
 
-cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManagementParams &icm, GammaValues &ga) {
+cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManagementParams &icm, GammaValues &ga)
+{
     float p[6]; //primaries
     ga[6] = 0.0;
 
@@ -1121,7 +1122,8 @@ cmsHPROFILE rtengine::ICCStore::createGammaProfile(const procparams::ColorManage
 }
 
 // WARNING: the caller must lock lcmsMutex
-cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams::ColorManagementParams &icm, GammaValues &ga) {
+cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams::ColorManagementParams &icm, GammaValues &ga)
+{
     bool pro = false;
     Glib::ustring outProfile;
     cmsHPROFILE outputProfile = nullptr;
