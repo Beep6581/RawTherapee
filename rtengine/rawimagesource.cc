@@ -704,6 +704,14 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         imheight = maximheight;
     }
 
+    if (fuji) { // zero image to avoid access to uninitialized values in further processing because fuji super-ccd processing is not clean...
+        for (int i = 0; i < image->getHeight(); ++i) {
+            for (int j = 0; j < image->getWidth(); ++j) {
+                image->r(i, j) = image->g(i, j) = image->b(i, j) = 0;
+            }
+        }
+    }
+
     int maxx = this->W, maxy = this->H, skip = pp.getSkip();
 
     // raw clip levels after white balance
