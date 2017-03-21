@@ -1136,7 +1136,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     Gtk::HBox *zoombox = Gtk::manage(new Gtk::HBox());
     rememberZoomPanCheckbutton = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_REMEMBERZOOMPAN")) );
     rememberZoomPanCheckbutton->set_tooltip_text(M("PREFERENCES_REMEMBERZOOMPAN_TOOLTIP"));
-    extendedZoomLevelsCheckbutton = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_EXTENDEDZOOMLEVELS")) );
+    extendedZoomLevelsCheckbutton = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_EXTENDEDZOOMLEVELS") + " (" + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     extendedZoomLevelsCheckbutton->set_tooltip_text(M("PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP"));
     zoombox->set_spacing(10);
     zoombox->pack_start(*rememberZoomPanCheckbutton);

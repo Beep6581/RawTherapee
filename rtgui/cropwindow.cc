@@ -2082,6 +2082,8 @@ void CropWindow::zoomFitCrop ()
         setCropAnchorPosition(centerX, centerY);
         changeZoom (cz, true, centerX, centerY);
         fitZoom = false;
+    } else {
+        zoomFit();
     }
 }
 
