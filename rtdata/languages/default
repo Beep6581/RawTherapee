@@ -1748,6 +1748,18 @@ TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
 TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
+TP_RAW_AMAZE;AMaZE
+TP_RAW_IGV;igv
+TP_RAW_LMMSE;lmmse
+TP_RAW_EAHD;eahd
+TP_RAW_HPHD;hphd
+TP_RAW_VNG4;vng4
+TP_RAW_DCB;dcb
+TP_RAW_AHD;ahd
+TP_RAW_FAST;fast
+TP_RAW_MONO;mono
+TP_RAW_NONE;none (show sensor pattern)
+TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_CROPPEDAREA;Cropped Area
 TP_RESIZE_FITBOX;Bounding Box

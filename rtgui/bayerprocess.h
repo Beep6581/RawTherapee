@@ -25,8 +25,7 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-
-class BayerProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel
+class BayerProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::FrameCountListener
 {
 
 protected:
@@ -88,6 +87,7 @@ public:
     void adjusterChanged (Adjuster* a, double newval);
     void checkBoxToggled (CheckBox* c, CheckValue newval);
     void pixelShiftMotionMethodChanged();
+    void FrameCountChanged(int n, int frameNum);
 #ifdef PIXELSHIFTDEV
     void psMotionCorrectionChanged ();
 #endif

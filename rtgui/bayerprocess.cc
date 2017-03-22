@@ -30,7 +30,7 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     method = Gtk::manage (new MyComboBoxText ());
 
     for( size_t i = 0; i < procparams::RAWParams::BayerSensor::numMethods; i++) {
-        method->append(procparams::RAWParams::BayerSensor::methodstring[i]);
+        method->append(M("TP_RAW_" + Glib::ustring(procparams::RAWParams::BayerSensor::methodstring[i]).uppercase()));
     }
 
     method->set_active(0);
@@ -397,7 +397,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     pixelShiftNonGreenCross2->setValue (pp->raw.bayersensor.pixelShiftNonGreenCross2);
     pixelShiftNonGreenAmaze->setValue (pp->raw.bayersensor.pixelShiftNonGreenAmaze);
     pixelShiftMotion->setValue (pp->raw.bayersensor.pixelShiftMotion);
-    pixelShiftMotionCorrection->setValue  ((int)pp->raw.bayersensor.pixelShiftMotionCorrection);
+    pixelShiftMotionCorrection->set_active  ((int)pp->raw.bayersensor.pixelShiftMotionCorrection);
     if (!batchMode) {
         pixelShiftHoleFill->set_sensitive (pixelShiftAutomatic->getValue () != CheckValue::off && pixelShiftMotionCorrection->get_active_row_number() == 5);
         pixelShiftBlur->set_sensitive(pixelShiftAutomatic->getValue () != CheckValue::off && pixelShiftMotionCorrection->get_active_row_number() == 5);
@@ -850,7 +850,7 @@ void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
 #ifdef PIXELSHIFTDEV
     else if (c == pixelShiftAutomatic) {
         if (!batchMode) {
-            pixelShiftMotion->set_sensitive(!newval != CheckValue::off);
+            pixelShiftMotion->set_sensitive(newval != CheckValue::off);
             pixelShiftEperIso->set_sensitive(newval != CheckValue::off);
             pixelShiftNreadIso->set_sensitive(newval != CheckValue::off);
             pixelShiftPrnu->set_sensitive(newval != CheckValue::off);
@@ -924,4 +924,25 @@ void BayerProcess::pixelShiftMotionMethodChanged ()
     if (listener) {
         listener->panelChanged (EvPixelShiftMotionMethod, pixelShiftMotionMethod->get_active_text());
     }
+}
+
+void BayerProcess::FrameCountChanged(int n, int frameNum)
+{
+    GThreadLock lock;
+    imageNumber->block (true);
+
+    imageNumber->remove_all();
+    imageNumber->append("1");
+    for(int i = 2; i <= std::min(n, 4); ++i) {
+        std::ostringstream entry;
+        entry << i;
+        imageNumber->append(entry.str());
+    }
+    imageNumber->set_active(std::min(frameNum, n - 1));
+    if(n == 1) {
+        imageNumberBox->hide();
+    } else {
+        imageNumberBox->show();
+    }
+    imageNumber->block (false);
 }

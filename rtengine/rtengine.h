@@ -317,6 +317,20 @@ public :
     virtual void WBChanged(double temp, double green) = 0;
 };
 
+class FrameCountListener
+{
+public :
+    virtual ~FrameCountListener() = default;
+    virtual void FrameCountChanged(int n, int frameNum) = 0;
+};
+
+class ImageTypeListener
+{
+public :
+    virtual ~ImageTypeListener() = default;
+    virtual void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans) = 0;
+};
+
 class WaveletListener
 {
 public :
@@ -417,12 +431,14 @@ public:
     virtual void        setHistogramListener    (HistogramListener *l) = 0;
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
+    virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
+    virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;

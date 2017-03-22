@@ -204,6 +204,8 @@ public:
         currFrame = std::min(numFrames - 1, frameNum);
         ri = riFrames[currFrame];
     }
+    int getFrameCount() {return numFrames;}
+
 protected:
     typedef unsigned short ushort;
     void processFalseColorCorrection (Imagefloat* i, const int steps);

@@ -160,6 +160,18 @@ public:
             exp->set_expanded( expanded );
         }
     }
+
+    void hide() {
+        if (exp && !batchMode) {  // conditional hide
+            exp->hide();
+        }
+    }
+
+    void show() {
+        if (exp) {                // always show
+            exp->show();
+        }
+    }
     bool getExpanded ()
     {
         if (exp) {

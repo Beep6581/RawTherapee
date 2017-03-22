@@ -51,6 +51,8 @@ public:
     void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
     ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
 
+    eSensorType getSensorType() const {return ST_NONE;}
+
     bool        isWBProviderReady ()
     {
         return true;
@@ -96,6 +98,8 @@ public:
         return rgbSourceModified;
     }
     void setCurrentFrame(unsigned int frameNum) {}
+    int getFrameCount() {return 1;}
+
 
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) { R = G = B = 0;}
 
