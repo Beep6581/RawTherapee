@@ -1760,6 +1760,8 @@ TP_RAW_FAST;fast
 TP_RAW_MONO;mono
 TP_RAW_NONE;none (show sensor pattern)
 TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
+TP_RAW_3-PASS (BEST);3-pass (best)
+TP_RAW_1-PASS (MEDIUM);1-pass (medium)
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_CROPPEDAREA;Cropped Area
 TP_RESIZE_FITBOX;Bounding Box

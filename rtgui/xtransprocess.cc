@@ -29,7 +29,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     method = Gtk::manage (new MyComboBoxText ());
 
     for( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++) {
-        method->append(procparams::RAWParams::XTransSensor::methodstring[i]);
+        method->append(M("TP_RAW_" + Glib::ustring(procparams::RAWParams::XTransSensor::methodstring[i]).uppercase()));
     }
 
     method->set_active(0);
