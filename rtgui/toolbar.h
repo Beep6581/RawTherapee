@@ -62,6 +62,7 @@ protected:
     ToolBarListener* listener;
     LockablePickerToolListener* pickerListener;
     ToolMode current;
+    bool allowNoTool;
     bool editingMode;  // true if the cursor is being used to remotely edit tool's values
     sigc::connection  handConn;
     sigc::connection  wbConn;
