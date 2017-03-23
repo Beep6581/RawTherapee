@@ -37,8 +37,8 @@
 
 #include "cplx_wavelet_dec.h"
 
-//#define BENCHMARK
-//#include "StopWatch.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 #define cliploc( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 
@@ -48,6 +48,27 @@
 #define CLIPLIG(x) LIM(x,0.f, 99.5f)
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 #define CLIPRET(x) LIM(x,-99.5f, 99.5f)
+
+namespace {
+
+float calcLocalFactor (const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
+{
+//elipse x2/a2 + y2/b2=1
+//transition elipsoidal
+//x==>lox y==>loy
+// a==> dx  b==>dy
+
+    float kelip = dx / dy;
+    float belip = sqrt ((rtengine::SQR ((lox - lcx) / kelip) + rtengine::SQR (loy - lcy))); //determine position ellipse ==> a and b
+    float aelip = belip * kelip;
+    float degrad = aelip / dx;
+    float ap = rtengine::RT_PI / (1.f - ach);
+    float bp = rtengine::RT_PI - ap;
+    return 0.5f * (1.f + xcosf (degrad * ap + bp)); //trigo cos transition
+
+}
+
+}
 
 namespace rtengine
 {
@@ -241,24 +262,6 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
 
 }
 
-inline static float calcLocalFactor (const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
-{
-//elipse x2/a2 + y2/b2=1
-//transition elipsoidal
-//x==>lox y==>loy
-// a==> dx  b==>dy
-
-    float kelip = dx / dy;
-    float belip = sqrt ((SQR ((lox - lcx) / kelip) + SQR (loy - lcy))); //determine position ellipse ==> a and b
-    float aelip = belip * kelip;
-    float degrad = aelip / dx;
-    float ap = rtengine::RT_PI / (1.f - ach);
-    float bp = rtengine::RT_PI - ap;
-    return 0.5f * (1.f + xcosf (degrad * ap + bp)); //trigo cos transition
-
-}
-
-
 static void calcTransition (const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
 {
     // returns the zone (0 = outside selection, 1 = transition zone between outside and inside selection, 2 = inside selection)
@@ -267,40 +270,44 @@ static void calcTransition (const float lox, const float loy, const float ach, c
     zone = 0;
 
     if (lox >= lp.xc && lox < (lp.xc + lp.lx) && loy >= lp.yc && loy < lp.yc + lp.ly) {
-        zone = ( (SQR (lox - lp.xc) / SQR (ach * lp.lx) + SQR (loy - lp.yc) / SQR (ach * lp.ly)) < 1.f) ? 2 : 0;
+        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lx)) + SQR ((loy - lp.yc) / (ach * lp.ly));
+        zone = zoneVal < 1.f ? 2 : 0;
 
         if (!zone) {
-            zone = (((SQR (lox - lp.xc) / SQR (ach * lp.lx) + SQR (loy - lp.yc) / SQR (ach * lp.ly)) > 1.f) && ((SQR (lox - lp.xc) / SQR (lp.lx) + SQR (loy - lp.yc) / SQR (lp.ly)) < 1.f)) ? 1 : 0;
+            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lx)) + SQR ((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone) {
                 localFactor = calcLocalFactor (lox, loy, lp.xc, lp.lx, lp.yc, lp.ly, ach);
             }
         }
     } else if (lox >= lp.xc && lox < lp.xc + lp.lx && loy < lp.yc && loy > lp.yc - lp.lyT) {
-        zone = (SQR (lox - lp.xc) / SQR (ach * lp.lx) + SQR (loy - lp.yc) / SQR (ach * lp.lyT)) < 1.f ? 2 : 0;
+        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lx)) + SQR ((loy - lp.yc) / (ach * lp.lyT));
+        zone = zoneVal < 1.f ? 2 : 0;
 
         if (!zone) {
-            zone = (((SQR (lox - lp.xc) / SQR (ach * lp.lx) + SQR (loy - lp.yc) / SQR (ach * lp.lyT)) > 1.f) && ((SQR (lox - lp.xc) / SQR (lp.lx) + SQR (loy - lp.yc) / SQR (lp.lyT)) < 1.f)) ? 1 : 0;
+            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lx)) + SQR ((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone) {
                 localFactor = calcLocalFactor (lox, loy, lp.xc, lp.lx, lp.yc, lp.lyT, ach);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy <= lp.yc && loy > lp.yc - lp.lyT) {
-        zone = (SQR (lox - lp.xc) / SQR (ach * lp.lxL) + SQR (loy - lp.yc) / SQR (ach * lp.lyT)) < 1.f ? 2 : 0;
+        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lxL)) + SQR ((loy - lp.yc) / (ach * lp.lyT));
+        zone = zoneVal < 1.f ? 2 : 0;
 
         if (!zone) {
-            zone = (((SQR (lox - lp.xc) / SQR (ach * lp.lxL) + SQR (loy - lp.yc) / SQR (ach * lp.lyT)) > 1.f) && ((SQR (lox - lp.xc) / SQR (lp.lxL) + SQR (loy - lp.yc) / SQR (lp.lyT)) < 1.f)) ? 1 : 0;
+            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lxL)) + SQR ((loy - lp.yc) / (lp.lyT))) < 1.f)) ? 1 : 0;
 
             if (zone) {
                 localFactor = calcLocalFactor (lox, loy, lp.xc, lp.lxL, lp.yc, lp.lyT, ach);
             }
         }
     } else if (lox < lp.xc && lox > lp.xc - lp.lxL && loy > lp.yc && loy < lp.yc + lp.ly) {
-        zone = (SQR (lox - lp.xc) / SQR (ach * lp.lxL) + SQR (loy - lp.yc) / SQR (ach * lp.ly)) < 1.f ? 2 : 0;
+        float zoneVal = SQR ((lox - lp.xc) / (ach * lp.lxL)) + SQR ((loy - lp.yc) / (ach * lp.ly));
+        zone = zoneVal < 1.f ? 2 : 0;
 
         if (!zone) {
-            zone = (((SQR (lox - lp.xc) / SQR (ach * lp.lxL) + SQR (loy - lp.yc) / SQR (ach * lp.ly)) > 1.f) && ((SQR (lox - lp.xc) / SQR (lp.lxL) + SQR (loy - lp.yc) / SQR (lp.ly)) < 1.f)) ? 1 : 0;
+            zone = (zoneVal > 1.f && ((SQR ((lox - lp.xc) / (lp.lxL)) + SQR ((loy - lp.yc) / (lp.ly))) < 1.f)) ? 1 : 0;
 
             if (zone) {
                 localFactor = calcLocalFactor (lox, loy, lp.xc, lp.lxL, lp.yc, lp.ly, ach);
@@ -1088,7 +1095,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, float **deltE, LabImage * original, LabImage * transformed, int cx, int cy)
 {
 //local BLUR
-    // BENCHFUN
+    BENCHFUN
     const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
     float reducac;
@@ -1132,6 +1139,24 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 #endif
 
         for (int y = 0; y < transformed->H; y++) {
+            int loy = cy + y;
+            float loyf = loy;
+
+            const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+            if(isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                for (int x = 0; x < transformed->W; x++) {
+                    transformed->L[y][x] = original->L[y][x];
+                }
+                if (!lp.actsp) {
+                    for (int x = 0; x < transformed->W; x++) {
+                        transformed->a[y][x] = original->a[y][x];
+                        transformed->b[y][x] = original->b[y][x];
+                    }
+                }
+                continue;
+            }
+
 #ifdef __SSE2__
             int i = 0;
 
@@ -1146,13 +1171,24 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 atan2Buffer[i] = xatan2f (original->b[y][i], original->a[y][i]);
                 sqrtBuffer[i] = sqrt (SQR (original->b[y][i]) + SQR (original->a[y][i])) / 327.68f;
             }
-
 #endif
 
-            int loy = cy + y;
 
-            for (int x = 0; x < transformed->W; x++) {
-                int lox = cx + x;
+
+            for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
+                int zone = 0;
+                float localFactor = 1.f;
+                calcTransition (lox, loy, ach, lp, zone, localFactor);
+
+                if(zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                    transformed->L[y][x] = original->L[y][x];
+
+                    if (!lp.actsp) {
+                        transformed->a[y][x] = original->a[y][x];
+                        transformed->b[y][x] = original->b[y][x];
+                    }
+                    continue;
+                }
 #ifdef __SSE2__
                 float rhue = atan2Buffer[x];
                 float rchro = sqrtBuffer[x];
@@ -1160,9 +1196,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 float rhue = xatan2f (original->b[y][x], original->a[y][x]);
                 float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
 #endif
-                int zone;
-                float localFactor = 1.f;
-                calcTransition (lox, loy, ach, lp, zone, localFactor);
+
                 //prepare shape detection
                 float khu = 0.f;
                 float kch = 1.f;
@@ -1270,16 +1304,6 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 int begy = int (lp.yc - lp.lyT);
 
                 switch (zone) {
-                    case 0: { // outside selection and outside transition zone => no effect, keep original values
-                        transformed->L[y][x] = original->L[y][x];
-
-                        if (!lp.actsp) {
-                            transformed->a[y][x] = original->a[y][x];
-                            transformed->b[y][x] = original->b[y][x];
-                        }
-
-                        break;
-                    }
 
                     case 1: { // inside transition zone
                         float factorx = localFactor;
@@ -3776,24 +3800,24 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufgb->b[ir][jr] = 0.f;
                     }
 
+                int yStart = lp.yc - lp.lyT - cy;
+                int yEnd = lp.yc + lp.ly - cy;
+                int xStart = lp.xc - lp.lxL - cx;
+                int xEnd = lp.xc + lp.lx - cx;
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
-
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                            bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                        }
+                for (int y = yStart; y < yEnd ; y++) {
+                    int loy = cy + y;
+                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
+                        bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                        bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
                     }
-
+                }
                 tmp1 = new LabImage (bfw, bfh);
 #ifdef _OPENMP
                 #pragma omp parallel
@@ -3804,7 +3828,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     gaussianBlur (bufgb->b, tmp1->b, bfw, bfh, radius);
 
                 }
-
 
             } else {
                 tmp1 = new LabImage (transformed->W, transformed->H);;
