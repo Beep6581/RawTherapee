@@ -1270,8 +1270,8 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                         }
                     }
                 }
-                int begx = lp.xc - lp.lxL);
-                int begy = lp.yc - lp.lyT);
+                int begx = lp.xc - lp.lxL;
+                int begy = lp.yc - lp.lyT;
 
                 switch (zone) {
 
