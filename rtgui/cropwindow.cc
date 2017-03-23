@@ -34,39 +34,6 @@
 
 using namespace rtengine;
 
-struct ZoomStep {
-    Glib::ustring label;
-    double zoom;
-    int czoom;
-};
-
-ZoomStep zoomSteps[] = {
-    {"  1%",  0.01,    100},
-    {"  2%",  0.02,    50},
-    {"  5%",  0.05,    20},
-    {"6.7%",  1.0 / 15.0, 15},
-    {"  8%",  1.0 / 12.0, 12},
-    {" 10%",  0.1,     10},
-    {"12.5%", 0.125,   8},
-    {" 14%",  1.0 / 7.0, 7},
-    {"16.6%", 1.0 / 6.0, 6},
-    {" 20%",  0.2,     5},
-    {" 25%",  0.25,    4},
-    {" 33%",  1.0 / 3.0, 3},
-    {" 50%",  0.5,     2},
-    {"100%",  1.0,     1000},
-    {"200%",  2.0,     2000},
-    {"300%",  3.0,     3000},
-    {"400%",  4.0,     4000},
-    {"500%",  5.0,     5000},
-    {"600%",  6.0,     6000},
-    {"700%",  7.0,     7000},
-    {"800%",  8.0,     8000},
-    {"1600%", 16.0,    16000}
-};
-#define MAXZOOMSTEPS 21
-#define ZOOM11INDEX  13
-
 CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
     : ObjectMOBuffer(parent), state(SNormal), press_x(0), press_y(0), action_x(0), action_y(0), pickedObject(-1), pickModifierKey(0), rot_deg(0), onResizeArea(false), deleted(false),
       fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_), hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
@@ -75,6 +42,8 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
       imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(nullptr),
       pmlistener(nullptr), pmhlistener(nullptr), observedCropWin(nullptr)
 {
+    initZoomSteps();
+    
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
@@ -119,6 +88,29 @@ CropWindow::~CropWindow ()
     for (auto colorPicker : colorPickers) {
         delete colorPicker;
     }
+}
+
+
+void CropWindow::initZoomSteps()
+{
+    zoomSteps.push_back(ZoomStep("  1%", 0.01, 999, true));
+    zoomSteps.push_back(ZoomStep("  2%", 0.02, 500, true));
+    zoomSteps.push_back(ZoomStep("  5%", 0.05, 200, true));
+    zoomSteps.push_back(ZoomStep("  6%", 1.0/15.0, 150, true));
+    zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120, true));
+    char lbl[64];
+    for (int s = 100; s >= 11; --s) {
+        float z = 10./float(s);
+        sprintf(lbl, "% 2d%%", int(z * 100));
+        bool is_major = (s == s/10 * 10);
+        zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
+    }
+    zoom11index = zoomSteps.size();
+    for (int s = 1; s <= 8; ++s) {
+        sprintf(lbl, "%d00%%", s);
+        zoomSteps.push_back(ZoomStep(lbl, s, s * 1000, true));
+    }
+    zoomSteps.push_back(ZoomStep("1600%", 16, 16000, true));
 }
 
 void CropWindow::enable()
@@ -317,7 +309,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                     state = SNormal;
                     zoomVersion = exposeVersion;
                     screenCoordToImage (x, y, action_x, action_y);
-                    changeZoom (ZOOM11INDEX, true, action_x, action_y);
+                    changeZoom (zoom11index, true, action_x, action_y);
                     fitZoom = false;
                 } else {
                     zoomFit ();
@@ -1940,7 +1932,11 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY)
         }
     }
 
-    changeZoom (cropZoom + 1, true, x, y);
+    int z = cropZoom + 1;
+    while (z < int(zoomSteps.size()) && !zoomSteps[z].is_major) {
+        ++z;
+    }
+    changeZoom (z, true, x, y);
     fitZoom = false;
 }
 
@@ -1953,10 +1949,16 @@ void CropWindow::zoomOut (bool toCursor, int cursorX, int cursorY)
     if (toCursor) {
         x = cursorX;
         y = cursorY;
+    } else {
+        screenCoordToImage(xpos + imgX + imgW / 2, ypos + imgY + imgH / 2, x, y);
     }
 
     zoomVersion = exposeVersion;
-    changeZoom (cropZoom - 1, true, x, y);
+    int z = cropZoom - 1;
+    while (z >= 0 && !zoomSteps[z].is_major) {
+        --z;
+    }
+    changeZoom (z, true, x, y);
     fitZoom = false;
 }
 
@@ -1978,9 +1980,11 @@ void CropWindow::zoom11 ()
         }
 
         zoomVersion = exposeVersion;
+    } else {
+        screenCoordToImage(xpos + imgX + imgW / 2, ypos + imgY + imgH / 2, x, y);
     }
 
-    changeZoom (ZOOM11INDEX, true, x, y);
+    changeZoom (zoom11index, true, x, y);
     fitZoom = false;
 }
 
@@ -1997,17 +2001,17 @@ bool CropWindow::isMinZoom ()
 
 bool CropWindow::isMaxZoom ()
 {
-    return cropZoom >= MAXZOOMSTEPS;
+    return cropZoom >= int(zoomSteps.size())-1;
 }
 
 void CropWindow::setZoom (double zoom)
 {
-    int cz = MAXZOOMSTEPS;
+    int cz = int(zoomSteps.size())-1;
 
     if (zoom < zoomSteps[0].zoom) {
         cz = 0;
     } else
-        for (int i = 0; i < MAXZOOMSTEPS; i++)
+        for (int i = 0; i < int(zoomSteps.size())-1; i++)
             if (zoomSteps[i].zoom <= zoom && zoomSteps[i + 1].zoom > zoom) {
                 cz = i;
                 break;
@@ -2019,12 +2023,12 @@ void CropWindow::setZoom (double zoom)
 double CropWindow::getZoomFitVal ()
 {
     double z = cropHandler.getFitZoom ();
-    int cz = MAXZOOMSTEPS;
+    int cz = int(zoomSteps.size())-1;
 
     if (z < zoomSteps[0].zoom) {
         cz = 0;
     } else
-        for (int i = 0; i < MAXZOOMSTEPS; i++)
+        for (int i = 0; i < int(zoomSteps.size())-1; i++)
             if (zoomSteps[i].zoom <= z && zoomSteps[i + 1].zoom > z) {
                 cz = i;
                 break;
@@ -2038,12 +2042,12 @@ void CropWindow::zoomFit ()
 {
 
     double z = cropHandler.getFitZoom ();
-    int cz = MAXZOOMSTEPS;
+    int cz = int(zoomSteps.size())-1;
 
     if (z < zoomSteps[0].zoom) {
         cz = 0;
     } else
-        for (int i = 0; i < MAXZOOMSTEPS; i++)
+        for (int i = 0; i < int(zoomSteps.size())-1; i++)
             if (zoomSteps[i].zoom <= z && zoomSteps[i + 1].zoom > z) {
                 cz = i;
                 break;
@@ -2058,12 +2062,12 @@ void CropWindow::zoomFitCrop ()
 {
     if(cropHandler.cropParams.enabled) {
         double z = cropHandler.getFitCropZoom ();
-        int cz = MAXZOOMSTEPS;
+        int cz = int(zoomSteps.size())-1;
 
         if (z < zoomSteps[0].zoom) {
             cz = 0;
         } else
-            for (int i = 0; i < MAXZOOMSTEPS; i++)
+            for (int i = 0; i < int(zoomSteps.size())-1; i++)
                 if (zoomSteps[i].zoom <= z && zoomSteps[i + 1].zoom > z) {
                     cz = i;
                     break;
@@ -2076,6 +2080,8 @@ void CropWindow::zoomFitCrop ()
         setCropAnchorPosition(centerX, centerY);
         changeZoom (cz, true, centerX, centerY);
         fitZoom = false;
+    } else {
+        zoomFit();
     }
 }
 
@@ -2138,8 +2144,8 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery)
 
     if (zoom < 0) {
         zoom = 0;
-    } else if (zoom > MAXZOOMSTEPS) {
-        zoom = MAXZOOMSTEPS;
+    } else if (zoom > int(zoomSteps.size())-1) {
+        zoom = int(zoomSteps.size())-1;
     }
 
     cropZoom = zoom;
