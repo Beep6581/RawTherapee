@@ -121,7 +121,6 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
 
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
-    Gtk::CheckButton* extendedZoomLevelsCheckbutton;
 
     Gtk::ComboBoxText* view;
     Gtk::ComboBoxText* grey;
