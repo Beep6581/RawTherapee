@@ -30,9 +30,8 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     method = Gtk::manage (new MyComboBoxText ());
 
     for( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++) {
-        std::string langKey(procparams::RAWParams::XTransSensor::methodstring[i]);
-        static const std::regex what ("[\\-() ]");
-        langKey = std::regex_replace (langKey, what, "");
+        static const std::regex what ("[() -]");
+        const std::string langKey = std::regex_replace (procparams::RAWParams::XTransSensor::methodstring[i], what, "");
         method->append(M("TP_RAW_" + Glib::ustring(langKey).uppercase()));
     }
 
