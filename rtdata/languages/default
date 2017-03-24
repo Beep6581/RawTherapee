@@ -1707,14 +1707,14 @@ TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, bu
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Sub-image
-TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Sensitivity). Use this button to select the sub-image.\n\nThe last sub-image will be used if you select a value beyond the real sub-image count.
+TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
 TP_RAW_MONO;Mono
 TP_RAW_NONE;None (Shows sensor pattern)
-TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
+TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
