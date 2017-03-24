@@ -132,16 +132,16 @@ ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/mime
 # gtk3 themes
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
-# Adwaita icons (Do Retina displays require higher resolution icons?)
+# Adwaita icons
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
 for f in "${iconfolders[@]}"; do ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/"$f"; done
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${GTK_PREFIX}"/bin/gtk-update-icon-cache-3.0 "${RESOURCES}"/share/icons/Adwaita
 # fontconfig files (X11 backend only)
-if otool -L "${EXECUTABLE}" | grep -sq 'libgtk-x11-2.0'; then
-    message "Installing fontconfig files (Your library is X11 backend. 'FONTCONFIG_PATH' will be set by executable loader.)"
-    cp -RL "${GTK_PREFIX}"/etc/fonts "${ETC}"
-fi
+# if otool -L "${EXECUTABLE}" | grep -sq 'libgtk-x11-2.0'; then
+#     message "Installing fontconfig files (Your library is X11 backend. 'FONTCONFIG_PATH' will be set by executable loader.)"
+#     cp -RL "${GTK_PREFIX}"/etc/fonts "${ETC}"
+# fi
 
 
 
