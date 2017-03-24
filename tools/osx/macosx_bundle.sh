@@ -1,17 +1,26 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Required variables
-# ------------------
-# these are very important variables. Must be set into rtdata/CMakeLists.txt!
+# Required variables, must be set in rtdata/CMakeLists.txt
 # - PROJECT_NAME
-# - PROJECT_SOURCE_DIR
 # - PROJECT_VERSION (if without git)
+# - PROJECT_SOURCE_DIR
 # - CMAKE_BUILD_TYPE
 # - PROC_BIT_DEPTH
 # - GTK_PREFIX
 
-function message {
-    printf '\e[35m-- %s\e[m\n' "$*"
+# Formatting
+fNormal="$(tput sgr0)"
+fBold="$(tput bold)"
+# Colors depend upon the user's terminal emulator color scheme - what is readable for you may be not readable for someone else.
+fMagenta="$(tput setaf 5)"
+fRed="$(tput setaf 1)"
+
+function msg {
+    printf "\n${fBold}-- %s${fNormal}\n" "${@}"
+}
+
+function msgError {
+    printf "\n${fBold}Error:${fNormal}\n%s\n" "${@}"
 }
 
 function GetDependencies {
@@ -25,14 +34,14 @@ function CheckLink {
     done
 }
 
-# source check
-if test ! -d "${CMAKE_BUILD_TYPE}"; then
-    printf "\e[31m${PWD}/${CMAKE_BUILD_TYPE} directory is not found. Please execute 'make install' first.\e[m\n"
+# Source check
+if [[ ! -d "${CMAKE_BUILD_TYPE}" ]]; then
+    msgError "${PWD}/${CMAKE_BUILD_TYPE} folder does not exist. Please execute 'make install' first."
     exit 1
 fi
 
-# update project version
-if test -x "$(which git)" -a -d "${PROJECT_SOURCE_DIR}/.git"; then
+# Update project version
+if [[ -x "$(which git)" && -d "${PROJECT_SOURCE_DIR}/.git" ]]; then
     ### This section is copied from tools/generateReleaseInfo
     # Get version description.
     # Depending on whether you checked out a branch (dev) or a tag (release),
@@ -62,10 +71,8 @@ if test -x "$(which git)" -a -d "${PROJECT_SOURCE_DIR}/.git"; then
 
 fi
 
-# if not specify CMAKE_OSX_DEPLOYMENT_TARGET when compiling,
-# 'MINIMUM_VERSION' will be used host OS X version.
 MINIMUM_SYSTEM_VERSION="$(otool -l "${CMAKE_BUILD_TYPE}"/MacOS/rawtherapee | grep -A2 'LC_VERSION_MIN_MACOSX' | awk '$1 ~ /version/ { printf $2 }')"
-if test ! -n "${MINIMUM_SYSTEM_VERSION}"; then
+if [[ -z "${MINIMUM_SYSTEM_VERSION}" ]]; then
     MINIMUM_SYSTEM_VERSION="$(sw_vers -productVersion | cut -d. -f-2)"
 fi
 
@@ -85,132 +92,132 @@ GTK_PREFIX:             ${GTK_PREFIX}
 PWD:                    ${PWD}
 __EOS__
 
-APP="${PROJECT_NAME}".app
-CONTENTS="${APP}"/Contents
-RESOURCES="${CONTENTS}"/Resources
-MACOS="${CONTENTS}"/MacOS
-LIB="${CONTENTS}"/Frameworks
-ETC="${RESOURCES}"/etc
-EXECUTABLE="${MACOS}"/rawtherapee
+APP="${PROJECT_NAME}.app"
+CONTENTS="${APP}/Contents"
+RESOURCES="${CONTENTS}/Resources"
+MACOS="${CONTENTS}/MacOS"
+LIB="${CONTENTS}/Frameworks"
+ETC="${RESOURCES}/etc"
+EXECUTABLE="${MACOS}/rawtherapee"
 
-message "Removing old files"
+msg "Removing old files:"
 rm -rf "${APP}" "${PROJECT_NAME}_*.dmg"
 
-message "Creating bundle container"
+msg "Creating bundle container:"
 install -d  "${RESOURCES}" \
-"${MACOS}" \
-"${LIB}" \
-"${ETC}"
+    "${MACOS}" \
+    "${LIB}" \
+    "${ETC}"
 
-message "Copying release files"
-ditto "${CMAKE_BUILD_TYPE}"/MacOS "${MACOS}"
-ditto "${CMAKE_BUILD_TYPE}"/Resources "${RESOURCES}"
+msg "Copying release files:"
+ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
+ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
-message "Copying dependencies from ${GTK_PREFIX}"
+msg "Copying dependencies from ${GTK_PREFIX}:"
 CheckLink "${EXECUTABLE}"
 
-message "Copying library modules from ${GTK_PREFIX}"
-ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/gdk-pixbuf-2.0
-ditto --arch "${arch}" {"${GTK_PREFIX}"/lib,"${LIB}"}/gtk-3.0
+msg "Copying library modules from ${GTK_PREFIX}:"
+ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
+ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
 
-message "Removing static libraries and cache files"
+msg "Removing static libraries and cache files:"
 find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read; do rm "${REPLY}"; done
 
-message "Copying configuration files from ${GTK_PREFIX}"
-install -d "${ETC}"/gtk-3.0
-cp "${GTK_PREFIX}"/etc/gtk-3.0/im-multipress.conf "${ETC}"/gtk-3.0
-"${GTK_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
-"${GTK_PREFIX}"/bin/gtk-query-immodules-3.0  "${LIB}"/gtk-3.0/*/immodules/*.so      > "${ETC}"/gtk-3.0/gtk.immodules
-sed -i "" -e "s|${PWD}|/tmp|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders \
-"${ETC}"/gtk-3.0/gtk.immodules
+msg "Copying configuration files from ${GTK_PREFIX}:"
+install -d "${ETC}/gtk-3.0"
+cp "${GTK_PREFIX}/etc/gtk-3.0/im-multipress.conf" "${ETC}/gtk-3.0"
+"${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
+"${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/gtk-3.0/*/immodules/*.so      > "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|${PWD}|/tmp|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
-"${GTK_PREFIX}"/bin/glib-compile-schemas "${RESOURCES}"/share/glib-2.0/schemas
+"${GTK_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
-message "Copying shared files from ${GTK_PREFIX}"
+msg "Copying shared files from ${GTK_PREFIX}:"
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/mime
-# gtk3 themes
+# GTK3 themes
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
 # Adwaita icons
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
-for f in "${iconfolders[@]}"; do ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/"$f"; done
+for f in "${iconfolders[@]}"; do
+    ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/"$f"
+done
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
-"${GTK_PREFIX}"/bin/gtk-update-icon-cache-3.0 "${RESOURCES}"/share/icons/Adwaita
+"${GTK_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
+
+### Pending deletion:
 # fontconfig files (X11 backend only)
 # if otool -L "${EXECUTABLE}" | grep -sq 'libgtk-x11-2.0'; then
-#     message "Installing fontconfig files (Your library is X11 backend. 'FONTCONFIG_PATH' will be set by executable loader.)"
-#     cp -RL "${GTK_PREFIX}"/etc/fonts "${ETC}"
+#     msg "Installing fontconfig files (Using X11 backend. FONTCONFIG_PATH will be set by executable loader.)"
+#     cp -RL "${GTK_PREFIX}/etc/fonts" "${ETC}"
 # fi
 
-
-
-# install names
+# Install names
 find -E "${MACOS}" -type f -regex '.*/(rawtherapee|.*\.(dylib|so))' | while read x; do
-    message "Modifying install names: ${x}"
+    msg "Modifying install names: ${x}"
     {
         # id
-    case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
-    # names
-    GetDependencies "${x}" | while read y; do
-        echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
-    done
-} | bash -v
+        case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
+        # names
+        GetDependencies "${x}" | while read y; do
+            echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
+        done
+    } | bash -v
 done
 
-message "Registering @loader_path into the executable"
+msg "Registering @loader_path into the executable:"
 echo "   install_name_tool -add_rpath @loader_path/lib '${EXECUTABLE}'" | bash -v
 
+msg "Installing required application bundle files:"
+PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
 
-
-message "Installing required application bundle files"
-PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}"/tools/osx
-# executable loader
-# note: executable is renamed to 'rawtherapee-bin'.
-mv "${MACOS}"/rawtherapee{,-bin}
-install -m 0755 "${PROJECT_SOURCE_DATA_DIR}"/executable_loader.in "${MACOS}"/rawtherapee
-# app bundle resources
-cp "${PROJECT_SOURCE_DATA_DIR}"/{rawtherapee,profile}.icns "${RESOURCES}"
-cp "${PROJECT_SOURCE_DATA_DIR}"/PkgInfo "${CONTENTS}"
-install -m 0644 "${PROJECT_SOURCE_DATA_DIR}"/Info.plist.in "${CONTENTS}"/Info.plist
+# Executable loader
+# Note: executable is renamed to 'rawtherapee-bin'.
+mv "${MACOS}/rawtherapee" "${MACOS}/rawtherapee-bin"
+install -m 0755 "${PROJECT_SOURCE_DATA_DIR}/executable_loader.in" "${MACOS}/rawtherapee"
+# App bundle resources
+cp "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
+cp "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
+install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
 sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
 s|@shortVersion@|${PROJECT_VERSION}|
 s|@arch@|${arch}|" \
-"${CONTENTS}"/Info.plist
-plutil -convert binary1 "${CONTENTS}"/Info.plist
+    "${CONTENTS}/Info.plist"
+plutil -convert binary1 "${CONTENTS}/Info.plist"
 
 
 
 function CreateDmg {
-    local srcdir="$(mktemp -dt $$)"
+    local srcDir="$(mktemp -dt $$)"
 
-    message "Preparing disk image sources at ${srcdir}"
-    cp -R "${APP}" "${srcdir}"
-    cp AboutThisBuild.txt "${srcdir}"
-    ln -s /Applications "${srcdir}"
+    msg "Preparing disk image sources at ${srcDir}:"
+    cp -R "${APP}" "${srcDir}"
+    cp AboutThisBuild.txt "${srcDir}"
+    ln -s /Applications "${srcDir}"
 
-    # web bookmarks
+    # Web bookmarks
     function CreateWebloc {
-        defaults write "${srcdir}/$1" URL "$2"
-        mv "${srcdir}/$1".{plist,webloc}
+        defaults write "${srcDir}/$1" URL "$2"
+        mv "${srcDir}/$1".{plist,webloc}
     }
-    CreateWebloc 'RawTherapee Blog' 'http://www.rawtherapee.com'
-    CreateWebloc 'Online Manual'    'http://rawpedia.rawtherapee.com/'
+    CreateWebloc 'Website' 'http://www.rawtherapee.com/'
+    CreateWebloc 'Manual'  'http://rawpedia.rawtherapee.com/'
 
-    # disk image name
+    # Disk image name
     dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
-    if ! echo "${CMAKE_BUILD_TYPE}" | grep -sqi "release"; then
-        dmg_name="${dmg_name}_$(echo ${CMAKE_BUILD_TYPE} | tr '[:upper:]' '[:lower:]')"
+    if [[ ${CMAKE_BUILD_TYPE,,} != release ]]; then
+        dmg_name="${dmg_name}_${CMAKE_BUILD_TYPE,,}"
     fi
 
-    message "Creating disk image"
-    hdiutil create -format UDBZ -srcdir "${srcdir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}".dmg
+    msg "Creating disk image:"
+    hdiutil create -format UDBZ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
 
-    # zip .dmg for re-distribution
+    # Zip disk image for redistribution
     zip "${dmg_name}.zip" "${dmg_name}.dmg" AboutThisBuild.txt
     rm "${dmg_name}.dmg"
 
-    message "Removing disk image caches"
-    rm -rf "${srcdir}"
+    msg "Removing disk image caches:"
+    rm -rf "${srcDir}"
 }
 CreateDmg
