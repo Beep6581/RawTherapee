@@ -4,9 +4,9 @@ cd "$(dirname "$0")" || exit 1
 
 cwd="$(pwd)"
 app="${cwd%/Contents/*}"
-etc="${cwd}/etc"
 lib="${app}/Contents/Frameworks"
 resources="${app}/Contents/Resources"
+etc="${resources}"/etc
 
 ### Pending deletion:
 # See https://github.com/Beep6581/RawTherapee/issues/1779
