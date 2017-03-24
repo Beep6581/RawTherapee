@@ -206,8 +206,9 @@ function CreateDmg {
 
     # Disk image name
     dmg_name="${PROJECT_NAME// /_}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}"
-    if [[ ${CMAKE_BUILD_TYPE,,} != release ]]; then
-        dmg_name="${dmg_name}_${CMAKE_BUILD_TYPE,,}"
+    lower_build_type="$(tr '[:upper:]' '[:lower:]' <<< "$CMAKE_BUILD_TYPE")"
+    if [[ ${lower_build_type} != release ]]; then
+        dmg_name="${dmg_name}_${lower_build_type}"
     fi
 
     msg "Creating disk image:"
