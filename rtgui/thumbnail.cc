@@ -238,8 +238,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         if (!err) {
             loadProcParams();
         }
-    } else if (create &&
-               defProf != DEFPROFILE_DYNAMIC && defProf != DEFPROFILE_INTERNAL){
+    } else if (create && defProf != DEFPROFILE_DYNAMIC) {
         const PartialProfile *p = profileStore.getProfile(defProf);
         if (p && !p->pparams->save(outFName)) {
             loadProcParams();
