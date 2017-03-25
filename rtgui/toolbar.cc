@@ -82,6 +82,7 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr)
 
     handTool->set_active (true);
     current = TMHand;
+    allowNoTool = false;
 
     handConn = handTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::hand_pressed));
     wbConn   = wbTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::wb_pressed));
@@ -221,25 +222,29 @@ void ToolBar::hand_pressed ()
             listener->editModeSwitchedOff ();
         }
     }
-    if (current != TMHand) {
-        if (colPickerTool) {
-            colPickerTool->set_active(false);
-        }
-        if (wbTool) {
-            wbTool->set_active (false);
-        }
 
-        cropTool->set_active (false);
-        straTool->set_active (false);
-        current = TMHand;
+    if (colPickerTool) {
+        colPickerTool->set_active(false);
+    }
+    if (wbTool) {
+        wbTool->set_active (false);
     }
 
+    cropTool->set_active (false);
+    straTool->set_active (false);
     handTool->set_active (true);
+
+    if (current != TMHand) {
+        current = TMHand;
+    } else if (allowNoTool) {
+        current = TMNone;
+        handTool->set_active(false);
+    }
 
     }
 
     if (listener) {
-        listener->toolSelected (TMHand);
+        listener->toolSelected (current);
     }
 }
 
@@ -366,32 +371,35 @@ void ToolBar::crop_pressed ()
     ConnectionBlocker cropBlocker(cropConn);
     ConnectionBlocker wbWasBlocked(wbTool, wbConn), cpWasBlocked(colPickerTool, cpConn);
 
-    if (current != TMCropSelect) {
-        if (editingMode) {
-            stopEditMode();
-            if (listener) {
-                listener->editModeSwitchedOff ();
-            }
+    if (editingMode) {
+        stopEditMode();
+        if (listener) {
+            listener->editModeSwitchedOff ();
         }
-        handTool->set_active (false);
-        if (colPickerTool) {
-            colPickerTool->set_active(false);
-        }
-        if (wbTool) {
-            wbTool->set_active (false);
-        }
-
-        straTool->set_active (false);
-        current = TMCropSelect;
+    }
+    handTool->set_active (false);
+    if (colPickerTool) {
+        colPickerTool->set_active(false);
+    }
+    if (wbTool) {
+        wbTool->set_active (false);
     }
 
+    straTool->set_active (false);
     cropTool->set_active (true);
-    cropTool->grab_focus ();
+
+    if (current != TMCropSelect) {
+        current = TMCropSelect;
+        cropTool->grab_focus ();
+    } else if (allowNoTool) {
+        current = TMNone;
+        cropTool->set_active(false);
+    }
 
     }
 
     if (listener) {
-        listener->toolSelected (TMCropSelect);
+        listener->toolSelected (current);
     }
 }
 
@@ -403,31 +411,34 @@ void ToolBar::stra_pressed ()
     ConnectionBlocker cropBlocker(cropConn);
     ConnectionBlocker wbWasBlocked(wbTool, wbConn), cpWasBlocked(colPickerTool, cpConn);
 
-    if (current != TMStraighten) {
-        if (editingMode) {
-            stopEditMode();
-            if (listener) {
-                listener->editModeSwitchedOff ();
-            }
+    if (editingMode) {
+        stopEditMode();
+        if (listener) {
+            listener->editModeSwitchedOff ();
         }
-        handTool->set_active (false);
-        if (colPickerTool) {
-            colPickerTool->set_active(false);
-        }
-        if (wbTool) {
-            wbTool->set_active (false);
-        }
-
-        cropTool->set_active (false);
-        current = TMStraighten;
+    }
+    handTool->set_active (false);
+    if (colPickerTool) {
+        colPickerTool->set_active(false);
+    }
+    if (wbTool) {
+        wbTool->set_active (false);
     }
 
+    cropTool->set_active (false);
     straTool->set_active (true);
+
+    if (current != TMStraighten) {
+        current = TMStraighten;
+    } else if (allowNoTool) {
+        current = TMNone;
+        straTool->set_active(false);
+    }
 
     }
 
     if (listener) {
-        listener->toolSelected (TMStraighten);
+        listener->toolSelected (current);
     }
 }
 
@@ -483,6 +494,21 @@ void ToolBar::setBatchMode()
         cpConn.disconnect();
         removeIfThere(this, colPickerTool, false);
         colPickerTool = nullptr;
+    }
+
+    allowNoTool = true;
+    switch (current) {
+    case TMHand:
+        hand_pressed();
+        break;
+    case TMCropSelect:
+        crop_pressed();
+        break;
+    case TMStraighten:
+        stra_pressed();
+        break;
+    default:
+        break;
     }
 }
 

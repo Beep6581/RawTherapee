@@ -317,6 +317,20 @@ public :
     virtual void WBChanged(double temp, double green) = 0;
 };
 
+class FrameCountListener
+{
+public :
+    virtual ~FrameCountListener() = default;
+    virtual void FrameCountChanged(int n, int frameNum) = 0;
+};
+
+class ImageTypeListener
+{
+public :
+    virtual ~ImageTypeListener() = default;
+    virtual void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans) = 0;
+};
+
 class WaveletListener
 {
 public :
@@ -417,12 +431,14 @@ public:
     virtual void        setHistogramListener    (HistogramListener *l) = 0;
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
+    virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
+    virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;
@@ -443,18 +459,12 @@ public:
   * @brief Initializes the RT engine
   * @param s is a struct of basic settings
   * @param baseDir base directory of RT's installation dir
-  * @param userSettingsDir RT's base directory in the user's settings dir */
-int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir);
+  * @param userSettingsDir RT's base directory in the user's settings dir
+  * @param loadAll if false, don't load the various dependencies (profiles, HALDClut files, ...), they'll be loaded from disk each time they'll be used (launching time improvement) */
+int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll = true);
 
 /** Cleanup the RT engine (static variables) */
 void cleanup ();
-
-/** Returns the available working profile names
-  * @return a vector of the available working profile names */
-std::vector<Glib::ustring> getWorkingProfiles ();
-/** Returns the available output gammas
-  * @return a vector of the available gamma names */
-std::vector<Glib::ustring> getGamma ();
 
 /** This class  holds all the necessary informations to accomplish the full processing of the image */
 class ProcessingJob

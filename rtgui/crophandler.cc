@@ -30,7 +30,7 @@
 using namespace rtengine;
 
 CropHandler::CropHandler ()
-    : zoom(10), ww(0), wh(0), imx(-1), imy(-1), imw(0), imh(0), cax(-1), cay(-1),
+    : zoom(100), ww(0), wh(0), imx(-1), imy(-1), imw(0), imh(0), cax(-1), cay(-1),
       cx(0), cy(0), cw(0), ch(0), cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
       cropimg(nullptr), cropimgtrue(nullptr), cropimg_width(0), cropimg_height(0),
       cix(0), ciy(0), ciw(0), cih(0), cis(1),
@@ -145,8 +145,8 @@ void CropHandler::setZoom (int z, int centerx, int centery)
     assert (ipc);
 
     int oldZoom = zoom;
-    float oldScale = zoom >= 1000 ? float(zoom / 1000) : 1.f / float(zoom);
-    float newScale = z >= 1000 ? float(z / 1000) : 1.f / float(z);
+    float oldScale = zoom >= 1000 ? float(zoom / 1000) : 10.f / float(zoom);
+    float newScale = z >= 1000 ? float(z / 1000) : 10.f / float(z);
 
     int oldcax = cax;
     int oldcay = cay;
@@ -176,8 +176,8 @@ void CropHandler::setZoom (int z, int centerx, int centery)
         cw = ww * 1000 / zoom;
         ch = wh * 1000 / zoom;
     } else {
-        cw = ww * zoom;
-        ch = wh * zoom;
+        cw = ww * (zoom / 10);
+        ch = wh * (zoom / 10);
     }
 
     cx = cax - cw / 2;
@@ -206,7 +206,7 @@ float CropHandler::getZoomFactor ()
     if (zoom >= 1000) {
         return zoom / 1000;
     } else {
-        return 1.f / (float)zoom;
+        return 10.f / (float)zoom;
     }
 }
 
@@ -221,8 +221,8 @@ void CropHandler::setWSize (int w, int h)
         cw = ww * 1000 / zoom;
         ch = wh * 1000 / zoom;
     } else {
-        cw = ww * zoom;
-        ch = wh * zoom;
+        cw = ww * (zoom / 10);
+        ch = wh * (zoom / 10);
     }
 
     compDim ();
@@ -320,7 +320,7 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
 
     cropimgtrue = nullptr;
 
-    if (ax == cropX && ay == cropY && aw == cropW && ah == cropH && askip == (zoom >= 1000 ? 1 : zoom)) {
+    if (ax == cropX && ay == cropY && aw == cropW && ah == cropH && askip == (zoom >= 1000 ? 1 : zoom / 10)) {
         cropimg_width = im->getWidth ();
         cropimg_height = im->getHeight ();
         cropimg = new unsigned char [3 * cropimg_width * cropimg_height];
@@ -362,11 +362,13 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
             }
 
             if (ch->cropimg) {
-                if (ch->cix == ch->cropX && ch->ciy == ch->cropY && ch->ciw == ch->cropW && ch->cih == ch->cropH && ch->cis == (ch->zoom >= 1000 ? 1 : ch->zoom)) {
+                if (ch->cix == ch->cropX && ch->ciy == ch->cropY && ch->ciw == ch->cropW && ch->cih == ch->cropH && ch->cis == (ch->zoom >= 1000 ? 1 : ch->zoom / 10)) {
                     // calculate final image size
-                    int czoom = ch->zoom < 1000 ? 1000 : ch->zoom;
-                    int imw = ch->cropimg_width * czoom / 1000;
-                    int imh = ch->cropimg_height * czoom / 1000;
+                    float czoom = ch->zoom >= 1000 ?
+                        ch->zoom / 1000.f :
+                        float((ch->zoom/10) * 10) / float(ch->zoom);
+                    int imw = ch->cropimg_width * czoom;
+                    int imh = ch->cropimg_height * czoom;
 
                     if (imw > ch->ww) {
                         imw = ch->ww;
@@ -376,14 +378,14 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
                         imh = ch->wh;
                     }
 
-                    Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (ch->cropimg, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, 2 * ch->cropimg_height, 3 * ch->cropimg_width);
+                    Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (ch->cropimg, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, ch->cropimg_height, 3 * ch->cropimg_width);
                     ch->cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                    tmpPixbuf->scale (ch->cropPixbuf, 0, 0, imw, imh, 0, 0, czoom / 1000.0, czoom / 1000.0, Gdk::INTERP_NEAREST);
+                    tmpPixbuf->scale (ch->cropPixbuf, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
                     tmpPixbuf.clear ();
 
-                    Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (ch->cropimgtrue, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, 2 * ch->cropimg_height, 3 * ch->cropimg_width);
+                    Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (ch->cropimgtrue, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, ch->cropimg_height, 3 * ch->cropimg_width);
                     ch->cropPixbuftrue = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
-                    tmpPixbuftrue->scale (ch->cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom / 1000.0, czoom / 1000.0, Gdk::INTERP_NEAREST);
+                    tmpPixbuftrue->scale (ch->cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom, czoom, Gdk::INTERP_TILES);
                     tmpPixbuftrue.clear ();
                 }
 
@@ -432,7 +434,7 @@ bool CropHandler::getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip)
         cwh = 32;
     }
 
-    cskip = zoom >= 1000 ? 1 : zoom;
+    cskip = zoom >= 1000 ? 1 : zoom/10;
 
     return true;
 }
@@ -615,12 +617,12 @@ void CropHandler::compDim ()
         scaledCAX = cax * (zoom/1000);
         scaledCAY = cay * (zoom/1000);
     } else {
-        wwImgSpace = int(float(ww) * float(zoom) + 0.5f);
-        whImgSpace = int(float(wh) * float(zoom) + 0.5f);
+        wwImgSpace = int(float(ww) * (float(zoom)/10.f) + 0.5f);
+        whImgSpace = int(float(wh) * (float(zoom)/10.f) + 0.5f);
         //scaledFullW = fullW / zoom;
         //scaledFullH = fullH / zoom;
-        scaledCAX = cax / zoom;
-        scaledCAY = cay / zoom;
+        scaledCAX = int(float(cax) / (float(zoom)/10.f));
+        scaledCAY = int(float(cay) / (float(zoom)/10.f));
     }
 
     imgX = ww / 2 - scaledCAX;

@@ -22,6 +22,7 @@
 #include "splash.h"
 #include "cachemanager.h"
 #include "addsetids.h"
+#include "../rtengine/icons.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include <sstream>
@@ -41,6 +42,8 @@ Preferences::Preferences  (RTWindow *rtwindow)
     , rprofiles (nullptr)
     , iprofiles (nullptr)
     , parent (rtwindow)
+    , newFont (false)
+    , newCPFont (false)
 {
     regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
 
@@ -55,6 +58,10 @@ Preferences::Preferences  (RTWindow *rtwindow)
      */
     set_size_request (650, -1);
     set_default_size (options.preferencesWidth, options.preferencesHeight);
+
+    Pango::FontDescription defaultFont = get_style_context ()->get_font();
+    initialFontFamily = defaultFont.get_family ();
+    initialFontSize = defaultFont.get_size () / Pango::SCALE;
 
     Gtk::Box* mainBox = get_content_area ();
 //GTK318
@@ -1032,7 +1039,11 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     fontButton = Gtk::manage( new Gtk::FontButton ());
     setExpandAlignProperties(fontButton, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     fontButton->set_use_size(true);
-    fontButton->set_font_name(Glib::ustring::compose("%1 %2", options.fontFamily == "default" ? "sans" : options.fontFamily, options.fontSize));
+    if (options.fontFamily == "default") {
+        fontButton->set_font_name (Glib::ustring::compose("%1 %2", initialFontFamily, initialFontSize));
+    } else {
+        fontButton->set_font_name (Glib::ustring::compose("%1 %2", options.fontFamily, options.fontSize));
+    }
 
     themeGrid->attach_next_to(*fontlab, *theme, Gtk::POS_RIGHT, 1, 1);
     themeGrid->attach_next_to(*fontButton, *fontlab, Gtk::POS_RIGHT, 1, 1);
@@ -1042,7 +1053,11 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     colorPickerFontButton = Gtk::manage( new Gtk::FontButton ());
     setExpandAlignProperties(fontButton, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     colorPickerFontButton->set_use_size(true);
-    colorPickerFontButton->set_font_name(Glib::ustring::compose("%1 %2", options.CPFontFamily == "default" ? "sans" : options.CPFontFamily, options.CPFontSize));
+    if (options.fontFamily == "default") {
+        colorPickerFontButton->set_font_name (Glib::ustring::compose("%1 %2", initialFontFamily, initialFontSize));
+    } else {
+        colorPickerFontButton->set_font_name (Glib::ustring::compose("%1 %2", options.CPFontFamily, options.CPFontSize));
+    }
 
     themeGrid->attach_next_to(*cpfontlab, *fontButton, Gtk::POS_RIGHT, 1, 1);
     themeGrid->attach_next_to(*colorPickerFontButton, *cpfontlab, Gtk::POS_RIGHT, 1, 1);
@@ -1193,6 +1208,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
     fconn = fontButton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
+    cpfconn = colorPickerFontButton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::cpFontChanged) );
 
     return mvbsd;
 }
@@ -1582,12 +1598,16 @@ void Preferences::storePreferences ()
     moptions.navGuideBrush[3] = butNavGuideCol->get_alpha() / 65535.0;
 
     Pango::FontDescription fd(fontButton->get_font_name());
-    moptions.fontFamily      = fd.get_family();
-    moptions.fontSize        = fd.get_size() / Pango::SCALE;
+    if (newFont) {
+        moptions.fontFamily      = fd.get_family();
+        moptions.fontSize        = fd.get_size() / Pango::SCALE;
+    }
 
     Pango::FontDescription cpfd(colorPickerFontButton->get_font_name());
-    moptions.CPFontFamily    = cpfd.get_family();
-    moptions.CPFontSize      = cpfd.get_size() / Pango::SCALE;
+    if (newCPFont) {
+        moptions.CPFontFamily    = cpfd.get_family();
+        moptions.CPFontSize      = cpfd.get_size() / Pango::SCALE;
+    }
 
 #ifdef WIN32
     moptions.gimpDir        = gimpDir->get_filename ();
@@ -1758,6 +1778,7 @@ void Preferences::fillPreferences ()
 
     tconn.block (true);
     fconn.block (true);
+    cpfconn.block (true);
     sconn.block (true);
     dfconn.block (true);
     ffconn.block (true);
@@ -1843,8 +1864,17 @@ void Preferences::fillPreferences ()
     butNavGuideCol->set_rgba(NavGuideCol);
     butNavGuideCol->set_alpha ( (unsigned short)(moptions.navGuideBrush[3] * 65535.0));
 
-    fontButton->set_font_name(Glib::ustring::compose("%1 %2", options.fontFamily == "default" ? "sans" : options.fontFamily, options.fontSize));
-    colorPickerFontButton->set_font_name(Glib::ustring::compose("%1 %2", options.CPFontFamily == "default" ? "sans" : options.CPFontFamily, options.CPFontSize));
+    if (options.fontFamily == "default") {
+        fontButton->set_font_name (Glib::ustring::compose("%1 %2", initialFontFamily, initialFontSize));
+    } else {
+        fontButton->set_font_name (Glib::ustring::compose("%1 %2", options.fontFamily, options.fontSize));
+    }
+
+    if (options.CPFontFamily == "default") {
+        colorPickerFontButton->set_font_name (Glib::ustring::compose("%1 %2", initialFontFamily, initialFontSize));
+    } else {
+        colorPickerFontButton->set_font_name (Glib::ustring::compose("%1 %2", options.CPFontFamily, options.CPFontSize));
+    }
 
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
@@ -1866,13 +1896,13 @@ void Preferences::fillPreferences ()
     if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
         gimpDir->set_current_folder (moptions.gimpDir);
     } else {
-        gimpDir->set_current_folder ("");
+        gimpDir->set_current_folder (Glib::get_home_dir());
     }
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
     } else {
-        psDir->set_current_folder ("");
+        psDir->set_current_folder (Glib::get_home_dir());
     }
 
 #elif defined __APPLE__
@@ -1880,6 +1910,8 @@ void Preferences::fillPreferences ()
 
     if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
         psDir->set_current_folder (moptions.psDir);
+    } else {
+        psDir->set_current_folder (Glib::get_home_dir());
     }
 
 #endif
@@ -1965,6 +1997,7 @@ void Preferences::fillPreferences ()
 
     addc.block (false);
     setc.block (false);
+    cpfconn.block (false);
     fconn.block (false);
     tconn.block (false);
     sconn.block (false);
@@ -2039,7 +2072,7 @@ void Preferences::cancelPressed ()
 {
     // set the initial theme back
     if (themeFNames.at(theme->get_active_row_number ()).longFName != options.theme) {
-        RTImage::setPaths(options);
+        rtengine::setPaths(options);
         RTImage::updateImages();
         switchThemeTo(options.theme);
     }
@@ -2047,7 +2080,11 @@ void Preferences::cancelPressed ()
     // set the initial font back
     Pango::FontDescription fd(fontButton->get_font_name());
     if (fd.get_family() != options.fontFamily && (fd.get_size() / Pango::SCALE) != options.fontSize) {
-        switchFontTo(options.fontFamily == "default" ? "sans" : options.fontFamily, options.fontSize);
+        if (options.fontFamily == "default") {
+            switchFontTo(initialFontFamily, initialFontSize);
+        } else {
+            switchFontTo(options.fontFamily, options.fontSize);
+        }
     }
 
     // update the profileStore
@@ -2092,7 +2129,7 @@ void Preferences::themeChanged ()
 {
 
     moptions.theme = themeFNames.at(theme->get_active_row_number ()).longFName;
-    RTImage::setPaths(moptions);
+    rtengine::setPaths(moptions);
     RTImage::updateImages();
     switchThemeTo(moptions.theme);
 }
@@ -2244,8 +2281,15 @@ void Preferences::switchThemeTo(Glib::ustring newTheme)
 void Preferences::fontChanged ()
 {
 
+    newFont = true;
     Pango::FontDescription fd(fontButton->get_font_name());
     switchFontTo(fd.get_family(), fd.get_size() / Pango::SCALE);
+}
+
+void Preferences::cpFontChanged ()
+{
+
+    newCPFont = true;
 }
 
 void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int newFontSize)
@@ -2270,6 +2314,13 @@ void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int new
             printf("Error: \"%s\"\n", err.what().c_str());
         } catch (...) {
             printf("Error: Can't find the font named \"%s\"\n", newFontFamily.c_str());
+        }
+    }
+    else {
+        if (fontcss) {
+            fontcss = Gtk::CssProvider::create();
+            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+            Gtk::StyleContext::remove_provider_for_screen(screen, fontcss);
         }
     }
 }

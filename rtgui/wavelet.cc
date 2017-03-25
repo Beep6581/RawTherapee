@@ -172,8 +172,7 @@ Wavelet::Wavelet() :
     enableFinalConn = expfinal->signal_enabled_toggled().connect ( sigc::bind( sigc::mem_fun(this, &Wavelet::enableToggled), expfinal) );
 
 // Wavelet Settings
-    Gtk::VBox* const settingsVBox = Gtk::manage(new Gtk::VBox());
-    settingsVBox->set_spacing(2);
+    ToolParamBlock* const settingsBox = Gtk::manage (new ToolParamBlock());
 
     strength->setAdjusterListener (this);
 
@@ -247,16 +246,16 @@ Wavelet::Wavelet() :
     levdirSubHBox->pack_start(*Lmethod);
     levdirSubHBox->pack_start(*Dirmethod, Gtk::PACK_EXPAND_WIDGET, 2); // same, but 2 not 4?
 
-    settingsVBox->pack_start(*strength);
-    settingsVBox->pack_start(*thres);
-    settingsVBox->pack_start(*tilesizeHBox);
-    settingsVBox->pack_start(*daubcoeffHBox);
-    settingsVBox->pack_start(*backgroundHBox);
-    settingsVBox->pack_start(*levdirMainHBox);
-    settingsVBox->pack_start(*levdirSubHBox);
+    settingsBox->pack_start(*strength);
+    settingsBox->pack_start(*thres);
+    settingsBox->pack_start(*tilesizeHBox);
+    settingsBox->pack_start(*daubcoeffHBox);
+    settingsBox->pack_start(*backgroundHBox);
+    settingsBox->pack_start(*levdirMainHBox);
+    settingsBox->pack_start(*levdirSubHBox);
 
 // Contrast
-    Gtk::VBox* const levBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const levBox = Gtk::manage (new ToolParamBlock());
 
     Gtk::HBox* const buttonBox = Gtk::manage (new Gtk::HBox(true, 10));
     levBox->pack_start(*buttonBox, Gtk::PACK_SHRINK, 2);
@@ -335,7 +334,7 @@ Wavelet::Wavelet() :
     levBox->pack_start(*contrastSHFrame);
 
 // Chromaticity
-    Gtk::VBox* const chBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const chBox = Gtk::manage (new ToolParamBlock());
 
     Gtk::Label* const labmch = Gtk::manage(new Gtk::Label(M("TP_WAVELET_CHTYPE") + ":"));
     Gtk::HBox* const ctboxch = Gtk::manage(new Gtk::HBox());
@@ -405,7 +404,7 @@ Wavelet::Wavelet() :
     }
 
 // Toning
-    Gtk::VBox* const tonBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const tonBox = Gtk::manage (new ToolParamBlock());
 
     opaCurveEditorG->setCurveListener (this);
 
@@ -434,7 +433,7 @@ Wavelet::Wavelet() :
     tonBox->pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
 // Denoise and Refine
-    Gtk::VBox* const noiseBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const noiseBox = Gtk::manage (new ToolParamBlock());
 
     linkedg->set_active (true);
     linkedgConn = linkedg->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::linkedgToggled) );
@@ -458,7 +457,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start( *level3noise, Gtk::PACK_SHRINK, 0);
 
 // Edge Sharpness
-    Gtk::VBox* const edgBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const edgBox = Gtk::manage (new ToolParamBlock());
 
     edgval->setAdjusterListener(this);
     edgBox->pack_start(*edgval);
@@ -571,7 +570,7 @@ Wavelet::Wavelet() :
     edgBox->pack_start(*ctboxES);
 
 // Gamut
-    Gtk::VBox* const conBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const conBox = Gtk::manage (new ToolParamBlock());
 
     median->set_active (true);
     medianConn = median->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::medianToggled) );
@@ -621,7 +620,7 @@ Wavelet::Wavelet() :
     conBox->pack_start(*avoid);
 
 // Residual Image
-    Gtk::VBox* const resBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const resBox = Gtk::manage (new ToolParamBlock());
 
     rescon->setAdjusterListener (this);
     resBox->pack_start(*rescon, Gtk::PACK_SHRINK);
@@ -822,7 +821,7 @@ Wavelet::Wavelet() :
     tmr->set_tooltip_text (M("TP_WAVELET_BALCHRO_TOOLTIP"));
     tmrConn = tmr->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::tmrToggled) );
 
-    Gtk::VBox* const finalBox = Gtk::manage (new ToolParamBlock());
+    ToolParamBlock* const finalBox = Gtk::manage (new ToolParamBlock());
 
     finalBox->pack_start (*ctboxBA);
     finalBox->pack_start(*balance);
@@ -839,7 +838,7 @@ Wavelet::Wavelet() :
 
 //-----------------------------
 
-    expsettings->add(*settingsVBox);
+    expsettings->add(*settingsBox);
     expsettings->setLevel(2);
     pack_start (*expsettings);
 

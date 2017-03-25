@@ -46,6 +46,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   André Gauthier
   Sébastien Guyader
   M. Dávid Gyurkó
+  JK Han (pinholecam)
   Arturs Jekabsons
   Marián Kyral
   Oscar de Lama
@@ -56,6 +57,8 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Wim ter Meer
   Alberto Righetto
   Kostia (Kildor) Romanov
+  Kalle Söderman
   Johan Thor
+  Vitalis Tiknius
   TooWaBoo
   Colin Walker

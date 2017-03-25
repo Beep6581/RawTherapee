@@ -685,6 +685,36 @@ HISTORY_MSG_441;Retinex - Gain transmission
 HISTORY_MSG_442;Retinex - Scale
 HISTORY_MSG_443;Output Black Point Compensation
 HISTORY_MSG_444;WB - Temp bias
+HISTORY_MSG_445;Raw Sub-Image
+HISTORY_MSG_446;EvPixelShiftMotion
+HISTORY_MSG_447;EvPixelShiftMotionCorrection
+HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
+HISTORY_MSG_449;PS ISO adaption
+HISTORY_MSG_450;EvPixelShiftNreadIso
+HISTORY_MSG_451;EvPixelShiftPrnu
+HISTORY_MSG_452;PS Show motion
+HISTORY_MSG_453;PS Show mask only
+HISTORY_MSG_454;EvPixelShiftAutomatic
+HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
+HISTORY_MSG_456;EvPixelShiftNonGreenVertical
+HISTORY_MSG_457;PS Check red/blue
+HISTORY_MSG_458;EvPixelShiftStddevFactorRed
+HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
+HISTORY_MSG_460;EvPixelShiftGreenAmaze
+HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
+HISTORY_MSG_462;PS Check green
+HISTORY_MSG_463;EvPixelShiftRedBlueWeight
+HISTORY_MSG_464;PS Blur motion mask
+HISTORY_MSG_465;PS Blur radius
+HISTORY_MSG_466;EvPixelShiftSum
+HISTORY_MSG_467;EvPixelShiftExp0
+HISTORY_MSG_468;PS Fill holes
+HISTORY_MSG_469;PS Median
+HISTORY_MSG_470;EvPixelShiftMedian3
+HISTORY_MSG_471;PS Motion correction
+HISTORY_MSG_472;PS Smooth transitions
+HISTORY_MSG_473;PS Use lmmse
+HISTORY_MSG_474;PS Equalize
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -875,6 +905,7 @@ PARTIALPASTE_RAW_DCBENHANCE;DCB enhancement
 PARTIALPASTE_RAW_DCBITERATIONS;DCB iterations
 PARTIALPASTE_RAW_DMETHOD;Demosaic method
 PARTIALPASTE_RAW_FALSECOLOR;False color suppression
+PARTIALPASTE_RAW_IMAGENUM;Sub-image
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_RETINEX;Retinex
@@ -1055,6 +1086,8 @@ PREFERENCES_PRTPROFILE;Color profile
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
+PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
+PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
 PREFERENCES_SELECTFONT;Select main font
@@ -1655,21 +1688,82 @@ TP_RAWEXPOS_LINEAR;White-point correction
 TP_RAWEXPOS_PRESER;Highlight preservation
 TP_RAWEXPOS_RGB;Red, Green, Blue
 TP_RAWEXPOS_TWOGREEN;Link greens
+TP_RAW_1PASSMEDIUM;1-Pass (Medium)
+TP_RAW_3PASSBEST;3-Pass (Best)
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;DCB enhancement
 TP_RAW_DCBITERATIONS;Number of DCB iterations
 TP_RAW_DMETHOD;Method
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.
+TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;False color suppression steps
+TP_RAW_FAST;Fast
 TP_RAW_HD;Threshold
 TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;Sub-image
+TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
 TP_RAW_LABEL;Demosaicing
+TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
+TP_RAW_MONO;Mono
+TP_RAW_NONE;None (Shows sensor pattern)
+TP_RAW_PIXELSHIFT;Pixel Shift
+TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
+TP_RAW_PIXELSHIFTBLUR;Blur motion mask
+TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
+TP_RAW_PIXELSHIFTEPERISO;ISO adaption
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
+TP_RAW_PIXELSHIFTEXP0;Experimental
+TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
+TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
+TP_RAW_PIXELSHIFTLMMSE;Use lmmse for motion parts
+TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use lmmse instead of amaze for motion areas.\nUseful for High ISO images.
+TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
+TP_RAW_PIXELSHIFTMEDIAN;Median
+TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
+TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
+TP_RAW_PIXELSHIFTMM_AUTO;Automatic
+TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
+TP_RAW_PIXELSHIFTMM_OFF;Off
+TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
+TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
+TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
+TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
+TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
+TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
+TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
+TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
+TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
+TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
+TP_RAW_PIXELSHIFTNREADISO;nRead
+TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
+TP_RAW_PIXELSHIFTSHOWMOTION;Show motion
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show mask only
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion
+TP_RAW_PIXELSHIFTSIGMA;Blur radius
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Default radius of 1.0 usually fits good for base ISO. Increase value for high ISO shots,\n5.0 is a good starting point for high ISO shots.\nWatch motion mask while changing the value.
+TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with and without motion.\nSet to 0 to disable smooth transitions\nSet to 1 to get Amaze/lmmse or Median
+TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
+TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
+TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
+TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_CROPPEDAREA;Cropped Area
 TP_RESIZE_FITBOX;Bounding Box

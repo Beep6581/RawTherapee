@@ -21,29 +21,58 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
-
-class BayerProcess : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class BayerProcess : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::FrameCountListener
 {
 
 protected:
 
     MyComboBoxText* method;
+    Gtk::HBox *imageNumberBox;
+    MyComboBoxText* imageNumber;
     Adjuster* ccSteps;
     Gtk::VBox *dcbOptions;
     Adjuster* dcbIterations;
-    Gtk::CheckButton* dcbEnhance;
-    //Gtk::VBox *allOptions;
-    //Gtk::CheckButton* allEnhance;
+    CheckBox* dcbEnhance;
     Gtk::VBox *lmmseOptions;
     Adjuster* lmmseIterations;
-
-    bool lastDCBen;
-    int oldSelection;
-    //bool lastALLen;
-    sigc::connection methodconn, dcbEnhconn; //,allEnhconn;
+    Gtk::VBox *pixelShiftFrame;
+    Gtk::VBox *pixelShiftOptions;
+    MyComboBoxText* pixelShiftMotionMethod;
+    CheckBox* pixelShiftShowMotion;
+    CheckBox* pixelShiftShowMotionMaskOnly;
+    CheckBox* pixelShiftNonGreenCross;
+    CheckBox* pixelShiftGreen;
+    CheckBox* pixelShiftBlur;
+    CheckBox* pixelShiftHoleFill;
+    CheckBox* pixelShiftMedian;
+    CheckBox* pixelShiftLmmse;
+    CheckBox* pixelShiftEqualBright;
+    Adjuster* pixelShiftSmooth;
+    Adjuster* pixelShiftEperIso;
+    Adjuster* pixelShiftSigma;
+#ifdef PIXELSHIFTDEV
+    Adjuster* pixelShiftSum;
+    Adjuster* pixelShiftMotion;
+    MyComboBoxText* pixelShiftMotionCorrection;
+    CheckBox* pixelShiftAutomatic;
+    CheckBox* pixelShiftNonGreenHorizontal;
+    CheckBox* pixelShiftNonGreenVertical;
+    CheckBox* pixelShiftNonGreenCross2;
+    CheckBox* pixelShiftNonGreenAmaze;
+    CheckBox* pixelShiftExp0;
+    CheckBox* pixelShiftMedian3;
+    Adjuster* pixelShiftStddevFactorGreen;
+    Adjuster* pixelShiftStddevFactorRed;
+    Adjuster* pixelShiftStddevFactorBlue;
+    Adjuster* pixelShiftNreadIso;
+    Adjuster* pixelShiftPrnu;
+    Adjuster* pixelShiftRedBlueWeight;
+#endif
+    int oldMethod;
 public:
 
     BayerProcess ();
@@ -54,9 +83,14 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
     void methodChanged ();
-    void adjusterChanged     (Adjuster* a, double newval);
-    void dcbEnhanceChanged();
-    //void allEnhanceChanged();
+    void imageNumberChanged ();
+    void adjusterChanged (Adjuster* a, double newval);
+    void checkBoxToggled (CheckBox* c, CheckValue newval);
+    void pixelShiftMotionMethodChanged();
+    void FrameCountChanged(int n, int frameNum);
+#ifdef PIXELSHIFTDEV
+    void psMotionCorrectionChanged ();
+#endif
 };
 
 #endif

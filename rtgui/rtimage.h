@@ -34,9 +34,6 @@ public:
     void changeImage (const Glib::ustring& imageName);
     static void updateImages ();
 
-    static Glib::ustring findIconAbsolutePath (const Glib::ustring& iconName);
-    static void setPaths (const Options& options);
-
     static Glib::RefPtr<Gdk::Pixbuf> createFromFile (const Glib::ustring& fileName);
     static Cairo::RefPtr<Cairo::ImageSurface> createFromPng (const Glib::ustring& fileName);
 };

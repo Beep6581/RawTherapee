@@ -175,7 +175,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     iptc_data_sort (iptc);
 }
 
-void ImageIO::setOutputProfile  (char* pdata, int plen)
+void ImageIO::setOutputProfile  (const char* pdata, int plen)
 {
 
     delete [] profileData;

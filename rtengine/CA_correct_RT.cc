@@ -112,7 +112,7 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::CA_correct_RT(const double cared, const double cablue, const double caautostrength)
+void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData)
 {
 // multithreaded and partly vectorized by Ingo Weyrich
     constexpr int ts = 128;
@@ -134,7 +134,6 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
         plistener->setProgress (progress);
     }
 
-    const bool autoCA = (cared == 0 && cablue == 0);
     // local variables
     const int width = W, height = H;
     //temporary array to store simple interpolation of G
@@ -695,7 +694,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                 //fitparams[polyord*i+j] gives the coefficients of (vblock^i hblock^j) in a polynomial fit for i,j<=4
             }
             //end of initialization for CA correction pass
-            //only executed if cared and cablue are zero
+            //only executed if autoCA is true
         }
 
         // Main algorithm: Tile loop

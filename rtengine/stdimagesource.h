@@ -42,7 +42,7 @@ public:
     StdImageSource ();
     ~StdImageSource ();
 
-    int         load        (const Glib::ustring &fname, bool batch = false);
+    int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false);
     void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
     ColorTemp   getWB       () const
     {
@@ -50,6 +50,8 @@ public:
     }
     void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
     ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
+
+    eSensorType getSensorType() const {return ST_NONE;}
 
     bool        isWBProviderReady ()
     {
@@ -95,6 +97,13 @@ public:
     {
         return rgbSourceModified;
     }
+    void setCurrentFrame(unsigned int frameNum) {}
+    int getFrameCount() {return 1;}
+
+
+    void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) { R = G = B = 0;}
+
+
 };
 }
 #endif

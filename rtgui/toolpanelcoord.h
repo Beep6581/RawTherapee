@@ -92,7 +92,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
     public SpotWBListener,
     public CropPanelListener,
     public ICMPanelListener,
-    public ImageAreaToolListener
+    public ImageAreaToolListener,
+    public rtengine::ImageTypeListener
 {
 
 protected:
@@ -229,6 +230,7 @@ public:
     // toolpanellistener interface
     void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
+    void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans);
     // profilechangelistener interface
     void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
     void setDefaults    (rtengine::procparams::ProcParams* defparams);

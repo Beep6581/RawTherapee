@@ -202,7 +202,7 @@ public:
     }
 
     // use with indices
-    T * operator[](int index)
+    T * operator[](int index) const
     {
         assert((index >= 0) && (index < y));
         return ptr[index];

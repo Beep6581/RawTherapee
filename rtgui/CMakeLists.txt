@@ -1,7 +1,11 @@
+# common source files for both CLI and non-CLI execautables
+set (CLISOURCEFILES
+    paramsedited.cc options.cc multilangmgr.cc pathutils.cc edit.cc threadutils.cc
+    main-cli.cc)
 
-set (BASESOURCEFILES
+set (NONCLISOURCEFILES
     editwindow.cc batchtoolpanelcoord.cc paramsedited.cc cropwindow.cc previewhandler.cc previewwindow.cc navigator.cc indclippedpanel.cc previewmodepanel.cc filterpanel.cc
-    exportpanel.cc cursormanager.cc rtwindow.cc renamedlg.cc recentbrowser.cc placesbrowser.cc filepanel.cc editorpanel.cc batchqueuepanel.cc
+    exportpanel.cc cursormanager.cc rtwindow.cc renamedlg.cc recentbrowser.cc placesbrowser.cc filepanel.cc editorpanel.cc batchqueuepanel.cc checkbox.cc
     ilabel.cc thumbbrowserbase.cc adjuster.cc filebrowserentry.cc filebrowser.cc filethumbnailbuttonset.cc
     cachemanager.cc cacheimagedata.cc shcselector.cc perspective.cc thresholdselector.cc thresholdadjuster.cc
     clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc coloredbar.cc edit.cc coordinateadjuster.cc
@@ -21,7 +25,7 @@ set (BASESOURCEFILES
     preferences.cc profilepanel.cc saveasdlg.cc
     saveformatpanel.cc soundman.cc splash.cc
     thumbnail.cc tonecurve.cc toolbar.cc
-    guiutils.cc threadutils.cc zoompanel.cc toolpanelcoord.cc
+    pathutils.cc guiutils.cc threadutils.cc zoompanel.cc toolpanelcoord.cc
     thumbbrowserentrybase.cc batchqueueentry.cc
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
@@ -42,7 +46,8 @@ if (APPLE)
     set (EXTRA_INCDIR ${EXTRA_INCDIR} ${MacIntegration_INCLUDE_DIRS})
 endif (APPLE)
 if (WIN32)
-    set (EXTRA_SRC windirmonitor.cc myicon.rc)
+    set (EXTRA_SRC_CLI myicon.rc)
+    set (EXTRA_SRC_NONCLI myicon.rc windirmonitor.cc)
     set (EXTRA_LIB_RTGUI winmm)
     include_directories (${EXTRA_INCDIR} ${GLIB2_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS}
         ${GTK_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS} ${GIOMM_INCLUDE_DIRS})
@@ -62,14 +67,27 @@ endif (WIN32)
 # create config.h which defines where data are stored
 configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 
-add_executable (rth ${EXTRA_SRC} ${BASESOURCEFILES})
-add_dependencies (rth UpdateInfo)
+# create new executables targets
+add_executable (rth ${EXTRA_SRC_NONCLI} ${NONCLISOURCEFILES})
+#add_executable (rth-cli ${EXTRA_SRC_CLI} ${CLISOURCEFILES})
 
+# add dependencies to executables targets
+add_dependencies (rth UpdateInfo)
+#add_dependencies (rth-cli UpdateInfo)
+
+# set executables targets properties, i.e. output filename and compile flags
 set_target_properties (rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)
-#target_link_libraries (rth rtengine ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${TIFF_LIBRARIES} ${EXTRA_LIB} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
-#   ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTK_LIBRARIES} ${GTKMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${IPTCDATA_LIBRARIES})
+#set_target_properties (rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee-cli)
+
+# add linked libraries dependencies to executables targets
 target_link_libraries (rth rtengine ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${TIFF_LIBRARIES} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
     ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTK_LIBRARIES} ${GTKMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES}
     ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES} ${CANBERRA-GTK_LIBRARIES} ${EXTRA_LIB_RTGUI})
-install (TARGETS rth DESTINATION ${BINDIR})
 
+#target_link_libraries (rth-cli rtengine ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${TIFF_LIBRARIES} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
+#    ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${CAIROMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES}
+#    ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES} ${EXTRA_LIB_RTGUI})
+
+# install executables
+install (TARGETS rth DESTINATION ${BINDIR})
+#install (TARGETS rth-cli DESTINATION ${BINDIR})

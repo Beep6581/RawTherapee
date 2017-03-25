@@ -18,7 +18,6 @@
  */
 #include "bayerrawexposure.h"
 #include "guiutils.h"
-#include <sstream>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -57,9 +56,9 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, "bayerrawexposur
     }
 
     PexBlack0->show();
-    PextwoGreen = Gtk::manage(new Gtk::CheckButton((M("TP_RAWEXPOS_TWOGREEN"))));// two green
+    PextwoGreen = Gtk::manage(new CheckBox(M("TP_RAWEXPOS_TWOGREEN"), multiImage));// two green
     PextwoGreen->set_active (true);
-    greenconn = PextwoGreen->signal_toggled().connect ( sigc::mem_fun(*this, &BayerRAWExposure::GreenChanged));
+    PextwoGreen->setCheckBoxListener (this);
 
     pack_start( *PexBlack1, Gtk::PACK_SHRINK, 0);//black R
     pack_start( *PexBlack0, Gtk::PACK_SHRINK, 0);//black G1
@@ -79,16 +78,13 @@ void BayerRAWExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         PexBlack3->setEditedState( pedited->raw.bayersensor.exBlack3 ? Edited : UnEdited );
     }
 
-    greenconn.block (true);
-    PextwoGreen->set_active (pp->raw.bayersensor.twogreen);
-    greenconn.block (false);
-    lastPextwoGreen = pp->raw.bayersensor.twogreen;
+    PextwoGreen->setValue (pp->raw.bayersensor.twogreen);
 
     PexBlack0->setValue (pp->raw.bayersensor.black0);//black
     PexBlack1->setValue (pp->raw.bayersensor.black1);//black
     PexBlack2->setValue (pp->raw.bayersensor.black2);//black
 
-    if(!PextwoGreen->get_active()) {
+    if(!PextwoGreen->getLastActive()) {
         PexBlack3->setValue (pp->raw.bayersensor.black3);
     } else {
         PexBlack3->setValue (PexBlack0->getValue());
@@ -102,9 +98,9 @@ void BayerRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited
     pp->raw.bayersensor.black0 = PexBlack0->getValue();// black
     pp->raw.bayersensor.black1 = PexBlack1->getValue();// black
     pp->raw.bayersensor.black2 = PexBlack2->getValue();// black
-    pp->raw.bayersensor.twogreen = PextwoGreen->get_active();
+    pp->raw.bayersensor.twogreen = PextwoGreen->getLastActive();
 
-    if(PextwoGreen->get_active()) {
+    if(PextwoGreen->getLastActive()) {
         pp->raw.bayersensor.black3 = pp->raw.bayersensor.black0;   // active or desactive 2 green together
     } else {
         pp->raw.bayersensor.black3 = PexBlack3->getValue();
@@ -126,7 +122,7 @@ void BayerRAWExposure::adjusterChanged (Adjuster* a, double newval)
         Glib::ustring value = a->getTextValue();
 
         if (a == PexBlack0) {
-            if(!PextwoGreen->get_active()) {
+            if(!PextwoGreen->getLastActive()) {
                 listener->panelChanged (EvPreProcessExpBlackzero,  value );
             } else {
                 listener->panelChanged (EvPreProcessExpBlackzero,  value );
@@ -137,7 +133,7 @@ void BayerRAWExposure::adjusterChanged (Adjuster* a, double newval)
         } else if (a == PexBlack2) {
             listener->panelChanged (EvPreProcessExpBlacktwo,  value );
         } else if (a == PexBlack3)    {
-            if(!PextwoGreen->get_active()) {
+            if(!PextwoGreen->getLastActive()) {
                 listener->panelChanged (EvPreProcessExpBlackthree,  value );
             } else {
                 listener->panelChanged (EvPreProcessExpBlackthree,  value );
@@ -146,33 +142,17 @@ void BayerRAWExposure::adjusterChanged (Adjuster* a, double newval)
         }
     }
 }
-void BayerRAWExposure::GreenChanged()
+
+void BayerRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
-    if (batchMode) {
-        if (PextwoGreen->get_inconsistent()) {
-            PextwoGreen->set_inconsistent (false);
-            greenconn.block (true);
-            PextwoGreen->set_active (false);
-            greenconn.block (false);
-        } else if (lastPextwoGreen) {
-            PextwoGreen->set_inconsistent (true);
+    if (c == PextwoGreen) {
+        if (listener) {
+            listener->panelChanged (EvPreProcessExptwoGreen, PextwoGreen->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+            if (PextwoGreen->getLastActive()) {
+                PexBlack3->setValue (PexBlack0->getValue());//two green together
+            }
         }
-
-        lastPextwoGreen = PextwoGreen->get_active ();
     }
-
-    if (listener) {
-        if (PextwoGreen->get_active()) {
-            listener->panelChanged (EvPreProcessExptwoGreen, M("GENERAL_ENABLED"));
-            PexBlack3->setValue (PexBlack0->getValue());//two green together
-        }
-
-        else {
-            listener->panelChanged (EvPreProcessExptwoGreen, M("GENERAL_DISABLED"));
-        }
-
-    }
-
 }
 
 void BayerRAWExposure::setBatchMode(bool batchMode)

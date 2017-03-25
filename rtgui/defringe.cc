@@ -58,7 +58,6 @@ Defringe::Defringe () : FoldableToolPanel(this, "defringe", M("TP_DEFRINGE_LABEL
 
     pack_start (*curveEditorPF, Gtk::PACK_SHRINK, 4);
 
-    show ();
 }
 
 Defringe::~Defringe ()

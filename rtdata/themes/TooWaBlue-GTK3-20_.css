@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.49 - requires RT 5.0
+  Version 2.50 - requires RT 5.0 (Gtk+ >= 3.20)
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -456,8 +456,8 @@ menu separator {
 }
 
 #MyExpander separator {
-    background-color: shade(@bg-grey,.7);
-    margin: 0.33334em 0.66667em;
+    background-color: @view-grid-border;
+    margin: 0.33334em 0;
 }
 
 #PlacesPaned .view.separator {
