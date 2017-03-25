@@ -1567,6 +1567,17 @@ void Crop::freeAll ()
     cropAllocated = false;
 }
 
+
+namespace {
+
+bool check_need_larger_crop_for_lcp_distortion(const ProcParams &params)
+{
+    return (params.lensProf.lcpFile.length() > 0 &&
+            params.lensProf.useDist);
+}
+
+} // namespace
+
 /** @brief Handles crop's image buffer reallocation and trigger sizeChanged of SizeListener[s]
  * If the scale changes, this method will free all buffers and reallocate ones of the new size.
  * It will then tell to the SizeListener that size has changed (sizeChanged)
@@ -1620,11 +1631,29 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
     parent->imgsrc->getSize (cp, orW, orH);
-    int cw = skips (bw, skip);
-    int ch = skips (bh, skip);
 
-    leftBorder  = skips (rqx1 - bx1, skip);
-    upperBorder = skips (rqy1 - by1, skip);
+    if (check_need_larger_crop_for_lcp_distortion(parent->params)) {
+        int fW, fH;
+        parent->imgsrc->getFullSize(fW, fH);
+        double dW = double(fW) * 0.15; // TODO  - this is hardcoded ATM!
+        double dH = double(fH) * 0.15; // this is an estimate of the max
+                                       // distortion relative to the image
+                                       // size. BUT IS 15% REALLY ENOUGH?
+                                       // In fact, is there a better way??
+        orW = min(int(orW + dW), fW);
+        orH = min(int(orH + dH), fH);
+        trafx = max(int(orx - dW/2.0), 0);
+        trafy = max(int(ory - dH/2.0), 0);
+    } else {
+        trafx = orx;
+        trafy = ory;
+    }
+
+    int cw = skips(bw, skip);
+    int ch = skips(bh, skip);
+
+    leftBorder  = skips(rqx1 - bx1, skip);
+    upperBorder = skips(rqy1 - by1, skip);
 
     if (settings->verbose) {
         printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);
@@ -1740,8 +1769,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     cropx = bx1;
     cropy = by1;
-    trafx = orx;
-    trafy = ory;
 
     if (settings->verbose) {
         printf ("setsizes ends\n");

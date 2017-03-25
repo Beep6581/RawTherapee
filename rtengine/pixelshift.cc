@@ -133,7 +133,7 @@ void paintMotionMask(int index, bool showMotion, float gridMax, bool showOnlyMas
     }
 }
 
-void invertMask(int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &maskIn, array2D<uint8_t> &maskOut)
+void invertMask(int xStart, int xEnd, int yStart, int yEnd, const array2D<uint8_t> &maskIn, array2D<uint8_t> &maskOut)
 {
     #pragma omp parallel for schedule(dynamic,16)
 
@@ -146,7 +146,7 @@ void invertMask(int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &ma
     }
 }
 
-void xorMasks(int xStart, int xEnd, int yStart, int yEnd, array2D<uint8_t> &maskIn, array2D<uint8_t> &maskOut)
+void xorMasks(int xStart, int xEnd, int yStart, int yEnd, const array2D<uint8_t> &maskIn, array2D<uint8_t> &maskOut)
 {
     #pragma omp parallel for schedule(dynamic,16)
 
@@ -375,7 +375,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 for(int i=0, frameIndex = 0;i<4;++i) {
                     if(i != currFrame) {
                         if(bayerParams.pixelShiftLmmse) {
-                            lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex], raw.bayersensor.lmmse_iterations);
+                            lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex], bayerParams.lmmse_iterations);
                         } else {
                             amaze_demosaic_RT (0, 0, winw, winh, *(rawDataFrames[i]), redTmp[frameIndex], greenTmp[frameIndex], blueTmp[frameIndex]);
                         }
@@ -689,9 +689,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #ifdef PIXELSHIFTDEV
     std::cout << "WL: " << c_white[0] << " BL: " << c_black[0] << " ePerIso multiplicator: " << (65535.f / (c_white[0] - c_black[0])) << std::endl;
 #endif
-    float eperIsoRed = (eperIso / scale_mul[0]) * (65535.f / (c_white[0] - c_black[0]));
-    float eperIsoGreen = (eperIso * scaleGreen) * (65535.f / (c_white[1] - c_black[1]));
-    float eperIsoBlue = (eperIso / scale_mul[2]) * (65535.f / (c_white[2] - c_black[2]));
+    const float eperIsoRed = (eperIso / scale_mul[0]) * (65535.f / (c_white[0] - c_black[0]));
+    const float eperIsoGreen = (eperIso * scaleGreen) * (65535.f / (c_white[1] - c_black[1]));
+    const float eperIsoBlue = (eperIso / scale_mul[2]) * (65535.f / (c_white[2] - c_black[2]));
 
     const float clippedRed = 65535.f / scale_mul[0];
     const float clippedBlue = 65535.f / scale_mul[2];
@@ -705,7 +705,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     nRead *= nRead;
 
     // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
-    float motionThreshold = 1.f - (motion / 100.f);
+    const float motionThreshold = 1.f - (motion / 100.f);
     // For shades of green motion indicators
     const float blendFactor = ((adaptive || motion == 0.f) ? 1.f : 1.f / (1.f - motionThreshold));
 
@@ -732,12 +732,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 offsY = 0;
         }
     }
-
-    const float thresh = adaptive ? 0.f : motionThreshold;
-    array2D<float> psRed(winw + 32, winh); // increase width to avoid cache conflicts
-    array2D<float> psG1(winw + 32, winh);
-    array2D<float> psG2(winw + 32, winh);
-    array2D<float> psBlue(winw + 32, winh);
 
     // calculate average green brightness for each frame
     float greenBrightness[4] = {1.f, 1.f, 1.f, 1.f};
@@ -766,18 +760,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #endif
 
             for(int i = winy + 1; i < winh - 1; ++i) {
-                int j = winx + 1;
-                int c = FC(i, j);
-
-                // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
-                unsigned int offset = c & 1;
-
-                for(; j < winw - 1; ++j) {
-                    float green1 = (*rawDataFrames[1 - offset])[i - offset + 1][j];
-                    float green2 = (*rawDataFrames[3 - offset])[i + offset][j + 1];
-                    (*histoThr[1 - offset])[green1]++;
-                    (*histoThr[3 - offset])[green2]++;
-                    offset ^= 1; // 0 => 1 or 1 => 0
+                for(int j = winx + 1, offset = FC(i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
+                    (*histoThr[1 - offset])[(*rawDataFrames[1 - offset])[i - offset + 1][j]]++;
+                    (*histoThr[3 - offset])[(*rawDataFrames[3 - offset])[i + offset][j + 1]]++;
                 }
             }
 
@@ -816,6 +801,12 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #endif
 
     }
+
+    const float thresh = adaptive ? 0.f : motionThreshold;
+    array2D<float> psRed(winw + 32, winh); // increase width to avoid cache conflicts
+    array2D<float> psG1(winw + 32, winh);
+    array2D<float> psG2(winw + 32, winh);
+    array2D<float> psBlue(winw + 32, winh);
 
 // fill channels psRed, psG1, psG2 and psBlue
 #ifdef _OPENMP
@@ -1336,7 +1327,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         }
 
         array2D<uint8_t> mask(W, H, ARRAY2D_CLEAR_DATA);
-        array2D<uint8_t> maskInv(W, H, ARRAY2D_CLEAR_DATA);
 
         #pragma omp parallel for schedule(dynamic,16)
 
@@ -1346,7 +1336,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
             for(int v = -1; v <= 1; v++) {
                 for(int h = -1; h < 1; h++) {
-                    v3sum[1 + h] += (psMask[i + v][j + h]);
+                    v3sum[1 + h] += psMask[i + v][j + h];
                 }
             }
 
@@ -1366,6 +1356,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         }
 
         if(holeFill) {
+            array2D<uint8_t> maskInv(W, H);
             invertMask(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), mask, maskInv);
             floodFill4(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), maskInv);
             xorMasks(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), maskInv, mask);
@@ -1403,21 +1394,21 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 if(mask[i][j] == 255) {
                     paintMotionMask(j + offsX, showMotion, 0.5f, showOnlyMask, greenDest, redDest, blueDest);
                 } else if(showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
-                    red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
+                    redDest[j + offsX] = greenDest[j + offsX] = blueDest[j + offsX] = 0.f;
                 } else {
                     if(smoothTransitions) {
 #ifdef __SSE2__
-                        float blend = psMask[i][j];
+                        const float blend = psMask[i][j];
 #else
-                        float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
+                        const float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
-                        red[i + offsY][j + offsX] = intp(blend, red[i + offsY][j + offsX], psRed[i][j] );
-                        green[i + offsY][j + offsX] = intp(blend, green[i + offsY][j + offsX], (psG1[i][j] + psG2[i][j]) * 0.5f);
-                        blue[i + offsY][j + offsX] = intp(blend, blue[i + offsY][j + offsX], psBlue[i][j]);
+                        redDest[j + offsX] = intp(blend, redDest[j + offsX], psRed[i][j] );
+                        greenDest[j + offsX] = intp(blend, greenDest[j + offsX], (psG1[i][j] + psG2[i][j]) * 0.5f);
+                        blueDest[j + offsX] = intp(blend, blueDest[j + offsX], psBlue[i][j]);
                     } else {
-                        red[i + offsY][j + offsX] = psRed[i][j];
-                        green[i + offsY][j + offsX] = (psG1[i][j] + psG2[i][j]) * 0.5f;
-                        blue[i + offsY][j + offsX] = psBlue[i][j];
+                        redDest[j + offsX] = psRed[i][j];
+                        greenDest[j + offsX] = (psG1[i][j] + psG2[i][j]) * 0.5f;
+                        blueDest[j + offsX] = psBlue[i][j];
                     }
                 }
             }

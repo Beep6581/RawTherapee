@@ -53,8 +53,6 @@ SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SH
     pack_start( *amount, Gtk::PACK_SHRINK, 0);
     pack_start( *uniformity, Gtk::PACK_SHRINK, 0);
 
-    show ();
-
     matrixconn = matrix->signal_toggled().connect( sigc::mem_fun(*this, &SharpenMicro::matrix_toggled) );
 }
 

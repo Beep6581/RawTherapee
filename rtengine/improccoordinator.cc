@@ -164,17 +164,15 @@ ImProcCoordinator::ImProcCoordinator ()
       rCurve(),
       gCurve(),
       bCurve(),
-      rcurvehist (256), rcurvehistCropped (256), rbeforehist (256),
-      gcurvehist (256), gcurvehistCropped (256), gbeforehist (256),
-      bcurvehist (256), bcurvehistCropped (256), bbeforehist (256),
-      fw (0), fh (0), tr (0),
-      fullw (1), fullh (1),
-      pW (-1), pH (-1),
-      plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener (nullptr), aloListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), hListener (nullptr),
-      resultValid (false), lastOutputProfile ("BADFOOD"), lastOutputIntent (RI__COUNT), lastOutputBPC (false), thread (nullptr), changeSinceLast (0), updaterRunning (false), destroying (false), utili (false), autili (false), wavcontlutili (false),
-      butili (false), ccutili (false), cclutili (false), clcutili (false), opautili (false), conversionBuffer (1, 1), colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f)
-
-
+      rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
+      gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
+      bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
+      fw(0), fh(0), tr(0),
+      fullw(1), fullh(1),
+      pW(-1), pH(-1),
+      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), aloListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), hListener(nullptr),
+      resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f)
 {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc)
@@ -268,9 +266,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     progress ("Applying white balance, color correction & sRGB conversion...", 100 * readyphase / numofphases);
 
+    if(frameCountListener) {
+        frameCountListener->FrameCountChanged(imgsrc->getFrameCount(), params.raw.bayersensor.imageNum);
+    }
+
     // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
     if ( (todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
         imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
+
         imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
 
@@ -292,6 +295,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         OR HLR gets disabled when Color method was selected
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
+
+    if(imageTypeListener) {
+        imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS);
+    }
 
     if (   (todo & M_RAW)
             || (!highDetailRawComputed && highDetailNeeded)
@@ -2714,6 +2721,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         updateLRGBHistograms ();
         hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
     }
+
 }
 
 

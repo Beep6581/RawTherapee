@@ -169,6 +169,8 @@ protected:
     AutoBWListener* abwListener;
     localListener* aloListener;
     AutoWBListener* awbListener;
+    FrameCountListener *frameCountListener;
+    ImageTypeListener *imageTypeListener;
 
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
@@ -435,6 +437,16 @@ public:
     void setWaveletListener  (WaveletListener* awa)
     {
         awavListener = awa;
+    }
+
+    void setFrameCountListener  (FrameCountListener* fcl)
+    {
+        frameCountListener = fcl;
+    }
+
+    void setImageTypeListener  (ImageTypeListener* itl)
+    {
+        imageTypeListener = itl;
     }
 
     void saveInputICCReference (const Glib::ustring& fname, bool apply_wb);

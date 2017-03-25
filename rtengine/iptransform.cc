@@ -83,6 +83,19 @@ float normn(float a, float b, int n)
             return pow_F(pown(a, n) + pown(b, n), 1.f / n);
     }
 }
+
+void correct_distortion(const rtengine::LCPMapper *lcp, double &x, double &y,
+                        int cx, int cy)
+{
+    assert(lcp);
+    
+    x += cx;
+    y += cy;
+    lcp->correctDistortion(x, y);
+    x -= cx;
+    y -= cy;
+}
+
 }
 
 namespace rtengine
@@ -142,7 +155,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         double x_d = src[i].x, y_d = src[i].y;
 
         if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d);    // must be first transform
+            correct_distortion(pLCPMap, x_d, y_d, 0, 0);
         }
 
         y_d = ascale * (y_d - h2);
@@ -297,8 +310,12 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         LCPProfile *pLCPProf = lcpStore->getProfile(params->lensProf.lcpFile);
 
-        if (pLCPProf) pLCPMap = new LCPMapper(pLCPProf, focalLen, focalLen35mm, focusDist, 0, false, params->lensProf.useDist,
-                                                  original->getWidth(), original->getHeight(), params->coarse, rawRotationDeg);
+        if (pLCPProf) {
+            pLCPMap = new LCPMapper(pLCPProf, focalLen, focalLen35mm,
+                                    focusDist, 0, false,
+                                    params->lensProf.useDist,
+                                    oW, oH, params->coarse, rawRotationDeg);
+        }
     }
 
     if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
@@ -705,7 +722,6 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
         const LCPMapper *pLCPMap, bool fullImage)
 {
-
     double w2 = (double) oW  / 2.0 - 0.5;
     double h2 = (double) oH  / 2.0 - 0.5;
 
@@ -762,11 +778,11 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                      oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-    double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, fullImage ? pLCPMap : nullptr) : 1.0;
+    double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, true /*fullImage*/ ? pLCPMap : nullptr) : 1.0;
 
     // smaller crop images are a problem, so only when processing fully
     bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage && pLCPMap->enableCA;
-    bool enableLCPDist = pLCPMap && params->lensProf.useDist && fullImage;
+    bool enableLCPDist = pLCPMap && params->lensProf.useDist; // && fullImage;
 
     if (enableLCPCA) {
         enableLCPDist = false;
@@ -783,7 +799,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
             double x_d = x, y_d = y;
 
             if (enableLCPDist) {
-                pLCPMap->correctDistortion(x_d, y_d);    // must be first transform
+                correct_distortion(pLCPMap, x_d, y_d, cx, cy); // must be first transform
             }
 
             x_d = ascale * (x_d + cx - w2);     // centering x coord & scale
@@ -960,7 +976,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             double x_d = x, y_d = y;
 
             if (pLCPMap && params->lensProf.useDist) {
-                pLCPMap->correctDistortion(x_d, y_d);    // must be first transform
+                correct_distortion(pLCPMap, x_d, y_d, cx, cy); // must be first transform
             }
 
             y_d = ascale * (y_d + cy - h2);     // centering y coord & scale

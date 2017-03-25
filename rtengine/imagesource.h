@@ -81,14 +81,12 @@ public:
     virtual bool        IsrgbSourceModified() const = 0; // tracks whether cached rgb output of demosaic has been modified
 
     virtual void setCurrentFrame(unsigned int frameNum) = 0;
+    virtual int getFrameCount() = 0;
 
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
     virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hlp, const ColorManagementParams &cmp, const RAWParams &raw) = 0;
-    virtual eSensorType getSensorType ()
-    {
-        return ST_NONE;
-    }
+    virtual eSensorType getSensorType () const = 0;
     // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
     virtual bool        isWBProviderReady () = 0;
 

@@ -550,9 +550,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 
     if (ri->get_FujiWidth() != 0) {
-        tpp->scale = (double) (height - ri->get_FujiWidth()) / sqrt(0.5) / h;
+        tpp->scale = (double) (height - ri->get_FujiWidth()) * 2.0 / (rotate_90 ? w : h);
     } else {
-        tpp->scale = (double) height / h;
+        tpp->scale = (double) height / (rotate_90 ? w : h);
     }
 
     // generate histogram for auto exposure

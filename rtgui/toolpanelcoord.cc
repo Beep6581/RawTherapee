@@ -323,6 +323,25 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolBar;
 }
 
+void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans)
+{
+
+    if(isRaw) {
+        rawPanelSW->set_sensitive(true);
+        if (isBayer) {
+            sensorxtrans->FoldableToolPanel::hide();
+            sensorbayer->FoldableToolPanel::show();
+        } else if (isXtrans) {
+            sensorxtrans->FoldableToolPanel::show();
+            sensorbayer->FoldableToolPanel::hide();
+        }
+    } else {
+        rawPanelSW->set_sensitive(false);
+    }
+
+}
+
+
 void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::ustring& descr)
 {
 
@@ -507,15 +526,16 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoExpListener (toneCurve);
         ipc->setAutoCamListener (colorappearance);
         ipc->setAutoBWListener (blackwhite);
+        ipc->setFrameCountListener (bayerprocess);
         ipc->setAutoWBListener (whitebalance);
         ipc->setAutoColorTonListener (colortoning);
         ipc->setAutoChromaListener (dirpyrdenoise);
         ipc->setWaveletListener (wavelet);
         ipc->setRetinexListener (retinex);
         ipc->setlocalListener (locallab);
-
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
+        ipc->setImageTypeListener (this);
     }
 
     flatfield->setShortcutPath (Glib::path_get_dirname (ipc->getInitialImage()->getFileName()));
