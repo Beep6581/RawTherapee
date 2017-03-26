@@ -435,6 +435,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
 FileCatalog::~FileCatalog()
 {
+    idle_register.destroy();
+
     for (int i = 0; i < 5; i++) {
         delete iranked[i];
         delete igranked[i];
@@ -702,15 +704,15 @@ void FileCatalog::_refreshProgressBar ()
     }
 }
 
-int refreshProgressBarUI (void* data)
-{
-    (static_cast<FileCatalog*>(data))->_refreshProgressBar ();
-    return 0;
-}
-
 void FileCatalog::filterApplied()
 {
-    g_idle_add (refreshProgressBarUI, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileCatalog*>(data)->_refreshProgressBar();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 
@@ -776,12 +778,6 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
     _refreshProgressBar();
 }
 
-int prevfinished (void* data)
-{
-    (static_cast<FileCatalog*>(data))->previewsFinishedUI ();
-    return 0;
-}
-
 // Called within GTK UI thread
 void FileCatalog::previewsFinishedUI ()
 {
@@ -838,7 +834,13 @@ void FileCatalog::previewsFinished (int dir_id)
         currentEFS = dirEFS;
     }
 
-    g_idle_add (prevfinished, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileCatalog*>(data)->previewsFinishedUI();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void FileCatalog::setEnabled (bool e)
@@ -920,7 +922,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb)
         tmb[i]->increaseRef ();
     }
 
-    g_idle_add (openRequestedUI, params);
+    idle_register.add(openRequestedUI, params);
 }
 
 void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed)
@@ -1744,15 +1746,16 @@ void FileCatalog::reparseDirectory ()
 }
 
 #ifdef WIN32
-int winDirChangedUITread (void* cat)
-{
-    (static_cast<FileCatalog*>(cat))->reparseDirectory ();
-    return 0;
-}
 
 void FileCatalog::winDirChanged ()
 {
-    g_idle_add(winDirChangedUITread, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileCatalog*>(data)->reparseDirectory();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 #else
@@ -1857,7 +1860,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
         params->catalog = this;
         params->tmb.push_back (tmb);
         tmb->increaseRef ();
-        g_idle_add (openRequestedUI, params);
+        idle_register.add(openRequestedUI, params);
 
     } catch(Gio::Error&) {}
 }

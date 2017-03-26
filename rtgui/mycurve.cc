@@ -48,7 +48,6 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
 
 MyCurve::~MyCurve ()
 {
-
     if (mcih->pending) {
         mcih->destroyed = true;
     } else {

@@ -65,32 +65,36 @@ public:
 template<class T>
 class ProgressConnector
 {
-
+private:
     sigc::signal0<T> opStart;
     sigc::signal0<bool> opEnd;
     T retval;
     Glib::Thread *workThread;
-
-    static int emitEndSignalUI (void* data)
-    {
-
-        sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
-        int r = opEnd->emit ();
-        delete opEnd;
-
-        return r;
-    }
+    IdleRegister idle_register;
 
     void workingThread ()
     {
-        retval = opStart.emit ();
-        g_idle_add (ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool> (opEnd));
+        retval = opStart.emit();
+
+        const auto func = [](gpointer data) -> gboolean {
+            sigc::signal0<bool>* const opEnd = static_cast<sigc::signal0<bool>*>(data);
+            const gboolean res = opEnd->emit();
+            delete opEnd;
+
+            return res;
+        };
+
+        idle_register.add(func, new sigc::signal0<bool>(opEnd));
+
         workThread = nullptr;
     }
 
 public:
-
     ProgressConnector (): retval( 0 ), workThread( nullptr ) { }
+    ~ProgressConnector()
+    {
+        idle_register.destroy();
+    }
 
     void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler )
     {

@@ -48,6 +48,8 @@ public:
 
 class MyDiagonalCurve : public MyCurve
 {
+private:
+    IdleRegister idle_register;
 
 protected:
     DiagonalCurveDescr curve;
