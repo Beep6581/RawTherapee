@@ -3758,6 +3758,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 //local denoise
         if (lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f  && call < 3 || noiscfactiv  && lp.denoiena) {
+            StopWatch Stop1("locallab Denoise called");
             if (lp.noisecf > 0.1f || lp.noisecc > 0.1f) {
                 noiscfactiv = false;
                 levred = 7;
