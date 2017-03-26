@@ -36,6 +36,7 @@
 #35 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
 #36 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
 #37 2017-03-06 Dynamisches Profil (TooWaBoo)
+#38 2017-03-26 Pixel Shift (TooWaBoo)
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -112,7 +113,7 @@ EXPORT_BYPASS_DIRPYRDENOISE;Rauschreduzierung überspringen
 EXPORT_BYPASS_DIRPYREQUALIZER;Detailebenenkontrast überspringen
 EXPORT_BYPASS_EQUALIZER;Waveletebenen überspringen
 EXPORT_BYPASS_RAW_CA;CA-Korrektur überspringen [RAW]
-EXPORT_BYPASS_RAW_CCSTEPS;Falschfarbenunterdrückung überspringen\n[RAW]
+EXPORT_BYPASS_RAW_CCSTEPS;Falschfarbenreduzierung überspringen\n[RAW]
 EXPORT_BYPASS_RAW_DCB_ENHANCE;DCB-Verbesserungsstufen überspringen\n[RAW]
 EXPORT_BYPASS_RAW_DCB_ITERATIONS;DCB-Interationen überspringen [RAW]
 EXPORT_BYPASS_RAW_DF;Dunkelbild überspringen [RAW]
@@ -202,6 +203,7 @@ FILEBROWSER_RANK3_TOOLTIP;Bewertung 3 ***\nTaste: <b>Umschalt</b> + <b>3</b>
 FILEBROWSER_RANK4_TOOLTIP;Bewertung 4 ****\nTaste: <b>Umschalt</b> + <b>4</b>
 FILEBROWSER_RANK5_TOOLTIP;Bewertung 5 *****\nTaste: <b>Umschalt</b> + <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
+FILEBROWSER_RESETDEFAULTPROFILE;Profil auf Vorgabe zurücksetzen
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
 FILEBROWSER_SELECTFLATFIELD;Weißbild wählen...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Nur rot markierte Bilder anzeigen\nTaste: <b>Alt</b> + <b>1</b>
@@ -390,14 +392,14 @@ HISTORY_MSG_110;(Skalieren) - Anwenden auf:
 HISTORY_MSG_111;(L*a*b*) - Farbverschiebung\nvermeiden
 HISTORY_MSG_112;--unused--
 HISTORY_MSG_113;(L*a*b*) - Hautfarbtöne\nschützen
-HISTORY_MSG_114;(Sensor Bayer-Matrix)\nFarbinterpolation\nDCB-Iterationen
-HISTORY_MSG_115;(Sensor-Matrix)\nFarbinterpolation\nFalschfarbenunterdrückung
-HISTORY_MSG_116;(Sensor Bayer-Matrix)\nFarbinterpolation\nDCB-Verbesserung
-HISTORY_MSG_117;(Sensor Bayer-Matrix)\nChromatische Aberration\nRot
-HISTORY_MSG_118;(Sensor Bayer-Matrix)\nChromatische Aberration\nBlau
-HISTORY_MSG_119;(Sensor Bayer-Matrix)\nVorverarbeitung\nZeilenrauschfilter
-HISTORY_MSG_120;(Sensor Bayer-Matrix)\nVorverarbeitung\nGrün-Ausgleich
-HISTORY_MSG_121;(Sensor Bayer-Matrix)\nChromatische Aberration\nAutomatische Korrektur
+HISTORY_MSG_114;(Sensor-Matrix)\nFarbinterpolation\nDCB-Iterationen
+HISTORY_MSG_115;(Sensor-Matrix)\nFarbinterpolation\nFalschfarbenreduzierung
+HISTORY_MSG_116;(Sensor-Matrix)\nFarbinterpolation\nDCB-Verbesserung
+HISTORY_MSG_117;(Sensor-Matrix)\nChromatische Aberration\nRot
+HISTORY_MSG_118;(Sensor-Matrix)\nChromatische Aberration\nBlau
+HISTORY_MSG_119;(Sensor-Matrix)\nVorverarbeitung\nZeilenrauschfilter
+HISTORY_MSG_120;(Sensor-Matrix)\nVorverarbeitung\nGrün-Ausgleich
+HISTORY_MSG_121;(Sensor-Matrix)\nChromatische Aberration\nAutomatische Korrektur
 HISTORY_MSG_122;(Dunkelbild)\nAutomatische Auswahl
 HISTORY_MSG_123;(Dunkelbild) - Datei
 HISTORY_MSG_124;(Weißpunkt)\nKorrekturfaktor
@@ -413,11 +415,11 @@ HISTORY_MSG_133;(Farbmanagement)\nAusgabeprofil\nAusgabe-Gamma
 HISTORY_MSG_134;(Farbmanagement)\nAusgabeprofil\nGamma
 HISTORY_MSG_135;(Farbmanagement)\nAusgabeprofil\nFreies Gamma
 HISTORY_MSG_136;(Farbmanagement)\nAusgabeprofil\nGradient (linear)
-HISTORY_MSG_137;(Sensor Bayer-Matrix)\nSchwarzpunkt - Grün 1
-HISTORY_MSG_138;(Sensor Bayer-Matrix)\nSchwarzpunkt - Rot
-HISTORY_MSG_139;(Sensor Bayer-Matrix)\nSchwarzpunkt - Blau
-HISTORY_MSG_140;(Sensor Bayer-Matrix)\nSchwarzpunkt - Grün 2
-HISTORY_MSG_141;(Sensor Bayer-Matrix)\nSchwarzpunkt\nGrün-Werte angleichen
+HISTORY_MSG_137;(Sensor-Matrix)\nSchwarzpunkt - Grün 1
+HISTORY_MSG_138;(Sensor-Matrix)\nSchwarzpunkt - Rot
+HISTORY_MSG_139;(Sensor-Matrix)\nSchwarzpunkt - Blau
+HISTORY_MSG_140;(Sensor-Matrix)\nSchwarzpunkt - Grün 2
+HISTORY_MSG_141;(Sensor-Matrix)\nSchwarzpunkt\nGrün-Werte angleichen
 HISTORY_MSG_142;(Kantenschärfung)\nIterationen
 HISTORY_MSG_143;(Kantenschärfung)\nIntensität
 HISTORY_MSG_144;(Mikrokontrast)\nIntensität
@@ -480,7 +482,7 @@ HISTORY_MSG_200;(CIECAM02)\nDynamikkompression
 HISTORY_MSG_201;(Rauschreduzierung)\nDelta-Chrominanz\nRot / Grün
 HISTORY_MSG_202;(Rauschreduzierung)\nDelta-Chrominanz\nBlau / Gelb
 HISTORY_MSG_203;(Rauschreduzierung)\nMethode
-HISTORY_MSG_204;(Sensor Bayer-Matrix)\nFarbinterpolation\nLMMSE-Verbesserung
+HISTORY_MSG_204;(Sensor-Matrix)\nFarbinterpolation\nLMMSE-Verbesserung
 HISTORY_MSG_205;(CIECAM02)\nBetrachtungsbed.\nHot / Bad-Pixelfilter
 HISTORY_MSG_206;(CIECAM02) - Szene\nAuto-Leuchtstärke
 HISTORY_MSG_207;(Farbsaum entfernen)\nFarbtonkurve
@@ -565,9 +567,9 @@ HISTORY_MSG_286;(Rauschreduzierung)\nMediantyp
 HISTORY_MSG_287;(Rauschreduzierung)\nMedianiterationen
 HISTORY_MSG_288;(Weißbild)\nKontrolle zu heller Bereiche
 HISTORY_MSG_289;(Weißbild)\nAuto-Kontrolle zu\nheller Bereiche
-HISTORY_MSG_290;(Sensor X-Trans-Matrix)\nSchwarzpunkt - Rot
-HISTORY_MSG_291;(Sensor X-Trans-Matrix)\nSchwarzpunkt - Grün
-HISTORY_MSG_292;(Sensor X-Trans-Matrix)\nSchwarzpunkt - Blau
+HISTORY_MSG_290;(Sensor-Matrix)\nSchwarzpunkt - Rot
+HISTORY_MSG_291;(Sensor-Matrix)\nSchwarzpunkt - Grün
+HISTORY_MSG_292;(Sensor-Matrix)\nSchwarzpunkt - Blau
 HISTORY_MSG_293;(Filmsimulation)
 HISTORY_MSG_294;(Filmsimulation)\nIntensität
 HISTORY_MSG_295;(Filmsimulation) - Film
@@ -720,6 +722,36 @@ HISTORY_MSG_441;(Retinex) - Einstellungen\nVerstärkung und Ausgleich\nTransmiss
 HISTORY_MSG_442;(Retinex) - Einstellungen\nTransmission - Skalierung
 HISTORY_MSG_443;(Farbmanagement)\nAusgabeprofil\nSchwarzpunkt-Kompensation
 HISTORY_MSG_444;(Weißabgleich)\nAWB-Temperatur-Korrektur
+HISTORY_MSG_445;(Sensor-Matrix)\nFarbinterpolation\nUnterbild
+HISTORY_MSG_446;EvPixelShiftMotion
+HISTORY_MSG_447;EvPixelShiftMotionCorrection
+HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
+HISTORY_MSG_449;(Sensor-Matrix)\nFarbinterpolation\nISO-Anpassung
+HISTORY_MSG_450;EvPixelShiftNreadIso
+HISTORY_MSG_451;EvPixelShiftPrnu
+HISTORY_MSG_452;(Sensor-Matrix)\nFarbinterpolation\nBewegungsmaske\nanzeigen
+HISTORY_MSG_453;(Sensor-Matrix)\nFarbinterpolation\nNur Maske anzeigen
+HISTORY_MSG_454;EvPixelShiftAutomatic
+HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
+HISTORY_MSG_456;EvPixelShiftNonGreenVertical
+HISTORY_MSG_457;(Sensor-Matrix)\nFarbinterpolation\nBewegung im Rot/Blau-\nKanal erkennen
+HISTORY_MSG_458;EvPixelShiftStddevFactorRed
+HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
+HISTORY_MSG_460;EvPixelShiftGreenAmaze
+HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
+HISTORY_MSG_462;(Sensor-Matrix)\nFarbinterpolation\nBewegung im Grün-\nKanal erkennen
+HISTORY_MSG_463;EvPixelShiftRedBlueWeight
+HISTORY_MSG_464;(Sensor-Matrix)\nFarbinterpolation\nUnschärfebewegungsmaske
+HISTORY_MSG_465;(Sensor-Matrix)\nFarbinterpolation\nUnschärferadius
+HISTORY_MSG_466;EvPixelShiftSum
+HISTORY_MSG_467;EvPixelShiftExp0
+HISTORY_MSG_468;(Sensor-Matrix)\nFarbinterpolation\nLücken in der Bewegungs-\nmaske erkennen
+HISTORY_MSG_469;(Sensor-Matrix)\nFarbinterpolation\nMedian
+HISTORY_MSG_470;EvPixelShiftMedian3
+HISTORY_MSG_471;(Sensor-Matrix)\nFarbinterpolation\nBewegungskorrektur
+HISTORY_MSG_472;(Sensor-Matrix)\nFarbinterpolation\nWeicher Übergang
+HISTORY_MSG_473;(Sensor-Matrix)\nFarbinterpolation\nLMMSE für Bewegungs-\nteile verwenden
+HISTORY_MSG_474;(Sensor-Matrix)\nFarbinterpolation\nFrame-Helligkeit angleichen
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -909,7 +941,8 @@ PARTIALPASTE_RAWGROUP;RAW
 PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verbesserung
 PARTIALPASTE_RAW_DCBITERATIONS;Farbinterpolation: Anzahl der DCB-Iterationen
 PARTIALPASTE_RAW_DMETHOD;Farbinterpolation: Methode
-PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenunterdrückung
+PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenreduzierung
+PARTIALPASTE_RAW_IMAGENUM;Farbinterpolation: Unterbild
 PARTIALPASTE_RAW_LMMSEITERATIONS;Farbinterpolation: LMMSE-Verbesserungsstufen
 PARTIALPASTE_RESIZE;Skalieren
 PARTIALPASTE_RETINEX;Retinex (Bildschleier entfernen)
@@ -1173,7 +1206,7 @@ PROGRESSBAR_SNAPSHOT_ADDED;Schnappschuss hinzugefügt
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil wurde in der Dateiverwaltung geändert
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
-SAVEDLG_AUTOSUFFIX;Suffix anfügen, falls unter dem Namen bereits eine Datei existiert
+SAVEDLG_AUTOSUFFIX;Suffix anfügen, wenn die Datei bereits existiert
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
 SAVEDLG_JPEGQUAL;JPEG-Qualität
@@ -1690,21 +1723,82 @@ TP_RAWEXPOS_LINEAR;Korrekturfaktor
 TP_RAWEXPOS_PRESER;Weißpunkt: Lichter schützen
 TP_RAWEXPOS_RGB;Rot, Grün, Blau
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
+TP_RAW_1PASSMEDIUM;1-Pass (Medium)
+TP_RAW_3PASSBEST;3-Pass (Beste)
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;DCB-Verbesserung
 TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
 TP_RAW_DMETHOD;Methode
 TP_RAW_DMETHOD_PROGRESSBAR;%1 verarbeitet
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaikoptimierung
-TP_RAW_DMETHOD_TOOLTIP;Hinweis: IGV und LMMSE ist speziell für Bilder\nmit hohen ISO-Werten reserviert und verbessert\ndie Rauschreduzierung.
-TP_RAW_FALSECOLOR;Falschfarbenunterdrückung
+TP_RAW_DMETHOD_TOOLTIP;<b>IGV</b> und <b>LMMSE</b> sind speziel für High-ISO-Aufnahmen um die\nRauschreduzierung zu unterstützen ohne zu Maze-Mustern,\nPosterisierung oder einem ausgewaschenen Look zu führen.\n\n<b>Pixel Shift</b> ist für “Pentax Pixel Shift“-Dateien. Für "Nicht-Pixel-\nShift"-Dateien wird automatisch AMaZE verwendet.
+TP_RAW_EAHD;EAHD
+TP_RAW_FALSECOLOR;Falschfarbenreduzierung
+TP_RAW_FAST;Schnell
 TP_RAW_HD;Schwelle
 TP_RAW_HD_TOOLTIP;Je niedriger der Wert, umso empfindlicher reagiert\ndie “Hot / Dead-Pixel-Erkennung“.\nIst die Empfindlichkeit zu hoch, können Artefakte\nentstehen. Erhöhen Sie in diesem Fall die Schwelle,\nbis die Artefakte verschwinden.
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;Unterbild
+TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate beinhalten möglicherweise mehrere\nUnterbilder (HDR, Pixel-Shift, Dual Pixel, Dual Sensitivity).\nWählen Sie das passende Unterbild aus.\n\nIst die Bildnummer größer als die Anzahl\nder Unterbilder wird das letzte Unterbild benutzt.
 TP_RAW_LABEL;Farbinterpolation
+TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE-Verbesserungsstufen
 TP_RAW_LMMSE_TOOLTIP;Fügt Gamma (Stufe 1), Median (Stufe 2-4)\nund Optimierung (Stufe 5-6) zur Minimierung\nvon Artefakten hinzu und verbessert das\nSignalrauschverhältnis.
+TP_RAW_MONO;Mono
+TP_RAW_NONE;Keine
+TP_RAW_PIXELSHIFT;Pixel Shift
+TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
+TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
+TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Unschärfebewegungsmaske
+TP_RAW_PIXELSHIFTEPERISO;ISO-Anpassung
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert (0.0) empfiehlt sich für die Basis-ISO.\nErhöhen Sie den Wert, um die Bewegungserkennung für höhere ISO-Werte zu verbessern.\nErhöhen Sie den Wert nur in kleinen Schritten und achten Sie dabei auf die Bewegungsmaske.
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den aktuellen Frame an.\n\nSind überbelichtete Bereiche vorhanden wählen Sie den hellsten Frame aus um\nMagenta-Farbstiche zu vermeiden oder aktivieren Sie die Bewegungskorrektur.
+TP_RAW_PIXELSHIFTEXP0;Experimentell
+TP_RAW_PIXELSHIFTGREEN;Bewegung im Grün-Kanal erkennen
+TP_RAW_PIXELSHIFTHOLEFILL;Lücken in der Bewegungsmaske erkennen
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Lücken in der Bewegungsmaske erkennen
+TP_RAW_PIXELSHIFTLMMSE;LMMSE für Bewegungsteile verwenden
+TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;LMMSE anstatt AMaZE für bewegte Bildanteile verwenden.\nSinnvoll bei High-ISO-Aufnahmen.
+TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
+TP_RAW_PIXELSHIFTMEDIAN;Median
+TP_RAW_PIXELSHIFTMEDIAN3;Aktuellen Frame vom Median ausschließen.
+TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Schließt den aktuellen Frame vom Median aus.\nNützlich, wenn sich bewegte Objekte im Frame 2\nund 3 überlappen.
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Verwenden Sie den Median aller Frames anstelle des\nausgewählten Frames für Regionen mit Bewegung.\nEntfernt Objekte, die an verschiedenen Stellen in allen\nFrames vorkommen. Erzeugt einen Bewegungseffekt\nauf langsame (überlappende) Objekte.
+TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
+TP_RAW_PIXELSHIFTMM_CUSTOM;Benutzerdefiniert
+TP_RAW_PIXELSHIFTMM_OFF;Aus
+TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
+TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
+TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 Pixel\n3 = 3x3 Raster\n5 = 5x5 Raster
+TP_RAW_PIXELSHIFTMOTIONMETHOD;Bewegungskorrektur
+TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 = Keine Bewegungserkennung\n1 - 99 = Bewegung wird entsprechend dem Wert erkannt.\nHöhere Werte erhöhen die Trefferquote\n100 = Der mit AMaZE interpolierte Frame wird verwendet.
+TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
+TP_RAW_PIXELSHIFTNONGREENCROSS;Bewegung im Rot/Blau-Kanal erkennen
+TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
+TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
+TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
+TP_RAW_PIXELSHIFTNREADISO;nRead
+TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
+TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer Maske um die\nBereiche mit Bewegung hervorzuheben.
+TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
+TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Weicher Übergang zwischen Bereichen mit und ohne Bewegung.\n0 = Aus\n1 = AMaZE/LMMSE oder Median
+TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
+TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
+TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix
-TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-pass“ erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich “1-pass“\nkaum gegenüber “3-pass“, ist aber deutlich schneller.
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit “3-Pass“ erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich “1-Pass“\nkaum gegenüber “3-Pass“, ist aber deutlich schneller.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor mit X-Trans-Matrix
+TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;Anwenden auf:
 TP_RESIZE_CROPPEDAREA;Ausschnitt
 TP_RESIZE_FITBOX;Begrenzungsrahmen
@@ -2083,100 +2177,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>Alt</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_445;Raw Sub-Image
-!HISTORY_MSG_446;EvPixelShiftMotion
-!HISTORY_MSG_447;EvPixelShiftMotionCorrection
-!HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
-!HISTORY_MSG_449;PS ISO adaption
-!HISTORY_MSG_450;EvPixelShiftNreadIso
-!HISTORY_MSG_451;EvPixelShiftPrnu
-!HISTORY_MSG_452;PS Show motion
-!HISTORY_MSG_453;PS Show mask only
-!HISTORY_MSG_454;EvPixelShiftAutomatic
-!HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
-!HISTORY_MSG_456;EvPixelShiftNonGreenVertical
-!HISTORY_MSG_457;PS Check red/blue
-!HISTORY_MSG_458;EvPixelShiftStddevFactorRed
-!HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
-!HISTORY_MSG_460;EvPixelShiftGreenAmaze
-!HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
-!HISTORY_MSG_462;PS Check green
-!HISTORY_MSG_463;EvPixelShiftRedBlueWeight
-!HISTORY_MSG_464;PS Blur motion mask
-!HISTORY_MSG_465;PS Blur radius
-!HISTORY_MSG_466;EvPixelShiftSum
-!HISTORY_MSG_467;EvPixelShiftExp0
-!HISTORY_MSG_468;PS Fill holes
-!HISTORY_MSG_469;PS Median
-!HISTORY_MSG_470;EvPixelShiftMedian3
-!HISTORY_MSG_471;PS Motion correction
-!HISTORY_MSG_472;PS Smooth transitions
-!HISTORY_MSG_473;PS Use lmmse
-!HISTORY_MSG_474;PS Equalize
-!PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!TP_RAW_1-PASS (MEDIUM);1-pass (medium)
-!TP_RAW_3-PASS (BEST);3-pass (best)
-!TP_RAW_AHD;ahd
-!TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;dcb
-!TP_RAW_EAHD;eahd
-!TP_RAW_FAST;fast
-!TP_RAW_HPHD;hphd
-!TP_RAW_IGV;igv
-!TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel-Shift, Dual Sensitivity). Use this button to select the sub-image.\n\nThe last sub-image will be used if you select a value beyond the real sub-image count.
-!TP_RAW_LMMSE;lmmse
-!TP_RAW_MONO;mono
-!TP_RAW_NONE;none (show sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
-!TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
-!TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
-!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
-!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
-!TP_RAW_PIXELSHIFTEXP0;Experimental
-!TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
-!TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use lmmse for motion parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use lmmse instead of amaze for motion areas.\nUseful for High ISO images.
-!TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
-!TP_RAW_PIXELSHIFTMEDIAN;Median
-!TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
-!TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
-!TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
-!TP_RAW_PIXELSHIFTMM_AUTO;Automatic
-!TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
-!TP_RAW_PIXELSHIFTMM_OFF;Off
-!TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
-!TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
-!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
-!TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
-!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
-!TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
-!TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
-!TP_RAW_PIXELSHIFTNREADISO;nRead
-!TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-!TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
-!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show mask only
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion
-!TP_RAW_PIXELSHIFTSIGMA;Blur radius
-!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Default radius of 1.0 usually fits good for base ISO. Increase value for high ISO shots,\n5.0 is a good starting point for high ISO shots.\nWatch motion mask while changing the value.
-!TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
-!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with and without motion.\nSet to 0 to disable smooth transitions\nSet to 1 to get Amaze/lmmse or Median
-!TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
-!TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
-!TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
-!TP_RAW_VNG4;vng4
