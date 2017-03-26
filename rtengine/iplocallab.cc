@@ -31,6 +31,7 @@
 #include "iccmatrices.h"
 #include "color.h"
 #include "rt_math.h"
+#include "jaggedarray.h"
 #ifdef _DEBUG
 #include "mytime.h"
 #endif
@@ -1886,7 +1887,6 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
 // contrast - perhaps for 4 areas   if need
 // I tried shmap adaptaed to Lab, but no real gain and artifacts
     const float localtype = lumaref; // always spot area
-    //  const float localtype = ave; // always spot area
     const float ach = (float)lp.trans / 100.f;
     float reducac;
 
@@ -1933,7 +1933,6 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
     float minco = +10000.f;
 
     if (call <= 3) {
-std::cout << lp.sens << " " << lp.qualmet << std::endl;
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
@@ -1949,11 +1948,8 @@ std::cout << lp.sens << " " << lp.qualmet << std::endl;
             #pragma omp for schedule(dynamic,16)
 #endif
 
-            for (int y = 0; y < transformed->H; y++)
-            {
-
+            for (int y = 0; y < transformed->H; y++) {
                 const int loy = cy + y;
-
                 const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
                 if(isZone0) { // outside selection and outside transition zone => no effect, keep original values
@@ -1978,14 +1974,12 @@ std::cout << lp.sens << " " << lp.qualmet << std::endl;
 #endif
 
                 for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
+                    const int lox = cx + x;
 
                     float rL;
 
                     if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && (rL = original->L[y][x]) > 3.2768f) {
                         // rL > 3.2768f to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
-                        int begx = lp.xc - lp.lxL;
-                        int begy = lp.yc - lp.lyT;
                         int zone = 0;
 
                         float localFactor = 1.f;
@@ -2008,6 +2002,8 @@ std::cout << lp.sens << " " << lp.qualmet << std::endl;
 
                         float cli = 1.f;
 
+                        const int begx = lp.xc - lp.lxL;
+                        const int begy = lp.yc - lp.lyT;
                         if (lp.curvact) {
 
                             cli = (buflightc[loy - begy][lox - begx]);
@@ -2119,7 +2115,6 @@ std::cout << lp.sens << " " << lp.qualmet << std::endl;
 
                             if (rchro < kcr) {
                                 fach *= SQR(rchro) / SQR(kcr);
-//                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
                             }
                         }
 
@@ -2212,7 +2207,6 @@ std::cout << lp.sens << " " << lp.qualmet << std::endl;
                     }
                 }
             }
-
         }
     }
 }
@@ -2543,7 +2537,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
 
 void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
-    // BENCHFUN
+     BENCHFUN
     const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
     float reducac;
@@ -2573,6 +2567,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
     const float ahu = 1.f / (2.8f * lp.senssha - 280.f);
     const float bhu = 1.f - ahu * 2.8f * lp.senssha;
 
+    const bool detectHue = lp.senssha < 20.f && lp.qualmet == 1;
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
@@ -2588,50 +2583,63 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
 #endif
 
         for (int y = 0; y < transformed->H; y++) {
+
+            const int loy = cy + y;
+            const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+            if(isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                for (int x = 0; x < transformed->W; x++) {
+                    transformed->L[y][x] = original->L[y][x];
+                }
+                continue;
+            }
+
 #ifdef __SSE2__
             int i = 0;
 
-            for (; i < transformed->W - 3; i += 4) {
-                vfloat av = LVFU (original->a[y][i]);
-                vfloat bv = LVFU (original->b[y][i]);
-                STVF (atan2Buffer[i], xatan2f (bv, av));
-                STVF (sqrtBuffer[i], _mm_sqrt_ps (SQRV (bv) + SQRV (av)) / c327d68v);
-            }
+            if(detectHue) {
+                for (; i < transformed->W - 3; i += 4) {
+                    vfloat av = LVFU (original->a[y][i]);
+                    vfloat bv = LVFU (original->b[y][i]);
+                    STVF (atan2Buffer[i], xatan2f (bv, av));
+                    STVF (sqrtBuffer[i], _mm_sqrt_ps (SQRV (bv) + SQRV (av)) / c327d68v);
+                }
 
-            for (; i < transformed->W; i++) {
-                atan2Buffer[i] = xatan2f (original->b[y][i], original->a[y][i]);
-                sqrtBuffer[i] = sqrt (SQR (original->b[y][i]) + SQR (original->a[y][i])) / 327.68f;
+                for (; i < transformed->W; i++) {
+                    atan2Buffer[i] = xatan2f (original->b[y][i], original->a[y][i]);
+                    sqrtBuffer[i] = sqrt (SQR (original->b[y][i]) + SQR (original->a[y][i])) / 327.68f;
+                }
+            } else {
+                for (; i < transformed->W - 3; i += 4) {
+                    vfloat av = LVFU (original->a[y][i]);
+                    vfloat bv = LVFU (original->b[y][i]);
+                    STVF (sqrtBuffer[i], _mm_sqrt_ps (SQRV (bv) + SQRV (av)) / c327d68v);
+                }
+                for (; i < transformed->W; i++) {
+                    sqrtBuffer[i] = sqrt (SQR (original->b[y][i]) + SQR (original->a[y][i])) / 327.68f;
+                }
             }
 
 #endif
-
-            int loy = cy + y;
 
             for (int x = 0; x < transformed->W; x++) {
                 int lox = cx + x;
-#ifdef __SSE2__
-                float rhue = atan2Buffer[x];
-                float rchro = sqrtBuffer[x];
-#else
-                float rhue = xatan2f (original->b[y][x], original->a[y][x]);
-                float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
-#endif
-                int zone;
+                int zone = 0;
                 float localFactor = 1.f;
                 calcTransition (lox, loy, ach, lp, zone, localFactor);
+                if(zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                    transformed->L[y][x] = original->L[y][x];
+                    continue;
+                }
+#ifdef __SSE2__
+                float rchro = sqrtBuffer[x];
+#else
+                float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
+#endif
                 //prepare shape detection
-                float khu = 0.f;
                 float kch = 1.f;
-                bool kzon = false;
                 float fach = 1.f;
                 float deltachro = fabs (rchro - chromaref);
-                float deltahue = fabs (rhue - hueref);
-
-                if (deltahue > rtengine::RT_PI) {
-                    deltahue = - (deltahue - 2.f * rtengine::RT_PI);
-                }
-
-                float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
 
                 //kch to modulate action with chroma
                 if (deltachro < 160.f * SQR (lp.senssha / 100.f)) {
@@ -2641,15 +2649,24 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                     float ak = 1.f / (ck - 160.f);
                     float bk = -160.f * ak;
                     kch = ak * deltachro + bk;
+                    if (lp.senssha < 40.f ) {
+                        kch = pow_F (kch, pa * lp.senssha + pb);   //increase under 40
+                    }
                 }
-
-                if (lp.senssha < 40.f ) {
-                    kch = pow (kch, pa * lp.senssha + pb);   //increase under 40
-                }
-
 
                 // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                if (lp.senssha < 20.f) { //to try...
+                if (detectHue) { //to try...
+#ifdef __SSE2__
+                    float rhue = atan2Buffer[x];
+#else
+                    float rhue = xatan2f (original->b[y][x], original->a[y][x]);
+#endif
+                    float khu = 0.f;
+                    float deltahue = fabs (rhue - hueref);
+
+                    if (deltahue > rtengine::RT_PI) {
+                        deltahue = - (deltahue - 2.f * rtengine::RT_PI);
+                    }
                     //hue detection
                     if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                         if (rhue >= hueplus - delhu )  {
@@ -2661,7 +2678,6 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                         }
 
 
-                        kzon = true;
                     } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
@@ -2671,7 +2687,6 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                             khu = 1.f;
                         }
 
-                        kzon = true;
                     }
 
                     if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
@@ -2683,7 +2698,6 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                             khu = 1.f;
                         }
 
-                        kzon = true;
                     } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
@@ -2693,8 +2707,9 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                             khu = 1.f;
                         }
 
-                        kzon = true;
                     }
+
+                    float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
 
                     if (deltaE <  2.8f * lp.senssha) {
                         fach = khu;
@@ -2709,33 +2724,12 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                         fach *= (1.f / (kcr * kcr)) * rchro * rchro;
                     }
 
-                    if (lp.qualmet == 1) {
-                    } else {
-                        fach = 1.f;
-                    }
-
-                    //fach = khu ;
-
-                } else {
-                    /*
-                        float kcr = 8.f;
-                        if(lp.senssha > 30.f){
-                        if (rchro < kcr) {
-                            fach *= (1.f / (kcr)) * rchro;
-
-                        }
-                        }
-                        */
                 }
 
                 int begx = int (lp.xc - lp.lxL);
                 int begy = int (lp.yc - lp.lyT);
 
                 switch (zone) {
-                    case 0: { // outside selection and outside transition zone => no effect, keep original values
-                        transformed->L[y][x] = original->L[y][x];
-                        break;
-                    }
 
                     case 1: { // inside transition zone
                         float factorx = localFactor;
@@ -4831,70 +4825,36 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 //end cbdl
         if (!lp.invshar && lp.shrad > 0.42 && call < 3  && lp.sharpena) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
-
-            int GW = original->W;
-            int GH = original->H;
-            float **bufsh;//buffer por square zone
-            float **loctemp;
-            float **hbuffer;
-            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-            int bfw = int (lp.lx + lp.lxL) + del;
+            int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
+            int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
+            const JaggedArray<float> loctemp (bfw, bfh);
 
             if (call == 2) { //call from simpleprocess
-                bufsh   = new float*[bfh];
+                const JaggedArray<float> bufsh (bfw, bfh, true);
+                const JaggedArray<float> hbuffer (bfw, bfh);
 
-                for (int i = 0; i < bfh; i++) {
-                    bufsh[i] = new float[bfw];
-                }
-
+                int yStart = lp.yc - lp.lyT - cy;
+                int yEnd = lp.yc + lp.ly - cy;
+                int xStart = lp.xc - lp.lxL - cx;
+                int xEnd = lp.xc + lp.lx - cx;
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufsh[ir][jr] = 0.f;
+                for (int y = yStart; y < yEnd ; y++) {
+                    int loy = cy + y;
+                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
+                        bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                     }
-
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
-
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                            bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                        }
-                    }
-
-                loctemp = new float*[bfh];//allocate temp
-
-                for (int i = 0; i < bfh; i++) {
-                    loctemp[i] = new float[bfw];
-                }
-
-                hbuffer = new float*[bfh];//allocate buffer for sharp
-
-                for (int i = 0; i < bfh; i++) {
-                    hbuffer[i] = new float[bfw];
                 }
 
                 //sharpen only square area instaed of all image
                 ImProcFunctions::deconvsharpeningloc (bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
             } else { //call from dcrop.cc
-                loctemp = new float*[GH];//allocate temp
 
-                for (int i = 0; i < GH; i++) {
-                    loctemp[i] = new float[GW];
-                }
-
-                ImProcFunctions::deconvsharpeningloc (original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
+                ImProcFunctions::deconvsharpeningloc (original->L, shbuffer, bfw, bfh, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
 
             }
 
@@ -4912,50 +4872,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             //sharpen ellipse and transition
             Sharp_Local (call, sp, loctemp, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, original, transformed, cx, cy);
 
-            //cleann all
-            if (call == 2  && !lp.invshar) {
-                for (int i = 0; i < bfh; i++) {
-                    delete [] loctemp[i];
-                }
-
-                delete [] loctemp;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] bufsh[i];
-                }
-
-                delete [] bufsh;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] hbuffer[i];
-                }
-
-                delete [] hbuffer;
-            } else {
-                for (int i = 0; i < GH; i++) {
-                    delete [] loctemp[i];
-                }
-
-                delete [] loctemp;
-
-            }
-
-            /*            for (int i = 0; i < GH; i++) {
-                            delete [] hbuffer[i];
-                        }
-
-                        delete [] hbuffer;
-            */
-
         } else if (lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena) {
             int GW = original->W;
             int GH = original->H;
-
-            float **loctemp = new float*[GH];
-
-            for (int i = 0; i < GH; i++) {
-                loctemp[i] = new float[GW];
-            }
+            const JaggedArray<float> loctemp (GW, GH);
 
             ImProcFunctions::deconvsharpeningloc (original->L, shbuffer, GW, GH, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
 
@@ -4971,13 +4891,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             }
 
             InverseSharp_Local (sp, loctemp, hueplus, huemoins, hueref, dhue, chromaref, lumaref, lp, original, transformed, cx, cy);
-
-            for (int i = 0; i < GH; i++) {
-                delete [] loctemp[i];
-            }
-
-            delete [] loctemp;
-
         }
 
         //      }
