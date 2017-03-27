@@ -1168,8 +1168,8 @@ void ProcParams::setDefaults ()
     epd.enabled = false;
     epd.strength = 0.5;
     epd.gamma = 1.0;
-    epd.edgeStopping = 1.4;
-    epd.scale = 0.3;
+    epd.edgeStopping = 0.5;
+    epd.scale = 0.1;
     epd.reweightingIterates = 0;
 
     sh.enabled       = false;
