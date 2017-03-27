@@ -110,7 +110,7 @@ protected:
     Gtk::MenuItem* partpasteprof;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* applypartprof;
-    Gtk::MenuItem* execcustprof;
+    Gtk::MenuItem* resetdefaultprof;
     Gtk::MenuItem* clearprof;
     Gtk::MenuItem* cachemenu;
     Gtk::MenuItem* clearFromCache;

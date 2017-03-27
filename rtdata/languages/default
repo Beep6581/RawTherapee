@@ -117,7 +117,7 @@ FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1</b> 
 FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
 FILEBROWSER_EMPTYTRASH;Empty trash
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files from trash.
-FILEBROWSER_EXEC_CPB;Custom Profile Builder
+FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 FILEBROWSER_EXTPROGMENU;Open with
 FILEBROWSER_FLATFIELD;Flat-Field
 FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
