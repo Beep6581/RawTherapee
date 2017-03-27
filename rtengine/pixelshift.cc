@@ -332,7 +332,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
         bayerParams.pixelShiftMotion = 0;
         bayerParams.pixelShiftAutomatic = false;
-        bayerParams.pixelshiftShowMotion = false;
+        bayerParams.pixelShiftShowMotion = false;
     }
 
     if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic)) {
@@ -454,8 +454,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
     const int motion = bayerParams.pixelShiftMotion;
-    const bool showMotion = bayerParams.pixelshiftShowMotion;
-    const bool showOnlyMask = bayerParams.pixelshiftShowMotionMaskOnly && showMotion;
+    const bool showMotion = bayerParams.pixelShiftShowMotion;
+    const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
     const RAWParams::BayerSensor::ePSMotionCorrection gridSize_ = bayerParams.pixelShiftMotionCorrection;
     const bool adaptive = bayerParams.pixelShiftAutomatic;
 #ifdef PIXELSHIFTDEV
