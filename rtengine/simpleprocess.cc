@@ -1414,9 +1414,6 @@ private:
         for (auto &p : params.dirpyrDenoise.lcurve) {
             p *= scale_factor;
         }
-        for (auto &p : params.dirpyrDenoise.cccurve) {
-            p *= scale_factor;
-        }
         
         params.epd.scale *= scale_factor;
         //params.epd.edgeStopping *= scale_factor;
