@@ -1142,7 +1142,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                             if (!memoryAllocationFailed) {
                                 if (nrQuality == QUALITY_STANDARD) {
-                                    if (!WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb)) { //enhance mode
+                                    if (!WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb, denoiseNestedLevels)) { //enhance mode
                                         memoryAllocationFailed = true;
                                     }
                                 } else { /*if (nrQuality==QUALITY_HIGH)*/
@@ -1151,7 +1151,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                     }
 
                                     if (!memoryAllocationFailed) {
-                                        if (!WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb)) {
+                                        if (!WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_r, useNoiseCCurve, autoch, denoiseMethodRgb, denoiseNestedLevels)) {
                                             memoryAllocationFailed = true;
                                         }
                                     }
@@ -1179,7 +1179,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
                                 if (!memoryAllocationFailed) {
                                     if (nrQuality == QUALITY_STANDARD) {
-                                        if (!WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb)) { //enhance mode
+                                        if (!WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb, denoiseNestedLevels)) { //enhance mode
                                             memoryAllocationFailed = true;
                                         }
                                     } else { /*if (nrQuality==QUALITY_HIGH)*/
@@ -1188,7 +1188,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         }
 
                                         if (!memoryAllocationFailed) {
-                                            if (!WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb)) {
+                                            if (!WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL,  nullptr, 0, noisevarab_b, useNoiseCCurve, autoch, denoiseMethodRgb, denoiseNestedLevels)) {
                                                 memoryAllocationFailed = true;
                                             }
                                         }
@@ -1215,7 +1215,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                         int edge = 0;
 
                                         if (nrQuality == QUALITY_STANDARD) {
-                                            if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, nullptr, edge)) { //enhance mode
+                                            if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, nullptr, edge, denoiseNestedLevels)) { //enhance mode
                                                 memoryAllocationFailed = true;
                                             }
                                         } else { /*if (nrQuality==QUALITY_HIGH)*/
@@ -1224,7 +1224,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                             }
 
                                             if (!memoryAllocationFailed) {
-                                                if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, nullptr, edge)) {
+                                                if (!WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, nullptr, edge, denoiseNestedLevels)) {
                                                     memoryAllocationFailed = true;
                                                 }
                                             }
@@ -2476,7 +2476,7 @@ SSEFUNCTION bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposi
 }
 
 
-bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge)//mod JD
+bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)//mod JD
 
 {
 
@@ -2540,7 +2540,7 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition &WaveletCoeffs_L,
 
 
 bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab,
-        float *noisevarchrom, float madL[8][3],  float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb)//mod JD
+        float *noisevarchrom, float madL[8][3],  float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)//mod JD
 
 {
 

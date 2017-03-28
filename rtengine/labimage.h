@@ -78,6 +78,17 @@ public:
         allocLab(W, H);
     };
 
+    void clear(bool multiThread = false) {
+#ifdef _OPENMP
+        #pragma omp parallel for if(multiThread)
+#endif
+        for(int i = 0; i < H; ++i) {
+            for(int j = 0; j < W; ++j) {
+                L[i][j] = a[i][j] = b[i][j] = 0.f;
+            }
+        }
+    }
+
 };
 
 }

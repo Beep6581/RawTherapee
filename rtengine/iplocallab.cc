@@ -35,6 +35,9 @@
 #ifdef _DEBUG
 #include "mytime.h"
 #endif
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "cplx_wavelet_dec.h"
 
@@ -439,7 +442,7 @@ void ImProcFunctions::addGaNoise (LabImage *lab, LabImage *dst, const float mean
     }
 }
 
-void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy)
+void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy)
 {
     // local denoise
     // BENCHFUN
@@ -448,7 +451,17 @@ void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, La
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 
     for (int y = 0; y < transformed->H; y++) {
-        int loy = cy + y;
+        const int loy = cy + y;
+        const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+        if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+            for (int x = 0; x < transformed->W; x++) {
+                transformed->L[y][x] = original->L[y][x];
+                transformed->a[y][x] = original->a[y][x];
+                transformed->b[y][x] = original->b[y][x];
+            }
+            continue;
+        }
 
         for (int x = 0; x < transformed->W; x++) {
             int lox = cx + x;
@@ -473,14 +486,14 @@ void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, La
 
                     if (call == 2) { //simpleprocess
                         if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
                         }
                     } else  { //dcrop
-                        difL = tmp1->L[y][x] - original->L[y][x];
-                        difa = tmp1->a[y][x] - original->a[y][x];
-                        difb = tmp1->b[y][x] - original->b[y][x];
+                        difL = tmp1.L[y][x] - original->L[y][x];
+                        difa = tmp1.a[y][x] - original->a[y][x];
+                        difb = tmp1.b[y][x] - original->b[y][x];
 
                     }
 
@@ -499,14 +512,14 @@ void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, La
                     if (call == 2) { //simpleprocess
 
                         if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
                         }
                     } else  { //dcrop
-                        difL = tmp1->L[y][x] - original->L[y][x];
-                        difa = tmp1->a[y][x] - original->a[y][x];
-                        difb = tmp1->b[y][x] - original->b[y][x];
+                        difL = tmp1.L[y][x] - original->L[y][x];
+                        difa = tmp1.a[y][x] - original->a[y][x];
+                        difb = tmp1.b[y][x] - original->b[y][x];
 
                     }
 
@@ -3793,17 +3806,22 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 levred = 7;
             }
 
+#ifdef _OPENMP
+            const int numThreads = omp_get_max_threads();
+#else
+            const int numThreads = 1;
+
+#endif
             if (call == 1) {
-                LabImage *tmp1 = new LabImage (transformed->W, transformed->H);
+                LabImage tmp1(transformed->W, transformed->H);
                 int GW = transformed->W;
                 int GH = transformed->H;
 
-
                 for (int ir = 0; ir < GH; ir++)
                     for (int jr = 0; jr < GW; jr++) {
-                        tmp1->L[ir][jr] = original->L[ir][jr];
-                        tmp1->a[ir][jr] = original->a[ir][jr];
-                        tmp1->b[ir][jr] = original->b[ir][jr];
+                        tmp1.L[ir][jr] = original->L[ir][jr];
+                        tmp1.a[ir][jr] = original->a[ir][jr];
+                        tmp1.b[ir][jr] = original->b[ir][jr];
                     }
 
                 int DaubLen = 6;
@@ -3811,27 +3829,27 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 int levwavL = levred;
                 int skip = 1;
-                wavelet_decomposition* Ldecomp = new wavelet_decomposition (tmp1->L[0], tmp1->W, tmp1->H, levwavL, 1, skip, max (1, wavNestedLevels), DaubLen);
-                wavelet_decomposition* adecomp = new wavelet_decomposition (tmp1->a[0], tmp1->W, tmp1->H, levwavL, 1, skip, max (1, wavNestedLevels), DaubLen);
-                wavelet_decomposition* bdecomp = new wavelet_decomposition (tmp1->b[0], tmp1->W, tmp1->H, levwavL, 1, skip, max (1, wavNestedLevels), DaubLen);
+
+                wavelet_decomposition Ldecomp(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition adecomp(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
                 float madab[8][3];
                 int edge;
 
-                if (!Ldecomp->memoryAllocationFailed) {
-
+                if (!Ldecomp.memoryAllocationFailed) {
+                    #pragma omp parallel for collapse(2) schedule(dynamic,1)
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
-                            int Wlvl_L = Ldecomp->level_W (lvl);
-                            int Hlvl_L = Ldecomp->level_H (lvl);
+                            int Wlvl_L = Ldecomp.level_W (lvl);
+                            int Hlvl_L = Ldecomp.level_H (lvl);
 
-                            float ** WavCoeffs_L = Ldecomp->level_coeffs (lvl);
+                            float ** WavCoeffs_L = Ldecomp.level_coeffs (lvl);
 
                             madL[lvl][dir - 1] = SQR (Mad (WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                         }
                     }
-
 
                     int ind = 0;
                     float vari[levred];
@@ -3869,13 +3887,13 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
 
-                        WaveletDenoiseAllL (*Ldecomp, noisevarlum, madL, vari, edge);
+                        WaveletDenoiseAllL (Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                     }
                 }
 
                 float variC[levred];
 
-                if (!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
+                if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
                     if (levred == 7) {
                         edge = 2;
                         variC[0] = SQR (lp.noisecf / 10.0);
@@ -3921,102 +3939,84 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         }
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB (*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false);
-                        WaveletDenoiseAllAB (*Ldecomp, *bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false);
+                        WaveletDenoiseAllAB (Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB (Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
                 }
 
-                if (!Ldecomp->memoryAllocationFailed) {
+                if (!Ldecomp.memoryAllocationFailed) {
 
-                    Ldecomp->reconstruct (tmp1->L[0]);
+                    Ldecomp.reconstruct (tmp1.L[0]);
                 }
 
-                if (!adecomp->memoryAllocationFailed) {
+                if (!adecomp.memoryAllocationFailed) {
 
-                    adecomp->reconstruct (tmp1->a[0]);
+                    adecomp.reconstruct (tmp1.a[0]);
                 }
 
-                if (!bdecomp->memoryAllocationFailed) {
+                if (!bdecomp.memoryAllocationFailed) {
 
-                    bdecomp->reconstruct (tmp1->b[0]);
+                    bdecomp.reconstruct (tmp1.b[0]);
                 }
 
                 DeNoise_Local (call, lp, original, transformed, tmp1, cx, cy);
-                delete tmp1;
-                delete Ldecomp;
-                delete adecomp;
-                delete bdecomp;
-            }
 
-            LabImage *bufwv;
+            } else if (call == 2) { //simpleprocess
 
-            if (call == 2) { //simpleprocess
                 int GW = transformed->W;
                 int GH = transformed->H;
                 int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                 int bfw = int (lp.lx + lp.lxL) + del;
-                bufwv = new LabImage (bfw, bfh);
+                LabImage bufwv(bfw, bfh);
+                bufwv.clear(true);
 
+                int yStart = lp.yc - lp.lyT - cy;
+                int yEnd = lp.yc + lp.ly - cy;
+                int xStart = lp.xc - lp.lxL - cx;
+                int xEnd = lp.xc + lp.lx - cx;
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for (int ir = 0; ir < bfh; ir++) //fill with 0
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufwv->L[ir][jr] = 0.f;
-                        bufwv->a[ir][jr] = 0.f;
-                        bufwv->b[ir][jr] = 0.f;
+                for (int y = yStart; y < yEnd ; y++) {
+                    int loy = cy + y;
 
+                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
+                            bufwv.L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufwv.a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufwv.b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
                     }
-
-
-#ifdef _OPENMP
-                #pragma omp parallel for
-#endif
-
-                for (int y = 0; y < transformed->H ; y++) //{
-                    for (int x = 0; x < transformed->W; x++) {
-                        int lox = cx + x;
-                        int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
-
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                            bufwv->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufwv->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufwv->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                        }
-                    }
-
+                }
 
                 int DaubLen = 6;
                 int wavNestedLevels = 1;
 
                 int levwavL = levred;
                 int skip = 1;
-                wavelet_decomposition* Ldecomp = new wavelet_decomposition (bufwv->L[0], bufwv->W, bufwv->H, levwavL, 1, skip, max (1, wavNestedLevels), DaubLen);
-                wavelet_decomposition* adecomp = new wavelet_decomposition (bufwv->a[0], bufwv->W, bufwv->H, levwavL, 1, skip, max (1, wavNestedLevels), DaubLen);
-                wavelet_decomposition* bdecomp = new wavelet_decomposition (bufwv->b[0], bufwv->W, bufwv->H, levwavL, 1, skip, max (1, wavNestedLevels), DaubLen);
+                wavelet_decomposition Ldecomp(bufwv.L[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition adecomp(bufwv.a[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition bdecomp(bufwv.b[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
                 float madab[8][3];
                 int edge;
 
-                if (!Ldecomp->memoryAllocationFailed) {
-
+                if (!Ldecomp.memoryAllocationFailed) {
+                    #pragma omp parallel for collapse(2) schedule(dynamic,1)
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
-                            int Wlvl_L = Ldecomp->level_W (lvl);
-                            int Hlvl_L = Ldecomp->level_H (lvl);
+                            int Wlvl_L = Ldecomp.level_W (lvl);
+                            int Hlvl_L = Ldecomp.level_H (lvl);
 
-                            float ** WavCoeffs_L = Ldecomp->level_coeffs (lvl);
+                            float ** WavCoeffs_L = Ldecomp.level_coeffs (lvl);
 
                             madL[lvl][dir - 1] = SQR (Mad (WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                         }
                     }
-
 
                     int ind = 0;
 
@@ -4057,14 +4057,14 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
 
-                        WaveletDenoiseAllL (*Ldecomp, noisevarlum, madL, vari, edge);
+                        WaveletDenoiseAllL (Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                     }
                 }
 
 
                 float variC[levred];
 
-                if (!adecomp->memoryAllocationFailed && !bdecomp->memoryAllocationFailed) {
+                if (!adecomp.memoryAllocationFailed && !bdecomp.memoryAllocationFailed) {
 
                     if (levred == 7) {
                         edge = 2;
@@ -4111,41 +4111,29 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
-                        WaveletDenoiseAllAB (*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false);
-                        WaveletDenoiseAllAB (*Ldecomp, *bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false);
+                        WaveletDenoiseAllAB (Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB (Ldecomp, bdecomp, noisevarchrom, madL, variC, edge, noisevarab_r, false, false, false, numThreads);
                         delete[] noisevarchrom;
 
                     }
                 }
 
+                if (!Ldecomp.memoryAllocationFailed) {
 
-                if (!Ldecomp->memoryAllocationFailed) {
-
-                    Ldecomp->reconstruct (bufwv->L[0]);
+                    Ldecomp.reconstruct (bufwv.L[0]);
                 }
 
-                if (!adecomp->memoryAllocationFailed) {
+                if (!adecomp.memoryAllocationFailed) {
 
-                    adecomp->reconstruct (bufwv->a[0]);
+                    adecomp.reconstruct (bufwv.a[0]);
                 }
 
-                if (!bdecomp->memoryAllocationFailed) {
+                if (!bdecomp.memoryAllocationFailed) {
 
-                    bdecomp->reconstruct (bufwv->b[0]);
+                    bdecomp.reconstruct (bufwv.b[0]);
                 }
 
                 DeNoise_Local (call, lp, original, transformed, bufwv, cx, cy);
-                delete bufwv;
-                delete Ldecomp;
-                delete adecomp;
-                delete bdecomp;
-
-                bufwv = nullptr;
-                Ldecomp = nullptr;
-                adecomp = nullptr;
-                bdecomp = nullptr;
-
-
             }
 
         }

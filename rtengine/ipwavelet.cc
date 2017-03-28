@@ -918,7 +918,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                             vari[3] = max(0.0001f, vari[3]);
                             float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
 
-                            WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge);
+                            WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                         }
 
                         ind = 1;

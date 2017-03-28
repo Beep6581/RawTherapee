@@ -292,7 +292,7 @@ public:
     static void strcurv_data (std::string retistr, int *s_datc, int &siz);
     void InverseContrast_Local (float ave, const struct local_contra& lco, const struct local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
 
-    void DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
+    void DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy);
 
     void ColorLight_Local (int call, LabImage * bufcolorig, LabImage * bufcoltra, float **buflight, float **bufchro,  float ** buflightslid, int sp, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, float chprov, float cligh, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
     void InverseColorLight_Local (const struct local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
@@ -334,8 +334,8 @@ public:
     void RGB_denoise_info (Imagefloat * src, Imagefloat * provicalc, bool isRAW, LUTf &gamcurve, float gam, float gamthresh, float gamslope, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float & maxblueaut, float &minredaut, float & minblueaut, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc, bool multiThread = false);
     void RGBtile_denoise (float * fLblox, int hblproc, float noisevar_Ldetail, float * nbrwt, float * blurbuffer );   //for DCT
     void RGBoutput_tile_row (float *bloxrow_L, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
-    bool WaveletDenoiseAllL (wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge);
-    bool WaveletDenoiseAllAB (wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb);
+    bool WaveletDenoiseAllL (wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels);
+    bool WaveletDenoiseAllAB (wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels);
     void WaveletDenoiseAll_info (int levwav, wavelet_decomposition &WaveletCoeffs_a,
                                  wavelet_decomposition &WaveletCoeffs_b, float **noisevarlum, float **noisevarchrom, float **noisevarhue, int width, int height, float noisevar_abr, float noisevar_abb, LabImage * noi, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float & minblueaut, int schoice, bool autoch, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
                                  float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb, bool multiThread);
