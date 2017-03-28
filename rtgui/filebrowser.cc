@@ -389,6 +389,7 @@ FileBrowser::FileBrowser ()
     untrash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Return, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    developfast->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     partpasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_V, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
@@ -767,6 +768,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     else if (m == develop) {
         tbl->developRequested (mselected, false);
     } else if (m == developfast) {
+        if (exportPanel) {
+            // force saving export panel settings
+            exportPanel->setExportPanelListener(nullptr);
+            exportPanel->FastExportPressed();
+            exportPanel->setExportPanelListener(this);
+        }
         tbl->developRequested (mselected, true);
     }
 
@@ -1139,8 +1146,11 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     } else if (event->keyval == GDK_KEY_Delete && shift) {
         menuItemActivated (untrash);
         return true;
-    } else if ((event->keyval == GDK_KEY_B || event->keyval == GDK_KEY_b) && ctrl) {
+    } else if ((event->keyval == GDK_KEY_B || event->keyval == GDK_KEY_b) && ctrl && !shift) {
         menuItemActivated (develop);
+        return true;
+    } else if ((event->keyval == GDK_KEY_B || event->keyval == GDK_KEY_b) && ctrl && shift) {
+        menuItemActivated (developfast);
         return true;
     } else if ((event->keyval == GDK_KEY_A || event->keyval == GDK_KEY_a) && ctrl) {
         menuItemActivated (selall);
