@@ -50,7 +50,8 @@
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 #define CLIPRET(x) LIM(x,-99.5f, 99.5f)
 
-namespace {
+namespace
+{
 
 float calcLocalFactor (const float lox, const float loy, const float lcx, const float dx, const float lcy, const float dy, const float ach)
 {
@@ -1138,16 +1139,18 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
-            if(isZone0) { // outside selection and outside transition zone => no effect, keep original values
+            if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
                 for (int x = 0; x < transformed->W; x++) {
                     transformed->L[y][x] = original->L[y][x];
                 }
+
                 if (!lp.actsp) {
                     for (int x = 0; x < transformed->W; x++) {
                         transformed->a[y][x] = original->a[y][x];
                         transformed->b[y][x] = original->b[y][x];
                     }
                 }
+
                 continue;
             }
 
@@ -1165,6 +1168,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 atan2Buffer[i] = xatan2f (original->b[y][i], original->a[y][i]);
                 sqrtBuffer[i] = sqrt (SQR (original->b[y][i]) + SQR (original->a[y][i])) / 327.68f;
             }
+
 #endif
 
 
@@ -1174,15 +1178,17 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 float localFactor = 1.f;
                 calcTransition (lox, loy, ach, lp, zone, localFactor);
 
-                if(zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     transformed->L[y][x] = original->L[y][x];
 
                     if (!lp.actsp) {
                         transformed->a[y][x] = original->a[y][x];
                         transformed->b[y][x] = original->b[y][x];
                     }
+
                     continue;
                 }
+
 #ifdef __SSE2__
                 const float rhue = atan2Buffer[x];
                 const float rchro = sqrtBuffer[x];
@@ -1271,6 +1277,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                         }
                     }
                 }
+
                 int begx = lp.xc - lp.lxL;
                 int begy = lp.yc - lp.lyT;
 
@@ -1883,7 +1890,7 @@ struct local_contra {
 
 void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontorig, float ** buflightc, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, float pm, struct local_contra & lco, float lumaref, float av, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
-     BENCHFUN
+    BENCHFUN
 // contrast - perhaps for 4 areas   if need
 // I tried shmap adaptaed to Lab, but no real gain and artifacts
     const float localtype = lumaref; // always spot area
@@ -1948,11 +1955,12 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
             #pragma omp for schedule(dynamic,16)
 #endif
 
-            for (int y = 0; y < transformed->H; y++) {
+            for (int y = 0; y < transformed->H; y++)
+            {
                 const int loy = cy + y;
                 const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
-                if(isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
                     continue;
                 }
 
@@ -1984,7 +1992,8 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
 
                         float localFactor = 1.f;
                         calcTransition (lox, loy, ach, lp, zone, localFactor);
-                        if(zone == 0) {
+
+                        if (zone == 0) {
                             continue;
                         }
 
@@ -2004,6 +2013,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
 
                         const int begx = lp.xc - lp.lxL;
                         const int begy = lp.yc - lp.lyT;
+
                         if (lp.curvact) {
 
                             cli = (buflightc[loy - begy][lox - begx]);
@@ -2033,6 +2043,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                             float ak = 1.f / (ck - 160.f);
                             float bk = -160.f * ak;
                             kch = ak * deltachro + bk;
+
                             if (lp.sens < 40.f ) {
                                 kch = pow_F (kch, pa * lp.sens + pb);   //increase under 40
                             }
@@ -2114,7 +2125,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                             constexpr float kcr = 10.f;
 
                             if (rchro < kcr) {
-                                fach *= SQR(rchro) / SQR(kcr);
+                                fach *= SQR (rchro) / SQR (kcr);
                             }
                         }
 
@@ -2141,6 +2152,7 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                                     float factorx = localFactor;
                                     float prov100 = original->L[y][x] / 32768.f;
                                     float prov = prov100 * 100.f;
+
                                     if (prov > localty) {
                                         if (prov >= localty && prov < 50.f + localty / 2.f) {
                                             float core = (lco.alsup2 * prov + lco.blsup2) ;
@@ -2537,7 +2549,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
 
 void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
-     BENCHFUN
+    BENCHFUN
     const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
     float reducac;
@@ -2587,17 +2599,18 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
             const int loy = cy + y;
             const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
 
-            if(isZone0) { // outside selection and outside transition zone => no effect, keep original values
+            if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
                 for (int x = 0; x < transformed->W; x++) {
                     transformed->L[y][x] = original->L[y][x];
                 }
+
                 continue;
             }
 
 #ifdef __SSE2__
             int i = 0;
 
-            if(detectHue) {
+            if (detectHue) {
                 for (; i < transformed->W - 3; i += 4) {
                     vfloat av = LVFU (original->a[y][i]);
                     vfloat bv = LVFU (original->b[y][i]);
@@ -2615,6 +2628,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                     vfloat bv = LVFU (original->b[y][i]);
                     STVF (sqrtBuffer[i], _mm_sqrt_ps (SQRV (bv) + SQRV (av)) / c327d68v);
                 }
+
                 for (; i < transformed->W; i++) {
                     sqrtBuffer[i] = sqrt (SQR (original->b[y][i]) + SQR (original->a[y][i])) / 327.68f;
                 }
@@ -2627,10 +2641,12 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                 int zone = 0;
                 float localFactor = 1.f;
                 calcTransition (lox, loy, ach, lp, zone, localFactor);
-                if(zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+
+                if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     transformed->L[y][x] = original->L[y][x];
                     continue;
                 }
+
 #ifdef __SSE2__
                 float rchro = sqrtBuffer[x];
 #else
@@ -2649,6 +2665,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                     float ak = 1.f / (ck - 160.f);
                     float bk = -160.f * ak;
                     kch = ak * deltachro + bk;
+
                     if (lp.senssha < 40.f ) {
                         kch = pow_F (kch, pa * lp.senssha + pb);   //increase under 40
                     }
@@ -2667,6 +2684,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                     if (deltahue > rtengine::RT_PI) {
                         deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                     }
+
                     //hue detection
                     if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                         if (rhue >= hueplus - delhu )  {
@@ -3689,12 +3707,14 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 for (int y = yStart; y < yEnd ; y++) {
                     int loy = cy + y;
+
                     for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
                         bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                         bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                         bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
                     }
                 }
+
                 tmp1 = new LabImage (bfw, bfh);
 #ifdef _OPENMP
                 #pragma omp parallel
@@ -3757,8 +3777,17 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
         //      }
 
 //local denoise
-        if (lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f  && call < 3 || noiscfactiv  && lp.denoiena) {
-            StopWatch Stop1("locallab Denoise called");
+        //all these variables are to prevent use of denoise when non necessary
+        // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
+        // but if user select volontary denoise, it is that choice the good (prioritary)
+        bool execdenoi = false ;
+        bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0.f); // only if one slider ore more is engaged
+        bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) ;//only if user want cbdl
+        execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f));
+
+        if (((lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) || execdenoi) {
+            StopWatch Stop1 ("locallab Denoise called");
+
             if (lp.noisecf > 0.1f || lp.noisecc > 0.1f) {
                 noiscfactiv = false;
                 levred = 7;
@@ -4846,6 +4875,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 for (int y = yStart; y < yEnd ; y++) {
                     int loy = cy + y;
+
                     for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
                         bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                     }
