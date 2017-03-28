@@ -105,7 +105,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_black           = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_BLACK")));
     raw_ca_autocorrect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AUTO")));
     raw_caredblue       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CAREDBLUE")));
-    raw_caautostrength  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH")));
     raw_hotpix_filt     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_HOTPIXFILT")));
     raw_deadpix_filt    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_DEADPIXFILT")));
     raw_linenoise       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCESS_LINEDENOISE")));
@@ -230,7 +229,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
     vboxes[6]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_caautostrength, Gtk::PACK_SHRINK, 2);
 
     //META
     vboxes[7]->pack_start (*meta, Gtk::PACK_SHRINK, 2);
@@ -356,7 +354,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_blackConn           = raw_black->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ca_autocorrectConn  = raw_ca_autocorrect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_caredblueConn       = raw_caredblue->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    raw_caautostrengthConn  = raw_caautostrength->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_hotpix_filtConn     = raw_hotpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_deadpix_filtConn    = raw_deadpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_linenoiseConn       = raw_linenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -436,7 +433,6 @@ void PartialPasteDlg::rawToggled ()
     raw_blackConn.block (true);
     raw_ca_autocorrectConn.block (true);
     raw_caredblueConn.block (true);
-    raw_caautostrengthConn.block (true);
     raw_hotpix_filtConn.block (true);
     raw_deadpix_filtConn.block (true);
     raw_linenoiseConn.block (true);
@@ -464,7 +460,6 @@ void PartialPasteDlg::rawToggled ()
     raw_black->set_active (raw->get_active ());
     raw_ca_autocorrect->set_active (raw->get_active ());
     raw_caredblue->set_active (raw->get_active ());
-    raw_caautostrength->set_active (raw->get_active ());
     raw_hotpix_filt->set_active (raw->get_active ());
     raw_deadpix_filt->set_active (raw->get_active ());
     raw_linenoise->set_active (raw->get_active ());
@@ -490,7 +485,6 @@ void PartialPasteDlg::rawToggled ()
     raw_blackConn.block (false);
     raw_ca_autocorrectConn.block (false);
     raw_caredblueConn.block (false);
-    raw_caautostrengthConn.block (false);
     raw_hotpix_filtConn.block (false);
     raw_deadpix_filtConn.block (false);
     raw_linenoiseConn.block (false);
@@ -947,10 +941,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!raw_caredblue->get_active ()) {
         filterPE.raw.caRed              = falsePE.raw.caRed;
         filterPE.raw.caBlue             = falsePE.raw.caBlue;
-    }
-
-    if (!raw_caautostrength->get_active ()) {
-        filterPE.raw.caAutoStrength     = falsePE.raw.caAutoStrength;
     }
 
     if (!raw_hotpix_filt->get_active ())     {

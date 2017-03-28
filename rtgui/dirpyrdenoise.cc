@@ -26,7 +26,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 extern Options options;
 
-DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP_DIRPYRDENOISE_LABEL"), true, true), lastenhance(false)
+DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP_DIRPYRDENOISE_LABEL"), true, true), lastenhance(false), lastmedian(false), lastautochroma(false)
 {
     std::vector<GradientMilestone> milestones;
     CurveListener::setMulti(true);
