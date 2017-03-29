@@ -364,12 +364,12 @@ public:
     double radius2;
     double translax;
     double translay;
-    bool filled;
-    bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
     double scalx;
     double scaly;
     double begang;
     double endang;
+    bool filled;
+    bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
 
     Arcellipse ();
     Arcellipse (rtengine::Coord& center, double radius, double radius2, double translax, double translay, double scalx, double scaly, double begang, double endang, bool filled = false, bool radiusInImageSpace = false);

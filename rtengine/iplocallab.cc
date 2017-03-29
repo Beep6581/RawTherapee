@@ -332,7 +332,7 @@ void ImProcFunctions::strcurv_data (std::string retistr, int *s_datc, int &siz)
     std::size_t posend = retistr.find ("@");
 
     std::string strend = retistr.substr (posend - 1, 1);
-    int longe;
+    int longe = 0;
 
     for (int sl = 0; sl < 69; sl++) {
         if (delim[sl] == strend) {
@@ -342,12 +342,9 @@ void ImProcFunctions::strcurv_data (std::string retistr, int *s_datc, int &siz)
 
     s_size = longe;
 
-
-    int s_cur[s_size + 1];
     int s_datcu[s_size + 1];
 
     std::size_t pose[s_size + 1];
-    std::size_t valstr[s_size + 1];
     pose[0] = -1;
 
     for (int z = 1; z < s_size + 1; z++) {
@@ -485,11 +482,9 @@ void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, La
                     float difL, difa, difb;
 
                     if (call == 2) { //simpleprocess
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
-                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
-                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
-                        }
+                        difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                        difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                        difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
                     } else  { //dcrop
                         difL = tmp1.L[y][x] - original->L[y][x];
                         difa = tmp1.a[y][x] - original->a[y][x];
@@ -510,12 +505,9 @@ void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, La
                     float difL, difa, difb;
 
                     if (call == 2) { //simpleprocess
-
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                            difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
-                            difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
-                            difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
-                        }
+                        difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+                        difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+                        difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
                     } else  { //dcrop
                         difL = tmp1.L[y][x] - original->L[y][x];
                         difa = tmp1.a[y][x] - original->a[y][x];
@@ -540,20 +532,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
 {
 //local CBDL
     // BENCHFUN
-    const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
-    float reducac;
-
-    //constant and variable to prepare shape detection
-    if (lp.senscb < 30.f) {
-        reducac = 0.2f * (lp.senscb / 100.f);
-    } else {
-        float areduc = 0.6285714f; //0.44f/0.7f;
-        float breduc = 0.5f - areduc;
-        reducac = areduc * (lp.senscb / 100.f) + breduc;
-    }
-
-
     constexpr float delhu = 0.1f; //between 0.05 and 0.2
 
     const float apl = (-1.f) / delhu;
@@ -640,7 +619,6 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                     //prepare shape detection
                     float khu = 0.f;
                     float kch = 1.f;
-                    bool kzon = false;
                     float fach = 1.f;
                     float deltachro = fabs (rchro - chromaref);
                     float deltahue = fabs (rhue - hueref);
@@ -685,7 +663,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
                             }
 
 
-                            kzon = true;
+//                            kzon = true;
                         } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
@@ -701,7 +679,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
 
                             }
 
-                            kzon = true;
+//                            kzon = true;
                         }
 
                         if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
@@ -720,7 +698,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
 
                             }
 
-                            kzon = true;
+//                            kzon = true;
                         } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
@@ -736,7 +714,7 @@ void ImProcFunctions::cbdl_Local (int call, int sp, float ** buflight, float **l
 
                             }
 
-                            kzon = true;
+//                            kzon = true;
                         }
 
                         if (deltaE <  2.8f * lp.senscb) {
@@ -817,20 +795,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 {
 //local TM
     // BENCHFUN
-    const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
-    float reducac;
-
-    //constant and variable to prepare shape detection
-    if (lp.senstm < 30.f) {
-        reducac = 0.2f * (lp.senstm / 100.f);
-    } else {
-        float areduc = 0.6285714f; //0.44f/0.7f;
-        float breduc = 0.5f - areduc;
-        reducac = areduc * (lp.senstm / 100.f) + breduc;
-    }
-
-
     constexpr float delhu = 0.1f; //between 0.05 and 0.2
 
     const float apl = (-1.f) / delhu;
@@ -917,7 +882,6 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                     //prepare shape detection
                     float khu = 0.f;
                     float kch = 1.f;
-                    bool kzon = false;
                     float fach = 1.f;
                     float deltachro = fabs (rchro - chromaref);
                     float deltahue = fabs (rhue - hueref);
@@ -962,7 +926,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                             }
 
 
-                            kzon = true;
+//                            kzon = true;
                         } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
@@ -978,7 +942,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 
                             }
 
-                            kzon = true;
+//                            kzon = true;
                         }
 
                         if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
@@ -996,7 +960,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 
                             }
 
-                            kzon = true;
+//                            kzon = true;
                         } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                                 realcligh = apluscligh * rhue + bpluscligh;
@@ -1012,7 +976,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 
                             }
 
-                            kzon = true;
+//                            kzon = true;
                         }
 
                         if (deltaE <  2.8f * lp.senstm) {
@@ -1106,19 +1070,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 //local BLUR
     BENCHFUN
 
-    const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
-    float reducac;
-
-    //constant and variable to prepare shape detection
-    if (lp.sensbn < 30.f) {
-        reducac = 0.2f * (lp.sensbn / 100.f);
-    } else {
-        float areduc = 0.6285714f; //0.44f/0.7f;
-        float breduc = 0.5f - areduc;
-        reducac = areduc * (lp.sensbn / 100.f) + breduc;
-    }
-
     constexpr float delhu = 0.1f; //between 0.05 and 0.2
 
     constexpr float apl = (-1.f) / delhu;
@@ -1300,12 +1252,9 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                         float difL, difa, difb;
 
                         if (call == 2) {
-                            if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-
-                            }
+                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
                         } else {
                             difL = tmp1->L[y][x] - original->L[y][x];
                             difa = tmp1->a[y][x] - original->a[y][x];
@@ -1332,12 +1281,9 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                         float difL, difa, difb;
 
                         if (call == 2) {
-                            if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
-                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
-                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
-
-                            }
+                            difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                            difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                            difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
                         } else {
                             difL = tmp1->L[y][x] - original->L[y][x];
                             difa = tmp1->a[y][x] - original->a[y][x];
@@ -1446,10 +1392,6 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
         const float multchro = lp.sensh * achsens + bchsens;
 
         //luma
-        constexpr float ampllumsens = 2.f;
-        constexpr float alumsens = (ampllumsens - 1.f) / (100.f - 20.f); //20. default locallab.sensih
-        constexpr float blumsens = 1.f - 20.f * alumsens;
-        const float multlum = lp.sensh * alumsens + blumsens;
 
         //skin
         constexpr float amplchsensskin = 1.6f;
@@ -1458,7 +1400,6 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
         const float multchroskin = lp.sensh * achsensskin + bchsensskin;
 
         //transition = difficult to avoid artifact with scope on flat area (sky...)
-        float strn = lp.str / 1.f;  // we can chnage 1.f by 2 or...to chnage effect
 
         constexpr float delhu = 0.1f; //between 0.05 and 0.2
 
@@ -1526,11 +1467,6 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                         float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
 #endif
                         float rL = original->L[y][x] / 327.68f;
-                        float eps = 0.f;
-
-                        if (fabs (original->b[y][x]) < 0.001f) {
-                            eps = 0.01f;
-                        }
 
                         float cli = 1.f;
                         float clc = 1.f;
@@ -1553,8 +1489,6 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                         float bplusch = 1.f - aplusch * hueplus;
                         float amoinsch = (clc - 1.f) / delhu;
                         float bmoinsch = 1.f - amoinsch * huemoins;
-
-                        float kab = original->a[y][x] / (original->b[y][x] + eps);
 
                         float realstr = 1.f;
                         float realstrch = 1.f;
@@ -1949,8 +1883,6 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
     const float vinf = (50.f + localtype / 2.f) / 100.f;
     ImProcFunctions::secondeg_begin (reducac, vi, lco.aa, lco.bb);//parabolic
     ImProcFunctions::secondeg_end (reducac, vinf, lco.aaa, lco.bbb, lco.ccc);//parabolic
-    float maxco = -10000.f;
-    float minco = +10000.f;
 
     if (call <= 3) {
 #ifdef _OPENMP
@@ -2038,7 +1970,6 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                         float amoinscligh = (cli - 1.f) / delhu;
                         float bmoinscligh = 1.f - amoinscligh * huemoins;
                         float realcligh = 1.f;
-                        float realcligh2 = cli;
                         float deltachro = fabs (rchro - chromaref);
                         float deltahue = fabs (rhue - hueref);
 
@@ -2319,7 +2250,7 @@ static void calclight (float lum, float  koef, float & lumnew, bool inv)
         blac = 0.99f;
     }
 
-    if (koef > 0.f) {
+    if (koef >= 0.f) {
         lumnew = lum + 0.2f * (33000.f - lum) * koef / 100.f;
     }
 
@@ -2346,21 +2277,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
 {
 //local sharp
     //  BENCHFUN
-    const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
-    float reducac;
-
-    //constant and variable to prepare shape detection
-    if (lp.senssha < 30.f) {
-        reducac = 0.2f * (lp.senssha / 100.f);
-    } else {
-        float areduc = 0.6285714f; //0.44f/0.7f;
-        float breduc = 0.5f - areduc;
-        reducac = areduc * (lp.senssha / 100.f) + breduc;
-    }
-
-
-
     constexpr float delhu = 0.1f; //between 0.05 and 0.2
 
     const float apl = (-1.f) / delhu;
@@ -2424,7 +2341,6 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                 //prepare shape detection
                 float khu = 0.f;
                 float kch = 1.f;
-                bool kzon = false;
                 float fach = 1.f;
                 float deltachro = fabs (rchro - chromaref);
                 float deltahue = fabs (rhue - hueref);
@@ -2462,8 +2378,6 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                             khu = 1.f;
                         }
 
-
-                        kzon = true;
                     } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
@@ -2473,7 +2387,6 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                             khu = 1.f;
                         }
 
-                        kzon = true;
                     }
 
                     if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
@@ -2485,7 +2398,6 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                             khu = 1.f;
                         }
 
-                        kzon = true;
                     } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                         if (rhue >= hueplus - delhu  && rhue < hueplus)  {
                             khu  = apl * rhue + bpl;
@@ -2495,7 +2407,6 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
                             khu = 1.f;
                         }
 
-                        kzon = true;
                     }
 
                     if (deltaE <  2.8f * lp.senssha) {
@@ -2563,21 +2474,7 @@ void ImProcFunctions::InverseSharp_Local (int sp, float **loctemp, const float h
 void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
     BENCHFUN
-    const float localtype = lumaref; // always spot area
     const float ach = (float)lp.trans / 100.f;
-    float reducac;
-
-    //constant and variable to prepare shape detection
-    if (lp.senssha < 30.f) {
-        reducac = 0.2f * (lp.senssha / 100.f);
-    } else {
-        float areduc = 0.6285714f; //0.44f/0.7f;
-        float breduc = 0.5f - areduc;
-        reducac = areduc * (lp.senssha / 100.f) + breduc;
-    }
-
-    //printf("call=%i\n", call);
-
     constexpr float delhu = 0.1f; //between 0.05 and 0.2
 
     const float apl = (-1.f) / delhu;
@@ -2767,9 +2664,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                         float difL;
 
                         if (call == 2) {
-                            if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                                difL = loctemp[loy - begy][lox - begx] - original->L[y][x];
-                            }
+                            difL = loctemp[loy - begy][lox - begx] - original->L[y][x];
                         } else {
                             difL = loctemp[y][x] - original->L[y][x];
 
@@ -2785,11 +2680,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
                         float difL;
 
                         if (call == 2) {
-
-                            if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                                //       bufsh[loy - begy - 1][lox - begx - 1]
-                                difL = loctemp[loy - begy][lox - begx] - original->L[y][x];
-                            }
+                            difL = loctemp[loy - begy][lox - begx] - original->L[y][x];
                         } else  {
                             difL = loctemp[y][x] - original->L[y][x];
                         }
@@ -2804,7 +2695,7 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
 
 
 
-void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImage * bufcoltra, float ** buflight, float ** bufchro, float ** buflightslid, int sp, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, float chprov, float cligh, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** buflightslid, int sp, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, float chprov, float cligh, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
     // BENCHFUN
 // chroma and lightness
@@ -2849,9 +2740,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
     const float ahu = 1.f / (2.8f * lp.sens - 280.f);
     const float bhu = 1.f - ahu * 2.8f * lp.sens;
 
-    const float alum = 1.f / (lp.sens - 100.f);
-    const float blum = 1.f - alum * lp.sens;
-
     //luma
     constexpr float lumdelta = 11.f; //11
     float modlum = lumdelta * multlum;
@@ -2865,7 +2753,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
         modlum = (lumaref) / 2.f;
     }
 
-    float alu = 1.f / (lumaref + modlum - 100.f); //linear
     float aa, bb, aaa, bbb, ccc;
     float reducac = settings->reduchigh;//0.85f;
     float reducac2 = settings->reduclow;//0.2f;
@@ -2892,15 +2779,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
             float sqrtBuffer[transformed->W] ALIGNED16;
             vfloat c327d68v = F2V (327.68f);
 #endif
-
-            float maxl = -100000.f;
-            float maxa = -100000.f;
-            float maxb = -100000.f;
-            float minl = 100000.f;
-            float mina = 100000.f;
-            float minb = 100000.f;
-            float maxrl = -100000.f;
-            float minrl = 100000.f;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -2990,7 +2868,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, LabImag
                         float realcurv = 1.f;
                         float realcligh = 1.f;
                         float realclighsl = 1.f;
-                        float realchrosl = 1.f;
 
                         //evaluate delta Hue and delta Chro
                         float deltachro = fabs (rchro - chromaref);
@@ -3542,22 +3419,18 @@ void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * o
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
-        int GW = transformed->W;
-        int GH = transformed->H;
         struct local_params lp;
         calcLocalParams (oW, oH, params->locallab, lp);
 
 // double precision for large summations
-        double ave = 0.;
         double aveA = 0.;
         double aveB = 0.;
         double aveL = 0.;
         double aveChro = 0.;
 // int precision for the counters
-        int n = 0;
         int nab = 0;
 // single precision for the result
-        float av, avA, avB, avL;
+        float avA, avB, avL;
         int spotSize = 0.88623f * max (1,  lp.cir / sk); //18
         //O.88623 = sqrt(PI / 4) ==> sqare equal to circle
 
@@ -3600,22 +3473,16 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 #endif
 
         int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
-        int GW = transformed->W;
-        int GH = transformed->H;
         float moy = 0.f;
-        float maxmad = -10000.f;
-        float minmad = 1000000.f;
 
         struct local_params lp;
         calcLocalParams (oW, oH, params->locallab, lp);
 
         const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
-        GW = transformed->W;
-        GH = transformed->H;
 
         double ave = 0.;
         int n = 0;
-        float av;
+        float av = 0;
         int levred;
         bool noiscfactiv = false;
 
@@ -3825,7 +3692,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
                 int DaubLen = 6;
-                int wavNestedLevels = 1;
 
                 int levwavL = levred;
                 int skip = 1;
@@ -3835,8 +3701,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
-                float madab[8][3];
-                int edge;
+                int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
                     #pragma omp parallel for collapse(2) schedule(dynamic,1)
@@ -3851,7 +3716,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         }
                     }
 
-                    int ind = 0;
                     float vari[levred];
 
                     if (levred == 7) {
@@ -3965,8 +3829,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
             } else if (call == 2) { //simpleprocess
 
-                int GW = transformed->W;
-                int GH = transformed->H;
                 int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                 int bfw = int (lp.lx + lp.lxL) + del;
                 LabImage bufwv(bfw, bfh);
@@ -3993,7 +3855,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 }
 
                 int DaubLen = 6;
-                int wavNestedLevels = 1;
 
                 int levwavL = levred;
                 int skip = 1;
@@ -4002,8 +3863,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 wavelet_decomposition bdecomp(bufwv.b[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
-                float madab[8][3];
-                int edge;
+                int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
                     #pragma omp parallel for collapse(2) schedule(dynamic,1)
@@ -4017,8 +3877,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                             madL[lvl][dir - 1] = SQR (Mad (WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                         }
                     }
-
-                    int ind = 0;
 
                     float vari[levred];
 
@@ -4140,8 +3998,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 //local color and light
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.qualcurvemet != 0) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
-            float maxhur = -10.f;
-            float minhur = 10.f;
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
 
@@ -4157,12 +4013,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             LabImage *bufcolorig;
             float chprov = 1.f;
             float chpro = 1.f;
-            float chp = 1.f;
             float cligh = 1.f;
             float clighL = 1.f;
             float clighmax ;
-            float clighmin ;
-            LabImage *bufcoltra;
             float **buflight;
             float **bufchro;
             float **buflightslid;
@@ -4171,7 +4024,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
             float adjustr = 1.0f;
-            float compadjustr = 1.0f;
 
 //adapt chroma to working profile
             if      (params->icm.working == "ProPhoto")   {
@@ -4194,12 +4046,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                int GW = transformed->W;
-                int GH = transformed->H;
                 bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                 bfw = int (lp.lx + lp.lxL) + del;
                 bufcolorig = new LabImage (bfw, bfh);//buffer for data in zone limit
-                // bufcoltra = new LabImage (bfw, bfh);//not used
 
                 buflight   = new float*[bfh];//for lightness curve
 
@@ -4233,7 +4082,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
                 clighmax = 0.f;
-                clighmin = 100000.f;
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -4318,7 +4166,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             }
 
 
-            ColorLight_Local (call, bufcolorig, bufcoltra, buflight, bufchro, buflightslid, sp, moy, hueplus, huemoins, hueref, dhue, chromaref, lumaref, locallutili, lllocalcurve, loclhCurve, cclocalcurve, chprov, clighmax, lp, original, transformed, cx, cy);
+            ColorLight_Local (call, bufcolorig, buflight, bufchro, buflightslid, sp, moy, hueplus, huemoins, hueref, dhue, chromaref, lumaref, locallutili, lllocalcurve, loclhCurve, cclocalcurve, chprov, clighmax, lp, original, transformed, cx, cy);
 
             if (call <= 3) {
 
@@ -4400,8 +4248,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             ImProcFunctions::secondeg_end (reducac, vinf, lco.aaa, lco.bbb, lco.ccc);//parabolic
 
             if (call <= 3) { //simpleprocess, dcrop, improccoordinator
-                int GW = transformed->W;
-                int GH = transformed->H;
                 bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                 bfw = int (lp.lx + lp.lxL) + del;
                 bufcontorig = new LabImage (bfw, bfh);//buffer for data in zone limit
@@ -4426,8 +4272,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                     }
 
-                float maxc = -10000.f;
-                float minc = +10000.f;
                 float localty;
                 localty = localtype;
 
@@ -4544,16 +4388,11 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 //&& lp.tonemapena
         if (lp.strengt != 0.f  && lp.tonemapena) {
             LabImage *tmp1;
-            LabImage *tmp;
             float **buflight;
 
             LabImage *bufgb;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
-            int GW = transformed->W;
-            int GH = transformed->H;
-            int Hd = bfh;
-            int Wd = bfw;
 
             if (call <= 3) { //simpleprocess dcrop improcc
 
@@ -4615,8 +4454,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
-            float maxc = -10000.f;
-            float minc = +10000.f;
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -4667,12 +4504,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
         }
 
 //begin cbdl
-        if (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f && lp.cbdlena) {
-            int GW = original->W;
-            int GH = original->H;
+        if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) && lp.cbdlena) {
             float **bufsh;//buffer por square zone
             float **loctemp;
-            float **hbuffer;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
             float b_l = -5.f;
@@ -4732,15 +4566,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     loctemp[i] = new float[bfw];
                 }
 
-                hbuffer = new float*[bfh];//allocate buffer for sharp
-
-                for (int i = 0; i < bfh; i++) {
-                    hbuffer[i] = new float[bfw];
-                }
-
                 ImProcFunctions::cbdl_local_temp (bufsh, bufsh, loctemp, bfw, bfh, lp.mulloc, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
-                float maxc = -10000.f;
-                float minc = +10000.f;
 #ifdef _OPENMP
                 #pragma omp parallel for
 #endif
@@ -4812,12 +4638,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 }
 
                 delete [] bufsh;
-
-                for (int i = 0; i < bfh; i++) {
-                    delete [] hbuffer[i];
-                }
-
-                delete [] hbuffer;
 
                 for (int i = 0; i < bfh; i++) {
                     delete [] buflight[i];
@@ -4921,10 +4741,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             LabImage *bufreti;
             float **buflight;
             float **bufchro;
-            float clighL;
-            float clighc;
-            float **loctemp;
-            float **hbuffer;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
 
@@ -5046,8 +4862,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 */
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
             ImProcFunctions::MSRLocal (orig, tmpl->L, orig1, Wd, Hd, params->locallab, sk, locRETgainCcurve, 0, 4, 0.8f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-            float maxc = -10000000.f;
-            float minc = +10000.f;
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
@@ -5055,8 +4869,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             for (int ir = 0; ir < Hd; ir += 1)
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
-                    clighL = 0.f;
-                    float amplil = 1.f;
 
                     if (!lp.invret) {
                         float rL;
@@ -5119,8 +4931,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 if (!lp.invret && call <= 3) {
 
 
-                    float maxch = -10000000.f;
-                    float minch = +10000.f;
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif
@@ -5134,8 +4944,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                             tmpl->a[ir][jr] = orig[ir][jr] * sincosval.y;
                             tmpl->b[ir][jr] = orig[ir][jr] * sincosval.x;
 
-                            clighc = 0.f;
-                            float amplil = 1.f;
 
                             if (!lp.invret) {
 
