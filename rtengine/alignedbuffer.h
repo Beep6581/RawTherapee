@@ -140,6 +140,18 @@ public:
     {
         return unitSize ? allocatedSize / unitSize : 0;
     }
+
+    T &operator[](unsigned int idx)
+    {
+        assert(idx < getSize());
+        return data[idx];
+    }
+
+    const T &operator[](unsigned int idx) const
+    {
+        assert(idx < getSize());
+        return data[idx];
+    }
 };
 
 // Multi processor version, use with OpenMP

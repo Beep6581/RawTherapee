@@ -812,7 +812,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                 if(numtiles == 1) {
                     // reduce the varhue array to get faster access in following processing and reduce peak memory usage
-                    float temphue[(tilewidth + 1) / 2] ALIGNED64;
+                    AlignedBuffer<float> temphue((tilewidth + 1) / 2, 64);
 
                     for (int i = 0; i < (tileheight + 1) / 2; i++) {
                         for (int j = 0; j < (tilewidth + 1) / 2; j++) {
@@ -821,7 +821,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                         delete [] varhue[i];
                         varhue[i] = new float[(tilewidth + 1) / 2];
-                        memcpy(varhue[i], temphue, ((tilewidth + 1) / 2) * sizeof(float));
+                        memcpy(varhue[i], temphue.data, ((tilewidth + 1) / 2) * sizeof(float));
                     }
 
                     for(int i = (tileheight + 1) / 2; i < tileheight; i++) {
@@ -1045,8 +1045,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                 if(numtiles > 1 || (numtiles == 1 /*&& cp.avoi*/)) {//in all case since I add contrast curve
                     //calculate mask for feathering output tile overlaps
-                    float Vmask[height + overlap] ALIGNED16;
-                    float Hmask[width + overlap] ALIGNED16;
+                    AlignedBuffer<float> Vmask(height + overlap, 16);
+                    AlignedBuffer<float> Hmask(width + overlap, 16);
 
                     if(numtiles > 1) {
                         for (int i = 0; i < height; i++) {
@@ -1089,10 +1089,10 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         float L, a, b;
 #ifdef __SSE2__
                         int rowWidth = tileright - tileleft;
-                        float atan2Buffer[rowWidth] ALIGNED64;
-                        float chprovBuffer[rowWidth] ALIGNED64;
-                        float xBuffer[rowWidth] ALIGNED64;
-                        float yBuffer[rowWidth] ALIGNED64;
+                        AlignedBuffer<float> atan2Buffer(rowWidth, 64);
+                        AlignedBuffer<float> chprovBuffer(rowWidth, 64);
+                        AlignedBuffer<float> xBuffer(rowWidth, 64);
+                        AlignedBuffer<float> yBuffer(rowWidth, 64);
 
                         if(cp.avoi) {
                             int col;
@@ -1894,7 +1894,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
 
         if(cp.detectedge) { //enabled Lipschitz control...more memory..more time...
             float *tmCBuffer = new float[H_L * W_L];
-            float *tmC[H_L];
+            std::vector<float *> tmC(H_L);
 
             for (int i = 0; i < H_L; i++) {
                 tmC[i] = &tmCBuffer[i * W_L];
@@ -1910,7 +1910,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                     int H_L = WaveletCoeffs_L.level_H(lvl);
 
                     float ** WavCoeffs_LL = WaveletCoeffs_L.level_coeffs(lvl);
-                    calckoe(WavCoeffs_LL, cp, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC);
+                    calckoe(WavCoeffs_LL, cp, koeLi, lvl , dir, W_L, H_L, edd, maxkoeLi, tmC.data());
                     // return convolution KoeLi and maxkoeLi of level 0 1 2 3 and Dir Horiz, Vert, Diag
                 }
             }
@@ -2063,8 +2063,8 @@ void ImProcFunctions::WaveletAandBAllAB(LabImage * labco, float ** varhue, float
 #endif
         {
 #ifdef __SSE2__
-            float huebuffer[W_L] ALIGNED64;
-            float chrbuffer[W_L] ALIGNED64;
+            AlignedBuffer<float> huebuffer(W_L, 64);
+            AlignedBuffer<float> chrbuffer(W_L, 64);
 #endif // __SSE2__
 #ifdef _RT_NESTED_OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -3069,7 +3069,8 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             float scale = 1.f;
             float scale2 = 1.f;
 
-            float LL100, LL100res, LL100init, kH[maxlvl];
+            float LL100, LL100res, LL100init;
+            std::vector<float> kH(maxlvl);
 
             int ii = i / W_L;
             int jj = i - ii * W_L;
