@@ -241,8 +241,8 @@ void DiagonalCurve::NURBS_set ()
         nbr_points = (int)(((double)(ppn + N - 2) * sc_length[i / 3] ) / total_length);
 
         if (nbr_points < 0) {
-            for(size_t it = 0; it < sc_x.size(); it += 3) {
-                printf("sc_length[%zu/3]=%f \n", it, sc_length[it / 3]);
+            for(unsigned int it = 0; it < sc_x.size(); it += 3) { // used unsigned int instead of size_t to avoid %zu in printf
+                printf("sc_length[%u/3]=%f \n", it, sc_length[it / 3]);
             }
 
             printf("NURBS diagonal curve: error detected!\n i=%u nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f", i, nbr_points, ppn, N, sc_length[i / 3], total_length);
