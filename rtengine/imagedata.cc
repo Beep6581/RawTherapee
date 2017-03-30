@@ -331,7 +331,7 @@ void ImageData::extractInfo ()
 
                     if (mnote->getTag ("LensData")) {
                         std::string ldata = mnote->getTag ("LensData")->valueToString ();
-                        int pos;
+                        size_t pos;
 
                         if (ldata.size() > 10 && (pos = ldata.find ("Lens = ")) != Glib::ustring::npos) {
                             lens = ldata.substr (pos + 7);
@@ -339,7 +339,7 @@ void ImageData::extractInfo ()
                             if (lens.compare (0, 7, "Unknown")) {
                                 lensOk = true;
                             } else {
-                                int pos = lens.find("$FL$");        // is there a placeholder for focallength?
+                                size_t pos = lens.find("$FL$");        // is there a placeholder for focallength?
 
                                 if(pos != Glib::ustring::npos) {                // then fill in focallength
                                     lens = lens.replace(pos, 4, exif->getTag ("FocalLength")->valueToString ());
