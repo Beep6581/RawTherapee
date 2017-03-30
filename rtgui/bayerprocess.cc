@@ -357,11 +357,11 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
 
     dcbIterations->setValue (pp->raw.bayersensor.dcb_iterations);
     dcbEnhance->setValue (pp->raw.bayersensor.dcb_enhance);
-    pixelShiftShowMotion->setValue (pp->raw.bayersensor.pixelshiftShowMotion);
+    pixelShiftShowMotion->setValue (pp->raw.bayersensor.pixelShiftShowMotion);
     if (!batchMode) {
-        pixelShiftShowMotionMaskOnly->set_sensitive (pp->raw.bayersensor.pixelshiftShowMotion);
+        pixelShiftShowMotionMaskOnly->set_sensitive (pp->raw.bayersensor.pixelShiftShowMotion);
     }
-    pixelShiftShowMotionMaskOnly->setValue (pp->raw.bayersensor.pixelshiftShowMotionMaskOnly);
+    pixelShiftShowMotionMaskOnly->setValue (pp->raw.bayersensor.pixelShiftShowMotionMaskOnly);
     pixelShiftHoleFill->setValue (pp->raw.bayersensor.pixelShiftHoleFill);
     pixelShiftMedian->setValue (pp->raw.bayersensor.pixelShiftMedian);
     pixelShiftGreen->setValue (pp->raw.bayersensor.pixelShiftGreen);
@@ -412,8 +412,8 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         ccSteps->setEditedState (pedited->raw.bayersensor.ccSteps ? Edited : UnEdited);
         dcbIterations->setEditedState ( pedited->raw.bayersensor.dcbIterations ? Edited : UnEdited);
         dcbEnhance->setEdited (pedited->raw.bayersensor.dcbEnhance);
-        pixelShiftShowMotion->setEdited (pedited->raw.bayersensor.pixelshiftShowMotion);
-        pixelShiftShowMotionMaskOnly->setEdited (pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly);
+        pixelShiftShowMotion->setEdited (pedited->raw.bayersensor.pixelShiftShowMotion);
+        pixelShiftShowMotionMaskOnly->setEdited (pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly);
         pixelShiftHoleFill->setEdited (pedited->raw.bayersensor.pixelShiftHoleFill);
         pixelShiftMedian->setEdited(pedited->raw.bayersensor.pixelShiftMedian);
         pixelShiftGreen->setEdited (pedited->raw.bayersensor.pixelShiftGreen);
@@ -515,8 +515,8 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)pixelShiftMotionMethod->get_active_row_number();
     pp->raw.bayersensor.pixelShiftEperIso = pixelShiftEperIso->getValue();
     pp->raw.bayersensor.pixelShiftSigma = pixelShiftSigma->getValue();
-    pp->raw.bayersensor.pixelshiftShowMotion = pixelShiftShowMotion->getLastActive ();
-    pp->raw.bayersensor.pixelshiftShowMotionMaskOnly = pixelShiftShowMotionMaskOnly->getLastActive ();
+    pp->raw.bayersensor.pixelShiftShowMotion = pixelShiftShowMotion->getLastActive ();
+    pp->raw.bayersensor.pixelShiftShowMotionMaskOnly = pixelShiftShowMotionMaskOnly->getLastActive ();
     pp->raw.bayersensor.pixelShiftHoleFill = pixelShiftHoleFill->getLastActive ();
     pp->raw.bayersensor.pixelShiftMedian = pixelShiftMedian->getLastActive ();
     pp->raw.bayersensor.pixelShiftGreen = pixelShiftGreen->getLastActive ();
@@ -566,8 +566,8 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = pixelShiftMotionMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->raw.bayersensor.pixelShiftEperIso = pixelShiftEperIso->getEditedState ();
         pedited->raw.bayersensor.pixelShiftSigma = pixelShiftSigma->getEditedState ();
-        pedited->raw.bayersensor.pixelshiftShowMotion = !pixelShiftShowMotion->get_inconsistent();
-        pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly = !pixelShiftShowMotionMaskOnly->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftShowMotion = !pixelShiftShowMotion->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly = !pixelShiftShowMotionMaskOnly->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftHoleFill = !pixelShiftHoleFill->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftMedian = !pixelShiftMedian->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftGreen = !pixelShiftGreen->get_inconsistent();

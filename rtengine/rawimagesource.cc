@@ -543,17 +543,17 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
     int ppx = pp_x, ppy = pp_y;
 
     if (tran & TR_HFLIP) {
-        ppx = sw - pp_x - pp_width;
+        ppx = max(sw - pp_x - pp_width, 0);
     }
 
     if (tran & TR_VFLIP) {
-        ppy = sh - pp_y - pp_height;
+        ppy = max(sh - pp_y - pp_height, 0);
     }
 
     int sx1 = ppx;        // assuming it's >=0
     int sy1 = ppy;        // assuming it's >=0
-    int sx2 = max(ppx + pp_width, w - 1);
-    int sy2 = max(ppy + pp_height, h - 1);
+    int sx2 = min(ppx + pp_width, w - 1);
+    int sy2 = min(ppy + pp_height, h - 1);
 
     if ((tran & TR_ROT) == TR_R180) {
         sx1 = max(w - ppx - pp_width, 0);

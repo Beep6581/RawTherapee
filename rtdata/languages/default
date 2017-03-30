@@ -89,6 +89,11 @@ EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 EXPORT_BYPASS_SHARPENING;Bypass Sharpening
 EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
+EXPORT_PIPELINE;Processing pipeline
+EXPORT_BYPASS;Processing steps to bypass
+EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
 EXPORT_MAXHEIGHT;Maximum height:
@@ -117,7 +122,7 @@ FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1</b> 
 FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
 FILEBROWSER_EMPTYTRASH;Empty trash
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files from trash.
-FILEBROWSER_EXEC_CPB;Custom Profile Builder
+FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 FILEBROWSER_EXTPROGMENU;Open with
 FILEBROWSER_FLATFIELD;Flat-Field
 FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
@@ -895,8 +900,8 @@ PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
 PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
-PARTIALPASTE_RAWCACORR_CABLUE;CA blue
-PARTIALPASTE_RAWCACORR_CARED;CA red
+PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
+PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 PARTIALPASTE_RAWEXPOS_BLACK;Black levels
 PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
 PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
@@ -907,6 +912,7 @@ PARTIALPASTE_RAW_DMETHOD;Demosaic method
 PARTIALPASTE_RAW_FALSECOLOR;False color suppression
 PARTIALPASTE_RAW_IMAGENUM;Sub-image
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_RGBCURVES;RGB curves

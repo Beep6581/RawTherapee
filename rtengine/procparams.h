@@ -1221,8 +1221,8 @@ public:
         double pixelShiftSigma;
         double pixelShiftSum;
         double pixelShiftRedBlueWeight;
-        bool pixelshiftShowMotion;
-        bool pixelshiftShowMotionMaskOnly;
+        bool pixelShiftShowMotion;
+        bool pixelShiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
         bool pixelShiftNonGreenHorizontal;
         bool pixelShiftNonGreenVertical;

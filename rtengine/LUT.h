@@ -579,7 +579,7 @@ public:
             numVals = std::min(numVals, passThrough.getSize());
             float mult = dest.size - 1;
 
-            for (int i = 0; i < numVals; i++) {
+            for (unsigned int i = 0; i < numVals; i++) {
                 int hi = (int)(mult * passThrough[i]);
                 dest[hi] += this->data[i] ;
             }
