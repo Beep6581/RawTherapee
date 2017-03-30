@@ -1080,19 +1080,26 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                     bool highlight = params->toneCurve.hrenabled;
 
+                    int rowWidth = tileright - tileleft;
 #ifdef _RT_NESTED_OPENMP
-                    #pragma omp parallel for schedule(dynamic,16) num_threads(wavNestedLevels) if(wavNestedLevels>1)
+                    #pragma omp parallel num_threads(wavNestedLevels) if(wavNestedLevels>1)
+#endif
+                    {
+#ifdef __SSE2__
+                    AlignedBuffer<float> atan2Buffer(rowWidth, 64);
+                    AlignedBuffer<float> chprovBuffer(rowWidth, 64);
+                    AlignedBuffer<float> xBuffer(rowWidth, 64);
+                    AlignedBuffer<float> yBuffer(rowWidth, 64);
+#endif
+
+#ifdef _RT_NESTED_OPENMP                        
+                    #pragma omp for schedule(dynamic,16) nowait
 #endif
 
                     for (int i = tiletop; i < tilebottom; i++) {
                         int i1 = i - tiletop;
                         float L, a, b;
 #ifdef __SSE2__
-                        int rowWidth = tileright - tileleft;
-                        AlignedBuffer<float> atan2Buffer(rowWidth, 64);
-                        AlignedBuffer<float> chprovBuffer(rowWidth, 64);
-                        AlignedBuffer<float> xBuffer(rowWidth, 64);
-                        AlignedBuffer<float> yBuffer(rowWidth, 64);
 
                         if(cp.avoi) {
                             int col;
@@ -1223,6 +1230,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                             }
                         }
                     }
+                    } // #pragma omp parallel
                 }
 
                 if(LoldBuffer != nullptr) {
