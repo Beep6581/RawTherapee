@@ -250,7 +250,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         cp.edgampl = (float) params->wavelet.edgeampli;
     }
 
-    int N = imheight * imwidth;
+    //int N = imheight * imwidth;
     int maxmul = params->wavelet.thres;
     cp.maxilev = maxmul;
     static const float scales[10] = {1.f, 2.f, 4.f, 8.f, 16.f, 32.f, 64.f, 128.f, 256.f, 512.f};
@@ -2597,7 +2597,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
     float bedstr = 1.f - 10.f * aedstr;
 
     if(cp.val > 0  && cp.edgeena) {
-        float * koe;
+        float * koe = nullptr;
         float maxkoe = 0.f;
 
         if(!lipschitz) {
@@ -2766,7 +2766,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             float asig = 0.166f / sigma[level];
             float bsig = 0.5f - asig * mean[level];
             float amean = 0.5f / mean[level];
-            float absciss;
+            float absciss = 0.f;
             float kinterm;
             float kmul;
             int borderL = 1;
