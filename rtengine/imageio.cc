@@ -1245,7 +1245,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // The maximum lenght is strangely not the same than for the JPEG file...
         // Which maximum length is the good one ?
-        if (size > 0 && size <= bufferSize) {
+        if (size > 0 && size <= static_cast<int>(bufferSize)) {
             fwrite (buffer, size, 1, file);
         }
 
