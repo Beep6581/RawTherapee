@@ -15,17 +15,18 @@ etc="${resources}"/etc
 # cp -f /usr/lib/libcups.2.dylib "${cups_dir}"
 # export DYLD_LIBRARY_PATH="${lib}:${cups_dir}"
 
+# export GTK_EXE_PREFIX="${resources}"
+# export GTK_DATA_PREFIX="${resources}"
+# export XDG_DATA_DIRS="${resources}/share"
+# export GTK_IM_MODULE_FILE="${etc}/gtk-3.0/gtk.immodules"
+
 export DYLD_LIBRARY_PATH="${lib}"
 
-# export GTK_EXE_PREFIX="${cwd}"
-# export GTK_DATA_PREFIX="${cwd}"
-# export XDG_DATA_DIRS="${resources}/share"
-export GTK_IM_MODULE_FILE="${etc}/gtk-3.0/gtk.immodules"
-export GDK_PIXBUF_MODULE_FILE="${etc}/gtk-3.0/gdk-pixbuf.loaders"
-export GDK_PIXBUF_MODULEDIR="${lib}/gdk-pixbuf-2.0/2.10.0/loaders"
 export GTK_PATH="${lib}/gtk-3.0/3.0.0"
 export XDG_DATA_HOME="${resources}/share"
 export GSETTINGS_SCHEMA_DIR="${resources}/share/glib-2.0/schemas"
+export GDK_PIXBUF_MODULE_FILE="${etc}/gtk-3.0/gdk-pixbuf.loaders"
+export GDK_PIXBUF_MODULEDIR="${lib}/gdk-pixbuf-2.0/2.10.0/loaders"
 
 export RT_SETTINGS="${HOME}/Library/Application Support/RawTherapee/config"
 export RT_CACHE="${HOME}/Library/Application Support/RawTherapee/cache"
