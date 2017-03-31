@@ -141,7 +141,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 
             if (data) {
                 int w, h;
-                double scale = 1.;
+             //   double scale = 1.;
                 w = output->getWidth();
                 h = output->getHeight();
                 previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
