@@ -5897,7 +5897,7 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 33422:			/* CFAPattern */
 	if (filters == 9) {
-	  FORC(36) ((char *)xtrans)[c] = fgetc(ifp) & 3;
+	  FORC(36) ((int *)xtrans)[c] = fgetc(ifp) & 3;
 	  break;
 	}
       case 64777:			/* Kodak P-series */
@@ -9020,7 +9020,7 @@ canon_a5:
     }
     if (fuji_layout) raw_width *= is_raw;
     if (filters == 9)
-      FORC(36) ((char *)xtrans)[c] =
+      FORC(36) ((int *)xtrans)[c] =
 	xtrans_abs[(c/6+top_margin) % 6][(c+left_margin) % 6];
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
