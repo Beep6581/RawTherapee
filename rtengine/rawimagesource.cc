@@ -425,25 +425,6 @@ RawImageSource::RawImageSource ()
     : ImageSource()
     , W(0), H(0)
     , plistener(nullptr)
-    , border(4)
-    , ri(nullptr)
-    , cache(nullptr)
-    , rawData(0, 0)
-    , green(0, 0)
-    , red(0, 0)
-    , blue(0, 0)
-    , lc00(0.0)
-    , lc01(0.0)
-    , lc02(0.0)
-    , lc10(0.0)
-    , lc11(0.0)
-    , lc12(0.0)
-    , lc20(0.0)
-    , lc21(0.0)
-    , lc22(0.0)
-    , hlmax{}
-    , clmax{}
-    , chmax{}
     , scale_mul{}
     , c_black{}
     , c_white{}
@@ -458,10 +439,29 @@ RawImageSource::RawImageSource ()
     , cam_xyz{}
     , fuji(false)
     , d1x(false)
+    , border(4)
+    , chmax{}
+    , hlmax{}
+    , clmax{}
     , initialGain(0.0)
     , camInitialGain(0.0)
     , defGain(0.0)
+    , ri(nullptr)
+    , lc00(0.0)
+    , lc01(0.0)
+    , lc02(0.0)
+    , lc10(0.0)
+    , lc11(0.0)
+    , lc12(0.0)
+    , lc20(0.0)
+    , lc21(0.0)
+    , lc22(0.0)
+    , cache(nullptr)
     , threshold(0)
+    , rawData(0, 0)
+    , green(0, 0)
+    , red(0, 0)
+    , blue(0, 0)
 {
     camProfile = nullptr;
     embProfile = nullptr;
@@ -748,7 +748,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
                 for (int j = 0, jx = sx1; j < imwidth; j++, jx += skip) {
-                    jx = jx >= (maxx - skip) ? jx = maxx - skip - 1 : jx; // avoid trouble
+                    jx = std::min(jx, maxx - skip - 1); // avoid trouble
 
                     float rtot = 0.f, gtot = 0.f, btot = 0.f;
 
@@ -896,6 +896,11 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
             case ST_FUJI_XTRANS:
                 processFalseColorCorrection (image, raw.xtranssensor.ccSteps);
+                break;
+
+            case ST_FOVEON:
+            case ST_NONE:
+                break;
         }
     }
 }
@@ -1169,8 +1174,7 @@ int RawImageSource::interpolateBadPixelsXtrans( PixelsMap &bitmapBads )
             }
 
             float wtdsum = 0.f, norm = 0.f;
-            int pixelColor = ri->XTRANSFC(row, col);
-            float oldval = rawData[row][col];
+            unsigned int pixelColor = ri->XTRANSFC(row, col);
 
             if(pixelColor == 1) {
                 // green channel. A green pixel can either be a solitary green pixel or a member of a 2x2 square of green pixels
@@ -1782,7 +1786,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if(numFrames == 4) {
         int bufferNumber = 0;
-        for(int i=0; i<4; ++i) {
+        for(unsigned int i=0; i<4; ++i) {
             if(i==currFrame) {
                 copyOriginalPixels(raw, ri, rid, rif, rawData);
                 rawDataFrames[i] = &rawData;
@@ -2840,7 +2844,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
         float limitFactor = 1.f;
 
         if(raw.ff_AutoClipControl) {
-            int clipControlGui = 0;
+//            int clipControlGui = 0;
 
             for (int m = 0; m < 2; m++)
                 for (int n = 0; n < 2; n++) {
@@ -2885,7 +2889,7 @@ void RawImageSource::processFlatField(const RAWParams &raw, RawImage *riFlatFile
                     }
                 }
 
-            clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
+//            clipControlGui = (1.f - limitFactor) * 100.f;           // this value can be used to set the clip control slider in gui
         } else {
             limitFactor = max((float)(100 - raw.ff_clipControl) / 100.f, 0.01f);
         }
@@ -5019,7 +5023,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     int x;
     int y;
     double reds = 0, greens = 0, blues = 0;
-    int rn = 0;
+    unsigned int rn = 0;
 
     if (ri->getSensorType() != ST_BAYER) {
         if(ri->getSensorType() == ST_FUJI_XTRANS) {
@@ -5210,7 +5214,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
         }
     }
 
-    if (2 * rn < red.size()) {
+    if (2u * rn < red.size()) {
         return ColorTemp (equal);
     } else {
         reds = reds / rn * refwb_red;
@@ -5343,7 +5347,7 @@ void RawImageSource::init ()
         std::vector<double> cInversePoints;
         cInversePoints.push_back(double(DCT_Spline));  // The first value is the curve type
 
-        for (int i = 0; i < sizeof(phase_one_forward) / sizeof(phase_one_forward[0]); i += 2) {
+        for (unsigned int i = 0; i < sizeof(phase_one_forward) / sizeof(phase_one_forward[0]); i += 2) {
             cForwardPoints.push_back(phase_one_forward[i + 0]);
             cForwardPoints.push_back(phase_one_forward[i + 1]);
             cInversePoints.push_back(phase_one_forward[i + 1]);
