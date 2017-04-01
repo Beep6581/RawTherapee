@@ -1007,7 +1007,7 @@ SSEFUNCTION void HistogramArea::updateBackBuffer ()
         // does not take into account 0 and 255 values
         // them are handled separately
 
-        int fullhistheight = 0;
+        unsigned int fullhistheight = 0;
 
         for (int i = 1; i < 255; i++) {
             if (needLuma && lhisttemp[i] > fullhistheight) {
@@ -1042,7 +1042,7 @@ SSEFUNCTION void HistogramArea::updateBackBuffer ()
             vint iv = (vint)ZEROV;
 #endif
 
-            for (int i = 0; i < fullhistheight; i++) {
+            for (unsigned i = 0; i < fullhistheight; i++) {
 #ifdef __SSE2__
                 vint areatempv = (vint)ZEROV;
 

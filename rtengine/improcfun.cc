@@ -4634,7 +4634,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             else if (params->colorToning.method == "Lab"  && opautili) {
                 int algm = 0;
                 bool twocol = true;
-                int metchrom;
+                int metchrom = 0;
 
                 if      (params->colorToning.twocolor == "Std"  ) {
                     metchrom = 0;

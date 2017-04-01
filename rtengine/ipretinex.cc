@@ -273,7 +273,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
 
-            float varx;
+            float varx = 0.f;
             float limdx, ilimdx;
 
             if(gradvart != 0) {

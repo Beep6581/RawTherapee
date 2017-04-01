@@ -49,7 +49,6 @@ class Thumbnail
 
     rtengine::procparams::ProcParams      pparams;
     bool            pparamsValid;
-    bool            pparamsSet;
     bool            needsReProcessing;
     bool            imageLoading;
 
