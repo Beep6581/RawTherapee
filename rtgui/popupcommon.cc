@@ -107,8 +107,8 @@ void PopUpCommon::entrySelected (int i)
 
 void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
     const auto items = menu->get_children ();
-    if (index < items.size ()) {
-        items[index]->set_sensitive (isSensitive);
+    if (size_t(index) < items.size ()) {
+        items[size_t(index)]->set_sensitive (isSensitive);
     }
 }
 

@@ -35,7 +35,7 @@ CheckBox::CheckBox (Glib::ustring label, bool const& multiImageVal)
 void CheckBox::buttonToggled ()
 {
 
-    CheckValue newValue;
+    CheckValue newValue = CheckValue::unchanged;
 
     if (multiImage) {
         if (get_inconsistent()) {

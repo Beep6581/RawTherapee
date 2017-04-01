@@ -1627,7 +1627,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                             int delta = 0;
                             // for efficiency, pre-calculate currWS_L as it may be needed in both
                             // if (showch) and if (showcs) branches
-                            int currWS_L;
+                            int currWS_L = 0;
 
                             if (showL && (showch || showcs)) {
                                 currWS_L = (int)(0.299f * currWS[0] + 0.587f * currWS[1] + 0.114f * currWS[2]);

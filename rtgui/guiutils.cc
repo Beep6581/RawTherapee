@@ -1478,7 +1478,7 @@ void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int src
         return;
     }
 
-    for (unsigned int i = 0; i < (unsigned int)(srcH); ++i) {
+    for (int i = 0; i < srcH; ++i) {
         if (dstY + i >= surfH) {
             break;
         }
@@ -1486,7 +1486,7 @@ void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int src
         src = srcData + i * srcRowStride;
         dst = dstData + ((dstY + i) * surfW + dstX) * 4;
 
-        for (unsigned int j = 0; j < (unsigned int)(srcW); ++j) {
+        for (int j = 0; j < srcW; ++j) {
             if (dstX + j >= surfW) {
                 break;
             }
