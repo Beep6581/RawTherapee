@@ -442,7 +442,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         return 2;
     }
 
-    if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2 != raw_size) {
+    if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2u != raw_size) {
         parse_fuji_compressed_header();
 	}
 

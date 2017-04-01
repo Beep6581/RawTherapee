@@ -21,7 +21,8 @@
 #include <iostream>
 #include <cstring>
 
-#ifdef WIN32
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
 #include <windows.h>
 #endif
