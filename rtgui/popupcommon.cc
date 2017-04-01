@@ -26,9 +26,9 @@
 #include "guiutils.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
-    : selected (-1) // -1 means that the button is invalid
+    : buttonImage (nullptr)
     , menu (nullptr)
-    , buttonImage (nullptr)
+    , selected (-1) // -1 means that the button is invalid
 {
     button = thisButton;
     hasMenu = false;

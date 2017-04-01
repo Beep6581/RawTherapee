@@ -18,11 +18,12 @@
  */
 #include "browserfilter.h"
 
-BrowserFilter::BrowserFilter () : exifFilterEnabled (false),
+BrowserFilter::BrowserFilter () : 
     showTrash (true),
     showNotTrash (true),
     showOriginal (false),
-    multiselect (false)
+    multiselect (false),
+    exifFilterEnabled (false)
 {
     for (int i = 0; i < 6; i++) {
         showRanked[i] = true;

@@ -1620,8 +1620,8 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
         int offsetY = rtengine::LIM<int>(offset.y, 0, surface->get_height());
 
         // now copy the off-screen Surface to the destination Surface
-        int srcSurfW = surface->get_width();
-        int srcSurfH = surface->get_height();
+        // int srcSurfW = surface->get_width();
+        // int srcSurfH = surface->get_height();
         //printf("srcSurf:  w: %d, h: %d\n", srcSurfW, srcSurfH);
         crDest->set_line_width(0.);
 
