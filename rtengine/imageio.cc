@@ -216,9 +216,8 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
 
     //reading PNG header
     unsigned char header[8];
-    fread (header, 1, 8, file);
 
-    if (png_sig_cmp (header, 0, 8)) {
+    if (fread (header, 1, 8, file) != 8 || png_sig_cmp (header, 0, 8)) {
         fclose(file);
         return IMIO_HEADERERROR;
     }
@@ -295,9 +294,8 @@ int ImageIO::loadPNG  (Glib::ustring fname)
 
     //reading PNG header
     unsigned char header[8];
-    fread (header, 1, 8, file);
 
-    if (png_sig_cmp (header, 0, 8)) {
+    if (fread (header, 1, 8, file) != 8 || png_sig_cmp (header, 0, 8)) {
         fclose(file);
         return IMIO_HEADERERROR;
     }

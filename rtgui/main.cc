@@ -21,8 +21,6 @@
 #if defined(__FAST_MATH__)
 #error Using the -ffast-math CFLAG is known to lead to problems. Disable it to compile RawTherapee.
 #endif
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
 #include "config.h"
@@ -467,6 +465,3 @@ int processLineParams( int argc, char **argv )
 
     return errors > 0 ? -2 : 0;
 }
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif // __GNUC__

@@ -672,7 +672,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
     defGain = 0.0;
     // compute image area to render in order to provide the requested part of the image
-    int sx1, sy1, imwidth, imheight, fw, d1xHeightOdd;
+    int sx1, sy1, imwidth, imheight, fw, d1xHeightOdd = 0;
     transformRect (pp, tran, sx1, sy1, imwidth, imheight, fw);
 
     // check possible overflows
@@ -2384,7 +2384,7 @@ void RawImageSource::retinex(ColorManagementParams cmp, RetinexParams deh, ToneC
     LUTf lutToneireti;
     lutToneireti(65536);
 
-    LUTf *retinexigamtab;//gamma before and after Retinex to restore tones
+    LUTf *retinexigamtab = nullptr;//gamma before and after Retinex to restore tones
 
     if(deh.gammaretinex == "low") {
         retinexigamtab = &(Color::igammatab_115_2);

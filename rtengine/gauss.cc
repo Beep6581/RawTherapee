@@ -231,8 +231,8 @@ template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const f
 #ifdef __SSE2__
 template<class T> SSEFUNCTION void gaussVertical3 (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
-    vfloat Tv, Tm1v, Tp1v;
-    vfloat Tv1, Tm1v1, Tp1v1;
+    vfloat Tv = F2V(0.f), Tm1v, Tp1v;
+    vfloat Tv1 = F2V(0.f), Tm1v1, Tp1v1;
     vfloat c0v, c1v;
     c0v = F2V(c0);
     c1v = F2V(c1);

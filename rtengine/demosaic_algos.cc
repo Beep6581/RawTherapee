@@ -1338,7 +1338,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array
     h3 /= hs;
     h4 /= hs;
     int passref = 0;
-    int iter;
+    int iter = 0;
 
     if(iterations <= 4) {
         iter = iterations - 1;
@@ -4011,7 +4011,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
     // sgrow/sgcol is the offset in the sensor matrix of the solitary
     // green pixels
-    ushort sgrow, sgcol;
+    ushort sgrow = 0, sgcol = 0;
 
     const int height = H, width = W;
 

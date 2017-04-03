@@ -1474,7 +1474,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         float Yw;
         Yw = 1.0;
         double Xw, Zw;
-        float f, nc, yb = 0.f, la, c, xw, yw, zw, f2, c2 = 1.f, nc2, yb2;
+        float f, nc, yb = 0.f, la, c, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
         float fl, n, nbb, ncb, aw; //d
         float xwd, ywd, zwd;
         int alg = 0;
@@ -2952,7 +2952,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         }
     }
 
-    int h_th, s_th;
+    int h_th = 0, s_th = 0;
 
     if (shmap) {
         h_th = shmap->max_f - params->sh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
@@ -3007,10 +3007,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         params->chmixer.green[0] != 0 || params->chmixer.green[1] != 100 || params->chmixer.green[2] != 0 ||
                         params->chmixer.blue[0] != 0  || params->chmixer.blue[1] != 0    || params->chmixer.blue[2] != 100);
 
-    FlatCurve* hCurve;
-    FlatCurve* sCurve;
-    FlatCurve* vCurve;
-    FlatCurve* bwlCurve;
+    FlatCurve* hCurve = nullptr;
+    FlatCurve* sCurve = nullptr;
+    FlatCurve* vCurve = nullptr;
+    FlatCurve* bwlCurve = nullptr;
 
     FlatCurveType hCurveType = (FlatCurveType)params->hsvequalizer.hcurve.at(0);
     FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at(0);
@@ -3064,7 +3064,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     std::shared_ptr<HaldCLUT> hald_clut;
     bool clutAndWorkingProfilesAreSame = false;
-    TMatrix xyz2clut, clut2xyz;
+    TMatrix xyz2clut = {}, clut2xyz = {};
 #ifdef __SSE2__
     vfloat v_work2xyz[3][3] ALIGNED16;
     vfloat v_xyz2clut[3][3] ALIGNED16;
@@ -3253,7 +3253,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
     // For tonecurve histogram
     int toneCurveHistSize = histToneCurve ? histToneCurve.getSize() : 0;
-    int histToneCurveCompression;
+    int histToneCurveCompression = 0;
 
     if(toneCurveHistSize > 0) {
         histToneCurve.clear();
@@ -4650,7 +4650,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     twocol = false;
                 }
 
-                float iplow, iphigh;
+                float iplow = 0.f, iphigh = 0.f;
 
                 if(!twocol) {
                     iplow = (float)ctColorCurve.low;

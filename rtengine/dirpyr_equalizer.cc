@@ -149,7 +149,7 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst,
         level ++;
     }
 
-    float **tmpHue, **tmpChr;
+    float **tmpHue = nullptr, **tmpChr = nullptr;
 
     if(skinprot != 0.f) {
         // precalculate hue and chroma, use SSE, if available

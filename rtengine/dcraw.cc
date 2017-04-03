@@ -3,6 +3,10 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wparentheses"
+#if (__GNUC__ == 6)
+#pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#endif
 #endif
 
 /*RT*/#include <glib.h>
