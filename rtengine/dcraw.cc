@@ -1,3 +1,10 @@
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 /*RT*/#include <glib.h>
 /*RT*/#include <glib/gstdio.h>
 /*RT*/#undef MAX
@@ -251,7 +258,11 @@ void CLASS derror()
     if (feof(ifp))
       fprintf (stderr,_("Unexpected end of file\n"));
     else
+#ifdef WIN32
+      fprintf (stderr,_("Corrupt data near 0x%I64x\n"), (INT64) ftello(ifp));
+#else
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
+#endif
   }
   data_error++;
 /*RT Issue 2467  longjmp (failure, 1);*/
@@ -1840,8 +1851,8 @@ void CLASS parse_hasselblad_gain()
       not be seen as clipped).
     */
 
-    ushort raw_h, count, ch_count, u16;
-    int i, offset;
+    ushort raw_h;
+    int offset;
     off_t base;
 
     base = ftell(ifp);
@@ -9881,3 +9892,6 @@ struct tiff_hdr {
 /*RT*/#undef LIM
 /*RT*/#undef ULIM
 /*RT*/#undef CLIP
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
