@@ -311,6 +311,7 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
 
 void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans)
 {
+    GThreadLock lock;
 
     if(isRaw) {
         rawPanelSW->set_sensitive(true);
