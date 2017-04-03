@@ -36,7 +36,7 @@ ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(nullptr), oprevi(nullptr), oprevl(nullptr), nprevl(nullptr), previmg(nullptr), workimg(nullptr),
       ncie(nullptr), imgsrc(nullptr), shmap(nullptr), lastAwbEqual(0.), lastAwbTempBias(0.0), ipf(&params, true), monitorIntent(RI_RELATIVE),
       softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
-      allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
+      allocated(false), isFullRes(false), realscale(10), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
       ctColorCurve(),
       hltonecurve(65536),
@@ -158,6 +158,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 highDetailNeeded = true;
                 break;
             }
+    }
+
+
+    if (fullResNeeded(highDetailNeeded)) {
+        if (!isFullRes) {
+            todo |= ALL;
+            setFullRes(true);
+        }
+    } else if (isFullRes) {
+        setFullRes(false);
     }
 
     RAWParams rp = params.raw;
@@ -698,7 +708,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             int kall = 0;
             progress ("Wavelet...", 100 * readyphase / numofphases);
             //  ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, scale);
-            ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, wavcontlutili, scale);
+            waveletEvalParams.evaluate = true;
+            ImProcFunctions::WaveletEvalParams *ep = nullptr;
+            if (WaveParams.Tilesmethod == "full") {
+                ep = &waveletEvalParams;
+            }
+            ipf.ip_wavelet(nprevl, nprevl, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, wavclCurve, wavcontlutili, scale, ep);
+            waveletEvalParams.evaluate = false;
 
         }
 
@@ -847,6 +863,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 }
 
 
+bool ImProcCoordinator::fullResNeeded(bool highDetailNeeded) const
+{
+    return highDetailNeeded && params.wavelet.enabled && params.wavelet.expcontrast && params.wavelet.Tilesmethod == "full";
+}
+
+
 void ImProcCoordinator::freeAll ()
 {
 
@@ -864,6 +886,7 @@ void ImProcCoordinator::freeAll ()
         orig_prev = nullptr;
         delete oprevl;
         oprevl    = nullptr;
+
         delete nprevl;
         nprevl    = nullptr;
 
@@ -900,7 +923,6 @@ void ImProcCoordinator::freeAll ()
  */
 void ImProcCoordinator::setScale (int prevscale)
 {
-
     if (settings->verbose) {
         printf ("setscale before lock\n");
     }
@@ -923,6 +945,11 @@ void ImProcCoordinator::setScale (int prevscale)
     }
 
     if (nW != pW || nH != pH) {
+
+        if (isFullRes) {
+            realscale = prevscale;
+            return;
+        }
 
         freeAll ();
 
@@ -965,9 +992,27 @@ void ImProcCoordinator::setScale (int prevscale)
 }
 
 
+void ImProcCoordinator::setFullRes(bool yes)
+{
+    if (isFullRes == yes) {
+        return;
+    }
+
+    printf("CHANGE FULL RES: %d\n", yes);
+
+    if (yes) {
+        realscale = scale;
+        setScale(1);
+    } else {
+        setScale(realscale);
+    }
+
+    isFullRes = yes;
+}
+
+
 void ImProcCoordinator::updateLRGBHistograms ()
 {
-
     int x1, y1, x2, y2;
     params.crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 

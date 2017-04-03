@@ -83,6 +83,11 @@ protected:
     bool highDetailRawComputed;
     bool allocated;
 
+    bool isFullRes;
+    int realscale;
+    void setFullRes(bool yes);
+    bool fullResNeeded(bool highDetailNeeded) const;
+
     void freeAll ();
 
     // Precomputed values used by DetailedCrop ----------------------------------------------
@@ -364,6 +369,7 @@ public:
 
     } denoiseInfoStore;
 
+    ImProcFunctions::WaveletEvalParams waveletEvalParams;
 };
 }
 #endif

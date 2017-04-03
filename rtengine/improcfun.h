@@ -274,10 +274,81 @@ public:
                            int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ );
 
     void Tile_calc (int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip);
-    void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, bool wavcontlutili, int skip);
+    struct WaveletEvalParams {
+        bool evaluate;
+        float mean[2][9];
+        float meanN[2][9];
+        float sigma[2][9];
+        float sigmaN[2][9];
+        float MaxP[2][9];
+        float MaxN[2][9];
+        float madL[2][8][3];
+        double avedbl;
+        float max0;
+        float min0;
+        float ave;
+
+        void update(int which, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, float madL[8][3])
+        {
+            assert(which == 0 || which == 1);
+            if (evaluate) {
+                for (int i = 0; i < 9; ++i) {
+                    this->mean[which][i] = mean[i];
+                    this->meanN[which][i] = meanN[i];
+                    this->sigma[which][i] = sigma[i];
+                    this->sigmaN[which][i] = sigmaN[i];
+                    this->MaxP[which][i] = MaxP[i];
+                    this->MaxN[which][i] = MaxN[i];
+                }
+                for (int i = 0; i < 8; ++i) {
+                    for (int j = 0; j < 3; ++j) {
+                        this->madL[which][i][j] = madL[i][j];
+                    }
+                }
+            } else {
+                for (int i = 0; i < 9; ++i) {
+                    mean[i] = this->mean[which][i];
+                    meanN[i] = this->meanN[which][i];
+                    sigma[i] = this->sigma[which][i];
+                    sigmaN[i] = this->sigmaN[which][i];
+                    MaxP[i] = this->MaxP[which][i];
+                    MaxN[i] = this->MaxN[which][i];
+                }
+                for (int i = 0; i < 8; ++i) {
+                    for (int j = 0; j < 3; ++j) {
+                        madL[i][j] = this->madL[which][i][j];
+                    }
+                }
+            }
+        }
+
+        void update(double &avedbl, float &max0, float &min0)
+        {
+            if (evaluate) {
+                this->avedbl = avedbl;
+                this->max0 = max0;
+                this->min0 = min0;
+            } else {
+                avedbl = this->avedbl;
+                max0 = this->max0;
+                min0 = this->min0;
+            }
+        }
+
+        void update(float &ave)
+        {
+            if (evaluate) {
+                this->ave = ave;
+            } else {
+                ave = this->ave;
+            }
+        }
+        
+    };
+    void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, bool wavcontlutili, int skip, WaveletEvalParams *evalparams=nullptr);
 
     void WaveletcontAllL(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_L,
-                         struct cont_params &cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili);
+                         struct cont_params &cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili, WaveletEvalParams *evalparams=nullptr);
     void WaveletcontAllLfinal(wavelet_decomposition &WaveletCoeffs_L, struct cont_params &cp, float *mean, float *sigma, float *MaxP, const WavOpacityCurveWL & waOpacityCurveWL);
     void WaveletcontAllAB(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_a, const WavOpacityCurveW & waOpacityCurveW,
                           struct cont_params &cp, const bool useChannelA);

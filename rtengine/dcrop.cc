@@ -924,7 +924,12 @@ void Crop::update (int todo)
 
             params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
-            parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, wavcontlutili, skip);
+            ImProcFunctions::WaveletEvalParams *ep = nullptr;
+            if (WaveParams.Tilesmethod == "full") {
+                ep = &parent->waveletEvalParams;
+                printf("expecting to use evalparams in %s mode\n", ep->evaluate ? "save" : "load");
+            }
+            parent->ipf.ip_wavelet(labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, wavcontlutili, skip, ep);
         }
 
         //     }

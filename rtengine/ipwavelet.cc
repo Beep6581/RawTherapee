@@ -140,7 +140,7 @@ struct cont_params {
 int wavNestedLevels = 1;
 
 
-SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, bool wavcontlutili, int skip)
+SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, LUTf &wavclCurve, bool wavcontlutili, int skip, WaveletEvalParams *evalparams)
 
 
 {
@@ -666,7 +666,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         printf("Ip Wavelet uses %d main thread(s) and up to %d nested thread(s) for each main thread\n", numthreads, wavNestedLevels);
     }
 
-    #pragma omp parallel num_threads(numthreads)
+    #pragma omp parallel num_threads(numthreads) if (!evalparams)
 #endif
     {
         float *mean = new float [9];
@@ -689,7 +689,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         }
 
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic) collapse(2)
+       #pragma omp for schedule(dynamic) collapse(2)
 #endif
 
         for (int tiletop = 0; tiletop < imheight; tiletop += tileHskip) {
@@ -721,7 +721,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 }
 
 #ifdef _RT_NESTED_OPENMP
-                #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
+                #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1 && !evalparams)
 #endif
 
                 for (int i = tiletop; i < tilebottom; i++) {
@@ -899,7 +899,12 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         }
 
                         if(cp.val > 0 || ref || contr) {//edge
-                            Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+                            if (!evalparams || evalparams->evaluate) {
+                                Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+                            }
+                            if (evalparams) {
+                                evalparams->update(0, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+                            }
                         }
 
                         //init for edge and denoise
@@ -937,10 +942,17 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         }
 
 
-                        WaveletcontAllL(labco, varhue, varchro, *Ldecomp, cp, skip, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, waOpacityCurveWL, ChCurve, Chutili);
+                        WaveletcontAllL(labco, varhue, varchro, *Ldecomp, cp, skip, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavCLVCcurve, waOpacityCurveW, waOpacityCurveWL, ChCurve, Chutili, evalparams);
 
                         if(cp.val > 0 || ref || contr  || cp.diagcurv) {//edge
-                            Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+                            if (!evalparams || evalparams->evaluate) {
+                                Evaluate2(*Ldecomp, cp, ind, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+                            }
+                            if (evalparams) {
+                                evalparams->update(1, mean, meanN, sigma, sigmaN, MaxP, MaxN, madL);
+                                printf("%s EVALPARAMS!\n",
+                                       evalparams->evaluate ? "SAVING" : "LOADING");
+                            }
                         }
 
                         WaveletcontAllLfinal(*Ldecomp, cp, mean, sigma, MaxP, waOpacityCurveWL);
@@ -1690,7 +1702,7 @@ void ImProcFunctions::WaveletcontAllLfinal(wavelet_decomposition &WaveletCoeffs_
 
 
 void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition &WaveletCoeffs_L,
-                                      struct cont_params &cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili)
+                                      struct cont_params &cp, int skip, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, FlatCurve* ChCurve, bool Chutili, WaveletEvalParams *evalparams)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
     int W_L = WaveletCoeffs_L.level_W(0);
@@ -1706,7 +1718,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     float max0 = 0.f;
     float min0 = FLT_MAX;
 
-    if(contrast != 0.f || (cp.tonemap  && cp.resena)) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
+    if ((contrast != 0.f || (cp.tonemap  && cp.resena)) && (!evalparams || evalparams->evaluate)) { // contrast = 0.f means that all will be multiplied by 1.f, so we can skip this step
 #ifdef _RT_NESTED_OPENMP
         #pragma omp parallel for reduction(+:avedbl) num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
@@ -1753,6 +1765,9 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         }
 
     }
+    if (evalparams) {
+        evalparams->update(avedbl, max0, min0);
+    }
 
     //      printf("MAXmax0=%f MINmin0=%f\n",max0,min0);
 
@@ -1769,6 +1784,9 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
     max0 /= 327.68f;
     min0 /= 327.68f;
     float ave = avedbl / (double)(W_L * H_L);
+    if (evalparams) {
+        evalparams->update(ave);
+    }
     float av = ave / 327.68f;
     float ah = (multH - 1.f) / (av - max0); //
     float bh = 1.f - max0 * ah;
