@@ -55,6 +55,7 @@ public:
         tunnelMetaData(tunnelMetaData),
         flush(flush),
         // internal state
+        ipf_p(nullptr),
         ii(nullptr),
         imgsrc(nullptr),
         fw(-1),
@@ -160,10 +161,11 @@ private:
 //    MyTime t1,t2;
 //    t1.set();
 
-        ImProcFunctions ipf (&params, true);
+        ipf_p.reset(new ImProcFunctions(&params, true));
+        ImProcFunctions &ipf = *(ipf_p.get());
 
         pp = PreviewProps(0, 0, fw, fh, 1);
-    imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
+        imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
         imgsrc->preprocess( params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
         if (params.toneCurve.autoexp) {// this enabled HLRecovery
@@ -733,7 +735,8 @@ private:
     void stage_denoise()
     {
         procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
+        //ImProcFunctions ipf (&params, true);
+        ImProcFunctions &ipf = *(ipf_p.get());
         
         // perform luma/chroma denoise
 //  CieImage *cieView;
@@ -797,7 +800,8 @@ private:
     void stage_transform()
     {
         procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
+        //ImProcFunctions ipf (&params, true);
+        ImProcFunctions &ipf = *(ipf_p.get());        
 
         imgsrc->convertColorSpace(baseImg, params.icm, currWB);
 
@@ -819,7 +823,8 @@ private:
     Image16 *stage_finish()
     {
         procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
+        //ImProcFunctions ipf (&params, true);
+        ImProcFunctions &ipf = *(ipf_p.get());        
 
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
             const int W = baseImg->getWidth();
@@ -1344,7 +1349,8 @@ private:
     void stage_early_resize()
     {
         procparams::ProcParams& params = job->pparams;
-        ImProcFunctions ipf (&params, true);
+        //ImProcFunctions ipf (&params, true);
+        ImProcFunctions &ipf = *(ipf_p.get());        
         
         int imw, imh;
         double scale_factor = ipf.resizeScale(&params, fw, fh, imw, imh);
@@ -1445,6 +1451,7 @@ private:
     bool flush;
 
     // internal state
+    std::unique_ptr<ImProcFunctions> ipf_p;
     InitialImage *ii;
     ImageSource *imgsrc;
     int fw;
