@@ -868,7 +868,7 @@ bool ImProcCoordinator::fullResNeeded(bool highDetailNeeded) const
     return (highDetailNeeded
             && options.rtSettings.wavelet_preview_mode != Settings::WAVELET_CROP_100
             && params.wavelet.enabled
-            && params.wavelet.expcontrast
+            //&& params.wavelet.expcontrast
             && params.wavelet.Tilesmethod == "full");
 }
 
