@@ -167,6 +167,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             setFullRes(true);
         }
     } else if (isFullRes) {
+        todo |= ALL;
         setFullRes(false);
     }
 
@@ -1018,11 +1019,11 @@ void ImProcCoordinator::setFullRes(bool yes)
             fullscale = 1;
         }
         setScale(fullscale);
+        isFullRes = true;
     } else {
+        isFullRes = false;
         setScale(realscale);
     }
-
-    isFullRes = yes;
 }
 
 
