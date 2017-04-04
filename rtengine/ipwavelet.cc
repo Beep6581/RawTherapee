@@ -721,7 +721,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 }
 
 #ifdef _RT_NESTED_OPENMP
-                #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1 && !evalparams)
+                #pragma omp parallel for num_threads(wavNestedLevels) if(wavNestedLevels>1)
 #endif
 
                 for (int i = tiletop; i < tilebottom; i++) {
