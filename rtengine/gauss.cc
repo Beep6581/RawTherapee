@@ -921,7 +921,7 @@ template<class T> void gaussVertical (T** src, T** dst, const int W, const int H
     #pragma omp for nowait
 #endif
 
-    for (int i = 0; i < W - numcols + 1; i += numcols) {
+    for (unsigned int i = 0; i < static_cast<unsigned>(std::max(0, W - numcols + 1)); i += numcols) {
         for (int k = 0; k < numcols; k++) {
             temp2[0][k] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
             temp2[1][k] = B * src[1][i + k] + b1 * temp2[0][k] + b2 * src[0][i + k] + b3 * src[0][i + k];
