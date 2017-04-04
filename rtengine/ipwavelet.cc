@@ -699,7 +699,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 int width  = tileright - tileleft;
                 int height = tilebottom - tiletop;
                 LabImage * labco;
-                float **Lold;
+                float **Lold = nullptr;
                 float *LoldBuffer = nullptr;
 
                 if(numtiles == 1) { // untiled processing => we can use output buffer for labco

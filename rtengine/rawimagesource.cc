@@ -2111,7 +2111,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
     conversionBuffer[2] (W - 2 * border, H - 2 * border);
     conversionBuffer[3] (W - 2 * border, H - 2 * border);
 
-    LUTf *retinexgamtab;//gamma before and after Retinex to restore tones
+    LUTf *retinexgamtab = nullptr;//gamma before and after Retinex to restore tones
     LUTf lutTonereti;
 
     if(retinexParams.gammaretinex == "low") {
