@@ -687,6 +687,8 @@ void Options::setDefaults ()
     rtSettings.nrhigh = 0.45;//between 0.1 and 0.9
     rtSettings.nrwavlevel = 1;//integer between 0 and 2
 
+    rtSettings.wavelet_preview_mode = rtengine::Settings::WAVELET_CROP_100;
+
 //   rtSettings.colortoningab =0.7;
 //rtSettings.decaction =0.3;
 //  rtSettings.ciebadpixgauss=false;
@@ -1213,6 +1215,10 @@ int Options::readFromFile (Glib::ustring fname)
 
                 if (keyFile.has_key ("Performance", "SIMPLNRAUT")) {
                     rtSettings.leveldnautsimpl = keyFile.get_integer ("Performance", "SIMPLNRAUT");
+                }
+
+                if (keyFile.has_key ("Performance", "WaveletPreviewMode")) {
+                    rtSettings.wavelet_preview_mode = std::min(std::max(int(rtengine::Settings::WAVELET_CROP_100), keyFile.get_integer("Performance", "WaveletPreviewMode")), int(rtengine::Settings::WAVELET_FULL_25));
                 }
 
                 if (keyFile.has_key ("Performance", "ClutCacheSize")) {
@@ -1948,6 +1954,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_double  ("Performance", "NRautomax", rtSettings.nrautomax);
         keyFile.set_double  ("Performance", "NRhigh", rtSettings.nrhigh);
         keyFile.set_integer ("Performance", "NRWavlevel", rtSettings.nrwavlevel);
+        keyFile.set_integer("Performance", "WaveletPreviewMode", rtSettings.wavelet_preview_mode);
         keyFile.set_integer ("Performance", "LevNR", rtSettings.leveldnv);
         keyFile.set_integer ("Performance", "LevNRTI", rtSettings.leveldnti);
         keyFile.set_integer ("Performance", "LevNRAUT", rtSettings.leveldnaut);

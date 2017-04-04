@@ -925,7 +925,7 @@ void Crop::update (int todo)
             params.wavelet.getCurves(wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
             ImProcFunctions::WaveletEvalParams *ep = nullptr;
-            if (WaveParams.Tilesmethod == "full") {
+            if (WaveParams.Tilesmethod == "full" && options.rtSettings.wavelet_preview_mode != Settings::WAVELET_CROP_100) {
                 ep = &parent->waveletEvalParams;
                 printf("expecting to use evalparams in %s mode\n", ep->evaluate ? "save" : "load");
             }

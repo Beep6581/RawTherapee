@@ -865,7 +865,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
 bool ImProcCoordinator::fullResNeeded(bool highDetailNeeded) const
 {
-    return highDetailNeeded && params.wavelet.enabled && params.wavelet.expcontrast && params.wavelet.Tilesmethod == "full";
+    return (highDetailNeeded
+            && options.rtSettings.wavelet_preview_mode != Settings::WAVELET_CROP_100
+            && params.wavelet.enabled
+            && params.wavelet.expcontrast
+            && params.wavelet.Tilesmethod == "full");
 }
 
 
@@ -1002,7 +1006,18 @@ void ImProcCoordinator::setFullRes(bool yes)
 
     if (yes) {
         realscale = scale;
-        setScale(1);
+        int fullscale = 1;
+        switch (options.rtSettings.wavelet_preview_mode) {
+        case Settings::WAVELET_FULL_50:
+            fullscale = 2;
+            break;
+        case Settings::WAVELET_FULL_25:
+            fullscale = 4;
+            break;
+        default:
+            fullscale = 1;
+        }
+        setScale(fullscale);
     } else {
         setScale(realscale);
     }

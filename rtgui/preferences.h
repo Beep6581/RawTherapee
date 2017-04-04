@@ -131,6 +131,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::ComboBoxText* dnautsimpl;
     Gtk::ComboBoxText* dnwavlev;
     Gtk::ComboBoxText* dnliss;
+    Gtk::ComboBoxText* wavpreview;
 
     Gtk::Frame* waveletFrame;
     Gtk::HBox* waveletTileSizeHBox;

@@ -92,6 +92,15 @@ public:
     double          ed_low;
     double          ed_lipinfl;
     double          ed_lipampl;
+
+    enum {
+        WAVELET_CROP_100 = 0,
+        WAVELET_FULL_100,
+        WAVELET_FULL_50,
+        WAVELET_FULL_25
+    };
+    int wavelet_preview_mode;
+    
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */
     static Settings* create  ();

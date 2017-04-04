@@ -696,6 +696,23 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     fdenoise->add (*vbdenoise);
     mainContainer->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
 
+    Gtk::Frame *fwavpreview = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WAVPREVIEW")));
+    Gtk::HBox *hbwavpreview = Gtk::manage(new Gtk::HBox(false, 4));
+    Gtk::VBox *vbwavpreview = Gtk::manage(new Gtk::VBox(false, 4));
+    Gtk::Label *lwavpreview = Gtk::manage(new Gtk::Label(M("PREFERENCES_WAVPREVIEW_LABEL") + ":"));
+    wavpreview = Gtk::manage(new Gtk::ComboBoxText());
+    wavpreview->append(M("PREFERENCES_WAVPREVIEW_CROP_100"));
+    wavpreview->append(M("PREFERENCES_WAVPREVIEW_FULL_100"));
+    wavpreview->append(M("PREFERENCES_WAVPREVIEW_FULL_50"));
+    wavpreview->append(M("PREFERENCES_WAVPREVIEW_FULL_25"));
+    wavpreview->set_active(0);
+    hbwavpreview->pack_start(*lwavpreview, Gtk::PACK_SHRINK);
+    hbwavpreview->pack_start(*wavpreview);
+    vbwavpreview->add(*Gtk::manage(new Gtk::Label(M("PREFERENCES_IMG_RELOAD_NEEDED"), Gtk::ALIGN_START)));
+    vbwavpreview->add(*hbwavpreview);
+    fwavpreview->add(*vbwavpreview);
+    mainContainer->pack_start(*fwavpreview, Gtk::PACK_SHRINK, 4);
+
     return mainContainer;
 }
 
@@ -1696,6 +1713,7 @@ void Preferences::storePreferences ()
     moptions.rtSettings.nrwavlevel   = dnwavlev->get_active_row_number ();
     moptions.rtSettings.leveldnautsimpl   = dnautsimpl->get_active_row_number ();
     moptions.rtSettings.daubech             = cbdaubech->get_active ();
+    moptions.rtSettings.wavelet_preview_mode = wavpreview->get_active_row_number();
 
     moptions.prevdemo = (prevdemo_t)cprevdemo->get_active_row_number ();
     moptions.serializeTiffRead = ctiffserialize->get_active();
@@ -1843,6 +1861,7 @@ void Preferences::fillPreferences ()
     dnaut->set_active (moptions.rtSettings.leveldnaut);
     dnautsimpl->set_active (moptions.rtSettings.leveldnautsimpl);
     dnwavlev->set_active (moptions.rtSettings.nrwavlevel);
+    wavpreview->set_active(moptions.rtSettings.wavelet_preview_mode);
     cprevdemo->set_active (moptions.prevdemo);
     cbdaubech->set_active (moptions.rtSettings.daubech);
 
