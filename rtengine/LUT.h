@@ -599,7 +599,7 @@ public:
         vint sumv = (vint)ZEROV;
         vfloat avgv = ZEROV;
 
-        for(; i < size - 3; i += 4) {
+        for(; i < static_cast<int>(size) - 3; i += 4) {
             vint datav = _mm_loadu_si128((__m128i*)&data[i]);
             sumv += datav;
             avgv += iv * _mm_cvtepi32_ps(datav);
@@ -611,7 +611,7 @@ public:
         avg = vhadd(avgv);
 #endif
 
-        for (; i < size; i++) {
+        for (; i < static_cast<int>(size); i++) {
             T val = data[i];
             sum += val;
             avg += i * val;

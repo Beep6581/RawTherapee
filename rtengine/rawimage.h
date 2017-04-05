@@ -180,7 +180,7 @@ public:
     eSensorType getSensorType();
 
     void getRgbCam (float rgbcam[3][4]);
-    void getXtransMatrix ( char xtransMatrix[6][6]);
+    void getXtransMatrix ( int xtransMatrix[6][6]);
     void clearXtransCblack( )
     {
         for(int c = 0; c < 4; c++) {

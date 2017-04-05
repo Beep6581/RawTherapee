@@ -50,7 +50,7 @@ namespace
             return false;
         }
 
-        const std::size_t length =
+        const ssize_t length =
             fdata(raw_image.get_thumbOffset(), raw_image.get_file())[1] != 0xD8 && raw_image.is_ppmThumb()
                 ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
                 : raw_image.get_thumbLength();
@@ -254,7 +254,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         std::string fname = ri->get_filename();
         std::string suffix = fname.length() > 4 ? fname.substr(fname.length() - 3) : "";
 
-        for (int i = 0; i < suffix.length(); i++) {
+        for (unsigned int i = 0; i < suffix.length(); i++) {
             suffix[i] = std::tolower(suffix[i]);
         }
 
@@ -500,8 +500,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
         for (int row = 0; row < high; row++)
             for (int col = 0; col < wide; col++) {
-                unsigned ur = r = fw + (row - col) * step;
-                unsigned uc = c = (row + col) * step;
+                int ur = r = fw + (row - col) * step;
+                int uc = c = (row + col) * step;
 
                 if (ur > tmph - 2 || uc > tmpw - 2) {
                     continue;
@@ -779,17 +779,33 @@ void Thumbnail::init ()
 }
 
 Thumbnail::Thumbnail () :
-    iColorMatrix{}, cam2xyz{}, scale(1.0), colorMatrix{}, isRaw(true),
-    camProfile(nullptr), thumbImg(nullptr),
-    camwbRed(1.0), camwbGreen(1.0), camwbBlue(1.0),
-    redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0),
-    autoWBTemp(2700), autoWBGreen(1.0), wbEqual(-1.0), wbTempBias(0.0),
-    embProfileLength(0), embProfileData(nullptr), embProfile(nullptr),
-    redMultiplier(1.0), greenMultiplier(1.0), blueMultiplier(1.0),
+    camProfile(nullptr),
+    iColorMatrix{},
+    cam2xyz{},
+    thumbImg(nullptr),
+    camwbRed(1.0),
+    camwbGreen(1.0),
+    camwbBlue(1.0),
+    redAWBMul(-1.0),
+    greenAWBMul(-1.0),
+    blueAWBMul(-1.0),
+    autoWBTemp(2700),
+    autoWBGreen(1.0),
+    wbEqual(-1.0),
+    wbTempBias(0.0),
+    aeHistCompression(3),
+    embProfileLength(0),
+    embProfileData(nullptr),
+    embProfile(nullptr),
+    redMultiplier(1.0),
+    greenMultiplier(1.0),
+    blueMultiplier(1.0),
+    scale(1.0),
     defGain(1.0),
     scaleForSave(8192),
     gammaCorrected(false),
-    aeHistCompression(3)
+    colorMatrix{},
+    isRaw(true)
 {
 }
 
@@ -959,7 +975,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     LUTu hist16 (65536);
 
-    double gamma = isRaw ? Color::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
     ipf.firstAnalysis (baseImg, params, hist16);
 
     // perform transform
@@ -967,7 +982,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         Imagefloat* trImg = new Imagefloat (fw, fh);
         int origFW;
         int origFH;
-        double tscale;
+        double tscale = 0.0;
         getDimensions(origFW, origFH, tscale);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, focalLen, focalLen35mm, focusDist, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
@@ -1193,7 +1208,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         LUTf CAMBrightCurveQ;
         float CAMMean;
         int sk;
-        int scale;
         sk = 16;
         int rtt = 0;
         CieImage* cieView = new CieImage (fw, fh);

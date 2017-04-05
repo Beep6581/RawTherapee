@@ -82,7 +82,6 @@ SSEFUNCTION void ImProcFunctions::impulse_nr (LabImage* lab, double thresh)
 #ifdef __SSE2__
         vfloat hfnbravev, hpfabsv;
         vfloat impthrDiv24v = F2V( impthrDiv24 );
-        vfloat onev = F2V( 1.0f );
 #endif
 #ifdef _OPENMP
         #pragma omp for

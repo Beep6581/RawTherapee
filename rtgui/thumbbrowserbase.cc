@@ -25,7 +25,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), inspector(nullptr), isInspectorActive(false), location(THLOC_FILEBROWSER)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1)
 {
     inW = -1;
     inH = -1;

@@ -1,3 +1,14 @@
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wparentheses"
+#if (__GNUC__ == 6)
+#pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#endif
+#endif
+
 /*RT*/#include <glib.h>
 /*RT*/#include <glib/gstdio.h>
 /*RT*/#undef MAX
@@ -251,7 +262,11 @@ void CLASS derror()
     if (feof(ifp))
       fprintf (stderr,_("Unexpected end of file\n"));
     else
+#ifdef WIN32
+      fprintf (stderr,_("Corrupt data near 0x%I64x\n"), (INT64) ftello(ifp));
+#else
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
+#endif
   }
   data_error++;
 /*RT Issue 2467  longjmp (failure, 1);*/
@@ -1840,8 +1855,8 @@ void CLASS parse_hasselblad_gain()
       not be seen as clipped).
     */
 
-    ushort raw_h, count, ch_count, u16;
-    int i, offset;
+    ushort raw_h;
+    int offset;
     off_t base;
 
     base = ftell(ifp);
@@ -5897,7 +5912,7 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 33422:			/* CFAPattern */
 	if (filters == 9) {
-	  FORC(36) ((char *)xtrans)[c] = fgetc(ifp) & 3;
+	  FORC(36) ((int *)xtrans)[c] = fgetc(ifp) & 3;
 	  break;
 	}
       case 64777:			/* Kodak P-series */
@@ -9020,7 +9035,7 @@ canon_a5:
     }
     if (fuji_layout) raw_width *= is_raw;
     if (filters == 9)
-      FORC(36) ((char *)xtrans)[c] =
+      FORC(36) ((int *)xtrans)[c] =
 	xtrans_abs[(c/6+top_margin) % 6][(c+left_margin) % 6];
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
@@ -9881,3 +9896,6 @@ struct tiff_hdr {
 /*RT*/#undef LIM
 /*RT*/#undef ULIM
 /*RT*/#undef CLIP
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif

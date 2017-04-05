@@ -193,7 +193,6 @@ private:
     ToolPanelCoordinator* tpc;
     RTWindow* parent;
     //SaveAsDialog* saveAsDialog;
-    BatchToolPanelCoordinator* btpCoordinator;
     FilePanel* fPanel;
 
     bool firstProcessingDone;

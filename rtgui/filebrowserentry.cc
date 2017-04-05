@@ -635,6 +635,7 @@ bool FileBrowserEntry::onArea (CursorArea a, int x, int y)
                y1 < cropParams.y + cropParams.h - 1 &&
                x1 > cropParams.x &&
                x1 < cropParams.x + cropParams.w - 1;
+    default: /* do nothing */ ;
     }
 
     return false;

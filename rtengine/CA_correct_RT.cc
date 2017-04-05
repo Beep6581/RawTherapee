@@ -241,7 +241,6 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int row = rr + top, cc = ccmin; cc < ccmax; cc++) {
                             int col = cc + left;
                             int c = FC(rr, cc);
-                            int indx = row * width + col;
                             int indx1 = rr * ts + cc;
                             rgb[c][indx1] = (rawData[row][col]) / 65535.0f;
                         }
@@ -966,10 +965,9 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
                     // copy CA corrected results to temporary image matrix
                     for (int rr = border; rr < rr1 - border; rr++) {
-                        int c = FC(rr + top, left + border + FC(rr + top, 2) & 1);
+                        int c = FC(rr + top, left + border + (FC(rr + top, 2) & 1));
 
                         for (int row = rr + top, cc = border + (FC(rr, 2) & 1), indx = (row * width + cc + left) >> 1; cc < cc1 - border; cc += 2, indx++) {
-                            int col = cc + left;
                             RawDataTmp[indx] = 65535.0f * rgb[c][(rr) * ts + cc] + 0.5f;
                         }
                     }

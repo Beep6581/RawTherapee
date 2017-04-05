@@ -442,7 +442,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         return 2;
     }
 
-    if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2 != raw_size) {
+    if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2u != raw_size) {
         parse_fuji_compressed_header();
 	}
 
@@ -779,7 +779,7 @@ RawImage::is_ppmThumb() const
              !thumb_load_raw );
 }
 
-void RawImage::getXtransMatrix( char XtransMatrix[6][6])
+void RawImage::getXtransMatrix( int XtransMatrix[6][6])
 {
     for(int row = 0; row < 6; row++)
         for(int col = 0; col < 6; col++) {

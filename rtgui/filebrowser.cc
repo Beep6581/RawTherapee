@@ -405,7 +405,7 @@ FileBrowser::FileBrowser ()
         colorlabel[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), colorlabel[i]));
     }
 
-    for (int i = 0; i < mMenuExtProgs.size(); i++) {
+    for (size_t i = 0; i < mMenuExtProgs.size(); i++) {
         amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
     }
 
@@ -730,14 +730,14 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             return;
         }
 
-    for (int j = 0; j < mMenuExtProgs.size(); j++) {
+    for (size_t j = 0; j < mMenuExtProgs.size(); j++) {
         if (m == amiExtProg[j]) {
             const auto pAct = mMenuExtProgs[m->get_label()];
 
             // Build vector of all file names
             std::vector<Glib::ustring> selFileNames;
 
-            for (int i = 0; i < mselected.size(); i++) {
+            for (size_t i = 0; i < mselected.size(); i++) {
                 Glib::ustring fn = mselected[i]->thumbnail->getFileName();
 
                 // Maybe batch processed version
@@ -1505,11 +1505,11 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
         int iFilenameMatch = 0;
         std::vector<Glib::ustring> vFilterStrings = Glib::Regex::split_simple(",", decodedQueryFileName.uppercase());
 
-        for(int i = 0; i < vFilterStrings.size(); i++) {
+        for(size_t i = 0; i < vFilterStrings.size(); i++) {
             // ignore empty vFilterStrings. Otherwise filter will always return true if
             // e.g. filter.queryFileName ends on "," and will stop being a filter
             if (!vFilterStrings.at(i).empty()) {
-                if (FileName.find(vFilterStrings.at(i)) != -1) {
+                if (FileName.find(vFilterStrings.at(i)) != Glib::ustring::npos) {
                     iFilenameMatch++;
                 }
             }
