@@ -711,7 +711,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                             setDirty(true);
                             draw ();
                             std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
-                            unsigned int size = curve.x.size();
+                            int size = curve.x.size();
 
                             if      (edited_point == 0)      {
                                 newBoundaries.at(0).minVal = 0.;
@@ -761,7 +761,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                         setDirty(true);
                         draw ();
                         std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
-                        unsigned int size = curve.x.size();
+                        int size = curve.x.size();
 
                         if      (edited_point == 0)      {
                             newBoundaries.at(0).minVal = 0.;
@@ -1544,7 +1544,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag)
             }
 
             if (curve.y.size() > 2) {
-                if (lit_point == (curve.y.size() - 1)) {
+                if (lit_point == int(curve.y.size()) - 1) {
                     if (snapCoordinateY(curve.y.at(0), ugpY)) {
                         snapToElmt = 0;
                     }

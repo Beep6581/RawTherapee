@@ -114,7 +114,7 @@ public:
 class ConnectionBlocker
 {
 public:
-    explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr)
+    explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr), wasBlocked(false)
     {
         if (this->connection) {
             wasBlocked = connection.block();

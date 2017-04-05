@@ -374,7 +374,7 @@ public:
 };
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
-    : realized(false), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), openThm(nullptr), ipc(nullptr), beforeIpc(nullptr), isProcessing(false), catalogPane(nullptr)
+    : catalogPane(nullptr), realized(false), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), openThm(nullptr), ipc(nullptr), beforeIpc(nullptr), isProcessing(false)
 {
 
     epih = new EditorPanelIdleHelper;

@@ -21,7 +21,8 @@
 #include <iostream>
 #include <cstring>
 
-#ifdef WIN32
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
 #include <windows.h>
 #endif
@@ -348,7 +349,7 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)
     auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
     auto subDirs = listSubDirs (dir, options.fbShowHidden);
 
-    for (int i = 0; i < subDirs.size(); i++) {
+    for (size_t i = 0; i < subDirs.size(); i++) {
         bool found = false;
 
         for (Gtk::TreeModel::iterator it = iter->children().begin(); it != iter->children().end() && !found ; ++it) {

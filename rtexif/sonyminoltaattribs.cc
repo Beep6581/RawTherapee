@@ -1023,6 +1023,7 @@ public:
             {65535, "Sony FE PZ 28-135mm f/4 G OSS"},
             {65535, "Sony FE 24-70mm f/2.8 GM"},
             {65535, "Sony FE 85mm f/1.4 GM"},
+            {65535, "Sony FE 85mm f/1.8"},
             {65535, "Sony FE 50mm f/1.8"},
             {65535, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"},
             {65535, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"},
@@ -1112,6 +1113,7 @@ public:
         choices.insert(p_t(32793, "Sony E PZ 16-50mm f/3.5-5.6 OSS"));
         choices.insert(p_t(32794, "Sony FE 35mm f/2.8 ZA"));
         choices.insert(p_t(32795, "Sony FE 24-70mm f/4 ZA OSS"));
+        choices.insert(p_t(32796, "Sony FE 85mm f/1.8"));
         choices.insert(p_t(32797, "Sony E 18-200mm f/3.5-6.3 OSS LE"));
         choices.insert(p_t(32798, "Sony E 20mm f/2.8"));
         choices.insert(p_t(32799, "Sony E 35mm f/1.8 OSS"));

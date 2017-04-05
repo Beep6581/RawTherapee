@@ -866,7 +866,6 @@ Glib::ustring LCPStore::getDefaultCommonDirectory() const
 
 #ifdef WIN32
     WCHAR pathW[MAX_PATH] = {0};
-    char pathA[MAX_PATH];
 
     if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_COMMON_APPDATA, false)) {
         char pathA[MAX_PATH];

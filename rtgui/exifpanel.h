@@ -27,8 +27,6 @@ class ExifPanel : public Gtk::VBox, public ToolPanel
 
 private:
     const rtengine::ImageMetaData* idata;
-    int fullw, fullh, cx, cy, cw, ch;
-    bool crenabled;
     rtengine::procparams::ExifPairs changeList;
     rtengine::procparams::ExifPairs defChangeList;
     bool recursiveOp;

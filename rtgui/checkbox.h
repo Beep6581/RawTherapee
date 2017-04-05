@@ -48,7 +48,6 @@ class CheckBox : public Gtk::CheckButton  // Should ideally be private, but in t
 
     CheckBoxListener *listener;
     bool lastActive;
-    bool inBatchMode;
     bool const& multiImage;
     sigc::connection conn;
     void buttonToggled ();

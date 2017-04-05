@@ -748,12 +748,12 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
                 dirEFS.shutterTo = cfs->shutter;
             }
 
-            if (cfs->iso > 0 && (int)cfs->iso < dirEFS.isoFrom) {
-                dirEFS.isoFrom = (int)cfs->iso;
+            if (cfs->iso > 0 && cfs->iso < dirEFS.isoFrom) {
+                dirEFS.isoFrom = cfs->iso;
             }
 
-            if (cfs->iso > 0 && (int)cfs->iso > dirEFS.isoTo) {
-                dirEFS.isoTo = (int)cfs->iso;
+            if (cfs->iso > 0 && cfs->iso > dirEFS.isoTo) {
+                dirEFS.isoTo = cfs->iso;
             }
 
             if (cfs->focalLen < dirEFS.focalFrom) {

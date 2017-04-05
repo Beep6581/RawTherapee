@@ -58,7 +58,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     bool deleted;
     bool fitZoomEnabled;
     bool fitZoom;
-    bool isLowUpdatePriority;
+    //bool isLowUpdatePriority;
     CursorShape cursor_type;
 
     // color pickers
