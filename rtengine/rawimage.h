@@ -173,12 +173,6 @@ public:
 
     void getRgbCam (float rgbcam[3][4]);
     void getXtransMatrix ( int xtransMatrix[6][6]);
-    void clearXtransCblack( )
-    {
-        for(int c = 0; c < 4; c++) {
-            cblack[c] = 0;
-        }
-    }
     unsigned get_filters() const
     {
         return filters;
@@ -312,14 +306,6 @@ public:
 
 public:
     // dcraw functions
-    void scale_colors()
-    {
-        if(isXtrans()) {
-            clearXtransCblack( );
-        }
-
-        DCraw::scale_colors();
-    }
     void pre_interpolate()
     {
         DCraw::pre_interpolate();

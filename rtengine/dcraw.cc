@@ -4526,6 +4526,7 @@ void CLASS colorcheck()
 //  free (fimg);
 //}
 
+/*
 void CLASS scale_colors()
 {
   unsigned bottom, right, size, row, col, ur, uc, i, x, y, c, sum[8];
@@ -4641,6 +4642,7 @@ skip_block: ;
   }
 }
 
+*/
 void CLASS pre_interpolate()
 {
   ushort (*img)[4];
