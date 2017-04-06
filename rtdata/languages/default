@@ -71,6 +71,7 @@ EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values.
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values.
 EXIFPANEL_SUBDIRECTORY;Subdirectory
+EXPORT_BYPASS;Processing steps to bypass
 EXPORT_BYPASS_ALL;Select / Unselect All
 EXPORT_BYPASS_DEFRINGE;Bypass Defringe
 EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
@@ -89,17 +90,16 @@ EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 EXPORT_BYPASS_SHARPENING;Bypass Sharpening
 EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
-EXPORT_PIPELINE;Processing pipeline
-EXPORT_BYPASS;Processing steps to bypass
-EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
 EXPORT_MAXHEIGHT;Maximum height:
 EXPORT_MAXWIDTH;Maximum width:
+EXPORT_PIPELINE;Processing pipeline
 EXPORT_PUTTOQUEUEFAST;  Put to queue for fast export
 EXPORT_RAW_DMETHOD;Demosaic method
+EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;queue-processed
 FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
@@ -122,7 +122,6 @@ FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1</b> 
 FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
 FILEBROWSER_EMPTYTRASH;Empty trash
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files from trash.
-FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 FILEBROWSER_EXTPROGMENU;Open with
 FILEBROWSER_FLATFIELD;Flat-Field
 FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
@@ -172,6 +171,7 @@ FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Rename file
+FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 FILEBROWSER_SELECTDARKFRAME;Select dark-frame...
 FILEBROWSER_SELECTFLATFIELD;Select flat-field...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
@@ -991,6 +991,8 @@ PREFERENCES_DIRSOFTWARE;Installation directory
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EDITORLAYOUT;Editor Layout
 PREFERENCES_EXPAUT;Expert
+PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
+PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 PREFERENCES_EXTERNALEDITOR;External Editor
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
@@ -1092,8 +1094,6 @@ PREFERENCES_PRTPROFILE;Color profile
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
-PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
 PREFERENCES_SELECTFONT;Select main font
