@@ -58,6 +58,20 @@ namespace
         return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
     }
 
+
+void scale_colors(rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
+{
+    DCraw::dcrawImage_t image = ri->get_image();
+    int size = ri->get_iheight() * ri->get_iwidth();
+
+    for (int i = 0; i < size * 4; ++i) {
+        float val = reinterpret_cast<unsigned short *>(image)[i];
+        val -= cblack[i & 3];
+        val *= scale_mul[i & 3];
+        reinterpret_cast<unsigned short *>(image)[i] = rtengine::CLIP(val);
+    }
+}
+
 }
 
 extern Options options;
@@ -333,17 +347,23 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->greenMultiplier = ri->get_pre_mul(1);
     tpp->blueMultiplier = ri->get_pre_mul(2);
 
-    ri->scale_colors();
+    //ri->scale_colors();
+    float pre_mul[4], scale_mul[4], cblack[4];
+    ri->get_colorsCoeff(pre_mul, scale_mul, cblack, false);
+    scale_colors(ri, scale_mul, cblack);
+    
     ri->pre_interpolate();
 
     rml.exifBase = ri->get_exifBase();
     rml.ciffBase = ri->get_ciffBase();
     rml.ciffLength = ri->get_ciffLen();
 
-    tpp->camwbRed = tpp->redMultiplier / ri->get_pre_mul(0);
-    tpp->camwbGreen = tpp->greenMultiplier / ri->get_pre_mul(1);
-    tpp->camwbBlue = tpp->blueMultiplier / ri->get_pre_mul(2);
-    tpp->defGain = 1.0 / min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
+    tpp->camwbRed = tpp->redMultiplier / pre_mul[0]; //ri->get_pre_mul(0);
+    tpp->camwbGreen = tpp->greenMultiplier / pre_mul[1]; //ri->get_pre_mul(1);
+    tpp->camwbBlue = tpp->blueMultiplier / pre_mul[2]; //ri->get_pre_mul(2);
+    //tpp->defGain = 1.0 / min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
+    tpp->defGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+
     tpp->gammaCorrected = true;
 
     unsigned filter = ri->get_filters();
