@@ -98,7 +98,10 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
         }
     } else if ((this->get_cblack(4) + 1) / 2 == 1 && (this->get_cblack(5) + 1) / 2 == 1) {
         for (int c = 0; c < 4; c++) {
-            cblack_[FC(c / 2, c % 2)] = this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
+            cblack_[c] = this->get_cblack(c);
+        }
+        for (int c = 0; c < 4; c++) {
+            cblack_[FC(c / 2, c % 2)] += this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
             pre_mul_[c] = this->get_pre_mul(c);
         }
     } else {
