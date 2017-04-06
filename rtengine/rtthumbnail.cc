@@ -62,13 +62,14 @@ namespace
 void scale_colors(rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
 {
     DCraw::dcrawImage_t image = ri->get_image();
-    int size = ri->get_iheight() * ri->get_iwidth();
-
-    for (int i = 0; i < size * 4; ++i) {
-        float val = reinterpret_cast<unsigned short *>(image)[i];
-        val -= cblack[i & 3];
-        val *= scale_mul[i & 3];
-        reinterpret_cast<unsigned short *>(image)[i] = rtengine::CLIP(val);
+    const int size = ri->get_iheight() * ri->get_iwidth();
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            float val = image[i][j];
+            val -= cblack[j];
+            val *= scale_mul[j];
+            image[i][j] = rtengine::CLIP(val);
+        }
     }
 }
 
