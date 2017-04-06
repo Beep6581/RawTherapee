@@ -62,8 +62,8 @@ namespace
 void scale_colors(rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
 {
     BENCHFUNMICRO
+    DCraw::dcrawImage_t image = ri->get_image();
     if(ri->isBayer()) {
-        DCraw::dcrawImage_t image = ri->get_image();
         const int height = ri->get_iheight();
         const int width = ri->get_iwidth();
         for(int row = 0; row < height; ++row) {
@@ -87,8 +87,34 @@ void scale_colors(rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
                 image[row * width + col][c0] = rtengine::CLIP(val0);
             }
         }
+    } else if(ri->isXtrans()) {
+        const int height = ri->get_iheight();
+        const int width = ri->get_iwidth();
+        unsigned c[6];
+        for(int row = 0; row < height; ++row) {
+            for(int i = 0; i < 6; ++i) {
+                c[i] = ri->XTRANSFC(row,i);
+            }
+
+            int col = 0;
+            for(; col < width - 5; col += 6) {
+                for(int i = 0; i < 6; ++i) {
+                    const unsigned ccol = c[i];
+                    float val = image[row * width + col + i][ccol];
+                    val -= cblack[ccol];
+                    val *= scale_mul[ccol];
+                    image[row * width + col + i][ccol] = rtengine::CLIP(val);
+                }
+            }
+            for(; col < width; ++col) { // remaining columns
+                const unsigned ccol = ri->XTRANSFC(row,col);
+                float val = image[row * width + col][ccol];
+                val -= cblack[ccol];
+                val *= scale_mul[ccol];
+                image[row * width + col][ccol] = rtengine::CLIP(val);
+            }
+        }
     } else {
-        DCraw::dcrawImage_t image = ri->get_image();
         const int size = ri->get_iheight() * ri->get_iwidth();
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < 4; ++j) {
@@ -908,7 +934,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName,
                                   double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso, std::string expcomp_, double& myscale)
 {
-    BENCHFUN
+//    BENCHFUN
 
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {
