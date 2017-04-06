@@ -37,7 +37,7 @@
 #include "../rtgui/ppversion.h"
 #include "improccoordinator.h"
 #include <locale.h>
-//#define BENCHMARK
+#define BENCHMARK
 #include "StopWatch.h"
 
 
@@ -61,14 +61,42 @@ namespace
 
 void scale_colors(rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
 {
-    DCraw::dcrawImage_t image = ri->get_image();
-    const int size = ri->get_iheight() * ri->get_iwidth();
-    for (int i = 0; i < size; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            float val = image[i][j];
-            val -= cblack[j];
-            val *= scale_mul[j];
-            image[i][j] = rtengine::CLIP(val);
+    BENCHFUNMICRO
+    if(ri->isBayer()) {
+        DCraw::dcrawImage_t image = ri->get_image();
+        const int height = ri->get_iheight();
+        const int width = ri->get_iwidth();
+        for(int row = 0; row < height; ++row) {
+            unsigned c0 = ri->FC(row,0);
+            unsigned c1 = ri->FC(row,1);
+            int col = 0;
+            for(; col < width - 1; col += 2) {
+                float val0 = image[row * width + col][c0];
+                float val1 = image[row * width + col + 1][c1];
+                val0 -= cblack[c0];
+                val1 -= cblack[c1];
+                val0 *= scale_mul[c0];
+                val1 *= scale_mul[c1];
+                image[row * width + col][c0] = rtengine::CLIP(val0);
+                image[row * width + col + 1][c1] = rtengine::CLIP(val1);
+            }
+            if(col < width) { // in case width is odd
+                float val0 = image[row * width + col][c0];
+                val0 -= cblack[c0];
+                val0 *= scale_mul[c0];
+                image[row * width + col][c0] = rtengine::CLIP(val0);
+            }
+        }
+    } else {
+        DCraw::dcrawImage_t image = ri->get_image();
+        const int size = ri->get_iheight() * ri->get_iwidth();
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                float val = image[i][j];
+                val -= cblack[j];
+                val *= scale_mul[j];
+                image[i][j] = rtengine::CLIP(val);
+            }
         }
     }
 }

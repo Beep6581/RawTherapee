@@ -129,10 +129,6 @@ protected:
     char* profile_data; // Embedded ICC color profile
     float* allocation; // pointer to allocated memory
     int maximum_c4[4];
-    bool isBayer() const
-    {
-        return (filters != 0 && filters != 9);
-    }
     bool isXtrans() const
     {
         return filters == 9;
@@ -306,6 +302,11 @@ public:
     bool zeroIsBad() const
     {
         return zero_is_bad == 1;
+    }
+
+    bool isBayer() const
+    {
+        return (filters != 0 && filters != 9);
     }
 
 public:
