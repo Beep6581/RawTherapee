@@ -22,6 +22,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <sstream>
 
 #include <glibmm.h>
 #include <expat.h>
@@ -93,6 +94,9 @@ class LCPProfile
     static void XMLCALL XmlEndHandler  (void *pLCPProfile, const char *el);
 
     int filterBadFrames(double maxAvgDevFac, int minFramesLeft);
+
+    void handle_text(std::string text);
+    std::ostringstream textbuf;
 
 public:
     // Common data
