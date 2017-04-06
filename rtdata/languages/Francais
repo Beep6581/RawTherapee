@@ -2049,6 +2049,12 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !DYNPROFILEEDITOR_NEW;New
 !DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
 !DYNPROFILEEDITOR_PROFILE;Processing Profile
+!EXPORT_BYPASS;Processing steps to bypass
+!EXPORT_PIPELINE;Processing pipeline
+!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !HISTORY_MSG_444;WB - Temp bias
 !HISTORY_MSG_445;Raw Sub-Image
 !HISTORY_MSG_446;EvPixelShiftMotion
@@ -2081,23 +2087,25 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_473;PS Use lmmse
 !HISTORY_MSG_474;PS Equalize
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
+!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
+!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PROFILEPANEL_PDYNAMIC;Dynamic
-!TP_RAW_1-PASS (MEDIUM);1-pass (medium)
-!TP_RAW_3-PASS (BEST);3-pass (best)
-!TP_RAW_AHD;ahd
+!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
+!TP_RAW_3PASSBEST;3-Pass (Best)
+!TP_RAW_AHD;AHD
 !TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;dcb
-!TP_RAW_EAHD;eahd
-!TP_RAW_FAST;fast
-!TP_RAW_HPHD;hphd
-!TP_RAW_IGV;igv
+!TP_RAW_DCB;DCB
+!TP_RAW_EAHD;EAHD
+!TP_RAW_FAST;Fast
+!TP_RAW_HPHD;HPHD
+!TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel-Shift, Dual Sensitivity). Use this button to select the sub-image.\n\nThe last sub-image will be used if you select a value beyond the real sub-image count.
-!TP_RAW_LMMSE;lmmse
-!TP_RAW_MONO;mono
-!TP_RAW_NONE;none (show sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
+!TP_RAW_LMMSE;LMMSE
+!TP_RAW_MONO;Mono
+!TP_RAW_NONE;None (Shows sensor pattern)
+!TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 !TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
@@ -2143,6 +2151,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 !TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 !TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
-!TP_RAW_VNG4;vng4
+!TP_RAW_VNG4;VNG4
 !TP_WBALANCE_TEMPBIAS;AWB temperature bias
 !TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".

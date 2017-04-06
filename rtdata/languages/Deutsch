@@ -2177,3 +2177,18 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen\nTaste: <b>Alt</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!EXPORT_BYPASS;Processing steps to bypass
+!EXPORT_PIPELINE;Processing pipeline
+!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
+!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
+!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
+!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
+!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.

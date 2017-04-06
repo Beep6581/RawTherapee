@@ -815,6 +815,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
 !EXIFFILTER_METADATAFILTER;Enable metadata filters
+!EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_DEFRINGE;Bypass Defringe
 !EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
 !EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by Detail Levels
@@ -831,7 +832,11 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 !EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+!EXPORT_PIPELINE;Processing pipeline
 !EXPORT_RAW_DMETHOD;Demosaic method
+!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
@@ -854,6 +859,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_POPUPRANK0;Unrank
 !FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate the search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nExclude search terms by prefixing them with <i>!=</i>\ne.g.\n<i>!=1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
+!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
 !FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
 !FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</b>
@@ -1302,6 +1308,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
+!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
+!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAWEXPOS_BLACK;Black levels
 !PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
 !PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
@@ -1311,6 +1319,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PARTIALPASTE_RAW_FALSECOLOR;False color suppression
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 !PREFERENCES_AUTLISLOW;Low
@@ -1351,6 +1360,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXPAUT;Expert
+!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
+!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLATFIELDSDIR;Flat-fields directory
@@ -1781,33 +1792,33 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAWEXPOS_PRESER;Highlight preservation
 !TP_RAWEXPOS_RGB;Red, Green, Blue
 !TP_RAWEXPOS_TWOGREEN;Link greens
-!TP_RAW_1-PASS (MEDIUM);1-pass (medium)
-!TP_RAW_3-PASS (BEST);3-pass (best)
-!TP_RAW_AHD;ahd
+!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
+!TP_RAW_3PASSBEST;3-Pass (Best)
+!TP_RAW_AHD;AHD
 !TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;dcb
+!TP_RAW_DCB;DCB
 !TP_RAW_DCBENHANCE;DCB enhancement
 !TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAW_DMETHOD;Method
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixelshift is for Pentax pixelshift files. It falls back to Amaze for non pixelshift files.
-!TP_RAW_EAHD;eahd
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+!TP_RAW_EAHD;EAHD
 !TP_RAW_FALSECOLOR;False color suppression steps
-!TP_RAW_FAST;fast
+!TP_RAW_FAST;Fast
 !TP_RAW_HD;Threshold
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
-!TP_RAW_HPHD;hphd
-!TP_RAW_IGV;igv
+!TP_RAW_HPHD;HPHD
+!TP_RAW_IGV;IGV
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel-Shift, Dual Sensitivity). Use this button to select the sub-image.\n\nThe last sub-image will be used if you select a value beyond the real sub-image count.
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
 !TP_RAW_LABEL;Demosaicing
-!TP_RAW_LMMSE;lmmse
+!TP_RAW_LMMSE;LMMSE
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
-!TP_RAW_MONO;mono
-!TP_RAW_NONE;none (show sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
+!TP_RAW_MONO;Mono
+!TP_RAW_NONE;None (Shows sensor pattern)
+!TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 !TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
@@ -1856,7 +1867,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
-!TP_RAW_VNG4;vng4
+!TP_RAW_VNG4;VNG4
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
