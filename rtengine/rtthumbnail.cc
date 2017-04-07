@@ -37,8 +37,6 @@
 #include "../rtgui/ppversion.h"
 #include "improccoordinator.h"
 #include <locale.h>
-#define BENCHMARK
-#include "StopWatch.h"
 
 
 namespace
@@ -61,7 +59,6 @@ namespace
 
 void scale_colors(rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
 {
-    BENCHFUNMICRO
     DCraw::dcrawImage_t image = ri->get_image();
     if(ri->isBayer()) {
         const int height = ri->get_iheight();
@@ -934,8 +931,6 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName,
                                   double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso, std::string expcomp_, double& myscale)
 {
-//    BENCHFUN
-
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {
         wbEqual = params.wb.equal;
