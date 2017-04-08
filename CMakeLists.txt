@@ -114,6 +114,9 @@ option (AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI
 
 # set install directories
 if (WIN32 OR APPLE)
+    if(BUILD_BUNDLE)
+        message(STATUS "You have set BUILD_BUNDLE=ON but this is not necessary - the option if force to ON on Windows and macOS.")
+    endif()
     set (BUILD_BUNDLE ON FORCE)
 endif(WIN32 OR APPLE)
 
@@ -169,11 +172,7 @@ endif (NOT DEFINED LIBDIR)
 
 if (NOT DEFINED DOCDIR)
     if (BUILD_BUNDLE)
-        if (APPLE)
-            set (DOCDIR "${DATADIR}/share/doc")
-        else ()
-            set (DOCDIR ./doc)
-        endif ()
+        set (DOCDIR "${DATADIR}/share/doc")
     else (BUILD_BUNDLE)
         set (DOCDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
     endif (BUILD_BUNDLE)
@@ -181,11 +180,7 @@ endif (NOT DEFINED DOCDIR)
 
 if (NOT DEFINED CREDITSDIR)
     if (BUILD_BUNDLE)
-        if (APPLE)
-            set (CREDITSDIR "${DATADIR}")
-        else ()
-            set (CREDITSDIR .)
-        endif ()
+        set (CREDITSDIR "${DATADIR}")
     else (BUILD_BUNDLE)
         set (CREDITSDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
     endif (BUILD_BUNDLE)
@@ -193,11 +188,7 @@ endif (NOT DEFINED CREDITSDIR)
 
 if (NOT DEFINED LICENCEDIR)
     if (BUILD_BUNDLE)
-        if (APPLE)
-            set (LICENCEDIR "${DATADIR}")
-        else ()
-            set (LICENCEDIR .)
-        endif ()
+        set (LICENCEDIR "${DATADIR}")
     else (BUILD_BUNDLE)
         set (LICENCEDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
     endif (BUILD_BUNDLE)
@@ -205,7 +196,8 @@ endif (NOT DEFINED LICENCEDIR)
 
 if (NOT DEFINED DESKTOPDIR)
     if (UNIX)
-        set (DESKTOPDIR "${CMAKE_INSTALL_PREFIX}/share/applications")
+        set (DESKTOPDIR "${CMAKE_INSTALL_PREFIX}/share/applications") # Absolute
+        #set (DESKTOPDIR "${DATADIR}/share/applications") # Relative
     endif (UNIX)
 endif (NOT DEFINED DESKTOPDIR)
 
@@ -221,29 +213,21 @@ if (NOT DEFINED APPDATADIR)
     endif (UNIX)
 endif (NOT DEFINED APPDATADIR)
 
-# non-bundle builds have to use absolute paths
-if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${BINDIR}"))
-    message (FATAL_ERROR "The BINDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
-endif ()
-
-if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${DATADIR}"))
-    message (FATAL_ERROR "The DATADIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
-endif ()
-
-if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${LIBDIR}"))
-    message (FATAL_ERROR "The LIBDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
-endif ()
-
-if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${DOCDIR}"))
-    message (FATAL_ERROR "The DOCDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
-endif ()
-
-if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${CREDITSDIR}"))
-    message (FATAL_ERROR "The CREDITSDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
-endif ()
-
-if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${LICENCEDIR}"))
-    message (FATAL_ERROR "The LICENCEDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
+# Enforce absolute paths for non-bundle builds.
+if(NOT BUILD_BUNDLE)
+    if(NOT (IS_ABSOLUTE "${BINDIR}"))
+        message (FATAL_ERROR "The BINDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
+    elseif(NOT (IS_ABSOLUTE "${DATADIR}"))
+        message (FATAL_ERROR "The DATADIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
+    elseif(NOT (IS_ABSOLUTE "${LIBDIR}"))
+        message (FATAL_ERROR "The LIBDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
+    elseif(NOT (IS_ABSOLUTE "${DOCDIR}"))
+        message (FATAL_ERROR "The DOCDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
+    elseif(NOT (IS_ABSOLUTE "${CREDITSDIR}"))
+        message (FATAL_ERROR "The CREDITSDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
+    elseif(NOT (IS_ABSOLUTE "${LICENCEDIR}"))
+        message (FATAL_ERROR "The LICENCEDIR path has to be absolute, or use -DBUILD_BUNDLE=ON")
+    endif()
 endif ()
 
  # MyMutex
