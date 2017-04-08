@@ -1150,10 +1150,10 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
                                                       // distortion relative to the image
                                                       // size. BUT IS 15% REALLY ENOUGH?
                                                       // In fact, is there a better way??
-        orw = min(int(orw + dW), parent->fw);
-        orh = min(int(orh + dH), parent->fh);
         orx = max(int(orx - dW/2.0), 0);
         ory = max(int(ory - dH/2.0), 0);
+        orw = min(int(orw + dW), parent->fw - orx);
+        orh = min(int(orh + dH), parent->fh - ory);
     }
     
 
