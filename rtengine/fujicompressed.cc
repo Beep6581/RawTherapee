@@ -151,7 +151,6 @@ void CLASS copy_line_to_xtrans (struct fuji_compressed_block* info, int cur_line
     ushort *lineBufB[3];
     ushort *lineBufG[6];
     ushort *lineBufR[3];
-    unsigned pixel_count;
     ushort* line_buf;
     int index;
 
@@ -169,7 +168,7 @@ void CLASS copy_line_to_xtrans (struct fuji_compressed_block* info, int cur_line
     }
 
     while (row_count < 6) {
-        pixel_count = 0;
+        unsigned pixel_count = 0;
 
         while (static_cast<int>(pixel_count) < cur_block_width) {
             switch (xtrans_abs[row_count][ (pixel_count % 6)]) {
@@ -203,7 +202,6 @@ void CLASS copy_line_to_bayer (struct fuji_compressed_block *info, int cur_line,
     ushort *lineBufB[3];
     ushort *lineBufG[6];
     ushort *lineBufR[3];
-    unsigned pixel_count;
     ushort *line_buf;
 
     int fuji_bayer[2][2];
@@ -227,7 +225,7 @@ void CLASS copy_line_to_bayer (struct fuji_compressed_block *info, int cur_line,
     }
 
     while (row_count < 6) {
-        pixel_count = 0;
+        unsigned pixel_count = 0;
 
         while (static_cast<int>(pixel_count) < cur_block_width) {
             switch (fuji_bayer[row_count & 1][pixel_count & 1]) {

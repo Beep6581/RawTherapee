@@ -1518,10 +1518,9 @@ void Preferences::parseThemeDir (Glib::ustring dirname)
         Glib::ustring fname = Glib::build_filename(dirname, *i);
         Glib::ustring sname = *i;
 
-        bool keepIt = false;
-
         // ignore directories and filter out unsupported theme
         if (regex->match(sname, matchInfo) && !Glib::file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= 4) {
+            bool keepIt = false;
             Glib::ustring fname2 = matchInfo.fetch(1);
             Glib::ustring minMinor = matchInfo.fetch(2);
             Glib::ustring maxMinor = matchInfo.fetch(3);

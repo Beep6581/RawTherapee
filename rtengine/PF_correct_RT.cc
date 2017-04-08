@@ -663,12 +663,10 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 
     const int width = src->W, height = src->H;
     const float piid = 3.14159265f / 180.f;
-    float shfabs, shmed;
 
-    int i1, j1, tot;
+    int i1, j1;
     const float eps = 1.0f;
     const float eps2 = 0.01f;
-    float shsum, dirsh, norm, sum;
 
     float** sraa;
     sraa = new float*[height];
@@ -848,13 +846,13 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
         __m128 onev = F2V(1.0f);
 #endif // __SSE2__
 #ifdef _OPENMP
-        #pragma omp for private(shfabs, shmed,i1,j1)
+        #pragma omp for private(i1,j1)
 #endif
 
         for (int i = 0; i < height; i++) {
             for (j = 0; j < 2; j++) {
-                shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = 0; j1 <= j + 2; j1++ ) {
@@ -879,8 +877,8 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
             }
 
             for (; j < width - 2; j++) {
-                shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
@@ -893,8 +891,8 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 #else
 
             for (; j < width - 2; j++) {
-                shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
@@ -907,8 +905,8 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 #endif
 
             for (; j < width; j++) {
-                shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->sh_p[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 < width; j1++ ) {
@@ -927,7 +925,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
     {
         int j;
 #ifdef _OPENMP
-        #pragma omp for private(shsum,norm,dirsh,sum,i1,j1) schedule(dynamic,16)
+        #pragma omp for private(i1,j1) schedule(dynamic,16)
 #endif
 
         for (int i = 0; i < height; i++) {
@@ -936,10 +934,10 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
                     continue;
                 }
 
-                norm = 0.0f;
-                shsum = 0.0f;
-                sum = 0.0f;
-                tot = 0;
+                float norm = 0.0f;
+                float shsum = 0.0f;
+                float sum = 0.0f;
+                int tot = 0;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = 0; j1 <= j + 2; j1++ ) {
@@ -953,7 +951,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 
                         sum += src->sh_p[i1][j1];
                         tot++;
-                        dirsh = 1.f / (SQR(src->sh_p[i1][j1] - src->sh_p[i][j]) + eps);
+                        float dirsh = 1.f / (SQR(src->sh_p[i1][j1] - src->sh_p[i][j]) + eps);
                         shsum += dirsh * src->sh_p[i1][j1];
                         norm += dirsh;
                     }
@@ -972,10 +970,10 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
                     continue;
                 }
 
-                norm = 0.0f;
-                shsum = 0.0f;
-                sum = 0.0f;
-                tot = 0;
+                float norm = 0.0f;
+                float shsum = 0.0f;
+                float sum = 0.0f;
+                int tot = 0;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
@@ -989,7 +987,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 
                         sum += src->sh_p[i1][j1];
                         tot++;
-                        dirsh = 1.f / (SQR(src->sh_p[i1][j1] - src->sh_p[i][j]) + eps);
+                        float dirsh = 1.f / (SQR(src->sh_p[i1][j1] - src->sh_p[i][j]) + eps);
                         shsum += dirsh * src->sh_p[i1][j1];
                         norm += dirsh;
                     }
@@ -1008,10 +1006,10 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
                     continue;
                 }
 
-                norm = 0.0f;
-                shsum = 0.0f;
-                sum = 0.0f;
-                tot = 0;
+                float norm = 0.0f;
+                float shsum = 0.0f;
+                float sum = 0.0f;
+                int tot = 0;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 < width; j1++ ) {
@@ -1025,7 +1023,7 @@ SSEFUNCTION void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, d
 
                         sum += src->sh_p[i1][j1];
                         tot++;
-                        dirsh = 1.f / (SQR(src->sh_p[i1][j1] - src->sh_p[i][j]) + eps);
+                        float dirsh = 1.f / (SQR(src->sh_p[i1][j1] - src->sh_p[i][j]) + eps);
                         shsum += dirsh * src->sh_p[i1][j1];
                         norm += dirsh;
                     }
@@ -1272,13 +1270,10 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
     t1.set();
 
     const int width = src->W, height = src->H;
-//  const float piid=3.14159265f/180.f;
-    float shfabs, shmed;
 
-    int i1, j1, tot;
+    int i1, j1;
     const float eps = 1.0f;
     const float eps2 = 0.01f;
-    float shsum, dirsh, norm, sum;
 
     float** sraa;
     sraa = new float*[height];
@@ -1455,13 +1450,13 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
         __m128 onev = F2V(1.0f);
 #endif // __SSE2__
 #ifdef _OPENMP
-        #pragma omp for private(shfabs, shmed,i1,j1)
+        #pragma omp for private(i1,j1)
 #endif
 
         for (int i = 0; i < height; i++) {
             for (j = 0; j < 2; j++) {
-                shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->L[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = 0; j1 <= j + 2; j1++ ) {
@@ -1474,7 +1469,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 #ifdef __SSE2__
 
             for (; j < width - 5; j += 4) {
-                shfabsv = vabsf(LVFU(src->L[i][j]) - LVFU(tmL[i][j]));
+                vfloat shfabsv = vabsf(LVFU(src->L[i][j]) - LVFU(tmL[i][j]));
                 shmedv = ZEROV;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
@@ -1486,8 +1481,8 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
             }
 
             for (; j < width - 2; j++) {
-                shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->L[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
@@ -1500,8 +1495,8 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 #else
 
             for (; j < width - 2; j++) {
-                shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->L[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
@@ -1514,8 +1509,8 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 #endif
 
             for (; j < width; j++) {
-                shfabs = fabs(src->L[i][j] - tmL[i][j]);
-                shmed = 0.0f;
+                float shfabs = fabs(src->L[i][j] - tmL[i][j]);
+                float shmed = 0.0f;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 < width; j1++ ) {
@@ -1534,7 +1529,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
     {
         int j;
 #ifdef _OPENMP
-        #pragma omp for private(shsum,norm,dirsh,sum,i1,j1) schedule(dynamic,16)
+        #pragma omp for private(i1,j1) schedule(dynamic,16)
 #endif
 
         for (int i = 0; i < height; i++) {
@@ -1543,10 +1538,10 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
                     continue;
                 }
 
-                norm = 0.0f;
-                shsum = 0.0f;
-                sum = 0.0f;
-                tot = 0;
+                float norm = 0.0f;
+                float shsum = 0.0f;
+                float sum = 0.0f;
+                int tot = 0;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = 0; j1 <= j + 2; j1++ ) {
@@ -1560,7 +1555,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 
                         sum += src->L[i1][j1];
                         tot++;
-                        dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
+                        float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
                         shsum += dirsh * src->L[i1][j1];
                         norm += dirsh;
                     }
@@ -1579,10 +1574,10 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
                     continue;
                 }
 
-                norm = 0.0f;
-                shsum = 0.0f;
-                sum = 0.0f;
-                tot = 0;
+                float norm = 0.0f;
+                float shsum = 0.0f;
+                float sum = 0.0f;
+                int tot = 0;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 <= j + 2; j1++ ) {
@@ -1596,7 +1591,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 
                         sum += src->L[i1][j1];
                         tot++;
-                        dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
+                        float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
                         shsum += dirsh * src->L[i1][j1];
                         norm += dirsh;
                     }
@@ -1615,10 +1610,10 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
                     continue;
                 }
 
-                norm = 0.0f;
-                shsum = 0.0f;
-                sum = 0.0f;
-                tot = 0;
+                float norm = 0.0f;
+                float shsum = 0.0f;
+                float sum = 0.0f;
+                int tot = 0;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
                     for (j1 = j - 2; j1 < width; j1++ ) {
@@ -1632,7 +1627,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 
                         sum += src->L[i1][j1];
                         tot++;
-                        dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
+                        float dirsh = 1.f / (SQR(src->L[i1][j1] - src->L[i][j]) + eps);
                         shsum += dirsh * src->L[i1][j1];
                         norm += dirsh;
                     }

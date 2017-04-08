@@ -101,7 +101,7 @@ public:
     }
 
     virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
-    virtual void        getSize     (PreviewProps pp, int& w, int& h) = 0;
+    virtual void        getSize     (const PreviewProps &pp, int& w, int& h) = 0;
     virtual int         getRotateDegree() const
     {
         return 0;

@@ -375,7 +375,6 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(cachemenu = new Gtk::MenuItem (M("FILEBROWSER_CACHE"))), 0, 1, p, p + 1);
-    p++;
 
     pmenu->show_all ();
 

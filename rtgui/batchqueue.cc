@@ -62,7 +62,6 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
     p++;
 
     pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "gtk-close.png")), 0, 1, p, p + 1);
-    p++;
 
     pmenu.show_all ();
 

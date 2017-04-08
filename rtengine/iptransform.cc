@@ -390,7 +390,6 @@ static void calcGradientParams (int oW, int oH, const GradientParams& gradient, 
         // division with extremely small numbers
         gp.transpose = true;
         gradient_angle += 0.5 * rtengine::RT_PI;
-        cosgrad = cos (gradient_angle);
         double gxc = gradient_center_x;
         gradient_center_x = 1.0 - gradient_center_y;
         gradient_center_y = gxc;

@@ -45,15 +45,14 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 //
 //==============================================================================
 
-    double fMaxElem;
     double fAcc;
 
-    int i, j, k, m;
+    int i, j, k;
 
     for(k = 0; k < (nDim - 1); k++) { // base row of matrix
         // search of line with max element
-        fMaxElem = fabs( pfMatr[k * nDim + k] );
-        m = k;
+        double fMaxElem = fabs( pfMatr[k * nDim + k] );
+        int m = k;
 
         for (i = k + 1; i < nDim; i++) {
             if(fMaxElem < fabs(pfMatr[i * nDim + k]) ) {

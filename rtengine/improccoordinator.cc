@@ -608,6 +608,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 #endif
             lhist16 += lhist16thr;
         }
+#ifdef _OPENMP
+            static_cast<void>(numThreads); // to silence cppcheck warning
+#endif
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, histLCurve, scale == 1 ? 1 : 16, utili);
     }
 
