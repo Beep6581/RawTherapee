@@ -91,8 +91,9 @@ protected:
     // Precomputed values used by DetailedCrop ----------------------------------------------
 
     float bwAutoR, bwAutoG, bwAutoB;
-    int coordX, coordY, localX, localY;
     float CAMMean;
+    int coordX, coordY, localX, localY;
+
     LUTf hltonecurve;
     LUTf shtonecurve;
     LUTf tonecurve;

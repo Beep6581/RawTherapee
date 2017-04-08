@@ -1530,18 +1530,8 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
                                  int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
     float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z, XL, YL, ZL;
-    float L1, L2, LL, a_1, b_1, a_2, b_2, a, b, a_L, b_L;
-    float c1, c2, h1, h2, cL, hL;
-    float RR, GG, BB;
-    float Lr;
-    float slc = 0.f;
-    float hh = 0.f;
-    float ll = 0.f;
-    float sh = 0.f;
-    bool LCH = false;
+    float L1 = 0.f, L2, LL, a_1 = 0.f, b_1 = 0.f, a_2, b_2, a_L, b_L;
 
-    float ha, hb, hc, ba;
-    float c_1, h_1;
     // converting color 1 to Lab  (image)
     Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
 
@@ -1566,19 +1556,16 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
     X2 = x2;
     Y2 = y2;
     Z2 = z2;
-    float c_2, h_2;
 
     if(algm == 1 ) {
         Color::XYZ2Lab(X2, Y2, Z2, L2, a_2, b_2);
         //Color::Lab2Lch(a_2, b_2, c_2, h_2) ;
     }
 
-    float bal, balH, cal, calH, calm;
-    bal = balH = balance;
+    float cal, calH, calm;
     cal = calH = calm = 1.f - chromat;
     float med = 1.f;
     float medH = 0.f;
-    float medL = (iphigh + iplow) / 2.f;
 
     float calan;
     calan = chromat;
@@ -1588,19 +1575,6 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
 
     if(twoc == 0) { // 2 colours
         calan = chromat;
-
-        //calculate new balance in function of (arbitrary) "med".. I hope no error !!
-        if      (realL > iplow && realL <= med) {
-            bal = realL * balance / (iplow - med) - med * balance / (iplow - med);
-        } else if (realL <= iplow) {
-            bal = realL * balance / iplow;
-        }
-
-        if      (realL > medH && realL <= iphigh) {
-            balH = realL * balance / (iphigh - medH) - medH * balance / (iphigh - medH);
-        } else if (realL > iphigh) {
-            balH = realL * balance * (iphigh - 1.f) - balance * (iphigh - 1.f);
-        }
 
         //calculate new balance chroma
         if      (realL > iplow && realL <= med) {
@@ -1616,8 +1590,7 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
         }
     }
 
-    float hX = 0.f;
-    float hLL, hH, ccL, ccH, llH, aaH, bbH;
+    float aaH, bbH;
 
     if(algm <= 1) {
         if(twoc == 0  && metchrom == 3) { // 2 colours  only with special "ab"
@@ -1639,8 +1612,6 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
                 b_1 = b_1 + (b_2 - b_1) * calby * balance;
             }
         }
-    } else {
-        h1 = hX;
     }
 
     Color::Lab2XYZ(L1, a_1, b_1, X, Y, Z);

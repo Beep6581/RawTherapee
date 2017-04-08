@@ -340,7 +340,7 @@ FileBrowser::FileBrowser ()
         p++;
         submenuProfileOperations->attach (*Gtk::manage(applypartprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE_PARTIAL"))), 0, 1, p, p + 1);
         p++;
-        submenuProfileOperations->attach (*Gtk::manage(execcustprof = new Gtk::MenuItem (M("FILEBROWSER_EXEC_CPB"))), 0, 1, p, p + 1);
+        submenuProfileOperations->attach (*Gtk::manage(resetdefaultprof = new Gtk::MenuItem (M("FILEBROWSER_RESETDEFAULTPROFILE"))), 0, 1, p, p + 1);
         p++;
         submenuProfileOperations->attach (*Gtk::manage(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p + 1);
         p++;
@@ -358,7 +358,7 @@ FileBrowser::FileBrowser ()
         p++;
         pmenu->attach (*Gtk::manage(applypartprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE_PARTIAL"))), 0, 1, p, p + 1);
         p++;
-        pmenu->attach (*Gtk::manage(execcustprof = new Gtk::MenuItem (M("FILEBROWSER_EXEC_CPB"))), 0, 1, p, p + 1);
+        pmenu->attach (*Gtk::manage(resetdefaultprof = new Gtk::MenuItem (M("FILEBROWSER_RESETDEFAULTPROFILE"))), 0, 1, p, p + 1);
         p++;
         pmenu->attach (*Gtk::manage(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p + 1);
         p++;
@@ -389,6 +389,7 @@ FileBrowser::FileBrowser ()
     untrash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Return, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    developfast->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     partpasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_V, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
@@ -404,7 +405,7 @@ FileBrowser::FileBrowser ()
         colorlabel[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), colorlabel[i]));
     }
 
-    for (int i = 0; i < mMenuExtProgs.size(); i++) {
+    for (size_t i = 0; i < mMenuExtProgs.size(); i++) {
         amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
     }
 
@@ -427,7 +428,7 @@ FileBrowser::FileBrowser ()
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));
     applyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applyprof));
     applypartprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applypartprof));
-    execcustprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), execcustprof));
+    resetdefaultprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), resetdefaultprof));
     clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));
     cachemenu->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), cachemenu));
 
@@ -729,14 +730,14 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             return;
         }
 
-    for (int j = 0; j < mMenuExtProgs.size(); j++) {
+    for (size_t j = 0; j < mMenuExtProgs.size(); j++) {
         if (m == amiExtProg[j]) {
             const auto pAct = mMenuExtProgs[m->get_label()];
 
             // Build vector of all file names
             std::vector<Glib::ustring> selFileNames;
 
-            for (int i = 0; i < mselected.size(); i++) {
+            for (size_t i = 0; i < mselected.size(); i++) {
                 Glib::ustring fn = mselected[i]->thumbnail->getFileName();
 
                 // Maybe batch processed version
@@ -767,6 +768,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     else if (m == develop) {
         tbl->developRequested (mselected, false);
     } else if (m == developfast) {
+        if (exportPanel) {
+            // force saving export panel settings
+            exportPanel->setExportPanelListener(nullptr);
+            exportPanel->FastExportPressed();
+            exportPanel->setExportPanelListener(this);
+        }
         tbl->developRequested (mselected, true);
     }
 
@@ -960,7 +967,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         }
 
         queue_draw ();
-    } else if (m == execcustprof) {
+    } else if (m == resetdefaultprof) {
         if (!mselected.empty() && bppcl) {
             bppcl->beginBatchPParamsChange(mselected.size());
         }
@@ -1139,8 +1146,11 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     } else if (event->keyval == GDK_KEY_Delete && shift) {
         menuItemActivated (untrash);
         return true;
-    } else if ((event->keyval == GDK_KEY_B || event->keyval == GDK_KEY_b) && ctrl) {
+    } else if ((event->keyval == GDK_KEY_B || event->keyval == GDK_KEY_b) && ctrl && !shift) {
         menuItemActivated (develop);
+        return true;
+    } else if ((event->keyval == GDK_KEY_B || event->keyval == GDK_KEY_b) && ctrl && shift) {
+        menuItemActivated (developfast);
         return true;
     } else if ((event->keyval == GDK_KEY_A || event->keyval == GDK_KEY_a) && ctrl) {
         menuItemActivated (selall);
@@ -1495,11 +1505,11 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
         int iFilenameMatch = 0;
         std::vector<Glib::ustring> vFilterStrings = Glib::Regex::split_simple(",", decodedQueryFileName.uppercase());
 
-        for(int i = 0; i < vFilterStrings.size(); i++) {
+        for(size_t i = 0; i < vFilterStrings.size(); i++) {
             // ignore empty vFilterStrings. Otherwise filter will always return true if
             // e.g. filter.queryFileName ends on "," and will stop being a filter
             if (!vFilterStrings.at(i).empty()) {
-                if (FileName.find(vFilterStrings.at(i)) != -1) {
+                if (FileName.find(vFilterStrings.at(i)) != Glib::ustring::npos) {
                     iFilenameMatch++;
                 }
             }

@@ -312,7 +312,7 @@ void Arcellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
 
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
+//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
         double scalx_ = scalx; //radius2_ / radius_;
 
         double scaly_ = scaly;
@@ -363,7 +363,7 @@ void Arcellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOB
 
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
+//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
 
         double scalx_ = scalx; //radius2_ / radius_;
 
@@ -437,7 +437,7 @@ void Arcellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned sh
         cr->set_line_width ( getMouseOverLineWidth() );
         rtengine::Coord center_ = center;
         double radius_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius)) : double (radius);
-        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
+//        double radius2_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radius2)) : double (radius2);
 
         double scalx_ = scalx ; //radius2_ / radius_;
         double scaly_ = scaly;
@@ -1165,23 +1165,23 @@ OPIcon::OPIcon (Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustr
                 Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint (drivenPoint)
 {
     if (!normalImage.empty()) {
-        normalImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(normalImage) );
+        normalImg = Cairo::ImageSurface::create_from_png ( rtengine::findIconAbsolutePath (normalImage) );
     }
 
     if (!prelightImage.empty()) {
-        prelightImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(prelightImage) );
+        prelightImg = Cairo::ImageSurface::create_from_png ( rtengine::findIconAbsolutePath (prelightImage) );
     }
 
     if (!activeImage.empty()) {
-        activeImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(activeImage) );
+        activeImg = Cairo::ImageSurface::create_from_png ( rtengine::findIconAbsolutePath (activeImage) );
     }
 
     if (!draggedImage.empty()) {
-        draggedImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(draggedImage) );
+        draggedImg = Cairo::ImageSurface::create_from_png ( rtengine::findIconAbsolutePath (draggedImage) );
     }
 
     if (!insensitiveImage.empty()) {
-        insensitiveImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(insensitiveImage) );
+        insensitiveImg = Cairo::ImageSurface::create_from_png ( rtengine::findIconAbsolutePath (insensitiveImage) );
     }
 }
 

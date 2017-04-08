@@ -49,9 +49,9 @@ Locallab::Locallab ():
     expdenoi (new MyExpander (true, M ("TP_LOCALLAB_DENOIS"))),
     expsettings (new MyExpander (false, M ("TP_LOCALLAB_SETTINGS"))),
 
-    llCurveEditorG (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_LUM"))),
     LocalcurveEditorgainT (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     LocalcurveEditorgainTrab (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_TRANSMISSIONGAINRAB"))),
+    llCurveEditorG (new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_LUM"))),
 
 
     anbspot (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ANBSPOT"), 0, 1, 1, 0))),
@@ -101,12 +101,12 @@ Locallab::Locallab ():
     lumaref (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LUMAMAREF"), 0, 100, 0.01, 0))),
 
     Smethod (Gtk::manage (new MyComboBoxText ())),
-    qualityMethod (Gtk::manage (new MyComboBoxText ())),
     retinexMethod (Gtk::manage (new MyComboBoxText ())),
+    qualityMethod (Gtk::manage (new MyComboBoxText ())),
     qualitycurveMethod (Gtk::manage (new MyComboBoxText ())),
 
-    shapeFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_SHFR")))),
     artifFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_ARTIF")))),
+    shapeFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_SHFR")))),
     superFrame (Gtk::manage (new Gtk::Frame ())),
 
     //  artifVBox (Gtk::manage (new Gtk::VBox ())),

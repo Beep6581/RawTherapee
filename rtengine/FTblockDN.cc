@@ -125,7 +125,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
         medBuffer[1] = dst;
     }
 
-    float ** medianIn, ** medianOut;
+    float ** medianIn, ** medianOut = nullptr;
     int BufferIndex = 0;
 
     for (int iteration = 1; iteration <= iterations; ++iteration) {
@@ -454,10 +454,10 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
     const bool useNoiseLCurve = (noiseLCurve && noiseLCurve.getSum() >= 7.f);
     const bool autoch = (settings->leveldnautsimpl == 1 && (dnparams.Cmethod == "AUT" || dnparams.Cmethod == "PRE")) || (settings->leveldnautsimpl == 0 && (dnparams.C2method == "AUTO" || dnparams.C2method == "PREV"));
 
-    float** lumcalc;
-    float* lumcalcBuffer;
-    float** ccalc;
-    float* ccalcBuffer;
+    float** lumcalc = nullptr;
+    float* lumcalcBuffer = nullptr;
+    float** ccalc = nullptr;
+    float* ccalcBuffer = nullptr;
 
     bool ponder = false;
     float ponderCC = 1.f;
@@ -518,7 +518,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             ccalc[i] = ccalcBuffer + (i * wid);
         }
 
-        float cn100Precalc;
+        float cn100Precalc = 0.f;
 
         if (useNoiseCCurve) {
             cn100Precalc = SQR(1.f + ponderCC * (4.f * noiseCCurve[100.f / 60.f]));

@@ -678,7 +678,9 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
             }
 
             strcpy(pProf->lastTag, nameStart);
-            XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));
+
+            pProf->handle_text(attr[i+1]);
+            //XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));
         }
     }
 }
@@ -690,24 +692,33 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     if (!pProf->inCamProfiles || pProf->inAlternateLensID || pProf->inAlternateLensNames || *pProf->inInvalidTag) {
         return;
     }
+    
+    for (int i = 0; i < len; ++i) {
+        pProf->textbuf << s[i];
+    }
+}
 
+
+void LCPProfile::handle_text(std::string text)
+{
+    const char *raw = text.c_str();
+    
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace = true;
-    int i = 0;
-
-    while (i < len && onlyWhiteSpace) {
-        onlyWhiteSpace = isspace(s[i]);
-        i++;
+    for (size_t i = 0; i < text.size(); ++i) {
+        if (!isspace(text[i])) {
+            onlyWhiteSpace = false;
+            break;
+        }
     }
 
     if (onlyWhiteSpace) {
         return;
     }
 
+    LCPProfile *pProf = this;
+
     // convert to null terminated
-    char raw[len + 1];
-    memcpy(raw, s, len);
-    raw[len] = 0;
     char* tag = pProf->lastTag;
 
     // Common data section
@@ -732,15 +743,12 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     // WARNING: called by different threads, that may run on different local settings,
     // so don't use system params
     if (atof("1,2345") == 1.2345) {
-        char* p = raw;
-
-        while (*p) {
-            if (*p == '.') {
-                *p = ',';
+        for (size_t i = 0; i < text.size(); ++i) {
+            if (text[i] == '.') {
+                text[i] = ',';
             }
-
-            p++;
         }
+        raw = text.c_str();
     }
 
     if (!pProf->firstLIDone) {
@@ -788,6 +796,9 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
 void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el)
 {
     LCPProfile *pProf = static_cast<LCPProfile*>(pLCPProfile);
+
+    pProf->handle_text(pProf->textbuf.str());
+    pProf->textbuf.str("");
 
     // We ignore everything in dirty tag till it's gone
     if (*pProf->inInvalidTag) {
@@ -866,7 +877,6 @@ Glib::ustring LCPStore::getDefaultCommonDirectory() const
 
 #ifdef WIN32
     WCHAR pathW[MAX_PATH] = {0};
-    char pathA[MAX_PATH];
 
     if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_COMMON_APPDATA, false)) {
         char pathA[MAX_PATH];

@@ -398,23 +398,20 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
     int height = H;
     int width = W;
 
-    static const int range = 2;
-    static const int pitch = 4;
+    constexpr int range = 2;
+    constexpr int pitch = 4;
 
-    static const int numdirs = 4;
-
-    static const float threshpct = 0.25f;
-    static const float fixthreshpct = 0.7f;
-    static const float maxpct = 0.95f;
-    static const float epsilon = 0.00001f;
+    constexpr float threshpct = 0.25f;
+    constexpr float maxpct = 0.95f;
+    constexpr float epsilon = 0.00001f;
     //%%%%%%%%%%%%%%%%%%%%
     //for blend algorithm:
-    static const float blendthresh = 1.0;
-    static const int ColorCount = 3;
+    constexpr float blendthresh = 1.0;
+    constexpr int ColorCount = 3;
     // Transform matrixes rgb>lab and back
-    static const float trans[ColorCount][ColorCount] =
+    constexpr float trans[ColorCount][ColorCount] =
     { { 1.f, 1.f, 1.f }, { 1.7320508f, -1.7320508f, 0.f }, { -1.f, -1.f, 2.f } };
-    static const float itrans[ColorCount][ColorCount] =
+    constexpr float itrans[ColorCount][ColorCount] =
     { { 1.f, 0.8660254f, -0.5f }, { 1.f, -0.8660254f, -0.5f }, { 1.f, 0.f, 1.f } };
 
     if(settings->verbose)

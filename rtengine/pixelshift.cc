@@ -332,7 +332,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
         bayerParams.pixelShiftMotion = 0;
         bayerParams.pixelShiftAutomatic = false;
-        bayerParams.pixelshiftShowMotion = false;
+        bayerParams.pixelShiftShowMotion = false;
     }
 
     if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic)) {
@@ -454,11 +454,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
     const int motion = bayerParams.pixelShiftMotion;
-    const bool showMotion = bayerParams.pixelshiftShowMotion;
-    const bool showOnlyMask = bayerParams.pixelshiftShowMotionMaskOnly && showMotion;
-    const RAWParams::BayerSensor::ePSMotionCorrection gridSize_ = bayerParams.pixelShiftMotionCorrection;
+    const bool showMotion = bayerParams.pixelShiftShowMotion;
+    const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
     const bool adaptive = bayerParams.pixelShiftAutomatic;
 #ifdef PIXELSHIFTDEV
+    const RAWParams::BayerSensor::ePSMotionCorrection gridSize_ = bayerParams.pixelShiftMotionCorrection;
     const bool detectMotion = bayerParams.pixelShiftMotion > 0;
     float stddevFactorGreen = bayerParams.pixelShiftStddevFactorGreen;
     float stddevFactorRed = bayerParams.pixelShiftStddevFactorRed;
@@ -475,25 +475,25 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     const float redBlueWeight = 0.7f + 1.f;
 #endif
     float eperIso = bayerParams.pixelShiftEperIso;
-    const bool checkNonGreenHorizontal = bayerParams.pixelShiftNonGreenHorizontal;
-    const bool checkNonGreenVertical = bayerParams.pixelShiftNonGreenVertical;
     const bool checkNonGreenCross = bayerParams.pixelShiftNonGreenCross;
-    const bool checkNonGreenAmaze = bayerParams.pixelShiftNonGreenAmaze;
-    const bool checkNonGreenCross2 = bayerParams.pixelShiftNonGreenCross2;
     const bool checkGreen = bayerParams.pixelShiftGreen;
     const float greenWeight = 2.f;
     const bool blurMap = bayerParams.pixelShiftBlur;
     const float sigma = bayerParams.pixelShiftSigma;
 #ifdef PIXELSHIFTDEV
+    const bool checkNonGreenHorizontal = bayerParams.pixelShiftNonGreenHorizontal;
+    const bool checkNonGreenVertical = bayerParams.pixelShiftNonGreenVertical;
+    const bool checkNonGreenAmaze = bayerParams.pixelShiftNonGreenAmaze;
+    const bool checkNonGreenCross2 = bayerParams.pixelShiftNonGreenCross2;
     const float threshold = bayerParams.pixelShiftSum + 9.f;
+    const bool experimental0 = bayerParams.pixelShiftExp0;
+    const bool automatic = bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic;
 #else
     constexpr float threshold = 3.f + 9.f;
 #endif
-    const bool experimental0 = bayerParams.pixelShiftExp0;
     const bool holeFill = bayerParams.pixelShiftHoleFill;
     const bool equalBrightness = bayerParams.pixelShiftEqualBright;
     const bool smoothTransitions = blurMap && bayerParams.pixelShiftSmoothFactor > 0. && !showOnlyMask;
-    const bool automatic = bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Automatic;
     const float smoothFactor = 1.0 - bayerParams.pixelShiftSmoothFactor;
 
     static const float nReadK3II[] = { 3.4f,  // ISO 100
@@ -606,8 +606,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     }
 
 
+#ifdef PIXELSHIFTDEV
     const bool skip = (gridSize_ == RAWParams::BayerSensor::ePSMotionCorrection::Grid1x2);
     int gridSize = 1;
+
     bool nOf3x3 = false;
 
     switch (gridSize_) {
@@ -632,6 +634,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             gridSize = 1;
             nOf3x3 = true;
     }
+#else
+    const bool nOf3x3 = true;
+#endif
 
     if(adaptive && blurMap && nOf3x3 && smoothFactor == 0.f && !showMotion) {
         if(plistener) {
@@ -707,9 +712,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     // If the values of two corresponding green pixels differ my more then motionThreshold %, the pixel will be treated as a badGreen pixel
     const float motionThreshold = 1.f - (motion / 100.f);
     // For shades of green motion indicators
+#ifdef PIXELSHIFTDEV
     const float blendFactor = ((adaptive || motion == 0.f) ? 1.f : 1.f / (1.f - motionThreshold));
-
-    unsigned int offsX = 0, offsY = 0;
+#endif
+    int offsX = 0, offsY = 0;
 
     if(!bayerParams.pixelShiftMedian || !adaptive) {
         // We have to adjust the offsets for the selected subframe we use for areas with motion
@@ -860,9 +866,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #endif
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
+#ifdef PIXELSHIFTDEV
             float *greenDest = green[i + offsY];
             float *redDest = red[i + offsY];
             float *blueDest = blue[i + offsY];
+#endif
             int j = winx + border - offsX;
 
 #ifdef PIXELSHIFTDEV

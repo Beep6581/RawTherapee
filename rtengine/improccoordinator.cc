@@ -43,8 +43,8 @@ ImProcCoordinator::ImProcCoordinator ()
       ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN), coordX (0), coordY (0), localX (0), localY (0),
-      dataspot (nullptr), retistr (nullptr), retistrsav (nullptr), llstr (nullptr), lhstr (nullptr), ccstr (nullptr),
-      ctColorCurve(),
+      dataspot (nullptr), retistr (nullptr), llstr (nullptr), lhstr (nullptr), ccstr (nullptr), retistrsav (nullptr),
+//     ctColorCurve(),
 //      localcurve(65536, 0),
       hltonecurve (65536),
       shtonecurve (65536),
@@ -55,6 +55,7 @@ ImProcCoordinator::ImProcCoordinator ()
       satcurve (65536, 0),
       lhskcurve (65536, 0),
       clcurve (65536, 0),
+      conversionBuffer (1, 1),
       wavclCurve (65536, 0),
       clToningcurve (65536, 0),
       lllocalcurve (65536, 0),
@@ -164,15 +165,17 @@ ImProcCoordinator::ImProcCoordinator ()
       rCurve(),
       gCurve(),
       bCurve(),
-      rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
-      gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
-      bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
-      fw(0), fh(0), tr(0),
-      fullw(1), fullh(1),
-      pW(-1), pH(-1),
-      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), aloListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), hListener(nullptr),
-      resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f)
+      ctColorCurve(),
+      rcurvehist (256), rcurvehistCropped (256), rbeforehist (256),
+      gcurvehist (256), gcurvehistCropped (256), gbeforehist (256),
+      bcurvehist (256), bcurvehistCropped (256), bbeforehist (256),
+      fw (0), fh (0), tr (0),
+      fullw (1), fullh (1),
+      pW (-1), pH (-1),
+      //conversionBuffer(1, 1),
+      plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener (nullptr), aloListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), frameCountListener (nullptr), imageTypeListener (nullptr), hListener (nullptr),
+      resultValid (false), lastOutputProfile ("BADFOOD"), lastOutputIntent (RI__COUNT), lastOutputBPC (false), thread (nullptr), changeSinceLast (0), updaterRunning (false), destroying (false), utili (false), autili (false), wavcontlutili (false),
+      butili (false), ccutili (false), cclutili (false), clcutili (false), opautili (false),  colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f)
 {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc)
@@ -266,16 +269,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     progress ("Applying white balance, color correction & sRGB conversion...", 100 * readyphase / numofphases);
 
-    if(frameCountListener) {
-        frameCountListener->FrameCountChanged(imgsrc->getFrameCount(), params.raw.bayersensor.imageNum);
+    if (frameCountListener) {
+        frameCountListener->FrameCountChanged (imgsrc->getFrameCount(), params.raw.bayersensor.imageNum);
     }
 
     // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
     if ( (todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
-        imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
+        imgsrc->setCurrentFrame (params.raw.bayersensor.imageNum);
 
-        imgsrc->preprocess( rp, params.lensProf, params.coarse );
-        imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
+        imgsrc->preprocess ( rp, params.lensProf, params.coarse );
+        imgsrc->getRAWHistogram ( histRedRaw, histGreenRaw, histBlueRaw );
 
         if (highDetailNeeded) {
             highDetailPreprocessComputed = true;
@@ -296,8 +299,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
-    if(imageTypeListener) {
-        imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS);
+    if (imageTypeListener) {
+        imageTypeListener->imageTypeChanged (imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS);
     }
 
     if (   (todo & M_RAW)
@@ -307,7 +310,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         if (settings->verbose) {
             if (imgsrc->getSensorType() == ST_BAYER) {
-                printf("Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());
+                printf ("Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());
             } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
                 printf ("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
             }
@@ -553,7 +556,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
         opautili = false;
 
-        if(params.colorToning.enabled) {
+        if (params.colorToning.enabled) {
             TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
             double wp[3][3] = {
                 {wprof[0][0], wprof[0][1], wprof[0][2]},
@@ -787,7 +790,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             printf ("mip files in=%s\n", datal.c_str());
             //    if(! fic0.fail())    {
-            float **shbuffer;
+            float **shbuffer = nullptr;
             versionmip = 0;
             int maxdat;
             int sca = 1;
@@ -1261,7 +1264,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             //end save
 
 
-            int ns;
+            int ns = 0;
             int realsp = params.locallab.nbspot;
             bool excurvret = true;
             bool excurvll = true;
@@ -1640,7 +1643,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     std::string line2;
                     std::string spotline2;
                     int cont2 = 0;
-                    int ns2;
+                    int ns2 = 0;
                     int maxin = 58;
                     int sizecu2;
                     int sizell2;
@@ -1770,7 +1773,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             for (int sp = 1; sp < maxspot; sp++) { //spots default
                 params.locallab.hueref = dataspot[58][sp] / 100.;
                 params.locallab.chromaref = dataspot[59][sp];
-                bool locutili = locutili;
+                bool locutili = false;
                 params.locallab.lumaref = dataspot[60][sp];
                 params.locallab.circrad = circrads[sp] = dataspot[2][sp];
                 params.locallab.locX = locx[sp] = dataspot[3][sp];

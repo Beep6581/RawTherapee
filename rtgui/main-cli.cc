@@ -81,6 +81,8 @@ Glib::ustring fname_to_utf8 (const char* fname)
 #endif
 }
 
+bool fast_export = false;
+
 }
 
 /* Process line command options
@@ -407,6 +409,10 @@ int processLineParams( int argc, char **argv )
                 compression = -1;
                 break;
 
+            case 'f':
+                fast_export = true;
+                break;
+                
             case 'c': // MUST be last option
                 while (iArg + 1 < argc) {
                     iArg++;
@@ -491,7 +497,7 @@ int processLineParams( int argc, char **argv )
                 std::cout << std::endl;
 #endif
                 std::cout << "Options:" << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] -c <input>" << std::endl;
+                std::cout << "  " << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] [-f] -c <input>" << std::endl;
                 std::cout << std::endl;
                 std::cout << "  -q               Quick Start mode : do not load cached files to speedup start time." << std::endl;
                 std::cout << "  -c <files>       Specify one or more input files." << std::endl;
@@ -525,6 +531,7 @@ int processLineParams( int argc, char **argv )
                 std::cout << "  -n               Specify output to be compressed PNG." << std::endl;
                 std::cout << "                   Compression is hard-coded to 6." << std::endl;
                 std::cout << "  -Y               Overwrite output if present." << std::endl;
+                std::cout << "  -f               Use the custom fast-export processing pipeline." << std::endl;
                 std::cout << std::endl;
                 std::cout << "Your " << pparamsExt << " files can be incomplete, RawTherapee will build the final values as follows:" << std::endl;
                 std::cout << "  1- A new processing profile is created using neutral values," << std::endl;
@@ -714,7 +721,7 @@ int processLineParams( int argc, char **argv )
             continue;
         }
 
-        job = rtengine::ProcessingJob::create (ii, currentParams);
+        job = rtengine::ProcessingJob::create (ii, currentParams, fast_export);
 
         if( !job ) {
             errors++;

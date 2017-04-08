@@ -273,7 +273,7 @@ void RawImageSource::MSR (float** luminance, float** originalLuminance, float **
                 }
             }
 
-            float varx;
+            float varx = 0.f;
             float limdx, ilimdx;
 
             if (gradvart != 0) {
@@ -345,7 +345,7 @@ void RawImageSource::MSR (float** luminance, float** originalLuminance, float **
                 src[i] = &srcBuffer[i * W_L];
             }
 
-            int h_th, s_th;
+            int h_th = 0, s_th = 0;
 
             int shHighlights = deh.highlights;
             int shShadows = deh.shadows;
@@ -824,7 +824,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
         float         mean, stddv, maxtr, mintr;
         float         delta;
         constexpr float eps = 2.f;
-        constexpr bool useHsl = false; //never used
+        //   constexpr bool useHsl = false; //never used
         constexpr bool useHslLin = false;//never used
         const float offse = 0.f; //loc.offs;
         const float chrT = (float) (loc.chrrt) / 100.f;
@@ -847,7 +847,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
             nei = (int) (0.3f * nei + 2.f);
         }
 
-        int moderetinex;
+        int moderetinex = 0;
 
         if (loc.retinexMethod == "uni") {
             moderetinex = 0;
@@ -1060,26 +1060,26 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
             bmax *= 500.f;
             amin *= 500.f;
             bmin *= 500.f;
+            /*
+            #ifdef _OPENMP
+                        #pragma omp parallel for schedule(dynamic,16)
+            #endif
 
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-#endif
+                        for (int i = 0; i < H_L; i++ )
+                            for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
+                                float absciss;
 
-            for (int i = 0; i < H_L; i++ )
-                for (int j = 0; j < W_L; j++) { //for mintr to maxtr evalate absciss in function of original transmission
-                    float absciss;
+                                if (LIKELY (fabsf (luminance[i][j] - mean) < stddv)) {
+                                    absciss = asig * luminance[i][j] + bsig;
+                                } else if (luminance[i][j] >= mean) {
+                                    absciss = amax * luminance[i][j] + bmax;
+                                } else {
+                                    absciss = amin * luminance[i][j] + bmin;
+                                }
 
-                    if (LIKELY (fabsf (luminance[i][j] - mean) < stddv)) {
-                        absciss = asig * luminance[i][j] + bsig;
-                    } else if (luminance[i][j] >= mean) {
-                        absciss = amax * luminance[i][j] + bmax;
-                    } else {
-                        absciss = amin * luminance[i][j] + bmin;
-                    }
-
-                    // luminance[i][j] *= (-1.f + 4.f * wavRETCcurve[absciss]); //new transmission
-                }
-
+                                // luminance[i][j] *= (-1.f + 4.f * wavRETCcurve[absciss]); //new transmission
+                            }
+            */
             // median filter on transmission  ==> reduce artifacts
             bool ty = false;
 
@@ -1099,7 +1099,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
 #endif
 
                 for (int i = borderL; i < hei - borderL; i++) {
-                    float pp[9], temp;
+                    // float pp[9], temp;
 
                     for (int j = borderL; j < wid - borderL; j++) {
                         tmL[i][j] = median (luminance[i][j], luminance[i - 1][j], luminance[i + 1][j], luminance[i][j + 1], luminance[i][j - 1], luminance[i - 1][j - 1], luminance[i - 1][j + 1], luminance[i + 1][j - 1], luminance[i + 1][j + 1]); //3x3
@@ -1167,7 +1167,7 @@ void ImProcFunctions::MSRLocal (float** luminance, float** templ, const float* c
         // I call mean_stddv2 instead of mean_stddv ==> logBetaGain
 
         mean_stddv2 ( luminance, mean, stddv, W_L, H_L, maxtr, mintr);
-        float asig, bsig, amax, bmax, amin, bmin;
+        float asig = 0.f, bsig = 0.f, amax = 0.f, bmax = 0.f, amin = 0.f, bmin = 0.f;
         //   bool gaincurve = false; //wavRETgainCcurve
         const bool hasWavRetGainCurve =  locRETgainCcurve && mean != 0.f && stddv != 0.f;
 

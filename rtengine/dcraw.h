@@ -76,7 +76,8 @@ protected:
     FILE *ofp;
     short order;
     const char *ifname;
-    char *meta_data, xtrans[6][6],xtrans_abs[6][6];
+    char *meta_data;
+    int xtrans[6][6],xtrans_abs[6][6];
     char cdesc[5], desc[512], make[64], model[64], model2[64], model3[64], artist[64];
     float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
     time_t timestamp;
@@ -409,23 +410,10 @@ void foveon_make_curves(short **curvep, float dq[3], float div[3], float filt);
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
 
-//void xtrans_interpolate (int passes);
-//void cielab (ushort rgb[3], short lab[3]);
-
-//void remove_zeroes();
-//void bad_pixels (const char *cfname);
-//void subtract (const char *fname);
 void gamma_curve (double pwr, double ts, int mode, int imax);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
 void cam_xyz_coeff (float rgb_cam[3][4], double cam_xyz[4][3]);
-//void hat_transform (float *temp, float *base, int st, int size, int sc);
-//void wavelet_denoise();
-void scale_colors();
 void pre_interpolate();
-//void border_interpolate (int border);
-//void median_filter();
-//void blend_highlights();
-//void recover_highlights();
 void crop_masked_pixels();
 
 void tiff_get (unsigned base,	unsigned *tag, unsigned *type, unsigned *len, unsigned *save);

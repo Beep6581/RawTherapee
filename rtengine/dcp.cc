@@ -309,8 +309,6 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
         { 600, 0.33724, 0.36051, -116.45 }
     };
 
-    constexpr double tint_scale = -3000.0;
-
     double res = 0;
 
     // Convert to uv space.
@@ -847,7 +845,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
             // Saturation maps. Need to be unwinded.
             tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DATA_2));
 
-            for (int i = 0; i < delta_info.array_count; ++i) {
+            for (unsigned int i = 0; i < delta_info.array_count; ++i) {
                 deltas_2[i].hue_shift = tag->toDouble((i * 3) * tiff_float_size);
                 deltas_2[i].sat_scale = tag->toDouble((i * 3 + 1) * tiff_float_size);
                 deltas_2[i].val_scale = tag->toDouble((i * 3 + 2) * tiff_float_size);

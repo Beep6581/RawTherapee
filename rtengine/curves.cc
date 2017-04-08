@@ -44,8 +44,7 @@ using namespace std;
 
 namespace rtengine
 {
-
-Curve::Curve () : N (0), ppn (0), x (nullptr), y (nullptr), mc (0.0), mfc (0.0), msc (0.0), mhc (0.0), ypp (nullptr), x1 (0.0), y1 (0.0), x2 (0.0), y2 (0.0), x3 (0.0), y3 (0.0), firstPointIncluded (false), increment (0.0), nbr_points (0), hashSize (1000 /* has to be initialized to the maximum value */) {}
+Curve::Curve () : N (0), ppn (0), x (nullptr), y (nullptr), mc (0.0), mfc (0.0), msc (0.0), mhc (0.0), hashSize (1000 /* has to be initialized to the maximum value */), ypp (nullptr), x1 (0.0), y1 (0.0), x2 (0.0), y2 (0.0), x3 (0.0), y3 (0.0), firstPointIncluded (false), increment (0.0), nbr_points (0) {}
 
 void Curve::AddPolygons ()
 {
@@ -104,7 +103,7 @@ void Curve::fillHash()
     milestone = 0.;
     polyIter = 0;
 
-    for (unsigned int i = 0; i < (hashSize + 1);) {
+    for (unsigned int i = 0; i < hashSize + 1u;) {
         while (poly_x[polyIter] < (milestone + increment)) {
             ++polyIter;
         }
@@ -1732,7 +1731,7 @@ void ColorGradientCurve::SetXYZ (const Curve *pCurve, const double xyz_rgb[3][3]
     }
 
     float r, g, b, xx, yy, zz;
-    float lr1, lr2;
+    float lr1, lr2 = 0.f;
     int upperBound = lut1.getUpperBound();
 
     if (pCurve->isIdentity()) {
@@ -2121,7 +2120,7 @@ float PerceptualToneCurve::get_curve_val (float x, float range[2], float lut[], 
 
     int idx = (int)xm;
 
-    if (idx >= lut_size - 1) {
+    if (idx >= static_cast<int> (lut_size) - 1) {
         return lut[lut_size - 1];
     }
 
@@ -2146,7 +2145,7 @@ float PerceptualToneCurve::calculateToneCurveContrastValue() const
         const float xd = 0.07;
         const float tx[] = { 0.30, 0.35, 0.40, 0.45 }; // we only look in the midtone range
 
-        for (int i = 0; i < sizeof (tx) / sizeof (tx[0]); i++) {
+        for (size_t i = 0; i < sizeof (tx) / sizeof (tx[0]); i++) {
             float x0 = tx[i] - xd;
             float y0 = CurveFactory::gamma2 (lutToneCurve[CurveFactory::igamma2 (x0) * 65535.f] / 65535.f) - k * x0;
             float x1 = tx[i] + xd;
@@ -2163,7 +2162,7 @@ float PerceptualToneCurve::calculateToneCurveContrastValue() const
         {
             const float tx[] = { 0.20, 0.25, 0.50, 0.55 }; // we only look in the midtone range
 
-            for (int i = 0; i < sizeof (tx) / sizeof (tx[0]); i++) {
+            for (size_t i = 0; i < sizeof (tx) / sizeof (tx[0]); i++) {
                 float x0 = tx[i] - xd;
                 float y0 = CurveFactory::gamma2 (lutToneCurve[CurveFactory::igamma2 (x0) * 65535.f] / 65535.f) - k * x0;
                 float x1 = tx[i] + xd;
@@ -2496,8 +2495,8 @@ void PerceptualToneCurve::initApplyState (PerceptualToneCurveState & state, Glib
         state.isProphoto = true;
     } else {
         state.isProphoto = false;
-        TMatrix Work = ICCStore::getInstance()->workingSpaceMatrix(workingSpace);
-        memset(state.Working2Prophoto, 0, sizeof(state.Working2Prophoto));
+        TMatrix Work = ICCStore::getInstance()->workingSpaceMatrix (workingSpace);
+        memset (state.Working2Prophoto, 0, sizeof (state.Working2Prophoto));
 
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
@@ -2506,7 +2505,7 @@ void PerceptualToneCurve::initApplyState (PerceptualToneCurveState & state, Glib
                 }
 
         Work = ICCStore::getInstance()->workingSpaceInverseMatrix (workingSpace);
-        memset(state.Prophoto2Working, 0, sizeof(state.Prophoto2Working));
+        memset (state.Prophoto2Working, 0, sizeof (state.Prophoto2Working));
 
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)

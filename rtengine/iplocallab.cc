@@ -457,6 +457,7 @@ void ImProcFunctions::DeNoise_Local (int call, const struct local_params& lp, La
                 transformed->a[y][x] = original->a[y][x];
                 transformed->b[y][x] = original->b[y][x];
             }
+
             continue;
         }
 
@@ -3553,8 +3554,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 //Blur and noise
 
         if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1)  && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
-            LabImage *tmp1;
-            LabImage *bufgb;
+            LabImage *tmp1 = nullptr;
+            LabImage *bufgb = nullptr;
             int GW = transformed->W;
             int GH = transformed->H;
             //  printf ("rad=%f gaus=%f call=%i skip=%i\n", radius, GAUSS_SKIP, call, sk);
@@ -3679,8 +3680,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             const int numThreads = 1;
 
 #endif
+
             if (call == 1) {
-                LabImage tmp1(transformed->W, transformed->H);
+                LabImage tmp1 (transformed->W, transformed->H);
                 int GW = transformed->W;
                 int GH = transformed->H;
 
@@ -3696,15 +3698,16 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 int levwavL = levred;
                 int skip = 1;
 
-                wavelet_decomposition Ldecomp(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
-                wavelet_decomposition adecomp(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
-                wavelet_decomposition bdecomp(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition Ldecomp (tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition adecomp (tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition bdecomp (tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
                 int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
                     #pragma omp parallel for collapse(2) schedule(dynamic,1)
+
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
                             int Wlvl_L = Ldecomp.level_W (lvl);
@@ -3831,8 +3834,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
                 int bfw = int (lp.lx + lp.lxL) + del;
-                LabImage bufwv(bfw, bfh);
-                bufwv.clear(true);
+                LabImage bufwv (bfw, bfh);
+                bufwv.clear (true);
 
                 int yStart = lp.yc - lp.lyT - cy;
                 int yEnd = lp.yc + lp.ly - cy;
@@ -3848,9 +3851,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     int loy = cy + y;
 
                     for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
-                            bufwv.L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                            bufwv.a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                            bufwv.b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        bufwv.L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        bufwv.a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                        bufwv.b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
                     }
                 }
 
@@ -3858,15 +3861,16 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                 int levwavL = levred;
                 int skip = 1;
-                wavelet_decomposition Ldecomp(bufwv.L[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
-                wavelet_decomposition adecomp(bufwv.a[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
-                wavelet_decomposition bdecomp(bufwv.b[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition Ldecomp (bufwv.L[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition adecomp (bufwv.a[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
+                wavelet_decomposition bdecomp (bufwv.b[0], bufwv.W, bufwv.H, levwavL, 1, skip, numThreads, DaubLen);
 
                 float madL[8][3];
                 int edge = 2;
 
                 if (!Ldecomp.memoryAllocationFailed) {
                     #pragma omp parallel for collapse(2) schedule(dynamic,1)
+
                     for (int lvl = 0; lvl < levred; lvl++) {
                         for (int dir = 1; dir < 4; dir++) {
                             int Wlvl_L = Ldecomp.level_W (lvl);
@@ -4010,15 +4014,15 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
-            LabImage *bufcolorig;
+            LabImage *bufcolorig = nullptr;
             float chprov = 1.f;
             float chpro = 1.f;
             float cligh = 1.f;
             float clighL = 1.f;
             float clighmax ;
-            float **buflight;
-            float **bufchro;
-            float **buflightslid;
+            float **buflight = nullptr;
+            float **bufchro = nullptr;
+            float **buflightslid = nullptr;
 
             int bfh, bfw;
 
@@ -4214,8 +4218,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
-            LabImage *bufcontorig;
-            float **buflightc;
+            LabImage *bufcontorig = nullptr;
+            float **buflightc = nullptr;
             int bfh, bfw;
             float clighc = 0.f;
             const float localtype = lumaref;
@@ -4387,10 +4391,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 //&& lp.tonemapena
         if (lp.strengt != 0.f  && lp.tonemapena) {
-            LabImage *tmp1;
-            float **buflight;
+            LabImage *tmp1 = nullptr;
+            float **buflight = nullptr;
 
-            LabImage *bufgb;
+            LabImage *bufgb = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
 
@@ -4505,8 +4509,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 //begin cbdl
         if ((lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) && lp.cbdlena) {
-            float **bufsh;//buffer por square zone
-            float **loctemp;
+            float **bufsh = nullptr;//buffer por square zone
+            float **loctemp = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
             float b_l = -5.f;
@@ -4515,7 +4519,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float b_r = 170.f;
             double skinprot = 0.;
             int choice = 0;
-            float **buflight;
+            float **buflight = nullptr;
 
 
             if (call <= 3) { //call from simpleprocess dcrop improcc
@@ -4738,9 +4742,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             int GW = transformed->W;
             int GH = transformed->H;
 
-            LabImage *bufreti;
-            float **buflight;
-            float **bufchro;
+            LabImage *bufreti = nullptr;
+            float **buflight = nullptr;
+            float **bufchro = nullptr;
             int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
             int bfw = int (lp.lx + lp.lxL) + del;
 
@@ -4826,7 +4830,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             }
 
 
-            LabImage *tmpl;
+            LabImage *tmpl = nullptr;
 
             if (!lp.invret && call <= 3) {
 

@@ -8,7 +8,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), false, true)
+Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), false, true), lastmedianmap(false)
 {
     CurveListener::setMulti(true);
     std::vector<double> defaultCurve;
@@ -1513,7 +1513,7 @@ void Retinex::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histL
 void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
-    float R, G, B;
+    float R = 0.f, G = 0.f, B = 0.f;
 
     if (elemType == ColorCaller::CCET_VERTICAL_BAR) {
         valY = 0.5;

@@ -33,57 +33,6 @@ private:
     void enableToggled (MyExpander *expander);
 
 //protected:
-    Gtk::HBox *editHBox;
-    Gtk::ToggleButton* edit;
-
-    Adjuster* nbspot;
-    Adjuster* multiplier[5];
-
-    Adjuster* const degree;
-    Adjuster* const locX;
-    Adjuster* const locY;
-    Adjuster* const locXL;
-    Adjuster* const locYT;
-    Adjuster* const centerX;
-    Adjuster* const centerY;
-    Adjuster* const circrad;
-    Adjuster* const lightness;
-    Adjuster* const contrast;
-    Adjuster* const chroma;
-    Adjuster* const sensi;
-    Adjuster* const sensih;
-    Adjuster* const radius;
-    Adjuster* const strength;
-    Adjuster* const transit;
-    Adjuster* const str;
-    Adjuster* const neigh;
-    Adjuster* const vart;
-    Adjuster* const chrrt;
-    Adjuster* const anbspot;
-    Adjuster* const sharradius;
-    Adjuster* const sharamount;
-    Adjuster* const shardamping;
-    Adjuster* const shariter;
-    Adjuster* const sensisha;
-    Adjuster* const thres;
-    Adjuster* const proxi;
-    Adjuster* const noiselumf;
-    Adjuster* const noiselumc;
-    Adjuster* const noisechrof;
-    Adjuster* const noisechroc;
-    Adjuster* const threshold;
-    Adjuster* const sensicb;
-    Adjuster* const sensibn;
-    Adjuster* const stren;
-    Adjuster* const gamma;
-    Adjuster* const estop;
-    Adjuster* const scaltm;
-    Adjuster* const rewei;
-    Adjuster* const sensitm;
-    Adjuster* const retrab;
-    Adjuster* const hueref;
-    Adjuster* const chromaref;
-    Adjuster* const lumaref;
 
     MyExpander* const expcolor;
     MyExpander* const expblur;
@@ -94,22 +43,83 @@ private:
     MyExpander* const expdenoi;
     MyExpander* const expsettings;
 
+    CurveEditorGroup* const LocalcurveEditorgainT;
+    CurveEditorGroup* const LocalcurveEditorgainTrab;
+    CurveEditorGroup* const llCurveEditorG;
 
-    sigc::connection lumaneutralPressedConn;
-    sigc::connection lumacontrastPlusPressedConn;
-    sigc::connection lumacontrastMinusPressedConn;
-    sigc::connection enablecolorConn, enableblurConn, enabletonemapConn;
-    sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
-    sigc::connection enabledenoiConn;
-    sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
 
-    Gtk::HBox* const ctboxS;
-    Gtk::HBox* const qualbox;
-    Gtk::HBox* const qualcurvbox;
+    Gtk::HBox *editHBox;
+    Gtk::ToggleButton* edit;
+
+    Adjuster* nbspot;
+    Adjuster* multiplier[5];
+
+    Adjuster* const anbspot;
+    Adjuster* const locX;
+    Adjuster* const locXL;
+    Adjuster* const degree;
+    Adjuster* const locY;
+    Adjuster* const locYT;
+    Adjuster* const centerX;
+    Adjuster* const centerY;
+    Adjuster* const circrad;
+    Adjuster* const thres;
+    Adjuster* const proxi;
+    Adjuster* const lightness;
+    Adjuster* const contrast;
+    Adjuster* const chroma;
+    Adjuster* const sensi;
+    Adjuster* const radius;
+    Adjuster* const strength;
+    Adjuster* const sensibn;
+    Adjuster* const transit;
+    Adjuster* const stren;
+    Adjuster* const gamma;
+    Adjuster* const estop;
+    Adjuster* const scaltm;
+    Adjuster* const rewei;
+    Adjuster* const sensitm;
+    Adjuster* const str;
+    Adjuster* const neigh;
+    Adjuster* const vart;
+    Adjuster* const chrrt;
+    Adjuster* const sensih;
+    Adjuster* const retrab;
+    Adjuster* const threshold;
+    Adjuster* const sensicb;
+    Adjuster* const sharradius;
+    Adjuster* const sharamount;
+    Adjuster* const shardamping;
+    Adjuster* const shariter;
+    Adjuster* const sensisha;
+    Adjuster* const noiselumf;
+    Adjuster* const noiselumc;
+    Adjuster* const noisechrof;
+    Adjuster* const noisechroc;
+    Adjuster* const hueref;
+    Adjuster* const chromaref;
+    Adjuster* const lumaref;
+
+    MyComboBoxText*   const Smethod;
+    MyComboBoxText*   const retinexMethod;
+    MyComboBoxText*   const qualityMethod;
+    MyComboBoxText*   const qualitycurveMethod;
+
 
     Gtk::Frame* const artifFrame;
     Gtk::Frame* const shapeFrame;
     Gtk::Frame* const superFrame;
+
+    Gtk::Label* const labmdh;
+    Gtk::Label* const labqual;
+    Gtk::Label* const labqualcurv;
+    Gtk::Label* const labmS;
+
+    Gtk::HBox* const ctboxS;
+    Gtk::HBox* const dhbox;
+    Gtk::HBox* const qualbox;
+    Gtk::HBox* const qualcurvbox;
+
     /*
         Gtk::VBox* const artifVBox;
         Gtk::VBox* const shapeVBox;
@@ -123,11 +133,11 @@ private:
         Gtk::VBox* const superVBox;
     */
     Gtk::CheckButton* const avoid;
+    Gtk::CheckButton* const activlum;
     Gtk::CheckButton* const invers;
     Gtk::CheckButton* const curvactiv;
     Gtk::CheckButton* const inversrad;
     Gtk::CheckButton* const inversret;
-    Gtk::CheckButton* const activlum;
     Gtk::CheckButton* const inverssha;
 
     Gtk::Button* neutral;
@@ -135,32 +145,27 @@ private:
     Gtk::Button* neutral1;
     Gtk::HBox* neutrHBox1;
 
-    MyComboBoxText*   const Smethod;
-    sigc::connection  Smethodconn;
-    MyComboBoxText*   const retinexMethod;
-    sigc::connection retinexMethodConn;
-    MyComboBoxText*   const qualityMethod;
-    sigc::connection qualityMethodConn;
-    MyComboBoxText*   const qualitycurveMethod;
-    sigc::connection qualitycurveMethodConn;
-
-
-    Gtk::Label* const labmdh;
-    Gtk::Label* const labqual;
-    Gtk::Label* const labqualcurv;
-    Gtk::Label* const labmS;
-
-    Gtk::HBox* const dhbox;
-
-    CurveEditorGroup* const LocalcurveEditorgainT;
     FlatCurveEditor* cTgainshape;
-    CurveEditorGroup* const LocalcurveEditorgainTrab;
     FlatCurveEditor* cTgainshaperab;
-    CurveEditorGroup* const llCurveEditorG;
     DiagonalCurveEditor* llshape;
     DiagonalCurveEditor* ccshape;
     Gtk::Image* irg;
     FlatCurveEditor* LHshape;
+
+
+
+
+    sigc::connection lumaneutralPressedConn;
+    sigc::connection lumacontrastPlusPressedConn;
+    sigc::connection lumacontrastMinusPressedConn;
+    sigc::connection enablecolorConn, enableblurConn, enabletonemapConn;
+    sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
+    sigc::connection enabledenoiConn;
+    sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
+    sigc::connection  Smethodconn;
+    sigc::connection retinexMethodConn;
+    sigc::connection qualityMethodConn;
+    sigc::connection qualitycurveMethodConn;
 
 
 

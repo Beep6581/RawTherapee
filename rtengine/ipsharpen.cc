@@ -1008,7 +1008,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2)
     // Rest is UNSHARP MASK
 
     int W = ncie->W, H = ncie->H;
-    float** b3;
+    float** b3 = nullptr;
 
     if (params->sharpening.edgesonly) {
         b3 = new float*[H];

@@ -1568,10 +1568,15 @@ void Crop::freeAll ()
 }
 
 
-namespace {
-
-bool check_need_larger_crop_for_lcp_distortion(const ProcParams &params)
+namespace
 {
+
+bool check_need_larger_crop_for_lcp_distortion (int fw, int fh, int x, int y, int w, int h, const ProcParams &params)
+{
+    if (x == 0 && y == 0 && w == fw && h == fh) {
+        return false;
+    }
+
     return (params.lensProf.lcpFile.length() > 0 &&
             params.lensProf.useDist);
 }
@@ -1625,35 +1630,39 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     // determine which part of the source image is required to compute the crop rectangle
     int orx, ory, orw, orh;
+    orx = bx1;
+    ory = by1;
+    orw = bw;
+    orh = bh;
     ProcParams& params = parent->params;
+
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
+
+    if (check_need_larger_crop_for_lcp_distortion (parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
+        double dW = double (parent->fw) * 0.15 / skip; // TODO  - this is hardcoded ATM!
+        double dH = double (parent->fh) * 0.15 / skip; // this is an estimate of the max
+        // distortion relative to the image
+        // size. BUT IS 15% REALLY ENOUGH?
+        // In fact, is there a better way??
+        orx = max (int (orx - dW / 2.0), 0);
+        ory = max (int (ory - dH / 2.0), 0);
+        orw = min (int (orw + dW), parent->fw - orx);
+        orh = min (int (orh + dH), parent->fh - ory);
+    }
+
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
     parent->imgsrc->getSize (cp, orW, orH);
 
-    if (check_need_larger_crop_for_lcp_distortion(parent->params)) {
-        int fW, fH;
-        parent->imgsrc->getFullSize(fW, fH);
-        double dW = double(fW) * 0.15; // TODO  - this is hardcoded ATM!
-        double dH = double(fH) * 0.15; // this is an estimate of the max
-                                       // distortion relative to the image
-                                       // size. BUT IS 15% REALLY ENOUGH?
-                                       // In fact, is there a better way??
-        orW = min(int(orW + dW), fW);
-        orH = min(int(orH + dH), fH);
-        trafx = max(int(orx - dW/2.0), 0);
-        trafy = max(int(ory - dH/2.0), 0);
-    } else {
-        trafx = orx;
-        trafy = ory;
-    }
+    trafx = orx;
+    trafy = ory;
 
-    int cw = skips(bw, skip);
-    int ch = skips(bh, skip);
+    int cw = skips (bw, skip);
+    int ch = skips (bh, skip);
 
-    leftBorder  = skips(rqx1 - bx1, skip);
-    upperBorder = skips(rqy1 - by1, skip);
+    leftBorder  = skips (rqx1 - bx1, skip);
+    upperBorder = skips (rqy1 - by1, skip);
 
     if (settings->verbose) {
         printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);
