@@ -85,16 +85,17 @@ float normn (float a, float b, int n)
     }
 }
 
-void correct_distortion (const rtengine::LCPMapper *lcp, double &x, double &y,
-                         int cx, int cy)
+
+void correct_distortion(const rtengine::LCPMapper *lcp, double &x, double &y,
+                        int cx, int cy, double scale)
 {
     assert (lcp);
 
     x += cx;
     y += cy;
-    lcp->correctDistortion (x, y);
-    x -= cx;
-    y -= cy;
+    lcp->correctDistortion(x, y, scale);
+    x -= (cx * scale);
+    y -= (cy * scale);
 }
 
 }
@@ -156,11 +157,14 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         double x_d = src[i].x, y_d = src[i].y;
 
         if (pLCPMap && params->lensProf.useDist) {
-            correct_distortion (pLCPMap, x_d, y_d, 0, 0);
+            correct_distortion (pLCPMap, x_d, y_d, 0, 0, ascale);
+        } else {
+            x_d *= ascale;
+            y_d *= ascale;
         }
 
-        y_d = ascale * (y_d - h2);
-        x_d = ascale * (x_d - w2);
+        x_d += ascale * (0 - w2);     // centering x coord & scale
+        y_d += ascale * (0 - h2);     // centering y coord & scale
 
         if (needsPerspective()) {
             // horizontal perspective transformation
@@ -799,11 +803,14 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
             double x_d = x, y_d = y;
 
             if (enableLCPDist) {
-                correct_distortion (pLCPMap, x_d, y_d, cx, cy); // must be first transform
+                correct_distortion(pLCPMap, x_d, y_d, cx, cy, ascale); // must be first transform
+            } else {
+                x_d *= ascale;
+                y_d *= ascale;
             }
 
-            x_d = ascale * (x_d + cx - w2);     // centering x coord & scale
-            y_d = ascale * (y_d + cy - h2);     // centering y coord & scale
+            x_d += ascale * (cx - w2);     // centering x coord & scale
+            y_d += ascale * (cy - h2);     // centering y coord & scale
 
             double vig_x_d = 0., vig_y_d = 0.;
 
@@ -976,11 +983,14 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             double x_d = x, y_d = y;
 
             if (pLCPMap && params->lensProf.useDist) {
-                correct_distortion (pLCPMap, x_d, y_d, cx, cy); // must be first transform
+                correct_distortion(pLCPMap, x_d, y_d, cx, cy, ascale); // must be first transform
+            } else {
+                x_d *= ascale;
+                y_d *= ascale;
             }
 
-            y_d = ascale * (y_d + cy - h2);     // centering y coord & scale
-            x_d = ascale * (x_d + cx - w2);     // centering x coord & scale
+            x_d += ascale * (cx - w2);     // centering x coord & scale
+            y_d += ascale * (cy - h2);     // centering y coord & scale
 
             double vig_x_d = 0., vig_y_d = 0.;
 
