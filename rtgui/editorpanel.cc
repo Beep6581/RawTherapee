@@ -105,7 +105,7 @@ bool find_default_monitor_profile(GdkWindow *rootwin, Glib::ustring &defprof, Gl
     // * Copyright (C) 2006 John Ellis
     // * Copyright (C) 2008 - 2016 The Geeqie Team
     // 
-    guchar *prof;
+    guchar *prof = NULL;
     gint proflen;
     GdkAtom type = GDK_NONE;
     gint format = 0;
