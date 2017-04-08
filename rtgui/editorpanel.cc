@@ -71,6 +71,67 @@ int setprogressStrUI ( void *p )
     return FALSE;
 }
 
+
+bool find_default_monitor_profile(GdkWindow *rootwin, Glib::ustring &defprof, Glib::ustring &defprofname)
+{
+#ifdef WIN32
+    HDC hDC = GetDC(nullptr);
+
+    if (hDC != nullptr) {
+        if (SetICMMode(hDC, ICM_ON)) {
+            char profileName[MAX_PATH + 1];
+            DWORD profileLength = MAX_PATH;
+
+            if (GetICMProfileA(hDC, &profileLength, profileName)) {
+                defprof = Glib::ustring(profileName);
+                defprofname = Glib::path_get_basename(defprof);
+                size_t pos = defprofname.rfind(".");
+
+                if (pos != Glib::ustring::npos) {
+                    defprofname = defprofname.substr(0, pos);
+                }
+                defprof = Glib::ustring("file:") + defprof;
+                return true;
+            }
+
+            // might fail if e.g. the monitor has no profile
+        }
+
+        ReleaseDC(NULL, hDC);
+    }
+#elif !defined(__APPLE__)
+    // taken from geeqie (image.c) and adapted
+    // Originally licensed as GPL v2+, with the following copyright:
+    // * Copyright (C) 2006 John Ellis
+    // * Copyright (C) 2008 - 2016 The Geeqie Team
+    // 
+    guchar *prof;
+    gint proflen;
+    GdkAtom type = GDK_NONE;
+    gint format = 0;
+    if (gdk_property_get(rootwin, gdk_atom_intern("_ICC_PROFILE", FALSE), GDK_NONE, 0, 64 * 1024 * 1024, FALSE, &type, &format, &proflen, &prof) && proflen > 0) {
+        cmsHPROFILE p = cmsOpenProfileFromMem(prof, proflen);
+        if (p) {
+            defprofname = "GDK_ICC_PROFILE";
+            defprof = Glib::build_filename(Options::rtdir, "GDK_ICC_PROFILE.icc");
+            if (cmsSaveProfileToFile(p, defprof.c_str())) {
+                cmsCloseProfile(p);
+                if (prof) {
+                    g_free(prof);
+                }
+                defprof = Glib::ustring("file:") + defprof;
+                return true;
+            }
+        }
+    }
+    if (prof) {
+        g_free(prof);
+    }
+#endif
+    return false;
+}
+
+
 }
 
 class EditorPanel::ColorManagementToolbar
@@ -84,6 +145,7 @@ private:
     Gtk::ToggleButton spGamutCheck;
     sigc::connection profileConn, intentConn, softproofConn;
     bool canSProof;
+    Glib::ustring defprof;
 
     rtengine::StagedImageProcessor* const& processor;
 
@@ -95,12 +157,13 @@ private:
         setExpandAlignProperties (&profileBox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         profileBox.append (M ("PREFERENCES_PROFILE_NONE"));
-#ifdef WIN32
-        profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + rtengine::ICCStore::getInstance()->getDefaultMonitorProfileName() + ")");
-        profileBox.set_active (options.rtSettings.autoMonitorProfile ? 1 : 0);
-#else
-        profileBox.set_active (0);
-#endif
+        Glib::ustring defprofname;
+        if (find_default_monitor_profile(profileBox.get_root_window()->gobj(), defprof, defprofname)) {
+            profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + defprofname + ")");
+            profileBox.set_active (options.rtSettings.autoMonitorProfile ? 1 : 0);
+        } else {
+            profileBox.set_active (0);
+        }
         const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
         for (const auto profile: profiles) {
             profileBox.append (profile);
@@ -174,21 +237,17 @@ private:
         Glib::ustring profile;
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
-    #ifdef WIN32
-        if (profileBox.get_active_row_number () == 1) {
-            profile = rtengine::ICCStore::getInstance()->getDefaultMonitorProfileName ();
+        if (!defprof.empty() && profileBox.get_active_row_number () == 1) {
+            profile = defprof;
             if (profile.empty ()) {
                 profile = options.rtSettings.monitorProfile;
             }
             if (profile.empty ()) {
                 profile = "sRGB IEC61966-2.1";
             }
-        } else if (profileBox.get_active_row_number () > 1) {
+        } else if (profileBox.get_active_row_number () > 0) {
             profile = profileBox.get_active_text ();
         }
-    #else
-        profile = profileBox.get_active_row_number () > 0 ? profileBox.get_active_text () : Glib::ustring ();
-    #endif
 #else
         profile = "RT_sRGB";
 #endif
@@ -342,15 +401,11 @@ public:
 #if !defined(__APPLE__) // monitor profile not supported on apple
         ConnectionBlocker profileBlocker (profileConn);
 
-    #ifdef WIN32
-        if (options.rtSettings.autoMonitorProfile) {
+        if (!defprof.empty() && options.rtSettings.autoMonitorProfile) {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 1);
         } else {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
         }
-    #else
-        setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
-    #endif
 #endif
 
         switch (options.rtSettings.monitorIntent) {
