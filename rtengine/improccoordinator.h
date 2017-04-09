@@ -93,6 +93,7 @@ protected:
     float bwAutoR, bwAutoG, bwAutoB;
     float CAMMean;
     int coordX, coordY, localX, localY;
+    ColorGradientCurve ctColorCurve;
 
     LUTf hltonecurve;
     LUTf shtonecurve;
@@ -133,7 +134,6 @@ protected:
     LUTf bCurve;
     ToneCurve customToneCurve1;
     ToneCurve customToneCurve2;
-    ColorGradientCurve ctColorCurve;
     OpacityCurve ctOpacityCurve;
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
@@ -164,19 +164,19 @@ protected:
     int pW, pH;
 
     ProgressListener* plistener;
+    AutoWBListener* awbListener;
     PreviewImageListener* imageListener;
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
     localListener* aloListener;
-    AutoWBListener* awbListener;
-    FrameCountListener *frameCountListener;
-    ImageTypeListener *imageTypeListener;
-
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
+    FrameCountListener *frameCountListener;
+    ImageTypeListener *imageTypeListener;
+
 
     HistogramListener* hListener;
     std::vector<SizeListener*> sizeListeners;
@@ -279,6 +279,7 @@ protected:
     LUTi thresholds;
     LUTi sensicbs;
     LUTi activlums;
+    int versionmip;	
     LUTi strens;
     LUTi gammas;
     LUTi estops;
@@ -287,7 +288,6 @@ protected:
     LUTi sensitms;
     LUTi qualitycurves;
 
-    int versionmip;
     LUTi sizeretics;
     LUTi reticurvs;
     LUTi retrabs;

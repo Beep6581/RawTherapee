@@ -43,9 +43,7 @@ ImProcCoordinator::ImProcCoordinator ()
       ncie (nullptr), imgsrc (nullptr), shmap (nullptr), lastAwbEqual (0.), lastAwbTempBias (0.0), ipf (&params, true), monitorIntent (RI_RELATIVE),
       softProof (false), gamutCheck (false), scale (10), highDetailPreprocessComputed (false), highDetailRawComputed (false),
       allocated (false), bwAutoR (-9000.f), bwAutoG (-9000.f), bwAutoB (-9000.f), CAMMean (NAN), coordX (0), coordY (0), localX (0), localY (0),
-      dataspot (nullptr), retistr (nullptr), llstr (nullptr), lhstr (nullptr), ccstr (nullptr), retistrsav (nullptr),
-//     ctColorCurve(),
-//      localcurve(65536, 0),
+      ctColorCurve(),
       hltonecurve (65536),
       shtonecurve (65536),
       tonecurve (65536, 0), //,1);
@@ -60,7 +58,6 @@ ImProcCoordinator::ImProcCoordinator ()
       clToningcurve (65536, 0),
       lllocalcurve (65536, 0),
       cclocalcurve (65536, 0),
-
       cl2Toningcurve (65536, 0),
       Noisecurve (65536, 0),
       NoiseCCcurve (65536, 0),
@@ -78,21 +75,31 @@ ImProcCoordinator::ImProcCoordinator ()
       histLCurve (256),
       histCCurve (256),
       histLLCurve (256),
-
       histLCAM (256),
       histCCAM (256),
       histClad (256),
       bcabhist (256),
       histChroma (256),
-
       histLRETI (256),
-
       CAMBrightCurveJ(), CAMBrightCurveQ(),
+      rCurve(),
+      gCurve(),
+      bCurve(),
+      rcurvehist (256), rcurvehistCropped (256), rbeforehist (256),
+      gcurvehist (256), gcurvehistCropped (256), gbeforehist (256),
+      bcurvehist (256), bcurvehistCropped (256), bbeforehist (256),
+      fw (0), fh (0), tr (0),
+      fullw (1), fullh (1),
+      pW (-1), pH (-1),
+      plistener (nullptr), awbListener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr),  aloListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), frameCountListener (nullptr), imageTypeListener (nullptr), hListener (nullptr),
+      resultValid (false), lastOutputProfile ("BADFOOD"), lastOutputIntent (RI__COUNT), lastOutputBPC (false), thread (nullptr), changeSinceLast (0), updaterRunning (false), destroying (false), utili (false), autili (false),
+      butili (false), ccutili (false), cclutili (false), clcutili (false), opautili (false),  wavcontlutili (false),
+      dataspot (nullptr), retistr (nullptr), llstr (nullptr), lhstr (nullptr), ccstr (nullptr),
       circrads (500, -10000),
-      locx (500, -10000),
-      locy (500, -10000),
       centerx (500, -10000),
       centery (500, -10000),
+      locx (500, -10000),
+      locy (500, -10000),
       locxl (500, -10000),
       locyt (500, -10000),
       lights (500, -100000),
@@ -119,12 +126,12 @@ ImProcCoordinator::ImProcCoordinator ()
       sharradiuss (500, -10000),
       sharamounts (500, -10000),
       shardampings (500, -10000),
-      shariters (500, -10000),
       inversshas (500, -10000),
+      shariters (500, -10000),
       sensishas (500, -10000),
       qualitys (500, -10000),
-      proxis (500, -10000),
       thress (500, -10000),
+      proxis (500, -10000),
       noiselumfs (500, -10000),
       noiselumcs (500, -10000),
       noisechrofs (500, -10000),
@@ -144,8 +151,9 @@ ImProcCoordinator::ImProcCoordinator ()
       scaltms (500, -10000),
       reweis (500, -10000),
       sensitms (500, -10000),
-      reticurvs (25000, -10000), //allow 500 values for each control point * 500
+      qualitycurves (500, -10000),
       sizeretics (500, -10000),
+      reticurvs (25000, -10000), //allow 500 values for each control point * 500
       retrabs (500, -10000),
       llcurvs (25000, -10000), //allow 500 values for each control point * 500
       sizellcs (500, -10000),
@@ -153,29 +161,15 @@ ImProcCoordinator::ImProcCoordinator ()
       sizelhcs (500, -10000),
       cccurvs (25000, -10000), //allow 500 values for each control point * 500
       sizecccs (500, -10000),
-      qualitycurves (500, -10000),
-
-      lumarefs (500, -100000.f),
-      chromarefs (500, -100000.f),
       huerefs (500, -100000.f),
+      chromarefs (500, -100000.f),
+      lumarefs (500, -100000.f),
       huer (0),
       chromar (0),
       lumar (0),
+      colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f),
+      retistrsav (nullptr)
 
-      rCurve(),
-      gCurve(),
-      bCurve(),
-      ctColorCurve(),
-      rcurvehist (256), rcurvehistCropped (256), rbeforehist (256),
-      gcurvehist (256), gcurvehistCropped (256), gbeforehist (256),
-      bcurvehist (256), bcurvehistCropped (256), bbeforehist (256),
-      fw (0), fh (0), tr (0),
-      fullw (1), fullh (1),
-      pW (-1), pH (-1),
-      //conversionBuffer(1, 1),
-      plistener (nullptr), imageListener (nullptr), aeListener (nullptr), acListener (nullptr), abwListener (nullptr), awbListener (nullptr), aloListener (nullptr), actListener (nullptr), adnListener (nullptr), awavListener (nullptr), dehaListener (nullptr), frameCountListener (nullptr), imageTypeListener (nullptr), hListener (nullptr),
-      resultValid (false), lastOutputProfile ("BADFOOD"), lastOutputIntent (RI__COUNT), lastOutputBPC (false), thread (nullptr), changeSinceLast (0), updaterRunning (false), destroying (false), utili (false), autili (false), wavcontlutili (false),
-      butili (false), ccutili (false), cclutili (false), clcutili (false), opautili (false),  colourToningSatLimit (0.f), colourToningSatLimitOpacity (0.f)
 {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc)
@@ -792,7 +786,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             //    if(! fic0.fail())    {
             float **shbuffer = nullptr;
             versionmip = 0;
-            int maxdat;
+            //   int maxdat;
             int sca = 1;
             //string delim ==> delimiter to separate integer in a string, 70 is lagely enough for curves : noramlly 3 to 21 must be suffisant
             std::string delim[69] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
@@ -806,7 +800,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 //find current version mip
                 std::string line;
                 std::string spotline;
-                int cont = 0;
+                //       int cont = 0;
 
                 while (getline (fic0, line)) {
                     spotline = line;
@@ -818,11 +812,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         versionmip = std::stoi (strversion.c_str());
                     }
 
-                    if (spotline.substr (0, pos) == "Spot") {
-                        // string str2 = spotline.substr (pos + 1, (posend - pos));
-                        cont = 0;
-                    }
-
+                    /*
+                                        if (spotline.substr (0, pos) == "Spot") {
+                                            // string str2 = spotline.substr (pos + 1, (posend - pos));
+                                            //              cont = 0;
+                                        }
+                    */
 
                 }
 
@@ -831,7 +826,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             printf ("mipvers=%i\n", versionmip);
             ifstream fic (datal, ios::in);
-            bool reinit = false;
 
 
 
@@ -1155,7 +1149,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     siz = 69;    //to avoid crash
                 }
 
-                int s_cur[siz + 1];
                 int s_datcur[siz + 1];
 
                 for (int j = 0; j < siz; j++) {
@@ -1178,7 +1171,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     sizl = 69;//to avoid crash
                 }
 
-                int s_curl[sizl + 1];
+                //      int s_curl[sizl + 1];
                 int s_datcurl[sizl + 1];
 
                 for (int j = 0; j < sizl; j++) {
@@ -1201,7 +1194,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     sizc = 69;//to avoid crash
                 }
 
-                int s_curc[sizc + 1];
+                //      int s_curc[sizc + 1];
                 int s_datcurc[sizc + 1];
 
                 for (int j = 0; j < sizc; j++) {
@@ -1225,7 +1218,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     sizh = 69;//to avoid crash
                 }
 
-                int s_curh[sizh + 1];
+                //     int s_curh[sizh + 1];
                 int s_datcurh[sizh + 1];
 
                 for (int j = 0; j < sizh; j++) {
@@ -1265,7 +1258,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
 
             int ns = 0;
-            int realsp = params.locallab.nbspot;
+            //    int realsp = params.locallab.nbspot;
             bool excurvret = true;
             bool excurvll = true;
             bool excurvlh = true;
@@ -1308,10 +1301,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     maxind = 57;
                 }
 
-                int sizecu;
-                int sizell;
-                int sizelh;
-                int sizecc;
 
                 while (getline (fich, line)) {
                     spotline = line;
@@ -1351,72 +1340,69 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                     if (excurvret && spotline.substr (0, pos) == "curveReti") {
                         std::string curstr;
-                        int longecur;
                         std::string strend = spotline.substr (posend - 1, 1);
-                        std::size_t posz = spotline.find (strend);
-                        int longe;
 
                         for (int sl = 0; sl < 69; sl++) {
                             if (delim[sl] == strend) {
-                                longe = sl + 1;
+                                //             longe = sl + 1;
                             }
                         }
 
                         retistr[ns] = str3;
-                        sizecu = longe;
+                        //    sizecu = longe;
 
                     }
 
                     if (excurvll && spotline.substr (0, pos) == "curveLL") {
                         std::string curstrl;
-                        int longecurl;
+                        //      int longecurl;
                         std::string strendl = spotline.substr (posend - 1, 1);
-                        std::size_t poszl = spotline.find (strendl);
-                        int longel;
+                        //      std::size_t poszl = spotline.find (strendl);
+                        //      int longel;
 
                         for (int sl = 0; sl < 69; sl++) {
                             if (delim[sl] == strendl) {
-                                longel = sl + 1;
+                                //             longel = sl + 1;
                             }
                         }
 
                         llstr[ns] = str3;
-                        sizell = longel;
+                        //    sizell = longel;
                     }
 
 
                     if (excurvlh && spotline.substr (0, pos) == "curveLH") {
                         std::string curstrh;
-                        int longecurh;
+                        //      int longecurh;
                         std::string strendh = spotline.substr (posend - 1, 1);
-                        std::size_t poszh = spotline.find (strendh);
-                        int longeh;
+                        //      std::size_t poszh = spotline.find (strendh);
+                        //      int longeh;
 
                         for (int sh = 0; sh < 69; sh++) {
                             if (delim[sh] == strendh) {
-                                longeh = sh + 1;
+                                //             longeh = sh + 1;
                             }
                         }
 
                         lhstr[ns] = str3;
-                        sizelh = longeh;
+                        //    sizelh = longeh;
                     }
 
                     if (excurvcc && spotline.substr (0, pos) == "curveCC") {
                         std::string curstrc;
-                        int longecurc;
+                        //      int longecurc;
                         std::string strendc = spotline.substr (posend - 1, 1);
-                        std::size_t poszc = spotline.find (strendc);
-                        int longec;
+                        //      std::size_t poszc = spotline.find (strendc);
+                        //      int longec;
 
                         for (int sl = 0; sl < 69; sl++) {
                             if (delim[sl] == strendc) {
-                                longec = sl + 1;
+                                //             longec = sl + 1;
                             }
                         }
 
                         ccstr[ns] = str3;
-                        sizecc = longec;
+                        //     sizecc = longec;
                     }
 
 
@@ -1645,10 +1631,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int cont2 = 0;
                     int ns2 = 0;
                     int maxin = 58;
-                    int sizecu2;
-                    int sizell2;
-                    int sizelh2;
-                    int sizecc2;
+                    //      int sizecu2;
+                    //     int sizell2;
+                    //     int sizelh2;
+                    //      int sizecc2;
 
                     while (getline (fich2, line2)) {
                         spotline2 = line2;
@@ -1687,74 +1673,74 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                         if (spotline2.substr (0, pos2) == "curveReti") {
                             std::string curstr2;
-                            int longecur2;
+                            //    int longecur2;
                             std::string strend2 = spotline2.substr (posend2 - 1, 1);
-                            std::size_t posz2 = spotline2.find (strend2);
-                            int longe2;
+                            //    std::size_t posz2 = spotline2.find (strend2);
+                            //    int longe2;
 
                             for (int sl = 0; sl < 69; sl++) {
                                 if (delim[sl] == strend2) {
-                                    longe2 = sl + 1;
+                                    //           longe2 = sl + 1;
                                 }
                             }
 
                             retistr[ns] = str32;
-                            sizecu2 = longe2;
+                            //     sizecu2 = longe2;
 
                         }
 
                         if (spotline2.substr (0, pos2) == "curveLL") {
                             std::string curstr2l;
-                            int longecur2l;
+                            //      int longecur2l;
                             std::string strend2l = spotline2.substr (posend2 - 1, 1);
-                            std::size_t posz2l = spotline2.find (strend2l);
-                            int longe2l;
+                            //      std::size_t posz2l = spotline2.find (strend2l);
+                            //      int longe2l;
 
                             for (int sl = 0; sl < 69; sl++) {
                                 if (delim[sl] == strend2l) {
-                                    longe2l = sl + 1;
+                                    //        longe2l = sl + 1;
                                 }
                             }
 
                             llstr[ns] = str32;
-                            sizell2 = longe2l;
+                            //    sizell2 = longe2l;
 
                         }
 
 
                         if (spotline2.substr (0, pos2) == "curveLH") {
                             std::string curstr2h;
-                            int longecur2h;
+                            //      int longecur2h;
                             std::string strend2h = spotline2.substr (posend2 - 1, 1);
-                            std::size_t posz2h = spotline2.find (strend2h);
-                            int longe2h;
+                            //      std::size_t posz2h = spotline2.find (strend2h);
+                            //      int longe2h;
 
                             for (int sh = 0; sh < 69; sh++) {
                                 if (delim[sh] == strend2h) {
-                                    longe2h = sh + 1;
+                                    //          longe2h = sh + 1;
                                 }
                             }
 
                             lhstr[ns] = str32;
-                            sizelh2 = longe2h;
+                            //    sizelh2 = longe2h;
 
                         }
 
                         if (spotline2.substr (0, pos2) == "curveCC") {
                             std::string curstr2c;
-                            int longecur2c;
+                            //      int longecur2c;
                             std::string strend2c = spotline2.substr (posend2 - 1, 1);
-                            std::size_t posz2lc = spotline2.find (strend2c);
-                            int longe2c;
+                            //      std::size_t posz2lc = spotline2.find (strend2c);
+                            //      int longe2c;
 
                             for (int sl = 0; sl < 69; sl++) {
                                 if (delim[sl] == strend2c) {
-                                    longe2c = sl + 1;
+                                    //              longe2c = sl + 1;
                                 }
                             }
 
                             ccstr[ns] = str32;
-                            sizecc2 = longe2c;
+                            //    sizecc2 = longe2c;
 
                         }
 
@@ -1999,7 +1985,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 params.locallab.localTgaincurve.clear();
                 params.locallab.localTgaincurve = cretiend;
 
-                int lenc = params.locallab.localTgaincurve.size();
+                //       int lenc = params.locallab.localTgaincurve.size();
 
                 params.locallab.llcurve.clear();
                 params.locallab.llcurve = cllend;
@@ -2048,7 +2034,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
 
 
-            int sis = 1;
+            //   int sis = 1;
             params.locallab.hueref = INFINITY;
             params.locallab.chromaref = INFINITY;
             params.locallab.lumaref = INFINITY;
@@ -2251,7 +2237,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             params.locallab.localTgaincurve.clear();
             params.locallab.localTgaincurve = cretiend;
 
-            int lenc = params.locallab.localTgaincurve.size();
+            //      int lenc = params.locallab.localTgaincurve.size();
 
 
             delete [] s_datc;
