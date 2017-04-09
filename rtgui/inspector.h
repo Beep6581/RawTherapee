@@ -25,8 +25,8 @@
 
 class InspectorBuffer
 {
-private:
-    int infoFromImage (const Glib::ustring& fname);
+//private:
+//    int infoFromImage (const Glib::ustring& fname);
 
 public:
     BackBuffer imgBuffer;

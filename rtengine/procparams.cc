@@ -8339,7 +8339,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && wavelet.sup == other.wavelet.sup
         && wavelet.sky == other.wavelet.sky
         && wavelet.thres == other.wavelet.thres
-        && wavelet.threshold == other.wavelet.threshold
         && wavelet.chroma == other.wavelet.chroma
         && wavelet.chro == other.wavelet.chro
         && wavelet.tmr == other.wavelet.tmr

@@ -964,7 +964,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     gm = camwbGreen / gm;
     bm = camwbBlue / bm;
     double mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
-    double logDefGain = 0.0;
     float rmi, gmi, bmi;
 
     rmi = rm * defGain / mul_lum;
@@ -1083,6 +1082,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
 
     if (params.toneCurve.autoexp && aeHistogram) {
+        double logDefGain = 0.0;
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
     }
 
@@ -1487,7 +1487,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
 
     // to utilize the 8 bit color range of the thumbnail we brighten it and apply gamma correction
     unsigned char* tmpdata = new unsigned char[thumbImg->getHeight() * trim_width];
-    int ix = 0, max;
+    int ix = 0;
 
     if (gammaCorrected) {
         // if it's gamma correct (usually a RAW), we have the problem that there is a lot noise etc. that makes the maximum way too high.
@@ -1571,7 +1571,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         }
     } else {
         // If it's not gamma corrected (usually a JPG) we take the normal maximum
-        max = 0;
+        int max = 0;
 
         if (thumbImg->getType() == sImage8) {
             Image8 *image = static_cast<Image8*>(thumbImg);

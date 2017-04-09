@@ -149,7 +149,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
 #endif
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
-    double wip[3][3] = {
+    const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}

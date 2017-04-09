@@ -1817,7 +1817,7 @@ void Color::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v)
     v = 9.0 * Y / (X + 15 * Y + 3 * Z) - v0;
 }
 
-void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, double wp[3][3])
+void Color::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, const double wp[3][3])
 {
     float u1 = u + u0;
     float v1 = v + v0;

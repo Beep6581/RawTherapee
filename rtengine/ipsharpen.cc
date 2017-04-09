@@ -267,26 +267,26 @@ void ImProcFunctions::sharpenHaloCtrl (float** luminance, float** blurmap, float
 #endif
 
     for (int i = 2; i < H - 2; i++) {
-        float max1 = 0, max2 = 0, min1 = 0, min2 = 0, maxn, minn, np1, np2, np3, min_, max_, labL;
+        float max1 = 0, max2 = 0, min1 = 0, min2 = 0;
 
         for (int j = 2; j < W - 2; j++) {
             // compute 3 iterations, only forward
-            np1 = 2.f * (nL[i - 2][j] + nL[i - 2][j + 1] + nL[i - 2][j + 2] + nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2]) / 27.f + nL[i - 1][j + 1] / 3.f;
-            np2 = 2.f * (nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2]) / 27.f + nL[i]  [j + 1] / 3.f;
-            np3 = 2.f * (nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2] + nL[i + 2][j] + nL[i + 2][j + 1] + nL[i + 2][j + 2]) / 27.f + nL[i + 1][j + 1] / 3.f;
+            float np1 = 2.f * (nL[i - 2][j] + nL[i - 2][j + 1] + nL[i - 2][j + 2] + nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2]) / 27.f + nL[i - 1][j + 1] / 3.f;
+            float np2 = 2.f * (nL[i - 1][j] + nL[i - 1][j + 1] + nL[i - 1][j + 2] + nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2]) / 27.f + nL[i]  [j + 1] / 3.f;
+            float np3 = 2.f * (nL[i]  [j] + nL[i]  [j + 1] + nL[i]  [j + 2] + nL[i + 1][j] + nL[i + 1][j + 1] + nL[i + 1][j + 2] + nL[i + 2][j] + nL[i + 2][j + 1] + nL[i + 2][j + 2]) / 27.f + nL[i + 1][j + 1] / 3.f;
 
             // Max/Min of all these deltas and the last two max/min
-            maxn = max(np1, np2, np3);
-            minn = min(np1, np2, np3);
-            max_ = max(max1, max2, maxn);
-            min_ = min(min1, min2, minn);
+            float maxn = max(np1, np2, np3);
+            float minn = min(np1, np2, np3);
+            float max_ = max(max1, max2, maxn);
+            float min_ = min(min1, min2, minn);
 
             // Shift the queue
             max1 = max2;
             max2 = maxn;
             min1 = min2;
             min2 = minn;
-            labL = luminance[i][j];
+            float labL = luminance[i][j];
 
             if (max_ < labL) {
                 max_ = labL;

@@ -2110,12 +2110,6 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
         // No histogram
         if (!oldPosition) {
             // An histogram actually exist, we delete it
-            if      (oldPosition == 1) {
-                removeIfThere (leftbox, histogramPanel, false);
-            } else if (oldPosition == 2) {
-                removeIfThere (vboxright, histogramPanel, false);
-            }
-
             delete histogramPanel;
             histogramPanel = nullptr;
         }

@@ -864,7 +864,7 @@ cmsHPROFILE rtengine::ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
     } tags[tag_count];
 
     const uint32_t gamma = 0x239;
-    int gamma_size =(gamma == 0 || gamma == 256) ? 12 : 14;
+    int gamma_size = 14;
     int data_size =(gamma_size + 3) & ~3;
 
     for (uint32_t i = 0; i < tag_count; i++) {

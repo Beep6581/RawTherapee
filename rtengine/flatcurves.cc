@@ -30,9 +30,8 @@ FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn
     poly_x.clear();
     poly_y.clear();
 
-    bool identity = true;
-
     if (p.size() > 4) {
+        bool identity = true;
         kind = (FlatCurveType)p[0];
 
         if (kind == FCT_MinMaxCPoints) {
@@ -146,7 +145,6 @@ void FlatCurve::CtrlPoints_set ()
         double length;
         double dx;
         double dy;
-        double xp1, xp2, yp2, xp3;
         bool startLinear, endLinear;
 
         startLinear = (rightTangent[i]   == 0.) || (y[i] == y[i + 1]);
@@ -171,6 +169,7 @@ void FlatCurve::CtrlPoints_set ()
             sc_length[k++] = length;
             total_length += length;
         } else {
+            double xp1, xp2, yp2, xp3;
             if (startLinear) {
                 xp1 = x[i];
             } else {
@@ -363,7 +362,6 @@ double FlatCurve::getVal (double t) const
         }
 
         return poly_y[k_lo] + (t - poly_x[k_lo]) * dyByDx[k_lo];
-        break;
     }
 
     /*case Parametric : {

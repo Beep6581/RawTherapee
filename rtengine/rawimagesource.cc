@@ -501,7 +501,7 @@ RawImageSource::~RawImageSource ()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &ssy1, int &width, int &height, int &fw)
+void RawImageSource::transformRect (const PreviewProps &pp, int tran, int &ssx1, int &ssy1, int &width, int &height, int &fw)
 {
     int pp_x = pp.getX() + border;
     int pp_y = pp.getY() + border;
@@ -1490,7 +1490,7 @@ void RawImageSource::getFullSize (int& w, int& h, int tr)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getSize (PreviewProps pp, int& w, int& h)
+void RawImageSource::getSize (const PreviewProps &pp, int& w, int& h)
 {
     w = pp.getWidth() / pp.getSkip() + (pp.getWidth() % pp.getSkip() > 0);
     h = pp.getHeight() / pp.getSkip() + (pp.getHeight() % pp.getSkip() > 0);
@@ -2297,7 +2297,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, RetinexPar
         }
     } else {
         TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (cmp.working);
-        float wp[3][3] = {
+        const float wp[3][3] = {
             {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
             {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
             {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
