@@ -1469,7 +1469,7 @@ SSEFUNCTION void ImProcFunctions::BadpixelsLab(LabImage * src, LabImage * dst, d
 #ifdef __SSE2__
 
             for (; j < width - 5; j += 4) {
-                vfloat shfabsv = vabsf(LVFU(src->L[i][j]) - LVFU(tmL[i][j]));
+                shfabsv = vabsf(LVFU(src->L[i][j]) - LVFU(tmL[i][j]));
                 shmedv = ZEROV;
 
                 for (i1 = max(0, i - 2); i1 <= min(i + 2, height - 1); i1++ )
