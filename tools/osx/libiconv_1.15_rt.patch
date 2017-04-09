@@ -1,0 +1,30 @@
+diff --git a/lib/iconv.c b/lib/iconv.c
+index 31853a7..630a498 100644
+--- a/lib/iconv.c
++++ b/lib/iconv.c
+@@ -611,4 +611,25 @@ strong_alias (libiconv, iconv)
+ strong_alias (libiconv_close, iconv_close)
+ #endif
+ 
++#undef iconv_open
++#undef iconv
++#undef iconv_close
++
++LIBICONV_DLL_EXPORTED iconv_t iconv_open (const char* tocode, const char* fromcode)
++{
++  return libiconv_open(tocode, fromcode);
++}
++
++LIBICONV_DLL_EXPORTED size_t iconv (iconv_t icd,
++                                    ICONV_CONST char * * inbuf, size_t *inbytesleft,
++                                    char * * outbuf, size_t *outbytesleft)
++{
++  return libiconv(icd, inbuf, inbytesleft, outbuf, outbytesleft);
++}
++
++LIBICONV_DLL_EXPORTED int iconv_close (iconv_t icd)
++{
++  return libiconv_close(icd);
++}
++
+ #endif
