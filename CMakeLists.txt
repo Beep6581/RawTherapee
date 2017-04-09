@@ -4,7 +4,7 @@ else()
     cmake_minimum_required(VERSION 2.6)
 endif()
 
-# Must stay before the 'project' command:
+# Must stay before the PROJECT() command:
 if(${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
     set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
     # Users building with Eclipse should set CMAKE_ECLIPSE_VERSION through the
@@ -117,7 +117,7 @@ option(AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI 
 # Set installation directories:
 if(WIN32 OR APPLE)
     if(BUILD_BUNDLE)
-        message(STATUS "You have set BUILD_BUNDLE=ON but this is not necessary - the option if force to ON on Windows and macOS.")
+        message(STATUS "You have set BUILD_BUNDLE=ON but this is not necessary - the option is forced to ON for Windows and macOS.")
     endif()
     set (BUILD_BUNDLE ON FORCE)
 endif()
@@ -414,6 +414,7 @@ list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/UpdateInfo.cmake")
 add_custom_target(UpdateInfo ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
     COMMENT "Creating AboutThisBuild.txt and other version-dependent files")
+
 ### End generating AboutThisBuild.txt
 
 install(FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
@@ -421,8 +422,10 @@ install(FILES LICENSE.txt DESTINATION "${LICENCEDIR}")
 install(FILES "${CMAKE_BINARY_DIR}/AboutThisBuild.txt" DESTINATION "${CREDITSDIR}")
 install(FILES RELEASE_NOTES.txt DESTINATION "${CREDITSDIR}" OPTIONAL)
 
+# The standard location for man pages in Linux is /usr/share/man
+# Use "manpath" to see the search paths for man pages on your system.
 if(UNIX OR WIN32)
-    install(FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${DOCDIR}/man")
+    install(FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
 endif()
 
 if(WIN32)
