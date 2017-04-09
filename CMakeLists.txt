@@ -46,6 +46,7 @@ message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 # Cache name suffix examples: "" = ~/.config/RawTherapee, "5" = ~/.config/RawTherapee-5, "_testing" = ~/.config/RawTherapee_testing
+# Use "" for stable releases and "5-dev" for anything else.
 set(CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix")
 
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is set to 0.
@@ -100,8 +101,8 @@ if(APPLE)
     endif()
 endif()
 
-option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
-option(BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
+option(USE_EXPERIMENTAL_LANG_VERSIONS "Build with -std=c++0x" OFF)
+option(BUILD_SHARED "Build with shared libraries" OFF)
 option(WITH_BZIP "Build with Bzip2 support" ON)
 option(WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option(WITH_LTO "Build with link-time optimizations" OFF)
@@ -109,8 +110,9 @@ option(WITH_SAN "Build with run-time sanitizer" OFF)
 option(WITH_PROF "Build with profiling instrumentation" OFF)
 option(OPTION_OMP "Build with OpenMP support" ON)
 option(STRICT_MUTEX "True (recommended): MyMutex will behave like POSIX Mutex; False: MyMutex will behave like POSIX RecMutex; Note: forced to ON for Debug builds" ON)
-option(TRACE_MYRWMUTEX "Trace RT's custom R/W Mutex (Debug builds only); redirecting std::out to a file is strongly recommended!" OFF)
+option(TRACE_MYRWMUTEX "Trace custom R/W Mutex (Debug builds only); redirecting std::out to a file is strongly recommended!" OFF)
 option(AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI thread; set it ON if you experience X Server warning/errors" OFF)
+#option(TARGET32BIT "Build for 32-bit architecture when ON, otherwise 64-bit. Default is OFF" OFF)
 
 # Set installation directories:
 if(WIN32 OR APPLE)
