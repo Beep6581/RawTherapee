@@ -119,11 +119,11 @@ int main (int argc, char **argv)
 {
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
-    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
 
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
     gdk_threads_init();
+    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
     Gio::init ();
 
     //mainThread = Glib::Threads::Thread::self();
@@ -204,8 +204,8 @@ int main (int argc, char **argv)
                         break;
                     }
 
-                if(Console && AllocConsole()) {
-                    AttachConsole( GetCurrentProcessId() ) ;
+                if (Console && AllocConsole()) {
+                    AttachConsole ( GetCurrentProcessId() ) ;
                     // Don't allow CTRL-C in console to terminate RT
                     SetConsoleCtrlHandler ( NULL, true );
                     // Set title of console
@@ -242,13 +242,13 @@ int main (int argc, char **argv)
             }
         }
 
-        if(argc > 1) {
-            int ret = processLineParams( argc, argv);
+        if (argc > 1) {
+            int ret = processLineParams ( argc, argv);
 
-            if( ret <= 0 ) {
-                if(consoleOpened) {
-                    printf("Press any key to exit RawTherapee\n");
-                    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+            if ( ret <= 0 ) {
+                if (consoleOpened) {
+                    printf ("Press any key to exit RawTherapee\n");
+                    FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
                     getch();
                 }
 
@@ -304,7 +304,7 @@ int main (int argc, char **argv)
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
     defaultIconTheme->append_search_path (icon_path);
 
-    rtengine::setPaths(options);
+    rtengine::setPaths (options);
     MyExpander::init();  // has to stay AFTER rtengine::setPaths
 
     // ------- loading theme files
@@ -420,43 +420,43 @@ int processLineParams ( int argc, char **argv )
 {
     unsigned errors = 0;
 
-    for( int iArg = 1; iArg < argc; iArg++) {
-        if( argv[iArg][0] == '-' ) {
-            switch( argv[iArg][1] ) {
+    for ( int iArg = 1; iArg < argc; iArg++) {
+        if ( argv[iArg][0] == '-' ) {
+            switch ( argv[iArg][1] ) {
 #ifdef WIN32
 
                 case 'w': // This case is handled outside this function
                     break;
 #endif
 
-            case 'h':
-            case '?':
-            default: {
-                Glib::ustring pparamsExt = paramFileExtension.substr(1);
-                std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
-                std::cout << std::endl;
-                std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
-                std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
-                std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
-                std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
-                std::cout << std::endl;
-                std::cout << "Symbols:" << std::endl;
-                std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
-                std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
-                std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
-                std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
-                std::cout << std::endl;
-                std::cout << "Usage:" << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
-                std::cout << std::endl;
-                std::cout << "Options:" << std::endl;
+                case 'h':
+                case '?':
+                default: {
+                    Glib::ustring pparamsExt = paramFileExtension.substr (1);
+                    std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
+                    std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
+                    std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
+                    std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "Symbols:" << std::endl;
+                    std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
+                    std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
+                    std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
+                    std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "Usage:" << std::endl;
+                    std::cout << "  " << Glib::path_get_basename (argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
+                    std::cout << "  " << Glib::path_get_basename (argv[0]) << " <file>             Start Image Editor with file." << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "Options:" << std::endl;
 #ifdef WIN32
-                std::cout << "  -w Do not open the Windows console" << std::endl;
+                    std::cout << "  -w Do not open the Windows console" << std::endl;
 #endif
-                std::cout << "  -h -? Display this help message" << std::endl;
-                return -1;
-            }
+                    std::cout << "  -h -? Display this help message" << std::endl;
+                    return -1;
+                }
             }
         } else {
             argv1 = fname_to_utf8 (argv[iArg]);
