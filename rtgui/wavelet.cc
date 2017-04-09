@@ -877,6 +877,8 @@ Wavelet::Wavelet() :
 
 Wavelet::~Wavelet ()
 {
+    idle_register.destroy();
+
     delete opaCurveEditorG;
     delete opacityCurveEditorG;
     delete CCWcurveEditorG;
@@ -887,26 +889,28 @@ Wavelet::~Wavelet ()
     delete opacityCurveEditorWL;
 }
 
-int wavUpdateUI (void* data)
-{
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
-    (static_cast<Wavelet*>(data))->wavComputed_ ();
-    return 0;
-}
-
 void Wavelet::wavChanged (double nlevel)
 {
     nextnlevel = nlevel;
-    g_idle_add (wavUpdateUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+        static_cast<Wavelet*>(data)->wavComputed_();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
+
 bool Wavelet::wavComputed_ ()
 {
-
     disableListener ();
     enableListener ();
     updatewavLabel ();
     return false;
 }
+
 void Wavelet::updatewavLabel ()
 {
     if (!batchMode) {

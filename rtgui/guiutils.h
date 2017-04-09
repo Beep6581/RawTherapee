@@ -44,15 +44,13 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
 gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
 
-guint add_idle (GSourceFunc function, gpointer data);
-
 class IdleRegister final :
     public rtengine::NonCopyable
 {
 public:
     ~IdleRegister();
 
-    void add(GSourceFunc function, gpointer data);
+    void add(GSourceFunc function, gpointer data, gint priority = G_PRIORITY_DEFAULT_IDLE);
     void destroy();
 
 private:

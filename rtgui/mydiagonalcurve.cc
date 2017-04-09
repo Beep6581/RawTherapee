@@ -49,6 +49,7 @@ MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false)
 
 MyDiagonalCurve::~MyDiagonalCurve ()
 {
+    idle_register.destroy();
 
     delete [] bghist;
 }
@@ -1492,38 +1493,13 @@ void MyDiagonalCurve::setType (DiagonalCurveType t)
 
 void MyDiagonalCurve::setActiveParam (int ac)
 {
-
     activeParam = ac;
     setDirty(true);
     queue_draw ();
 }
 
-int diagonalmchistupdateUI (void* data)
-{
-
-    MyCurveIdleHelper* mcih = static_cast<MyCurveIdleHelper*>(data);
-
-    if (mcih->destroyed) {
-        if (mcih->pending == 1) {
-            delete mcih;
-        } else {
-            mcih->pending--;
-        }
-
-        return 0;
-    }
-
-    mcih->clearPixmap ();
-    mcih->myCurve->queue_draw ();
-
-    mcih->pending--;
-
-    return 0;
-}
-
 void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist)
 {
-
     if (hist) {
         //memcpy (bghist, hist, 256*sizeof(unsigned int));
         for (int i = 0; i < 256; i++) {
@@ -1537,14 +1513,33 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist)
     }
 
     mcih->pending++;
-    // Can be done outside of the GUI thread, so we're using g_idle_add instead of add_idle
-    g_idle_add (diagonalmchistupdateUI, mcih);
 
+    const auto func = [](gpointer data) -> gboolean {
+        MyCurveIdleHelper* const mcih = static_cast<MyCurveIdleHelper*>(data);
+
+        if (mcih->destroyed) {
+            if (mcih->pending == 1) {
+                delete mcih;
+            } else {
+                mcih->pending--;
+            }
+
+            return 0;
+        }
+
+        mcih->clearPixmap ();
+        mcih->myCurve->queue_draw ();
+
+        mcih->pending--;
+
+        return FALSE;
+    };
+
+    idle_register.add(func, mcih);
 }
 
 void MyDiagonalCurve::reset(const std::vector<double> &resetCurve, double identityValue)
 {
-
     stopNumericalAdjustment();
 
     if (!resetCurve.empty()) {

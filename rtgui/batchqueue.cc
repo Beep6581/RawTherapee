@@ -388,16 +388,6 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     return savedParamPath;
 }
 
-int cancelItemUI (void* data)
-{
-    const auto bqe = static_cast<BatchQueueEntry*>(data);
-
-    g_remove (bqe->savedParamsFile.c_str ());
-    delete bqe;
-
-    return 0;
-}
-
 void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
@@ -422,7 +412,16 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            g_idle_add (cancelItemUI, entry);
+            const auto func = [](gpointer data) -> gboolean {
+                const BatchQueueEntry* const bqe = static_cast<BatchQueueEntry*>(data);
+
+                ::g_remove(bqe->savedParamsFile.c_str());
+                delete bqe;
+
+                return FALSE;
+            };
+
+            idle_register.add(func, entry);
         }
 
         for (const auto entry : fd)
@@ -882,12 +881,6 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     return "";
 }
 
-int setProgressUI (void* p)
-{
-    (static_cast<BatchQueue*>(p))->redraw();
-    return 0;
-}
-
 void BatchQueue::setProgress (double p)
 {
 
@@ -896,7 +889,12 @@ void BatchQueue::setProgress (double p)
     }
 
     // No need to acquire the GUI, setProgressUI will do it
-    g_idle_add (setProgressUI, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<BatchQueue*>(data)->redraw();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData)

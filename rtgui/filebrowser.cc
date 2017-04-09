@@ -456,6 +456,8 @@ FileBrowser::FileBrowser ()
 
 FileBrowser::~FileBrowser ()
 {
+    idle_register.destroy();
+
     profileStore.removeListener(this);
     delete pmenu;
     delete pmenuColorLabels;
@@ -542,46 +544,44 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
     }
 }
 
-struct addparams {
-    FileBrowserIdleHelper* fbih;
-    FileBrowserEntry* entry;
-};
-
-int AddEntryUIThread (void* data)
-{
-
-    addparams* ap = static_cast<addparams*>(data);
-    FileBrowserIdleHelper* fbih = ap->fbih;
-
-    if (fbih->destroyed) {
-        if (fbih->pending == 1) {
-            delete fbih;
-        } else {
-            fbih->pending--;
-        }
-
-        delete ap->entry;
-        delete ap;
-
-        return 0;
-    }
-
-    ap->fbih->fbrowser->addEntry_ (ap->entry);
-    delete ap;
-    fbih->pending--;
-
-    return 0;
-}
-
 void FileBrowser::addEntry (FileBrowserEntry* entry)
 {
+    struct addparams {
+        FileBrowserIdleHelper* fbih;
+        FileBrowserEntry* entry;
+    };
 
     fbih->pending++;
     entry->setParent (this);
-    addparams* ap = new addparams;
+    addparams* const ap = new addparams;
     ap->fbih = fbih;
     ap->entry = entry;
-    g_idle_add (AddEntryUIThread, ap);
+
+    const auto func = [](gpointer data) -> gboolean {
+        addparams* const ap = static_cast<addparams*>(data);
+        FileBrowserIdleHelper* fbih = ap->fbih;
+
+        if (fbih->destroyed) {
+            if (fbih->pending == 1) {
+                delete fbih;
+            } else {
+                fbih->pending--;
+            }
+
+            delete ap->entry;
+            delete ap;
+
+            return 0;
+        }
+
+        ap->fbih->fbrowser->addEntry_ (ap->entry);
+        delete ap;
+        fbih->pending--;
+
+        return FALSE;
+    };
+
+    idle_register.add(func, ap);
 }
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry)
@@ -1915,12 +1915,6 @@ void FileBrowser::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextP
     }
 }
 
-int refreshThumbImagesUI (void* data)
-{
-    (static_cast<FileBrowser*>(data))->_thumbRearrangementNeeded ();
-    return 0;
-}
-
 void FileBrowser::_thumbRearrangementNeeded ()
 {
     refreshThumbImages ();  // arrangeFiles is NOT enough
@@ -1928,8 +1922,13 @@ void FileBrowser::_thumbRearrangementNeeded ()
 
 void FileBrowser::thumbRearrangementNeeded ()
 {
-    // refreshThumbImagesUI will handle thread safety itself
-    g_idle_add (refreshThumbImagesUI, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileBrowser*>(data)->_thumbRearrangementNeeded();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void FileBrowser::selectionChanged ()
