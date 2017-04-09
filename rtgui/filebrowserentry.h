@@ -57,6 +57,8 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
 
     ImgEditState state;
 
+    IdleRegister idle_register;
+
     bool onArea (CursorArea a, int x, int y);
     void updateCursor (int x, int y);
     void drawStraightenGuide (Cairo::RefPtr<Cairo::Context> c);

@@ -101,6 +101,11 @@ DirBrowser::DirBrowser () : dirTreeModel(),
     scrolledwindow4->show ();
 }
 
+DirBrowser::~DirBrowser()
+{
+    idle_register.destroy();
+}
+
 void DirBrowser::fillDirTree ()
 {
 
@@ -228,16 +233,16 @@ int updateVolumesUI (void* br)
     (static_cast<DirBrowser*>(br))->updateVolumes ();
     return 1;
 }
-int updateDirTreeUI (void* br)
-{
-    (static_cast<DirBrowser*>(br))->updateDirTreeRoot ();
-    return 0;
-}
 
 void DirBrowser::winDirChanged ()
 {
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<DirBrowser*>(data)->updateDirTreeRoot();
 
-    g_idle_add (updateDirTreeUI, this);
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 #endif
 

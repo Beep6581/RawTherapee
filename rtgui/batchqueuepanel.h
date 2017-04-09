@@ -53,9 +53,11 @@ class BatchQueuePanel : public Gtk::VBox,
     Gtk::HBox* bottomBox;
     Gtk::HBox* topBox;
 
-public:
+    IdleRegister idle_register;
 
+public:
     explicit BatchQueuePanel (FileCatalog* aFileCatalog);
+    ~BatchQueuePanel();
 
     void init (RTWindow* parent);
 

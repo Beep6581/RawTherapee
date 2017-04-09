@@ -67,6 +67,7 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
 
 FileBrowserEntry::~FileBrowserEntry ()
 {
+    idle_register.destroy();
 
     // so jobs arriving now do nothing
     if (feih->pending) {
@@ -176,39 +177,6 @@ void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt)
     }
 }
 
-struct tiupdate {
-    FileBrowserEntryIdleHelper* feih;
-    rtengine::IImage8* img;
-    double scale;
-    rtengine::procparams::CropParams cropParams;
-};
-
-int updateImageUI (void* data)
-{
-
-    tiupdate* params = static_cast<tiupdate*>(data);
-    FileBrowserEntryIdleHelper* feih = params->feih;
-
-    if (feih->destroyed) {
-        if (feih->pending == 1) {
-            delete feih;
-        } else {
-            feih->pending--;
-        }
-
-        params->img->free ();
-        delete params;
-        return 0;
-    }
-
-    feih->fbentry->_updateImage (params->img, params->scale, params->cropParams);
-    feih->pending--;
-
-    delete params;
-
-    return 0;
-}
-
 void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams)
 {
 
@@ -225,16 +193,51 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
         feih->pending++;
     }
 
-    tiupdate* param = new tiupdate ();
-    param->feih = feih;
-    param->img = img;
-    param->scale = scale;
-    param->cropParams = cropParams;
+    struct tiupdate {
+        FileBrowserEntryIdleHelper* feih;
+        rtengine::IImage8* img;
+        double scale;
+        rtengine::procparams::CropParams cropParams;
+    };
+
+    tiupdate* param = new tiupdate{
+        feih,
+        img,
+        scale,
+        cropParams
+    };
+
 #if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
-    g_idle_add_full (G_PRIORITY_DEFAULT, updateImageUI, param, NULL);
+    const gint priority = G_PRIORITY_DEFAULT;
 #else
-    g_idle_add_full (G_PRIORITY_LOW, updateImageUI, param, nullptr);
+    const gint priority = G_PRIORITY_LOW;
 #endif
+
+    const auto func = [](gpointer data) -> gboolean {
+        tiupdate* const params = static_cast<tiupdate*>(data);
+        FileBrowserEntryIdleHelper* const feih = params->feih;
+
+        if (feih->destroyed) {
+            if (feih->pending == 1) {
+                delete feih;
+            } else {
+                feih->pending--;
+            }
+
+            params->img->free ();
+            delete params;
+            return 0;
+        }
+
+        feih->fbentry->_updateImage (params->img, params->scale, params->cropParams);
+        feih->pending--;
+
+        delete params;
+
+        return FALSE;
+    };
+
+    idle_register.add(func, param, priority);
 }
 
 void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine::procparams::CropParams cropParams)
