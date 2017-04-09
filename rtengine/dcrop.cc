@@ -52,7 +52,7 @@ extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer (editDataProvider), origCrop (nullptr), laboCrop (nullptr), labnCrop (nullptr),
-      cropImg (nullptr), cbuf_real (nullptr),  shbuf_real (nullptr), cshmap (nullptr), transCrop (nullptr), cieCrop (nullptr), cbuffer (nullptr), shbuffer (nullptr),
+      cropImg (nullptr), cbuf_real (nullptr),   cshmap (nullptr), shbuf_real (nullptr), transCrop (nullptr), cieCrop (nullptr), cbuffer (nullptr), shbuffer (nullptr),
       updating (false), newUpdatePending (false), skip (10),
       cropx (0), cropy (0), cropw (-1), croph (-1),
       trafx (0), trafy (0), trafw (-1), trafh (-1),
@@ -832,7 +832,7 @@ void Crop::update (int todo)
         locallutili = false;
         int sca = skip;
 
-        bool tyty = false;
+        //    bool tyty = false;
         int maxspot = settings->nspot + 1;
 
         if (needslocal ) {
@@ -860,10 +860,10 @@ void Crop::update (int todo)
             ifstream fich (datalab, ios::in);
 
             if (fich  && parent->versionmip != 0) {//to avoid crash in some cases
-                int **dataspotd;
+                //  int **dataspotd;
 
                 int realspot = params.locallab.nbspot;
-                bool tata = true;
+                //  bool tata = true;
                 bool locutili = parent->locutili;
 
 
@@ -1054,7 +1054,7 @@ void Crop::update (int todo)
 
                 int sp ;
                 sp = realspot;
-                bool locutili2 = parent->locutili;
+                //  bool locutili2 = parent->locutili;
                 locallutili = false;
 
                 parent->sps[sp] = sp;
@@ -1285,7 +1285,7 @@ void Crop::update (int todo)
             }
         }
 
-        int moderetinex;
+        //   int moderetinex;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
         parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance (labnCrop);

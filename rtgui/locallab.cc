@@ -39,7 +39,7 @@ extern Options options;
 
 Locallab::Locallab ():
     FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABEL"), false, true),
-    EditSubscriber (ET_OBJECTS), lastObject (-1), draggedPointOldAngle (-1000.),
+    EditSubscriber (ET_OBJECTS), lastObject (-1),
     expcolor (new MyExpander (true, M ("TP_LOCALLAB_COFR"))),
     expblur (new MyExpander (true, M ("TP_LOCALLAB_BLUFR"))),
     exptonemap (new MyExpander (true, M ("TP_LOCALLAB_TM"))),
@@ -137,8 +137,8 @@ Locallab::Locallab ():
     curvactiv (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_CURV")))),
     inversrad (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
     inversret (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
-    inverssha (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS"))))
-
+    inverssha (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
+    draggedPointOldAngle (-1000.)
 
 {
     CurveListener::setMulti (true);
@@ -653,14 +653,15 @@ Locallab::Locallab ():
 
 
     // Instantiating the Editing geometry; positions will be initialized later
-    Line  *hLine, *vLine, *locYLine[2], *locXLine[2];
+//   Line  *hLine, *vLine, *locYLine[2], *locXLine[2];
+    Line  *locYLine[2], *locXLine[2];
     Circle *centerCircle;
 //   Arcellipse *oneellipse;
 
-    Beziers *onebeziers[3];
-    Beziers *twobeziers[3];
-    Beziers *thrbeziers[3];
-    Beziers *foubeziers[3];
+    Beziers *onebeziers[3] = {};
+    Beziers *twobeziers[3] = {};
+    Beziers *thrbeziers[3] = {};
+    Beziers *foubeziers[3] = {};
     float innw = 0.7f;
     // Visible geometry
     locXLine[0] = new Line();
@@ -1208,6 +1209,7 @@ bool Locallab::localretComputed_ ()
         listener->panelChanged (EvlocallabLHshape, M (""));
     }
 
+    return false;
 
 }
 
@@ -1902,11 +1904,12 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
         decayXL = decayX;
     }
 
-    Line *currLine;
-    Circle *currCircle;
+//    Line *currLine;
+//    Circle *currCircle;
     //  Arcellipse *currArcellipse;
-    Beziers *currBeziers;
+//    Beziers *currBeziers;
     double decay;
+    /*
     const auto updateLine = [&] (Geometry * geometry, const float radius, const float begin, const float end) {
         const auto line = static_cast<Line*> (geometry);
         line->begin = PolarCoord (radius, -degree_ + begin);
@@ -1914,7 +1917,7 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
         line->end = PolarCoord (radius, -degree_ + end);
         line->end += origin;
     };
-
+    */
     const auto updateLineWithDecay = [&] (Geometry * geometry, const float radius, const float decal, const float offSetAngle) {
         const auto line = static_cast<Line*> (geometry); //180
         line->begin = PolarCoord (radius, -degree_ + decal) + PolarCoord (decay, -degree_ + offSetAngle);

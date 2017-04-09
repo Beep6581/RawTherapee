@@ -1019,8 +1019,8 @@ private:
 
 
         bool locutili = false;
-        bool locallutili = false;
-        bool localcutili = false;
+        //     bool locallutili = false;
+        //     bool localcutili = false;
 
         if (params.locallab.enabled) {
             MyTime t1, t2;
@@ -1051,10 +1051,10 @@ private:
             LUTf lllocalcurve (65536, 0);
             LUTf cclocalcurve (65536, 0);
 
-            int realspot = params.locallab.nbspot;
+            //    int realspot = params.locallab.nbspot;
             int maxspot = settings->nspot + 1;
             ifstream fic0 (datalab, ios::in);
-            float** shbuffer;
+            float** shbuffer = nullptr;
             int versionmip = 0;
             std::string delim[69] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
                                      "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
@@ -1073,7 +1073,7 @@ private:
                 //find the version mip
                 string line;
                 string spotline;
-                int cont = 0;
+                //   int cont = 0;
 
                 while (getline (fic0, line)) {
                     spotline = line;
@@ -1086,7 +1086,7 @@ private:
                     }
 
                     if (spotline.substr (0, pos) == "Spot") {
-                        cont = 0;
+                        //        cont = 0;
                     }
 
 
@@ -1256,7 +1256,7 @@ private:
                         siz = 69;//avoid crash
                     }
 
-                    int s_cur[siz + 1];
+                    //   int s_cur[siz + 1];
                     int s_datcur[siz + 1];
 
                     for (int j = 0; j < siz; j++) {
@@ -1277,7 +1277,7 @@ private:
                         sizl = 69;
                     }
 
-                    int s_curl[sizl + 1];
+                    //    int s_curl[sizl + 1];
                     int s_datcurl[sizl + 1];
 
                     for (int j = 0; j < sizl; j++) {
@@ -1299,7 +1299,7 @@ private:
                         sizc = 69;
                     }
 
-                    int s_curc[sizc + 1];
+                    //        int s_curc[sizc + 1];
                     int s_datcurc[sizc + 1];
 
                     for (int j = 0; j < sizc; j++) {
@@ -1322,7 +1322,7 @@ private:
                         sizh = 69;
                     }
 
-                    int s_curh[sizh + 1];
+                    //     int s_curh[sizh + 1];
                     int s_datcurh[sizh + 1];
 
                     for (int j = 0; j < sizh; j++) {
@@ -1339,21 +1339,21 @@ private:
 
 
                 }
-                locallutili = false;
+                //     locallutili = false;
 
 
-                int ns;
-                int realsp = params.locallab.nbspot;
+                int ns = 0;
+                //      int realsp = params.locallab.nbspot;
 
                 if (fich) {
 
                     std::string line;
                     std::string spotline;
                     int cont = 0;
-                    int sizecu;
-                    int sizell;
-                    int sizelh;
-                    int sizecc;
+                    //   int sizecu = 0;
+                    //   int sizell;
+                    //   int sizelh;
+                    //   int sizecc;
 
                     while (getline (fich, line)) {
                         spotline = line;
@@ -1392,71 +1392,71 @@ private:
 
                         if (spotline.substr (0, pos) == "curveReti") {
                             std::string curstr;
-                            int longecur;
+                            //        int longecur;
                             std::string strend = spotline.substr (posend - 1, 1);
-                            std::size_t posz = spotline.find (strend);
-                            int longe;
+                            //        std::size_t posz = spotline.find (strend);
+                            //        int longe;
 
                             for (int sl = 0; sl < 69; sl++) {
                                 if (delim[sl] == strend) {
-                                    longe = sl + 1;
+                                    //                longe = sl + 1;
                                 }
                             }
 
                             retistrs[ns] = str3;
-                            sizecu = longe;
+                            //   sizecu = longe;
                         }
 
                         if (spotline.substr (0, pos) == "curveLL") {
                             std::string curstrl;
-                            int longecurl;
+                            //       int longecurl;
                             std::string strendl = spotline.substr (posend - 1, 1);
-                            std::size_t poszl = spotline.find (strendl);
-                            int longel;
+                            //       std::size_t poszl = spotline.find (strendl);
+                            //       int longel;
 
                             for (int sl = 0; sl < 69; sl++) {
                                 if (delim[sl] == strendl) {
-                                    longel = sl + 1;
+                                    //     longel = sl + 1;
                                 }
                             }
 
                             llstrs[ns] = str3;
-                            sizell = longel;
+                            //  sizell = longel;
 
                         }
 
                         if (spotline.substr (0, pos) == "curveLH") {
                             std::string curstrh;
-                            int longecurh;
+                            //      int longecurh;
                             std::string strendh = spotline.substr (posend - 1, 1);
-                            std::size_t poszh = spotline.find (strendh);
-                            int longeh;
+                            //      std::size_t poszh = spotline.find (strendh);
+                            //     int longeh;
 
                             for (int sh = 0; sh < 69; sh++) {
                                 if (delim[sh] == strendh) {
-                                    longeh = sh + 1;
+                                    //            longeh = sh + 1;
                                 }
                             }
 
                             lhstrs[ns] = str3;
-                            sizelh = longeh;
+                            //    sizelh = longeh;
                         }
 
                         if (spotline.substr (0, pos) == "curveCC") {
                             std::string curstrc;
-                            int longecurc;
+                            //       int longecurc;
                             std::string strendc = spotline.substr (posend - 1, 1);
-                            std::size_t poszc = spotline.find (strendc);
-                            int longec;
+                            //       std::size_t poszc = spotline.find (strendc);
+                            //      int longec;
 
                             for (int sh = 0; sh < 69; sh++) {
                                 if (delim[sh] == strendc) {
-                                    longec = sh + 1;
+                                    //               longec = sh + 1;
                                 }
                             }
 
                             ccstrs[ns] = str3;
-                            sizecc = longec;
+                            //    sizecc = longec;
                         }
 
                     }
