@@ -1990,22 +1990,26 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
 
     if (options.showdelimspot) {
         //this decayww evaluate approximation of a point in the ellipse for an angle alpha
-        double decay15 = 1.07854 * ((decayX * decayY) / sqrt (0.07179 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.07854 = 1 / cos(15)
+        //this decayww evaluate approximation of a point in the ellipse for an angle alpha
+        //  double decay5 = 1.003819 * ((decayX * decayY) / sqrt (0.00765 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
+        double decay15 = 1.03527 * ((decayX * decayY) / sqrt (0.07179 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.03527 = 1 / cos(15)
         double decay30 = 1.15473 * ((decayX * decayY) / sqrt (0.33335 * SQR (decayX) + SQR (decayY)));
         double decay60 = 2. * ((decayX * decayY) / sqrt (3.0 * SQR (decayX) + SQR (decayY)));
         double decay75 = 3.86398 * ((decayX * decayY) / sqrt (13.929 * SQR (decayX) + SQR (decayY)));
+        //    double decay85 = 11.473 * ((decayX * decayY) / sqrt (130.64 * SQR (decayX) + SQR (decayY)));
 
-        double decay15L = 1.07854 * ((decayXL * decayY) / sqrt (0.07179 * SQR (decayXL) + SQR (decayY)));
+
+        double decay15L = 1.03527 * ((decayXL * decayY) / sqrt (0.07179 * SQR (decayXL) + SQR (decayY)));
         double decay30L = 1.15473 * ((decayXL * decayY) / sqrt (0.33335 * SQR (decayXL) + SQR (decayY)));
         double decay60L = 2. * ((decayXL * decayY) / sqrt (3.0 * SQR (decayXL) + SQR (decayY)));
         double decay75L = 3.86398 * ((decayXL * decayY) / sqrt (13.929 * SQR (decayXL) + SQR (decayY)));
 
-        double decay15LT = 1.07854 * ((decayXL * decayYT) / sqrt (0.07179 * SQR (decayXL) + SQR (decayYT)));
+        double decay15LT = 1.03527 * ((decayXL * decayYT) / sqrt (0.07179 * SQR (decayXL) + SQR (decayYT)));
         double decay30LT = 1.15473 * ((decayXL * decayYT) / sqrt (0.33335 * SQR (decayXL) + SQR (decayYT)));
         double decay60LT = 2. * ((decayXL * decayYT) / sqrt (3.0 * SQR (decayXL) + SQR (decayYT)));
         double decay75LT = 3.86398 * ((decayXL * decayYT) / sqrt (13.929 * SQR (decayXL) + SQR (decayYT)));
 
-        double decay15T = 1.07854 * ((decayX * decayYT) / sqrt (0.07179 * SQR (decayX) + SQR (decayYT)));
+        double decay15T = 1.03527 * ((decayX * decayYT) / sqrt (0.07179 * SQR (decayX) + SQR (decayYT)));
         double decay30T = 1.15473 * ((decayX * decayYT) / sqrt (0.33335 * SQR (decayX) + SQR (decayYT)));
         double decay60T = 2. * ((decayX * decayYT) / sqrt (3.0 * SQR (decayX) + SQR (decayYT)));
         double decay75T = 3.86398 * ((decayX * decayYT) / sqrt (13.929 * SQR (decayX) + SQR (decayYT)));
