@@ -658,10 +658,10 @@ Locallab::Locallab ():
     Circle *centerCircle;
 //   Arcellipse *oneellipse;
 
-    Beziers *onebeziers[3] = {};
-    Beziers *twobeziers[3] = {};
-    Beziers *thrbeziers[3] = {};
-    Beziers *foubeziers[3] = {};
+    Beziers *onebeziers[4] = {};
+    Beziers *twobeziers[4] = {};
+    Beziers *thrbeziers[4] = {};
+    Beziers *foubeziers[4] = {};
     float innw = 0.7f;
     // Visible geometry
     locXLine[0] = new Line();
@@ -695,6 +695,10 @@ Locallab::Locallab ():
         onebeziers[2]->datum = Geometry::IMAGE;
         onebeziers[2]->innerLineWidth = innw;
 
+        onebeziers[3] = new Beziers();
+        onebeziers[3]->datum = Geometry::IMAGE;
+        onebeziers[3]->innerLineWidth = innw;
+
         twobeziers[0] = new Beziers();
         twobeziers[0]->datum = Geometry::IMAGE;
         twobeziers[0]->innerLineWidth = innw;
@@ -706,6 +710,10 @@ Locallab::Locallab ():
         twobeziers[2] = new Beziers();
         twobeziers[2]->datum = Geometry::IMAGE;
         twobeziers[2]->innerLineWidth = innw;
+
+        twobeziers[3] = new Beziers();
+        twobeziers[3]->datum = Geometry::IMAGE;
+        twobeziers[3]->innerLineWidth = innw;
 
         thrbeziers[0] = new Beziers();
         thrbeziers[0]->datum = Geometry::IMAGE;
@@ -719,6 +727,10 @@ Locallab::Locallab ():
         thrbeziers[2]->datum = Geometry::IMAGE;
         thrbeziers[2]->innerLineWidth = innw;
 
+        thrbeziers[3] = new Beziers();
+        thrbeziers[3]->datum = Geometry::IMAGE;
+        thrbeziers[3]->innerLineWidth = innw;
+
         foubeziers[0] = new Beziers();
         foubeziers[0]->datum = Geometry::IMAGE;
         foubeziers[0]->innerLineWidth = innw;
@@ -730,6 +742,10 @@ Locallab::Locallab ():
         foubeziers[2] = new Beziers();
         foubeziers[2]->datum = Geometry::IMAGE;
         foubeziers[2]->innerLineWidth = innw;
+
+        foubeziers[3] = new Beziers();
+        foubeziers[3]->datum = Geometry::IMAGE;
+        foubeziers[3]->innerLineWidth = innw;
     }
 
     // oneellipse->radiusInImageSpace = true;
@@ -746,15 +762,19 @@ Locallab::Locallab ():
         EditSubscriber::visibleGeometry.push_back ( onebeziers[0] );
         EditSubscriber::visibleGeometry.push_back ( onebeziers[1] );
         EditSubscriber::visibleGeometry.push_back ( onebeziers[2] );
+        EditSubscriber::visibleGeometry.push_back ( onebeziers[3] );
         EditSubscriber::visibleGeometry.push_back ( twobeziers[0] );
         EditSubscriber::visibleGeometry.push_back ( twobeziers[1] );
         EditSubscriber::visibleGeometry.push_back ( twobeziers[2] );
+        EditSubscriber::visibleGeometry.push_back ( twobeziers[3] );
         EditSubscriber::visibleGeometry.push_back ( thrbeziers[0] );
         EditSubscriber::visibleGeometry.push_back ( thrbeziers[1] );
         EditSubscriber::visibleGeometry.push_back ( thrbeziers[2] );
+        EditSubscriber::visibleGeometry.push_back ( thrbeziers[3] );
         EditSubscriber::visibleGeometry.push_back ( foubeziers[0] );
         EditSubscriber::visibleGeometry.push_back ( foubeziers[1] );
         EditSubscriber::visibleGeometry.push_back ( foubeziers[2] );
+        EditSubscriber::visibleGeometry.push_back ( foubeziers[3] );
     }
 
     // MouseOver geometry
@@ -789,6 +809,10 @@ Locallab::Locallab ():
         onebeziers[2]->datum = Geometry::IMAGE;
         onebeziers[2]->innerLineWidth = innw;
 
+        onebeziers[3]   = new Beziers();
+        onebeziers[3]->datum = Geometry::IMAGE;
+        onebeziers[3]->innerLineWidth = innw;
+
         twobeziers[0] = new Beziers();
         twobeziers[0]->datum = Geometry::IMAGE;
         twobeziers[0]->innerLineWidth = innw;
@@ -800,6 +824,10 @@ Locallab::Locallab ():
         twobeziers[2] = new Beziers();
         twobeziers[2]->datum = Geometry::IMAGE;
         twobeziers[2]->innerLineWidth = innw;
+
+        twobeziers[3] = new Beziers();
+        twobeziers[3]->datum = Geometry::IMAGE;
+        twobeziers[3]->innerLineWidth = innw;
 
         thrbeziers[0] = new Beziers();
         thrbeziers[0]->datum = Geometry::IMAGE;
@@ -813,6 +841,10 @@ Locallab::Locallab ():
         thrbeziers[2]->datum = Geometry::IMAGE;
         thrbeziers[2]->innerLineWidth = innw;
 
+        thrbeziers[3] = new Beziers();
+        thrbeziers[3]->datum = Geometry::IMAGE;
+        thrbeziers[3]->innerLineWidth = innw;
+
         foubeziers[0] = new Beziers();
         foubeziers[0]->datum = Geometry::IMAGE;
         foubeziers[0]->innerLineWidth = innw;
@@ -824,6 +856,11 @@ Locallab::Locallab ():
         foubeziers[2] = new Beziers();
         foubeziers[2]->datum = Geometry::IMAGE;
         foubeziers[2]->innerLineWidth = innw;
+
+        foubeziers[3] = new Beziers();
+        foubeziers[3]->datum = Geometry::IMAGE;
+        foubeziers[3]->innerLineWidth = innw;
+
     }
 
 //   oneellipse->radiusInImageSpace = true;
@@ -842,15 +879,19 @@ Locallab::Locallab ():
         EditSubscriber::mouseOverGeometry.push_back ( onebeziers[0] );
         EditSubscriber::mouseOverGeometry.push_back ( onebeziers[1] );
         EditSubscriber::mouseOverGeometry.push_back ( onebeziers[2] );
+        EditSubscriber::mouseOverGeometry.push_back ( onebeziers[3] );
         EditSubscriber::mouseOverGeometry.push_back ( twobeziers[0] );
         EditSubscriber::mouseOverGeometry.push_back ( twobeziers[1] );
         EditSubscriber::mouseOverGeometry.push_back ( twobeziers[2] );
+        EditSubscriber::mouseOverGeometry.push_back ( twobeziers[3] );
         EditSubscriber::mouseOverGeometry.push_back ( thrbeziers[0] );
         EditSubscriber::mouseOverGeometry.push_back ( thrbeziers[1] );
         EditSubscriber::mouseOverGeometry.push_back ( thrbeziers[2] );
+        EditSubscriber::mouseOverGeometry.push_back ( thrbeziers[3] );
         EditSubscriber::mouseOverGeometry.push_back ( foubeziers[0] );
         EditSubscriber::mouseOverGeometry.push_back ( foubeziers[1] );
         EditSubscriber::mouseOverGeometry.push_back ( foubeziers[2] );
+        EditSubscriber::mouseOverGeometry.push_back ( foubeziers[3] );
     }
 
     show_all();
@@ -1991,28 +2032,33 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
     if (options.showdelimspot) {
         //this decayww evaluate approximation of a point in the ellipse for an angle alpha
         //this decayww evaluate approximation of a point in the ellipse for an angle alpha
-        //  double decay5 = 1.003819 * ((decayX * decayY) / sqrt (0.00765 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
+        double decay5 = 1.003819 * ((decayX * decayY) / sqrt (0.00765 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
         double decay15 = 1.03527 * ((decayX * decayY) / sqrt (0.07179 * SQR (decayX) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.03527 = 1 / cos(15)
         double decay30 = 1.15473 * ((decayX * decayY) / sqrt (0.33335 * SQR (decayX) + SQR (decayY)));
         double decay60 = 2. * ((decayX * decayY) / sqrt (3.0 * SQR (decayX) + SQR (decayY)));
         double decay75 = 3.86398 * ((decayX * decayY) / sqrt (13.929 * SQR (decayX) + SQR (decayY)));
-        //    double decay85 = 11.473 * ((decayX * decayY) / sqrt (130.64 * SQR (decayX) + SQR (decayY)));
+        double decay85 = 11.473 * ((decayX * decayY) / sqrt (130.64 * SQR (decayX) + SQR (decayY)));
 
-
+        double decay5L = 1.003819 * ((decayXL * decayY) / sqrt (0.00765 * SQR (decayXL) + SQR (decayY))); //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
         double decay15L = 1.03527 * ((decayXL * decayY) / sqrt (0.07179 * SQR (decayXL) + SQR (decayY)));
         double decay30L = 1.15473 * ((decayXL * decayY) / sqrt (0.33335 * SQR (decayXL) + SQR (decayY)));
         double decay60L = 2. * ((decayXL * decayY) / sqrt (3.0 * SQR (decayXL) + SQR (decayY)));
         double decay75L = 3.86398 * ((decayXL * decayY) / sqrt (13.929 * SQR (decayXL) + SQR (decayY)));
+        double decay85L = 11.473 * ((decayXL * decayY) / sqrt (130.64 * SQR (decayXL) + SQR (decayY)));
 
+        double decay5LT = 1.003819 * ((decayXL * decayYT) / sqrt (0.00765 * SQR (decayXL) + SQR (decayYT))); //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
         double decay15LT = 1.03527 * ((decayXL * decayYT) / sqrt (0.07179 * SQR (decayXL) + SQR (decayYT)));
         double decay30LT = 1.15473 * ((decayXL * decayYT) / sqrt (0.33335 * SQR (decayXL) + SQR (decayYT)));
         double decay60LT = 2. * ((decayXL * decayYT) / sqrt (3.0 * SQR (decayXL) + SQR (decayYT)));
         double decay75LT = 3.86398 * ((decayXL * decayYT) / sqrt (13.929 * SQR (decayXL) + SQR (decayYT)));
+        double decay85LT = 11.473 * ((decayXL * decayYT) / sqrt (130.64 * SQR (decayXL) + SQR (decayYT)));
 
+        double decay5T = 1.003819 * ((decayX * decayYT) / sqrt (0.00765 * SQR (decayX) + SQR (decayYT))); //0.07179 = SQR(sin(15)/cos(15))  1.0038 = 1 / cos(5)
         double decay15T = 1.03527 * ((decayX * decayYT) / sqrt (0.07179 * SQR (decayX) + SQR (decayYT)));
         double decay30T = 1.15473 * ((decayX * decayYT) / sqrt (0.33335 * SQR (decayX) + SQR (decayYT)));
         double decay60T = 2. * ((decayX * decayYT) / sqrt (3.0 * SQR (decayX) + SQR (decayYT)));
         double decay75T = 3.86398 * ((decayX * decayYT) / sqrt (13.929 * SQR (decayX) + SQR (decayYT)));
+        double decay85T = 11.473 * ((decayX * decayYT) / sqrt (130.64 * SQR (decayX) + SQR (decayYT)));
 
         double decay45 = (1.414 * decayX * decayY) / sqrt (SQR (decayX) + SQR (decayY));
         double decay45L = (1.414 * decayXL * decayY) / sqrt (SQR (decayXL) + SQR (decayY));
@@ -2020,41 +2066,54 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
         double decay45T = (1.414 * decayX * decayYT) / sqrt (SQR (decayX) + SQR (decayYT));
 
         //printf("decayX=%f decayY=%f decay10=%f decay45=%f oriX=%i origY=%i\n", decayX, decayY, decay10, decay45, origin.x, origin.y);
-        updateBeziers (visibleGeometry.at (5), decayX, decay15  , decay30, 0., 15., 30.);
-        updateBeziers (mouseOverGeometry.at (5), decayX, decay15 , decay30, 0., 15., 30.);
+        updateBeziers (visibleGeometry.at (5), decayX, decay5  , decay15, 0., 5., 15.);
+        updateBeziers (mouseOverGeometry.at (5), decayX, decay5 , decay15, 0., 5., 15.);
 
-        updateBeziers (visibleGeometry.at (6), decay30, decay45 , decay60, 30., 45., 60.);
-        updateBeziers (mouseOverGeometry.at (6), decay30, decay45 , decay60, 30., 45., 60.);
+        updateBeziers (visibleGeometry.at (6), decay15, decay30 , decay45, 15., 30., 45.);
+        updateBeziers (mouseOverGeometry.at (6), decay15, decay30 , decay45, 15., 30., 45.);
 
-        updateBeziers (visibleGeometry.at (7), decay60, decay75 , decayY, 60., 75., 90.);
-        updateBeziers (mouseOverGeometry.at (7), decay60, decay75 , decayY, 60., 75., 90.);
+        updateBeziers (visibleGeometry.at (7), decay45, decay60 , decay75, 45., 60., 75.);
+        updateBeziers (mouseOverGeometry.at (7), decay45, decay60 , decay75, 45., 60., 75.);
 
-        updateBeziers (visibleGeometry.at (8), decayY, decay75L  , decay60L, 90., 105., 120.);
-        updateBeziers (mouseOverGeometry.at (8), decayY, decay75L , decay60L, 90., 105., 120.);
+        updateBeziers (visibleGeometry.at (8), decay75, decay85 , decayY, 75., 85., 90.);
+        updateBeziers (mouseOverGeometry.at (8), decay75, decay85 , decayY, 75., 85., 90.);
 
-        updateBeziers (visibleGeometry.at (9), decay60L, decay45L  , decay30L, 120., 135., 150.);
-        updateBeziers (mouseOverGeometry.at (9), decay60L, decay45L , decay30L, 120., 135., 150.);
+        updateBeziers (visibleGeometry.at (9), decayY, decay85L  , decay75L, 90., 95., 105.);
+        updateBeziers (mouseOverGeometry.at (9), decayY, decay85L , decay75L, 90., 95., 105.);
 
-        updateBeziers (visibleGeometry.at (10), decay30L, decay15L  , decayXL, 150., 165., 180.);
-        updateBeziers (mouseOverGeometry.at (10), decay30L, decay15L , decayXL, 150., 165., 180.);
+        updateBeziers (visibleGeometry.at (10), decay75L, decay60L  , decay45L, 105., 120., 135.);
+        updateBeziers (mouseOverGeometry.at (10), decay75L, decay60L , decay45L, 105., 120., 135.);
 
-        updateBeziers (visibleGeometry.at (11), decayXL, decay15LT  , decay30LT, 180., 195., 210.);
-        updateBeziers (mouseOverGeometry.at (11), decayXL, decay15LT , decay30LT, 180., 195., 210.);
+        updateBeziers (visibleGeometry.at (11), decay45L, decay30L  , decay15L, 135., 150., 165.);
+        updateBeziers (mouseOverGeometry.at (11), decay45L, decay30L , decay15L, 135., 150., 165.);
 
-        updateBeziers (visibleGeometry.at (12), decay30LT, decay45LT  , decay60LT, 210., 225., 240.);
-        updateBeziers (mouseOverGeometry.at (12), decay30LT, decay45LT , decay60LT, 210., 225., 240.);
+        updateBeziers (visibleGeometry.at (12), decay15L, decay5L  , decayXL, 165., 175., 180.);
+        updateBeziers (mouseOverGeometry.at (12), decay15L, decay5L , decayXL, 165., 175., 180.);
 
-        updateBeziers (visibleGeometry.at (13), decay60LT, decay75LT  , decayYT, 240., 255., 270.);
-        updateBeziers (mouseOverGeometry.at (13), decay60LT, decay75LT , decayYT, 240., 255., 270.);
 
-        updateBeziers (visibleGeometry.at (14), decayYT, decay75T  , decay60T, 270., 285., 300.);
-        updateBeziers (mouseOverGeometry.at (14), decayYT, decay75T , decay60T, 270., 285., 300.);
+        updateBeziers (visibleGeometry.at (13), decayXL, decay5LT  , decay15LT, 180., 185., 195.);
+        updateBeziers (mouseOverGeometry.at (13), decayXL, decay5LT , decay15LT, 180., 185., 195.);
 
-        updateBeziers (visibleGeometry.at (15), decay60T, decay45T  , decay30T, 300., 315., 330.);
-        updateBeziers (mouseOverGeometry.at (15), decay60T, decay45T , decay30T, 300., 315., 330.);
+        updateBeziers (visibleGeometry.at (14), decay15LT, decay30LT  , decay45LT, 195., 210., 225.);
+        updateBeziers (mouseOverGeometry.at (14), decay15LT, decay30LT , decay45LT, 195., 210., 225.);
 
-        updateBeziers (visibleGeometry.at (16), decay30T, decay15T  , decayX, 330., 345., 360.);
-        updateBeziers (mouseOverGeometry.at (16), decay30T, decay15T , decayX, 330., 345., 360.);
+        updateBeziers (visibleGeometry.at (15), decay45LT, decay60LT  , decay75LT, 225., 240., 255.);
+        updateBeziers (mouseOverGeometry.at (15), decay45LT, decay60LT , decay75LT, 225., 240., 255.);
+
+        updateBeziers (visibleGeometry.at (16), decay75LT, decay85LT  , decayYT, 255., 265., 270.);
+        updateBeziers (mouseOverGeometry.at (16), decay75LT, decay85LT , decayYT, 255., 265., 270.);
+
+        updateBeziers (visibleGeometry.at (17), decayYT, decay85T  , decay75T, 270., 275., 285.);
+        updateBeziers (mouseOverGeometry.at (17), decayYT, decay85T , decay75T, 270., 275., 285.);
+
+        updateBeziers (visibleGeometry.at (18), decay75T, decay60T  , decay45T, 285., 300., 315.);
+        updateBeziers (mouseOverGeometry.at (18), decay75T, decay60T , decay45T, 285., 300., 315.);
+
+        updateBeziers (visibleGeometry.at (19), decay45T, decay30T  , decay15T, 315., 330., 345.);
+        updateBeziers (mouseOverGeometry.at (19), decay45T, decay30T , decay15T, 315., 330., 345.);
+
+        updateBeziers (visibleGeometry.at (20), decay15T, decay5T  , decayX, 345., 355., 360.);
+        updateBeziers (mouseOverGeometry.at (20), decay15T, decay5T , decayX, 345., 355., 360.);
 
     }
 
