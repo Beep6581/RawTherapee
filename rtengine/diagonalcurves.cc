@@ -33,7 +33,6 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
 {
 
     ppn = poly_pn > 65500 ? 65500 : poly_pn;
-    bool identity = true;
 
     if (ppn < 500) {
         hashSize = 100;    // Arbitrary cut-off value, but mutliple of 10
@@ -46,6 +45,7 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
     if (p.size() < 3) {
         kind = DCT_Empty;
     } else {
+        bool identity = true;
         kind = (DiagonalCurveType)p[0];
 
         if (kind == DCT_Linear || kind == DCT_Spline || kind == DCT_NURBS) {
@@ -364,7 +364,6 @@ double DiagonalCurve::getVal (double t) const
         }
 
         return poly_y[k_lo] + (t - poly_x[k_lo]) * dyByDx[k_lo];
-        break;
     }
 
     case DCT_Empty :

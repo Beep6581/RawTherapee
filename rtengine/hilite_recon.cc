@@ -217,7 +217,6 @@ void RawImageSource::boxblur_resamp(float **src, float **dst, float ** temp, int
     #pragma omp parallel
 #endif
     {
-        float tempval;
 #ifdef _OPENMP
         #pragma omp for
 #endif
@@ -227,7 +226,7 @@ void RawImageSource::boxblur_resamp(float **src, float **dst, float ** temp, int
         for (int row = 0; row < H; row++)
         {
             int len = box + 1;
-            tempval = src[row][0] / len;
+            float tempval = src[row][0] / len;
 
             for (int j = 1; j <= box; j++) {
                 tempval += src[row][j] / len;
@@ -339,12 +338,11 @@ void RawImageSource::boxblur_resamp(float **src, float **dst, float ** temp, int
         // process remaining columns
         #pragma omp single
         {
-            float tempval;
 
             //vertical blur
             for (int col = (W / samp) - ((W / samp) % numCols); col < W / samp; col++) {
                 int len = box + 1;
-                tempval = temp[0][col] / len;
+                float tempval = temp[0][col] / len;
 
                 for (int i = 1; i <= box; i++) {
                     tempval += temp[i][col] / len;

@@ -320,7 +320,7 @@ class MyComboBoxText : public Gtk::ComboBoxText
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
-    MyComboBoxText (bool has_entry = false);
+    explicit MyComboBoxText (bool has_entry = false);
 
     void setPreferredWidth (int minimum_width, int natural_width);
     void connect(const sigc::connection &connection) { myConnection = connection; }
@@ -437,7 +437,7 @@ private:
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
-    MyProgressBar(int width);
+    explicit MyProgressBar(int width);
     MyProgressBar();
 
     void setPreferredWidth(int width);

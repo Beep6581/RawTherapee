@@ -1639,15 +1639,38 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
 
     if (check_need_larger_crop_for_lcp_distortion (parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
-        double dW = double (parent->fw) * 0.15 / skip; // TODO  - this is hardcoded ATM!
-        double dH = double (parent->fh) * 0.15 / skip; // this is an estimate of the max
-        // distortion relative to the image
-        // size. BUT IS 15% REALLY ENOUGH?
-        // In fact, is there a better way??
-        orx = max (int (orx - dW / 2.0), 0);
-        ory = max (int (ory - dH / 2.0), 0);
-        orw = min (int (orw + dW), parent->fw - orx);
-        orh = min (int (orh + dH), parent->fh - ory);
+        // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
+        int dW = int (double (parent->fw) * 0.15 / (2 * skip));
+        int dH = int (double (parent->fh) * 0.15 / (2 * skip));
+        int x1 = orx - dW;
+        int x2 = orx + orw + dW;
+        int y1 = ory - dH;
+        int y2 = ory + orh + dH;
+
+        if (x1 < 0) {
+            x2 += -x1;
+            x1 = 0;
+        }
+
+        if (x2 > parent->fw) {
+            x1 -= x2 - parent->fw;
+            x2 = parent->fw;
+        }
+
+        if (y1 < 0) {
+            y2 += -y1;
+            y1 = 0;
+        }
+
+        if (y2 > parent->fh) {
+            y1 -= y2 - parent->fh;
+            y2 = parent->fh;
+        }
+
+        orx = max (x1, 0);
+        ory = max (y1, 0);
+        orw = min (x2 - x1, parent->fw - orx);
+        orh = min (y2 - y1, parent->fh - ory);
     }
 
 

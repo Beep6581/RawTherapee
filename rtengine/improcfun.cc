@@ -189,6 +189,9 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
             histogram += hist;
 
         }
+#ifdef _OPENMP
+        static_cast<void> (numThreads); // to silence cppcheck warning
+#endif
     } else {
         for (int i = 0; i < H; i++) {
             for (int j = 0; j < W; j++) {
@@ -221,7 +224,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         LUTf dLcurve;
         LUTu hist16JCAM;
         bool jp = false;
-        float val;
 
         //preparate for histograms CIECAM
         if (pW != 1) { //only with improccoordinator
@@ -231,7 +233,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             hist16JCAM.clear();
 
             for (int i = 0; i < 32768; i++) { //# 32768*1.414  approximation maxi for chroma
-                val = (double)i / 32767.0;
+                float val = (double)i / 32767.0;
                 dLcurve[i] = CLIPD (val);
             }
         }
@@ -239,7 +241,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         LUTf dCcurve;
         LUTu hist16_CCAM;
         bool chropC = false;
-        float valc;
 
         if (pW != 1) { //only with improccoordinator
             dCcurve (65536, 0);
@@ -247,7 +248,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             hist16_CCAM.clear();
 
             for (int i = 0; i < 48000; i++) { //# 32768*1.414  approximation maxi for chroma
-                valc = (double)i / 47999.0;
+                float valc = (double)i / 47999.0;
                 dCcurve[i] = CLIPD (valc);
             }
         }
@@ -1219,9 +1220,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         artifact = 1.f;
                     }
 
-                    int hotbad = 0;
                     float chrom = 50.f;
                     {
+                        int hotbad = 0;
                         ImProcFunctions::badpixcam (ncie, artifact, 5, 2 , b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect , chrom, hotbad);    //enabled remove artifacts for cbDL
                     }
                 }
@@ -1244,15 +1245,15 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
             if (params->dirpyrequalizer.enabled /*&& (execsharp)*/) {
-                float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-                int choice = 0; //not disabled in case of ! always 0
 
 //  if     (params->dirpyrequalizer.algo=="FI") choice=0;
 //  else if(params->dirpyrequalizer.algo=="LA") choice=1;
                 if (rtt == 1) {
+                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
+                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
+                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
+                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                    int choice = 0; //not disabled in case of ! always 0
                     dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scalecd);   //contrast by detail adapted to CIECAM
                 }
             }
@@ -1325,7 +1326,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         double chsacol = 327.;
                         int libr = 0;
                         int colch = 0;
-                        float sa_t;
 
                         if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
                             brli = 70.0;
@@ -1371,7 +1371,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                 if (colch == 0) {
                                     posc = CLIP ((int) (ncie->C_p[i][j] * chsacol));  //450.0 approximative factor for s    320 for M
                                 } else if (colch == 1) {
-                                    sa_t = 100.f * sqrt (ncie->C_p[i][j] / ncie->Q_p[i][j]);   //Q_p always > 0
+                                    float sa_t = 100.f * sqrt (ncie->C_p[i][j] / ncie->Q_p[i][j]);   //Q_p always > 0
                                     posc = CLIP ((int) (sa_t * chsacol));
                                 } else { /*if(colch == 2)*/
                                     posc = CLIP ((int) (ncie->M_p[i][j] * chsacol));
@@ -2603,15 +2603,15 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
                 if (params->dirpyrequalizer.enabled /*&& execsharp*/)  {
-                    float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
-                    float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
-                    float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-                    int choice = 0; // I have not suppress this statement in case of !! always to 0
 //  if(params->dirpyrequalizer.algo=="FI") choice=0;
 //  else if(params->dirpyrequalizer.algo=="LA") choice=1;
 
                     if (rtt == 1) {
+                        float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
+                        float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
+                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
+                        float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
+                        int choice = 0; // I have not suppress this statement in case of !! always to 0
                         lab->deleteLab();
                         dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect,  true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scalecd); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
@@ -3013,7 +3013,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     };
 
     // For tonecurve histogram
-    float lumimulf[3] = {static_cast<float> (lumimul[0]), static_cast<float> (lumimul[1]), static_cast<float> (lumimul[2])};
+//   float lumimulf[3] = {static_cast<float> (lumimul[0]), static_cast<float> (lumimul[1]), static_cast<float> (lumimul[2])};
 
 
     bool mixchannels = (params->chmixer.red[0] != 100 || params->chmixer.red[1] != 0     || params->chmixer.red[2] != 0   ||
@@ -3232,9 +3232,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     float gamvalr = 125.f;
     float gamvalg = 125.f;
     float gamvalb = 125.f;
-    double nr = 0;
-    double ng = 0;
-    double nb = 0;
     bool computeMixerAuto = params->blackwhite.autoc && (autor < -5000.f);
 
     if (bwrgam < 0) {
@@ -3272,6 +3269,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         histToneCurve.clear();
         histToneCurveCompression = log2 (65536 / toneCurveHistSize);
     }
+
+    // For tonecurve histogram
+    const float lumimulf[3] = {static_cast<float> (lumimul[0]), static_cast<float> (lumimul[1]), static_cast<float> (lumimul[2])};
 
 
 #define TS 112
@@ -4433,6 +4433,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             //end auto chmix
             if (computeMixerAuto) {
                 // auto channel-mixer
+                double nr = 0;
+                double ng = 0;
+                double nb = 0;
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic, 16) reduction(+:nr,ng,nb)
 #endif
@@ -4970,9 +4974,6 @@ void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go
         rlob = rlo;
     }
 
-    //second degree
-    float aa, bb, cc;
-    float v0 = 0.15f;
 
     //fixed value of reducac=0.3
     //secondeg_end (reducac, v0, aa, bb, cc);
@@ -4983,6 +4984,9 @@ void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go
             kl = (-1.f / 0.85f) * v + (1.f) / 0.85f;    //Low light ==> decrease action after v=0.15
         }
     } else { //color
+        float v0 = 0.15f;
+        //second degree
+        float aa, bb, cc;
         secondeg_end (reducac, v0, aa, bb, cc);
         float aab, bbb;
         secondeg_begin (0.7f, v0, aab, bbb);
@@ -5042,7 +5046,6 @@ void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go
     // mid tones
     float km;
     float v0m = 0.5f; //max action
-    float v0mm = 0.5f; //max
 
     if (v < v0m) {
         float aam, bbm;
@@ -5050,6 +5053,7 @@ void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go
         secondeg_begin (reducac, vend, aam, bbm);
         km = aam * v * v + bbm * v; //verification = good
     } else {
+        float v0mm = 0.5f; //max
         float aamm, bbmm, ccmm;
         secondeg_end (reducac, v0mm, aamm, bbmm, ccmm);
         km = aamm * v * v + bbmm * v + ccmm; //verification good
@@ -5237,17 +5241,16 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
         kl = aab * v * v + bbb * v;
     }
 
-    //rl gl bl
-    float RedL, GreenL, BlueL;
-    float krl = rl / (rl + gl + bl);
-    float kgl = gl / (rl + gl + bl);
-    float kbl = bl / (rl + gl + bl);
 
     if (SatLow > 0.f) {
-        float kmgb;
+        //rl gl bl
+        float krl = rl / (rl + gl + bl);
+        float kgl = gl / (rl + gl + bl);
+        float kbl = bl / (rl + gl + bl);
+        float RedL, GreenL, BlueL;
 
         if (g < 20000.f || b < 20000.f || r < 20000.f) {
-            kmgb = min (r, g, b);   //I have tested ...0.85 compromise...
+            float kmgb = min (r, g, b);   //I have tested ...0.85 compromise...
             kl *= pow ((kmgb / 20000.f), 0.85f);
         }
 
@@ -5294,10 +5297,9 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
         kh = aa0 * v * v + bb0 * v;
     }
 
-    float kmgb;
 
     if (g > 45535.f || b > 45535.f || r > 45535.f) {
-        kmgb = max (r, g, b);
+        float kmgb = max (r, g, b);
         float cora = 1.f / (45535.f - 65535.f);
         float corb = 1.f - cora * 45535.f;
         float cor = kmgb * cora + corb;
@@ -5309,12 +5311,12 @@ void ImProcFunctions::toning2col (float r, float g, float b, float &ro, float &g
         kh*=cor;*/
     }
 
-    float RedH, GreenH, BlueH;
-    float krh = rh / (rh + gh + bh);
-    float kgh = gh / (rh + gh + bh);
-    float kbh = bh / (rh + gh + bh);
 
     if (SatHigh > 0.f) {
+        float RedH, GreenH, BlueH;
+        float krh = rh / (rh + gh + bh);
+        float kgh = gh / (rh + gh + bh);
+        float kbh = bh / (rh + gh + bh);
         RedH = 1.f + (SatHigh * krh) * kh * rlh * balanH; //1.2
 
         if (krh > 0.f) {
@@ -5642,14 +5644,14 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
     const float amountchroma = (float) settings->amchroma;
 
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
-    double wip[3][3] = {
+    const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
     };
 
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
-    double wp[3][3] = {
+    const double wp[3][3] = {
         {wprof[0][0], wprof[0][1], wprof[0][2]},
         {wprof[1][0], wprof[1][1], wprof[1][2]},
         {wprof[2][0], wprof[2][1], wprof[2][2]}
@@ -5806,7 +5808,6 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                     float l_r;//Luminance Lab in 0..1
                     l_r = Lprov1 / 100.f;
                     {
-                        float khue = 1.9f; //in reserve in case of!
                         float valparam = float ((lhCurve->getVal (Color::huelab_to_huehsv2 (HH)) - 0.5f)); //get l_r=f(H)
                         float valparamneg;
                         valparamneg = valparam;
@@ -5820,6 +5821,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                         } else
                             //for negative
                         {
+                            float khue = 1.9f; //in reserve in case of!
                             l_r *= (1.f + khue * valparamneg);
                         }
                     }
@@ -5926,7 +5928,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                     }
 
                     if (clut) { // begin C=f(L)
-                        float factorskin, factorsat, factor, factorskinext, interm;
+                        float factorskin, factorsat, factor, factorskinext;
                         float chromaCfactor = (clcurve[LL * 655.35f]) / (LL * 655.35f); //apply C=f(L)
                         float curf = 0.7f; //empirical coeff because curve is more progressive
                         float scale = 100.0f / 100.1f; //reduction in normal zone for curve C
@@ -5960,7 +5962,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                         }
 
                         if (chromaCfactor > 1.0) {
-                            interm = (chromaCfactor - 1.0f) * 100.0f;
+                            float interm = (chromaCfactor - 1.0f) * 100.0f;
                             factorskin = 1.0f + (interm * scale) / 100.0f;
                             factorskinext = 1.0f + (interm * scaleext) / 100.0f;
                         } else {
@@ -5986,7 +5988,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                     }//Lab C=f(C) pipette
 
                     if (ccut) {
-                        float factorskin, factorsat, factor, factorskinext, interm;
+                        float factorskin, factorsat, factor, factorskinext;
                         float chroma = sqrt (SQR (atmp) + SQR (btmp) + 0.001f);
                         float chromaCfactor = (satcurve[chroma * adjustr]) / (chroma * adjustr); //apply C=f(C)
                         float curf = 0.7f; //empirical coeff because curve is more progressive
@@ -6021,7 +6023,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                         }
 
                         if (chromaCfactor > 1.0) {
-                            interm = (chromaCfactor - 1.0f) * 100.0f;
+                            float interm = (chromaCfactor - 1.0f) * 100.0f;
                             factorskin = 1.0f + (interm * scale) / 100.0f;
                             factorskinext = 1.0f + (interm * scaleext) / 100.0f;
                         } else {
@@ -6790,15 +6792,15 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
         return;
     }
 
-    lodev = (lodev / (log (2.f) * losum));
-    hidev = (hidev / (log (2.f) * hisum));
+//    lodev = (lodev / (log(2.f) * losum));
+//    hidev = (hidev / (log(2.f) * hisum));
 
-    if (octile[6] > log ((float)imax + 1.f) / log2 (2.f)) { //if very overxposed image
+    if (octile[6] > log1p ((float)imax) / log2 (2.f)) { //if very overxposed image
         octile[6] = 1.5f * octile[5] - 0.5f * octile[4];
         overex = 2;
     }
 
-    if (octile[7] > log ((float)imax + 1.f) / log2 (2.f)) { //if overexposed
+    if (octile[7] > log1p ((float)imax) / log2 (2.f)) { //if overexposed
         octile[7] = 1.5f * octile[6] - 0.5f * octile[5];
         overex = 1;
     }
@@ -6871,10 +6873,10 @@ void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double 
     median <<= histcompr;
     shc <<= histcompr;
 
-    //prevent division by 0
-    if (lodev == 0.f) {
-        lodev = 1.f;
-    }
+//    //prevent division by 0
+//    if (lodev == 0.f) {
+//        lodev = 1.f;
+//    }
 
     //compute exposure compensation as geometric mean of the amount that
     //sets the mean or median at middle gray, and the amount that sets the estimated top
@@ -7070,7 +7072,7 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
         int dist_result = calcDistortion (thumbGray, rawGray, width, h_thumb, 1, dist_amount);
 
         if (dist_result == -1) { // not enough features found, try increasing max. number of features by factor 4
-            dist_result = calcDistortion (thumbGray, rawGray, width, h_thumb, 4, dist_amount);
+            calcDistortion (thumbGray, rawGray, width, h_thumb, 4, dist_amount);
         }
 
         delete thumbGray;

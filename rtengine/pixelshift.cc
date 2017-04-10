@@ -994,10 +994,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #ifdef PIXELSHIFTDEV
                 if(detectMotion || (adaptive && checkGreen)) {
                     bool skipNext = false;
+                    float gridMax = 0.f;
 #else
                 if(adaptive && checkGreen) {
-#endif
                     float gridMax;
+#endif
 
 #ifdef PIXELSHIFTDEV
 

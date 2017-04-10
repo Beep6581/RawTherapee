@@ -76,23 +76,17 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
                 previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
                 previewImage->flush();
 
-                #pragma omp parallel
-                {
-                    const unsigned char *src;
-                    unsigned char *dst;
-                    #pragma omp for schedule(static,10)
+                #pragma omp parallel for
+                for (unsigned int i = 0; i < (unsigned int)(h); ++i) {
+                    const unsigned char *src = data + i * w * 3;
+                    unsigned char *dst = previewImage->get_data() + i * w * 4;
 
-                    for (unsigned int i = 0; i < (unsigned int)(h); ++i) {
-                        src = data + i * w * 3;
-                        dst = previewImage->get_data() + i * w * 4;
+                    for (unsigned int j = 0; j < (unsigned int)(w); ++j) {
+                        unsigned char r = *(src++);
+                        unsigned char g = *(src++);
+                        unsigned char b = *(src++);
 
-                        for (unsigned int j = 0; j < (unsigned int)(w); ++j) {
-                            unsigned char r = *(src++);
-                            unsigned char g = *(src++);
-                            unsigned char b = *(src++);
-
-                            poke255_uc(dst, r, g, b);
-                        }
+                        poke255_uc(dst, r, g, b);
                     }
                 }
                 previewImage->mark_dirty();
@@ -139,29 +133,22 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 
             if (data) {
                 int w, h;
-             //   double scale = 1.;
                 w = output->getWidth();
                 h = output->getHeight();
                 previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
                 previewImage->flush();
 
-                #pragma omp parallel
-                {
-                    const unsigned char *src;
-                    unsigned char *dst;
-                    #pragma omp for schedule(static,10)
+                #pragma omp parallel for 
+                for (unsigned int i = 0; i < (unsigned int)(h); i++) {
+                    const unsigned char *src = data + i * w * 3;
+                    unsigned char *dst = previewImage->get_data() + i * w * 4;
 
-                    for (unsigned int i = 0; i < (unsigned int)(h); i++) {
-                        src = data + i * w * 3;
-                        dst = previewImage->get_data() + i * w * 4;
+                    for (unsigned int j = 0; j < (unsigned int)(w); j++) {
+                        unsigned char r = *(src++);
+                        unsigned char g = *(src++);
+                        unsigned char b = *(src++);
 
-                        for (unsigned int j = 0; j < (unsigned int)(w); j++) {
-                            unsigned char r = *(src++);
-                            unsigned char g = *(src++);
-                            unsigned char b = *(src++);
-
-                            poke255_uc(dst, r, g, b);
-                        }
+                        poke255_uc(dst, r, g, b);
                     }
                 }
 

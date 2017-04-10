@@ -1194,6 +1194,7 @@ void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider,
         // occurs when leaving the preview area -> cleanup the curve editor
         pipetteR = pipetteG = pipetteB = -1.f;
         lit_point = -1;
+        editedHandle = FCT_EditedHandle_None;
         return;
     }
 

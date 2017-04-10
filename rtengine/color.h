@@ -92,10 +92,10 @@ private:
 
     // Separated from init() to keep the code clear
     static void initMunsell ();
-    static double hue2rgb(double p, double q, double t);
-    static float hue2rgbfloat(float p, float q, float t);
+    static double hue2rgb (double p, double q, double t);
+    static float hue2rgbfloat (float p, float q, float t);
 #ifdef __SSE2__
-    static vfloat hue2rgb(vfloat p, vfloat q, vfloat t);
+    static vfloat hue2rgb (vfloat p, vfloat q, vfloat t);
 #endif
 public:
 
@@ -167,13 +167,13 @@ public:
     * @return luminance value
     */
     // xyz_sRGBD65 : conversion matrix from XYZ to sRGB for D65 illuminant: we use diagonal values
-    static float rgbLuminance(float r, float g, float b)
+    static float rgbLuminance (float r, float g, float b)
     {
         // WArning: The sum of xyz_sRGBd65[1][] is > 1.0 (i.e. 1.0000001), so we use our own adapted values)
         // 0.2126729,  0.7151521,  0.0721750
         return r * 0.2126729f + g * 0.7151521f + b * 0.0721750f;
     }
-    static double rgbLuminance(double r, double g, double b)
+    static double rgbLuminance (double r, double g, double b)
     {
         return r * 0.2126729 + g * 0.7151521 + b * 0.0721750;
     }
@@ -248,10 +248,10 @@ public:
     */
     static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
 
-    static inline float rgb2s(float r, float g, float b) // fast version if only saturation is needed
+    static inline float rgb2s (float r, float g, float b) // fast version if only saturation is needed
     {
-        float var_Min = min(r, g, b);
-        float var_Max = max(r, g, b);
+        float var_Min = min (r, g, b);
+        float var_Max = max (r, g, b);
         float del_Max = var_Max - var_Min;
 
         if (del_Max < 0.00001f) {
@@ -261,19 +261,19 @@ public:
         }
     }
 
-    static inline bool rgb2hsvdcp(float r, float g, float b, float &h, float &s, float &v)
+    static inline bool rgb2hsvdcp (float r, float g, float b, float &h, float &s, float &v)
     {
 
-        float var_Min = min(r, g, b);
+        float var_Min = min (r, g, b);
 
-        if(var_Min < 0.f) {
+        if (var_Min < 0.f) {
             return false;
         } else {
-            float var_Max = max(r, g, b);
+            float var_Max = max (r, g, b);
             float del_Max = var_Max - var_Min;
             v = var_Max / 65535.f;
 
-            if (fabsf(del_Max) < 0.00001f) {
+            if (fabsf (del_Max) < 0.00001f) {
                 h = 0.f;
                 s = 0.f;
             } else {
@@ -458,11 +458,11 @@ public:
     * @param y Y coordinate [0 ; 65535] ; can be negative! (return value)
     * @param z Z coordinate [0 ; 65535] ; can be negative! (return value)
     */
-    static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
-    static void L2XYZ(float L, float &x, float &y, float &z);
+    static void Lab2XYZ (float L, float a, float b, float &x, float &y, float &z);
+    static void L2XYZ (float L, float &x, float &y, float &z);
 
 #ifdef __SSE2__
-    static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
+    static void Lab2XYZ (vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
 #endif // __SSE2__
 
     /**
@@ -474,7 +474,7 @@ public:
     * @param a channel [-42000 ; +42000] ; can be more than 42000 (return value)
     * @param b channel [-42000 ; +42000] ; can be more than 42000 (return value)
     */
-    static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
+    static void XYZ2Lab (float x, float y, float z, float &L, float &a, float &b);
 
 
     /**
@@ -486,7 +486,7 @@ public:
     * @param u red chrominance channel [0 ; 65535] (return value)
     * @param v blue chrominance channel [0 ; 65535] (return value)
     */
-    static void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
+    static void Lab2Yuv (float L, float a, float b, float &Y, float &u, float &v);
 
 
     /**
@@ -498,7 +498,7 @@ public:
     * @param a channel [-42000 ; +42000] ; can be more than 42000 (return value)
     * @param b channel [-42000 ; +42000] ; can be more than 42000 (return value)
     */
-    static void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
+    static void Yuv2Lab (float Y, float u, float v, float &L, float &a, float &b, const double wp[3][3]);
 
 
     /**
@@ -508,7 +508,7 @@ public:
     * @param c 'c' channel return value, in [0 ; 42000] ; can be more than 42000 (return value)
     * @param h 'h' channel return value, in [-PI ; +PI] (return value)
     */
-    static void Lab2Lch(float a, float b, float &c, float &h);
+    static void Lab2Lch (float a, float b, float &c, float &h);
 
 
     /**
@@ -518,7 +518,7 @@ public:
     * @param a 'a' channel [-42000 ; +42000] ; can be more than 42000 (return value)
     * @param b 'b' channel [-42000 ; +42000] ; can be more than 42000 (return value)
     */
-    static void Lch2Lab(float c, float h, float &a, float &b);
+    static void Lch2Lab (float c, float h, float &a, float &b);
 
 
     /**
@@ -528,7 +528,7 @@ public:
     * @param c 'c' channel [unknown range!] (return value)
     * @param h 'h' channel [-PI ; +PI] (return value)
     */
-    static void Luv2Lch(float u, float v, float &c, float &h);
+    static void Luv2Lch (float u, float v, float &c, float &h);
 
 
     /**
@@ -538,7 +538,7 @@ public:
     * @param u 'u' channel [unknown range!] (return value)
     * @param v 'v' channel [unknown range!] (return value)
     */
-    static void Lch2Luv(float c, float h, float &u, float &v);
+    static void Lch2Luv (float c, float h, float &u, float &v);
 
 
     /**
@@ -574,7 +574,7 @@ public:
     *          fy=(L+16)/116 L=luminance [0 ; 100]
     *          fz=fy-b/200 b=chroma blue yellow [-128 ; +128]
     */
-    static inline double f2xyz(double f)
+    static inline double f2xyz (double f)
     {
         const double epsilonExpInv3 = 6.0 / 29.0;
         const double kappaInv = 27.0 / 24389.0; // inverse of kappa
@@ -582,7 +582,7 @@ public:
         return (f > epsilonExpInv3) ? f * f * f : (116. * f - 16.) * kappaInv;
 
     }
-    static inline float f2xyz(float f)
+    static inline float f2xyz (float f)
     {
         const float epsilonExpInv3 = 0.20689655f; // 6.0f/29.0f;
         const float kappaInv = 0.0011070565f; // 27.0f/24389.0f;  // inverse of kappa
@@ -590,13 +590,13 @@ public:
         return (f > epsilonExpInv3) ? f * f * f : (116.f * f - 16.f) * kappaInv;
     }
 #ifdef __SSE2__
-    static inline vfloat f2xyz(vfloat f)
+    static inline vfloat f2xyz (vfloat f)
     {
-        const vfloat epsilonExpInv3 = F2V(0.20689655f); // 6.0f/29.0f;
-        const vfloat kappaInv = F2V(0.0011070565f); // 27.0f/24389.0f;  // inverse of kappa
+        const vfloat epsilonExpInv3 = F2V (0.20689655f); // 6.0f/29.0f;
+        const vfloat kappaInv = F2V (0.0011070565f); // 27.0f/24389.0f;  // inverse of kappa
         vfloat res1 = f * f * f;
-        vfloat res2 = (F2V(116.f) * f - F2V(16.f)) * kappaInv;
-        return vself(vmaskf_gt(f, epsilonExpInv3), res1, res2);
+        vfloat res2 = (F2V (116.f) * f - F2V (16.f)) * kappaInv;
+        return vself (vmaskf_gt (f, epsilonExpInv3), res1, res2);
     }
 #endif
 
@@ -812,30 +812,30 @@ public:
     {
         float d = h2 - h1;
         float f;
-        f = T(balance);
+        f = T (balance);
         double h;
 
         if (h1 > h2) {
-            std::swap(h1, h2);
+            std::swap (h1, h2);
             d = -d;
             f = 1.f - f;
         }
 
-        if (d < T(-rtengine::RT_PI) || d < T(0) || d > T(rtengine::RT_PI)) { //there was an inversion here !! d > T(rtengine::RT_PI)
-            h1 += T(2 * rtengine::RT_PI);
+        if (d < T (-rtengine::RT_PI) || d < T (0) || d > T (rtengine::RT_PI)) { //there was an inversion here !! d > T(rtengine::RT_PI)
+            h1 += T (2 * rtengine::RT_PI);
             h = h1 + f * (h2 - h1);
-            h = std::fmod(h, 2 * rtengine::RT_PI);
+            h = std::fmod (h, 2 * rtengine::RT_PI);
         } else {
             h = h1 + f * d;
         }
 
         // not strictly necessary..but in case of
-        if(h < T(-rtengine::RT_PI)) {
-            h = T(2 * rtengine::RT_PI) - h;
+        if (h < T (-rtengine::RT_PI)) {
+            h = T (2 * rtengine::RT_PI) - h;
         }
 
-        if(h > T(rtengine::RT_PI)) {
-            h = h - T(2 * rtengine::RT_PI);
+        if (h > T (rtengine::RT_PI)) {
+            h = h - T (2 * rtengine::RT_PI);
         }
 
         return h;
@@ -855,30 +855,30 @@ public:
     {
         float d = h2 - h1;
         float f;
-        f = T(balance);
+        f = T (balance);
         double h;
 
         if (h1 > h2) {
-            std::swap(h1, h2);
+            std::swap (h1, h2);
             d = -d;
             f = 1.f - f;
         }
 
-        if (d < T(0) || d < T(0.5) || d > T(1.)) { //there was an inversion here !! d > T(rtengine::RT_PI)
-            h1 += T(1.);
+        if (d < T (0) || d < T (0.5) || d > T (1.)) { //there was an inversion here !! d > T(rtengine::RT_PI)
+            h1 += T (1.);
             h = h1 + f * (h2 - h1);
-            h = std::fmod(h, 1.);
+            h = std::fmod (h, 1.);
         } else {
             h = h1 + f * d;
         }
 
         // not strictly necessary..but in case of
-        if(h < T(0)) {
-            h = T(1.) - h;
+        if (h < T (0)) {
+            h = T (1.) - h;
         }
 
-        if(h > T(1)) {
-            h = h - T(1.);
+        if (h > T (1)) {
+            h = h - T (1.);
         }
 
         return h;
@@ -950,7 +950,7 @@ public:
     */
     static inline double gamma2     (double x)      //  g3                  1+g4
     {
-        return x <= 0.003041 ? x * 12.92 : 1.055011 * exp(log(x) / sRGBGammaCurve) - 0.055011;
+        return x <= 0.003041 ? x * 12.92 : 1.055011 * exp (log (x) / sRGBGammaCurve) - 0.055011;
     }
 
 
@@ -962,7 +962,7 @@ public:
     */
     static inline double igamma2    (double x)      //g2
     {
-        return x <= 0.039293 ? x / 12.92 : exp(log((x + 0.055011) / 1.055011) * sRGBGammaCurve);
+        return x <= 0.039293 ? x / 12.92 : exp (log ((x + 0.055011) / 1.055011) * sRGBGammaCurve);
     }
 
 
@@ -973,7 +973,7 @@ public:
     */
     static inline double gamma55     (double x)     //  g3                  1+g4
     {
-        return x <= 0.013189 ? x * 10.0 : 1.593503 * exp(log(x) / 5.5) - 0.593503; // 5.5 10
+        return x <= 0.013189 ? x * 10.0 : 1.593503 * exp (log (x) / 5.5) - 0.593503; // 5.5 10
     }
 
 
@@ -984,7 +984,7 @@ public:
     */
     static inline double igamma55    (double x)     //g2
     {
-        return x <= 0.131889 ? x / 10.0 : exp(log((x + 0.593503) / 1.593503) * 5.5); // 5.5 10
+        return x <= 0.131889 ? x / 10.0 : exp (log ((x + 0.593503) / 1.593503) * 5.5); // 5.5 10
     }
 
 
@@ -995,7 +995,7 @@ public:
     */
     static inline double gamma4     (double x)      //  g3                  1+g4
     {
-        return x <= 0.03089 ? x * 5.0 : 1.478793 * exp(log(x) / 4.1) - 0.478793; // 4  5
+        return x <= 0.03089 ? x * 5.0 : 1.478793 * exp (log (x) / 4.1) - 0.478793; // 4  5
     }
 
 
@@ -1006,7 +1006,7 @@ public:
     */
     static inline double igamma4    (double x)      //g2
     {
-        return x <= 0.154449 ? x / 5.0 : exp(log((x + 0.478793) / 1.478793) * 4.1); // 4 5
+        return x <= 0.154449 ? x / 5.0 : exp (log ((x + 0.478793) / 1.478793) * 4.1); // 4 5
     }
 
 
@@ -1037,7 +1037,7 @@ public:
     */
     static inline double gamma24_17     (double x)
     {
-        return x <= 0.001867 ? x * 17.0 : 1.044445 * exp(log(x) / 2.4) - 0.044445;
+        return x <= 0.001867 ? x * 17.0 : 1.044445 * exp (log (x) / 2.4) - 0.044445;
     }
 
 
@@ -1048,7 +1048,7 @@ public:
     */
     static inline double igamma24_17    (double x)
     {
-        return x <= 0.031746 ? x / 17.0 : exp(log((x + 0.044445) / 1.044445) * 2.4);
+        return x <= 0.031746 ? x / 17.0 : exp (log ((x + 0.044445) / 1.044445) * 2.4);
     }
 
 
@@ -1059,7 +1059,7 @@ public:
     */
     static inline double gamma26_11     (double x)
     {
-        return x <= 0.004921 ? x * 11.0 : 1.086603 * exp(log(x) / 2.6) - 0.086603;
+        return x <= 0.004921 ? x * 11.0 : 1.086603 * exp (log (x) / 2.6) - 0.086603;
     }
 
 
@@ -1070,7 +1070,7 @@ public:
     */
     static inline double igamma26_11    (double x)
     {
-        return x <= 0.054127 ? x / 11.0 : exp(log((x + 0.086603) / 1.086603) * 2.6);
+        return x <= 0.054127 ? x / 11.0 : exp (log ((x + 0.086603) / 1.086603) * 2.6);
     }
     /**
     * @brief Get the gamma value for Gamma=1.3 Slope=2
@@ -1079,42 +1079,42 @@ public:
     */
     static inline double gamma13_2     (double x)
     {
-        return x <= 0.016613 ? x * 2.0 : 1.009968 * exp(log(x) / 1.3) - 0.009968;
+        return x <= 0.016613 ? x * 2.0 : 1.009968 * exp (log (x) / 1.3) - 0.009968;
     }
 
     static inline double igamma13_2    (double x)
     {
-        return x <= 0.033226 ? x / 2.0 : exp(log((x + 0.009968) / 1.009968) * 1.3);
+        return x <= 0.033226 ? x / 2.0 : exp (log ((x + 0.009968) / 1.009968) * 1.3);
     }
 
     static inline double gamma115_2     (double x)
     {
-        return x <= 0.001692 ? x * 2.0 : 1.000508 * exp(log(x) / 1.15) - 0.000508;
+        return x <= 0.001692 ? x * 2.0 : 1.000508 * exp (log (x) / 1.15) - 0.000508;
     }
 
     static inline double igamma115_2    (double x)
     {
-        return x <= 0.003384 ? x / 2.0 : exp(log((x + 0.000508) / 1.000508) * 1.15);
+        return x <= 0.003384 ? x / 2.0 : exp (log ((x + 0.000508) / 1.000508) * 1.15);
     }
 
     static inline double gamma145_3     (double x)
     {
-        return x <= 0.009115 ? x * 3.0 : 1.012305 * exp(log(x) / 1.45) - 0.012305;
+        return x <= 0.009115 ? x * 3.0 : 1.012305 * exp (log (x) / 1.45) - 0.012305;
     }
 
     static inline double igamma145_3    (double x)
     {
-        return x <= 0.027345 ? x / 3.0 : exp(log((x + 0.012305) / 1.012305) * 1.45);
+        return x <= 0.027345 ? x / 3.0 : exp (log ((x + 0.012305) / 1.012305) * 1.45);
     }
 
 //gamma for Retinex
     static inline double gammareti      (double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start ? x*slope : exp(log(x) / gamma) * mul - add);
+        return (x <= start ? x*slope : exp (log (x) / gamma) * mul - add);
     }
     static inline double igammareti     (double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
+        return (x <= start * slope ? x / slope : exp (log ((x + add) / mul) * gamma) );
     }
 
 
@@ -1124,12 +1124,12 @@ public:
     // X range 0..1
     static inline double gamma      (double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start ? x*slope : exp(log(x) / gamma) * mul - add);
+        return (x <= start ? x*slope : exp (log (x) / gamma) * mul - add);
     }
 
     static inline float gammaf      (float x, float gamma, float start, float slope)
     {
-        return x <= start ? x * slope : xexpf(xlogf(x) / gamma);
+        return x <= start ? x * slope : xexpf (xlogf (x) / gamma);
     }
 
     //fills a LUT of size 65536 using gamma with slope...
@@ -1137,7 +1137,7 @@ public:
 
     static inline double igamma     (double x, double gamma, double start, double slope, double mul, double add)
     {
-        return (x <= start * slope ? x / slope : exp(log((x + add) / mul) * gamma) );
+        return (x <= start * slope ? x / slope : exp (log ((x + add) / mul) * gamma) );
     }
 
 
@@ -1149,7 +1149,7 @@ public:
     */
     static inline double gamman      (double x, double gamma)           //standard gamma without slope...
     {
-        return exp(log(x) / gamma);
+        return exp (log (x) / gamma);
     }
 
     /**
@@ -1160,7 +1160,7 @@ public:
     */
     static inline float gammanf      (float x, float gamma)           //standard gamma without slope...
     {
-        return xexpf(xlogf(x) / gamma);
+        return xexpf (xlogf (x) / gamma);
     }
     //fills a LUT of size 65536 using gamma without slope...
     static void gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float factor);
@@ -1173,7 +1173,7 @@ public:
     */
     static inline double igamman     (double x, double gamma)           //standard inverse gamma without slope...
     {
-        return exp(log(x) * gamma);
+        return exp (log (x) * gamma);
     }
 
 
@@ -1355,41 +1355,41 @@ public:
     static inline void pregamutlab (float lum, float hue, float &chr)//big approximation to limit gamut (Prophoto) before good gamut procedure for locallab chroma, to avoid crash
     {
         if  (lum >= 95.0f) {
-            if(hue > 1.5f && hue < 2.f ) {
+            if (hue > 1.5f && hue < 2.f ) {
                 chr = 120.f;
-            } else if(hue > 0.7f && hue <= 1.5f) {
+            } else if (hue > 0.7f && hue <= 1.5f) {
                 chr = 60.f;
             } else {
                 chr = 40.f;
             }
-        }   else if(lum > 75.f) {
-            if(hue > 1.f && hue < 3.14f ) {
+        }   else if (lum > 75.f) {
+            if (hue > 1.f && hue < 3.14f ) {
                 chr = 130.f;
-            } else if(hue > -0.4f && hue <= 1.f) {
+            } else if (hue > -0.4f && hue <= 1.f) {
                 chr = 80.f;
-            } else if(hue > -3.15f && hue > -2.f) {
+            } else if (hue > -3.15f && hue > -2.f) {
                 chr = 80.f;
             } else {
                 chr = 60.f;
             }
 
-        } else if(lum > 35.f) {
+        } else if (lum > 35.f) {
             chr = 100.f;
-        }   else if(lum > 20.f) {
-            if(hue < -1.f && hue > -2.f ) {
+        }   else if (lum > 20.f) {
+            if (hue < -1.f && hue > -2.f ) {
                 chr = 120.f;
             } else {
                 chr = 80.f;
             }
-        }   else if(lum > 7.f) {
-            if(hue < -1.f && hue > -1.8f ) {
+        }   else if (lum > 7.f) {
+            if (hue < -1.f && hue > -1.8f ) {
                 chr = 120.f;
             } else {
                 chr = 60.f;
             }
 
         }   else {
-            if(hue < -1.f && hue > -1.6f ) {
+            if (hue < -1.f && hue > -1.6f ) {
                 chr = 80.f;
             } else {
                 chr = 40.f;
@@ -1413,10 +1413,10 @@ public:
         // wide area for transition, uses explicit factor 0.4
 
         if  (lum >= 85.0f) {
-            if((hue > (t_l + 0.53f - H9) && hue < (t_r + H9)) && (chrom > 8.0f && chrom < (14.0f + C9))) {
+            if ((hue > (t_l + 0.53f - H9) && hue < (t_r + H9)) && (chrom > 8.0f && chrom < (14.0f + C9))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if (lum >= 92.0f) {
-                if((hue > t_l + 0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) {
+                if ((hue > t_l + 0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) {
                     scale = (100.f - skinprot * 0.6f) / 100.1f;
                 } else if ((hue > b_l && hue < t_r) && (chrom > 7.0f && chrom < (18.0f))) {
                     scale = (100.f - skinprot * 0.4f) / 100.1f;
@@ -1427,7 +1427,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 70.0f) {
-            if((hue > t_l + 0.15f && hue < (t_r - 0.2f + H8)) && (chrom > 8.0f && chrom < (35.0f + C8))) {
+            if ((hue > t_l + 0.15f && hue < (t_r - 0.2f + H8)) && (chrom > 8.0f && chrom < (35.0f + C8))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1435,7 +1435,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 52.0f) {
-            if((hue > t_l && hue < (t_r + H7)) && (chrom > 11.0f && chrom < (35.0f + C7))) {
+            if ((hue > t_l && hue < (t_r + H7)) && (chrom > 11.0f && chrom < (35.0f + C7))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1443,7 +1443,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 35.0f) {
-            if((hue > t_l && hue <  (t_r + H4)) && (chrom > 13.0f && chrom < (37.0f + C4))) {
+            if ((hue > t_l && hue <  (t_r + H4)) && (chrom > 13.0f && chrom < (37.0f + C4))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1451,7 +1451,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 20.0f) {
-            if((hue > t_l && hue < (t_r + H3)) && (chrom > 7.0f && chrom < (35.0f + C3) )) {
+            if ((hue > t_l && hue < (t_r + H3)) && (chrom > 7.0f && chrom < (35.0f + C3) )) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1459,7 +1459,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 10.0f) {
-            if((hue > (t_l - 0.25f + H10) && hue < (t_r - 0.3f + H2)) && (chrom > 8.0f && chrom < (23.0f + C2))) {
+            if ((hue > (t_l - 0.25f + H10) && hue < (t_r - 0.3f + H2)) && (chrom > 8.0f && chrom < (23.0f + C2))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (35.0f + C1) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1475,7 +1475,7 @@ public:
         }
 
         //extended zone for hair, beard and if user adjust high value for skinprot
-        if(skinprot > 85.f && chrom < 20.f && neg) {
+        if (skinprot > 85.f && chrom < 20.f && neg) {
             float modula = -0.0666f * skinprot + 6.66f;
             scale *= modula;
         }
@@ -1490,12 +1490,12 @@ public:
         // "real" skin color : take into account a slightly usage of contrast and saturation in RT if option "skin" = 1, uses imolicit factor 1.0
         // wide area  skin color, useful if not accurate colorimetry or if the user has changed hue and saturation, uses explicit facor 0.6
         // wide area for transition, uses explicit factor 0.4
-        if((b_l > -0.3f && b_r < 2.f)  || basc == 0) { //range maxi skin
+        if ((b_l > -0.3f && b_r < 2.f)  || basc == 0) { //range maxi skin
             if  (lum >= 85.0f) {
-                if((hue > (t_l + 0.53f - H9) && hue < (t_r + H9)) && (chrom > 8.0f && chrom < (14.0f + C9))) {
+                if ((hue > (t_l + 0.53f - H9) && hue < (t_r + H9)) && (chrom > 8.0f && chrom < (14.0f + C9))) {
                     scale = (100.f - skinprot) / 100.1f;
                 } else if (lum >= 92.0f) {
-                    if((hue > t_l + 0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) {
+                    if ((hue > t_l + 0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) {
                         scale = (100.f - skinprot * 0.6f) / 100.1f;
                     } else if ((hue > b_l && hue < t_r) && (chrom > 7.0f && chrom < (18.0f))) {
                         scale = (100.f - skinprot * 0.4f) / 100.1f;
@@ -1506,7 +1506,7 @@ public:
                     scale = (100.f - skinprot * 0.4f) / 100.1f;
                 }
             } else if (lum >= 70.0f) {
-                if((hue > t_l + 0.15f && hue < (t_r - 0.2f + H8)) && (chrom > 8.0f && chrom < (35.0f + C8))) {
+                if ((hue > t_l + 0.15f && hue < (t_r - 0.2f + H8)) && (chrom > 8.0f && chrom < (35.0f + C8))) {
                     scale = (100.f - skinprot) / 100.1f;
                 } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                     scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1514,7 +1514,7 @@ public:
                     scale = (100.f - skinprot * 0.4f) / 100.1f;
                 }
             } else if (lum >= 52.0f) {
-                if((hue > t_l && hue < (t_r + H7)) && (chrom > 11.0f && chrom < (35.0f + C7))) {
+                if ((hue > t_l && hue < (t_r + H7)) && (chrom > 11.0f && chrom < (35.0f + C7))) {
                     scale = (100.f - skinprot) / 100.1f;
                 } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                     scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1522,7 +1522,7 @@ public:
                     scale = (100.f - skinprot * 0.4f) / 100.1f;
                 }
             } else if (lum >= 35.0f) {
-                if((hue > t_l && hue <  (t_r + H4)) && (chrom > 13.0f && chrom < (37.0f + C4))) {
+                if ((hue > t_l && hue <  (t_r + H4)) && (chrom > 13.0f && chrom < (37.0f + C4))) {
                     scale = (100.f - skinprot) / 100.1f;
                 } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                     scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1530,7 +1530,7 @@ public:
                     scale = (100.f - skinprot * 0.4f) / 100.1f;
                 }
             } else if (lum >= 20.0f) {
-                if((hue > t_l && hue < (t_r + H3)) && (chrom > 7.0f && chrom < (35.0f + C3) )) {
+                if ((hue > t_l && hue < (t_r + H3)) && (chrom > 7.0f && chrom < (35.0f + C3) )) {
                     scale = (100.f - skinprot) / 100.1f;
                 } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                     scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1538,7 +1538,7 @@ public:
                     scale = (100.f - skinprot * 0.4f) / 100.1f;
                 }
             } else if (lum >= 10.0f) {
-                if((hue > (t_l - 0.25f + H10) && hue < (t_r - 0.3f + H2)) && (chrom > 8.0f && chrom < (23.0f + C2))) {
+                if ((hue > (t_l - 0.25f + H10) && hue < (t_r - 0.3f + H2)) && (chrom > 8.0f && chrom < (23.0f + C2))) {
                     scale = (100.f - skinprot) / 100.1f;
                 } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (35.0f + C1) )) {
                     scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1554,21 +1554,21 @@ public:
             }
 
             //extended zone for hair, beard and if user adjust high value for skinprot
-            if(skinprot > 85.f && chrom < 20.f && neg) {
+            if (skinprot > 85.f && chrom < 20.f && neg) {
                 float modula = -0.0666f * skinprot + 6.66f;
                 scale *= modula;
             }
         }
         //end hue skin algo
         else if (basc == 1) { //not hue skin  linear transition or mod chroma curve
-            if(hue >= t_l && hue <= t_r) {
+            if (hue >= t_l && hue <= t_r) {
                 scale = (100.f - skinprot) / 100.1f;
-            } else if(hue > b_l && hue < t_l) {
+            } else if (hue > b_l && hue < t_l) {
                 float sc = (100.f - skinprot) / 100.1f;
                 float aa = (1.f - sc) / (b_l - t_l);
                 float bb = 1.f - aa * b_l;
                 scale = aa * hue + bb;
-            } else if(hue > t_r && hue < b_r) {
+            } else if (hue > t_r && hue < b_r) {
                 float sc = (100.f - skinprot) / 100.1f;
                 float aa = (sc - 1.f) / (t_r - b_r);
                 float bb = 1.f - aa * b_r;
@@ -1589,15 +1589,15 @@ public:
 
         if     (hue > 8.6f  && hue <= 74.f ) {
             HH = (1.15f / 65.4f) * hue - 0.0012f;   //H > 0.15   H<1.3
-        } else if(hue > 0.f   && hue <= 8.6f ) {
+        } else if (hue > 0.f   && hue <= 8.6f ) {
             HH = (0.19f / 8.6f ) * hue - 0.04f;   //H>-0.04 H < 0.15
-        } else if(hue > 355.f && hue <= 360.f) {
+        } else if (hue > 355.f && hue <= 360.f) {
             HH = (0.11f / 5.0f ) * hue - 7.96f;   //H>-0.15 <-0.04
-        } else if(hue > 74.f  && hue < 95.f  ) {
+        } else if (hue > 74.f  && hue < 95.f  ) {
             HH = (0.30f / 21.0f) * hue + 0.24285f;   //H>1.3  H<1.6
-        } else if(hue >= 95.f && hue < 137.5f) {
+        } else if (hue >= 95.f && hue < 137.5f) {
             HH = 0.01882f * hue - 0.18823f;   // H>1.6 H<2.4
-        } else if(hue > 285.f && hue <= 355.f)  {
+        } else if (hue > 285.f && hue <= 355.f)  {
             HH = 0.1642f * hue - 5.982f;   //HH>-1.3  HH <-0.15
         }
 
@@ -1608,10 +1608,10 @@ public:
         // wide area for transition, uses explicit factor 0.4
 
         if  (lum >= 85.0f) {
-            if((hue > (t_l + 0.53f - H9) && hue < (t_r + H9)) && (chrom > 8.0f && chrom < (14.0f + C9))) {
+            if ((hue > (t_l + 0.53f - H9) && hue < (t_r + H9)) && (chrom > 8.0f && chrom < (14.0f + C9))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if (lum >= 92.0f) {
-                if((hue > t_l + 0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) {
+                if ((hue > t_l + 0.4f && hue < t_r) && (chrom > 7.0f && chrom < (15.0f))) {
                     scale = (100.f - skinprot * 0.6f) / 100.1f;
                 } else if ((hue > b_l && hue < t_r) && (chrom > 7.0f && chrom < (18.0f))) {
                     scale = (100.f - skinprot * 0.4f) / 100.1f;
@@ -1622,7 +1622,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 70.0f) {
-            if((hue > t_l + 0.15f && hue < (t_r - 0.2f + H8)) && (chrom > 8.0f && chrom < (35.0f + C8))) {
+            if ((hue > t_l + 0.15f && hue < (t_r - 0.2f + H8)) && (chrom > 8.0f && chrom < (35.0f + C8))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1630,7 +1630,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 52.0f) {
-            if((hue > t_l && hue < (t_r + H7)) && (chrom > 11.0f && chrom < (35.0f + C7))) {
+            if ((hue > t_l && hue < (t_r + H7)) && (chrom > 11.0f && chrom < (35.0f + C7))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1638,7 +1638,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 35.0f) {
-            if((hue > t_l && hue <  (t_r + H4)) && (chrom > 13.0f && chrom < (37.0f + C4))) {
+            if ((hue > t_l && hue <  (t_r + H4)) && (chrom > 13.0f && chrom < (37.0f + C4))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1646,7 +1646,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 20.0f) {
-            if((hue > t_l && hue < (t_r + H3)) && (chrom > 7.0f && chrom < (35.0f + C3) )) {
+            if ((hue > t_l && hue < (t_r + H3)) && (chrom > 7.0f && chrom < (35.0f + C3) )) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (48.0f + C9) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1654,7 +1654,7 @@ public:
                 scale = (100.f - skinprot * 0.4f) / 100.1f;
             }
         } else if (lum >= 10.0f) {
-            if((hue > (t_l - 0.25f + H10) && hue < (t_r - 0.3f + H2)) && (chrom > 8.0f && chrom < (23.0f + C2))) {
+            if ((hue > (t_l - 0.25f + H10) && hue < (t_r - 0.3f + H2)) && (chrom > 8.0f && chrom < (23.0f + C2))) {
                 scale = (100.f - skinprot) / 100.1f;
             } else if ((hue > (b_l + 0.07f + H11) && hue < t_r - 0.2f) && (chrom > 7.0f && chrom < (35.0f + C1) )) {
                 scale = (100.f - skinprot * 0.6f) / 100.1f;
@@ -1670,7 +1670,7 @@ public:
         }
 
         //extended zone for hair, beard and if user adjust high value for skinprot
-        if(skinprot > 85.f && chrom < 20.f && neg) {
+        if (skinprot > 85.f && chrom < 20.f && neg) {
             float modula = -0.0666f * skinprot + 6.66f;
             scale *= modula;
         }
@@ -1684,7 +1684,7 @@ public:
     * @param Z Z channel input value and corrected output value [0 ; 65535]
     * @param p working profile
     */
-    static void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
+    static void gamutmap (float &X, float &Y, float &Z, const double p[3][3]);
 
 
     /**
@@ -1700,29 +1700,29 @@ public:
         //allways put h between 0 and 1
 
         if      (HH >= 0.f       && HH < 0.6f    ) {
-            hr = 0.11666 * double(HH) + 0.93;    //hr 0.93  1.00    full red
+            hr = 0.11666 * double (HH) + 0.93;   //hr 0.93  1.00    full red
         } else if (HH >= 0.6f      && HH < 1.4f    ) {
-            hr = 0.1125 * double(HH) - 0.0675;    //hr 0.00  0.09    red yellow orange
+            hr = 0.1125 * double (HH) - 0.0675;   //hr 0.00  0.09    red yellow orange
         } else if (HH >= 1.4f      && HH < 2.f     ) {
-            hr = 0.2666 * double(HH) - 0.2833;    //hr 0.09  0.25    orange yellow
+            hr = 0.2666 * double (HH) - 0.2833;   //hr 0.09  0.25    orange yellow
         } else if (HH >= 2.f       && HH < 3.14159f) {
-            hr = 0.1489 * double(HH) - 0.04785;    //hr 0.25  0.42    yellow green green
+            hr = 0.1489 * double (HH) - 0.04785;   //hr 0.25  0.42    yellow green green
         } else if (HH >= -3.14159f && HH < -2.8f   ) {
-            hr = 0.23419 * double(HH) + 1.1557;    //hr 0.42  0.50    green
+            hr = 0.23419 * double (HH) + 1.1557;   //hr 0.42  0.50    green
         } else if (HH >= -2.8f     && HH < -2.3f   ) {
-            hr = 0.16   * double(HH) + 0.948;    //hr 0.50  0.58    cyan
+            hr = 0.16   * double (HH) + 0.948;   //hr 0.50  0.58    cyan
         } else if (HH >= -2.3f     && HH < -0.9f   ) {
-            hr = 0.12143 * double(HH) + 0.85928;    //hr 0.58  0.75    blue blue-sky
+            hr = 0.12143 * double (HH) + 0.85928;   //hr 0.58  0.75    blue blue-sky
         } else if (HH >= -0.9f     && HH < -0.1f   ) {
-            hr = 0.2125 * double(HH) + 0.94125;    //hr 0.75  0.92    purple magenta
+            hr = 0.2125 * double (HH) + 0.94125;   //hr 0.75  0.92    purple magenta
         } else if (HH >= -0.1f     && HH < 0.f     ) {
-            hr = 0.1    * double(HH) + 0.93;    //hr 0.92  0.93    red
+            hr = 0.1    * double (HH) + 0.93;   //hr 0.92  0.93    red
         }
 
         // in case of !
         if     (hr < 0.0) {
             hr += 1.0;
-        } else if(hr > 1.0) {
+        } else if (hr > 1.0) {
             hr -= 1.0;
         }
 

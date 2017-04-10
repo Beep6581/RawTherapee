@@ -395,6 +395,9 @@ SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Pro
             }
         }
     }
+#ifdef _OPENMP
+    static_cast<void>(chunkSize); // to silence cppcheck warning
+#endif
 }
 
 bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int MaxFillAbove)

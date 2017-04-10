@@ -142,6 +142,7 @@ class LCPMapper
     bool swapXY;
     LCPModelCommon mc;
     LCPModelCommon chrom[3];  // in order RedGreen/Green/BlueGreen
+    bool isFisheye;
 
 public:
     bool enableCA;  // is the mapper capable if CA correction?
@@ -150,7 +151,7 @@ public:
     LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
               const CoarseTransformParams& coarse, int rawRotationDeg);
 
-    void correctDistortion(double& x, double& y) const;  // MUST be the first stage
+    void correctDistortion(double& x, double& y, double scale) const;  // MUST be the first stage
     void correctCA(double& x, double& y, int channel) const;
     void processVignetteLine(int width, int y, float *line) const;
     void processVignetteLine3Channels(int width, int y, float *line) const;

@@ -696,7 +696,7 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
                 sFormat = IIOSF_HALF;
                 return IMIO_SUCCESS;
             }*/
-            if ((samplesperpixel == 3 || samplesperpixel == 4) && bitspersample == 32) {
+            if (bitspersample == 32) {
                 sFormat = IIOSF_FLOAT;
                 return IMIO_SUCCESS;
             }

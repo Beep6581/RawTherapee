@@ -491,9 +491,6 @@ void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float
         idirpyr_eq_channelcam (dirpyrlo[level], dirpyrlo[level - 1], buffer, srcwidth, srcheight, level, multi, dirpyrThreshold , h_p, C_p, skinprot, b_l, t_l, t_r);
     }
 
-
-    scale = scales[0];
-
     idirpyr_eq_channelcam (dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, multi, dirpyrThreshold,  h_p, C_p, skinprot, b_l, t_l, t_r);
 
 
@@ -749,7 +746,7 @@ SSEFUNCTION void ImProcFunctions::dirpyr_channel (float ** data_fine, float ** d
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void ImProcFunctions::idirpyr_eq_channel_loc (float ** data_coarse, float ** data_fine, float ** loctemp, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r , int choice)
 {
-//   const float skinprotneg = -skinprot;
+    //  const float skinprotneg = -skinprot;
 //   const float factorHard = (1.f - skinprotneg / 100.f);
 
     float offs;
@@ -841,10 +838,7 @@ void ImProcFunctions::idirpyr_eq_channel_loc (float ** data_coarse, float ** dat
     */
 }
 
-
-
-
-void ImProcFunctions::idirpyr_eq_channel (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r , int choice)
+void ImProcFunctions::idirpyr_eq_channel (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[6], const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r , int choice)
 {
     const float skinprotneg = -skinprot;
     const float factorHard = (1.f - skinprotneg / 100.f);
@@ -936,7 +930,7 @@ void ImProcFunctions::idirpyr_eq_channel (float ** data_coarse, float ** data_fi
 }
 
 
-void ImProcFunctions::idirpyr_eq_channelcam (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[5], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r)
+void ImProcFunctions::idirpyr_eq_channelcam (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult[6], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r)
 {
 
     const float skinprotneg = -skinprot;
