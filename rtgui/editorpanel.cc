@@ -112,7 +112,7 @@ bool find_default_monitor_profile(GdkWindow *rootwin, Glib::ustring &defprof, Gl
     if (gdk_property_get(rootwin, gdk_atom_intern("_ICC_PROFILE", FALSE), GDK_NONE, 0, 64 * 1024 * 1024, FALSE, &type, &format, &proflen, &prof) && proflen > 0) {
         cmsHPROFILE p = cmsOpenProfileFromMem(prof, proflen);
         if (p) {
-            defprofname = "GDK_ICC_PROFILE";
+            defprofname = "from GDK";
             defprof = Glib::build_filename(Options::rtdir, "GDK_ICC_PROFILE.icc");
             if (cmsSaveProfileToFile(p, defprof.c_str())) {
                 cmsCloseProfile(p);
