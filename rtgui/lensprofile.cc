@@ -144,10 +144,6 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 
 void LensProfilePanel::onLCPFileChanged()
 {
-
-    // Disable Auto-Fill when enabling LCP Distortion Correction, #1791
-    lensgeomLcpFill->disableAutoFillIfActive();
-
     lcpFileChanged = true;
     updateDisabled(lcpStore->isValidLCPFileName(fcbLCPFile->get_filename()));
 
@@ -170,12 +166,6 @@ void LensProfilePanel::onLCPFileReset()
 
 void LensProfilePanel::onUseDistChanged()
 {
-
-    // Disable Auto-Fill when enabling LCP Distortion Correction, #1791
-    if (ckbUseDist->get_active()) {
-        lensgeomLcpFill->disableAutoFillIfActive();
-    }
-
     useDistChanged = true;
 
     if (listener) {

@@ -54,7 +54,6 @@ public:
     {
         rlistener = l;
     }
-    void disableAutoFillIfActive ();
 
 private:
     IdleRegister idle_register;

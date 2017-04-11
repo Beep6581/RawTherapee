@@ -119,28 +119,3 @@ void LensGeometry::setBatchMode (bool batchMode)
     removeIfThere (this, autoCrop);
 }
 
-void LensGeometry::disableAutoFillIfActive ()
-{
-    const auto func = [](gpointer data) -> gboolean {
-        GThreadLock lock; // Is this really needed?
-
-        LensGeometry* const instance = static_cast<LensGeometry*>(data);
-
-        if (!instance->batchMode) {
-            if (instance->fill->get_active()) {
-                instance->fillConn.block(true);
-                instance->fill->set_active(false);
-
-                if (instance->listener) {
-                    instance->listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
-                }
-
-                instance->fillConn.block(false);
-            }
-        }
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
-}
