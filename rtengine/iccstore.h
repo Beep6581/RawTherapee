@@ -78,6 +78,9 @@ public:
     cmsHPROFILE      getStdProfile(const Glib::ustring& name) const;
     ProfileContent   getContent(const Glib::ustring& name) const;
 
+    Glib::ustring getDefaultMonitorProfileName() const;
+    void setDefaultMonitorProfileName(const Glib::ustring &name);
+
     cmsHPROFILE      getXYZProfile() const;
     cmsHPROFILE      getsRGBProfile() const;
 

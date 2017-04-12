@@ -160,7 +160,12 @@ private:
         Glib::ustring defprofname;
         if (find_default_monitor_profile(profileBox.get_root_window()->gobj(), defprof, defprofname)) {
             profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + defprofname + ")");
-            profileBox.set_active (options.rtSettings.autoMonitorProfile ? 1 : 0);
+            if (options.rtSettings.autoMonitorProfile) {
+                rtengine::ICCStore::getInstance()->setDefaultMonitorProfileName(defprof);
+                profileBox.set_active(1);
+            } else {
+                profileBox.set_active(0);
+            }
         } else {
             profileBox.set_active (0);
         }
@@ -402,7 +407,7 @@ public:
         ConnectionBlocker profileBlocker (profileConn);
 
         if (!defprof.empty() && options.rtSettings.autoMonitorProfile) {
-            setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 1);
+            profileBox.set_active(1);
         } else {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
         }
@@ -424,6 +429,23 @@ public:
         }
 
         updateParameters ();
+    }
+
+    void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile)
+    {
+        ConnectionBlocker profileBlocker (profileConn);
+        
+        if (auto_monitor_profile && !defprof.empty()) {
+            rtengine::ICCStore::getInstance()->setDefaultMonitorProfileName(defprof);
+#ifndef __APPLE__
+            profileBox.set_active(1);
+#endif
+        } else {
+            rtengine::ICCStore::getInstance()->setDefaultMonitorProfileName(profile_name);
+#ifndef __APPLE__
+            setActiveTextOrIndex(profileBox, profile_name, 0);
+#endif
+        }
     }
 
 };
@@ -2214,3 +2236,10 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
 
     iareapanel->imageArea->setPointerMotionHListener (histogramPanel);
 }
+
+
+void EditorPanel::defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile)
+{
+    colorMgmtToolBar->defaultMonitorProfileChanged(profile_name, auto_monitor_profile);
+}
+
