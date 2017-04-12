@@ -129,6 +129,8 @@ public:
     void updateTabsUsesIcons (bool useIcons);
     void updateHistogramPosition (int oldPosition, int newPosition);
 
+    void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile);
+
     Gtk::Paned* catalogPane;
 
 private:

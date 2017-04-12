@@ -1040,7 +1040,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     ImProcFunctions ipf (&params, false);
     ipf.setScale (sqrt(double(fw * fw + fh * fh)) / sqrt(double(thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (options.rtSettings.monitorProfile, options.rtSettings.monitorIntent, false, false);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), options.rtSettings.monitorIntent, false, false);
 
     LUTu hist16 (65536);
 
