@@ -354,7 +354,7 @@ endif()
 # Set the platform bit-depth:
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(PROC_BIT_DEPTH 32 bits)
-elseif()
+else()
     set(PROC_BIT_DEPTH 64 bits)
 endif()
 

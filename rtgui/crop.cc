@@ -836,7 +836,7 @@ void Crop::cropMoved (int &X, int &Y, int &W, int &H)
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
-void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H)
+void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     int oldXR = nx + nw;
@@ -849,8 +849,8 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H)
         W = oldXR;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         H = (int)round(W / r);
         int Hmax = min(ny + nh, maxh - ny);
 
@@ -879,7 +879,7 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H)
     idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
 }
 
-void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H)
+void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     if (W < 0) {
@@ -890,8 +890,8 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H)
         W = maxw - nx;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         H = (int)round(W / r);
         int Hmax = min(ny + nh, maxh - ny);
 
@@ -919,7 +919,7 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H)
     idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
 }
 
-void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H)
+void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     int oldYB = ny + nh;
@@ -932,8 +932,8 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H)
         H = oldYB;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         W = (int)round(H * r);
         int Wmax = min(nx + nw, maxw - nx);
 
@@ -962,7 +962,7 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H)
     idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
 }
 
-void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H)
+void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     if (H < 0) {
@@ -973,8 +973,8 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H)
         H = maxh - ny;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         W = (int)round(H * r);
         int Wmax = min(nx + nw, maxw - nx);
 
@@ -1002,7 +1002,7 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H)
     idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
 }
 
-void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H)
+void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     int oldXR = nx + nw; // right side
@@ -1024,8 +1024,8 @@ void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H)
         H = oldYB;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         W = (int)round(H * r);
 
         if (W > oldXR) {
@@ -1044,7 +1044,7 @@ void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H)
     idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
 }
 
-void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H)
+void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     int oldYB = ny + nh;
@@ -1065,8 +1065,8 @@ void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H)
         H = oldYB;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         W = (int)round(H * r);
 
         if (W > maxw - nx) {
@@ -1084,7 +1084,7 @@ void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H)
     idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
 }
 
-void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H)
+void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     int oldXR = nx + nw;
@@ -1105,8 +1105,8 @@ void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H)
         H = maxh - ny;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         W = (int)round(H * r);
 
         if (W > oldXR) {
@@ -1124,7 +1124,7 @@ void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H)
     idle_register.add(refreshSpinsUI, new RefreshSpinHelper(this, false));
 }
 
-void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H)
+void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H, float custom_ratio)
 {
 
     if (W < 0) {
@@ -1143,8 +1143,8 @@ void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H)
         H = maxh - ny;
     }
 
-    if (fixr->get_active()) {
-        double r = getRatio();
+    if (fixr->get_active() || custom_ratio > 0) {
+        double r = custom_ratio > 0 ? custom_ratio : getRatio();
         W = (int)round(H * r);
 
         if (W > maxw - nx) {
