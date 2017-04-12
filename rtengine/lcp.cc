@@ -28,10 +28,17 @@
 #include <shlobj.h>
 #endif
 
+#include "settings.h"
 
 using namespace std;
 using namespace rtengine;
 
+
+namespace rtengine {
+
+extern const Settings* settings;
+
+}
 
 LCPModelCommon::LCPModelCommon() :
     foc_len_x(-1.0f),
@@ -603,7 +610,9 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
 
         //printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
     } else {
-        printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
+        if (settings->verbose) {
+            printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
+        }
     }
 }
 
