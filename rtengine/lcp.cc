@@ -191,7 +191,9 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
     swapXY  = (rot == 90  || rot == 270);
     bool mirrorX = (rot == 90  || rot == 180);
     bool mirrorY = (rot == 180 || rot == 270);
-    //printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+    if (settings->verbose) {
+        printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+    }
 
     pProf->calcParams(vignette ? 0 : 1, focalLength, focusDist, aperture, &mc, nullptr, nullptr);
     mc.prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
@@ -400,7 +402,9 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
 
     XML_ParserFree(parser);
 
-    //printf("Parsing %s\n", fname.c_str());
+    if (settings->verbose) {
+        printf("Parsing %s\n", fname.c_str());
+    }
     // Two phase filter: first filter out the very rough ones, that distord the average a lot
     // force it, even if there are few frames (community profiles)
     filterBadFrames(2.0, 0);
@@ -468,7 +472,9 @@ int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft)
             }
         }
 
-        //printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
+        if (settings->verbose) {
+            printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
+        }
     }
 
     return filtered;
@@ -608,7 +614,9 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
             break;
         }
 
-        //printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
+        if (settings->verbose) {
+            printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
+        }
     } else {
         if (settings->verbose) {
             printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
@@ -894,7 +902,9 @@ LCPProfile* LCPStore::getProfile (Glib::ustring filename)
 
     // Add profile (if exists)
     profileCache[filename] = new LCPProfile(filename);
-    //profileCache[filename]->print();
+    if (settings->verbose) {
+        profileCache[filename]->print();
+    }
     return profileCache[filename];
 }
 
