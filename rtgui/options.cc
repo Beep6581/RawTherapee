@@ -727,6 +727,7 @@ void Options::setDefaults ()
     lastVibranceCurvesDir = "";
     lastProfilingReferenceDir = "";
     lastBWCurvesDir = "";
+    lastLensProfileDir = "";
     maxRecentFolders = 15;
 }
 
@@ -1853,6 +1854,7 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet (keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
+                safeDirGet (keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
             }
 
 // --------------------------------------------------------------------------------------------------------
@@ -2218,6 +2220,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
         keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
+        keyFile.set_string ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
 
         keyData = keyFile.to_data ();
 

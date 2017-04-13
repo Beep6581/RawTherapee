@@ -780,7 +780,9 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance ()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
 
     for (const auto profile : profiles) {
-        monProfile->append (profile);
+        if (profile.find("file:") != 0) {
+            monProfile->append (profile);
+        }
     }
 
     // same order as the enum

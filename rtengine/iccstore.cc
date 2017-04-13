@@ -302,6 +302,8 @@ public:
         if (loadAll) {
             loadProfiles(stdProfilesDir, nullptr, nullptr, &fileStdProfilesFileNames, true);
         }
+
+        defaultMonitorProfile = settings->monitorProfile;
     }
 
     cmsHPROFILE workingSpace(const Glib::ustring& name) const
@@ -534,6 +536,16 @@ public:
         return getProofIntents(getProfile(name));
     }
 
+    Glib::ustring getDefaultMonitorProfileName() const
+    {
+        return defaultMonitorProfile;
+    }
+
+    void setDefaultMonitorProfileName(const Glib::ustring &name)
+    {
+        defaultMonitorProfile = name;
+    }
+
 private:
     using ProfileMap = std::map<Glib::ustring, cmsHPROFILE>;
     using MatrixMap = std::map<Glib::ustring, TMatrix>;
@@ -615,6 +627,18 @@ cmsHPROFILE rtengine::ICCStore::getStdProfile(const Glib::ustring& name) const
 rtengine::ProfileContent rtengine::ICCStore::getContent(const Glib::ustring& name) const
 {
     return implementation->getContent(name);
+}
+
+
+Glib::ustring rtengine::ICCStore::getDefaultMonitorProfileName() const
+{
+    return implementation->getDefaultMonitorProfileName();
+}
+
+
+void rtengine::ICCStore::setDefaultMonitorProfileName(const Glib::ustring &name)
+{
+    implementation->setDefaultMonitorProfileName(name);
 }
 
 cmsHPROFILE rtengine::ICCStore::getXYZProfile() const

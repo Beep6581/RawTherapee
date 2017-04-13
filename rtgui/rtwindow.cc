@@ -657,6 +657,12 @@ void RTWindow::showPreferences ()
     delete pref;
 
     fpanel->optionsChanged ();
+    if (epanel) {
+        epanel->defaultMonitorProfileChanged(options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
+    for (const auto &p : epanels) {
+        p.second->defaultMonitorProfileChanged(options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
 }
 
 void RTWindow::setProgress (double p)

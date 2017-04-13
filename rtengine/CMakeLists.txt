@@ -1,46 +1,141 @@
-include_directories (${EXTRA_INCDIR} ${GTHREAD_INCLUDE_DIRS} ${GOBJECT_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIRS}
-    ${GLIBMM_INCLUDE_DIRS} ${IPTCDATA_INCLUDE_DIRS} ${LCMS_INCLUDE_DIRS} ${EXPAT_INCLUDE_DIRS} ${FFTW3F_INCLUDE_DIRS}
-    ${GTKMM_INCLUDE_DIRS} ${GTK_INCLUDE_DIRS})
-link_directories ("${PROJECT_SOURCE_DIR}/rtexif" ${EXTRA_LIBDIR} ${GTHREAD_LIBRARY_DIRS}
-    ${GOBJECT_LIBRARY_DIRS} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}
-    ${IPTCDATA_LIBRARY_DIRS} ${LCMS_LIBRARY_DIRS} ${EXPAT_LIBRARY_DIRS} ${FFTW3F_LIBRARY_DIRS})
-
-set (CAMCONSTSFILE "camconst.json")
-
-set (RTENGINESOURCEFILES colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc dcraw.cc iccstore.cc color.cc
-    dfmanager.cc ffmanager.cc gauss.cc rawimage.cc image8.cc image16.cc imagefloat.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
-    loadinitial.cc procparams.cc rawimagesource.cc demosaic_algos.cc shmap.cc simpleprocess.cc refreshmap.cc
-    fast_demo.cc amaze_demosaic_RT.cc CA_correct_RT.cc cfa_linedn_RT.cc green_equil_RT.cc hilite_recon.cc expo_before_b.cc
-    stdimagesource.cc myfile.cc iccjpeg.cc improccoordinator.cc pipettebuffer.cc coord.cc
-    processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc cieimage.cc iplocallab.cc
-    iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc icons.cc
-    imagedimensions.cc jpeg_ijg/jpeg_memsrc.cc jdatasrc.cc iimage.cc
-    EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDN.cc
-    PF_correct_RT.cc previewimage.cc ipwavelet.cc
-    dirpyr_equalizer.cc
-    calc_distort.cc lcp.cc dcp.cc ipretinex.cc
-    cJSON.c camconst.cc
-    klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
-    klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
-    clutstore.cc
-    ciecam02.cc
-    pixelshift.cc
+include_directories(${EXTRA_INCDIR}
+    ${EXPAT_INCLUDE_DIRS}
+    ${FFTW3F_INCLUDE_DIRS}
+    ${GLIB2_INCLUDE_DIRS}
+    ${GLIBMM_INCLUDE_DIRS}
+    ${GOBJECT_INCLUDE_DIRS}
+    ${GTHREAD_INCLUDE_DIRS}
+    ${GTKMM_INCLUDE_DIRS}
+    ${GTK_INCLUDE_DIRS}
+    ${IPTCDATA_INCLUDE_DIRS}
+    ${LCMS_INCLUDE_DIRS}
     )
 
-include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+link_directories("${PROJECT_SOURCE_DIR}/rtexif"
+    ${EXPAT_LIBRARY_DIRS}
+    ${EXTRA_LIBDIR}
+    ${FFTW3F_LIBRARY_DIRS}
+    ${GLIB2_LIBRARY_DIRS}
+    ${GLIBMM_LIBRARY_DIRS}
+    ${GOBJECT_LIBRARY_DIRS}
+    ${GTHREAD_LIBRARY_DIRS}
+    ${IPTCDATA_LIBRARY_DIRS}
+    ${LCMS_LIBRARY_DIRS}
+    )
 
-add_library (rtengine ${RTENGINESOURCEFILES})
-add_dependencies (rtengine UpdateInfo)
+set(CAMCONSTSFILE "camconst.json")
 
-#It may be nice to store library version too
-IF (BUILD_SHARED_LIBS)
+set(RTENGINESOURCEFILES
+    CA_correct_RT.cc
+    EdgePreservingDecomposition.cc
+    FTblockDN.cc
+    PF_correct_RT.cc
+    amaze_demosaic_RT.cc
+    cJSON.c
+    calc_distort.cc
+    camconst.cc
+    cfa_linedn_RT.cc
+    ciecam02.cc
+    cieimage.cc
+    clutstore.cc
+    color.cc
+    colortemp.cc
+    coord.cc
+    cplx_wavelet_dec.cc
+    curves.cc
+    dcp.cc
+    dcraw.cc
+    dcrop.cc
+    demosaic_algos.cc
+    dfmanager.cc
+    diagonalcurves.cc
+    dirpyr_equalizer.cc
+    expo_before_b.cc
+    fast_demo.cc
+    ffmanager.cc
+    flatcurves.cc
+    gauss.cc
+    green_equil_RT.cc
+    hilite_recon.cc
+    iccjpeg.cc
+    iccstore.cc
+    icons.cc
+    iimage.cc
+    image16.cc
+    image8.cc
+    imagedata.cc
+    imagedimensions.cc
+    imagefloat.cc
+    imageio.cc
+    improccoordinator.cc
+    improcfun.cc
+    init.cc
+    iplab2rgb.cc
+	iplocallab.cc
+    ipresize.cc
+    ipretinex.cc
+    ipsharpen.cc
+    iptransform.cc
+    ipvibrance.cc
+    ipwavelet.cc
+    jdatasrc.cc
+    jpeg_ijg/jpeg_memsrc.cc
+    klt/convolve.cc
+    klt/error.cc
+    klt/klt.cc
+    klt/klt_util.cc
+    klt/pnmio.cc
+    klt/pyramid.cc
+    klt/selectGoodFeatures.cc
+    klt/storeFeatures.cc
+    klt/trackFeatures.cc
+    klt/writeFeatures.cc
+    labimage.cc
+    lcp.cc
+    loadinitial.cc
+    myfile.cc
+    pipettebuffer.cc
+    pixelshift.cc
+    previewimage.cc
+    processingjob.cc
+    procparams.cc
+    rawimage.cc
+    rawimagesource.cc
+    refreshmap.cc
+    rtthumbnail.cc
+    shmap.cc
+    simpleprocess.cc
+    slicer.cc
+    stdimagesource.cc
+    utils.cc
+    )
+
+include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+
+add_library(rtengine ${RTENGINESOURCEFILES})
+add_dependencies(rtengine UpdateInfo)
+
+# It may be nice to store library version too
+if(BUILD_SHARED_LIBS)
     install (TARGETS rtengine DESTINATION ${LIBDIR})
-ENDIF (BUILD_SHARED_LIBS)
+endif()
 
-set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
+set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
 
-target_link_libraries (rtengine rtexif ${EXTRA_LIB} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
-    ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${LCMS_LIBRARIES} ${EXPAT_LIBRARIES} ${FFTW3F_LIBRARIES} ${IPTCDATA_LIBRARIES}
-    ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES} ${ZLIB_LIBRARIES})
+target_link_libraries(rtengine rtexif
+    ${EXPAT_LIBRARIES}
+    ${EXTRA_LIB}
+    ${FFTW3F_LIBRARIES}
+    ${GLIB2_LIBRARIES}
+    ${GLIBMM_LIBRARIES}
+    ${GOBJECT_LIBRARIES}
+    ${GTHREAD_LIBRARIES}
+    ${IPTCDATA_LIBRARIES}
+    ${JPEG_LIBRARIES}
+    ${LCMS_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${TIFF_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    )
 
-install (FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
