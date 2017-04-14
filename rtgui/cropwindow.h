@@ -97,6 +97,8 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
 
     CropWindow* observedCropWin;  // Pointer to the currently active detail CropWindow
 
+    float crop_custom_ratio;
+
     bool onArea                    (CursorArea a, int x, int y);
     void updateCursor              (int x, int y);
     void drawDecoration            (Cairo::RefPtr<Cairo::Context> cr);

@@ -699,6 +699,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     // the general section is always ignored, whichever operation we use the PartialPaste for
     filterPE.general = falsePE.general;
+    // raw.caAutoStrength is ignored at the moment.
+    filterPE.raw.caAutoStrength = false;
 
 
     // Now we filter out the filter depending on the checked items
