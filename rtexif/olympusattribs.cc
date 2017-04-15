@@ -66,8 +66,8 @@ public:
     virtual std::string toString (Tag* t)
     {
         std::ostringstream str;
-        str.precision(2);
-        str << pow(2, t->toInt() / 512.0);
+        str.precision (2);
+        str << pow (2, t->toInt() / 512.0);
         return str.str();
     }
 };
@@ -196,9 +196,9 @@ public:
         std::ostringstream lid;
         lid.setf (std::ios_base::hex, std::ios_base::basefield);
         lid.setf (std::ios_base::uppercase);
-        lid << std::setw(2) << std::setfill('0') << t->toInt(0) << ' '; //maker
-        lid << std::setw(2) << std::setfill('0') << t->toInt(2) << ' '; //model
-        lid << std::setw(2) << std::setfill('0') << t->toInt(3); // submodel
+        lid << std::setw (2) << std::setfill ('0') << t->toInt (0) << ' '; //maker
+        lid << std::setw (2) << std::setfill ('0') << t->toInt (2) << ' '; //model
+        lid << std::setw (2) << std::setfill ('0') << t->toInt (3); // submodel
 
         std::map<std::string, std::string>::iterator r = lenses.find (lid.str());
 

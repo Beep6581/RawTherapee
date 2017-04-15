@@ -36,9 +36,9 @@ public:
     {
         int n = t->toInt();
 
-        if( n == 0 ) {
+        if ( n == 0 ) {
             return "OFF";
-        } else if( n == 1) {
+        } else if ( n == 1) {
             return "ON";
         } else {
             return "undef";
@@ -66,9 +66,9 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        double v = pow(2.0, t->toDouble() / 64.0);
+        double v = pow (2.0, t->toDouble() / 64.0);
 
-        if( v < 0. || v > 1000.) {
+        if ( v < 0. || v > 1000.) {
             return "undef";
         }
 
@@ -94,9 +94,9 @@ class CASelfTimerInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        int sec = t->toInt(0, SHORT);
+        int sec = t->toInt (0, SHORT);
 
-        if( !sec ) {
+        if ( !sec ) {
             return "OFF";
         }
 
@@ -388,41 +388,41 @@ public:
     virtual std::string toString (Tag* t)
     {
         std::ostringstream s;
-        unsigned bits = t->toInt(0, SHORT);
+        unsigned bits = t->toInt (0, SHORT);
 
-        if( bits & 0x0001 ) {
+        if ( bits & 0x0001 ) {
             s << "Manual ";
         }
 
-        if( bits & 0x0002 ) {
+        if ( bits & 0x0002 ) {
             s << "TTL ";
         }
 
-        if( bits & 0x0004 ) {
+        if ( bits & 0x0004 ) {
             s << "A-TTL ";
         }
 
-        if( bits & 0x0008 ) {
+        if ( bits & 0x0008 ) {
             s << "E-TTL ";
         }
 
-        if( bits & 0x0010 ) {
+        if ( bits & 0x0010 ) {
             s << "FP sync enabled ";
         }
 
-        if( bits & 0x0080 ) {
+        if ( bits & 0x0080 ) {
             s << "2nd curtain ";
         }
 
-        if( bits & 0x0800 ) {
+        if ( bits & 0x0800 ) {
             s << "FP sync used ";
         }
 
-        if( bits & 0x2000 ) {
+        if ( bits & 0x2000 ) {
             s << "Built-in ";
         }
 
-        if( bits & 0x4000 ) {
+        if ( bits & 0x4000 ) {
             s << "External ";
         }
 
@@ -535,11 +535,11 @@ class CAFocalInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
+        Tag *unitTag = t->getParent()->getRoot()->findTag ("FocalUnits");
         double v = unitTag ? unitTag->toDouble() : 1.;
         v = (v > 0. ? t->toDouble() / v : t->toDouble());
 
-        if( v < 0. || v > 1000000.) {
+        if ( v < 0. || v > 1000000.) {
             return "undef";
         }
 
@@ -555,350 +555,350 @@ class CALensInterpreter : public IntLensInterpreter< int >
 public:
     CALensInterpreter ()
     {
-        choices.insert(p_t(1, "Canon EF 50mm f/1.8"));
-        choices.insert(p_t(2, "Canon EF 28mm f/2.8"));
-        choices.insert(p_t(3, "Canon EF 135mm f/2.8 Soft"));
-        choices.insert(p_t(4, "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens"));
-        choices.insert(p_t(4, "Sigma UC Zoom 35-135mm f/4-5.6"));
-        choices.insert(p_t(5, "Canon EF 35-70mm f/3.5-4.5"));
-        choices.insert(p_t(6, "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens"));
-        choices.insert(p_t(6, "Sigma 18-50mm f/3.5-5.6 DC"));
-        choices.insert(p_t(6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"));
-        choices.insert(p_t(6, "Tokina AF 193-2 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(6, "Sigma 28-80mm f/3.5-5.6 II Macro"));
-        choices.insert(p_t(7, "Canon EF 100-300mm f/5.6L"));
-        choices.insert(p_t(8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens"));
-        choices.insert(p_t(8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"));
-        choices.insert(p_t(8, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"));
-        choices.insert(p_t(9, "Canon EF 70-210mm f/4"));
-        choices.insert(p_t(9, "Sigma 55-200mm f/4-5.6 DC"));
-        choices.insert(p_t(10, "Canon EF 50mm f/2.5 Macro or Sigma Lens"));
-        choices.insert(p_t(10, "Sigma 50mm f/2.8 EX"));
-        choices.insert(p_t(10, "Sigma 28mm f/1.8"));
-        choices.insert(p_t(10, "Sigma 105mm f/2.8 Macro EX"));
-        choices.insert(p_t(10, "Sigma 70mm f/2.8 EX DG Macro EF"));
-        choices.insert(p_t(11, "Canon EF 35mm f/2"));
-        choices.insert(p_t(13, "Canon EF 15mm f/2.8 Fisheye"));
-        choices.insert(p_t(14, "Canon EF 50-200mm f/3.5-4.5L"));
-        choices.insert(p_t(15, "Canon EF 50-200mm f/3.5-4.5"));
-        choices.insert(p_t(16, "Canon EF 35-135mm f/3.5-4.5"));
-        choices.insert(p_t(17, "Canon EF 35-70mm f/3.5-4.5A"));
-        choices.insert(p_t(18, "Canon EF 28-70mm f/3.5-4.5"));
-        choices.insert(p_t(20, "Canon EF 100-200mm f/4.5A"));
-        choices.insert(p_t(21, "Canon EF 80-200mm f/2.8L"));
-        choices.insert(p_t(22, "Canon EF 20-35mm f/2.8L or Tokina Lens"));
-        choices.insert(p_t(22, "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical"));
-        choices.insert(p_t(23, "Canon EF 35-105mm f/3.5-4.5"));
-        choices.insert(p_t(24, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert(p_t(25, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert(p_t(26, "Canon EF 100mm f/2.8 Macro or Other Lens"));
-        choices.insert(p_t(26, "Cosina 100mm f/3.5 Macro AF"));
-        choices.insert(p_t(26, "Tamron SP AF 90mm f/2.8 Di Macro"));
-        choices.insert(p_t(26, "Tamron SP AF 180mm f/3.5 Di Macro"));
-        choices.insert(p_t(26, "Carl Zeiss Planar T* 50mm f/1.4"));
-        choices.insert(p_t(27, "Canon EF 35-80mm f/4-5.6"));
-        choices.insert(p_t(28, "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens"));
-        choices.insert(p_t(28, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
-        choices.insert(p_t(28, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(28, "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro"));
-        choices.insert(p_t(28, "Tamron AF Aspherical 28-200mm f/3.8-5.6"));
-        choices.insert(p_t(29, "Canon EF 50mm f/1.8 II"));
-        choices.insert(p_t(30, "Canon EF 35-105mm f/4.5-5.6"));
-        choices.insert(p_t(31, "Canon EF 75-300mm f/4-5.6 or Tamron Lens"));
-        choices.insert(p_t(31, "Tamron SP AF 300mm f/2.8 LD IF"));
-        choices.insert(p_t(32, "Canon EF 24mm f/2.8 or Sigma Lens"));
-        choices.insert(p_t(32, "Sigma 15mm f/2.8 EX Fisheye"));
-        choices.insert(p_t(33, "Voigtlander or Carl Zeiss Lens"));
-        choices.insert(p_t(33, "Voigtlander Ultron 40mm f/2 SLII Aspherical"));
-        choices.insert(p_t(33, "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical"));
-        choices.insert(p_t(33, "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 15mm f/2.8 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 18mm f/3.5 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 21mm f/2.8 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 25mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 28mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 35mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 35mm f/1.4 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Planar T* 50mm f/1.4 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Makro-Planar T* 50mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Makro-Planar T* 100mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE"));
-        choices.insert(p_t(35, "Canon EF 35-80mm f/4-5.6"));
-        choices.insert(p_t(36, "Canon EF 38-76mm f/4.5-5.6"));
-        choices.insert(p_t(37, "Canon EF 35-80mm f/4-5.6 or Tamron Lens"));
-        choices.insert(p_t(37, "Tamron 70-200mm f/2.8 Di LD IF Macro"));
-        choices.insert(p_t(37, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
-        choices.insert(p_t(37, "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"));
-        choices.insert(p_t(37, "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"));
-        choices.insert(p_t(38, "Canon EF 80-200mm f/4.5-5.6"));
-        choices.insert(p_t(39, "Canon EF 75-300mm f/4-5.6"));
-        choices.insert(p_t(40, "Canon EF 28-80mm f/3.5-5.6"));
-        choices.insert(p_t(41, "Canon EF 28-90mm f/4-5.6"));
-        choices.insert(p_t(42, "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens"));
-        choices.insert(p_t(42, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
-        choices.insert(p_t(43, "Canon EF 28-105mm f/4-5.6"));
-        choices.insert(p_t(44, "Canon EF 90-300mm f/4.5-5.6"));
-        choices.insert(p_t(45, "Canon EF-S 18-55mm f/3.5-5.6 [II]"));
-        choices.insert(p_t(46, "Canon EF 28-90mm f/4-5.6"));
-        choices.insert(p_t(47, "Zeiss Milvus 35mm f/2 or 50mm f/2"));
-        choices.insert(p_t(47, "Zeiss Milvus 50mm f/2 Makro"));
-        choices.insert(p_t(48, "Canon EF-S 18-55mm f/3.5-5.6 IS"));
-        choices.insert(p_t(49, "Canon EF-S 55-250mm f/4-5.6 IS"));
-        choices.insert(p_t(50, "Canon EF-S 18-200mm f/3.5-5.6 IS"));
-        choices.insert(p_t(51, "Canon EF-S 18-135mm f/3.5-5.6 IS"));
-        choices.insert(p_t(52, "Canon EF-S 18-55mm f/3.5-5.6 IS II"));
-        choices.insert(p_t(53, "Canon EF-S 18-55mm f/3.5-5.6 III"));
-        choices.insert(p_t(54, "Canon EF-S 55-250mm f/4-5.6 IS II"));
-        choices.insert(p_t(60, "Irix 11mm f/4"));
-        choices.insert(p_t(94, "Canon TS-E 17mm f/4L"));
-        choices.insert(p_t(95, "Canon TS-E 24.0mm f/3.5 L II"));
-        choices.insert(p_t(124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"));
-        choices.insert(p_t(125, "Canon TS-E 24mm f/3.5L"));
-        choices.insert(p_t(126, "Canon TS-E 45mm f/2.8"));
-        choices.insert(p_t(127, "Canon TS-E 90mm f/2.8"));
-        choices.insert(p_t(129, "Canon EF 300mm f/2.8L"));
-        choices.insert(p_t(130, "Canon EF 50mm f/1.0L"));
-        choices.insert(p_t(131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens"));
-        choices.insert(p_t(131, "Sigma 8mm f/3.5 EX DG Circular Fisheye"));
-        choices.insert(p_t(131, "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM"));
-        choices.insert(p_t(131, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
-        choices.insert(p_t(131, "Sigma APO 50-150mm f/2.8 [II] EX DC HSM"));
-        choices.insert(p_t(131, "Sigma APO 120-300mm f/2.8 EX DG HSM"));
-        choices.insert(p_t(131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
-        choices.insert(p_t(131, "Sigma 70-200mm f/2.8 APO EX HSM"));
-        choices.insert(p_t(132, "Canon EF 1200mm f/5.6L"));
-        choices.insert(p_t(134, "Canon EF 600mm f/4L IS"));
-        choices.insert(p_t(135, "Canon EF 200mm f/1.8L"));
-        choices.insert(p_t(136, "Canon EF 300mm f/2.8L"));
-        choices.insert(p_t(137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens"));
-        choices.insert(p_t(137, "Sigma 18-50mm f/2.8-4.5 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 50-200mm f/4-5.6 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
-        choices.insert(p_t(137, "Sigma 18-125mm f/3.8-5.6 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM | C"));
-        choices.insert(p_t(137, "Sigma 17-50mm f/2.8 OS HSM"));
-        choices.insert(p_t(137, "Sigma 18-200mm f/3.5-6.3 DC OS HSM [II]"));
-        choices.insert(p_t(137, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
-        choices.insert(p_t(137, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
-        choices.insert(p_t(137, "Tamron SP 17-50mm f/2.8 XR Di II VC"));
-        choices.insert(p_t(137, "Tamron SP 60mm f/2 Macro Di II"));
-        choices.insert(p_t(137, "Sigma 10-20mm f/3.5 EX DC HSM"));
-        choices.insert(p_t(137, "Tamron SP 24-70mm f/2.8 Di VC USD"));
-        choices.insert(p_t(137, "Sigma 18-35mm f/1.8 DC HSM"));
-        choices.insert(p_t(137, "Sigma 12-24mm f/4.5-5.6 DG HSM II"));
-        choices.insert(p_t(138, "Canon EF 28-80mm f/2.8-4L"));
-        choices.insert(p_t(139, "Canon EF 400mm f/2.8L"));
-        choices.insert(p_t(140, "Canon EF 500mm f/4.5L"));
-        choices.insert(p_t(141, "Canon EF 500mm f/4.5L"));
-        choices.insert(p_t(142, "Canon EF 300mm f/2.8L IS"));
-        choices.insert(p_t(143, "Canon EF 500mm f/4L IS or Sigma Lens"));
-        choices.insert(p_t(143, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"));
-        choices.insert(p_t(144, "Canon EF 35-135mm f/4-5.6 USM"));
-        choices.insert(p_t(145, "Canon EF 100-300mm f/4.5-5.6 USM"));
-        choices.insert(p_t(146, "Canon EF 70-210mm f/3.5-4.5 USM"));
-        choices.insert(p_t(147, "Canon EF 35-135mm f/4-5.6 USM"));
-        choices.insert(p_t(148, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert(p_t(149, "Canon EF 100mm f/2 USM"));
-        choices.insert(p_t(150, "Canon EF 14mm f/2.8L or Sigma Lens"));
-        choices.insert(p_t(150, "Sigma 20mm EX f/1.8"));
-        choices.insert(p_t(150, "Sigma 30mm f/1.4 DC HSM"));
-        choices.insert(p_t(150, "Sigma 24mm f/1.8 DG Macro EX"));
-        choices.insert(p_t(150, "Sigma 28mm f/1.8 DG Macro EX"));
-        choices.insert(p_t(151, "Canon EF 200mm f/2.8L"));
-        choices.insert(p_t(152, "Canon EF 300mm f/4L IS or Sigma Lens"));
-        choices.insert(p_t(152, "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM"));
-        choices.insert(p_t(152, "Sigma 14mm f/2.8 EX Aspherical HSM"));
-        choices.insert(p_t(152, "Sigma 10-20mm f/4-5.6"));
-        choices.insert(p_t(152, "Sigma 100-300mm f/4"));
-        choices.insert(p_t(153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens"));
-        choices.insert(p_t(153, "Sigma 50-500mm f/4-6.3 APO HSM EX"));
-        choices.insert(p_t(153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"));
-        choices.insert(p_t(153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro Model A14"));
-        choices.insert(p_t(153, "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
-        choices.insert(p_t(154, "Canon EF 20mm f/2.8 USM or Zeiss Lens"));
-        choices.insert(p_t(154, "Zeiss Milvus 21mm f/2.8"));
-        choices.insert(p_t(155, "Canon EF 85mm f/1.8 USM"));
-        choices.insert(p_t(156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"));
-        choices.insert(p_t(156, "Tamron SP 70-300mm f/4.0-5.6 Di VC USD"));
-        choices.insert(p_t(156, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
-        choices.insert(p_t(160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"));
-        choices.insert(p_t(160, "Tamron AF 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(160, "Tokina AT-X 124 AF Pro DX 12-24mm f/4"));
-        choices.insert(p_t(160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"));
-        choices.insert(p_t(160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"));
-        choices.insert(p_t(160, "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"));
-        choices.insert(p_t(161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens"));
-        choices.insert(p_t(161, "Sigma 24-70mm f/2.8 EX"));
-        choices.insert(p_t(161, "Sigma 28-70mm f/2.8 EX"));
-        choices.insert(p_t(161, "Sigma 24-60mm f/2.8 EX DG"));
-        choices.insert(p_t(161, "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"));
-        choices.insert(p_t(161, "Tamron 90mm f/2.8"));
-        choices.insert(p_t(161, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"));
-        choices.insert(p_t(161, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(162, "Canon EF 200mm f/2.8L"));
-        choices.insert(p_t(163, "Canon EF 300mm f/4L"));
-        choices.insert(p_t(164, "Canon EF 400mm f/5.6L"));
-        choices.insert(p_t(165, "Canon EF 70-200mm f/2.8 L"));
-        choices.insert(p_t(166, "Canon EF 70-200mm f/2.8 L + 1.4x"));
-        choices.insert(p_t(167, "Canon EF 70-200mm f/2.8 L + 2x"));
-        choices.insert(p_t(168, "Canon EF 28mm f/1.8 USM or Sigma Lens"));
-        choices.insert(p_t(168, "Sigma 50-100mm f/1.8 DC HSM | A"));
-        choices.insert(p_t(169, "Canon EF 17-35mm f/2.8L or Sigma Lens"));
-        choices.insert(p_t(169, "Sigma 18-200mm f/3.5-6.3 DC OS"));
-        choices.insert(p_t(169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"));
-        choices.insert(p_t(169, "Sigma 18-50mm f/2.8 Macro"));
-        choices.insert(p_t(169, "Sigma 50mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(169, "Sigma 85mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(169, "Sigma 30mm f/1.4 EX DC HSM"));
-        choices.insert(p_t(169, "Sigma 35mm f/1.4 DG HSM"));
-        choices.insert(p_t(170, "Canon EF 200mm f/2.8L II"));
-        choices.insert(p_t(171, "Canon EF 300mm f/4L"));
-        choices.insert(p_t(172, "Canon EF 400mm f/5.6L or Sigma Lens"));
-        choices.insert(p_t(172, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
-        choices.insert(p_t(173, "Canon EF 180mm Macro f/3.5L or Sigma Lens"));
-        choices.insert(p_t(173, "Sigma 180mm EX HSM Macro f/3.5"));
-        choices.insert(p_t(173, "Sigma APO Macro 150mm f/2.8 EX DG HSM"));
-        choices.insert(p_t(174, "Canon EF 135mm f/2L or Other Lens"));
-        choices.insert(p_t(174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"));
-        choices.insert(p_t(174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"));
-        choices.insert(p_t(174, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
-        choices.insert(p_t(174, "Zeiss Milvus 100mm f/2 Makro"));
-        choices.insert(p_t(175, "Canon EF 400mm f/2.8L"));
-        choices.insert(p_t(176, "Canon EF 24-85mm f/3.5-4.5 USM"));
-        choices.insert(p_t(177, "Canon EF 300mm f/4L IS"));
-        choices.insert(p_t(178, "Canon EF 28-135mm f/3.5-5.6 IS"));
-        choices.insert(p_t(179, "Canon EF 24mm f/1.4L"));
-        choices.insert(p_t(180, "Canon EF 35mm f/1.4L or Other Lens"));
-        choices.insert(p_t(180, "Sigma 50mm f/1.4 DG HSM | A"));
-        choices.insert(p_t(180, "Sigma 24mm f/1.4 DG HSM | A"));
-        choices.insert(p_t(180, "Zeiss Milvus 50mm f/1.4"));
-        choices.insert(p_t(180, "Zeiss Milvus 85mm f/1.4"));
-        choices.insert(p_t(180, "Zeiss Otus 28mm f/1.4 ZE"));
-        choices.insert(p_t(181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens"));
-        choices.insert(p_t(181, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"));
-        choices.insert(p_t(182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens"));
-        choices.insert(p_t(182, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"));
-        choices.insert(p_t(183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens"));
-        choices.insert(p_t(183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert(p_t(183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"));
-        choices.insert(p_t(183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert(p_t(183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"));
-        choices.insert(p_t(183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
-        choices.insert(p_t(184, "Canon EF 400mm f/2.8L + 2x"));
-        choices.insert(p_t(185, "Canon EF 600mm f/4L IS"));
-        choices.insert(p_t(186, "Canon EF 70-200mm f/4L"));
-        choices.insert(p_t(187, "Canon EF 70-200mm f/4L + 1.4x"));
-        choices.insert(p_t(188, "Canon EF 70-200mm f/4L + 2x"));
-        choices.insert(p_t(189, "Canon EF 70-200mm f/4L + 2.8x"));
-        choices.insert(p_t(190, "Canon EF 100mm f/2.8 Macro USM"));
-        choices.insert(p_t(191, "Canon EF 400mm f/4 DO IS"));
-        choices.insert(p_t(193, "Canon EF 35-80mm f/4-5.6 USM"));
-        choices.insert(p_t(194, "Canon EF 80-200mm f/4.5-5.6 USM"));
-        choices.insert(p_t(195, "Canon EF 35-105mm f/4.5-5.6 USM"));
-        choices.insert(p_t(196, "Canon EF 75-300mm f/4-5.6 USM"));
-        choices.insert(p_t(197, "Canon EF 75-300mm f/4-5.6 IS USM"));
-        choices.insert(p_t(198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"));
-        choices.insert(p_t(198, "Zeiss Otus 55mm f/1.4 ZE"));
-        choices.insert(p_t(198, "Zeiss Otus 85mm f/1.4 ZE"));
-        choices.insert(p_t(199, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert(p_t(200, "Canon EF 75-300mm f/4-5.6 USM"));
-        choices.insert(p_t(201, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert(p_t(202, "Canon EF 28-80mm f/3.5-5.6 USM IV"));
-        choices.insert(p_t(208, "Canon EF 22-55mm f/4-5.6 USM"));
-        choices.insert(p_t(209, "Canon EF 55-200mm f/4.5-5.6"));
-        choices.insert(p_t(210, "Canon EF 28-90mm f/4-5.6 USM"));
-        choices.insert(p_t(211, "Canon EF 28-200mm f/3.5-5.6 USM"));
-        choices.insert(p_t(212, "Canon EF 28-105mm f/4-5.6 USM"));
-        choices.insert(p_t(213, "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens"));
-        choices.insert(p_t(213, "Tamron SP 150-600mm f/5-6.3 Di VC USD"));
-        choices.insert(p_t(213, "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro"));
-        choices.insert(p_t(213, "Tamron SP 35mm f/1.8 Di VC USD"));
-        choices.insert(p_t(213, "Tamron SP 45mm f/1.8 Di VC USD"));
-        choices.insert(p_t(214, "Canon EF-S 18-55mm f/3.5-5.6 USM"));
-        choices.insert(p_t(215, "Canon EF 55-200mm f/4.5-5.6 II USM"));
-        choices.insert(p_t(217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
-        choices.insert(p_t(224, "Canon EF 70-200mm f/2.8L IS"));
-        choices.insert(p_t(225, "Canon EF 70-200mm f/2.8L IS + 1.4x"));
-        choices.insert(p_t(226, "Canon EF 70-200mm f/2.8L IS + 2x"));
-        choices.insert(p_t(227, "Canon EF 70-200mm f/2.8L IS + 2.8x"));
-        choices.insert(p_t(228, "Canon EF 28-105mm f/3.5-4.5 USM"));
-        choices.insert(p_t(229, "Canon EF 16-35mm f/2.8L"));
-        choices.insert(p_t(230, "Canon EF 24-70mm f/2.8L"));
-        choices.insert(p_t(231, "Canon EF 17-40mm f/4L"));
-        choices.insert(p_t(232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM"));
-        choices.insert(p_t(233, "Canon EF 28-300mm f/3.5-5.6L IS"));
-        choices.insert(p_t(234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens"));
-        choices.insert(p_t(234, "Tokina AT-X 12-28 PRO DX 12-28mm f/4"));
-        choices.insert(p_t(235, "Canon EF-S 10-22mm f/3.5-4.5 USM"));
-        choices.insert(p_t(236, "Canon EF-S 60mm f/2.8 Macro USM"));
-        choices.insert(p_t(237, "Canon EF 24-105mm f/4L IS"));
-        choices.insert(p_t(238, "Canon EF 70-300mm f/4-5.6 IS USM"));
-        choices.insert(p_t(239, "Canon EF 85mm f/1.2L II"));
-        choices.insert(p_t(240, "Canon EF-S 17-55mm f/2.8 IS USM"));
-        choices.insert(p_t(241, "Canon EF 50mm f/1.2L"));
-        choices.insert(p_t(242, "Canon EF 70-200mm f/4L IS"));
-        choices.insert(p_t(243, "Canon EF 70-200mm f/4L IS + 1.4x"));
-        choices.insert(p_t(244, "Canon EF 70-200mm f/4L IS + 2x"));
-        choices.insert(p_t(245, "Canon EF 70-200mm f/4L IS + 2.8x"));
-        choices.insert(p_t(246, "Canon EF 16-35mm f/2.8L II"));
-        choices.insert(p_t(247, "Canon EF 14mm f/2.8L II USM"));
-        choices.insert(p_t(248, "Canon EF 200mm f/2L IS or Sigma Lens"));
-        choices.insert(p_t(248, "Sigma 24-35mm f/2 DG HSM | A"));
-        choices.insert(p_t(249, "Canon EF 800mm f/5.6L IS"));
-        choices.insert(p_t(250, "Canon EF 24mm f/1.4L II or Sigma Lens"));
-        choices.insert(p_t(250, "Sigma 20mm f/1.4 DG HSM | A"));
-        choices.insert(p_t(251, "Canon EF 70-200mm f/2.8L IS II USM"));
-        choices.insert(p_t(252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x"));
-        choices.insert(p_t(253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"));
-        choices.insert(p_t(254, "Canon EF 100mm f/2.8L Macro IS USM"));
-        choices.insert(p_t(255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"));
-        choices.insert(p_t(255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert(p_t(488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"));
-        choices.insert(p_t(489, "Canon EF 70-300mm f/4-5.6L IS USM"));
-        choices.insert(p_t(490, "Canon EF 8-15mm f/4L Fisheye USM"));
-        choices.insert(p_t(491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"));
-        choices.insert(p_t(491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"));
-        choices.insert(p_t(492, "Canon EF 400mm f/2.8L IS II USM"));
-        choices.insert(p_t(493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"));
-        choices.insert(p_t(493, "Canon EF 24-105mm f/4L IS USM"));
-        choices.insert(p_t(494, "Canon EF 600mm f/4.0L IS II USM"));
-        choices.insert(p_t(495, "Canon EF 24-70mm f/2.8L II USM"));
-        choices.insert(p_t(496, "Canon EF 200-400mm f/4L IS USM"));
-        choices.insert(p_t(499, "Canon EF 200-400mm f/4L IS USM + 1.4x"));
-        choices.insert(p_t(502, "Canon EF 28mm f/2.8 IS USM"));
-        choices.insert(p_t(503, "Canon EF 24mm f/2.8 IS USM"));
-        choices.insert(p_t(504, "Canon EF 24-70mm f/4L IS USM"));
-        choices.insert(p_t(505, "Canon EF 35mm f/2 IS USM"));
-        choices.insert(p_t(506, "Canon EF 400mm f/4 DO IS II USM"));
-        choices.insert(p_t(507, "Canon EF 16-35mm f/4L IS USM"));
-        choices.insert(p_t(508, "Canon EF 11-24mm f/4L USM"));
-        choices.insert(p_t(747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"));
-        choices.insert(p_t(747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"));
-        choices.insert(p_t(748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"));
-        choices.insert(p_t(750, "Canon EF 35mm f/1.4L II USM"));
-        choices.insert(p_t(751, "Canon EF 16-35mm f/2.8L III USM"));
-        choices.insert(p_t(752, "Canon EF 24-105mm f/4L IS II USM"));
-        choices.insert(p_t(4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"));
-        choices.insert(p_t(4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"));
-        choices.insert(p_t(4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
-        choices.insert(p_t(4144, "Canon EF 40mm f/2.8 STM"));
-        choices.insert(p_t(4145, "Canon EF-M 22mm f/2 STM"));
-        choices.insert(p_t(4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"));
-        choices.insert(p_t(4147, "Canon EF-M 11-22mm f/4-5.6 IS STM"));
-        choices.insert(p_t(4148, "Canon EF-S 55-250mm f/4-5.6 IS STM"));
-        choices.insert(p_t(4149, "Canon EF-M 55-200mm f/4.5-6.3 IS STM"));
-        choices.insert(p_t(4150, "Canon EF-S 10-18mm f/4.5-5.6 IS STM"));
-        choices.insert(p_t(4152, "Canon EF 24-105mm f/3.5-5.6 IS STM"));
-        choices.insert(p_t(4153, "Canon EF-M 15-45mm f/3.5-6.3 IS STM"));
-        choices.insert(p_t(4154, "Canon EF-S 24mm f/2.8 STM"));
-        choices.insert(p_t(4155, "Canon EF-M 28mm f/3.5 Macro IS STM"));
-        choices.insert(p_t(4156, "Canon EF 50mm f/1.8 STM"));
-        choices.insert(p_t(4157, "Canon EF-M 18-150mm 1:3.5-6.3 IS STM"));
-        choices.insert(p_t(4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"));
-        choices.insert(p_t(36910, "Canon EF 70-300mm f/4-5.6 IS II USM"));
-        choices.insert(p_t(36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"));
-        choices.insert(p_t(65535, "n/a"));
+        choices.insert (p_t (1, "Canon EF 50mm f/1.8"));
+        choices.insert (p_t (2, "Canon EF 28mm f/2.8"));
+        choices.insert (p_t (3, "Canon EF 135mm f/2.8 Soft"));
+        choices.insert (p_t (4, "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens"));
+        choices.insert (p_t (4, "Sigma UC Zoom 35-135mm f/4-5.6"));
+        choices.insert (p_t (5, "Canon EF 35-70mm f/3.5-4.5"));
+        choices.insert (p_t (6, "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens"));
+        choices.insert (p_t (6, "Sigma 18-50mm f/3.5-5.6 DC"));
+        choices.insert (p_t (6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"));
+        choices.insert (p_t (6, "Tokina AF 193-2 19-35mm f/3.5-4.5"));
+        choices.insert (p_t (6, "Sigma 28-80mm f/3.5-5.6 II Macro"));
+        choices.insert (p_t (7, "Canon EF 100-300mm f/5.6L"));
+        choices.insert (p_t (8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens"));
+        choices.insert (p_t (8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"));
+        choices.insert (p_t (8, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"));
+        choices.insert (p_t (9, "Canon EF 70-210mm f/4"));
+        choices.insert (p_t (9, "Sigma 55-200mm f/4-5.6 DC"));
+        choices.insert (p_t (10, "Canon EF 50mm f/2.5 Macro or Sigma Lens"));
+        choices.insert (p_t (10, "Sigma 50mm f/2.8 EX"));
+        choices.insert (p_t (10, "Sigma 28mm f/1.8"));
+        choices.insert (p_t (10, "Sigma 105mm f/2.8 Macro EX"));
+        choices.insert (p_t (10, "Sigma 70mm f/2.8 EX DG Macro EF"));
+        choices.insert (p_t (11, "Canon EF 35mm f/2"));
+        choices.insert (p_t (13, "Canon EF 15mm f/2.8 Fisheye"));
+        choices.insert (p_t (14, "Canon EF 50-200mm f/3.5-4.5L"));
+        choices.insert (p_t (15, "Canon EF 50-200mm f/3.5-4.5"));
+        choices.insert (p_t (16, "Canon EF 35-135mm f/3.5-4.5"));
+        choices.insert (p_t (17, "Canon EF 35-70mm f/3.5-4.5A"));
+        choices.insert (p_t (18, "Canon EF 28-70mm f/3.5-4.5"));
+        choices.insert (p_t (20, "Canon EF 100-200mm f/4.5A"));
+        choices.insert (p_t (21, "Canon EF 80-200mm f/2.8L"));
+        choices.insert (p_t (22, "Canon EF 20-35mm f/2.8L or Tokina Lens"));
+        choices.insert (p_t (22, "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical"));
+        choices.insert (p_t (23, "Canon EF 35-105mm f/3.5-4.5"));
+        choices.insert (p_t (24, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
+        choices.insert (p_t (25, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
+        choices.insert (p_t (26, "Canon EF 100mm f/2.8 Macro or Other Lens"));
+        choices.insert (p_t (26, "Cosina 100mm f/3.5 Macro AF"));
+        choices.insert (p_t (26, "Tamron SP AF 90mm f/2.8 Di Macro"));
+        choices.insert (p_t (26, "Tamron SP AF 180mm f/3.5 Di Macro"));
+        choices.insert (p_t (26, "Carl Zeiss Planar T* 50mm f/1.4"));
+        choices.insert (p_t (27, "Canon EF 35-80mm f/4-5.6"));
+        choices.insert (p_t (28, "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens"));
+        choices.insert (p_t (28, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
+        choices.insert (p_t (28, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
+        choices.insert (p_t (28, "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro"));
+        choices.insert (p_t (28, "Tamron AF Aspherical 28-200mm f/3.8-5.6"));
+        choices.insert (p_t (29, "Canon EF 50mm f/1.8 II"));
+        choices.insert (p_t (30, "Canon EF 35-105mm f/4.5-5.6"));
+        choices.insert (p_t (31, "Canon EF 75-300mm f/4-5.6 or Tamron Lens"));
+        choices.insert (p_t (31, "Tamron SP AF 300mm f/2.8 LD IF"));
+        choices.insert (p_t (32, "Canon EF 24mm f/2.8 or Sigma Lens"));
+        choices.insert (p_t (32, "Sigma 15mm f/2.8 EX Fisheye"));
+        choices.insert (p_t (33, "Voigtlander or Carl Zeiss Lens"));
+        choices.insert (p_t (33, "Voigtlander Ultron 40mm f/2 SLII Aspherical"));
+        choices.insert (p_t (33, "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical"));
+        choices.insert (p_t (33, "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 15mm f/2.8 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 18mm f/3.5 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 21mm f/2.8 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 25mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 28mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 35mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 35mm f/1.4 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Planar T* 50mm f/1.4 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Makro-Planar T* 50mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Makro-Planar T* 100mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE"));
+        choices.insert (p_t (35, "Canon EF 35-80mm f/4-5.6"));
+        choices.insert (p_t (36, "Canon EF 38-76mm f/4.5-5.6"));
+        choices.insert (p_t (37, "Canon EF 35-80mm f/4-5.6 or Tamron Lens"));
+        choices.insert (p_t (37, "Tamron 70-200mm f/2.8 Di LD IF Macro"));
+        choices.insert (p_t (37, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
+        choices.insert (p_t (37, "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"));
+        choices.insert (p_t (37, "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"));
+        choices.insert (p_t (38, "Canon EF 80-200mm f/4.5-5.6"));
+        choices.insert (p_t (39, "Canon EF 75-300mm f/4-5.6"));
+        choices.insert (p_t (40, "Canon EF 28-80mm f/3.5-5.6"));
+        choices.insert (p_t (41, "Canon EF 28-90mm f/4-5.6"));
+        choices.insert (p_t (42, "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens"));
+        choices.insert (p_t (42, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
+        choices.insert (p_t (43, "Canon EF 28-105mm f/4-5.6"));
+        choices.insert (p_t (44, "Canon EF 90-300mm f/4.5-5.6"));
+        choices.insert (p_t (45, "Canon EF-S 18-55mm f/3.5-5.6 [II]"));
+        choices.insert (p_t (46, "Canon EF 28-90mm f/4-5.6"));
+        choices.insert (p_t (47, "Zeiss Milvus 35mm f/2 or 50mm f/2"));
+        choices.insert (p_t (47, "Zeiss Milvus 50mm f/2 Makro"));
+        choices.insert (p_t (48, "Canon EF-S 18-55mm f/3.5-5.6 IS"));
+        choices.insert (p_t (49, "Canon EF-S 55-250mm f/4-5.6 IS"));
+        choices.insert (p_t (50, "Canon EF-S 18-200mm f/3.5-5.6 IS"));
+        choices.insert (p_t (51, "Canon EF-S 18-135mm f/3.5-5.6 IS"));
+        choices.insert (p_t (52, "Canon EF-S 18-55mm f/3.5-5.6 IS II"));
+        choices.insert (p_t (53, "Canon EF-S 18-55mm f/3.5-5.6 III"));
+        choices.insert (p_t (54, "Canon EF-S 55-250mm f/4-5.6 IS II"));
+        choices.insert (p_t (60, "Irix 11mm f/4"));
+        choices.insert (p_t (94, "Canon TS-E 17mm f/4L"));
+        choices.insert (p_t (95, "Canon TS-E 24.0mm f/3.5 L II"));
+        choices.insert (p_t (124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"));
+        choices.insert (p_t (125, "Canon TS-E 24mm f/3.5L"));
+        choices.insert (p_t (126, "Canon TS-E 45mm f/2.8"));
+        choices.insert (p_t (127, "Canon TS-E 90mm f/2.8"));
+        choices.insert (p_t (129, "Canon EF 300mm f/2.8L"));
+        choices.insert (p_t (130, "Canon EF 50mm f/1.0L"));
+        choices.insert (p_t (131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens"));
+        choices.insert (p_t (131, "Sigma 8mm f/3.5 EX DG Circular Fisheye"));
+        choices.insert (p_t (131, "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM"));
+        choices.insert (p_t (131, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
+        choices.insert (p_t (131, "Sigma APO 50-150mm f/2.8 [II] EX DC HSM"));
+        choices.insert (p_t (131, "Sigma APO 120-300mm f/2.8 EX DG HSM"));
+        choices.insert (p_t (131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
+        choices.insert (p_t (131, "Sigma 70-200mm f/2.8 APO EX HSM"));
+        choices.insert (p_t (132, "Canon EF 1200mm f/5.6L"));
+        choices.insert (p_t (134, "Canon EF 600mm f/4L IS"));
+        choices.insert (p_t (135, "Canon EF 200mm f/1.8L"));
+        choices.insert (p_t (136, "Canon EF 300mm f/2.8L"));
+        choices.insert (p_t (137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens"));
+        choices.insert (p_t (137, "Sigma 18-50mm f/2.8-4.5 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 50-200mm f/4-5.6 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
+        choices.insert (p_t (137, "Sigma 18-125mm f/3.8-5.6 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM | C"));
+        choices.insert (p_t (137, "Sigma 17-50mm f/2.8 OS HSM"));
+        choices.insert (p_t (137, "Sigma 18-200mm f/3.5-6.3 DC OS HSM [II]"));
+        choices.insert (p_t (137, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
+        choices.insert (p_t (137, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
+        choices.insert (p_t (137, "Tamron SP 17-50mm f/2.8 XR Di II VC"));
+        choices.insert (p_t (137, "Tamron SP 60mm f/2 Macro Di II"));
+        choices.insert (p_t (137, "Sigma 10-20mm f/3.5 EX DC HSM"));
+        choices.insert (p_t (137, "Tamron SP 24-70mm f/2.8 Di VC USD"));
+        choices.insert (p_t (137, "Sigma 18-35mm f/1.8 DC HSM"));
+        choices.insert (p_t (137, "Sigma 12-24mm f/4.5-5.6 DG HSM II"));
+        choices.insert (p_t (138, "Canon EF 28-80mm f/2.8-4L"));
+        choices.insert (p_t (139, "Canon EF 400mm f/2.8L"));
+        choices.insert (p_t (140, "Canon EF 500mm f/4.5L"));
+        choices.insert (p_t (141, "Canon EF 500mm f/4.5L"));
+        choices.insert (p_t (142, "Canon EF 300mm f/2.8L IS"));
+        choices.insert (p_t (143, "Canon EF 500mm f/4L IS or Sigma Lens"));
+        choices.insert (p_t (143, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"));
+        choices.insert (p_t (144, "Canon EF 35-135mm f/4-5.6 USM"));
+        choices.insert (p_t (145, "Canon EF 100-300mm f/4.5-5.6 USM"));
+        choices.insert (p_t (146, "Canon EF 70-210mm f/3.5-4.5 USM"));
+        choices.insert (p_t (147, "Canon EF 35-135mm f/4-5.6 USM"));
+        choices.insert (p_t (148, "Canon EF 28-80mm f/3.5-5.6 USM"));
+        choices.insert (p_t (149, "Canon EF 100mm f/2 USM"));
+        choices.insert (p_t (150, "Canon EF 14mm f/2.8L or Sigma Lens"));
+        choices.insert (p_t (150, "Sigma 20mm EX f/1.8"));
+        choices.insert (p_t (150, "Sigma 30mm f/1.4 DC HSM"));
+        choices.insert (p_t (150, "Sigma 24mm f/1.8 DG Macro EX"));
+        choices.insert (p_t (150, "Sigma 28mm f/1.8 DG Macro EX"));
+        choices.insert (p_t (151, "Canon EF 200mm f/2.8L"));
+        choices.insert (p_t (152, "Canon EF 300mm f/4L IS or Sigma Lens"));
+        choices.insert (p_t (152, "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM"));
+        choices.insert (p_t (152, "Sigma 14mm f/2.8 EX Aspherical HSM"));
+        choices.insert (p_t (152, "Sigma 10-20mm f/4-5.6"));
+        choices.insert (p_t (152, "Sigma 100-300mm f/4"));
+        choices.insert (p_t (153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens"));
+        choices.insert (p_t (153, "Sigma 50-500mm f/4-6.3 APO HSM EX"));
+        choices.insert (p_t (153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"));
+        choices.insert (p_t (153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro Model A14"));
+        choices.insert (p_t (153, "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
+        choices.insert (p_t (154, "Canon EF 20mm f/2.8 USM or Zeiss Lens"));
+        choices.insert (p_t (154, "Zeiss Milvus 21mm f/2.8"));
+        choices.insert (p_t (155, "Canon EF 85mm f/1.8 USM"));
+        choices.insert (p_t (156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"));
+        choices.insert (p_t (156, "Tamron SP 70-300mm f/4.0-5.6 Di VC USD"));
+        choices.insert (p_t (156, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
+        choices.insert (p_t (160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"));
+        choices.insert (p_t (160, "Tamron AF 19-35mm f/3.5-4.5"));
+        choices.insert (p_t (160, "Tokina AT-X 124 AF Pro DX 12-24mm f/4"));
+        choices.insert (p_t (160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"));
+        choices.insert (p_t (160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"));
+        choices.insert (p_t (160, "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"));
+        choices.insert (p_t (161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens"));
+        choices.insert (p_t (161, "Sigma 24-70mm f/2.8 EX"));
+        choices.insert (p_t (161, "Sigma 28-70mm f/2.8 EX"));
+        choices.insert (p_t (161, "Sigma 24-60mm f/2.8 EX DG"));
+        choices.insert (p_t (161, "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"));
+        choices.insert (p_t (161, "Tamron 90mm f/2.8"));
+        choices.insert (p_t (161, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"));
+        choices.insert (p_t (161, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
+        choices.insert (p_t (162, "Canon EF 200mm f/2.8L"));
+        choices.insert (p_t (163, "Canon EF 300mm f/4L"));
+        choices.insert (p_t (164, "Canon EF 400mm f/5.6L"));
+        choices.insert (p_t (165, "Canon EF 70-200mm f/2.8 L"));
+        choices.insert (p_t (166, "Canon EF 70-200mm f/2.8 L + 1.4x"));
+        choices.insert (p_t (167, "Canon EF 70-200mm f/2.8 L + 2x"));
+        choices.insert (p_t (168, "Canon EF 28mm f/1.8 USM or Sigma Lens"));
+        choices.insert (p_t (168, "Sigma 50-100mm f/1.8 DC HSM | A"));
+        choices.insert (p_t (169, "Canon EF 17-35mm f/2.8L or Sigma Lens"));
+        choices.insert (p_t (169, "Sigma 18-200mm f/3.5-6.3 DC OS"));
+        choices.insert (p_t (169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"));
+        choices.insert (p_t (169, "Sigma 18-50mm f/2.8 Macro"));
+        choices.insert (p_t (169, "Sigma 50mm f/1.4 EX DG HSM"));
+        choices.insert (p_t (169, "Sigma 85mm f/1.4 EX DG HSM"));
+        choices.insert (p_t (169, "Sigma 30mm f/1.4 EX DC HSM"));
+        choices.insert (p_t (169, "Sigma 35mm f/1.4 DG HSM"));
+        choices.insert (p_t (170, "Canon EF 200mm f/2.8L II"));
+        choices.insert (p_t (171, "Canon EF 300mm f/4L"));
+        choices.insert (p_t (172, "Canon EF 400mm f/5.6L or Sigma Lens"));
+        choices.insert (p_t (172, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
+        choices.insert (p_t (173, "Canon EF 180mm Macro f/3.5L or Sigma Lens"));
+        choices.insert (p_t (173, "Sigma 180mm EX HSM Macro f/3.5"));
+        choices.insert (p_t (173, "Sigma APO Macro 150mm f/2.8 EX DG HSM"));
+        choices.insert (p_t (174, "Canon EF 135mm f/2L or Other Lens"));
+        choices.insert (p_t (174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"));
+        choices.insert (p_t (174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"));
+        choices.insert (p_t (174, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
+        choices.insert (p_t (174, "Zeiss Milvus 100mm f/2 Makro"));
+        choices.insert (p_t (175, "Canon EF 400mm f/2.8L"));
+        choices.insert (p_t (176, "Canon EF 24-85mm f/3.5-4.5 USM"));
+        choices.insert (p_t (177, "Canon EF 300mm f/4L IS"));
+        choices.insert (p_t (178, "Canon EF 28-135mm f/3.5-5.6 IS"));
+        choices.insert (p_t (179, "Canon EF 24mm f/1.4L"));
+        choices.insert (p_t (180, "Canon EF 35mm f/1.4L or Other Lens"));
+        choices.insert (p_t (180, "Sigma 50mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (180, "Sigma 24mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (180, "Zeiss Milvus 50mm f/1.4"));
+        choices.insert (p_t (180, "Zeiss Milvus 85mm f/1.4"));
+        choices.insert (p_t (180, "Zeiss Otus 28mm f/1.4 ZE"));
+        choices.insert (p_t (181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens"));
+        choices.insert (p_t (181, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"));
+        choices.insert (p_t (182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens"));
+        choices.insert (p_t (182, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"));
+        choices.insert (p_t (183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens"));
+        choices.insert (p_t (183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"));
+        choices.insert (p_t (183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"));
+        choices.insert (p_t (183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
+        choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"));
+        choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
+        choices.insert (p_t (184, "Canon EF 400mm f/2.8L + 2x"));
+        choices.insert (p_t (185, "Canon EF 600mm f/4L IS"));
+        choices.insert (p_t (186, "Canon EF 70-200mm f/4L"));
+        choices.insert (p_t (187, "Canon EF 70-200mm f/4L + 1.4x"));
+        choices.insert (p_t (188, "Canon EF 70-200mm f/4L + 2x"));
+        choices.insert (p_t (189, "Canon EF 70-200mm f/4L + 2.8x"));
+        choices.insert (p_t (190, "Canon EF 100mm f/2.8 Macro USM"));
+        choices.insert (p_t (191, "Canon EF 400mm f/4 DO IS"));
+        choices.insert (p_t (193, "Canon EF 35-80mm f/4-5.6 USM"));
+        choices.insert (p_t (194, "Canon EF 80-200mm f/4.5-5.6 USM"));
+        choices.insert (p_t (195, "Canon EF 35-105mm f/4.5-5.6 USM"));
+        choices.insert (p_t (196, "Canon EF 75-300mm f/4-5.6 USM"));
+        choices.insert (p_t (197, "Canon EF 75-300mm f/4-5.6 IS USM"));
+        choices.insert (p_t (198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"));
+        choices.insert (p_t (198, "Zeiss Otus 55mm f/1.4 ZE"));
+        choices.insert (p_t (198, "Zeiss Otus 85mm f/1.4 ZE"));
+        choices.insert (p_t (199, "Canon EF 28-80mm f/3.5-5.6 USM"));
+        choices.insert (p_t (200, "Canon EF 75-300mm f/4-5.6 USM"));
+        choices.insert (p_t (201, "Canon EF 28-80mm f/3.5-5.6 USM"));
+        choices.insert (p_t (202, "Canon EF 28-80mm f/3.5-5.6 USM IV"));
+        choices.insert (p_t (208, "Canon EF 22-55mm f/4-5.6 USM"));
+        choices.insert (p_t (209, "Canon EF 55-200mm f/4.5-5.6"));
+        choices.insert (p_t (210, "Canon EF 28-90mm f/4-5.6 USM"));
+        choices.insert (p_t (211, "Canon EF 28-200mm f/3.5-5.6 USM"));
+        choices.insert (p_t (212, "Canon EF 28-105mm f/4-5.6 USM"));
+        choices.insert (p_t (213, "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens"));
+        choices.insert (p_t (213, "Tamron SP 150-600mm f/5-6.3 Di VC USD"));
+        choices.insert (p_t (213, "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro"));
+        choices.insert (p_t (213, "Tamron SP 35mm f/1.8 Di VC USD"));
+        choices.insert (p_t (213, "Tamron SP 45mm f/1.8 Di VC USD"));
+        choices.insert (p_t (214, "Canon EF-S 18-55mm f/3.5-5.6 USM"));
+        choices.insert (p_t (215, "Canon EF 55-200mm f/4.5-5.6 II USM"));
+        choices.insert (p_t (217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
+        choices.insert (p_t (224, "Canon EF 70-200mm f/2.8L IS"));
+        choices.insert (p_t (225, "Canon EF 70-200mm f/2.8L IS + 1.4x"));
+        choices.insert (p_t (226, "Canon EF 70-200mm f/2.8L IS + 2x"));
+        choices.insert (p_t (227, "Canon EF 70-200mm f/2.8L IS + 2.8x"));
+        choices.insert (p_t (228, "Canon EF 28-105mm f/3.5-4.5 USM"));
+        choices.insert (p_t (229, "Canon EF 16-35mm f/2.8L"));
+        choices.insert (p_t (230, "Canon EF 24-70mm f/2.8L"));
+        choices.insert (p_t (231, "Canon EF 17-40mm f/4L"));
+        choices.insert (p_t (232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM"));
+        choices.insert (p_t (233, "Canon EF 28-300mm f/3.5-5.6L IS"));
+        choices.insert (p_t (234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens"));
+        choices.insert (p_t (234, "Tokina AT-X 12-28 PRO DX 12-28mm f/4"));
+        choices.insert (p_t (235, "Canon EF-S 10-22mm f/3.5-4.5 USM"));
+        choices.insert (p_t (236, "Canon EF-S 60mm f/2.8 Macro USM"));
+        choices.insert (p_t (237, "Canon EF 24-105mm f/4L IS"));
+        choices.insert (p_t (238, "Canon EF 70-300mm f/4-5.6 IS USM"));
+        choices.insert (p_t (239, "Canon EF 85mm f/1.2L II"));
+        choices.insert (p_t (240, "Canon EF-S 17-55mm f/2.8 IS USM"));
+        choices.insert (p_t (241, "Canon EF 50mm f/1.2L"));
+        choices.insert (p_t (242, "Canon EF 70-200mm f/4L IS"));
+        choices.insert (p_t (243, "Canon EF 70-200mm f/4L IS + 1.4x"));
+        choices.insert (p_t (244, "Canon EF 70-200mm f/4L IS + 2x"));
+        choices.insert (p_t (245, "Canon EF 70-200mm f/4L IS + 2.8x"));
+        choices.insert (p_t (246, "Canon EF 16-35mm f/2.8L II"));
+        choices.insert (p_t (247, "Canon EF 14mm f/2.8L II USM"));
+        choices.insert (p_t (248, "Canon EF 200mm f/2L IS or Sigma Lens"));
+        choices.insert (p_t (248, "Sigma 24-35mm f/2 DG HSM | A"));
+        choices.insert (p_t (249, "Canon EF 800mm f/5.6L IS"));
+        choices.insert (p_t (250, "Canon EF 24mm f/1.4L II or Sigma Lens"));
+        choices.insert (p_t (250, "Sigma 20mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (251, "Canon EF 70-200mm f/2.8L IS II USM"));
+        choices.insert (p_t (252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x"));
+        choices.insert (p_t (253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"));
+        choices.insert (p_t (254, "Canon EF 100mm f/2.8L Macro IS USM"));
+        choices.insert (p_t (255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"));
+        choices.insert (p_t (255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
+        choices.insert (p_t (488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"));
+        choices.insert (p_t (489, "Canon EF 70-300mm f/4-5.6L IS USM"));
+        choices.insert (p_t (490, "Canon EF 8-15mm f/4L Fisheye USM"));
+        choices.insert (p_t (491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"));
+        choices.insert (p_t (491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"));
+        choices.insert (p_t (492, "Canon EF 400mm f/2.8L IS II USM"));
+        choices.insert (p_t (493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"));
+        choices.insert (p_t (493, "Canon EF 24-105mm f/4L IS USM"));
+        choices.insert (p_t (494, "Canon EF 600mm f/4.0L IS II USM"));
+        choices.insert (p_t (495, "Canon EF 24-70mm f/2.8L II USM"));
+        choices.insert (p_t (496, "Canon EF 200-400mm f/4L IS USM"));
+        choices.insert (p_t (499, "Canon EF 200-400mm f/4L IS USM + 1.4x"));
+        choices.insert (p_t (502, "Canon EF 28mm f/2.8 IS USM"));
+        choices.insert (p_t (503, "Canon EF 24mm f/2.8 IS USM"));
+        choices.insert (p_t (504, "Canon EF 24-70mm f/4L IS USM"));
+        choices.insert (p_t (505, "Canon EF 35mm f/2 IS USM"));
+        choices.insert (p_t (506, "Canon EF 400mm f/4 DO IS II USM"));
+        choices.insert (p_t (507, "Canon EF 16-35mm f/4L IS USM"));
+        choices.insert (p_t (508, "Canon EF 11-24mm f/4L USM"));
+        choices.insert (p_t (747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"));
+        choices.insert (p_t (747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"));
+        choices.insert (p_t (748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"));
+        choices.insert (p_t (750, "Canon EF 35mm f/1.4L II USM"));
+        choices.insert (p_t (751, "Canon EF 16-35mm f/2.8L III USM"));
+        choices.insert (p_t (752, "Canon EF 24-105mm f/4L IS II USM"));
+        choices.insert (p_t (4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"));
+        choices.insert (p_t (4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"));
+        choices.insert (p_t (4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
+        choices.insert (p_t (4144, "Canon EF 40mm f/2.8 STM"));
+        choices.insert (p_t (4145, "Canon EF-M 22mm f/2 STM"));
+        choices.insert (p_t (4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"));
+        choices.insert (p_t (4147, "Canon EF-M 11-22mm f/4-5.6 IS STM"));
+        choices.insert (p_t (4148, "Canon EF-S 55-250mm f/4-5.6 IS STM"));
+        choices.insert (p_t (4149, "Canon EF-M 55-200mm f/4.5-6.3 IS STM"));
+        choices.insert (p_t (4150, "Canon EF-S 10-18mm f/4.5-5.6 IS STM"));
+        choices.insert (p_t (4152, "Canon EF 24-105mm f/3.5-5.6 IS STM"));
+        choices.insert (p_t (4153, "Canon EF-M 15-45mm f/3.5-6.3 IS STM"));
+        choices.insert (p_t (4154, "Canon EF-S 24mm f/2.8 STM"));
+        choices.insert (p_t (4155, "Canon EF-M 28mm f/3.5 Macro IS STM"));
+        choices.insert (p_t (4156, "Canon EF 50mm f/1.8 STM"));
+        choices.insert (p_t (4157, "Canon EF-M 18-150mm 1:3.5-6.3 IS STM"));
+        choices.insert (p_t (4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"));
+        choices.insert (p_t (36910, "Canon EF 70-300mm f/4-5.6 IS II USM"));
+        choices.insert (p_t (36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"));
+        choices.insert (p_t (65535, "n/a"));
     }
 
     virtual std::string toString (Tag* t)
@@ -906,43 +906,43 @@ public:
         int lensID = t->toInt();
 
         it_t r;
-        size_t nFound = choices.count( lensID );
+        size_t nFound = choices.count ( lensID );
 
-        if(1 == nFound) {
+        if (1 == nFound) {
             r = choices.find ( lensID );
             return r->second;
         }
 
-        Tag *apertureTag = t->getParent()->getRoot()->findTag("MaxAperture");
-        Tag *focalLengthTag = t->getParent()->getRoot()->findTag("FocalLength");
-        Tag *focalLengthMaxTag = t->getParent()->getRoot()->findTag("LongFocal");
-        Tag *focalLengthMinTag = t->getParent()->getRoot()->findTag("ShortFocal");
-        Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
+        Tag *apertureTag = t->getParent()->getRoot()->findTag ("MaxAperture");
+        Tag *focalLengthTag = t->getParent()->getRoot()->findTag ("FocalLength");
+        Tag *focalLengthMaxTag = t->getParent()->getRoot()->findTag ("LongFocal");
+        Tag *focalLengthMinTag = t->getParent()->getRoot()->findTag ("ShortFocal");
+        Tag *unitTag = t->getParent()->getRoot()->findTag ("FocalUnits");
         double maxApertureAtFocal = 0.;
         double focalLength = 0.;
         double focalLengthMin = 0.;
         double focalLengthMax = 0.;
 
-        if( apertureTag ) {
-            maxApertureAtFocal = pow(2.0, apertureTag->toDouble() / 64.0);
+        if ( apertureTag ) {
+            maxApertureAtFocal = pow (2.0, apertureTag->toDouble() / 64.0);
         }
 
-        if( unitTag ) {
+        if ( unitTag ) {
             double unit = unitTag->toDouble();
 
-            if( unit == 0. ) {
+            if ( unit == 0. ) {
                 unit = 1;
             }
 
-            if( focalLengthTag ) {
+            if ( focalLengthTag ) {
                 focalLength = focalLengthTag->toDouble();
             }
 
-            if( focalLengthMinTag ) {
+            if ( focalLengthMinTag ) {
                 focalLengthMin = focalLengthMinTag->toDouble() / unit;
             }
 
-            if( focalLengthMaxTag ) {
+            if ( focalLengthMaxTag ) {
                 focalLengthMax = focalLengthMaxTag->toDouble() / unit;
             }
         }
@@ -970,56 +970,57 @@ public:
 
         double deltaMin = 1000.;
 
-        std::string bestMatch(s.str());
+        std::string bestMatch (s.str());
         std::ostringstream candidates;
 
-        for (r = choices.lower_bound(lensID); r != choices.upper_bound(lensID); r++) {
+        for (r = choices.lower_bound (lensID); r != choices.upper_bound (lensID); r++) {
             double a1, a2, f1, f2, dif;
 
-            if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
+            if ( !extractLensInfo ( r->second, f1, f2, a1, a2) ) {
                 continue;
             }
 
-            if( f1 == 0. || a1 == 0.) {
+            if ( f1 == 0. || a1 == 0.) {
                 continue;
             }
 
-            if( focalLength < f1 - .5 || focalLength > f2 + 0.5 ) {
+            if ( focalLength < f1 - .5 || focalLength > f2 + 0.5 ) {
                 continue;
             }
 
-            if( focalLengthMin > 0. && fabs(f1 - focalLengthMin) > 0.5 ) {
+            if ( focalLengthMin > 0. && fabs (f1 - focalLengthMin) > 0.5 ) {
                 continue;
             }
 
-            if( focalLengthMax > 0. && fabs(f2 - focalLengthMax) > 0.5 ) {
+            if ( focalLengthMax > 0. && fabs (f2 - focalLengthMax) > 0.5 ) {
                 continue;
             }
 
-            if( maxApertureAtFocal > 0.1) {
+            if ( maxApertureAtFocal > 0.1) {
                 double lensAperture;
-                if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
+
+                if ( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
                     continue;
                 }
 
-                if( a1 == a2 || f1 == f2) {
+                if ( a1 == a2 || f1 == f2) {
                     lensAperture = a1;
                 } else {
-                    lensAperture = exp( log(a1) + (log(a2) - log(a1)) / (log(f2) - log(f1)) * (log(focalLength) - log(f1)) );
+                    lensAperture = exp ( log (a1) + (log (a2) - log (a1)) / (log (f2) - log (f1)) * (log (focalLength) - log (f1)) );
                 }
 
-                dif = abs(lensAperture - maxApertureAtFocal);
+                dif = abs (lensAperture - maxApertureAtFocal);
             } else {
                 dif = 0;
             }
 
-            if( dif < deltaMin ) {
+            if ( dif < deltaMin ) {
                 deltaMin = dif;
                 bestMatch = r->second;
             }
 
-            if( dif < 0.15) {
-                if( candidates.tellp() ) {
+            if ( dif < 0.15) {
+                if ( candidates.tellp() ) {
                     candidates << "\n or " <<  r->second;
                 } else {
                     candidates <<  r->second;
@@ -1028,7 +1029,7 @@ public:
 
         }
 
-        if( !candidates.tellp() ) {
+        if ( !candidates.tellp() ) {
             return bestMatch;
         } else {
             return candidates.str();
@@ -1056,7 +1057,7 @@ public:
     {
         int val = t->toInt();
 
-        if( val < 40 ) {
+        if ( val < 40 ) {
             return "undef";
         }
 
@@ -1103,10 +1104,10 @@ public:
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = Interpreter::toInt(t, ofs);
+        int a = Interpreter::toInt (t, ofs);
 
-        if(a > 1) {
-            double i = pow(2., double(a) / 32. - 4.) * 50.;
+        if (a > 1) {
+            double i = pow (2., double (a) / 32. - 4.) * 50.;
             return i;
         } else {
             return 0.;
@@ -1114,10 +1115,10 @@ public:
     }
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
-        int a = Interpreter::toInt(t, ofs, astype);
+        int a = Interpreter::toInt (t, ofs, astype);
 
-        if(a > 1) {
-            int i = int(double(powf(2.f, float(a) / 32.f - 4.f)) * 50.f + 0.5f);
+        if (a > 1) {
+            int i = int (double (powf (2.f, float (a) / 32.f - 4.f)) * 50.f + 0.5f);
             return i;
         } else {
             return 0;
@@ -1235,7 +1236,7 @@ public:
     {
         int n = t->toInt();
 
-        if( n == -1) {
+        if ( n == -1) {
             return "undef";
         }
 
@@ -1441,7 +1442,7 @@ class CAFileNumberInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        unsigned long val = t->toInt(0, LONG);
+        unsigned long val = t->toInt (0, LONG);
         char buffer[32];
         sprintf (buffer, "%ld", ((val & 0xffc0) >> 6) * 10000 + ((val >> 16) & 0xff) + ((val & 0x3f) << 8) );
         return buffer;
@@ -1846,7 +1847,7 @@ const TagAttrib canonFocalLengthAttribs[] = {
 
 const TagAttrib canonShotInfoAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 1, AUTO, "AutoISO", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 2, AUTO, "BaseISO" , &caBaseISOInterpreter},
+    {0, AC_WRITE, 0, nullptr, 2, AUTO, "BaseISO", &caBaseISOInterpreter},
     {0, AC_WRITE, 0, nullptr, 3, AUTO, "MeasuredEV", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 4, AUTO, "TargetAperture", &caApertureInterpreter},
     {0, AC_WRITE, 0, nullptr, 5, AUTO, "TargetExposureTime", &caExposureTimeInterpreter},
@@ -1855,13 +1856,13 @@ const TagAttrib canonShotInfoAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 8, AUTO, "SlowShutter", &caSlowShutterInterpreter},
     {0, AC_WRITE, 0, nullptr, 9, AUTO, "SequenceNumber", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 10, AUTO, "OpticalZoomCode", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 13, AUTO, "FlashGuideNumber" , &caFlashGuideNumberInterpreter},
+    {0, AC_WRITE, 0, nullptr, 13, AUTO, "FlashGuideNumber", &caFlashGuideNumberInterpreter},
     {0, AC_WRITE, 0, nullptr, 14, AUTO, "AFPointsInFocus", &caAFPointsInFocusInterpreter},
     {0, AC_WRITE, 0, nullptr, 15, AUTO, "FlashExposureComp", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 16, AUTO, "AutoExposureBracketing", &caAutoExposureBracketingInterpreter},
     {0, AC_WRITE, 0, nullptr, 17, AUTO, "AEBBracketValue", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 18, AUTO, "ControlMode", &caControModeInterpreter},
-    {0, AC_WRITE, 0, nullptr, 21, AUTO, "FNumber" , &caApertureInterpreter},
+    {0, AC_WRITE, 0, nullptr, 21, AUTO, "FNumber", &caApertureInterpreter},
     {0, AC_WRITE, 0, nullptr, 22, AUTO, "ExposureTime", &caExposureTimeInterpreter},
     {0, AC_WRITE, 0, nullptr, 23, AUTO, "MeasuredEV2", &caMeasuredEVInterpreter},
     {0, AC_WRITE, 0, nullptr, 24, AUTO, "BulbDuration", &stdInterpreter},
@@ -1881,15 +1882,15 @@ const TagAttrib canonFileInfoAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 6, AUTO, "RawJpgQuality", &caRAWJpegQualityInterpreter},
     {0, AC_WRITE, 0, nullptr, 7, AUTO, "RawJpgSize", &caJpegSizeInterpreter},
     {0, AC_WRITE, 0, nullptr, 8, AUTO, "NoiseReduction", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 9, AUTO, "WBBracketMode" , &caWBBracketModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 9, AUTO, "WBBracketMode", &caWBBracketModeInterpreter},
     {0, AC_WRITE, 0, nullptr, 12, AUTO, "WBBracketValueAB", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 13, AUTO, "WBBracketValueGM", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 14, AUTO, "FilterEffect" , &caFilterEffectInterpreter},
-    {0, AC_WRITE, 0, nullptr, 15, AUTO, "ToningEffect" , &caToningEffectInterpreter},
-    {0, AC_WRITE, 0, nullptr, 19, AUTO, "LiveViewShooting" , &caOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 14, AUTO, "FilterEffect", &caFilterEffectInterpreter},
+    {0, AC_WRITE, 0, nullptr, 15, AUTO, "ToningEffect", &caToningEffectInterpreter},
+    {0, AC_WRITE, 0, nullptr, 19, AUTO, "LiveViewShooting", &caOnOffInterpreter},
     {0, AC_WRITE, 0, nullptr, 20, AUTO, "FocusDistanceUpper", &caFocusDistanceInterpreter},
     {0, AC_WRITE, 0, nullptr, 21, AUTO, "FocusDistanceLower", &caFocusDistanceInterpreter},
-    {0, AC_WRITE, 0, nullptr, 25, AUTO, "FlashExposureLock" , &caOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 25, AUTO, "FlashExposureLock", &caOnOffInterpreter},
     { -1, AC_DONTWRITE, 0, nullptr, 0, AUTO, "", nullptr},
 };
 
@@ -1980,7 +1981,7 @@ const TagAttrib canonAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 0x00a9, AUTO, "ColorBalance", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00aa, AUTO, "MeasuredColor", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00ae, AUTO, "ColorTemperature", &stdInterpreter},
-    {0, AC_NEW  , 0, nullptr, 0x00b0, AUTO, "CanonFlags", &stdInterpreter},
+    {0, AC_NEW, 0, nullptr, 0x00b0, AUTO, "CanonFlags", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00b1, AUTO, "ModifiedInfo", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00b2, AUTO, "ToneCurveMatching", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00b3, AUTO, "WhiteBalanceMatching", &stdInterpreter},

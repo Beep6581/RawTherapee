@@ -38,7 +38,7 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->toInt(2));
+        sprintf (buffer, "%d", t->toInt (2));
         return buffer;
     }
 };
@@ -59,8 +59,8 @@ public:
     {
         int a = t->getValue()[ofs];
 
-        if(a > 1) {
-            double i = pow(2., double(a) / 12. - 5.) * 100.;
+        if (a > 1) {
+            double i = pow (2., double (a) / 12. - 5.) * 100.;
             return i;
         } else {
             return 0.;
@@ -70,8 +70,8 @@ public:
     {
         int a = t->getValue()[ofs];
 
-        if(a > 1) {
-            int i = int(double(powf(2.f, float(a) / 12.f - 5.f)) * 100.f + 0.5f);
+        if (a > 1) {
+            int i = int (double (powf (2.f, float (a) / 12.f - 5.f)) * 100.f + 0.5f);
             return i;
         } else {
             return 0;
@@ -90,50 +90,50 @@ public:
 
         // unclear if this interpretation is correct!
         switch (a) {
-        case 0x0:
-            return "Off";
+            case 0x0:
+                return "Off";
 
-        case 0x101:
-            return "Hi 0.3";
+            case 0x101:
+                return "Hi 0.3";
 
-        case 0x102:
-            return "Hi 0.5";
+            case 0x102:
+                return "Hi 0.5";
 
-        case 0x103:
-            return "Hi 0.7";
+            case 0x103:
+                return "Hi 0.7";
 
-        case 0x104:
-            return "Hi 1.0";
+            case 0x104:
+                return "Hi 1.0";
 
-        case 0x105:
-            return "Hi 1.3";
+            case 0x105:
+                return "Hi 1.3";
 
-        case 0x106:
-            return "Hi 1.5";
+            case 0x106:
+                return "Hi 1.5";
 
-        case 0x107:
-            return "Hi 1.7";
+            case 0x107:
+                return "Hi 1.7";
 
-        case 0x108:
-            return "Hi 2.0";
+            case 0x108:
+                return "Hi 2.0";
 
-        case 0x201:
-            return "Lo 0.3";
+            case 0x201:
+                return "Lo 0.3";
 
-        case 0x202:
-            return "Lo 0.5";
+            case 0x202:
+                return "Lo 0.5";
 
-        case 0x203:
-            return "Lo 0.7";
+            case 0x203:
+                return "Lo 0.7";
 
-        case 0x204:
-            return "Lo 1.0";
+            case 0x204:
+                return "Lo 1.0";
 
-        default: {
-            char buffer[32];
-            sprintf(buffer, "0x%04X", a);
-            return buffer;
-        }
+            default: {
+                char buffer[32];
+                sprintf (buffer, "0x%04X", a);
+                return buffer;
+            }
         }
     }
 };
@@ -222,7 +222,7 @@ public:
         amchoices[0x3] = "Group Dynamic";
         amchoices[0x4] = "Single Area (wide)";
         amchoices[0x5] = "Dynamic Area (wide)";
-    // AFPoint
+        // AFPoint
         afpchoices[0x0] = "Center";
         afpchoices[0x1] = "Top";
         afpchoices[0x2] = "Bottom";
@@ -251,62 +251,52 @@ public:
                 af << "Center";
             } else {
                 af << ", Center";
-            }
-        else if (aff & 2)
+            } else if (aff & 2)
             if (af.str() == "") {
                 af << "Top";
             } else {
                 af << ", Top";
-            }
-        else if (aff & 4)
+            } else if (aff & 4)
             if (af.str() == "") {
                 af << "Bottom";
             } else {
                 af << ", Bottom";
-            }
-        else if (aff & 8)
+            } else if (aff & 8)
             if (af.str() == "") {
                 af << "Left";
             } else {
                 af << ", Left";
-            }
-        else if (aff & 16)
+            } else if (aff & 16)
             if (af.str() == "") {
                 af << "Right";
             } else {
                 af << ", Right";
-            }
-        else if (aff & 32)
+            } else if (aff & 32)
             if (af.str() == "") {
                 af << "Upper-left";
             } else {
                 af << ", Upper-left";
-            }
-        else if (aff & 64)
+            } else if (aff & 64)
             if (af.str() == "") {
                 af << "Upper-right";
             } else {
                 af << ", Upper-right";
-            }
-        else if (aff & 128)
+            } else if (aff & 128)
             if (af.str() == "") {
                 af << " Lower-left";
             } else {
                 af << ",  Lower-left";
-            }
-        else if (aff & 256)
+            } else if (aff & 256)
             if (af.str() == "") {
                 af << "Lower-right";
             } else {
                 af << ", Lower-right";
-            }
-        else if (aff & 512)
+            } else if (aff & 512)
             if (af.str() == "") {
                 af << "Far Left";
             } else {
                 af << ", Far Left";
-            }
-        else if (aff & 1024) {
+            } else if (aff & 1024) {
             if (af.str() == "") {
                 af << "Far Right";
             } else {
@@ -372,21 +362,21 @@ public:
         std::ostringstream ld;
         ld << "Version = " << ver << std::endl;
 
-        int lenstype = t->getParent()->getTag(0x0083)->toInt(0, BYTE);
+        int lenstype = t->getParent()->getTag (0x0083)->toInt (0, BYTE);
 
         std::ostringstream lid;
         lid.setf (std::ios_base::hex, std::ios_base::basefield);
         lid.setf (std::ios_base::uppercase);
 
-        Tag *modelTag = t->getParent()->getRoot()->findTag("Model");
-        std::string model( modelTag ?  modelTag->valueToString() : "");
+        Tag *modelTag = t->getParent()->getRoot()->findTag ("Model");
+        std::string model ( modelTag ?  modelTag->valueToString() : "");
         int lidoffs = 7;
         bool d100 = false;
 
-        if (model.substr(0, 10) == "NIKON D100" || model.substr(0, 9) == "NIKON D1X") {
+        if (model.substr (0, 10) == "NIKON D100" || model.substr (0, 9) == "NIKON D1X") {
             lidoffs = 0;
             d100 = true;
-        } else if( ver < 204) {
+        } else if ( ver < 204) {
             lidoffs = 7;
             d100 = false;
         } else {
@@ -403,14 +393,14 @@ public:
         }
 
         if (ver >= 201) {
-            const unsigned char* serval = t->getParent()->getTag(0x001d)->getValue ();
+            const unsigned char* serval = t->getParent()->getTag (0x001d)->getValue ();
             int serial = 0;
 
             for (int i = 0; serval[i]; i++) {
-                serial = serial * 10 + (isdigit(serval[i]) ? serval[i] - '0' : serval[i] % 10);
+                serial = serial * 10 + (isdigit (serval[i]) ? serval[i] - '0' : serval[i] % 10);
             }
 
-            const unsigned char* scval = t->getParent()->getTag(0x00a7)->getValue ();
+            const unsigned char* scval = t->getParent()->getTag (0x00a7)->getValue ();
             int key = 0;
 
             for (int i = 0; i < 4; i++) {
@@ -431,7 +421,7 @@ public:
         if (!d100) {
             int  EffectiveMaxApertureValue;
 
-            if( ver < 204 ) {
+            if ( ver < 204 ) {
                 ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
                 ld << "AFAperture = "        << (int) buffer[1] << std::endl;
                 ld << "FocusPosition = "     << (int) buffer[4] << std::endl;
@@ -448,111 +438,111 @@ public:
             }
 
             switch (EffectiveMaxApertureValue) {
-            case 0x8:
-                EffectiveMaxApertureString = "1.2";
-                break;
+                case 0x8:
+                    EffectiveMaxApertureString = "1.2";
+                    break;
 
-            case 0xc:
-                EffectiveMaxApertureString = "1.4";
-                break;
+                case 0xc:
+                    EffectiveMaxApertureString = "1.4";
+                    break;
 
-            case 0x14:
-                EffectiveMaxApertureString = "1.8";
-                break;
+                case 0x14:
+                    EffectiveMaxApertureString = "1.8";
+                    break;
 
-            case 0x18:
-                EffectiveMaxApertureString = "2.0";
-                break;
+                case 0x18:
+                    EffectiveMaxApertureString = "2.0";
+                    break;
 
-            case 0x20:
-                EffectiveMaxApertureString = "2.5";
-                break;
+                case 0x20:
+                    EffectiveMaxApertureString = "2.5";
+                    break;
 
-            case 0x24:
-                EffectiveMaxApertureString = "2.8";
-                break;
+                case 0x24:
+                    EffectiveMaxApertureString = "2.8";
+                    break;
 
-            case 0x2a:
-                EffectiveMaxApertureString = "3.3";
-                break;
+                case 0x2a:
+                    EffectiveMaxApertureString = "3.3";
+                    break;
 
-            case 0x2c:
-                EffectiveMaxApertureString = "3.5";
-                break;
+                case 0x2c:
+                    EffectiveMaxApertureString = "3.5";
+                    break;
 
-            case 0x30:
-                EffectiveMaxApertureString = "4.0";
-                break;
+                case 0x30:
+                    EffectiveMaxApertureString = "4.0";
+                    break;
 
-            case 0x34:
-                EffectiveMaxApertureString = "4.5";
-                break;
+                case 0x34:
+                    EffectiveMaxApertureString = "4.5";
+                    break;
 
-            case 0x38:
-                EffectiveMaxApertureString = "5.0";
-                break;
+                case 0x38:
+                    EffectiveMaxApertureString = "5.0";
+                    break;
 
-            case 0x3c:
-                EffectiveMaxApertureString = "5.6";
-                break;
+                case 0x3c:
+                    EffectiveMaxApertureString = "5.6";
+                    break;
 
-            case 0x40:
-                EffectiveMaxApertureString = "6.3";
-                break;
+                case 0x40:
+                    EffectiveMaxApertureString = "6.3";
+                    break;
 
-            case 0x44:
-                EffectiveMaxApertureString = "7.1";
-                break;
+                case 0x44:
+                    EffectiveMaxApertureString = "7.1";
+                    break;
 
-            case 0x48:
-                EffectiveMaxApertureString = "8.0";
-                break;
+                case 0x48:
+                    EffectiveMaxApertureString = "8.0";
+                    break;
 
-            case 0x4e:
-                EffectiveMaxApertureString = "9.5";
-                break;
+                case 0x4e:
+                    EffectiveMaxApertureString = "9.5";
+                    break;
 
-            case 0x54:
-                EffectiveMaxApertureString = "11.0";
-                break;
+                case 0x54:
+                    EffectiveMaxApertureString = "11.0";
+                    break;
 
-            case 0x5a:
-                EffectiveMaxApertureString = "13.0";
-                break;
+                case 0x5a:
+                    EffectiveMaxApertureString = "13.0";
+                    break;
 
-            case 0x5e:
-                EffectiveMaxApertureString = "15.0";
-                break;
+                case 0x5e:
+                    EffectiveMaxApertureString = "15.0";
+                    break;
 
-            case 0x60:
-                EffectiveMaxApertureString = "16.0";
-                break;
+                case 0x60:
+                    EffectiveMaxApertureString = "16.0";
+                    break;
 
-            case 0x66:
-                EffectiveMaxApertureString = "19.0";
-                break;
+                case 0x66:
+                    EffectiveMaxApertureString = "19.0";
+                    break;
 
-            case 0x6c:
-                EffectiveMaxApertureString = "22.0";
-                break;
+                case 0x6c:
+                    EffectiveMaxApertureString = "22.0";
+                    break;
 
-            default  :
-                EffectiveMaxApertureString = "";
+                default  :
+                    EffectiveMaxApertureString = "";
             }
 
             ld << "EffectiveMaxAperture = "  << EffectiveMaxApertureString << std::endl;
         }
 
         for (int i = 0; i < 7; i++) {
-            lid << std::setw(2) << std::setfill('0') << (int)buffer[lidoffs + i] << ' ';
+            lid << std::setw (2) << std::setfill ('0') << (int)buffer[lidoffs + i] << ' ';
         }
 
-        lid << std::setw(2) << std::setfill('0') << lenstype;
+        lid << std::setw (2) << std::setfill ('0') << lenstype;
 
         std::map<std::string, std::string>::const_iterator r = lenses.find (lid.str());
 
         if (r != lenses.end()) {
-            if(r == lenses.begin() && EffectiveMaxApertureString != "") {       // first entry is for unchipped lenses
+            if (r == lenses.begin() && EffectiveMaxApertureString != "") {      // first entry is for unchipped lenses
                 ld << "Lens = Unknown $FL$mm f/" << EffectiveMaxApertureString;
             } else {
                 ld << "Lens = " << r->second;

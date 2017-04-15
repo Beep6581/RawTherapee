@@ -54,7 +54,7 @@ const enum ByteOrder HOSTORDER = MOTOROLA;
 #endif
 enum MNKind {NOMK, IFD, HEADERIFD, NIKON3, OLYMPUS2, FUJI, TABLESUBDIR};
 
-bool extractLensInfo(std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
+bool extractLensInfo (std::string &fullname, double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
 
 unsigned short sget2 (unsigned char *s, ByteOrder order);
 int sget4 (unsigned char *s, ByteOrder order);
@@ -135,7 +135,7 @@ public:
     Tag*             getTagP       (const char* name) const;  // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
     Tag*             getTag        (int ID) const;
     virtual Tag*     findTag       (const char* name) const;
-    bool             getXMPTagValue(const char* name, char* value) const;
+    bool             getXMPTagValue (const char* name, char* value) const;
 
     void             keepTag       (int ID);
     virtual void     addTag        (Tag* a);
@@ -197,7 +197,7 @@ protected:
     TagDirectory*    parent;
     TagDirectory**   directory;
     MNKind           makerNoteKind;
-    bool             parseMakerNote(FILE* f, int base, ByteOrder bom );
+    bool             parseMakerNote (FILE* f, int base, ByteOrder bom );
 
 public:
     Tag (TagDirectory* parent, FILE* f, int base);                          // parse next tag from the file
@@ -236,7 +236,7 @@ public:
     }
     signed char*         getSignedValue () const
     {
-        return reinterpret_cast<signed char*>(value);
+        return reinterpret_cast<signed char*> (value);
     }
     const TagAttrib*     getAttrib      () const
     {
@@ -334,62 +334,62 @@ public:
     {
         char buffer[1024];
         t->toString (buffer);
-        std::string s(buffer);
-        std::string::size_type p1 = s.find_first_not_of(' ');
+        std::string s (buffer);
+        std::string::size_type p1 = s.find_first_not_of (' ');
 
-        if( p1 == std::string::npos ) {
+        if ( p1 == std::string::npos ) {
             return s;
         } else {
-            return s.substr(p1, s.find_last_not_of(' ') - p1 + 1);
+            return s.substr (p1, s.find_last_not_of (' ') - p1 + 1);
         }
     }
     virtual void fromString (Tag* t, const std::string& value)
     {
         if (t->getType() == SHORT || t->getType() == LONG) {
-            t->fromInt (atoi(value.c_str()));
+            t->fromInt (atoi (value.c_str()));
         } else {
             t->fromString (value.c_str());
         }
     }
     // Get the value as a double
-    virtual double toDouble(Tag* t, int ofs = 0)
+    virtual double toDouble (Tag* t, int ofs = 0)
     {
         double ud, dd;
 
         switch (t->getType()) {
-        case SBYTE:
-            return double(int(t->getSignedValue()[ofs]));
+            case SBYTE:
+                return double (int (t->getSignedValue()[ofs]));
 
-        case BYTE:
-            return (double)((int)t->getValue()[ofs]);
+            case BYTE:
+                return (double) ((int)t->getValue()[ofs]);
 
-        case ASCII:
-            return 0.0;
+            case ASCII:
+                return 0.0;
 
-        case SSHORT:
-            return (double)int2_to_signed(sget2 (t->getValue() + ofs, t->getOrder()));
+            case SSHORT:
+                return (double)int2_to_signed (sget2 (t->getValue() + ofs, t->getOrder()));
 
-        case SHORT:
-            return (double)((int)sget2 (t->getValue() + ofs, t->getOrder()));
+            case SHORT:
+                return (double) ((int)sget2 (t->getValue() + ofs, t->getOrder()));
 
-        case SLONG:
-        case LONG:
-            return (double)((int)sget4 (t->getValue() + ofs, t->getOrder()));
+            case SLONG:
+            case LONG:
+                return (double) ((int)sget4 (t->getValue() + ofs, t->getOrder()));
 
-        case SRATIONAL:
-        case RATIONAL:
-            ud = (int)sget4 (t->getValue() + ofs, t->getOrder());
-            dd = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
-            return dd == 0. ? 0. : (double)ud / (double)dd;
+            case SRATIONAL:
+            case RATIONAL:
+                ud = (int)sget4 (t->getValue() + ofs, t->getOrder());
+                dd = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return dd == 0. ? 0. : (double)ud / (double)dd;
 
-        case FLOAT:
-            return double(sget4 (t->getValue() + ofs, t->getOrder()));
+            case FLOAT:
+                return double (sget4 (t->getValue() + ofs, t->getOrder()));
 
-        case UNDEFINED:
-            return 0.;
+            case UNDEFINED:
+                return 0.;
 
-        default:
-            return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
+            default:
+                return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
         }
     }
     // Get the value as an int
@@ -402,38 +402,38 @@ public:
         }
 
         switch (astype) {
-        case SBYTE:
-            return int(t->getSignedValue()[ofs]);
+            case SBYTE:
+                return int (t->getSignedValue()[ofs]);
 
-        case BYTE:
-            return t->getValue()[ofs];
+            case BYTE:
+                return t->getValue()[ofs];
 
-        case ASCII:
-            return 0;
+            case ASCII:
+                return 0;
 
-        case SSHORT:
-            return (int)int2_to_signed(sget2 (t->getValue() + ofs, t->getOrder()));
+            case SSHORT:
+                return (int)int2_to_signed (sget2 (t->getValue() + ofs, t->getOrder()));
 
-        case SHORT:
-            return (int)sget2 (t->getValue() + ofs, t->getOrder());
+            case SHORT:
+                return (int)sget2 (t->getValue() + ofs, t->getOrder());
 
-        case SLONG:
-        case LONG:
-            return (int)sget4 (t->getValue() + ofs, t->getOrder());
+            case SLONG:
+            case LONG:
+                return (int)sget4 (t->getValue() + ofs, t->getOrder());
 
-        case SRATIONAL:
-        case RATIONAL:
-            a = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
-            return a == 0 ? 0 : (int)sget4 (t->getValue() + ofs, t->getOrder()) / a;
+            case SRATIONAL:
+            case RATIONAL:
+                a = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return a == 0 ? 0 : (int)sget4 (t->getValue() + ofs, t->getOrder()) / a;
 
-        case FLOAT:
-            return (int)toDouble(t, ofs);
+            case FLOAT:
+                return (int)toDouble (t, ofs);
 
-        case UNDEFINED:
-            return 0;
+            case UNDEFINED:
+                return 0;
 
-        default:
-            return 0; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
+            default:
+                return 0; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
         }
 
         return 0;
@@ -470,28 +470,28 @@ protected:
     typedef std::pair< T, std::string> p_t;
     container_t choices;
 
-    virtual std::string guess(const T lensID, double focalLength, double maxApertureAtFocal, double *lensInfoArray)
+    virtual std::string guess (const T lensID, double focalLength, double maxApertureAtFocal, double *lensInfoArray)
     {
         it_t r;
-        size_t nFound = choices.count( lensID );
+        size_t nFound = choices.count ( lensID );
 
-        switch( nFound ) {
-        case 0: { // lens Unknown
-            std::ostringstream s;
-            s << lensID;
-            return s.str();
+        switch ( nFound ) {
+            case 0: { // lens Unknown
+                std::ostringstream s;
+                s << lensID;
+                return s.str();
+            }
+
+            case 1: // lens found
+                r = choices.find ( lensID );
+                return r->second;
+
+            default:
+                // More than one hit: we must guess
+                break;
         }
 
-        case 1: // lens found
-            r = choices.find ( lensID );
-            return r->second;
-
-        default:
-            // More than one hit: we must guess
-            break;
-        }
-
-        std::string bestMatch("Unknown");
+        std::string bestMatch ("Unknown");
         double a1, a2, f1, f2;
 
         /* FIRST TRY
@@ -499,8 +499,8 @@ protected:
         * Get the lens info (min/man focal, min/max aperture) and compare them to the possible choice
         */
         if (lensInfoArray) {
-            for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); ++r  ) {
-                if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
+            for ( r = choices.lower_bound ( lensID ); r != choices.upper_bound (lensID); ++r  ) {
+                if ( !extractLensInfo ( r->second, f1, f2, a1, a2) ) {
                     continue;
                 }
 
@@ -513,17 +513,17 @@ protected:
 
             // No lens found, we update the "unknown" string with the lens info values
             if (lensInfoArray[0] == lensInfoArray[1]) {
-                bestMatch += Glib::ustring::compose(" (%1mm", int(lensInfoArray[0]));
+                bestMatch += Glib::ustring::compose (" (%1mm", int (lensInfoArray[0]));
             } else {
-                bestMatch += Glib::ustring::compose(" (%1-%2mm", int(lensInfoArray[0]), int(lensInfoArray[1]));
+                bestMatch += Glib::ustring::compose (" (%1-%2mm", int (lensInfoArray[0]), int (lensInfoArray[1]));
             }
 
             if (lensInfoArray[2] == lensInfoArray[3]) {
-                bestMatch += Glib::ustring::compose(" f/%1)", Glib::ustring::format(std::fixed, std::setprecision(1), lensInfoArray[2]));
+                bestMatch += Glib::ustring::compose (" f/%1)", Glib::ustring::format (std::fixed, std::setprecision (1), lensInfoArray[2]));
             } else
-                bestMatch += Glib::ustring::compose(" f/%1-%2)",
-                                                    Glib::ustring::format(std::fixed, std::setprecision(1), lensInfoArray[2]),
-                                                    Glib::ustring::format(std::fixed, std::setprecision(1), lensInfoArray[3]));
+                bestMatch += Glib::ustring::compose (" f/%1-%2)",
+                                                     Glib::ustring::format (std::fixed, std::setprecision (1), lensInfoArray[2]),
+                                                     Glib::ustring::format (std::fixed, std::setprecision (1), lensInfoArray[3]));
         }
 
         /* SECOND TRY
@@ -536,45 +536,46 @@ protected:
         std::ostringstream candidates;
         double deltaMin = 1000.;
 
-        for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); ++r  ) {
+        for ( r = choices.lower_bound ( lensID ); r != choices.upper_bound (lensID); ++r  ) {
             double dif;
 
-            if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
+            if ( !extractLensInfo ( r->second, f1, f2, a1, a2) ) {
                 continue;
             }
 
-            if( f1 == 0. || a1 == 0.) {
+            if ( f1 == 0. || a1 == 0.) {
                 continue;
             }
 
-            if( focalLength < f1 - .5 || focalLength > f2 + 0.5 ) {
+            if ( focalLength < f1 - .5 || focalLength > f2 + 0.5 ) {
                 continue;
             }
 
-            if( maxApertureAtFocal > 0.1) {
+            if ( maxApertureAtFocal > 0.1) {
                 double lensAperture;
-                if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
+
+                if ( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
                     continue;
                 }
 
-                if( a1 == a2 || f1 == f2) {
+                if ( a1 == a2 || f1 == f2) {
                     lensAperture = a1;
                 } else {
-                    lensAperture = exp( log(a1) + (log(a2) - log(a1)) / (log(f2) - log(f1)) * (log(focalLength) - log(f1)) );
+                    lensAperture = exp ( log (a1) + (log (a2) - log (a1)) / (log (f2) - log (f1)) * (log (focalLength) - log (f1)) );
                 }
 
-                dif = std::abs(lensAperture - maxApertureAtFocal);
+                dif = std::abs (lensAperture - maxApertureAtFocal);
             } else {
                 dif = 0;
             }
 
-            if( dif < deltaMin ) {
+            if ( dif < deltaMin ) {
                 deltaMin = dif;
                 bestMatch = r->second;
             }
 
-            if( dif < 0.15) {
-                if( candidates.tellp() ) {
+            if ( dif < 0.15) {
+                if ( candidates.tellp() ) {
                     candidates << "\n or " <<  r->second;
                 } else {
                     candidates <<  r->second;
@@ -582,7 +583,7 @@ protected:
             }
         }
 
-        if( !candidates.tellp() ) {
+        if ( !candidates.tellp() ) {
             return bestMatch;
         } else {
             return candidates.str();
@@ -590,7 +591,7 @@ protected:
     }
 };
 
-inline static int getTypeSize( TagType type )
+inline static int getTypeSize ( TagType type )
 {
     return ("11124811248484"[type < 14 ? type : 0] - '0');
 }
@@ -627,6 +628,6 @@ extern const TagAttrib sonyCameraSettingsAttribs3[];
 //extern const TagAttrib sonyDNGMakerNote[];
 extern const TagAttrib olympusAttribs[];
 extern const TagAttrib kodakIfdAttribs[];
-void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif);
+void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif);
 }
 #endif

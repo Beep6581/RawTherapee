@@ -1084,17 +1084,17 @@ public:
     virtual std::string toString (Tag* t)
     {
         int lensID = t->toInt();
-        Tag *lensInfoTag = t->getParent()->getRoot()->findTag("LensInfo");
-        Tag *apertureTag = t->getParent()->getRoot()->findTag("MaxApertureValue");
-        Tag *focalLengthTag = t->getParent()->getRoot()->findTag("FocalLength");
+        Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
+        Tag *apertureTag = t->getParent()->getRoot()->findTag ("MaxApertureValue");
+        Tag *focalLengthTag = t->getParent()->getRoot()->findTag ("FocalLength");
         double maxApertureAtFocal = 0.;
         double focalLength = 0.;
 
-        if( apertureTag ) {
-            maxApertureAtFocal = pow(2.0, apertureTag->toDouble() / 2.0);
+        if ( apertureTag ) {
+            maxApertureAtFocal = pow (2.0, apertureTag->toDouble() / 2.0);
         }
 
-        if( focalLengthTag ) {
+        if ( focalLengthTag ) {
             focalLength = focalLengthTag->toDouble();
         }
 
@@ -1104,9 +1104,9 @@ public:
             liArray = lensInfoTag->toDoubleArray();
         }
 
-        std::string retval = guess( lensID, focalLength, maxApertureAtFocal, liArray);
+        std::string retval = guess ( lensID, focalLength, maxApertureAtFocal, liArray);
 
-        if(liArray) {
+        if (liArray) {
             delete [] liArray;
         }
 
@@ -1120,104 +1120,104 @@ class SALensID2Interpreter : public IntLensInterpreter< int >
 public:
     SALensID2Interpreter ()
     {
-        choices.insert(p_t(0, "Unknown E-mount lens or other lens"));
-        choices.insert(p_t(1, "Sony LA-EA1 Adapter"));
-        choices.insert(p_t(2, "Sony LA-EA2 Adapter"));
-        choices.insert(p_t(3, "Sony LA-EA3 Adapter"));
-        choices.insert(p_t(6, "Sony LA-EA4 Adapter"));
-        choices.insert(p_t(44, "Metabones Canon EF Smart Adapter"));
-        choices.insert(p_t(78, "Metabones Canon EF Smart Adapter Mark III or Other Adapter"));
-        choices.insert(p_t(234, "Metabones Canon EF Smart Adapter Mark IV"));
-        choices.insert(p_t(239, "Metabones Canon EF Speed Booster"));
-        choices.insert(p_t(32784, "Sony E 16mm f/2.8"));
-        choices.insert(p_t(32785, "Sony E 18-55mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(32786, "Sony E 55-210mm f/4.5-6.3 OSS"));
-        choices.insert(p_t(32787, "Sony E 18-200mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(32788, "Sony E 30mm f/3.5 Macro"));
-        choices.insert(p_t(32789, "Sony E 24mm f/1.8 ZA or Samyang AF 50mm f/1.4 FE"));
-        choices.insert(p_t(32789, "Samyang AF 50mm f/1.4 FE"));
-        choices.insert(p_t(32790, "Sony E 50mm f/1.8 OSS or Samyang AF 14mm f/2.8 FE"));
-        choices.insert(p_t(32790, "Samyang AF 14mm f/2.8 FE"));
-        choices.insert(p_t(32791, "Sony E 16-70mm f/4 ZA OSS"));
-        choices.insert(p_t(32792, "Sony E 10-18mm f/4 OSS"));
-        choices.insert(p_t(32793, "Sony E PZ 16-50mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(32794, "Sony FE 35mm f/2.8 ZA"));
-        choices.insert(p_t(32795, "Sony FE 24-70mm f/4 ZA OSS"));
-        choices.insert(p_t(32796, "Sony FE 85mm f/1.8"));
-        choices.insert(p_t(32797, "Sony E 18-200mm f/3.5-6.3 OSS LE"));
-        choices.insert(p_t(32798, "Sony E 20mm f/2.8"));
-        choices.insert(p_t(32799, "Sony E 35mm f/1.8 OSS"));
-        choices.insert(p_t(32800, "Sony E PZ 18-105mm f/4 G OSS"));
-        choices.insert(p_t(32802, "Sony FE 90mm f/2.8 Macro G OSS"));
-        choices.insert(p_t(32803, "Sony E 18-50mm f/4-5.6"));
-        choices.insert(p_t(32807, "Sony E PZ 18-200mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(32808, "Sony FE 55mm f/1.8 ZA"));
-        choices.insert(p_t(32810, "Sony FE 70-200mm f/4 G OSS"));
-        choices.insert(p_t(32811, "Sony FE 16-35mm f/4 ZA OSS"));
-        choices.insert(p_t(32812, "Sony FE 50mm f/2.8 Macro"));
-        choices.insert(p_t(32813, "Sony FE 28-70mm f/3.5-5.6 OSS"));
-        choices.insert(p_t(32814, "Sony FE 35mm f/1.4 ZA"));
-        choices.insert(p_t(32815, "Sony FE 24-240mm f/3.5-6.3 OSS"));
-        choices.insert(p_t(32816, "Sony FE 28mm f/2"));
-        choices.insert(p_t(32817, "Sony FE PZ 28-135mm f/4 G OSS"));
-        choices.insert(p_t(32819, "Sony FE 100mm f/2.8 STF GM OSS"));
-        choices.insert(p_t(32821, "Sony FE 24-70mm f/2.8 GM"));
-        choices.insert(p_t(32822, "Sony FE 50mm f/1.4 ZA"));
-        choices.insert(p_t(32823, "Sony FE 85mm f/1.4 GM"));
-        choices.insert(p_t(32824, "Sony FE 50mm f/1.8"));
-        choices.insert(p_t(32826, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"));
-        choices.insert(p_t(32827, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"));
-        choices.insert(p_t(32828, "Sony FE 70-300mm f/4.5-5.6 G OSS"));
-        choices.insert(p_t(32830, "Sony FE 70-200mm f/2.8 GM OSS"));
-        choices.insert(p_t(33002, "Sigma 85mm f/1.4 DG HSM | A 016 (+ Metabones Ver.50)"));
-        choices.insert(p_t(33072, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"));
-        choices.insert(p_t(33073, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"));
-        choices.insert(p_t(33076, "Sony FE 100mm f/2.8 STF GM OSS (macro mode)"));
-        choices.insert(p_t(49201, "Zeiss Touit 12mm f/2.8"));
-        choices.insert(p_t(49202, "Zeiss Touit 32mm f/1.8"));
-        choices.insert(p_t(49203, "Zeiss Touit 50mm f/2.8 Macro"));
-        choices.insert(p_t(49216, "Zeiss Batis 25mm f/2"));
-        choices.insert(p_t(49217, "Zeiss Batis 85mm f/1.8"));
-        choices.insert(p_t(49218, "Zeiss Batis 18mm f/2.8"));
-        choices.insert(p_t(49219, "Zeiss Batis 135mm f/2.8"));
-        choices.insert(p_t(49232, "Zeiss Loxia 50mm f/2"));
-        choices.insert(p_t(49233, "Zeiss Loxia 35mm f/2"));
-        choices.insert(p_t(49234, "Zeiss Loxia 21mm f/2.8"));
-        choices.insert(p_t(49235, "Zeiss Loxia 85mm f/2.4"));
-        choices.insert(p_t(50480, "Sigma 30mm f/1.4 DC DN | C 016"));
-        choices.insert(p_t(50481, "Sigma 50mm f/1.4 DG HSM | A 014 + MC-11"));
-        choices.insert(p_t(50482, "Sigma 18-300mm f/3.5-6.3 DC MACRO OS HSM | C 014 + MC-11"));
-        choices.insert(p_t(50483, "Sigma 18-35mm f/1.8 DC HSM | A 013 + MC-11"));
-        choices.insert(p_t(50484, "Sigma 24-35mm f/2 DG HSM | A 015 + MC-11"));
-        choices.insert(p_t(50486, "Sigma 150-600mm f/5-6.3 DG OS HSM | C 015 + MC-11"));
-        choices.insert(p_t(50487, "Sigma 20mm f/1.4 DG HSM | A 015 + MC-11"));
-        choices.insert(p_t(50488, "Sigma 35mm f/1.4 DG HSM | A 012 + MC-11"));
-        choices.insert(p_t(50489, "Sigma 150-600mm f/5-6.3 DG OS HSM | S 014 + MC-11"));
-        choices.insert(p_t(50490, "Sigma 120-300mm f/2.8 DG OS HSM | S 013 + MC-11"));
-        choices.insert(p_t(50492, "Sigma 24-105mm f/4 DG OS HSM | A 013 + MC-11"));
-        choices.insert(p_t(50493, "Sigma 17-70mm f/2.8-4 DC MACRO OS HSM | C 013 + MC-11"));
-        choices.insert(p_t(50495, "Sigma 50-100mm f/1.8 DC HSM | A 016 + MC-11"));
-        choices.insert(p_t(50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
-        choices.insert(p_t(50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
-        choices.insert(p_t(50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
-        choices.insert(p_t(50996, "Voigtlander NOKTON 40mm f/1.2 Aspherical"));
-        choices.insert(p_t(51505, "Samyang AF 14mm f/2.8 FE"));
+        choices.insert (p_t (0, "Unknown E-mount lens or other lens"));
+        choices.insert (p_t (1, "Sony LA-EA1 Adapter"));
+        choices.insert (p_t (2, "Sony LA-EA2 Adapter"));
+        choices.insert (p_t (3, "Sony LA-EA3 Adapter"));
+        choices.insert (p_t (6, "Sony LA-EA4 Adapter"));
+        choices.insert (p_t (44, "Metabones Canon EF Smart Adapter"));
+        choices.insert (p_t (78, "Metabones Canon EF Smart Adapter Mark III or Other Adapter"));
+        choices.insert (p_t (234, "Metabones Canon EF Smart Adapter Mark IV"));
+        choices.insert (p_t (239, "Metabones Canon EF Speed Booster"));
+        choices.insert (p_t (32784, "Sony E 16mm f/2.8"));
+        choices.insert (p_t (32785, "Sony E 18-55mm f/3.5-5.6 OSS"));
+        choices.insert (p_t (32786, "Sony E 55-210mm f/4.5-6.3 OSS"));
+        choices.insert (p_t (32787, "Sony E 18-200mm f/3.5-6.3 OSS"));
+        choices.insert (p_t (32788, "Sony E 30mm f/3.5 Macro"));
+        choices.insert (p_t (32789, "Sony E 24mm f/1.8 ZA or Samyang AF 50mm f/1.4 FE"));
+        choices.insert (p_t (32789, "Samyang AF 50mm f/1.4 FE"));
+        choices.insert (p_t (32790, "Sony E 50mm f/1.8 OSS or Samyang AF 14mm f/2.8 FE"));
+        choices.insert (p_t (32790, "Samyang AF 14mm f/2.8 FE"));
+        choices.insert (p_t (32791, "Sony E 16-70mm f/4 ZA OSS"));
+        choices.insert (p_t (32792, "Sony E 10-18mm f/4 OSS"));
+        choices.insert (p_t (32793, "Sony E PZ 16-50mm f/3.5-5.6 OSS"));
+        choices.insert (p_t (32794, "Sony FE 35mm f/2.8 ZA"));
+        choices.insert (p_t (32795, "Sony FE 24-70mm f/4 ZA OSS"));
+        choices.insert (p_t (32796, "Sony FE 85mm f/1.8"));
+        choices.insert (p_t (32797, "Sony E 18-200mm f/3.5-6.3 OSS LE"));
+        choices.insert (p_t (32798, "Sony E 20mm f/2.8"));
+        choices.insert (p_t (32799, "Sony E 35mm f/1.8 OSS"));
+        choices.insert (p_t (32800, "Sony E PZ 18-105mm f/4 G OSS"));
+        choices.insert (p_t (32802, "Sony FE 90mm f/2.8 Macro G OSS"));
+        choices.insert (p_t (32803, "Sony E 18-50mm f/4-5.6"));
+        choices.insert (p_t (32807, "Sony E PZ 18-200mm f/3.5-6.3 OSS"));
+        choices.insert (p_t (32808, "Sony FE 55mm f/1.8 ZA"));
+        choices.insert (p_t (32810, "Sony FE 70-200mm f/4 G OSS"));
+        choices.insert (p_t (32811, "Sony FE 16-35mm f/4 ZA OSS"));
+        choices.insert (p_t (32812, "Sony FE 50mm f/2.8 Macro"));
+        choices.insert (p_t (32813, "Sony FE 28-70mm f/3.5-5.6 OSS"));
+        choices.insert (p_t (32814, "Sony FE 35mm f/1.4 ZA"));
+        choices.insert (p_t (32815, "Sony FE 24-240mm f/3.5-6.3 OSS"));
+        choices.insert (p_t (32816, "Sony FE 28mm f/2"));
+        choices.insert (p_t (32817, "Sony FE PZ 28-135mm f/4 G OSS"));
+        choices.insert (p_t (32819, "Sony FE 100mm f/2.8 STF GM OSS"));
+        choices.insert (p_t (32821, "Sony FE 24-70mm f/2.8 GM"));
+        choices.insert (p_t (32822, "Sony FE 50mm f/1.4 ZA"));
+        choices.insert (p_t (32823, "Sony FE 85mm f/1.4 GM"));
+        choices.insert (p_t (32824, "Sony FE 50mm f/1.8"));
+        choices.insert (p_t (32826, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"));
+        choices.insert (p_t (32827, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"));
+        choices.insert (p_t (32828, "Sony FE 70-300mm f/4.5-5.6 G OSS"));
+        choices.insert (p_t (32830, "Sony FE 70-200mm f/2.8 GM OSS"));
+        choices.insert (p_t (33002, "Sigma 85mm f/1.4 DG HSM | A 016 (+ Metabones Ver.50)"));
+        choices.insert (p_t (33072, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"));
+        choices.insert (p_t (33073, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"));
+        choices.insert (p_t (33076, "Sony FE 100mm f/2.8 STF GM OSS (macro mode)"));
+        choices.insert (p_t (49201, "Zeiss Touit 12mm f/2.8"));
+        choices.insert (p_t (49202, "Zeiss Touit 32mm f/1.8"));
+        choices.insert (p_t (49203, "Zeiss Touit 50mm f/2.8 Macro"));
+        choices.insert (p_t (49216, "Zeiss Batis 25mm f/2"));
+        choices.insert (p_t (49217, "Zeiss Batis 85mm f/1.8"));
+        choices.insert (p_t (49218, "Zeiss Batis 18mm f/2.8"));
+        choices.insert (p_t (49219, "Zeiss Batis 135mm f/2.8"));
+        choices.insert (p_t (49232, "Zeiss Loxia 50mm f/2"));
+        choices.insert (p_t (49233, "Zeiss Loxia 35mm f/2"));
+        choices.insert (p_t (49234, "Zeiss Loxia 21mm f/2.8"));
+        choices.insert (p_t (49235, "Zeiss Loxia 85mm f/2.4"));
+        choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C 016"));
+        choices.insert (p_t (50481, "Sigma 50mm f/1.4 DG HSM | A 014 + MC-11"));
+        choices.insert (p_t (50482, "Sigma 18-300mm f/3.5-6.3 DC MACRO OS HSM | C 014 + MC-11"));
+        choices.insert (p_t (50483, "Sigma 18-35mm f/1.8 DC HSM | A 013 + MC-11"));
+        choices.insert (p_t (50484, "Sigma 24-35mm f/2 DG HSM | A 015 + MC-11"));
+        choices.insert (p_t (50486, "Sigma 150-600mm f/5-6.3 DG OS HSM | C 015 + MC-11"));
+        choices.insert (p_t (50487, "Sigma 20mm f/1.4 DG HSM | A 015 + MC-11"));
+        choices.insert (p_t (50488, "Sigma 35mm f/1.4 DG HSM | A 012 + MC-11"));
+        choices.insert (p_t (50489, "Sigma 150-600mm f/5-6.3 DG OS HSM | S 014 + MC-11"));
+        choices.insert (p_t (50490, "Sigma 120-300mm f/2.8 DG OS HSM | S 013 + MC-11"));
+        choices.insert (p_t (50492, "Sigma 24-105mm f/4 DG OS HSM | A 013 + MC-11"));
+        choices.insert (p_t (50493, "Sigma 17-70mm f/2.8-4 DC MACRO OS HSM | C 013 + MC-11"));
+        choices.insert (p_t (50495, "Sigma 50-100mm f/1.8 DC HSM | A 016 + MC-11"));
+        choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
+        choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
+        choices.insert (p_t (50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
+        choices.insert (p_t (50996, "Voigtlander NOKTON 40mm f/1.2 Aspherical"));
+        choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 FE"));
     }
 
     virtual std::string toString (Tag* t)
     {
         int lensID = t->toInt();
-        Tag *lensInfoTag = t->getParent()->getRoot()->findTag("LensInfo");
-        Tag *apertureTag = t->getParent()->getRoot()->findTag("MaxApertureValue");
-        Tag *focalLengthTag = t->getParent()->getRoot()->findTag("FocalLength");
+        Tag *lensInfoTag = t->getParent()->getRoot()->findTag ("LensInfo");
+        Tag *apertureTag = t->getParent()->getRoot()->findTag ("MaxApertureValue");
+        Tag *focalLengthTag = t->getParent()->getRoot()->findTag ("FocalLength");
         double maxApertureAtFocal = 0.;
         double focalLength = 0.;
 
-        if( apertureTag ) {
-            maxApertureAtFocal = pow(2.0, apertureTag->toDouble() / 2.0);
+        if ( apertureTag ) {
+            maxApertureAtFocal = pow (2.0, apertureTag->toDouble() / 2.0);
         }
 
-        if( focalLengthTag ) {
+        if ( focalLengthTag ) {
             focalLength = focalLengthTag->toDouble();
         }
 
@@ -1227,9 +1227,9 @@ public:
             liArray = lensInfoTag->toDoubleArray();
         }
 
-        std::string retval = guess( lensID, focalLength, maxApertureAtFocal, liArray);
+        std::string retval = guess ( lensID, focalLength, maxApertureAtFocal, liArray);
 
-        if(liArray) {
+        if (liArray) {
             delete [] liArray;
         }
 
@@ -2002,7 +2002,7 @@ public:
     {
         double a = t->toDouble();
 
-        if(a > 0) {
+        if (a > 0) {
             char buffer[32];
             sprintf (buffer, "%.4f", a);
             return buffer;
@@ -2023,8 +2023,8 @@ public:
         }
 
         // Decode the value
-        if(a > 0) {
-            return pow(2., 6. - (double(a) / 8.));
+        if (a > 0) {
+            return pow (2., 6. - (double (a) / 8.));
         } else {
             return 0.;
         }
@@ -2045,8 +2045,8 @@ public:
         }
 
         // Decode the value
-        if(a) {
-            return int(powf(2.f, 6.f - (float(a) / 8.f)) + 0.5f);
+        if (a) {
+            return int (powf (2.f, 6.f - (float (a) / 8.f)) + 0.5f);
         } else {
             return 0;
         }
@@ -2060,9 +2060,9 @@ public:
     SAFNumberInterpreter () {}
     virtual std::string toString (Tag* t)
     {
-        double a = double(t->toDouble());
+        double a = double (t->toDouble());
 
-        if(a) {
+        if (a) {
             char buffer[32];
             sprintf (buffer, "%.1f", a / 100. );
             return buffer;
@@ -2083,8 +2083,8 @@ public:
         }
 
         // Decode the value
-        if(a > 0) {
-            return pow(2., (double(a) / 8. - 1.) / 2.);
+        if (a > 0) {
+            return pow (2., (double (a) / 8. - 1.) / 2.);
         } else {
             return 0.;
         }
@@ -2105,8 +2105,8 @@ public:
         }
 
         // Decode the value
-        if(a) {
-            return int(powf(2.f, (float(a) / 8.f - 1.f) / 2.f) + 0.5f);
+        if (a) {
+            return int (powf (2.f, (float (a) / 8.f - 1.f) / 2.f) + 0.5f);
         } else {
             return 0;
         }
@@ -2122,7 +2122,7 @@ public:
     {
         int a = t->toInt();
 
-        if(a) {
+        if (a) {
             char buffer[32];
             sprintf (buffer, "%d", a );
             return buffer;
@@ -2146,8 +2146,8 @@ public:
         }
 
         // Decode the value
-        if(a && a != 254) { // 254 = 'Auto' for CameraSettings3, but we might say the same for CameraSettings & CameraSettings2 (?)
-            return int(expf((double(a) / 8.f - 6.f) * logf(2.f)) * 100.f + 0.5f);
+        if (a && a != 254) { // 254 = 'Auto' for CameraSettings3, but we might say the same for CameraSettings & CameraSettings2 (?)
+            return int (expf ((double (a) / 8.f - 6.f) * logf (2.f)) * 100.f + 0.5f);
         } else {
             return 0;
         }
@@ -2171,7 +2171,7 @@ public:
         // Get the value
         int a = t->getValue()[ofs];
         // Decode the value
-        return (double(a) - 128.) / 24.;
+        return (double (a) - 128.) / 24.;
     }
 };
 SAExposureCompSetInterpreter saExposureCompSetInterpreter;
