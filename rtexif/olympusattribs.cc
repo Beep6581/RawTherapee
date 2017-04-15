@@ -122,6 +122,9 @@ public:
         lenses["00 24 00"] = "Olympus Zuiko Digital ED 40-150mm f/4.0-5.6";
         lenses["00 24 10"] = "Olympus M.Zuiko Digital ED 300mm f/4.0 IS Pro";
         lenses["00 25 10"] = "Olympus M.Zuiko Digital ED 8mm f/1.8 Fisheye Pro";
+        lenses["00 26 10"] = "Olympus M.Zuiko Digital ED 12-100mm f/4.0 IS Pro";
+        lenses["00 27 10"] = "Olympus M.Zuiko Digital ED 30mm f/3.5 Macro";
+        lenses["00 28 10"] = "Olympus M.Zuiko Digital ED 25mm f/1.2 Pro";
         lenses["00 30 00"] = "Olympus Zuiko Digital ED 50-200mm f/2.8-3.5 SWD";
         lenses["00 31 00"] = "Olympus Zuiko Digital ED 12-60mm f/2.8-4.0 SWD";
         lenses["00 32 00"] = "Olympus Zuiko Digital ED 14-35mm f/2.0 SWD";
@@ -258,6 +261,7 @@ public:
         choices[1] = "Sequential shooting AF";
         choices[2] = "Continuous AF";
         choices[3] = "Multi AF";
+        choices[4] = "Face detect";
         choices[10] = "MF";
     }
 };

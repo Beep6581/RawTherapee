@@ -716,8 +716,8 @@ public:
         choices.insert(p_t(256 * 3 + 23, "Tokina 80-200mm f/2.8 ATX-Pro"));
         choices.insert(p_t(256 * 3 + 24, "smc PENTAX-F 35-135mm f/3.5-4.5"));
         choices.insert(p_t(256 * 3 + 25, "smc PENTAX-F 35-105mm f/4-5.6 or Sigma or Tokina Lens"));
-        choices.insert(p_t(256 * 3 + 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
         choices.insert(p_t(256 * 3 + 25, "Sigma 55-200mm f/4-5.6 DC"));
+        choices.insert(p_t(256 * 3 + 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
         choices.insert(p_t(256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DL IF"));
         choices.insert(p_t(256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
         choices.insert(p_t(256 * 3 + 25, "Tokina 80-200mm f/2.8 ATX-Pro"));
@@ -752,6 +752,7 @@ public:
         choices.insert(p_t(256 * 3 + 44, "Sigma 18-50mm f/3.5-5.6 DC"));
         choices.insert(p_t(256 * 3 + 44, "Sigma 17-35mm f/2.8-4 EX DG"));
         choices.insert(p_t(256 * 3 + 44, "Tamron 35-90mm f/4 AF"));
+        choices.insert(p_t(256 * 3 + 44, "Sigma AF 18-35mm f/3.5-4.5 Aspherical"));
         choices.insert(p_t(256 * 3 + 46, "Sigma or Samsung Lens (3 46)"));
         choices.insert(p_t(256 * 3 + 46, "Sigma APO 70-200mm f/2.8 EX"));
         choices.insert(p_t(256 * 3 + 46, "Sigma EX APO 100-300mm f/4 IF"));
@@ -782,6 +783,7 @@ public:
         choices.insert(p_t(256 * 4 + 2, "smc PENTAX-FA 80-320mm f/4.5-5.6"));
         choices.insert(p_t(256 * 4 + 3, "smc PENTAX-FA 43mm f/1.9 Limited"));
         choices.insert(p_t(256 * 4 + 6, "smc PENTAX-FA 35-80mm f/4-5.6"));
+        choices.insert(p_t(256 * 4 + 10, "Irix 15mm f/2.4"));
         choices.insert(p_t(256 * 4 + 12, "smc PENTAX-FA 50mm f/1.4"));
         choices.insert(p_t(256 * 4 + 15, "smc PENTAX-FA 28-105mm f/4-5.6 [IF]"));
         choices.insert(p_t(256 * 4 + 16, "Tamron AF 80-210mm f/4-5.6 (178D)"));
@@ -981,6 +983,7 @@ public:
         choices.insert(p_t(256 * 21 + 6, "06 Telephoto Zoom 15-45mm f/2.8"));
         choices.insert(p_t(256 * 21 + 7, "07 Mount Shield 11.5mm f/9"));
         choices.insert(p_t(256 * 21 + 8, "08 Wide Zoom 3.8-5.9mm f/3.7-4"));
+        choices.insert(p_t(256 * 21 + 233, "Adapter Q for K-mount Lens"));
         choices.insert(p_t(256 * 22 + 3, "03 Fish-eye 3.2mm f/5.6"));
         choices.insert(p_t(256 * 22 + 4, "04 Toy Lens Wide 6.3mm f/7.1"));
         choices.insert(p_t(256 * 22 + 5, "05 Toy Lens Telephoto 18mm f/8"));
