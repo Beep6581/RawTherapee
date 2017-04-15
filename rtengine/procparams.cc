@@ -8659,7 +8659,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftMotion"))  {
-                raw.bayersensor.pixelShiftMotion = keyFile.get_integer("RAW Bayer", "PixelShiftMotion");
+                raw.bayersensor.pixelShiftMotion = keyFile.get_integer ("RAW Bayer", "PixelShiftMotion");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftMotion = true;
@@ -8667,15 +8667,15 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftMotionCorrection"))  {
-                raw.bayersensor.pixelShiftMotionCorrection = (RAWParams::BayerSensor::ePSMotionCorrection)keyFile.get_integer("RAW Bayer", "PixelShiftMotionCorrection");
+                raw.bayersensor.pixelShiftMotionCorrection = (RAWParams::BayerSensor::ePSMotionCorrection)keyFile.get_integer ("RAW Bayer", "PixelShiftMotionCorrection");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftMotionCorrection = true;
                 }
             }
- 
+
             if (keyFile.has_key ("RAW Bayer", "PixelShiftMotionCorrectionMethod"))  {
-                raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)keyFile.get_integer("RAW Bayer", "PixelShiftMotionCorrectionMethod");
+                raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)keyFile.get_integer ("RAW Bayer", "PixelShiftMotionCorrectionMethod");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = true;
@@ -8683,7 +8683,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorGreen"))  {
-                raw.bayersensor.pixelShiftStddevFactorGreen = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorGreen");
+                raw.bayersensor.pixelShiftStddevFactorGreen = keyFile.get_double ("RAW Bayer", "pixelShiftStddevFactorGreen");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftStddevFactorGreen = true;
@@ -8691,7 +8691,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorRed"))  {
-                raw.bayersensor.pixelShiftStddevFactorRed = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorRed");
+                raw.bayersensor.pixelShiftStddevFactorRed = keyFile.get_double ("RAW Bayer", "pixelShiftStddevFactorRed");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftStddevFactorRed = true;
@@ -8699,7 +8699,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftStddevFactorBlue"))  {
-                raw.bayersensor.pixelShiftStddevFactorBlue = keyFile.get_double("RAW Bayer", "pixelShiftStddevFactorBlue");
+                raw.bayersensor.pixelShiftStddevFactorBlue = keyFile.get_double ("RAW Bayer", "pixelShiftStddevFactorBlue");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftStddevFactorBlue = true;
@@ -8707,7 +8707,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftEperIso"))  {
-                raw.bayersensor.pixelShiftEperIso = keyFile.get_double("RAW Bayer", "PixelShiftEperIso");
+                raw.bayersensor.pixelShiftEperIso = keyFile.get_double ("RAW Bayer", "PixelShiftEperIso");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftEperIso = true;
@@ -8715,7 +8715,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftNreadIso"))  {
-                raw.bayersensor.pixelShiftNreadIso = keyFile.get_double("RAW Bayer", "PixelShiftNreadIso");
+                raw.bayersensor.pixelShiftNreadIso = keyFile.get_double ("RAW Bayer", "PixelShiftNreadIso");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftNreadIso = true;
@@ -8723,7 +8723,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftPrnu"))  {
-                raw.bayersensor.pixelShiftPrnu = keyFile.get_double("RAW Bayer", "PixelShiftPrnu");
+                raw.bayersensor.pixelShiftPrnu = keyFile.get_double ("RAW Bayer", "PixelShiftPrnu");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftPrnu = true;
@@ -8731,7 +8731,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftSigma"))  {
-                raw.bayersensor.pixelShiftSigma = keyFile.get_double("RAW Bayer", "PixelShiftSigma");
+                raw.bayersensor.pixelShiftSigma = keyFile.get_double ("RAW Bayer", "PixelShiftSigma");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftSigma = true;
@@ -8739,7 +8739,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftSum"))  {
-                raw.bayersensor.pixelShiftSum = keyFile.get_double("RAW Bayer", "PixelShiftSum");
+                raw.bayersensor.pixelShiftSum = keyFile.get_double ("RAW Bayer", "PixelShiftSum");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftSum = true;
@@ -8747,7 +8747,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftRedBlueWeight"))  {
-                raw.bayersensor.pixelShiftRedBlueWeight = keyFile.get_double("RAW Bayer", "PixelShiftRedBlueWeight");
+                raw.bayersensor.pixelShiftRedBlueWeight = keyFile.get_double ("RAW Bayer", "PixelShiftRedBlueWeight");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftRedBlueWeight = true;
@@ -8755,7 +8755,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotion"))  {
-                raw.bayersensor.pixelShiftShowMotion = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotion");
+                raw.bayersensor.pixelShiftShowMotion = keyFile.get_boolean ("RAW Bayer", "PixelShiftShowMotion");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftShowMotion = true;
@@ -8763,7 +8763,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotionMaskOnly"))  {
-                raw.bayersensor.pixelShiftShowMotionMaskOnly = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotionMaskOnly");
+                raw.bayersensor.pixelShiftShowMotionMaskOnly = keyFile.get_boolean ("RAW Bayer", "PixelShiftShowMotionMaskOnly");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly = true;
@@ -8771,7 +8771,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftAutomatic"))  {
-                raw.bayersensor.pixelShiftAutomatic = keyFile.get_boolean("RAW Bayer", "pixelShiftAutomatic");
+                raw.bayersensor.pixelShiftAutomatic = keyFile.get_boolean ("RAW Bayer", "pixelShiftAutomatic");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftAutomatic = true;
@@ -8779,7 +8779,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenHorizontal"))  {
-                raw.bayersensor.pixelShiftNonGreenHorizontal = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenHorizontal");
+                raw.bayersensor.pixelShiftNonGreenHorizontal = keyFile.get_boolean ("RAW Bayer", "pixelShiftNonGreenHorizontal");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftNonGreenHorizontal = true;
@@ -8787,7 +8787,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenVertical"))  {
-                raw.bayersensor.pixelShiftNonGreenVertical = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenVertical");
+                raw.bayersensor.pixelShiftNonGreenVertical = keyFile.get_boolean ("RAW Bayer", "pixelShiftNonGreenVertical");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftNonGreenVertical = true;
@@ -8795,7 +8795,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftHoleFill"))  {
-                raw.bayersensor.pixelShiftHoleFill = keyFile.get_boolean("RAW Bayer", "pixelShiftHoleFill");
+                raw.bayersensor.pixelShiftHoleFill = keyFile.get_boolean ("RAW Bayer", "pixelShiftHoleFill");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftHoleFill = true;
@@ -8803,7 +8803,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftMedian"))  {
-                raw.bayersensor.pixelShiftMedian = keyFile.get_boolean("RAW Bayer", "pixelShiftMedian");
+                raw.bayersensor.pixelShiftMedian = keyFile.get_boolean ("RAW Bayer", "pixelShiftMedian");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftMedian = true;
@@ -8811,7 +8811,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftMedian3"))  {
-                raw.bayersensor.pixelShiftMedian3 = keyFile.get_boolean("RAW Bayer", "pixelShiftMedian3");
+                raw.bayersensor.pixelShiftMedian3 = keyFile.get_boolean ("RAW Bayer", "pixelShiftMedian3");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftMedian3 = true;
@@ -8819,7 +8819,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftGreen"))  {
-                raw.bayersensor.pixelShiftGreen = keyFile.get_boolean("RAW Bayer", "pixelShiftGreen");
+                raw.bayersensor.pixelShiftGreen = keyFile.get_boolean ("RAW Bayer", "pixelShiftGreen");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftGreen = true;
@@ -8827,7 +8827,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftBlur"))  {
-                raw.bayersensor.pixelShiftBlur = keyFile.get_boolean("RAW Bayer", "pixelShiftBlur");
+                raw.bayersensor.pixelShiftBlur = keyFile.get_boolean ("RAW Bayer", "pixelShiftBlur");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftBlur = true;
@@ -8835,7 +8835,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftSmoothFactor"))  {
-                raw.bayersensor.pixelShiftSmoothFactor = keyFile.get_double("RAW Bayer", "pixelShiftSmoothFactor");
+                raw.bayersensor.pixelShiftSmoothFactor = keyFile.get_double ("RAW Bayer", "pixelShiftSmoothFactor");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftSmooth = true;
@@ -8843,7 +8843,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftExp0"))  {
-                raw.bayersensor.pixelShiftExp0 = keyFile.get_boolean("RAW Bayer", "pixelShiftExp0");
+                raw.bayersensor.pixelShiftExp0 = keyFile.get_boolean ("RAW Bayer", "pixelShiftExp0");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftExp0 = true;
@@ -8851,7 +8851,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftLmmse"))  {
-                raw.bayersensor.pixelShiftLmmse = keyFile.get_boolean("RAW Bayer", "pixelShiftLmmse");
+                raw.bayersensor.pixelShiftLmmse = keyFile.get_boolean ("RAW Bayer", "pixelShiftLmmse");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftLmmse = true;
@@ -8859,7 +8859,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftEqualBright"))  {
-                raw.bayersensor.pixelShiftEqualBright = keyFile.get_boolean("RAW Bayer", "pixelShiftEqualBright");
+                raw.bayersensor.pixelShiftEqualBright = keyFile.get_boolean ("RAW Bayer", "pixelShiftEqualBright");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftEqualBright = true;
@@ -8867,7 +8867,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftEqualBrightChannel"))  {
-                raw.bayersensor.pixelShiftEqualBrightChannel = keyFile.get_boolean("RAW Bayer", "pixelShiftEqualBrightChannel");
+                raw.bayersensor.pixelShiftEqualBrightChannel = keyFile.get_boolean ("RAW Bayer", "pixelShiftEqualBrightChannel");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftEqualBrightChannel = true;
@@ -8875,7 +8875,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenCross"))  {
-                raw.bayersensor.pixelShiftNonGreenCross = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenCross");
+                raw.bayersensor.pixelShiftNonGreenCross = keyFile.get_boolean ("RAW Bayer", "pixelShiftNonGreenCross");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftNonGreenCross = true;
@@ -8883,7 +8883,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenCross2"))  {
-                raw.bayersensor.pixelShiftNonGreenCross2 = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenCross2");
+                raw.bayersensor.pixelShiftNonGreenCross2 = keyFile.get_boolean ("RAW Bayer", "pixelShiftNonGreenCross2");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftNonGreenCross2 = true;
@@ -8891,7 +8891,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "pixelShiftNonGreenAmaze"))  {
-                raw.bayersensor.pixelShiftNonGreenAmaze = keyFile.get_boolean("RAW Bayer", "pixelShiftNonGreenAmaze");
+                raw.bayersensor.pixelShiftNonGreenAmaze = keyFile.get_boolean ("RAW Bayer", "pixelShiftNonGreenAmaze");
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftNonGreenAmaze = true;
