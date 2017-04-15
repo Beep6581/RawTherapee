@@ -2,7 +2,6 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #pragma GCC diagnostic ignored "-Wparentheses"
 #if (__GNUC__ == 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
@@ -1855,13 +1854,12 @@ void CLASS parse_hasselblad_gain()
       not be seen as clipped).
     */
 
-    ushort raw_h;
     int offset;
     off_t base;
 
     base = ftell(ifp);
     fseek(ifp, 2 * 23, SEEK_CUR);
-    raw_h = get2();
+    get2();
     fseek(ifp, 48, SEEK_CUR);
     offset = get4();
     hbd.levels = offset ? base + offset : 0;
@@ -6700,7 +6698,7 @@ void CLASS parse_sinar_ia()
 
 void CLASS parse_phase_one (int base)
 {
-  unsigned entries, tag, type, len, data, save, i, c;
+  unsigned entries, tag, len, data, save, i, c;
   float romm_cam[3][3];
   char *cp;
 
@@ -6713,7 +6711,7 @@ void CLASS parse_phase_one (int base)
   get4();
   while (entries--) {
     tag  = get4();
-    type = get4();
+    get4();
     len  = get4();
     data = get4();
     save = ftell(ifp);
