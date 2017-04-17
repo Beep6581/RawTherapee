@@ -135,13 +135,13 @@ if(NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
     endif()
 endif()
 
-if(BUILD_BUNDLE)
-    set(BINDIR .)
-    set(CMAKE_INSTALL_PREFIX "${BUNDLE_BASE_INSTALL_DIR}")
-endif()
-
 if(NOT DEFINED BINDIR)
-    set(BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
+    if(BUILD_BUNDLE)
+        set(BINDIR .)
+        set(CMAKE_INSTALL_PREFIX "${BUNDLE_BASE_INSTALL_DIR}")
+    else()
+        set(BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
+    endif()
 endif()
 
 if(NOT DEFINED DATADIR)
@@ -203,20 +203,31 @@ endif()
 
 if(NOT DEFINED DESKTOPDIR)
     if(UNIX)
-        set(DESKTOPDIR "${CMAKE_INSTALL_PREFIX}/share/applications") # Absolute
-        #set(DESKTOPDIR "${DATADIR}/share/applications") # Relative
+        if(BUILD_BUNDLE)
+            set(DESKTOPDIR "${DATADIR}/share/applications")
+        else()
+            set(DESKTOPDIR "${CMAKE_INSTALL_PREFIX}/share/applications")
+        endif()
     endif()
 endif()
 
 if(NOT DEFINED ICONSDIR)
     if(UNIX)
-        set(ICONSDIR "${CMAKE_INSTALL_PREFIX}/share/icons")
+        if(BUILD_BUNDLE)
+            set(ICONSDIR "${DATADIR}/share/icons")
+        else()
+            set(ICONSDIR "${CMAKE_INSTALL_PREFIX}/share/icons")
+        endif()
     endif()
 endif()
 
 if(NOT DEFINED APPDATADIR)
     if(UNIX)
-        set(APPDATADIR "${CMAKE_INSTALL_PREFIX}/share/appdata")
+        if(BUILD_BUNDLE)
+            set(APPDATADIR "${DATADIR}/share/appdata")
+        else()
+            set(APPDATADIR "${CMAKE_INSTALL_PREFIX}/share/appdata")
+        endif()
     endif()
 endif()
 
@@ -421,7 +432,9 @@ install(FILES RELEASE_NOTES.txt DESTINATION "${CREDITSDIR}" OPTIONAL)
 
 # The standard location for man pages in Linux is /usr/share/man
 # Use "manpath" to see the search paths for man pages on your system.
-if(UNIX OR WIN32)
+if(BUILD_BUNDLE)
+    install(FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${DATADIR}/share/man/man1")
+else()
     install(FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
 endif()
 
