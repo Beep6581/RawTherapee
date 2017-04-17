@@ -119,11 +119,11 @@ int main(int argc, char **argv)
 {
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
 
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
     gdk_threads_init();
+    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
     Gio::init ();
 
     //mainThread = Glib::Threads::Thread::self();

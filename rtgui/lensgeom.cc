@@ -45,7 +45,7 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGE
 
 LensGeometry::~LensGeometry ()
 {
-    g_idle_remove_by_data(this);
+    idle_register.destroy();
 }
 
 void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -119,29 +119,3 @@ void LensGeometry::setBatchMode (bool batchMode)
     removeIfThere (this, autoCrop);
 }
 
-void LensGeometry::disableAutoFillIfActive ()
-{
-    g_idle_add(doDisableAutoFillIfActive, this);
-}
-
-int LensGeometry::doDisableAutoFillIfActive (void* data)
-{
-    GThreadLock lock; // Is this really needed?
-
-    LensGeometry* const instance = static_cast<LensGeometry*>(data);
-
-    if (!instance->batchMode) {
-        if (instance->fill->get_active()) {
-            instance->fillConn.block (true);
-            instance->fill->set_active(false);
-
-            if (instance->listener) {
-                instance->listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
-            }
-
-            instance->fillConn.block (false);
-        }
-    }
-
-    return 0;
-}

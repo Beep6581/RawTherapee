@@ -8,7 +8,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), false, true)
+Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), false, true), lastmedianmap(false)
 {
     CurveListener::setMulti(true);
     std::vector<double> defaultCurve;
@@ -634,6 +634,8 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 Retinex::~Retinex()
 {
+    idle_register.destroy();
+
     delete curveEditorGD;
     delete curveEditorGDH;
     delete transmissionCurveEditorG;
@@ -695,17 +697,6 @@ void Retinex::updateToolState(std::vector<int> &tpOpen)
     }
 }
 
-
-
-
-
-int minmaxChangedUI (void* data)
-{
-    GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-    (static_cast<Retinex*>(data))->minmaxComputed_ ();
-    return 0;
-}
-
 void Retinex::minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax)
 {
     nextmin = cdmin;
@@ -716,8 +707,15 @@ void Retinex::minmaxChanged (double cdma, double cdmin, double mini, double maxi
     nextsigma = Tsigma;
     nextminT = Tmin;
     nextmaxT = Tmax;
-    g_idle_add (minmaxChangedUI, this);
 
+    const auto func = [](gpointer data) -> gboolean {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+        static_cast<Retinex*>(data)->minmaxComputed_();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool Retinex::minmaxComputed_ ()
@@ -1513,7 +1511,7 @@ void Retinex::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histL
 void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
-    float R, G, B;
+    float R = 0.f, G = 0.f, B = 0.f;
 
     if (elemType == ColorCaller::CCET_VERTICAL_BAR) {
         valY = 0.5;

@@ -704,8 +704,8 @@ public:
         bool pixelShiftSigma;
         bool pixelShiftSum;
         bool pixelShiftRedBlueWeight;
-        bool pixelshiftShowMotion;
-        bool pixelshiftShowMotionMaskOnly;
+        bool pixelShiftShowMotion;
+        bool pixelShiftShowMotionMaskOnly;
         bool pixelShiftAutomatic;
         bool pixelShiftNonGreenHorizontal;
         bool pixelShiftNonGreenVertical;
@@ -718,6 +718,7 @@ public:
         bool pixelShiftExp0;
         bool pixelShiftLmmse;
         bool pixelShiftEqualBright;
+        bool pixelShiftEqualBrightChannel;
         bool pixelShiftNonGreenCross;
         bool pixelShiftNonGreenCross2;
         bool pixelShiftNonGreenAmaze;

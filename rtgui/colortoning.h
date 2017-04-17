@@ -50,7 +50,7 @@ public:
     void colorForValue         (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
 
 private:
-    Gtk::HSeparator* satLimiterSep;
+    //Gtk::HSeparator* satLimiterSep;
     Gtk::HSeparator* colorSep;
     CurveEditorGroup* colorCurveEditorG;
     CurveEditorGroup* opacityCurveEditorG;
@@ -83,20 +83,16 @@ private:
     Adjuster* satProtectionThreshold;
     Adjuster* saturatedOpacity;
     Adjuster* strength;
-    Gtk::Image* itot;
     Gtk::Image* iby;
     Gtk::Image* irg;
 
     Gtk::Button* neutral;
     Gtk::HBox* neutrHBox;
-    Gtk::HBox* chromaHbox;
-    Gtk::Label* chroLabel;
     int nextbw;
     int nextsatth;
     int nextsatpr;
     Glib::ustring nextbalcolor;
     Glib::ustring balcolor;
-    bool lasttwocolor;
     sigc::connection neutralconn, twocconn; //, neutralcurvesconn;
     bool lastautosat;
     sigc::connection autosatConn;

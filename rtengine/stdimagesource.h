@@ -66,7 +66,7 @@ public:
     }
 
     void        getFullSize (int& w, int& h, int tr = TR_NONE);
-    void        getSize     (PreviewProps pp, int& w, int& h);
+    void        getSize     (const PreviewProps &pp, int& w, int& h);
 
     ImageData*  getImageData ()
     {

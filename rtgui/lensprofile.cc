@@ -26,7 +26,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL"))
+LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL")), isRaw(true)
 {
     hbLCPFile = Gtk::manage(new Gtk::HBox());
 
@@ -48,7 +48,10 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
         fcbLCPFile->set_show_hidden(true);  // ProgramData is hidden on Windows
 #endif
         fcbLCPFile->set_current_folder(defDir);
+    } else if (!options.lastLensProfileDir.empty()) {
+        fcbLCPFile->set_current_folder(options.lastLensProfileDir);
     }
+    bindCurrentFolder(*fcbLCPFile, options.lastLensProfileDir);
 
     hbLCPFile->pack_start(*fcbLCPFile);
 
@@ -89,8 +92,9 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
             fcbLCPFile->unselect_filename(fname);
         } else {
             Glib::ustring lastFolder = fcbLCPFile->get_current_folder();
-            fcbLCPFile->set_filename("");
             fcbLCPFile->set_current_folder(lastFolder);
+            fcbLCPFile->set_filename(lastFolder + "/.");
+            bindCurrentFolder(*fcbLCPFile, options.lastLensProfileDir);
         }
 
         updateDisabled(false);
@@ -144,10 +148,6 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 
 void LensProfilePanel::onLCPFileChanged()
 {
-
-    // Disable Auto-Fill when enabling LCP Distortion Correction, #1791
-    lensgeomLcpFill->disableAutoFillIfActive();
-
     lcpFileChanged = true;
     updateDisabled(lcpStore->isValidLCPFileName(fcbLCPFile->get_filename()));
 
@@ -170,12 +170,6 @@ void LensProfilePanel::onLCPFileReset()
 
 void LensProfilePanel::onUseDistChanged()
 {
-
-    // Disable Auto-Fill when enabling LCP Distortion Correction, #1791
-    if (ckbUseDist->get_active()) {
-        lensgeomLcpFill->disableAutoFillIfActive();
-    }
-
     useDistChanged = true;
 
     if (listener) {

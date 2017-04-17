@@ -34,6 +34,7 @@
 #include "guiutils.h"
 #include "rtimage.h"
 #include <sys/time.h>
+
 using namespace std;
 using namespace rtengine;
 
@@ -61,7 +62,6 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
     p++;
 
     pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "gtk-close.png")), 0, 1, p, p + 1);
-    p++;
 
     pmenu.show_all ();
 
@@ -227,7 +227,7 @@ bool BatchQueue::saveBatchQueue ()
 
         // The column's header is mandatory (the first line will be skipped when loaded)
         file << "input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
-             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|<end of line>"
+             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|fast export|<end of line>"
              << std::endl;
 
         // method is already running with entryLock, so no need to lock again
@@ -242,6 +242,7 @@ bool BatchQueue::saveBatchQueue ()
                  << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
                  << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
+                 << entry->job->fastPipeline() << '|'
                  << std::endl;
         }
     }
@@ -308,6 +309,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto tiffUncompressed = nextIntOr (options.saveFormat.tiffUncompressed);
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
+            const auto fast = nextIntOr(false);
 
             rtengine::procparams::ProcParams pparams;
 
@@ -319,7 +321,7 @@ bool BatchQueue::loadBatchQueue ()
             if (!thumb)
                 continue;
 
-            auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams);
+            auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams, fast);
 
             auto prevh = getMaxThumbnailHeight ();
             auto prevw = prevh;
@@ -385,16 +387,6 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     return savedParamPath;
 }
 
-int cancelItemUI (void* data)
-{
-    const auto bqe = static_cast<BatchQueueEntry*>(data);
-
-    g_remove (bqe->savedParamsFile.c_str ());
-    delete bqe;
-
-    return 0;
-}
-
 void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
@@ -419,7 +411,16 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            g_idle_add (cancelItemUI, entry);
+            const auto func = [](gpointer data) -> gboolean {
+                const BatchQueueEntry* const bqe = static_cast<BatchQueueEntry*>(data);
+
+                ::g_remove(bqe->savedParamsFile.c_str());
+                delete bqe;
+
+                return FALSE;
+            };
+
+            idle_register.add(func, entry);
         }
 
         for (const auto entry : fd)
@@ -778,7 +779,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 
                 if (options.savePathTemplate[ix] == 'p') {
                     ix++;
-                    int i = options.savePathTemplate[ix] - '0';
+                    unsigned int i = options.savePathTemplate[ix] - '0';
 
                     if (i < pa.size()) {
                         path = path + pa[pa.size() - i - 1] + '/';
@@ -787,7 +788,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     ix++;
                 } else if (options.savePathTemplate[ix] == 'd') {
                     ix++;
-                    int i = options.savePathTemplate[ix] - '0';
+                    unsigned i = options.savePathTemplate[ix] - '0';
 
                     if (i < da.size()) {
                         path = path + da[da.size() - i - 1];
@@ -879,12 +880,6 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     return "";
 }
 
-int setProgressUI (void* p)
-{
-    (static_cast<BatchQueue*>(p))->redraw();
-    return 0;
-}
-
 void BatchQueue::setProgress (double p)
 {
 
@@ -893,7 +888,12 @@ void BatchQueue::setProgress (double p)
     }
 
     // No need to acquire the GUI, setProgressUI will do it
-    g_idle_add (setProgressUI, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<BatchQueue*>(data)->redraw();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData)

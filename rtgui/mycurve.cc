@@ -48,7 +48,6 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
 
 MyCurve::~MyCurve ()
 {
-
     if (mcih->pending) {
         mcih->destroyed = true;
     } else {
@@ -175,7 +174,7 @@ bool MyCurve::snapCoordinateY(double testedVal, double realVal)
 
 float MyCurve::getVal(LUTf &curve, int x)
 {
-    if ((graphW - 2) == curve.getSize()) {
+    if (size_t(graphW - 2) == curve.getSize()) {
         return curve[x];
     } else {
         return curve.getVal01(float(x) / (graphW - 3));

@@ -38,7 +38,12 @@ ExportPanel::ExportPanel () : listener (nullptr)
     labExportTitle->set_alignment(Gtk::ALIGN_START);
     pack_start(*labExportTitle, Gtk::PACK_SHRINK, 4);
 
+    Gtk::RadioButton::Group pipeline_group;
+    use_fast_pipeline       = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M("EXPORT_USE_FAST_PIPELINE")));
+    use_normal_pipeline     = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M("EXPORT_USE_NORMAL_PIPELINE")));
+    bypass_box = Gtk::manage(new Gtk::VBox());
     bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_ALL")));
+    use_fast_pipeline->set_tooltip_text(M("EXPORT_USE_FAST_PIPELINE_TIP"));
     bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENING")));
     bypass_sharpenEdge      = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENEDGE")));
     bypass_sharpenMicro     = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENMICRO")));
@@ -96,18 +101,28 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ----------------------------------------------------------------
 
     // start global packing
-    pack_start(*bypass_ALL          , Gtk::PACK_SHRINK, 4);
-    pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sharpening   , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sharpenEdge  , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sharpenMicro , Gtk::PACK_SHRINK, 4);
+    Gtk::HBox* lblbox = Gtk::manage (new Gtk::HBox ());
+    lblbox->pack_start (*Gtk::manage (new Gtk::Label (M("EXPORT_PIPELINE"))), Gtk::PACK_SHRINK, 4);
+    pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
+    pack_start(*use_fast_pipeline   , Gtk::PACK_SHRINK, 4);
+    pack_start(*use_normal_pipeline   , Gtk::PACK_SHRINK, 4);
+
+    bypass_box->pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
+    lblbox = Gtk::manage (new Gtk::HBox ());
+    lblbox->pack_start (*Gtk::manage (new Gtk::Label (M("EXPORT_BYPASS"))), Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_ALL          , Gtk::PACK_SHRINK, 4);
+    // bypass_box->pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sharpening   , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sharpenEdge  , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sharpenMicro , Gtk::PACK_SHRINK, 4);
     //pack_start(*bypass_lumaDenoise  , Gtk::PACK_SHRINK, 4);
     //pack_start(*bypass_colorDenoise , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_defringe     , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_dirpyrDenoise, Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_sh_hq        , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_dirpyrequalizer , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_wavelet , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_defringe     , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_dirpyrDenoise, Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_sh_hq        , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_dirpyrequalizer , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_wavelet , Gtk::PACK_SHRINK, 4);
 
     bayerFrameVBox->pack_start(*hb_raw_bayer_method, Gtk::PACK_SHRINK, 4);
     //bayerFrameVBox->pack_start(*bypass_raw_all_enhance , Gtk::PACK_SHRINK, 4);
@@ -121,12 +136,14 @@ ExportPanel::ExportPanel () : listener (nullptr)
     xtransFrameVBox->pack_start(*hb_raw_xtrans_method, Gtk::PACK_SHRINK, 4);
     xtransFrame->add(*xtransFrameVBox);
 
-    pack_start(*bypass_raw_ccSteps     , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_raw_ca         , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_ccSteps     , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_ca         , Gtk::PACK_SHRINK, 4);
 
-    pack_start(*bypass_raw_df         , Gtk::PACK_SHRINK, 4);
-    pack_start(*bypass_raw_ff         , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_df         , Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start(*bypass_raw_ff         , Gtk::PACK_SHRINK, 4);
 
+    pack_start(*bypass_box, Gtk::PACK_SHRINK);    
+    
     pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);
 
     // Resize options
@@ -176,6 +193,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     pack_start(*vboxpe, Gtk::PACK_SHRINK, 0);
 
 
+    use_fast_pipeline->signal_toggled().connect(sigc::mem_fun(*this, &ExportPanel::use_fast_pipeline_toggled));
     btnFastExport->signal_clicked().connect( sigc::mem_fun(*this, &ExportPanel::FastExportPressed) );
     //btnExportLoadSettings->signal_clicked().connect( sigc::mem_fun(*this, &ExportPanel::LoadSettings) );
     //btnExportSaveSettings->signal_clicked().connect( sigc::mem_fun(*this, &ExportPanel::SaveSettings) );
@@ -224,40 +242,48 @@ void ExportPanel::FastExportPressed ()
 
 void ExportPanel::SaveSettingsAsDefault()
 {
+    bool changed = false;
+#define FE_OPT_STORE_(n, v) \
+    do {                \
+        if (n != v) {   \
+            n = v;      \
+            changed = true;                     \
+        }                                       \
+    } while (false)
     // Save fast export settings to options
-    options.fastexport_bypass_sharpening           = bypass_sharpening->get_active        ();
-    options.fastexport_bypass_sharpenEdge          = bypass_sharpenEdge->get_active       ();
-    options.fastexport_bypass_sharpenMicro         = bypass_sharpenMicro->get_active      ();
+    FE_OPT_STORE_(options.fastexport_bypass_sharpening, bypass_sharpening->get_active        ());
+    FE_OPT_STORE_(options.fastexport_bypass_sharpenEdge, bypass_sharpenEdge->get_active       ());
+    FE_OPT_STORE_(options.fastexport_bypass_sharpenMicro, bypass_sharpenMicro->get_active      ());
     //options.fastexport_bypass_lumaDenoise        = bypass_lumaDenoise->get_active       ();
     //options.fastexport_bypass_colorDenoise       = bypass_colorDenoise->get_active      ();
-    options.fastexport_bypass_defringe             = bypass_defringe->get_active          ();
-    options.fastexport_bypass_dirpyrDenoise        = bypass_dirpyrDenoise->get_active     ();
-    options.fastexport_bypass_sh_hq                = bypass_sh_hq->get_active             ();
-    options.fastexport_bypass_dirpyrequalizer      = bypass_dirpyrequalizer->get_active   ();
-    options.fastexport_bypass_wavelet      = bypass_wavelet->get_active   ();
+    FE_OPT_STORE_(options.fastexport_bypass_defringe, bypass_defringe->get_active          ());
+    FE_OPT_STORE_(options.fastexport_bypass_dirpyrDenoise, bypass_dirpyrDenoise->get_active     ());
+    FE_OPT_STORE_(options.fastexport_bypass_sh_hq, bypass_sh_hq->get_active             ());
+    FE_OPT_STORE_(options.fastexport_bypass_dirpyrequalizer, bypass_dirpyrequalizer->get_active   ());
+    FE_OPT_STORE_(options.fastexport_bypass_wavelet, bypass_wavelet->get_active   ());
     //options.fastexport_bypass_raw_bayer_all_enhance    = bypass_raw_all_enhance->get_active           ();
-    options.fastexport_bypass_raw_bayer_dcb_iterations   = bypass_raw_bayer_dcb_iterations->get_active  ();
-    options.fastexport_bypass_raw_bayer_dcb_enhance      = bypass_raw_bayer_dcb_enhance->get_active     ();
-    options.fastexport_bypass_raw_bayer_lmmse_iterations = bypass_raw_bayer_lmmse_iterations->get_active();
-    options.fastexport_bypass_raw_bayer_linenoise        = bypass_raw_bayer_linenoise->get_active       ();
-    options.fastexport_bypass_raw_bayer_greenthresh      = bypass_raw_bayer_greenthresh->get_active     ();
-    options.fastexport_bypass_raw_ccSteps          = bypass_raw_ccSteps->get_active       ();
-    options.fastexport_bypass_raw_ca               = bypass_raw_ca->get_active            ();
-    options.fastexport_bypass_raw_df               = bypass_raw_df->get_active            ();
-    options.fastexport_bypass_raw_ff               = bypass_raw_ff->get_active            ();
+    FE_OPT_STORE_(options.fastexport_bypass_raw_bayer_dcb_iterations, bypass_raw_bayer_dcb_iterations->get_active  ());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_bayer_dcb_enhance, bypass_raw_bayer_dcb_enhance->get_active     ());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_bayer_lmmse_iterations, bypass_raw_bayer_lmmse_iterations->get_active());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_bayer_linenoise, bypass_raw_bayer_linenoise->get_active       ());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_bayer_greenthresh, bypass_raw_bayer_greenthresh->get_active     ());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_ccSteps, bypass_raw_ccSteps->get_active       ());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_ca, bypass_raw_ca->get_active            ());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_df, bypass_raw_df->get_active            ());
+    FE_OPT_STORE_(options.fastexport_bypass_raw_ff, bypass_raw_ff->get_active            ());
 
     //saving Bayer demosaic_method
     int currentRow = raw_bayer_method->get_active_row_number();
 
     if( currentRow >= 0 && currentRow < procparams::RAWParams::BayerSensor::numMethods) {
-        options.fastexport_raw_bayer_method = procparams::RAWParams::BayerSensor::methodstring[currentRow];
+        FE_OPT_STORE_(options.fastexport_raw_bayer_method, procparams::RAWParams::BayerSensor::methodstring[currentRow]);
     }
 
     //saving X-Trans demosaic_method
     currentRow = raw_xtrans_method->get_active_row_number();
 
     if( currentRow >= 0 && currentRow < procparams::RAWParams::XTransSensor::numMethods) {
-        options.fastexport_raw_xtrans_method = procparams::RAWParams::XTransSensor::methodstring[currentRow];
+        FE_OPT_STORE_(options.fastexport_raw_xtrans_method, procparams::RAWParams::XTransSensor::methodstring[currentRow]);
     }
 
 //  options.fastexport_icm_input        = icm_input       ;
@@ -269,9 +295,16 @@ void ExportPanel::SaveSettingsAsDefault()
 //  options.fastexport_resize_appliesTo = resize_appliesTo;
 //  options.fastexport_resize_dataspec  = resize_dataspec ;
 
-    options.fastexport_resize_method = "Lanczos";
-    options.fastexport_resize_width     = MaxWidth->get_value_as_int ();
-    options.fastexport_resize_height    = MaxHeight->get_value_as_int ();
+    FE_OPT_STORE_(options.fastexport_resize_method, "Lanczos");
+    FE_OPT_STORE_(options.fastexport_resize_width, MaxWidth->get_value_as_int ());
+    FE_OPT_STORE_(options.fastexport_resize_height, MaxHeight->get_value_as_int ());
+
+    FE_OPT_STORE_(options.fastexport_use_fast_pipeline, use_fast_pipeline->get_active());
+#undef FE_OPT_STORE_
+
+    if (changed) {
+        Options::save();
+    }
 }
 
 void ExportPanel::LoadDefaultSettings()
@@ -327,6 +360,13 @@ void ExportPanel::LoadDefaultSettings()
 
     MaxWidth->set_value(options.fastexport_resize_width);
     MaxHeight->set_value(options.fastexport_resize_height);
+
+    if (options.fastexport_use_fast_pipeline) {
+        use_fast_pipeline->set_active(true);
+        bypass_box->set_sensitive(false);
+    } else {
+        use_normal_pipeline->set_active(true);
+    }
 }
 
 void ExportPanel::LoadSettings()
@@ -406,6 +446,11 @@ void ExportPanel::bypassALL_Toggled()
     bypass_raw_caConn.block               (false);
     bypass_raw_dfConn.block               (false);
     bypass_raw_ffConn.block               (false);
+}
+
+void ExportPanel::use_fast_pipeline_toggled()
+{
+    bypass_box->set_sensitive(!use_fast_pipeline->get_active());
 }
 
 /*

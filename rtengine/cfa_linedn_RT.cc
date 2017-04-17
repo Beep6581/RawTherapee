@@ -46,7 +46,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 
     const float clip_pt = 0.8 * initialGain * 65535.0;
 
-    float eps = 1e-5;       //tolerance to avoid dividing by zero
+    const float eps = 1e-5;       //tolerance to avoid dividing by zero
 
     const float gauss[5] = {0.20416368871516755, 0.18017382291138087, 0.1238315368057753, 0.0662822452863612, 0.02763055063889883};
     const float rolloff[8] = {0, 0.135335, 0.249352, 0.411112, 0.606531, 0.800737, 0.945959, 1}; //gaussian with sigma=3

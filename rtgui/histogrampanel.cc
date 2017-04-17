@@ -412,6 +412,7 @@ HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
 
 HistogramRGBArea::~HistogramRGBArea ()
 {
+    idle_register.destroy();
 
     if (harih->pending) {
         harih->destroyed = true;
@@ -703,30 +704,6 @@ void HistogramRGBArea::rgb2lab (Glib::ustring profile, Glib::ustring profileW, i
 
 }
 
-
-int histrgbupdate (void* data)
-{
-
-    HistogramRGBAreaIdleHelper* harih = static_cast<HistogramRGBAreaIdleHelper*>(data);
-
-    if (harih->destroyed) {
-        if (harih->pending == 1) {
-            delete harih;
-        } else {
-            harih->pending--;
-        }
-
-        return 0;
-    }
-
-    harih->harea->updateBackBuffer(-1, -1, -1);
-    harih->harea->queue_draw ();
-
-    harih->pending--;
-
-    return 0;
-}
-
 void HistogramRGBArea::update (int valh, int rh, int  gh, int bh)
 {
 
@@ -741,7 +718,29 @@ void HistogramRGBArea::update (int valh, int rh, int  gh, int bh)
     }
 
     harih->pending++;
-    g_idle_add (histrgbupdate, harih);
+
+    const auto func = [](gpointer data) -> gboolean {
+        HistogramRGBAreaIdleHelper* const harih = static_cast<HistogramRGBAreaIdleHelper*>(data);
+
+        if (harih->destroyed) {
+            if (harih->pending == 1) {
+                delete harih;
+            } else {
+                harih->pending--;
+            }
+
+            return 0;
+        }
+
+        harih->harea->updateBackBuffer(-1, -1, -1);
+        harih->harea->queue_draw ();
+
+        harih->pending--;
+
+        return FALSE;
+    };
+
+    idle_register.add(func, harih);
 }
 
 void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool bar, bool c)
@@ -840,13 +839,13 @@ HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by 
 
 HistogramArea::~HistogramArea ()
 {
+    idle_register.destroy();
 
     if (haih->pending) {
         haih->destroyed = true;
     } else {
         delete haih;
     }
-
 }
 
 Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
@@ -901,33 +900,8 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, boo
     updateBackBuffer ();
 }
 
-int histupdateUI (void* data)
-{
-
-    HistogramAreaIdleHelper* haih = static_cast<HistogramAreaIdleHelper*>(data);
-
-    if (haih->destroyed) {
-        if (haih->pending == 1) {
-            delete haih;
-        } else {
-            haih->pending--;
-        }
-
-        return 0;
-    }
-
-    haih->harea->setDirty (true);
-    haih->harea->updateBackBuffer ();
-    haih->harea->queue_draw ();
-
-    haih->pending--;
-
-    return 0;
-}
-
 void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma)
 {
-
     if (histRed) {
         lhist = histLuma;
         chist = histChroma;
@@ -945,7 +919,29 @@ void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu
 
     haih->pending++;
     // Can be done outside of the GUI thread
-    g_idle_add (histupdateUI, haih);
+    const auto func = [](gpointer data) -> gboolean {
+        HistogramAreaIdleHelper* const haih = static_cast<HistogramAreaIdleHelper*>(data);
+
+        if (haih->destroyed) {
+            if (haih->pending == 1) {
+                delete haih;
+            } else {
+                haih->pending--;
+            }
+
+            return 0;
+        }
+
+        haih->harea->setDirty (true);
+        haih->harea->updateBackBuffer ();
+        haih->harea->queue_draw ();
+
+        haih->pending--;
+
+        return FALSE;
+    };
+
+    idle_register.add(func, haih);
 }
 
 SSEFUNCTION void HistogramArea::updateBackBuffer ()
@@ -1007,7 +1003,7 @@ SSEFUNCTION void HistogramArea::updateBackBuffer ()
         // does not take into account 0 and 255 values
         // them are handled separately
 
-        int fullhistheight = 0;
+        unsigned int fullhistheight = 0;
 
         for (int i = 1; i < 255; i++) {
             if (needLuma && lhisttemp[i] > fullhistheight) {
@@ -1042,7 +1038,7 @@ SSEFUNCTION void HistogramArea::updateBackBuffer ()
             vint iv = (vint)ZEROV;
 #endif
 
-            for (int i = 0; i < fullhistheight; i++) {
+            for (unsigned i = 0; i < fullhistheight; i++) {
 #ifdef __SSE2__
                 vint areatempv = (vint)ZEROV;
 
