@@ -108,6 +108,7 @@ private:
 
     int zoom;               // scale factor (e.g. 5 if 1:5 scale) ; if 1:1 scale and bigger, factor is multiplied by 1000  (i.e. 1000 for 1:1 scale, 2000 for 2:1, etc...)
     int ww, wh;             // size of the crop's canvas on the screen ; might be bigger than the displayed image, but not smaller
+    int imx, imy, imw, imh; // this is a copy of the cropwindow's parameters
     int cax, cay;           // clamped crop anchor's coordinate, i.e. point of the image that coincide to the center of the display area, expressed in image coordinates; cannot be outside the image's bounds; but if cax==cay==-1, designate the center of the image
     int cx, cy, cw, ch;     // position and size of the requested crop ; position expressed in image coordinates, so cx and cy might be negative and cw and ch higher than the image's 1:1 size
     int cropX, cropY, cropW, cropH; // cropPixbuf's displayed area (position and size), i.e. coordinates in 1:1 scale, i.e. cx, cy, cw & ch trimmed to the image's bounds

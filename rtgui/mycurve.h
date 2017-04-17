@@ -57,6 +57,7 @@ class CurveEditor;
 
 class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller, public CoordinateProvider
 {
+
     friend class MyCurveIdleHelper;
 
 protected:

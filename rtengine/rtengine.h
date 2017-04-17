@@ -471,7 +471,6 @@ class ProcessingJob
 {
 
 public:
-    virtual ~ProcessingJob() {}
 
     /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately.
@@ -479,7 +478,7 @@ public:
        * @param isRaw shall be true if it is a raw file
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-    static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, bool fast=false);
+    static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams);
 
     /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately. This function increases the reference count of the initialImage. If you decide not the process the image you
@@ -488,14 +487,12 @@ public:
        * @param initialImage is a loaded and pre-processed initial image
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-    static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, bool fast=false);
+    static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams);
 
     /** Cancels and destroys a processing job. The reference count of the corresponding initialImage (if any) is decreased. After the call of this function the ProcessingJob instance
       * gets invalid, you must not use it any more. Dont call this function while the job is being processed.
       * @param job is the job to destroy */
     static void destroy (ProcessingJob* job);
-
-    virtual bool fastPipeline() const = 0;
 };
 
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It returns when it is ready, so it can be slow.

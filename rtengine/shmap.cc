@@ -376,7 +376,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 #endif
         {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-            vfloat dirwtv, valv, normv, dftemp1v, dftemp2v;
+            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v, fg;
 #endif // __SSE2__
             int j;
 #ifdef _OPENMP
@@ -483,7 +483,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 #endif
         {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-            vfloat dirwtv, valv, normv, dftemp1v, dftemp2v;
+            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v, fgg;
             float domkerv[5][5][4] ALIGNED16 = {{{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}};
 
 #endif // __SSE2__

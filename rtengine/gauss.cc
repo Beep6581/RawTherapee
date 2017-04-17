@@ -231,8 +231,8 @@ template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const f
 #ifdef __SSE2__
 template<class T> SSEFUNCTION void gaussVertical3 (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
-    vfloat Tv = F2V(0.f), Tm1v, Tp1v;
-    vfloat Tv1 = F2V(0.f), Tm1v1, Tp1v1;
+    vfloat Tv, Tm1v, Tp1v;
+    vfloat Tv1, Tm1v1, Tp1v1;
     vfloat c0v, c1v;
     c0v = F2V(c0);
     c1v = F2V(c1);
@@ -921,7 +921,7 @@ template<class T> void gaussVertical (T** src, T** dst, const int W, const int H
     #pragma omp for nowait
 #endif
 
-    for (unsigned int i = 0; i < static_cast<unsigned>(std::max(0, W - numcols + 1)); i += numcols) {
+    for (int i = 0; i < W - numcols + 1; i += numcols) {
         for (int k = 0; k < numcols; k++) {
             temp2[0][k] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
             temp2[1][k] = B * src[1][i + k] + b1 * temp2[0][k] + b2 * src[0][i + k] + b3 * src[0][i + k];

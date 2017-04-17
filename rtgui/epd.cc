@@ -30,8 +30,8 @@ EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPa
 
     strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -1.0, 2.0, 0.01, 0.5));
     gamma = Gtk::manage(new Adjuster (M("TP_EPD_GAMMA"), 0.8, 1.5, 0.01, 1.));
-    edgeStopping = Gtk::manage(new Adjuster (M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 0.5));
-    scale = Gtk::manage(new Adjuster (M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 0.1));
+    edgeStopping = Gtk::manage(new Adjuster (M("TP_EPD_EDGESTOPPING"), 0.1, 4.0, 0.01, 1.4));
+    scale = Gtk::manage(new Adjuster (M("TP_EPD_SCALE"), 0.1, 10.0, 0.01, 0.3));
     reweightingIterates = Gtk::manage(new Adjuster (M("TP_EPD_REWEIGHTINGITERATES"), 0, 9, 1, 0));
 
     strength->setAdjusterListener(this);

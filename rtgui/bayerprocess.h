@@ -51,7 +51,6 @@ protected:
     CheckBox* pixelShiftMedian;
     CheckBox* pixelShiftLmmse;
     CheckBox* pixelShiftEqualBright;
-    CheckBox* pixelShiftEqualBrightChannel;
     Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftSigma;

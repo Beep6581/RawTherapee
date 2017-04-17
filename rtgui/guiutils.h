@@ -44,13 +44,15 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
 gboolean acquireGUI(void* data);
 void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
 
+guint add_idle (GSourceFunc function, gpointer data);
+
 class IdleRegister final :
     public rtengine::NonCopyable
 {
 public:
     ~IdleRegister();
 
-    void add(GSourceFunc function, gpointer data, gint priority = G_PRIORITY_DEFAULT_IDLE);
+    void add(GSourceFunc function, gpointer data);
     void destroy();
 
 private:
@@ -112,7 +114,7 @@ public:
 class ConnectionBlocker
 {
 public:
-    explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr), wasBlocked(false)
+    explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr)
     {
         if (this->connection) {
             wasBlocked = connection.block();
@@ -320,7 +322,7 @@ class MyComboBoxText : public Gtk::ComboBoxText
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
-    explicit MyComboBoxText (bool has_entry = false);
+    MyComboBoxText (bool has_entry = false);
 
     void setPreferredWidth (int minimum_width, int natural_width);
     void connect(const sigc::connection &connection) { myConnection = connection; }
@@ -437,7 +439,7 @@ private:
     void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
-    explicit MyProgressBar(int width);
+    MyProgressBar(int width);
     MyProgressBar();
 
     void setPreferredWidth(int width);

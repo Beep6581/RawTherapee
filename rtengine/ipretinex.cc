@@ -273,7 +273,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
 
-            float varx = 0.f;
+            float varx;
             float limdx, ilimdx;
 
             if(gradvart != 0) {
@@ -345,7 +345,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 src[i] = &srcBuffer[i * W_L];
             }
 
-            int h_th = 0, s_th = 0;
+            int h_th, s_th;
 
             int shHighlights = deh.highlights;
             int shShadows = deh.shadows;

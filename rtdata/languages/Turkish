@@ -465,7 +465,6 @@ TP_WBALANCE_TEMPERATURE;Isı
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
 !EXIFFILTER_FILETYPE;File type
 !EXIFFILTER_METADATAFILTER;Enable metadata filters
-!EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_ALL;Select / Unselect All
 !EXPORT_BYPASS_DEFRINGE;Bypass Defringe
 !EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
@@ -488,12 +487,8 @@ TP_WBALANCE_TEMPERATURE;Isı
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
 !EXPORT_MAXHEIGHT;Maximum height:
 !EXPORT_MAXWIDTH;Maximum width:
-!EXPORT_PIPELINE;Processing pipeline
 !EXPORT_PUTTOQUEUEFAST;  Put to queue for fast export
 !EXPORT_RAW_DMETHOD;Demosaic method
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !EXTPROGTARGET_1;raw
 !EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
@@ -509,6 +504,7 @@ TP_WBALANCE_TEMPERATURE;Isı
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark-frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+!FILEBROWSER_EXEC_CPB;Custom Profile Builder
 !FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_FLATFIELD;Flat-Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark-frames directory
@@ -543,7 +539,6 @@ TP_WBALANCE_TEMPERATURE;Isı
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !FILEBROWSER_SELECTDARKFRAME;Select dark-frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat-field...
 !FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
@@ -1094,8 +1089,8 @@ TP_WBALANCE_TEMPERATURE;Isı
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto-correction
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
-!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
+!PARTIALPASTE_RAWCACORR_CABLUE;CA blue
+!PARTIALPASTE_RAWCACORR_CARED;CA red
 !PARTIALPASTE_RAWEXPOS_BLACK;Black levels
 !PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
 !PARTIALPASTE_RAWEXPOS_PRESER;Highlight preservation
@@ -1106,7 +1101,6 @@ TP_WBALANCE_TEMPERATURE;Isı
 !PARTIALPASTE_RAW_FALSECOLOR;False color suppression
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
@@ -1161,8 +1155,6 @@ TP_WBALANCE_TEMPERATURE;Isı
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLATFIELD;Flat-Field
@@ -1744,31 +1736,31 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_RAWEXPOS_PRESER;Highlight preservation
 !TP_RAWEXPOS_RGB;Red, Green, Blue
 !TP_RAWEXPOS_TWOGREEN;Link greens
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_AHD;AHD
+!TP_RAW_1-PASS (MEDIUM);1-pass (medium)
+!TP_RAW_3-PASS (BEST);3-pass (best)
+!TP_RAW_AHD;ahd
 !TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;DCB
+!TP_RAW_DCB;dcb
 !TP_RAW_DCBENHANCE;DCB enhancement
 !TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
-!TP_RAW_EAHD;EAHD
-!TP_RAW_FAST;Fast
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixelshift is for Pentax pixelshift files. It falls back to Amaze for non pixelshift files.
+!TP_RAW_EAHD;eahd
+!TP_RAW_FAST;fast
 !TP_RAW_HD;Threshold
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
-!TP_RAW_HPHD;HPHD
-!TP_RAW_IGV;IGV
+!TP_RAW_HPHD;hphd
+!TP_RAW_IGV;igv
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel-Shift, Dual Sensitivity). Use this button to select the sub-image.\n\nThe last sub-image will be used if you select a value beyond the real sub-image count.
 !TP_RAW_LABEL;Demosaicing
-!TP_RAW_LMMSE;LMMSE
+!TP_RAW_LMMSE;lmmse
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
-!TP_RAW_MONO;Mono
-!TP_RAW_NONE;None (Shows sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift
+!TP_RAW_MONO;mono
+!TP_RAW_NONE;none (show sensor pattern)
+!TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 !TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
@@ -1817,7 +1809,7 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
-!TP_RAW_VNG4;VNG4
+!TP_RAW_VNG4;vng4
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped Area
 !TP_RESIZE_FITBOX;Bounding Box

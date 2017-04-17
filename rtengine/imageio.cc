@@ -216,8 +216,9 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
 
     //reading PNG header
     unsigned char header[8];
+    fread (header, 1, 8, file);
 
-    if (fread (header, 1, 8, file) != 8 || png_sig_cmp (header, 0, 8)) {
+    if (png_sig_cmp (header, 0, 8)) {
         fclose(file);
         return IMIO_HEADERERROR;
     }
@@ -294,8 +295,9 @@ int ImageIO::loadPNG  (Glib::ustring fname)
 
     //reading PNG header
     unsigned char header[8];
+    fread (header, 1, 8, file);
 
-    if (fread (header, 1, 8, file) != 8 || png_sig_cmp (header, 0, 8)) {
+    if (png_sig_cmp (header, 0, 8)) {
         fclose(file);
         return IMIO_HEADERERROR;
     }
@@ -696,7 +698,7 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
                 sFormat = IIOSF_HALF;
                 return IMIO_SUCCESS;
             }*/
-            if (bitspersample == 32) {
+            if ((samplesperpixel == 3 || samplesperpixel == 4) && bitspersample == 32) {
                 sFormat = IIOSF_FLOAT;
                 return IMIO_SUCCESS;
             }
@@ -1243,7 +1245,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // The maximum lenght is strangely not the same than for the JPEG file...
         // Which maximum length is the good one ?
-        if (size > 0 && size <= static_cast<int>(bufferSize)) {
+        if (size > 0 && size <= bufferSize) {
             fwrite (buffer, size, 1, file);
         }
 

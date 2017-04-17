@@ -505,6 +505,7 @@ void DynamicProfilePanel::on_button_edit()
     }
     EditDialog d(M("DYNPROFILEEDITOR_EDIT_RULE"),
                  static_cast<Gtk::Window &>(*get_toplevel()));
+    auto it = s->get_selected();
     Gtk::TreeModel::Row row = *(s->get_selected());
     d.set_rule(to_rule(row));
     int status = d.run();

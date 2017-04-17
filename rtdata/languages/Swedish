@@ -1904,12 +1904,6 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !DYNPROFILEEDITOR_NEW;New
 !DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
 !DYNPROFILEEDITOR_PROFILE;Processing Profile
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !HISTORY_MSG_257;Color Toning
 !HISTORY_MSG_288;Flat Field - Clip control
 !HISTORY_MSG_289;Flat Field - Clip control - Auto
@@ -1991,13 +1985,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !PARTIALPASTE_COLORTONING;Color toning
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
-!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_LISS;Auto multi-zone smoothing
 !PREFERENCES_MONINTENT;Default rendering intent
@@ -2036,21 +2025,21 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_ICM_SAVEREFERENCE;Save Reference Image
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_AHD;AHD
+!TP_RAW_1-PASS (MEDIUM);1-pass (medium)
+!TP_RAW_3-PASS (BEST);3-pass (best)
+!TP_RAW_AHD;ahd
 !TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;DCB
-!TP_RAW_EAHD;EAHD
-!TP_RAW_FAST;Fast
-!TP_RAW_HPHD;HPHD
-!TP_RAW_IGV;IGV
+!TP_RAW_DCB;dcb
+!TP_RAW_EAHD;eahd
+!TP_RAW_FAST;fast
+!TP_RAW_HPHD;hphd
+!TP_RAW_IGV;igv
 !TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
-!TP_RAW_LMMSE;LMMSE
-!TP_RAW_MONO;Mono
-!TP_RAW_NONE;None (Shows sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel-Shift, Dual Sensitivity). Use this button to select the sub-image.\n\nThe last sub-image will be used if you select a value beyond the real sub-image count.
+!TP_RAW_LMMSE;lmmse
+!TP_RAW_MONO;mono
+!TP_RAW_NONE;none (show sensor pattern)
+!TP_RAW_PIXELSHIFT;Pixel Shift (Pentax)
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 !TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
@@ -2096,7 +2085,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 !TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 !TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
-!TP_RAW_VNG4;VNG4
+!TP_RAW_VNG4;vng4
 !TP_RETINEX_CONTEDIT_MAP;Mask equalizer
 !TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
 !TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;This curve can be applied alone or with a Gaussian mask or wavelet mask.\nBeware of artifacts!

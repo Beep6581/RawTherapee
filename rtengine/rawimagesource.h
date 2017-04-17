@@ -97,7 +97,7 @@ protected:
     void hphd_green          (float** hpmap);
     void processFalseColorCorrectionThread (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to);
     void hlRecovery          (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
-    void transformRect       (const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
+    void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
     unsigned FC(int row, int col)
@@ -156,7 +156,7 @@ public:
     }
 
     void        getFullSize (int& w, int& h, int tr = TR_NONE);
-    void        getSize     (const PreviewProps &pp, int& w, int& h);
+    void        getSize     (PreviewProps pp, int& w, int& h);
     int         getRotateDegree() const
     {
         return ri->get_rotateDegree();

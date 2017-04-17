@@ -559,7 +559,7 @@ void LCurve::adjusterChanged (Adjuster* a, double newval)
 void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
-    float R = 0.f, G = 0.f, B = 0.f;
+    float R, G, B;
 
     if (elemType == ColorCaller::CCET_VERTICAL_BAR) {
         valY = 0.5;

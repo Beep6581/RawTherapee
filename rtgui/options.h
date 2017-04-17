@@ -288,7 +288,6 @@ public:
     int           fastexport_resize_dataspec;
     int           fastexport_resize_width;
     int           fastexport_resize_height;
-    bool fastexport_use_fast_pipeline;
 
     // Dialog settings
     Glib::ustring lastIccDir;
@@ -306,7 +305,6 @@ public:
     Glib::ustring lastVibranceCurvesDir;
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
-    Glib::ustring lastLensProfileDir;
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders

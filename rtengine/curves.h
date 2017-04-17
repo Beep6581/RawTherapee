@@ -273,7 +273,7 @@ public:
             }
 
             float R = hlrange / (val * comp);
-            return log1p(Y) * R;
+            return log(1.0 + Y) * R;
         } else {
             return exp_scale;
         }

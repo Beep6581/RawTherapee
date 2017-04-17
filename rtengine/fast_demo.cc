@@ -277,6 +277,7 @@ SSEFUNCTION void RawImageSource::fast_demosaic(int winx, int winy, int winw, int
                 int j, cc;
                 __m128 wtuv, wtdv, wtlv, wtrv;
                 __m128 greenv, tempv, absv, abs2v;
+                __m128 onev = _mm_set1_ps( 1.0f );
                 __m128 c16v = _mm_set1_ps( 16.0f );
                 __m128 fourv = _mm_set1_ps( 4.0f );
                 vmask selmask;

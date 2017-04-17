@@ -1,13 +1,3 @@
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wparentheses"
-#if (__GNUC__ == 6)
-#pragma GCC diagnostic ignored "-Wmisleading-indentation"
-#endif
-#endif
-
 /*RT*/#include <glib.h>
 /*RT*/#include <glib/gstdio.h>
 /*RT*/#undef MAX
@@ -261,11 +251,7 @@ void CLASS derror()
     if (feof(ifp))
       fprintf (stderr,_("Unexpected end of file\n"));
     else
-#ifdef WIN32
-      fprintf (stderr,_("Corrupt data near 0x%I64x\n"), (INT64) ftello(ifp));
-#else
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
-#endif
   }
   data_error++;
 /*RT Issue 2467  longjmp (failure, 1);*/
@@ -1854,12 +1840,13 @@ void CLASS parse_hasselblad_gain()
       not be seen as clipped).
     */
 
-    int offset;
+    ushort raw_h, count, ch_count, u16;
+    int i, offset;
     off_t base;
 
     base = ftell(ifp);
     fseek(ifp, 2 * 23, SEEK_CUR);
-    get2();
+    raw_h = get2();
     fseek(ifp, 48, SEEK_CUR);
     offset = get4();
     hbd.levels = offset ? base + offset : 0;
@@ -4524,7 +4511,6 @@ void CLASS colorcheck()
 //  free (fimg);
 //}
 
-/*
 void CLASS scale_colors()
 {
   unsigned bottom, right, size, row, col, ur, uc, i, x, y, c, sum[8];
@@ -4640,7 +4626,6 @@ skip_block: ;
   }
 }
 
-*/
 void CLASS pre_interpolate()
 {
   ushort (*img)[4];
@@ -5912,7 +5897,7 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 33422:			/* CFAPattern */
 	if (filters == 9) {
-	  FORC(36) ((int *)xtrans)[c] = fgetc(ifp) & 3;
+	  FORC(36) ((char *)xtrans)[c] = fgetc(ifp) & 3;
 	  break;
 	}
       case 64777:			/* Kodak P-series */
@@ -6698,7 +6683,7 @@ void CLASS parse_sinar_ia()
 
 void CLASS parse_phase_one (int base)
 {
-  unsigned entries, tag, len, data, save, i, c;
+  unsigned entries, tag, type, len, data, save, i, c;
   float romm_cam[3][3];
   char *cp;
 
@@ -6711,7 +6696,7 @@ void CLASS parse_phase_one (int base)
   get4();
   while (entries--) {
     tag  = get4();
-    get4();
+    type = get4();
     len  = get4();
     data = get4();
     save = ftell(ifp);
@@ -9035,7 +9020,7 @@ canon_a5:
     }
     if (fuji_layout) raw_width *= is_raw;
     if (filters == 9)
-      FORC(36) ((int *)xtrans)[c] =
+      FORC(36) ((char *)xtrans)[c] =
 	xtrans_abs[(c/6+top_margin) % 6][(c+left_margin) % 6];
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
@@ -9507,7 +9492,7 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 	adobe_coeff (make, model);
-  if((!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4) || !strncmp(model, "K-1",3))) && filters != 0)
+  if(!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4) || !strncmp(model, "K-1",3)))
 	adobe_coeff (make, model);
   if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
     adobe_coeff (make, model);
@@ -9896,6 +9881,3 @@ struct tiff_hdr {
 /*RT*/#undef LIM
 /*RT*/#undef ULIM
 /*RT*/#undef CLIP
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif

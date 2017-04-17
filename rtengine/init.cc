@@ -41,6 +41,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
 {
     settings = s;
     ICCStore::getInstance()->init (s->iccDirectory, Glib::build_filename (baseDir, "iccprofiles"), loadAll);
+    ICCStore::getInstance()->findDefaultMonitorProfile();
     DCPStore::getInstance()->init (Glib::build_filename (baseDir, "dcpprofiles"), loadAll);
 
     CameraConstantsStore::getInstance ()->init (baseDir, userSettingsDir);

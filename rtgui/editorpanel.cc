@@ -71,67 +71,6 @@ int setprogressStrUI ( void *p )
     return FALSE;
 }
 
-
-bool find_default_monitor_profile(GdkWindow *rootwin, Glib::ustring &defprof, Glib::ustring &defprofname)
-{
-#ifdef WIN32
-    HDC hDC = GetDC(nullptr);
-
-    if (hDC != nullptr) {
-        if (SetICMMode(hDC, ICM_ON)) {
-            char profileName[MAX_PATH + 1];
-            DWORD profileLength = MAX_PATH;
-
-            if (GetICMProfileA(hDC, &profileLength, profileName)) {
-                defprof = Glib::ustring(profileName);
-                defprofname = Glib::path_get_basename(defprof);
-                size_t pos = defprofname.rfind(".");
-
-                if (pos != Glib::ustring::npos) {
-                    defprofname = defprofname.substr(0, pos);
-                }
-                defprof = Glib::ustring("file:") + defprof;
-                return true;
-            }
-
-            // might fail if e.g. the monitor has no profile
-        }
-
-        ReleaseDC(NULL, hDC);
-    }
-#elif !defined(__APPLE__)
-    // taken from geeqie (image.c) and adapted
-    // Originally licensed as GPL v2+, with the following copyright:
-    // * Copyright (C) 2006 John Ellis
-    // * Copyright (C) 2008 - 2016 The Geeqie Team
-    // 
-    guchar *prof = nullptr;
-    gint proflen;
-    GdkAtom type = GDK_NONE;
-    gint format = 0;
-    if (gdk_property_get(rootwin, gdk_atom_intern("_ICC_PROFILE", FALSE), GDK_NONE, 0, 64 * 1024 * 1024, FALSE, &type, &format, &proflen, &prof) && proflen > 0) {
-        cmsHPROFILE p = cmsOpenProfileFromMem(prof, proflen);
-        if (p) {
-            defprofname = "from GDK";
-            defprof = Glib::build_filename(Options::rtdir, "GDK_ICC_PROFILE.icc");
-            if (cmsSaveProfileToFile(p, defprof.c_str())) {
-                cmsCloseProfile(p);
-                if (prof) {
-                    g_free(prof);
-                }
-                defprof = Glib::ustring("file:") + defprof;
-                return true;
-            }
-        }
-    }
-    if (prof) {
-        g_free(prof);
-    }
-#endif
-    return false;
-}
-
-
 }
 
 class EditorPanel::ColorManagementToolbar
@@ -145,7 +84,6 @@ private:
     Gtk::ToggleButton spGamutCheck;
     sigc::connection profileConn, intentConn, softproofConn;
     bool canSProof;
-    Glib::ustring defprof;
 
     rtengine::StagedImageProcessor* const& processor;
 
@@ -157,18 +95,12 @@ private:
         setExpandAlignProperties (&profileBox, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         profileBox.append (M ("PREFERENCES_PROFILE_NONE"));
-        Glib::ustring defprofname;
-        if (find_default_monitor_profile(profileBox.get_root_window()->gobj(), defprof, defprofname)) {
-            profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + defprofname + ")");
-            if (options.rtSettings.autoMonitorProfile) {
-                rtengine::ICCStore::getInstance()->setDefaultMonitorProfileName(defprof);
-                profileBox.set_active(1);
-            } else {
-                profileBox.set_active(0);
-            }
-        } else {
-            profileBox.set_active (0);
-        }
+#ifdef WIN32
+        profileBox.append (M ("MONITOR_PROFILE_SYSTEM") + " (" + rtengine::ICCStore::getInstance()->getDefaultMonitorProfileName() + ")");
+        profileBox.set_active (options.rtSettings.autoMonitorProfile ? 1 : 0);
+#else
+        profileBox.set_active (0);
+#endif
         const std::vector<Glib::ustring> profiles = rtengine::ICCStore::getInstance()->getProfiles (rtengine::ICCStore::ProfileType::MONITOR);
         for (const auto profile: profiles) {
             profileBox.append (profile);
@@ -242,17 +174,21 @@ private:
         Glib::ustring profile;
 
 #if !defined(__APPLE__) // monitor profile not supported on apple
-        if (!defprof.empty() && profileBox.get_active_row_number () == 1) {
-            profile = defprof;
+    #ifdef WIN32
+        if (profileBox.get_active_row_number () == 1) {
+            profile = rtengine::ICCStore::getInstance()->getDefaultMonitorProfileName ();
             if (profile.empty ()) {
                 profile = options.rtSettings.monitorProfile;
             }
             if (profile.empty ()) {
                 profile = "sRGB IEC61966-2.1";
             }
-        } else if (profileBox.get_active_row_number () > 0) {
+        } else if (profileBox.get_active_row_number () > 1) {
             profile = profileBox.get_active_text ();
         }
+    #else
+        profile = profileBox.get_active_row_number () > 0 ? profileBox.get_active_text () : Glib::ustring ();
+    #endif
 #else
         profile = "RT_sRGB";
 #endif
@@ -406,11 +342,15 @@ public:
 #if !defined(__APPLE__) // monitor profile not supported on apple
         ConnectionBlocker profileBlocker (profileConn);
 
-        if (!defprof.empty() && options.rtSettings.autoMonitorProfile) {
-            profileBox.set_active(1);
+    #ifdef WIN32
+        if (options.rtSettings.autoMonitorProfile) {
+            setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 1);
         } else {
             setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
         }
+    #else
+        setActiveTextOrIndex (profileBox, options.rtSettings.monitorProfile, 0);
+    #endif
 #endif
 
         switch (options.rtSettings.monitorIntent) {
@@ -431,27 +371,10 @@ public:
         updateParameters ();
     }
 
-    void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile)
-    {
-        ConnectionBlocker profileBlocker (profileConn);
-        
-        if (auto_monitor_profile && !defprof.empty()) {
-            rtengine::ICCStore::getInstance()->setDefaultMonitorProfileName(defprof);
-#ifndef __APPLE__
-            profileBox.set_active(1);
-#endif
-        } else {
-            rtengine::ICCStore::getInstance()->setDefaultMonitorProfileName(profile_name);
-#ifndef __APPLE__
-            setActiveTextOrIndex(profileBox, profile_name, 0);
-#endif
-        }
-    }
-
 };
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
-    : catalogPane(nullptr), realized(false), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), openThm(nullptr), ipc(nullptr), beforeIpc(nullptr), isProcessing(false)
+    : realized(false), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), openThm(nullptr), ipc(nullptr), beforeIpc(nullptr), isProcessing(false), catalogPane(nullptr)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -1093,42 +1016,44 @@ void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, r
 //        saveLabel->set_markup (Glib::ustring("<span foreground=\"#AA0000\" weight=\"bold\">") + M("MAIN_BUTTON_SAVE") + "</span>");
 }
 
+struct spsparams {
+    bool inProcessing;
+    EditorPanelIdleHelper* epih;
+};
+
+int setProgressStateUIThread (void* data)
+{
+
+    spsparams* p = static_cast<spsparams*> (data);
+
+    if (p->epih->destroyed) {
+        if (p->epih->pending == 1) {
+            delete p->epih;
+        } else {
+            p->epih->pending--;
+        }
+
+        delete p;
+
+        return 0;
+    }
+
+    p->epih->epanel->refreshProcessingState (p->inProcessing);
+    p->epih->pending--;
+    delete p;
+
+    return 0;
+}
+
 void EditorPanel::setProgressState (bool inProcessing)
 {
-    struct spsparams {
-        bool inProcessing;
-        EditorPanelIdleHelper* epih;
-    };
 
     epih->pending++;
 
     spsparams* p = new spsparams;
     p->inProcessing = inProcessing;
     p->epih = epih;
-
-    const auto func = [](gpointer data) -> gboolean {
-        spsparams* const p = static_cast<spsparams*>(data);
-
-        if (p->epih->destroyed) {
-            if (p->epih->pending == 1) {
-                delete p->epih;
-            } else {
-                p->epih->pending--;
-            }
-
-            delete p;
-
-            return 0;
-        }
-
-        p->epih->epanel->refreshProcessingState (p->inProcessing);
-        p->epih->pending--;
-        delete p;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, p);
+    g_idle_add (setProgressStateUIThread, p);
 }
 
 void EditorPanel::setProgress (double p)
@@ -1200,6 +1125,12 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
     setprogressStrUI (s);
 }
 
+struct errparams {
+    Glib::ustring descr;
+    Glib::ustring title;
+    EditorPanelIdleHelper* epih;
+};
+
 void EditorPanel::displayError (Glib::ustring title, Glib::ustring descr)
 {
     GtkWidget* msgd = gtk_message_dialog_new_with_markup (nullptr,
@@ -1215,43 +1146,38 @@ void EditorPanel::displayError (Glib::ustring title, Glib::ustring descr)
     gtk_widget_show_all (msgd);
 }
 
+int disperrorUI (void* data)
+{
+    errparams* p = static_cast<errparams*> (data);
+
+    if (p->epih->destroyed) {
+        if (p->epih->pending == 1) {
+            delete p->epih;
+        } else {
+            p->epih->pending--;
+        }
+
+        delete p;
+
+        return 0;
+    }
+
+    p->epih->epanel->displayError (p->title, p->descr);
+    p->epih->pending--;
+    delete p;
+
+    return 0;
+}
+
 void EditorPanel::error (Glib::ustring title, Glib::ustring descr)
 {
-    struct errparams {
-        Glib::ustring descr;
-        Glib::ustring title;
-        EditorPanelIdleHelper* epih;
-    };
 
     epih->pending++;
-    errparams* const p = new errparams;
+    errparams* p = new errparams;
     p->descr = descr;
     p->title = title;
     p->epih = epih;
-
-    const auto func = [](gpointer data) -> gboolean {
-        errparams* const p = static_cast<errparams*> (data);
-
-        if (p->epih->destroyed) {
-            if (p->epih->pending == 1) {
-                delete p->epih;
-            } else {
-                p->epih->pending--;
-            }
-
-            delete p;
-
-            return 0;
-        }
-
-        p->epih->epanel->displayError (p->title, p->descr);
-        p->epih->pending--;
-        delete p;
-
-        return FALSE;
-    };
-
-    idle_register.add(func, p);
+    g_idle_add (disperrorUI, p);
 }
 
 void EditorPanel::info_toggled ()
@@ -2187,6 +2113,12 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
         // No histogram
         if (!oldPosition) {
             // An histogram actually exist, we delete it
+            if      (oldPosition == 1) {
+                removeIfThere (leftbox, histogramPanel, false);
+            } else if (oldPosition == 2) {
+                removeIfThere (vboxright, histogramPanel, false);
+            }
+
             delete histogramPanel;
             histogramPanel = nullptr;
         }
@@ -2236,10 +2168,3 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
 
     iareapanel->imageArea->setPointerMotionHListener (histogramPanel);
 }
-
-
-void EditorPanel::defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile)
-{
-    colorMgmtToolBar->defaultMonitorProfileChanged(profile_name, auto_monitor_profile);
-}
-

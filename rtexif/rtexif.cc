@@ -977,7 +977,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                 // There are 2 format pentaxLensDataAttribs
                 int offsetFirst = 4;  // LensInfo2
 
-                if( strstr(model, "*ist") || strstr(model, "GX-1") || strstr(model, "K200D") || (strstr(model, "K100D") && !strstr(model, "K100D Super")) || strstr(model, "K110D") || strstr(model, "645Z")) {
+                if( strstr(model, "*ist") || strstr(model, "GX-1") || strstr(model, "K100D") || strstr(model, "K110D") ) {
                     offsetFirst = 3;    // LensInfo
                 } else if( strstr(model, "645D") ) {
                     offsetFirst = 13;    // LensInfo3

@@ -311,25 +311,15 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
 
 void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans)
 {
-    GThreadLock lock;
 
     if(isRaw) {
         rawPanelSW->set_sensitive(true);
         if (isBayer) {
             sensorxtrans->FoldableToolPanel::hide();
             sensorbayer->FoldableToolPanel::show();
-            preprocess->FoldableToolPanel::show();
-            flatfield->FoldableToolPanel::show();
         } else if (isXtrans) {
             sensorxtrans->FoldableToolPanel::show();
             sensorbayer->FoldableToolPanel::hide();
-            preprocess->FoldableToolPanel::show();
-            flatfield->FoldableToolPanel::show();
-        } else {
-            sensorbayer->FoldableToolPanel::hide();
-            sensorxtrans->FoldableToolPanel::hide();
-            preprocess->FoldableToolPanel::hide();
-            flatfield->FoldableToolPanel::hide();
         }
     } else {
         rawPanelSW->set_sensitive(false);

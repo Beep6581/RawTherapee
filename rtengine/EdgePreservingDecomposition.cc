@@ -21,7 +21,7 @@ Takes less memory with OkToModify_b = true, and Preconditioner = nullptr. */
 float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b,
                                float *x, float RMSResidual, void *Pass, int MaximumIterates, void Preconditioner(float *Product, float *x, void *Pass))
 {
-    int iterate;
+    int iterate, i;
 
     float* buffer = (float*)malloc(2 * n * sizeof(float) + 128);
     float *r = (buffer + 16);
@@ -395,9 +395,6 @@ SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Pro
             }
         }
     }
-#ifdef _OPENMP
-    static_cast<void>(chunkSize); // to silence cppcheck warning
-#endif
 }
 
 bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int MaxFillAbove)
@@ -414,7 +411,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 
     //How many diagonals in the decomposition?
     MaxFillAbove++; //Conceptually, now "fill" includes an existing diagonal. Simpler in the math that follows.
-    int j, mic, fp;
+    int i, j, mic, fp;
     mic = 1;
     fp = 1;
 
@@ -444,8 +441,8 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     }
 
     //It's all initialized? Uhkay. Do the actual math then.
-    int sss;
-   // int MaxStartRow = StartRows[m - 1];  //Handy number.
+    int sss, ss;
+    int MaxStartRow = StartRows[m - 1];  //Handy number.
     float **l = ic->Diagonals;
     float  *d = ic->Diagonals[0];       //Describes D in LDLt.
     int icm = ic->m;

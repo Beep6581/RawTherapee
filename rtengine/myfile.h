@@ -68,10 +68,7 @@ inline void fseek (IMFILE* f, int p, int how)
     } else if (how == SEEK_CUR) {
         f->pos += p;
     } else if (how == SEEK_END) {
-        if(p <= 0 && -p <= f->size) {
-            f->pos = f->size + p;
-        }
-        return;
+        f->pos = f->size + p;
     }
 
     if (f->pos < 0  || f->pos > f->size) {

@@ -38,12 +38,18 @@ Glib::RefPtr<Gdk::Pixbuf> MyExpander::disabledPBuf;
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::openedPBuf;
 Glib::RefPtr<Gdk::Pixbuf> MyExpander::closedPBuf;
 
+guint add_idle (GSourceFunc function, gpointer data)
+{
+    return gdk_threads_add_idle(function, data);
+    //gtk_main_iteration_do(false);
+}
+
 IdleRegister::~IdleRegister()
 {
     destroy();
 }
 
-void IdleRegister::add(GSourceFunc function, gpointer data, gint priority)
+void IdleRegister::add(GSourceFunc function, gpointer data)
 {
     struct DataWrapper {
         IdleRegister* const self;
@@ -73,7 +79,7 @@ void IdleRegister::add(GSourceFunc function, gpointer data, gint priority)
     };
 
     mutex.lock();
-    ids[data_wrapper] = gdk_threads_add_idle_full(priority, dispatch, data_wrapper, nullptr);
+    ids[data_wrapper] = add_idle(dispatch, data_wrapper);
     mutex.unlock();
 }
 
@@ -1454,6 +1460,8 @@ bool BackBuffer::setDrawRectangle(Cairo::Format format, int newX, int newY, int 
  */
 void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int srcY, int srcW, int srcH, int srcRowStride, int dstX, int dstY)
 {
+    const unsigned char *src;
+    unsigned char *dst;
     unsigned char r, g, b;
 
     if (!surface) {
@@ -1470,15 +1478,15 @@ void BackBuffer::copyRGBCharData(const unsigned char *srcData, int srcX, int src
         return;
     }
 
-    for (int i = 0; i < srcH; ++i) {
+    for (unsigned int i = 0; i < (unsigned int)(srcH); ++i) {
         if (dstY + i >= surfH) {
             break;
         }
 
-        const unsigned char *src = srcData + i * srcRowStride;
-        unsigned char *dst = dstData + ((dstY + i) * surfW + dstX) * 4;
+        src = srcData + i * srcRowStride;
+        dst = dstData + ((dstY + i) * surfW + dstX) * 4;
 
-        for (int j = 0; j < srcW; ++j) {
+        for (unsigned int j = 0; j < (unsigned int)(srcW); ++j) {
             if (dstX + j >= surfW) {
                 break;
             }
@@ -1612,8 +1620,8 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
         int offsetY = rtengine::LIM<int>(offset.y, 0, surface->get_height());
 
         // now copy the off-screen Surface to the destination Surface
-        // int srcSurfW = surface->get_width();
-        // int srcSurfH = surface->get_height();
+        int srcSurfW = surface->get_width();
+        int srcSurfH = surface->get_height();
         //printf("srcSurf:  w: %d, h: %d\n", srcSurfW, srcSurfH);
         crDest->set_line_width(0.);
 

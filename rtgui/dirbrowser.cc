@@ -21,8 +21,7 @@
 #include <iostream>
 #include <cstring>
 
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
+#ifdef WIN32
 #define _WIN32_WINNT 0x0600
 #include <windows.h>
 #endif
@@ -99,11 +98,6 @@ DirBrowser::DirBrowser () : dirTreeModel(),
     pack_start (*scrolledwindow4);
     dirtree->show ();
     scrolledwindow4->show ();
-}
-
-DirBrowser::~DirBrowser()
-{
-    idle_register.destroy();
 }
 
 void DirBrowser::fillDirTree ()
@@ -233,16 +227,16 @@ int updateVolumesUI (void* br)
     (static_cast<DirBrowser*>(br))->updateVolumes ();
     return 1;
 }
+int updateDirTreeUI (void* br)
+{
+    (static_cast<DirBrowser*>(br))->updateDirTreeRoot ();
+    return 0;
+}
 
 void DirBrowser::winDirChanged ()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<DirBrowser*>(data)->updateDirTreeRoot();
 
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    g_idle_add (updateDirTreeUI, this);
 }
 #endif
 
@@ -354,7 +348,7 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)
     auto dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
     auto subDirs = listSubDirs (dir, options.fbShowHidden);
 
-    for (size_t i = 0; i < subDirs.size(); i++) {
+    for (int i = 0; i < subDirs.size(); i++) {
         bool found = false;
 
         for (Gtk::TreeModel::iterator it = iter->children().begin(); it != iter->children().end() && !found ; ++it) {

@@ -69,14 +69,14 @@ public:
     void writeOptions   ();
 
     void cropMoved          (int &x, int &y, int &w, int &h);
-    void cropWidth1Resized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
-    void cropWidth2Resized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
-    void cropHeight1Resized (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
-    void cropHeight2Resized (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
-    void cropTopLeftResized     (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
-    void cropTopRightResized    (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
-    void cropBottomLeftResized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
-    void cropBottomRightResized (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropWidth1Resized  (int &x, int &y, int &w, int &h);
+    void cropWidth2Resized  (int &x, int &y, int &w, int &h);
+    void cropHeight1Resized (int &x, int &y, int &w, int &h);
+    void cropHeight2Resized (int &x, int &y, int &w, int &h);
+    void cropTopLeftResized     (int &x, int &y, int &w, int &h);
+    void cropTopRightResized    (int &x, int &y, int &w, int &h);
+    void cropBottomLeftResized  (int &x, int &y, int &w, int &h);
+    void cropBottomRightResized (int &x, int &y, int &w, int &h);
     void cropInit           (int &x, int &y, int &w, int &h);
     void cropResized        (int &x, int &y, int& x2, int& y2);
     void cropManipReady     ();

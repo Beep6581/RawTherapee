@@ -58,7 +58,7 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     bool deleted;
     bool fitZoomEnabled;
     bool fitZoom;
-    //bool isLowUpdatePriority;
+    bool isLowUpdatePriority;
     CursorShape cursor_type;
 
     // color pickers
@@ -96,8 +96,6 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     std::list<CropWindowListener*> listeners;
 
     CropWindow* observedCropWin;  // Pointer to the currently active detail CropWindow
-
-    float crop_custom_ratio;
 
     bool onArea                    (CursorArea a, int x, int y);
     void updateCursor              (int x, int y);

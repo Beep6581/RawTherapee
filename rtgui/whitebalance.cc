@@ -355,6 +355,7 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval)
     int tVal = (int)temp->getValue();
     double gVal = green->getValue();
     double eVal = equal->getValue();
+    double tempBiasVal = tempBias->getValue();
     Gtk::TreeModel::Row row = getActiveMethod();
 
     if (row == refTreeModel->children().end()) {

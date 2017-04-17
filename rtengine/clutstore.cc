@@ -32,7 +32,7 @@ bool loadFile(
     bool res = false;
 
     if (fw == fh) {
-        int level = 1;
+        unsigned int level = 1;
 
         while (level * level * level < fw) {
             ++level;

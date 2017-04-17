@@ -36,10 +36,7 @@ class ExportPanel : public Gtk::VBox
 
 protected:
 
-    Gtk::VBox *bypass_box;
     //Gtk::CheckButton* enabled;
-    Gtk::RadioButton* use_fast_pipeline;
-    Gtk::RadioButton* use_normal_pipeline;
     Gtk::CheckButton* bypass_ALL;
     Gtk::CheckButton* bypass_sharpenEdge;
     Gtk::CheckButton* bypass_sharpenMicro;
@@ -108,7 +105,6 @@ protected:
     ExportPanelListener* listener;
 
     void bypassALL_Toggled();
-    void use_fast_pipeline_toggled();
     void SaveSettingsAsDefault();
     void LoadDefaultSettings();
     void LoadSettings();

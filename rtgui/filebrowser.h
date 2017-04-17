@@ -67,12 +67,11 @@ class FileBrowser  : public ThumbBrowserBase,
     public ExportPanelListener,
     public ProfileStoreListener
 {
-private:
+
     typedef sigc::signal<void> type_trash_changed;
 
-    IdleRegister idle_register;
-
 protected:
+
     Gtk::MenuItem* rank[6];
     MyImageMenuItem* colorlabel[6];
     Gtk::MenuItem* trash;
@@ -111,7 +110,7 @@ protected:
     Gtk::MenuItem* partpasteprof;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* applypartprof;
-    Gtk::MenuItem* resetdefaultprof;
+    Gtk::MenuItem* execcustprof;
     Gtk::MenuItem* clearprof;
     Gtk::MenuItem* cachemenu;
     Gtk::MenuItem* clearFromCache;
@@ -144,6 +143,7 @@ protected:
     type_trash_changed m_trash_changed;
 
 public:
+
     FileBrowser ();
     ~FileBrowser ();
 

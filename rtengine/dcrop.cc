@@ -806,6 +806,7 @@ void Crop::update (int todo)
         bool wavcontlutili = parent->wavcontlutili;
 
         LUTu dummy;
+        int moderetinex;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
         parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance (labnCrop);
@@ -1078,11 +1079,8 @@ void Crop::freeAll ()
 
 namespace {
 
-bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int w, int h, const ProcParams &params)
+bool check_need_larger_crop_for_lcp_distortion(const ProcParams &params)
 {
-    if (x == 0 && y == 0 && w == fw && h == fh) {
-        return false;
-    }
     return (params.lensProf.lcpFile.length() > 0 &&
             params.lensProf.useDist);
 }
@@ -1136,51 +1134,29 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     // determine which part of the source image is required to compute the crop rectangle
     int orx, ory, orw, orh;
-    orx = bx1;
-    ory = by1;
-    orw = bw;
-    orh = bh;
     ProcParams& params = parent->params;
-
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
-    
-    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
-        // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
-        int dW = int(double(parent->fw) * 0.15 / (2 * skip));
-        int dH = int(double(parent->fh) * 0.15 / (2 * skip));
-        int x1 = orx - dW;
-        int x2 = orx + orw + dW;
-        int y1 = ory - dH;
-        int y2 = ory + orh + dH;
-        if (x1 < 0) {
-            x2 += -x1;
-            x1 = 0;
-        }
-        if (x2 > parent->fw) {
-            x1 -= x2 - parent->fw;
-            x2 = parent->fw;
-        }
-        if (y1 < 0) {
-            y2 += -y1;
-            y1 = 0;
-        }
-        if (y2 > parent->fh) {
-            y1 -= y2 - parent->fh;
-            y2 = parent->fh;
-        }
-        orx = max(x1, 0);
-        ory = max(y1, 0);
-        orw = min(x2 - x1, parent->fw - orx);
-        orh = min(y2 - y1, parent->fh - ory);
-    }
-    
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
     parent->imgsrc->getSize (cp, orW, orH);
 
-    trafx = orx;
-    trafy = ory;
+    if (check_need_larger_crop_for_lcp_distortion(parent->params)) {
+        int fW, fH;
+        parent->imgsrc->getFullSize(fW, fH);
+        double dW = double(fW) * 0.15; // TODO  - this is hardcoded ATM!
+        double dH = double(fH) * 0.15; // this is an estimate of the max
+                                       // distortion relative to the image
+                                       // size. BUT IS 15% REALLY ENOUGH?
+                                       // In fact, is there a better way??
+        orW = min(int(orW + dW), fW);
+        orH = min(int(orH + dH), fH);
+        trafx = max(int(orx - dW/2.0), 0);
+        trafy = max(int(ory - dH/2.0), 0);
+    } else {
+        trafx = orx;
+        trafy = ory;
+    }
 
     int cw = skips(bw, skip);
     int ch = skips(bh, skip);

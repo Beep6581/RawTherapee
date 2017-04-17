@@ -20,7 +20,7 @@ it under the terms of the one of three licenses as you choose:
 
 void CLASS init_fuji_compr (struct fuji_compressed_params* info)
 {
-    int cur_val;
+    int cur_val, i;
     char *qt;
 
     if ((fuji_block_width % 3 && fuji_raw_type == 16) || (fuji_block_width & 1 && fuji_raw_type == 0)) {
@@ -151,6 +151,7 @@ void CLASS copy_line_to_xtrans (struct fuji_compressed_block* info, int cur_line
     ushort *lineBufB[3];
     ushort *lineBufG[6];
     ushort *lineBufR[3];
+    unsigned pixel_count;
     ushort* line_buf;
     int index;
 
@@ -168,9 +169,9 @@ void CLASS copy_line_to_xtrans (struct fuji_compressed_block* info, int cur_line
     }
 
     while (row_count < 6) {
-        unsigned pixel_count = 0;
+        pixel_count = 0;
 
-        while (static_cast<int>(pixel_count) < cur_block_width) {
+        while (pixel_count < cur_block_width) {
             switch (xtrans_abs[row_count][ (pixel_count % 6)]) {
                 case 0:     // red
                     line_buf = lineBufR[row_count >> 1];
@@ -181,12 +182,11 @@ void CLASS copy_line_to_xtrans (struct fuji_compressed_block* info, int cur_line
                     break;
 
                 case 2:     // blue
-                default:
                     line_buf = lineBufB[row_count >> 1];
                     break;
             }
 
-            index = (((pixel_count * 2 / 3) & 0x7FFFFFFE) | ((pixel_count % 3) & 1)) + ((pixel_count % 3) >> 1);
+            index = (((pixel_count * 2 / 3) & 0x7FFFFFFE) | (pixel_count % 3) & 1) + ((pixel_count % 3) >> 1);
             raw_block_data[pixel_count] = line_buf[index];
 
             ++pixel_count;
@@ -202,6 +202,7 @@ void CLASS copy_line_to_bayer (struct fuji_compressed_block *info, int cur_line,
     ushort *lineBufB[3];
     ushort *lineBufG[6];
     ushort *lineBufR[3];
+    unsigned pixel_count;
     ushort *line_buf;
 
     int fuji_bayer[2][2];
@@ -225,9 +226,9 @@ void CLASS copy_line_to_bayer (struct fuji_compressed_block *info, int cur_line,
     }
 
     while (row_count < 6) {
-        unsigned pixel_count = 0;
+        pixel_count = 0;
 
-        while (static_cast<int>(pixel_count) < cur_block_width) {
+        while (pixel_count < cur_block_width) {
             switch (fuji_bayer[row_count & 1][pixel_count & 1]) {
                 case 0: // red
                     line_buf = lineBufR[row_count >> 1];
@@ -896,11 +897,12 @@ void CLASS fuji_compressed_load_raw()
 {
     struct fuji_compressed_params common_info;
     int cur_block;
-    unsigned *block_sizes;
+    unsigned line_size, *block_sizes;
     INT64 raw_offset, *raw_block_offsets;
     //struct fuji_compressed_block info;
 
     init_fuji_compr (&common_info);
+    line_size = sizeof (ushort) * (common_info.line_width + 2);
 
     // read block sizes
     block_sizes = (unsigned*) malloc (sizeof (unsigned) * fuji_total_blocks);

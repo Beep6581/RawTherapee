@@ -285,7 +285,7 @@ void StdImageSource::getFullSize (int& w, int& h, int tr)
     }
 }
 
-void StdImageSource::getSize (const PreviewProps &pp, int& w, int& h)
+void StdImageSource::getSize (PreviewProps pp, int& w, int& h)
 {
     w = pp.getWidth() / pp.getSkip() + (pp.getWidth() % pp.getSkip() > 0);
     h = pp.getHeight() / pp.getSkip() + (pp.getHeight() % pp.getSkip() > 0);

@@ -389,7 +389,7 @@ public:
         char buffer[32];
         double d = pow (2.0, -t->toDouble());
 
-        if (d > 0.0 && d <= 0.5) {
+        if (d > 0.0 && d < 0.9) {
             sprintf (buffer, "1/%.0f", 1.0 / d);
         } else {
             sprintf (buffer, "%.1f", d);
@@ -409,7 +409,7 @@ public:
         char buffer[32];
         double d = t->toDouble();
 
-        if (d > 0.0 && d <= 0.5) {
+        if (d > 0.0 && d < 0.9) {
             sprintf (buffer, "1/%.0f", 1.0 / d);
         } else {
             sprintf (buffer, "%.1f", d);

@@ -20,6 +20,7 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
 
     TagDirectory *exif = exif_->getDirectory();
     char *value = (char *)textualInfo->getValue();
+    int valuesize = textualInfo->getValueSize();
 
     char *p = value;
     char *pc, *plf;

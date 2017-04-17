@@ -28,6 +28,12 @@ PipetteBuffer::PipetteBuffer(::EditDataProvider *dataProvider) :
 PipetteBuffer::~PipetteBuffer()
 {
     flush();
+#ifndef NDEBUG
+    imgFloatBuffer = (Imagefloat*)(0xbaadf00d);
+#endif
+#ifndef NDEBUG
+    LabBuffer = (LabImage*)(0xbaadf00d);
+#endif
 }
 
 void PipetteBuffer::createBuffer(int width, int height)

@@ -24,6 +24,14 @@
 #include "soundman.h"
 #include "rtimage.h"
 
+int processLoadedBatchQueueUIThread (void* data)
+{
+
+    BatchQueue* bq = static_cast<BatchQueue*>(data);
+    bq->resizeLoadedQueue();
+    return 0;
+}
+
 static Glib::ustring makeFolderLabel(Glib::ustring path)
 {
     if (!Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
@@ -177,20 +185,9 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
 
     show_all ();
 
-    if (batchQueue->loadBatchQueue()) {
-        const auto func = [](gpointer data) -> gboolean {
-            static_cast<BatchQueue*>(data)->resizeLoadedQueue();
-
-            return FALSE;
-        };
-
-        idle_register.add(func, batchQueue, G_PRIORITY_LOW);
+    if (batchQueue->loadBatchQueue ()) {
+        g_idle_add_full (G_PRIORITY_LOW, processLoadedBatchQueueUIThread, batchQueue, nullptr);
     }
-}
-
-BatchQueuePanel::~BatchQueuePanel()
-{
-    idle_register.destroy();
 }
 
 void BatchQueuePanel::init (RTWindow *parent)

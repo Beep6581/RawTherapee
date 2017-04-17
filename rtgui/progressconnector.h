@@ -84,7 +84,7 @@ class ProgressConnector
     void workingThread ()
     {
         retval = opStart.emit ();
-        gdk_threads_add_idle(ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool>(opEnd));
+        g_idle_add (ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool> (opEnd));
         workThread = nullptr;
     }
 

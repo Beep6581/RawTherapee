@@ -49,6 +49,7 @@ class Thumbnail
 
     rtengine::procparams::ProcParams      pparams;
     bool            pparamsValid;
+    bool            pparamsSet;
     bool            needsReProcessing;
     bool            imageLoading;
 
@@ -86,7 +87,7 @@ public:
     const rtengine::procparams::ProcParams& getProcParamsU ();  // Unprotected version
 
     // Use this to create params on demand for update ; if flaggingMode=true, the procparams is created for a file being flagged (inTrash, rank, colorLabel)
-    rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool force, bool flaggingMode = false);
+    rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB, bool flaggingMode = false);
 
     void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe = nullptr, int whoChangedIt = -1, bool updateCacheNow = true);
     void              clearProcParams (int whoClearedIt = -1);

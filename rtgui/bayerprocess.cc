@@ -101,11 +101,6 @@ BayerProcess::BayerProcess () : FoldableToolPanel(this, "bayerprocess", M("TP_RA
     pixelShiftEqualBright->set_tooltip_text (M("TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP"));
     pixelShiftFrame->pack_start(*pixelShiftEqualBright);
 
-    pixelShiftEqualBrightChannel = Gtk::manage (new CheckBox(M("TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL"), multiImage));
-    pixelShiftEqualBrightChannel->setCheckBoxListener (this);
-    pixelShiftEqualBrightChannel->set_tooltip_text (M("TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP"));
-    pixelShiftFrame->pack_start(*pixelShiftEqualBrightChannel);
-
     Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
     hb3->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_PIXELSHIFTMOTIONMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     pixelShiftMotionMethod = Gtk::manage (new MyComboBoxText ());
@@ -362,11 +357,11 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
 
     dcbIterations->setValue (pp->raw.bayersensor.dcb_iterations);
     dcbEnhance->setValue (pp->raw.bayersensor.dcb_enhance);
-    pixelShiftShowMotion->setValue (pp->raw.bayersensor.pixelShiftShowMotion);
+    pixelShiftShowMotion->setValue (pp->raw.bayersensor.pixelshiftShowMotion);
     if (!batchMode) {
-        pixelShiftShowMotionMaskOnly->set_sensitive (pp->raw.bayersensor.pixelShiftShowMotion);
+        pixelShiftShowMotionMaskOnly->set_sensitive (pp->raw.bayersensor.pixelshiftShowMotion);
     }
-    pixelShiftShowMotionMaskOnly->setValue (pp->raw.bayersensor.pixelShiftShowMotionMaskOnly);
+    pixelShiftShowMotionMaskOnly->setValue (pp->raw.bayersensor.pixelshiftShowMotionMaskOnly);
     pixelShiftHoleFill->setValue (pp->raw.bayersensor.pixelShiftHoleFill);
     pixelShiftMedian->setValue (pp->raw.bayersensor.pixelShiftMedian);
     pixelShiftGreen->setValue (pp->raw.bayersensor.pixelShiftGreen);
@@ -377,8 +372,6 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     pixelShiftSmooth->setValue (pp->raw.bayersensor.pixelShiftSmoothFactor);
     pixelShiftLmmse->setValue (pp->raw.bayersensor.pixelShiftLmmse);
     pixelShiftEqualBright->setValue (pp->raw.bayersensor.pixelShiftEqualBright);
-    pixelShiftEqualBrightChannel->set_sensitive (pp->raw.bayersensor.pixelShiftEqualBright);
-    pixelShiftEqualBrightChannel->setValue (pp->raw.bayersensor.pixelShiftEqualBrightChannel);
     pixelShiftNonGreenCross->setValue (pp->raw.bayersensor.pixelShiftNonGreenCross);
     ccSteps->setValue (pp->raw.bayersensor.ccSteps);
     lmmseIterations->setValue (pp->raw.bayersensor.lmmse_iterations);
@@ -419,8 +412,8 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         ccSteps->setEditedState (pedited->raw.bayersensor.ccSteps ? Edited : UnEdited);
         dcbIterations->setEditedState ( pedited->raw.bayersensor.dcbIterations ? Edited : UnEdited);
         dcbEnhance->setEdited (pedited->raw.bayersensor.dcbEnhance);
-        pixelShiftShowMotion->setEdited (pedited->raw.bayersensor.pixelShiftShowMotion);
-        pixelShiftShowMotionMaskOnly->setEdited (pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly);
+        pixelShiftShowMotion->setEdited (pedited->raw.bayersensor.pixelshiftShowMotion);
+        pixelShiftShowMotionMaskOnly->setEdited (pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly);
         pixelShiftHoleFill->setEdited (pedited->raw.bayersensor.pixelShiftHoleFill);
         pixelShiftMedian->setEdited(pedited->raw.bayersensor.pixelShiftMedian);
         pixelShiftGreen->setEdited (pedited->raw.bayersensor.pixelShiftGreen);
@@ -428,7 +421,6 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         pixelShiftSmooth->setEditedState ( pedited->raw.bayersensor.pixelShiftSmooth ? Edited : UnEdited);
         pixelShiftLmmse->setEdited (pedited->raw.bayersensor.pixelShiftLmmse);
         pixelShiftEqualBright->setEdited (pedited->raw.bayersensor.pixelShiftEqualBright);
-        pixelShiftEqualBrightChannel->setEdited (pedited->raw.bayersensor.pixelShiftEqualBrightChannel);
         pixelShiftNonGreenCross->setEdited (pedited->raw.bayersensor.pixelShiftNonGreenCross);
         lmmseIterations->setEditedState ( pedited->raw.bayersensor.lmmseIterations ? Edited : UnEdited);
         pixelShiftEperIso->setEditedState ( pedited->raw.bayersensor.pixelShiftEperIso ? Edited : UnEdited);
@@ -523,8 +515,8 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.pixelShiftMotionCorrectionMethod = (RAWParams::BayerSensor::ePSMotionCorrectionMethod)pixelShiftMotionMethod->get_active_row_number();
     pp->raw.bayersensor.pixelShiftEperIso = pixelShiftEperIso->getValue();
     pp->raw.bayersensor.pixelShiftSigma = pixelShiftSigma->getValue();
-    pp->raw.bayersensor.pixelShiftShowMotion = pixelShiftShowMotion->getLastActive ();
-    pp->raw.bayersensor.pixelShiftShowMotionMaskOnly = pixelShiftShowMotionMaskOnly->getLastActive ();
+    pp->raw.bayersensor.pixelshiftShowMotion = pixelShiftShowMotion->getLastActive ();
+    pp->raw.bayersensor.pixelshiftShowMotionMaskOnly = pixelShiftShowMotionMaskOnly->getLastActive ();
     pp->raw.bayersensor.pixelShiftHoleFill = pixelShiftHoleFill->getLastActive ();
     pp->raw.bayersensor.pixelShiftMedian = pixelShiftMedian->getLastActive ();
     pp->raw.bayersensor.pixelShiftGreen = pixelShiftGreen->getLastActive ();
@@ -532,7 +524,6 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.pixelShiftSmoothFactor = pixelShiftSmooth->getValue();
     pp->raw.bayersensor.pixelShiftLmmse = pixelShiftLmmse->getLastActive ();
     pp->raw.bayersensor.pixelShiftEqualBright = pixelShiftEqualBright->getLastActive ();
-    pp->raw.bayersensor.pixelShiftEqualBrightChannel = pixelShiftEqualBrightChannel->getLastActive ();
     pp->raw.bayersensor.pixelShiftNonGreenCross = pixelShiftNonGreenCross->getLastActive ();
 #ifdef PIXELSHIFTDEV
     pp->raw.bayersensor.pixelShiftStddevFactorGreen = pixelShiftStddevFactorGreen->getValue();
@@ -575,8 +566,8 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelShiftMotionCorrectionMethod = pixelShiftMotionMethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->raw.bayersensor.pixelShiftEperIso = pixelShiftEperIso->getEditedState ();
         pedited->raw.bayersensor.pixelShiftSigma = pixelShiftSigma->getEditedState ();
-        pedited->raw.bayersensor.pixelShiftShowMotion = !pixelShiftShowMotion->get_inconsistent();
-        pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly = !pixelShiftShowMotionMaskOnly->get_inconsistent();
+        pedited->raw.bayersensor.pixelshiftShowMotion = !pixelShiftShowMotion->get_inconsistent();
+        pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly = !pixelShiftShowMotionMaskOnly->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftHoleFill = !pixelShiftHoleFill->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftMedian = !pixelShiftMedian->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftGreen = !pixelShiftGreen->get_inconsistent();
@@ -584,7 +575,6 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelShiftSmooth = pixelShiftSmooth->getEditedState();
         pedited->raw.bayersensor.pixelShiftLmmse = !pixelShiftLmmse->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftEqualBright = !pixelShiftEqualBright->get_inconsistent();
-        pedited->raw.bayersensor.pixelShiftEqualBrightChannel = !pixelShiftEqualBrightChannel->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftNonGreenCross = !pixelShiftNonGreenCross->get_inconsistent();
 #ifdef PIXELSHIFTDEV
         pedited->raw.bayersensor.pixelShiftStddevFactorGreen = pixelShiftStddevFactorGreen->getEditedState ();
@@ -849,15 +839,8 @@ void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
             listener->panelChanged (EvPixelShiftLmmse, pixelShiftLmmse->getValueAsStr ());
         }
     } else if (c == pixelShiftEqualBright) {
-        if (!batchMode) {
-            pixelShiftEqualBrightChannel->set_sensitive(newval != CheckValue::off);
-        }
         if (listener) {
             listener->panelChanged (EvPixelShiftEqualBright, pixelShiftEqualBright->getValueAsStr ());
-        }
-    } else if (c == pixelShiftEqualBrightChannel) {
-        if (listener) {
-            listener->panelChanged (EvPixelShiftEqualBrightChannel, pixelShiftEqualBrightChannel->getValueAsStr ());
         }
     } else if (c == pixelShiftNonGreenCross) {
         if (listener) {

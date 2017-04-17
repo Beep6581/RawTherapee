@@ -331,7 +331,7 @@ void ImageData::extractInfo ()
 
                     if (mnote->getTag ("LensData")) {
                         std::string ldata = mnote->getTag ("LensData")->valueToString ();
-                        size_t pos;
+                        int pos;
 
                         if (ldata.size() > 10 && (pos = ldata.find ("Lens = ")) != Glib::ustring::npos) {
                             lens = ldata.substr (pos + 7);
@@ -339,7 +339,7 @@ void ImageData::extractInfo ()
                             if (lens.compare (0, 7, "Unknown")) {
                                 lensOk = true;
                             } else {
-                                size_t pos = lens.find("$FL$");        // is there a placeholder for focallength?
+                                int pos = lens.find("$FL$");        // is there a placeholder for focallength?
 
                                 if(pos != Glib::ustring::npos) {                // then fill in focallength
                                     lens = lens.replace(pos, 4, exif->getTag ("FocalLength")->valueToString ());
@@ -566,7 +566,7 @@ std::string ImageMetaData::shutterToString (double shutter)
 
     char buffer[256];
 
-    if (shutter > 0.0 && shutter <= 0.5) {
+    if (shutter > 0.0 && shutter < 0.9) {
         sprintf (buffer, "1/%0.0f", 1.0 / shutter);
     } else {
         sprintf (buffer, "%0.1f", shutter);

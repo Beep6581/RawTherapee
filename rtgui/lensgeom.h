@@ -54,9 +54,11 @@ public:
     {
         rlistener = l;
     }
+    void disableAutoFillIfActive ();
 
 private:
-    IdleRegister idle_register;
+    static int doDisableAutoFillIfActive (void* data);
+
 };
 
 #endif

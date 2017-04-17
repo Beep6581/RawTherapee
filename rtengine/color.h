@@ -498,7 +498,7 @@ public:
     * @param a channel [-42000 ; +42000] ; can be more than 42000 (return value)
     * @param b channel [-42000 ; +42000] ; can be more than 42000 (return value)
     */
-    static void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, const double wp[3][3]);
+    static void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
 
 
     /**

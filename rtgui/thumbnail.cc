@@ -64,7 +64,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr), pparamsValid(false),
-      needsReProcessing(true), imageLoading(false), lastImg(nullptr),
+      pparamsSet(false), needsReProcessing(true), imageLoading(false), lastImg(nullptr),
       lastW(0), lastH(0), lastScale(0.0), initial_(true)
 {
 
@@ -198,13 +198,14 @@ const ProcParams& Thumbnail::getProcParamsU ()
  *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
  *
  *  @param returnParams Ask to return a pointer to a ProcParams object if true
- *  @param force True if the profile has to be re-generated even if it already exists
+ *  @param forceCPB True if the Custom Profile Builder has to be invoked, False if the CPB has to be invoked if the profile doesn't
+ *                  exist yet. It depends on other conditions too
  *  @param flaggingMode True if the ProcParams will be created because the file browser is being flagging an image
  *                      (rang, to trash, color labels). This parameter is passed to the CPB.
  *
  *  @return Return a pointer to a ProcPamas structure to be updated if returnParams is true and if everything went fine, NULL otherwise.
  */
-rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool force, bool flaggingMode)
+rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB, bool flaggingMode)
 {
 
     static int index = 0; // Will act as unique identifier during the session
@@ -216,7 +217,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
-    const bool create = (!hasProcParams() || force);
+    const bool create = (!hasProcParams() || forceCPB);
 
     const Glib::ustring outFName =
         (options.paramsLoadLocation == PLL_Input) ?
@@ -236,11 +237,6 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         pp->deleteInstance();
         delete pp;
         if (!err) {
-            loadProcParams();
-        }
-    } else if (create && defProf != DEFPROFILE_DYNAMIC) {
-        const PartialProfile *p = profileStore.getProfile(defProf);
-        if (p && !p->pparams->save(outFName)) {
             loadProcParams();
         }
     }

@@ -17,8 +17,6 @@ class Retinex : public ToolParamBlock, public FoldableToolPanel,  public rtengin
     public AdjusterListener, public ColorProvider
 
 {
-private:
-    IdleRegister idle_register;
 
 protected:
     CurveEditorGroup* curveEditorGD;

@@ -435,8 +435,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
 FileCatalog::~FileCatalog()
 {
-    idle_register.destroy();
-
     for (int i = 0; i < 5; i++) {
         delete iranked[i];
         delete igranked[i];
@@ -704,15 +702,15 @@ void FileCatalog::_refreshProgressBar ()
     }
 }
 
+int refreshProgressBarUI (void* data)
+{
+    (static_cast<FileCatalog*>(data))->_refreshProgressBar ();
+    return 0;
+}
+
 void FileCatalog::filterApplied()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->_refreshProgressBar();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    g_idle_add (refreshProgressBarUI, this);
 }
 
 
@@ -750,12 +748,12 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
                 dirEFS.shutterTo = cfs->shutter;
             }
 
-            if (cfs->iso > 0 && cfs->iso < dirEFS.isoFrom) {
-                dirEFS.isoFrom = cfs->iso;
+            if (cfs->iso > 0 && (int)cfs->iso < dirEFS.isoFrom) {
+                dirEFS.isoFrom = (int)cfs->iso;
             }
 
-            if (cfs->iso > 0 && cfs->iso > dirEFS.isoTo) {
-                dirEFS.isoTo = cfs->iso;
+            if (cfs->iso > 0 && (int)cfs->iso > dirEFS.isoTo) {
+                dirEFS.isoTo = (int)cfs->iso;
             }
 
             if (cfs->focalLen < dirEFS.focalFrom) {
@@ -776,6 +774,12 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
     previewsLoaded++;
 
     _refreshProgressBar();
+}
+
+int prevfinished (void* data)
+{
+    (static_cast<FileCatalog*>(data))->previewsFinishedUI ();
+    return 0;
 }
 
 // Called within GTK UI thread
@@ -834,13 +838,7 @@ void FileCatalog::previewsFinished (int dir_id)
         currentEFS = dirEFS;
     }
 
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->previewsFinishedUI();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    g_idle_add (prevfinished, this);
 }
 
 void FileCatalog::setEnabled (bool e)
@@ -922,7 +920,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb)
         tmb[i]->increaseRef ();
     }
 
-    idle_register.add(openRequestedUI, params);
+    g_idle_add (openRequestedUI, params);
 }
 
 void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed)
@@ -1097,108 +1095,99 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
             // and also those which effect is not pronounced after reducing the image size
             // TODO!!! could expose selections below via preferences
             if (fastmode) {
-                if (!options.fastexport_use_fast_pipeline) {
-                    if (options.fastexport_bypass_sharpening) {
-                        params.sharpening.enabled = false;
-                    }
-
-                    if (options.fastexport_bypass_sharpenEdge) {
-                        params.sharpenEdge.enabled = false;
-                    }
-
-                    if (options.fastexport_bypass_sharpenMicro) {
-                        params.sharpenMicro.enabled = false;
-                    }
-
-                    //if (options.fastexport_bypass_lumaDenoise) params.lumaDenoise.enabled = false;
-                    //if (options.fastexport_bypass_colorDenoise) params.colorDenoise.enabled = false;
-                    if (options.fastexport_bypass_defringe) {
-                        params.defringe.enabled = false;
-                    }
-
-                    if (options.fastexport_bypass_dirpyrDenoise) {
-                        params.dirpyrDenoise.enabled = false;
-                    }
-
-                    if (options.fastexport_bypass_sh_hq) {
-                        params.sh.hq = false;
-                    }
-
-                    if (options.fastexport_bypass_dirpyrequalizer) {
-                        params.dirpyrequalizer.enabled = false;
-                    }
-
-                    if (options.fastexport_bypass_wavelet) {
-                        params.wavelet.enabled = false;
-                    }
-
-                    //if (options.fastexport_bypass_raw_bayer_all_enhance) params.raw.bayersensor.all_enhance = false;
-                    if (options.fastexport_bypass_raw_bayer_dcb_iterations) {
-                        params.raw.bayersensor.dcb_iterations = 0;
-                    }
-
-                    if (options.fastexport_bypass_raw_bayer_dcb_enhance) {
-                        params.raw.bayersensor.dcb_enhance = false;
-                    }
-
-                    if (options.fastexport_bypass_raw_bayer_lmmse_iterations) {
-                        params.raw.bayersensor.lmmse_iterations = 0;
-                    }
-
-                    if (options.fastexport_bypass_raw_bayer_linenoise) {
-                        params.raw.bayersensor.linenoise = 0;
-                    }
-
-                    if (options.fastexport_bypass_raw_bayer_greenthresh) {
-                        params.raw.bayersensor.greenthresh = 0;
-                    }
-
-                    if (options.fastexport_bypass_raw_ccSteps) {
-                        params.raw.bayersensor.ccSteps = params.raw.xtranssensor.ccSteps = 0;
-                    }
-
-                    if (options.fastexport_bypass_raw_ca) {
-                        params.raw.ca_autocorrect = false;
-                        params.raw.cared = 0;
-                        params.raw.cablue = 0;
-                    }
-
-                    if (options.fastexport_bypass_raw_df) {
-                        params.raw.df_autoselect = false;
-                        params.raw.dark_frame = "";
-                    }
-
-                    if (options.fastexport_bypass_raw_ff) {
-                        params.raw.ff_AutoSelect = false;
-                        params.raw.ff_file = "";
-                    }
-
-                    params.raw.bayersensor.method = options.fastexport_raw_bayer_method;
-                    params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
-                    params.icm.input = options.fastexport_icm_input;
-                    params.icm.working = options.fastexport_icm_working;
-                    params.icm.output = options.fastexport_icm_output;
-                    params.icm.outputIntent = options.fastexport_icm_outputIntent;
-                    params.icm.outputBPC = options.fastexport_icm_outputBPC;
-                    params.icm.gamma = options.fastexport_icm_gamma;
+                if (options.fastexport_bypass_sharpening         ) {
+                    params.sharpening.enabled          = false;
                 }
 
-                if (params.resize.enabled) {
-                    params.resize.width = rtengine::min(params.resize.width, options.fastexport_resize_width);
-                    params.resize.height = rtengine::min(params.resize.height, options.fastexport_resize_height);
-                } else {
-                    params.resize.width = options.fastexport_resize_width;
-                    params.resize.height = options.fastexport_resize_height;
+                if (options.fastexport_bypass_sharpenEdge        ) {
+                    params.sharpenEdge.enabled         = false;
                 }
-                
-                params.resize.enabled = options.fastexport_resize_enabled;
-                params.resize.scale = options.fastexport_resize_scale;
-                params.resize.appliesTo = options.fastexport_resize_appliesTo;
-                params.resize.method = options.fastexport_resize_method;
-                params.resize.dataspec = options.fastexport_resize_dataspec;
+
+                if (options.fastexport_bypass_sharpenMicro       ) {
+                    params.sharpenMicro.enabled        = false;
+                }
+
+                //if (options.fastexport_bypass_lumaDenoise      ) params.lumaDenoise.enabled         = false;
+                //if (options.fastexport_bypass_colorDenoise     ) params.colorDenoise.enabled        = false;
+                if (options.fastexport_bypass_defringe           ) {
+                    params.defringe.enabled            = false;
+                }
+
+                if (options.fastexport_bypass_dirpyrDenoise      ) {
+                    params.dirpyrDenoise.enabled       = false;
+                }
+
+                if (options.fastexport_bypass_sh_hq              ) {
+                    params.sh.hq                       = false;
+                }
+
+                if (options.fastexport_bypass_dirpyrequalizer    ) {
+                    params.dirpyrequalizer.enabled     = false;
+                }
+
+                if (options.fastexport_bypass_wavelet    ) {
+                    params.wavelet.enabled     = false;
+                }
+
+                //if (options.fastexport_bypass_raw_bayer_all_enhance   ) params.raw.bayersensor.all_enhance       = false;
+                if (options.fastexport_bypass_raw_bayer_dcb_iterations  ) {
+                    params.raw.bayersensor.dcb_iterations    = 0;
+                }
+
+                if (options.fastexport_bypass_raw_bayer_dcb_enhance     ) {
+                    params.raw.bayersensor.dcb_enhance       = false;
+                }
+
+                if (options.fastexport_bypass_raw_bayer_lmmse_iterations) {
+                    params.raw.bayersensor.lmmse_iterations  = 0;
+                }
+
+                if (options.fastexport_bypass_raw_bayer_linenoise       ) {
+                    params.raw.bayersensor.linenoise         = 0;
+                }
+
+                if (options.fastexport_bypass_raw_bayer_greenthresh     ) {
+                    params.raw.bayersensor.greenthresh       = 0;
+                }
+
+                if (options.fastexport_bypass_raw_ccSteps        ) {
+                    params.raw.bayersensor.ccSteps = params.raw.xtranssensor.ccSteps = 0;
+                }
+
+                if (options.fastexport_bypass_raw_ca             ) {
+                    params.raw.ca_autocorrect = false;
+                    params.raw.cared = 0;
+                    params.raw.cablue = 0;
+                }
+
+                if (options.fastexport_bypass_raw_df             ) {
+                    params.raw.df_autoselect  = false;
+                    params.raw.dark_frame = "";
+                }
+
+                if (options.fastexport_bypass_raw_ff             ) {
+                    params.raw.ff_AutoSelect  = false;
+                    params.raw.ff_file = "";
+                }
+
+                params.raw.bayersensor.method  = options.fastexport_raw_bayer_method ;
+                params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
+                params.icm.input               = options.fastexport_icm_input        ;
+                params.icm.working             = options.fastexport_icm_working      ;
+                params.icm.output              = options.fastexport_icm_output       ;
+                params.icm.outputIntent        = options.fastexport_icm_outputIntent ;
+                params.icm.outputBPC           = options.fastexport_icm_outputBPC    ;
+                params.icm.gamma               = options.fastexport_icm_gamma        ;
+                params.resize.enabled          = options.fastexport_resize_enabled   ;
+                params.resize.scale            = options.fastexport_resize_scale     ;
+                params.resize.appliesTo        = options.fastexport_resize_appliesTo ;
+                params.resize.method           = options.fastexport_resize_method    ;
+                params.resize.dataspec         = options.fastexport_resize_dataspec  ;
+                params.resize.width            = options.fastexport_resize_width     ;
+                params.resize.height           = options.fastexport_resize_height    ;
             }
 
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params);
 
             int pw;
             int ph = BatchQueue::calcMaxThumbnailHeight();
@@ -1755,16 +1744,15 @@ void FileCatalog::reparseDirectory ()
 }
 
 #ifdef WIN32
+int winDirChangedUITread (void* cat)
+{
+    (static_cast<FileCatalog*>(cat))->reparseDirectory ();
+    return 0;
+}
 
 void FileCatalog::winDirChanged ()
 {
-    const auto func = [](gpointer data) -> gboolean {
-        static_cast<FileCatalog*>(data)->reparseDirectory();
-
-        return FALSE;
-    };
-
-    idle_register.add(func, this);
+    g_idle_add(winDirChangedUITread, this);
 }
 
 #else
@@ -1869,7 +1857,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
         params->catalog = this;
         params->tmb.push_back (tmb);
         tmb->increaseRef ();
-        idle_register.add(openRequestedUI, params);
+        g_idle_add (openRequestedUI, params);
 
     } catch(Gio::Error&) {}
 }

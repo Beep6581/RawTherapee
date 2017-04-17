@@ -364,7 +364,7 @@ int fscanf (IMFILE* f, const char* s ...)
     char buf[50], *endptr = nullptr;
     int copy_sz = f->size - f->pos;
 
-    if (copy_sz > static_cast<int>(sizeof(buf))) {
+    if (copy_sz > sizeof(buf)) {
         copy_sz = sizeof(buf) - 1;
     }
 

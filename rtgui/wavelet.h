@@ -40,7 +40,7 @@ class Wavelet :
 {
 public:
     Wavelet ();
-    ~Wavelet ();
+    virtual ~Wavelet ();
 
     bool wavComputed_ ();
     void adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop);
@@ -248,6 +248,4 @@ private:
 
     bool lastmedian, lastmedianlev, lastlinkedg, lastavoid, lastlipst, lasttmr, lastcbenab;
     int nextnlevel;
-
-    IdleRegister idle_register;
 };

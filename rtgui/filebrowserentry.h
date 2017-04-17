@@ -56,9 +56,6 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
     FileBrowserEntryIdleHelper* feih;
 
     ImgEditState state;
-    float crop_custom_ratio;
-
-    IdleRegister idle_register;
 
     bool onArea (CursorArea a, int x, int y);
     void updateCursor (int x, int y);

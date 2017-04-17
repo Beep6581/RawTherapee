@@ -88,6 +88,8 @@ private:
     sigc::connection   onamesconn;
     PopUpButton*       ointent;
     sigc::connection   ointentconn;
+    Gtk::RadioButton*  ofromdir;
+    Gtk::RadioButton*  ofromfile;
     Gtk::RadioButton*  iunchanged;
     MyFileChooserButton* ipDialog;
     Gtk::RadioButton::Group opts;
@@ -97,6 +99,7 @@ private:
     ICMPanelListener*  icmplistener;
 
     double dcpTemperatures[2];
+    bool enableLastICCWorkDirChange;
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);

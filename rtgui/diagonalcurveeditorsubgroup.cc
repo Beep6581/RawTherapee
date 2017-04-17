@@ -40,6 +40,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
     Gtk::PositionType sideStart = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
     Gtk::PositionType sideEnd = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_RIGHT : Gtk::POS_BOTTOM;
+    bool vExpand = options.curvebboxpos == 0 || options.curvebboxpos == 2;
 
     valLinear = (int)DCT_Linear;
     valUnchanged = (int)DCT_Unchanged;

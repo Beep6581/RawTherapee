@@ -1,4 +1,5 @@
 /*
+/*
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -601,7 +602,7 @@ void RawImageSource::vng4_demosaic ()
 
     const unsigned prefilters = ri->prefilters;
     const int width = W, height = H;
-    constexpr unsigned int colors = 4;
+    const int colors = 4;
     float (*image)[4];
 
     image = (float (*)[4]) calloc (height * width, sizeof * image);
@@ -647,7 +648,7 @@ void RawImageSource::vng4_demosaic ()
 
                 int colcount = 0;
 
-                for (unsigned int c = 0; c < colors; c++)
+                for (int c = 0; c < colors; c++)
                     if (c != fc(row, col)) {
                         *ip++ = c;
                         csum[row][col][colcount] = sum[c];
@@ -670,7 +671,7 @@ void RawImageSource::vng4_demosaic ()
                     sum[ip[1]] += pix[ip[0]] * mul[row & 15][col & 15][i];
                 }
 
-                for (unsigned int i = 0; i < colors - 1; i++, ip++) {
+                for (int i = 0; i < colors - 1; i++, ip++) {
                     pix[ip[0]] = sum[ip[0]] / csum[row & 15][col & 15][i];
                 }
             }
@@ -693,7 +694,7 @@ void RawImageSource::vng4_demosaic ()
                 int x2 = *cp++;
                 int weight = *cp++;
                 int grads = *cp++;
-                unsigned int color = fc(row + y1, col + x1);
+                int color = fc(row + y1, col + x1);
 
                 if (fc(row + y2, col + x2) != color) {
                     continue;
@@ -723,7 +724,7 @@ void RawImageSource::vng4_demosaic ()
                 int y = *cp++;
                 int x = *cp++;
                 *ip++ = (y * width + x) * 4;
-                unsigned int color = fc(row, col);
+                int color = fc(row, col);
 
                 if (fc(row + y, col + x) != color && fc(row + y * 2, col + x * 2) == color) {
                     *ip++ = (y * width + x) * 8 + color;
@@ -877,7 +878,7 @@ void RawImageSource::vng4_demosaic ()
 #define fc(row,col) \
     (ri->get_filters() >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 
-#define FORCC for (unsigned int c=0; c < colors; c++)
+#define FORCC for (int c=0; c < colors; c++)
 
 /*
    Patterned Pixel Grouping Interpolation by Alain Desbiolles
@@ -886,7 +887,7 @@ void RawImageSource::ppg_demosaic()
 {
     int width = W, height = H;
     int dir[5] = { 1, width, -1, -width, 1 };
-    int row, col, diff[2] = {}, guess[2], c, d, i;
+    int row, col, diff[2], guess[2], c, d, i;
     float (*pix)[4];
 
     float (*image)[4];
@@ -997,7 +998,7 @@ void RawImageSource::ppg_demosaic()
 
 void RawImageSource::border_interpolate(unsigned int border, float (*image)[4], unsigned int start, unsigned int end)
 {
-    unsigned row, col, y, x, f, sum[8];
+    unsigned row, col, y, x, f, c, sum[8];
     unsigned int width = W, height = H;
     unsigned int colors = 3;
 
@@ -1337,8 +1338,8 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array
     h2 /= hs;
     h3 /= hs;
     h4 /= hs;
-    int passref = 0;
-    int iter = 0;
+    int passref;
+    int iter;
 
     if(iterations <= 4) {
         iter = iterations - 1;
@@ -2630,7 +2631,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 
     int width = W, height = H;
     float (*image)[4];
-    unsigned int colors = 3;
+    int colors = 3;
 
     const double xyz_rgb[3][3] = {        /* XYZ from RGB */
         { 0.412453, 0.357580, 0.180423 },
@@ -2660,7 +2661,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     }
 
     for (i = 0; i < 3; i++)
-        for (unsigned int j = 0; j < colors; j++)
+        for (j = 0; j < colors; j++)
             for (xyz_cam[i][j] = k = 0; k < 3; k++) {
                 xyz_cam[i][j] += xyz_rgb[i][k] * imatrices.rgb_cam[k][j] / d65_white[i];
             }
@@ -3292,12 +3293,12 @@ void RawImageSource::fill_raw( float (*cache )[3], int x0, int y0, float** rawDa
 
 void RawImageSource::fill_border( float (*cache )[3], int border, int x0, int y0)
 {
-    unsigned f;
+    unsigned row, col, y, x, f, c;
     float sum[8];
-    constexpr unsigned int colors = 3;  // used in FORCC
+    const unsigned int colors = 3;  // used in FORCC
 
-    for (int row = y0; row < y0 + TILESIZE + TILEBORDER && row < H; row++) {
-        for (int col = x0; col < x0 + TILESIZE + TILEBORDER && col < W; col++) {
+    for (row = y0; row < y0 + TILESIZE + TILEBORDER && row < H; row++) {
+        for (col = x0; col < x0 + TILESIZE + TILEBORDER && col < W; col++) {
             if (col >= border && col < W - border && row >= border && row < H - border) {
                 col = W - border;
 
@@ -3308,8 +3309,8 @@ void RawImageSource::fill_border( float (*cache )[3], int border, int x0, int y0
 
             memset(sum, 0, sizeof sum);
 
-            for (int y = row - 1; y != row + 2; y++)
-                for (int x = col - 1; x != col + 2; x++)
+            for (y = row - 1; y != row + 2; y++)
+                for (x = col - 1; x != col + 2; x++)
                     if (y < H && y < y0 + TILESIZE + TILEBORDER && x < W && x < x0 + TILESIZE + TILEBORDER) {
                         f = fc(y, x);
                         sum[f] += cache[(y - y0 + TILEBORDER) * CACHESIZE + TILEBORDER + x - x0][f];
@@ -3360,13 +3361,13 @@ void RawImageSource::restore_from_buffer(float (*image)[3], float (*buffer)[2])
 void RawImageSource::dcb_hid(float (*image)[3], int x0, int y0)
 {
     const int u = CACHESIZE;
-    int rowMin, colMin, rowMax, colMax;
+    int rowMin, colMin, rowMax, colMax, c;
     dcb_initTileLimits(colMin, rowMin, colMax, rowMax, x0, y0, 2);
 
 // simple green bilinear in R and B pixels
     for (int row = rowMin; row < rowMax; row++)
-        for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col; col < colMax; col += 2, indx += 2) {
-            assert(indx - u - 1 >= 0 && indx + u + 1 < u * u);
+        for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col, c = FC(y0 - TILEBORDER + row, x0 - TILEBORDER + col); col < colMax; col += 2, indx += 2) {
+            assert(indx - u - 1 >= 0 && indx + u + 1 < u * u && c >= 0 && c < 3);
 
             image[indx][1] = 0.25*(image[indx-1][1]+image[indx+1][1]+image[indx-u][1]+image[indx+u][1]);
         }
@@ -3417,13 +3418,13 @@ void RawImageSource::dcb_color(float (*image)[3], int x0, int y0)
 // green correction
 void RawImageSource::dcb_hid2(float (*image)[3], int x0, int y0)
 {
-    const int v = 2 * CACHESIZE;
+    const int u = CACHESIZE, v = 2 * CACHESIZE;
     int rowMin, colMin, rowMax, colMax;
     dcb_initTileLimits(colMin, rowMin, colMax, rowMax, x0, y0, 2);
 
     for (int row = rowMin; row < rowMax; row++) {
         for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col, c = FC(y0 - TILEBORDER + row, x0 - TILEBORDER + col); col < colMax; col += 2, indx += 2) {
-            assert(indx - v >= 0 && indx + v < CACHESIZE * CACHESIZE);
+            assert(indx - v >= 0 && indx + v < u * u);
 
 //Jacek comment: one multiplication less
             image[indx][1] = image[indx][c] +
@@ -3591,11 +3592,11 @@ void RawImageSource::dcb_correction2(float (*image)[3], uint8_t *map, int x0, in
 // image refinement
 void RawImageSource::dcb_refinement(float (*image)[3], uint8_t *map, int x0, int y0)
 {
-    const int u = CACHESIZE, v = 2 * CACHESIZE;
+    const int u = CACHESIZE, v = 2 * CACHESIZE, w = 3 * CACHESIZE;
     int rowMin, colMin, rowMax, colMax;
     dcb_initTileLimits(colMin, rowMin, colMax, rowMax, x0, y0, 4);
 
-    float f0, f1, f2, g1, h0, h1, h2, g2;
+    float f0, f1, f2, g1, h0, h1, h2, g2, current;
 
     for (int row = rowMin; row < rowMax; row++)
         for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col, c = FC(y0 - TILEBORDER + row, x0 - TILEBORDER + col); col < colMax; col += 2, indx += 2) {
@@ -3936,7 +3937,7 @@ void RawImageSource::xtransborder_interpolate (int border)
 {
     const int height = H, width = W;
 
-    int xtrans[6][6];
+    char xtrans[6][6];
     ri->getXtransMatrix(xtrans);
 
     for (int row = 0; row < height; row++)
@@ -4000,7 +4001,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
         plistener->setProgress (progress);
     }
 
-    int xtrans[6][6];
+    char xtrans[6][6];
     ri->getXtransMatrix(xtrans);
 
     constexpr short  orth[12] = { 1, 0, 0, 1, -1, 0, 0, -1, 1, 0, 0, 1 },
@@ -4011,7 +4012,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
     // sgrow/sgcol is the offset in the sensor matrix of the solitary
     // green pixels
-    ushort sgrow = 0, sgcol = 0;
+    ushort sgrow, sgcol;
 
     const int height = H, width = W;
 
@@ -4720,16 +4721,17 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
 
                 /* Average the most homogeneous pixels for the final result: */
-                uint8_t hm[8] = {};
+                uint8_t hm[8];
 
                 for (int row = MIN(top, 8); row < mrow - 8; row++)
                     for (int col = MIN(left, 8); col < mcol - 8; col++) {
+                        int d = 0;
 
-                        for (int d = 0; d < 4; d++) {
+                        for (; d < 4; d++) {
                             hm[d] = homosum[d][row][col];
                         }
 
-                        for (int d = 4; d < ndir; d++) {
+                        for (; d < ndir; d++) {
                             hm[d] = homosum[d][row][col];
 
                             if (hm[d - 4] < hm[d]) {
@@ -4743,7 +4745,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab)
 
                         uint8_t maxval = homosummax[row][col];
 
-                        for (int d = 0; d < ndir; d++)
+                        for (d = 0; d < ndir; d++)
                             if (hm[d] >= maxval) {
                                 FORC3 avg[c] += rgb[d][row][col][c];
                                 avg[3]++;
@@ -4790,7 +4792,7 @@ void RawImageSource::fast_xtrans_interpolate ()
     const int height = H, width = W;
 
     xtransborder_interpolate (1);
-    int xtrans[6][6];
+    char xtrans[6][6];
     ri->getXtransMatrix(xtrans);
 
     #pragma omp parallel for

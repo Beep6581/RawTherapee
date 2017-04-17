@@ -12,7 +12,7 @@
 # Copyright 2010 henrik andersson
 #=============================================================================
 
-set(MACINTEGRATION_FIND_REQUIRED ${MacIntegration_FIND_REQUIRED})
+SET(MACINTEGRATION_FIND_REQUIRED ${MacIntegration_FIND_REQUIRED})
 
 find_path(MACINTEGRATION_INCLUDE_DIR gtkosxapplication.h PATH_SUFFIXES gtkmacintegration gtkmacintegration-gtk3)
 mark_as_advanced(MACINTEGRATION_INCLUDE_DIR)
@@ -26,7 +26,7 @@ mark_as_advanced(MACINTEGRATION_LIBRARY)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MACINTEGRATION DEFAULT_MSG MACINTEGRATION_LIBRARY MACINTEGRATION_INCLUDE_DIR)
 
-if(MACINTEGRATION_FOUND)
-    set(MacIntegration_LIBRARIES ${MACINTEGRATION_LIBRARY})
-    set(MacIntegration_INCLUDE_DIRS ${MACINTEGRATION_INCLUDE_DIR})
-endif()
+IF(MACINTEGRATION_FOUND)
+    SET(MacIntegration_LIBRARIES ${MACINTEGRATION_LIBRARY})
+    SET(MacIntegration_INCLUDE_DIRS ${MACINTEGRATION_INCLUDE_DIR})
+ENDIF(MACINTEGRATION_FOUND)

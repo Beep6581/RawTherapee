@@ -29,8 +29,6 @@
 
 class ToneCurve : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener
 {
-private:
-    IdleRegister idle_register;
 
 protected:
     // from HLRecovery
@@ -75,6 +73,7 @@ protected:
     bool nextHLRecons;
 
 public:
+
     ToneCurve ();
     ~ToneCurve ();
 
