@@ -41,7 +41,9 @@ export RT_CACHE="${HOME}/Library/Application Support/RawTherapee/cache"
 case "$1" in
     -psn_*) shift ;;
 esac
-
+if [[ -d "/tmp/RawTherapee.app" ]]; then
+  rm -rf "/tmp/RawTherapee.app"
+fi
 ln -sf "${app}" /tmp
 
 exec "${cwd}/rawtherapee-bin" "$@"
