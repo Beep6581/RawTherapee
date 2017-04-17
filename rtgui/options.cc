@@ -480,6 +480,7 @@ void Options::setDefaults ()
     fastexport_resize_dataspec           = 3;
     fastexport_resize_width              = 900;
     fastexport_resize_height             = 900;
+    fastexport_use_fast_pipeline         = true;
 
     clutsDir = "./cluts";
 
@@ -710,6 +711,7 @@ void Options::setDefaults ()
     lastVibranceCurvesDir = "";
     lastProfilingReferenceDir = "";
     lastBWCurvesDir = "";
+    lastLensProfileDir = "";
     maxRecentFolders = 15;
 }
 
@@ -1784,6 +1786,9 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            )) {
                     fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
                 }
+                if (keyFile.has_key ("Fast Export", "fastexport_use_fast_pipeline"            )) {
+                    fastexport_use_fast_pipeline           = keyFile.get_integer ("Fast Export", "fastexport_use_fast_pipeline"            );
+                }
             }
 
             if (keyFile.has_group ("Dialogs")) {
@@ -1802,6 +1807,7 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet (keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
+                safeDirGet (keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
             }
 
 // --------------------------------------------------------------------------------------------------------
@@ -2142,6 +2148,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Fast Export", "fastexport_resize_dataspec", fastexport_resize_dataspec          );
         keyFile.set_integer ("Fast Export", "fastexport_resize_width", fastexport_resize_width             );
         keyFile.set_integer ("Fast Export", "fastexport_resize_height", fastexport_resize_height            );
+        keyFile.set_integer ("Fast Export", "fastexport_use_fast_pipeline", fastexport_use_fast_pipeline    );
 
         keyFile.set_string ("Dialogs", "LastIccDir", lastIccDir);
         keyFile.set_string ("Dialogs", "LastDarkframeDir", lastDarkframeDir);
@@ -2157,6 +2164,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
         keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
+        keyFile.set_string ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
 
         keyData = keyFile.to_data ();
 

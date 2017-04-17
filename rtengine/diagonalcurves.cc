@@ -33,7 +33,6 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
 {
 
     ppn = poly_pn > 65500 ? 65500 : poly_pn;
-    bool identity = true;
 
     if (ppn < 500) {
         hashSize = 100;    // Arbitrary cut-off value, but mutliple of 10
@@ -46,6 +45,7 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
     if (p.size() < 3) {
         kind = DCT_Empty;
     } else {
+        bool identity = true;
         kind = (DiagonalCurveType)p[0];
 
         if (kind == DCT_Linear || kind == DCT_Spline || kind == DCT_NURBS) {
@@ -241,8 +241,8 @@ void DiagonalCurve::NURBS_set ()
         nbr_points = (int)(((double)(ppn + N - 2) * sc_length[i / 3] ) / total_length);
 
         if (nbr_points < 0) {
-            for(size_t it = 0; it < sc_x.size(); it += 3) {
-                printf("sc_length[%zu/3]=%f \n", it, sc_length[it / 3]);
+            for(unsigned int it = 0; it < sc_x.size(); it += 3) { // used unsigned int instead of size_t to avoid %zu in printf
+                printf("sc_length[%u/3]=%f \n", it, sc_length[it / 3]);
             }
 
             printf("NURBS diagonal curve: error detected!\n i=%u nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f", i, nbr_points, ppn, N, sc_length[i / 3], total_length);
@@ -364,7 +364,6 @@ double DiagonalCurve::getVal (double t) const
         }
 
         return poly_y[k_lo] + (t - poly_x[k_lo]) * dyByDx[k_lo];
-        break;
     }
 
     case DCT_Empty :

@@ -952,7 +952,7 @@ void ColorToning::autoOpenCurve  ()
 void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
-    float R, G, B;
+    float R = 0.f, G = 0.f, B = 0.f;
 
     if (callerId == 1) {         // ch - main curve
         Color::hsv2rgb01(float(valY), 1.0f, 0.5f, R, G, B);

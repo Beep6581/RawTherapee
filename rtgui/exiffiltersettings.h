@@ -36,8 +36,8 @@ public:
     double shutterTo;
     double focalFrom;
     double focalTo;
-    int isoFrom;
-    int isoTo;
+    unsigned isoFrom;
+    unsigned isoTo;
 
     bool filterFNumber;
     bool filterShutter;

@@ -161,6 +161,8 @@ private:
     WinDirMonitor* wdMonitor;
 #endif
 
+    IdleRegister idle_register;
+
     void addAndOpenFile (const Glib::ustring& fname);
     void checkAndAddFile (Glib::RefPtr<Gio::File> info);
     std::vector<Glib::ustring> getFileList ();

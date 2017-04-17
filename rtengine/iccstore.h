@@ -68,11 +68,6 @@ public:
 
     void init(const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir, bool loadAll);
 
-    // Main monitors standard profile name, from OS
-    void          findDefaultMonitorProfile();
-    cmsHPROFILE   getDefaultMonitorProfile() const;
-    Glib::ustring getDefaultMonitorProfileName() const;
-
     cmsHPROFILE      workingSpace(const Glib::ustring& name) const;
     cmsHPROFILE      workingSpaceGamma(const Glib::ustring& name) const;
     TMatrix          workingSpaceMatrix(const Glib::ustring& name) const;
@@ -82,6 +77,9 @@ public:
     cmsHPROFILE      getProfile(const Glib::ustring& name) const;
     cmsHPROFILE      getStdProfile(const Glib::ustring& name) const;
     ProfileContent   getContent(const Glib::ustring& name) const;
+
+    Glib::ustring getDefaultMonitorProfileName() const;
+    void setDefaultMonitorProfileName(const Glib::ustring &name);
 
     cmsHPROFILE      getXYZProfile() const;
     cmsHPROFILE      getsRGBProfile() const;

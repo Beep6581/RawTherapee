@@ -27,7 +27,6 @@ CheckBox::CheckBox (Glib::ustring label, bool const& multiImageVal)
     : Gtk::CheckButton (label)
     , listener (nullptr)
     , lastActive (false)
-    , inBatchMode (false)
     , multiImage (multiImageVal)
 {
     conn = signal_toggled().connect( sigc::mem_fun(*this, &CheckBox::buttonToggled) );
@@ -36,7 +35,7 @@ CheckBox::CheckBox (Glib::ustring label, bool const& multiImageVal)
 void CheckBox::buttonToggled ()
 {
 
-    CheckValue newValue;
+    CheckValue newValue = CheckValue::unchanged;
 
     if (multiImage) {
         if (get_inconsistent()) {

@@ -204,7 +204,7 @@ void SHCSelector::updateBackBuffer()
             cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
             cr->stroke ();
         }
-        /*
+        / *
         else if (i==litCursor) {
             // prelight
             Gdk::RGBA c = style->get_background_color(Gtk::STATE_FLAG_PRELIGHT);

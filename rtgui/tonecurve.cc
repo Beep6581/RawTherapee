@@ -188,6 +188,8 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
 
 ToneCurve::~ToneCurve ()
 {
+    idle_register.destroy();
+
     delete curveEditorG;
     delete curveEditorG2;
 }
@@ -727,15 +729,8 @@ void ToneCurve::waitForAutoExp ()
     method->set_sensitive(false);
 }
 
-int autoExpChangedUI (void* data)
-{
-    (static_cast<ToneCurve*>(data))->autoExpComputed_ ();
-    return 0;
-}
-
 void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons)
 {
-
     nextBlack = black;
     nextExpcomp = expcomp;
     nextBrightness = bright;
@@ -743,7 +738,14 @@ void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black
     nextHlcompr = hlcompr;
     nextHlcomprthresh = hlcomprthresh;
     nextHLRecons = hlrecons;
-    g_idle_add (autoExpChangedUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ToneCurve*>(data)->autoExpComputed_();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void ToneCurve::enableAll ()

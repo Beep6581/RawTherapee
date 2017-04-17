@@ -56,30 +56,30 @@ InspectorBuffer::~InspectorBuffer() {
 }
 */
 
-int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
-{
-
-    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, nullptr);
-
-    if (!idata) {
-        return 0;
-    }
-
-    int deg = 0;
-
-    if (idata->hasExif()) {
-        if      (idata->getOrientation() == "Rotate 90 CW" ) {
-            deg = 90;
-        } else if (idata->getOrientation() == "Rotate 180"   ) {
-            deg = 180;
-        } else if (idata->getOrientation() == "Rotate 270 CW") {
-            deg = 270;
-        }
-    }
-
-    delete idata;
-    return deg;
-}
+//int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
+//{
+//
+//    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, nullptr);
+//
+//    if (!idata) {
+//        return 0;
+//    }
+//
+//    int deg = 0;
+//
+//    if (idata->hasExif()) {
+//        if      (idata->getOrientation() == "Rotate 90 CW" ) {
+//            deg = 90;
+//        } else if (idata->getOrientation() == "Rotate 180"   ) {
+//            deg = 180;
+//        } else if (idata->getOrientation() == "Rotate 270 CW") {
+//            deg = 270;
+//        }
+//    }
+//
+//    delete idata;
+//    return deg;
+//}
 
 Inspector::Inspector () : currImage(nullptr), zoom(0.0), active(false)
 {

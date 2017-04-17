@@ -28,10 +28,17 @@
 #include <shlobj.h>
 #endif
 
+#include "settings.h"
 
 using namespace std;
 using namespace rtengine;
 
+
+namespace rtengine {
+
+extern const Settings* settings;
+
+}
 
 LCPModelCommon::LCPModelCommon() :
     foc_len_x(-1.0f),
@@ -184,7 +191,9 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
     swapXY  = (rot == 90  || rot == 270);
     bool mirrorX = (rot == 90  || rot == 180);
     bool mirrorY = (rot == 180 || rot == 270);
-    //printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+    if (settings->verbose) {
+        printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+    }
 
     pProf->calcParams(vignette ? 0 : 1, focalLength, focusDist, aperture, &mc, nullptr, nullptr);
     mc.prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
@@ -198,24 +207,52 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
     }
 
     enableCA = !vignette && focusDist > 0;
+    isFisheye = pProf->isFisheye;
 }
 
-void LCPMapper::correctDistortion(double& x, double& y) const
+void LCPMapper::correctDistortion(double& x, double& y, double scale) const
 {
-    double xd = (x - mc.x0) / mc.fx, yd = (y - mc.y0) / mc.fy;
+    if (isFisheye) {
+        double u = x * scale;
+        double v = y * scale;
+        double u0 = mc.x0 * scale;
+        double v0 = mc.y0 * scale;
+        double du = (u - u0);
+        double dv = (v - v0);
+        double fx = mc.fx;
+        double fy = mc.fy;
+        double k1 = mc.param[0];
+        double k2 = mc.param[1];
+        double r = sqrt(du * du + dv * dv);
+        double f = sqrt(fx*fy / (scale * scale));
+        double th = atan2(r, f);
+        double th2 = th * th;
+        double cfact = (((k2 * th2 + k1) * th2 + 1) * th) / r;
+        double ud = cfact * fx * du + u0;
+        double vd = cfact * fy * dv + v0;
 
-    const LCPModelCommon::Param aDist = mc.param;
-    double rsqr      = xd * xd + yd * yd;
-    double xfac = aDist[swapXY ? 3 : 4], yfac = aDist[swapXY ? 4 : 3];
+        x = ud;
+        y = vd;
+    } else {
+        x *= scale;
+        y *= scale;
+        double x0 = mc.x0 * scale;
+        double y0 = mc.y0 * scale;
+        double xd = (x - x0) / mc.fx, yd = (y - y0) / mc.fy;
 
-    double commonFac = (((aDist[2] * rsqr + aDist[1]) * rsqr + aDist[0]) * rsqr + 1.)
-                       + 2. * (yfac * yd + xfac * xd);
+        const LCPModelCommon::Param aDist = mc.param;
+        double rsqr      = xd * xd + yd * yd;
+        double xfac = aDist[swapXY ? 3 : 4], yfac = aDist[swapXY ? 4 : 3];
 
-    double xnew = xd * commonFac + xfac * rsqr;
-    double ynew = yd * commonFac + yfac * rsqr;
+        double commonFac = (((aDist[2] * rsqr + aDist[1]) * rsqr + aDist[0]) * rsqr + 1.)
+            + 2. * (yfac * yd + xfac * xd);
 
-    x = xnew * mc.fx + mc.x0;
-    y = ynew * mc.fy + mc.y0;
+        double xnew = xd * commonFac + xfac * rsqr;
+        double ynew = yd * commonFac + yfac * rsqr;
+
+        x = xnew * mc.fx + x0;
+        y = ynew * mc.fy + y0;
+    }
 }
 
 void LCPMapper::correctCA(double& x, double& y, int channel) const
@@ -365,7 +402,9 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
 
     XML_ParserFree(parser);
 
-    //printf("Parsing %s\n", fname.c_str());
+    if (settings->verbose) {
+        printf("Parsing %s\n", fname.c_str());
+    }
     // Two phase filter: first filter out the very rough ones, that distord the average a lot
     // force it, even if there are few frames (community profiles)
     filterBadFrames(2.0, 0);
@@ -433,7 +472,9 @@ int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft)
             }
         }
 
-        //printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
+        if (settings->verbose) {
+            printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
+        }
     }
 
     return filtered;
@@ -573,9 +614,13 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
             break;
         }
 
-        //printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
+        if (settings->verbose) {
+            printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
+        }
     } else {
-        printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
+        if (settings->verbose) {
+            printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
+        }
     }
 }
 
@@ -678,7 +723,9 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
             }
 
             strcpy(pProf->lastTag, nameStart);
-            XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));
+
+            pProf->handle_text(attr[i+1]);
+            //XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));
         }
     }
 }
@@ -690,24 +737,33 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     if (!pProf->inCamProfiles || pProf->inAlternateLensID || pProf->inAlternateLensNames || *pProf->inInvalidTag) {
         return;
     }
+    
+    for (int i = 0; i < len; ++i) {
+        pProf->textbuf << s[i];
+    }
+}
 
+
+void LCPProfile::handle_text(std::string text)
+{
+    const char *raw = text.c_str();
+    
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace = true;
-    int i = 0;
-
-    while (i < len && onlyWhiteSpace) {
-        onlyWhiteSpace = isspace(s[i]);
-        i++;
+    for (size_t i = 0; i < text.size(); ++i) {
+        if (!isspace(text[i])) {
+            onlyWhiteSpace = false;
+            break;
+        }
     }
 
     if (onlyWhiteSpace) {
         return;
     }
 
+    LCPProfile *pProf = this;
+
     // convert to null terminated
-    char raw[len + 1];
-    memcpy(raw, s, len);
-    raw[len] = 0;
     char* tag = pProf->lastTag;
 
     // Common data section
@@ -732,15 +788,12 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     // WARNING: called by different threads, that may run on different local settings,
     // so don't use system params
     if (atof("1,2345") == 1.2345) {
-        char* p = raw;
-
-        while (*p) {
-            if (*p == '.') {
-                *p = ',';
+        for (size_t i = 0; i < text.size(); ++i) {
+            if (text[i] == '.') {
+                text[i] = ',';
             }
-
-            p++;
         }
+        raw = text.c_str();
     }
 
     if (!pProf->firstLIDone) {
@@ -788,6 +841,9 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
 void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el)
 {
     LCPProfile *pProf = static_cast<LCPProfile*>(pLCPProfile);
+
+    pProf->handle_text(pProf->textbuf.str());
+    pProf->textbuf.str("");
 
     // We ignore everything in dirty tag till it's gone
     if (*pProf->inInvalidTag) {
@@ -846,7 +902,9 @@ LCPProfile* LCPStore::getProfile (Glib::ustring filename)
 
     // Add profile (if exists)
     profileCache[filename] = new LCPProfile(filename);
-    //profileCache[filename]->print();
+    if (settings->verbose) {
+        profileCache[filename]->print();
+    }
     return profileCache[filename];
 }
 
@@ -866,7 +924,6 @@ Glib::ustring LCPStore::getDefaultCommonDirectory() const
 
 #ifdef WIN32
     WCHAR pathW[MAX_PATH] = {0};
-    char pathA[MAX_PATH];
 
     if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_COMMON_APPDATA, false)) {
         char pathA[MAX_PATH];

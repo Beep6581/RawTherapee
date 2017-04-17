@@ -129,6 +129,8 @@ public:
     void updateTabsUsesIcons (bool useIcons);
     void updateHistogramPosition (int oldPosition, int newPosition);
 
+    void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile);
+
     Gtk::Paned* catalogPane;
 
 private:
@@ -193,7 +195,6 @@ private:
     ToolPanelCoordinator* tpc;
     RTWindow* parent;
     //SaveAsDialog* saveAsDialog;
-    BatchToolPanelCoordinator* btpCoordinator;
     FilePanel* fPanel;
 
     bool firstProcessingDone;

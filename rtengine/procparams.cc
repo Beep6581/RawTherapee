@@ -901,6 +901,7 @@ void RAWParams::BayerSensor::setPixelShiftDefaults()
     pixelShiftExp0 = false;
     pixelShiftLmmse = false;
     pixelShiftEqualBright = false;
+    pixelShiftEqualBrightChannel = false;
     pixelShiftNonGreenCross = true;
     pixelShiftNonGreenCross2 = false;
     pixelShiftNonGreenAmaze = false;
@@ -945,8 +946,8 @@ void RAWParams::setDefaults()
     deadPixelFilter = false;
     hotdeadpix_thresh = 100;
     bayersensor.setPixelShiftDefaults();
-    bayersensor.pixelshiftShowMotion = false;
-    bayersensor.pixelshiftShowMotionMaskOnly = false;
+    bayersensor.pixelShiftShowMotion = false;
+    bayersensor.pixelShiftShowMotionMaskOnly = false;
 
 }
 
@@ -1168,8 +1169,8 @@ void ProcParams::setDefaults ()
     epd.enabled = false;
     epd.strength = 0.5;
     epd.gamma = 1.0;
-    epd.edgeStopping = 1.4;
-    epd.scale = 0.3;
+    epd.edgeStopping = 0.5;
+    epd.scale = 0.1;
     epd.reweightingIterates = 0;
 
     sh.enabled       = false;
@@ -3451,12 +3452,12 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_double ("RAW Bayer", "PixelShiftRedBlueWeight", raw.bayersensor.pixelShiftRedBlueWeight );
         }
 
-        if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotion) {
-            keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelshiftShowMotion );
+        if (!pedited || pedited->raw.bayersensor.pixelShiftShowMotion) {
+            keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotion", raw.bayersensor.pixelShiftShowMotion );
         }
 
-        if (!pedited || pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly) {
-            keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotionMaskOnly", raw.bayersensor.pixelshiftShowMotionMaskOnly );
+        if (!pedited || pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly) {
+            keyFile.set_boolean ("RAW Bayer", "PixelShiftShowMotionMaskOnly", raw.bayersensor.pixelShiftShowMotionMaskOnly );
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftAutomatic) {
@@ -3505,6 +3506,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftEqualBright) {
             keyFile.set_boolean ("RAW Bayer", "pixelShiftEqualBright", raw.bayersensor.pixelShiftEqualBright );
+        }
+
+        if (!pedited || pedited->raw.bayersensor.pixelShiftEqualBrightChannel) {
+            keyFile.set_boolean ("RAW Bayer", "pixelShiftEqualBrightChannel", raw.bayersensor.pixelShiftEqualBrightChannel );
         }
 
         if (!pedited || pedited->raw.bayersensor.pixelShiftNonGreenCross) {
@@ -7680,18 +7685,18 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotion"))  {
-                raw.bayersensor.pixelshiftShowMotion = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotion");
+                raw.bayersensor.pixelShiftShowMotion = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotion");
 
                 if (pedited) {
-                    pedited->raw.bayersensor.pixelshiftShowMotion = true;
+                    pedited->raw.bayersensor.pixelShiftShowMotion = true;
                 }
             }
 
             if (keyFile.has_key ("RAW Bayer", "PixelShiftShowMotionMaskOnly"))  {
-                raw.bayersensor.pixelshiftShowMotionMaskOnly = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotionMaskOnly");
+                raw.bayersensor.pixelShiftShowMotionMaskOnly = keyFile.get_boolean("RAW Bayer", "PixelShiftShowMotionMaskOnly");
 
                 if (pedited) {
-                    pedited->raw.bayersensor.pixelshiftShowMotionMaskOnly = true;
+                    pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly = true;
                 }
             }
 
@@ -7788,6 +7793,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->raw.bayersensor.pixelShiftEqualBright = true;
+                }
+            }
+
+            if (keyFile.has_key ("RAW Bayer", "pixelShiftEqualBrightChannel"))  {
+                raw.bayersensor.pixelShiftEqualBrightChannel = keyFile.get_boolean("RAW Bayer", "pixelShiftEqualBrightChannel");
+
+                if (pedited) {
+                    pedited->raw.bayersensor.pixelShiftEqualBrightChannel = true;
                 }
             }
 
@@ -8264,8 +8277,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.pixelShiftSigma == other.raw.bayersensor.pixelShiftSigma
         && raw.bayersensor.pixelShiftSum == other.raw.bayersensor.pixelShiftSum
         && raw.bayersensor.pixelShiftRedBlueWeight == other.raw.bayersensor.pixelShiftRedBlueWeight
-        && raw.bayersensor.pixelshiftShowMotion == other.raw.bayersensor.pixelshiftShowMotion
-        && raw.bayersensor.pixelshiftShowMotionMaskOnly == other.raw.bayersensor.pixelshiftShowMotionMaskOnly
+        && raw.bayersensor.pixelShiftShowMotion == other.raw.bayersensor.pixelShiftShowMotion
+        && raw.bayersensor.pixelShiftShowMotionMaskOnly == other.raw.bayersensor.pixelShiftShowMotionMaskOnly
         && raw.bayersensor.pixelShiftAutomatic == other.raw.bayersensor.pixelShiftAutomatic
         && raw.bayersensor.pixelShiftNonGreenHorizontal == other.raw.bayersensor.pixelShiftNonGreenHorizontal
         && raw.bayersensor.pixelShiftNonGreenVertical == other.raw.bayersensor.pixelShiftNonGreenVertical
@@ -8278,6 +8291,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && raw.bayersensor.pixelShiftExp0 == other.raw.bayersensor.pixelShiftExp0
         && raw.bayersensor.pixelShiftLmmse == other.raw.bayersensor.pixelShiftLmmse
         && raw.bayersensor.pixelShiftEqualBright == other.raw.bayersensor.pixelShiftEqualBright
+        && raw.bayersensor.pixelShiftEqualBrightChannel == other.raw.bayersensor.pixelShiftEqualBrightChannel
         && raw.bayersensor.pixelShiftNonGreenCross == other.raw.bayersensor.pixelShiftNonGreenCross
         && raw.bayersensor.pixelShiftNonGreenCross2 == other.raw.bayersensor.pixelShiftNonGreenCross2
         && raw.bayersensor.pixelShiftNonGreenAmaze == other.raw.bayersensor.pixelShiftNonGreenAmaze
@@ -8339,7 +8353,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && wavelet.sup == other.wavelet.sup
         && wavelet.sky == other.wavelet.sky
         && wavelet.thres == other.wavelet.thres
-        && wavelet.threshold == other.wavelet.threshold
         && wavelet.chroma == other.wavelet.chroma
         && wavelet.chro == other.wavelet.chro
         && wavelet.tmr == other.wavelet.tmr

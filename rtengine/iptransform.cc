@@ -25,22 +25,23 @@
 #include "rt_math.h"
 #include "sleef.c"
 
+
 using namespace std;
 
 namespace
 {
 
-float pow3(float x)
+float pow3 (float x)
 {
     return x * x * x;
 }
 
-float pow4(float x)
+float pow4 (float x)
 {
     return (x * x) * (x * x);
 }
 
-float pown(float x, int n)
+float pown (float x, int n)
 {
 
     switch (n) {
@@ -51,49 +52,50 @@ float pown(float x, int n)
             return x * x;
 
         case 4:
-            return pow4(x);
+            return pow4 (x);
 
         case 6:
-            return (x * x) * pow4(x);
+            return (x * x) * pow4 (x);
 
         case 8:
-            return pow4(x) * pow4(x);
+            return pow4 (x) * pow4 (x);
 
         default:
-            return pow_F(x, n);
+            return pow_F (x, n);
     }
 }
 
-float normn(float a, float b, int n)
+float normn (float a, float b, int n)
 {
     switch (n) {
         case 2:
-            return sqrtf(a * a + b * b);
+            return sqrtf (a * a + b * b);
 
         case 4:
-            return sqrtf(sqrtf(pow4(a) + pow4(b)));
+            return sqrtf (sqrtf (pow4 (a) + pow4 (b)));
 
         case 6:
-            return sqrtf(xcbrtf(pow3(a) * pow3(a) + pow3(b) * pow3(b)));
+            return sqrtf (xcbrtf (pow3 (a) * pow3 (a) + pow3 (b) * pow3 (b)));
 
         case 8:
-            return sqrtf(sqrtf(sqrtf(pow4(a) * pow4(a) + pow4(b) * pow4(b))));
+            return sqrtf (sqrtf (sqrtf (pow4 (a) * pow4 (a) + pow4 (b) * pow4 (b))));
 
         default:
-            return pow_F(pown(a, n) + pown(b, n), 1.f / n);
+            return pow_F (pown (a, n) + pown (b, n), 1.f / n);
     }
 }
 
+
 void correct_distortion(const rtengine::LCPMapper *lcp, double &x, double &y,
-                        int cx, int cy)
+                        int cx, int cy, double scale)
 {
-    assert(lcp);
-    
+    assert (lcp);
+
     x += cx;
     y += cy;
-    lcp->correctDistortion(x, y);
-    x -= cx;
-    y -= cy;
+    lcp->correctDistortion(x, y, scale);
+    x -= (cx * scale);
+    y -= (cy * scale);
 }
 
 }
@@ -127,26 +129,26 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double oW = W, oH = H;
     double w2 = (double) oW  / 2.0 - 0.5;
     double h2 = (double) oH  / 2.0 - 0.5;
-    double maxRadius = sqrt( (double)( oW * oW + oH * oH ) ) / 2;
+    double maxRadius = sqrt ( (double) ( oW * oW + oH * oH ) ) / 2;
 
     // auxiliary variables for distortion correction
     bool needsDist = needsDistortion();  // for performance
     double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
-    double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
+    double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
+    double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
-    double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-oW * oW * tan(vpalpha) * tan(vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan(vpalpha) * sqrt(16 * maxRadius * maxRadius + oW * oW * tan(vpalpha) * tan(vpalpha))) / (maxRadius * maxRadius * 8)));
+    double vpteta  = fabs (vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oW * oW * tan (vpalpha) * tan (vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan (vpalpha) * sqrt (16 * maxRadius * maxRadius + oW * oW * tan (vpalpha) * tan (vpalpha))) / (maxRadius * maxRadius * 8)));
     double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
-    double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-oH * oH * tan(hpalpha) * tan(hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan(hpalpha) * sqrt(16 * maxRadius * maxRadius + oH * oH * tan(hpalpha) * tan(hpalpha))) / (maxRadius * maxRadius * 8)));
+    double hpteta  = fabs (hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oH * oH * tan (hpalpha) * tan (hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan (hpalpha) * sqrt (16 * maxRadius * maxRadius + oH * oH * tan (hpalpha) * tan (hpalpha))) / (maxRadius * maxRadius * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
     double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
@@ -155,11 +157,14 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         double x_d = src[i].x, y_d = src[i].y;
 
         if (pLCPMap && params->lensProf.useDist) {
-            correct_distortion(pLCPMap, x_d, y_d, 0, 0);
+            correct_distortion (pLCPMap, x_d, y_d, 0, 0, ascale);
+        } else {
+            x_d *= ascale;
+            y_d *= ascale;
         }
 
-        y_d = ascale * (y_d - h2);
-        x_d = ascale * (x_d - w2);
+        x_d += ascale * (0 - w2);     // centering x coord & scale
+        y_d += ascale * (0 - h2);     // centering y coord & scale
 
         if (needsPerspective()) {
             // horizontal perspective transformation
@@ -179,25 +184,25 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         double s = 1;
 
         if (needsDist) {
-            double r = sqrt(Dx * Dx + Dy * Dy) / maxRadius; // sqrt is slow
+            double r = sqrt (Dx * Dx + Dy * Dy) / maxRadius; // sqrt is slow
             s = 1.0 - distAmount + distAmount * r ;
         }
 
         // LCP CA is not reflected in preview (and very small), so don't add it here
 
-        red.push_back (Coord2D(Dx * (s + params->cacorrection.red) + w2, Dy * (s + params->cacorrection.red) + h2));
-        green.push_back (Coord2D(Dx * s + w2, Dy * s + h2));
-        blue.push_back (Coord2D(Dx * (s + params->cacorrection.blue) + w2, Dy * (s + params->cacorrection.blue) + h2));
+        red.push_back (Coord2D (Dx * (s + params->cacorrection.red) + w2, Dy * (s + params->cacorrection.red) + h2));
+        green.push_back (Coord2D (Dx * s + w2, Dy * s + h2));
+        blue.push_back (Coord2D (Dx * (s + params->cacorrection.blue) + w2, Dy * (s + params->cacorrection.blue) + h2));
     }
 
     // Clip all points and track if they were any corrections
     for (size_t i = 0; i < src.size(); i++) {
-        red[i].x = CLIPTOC(red[i].x, 0, W - 1, clipped);
-        red[i].y = CLIPTOC(red[i].y, 0, H - 1, clipped);
-        green[i].x = CLIPTOC(green[i].x, 0, W - 1, clipped);
-        green[i].y = CLIPTOC(green[i].y, 0, H - 1, clipped);
-        blue[i].x = CLIPTOC(blue[i].x, 0, W - 1, clipped);
-        blue[i].y = CLIPTOC(blue[i].y, 0, H - 1, clipped);
+        red[i].x = CLIPTOC (red[i].x, 0, W - 1, clipped);
+        red[i].y = CLIPTOC (red[i].y, 0, H - 1, clipped);
+        green[i].x = CLIPTOC (green[i].x, 0, W - 1, clipped);
+        green[i].y = CLIPTOC (green[i].y, 0, H - 1, clipped);
+        blue[i].x = CLIPTOC (blue[i].x, 0, W - 1, clipped);
+        blue[i].y = CLIPTOC (blue[i].y, 0, H - 1, clipped);
     }
 
     return clipped;
@@ -264,7 +269,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
             x1d = transCorners[i].x;
         }
 
-    int x1v = (int)(x1d);
+    int x1v = (int) (x1d);
 
     double y1d = transCorners[0].y;
 
@@ -273,7 +278,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
             y1d = transCorners[i].y;
         }
 
-    int y1v = (int)(y1d);
+    int y1v = (int) (y1d);
 
     double x2d = transCorners[0].x;
 
@@ -282,7 +287,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
             x2d = transCorners[i].x;
         }
 
-    int x2v = (int)ceil(x2d);
+    int x2v = (int)ceil (x2d);
 
     double y2d = transCorners[0].y;
 
@@ -291,7 +296,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
             y2d = transCorners[i].y;
         }
 
-    int y2v = (int)ceil(y2d);
+    int y2v = (int)ceil (y2d);
 
     xv = x1v;
     yv = y1v;
@@ -308,17 +313,17 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     LCPMapper *pLCPMap = nullptr;
 
     if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
-        LCPProfile *pLCPProf = lcpStore->getProfile(params->lensProf.lcpFile);
+        LCPProfile *pLCPProf = lcpStore->getProfile (params->lensProf.lcpFile);
 
         if (pLCPProf) {
-            pLCPMap = new LCPMapper(pLCPProf, focalLen, focalLen35mm,
-                                    focusDist, 0, false,
-                                    params->lensProf.useDist,
-                                    oW, oH, params->coarse, rawRotationDeg);
+            pLCPMap = new LCPMapper (pLCPProf, focalLen, focalLen35mm,
+                                     focusDist, 0, false,
+                                     params->lensProf.useDist,
+                                     oW, oH, params->coarse, rawRotationDeg);
         }
     }
 
-    if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
+    if (! (needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
         transformLuminanceOnly (original, transformed, cx, cy, oW, oH, fW, fH);
     } else if (!needsCA() && scale != 1) {
         transformPreview (original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap);
@@ -332,7 +337,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
 }
 
 // helper function
-void ImProcFunctions::calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul)
+void ImProcFunctions::calcVignettingParams (int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul)
 {
     // vignette center is a point with coordinates between -1 and +1
     double x = vignetting.centerX / 100.0;
@@ -343,12 +348,12 @@ void ImProcFunctions::calcVignettingParams(int oW, int oH, const VignettingParam
     h2 = (double) oH  / 2.0 - 0.5 + y * oH;
 
     // max vignette radius in pixels
-    maxRadius = sqrt( (double)( oW * oW + oH * oH ) ) / 2.;
+    maxRadius = sqrt ( (double) ( oW * oW + oH * oH ) ) / 2.;
 
     // vignette variables with applied strength
-    v = 1.0 + vignetting.strength * fabs(vignetting.amount) * 3.0 / 400.0;
+    v = 1.0 + vignetting.strength * fabs (vignetting.amount) * 3.0 / 400.0;
     b = 1.0 + vignetting.radius * 7.0 / 100.0;
-    mul = (1.0 - v) / tanh(b);
+    mul = (1.0 - v) / tanh (b);
 }
 
 struct grad_params {
@@ -359,7 +364,7 @@ struct grad_params {
     float top_edge_0;
     int h;
 };
-static void calcGradientParams(int oW, int oH, const GradientParams& gradient, struct grad_params& gp)
+static void calcGradientParams (int oW, int oH, const GradientParams& gradient, struct grad_params& gp)
 {
     int w = oW;
     int h = oH;
@@ -371,7 +376,7 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
     //fprintf(stderr, "%f %f %f %f %f %d %d\n", gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
     // make 0.0 <= gradient_angle < 2 * rtengine::RT_PI
-    gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
+    gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
 
     if (gradient_angle < 0.0) {
         gradient_angle += 2.0 * rtengine::RT_PI;
@@ -381,21 +386,20 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
     gp.transpose = false;
     gp.angle_is_zero = false;
     gp.h = h;
-    double cosgrad = cos(gradient_angle);
+    double cosgrad = cos (gradient_angle);
 
-    if (fabs(cosgrad) < 0.707) {
+    if (fabs (cosgrad) < 0.707) {
         // we transpose to avoid division by zero at 90 degrees
         // (actually we could transpose only for 90 degrees, but this way we avoid
         // division with extremely small numbers
         gp.transpose = true;
         gradient_angle += 0.5 * rtengine::RT_PI;
-        cosgrad = cos(gradient_angle);
         double gxc = gradient_center_x;
         gradient_center_x = 1.0 - gradient_center_y;
         gradient_center_y = gxc;
     }
 
-    gradient_angle = fmod(gradient_angle, 2 * rtengine::RT_PI);
+    gradient_angle = fmod (gradient_angle, 2 * rtengine::RT_PI);
 
     if (gradient_angle > 0.5 * rtengine::RT_PI && gradient_angle < rtengine::RT_PI) {
         gradient_angle += rtengine::RT_PI;
@@ -405,7 +409,7 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
         gp.bright_top = true;
     }
 
-    if (fabs(gradient_angle) < 0.001 || fabs(gradient_angle - 2 * rtengine::RT_PI) < 0.001) {
+    if (fabs (gradient_angle) < 0.001 || fabs (gradient_angle - 2 * rtengine::RT_PI) < 0.001) {
         gradient_angle = 0;
         gp.angle_is_zero = true;
     }
@@ -420,7 +424,7 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
         h = tmp;
     }
 
-    gp.scale = 1.0 / pow(2, gradient_stops);
+    gp.scale = 1.0 / pow (2, gradient_stops);
 
     if (gp.bright_top) {
         gp.topmul = 1.0;
@@ -430,10 +434,10 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
         gp.botmul = 1.0;
     }
 
-    gp.ta = tan(gradient_angle);
+    gp.ta = tan (gradient_angle);
     gp.xc = w * gradient_center_x;
     gp.yc = h * gradient_center_y;
-    gp.ys = sqrt((float)h * h + (float)w * w) * (gradient_span / cos(gradient_angle));
+    gp.ys = sqrt ((float)h * h + (float)w * w) * (gradient_span / cos (gradient_angle));
     gp.ys_inv = 1.0 / gp.ys;
     gp.top_edge_0 = gp.yc - gp.ys / 2.0;
 
@@ -443,18 +447,17 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
     }
 }
 
-static float calcGradientFactor(const struct grad_params& gp, int x, int y)
+static float calcGradientFactor (const struct grad_params& gp, int x, int y)
 {
     if (gp.angle_is_zero) {
         int gy = gp.transpose ? x : y;
-        int gx = gp.transpose ? y : x;
 
         if (gy < gp.top_edge_0) {
             return gp.topmul;
         } else if (gy >= gp.top_edge_0 + gp.ys) {
             return gp.botmul;
         } else {
-            float val = ((float)(gy - gp.top_edge_0) * gp.ys_inv);
+            float val = ((float) (gy - gp.top_edge_0) * gp.ys_inv);
 
             if (gp.bright_top) {
                 val = 1.f - val;
@@ -463,9 +466,9 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
             val *= rtengine::RT_PI_F_2;
 
             if (gp.scale < 1.f) {
-                val = pow3(xsinf(val));
+                val = pow3 (xsinf (val));
             } else {
-                val = 1.f - pow3(xcosf(val));
+                val = 1.f - pow3 (xcosf (val));
             }
 
             return gp.scale + val * (1.0 - gp.scale);
@@ -480,16 +483,16 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y)
         } else if (gy >= top_edge + gp.ys) {
             return gp.botmul;
         } else {
-            float val = ((float)(gy - top_edge) * gp.ys_inv);
+            float val = ((float) (gy - top_edge) * gp.ys_inv);
 
             val = gp.bright_top ? 1.f - val : val;
 
             val *= rtengine::RT_PI_F_2;
 
             if (gp.scale < 1.f) {
-                val = pow3(xsinf(val));
+                val = pow3 (xsinf (val));
             } else {
-                val = 1.f - pow3(xcosf(val));
+                val = 1.f - pow3 (xcosf (val));
             }
 
             return gp.scale + val * (1.0 - gp.scale);
@@ -507,7 +510,7 @@ struct pcv_params {
     float scale;
     float fadeout_mul;
 };
-static void calcPCVignetteParams(int fW, int fH, int oW, int oH, const PCVignetteParams& pcvignette, const CropParams &crop, struct pcv_params& pcv)
+static void calcPCVignetteParams (int fW, int fH, int oW, int oH, const PCVignetteParams& pcvignette, const CropParams &crop, struct pcv_params& pcv)
 {
 
     // ellipse formula: (x/a)^2 + (y/b)^2 = 1
@@ -528,49 +531,49 @@ static void calcPCVignetteParams(int fW, int fH, int oW, int oH, const PCVignett
         pcv.h = oH;
     }
 
-    pcv.fadeout_mul = 1.0 / (0.05 * sqrtf(oW * oW + oH * oH));
+    pcv.fadeout_mul = 1.0 / (0.05 * sqrtf (oW * oW + oH * oH));
     float short_side = (pcv.w < pcv.h) ? pcv.w : pcv.h;
     float long_side =  (pcv.w > pcv.h) ? pcv.w : pcv.h;
 
     pcv.sep = 2;
     pcv.sepmix = 0;
-    pcv.oe_a = sqrt(2.0) * long_side * 0.5;
+    pcv.oe_a = sqrt (2.0) * long_side * 0.5;
     pcv.oe_b = pcv.oe_a * short_side / long_side;
-    pcv.ie_mul = (1.0 / sqrt(2.0)) * (1.0 - pcv.feather);
+    pcv.ie_mul = (1.0 / sqrt (2.0)) * (1.0 - pcv.feather);
     pcv.is_super_ellipse_mode = false;
     pcv.is_portrait = (pcv.w < pcv.h);
 
     if (roundness < 0.5) {
         // make super-ellipse of higher and higher degree
         pcv.is_super_ellipse_mode = true;
-        float sepf = 2 + 4 * powf(1.0 - 2 * roundness, 1.3); // gamma 1.3 used to balance the effect in the 0.0...0.5 roundness range
+        float sepf = 2 + 4 * powf (1.0 - 2 * roundness, 1.3); // gamma 1.3 used to balance the effect in the 0.0...0.5 roundness range
         pcv.sep = ((int)sepf) & ~0x1;
         pcv.sepmix = (sepf - pcv.sep) * 0.5; // 0.0 to 1.0
-        pcv.oe1_a = powf(2.0, 1.0 / pcv.sep) * long_side * 0.5;
+        pcv.oe1_a = powf (2.0, 1.0 / pcv.sep) * long_side * 0.5;
         pcv.oe1_b = pcv.oe1_a * short_side / long_side;
-        pcv.ie1_mul = (1.0 / powf(2.0, 1.0 / pcv.sep)) * (1.0 - pcv.feather);
-        pcv.oe2_a = powf(2.0, 1.0 / (pcv.sep + 2)) * long_side * 0.5;
+        pcv.ie1_mul = (1.0 / powf (2.0, 1.0 / pcv.sep)) * (1.0 - pcv.feather);
+        pcv.oe2_a = powf (2.0, 1.0 / (pcv.sep + 2)) * long_side * 0.5;
         pcv.oe2_b = pcv.oe2_a * short_side / long_side;
-        pcv.ie2_mul = (1.0 / powf(2.0, 1.0 / (pcv.sep + 2))) * (1.0 - pcv.feather);
+        pcv.ie2_mul = (1.0 / powf (2.0, 1.0 / (pcv.sep + 2))) * (1.0 - pcv.feather);
     }
 
     if (roundness > 0.5) {
         // scale from fitted ellipse towards circle
-        float rad = sqrtf(pcv.w * pcv.w + pcv.h * pcv.h) / 2.0;
+        float rad = sqrtf (pcv.w * pcv.w + pcv.h * pcv.h) / 2.0;
         float diff_a = rad - pcv.oe_a;
         float diff_b = rad - pcv.oe_b;
         pcv.oe_a = pcv.oe_a + diff_a * 2 * (roundness - 0.5);
         pcv.oe_b = pcv.oe_b + diff_b * 2 * (roundness - 0.5);
     }
 
-    pcv.scale = powf(2, -pcvignette.strength);
+    pcv.scale = powf (2, -pcvignette.strength);
 
     if (pcvignette.strength >= 6.0) {
         pcv.scale = 0.0;
     }
 }
 
-static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
+static float calcPCVignetteFactor (const struct pcv_params& pcv, int x, int y)
 {
 
     float fo = 1.f;
@@ -592,25 +595,25 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
             dist_y = 0;
         }
 
-        fo = sqrtf(dist_x * dist_x + dist_y * dist_y) * pcv.fadeout_mul;
+        fo = sqrtf (dist_x * dist_x + dist_y * dist_y) * pcv.fadeout_mul;
 
         if (fo >= 1.f) {
             return 1.f;
         }
     }
 
-    float a = fabs((x - pcv.x1) - pcv.w * 0.5f);
-    float b = fabs((y - pcv.y1) - pcv.h * 0.5f);
+    float a = fabs ((x - pcv.x1) - pcv.w * 0.5f);
+    float b = fabs ((y - pcv.y1) - pcv.h * 0.5f);
 
-    if(pcv.is_portrait) {
-        std::swap(a, b);
+    if (pcv.is_portrait) {
+        std::swap (a, b);
     }
 
-    float dist = normn(a, b, 2);
+    float dist = normn (a, b, 2);
     float dist_oe, dist_ie;
     float2 sincosval;
 
-    if(dist == 0.0f) {
+    if (dist == 0.0f) {
         sincosval.y = 1.0f;         // cos
         sincosval.x = 0.0f;         // sin
     } else {
@@ -619,14 +622,14 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
     }
 
     if (pcv.is_super_ellipse_mode) {
-        float dist_oe1 = pcv.oe1_a * pcv.oe1_b / normn(pcv.oe1_b * sincosval.y, pcv.oe1_a * sincosval.x, pcv.sep);
-        float dist_oe2 = pcv.oe2_a * pcv.oe2_b / normn(pcv.oe2_b * sincosval.y, pcv.oe2_a * sincosval.x, pcv.sep + 2);
+        float dist_oe1 = pcv.oe1_a * pcv.oe1_b / normn (pcv.oe1_b * sincosval.y, pcv.oe1_a * sincosval.x, pcv.sep);
+        float dist_oe2 = pcv.oe2_a * pcv.oe2_b / normn (pcv.oe2_b * sincosval.y, pcv.oe2_a * sincosval.x, pcv.sep + 2);
         float dist_ie1 = pcv.ie1_mul * dist_oe1;
         float dist_ie2 = pcv.ie2_mul * dist_oe2;
         dist_oe = dist_oe1 * (1.f - pcv.sepmix) + dist_oe2 * pcv.sepmix;
         dist_ie = dist_ie1 * (1.f - pcv.sepmix) + dist_ie2 * pcv.sepmix;
     } else {
-        dist_oe = pcv.oe_a * pcv.oe_b / sqrtf(SQR(pcv.oe_b * sincosval.y) + SQR(pcv.oe_a * sincosval.x));
+        dist_oe = pcv.oe_a * pcv.oe_b / sqrtf (SQR (pcv.oe_b * sincosval.y) + SQR (pcv.oe_a * sincosval.x));
         dist_ie = pcv.ie_mul * dist_oe;
     }
 
@@ -642,9 +645,9 @@ static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y)
         val = rtengine::RT_PI_F_2 * (dist - dist_ie) / (dist_oe - dist_ie);
 
         if (pcv.scale < 1.f) {
-            val = pow4(xcosf(val));
+            val = pow4 (xcosf (val));
         } else {
-            val = 1 - pow4(xsinf(val));
+            val = 1 - pow4 (xsinf (val));
         }
 
         val = pcv.scale + val * (1.f - pcv.scale);
@@ -667,20 +670,20 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
     double vig_w2, vig_h2, maxRadius, v, b, mul;
 
     if (applyVignetting) {
-        calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+        calcVignettingParams (oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
     }
 
     struct grad_params gp;
 
     if (applyGradient) {
-        calcGradientParams(oW, oH, params->gradient, gp);
+        calcGradientParams (oW, oH, params->gradient, gp);
     }
 
     struct pcv_params pcv;
 
     if (applyPCVignetting) {
         //fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->getWidth(), transformed->getHeight(), cx, cy, params->crop.w, params->crop.h);
-        calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
+        calcPCVignetteParams (fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
     bool darkening = (params->vignetting.amount <= 0.0);
@@ -694,26 +697,26 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 
             if (applyVignetting) {
                 double vig_x_d = (double) (x + cx) - vig_w2 ;
-                double r = sqrt(vig_x_d * vig_x_d + vig_y_d * vig_y_d);
+                double r = sqrt (vig_x_d * vig_x_d + vig_y_d * vig_y_d);
 
-                if(darkening) {
-                    factor /= std::max(v + mul * tanh (b * (maxRadius - r) / maxRadius), 0.001);
+                if (darkening) {
+                    factor /= std::max (v + mul * tanh (b * (maxRadius - r) / maxRadius), 0.001);
                 } else {
                     factor = v + mul * tanh (b * (maxRadius - r) / maxRadius);
                 }
             }
 
             if (applyGradient) {
-                factor *= calcGradientFactor(gp, cx + x, cy + y);
+                factor *= calcGradientFactor (gp, cx + x, cy + y);
             }
 
             if (applyPCVignetting) {
-                factor *= calcPCVignetteFactor(pcv, cx + x, cy + y);
+                factor *= calcPCVignetteFactor (pcv, cx + x, cy + y);
             }
 
-            transformed->r(y, x) = original->r(y, x) * factor;
-            transformed->g(y, x) = original->g(y, x) * factor;
-            transformed->b(y, x) = original->b(y, x) * factor;
+            transformed->r (y, x) = original->r (y, x) * factor;
+            transformed->g (y, x) = original->g (y, x) * factor;
+            transformed->b (y, x) = original->b (y, x) * factor;
         }
     }
 }
@@ -726,18 +729,18 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
     double h2 = (double) oH  / 2.0 - 0.5;
 
     double vig_w2, vig_h2, maxRadius, v, b, mul;
-    calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+    calcVignettingParams (oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
     struct grad_params gp;
 
     if (needsGradient()) {
-        calcGradientParams(oW, oH, params->gradient, gp);
+        calcGradientParams (oW, oH, params->gradient, gp);
     }
 
     struct pcv_params pcv;
 
     if (needsPCVignetting()) {
-        calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
+        calcPCVignetteParams (fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
     float** chOrig[3];
@@ -761,21 +764,21 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
     double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
-    double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
+    double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
+    double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * rtengine::RT_PI;
-    double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oW * tan(vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
-                     oW * tan(vpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oW * tan(vpalpha)))) / (SQR(maxRadius) * 8)));
+    double vpteta  = fabs (vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt ((-SQR (oW * tan (vpalpha)) + (vpdeg > 0 ? 1.0 : -1.0) *
+                     oW * tan (vpalpha) * sqrt (SQR (4 * maxRadius) + SQR (oW * tan (vpalpha)))) / (SQR (maxRadius) * 8)));
     double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * rtengine::RT_PI;
-    double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-SQR(oH * tan(hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
-                     oH * tan(hpalpha) * sqrt(SQR(4 * maxRadius) + SQR(oH * tan(hpalpha)))) / (SQR(maxRadius) * 8)));
+    double hpteta  = fabs (hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt ((-SQR (oH * tan (hpalpha)) + (hpdeg > 0 ? 1.0 : -1.0) *
+                     oH * tan (hpalpha) * sqrt (SQR (4 * maxRadius) + SQR (oH * tan (hpalpha)))) / (SQR (maxRadius) * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
     double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, true /*fullImage*/ ? pLCPMap : nullptr) : 1.0;
@@ -799,13 +802,16 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
             double x_d = x, y_d = y;
 
             if (enableLCPDist) {
-                correct_distortion(pLCPMap, x_d, y_d, cx, cy); // must be first transform
+                correct_distortion(pLCPMap, x_d, y_d, cx, cy, ascale); // must be first transform
+            } else {
+                x_d *= ascale;
+                y_d *= ascale;
             }
 
-            x_d = ascale * (x_d + cx - w2);     // centering x coord & scale
-            y_d = ascale * (y_d + cy - h2);     // centering y coord & scale
+            x_d += ascale * (cx - w2);     // centering x coord & scale
+            y_d += ascale * (cy - h2);     // centering y coord & scale
 
-            double vig_x_d, vig_y_d;
+            double vig_x_d = 0., vig_y_d = 0.;
 
             if (needsVignetting()) {
                 vig_x_d = ascale * (x + cx - vig_w2);       // centering x coord & scale
@@ -830,16 +836,16 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
             double s = 1;
 
             if (needsDist) {
-                double r = sqrt(Dxc * Dxc + Dyc * Dyc) / maxRadius; // sqrt is slow
+                double r = sqrt (Dxc * Dxc + Dyc * Dyc) / maxRadius; // sqrt is slow
                 s = 1.0 - distAmount + distAmount * r ;
             }
 
-            double r2;
+            double r2 = 0.;
 
             if (needsVignetting()) {
                 double vig_Dx = vig_x_d * cost - vig_y_d * sint;
                 double vig_Dy = vig_x_d * sint + vig_y_d * cost;
-                r2 = sqrt(vig_Dx * vig_Dx + vig_Dy * vig_Dy);
+                r2 = sqrt (vig_Dx * vig_Dx + vig_Dy * vig_Dy);
             }
 
             for (int c = 0; c < (enableCA ? 3 : 1); c++) {
@@ -852,7 +858,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 
                 // LCP CA
                 if (enableLCPCA) {
-                    pLCPMap->correctCA(Dx, Dy, c);
+                    pLCPMap->correctCA (Dx, Dy, c);
                 }
 
                 // Extract integer and fractions of source screen coordinates
@@ -870,41 +876,41 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                     double vignmul = 1.0;
 
                     if (needsVignetting()) {
-                        if(darkening) {
-                            vignmul /= std::max(v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
+                        if (darkening) {
+                            vignmul /= std::max (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                         } else {
                             vignmul *= (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius));
                         }
                     }
 
                     if (needsGradient()) {
-                        vignmul *= calcGradientFactor(gp, cx + x, cy + y);
+                        vignmul *= calcGradientFactor (gp, cx + x, cy + y);
                     }
 
                     if (needsPCVignetting()) {
-                        vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
+                        vignmul *= calcPCVignetteFactor (pcv, cx + x, cy + y);
                     }
 
                     if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
                         // all interpolation pixels inside image
                         if (enableCA) {
-                            interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
+                            interpolateTransformChannelsCubic (chOrig[c], xc - 1, yc - 1, Dx, Dy, & (chTrans[c][y][x]), vignmul);
                         } else {
-                            interpolateTransformCubic (original, xc - 1, yc - 1, Dx, Dy, &(transformed->r(y, x)), &(transformed->g(y, x)), &(transformed->b(y, x)), vignmul);
+                            interpolateTransformCubic (original, xc - 1, yc - 1, Dx, Dy, & (transformed->r (y, x)), & (transformed->g (y, x)), & (transformed->b (y, x)), vignmul);
                         }
                     } else {
                         // edge pixels
-                        int y1 = LIM(yc,   0, original->getHeight() - 1);
-                        int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
-                        int x1 = LIM(xc,   0, original->getWidth() - 1);
-                        int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
+                        int y1 = LIM (yc,   0, original->getHeight() - 1);
+                        int y2 = LIM (yc + 1, 0, original->getHeight() - 1);
+                        int x1 = LIM (xc,   0, original->getWidth() - 1);
+                        int x2 = LIM (xc + 1, 0, original->getWidth() - 1);
 
                         if (enableCA) {
                             chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
                         } else {
-                            transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
-                            transformed->g(y, x) = vignmul * (original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
-                            transformed->b(y, x) = vignmul * (original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
+                            transformed->r (y, x) = vignmul * (original->r (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r (y1, x2) * Dx * (1.0 - Dy) + original->r (y2, x1) * (1.0 - Dx) * Dy + original->r (y2, x2) * Dx * Dy);
+                            transformed->g (y, x) = vignmul * (original->g (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g (y1, x2) * Dx * (1.0 - Dy) + original->g (y2, x1) * (1.0 - Dx) * Dy + original->g (y2, x2) * Dx * Dy);
+                            transformed->b (y, x) = vignmul * (original->b (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b (y1, x2) * Dx * (1.0 - Dy) + original->b (y2, x1) * (1.0 - Dx) * Dy + original->b (y2, x2) * Dx * Dy);
                         }
                     }
                 } else {
@@ -912,9 +918,9 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                         // not valid (source pixel x,y not inside source image, etc.)
                         chTrans[c][y][x] = 0;
                     } else {
-                        transformed->r(y, x) = 0;
-                        transformed->g(y, x) = 0;
-                        transformed->b(y, x) = 0;
+                        transformed->r (y, x) = 0;
+                        transformed->g (y, x) = 0;
+                        transformed->b (y, x) = 0;
                     }
                 }
             }
@@ -930,18 +936,18 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
     double h2 = (double) oH  / 2.0 - 0.5;
 
     double vig_w2, vig_h2, maxRadius, v, b, mul;
-    calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+    calcVignettingParams (oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
     struct grad_params gp;
 
     if (needsGradient()) {
-        calcGradientParams(oW, oH, params->gradient, gp);
+        calcGradientParams (oW, oH, params->gradient, gp);
     }
 
     struct pcv_params pcv;
 
     if (needsPCVignetting()) {
-        calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
+        calcPCVignetteParams (fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
     }
 
     // auxiliary variables for distortion correction
@@ -949,19 +955,19 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
     double distAmount = params->distortion.amount;
 
     // auxiliary variables for rotation
-    double cost = cos(params->rotate.degree * rtengine::RT_PI / 180.0);
-    double sint = sin(params->rotate.degree * rtengine::RT_PI / 180.0);
+    double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
+    double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
 
     // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
     double vpalpha = (90 - vpdeg) / 180.0 * rtengine::RT_PI;
-    double vpteta  = fabs(vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt((-oW * oW * tan(vpalpha) * tan(vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan(vpalpha) * sqrt(16 * maxRadius * maxRadius + oW * oW * tan(vpalpha) * tan(vpalpha))) / (maxRadius * maxRadius * 8)));
+    double vpteta  = fabs (vpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((vpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oW * oW * tan (vpalpha) * tan (vpalpha) + (vpdeg > 0 ? 1.0 : -1.0) * oW * tan (vpalpha) * sqrt (16 * maxRadius * maxRadius + oW * oW * tan (vpalpha) * tan (vpalpha))) / (maxRadius * maxRadius * 8)));
     double vpcospt = (vpdeg >= 0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
     double hpalpha = (90 - hpdeg) / 180.0 * rtengine::RT_PI;
-    double hpteta  = fabs(hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt((-oH * oH * tan(hpalpha) * tan(hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan(hpalpha) * sqrt(16 * maxRadius * maxRadius + oH * oH * tan(hpalpha) * tan(hpalpha))) / (maxRadius * maxRadius * 8)));
+    double hpteta  = fabs (hpalpha - rtengine::RT_PI / 2) < 3e-4 ? 0.0 : acos ((hpdeg > 0 ? 1.0 : -1.0) * sqrt ((-oH * oH * tan (hpalpha) * tan (hpalpha) + (hpdeg > 0 ? 1.0 : -1.0) * oH * tan (hpalpha) * sqrt (16 * maxRadius * maxRadius + oH * oH * tan (hpalpha) * tan (hpalpha))) / (maxRadius * maxRadius * 8)));
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
     double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
@@ -976,13 +982,16 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             double x_d = x, y_d = y;
 
             if (pLCPMap && params->lensProf.useDist) {
-                correct_distortion(pLCPMap, x_d, y_d, cx, cy); // must be first transform
+                correct_distortion(pLCPMap, x_d, y_d, cx, cy, ascale); // must be first transform
+            } else {
+                x_d *= ascale;
+                y_d *= ascale;
             }
 
-            y_d = ascale * (y_d + cy - h2);     // centering y coord & scale
-            x_d = ascale * (x_d + cx - w2);     // centering x coord & scale
+            x_d += ascale * (cx - w2);     // centering x coord & scale
+            y_d += ascale * (cy - h2);     // centering y coord & scale
 
-            double vig_x_d, vig_y_d;
+            double vig_x_d = 0., vig_y_d = 0.;
 
             if (needsVignetting()) {
                 vig_x_d = ascale * (x + cx - vig_w2);       // centering x coord & scale
@@ -1007,18 +1016,18 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             double s = 1;
 
             if (needsDist) {
-                double r = sqrt(Dx * Dx + Dy * Dy) / maxRadius; // sqrt is slow
+                double r = sqrt (Dx * Dx + Dy * Dy) / maxRadius; // sqrt is slow
                 s = 1.0 - distAmount + distAmount * r ;
                 Dx *= s;
                 Dy *= s;
             }
 
-            double r2;
+            double r2 = 0.;
 
             if (needsVignetting()) {
                 double vig_Dx = vig_x_d * cost - vig_y_d * sint;
                 double vig_Dy = vig_x_d * sint + vig_y_d * cost;
-                r2 = sqrt(vig_Dx * vig_Dx + vig_Dy * vig_Dy);
+                r2 = sqrt (vig_Dx * vig_Dx + vig_Dy * vig_Dy);
             }
 
             // de-center
@@ -1040,41 +1049,41 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 double vignmul = 1.0;
 
                 if (needsVignetting()) {
-                    if(darkening) {
-                        vignmul /= std::max(v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
+                    if (darkening) {
+                        vignmul /= std::max (v + mul * tanh (b * (maxRadius - s * r2) / maxRadius), 0.001);
                     } else {
                         vignmul = v + mul * tanh (b * (maxRadius - s * r2) / maxRadius);
                     }
                 }
 
                 if (needsGradient()) {
-                    vignmul *= calcGradientFactor(gp, cx + x, cy + y);
+                    vignmul *= calcGradientFactor (gp, cx + x, cy + y);
                 }
 
                 if (needsPCVignetting()) {
-                    vignmul *= calcPCVignetteFactor(pcv, cx + x, cy + y);
+                    vignmul *= calcPCVignetteFactor (pcv, cx + x, cy + y);
                 }
 
                 if (yc < original->getHeight() - 1 && xc < original->getWidth() - 1) {
                     // all interpolation pixels inside image
-                    transformed->r(y, x) = vignmul * (original->r(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r(yc, xc + 1) * Dx * (1.0 - Dy) + original->r(yc + 1, xc) * (1.0 - Dx) * Dy + original->r(yc + 1, xc + 1) * Dx * Dy);
-                    transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
-                    transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
+                    transformed->r (y, x) = vignmul * (original->r (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->r (yc, xc + 1) * Dx * (1.0 - Dy) + original->r (yc + 1, xc) * (1.0 - Dx) * Dy + original->r (yc + 1, xc + 1) * Dx * Dy);
+                    transformed->g (y, x) = vignmul * (original->g (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g (yc, xc + 1) * Dx * (1.0 - Dy) + original->g (yc + 1, xc) * (1.0 - Dx) * Dy + original->g (yc + 1, xc + 1) * Dx * Dy);
+                    transformed->b (y, x) = vignmul * (original->b (yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b (yc, xc + 1) * Dx * (1.0 - Dy) + original->b (yc + 1, xc) * (1.0 - Dx) * Dy + original->b (yc + 1, xc + 1) * Dx * Dy);
                 } else {
                     // edge pixels
-                    int y1 = LIM(yc,   0, original->getHeight() - 1);
-                    int y2 = LIM(yc + 1, 0, original->getHeight() - 1);
-                    int x1 = LIM(xc,   0, original->getWidth() - 1);
-                    int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
-                    transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
-                    transformed->g(y, x) = vignmul * (original->g(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g(y1, x2) * Dx * (1.0 - Dy) + original->g(y2, x1) * (1.0 - Dx) * Dy + original->g(y2, x2) * Dx * Dy);
-                    transformed->b(y, x) = vignmul * (original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
+                    int y1 = LIM (yc,   0, original->getHeight() - 1);
+                    int y2 = LIM (yc + 1, 0, original->getHeight() - 1);
+                    int x1 = LIM (xc,   0, original->getWidth() - 1);
+                    int x2 = LIM (xc + 1, 0, original->getWidth() - 1);
+                    transformed->r (y, x) = vignmul * (original->r (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r (y1, x2) * Dx * (1.0 - Dy) + original->r (y2, x1) * (1.0 - Dx) * Dy + original->r (y2, x2) * Dx * Dy);
+                    transformed->g (y, x) = vignmul * (original->g (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->g (y1, x2) * Dx * (1.0 - Dy) + original->g (y2, x1) * (1.0 - Dx) * Dy + original->g (y2, x2) * Dx * Dy);
+                    transformed->b (y, x) = vignmul * (original->b (y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b (y1, x2) * Dx * (1.0 - Dy) + original->b (y2, x1) * (1.0 - Dx) * Dy + original->b (y2, x2) * Dx * Dy);
                 }
             } else {
                 // not valid (source pixel x,y not inside source image, etc.)
-                transformed->r(y, x) = 0;
-                transformed->g(y, x) = 0;
-                transformed->b(y, x) = 0;
+                transformed->r (y, x) = 0;
+                transformed->g (y, x) = 0;
+                transformed->b (y, x) = 0;
             }
         }
     }
@@ -1126,12 +1135,12 @@ bool ImProcFunctions::needsPerspective ()
 
 bool ImProcFunctions::needsGradient ()
 {
-    return params->gradient.enabled && fabs(params->gradient.strength) > 1e-15;
+    return params->gradient.enabled && fabs (params->gradient.strength) > 1e-15;
 }
 
 bool ImProcFunctions::needsPCVignetting ()
 {
-    return params->pcvignette.enabled && fabs(params->pcvignette.strength) > 1e-15;
+    return params->pcvignette.enabled && fabs (params->pcvignette.strength) > 1e-15;
 }
 
 bool ImProcFunctions::needsVignetting ()

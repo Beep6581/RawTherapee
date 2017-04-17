@@ -447,10 +447,8 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
         #pragma omp for nowait
 
         for (int y = y1; y < y2; y++) {
-            int i;
-
             for (int x = x1; x < x2; x++) {
-                i = (int)(facRed * r(y, x) + facGreen * g(y, x) + facBlue * b(y, x));
+                int i = (int)(facRed * r(y, x) + facGreen * g(y, x) + facBlue * b(y, x));
 
                 if (i < 0) {
                     i = 0;

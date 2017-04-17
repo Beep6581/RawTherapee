@@ -325,9 +325,7 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
 
     const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\"");
     auto success = ShellExecute( NULL, "open", cmdLine.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
-    if ((uintptr_t)success > 32) {
-        return true;
-    }
+    return (uintptr_t)success > 32;
 
 #elif defined __APPLE__
 

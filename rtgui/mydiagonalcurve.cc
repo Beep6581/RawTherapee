@@ -49,6 +49,7 @@ MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false)
 
 MyDiagonalCurve::~MyDiagonalCurve ()
 {
+    idle_register.destroy();
 
     delete [] bghist;
 }
@@ -398,7 +399,7 @@ void MyDiagonalCurve::draw (int handle)
             double y2 = double(graphY) - 1.5 - double(graphH - 3) * points[pos + 1]; // project (curve.y.at(i), 0, 1, graphH);
 
             // set the color of the line when the point is snapped to the cage
-            if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((i == (snapToElmt - 1000)) || (i == (snapToElmt - 999)))) {
+            if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((int(i) == (snapToElmt - 1000)) || (int(i) == (snapToElmt - 999)))) {
                 cr->set_source_rgb (1.0, 0.0, 0.0);
             } else {
                 cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
@@ -606,7 +607,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
 
                         edited_point = lit_point;
                         std::vector<CoordinateAdjuster::Boundaries> newBoundaries(2);
-                        unsigned int size = curve.x.size();
+                        int size = curve.x.size();
 
                         if      (edited_point == 0)      {
                             newBoundaries.at(0).minVal = 0.;
@@ -655,7 +656,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                                     draw (lit_point);
                                     std::vector<CoordinateAdjuster::Boundaries> newBoundaries;
                                     newBoundaries.resize(2);
-                                    unsigned int size = curve.x.size();
+                                    int size = curve.x.size();
 
                                     if      (edited_point == 0)      {
                                         newBoundaries.at(0).minVal = 0.;
@@ -888,7 +889,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                 } else {
                     // snapping point to specific values
                     if (snapTo && curve.x.at(grab_point) != -1.) {
-                        if (grab_point > 0 && grab_point < (curve.y.size() - 1)) {
+                        if (grab_point > 0 && unsigned(grab_point) < (curve.y.size() - 1)) {
                             double prevX = curve.x.at(grab_point - 1);
                             double prevY = curve.y.at(grab_point - 1);
                             double nextX = curve.x.at(grab_point + 1);
@@ -910,7 +911,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                             }
                         }
 
-                        if (grab_point < (curve.y.size() - 1)) {
+                        if (grab_point < int(curve.y.size() - 1)) {
                             int nextP = grab_point + 1;
 
                             if (snapCoordinateY(curve.y.at(nextP), ugpY)) {
@@ -1208,7 +1209,7 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey)
 
     // snapping point to specific values
     if (snapTo && curve.x.at(grab_point) != -1.) {
-        if (grab_point > 0 && grab_point < (curve.y.size() - 1)) {
+        if (grab_point > 0 && unsigned(grab_point) < (curve.y.size() - 1)) {
             double prevX = curve.x.at(grab_point - 1);
             double prevY = curve.y.at(grab_point - 1);
             double nextX = curve.x.at(grab_point + 1);
@@ -1230,7 +1231,7 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey)
             }
         }
 
-        if (grab_point < (curve.y.size() - 1)) {
+        if (grab_point < int(curve.y.size() - 1)) {
             int nextP = grab_point + 1;
 
             if (snapCoordinateY(curve.y.at(nextP), ugpY)) {
@@ -1492,38 +1493,13 @@ void MyDiagonalCurve::setType (DiagonalCurveType t)
 
 void MyDiagonalCurve::setActiveParam (int ac)
 {
-
     activeParam = ac;
     setDirty(true);
     queue_draw ();
 }
 
-int diagonalmchistupdateUI (void* data)
-{
-
-    MyCurveIdleHelper* mcih = static_cast<MyCurveIdleHelper*>(data);
-
-    if (mcih->destroyed) {
-        if (mcih->pending == 1) {
-            delete mcih;
-        } else {
-            mcih->pending--;
-        }
-
-        return 0;
-    }
-
-    mcih->clearPixmap ();
-    mcih->myCurve->queue_draw ();
-
-    mcih->pending--;
-
-    return 0;
-}
-
 void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist)
 {
-
     if (hist) {
         //memcpy (bghist, hist, 256*sizeof(unsigned int));
         for (int i = 0; i < 256; i++) {
@@ -1537,14 +1513,33 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist)
     }
 
     mcih->pending++;
-    // Can be done outside of the GUI thread, so we're using g_idle_add instead of add_idle
-    g_idle_add (diagonalmchistupdateUI, mcih);
 
+    const auto func = [](gpointer data) -> gboolean {
+        MyCurveIdleHelper* const mcih = static_cast<MyCurveIdleHelper*>(data);
+
+        if (mcih->destroyed) {
+            if (mcih->pending == 1) {
+                delete mcih;
+            } else {
+                mcih->pending--;
+            }
+
+            return 0;
+        }
+
+        mcih->clearPixmap ();
+        mcih->myCurve->queue_draw ();
+
+        mcih->pending--;
+
+        return FALSE;
+    };
+
+    idle_register.add(func, mcih);
 }
 
 void MyDiagonalCurve::reset(const std::vector<double> &resetCurve, double identityValue)
 {
-
     stopNumericalAdjustment();
 
     if (!resetCurve.empty()) {

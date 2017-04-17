@@ -38,7 +38,6 @@ ImProcCoordinator::ImProcCoordinator ()
       softProof(false), gamutCheck(false), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false),
       allocated(false), bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(NAN),
 
-      ctColorCurve(),
       hltonecurve(65536),
       shtonecurve(65536),
       tonecurve(65536, 0), //,1);
@@ -48,6 +47,7 @@ ImProcCoordinator::ImProcCoordinator ()
       satcurve(65536, 0),
       lhskcurve(65536, 0),
       clcurve(65536, 0),
+      conversionBuffer(1, 1), 
       wavclCurve(65536, 0),
       clToningcurve(65536, 0),
       cl2Toningcurve(65536, 0),
@@ -81,15 +81,16 @@ ImProcCoordinator::ImProcCoordinator ()
       rCurve(),
       gCurve(),
       bCurve(),
+      ctColorCurve(),
       rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
       gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
       fw(0), fh(0), tr(0),
       fullw(1), fullh(1),
       pW(-1), pH(-1),
-      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), hListener(nullptr),
-      resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false), wavcontlutili(false),
-      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), conversionBuffer(1, 1), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f)
+      plistener(nullptr), imageListener(nullptr), aeListener(nullptr), acListener(nullptr), abwListener(nullptr), awbListener(nullptr), frameCountListener(nullptr), imageTypeListener(nullptr), actListener(nullptr), adnListener(nullptr), awavListener(nullptr), dehaListener(nullptr), hListener(nullptr),
+      resultValid(false), lastOutputProfile("BADFOOD"), lastOutputIntent(RI__COUNT), lastOutputBPC(false), thread(nullptr), changeSinceLast(0), updaterRunning(false), destroying(false), utili(false), autili(false),
+      butili(false), ccutili(false), cclutili(false), clcutili(false), opautili(false), wavcontlutili(false), colourToningSatLimit(0.f), colourToningSatLimitOpacity(0.f)
 {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc)
@@ -607,6 +608,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 #endif
             lhist16 += lhist16thr;
         }
+#ifdef _OPENMP
+            static_cast<void>(numThreads); // to silence cppcheck warning
+#endif
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, histLCurve, scale == 1 ? 1 : 16, utili);
     }
 

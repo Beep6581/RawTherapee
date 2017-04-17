@@ -19,10 +19,14 @@
 #ifndef _PREVIEWHANDLER_
 #define _PREVIEWHANDLER_
 
-#include "../rtengine/rtengine.h"
-#include "threadutils.h"
-#include <gtkmm.h>
 #include <list>
+
+#include <gtkmm.h>
+
+#include "threadutils.h"
+#include "guiutils.h"
+
+#include "../rtengine/rtengine.h"
 
 class PreviewListener
 {
@@ -41,10 +45,12 @@ struct PreviewHandlerIdleHelper {
 
 class PreviewHandler : public rtengine::PreviewImageListener
 {
-
+private:
     friend int setImageUI   (void* data);
     friend int delImageUI   (void* data);
     friend int imageReadyUI (void* data);
+
+    IdleRegister idle_register;
 
 protected:
     rtengine::IImage8* image;

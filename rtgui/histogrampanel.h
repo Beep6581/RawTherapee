@@ -45,11 +45,12 @@ struct HistogramRGBAreaIdleHelper {
 
 class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer
 {
-
+private:
     typedef const double (*TMatrix)[3];
 
-protected:
+    IdleRegister idle_register;
 
+protected:
     int val;
     int r;
     int g;
@@ -72,7 +73,6 @@ protected:
     HistogramRGBAreaIdleHelper* harih;
 
 public:
-
     HistogramRGBArea();
     ~HistogramRGBArea();
 
@@ -111,9 +111,10 @@ public:
 
 class HistogramArea : public Gtk::DrawingArea, public BackBuffer
 {
+private:
+    IdleRegister idle_register;
 
 protected:
-
     LUTu lhist, rhist, ghist, bhist, chist;
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
@@ -127,7 +128,6 @@ protected:
     HistogramAreaIdleHelper* haih;
 
 public:
-
     explicit HistogramArea(FullModeListener *fml = nullptr);
     ~HistogramArea();
 
