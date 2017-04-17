@@ -125,128 +125,6 @@ if(WIN32 OR APPLE)
         message(STATUS "You have set BUILD_BUNDLE=ON but this is not necessary - the option is forced to ON for Windows and macOS.")
     endif()
     set (BUILD_BUNDLE ON FORCE)
-<<<<<<< HEAD
-endif(WIN32 OR APPLE)
-
-if (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
-    if (APPLE)
-        set (BUNDLE_BASE_INSTALL_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/MacOS")
-    else (APPLE)
-        set (BUNDLE_BASE_INSTALL_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-    endif (APPLE)
-endif (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
-
-if (BUILD_BUNDLE)
-    set (BINDIR .)
-    set (CMAKE_INSTALL_PREFIX "${BUNDLE_BASE_INSTALL_DIR}")
-endif (BUILD_BUNDLE)
-
-if (NOT DEFINED BINDIR)
-    set (BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
-endif (NOT DEFINED BINDIR)
-
-if (NOT DEFINED DATADIR)
-    if (BUILD_BUNDLE)
-        if (APPLE)
-            set (DATADIR "../Resources")
-        else (APPLE)
-            set (DATADIR .)
-        endif (APPLE)
-    else (BUILD_BUNDLE)
-        set (DATADIR "${CMAKE_INSTALL_PREFIX}/share/rawtherapee")
-    endif (BUILD_BUNDLE)
-endif (NOT DEFINED DATADIR)
-
-if (NOT DEFINED LIBDIR)
-    if (BUILD_BUNDLE)
-        if (APPLE)
-            set (LIBDIR "../Frameworks")
-        else (APPLE)
-            set (LIBDIR .)
-        endif (APPLE)
-    else (BUILD_BUNDLE)
-        # Respect CMAKE_INSTALL_LIBDIR if set
-        if (DEFINED CMAKE_INSTALL_LIBDIR)
-            if (IS_ABSOLUTE "${LIBDIR}")
-                set (LIBDIR "${CMAKE_INSTALL_LIBDIR}")
-            else (IS_ABSOLUTE "${LIBDIR}")
-                set (LIBDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-            endif (IS_ABSOLUTE "${LIBDIR}")
-        else (DEFINED CMAKE_INSTALL_LIBDIR)
-            set (LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
-        endif (DEFINED CMAKE_INSTALL_LIBDIR)
-    endif (BUILD_BUNDLE)
-endif (NOT DEFINED LIBDIR)
-
-if (NOT DEFINED DOCDIR)
-    if (BUILD_BUNDLE)
-        set (DOCDIR "${DATADIR}/share/doc")
-    else (BUILD_BUNDLE)
-        set (DOCDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
-    endif (BUILD_BUNDLE)
-endif (NOT DEFINED DOCDIR)
-
-if (NOT DEFINED CREDITSDIR)
-    if (BUILD_BUNDLE)
-        set (CREDITSDIR "${DATADIR}")
-    else (BUILD_BUNDLE)
-        set (CREDITSDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
-    endif (BUILD_BUNDLE)
-endif (NOT DEFINED CREDITSDIR)
-
-if (NOT DEFINED LICENCEDIR)
-    if (BUILD_BUNDLE)
-        set (LICENCEDIR "${DATADIR}")
-    else (BUILD_BUNDLE)
-        set (LICENCEDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
-    endif (BUILD_BUNDLE)
-endif (NOT DEFINED LICENCEDIR)
-
-if (NOT DEFINED DESKTOPDIR)
-    if (UNIX)
-        set (DESKTOPDIR "${DATADIR}/share/applications")
-    endif (UNIX)
-endif (NOT DEFINED DESKTOPDIR)
-
-if (NOT DEFINED ICONSDIR)
-    if (UNIX)
-        set (ICONSDIR "${DATADIR}/share/icons")
-    endif (UNIX)
-endif (NOT DEFINED ICONSDIR)
-
-if (NOT DEFINED APPDATADIR)
-    if (UNIX)
-        set (APPDATADIR "${DATADIR}/share/appdata")
-    endif (UNIX)
-endif (NOT DEFINED APPDATADIR)
-
-# non-bundle builds has to use absolute paths
-if (NOT BUILD_BUNDLE AND NOT (IS_ABSOLUTE "${BINDIR}" AND IS_ABSOLUTE "${DATADIR}" AND IS_ABSOLUTE "${LIBDIR}" AND IS_ABSOLUTE "${DOCDIR}" AND IS_ABSOLUTE "${CREDITSDIR}" AND IS_ABSOLUTE "${LICENCEDIR}"))
-    message (FATAL_ERROR "The paths has to be absolute or use -DBUILD_BUNDLE=ON")
-endif ()
-
-# MyMutex
-if (STRICT_MUTEX OR UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-    add_definitions (-DSTRICT_MUTEX=1)
-else (STRICT_MUTEX OR UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-    add_definitions (-DSTRICT_MUTEX=0)
-endif (STRICT_MUTEX OR UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-
-# MyRWMutex
-if (TRACE_MYRWMUTEX)
-    add_definitions (-DTRACE_MYRWMUTEX=1)
-else (TRACE_MYRWMUTEX)
-    add_definitions (-DTRACE_MYRWMUTEX=0)
-endif (TRACE_MYRWMUTEX)
-
-if (AUTO_GDK_FLUSH)
-    add_definitions (-DAUTO_GDK_FLUSH=1)
-else (AUTO_GDK_FLUSH)
-    add_definitions (-DAUTO_GDK_FLUSH=0)
-endif (AUTO_GDK_FLUSH)
-
-# check for libraries
-=======
 endif()
 
 if(NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
@@ -372,7 +250,6 @@ else()
 endif()
 
 # Check for libraries:
->>>>>>> Beep6581/dev
 find_package(PkgConfig)
 pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.16)
 pkg_check_modules (GLIB2   REQUIRED glib-2.0>=2.44)
@@ -486,15 +363,9 @@ else()
     set(PROC_BIT_DEPTH 64 bits)
 endif()
 
-<<<<<<< HEAD
-# Get compiler name and version
-# only cmake > 2.8.7 knows CMAKE_*_COMPILER_VERSION
-if (CMAKE_VERSION VERSION_GREATER 2.8.7)
-=======
 # Get compiler name and version.
 # Only CMake > 2.8.7 knows CMAKE_*_COMPILER_VERSION
 if(CMAKE_VERSION VERSION_GREATER 2.8.7)
->>>>>>> Beep6581/dev
     get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
     set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
 else()
@@ -541,26 +412,6 @@ add_custom_target(UpdateInfo ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
     COMMENT "Creating AboutThisBuild.txt and other version-dependent files")
 
-<<<<<<< HEAD
-## END: Generating AboutThisBuild.txt
-
-install (FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
-install (FILES LICENSE.txt DESTINATION "${LICENCEDIR}")
-install (FILES "${CMAKE_BINARY_DIR}/AboutThisBuild.txt" DESTINATION "${CREDITSDIR}")
-install (FILES RELEASE_NOTES.txt DESTINATION "${CREDITSDIR}" OPTIONAL)
-if (WIN32)
-    install (DIRECTORY "licenses" DESTINATION "${LICENCEDIR}")
-endif (WIN32)
-if (UNIX)
-    install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${DOCDIR}/man")
-    install (FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
-endif (UNIX)
-
-add_subdirectory (rtexif)
-add_subdirectory (rtengine)
-add_subdirectory (rtgui)
-add_subdirectory (rtdata)
-=======
 ### End generating AboutThisBuild.txt
 
 install(FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
@@ -586,5 +437,3 @@ add_subdirectory(rtexif)
 add_subdirectory(rtengine)
 add_subdirectory(rtgui)
 add_subdirectory(rtdata)
-
->>>>>>> Beep6581/dev
