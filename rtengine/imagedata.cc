@@ -566,7 +566,7 @@ std::string ImageMetaData::shutterToString (double shutter)
 
     char buffer[256];
 
-    if (shutter > 0.0 && shutter < 0.9) {
+    if (shutter > 0.0 && shutter <= 0.5) {
         sprintf (buffer, "1/%0.0f", 1.0 / shutter);
     } else {
         sprintf (buffer, "%0.1f", shutter);
