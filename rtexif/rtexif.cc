@@ -847,6 +847,22 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             type = INVALID;
         }
     }
+    
+    if(tag == 0x002e) {  // location of the embedded preview image in raw files of Panasonic cameras
+        TagDirectory* previewdir = ExifManager::parseJPEG(f, ftell(f)); // try to parse the exif data from the preview image
+
+        if (previewdir) {
+            if (previewdir->getTag("Exif")) {                
+                if(previewdir->getTag("Make")){
+                    if(previewdir->getTag("Make")->valueToString() == "Panasonic"){ // "make" is not yet available here, so get it from the preview tags to assure we're doing the right thing
+                        Tag* t = new Tag (parent->getRoot(), lookupAttrib(ifdAttribs, "Exif")); // replace raw exif with preview exif assuming there are the same
+                        t->initSubDir(previewdir->getTag("Exif")->getDirectory());
+                        parent->getRoot()->addTag(t);
+                    }
+                }
+            }
+        } 
+    }
 
     // if this tag is the makernote, it needs special treatment (brand specific parsing)
     if (tag == 0x927C && attrib && !strcmp (attrib->name, "MakerNote") ) {
@@ -1212,6 +1228,14 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
         } else {
             directory[0] = new TagDirectory (parent, f, base, olympusAttribs, bom);
         }
+    } else if ( make.find( "Panasonic" ) != std::string::npos) {
+        makerNoteKind = HEADERIFD;
+        valuesize = 12;
+        value = new unsigned char[12];
+        fread (value, 1, 12, f);
+        directory = new TagDirectory*[2];
+        directory[0] = new TagDirectory (parent, f, base, panasonicAttribs, bom);
+        directory[1] = nullptr;
     } else {
         return false;
     }
@@ -2749,10 +2773,10 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
     return root;
 }
 
-TagDirectory* ExifManager::parseJPEG (FILE* f)
+TagDirectory* ExifManager::parseJPEG (FILE* f, int offset)
 {
 
-    fseek (f, 0, SEEK_SET);
+    fseek (f, offset, SEEK_SET);
     unsigned char markerl = 0xff;
     unsigned char c;
     fread (&c, 1, 1, f);

@@ -157,7 +157,8 @@ void ImageData::extractInfo ()
             "SAMSUNG",
             "Mamiya",
             "MOTOROLA",
-            "Leaf"
+            "Leaf",
+            "Panasonic"
         }) {
             if (make.find(corp) != std::string::npos) { // Simplify company names
                 make = corp;
@@ -480,6 +481,17 @@ void ImageData::extractInfo ()
 
                         if (eq->getTag ("LensType")) {
                             lens = eq->getTag ("LensType")->valueToString ();
+                        }
+                    }
+                } else if (mnote && !make.compare (0, 9, "Panasonic")) {
+                    if (mnote->getTag ("LensType")) {
+                        std::string panalens = mnote->getTag("LensType")->valueToString();
+
+                        if (panalens.find("LUMIX") != Glib::ustring::npos) {
+                            lens = "Panasonic " + panalens;
+                        }
+                        else {
+                            lens = panalens;
                         }
                     }
                 }
