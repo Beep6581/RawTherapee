@@ -154,7 +154,7 @@ ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 # fi
 
 # Install names
-find -E "${MACOS}" -type f -regex '.*/(rawtherapee|.*\.(dylib|so))' | while read x; do
+find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee|.*\.(dylib|so))' | while read x; do
     msg "Modifying install names: ${x}"
     {
         # id
@@ -167,7 +167,7 @@ find -E "${MACOS}" -type f -regex '.*/(rawtherapee|.*\.(dylib|so))' | while read
 done
 
 msg "Registering @loader_path into the executable:"
-echo "   install_name_tool -add_rpath @loader_path/lib '${EXECUTABLE}'" | bash -v
+echo "   install_name_tool -add_rpath @loader_path/../Frameworks '${EXECUTABLE}'" | bash -v
 
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
