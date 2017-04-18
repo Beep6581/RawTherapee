@@ -1167,8 +1167,10 @@ PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Processing profile loading priority
 PREFERENCES_PROFILEPRCACHE;Profile in cache
 PREFERENCES_PROFILEPRFILE;Profile next to the input file
+PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
+PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 PREFERENCES_PROFILE_NONE;None
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PRTINTENT;Rendering intent

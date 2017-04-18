@@ -179,8 +179,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::Button*      behSetAll;
     Gtk::CheckButton* chOverwriteOutputFile;
 
-    Gtk::CheckButton* saveParamsFile;
-    Gtk::CheckButton* saveParamsCache;
+    Gtk::ComboBoxText* saveParamsPreference;
     Gtk::CheckButton* useBundledProfiles;
     Gtk::ComboBoxText* loadParamsPreference;
     Gtk::ComboBoxText* editorLayout;

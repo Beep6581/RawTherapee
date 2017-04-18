@@ -219,7 +219,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     const bool create = (!hasProcParams() || force);
 
     const Glib::ustring outFName =
-        (options.paramsLoadLocation == PLL_Input) ?
+        (options.paramsLoadLocation == PLL_Input && options.saveParamsFile) ?
         fname + paramFileExtension :
         getCacheFileName("profiles", paramFileExtension);
 

@@ -91,17 +91,15 @@ if (WIN32)
         set(ARCHITECTURE_ALLOWED "x86 x64 ia64")
         # installing in 32 bits mode even on 64 bits OS and architecture
         set(INSTALL_MODE "")
-        # set part of the output archive name
-        set(SYSTEM_NAME "WinXP")
     elseif (BIT_DEPTH EQUAL 8)
         set(BUILD_BIT_DEPTH 64)
         # Restricting the 64 bits builds to 64 bits systems only
         set(ARCHITECTURE_ALLOWED "x64 ia64")
         # installing in 64 bits mode for all 64 bits processors, even for itanium architecture
         set(INSTALL_MODE "x64 ia64")
-        # set part of the output archive name
-        set(SYSTEM_NAME "WinVista")
     endif (BIT_DEPTH EQUAL 4)
+    # set part of the output archive name
+    set(SYSTEM_NAME "WinVista")
 
     configure_file ("${PROJECT_SOURCE_DIR}/tools/win/InnoSetup/WindowsInnoSetup.iss.in" "${CMAKE_BINARY_DIR}/rtdata/WindowsInnoSetup.iss")
 endif (WIN32)
