@@ -1,4 +1,4 @@
-add_library(rtexif rtexif.cc stdattribs.cc nikonattribs.cc canonattribs.cc pentaxattribs.cc fujiattribs.cc sonyminoltaattribs.cc olympusattribs.cc kodakattribs.cc)
+add_library(rtexif rtexif.cc stdattribs.cc nikonattribs.cc canonattribs.cc pentaxattribs.cc fujiattribs.cc sonyminoltaattribs.cc olympusattribs.cc kodakattribs.cc panasonicattribs.cc)
 add_dependencies(rtexif UpdateInfo)
 
 if(WIN32)

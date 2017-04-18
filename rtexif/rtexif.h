@@ -312,7 +312,7 @@ class ExifManager
     static Tag* saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const char* name);
 public:
     static TagDirectory* parse (FILE*f, int base, bool skipIgnored = true);
-    static TagDirectory* parseJPEG (FILE*f);
+    static TagDirectory* parseJPEG (FILE*f, int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
     static TagDirectory* parseTIFF (FILE*f, bool skipIgnored = true);
     static TagDirectory* parseCIFF (FILE* f, int base, int length);
     static void          parseCIFF (FILE* f, int base, int length, TagDirectory* root);
@@ -629,5 +629,7 @@ extern const TagAttrib sonyCameraSettingsAttribs3[];
 extern const TagAttrib olympusAttribs[];
 extern const TagAttrib kodakIfdAttribs[];
 void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif);
+extern const TagAttrib panasonicAttribs[];
+extern const TagAttrib panasonicRawAttribs[];
 }
 #endif
