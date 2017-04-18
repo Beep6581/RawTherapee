@@ -38,7 +38,7 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->toInt(2));
+        sprintf (buffer, "%d", t->toInt (2));
         return buffer;
     }
 };
@@ -59,8 +59,8 @@ public:
     {
         int a = t->getValue()[ofs];
 
-        if(a > 1) {
-            double i = pow(2., double(a) / 12. - 5.) * 100.;
+        if (a > 1) {
+            double i = pow (2., double (a) / 12. - 5.) * 100.;
             return i;
         } else {
             return 0.;
@@ -70,8 +70,8 @@ public:
     {
         int a = t->getValue()[ofs];
 
-        if(a > 1) {
-            int i = int(double(powf(2.f, float(a) / 12.f - 5.f)) * 100.f + 0.5f);
+        if (a > 1) {
+            int i = int (double (powf (2.f, float (a) / 12.f - 5.f)) * 100.f + 0.5f);
             return i;
         } else {
             return 0;
@@ -90,50 +90,50 @@ public:
 
         // unclear if this interpretation is correct!
         switch (a) {
-        case 0x0:
-            return "Off";
+            case 0x0:
+                return "Off";
 
-        case 0x101:
-            return "Hi 0.3";
+            case 0x101:
+                return "Hi 0.3";
 
-        case 0x102:
-            return "Hi 0.5";
+            case 0x102:
+                return "Hi 0.5";
 
-        case 0x103:
-            return "Hi 0.7";
+            case 0x103:
+                return "Hi 0.7";
 
-        case 0x104:
-            return "Hi 1.0";
+            case 0x104:
+                return "Hi 1.0";
 
-        case 0x105:
-            return "Hi 1.3";
+            case 0x105:
+                return "Hi 1.3";
 
-        case 0x106:
-            return "Hi 1.5";
+            case 0x106:
+                return "Hi 1.5";
 
-        case 0x107:
-            return "Hi 1.7";
+            case 0x107:
+                return "Hi 1.7";
 
-        case 0x108:
-            return "Hi 2.0";
+            case 0x108:
+                return "Hi 2.0";
 
-        case 0x201:
-            return "Lo 0.3";
+            case 0x201:
+                return "Lo 0.3";
 
-        case 0x202:
-            return "Lo 0.5";
+            case 0x202:
+                return "Lo 0.5";
 
-        case 0x203:
-            return "Lo 0.7";
+            case 0x203:
+                return "Lo 0.7";
 
-        case 0x204:
-            return "Lo 1.0";
+            case 0x204:
+                return "Lo 1.0";
 
-        default: {
-            char buffer[32];
-            sprintf(buffer, "0x%04X", a);
-            return buffer;
-        }
+            default: {
+                char buffer[32];
+                sprintf (buffer, "0x%04X", a);
+                return buffer;
+            }
         }
     }
 };
@@ -222,7 +222,7 @@ public:
         amchoices[0x3] = "Group Dynamic";
         amchoices[0x4] = "Single Area (wide)";
         amchoices[0x5] = "Dynamic Area (wide)";
-    // AFPoint
+        // AFPoint
         afpchoices[0x0] = "Center";
         afpchoices[0x1] = "Top";
         afpchoices[0x2] = "Bottom";
@@ -251,62 +251,52 @@ public:
                 af << "Center";
             } else {
                 af << ", Center";
-            }
-        else if (aff & 2)
+            } else if (aff & 2)
             if (af.str() == "") {
                 af << "Top";
             } else {
                 af << ", Top";
-            }
-        else if (aff & 4)
+            } else if (aff & 4)
             if (af.str() == "") {
                 af << "Bottom";
             } else {
                 af << ", Bottom";
-            }
-        else if (aff & 8)
+            } else if (aff & 8)
             if (af.str() == "") {
                 af << "Left";
             } else {
                 af << ", Left";
-            }
-        else if (aff & 16)
+            } else if (aff & 16)
             if (af.str() == "") {
                 af << "Right";
             } else {
                 af << ", Right";
-            }
-        else if (aff & 32)
+            } else if (aff & 32)
             if (af.str() == "") {
                 af << "Upper-left";
             } else {
                 af << ", Upper-left";
-            }
-        else if (aff & 64)
+            } else if (aff & 64)
             if (af.str() == "") {
                 af << "Upper-right";
             } else {
                 af << ", Upper-right";
-            }
-        else if (aff & 128)
+            } else if (aff & 128)
             if (af.str() == "") {
                 af << " Lower-left";
             } else {
                 af << ",  Lower-left";
-            }
-        else if (aff & 256)
+            } else if (aff & 256)
             if (af.str() == "") {
                 af << "Lower-right";
             } else {
                 af << ", Lower-right";
-            }
-        else if (aff & 512)
+            } else if (aff & 512)
             if (af.str() == "") {
                 af << "Far Left";
             } else {
                 af << ", Far Left";
-            }
-        else if (aff & 1024) {
+            } else if (aff & 1024) {
             if (af.str() == "") {
                 af << "Far Right";
             } else {
@@ -372,21 +362,21 @@ public:
         std::ostringstream ld;
         ld << "Version = " << ver << std::endl;
 
-        int lenstype = t->getParent()->getTag(0x0083)->toInt(0, BYTE);
+        int lenstype = t->getParent()->getTag (0x0083)->toInt (0, BYTE);
 
         std::ostringstream lid;
         lid.setf (std::ios_base::hex, std::ios_base::basefield);
         lid.setf (std::ios_base::uppercase);
 
-        Tag *modelTag = t->getParent()->getRoot()->findTag("Model");
-        std::string model( modelTag ?  modelTag->valueToString() : "");
+        Tag *modelTag = t->getParent()->getRoot()->findTag ("Model");
+        std::string model ( modelTag ?  modelTag->valueToString() : "");
         int lidoffs = 7;
         bool d100 = false;
 
-        if (model.substr(0, 10) == "NIKON D100" || model.substr(0, 9) == "NIKON D1X") {
+        if (model.substr (0, 10) == "NIKON D100" || model.substr (0, 9) == "NIKON D1X") {
             lidoffs = 0;
             d100 = true;
-        } else if( ver < 204) {
+        } else if ( ver < 204) {
             lidoffs = 7;
             d100 = false;
         } else {
@@ -403,14 +393,14 @@ public:
         }
 
         if (ver >= 201) {
-            const unsigned char* serval = t->getParent()->getTag(0x001d)->getValue ();
+            const unsigned char* serval = t->getParent()->getTag (0x001d)->getValue ();
             int serial = 0;
 
             for (int i = 0; serval[i]; i++) {
-                serial = serial * 10 + (isdigit(serval[i]) ? serval[i] - '0' : serval[i] % 10);
+                serial = serial * 10 + (isdigit (serval[i]) ? serval[i] - '0' : serval[i] % 10);
             }
 
-            const unsigned char* scval = t->getParent()->getTag(0x00a7)->getValue ();
+            const unsigned char* scval = t->getParent()->getTag (0x00a7)->getValue ();
             int key = 0;
 
             for (int i = 0; i < 4; i++) {
@@ -431,7 +421,7 @@ public:
         if (!d100) {
             int  EffectiveMaxApertureValue;
 
-            if( ver < 204 ) {
+            if ( ver < 204 ) {
                 ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
                 ld << "AFAperture = "        << (int) buffer[1] << std::endl;
                 ld << "FocusPosition = "     << (int) buffer[4] << std::endl;
@@ -448,111 +438,111 @@ public:
             }
 
             switch (EffectiveMaxApertureValue) {
-            case 0x8:
-                EffectiveMaxApertureString = "1.2";
-                break;
+                case 0x8:
+                    EffectiveMaxApertureString = "1.2";
+                    break;
 
-            case 0xc:
-                EffectiveMaxApertureString = "1.4";
-                break;
+                case 0xc:
+                    EffectiveMaxApertureString = "1.4";
+                    break;
 
-            case 0x14:
-                EffectiveMaxApertureString = "1.8";
-                break;
+                case 0x14:
+                    EffectiveMaxApertureString = "1.8";
+                    break;
 
-            case 0x18:
-                EffectiveMaxApertureString = "2.0";
-                break;
+                case 0x18:
+                    EffectiveMaxApertureString = "2.0";
+                    break;
 
-            case 0x20:
-                EffectiveMaxApertureString = "2.5";
-                break;
+                case 0x20:
+                    EffectiveMaxApertureString = "2.5";
+                    break;
 
-            case 0x24:
-                EffectiveMaxApertureString = "2.8";
-                break;
+                case 0x24:
+                    EffectiveMaxApertureString = "2.8";
+                    break;
 
-            case 0x2a:
-                EffectiveMaxApertureString = "3.3";
-                break;
+                case 0x2a:
+                    EffectiveMaxApertureString = "3.3";
+                    break;
 
-            case 0x2c:
-                EffectiveMaxApertureString = "3.5";
-                break;
+                case 0x2c:
+                    EffectiveMaxApertureString = "3.5";
+                    break;
 
-            case 0x30:
-                EffectiveMaxApertureString = "4.0";
-                break;
+                case 0x30:
+                    EffectiveMaxApertureString = "4.0";
+                    break;
 
-            case 0x34:
-                EffectiveMaxApertureString = "4.5";
-                break;
+                case 0x34:
+                    EffectiveMaxApertureString = "4.5";
+                    break;
 
-            case 0x38:
-                EffectiveMaxApertureString = "5.0";
-                break;
+                case 0x38:
+                    EffectiveMaxApertureString = "5.0";
+                    break;
 
-            case 0x3c:
-                EffectiveMaxApertureString = "5.6";
-                break;
+                case 0x3c:
+                    EffectiveMaxApertureString = "5.6";
+                    break;
 
-            case 0x40:
-                EffectiveMaxApertureString = "6.3";
-                break;
+                case 0x40:
+                    EffectiveMaxApertureString = "6.3";
+                    break;
 
-            case 0x44:
-                EffectiveMaxApertureString = "7.1";
-                break;
+                case 0x44:
+                    EffectiveMaxApertureString = "7.1";
+                    break;
 
-            case 0x48:
-                EffectiveMaxApertureString = "8.0";
-                break;
+                case 0x48:
+                    EffectiveMaxApertureString = "8.0";
+                    break;
 
-            case 0x4e:
-                EffectiveMaxApertureString = "9.5";
-                break;
+                case 0x4e:
+                    EffectiveMaxApertureString = "9.5";
+                    break;
 
-            case 0x54:
-                EffectiveMaxApertureString = "11.0";
-                break;
+                case 0x54:
+                    EffectiveMaxApertureString = "11.0";
+                    break;
 
-            case 0x5a:
-                EffectiveMaxApertureString = "13.0";
-                break;
+                case 0x5a:
+                    EffectiveMaxApertureString = "13.0";
+                    break;
 
-            case 0x5e:
-                EffectiveMaxApertureString = "15.0";
-                break;
+                case 0x5e:
+                    EffectiveMaxApertureString = "15.0";
+                    break;
 
-            case 0x60:
-                EffectiveMaxApertureString = "16.0";
-                break;
+                case 0x60:
+                    EffectiveMaxApertureString = "16.0";
+                    break;
 
-            case 0x66:
-                EffectiveMaxApertureString = "19.0";
-                break;
+                case 0x66:
+                    EffectiveMaxApertureString = "19.0";
+                    break;
 
-            case 0x6c:
-                EffectiveMaxApertureString = "22.0";
-                break;
+                case 0x6c:
+                    EffectiveMaxApertureString = "22.0";
+                    break;
 
-            default  :
-                EffectiveMaxApertureString = "";
+                default  :
+                    EffectiveMaxApertureString = "";
             }
 
             ld << "EffectiveMaxAperture = "  << EffectiveMaxApertureString << std::endl;
         }
 
         for (int i = 0; i < 7; i++) {
-            lid << std::setw(2) << std::setfill('0') << (int)buffer[lidoffs + i] << ' ';
+            lid << std::setw (2) << std::setfill ('0') << (int)buffer[lidoffs + i] << ' ';
         }
 
-        lid << std::setw(2) << std::setfill('0') << lenstype;
+        lid << std::setw (2) << std::setfill ('0') << lenstype;
 
         std::map<std::string, std::string>::const_iterator r = lenses.find (lid.str());
 
         if (r != lenses.end()) {
-            if(r == lenses.begin() && EffectiveMaxApertureString != "") {       // first entry is for unchipped lenses
+            if (r == lenses.begin() && EffectiveMaxApertureString != "") {      // first entry is for unchipped lenses
                 ld << "Lens = Unknown $FL$mm f/" << EffectiveMaxApertureString;
             } else {
                 ld << "Lens = " << r->second;
@@ -618,6 +608,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"00 4C 7C 7C 2C 2C 00 02", "Tamron SP AF 180mm f/3.5 Di Model (B01)"},
     {"00 53 2B 50 24 24 00 06", "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical (IF) (A16)"},
     {"00 54 2B 50 24 24 00 06", "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical (IF) (A16NII)"},
+    {"00 54 38 38 18 18 00 00", "Carl Zeiss Distagon T* 2/25 ZF.2"},
     {"00 54 3C 3C 18 18 00 00", "Carl Zeiss Distagon T* 2/28 ZF.2"},
     {"00 54 44 44 0C 0C 00 00", "Carl Zeiss Distagon T* 1.4/35 ZF.2"},
     {"00 54 44 44 18 18 00 00", "Carl Zeiss Distagon T* 2/35 ZF.2"},
@@ -851,6 +842,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"4A 48 24 24 24 0C 4D 02", "Samyang AE 14mm f/2.8 ED AS IF UMC"},
     {"4A 54 29 29 18 0C 4D 02", "Samyang 16mm f/2.0 ED AS UMC CS"},
     {"4A 54 62 62 0C 0C 4D 02", "AF Nikkor 85mm f/1.4D IF"},
+    {"4A 60 36 36 0C 0C 4D 02", "Samyang 24mm f/1.4 ED AS UMC"},
     {"4A 60 44 44 0C 0C 4D 02", "Samyang 35mm f/1.4 AS UMC"},
     {"4A 60 62 62 0C 0C 4D 02", "Samyang AE 85mm f/1.4 AS IF UMC"},
     {"4B 3C A0 A0 30 30 4E 02", "AF-S Nikkor 500mm f/4D IF-ED"},
@@ -907,6 +899,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"74 40 37 62 2C 34 78 06", "AF-S Zoom-Nikkor 24-85mm f/3.5-4.5G IF-ED"},
     {"75 40 3C 68 2C 3C 79 06", "AF Zoom-Nikkor 28-100mm f/3.5-5.6G"},
     {"76 58 50 50 14 14 7A 02", "AF Nikkor 50mm f/1.8D"},
+    {"77 44 60 98 34 3C 7B 0E", "Sigma 80-400mm f4.5-5.6 APO DG D OS"},
     {"77 44 61 98 34 3C 7B 0E", "Sigma 80-400mm f/4.5-5.6 EX OS"},
     {"77 48 5C 80 24 24 7B 0E", "AF-S VR Zoom-Nikkor 70-200mm f/2.8G IF-ED"},
     {"78 40 37 6E 2C 3C 7C 0E", "AF-S VR Zoom-Nikkor 24-120mm f/3.5-5.6G IF-ED"},
@@ -914,6 +907,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"79 40 3C 80 2C 3C 7F 06", "AF Zoom-Nikkor 28-200mm f/3.5-5.6G IF-ED"},
     {"79 48 3C 5C 24 24 1C 06", "Sigma 28-70mm f/2.8 EX DG"},
     {"79 48 5C 5C 24 24 1C 06", "Sigma Macro 70mm f/2.8 EX DG"},
+    {"79 54 31 31 0C 0C 4B 06", "Sigma 20mm f/1.4 DG HSM | A"},
     {"7A 3B 53 80 30 3C 4B 06", "Sigma 55-200mm f/4-5.6 DC HSM"},
     {"7A 3C 1F 37 30 30 7E 06", "AF-S DX Zoom-Nikkor 12-24mm f/4G IF-ED"},
     {"7A 3C 1F 37 30 30 7E 06", "Tokina AT-X 124 AF PRO DX II (AF 12-24mm f/4)"},
@@ -981,6 +975,8 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"9E 40 2D 6A 2C 3C A0 0E", "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED"},
     {"9F 37 50 A0 34 40 4B 0E", "Sigma 50-500mm f/4.5-6.3 DG OS HSM"},
     {"9F 58 44 44 14 14 A1 06", "AF-S DX Nikkor 35mm f/1.8G"},
+    {"A0 40 2D 53 2C 3C CA 0E", "AF-P DX Nikkor 18-55mm f/3.5-5.6G VR"},
+    {"A0 40 2D 53 2C 3C CA 8E", "AF-P DX Nikkor 18-55mm f/3.5-5.6G"},
     {"A0 40 2D 74 2C 3C BB 0E", "AF-S DX Nikkor 18-140mm f/3.5-5.6G ED VR"},
     {"A0 48 2A 5C 24 30 4B 0E", "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"},
     {"A0 54 50 50 0C 0C A2 06", "AF-S Nikkor 50mm f/1.4G"},
@@ -993,10 +989,13 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"A3 3C 5C 8E 30 3C 4B 0E", "Sigma 70-300mm f/4-5.6 DG OS"},
     {"A4 40 2D 8E 2C 40 BF 0E", "AF-S DX Nikkor 18-300mm f/3.5-6.3G ED VR"},
     {"A4 47 2D 50 24 34 4B 0E", "Sigma 18-50mm f/2.8-4.5 DC OS HSM"},
+    {"A4 48 5C 80 24 24 CF 0E", "AF-S Nikkor 70-200mm f/2.8E FL ED VR"},
     {"A4 54 37 37 0C 0C A6 06", "AF-S Nikkor 24mm f/1.4G ED"},
     {"A5 40 2D 88 2C 40 4B 0E", "Sigma 18-250mm f/3.5-6.3 DC OS HSM"},
     {"A5 40 3C 8E 2C 3C A7 0E", "AF-S Nikkor 28-300mm f/3.5-5.6G ED VR"},
     {"A5 4C 44 44 14 14 C0 06", "AF-S Nikkor 35mm f/1.8G ED"},
+    {"A5 54 6A 6A 0C 0C D0 06", "AF-S Nikkor 105mm f/1.4E ED"},
+    {"A5 54 6A 6A 0C 0C D0 46", "AF-S Nikkor 105mm f/1.4E ED"},
     {"A6 48 37 5C 24 24 4B 06", "Sigma 24-70mm f/2.8 IF EX DG HSM"},
     {"A6 48 8E 8E 24 24 A8 0E", "AF-S VR Nikkor 300mm f/2.8G IF-ED II"},
     {"A6 48 98 98 24 24 C1 0E", "AF-S Nikkor 400mm f/2.8E FL ED VR"},
@@ -1040,9 +1039,12 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"E0 3C 5C 8E 30 3C 4B 06", "Sigma 70-300mm f/4-5.6 APO DG Macro HSM"},
     {"E1 58 37 37 14 14 1C 02", "Sigma 24mm f/1.8 EX DG Aspherical Macro"},
     {"E3 54 50 50 24 24 35 02", "Sigma Macro 50mm f/2.8 EX DG"},
+    {"E4 54 64 64 24 24 DF 0E", "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1 (F017)"},
     {"E5 54 6A 6A 24 24 35 02", "Sigma Macro 105mm f/2.8 EX DG"},
+    {"E6 40 2D 80 2C 40 DF 0E", "Tamron AF 18-200mm f/3.5-6.3 Di II VC (B018)"},
     {"E6 41 3C 8E 2C 40 1C 02", "Sigma 28-300mm f/3.5-6.3 DG Macro"},
-    {"E8 4C 44 44 14 14 DF 0E", "Tamron SP 35mm f/1.8 VC"},
+    {"E7 4C 4C 4C 14 14 DF 0E", "Tamron SP 45mm f/1.8 Di VC USD (F013)"},
+    {"E8 4C 44 44 14 14 DF 0E", "Tamron SP 35mm f/1.8 Di VC USD (F012)"},
     {"E9 48 27 3E 24 24 DF 0E", "Tamron SP 15-30mm f/2.8 Di VC USD (A012)"},
     {"E9 54 37 5C 24 24 1C 02", "Sigma 24-70mm f/2.8 EX DG Macro"},
     {"EA 40 29 8E 2C 40 DF 0E", "Tamron AF 16-300mm f/3.5-6.3 Di II VC PZD (B016)"},
