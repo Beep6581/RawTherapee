@@ -486,20 +486,20 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     mvbpp->pack_start (*cpfrm, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fdp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_PROFILEHANDLING")));
-    Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
-    saveParamsFile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_PROFILESAVEINPUT")));
-    vbdp->pack_start (*saveParamsFile, Gtk::PACK_SHRINK, 4);
-    saveParamsCache = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_PROFILESAVECACHE")));
-    vbdp->pack_start (*saveParamsCache, Gtk::PACK_SHRINK, 4);
+    Gtk::Table* vbdp = Gtk::manage (new Gtk::Table (2, 2));
+    saveParamsPreference = Gtk::manage (new Gtk::ComboBoxText ());
+    saveParamsPreference->append(M("PREFERENCES_PROFILESAVEINPUT"));
+    saveParamsPreference->append(M("PREFERENCES_PROFILESAVECACHE"));
+    saveParamsPreference->append(M("PREFERENCES_PROFILESAVEBOTH"));
+    Gtk::Label *splab = Gtk::manage(new Gtk::Label(M("PREFERENCES_PROFILESAVELOCATION") + ":"));
+    vbdp->attach(*splab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    vbdp->attach(*saveParamsPreference, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PROFILELOADPR") + ":"));
     loadParamsPreference = Gtk::manage (new Gtk::ComboBoxText ());
     loadParamsPreference->append (M("PREFERENCES_PROFILEPRCACHE"));
     loadParamsPreference->append (M("PREFERENCES_PROFILEPRFILE"));
-    Gtk::HBox* hb41 = Gtk::manage (new Gtk::HBox ());
-    hb41->pack_start (*lplab, Gtk::PACK_SHRINK, 0);
-    hb41->pack_start (*loadParamsPreference, Gtk::PACK_EXPAND_WIDGET, 0);
-    hb41->set_spacing(4);
-    vbdp->pack_start (*hb41, Gtk::PACK_EXPAND_WIDGET, 4);
+    vbdp->attach(*lplab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    vbdp->attach(*loadParamsPreference, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     fdp->add (*vbdp);
     mvbpp->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
@@ -1729,8 +1729,9 @@ void Preferences::storePreferences ()
     moptions.sameThumbSize = sameThumbSize->get_active();
     moptions.internalThumbIfUntouched = ckbInternalThumbIfUntouched->get_active ();
 
-    moptions.saveParamsFile = saveParamsFile->get_active ();
-    moptions.saveParamsCache = saveParamsCache->get_active ();
+    auto save_where = saveParamsPreference->get_active_row_number();
+    moptions.saveParamsFile = save_where == 0 || save_where == 2;
+    moptions.saveParamsCache = save_where == 1 || save_where == 2;
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
     moptions.useBundledProfiles = useBundledProfiles->get_active ();
 
@@ -1949,8 +1950,8 @@ void Preferences::fillPreferences ()
     sameThumbSize->set_active(moptions.sameThumbSize);
     ckbInternalThumbIfUntouched->set_active(moptions.internalThumbIfUntouched);
 
-    saveParamsFile->set_active (moptions.saveParamsFile);
-    saveParamsCache->set_active (moptions.saveParamsCache);
+    saveParamsPreference->set_active(moptions.saveParamsFile ? (moptions.saveParamsCache ? 2 : 0) : 1);
+
     loadParamsPreference->set_active (moptions.paramsLoadLocation);
     useBundledProfiles->set_active (moptions.useBundledProfiles);
 

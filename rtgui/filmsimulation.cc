@@ -133,6 +133,7 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
                 ? Glib::ustring(Glib::build_filename(options.clutsDir, pp->filmSimulation.clutFilename))
                 : pp->filmSimulation.clutFilename
         );
+        m_oldClutFilename = m_clutComboBox->getSelectedClut();
     }
 
     m_strength->setValue(pp->filmSimulation.strength);
