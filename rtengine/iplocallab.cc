@@ -3637,6 +3637,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufgb->b[ir][jr] = 0.f;
                     }
 
+
+
+
                 int yStart = lp.yc - lp.lyT - cy;
                 int yEnd = lp.yc + lp.ly - cy;
                 int xStart = lp.xc - lp.lxL - cx;
@@ -4728,23 +4731,23 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 const JaggedArray<float> bufsh (bfw, bfh, true);
                 const JaggedArray<float> hbuffer (bfw, bfh);
 
-                int yStart = lp.yc - lp.lyT - cy;
-                int yEnd = lp.yc + lp.ly - cy;
-                int xStart = lp.xc - lp.lxL - cx;
-                int xEnd = lp.xc + lp.lx - cx;
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for
 #endif
 
-                for (int y = yStart; y < yEnd ; y++) {
-                    int loy = cy + y;
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+                        int begx = int (lp.xc - lp.lxL);
+                        int begy = int (lp.yc - lp.lyT);
 
-                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
-                        bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                            bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        }
                     }
-                }
+
+                //   }
 
                 //sharpen only square area instaed of all image
                 ImProcFunctions::deconvsharpeningloc (bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.shardamping, (double)params->locallab.sharradius / 100., params->locallab.shariter, params->locallab.sharamount);
