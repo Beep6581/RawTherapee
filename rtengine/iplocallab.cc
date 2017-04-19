@@ -3638,28 +3638,45 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
 
-
-
-                int yStart = lp.yc - lp.lyT - cy;
-                int yEnd = lp.yc + lp.ly - cy;
-                int xStart = lp.xc - lp.lxL - cx;
-                int xEnd = lp.xc + lp.lx - cx;
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for
 #endif
 
-                for (int y = yStart; y < yEnd ; y++) {
-                    int loy = cy + y;
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+                        int begx = int (lp.xc - lp.lxL);
+                        int begy = int (lp.yc - lp.lyT);
 
-                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
-                        bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                        bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                        bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                            bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        }
                     }
-                }
 
+                /*
+                                int yStart = lp.yc - lp.lyT - cy;
+                                int yEnd = lp.yc + lp.ly - cy;
+                                int xStart = lp.xc - lp.lxL - cx;
+                                int xEnd = lp.xc + lp.lx - cx;
+                                int begy = lp.yc - lp.lyT;
+                                int begx = lp.xc - lp.lxL;
+                #ifdef _OPENMP
+                                #pragma omp parallel for schedule(dynamic,16)
+                #endif
+
+                                for (int y = yStart; y < yEnd ; y++) {
+                                    int loy = cy + y;
+
+                                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
+                                        bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                                        bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                                        bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                                    }
+                                }
+                */
                 tmp1 = new LabImage (bfw, bfh);
 #ifdef _OPENMP
                 #pragma omp parallel
@@ -3900,26 +3917,24 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 int bfw = int (lp.lx + lp.lxL) + del;
                 LabImage bufwv (bfw, bfh);
                 bufwv.clear (true);
-
-                int yStart = lp.yc - lp.lyT - cy;
-                int yEnd = lp.yc + lp.ly - cy;
-                int xStart = lp.xc - lp.lxL - cx;
-                int xEnd = lp.xc + lp.lx - cx;
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for
 #endif
 
-                for (int y = yStart; y < yEnd ; y++) {
-                    int loy = cy + y;
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+                        int begx = int (lp.xc - lp.lxL);
+                        int begy = int (lp.yc - lp.lyT);
 
-                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
-                        bufwv.L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                        bufwv.a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                        bufwv.b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                            bufwv.L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufwv.a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufwv.b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                        }
+
                     }
-                }
 
                 int DaubLen = 6;
 
