@@ -11,7 +11,7 @@ namespace rtexif
 {
 
 
-void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
+void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif_)
 {
     // parse TextualInfo and copy values into corresponding standard Exif
     if (textualInfo->getType() != ASCII) {
@@ -24,7 +24,7 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
     char *p = value;
     char *pc, *plf;
 
-    while ((pc = strchr(p, ':')) != nullptr && (plf = strchr(pc, '\n')) != nullptr) {
+    while ((pc = strchr (p, ':')) != nullptr && (plf = strchr (pc, '\n')) != nullptr) {
         while (*p == ' ') {
             p++;
         }
@@ -35,7 +35,7 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
             len--;
         }
 
-        std::string key = std::string(p, len);
+        std::string key = std::string (p, len);
         ++pc;
 
         while (*pc == ' ') {
@@ -48,7 +48,7 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
             len--;
         }
 
-        std::string val = std::string(pc, len);
+        std::string val = std::string (pc, len);
         p = ++plf;
 
         // we pick out a few select tags here
@@ -56,78 +56,78 @@ void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif_)
 
         if (key == "Lens") {
             // Proback645 may have "Lens" but not "Focal Length"
-            float flen = atof(val.c_str());
+            float flen = atof (val.c_str());
 
             if (flen != 0.0) {
-                t = new Tag(exif, lookupAttrib(exifAttribs, "FocalLength"));
-                t->initRational(flen * 32, 32);
-                exif->replaceTag(t);
+                t = new Tag (exif, lookupAttrib (exifAttribs, "FocalLength"));
+                t->initRational (flen * 32, 32);
+                exif->replaceTag (t);
             }
         } else if (key == "Focal Length") {
-            float flen = atof(val.c_str());
+            float flen = atof (val.c_str());
 
             if (flen != 0.0) {
-                t = new Tag(exif, lookupAttrib(exifAttribs, "FocalLength"));
-                t->initRational(flen * 32, 32);
-                exif->replaceTag(t);
+                t = new Tag (exif, lookupAttrib (exifAttribs, "FocalLength"));
+                t->initRational (flen * 32, 32);
+                exif->replaceTag (t);
             }
         } else if (key == "Aperture") {
-            float aperture = atof(&val.c_str()[1]);
+            float aperture = atof (&val.c_str()[1]);
 
             if (aperture != 0.0) {
-                t = new Tag(exif, lookupAttrib(exifAttribs, "FNumber"));
-                t->initRational((int)(aperture * 10), 10);
-                exif->replaceTag(t);
+                t = new Tag (exif, lookupAttrib (exifAttribs, "FNumber"));
+                t->initRational ((int) (aperture * 10), 10);
+                exif->replaceTag (t);
             }
         } else if (key == "Exposure Bias" || key == "Compensation") {
             float bias = 0.0;
 
             if (val != "Off") {
-                bias = atof(val.c_str());
+                bias = atof (val.c_str());
             }
 
-            t = new Tag (exif, lookupAttrib(exifAttribs, "ExposureBiasValue"));
-            t->initRational ((int)(bias * 1000), 1000);
-            exif->replaceTag(t);
+            t = new Tag (exif, lookupAttrib (exifAttribs, "ExposureBiasValue"));
+            t->initRational ((int) (bias * 1000), 1000);
+            exif->replaceTag (t);
         } else if (key == "ISO Speed") {
-            t = new Tag (exif, lookupAttrib(exifAttribs, "ISOSpeedRatings"));
-            t->initInt(atoi(val.c_str()), SHORT);
-            exif->replaceTag(t);
+            t = new Tag (exif, lookupAttrib (exifAttribs, "ISOSpeedRatings"));
+            t->initInt (atoi (val.c_str()), SHORT);
+            exif->replaceTag (t);
         } else if (key == "Shutter") {
-            const char *p1 = strchr(val.c_str(), '/');
+            const char *p1 = strchr (val.c_str(), '/');
             int a, b;
 
             if (p1 == nullptr) {
-                a = atoi(val.c_str());
+                a = atoi (val.c_str());
                 b = 1;
             } else {
-                a = atoi(val.c_str());
-                b = atoi(&p1[1]);
+                a = atoi (val.c_str());
+                b = atoi (&p1[1]);
             }
 
-            t = new Tag (exif, lookupAttrib(exifAttribs, "ExposureTime"));
-            t->initRational(a, b);
-            exif->replaceTag(t);
+            t = new Tag (exif, lookupAttrib (exifAttribs, "ExposureTime"));
+            t->initRational (a, b);
+            exif->replaceTag (t);
 
-            float ssv = -log2((float)a / (float)b); // convert to APEX value
-            t = new Tag (exif, lookupAttrib(exifAttribs, "ShutterSpeedValue"));
-            t->initRational(1000000 * ssv, 1000000);
-            exif->replaceTag(t);
+            float ssv = -log2 ((float)a / (float)b); // convert to APEX value
+            t = new Tag (exif, lookupAttrib (exifAttribs, "ShutterSpeedValue"));
+            t->initRational (1000000 * ssv, 1000000);
+            exif->replaceTag (t);
         } else if (key == "Flash Fired") {
-            t = new Tag (exif, lookupAttrib(exifAttribs, "Flash"));
+            t = new Tag (exif, lookupAttrib (exifAttribs, "Flash"));
 
             if (val == "No") {
-                t->initInt(0, SHORT);
+                t->initInt (0, SHORT);
             } else {
                 // not sure if "Flash Fired" is only yes/no, only seen "No" in test pictures
-                t->initInt(1, SHORT);
+                t->initInt (1, SHORT);
             }
 
-            exif->replaceTag(t);
+            exif->replaceTag (t);
         } else if (key == "White balance") { // yes should be small 'b' int 'balance'.
-            t = new Tag (exif, lookupAttrib(exifAttribs, "Flash"));
-            t->initInt((val == "Auto") ? 0 : 1, SHORT);
-            exif->replaceTag(t);
+            t = new Tag (exif, lookupAttrib (exifAttribs, "Flash"));
+            t->initInt ((val == "Auto") ? 0 : 1, SHORT);
+            exif->replaceTag (t);
         }
     }
 }
