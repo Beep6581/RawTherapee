@@ -4594,6 +4594,84 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             int choice = 0;
             float **buflight = nullptr;
 
+            /*
+                        if (call <= 3) { //call from simpleprocess dcrop improcc
+                            bufsh   = new float*[bfh];
+
+                            for (int i = 0; i < bfh; i++) {
+                                bufsh[i] = new float[bfw];
+                            }
+
+                            buflight   = new float*[bfh];//for lightness reti
+
+                            for (int i = 0; i < bfh; i++) {
+                                buflight[i] = new float[bfw];
+                            }
+
+
+            #ifdef _OPENMP
+                            #pragma omp parallel for
+            #endif
+
+                            for (int ir = 0; ir < bfh; ir++) //fill with 0
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    bufsh[ir][jr] = 0.f;
+                                    buflight[ir][jr] = 0.f;
+
+                                }
+
+                            int yStart = lp.yc - lp.lyT - cy;
+                            int yEnd = lp.yc + lp.ly - cy;
+                            int xStart = lp.xc - lp.lxL - cx;
+                            int xEnd = lp.xc + lp.lx - cx;
+                            int begy = lp.yc - lp.lyT;
+                            int begx = lp.xc - lp.lxL;
+
+            #ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+            #endif
+
+                            for (int y = yStart; y < yEnd ; y++) {
+                                int loy = cy + y;
+
+                                for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
+
+                                    // if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                                    bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                                }
+                            }
+
+                            loctemp = new float*[bfh];//allocate temp
+
+                            for (int i = 0; i < bfh; i++) {
+                                loctemp[i] = new float[bfw];
+                            }
+
+                            ImProcFunctions::cbdl_local_temp (bufsh, bufsh, loctemp, bfw, bfh, lp.mulloc, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
+
+            #ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16)
+            #endif
+
+                            for (int y = yStart; y < yEnd ; y++) {
+                                int loy = cy + y;
+
+                                for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
+
+                                    //   if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                                    float rL;
+                                    rL = CLIPRET ((loctemp[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
+
+                                    buflight[loy - begy][lox - begx]  = rL;
+
+                                }
+                            }
+
+            //                printf ("min=%2.2f max=%2.2f", minc, maxc);
+
+
+                        }
+            */
 
             if (call <= 3) { //call from simpleprocess dcrop improcc
                 bufsh   = new float*[bfh];
@@ -4620,26 +4698,22 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                     }
 
-                int yStart = lp.yc - lp.lyT - cy;
-                int yEnd = lp.yc + lp.ly - cy;
-                int xStart = lp.xc - lp.lxL - cx;
-                int xEnd = lp.xc + lp.lx - cx;
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for
 #endif
 
-                for (int y = yStart; y < yEnd ; y++) {
-                    int loy = cy + y;
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+                        int begx = int (lp.xc - lp.lxL);
+                        int begy = int (lp.yc - lp.lyT);
 
-                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
-
-                        // if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                        bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                            bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                        }
                     }
-                }
 
                 loctemp = new float*[bfh];//allocate temp
 
@@ -4648,49 +4722,40 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 }
 
                 ImProcFunctions::cbdl_local_temp (bufsh, bufsh, loctemp, bfw, bfh, lp.mulloc, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
-
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                #pragma omp parallel for
 #endif
 
-                for (int y = yStart; y < yEnd ; y++) {
-                    int loy = cy + y;
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+                        int begx = int (lp.xc - lp.lxL);
+                        int begy = int (lp.yc - lp.lyT);
 
-                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
+                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                            float rL;
+                            rL = CLIPRET ((loctemp[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
+                            /*
+                                                        if (rL > maxc) {
+                                                            maxc = rL;
+                                                        }
 
-                        //   if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
-                        float rL;
-                        rL = CLIPRET ((loctemp[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
-                        /*
-                                                    if (rL > maxc) {
-                                                        maxc = rL;
-                                                    }
+                                                        if (rL < minc) {
+                                                            minc = rL;
+                                                        }
+                            */
 
-                                                    if (rL < minc) {
-                                                        minc = rL;
-                                                    }
-                        */
+                            buflight[loy - begy][lox - begx]  = rL;
 
-                        buflight[loy - begy][lox - begx]  = rL;
-
+                        }
                     }
-                }
 
 //                printf ("min=%2.2f max=%2.2f", minc, maxc);
 
 
-            } /* else { //call from dcrop.cc
-
-                loctemp = new float*[GH];//allocate temp
-
-                for (int i = 0; i < GH; i++) {
-                    loctemp[i] = new float[GW];
-                }
-
-                ImProcFunctions::cbdl_local_temp (original->L, original->L, loctemp, GW, GH, lp.mulloc, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
-
             }
-*/
+
 
             // I initialize these variable in case of !
             float hueplus = hueref + dhue;
