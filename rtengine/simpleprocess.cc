@@ -1416,9 +1416,25 @@ private:
         }
         params.wavelet.strength *= scale_factor;
         params.dirpyrDenoise.luma *= scale_factor;
+        params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
         //params.dirpyrDenoise.smethod = "shal";
         for (auto &p : params.dirpyrDenoise.lcurve) {
             p *= scale_factor;
+        }
+        const char *medmethods[] = { "soft", "33", "55soft", "55", "77", "99" };
+        if (params.dirpyrDenoise.median) {
+            auto &key = params.dirpyrDenoise.methodmed == "RGB" ? params.dirpyrDenoise.rgbmethod : params.dirpyrDenoise.medmethod;
+            for (int i = 1; i < int(sizeof(medmethods)/sizeof(const char *)); ++i) {
+                if (key == medmethods[i]) {
+                    int j = i - int(1.0 / scale_factor);
+                    if (j < 0) {
+                        params.dirpyrDenoise.median = false;
+                    } else {
+                        key = medmethods[j];
+                    }
+                    break;
+                }
+            }
         }
         
         params.epd.scale *= scale_factor;
@@ -1429,6 +1445,7 @@ private:
             adjust_radius(defaultparams.dirpyrequalizer.mult[i], dirpyreq_scale,
                           params.dirpyrequalizer.mult[i]);
         }
+        params.dirpyrequalizer.threshold *= scale_factor;
 
         adjust_radius(defaultparams.defringe.radius, scale_factor,
                       params.defringe.radius);
@@ -1440,6 +1457,9 @@ private:
             params.raw.xtranssensor.method =
                 procparams::RAWParams::XTransSensor::methodstring[
                     procparams::RAWParams::XTransSensor::onePass];
+        }
+        if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::pixelshift]) {
+            params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::methodstring[params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::lmmse : procparams::RAWParams::BayerSensor::amaze];
         }
     }
 
