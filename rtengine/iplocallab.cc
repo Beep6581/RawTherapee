@@ -3637,19 +3637,21 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufgb->b[ir][jr] = 0.f;
                     }
 
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
 
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
@@ -3657,6 +3659,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
                 /*
+                There is a bug in this calculation ==> out of limits ==> crash
                                 int yStart = lp.yc - lp.lyT - cy;
                                 int yEnd = lp.yc + lp.ly - cy;
                                 int xStart = lp.xc - lp.lxL - cx;
@@ -3917,18 +3920,22 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 int bfw = int (lp.lx + lp.lxL) + del;
                 LabImage bufwv (bfw, bfh);
                 bufwv.clear (true);
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufwv.L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufwv.a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufwv.b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
@@ -4165,20 +4172,57 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
                 clighmax = 0.f;
+                /*
+                                int yStart = lp.yc - lp.lyT - cy;
+                                int yEnd = lp.yc + lp.ly - cy;
+                                int xStart = lp.xc - lp.lxL - cx;
+                                int xEnd = lp.xc + lp.lx - cx;
+
+                     //   int begx = int (lp.xc - lp.lxL);
+                     //   int begy = int (lp.yc - lp.lyT);
+
+                */
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+                /*
+                                            int yStart = lp.yc - lp.lyT - cy;
+                                            int yEnd = lp.yc + lp.ly - cy;
+                                            int xStart = lp.xc - lp.lxL - cx;
+                                            int xEnd = lp.xc + lp.lx - cx;
+                                            //there is a bug in calculation==> outof limits ==> crash
+                                            printf("cy=%i cx=%i begy=%i begx=%i yS=%i yE=%i xS=%i xE=%i tH=%i tW=%i\n", cy, cx, begy, begx, yStart, yEnd, xStart, xEnd, transformed->H, transformed->W );
+                                            int ymax = min(transformed->H, yEnd);
+                                            int xmax = min(transformed->W, xEnd);
+
+                            #ifdef _OPENMP
+                                            #pragma omp parallel for schedule(dynamic,16)
+                            #endif
+
+                                            for (int y = yStart; y < ymax ; y++) {
+                                                int loy = cy + y;
+
+                                                for (int x = xStart, lox = cx + x; x < xmax; x++, lox++) {
+                                                    bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                                                    bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                                                    bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+                                                }
+                                            }
+                */
 
 
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
@@ -4359,19 +4403,21 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 float localty;
                 localty = localtype;
 
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
 
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufcontorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
 
                             //slider contrast
@@ -4498,18 +4544,21 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufgb->b[ir][jr] = 0.f;
                     }
 
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
@@ -4538,18 +4587,21 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 huemoins = hueref - dhue + 2.f * rtengine::RT_PI;
             }
 
+            int begy = lp.yc - lp.lyT;
+            int begx = lp.xc - lp.lxL;
+            int yEn = lp.yc + lp.ly;
+            int xEn = lp.xc + lp.lx;
+
 #ifdef _OPENMP
-            #pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
             for (int y = 0; y < transformed->H ; y++) //{
                 for (int x = 0; x < transformed->W; x++) {
                     int lox = cx + x;
                     int loy = cy + y;
-                    int begx = int (lp.xc - lp.lxL);
-                    int begy = int (lp.yc - lp.lyT);
 
-                    if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
                         float rL;
                         rL = CLIPRET ((tmp1->L[loy - begy][lox - begx] - original->L[y][x]) / 400.f);
@@ -4629,18 +4681,21 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
 
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                         }
                     }
@@ -4652,18 +4707,18 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 }
 
                 ImProcFunctions::cbdl_local_temp (bufsh, bufsh, loctemp, bfw, bfh, lp.mulloc, lp.threshol, skinprot, false,  b_l, t_l, t_r, b_r, choice, sk);
+
+
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             float rL;
                             rL = CLIPRET ((loctemp[loy - begy][lox - begx] - original->L[y][x]) / 330.f);
                             /*
@@ -4746,18 +4801,21 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 const JaggedArray<float> bufsh (bfw, bfh, true);
                 const JaggedArray<float> hbuffer (bfw, bfh);
 
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufsh[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                         }
                     }
@@ -4862,18 +4920,21 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufreti->b[ir][jr] = 0.f;
                     }
 
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+
 #ifdef _OPENMP
-                #pragma omp parallel for
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        int begx = int (lp.xc - lp.lxL);
-                        int begy = int (lp.yc - lp.lyT);
 
-                        if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufreti->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufreti->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufreti->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
