@@ -967,7 +967,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         int c = FC(rr + top, left + border + (FC(rr + top, 2) & 1));
 
                         for (int row = rr + top, cc = border + (FC(rr, 2) & 1), indx = (row * width + cc + left) >> 1; cc < cc1 - border; cc += 2, indx++) {
-                            RawDataTmp[indx] = 65535.0f * rgb[c][(rr) * ts + cc] + 0.5f;
+                            RawDataTmp[indx] = 65535.0f * rgb[c][(rr) * ts + cc];
                         }
                     }
 

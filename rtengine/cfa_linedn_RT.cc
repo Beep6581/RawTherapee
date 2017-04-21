@@ -231,7 +231,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 
                     for (int col = 16 + left, indx = rr * TS + 16; indx < rr * TS + numcols - 16; indx++, col++) {
                         if (rawData[row][col] < clip_pt && cfadn[indx] < clip_pt) {
-                            RawDataTmp[row * width + col] = CLIP((int)(cfadn[indx] + 0.5f));
+                            RawDataTmp[row * width + col] = CLIP(cfadn[indx]);
                         }
                     }
                 }
