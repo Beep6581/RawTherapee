@@ -1879,7 +1879,7 @@ SSEFUNCTION void RawImageSource::lmmse_interpolate_omp(int winw, int winh, array
         gamtab = &(Color::igammatab_24_17);
     } else {
         for(int i = 0; i < 65536; i++) {
-            (*gamtab)[i] = (float)i + 0.5f;
+            (*gamtab)[i] = i;
         }
     }
 
