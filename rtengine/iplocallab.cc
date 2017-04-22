@@ -52,6 +52,7 @@
 #define CLIPLIG(x) LIM(x,0.f, 99.5f)
 #define CLIPCHRO(x) LIM(x,0.f, 140.f)
 #define CLIPRET(x) LIM(x,-99.5f, 99.5f)
+#define CLIP1(x) LIM(x, 0.f, 1.f)
 
 namespace
 {
@@ -2012,7 +2013,11 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
 
                         if (lp.curvact) {
 
-                            cli = (buflightc[loy - begy][lox - begx]);
+                            cli = buflightc[loy - begy][lox - begx];
+
+                            if (cli ==  0.0f) {
+                                cli = 0.01f;
+                            }
                         }
 
                         //parameters for linear interpolation in function of real hue
@@ -2140,8 +2145,10 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                                 if (!lp.curvact) {
                                     modu = 1.f;
                                 } else {
-                                    modu = realcligh / (cli + 0.001f);//avoid divide by zero
+                                    modu = CLIP1 (realcligh / cli);
+
                                 }
+
 
                                 if (original->L[y][x] < 32768.f) {
                                     float factorx = localFactor;
@@ -2181,10 +2188,13 @@ void ImProcFunctions::Contrast_Local (int call, float ave, LabImage * bufcontori
                             }
 
                             case 2: { // inside selection => full effect, no transition
-                                if (lp.curvact == false) {
+                                if (!lp.curvact) {
                                     modu = 1.f;
                                 } else {
-                                    modu = realcligh / (cli + 0.001f);
+                                    //   modu = realcligh / (cli + 0.001f);
+                                    //  printf("mo=%f", modu);
+                                    modu = CLIP1 (realcligh / cli);
+
                                 }
 
                                 if (original->L[y][x] < 32768.f) {
@@ -2299,6 +2309,10 @@ static void calclight (float lum, float  koef, float & lumnew, bool inv)
 
     if (inv == false) {
         blac = 0.99f;
+    } else {
+        if (koef < -90.f) {
+            blac = -0.069f * koef - 5.91f;
+        }
     }
 
     if (koef >= 0.f) {
@@ -2314,7 +2328,8 @@ static void calclight (float lum, float  koef, float & lumnew, bool inv)
 
         }
 
-        if (inv == false && koef == -100.f) {
+        //    if (inv == false && koef == -100.f) {
+        if (koef == -100.f) {
             lumnew = 0.f;
         }
 
@@ -4407,6 +4422,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 int begx = lp.xc - lp.lxL;
                 int yEn = lp.yc + lp.ly;
                 int xEn = lp.xc + lp.lx;
+                //  float maxc = -10000.f;
+                //  float minc = 100000.f;
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -4462,6 +4479,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                 }
 
                                 /*
+
                                                                 if (clighc > maxc) {
                                                                     maxc = clighc;
                                                                 }
@@ -4476,11 +4494,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         }
                     }
 
-                //            printf ("min=%2.2f max=%2.2f", minc, maxc);
+                //       printf ("min=%2.2f max=%2.2f", minc, maxc);
 
 
             }
-
 
             Contrast_Local (call, ave, bufcontorig, buflightc, moy, hueplus, huemoins, hueref, dhue, chromaref, pm, lco, lumaref, av, lp, original, transformed, cx, cy);
 
