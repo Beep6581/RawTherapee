@@ -1618,6 +1618,11 @@ void Locallab::localretChanged  (int **datasp, std::string datastr, std::string 
 
 void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
+    anbspot->hide();
+    hueref->hide();
+    chromaref->hide();
+    lumaref->hide();
+
     disableListener ();
     enablecolorConn.block (true);
     enableblurConn.block (true);
@@ -3030,6 +3035,10 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
 
 void Locallab::enabledChanged ()
 {
+    anbspot->hide();
+    hueref->hide();
+    chromaref->hide();
+    lumaref->hide();
 
     if (listener) {
         if (get_inconsistent()) {
@@ -3147,6 +3156,11 @@ void Locallab::setBatchMode (bool batchMode)
 {
     removeIfThere (this, edit, false);
     ToolPanel::setBatchMode (batchMode);
+
+    hueref->hide ();
+    chromaref->hide ();
+    lumaref->hide ();
+
     degree->showEditedCB ();
     locY->showEditedCB ();
     locX->showEditedCB ();
