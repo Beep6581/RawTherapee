@@ -235,8 +235,10 @@ bool storeDynamicProfileRules(const std::vector<DynamicProfileRule> &rules)
 PartialProfile *loadDynamicProfile(const ImageMetaData *im)
 {
     PartialProfile *ret = new PartialProfile(true, true);
+    bool found = false;
     for (auto &rule : profileStore.getDynamicProfileRules()) { 
         if (rule.matches(im)) {
+            found = true;
             if (options.rtSettings.verbose) {
                 printf("found matching profile %s\n",
                        rule.profilepath.c_str());
@@ -250,6 +252,10 @@ PartialProfile *loadDynamicProfile(const ImageMetaData *im)
                        rule.profilepath.c_str());
             }
         }
+    }
+    if (!found) {
+        const PartialProfile *p = profileStore.getProfile(DEFPROFILE_INTERNAL);
+        p->applyTo(ret->pparams);
     }
     return ret;
 }
