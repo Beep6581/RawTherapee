@@ -19,8 +19,9 @@
 
 #include "dynamicprofilepanel.h"
 #include "multilangmgr.h"
-#include "profilestore.h"
+#include "../rtengine/profilestore.h"
 #include "../rtengine/rtengine.h"
+#include "../rtengine/dynamicprofile.h"
 #include <sstream>
 #include <iomanip>
 
@@ -297,7 +298,7 @@ DynamicProfilePanel::DynamicProfilePanel():
     
     show_all_children();
 
-    for (auto &r : profileStore.getDynamicProfileRules()) {
+    for (auto &r : ProfileStore::getInstance()->getRules()) {
         add_rule(r);
     }
 }
@@ -346,7 +347,7 @@ void DynamicProfilePanel::render_profilepath(
     auto row = *iter;
     Gtk::CellRendererText *ct = static_cast<Gtk::CellRendererText *>(cell);
     auto value = row[columns_.profilepath];
-    auto pse = profileStore.findEntryFromFullPath(value);
+    auto pse = ProfileStore::getInstance()->findEntryFromFullPath(value);
     if (pse != nullptr) {
         ct->property_text() = pse->label;
     } else {
@@ -521,12 +522,12 @@ void DynamicProfilePanel::save()
     for (auto row : treemodel_->children()) {
         rules.emplace_back(to_rule(row, serial++));
     }
-    if (!storeDynamicProfileRules(rules)) {
+
+    ProfileStore::getInstance()->setRules(rules);
+
+    if (!ProfileStore::getInstance()->storeRules()) {
         printf("Error in saving dynamic profile rules\n");
-    } else {
-        profileStore.setDynamicProfileRules(rules);
-        if (options.rtSettings.verbose) {
-            printf("Saved %d dynamic profile rules\n", int(rules.size()));
-        }
+    } else if (options.rtSettings.verbose) {
+        printf("Saved %d dynamic profile rules\n", int(rules.size()));
     }
 }

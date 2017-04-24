@@ -49,6 +49,9 @@
 #include "conio.h"
 #endif
 
+// Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
+#define ECLIPSE_ARGS 0
+
 extern Options options;
 
 // stores path to data files
@@ -175,7 +178,11 @@ int main(int argc, char **argv)
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 
     if (argc > 1 || options.rtSettings.verbose) {
-        if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
+        Glib::ustring fname(fname_to_utf8 (argv[1]));
+#if ECLIPSE_ARGS
+        fname = fname.substr(1, fname.length()-2);
+#endif
+        if (options.rtSettings.verbose || ( !Glib::file_test (fname, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname, Glib::FILE_TEST_IS_DIR))) {
             bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
             bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
 
@@ -268,8 +275,12 @@ void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparam
 
 bool dontLoadCache( int argc, char **argv )
 {
-    for( int iArg = 1; iArg < argc; iArg++) {
-        if( argv[iArg][0] == '-' && argv[iArg][1] == 'q' ) {
+    for (int iArg = 1; iArg < argc; iArg++) {
+        Glib::ustring currParam(argv[iArg]);
+#if ECLIPSE_ARGS
+        currParam = currParam.substr(1, currParam.length()-2);
+#endif
+        if( currParam.at(0) == '-' && currParam.at(1) == 'q' ) {
             return true;
         }
     }
@@ -297,16 +308,22 @@ int processLineParams( int argc, char **argv )
     unsigned errors = 0;
 
     for( int iArg = 1; iArg < argc; iArg++) {
-        if( argv[iArg][0] == '-' ) {
-            switch( argv[iArg][1] ) {
+        Glib::ustring currParam(argv[iArg]);
+#if ECLIPSE_ARGS
+        currParam = currParam.substr(1, currParam.length()-2);
+#endif
+        if( currParam.at(0) == '-' ) {
+            switch( currParam.at(1) ) {
             case 'O':
                 copyParamsFile = true;
 
             case 'o': // outputfile or dir
                 if( iArg + 1 < argc ) {
                     iArg++;
-                    outputPath = fname_to_utf8 (argv[iArg]);
-
+                    outputPath = Glib::ustring(fname_to_utf8(argv[iArg]));
+#if ECLIPSE_ARGS
+                    outputPath = outputPath.substr(1, outputPath.length()-2);
+#endif
                     if( Glib::file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
                         outputDirectory = true;
                     }
@@ -319,7 +336,10 @@ int processLineParams( int argc, char **argv )
                 // RT stop if any of them can't be loaded for any reason.
                 if( iArg + 1 < argc ) {
                     iArg++;
-                    Glib::ustring fname = fname_to_utf8 (argv[iArg]);
+                    Glib::ustring fname(fname_to_utf8(argv[iArg]));
+#if ECLIPSE_ARGS
+                    fname = fname.substr(1, fname.length()-2);
+#endif
 
                     if (fname.at(0) == '-') {
                         std::cerr << "Error: filename missing next to the -p switch" << std::endl;
@@ -360,15 +380,15 @@ int processLineParams( int argc, char **argv )
                 break;
 
             case 'j':
-                if (strlen(argv[iArg]) > 2 && argv[iArg][2] == 's') {
-                    if (strlen(argv[iArg]) == 3) {
+                if (currParam.length() > 2 && currParam.at(2) == 's') {
+                    if (currParam.length() == 3) {
                         std::cerr << "Error: the -js switch requires a mandatory value!" << std::endl;
                         deleteProcParams(processingParams);
                         return -3;
                     }
 
                     // looking for the subsampling parameter
-                    sscanf(&argv[iArg][3], "%d", &subsampling);
+                    subsampling = atoi(currParam.substr(3).c_str());
 
                     if (subsampling < 1 || subsampling > 3) {
                         std::cerr << "Error: the value accompanying the -js switch has to be in the [1-3] range!" << std::endl;
@@ -377,7 +397,7 @@ int processLineParams( int argc, char **argv )
                     }
                 } else {
                     outputType = "jpg";
-                    sscanf(&argv[iArg][2], "%d", &compression);
+                    compression = atoi(currParam.substr(2).c_str());
 
                     if (compression < 0 || compression > 100) {
                         std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
@@ -389,7 +409,7 @@ int processLineParams( int argc, char **argv )
                 break;
 
             case 'b':
-                sscanf(&argv[iArg][2], "%d", &bits);
+                bits = atoi(currParam.substr(2).c_str());
 
                 if (bits != 8 && bits != 16) {
                     std::cerr << "Error: specify -b8 for 8-bit or -b16 for 16-bit output." << std::endl;
@@ -401,7 +421,7 @@ int processLineParams( int argc, char **argv )
 
             case 't':
                 outputType = "tif";
-                compression = ((argv[iArg][2] != 'z') ? 0 : 1);
+                compression = ((currParam.at(2) != 'z') ? 0 : 1);
                 break;
 
             case 'n':
@@ -416,8 +436,10 @@ int processLineParams( int argc, char **argv )
             case 'c': // MUST be last option
                 while (iArg + 1 < argc) {
                     iArg++;
-
-                    const auto argument = fname_to_utf8 (argv[iArg]);
+                    Glib::ustring argument(fname_to_utf8(argv[iArg]));
+#if ECLIPSE_ARGS
+                    argument = argument.substr(1, argument.length()-2);
+#endif
 
                     if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
                         inputFiles.emplace_back (argument);
@@ -546,7 +568,10 @@ int processLineParams( int argc, char **argv )
             }
             }
         } else {
-            argv1 = fname_to_utf8 (argv[iArg]);
+            argv1 = Glib::ustring(fname_to_utf8(argv[iArg]));
+#if ECLIPSE_ARGS
+            argv1 = argv1.substr(1, argv1.length()-2);
+#endif
 
             if( outputDirectory ) {
                 options.savePathFolder = outputPath;
@@ -587,7 +612,7 @@ int processLineParams( int argc, char **argv )
         rawParams = new rtengine::procparams::PartialProfile(true, true);
         Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
 
-        if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfRaw.substr(5) + paramFileExtension)))) {
+        if (options.is_defProfRawMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && rawParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, Glib::path_get_basename(options.defProfRaw) + paramFileExtension)))) {
             std::cerr << "Error: default raw processing profile not found" << std::endl;
             rawParams->deleteInstance();
             delete rawParams;
@@ -598,7 +623,7 @@ int processLineParams( int argc, char **argv )
         imgParams = new rtengine::procparams::PartialProfile(true);
         profPath = options.findProfilePath(options.defProfImg);
 
-        if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfImg.substr(5) + paramFileExtension)))) {
+        if (options.is_defProfImgMissing() || profPath.empty() || (profPath != DEFPROFILE_DYNAMIC && imgParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, Glib::path_get_basename(options.defProfImg) + paramFileExtension)))) {
             std::cerr << "Error: default non-raw processing profile not found" << std::endl;
             imgParams->deleteInstance();
             delete imgParams;
@@ -635,7 +660,7 @@ int processLineParams( int argc, char **argv )
         } else if( outputDirectory ) {
             Glib::ustring s = Glib::path_get_basename( inputFile );
             Glib::ustring::size_type ext = s.find_last_of('.');
-            outputFile = outputPath + "/" + s.substr(0, ext) + "." + outputType;
+            outputFile = Glib::build_filename(outputPath, s.substr(0, ext) + "." + outputType);
         } else {
             Glib::ustring s = outputPath;
             Glib::ustring::size_type ext = s.find_last_of('.');
@@ -673,7 +698,7 @@ int processLineParams( int argc, char **argv )
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
                     rawParams->deleteInstance();
                     delete rawParams;
-                    rawParams = loadDynamicProfile(ii->getMetaData());
+                    rawParams = ProfileStore::getInstance()->loadDynamicProfile(ii->getMetaData());
                 }
                 std::cout << "  Merging default raw processing profile" << std::endl;
                 rawParams->applyTo(&currentParams);
@@ -681,7 +706,7 @@ int processLineParams( int argc, char **argv )
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
                     imgParams->deleteInstance();
                     delete imgParams;
-                    imgParams = loadDynamicProfile(ii->getMetaData());
+                    imgParams = ProfileStore::getInstance()->loadDynamicProfile(ii->getMetaData());
                 }
                 std::cout << "  Merging default non-raw processing profile" << std::endl;
                 imgParams->applyTo(&currentParams);

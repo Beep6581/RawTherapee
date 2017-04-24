@@ -38,7 +38,7 @@
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
-#include "dynamicprofile.h"
+#include "../rtengine/dynamicprofile.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -49,6 +49,9 @@
 #include <glibmm/thread.h>
 #include "conio.h"
 #endif
+
+// Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
+#define ECLIPSE_ARGS 0
 
 extern Options options;
 
@@ -177,7 +180,6 @@ int main(int argc, char **argv)
         return -2;
     }
 
-    profileStore.init ();
     extProgStore->init();
     SoundManager::init();
 
@@ -416,8 +418,12 @@ int processLineParams( int argc, char **argv )
     unsigned errors = 0;
 
     for( int iArg = 1; iArg < argc; iArg++) {
-        if( argv[iArg][0] == '-' ) {
-            switch( argv[iArg][1] ) {
+        Glib::ustring currParam(argv[iArg]);
+#if ECLIPSE_ARGS
+        currParam = currParam.substr(1, currParam.length()-2);
+#endif
+        if( currParam.at(0) == '-' ) {
+            switch( currParam.at(1) ) {
 #ifdef WIN32
 
             case 'w': // This case is handled outside this function
@@ -437,9 +443,9 @@ int processLineParams( int argc, char **argv )
                 std::cout << std::endl;
                 std::cout << "Symbols:" << std::endl;
                 std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
-                std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
-                std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
-                std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
+              //std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
+              //std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
+              //std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
                 std::cout << std::endl;
                 std::cout << "Usage:" << std::endl;
                 std::cout << "  " << Glib::path_get_basename(argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
@@ -454,7 +460,10 @@ int processLineParams( int argc, char **argv )
             }
             }
         } else {
-            argv1 = fname_to_utf8 (argv[iArg]);
+            argv1 = Glib::ustring(fname_to_utf8(argv[iArg]));
+#if ECLIPSE_ARGS
+            argv1 = argv1.substr(1, argv1.length()-2);
+#endif
             break;
         }
     }

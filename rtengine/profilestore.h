@@ -23,16 +23,14 @@
 #include <vector>
 #include <glibmm.h>
 
-#include "../rtengine/rtengine.h"
-#include "../rtengine/noncopyable.h"
-
-#include "threadutils.h"
-#include "paramsedited.h"
-#include "guiutils.h"
+#include "rtengine.h"
+#include "noncopyable.h"
+#include "dynamicprofile.h"
 
 
 // forward decl
 class DynamicProfileRule;
+class DynamicProfileRules;
 
 /** @brief This will implement callback functions for the ProfileStore
   *
@@ -95,41 +93,17 @@ public:
 };
 
 
-/**
- * @brief subclass of Gtk::Label with extra fields for Combobox and Menu, to link with a ProfileStoreEntry
- */
-class ProfileStoreLabel : public Gtk::Label
-{
-
-public:
-    const ProfileStoreEntry *entry;
-
-#ifndef NDEBUG
-    ProfileStoreLabel() : Gtk::Label("*** error ***"), entry(nullptr) {}
-#else
-    ProfileStoreLabel() : Gtk::Label(""), entry(NULL) {}
-#endif
-
-    /** @brief Create a new ProfileStoreLabel
-      *
-      * @param entry      Pointer to the ProfileStoreEntry object, be it a directory or a file
-      */
-    explicit ProfileStoreLabel(const ProfileStoreEntry *entry);
-    ProfileStoreLabel (const ProfileStoreLabel &other);
-};
-
-
 /** @brief Store the profiles bundled with RawTharapee and created by the user.
   *
   * This store can be queried by the GUI to display a Tree of the profiles available
   * in the user's and system's profile directory and subdirectories.
   */
-class ProfileStore :
-    public rtengine::NonCopyable
+class ProfileStore : public rtengine::NonCopyable, public DynamicProfileRules
 {
 
     typedef enum {
         STORESTATE_NOTINITIALIZED,
+        STORESTATE_LIGHTWEIGHT,
         STORESTATE_BEINGINITIALIZED,
         STORESTATE_INITIALIZED,
         STORESTATE_DELETED
@@ -143,7 +117,7 @@ private:
         }
     };
 
-    MyMutex *parseMutex;
+    MyMutex parseMutex;
     StoreState storeState;
     rtengine::procparams::AutoPartialProfile *internalDefaultProfile;
     ProfileStoreEntry *internalDefaultEntry;
@@ -164,8 +138,8 @@ private:
     /** List of the client of this store */
     std::list<ProfileStoreListener*> listeners;
 
-    /** cache for dynamic profile rules */
-    std::unique_ptr<std::vector<DynamicProfileRule>> dynamicRules;
+    /** whereas we have to load all profile at init time or one by one upon request */
+    bool loadAll;
 
     /** @brief Method to recursively parse a profile folder with a level depth arbitrarily limited to 3
       *
@@ -189,7 +163,9 @@ public:
     ProfileStore();
     ~ProfileStore();
 
-    bool init ();
+    static ProfileStore* getInstance();
+
+    bool init (bool loadAll = true);
     void parseProfiles ();
     int findFolderId(const Glib::ustring &path);
     const ProfileStoreEntry*                     findEntryFromFullPath(Glib::ustring path);
@@ -210,53 +186,12 @@ public:
         return internalDynamicEntry;
     }
 
-    const std::vector<DynamicProfileRule> &getDynamicProfileRules() const;
-    void setDynamicProfileRules(const std::vector<DynamicProfileRule> &r);
-
     void addListener(ProfileStoreListener *listener);
     void removeListener(ProfileStoreListener *listener);
 
+    rtengine::procparams::PartialProfile*        loadDynamicProfile(const rtengine::ImageMetaData *im);
+
     void dumpFolderList();
-
 };
-
-class ProfileStoreComboBox : public MyComboBox
-{
-
-protected:
-    class MethodColumns : public Gtk::TreeModel::ColumnRecord
-    {
-    public:
-        Gtk::TreeModelColumn<Glib::ustring> label;
-        Gtk::TreeModelColumn<const ProfileStoreEntry*> profileStoreEntry;
-        MethodColumns()
-        {
-            add(label);
-            add(profileStoreEntry);
-        }
-    };
-
-    Glib::RefPtr<Gtk::TreeStore> refTreeModel;
-    MethodColumns methodColumns;
-    void refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList);
-    Gtk::TreeIter findRowFromEntry_ (Gtk::TreeModel::Children childs, const ProfileStoreEntry *pse);
-    Gtk::TreeIter findRowFromFullPath_(Gtk::TreeModel::Children childs, int parentFolderId, Glib::ustring &name);
-
-public:
-    ProfileStoreComboBox();
-    void updateProfileList();
-    Glib::ustring getCurrentLabel();
-    const ProfileStoreEntry* getSelectedEntry();
-    Gtk::TreeIter findRowFromEntry (const ProfileStoreEntry *pse);
-    Gtk::TreeIter findRowFromFullPath (Glib::ustring path);
-    Glib::ustring getFullPathFromActiveRow ();
-    bool setActiveRowFromFullPath (Glib::ustring oldPath);
-    bool setActiveRowFromEntry (const ProfileStoreEntry *pse);
-    bool setInternalEntry ();
-    Gtk::TreeIter getRowFromLabel(Glib::ustring name);
-    Gtk::TreeIter addRow(const ProfileStoreEntry *profileStoreEntry);
-};
-
-extern ProfileStore profileStore;
 
 #endif

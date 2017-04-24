@@ -100,7 +100,7 @@ Preferences::Preferences  (RTWindow *rtwindow)
 #endif
     nb->set_current_page (0);
 
-    profileStore.addListener(this);
+    ProfileStore::getInstance()->addListener(this);
 
     fillPreferences ();
 
@@ -111,7 +111,7 @@ Preferences::Preferences  (RTWindow *rtwindow)
 Preferences::~Preferences ()
 {
 
-    profileStore.removeListener(this);
+    ProfileStore::getInstance()->removeListener(this);
     get_size(options.preferencesWidth, options.preferencesHeight);
 }
 
@@ -445,13 +445,14 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     Gtk::VBox* vbpp = Gtk::manage (new Gtk::VBox ());
     Gtk::Label* drlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FORRAW") + ":", Gtk::ALIGN_START));
     rprofiles = Gtk::manage (new ProfileStoreComboBox ());
-    rprofiles->addRow(profileStore.getInternalDynamicPSE());
+    const ProfileStoreEntry* dynpse = ProfileStore::getInstance()->getInternalDynamicPSE();
+    rprofiles->addRow(dynpse);
     setExpandAlignProperties(rprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     rprofiles->set_size_request(50, -1);
     rpconn = rprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forRAWComboChanged) );
     Gtk::Label* drimg = Gtk::manage (new Gtk::Label (M("PREFERENCES_FORIMAGE") + ":", Gtk::ALIGN_START));
     iprofiles = Gtk::manage (new ProfileStoreComboBox ());
-    iprofiles->addRow(profileStore.getInternalDynamicPSE());
+    iprofiles->addRow(dynpse);
     iprofiles->set_size_request(50, -1);
     setExpandAlignProperties(iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     ipconn = iprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forImageComboChanged) );
@@ -2197,7 +2198,7 @@ void Preferences::bundledProfilesChanged ()
     options.useBundledProfiles = useBundledProfiles->get_active ();
 
     // rescan the file's tree
-    profileStore.parseProfiles(); // This will call Preferences::updateProfileList in return
+    ProfileStore::getInstance()->parseProfiles(); // This will call Preferences::updateProfileList in return
 
     // restoring back the old value
     options.useBundledProfiles = currValue;
@@ -2232,8 +2233,9 @@ void Preferences::updateProfileList()
 {
     rprofiles->updateProfileList();
     iprofiles->updateProfileList();
-    rprofiles->addRow(profileStore.getInternalDynamicPSE());
-    iprofiles->addRow(profileStore.getInternalDynamicPSE());
+    const ProfileStoreEntry* dynpse = ProfileStore::getInstance()->getInternalDynamicPSE();
+    rprofiles->addRow(dynpse);
+    iprofiles->addRow(dynpse);
 }
 
 void Preferences::restoreValue()

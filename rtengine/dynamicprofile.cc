@@ -17,8 +17,8 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dynamicprofile.h"
-#include "profilestore.h"
+#include "../rtengine/dynamicprofile.h"
+
 #include <stdlib.h>
 #include <glibmm/regex.h>
 
@@ -36,6 +36,7 @@ const double EXPCOMP_MAX = 20.0;
 
 } // namespace
 
+DynamicProfileRules dynamicProfileRules;
 
 bool DynamicProfileRule::Optional::operator()(const Glib::ustring &val) const
 {
@@ -44,8 +45,7 @@ bool DynamicProfileRule::Optional::operator()(const Glib::ustring &val) const
     }
     if (value.find("re:") == 0) {
         // this is a regexp
-        return Glib::Regex::match_simple(value.substr(3), val,
-                                         Glib::REGEX_CASELESS);
+        return Glib::Regex::match_simple(value.substr(3), val, Glib::REGEX_CASELESS);
     } else {
         // normal string comparison
         return value.casefold() == val.casefold();
@@ -156,14 +156,12 @@ void set_optional(Glib::KeyFile &kf, const Glib::ustring &group,
 
 } // namespace
 
-
-bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out)
+bool DynamicProfileRules::loadRules()
 {
-    out.clear();
+    dynamicRules.clear();
     Glib::KeyFile kf;
     try {
-        if (!kf.load_from_file(
-                Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"))) {
+        if (!kf.load_from_file(Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"))) {
             return false;
         }
     } catch (Glib::Error &e) {
@@ -186,9 +184,9 @@ bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out)
         if (options.rtSettings.verbose) {
             printf(" loading rule %d\n", serial);
         }
-        
-        out.emplace_back(DynamicProfileRule());
-        DynamicProfileRule &rule = out.back();
+
+        dynamicRules.emplace_back(DynamicProfileRule());
+        DynamicProfileRule &rule = dynamicRules.back();
         rule.serial_number = serial;
         get_int_range(rule.iso, kf, group, "iso");
         get_double_range(rule.fnumber, kf, group, "fnumber");
@@ -200,21 +198,21 @@ bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out)
         try {
             rule.profilepath = kf.get_string(group, "profilepath");
         } catch (Glib::KeyFileError &) {
-            out.pop_back();
+            dynamicRules.pop_back();
         }
     }
-    std::sort(out.begin(), out.end());
+    std::sort(dynamicRules.begin(), dynamicRules.end());
+    rulesLoaded = true;
     return true;
 }
 
-
-bool storeDynamicProfileRules(const std::vector<DynamicProfileRule> &rules)
+bool DynamicProfileRules::storeRules()
 {
     if (options.rtSettings.verbose) {
         printf("saving dynamic profiles...\n");
     }
     Glib::KeyFile kf;
-    for (auto &rule : rules) {
+    for (auto &rule : dynamicRules) {
         std::ostringstream buf;
         buf << "rule " << rule.serial_number;
         Glib::ustring group = buf.str();
@@ -227,29 +225,15 @@ bool storeDynamicProfileRules(const std::vector<DynamicProfileRule> &rules)
         set_optional(kf, group, "lens", rule.lens);
         kf.set_string(group, "profilepath", rule.profilepath);
     }
-    return kf.save_to_file(
-        Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"));
+    return kf.save_to_file(Glib::build_filename(Options::rtdir, "dynamicprofile.cfg"));
 }
 
-
-PartialProfile *loadDynamicProfile(const ImageMetaData *im)
+const std::vector<DynamicProfileRule> &DynamicProfileRules::getRules() const
 {
-    PartialProfile *ret = new PartialProfile(true, true);
-    for (auto &rule : profileStore.getDynamicProfileRules()) { 
-        if (rule.matches(im)) {
-            if (options.rtSettings.verbose) {
-                printf("found matching profile %s\n",
-                       rule.profilepath.c_str());
-            }
-            const PartialProfile *p =
-                profileStore.getProfile(rule.profilepath);
-            if (p != nullptr) {
-                p->applyTo(ret->pparams);
-            } else {
-                printf("ERROR loading matching profile from: %s\n",
-                       rule.profilepath.c_str());
-            }
-        }
-    }
-    return ret;
+    return dynamicRules;
+}
+
+void DynamicProfileRules::setRules(const std::vector<DynamicProfileRule> &r)
+{
+    dynamicRules = r;
 }

@@ -20,8 +20,8 @@
 #define _DYNAMICPROFILEPANEL_H_
 
 #include <gtkmm.h>
-#include "dynamicprofile.h"
-#include "profilestore.h"
+#include "../rtengine/dynamicprofile.h"
+#include "profilestorecombobox.h"
 
 class DynamicProfilePanel: public Gtk::VBox {
 public:
