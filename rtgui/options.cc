@@ -429,6 +429,7 @@ void Options::setDefaults ()
     curvebboxpos = 1;
     prevdemo = PD_Sidecar;
     mip = MI_opt;
+    locaaju = lo_enhde;
 
     rgbDenoiseThreadLimit = 0;
 #if defined( _OPENMP ) && defined( __x86_64__ )
@@ -1265,6 +1266,10 @@ int Options::readFromFile (Glib::ustring fname)
                     prevdemo             = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
                 }
 
+                if (keyFile.has_key ("Performance", "Localajustqual")) {
+                    locaaju             = (locaaju_t)keyFile.get_integer ("Performance", "Localajustqual");
+                }
+
                 if (keyFile.has_key ("Profiles", "Mipfiles")) {
                     mip             = (mip_t)keyFile.get_integer ("Profiles", "Mipfiles");
                 }
@@ -1831,6 +1836,7 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            )) {
                     fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
                 }
+
                 if (keyFile.has_key ("Fast Export", "fastexport_use_fast_pipeline"            )) {
                     fastexport_use_fast_pipeline           = keyFile.get_integer ("Fast Export", "fastexport_use_fast_pipeline"            );
                 }
@@ -2013,6 +2019,8 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("Performance", "PreviewDemosaicFromSidecar", prevdemo);
         keyFile.set_boolean ("Performance", "Daubechies", rtSettings.daubech);
         keyFile.set_boolean ("Performance", "SerializeTiffRead", serializeTiffRead);
+        keyFile.set_integer ("Performance", "Localajustqual", locaaju);
+
 
         keyFile.set_string  ("Output", "Format", saveFormat.format);
         keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);

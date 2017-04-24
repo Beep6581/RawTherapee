@@ -141,6 +141,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
     Gtk::ComboBoxText* cmip;
+    Gtk::ComboBoxText* clocalajust;
 
     Gtk::ComboBoxText* theme;
     Gtk::FontButton* fontButton;

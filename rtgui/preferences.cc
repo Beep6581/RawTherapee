@@ -733,6 +733,20 @@ Gtk::Widget* Preferences::getPerformancePanel ()
     fdenoise->add (*vbdenoise);
     mainContainer->pack_start (*fdenoise, Gtk::PACK_SHRINK, 4);
 
+    Gtk::Frame* flocalajust = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_LOCAL")));
+    Gtk::HBox* hblocalajust = Gtk::manage (new Gtk::HBox (false, 4));
+    Gtk::Label* llocalajust = Gtk::manage (new Gtk::Label (M ("PREFERENCES_LOCALAJUST_LABEL")));
+    clocalajust = Gtk::manage (new Gtk::ComboBoxText ());
+    clocalajust->append (M ("PREFERENCES_LOCALAJUST_STD"));
+    clocalajust->append (M ("PREFERENCES_LOCALAJUST_ENH"));
+    clocalajust->append (M ("PREFERENCES_LOCALAJUST_ENHDEN"));
+    clocalajust->set_active (2);
+    hblocalajust->pack_start (*llocalajust, Gtk::PACK_SHRINK);
+    hblocalajust->pack_start (*clocalajust);
+    flocalajust->add (*hblocalajust);
+    mainContainer->pack_start (*flocalajust, Gtk::PACK_SHRINK, 4);
+
+
     return mainContainer;
 }
 
@@ -1777,6 +1791,7 @@ void Preferences::storePreferences ()
     moptions.prevdemo = (prevdemo_t)cprevdemo->get_active_row_number ();
     moptions.serializeTiffRead = ctiffserialize->get_active();
     moptions.mip = (mip_t)cmip->get_active_row_number ();
+    moptions.locaaju = (locaaju_t)clocalajust->get_active_row_number ();
 
     if (sdcurrent->get_active ()) {
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -1934,6 +1949,7 @@ void Preferences::fillPreferences ()
     cprevdemo->set_active (moptions.prevdemo);
     cbdaubech->set_active (moptions.rtSettings.daubech);
     cmip->set_active (moptions.mip);
+    clocalajust->set_active (moptions.locaaju);
 
 //  cbAutocielab->set_active (moptions.rtSettings.autocielab);
     cbciecamfloat->set_active (moptions.rtSettings.ciecamfloat);

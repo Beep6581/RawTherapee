@@ -1117,6 +1117,10 @@ PREFERENCES_LEVAUTDN;Denoising level
 PREFERENCES_LEVDN;Cell size
 PREFERENCES_LISS;Auto multi-zone smoothing
 PREFERENCES_LOCAL;Local adjustements
+PREFERENCES_LOCALAJUST_LABEL;Local adjustements Quality Method
+PREFERENCES_LOCALAJUST_STD;Standard
+PREFERENCES_LOCALAJUST_ENH;Enhanced
+PREFERENCES_LOCALAJUST_ENHDEN;Enhanced + chroma denoise
 PREFERENCES_LOCALSHOWDELIMSPOT;Show spot delimiters
 PREFERENCES_MAX;Maxi (Tile)
 PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
@@ -1785,7 +1789,7 @@ TP_LOCALLAB_PROXI;Iterations
 TP_LOCALLAB_ANBSPOT;Help to Move Control point
 TP_LOCALLAB_ANBSPOT_TOOLTIP;Provisory control (I hope somebody can help to manage events!! and suppress this bad function)
 TP_LOCALLAB_LIGHTNESS;Lightness
-TP_LOCALLAB_METHOD_TOOLTIP;Default - standard.\nIf you select Enhanced or enhanced chroma denoise - only for Color Light-Sharpening-Retinex-CBDL in normal mode\nEnhanced and chroma denoise significantly increases processing times.
+TP_LOCALLAB_METHOD_TOOLTIP;Default - in Preferences - Performance et Quality\nIf you select Enhanced or enhanced chroma denoise - only for Color Light-Sharpening-Retinex-CBDL in normal mode\nEnhanced and chroma denoise significantly increases processing times.
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RETI;Retinex
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain

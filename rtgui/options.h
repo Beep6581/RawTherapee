@@ -70,6 +70,7 @@ enum PPLoadLocation {PLL_Cache = 0, PLL_Input = 1};
 enum CPBKeyType {CPBKT_TID = 0, CPBKT_NAME = 1, CPBKT_TID_NAME = 2};
 enum prevdemo_t {PD_Sidecar = 1, PD_Fast = 0};
 enum mip_t {MI_prev = 0, MI_opt = 1};
+enum locaaju_t {lo_std = 0, lo_enh = 1, lo_enhde = 2};
 
 class Options
 {
@@ -247,6 +248,7 @@ public:
     prevdemo_t prevdemo; // Demosaicing method used for the <100% preview
     bool serializeTiffRead;
     mip_t mip; // MIP
+    locaaju_t locaaju;
 
     bool menuGroupRank;
     bool menuGroupLabel;

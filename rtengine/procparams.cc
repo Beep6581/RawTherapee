@@ -917,7 +917,16 @@ void LocallabParams::setDefaults()
     centerX = 0;
     centerY = 0;
     circrad = 18;
-    qualityMethod = "enhden";
+
+    if (options.locaaju == 0) {
+        qualityMethod = "std";
+    } else if (options.locaaju == 1) {
+        qualityMethod = "enh";
+    } else if (options.locaaju == 2) {
+        qualityMethod = "enhden";
+    }
+
+    // qualityMethod = "enhden";
     qualitycurveMethod = "none";
     proxi = 20;
     thres = 18;
