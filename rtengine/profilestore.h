@@ -81,7 +81,7 @@ public:
       * @param parentFolder  index of the elements's path in the folder list
       * @param folder        index of the folder's own path in the folder list
       */
-    ProfileStoreEntry(Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder);
+    ProfileStoreEntry (Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder);
 
     /** @brief Set the values of the object after its instantiation
       * @param label         Label to be used in menu or combobox; also used as profile's filename
@@ -89,7 +89,7 @@ public:
       * @param parentFolder  index of the elements's path in the folder list
       * @param folder        index of the folder's own path in the folder list
       */
-    void setValues(Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder);
+    void setValues (Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder);
 };
 
 
@@ -111,7 +111,7 @@ class ProfileStore : public rtengine::NonCopyable, public DynamicProfileRules
 
 private:
     struct SortProfiles {
-        bool operator ()(const ProfileStoreEntry* const a1, const ProfileStoreEntry* const a2)
+        bool operator () (const ProfileStoreEntry* const a1, const ProfileStoreEntry* const a2)
         {
             return a1->parentFolderId == a2->parentFolderId ? a1->label < a2->label :  a1->parentFolderId < a2->parentFolderId;
         }
@@ -156,7 +156,7 @@ private:
     void _parseProfiles ();
     void clearFileList ();
     void clearProfileList ();
-    const ProfileStoreEntry* findEntryFromFullPathU(Glib::ustring path);
+    const ProfileStoreEntry* findEntryFromFullPathU (Glib::ustring path);
 
 public:
 
@@ -167,15 +167,15 @@ public:
 
     bool init (bool loadAll = true);
     void parseProfiles ();
-    int findFolderId(const Glib::ustring &path);
-    const ProfileStoreEntry*                     findEntryFromFullPath(Glib::ustring path);
+    int findFolderId (const Glib::ustring &path);
+    const ProfileStoreEntry*                     findEntryFromFullPath (Glib::ustring path);
     const rtengine::procparams::PartialProfile*  getProfile (Glib::ustring path);
     const rtengine::procparams::PartialProfile*  getProfile (const ProfileStoreEntry* entry);
     const std::vector<const ProfileStoreEntry*>* getFileList ();
     void                                         releaseFileList ();
     const rtengine::procparams::ProcParams*      getDefaultProcParams (bool isRaw);
     const rtengine::procparams::PartialProfile*  getDefaultPartialProfile (bool isRaw);
-    const Glib::ustring                          getPathFromId(int folderId);
+    const Glib::ustring                          getPathFromId (int folderId);
     const ProfileStoreEntry*                     getInternalDefaultPSE()
     {
         return internalDefaultEntry;
@@ -186,10 +186,10 @@ public:
         return internalDynamicEntry;
     }
 
-    void addListener(ProfileStoreListener *listener);
-    void removeListener(ProfileStoreListener *listener);
+    void addListener (ProfileStoreListener *listener);
+    void removeListener (ProfileStoreListener *listener);
 
-    rtengine::procparams::PartialProfile*        loadDynamicProfile(const rtengine::ImageMetaData *im);
+    rtengine::procparams::PartialProfile*        loadDynamicProfile (const rtengine::ImageMetaData *im);
 
     void dumpFolderList();
 };

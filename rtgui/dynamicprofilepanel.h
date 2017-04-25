@@ -23,17 +23,17 @@
 #include "../rtengine/dynamicprofile.h"
 #include "profilestorecombobox.h"
 
-class DynamicProfilePanel: public Gtk::VBox {
+class DynamicProfilePanel: public Gtk::VBox
+{
 public:
     DynamicProfilePanel();
     void save();
 
 private:
-    void update_rule(Gtk::TreeModel::Row row,
-                      const DynamicProfileRule &rule);
-    void add_rule(const DynamicProfileRule &rule);
-    DynamicProfileRule to_rule(Gtk::TreeModel::Row row, int serial=0);
-    
+    void update_rule (Gtk::TreeModel::Row row, const DynamicProfileRule &rule);
+    void add_rule (const DynamicProfileRule &rule);
+    DynamicProfileRule to_rule (Gtk::TreeModel::Row row, int serial = 0);
+
     void on_button_quit();
     void on_button_up();
     void on_button_down();
@@ -41,18 +41,19 @@ private:
     void on_button_edit();
     void on_button_delete();
 
-    class DynamicProfileColumns: public Gtk::TreeModel::ColumnRecord {
+    class DynamicProfileColumns: public Gtk::TreeModel::ColumnRecord
+    {
     public:
         DynamicProfileColumns()
         {
-            add(iso);
-            add(fnumber);
-            add(focallen);
-            add(shutterspeed);
-            add(expcomp);
-            add(camera);
-            add(lens);
-            add(profilepath);
+            add (iso);
+            add (fnumber);
+            add (focallen);
+            add (shutterspeed);
+            add (expcomp);
+            add (camera);
+            add (lens);
+            add (profilepath);
         }
 
         Gtk::TreeModelColumn<DynamicProfileRule::Range<int>> iso;
@@ -66,35 +67,26 @@ private:
     };
 
     // cell renderers
-    void render_iso(Gtk::CellRenderer* cell,
-                    const Gtk::TreeModel::iterator& iter);
-    void render_fnumber(Gtk::CellRenderer* cell,
-                        const Gtk::TreeModel::iterator& iter);
-    void render_focallen(Gtk::CellRenderer* cell,
-                         const Gtk::TreeModel::iterator& iter);
-    void render_shutterspeed(Gtk::CellRenderer* cell,
-                             const Gtk::TreeModel::iterator& iter);
-    void render_expcomp(Gtk::CellRenderer* cell,
-                        const Gtk::TreeModel::iterator& iter);
-    void render_camera(Gtk::CellRenderer* cell,
-                       const Gtk::TreeModel::iterator& iter);
-    void render_lens(Gtk::CellRenderer* cell,
-                     const Gtk::TreeModel::iterator& iter);
-    void render_profilepath(Gtk::CellRenderer* cell,
-                            const Gtk::TreeModel::iterator& iter);
+    void render_iso (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_fnumber (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_focallen (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_shutterspeed (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_expcomp (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_camera (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_lens (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_profilepath (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
 
-    class EditDialog: public Gtk::Dialog {
+    class EditDialog: public Gtk::Dialog
+    {
     public:
-        EditDialog(const Glib::ustring &title, Gtk::Window &parent);
-        void set_rule(const DynamicProfileRule &rule);
+        EditDialog (const Glib::ustring &title, Gtk::Window &parent);
+        void set_rule (const DynamicProfileRule &rule);
         DynamicProfileRule get_rule();
 
     private:
         void set_ranges();
-        void add_range(const Glib::ustring &name,
-                       Gtk::SpinButton *&from, Gtk::SpinButton *&to);
-        void add_optional(const Glib::ustring &name,
-                          Gtk::CheckButton *&check, Gtk::Entry *&field);
+        void add_range (const Glib::ustring &name, Gtk::SpinButton *&from, Gtk::SpinButton *&to);
+        void add_optional (const Glib::ustring &name, Gtk::CheckButton *&check, Gtk::Entry *&field);
 
         Gtk::SpinButton *iso_min_;
         Gtk::SpinButton *iso_max_;

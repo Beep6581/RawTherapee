@@ -87,16 +87,16 @@ Preferences::Preferences  (RTWindow *rtwindow)
     get_action_area()->pack_end (*ok);
     get_action_area()->pack_end (*cancel);
 
-    nb->append_page (*getGeneralPanel(),        M("PREFERENCES_TAB_GENERAL"));
-    nb->append_page (*getProcParamsPanel(),     M("PREFERENCES_TAB_IMPROC"));
-    nb->append_page (*getDynProfilePanel(), M("PREFERENCES_TAB_DYNAMICPROFILE"));
-    nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
+    nb->append_page (*getGeneralPanel(),         M("PREFERENCES_TAB_GENERAL"));
+    nb->append_page (*getProcParamsPanel(),      M("PREFERENCES_TAB_IMPROC"));
+    nb->append_page (*getDynProfilePanel(),      M("PREFERENCES_TAB_DYNAMICPROFILE"));
+    nb->append_page (*getFileBrowserPanel(),     M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(), M("PREFERENCES_TAB_COLORMGR"));
-    nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
-    nb->append_page (*getPerformancePanel(),    M("PREFERENCES_TAB_PERFORMANCE"));
+    nb->append_page (*getBatchProcPanel(),       M("PREFERENCES_BATCH_PROCESSING"));
+    nb->append_page (*getPerformancePanel(),     M("PREFERENCES_TAB_PERFORMANCE"));
     // Sounds only on Windows and Linux
 #if defined(WIN32) || defined(__linux__)
-    nb->append_page (*getSoundPanel(),          M("PREFERENCES_TAB_SOUND"));
+    nb->append_page (*getSoundPanel(),           M("PREFERENCES_TAB_SOUND"));
 #endif
     nb->set_current_page (0);
 

@@ -42,16 +42,16 @@ public:
     const ProfileStoreEntry *entry;
 
 #ifndef NDEBUG
-    ProfileStoreLabel() : Gtk::Label("*** error ***"), entry(nullptr) {}
+    ProfileStoreLabel() : Gtk::Label ("*** error ***"), entry (nullptr) {}
 #else
-    ProfileStoreLabel() : Gtk::Label(""), entry(NULL) {}
+    ProfileStoreLabel() : Gtk::Label (""), entry (NULL) {}
 #endif
 
     /** @brief Create a new ProfileStoreLabel
       *
       * @param entry      Pointer to the ProfileStoreEntry object, be it a directory or a file
       */
-    explicit ProfileStoreLabel(const ProfileStoreEntry *entry);
+    explicit ProfileStoreLabel (const ProfileStoreEntry *entry);
     ProfileStoreLabel (const ProfileStoreLabel &other);
 };
 
@@ -66,8 +66,8 @@ protected:
         Gtk::TreeModelColumn<const ProfileStoreEntry*> profileStoreEntry;
         MethodColumns()
         {
-            add(label);
-            add(profileStoreEntry);
+            add (label);
+            add (profileStoreEntry);
         }
     };
 
@@ -75,7 +75,7 @@ protected:
     MethodColumns methodColumns;
     void refreshProfileList_ (Gtk::TreeModel::Row *parentRow, int parentFolderId, bool initial, const std::vector<const ProfileStoreEntry*> *entryList);
     Gtk::TreeIter findRowFromEntry_ (Gtk::TreeModel::Children childs, const ProfileStoreEntry *pse);
-    Gtk::TreeIter findRowFromFullPath_(Gtk::TreeModel::Children childs, int parentFolderId, Glib::ustring &name);
+    Gtk::TreeIter findRowFromFullPath_ (Gtk::TreeModel::Children childs, int parentFolderId, Glib::ustring &name);
 
 public:
     ProfileStoreComboBox();
@@ -88,8 +88,8 @@ public:
     bool setActiveRowFromFullPath (Glib::ustring oldPath);
     bool setActiveRowFromEntry (const ProfileStoreEntry *pse);
     bool setInternalEntry ();
-    Gtk::TreeIter getRowFromLabel(Glib::ustring name);
-    Gtk::TreeIter addRow(const ProfileStoreEntry *profileStoreEntry);
+    Gtk::TreeIter getRowFromLabel (Glib::ustring name);
+    Gtk::TreeIter addRow (const ProfileStoreEntry *profileStoreEntry);
 };
 
 #endif
