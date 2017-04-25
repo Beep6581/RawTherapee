@@ -2120,12 +2120,15 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !HISTORY_MSG_472;PS Smooth transitions
 !HISTORY_MSG_473;PS Use lmmse
 !HISTORY_MSG_474;PS Equalize
+!HISTORY_MSG_475;PS Equalize channel
 !PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
 !PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
+!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
+!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !TP_RAW_1PASSMEDIUM;1-Pass (Medium)
@@ -2149,6 +2152,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
 !TP_RAW_PIXELSHIFTEXP0;Experimental
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion

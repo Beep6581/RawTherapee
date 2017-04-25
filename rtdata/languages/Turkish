@@ -975,6 +975,7 @@ TP_WBALANCE_TEMPERATURE;Isı
 !HISTORY_MSG_472;PS Smooth transitions
 !HISTORY_MSG_473;PS Use lmmse
 !HISTORY_MSG_474;PS Equalize
+!HISTORY_MSG_475;PS Equalize channel
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1229,6 +1230,8 @@ TP_WBALANCE_TEMPERATURE;Isı
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
 !PREFERENCES_PRINTER;Printer (Soft-Proofing)
+!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
+!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_PROFILE_NONE;None
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_PRTINTENT;Rendering intent
@@ -1775,6 +1778,8 @@ TP_WBALANCE_TEMPERATURE;Isı
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
 !TP_RAW_PIXELSHIFTEXP0;Experimental
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
