@@ -187,18 +187,6 @@ void ExifPanel::setImageData (const ImageMetaData* id)
     idata = id;
     exifTreeModel->clear ();
 
-    const std::vector<Tag*> defTags = ExifManager::getDefaultTIFFTags (nullptr);
-
-    for (size_t i = 0; i < defTags.size(); i++) {
-        Tag* defTag = defTags[i];
-        if (defTag->nameToString() == "ImageWidth" || defTag->nameToString() == "ImageHeight" || defTag->nameToString() == "BitsPerSample") {
-            addTag (exifTreeModel->children(), defTag->nameToString(), "?", AC_SYSTEM, false);
-        } else {
-            addTag (exifTreeModel->children(), defTag->nameToString(), defTag->valueToString(), AC_SYSTEM, false);
-        }
-        delete defTag;
-    }
-
     if (id && id->getExifData ()) {
 //        id->getExifData ()->printAll ();
         addDirectory (id->getExifData (), exifTreeModel->children());
