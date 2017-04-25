@@ -13,6 +13,7 @@
 #13 2015-03-03 updated to rt4.2.102 by wim ter meer
 #14 2015-11-23 update by wim ter meer
 #15 2016-07-21 update by wim ter meer
+#16 2017-04-21 update by wim ter meer
 
 ABOUT_TAB_BUILD;Versie
 ABOUT_TAB_CREDITS;Credits
@@ -48,6 +49,15 @@ CURVEEDITOR_TOOLTIPPASTE;Plak curve van klembord
 CURVEEDITOR_TOOLTIPSAVE;Bewaar huidige curve
 CURVEEDITOR_TYPE;Type:
 DIRBROWSER_FOLDERS;Mappen
+DYNPROFILEEDITOR_DELETE;Verwijder
+DYNPROFILEEDITOR_EDIT;Wijzig
+DYNPROFILEEDITOR_EDIT_RULE;Wijzig Dynamisch Profielregel
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Het zoeken is niet hoofdlettergevoelig.\nGebruik het "re:" voorvoegsel om\n een reguliere expressie uit te voeren
+DYNPROFILEEDITOR_MOVE_DOWN;Naar beneden
+DYNPROFILEEDITOR_MOVE_UP;Naar boven
+DYNPROFILEEDITOR_NEW;Nieuw
+DYNPROFILEEDITOR_NEW_RULE;Nieuw Dynamisch Profielregelegel
+DYNPROFILEEDITOR_PROFILE;Profiel verwerken
 EDITWINDOW_TITLE;Bewerk afbeelding
 EDIT_OBJECT_TOOLTIP;Toont een widget in het voorbeeld scherm waarmee de werking van het gereedschap kan worden aangepast.
 EDIT_PIPETTE_TOOLTIP;Voeg een punt toe aan de curve door de Ctrl toets ingedrukt te houden en tegelijkertijd te links-klikken op de gewenste plek op het voorbeeld.\nOm een punt te wijzigen, hou de Ctrl toets ingedrukt en links-klik tegelijkertijd op het gewenste gebied in het voorbeeld, en laat daarna de Ctrl toets los (behalve wanneer fijne controle is gewenst), blijf de linker muis knop ingedrukt houden en beweeg de muis naar boven of beneden om dit punt te verschuiven op de curve.
@@ -74,6 +84,7 @@ EXIFPANEL_RESETALL;Herstel alles
 EXIFPANEL_RESETALLHINT;Zet alle tags terug naar oorspronkelijke waarden
 EXIFPANEL_RESETHINT;Zet geselecteerde tags terug naar oorspronkelijke waarden
 EXIFPANEL_SUBDIRECTORY;Submap
+EXPORT_BYPASS;Verwerkingsstappen die worden overgeslagen
 EXPORT_BYPASS_ALL;Alles selecteren/deselecteren
 EXPORT_BYPASS_DEFRINGE;Verzachten niet toepassen
 EXPORT_BYPASS_DIRPYRDENOISE;Ruisonderdrukking niet toepassen
@@ -96,8 +107,12 @@ EXPORT_FASTEXPORTOPTIONS;<b>Opties Snelle Export</b>
 EXPORT_INSTRUCTIONS;Snel Exporteren biedt de mogelijkheid om gereedschappen uit te schakelen die veel tijd en rekenkracht vergen tijdens het converteren. Deze methode wordt aanbevolen om snel foto's in lagere resoluties aan te maken of wanneer de grootte moet worden aangepast voor één of meerdere afbeeldingen zonder de reeds opgeslagen ontwikkelinstellingen te wijzigen.
 EXPORT_MAXHEIGHT;Max. hoogte:
 EXPORT_MAXWIDTH;Max. breedte:
+EXPORT_PIPELINE;Verwerken
 EXPORT_PUTTOQUEUEFAST;Plaats in verwerkingsrij voor Snelle Export
 EXPORT_RAW_DMETHOD;Demozaïekmethode
+EXPORT_USE_FAST_PIPELINE;Snel (volledige verwerking op gewijzigd formaat van de afbeelding)
+EXPORT_USE_FAST_PIPELINE_TIP;Gebruikt een speciale verwerkingslijn waarbij kwaliteit ten koste gaat van snelheid. Het formaat van de afbeelding wordt zo snel mogelijk gewijzigd, ipv aan het eind van de verwerking. De snelheidswinst is aanzienlijk, maar de kwaliteit van de afbeelding zal minder zijn.
+EXPORT_USE_NORMAL_PIPELINE;Standaard (wijzigt formaat aan het eind)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;verwerkingsrij
 FILEBROWSER_ADDDELTEMPLATE;Voeg sjablonen toe of verwijder...
@@ -170,6 +185,7 @@ FILEBROWSER_RANK3_TOOLTIP;Waardering 3 *\nSneltoets: Shift-3
 FILEBROWSER_RANK4_TOOLTIP;Waardering 4 *\nSneltoets: Shift-4
 FILEBROWSER_RANK5_TOOLTIP;Waardering 5 *\nSneltoets: Shift-5
 FILEBROWSER_RENAMEDLGLABEL;Hernoem bestand
+FILEBROWSER_RESETDEFAULTPROFILE;Terugzetten naar standaardwaarde
 FILEBROWSER_SELECTDARKFRAME;Selecteer donkerframe...
 FILEBROWSER_SELECTFLATFIELD;Kies vlakveldopname...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Toon foto's met label Rood\nSneltoets: <b>Alt-1</b>
@@ -211,6 +227,7 @@ FILECHOOSER_FILTER_SAME;Hetzelfe formaat als huidige foto
 FILECHOOSER_FILTER_TIFF;TIFF bestanden
 GENERAL_ABOUT;Over RawTherapee
 GENERAL_AFTER;Na
+GENERAL_APPLY;Toepassen
 GENERAL_ASIMAGE;Als Afbeelding
 GENERAL_AUTO;Automatisch
 GENERAL_BEFORE;Voor
@@ -226,6 +243,7 @@ GENERAL_NA;nvt.
 GENERAL_NO;Nee
 GENERAL_NONE;Geen
 GENERAL_OK;OK
+GENERAL_OPEN;Open
 GENERAL_PORTRAIT;Portret
 GENERAL_SAVE;Opslaan
 GENERAL_UNCHANGED;(Onveranderd)
@@ -668,8 +686,8 @@ HISTORY_MSG_423;Retinex - Gamma helling
 HISTORY_MSG_424;Retinex - HL drempel
 HISTORY_MSG_425;Retinex - Log base
 HISTORY_MSG_426;Retinex - Tint balans
-HISTORY_MSG_427;Uitvoer rendering weergave
-HISTORY_MSG_428;Monitor rendering weergave
+HISTORY_MSG_427;Uitvoer grafische weergave
+HISTORY_MSG_428;Monitor grafische weergave
 HISTORY_MSG_429;Retinex - Herhalingen
 HISTORY_MSG_430;Retinex - Transmissie Verloop
 HISTORY_MSG_431;Retinex - Sterkte Verloop
@@ -680,28 +698,71 @@ HISTORY_MSG_435;Retinex - M - Schaduwen TW
 HISTORY_MSG_436;Retinex - M - Straal
 HISTORY_MSG_437;Retinex - M - Methode
 HISTORY_MSG_438;Retinex - M - Mixer
+HISTORY_MSG_439;Retinex - Verwerken
 HISTORY_MSG_440;DC - Methode
+HISTORY_MSG_442;Retinex - Schaal
+HISTORY_MSG_443;Uivoer Zwartpunt Compensatie
+HISTORY_MSG_444;WB - Temp afwijking
+HISTORY_MSG_445;Raw Sub-afbeelding
+HISTORY_MSG_449;PV ISO toepassen
+HISTORY_MSG_452;PV Toon beweging
+HISTORY_MSG_453;PV Toon alleen masker
+HISTORY_MSG_457;PV Controleer rood/blauw
+HISTORY_MSG_462;PV Controleer groen
+HISTORY_MSG_464;PV Vervagen bewagingsmasker
+HISTORY_MSG_465;PV Vervagen straal
+HISTORY_MSG_468;PV Vul holtes
+HISTORY_MSG_469;PV Mediaann
+HISTORY_MSG_471;PV Bewegingscorrectie
+HISTORY_MSG_472;PV Zachte overgang
+HISTORY_MSG_473;PV Gebruik lmmse
+HISTORY_MSG_474;PV Balans
 HISTORY_NEWSNAPSHOT;Nieuw
 HISTORY_NEWSNAPSHOT_TOOLTIP;Sneltoets: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Nieuw
 HISTORY_SNAPSHOTS;Snapshots
 IPTCPANEL_CATEGORY;Categorie
+IPTCPANEL_CATEGORYHINT;Het onderwerp van de afbeelding.
 IPTCPANEL_CITY;Plaats
+IPTCPANEL_CITYHINT;Plaats waar de afbeelding is genomen.
 IPTCPANEL_COPYHINT;Kopieer IPTC-instellingen naar klembord
+IPTCPANEL_COPYRIGHT;Copyright melding
+IPTCPANEL_COPYRIGHTHINT;Melding over de huidige copyright houder van de afbeelding, bijvoorbeeld ©2008 Jane Doe.
 IPTCPANEL_COUNTRY;Land
+IPTCPANEL_COUNTRYHINT;Land waar de afbeelding is genomen.
+IPTCPANEL_CREATOR;Maker
+IPTCPANEL_CREATORHINT;Naam van de maker.
+IPTCPANEL_CREATORJOBTITLE;Functie van de maker.
+IPTCPANEL_CREATORJOBTITLEHINT;De functie van de maker.
 IPTCPANEL_CREDIT;Credit
 IPTCPANEL_CREDITHINT;Naam van de leverancier van de foto, niet noodzakelijkerwijs de eigenaar/maker (Credit)
 IPTCPANEL_DATECREATED;Opnamedatum
+IPTCPANEL_DATECREATEDHINT;Datum waarop de afbeelding is genomen.
+IPTCPANEL_DESCRIPTION;Beschrijving
+IPTCPANEL_DESCRIPTIONHINT;Bijschrift dat het wie, wat of waarom beschrijft van wat er gebeurt in de afbeelding. Dit kan inclusief de namen van de persone zijn en of hun rol in de actie die plaatsvindt in de afbeelding.
+IPTCPANEL_DESCRIPTIONWRITER;Schrijver van de beschrijving.
+IPTCPANEL_DESCRIPTIONWRITERHINT;De naam van de persoon die is betrokken bij het schrijven, wijzigen of corrigeren van de beschrijving van de afbeelding.
 IPTCPANEL_EMBEDDED;Ingebed
 IPTCPANEL_EMBEDDEDHINT;Keer terug naar IPTC-data die in de foto zijn opgeslagen
 IPTCPANEL_HEADLINE;Titel
+IPTCPANEL_HEADLINEHINT;Een korte samenvatting van de inhoud van de afbeelding.
 IPTCPANEL_INSTRUCTIONS;Instructies
+IPTCPANEL_INSTRUCTIONSHINT;Infomatie over embargo of andere beperkingen die buiten het Copyright vallen.
 IPTCPANEL_KEYWORDS;Sleutelwoorden
+IPTCPANEL_KEYWORDSHINT;Gebruik steekwoorden of zinnen om het onderwerp van de afbeelding te beschrijven.
 IPTCPANEL_PASTEHINT;Plak IPTC-instellingen van klembord
+IPTCPANEL_PROVINCE;Provincie
+IPTCPANEL_PROVINCEHINT;Provincie waar de afbeelding is genomen.
 IPTCPANEL_RESET;Standaardwaarden
 IPTCPANEL_RESETHINT;Terug naar standaardwaarden
 IPTCPANEL_SOURCE;Bron
+IPTCPANEL_SOURCEHINT;De naam van de persoon of de partij die verantwoordelijk is voor de verspreiding van de afbeelding, zoals de persoon of partij van wie de afbeelding afkomstig is.
+IPTCPANEL_SUPPCATEGORIES;Aanvullende categorieën.
+IPTCPANEL_SUPPCATEGORIESHINT;Verfijnt het onderwerp van de afbeelding.
 IPTCPANEL_TITLE;Titel
+IPTCPANEL_TITLEHINT;De korte naam van de afbeelding. Dit kan de bestandsnaam zijn.
+IPTCPANEL_TRANSREFERENCE;Referentienummer
+IPTCPANEL_TRANSREFERENCEHINT;Het nummer dat wordt gebruikt voor de 'workflow control' of voor de tracking.
 MAIN_BUTTON_FULLSCREEN;Volledig scherm
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigeer naar de volgende afbeelding relatief ten opzichte van de geopende afbeelding in de Editor\nSneltoets: <b>Shift-F4</b>\n\nNavigeer naar de volgende afbeelding relatief ten opzichte van de miniatuur geselecteerd in de Bestandsnavigator\nSneltoets: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigeer naar de vorige afbeelding relatief ten opzichte van de geopende afbeelding in de Editor\nSneltoets: <b>Shift-F3</b> \n\nNavigeer naar de vorige afbeelding relatief ten opzichte van de miniatuur geselecteerd in de Bestandsnavigator\nSneltoets: <b>F3</b>
@@ -836,8 +897,10 @@ PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hete pixels filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Lijnruisfilter
 PARTIALPASTE_PRSHARPENING;Verscherp na verkleinen
 PARTIALPASTE_RAWCACORR_AUTO;Autom. C/A-correctie
+PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correctie sterkte
 PARTIALPASTE_RAWCACORR_CABLUE;C/A Blauw
 PARTIALPASTE_RAWCACORR_CARED;C/A Rood
+PARTIALPASTE_RAWCACORR_CAREDBLUE;CA rood & blauw
 PARTIALPASTE_RAWEXPOS_BLACK;Zwartniveau
 PARTIALPASTE_RAWEXPOS_LINEAR;Raw witpunt- lineaire corr. factor
 PARTIALPASTE_RAWEXPOS_PRESER;Raw witpunt- herstel hoge lichten (EV)
@@ -846,7 +909,9 @@ PARTIALPASTE_RAW_DCBENHANCE;Pas DCB-verbetering toe
 PARTIALPASTE_RAW_DCBITERATIONS;aantal DCB-herhalingen
 PARTIALPASTE_RAW_DMETHOD;Demozaïekmethode
 PARTIALPASTE_RAW_FALSECOLOR;Demozaïek stapgrootte kleurfoutonderdrukking
+PARTIALPASTE_RAW_IMAGENUM;Sub-afbeelding
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE verbetering
+PARTIALPASTE_RAW_PIXELSHIFT;PixelVerschuiving
 PARTIALPASTE_RESIZE;Wijzig grootte
 PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_RGBCURVES;RGB-curven
@@ -889,6 +954,7 @@ PREFERENCES_CLIPPINGIND;Indicatie over-/onderbelichting
 PREFERENCES_CLUTSCACHE;HaldCLUT cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum aantal cached Cluts
 PREFERENCES_CLUTSDIR;HaldCLUT map
+PREFERENCES_CMMBPC;Zwartpunt Compensatie
 PREFERENCES_CURVEBBOXPOS;Positie copy/paste knoppen bij Curves
 PREFERENCES_CURVEBBOXPOS_ABOVE;Boven
 PREFERENCES_CURVEBBOXPOS_BELOW;Beneden
@@ -924,6 +990,8 @@ PREFERENCES_DIRSOFTWARE;Installatiemap
 PREFERENCES_EDITORCMDLINE;Andere editor, geef pad
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster
 PREFERENCES_EXPAUT;Expert
+PREFERENCES_EXTENDEDZOOMLEVELS;Gebruik fijner geschaalde zoom niveau´s voor "schermvullend" zoomen
+PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;Het scherm wordt beter uitgevuld wanneer de "schermvullend" methode wordt gebruikt. Het voorbeeld kan iets afwijken, afhankelijk van de gebruikte zoom factor.
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Enkele rij navigator werkbalk (de-activeer voor lage resolutie)
@@ -984,6 +1052,9 @@ PREFERENCES_MENUOPTIONS;Menu-opties
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MIN;Mini (100x115)
 PREFERENCES_MONINTENT;Standaard monitor weergave
+PREFERENCES_MONITOR;Monitor
+PREFERENCES_MONPROFILE;Standaard kleurprofiel
+PREFERENCES_MONPROFILE_WARNOSX;Als gevolg van MacOS beperkingen wordt alleen sRGB ondersteund.
 PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
 PREFERENCES_NAVGUIDEBRUSH;Navigator randkleur
@@ -1008,6 +1079,7 @@ PREFERENCES_PREVDEMO;Voorbeeld Demozaïekmethode
 PREFERENCES_PREVDEMO_FAST;Snel
 PREFERENCES_PREVDEMO_LABEL;Demozaïekmethode van het voorbeeld bij <100% zoom:
 PREFERENCES_PREVDEMO_SIDECAR;Gelijk aan PP3
+PREFERENCES_PRINTER;Printer (Proefafdruk)
 PREFERENCES_PROFILEHANDLING;Verwerking profielen
 PREFERENCES_PROFILELOADPR;Laadprioriteit profielen
 PREFERENCES_PROFILEPRCACHE;Profiel in cache
@@ -1016,12 +1088,15 @@ PREFERENCES_PROFILESAVECACHE;Bewaar profiel in cache
 PREFERENCES_PROFILESAVEINPUT;Bewaar profiel bij RAW-bestand
 PREFERENCES_PROFILE_NONE;Geen
 PREFERENCES_PROPERTY;Eigenschap
+PREFERENCES_PRTINTENT;Grafische weergave
+PREFERENCES_PRTPROFILE;Kleurprofiel
 PREFERENCES_PSPATH;Installatiemap Adobe Photoshop
 PREFERENCES_REMEMBERZOOMPAN;Onthoud zoom % en pan startpunt
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Onthoud het zoom % en pan startpunt van de huidige afbeelding als er een nieuwe afbeelding wordt geopend.\n\nDeze optie werkt alleen in "Single Editor Tab Mode" en wanneer "Demozaïekmethode van het voorbeeld <100% zoom" hetzelfde is als "Gelijk aan PP3".
 PREFERENCES_RGBDTL_LABEL;Maximum aantal 'threads' voor Ruisonderdrukking en Wavelet (gedeeld door 2)
 PREFERENCES_RGBDTL_TOOLTIP;Ruisonderdrukking en Wavelet gebruiken ongeveer 128MB RAM voor een 10MPix afbeelding, of 512MB voor een 40MPix afbeelding en additioneel 128MB RAM per thread. Hoe meer threads parallel worden gebruikt, hoe sneller de  bewerking. Laat de instelling op "0" staan om automatisch het maximale aantal threads te gebruiken dat mogelijk is.
 PREFERENCES_SELECTFONT;Kies lettertype
+PREFERENCES_SELECTFONT_COLPICKER;Font van de Kleurkiezer
 PREFERENCES_SELECTLANG;Selecteer taal
 PREFERENCES_SELECTTHEME;Kies thema
 PREFERENCES_SERIALIZE_TIFF_READ;Tiff Lees Instellingen
@@ -1046,6 +1121,7 @@ PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
 PREFERENCES_STDAUT;Standaard
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
 PREFERENCES_TAB_COLORMGR;Kleurbeheer
+PREFERENCES_TAB_DYNAMICPROFILE;Dynamisch Profielregel
 PREFERENCES_TAB_GENERAL;Algemeen
 PREFERENCES_TAB_IMPROC;Beeldverwerking
 PREFERENCES_TAB_PERFORMANCE;Prestaties en Kwaliteit
@@ -1074,6 +1150,7 @@ PROFILEPANEL_MODE_TIP;Profiel aanvullen.\n\nKnop ingedrukt: gedeeltelijke profie
 PROFILEPANEL_MYPROFILES;Mijn profielen
 PROFILEPANEL_PASTEPPASTE;Te plakken parameters
 PROFILEPANEL_PCUSTOM;Handmatig
+PROFILEPANEL_PDYNAMIC;Dynamisch
 PROFILEPANEL_PFILE;Uit bestand
 PROFILEPANEL_PINTERNAL;Neutraal
 PROFILEPANEL_PLASTSAVED;Laatst opgeslagen
@@ -1118,6 +1195,8 @@ SAVEDLG_SUBSAMP_TOOLTIP;Beste Compressie:\nJ:a:b 4:2:0\nh/v 2/2\nChroma gehalvee
 SAVEDLG_TIFFUNCOMPRESSED;Geen compressie
 SAVEDLG_WARNFILENAME;Bestandsnaam wordt
 SHCSELECTOR_TOOLTIP;Klik op de rechtermuisknop om\nde 3 knoppen te verschuiven
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Toont in grijs de pixels die buiten het kleurengamma vallen van het uitvoerprofiel
+SOFTPROOF_TOOLTIP;Proefafdruk\nSimuleert grafische weergave op basis van het ICM uitvoerprofiel. Voral bruikbaar voor het simuleren van afdrukken.
 THRESHOLDSELECTOR_B;Onderkant
 THRESHOLDSELECTOR_BL;Onderkant-links
 THRESHOLDSELECTOR_BR;Onderkant-rechts
@@ -1125,6 +1204,7 @@ THRESHOLDSELECTOR_HINT;Houdt de <b>Shift</b>-toets ingedrukt om individuele cont
 THRESHOLDSELECTOR_T;Bovenkant
 THRESHOLDSELECTOR_TL;Bovenkant-links
 THRESHOLDSELECTOR_TR;Bovenkant-rechts
+TOOLBAR_TOOLTIP_COLORPICKER;Vergrendelbare Kleurkiezer\n\nKlik met de linkermuisknop in het voorbeeld om een kleurkiezer toe te voegen\nBeweeg het punt door de linkermuisknop ingedrukt te houden\nVerwijder de kleurkiezer met een rechtermuisknop klik\nVerwijder allle kleurkiezers met Shift + rechtermuisknop klik\nMet een rechtermuisklik naast een kleurkiezer komt het selecteer handje terug.
 TOOLBAR_TOOLTIP_CROP;Bijsnijden.\nSneltoets: <b>c</b>
 TOOLBAR_TOOLTIP_HAND;Sleepgereedschap.\nSneltoets: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Rechtmaken</b> / <b>Kleine rotaties</b>.\nSneltoets: <b>s</b>\n\nBepaal de vertikale of horizontale as door het trekken van een hulplijn over de afbeelding. De rotatiehoek wordt naast de hulplijn getoond. Het centrum van de roatatie is het geometrische midden van de afbeelding.
@@ -1133,6 +1213,7 @@ TP_BWMIX_ALGO;Algoritme OYCPM
 TP_BWMIX_ALGO_LI;Lineair
 TP_BWMIX_ALGO_SP;Speciale effecten
 TP_BWMIX_ALGO_TOOLTIP;Lineair: creëert een normale <b>lineaire</b> response.\n Speciale effecten: creëert speciale effecten door kanalen <b>non-lineair</b> te mixen.TP_BWMIX_AUTOCH;Auto
+TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH_TIP;Bereken optimale waardes voor de kanaalmixer.
 TP_BWMIX_CC_ENABLED;Wijzig complementaire kleur
 TP_BWMIX_CC_TOOLTIP;Automatische aanpassing van complementaire kleuren in ROYGCBPM mode.
@@ -1335,6 +1416,12 @@ TP_DARKFRAME_LABEL;Donkerframe
 TP_DEFRINGE_LABEL;Verzachten (Lab/CIECAM02)
 TP_DEFRINGE_RADIUS;Straal
 TP_DEFRINGE_THRESHOLD;Drempel
+TP_DIRPYRDENOISE_3X3;3×3
+TP_DIRPYRDENOISE_3X3_SOFT;3×3 zacht
+TP_DIRPYRDENOISE_5X5;5×5
+TP_DIRPYRDENOISE_5X5_SOFT;5×5 zacht
+TP_DIRPYRDENOISE_7X7;7×7
+TP_DIRPYRDENOISE_9X9;9×9
 TP_DIRPYRDENOISE_ABM;Alleen chroma
 TP_DIRPYRDENOISE_AUT;Automatisch algemeen
 TP_DIRPYRDENOISE_AUTO;Automatisch algemeen
@@ -1374,11 +1461,13 @@ TP_DIRPYRDENOISE_METHOD11;Kwaliteit
 TP_DIRPYRDENOISE_METHOD11_TOOLTIP;De kwaliteit kan worden aangepast aan de hoeveelheid ruis. \nHoog verbetert de ruisonderdrukking, maar verlengt de verwerkingstijd
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Voor raw afbeeldingen kan RGB of Lab methode worden gebruikt.\n\nVoor niet-raw afbeeldingen zal altijd de Lab methode worden gebruikt, ongeacht de geselecteerde methode.
 TP_DIRPYRDENOISE_METM_TOOLTIP;De "Alleen Luminantie" en "L*a*b*" methodes worden meteen na de wavelet stap uitgevoerd bij het onderdrukken van ruis.\nDe "RGB" methode, wordt echter als laatste stap uitgevoerd bij ruisonderdrukking.
+TP_DIRPYRDENOISE_MET_TOOLTIP;Gebruik een mediaan filter van gewenste venster grootte. Hoe groter het venster hoe langer het duurt.\n\n3×3 zacht: behandeld 5 pixels in een 3×3 pixel venster.\n3×3: behandeld 9 pixels in een 3×3 pixel venster.\n5×5 zacht: behandeld 13 pixels in een 5×5 pixel venster.\n5×5: behandeld 25 pixels in een 5×5 pixel venster.\n7×7: behandeld 49 pixels in een 7×7 pixel venster.\n9×9: behandeld 81 pixels in a 9×9 pixel venster.\n\nSoms is het mogelijk om een betere kwaliteit te krijgen door het uitvoeren van meerdere herhalingen met een kleiner venster dan één uitvoering met een groter venster.
 TP_DIRPYRDENOISE_NOISELABEL;Voorbeeld ruis: Gemiddeld=%1  Hoog=%2
 TP_DIRPYRDENOISE_NOISELABELEMPTY;Voorbeeld ruis: Gemiddeld= -   Hoog= -
 TP_DIRPYRDENOISE_NRESID_TOOLTIP;Toont de overgebleven ruisniveaus van het zichtbare deel van de afbeelding in het <b>voorbeeld</b> na wavelet.\n\n>300 Veel ruis\n100-300 Gemiddeld ruis\n50-100 Weinig ruis\n<50 Zeer weinig ruis\n\nVoorzichtig, de waarden zullen verschillen tussen RGB en L*a*b* mode. De RGB waarden zijn minder accuraat omdat de RGB mode luminantie en chrominantie niet volledig scheidt.
 TP_DIRPYRDENOISE_PASSE;Herhalingen
 TP_DIRPYRDENOISE_PASSES;Mediaan herhalingen
+TP_DIRPYRDENOISE_PASSES_TOOLTIP;Het gebruik van drie mediaan filter herhalingen met een 3×3 venster grootte geeft meestal een beter resultaat dan het gebruik van één mediaan filter herhaling met eeen 7×7 venster grootte.
 TP_DIRPYRDENOISE_PON;Auto multi-zone
 TP_DIRPYRDENOISE_PRE;Voorbeeld multi-zone
 TP_DIRPYRDENOISE_PREV;Voorbeeld
@@ -1406,6 +1495,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Bij -100 huidtinten worden gewijzigd.\nBij 0 all
 TP_DIRPYREQUALIZER_THRESHOLD;Drempel
 TP_DIRPYREQUALIZER_TOOLTIP;Probeert artefacten te verminderen die het gevolg zijn van kleurverschuiving  van de huidtinten(hue, chroma, luma) en de rest van de afbeelding
 TP_DISTORTION_AMOUNT;Hoeveelheid
+TP_DISTORTION_AUTO_TIP;Corrigeert automatisch lens afwijkingen in raw afbeeldingen op basis van de ingebedde JPEG indien deze is gecorrigeerd door de camera.
 TP_DISTORTION_LABEL;Corrigeer lensvervorming
 TP_EPD_EDGESTOPPING;Randen
 TP_EPD_GAMMA;Gamma
@@ -1492,6 +1582,8 @@ TP_ICM_APPLYLOOKTABLE;DCP 'look' tabel
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Gebruik de ingebedde DCP 'look' tabel. De instelling is allen actief als de DCP een looktable heeft.
 TP_ICM_BLENDCMSMATRIX;Meng hoge lichten met matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activeer om uitgebeten hoge lichten te herstellen wanneer op LUT gebaseerde ICC-profielen worden gebruikt.
+TP_ICM_BPC;Zwartpunt Compensatie
+TP_ICM_BPC_TOOLTIP;Pas de Luminositeit aan  op het uitvoer kleurprofiel met een vast Witpunt  
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoleren
 TP_ICM_DCPILLUMINANT_TOOLTIP;Kies welk ingebed DCP illuminant moet worden gebruikt. Standaard is dit "interpoleren". Dit is een mix van de twee gebaseerd op de witbalans. De instelling is alleen actief als een Dual-Illuminant DCP met interpolatie is geselecteerd.
@@ -1510,7 +1602,8 @@ TP_ICM_INPUTPROFILE;Invoerprofiel
 TP_ICM_LABEL;Kleurbeheer
 TP_ICM_NOICM;Geen ICM: sRGB-uitvoer
 TP_ICM_OUTPUTPROFILE;Uitvoerprofiel
-TP_ICM_PROFILEINTENT;Rendering weergave
+TP_ICM_PROFILEINTENT;Grafische weergave
+TP_ICM_SAVEREFERENCE;Bewaar Referentie Afbeelding
 TP_ICM_SAVEREFERENCE_APPLYWB;Toepassen witbalans
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Gebruik witbalans bij het opslaan van afbeeldingen voor het maken van ICC profielen. Gebruik geen witbalans bij het maken van DCP profielen.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Sla de lineaire TIFF afbeelding op voordat het invoer profiel is toegepast. Het resultaat kan worden gebruikt voor calibratie en het genereren van een camera profiel.
@@ -1603,21 +1696,82 @@ TP_RAWEXPOS_LINEAR;Witpunt Correctie
 TP_RAWEXPOS_PRESER;Herstel hoge lichten
 TP_RAWEXPOS_RGB;Rood, Groen, Blauw
 TP_RAWEXPOS_TWOGREEN;Koppel Groen 1 en 2
+TP_RAW_1PASSMEDIUM;1 keer (Gemiddeld)
+TP_RAW_3PASSBEST;3 keer (Beste)
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;DCB Verbetering
 TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
 TP_RAW_DMETHOD;Methode
 TP_RAW_DMETHOD_PROGRESSBAR;%1 Demozaïeken...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demozaïek verfijning...
 TP_RAW_DMETHOD_TOOLTIP;IGV en LMMSE zijn speciaal bedoeld voor hoge ISO afbeeldingen
+TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
+TP_RAW_FAST;Snel
 TP_RAW_HD;Drempel
 TP_RAW_HD_TOOLTIP;Lagere waarden maken Hete/Dode pixel detectie agressiever, maar valse positieven kunnen leiden tot meer artefacten. Als er artefacten verschijnen bij het gebruik van de Hete/Dode Pixel Filters verminder dan geleidelijk de drempelwaarde totdat ze verdwijnen.
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;Sub-afbeelding
+TP_RAW_IMAGENUM_TOOLTIP;Somige raw bestanden hebben verschillende ingebedde sub-afbeeldingen (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Gebruik deze knop om de sub-afbeelding te selecteren.
 TP_RAW_LABEL;Demozaïekproces
+TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE Verbetering Stappen
 TP_RAW_LMMSE_TOOLTIP;Toevoegen gamma (stap 1), mediaan (stappen 2-4), en verfijnen (stappen 5-6) om artefacten te verwijderen en de signaal/ruis ratio te verbeteren.
+TP_RAW_MONO;Mono
+TP_RAW_NONE;Geen (Toont sensor patroon)
+TP_RAW_PIXELSHIFT;Pixel Verschuiven
+TP_RAW_PIXELSHIFTADAPTIVE;Adaptieve detectie
+TP_RAW_PIXELSHIFTBLUR;Vervaag bewegingsmasker
+TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Vervaag bewegingsmasker
+TP_RAW_PIXELSHIFTEPERISO;ISO toepassing
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;De standaard waarde (0.0) werkt goed voor normale ISO.\nVergroot de waarde om de bewegingsdetectie te verbeteren voor hogere ISO.\nVergroot in kleine stappen en bekijk het bewegingsmasker tijdens het verhogen.
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Balanseer de helderheid van de frames
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Balanseer de helderheid van de frames t.o.v. de helderheid van het geslecteerde frame.\nAls er overbelichte gebieden zijn in de frames, selecteer dan het helderste frame om een magenta kleurzweem te vermijden of selecteer bewegingsorrectie.
+TP_RAW_PIXELSHIFTEXP0;Experimenteel
+TP_RAW_PIXELSHIFTGREEN;Controleer groene kanaal voor beweging
+TP_RAW_PIXELSHIFTHOLEFILL;Vul holtes in verschuivingsmasker
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Vul holtes in het verschuivingsmasker op
+TP_RAW_PIXELSHIFTLMMSE;Gebruik lmmse voor verschoven gebieden
+TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Gebruik lmmse ipv amaze voor verschoven gebieden.\nNuttig voor hoge ISO afbeeeldingen.
+TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 nieuwe drempel
+TP_RAW_PIXELSHIFTMEDIAN;Mediaan
+TP_RAW_PIXELSHIFTMEDIAN3;Sluit geselecteerde frame uit voor mediaan
+TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Sluit geselecteerde frame uit voor mediaan.\nNuttig als bewegende objecten een overlap hebben in frame 2 en 3
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Gebruik mediaan voor alle frames inplaats van  alleen het geselecteerd frame voor gebieden met beweging.\nVerwijder objecten die voorkomen op verschillende plekken in alle frames.\nGeeft bewegingseffect voor langzaam bewegende (overlappende) objecten.
+TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
+TP_RAW_PIXELSHIFTMM_CUSTOM;Eigen
+TP_RAW_PIXELSHIFTMM_OFF;Uit
+TP_RAW_PIXELSHIFTMOTION;Beweging detectie niveau (vervallen)
+TP_RAW_PIXELSHIFTMOTIONCORRECTION;Groen bewegingscorrectie grootte
+TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 raster\n5 = 5x5 raster
+TP_RAW_PIXELSHIFTMOTIONMETHOD;Beweging Correctie
+TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0: geen bewegingsdetectie\n1 - 99: beweging wordt bepaald op basis van deze waarde. Vergroot de waarde om de bewegingsdetectie te verhogen\n100: Amaze demozaïek wordt gebruikt
+TP_RAW_PIXELSHIFTNONGREENAMAZE;Controleer rood/blauw amaze
+TP_RAW_PIXELSHIFTNONGREENCROSS;Controleer rood/blauw kanaal voor beweging
+TP_RAW_PIXELSHIFTNONGREENCROSS2;Controleer groen amaze
+TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Controleer rood/blauw horizontaal
+TP_RAW_PIXELSHIFTNONGREENVERTICAL;Controleer rood/blauw vertikaal
+TP_RAW_PIXELSHIFTNREADISO;nLezen
+TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Rood&Blauw gewicht
+TP_RAW_PIXELSHIFTSHOWMOTION;Toon beweging
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Toon alleen masker
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Toont het bewegingsmasker zonder de afbeelding
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Maakt een doorzichtig masker dat de gebieden toont met beweging
+TP_RAW_PIXELSHIFTSIGMA;Vervagen straal
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;De standaard straal van 1.0 is goed voor normale ISO. Verhoog de waarde voor hogere ISO.\n5.0 is een goed startpunt voor hoge ISO afbeeldingen.\nControleer het bewegingsmasker bij het veranderen van de waarde.
+TP_RAW_PIXELSHIFTSMOOTH;Zachte overgang
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Zachte overgang tussen gebieden met en zonder beweging.\nKies 0 om Zachte overgang uit te zetten\nKies 1 voor Amaze/lmmse of Mediaan
+TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blauw
+TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Groen
+TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Rood
 TP_RAW_SENSOR_BAYER_LABEL;Sensor met Bayer matrix
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass geeft het beste resultaat (aanbevolen voor lage ISO afbeeldingen)\n1-pass geeft hetzelfde resultaat als 3-pass voor hoge ISO afbeeldingen en is sneller.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor met X-Trans matrix
+TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;Toepassen op:
 TP_RESIZE_CROPPEDAREA;Uitsnede
 TP_RESIZE_FITBOX;Breedte en hoogte
@@ -1688,6 +1842,7 @@ TP_RETINEX_OFFSET;Beginpunt
 TP_RETINEX_SCALES;Gaussiaans verloop
 TP_RETINEX_SCALES_TOOLTIP;Indien schuifbalk=0: alle herhalingen zijn gelijk.\nIndien > 0 Schaal en straal worden verkleind als herhaling toeneemt, en omgekeerd.
 TP_RETINEX_SETTINGS;Instellingen
+TP_RETINEX_SKAL;Schaal
 TP_RETINEX_SLOPE;Vrij gamma helling
 TP_RETINEX_STRENGTH;Sterkte
 TP_RETINEX_THRESHOLD;Drempel
@@ -1981,6 +2136,8 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (leverancier)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Wijs WB aan
+TP_WBALANCE_TEMPBIAS;AWB temperatuur afwijking
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Wijzigt de berekening van "auto wit balans"\ndoor een afwijking naar warmere of koelere temperatuur \nDe afwijking wordt uitgedrukt als percentage van de berekende temperatuur,\nszodat het resultaat is "computedTemp + computedTemp * afwijking".
 TP_WBALANCE_TEMPERATURE;Kleurtemperatuur
 TP_WBALANCE_TUNGSTEN;Tungsten (wolfraam)
 TP_WBALANCE_WATER1;Onderwater 1
@@ -1998,180 +2155,29 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!DYNPROFILEEDITOR_DELETE;Delete
-!DYNPROFILEEDITOR_EDIT;Edit
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
-!DYNPROFILEEDITOR_MOVE_UP;Move Up
-!DYNPROFILEEDITOR_NEW;New
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!DYNPROFILEEDITOR_PROFILE;Processing Profile
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!GENERAL_APPLY;Apply
-!GENERAL_OPEN;Open
-!HISTORY_MSG_439;Retinex - Process
 !HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_442;Retinex - Scale
-!HISTORY_MSG_443;Output Black Point Compensation
-!HISTORY_MSG_444;WB - Temp bias
-!HISTORY_MSG_445;Raw Sub-Image
 !HISTORY_MSG_446;EvPixelShiftMotion
 !HISTORY_MSG_447;EvPixelShiftMotionCorrection
 !HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
-!HISTORY_MSG_449;PS ISO adaption
 !HISTORY_MSG_450;EvPixelShiftNreadIso
 !HISTORY_MSG_451;EvPixelShiftPrnu
-!HISTORY_MSG_452;PS Show motion
-!HISTORY_MSG_453;PS Show mask only
 !HISTORY_MSG_454;EvPixelShiftAutomatic
 !HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
 !HISTORY_MSG_456;EvPixelShiftNonGreenVertical
-!HISTORY_MSG_457;PS Check red/blue
 !HISTORY_MSG_458;EvPixelShiftStddevFactorRed
 !HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
 !HISTORY_MSG_460;EvPixelShiftGreenAmaze
 !HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
-!HISTORY_MSG_462;PS Check green
 !HISTORY_MSG_463;EvPixelShiftRedBlueWeight
-!HISTORY_MSG_464;PS Blur motion mask
-!HISTORY_MSG_465;PS Blur radius
 !HISTORY_MSG_466;EvPixelShiftSum
 !HISTORY_MSG_467;EvPixelShiftExp0
-!HISTORY_MSG_468;PS Fill holes
-!HISTORY_MSG_469;PS Median
 !HISTORY_MSG_470;EvPixelShiftMedian3
-!HISTORY_MSG_471;PS Motion correction
-!HISTORY_MSG_472;PS Smooth transitions
-!HISTORY_MSG_473;PS Use lmmse
-!HISTORY_MSG_474;PS Equalize
-!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
-!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
-!IPTCPANEL_COPYRIGHT;Copyright notice
-!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
-!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
-!IPTCPANEL_CREATOR;Creator
-!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
-!IPTCPANEL_CREATORJOBTITLE;Creator's job title
-!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
-!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
-!IPTCPANEL_DESCRIPTION;Description
-!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
-!IPTCPANEL_DESCRIPTIONWRITER;Description writer
-!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
-!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
-!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
-!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
-!IPTCPANEL_PROVINCE;Province or state
-!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
-!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
-!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
-!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
-!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
-!IPTCPANEL_TRANSREFERENCE;Job ID
-!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
-!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
-!PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
-!PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
-!PREFERENCES_MONITOR;Monitor
-!PREFERENCES_MONPROFILE;Default color profile
-!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_PRINTER;Printer (Soft-Proofing)
-!PREFERENCES_PRTINTENT;Rendering intent
-!PREFERENCES_PRTPROFILE;Color profile
-!PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
-!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PROFILEPANEL_PDYNAMIC;Dynamic
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colors from the output profile.
-!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate de rendering generated by the output profile of the ICM tool. Most useful for simulating printing outputs.
-!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen enabled:\nClick in the preview with left mouse button to add a color picker\nDrag it around while pressing the left mouse button\nDelete the color picker with a right mouse button click\nDelete all color pickers with Shift + Right mouse button click\nRight click away from any color picker to go back to the Hand tool
-!TP_BWMIX_AUTOCH;Auto
-!TP_DIRPYRDENOISE_3X3;3×3
-!TP_DIRPYRDENOISE_3X3_SOFT;3×3 soft
-!TP_DIRPYRDENOISE_5X5;5×5
-!TP_DIRPYRDENOISE_5X5_SOFT;5×5 soft
-!TP_DIRPYRDENOISE_7X7;7×7
-!TP_DIRPYRDENOISE_9X9;9×9
-!TP_DIRPYRDENOISE_MET_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DIRPYRDENOISE_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
-!TP_ICM_BPC;Black Point Compensation
-!TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
-!TP_ICM_SAVEREFERENCE;Save Reference Image
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_AHD;AHD
-!TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;DCB
-!TP_RAW_EAHD;EAHD
-!TP_RAW_FAST;Fast
-!TP_RAW_HPHD;HPHD
-!TP_RAW_IGV;IGV
-!TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
-!TP_RAW_LMMSE;LMMSE
-!TP_RAW_MONO;Mono
-!TP_RAW_NONE;None (Shows sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift
-!TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
-!TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
-!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
-!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
-!TP_RAW_PIXELSHIFTEXP0;Experimental
-!TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
-!TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use lmmse for motion parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use lmmse instead of amaze for motion areas.\nUseful for High ISO images.
-!TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
-!TP_RAW_PIXELSHIFTMEDIAN;Median
-!TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
-!TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
-!TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
-!TP_RAW_PIXELSHIFTMM_AUTO;Automatic
-!TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
-!TP_RAW_PIXELSHIFTMM_OFF;Off
-!TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
-!TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
-!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
-!TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
-!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
-!TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
-!TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
-!TP_RAW_PIXELSHIFTNREADISO;nRead
-!TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-!TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
-!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show mask only
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion
-!TP_RAW_PIXELSHIFTSIGMA;Blur radius
-!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Default radius of 1.0 usually fits good for base ISO. Increase value for high ISO shots,\n5.0 is a good starting point for high ISO shots.\nWatch motion mask while changing the value.
-!TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
-!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with and without motion.\nSet to 0 to disable smooth transitions\nSet to 1 to get Amaze/lmmse or Median
-!TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
-!TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
-!TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
-!TP_RAW_VNG4;VNG4
+!HISTORY_MSG_475;PS Equalize channel
+!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
+!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
 !TP_RETINEX_GAINTRANSMISSION;Gain transmission
 !TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce transmission map to achieve luminance.\nAbscissa: transmission -min from 0, mean, and values (max).\nOrdinate: gain.
-!TP_RETINEX_SKAL;Scale
 !TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
-!TP_WBALANCE_TEMPBIAS;AWB temperature bias
-!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
