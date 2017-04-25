@@ -122,9 +122,9 @@ FilePanel::FilePanel () : parent(nullptr)
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, true);
 
-    rightNotebook->append_page (*tpcPaned, *devLab);
-    rightNotebook->append_page (*inspectorPanel, *inspectLab);
     rightNotebook->append_page (*sFilterPanel, *filtLab);
+    rightNotebook->append_page (*inspectorPanel, *inspectLab);
+    rightNotebook->append_page (*tpcPaned, *devLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
     rightNotebook->set_name ("RightNotebook");
