@@ -246,8 +246,12 @@ bool DynamicProfileRules::storeRules()
     return kf.save_to_file (Glib::build_filename (Options::rtdir, "dynamicprofile.cfg"));
 }
 
-const std::vector<DynamicProfileRule> &DynamicProfileRules::getRules() const
+const std::vector<DynamicProfileRule> &DynamicProfileRules::getRules()
 {
+    if (!rulesLoaded) {
+        loadRules();
+    }
+
     return dynamicRules;
 }
 
