@@ -36,7 +36,7 @@
 #35 2015-11-24 updated by mkyral
 #36 2016-10-18 updated by mkyral
 #37 2017-01-10 updated by mkyral
-
+#38 2017-04-26 updated by mkyral
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -71,6 +71,15 @@ CURVEEDITOR_TOOLTIPPASTE;Vložit křivku ze schránky.
 CURVEEDITOR_TOOLTIPSAVE;Uložit současnou křivku.
 CURVEEDITOR_TYPE;Typ
 DIRBROWSER_FOLDERS;Složky
+DYNPROFILEEDITOR_DELETE;Smazat
+DYNPROFILEEDITOR_EDIT;Upravit
+DYNPROFILEEDITOR_EDIT_RULE;Upravit pravidlo dynamického profilu
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Porovnávání rozlišuje velikost písmen.\nPro vložení regulárního výrazu přidejte\nprefix "re:".
+DYNPROFILEEDITOR_MOVE_DOWN;Posunout dolů
+DYNPROFILEEDITOR_MOVE_UP;Posunout nahoru
+DYNPROFILEEDITOR_NEW;Nový
+DYNPROFILEEDITOR_NEW_RULE;Nové pravidlo dynamického profilu
+DYNPROFILEEDITOR_PROFILE;Profil zpracování
 EDITWINDOW_TITLE;Editace obrázku
 EDIT_OBJECT_TOOLTIP;V náhledovém okně zobrazí widget umožňující přizpůsobení nástroje.
 EDIT_PIPETTE_TOOLTIP;Pro přidání bodu na křivku, podržte klávesu Ctrl a klikněte levým tlačítkem na vybraný bod v náhledu obrázku.\nPro úpravu bodu podržte klávesu Ctrl a klikněte levým tlačítkem na odpovídající oblast v náhledu, následně uvolněte klávesu Ctrl (pokud si přejete jemné změny) a za stálého držení levého tlačítka myši pohybujte myší nahoru a dolů což bude posouvat bod na křivce nahoru a dolů.
@@ -97,6 +106,7 @@ EXIFPANEL_RESETALL;Obnovit vše
 EXIFPANEL_RESETALLHINT;Obnoví původní hodnoty u všech štítků.
 EXIFPANEL_RESETHINT;Obnoví původní hodnoty u vybraných štítků.
 EXIFPANEL_SUBDIRECTORY;Podadresář
+EXPORT_BYPASS;Kroky zpracování pro přeskočení
 EXPORT_BYPASS_ALL;Vybrat / Zrušit výběr všeho
 EXPORT_BYPASS_DEFRINGE;Vynechat odstranění lemu
 EXPORT_BYPASS_DIRPYRDENOISE;Vynechat redukci šumu
@@ -119,8 +129,12 @@ EXPORT_FASTEXPORTOPTIONS;<b>Volby rychlého exportu</b>
 EXPORT_INSTRUCTIONS;Volba rychlého exportu umožňuje potlačit vybrané nastavení procesu vyvolání a zkrátit tak čas a zdroje potřebné pro zpracování fronty tím, že se pro vyvolání použije nastavení rychlého exportu. Tato metoda je doporučována pro rychlejší vyvolání obrázků v nižším rozlišení v případě, že je důležitá rychlost, nebo pokud je požadováno vyvolání jednoho nebo více obrázků v nižším rozlišení bez změny uložených parametrů vyvolání.
 EXPORT_MAXHEIGHT;Maximální výška:
 EXPORT_MAXWIDTH;Maximální šířka:
+EXPORT_PIPELINE;Fronta zpracování
 EXPORT_PUTTOQUEUEFAST;  Vložit do fronty pro rychlý export
 EXPORT_RAW_DMETHOD;Metoda demozajkování
+EXPORT_USE_FAST_PIPELINE;Vyhrazený (kompletní zpracování zmenšeného obrázku)
+EXPORT_USE_FAST_PIPELINE_TIP;Použije vyhrazenou frontu zpracování v režimu rychlého exportu a vymění tak kvalitu za rychlost. Zmenšení obrázku se provede co nejdříve po zahájení zpracování, na rozdíl od standardního zpracování, kde se provádí až na závěr. Zrychlení může být velmi významné, ale připravte se na artefakty a celkové zhoršení kvality výstupu.
+EXPORT_USE_NORMAL_PIPELINE;Standardní (přeskočí některé kroky, zmenší až na konci)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;Zpracování fronty
 FILEBROWSER_ADDDELTEMPLATE;Přidat/Smazat šablony...
@@ -143,7 +157,6 @@ FILEBROWSER_DELETEDLGMSG;Jste si jisti, že chcete vymazat <b>%1</b> vybraných 
 FILEBROWSER_DELETEDLGMSGINCLPROC;Jste si jisti, že chcete vymazat <b>%1</b> vybraných souborů <b>včetně</b> výstupů dávkového zpracování?
 FILEBROWSER_EMPTYTRASH;Vysypat koš
 FILEBROWSER_EMPTYTRASHHINT;Trvale smazat soubory z koše,
-FILEBROWSER_EXEC_CPB;Vlastní generátor profilu
 FILEBROWSER_EXTPROGMENU;Otevřít pomocí
 FILEBROWSER_FLATFIELD;Flat Field
 FILEBROWSER_MOVETODARKFDIR;Přesunout do složky tmavých snímků
@@ -193,6 +206,7 @@ FILEBROWSER_RANK3_TOOLTIP;Hodnocení 3 *\nZkratka: <b>Shift-3</b>
 FILEBROWSER_RANK4_TOOLTIP;Hodnocení 4 *\nZkratka: <b>Shift-4</b>
 FILEBROWSER_RANK5_TOOLTIP;Hodnocení 5 *\nZkratka: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Přejmenování souboru
+FILEBROWSER_RESETDEFAULTPROFILE;Vrátit se k původnímu
 FILEBROWSER_SELECTDARKFRAME;Výběr tmavého snímku...
 FILEBROWSER_SELECTFLATFIELD;Výběr Flat Field...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Ukázat obrázky s červeným štítkem.\nZkratka: <b>Alt-1</b>
@@ -710,6 +724,38 @@ HISTORY_MSG_440;Metoda KdDÚ
 HISTORY_MSG_441;Retinex - Přenos zisku
 HISTORY_MSG_442;Retinex - Měřítko
 HISTORY_MSG_443;Kompenzace výstupního černého bodu
+HISTORY_MSG_444;VB - Zdůraznění teploty
+HISTORY_MSG_445;Raw Dílčí snímek
+HISTORY_MSG_446;EvPixelShiftMotion
+HISTORY_MSG_447;EvPixelShiftMotionCorrection
+HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
+HISTORY_MSG_449;PS přizpůsobení ISO
+HISTORY_MSG_450;EvPixelShiftNreadIso
+HISTORY_MSG_451;EvPixelShiftPrnu
+HISTORY_MSG_452;PS Ukázat pohyb
+HISTORY_MSG_453;PS Zobrazit jen masku
+HISTORY_MSG_454;EvPixelShiftAutomatic
+HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
+HISTORY_MSG_456;EvPixelShiftNonGreenVertical
+HISTORY_MSG_457;PS Kontrola červená/modrá
+HISTORY_MSG_458;EvPixelShiftStddevFactorRed
+HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
+HISTORY_MSG_460;EvPixelShiftGreenAmaze
+HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
+HISTORY_MSG_462;PS Kontrola zelená
+HISTORY_MSG_463;EvPixelShiftRedBlueWeight
+HISTORY_MSG_464;PS Maska pohybové neostrosti
+HISTORY_MSG_465;PS Poloměr rozostření
+HISTORY_MSG_466;EvPixelShiftSum
+HISTORY_MSG_467;EvPixelShiftExp0
+HISTORY_MSG_468;PS Vyplnit díry
+HISTORY_MSG_469;PS Medián
+HISTORY_MSG_470;EvPixelShiftMedian3
+HISTORY_MSG_471;PS korekce pohybu
+HISTORY_MSG_472;PS plynulé přechody
+HISTORY_MSG_473;PS Použít LMMSE
+HISTORY_MSG_474;PS korekce
+HISTORY_MSG_475;PS korekce kanálu
 HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSNAPSHOT_TOOLTIP;Zkratka: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snímek
@@ -766,7 +812,7 @@ MAIN_BUTTON_SAVE_TOOLTIP;Uložit současný obrázek.\nZkratka: <b>Ctrl+s</b>
 MAIN_BUTTON_SENDTOEDITOR;Upravit obrázek v externím editoru
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editovat současný obrázek v externím editoru.\nZkratka: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Zobrazit/skrýt všechny postranní panely.\nZkratka: <b>m</b>
-MAIN_BUTTON_UNFULLSCREEN;Ukončit mód celé obrazovky
+MAIN_BUTTON_UNFULLSCREEN;Ukončit režim celé obrazovky
 MAIN_FRAME_BATCHQUEUE;Fronta
 MAIN_FRAME_BATCHQUEUE_TOOLTIP;Fronta zpracování.\nZkratka: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Editor
@@ -890,8 +936,8 @@ PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtr vypálených pixelů
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
 PARTIALPASTE_PRSHARPENING;Doostření po změně velikosti
 PARTIALPASTE_RAWCACORR_AUTO;Automatická korekce CA
-PARTIALPASTE_RAWCACORR_CABLUE;CA modrá
-PARTIALPASTE_RAWCACORR_CARED;CA červená
+PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA Síla automatická korekce
+PARTIALPASTE_RAWCACORR_CAREDBLUE;CA červená a modrá
 PARTIALPASTE_RAWEXPOS_BLACK;Úrovně černé
 PARTIALPASTE_RAWEXPOS_LINEAR;Korekce bílého bodu
 PARTIALPASTE_RAWEXPOS_PRESER;Zachování světel
@@ -900,7 +946,9 @@ PARTIALPASTE_RAW_DCBENHANCE;Vylepšení DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Průchody DCB
 PARTIALPASTE_RAW_DMETHOD;Metoda demozajkování
 PARTIALPASTE_RAW_FALSECOLOR;Potlačení chybných barev
+PARTIALPASTE_RAW_IMAGENUM;Dílčí snímek
 PARTIALPASTE_RAW_LMMSEITERATIONS;Kroky rozšíření LMMSE
+PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 PARTIALPASTE_RESIZE;Změna velikosti
 PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_RGBCURVES;RGB křivky
@@ -979,9 +1027,11 @@ PREFERENCES_DIRSOFTWARE;Instalační složka
 PREFERENCES_EDITORCMDLINE;Jiný příkaz
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXPAUT;Expert
+PREFERENCES_EXTENDEDZOOMLEVELS;Použít jemné úrovně zvětšení v režimu "Přizpůsobení obrazovce"
+PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;Dovolí lépe vyplnit okno editoru ve všech režimech "přizpůsobit obrazovce". Ovšem kvalita náhledu může být mírně zhoršená v závislosti na vypočteném faktoru zvětšení.
 PREFERENCES_EXTERNALEDITOR;Externí editor
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů / náhledů
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů (vypněte na nízkých rozlišeních)
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů\n(vypněte na nízkých rozlišeních)
 PREFERENCES_FILEFORMAT;Formát souboru
 PREFERENCES_FILMSIMULATION;Simulace filmu
 PREFERENCES_FLATFIELD;Flat Field
@@ -1051,7 +1101,7 @@ PREFERENCES_OUTDIR;Výstupní složka
 PREFERENCES_OUTDIRFOLDER;Ulož do souboru
 PREFERENCES_OUTDIRFOLDERHINT;Uložit obrázky do vybrané složky.
 PREFERENCES_OUTDIRTEMPLATE;Použít šablonu
-PREFERENCES_OUTDIRTEMPLATEHINT;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii, některé vlastnosti fotografie nebo pořadí v dávce.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bude nahrazeno hodnocením fotografie. Pokud není fotografie ohodnocena, bude %r nahrazeno '0'. Pokud je fotografie v koši, bude %r nahrazeno 'x'.\n\n<b>%s1</b>, <b>%s2</b>, atd. bude nahrazeno pořadím v dávce doplněném na 1 až 9 číslic. Každé spuštění zpracování fronty jej vždy nastaví na jedna a po každé zpracované fotografii se o jedna zvýší .\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>zpracovano</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/zpracovano/%f</b>\n\nPro uložení výstupního obrázku do adresáře "<i>/home/tom/fotky/zpracovano/2010-10-31</i>", napište:\n<b>%p2/zpracovano/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii, některé vlastnosti fotografie nebo pořadí v dávce.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bude nahrazeno hodnocením fotografie. Pokud není fotografie ohodnocena, bude %r nahrazeno '0'. Pokud je fotografie v koši, bude %r nahrazeno 'x'.\n\n<b>%s1</b>, <b>%s2</b>, atd. bude nahrazeno pořadím v dávce doplněném na 1 až 9 číslic. Každé spuštění zpracování fronty jej vždy nastaví na jedna a po každé zpracované fotografii se o jedna zvýší .\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>zpracovano</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/zpracovano/%f</b>\n\nPro uložení výstupního obrázku do adresáře\n"<i>/home/tom/fotky/zpracovano/2010-10-31</i>", napište:\n<b>%p2/zpracovano/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Překrýt jména souborů na náhledech v prohlížeči souborů
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Překrýt jména souborů na náhledech v editoru
 PREFERENCES_OVERWRITEOUTPUTFILE;Přepsat existující soubory
@@ -1070,9 +1120,11 @@ PREFERENCES_PRINTER;Tiskárna (obtah)
 PREFERENCES_PROFILEHANDLING;Řízení profilů zpracování
 PREFERENCES_PROFILELOADPR;Priorita nahrávání profilů zpracování
 PREFERENCES_PROFILEPRCACHE;Profil v mezipaměti
-PREFERENCES_PROFILEPRFILE;Profil uložený se zdrojovým souborem
-PREFERENCES_PROFILESAVECACHE;Ukládat parametry zpracování do mezipaměti
-PREFERENCES_PROFILESAVEINPUT;Ukládat parametry zpracování spolu se zdrojovým souborem
+PREFERENCES_PROFILEPRFILE;Profil uložený se vstupním souborem
+PREFERENCES_PROFILESAVEBOTH;Ukládat profil zpracování do mezipaměti a zároveň i se vstupním souborem
+PREFERENCES_PROFILESAVECACHE;Ukládat profil zpracování do mezipaměti
+PREFERENCES_PROFILESAVEINPUT;Ukládat profil zpracování spolu se vstupním souborem
+PREFERENCES_PROFILESAVELOCATION;Místo uložení profilů zpracování
 PREFERENCES_PROFILE_NONE;Nic
 PREFERENCES_PROPERTY;Vlastnost
 PREFERENCES_PRTINTENT;Reprodukční záměr
@@ -1082,7 +1134,7 @@ PREFERENCES_REMEMBERZOOMPAN;Zapamatovat si procento přiblížení a posun obrá
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Zapamatovat si procento přiblížení a posun aktuálního obrázku a použít tyto hodnoty při otevírání nového obrázku.\n\nTato volba funguje pouze v režimu "Mód jedné karty editoru" a volba "Metoda demozajkování pro náhled při přiblížení menším než 100%" je nastavena na "Stejně jako v PP3".
 PREFERENCES_RGBDTL_LABEL;Maximální počet vláken pro redukci šumu a úrovně vlnky
 PREFERENCES_RGBDTL_TOOLTIP;Pro automatické nastavení maximálního možného počtu vláken ponechte nastaveno na "0". Čím více vláken běží paralelně, tím rychlejší je výpočet. Paměťové nároky najdete na RawPedii.
-PREFERENCES_SELECTFONT;Vyberte globální písmo
+PREFERENCES_SELECTFONT;Vyberte hlavní písmo
 PREFERENCES_SELECTFONT_COLPICKER;Vybrat písmo pro Průzkumníka barev
 PREFERENCES_SELECTLANG;Volba jazyka
 PREFERENCES_SELECTTHEME;Zvolit vzhled
@@ -1108,6 +1160,7 @@ PREFERENCES_STARTUPIMDIR;Složka obrázků při spuštění
 PREFERENCES_STDAUT;Běžný
 PREFERENCES_TAB_BROWSER;Prohlížeč souborů
 PREFERENCES_TAB_COLORMGR;Správa barev
+PREFERENCES_TAB_DYNAMICPROFILE;Pravidla dynamických profilů
 PREFERENCES_TAB_GENERAL;Obecné
 PREFERENCES_TAB_IMPROC;Zpracování obrázku
 PREFERENCES_TAB_PERFORMANCE;Výkon a kvalita
@@ -1136,6 +1189,7 @@ PROFILEPANEL_MODE_TIP;Režim uplatnění profilu zpracování.\n\nTlačítko je 
 PROFILEPANEL_MYPROFILES;Mé profily
 PROFILEPANEL_PASTEPPASTE;Parametry pro vložení
 PROFILEPANEL_PCUSTOM;Vlastní
+PROFILEPANEL_PDYNAMIC;Dynamiký
 PROFILEPANEL_PFILE;Ze souboru
 PROFILEPANEL_PINTERNAL;Neutrální
 PROFILEPANEL_PLASTSAVED;Poslední uschovaný
@@ -1328,7 +1382,7 @@ TP_COLORAPP_SURROUND_DIM;Tlumené
 TP_COLORAPP_SURROUND_EXDARK;Velmi tmavé
 TP_COLORAPP_SURROUND_TOOLTIP;Změní tóny a barvy dle podmínek prohlížení na výstupním zařízení\n\n<b>Průměrné</b>: Průměrné osvětlení prostředí (standardní). Obrázek nebude změněn.\n\n<b>Tlumené</b>: Tlumené prostředí (TV). Obrázek bude mírně ztmaven.\n\n<b>Tmavé</b>: Tmavé prostředí (projektor). Obrázek bude více tmavý.\n\n<b>Velmi tmavé</b>: Velmi tmavé prostředí (cutsheet). Obrázek bude velmi tmavý.
 TP_COLORAPP_SURSOURCE;Tmavé okolí
-TP_COLORAPP_SURSOURCE_TOOLTIP;Může být použito pokud má zdrojový obrázek tmavý okraj.
+TP_COLORAPP_SURSOURCE_TOOLTIP;Může být použito, pokud má vstupní obrázek tmavý okraj.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Jas
 TP_COLORAPP_TCMODE_CHROMA;Barevnost
 TP_COLORAPP_TCMODE_COLORF;Pestrobarevnost
@@ -1678,21 +1732,84 @@ TP_RAWEXPOS_LINEAR;Korekce bílého bodu
 TP_RAWEXPOS_PRESER;Zachování světel
 TP_RAWEXPOS_RGB;Červená, telená, modrá
 TP_RAWEXPOS_TWOGREEN;Spojit zelené
+TP_RAW_1PASSMEDIUM;Jeden průchod (střední)
+TP_RAW_3PASSBEST;Tři průchody (nejlepší)
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;Vylepšení DCB
 TP_RAW_DCBITERATIONS;Počet průchodů DCB
 TP_RAW_DMETHOD;Metoda
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demozajkování...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Vylepšení demozajkování...
-TP_RAW_DMETHOD_TOOLTIP;Poznámka: IGV a LMMSE jsou určeny pro obrázky s vysokým ISO, kde pomáhají redukci šumu minimalizovat posterizaci a vyžehlený vzhled.
+TP_RAW_DMETHOD_TOOLTIP;Poznámka: IGV a LMMSE jsou určeny pro obrázky s vysokým ISO, kde pomáhají redukci šumu minimalizovat posterizaci a vyžehlený vzhled.\n\nPixel Shift je určen pro soubory Pentax Pixel Shift.\nPro soubory neobsahující Pixel Shift data je použita metoda AMaZE.
+TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Počet kroků potlačování chybných barev
+TP_RAW_FAST;Rychlá
 TP_RAW_HD;Práh
 TP_RAW_HD_TOOLTIP;Nižší hodnoty učiní detekci vypálených/mrtvých bodů agresivnější, ale falešná hlášení mohou vést k artefaktům. Pokud po povolení filtru vypálených/mrtvých bodů zpozorujete výskyt artefaktů, postupně snižujte prahovou hodnotu až do jejich vymizení.
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;Dílčí snímek
+TP_RAW_IMAGENUM_TOOLTIP;Některé Raw soubory mohou obsahovat několik dílčích snímků (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Tímto tlačítkem vyberete konkrétní dílčí snímek.
 TP_RAW_LABEL;Demozajkování
+TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;Kroky rozšíření LMMSE
 TP_RAW_LMMSE_TOOLTIP;Přidá gamu (krok 1) - přidá mediány (kroky 2, až 4) a následně přidá (kroky 5 a 6) vyčištění artefaktů a vylepšení poměru signálu a šumu.
+TP_RAW_MONO;Mono
+TP_RAW_NONE;Žádná (zobrazí strukturu senzoru)
+TP_RAW_PIXELSHIFT;Pixel Shift
+TP_RAW_PIXELSHIFTADAPTIVE;Přizpůsobivá detekce
+TP_RAW_PIXELSHIFTBLUR;Maska pohybové neostrosti
+TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Maska pohybové neostrosti
+TP_RAW_PIXELSHIFTEPERISO;Přizpůsobení ISO
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Výchozí hodnota (0,0) by měla dostačovat pro základní hodnoty ISO.\nDetekci pohybu na vyšších hodnotách ISO vylepšíte navýšením této hodnoty.\nZvyšujte po malých krocích a sledujte přitom masku pohybu.
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Vyrovnat jas snímků
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Korekce po kanálech
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Zapnuto: Nezávislá korekce jednotlivých RGB kanálů.\nVypnuto: Použije se stejná hodnota pro všechny kanály.
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Vyrovná jas ostatních snímků podle jasu vybraného snímku.\nPokud jsou ve snímku přeexponované oblasti, vyberte jasnější snímek abyste zamezili výskytu purpurové barvy v přeexponovaných oblastech nebo povolte korekci pohybu.
+TP_RAW_PIXELSHIFTEXP0;Testovací
+TP_RAW_PIXELSHIFTGREEN;Kontrolovat zelený kanál na pohyb
+TP_RAW_PIXELSHIFTHOLEFILL;Vyplnit díry v masce pohybu
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Vyplnit díry v masce pohybu
+TP_RAW_PIXELSHIFTLMMSE;Použít LMMSE pro části s pohybem
+TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Pro oblasti s pohybem použít LMMSE namísto AMaZE.\nUžitečné pro fotografie s vysokým ISO.
+TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 nový práh
+TP_RAW_PIXELSHIFTMEDIAN;Medián
+TP_RAW_PIXELSHIFTMEDIAN3;Vyjmout vybraný snímek z mediánu
+TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Vyjme vybraný snímek z mediánu.\nUžitečné, pokud se pohybující se objekty překrývají jen ve druhém a třetím.
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Pro oblasti s pohybem použijte medián všech snímků namísto vybraného.\nOdstraní objekty, které jsou na všech snímcích na různých místech.\nVytvoří efekt pohybu pro pomalu se pohybující (překrývající se) objekty.
+TP_RAW_PIXELSHIFTMM_AUTO;Automatická
+TP_RAW_PIXELSHIFTMM_CUSTOM;Vlastní
+TP_RAW_PIXELSHIFTMM_OFF;Vypnuto
+TP_RAW_PIXELSHIFTMOTION;Úroveň kontroly pohybu (zastaralé)
+TP_RAW_PIXELSHIFTMOTIONCORRECTION;Míra korekce pohybu v zelené
+TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixely\n3 = mřížka 3x3\n5 = mřížka 5x5
+TP_RAW_PIXELSHIFTMOTIONMETHOD;Korekce pohybu
+TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 znamená bez detekce pohybu\n1 - 99 znamená, že pohybu bude detekován dle této hodnoty. Pro zvýšení míry detekce použijte vyšší hodnotu\n100 znamená, že bude použito AMaZE demozajkování snímku
+TP_RAW_PIXELSHIFTNONGREENAMAZE;Kontrolovat červené/modré AMaZE
+TP_RAW_PIXELSHIFTNONGREENCROSS;Kontrolovat pohyb v červeném a modrém kanálu
+TP_RAW_PIXELSHIFTNONGREENCROSS2;Kontrolovat zelené amaze
+TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Kontrolovat červenou/modrou vodorovně
+TP_RAW_PIXELSHIFTNONGREENVERTICAL;Kontrolovat červenou/modrou svisle
+TP_RAW_PIXELSHIFTNREADISO;nRead
+TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Váha červené a modré
+TP_RAW_PIXELSHIFTSHOWMOTION;Ukázat pohyb
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Zobrazit pouze masku
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Ukázat masku pohybu bez obrázku
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Překryje obrázek maskou, která ukazuje oblasti s pohybem
+TP_RAW_PIXELSHIFTSIGMA;Poloměr rozostření
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Výchozí poloměr 1,0 většinou dobře funguje pro základní ISO. U snímků s vyšším ISO poloměr zvětšete.\nHodnota 5,0 je dobrým výchozím bodem pro snímky pořízené na vysoké ISO.\nBěhem změny hodnoty poloměru sledujte masku pohybu.
+TP_RAW_PIXELSHIFTSMOOTH;Hladké přechody
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Plynulé přechody mezi místy s pohybem a bez něj.\nNastavte 0 pro zakázání plynulých přechodů\nNastavte 1 pro použití AMaZE/LMMSE nebo Median
+TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev faktor modrý
+TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev faktor zelený
+TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev faktor červený
 TP_RAW_SENSOR_BAYER_LABEL;Snímač s Bayerovou maskou
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Tří průchodová dává lepší výsledky (doporučeno pro fotky s nízkým ISO).\nJednoprůchodová je téměř k nerozeznání od tří průchodové pro vysoké ISO a je rychlejší.
 TP_RAW_SENSOR_XTRANS_LABEL;Senzory s X-Trans maticí
+TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;Aplikovat na:
 TP_RESIZE_CROPPEDAREA;Oblast ořezu
 TP_RESIZE_FITBOX;Výřez
@@ -2057,6 +2174,8 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Bodové vyvážení
+TP_WBALANCE_TEMPBIAS;AVB - Zdůraznění teploty
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Dovolí ovlivnit výpočet "automatického vyvážení bílé"\nzdůrazněním teplejší nebo chladnější teploty. Toto zdůraznění\nje vyjádřeno v procentech vypočtené teploty a výsledek\nlze vyjádřit vzorcem "vypočtenáTeplota + vypočtenáTeplota * zdůraznění".
 TP_WBALANCE_TEMPERATURE;Teplota
 TP_WBALANCE_TUNGSTEN;Wolfram
 TP_WBALANCE_WATER1;Pod vodou 1
@@ -2069,130 +2188,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Přizpůsobit obrazovce\nZkratka: <b>Alt</b>-<b>f</b
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!DYNPROFILEEDITOR_DELETE;Delete
-!DYNPROFILEEDITOR_EDIT;Edit
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
-!DYNPROFILEEDITOR_MOVE_UP;Move Up
-!DYNPROFILEEDITOR_NEW;New
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!DYNPROFILEEDITOR_PROFILE;Processing Profile
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!HISTORY_MSG_444;WB - Temp bias
-!HISTORY_MSG_445;Raw Sub-Image
-!HISTORY_MSG_446;EvPixelShiftMotion
-!HISTORY_MSG_447;EvPixelShiftMotionCorrection
-!HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
-!HISTORY_MSG_449;PS ISO adaption
-!HISTORY_MSG_450;EvPixelShiftNreadIso
-!HISTORY_MSG_451;EvPixelShiftPrnu
-!HISTORY_MSG_452;PS Show motion
-!HISTORY_MSG_453;PS Show mask only
-!HISTORY_MSG_454;EvPixelShiftAutomatic
-!HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
-!HISTORY_MSG_456;EvPixelShiftNonGreenVertical
-!HISTORY_MSG_457;PS Check red/blue
-!HISTORY_MSG_458;EvPixelShiftStddevFactorRed
-!HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
-!HISTORY_MSG_460;EvPixelShiftGreenAmaze
-!HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
-!HISTORY_MSG_462;PS Check green
-!HISTORY_MSG_463;EvPixelShiftRedBlueWeight
-!HISTORY_MSG_464;PS Blur motion mask
-!HISTORY_MSG_465;PS Blur radius
-!HISTORY_MSG_466;EvPixelShiftSum
-!HISTORY_MSG_467;EvPixelShiftExp0
-!HISTORY_MSG_468;PS Fill holes
-!HISTORY_MSG_469;PS Median
-!HISTORY_MSG_470;EvPixelShiftMedian3
-!HISTORY_MSG_471;PS Motion correction
-!HISTORY_MSG_472;PS Smooth transitions
-!HISTORY_MSG_473;PS Use lmmse
-!HISTORY_MSG_474;PS Equalize
-!HISTORY_MSG_475;PS Equalize channel
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
-!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
-!PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
-!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
-!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PROFILEPANEL_PDYNAMIC;Dynamic
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_AHD;AHD
-!TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;DCB
-!TP_RAW_EAHD;EAHD
-!TP_RAW_FAST;Fast
-!TP_RAW_HPHD;HPHD
-!TP_RAW_IGV;IGV
-!TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files might embed several sub-images (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Use this button to select the sub-image.
-!TP_RAW_LMMSE;LMMSE
-!TP_RAW_MONO;Mono
-!TP_RAW_NONE;None (Shows sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift
-!TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
-!TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
-!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
-!TP_RAW_PIXELSHIFTEXP0;Experimental
-!TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
-!TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use lmmse for motion parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use lmmse instead of amaze for motion areas.\nUseful for High ISO images.
-!TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
-!TP_RAW_PIXELSHIFTMEDIAN;Median
-!TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
-!TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
-!TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
-!TP_RAW_PIXELSHIFTMM_AUTO;Automatic
-!TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
-!TP_RAW_PIXELSHIFTMM_OFF;Off
-!TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
-!TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
-!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
-!TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
-!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
-!TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
-!TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
-!TP_RAW_PIXELSHIFTNREADISO;nRead
-!TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-!TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
-!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show mask only
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion
-!TP_RAW_PIXELSHIFTSIGMA;Blur radius
-!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Default radius of 1.0 usually fits good for base ISO. Increase value for high ISO shots,\n5.0 is a good starting point for high ISO shots.\nWatch motion mask while changing the value.
-!TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
-!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with and without motion.\nSet to 0 to disable smooth transitions\nSet to 1 to get Amaze/lmmse or Median
-!TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
-!TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
-!TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
-!TP_RAW_VNG4;VNG4
-!TP_WBALANCE_TEMPBIAS;AWB temperature bias
-!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
