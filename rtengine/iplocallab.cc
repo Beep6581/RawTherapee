@@ -4125,7 +4125,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float **bufchro = nullptr;
             float **buflightslid = nullptr;
 
-            int bfh, bfw;
+            int bfh = 0.f, bfw = 0.f;
 
 
             float adjustr = 1.0f;
@@ -5254,12 +5254,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         float Chprov1 = sqrtBuffer[x];
                         sincosval.y = sincosyBuffer[x];
                         sincosval.x = sincosxBuffer[x];
-                        float chr;
+                        float chr = 0.f;
 
 #else
                         float aa = transformed->a[y][x];
                         float bb = transformed->b[y][x];
-                        float HH, chr;
+                        float HH = 0.f, chr = 0.f;
 
                         if (needHH) { // only do expensive atan2 calculation if needed
                             HH = xatan2f (bb, aa);
