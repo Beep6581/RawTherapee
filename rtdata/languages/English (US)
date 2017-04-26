@@ -721,6 +721,7 @@
 !HISTORY_MSG_472;PS Smooth transitions
 !HISTORY_MSG_473;PS Use lmmse
 !HISTORY_MSG_474;PS Equalize
+!HISTORY_MSG_475;PS Equalize channel
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -1086,8 +1087,10 @@
 !PREFERENCES_PROFILELOADPR;Processing profile loading priority
 !PREFERENCES_PROFILEPRCACHE;Profile in cache
 !PREFERENCES_PROFILEPRFILE;Profile next to the input file
+!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 !PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
+!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_PROFILE_NONE;None
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_PRTINTENT;Rendering intent
@@ -1728,6 +1731,8 @@
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
 !TP_RAW_PIXELSHIFTEXP0;Experimental
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
