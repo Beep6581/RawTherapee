@@ -74,6 +74,8 @@ protected:
     Adjuster* pixelShiftRedBlueWeight;
 #endif
     int oldMethod;
+
+    IdleRegister idle_register;
 public:
 
     BayerProcess ();
