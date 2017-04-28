@@ -56,6 +56,7 @@ void IdleRegister::add(GSourceFunc function, gpointer data, gint priority)
 
         if (!data_wrapper->function(data_wrapper->data)) {
             data_wrapper->self->mutex.lock();
+            g_source_remove(data_wrapper->self->ids[data_wrapper]);
             data_wrapper->self->ids.erase(data_wrapper);
             data_wrapper->self->mutex.unlock();
 
