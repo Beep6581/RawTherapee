@@ -528,12 +528,12 @@ MAIN_TAB_COLOR;Colore
 MAIN_TAB_COLOR_TOOLTIP;Scorciatoia: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Dettaglio
 MAIN_TAB_DETAIL_TOOLTIP;Scorciatoia: <b>Alt-d</b>
-MAIN_TAB_DEVELOP;Sviluppo
+MAIN_TAB_DEVELOP; Modifiche Batch 
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Esportazione Rapida
+MAIN_TAB_EXPORT; Esportazione Rapida 
 MAIN_TAB_EXPOSURE;Esposizione
 MAIN_TAB_EXPOSURE_TOOLTIP;Scorciatoia: <b>Alt-e</b>
-MAIN_TAB_FILTER;Filtro
+MAIN_TAB_FILTER; Filtro 
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadati
 MAIN_TAB_METADATA_TOOLTIP;Scorciatoia: <b>Alt-m</b>

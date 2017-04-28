@@ -842,13 +842,13 @@ MAIN_TAB_COLOR;Farbe
 MAIN_TAB_COLOR_TOOLTIP;Taste: <b>Alt</b> + <b>c</b>
 MAIN_TAB_DETAIL;Details
 MAIN_TAB_DETAIL_TOOLTIP;Taste: <b>Alt</b> + <b>d</b>
-MAIN_TAB_DEVELOP;Entwickeln
+MAIN_TAB_DEVELOP; Batchbearbeitung 
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT;Exportieren
+MAIN_TAB_EXPORT; Exportieren 
 MAIN_TAB_EXPOSURE;Belichtung
 MAIN_TAB_EXPOSURE_TOOLTIP;Taste: <b>Alt</b> + <b>e</b>
-MAIN_TAB_FILTER; Filter
-MAIN_TAB_INSPECT; Prüfen
+MAIN_TAB_FILTER; Filter 
+MAIN_TAB_INSPECT; Prüfen 
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadaten
 MAIN_TAB_METADATA_TOOLTIP;Taste: <b>Alt</b> + <b>m</b>
