@@ -198,8 +198,7 @@ int main(int argc, char **argv)
                         break;
                     }
 
-                if(Console) {
-                    AllocConsole();
+                if(Console && AllocConsole()) {
                     AttachConsole( GetCurrentProcessId() ) ;
                     // Don't allow CTRL-C in console to terminate RT
                     SetConsoleCtrlHandler( NULL, true );
