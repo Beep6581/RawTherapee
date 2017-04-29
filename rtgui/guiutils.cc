@@ -91,6 +91,7 @@ void IdleRegister::destroy()
         DataWrapper *w = static_cast<DataWrapper *>(id.first);
         delete w;
     }
+    ids.clear();
     mutex.unlock();
 }
 
