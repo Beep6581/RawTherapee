@@ -2189,3 +2189,12 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_475;PS Equalize channel
+!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
+!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.

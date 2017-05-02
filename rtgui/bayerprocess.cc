@@ -945,21 +945,53 @@ void BayerProcess::pixelShiftMotionMethodChanged ()
 
 void BayerProcess::FrameCountChanged(int n, int frameNum)
 {
-    GThreadLock lock;
-    imageNumber->block (true);
+    struct Data {
+        BayerProcess *me;
+        int n;
+        int frameNum;
+    };
+    const auto func = [](gpointer data) -> gboolean {
+        Data *d = static_cast<Data *>(data);
+        BayerProcess *me = d->me;
+        me->imageNumber->block (true);
+        int n = d->n;
+        int frameNum = d->frameNum;
 
-    imageNumber->remove_all();
-    imageNumber->append("1");
-    for(int i = 2; i <= std::min(n, 4); ++i) {
-        std::ostringstream entry;
-        entry << i;
-        imageNumber->append(entry.str());
-    }
-    imageNumber->set_active(std::min(frameNum, n - 1));
-    if(n == 1) {
-        imageNumberBox->hide();
-    } else {
-        imageNumberBox->show();
-    }
-    imageNumber->block (false);
+        me->imageNumber->remove_all();
+        me->imageNumber->append("1");
+        for(int i = 2; i <= std::min(n, 4); ++i) {
+            std::ostringstream entry;
+            entry << i;
+            me->imageNumber->append(entry.str());
+        }
+        me->imageNumber->set_active(std::min(frameNum, n - 1));
+        if(n == 1) {
+            me->imageNumberBox->hide();
+        } else {
+            me->imageNumberBox->show();
+        }
+        me->imageNumber->block (false);
+        delete d;
+        return FALSE;
+    };
+
+    idle_register.add(func, new Data { this, n, frameNum });
+    
+    // GThreadLock lock;
+    // imageNumber->block (true);
+
+    // imageNumber->remove_all();
+    // imageNumber->append("1");
+    // for(int i = 2; i <= std::min(n, 4); ++i) {
+    //     std::ostringstream entry;
+    //     entry << i;
+    //     imageNumber->append(entry.str());
+    // }
+    // imageNumber->set_active(std::min(frameNum, n - 1));
+    // if(n == 1) {
+    //     imageNumberBox->hide();
+    // } else {
+    //     imageNumberBox->show();
+    // }
+    // imageNumber->block (false);
 }
