@@ -2366,6 +2366,27 @@ void Options::save ()
 }
 
 /*
+ * return true if ext is a parsed extension (retained or not)
+ */
+bool Options::is_parse_extention (Glib::ustring fname)
+{
+    Glib::ustring ext = getExtension (fname).lowercase();
+
+    if (!ext.empty()) {
+        // there is an extension to the filename
+
+        // look out if it has one of the listed extensions (selected or not)
+        for (unsigned int i = 0; i < parseExtensions.size(); i++) {
+            if (ext == parseExtensions[i]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/*
  * return true if fname ends with one of the retained image file extensions
  */
 bool Options::has_retained_extention (Glib::ustring fname)

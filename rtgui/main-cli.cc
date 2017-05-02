@@ -298,6 +298,7 @@ int processLineParams( int argc, char **argv )
     bool sideProcParams = false;
     bool copyParamsFile = false;
     bool skipIfNoSidecar = false;
+    bool allExtensions = false;
     bool useDefault = false;
     unsigned int sideCarFilePos = 0;
     int compression = 92;
@@ -378,6 +379,10 @@ int processLineParams( int argc, char **argv )
                 overwriteFiles = true;
                 break;
 
+            case 'a':
+                allExtensions = true;
+                break;
+
             case 'j':
                 if (currParam.length() > 2 && currParam.at(2) == 's') {
                     if (currParam.length() == 3) {
@@ -431,7 +436,7 @@ int processLineParams( int argc, char **argv )
             case 'f':
                 fast_export = true;
                 break;
-                
+
             case 'c': // MUST be last option
                 while (iArg + 1 < argc) {
                     iArg++;
@@ -440,9 +445,26 @@ int processLineParams( int argc, char **argv )
                     argument = argument.substr(1, argument.length()-2);
 #endif
 
-                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
-                        inputFiles.emplace_back (argument);
+                    if (!Glib::file_test (argument, Glib::FILE_TEST_EXISTS)) {
+                        std::cout << "\"" << argument << "\"  doesn't exist !" << std::endl;
                         continue;
+                    }
+
+                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
+                        bool notAll = allExtensions && !options.is_parse_extention (argument);
+                        bool notRetained = !allExtensions && !options.has_retained_extention (argument);
+                        if (notAll || notRetained) {
+                            if (notAll) {
+                                std::cout << "\"" << argument << "\"  is not one of the file format to process: skipped" << std::endl;
+                            } else if (notRetained) {
+                                std::cout << "\"" << argument << "\"  is not one of the retained file format to process: skipped" << std::endl;
+                            }
+                        }
+                        else {
+                            inputFiles.emplace_back (argument);
+                        }
+                        continue;
+
                     }
 
                     if (Glib::file_test (argument, Glib::FILE_TEST_IS_DIR)) {
@@ -459,19 +481,28 @@ int processLineParams( int argc, char **argv )
                             while (auto file = enumerator->next_file ()) {
 
                                 const auto fileName = Glib::build_filename (argument, file->get_name ());
+                                bool isDir = Glib::file_test (fileName, Glib::FILE_TEST_IS_DIR);
+                                bool notAll = allExtensions && !options.is_parse_extention (fileName);
+                                bool notRetained = !allExtensions && !options.has_retained_extention (fileName);
 
-                                if (Glib::file_test (fileName, Glib::FILE_TEST_IS_DIR)) {
+                                if (isDir || notAll || notRetained) {
+                                    if (isDir) {
+                                        std::cout << "\"" << fileName << "\"  is a directory: skipped" << std::endl;
+                                    } else if (notAll) {
+                                        std::cout << "\"" << fileName << "\"  is not one of the file format to process: skipped" << std::endl;
+                                    } else if (notRetained) {
+                                        std::cout << "\"" << fileName << "\"  is not one of the retained file format to process: skipped" << std::endl;
+                                    }
                                     continue;
+
                                 }
 
-                                // skip files without extension and sidecar files
-                                auto lastdot = fileName.find_last_of('.');
-                                if (lastdot == Glib::ustring::npos) {
-                                    continue;
-                                }
-
-                                if (fileName.substr (lastdot).compare (paramFileExtension) == 0) {
-                                    continue;
+                                if (sideProcParams && skipIfNoSidecar) {
+                                    // look for the sidecar proc params
+                                    if (!Glib::file_test(fileName + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
+                                        std::cout << "\"" << fileName << "\"  has no side-car file: image skipped" << std::endl;
+                                        continue;
+                                    }
                                 }
 
                                 inputFiles.emplace_back (fileName);
@@ -521,12 +552,16 @@ int processLineParams( int argc, char **argv )
                 std::cout << "  " << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] [-f] -c <input>" << std::endl;
                 std::cout << std::endl;
                 std::cout << "  -q               Quick Start mode : do not load cached files to speedup start time." << std::endl;
-                std::cout << "  -c <files>       Specify one or more input files." << std::endl;
+                std::cout << "  -c <files>       Specify one or more input files or directory." << std::endl;
+                std::cout << "                   When specifying directories, Rawtherapee will look for images files that comply with the" << std::endl;
+                std::cout << "                   selected extensions (see also '-a')." << std::endl;
                 std::cout << "                   -c must be the last option." << std::endl;
                 std::cout << "  -o <file>|<dir>  Set output file or folder." << std::endl;
                 std::cout << "                   Saves output file alongside input file if -o is not specified." << std::endl;
                 std::cout << "  -O <file>|<dir>  Set output file or folder and copy " << pparamsExt << " file into it." << std::endl;
                 std::cout << "                   Saves output file alongside input file if -O is not specified." << std::endl;
+                std::cout << "  -a               stand for 'all'. When specifying a directory, process all images specified in the" << std::endl;
+                std::cout << "                   extension list from the options file, even those currently not seleted" << std::endl;
                 std::cout << "  -s               Use the existing sidecar file to build the processing parameters," << std::endl;
                 std::cout << "                   e.g. for photo.raw there should be a photo.raw." << pparamsExt << " file in the same folder." << std::endl;
                 std::cout << "                   If the sidecar file does not exist, neutral values will be used." << std::endl;
