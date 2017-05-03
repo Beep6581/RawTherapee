@@ -240,7 +240,7 @@ textview:selected, treeview:selected {
     border-top-color: transparent;
 }
 
-#RightNotebook > stack > :nth-child(3) treeview {
+#RightNotebook > stack > :nth-child(1) treeview {
     border: 0.08334em solid @bg-dark-grey;
     border-bottom: none;
 }
