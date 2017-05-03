@@ -4183,7 +4183,9 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufcolorig->L[ir][jr] = 0.f;
                         bufcolorig->a[ir][jr] = 0.f;
                         bufcolorig->b[ir][jr] = 0.f;
-
+                        bufchro[ir][jr] = 0.f;
+                        buflightslid[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
                     }
 
                 clighmax = 0.f;
@@ -4412,6 +4414,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufcontorig->L[ir][jr] = 0.f;
                         //   bufcontorig->a[ir][jr] = 0.f;
                         //   bufcontorig->b[ir][jr] = 0.f;
+                        buflightc[ir][jr] = 0.f;
+
 
                     }
 
@@ -4935,6 +4939,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufreti->L[ir][jr] = 0.f;
                         bufreti->a[ir][jr] = 0.f;
                         bufreti->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufchro[ir][jr] = 0.f;
                     }
 
                 int begy = lp.yc - lp.lyT;
