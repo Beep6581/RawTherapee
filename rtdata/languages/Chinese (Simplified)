@@ -69,7 +69,6 @@ FILEBROWSER_DELETEDLGLABEL;确认删除
 FILEBROWSER_DELETEDLGMSG;确定删除所选的%1个文件？
 FILEBROWSER_EMPTYTRASH;清空垃圾箱
 FILEBROWSER_EMPTYTRASHHINT;永久清空垃圾箱
-FILEBROWSER_EXEC_CPB;自定义档案制作工具
 FILEBROWSER_EXTPROGMENU;调用程序...
 FILEBROWSER_NEW_NAME;新名称：
 FILEBROWSER_OPENDEFAULTVIEWER;Windows 默认阅览工具 (序列)
@@ -152,7 +151,6 @@ HISTOGRAM_TOOLTIP_L;显示/隐藏 CIELAB 亮度直方图
 HISTOGRAM_TOOLTIP_R;显示/隐藏 红色直方图
 HISTORY_CHANGED;已更改
 HISTORY_CUSTOMCURVE;自定义曲线
-HISTORY_DELSNAPSHOT;移除快照
 HISTORY_FROMCLIPBOARD;从剪贴板
 HISTORY_LABEL;历史
 HISTORY_MSG_1;图片加载完
@@ -388,8 +386,6 @@ PARTIALPASTE_PERSPECTIVE;视角
 PARTIALPASTE_PREPROCESS_GREENEQUIL;绿平衡
 PARTIALPASTE_PREPROCESS_LINEDENOISE;线性噪点滤镜
 PARTIALPASTE_RAWCACORR_AUTO;CA自动更正
-PARTIALPASTE_RAWCACORR_CABLUE;CA蓝
-PARTIALPASTE_RAWCACORR_CARED;CA红
 PARTIALPASTE_RAWGROUP;Raw设置
 PARTIALPASTE_RESIZE;缩放
 PARTIALPASTE_RGBCURVES;RGB曲线
@@ -474,7 +470,6 @@ PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;图片处理
 PREFERENCES_TAB_SOUND;音效
 PREFERENCES_TP_LABEL;工具栏
-PREFERENCES_USESYSTEMTHEME;使用系统主题
 PREFERENCES_WORKFLOW;排版
 PROFILEPANEL_LABEL;处理参数配置
 PROFILEPANEL_LOADDLGLABEL;加载处理参数为...
@@ -1309,7 +1304,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAWEXPOS_BLACK;Black levels
 !PARTIALPASTE_RAWEXPOS_LINEAR;White point correction
@@ -1361,8 +1355,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLATFIELDSDIR;Flat-fields directory
@@ -1446,7 +1438,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
-!PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for no sound.\nFor system sounds on Windows use "SystemDefault", "SystemAsterisk" etc., and on Linux use "complete", "window-attention" etc.
@@ -1725,7 +1716,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 !TP_ICM_BPC;Black Point Compensation
-!TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
@@ -1824,7 +1814,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
@@ -1847,7 +1836,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 !TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
 !TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 !TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze

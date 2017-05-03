@@ -93,7 +93,6 @@ FILEBROWSER_DELETEDLGMSG;Biztosan törölni kívánja a kijelölt %1 képet?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Biztos vagy benne, hogy törölni szeredné a kiválasztott %1 állományt, beleértve a feldolgozási sorba helyezett változatát IS?
 FILEBROWSER_EMPTYTRASH;Kuka ürítése
 FILEBROWSER_EMPTYTRASHHINT;A kukában lévő képek végleges, állományrendszerből történő eltávolítása.
-FILEBROWSER_EXEC_CPB;Egyedi profil készítő futtatása
 FILEBROWSER_FLATFIELD;Flat Field
 FILEBROWSER_MOVETODARKFDIR;Mozgatás a 'dark frame' könyvtárba
 FILEBROWSER_MOVETOFLATFIELDDIR;Flat Fields könyvtárba mozgatás
@@ -177,7 +176,6 @@ HISTOGRAM_TOOLTIP_R;Piros csatorna hisztogrammja (mutat/elrejt)
 HISTOGRAM_TOOLTIP_RAW;Raw hisztogram megjelenítése/elrejtése
 HISTORY_CHANGED;Változott
 HISTORY_CUSTOMCURVE;Saját görbe
-HISTORY_DELSNAPSHOT;Töröl
 HISTORY_FROMCLIPBOARD;Vágólapról
 HISTORY_LABEL;Előzmények
 HISTORY_MSG_1;Kép betöltve
@@ -461,8 +459,6 @@ PARTIALPASTE_PERSPECTIVE;Perspektíva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Zöldegyensúly
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Soronkénti zajszűrés
 PARTIALPASTE_RAWCACORR_AUTO;CA autokorrekció
-PARTIALPASTE_RAWCACORR_CABLUE;CA kék
-PARTIALPASTE_RAWCACORR_CARED;CA vörös
 PARTIALPASTE_RAWEXPOS_BLACK;Feketeszint
 PARTIALPASTE_RAWEXPOS_LINEAR;Raw fehérszint lineáris korrekciós faktor (FÉ)
 PARTIALPASTE_RAWEXPOS_PRESER;Raw fehérszint csúcsfény-megőrző faktor (FÉ)
@@ -573,7 +569,6 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Expozíciókompenzáció megjelenítése
 PREFERENCES_SHTHRESHOLD;Küszöbérték bebukott árnyékokhoz
 PREFERENCES_SINGLETAB;Egyetlen szerkesztőfül
 PREFERENCES_SINGLETABVERTAB;Egyetlen fül mód, függőleges előnézeti képek
-PREFERENCES_SLIMUI;Karcsú felület
 PREFERENCES_SND_BATCHQUEUEDONE;Feldolgozási sor végén
 PREFERENCES_SND_HELP;Állomány elérése, vagy hagyd üresen (ekkor nincs hang). Windows-on használd a "SystemDefault", "SystemAsterisk", stb. stringeket a rendszerhangokhoz.
 PREFERENCES_SND_LNGEDITPROCDONE;Amikor a képszerkesztés végződik
@@ -587,7 +582,6 @@ PREFERENCES_TAB_SOUND;Hangok
 PREFERENCES_TP_LABEL;Eszközök panel:
 PREFERENCES_TP_USEICONORTEXT;Ikonok használata szöveg helyett a füleken
 PREFERENCES_TP_VSCROLLBAR;Függőleges görgetősáv elrejtése
-PREFERENCES_USESYSTEMTHEME;Rendszer megjelenésének használata
 PREFERENCES_WORKFLOW;Munkamenet
 PROFILEPANEL_COPYPPASTE;Másolandó paraméterek
 PROFILEPANEL_LABEL;Feldolgozási beállítások
@@ -1322,7 +1316,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
@@ -1363,8 +1356,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FLUOF2;Fluorescent F2
 !PREFERENCES_FLUOF7;Fluorescent F7
@@ -1751,7 +1742,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 !TP_ICM_BPC;Black Point Compensation
-!TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
@@ -1848,7 +1838,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
@@ -1871,7 +1860,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 !TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
 !TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 !TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze

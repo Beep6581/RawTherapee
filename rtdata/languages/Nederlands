@@ -135,7 +135,6 @@ FILEBROWSER_DELETEDLGMSG;Weet u zeker dat u de geselecteerde %1 bestanden wilt v
 FILEBROWSER_DELETEDLGMSGINCLPROC;Weet u zeker dat u de %1 geselecteerde bestanden wilt verwijderen *inclusief* de versies van de verwerkingsrij?
 FILEBROWSER_EMPTYTRASH;Leeg prullenbak
 FILEBROWSER_EMPTYTRASHHINT;Verwijder bestanden in prullenbak voorgoed
-FILEBROWSER_EXEC_CPB;Start externe/eigen profielgenerator
 FILEBROWSER_EXTPROGMENU;Open met
 FILEBROWSER_FLATFIELD;Vlakveld
 FILEBROWSER_MOVETODARKFDIR;Verplaats naar map met donkerframes
@@ -258,7 +257,6 @@ HISTOGRAM_TOOLTIP_R;Toon/verberg rood histogram
 HISTOGRAM_TOOLTIP_RAW;Toon/verberg RAW-histogram
 HISTORY_CHANGED;Veranderd
 HISTORY_CUSTOMCURVE;Handmatig
-HISTORY_DELSNAPSHOT;Wis
 HISTORY_FROMCLIPBOARD;Van klembord
 HISTORY_LABEL;Geschiedenis
 HISTORY_MSG_1;Foto geladen
@@ -897,9 +895,6 @@ PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hete pixels filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Lijnruisfilter
 PARTIALPASTE_PRSHARPENING;Verscherp na verkleinen
 PARTIALPASTE_RAWCACORR_AUTO;Autom. C/A-correctie
-PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correctie sterkte
-PARTIALPASTE_RAWCACORR_CABLUE;C/A Blauw
-PARTIALPASTE_RAWCACORR_CARED;C/A Rood
 PARTIALPASTE_RAWCACORR_CAREDBLUE;CA rood & blauw
 PARTIALPASTE_RAWEXPOS_BLACK;Zwartniveau
 PARTIALPASTE_RAWEXPOS_LINEAR;Raw witpunt- lineaire corr. factor
@@ -990,8 +985,6 @@ PREFERENCES_DIRSOFTWARE;Installatiemap
 PREFERENCES_EDITORCMDLINE;Andere editor, geef pad
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster
 PREFERENCES_EXPAUT;Expert
-PREFERENCES_EXTENDEDZOOMLEVELS;Gebruik fijner geschaalde zoom niveau´s voor "schermvullend" zoomen
-PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;Het scherm wordt beter uitgevuld wanneer de "schermvullend" methode wordt gebruikt. Het voorbeeld kan iets afwijken, afhankelijk van de gebruikte zoom factor.
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Enkele rij navigator werkbalk (de-activeer voor lage resolutie)
@@ -1111,7 +1104,6 @@ PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
 PREFERENCES_SIMPLAUT;Gereedschap
 PREFERENCES_SINGLETAB;Enkel-tab: foto's openen in zelfde tabvenster
 PREFERENCES_SINGLETABVERTAB;Enkel-tab ('filmstrip') modus met verticale tabs
-PREFERENCES_SLIMUI;Slanke interface
 PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Verwerkingsrij klaar
 PREFERENCES_SND_HELP;Typ bestandsnaam (of niets: geen geluid).\nWindows: gebruik 'SystemDefault', 'SystemAsterisk', etc. voor systeemgeluiden.\nLinux: gebruik "complete", "window-attention" etc. voor systeemgeluiden
@@ -1134,7 +1126,6 @@ PREFERENCES_TP_USEICONORTEXT;Gebruik iconen ipv. tekst voor de tabbladen
 PREFERENCES_TP_VSCROLLBAR;Verberg de schuifbalk van het gereedschapspaneel
 PREFERENCES_TUNNELMETADATA;Kopieer Exif/IPTC/XMP-data onveranderd naar uitvoerbestand
 PREFERENCES_USEBUNDLEDPROFILES;Gebruik gebundelde profielen
-PREFERENCES_USESYSTEMTHEME; Gebruik systeemthema
 PREFERENCES_VIEW;Witbalans instelling van het uitvoerapparaat (monitor, TV, projector...)
 PREFERENCES_WAVLEV;Vergroot wavelet ninveau voor kwaliteit 'hoog'
 PREFERENCES_WLONE;Eén niveau
@@ -1583,7 +1574,6 @@ TP_ICM_APPLYLOOKTABLE_TOOLTIP;Gebruik de ingebedde DCP 'look' tabel. De instelli
 TP_ICM_BLENDCMSMATRIX;Meng hoge lichten met matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activeer om uitgebeten hoge lichten te herstellen wanneer op LUT gebaseerde ICC-profielen worden gebruikt.
 TP_ICM_BPC;Zwartpunt Compensatie
-TP_ICM_BPC_TOOLTIP;Pas de Luminositeit aan  op het uitvoer kleurprofiel met een vast Witpunt  
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoleren
 TP_ICM_DCPILLUMINANT_TOOLTIP;Kies welk ingebed DCP illuminant moet worden gebruikt. Standaard is dit "interpoleren". Dit is een mix van de twee gebaseerd op de witbalans. De instelling is alleen actief als een Dual-Illuminant DCP met interpolatie is geselecteerd.
@@ -1725,7 +1715,6 @@ TP_RAW_NONE;Geen (Toont sensor patroon)
 TP_RAW_PIXELSHIFT;Pixel Verschuiven
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptieve detectie
 TP_RAW_PIXELSHIFTBLUR;Vervaag bewegingsmasker
-TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Vervaag bewegingsmasker
 TP_RAW_PIXELSHIFTEPERISO;ISO toepassing
 TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;De standaard waarde (0.0) werkt goed voor normale ISO.\nVergroot de waarde om de bewegingsdetectie te verbeteren voor hogere ISO.\nVergroot in kleine stappen en bekijk het bewegingsmasker tijdens het verhogen.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Balanseer de helderheid van de frames
@@ -1746,7 +1735,6 @@ TP_RAW_PIXELSHIFTMM_CUSTOM;Eigen
 TP_RAW_PIXELSHIFTMM_OFF;Uit
 TP_RAW_PIXELSHIFTMOTION;Beweging detectie niveau (vervallen)
 TP_RAW_PIXELSHIFTMOTIONCORRECTION;Groen bewegingscorrectie grootte
-TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 raster\n5 = 5x5 raster
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Beweging Correctie
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0: geen bewegingsdetectie\n1 - 99: beweging wordt bepaald op basis van deze waarde. Vergroot de waarde om de bewegingsdetectie te verhogen\n100: Amaze demozaïek wordt gebruikt
 TP_RAW_PIXELSHIFTNONGREENAMAZE;Controleer rood/blauw amaze
@@ -1900,7 +1888,6 @@ TP_SHARPENING_RLD_AMOUNT;Hoeveelheid
 TP_SHARPENING_RLD_DAMPING;Demping
 TP_SHARPENING_RLD_ITERATIONS;Herhaling
 TP_SHARPENING_THRESHOLD;Drempel
-TP_SHARPENING_TOOLTIP;Hou rekening met een enigszins ander effect in combinatie met CIECAM02. Aanpassen naar eigen smaak.
 TP_SHARPENING_USM;Onscherpmasker
 TP_SHARPENMICRO_AMOUNT;Hoeveelheid
 TP_SHARPENMICRO_LABEL;Microcontrast (Lab/CIECAM02)

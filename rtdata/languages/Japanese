@@ -139,7 +139,6 @@ FILEBROWSER_DELETEDLGMSG;選択済みのファイル <b>%1</b> を削除して�
 FILEBROWSER_DELETEDLGMSGINCLPROC;バッチ処理に<b>組み込まれている</b>選択済みのファイル <b>%1</b> を削除してもいいですか?
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
 FILEBROWSER_EMPTYTRASHHINT;ゴミ箱のファイルを完全に削除する
-FILEBROWSER_EXEC_CPB;カスタム・プロファイルビルダーを実行
 FILEBROWSER_EXTPROGMENU;..で開く
 FILEBROWSER_FLATFIELD;フラットフィールド
 FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
@@ -258,7 +257,6 @@ HISTOGRAM_TOOLTIP_R;レッド・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_RAW;rawヒストグラム 表示/非表示
 HISTORY_CHANGED;変更されました
 HISTORY_CUSTOMCURVE;カスタムカーブ
-HISTORY_DELSNAPSHOT;削除
 HISTORY_FROMCLIPBOARD;クリップボードから
 HISTORY_LABEL;履歴
 HISTORY_MSG_1;写真を読み込みました
@@ -817,8 +815,6 @@ PARTIALPASTE_PREPROCESS_GREENEQUIL;グリーン 平衡化
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;ホットピクセルフィルターを適用
 PARTIALPASTE_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
 PARTIALPASTE_RAWCACORR_AUTO;自動色収差補正
-PARTIALPASTE_RAWCACORR_CABLUE;色収差 ブルー
-PARTIALPASTE_RAWCACORR_CARED;色収差 レッド
 PARTIALPASTE_RAWEXPOS_BLACK;黒レベル
 PARTIALPASTE_RAWEXPOS_LINEAR;raw ホワイトポイント リニア補正係数
 PARTIALPASTE_RAWEXPOS_PRESER;raw ホワイトポイント ハイライトを保持したまま補正 (EV)
@@ -1012,7 +1008,6 @@ PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SIMPLAUT;ツールのモード
 PREFERENCES_SINGLETAB;シングルタブモードモード
 PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
-PREFERENCES_SLIMUI;スリムインタフェース
 PREFERENCES_SMA;小 (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
 PREFERENCES_SND_HELP;ファイルパスを入力 または空欄(無音).\nWindowsはシステムサウンドの "SystemDefault", "SystemAsterisk"など..\nLinuxはシステムサウンドの "complete", "window-attention"などを使用します
@@ -1033,7 +1028,6 @@ PREFERENCES_TP_LABEL;ツール パネル:
 PREFERENCES_TP_USEICONORTEXT;テキストの代わりにタブアイコンを使用
 PREFERENCES_TP_VSCROLLBAR;ツールパネルの垂直スクロールバーを隠す
 PREFERENCES_USEBUNDLEDPROFILES;付属のプロファイルを使用
-PREFERENCES_USESYSTEMTHEME;システムのテーマを使う
 PREFERENCES_VIEW;出力デバイスのホワイトバランス設定 (モニター, TV, プロジェクター,観視...)
 PREFERENCES_WAVLEV;’高い’質の場合、ウェーブレット変換のレベルを上げる
 PREFERENCES_WLONE;レベル1
@@ -1633,7 +1627,6 @@ TP_SHARPENING_RLD_AMOUNT;適用量
 TP_SHARPENING_RLD_DAMPING;減衰
 TP_SHARPENING_RLD_ITERATIONS;繰返し
 TP_SHARPENING_THRESHOLD;しきい値
-TP_SHARPENING_TOOLTIP;CIECAM02で使用する場合、わずかに異なる結果が予想されます。違いが認められた場合、好みに合わせて調整します
 TP_SHARPENING_USM;アンシャープマスク
 TP_SHARPENMICRO_AMOUNT;適用量
 TP_SHARPENMICRO_LABEL;マイクロコントラスト
@@ -2000,14 +1993,11 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PARTIALPASTE_RETINEX;Retinex
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE;Default color profile
@@ -2043,7 +2033,6 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
 !TP_ICM_BPC;Black Point Compensation
-!TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_NEUTRAL;Reset
@@ -2065,7 +2054,6 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
@@ -2088,7 +2076,6 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 !TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
 !TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 !TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze

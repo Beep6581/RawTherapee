@@ -159,7 +159,6 @@ FILEBROWSER_DELETEDLGMSG;Möchten Sie wirklich %1 Datei(en) unwiderruflich lösc
 FILEBROWSER_DELETEDLGMSGINCLPROC;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen, mit allen aus der Stapelverarbeitung resultierenden zugehörigen Ausgabedateien?
 FILEBROWSER_EMPTYTRASH;Papierkorb leeren
 FILEBROWSER_EMPTYTRASHHINT;Dateien endgültig aus Papierkorb löschen
-FILEBROWSER_EXEC_CPB;Benutzerdef. Bildprofilgenerator ausführen
 FILEBROWSER_EXTPROGMENU;Öffnen mit
 FILEBROWSER_FLATFIELD;Weißbild
 FILEBROWSER_MOVETODARKFDIR;In Dunkelbild-Verzeichnis verschieben
@@ -282,7 +281,6 @@ HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten.
 HISTORY_CHANGED;Geändert
 HISTORY_CUSTOMCURVE;Benutzerdefiniert
-HISTORY_DELSNAPSHOT;Entfernen
 HISTORY_FROMCLIPBOARD;Aus der Zwischenablage
 HISTORY_LABEL;Historie
 HISTORY_MSG_1;(Bild geladen)
@@ -938,9 +936,6 @@ PARTIALPASTE_PREPROCESS_HOTPIXFILT;Vorverarbeitung: Hot-Pixel-Filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Vorverarbeitung: Zeilenrauschfilter
 PARTIALPASTE_PRSHARPENING;Schärfung nach Größenänderung
 PARTIALPASTE_RAWCACORR_AUTO;Chromatische Aberration: Automatische Korrektur
-PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
-PARTIALPASTE_RAWCACORR_CABLUE;Chromatische Aberration: Blau
-PARTIALPASTE_RAWCACORR_CARED;Chromatische Aberration: Rot
 PARTIALPASTE_RAWCACORR_CAREDBLUE;Chromatische Aberration: Rot & Blau
 PARTIALPASTE_RAWEXPOS_BLACK;Weißpunkt: Schwarzpegel
 PARTIALPASTE_RAWEXPOS_LINEAR;Weißpunkt: Korrekturfaktor
@@ -1031,8 +1026,6 @@ PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
 PREFERENCES_EDITORCMDLINE;Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXPAUT;Experte
-PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar\n(Bei geringer Bildschirmauflösung deaktivieren)
@@ -1152,7 +1145,6 @@ PREFERENCES_SHTHRESHOLD;Schatten - Schwelle
 PREFERENCES_SIMPLAUT;Werkzeugmodus
 PREFERENCES_SINGLETAB;Ein-Reitermodus
 PREFERENCES_SINGLETABVERTAB;Ein-Reitermodus (vertikale Reiter)
-PREFERENCES_SLIMUI;Kompakte Oberfläche
 PREFERENCES_SMA;Klein (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_HELP;Geben Sie einen Pfad zu einer Sounddatei oder einen Systemklang ein.\n\nBeispiel Systemklänge:\nWindows: SystemDefault, SystemAsterisk ...\nLinux: complete, window-attention ...\n
@@ -1175,7 +1167,6 @@ PREFERENCES_TP_USEICONORTEXT;Symbole statt Text in Karteireitern
 PREFERENCES_TP_VSCROLLBAR;Keine vertikale Scrollbar
 PREFERENCES_TUNNELMETADATA;Exif/XMP unverändert in die Ausgabedatei übernehmen.
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
-PREFERENCES_USESYSTEMTHEME;Systemoberfläche verwenden
 PREFERENCES_VIEW;Weißabgleich-Einstellung des Ausgabegerätes (Monitor, TV, Projektor, usw.)
 PREFERENCES_WAVLEV;Die Qualität von Waveletebenen erhöhen
 PREFERENCES_WLONE;Eine Ebene
@@ -1621,7 +1612,6 @@ TP_ICM_APPLYLOOKTABLE_TOOLTIP;Die eingebettete DCP-“Look“-Tabelle verwenden.
 TP_ICM_BLENDCMSMATRIX;ICC Lichter mit Matrix überlagern
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Stellt bei Verwendung von LUT-basierten ICC-Profilen die Lichter wieder her.
 TP_ICM_BPC;Schwarzpunkt-Kompensation
-TP_ICM_BPC_TOOLTIP;Wenn eingeschaltet, wird der Helligkeitskanal mit einem festen Weißpunkt an den Farbraum angeglichen.
 TP_ICM_DCPILLUMINANT;Illumination
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoliert
 TP_ICM_DCPILLUMINANT_TOOLTIP;DCP-Illumination auswählen. Vorgabe ist\nInterpoliert. Die Einstellung ist nur verfügbar\nwenn sie vom Eingangsfarbprofil unterstützt\nwird.
@@ -1763,7 +1753,6 @@ TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Adaptive Erkennung
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
-TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Unschärfebewegungsmaske
 TP_RAW_PIXELSHIFTEPERISO;ISO-Anpassung
 TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert (0.0) empfiehlt sich für die Basis-ISO.\nErhöhen Sie den Wert, um die Bewegungserkennung für höhere ISO-Werte zu verbessern.\nErhöhen Sie den Wert nur in kleinen Schritten und achten Sie dabei auf die Bewegungsmaske.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
@@ -1784,7 +1773,6 @@ TP_RAW_PIXELSHIFTMM_CUSTOM;Benutzerdefiniert
 TP_RAW_PIXELSHIFTMM_OFF;Aus
 TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 Pixel\n3 = 3x3 Raster\n5 = 5x5 Raster
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Bewegungskorrektur
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 = Keine Bewegungserkennung\n1 - 99 = Bewegung wird entsprechend dem Wert erkannt.\nHöhere Werte erhöhen die Trefferquote\n100 = Der mit AMaZE interpolierte Frame wird verwendet.
 TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze

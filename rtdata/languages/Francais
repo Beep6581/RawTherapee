@@ -106,7 +106,6 @@ FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers se
 FILEBROWSER_DELETEDLGMSGINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnés, INCLUANT une version déjà traitée?
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
 FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
-FILEBROWSER_EXEC_CPB;Lancer un constructeur de profil personnalisé
 FILEBROWSER_EXTPROGMENU;Ouvrir avec
 FILEBROWSER_FLATFIELD;Champ Uniforme
 FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
@@ -228,7 +227,6 @@ HISTOGRAM_TOOLTIP_R;Montrer/cacher l'histogramme ROUGE
 HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histogramme des données RAW
 HISTORY_CHANGED;Changé
 HISTORY_CUSTOMCURVE;Courbe personnelle
-HISTORY_DELSNAPSHOT;Supprimer
 HISTORY_FROMCLIPBOARD;Du presse-papier
 HISTORY_LABEL;Historique
 HISTORY_MSG_1;Photo chargée
@@ -853,7 +851,6 @@ PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtrage des pixels chauds
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
 PARTIALPASTE_PRSHARPENING;Netteté post-redim.
 PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
-PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;Force aberr. chromatique auto
 PARTIALPASTE_RAWCACORR_CAREDBLUE;Aberr. chromatique rouge et bleu
 PARTIALPASTE_RAWEXPOS_BLACK;Niveaux de noir
 PARTIALPASTE_RAWEXPOS_LINEAR;Correction du point blanc
@@ -1062,7 +1059,6 @@ PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SIMPLAUT;Mode de l'outil
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
-PREFERENCES_SLIMUI;Interface compacte
 PREFERENCES_SMA;Petit (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
 PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
@@ -1084,7 +1080,6 @@ PREFERENCES_TP_USEICONORTEXT;Utiliser des icônes au lieu de textes
 PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
 PREFERENCES_TUNNELMETADATA;Copier les données Exif/IPTC/XMP tel quel dans le fichier de sortie
 PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profils fournis
-PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_VIEW;Point blanc du périphérique sortie (moniteur, TV, projecteur,...)
 PREFERENCES_WAVLEV;Augmenter le nombre de niveau d'ondelette en qualité "haute"
 PREFERENCES_WLONE;Un niveau
@@ -1530,7 +1525,6 @@ TP_ICM_APPLYLOOKTABLE_TOOLTIP;Utilise la table de correspondance (LUT) contenu d
 TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndu profil ICC avec la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
 TP_ICM_BPC;Compensation du  Point Noir
-TP_ICM_BPC_TOOLTIP;Activez ceci pour faire correspondre le canal Luminosité à l'espace couleur de sortie avec un Point Blanc fixe
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolé
 TP_ICM_DCPILLUMINANT_TOOLTIP;Sélectionne quel illuminant DCP inclus utiliser. La valeur par défaut est "Interpolé", qui est un mix entre les 2 profils inclus basé sur la Balance des Blancs choisie. Ce paramètre n'est actif que si un fichier DCP Bi-Illuminant avec support de l'interpolation est choisi.
@@ -1789,7 +1783,6 @@ TP_SHARPENING_RLD_AMOUNT;Quantité
 TP_SHARPENING_RLD_DAMPING;Amortissement
 TP_SHARPENING_RLD_ITERATIONS;Itérations
 TP_SHARPENING_THRESHOLD;Seuil
-TP_SHARPENING_TOOLTIP;Un effet légèrement différent peut être obtenu avec CIECAM02. Si différence observée, ajuster les réglages
 TP_SHARPENING_USM;Masque flou (USM)
 TP_SHARPENMICRO_AMOUNT;Quantité
 TP_SHARPENMICRO_LABEL;Microcontraste
@@ -2088,8 +2081,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_474;PS Equalize
 !HISTORY_MSG_475;PS Equalize channel
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
@@ -2111,7 +2102,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
@@ -2134,7 +2124,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 !TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
 !TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 !TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze

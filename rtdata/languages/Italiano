@@ -104,7 +104,6 @@ FILEBROWSER_DELETEDLGMSG;Vuoi eliminare i <b>%1</b> file selezionati?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Vuoi eliminare i <b>%1</b> file <b>inclusa</b> la versione sviluppata nella coda?
 FILEBROWSER_EMPTYTRASH;Svuota cestino
 FILEBROWSER_EMPTYTRASHHINT;Elimina definitivamente i file dal cestino.
-FILEBROWSER_EXEC_CPB;Generatore profili personalizzati
 FILEBROWSER_EXTPROGMENU;Apri con
 FILEBROWSER_FLATFIELD;Flat Field
 FILEBROWSER_MOVETODARKFDIR;Sposta nella cartella dei Dark Frame
@@ -214,7 +213,6 @@ HISTOGRAM_TOOLTIP_R;Mostra/Nascondi l'istogramma del Rosso.
 HISTOGRAM_TOOLTIP_RAW;Mostra/Nascondi l'istogramma del raw.
 HISTORY_CHANGED;Modificato
 HISTORY_CUSTOMCURVE;Curva personalizzata
-HISTORY_DELSNAPSHOT;Rimuovi
 HISTORY_FROMCLIPBOARD;Dagli appunti
 HISTORY_LABEL;Cronologia
 HISTORY_MSG_1;Foto caricata
@@ -613,8 +611,6 @@ PARTIALPASTE_PERSPECTIVE;Prospettiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Bilanciamento del verde
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 PARTIALPASTE_RAWCACORR_AUTO;Autocorrezione AC
-PARTIALPASTE_RAWCACORR_CABLUE;Correzione AC blu
-PARTIALPASTE_RAWCACORR_CARED;Correzione AC rosso
 PARTIALPASTE_RAWEXPOS_BLACK;Punto del Nero
 PARTIALPASTE_RAWEXPOS_LINEAR;Correzione Punto del Bianco
 PARTIALPASTE_RAWEXPOS_PRESER;Conservazione Alteluci
@@ -758,7 +754,6 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Accoda compensazione dell'esposizione
 PREFERENCES_SHTHRESHOLD;Soglia per le ombre tosate
 PREFERENCES_SINGLETAB;Modalità a Scheda Singola
 PREFERENCES_SINGLETABVERTAB;Modalità a Scheda Singola, schede verticali
-PREFERENCES_SLIMUI;Interfaccia compatta
 PREFERENCES_SND_BATCHQUEUEDONE;Al termine dell'elaborazione della coda
 PREFERENCES_SND_HELP;Inserire un percorso oppure nulla (per non avere suoni).\nSu Windows usa "SystemDefault", "SystemAsterisk" ecc. per i suoni di sistema.\nSu Linux usa "complete", "window-attention" ecc. per i suoni di sistema.
 PREFERENCES_SND_LNGEDITPROCDONE;Al termine delle operazioni di modifica
@@ -774,7 +769,6 @@ PREFERENCES_TP_LABEL;Pannello Strumenti:
 PREFERENCES_TP_USEICONORTEXT;Utilizza le icone delle schede anziché il testo
 PREFERENCES_TP_VSCROLLBAR;Nascondi la barra di scorrimento verticale
 PREFERENCES_USEBUNDLEDPROFILES;Usa profili inclusi
-PREFERENCES_USESYSTEMTHEME;Usa tema di sistema
 PREFERENCES_VIEW;Bilanciamento del bianco del dispositivo di uscita (monitor, TV, proiettore...)
 PREFERENCES_WORKFLOW;Disposizione
 PROFILEPANEL_COPYPPASTE;Parametri da copiare
@@ -1253,7 +1247,6 @@ TP_SHARPENING_RLD_AMOUNT;Quantità
 TP_SHARPENING_RLD_DAMPING;Smorzamento
 TP_SHARPENING_RLD_ITERATIONS;Iterazioni
 TP_SHARPENING_THRESHOLD;Soglia
-TP_SHARPENING_TOOLTIP;Aspettati un risultato leggermente diverso quando usato con CIECAM02. Se noti differenze, regola a tuo piacimento.
 TP_SHARPENING_USM;Maschera di contrasto
 TP_SHARPENMICRO_AMOUNT;Quantità
 TP_SHARPENMICRO_LABEL;Microcontrasto
@@ -1631,7 +1624,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA auto-correction strength
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
@@ -1656,8 +1648,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_EXPAUT;Expert
-!PREFERENCES_EXTENDEDZOOMLEVELS;Use finer-grained zoom levels for "fit to screen" zooming
-!PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;This allows to better fill the editor window when using one of the "fit to screen" zoom modes. However, the preview quality might be slightly degraded, depending on the actual zoom factor computed.
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
@@ -1829,7 +1819,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 !TP_ICM_BPC;Black Point Compensation
-!TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
@@ -1869,7 +1858,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_RAW_PIXELSHIFT;Pixel Shift
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Blur motion mask
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
 !TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
@@ -1892,7 +1880,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_RAW_PIXELSHIFTMM_OFF;Off
 !TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 !TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixels\n3 = 3x3 grid\n5 = 5x5 grid
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
 !TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
 !TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
