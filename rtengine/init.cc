@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "../rtgui/profilestorecombobox.h"
 #include "rtengine.h"
 #include "iccstore.h"
 #include "dcp.h"
@@ -27,7 +28,7 @@
 #include "dfmanager.h"
 #include "ffmanager.h"
 #include "rtthumbnail.h"
-#include "../rtgui/profilestore.h"
+#include "profilestore.h"
 #include "../rtgui/threadutils.h"
 
 namespace rtengine
@@ -40,6 +41,7 @@ MyMutex* lcmsMutex = nullptr;
 int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir, bool loadAll)
 {
     settings = s;
+    ProfileStore::getInstance()->init (loadAll);
     ICCStore::getInstance()->init (s->iccDirectory, Glib::build_filename (baseDir, "iccprofiles"), loadAll);
     DCPStore::getInstance()->init (Glib::build_filename (baseDir, "dcpprofiles"), loadAll);
 

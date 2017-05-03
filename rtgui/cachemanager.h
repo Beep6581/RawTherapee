@@ -62,8 +62,6 @@ public:
     void clearmip () const;
     void clearFromCache (const Glib::ustring& fname, bool purge) const;
 
-    static std::string getMD5 (const Glib::ustring& fname);
-
     Glib::ustring    getCacheFileName (const Glib::ustring& subDir,
                                        const Glib::ustring& fname,
                                        const Glib::ustring& fext,

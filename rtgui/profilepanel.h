@@ -24,9 +24,9 @@
 #include "../rtengine/rtengine.h"
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
-#include "profilestore.h"
 #include "partialpastedlg.h"
 #include "guiutils.h"
+#include "profilestorecombobox.h"
 #include "rtimage.h"
 
 class ProfilePanel : public Gtk::Grid, public PParamsChangeListener, public ProfileStoreListener

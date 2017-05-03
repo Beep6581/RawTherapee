@@ -18,9 +18,9 @@
  */
 #include "profilepanel.h"
 #include "options.h"
-#include "profilestore.h"
 #include "clipboard.h"
 #include "multilangmgr.h"
+#include "profilestorecombobox.h"
 #include "rtimage.h"
 
 using namespace rtengine;
@@ -99,7 +99,7 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), image
     lastsaved = nullptr;
     dontupdate = false;
 
-    profileStore.addListener(this);
+    ProfileStore::getInstance()->addListener(this);
 
     changeconn = profiles->signal_changed().connect( sigc::mem_fun(*this, &ProfilePanel::selection_changed) );
 
@@ -114,7 +114,7 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), image
 ProfilePanel::~ProfilePanel ()
 {
 
-    profileStore.removeListener(this);
+    ProfileStore::getInstance()->removeListener(this);
 
     if (custom)    {
         custom->deleteInstance();
@@ -188,7 +188,7 @@ void ProfilePanel::storeCurrentValue ()
         const ProfileStoreEntry *entry = profiles->getSelectedEntry();
         const PartialProfile *currProfile;
 
-        if (entry && (currProfile = profileStore.getProfile(entry)) != nullptr) {
+        if (entry && (currProfile = ProfileStore::getInstance()->getProfile(entry)) != nullptr) {
             // now storedPProfile has the current entry's values
             storedPProfile = new PartialProfile(currProfile->pparams, currProfile->pedited, true);
         } else {
@@ -318,7 +318,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
                 toSave = lastsaved;
             } else {
                 const ProfileStoreEntry* entry = profiles->getSelectedEntry();
-                toSave = entry ? profileStore.getProfile (profiles->getSelectedEntry()) : nullptr;
+                toSave = entry ? ProfileStore::getInstance()->getProfile (profiles->getSelectedEntry()) : nullptr;
             }
 
             if (toSave) {
@@ -343,7 +343,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
                     } else {
                         done = true;
                         bool ccPrevState = changeconn.block(true);
-                        profileStore.parseProfiles();
+                        ProfileStore::getInstance()->parseProfiles();
                         changeconn.block (ccPrevState);
                     }
                 } else {
@@ -355,7 +355,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
                     } else {
                         done = true;
                         bool ccPrevState = changeconn.block(true);
-                        profileStore.parseProfiles();
+                        ProfileStore::getInstance()->parseProfiles();
                         changeconn.block (ccPrevState);
                     }
                 }
@@ -388,7 +388,7 @@ void ProfilePanel::copy_clicked (GdkEventButton* event)
         toSave = lastsaved;
     } else {
         const ProfileStoreEntry* entry = profiles->getSelectedEntry();
-        toSave = entry ? profileStore.getProfile (entry) : nullptr;
+        toSave = entry ? ProfileStore::getInstance()->getProfile (entry) : nullptr;
     }
 
     // toSave has to be a complete procparams
@@ -559,7 +559,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
             const ProfileStoreEntry* entry = profiles->getSelectedEntry();
 
             if (entry) {
-                const PartialProfile* partProfile = profileStore.getProfile (entry);
+                const PartialProfile* partProfile = ProfileStore::getInstance()->getProfile (entry);
                 *custom->pparams = *partProfile->pparams;
             }
         }
@@ -576,7 +576,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
                 const ProfileStoreEntry* entry = profiles->getSelectedEntry();
 
                 if (entry) {
-                    const PartialProfile* partProfile = profileStore.getProfile (entry);
+                    const PartialProfile* partProfile = ProfileStore::getInstance()->getProfile (entry);
                     *custom->pparams = *partProfile->pparams;
                 }
             }
@@ -660,7 +660,7 @@ void ProfilePanel::selection_changed ()
             currRow = profiles->get_active();
         }
 
-        const PartialProfile* s = profileStore.getProfile (pse);
+        const PartialProfile* s = ProfileStore::getInstance()->getProfile (pse);
 
         if (s) {
             if (fillMode->get_active() && s->pedited) {
@@ -745,12 +745,12 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
         lasSavedEntry = getLastSavedRow();
     }
 
-    if (!(pse = profileStore.findEntryFromFullPath(profileFullPath))) {
+    if (!(pse = ProfileStore::getInstance()->findEntryFromFullPath(profileFullPath))) {
         // entry not found, pse = the Internal ProfileStoreEntry
-        pse = profileStore.getInternalDefaultPSE();
+        pse = ProfileStore::getInstance()->getInternalDefaultPSE();
     }
 
-    defprofile = profileStore.getProfile (pse);
+    defprofile = ProfileStore::getInstance()->getProfile (pse);
 
     // selecting the "Internal" entry
     profiles->setInternalEntry ();

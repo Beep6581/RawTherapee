@@ -50,6 +50,7 @@ set(RTENGINESOURCEFILES
     dfmanager.cc
     diagonalcurves.cc
     dirpyr_equalizer.cc
+    dynamicprofile.cc
     expo_before_b.cc
     fast_demo.cc
     ffmanager.cc
@@ -99,6 +100,7 @@ set(RTENGINESOURCEFILES
     previewimage.cc
     processingjob.cc
     procparams.cc
+    profilestore.cc
     rawimage.cc
     rawimagesource.cc
     refreshmap.cc

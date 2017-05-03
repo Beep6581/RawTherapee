@@ -134,7 +134,7 @@ FileBrowser::FileBrowser ()
     fbih->destroyed = false;
     fbih->pending = 0;
 
-    profileStore.addListener(this);
+    ProfileStore::getInstance()->addListener(this);
 
     int p = 0;
     pmenu = new Gtk::Menu ();
@@ -457,7 +457,7 @@ FileBrowser::~FileBrowser ()
 {
     idle_register.destroy();
 
-    profileStore.removeListener(this);
+    ProfileStore::getInstance()->removeListener(this);
     delete pmenu;
     delete pmenuColorLabels;
     delete[] amiExtProg;
@@ -1346,7 +1346,7 @@ void FileBrowser::applyMenuItemActivated (ProfileStoreLabel *label)
 {
     MYREADERLOCK(l, entryRW);
 
-    const rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (label->entry);
+    const rtengine::procparams::PartialProfile* partProfile = ProfileStore::getInstance()->getProfile (label->entry);
 
     if (partProfile->pparams && !selected.empty()) {
         if (bppcl) {
@@ -1376,7 +1376,7 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
         }
     }
 
-    const rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (label->entry);
+    const rtengine::procparams::PartialProfile* srcProfiles = ProfileStore::getInstance()->getProfile (label->entry);
 
     if (srcProfiles->pparams) {
 
@@ -1982,7 +1982,7 @@ void FileBrowser::updateProfileList ()
     // submenu applmenu
     int p = 0;
 
-    const std::vector<const ProfileStoreEntry*> *profEntries = profileStore.getFileList();  // lock and get a pointer to the profiles' list
+    const std::vector<const ProfileStoreEntry*> *profEntries = ProfileStore::getInstance()->getFileList();  // lock and get a pointer to the profiles' list
 
     std::map<unsigned short /* folderId */, Gtk::Menu*> subMenuList;  // store the Gtk::Menu that Gtk::MenuItem will have to be attached to
 
@@ -2067,7 +2067,7 @@ void FileBrowser::updateProfileList ()
         applypartprof->set_submenu (*(subMenuList.at(0)));
     }
 
-    profileStore.releaseFileList();
+    ProfileStore::getInstance()->releaseFileList();
     subMenuList.clear();
 }
 

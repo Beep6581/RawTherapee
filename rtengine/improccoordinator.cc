@@ -26,8 +26,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "../rtgui/cachemanager.h"
-#include "../rtgui/cacheimagedata.h"
+#include "../rtgui/md5helper.h"
 
 #include "iccstore.h"
 #ifdef _OPENMP
@@ -736,11 +735,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
              */
 
             bool isascii = true;
-            CacheManager*   cachemgr;
-
-            CacheImageData  cfs;
-            cfs.md5 = cachemgr->getMD5 (imgsrc->getFileName());
-            std::string mdfive = cfs.md5;
+            std::string mdfive = getMD5 (imgsrc->getFileName());
 
 
             Glib::ustring datainterm = imgsrc->getFileName() + ".ii";//extansion ii arbitrary to test if mip file is possible

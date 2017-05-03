@@ -26,8 +26,7 @@
 #include <fstream>
 #include <string>
 #include <unistd.h>
-#include "../rtgui/cachemanager.h"
-#include "../rtgui/cacheimagedata.h"
+#include "../rtgui/md5helper.h"
 
 //#include <chrono>
 // "ceil" rounding
@@ -838,11 +837,7 @@ void Crop::update (int todo)
         if (needslocal ) {
             // if (tyty ) {
 
-            CacheManager*   cachemgr;
-
-            CacheImageData  cfs;
-            cfs.md5 = cachemgr->getMD5 (parent->imgsrc->getFileName());
-            std::string mdfive = cfs.md5;
+            std::string mdfive = getMD5 (parent->imgsrc->getFileName());
 
             Glib::ustring pop = options.cacheBaseDir + "/mip/";
 

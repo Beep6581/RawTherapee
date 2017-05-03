@@ -32,8 +32,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "../rtgui/cachemanager.h"
-#include "../rtgui/cacheimagedata.h"
+#include "../rtgui/md5helper.h"
 
 
 #undef THREAD_PRIORITY_NORMAL
@@ -1025,11 +1024,8 @@ private:
         if (params.locallab.enabled) {
             MyTime t1, t2;
             t1.set();
-            CacheManager*   cachemgr;
 
-            CacheImageData  cfs;
-            cfs.md5 = cachemgr->getMD5 (imgsrc->getFileName());
-            std::string mdfive = cfs.md5;
+            std::string mdfive = getMD5 (imgsrc->getFileName());
 
             Glib::ustring pop = options.cacheBaseDir + "/mip/";
 
@@ -2137,11 +2133,12 @@ private:
 
         params.wavelet.strength *= scale_factor;
         params.dirpyrDenoise.luma *= scale_factor;
-        params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
-        //params.dirpyrDenoise.smethod = "shal";
-        for (auto &p : params.dirpyrDenoise.lcurve) {
-            p *= scale_factor;
+        //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
+        auto &lcurve = params.dirpyrDenoise.lcurve;
+        for (size_t i = 2; i < lcurve.size(); i += 4) {
+            lcurve[i] *= min(scale_factor * 2, 1.0);
         }
+        noiseLCurve.Set(lcurve);
         const char *medmethods[] = { "soft", "33", "55soft", "55", "77", "99" };
         if (params.dirpyrDenoise.median) {
             auto &key = params.dirpyrDenoise.methodmed == "RGB" ? params.dirpyrDenoise.rgbmethod : params.dirpyrDenoise.medmethod;

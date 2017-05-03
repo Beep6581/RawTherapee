@@ -46,7 +46,6 @@ set(NONCLISOURCEFILES
     dirpyrdenoise.cc
     dirpyrequalizer.cc
     distortion.cc
-    dynamicprofile.cc
     dynamicprofilepanel.cc
     edit.cc
     editorpanel.cc
@@ -108,7 +107,7 @@ set(NONCLISOURCEFILES
     previewmodepanel.cc
     previewwindow.cc
     profilepanel.cc
-    profilestore.cc
+    profilestorecombobox.cc
     prsharpening.cc
     rawcacorrection.cc
     rawexposure.cc
@@ -220,15 +219,15 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY
 
 # Create new executables targets
 add_executable(rth ${EXTRA_SRC_NONCLI} ${NONCLISOURCEFILES})
-#add_executable(rth-cli ${EXTRA_SRC_CLI} ${CLISOURCEFILES})
+add_executable(rth-cli ${EXTRA_SRC_CLI} ${CLISOURCEFILES})
 
 # Add dependencies to executables targets
 add_dependencies(rth UpdateInfo)
-#add_dependencies(rth-cli UpdateInfo)
+add_dependencies(rth-cli UpdateInfo)
 
 # Set executables targets properties, i.e. output filename and compile flags
 set_target_properties(rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)
-#set_target_properties(rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee-cli)
+set_target_properties(rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee-cli)
 
 # Add linked libraries dependencies to executables targets
 target_link_libraries(rth rtengine
@@ -252,25 +251,25 @@ target_link_libraries(rth rtengine
     ${ZLIB_LIBRARIES}
     )
 
-#target_link_libraries(rth-cli rtengine
-#    ${CAIROMM_LIBRARIES}
-#    ${EXPAT_LIBRARIES}
-#    ${EXTRA_LIB_RTGUI}
-#    ${FFTW3F_LIBRARIES}
-#    ${GIOMM_LIBRARIES}
-#    ${GIO_LIBRARIES}
-#    ${GLIB2_LIBRARIES}
-#    ${GLIBMM_LIBRARIES}
-#    ${GOBJECT_LIBRARIES}
-#    ${GTHREAD_LIBRARIES}
-#    ${IPTCDATA_LIBRARIES}
-#    ${JPEG_LIBRARIES}
-#    ${LCMS_LIBRARIES}
-#    ${PNG_LIBRARIES}
-#    ${TIFF_LIBRARIES}
-#    ${ZLIB_LIBRARIES}
-#    )
+target_link_libraries(rth-cli rtengine
+    ${CAIROMM_LIBRARIES}
+    ${EXPAT_LIBRARIES}
+    ${EXTRA_LIB_RTGUI}
+    ${FFTW3F_LIBRARIES}
+    ${GIOMM_LIBRARIES}
+    ${GIO_LIBRARIES}
+    ${GLIB2_LIBRARIES}
+    ${GLIBMM_LIBRARIES}
+    ${GOBJECT_LIBRARIES}
+    ${GTHREAD_LIBRARIES}
+    ${IPTCDATA_LIBRARIES}
+    ${JPEG_LIBRARIES}
+    ${LCMS_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${TIFF_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    )
 
 # Install executables
 install(TARGETS rth DESTINATION ${BINDIR})
-#install(TARGETS rth-cli DESTINATION ${BINDIR})
+install(TARGETS rth-cli DESTINATION ${BINDIR})
