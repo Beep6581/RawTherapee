@@ -1416,11 +1416,12 @@ private:
         }
         params.wavelet.strength *= scale_factor;
         params.dirpyrDenoise.luma *= scale_factor;
-        params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
-        //params.dirpyrDenoise.smethod = "shal";
-        for (auto &p : params.dirpyrDenoise.lcurve) {
-            p *= scale_factor;
+        //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
+        auto &lcurve = params.dirpyrDenoise.lcurve;
+        for (size_t i = 2; i < lcurve.size(); i += 4) {
+            lcurve[i] *= min(scale_factor * 2, 1.0);
         }
+        noiseLCurve.Set(lcurve);
         const char *medmethods[] = { "soft", "33", "55soft", "55", "77", "99" };
         if (params.dirpyrDenoise.median) {
             auto &key = params.dirpyrDenoise.methodmed == "RGB" ? params.dirpyrDenoise.rgbmethod : params.dirpyrDenoise.medmethod;

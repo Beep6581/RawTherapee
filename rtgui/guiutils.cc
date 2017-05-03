@@ -45,12 +45,6 @@ IdleRegister::~IdleRegister()
 
 void IdleRegister::add(GSourceFunc function, gpointer data, gint priority)
 {
-    struct DataWrapper {
-        IdleRegister* const self;
-        GSourceFunc function;
-        gpointer data;
-    };
-
     const auto dispatch = [](gpointer data) -> gboolean {
         DataWrapper* const data_wrapper = static_cast<DataWrapper*>(data);
 
@@ -80,9 +74,11 @@ void IdleRegister::add(GSourceFunc function, gpointer data, gint priority)
 void IdleRegister::destroy()
 {
     mutex.lock();
-    for (const auto id : ids) {
+    for (const auto& id : ids) {
         g_source_remove(id.second);
+        delete id.first;
     }
+    ids.clear();
     mutex.unlock();
 }
 

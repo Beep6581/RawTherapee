@@ -21,18 +21,18 @@
 
 #include <glibmm.h>
 #include <vector>
-#include "options.h"
+#include "../rtgui/options.h"
 
-
-class DynamicProfileRule {
+class DynamicProfileRule
+{
 public:
     template <class T>
     struct Range {
         T min;
         T max;
-        explicit Range(T l=T(), T u=T()): min(l), max(u) {}
+        explicit Range (T l = T(), T u = T()): min (l), max (u) {}
 
-        bool operator()(T val) const
+        bool operator() (T val) const
         {
             return val >= min && val <= max;
         }
@@ -41,15 +41,15 @@ public:
     struct Optional {
         Glib::ustring value;
         bool enabled;
-        explicit Optional(const Glib::ustring v="", bool e=false):
-            value(v), enabled(e) {}
+        explicit Optional (const Glib::ustring v = "", bool e = false):
+            value (v), enabled (e) {}
 
-        bool operator()(const Glib::ustring &val) const;
+        bool operator() (const Glib::ustring &val) const;
     };
-    
+
     DynamicProfileRule();
-    bool matches(const rtengine::ImageMetaData *im) const;
-    bool operator<(const DynamicProfileRule &other) const;
+    bool matches (const rtengine::ImageMetaData *im) const;
+    bool operator< (const DynamicProfileRule &other) const;
 
     int serial_number;
     Range<int> iso;
@@ -62,13 +62,18 @@ public:
     Glib::ustring profilepath;
 };
 
+class DynamicProfileRules
+{
+protected:
+    /** cache for dynamic profile rules */
+    std::vector<DynamicProfileRule> dynamicRules;
+    bool rulesLoaded;
 
-bool loadDynamicProfileRules(std::vector<DynamicProfileRule> &out);
-bool storeDynamicProfileRules(
-    const std::vector<DynamicProfileRule> &rules);
-
-rtengine::procparams::PartialProfile *loadDynamicProfile(
-    const rtengine::ImageMetaData *im);
-
+public:
+    bool loadRules();
+    bool storeRules();
+    const std::vector<DynamicProfileRule> &getRules();
+    void setRules (const std::vector<DynamicProfileRule> &r);
+};
 
 #endif // _DYNAMICPROFILE_H_

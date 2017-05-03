@@ -333,6 +333,7 @@ public:
         return globalProfilePath;
     }
     Glib::ustring findProfilePath(Glib::ustring &profName);
+    bool        is_parse_extention (Glib::ustring fname);
     bool        has_retained_extention (Glib::ustring fname);
     bool        is_extention_enabled(Glib::ustring ext);
     bool        is_defProfRawMissing()

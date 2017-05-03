@@ -227,7 +227,7 @@ Glib::ustring Options::getPreferredProfilePath()
 /** @brief Get the absolute path of the given filename or the "Neutral" special value
   *
   *@param profName  path + filename of the procparam to look for. A filename without path can be provided for backward compatibility.
-  *                 In this case, this parameter will be update with the new format.
+  *                 In this case, this parameter will be updated with the new format.
   *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementor will have
   *        to test for this particular value. If the absolute path is invalid (e.g. the file doesn't exist), it will return an empty string.
   */
@@ -2363,6 +2363,27 @@ void Options::save ()
     } else {
         options.saveToFile (Glib::build_filename (rtdir, "options"));
     }
+}
+
+/*
+ * return true if ext is a parsed extension (retained or not)
+ */
+bool Options::is_parse_extention (Glib::ustring fname)
+{
+    Glib::ustring ext = getExtension (fname).lowercase();
+
+    if (!ext.empty()) {
+        // there is an extension to the filename
+
+        // look out if it has one of the listed extensions (selected or not)
+        for (unsigned int i = 0; i < parseExtensions.size(); i++) {
+            if (ext == parseExtensions[i]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /*

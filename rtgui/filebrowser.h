@@ -29,7 +29,7 @@
 #include "partialpastedlg.h"
 #include "exportpanel.h"
 #include "extprog.h"
-#include "profilestore.h"
+#include "profilestorecombobox.h"
 
 class ProfileStoreLabel;
 class FileBrowser;

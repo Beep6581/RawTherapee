@@ -54,7 +54,13 @@ public:
     void destroy();
 
 private:
-    std::map<void*, guint> ids;
+    struct DataWrapper {
+        IdleRegister* const self;
+        GSourceFunc function;
+        gpointer data;
+    };
+
+    std::map<const DataWrapper*, guint> ids;
     MyMutex mutex;
 };
 

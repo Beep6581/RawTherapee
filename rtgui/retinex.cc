@@ -8,9 +8,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), false, true), lastmedianmap(false)
+Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL"), false, true), lastmedianmap (false)
 {
-    CurveListener::setMulti(true);
+    CurveListener::setMulti (true);
     std::vector<double> defaultCurve;
     std::vector<GradientMilestone> milestones;
     nextmin = 0.;
@@ -31,78 +31,78 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 
     Gtk::Grid *retinexGrid = Gtk::manage ( new Gtk::Grid());
-    setExpandAlignProperties(retinexGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (retinexGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     dhgrid = Gtk::manage (new Gtk::Grid ());
-    setExpandAlignProperties(dhgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (dhgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    labmdh = Gtk::manage (new Gtk::Label (M("TP_RETINEX_METHOD") + ":"));
-    setExpandAlignProperties(labmdh, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    dhgrid->attach(*labmdh, 0, 0, 1, 1);
+    labmdh = Gtk::manage (new Gtk::Label (M ("TP_RETINEX_METHOD") + ":"));
+    setExpandAlignProperties (labmdh, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    dhgrid->attach (*labmdh, 0, 0, 1, 1);
 
     retinexMethod = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(retinexMethod, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    retinexMethod->append (M("TP_RETINEX_LOW"));
-    retinexMethod->append (M("TP_RETINEX_UNIFORM"));
-    retinexMethod->append (M("TP_RETINEX_HIGH"));
-    retinexMethod->append (M("TP_RETINEX_HIGHLIG"));
+    setExpandAlignProperties (retinexMethod, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    retinexMethod->append (M ("TP_RETINEX_LOW"));
+    retinexMethod->append (M ("TP_RETINEX_UNIFORM"));
+    retinexMethod->append (M ("TP_RETINEX_HIGH"));
+    retinexMethod->append (M ("TP_RETINEX_HIGHLIG"));
 //  retinexMethod->append (M("TP_RETINEX_HIGHLIGPLUS"));
-    retinexMethod->set_active(0);
-    retinexMethodConn = retinexMethod->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexMethodChanged) );
-    retinexMethod->set_tooltip_markup (M("TP_RETINEX_METHOD_TOOLTIP"));
-    dhgrid->attach(*retinexMethod, 1, 0, 1, 1);
+    retinexMethod->set_active (0);
+    retinexMethodConn = retinexMethod->signal_changed().connect ( sigc::mem_fun (*this, &Retinex::retinexMethodChanged) );
+    retinexMethod->set_tooltip_markup (M ("TP_RETINEX_METHOD_TOOLTIP"));
+    dhgrid->attach (*retinexMethod, 1, 0, 1, 1);
 
     retinexcolorspace = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(retinexcolorspace, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    retinexcolorspace->append (M("TP_RETINEX_LABSPACE"));
-    retinexcolorspace->append (M("TP_RETINEX_HSLSPACE_LOG"));
-    retinexcolorspace->append (M("TP_RETINEX_HSLSPACE_LIN"));
-    retinexcolorspace->set_active(0);
-    retinexColorSpaceConn = retinexcolorspace->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::retinexColorSpaceChanged) );
-    dhgrid->attach(*retinexcolorspace, 2, 0, 1, 1);
-    retinexGrid->attach(*dhgrid, 0, 0, 1, 1);
+    setExpandAlignProperties (retinexcolorspace, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    retinexcolorspace->append (M ("TP_RETINEX_LABSPACE"));
+    retinexcolorspace->append (M ("TP_RETINEX_HSLSPACE_LOG"));
+    retinexcolorspace->append (M ("TP_RETINEX_HSLSPACE_LIN"));
+    retinexcolorspace->set_active (0);
+    retinexColorSpaceConn = retinexcolorspace->signal_changed().connect ( sigc::mem_fun (*this, &Retinex::retinexColorSpaceChanged) );
+    dhgrid->attach (*retinexcolorspace, 2, 0, 1, 1);
+    retinexGrid->attach (*dhgrid, 0, 0, 1, 1);
 
-    str = Gtk::manage (new Adjuster (M("TP_RETINEX_STRENGTH"), 0, 100., 1., 20.));
-    setExpandAlignProperties(str, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    retinexGrid->attach(*str, 0, 1, 1, 1);
+    str = Gtk::manage (new Adjuster (M ("TP_RETINEX_STRENGTH"), 0, 100., 1., 20.));
+    setExpandAlignProperties (str, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    retinexGrid->attach (*str, 0, 1, 1, 1);
     str->show ();
 
-    neigh = Gtk::manage (new Adjuster (M("TP_RETINEX_NEIGHBOR"), 6, 100., 1., 80.));
-    setExpandAlignProperties(neigh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    retinexGrid->attach(*neigh, 0, 2, 1, 1);
+    neigh = Gtk::manage (new Adjuster (M ("TP_RETINEX_NEIGHBOR"), 6, 100., 1., 80.));
+    setExpandAlignProperties (neigh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    retinexGrid->attach (*neigh, 0, 2, 1, 1);
     neigh->show ();
 
-    vart   = Gtk::manage (new Adjuster (M("TP_RETINEX_VARIANCE"), 50, 500, 1, 200));
-    setExpandAlignProperties(vart, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    vart->set_tooltip_markup (M("TP_RETINEX_VARIANCE_TOOLTIP"));
-    retinexGrid->attach(*vart, 0, 3, 1, 1);
+    vart   = Gtk::manage (new Adjuster (M ("TP_RETINEX_VARIANCE"), 50, 500, 1, 200));
+    setExpandAlignProperties (vart, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    vart->set_tooltip_markup (M ("TP_RETINEX_VARIANCE_TOOLTIP"));
+    retinexGrid->attach (*vart, 0, 3, 1, 1);
     vart->show ();
 
-    highl   = Gtk::manage (new Adjuster (M("TP_RETINEX_HIGHLIGHT"), 1, 20, 1, 4));
-    setExpandAlignProperties(highl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    highl->set_tooltip_markup (M("TP_RETINEX_HIGHLIGHT_TOOLTIP"));
-    retinexGrid->attach(*highl, 0, 4, 1, 1);
+    highl   = Gtk::manage (new Adjuster (M ("TP_RETINEX_HIGHLIGHT"), 1, 20, 1, 4));
+    setExpandAlignProperties (highl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    highl->set_tooltip_markup (M ("TP_RETINEX_HIGHLIGHT_TOOLTIP"));
+    retinexGrid->attach (*highl, 0, 4, 1, 1);
     highl->show ();
 
     viewgrid = Gtk::manage (new Gtk::Grid ());
-    setExpandAlignProperties(viewgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (viewgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    labview = Gtk::manage (new Gtk::Label (M("TP_RETINEX_VIEW") + ":"));
-    setExpandAlignProperties(labview, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    viewgrid->attach(*labview, 0, 0, 1, 1);
+    labview = Gtk::manage (new Gtk::Label (M ("TP_RETINEX_VIEW") + ":"));
+    setExpandAlignProperties (labview, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    viewgrid->attach (*labview, 0, 0, 1, 1);
 
     viewMethod = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(viewMethod, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    viewMethod->append (M("TP_RETINEX_VIEW_NONE"));
-    viewMethod->append (M("TP_RETINEX_VIEW_UNSHARP"));
-    viewMethod->append (M("TP_RETINEX_VIEW_MASK"));
-    viewMethod->append (M("TP_RETINEX_VIEW_TRAN"));
-    viewMethod->append (M("TP_RETINEX_VIEW_TRAN2"));
-    viewMethod->set_active(0);
-    viewMethodConn = viewMethod->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::viewMethodChanged) );
-    viewMethod->set_tooltip_markup (M("TP_RETINEX_VIEW_METHOD_TOOLTIP"));
-    viewgrid->attach(*viewMethod, 1, 0, 1, 1);
-    retinexGrid->attach(*viewgrid, 0, 5, 1, 1);
+    setExpandAlignProperties (viewMethod, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    viewMethod->append (M ("TP_RETINEX_VIEW_NONE"));
+    viewMethod->append (M ("TP_RETINEX_VIEW_UNSHARP"));
+    viewMethod->append (M ("TP_RETINEX_VIEW_MASK"));
+    viewMethod->append (M ("TP_RETINEX_VIEW_TRAN"));
+    viewMethod->append (M ("TP_RETINEX_VIEW_TRAN2"));
+    viewMethod->set_active (0);
+    viewMethodConn = viewMethod->signal_changed().connect ( sigc::mem_fun (*this, &Retinex::viewMethodChanged) );
+    viewMethod->set_tooltip_markup (M ("TP_RETINEX_VIEW_METHOD_TOOLTIP"));
+    viewgrid->attach (*viewMethod, 1, 0, 1, 1);
+    retinexGrid->attach (*viewgrid, 0, 5, 1, 1);
 
     //-------------
 
@@ -112,78 +112,78 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
     // MAP (MASK) Frame ---------------------------------------------------------------
 
 
-    Gtk::Frame *maskFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_LABEL_MASK")) );
-    setExpandAlignProperties(maskFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    Gtk::Frame *maskFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_LABEL_MASK")) );
+    setExpandAlignProperties (maskFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     Gtk::Grid *maskGrid = Gtk::manage ( new Gtk::Grid());
-    setExpandAlignProperties(maskGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (maskGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     // Map Method
     mapgrid = Gtk::manage (new Gtk::Grid ());
-    setExpandAlignProperties(mapgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (mapgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    labmap = Gtk::manage (new Gtk::Label (M("TP_RETINEX_MAP") + ":"));
-    setExpandAlignProperties(labmap, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    mapgrid->attach(*labmap, 0, 0, 1, 1);
+    labmap = Gtk::manage (new Gtk::Label (M ("TP_RETINEX_MAP") + ":"));
+    setExpandAlignProperties (labmap, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    mapgrid->attach (*labmap, 0, 0, 1, 1);
 
     mapMethod = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(mapMethod, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    mapMethod->append (M("TP_RETINEX_MAP_NONE"));
-    mapMethod->append (M("TP_RETINEX_MAP_GAUS"));
-    mapMethod->append (M("TP_RETINEX_MAP_MAPP"));
-    mapMethod->append (M("TP_RETINEX_MAP_MAPT"));
-    mapMethod->set_active(0);
-    mapMethodConn = mapMethod->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::mapMethodChanged) );
-    mapMethod->set_tooltip_markup (M("TP_RETINEX_MAP_METHOD_TOOLTIP"));
-    mapgrid->attach(*mapMethod, 1, 0, 1, 1);
+    setExpandAlignProperties (mapMethod, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    mapMethod->append (M ("TP_RETINEX_MAP_NONE"));
+    mapMethod->append (M ("TP_RETINEX_MAP_GAUS"));
+    mapMethod->append (M ("TP_RETINEX_MAP_MAPP"));
+    mapMethod->append (M ("TP_RETINEX_MAP_MAPT"));
+    mapMethod->set_active (0);
+    mapMethodConn = mapMethod->signal_changed().connect ( sigc::mem_fun (*this, &Retinex::mapMethodChanged) );
+    mapMethod->set_tooltip_markup (M ("TP_RETINEX_MAP_METHOD_TOOLTIP"));
+    mapgrid->attach (*mapMethod, 1, 0, 1, 1);
 
-    maskGrid->attach(*mapgrid, 0, 0, 1, 1);
+    maskGrid->attach (*mapgrid, 0, 0, 1, 1);
     mapgrid->show();
 
     // Map Equalizer
-    curveEditormap = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_MAP"));
-    setExpandAlignProperties(curveEditormap, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    curveEditormap = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_CONTEDIT_MAP"));
+    setExpandAlignProperties (curveEditormap, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     curveEditormap->setCurveListener (this);
     std::vector<GradientMilestone> milestones222;
-    milestones222.push_back( GradientMilestone(0., 0., 0., 0.) );
-    milestones222.push_back( GradientMilestone(1., 1., 1., 1.) );
-    mapshape = static_cast<DiagonalCurveEditor*>(curveEditormap->addCurve(CT_Diagonal, M("TP_RETINEX_CURVEEDITOR_MAP")));
-    mapshape->setTooltip(M("TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP"));
-    mapshape->setBottomBarBgGradient(milestones222);
-    mapshape->setLeftBarBgGradient(milestones222);
+    milestones222.push_back ( GradientMilestone (0., 0., 0., 0.) );
+    milestones222.push_back ( GradientMilestone (1., 1., 1., 1.) );
+    mapshape = static_cast<DiagonalCurveEditor*> (curveEditormap->addCurve (CT_Diagonal, M ("TP_RETINEX_CURVEEDITOR_MAP")));
+    mapshape->setTooltip (M ("TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP"));
+    mapshape->setBottomBarBgGradient (milestones222);
+    mapshape->setLeftBarBgGradient (milestones222);
     curveEditormap->curveListComplete();
-    maskGrid->attach(*curveEditormap, 0, 1, 1, 1);
+    maskGrid->attach (*curveEditormap, 0, 1, 1, 1);
     curveEditormap->show();
 
     // Adjusters
-    highlights = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
-    setExpandAlignProperties(highlights, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    maskGrid->attach(*highlights, 0, 2, 1, 1);
+    highlights = Gtk::manage (new Adjuster (M ("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
+    setExpandAlignProperties (highlights, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    maskGrid->attach (*highlights, 0, 2, 1, 1);
     highlights->show();
 
-    h_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 80));
-    setExpandAlignProperties(h_tonalwidth, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    maskGrid->attach(*h_tonalwidth, 0, 3, 1, 1);
+    h_tonalwidth = Gtk::manage (new Adjuster (M ("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 80));
+    setExpandAlignProperties (h_tonalwidth, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    maskGrid->attach (*h_tonalwidth, 0, 3, 1, 1);
     h_tonalwidth->show();
 
-    shadows = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
-    setExpandAlignProperties(shadows, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    maskGrid->attach(*shadows, 0, 4, 1, 1);
+    shadows = Gtk::manage (new Adjuster (M ("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
+    setExpandAlignProperties (shadows, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    maskGrid->attach (*shadows, 0, 4, 1, 1);
     shadows->show();
 
-    s_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 80));
-    setExpandAlignProperties(s_tonalwidth, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    maskGrid->attach(*s_tonalwidth, 0, 5, 1, 1);
+    s_tonalwidth = Gtk::manage (new Adjuster (M ("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 80));
+    setExpandAlignProperties (s_tonalwidth, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    maskGrid->attach (*s_tonalwidth, 0, 5, 1, 1);
     s_tonalwidth->show();
 
-    radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 5, 100, 1, 40));
-    setExpandAlignProperties(radius, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    maskGrid->attach(*radius, 0, 6, 1, 1);
+    radius = Gtk::manage (new Adjuster (M ("TP_SHADOWSHLIGHTS_RADIUS"), 5, 100, 1, 40));
+    setExpandAlignProperties (radius, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    maskGrid->attach (*radius, 0, 6, 1, 1);
     radius->show();
 
     //-------------
 
-    maskFrame->add(*maskGrid);
+    maskFrame->add (*maskGrid);
     pack_start (*maskFrame, Gtk::PACK_EXPAND_WIDGET, 4);
 
 
@@ -194,286 +194,288 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
 
 
-    expsettings = new MyExpander (false, M("TP_RETINEX_SETTINGS"));
-    setExpandAlignProperties(expsettings, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    expsettings->signal_button_release_event().connect_notify( sigc::bind( sigc::mem_fun(this, &Retinex::foldAllButMe), expsettings) );
+    expsettings = new MyExpander (false, M ("TP_RETINEX_SETTINGS"));
+    setExpandAlignProperties (expsettings, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expsettings->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Retinex::foldAllButMe), expsettings) );
 
     Gtk::Grid *settingsGrid = Gtk::manage ( new Gtk::Grid());
-    setExpandAlignProperties(settingsGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (settingsGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    mMLabels = Gtk::manage(new Gtk::Label("---"));
-    setExpandAlignProperties(mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    mMLabels->set_tooltip_markup (M("TP_RETINEX_MLABEL_TOOLTIP"));
-    settingsGrid->attach(*mMLabels, 0, 0, 1, 1);
+    mMLabels = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (mMLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    mMLabels->set_tooltip_markup (M ("TP_RETINEX_MLABEL_TOOLTIP"));
+    settingsGrid->attach (*mMLabels, 0, 0, 1, 1);
     mMLabels->show ();
 
-    transLabels = Gtk::manage(new Gtk::Label("---"));
-    setExpandAlignProperties(transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    transLabels->set_tooltip_markup (M("TP_RETINEX_TLABEL_TOOLTIP"));
-    settingsGrid->attach(*transLabels, 0, 1, 1, 1);
+    transLabels = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (transLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    transLabels->set_tooltip_markup (M ("TP_RETINEX_TLABEL_TOOLTIP"));
+    settingsGrid->attach (*transLabels, 0, 1, 1, 1);
     transLabels->show ();
 
-    transLabels2 = Gtk::manage(new Gtk::Label("---"));
-    setExpandAlignProperties(transLabels2, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
-    settingsGrid->attach(*transLabels2, 0, 2, 1, 1);
+    transLabels2 = Gtk::manage (new Gtk::Label ("---"));
+    setExpandAlignProperties (transLabels2, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    settingsGrid->attach (*transLabels2, 0, 2, 1, 1);
     transLabels2->show ();
 
 
     // EQUALIZER Frame ----------------------------------------------------------------
 
 
-    equalFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_EQUAL")));
-    setExpandAlignProperties(equalFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    equalFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_EQUAL")));
+    setExpandAlignProperties (equalFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-    equalFrame->set_border_width(5);
+    equalFrame->set_border_width (5);
 #endif
 //GTK318
 
     Gtk::Grid *equalGrid = Gtk::manage (new Gtk::Grid());
-    setExpandAlignProperties(equalGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (equalGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     // Histogram equalizer Lab curve
-    curveEditorGD = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_LAB"));
-    setExpandAlignProperties(curveEditorGD, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    curveEditorGD = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_CONTEDIT_LAB"));
+    setExpandAlignProperties (curveEditorGD, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     curveEditorGD->setCurveListener (this);
     std::vector<GradientMilestone> milestones22;
-    milestones22.push_back( GradientMilestone(0., 0., 0., 0.) );
-    milestones22.push_back( GradientMilestone(1., 1., 1., 1.) );
-    cdshape = static_cast<DiagonalCurveEditor*>(curveEditorGD->addCurve(CT_Diagonal, M("TP_RETINEX_CURVEEDITOR_CD")));
-    cdshape->setTooltip(M("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
-    cdshape->setBottomBarBgGradient(milestones22);
-    cdshape->setLeftBarBgGradient(milestones22);
+    milestones22.push_back ( GradientMilestone (0., 0., 0., 0.) );
+    milestones22.push_back ( GradientMilestone (1., 1., 1., 1.) );
+    cdshape = static_cast<DiagonalCurveEditor*> (curveEditorGD->addCurve (CT_Diagonal, M ("TP_RETINEX_CURVEEDITOR_CD")));
+    cdshape->setTooltip (M ("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
+    cdshape->setBottomBarBgGradient (milestones22);
+    cdshape->setLeftBarBgGradient (milestones22);
     curveEditorGD->curveListComplete();
-    equalGrid->attach(*curveEditorGD, 0, 0, 1, 1);
+    equalGrid->attach (*curveEditorGD, 0, 0, 1, 1);
     curveEditorGD->show();
 
     // Histogram equalizer HSL curve
-    curveEditorGDH = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_HSL"));
-    setExpandAlignProperties(curveEditorGDH, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    curveEditorGDH = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_CONTEDIT_HSL"));
+    setExpandAlignProperties (curveEditorGDH, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     curveEditorGDH->setCurveListener (this);
     std::vector<GradientMilestone> milestones22H;
-    milestones22H.push_back( GradientMilestone(0., 0., 0., 0.) );
-    milestones22H.push_back( GradientMilestone(1., 1., 1., 1.) );
-    cdshapeH = static_cast<DiagonalCurveEditor*>(curveEditorGDH->addCurve(CT_Diagonal, M("TP_RETINEX_CURVEEDITOR_CD")));
-    cdshapeH->setTooltip(M("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
-    cdshapeH->setBottomBarBgGradient(milestones22H);
-    cdshapeH->setLeftBarBgGradient(milestones22H);
+    milestones22H.push_back ( GradientMilestone (0., 0., 0., 0.) );
+    milestones22H.push_back ( GradientMilestone (1., 1., 1., 1.) );
+    cdshapeH = static_cast<DiagonalCurveEditor*> (curveEditorGDH->addCurve (CT_Diagonal, M ("TP_RETINEX_CURVEEDITOR_CD")));
+    cdshapeH->setTooltip (M ("TP_RETINEX_CURVEEDITOR_CD_TOOLTIP"));
+    cdshapeH->setBottomBarBgGradient (milestones22H);
+    cdshapeH->setLeftBarBgGradient (milestones22H);
     curveEditorGDH->curveListComplete();
-    equalGrid->attach(*curveEditorGDH, 0, 1, 1, 1);
+    equalGrid->attach (*curveEditorGDH, 0, 1, 1, 1);
     curveEditorGDH->show();
 
     // Hue equalizer
-    curveEditorGH = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_CONTEDIT_LH"));
-    setExpandAlignProperties(curveEditorGH, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    curveEditorGH = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_CONTEDIT_LH"));
+    setExpandAlignProperties (curveEditorGH, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     curveEditorGH->setCurveListener (this);
-    lhshape = static_cast<FlatCurveEditor*>(curveEditorGH->addCurve(CT_Flat, M("TP_RETINEX_CURVEEDITOR_LH")));
-    lhshape->setTooltip(M("TP_RETINEX_CURVEEDITOR_LH_TOOLTIP"));
-    lhshape->setCurveColorProvider(this, 4);
+    lhshape = static_cast<FlatCurveEditor*> (curveEditorGH->addCurve (CT_Flat, M ("TP_RETINEX_CURVEEDITOR_LH")));
+    lhshape->setTooltip (M ("TP_RETINEX_CURVEEDITOR_LH_TOOLTIP"));
+    lhshape->setCurveColorProvider (this, 4);
     milestones.clear();
+
     for (int i = 0; i < 7; i++) {
         float R, G, B;
-        float x = float(i) * (1.0f / 6.0);
-        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-        milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+        float x = float (i) * (1.0f / 6.0);
+        Color::hsv2rgb01 (x, 0.5f, 0.5f, R, G, B);
+        milestones.push_back ( GradientMilestone (double (x), double (R), double (G), double (B)) );
     }
-    lhshape->setBottomBarBgGradient(milestones);
+
+    lhshape->setBottomBarBgGradient (milestones);
     curveEditorGH->curveListComplete();
-    equalGrid->attach(*curveEditorGH, 0, 2, 1, 1);
+    equalGrid->attach (*curveEditorGH, 0, 2, 1, 1);
     curveEditorGH->show();
 
     // Gamma settings
     gamgrid = Gtk::manage (new Gtk::Grid ());
-    setExpandAlignProperties(gamgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (gamgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    labgam = Gtk::manage (new Gtk::Label (M("TP_RETINEX_GAMMA") + ":"));
-    setExpandAlignProperties(labgam, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    gamgrid->attach(*labgam, 0, 0, 1, 1);
+    labgam = Gtk::manage (new Gtk::Label (M ("TP_RETINEX_GAMMA") + ":"));
+    setExpandAlignProperties (labgam, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    gamgrid->attach (*labgam, 0, 0, 1, 1);
 
     gammaretinex = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(gammaretinex, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    gammaretinex->append (M("TP_RETINEX_GAMMA_NONE"));
-    gammaretinex->append (M("TP_RETINEX_GAMMA_LOW"));
-    gammaretinex->append (M("TP_RETINEX_GAMMA_MID"));
-    gammaretinex->append (M("TP_RETINEX_GAMMA_HIGH"));
-    gammaretinex->append (M("TP_RETINEX_GAMMA_FREE"));
-    gammaretinex->set_active(0);
-    gammaretinexConn = gammaretinex->signal_changed().connect ( sigc::mem_fun(*this, &Retinex::gammaretinexChanged) );
-    gammaretinex->set_tooltip_markup (M("TP_RETINEX_GAMMA_TOOLTIP"));
-    gamgrid->attach(*gammaretinex, 1, 0, 1, 1);
-    equalGrid->attach(*gamgrid, 0, 3, 1, 1);
+    setExpandAlignProperties (gammaretinex, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    gammaretinex->append (M ("TP_RETINEX_GAMMA_NONE"));
+    gammaretinex->append (M ("TP_RETINEX_GAMMA_LOW"));
+    gammaretinex->append (M ("TP_RETINEX_GAMMA_MID"));
+    gammaretinex->append (M ("TP_RETINEX_GAMMA_HIGH"));
+    gammaretinex->append (M ("TP_RETINEX_GAMMA_FREE"));
+    gammaretinex->set_active (0);
+    gammaretinexConn = gammaretinex->signal_changed().connect ( sigc::mem_fun (*this, &Retinex::gammaretinexChanged) );
+    gammaretinex->set_tooltip_markup (M ("TP_RETINEX_GAMMA_TOOLTIP"));
+    gamgrid->attach (*gammaretinex, 1, 0, 1, 1);
+    equalGrid->attach (*gamgrid, 0, 3, 1, 1);
     gammaretinex->show();
 
-    gam = Gtk::manage (new Adjuster (M("TP_RETINEX_FREEGAMMA"), 0.6, 3.0, 0.01, 1.30));
-    setExpandAlignProperties(gam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    equalGrid->attach(*gam, 0, 4, 1, 1);
+    gam = Gtk::manage (new Adjuster (M ("TP_RETINEX_FREEGAMMA"), 0.6, 3.0, 0.01, 1.30));
+    setExpandAlignProperties (gam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    equalGrid->attach (*gam, 0, 4, 1, 1);
     gam->show ();
 
-    slope = Gtk::manage (new Adjuster (M("TP_RETINEX_SLOPE"), 1., 20., 0.1, 3.));
-    setExpandAlignProperties(slope, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    equalGrid->attach(*slope, 0, 5, 1, 1);
+    slope = Gtk::manage (new Adjuster (M ("TP_RETINEX_SLOPE"), 1., 20., 0.1, 3.));
+    setExpandAlignProperties (slope, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    equalGrid->attach (*slope, 0, 5, 1, 1);
     slope->show ();
 
     //-------------
 
-    equalFrame->add(*equalGrid);
-    settingsGrid->attach(*equalFrame, 0, 3, 1, 1);
+    equalFrame->add (*equalGrid);
+    settingsGrid->attach (*equalFrame, 0, 3, 1, 1);
 
 
     // TONE MAPPING Frame -------------------------------------------------------------
 
 
-    iterFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_ITERF")));
-    setExpandAlignProperties(iterFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    iterFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_ITERF")));
+    setExpandAlignProperties (iterFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-    iterFrame->set_border_width(5);
+    iterFrame->set_border_width (5);
 #endif
 //GTK318
 
     Gtk::Grid *iterGrid = Gtk::manage (new Gtk::Grid());
-    setExpandAlignProperties(iterGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (iterGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    iter   = Gtk::manage (new Adjuster (M("TP_RETINEX_ITER"), 1, 5., 1., 1.));
-    setExpandAlignProperties(iter, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    iter->set_tooltip_markup (M("TP_RETINEX_ITER_TOOLTIP"));
-    iterGrid->attach(*iter, 0, 0, 1, 1);
+    iter   = Gtk::manage (new Adjuster (M ("TP_RETINEX_ITER"), 1, 5., 1., 1.));
+    setExpandAlignProperties (iter, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    iter->set_tooltip_markup (M ("TP_RETINEX_ITER_TOOLTIP"));
+    iterGrid->attach (*iter, 0, 0, 1, 1);
     iter->show ();
 
-    scal   = Gtk::manage (new Adjuster (M("TP_RETINEX_SCALES"), -1, 6., 1., 3.));
-    setExpandAlignProperties(scal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    scal->set_tooltip_markup (M("TP_RETINEX_SCALES_TOOLTIP"));
-    iterGrid->attach(*scal, 0, 1, 1, 1);
+    scal   = Gtk::manage (new Adjuster (M ("TP_RETINEX_SCALES"), -1, 6., 1., 3.));
+    setExpandAlignProperties (scal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    scal->set_tooltip_markup (M ("TP_RETINEX_SCALES_TOOLTIP"));
+    iterGrid->attach (*scal, 0, 1, 1, 1);
     scal->show ();
 
-    grad   = Gtk::manage (new Adjuster (M("TP_RETINEX_GRAD"), -2., 2., 1., 1.));
-    setExpandAlignProperties(grad, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    grad->set_tooltip_markup (M("TP_RETINEX_GRAD_TOOLTIP"));
-    iterGrid->attach(*grad, 0, 2, 1, 1);
+    grad   = Gtk::manage (new Adjuster (M ("TP_RETINEX_GRAD"), -2., 2., 1., 1.));
+    setExpandAlignProperties (grad, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    grad->set_tooltip_markup (M ("TP_RETINEX_GRAD_TOOLTIP"));
+    iterGrid->attach (*grad, 0, 2, 1, 1);
     grad->show ();
 
-    grads   = Gtk::manage (new Adjuster (M("TP_RETINEX_GRADS"), -2., 2., 1., 1.));
-    setExpandAlignProperties(grads, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    grads->set_tooltip_markup (M("TP_RETINEX_GRADS_TOOLTIP"));
-    iterGrid->attach(*grads, 0, 3, 1, 1);
+    grads   = Gtk::manage (new Adjuster (M ("TP_RETINEX_GRADS"), -2., 2., 1., 1.));
+    setExpandAlignProperties (grads, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    grads->set_tooltip_markup (M ("TP_RETINEX_GRADS_TOOLTIP"));
+    iterGrid->attach (*grads, 0, 3, 1, 1);
     grads->show ();
 
     //-------------
 
-    iterFrame->add(*iterGrid);
-    settingsGrid->attach(*iterFrame, 0, 4, 1, 1);
+    iterFrame->add (*iterGrid);
+    settingsGrid->attach (*iterFrame, 0, 4, 1, 1);
 
 
     // TRANSMISSION Frame -------------------------------------------------------------
 
 
-    tranFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_TRANF")));
-    setExpandAlignProperties(tranFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    tranFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_TRANF")));
+    setExpandAlignProperties (tranFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-    tranFrame->set_border_width(5);
+    tranFrame->set_border_width (5);
 #endif
 //GTK318
 
     Gtk::Grid *tranGrid = Gtk::manage (new Gtk::Grid());
-    setExpandAlignProperties(tranGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (tranGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     // Transmission map curve
-    transmissionCurveEditorG = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_TRANSMISSION"));
-    setExpandAlignProperties(transmissionCurveEditorG, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    transmissionCurveEditorG = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_TRANSMISSION"));
+    setExpandAlignProperties (transmissionCurveEditorG, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     transmissionCurveEditorG->setCurveListener (this);
-    rtengine::RetinexParams::getDefaulttransmissionCurve(defaultCurve);
-    transmissionShape = static_cast<FlatCurveEditor*>(transmissionCurveEditorG->addCurve(CT_Flat, "", nullptr, false, false));
-    transmissionShape->setIdentityValue(0.);
-    transmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
-    transmissionShape->setBottomBarBgGradient(milestones);
+    rtengine::RetinexParams::getDefaulttransmissionCurve (defaultCurve);
+    transmissionShape = static_cast<FlatCurveEditor*> (transmissionCurveEditorG->addCurve (CT_Flat, "", nullptr, false, false));
+    transmissionShape->setIdentityValue (0.);
+    transmissionShape->setResetCurve (FlatCurveType (defaultCurve.at (0)), defaultCurve);
+    // transmissionShape->setBottomBarBgGradient(milestones);
     transmissionCurveEditorG->curveListComplete();
-    transmissionCurveEditorG->set_tooltip_markup (M("TP_RETINEX_TRANSMISSION_TOOLTIP"));
-    tranGrid->attach( *transmissionCurveEditorG, 0, 0, 1, 1);
+    transmissionCurveEditorG->set_tooltip_markup (M ("TP_RETINEX_TRANSMISSION_TOOLTIP"));
+    tranGrid->attach ( *transmissionCurveEditorG, 0, 0, 1, 1);
     transmissionCurveEditorG->show();
 
     // Scale
-    skal = Gtk::manage (new Adjuster (M("TP_RETINEX_SKAL"), 1, 8, 1, 3));
-    setExpandAlignProperties(skal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    tranGrid->attach(*skal, 0, 1, 1, 1);
+    skal = Gtk::manage (new Adjuster (M ("TP_RETINEX_SKAL"), 1, 8, 1, 3));
+    setExpandAlignProperties (skal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    tranGrid->attach (*skal, 0, 1, 1, 1);
     skal->show ();
 
     // Threshold
-    limd = Gtk::manage (new Adjuster (M("TP_RETINEX_THRESHOLD"), 2, 100, 1, 8));
-    setExpandAlignProperties(limd, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    limd->set_tooltip_markup (M("TP_RETINEX_THRESHOLD_TOOLTIP"));
-    tranGrid->attach(*limd, 0, 2, 1, 1);
+    limd = Gtk::manage (new Adjuster (M ("TP_RETINEX_THRESHOLD"), 2, 100, 1, 8));
+    setExpandAlignProperties (limd, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    limd->set_tooltip_markup (M ("TP_RETINEX_THRESHOLD_TOOLTIP"));
+    tranGrid->attach (*limd, 0, 2, 1, 1);
     limd->show ();
 
     // Transmission median filter
-    medianmap = Gtk::manage (new Gtk::CheckButton (M("TP_RETINEX_MEDIAN")));
-    setExpandAlignProperties(medianmap, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    medianmap = Gtk::manage (new Gtk::CheckButton (M ("TP_RETINEX_MEDIAN")));
+    setExpandAlignProperties (medianmap, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     medianmap->set_active (true);
-    medianmapConn  = medianmap->signal_toggled().connect( sigc::mem_fun(*this, &Retinex::medianmapChanged) );
-    tranGrid->attach(*medianmap, 0, 3, 1, 1);
+    medianmapConn  = medianmap->signal_toggled().connect ( sigc::mem_fun (*this, &Retinex::medianmapChanged) );
+    tranGrid->attach (*medianmap, 0, 3, 1, 1);
     medianmap->show ();
 
     //-------------
 
-    tranFrame->add(*tranGrid);
-    settingsGrid->attach(*tranFrame, 0, 5, 1, 1);
+    tranFrame->add (*tranGrid);
+    settingsGrid->attach (*tranFrame, 0, 5, 1, 1);
 
 
     // GAIN AND OFFSET Frame ----------------------------------------------------------
 
 
-    gainFrame = Gtk::manage (new Gtk::Frame(M("TP_RETINEX_GAINOFFS")));
-    setExpandAlignProperties(gainFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    gainFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_GAINOFFS")));
+    setExpandAlignProperties (gainFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-    gainFrame->set_border_width(5);
+    gainFrame->set_border_width (5);
 #endif
 //GTK318
 
     Gtk::Grid *gainGrid = Gtk::manage (new Gtk::Grid());
-    setExpandAlignProperties(gainGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties (gainGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     // Gain Transmission map curve
-    gaintransmissionCurve = new CurveEditorGroup (options.lastRetinexDir, M("TP_RETINEX_GAINTRANSMISSION"));
-    setExpandAlignProperties(gaintransmissionCurve, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    gaintransmissionCurve = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_GAINTRANSMISSION"));
+    setExpandAlignProperties (gaintransmissionCurve, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     gaintransmissionCurve->setCurveListener (this);
-    rtengine::RetinexParams::getDefaultgaintransmissionCurve(defaultCurve);
-    gaintransmissionShape = static_cast<FlatCurveEditor*>(gaintransmissionCurve->addCurve(CT_Flat, "", nullptr, false, false));
-    gaintransmissionShape->setIdentityValue(0.);
-    gaintransmissionShape->setResetCurve(FlatCurveType(defaultCurve.at(0)), defaultCurve);
-    gaintransmissionShape->setBottomBarBgGradient(milestones);
-    gaintransmissionCurve->set_tooltip_markup (M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
+    rtengine::RetinexParams::getDefaultgaintransmissionCurve (defaultCurve);
+    gaintransmissionShape = static_cast<FlatCurveEditor*> (gaintransmissionCurve->addCurve (CT_Flat, "", nullptr, false, false));
+    gaintransmissionShape->setIdentityValue (0.);
+    gaintransmissionShape->setResetCurve (FlatCurveType (defaultCurve.at (0)), defaultCurve);
+    //gaintransmissionShape->setBottomBarBgGradient(milestones);
+    gaintransmissionCurve->set_tooltip_markup (M ("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
     gaintransmissionCurve->curveListComplete();
 
-    gainGrid->attach( *gaintransmissionCurve, 0, 0, 1, 1);
+    gainGrid->attach ( *gaintransmissionCurve, 0, 0, 1, 1);
     gaintransmissionCurve->show();
 
-    gain   = Gtk::manage (new Adjuster (M("TP_RETINEX_GAIN"), 20, 200, 1, 50));         // Unused !?
-    setExpandAlignProperties(gain, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    gain->set_tooltip_markup (M("TP_RETINEX_GAIN_TOOLTIP"));
+    gain   = Gtk::manage (new Adjuster (M ("TP_RETINEX_GAIN"), 20, 200, 1, 50));        // Unused !?
+    setExpandAlignProperties (gain, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    gain->set_tooltip_markup (M ("TP_RETINEX_GAIN_TOOLTIP"));
 
-    offs   = Gtk::manage (new Adjuster (M("TP_RETINEX_OFFSET"), -1000, 5000, 1, 0));
-    setExpandAlignProperties(offs, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    gainGrid->attach(*offs, 0, 1, 1, 1);
+    offs   = Gtk::manage (new Adjuster (M ("TP_RETINEX_OFFSET"), -1000, 5000, 1, 0));
+    setExpandAlignProperties (offs, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    gainGrid->attach (*offs, 0, 1, 1, 1);
     offs->show ();
 
     //-------------
 
-    gainFrame->add(*gainGrid);
-    settingsGrid->attach(*gainFrame, 0, 6, 1, 1);
+    gainFrame->add (*gainGrid);
+    settingsGrid->attach (*gainFrame, 0, 6, 1, 1);
 
 
 
-    baselog   = Gtk::manage (new Adjuster (M("TP_RETINEX_BASELOG"), 1., 10., 1., 3.));  // Unused !?
-    setExpandAlignProperties(baselog, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    baselog->set_tooltip_markup (M("TP_RETINEX_BASELOG_TOOLTIP"));
+    baselog   = Gtk::manage (new Adjuster (M ("TP_RETINEX_BASELOG"), 1., 10., 1., 3.)); // Unused !?
+    setExpandAlignProperties (baselog, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    baselog->set_tooltip_markup (M ("TP_RETINEX_BASELOG_TOOLTIP"));
 //  settingsGrid->attach(*baselog, 0, 7, 1, 1);
 //  baselog->show ();
 
     //--------------------------
 
-    expsettings->add(*settingsGrid);
-    expsettings->setLevel(2);
+    expsettings->add (*settingsGrid);
+    expsettings->setLevel (2);
     pack_start (*expsettings);
 
 
@@ -486,13 +488,13 @@ Retinex::Retinex () : FoldableToolPanel(this, "retinex", M("TP_RETINEX_LABEL"), 
 
     // Reset button
 
-    neutral = Gtk::manage (new Gtk::Button (M("TP_RETINEX_NEUTRAL")));
-    setExpandAlignProperties(neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    neutral = Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")));
+    setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
-    setExpandAlignProperties(resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-    neutral->set_image(*resetImg);
-    neutral->set_tooltip_text (M("TP_RETINEX_NEUTRAL_TIP"));
-    neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &Retinex::neutral_pressed) );
+    setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    neutral->set_image (*resetImg);
+    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TIP"));
+    neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &Retinex::neutral_pressed) );
     neutral->show();
 
     //-------------
@@ -646,30 +648,30 @@ Retinex::~Retinex()
 }
 void Retinex::neutral_pressed ()
 {
-    neigh->resetValue(false);
-    gain->resetValue(false);
-    offs->resetValue(false);
-    str->resetValue(false);
-    scal->resetValue(false);
-    iter->resetValue(false);
-    grad->resetValue(false);
-    grads->resetValue(false);
-    vart->resetValue(false);
-    limd->resetValue(false);
-    highl->resetValue(false);
-    baselog->resetValue(false);
-    gam->resetValue(false);
-    slope->resetValue(false);
-    highlights->resetValue(false);
-    h_tonalwidth->resetValue(false);
-    shadows->resetValue(false);
-    s_tonalwidth->resetValue(false);
-    radius->resetValue(false);
-    mapMethod->set_active(0);
-    viewMethod->set_active(0);
-    retinexMethod->set_active(2);
-    retinexcolorspace->set_active(0);
-    gammaretinex->set_active(0);
+    neigh->resetValue (false);
+    gain->resetValue (false);
+    offs->resetValue (false);
+    str->resetValue (false);
+    scal->resetValue (false);
+    iter->resetValue (false);
+    grad->resetValue (false);
+    grads->resetValue (false);
+    vart->resetValue (false);
+    limd->resetValue (false);
+    highl->resetValue (false);
+    baselog->resetValue (false);
+    gam->resetValue (false);
+    slope->resetValue (false);
+    highlights->resetValue (false);
+    h_tonalwidth->resetValue (false);
+    shadows->resetValue (false);
+    s_tonalwidth->resetValue (false);
+    radius->resetValue (false);
+    mapMethod->set_active (0);
+    viewMethod->set_active (0);
+    retinexMethod->set_active (2);
+    retinexcolorspace->set_active (0);
+    gammaretinex->set_active (0);
     transmissionShape->reset();
     gaintransmissionShape->reset();
     cdshape->reset();
@@ -681,19 +683,19 @@ void Retinex::neutral_pressed ()
 void Retinex::foldAllButMe (GdkEventButton* event, MyExpander *expander)
 {
     if (event->button == 3) {
-        expsettings->set_expanded(expsettings == expander);
+        expsettings->set_expanded (expsettings == expander);
     }
 }
 
-void Retinex::writeOptions(std::vector<int> &tpOpen)
+void Retinex::writeOptions (std::vector<int> &tpOpen)
 {
     tpOpen.push_back (expsettings->get_expanded ());
 }
 
-void Retinex::updateToolState(std::vector<int> &tpOpen)
+void Retinex::updateToolState (std::vector<int> &tpOpen)
 {
-    if(tpOpen.size() == 10) {
-        expsettings->set_expanded(tpOpen.at(9));
+    if (tpOpen.size() == 10) {
+        expsettings->set_expanded (tpOpen.at (9));
     }
 }
 
@@ -708,14 +710,14 @@ void Retinex::minmaxChanged (double cdma, double cdmin, double mini, double maxi
     nextminT = Tmin;
     nextmaxT = Tmax;
 
-    const auto func = [](gpointer data) -> gboolean {
+    const auto func = [] (gpointer data) -> gboolean {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-        static_cast<Retinex*>(data)->minmaxComputed_();
+        static_cast<Retinex*> (data)->minmaxComputed_();
 
         return FALSE;
     };
 
-    idle_register.add(func, this);
+    idle_register.add (func, this);
 }
 
 bool Retinex::minmaxComputed_ ()
@@ -735,10 +737,10 @@ void Retinex::updateLabel ()
         nX = nextmin;
         nY = nextmax;
         {
-            mMLabels->set_text(
-                Glib::ustring::compose(M("TP_RETINEX_MLABEL"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), nX),
-                                       Glib::ustring::format(std::fixed, std::setprecision(0), nY))
+            mMLabels->set_text (
+                Glib::ustring::compose (M ("TP_RETINEX_MLABEL"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (0), nX),
+                                        Glib::ustring::format (std::fixed, std::setprecision (0), nY))
             );
         }
     }
@@ -755,17 +757,17 @@ void Retinex::updateTrans ()
         nB = nextmaxT;
         nS = nextsigma;
         {
-            transLabels->set_text(
-                Glib::ustring::compose(M("TP_RETINEX_TLABEL"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(1), nm),
-                                       Glib::ustring::format(std::fixed, std::setprecision(1), nM),
-                                       Glib::ustring::format(std::fixed, std::setprecision(1), nZ),
-                                       Glib::ustring::format(std::fixed, std::setprecision(1), nS))
+            transLabels->set_text (
+                Glib::ustring::compose (M ("TP_RETINEX_TLABEL"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), nm),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), nM),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), nZ),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), nS))
             );
-            transLabels2->set_text(
-                Glib::ustring::compose(M("TP_RETINEX_TLABEL2"),
-                                       Glib::ustring::format(std::fixed, std::setprecision(1), nA),
-                                       Glib::ustring::format(std::fixed, std::setprecision(1), nB))
+            transLabels2->set_text (
+                Glib::ustring::compose (M ("TP_RETINEX_TLABEL2"),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), nA),
+                                        Glib::ustring::format (std::fixed, std::setprecision (1), nB))
             );
 
 
@@ -778,11 +780,11 @@ void Retinex::updateTrans ()
 void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener ();
-    retinexMethodConn.block(true);
-    retinexColorSpaceConn.block(true);
-    gammaretinexConn.block(true);
-    mapMethodConn.block(true);
-    viewMethodConn.block(true);
+    retinexMethodConn.block (true);
+    retinexColorSpaceConn.block (true);
+    gammaretinexConn.block (true);
+    mapMethodConn.block (true);
+    viewMethodConn.block (true);
 
 
     if (pedited) {
@@ -810,23 +812,23 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 
         if (!pedited->retinex.retinexMethod) {
-            retinexMethod->set_active_text(M("GENERAL_UNCHANGED"));
+            retinexMethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->retinex.mapMethod) {
-            mapMethod->set_active_text(M("GENERAL_UNCHANGED"));
+            mapMethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->retinex.viewMethod) {
-            viewMethod->set_active_text(M("GENERAL_UNCHANGED"));
+            viewMethod->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->retinex.retinexcolorspace) {
-            retinexcolorspace->set_active_text(M("GENERAL_UNCHANGED"));
+            retinexcolorspace->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->retinex.gammaretinex) {
-            gammaretinex->set_active_text(M("GENERAL_UNCHANGED"));
+            gammaretinex->set_active_text (M ("GENERAL_UNCHANGED"));
         }
 
         cdshape->setUnChanged  (!pedited->retinex.cdcurve);
@@ -862,14 +864,14 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     skal->setValue  (pp->retinex.skal);
 
     if (!batchMode) {
-        if(pp->retinex.iter == 1)   {
-            grad->set_sensitive(false);
-            scal->set_sensitive(false);
-            grads->set_sensitive(false);
+        if (pp->retinex.iter == 1)   {
+            grad->set_sensitive (false);
+            scal->set_sensitive (false);
+            grads->set_sensitive (false);
         } else {
-            grad->set_sensitive(true);
-            scal->set_sensitive(true);
-            grads->set_sensitive(true);
+            grad->set_sensitive (true);
+            scal->set_sensitive (true);
+            grads->set_sensitive (true);
         }
     }
 
@@ -941,20 +943,20 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     mapMethodChanged ();
     viewMethodChanged ();
 
-    medianmapConn.block(true);
+    medianmapConn.block (true);
     medianmapChanged ();
-    medianmapConn.block(false);
+    medianmapConn.block (false);
 
     cdshape->setCurve  (pp->retinex.cdcurve);
     cdshapeH->setCurve  (pp->retinex.cdHcurve);
     lhshape->setCurve  (pp->retinex.lhcurve);
     mapshape->setCurve  (pp->retinex.mapcurve);
 
-    retinexMethodConn.block(false);
-    retinexColorSpaceConn.block(false);
-    gammaretinexConn.block(false);
-    mapMethodConn.block(false);
-    viewMethodConn.block(false);
+    retinexMethodConn.block (false);
+    retinexColorSpaceConn.block (false);
+    gammaretinexConn.block (false);
+    mapMethodConn.block (false);
+    viewMethodConn.block (false);
     transmissionShape->setCurve (pp->retinex.transmissionCurve);
     gaintransmissionShape->setCurve (pp->retinex.gaintransmissionCurve);
 
@@ -998,11 +1000,11 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     pp->retinex.stonalwidth   = (int)s_tonalwidth->getValue ();
 
     if (pedited) {
-        pedited->retinex.retinexMethod    = retinexMethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->retinex.retinexcolorspace    = retinexcolorspace->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->retinex.gammaretinex    = gammaretinex->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->retinex.mapMethod    = mapMethod->get_active_text() != M("GENERAL_UNCHANGED");
-        pedited->retinex.viewMethod    = viewMethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->retinex.retinexMethod    = retinexMethod->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->retinex.retinexcolorspace    = retinexcolorspace->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->retinex.gammaretinex    = gammaretinex->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->retinex.mapMethod    = mapMethod->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->retinex.viewMethod    = viewMethod->get_active_text() != M ("GENERAL_UNCHANGED");
 
         //%%%%%%%%%%%%%%%%%%%%%%
         pedited->retinex.str   = str->getEditedState ();
@@ -1099,7 +1101,7 @@ void Retinex::retinexMethodChanged()
 {
 
     if (!batchMode) {
-        if(retinexMethod->get_active_row_number() == 3) {
+        if (retinexMethod->get_active_row_number() == 3) {
             highl->show();
         } else {
             highl->hide();
@@ -1117,14 +1119,14 @@ void Retinex::mapMethodChanged()
 {
 
     if (!batchMode) {
-        if(mapMethod->get_active_row_number() == 1  /*|| mapMethod->get_active_row_number() == 2*/) {
+        if (mapMethod->get_active_row_number() == 1  /*|| mapMethod->get_active_row_number() == 2*/) {
             curveEditormap->show();
             highlights->show();
             h_tonalwidth->show();
             shadows->show();
             s_tonalwidth->show();
             radius->show();
-        } else if(mapMethod->get_active_row_number() == 2  || mapMethod->get_active_row_number() == 3) {
+        } else if (mapMethod->get_active_row_number() == 2  || mapMethod->get_active_row_number() == 3) {
             curveEditormap->show();
             highlights->show();
             h_tonalwidth->show();
@@ -1149,7 +1151,7 @@ void Retinex::mapMethodChanged()
 void Retinex::viewMethodChanged()
 {
     if (!batchMode) {
-        if(viewMethod->get_active_row_number() == 1 || viewMethod->get_active_row_number() == 2) {
+        if (viewMethod->get_active_row_number() == 1 || viewMethod->get_active_row_number() == 2) {
             //vart->hide();
             gain->hide();
             offs->hide();
@@ -1166,7 +1168,7 @@ void Retinex::viewMethodChanged()
             */
 
             curveEditorGH->hide();
-        } else if(viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
+        } else if (viewMethod->get_active_row_number() == 3 || viewMethod->get_active_row_number() == 4) {
             gain->hide();
             offs->hide();
             transmissionCurveEditorG->show();
@@ -1205,15 +1207,15 @@ void Retinex::ColorSpaceUpdateUI ()
     if (!batchMode) {
         curveEditorGH->show();
 
-        if(retinexcolorspace->get_active_row_number() == 0) {
+        if (retinexcolorspace->get_active_row_number() == 0) {
             curveEditorGD->show();
             curveEditorGDH->hide();
             baselog->show();
-        } else if(retinexcolorspace->get_active_row_number() == 1) {
+        } else if (retinexcolorspace->get_active_row_number() == 1) {
             curveEditorGD->hide();
             curveEditorGDH->show();
             baselog->show();
-        } else if(retinexcolorspace->get_active_row_number() == 2) {
+        } else if (retinexcolorspace->get_active_row_number() == 2) {
             curveEditorGD->hide();
             curveEditorGDH->show();
             baselog->hide();
@@ -1234,10 +1236,10 @@ void Retinex::retinexColorSpaceChanged()
 void Retinex::gammaretinexChanged()
 {
     if (!batchMode) {
-        if(gammaretinex->get_active_row_number() == 4) {
+        if (gammaretinex->get_active_row_number() == 4) {
             gam->show();
             slope->show();
-        } else /*if(gammaretinex->get_active_row_number() != 4)*/ {
+        } else { /*if(gammaretinex->get_active_row_number() != 4)*/
             gam->hide();
             slope->hide();
         }
@@ -1268,11 +1270,11 @@ void Retinex::medianmapChanged ()
     if (listener) {
         if (medianmap->get_active()) {
             if (getEnabled()) {
-                listener->panelChanged (EvRetinexmedianmap, M("GENERAL_ENABLED"));
+                listener->panelChanged (EvRetinexmedianmap, M ("GENERAL_ENABLED"));
             }
         } else {
             if (getEnabled()) {
-                listener->panelChanged (EvRetinexmedianmap, M("GENERAL_DISABLED"));
+                listener->panelChanged (EvRetinexmedianmap, M ("GENERAL_DISABLED"));
             }
         }
 
@@ -1356,29 +1358,29 @@ void Retinex::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 
 void Retinex::setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, bool gainAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd)
 {
-    str->setAddMode(strAdd);
-    neigh->setAddMode(neighAdd);
-    limd->setAddMode(limdAdd);
-    gain->setAddMode(gainAdd);
-    offs->setAddMode(offsAdd);
-    vart->setAddMode(vartAdd);
-    gam->setAddMode(gamAdd);
-    slope->setAddMode(slopeAdd);
+    str->setAddMode (strAdd);
+    neigh->setAddMode (neighAdd);
+    limd->setAddMode (limdAdd);
+    gain->setAddMode (gainAdd);
+    offs->setAddMode (offsAdd);
+    vart->setAddMode (vartAdd);
+    gam->setAddMode (gamAdd);
+    slope->setAddMode (slopeAdd);
 }
 
 
 void Retinex::adjusterChanged (Adjuster* a, double newval)
 {
 
-    if (a==iter && !batchMode) {
-        if(iter->getIntValue() > 1) {
-            scal->set_sensitive(true);
-            grad->set_sensitive(true);
-            grads->set_sensitive(true);
+    if (a == iter && !batchMode) {
+        if (iter->getIntValue() > 1) {
+            scal->set_sensitive (true);
+            grad->set_sensitive (true);
+            grads->set_sensitive (true);
         } else {
-            scal->set_sensitive(false);
-            grad->set_sensitive(false);
-            grads->set_sensitive(false);
+            scal->set_sensitive (false);
+            grad->set_sensitive (false);
+            grads->set_sensitive (false);
         }
     }
 
@@ -1450,17 +1452,17 @@ void Retinex::curveChanged (CurveEditor* ce)
 {
     if (listener && getEnabled()) {
         if (ce == cdshape) {
-            listener->panelChanged (EvLCDCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvLCDCurve, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == cdshapeH) {
-            listener->panelChanged (EvLCDHCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvLCDHCurve, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == transmissionShape) {
-            listener->panelChanged (EvRetinextransmission, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvRetinextransmission, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == gaintransmissionShape) {
-            listener->panelChanged (EvRetinexgaintransmission, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvRetinexgaintransmission, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == lhshape) {
-            listener->panelChanged (EvRetinexlhcurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvRetinexlhcurve, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == mapshape) {
-            listener->panelChanged (EvRetinexmapcurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvRetinexmapcurve, M ("HISTORY_CUSTOMCURVE"));
         }
     }
 }
@@ -1470,11 +1472,11 @@ void Retinex::enabledChanged ()
 
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvRetinexEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged (EvRetinexEnabled, M ("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvRetinexEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged (EvRetinexEnabled, M ("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvRetinexEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged (EvRetinexEnabled, M ("GENERAL_DISABLED"));
         }
     }
 }
@@ -1482,22 +1484,22 @@ void Retinex::enabledChanged ()
 
 void Retinex::trimValues (rtengine::procparams::ProcParams* pp)
 {
-    str->trimValue(pp->retinex.str);
-    scal->trimValue(pp->retinex.scal);
-    iter->trimValue(pp->retinex.iter);
-    grad->trimValue(pp->retinex.grad);
-    grads->trimValue(pp->retinex.grads);
-    neigh->trimValue(pp->retinex.neigh);
-    gain->trimValue(pp->retinex.gain);
-    offs->trimValue(pp->retinex.offs);
-    vart->trimValue(pp->retinex.vart);
-    limd->trimValue(pp->retinex.limd);
-    highl->trimValue(pp->retinex.highl);
-    baselog->trimValue(pp->retinex.baselog);
-    gam->trimValue(pp->retinex.gam);
-    slope->trimValue(pp->retinex.slope);
-    highlights->trimValue(pp->retinex.highlights);
-    shadows->trimValue(pp->retinex.shadows);
+    str->trimValue (pp->retinex.str);
+    scal->trimValue (pp->retinex.scal);
+    iter->trimValue (pp->retinex.iter);
+    grad->trimValue (pp->retinex.grad);
+    grads->trimValue (pp->retinex.grads);
+    neigh->trimValue (pp->retinex.neigh);
+    gain->trimValue (pp->retinex.gain);
+    offs->trimValue (pp->retinex.offs);
+    vart->trimValue (pp->retinex.vart);
+    limd->trimValue (pp->retinex.limd);
+    highl->trimValue (pp->retinex.highl);
+    baselog->trimValue (pp->retinex.baselog);
+    gam->trimValue (pp->retinex.gam);
+    slope->trimValue (pp->retinex.slope);
+    highlights->trimValue (pp->retinex.highlights);
+    shadows->trimValue (pp->retinex.shadows);
 
 
 }
@@ -1519,24 +1521,24 @@ void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemTyp
 
     if (callerId == 1) {         // ch - main curve
 
-        Color::hsv2rgb01(float(valX), float(valY), 0.5f, R, G, B);
+        Color::hsv2rgb01 (float (valX), float (valY), 0.5f, R, G, B);
     } else if (callerId == 2) {  // cc - bottom bar
 
-        float value = (1.f - 0.7f) * float(valX) + 0.7f;
+        float value = (1.f - 0.7f) * float (valX) + 0.7f;
         // whole hue range
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-        Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+        Color::hsv2rgb01 (float (valY), float (valX), value, R, G, B);
     } else if (callerId == 3) {  // lc - bottom bar
 
-        float value = (1.f - 0.7f) * float(valX) + 0.7f;
+        float value = (1.f - 0.7f) * float (valX) + 0.7f;
 
         // whole hue range
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-        Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+        Color::hsv2rgb01 (float (valY), float (valX), value, R, G, B);
     } else if (callerId == 4) {  // LH - bottom bar
-        Color::hsv2rgb01(float(valX), 0.5f, float(valY), R, G, B);
+        Color::hsv2rgb01 (float (valX), 0.5f, float (valY), R, G, B);
     } else if (callerId == 5) {  // HH - bottom bar
-        float h = float((valY - 0.5) * 0.3 + valX);
+        float h = float ((valY - 0.5) * 0.3 + valX);
 
         if (h > 1.0f) {
             h -= 1.0f;
@@ -1544,12 +1546,12 @@ void Retinex::colorForValue (double valX, double valY, enum ColorCaller::ElemTyp
             h += 1.0f;
         }
 
-        Color::hsv2rgb01(h, 0.5f, 0.5f, R, G, B);
+        Color::hsv2rgb01 (h, 0.5f, 0.5f, R, G, B);
     }
 
-    caller->ccRed = double(R);
-    caller->ccGreen = double(G);
-    caller->ccBlue = double(B);
+    caller->ccRed = double (R);
+    caller->ccGreen = double (G);
+    caller->ccBlue = double (B);
 }
 
 

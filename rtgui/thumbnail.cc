@@ -26,11 +26,12 @@
 #include <glibmm.h>
 #include "../rtengine/imagedata.h"
 #include <glib/gstdio.h>
+
+#include "../rtengine/dynamicprofile.h"
 #include "guiutils.h"
-#include "profilestore.h"
 #include "batchqueue.h"
 #include "extprog.h"
-#include "dynamicprofile.h"
+#include "profilestorecombobox.h"
 
 using namespace rtengine::procparams;
 
@@ -177,7 +178,7 @@ const ProcParams& Thumbnail::getProcParamsU ()
     if (pparamsValid) {
         return pparams;
     } else {
-        pparams = *(profileStore.getDefaultProcParams (getType() == FT_Raw));
+        pparams = *(ProfileStore::getInstance()->getDefaultProcParams (getType() == FT_Raw));
 
         if (pparams.wb.method == "Camera") {
             double ct;
@@ -231,7 +232,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         } else {
             imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
         }
-        PartialProfile *pp = loadDynamicProfile(imageMetaData);
+        PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
         int err = pp->pparams->save(outFName);
         pp->deleteInstance();
         delete pp;
@@ -239,7 +240,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             loadProcParams();
         }
     } else if (create && defProf != DEFPROFILE_DYNAMIC) {
-        const PartialProfile *p = profileStore.getProfile(defProf);
+        const PartialProfile *p = ProfileStore::getInstance()->getProfile(defProf);
         if (p && !p->pparams->save(outFName)) {
             loadProcParams();
         }
@@ -315,7 +316,7 @@ void Thumbnail::loadProcParams ()
 
     pparamsValid = false;
     pparams.setDefaults();
-    const PartialProfile *defaultPP = profileStore.getDefaultPartialProfile(getType() == FT_Raw);
+    const PartialProfile *defaultPP = ProfileStore::getInstance()->getDefaultPartialProfile(getType() == FT_Raw);
     defaultPP->applyTo(&pparams);
 
     if (options.paramsLoadLocation == PLL_Input) {
