@@ -1745,7 +1745,6 @@ TP_RAW_HD_TOOLTIP;Nižší hodnoty učiní detekci vypálených/mrtvých bodů a
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Dílčí snímek
-TP_RAW_IMAGENUM_TOOLTIP;Některé Raw soubory mohou obsahovat několik dílčích snímků (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Tímto tlačítkem vyberete konkrétní dílčí snímek.
 TP_RAW_LABEL;Demozajkování
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;Kroky rozšíření LMMSE
@@ -2181,3 +2180,8 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.

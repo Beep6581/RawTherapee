@@ -1705,7 +1705,6 @@ TP_RAW_HD_TOOLTIP;Lagere waarden maken Hete/Dode pixel detectie agressiever, maa
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Sub-afbeelding
-TP_RAW_IMAGENUM_TOOLTIP;Somige raw bestanden hebben verschillende ingebedde sub-afbeeldingen (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Gebruik deze knop om de sub-afbeelding te selecteren.
 TP_RAW_LABEL;Demozaïekproces
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE Verbetering Stappen
@@ -2162,6 +2161,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_475;PS Equalize channel
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
