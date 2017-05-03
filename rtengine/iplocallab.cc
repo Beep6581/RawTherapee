@@ -4559,6 +4559,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         bufgb->L[ir][jr] = 0.f;
                         bufgb->a[ir][jr] = 0.f;
                         bufgb->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
                     }
 
                 int begy = lp.yc - lp.lyT;
@@ -4567,16 +4568,13 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                 int xEn = lp.xc + lp.lx;
 
 #ifdef _OPENMP
-                #pragma omp parallel for //schedule(dynamic,16)
+                #pragma omp parallel for schedule(dynamic,16)
 #endif
 
                 for (int y = 0; y < transformed->H ; y++) //{
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
-                        //  int begx = int (lp.xc - lp.lxL);
-                        //  int begy = int (lp.yc - lp.lyT);
-                        //      if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
@@ -4611,23 +4609,19 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             int begx = lp.xc - lp.lxL;
             int yEn = lp.yc + lp.ly;
             int xEn = lp.xc + lp.lx;
-//here with the new optimized code, sometimes it crash...with the old no...why ??
+
 #ifdef _OPENMP
-            #pragma omp parallel for //schedule(dynamic,16)
+            #pragma omp parallel for schedule(dynamic,16)
 #endif
 
             for (int y = 0; y < transformed->H ; y++) //{
                 for (int x = 0; x < transformed->W; x++) {
                     int lox = cx + x;
                     int loy = cy + y;
-                    int begx = int (lp.xc - lp.lxL);
-                    int begy = int (lp.yc - lp.lyT);
 
-                    //  if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                    if (lox >= (lp.xc - lp.lxL) && lox < (lp.xc + lp.lx) && loy >= (lp.yc - lp.lyT) && loy < (lp.yc + lp.ly)) {
+                    if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                        float rL;
-                        rL = CLIPRET ((tmp1->L[loy - begy][lox - begx] - original->L[y][x]) / 400.f);
+                        float rL = CLIPRET ((tmp1->L[loy - begy][lox - begx] - original->L[y][x]) / 400.f);
                         /*
                                                 if (rL > maxc) {
                                                     maxc = rL;
