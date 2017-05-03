@@ -2180,9 +2180,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_475;PS Equalize channel
+!HISTORY_MSG_475;PS - Equalize channel
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.

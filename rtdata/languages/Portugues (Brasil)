@@ -859,7 +859,7 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_357;W - Denoise - Link with ES
 !HISTORY_MSG_358;W - Gamut - CH
 !HISTORY_MSG_359;Hot/Dead - Threshold
-!HISTORY_MSG_360;TM Gamma
+!HISTORY_MSG_360;TM - Gamma
 !HISTORY_MSG_361;W - Final - Chroma balance
 !HISTORY_MSG_362;W - Residual - Compression method
 !HISTORY_MSG_363;W - Residual - Compression strength
@@ -911,12 +911,12 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_409;Retinex - Contrast
 !HISTORY_MSG_410;Retinex - Offset
 !HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Gaussian Gradient
+!HISTORY_MSG_412;Retinex - Gaussian gradient
 !HISTORY_MSG_413;Retinex - Contrast
 !HISTORY_MSG_414;Retinex - Histogram - Lab
 !HISTORY_MSG_415;Retinex - Transmission
 !HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission Median
+!HISTORY_MSG_417;Retinex - Transmission median
 !HISTORY_MSG_418;Retinex - Threshold
 !HISTORY_MSG_419;Retinex - Color space
 !HISTORY_MSG_420;Retinex - Histogram - HSL
@@ -929,8 +929,8 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_427;Output rendering intent
 !HISTORY_MSG_428;Monitor rendering intent
 !HISTORY_MSG_429;Retinex - Iterations
-!HISTORY_MSG_430;Retinex - Transmission Gradient
-!HISTORY_MSG_431;Retinex - Strength Gradient
+!HISTORY_MSG_430;Retinex - Transmission gradient
+!HISTORY_MSG_431;Retinex - Strength gradient
 !HISTORY_MSG_432;Retinex - M - Highlights
 !HISTORY_MSG_433;Retinex - M - Highlights TW
 !HISTORY_MSG_434;Retinex - M - Shadows
@@ -942,39 +942,23 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !HISTORY_MSG_440;CbDL - Method
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
-!HISTORY_MSG_443;Output Black Point Compensation
+!HISTORY_MSG_443;Output black point compensation
 !HISTORY_MSG_444;WB - Temp bias
-!HISTORY_MSG_445;Raw Sub-Image
-!HISTORY_MSG_446;EvPixelShiftMotion
-!HISTORY_MSG_447;EvPixelShiftMotionCorrection
-!HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
-!HISTORY_MSG_449;PS ISO adaption
-!HISTORY_MSG_450;EvPixelShiftNreadIso
-!HISTORY_MSG_451;EvPixelShiftPrnu
-!HISTORY_MSG_452;PS Show motion
-!HISTORY_MSG_453;PS Show mask only
-!HISTORY_MSG_454;EvPixelShiftAutomatic
-!HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
-!HISTORY_MSG_456;EvPixelShiftNonGreenVertical
-!HISTORY_MSG_457;PS Check red/blue
-!HISTORY_MSG_458;EvPixelShiftStddevFactorRed
-!HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
-!HISTORY_MSG_460;EvPixelShiftGreenAmaze
-!HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
-!HISTORY_MSG_462;PS Check green
-!HISTORY_MSG_463;EvPixelShiftRedBlueWeight
-!HISTORY_MSG_464;PS Blur motion mask
-!HISTORY_MSG_465;PS Blur radius
-!HISTORY_MSG_466;EvPixelShiftSum
-!HISTORY_MSG_467;EvPixelShiftExp0
-!HISTORY_MSG_468;PS Fill holes
-!HISTORY_MSG_469;PS Median
-!HISTORY_MSG_470;EvPixelShiftMedian3
-!HISTORY_MSG_471;PS Motion correction
-!HISTORY_MSG_472;PS Smooth transitions
-!HISTORY_MSG_473;PS Use lmmse
-!HISTORY_MSG_474;PS Equalize
-!HISTORY_MSG_475;PS Equalize channel
+!HISTORY_MSG_445;Raw sub-image
+!HISTORY_MSG_449;PS - ISO adaption
+!HISTORY_MSG_452;PS - Show motion
+!HISTORY_MSG_453;PS - Show mask only
+!HISTORY_MSG_457;PS - Check red/blue
+!HISTORY_MSG_462;PS - Check green
+!HISTORY_MSG_464;PS - Blur motion mask
+!HISTORY_MSG_465;PS - Blur radius
+!HISTORY_MSG_468;PS - Fill holes
+!HISTORY_MSG_469;PS - Median
+!HISTORY_MSG_471;PS - Motion correction
+!HISTORY_MSG_472;PS - Smooth transitions
+!HISTORY_MSG_473;PS - Use LMMSE
+!HISTORY_MSG_474;PS - Equalize
+!HISTORY_MSG_475;PS - Equalize channel
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1769,19 +1753,19 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
 !TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 !TP_RAW_PIXELSHIFTEPERISO;ISO adaption
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value (0.0) should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
+!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
 !TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the channels (RGB) individually.\nDisabled: Use same equalization factor for all channels.
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
 !TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
 !TP_RAW_PIXELSHIFTEXP0;Experimental
 !TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
 !TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
 !TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use lmmse for motion parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use lmmse instead of amaze for motion areas.\nUseful for High ISO images.
+!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
+!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
 !TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
-!TP_RAW_PIXELSHIFTMEDIAN;Median
+!TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
 !TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
 !TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
 !TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
@@ -1791,23 +1775,23 @@ TP_WBALANCE_TEMPERATURE;Temperatura
 !TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
 !TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
 !TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate\n100 means the Amaze demosaiced frame will be used
-!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue amaze
+!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
+!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue AMaZE
 !TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
-!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green amaze
+!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green AMaZE
 !TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
 !TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
 !TP_RAW_PIXELSHIFTNREADISO;nRead
 !TP_RAW_PIXELSHIFTPRNU;PRNU (%)
 !TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
-!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show mask only
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion
+!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
+!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
+!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image.
+!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion.
 !TP_RAW_PIXELSHIFTSIGMA;Blur radius
-!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Default radius of 1.0 usually fits good for base ISO. Increase value for high ISO shots,\n5.0 is a good starting point for high ISO shots.\nWatch motion mask while changing the value.
+!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
 !TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
-!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with and without motion.\nSet to 0 to disable smooth transitions\nSet to 1 to get Amaze/lmmse or Median
+!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
 !TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
 !TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
 !TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
