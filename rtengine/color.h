@@ -1367,7 +1367,7 @@ public:
                 chr = 130.f;
             } else if (hue > -0.4f && hue <= 1.f) {
                 chr = 80.f;
-            } else if (hue > -3.15f && hue > -2.f) {
+            } else if (hue > -3.15f && hue < -2.f) {
                 chr = 80.f;
             } else {
                 chr = 60.f;
