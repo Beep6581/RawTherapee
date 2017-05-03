@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.50 - requires RT 5.0 (Gtk+ >= 3.20)
+  Version 2.51 - requires RT 5.0 (Gtk+ >= 3.20)
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -813,7 +813,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     padding: 0;
 }
 
-#RightNotebook > stack > :nth-child(3) > * > box,
+#RightNotebook > stack > :nth-child(1) > * > box,
 #RightNotebook > stack > :nth-child(4) > * > box {
     padding: 0.5em;
     border: 0.08334em solid @bg-entry-border;
