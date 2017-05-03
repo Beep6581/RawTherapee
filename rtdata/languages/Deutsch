@@ -38,6 +38,8 @@
 #37 2017-03-06 Dynamisches Profil (TooWaBoo) RT 5.0 r1
 #38 2017-03-26 Pixel Shift (TooWaBoo) RT 5.0 r1
 #39 06.04.2017 Fast Export (TooWaBoo) RT 5.0 r1
+#40 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
+#41 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -1116,10 +1118,12 @@ PREFERENCES_PREVDEMO_SIDECAR;Wie im Bildverarbeitungsprofil vorgegeben
 PREFERENCES_PRINTER;Drucker (Soft-Proofing)
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
-PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher
+PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Festplatten-Cache
 PREFERENCES_PROFILEPRFILE;Bearbeitungsprofil, welches geladener Datei beiliegt (Sidecar)
-PREFERENCES_PROFILESAVECACHE;Verarbeitungsparameter im Zwischenspeicher speichern
+PREFERENCES_PROFILESAVEBOTH;Verarbeitungsparameter im Festplatten-Cache und zusammen mit der Datei speichern
+PREFERENCES_PROFILESAVECACHE;Verarbeitungsparameter im Festplatten-Cache speichern
 PREFERENCES_PROFILESAVEINPUT;Verarbeitungsparameter zusammen mit Datei speichern (Sidecar)
+PREFERENCES_PROFILESAVELOCATION;Speicherort der Profile
 PREFERENCES_PROFILE_NONE;Kein Farbprofil
 PREFERENCES_PROPERTY;Eigenschaft
 PREFERENCES_PRTINTENT;Rendering-Intent
@@ -1755,6 +1759,8 @@ TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
 TP_RAW_PIXELSHIFTEPERISO;ISO-Anpassung
 TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert (0.0) empfiehlt sich für die Basis-ISO.\nErhöhen Sie den Wert, um die Bewegungserkennung für höhere ISO-Werte zu verbessern.\nErhöhen Sie den Wert nur in kleinen Schritten und achten Sie dabei auf die Bewegungsmaske.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
 TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den aktuellen Frame an.\n\nSind überbelichtete Bereiche vorhanden wählen Sie den hellsten Frame aus um\nMagenta-Farbstiche zu vermeiden oder aktivieren Sie die Bewegungskorrektur.
 TP_RAW_PIXELSHIFTEXP0;Experimentell
 TP_RAW_PIXELSHIFTGREEN;Bewegung im Grün-Kanal erkennen
@@ -2181,8 +2187,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !HISTORY_MSG_475;PS - Equalize channel
-!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
