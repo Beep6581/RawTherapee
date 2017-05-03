@@ -2,7 +2,7 @@
 # Search files for keywords, then do something to the files which don't match
 
 # Path to the RawTherapee repository
-pushd $HOME/rawtherapee >/dev/null
+pushd $HOME/programs/code-rawtherapee >/dev/null
 unset uses match m u
 # Key to search for, e.g. an include
 IFS="" read -a match <<< $(grep -rni iomanip rt* | cut -d ":" -f1 | sort -uV)
