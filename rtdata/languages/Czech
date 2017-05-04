@@ -37,6 +37,7 @@
 #36 2016-10-18 updated by mkyral
 #37 2017-01-10 updated by mkyral
 #38 2017-04-26 updated by mkyral
+
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -279,7 +280,6 @@ HISTOGRAM_TOOLTIP_R;Skrýt/Zobrazit histogram červené.
 HISTOGRAM_TOOLTIP_RAW;Skrýt/Zobrazit raw histogram.
 HISTORY_CHANGED;Změněno
 HISTORY_CUSTOMCURVE;Vlastní křivka
-HISTORY_DELSNAPSHOT;Odstranit
 HISTORY_FROMCLIPBOARD;Ze schránky
 HISTORY_LABEL;Historie
 HISTORY_MSG_1;Fotka načtena
@@ -936,7 +936,6 @@ PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtr vypálených pixelů
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
 PARTIALPASTE_PRSHARPENING;Doostření po změně velikosti
 PARTIALPASTE_RAWCACORR_AUTO;Automatická korekce CA
-PARTIALPASTE_RAWCACORR_CAAUTOSTRENGTH;CA Síla automatická korekce
 PARTIALPASTE_RAWCACORR_CAREDBLUE;CA červená a modrá
 PARTIALPASTE_RAWEXPOS_BLACK;Úrovně černé
 PARTIALPASTE_RAWEXPOS_LINEAR;Korekce bílého bodu
@@ -1027,8 +1026,6 @@ PREFERENCES_DIRSOFTWARE;Instalační složka
 PREFERENCES_EDITORCMDLINE;Jiný příkaz
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXPAUT;Expert
-PREFERENCES_EXTENDEDZOOMLEVELS;Použít jemné úrovně zvětšení v režimu "Přizpůsobení obrazovce"
-PREFERENCES_EXTENDEDZOOMLEVELS_TOOLTIP;Dovolí lépe vyplnit okno editoru ve všech režimech "přizpůsobit obrazovce". Ovšem kvalita náhledu může být mírně zhoršená v závislosti na vypočteném faktoru zvětšení.
 PREFERENCES_EXTERNALEDITOR;Externí editor
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů / náhledů
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů\n(vypněte na nízkých rozlišeních)
@@ -1150,7 +1147,6 @@ PREFERENCES_SHTHRESHOLD;Práh oříznutých stínů
 PREFERENCES_SIMPLAUT;Režim nástrojů
 PREFERENCES_SINGLETAB;Mód jedné karty editoru
 PREFERENCES_SINGLETABVERTAB;Mód jedné karty editoru, svislé karty
-PREFERENCES_SLIMUI;Štíhlé rozhraní
 PREFERENCES_SMA;Malá (250x287)
 PREFERENCES_SND_BATCHQUEUEDONE;Zpracování fronty dokončeno
 PREFERENCES_SND_HELP;Vložte cestu k souboru pro nastavení zvuku nebo ponechte prázdné (bez zvuku).\nVe Windows zadejte "SystemDefault", "SystemAsterisk" a podobně.\nNa Linuxu použijte "complete", "window-attention" a další.
@@ -1173,7 +1169,6 @@ PREFERENCES_TP_USEICONORTEXT;V záhlaví karty zobrazit ikonu namísto textu
 PREFERENCES_TP_VSCROLLBAR;Skrýt svislou posuvnou lištu
 PREFERENCES_TUNNELMETADATA;Zkopírovat nezměněná Exif/IPTC/XMP metadata do výstupního souboru
 PREFERENCES_USEBUNDLEDPROFILES;Použít přiložené profily
-PREFERENCES_USESYSTEMTHEME;Použít systémový motiv
 PREFERENCES_VIEW;Nastavení vyvážení bílé výstupních zařízení (monitor, TV, projektor, rámeček a jiné)
 PREFERENCES_WAVLEV;Zvýšit úroveň vlnkové transformace v nejvyšší kvalitě
 PREFERENCES_WLONE;Jedna úroveň
@@ -1619,7 +1614,6 @@ TP_ICM_APPLYLOOKTABLE_TOOLTIP;Použije vloženou DCP tabulku vzhledu. Nastavení
 TP_ICM_BLENDCMSMATRIX;Smísení ICC světel s matici
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Povolit obnovení vypálených jasů při použití ICC profilů založených na LUT.
 TP_ICM_BPC;Kompenzace černého bodu
-TP_ICM_BPC_TOOLTIP;Pokud je povoleno, je kanál svítivosti přizpůsoben výstupnímu barevnému prostoru s pevným bílým bodem
 TP_ICM_DCPILLUMINANT;Osvětlení
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolované
 TP_ICM_DCPILLUMINANT_TOOLTIP;Vyberte které vložené DCP osvětlení se má použít. Ve výchozím stavu se použije "interpolované", což je mix mezi dvěma osvětleními založenými na vyvážení bílé. Nastavené je dostupné pouze v případě, že je povoleno dvojité DCP osvětlení s podporou interpolace.
@@ -1751,7 +1745,6 @@ TP_RAW_HD_TOOLTIP;Nižší hodnoty učiní detekci vypálených/mrtvých bodů a
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Dílčí snímek
-TP_RAW_IMAGENUM_TOOLTIP;Některé Raw soubory mohou obsahovat několik dílčích snímků (HDR, Pixel Shift, Dual Pixel, Dual Sensitivity). Tímto tlačítkem vyberete konkrétní dílčí snímek.
 TP_RAW_LABEL;Demozajkování
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;Kroky rozšíření LMMSE
@@ -1761,7 +1754,6 @@ TP_RAW_NONE;Žádná (zobrazí strukturu senzoru)
 TP_RAW_PIXELSHIFT;Pixel Shift
 TP_RAW_PIXELSHIFTADAPTIVE;Přizpůsobivá detekce
 TP_RAW_PIXELSHIFTBLUR;Maska pohybové neostrosti
-TP_RAW_PIXELSHIFTBLUR_TOOLTIP;Maska pohybové neostrosti
 TP_RAW_PIXELSHIFTEPERISO;Přizpůsobení ISO
 TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Výchozí hodnota (0,0) by měla dostačovat pro základní hodnoty ISO.\nDetekci pohybu na vyšších hodnotách ISO vylepšíte navýšením této hodnoty.\nZvyšujte po malých krocích a sledujte přitom masku pohybu.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Vyrovnat jas snímků
@@ -1784,7 +1776,6 @@ TP_RAW_PIXELSHIFTMM_CUSTOM;Vlastní
 TP_RAW_PIXELSHIFTMM_OFF;Vypnuto
 TP_RAW_PIXELSHIFTMOTION;Úroveň kontroly pohybu (zastaralé)
 TP_RAW_PIXELSHIFTMOTIONCORRECTION;Míra korekce pohybu v zelené
-TP_RAW_PIXELSHIFTMOTIONCORRECTION_TOOLTIP;1 = 2 pixely\n3 = mřížka 3x3\n5 = mřížka 5x5
 TP_RAW_PIXELSHIFTMOTIONMETHOD;Korekce pohybu
 TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 znamená bez detekce pohybu\n1 - 99 znamená, že pohybu bude detekován dle této hodnoty. Pro zvýšení míry detekce použijte vyšší hodnotu\n100 znamená, že bude použito AMaZE demozajkování snímku
 TP_RAW_PIXELSHIFTNONGREENAMAZE;Kontrolovat červené/modré AMaZE
@@ -2188,3 +2179,9 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Přizpůsobit obrazovce\nZkratka: <b>Alt</b>-<b>f</b
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
