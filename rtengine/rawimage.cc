@@ -547,8 +547,8 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
             crop_masked_pixels();
             free (raw_image);
             raw_image = nullptr;
-        } else {
-            if (is_foveon && cc && cc->has_rawCrop()) { // foveon images
+        } else { 
+            if (get_maker() == "Sigma" && cc && cc->has_rawCrop()) { // foveon images
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);
                 left_margin = lm;

@@ -544,19 +544,31 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
             int left_margin = ri->get_leftmargin();
             firstgreen += left_margin;
             int top_margin = ri->get_topmargin();
+            int wmax = tmpw;
+            int hmax = tmph;
             if(ri->get_maker() == "Sigma" && ri->DNGVERSION()) { // Hack to prevent sigma dng files from crashing
-                tmpw = (width - 2 - left_margin) / hskip;
-                tmph = (height - 2 - top_margin) / vskip;
+                wmax = (width - 2 - left_margin) / hskip;
+                hmax = (height - 2 - top_margin) / vskip;
             }
 
-            for (int row = 1 + top_margin, y = 0; row < iheight + top_margin  - 1 && y < tmph; row += vskip, y++) {
+            int y = 0;
+            for (int row = 1 + top_margin; row < iheight + top_margin  - 1 && y < hmax; row += vskip, y++) {
                 rofs = row * iwidth;
 
-                for (int col = firstgreen, x = 0; col < iwidth + left_margin - 1 && x < tmpw; col += hskip, x++) {
+                int x = 0;
+                for (int col = firstgreen; col < iwidth + left_margin - 1 && x < wmax; col += hskip, x++) {
                     int ofs = rofs + col;
                     tmpImg->r(y, x) = image[ofs][0];
                     tmpImg->g(y, x) = image[ofs][1];
                     tmpImg->b(y, x) = image[ofs][2];
+                }
+                for (; x < tmpw; ++x) {
+                    tmpImg->r(y, x) = tmpImg->g(y, x) = tmpImg->b(y, x) = 0;
+                }
+            }
+            for (; y < tmph; ++y) {
+                for (int x = 0; x < tmpw; ++x) {
+                    tmpImg->r(y, x) = tmpImg->g(y, x) = tmpImg->b(y, x) = 0;
                 }
             }
         }

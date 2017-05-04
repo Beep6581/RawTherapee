@@ -1933,6 +1933,11 @@ Camera constants:
         "raw_crop": [ 12, 0, -110, -62 ] // for small size all numbers/2
     },
 
+    { // Quality C, only raw crop for now - see #3858
+        "make_model": "Sigma sd Quattro",
+        "raw_crop": [ 200, 74, 5632, 3698 ]
+    },
+
     { // Quality A, correction for color matrix from Colin Walker's d50 to dng d65
         "make_model": "Sony NEX-C3",
         //"dcraw_matrix": [ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 ], // Colin walker's d50 kept for possible consistency issues
