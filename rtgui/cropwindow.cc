@@ -2214,6 +2214,10 @@ void CropWindow::screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& c
     if (zoomSteps[cropZoom].zoom > 1.) {
         cropx = int(double(cropx) / zoomSteps[cropZoom].zoom);
         cropy = int(double(cropy) / zoomSteps[cropZoom].zoom);
+    } else {
+        float czoom = float((zoomSteps[cropZoom].czoom/10) * 10) / float(zoomSteps[cropZoom].czoom);
+        cropx = cropx / czoom;
+        cropy = cropy / czoom;
     }
 
     cropx += crop->getLeftBorder();
