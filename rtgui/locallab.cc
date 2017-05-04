@@ -87,7 +87,7 @@ Locallab::Locallab ():
     retrab (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_RETRAB"), 0, 10000, 1, 500))),
     threshold (Gtk::manage ( new Adjuster (M ("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20) )),
     sensicb (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSICB"), 0, 100, 1, 19))),
-    sharradius (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARRADIUS"), 42, 250, 1, 4))),
+    sharradius (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARRADIUS"), 42, 500, 1, 4))),
     sharamount (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 75))),
     shardamping (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 75))),
     shariter (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
