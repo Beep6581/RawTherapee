@@ -1164,7 +1164,7 @@ Camera constants:
     { // Quality B, frame corrections
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
-        "raw_crop": [ 0, 0, -8, 0 ], // full frame 5312x2988, 8 black columns at the left
+        "raw_crop": [ 0, 0, 0, 0 ], // full frame 5312x2988, 8 black columns at the left
         "ranges": { "white_max": 1023 }
     },
 
