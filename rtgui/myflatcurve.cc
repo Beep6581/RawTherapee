@@ -1278,10 +1278,6 @@ void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider,
 // returns true if a point is being dragged
 bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
 {
-    if (!(modifierKey & GDK_CONTROL_MASK)) {
-        return false;
-    }
-    
     if (edited_point > -1) {
         return false;
     }

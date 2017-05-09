@@ -1065,10 +1065,6 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
 // returns true if a point is being dragged
 bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey)
 {
-    if (!(modifierKey & GDK_CONTROL_MASK)) {
-        return false;
-    }
-    
     if (edited_point > 1) {
         return false;
     }
