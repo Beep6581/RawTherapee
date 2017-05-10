@@ -622,7 +622,6 @@ BENCHFUN
     #pragma omp parallel
 #endif
 {
-    float signs[25];
 
 #ifdef _OPENMP
     #pragma omp for schedule(dynamic,16)
@@ -640,13 +639,6 @@ BENCHFUN
     for(int j = k; j < height - k; j++)
         for(int i = k, offset = j * width + i; i < width - k; i++, offset++) {
             float v = LM[offset];
-
-            for(int row = j - k, n = 0; row <= j + k; row++) {
-                for(int offset2 = row * width + i - k; offset2 <= row * width + i + k; offset2++) {
-                    signs[n] = SGN(v - LM[offset2]);
-                    n++;
-                }
-            }
 
             float contrast;
             if (k == 1) {
@@ -678,13 +670,10 @@ BENCHFUN
 
             temp = std::max(temp, 0.f);
 
-
-            v = temp;
-
             for(int row = j + k, n = SQR(2*k+1) - 1; row >= j - k; row--) {
                 for(int offset2 = row * width + i + k; offset2 >= row * width + i - k; offset2--) {
-                    if((LM[offset2] - v) * signs[n] > 0.f) {
-                        temp = intp(0.75f, v, LM[offset2]);
+                    if((LM[offset2] - temp) * SGN(v - LM[offset2]) > 0.f) {
+                        temp = intp(0.75f, temp, LM[offset2]);
                         goto breakout;
                     }
                     n--;
