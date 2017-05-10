@@ -672,7 +672,7 @@ BENCHFUN
 
             for(int row = j + k, n = SQR(2*k+1) - 1; row >= j - k; row--) {
                 for(int offset2 = row * width + i + k; offset2 >= row * width + i - k; offset2--) {
-                    if((LM[offset2] - temp) * SGN(v - LM[offset2]) > 0.f) {
+                    if((LM[offset2] - temp) * (v - LM[offset2]) > 0.f) {
                         temp = intp(0.75f, temp, LM[offset2]);
                         goto breakout;
                     }
