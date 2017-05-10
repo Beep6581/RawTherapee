@@ -1,4 +1,4 @@
-.TH RAWTHERAPEE 1 "July 05, 2016"
+.TH RAWTHERAPEE 1 "May 10, 2017"
 .SH NAME
 RawTherapee - An advanced, cross-platform program for developing raw photos.
 .SH DESCRIPTION
@@ -14,11 +14,14 @@ RawTherapee - An advanced, cross-platform program for developing raw photos.
   The pipe symbol | indicates a choice of one or the other.
   The dash symbol - denotes a range of possible values from one to the other.
 .SH SYNOPSIS
+  RawTherapee GUI
   rawtherapee <folder>           Start File Browser inside folder.
   rawtherapee <file>             Start Image Editor with file.
-  rawtherapee -c <dir>|<files>   Convert files in batch with default parameters.
-  rawtherapee <other options> -c <dir>|<files>   Convert files in batch with your own settings.
-  rawtherapee [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] -c <input>
+
+  RawTherapee CLI
+  rawtherapee-cli -c <dir>|<files>   Convert files in batch with default parameters.
+  rawtherapee-cli <other options> -c <dir>|<files>   Convert files in batch with your own settings.
+  rawtherapee-cli [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] -c <input>
 .SH OPTIONS
   -c <files>       Specify one or more input files.
                    -c must be the last option.
