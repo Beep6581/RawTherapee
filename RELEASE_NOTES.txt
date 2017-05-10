@@ -19,7 +19,7 @@ In order to use RawTherapee efficiently you should know that:
 
 New features since 5.0:
 - Pentax Pixel Shift support, to automatically combine sub-images from a Pentax Pixel Shift raw file into one high quality image.
-- Support for processing any sub-image from raw formats which support multiple images.
+- Support for processing any sub-image from raw formats which support multiple images. Currently up to 4 sub-images supported.
 - Dynamic Profile Creator to automatically generate per-image custom processing profiles by merging existing processing profiles based on image metadata (Exif).
 - New command-line executable "rawtherapee-cli(.exe)" to reduce startup time for command-line operations.
 - HaldCLUT paths are now relative to the HaldCLUT folder as set in Preferences. This enables you to share PP3 files easier.
