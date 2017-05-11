@@ -44,7 +44,6 @@ New features since 5.0:
   - NIKON D5600
   - NIKON D80
   - NIKON D810
-  - Nikon D810
   - OLYMPUS E-M1MarkII
   - Panasonic DMC-GX85
 
@@ -56,7 +55,7 @@ News Relevant to Package Maintainers
 - Branches "master" and "gtk3" are dead, do not use them.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
-- Use -o3, it will make RawTherapee faster with no known side-effects.
+- Use -O3, it will make RawTherapee faster with no known side-effects.
 - For stable releases use -DCACHE_NAME_SUFFIX=""
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
@@ -64,7 +63,7 @@ News Relevant to Developers
 ---------------------------
 - Announce and discuss your plans in GitHub before starting work.
 - Keep branches small so that completed and working features can be merged into the "dev" branch often, and so that they can be abandoned if they head in the wrong direction.
-- Use C++11
+- Use C++11.
 - Code must be run through astyle.
 
 DOCUMENTATION
