@@ -46,7 +46,7 @@ bool ProfileStore::init (bool loadAll)
 
     this->loadAll = loadAll;
 
-    if (storeState == STORESTATE_NOTINITIALIZED && loadAll) {
+    if ((storeState == STORESTATE_NOTINITIALIZED || storeState == STORESTATE_DIRTY) && loadAll) {
         storeState = STORESTATE_BEINGINITIALIZED;
         _parseProfiles ();
         storeState = STORESTATE_INITIALIZED;
@@ -85,7 +85,7 @@ ProfileStore::~ProfileStore ()
  * This method will scan the directory tree again and update the profile list. When finished,
  * the listeners will be called in order to update with the new list
  */
-void ProfileStore::parseProfiles ()
+void ProfileStore::parseProfilesOnce ()
 {
 
     for (auto listener : listeners) {
@@ -98,6 +98,13 @@ void ProfileStore::parseProfiles ()
         listener->updateProfileList();
         listener->restoreValue();
     }
+}
+
+void ProfileStore::parseProfiles ()
+{
+
+    storeState = STORESTATE_DIRTY;
+    parseProfilesOnce ();
 }
 
 void ProfileStore::_parseProfiles ()
@@ -272,7 +279,7 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU (Glib::ustring pat
     }
 
     if (storeState == STORESTATE_NOTINITIALIZED) {
-        parseProfiles();
+        parseProfilesOnce();
     }
 
     if (path == DEFPROFILE_INTERNAL || path == DEFPROFILE_DYNAMIC) {
@@ -340,7 +347,7 @@ const PartialProfile* ProfileStore::getProfile (Glib::ustring path)
 {
 
     if (storeState == STORESTATE_NOTINITIALIZED) {
-        parseProfiles();
+        parseProfilesOnce();
     }
 
     const ProfileStoreEntry *pse = findEntryFromFullPath (path);
@@ -356,7 +363,7 @@ const PartialProfile* ProfileStore::getProfile (const ProfileStoreEntry* entry)
 {
 
     if (storeState == STORESTATE_NOTINITIALIZED) {
-        parseProfiles();
+        parseProfilesOnce();
     }
 
     MyMutex::MyLock lock (parseMutex);
@@ -387,7 +394,7 @@ const std::vector<const ProfileStoreEntry*>* ProfileStore::getFileList ()
 {
 
     if (storeState == STORESTATE_NOTINITIALIZED) {
-        parseProfiles();
+        parseProfilesOnce();
     }
 
     parseMutex.lock();
@@ -493,7 +500,7 @@ void ProfileStore::dumpFolderList()
 PartialProfile *ProfileStore::loadDynamicProfile (const ImageMetaData *im)
 {
     if (storeState == STORESTATE_NOTINITIALIZED) {
-        parseProfiles();
+        parseProfilesOnce();
     }
 
     PartialProfile *ret = new PartialProfile (true, true);
