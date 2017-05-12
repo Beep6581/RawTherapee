@@ -559,9 +559,9 @@ int processLineParams( int argc, char **argv )
                 std::cout << "                   Saves output file alongside input file if -o is not specified." << std::endl;
                 std::cout << "  -O <file>|<dir>  Set output file or folder and copy " << pparamsExt << " file into it." << std::endl;
                 std::cout << "                   Saves output file alongside input file if -O is not specified." << std::endl;
-                std::cout << "  -q               Quick Start mode : do not load cached files to speedup start time." << std::endl;
-                std::cout << "  -a               Stands for 'all'. When specifying a directory, process all images specified in the" << std::endl;
-                std::cout << "                   extension list from the options file, even those not actually selected" << std::endl;
+                std::cout << "  -q               Quick-start mode. Does not load cached files to speedup start time." << std::endl;
+                std::cout << "  -a               Process all supported image file types when specifying a folder, even those" << std::endl;
+                std::cout << "                   not currently selected in Preferences > File Browser > Parsed Extensions." << std::endl;
                 std::cout << "  -s               Use the existing sidecar file to build the processing parameters," << std::endl;
                 std::cout << "                   e.g. for photo.raw there should be a photo.raw." << pparamsExt << " file in the same folder." << std::endl;
                 std::cout << "                   If the sidecar file does not exist, neutral values will be used." << std::endl;
