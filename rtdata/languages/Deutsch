@@ -758,6 +758,7 @@ HISTORY_MSG_471;(Sensor-Matrix)\nFarbinterpolation\nBewegungskorrektur
 HISTORY_MSG_472;(Sensor-Matrix)\nFarbinterpolation\nWeicher Übergang
 HISTORY_MSG_473;(Sensor-Matrix)\nFarbinterpolation\nLMMSE für Bewegungs-\nteile verwenden
 HISTORY_MSG_474;(Sensor-Matrix)\nFarbinterpolation\nFrame-Helligkeit angleichen
+HISTORY_MSG_475;(Sensor-Matrix)\nAusgleich pro Kanal
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1747,6 +1748,7 @@ TP_RAW_HD_TOOLTIP;Je niedriger der Wert, umso empfindlicher reagiert\ndie “Hot
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Unterbild
+TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel Shift,\nPentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendenden Unterbildes (nicht bei Pixel Shift).\n\n> Legt das Unterbild für die Bewegungsbereiche bei Pixel Shift fest.
 TP_RAW_LABEL;Farbinterpolation
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE-Verbesserungsstufen
@@ -2182,9 +2184,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_475;PS - Equalize channel
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
