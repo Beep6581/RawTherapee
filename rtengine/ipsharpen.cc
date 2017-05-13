@@ -414,7 +414,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab)
                     wD2 = eps2 + fabs(L[offset + width - 1] - L[offset - width + 1]) / s;
                     s = wD1;
                     wD1 /= wD2;
-                    wD2 /= wD1;
+                    wD2 /= s;
 
                     // initial values
                     int ii = offset / width;
