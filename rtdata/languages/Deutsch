@@ -2188,4 +2188,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 HISTORY_MSG_475;(Sensor-Matrix)\nAusgleich pro Kanal
-TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel Shift,\nPentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendeten Unterbildes (nicht bei Pixel Shift).\n\n> Legt das Unterbild für die Bewegungsbereiche bei Pixel Shift fest.
+TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel Shift,\nPentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendenden Unterbildes (nicht bei Pixel Shift).\n\n> Legt das Unterbild für die Bewegungsbereiche bei Pixel Shift fest.
