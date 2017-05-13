@@ -40,6 +40,7 @@
 #39 06.04.2017 Fast Export (TooWaBoo) RT 5.0 r1
 #40 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
 #41 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
+#42 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -2186,5 +2187,5 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_475;PS - Equalize channel
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+HISTORY_MSG_475;(Sensor-Matrix)\nAusgleich pro Kanal
+TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel Shift,\nPentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendeten Unterbildes (nicht bei Pixel Shift).\n\n> Legt das Unterbild für die Bewegeungsbereiche bei Pixel Shift fest.
