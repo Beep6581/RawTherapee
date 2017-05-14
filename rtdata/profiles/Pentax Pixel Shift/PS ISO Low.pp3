@@ -2,6 +2,20 @@
 AppVersion=5.0-r1-gtk3-503-g9e1fc78
 Version=326
 
+[Sharpening]
+Enabled=true
+Method=rld
+DeconvRadius=0.75
+DeconvAmount=75
+DeconvDamping=0
+DeconvIterations=30
+
+[SharpenMicro]
+Enabled=true
+Matrix=false
+Strength=20
+Uniformity=50
+
 [RAW]
 CA=true
 
@@ -9,14 +23,14 @@ CA=true
 Method=pixelshift
 PixelShiftMotion=0
 PixelShiftMotionCorrection=5
-PixelShiftMotionCorrectionMethod=2
+PixelShiftMotionCorrectionMethod=1
 pixelShiftStddevFactorGreen=5
 pixelShiftStddevFactorRed=5
 pixelShiftStddevFactorBlue=5
-PixelShiftEperIso=2
+PixelShiftEperIso=0
 PixelShiftNreadIso=0
 PixelShiftPrnu=1
-PixelShiftSigma=5
+PixelShiftSigma=1
 PixelShiftSum=3
 PixelShiftRedBlueWeight=0.69999999999999996
 pixelShiftAutomatic=true
@@ -24,4 +38,5 @@ pixelShiftHoleFill=true
 pixelShiftGreen=true
 pixelShiftBlur=true
 pixelShiftSmoothFactor=0.69999999999999996
+pixelShiftLmmse=false
 pixelShiftNonGreenCross=true
