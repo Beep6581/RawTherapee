@@ -418,6 +418,18 @@ CameraConst::update_Levels(const CameraConst *other)
 //  }
 }
 
+void
+CameraConst::update_Crop(CameraConst *other)
+{
+    if (!other) {
+        return;
+    }
+
+    if (other->has_rawCrop()) {
+        other->get_rawCrop(raw_crop[0], raw_crop[1], raw_crop[2], raw_crop[3]);
+    }
+}
+
 bool
 CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float fnumber)
 {
@@ -668,6 +680,7 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
                 existingcc->update_dcrawMatrix(cc->get_dcrawMatrix());
                 // deleting all the existing levels, replaced by the new ones
                 existingcc->update_Levels(cc);
+                existingcc->update_Crop(cc);
 
                 if (settings->verbose) {
                     printf("Merging camera constants for \"%s\"\n", make_model.c_str());
