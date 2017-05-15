@@ -1,10 +1,17 @@
-RAWTHERAPEE 5.1 RELEASE NOTES
------------------------------
-This is RawTherapee 5.1 stable, released on 2017-05-15.
+RAWTHERAPEE 5.1-dev RELEASE NOTES
+---------------------------------
+This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 
 RawTherapee provides you with a selection of powerful tools with which you can practice the art of developing raw photos. Be sure to read RawPedia to understand how each tool works so that you may make the most of it.
 http://rawpedia.rawtherapee.com/
 A great place to start is the "Getting Started" article. Click on "Main page" in the top-left corner when you have finished reading that article to see all other articles.
+
+While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
+- Development versions only had limited testing, so there may be bugs unknown to us.
+- You should report these bugs so that they get fixed for the next stable release. See
+  www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
+- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
+- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
 
 News Relevant to Photographers
 ------------------------------
@@ -17,39 +24,12 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to meaningful axes (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New features since 5.0:
-- Pentax Pixel Shift support, to automatically combine sub-images from a Pentax Pixel Shift raw file into one high quality image.
-- Support for processing any sub-image from raw formats which support multiple images. Currently up to 4 sub-images supported.
-- Dynamic Profile Creator to automatically generate per-image custom processing profiles by merging existing processing profiles based on image metadata (Exif).
-- New command-line executable "rawtherapee-cli(.exe)" to reduce startup time for command-line operations.
-- HaldCLUT paths are now relative to the HaldCLUT folder as set in Preferences. This enables you to share PP3 files easier.
-- Auto White Balance now has a Temperature Bias, letting you make the automatic temperature warmer or cooler.
-- LCP correction works for raw and non-raw files.
-- LCP distortion correction support for fisheye lenses.
-- Certain tools are now hidden or disabled if the loaded image does not support them, e.g. the tools in the Raw tab are disabled when working with a non-raw file.
-- New zoom levels for the main preview in the Editor tab.
-- New Fast Export option to downscale the image before processing, to increase speed.
-- Custom crop ratio.
-- Automatic monitor profile detection also in Linux.
-- Lens information support added for Panasonic cameras.
-- Support for lossy DNG files.
-- Support for compressed Fujifilm Bayer raw files.
-- Support for compressed X-Trans raw files.
-- Support for Sigma sd Quattro DNG raw files.
-- Added DCP profiles for accurate color for:
-  - FUJIFILM X100S
-  - LG Mobile LG-H815 (LG G4)
-  - NIKON D300
-  - NIKON D300
-  - NIKON D5600
-  - NIKON D80
-  - NIKON D810
-  - OLYMPUS E-M1MarkII
-  - Panasonic DMC-GX85
+New features since 5.1:
+- This section will be completed when 5.2 is released.
 
 News Relevant to Package Maintainers
 ------------------------------------
-- No significant changes since 5.0-r1.
+- No significant changes since 5.1.
 - Requires GTK+ version >=3.16.
 - GTK2 is not supported. 5.0-r1 was the last GTK2 release.
 - Branches "master" and "gtk3" are dead, do not use them.
