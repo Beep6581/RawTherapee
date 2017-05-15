@@ -1,10 +1,10 @@
-RAWTHERAPEE 5 DEVELOPMENT RELEASE NOTES
----------------------------------------
+RAWTHERAPEE 5.1-dev RELEASE NOTES
+---------------------------------
+This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
+
 RawTherapee provides you with a selection of powerful tools with which you can practice the art of developing raw photos. Be sure to read RawPedia to understand how each tool works so that you may make the most of it.
 http://rawpedia.rawtherapee.com/
 A great place to start is the "Getting Started" article. Click on "Main page" in the top-left corner when you have finished reading that article to see all other articles.
-
-This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 
 While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
 - Development versions only had limited testing, so there may be bugs unknown to us.
@@ -15,7 +15,7 @@ While we only commit tested and relatively stable code and so the development ve
 
 News Relevant to Photographers
 ------------------------------
-- RawTherapee 5 supports most raw formats, including some unusual ones like those from cameras using Foveon and X-Trans sensors. If you're wondering whether it supports your camera's raw format, first download RawTherapee 5 and try for yourself. If a raw format is not supported it will either not open, or the preview in the Editor tab will appear black, white, or have a strong color cast - usually magenta. In that case, read the "Adding Support for New Raw Formats" RawPedia article.
+- RawTherapee supports most raw formats, including some unusual ones like those from cameras using Foveon and X-Trans sensors. If you're wondering whether it supports your camera's raw format, first download RawTherapee and try for yourself. If a raw format is not supported it will either not open, or the preview in the Editor tab will appear black, white, or have a strong color cast - usually magenta. In that case, read the "Adding Support for New Raw Formats" RawPedia article.
 
 In order to use RawTherapee efficiently you should know that:
 - You can scroll all panels using the mouse scroll-wheel.
@@ -24,27 +24,27 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to meaningful axes (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New features since 5.0-r1:
-- 
+New features since 5.1:
+- This section will be completed when 5.2 is released.
 
 News Relevant to Package Maintainers
 ------------------------------------
-- To get the latest development version, use the "dev" branch.
-- All development now uses GTK3, requiring version >=3.16. There are known bugs using GTK+ versions 3.20-3.22 where scrollbars may appear stuck (issue #3545) and where the Retinex tool's "Gain and Offset" panel may appear under the "Transmission" panel (issue #3525) until the user hovers the mouse cursor over a curve button. For this reason we recommend using GTK+ 3.16-3.18 if possible.
-- GTK2 is no longer supported. Use branch "gtk2" if you want to compile a GTK2 version, but remember that there will be no improvements to it after 5.0-r1.
+- No significant changes since 5.1.
+- Requires GTK+ version >=3.16.
+- GTK2 is not supported. 5.0-r1 was the last GTK2 release.
 - Branches "master" and "gtk3" are dead, do not use them.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
-- Use -o3, it will make RawTherapee faster with no known side-effects.
-- For stable builds (RT5) use -DCACHE_NAME_SUFFIX=""
-- For development builds use -DCACHE_NAME_SUFFIX="5-dev"
-- Windows builders should compile on a drive letter which users are most unlikely to have, such as Y:, due to the "There is no disk in the drive" error (issue #3544).
+- Use -O3, it will make RawTherapee faster with no known side-effects.
+- For stable releases use -DCACHE_NAME_SUFFIX=""
+- For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
 News Relevant to Developers
 ---------------------------
-- Use C++11
+- Announce and discuss your plans in GitHub before starting work.
+- Keep branches small so that completed and working features can be merged into the "dev" branch often, and so that they can be abandoned if they head in the wrong direction.
+- Use C++11.
 - Code must be run through astyle.
-- Commits automatically trigger a compilation using Travis CI.
 
 DOCUMENTATION
 -------------
@@ -59,8 +59,8 @@ http://rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
 LIVE CHAT WITH USERS AND DEVELOPERS
 --------------------------------------
   Network: freenode
-  Server: chat.freenode.net
-  Channel #rawtherapee
+  Server:  chat.freenode.net
+  Channel: #rawtherapee
 
 You can use freenode webchat to communicate without installing anything:
 http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
