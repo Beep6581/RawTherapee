@@ -17,7 +17,7 @@
    inkscape:version="0.91 r13725"
    sodipodi:docname="rt_splash.svg"
    style="enable-background:new"
-   inkscape:export-filename="/tmp/rt_splash_51rc1.png"
+   inkscape:export-filename="/tmp/rt_splash_51.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <title
@@ -577,9 +577,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.3930636"
-     inkscape:cx="276"
-     inkscape:cy="173"
+     inkscape:zoom="1"
+     inkscape:cx="354.28099"
+     inkscape:cy="103.21"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -601,7 +601,7 @@
      showborder="true"
      borderlayer="false"
      inkscape:showpageshadow="true"
-     inkscape:snap-global="true"
+     inkscape:snap-global="false"
      showguides="true"
      inkscape:guide-bbox="true">
     <sodipodi:guide
@@ -1001,19 +1001,19 @@
        y="2.2370076"
        id="text3689"
        sodipodi:linespacing="125%"
-       transform="matrix(1,0,0.05240778,1,-8.2958692,-4.0353521)"><tspan
+       transform="matrix(0.91189111,0,0.04779019,0.91189111,15.491783,-6.3327061)"><tspan
          sodipodi:role="line"
          id="tspan3691"
          x="283.85016"
          y="2.2370076"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:80px;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold'">5</tspan></text>
     <text
-       transform="matrix(1,0,0.05240778,1,31.933766,5.1033199)"
+       transform="matrix(0.91189111,0,0.04779019,0.91189111,52.17683,2.0007677)"
        sodipodi:linespacing="125%"
        id="text3662"
        y="2.2370076"
        x="283.85016"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:-10px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter5542)"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:-10px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749)"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:60px;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';letter-spacing:-10px"
          y="2.2370076"
@@ -1022,10 +1022,11 @@
          sodipodi:role="line">.1</tspan></text>
     <g
        id="g3712"
-       transform="translate(0,16)">
+       transform="translate(190,16)"
+       style="fill:#000000">
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:40px;line-height:110.00000238%;font-family:sans-serif;text-align:end;letter-spacing:-1px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:110.00000238%;font-family:sans-serif;text-align:end;letter-spacing:-1px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          x="559.0896"
          y="46.61301"
          id="text3690"
@@ -1035,21 +1036,21 @@
            id="tspan3692"
            x="559.0896"
            y="46.61301"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1px;text-anchor:end" /><tspan
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1px;text-anchor:end;fill:#000000" /><tspan
            id="tspan3696"
            sodipodi:role="line"
            x="558.0896"
            y="71.363014"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1px;text-anchor:end">candidate 1</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1px;text-anchor:end;fill:#000000">candidate 1</tspan></text>
       <text
          transform="matrix(1,0,0.05240778,1,0,0)"
          sodipodi:linespacing="110%"
          id="text3702"
          y="46.908493"
          x="556.10699"
-         style="font-style:normal;font-weight:normal;font-size:40px;line-height:110.00000238%;font-family:sans-serif;text-align:end;letter-spacing:-1px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:110.00000238%;font-family:sans-serif;text-align:end;letter-spacing:-1px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1px;text-anchor:end"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1px;text-anchor:end;fill:#000000"
            y="46.908493"
            x="555.10699"
            sodipodi:role="line"

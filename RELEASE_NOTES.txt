@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.1-RC1 RELEASE NOTES
----------------------------------------
-This is a release candidate for version 5.1. This is not version 5.1 yet. This release is meant for testing in order to enable us to release a stable 5.1.
+RAWTHERAPEE 5.1 RELEASE NOTES
+-----------------------------
+This is RawTherapee 5.1 stable, released on 2017-05-15.
 
 RawTherapee provides you with a selection of powerful tools with which you can practice the art of developing raw photos. Be sure to read RawPedia to understand how each tool works so that you may make the most of it.
 http://rawpedia.rawtherapee.com/
@@ -79,8 +79,8 @@ http://rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
 LIVE CHAT WITH USERS AND DEVELOPERS
 --------------------------------------
   Network: freenode
-  Server: chat.freenode.net
-  Channel #rawtherapee
+  Server:  chat.freenode.net
+  Channel: #rawtherapee
 
 You can use freenode webchat to communicate without installing anything:
 http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
