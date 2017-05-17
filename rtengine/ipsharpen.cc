@@ -23,17 +23,15 @@
 #include "rt_math.h"
 #include "sleef.c"
 #include "opthelper.h"
+
 using namespace std;
-#define BENCHMARK
-#include "StopWatch.h"
+
 namespace rtengine
 {
 
 #undef ABS
 
 #define ABS(a) ((a)<0?-(a):(a))
-#define CLIREF(x) LIM(x,-200000.0f,200000.0f) // avoid overflow : do not act directly on image[] or pix[]
-
 
 extern const Settings* settings;
 SSEFUNCTION void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H)
@@ -569,13 +567,12 @@ void ImProcFunctions::MLmicrocontrast(float** luminance, int W, int H)
     if (!params->sharpenMicro.enabled) {
         return;
     }
-BENCHFUN
 
     const int k = params->sharpenMicro.matrix ? 1 : 2;
 
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
-    const float uniform = params->sharpenMicro.uniformity;//between 0 to 100
+    const float uniform = params->sharpenMicro.uniformity; //between 0 to 100
     const int unif = (int)(uniform / 10.0f); //put unif between 0 to 10
     float amount = params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
 
@@ -629,7 +626,7 @@ BENCHFUN
 
     for(int j = 0; j < height; j++)
         for(int i = 0, offset = j * width + i; i < width; i++, offset++) {
-            LM[offset] = luminance[j][i] / 327.68f; // adjust to 0.100 and to RT variables
+            LM[offset] = luminance[j][i] / 327.68f; // adjust to [0;100] and to RT variables
         }
 
 #ifdef _OPENMP
@@ -663,7 +660,7 @@ BENCHFUN
                                      LM[offset - 2 * width - 1] + LM[offset - 2 * width + 1] + LM[offset -  width + 2] + LM[offset -  width - 2]);
 
                 temp2 -= sqrt2 * (LM[offset + 2 * width - 2] + LM[offset + 2 * width + 2] + LM[offset - 2 * width - 2] + LM[offset - 2 * width + 2]);
-                temp2 += 18.601126159f * v ;
+                temp2 += 18.601126159f * v ; // 18.601126159 = 4 + 4 * sqrt(2) + 8 * sqrt(1.25)
                 temp2 *= 2.f * s;
                 temp += temp2;
             }
