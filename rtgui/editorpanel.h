@@ -131,6 +131,8 @@ public:
 
     void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile);
 
+    bool saveImmediately(const Glib::ustring &filename, SaveFormat sf);
+
     Gtk::Paned* catalogPane;
 
 private:

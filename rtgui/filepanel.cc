@@ -190,8 +190,13 @@ void FilePanel::init ()
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (argv1 != "" && Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
-        dirBrowser->open (argv1);
+    //if (argv1 != "" && Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
+    if (!argv1.empty() && Glib::file_test (argv1, Glib::FILE_TEST_EXISTS)) {
+        Glib::ustring d(argv1);
+        if (!Glib::file_test(d, Glib::FILE_TEST_IS_DIR)) {
+            d = Glib::path_get_dirname(d);
+        }
+        dirBrowser->open(d);
     } else {
         if (options.startupDir == STARTUPDIR_HOME) {
             dirBrowser->open (PlacesBrowser::userPicturesDir ());

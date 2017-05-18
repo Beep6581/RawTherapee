@@ -282,6 +282,14 @@ RTWindow::RTWindow ()
         show_all ();
 
         bpanel->init (this);
+
+        if (!argv1.empty()) {
+            Thumbnail* thm = cacheMgr->getEntry(argv1);
+            if (thm) {
+                std::vector<Thumbnail *> entries(1, thm);
+                fpanel->fileCatalog->openRequested(entries);
+            }
+        }
     }
 
     if (!isSingleTabMode() && !simpleEditor) {
@@ -646,6 +654,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
 
     Options::save ();
     hide();
+
     on_delete_has_run = true;
     return false;
 }

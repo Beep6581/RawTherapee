@@ -60,7 +60,9 @@ Glib::ustring argv0;
 Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
-bool simpleEditor;
+Glib::ustring argv2;
+bool simpleEditor = false;
+bool gimpPlugin = false;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
 //Glib::Threads::Thread* mainThread;
@@ -292,12 +294,23 @@ int main(int argc, char **argv)
 
 #endif
 
-    simpleEditor = false;
+    //simpleEditor = false;
 
-    if( !argv1.empty() )
+    if (!argv1.empty()) {
         if( Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
             simpleEditor = true;
         }
+    }
+    if (gimpPlugin) {
+        if (!Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
+            printf("Error: argv1 doesn't exist\n");
+            return 1;
+        }
+        if (argv2.empty()) {
+            printf("Error: -gimp requires two arguments\n");
+            return 1;
+        }
+    }
 
     Gtk::Main m(&argc, &argv);
 
@@ -385,7 +398,18 @@ int main(int argc, char **argv)
     // opening the main window
     m.run(*rtWindow);
 
+    if (gimpPlugin && rtWindow->epanel && rtWindow->epanel->isRealized()) {
+        SaveFormat sf;
+        sf.format = "tif";
+        sf.tiffBits = 16;
+        sf.tiffUncompressed = true;
+        sf.saveParams = true;
+            
+        rtWindow->epanel->saveImmediately(argv2, sf);
+    }        
+
     gdk_threads_leave ();
+    
     delete rtWindow;
     rtengine::cleanup();
 
@@ -429,6 +453,16 @@ int processLineParams( int argc, char **argv )
             case 'w': // This case is handled outside this function
                 break;
 #endif
+            case 'g':
+                if (currParam == "-gimp") {
+                    simpleEditor = true;
+                    gimpPlugin = true;
+                    break;
+                }
+                // no break here on purpose
+
+            case 'v':
+                return 0;
 
             case 'h':
             case '?':
@@ -455,16 +489,24 @@ int processLineParams( int argc, char **argv )
 #ifdef WIN32
                 std::cout << "  -w Do not open the Windows console" << std::endl;
 #endif
+                std::cout << "  -v Print RawTherapee version number and exit" << std::endl;
                 std::cout << "  -h -? Display this help message" << std::endl;
                 return -1;
             }
             }
         } else {
-            argv1 = Glib::ustring(fname_to_utf8(argv[iArg]));
+            if (argv1.empty()) {
+                argv1 = Glib::ustring(fname_to_utf8(argv[iArg]));
 #if ECLIPSE_ARGS
-            argv1 = argv1.substr(1, argv1.length()-2);
+                argv1 = argv1.substr(1, argv1.length()-2);
 #endif
-            break;
+            } else if (gimpPlugin) {
+                argv2 = Glib::ustring(fname_to_utf8(argv[iArg]));
+                break;
+            }
+            if (!gimpPlugin) {
+                break;
+            }
         }
     }
 
