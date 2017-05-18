@@ -59,7 +59,7 @@ Glib::ustring argv0;
 Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
-bool simpleEditor;
+//bool simpleEditor;
 //Glib::Threads::Thread* mainThread;
 
 namespace
