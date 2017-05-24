@@ -3,6 +3,7 @@
  *
  * file-rawtherapee.c -- raw file format plug-in that uses rawtherapee
  * Copyright (C) 2016 Tobias Ellinghaus <me@houz.org>
+ * Copyright (C) 2017 Alberto Griggio <alberto.griggio@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

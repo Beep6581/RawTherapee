@@ -162,7 +162,7 @@ query (void)
 
       gimp_register_file_handler_mime (format->load_proc,
                                        format->mime_type);
-//      gimp_register_file_handler_raw (format->load_proc);
+      gimp_register_file_handler_raw (format->load_proc);
       gimp_register_magic_load_handler (format->load_proc,
                                         format->extensions,
                                         "",
