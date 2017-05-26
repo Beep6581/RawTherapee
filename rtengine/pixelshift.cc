@@ -50,15 +50,7 @@ float greenDiff(float a, float b, bool adaptive, float stddevFactor, float eperI
         avg *= eperIso;
         prnu *= avg;
         float stddev = stddevFactor * (avg + nreadIso + prnu * prnu);
-        float result = gDiff - stddev;
-
-        if(!showMotion) {
-            return result;
-        } else if(result > 0.f) { // for the motion mask
-            return std::fabs(a - b) / (std::max(a, b) + 0.01f);
-        } else {
-            return 0.f;
-        }
+        return std::max(gDiff - stddev, 0.f);
 #ifdef PIXELSHIFTDEV
 
     } else {
@@ -110,14 +102,7 @@ float nonGreenDiffCross(float right, float left, float top, float bottom, float 
     prnu *= avg;
     float stddev = stddevFactor * (avg + nreadIso + prnu * prnu);
     float result = std::min(hDiff, vDiff) - stddev;
-
-    if(!showMotion) {
-        return result;
-    } else if(result > 0.f) { // for the motion mask
-        return std::sqrt((result / (stddev + result + 0.01f)));
-    } else {
-        return 0.f;
-    }
+    return std::max(std::min(hDiff, vDiff) - stddev, 0.f);
 }
 
 void paintMotionMask(int index, bool showMotion, float gridMax, bool showOnlyMask, float *maskDest, float *nonMaskDest0, float *nonMaskDest1)
