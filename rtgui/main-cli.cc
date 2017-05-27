@@ -425,7 +425,7 @@ int processLineParams( int argc, char **argv )
 
             case 't':
                 outputType = "tif";
-                compression = ((currParam.at(2) != 'z') ? 0 : 1);
+                compression = ((currParam.size() < 3 || currParam.at(2) != 'z') ? 0 : 1);
                 break;
 
             case 'n':
