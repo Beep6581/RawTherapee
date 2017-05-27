@@ -101,7 +101,6 @@ float nonGreenDiffCross(float right, float left, float top, float bottom, float 
     avg *= eperIso;
     prnu *= avg;
     float stddev = stddevFactor * (avg + nreadIso + prnu * prnu);
-    float result = std::min(hDiff, vDiff) - stddev;
     return std::max(std::min(hDiff, vDiff) - stddev, 0.f);
 }
 
