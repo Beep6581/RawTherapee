@@ -647,10 +647,8 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 
 
     if(adaptive) {
-        // fill channels psRed, psG1, psG2 and psBlue
+        // fill channels psRed and psBlue
         array2D<float> psRed(winw + 32, winh); // increase width to avoid cache conflicts
-        array2D<float> psG1(winw + 32, winh);
-        array2D<float> psG2(winw + 32, winh);
         array2D<float> psBlue(winw + 32, winh);
 
 #ifdef _OPENMP
@@ -658,8 +656,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #endif
 
         for(int i = winy + 1; i < winh - 1; ++i) {
-            float *greenDest1 = psG1[i];
-            float *greenDest2 = psG2[i];
             float *nonGreenDest0 = psRed[i];
             float *nonGreenDest1 = psBlue[i];
             float ngbright[2][4] = {{redBrightness[0], redBrightness[1], redBrightness[2], redBrightness[3]},
@@ -672,7 +668,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             if((c + FC(i, j + 1)) == 3) {
                 // row with blue pixels => swap destination pointers for non green pixels
                 std::swap(nonGreenDest0, nonGreenDest1);
-                std::swap(greenDest1, greenDest2);
                 ng ^= 1;
             }
 
@@ -680,9 +675,7 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             unsigned int offset = c & 1;
 
             for(; j < winw - 1; ++j) {
-                // store the values from the 4 frames into 4 different temporary planes
-                greenDest1[j] = (*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset];
-                greenDest2[j] = (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset];
+                // store the non green values from the 4 frames into 2 temporary planes
                 nonGreenDest0[j] = (*rawDataFrames[(offset << 1) + offset])[i][j + offset] * ngbright[ng][(offset << 1) + offset];
                 nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * ngbright[ng ^ 1][2 - offset];
                 offset ^= 1; // 0 => 1 or 1 => 0
@@ -722,11 +715,14 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
 #endif
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
-            for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
+            // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
+            unsigned int offset = FC(i, winx + border - offsX) & 1;
+
+            for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 psMask[i][j] = 1.f;
 
                 if(checkGreen) {
-                    if(greenDiff(psG1[i][j], psG2[i][j], stddevFactorGreen, eperIsoGreen, nRead, prnu) > 0.f) {
+                    if(greenDiff((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset], (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset], stddevFactorGreen, eperIsoGreen, nRead, prnu) > 0.f) {
                         psMask[i][j] = greenWeight;
                         // do not set the motion pixel values. They have already been set by demosaicer
                         continue;
@@ -844,7 +840,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             float *redDest = red[i + offsY];
             float *blueDest = blue[i + offsY];
 
-            for(int j = winx + border - offsX; j < winw - (border + offsX); ++j) {
+            // offset to keep the code short. It changes its value between 0 and 1 for each iteration of the loop
+            unsigned int offset = FC(i, winx + border - offsX) & 1;
+
+            for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 if(mask[i][j] == 255) {
                     paintMotionMask(j + offsX, showMotion, showOnlyMask, greenDest, redDest, blueDest);
                 } else if(showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
@@ -858,11 +857,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         const float blend = smoothFactor == 0.f ? 1.f : pow_F(std::max(psMask[i][j] - 1.f, 0.f), smoothFactor);
 #endif
                         redDest[j + offsX] = intp(blend, redDest[j + offsX], psRed[i][j] );
-                        greenDest[j + offsX] = intp(blend, greenDest[j + offsX], (psG1[i][j] + psG2[i][j]) * 0.5f);
+                        greenDest[j + offsX] = intp(blend, greenDest[j + offsX], ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f);
                         blueDest[j + offsX] = intp(blend, blueDest[j + offsX], psBlue[i][j]);
                     } else {
                         redDest[j + offsX] = psRed[i][j];
-                        greenDest[j + offsX] = (psG1[i][j] + psG2[i][j]) * 0.5f;
+                        greenDest[j + offsX] = ((*rawDataFrames[1 - offset])[i - offset + 1][j] * greenBrightness[1 - offset] + (*rawDataFrames[3 - offset])[i + offset][j + 1] * greenBrightness[3 - offset]) * 0.5f;
                         blueDest[j + offsX] = psBlue[i][j];
                     }
                 }
