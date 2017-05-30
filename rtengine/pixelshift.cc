@@ -316,53 +316,57 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         bayerParams.setPixelShiftDefaults();
         bayerParams.pixelShiftEqualBright = pixelShiftEqualBright;
     } else if(bayerParams.pixelShiftMotionCorrectionMethod == RAWParams::BayerSensor::Off) {
-        bayerParams.pixelShiftMotion = 0;
         bayerParams.pixelShiftAutomatic = false;
         bayerParams.pixelShiftShowMotion = false;
     }
 
-    if((bayerParams.pixelShiftMotion > 0 || bayerParams.pixelShiftAutomatic)) {
-        if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
-            if(bayerParams.pixelShiftLmmse) {
-                lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
-            } else {
-                amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue);
-            }
+    const bool showMotion = bayerParams.pixelShiftShowMotion;
+    const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
 
-            multi_array2D<float, 3> redTmp(winw, winh);
-            multi_array2D<float, 3> greenTmp(winw, winh);
-            multi_array2D<float, 3> blueTmp(winw, winh);
-
-            for(int i = 0; i < 3; i++) {
+    if(bayerParams.pixelShiftAutomatic) {
+        if(!showOnlyMask) {
+            if(bayerParams.pixelShiftMedian) { // We need the amaze demosaiced frames for motion correction
                 if(bayerParams.pixelShiftLmmse) {
-                    lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.lmmse_iterations);
+                    lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
                 } else {
-                    amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i]);
-                }
-            }
-
-#ifdef _OPENMP
-            #pragma omp parallel for schedule(dynamic,16)
-#endif
-
-            for(int i = winy + border; i < winh - border; i++) {
-                for(int j = winx + border; j < winw - border; j++) {
-                    red[i][j] = median(red[i][j], redTmp[0][i + 1][j], redTmp[1][i + 1][j + 1], redTmp[2][i][j + 1]);
+                    amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[0]), red, green, blue);
                 }
 
-                for(int j = winx + border; j < winw - border; j++) {
-                    green[i][j] = median(green[i][j], greenTmp[0][i + 1][j], greenTmp[1][i + 1][j + 1], greenTmp[2][i][j + 1]);
+                multi_array2D<float, 3> redTmp(winw, winh);
+                multi_array2D<float, 3> greenTmp(winw, winh);
+                multi_array2D<float, 3> blueTmp(winw, winh);
+
+                for(int i = 0; i < 3; i++) {
+                    if(bayerParams.pixelShiftLmmse) {
+                        lmmse_interpolate_omp(winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], bayerParams.lmmse_iterations);
+                    } else {
+                        amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i]);
+                    }
                 }
 
-                for(int j = winx + border; j < winw - border; j++) {
-                    blue[i][j] = median(blue[i][j], blueTmp[0][i + 1][j], blueTmp[1][i + 1][j + 1], blueTmp[2][i][j + 1]);
+    #ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+    #endif
+
+                for(int i = winy + border; i < winh - border; i++) {
+                    for(int j = winx + border; j < winw - border; j++) {
+                        red[i][j] = median(red[i][j], redTmp[0][i + 1][j], redTmp[1][i + 1][j + 1], redTmp[2][i][j + 1]);
+                    }
+
+                    for(int j = winx + border; j < winw - border; j++) {
+                        green[i][j] = median(green[i][j], greenTmp[0][i + 1][j], greenTmp[1][i + 1][j + 1], greenTmp[2][i][j + 1]);
+                    }
+
+                    for(int j = winx + border; j < winw - border; j++) {
+                        blue[i][j] = median(blue[i][j], blueTmp[0][i + 1][j], blueTmp[1][i + 1][j + 1], blueTmp[2][i][j + 1]);
+                    }
                 }
-            }
-        } else {
-            if(bayerParams.pixelShiftLmmse) {
-                lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
             } else {
-                amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
+                if(bayerParams.pixelShiftLmmse) {
+                    lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
+                } else {
+                    amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
+                }
             }
         }
     } else if(bayerParams.pixelShiftMotionCorrectionMethod != RAWParams::BayerSensor::Off) {
@@ -373,8 +377,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
         }
     }
 
-    const bool showMotion = bayerParams.pixelShiftShowMotion;
-    const bool showOnlyMask = bayerParams.pixelShiftShowMotionMaskOnly && showMotion;
     const bool adaptive = bayerParams.pixelShiftAutomatic;
     constexpr float stddevFactorGreen = 25.f;
     constexpr float stddevFactorRed = 25.f;
