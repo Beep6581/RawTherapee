@@ -344,9 +344,9 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                     }
                 }
 
-    #ifdef _OPENMP
+#ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
-    #endif
+#endif
 
                 for(int i = winy + border; i < winh - border; i++) {
                     for(int j = winx + border; j < winw - border; j++) {
