@@ -58,7 +58,7 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 x[i] = p[ix++];
                 y[i] = p[ix++];
 
-                if (x[i] != y[i]) {
+                if (std::fabs(x[i] - y[i]) >= 0.000009) {
                     identity = false;
                 }
             }
