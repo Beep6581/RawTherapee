@@ -2102,13 +2102,13 @@ float ImProcFunctions::MadMax(float * DataList, int & max, int datalen)
 
 }
 
-float ImProcFunctions::Mad(float * DataList, const int datalen)
+float ImProcFunctions::Mad(float * DataList, int datalen)
 {
     if(datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
-    //computes Median Absolute Deviation
+    //computes Median
     //DataList values should mostly have abs val < 256 because we are in Lab mode
     int histo[256] ALIGNED64 = {0};
 
@@ -2118,7 +2118,18 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
     }
 
     //find median of histogram
+    constexpr int skippedValues = 20;
     int median = 0, count = 0;
+    int skip = 0;
+
+    for(int i = 0; i < skippedValues; ++i) {
+        skip += histo[i];
+    }
+
+    if(skip != datalen) { // skip first skippedValues values
+        datalen -= skip;
+        median += skippedValues;
+    }
 
     while (count < datalen / 2) {
         count += histo[median];
@@ -2126,18 +2137,17 @@ float ImProcFunctions::Mad(float * DataList, const int datalen)
     }
 
     int count_ = count - histo[median - 1];
-
     // interpolate
     return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745);
 }
 
-float ImProcFunctions::MadRgb(float * DataList, const int datalen)
+float ImProcFunctions::MadRgb(float * DataList, int datalen)
 {
     if(datalen <= 1) { // Avoid possible buffer underrun
         return 0;
     }
 
-    //computes Median Absolute Deviation
+    //computes Median
     //DataList values should mostly have abs val < 65536 because we are in RGB mode
     int * histo = new int[65536];
 
@@ -2154,6 +2164,11 @@ float ImProcFunctions::MadRgb(float * DataList, const int datalen)
 
     //find median of histogram
     int median = 0, count = 0;
+    int skip = (histo[0] + histo[1]);
+    if(skip != datalen) { // skip first 2 values
+        datalen -= skip;
+        median += 2;
+    }
 
     while (count < datalen / 2) {
         count += histo[median];
