@@ -18,6 +18,7 @@
  */
 
 #include <gtkmm.h>
+#include <regex>
 #include "rtwindow.h"
 #include "options.h"
 #include "preferences.h"
@@ -319,22 +320,38 @@ void RTWindow::on_realize ()
 
     mainWindowCursorManager.init(get_window());
 
-    // Check if first run of this version, then display the Release Notes text
-    if (options.version != versionString) {
+    // Display release notes only if new major version.
+    // Pattern matches "5.1" from "5.1-23-g12345678"
+    std::string vs[] = {versionString, options.version};
+    std::regex pat("(^[0-9.]+).*");
+    std::smatch sm;
+    std::vector<std::string> vMajor;
+    for (const auto &v : vs) {
+        if (std::regex_match(v, sm, pat)) {
+            if (sm.size() == 2) {
+                std::ssub_match smsub = sm[1];
+                vMajor.push_back(smsub.str());
+            }
+        }
+    }
 
-        // Update the version parameter with the right value
-        options.version = versionString;
+    if (vMajor.size() == 2) {
+        if (vMajor[0] != vMajor[1]) {
 
-        splash = new Splash (*this);
-        splash->set_transient_for (*this);
-        splash->signal_delete_event().connect( sigc::mem_fun(*this, &RTWindow::splashClosed) );
+            // Update the version parameter with the right value
+            options.version = versionString;
 
-        if (splash->hasReleaseNotes()) {
-            splash->showReleaseNotes();
-            splash->show ();
-        } else {
-            delete splash;
-            splash = nullptr;
+            splash = new Splash (*this);
+            splash->set_transient_for (*this);
+            splash->signal_delete_event().connect( sigc::mem_fun(*this, &RTWindow::splashClosed) );
+
+            if (splash->hasReleaseNotes()) {
+                splash->showReleaseNotes();
+                splash->show ();
+            } else {
+                delete splash;
+                splash = nullptr;
+            }
         }
     }
 }
