@@ -33,7 +33,7 @@ private:
     void* real ;
     char alignment;
     size_t allocatedSize;
-    int unitSize;
+    unsigned int unitSize;
 
 public:
     T* data ;
@@ -69,7 +69,7 @@ public:
     * @param structSize if non null, will let you override the default struct's size (unit: byte)
     * @return True is everything went fine, including freeing memory when size==0, false if the allocation failed
     */
-    bool resize(size_t size, int structSize = 0)
+    bool resize(size_t size, unsigned int structSize = 0)
     {
         if (allocatedSize != size) {
             if (!size) {
@@ -136,9 +136,21 @@ public:
         std::swap(inUse, other.inUse);
     }
 
-    unsigned int getSize() const
+    size_t getSize() const
     {
         return unitSize ? allocatedSize / unitSize : 0;
+    }
+
+    T &operator [](size_t idx)
+    {
+        assert(idx < getSize());
+        return data[idx];
+    }
+
+    const T &operator [](size_t idx) const
+    {
+        assert(idx < getSize());
+        return data[idx];
     }
 };
 
