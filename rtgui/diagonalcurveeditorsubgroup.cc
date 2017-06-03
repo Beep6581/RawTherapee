@@ -620,7 +620,9 @@ void DiagonalCurveEditorSubGroup::switchGUI()
         } else {
             // dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
             if (!leftBar) {
-                leftBar = new ColoredBar(RTO_Bottom2Top);
+				leftBar = new ColoredBar(RTO_Bottom2Top);
+				
+				
             }
 
             if (barColorProvider) {

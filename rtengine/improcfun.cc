@@ -2365,13 +2365,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             hist16JCAM[posl]++;
 
                             if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
-                                chsacol = 327.f;
+                                chsacol = 400.f;//327
                                 colch = C;    //450.0 approximative factor for s    320 for M
                             } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
                                 chsacol = 450.0f;
                                 colch = s;
                             } else { /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/
-                                chsacol = 327.0f;
+                                chsacol = 400.0f;//327
                                 colch = M;
                             }
 
