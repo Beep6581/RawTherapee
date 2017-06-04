@@ -39,6 +39,7 @@ RawImage::~RawImage()
 {
     if(ifp) {
         fclose(ifp);
+        ifp = nullptr;
     }
 
     if( image ) {
@@ -410,7 +411,11 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
     verbose = settings->verbose;
     oprof = nullptr;
 
-    ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+    if(!ifp) {
+        ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+    } else  {
+        fseek (ifp, 0, SEEK_SET);
+    }
 
     if (!ifp) {
         return 3;

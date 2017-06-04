@@ -518,7 +518,7 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     mvbpp->pack_start ( *fdf , Gtk::PACK_SHRINK, 4);
 
     //dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
-    dfconn = darkFrameDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
+    dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
 
     // FLATFIELD
     Gtk::Frame* fff = Gtk::manage (new Gtk::Frame (M("PREFERENCES_FLATFIELD")) );
@@ -535,7 +535,7 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     mvbpp->pack_start ( *fff , Gtk::PACK_SHRINK, 4);
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
-    ffconn = flatFieldDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
+    ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
 
     //Cluts Dir
     Gtk::Frame* clutsDirFrame = Gtk::manage (new Gtk::Frame (M("PREFERENCES_FILMSIMULATION")) );
