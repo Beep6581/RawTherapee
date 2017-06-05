@@ -6,7 +6,6 @@
 #endif
 #include "sleef.c"
 #include "opthelper.h"
-#include <iostream>
 #define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 #define DIAGONALS 5
