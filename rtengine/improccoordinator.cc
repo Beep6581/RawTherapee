@@ -398,7 +398,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             oprevi = new Imagefloat (pW, pH);
         if (needstransform)
             ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
-                           imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
+                           imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getMetaData()->getFNumber(), imgsrc->getRotateDegree(), false);
         else
             orig_prev->copyData(oprevi);
     }
@@ -1212,7 +1212,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fW, fH);
         ipf.transform (im, trImg, 0, 0, 0, 0, fW, fH, fW, fH, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(),
-                       imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), true);
+                       imgsrc->getMetaData()->getFocusDist(), imgsrc->getMetaData()->getFNumber(), imgsrc->getRotateDegree(), true);
         delete im;
         im = trImg;
     }
