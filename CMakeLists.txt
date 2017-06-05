@@ -256,7 +256,10 @@ find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
-find_package (KLT)
+option(USE_SYSTEM_KLT "Enable this option here or in cmake call if you want to use system's KLT libraries." OFF)
+if (USE_SYSTEM_KLT)
+  find_package (KLT REQUIRED)
+endif(USE_SYSTEM_KLT)
 
 # link witz bzip
 if (WITH_BZIP)

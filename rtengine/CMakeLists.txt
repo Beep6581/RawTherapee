@@ -24,7 +24,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc 
     ciecam02.cc
     )
 
-if (NOT KLT_FOUND)
+if (NOT USE_SYSTEM_KLT)
     set (RTENGINESOURCEFILES ${RTENGINESOURCEFILES}
 	klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
 	klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
