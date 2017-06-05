@@ -1441,6 +1441,9 @@ public:
     int  load           (const Glib::ustring &fName);
     void set            (bool v);
     const void applyTo  (ProcParams *destParams) const ;
+private:
+    bool ownsPparams;
+    bool ownsPedited;
 };
 
 /**
