@@ -64,7 +64,7 @@ else (KLT_LIBRARIES AND KLT_INCLUDE_DIRS)
       message(STATUS "Found KLT: ${KLT_LIBRARIES}")
     endif (NOT KLT_FIND_QUIETLY)
   else (KLT_FOUND)
-      message(STATUS "Could not find KLT, using internal code.")
+      message(STATUS "KLT not found.")
   endif (KLT_FOUND)
 
   mark_as_advanced(KLT_INCLUDE_DIRS KLT_LIBRARIES)

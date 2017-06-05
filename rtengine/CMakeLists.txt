@@ -119,7 +119,7 @@ if (NOT USE_SYSTEM_KLT)
     set (KLT_LIBRARIES)
 endif ()
 
-include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
 add_library(rtengine ${RTENGINESOURCEFILES})
 add_dependencies(rtengine UpdateInfo)
