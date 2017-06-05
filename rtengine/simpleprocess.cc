@@ -43,7 +43,7 @@ void adjust_radius(const T &default_param, double scale_factor, T &param)
     const double delta = (param - default_param) * scale_factor;
     param = default_param + delta;
 }
-    
+
 
 class ImageProcessor {
 public:
@@ -91,7 +91,7 @@ private:
         }
 
         pl = nullptr;
-        
+
         if (!stage_init()) {
             return nullptr;
         }
@@ -267,12 +267,8 @@ private:
         if(settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "PON") {
             MyTime t1pone, t2pone;
             t1pone.set();
-            int crW, crH;
-
-            if(settings->leveldnv == 0) {
-                crW = 100;
-                crH = 100;
-            }
+            int crW = 100; // settings->leveldnv == 0
+            int crH = 100; // settings->leveldnv == 0
 
             if(settings->leveldnv == 1) {
                 crW = 250;
@@ -540,7 +536,7 @@ private:
                             PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
                             imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw);
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
-                            
+
 
                             // we only need image reduced to 1/4 here
                             for(int ii = 0; ii < crH; ii += 2) {
@@ -713,7 +709,7 @@ private:
         hlcompr = params.toneCurve.hlcompr;
         hlcomprthresh = params.toneCurve.hlcomprthresh;
 
-        
+
         if (params.toneCurve.autoexp) {
             LUTu aehist;
             int aehistcompr;
@@ -737,7 +733,7 @@ private:
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = *(ipf_p.get());
-        
+
         // perform luma/chroma denoise
 //  CieImage *cieView;
 //  NoisCurve noiseLCurve;
@@ -801,7 +797,7 @@ private:
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = *(ipf_p.get());        
+        ImProcFunctions &ipf = *(ipf_p.get());
 
         imgsrc->convertColorSpace(baseImg, params.icm, currWB);
 
@@ -809,7 +805,7 @@ private:
         hist16 (65536);
 
         ipf.firstAnalysis (baseImg, params, hist16);
-        
+
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = new Imagefloat (fw, fh);
@@ -824,7 +820,7 @@ private:
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = *(ipf_p.get());        
+        ImProcFunctions &ipf = *(ipf_p.get());
 
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
             const int W = baseImg->getWidth();
@@ -1350,8 +1346,8 @@ private:
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = *(ipf_p.get());        
-        
+        ImProcFunctions &ipf = *(ipf_p.get());
+
         int imw, imh;
         double scale_factor = ipf.resizeScale(&params, fw, fh, imw, imh);
 
@@ -1387,7 +1383,7 @@ private:
         }
 
         adjust_procparams(scale_factor);
-            
+
         fw = imw;
         fh = imh;
 
@@ -1437,7 +1433,7 @@ private:
                 }
             }
         }
-        
+
         params.epd.scale *= scale_factor;
         //params.epd.edgeStopping *= scale_factor;
 
@@ -1528,7 +1524,7 @@ private:
     LUTf gCurve;
     LUTf bCurve;
     LUTu dummy;
-    
+
     ToneCurve customToneCurve1, customToneCurve2;
     ColorGradientCurve ctColorCurve;
     OpacityCurve ctOpacityCurve;

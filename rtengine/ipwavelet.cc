@@ -1253,7 +1253,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         delete [] meanN;
         delete [] sigma;
         delete [] sigmaN;
-
+        delete [] MaxP;
+        delete [] MaxN;
     }
 #ifdef _RT_NESTED_OPENMP
     omp_set_nested(oldNested);

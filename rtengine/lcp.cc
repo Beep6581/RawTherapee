@@ -737,7 +737,7 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     if (!pProf->inCamProfiles || pProf->inAlternateLensID || pProf->inAlternateLensNames || *pProf->inInvalidTag) {
         return;
     }
-    
+
     for (int i = 0; i < len; ++i) {
         pProf->textbuf << s[i];
     }
@@ -746,8 +746,6 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
 
 void LCPProfile::handle_text(std::string text)
 {
-    const char *raw = text.c_str();
-    
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace = true;
     for (size_t i = 0; i < text.size(); ++i) {
@@ -765,6 +763,8 @@ void LCPProfile::handle_text(std::string text)
 
     // convert to null terminated
     char* tag = pProf->lastTag;
+
+    const char* raw = text.c_str();
 
     // Common data section
     if (!pProf->firstLIDone) {
