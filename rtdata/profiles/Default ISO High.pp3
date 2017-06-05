@@ -1,19 +1,18 @@
 [Version]
-AppVersion=4.2.84
-Version=322
+AppVersion=5.1
+Version=326
 
 [Exposure]
 Auto=true
 Clip=0.02
 Saturation=0
-CurveMode=Standard
-CurveMode2=Standard
+CurveMode=Perceptual
+CurveMode2=Perceptual
 Curve=0;
 Curve2=0;
 
-[HLRecovery]
-Enabled=true
-Method=Blend
+[Retinex]
+Enabled=false
 
 [Channel Mixer]
 Red=100;0;0;
@@ -42,19 +41,6 @@ ClCurve=0;
 
 [Sharpening]
 Enabled=false
-Method=usm
-Radius=0.7
-Amount=250
-Threshold=20;80;2000;1200;
-OnlyEdges=false
-EdgedetectionRadius=1.9
-EdgeTolerance=1800
-HalocontrolEnabled=false
-HalocontrolAmount=85
-DeconvRadius=0.75
-DeconvAmount=75
-DeconvDamping=20
-DeconvIterations=30
 
 [Vibrance]
 Enabled=false
@@ -68,6 +54,7 @@ Enabled=false
 [White Balance]
 Setting=Camera
 Equal=1
+TemperatureBias=0
 
 [Color appearance]
 Enabled=false
@@ -82,19 +69,19 @@ Enabled=false
 Enabled=true
 Enhance=false
 Median=true
-Luma=0
-Ldetail=50
-Chroma=30
+Auto=false
+Luma=40
+Ldetail=80
 Method=Lab
+LMethod=SLI
+CMethod=MAN
+C2Method=AUTO
 SMethod=shal
-MedMethod=33
+MedMethod=soft
 RGBMethod=soft
-MethodMed=Lab
-Redchro=0
-Bluechro=0
+MethodMed=Lpab
 Gamma=1.7
-Passes=3
-LCurve=1;0.05;0.5;0.35;0.35;0.55;0.04;0.35;0.35;
+Passes=1
 
 [EPD]
 Enabled=false
@@ -108,15 +95,35 @@ Enabled=false
 [PCVignette]
 Enabled=false
 
+[Color Management]
+InputProfile=(cameraICC)
+ToneCurve=false
+ApplyLookTable=false
+ApplyBaselineExposureOffset=true
+ApplyHueSatMap=true
+BlendCMSMatrix=false
+DCPIlluminant=0
+WorkingProfile=ProPhoto
+OutputProfile=RT_sRGB
+OutputProfileIntent=Relative
+OutputBPC=true
+Gammafree=default
+Freegamma=false
+GammaValue=2.2200000000000002
+GammaSlope=4.5
+
+[Wavelet]
+Enabled=false
+
+[Directional Pyramid Equalizer]
+Enabled=false
+
 [HSV Equalizer]
 HCurve=0;
 SCurve=0;
 VCurve=0;
 
 [Film Simulation]
-Enabled=false
-
-[Wavelet]
 Enabled=false
 
 [RGB Curves]
@@ -134,12 +141,15 @@ DarkFrameAuto=false
 FlatFieldFile=/szeva
 FlatFieldAutoSelect=false
 CA=true
-HotPixelFilter=true
+HotPixelFilter=false
 DeadPixelFilter=false
 HotDeadPixelThresh=100
+PreExposure=1
+PrePreserv=0
 
 [RAW Bayer]
 Method=lmmse
+ImageNum=1
 CcSteps=0
 PreBlack0=0
 PreBlack1=0

@@ -27,7 +27,7 @@
 ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
                                      double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
                                      ThresholdCurveProvider* curveProvider)
-    : ColoredBar(RTO_Left2Right)
+    : coloredBar(RTO_Left2Right)
 {
     positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
     positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
@@ -53,7 +53,7 @@ ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBotto
 
 ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottom,
                                      double defTop, unsigned int precision, bool startAtOne)
-    : ColoredBar(RTO_Left2Right)
+    : coloredBar(RTO_Left2Right)
 {
     positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
     positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
@@ -93,7 +93,7 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
 
 ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottomLeft, double defTopLeft,
                                      double defBottomRight, double defTopRight, unsigned int precision, bool startAtOne)
-    : ColoredBar(RTO_Left2Right)
+    : coloredBar(RTO_Left2Right)
 {
     positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottomLeft;
     positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTopLeft;
@@ -142,13 +142,47 @@ void ThresholdSelector::initValues ()
     oldLitCursor = litCursor = TS_UNDEFINED;
     movedCursor = TS_UNDEFINED;
     secondaryMovedCursor = TS_UNDEFINED;
-    set_size_request (-1, 30);
-    add_events(Gdk::LEAVE_NOTIFY_MASK);
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+
+    style->add_class("drawingarea");
+    style->add_class(GTK_STYLE_CLASS_TROUGH);
+    //style->add_class(GTK_STYLE_CLASS_SCALE);
+    style->add_class(GTK_STYLE_CLASS_SLIDER);
+
     set_name("ThresholdSelector");
     set_can_focus(false);
     set_app_paintable(true);
     setDirty(true);
     updateTooltip();
+}
+
+Gtk::SizeRequestMode ThresholdSelector::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void ThresholdSelector::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    int minimumWidth = 0;
+    int naturalWidth = 0;
+    get_preferred_width_vfunc (minimumWidth, naturalWidth);
+    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
+}
+
+void ThresholdSelector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 60;
+    natural_width = 150;
+}
+
+void ThresholdSelector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    natural_height = minimum_height = 23;
+}
+
+void ThresholdSelector::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
 /*
@@ -211,21 +245,32 @@ void ThresholdSelector::on_realize()
 
     Gtk::DrawingArea::on_realize();
 
-    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::LEAVE_NOTIFY_MASK);
 }
 
-bool ThresholdSelector::on_expose_event(GdkEventExpose* event)
+void ThresholdSelector::updateBackBuffer()
 {
 
-    Gdk::Color c;
-    Glib::RefPtr<Gdk::Window> win = get_window();
-    Cairo::RefPtr<Cairo::Context> cr = win->create_cairo_context();
+    // This will create or update the size of the BackBuffer::surface
+    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, get_width(), get_height(), true);
+
+    if (!surface) {
+        return;
+    }
+
+    Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+
+    cr->set_source_rgba (0., 0., 0., 0.);
+    cr->set_operator (Cairo::OPERATOR_CLEAR);
+    cr->paint ();
+    cr->set_operator (Cairo::OPERATOR_OVER);
 
     double positions01[4];
     int w = get_width ();
     int h = get_height ();
 
-    wslider = std::max(int(h / 5), 10);
+    int wslider = 10;
     int hwslider = wslider / 2;
     int iw = w - wslider - 2 * hb; // inner width  (excluding padding for sliders)
 
@@ -234,34 +279,24 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event)
     positions01[TS_BOTTOMRIGHT] = to01(TS_BOTTOMRIGHT);
     positions01[TS_TOPRIGHT]    = to01(TS_TOPRIGHT);
 
-    Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
-    Glib::RefPtr<Gtk::Style> style = get_style();
-
     // set the box's colors
     cr->set_line_width (1.0);
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
-    if (is_sensitive() && canGetColors()) {
-        // gradient background
-        Glib::RefPtr<Gdk::Window> win = get_window();
-        // this will eventually create/update the off-screen Surface
-        setDrawRectangle(win, hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
+    if (is_sensitive() && coloredBar.canGetColors()) {
+        // this will eventually create/update the off-screen Surface for the gradient area only !
+        coloredBar.setDrawRectangle(hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
         // that we're displaying here
-        ColoredBar::expose(win);
+        coloredBar.expose(*this, cr);
     } else {
-        // solid background
-        c = style->get_bg (state);
-
-        if (state == Gtk::STATE_INSENSITIVE) {
-            cr->set_source_rgb (c.get_red_p() * 0.96, c.get_green_p() * 0.96, c.get_blue_p() * 0.96);
-        } else {
-            cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
-        }
-
-        // draw the box's background
-        cr->rectangle (hb + hwslider - 0.5, double(int(float(h) * 1.5f / 7.f)) + 0.5, iw + 1, double(int(float(h) * 4.f / 7.f)));
-        cr->fill();
+        style->render_background(cr, hb + hwslider, int(float(h) * 1.5f / 7.f + 0.5f), iw + 1, int(float(h) * 4.f / 7.f + 0.5f));
     }
+
+    // draw the box's borders
+    style->render_frame(cr, hb + hwslider - 0.5, double(int(float(h) * 1.5f / 7.f)) + 0.5, iw + 1, double(int(float(h) * 4.f / 7.f)));
+
+    cr->set_line_width (1.);
+    cr->set_antialias(Cairo::ANTIALIAS_NONE);
 
     // draw curve
 
@@ -337,90 +372,110 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event)
         }
     }
 
-    if (is_sensitive() && bgGradient.size() > 1) {
+    cr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
+
+    if (is_sensitive() && coloredBar.canGetColors()) {
         // draw surrounding curve
-        c = style->get_bg (state);
-        cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
+        cr->set_source_rgb (0., 0., 0.);
         cr->set_line_width (5.0);
         cr->stroke_preserve();
     }
 
     // draw curve
     if (is_sensitive()) {
-        c = style->get_fg (movedCursor != TS_UNDEFINED || litCursor != TS_UNDEFINED ? Gtk::STATE_PRELIGHT : Gtk::STATE_ACTIVE);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->set_source_rgb (1., 1., 1.);
     } else {
-        c = style->get_bg (Gtk::STATE_INSENSITIVE);
-        cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
+        cr->set_source_rgba (0., 0., 0., 0.5);
     }
 
     cr->set_line_width (1.5);
     cr->stroke ();
 
-    // draw the box's borders
-    cr->set_line_width (1.);
-    cr->rectangle (hb + hwslider - 0.5, double(int(float(h) * 1.5f / 7.f)) + 0.5, iw + 1, double(int(float(h) * 4.f / 7.f)));
-    c = style->get_bg (state);
-
-    if (state == Gtk::STATE_INSENSITIVE) {
-        cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
-    } else {
-        cr->set_source_rgb (c.get_red_p() * 0.7, c.get_green_p() * 0.7, c.get_blue_p() * 0.7);
-    }
-
-    cr->stroke ();
-
     // draw sliders
     //if (!(litCursor == TS_UNDEFINED && movedCursor == TS_UNDEFINED)) {
-    //cr->set_line_width (1.);
-    for (int i = 0; i < (doubleThresh ? 4 : 2); i++) {
-        double posX = hb + hwslider + iw * positions01[i] + 0.5;
-        double arrowY = i == 0 || i == 2 ? h - (h * 2.5 / 7. - 0.5) - vb : h * 2.5 / 7. - 0.5 + vb;
-        double baseY = i == 0 || i == 2 ? h - 0.5 - vb : 0.5 + vb;
-        double centerY = (arrowY + baseY) / 2.;
-        cr->move_to (posX, arrowY);
-        cr->line_to (posX + hwslider, centerY);
-        cr->line_to (posX + hwslider, baseY);
-        cr->line_to (posX - hwslider, baseY);
-        cr->line_to (posX - hwslider, centerY);
-        cr->close_path();
+    Gtk::StateFlags currState = style->get_state();
 
-        if (i == movedCursor) {
-            // moved (selected)
-            c = style->get_bg (Gtk::STATE_SELECTED);
-            cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-            cr->fill_preserve ();
-            //c = style->get_dark (Gtk::STATE_SELECTED);
-            //cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-            c = style->get_bg (state);
-            cr->set_source_rgb (c.get_red_p() * 0.55, c.get_green_p() * 0.55, c.get_blue_p() * 0.55);
-            cr->stroke ();
-        } else if (i == secondaryMovedCursor || (movedCursor == TS_UNDEFINED && i == litCursor)) {
-            // prelight
-            c = style->get_bg (Gtk::STATE_PRELIGHT);
-            cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-            cr->fill_preserve ();
-            c = style->get_bg (state);
-            cr->set_source_rgb (c.get_red_p() * 0.55, c.get_green_p() * 0.55, c.get_blue_p() * 0.55);
-            cr->stroke ();
+    for (int i = 0; i < (doubleThresh ? 4 : 2); ++i) {
+        if (!is_sensitive()) {
+            style->set_state(Gtk::STATE_FLAG_INSENSITIVE);
+        } else if (i == movedCursor) {
+            style->set_state(Gtk::STATE_FLAG_ACTIVE);
+        } else if (i == litCursor) {
+            style->set_state(Gtk::STATE_FLAG_PRELIGHT);
         } else {
-            // normal
-            c = style->get_bg (is_sensitive() ? Gtk::STATE_ACTIVE : Gtk::STATE_INSENSITIVE);
-            cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+            style->set_state(Gtk::STATE_FLAG_NORMAL);
+        }
+
+        double posX = hb + iw * positions01[i] + 0.5;
+        double arrowY = i == 0 || i == 2 ? h - (h * 3. / 7. - 0.5) - vb : h * 3. / 7. - 0.5 + vb;
+        double baseY = i == 0 || i == 2 ? h - 0.5 - vb : 0.5 + vb;
+
+        style->render_slider(cr, posX, i == 0 || i == 2 ? arrowY : baseY, wslider, i == 0 || i == 2 ? baseY - arrowY : arrowY - baseY, Gtk::ORIENTATION_HORIZONTAL);
+    }
+
+    style->set_state(currState);
+
+    /*
+     *
+    Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
+
+    cr->set_line_width (1.);
+    for (int i=0; i<(doubleThresh?4:2); i++) {
+        double posX = hb+hwslider+iw*positions01[i]+0.5;
+        double arrowY = i==0 || i==2 ? h-(h*2.5/7.-0.5)-vb : h*2.5/7.-0.5+vb;
+        double baseY = i==0 || i==2 ? h-0.5-vb : 0.5+vb;
+        double centerY = (arrowY+baseY)/2.;
+        cr->move_to (posX, arrowY);
+        cr->line_to (posX+hwslider, centerY);
+        cr->line_to (posX+hwslider, baseY);
+        cr->line_to (posX-hwslider, baseY);
+        cr->line_to (posX-hwslider, centerY);
+        cr->close_path();
+        if (i==movedCursor) {
+            // moved (selected)
+            c = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
             cr->fill_preserve ();
-            c = style->get_bg (state);
-
-            if (state == Gtk::STATE_INSENSITIVE) {
-                cr->set_source_rgb (c.get_red_p() * 0.85, c.get_green_p() * 0.85, c.get_blue_p() * 0.85);
-            } else {
-                cr->set_source_rgb (c.get_red_p() * 0.7, c.get_green_p() * 0.7, c.get_blue_p() * 0.7);
-            }
-
+            c = style->get_border_color (Gtk::STATE_FLAG_SELECTED);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+            cr->stroke ();
+        }
+        else if (i==secondaryMovedCursor || (movedCursor==TS_UNDEFINED && i==litCursor)) {
+            // prelight
+            c = style->get_background_color(Gtk::STATE_FLAG_PRELIGHT);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+            cr->fill_preserve ();
+            c = style->get_border_color (Gtk::STATE_FLAG_PRELIGHT);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+            cr->stroke ();
+        }
+        else {
+            // normal
+            c = style->get_background_color(is_sensitive() ? Gtk::STATE_FLAG_ACTIVE : Gtk::STATE_FLAG_INSENSITIVE);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+            cr->fill_preserve ();
+            c = style->get_border_color (is_sensitive() ? Gtk::STATE_FLAG_ACTIVE : Gtk::STATE_FLAG_INSENSITIVE);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
             cr->stroke ();
         }
     }
-
+    */
     //}
+}
+
+bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
+{
+
+    // on_realize & updateBackBuffer have to be called before
+    if (get_realized() && get_width() && get_height()) {
+        if (isDirty()) {
+            updateBackBuffer();
+        }
+
+        if (surface) {
+            copySurface(cr);
+        }
+    }
 
     return true;
 }

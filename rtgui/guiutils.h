@@ -19,20 +19,56 @@
 #ifndef __GUI_UTILS_
 #define __GUI_UTILS_
 
+#include <map>
+
 #include <gtkmm.h>
-#include "../rtengine/rtengine.h"
+
+#include <cairomm/cairomm.h>
+
 #include "../rtengine/coord.h"
-#include <sstream>
-#include <iostream>
+#include "../rtengine/noncopyable.h"
+#include "../rtengine/rtengine.h"
+
+#include "rtimage.h"
+
+// for convenience...
+#include "pathutils.h"
+
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference = true);
 void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh);
-Glib::ustring removeExtension (const Glib::ustring& filename);
-Glib::ustring getExtension (const Glib::ustring& filename);
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename);
 void writeFailed (Gtk::Window& parent, const std::string& filename);
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams, bool drawGuide = true, bool useBgColor = true, bool fullImageVisible = true);
+gboolean acquireGUI(void* data);
+void setExpandAlignProperties(Gtk::Widget *widget, bool hExpand, bool vExpand, enum Gtk::Align hAlign, enum Gtk::Align vAlign);
+
+class IdleRegister final :
+    public rtengine::NonCopyable
+{
+public:
+    ~IdleRegister();
+
+    void add(GSourceFunc function, gpointer data, gint priority = G_PRIORITY_DEFAULT_IDLE);
+    void destroy();
+
+private:
+    struct DataWrapper {
+        IdleRegister* const self;
+        GSourceFunc function;
+        gpointer data;
+    };
+
+    std::map<const DataWrapper*, guint> ids;
+    MyMutex mutex;
+};
+
+// TODO: The documentation says gdk_threads_enter and gdk_threads_leave should be replaced
+// by g_main_context_invoke(), g_idle_add() and related functions, but this will require more extensive changes.
+// We silence those warnings until then so that we notice the others.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 /**
  * @brief Lock GTK for critical section.
@@ -77,10 +113,12 @@ public:
     }
 };
 
+#pragma GCC diagnostic pop
+
 class ConnectionBlocker
 {
 public:
-    explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr)
+    explicit ConnectionBlocker (Gtk::Widget *associatedWidget, sigc::connection& connection) : connection (associatedWidget ? &connection : nullptr), wasBlocked(false)
     {
         if (this->connection) {
             wasBlocked = connection.block();
@@ -116,7 +154,7 @@ public:
         delete pC;
     }
 
-    void updateStyle();
+    void setLevel(int level);
 
     void show() {}
     void show_all();
@@ -126,8 +164,7 @@ public:
     void showBox();
     void hideBox();
 
-    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
-    bool on_expose_event(GdkEventExpose* event);
+//  bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
 };
 
 /**
@@ -165,15 +202,8 @@ private:
     bool on_enter_leave_title (GdkEventCrossing* event);
     /// Used to handle the colored background for the Enable button
     bool on_enter_leave_enable (GdkEventCrossing* event);
-    /// Update the style of this widget, depending in the "slim" option
+
     void updateStyle();
-
-    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
-    {
-        updateStyle();
-    }
-
-
 
 protected:
     Gtk::Container* child;      /// Gtk::Contained to display below the expander's title
@@ -204,6 +234,9 @@ public:
         return titleEvBox->signal_button_release_event();
     };
     type_signal_enabled_toggled signal_enabled_toggled();
+
+    /// Set the nesting level of the Expander to adapt its style accordingly
+    void setLevel(int level);
 
     /// Set a new label string. If it has been instantiated with a Gtk::Widget, this method will do nothing
     void setLabel (Glib::ustring newLabel);
@@ -244,6 +277,8 @@ public:
     /// Add a Gtk::Container for the content of the expander
     /// Warning: do not manually Show/Hide the widget, because this parameter is handled by the click on the Expander's title
     void add  (Gtk::Container& widget);
+
+    void updateVScrollbars(bool hide);
 };
 
 
@@ -254,6 +289,8 @@ class MyScrolledWindow : public Gtk::ScrolledWindow
 {
 
     bool on_scroll_event (GdkEventScroll* event);
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
 
 public:
     MyScrolledWindow();
@@ -264,11 +301,16 @@ public:
  */
 class MyComboBox : public Gtk::ComboBox
 {
+    int naturalWidth, minimumWidth;
 
     bool on_scroll_event (GdkEventScroll* event);
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyComboBox ();
+
+    void setPreferredWidth (int minimum_width, int natural_width);
 };
 
 /**
@@ -276,11 +318,19 @@ public:
  */
 class MyComboBoxText : public Gtk::ComboBoxText
 {
+    int naturalWidth, minimumWidth;
+    sigc::connection myConnection;
 
     bool on_scroll_event (GdkEventScroll* event);
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
-    MyComboBoxText ();
+    explicit MyComboBoxText (bool has_entry = false);
+
+    void setPreferredWidth (int minimum_width, int natural_width);
+    void connect(const sigc::connection &connection) { myConnection = connection; }
+    void block(bool blocked) { myConnection.block(blocked); }
 };
 
 /**
@@ -316,6 +366,8 @@ class MyFileChooserButton : public Gtk::FileChooserButton
 
 protected:
     bool on_scroll_event (GdkEventScroll* event);
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
 public:
     MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);
@@ -369,6 +421,35 @@ public:
     void switchTo(TOITypes type);
 };
 
+class MyImageMenuItem : public Gtk::MenuItem
+{
+private:
+    Gtk::Grid *box;
+    RTImage *image;
+    Gtk::Label *label;
+
+public:
+    MyImageMenuItem (Glib::ustring label, Glib::ustring imageFileName);
+    const RTImage *getImage () const;
+    const Gtk::Label* getLabel () const;
+};
+
+class MyProgressBar : public Gtk::ProgressBar
+{
+private:
+    int w;
+
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+
+public:
+    explicit MyProgressBar(int width);
+    MyProgressBar();
+
+    void setPreferredWidth(int width);
+};
+
+
 /**
  * @brief Define a gradient milestone
  */
@@ -391,10 +472,32 @@ public:
     }
 };
 
+class RefCount
+{
+private:
+    int refCount;
+public:
+    RefCount() : refCount(1) {}
+    virtual ~RefCount() {}
+
+    void reference()
+    {
+        ++refCount;
+    }
+    void unreference()
+    {
+        --refCount;
+
+        if (!refCount) {
+            delete this;
+        }
+    }
+};
+
 /**
- * @brief Handle backbuffers as automatically as possible
+ * @brief Handle back buffers as automatically as possible, and suitable to be used with Glib::RefPtr
  */
-class BackBuffer
+class BackBuffer : public RefCount
 {
 
 protected:
@@ -405,11 +508,15 @@ protected:
 
 public:
     BackBuffer();
+    BackBuffer(int w, int h, Cairo::Format format = Cairo::FORMAT_RGB24);
+    BackBuffer(int w, int h, Glib::RefPtr<Gdk::Window> referenceWindow);
 
     // set the destination drawing rectangle; return true if the dimensions are different
     // Note: newW & newH must be > 0
-    bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW=-1, int newH=-1, bool updateBackBufferSize = true);
-    bool setDrawRectangle(Cairo::Format format, int newX, int newY, int newW=-1, int newH=-1, bool updateBackBufferSize = true);
+    bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle &rectangle, bool updateBackBufferSize = true);
+    bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
+    bool setDrawRectangle(Cairo::Format format, Gdk::Rectangle &rectangle, bool updateBackBufferSize = true);
+    bool setDrawRectangle(Cairo::Format format, int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
     // set the destination drawing location, do not modify other parameters like size and offset. Use setDrawRectangle to set all parameters at the same time
     void setDestPosition(int x, int y);
     void setSrcOffset(int x, int y);
@@ -417,10 +524,11 @@ public:
     void getSrcOffset(int &x, int &y);
     void getSrcOffset(rtengine::Coord &offset);
 
-    void copySurface(Glib::RefPtr<Gdk::Window> &window, GdkRectangle *rectangle = nullptr);
-    void copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle = nullptr);
-    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> &destSurface, GdkRectangle *rectangle = nullptr);
-    void copySurface(Cairo::RefPtr<Cairo::Context> &context, GdkRectangle *rectangle = nullptr);
+    void copyRGBCharData(const unsigned char *srcData, int srcX, int srcY, int srcW, int srcH, int srcRowStride, int dstX, int dstY);
+    void copySurface(Glib::RefPtr<Gdk::Window> window, Gdk::Rectangle *rectangle = nullptr);
+    void copySurface(BackBuffer *destBackBuffer, Gdk::Rectangle *rectangle = nullptr);
+    void copySurface(Cairo::RefPtr<Cairo::ImageSurface> destSurface, Gdk::Rectangle *rectangle = nullptr);
+    void copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangle *destRectangle = nullptr);
 
     void setDirty(bool isDirty)
     {
@@ -462,20 +570,25 @@ public:
     }
     int getWidth()
     {
-        return surface ? surface->get_width() : 0;
+        return surface ? surface->get_width() : 0;    // sending back the allocated width
     }
     int getHeight()
     {
-        return surface ? surface->get_height() : 0;
+        return surface ? surface->get_height() : 0;    // sending back the allocated height
     }
 };
 
 inline void setActiveTextOrIndex (Gtk::ComboBoxText& comboBox, const Glib::ustring& text, int index)
 {
-    comboBox.set_active_text (text);
+    bool valueSet = false;
+    if (!text.empty()) {
+        comboBox.set_active_text (text);
+        valueSet = true;
+    }
 
-    if (comboBox.get_active_row_number () < 0)
+    if (!valueSet || comboBox.get_active_row_number () < 0) {
         comboBox.set_active (index);
+    }
 }
 
 inline Gtk::Window& getToplevelWindow (Gtk::Widget* widget)

@@ -56,39 +56,43 @@ InspectorBuffer::~InspectorBuffer() {
 }
 */
 
-int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
+//int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
+//{
+//
+//    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, nullptr);
+//
+//    if (!idata) {
+//        return 0;
+//    }
+//
+//    int deg = 0;
+//
+//    if (idata->hasExif()) {
+//        if      (idata->getOrientation() == "Rotate 90 CW" ) {
+//            deg = 90;
+//        } else if (idata->getOrientation() == "Rotate 180"   ) {
+//            deg = 180;
+//        } else if (idata->getOrientation() == "Rotate 270 CW") {
+//            deg = 270;
+//        }
+//    }
+//
+//    delete idata;
+//    return deg;
+//}
+
+Inspector::Inspector () : currImage(nullptr), zoom(0.0), active(false)
 {
-
-    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, nullptr);
-
-    if (!idata) {
-        return 0;
-    }
-
-    int deg = 0;
-
-    if (idata->hasExif()) {
-        if      (idata->getOrientation() == "Rotate 90 CW" ) {
-            deg = 90;
-        } else if (idata->getOrientation() == "Rotate 180"   ) {
-            deg = 180;
-        } else if (idata->getOrientation() == "Rotate 270 CW") {
-            deg = 270;
-        }
-    }
-
-    delete idata;
-    return deg;
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    set_name("Inspector");
 }
-
-Inspector::Inspector () : currImage(nullptr), zoom(0.0), active(false) {}
 
 Inspector::~Inspector()
 {
     deleteBuffers();
 }
 
-bool Inspector::on_expose_event (GdkEventExpose* event)
+bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
     Glib::RefPtr<Gdk::Window> win = get_window();
@@ -113,7 +117,8 @@ bool Inspector::on_expose_event (GdkEventExpose* event)
         rtengine::Coord topLeft;
         rtengine::Coord displayedSize;
         rtengine::Coord dest(0, 0);
-        win->get_size(availableSize.x, availableSize.y);
+        availableSize.x = win->get_width();
+        availableSize.y = win->get_height();
         int imW = currImage->imgBuffer.getWidth();
         int imH = currImage->imgBuffer.getHeight();
 
@@ -157,22 +162,25 @@ bool Inspector::on_expose_event (GdkEventExpose* event)
 
         // Draw!
 
-        Gdk::Color c;
-        Cairo::RefPtr<Cairo::Context> cr = win->create_cairo_context();
-        Glib::RefPtr<Gtk::Style> style = get_style();
+        Gdk::RGBA c;
+        Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
         // draw the background
-        c = style->get_bg (Gtk::STATE_NORMAL);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        style->render_background(cr, 0, 0, get_width(), get_height());
+
+        /* --- old method
+        c = style->get_background_color (Gtk::STATE_FLAG_NORMAL);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->set_line_width (0);
         cr->rectangle (0, 0, availableSize.x, availableSize.y);
         cr->fill ();
+        */
 
         currImage->imgBuffer.copySurface(win);
 
         // draw the frame
-        c = style->get_fg (Gtk::STATE_NORMAL);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_border_color (Gtk::STATE_FLAG_NORMAL);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->set_line_width (1);
         cr->rectangle (0.5, 0.5, availableSize.x - 1, availableSize.y - 1);
         cr->stroke ();
@@ -286,5 +294,33 @@ void Inspector::setActive(bool state)
     }
 
     active = state;
+}
+
+
+Gtk::SizeRequestMode Inspector::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void Inspector::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height= 50;
+    natural_height = 300;
+}
+
+void Inspector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 50;
+    natural_width = 200;
+}
+
+void Inspector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc(minimum_height, natural_height);
+}
+
+void Inspector::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
 }
 

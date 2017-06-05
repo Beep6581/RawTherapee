@@ -96,6 +96,8 @@ private:
     Gtk::HBox* fltrRecentlySavedBox;
     Gtk::VBox* fltrVbox2;
 
+    Gtk::VSeparator* vSepiLeftPanel;
+
     Gtk::ToggleButton* tbLeftPanel_1;
     Gtk::ToggleButton* tbRightPanel_1;
     Gtk::ToggleButton* bFilterClear;
@@ -158,6 +160,8 @@ private:
 #else
     WinDirMonitor* wdMonitor;
 #endif
+
+    IdleRegister idle_register;
 
     void addAndOpenFile (const Glib::ustring& fname);
     void checkAndAddFile (Glib::RefPtr<Gio::File> info);

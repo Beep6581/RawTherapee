@@ -332,7 +332,7 @@ public:
         char buffer[32];
         double v = t->toDouble();
 
-        if( v < 0. || v > 1000. ) {
+        if ( v < 0. || v > 1000. ) {
             return "undef";
         }
 
@@ -349,9 +349,9 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        double v = pow(2.0, t->toDouble() / 2.0);
+        double v = pow (2.0, t->toDouble() / 2.0);
 
-        if( v < 0. || v > 1000. ) {
+        if ( v < 0. || v > 1000. ) {
             return "undef";
         }
 
@@ -370,7 +370,7 @@ public:
         char buffer[32];
         double v = t->toDouble();
 
-        if( v < -1000. || v > 1000. ) {
+        if ( v < -1000. || v > 1000. ) {
             return "undef";
         }
 
@@ -389,7 +389,7 @@ public:
         char buffer[32];
         double d = pow (2.0, -t->toDouble());
 
-        if (d > 0.0 && d < 0.9) {
+        if (d > 0.0 && d <= 0.5) {
             sprintf (buffer, "1/%.0f", 1.0 / d);
         } else {
             sprintf (buffer, "%.1f", d);
@@ -409,7 +409,7 @@ public:
         char buffer[32];
         double d = t->toDouble();
 
-        if (d > 0.0 && d < 0.9) {
+        if (d > 0.0 && d <= 0.5) {
             sprintf (buffer, "1/%.0f", 1.0 / d);
         } else {
             sprintf (buffer, "%.1f", d);
@@ -429,7 +429,7 @@ public:
         char buffer[32];
         double v = t->toDouble();
 
-        if( v > 1000000. || v < 0 ) {
+        if ( v > 1000000. || v < 0 ) {
             return "undef";
         }
 
@@ -445,16 +445,23 @@ public:
     UserCommentInterpreter () {}
     virtual std::string toString (Tag* t)
     {
-        char *buffer = new char[t->getCount()];
+        int count = t->getCount();
 
-        if (!strncmp((char*)t->getValue(), "ASCII\0\0\0", 8)) {
-            strncpy (buffer, (char*)t->getValue() + 8, t->getCount() - 8);
-            buffer[t->getCount() - 8] = '\0';
+        if (count <= 8) {
+            return std::string();
+        }
+
+        count = std::min (count, 65535); // limit to 65535 chars to avoid crashes in case of corrupted metadata
+        char *buffer = new char[count - 7];
+
+        if (!memcmp ((char*)t->getValue(), "ASCII\0\0\0", 8)) {
+            strncpy (buffer, (char*)t->getValue() + 8, count - 8);
+            buffer[count - 8] = '\0';
         } else {
             buffer[0] = 0;
         }
 
-        std::string retVal(buffer);
+        std::string retVal (buffer);
         delete [] buffer;
         return retVal;
     }
@@ -478,8 +485,8 @@ public:
         char colors[] = "RGB";
         char buffer[1024];
 
-        for( int i = 0; i < t->getCount(); i++) {
-            unsigned char c = t->toInt(i, BYTE);
+        for ( int i = 0; i < t->getCount(); i++) {
+            unsigned char c = t->toInt (i, BYTE);
             buffer[i] = c < 3 ? colors[c] : ' ';
         }
 

@@ -1,3 +1,13 @@
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wparentheses"
+#if (__GNUC__ == 6)
+#pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#endif
+#endif
+
 /*RT*/#include <glib.h>
 /*RT*/#include <glib/gstdio.h>
 /*RT*/#undef MAX
@@ -9,8 +19,10 @@
 /*RT*/#define NO_JASPER
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
+/*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
+
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2016 by Dave Coffin, dcoffin a cybercom o net
@@ -53,6 +65,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <strings.h>
 #include <sys/types.h>
 
 #if defined(DJGPP) || defined(__MINGW32__)
@@ -248,7 +261,11 @@ void CLASS derror()
     if (feof(ifp))
       fprintf (stderr,_("Unexpected end of file\n"));
     else
+#ifdef WIN32
+      fprintf (stderr,_("Corrupt data near 0x%I64x\n"), (INT64) ftello(ifp));
+#else
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
+#endif
   }
   data_error++;
 /*RT Issue 2467  longjmp (failure, 1);*/
@@ -325,7 +342,7 @@ void CLASS read_shorts (ushort *pixel, int count)
 {
   if (fread (pixel, 2, count, ifp) < count) derror();
   if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
-	  swab ((char*)pixel, (char*)pixel, count*2);
+	  rtengine::swab ((char*)pixel, (char*)pixel, count*2);
 }
 
 void CLASS cubic_spline (const int *x_, const int *y_, const int len)
@@ -1046,7 +1063,7 @@ void CLASS ljpeg_idct (struct jhead *jh)
     47,55,62,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63 };
 
   if (!cs[0])
-    FORC(106) cs[c] = cos((c & 31)*M_PI/16)/2;
+    FORC(106) cs[c] = cos((c & 31)*rtengine::RT_PI/16)/2;
   memset (work, 0, sizeof work);
   work[0][0][0] = jh->vpred[0] += ljpeg_diff (jh->huff[0]) * jh->quant[0];
   for (i=1; i < 64; i++ ) {
@@ -1058,8 +1075,8 @@ void CLASS ljpeg_idct (struct jhead *jh)
       coef -= (1 << len) - 1;
     ((float *)work)[zigzag[i]] = coef * jh->quant[i];
   }
-  FORC(8) work[0][0][c] *= M_SQRT1_2;
-  FORC(8) work[0][c][0] *= M_SQRT1_2;
+  FORC(8) work[0][0][c] *= rtengine::RT_SQRT1_2;
+  FORC(8) work[0][c][0] *= rtengine::RT_SQRT1_2;
   for (i=0; i < 8; i++)
     for (j=0; j < 8; j++)
       FORC(8) work[1][i][j] += work[0][i][c] * cs[(j*2+1)*c];
@@ -1837,13 +1854,12 @@ void CLASS parse_hasselblad_gain()
       not be seen as clipped).
     */
 
-    ushort raw_h, count, ch_count, u16;
-    int i, offset;
+    int offset;
     off_t base;
 
     base = ftell(ifp);
     fseek(ifp, 2 * 23, SEEK_CUR);
-    raw_h = get2();
+    get2();
     fseek(ifp, 48, SEEK_CUR);
     offset = get4();
     hbd.levels = offset ? base + offset : 0;
@@ -2011,7 +2027,7 @@ void CLASS hasselblad_correct()
                                             {bhu-1,0},{bhu-1,bwu/2},{bhu-1,bwu-1}};
             for (col = 0; col < bw; col++) {
                 for (i = 0; i < 9; i++) {
-                    ushort dist = (ushort)sqrt(abs(corners[i][0] - row) * abs(corners[i][0] - row) + abs(corners[i][1] - col) * abs(corners[i][1] - col));
+                    ushort dist = (ushort)sqrt(abs((int)(corners[i][0] - row)) * abs((int)(corners[i][0] - row)) + abs((int)(corners[i][1] - col)) * abs((int)(corners[i][1] - col)));
                     ushort weight = dist > maxdist ? 0 : maxdist - dist;
                     corners_weight[9*(row*bw+col)+i] = weight;
                 }
@@ -2603,7 +2619,7 @@ void CLASS kodak_radc_load_raw()
 
 #ifdef NO_JPEG
 void CLASS kodak_jpeg_load_raw() {}
-void CLASS lossy_dng_load_raw() {}
+// RT void CLASS lossy_dng_load_raw() {}
 #else
 
 METHODDEF(boolean)
@@ -2613,7 +2629,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
-  swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
+  rtengine::swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
   cinfo->src->next_input_byte = jpeg_buffer;
   cinfo->src->bytes_in_buffer = nbytes;
   return TRUE;
@@ -2660,6 +2676,7 @@ void CLASS kodak_jpeg_load_raw()
 }
 
 void CLASS gamma_curve (double pwr, double ts, int mode, int imax);
+/*RT*/#endif
 
 void CLASS lossy_dng_load_raw()
 {
@@ -2703,7 +2720,8 @@ void CLASS lossy_dng_load_raw()
     fseek (ifp, save+=4, SEEK_SET);
     if (tile_length < INT_MAX)
       fseek (ifp, get4(), SEEK_SET);
-    jpeg_stdio_src (&cinfo, ifp);
+    /*RT jpeg_stdio_src (&cinfo, ifp); */
+    /*RT*/jpeg_memory_src(&cinfo, fdata(ftell(ifp), ifp), ifp->size - ftell(ifp));
     jpeg_read_header (&cinfo, TRUE);
     jpeg_start_decompress (&cinfo);
     buf = (*cinfo.mem->alloc_sarray)
@@ -2723,7 +2741,7 @@ void CLASS lossy_dng_load_raw()
   jpeg_destroy_decompress (&cinfo);
   maximum = 0xffff;
 }
-#endif
+/*RT #endif */
 
 void CLASS kodak_dc120_load_raw()
 {
@@ -3626,7 +3644,7 @@ short * CLASS foveon_make_curve (double max, double mul, double filt)
   double x;
 
   if (!filt) filt = 0.8;
-  size = 4*M_PI*max / filt;
+  size = 4*rtengine::RT_PI*max / filt;
   if (size == UINT_MAX) size--;
   curve = (short *) calloc (size+1, sizeof *curve);
   merror (curve, "foveon_make_curve()");
@@ -4506,6 +4524,7 @@ void CLASS colorcheck()
 //  free (fimg);
 //}
 
+/*
 void CLASS scale_colors()
 {
   unsigned bottom, right, size, row, col, ur, uc, i, x, y, c, sum[8];
@@ -4621,6 +4640,7 @@ skip_block: ;
   }
 }
 
+*/
 void CLASS pre_interpolate()
 {
   ushort (*img)[4];
@@ -5892,7 +5912,7 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 33422:			/* CFAPattern */
 	if (filters == 9) {
-	  FORC(36) ((char *)xtrans)[c] = fgetc(ifp) & 3;
+	  FORC(36) ((int *)xtrans)[c] = fgetc(ifp) & 3;
 	  break;
 	}
       case 64777:			/* Kodak P-series */
@@ -6264,6 +6284,7 @@ void CLASS apply_tiff()
       tile_width    = tiff_ifd[i].tile_width;
       tile_length   = tiff_ifd[i].tile_length;
       shutter       = tiff_ifd[i].shutter;
+      raw_size      = tiff_ifd[i].bytes;
       raw = i;
     }
   }
@@ -6677,7 +6698,7 @@ void CLASS parse_sinar_ia()
 
 void CLASS parse_phase_one (int base)
 {
-  unsigned entries, tag, type, len, data, save, i, c;
+  unsigned entries, tag, len, data, save, i, c;
   float romm_cam[3][3];
   char *cp;
 
@@ -6690,7 +6711,7 @@ void CLASS parse_phase_one (int base)
   get4();
   while (entries--) {
     tag  = get4();
-    type = get4();
+    get4();
     len  = get4();
     data = get4();
     save = ftell(ifp);
@@ -8572,7 +8593,7 @@ void CLASS identify()
 	parse_fuji (i);
     }
     load_raw = &CLASS unpacked_load_raw;
-    fseek (ifp, 100+28*(shot_select > 0), SEEK_SET);
+    fseek (ifp, 100+28*(shot_select > 0 && shot_select < is_raw), SEEK_SET);
     parse_tiff (data_offset = get4());
     parse_tiff (thumb_offset+12);
 /*RT*/    exif_base = thumb_offset+12;
@@ -8743,6 +8764,10 @@ void CLASS identify()
   if (width == 7424 && !strcmp(model,"645D"))
     { height  = 5502;   width  = 7328; filters = 0x61616161; top_margin = 29;
       left_margin = 48; }
+  if (width == 7392 && !strncmp(model,"K-1",3))
+    { left_margin = 6; width  = 7376; if(!dng_version) {top_margin = 18; height -= top_margin; }}
+  if (width == 4832 && !strncmp(model,"K-1",3)) // K-1 APS-C format
+     if(!dng_version) {top_margin = 18; height -= top_margin; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
   if (dng_version) {
@@ -9010,7 +9035,7 @@ canon_a5:
     }
     if (fuji_layout) raw_width *= is_raw;
     if (filters == 9)
-      FORC(36) ((char *)xtrans)[c] =
+      FORC(36) ((int *)xtrans)[c] =
 	xtrans_abs[(c/6+top_margin) % 6][(c+left_margin) % 6];
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
@@ -9482,7 +9507,7 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 	adobe_coeff (make, model);
-  if(!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4)))
+  if((!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4) || !strncmp(model, "K-1",3))) && filters != 0)
 	adobe_coeff (make, model);
   if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
     adobe_coeff (make, model);
@@ -9516,8 +9541,8 @@ dng_skip:
   }
 #endif
 #ifdef NO_JPEG
-  if (load_raw == &CLASS kodak_jpeg_load_raw ||
-      load_raw == &CLASS lossy_dng_load_raw) {
+  if (load_raw == &CLASS kodak_jpeg_load_raw /* RT ||
+      load_raw == &CLASS lossy_dng_load_raw*/) {
     fprintf (stderr,_("%s: You must link dcraw with %s!!\n"),
 	ifname, "libjpeg");
     is_raw = 0;
@@ -9727,10 +9752,28 @@ static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max
 }
 
 void CLASS deflate_dng_load_raw() {
+    float_raw_image = new float[raw_width * raw_height];
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+    for (size_t i = 0; i < raw_width * raw_height; ++i)
+      float_raw_image[i] = 0.0f;
+
+  if(tiff_samples != 1) {
+    fprintf(stderr, "deflate_dng_load_raw %s: demosaiced float dng files are not supported\n",ifname);
+    return;
+  }
+
   struct tiff_ifd * ifd = &tiff_ifd[0];
   while (ifd < &tiff_ifd[tiff_nifds] && ifd->offset != data_offset) ++ifd;
   if (ifd == &tiff_ifd[tiff_nifds]) {
-    fprintf(stderr, "DNG Deflate: Raw image not found???\n");
+    fprintf(stderr, "deflate_dng_load_raw %s: Raw image not found???\n",ifname);
+    return;
+  }
+
+  if (ifd->sample_format != 3) {  // no floating point data
+    fprintf(stderr, "deflate_dng_load_raw %s: Only float format is supported for deflate compressed dng files\n",ifname);
     return;
   }
 
@@ -9740,16 +9783,6 @@ void CLASS deflate_dng_load_raw() {
     case 34894: predFactor = 2; break;
     case 34895: predFactor = 4; break;
 	default: predFactor = 0; break;
-  }
-
-  if (ifd->sample_format == 3) {  // Floating point data
-    float_raw_image = new float[raw_width * raw_height];
-
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-    for (size_t i = 0; i < raw_width * raw_height; ++i)
-      float_raw_image[i] = 0.0f;
   }
 
   // NOTE: This reader is based on the official DNG SDK from Adobe.
@@ -9779,20 +9812,22 @@ void CLASS deflate_dng_load_raw() {
     }
     uLongf dstLen = tile_width * tile_length * 4;
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp parallel
 #endif
 {
     Bytef * cBuffer = new Bytef[maxCompressed];
     Bytef * uBuffer = new Bytef[dstLen];
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp for collapse(2) nowait
 #endif
     for (size_t y = 0; y < raw_height; y += tile_length) {
       for (size_t x = 0; x < raw_width; x += tile_width) {
 		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
+#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
 #pragma omp critical
+#endif
 {
         fseek(ifp, tileOffsets[t], SEEK_SET);
         fread(cBuffer, 1, tileBytes[t], ifp);
@@ -9851,6 +9886,8 @@ struct tiff_hdr {
   char desc[512], make[64], model[64], soft[32], date[20], artist[64];
 };
 
+#include "fujicompressed.cc"
+
 /* RT: Delete from here */
 /*RT*/#undef SQR
 /*RT*/#undef MAX
@@ -9859,3 +9896,6 @@ struct tiff_hdr {
 /*RT*/#undef LIM
 /*RT*/#undef ULIM
 /*RT*/#undef CLIP
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif

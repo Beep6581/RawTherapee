@@ -130,6 +130,7 @@ public:
             }
 
             if ( tmb ) {
+                DEBUG("Preview Ready\n");
                 j.listener_->previewReady(j.dir_id_, new FileBrowserEntry(tmb, j.dir_entry_));
 // Issue 2406               fdn = new FileBrowserEntry(tmb,j.dir_entry_);
             }

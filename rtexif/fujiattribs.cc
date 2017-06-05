@@ -84,18 +84,22 @@ class FASaturationInterpreter : public ChoiceInterpreter
 public:
     FASaturationInterpreter ()
     {
-        choices[0]      = "Normal";
-        choices[0x80]   = "Medium High";
-        choices[0x100]  = "High";
-        choices[0x180]  = "Medium Low";
-        choices[0x200]  = "Low";
-        choices[0x300]  = "None (B&W)";
-        choices[0x301]  = "B&W Red Filter";
-        choices[0x302]  = "B&W Yellow Filter";
-        choices[0x303]  = "B&W Green Filter";
-        choices[0x310]  = "B&W Sepia";
-        choices[0x400]  = "Low 2";
-        choices[0x8000] = "Film Simulation";
+        choices[0] = "Normal";
+        choices[128] = "Medium High";
+        choices[256] = "High";
+        choices[384] = "Medium Low";
+        choices[512] = "Low";
+        choices[768] = "None (B&W)";
+        choices[769] = "B&W Red Filter";
+        choices[770] = "B&W Yellow Filter";
+        choices[771] = "B&W Green Filter";
+        choices[784] = "B&W Sepia";
+        choices[1024] = "Low 2";
+        choices[1280] = "Acros";
+        choices[1281] = "Acros Red Filter";
+        choices[1282] = "Acros Yellow Filter";
+        choices[1283] = "Acros Green Filter";
+        choices[32768] = "Film Simulation";
     }
 };
 FASaturationInterpreter faSaturationInterpreter;

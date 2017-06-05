@@ -16,11 +16,11 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //---------------method
 
     method = Gtk::manage (new MyComboBoxText ());
-    method->append_text (M("TP_COLORTONING_LAB"));
-    method->append_text (M("TP_COLORTONING_RGBSLIDERS"));
-    method->append_text (M("TP_COLORTONING_RGBCURVES"));
-    method->append_text (M("TP_COLORTONING_SPLITCOCO"));
-    method->append_text (M("TP_COLORTONING_SPLITLR"));
+    method->append (M("TP_COLORTONING_LAB"));
+    method->append (M("TP_COLORTONING_RGBSLIDERS"));
+    method->append (M("TP_COLORTONING_RGBCURVES"));
+    method->append (M("TP_COLORTONING_SPLITCOCO"));
+    method->append (M("TP_COLORTONING_SPLITLR"));
     method->set_active (0);
     method->set_tooltip_text (M("TP_COLORTONING_METHOD_TOOLTIP"));
 
@@ -72,10 +72,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //----------------------red green  blue yellow colours
 
     twocolor = Gtk::manage (new MyComboBoxText ());
-    twocolor->append_text (M("TP_COLORTONING_TWOSTD"));
-    twocolor->append_text (M("TP_COLORTONING_TWOALL"));
-    twocolor->append_text (M("TP_COLORTONING_TWOBY"));
-    twocolor->append_text (M("TP_COLORTONING_TWO2"));
+    twocolor->append (M("TP_COLORTONING_TWOSTD"));
+    twocolor->append (M("TP_COLORTONING_TWOALL"));
+    twocolor->append (M("TP_COLORTONING_TWOBY"));
+    twocolor->append (M("TP_COLORTONING_TWO2"));
     twocolor->set_tooltip_text (M("TP_COLORTONING_TWOCOLOR_TOOLTIP"));
     twocolor->set_active (0);
 
@@ -187,11 +187,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     // Vertical box container for the content of the Process 1 frame
     Gtk::VBox *p1VBox;
     p1Frame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_SA")) );
-    p1Frame->set_border_width(0);
     p1Frame->set_label_align(0.025, 0.5);
 
     p1VBox = Gtk::manage ( new Gtk::VBox());
-    p1VBox->set_border_width(4);
     p1VBox->set_spacing(2);
 
     autosat = Gtk::manage (new Gtk::CheckButton (M("TP_COLORTONING_AUTOSAT")));
@@ -287,11 +285,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     //--------------------- Reset sliders  ---------------------------
     neutrHBox = Gtk::manage (new Gtk::HBox ());
-    neutrHBox->set_border_width (2);
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
-    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
-    neutral->set_image(*resetImg);
     neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
     neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutral_pressed) );
     neutral->show();
@@ -329,6 +324,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
 ColorToning::~ColorToning()
 {
+    idle_register.destroy();
+
     delete colorCurveEditorG;
     delete opacityCurveEditorG;
     delete clCurveEditorG;
@@ -655,20 +652,18 @@ void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, doubl
                                 Glib::ustring::compose(Glib::ustring(M("TP_COLORTONING_HUE") + ": %1" + "\n" + M("TP_COLORTONING_STRENGTH") + ": %2"), int(newTop), int(newBottom)));
 }
 
-int CTChanged_UI (void* data)
-{
-    GThreadLock lock;
-    (static_cast<ColorToning*>(data))->CTComp_ ();
-    return 0;
-}
-
-
 void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
 {
     nextbw = bwct;
     nextsatth = satthres;
     nextsatpr = satprot;
-    g_idle_add (CTChanged_UI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<ColorToning*>(data)->CTComp_();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool ColorToning::CTComp_ ()
@@ -957,7 +952,7 @@ void ColorToning::autoOpenCurve  ()
 void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
-    float R, G, B;
+    float R = 0.f, G = 0.f, B = 0.f;
 
     if (callerId == 1) {         // ch - main curve
         Color::hsv2rgb01(float(valY), 1.0f, 0.5f, R, G, B);
@@ -1084,8 +1079,8 @@ void ColorToning::trimValues (rtengine::procparams::ProcParams* pp)
 void ColorToning::setBatchMode (bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
-    method->append_text (M("GENERAL_UNCHANGED"));
-    twocolor->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
+    twocolor->append (M("GENERAL_UNCHANGED"));
     hlColSat->showEditedCB ();
     shadowsColSat->showEditedCB ();
     redlow->showEditedCB ();

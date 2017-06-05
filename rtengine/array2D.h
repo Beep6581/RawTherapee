@@ -113,7 +113,7 @@ public:
     // use as empty declaration, resize before use!
     // very useful as a member object
     array2D() :
-        x(0), y(0), owner(0), ptr(nullptr), data(nullptr), lock(0), flags(0)
+        x(0), y(0), owner(0), flags(0), ptr(nullptr), data(nullptr), lock(0)
     {
         //printf("got empty array2D init\n");
     }
@@ -202,7 +202,7 @@ public:
     }
 
     // use with indices
-    T * operator[](int index)
+    T * operator[](int index) const
     {
         assert((index >= 0) && (index < y));
         return ptr[index];

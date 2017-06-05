@@ -77,8 +77,6 @@ Vibrance::Vibrance () : FoldableToolPanel(this, "vibrance", M("TP_VIBRANCE_LABEL
 
     pack_start (*curveEditorGG, Gtk::PACK_SHRINK, 4);
 
-    show ();
-
     pskinsconn = protectSkins->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::protectskins_toggled) );
     ashiftconn = avoidColorShift->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::avoidcolorshift_toggled) );
     pastsattogconn = pastSatTog->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::pastsattog_toggled) );

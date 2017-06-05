@@ -33,6 +33,7 @@ class ThresholdAdjusterListener
 {
 
 public:
+    virtual ~ThresholdAdjusterListener() {}
     // to be used by listener that has created a ThresholdAdjuster with with single threshold and precision > 0
     virtual void adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop) {}
     // to be used by listener that has created a ThresholdAdjuster with with double threshold and precision > 0
@@ -139,11 +140,11 @@ public:
     }
     void setBgGradient (const std::vector<GradientMilestone> &milestones)
     {
-        tSelector.setBgGradient (milestones);
+        tSelector.coloredBar.setBgGradient (milestones);
     }
     void setBgColorProvider (ColorProvider *cp, int i)
     {
-        tSelector.setColorProvider(cp, i);
+        tSelector.coloredBar.setColorProvider(cp, i);
     }
     void setUpdatePolicy (eUpdatePolicy policy)
     {

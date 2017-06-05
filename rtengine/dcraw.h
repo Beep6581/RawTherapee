@@ -76,7 +76,8 @@ protected:
     FILE *ofp;
     short order;
     const char *ifname;
-    char *meta_data, xtrans[6][6],xtrans_abs[6][6];
+    char *meta_data;
+    int xtrans[6][6],xtrans_abs[6][6];
     char cdesc[5], desc[512], make[64], model[64], model2[64], model3[64], artist[64];
     float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
     time_t timestamp;
@@ -89,8 +90,52 @@ protected:
     unsigned black, cblack[4102], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags;
+    bool xtransCompressed = false;
+    struct fuji_compressed_params
+    {
+        char        *q_table;        /* quantization table */
+        int         q_point[5];      /* quantization points */
+        int         max_bits;
+        int         min_value;
+        int         raw_bits;
+        int         total_values;
+        int			maxDiff;
+        ushort      line_width;
+    };
+
+    struct int_pair {
+        int value1;
+        int value2;
+    };
+
+    enum _xt_lines
+    {
+        _R0=0,_R1,_R2,_R3,_R4,
+        _G0,_G1,_G2,_G3,_G4,_G5,_G6,_G7,
+        _B0,_B1,_B2,_B3,_B4,
+        _ltotal
+    };
+
+    struct fuji_compressed_block {
+        int         cur_bit;         // current bit being read (from left to right)
+        int         cur_pos;         // current position in a buffer
+        INT64       cur_buf_offset;  // offset of this buffer in a file
+        unsigned	max_read_size;	 // Amount of data to be read
+        int         cur_buf_size;    // buffer size
+        uchar       *cur_buf;        // currently read block
+        int         fillbytes;          // Counter to add extra byte for block size N*16
+        IMFILE      *input;
+        struct int_pair grad_even[3][41];    // tables of gradients
+        struct int_pair grad_odd[3][41];
+        ushort		*linealloc;
+        ushort      *linebuf[_ltotal];
+    };
+
+    int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits, fuji_raw_type;
+
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
+    unsigned raw_size;
     ushort *raw_image;
     float * float_raw_image;
     ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
@@ -226,6 +271,27 @@ void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
 void packed_dng_load_raw();
 void deflate_dng_load_raw();
+void init_fuji_compr(struct fuji_compressed_params* info);
+void fuji_fill_buffer(struct fuji_compressed_block *info);
+void init_fuji_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, INT64 raw_offset, unsigned dsize);
+void copy_line_to_xtrans(struct fuji_compressed_block* info, int cur_line, int cur_block, int cur_block_width);
+void copy_line_to_bayer(struct fuji_compressed_block* info, int cur_line, int cur_block, int cur_block_width);
+void fuji_zerobits(struct fuji_compressed_block* info, int *count);
+void fuji_read_code(struct fuji_compressed_block* info, int *data, int bits_to_read);
+int bitDiff(int value1, int value2);
+int fuji_decode_sample_even(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
+int fuji_decode_sample_odd(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
+void fuji_decode_interpolation_even(int line_width, ushort* line_buf, int pos);
+void fuji_extend_generic(ushort *linebuf[_ltotal], int line_width, int start, int end);
+void fuji_extend_red(ushort *linebuf[_ltotal], int line_width);
+void fuji_extend_green(ushort *linebuf[_ltotal], int line_width);
+void fuji_extend_blue(ushort *linebuf[_ltotal], int line_width);
+void xtrans_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, int cur_line);
+void fuji_bayer_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, int cur_line);
+void fuji_decode_strip(const struct fuji_compressed_params* info_common, int cur_block, INT64 raw_offset, unsigned dsize);
+void fuji_compressed_load_raw();
+void fuji_decode_loop(const struct fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
+void parse_fuji_compressed_header();
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();
@@ -344,23 +410,10 @@ void foveon_make_curves(short **curvep, float dq[3], float div[3], float filt);
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
 
-//void xtrans_interpolate (int passes);
-//void cielab (ushort rgb[3], short lab[3]);
-
-//void remove_zeroes();
-//void bad_pixels (const char *cfname);
-//void subtract (const char *fname);
 void gamma_curve (double pwr, double ts, int mode, int imax);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
 void cam_xyz_coeff (float rgb_cam[3][4], double cam_xyz[4][3]);
-//void hat_transform (float *temp, float *base, int st, int size, int sc);
-//void wavelet_denoise();
-void scale_colors();
 void pre_interpolate();
-//void border_interpolate (int border);
-//void median_filter();
-//void blend_highlights();
-//void recover_highlights();
 void crop_masked_pixels();
 
 void tiff_get (unsigned base,	unsigned *tag, unsigned *type, unsigned *len, unsigned *save);

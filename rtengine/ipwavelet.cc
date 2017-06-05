@@ -148,8 +148,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     // init variables to display Munsell corrections
     MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
 #endif
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
-    double wip[3][3] = {
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
+    const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
@@ -250,7 +250,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         cp.edgampl = (float) params->wavelet.edgeampli;
     }
 
-    int N = imheight * imwidth;
+    //int N = imheight * imwidth;
     int maxmul = params->wavelet.thres;
     cp.maxilev = maxmul;
     static const float scales[10] = {1.f, 2.f, 4.f, 8.f, 16.f, 32.f, 64.f, 128.f, 256.f, 512.f};
@@ -537,7 +537,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     // begin tile processing of image
 
     //output buffer
-    int realtile;
+    int realtile = 0;
 
     if(params->wavelet.Tilesmethod == "big") {
         realtile = 22;
@@ -699,7 +699,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 int width  = tileright - tileleft;
                 int height = tilebottom - tiletop;
                 LabImage * labco;
-                float **Lold;
+                float **Lold = nullptr;
                 float *LoldBuffer = nullptr;
 
                 if(numtiles == 1) { // untiled processing => we can use output buffer for labco
@@ -1058,7 +1058,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         }
 
                         for (int i = 0; i < overlap; i++) {
-                            float mask = SQR(sin((M_PI * i) / (2 * overlap)));
+                            float mask = SQR(sin((rtengine::RT_PI * i) / (2 * overlap)));
 
                             if (tiletop > 0) {
                                 Vmask[i] = mask;
@@ -2597,7 +2597,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
     float bedstr = 1.f - 10.f * aedstr;
 
     if(cp.val > 0  && cp.edgeena) {
-        float * koe;
+        float * koe = nullptr;
         float maxkoe = 0.f;
 
         if(!lipschitz) {
@@ -2766,7 +2766,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             float asig = 0.166f / sigma[level];
             float bsig = 0.5f - asig * mean[level];
             float amean = 0.5f / mean[level];
-            float absciss;
+            float absciss = 0.f;
             float kinterm;
             float kmul;
             int borderL = 1;

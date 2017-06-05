@@ -17,12 +17,15 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <gtkmm.h>
+#include <regex>
 #include "rtwindow.h"
 #include "options.h"
 #include "preferences.h"
 #include "cursormanager.h"
 #include "rtimage.h"
 #include "whitebalance.h"
+#include "../rtengine/icons.h"
 
 #if defined(__APPLE__)
 static gboolean
@@ -89,10 +92,10 @@ RTWindow::RTWindow ()
 
     cacheMgr->init ();
     WhiteBalance::init();
-    ProfilePanel::init();
+    ProfilePanel::init (this);
 
-    Glib::ustring fName = "rt-logo.png";
-    Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
+    Glib::ustring fName = "rt-logo-small.png";
+    Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName);
 
     try {
         set_default_icon_from_file (fullPath);
@@ -119,18 +122,16 @@ RTWindow::RTWindow ()
 #endif
     versionStr = "RawTherapee " + versionString;
 
-    if (!versionSuffixString.empty()) {
-        versionStr += " " + versionSuffixString;
-    }
-
     set_title_decorated("");
-    property_allow_shrink() = true;
+    set_resizable(true);
+    set_resize_mode(Gtk::ResizeMode::RESIZE_QUEUE);
+    set_decorated(true);
     set_default_size(options.windowWidth, options.windowHeight);
     set_modal(false);
-    set_resizable(true);
 
     if (options.windowMaximized) {
         maximize();
+        //get_style_context()->add_class("maximized");
     } else {
         unmaximize();
         move(options.windowX, options.windowY);
@@ -160,37 +161,37 @@ RTWindow::RTWindow ()
         }
     } else {
         mainNB = Gtk::manage (new Gtk::Notebook ());
+        mainNB->set_name ("MainNotebook");
         mainNB->set_scrollable (true);
         mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
+
+        // Editor panel
         fpanel =  new FilePanel () ;
         fpanel->setParent (this);
 
         // decorate tab
+        Gtk::Grid* fpanelLabelGrid = Gtk::manage (new Gtk::Grid ());
+        setExpandAlignProperties(fpanelLabelGrid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        Gtk::Label* fpl = Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
+
         if (options.mainNBVertical) {
             mainNB->set_tab_pos (Gtk::POS_LEFT);
-
-            Gtk::VBox* vbf = Gtk::manage (new Gtk::VBox ());
-            vbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-            Gtk::Label* l = Gtk::manage(new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_FILEBROWSER")));
-            l->set_angle (90);
-            vbf->pack_start (*l);
-            vbf->set_spacing (2);
-            vbf->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-            vbf->show_all ();
-            mainNB->append_page (*fpanel, *vbf);
+            fpl->set_angle (90);
+            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_TOP, 1, 1);
+            fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            Gtk::HBox* hbf = Gtk::manage (new Gtk::HBox ());
-            hbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-            hbf->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER"))));
-            hbf->set_spacing (2);
-            hbf->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-            hbf->show_all ();
-            mainNB->append_page (*fpanel, *hbf);
+            fpanelLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), Gtk::POS_RIGHT, 1, 1);
+            fpanelLabelGrid->attach_next_to(*fpl, Gtk::POS_RIGHT, 1, 1);
         }
 
+        fpanelLabelGrid->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+        fpanelLabelGrid->show_all ();
+        mainNB->append_page (*fpanel, *fpanelLabelGrid);
+
+
+        // Batch Queue panel
         bpanel = Gtk::manage ( new BatchQueuePanel (fpanel->fileCatalog) );
-        bpanel->setParent (this);
 
         // decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
         Gtk::Label* lbq = Gtk::manage ( new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")) );
@@ -201,95 +202,91 @@ RTWindow::RTWindow ()
 
         mainNB->append_page (*bpanel, *lbq);
 
-        // epanel is only for single tab mode
+
+        // Editor panel, single-tab mode only
         epanel = Gtk::manage ( new EditorPanel (fpanel) );
         epanel->setParent (this);
 
         // decorate tab
+        Gtk::Grid* editorLabelGrid = Gtk::manage (new Gtk::Grid ());
+        setExpandAlignProperties(editorLabelGrid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        Gtk::Label* el = Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
+
         if (options.mainNBVertical) {
-            Gtk::VBox* vbe = Gtk::manage (new Gtk::VBox ());
-            vbe->pack_start (*Gtk::manage (new RTImage ("rt-logo.png")));
-            Gtk::Label* l = Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
-            //l->set_markup(Glib::ustring("<b>Editor</b>"));  Bold difficult to read
-            l->set_angle (90);
-            vbe->pack_start (*l);
-            vbe->set_spacing (2);
-            vbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
-            vbe->show_all ();
-            epanel->tbTopPanel_1_visible(true); //show the toggle Top Panel button
-            mainNB->append_page (*epanel, *vbe);
+            el->set_angle (90);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_TOP, 1, 1);
+            editorLabelGrid->attach_next_to(*el, Gtk::POS_TOP, 1, 1);
         } else {
-            Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
-            hbe->pack_start (*Gtk::manage (new RTImage ("rt-logo.png")));
-            hbe->pack_start (*Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") )));
-            hbe->set_spacing (2);
-            hbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
-            hbe->show_all ();
-            epanel->tbTopPanel_1_visible(true); //show the toggle Top Panel button
-            mainNB->append_page (*epanel, *hbe);
+            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_RIGHT, 1, 1);
+            editorLabelGrid->attach_next_to(*el, Gtk::POS_RIGHT, 1, 1);
         }
+
+        editorLabelGrid->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
+        editorLabelGrid->show_all ();
+        epanel->tbTopPanel_1_visible(true); //show the toggle Top Panel button
+        mainNB->append_page (*epanel, *editorLabelGrid);
 
         mainNB->set_current_page (mainNB->page_num (*fpanel));
 
-        Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
-        mainBox->pack_start (*mainNB);
+        //Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
+        //mainBox->pack_start (*mainNB);
 
         // filling bottom box
         iFullscreen = new RTImage ("fullscreen.png");
         iFullscreen_exit = new RTImage ("fullscreen-exit.png");
 
-        Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
+        //Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));   // unused... but fail to be linked anyway !?
         //Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
+        setExpandAlignProperties(preferences, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         preferences->set_image (*Gtk::manage(new RTImage ("gtk-preferences.png")));
         preferences->set_tooltip_markup (M("MAIN_BUTTON_PREFERENCES"));
         preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
 
         //btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
         btn_fullscreen = Gtk::manage( new Gtk::Button());
+        setExpandAlignProperties(btn_fullscreen, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         btn_fullscreen->set_tooltip_markup (M("MAIN_BUTTON_FULLSCREEN"));
         btn_fullscreen->set_image (*iFullscreen);
         btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
-#if GTKMM_MINOR_VERSION >= 20
+        setExpandAlignProperties(&prProgBar, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+        prProgBar.set_show_text(true);
+
+        Gtk::Grid* actionGrid = Gtk::manage (new Gtk::Grid ());
+        actionGrid->set_row_spacing(2);
+        actionGrid->set_column_spacing(2);
+
+        setExpandAlignProperties(actionGrid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
 
         if (options.mainNBVertical) {
-            Gtk::VBox* bottomVBox = Gtk::manage (new Gtk::VBox ());
-            bottomVBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 1);
-            bottomVBox->pack_end (*preferences, Gtk::PACK_SHRINK, 0);
-            bottomVBox->pack_end (*btn_fullscreen, Gtk::PACK_EXPAND_WIDGET, 1);
-            prProgBar.set_orientation(Gtk::PROGRESS_BOTTOM_TO_TOP);
-            mainNB->set_action_widget( bottomVBox, Gtk::PACK_END);
-            bottomVBox->show_all();
+            prProgBar.set_orientation(Gtk::ORIENTATION_VERTICAL);
+            prProgBar.set_inverted(true);
+            actionGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+            actionGrid->attach_next_to(prProgBar, Gtk::POS_BOTTOM, 1, 1);
+            actionGrid->attach_next_to(*preferences, Gtk::POS_BOTTOM, 1, 1);
+            actionGrid->attach_next_to(*btn_fullscreen, Gtk::POS_BOTTOM, 1, 1);
+            mainNB->set_action_widget(actionGrid, Gtk::PACK_END);
         } else {
-            Gtk::HBox* bottomHBox = Gtk::manage (new Gtk::HBox ());
-            bottomHBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 1);
-            bottomHBox->pack_end (*preferences, Gtk::PACK_SHRINK, 0);
-            bottomHBox->pack_start (prProgBar, Gtk::PACK_EXPAND_WIDGET, 1);
-            mainNB->set_action_widget( bottomHBox, Gtk::PACK_END);
-            bottomHBox->show_all();
+            prProgBar.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+            actionGrid->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+            actionGrid->attach_next_to(prProgBar, Gtk::POS_RIGHT, 1, 1);
+            actionGrid->attach_next_to(*preferences, Gtk::POS_RIGHT, 1, 1);
+            actionGrid->attach_next_to(*btn_fullscreen, Gtk::POS_RIGHT, 1, 1);
+            mainNB->set_action_widget(actionGrid, Gtk::PACK_END);
         }
 
-#else
-        Gtk::HBox* bottomBox = Gtk::manage (new Gtk::HBox ());
-        bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 1);
-        bottomBox->pack_end (*preferences, Gtk::PACK_SHRINK, 0);
-        bottomBox->pack_start (prProgBar, Gtk::PACK_EXPAND_WIDGET, 1);
-        mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
-#endif
+        actionGrid->show_all();
 
         pldBridge = new PLDBridge(static_cast<rtengine::ProgressListener*>(this));
 
-        Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
-        style->set_xthickness (0);
-        style->set_ythickness (0);
-        rtWeb->modify_style (style);
-
-        add (*mainBox);
+        add (*mainNB);
         show_all ();
+
+        bpanel->init (this);
     }
 
     if (!isSingleTabMode() && !simpleEditor) {
-        epanel->hide_all();
+        epanel->hide();
     }
 }
 
@@ -309,30 +306,6 @@ RTWindow::~RTWindow()
     }
 }
 
-void RTWindow::findVerNumbers(int* numbers, Glib::ustring versionStr)
-{
-    numbers[0] = numbers[1] = numbers[2] = numbers[3] = 0;
-    int n = 0;
-
-    for (unsigned int i = 0; i < versionStr.length(); i++) {
-        char chr = (char)versionStr.at(i);
-
-        if (chr >= '0' && chr <= '9') {
-            numbers[n] *= 10;
-            numbers[n] += (int)(chr - '0');
-        } else {
-            n++;
-
-            if (n > 4) {
-                printf("Error: malformed version string; \"%s\" must follow this format: xx.xx.xx.xx. Admitting it's a developer version...\n", versionStr.c_str());
-                // Reseting the already found numbers
-                numbers[0] = numbers[1] = numbers[2] = numbers[3] = 100;
-                return;
-            }
-        }
-    }
-}
-
 void RTWindow::on_realize ()
 {
     Gtk::Window::on_realize ();
@@ -345,31 +318,29 @@ void RTWindow::on_realize ()
         epanel->setAspect();
     }
 
-    cursorManager.init (get_window());
+    mainWindowCursorManager.init(get_window());
 
-    // Check if first run of this version, then display the Release Notes text
-    if (options.version != versionString) {
-        int prevVerNbr[4];
-        int currVerNbr[4];
-        findVerNumbers(prevVerNbr, options.version);
-        findVerNumbers(currVerNbr, versionString);
-
-        // Now we can update the version parameter with the right value
-        options.version = versionString;
-
-        bool showReleaseNotes = false;
-
-        // Check if the current version is newer
-        if      (currVerNbr[0] > prevVerNbr[0]) {
-            showReleaseNotes = true;
-        } else if (currVerNbr[1] > prevVerNbr[1]) {
-            showReleaseNotes = true;
-        } else if (currVerNbr[2] > prevVerNbr[2]) {
-            showReleaseNotes = true;
+    // Display release notes only if new major version.
+    // Pattern matches "5.1" from "5.1-23-g12345678"
+    std::string vs[] = {versionString, options.version};
+    std::regex pat("(^[0-9.]+).*");
+    std::smatch sm;
+    std::vector<std::string> vMajor;
+    for (const auto &v : vs) {
+        if (std::regex_match(v, sm, pat)) {
+            if (sm.size() == 2) {
+                std::ssub_match smsub = sm[1];
+                vMajor.push_back(smsub.str());
+            }
         }
+    }
 
-        if (showReleaseNotes) {
-            // this is a first run!
+    if (vMajor.size() == 2) {
+        if (vMajor[0] != vMajor[1]) {
+
+            // Update the version parameter with the right value
+            options.version = versionString;
+
             splash = new Splash (*this);
             splash->set_transient_for (*this);
             splash->signal_delete_event().connect( sigc::mem_fun(*this, &RTWindow::splashClosed) );
@@ -387,19 +358,14 @@ void RTWindow::on_realize ()
 
 bool RTWindow::on_window_state_event(GdkEventWindowState* event)
 {
-
-    if (!event->new_window_state) {
-        // Window mode
-        options.windowMaximized = false;
-    } else if (event->new_window_state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN | GDK_WINDOW_STATE_ICONIFIED)) {
-        // Fullscreen mode, save this mode even when window is iconified (minimized) to allow easier restore, not the best solution though...
-        options.windowMaximized = true;
+    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
+        options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     }
 
-    return true;
+    return Gtk::Widget::on_window_state_event(event);
 }
 
-void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num)
+void RTWindow::on_mainNB_switch_page(Gtk::Widget* widget, guint page_num)
 {
     if(!on_delete_has_run) {
         if(isEditorPanel(page_num)) {
@@ -440,26 +406,27 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         ep->setParent (this);
 
         // construct closeable tab for the image
-        Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-        hb->pack_start (*Gtk::manage (new RTImage ("rtwindow.png")));
-        hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
-        hb->set_tooltip_markup (name);
+        Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
+        titleGrid->set_tooltip_markup (name);
+        RTImage *closebimg = Gtk::manage(new RTImage ("gtk-close.png"));
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-        closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
+        closeb->set_name ("CloseButton");
+        closeb->add (*closebimg);
         closeb->set_relief (Gtk::RELIEF_NONE);
         closeb->set_focus_on_click (false);
-        // make the button as small as possible
-        Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
-        style->set_xthickness (0);
-        style->set_ythickness (0);
-
-        closeb->modify_style (style);
         closeb->signal_clicked().connect( sigc::bind (sigc::mem_fun(*this, &RTWindow::remEditorPanel) , ep));
-        hb->pack_end (*closeb);
-        hb->set_spacing (2);
-        hb->show_all ();
 
-        mainNB->append_page (*ep, *hb);
+        titleGrid->attach_next_to(*Gtk::manage (new RTImage ("rtwindow.png")), Gtk::POS_RIGHT, 1, 1);
+        titleGrid->attach_next_to(*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
+        titleGrid->attach_next_to(*closeb, Gtk::POS_RIGHT, 1, 1);
+        titleGrid->show_all ();
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+        titleGrid->set_column_spacing(2);
+#endif
+//GTK318
+
+        mainNB->append_page (*ep, *titleGrid);
         //ep->setAspect ();
         mainNB->set_current_page (mainNB->page_num (*ep));
         mainNB->set_tab_reorderable (*ep, true);
@@ -539,13 +506,13 @@ bool RTWindow::keyPressed (GdkEventKey* event)
 #if defined(__APPLE__)
     bool apple_cmd = event->state & GDK_MOD2_MASK;
 
-    if (event->keyval == GDK_q && apple_cmd) {
+    if (event->keyval == GDK_KEY_q && apple_cmd) {
         try_quit = true;
     }
 
 #else
 
-    if (event->keyval == GDK_q && ctrl) {
+    if (event->keyval == GDK_KEY_q && ctrl) {
         try_quit = true;
     }
 
@@ -557,7 +524,7 @@ bool RTWindow::keyPressed (GdkEventKey* event)
         }
     }
 
-    if(event->keyval == GDK_F11) {
+    if(event->keyval == GDK_KEY_F11) {
         toggle_fullscreen();
     }
 
@@ -569,22 +536,22 @@ bool RTWindow::keyPressed (GdkEventKey* event)
 
     if (ctrl) {
         switch(event->keyval) {
-        case GDK_F2: // file browser panel
+        case GDK_KEY_F2: // file browser panel
             mainNB->set_current_page (mainNB->page_num (*fpanel));
             return true;
 
-        case GDK_F3: // batch queue panel
+        case GDK_KEY_F3: // batch queue panel
             mainNB->set_current_page (mainNB->page_num (*bpanel));
             return true;
 
-        case GDK_F4: //single tab mode, editor panel
+        case GDK_KEY_F4: //single tab mode, editor panel
             if (isSingleTabMode() && epanel) {
                 mainNB->set_current_page (mainNB->page_num (*epanel));
             }
 
             return true;
 
-        case GDK_w: //multi-tab mode, close editor panel
+        case GDK_KEY_w: //multi-tab mode, close editor panel
             if (!isSingleTabMode() &&
                     mainNB->get_current_page() != mainNB->page_num(*fpanel) &&
                     mainNB->get_current_page() != mainNB->page_num(*bpanel)) {
@@ -707,6 +674,12 @@ void RTWindow::showPreferences ()
     delete pref;
 
     fpanel->optionsChanged ();
+    if (epanel) {
+        epanel->defaultMonitorProfileChanged(options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
+    for (const auto &p : epanels) {
+        p.second->defaultMonitorProfileChanged(options.rtSettings.monitorProfile, options.rtSettings.autoMonitorProfile);
+    }
 }
 
 void RTWindow::setProgress (double p)
@@ -795,15 +768,22 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
+void RTWindow::updateProfiles(const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
+{
+    epanel->updateProfiles(printerProfile, printerIntent, printerBPC);
+
+    for(auto panel : epanels) {
+        panel.second->updateProfiles(printerProfile, printerIntent, printerBPC);
+    }
+}
+
 void RTWindow::updateTPVScrollbar (bool hide)
 {
     fpanel->updateTPVScrollbar (hide);
     epanel->updateTPVScrollbar (hide);
 
-    std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
-
-    for(itr = epanels.begin(); itr != epanels.end(); ++itr) {
-        ((*itr).second)->updateTPVScrollbar (hide);
+    for(auto panel : epanels) {
+        panel.second->updateTPVScrollbar (hide);
     }
 }
 
@@ -812,10 +792,8 @@ void RTWindow::updateTabsUsesIcons (bool useIcons)
     fpanel->updateTabsUsesIcons (useIcons);
     epanel->updateTabsUsesIcons (useIcons);
 
-    std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
-
-    for(itr = epanels.begin(); itr != epanels.end(); ++itr) {
-        ((*itr).second)->updateTabsUsesIcons (useIcons);
+    for(auto panel : epanels) {
+        panel.second->updateTabsUsesIcons (useIcons);
     }
 }
 
@@ -833,10 +811,8 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 {
     epanel->updateHistogramPosition (oldPosition, newPosition);
 
-    std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
-
-    for(itr = epanels.begin(); itr != epanels.end(); ++itr) {
-        ((*itr).second)->updateHistogramPosition (oldPosition, newPosition);
+    for(auto panel : epanels) {
+        panel.second->updateHistogramPosition (oldPosition, newPosition);
     }
 }
 

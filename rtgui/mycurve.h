@@ -30,12 +30,11 @@
 #include "options.h"
 
 #define RADIUS          3   /** radius of the control points */
-#define CBAR_WIDTH_STD  13  /** width of the colored bar (border included) for standard themes */
-#define CBAR_WIDTH_SLIM 10  /** width of the colored bar (border included) for slim themes */
+#define CBAR_WIDTH      10  /** width of the colored bar (border included) */
 #define CBAR_MARGIN     2   /** spacing between the colored bar and the graph */
 #define SQUARE          2   /** half length of the square shape of the tangent handles */
 #define MIN_DISTANCE    5   /** min distance between control points */
-#define GRAPH_SIZE      200 /** size of the curve editor graphic */
+#define GRAPH_SIZE      150 /** size of the curve editor graphic */
 
 /** @brief Flat or Diagonal curve type
     For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
@@ -53,18 +52,11 @@ enum SnapToType {
     ST_Neighbors    /// Point snapped to the neighbor points
 };
 
-enum ResizeState {
-    RS_Pending = 1, /// Resize has to occurs
-    RS_Done    = 2, /// Resize has been done
-    RS_Force   = 4  /// Resize has to occurs even without CONFIGURE event
-};
-
 class MyCurveIdleHelper;
 class CurveEditor;
 
 class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller, public CoordinateProvider
 {
-
     friend class MyCurveIdleHelper;
 
 protected:
@@ -75,7 +67,7 @@ protected:
     ColoredBar *leftBar;
     ColoredBar *bottomBar;
     CursorShape cursor_type;
-    int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points of for the colored bar
+    int graphX, graphY, graphW, graphH; /// position and dimensions of the graphic area, excluding surrounding space for the points or for the colored bar
     int prevGraphW, prevGraphH;         /// previous inner width and height of the editor
     Gdk::ModifierType mod_type;
     int cursorX;        /// X coordinate in the graph of the cursor
@@ -98,7 +90,6 @@ protected:
     double snapToMinDistX, snapToMinDistY;
     double snapToValX, snapToValY;
     MyCurveIdleHelper* mcih;
-    enum ResizeState sized;
     bool curveIsDirty;
 
     int edited_point;  // > -1 when a point is being numerically edited
@@ -130,18 +121,15 @@ public:
     {
         return;
     } ;
-    void forceResize()
-    {
-        sized = RS_Force;
-    }
     void refresh();
     void setCurveDirty ()
     {
         curveIsDirty = true;
     }
-    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_updated ();
     virtual std::vector<double> getPoints () = 0;
     virtual void setPoints (const std::vector<double>& p) = 0;
+    virtual bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) = 0;
     virtual bool handleEvents (GdkEvent* event) = 0;
     virtual void reset (const std::vector<double> &resetCurve, double identityValue = 0.5) = 0;
 
@@ -150,10 +138,11 @@ public:
     virtual void pipetteButton1Released(EditDataProvider *provider) = 0;
     virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) = 0;
 
-    static int getBarWidth()
-    {
-        return options.slimUI ? CBAR_WIDTH_SLIM : CBAR_WIDTH_STD;
-    }
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 };
 
 class MyCurveIdleHelper

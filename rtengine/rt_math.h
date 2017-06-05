@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <limits>
 #include <cmath>
 #include <cstdint>
 
@@ -11,71 +12,90 @@ constexpr int MAXVAL = 0xffff;
 constexpr float MAXVALF = static_cast<float>(MAXVAL);  // float version of MAXVAL
 constexpr double MAXVALD = static_cast<double>(MAXVAL); // double version of MAXVAL
 
-template <typename _Tp>
-inline _Tp SQR (_Tp x)
+constexpr double RT_PI = 3.14159265358979323846; // pi
+constexpr double RT_PI_2 = 1.57079632679489661923; // pi/2
+constexpr double RT_1_PI = 0.31830988618379067154; // 1/pi
+constexpr double RT_2_PI = 0.63661977236758134308; // 2/pi
+constexpr double RT_SQRT1_2 = 0.70710678118654752440; // 1/sqrt(2)
+
+constexpr double RT_INFINITY = std::numeric_limits<double>::infinity();
+constexpr double RT_NAN = std::numeric_limits<double>::quiet_NaN();
+
+constexpr float RT_PI_F = RT_PI;
+constexpr float RT_PI_F_2 = RT_PI_2;
+
+constexpr float RT_INFINITY_F = std::numeric_limits<float>::infinity();
+constexpr float RT_NAN_F = std::numeric_limits<float>::quiet_NaN();
+
+template<typename T>
+constexpr T SQR(T x)
 {
-//      return std::pow(x,2); Slower than:
     return x * x;
 }
 
-template<typename _Tp>
-inline const _Tp& min(const _Tp& a, const _Tp& b)
+template<typename T>
+constexpr const T& min(const T& a)
 {
-    return std::min(a, b);
+    return a;
 }
 
-template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b)
+template<typename T>
+constexpr const T& min(const T& a, const T& b)
 {
-    return std::max(a, b);
+    return b < a ? b : a;
 }
 
-
-template<typename _Tp>
-inline const _Tp& LIM(const _Tp& a, const _Tp& b, const _Tp& c)
+template<typename T, typename... ARGS>
+constexpr const T& min(const T& a, const T& b, const ARGS&... args)
 {
-    return std::max(b, std::min(a, c));
+    return min(min(a, b), min(args...));
 }
 
-template<typename _Tp>
-inline _Tp LIM01(const _Tp& a)
+template<typename T>
+constexpr const T& max(const T& a)
 {
-    return std::max(_Tp(0), std::min(a, _Tp(1)));
+    return a;
 }
 
-template<typename _Tp>
-inline _Tp CLIP(const _Tp& a)
+template<typename T>
+constexpr const T& max(const T& a, const T& b)
 {
-    return LIM(a, static_cast<_Tp>(0), static_cast<_Tp>(MAXVAL));
+    return a < b ? b : a;
 }
 
-
-template<typename _Tp>
-inline const _Tp& min(const _Tp& a, const _Tp& b, const _Tp& c)
+template<typename T, typename... ARGS>
+constexpr const T& max(const T& a, const T& b, const ARGS&... args)
 {
-    return std::min(c, std::min(a, b));
+    return max(max(a, b), max(args...));
 }
 
-template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c)
+template<typename T>
+constexpr const T& LIM(const T& a, const T& b, const T& c)
 {
-    return std::max(c, std::max(a, b));
+    return max(b, min(a, c));
 }
 
-template<typename _Tp>
-inline const _Tp& min(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d)
+template<typename T>
+constexpr T LIM01(const T& a)
 {
-    return std::min(d, std::min(c, std::min(a, b)));
+    return max(T(0), min(a, T(1)));
 }
 
-template<typename _Tp>
-inline const _Tp& max(const _Tp& a, const _Tp& b, const _Tp& c, const _Tp& d)
+template<typename T>
+constexpr T CLIP(const T& a)
 {
-    return std::max(d, std::max(c, std::max(a, b)));
+    return LIM(a, static_cast<T>(0), static_cast<T>(MAXVAL));
 }
 
-template<typename _Tp>
-inline _Tp intp(_Tp a, _Tp b, _Tp c)
+template <typename T>
+constexpr T SGN(const T& a)
+{
+    // returns -1 for a < 0, 0 for a = 0 and +1 for a > 0
+    return (T(0) < a) - (a < T(0));
+}
+
+template<typename T>
+constexpr T intp(T a, T b, T c)
 {
     // calculate a * b + (1 - a) * c
     // following is valid:
@@ -99,13 +119,13 @@ inline T norm2(const T& x, const T& y)
 template< typename T >
 inline T norminf(const T& x, const T& y)
 {
-    return std::max(std::abs(x), std::abs(y));
+    return max(std::abs(x), std::abs(y));
 }
 
-inline int float2uint16range(float d) // clips input to [0;65535] and rounds
+constexpr int float2uint16range(float d)
 {
-    d = CLIP(d); // clip to [0;65535]
-    return d + 0.5f;
+    // clips input to [0;65535] and rounds
+    return CLIP(d) + 0.5f;
 }
 
 constexpr std::uint8_t uint16ToUint8Rounded(std::uint16_t i)

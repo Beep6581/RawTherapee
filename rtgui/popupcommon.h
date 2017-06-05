@@ -27,7 +27,7 @@
 
 namespace Gtk
 {
-class HBox;
+class Grid;
 class Menu;
 class Button;
 class ImageMenuItem;
@@ -43,7 +43,7 @@ class PopUpCommon
 public:
     typedef sigc::signal<void, int> type_signal_changed;
     type_signal_changed signal_changed();
-    Gtk::HBox* buttonGroup;     // this is the widget to be packed
+    Gtk::Grid* buttonGroup;    // this is the widget to be packed
 
     PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
@@ -60,10 +60,10 @@ private:
     type_signal_changed message;
 
     std::vector<Glib::ustring> imageFilenames;
-    std::vector<RTImage*> images;
+    std::vector<const RTImage*> images;
     Glib::ustring buttonHint;
     RTImage* buttonImage;
-    Gtk::HBox* imageContainer;
+    Gtk::Grid* imageContainer;
     Gtk::Menu* menu;
     Gtk::Button* button;
     int selected;

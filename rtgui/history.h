@@ -74,7 +74,6 @@ public:
 
 protected:
     Gtk::VPaned*            historyVPaned;
-    Gtk::ScrolledWindow*    hscrollw;
     Gtk::TreeView*          hTreeView;
     Glib::RefPtr<Gtk::ListStore> historyModel;
 
@@ -92,6 +91,8 @@ protected:
     ProfileChangeListener* tpc;
     ParamsEdited defParamsEdited;
     int bmnum;
+
+    bool on_query_tooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
 public:
 
@@ -120,7 +121,7 @@ public:
     void addBookmarkPressed ();
     void delBookmarkPressed ();
 
-    void resized (Gtk::Allocation& req);
+    //void resized (Gtk::Allocation& req);
 
     void undo ();
     void redo ();

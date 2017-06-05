@@ -95,7 +95,6 @@ FILEBROWSER_DELETEDLGMSG;Segur que voleu esborrar els <b>%1</b> fitxers?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Segur que voleu suprimir els fitxers <b>%1</b> seleccionats <b>incloent</b> la versió processada a la cua?
 FILEBROWSER_EMPTYTRASH;Buida paperera
 FILEBROWSER_EMPTYTRASHHINT;Buida permanentment la paperera
-FILEBROWSER_EXEC_CPB;Constructor de perfils propis
 FILEBROWSER_EXTPROGMENU;Obre amb
 FILEBROWSER_FLATFIELD;Camp pla
 FILEBROWSER_MOVETODARKFDIR;Canvia al directori de camps foscos
@@ -184,7 +183,6 @@ HISTOGRAM_TOOLTIP_R;Mostra/amaga l'histograma VERMELL
 HISTOGRAM_TOOLTIP_RAW;Mostra/Amaga l'histograma RAW
 HISTORY_CHANGED;Canviat
 HISTORY_CUSTOMCURVE;Corba particular
-HISTORY_DELSNAPSHOT;Esborra
 HISTORY_FROMCLIPBOARD;Del portapapers
 HISTORY_LABEL;Història
 HISTORY_MSG_1;Imatge oberta
@@ -362,47 +360,23 @@ HISTORY_MSG_173;RS - Detall de la luminància
 HISTORY_NEWSNAPSHOT;Afegeix
 HISTORY_SNAPSHOT;Instantània
 HISTORY_SNAPSHOTS;Instantànies
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
-IPTCPANEL_AUTHORSPOSITIONHINT;Títol del(s) creador(s) de l'objecte (By-line Title).
-IPTCPANEL_CAPTION;Text descriptiu
-IPTCPANEL_CAPTIONHINT;Un text de descripció de les dades (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Autor de la descripció
-IPTCPANEL_CAPTIONWRITERHINT;Nom de qui ha escrit, editat o corregit la imatge o la descripció (Writer - Editor).
 IPTCPANEL_CATEGORY;Classificació
-IPTCPANEL_CATEGORYHINT;Classificació de la imatge, segons el proveïdor (Category).
 IPTCPANEL_CITY;Ciutat
-IPTCPANEL_CITYHINT;Ciutat d'origen de la imatge (City).
 IPTCPANEL_COPYHINT;Copiar dades actuals IPTC al portapapers
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Qualsevol notificació necessària sobre copyright (Copyright Notice).
 IPTCPANEL_COUNTRY;País
-IPTCPANEL_COUNTRYHINT;Nom del país o lloc on va ser creada la imatge (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Crèdit
 IPTCPANEL_CREDITHINT;Identitat del proveïdor de la imatge, no necessàriament el propietari/creador (Credit).
 IPTCPANEL_DATECREATED;Data de creació
-IPTCPANEL_DATECREATEDHINT;Data en què va ser creat el contingut intel·lectual de la imatge; Format: AAAAMMDD (Date Created).
 IPTCPANEL_EMBEDDED;Encastat
 IPTCPANEL_EMBEDDEDHINT;Restaurar les dades IPTC encastades al fitxer d'imatge
 IPTCPANEL_HEADLINE;Capçalera
-IPTCPANEL_HEADLINEHINT;Una nota publicable que és una sinopsi dels continguts de la imatge (Headline).
 IPTCPANEL_INSTRUCTIONS;Instruccions
-IPTCPANEL_INSTRUCTIONSHINT;Altres instruccions editorials sobre l'ús de la imatge (Special Instructions).
 IPTCPANEL_KEYWORDS;Paraules clau
-IPTCPANEL_KEYWORDSHINT;Paraules clau que faciliten la recerca de la imatge (Keywords).
 IPTCPANEL_PASTEHINT;Enganxa les dades IPTC del portapapers
-IPTCPANEL_PROVINCE;Regió
-IPTCPANEL_PROVINCEHINT;Regió/Estat d'origen de la imatge (Province-State).
 IPTCPANEL_RESET;Reinici
 IPTCPANEL_RESETHINT;Reinici perfil per omissió
 IPTCPANEL_SOURCE;Font
-IPTCPANEL_SOURCEHINT;Propietari original del contingut intel·lectual de la imatge (Source).
-IPTCPANEL_SUPPCATEGORIES;Classif. detallada
-IPTCPANEL_SUPPCATEGORIESHINT;Precisió sobre el tema de la imatge (Supplemental Categories).
 IPTCPANEL_TITLE;Títol
-IPTCPANEL_TITLEHINT;Referència breu de la imatge (Object Name).
-IPTCPANEL_TRANSREFERENCE;Refer. transmissió
-IPTCPANEL_TRANSREFERENCEHINT;Codi que indica el lloc de la transmissió original (Original Transmission Reference).
 MAIN_BUTTON_FULLSCREEN;Pantalla sencera
 MAIN_BUTTON_PREFERENCES;Preferències
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Afeg. imatge actual a la cua de procés.\nDrecera: <b>Ctrl+B</b>
@@ -504,8 +478,6 @@ PARTIALPASTE_PERSPECTIVE;Perspectiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilibri verd
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre línia de soroll
 PARTIALPASTE_RAWCACORR_AUTO;Auto-correcció AC
-PARTIALPASTE_RAWCACORR_CABLUE;AC blau
-PARTIALPASTE_RAWCACORR_CARED;AC vermell
 PARTIALPASTE_RAWEXPOS_BLACK;Nivell negre
 PARTIALPASTE_RAWEXPOS_LINEAR;Factor de corr. linear de punt blanc
 PARTIALPASTE_RAWEXPOS_PRESER;Corr. punt blanc preservant HL (EV)
@@ -617,7 +589,6 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostra compensació d'exposició
 PREFERENCES_SHTHRESHOLD;Llindar pèrdues en foscos
 PREFERENCES_SINGLETAB;Mode simple treball
 PREFERENCES_SINGLETABVERTAB;Mode simple treball, vistes verticals
-PREFERENCES_SLIMUI;Interfície senzilla
 PREFERENCES_SND_BATCHQUEUEDONE;Procs. de la cua fets
 PREFERENCES_SND_HELP;Poseu el path o bé no res (res=silenci). A Windows useu "SystemDefault", "SystemAsterisk" etc. pels sons del sistema.
 PREFERENCES_SND_LNGEDITPROCDONE;Process. d'editor fet
@@ -631,7 +602,6 @@ PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_TP_LABEL;Panell d'eines:
 PREFERENCES_TP_USEICONORTEXT;Usa les icones tab en comptes de text
 PREFERENCES_TP_VSCROLLBAR;Amaga la barra d'eines vertical
-PREFERENCES_USESYSTEMTHEME; Usa tema del sistema
 PREFERENCES_WORKFLOW;Flux de treball
 PROFILEPANEL_COPYPPASTE;Paràmetres a copiar
 PROFILEPANEL_LABEL;Perfils de postprocés
@@ -733,8 +703,6 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Més fi
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Llindar
 TP_DISTORTION_AMOUNT;Quantitat
-TP_DISTORTION_AUTO;Auto correcció de distorsió
-TP_DISTORTION_AUTO_TIP;(Experimental) Correc. automàtica de distorsió de lent per algunes càmeres (M4/3, algunes compactes DC, etc.)
 TP_DISTORTION_LABEL;Distorsió
 TP_EPD_EDGESTOPPING;Aturant a les vores
 TP_EPD_LABEL;Mapejant tons
@@ -803,7 +771,6 @@ TP_ICM_INPUTPROFILE;Perfil d'entrada
 TP_ICM_LABEL;Gestió de color
 TP_ICM_NOICM;No cap ICM: Sortida  sRGB
 TP_ICM_OUTPUTPROFILE;Perfil de sortida
-TP_ICM_SAVEREFERENCE;Desa com a imatge de ref. als perfils
 TP_ICM_TONECURVE;Usa la corba de to DCP.
 TP_ICM_TONECURVE_TOOLTIP;Habilita l'ús de corbes de to incloses en els perfils DCP.
 TP_ICM_WORKINGPROFILE;Perfil de treball
@@ -999,10 +966,24 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
+!DYNPROFILEEDITOR_DELETE;Delete
+!DYNPROFILEEDITOR_EDIT;Edit
+!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+!DYNPROFILEEDITOR_MOVE_UP;Move Up
+!DYNPROFILEEDITOR_NEW;New
+!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+!DYNPROFILEEDITOR_PROFILE;Processing Profile
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
+!EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
+!EXPORT_PIPELINE;Processing pipeline
+!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
@@ -1021,6 +1002,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
+!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
@@ -1223,7 +1205,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_357;W - Denoise - Link with ES
 !HISTORY_MSG_358;W - Gamut - CH
 !HISTORY_MSG_359;Hot/Dead - Threshold
-!HISTORY_MSG_360;TM Gamma
+!HISTORY_MSG_360;TM - Gamma
 !HISTORY_MSG_361;W - Final - Chroma balance
 !HISTORY_MSG_362;W - Residual - Compression method
 !HISTORY_MSG_363;W - Residual - Compression strength
@@ -1275,12 +1257,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_409;Retinex - Contrast
 !HISTORY_MSG_410;Retinex - Offset
 !HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Gaussian Gradient
+!HISTORY_MSG_412;Retinex - Gaussian gradient
 !HISTORY_MSG_413;Retinex - Contrast
 !HISTORY_MSG_414;Retinex - Histogram - Lab
 !HISTORY_MSG_415;Retinex - Transmission
 !HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission Median
+!HISTORY_MSG_417;Retinex - Transmission median
 !HISTORY_MSG_418;Retinex - Threshold
 !HISTORY_MSG_419;Retinex - Color space
 !HISTORY_MSG_420;Retinex - Histogram - HSL
@@ -1293,8 +1275,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_427;Output rendering intent
 !HISTORY_MSG_428;Monitor rendering intent
 !HISTORY_MSG_429;Retinex - Iterations
-!HISTORY_MSG_430;Retinex - Transmission Gradient
-!HISTORY_MSG_431;Retinex - Strength Gradient
+!HISTORY_MSG_430;Retinex - Transmission gradient
+!HISTORY_MSG_431;Retinex - Strength gradient
 !HISTORY_MSG_432;Retinex - M - Highlights
 !HISTORY_MSG_433;Retinex - M - Highlights TW
 !HISTORY_MSG_434;Retinex - M - Shadows
@@ -1306,8 +1288,49 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_440;CbDL - Method
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
-!HISTORY_MSG_443;Output Black Point Compensation
+!HISTORY_MSG_443;Output black point compensation
+!HISTORY_MSG_444;WB - Temp bias
+!HISTORY_MSG_445;Raw sub-image
+!HISTORY_MSG_449;PS - ISO adaption
+!HISTORY_MSG_452;PS - Show motion
+!HISTORY_MSG_453;PS - Show mask only
+!HISTORY_MSG_457;PS - Check red/blue
+!HISTORY_MSG_462;PS - Check green
+!HISTORY_MSG_464;PS - Blur motion mask
+!HISTORY_MSG_465;PS - Blur radius
+!HISTORY_MSG_468;PS - Fill holes
+!HISTORY_MSG_469;PS - Median
+!HISTORY_MSG_471;PS - Motion correction
+!HISTORY_MSG_472;PS - Smooth transitions
+!HISTORY_MSG_473;PS - Use LMMSE
+!HISTORY_MSG_474;PS - Equalize
+!HISTORY_MSG_475;PS - Equalize channel
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
@@ -1341,7 +1364,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
 !PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
+!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
+!PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 !PREFERENCES_AUTLISLOW;Low
@@ -1362,6 +1388,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1407,9 +1434,10 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVGUIDEBRUSH;Navigator guide color
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
@@ -1420,7 +1448,12 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
+!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
+!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
@@ -1433,6 +1466,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_STDAUT;Standard
+!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
@@ -1447,6 +1481,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_MYPROFILES;My profiles
+!PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
@@ -1695,6 +1730,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EPD_TOOLTIP;Tone mapping is possible in L*a*b* mode (standard) and CIECAM02 mode.\n\nWhen in L*a*b* mode, tone mapping can also be used on the residual image of the Wavelet Levels tool.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
@@ -1728,11 +1764,11 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 !TP_ICM_BPC;Black Point Compensation
-!TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
@@ -1769,16 +1805,77 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RAWEXPOS_BLACK_GREEN;Green
 !TP_RAWEXPOS_BLACK_RED;Red
 !TP_RAWEXPOS_RGB;Red, Green, Blue
+!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
+!TP_RAW_3PASSBEST;3-Pass (Best)
+!TP_RAW_AHD;AHD
+!TP_RAW_AMAZE;AMaZE
+!TP_RAW_DCB;DCB
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images to aid in noise reduction without leading to maze patterns, posterization or a washed-out look.\nPixel Shift is for Pentax Pixel Shift files. It falls back to AMaZE for non-Pixel Shift files.
+!TP_RAW_EAHD;EAHD
+!TP_RAW_FAST;Fast
 !TP_RAW_HD;Threshold
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
+!TP_RAW_HPHD;HPHD
+!TP_RAW_IGV;IGV
+!TP_RAW_IMAGENUM;Sub-image
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_LMMSE;LMMSE
 !TP_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal-to-noise ratio.
+!TP_RAW_MONO;Mono
+!TP_RAW_NONE;None (Shows sensor pattern)
+!TP_RAW_PIXELSHIFT;Pixel Shift
+!TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
+!TP_RAW_PIXELSHIFTBLUR;Blur motion mask
+!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
+!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
+!TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
+!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
+!TP_RAW_PIXELSHIFTEXP0;Experimental
+!TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
+!TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
+!TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
+!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
+!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
+!TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
+!TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
+!TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
+!TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
+!TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
+!TP_RAW_PIXELSHIFTMM_AUTO;Automatic
+!TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
+!TP_RAW_PIXELSHIFTMM_OFF;Off
+!TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
+!TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
+!TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
+!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
+!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue AMaZE
+!TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
+!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green AMaZE
+!TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
+!TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
+!TP_RAW_PIXELSHIFTNREADISO;nRead
+!TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+!TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
+!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
+!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
+!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image.
+!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion.
+!TP_RAW_PIXELSHIFTSIGMA;Blur radius
+!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
+!TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
+!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
+!TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
+!TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
+!TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
 !TP_RAW_SENSOR_BAYER_LABEL;Sensor with Bayer Matrix
 !TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass gives best results (recommended for low ISO images).\n1-pass is almost undistinguishable from 3-pass for high ISO images and is faster.
 !TP_RAW_SENSOR_XTRANS_LABEL;Sensor with X-Trans Matrix
+!TP_RAW_VNG4;VNG4
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
@@ -2028,6 +2125,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_WAVELET_TON;Toning
 !TP_WBALANCE_EQBLUERED;Blue/Red equalizer
 !TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater),\nb) are far from conditions where calibrations were performed,\nc) where the matrices or ICC profiles are unsuitable.
+!TP_WBALANCE_TEMPBIAS;AWB temperature bias
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !TP_WBALANCE_WATER1;UnderWater 1
 !TP_WBALANCE_WATER2;UnderWater 2
 !TP_WBALANCE_WATER_HEADER;UnderWater

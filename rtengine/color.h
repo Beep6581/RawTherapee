@@ -498,7 +498,7 @@ public:
     * @param a channel [-42000 ; +42000] ; can be more than 42000 (return value)
     * @param b channel [-42000 ; +42000] ; can be more than 42000 (return value)
     */
-    static void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
+    static void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, const double wp[3][3]);
 
 
     /**
@@ -780,18 +780,18 @@ public:
     static inline T interpolatePolarHue_PI (T h1, T h2, U balance) {
         if (h1==h2)
             return h1;
-        if ((h1 > h2) && (h1-h2 > T(M_PI))){
-            h1 -= T(2*M_PI);
+        if ((h1 > h2) && (h1-h2 > T(rtengine::RT_PI))){
+            h1 -= T(2*rtengine::RT_PI);
             T value = h1 + T(balance) * (h2-h1);
-            if (value < T(-M_PI))
-                value += T(2*M_PI);
+            if (value < T(-rtengine::RT_PI))
+                value += T(2*rtengine::RT_PI);
             return value;
         }
-        else if (h2-h1 > T(M_PI)) {
-            h2 -= T(2*M_PI);
+        else if (h2-h1 > T(rtengine::RT_PI)) {
+            h2 -= T(2*rtengine::RT_PI);
             T value = h1 + T(balance) * (h2-h1);
             if (value < T(0))
-                value += T(2*M_PI);
+                value += T(2*rtengine::RT_PI);
             return value;
         }
         else
@@ -821,21 +821,21 @@ public:
             f = 1.f - f;
         }
 
-        if (d < T(-M_PI) || d < T(0) || d > T(M_PI)) { //there was an inversion here !! d > T(M_PI)
-            h1 += T(2 * M_PI);
+        if (d < T(-rtengine::RT_PI) || d < T(0) || d > T(rtengine::RT_PI)) { //there was an inversion here !! d > T(rtengine::RT_PI)
+            h1 += T(2 * rtengine::RT_PI);
             h = h1 + f * (h2 - h1);
-            h = std::fmod(h, 2 * M_PI);
+            h = std::fmod(h, 2 * rtengine::RT_PI);
         } else {
             h = h1 + f * d;
         }
 
         // not strictly necessary..but in case of
-        if(h < T(-M_PI)) {
-            h = T(2 * M_PI) - h;
+        if(h < T(-rtengine::RT_PI)) {
+            h = T(2 * rtengine::RT_PI) - h;
         }
 
-        if(h > T(M_PI)) {
-            h = h - T(2 * M_PI);
+        if(h > T(rtengine::RT_PI)) {
+            h = h - T(2 * rtengine::RT_PI);
         }
 
         return h;
@@ -864,7 +864,7 @@ public:
             f = 1.f - f;
         }
 
-        if (d < T(0) || d < T(0.5) || d > T(1.)) { //there was an inversion here !! d > T(M_PI)
+        if (d < T(0) || d < T(0.5) || d > T(1.)) { //there was an inversion here !! d > T(rtengine::RT_PI)
             h1 += T(1.);
             h = h1 + f * (h2 - h1);
             h = std::fmod(h, 1.);

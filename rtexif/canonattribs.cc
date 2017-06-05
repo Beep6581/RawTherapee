@@ -36,9 +36,9 @@ public:
     {
         int n = t->toInt();
 
-        if( n == 0 ) {
+        if ( n == 0 ) {
             return "OFF";
-        } else if( n == 1) {
+        } else if ( n == 1) {
             return "ON";
         } else {
             return "undef";
@@ -66,9 +66,9 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        double v = pow(2.0, t->toDouble() / 64.0);
+        double v = pow (2.0, t->toDouble() / 64.0);
 
-        if( v < 0. || v > 1000.) {
+        if ( v < 0. || v > 1000.) {
             return "undef";
         }
 
@@ -94,9 +94,9 @@ class CASelfTimerInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        int sec = t->toInt(0, SHORT);
+        int sec = t->toInt (0, SHORT);
 
-        if( !sec ) {
+        if ( !sec ) {
             return "OFF";
         }
 
@@ -171,6 +171,7 @@ public:
         choices[16] = "Pan Focus";
         choices[256] = "AF + MF";
         choices[512] = "Movie Snap Focus";
+        choices[519] = "Movie Servo AF";
     }
 };
 CAFocusModeInterpreter caFocusModeInterpreter;
@@ -387,41 +388,41 @@ public:
     virtual std::string toString (Tag* t)
     {
         std::ostringstream s;
-        unsigned bits = t->toInt(0, SHORT);
+        unsigned bits = t->toInt (0, SHORT);
 
-        if( bits & 0x0001 ) {
+        if ( bits & 0x0001 ) {
             s << "Manual ";
         }
 
-        if( bits & 0x0002 ) {
+        if ( bits & 0x0002 ) {
             s << "TTL ";
         }
 
-        if( bits & 0x0004 ) {
+        if ( bits & 0x0004 ) {
             s << "A-TTL ";
         }
 
-        if( bits & 0x0008 ) {
+        if ( bits & 0x0008 ) {
             s << "E-TTL ";
         }
 
-        if( bits & 0x0010 ) {
+        if ( bits & 0x0010 ) {
             s << "FP sync enabled ";
         }
 
-        if( bits & 0x0080 ) {
+        if ( bits & 0x0080 ) {
             s << "2nd curtain ";
         }
 
-        if( bits & 0x0800 ) {
+        if ( bits & 0x0800 ) {
             s << "FP sync used ";
         }
 
-        if( bits & 0x2000 ) {
+        if ( bits & 0x2000 ) {
             s << "Built-in ";
         }
 
-        if( bits & 0x4000 ) {
+        if ( bits & 0x4000 ) {
             s << "External ";
         }
 
@@ -534,11 +535,11 @@ class CAFocalInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
+        Tag *unitTag = t->getParent()->getRoot()->findTag ("FocalUnits");
         double v = unitTag ? unitTag->toDouble() : 1.;
         v = (v > 0. ? t->toDouble() / v : t->toDouble());
 
-        if( v < 0. || v > 1000000.) {
+        if ( v < 0. || v > 1000000.) {
             return "undef";
         }
 
@@ -554,342 +555,350 @@ class CALensInterpreter : public IntLensInterpreter< int >
 public:
     CALensInterpreter ()
     {
-        choices.insert(p_t(1, "Canon EF 50mm f/1.8"));
-        choices.insert(p_t(2, "Canon EF 28mm f/2.8"));
-        choices.insert(p_t(3, "Canon EF 135mm f/2.8 Soft"));
-        choices.insert(p_t(4, "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens"));
-        choices.insert(p_t(4, "Sigma UC Zoom 35-135mm f/4-5.6"));
-        choices.insert(p_t(5, "Canon EF 35-70mm f/3.5-4.5"));
-        choices.insert(p_t(6, "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens"));
-        choices.insert(p_t(6, "Sigma 18-50mm f/3.5-5.6 DC"));
-        choices.insert(p_t(6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"));
-        choices.insert(p_t(6, "Tokina AF 193-2 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(6, "Sigma 28-80mm f/3.5-5.6 II Macro"));
-        choices.insert(p_t(7, "Canon EF 100-300mm f/5.6L"));
-        choices.insert(p_t(8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens"));
-        choices.insert(p_t(8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"));
-        choices.insert(p_t(8, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"));
-        choices.insert(p_t(9, "Canon EF 70-210mm f/4"));
-        choices.insert(p_t(9, "Sigma 55-200mm f/4-5.6 DC"));
-        choices.insert(p_t(10, "Canon EF 50mm f/2.5 Macro or Sigma Lens"));
-        choices.insert(p_t(10, "Sigma 50mm f/2.8 EX"));
-        choices.insert(p_t(10, "Sigma 28mm f/1.8"));
-        choices.insert(p_t(10, "Sigma 105mm f/2.8 Macro EX"));
-        choices.insert(p_t(10, "Sigma 70mm f/2.8 EX DG Macro EF"));
-        choices.insert(p_t(11, "Canon EF 35mm f/2"));
-        choices.insert(p_t(13, "Canon EF 15mm f/2.8 Fisheye"));
-        choices.insert(p_t(14, "Canon EF 50-200mm f/3.5-4.5L"));
-        choices.insert(p_t(15, "Canon EF 50-200mm f/3.5-4.5"));
-        choices.insert(p_t(16, "Canon EF 35-135mm f/3.5-4.5"));
-        choices.insert(p_t(17, "Canon EF 35-70mm f/3.5-4.5A"));
-        choices.insert(p_t(18, "Canon EF 28-70mm f/3.5-4.5"));
-        choices.insert(p_t(20, "Canon EF 100-200mm f/4.5A"));
-        choices.insert(p_t(21, "Canon EF 80-200mm f/2.8L"));
-        choices.insert(p_t(22, "Canon EF 20-35mm f/2.8L or Tokina Lens"));
-        choices.insert(p_t(22, "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical"));
-        choices.insert(p_t(23, "Canon EF 35-105mm f/3.5-4.5"));
-        choices.insert(p_t(24, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert(p_t(25, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
-        choices.insert(p_t(26, "Canon EF 100mm f/2.8 Macro or Other Lens"));
-        choices.insert(p_t(26, "Cosina 100mm f/3.5 Macro AF"));
-        choices.insert(p_t(26, "Tamron SP AF 90mm f/2.8 Di Macro"));
-        choices.insert(p_t(26, "Tamron SP AF 180mm f/3.5 Di Macro"));
-        choices.insert(p_t(26, "Carl Zeiss Planar T* 50mm f/1.4"));
-        choices.insert(p_t(27, "Canon EF 35-80mm f/4-5.6"));
-        choices.insert(p_t(28, "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens"));
-        choices.insert(p_t(28, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
-        choices.insert(p_t(28, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(28, "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro"));
-        choices.insert(p_t(28, "Tamron AF Aspherical 28-200mm f/3.8-5.6"));
-        choices.insert(p_t(29, "Canon EF 50mm f/1.8 II"));
-        choices.insert(p_t(30, "Canon EF 35-105mm f/4.5-5.6"));
-        choices.insert(p_t(31, "Canon EF 75-300mm f/4-5.6 or Tamron Lens"));
-        choices.insert(p_t(31, "Tamron SP AF 300mm f/2.8 LD IF"));
-        choices.insert(p_t(32, "Canon EF 24mm f/2.8 or Sigma Lens"));
-        choices.insert(p_t(32, "Sigma 15mm f/2.8 EX Fisheye"));
-        choices.insert(p_t(33, "Voigtlander or Carl Zeiss Lens"));
-        choices.insert(p_t(33, "Voigtlander Ultron 40mm f/2 SLII Aspherical"));
-        choices.insert(p_t(33, "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical"));
-        choices.insert(p_t(33, "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 15mm f/2.8 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 18mm f/3.5 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 21mm f/2.8 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 25mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 28mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 35mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Distagon T* 35mm f/1.4 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Planar T* 50mm f/1.4 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Makro-Planar T* 50mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Makro-Planar T* 100mm f/2 ZE"));
-        choices.insert(p_t(33, "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE"));
-        choices.insert(p_t(35, "Canon EF 35-80mm f/4-5.6"));
-        choices.insert(p_t(36, "Canon EF 38-76mm f/4.5-5.6"));
-        choices.insert(p_t(37, "Canon EF 35-80mm f/4-5.6 or Tamron Lens"));
-        choices.insert(p_t(37, "Tamron 70-200mm f/2.8 Di LD IF Macro"));
-        choices.insert(p_t(37, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
-        choices.insert(p_t(37, "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"));
-        choices.insert(p_t(37, "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"));
-        choices.insert(p_t(38, "Canon EF 80-200mm f/4.5-5.6"));
-        choices.insert(p_t(39, "Canon EF 75-300mm f/4-5.6"));
-        choices.insert(p_t(40, "Canon EF 28-80mm f/3.5-5.6"));
-        choices.insert(p_t(41, "Canon EF 28-90mm f/4-5.6"));
-        choices.insert(p_t(42, "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens"));
-        choices.insert(p_t(42, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
-        choices.insert(p_t(43, "Canon EF 28-105mm f/4-5.6"));
-        choices.insert(p_t(44, "Canon EF 90-300mm f/4.5-5.6"));
-        choices.insert(p_t(45, "Canon EF-S 18-55mm f/3.5-5.6 [II]"));
-        choices.insert(p_t(46, "Canon EF 28-90mm f/4-5.6"));
-        choices.insert(p_t(47, "Zeiss Milvus 35mm f/2 or 50mm f/2"));
-        choices.insert(p_t(47, "Zeiss Milvus 50mm f/2 Makro"));
-        choices.insert(p_t(48, "Canon EF-S 18-55mm f/3.5-5.6 IS"));
-        choices.insert(p_t(49, "Canon EF-S 55-250mm f/4-5.6 IS"));
-        choices.insert(p_t(50, "Canon EF-S 18-200mm f/3.5-5.6 IS"));
-        choices.insert(p_t(51, "Canon EF-S 18-135mm f/3.5-5.6 IS"));
-        choices.insert(p_t(52, "Canon EF-S 18-55mm f/3.5-5.6 IS II"));
-        choices.insert(p_t(53, "Canon EF-S 18-55mm f/3.5-5.6 III"));
-        choices.insert(p_t(54, "Canon EF-S 55-250mm f/4-5.6 IS II"));
-        choices.insert(p_t(94, "Canon TS-E 17mm f/4L"));
-        choices.insert(p_t(95, "Canon TS-E 24.0mm f/3.5 L II"));
-        choices.insert(p_t(124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"));
-        choices.insert(p_t(125, "Canon TS-E 24mm f/3.5L"));
-        choices.insert(p_t(126, "Canon TS-E 45mm f/2.8"));
-        choices.insert(p_t(127, "Canon TS-E 90mm f/2.8"));
-        choices.insert(p_t(129, "Canon EF 300mm f/2.8L"));
-        choices.insert(p_t(130, "Canon EF 50mm f/1.0L"));
-        choices.insert(p_t(131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens"));
-        choices.insert(p_t(131, "Sigma 8mm f/3.5 EX DG Circular Fisheye"));
-        choices.insert(p_t(131, "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM"));
-        choices.insert(p_t(131, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
-        choices.insert(p_t(131, "Sigma APO 50-150mm f/2.8 [II] EX DC HSM"));
-        choices.insert(p_t(131, "Sigma APO 120-300mm f/2.8 EX DG HSM"));
-        choices.insert(p_t(131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
-        choices.insert(p_t(131, "Sigma 70-200mm f/2.8 APO EX HSM"));
-        choices.insert(p_t(132, "Canon EF 1200mm f/5.6L"));
-        choices.insert(p_t(134, "Canon EF 600mm f/4L IS"));
-        choices.insert(p_t(135, "Canon EF 200mm f/1.8L"));
-        choices.insert(p_t(136, "Canon EF 300mm f/2.8L"));
-        choices.insert(p_t(137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens"));
-        choices.insert(p_t(137, "Sigma 18-50mm f/2.8-4.5 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 50-200mm f/4-5.6 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
-        choices.insert(p_t(137, "Sigma 18-125mm f/3.8-5.6 DC OS HSM"));
-        choices.insert(p_t(137, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM | C"));
-        choices.insert(p_t(137, "Sigma 17-50mm f/2.8 OS HSM"));
-        choices.insert(p_t(137, "Sigma 18-200mm f/3.5-6.3 DC OS HSM [II]"));
-        choices.insert(p_t(137, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
-        choices.insert(p_t(137, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
-        choices.insert(p_t(137, "Tamron SP 17-50mm f/2.8 XR Di II VC"));
-        choices.insert(p_t(137, "Tamron SP 60mm f/2 Macro Di II"));
-        choices.insert(p_t(137, "Sigma 10-20mm f/3.5 EX DC HSM"));
-        choices.insert(p_t(137, "Tamron SP 24-70mm f/2.8 Di VC USD"));
-        choices.insert(p_t(137, "Sigma 18-35mm f/1.8 DC HSM"));
-        choices.insert(p_t(137, "Sigma 12-24mm f/4.5-5.6 DG HSM II"));
-        choices.insert(p_t(138, "Canon EF 28-80mm f/2.8-4L"));
-        choices.insert(p_t(139, "Canon EF 400mm f/2.8L"));
-        choices.insert(p_t(140, "Canon EF 500mm f/4.5L"));
-        choices.insert(p_t(141, "Canon EF 500mm f/4.5L"));
-        choices.insert(p_t(142, "Canon EF 300mm f/2.8L IS"));
-        choices.insert(p_t(143, "Canon EF 500mm f/4L IS or Sigma Lens"));
-        choices.insert(p_t(143, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"));
-        choices.insert(p_t(144, "Canon EF 35-135mm f/4-5.6 USM"));
-        choices.insert(p_t(145, "Canon EF 100-300mm f/4.5-5.6 USM"));
-        choices.insert(p_t(146, "Canon EF 70-210mm f/3.5-4.5 USM"));
-        choices.insert(p_t(147, "Canon EF 35-135mm f/4-5.6 USM"));
-        choices.insert(p_t(148, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert(p_t(149, "Canon EF 100mm f/2 USM"));
-        choices.insert(p_t(150, "Canon EF 14mm f/2.8L or Sigma Lens"));
-        choices.insert(p_t(150, "Sigma 20mm EX f/1.8"));
-        choices.insert(p_t(150, "Sigma 30mm f/1.4 DC HSM"));
-        choices.insert(p_t(150, "Sigma 24mm f/1.8 DG Macro EX"));
-        choices.insert(p_t(150, "Sigma 28mm f/1.8 DG Macro EX"));
-        choices.insert(p_t(151, "Canon EF 200mm f/2.8L"));
-        choices.insert(p_t(152, "Canon EF 300mm f/4L IS or Sigma Lens"));
-        choices.insert(p_t(152, "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM"));
-        choices.insert(p_t(152, "Sigma 14mm f/2.8 EX Aspherical HSM"));
-        choices.insert(p_t(152, "Sigma 10-20mm f/4-5.6"));
-        choices.insert(p_t(152, "Sigma 100-300mm f/4"));
-        choices.insert(p_t(153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens"));
-        choices.insert(p_t(153, "Sigma 50-500mm f/4-6.3 APO HSM EX"));
-        choices.insert(p_t(153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"));
-        choices.insert(p_t(153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro Model A14"));
-        choices.insert(p_t(153, "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
-        choices.insert(p_t(154, "Canon EF 20mm f/2.8 USM or Zeiss Lens"));
-        choices.insert(p_t(154, "Zeiss Milvus 21mm f/2.8"));
-        choices.insert(p_t(155, "Canon EF 85mm f/1.8 USM"));
-        choices.insert(p_t(156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"));
-        choices.insert(p_t(156, "Tamron SP 70-300mm f/4.0-5.6 Di VC USD"));
-        choices.insert(p_t(156, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
-        choices.insert(p_t(160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"));
-        choices.insert(p_t(160, "Tamron AF 19-35mm f/3.5-4.5"));
-        choices.insert(p_t(160, "Tokina AT-X 124 AF Pro DX 12-24mm f/4"));
-        choices.insert(p_t(160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"));
-        choices.insert(p_t(160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"));
-        choices.insert(p_t(160, "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"));
-        choices.insert(p_t(161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens"));
-        choices.insert(p_t(161, "Sigma 24-70mm f/2.8 EX"));
-        choices.insert(p_t(161, "Sigma 28-70mm f/2.8 EX"));
-        choices.insert(p_t(161, "Sigma 24-60mm f/2.8 EX DG"));
-        choices.insert(p_t(161, "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"));
-        choices.insert(p_t(161, "Tamron 90mm f/2.8"));
-        choices.insert(p_t(161, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"));
-        choices.insert(p_t(161, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(162, "Canon EF 200mm f/2.8L"));
-        choices.insert(p_t(163, "Canon EF 300mm f/4L"));
-        choices.insert(p_t(164, "Canon EF 400mm f/5.6L"));
-        choices.insert(p_t(165, "Canon EF 70-200mm f/2.8 L"));
-        choices.insert(p_t(166, "Canon EF 70-200mm f/2.8 L + 1.4x"));
-        choices.insert(p_t(167, "Canon EF 70-200mm f/2.8 L + 2x"));
-        choices.insert(p_t(168, "Canon EF 28mm f/1.8 USM or Sigma Lens"));
-        choices.insert(p_t(168, "Sigma 50-100mm f/1.8 DC HSM | A"));
-        choices.insert(p_t(169, "Canon EF 17-35mm f/2.8L or Sigma Lens"));
-        choices.insert(p_t(169, "Sigma 18-200mm f/3.5-6.3 DC OS"));
-        choices.insert(p_t(169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"));
-        choices.insert(p_t(169, "Sigma 18-50mm f/2.8 Macro"));
-        choices.insert(p_t(169, "Sigma 50mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(169, "Sigma 85mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(169, "Sigma 30mm f/1.4 EX DC HSM"));
-        choices.insert(p_t(169, "Sigma 35mm f/1.4 DG HSM"));
-        choices.insert(p_t(170, "Canon EF 200mm f/2.8L II"));
-        choices.insert(p_t(171, "Canon EF 300mm f/4L"));
-        choices.insert(p_t(172, "Canon EF 400mm f/5.6L or Sigma Lens"));
-        choices.insert(p_t(172, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
-        choices.insert(p_t(173, "Canon EF 180mm Macro f/3.5L or Sigma Lens"));
-        choices.insert(p_t(173, "Sigma 180mm EX HSM Macro f/3.5"));
-        choices.insert(p_t(173, "Sigma APO Macro 150mm f/2.8 EX DG HSM"));
-        choices.insert(p_t(174, "Canon EF 135mm f/2L or Other Lens"));
-        choices.insert(p_t(174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"));
-        choices.insert(p_t(174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"));
-        choices.insert(p_t(174, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
-        choices.insert(p_t(174, "Zeiss Milvus 100mm f/2 Makro"));
-        choices.insert(p_t(175, "Canon EF 400mm f/2.8L"));
-        choices.insert(p_t(176, "Canon EF 24-85mm f/3.5-4.5 USM"));
-        choices.insert(p_t(177, "Canon EF 300mm f/4L IS"));
-        choices.insert(p_t(178, "Canon EF 28-135mm f/3.5-5.6 IS"));
-        choices.insert(p_t(179, "Canon EF 24mm f/1.4L"));
-        choices.insert(p_t(180, "Canon EF 35mm f/1.4L or Other Lens"));
-        choices.insert(p_t(180, "Sigma 50mm f/1.4 DG HSM | A"));
-        choices.insert(p_t(180, "Sigma 24mm f/1.4 DG HSM | A"));
-        choices.insert(p_t(180, "Zeiss Milvus 50mm f/1.4"));
-        choices.insert(p_t(180, "Zeiss Milvus 85mm f/1.4"));
-        choices.insert(p_t(180, "Zeiss Otus 28mm f/1.4 ZE"));
-        choices.insert(p_t(181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens"));
-        choices.insert(p_t(181, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"));
-        choices.insert(p_t(182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens"));
-        choices.insert(p_t(182, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"));
-        choices.insert(p_t(183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens"));
-        choices.insert(p_t(183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert(p_t(183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"));
-        choices.insert(p_t(183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert(p_t(183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"));
-        choices.insert(p_t(183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
-        choices.insert(p_t(184, "Canon EF 400mm f/2.8L + 2x"));
-        choices.insert(p_t(185, "Canon EF 600mm f/4L IS"));
-        choices.insert(p_t(186, "Canon EF 70-200mm f/4L"));
-        choices.insert(p_t(187, "Canon EF 70-200mm f/4L + 1.4x"));
-        choices.insert(p_t(188, "Canon EF 70-200mm f/4L + 2x"));
-        choices.insert(p_t(189, "Canon EF 70-200mm f/4L + 2.8x"));
-        choices.insert(p_t(190, "Canon EF 100mm f/2.8 Macro USM"));
-        choices.insert(p_t(191, "Canon EF 400mm f/4 DO IS"));
-        choices.insert(p_t(193, "Canon EF 35-80mm f/4-5.6 USM"));
-        choices.insert(p_t(194, "Canon EF 80-200mm f/4.5-5.6 USM"));
-        choices.insert(p_t(195, "Canon EF 35-105mm f/4.5-5.6 USM"));
-        choices.insert(p_t(196, "Canon EF 75-300mm f/4-5.6 USM"));
-        choices.insert(p_t(197, "Canon EF 75-300mm f/4-5.6 IS USM"));
-        choices.insert(p_t(198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"));
-        choices.insert(p_t(198, "Zeiss Otus 55mm f/1.4 ZE"));
-        choices.insert(p_t(198, "Zeiss Otus 85mm f/1.4 ZE"));
-        choices.insert(p_t(199, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert(p_t(200, "Canon EF 75-300mm f/4-5.6 USM"));
-        choices.insert(p_t(201, "Canon EF 28-80mm f/3.5-5.6 USM"));
-        choices.insert(p_t(202, "Canon EF 28-80mm f/3.5-5.6 USM IV"));
-        choices.insert(p_t(208, "Canon EF 22-55mm f/4-5.6 USM"));
-        choices.insert(p_t(209, "Canon EF 55-200mm f/4.5-5.6"));
-        choices.insert(p_t(210, "Canon EF 28-90mm f/4-5.6 USM"));
-        choices.insert(p_t(211, "Canon EF 28-200mm f/3.5-5.6 USM"));
-        choices.insert(p_t(212, "Canon EF 28-105mm f/4-5.6 USM"));
-        choices.insert(p_t(213, "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens"));
-        choices.insert(p_t(213, "Tamron SP 150-600mm f/5-6.3 Di VC USD"));
-        choices.insert(p_t(213, "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro"));
-        choices.insert(p_t(213, "Tamron SP 35mm f/1.8 Di VC USD"));
-        choices.insert(p_t(213, "Tamron SP 45mm f/1.8 Di VC USD"));
-        choices.insert(p_t(214, "Canon EF-S 18-55mm f/3.5-5.6 USM"));
-        choices.insert(p_t(215, "Canon EF 55-200mm f/4.5-5.6 II USM"));
-        choices.insert(p_t(217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
-        choices.insert(p_t(224, "Canon EF 70-200mm f/2.8L IS"));
-        choices.insert(p_t(225, "Canon EF 70-200mm f/2.8L IS + 1.4x"));
-        choices.insert(p_t(226, "Canon EF 70-200mm f/2.8L IS + 2x"));
-        choices.insert(p_t(227, "Canon EF 70-200mm f/2.8L IS + 2.8x"));
-        choices.insert(p_t(228, "Canon EF 28-105mm f/3.5-4.5 USM"));
-        choices.insert(p_t(229, "Canon EF 16-35mm f/2.8L"));
-        choices.insert(p_t(230, "Canon EF 24-70mm f/2.8L"));
-        choices.insert(p_t(231, "Canon EF 17-40mm f/4L"));
-        choices.insert(p_t(232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM"));
-        choices.insert(p_t(233, "Canon EF 28-300mm f/3.5-5.6L IS"));
-        choices.insert(p_t(234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens"));
-        choices.insert(p_t(234, "Tokina AT-X 12-28 PRO DX 12-28mm f/4"));
-        choices.insert(p_t(235, "Canon EF-S 10-22mm f/3.5-4.5 USM"));
-        choices.insert(p_t(236, "Canon EF-S 60mm f/2.8 Macro USM"));
-        choices.insert(p_t(237, "Canon EF 24-105mm f/4L IS"));
-        choices.insert(p_t(238, "Canon EF 70-300mm f/4-5.6 IS USM"));
-        choices.insert(p_t(239, "Canon EF 85mm f/1.2L II"));
-        choices.insert(p_t(240, "Canon EF-S 17-55mm f/2.8 IS USM"));
-        choices.insert(p_t(241, "Canon EF 50mm f/1.2L"));
-        choices.insert(p_t(242, "Canon EF 70-200mm f/4L IS"));
-        choices.insert(p_t(243, "Canon EF 70-200mm f/4L IS + 1.4x"));
-        choices.insert(p_t(244, "Canon EF 70-200mm f/4L IS + 2x"));
-        choices.insert(p_t(245, "Canon EF 70-200mm f/4L IS + 2.8x"));
-        choices.insert(p_t(246, "Canon EF 16-35mm f/2.8L II"));
-        choices.insert(p_t(247, "Canon EF 14mm f/2.8L II USM"));
-        choices.insert(p_t(248, "Canon EF 200mm f/2L IS or Sigma Lens"));
-        choices.insert(p_t(248, "Sigma 24-35mm f/2 DG HSM | A"));
-        choices.insert(p_t(249, "Canon EF 800mm f/5.6L IS"));
-        choices.insert(p_t(250, "Canon EF 24mm f/1.4L II or Sigma Lens"));
-        choices.insert(p_t(250, "Sigma 20mm f/1.4 DG HSM | A"));
-        choices.insert(p_t(251, "Canon EF 70-200mm f/2.8L IS II USM"));
-        choices.insert(p_t(252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x"));
-        choices.insert(p_t(253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"));
-        choices.insert(p_t(254, "Canon EF 100mm f/2.8L Macro IS USM"));
-        choices.insert(p_t(255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"));
-        choices.insert(p_t(255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
-        choices.insert(p_t(488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"));
-        choices.insert(p_t(489, "Canon EF 70-300mm f/4-5.6L IS USM"));
-        choices.insert(p_t(490, "Canon EF 8-15mm f/4L Fisheye USM"));
-        choices.insert(p_t(491, "Canon EF 300mm f/2.8L IS II USM"));
-        choices.insert(p_t(492, "Canon EF 400mm f/2.8L IS II USM"));
-        choices.insert(p_t(493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"));
-        choices.insert(p_t(493, "Canon EF 24-105mm f/4L IS USM"));
-        choices.insert(p_t(494, "Canon EF 600mm f/4.0L IS II USM"));
-        choices.insert(p_t(495, "Canon EF 24-70mm f/2.8L II USM"));
-        choices.insert(p_t(496, "Canon EF 200-400mm f/4L IS USM"));
-        choices.insert(p_t(499, "Canon EF 200-400mm f/4L IS USM + 1.4x"));
-        choices.insert(p_t(502, "Canon EF 28mm f/2.8 IS USM"));
-        choices.insert(p_t(503, "Canon EF 24mm f/2.8 IS USM"));
-        choices.insert(p_t(504, "Canon EF 24-70mm f/4L IS USM"));
-        choices.insert(p_t(505, "Canon EF 35mm f/2 IS USM"));
-        choices.insert(p_t(506, "Canon EF 400mm f/4 DO IS II USM"));
-        choices.insert(p_t(507, "Canon EF 16-35mm f/4L IS USM"));
-        choices.insert(p_t(508, "Canon EF 11-24mm f/4L USM"));
-        choices.insert(p_t(747, "Canon EF 100-400mm f/4.5-5.6L IS II USM"));
-        choices.insert(p_t(748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"));
-        choices.insert(p_t(750, "Canon EF 35mm f/1.4L II USM"));
-        choices.insert(p_t(4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"));
-        choices.insert(p_t(4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"));
-        choices.insert(p_t(4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
-        choices.insert(p_t(4144, "Canon EF 40mm f/2.8 STM"));
-        choices.insert(p_t(4145, "Canon EF-M 22mm f/2 STM"));
-        choices.insert(p_t(4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"));
-        choices.insert(p_t(4147, "Canon EF-M 11-22mm f/4-5.6 IS STM"));
-        choices.insert(p_t(4148, "Canon EF-S 55-250mm f/4-5.6 IS STM"));
-        choices.insert(p_t(4149, "Canon EF-M 55-200mm f/4.5-6.3 IS STM"));
-        choices.insert(p_t(4150, "Canon EF-S 10-18mm f/4.5-5.6 IS STM"));
-        choices.insert(p_t(4152, "Canon EF 24-105mm f/3.5-5.6 IS STM"));
-        choices.insert(p_t(4153, "Canon EF-M 15-45mm f/3.5-6.3 IS STM"));
-        choices.insert(p_t(4154, "Canon EF-S 24mm f/2.8 STM"));
-        choices.insert(p_t(4155, "Canon EF-M 28mm f/3.5 Macro IS STM "));
-        choices.insert(p_t(4156, "Canon EF 50mm f/1.8 STM"));
-        choices.insert(p_t(36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"));
-        choices.insert(p_t(65535, "n/a"));
+        choices.insert (p_t (1, "Canon EF 50mm f/1.8"));
+        choices.insert (p_t (2, "Canon EF 28mm f/2.8"));
+        choices.insert (p_t (3, "Canon EF 135mm f/2.8 Soft"));
+        choices.insert (p_t (4, "Canon EF 35-105mm f/3.5-4.5 or Sigma Lens"));
+        choices.insert (p_t (4, "Sigma UC Zoom 35-135mm f/4-5.6"));
+        choices.insert (p_t (5, "Canon EF 35-70mm f/3.5-4.5"));
+        choices.insert (p_t (6, "Canon EF 28-70mm f/3.5-4.5 or Sigma or Tokina Lens"));
+        choices.insert (p_t (6, "Sigma 18-50mm f/3.5-5.6 DC"));
+        choices.insert (p_t (6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"));
+        choices.insert (p_t (6, "Tokina AF 193-2 19-35mm f/3.5-4.5"));
+        choices.insert (p_t (6, "Sigma 28-80mm f/3.5-5.6 II Macro"));
+        choices.insert (p_t (7, "Canon EF 100-300mm f/5.6L"));
+        choices.insert (p_t (8, "Canon EF 100-300mm f/5.6 or Sigma or Tokina Lens"));
+        choices.insert (p_t (8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"));
+        choices.insert (p_t (8, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"));
+        choices.insert (p_t (9, "Canon EF 70-210mm f/4"));
+        choices.insert (p_t (9, "Sigma 55-200mm f/4-5.6 DC"));
+        choices.insert (p_t (10, "Canon EF 50mm f/2.5 Macro or Sigma Lens"));
+        choices.insert (p_t (10, "Sigma 50mm f/2.8 EX"));
+        choices.insert (p_t (10, "Sigma 28mm f/1.8"));
+        choices.insert (p_t (10, "Sigma 105mm f/2.8 Macro EX"));
+        choices.insert (p_t (10, "Sigma 70mm f/2.8 EX DG Macro EF"));
+        choices.insert (p_t (11, "Canon EF 35mm f/2"));
+        choices.insert (p_t (13, "Canon EF 15mm f/2.8 Fisheye"));
+        choices.insert (p_t (14, "Canon EF 50-200mm f/3.5-4.5L"));
+        choices.insert (p_t (15, "Canon EF 50-200mm f/3.5-4.5"));
+        choices.insert (p_t (16, "Canon EF 35-135mm f/3.5-4.5"));
+        choices.insert (p_t (17, "Canon EF 35-70mm f/3.5-4.5A"));
+        choices.insert (p_t (18, "Canon EF 28-70mm f/3.5-4.5"));
+        choices.insert (p_t (20, "Canon EF 100-200mm f/4.5A"));
+        choices.insert (p_t (21, "Canon EF 80-200mm f/2.8L"));
+        choices.insert (p_t (22, "Canon EF 20-35mm f/2.8L or Tokina Lens"));
+        choices.insert (p_t (22, "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical"));
+        choices.insert (p_t (23, "Canon EF 35-105mm f/3.5-4.5"));
+        choices.insert (p_t (24, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
+        choices.insert (p_t (25, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
+        choices.insert (p_t (26, "Canon EF 100mm f/2.8 Macro or Other Lens"));
+        choices.insert (p_t (26, "Cosina 100mm f/3.5 Macro AF"));
+        choices.insert (p_t (26, "Tamron SP AF 90mm f/2.8 Di Macro"));
+        choices.insert (p_t (26, "Tamron SP AF 180mm f/3.5 Di Macro"));
+        choices.insert (p_t (26, "Carl Zeiss Planar T* 50mm f/1.4"));
+        choices.insert (p_t (27, "Canon EF 35-80mm f/4-5.6"));
+        choices.insert (p_t (28, "Canon EF 80-200mm f/4.5-5.6 or Tamron Lens"));
+        choices.insert (p_t (28, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
+        choices.insert (p_t (28, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
+        choices.insert (p_t (28, "Tamron AF 70-300mm f/4-5.6 Di LD 1:2 Macro"));
+        choices.insert (p_t (28, "Tamron AF Aspherical 28-200mm f/3.8-5.6"));
+        choices.insert (p_t (29, "Canon EF 50mm f/1.8 II"));
+        choices.insert (p_t (30, "Canon EF 35-105mm f/4.5-5.6"));
+        choices.insert (p_t (31, "Canon EF 75-300mm f/4-5.6 or Tamron Lens"));
+        choices.insert (p_t (31, "Tamron SP AF 300mm f/2.8 LD IF"));
+        choices.insert (p_t (32, "Canon EF 24mm f/2.8 or Sigma Lens"));
+        choices.insert (p_t (32, "Sigma 15mm f/2.8 EX Fisheye"));
+        choices.insert (p_t (33, "Voigtlander or Carl Zeiss Lens"));
+        choices.insert (p_t (33, "Voigtlander Ultron 40mm f/2 SLII Aspherical"));
+        choices.insert (p_t (33, "Voigtlander Color Skopar 20mm f/3.5 SLII Aspherical"));
+        choices.insert (p_t (33, "Voigtlander APO-Lanthar 90mm f/3.5 SLII Close Focus"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 15mm f/2.8 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 18mm f/3.5 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 21mm f/2.8 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 25mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 28mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 35mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Distagon T* 35mm f/1.4 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Planar T* 50mm f/1.4 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Makro-Planar T* 50mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Makro-Planar T* 100mm f/2 ZE"));
+        choices.insert (p_t (33, "Carl Zeiss Apo-Sonnar T* 135mm f/2 ZE"));
+        choices.insert (p_t (35, "Canon EF 35-80mm f/4-5.6"));
+        choices.insert (p_t (36, "Canon EF 38-76mm f/4.5-5.6"));
+        choices.insert (p_t (37, "Canon EF 35-80mm f/4-5.6 or Tamron Lens"));
+        choices.insert (p_t (37, "Tamron 70-200mm f/2.8 Di LD IF Macro"));
+        choices.insert (p_t (37, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
+        choices.insert (p_t (37, "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"));
+        choices.insert (p_t (37, "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"));
+        choices.insert (p_t (38, "Canon EF 80-200mm f/4.5-5.6"));
+        choices.insert (p_t (39, "Canon EF 75-300mm f/4-5.6"));
+        choices.insert (p_t (40, "Canon EF 28-80mm f/3.5-5.6"));
+        choices.insert (p_t (41, "Canon EF 28-90mm f/4-5.6"));
+        choices.insert (p_t (42, "Canon EF 28-200mm f/3.5-5.6 or Tamron Lens"));
+        choices.insert (p_t (42, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro Model A20"));
+        choices.insert (p_t (43, "Canon EF 28-105mm f/4-5.6"));
+        choices.insert (p_t (44, "Canon EF 90-300mm f/4.5-5.6"));
+        choices.insert (p_t (45, "Canon EF-S 18-55mm f/3.5-5.6 [II]"));
+        choices.insert (p_t (46, "Canon EF 28-90mm f/4-5.6"));
+        choices.insert (p_t (47, "Zeiss Milvus 35mm f/2 or 50mm f/2"));
+        choices.insert (p_t (47, "Zeiss Milvus 50mm f/2 Makro"));
+        choices.insert (p_t (48, "Canon EF-S 18-55mm f/3.5-5.6 IS"));
+        choices.insert (p_t (49, "Canon EF-S 55-250mm f/4-5.6 IS"));
+        choices.insert (p_t (50, "Canon EF-S 18-200mm f/3.5-5.6 IS"));
+        choices.insert (p_t (51, "Canon EF-S 18-135mm f/3.5-5.6 IS"));
+        choices.insert (p_t (52, "Canon EF-S 18-55mm f/3.5-5.6 IS II"));
+        choices.insert (p_t (53, "Canon EF-S 18-55mm f/3.5-5.6 III"));
+        choices.insert (p_t (54, "Canon EF-S 55-250mm f/4-5.6 IS II"));
+        choices.insert (p_t (60, "Irix 11mm f/4"));
+        choices.insert (p_t (94, "Canon TS-E 17mm f/4L"));
+        choices.insert (p_t (95, "Canon TS-E 24.0mm f/3.5 L II"));
+        choices.insert (p_t (124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"));
+        choices.insert (p_t (125, "Canon TS-E 24mm f/3.5L"));
+        choices.insert (p_t (126, "Canon TS-E 45mm f/2.8"));
+        choices.insert (p_t (127, "Canon TS-E 90mm f/2.8"));
+        choices.insert (p_t (129, "Canon EF 300mm f/2.8L"));
+        choices.insert (p_t (130, "Canon EF 50mm f/1.0L"));
+        choices.insert (p_t (131, "Canon EF 28-80mm f/2.8-4L or Sigma Lens"));
+        choices.insert (p_t (131, "Sigma 8mm f/3.5 EX DG Circular Fisheye"));
+        choices.insert (p_t (131, "Sigma 17-35mm f/2.8-4 EX DG Aspherical HSM"));
+        choices.insert (p_t (131, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
+        choices.insert (p_t (131, "Sigma APO 50-150mm f/2.8 [II] EX DC HSM"));
+        choices.insert (p_t (131, "Sigma APO 120-300mm f/2.8 EX DG HSM"));
+        choices.insert (p_t (131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
+        choices.insert (p_t (131, "Sigma 70-200mm f/2.8 APO EX HSM"));
+        choices.insert (p_t (132, "Canon EF 1200mm f/5.6L"));
+        choices.insert (p_t (134, "Canon EF 600mm f/4L IS"));
+        choices.insert (p_t (135, "Canon EF 200mm f/1.8L"));
+        choices.insert (p_t (136, "Canon EF 300mm f/2.8L"));
+        choices.insert (p_t (137, "Canon EF 85mm f/1.2L or Sigma or Tamron Lens"));
+        choices.insert (p_t (137, "Sigma 18-50mm f/2.8-4.5 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 50-200mm f/4-5.6 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
+        choices.insert (p_t (137, "Sigma 18-125mm f/3.8-5.6 DC OS HSM"));
+        choices.insert (p_t (137, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM | C"));
+        choices.insert (p_t (137, "Sigma 17-50mm f/2.8 OS HSM"));
+        choices.insert (p_t (137, "Sigma 18-200mm f/3.5-6.3 DC OS HSM [II]"));
+        choices.insert (p_t (137, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
+        choices.insert (p_t (137, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
+        choices.insert (p_t (137, "Tamron SP 17-50mm f/2.8 XR Di II VC"));
+        choices.insert (p_t (137, "Tamron SP 60mm f/2 Macro Di II"));
+        choices.insert (p_t (137, "Sigma 10-20mm f/3.5 EX DC HSM"));
+        choices.insert (p_t (137, "Tamron SP 24-70mm f/2.8 Di VC USD"));
+        choices.insert (p_t (137, "Sigma 18-35mm f/1.8 DC HSM"));
+        choices.insert (p_t (137, "Sigma 12-24mm f/4.5-5.6 DG HSM II"));
+        choices.insert (p_t (138, "Canon EF 28-80mm f/2.8-4L"));
+        choices.insert (p_t (139, "Canon EF 400mm f/2.8L"));
+        choices.insert (p_t (140, "Canon EF 500mm f/4.5L"));
+        choices.insert (p_t (141, "Canon EF 500mm f/4.5L"));
+        choices.insert (p_t (142, "Canon EF 300mm f/2.8L IS"));
+        choices.insert (p_t (143, "Canon EF 500mm f/4L IS or Sigma Lens"));
+        choices.insert (p_t (143, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"));
+        choices.insert (p_t (144, "Canon EF 35-135mm f/4-5.6 USM"));
+        choices.insert (p_t (145, "Canon EF 100-300mm f/4.5-5.6 USM"));
+        choices.insert (p_t (146, "Canon EF 70-210mm f/3.5-4.5 USM"));
+        choices.insert (p_t (147, "Canon EF 35-135mm f/4-5.6 USM"));
+        choices.insert (p_t (148, "Canon EF 28-80mm f/3.5-5.6 USM"));
+        choices.insert (p_t (149, "Canon EF 100mm f/2 USM"));
+        choices.insert (p_t (150, "Canon EF 14mm f/2.8L or Sigma Lens"));
+        choices.insert (p_t (150, "Sigma 20mm EX f/1.8"));
+        choices.insert (p_t (150, "Sigma 30mm f/1.4 DC HSM"));
+        choices.insert (p_t (150, "Sigma 24mm f/1.8 DG Macro EX"));
+        choices.insert (p_t (150, "Sigma 28mm f/1.8 DG Macro EX"));
+        choices.insert (p_t (151, "Canon EF 200mm f/2.8L"));
+        choices.insert (p_t (152, "Canon EF 300mm f/4L IS or Sigma Lens"));
+        choices.insert (p_t (152, "Sigma 12-24mm f/4.5-5.6 EX DG ASPHERICAL HSM"));
+        choices.insert (p_t (152, "Sigma 14mm f/2.8 EX Aspherical HSM"));
+        choices.insert (p_t (152, "Sigma 10-20mm f/4-5.6"));
+        choices.insert (p_t (152, "Sigma 100-300mm f/4"));
+        choices.insert (p_t (153, "Canon EF 35-350mm f/3.5-5.6L or Sigma or Tamron Lens"));
+        choices.insert (p_t (153, "Sigma 50-500mm f/4-6.3 APO HSM EX"));
+        choices.insert (p_t (153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical [IF] Macro"));
+        choices.insert (p_t (153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro Model A14"));
+        choices.insert (p_t (153, "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
+        choices.insert (p_t (154, "Canon EF 20mm f/2.8 USM or Zeiss Lens"));
+        choices.insert (p_t (154, "Zeiss Milvus 21mm f/2.8"));
+        choices.insert (p_t (155, "Canon EF 85mm f/1.8 USM"));
+        choices.insert (p_t (156, "Canon EF 28-105mm f/3.5-4.5 USM or Tamron Lens"));
+        choices.insert (p_t (156, "Tamron SP 70-300mm f/4.0-5.6 Di VC USD"));
+        choices.insert (p_t (156, "Tamron SP AF 28-105mm f/2.8 LD Aspherical IF"));
+        choices.insert (p_t (160, "Canon EF 20-35mm f/3.5-4.5 USM or Tamron or Tokina Lens"));
+        choices.insert (p_t (160, "Tamron AF 19-35mm f/3.5-4.5"));
+        choices.insert (p_t (160, "Tokina AT-X 124 AF Pro DX 12-24mm f/4"));
+        choices.insert (p_t (160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"));
+        choices.insert (p_t (160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"));
+        choices.insert (p_t (160, "Tokina AT-X 11-20 F2.8 PRO DX Aspherical 11-20mm f/2.8"));
+        choices.insert (p_t (161, "Canon EF 28-70mm f/2.8L or Sigma or Tamron Lens"));
+        choices.insert (p_t (161, "Sigma 24-70mm f/2.8 EX"));
+        choices.insert (p_t (161, "Sigma 28-70mm f/2.8 EX"));
+        choices.insert (p_t (161, "Sigma 24-60mm f/2.8 EX DG"));
+        choices.insert (p_t (161, "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"));
+        choices.insert (p_t (161, "Tamron 90mm f/2.8"));
+        choices.insert (p_t (161, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"));
+        choices.insert (p_t (161, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
+        choices.insert (p_t (162, "Canon EF 200mm f/2.8L"));
+        choices.insert (p_t (163, "Canon EF 300mm f/4L"));
+        choices.insert (p_t (164, "Canon EF 400mm f/5.6L"));
+        choices.insert (p_t (165, "Canon EF 70-200mm f/2.8 L"));
+        choices.insert (p_t (166, "Canon EF 70-200mm f/2.8 L + 1.4x"));
+        choices.insert (p_t (167, "Canon EF 70-200mm f/2.8 L + 2x"));
+        choices.insert (p_t (168, "Canon EF 28mm f/1.8 USM or Sigma Lens"));
+        choices.insert (p_t (168, "Sigma 50-100mm f/1.8 DC HSM | A"));
+        choices.insert (p_t (169, "Canon EF 17-35mm f/2.8L or Sigma Lens"));
+        choices.insert (p_t (169, "Sigma 18-200mm f/3.5-6.3 DC OS"));
+        choices.insert (p_t (169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"));
+        choices.insert (p_t (169, "Sigma 18-50mm f/2.8 Macro"));
+        choices.insert (p_t (169, "Sigma 50mm f/1.4 EX DG HSM"));
+        choices.insert (p_t (169, "Sigma 85mm f/1.4 EX DG HSM"));
+        choices.insert (p_t (169, "Sigma 30mm f/1.4 EX DC HSM"));
+        choices.insert (p_t (169, "Sigma 35mm f/1.4 DG HSM"));
+        choices.insert (p_t (170, "Canon EF 200mm f/2.8L II"));
+        choices.insert (p_t (171, "Canon EF 300mm f/4L"));
+        choices.insert (p_t (172, "Canon EF 400mm f/5.6L or Sigma Lens"));
+        choices.insert (p_t (172, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
+        choices.insert (p_t (173, "Canon EF 180mm Macro f/3.5L or Sigma Lens"));
+        choices.insert (p_t (173, "Sigma 180mm EX HSM Macro f/3.5"));
+        choices.insert (p_t (173, "Sigma APO Macro 150mm f/2.8 EX DG HSM"));
+        choices.insert (p_t (174, "Canon EF 135mm f/2L or Other Lens"));
+        choices.insert (p_t (174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"));
+        choices.insert (p_t (174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"));
+        choices.insert (p_t (174, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
+        choices.insert (p_t (174, "Zeiss Milvus 100mm f/2 Makro"));
+        choices.insert (p_t (175, "Canon EF 400mm f/2.8L"));
+        choices.insert (p_t (176, "Canon EF 24-85mm f/3.5-4.5 USM"));
+        choices.insert (p_t (177, "Canon EF 300mm f/4L IS"));
+        choices.insert (p_t (178, "Canon EF 28-135mm f/3.5-5.6 IS"));
+        choices.insert (p_t (179, "Canon EF 24mm f/1.4L"));
+        choices.insert (p_t (180, "Canon EF 35mm f/1.4L or Other Lens"));
+        choices.insert (p_t (180, "Sigma 50mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (180, "Sigma 24mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (180, "Zeiss Milvus 50mm f/1.4"));
+        choices.insert (p_t (180, "Zeiss Milvus 85mm f/1.4"));
+        choices.insert (p_t (180, "Zeiss Otus 28mm f/1.4 ZE"));
+        choices.insert (p_t (181, "Canon EF 100-400mm f/4.5-5.6L IS + 1.4x or Sigma Lens"));
+        choices.insert (p_t (181, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 1.4x"));
+        choices.insert (p_t (182, "Canon EF 100-400mm f/4.5-5.6L IS + 2x or Sigma Lens"));
+        choices.insert (p_t (182, "Sigma 150-600mm f/5-6.3 DG OS HSM | S + 2x"));
+        choices.insert (p_t (183, "Canon EF 100-400mm f/4.5-5.6L IS or Sigma Lens"));
+        choices.insert (p_t (183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"));
+        choices.insert (p_t (183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"));
+        choices.insert (p_t (183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
+        choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"));
+        choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
+        choices.insert (p_t (184, "Canon EF 400mm f/2.8L + 2x"));
+        choices.insert (p_t (185, "Canon EF 600mm f/4L IS"));
+        choices.insert (p_t (186, "Canon EF 70-200mm f/4L"));
+        choices.insert (p_t (187, "Canon EF 70-200mm f/4L + 1.4x"));
+        choices.insert (p_t (188, "Canon EF 70-200mm f/4L + 2x"));
+        choices.insert (p_t (189, "Canon EF 70-200mm f/4L + 2.8x"));
+        choices.insert (p_t (190, "Canon EF 100mm f/2.8 Macro USM"));
+        choices.insert (p_t (191, "Canon EF 400mm f/4 DO IS"));
+        choices.insert (p_t (193, "Canon EF 35-80mm f/4-5.6 USM"));
+        choices.insert (p_t (194, "Canon EF 80-200mm f/4.5-5.6 USM"));
+        choices.insert (p_t (195, "Canon EF 35-105mm f/4.5-5.6 USM"));
+        choices.insert (p_t (196, "Canon EF 75-300mm f/4-5.6 USM"));
+        choices.insert (p_t (197, "Canon EF 75-300mm f/4-5.6 IS USM"));
+        choices.insert (p_t (198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"));
+        choices.insert (p_t (198, "Zeiss Otus 55mm f/1.4 ZE"));
+        choices.insert (p_t (198, "Zeiss Otus 85mm f/1.4 ZE"));
+        choices.insert (p_t (199, "Canon EF 28-80mm f/3.5-5.6 USM"));
+        choices.insert (p_t (200, "Canon EF 75-300mm f/4-5.6 USM"));
+        choices.insert (p_t (201, "Canon EF 28-80mm f/3.5-5.6 USM"));
+        choices.insert (p_t (202, "Canon EF 28-80mm f/3.5-5.6 USM IV"));
+        choices.insert (p_t (208, "Canon EF 22-55mm f/4-5.6 USM"));
+        choices.insert (p_t (209, "Canon EF 55-200mm f/4.5-5.6"));
+        choices.insert (p_t (210, "Canon EF 28-90mm f/4-5.6 USM"));
+        choices.insert (p_t (211, "Canon EF 28-200mm f/3.5-5.6 USM"));
+        choices.insert (p_t (212, "Canon EF 28-105mm f/4-5.6 USM"));
+        choices.insert (p_t (213, "Canon EF 90-300mm f/4.5-5.6 USM or Tamron Lens"));
+        choices.insert (p_t (213, "Tamron SP 150-600mm f/5-6.3 Di VC USD"));
+        choices.insert (p_t (213, "Tamron 16-300mm f/3.5-6.3 Di II VC PZD Macro"));
+        choices.insert (p_t (213, "Tamron SP 35mm f/1.8 Di VC USD"));
+        choices.insert (p_t (213, "Tamron SP 45mm f/1.8 Di VC USD"));
+        choices.insert (p_t (214, "Canon EF-S 18-55mm f/3.5-5.6 USM"));
+        choices.insert (p_t (215, "Canon EF 55-200mm f/4.5-5.6 II USM"));
+        choices.insert (p_t (217, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
+        choices.insert (p_t (224, "Canon EF 70-200mm f/2.8L IS"));
+        choices.insert (p_t (225, "Canon EF 70-200mm f/2.8L IS + 1.4x"));
+        choices.insert (p_t (226, "Canon EF 70-200mm f/2.8L IS + 2x"));
+        choices.insert (p_t (227, "Canon EF 70-200mm f/2.8L IS + 2.8x"));
+        choices.insert (p_t (228, "Canon EF 28-105mm f/3.5-4.5 USM"));
+        choices.insert (p_t (229, "Canon EF 16-35mm f/2.8L"));
+        choices.insert (p_t (230, "Canon EF 24-70mm f/2.8L"));
+        choices.insert (p_t (231, "Canon EF 17-40mm f/4L"));
+        choices.insert (p_t (232, "Canon EF 70-300mm f/4.5-5.6 DO IS USM"));
+        choices.insert (p_t (233, "Canon EF 28-300mm f/3.5-5.6L IS"));
+        choices.insert (p_t (234, "Canon EF-S 17-85mm f/4-5.6 IS USM or Tokina Lens"));
+        choices.insert (p_t (234, "Tokina AT-X 12-28 PRO DX 12-28mm f/4"));
+        choices.insert (p_t (235, "Canon EF-S 10-22mm f/3.5-4.5 USM"));
+        choices.insert (p_t (236, "Canon EF-S 60mm f/2.8 Macro USM"));
+        choices.insert (p_t (237, "Canon EF 24-105mm f/4L IS"));
+        choices.insert (p_t (238, "Canon EF 70-300mm f/4-5.6 IS USM"));
+        choices.insert (p_t (239, "Canon EF 85mm f/1.2L II"));
+        choices.insert (p_t (240, "Canon EF-S 17-55mm f/2.8 IS USM"));
+        choices.insert (p_t (241, "Canon EF 50mm f/1.2L"));
+        choices.insert (p_t (242, "Canon EF 70-200mm f/4L IS"));
+        choices.insert (p_t (243, "Canon EF 70-200mm f/4L IS + 1.4x"));
+        choices.insert (p_t (244, "Canon EF 70-200mm f/4L IS + 2x"));
+        choices.insert (p_t (245, "Canon EF 70-200mm f/4L IS + 2.8x"));
+        choices.insert (p_t (246, "Canon EF 16-35mm f/2.8L II"));
+        choices.insert (p_t (247, "Canon EF 14mm f/2.8L II USM"));
+        choices.insert (p_t (248, "Canon EF 200mm f/2L IS or Sigma Lens"));
+        choices.insert (p_t (248, "Sigma 24-35mm f/2 DG HSM | A"));
+        choices.insert (p_t (249, "Canon EF 800mm f/5.6L IS"));
+        choices.insert (p_t (250, "Canon EF 24mm f/1.4L II or Sigma Lens"));
+        choices.insert (p_t (250, "Sigma 20mm f/1.4 DG HSM | A"));
+        choices.insert (p_t (251, "Canon EF 70-200mm f/2.8L IS II USM"));
+        choices.insert (p_t (252, "Canon EF 70-200mm f/2.8L IS II USM + 1.4x"));
+        choices.insert (p_t (253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"));
+        choices.insert (p_t (254, "Canon EF 100mm f/2.8L Macro IS USM"));
+        choices.insert (p_t (255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"));
+        choices.insert (p_t (255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
+        choices.insert (p_t (488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"));
+        choices.insert (p_t (489, "Canon EF 70-300mm f/4-5.6L IS USM"));
+        choices.insert (p_t (490, "Canon EF 8-15mm f/4L Fisheye USM"));
+        choices.insert (p_t (491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"));
+        choices.insert (p_t (491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"));
+        choices.insert (p_t (492, "Canon EF 400mm f/2.8L IS II USM"));
+        choices.insert (p_t (493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"));
+        choices.insert (p_t (493, "Canon EF 24-105mm f/4L IS USM"));
+        choices.insert (p_t (494, "Canon EF 600mm f/4.0L IS II USM"));
+        choices.insert (p_t (495, "Canon EF 24-70mm f/2.8L II USM"));
+        choices.insert (p_t (496, "Canon EF 200-400mm f/4L IS USM"));
+        choices.insert (p_t (499, "Canon EF 200-400mm f/4L IS USM + 1.4x"));
+        choices.insert (p_t (502, "Canon EF 28mm f/2.8 IS USM"));
+        choices.insert (p_t (503, "Canon EF 24mm f/2.8 IS USM"));
+        choices.insert (p_t (504, "Canon EF 24-70mm f/4L IS USM"));
+        choices.insert (p_t (505, "Canon EF 35mm f/2 IS USM"));
+        choices.insert (p_t (506, "Canon EF 400mm f/4 DO IS II USM"));
+        choices.insert (p_t (507, "Canon EF 16-35mm f/4L IS USM"));
+        choices.insert (p_t (508, "Canon EF 11-24mm f/4L USM"));
+        choices.insert (p_t (747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"));
+        choices.insert (p_t (747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"));
+        choices.insert (p_t (748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"));
+        choices.insert (p_t (750, "Canon EF 35mm f/1.4L II USM"));
+        choices.insert (p_t (751, "Canon EF 16-35mm f/2.8L III USM"));
+        choices.insert (p_t (752, "Canon EF 24-105mm f/4L IS II USM"));
+        choices.insert (p_t (4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"));
+        choices.insert (p_t (4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"));
+        choices.insert (p_t (4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
+        choices.insert (p_t (4144, "Canon EF 40mm f/2.8 STM"));
+        choices.insert (p_t (4145, "Canon EF-M 22mm f/2 STM"));
+        choices.insert (p_t (4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"));
+        choices.insert (p_t (4147, "Canon EF-M 11-22mm f/4-5.6 IS STM"));
+        choices.insert (p_t (4148, "Canon EF-S 55-250mm f/4-5.6 IS STM"));
+        choices.insert (p_t (4149, "Canon EF-M 55-200mm f/4.5-6.3 IS STM"));
+        choices.insert (p_t (4150, "Canon EF-S 10-18mm f/4.5-5.6 IS STM"));
+        choices.insert (p_t (4152, "Canon EF 24-105mm f/3.5-5.6 IS STM"));
+        choices.insert (p_t (4153, "Canon EF-M 15-45mm f/3.5-6.3 IS STM"));
+        choices.insert (p_t (4154, "Canon EF-S 24mm f/2.8 STM"));
+        choices.insert (p_t (4155, "Canon EF-M 28mm f/3.5 Macro IS STM"));
+        choices.insert (p_t (4156, "Canon EF 50mm f/1.8 STM"));
+        choices.insert (p_t (4157, "Canon EF-M 18-150mm 1:3.5-6.3 IS STM"));
+        choices.insert (p_t (4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"));
+        choices.insert (p_t (36910, "Canon EF 70-300mm f/4-5.6 IS II USM"));
+        choices.insert (p_t (36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"));
+        choices.insert (p_t (65535, "n/a"));
     }
 
     virtual std::string toString (Tag* t)
@@ -897,43 +906,43 @@ public:
         int lensID = t->toInt();
 
         it_t r;
-        size_t nFound = choices.count( lensID );
+        size_t nFound = choices.count ( lensID );
 
-        if(1 == nFound) {
+        if (1 == nFound) {
             r = choices.find ( lensID );
             return r->second;
         }
 
-        Tag *apertureTag = t->getParent()->getRoot()->findTag("MaxAperture");
-        Tag *focalLengthTag = t->getParent()->getRoot()->findTag("FocalLength");
-        Tag *focalLengthMaxTag = t->getParent()->getRoot()->findTag("LongFocal");
-        Tag *focalLengthMinTag = t->getParent()->getRoot()->findTag("ShortFocal");
-        Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
+        Tag *apertureTag = t->getParent()->getRoot()->findTag ("MaxAperture");
+        Tag *focalLengthTag = t->getParent()->getRoot()->findTag ("FocalLength");
+        Tag *focalLengthMaxTag = t->getParent()->getRoot()->findTag ("LongFocal");
+        Tag *focalLengthMinTag = t->getParent()->getRoot()->findTag ("ShortFocal");
+        Tag *unitTag = t->getParent()->getRoot()->findTag ("FocalUnits");
         double maxApertureAtFocal = 0.;
         double focalLength = 0.;
         double focalLengthMin = 0.;
         double focalLengthMax = 0.;
 
-        if( apertureTag ) {
-            maxApertureAtFocal = pow(2.0, apertureTag->toDouble() / 64.0);
+        if ( apertureTag ) {
+            maxApertureAtFocal = pow (2.0, apertureTag->toDouble() / 64.0);
         }
 
-        if( unitTag ) {
+        if ( unitTag ) {
             double unit = unitTag->toDouble();
 
-            if( unit == 0. ) {
+            if ( unit == 0. ) {
                 unit = 1;
             }
 
-            if( focalLengthTag ) {
+            if ( focalLengthTag ) {
                 focalLength = focalLengthTag->toDouble();
             }
 
-            if( focalLengthMinTag ) {
+            if ( focalLengthMinTag ) {
                 focalLengthMin = focalLengthMinTag->toDouble() / unit;
             }
 
-            if( focalLengthMaxTag ) {
+            if ( focalLengthMaxTag ) {
                 focalLengthMax = focalLengthMaxTag->toDouble() / unit;
             }
         }
@@ -961,56 +970,57 @@ public:
 
         double deltaMin = 1000.;
 
-        std::string bestMatch(s.str());
+        std::string bestMatch (s.str());
         std::ostringstream candidates;
 
-        for (r = choices.lower_bound(lensID); r != choices.upper_bound(lensID); r++) {
+        for (r = choices.lower_bound (lensID); r != choices.upper_bound (lensID); r++) {
             double a1, a2, f1, f2, dif;
 
-            if( !extractLensInfo( r->second , f1, f2, a1, a2) ) {
+            if ( !extractLensInfo ( r->second, f1, f2, a1, a2) ) {
                 continue;
             }
 
-            if( f1 == 0. || a1 == 0.) {
+            if ( f1 == 0. || a1 == 0.) {
                 continue;
             }
 
-            if( focalLength < f1 - .5 || focalLength > f2 + 0.5 ) {
+            if ( focalLength < f1 - .5 || focalLength > f2 + 0.5 ) {
                 continue;
             }
 
-            if( focalLengthMin > 0. && fabs(f1 - focalLengthMin) > 0.5 ) {
+            if ( focalLengthMin > 0. && fabs (f1 - focalLengthMin) > 0.5 ) {
                 continue;
             }
 
-            if( focalLengthMax > 0. && fabs(f2 - focalLengthMax) > 0.5 ) {
+            if ( focalLengthMax > 0. && fabs (f2 - focalLengthMax) > 0.5 ) {
                 continue;
             }
 
-            if( maxApertureAtFocal > 0.1) {
+            if ( maxApertureAtFocal > 0.1) {
                 double lensAperture;
-                if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
+
+                if ( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 + 0.15) {
                     continue;
                 }
 
-                if( a1 == a2 || f1 == f2) {
+                if ( a1 == a2 || f1 == f2) {
                     lensAperture = a1;
                 } else {
-                    lensAperture = exp( log(a1) + (log(a2) - log(a1)) / (log(f2) - log(f1)) * (log(focalLength) - log(f1)) );
+                    lensAperture = exp ( log (a1) + (log (a2) - log (a1)) / (log (f2) - log (f1)) * (log (focalLength) - log (f1)) );
                 }
 
-                dif = abs(lensAperture - maxApertureAtFocal);
+                dif = abs (lensAperture - maxApertureAtFocal);
             } else {
                 dif = 0;
             }
 
-            if( dif < deltaMin ) {
+            if ( dif < deltaMin ) {
                 deltaMin = dif;
                 bestMatch = r->second;
             }
 
-            if( dif < 0.15) {
-                if( candidates.tellp() ) {
+            if ( dif < 0.15) {
+                if ( candidates.tellp() ) {
                     candidates << "\n or " <<  r->second;
                 } else {
                     candidates <<  r->second;
@@ -1019,7 +1029,7 @@ public:
 
         }
 
-        if( !candidates.tellp() ) {
+        if ( !candidates.tellp() ) {
             return bestMatch;
         } else {
             return candidates.str();
@@ -1047,7 +1057,7 @@ public:
     {
         int val = t->toInt();
 
-        if( val < 40 ) {
+        if ( val < 40 ) {
             return "undef";
         }
 
@@ -1094,10 +1104,10 @@ public:
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = Interpreter::toInt(t, ofs);
+        int a = Interpreter::toInt (t, ofs);
 
-        if(a > 1) {
-            double i = pow(2., double(a) / 32. - 4.) * 50.;
+        if (a > 1) {
+            double i = pow (2., double (a) / 32. - 4.) * 50.;
             return i;
         } else {
             return 0.;
@@ -1105,10 +1115,10 @@ public:
     }
     virtual int toInt (Tag* t, int ofs, TagType astype)
     {
-        int a = Interpreter::toInt(t, ofs, astype);
+        int a = Interpreter::toInt (t, ofs, astype);
 
-        if(a > 1) {
-            int i = int(double(powf(2.f, float(a) / 32.f - 4.f)) * 50.f + 0.5f);
+        if (a > 1) {
+            int i = int (double (powf (2.f, float (a) / 32.f - 4.f)) * 50.f + 0.5f);
             return i;
         } else {
             return 0;
@@ -1181,10 +1191,13 @@ public:
     CAPictureStyleInterpreter()
     {
         choices[0] = "None";
-        choices[1] = "Standard ";
-        choices[2] = "Set 1";
-        choices[3] = "Set 2";
-        choices[4] = "Set 3";
+        choices[1] = "Standard";
+        choices[2] = "Portrait";
+        choices[3] = "High Saturation";
+        choices[4] = "Adobe RGB";
+        choices[5] = "Low Saturation";
+        choices[6] = "CM Set 1";
+        choices[7] = "CM Set 2";
         choices[0x21] = "User Def. 1";
         choices[0x22] = "User Def. 2";
         choices[0x23] = "User Def. 3";
@@ -1223,7 +1236,7 @@ public:
     {
         int n = t->toInt();
 
-        if( n == -1) {
+        if ( n == -1) {
             return "undef";
         }
 
@@ -1308,7 +1321,7 @@ public:
     {
         choices[248] = "EOS High-end";
         choices[250] = "Compact";
-        choices[252] = "EOS Mid-end";
+        choices[252] = "EOS Mid-range";
         choices[255] = "DV Camera";
     }
 };
@@ -1429,7 +1442,7 @@ class CAFileNumberInterpreter : public Interpreter
 public:
     virtual std::string toString (Tag* t)
     {
-        unsigned long val = t->toInt(0, LONG);
+        unsigned long val = t->toInt (0, LONG);
         char buffer[32];
         sprintf (buffer, "%ld", ((val & 0xffc0) >> 6) * 10000 + ((val >> 16) & 0xff) + ((val & 0x3f) << 8) );
         return buffer;
@@ -1437,315 +1450,319 @@ public:
 };
 CAFileNumberInterpreter caFileNumberInterpreter;
 
+// CanonModelID
 class CAModelIDInterpreter : public ChoiceInterpreter
 {
 public:
     CAModelIDInterpreter ()
     {
-        choices[0x1010000] = "PowerShot A30";
-        choices[0x1040000] = "PowerShot S300 / Digital IXUS 300 / IXY Digital 300";
-        choices[0x1060000] = "PowerShot A20";
-        choices[0x1080000] = "PowerShot A10";
-        choices[0x1090000] = "PowerShot S110 / Digital IXUS v / IXY Digital 200";
-        choices[0x1100000] = "PowerShot G2";
-        choices[0x1110000] = "PowerShot S40";
-        choices[0x1120000] = "PowerShot S30";
-        choices[0x1130000] = "PowerShot A40";
-        choices[0x1140000] = "EOS D30";
-        choices[0x1150000] = "PowerShot A100";
-        choices[0x1160000] = "PowerShot S200 / Digital IXUS v2 / IXY Digital 200a";
-        choices[0x1170000] = "PowerShot A200";
-        choices[0x1180000] = "PowerShot S330 / Digital IXUS 330 / IXY Digital 300a";
-        choices[0x1190000] = "PowerShot G3";
-        choices[0x1210000] = "PowerShot S45";
-        choices[0x1230000] = "PowerShot SD100 / Digital IXUS II / IXY Digital 30";
-        choices[0x1240000] = "PowerShot S230 / Digital IXUS v3 / IXY Digital 320";
-        choices[0x1250000] = "PowerShot A70";
-        choices[0x1260000] = "PowerShot A60";
-        choices[0x1270000] = "PowerShot S400 / Digital IXUS 400 / IXY Digital 400";
-        choices[0x1290000] = "PowerShot G5";
-        choices[0x1300000] = "PowerShot A300";
-        choices[0x1310000] = "PowerShot S50";
-        choices[0x1340000] = "PowerShot A80";
-        choices[0x1350000] = "PowerShot SD10 / Digital IXUS i / IXY Digital L";
-        choices[0x1360000] = "PowerShot S1 IS";
-        choices[0x1370000] = "PowerShot Pro1";
-        choices[0x1380000] = "PowerShot S70";
-        choices[0x1390000] = "PowerShot S60";
-        choices[0x1400000] = "PowerShot G6";
-        choices[0x1410000] = "PowerShot S500 / Digital IXUS 500 / IXY Digital 500";
-        choices[0x1420000] = "PowerShot A75";
-        choices[0x1440000] = "PowerShot SD110 / Digital IXUS IIs / IXY Digital 30a";
-        choices[0x1450000] = "PowerShot A400";
-        choices[0x1470000] = "PowerShot A310";
-        choices[0x1490000] = "PowerShot A85";
-        choices[0x1520000] = "PowerShot S410 / Digital IXUS 430 / IXY Digital 450";
-        choices[0x1530000] = "PowerShot A95";
-        choices[0x1540000] = "PowerShot SD300 / Digital IXUS 40 / IXY Digital 50";
-        choices[0x1550000] = "PowerShot SD200 / Digital IXUS 30 / IXY Digital 40";
-        choices[0x1560000] = "PowerShot A520";
-        choices[0x1570000] = "PowerShot A510";
-        choices[0x1590000] = "PowerShot SD20 / Digital IXUS i5 / IXY Digital L2";
-        choices[0x1640000] = "PowerShot S2 IS";
-        choices[0x1650000] = "PowerShot SD430 / Digital IXUS Wireless / IXY Digital Wireless";
-        choices[0x1660000] = "PowerShot SD500 / Digital IXUS 700 / IXY Digital 600";
-        choices[0x1668000] = "EOS D60";
-        choices[0x1700000] = "PowerShot SD30 / Digital IXUS i Zoom / IXY Digital L3";
-        choices[0x1740000] = "PowerShot A430";
-        choices[0x1750000] = "PowerShot A410";
-        choices[0x1760000] = "PowerShot S80";
-        choices[0x1780000] = "PowerShot A620";
-        choices[0x1790000] = "PowerShot A610";
-        choices[0x1800000] = "PowerShot SD630 / Digital IXUS 65 / IXY Digital 80";
-        choices[0x1810000] = "PowerShot SD450 / Digital IXUS 55 / IXY Digital 60";
-        choices[0x1820000] = "PowerShot TX1";
-        choices[0x1870000] = "PowerShot SD400 / Digital IXUS 50 / IXY Digital 55";
-        choices[0x1880000] = "PowerShot A420";
-        choices[0x1890000] = "PowerShot SD900 / Digital IXUS 900 Ti / IXY Digital 1000";
-        choices[0x1900000] = "PowerShot SD550 / Digital IXUS 750 / IXY Digital 700";
-        choices[0x1920000] = "PowerShot A700";
-        choices[0x1940000] = "PowerShot SD700 IS / Digital IXUS 800 IS / IXY Digital 800 IS";
-        choices[0x1950000] = "PowerShot S3 IS";
-        choices[0x1960000] = "PowerShot A540";
-        choices[0x1970000] = "PowerShot SD600 / Digital IXUS 60 / IXY Digital 70";
-        choices[0x1980000] = "PowerShot G7";
-        choices[0x1990000] = "PowerShot A530";
-        choices[0x2000000] = "PowerShot SD800 IS / Digital IXUS 850 IS / IXY Digital 900 IS";
-        choices[0x2010000] = "PowerShot SD40 / Digital IXUS i7 / IXY Digital L4";
-        choices[0x2020000] = "PowerShot A710 IS";
-        choices[0x2030000] = "PowerShot A640";
-        choices[0x2040000] = "PowerShot A630";
-        choices[0x2090000] = "PowerShot S5 IS";
-        choices[0x2100000] = "PowerShot A460";
-        choices[0x2120000] = "PowerShot SD850 IS / Digital IXUS 950 IS / IXY Digital 810 IS";
-        choices[0x2130000] = "PowerShot A570 IS";
-        choices[0x2140000] = "PowerShot A560";
-        choices[0x2150000] = "PowerShot SD750 / Digital IXUS 75 / IXY Digital 90";
-        choices[0x2160000] = "PowerShot SD1000 / Digital IXUS 70 / IXY Digital 10";
-        choices[0x2180000] = "PowerShot A550";
-        choices[0x2190000] = "PowerShot A450";
-        choices[0x2230000] = "PowerShot G9";
-        choices[0x2240000] = "PowerShot A650 IS";
-        choices[0x2260000] = "PowerShot A720 IS";
-        choices[0x2290000] = "PowerShot SX100 IS";
-        choices[0x2300000] = "PowerShot SD950 IS / Digital IXUS 960 IS / IXY Digital 2000 IS";
-        choices[0x2310000] = "PowerShot SD870 IS / Digital IXUS 860 IS / IXY Digital 910 IS";
-        choices[0x2320000] = "PowerShot SD890 IS / Digital IXUS 970 IS / IXY Digital 820 IS";
-        choices[0x2360000] = "PowerShot SD790 IS / Digital IXUS 90 IS / IXY Digital 95 IS";
-        choices[0x2370000] = "PowerShot SD770 IS / Digital IXUS 85 IS / IXY Digital 25 IS";
-        choices[0x2380000] = "PowerShot A590 IS";
-        choices[0x2390000] = "PowerShot A580";
-        choices[0x2420000] = "PowerShot A470";
-        choices[0x2430000] = "PowerShot SD1100 IS / Digital IXUS 80 IS / IXY Digital 20 IS";
-        choices[0x2460000] = "PowerShot SX1 IS";
-        choices[0x2470000] = "PowerShot SX10 IS";
-        choices[0x2480000] = "PowerShot A1000 IS";
-        choices[0x2490000] = "PowerShot G10";
-        choices[0x2510000] = "PowerShot A2000 IS";
-        choices[0x2520000] = "PowerShot SX110 IS";
-        choices[0x2530000] = "PowerShot SD990 IS / Digital IXUS 980 IS / IXY Digital 3000 IS";
-        choices[0x2540000] = "PowerShot SD880 IS / Digital IXUS 870 IS / IXY Digital 920 IS";
-        choices[0x2550000] = "PowerShot E1";
-        choices[0x2560000] = "PowerShot D10";
-        choices[0x2570000] = "PowerShot SD960 IS / Digital IXUS 110 IS / IXY Digital 510 IS";
-        choices[0x2580000] = "PowerShot A2100 IS";
-        choices[0x2590000] = "PowerShot A480";
-        choices[0x2600000] = "PowerShot SX200 IS";
-        choices[0x2610000] = "PowerShot SD970 IS / Digital IXUS 990 IS / IXY Digital 830 IS";
-        choices[0x2620000] = "PowerShot SD780 IS / Digital IXUS 100 IS / IXY Digital 210 IS";
-        choices[0x2630000] = "PowerShot A1100 IS";
-        choices[0x2640000] = "PowerShot SD1200 IS / Digital IXUS 95 IS / IXY Digital 110 IS";
-        choices[0x2700000] = "PowerShot G11";
-        choices[0x2710000] = "PowerShot SX120 IS";
-        choices[0x2720000] = "PowerShot S90";
-        choices[0x2750000] = "PowerShot SX20 IS";
-        choices[0x2760000] = "PowerShot SD980 IS / Digital IXUS 200 IS / IXY Digital 930 IS";
-        choices[0x2770000] = "PowerShot SD940 IS / Digital IXUS 120 IS / IXY Digital 220 IS";
-        choices[0x2800000] = "PowerShot A495";
-        choices[0x2810000] = "PowerShot A490";
-        choices[0x2820000] = "PowerShot A3100 IS / A3150 IS";
-        choices[0x2830000] = "PowerShot A3000 IS";
-        choices[0x2840000] = "PowerShot SD1400 IS / IXUS 130 / IXY 400F";
-        choices[0x2850000] = "PowerShot SD1300 IS / IXUS 105 / IXY 200F";
-        choices[0x2860000] = "PowerShot SD3500 IS / IXUS 210 / IXY 10S";
-        choices[0x2870000] = "PowerShot SX210 IS";
-        choices[0x2880000] = "PowerShot SD4000 IS / IXUS 300 HS / IXY 30S";
-        choices[0x2890000] = "PowerShot SD4500 IS / IXUS 1000 HS / IXY 50S";
-        choices[0x2920000] = "PowerShot G12";
-        choices[0x2930000] = "PowerShot SX30 IS";
-        choices[0x2940000] = "PowerShot SX130 IS";
-        choices[0x2950000] = "PowerShot S95";
-        choices[0x2980000] = "PowerShot A3300 IS";
-        choices[0x2990000] = "PowerShot A3200 IS";
-        choices[0x3000000] = "PowerShot ELPH 500 HS / IXUS 310 HS / IXY 31S";
-        choices[0x3010000] = "PowerShot Pro90 IS";
-        choices[0x3010001] = "PowerShot A800";
-        choices[0x3020000] = "PowerShot ELPH 100 HS / IXUS 115 HS / IXY 210F";
-        choices[0x3030000] = "PowerShot SX230 HS";
-        choices[0x3040000] = "PowerShot ELPH 300 HS / IXUS 220 HS / IXY 410F";
-        choices[0x3050000] = "PowerShot A2200";
-        choices[0x3060000] = "PowerShot A1200";
-        choices[0x3070000] = "PowerShot SX220 HS";
-        choices[0x3080000] = "PowerShot G1 X";
-        choices[0x3090000] = "PowerShot SX150 IS";
-        choices[0x3100000] = "PowerShot ELPH 510 HS / IXUS 1100 HS / IXY 51S";
-        choices[0x3110000] = "PowerShot S100 (new)";
-        choices[0x3120000] = "PowerShot ELPH 310 HS / IXUS 230 HS / IXY 600F";
-        choices[0x3130000] = "PowerShot SX40 HS";
-        choices[0x3140000] = "IXY 32S";
-        choices[0x3160000] = "PowerShot A1300";
-        choices[0x3170000] = "PowerShot A810";
-        choices[0x3180000] = "PowerShot ELPH 320 HS / IXUS 240 HS / IXY 420F";
-        choices[0x3190000] = "PowerShot ELPH 110 HS / IXUS 125 HS / IXY 220F";
-        choices[0x3200000] = "PowerShot D20";
-        choices[0x3210000] = "PowerShot A4000 IS";
-        choices[0x3220000] = "PowerShot SX260 HS";
-        choices[0x3230000] = "PowerShot SX240 HS";
-        choices[0x3240000] = "PowerShot ELPH 530 HS / IXUS 510 HS / IXY 1";
-        choices[0x3250000] = "PowerShot ELPH 520 HS / IXUS 500 HS / IXY 3";
-        choices[0x3260000] = "PowerShot A3400 IS";
-        choices[0x3270000] = "PowerShot A2400 IS";
-        choices[0x3280000] = "PowerShot A2300";
-        choices[0x3330000] = "PowerShot G15";
-        choices[0x3340000] = "PowerShot SX50";
-        choices[0x3350000] = "PowerShot SX160 IS";
-        choices[0x3360000] = "PowerShot S110 (new)";
-        choices[0x3370000] = "PowerShot SX500 IS";
-        choices[0x3380000] = "PowerShot N";
-        choices[0x3390000] = "IXUS 245 HS / IXY 430F";
-        choices[0x3400000] = "PowerShot SX280 HS";
-        choices[0x3410000] = "PowerShot SX270 HS";
-        choices[0x3420000] = "PowerShot A3500 IS";
-        choices[0x3430000] = "PowerShot A2600";
-        choices[0x3450000] = "PowerShot A1400";
-        choices[0x3460000] = "PowerShot ELPH 130 IS / IXUS 140 / IXY 110F";
-        choices[0x3470000] = "PowerShot ELPH 115/120 IS / IXUS 132/135 / IXY 90F/100F";
-        choices[0x3490000] = "PowerShot ELPH 330 HS / IXUS 255 HS / IXY 610F";
-        choices[0x3510000] = "PowerShot A2500";
-        choices[0x3540000] = "PowerShot G16";
-        choices[0x3550000] = "PowerShot S120";
-        choices[0x3560000] = "PowerShot SX170 IS";
-        choices[0x3580000] = "PowerShot SX510 HS";
-        choices[0x3590000] = "PowerShot S200 (new)";
-        choices[0x3600000] = "IXY 620F";
-        choices[0x3610000] = "PowerShot N100";
-        choices[0x3640000] = "PowerShot G1 X Mark II";
-        choices[0x3650000] = "PowerShot D30";
-        choices[0x3660000] = "PowerShot SX700 HS";
-        choices[0x3670000] = "PowerShot SX600 HS";
-        choices[0x3680000] = "PowerShot ELPH 140 IS / IXUS 150 / IXY 130";
-        choices[0x3690000] = "PowerShot ELPH 135 / IXUS 145 / IXY 120";
-        choices[0x3700000] = "PowerShot ELPH 340 HS / IXUS 265 HS / IXY 630";
-        choices[0x3710000] = "PowerShot ELPH 150 IS / IXUS 155 / IXY 140";
-        choices[0x3740000] = "EOS M3";
-        choices[0x3750000] = "PowerShot SX60 HS";
-        choices[0x3760000] = "PowerShot SX520 HS";
-        choices[0x3770000] = "PowerShot SX400 IS";
-        choices[0x3780000] = "PowerShot G7 X";
-        choices[0x3790000] = "PowerShot N2";
-        choices[0x3800000] = "PowerShot SX530 HS";
-        choices[0x3820000] = "PowerShot SX710 HS";
-        choices[0x3830000] = "PowerShot SX610 HS";
-        choices[0x3840000] = "EOS M10";
-        choices[0x3850000] = "PowerShot G3 X";
-        choices[0x3860000] = "PowerShot ELPH 165 HS / IXUS 165 / IXY 160";
-        choices[0x3870000] = "PowerShot ELPH 160 / IXUS 160";
-        choices[0x3880000] = "PowerShot ELPH 350 HS / IXUS 275 HS / IXY 640";
-        choices[0x3890000] = "PowerShot ELPH 170 IS / IXUS 170";
-        choices[0x3910000] = "PowerShot SX410 IS";
-        choices[0x3930000] = "PowerShot G9 X";
-        choices[0x3950000] = "PowerShot G5 X";
-        choices[0x3970000] = "PowerShot G7 X Mark II";
-        choices[0x3990000] = "PowerShot ELPH 360 HS / IXUS 285 HS / IXY 650";
-        choices[0x4010000] = "PowerShot SX540 HS";
-        choices[0x4020000] = "PowerShot SX420 IS";
-        choices[0x4030000] = "PowerShot ELPH 190 IS / IXUS 180 / IXY 190";
-        choices[0x4040000] = "PowerShot G1";
-        choices[0x4040001] = "IXY 180";
-        choices[0x4050000] = "PowerShot SX720 HS";
-        choices[0x6040000] = "PowerShot S100 / Digital IXUS / IXY Digital";
-        choices[0x4007d673] = "DC19/DC21/DC22";
-        choices[0x4007d674] = "XH A1";
-        choices[0x4007d675] = "HV10";
-        choices[0x4007d676] = "MD130/MD140/MD150/MD160/ZR850";
-        choices[0x4007d777] = "DC50";
-        choices[0x4007d778] = "HV20";
-        choices[0x4007d779] = "DC211";
-        choices[0x4007d77a] = "HG10";
-        choices[0x4007d77b] = "HR10";
-        choices[0x4007d77d] = "MD255/ZR950";
-        choices[0x4007d81c] = "HF11";
-        choices[0x4007d878] = "HV30";
-        choices[0x4007d87c] = "XH A1S";
-        choices[0x4007d87e] = "DC301/DC310/DC311/DC320/DC330";
-        choices[0x4007d87f] = "FS100";
-        choices[0x4007d880] = "HF10";
-        choices[0x4007d882] = "HG20/HG21";
-        choices[0x4007d925] = "HF21";
-        choices[0x4007d926] = "HF S11";
-        choices[0x4007d978] = "HV40";
-        choices[0x4007d987] = "DC410/DC411/DC420";
-        choices[0x4007d988] = "FS19/FS20/FS21/FS22/FS200";
-        choices[0x4007d989] = "HF20/HF200";
-        choices[0x4007d98a] = "HF S10/S100";
-        choices[0x4007da8e] = "HF R10/R16/R17/R18/R100/R106";
-        choices[0x4007da8f] = "HF M30/M31/M36/M300/M306";
-        choices[0x4007da90] = "HF S20/S21/S200";
-        choices[0x4007da92] = "FS31/FS36/FS37/FS300/FS305/FS306/FS307";
-        choices[0x4007dda9] = "HF G25";
-        choices[0x4007dfb4] = "XC10";
-        choices[0x80000001] = "EOS-1D";
-        choices[0x80000167] = "EOS-1DS";
-        choices[0x80000168] = "EOS 10D";
-        choices[0x80000169] = "EOS-1D Mark III";
-        choices[0x80000170] = "EOS Digital Rebel / 300D / Kiss Digital";
-        choices[0x80000174] = "EOS-1D Mark II";
-        choices[0x80000175] = "EOS 20D";
-        choices[0x80000176] = "EOS Digital Rebel XSi / 450D / Kiss X2";
-        choices[0x80000188] = "EOS-1Ds Mark II";
-        choices[0x80000189] = "EOS Digital Rebel XT / 350D / Kiss Digital N";
-        choices[0x80000190] = "EOS 40D";
-        choices[0x80000213] = "EOS 5D";
-        choices[0x80000215] = "EOS-1Ds Mark III";
-        choices[0x80000218] = "EOS 5D Mark II";
-        choices[0x80000219] = "WFT-E1";
-        choices[0x80000232] = "EOS-1D Mark II N";
-        choices[0x80000234] = "EOS 30D";
-        choices[0x80000236] = "EOS Digital Rebel XTi / 400D / Kiss Digital X";
-        choices[0x80000241] = "WFT-E2";
-        choices[0x80000246] = "WFT-E3";
-        choices[0x80000250] = "EOS 7D";
-        choices[0x80000252] = "EOS Rebel T1i / 500D / Kiss X3";
-        choices[0x80000254] = "EOS Rebel XS / 1000D / Kiss F";
-        choices[0x80000261] = "EOS 50D";
-        choices[0x80000269] = "EOS-1D X";
-        choices[0x80000270] = "EOS Rebel T2i / 550D / Kiss X4";
-        choices[0x80000271] = "WFT-E4";
-        choices[0x80000273] = "WFT-E5";
-        choices[0x80000281] = "EOS-1D Mark IV";
-        choices[0x80000285] = "EOS 5D Mark III";
-        choices[0x80000286] = "EOS Rebel T3i / 600D / Kiss X5";
-        choices[0x80000287] = "EOS 60D";
-        choices[0x80000288] = "EOS Rebel T3 / 1100D / Kiss X50";
-        choices[0x80000289] = "EOS 7D Mark II";
-        choices[0x80000297] = "WFT-E2 II";
-        choices[0x80000298] = "WFT-E4 II";
-        choices[0x80000301] = "EOS Rebel T4i / 650D / Kiss X6i";
-        choices[0x80000302] = "EOS 6D";
-        choices[0x80000324] = "EOS-1D C";
-        choices[0x80000325] = "EOS 70D";
-        choices[0x80000326] = "EOS Rebel T5i / 700D / Kiss X7i";
-        choices[0x80000327] = "EOS Rebel T5 / 1200D / Kiss X70";
-        choices[0x80000328] = "EOS-1D X MARK II";
-        choices[0x80000331] = "EOS M";
-        choices[0x80000346] = "EOS Rebel SL1 / 100D / Kiss X7";
-        choices[0x80000347] = "EOS Rebel T6s / 760D / 8000D";
-        choices[0x80000350] = "EOS 80D";
-        choices[0x80000355] = "EOS M2";
-        choices[0x80000382] = "EOS 5DS";
-        choices[0x80000393] = "EOS Rebel T6i / 750D / Kiss X8i";
-        choices[0x80000401] = "EOS 5DS R";
-        choices[0x80000404] = "EOS Rebel T6 / 1300D / Kiss X80";
+        choices[16842752] = "PowerShot A30";
+        choices[17039360] = "PowerShot S300 / Digital IXUS 300 / IXY Digital 300";
+        choices[17170432] = "PowerShot A20";
+        choices[17301504] = "PowerShot A10";
+        choices[17367040] = "PowerShot S110 / Digital IXUS v / IXY Digital 200";
+        choices[17825792] = "PowerShot G2";
+        choices[17891328] = "PowerShot S40";
+        choices[17956864] = "PowerShot S30";
+        choices[18022400] = "PowerShot A40";
+        choices[18087936] = "EOS D30";
+        choices[18153472] = "PowerShot A100";
+        choices[18219008] = "PowerShot S200 / Digital IXUS v2 / IXY Digital 200a";
+        choices[18284544] = "PowerShot A200";
+        choices[18350080] = "PowerShot S330 / Digital IXUS 330 / IXY Digital 300a";
+        choices[18415616] = "PowerShot G3";
+        choices[18939904] = "PowerShot S45";
+        choices[19070976] = "PowerShot SD100 / Digital IXUS II / IXY Digital 30";
+        choices[19136512] = "PowerShot S230 / Digital IXUS v3 / IXY Digital 320";
+        choices[19202048] = "PowerShot A70";
+        choices[19267584] = "PowerShot A60";
+        choices[19333120] = "PowerShot S400 / Digital IXUS 400 / IXY Digital 400";
+        choices[19464192] = "PowerShot G5";
+        choices[19922944] = "PowerShot A300";
+        choices[19988480] = "PowerShot S50";
+        choices[20185088] = "PowerShot A80";
+        choices[20250624] = "PowerShot SD10 / Digital IXUS i / IXY Digital L";
+        choices[20316160] = "PowerShot S1 IS";
+        choices[20381696] = "PowerShot Pro1";
+        choices[20447232] = "PowerShot S70";
+        choices[20512768] = "PowerShot S60";
+        choices[20971520] = "PowerShot G6";
+        choices[21037056] = "PowerShot S500 / Digital IXUS 500 / IXY Digital 500";
+        choices[21102592] = "PowerShot A75";
+        choices[21233664] = "PowerShot SD110 / Digital IXUS IIs / IXY Digital 30a";
+        choices[21299200] = "PowerShot A400";
+        choices[21430272] = "PowerShot A310";
+        choices[21561344] = "PowerShot A85";
+        choices[22151168] = "PowerShot S410 / Digital IXUS 430 / IXY Digital 450";
+        choices[22216704] = "PowerShot A95";
+        choices[22282240] = "PowerShot SD300 / Digital IXUS 40 / IXY Digital 50";
+        choices[22347776] = "PowerShot SD200 / Digital IXUS 30 / IXY Digital 40";
+        choices[22413312] = "PowerShot A520";
+        choices[22478848] = "PowerShot A510";
+        choices[22609920] = "PowerShot SD20 / Digital IXUS i5 / IXY Digital L2";
+        choices[23330816] = "PowerShot S2 IS";
+        choices[23396352] = "PowerShot SD430 / Digital IXUS Wireless / IXY Digital Wireless";
+        choices[23461888] = "PowerShot SD500 / Digital IXUS 700 / IXY Digital 600";
+        choices[23494656] = "EOS D60";
+        choices[24117248] = "PowerShot SD30 / Digital IXUS i Zoom / IXY Digital L3";
+        choices[24379392] = "PowerShot A430";
+        choices[24444928] = "PowerShot A410";
+        choices[24510464] = "PowerShot S80";
+        choices[24641536] = "PowerShot A620";
+        choices[24707072] = "PowerShot A610";
+        choices[25165824] = "PowerShot SD630 / Digital IXUS 65 / IXY Digital 80";
+        choices[25231360] = "PowerShot SD450 / Digital IXUS 55 / IXY Digital 60";
+        choices[25296896] = "PowerShot TX1";
+        choices[25624576] = "PowerShot SD400 / Digital IXUS 50 / IXY Digital 55";
+        choices[25690112] = "PowerShot A420";
+        choices[25755648] = "PowerShot SD900 / Digital IXUS 900 Ti / IXY Digital 1000";
+        choices[26214400] = "PowerShot SD550 / Digital IXUS 750 / IXY Digital 700";
+        choices[26345472] = "PowerShot A700";
+        choices[26476544] = "PowerShot SD700 IS / Digital IXUS 800 IS / IXY Digital 800 IS";
+        choices[26542080] = "PowerShot S3 IS";
+        choices[26607616] = "PowerShot A540";
+        choices[26673152] = "PowerShot SD600 / Digital IXUS 60 / IXY Digital 70";
+        choices[26738688] = "PowerShot G7";
+        choices[26804224] = "PowerShot A530";
+        choices[33554432] = "PowerShot SD800 IS / Digital IXUS 850 IS / IXY Digital 900 IS";
+        choices[33619968] = "PowerShot SD40 / Digital IXUS i7 / IXY Digital L4";
+        choices[33685504] = "PowerShot A710 IS";
+        choices[33751040] = "PowerShot A640";
+        choices[33816576] = "PowerShot A630";
+        choices[34144256] = "PowerShot S5 IS";
+        choices[34603008] = "PowerShot A460";
+        choices[34734080] = "PowerShot SD850 IS / Digital IXUS 950 IS / IXY Digital 810 IS";
+        choices[34799616] = "PowerShot A570 IS";
+        choices[34865152] = "PowerShot A560";
+        choices[34930688] = "PowerShot SD750 / Digital IXUS 75 / IXY Digital 90";
+        choices[34996224] = "PowerShot SD1000 / Digital IXUS 70 / IXY Digital 10";
+        choices[35127296] = "PowerShot A550";
+        choices[35192832] = "PowerShot A450";
+        choices[35848192] = "PowerShot G9";
+        choices[35913728] = "PowerShot A650 IS";
+        choices[36044800] = "PowerShot A720 IS";
+        choices[36241408] = "PowerShot SX100 IS";
+        choices[36700160] = "PowerShot SD950 IS / Digital IXUS 960 IS / IXY Digital 2000 IS";
+        choices[36765696] = "PowerShot SD870 IS / Digital IXUS 860 IS / IXY Digital 910 IS";
+        choices[36831232] = "PowerShot SD890 IS / Digital IXUS 970 IS / IXY Digital 820 IS";
+        choices[37093376] = "PowerShot SD790 IS / Digital IXUS 90 IS / IXY Digital 95 IS";
+        choices[37158912] = "PowerShot SD770 IS / Digital IXUS 85 IS / IXY Digital 25 IS";
+        choices[37224448] = "PowerShot A590 IS";
+        choices[37289984] = "PowerShot A580";
+        choices[37879808] = "PowerShot A470";
+        choices[37945344] = "PowerShot SD1100 IS / Digital IXUS 80 IS / IXY Digital 20 IS";
+        choices[38141952] = "PowerShot SX1 IS";
+        choices[38207488] = "PowerShot SX10 IS";
+        choices[38273024] = "PowerShot A1000 IS";
+        choices[38338560] = "PowerShot G10";
+        choices[38862848] = "PowerShot A2000 IS";
+        choices[38928384] = "PowerShot SX110 IS";
+        choices[38993920] = "PowerShot SD990 IS / Digital IXUS 980 IS / IXY Digital 3000 IS";
+        choices[39059456] = "PowerShot SD880 IS / Digital IXUS 870 IS / IXY Digital 920 IS";
+        choices[39124992] = "PowerShot E1";
+        choices[39190528] = "PowerShot D10";
+        choices[39256064] = "PowerShot SD960 IS / Digital IXUS 110 IS / IXY Digital 510 IS";
+        choices[39321600] = "PowerShot A2100 IS";
+        choices[39387136] = "PowerShot A480";
+        choices[39845888] = "PowerShot SX200 IS";
+        choices[39911424] = "PowerShot SD970 IS / Digital IXUS 990 IS / IXY Digital 830 IS";
+        choices[39976960] = "PowerShot SD780 IS / Digital IXUS 100 IS / IXY Digital 210 IS";
+        choices[40042496] = "PowerShot A1100 IS";
+        choices[40108032] = "PowerShot SD1200 IS / Digital IXUS 95 IS / IXY Digital 110 IS";
+        choices[40894464] = "PowerShot G11";
+        choices[40960000] = "PowerShot SX120 IS";
+        choices[41025536] = "PowerShot S90";
+        choices[41222144] = "PowerShot SX20 IS";
+        choices[41287680] = "PowerShot SD980 IS / Digital IXUS 200 IS / IXY Digital 930 IS";
+        choices[41353216] = "PowerShot SD940 IS / Digital IXUS 120 IS / IXY Digital 220 IS";
+        choices[41943040] = "PowerShot A495";
+        choices[42008576] = "PowerShot A490";
+        choices[42074112] = "PowerShot A3100 IS / A3150 IS";
+        choices[42139648] = "PowerShot A3000 IS";
+        choices[42205184] = "PowerShot SD1400 IS / IXUS 130 / IXY 400F";
+        choices[42270720] = "PowerShot SD1300 IS / IXUS 105 / IXY 200F";
+        choices[42336256] = "PowerShot SD3500 IS / IXUS 210 / IXY 10S";
+        choices[42401792] = "PowerShot SX210 IS";
+        choices[42467328] = "PowerShot SD4000 IS / IXUS 300 HS / IXY 30S";
+        choices[42532864] = "PowerShot SD4500 IS / IXUS 1000 HS / IXY 50S";
+        choices[43122688] = "PowerShot G12";
+        choices[43188224] = "PowerShot SX30 IS";
+        choices[43253760] = "PowerShot SX130 IS";
+        choices[43319296] = "PowerShot S95";
+        choices[43515904] = "PowerShot A3300 IS";
+        choices[43581440] = "PowerShot A3200 IS";
+        choices[50331648] = "PowerShot ELPH 500 HS / IXUS 310 HS / IXY 31S";
+        choices[50397184] = "PowerShot Pro90 IS";
+        choices[50397185] = "PowerShot A800";
+        choices[50462720] = "PowerShot ELPH 100 HS / IXUS 115 HS / IXY 210F";
+        choices[50528256] = "PowerShot SX230 HS";
+        choices[50593792] = "PowerShot ELPH 300 HS / IXUS 220 HS / IXY 410F";
+        choices[50659328] = "PowerShot A2200";
+        choices[50724864] = "PowerShot A1200";
+        choices[50790400] = "PowerShot SX220 HS";
+        choices[50855936] = "PowerShot G1 X";
+        choices[50921472] = "PowerShot SX150 IS";
+        choices[51380224] = "PowerShot ELPH 510 HS / IXUS 1100 HS / IXY 51S";
+        choices[51445760] = "PowerShot S100 (new)";
+        choices[51511296] = "PowerShot ELPH 310 HS / IXUS 230 HS / IXY 600F";
+        choices[51576832] = "PowerShot SX40 HS";
+        choices[51642368] = "IXY 32S";
+        choices[51773440] = "PowerShot A1300";
+        choices[51838976] = "PowerShot A810";
+        choices[51904512] = "PowerShot ELPH 320 HS / IXUS 240 HS / IXY 420F";
+        choices[51970048] = "PowerShot ELPH 110 HS / IXUS 125 HS / IXY 220F";
+        choices[52428800] = "PowerShot D20";
+        choices[52494336] = "PowerShot A4000 IS";
+        choices[52559872] = "PowerShot SX260 HS";
+        choices[52625408] = "PowerShot SX240 HS";
+        choices[52690944] = "PowerShot ELPH 530 HS / IXUS 510 HS / IXY 1";
+        choices[52756480] = "PowerShot ELPH 520 HS / IXUS 500 HS / IXY 3";
+        choices[52822016] = "PowerShot A3400 IS";
+        choices[52887552] = "PowerShot A2400 IS";
+        choices[52953088] = "PowerShot A2300";
+        choices[53673984] = "PowerShot G15";
+        choices[53739520] = "PowerShot SX50";
+        choices[53805056] = "PowerShot SX160 IS";
+        choices[53870592] = "PowerShot S110 (new)";
+        choices[53936128] = "PowerShot SX500 IS";
+        choices[54001664] = "PowerShot N";
+        choices[54067200] = "IXUS 245 HS / IXY 430F";
+        choices[54525952] = "PowerShot SX280 HS";
+        choices[54591488] = "PowerShot SX270 HS";
+        choices[54657024] = "PowerShot A3500 IS";
+        choices[54722560] = "PowerShot A2600";
+        choices[54853632] = "PowerShot A1400";
+        choices[54919168] = "PowerShot ELPH 130 IS / IXUS 140 / IXY 110F";
+        choices[54984704] = "PowerShot ELPH 115/120 IS / IXUS 132/135 / IXY 90F/100F";
+        choices[55115776] = "PowerShot ELPH 330 HS / IXUS 255 HS / IXY 610F";
+        choices[55640064] = "PowerShot A2500";
+        choices[55836672] = "PowerShot G16";
+        choices[55902208] = "PowerShot S120";
+        choices[55967744] = "PowerShot SX170 IS";
+        choices[56098816] = "PowerShot SX510 HS";
+        choices[56164352] = "PowerShot S200 (new)";
+        choices[56623104] = "IXY 620F";
+        choices[56688640] = "PowerShot N100";
+        choices[56885248] = "PowerShot G1 X Mark II";
+        choices[56950784] = "PowerShot D30";
+        choices[57016320] = "PowerShot SX700 HS";
+        choices[57081856] = "PowerShot SX600 HS";
+        choices[57147392] = "PowerShot ELPH 140 IS / IXUS 150 / IXY 130";
+        choices[57212928] = "PowerShot ELPH 135 / IXUS 145 / IXY 120";
+        choices[57671680] = "PowerShot ELPH 340 HS / IXUS 265 HS / IXY 630";
+        choices[57737216] = "PowerShot ELPH 150 IS / IXUS 155 / IXY 140";
+        choices[57933824] = "EOS M3";
+        choices[57999360] = "PowerShot SX60 HS";
+        choices[58064896] = "PowerShot SX520 HS";
+        choices[58130432] = "PowerShot SX400 IS";
+        choices[58195968] = "PowerShot G7 X";
+        choices[58261504] = "PowerShot N2";
+        choices[58720256] = "PowerShot SX530 HS";
+        choices[58851328] = "PowerShot SX710 HS";
+        choices[58916864] = "PowerShot SX610 HS";
+        choices[58982400] = "EOS M10";
+        choices[59047936] = "PowerShot G3 X";
+        choices[59113472] = "PowerShot ELPH 165 HS / IXUS 165 / IXY 160";
+        choices[59179008] = "PowerShot ELPH 160 / IXUS 160";
+        choices[59244544] = "PowerShot ELPH 350 HS / IXUS 275 HS / IXY 640";
+        choices[59310080] = "PowerShot ELPH 170 IS / IXUS 170";
+        choices[59834368] = "PowerShot SX410 IS";
+        choices[59965440] = "PowerShot G9 X";
+        choices[60030976] = "EOS M5";
+        choices[60096512] = "PowerShot G5 X";
+        choices[60227584] = "PowerShot G7 X Mark II";
+        choices[60358656] = "PowerShot ELPH 360 HS / IXUS 285 HS / IXY 650";
+        choices[67174400] = "PowerShot SX540 HS";
+        choices[67239936] = "PowerShot SX420 IS";
+        choices[67305472] = "PowerShot ELPH 190 IS / IXUS 180 / IXY 190";
+        choices[67371008] = "PowerShot G1";
+        choices[67371009] = "IXY 180";
+        choices[67436544] = "PowerShot SX720 HS";
+        choices[67502080] = "PowerShot SX620 HS";
+        choices[100925440] = "PowerShot S100 / Digital IXUS / IXY Digital";
+        choices[1074255475] = "DC19/DC21/DC22";
+        choices[1074255476] = "XH A1";
+        choices[1074255477] = "HV10";
+        choices[1074255478] = "MD130/MD140/MD150/MD160/ZR850";
+        choices[1074255735] = "DC50";
+        choices[1074255736] = "HV20";
+        choices[1074255737] = "DC211";
+        choices[1074255738] = "HG10";
+        choices[1074255739] = "HR10";
+        choices[1074255741] = "MD255/ZR950";
+        choices[1074255900] = "HF11";
+        choices[1074255992] = "HV30";
+        choices[1074255996] = "XH A1S";
+        choices[1074255998] = "DC301/DC310/DC311/DC320/DC330";
+        choices[1074255999] = "FS100";
+        choices[1074256000] = "HF10";
+        choices[1074256002] = "HG20/HG21";
+        choices[1074256165] = "HF21";
+        choices[1074256166] = "HF S11";
+        choices[1074256248] = "HV40";
+        choices[1074256263] = "DC410/DC411/DC420";
+        choices[1074256264] = "FS19/FS20/FS21/FS22/FS200";
+        choices[1074256265] = "HF20/HF200";
+        choices[1074256266] = "HF S10/S100";
+        choices[1074256526] = "HF R10/R16/R17/R18/R100/R106";
+        choices[1074256527] = "HF M30/M31/M36/M300/M306";
+        choices[1074256528] = "HF S20/S21/S200";
+        choices[1074256530] = "FS31/FS36/FS37/FS300/FS305/FS306/FS307";
+        choices[1074257321] = "HF G25";
+        choices[1074257844] = "XC10";
+        choices[2147483649] = "EOS-1D";
+        choices[2147484007] = "EOS-1DS";
+        choices[2147484008] = "EOS 10D";
+        choices[2147484009] = "EOS-1D Mark III";
+        choices[2147484016] = "EOS Digital Rebel / 300D / Kiss Digital";
+        choices[2147484020] = "EOS-1D Mark II";
+        choices[2147484021] = "EOS 20D";
+        choices[2147484022] = "EOS Digital Rebel XSi / 450D / Kiss X2";
+        choices[2147484040] = "EOS-1Ds Mark II";
+        choices[2147484041] = "EOS Digital Rebel XT / 350D / Kiss Digital N";
+        choices[2147484048] = "EOS 40D";
+        choices[2147484179] = "EOS 5D";
+        choices[2147484181] = "EOS-1Ds Mark III";
+        choices[2147484184] = "EOS 5D Mark II";
+        choices[2147484185] = "WFT-E1";
+        choices[2147484210] = "EOS-1D Mark II N";
+        choices[2147484212] = "EOS 30D";
+        choices[2147484214] = "EOS Digital Rebel XTi / 400D / Kiss Digital X";
+        choices[2147484225] = "WFT-E2";
+        choices[2147484230] = "WFT-E3";
+        choices[2147484240] = "EOS 7D";
+        choices[2147484242] = "EOS Rebel T1i / 500D / Kiss X3";
+        choices[2147484244] = "EOS Rebel XS / 1000D / Kiss F";
+        choices[2147484257] = "EOS 50D";
+        choices[2147484265] = "EOS-1D X";
+        choices[2147484272] = "EOS Rebel T2i / 550D / Kiss X4";
+        choices[2147484273] = "WFT-E4";
+        choices[2147484275] = "WFT-E5";
+        choices[2147484289] = "EOS-1D Mark IV";
+        choices[2147484293] = "EOS 5D Mark III";
+        choices[2147484294] = "EOS Rebel T3i / 600D / Kiss X5";
+        choices[2147484295] = "EOS 60D";
+        choices[2147484296] = "EOS Rebel T3 / 1100D / Kiss X50";
+        choices[2147484297] = "EOS 7D Mark II";
+        choices[2147484311] = "WFT-E2 II";
+        choices[2147484312] = "WFT-E4 II";
+        choices[2147484417] = "EOS Rebel T4i / 650D / Kiss X6i";
+        choices[2147484418] = "EOS 6D";
+        choices[2147484452] = "EOS-1D C";
+        choices[2147484453] = "EOS 70D";
+        choices[2147484454] = "EOS Rebel T5i / 700D / Kiss X7i";
+        choices[2147484455] = "EOS Rebel T5 / 1200D / Kiss X70";
+        choices[2147484456] = "EOS-1D X MARK II";
+        choices[2147484465] = "EOS M";
+        choices[2147484486] = "EOS Rebel SL1 / 100D / Kiss X7";
+        choices[2147484487] = "EOS Rebel T6s / 760D / 8000D";
+        choices[2147484489] = "EOS 5D Mark IV";
+        choices[2147484496] = "EOS 80D";
+        choices[2147484501] = "EOS M2";
+        choices[2147484546] = "EOS 5DS";
+        choices[2147484563] = "EOS Rebel T6i / 750D / Kiss X8i";
+        choices[2147484673] = "EOS 5DS R";
+        choices[2147484676] = "EOS Rebel T6 / 1300D / Kiss X80";
     }
 };
 CAModelIDInterpreter caModelIDInterpreter;
@@ -1830,7 +1847,7 @@ const TagAttrib canonFocalLengthAttribs[] = {
 
 const TagAttrib canonShotInfoAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 1, AUTO, "AutoISO", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 2, AUTO, "BaseISO" , &caBaseISOInterpreter},
+    {0, AC_WRITE, 0, nullptr, 2, AUTO, "BaseISO", &caBaseISOInterpreter},
     {0, AC_WRITE, 0, nullptr, 3, AUTO, "MeasuredEV", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 4, AUTO, "TargetAperture", &caApertureInterpreter},
     {0, AC_WRITE, 0, nullptr, 5, AUTO, "TargetExposureTime", &caExposureTimeInterpreter},
@@ -1839,13 +1856,13 @@ const TagAttrib canonShotInfoAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 8, AUTO, "SlowShutter", &caSlowShutterInterpreter},
     {0, AC_WRITE, 0, nullptr, 9, AUTO, "SequenceNumber", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 10, AUTO, "OpticalZoomCode", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 13, AUTO, "FlashGuideNumber" , &caFlashGuideNumberInterpreter},
+    {0, AC_WRITE, 0, nullptr, 13, AUTO, "FlashGuideNumber", &caFlashGuideNumberInterpreter},
     {0, AC_WRITE, 0, nullptr, 14, AUTO, "AFPointsInFocus", &caAFPointsInFocusInterpreter},
     {0, AC_WRITE, 0, nullptr, 15, AUTO, "FlashExposureComp", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 16, AUTO, "AutoExposureBracketing", &caAutoExposureBracketingInterpreter},
     {0, AC_WRITE, 0, nullptr, 17, AUTO, "AEBBracketValue", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 18, AUTO, "ControlMode", &caControModeInterpreter},
-    {0, AC_WRITE, 0, nullptr, 21, AUTO, "FNumber" , &caApertureInterpreter},
+    {0, AC_WRITE, 0, nullptr, 21, AUTO, "FNumber", &caApertureInterpreter},
     {0, AC_WRITE, 0, nullptr, 22, AUTO, "ExposureTime", &caExposureTimeInterpreter},
     {0, AC_WRITE, 0, nullptr, 23, AUTO, "MeasuredEV2", &caMeasuredEVInterpreter},
     {0, AC_WRITE, 0, nullptr, 24, AUTO, "BulbDuration", &stdInterpreter},
@@ -1865,15 +1882,15 @@ const TagAttrib canonFileInfoAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 6, AUTO, "RawJpgQuality", &caRAWJpegQualityInterpreter},
     {0, AC_WRITE, 0, nullptr, 7, AUTO, "RawJpgSize", &caJpegSizeInterpreter},
     {0, AC_WRITE, 0, nullptr, 8, AUTO, "NoiseReduction", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 9, AUTO, "WBBracketMode" , &caWBBracketModeInterpreter},
+    {0, AC_WRITE, 0, nullptr, 9, AUTO, "WBBracketMode", &caWBBracketModeInterpreter},
     {0, AC_WRITE, 0, nullptr, 12, AUTO, "WBBracketValueAB", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 13, AUTO, "WBBracketValueGM", &stdInterpreter},
-    {0, AC_WRITE, 0, nullptr, 14, AUTO, "FilterEffect" , &caFilterEffectInterpreter},
-    {0, AC_WRITE, 0, nullptr, 15, AUTO, "ToningEffect" , &caToningEffectInterpreter},
-    {0, AC_WRITE, 0, nullptr, 19, AUTO, "LiveViewShooting" , &caOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 14, AUTO, "FilterEffect", &caFilterEffectInterpreter},
+    {0, AC_WRITE, 0, nullptr, 15, AUTO, "ToningEffect", &caToningEffectInterpreter},
+    {0, AC_WRITE, 0, nullptr, 19, AUTO, "LiveViewShooting", &caOnOffInterpreter},
     {0, AC_WRITE, 0, nullptr, 20, AUTO, "FocusDistanceUpper", &caFocusDistanceInterpreter},
     {0, AC_WRITE, 0, nullptr, 21, AUTO, "FocusDistanceLower", &caFocusDistanceInterpreter},
-    {0, AC_WRITE, 0, nullptr, 25, AUTO, "FlashExposureLock" , &caOnOffInterpreter},
+    {0, AC_WRITE, 0, nullptr, 25, AUTO, "FlashExposureLock", &caOnOffInterpreter},
     { -1, AC_DONTWRITE, 0, nullptr, 0, AUTO, "", nullptr},
 };
 
@@ -1964,7 +1981,7 @@ const TagAttrib canonAttribs[] = {
     {0, AC_WRITE, 0, nullptr, 0x00a9, AUTO, "ColorBalance", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00aa, AUTO, "MeasuredColor", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00ae, AUTO, "ColorTemperature", &stdInterpreter},
-    {0, AC_NEW  , 0, nullptr, 0x00b0, AUTO, "CanonFlags", &stdInterpreter},
+    {0, AC_NEW, 0, nullptr, 0x00b0, AUTO, "CanonFlags", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00b1, AUTO, "ModifiedInfo", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00b2, AUTO, "ToneCurveMatching", &stdInterpreter},
     {0, AC_WRITE, 0, nullptr, 0x00b3, AUTO, "WhiteBalanceMatching", &stdInterpreter},

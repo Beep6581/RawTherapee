@@ -1072,6 +1072,14 @@ Camera constants:
         "ranges": { "white": 4050 } // nominal 4080-4093
     },
 
+    { // Quality C, color data guessed to be same with X-A3
+        "make_model": "FUJIFILM GFX 50S",
+        "dcraw_matrix": [ 12407,-5222,-1086,-2971,11116,2120,-294,1029,5284 ], // copy from X-A3 DNGv9.8 D65
+        "raw_crop": [ 0, 0, 8280, 6208 ], // full raw 9216X6210 - usefull 8280x6208
+      //  "raw_crop": [ 6, 6, 8264, 6200 ], // fuji official JPEG 8256X6192 10,11,9,8 - experimental crop to match with official
+        "ranges": { "white": 16300 }
+    },
+
     { // Quality A
         "make_model": "FUJIFILM S1",
         "dcraw_matrix": [ 12297,-4882,-1202,-2106,10691,1623,-88,1312,4790 ] // DNG_v8.5 D65
@@ -1156,7 +1164,7 @@ Camera constants:
     { // Quality B, frame corrections
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
-        "raw_crop": [ 0, 0, -8, 0 ], // full frame 5312x2988, 8 black columns at the left
+        "raw_crop": [ 0, 0, 0, 0 ], // full frame 5312x2988, 8 black columns at the left
         "ranges": { "white_max": 1023 }
     },
 
@@ -1760,6 +1768,11 @@ Camera constants:
         "ranges": { "white": 4080 } // nominal at ISO200 4094
     },
 
+    { // Quality C, only Raw crop
+        "make_model": [ "RICOH PENTAX KP", "PENTAX KP" ],
+        "raw_crop": [ 52, 28, 6032, 4028 ]
+    },
+
     { // Quality B, Intemediate ISO samples missing, Pentax_DNG WLtags are after BL sutraction and not valid
         "make_model": [ "RICOH PENTAX K-70", "PENTAX K-70" ],
         //"dcraw_matrix": [ 8050,-2061,-1264,-4359,12953,1515,-1096,1965,6075 ], // PENTAX DNG D65
@@ -1784,7 +1797,7 @@ Camera constants:
         "make_model": [ "RICOH PENTAX K-1", "PENTAX K-1" ],
         "dcraw_matrix": [ 8596,-2981,-639,-4202,12046,2431,-685,1424,6122 ], // adobe DNG v9.7 D65
         //"dcraw_matrix": [ 8566,-2746,-1201,-3612,12204,1550,-893,1680,6264 ], // PENTAX DNG
-        "raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
+        //"raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
         "ranges": {
             "white": [
                 { "iso": [ 100, 200, 400, 800 ], "levels": 16300 }, // 16380
@@ -1918,6 +1931,11 @@ Camera constants:
         "dcraw_matrix": [ 2517,1175,-621,-587,7080,404,-4677,12402,4231 ], // experimental, inverted icc DP1_Merrill_dpreview_daylight WP1.4
         "ranges": { "black": 16, "white": 4070 }, // BL is 16 or 31, should be measured at the horizontal black stripe at the bottom
         "raw_crop": [ 12, 0, -110, -62 ] // for small size all numbers/2
+    },
+
+    { // Quality C, only raw crop for now - see #3858
+        "make_model": "Sigma sd Quattro",
+        "raw_crop": [ 200, 74, 5632, 3698 ]
     },
 
     { // Quality A, correction for color matrix from Colin Walker's d50 to dng d65

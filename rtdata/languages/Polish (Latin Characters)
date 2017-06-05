@@ -108,7 +108,6 @@ FILEBROWSER_DELETEDLGMSG;Na pewno usunac zaznaczone %1 plikow?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Na pewno usunac wybrany plik %1 WLACZNIE z wersja utworzona przez kolejke przetwarzania?
 FILEBROWSER_EMPTYTRASH;Wyczysc kosz
 FILEBROWSER_EMPTYTRASHHINT;Definitywnie usuwa pliki z kosza
-FILEBROWSER_EXEC_CPB;Uruchom zewnetrzny kreator profilow
 FILEBROWSER_EXTPROGMENU;Otworz za pomoca
 FILEBROWSER_FLATFIELD;Puste pole
 FILEBROWSER_MOVETODARKFDIR;Przenies do katalogu zawierajacego czarne klatki
@@ -218,7 +217,6 @@ HISTOGRAM_TOOLTIP_R;Pokaz/Ukryj histogram czerwieni.
 HISTOGRAM_TOOLTIP_RAW;Pokaz/Ukryj histogram raw.
 HISTORY_CHANGED;Zmieniono
 HISTORY_CUSTOMCURVE;Krzywa wlasna
-HISTORY_DELSNAPSHOT;Usun migawke
 HISTORY_FROMCLIPBOARD;Ze schowka
 HISTORY_LABEL;Historia
 HISTORY_MSG_1;Zdjecie zaladowane
@@ -521,47 +519,23 @@ HISTORY_NEWSNAPSHOT;Nowa migawka
 HISTORY_NEWSNAPSHOT_TOOLTIP;Skrot: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Migawka
 HISTORY_SNAPSHOTS;Migawki
-IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORSPOSITION;Stanowisko
-IPTCPANEL_AUTHORSPOSITIONHINT;Stanowisko lub funkcja autora lub autorow dziela (By-line Title).
-IPTCPANEL_CAPTION;Tytul
-IPTCPANEL_CAPTIONHINT;Tekstowy opis tresci (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Autor opisu
-IPTCPANEL_CAPTIONWRITERHINT;Imie i nazwisko osoby biorace udzial w opracowywaniu, edytowanie lub korygowania obrazu lub opisu (Writer - Editor).
 IPTCPANEL_CATEGORY;Kategoria
-IPTCPANEL_CATEGORYHINT;Identyfikuje temat zdjecia w opinii jego dostawcy (Category).
 IPTCPANEL_CITY;Miasto
-IPTCPANEL_CITYHINT;Miasto w ktorym wykonano zdjecie (City).
 IPTCPANEL_COPYHINT;Kopiuje ustawienia IPTC do schowka
-IPTCPANEL_COPYRIGHT;Prawa autorskie
-IPTCPANEL_COPYRIGHTHINT;Wazne uwagi o prawach autorskich (Copyright Notice).
 IPTCPANEL_COUNTRY;Kraj
-IPTCPANEL_COUNTRYHINT;Nazwa kraju lub lokalizacji, gdzie zostalo wykonane zdjecie (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Zasluga
 IPTCPANEL_CREDITHINT;Identyfikuje dostawce zdjecia, niekoniecznie wlasciciela lub autora (Credit).
 IPTCPANEL_DATECREATED;Data utworzenia
-IPTCPANEL_DATECREATEDHINT;Data powstania intelektualnej tresci zdjecia. Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Osadzony
 IPTCPANEL_EMBEDDEDHINT;Resetuje dane IPTC do domyslnych ustawien osadzonych w orginalnym zdjeciu
 IPTCPANEL_HEADLINE;Naglowek
-IPTCPANEL_HEADLINEHINT;Gotowy do opublikowania wpis streszczajacy zawratosc zdjecia (Headline).
 IPTCPANEL_INSTRUCTIONS;Instrukcje
-IPTCPANEL_INSTRUCTIONSHINT;Inne wskazowki redakcyjne dotyczace korzystania z obrazu (Special Instructions).
 IPTCPANEL_KEYWORDS;Slowa kluczowe
-IPTCPANEL_KEYWORDSHINT;Wskazuje konkretne tresci mozliwe do odszukania (Keywords).
 IPTCPANEL_PASTEHINT;Wstawia ustawienia IPTC ze schowka
-IPTCPANEL_PROVINCE;Stan, wojewodztwo, dystrykt itd.
-IPTCPANEL_PROVINCEHINT;Wojewodztwo, gmina, stan gdzie zostalo wykonane zdjecie (Province-State).
 IPTCPANEL_RESET;Reset
 IPTCPANEL_RESETHINT;Resetuje do domyslnych ustawien profilu
 IPTCPANEL_SOURCE;Zrodlo
-IPTCPANEL_SOURCEHINT;Pierwotny wlasciciel tresci intelektualnych zdjecia (Source).
-IPTCPANEL_SUPPCATEGORIES;Dodatkowe kategorie tematyczne
-IPTCPANEL_SUPPCATEGORIESHINT;Doprecyzowuje kategorie tematyczne zdjecia (Supplemental Categories).
 IPTCPANEL_TITLE;Tytul
-IPTCPANEL_TITLEHINT;Skrocony temat odniesienia zdjecia (Object Name).
-IPTCPANEL_TRANSREFERENCE;Kod ident. zlecenie
-IPTCPANEL_TRANSREFERENCEHINT;Numer badz kod identyfikujacy zlecenie utworzony zazwyczaj przez fotografa przy transmisji umozliwiajacy sledzenie obrazu w obiegu.
 MAIN_BUTTON_FULLSCREEN;Pelen ekran
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Przejdz do nastepnego zdjecia wzgledem zdjecia otwartego w Edytorze.\nSkrot: <b>Shift-F4</b>\n\nAby przejsc do nastepnego zdjecia wzgledem miniaturki wybranej w Nawigatorze Zdjec:\nSkrot: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Przejdz do poprzedniego zdjecia wzgledem zdjecia otwartego w Edytorze.\nSkrot: <b>Shift-F3</b> \n\nAby przejsc do poprzedniego zdjecia wzgledem miniaturki wybranej w Nawigatorze Zdjec:\nSkrot: <b>F3</b>
@@ -689,8 +663,6 @@ PARTIALPASTE_PREPROCESS_GREENEQUIL;Wyrownanie zieleni
 PARTIALPASTE_PREPROCESS_HOTPIXFILT;Filtr goracych pikseli
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Redukcja szumow liniowych
 PARTIALPASTE_RAWCACORR_AUTO;Autokorekcja aberracji chr.
-PARTIALPASTE_RAWCACORR_CABLUE;AbChr niebieski
-PARTIALPASTE_RAWCACORR_CARED;AbChr czerwony
 PARTIALPASTE_RAWEXPOS_BLACK;Poziomy czerni
 PARTIALPASTE_RAWEXPOS_LINEAR;Korekcja punktu bieli
 PARTIALPASTE_RAWEXPOS_PRESER;Zachowanie przeswietlen
@@ -836,7 +808,6 @@ PREFERENCES_SHOWEXPOSURECOMPENSATION;Pokaz korekte ekspozycji
 PREFERENCES_SHTHRESHOLD;Prog dla niedoswietlen
 PREFERENCES_SINGLETAB;Tryb pojedynczej zakladki
 PREFERENCES_SINGLETABVERTAB;Tryb pojedynczej zakladki, pionowy uklad
-PREFERENCES_SLIMUI;Waskie suwaki
 PREFERENCES_SND_BATCHQUEUEDONE;Zakonczono przetwarzanie wsadowe
 PREFERENCES_SND_HELP;Nalezy wprowadzic sciezke do pliku, badz pozostawic niewypelnione (brak dzwiekow).\nW systemie Windows mozna stosowac "SystemDefault", "SystemAsterisk" itp. dla dzwiekow systemowych.\nW systemie Linux mozna stosowac "complete", "window-attention" etc. dla dzwiekow systemowych.
 PREFERENCES_SND_LNGEDITPROCDONE;Praca edytora wykonana
@@ -852,7 +823,6 @@ PREFERENCES_TP_LABEL;Panel narzedzi:
 PREFERENCES_TP_USEICONORTEXT;Uzyj ikon w zakladkach zamiast tekstowych etykiet
 PREFERENCES_TP_VSCROLLBAR;Ukry pionowy pasek przesuwania
 PREFERENCES_USEBUNDLEDPROFILES;Uzyj zalaczone profile przetwarzania
-PREFERENCES_USESYSTEMTHEME; Uzyj tematu systemowego
 PREFERENCES_VIEW;Balans bieli urzadzenia wyjsciowego (monitora, TV, projektora, widowni, etc.)
 PREFERENCES_WORKFLOW;Tok pracy
 PROFILEPANEL_COPYPPASTE;Parametry do skopiowania
@@ -1159,8 +1129,6 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Przy -100 oddzialywanie efektu odbywa sie wylacz
 TP_DIRPYREQUALIZER_THRESHOLD;Prog
 TP_DIRPYREQUALIZER_TOOLTIP;Zapobiega artefaktom w strefach przejscia pomiedzy odcieniom skory (hue, chrominancja, luminancja) a pozostalym odcieniom.
 TP_DISTORTION_AMOUNT;Sila
-TP_DISTORTION_AUTO;Automatyczna korekcja dystorsji
-TP_DISTORTION_AUTO_TIP;(Eksperymentalne) Automatyczna korekcja dystorsji obiektywu dla niektorych aparatow (M4/3, kompakty DC, itp.)
 TP_DISTORTION_LABEL;Dystorsja
 TP_EPD_EDGESTOPPING;Wyszukiwanie krawedzi
 TP_EPD_LABEL;Tone Mapping
@@ -1255,7 +1223,6 @@ TP_ICM_INPUTPROFILE;Profil wejsciowy
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Brak ICM: Wyjscie sRGB
 TP_ICM_OUTPUTPROFILE;Profil wyjsciowy
-TP_ICM_SAVEREFERENCE;Zapisz obraz wzorcowy dla profilowania
 TP_ICM_SAVEREFERENCE_TOOLTIP;Zapisz liniowy obraz TIFF zanim profil wejsciowy zostanie zastosowany. Obraz ten mozna uzyc do kalibracji oraz do wytworzenia profilu aparatu.
 TP_ICM_TONECURVE;Uzyj krzywa tonalna z DCP
 TP_ICM_TONECURVE_TOOLTIP;Wlacz aby uzyc krzywa tonalna znajdujaca sie w profilu DCP. Opcja ta jest tylko aktywna jesli profil DCP zawiera krzywa tonalna.
@@ -1406,7 +1373,6 @@ TP_SHARPENING_RLD_AMOUNT;Sila
 TP_SHARPENING_RLD_DAMPING;Tlumienie
 TP_SHARPENING_RLD_ITERATIONS;Powtorzenia
 TP_SHARPENING_THRESHOLD;Prog
-TP_SHARPENING_TOOLTIP;Kiedy CIECAM02 jest aktywne efekt wyostrzania moze ulec drobnym zmianom. W malo prawdopodobnym przypadku zuwazenia zmiany wystarczy prystosowac suwaki wedlug gustu.
 TP_SHARPENING_USM;Maska wyostrzajaca
 TP_SHARPENMICRO_AMOUNT;Sila
 TP_SHARPENMICRO_LABEL;Mikrokontrast
@@ -1499,7 +1465,22 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
+!DYNPROFILEEDITOR_DELETE;Delete
+!DYNPROFILEEDITOR_EDIT;Edit
+!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
+!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
+!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
+!DYNPROFILEEDITOR_MOVE_UP;Move Up
+!DYNPROFILEEDITOR_NEW;New
+!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
+!DYNPROFILEEDITOR_PROFILE;Processing Profile
+!EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
+!EXPORT_PIPELINE;Processing pipeline
+!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
+!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only non-deleted images.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
 !FILECHOOSER_FILTER_ANY;All files
@@ -1574,7 +1555,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_357;W - Denoise - Link with ES
 !HISTORY_MSG_358;W - Gamut - CH
 !HISTORY_MSG_359;Hot/Dead - Threshold
-!HISTORY_MSG_360;TM Gamma
+!HISTORY_MSG_360;TM - Gamma
 !HISTORY_MSG_361;W - Final - Chroma balance
 !HISTORY_MSG_362;W - Residual - Compression method
 !HISTORY_MSG_363;W - Residual - Compression strength
@@ -1626,12 +1607,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_409;Retinex - Contrast
 !HISTORY_MSG_410;Retinex - Offset
 !HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Gaussian Gradient
+!HISTORY_MSG_412;Retinex - Gaussian gradient
 !HISTORY_MSG_413;Retinex - Contrast
 !HISTORY_MSG_414;Retinex - Histogram - Lab
 !HISTORY_MSG_415;Retinex - Transmission
 !HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission Median
+!HISTORY_MSG_417;Retinex - Transmission median
 !HISTORY_MSG_418;Retinex - Threshold
 !HISTORY_MSG_419;Retinex - Color space
 !HISTORY_MSG_420;Retinex - Histogram - HSL
@@ -1644,8 +1625,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_427;Output rendering intent
 !HISTORY_MSG_428;Monitor rendering intent
 !HISTORY_MSG_429;Retinex - Iterations
-!HISTORY_MSG_430;Retinex - Transmission Gradient
-!HISTORY_MSG_431;Retinex - Strength Gradient
+!HISTORY_MSG_430;Retinex - Transmission gradient
+!HISTORY_MSG_431;Retinex - Strength gradient
 !HISTORY_MSG_432;Retinex - M - Highlights
 !HISTORY_MSG_433;Retinex - M - Highlights TW
 !HISTORY_MSG_434;Retinex - M - Shadows
@@ -1657,7 +1638,48 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !HISTORY_MSG_440;CbDL - Method
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
-!HISTORY_MSG_443;Output Black Point Compensation
+!HISTORY_MSG_443;Output black point compensation
+!HISTORY_MSG_444;WB - Temp bias
+!HISTORY_MSG_445;Raw sub-image
+!HISTORY_MSG_449;PS - ISO adaption
+!HISTORY_MSG_452;PS - Show motion
+!HISTORY_MSG_453;PS - Show mask only
+!HISTORY_MSG_457;PS - Check red/blue
+!HISTORY_MSG_462;PS - Check green
+!HISTORY_MSG_464;PS - Blur motion mask
+!HISTORY_MSG_465;PS - Blur radius
+!HISTORY_MSG_468;PS - Fill holes
+!HISTORY_MSG_469;PS - Median
+!HISTORY_MSG_471;PS - Motion correction
+!HISTORY_MSG_472;PS - Smooth transitions
+!HISTORY_MSG_473;PS - Use LMMSE
+!HISTORY_MSG_474;PS - Equalize
+!HISTORY_MSG_475;PS - Equalize channel
+!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
+!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
+!IPTCPANEL_COPYRIGHT;Copyright notice
+!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
+!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
+!IPTCPANEL_CREATOR;Creator
+!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
+!IPTCPANEL_CREATORJOBTITLE;Creator's job title
+!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
+!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
+!IPTCPANEL_DESCRIPTION;Description
+!IPTCPANEL_DESCRIPTIONHINT;Enter a "caption" describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
+!IPTCPANEL_DESCRIPTIONWRITER;Description writer
+!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
+!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
+!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
+!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
+!IPTCPANEL_PROVINCE;Province or state
+!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
+!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
+!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
+!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
+!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
+!IPTCPANEL_TRANSREFERENCE;Job ID
+!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
@@ -1665,6 +1687,9 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_EQUALIZER;Wavelet levels
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
+!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
+!PARTIALPASTE_RAW_IMAGENUM;Sub-image
+!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_WAVELETGROUP;Wavelet Levels
 !PREFERENCES_AUTLISLOW;Low
@@ -1676,6 +1701,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_CIEART_FRAME;CIECAM02-Specific Settings
 !PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
+!PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
@@ -1700,9 +1726,10 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MED;Medium (Tile/2)
 !PREFERENCES_MIN;Mini (100x115)
-!PREFERENCES_MONBPC;Black Point Compensation for the L*a*b*->Monitor transform
-!PREFERENCES_MONINTENT;Default monitor intent
-!PREFERENCES_MONPROFILE;Default monitor profile
+!PREFERENCES_MONINTENT;Default rendering intent
+!PREFERENCES_MONITOR;Monitor
+!PREFERENCES_MONPROFILE;Default color profile
+!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
 !PREFERENCES_NAVIGATIONFRAME;Navigation
 !PREFERENCES_NOISE;Noise Reduction
 !PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
@@ -1712,7 +1739,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_PREVDEMO_FAST;Fast
 !PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
 !PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+!PREFERENCES_PRINTER;Printer (Soft-Proofing)
+!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
+!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_PROFILE_NONE;None
+!PREFERENCES_PRTINTENT;Rendering intent
+!PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
@@ -1723,6 +1755,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_SIMPLAUT;Tool mode
 !PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_STDAUT;Standard
+!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
@@ -1731,6 +1764,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_WLONE;One level
 !PREFERENCES_WLTWO;Two levels
 !PREFERENCES_WLZER;No
+!PROFILEPANEL_PDYNAMIC;Dynamic
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colors from the output profile.
 !SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate de rendering generated by the output profile of the ICM tool. Most useful for simulating printing outputs.
@@ -1778,6 +1812,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
 !TP_DIRPYREQUALIZER_ARTIF;Reduce artifacts
+!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EXPOSURE_TCMODE_LUMINANCE;Luminance
 !TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptual
@@ -1789,16 +1824,77 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
 !TP_ICM_BPC;Black Point Compensation
-!TP_ICM_BPC_TOOLTIP;Enable this to fit the Luminosity channel to the output color space with a fix White Point
 !TP_ICM_PROFILEINTENT;Rendering Intent
+!TP_ICM_SAVEREFERENCE;Save Reference Image
 !TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_NEUTRAL;Reset
 !TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 !TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 !TP_RAWCACORR_CASTR;Strength
+!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
+!TP_RAW_3PASSBEST;3-Pass (Best)
+!TP_RAW_AHD;AHD
+!TP_RAW_AMAZE;AMaZE
+!TP_RAW_DCB;DCB
+!TP_RAW_EAHD;EAHD
+!TP_RAW_FAST;Fast
 !TP_RAW_HD;Threshold
 !TP_RAW_HD_TOOLTIP;Lower values make hot/dead pixel detection more aggressive, but false positives may lead to artifacts. If you notice any artifacts appearing when enabling the Hot/Dead Pixel Filters, gradually increase the threshold value until they disappear.
+!TP_RAW_HPHD;HPHD
+!TP_RAW_IGV;IGV
+!TP_RAW_IMAGENUM;Sub-image
+!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
+!TP_RAW_LMMSE;LMMSE
+!TP_RAW_MONO;Mono
+!TP_RAW_NONE;None (Shows sensor pattern)
+!TP_RAW_PIXELSHIFT;Pixel Shift
+!TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
+!TP_RAW_PIXELSHIFTBLUR;Blur motion mask
+!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
+!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
+!TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
+!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
+!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
+!TP_RAW_PIXELSHIFTEXP0;Experimental
+!TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
+!TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
+!TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
+!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
+!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
+!TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
+!TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
+!TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
+!TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
+!TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
+!TP_RAW_PIXELSHIFTMM_AUTO;Automatic
+!TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
+!TP_RAW_PIXELSHIFTMM_OFF;Off
+!TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
+!TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
+!TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
+!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
+!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue AMaZE
+!TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
+!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green AMaZE
+!TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
+!TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
+!TP_RAW_PIXELSHIFTNREADISO;nRead
+!TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+!TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
+!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
+!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
+!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image.
+!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion.
+!TP_RAW_PIXELSHIFTSIGMA;Blur radius
+!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
+!TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
+!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
+!TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
+!TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
+!TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
+!TP_RAW_VNG4;VNG4
 !TP_RETINEX_CONTEDIT_HSL;Histogram equalizer HSL
 !TP_RETINEX_CONTEDIT_LAB;Histogram equalizer L*a*b*
 !TP_RETINEX_CONTEDIT_LH;Hue equalizer
@@ -2042,3 +2138,5 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !TP_WAVELET_TMSTRENGTH_TOOLTIP;Control the strength of tone mapping or contrast compression of the residual image. When the value is different from 0, the Strength and Gamma sliders of the Tone Mapping tool in the Exposure tab will become grayed out.
 !TP_WAVELET_TMTYPE;Compression method
 !TP_WAVELET_TON;Toning
+!TP_WBALANCE_TEMPBIAS;AWB temperature bias
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".

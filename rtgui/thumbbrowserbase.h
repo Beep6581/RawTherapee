@@ -29,21 +29,36 @@
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
  */
-class ThumbBrowserBase  :  public Gtk::VBox
+class ThumbBrowserBase  :  public Gtk::Grid
 {
 
     class Internal : public Gtk::DrawingArea
     {
-
-        Glib::RefPtr<Gdk::GC> gc_;
+        //Cairo::RefPtr<Cairo::Context> cc;
         int ofsX, ofsY;
         ThumbBrowserBase* parent;
         bool dirty;
+
+        // caching some very often used values
+        Glib::RefPtr<Gtk::StyleContext> style;
+        Gdk::RGBA textn;
+        Gdk::RGBA texts;
+        Gdk::RGBA bgn;
+        Gdk::RGBA bgs;
+
     public:
         Internal ();
         void setParent (ThumbBrowserBase* p);
         void on_realize();
-        bool on_expose_event(GdkEventExpose* event);
+        void on_style_updated();
+        bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
+
+        Gtk::SizeRequestMode get_request_mode_vfunc () const;
+        void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const;
+        void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+        void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+        void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+
         bool on_button_press_event (GdkEventButton* event);
         bool on_button_release_event (GdkEventButton* event);
         bool on_motion_notify_event (GdkEventMotion* event);
@@ -51,6 +66,22 @@ class ThumbBrowserBase  :  public Gtk::VBox
         bool on_key_press_event (GdkEventKey* event);
         bool on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
         void setPosition (int x, int y);
+
+        Glib::RefPtr<Gtk::StyleContext> getStyle() {
+            return style;
+        }
+        Gdk::RGBA getNormalTextColor() {
+            return textn;
+        }
+        Gdk::RGBA getSelectedTextColor() {
+            return texts;
+        }
+        Gdk::RGBA getNormalBgColor() {
+            return bgn;
+        }
+        Gdk::RGBA getSelectedBgColor() {
+            return bgs;
+        }
 
         void setDirty ()
         {
@@ -168,7 +199,7 @@ public:
     {
         return fd;
     }
-    void on_style_changed (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_updated ();
     void redraw ();   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
@@ -201,6 +232,23 @@ public:
     {
         return &internal;
     }
+
+    Glib::RefPtr<Gtk::StyleContext> getStyle() {
+        return internal.getStyle();
+    }
+    Gdk::RGBA getNormalTextColor() {
+        return internal.getNormalTextColor();
+    }
+    Gdk::RGBA getSelectedTextColor() {
+        return internal.getSelectedTextColor();
+    }
+    Gdk::RGBA getNormalBgColor() {
+        return internal.getNormalBgColor();
+    }
+    Gdk::RGBA getSelectedBgColor() {
+        return internal.getSelectedBgColor();
+    }
+
 };
 
 #endif

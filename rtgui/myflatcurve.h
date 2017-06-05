@@ -125,6 +125,7 @@ public:
     };
     void setPoints (const std::vector<double>& p);
     void setType (FlatCurveType t);
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool handleEvents (GdkEvent* event);
     void reset (const std::vector<double> &resetCurve, double identityValue = 0.5);
     //void updateBackgroundHistogram (unsigned int* hist);

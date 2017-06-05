@@ -92,7 +92,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
     public SpotWBListener,
     public CropPanelListener,
     public ICMPanelListener,
-    public ImageAreaToolListener
+    public ImageAreaToolListener,
+    public rtengine::ImageTypeListener
 {
 
 protected:
@@ -196,7 +197,7 @@ protected:
 
     bool hasChanged;
 
-    void addPanel (Gtk::Box* where, FoldableToolPanel* panel);
+    void addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void foldThemAll (GdkEventButton* event);
     void updateVScrollbars (bool hide);
     void updateTabsHeader (bool useIcons);
@@ -229,6 +230,7 @@ public:
     // toolpanellistener interface
     void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
+    void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans);
     // profilechangelistener interface
     void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited = nullptr);
     void setDefaults    (rtengine::procparams::ProcParams* defparams);
@@ -252,10 +254,10 @@ public:
     void writeOptions       ();
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal)
+    void getAutoWB (double& temp, double& green, double equal, double tempBias)
     {
         if (ipc) {
-            ipc->getAutoWB (temp, green, equal);
+            ipc->getAutoWB (temp, green, equal, tempBias);
         }
     }
     void getCamWB (double& temp, double& green)

@@ -56,6 +56,9 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     inTabMode = false;
 
+    set_name ("FileBrowser");
+    set_spacing (2);
+
     //  construct and initialize thumbnail browsers
     fileBrowser = Gtk::manage( new FileBrowser() );
     fileBrowser->setFileBrowserListener (this);
@@ -65,7 +68,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     set_size_request(0, 250);
     // construct trash panel with the extra "empty trash" button
     trashButtonBox = Gtk::manage( new Gtk::VBox );
-    Gtk::Button* emptyT = Gtk::manage( new Gtk::Button (M("FILEBROWSER_EMPTYTRASH")));
+    Gtk::Button* emptyT = Gtk::manage( new Gtk::Button ());
     emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
     emptyT->set_image (*Gtk::manage(new RTImage ("trash.png")));
     emptyT->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::emptyTrash));
@@ -102,6 +105,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     Query = Gtk::manage(new Gtk::Entry ()); // cannot use Gtk::manage here as FileCatalog::getFilter will fail on Query->get_text()
     Query->set_text("");
     Query->set_width_chars (20); // TODO !!! add this value to options?
+    Query->set_max_width_chars (20);
     Query->set_tooltip_markup (M("FILEBROWSER_QUERYHINT"));
     Gtk::HBox* hbQuery = Gtk::manage(new Gtk::HBox ());
     buttonQueryClear = Gtk::manage(new Gtk::Button ());
@@ -124,9 +128,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     // setup button bar
     buttonBar = Gtk::manage( new Gtk::HBox () );
+    buttonBar->set_name ("ToolBarPanelFileBrowser");
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
-
-    buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     tbLeftPanel_1 = new Gtk::ToggleButton ();
     iLeftPanel_1_Show = new RTImage("panel-to-right.png");
@@ -139,8 +142,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     tbLeftPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbLeftPanel_1_toggled) );
     buttonBar->pack_start (*tbLeftPanel_1, Gtk::PACK_SHRINK);
 
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
-
+    vSepiLeftPanel = new Gtk::VSeparator ();
+    buttonBar->pack_start (*vSepiLeftPanel, Gtk::PACK_SHRINK);
 
     iFilterClear = new RTImage ("filterclear.png");
     igFilterClear = new RTImage ("filter.png");
@@ -410,6 +413,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hBox = Gtk::manage( new Gtk::HBox () );
     hBox->show ();
     hBox->pack_end (*fileBrowser);
+    hBox->set_name ("FilmstripPanel");
     fileBrowser->applyFilter (getFilter()); // warning: can call this only after all objects used in getFilter (e.g. Query) are instantiated
     //printf("FileCatalog::FileCatalog  fileBrowser->applyFilter (getFilter())\n");
     pack_start (*hBox);
@@ -431,6 +435,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
 FileCatalog::~FileCatalog()
 {
+    idle_register.destroy();
+
     for (int i = 0; i < 5; i++) {
         delete iranked[i];
         delete igranked[i];
@@ -667,17 +673,11 @@ void FileCatalog::_refreshProgressBar ()
         GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 
         Gtk::Notebook *nb = (Gtk::Notebook *)(filepanel->get_parent());
-        Gtk::Box* hbb = nullptr;
+        Gtk::Grid* grid = Gtk::manage (new Gtk::Grid ());
         Gtk::Label *label = nullptr;
 
-        if( options.mainNBVertical ) {
-            hbb = Gtk::manage (new Gtk::VBox ());
-        } else {
-            hbb = Gtk::manage (new Gtk::HBox ());
-        }
-
         if (!previewsToLoad ) {
-            hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gtk-directory.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
             int filteredCount = min(fileBrowser->getNumFiltered(), previewsLoaded);
 
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") +
@@ -685,7 +685,7 @@ void FileCatalog::_refreshProgressBar ()
                                                  + Glib::ustring::format(previewsLoaded) +
                                                  (filteredCount != previewsLoaded ? "]" : ")")));
         } else {
-            hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU)));
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gtk-find.png")), options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER") + " [" + Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad * 100 ) + "%]" ));
             filepanel->loadingThumbs("", (double)previewsLoaded / previewsToLoad);
         }
@@ -694,23 +694,25 @@ void FileCatalog::_refreshProgressBar ()
             label->set_angle(90);
         }
 
-        hbb->pack_start (*label);
-        hbb->set_spacing (2);
-        hbb->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
-        hbb->show_all ();
-        nb->set_tab_label(*filepanel, *hbb);
-    }
-}
+        grid->attach_next_to(*label, options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT, 1, 1);
+        grid->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+        grid->show_all ();
 
-int refreshProgressBarUI (void* data)
-{
-    (static_cast<FileCatalog*>(data))->_refreshProgressBar ();
-    return 0;
+        if (nb) {
+            nb->set_tab_label(*filepanel, *grid);
+        }
+    }
 }
 
 void FileCatalog::filterApplied()
 {
-    g_idle_add (refreshProgressBarUI, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileCatalog*>(data)->_refreshProgressBar();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 
@@ -748,12 +750,12 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
                 dirEFS.shutterTo = cfs->shutter;
             }
 
-            if (cfs->iso > 0 && (int)cfs->iso < dirEFS.isoFrom) {
-                dirEFS.isoFrom = (int)cfs->iso;
+            if (cfs->iso > 0 && cfs->iso < dirEFS.isoFrom) {
+                dirEFS.isoFrom = cfs->iso;
             }
 
-            if (cfs->iso > 0 && (int)cfs->iso > dirEFS.isoTo) {
-                dirEFS.isoTo = (int)cfs->iso;
+            if (cfs->iso > 0 && cfs->iso > dirEFS.isoTo) {
+                dirEFS.isoTo = cfs->iso;
             }
 
             if (cfs->focalLen < dirEFS.focalFrom) {
@@ -773,13 +775,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 
     previewsLoaded++;
 
-    g_idle_add (refreshProgressBarUI, this);
-}
-
-int prevfinished (void* data)
-{
-    (static_cast<FileCatalog*>(data))->previewsFinishedUI ();
-    return 0;
+    _refreshProgressBar();
 }
 
 // Called within GTK UI thread
@@ -838,7 +834,13 @@ void FileCatalog::previewsFinished (int dir_id)
         currentEFS = dirEFS;
     }
 
-    g_idle_add (prevfinished, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileCatalog*>(data)->previewsFinishedUI();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void FileCatalog::setEnabled (bool e)
@@ -920,7 +922,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb)
         tmb[i]->increaseRef ();
     }
 
-    g_idle_add (openRequestedUI, params);
+    idle_register.add(openRequestedUI, params);
 }
 
 void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed)
@@ -983,8 +985,8 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
     }
 
     Gtk::FileChooserDialog fc (getToplevelWindow (this), fc_title, Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
-    fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
+    fc.add_button( M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    fc.add_button( M("GENERAL_OK"), Gtk::RESPONSE_OK);
     // open dialog at the 1-st file's path
     fc.set_filename(tbe[0]->filename);
     //!!! TODO prevent dialog closing on "enter" key press
@@ -1095,99 +1097,108 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
             // and also those which effect is not pronounced after reducing the image size
             // TODO!!! could expose selections below via preferences
             if (fastmode) {
-                if (options.fastexport_bypass_sharpening         ) {
-                    params.sharpening.enabled          = false;
+                if (!options.fastexport_use_fast_pipeline) {
+                    if (options.fastexport_bypass_sharpening) {
+                        params.sharpening.enabled = false;
+                    }
+
+                    if (options.fastexport_bypass_sharpenEdge) {
+                        params.sharpenEdge.enabled = false;
+                    }
+
+                    if (options.fastexport_bypass_sharpenMicro) {
+                        params.sharpenMicro.enabled = false;
+                    }
+
+                    //if (options.fastexport_bypass_lumaDenoise) params.lumaDenoise.enabled = false;
+                    //if (options.fastexport_bypass_colorDenoise) params.colorDenoise.enabled = false;
+                    if (options.fastexport_bypass_defringe) {
+                        params.defringe.enabled = false;
+                    }
+
+                    if (options.fastexport_bypass_dirpyrDenoise) {
+                        params.dirpyrDenoise.enabled = false;
+                    }
+
+                    if (options.fastexport_bypass_sh_hq) {
+                        params.sh.hq = false;
+                    }
+
+                    if (options.fastexport_bypass_dirpyrequalizer) {
+                        params.dirpyrequalizer.enabled = false;
+                    }
+
+                    if (options.fastexport_bypass_wavelet) {
+                        params.wavelet.enabled = false;
+                    }
+
+                    //if (options.fastexport_bypass_raw_bayer_all_enhance) params.raw.bayersensor.all_enhance = false;
+                    if (options.fastexport_bypass_raw_bayer_dcb_iterations) {
+                        params.raw.bayersensor.dcb_iterations = 0;
+                    }
+
+                    if (options.fastexport_bypass_raw_bayer_dcb_enhance) {
+                        params.raw.bayersensor.dcb_enhance = false;
+                    }
+
+                    if (options.fastexport_bypass_raw_bayer_lmmse_iterations) {
+                        params.raw.bayersensor.lmmse_iterations = 0;
+                    }
+
+                    if (options.fastexport_bypass_raw_bayer_linenoise) {
+                        params.raw.bayersensor.linenoise = 0;
+                    }
+
+                    if (options.fastexport_bypass_raw_bayer_greenthresh) {
+                        params.raw.bayersensor.greenthresh = 0;
+                    }
+
+                    if (options.fastexport_bypass_raw_ccSteps) {
+                        params.raw.bayersensor.ccSteps = params.raw.xtranssensor.ccSteps = 0;
+                    }
+
+                    if (options.fastexport_bypass_raw_ca) {
+                        params.raw.ca_autocorrect = false;
+                        params.raw.cared = 0;
+                        params.raw.cablue = 0;
+                    }
+
+                    if (options.fastexport_bypass_raw_df) {
+                        params.raw.df_autoselect = false;
+                        params.raw.dark_frame = "";
+                    }
+
+                    if (options.fastexport_bypass_raw_ff) {
+                        params.raw.ff_AutoSelect = false;
+                        params.raw.ff_file = "";
+                    }
+
+                    params.raw.bayersensor.method = options.fastexport_raw_bayer_method;
+                    params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
+                    params.icm.input = options.fastexport_icm_input;
+                    params.icm.working = options.fastexport_icm_working;
+                    params.icm.output = options.fastexport_icm_output;
+                    params.icm.outputIntent = options.fastexport_icm_outputIntent;
+                    params.icm.outputBPC = options.fastexport_icm_outputBPC;
+                    params.icm.gamma = options.fastexport_icm_gamma;
                 }
 
-                if (options.fastexport_bypass_sharpenEdge        ) {
-                    params.sharpenEdge.enabled         = false;
+                if (params.resize.enabled) {
+                    params.resize.width = rtengine::min(params.resize.width, options.fastexport_resize_width);
+                    params.resize.height = rtengine::min(params.resize.height, options.fastexport_resize_height);
+                } else {
+                    params.resize.width = options.fastexport_resize_width;
+                    params.resize.height = options.fastexport_resize_height;
                 }
-
-                if (options.fastexport_bypass_sharpenMicro       ) {
-                    params.sharpenMicro.enabled        = false;
-                }
-
-                //if (options.fastexport_bypass_lumaDenoise      ) params.lumaDenoise.enabled         = false;
-                //if (options.fastexport_bypass_colorDenoise     ) params.colorDenoise.enabled        = false;
-                if (options.fastexport_bypass_defringe           ) {
-                    params.defringe.enabled            = false;
-                }
-
-                if (options.fastexport_bypass_dirpyrDenoise      ) {
-                    params.dirpyrDenoise.enabled       = false;
-                }
-
-                if (options.fastexport_bypass_sh_hq              ) {
-                    params.sh.hq                       = false;
-                }
-
-                if (options.fastexport_bypass_dirpyrequalizer    ) {
-                    params.dirpyrequalizer.enabled     = false;
-                }
-
-                if (options.fastexport_bypass_wavelet    ) {
-                    params.wavelet.enabled     = false;
-                }
-
-                //if (options.fastexport_bypass_raw_bayer_all_enhance   ) params.raw.bayersensor.all_enhance       = false;
-                if (options.fastexport_bypass_raw_bayer_dcb_iterations  ) {
-                    params.raw.bayersensor.dcb_iterations    = 0;
-                }
-
-                if (options.fastexport_bypass_raw_bayer_dcb_enhance     ) {
-                    params.raw.bayersensor.dcb_enhance       = false;
-                }
-
-                if (options.fastexport_bypass_raw_bayer_lmmse_iterations) {
-                    params.raw.bayersensor.lmmse_iterations  = 0;
-                }
-
-                if (options.fastexport_bypass_raw_bayer_linenoise       ) {
-                    params.raw.bayersensor.linenoise         = 0;
-                }
-
-                if (options.fastexport_bypass_raw_bayer_greenthresh     ) {
-                    params.raw.bayersensor.greenthresh       = 0;
-                }
-
-                if (options.fastexport_bypass_raw_ccSteps        ) {
-                    params.raw.bayersensor.ccSteps = params.raw.xtranssensor.ccSteps = 0;
-                }
-
-                if (options.fastexport_bypass_raw_ca             ) {
-                    params.raw.ca_autocorrect = false;
-                    params.raw.cared = 0;
-                    params.raw.cablue = 0;
-                }
-
-                if (options.fastexport_bypass_raw_df             ) {
-                    params.raw.df_autoselect  = false;
-                    params.raw.dark_frame = "";
-                }
-
-                if (options.fastexport_bypass_raw_ff             ) {
-                    params.raw.ff_AutoSelect  = false;
-                    params.raw.ff_file = "";
-                }
-
-                params.raw.bayersensor.method  = options.fastexport_raw_bayer_method ;
-                params.raw.xtranssensor.method = options.fastexport_raw_xtrans_method;
-                params.icm.input               = options.fastexport_icm_input        ;
-                params.icm.working             = options.fastexport_icm_working      ;
-                params.icm.output              = options.fastexport_icm_output       ;
-                params.icm.outputIntent        = options.fastexport_icm_outputIntent ;
-                params.icm.outputBPC           = options.fastexport_icm_outputBPC    ;
-                params.icm.gamma               = options.fastexport_icm_gamma        ;
-                params.resize.enabled          = options.fastexport_resize_enabled   ;
-                params.resize.scale            = options.fastexport_resize_scale     ;
-                params.resize.appliesTo        = options.fastexport_resize_appliesTo ;
-                params.resize.method           = options.fastexport_resize_method    ;
-                params.resize.dataspec         = options.fastexport_resize_dataspec  ;
-                params.resize.width            = options.fastexport_resize_width     ;
-                params.resize.height           = options.fastexport_resize_height    ;
+                
+                params.resize.enabled = options.fastexport_resize_enabled;
+                params.resize.scale = options.fastexport_resize_scale;
+                params.resize.appliesTo = options.fastexport_resize_appliesTo;
+                params.resize.method = options.fastexport_resize_method;
+                params.resize.dataspec = options.fastexport_resize_dataspec;
             }
 
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params);
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType() == FT_Raw, params, fastmode && options.fastexport_use_fast_pipeline);
 
             int pw;
             int ph = BatchQueue::calcMaxThumbnailHeight();
@@ -1744,15 +1755,16 @@ void FileCatalog::reparseDirectory ()
 }
 
 #ifdef WIN32
-int winDirChangedUITread (void* cat)
-{
-    (static_cast<FileCatalog*>(cat))->reparseDirectory ();
-    return 0;
-}
 
 void FileCatalog::winDirChanged ()
 {
-    g_idle_add(winDirChangedUITread, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FileCatalog*>(data)->reparseDirectory();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 #else
@@ -1857,7 +1869,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname)
         params->catalog = this;
         params->tmb.push_back (tmb);
         tmb->increaseRef ();
-        g_idle_add (openRequestedUI, params);
+        idle_register.add(openRequestedUI, params);
 
     } catch(Gio::Error&) {}
 }
@@ -1970,7 +1982,7 @@ bool FileCatalog::Query_key_pressed (GdkEventKey *event)
     bool shift = event->state & GDK_SHIFT_MASK;
 
     switch (event->keyval) {
-    case GDK_Escape:
+    case GDK_KEY_Escape:
 
         // Clear Query if the Escape character is pressed within it
         if (!shift) {
@@ -2059,7 +2071,7 @@ bool FileCatalog::BrowsePath_key_pressed (GdkEventKey *event)
     bool shift = event->state & GDK_SHIFT_MASK;
 
     switch (event->keyval) {
-    case GDK_Escape:
+    case GDK_KEY_Escape:
 
         // On Escape character Reset BrowsePath to selectedDirectory
         if (!shift) {
@@ -2082,8 +2094,10 @@ void FileCatalog::tbLeftPanel_1_visible (bool visible)
 {
     if (visible) {
         tbLeftPanel_1->show();
+        vSepiLeftPanel->show();
     } else {
         tbLeftPanel_1->hide();
+        vSepiLeftPanel->hide();
     }
 }
 void FileCatalog::tbRightPanel_1_visible (bool visible)
@@ -2230,7 +2244,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     // GUI Layout
     switch(event->keyval) {
-    case GDK_l:
+    case GDK_KEY_l:
         if (!alt) {
             tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active());    // toggle left panel
         }
@@ -2246,7 +2260,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
         return true;
 
-    case GDK_m:
+    case GDK_KEY_m:
         if (!ctrl && !alt) {
             toggleSidePanels();
         }
@@ -2256,7 +2270,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (shift) {
         switch(event->keyval) {
-        case GDK_Escape:
+        case GDK_KEY_Escape:
             BrowsePath->set_text(selectedDirectory);
             // set focus on something neutral, this is useful to remove focus from BrowsePath and Query
             // when need to execute a shortcut, which otherwise will be typed into those fields
@@ -2306,8 +2320,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!alt && !shift) {
         switch(event->keyval) {
 
-        case GDK_Return:
-        case GDK_KP_Enter:
+        case GDK_KEY_Return:
+        case GDK_KEY_KP_Enter:
             if (BrowsePath->is_focus()) {
                 FileCatalog::buttonBrowsePathPressed ();
                 return true;
@@ -2394,8 +2408,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!alt && !shift) {
         switch(event->keyval) {
 
-        case GDK_Return:
-        case GDK_KP_Enter:
+        case GDK_KEY_Return:
+        case GDK_KEY_KP_Enter:
             if (BrowsePath->is_focus()) {
                 FileCatalog::buttonBrowsePathPressed ();
                 return true;
@@ -2445,8 +2459,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (!ctrl && !alt) {
         switch(event->keyval) {
-        case GDK_d:
-        case GDK_D:
+        case GDK_KEY_d:
+        case GDK_KEY_D:
             categoryButtonToggled(bFilterClear, false);
             return true;
         }
@@ -2455,26 +2469,26 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!ctrl || (alt && !options.tabbedUI)) {
         switch(event->keyval) {
 
-        case GDK_bracketright:
+        case GDK_KEY_bracketright:
             coarsePanel->rotateRight();
             return true;
 
-        case GDK_bracketleft:
+        case GDK_KEY_bracketleft:
             coarsePanel->rotateLeft();
             return true;
 
-        case GDK_i:
-        case GDK_I:
+        case GDK_KEY_i:
+        case GDK_KEY_I:
             exifInfo->set_active (!exifInfo->get_active());
             return true;
 
-        case GDK_plus:
-        case GDK_equal:
+        case GDK_KEY_plus:
+        case GDK_KEY_equal:
             zoomIn();
             return true;
 
-        case GDK_minus:
-        case GDK_underscore:
+        case GDK_KEY_minus:
+        case GDK_KEY_underscore:
             zoomOut();
             return true;
         }
@@ -2482,18 +2496,18 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (ctrl && !alt) {
         switch (event->keyval) {
-        case GDK_o:
+        case GDK_KEY_o:
             BrowsePath->select_region(0, BrowsePath->get_text_length());
             BrowsePath->grab_focus();
             return true;
 
-        case GDK_f:
+        case GDK_KEY_f:
             Query->select_region(0, Query->get_text_length());
             Query->grab_focus();
             return true;
 
-        case GDK_t:
-        case GDK_T:
+        case GDK_KEY_t:
+        case GDK_KEY_T:
             modifierKey = 0; // HOMBRE: yet another hack.... otherwise the shortcut won't work
             categoryButtonToggled(bTrash, false);
             return true;
@@ -2502,8 +2516,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (!ctrl && !alt && shift) {
         switch (event->keyval) {
-        case GDK_t:
-        case GDK_T:
+        case GDK_KEY_t:
+        case GDK_KEY_T:
             if (inTabMode) {
                 if (options.showFilmStripToolBar) {
                     hideToolBar();
@@ -2520,8 +2534,8 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
     if (!ctrl && !alt && !shift) {
         switch (event->keyval) {
-        case GDK_t:
-        case GDK_T:
+        case GDK_KEY_t:
+        case GDK_KEY_T:
             if (inTabMode) {
                 if (options.showFilmStripToolBar) {
                     hideToolBar();

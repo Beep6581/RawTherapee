@@ -21,7 +21,7 @@
 
 #include "popupbutton.h"
 
-#include <gtkmm/box.h>
+#include <gtkmm/grid.h>
 
 /*
  * PopUpButton::PopUpButton (const Glib::ustring& label, bool imgRight)

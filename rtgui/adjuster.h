@@ -35,13 +35,15 @@ public:
 
 typedef double(*double2double_fun)(double val);
 
-class Adjuster : public Gtk::VBox
+class Adjuster : public Gtk::Grid
 {
 
 protected:
     Glib::ustring adjustmentName;
-    Gtk::HBox* hbox;
+    Gtk::Grid* grid;
     Gtk::Label* label;
+    Gtk::Image *imageIcon1;
+    Gtk::Image *imageIcon2;
     MyHScale* slider;
     MySpinButton* spin;
     Gtk::Button* reset;
@@ -144,6 +146,7 @@ public:
     void setNbDisplayedChars (int nbr)
     {
         spin->set_width_chars(nbr);
+        spin->set_max_width_chars(nbr);
     }
     void setEditedState (EditedState eState);
     EditedState getEditedState ();

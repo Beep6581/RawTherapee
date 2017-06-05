@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "checkbox.h"
 #include "toolpanel.h"
-#include "../rtengine/rawimage.h"
 
-class BayerRAWExposure : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class BayerRAWExposure : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel
 {
 
 protected:
@@ -32,12 +32,8 @@ protected:
     Adjuster* PexBlack1;
     Adjuster* PexBlack2;
     Adjuster* PexBlack3;
-    bool lastPextwoGreen;
-    sigc::connection  greenconn;
-    Gtk::CheckButton*  PextwoGreen;
+    CheckBox* PextwoGreen;
 
-private:
-//  Gtk::CheckButton*  PextwoGreen;
 public:
 
     BayerRAWExposure ();
@@ -46,8 +42,8 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setBatchMode   (bool batchMode);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
-    void GreenChanged() ;
     void adjusterChanged     (Adjuster* a, double newval);
+    void checkBoxToggled     (CheckBox* c, CheckValue newval);
     void setAdjusterBehavior (bool pexblackadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };

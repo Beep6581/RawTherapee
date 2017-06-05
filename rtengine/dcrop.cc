@@ -22,8 +22,18 @@
 #include "mytime.h"
 #include "refreshmap.h"
 #include "rt_math.h"
-// "ceil" rounding
-#define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
+
+namespace
+{
+
+    // "ceil" rounding
+    template<typename T>
+    constexpr T skips(T a, T b)
+    {
+        return a / b + static_cast<bool>(a % b);
+    }
+
+}
 
 namespace rtengine
 {
@@ -33,7 +43,7 @@ extern const Settings* settings;
 Crop::Crop (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow)
     : PipetteBuffer(editDataProvider), origCrop(nullptr), laboCrop(nullptr), labnCrop(nullptr),
       cropImg(nullptr), cbuf_real(nullptr), cshmap(nullptr), transCrop(nullptr), cieCrop(nullptr), cbuffer(nullptr),
-      updating(false), newUpdatePending(false), skip(10), padding(0),
+      updating(false), newUpdatePending(false), skip(10),
       cropx(0), cropy(0), cropw(-1), croph(-1),
       trafx(0), trafy(0), trafw(-1), trafh(-1),
       rqcropx(0), rqcropy(0), rqcropw(-1), rqcroph(-1),
@@ -103,12 +113,18 @@ void Crop::setEditSubscriber(EditSubscriber* newSubscriber)
             PipetteBuffer::LabBuffer = nullptr;
         }
 
-        if (PipetteBuffer::singlePlaneBuffer.getW() != -1) {
+        if (PipetteBuffer::singlePlaneBuffer.getWidth() != -1) {
             PipetteBuffer::singlePlaneBuffer.flushData();
         }
     }
 
     // If oldSubscriber == NULL && newSubscriber != NULL && newSubscriber->getEditingType() == ET_PIPETTE-> the image will be allocated when necessary
+}
+
+bool Crop::hasListener()
+{
+    MyMutex::MyLock cropLock(cropMutex);
+    return cropImageListener;
 }
 
 void Crop::update (int todo)
@@ -684,7 +700,7 @@ void Crop::update (int todo)
         }
 
         if (needstransform)
-            parent->ipf.transform (baseCrop, transCrop, cropx / skip, cropy / skip, trafx / skip, trafy / skip, SKIPS(parent->fw, skip), SKIPS(parent->fh, skip), parent->getFullWidth(), parent->getFullHeight(),
+            parent->ipf.transform (baseCrop, transCrop, cropx / skip, cropy / skip, trafx / skip, trafy / skip, skips(parent->fw, skip), skips(parent->fh, skip), parent->getFullWidth(), parent->getFullHeight(),
                                    parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(),
                                    parent->imgsrc->getMetaData()->getFocusDist(), parent->imgsrc->getRotateDegree(), false);
         else
@@ -714,7 +730,7 @@ void Crop::update (int todo)
 
     // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt (double(SKIPS(parent->fw, skip) * SKIPS(parent->fw, skip) + SKIPS(parent->fh, skip) * SKIPS(parent->fh, skip))) / 2.0;
+        double radius = sqrt (double(skips(parent->fw, skip) * skips(parent->fw, skip) + skips(parent->fh, skip) * skips(parent->fh, skip))) / 2.0;
         double shradius = params.sh.radius;
 
         if (!params.sh.hq) {
@@ -790,7 +806,6 @@ void Crop::update (int todo)
         bool wavcontlutili = parent->wavcontlutili;
 
         LUTu dummy;
-        int moderetinex;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
         parent->ipf.chromiLuminanceCurve (this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance (labnCrop);
@@ -1060,6 +1075,20 @@ void Crop::freeAll ()
     cropAllocated = false;
 }
 
+
+namespace {
+
+bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int w, int h, const ProcParams &params)
+{
+    if (x == 0 && y == 0 && w == fw && h == fh) {
+        return false;
+    }
+    return (params.lensProf.lcpFile.length() > 0 &&
+            params.lensProf.useDist);
+}
+
+} // namespace
+
 /** @brief Handles crop's image buffer reallocation and trigger sizeChanged of SizeListener[s]
  * If the scale changes, this method will free all buffers and reallocate ones of the new size.
  * It will then tell to the SizeListener that size has changed (sizeChanged)
@@ -1107,18 +1136,57 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     // determine which part of the source image is required to compute the crop rectangle
     int orx, ory, orw, orh;
+    orx = bx1;
+    ory = by1;
+    orw = bw;
+    orh = bh;
     ProcParams& params = parent->params;
+
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
+    
+    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
+        // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
+        int dW = int(double(parent->fw) * 0.15 / (2 * skip));
+        int dH = int(double(parent->fh) * 0.15 / (2 * skip));
+        int x1 = orx - dW;
+        int x2 = orx + orw + dW;
+        int y1 = ory - dH;
+        int y2 = ory + orh + dH;
+        if (x1 < 0) {
+            x2 += -x1;
+            x1 = 0;
+        }
+        if (x2 > parent->fw) {
+            x1 -= x2 - parent->fw;
+            x2 = parent->fw;
+        }
+        if (y1 < 0) {
+            y2 += -y1;
+            y1 = 0;
+        }
+        if (y2 > parent->fh) {
+            y1 -= y2 - parent->fh;
+            y2 = parent->fh;
+        }
+        orx = max(x1, 0);
+        ory = max(y1, 0);
+        orw = min(x2 - x1, parent->fw - orx);
+        orh = min(y2 - y1, parent->fh - ory);
+    }
+    
 
     PreviewProps cp (orx, ory, orw, orh, skip);
     int orW, orH;
     parent->imgsrc->getSize (cp, orW, orH);
 
-    int cw = SKIPS(bw, skip);
-    int ch = SKIPS(bh, skip);
+    trafx = orx;
+    trafy = ory;
 
-    leftBorder  = SKIPS(rqx1 - bx1, skip);
-    upperBorder = SKIPS(rqy1 - by1, skip);
+    int cw = skips(bw, skip);
+    int ch = skips(bh, skip);
+
+    leftBorder  = skips(rqx1 - bx1, skip);
+    upperBorder = skips(rqy1 - by1, skip);
 
     if (settings->verbose) {
         printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh, cw, ch);
@@ -1210,8 +1278,6 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     cropx = bx1;
     cropy = by1;
-    trafx = orx;
-    trafy = ory;
 
     if (settings->verbose) {
         printf ("setsizes ends\n");
@@ -1286,5 +1352,22 @@ void Crop::fullUpdate ()
     parent->updaterThreadStart.unlock ();
 }
 
+int Crop::get_skip()
+{
+    MyMutex::MyLock lock(cropMutex);
+    return skip;
 }
 
+int Crop::getLeftBorder()
+{
+    MyMutex::MyLock lock(cropMutex);
+    return leftBorder;
+}
+
+int Crop::getUpperBorder()
+{
+    MyMutex::MyLock lock(cropMutex);
+    return upperBorder;
+}
+
+}

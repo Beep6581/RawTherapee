@@ -32,7 +32,7 @@ Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm)
     : ThumbBrowserEntryBase(fname),
       opreview(nullptr), origpw(prevw), origph(prevh), opreviewDone(false),
-      job(pjob), progress(0), outFileName(""), sequence(0), forceFormatOpts(false), params(pparams)
+      job(pjob), params(pparams), progress(0), outFileName(""), sequence(0), forceFormatOpts(false)
 {
 
     thumbnail = thm;
@@ -98,7 +98,7 @@ void BatchQueueEntry::calcThumbnailSize ()
 }
 
 
-void BatchQueueEntry::drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h)
+void BatchQueueEntry::drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h)
 {
 
     if (processing) {
@@ -112,19 +112,19 @@ void BatchQueueEntry::drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefP
         cr->line_to (px + pw, py);
         cr->set_line_width (ph);
         cr->set_line_cap (Cairo::LINE_CAP_ROUND);
-        cr->set_source_rgb (foregr.get_red_p(), foregr.get_green_p(), foregr.get_blue_p());
+        cr->set_source_rgb (foregr.get_red(), foregr.get_green(), foregr.get_blue());
         cr->stroke ();
 
         cr->move_to (px, py);
         cr->line_to (px + pw, py);
         cr->set_line_width (ph * 3.0 / 4.0);
-        cr->set_source_rgb (backgr.get_red_p(), backgr.get_green_p(), backgr.get_blue_p());
+        cr->set_source_rgb (backgr.get_red(), backgr.get_green(), backgr.get_blue());
         cr->stroke ();
 
         cr->move_to (px, py);
         cr->line_to (px + pw * progress, py);
         cr->set_line_width (ph / 2.0);
-        cr->set_source_rgb (foregr.get_red_p(), foregr.get_green_p(), foregr.get_blue_p());
+        cr->set_source_rgb (foregr.get_red(), foregr.get_green(), foregr.get_blue());
         cr->stroke ();
     }
 }

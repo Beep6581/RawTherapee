@@ -21,25 +21,35 @@
 #include "options.h"
 #include "rtimage.h"
 
-CursorManager cursorManager;
+CursorManager mainWindowCursorManager;
+CursorManager editWindowCursorManager;
 
-void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin)
+void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 {
 
-    cResizeWidth = new Gdk::Cursor (Gdk::SB_H_DOUBLE_ARROW);
-    cResizeHeight = new Gdk::Cursor (Gdk::SB_V_DOUBLE_ARROW);
-    cResizeDiag = new Gdk::Cursor (Gdk::BOTTOM_RIGHT_CORNER);
-    cResizeTopLeft = new Gdk::Cursor (Gdk::TOP_LEFT_CORNER);
-    cResizeTopRight = new Gdk::Cursor (Gdk::TOP_RIGHT_CORNER);
-    cResizeBottomLeft = new Gdk::Cursor (Gdk::BOTTOM_LEFT_CORNER);
-    cResizeBottomRight = new Gdk::Cursor (Gdk::BOTTOM_RIGHT_CORNER);
-    cCropMove = new Gdk::Cursor (Gdk::FLEUR);
-    cCropMoving = new Gdk::Cursor (Gdk::HAND2);
-    cCropSelection = new Gdk::Cursor (Gdk::CROSSHAIR);
-    cLeftTanMove = new Gdk::Cursor (Gdk::SB_LEFT_ARROW);
-    cRightTanMove = new Gdk::Cursor (Gdk::SB_RIGHT_ARROW);
-    cAdd = new Gdk::Cursor (Gdk::PLUS);
-    cWait = new Gdk::Cursor (Gdk::CLOCK);
+    display = Gdk::Display::get_default ();
+#ifndef NDEBUG
+
+    if (!display) {
+        printf("Error: no default display!\n");
+    }
+
+#endif
+
+    cResizeWidth = Gdk::Cursor::create (display, Gdk::SB_H_DOUBLE_ARROW);
+    cResizeHeight = Gdk::Cursor::create (display, Gdk::SB_V_DOUBLE_ARROW);
+    cResizeDiag = Gdk::Cursor::create (display, Gdk::BOTTOM_RIGHT_CORNER);
+    cResizeTopLeft = Gdk::Cursor::create (display, Gdk::TOP_LEFT_CORNER);
+    cResizeTopRight = Gdk::Cursor::create (display, Gdk::TOP_RIGHT_CORNER);
+    cResizeBottomLeft = Gdk::Cursor::create (display, Gdk::BOTTOM_LEFT_CORNER);
+    cResizeBottomRight = Gdk::Cursor::create (display, Gdk::BOTTOM_RIGHT_CORNER);
+    cCropMove = Gdk::Cursor::create (display, Gdk::FLEUR);
+    cCropMoving = Gdk::Cursor::create (display, Gdk::HAND2);
+    cCropSelection = Gdk::Cursor::create (display, Gdk::CROSSHAIR);
+    cLeftTanMove = Gdk::Cursor::create (display, Gdk::SB_LEFT_ARROW);
+    cRightTanMove = Gdk::Cursor::create (display, Gdk::SB_RIGHT_ARROW);
+    cAdd = Gdk::Cursor::create (display, Gdk::PLUS);
+    cWait = Gdk::Cursor::create (display, Gdk::CLOCK);
 
     Glib::RefPtr<Gdk::Pixbuf> hand = RTImage::createFromFile ("cross.png");
     Glib::RefPtr<Gdk::Pixbuf> close_hand = RTImage::createFromFile ("closedhand.png");
@@ -51,17 +61,17 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin)
     Glib::RefPtr<Gdk::Pixbuf> move1DV = RTImage::createFromFile ("move-1D-v.png");
     Glib::RefPtr<Gdk::Pixbuf> moveRotate = RTImage::createFromFile ("move-rotate.png");
 
-    cHand = hand ? new Gdk::Cursor (cAdd->get_display(), hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
-    cClosedHand = close_hand ? new Gdk::Cursor (cAdd->get_display(), close_hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
-    cWB = wbpick ? new Gdk::Cursor (cAdd->get_display(), wbpick, 3, 15) : new Gdk::Cursor (Gdk::ARROW);
-    cAddPicker = cpick ? new Gdk::Cursor (cAdd->get_display(), cpick, 3, 18) : new Gdk::Cursor (Gdk::ARROW);
-    cHidden = empty ? new Gdk::Cursor (cAdd->get_display(), empty, 12, 12) : new Gdk::Cursor (Gdk::FLEUR);
-    cMove2D = move2D ?  new Gdk::Cursor (cAdd->get_display(), move2D, 11, 11) : new Gdk::Cursor (Gdk::FLEUR);
-    cMove1DH = move1DH ?  new Gdk::Cursor (cAdd->get_display(), move1DH, 11, 11) : new Gdk::Cursor (Gdk::FLEUR);
-    cMove1DV = move1DV ?  new Gdk::Cursor (cAdd->get_display(), move1DV, 11, 11) : new Gdk::Cursor (Gdk::FLEUR);
-    cMoveRotate = moveRotate ?  new Gdk::Cursor (cAdd->get_display(), moveRotate, 11, 11) : new Gdk::Cursor (Gdk::CIRCLE);
+    cHand = hand ? Gdk::Cursor::create (cAdd->get_display(), hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
+    cClosedHand = close_hand ? Gdk::Cursor::create (cAdd->get_display(), close_hand, 10, 10) : Gdk::Cursor::create (cAdd->get_display(), Gdk::HAND2);
+    cWB = wbpick ? Gdk::Cursor::create (cAdd->get_display(), wbpick, 3, 15) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
+    cAddPicker = cpick ? Gdk::Cursor::create (cAdd->get_display(), cpick, 3, 18) : Gdk::Cursor::create (cAdd->get_display(), Gdk::ARROW);
+    cHidden = empty ? Gdk::Cursor::create (cAdd->get_display(), empty, 12, 12) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
+    cMove2D = move2D ?  Gdk::Cursor::create (cAdd->get_display(), move2D, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
+    cMove1DH = move1DH ?  Gdk::Cursor::create (cAdd->get_display(), move1DH, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
+    cMove1DV = move1DV ?  Gdk::Cursor::create (cAdd->get_display(), move1DV, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::FLEUR);
+    cMoveRotate = moveRotate ?  Gdk::Cursor::create (cAdd->get_display(), moveRotate, 11, 11) : Gdk::Cursor::create (cAdd->get_display(), Gdk::CIRCLE);
 
-    mainWindow = mainWin;
+    window = mainWindow;
 }
 
 /* Set the cursor of the given window */
@@ -73,57 +83,89 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
     {
         window->set_cursor ();
     } else if (shape == CSOpenHand) {
-        window->set_cursor (*cHand);
+        window->set_cursor (cHand);
     } else if (shape == CSClosedHand) {
-        window->set_cursor (*cClosedHand);
+        window->set_cursor (cClosedHand);
     } else if (shape == CSMove) {
-        window->set_cursor (*cCropMove);
+        window->set_cursor (cCropMove);
     } else if (shape == CSResizeWidth) {
-        window->set_cursor (*cResizeWidth);
+        window->set_cursor (cResizeWidth);
     } else if (shape == CSResizeHeight) {
-        window->set_cursor (*cResizeHeight);
+        window->set_cursor (cResizeHeight);
     } else if (shape == CSResizeDiagonal) {
-        window->set_cursor (*cResizeDiag);
+        window->set_cursor (cResizeDiag);
     } else if (shape == CSResizeTopLeft) {
-        window->set_cursor (*cResizeTopLeft);
+        window->set_cursor (cResizeTopLeft);
     } else if (shape == CSResizeTopRight) {
-        window->set_cursor (*cResizeTopRight);
+        window->set_cursor (cResizeTopRight);
     } else if (shape == CSResizeBottomLeft) {
-        window->set_cursor (*cResizeBottomLeft);
+        window->set_cursor (cResizeBottomLeft);
     } else if (shape == CSResizeBottomRight) {
-        window->set_cursor (*cResizeBottomRight);
+        window->set_cursor (cResizeBottomRight);
     } else if (shape == CSMove2D) {
-        window->set_cursor (*cMove2D);
+        window->set_cursor (cMove2D);
     } else if (shape == CSMove1DH) {
-        window->set_cursor (*cMove1DH);
+        window->set_cursor (cMove1DH);
     } else if (shape == CSMove1DV) {
-        window->set_cursor (*cMove1DV);
+        window->set_cursor (cMove1DV);
     } else if (shape == CSMoveRotate) {
-        window->set_cursor (*cMoveRotate);
+        window->set_cursor (cMoveRotate);
     } else if (shape == CSSpotWB) {
-        window->set_cursor (*cWB);
+        window->set_cursor (cWB);
     } else if (shape == CSAddColPicker) {
-        window->set_cursor (*cAddPicker);
+        window->set_cursor (cAddPicker);
     } else if (shape == CSCropSelect) {
-        window->set_cursor (*cHand);
+        window->set_cursor (cHand);
     } else if (shape == CSMoveLeft) {
-        window->set_cursor (*cLeftTanMove);
+        window->set_cursor (cLeftTanMove);
     } else if (shape == CSMoveRight) {
-        window->set_cursor (*cRightTanMove);
+        window->set_cursor (cRightTanMove);
     } else if (shape == CSStraighten) {
-        window->set_cursor (*cHand);
+        window->set_cursor (cHand);
     } else if (shape == CSWait) {
-        window->set_cursor (*cWait);
+        window->set_cursor (cWait);
     } else if (shape == CSPlus) {
-        window->set_cursor (*cAdd);
+        window->set_cursor (cAdd);
     } else if (shape == CSEmpty) {
-        window->set_cursor (*cHidden);
+        window->set_cursor (cHidden);
     }
+}
+
+void CursorManager::setWidgetCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape)
+{
+    if (window->get_display() == mainWindowCursorManager.display) {
+        mainWindowCursorManager.setCursor(window, shape);
+    } else if (window->get_display() == editWindowCursorManager.display) {
+        editWindowCursorManager.setCursor(window, shape);
+    }
+
+#ifndef NDEBUG
+    else {
+        printf("CursorManager::setWidgetCursor  /  Error: Display not found!\n");
+    }
+
+#endif
+}
+
+void CursorManager::setCursorOfMainWindow (Glib::RefPtr<Gdk::Window> window, CursorShape shape)
+{
+    if (window->get_display() == mainWindowCursorManager.display) {
+        mainWindowCursorManager.setCursor(shape);
+    } else if (window->get_display() == editWindowCursorManager.display) {
+        editWindowCursorManager.setCursor(shape);
+    }
+
+#ifndef NDEBUG
+    else {
+        printf("CursorManager::setCursorOfMainWindow  /  Error: Display not found!\n");
+    }
+
+#endif
 }
 
 /* Set the cursor of the main window */
 void CursorManager::setCursor (CursorShape shape)
 {
-    setCursor(mainWindow, shape);
+    setCursor (window, shape);
 }
 

@@ -39,14 +39,13 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     //----------- Method combobox ------------------------------
 
     Gtk::HBox* metHBox = Gtk::manage (new Gtk::HBox ());
-    metHBox->set_border_width (0);
     metHBox->set_spacing (2);
     Gtk::Label* metLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_MET") + ":"));
     metHBox->pack_start (*metLabel, Gtk::PACK_SHRINK);
     method = Gtk::manage (new MyComboBoxText ());
-    method->append_text (M("TP_BWMIX_MET_DESAT"));
-    method->append_text (M("TP_BWMIX_MET_LUMEQUAL"));
-    method->append_text (M("TP_BWMIX_MET_CHANMIX"));
+    method->append (M("TP_BWMIX_MET_DESAT"));
+    method->append (M("TP_BWMIX_MET_LUMEQUAL"));
+    method->append (M("TP_BWMIX_MET_CHANMIX"));
 
     method->set_active (0);
     metHBox->pack_start (*method);
@@ -86,19 +85,15 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     pack_start (*mixerFrame, Gtk::PACK_SHRINK, 0);
 
     mixerVBox = Gtk::manage (new Gtk::VBox ());
-    mixerVBox->set_border_width(4);
     mixerVBox->set_spacing(4);
 
     autoHBox = Gtk::manage (new Gtk::HBox ());
-    autoHBox->set_border_width (2);
 
     autoch = Gtk::manage (new Gtk::ToggleButton (M("TP_BWMIX_AUTOCH")));
     autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
     autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_BWMIX_NEUTRAL")));
-    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
-    neutral->set_image(*resetImg);
     neutral->set_tooltip_text (M("TP_BWMIX_NEUTRAL_TIP"));
     neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &BlackWhite::neutral_pressed) );
     neutral->show();
@@ -113,28 +108,27 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     mixerVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
     settingHBox = Gtk::manage (new Gtk::HBox ());
-    settingHBox->set_border_width (0);
     settingHBox->set_spacing (2);
     settingHBox->set_tooltip_markup (M("TP_BWMIX_SETTING_TOOLTIP"));
     Gtk::Label *settingLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_SETTING") + ":"));
 
     settingHBox->pack_start (*settingLabel, Gtk::PACK_SHRINK);
     setting = Gtk::manage (new MyComboBoxText ());
-    setting->append_text (M("TP_BWMIX_SET_NORMCONTAST"));
-    setting->append_text (M("TP_BWMIX_SET_HIGHCONTAST"));
-    setting->append_text (M("TP_BWMIX_SET_LUMINANCE"));
-    setting->append_text (M("TP_BWMIX_SET_LANDSCAPE"));
-    setting->append_text (M("TP_BWMIX_SET_PORTRAIT"));
-    setting->append_text (M("TP_BWMIX_SET_LOWSENSIT"));
-    setting->append_text (M("TP_BWMIX_SET_HIGHSENSIT"));
-    setting->append_text (M("TP_BWMIX_SET_PANCHRO"));
-    setting->append_text (M("TP_BWMIX_SET_HYPERPANCHRO"));
-    setting->append_text (M("TP_BWMIX_SET_ORTHOCHRO"));
-    setting->append_text (M("TP_BWMIX_SET_RGBABS"));
-    setting->append_text (M("TP_BWMIX_SET_RGBREL"));
-    setting->append_text (M("TP_BWMIX_SET_ROYGCBPMABS"));
-    setting->append_text (M("TP_BWMIX_SET_ROYGCBPMREL"));
-    setting->append_text (M("TP_BWMIX_SET_INFRARED"));
+    setting->append (M("TP_BWMIX_SET_NORMCONTAST"));
+    setting->append (M("TP_BWMIX_SET_HIGHCONTAST"));
+    setting->append (M("TP_BWMIX_SET_LUMINANCE"));
+    setting->append (M("TP_BWMIX_SET_LANDSCAPE"));
+    setting->append (M("TP_BWMIX_SET_PORTRAIT"));
+    setting->append (M("TP_BWMIX_SET_LOWSENSIT"));
+    setting->append (M("TP_BWMIX_SET_HIGHSENSIT"));
+    setting->append (M("TP_BWMIX_SET_PANCHRO"));
+    setting->append (M("TP_BWMIX_SET_HYPERPANCHRO"));
+    setting->append (M("TP_BWMIX_SET_ORTHOCHRO"));
+    setting->append (M("TP_BWMIX_SET_RGBABS"));
+    setting->append (M("TP_BWMIX_SET_RGBREL"));
+    setting->append (M("TP_BWMIX_SET_ROYGCBPMABS"));
+    setting->append (M("TP_BWMIX_SET_ROYGCBPMREL"));
+    setting->append (M("TP_BWMIX_SET_INFRARED"));
 
     setting->set_active (0);
     settingHBox->pack_start (*setting);
@@ -165,21 +159,20 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     mixerVBox->pack_start (*filterSep);
 
     filterHBox = Gtk::manage (new Gtk::HBox ());
-    filterHBox->set_border_width (0);
     filterHBox->set_spacing (2);
     filterHBox->set_tooltip_markup (M("TP_BWMIX_FILTER_TOOLTIP"));
     Gtk::Label *filterLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_FILTER") + ":"));
     filterHBox->pack_start (*filterLabel, Gtk::PACK_SHRINK);
     filter = Gtk::manage (new MyComboBoxText ());
-    filter->append_text (M("TP_BWMIX_FILTER_NONE"));
-    filter->append_text (M("TP_BWMIX_FILTER_RED"));
-    filter->append_text (M("TP_BWMIX_FILTER_REDYELLOW"));
-    filter->append_text (M("TP_BWMIX_FILTER_YELLOW"));
-    filter->append_text (M("TP_BWMIX_FILTER_GREENYELLOW"));
-    filter->append_text (M("TP_BWMIX_FILTER_GREEN"));
-    filter->append_text (M("TP_BWMIX_FILTER_BLUEGREEN"));
-    filter->append_text (M("TP_BWMIX_FILTER_BLUE"));
-    filter->append_text (M("TP_BWMIX_FILTER_PURPLE"));
+    filter->append (M("TP_BWMIX_FILTER_NONE"));
+    filter->append (M("TP_BWMIX_FILTER_RED"));
+    filter->append (M("TP_BWMIX_FILTER_REDYELLOW"));
+    filter->append (M("TP_BWMIX_FILTER_YELLOW"));
+    filter->append (M("TP_BWMIX_FILTER_GREENYELLOW"));
+    filter->append (M("TP_BWMIX_FILTER_GREEN"));
+    filter->append (M("TP_BWMIX_FILTER_BLUEGREEN"));
+    filter->append (M("TP_BWMIX_FILTER_BLUE"));
+    filter->append (M("TP_BWMIX_FILTER_PURPLE"));
 
     filter->set_active (0);
     filterHBox->pack_start (*filter);
@@ -228,7 +221,6 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     mixerVBox->pack_start (*filterSep2);
 
     algoHBox = Gtk::manage (new Gtk::HBox ());
-    algoHBox->set_border_width (0);
     algoHBox->set_spacing (2);
     algoHBox->set_tooltip_markup (M("TP_BWMIX_ALGO_TOOLTIP"));
 
@@ -236,8 +228,8 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     algoHBox->pack_start (*alLabel, Gtk::PACK_SHRINK);
 
     algo = Gtk::manage (new MyComboBoxText ());
-    algo->append_text (M("TP_BWMIX_ALGO_LI"));
-    algo->append_text (M("TP_BWMIX_ALGO_SP"));
+    algo->append (M("TP_BWMIX_ALGO_LI"));
+    algo->append (M("TP_BWMIX_ALGO_SP"));
     algo->set_active (1);
     algoHBox->pack_start (*algo);
     mixerVBox->pack_start(*algoHBox);
@@ -287,7 +279,6 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     Gtk::VBox *gammaVBox = Gtk::manage (new Gtk::VBox());
     gammaVBox->set_spacing(4);
-    gammaVBox->set_border_width(4);
 
 
     gammaRed = Gtk::manage(new Adjuster (/*M("TP_BWMIX_GAM_RED")*/"", -100, 100, 1, 0, imgIcon[8]));
@@ -320,10 +311,10 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     bottomMilestonesbw.push_back( GradientMilestone(1., 1., 1., 1.) );
 
     beforeCurveMode = Gtk::manage (new MyComboBoxText ());
-    beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_STANDARD"));
-    beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
-    beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_FILMLIKE"));
-    beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_SATANDVALBLENDING"));
+    beforeCurveMode->append (M("TP_BWMIX_TCMODE_STANDARD"));
+    beforeCurveMode->append (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
+    beforeCurveMode->append (M("TP_BWMIX_TCMODE_FILMLIKE"));
+    beforeCurveMode->append (M("TP_BWMIX_TCMODE_SATANDVALBLENDING"));
     beforeCurveMode->set_active (0);
 
     beforeCurveCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR1"));
@@ -345,8 +336,8 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     //----------- Curve 2 ------------------------------
     /*
         afterCurveMode = Gtk::manage (new MyComboBoxText ());
-        afterCurveMode->append_text (M("TP_BWMIX_TCMODE_STANDARD"));
-        //  afterCurveMode->append_text (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
+        afterCurveMode->append (M("TP_BWMIX_TCMODE_STANDARD"));
+        //  afterCurveMode->append (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
         afterCurveMode->set_active (0);
     */
     afterCurveCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR2"));
@@ -373,16 +364,11 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 }
 BlackWhite::~BlackWhite ()
 {
+    idle_register.destroy();
+
     delete luminanceCEG;
     delete beforeCurveCEG;
     delete afterCurveCEG;
-}
-
-int BWChangedUI (void* data)
-{
-    GThreadLock lock;
-    (static_cast<BlackWhite*>(data))->BWComputed_ ();
-    return 0;
 }
 
 void BlackWhite::BWChanged  (double redbw, double greenbw, double bluebw)
@@ -390,7 +376,13 @@ void BlackWhite::BWChanged  (double redbw, double greenbw, double bluebw)
     nextredbw = redbw;
     nextgreenbw = greenbw;
     nextbluebw = bluebw;
-    g_idle_add (BWChangedUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<BlackWhite*>(data)->BWComputed_();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 bool BlackWhite::BWComputed_ ()
@@ -1210,17 +1202,17 @@ void BlackWhite::setBatchMode (bool batchMode)
     gammaRed->showEditedCB ();
     gammaGreen->showEditedCB ();
     gammaBlue->showEditedCB ();
-    method->append_text (M("GENERAL_UNCHANGED"));
-    filter->append_text (M("GENERAL_UNCHANGED"));
-    setting->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
+    filter->append (M("GENERAL_UNCHANGED"));
+    setting->append (M("GENERAL_UNCHANGED"));
     luminanceCEG->setBatchMode (batchMode);
     beforeCurveCEG->setBatchMode (batchMode);
     beforeCurveCEG->show();
-    beforeCurveMode->append_text (M("GENERAL_UNCHANGED"));
+    beforeCurveMode->append (M("GENERAL_UNCHANGED"));
     afterCurveCEG->setBatchMode (batchMode);
     afterCurveCEG->show();
-//  afterCurveMode->append_text (M("GENERAL_UNCHANGED"));
-    algo->append_text (M("GENERAL_UNCHANGED"));
+//  afterCurveMode->append (M("GENERAL_UNCHANGED"));
+    algo->append (M("GENERAL_UNCHANGED"));
 
     showLuminance();
     showFilter();

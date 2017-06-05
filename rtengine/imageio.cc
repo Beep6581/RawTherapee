@@ -175,7 +175,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     iptc_data_sort (iptc);
 }
 
-void ImageIO::setOutputProfile  (char* pdata, int plen)
+void ImageIO::setOutputProfile  (const char* pdata, int plen)
 {
 
     delete [] profileData;
@@ -216,9 +216,8 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
 
     //reading PNG header
     unsigned char header[8];
-    fread (header, 1, 8, file);
 
-    if (png_sig_cmp (header, 0, 8)) {
+    if (fread (header, 1, 8, file) != 8 || png_sig_cmp (header, 0, 8)) {
         fclose(file);
         return IMIO_HEADERERROR;
     }
@@ -295,9 +294,8 @@ int ImageIO::loadPNG  (Glib::ustring fname)
 
     //reading PNG header
     unsigned char header[8];
-    fread (header, 1, 8, file);
 
-    if (png_sig_cmp (header, 0, 8)) {
+    if (fread (header, 1, 8, file) != 8 || png_sig_cmp (header, 0, 8)) {
         fclose(file);
         return IMIO_HEADERERROR;
     }
@@ -698,7 +696,7 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
                 sFormat = IIOSF_HALF;
                 return IMIO_SUCCESS;
             }*/
-            if ((samplesperpixel == 3 || samplesperpixel == 4) && bitspersample == 32) {
+            if (bitspersample == 32) {
                 sFormat = IIOSF_FLOAT;
                 return IMIO_SUCCESS;
             }
@@ -895,7 +893,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
         char swapped[line_length];
 
         for ( int row = 0; row < height; ++row ) {
-            ::swab(((char*)buffer) + (row * line_length), swapped, line_length);
+            ::rtengine::swab(((char*)buffer) + (row * line_length), swapped, line_length);
             setScanline(row, (unsigned char*)&swapped[0], bps);
         }
     } else {
@@ -909,8 +907,11 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 {
+    if (getWidth() < 1 || getHeight() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
-    FILE *file = g_fopen_withBinaryAndLock (fname);
+    FILE* const file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -946,8 +947,8 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 
     png_set_compression_level(png, compression);
 
-    int width = getW ();
-    int height = getH ();
+    int width = getWidth ();
+    int height = getHeight ();
 
     if (bps < 0) {
         bps = getBPS ();
@@ -1003,8 +1004,11 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps)
 // Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
 int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 {
+    if (getWidth() < 1 || getHeight() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
-    FILE *file = g_fopen_withBinaryAndLock (fname);
+    FILE* const file = g_fopen_withBinaryAndLock (fname);
 
     if (!file) {
         return IMIO_CANNOTWRITEFILE;
@@ -1048,8 +1052,8 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
     jpeg_stdio_dest (&cinfo, file);
 
-    int width = getW ();
-    int height = getH ();
+    int width = getWidth ();
+    int height = getHeight ();
 
     cinfo.image_width  = width;
     cinfo.image_height = height;
@@ -1190,11 +1194,14 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp)
 
 int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 {
+    if (getWidth() < 1 || getHeight() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
     //TODO: Handling 32 bits floating point output images!
     bool writeOk = true;
-    int width = getW ();
-    int height = getH ();
+    int width = getWidth ();
+    int height = getHeight ();
 
     if (bps < 0) {
         bps = getBPS ();
@@ -1236,7 +1243,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         // The maximum lenght is strangely not the same than for the JPEG file...
         // Which maximum length is the good one ?
-        if (size > 0 && size <= bufferSize) {
+        if (size > 0 && size <= static_cast<int>(bufferSize)) {
             fwrite (buffer, size, 1, file);
         }
 
@@ -1342,7 +1349,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed)
 
         }
 
-        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " VERSION);
+        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " RTVERSION);
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
@@ -1441,19 +1448,11 @@ void png_flush(png_structp png_ptr)
 int ImageIO::load (Glib::ustring fname)
 {
 
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return IMIO_FILETYPENOTSUPPORTED;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    if (hasPngExtension(fname)) {
         return loadPNG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-               !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    } else if (hasJpegExtension(fname)) {
         return loadJPEG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         return loadTIFF (fname);
     } else {
         return IMIO_FILETYPENOTSUPPORTED;
@@ -1462,20 +1461,11 @@ int ImageIO::load (Glib::ustring fname)
 
 int ImageIO::save (Glib::ustring fname)
 {
-
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return IMIO_FILETYPENOTSUPPORTED;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    if (hasPngExtension(fname)) {
         return savePNG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-               !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    } else if (hasJpegExtension(fname)) {
         return saveJPEG (fname);
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         return saveTIFF (fname);
     } else {
         return IMIO_FILETYPENOTSUPPORTED;

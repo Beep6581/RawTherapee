@@ -43,6 +43,7 @@ public:
     int get_BlackLevel(int idx, int iso_speed);
     int get_WhiteLevel(int idx, int iso_speed, float fnumber);
     void update_Levels(const CameraConst *other);
+    void update_Crop(CameraConst *other);
 };
 
 class CameraConstantsStore

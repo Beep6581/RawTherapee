@@ -56,6 +56,9 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
     FileBrowserEntryIdleHelper* feih;
 
     ImgEditState state;
+    float crop_custom_ratio;
+
+    IdleRegister idle_register;
 
     bool onArea (CursorArea a, int x, int y);
     void updateCursor (int x, int y);
@@ -70,7 +73,7 @@ public:
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry ();
-    void draw ();
+    void draw (Cairo::RefPtr<Cairo::Context> cc);
 
     void setImageAreaToolListener (ImageAreaToolListener* l)
     {

@@ -73,18 +73,21 @@ private:
     Gtk::RadioButton*  ifromfile;
     Gtk::Label*        dcpIllLabel;
     MyComboBoxText*    dcpIll;
+    sigc::connection   dcpillconn;
     Gtk::CheckButton*  ckbToneCurve;
     Gtk::CheckButton*  ckbApplyLookTable;
     Gtk::CheckButton*  ckbApplyBaselineExposureOffset;
     Gtk::CheckButton*  ckbApplyHueSatMap;
     Gtk::CheckButton*  ckbBlendCMSMatrix;
     MyComboBoxText*    wnames;
+    sigc::connection   wnamesconn;
     MyComboBoxText*    wgamma;
+    sigc::connection   wgammaconn;
 
     MyComboBoxText*    onames;
+    sigc::connection   onamesconn;
     PopUpButton*       ointent;
-    Gtk::RadioButton*  ofromdir;
-    Gtk::RadioButton*  ofromfile;
+    sigc::connection   ointentconn;
     Gtk::RadioButton*  iunchanged;
     MyFileChooserButton* ipDialog;
     Gtk::RadioButton::Group opts;
@@ -93,9 +96,7 @@ private:
     Glib::ustring      oldip;
     ICMPanelListener*  icmplistener;
 
-    bool ignoreDcpSignal;
     double dcpTemperatures[2];
-    bool enableLastICCWorkDirChange;
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);

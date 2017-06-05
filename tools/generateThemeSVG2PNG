@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Generates PNG icons from SVG theme images.
+# Run this script from the rtdata/theme/images folder:
+# cd ~/repo-rt/rtdata/theme/images
+# ~/repo-rt/tools/generateThemeSvg2Png
+
+for d in svg/*; do
+    themeDir="${d#*/}"
+    if [[ ! -d "${themeDir}" ]]; then
+        mkdir "${themeDir}"
+    fi
+    for i in "svg/${themeDir}/"*.svg; do
+        iconName="${i##*/}"
+        iconName="${iconName%.*}"
+        printf '%s\n' "" "Converting: svg/${themeDir}/${iconName}.svg"
+        inkscape --file="svg/${themeDir}/${iconName}.svg" --export-png="${themeDir}/${iconName}.png" --export-area-page --without-gui
+    done
+done

@@ -136,7 +136,7 @@ void ImageArea::setPreviewHandler (PreviewHandler* ph)
     previewHandler = ph;
 }
 
-void ImageArea::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ImageArea::on_style_updated ()
 {
 
     // TODO: notify all crop windows that the style has been changed
@@ -149,11 +149,11 @@ void ImageArea::setInfoText (Glib::ustring text)
     infotext = text;
 
     Glib::RefPtr<Pango::Context> context = get_pango_context () ;
-    Pango::FontDescription fontd(get_default_style()->get_font());
+    Pango::FontDescription fontd(get_style_context()->get_font());
 
     // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (9 * Pango::SCALE);
+    fontd.set_size (10 * Pango::SCALE);
     context->set_font_description (fontd);
 
     // create text layout
@@ -225,15 +225,17 @@ void ImageArea::switchPickerVisibility (bool isVisible)
     redraw();
 }
 
-bool ImageArea::on_expose_event(GdkEventExpose* event)
+bool ImageArea::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
     dirty = false;
+
+    /* HOMBRE: How do we replace that??
 
     if (event->count) {
         return true;
     }
 
-    Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
+     */
 
     if (mainCropWindow) {
         mainCropWindow->expose (cr);
@@ -737,3 +739,31 @@ int ImageArea::getSpotWBRectSize  ()
         return 1;
     }
 }
+
+Gtk::SizeRequestMode ImageArea::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void ImageArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height= 50;
+    natural_height = 300;
+}
+
+void ImageArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 100;
+    natural_width = 400;
+}
+
+void ImageArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc(minimum_height, natural_height);
+}
+
+void ImageArea::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
+

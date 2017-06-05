@@ -35,12 +35,26 @@ static double one2one(double val)
 Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1, Gtk::Image *imgIcon2, double2double_fun slider2value_, double2double_fun value2slider_)
 {
 
+    set_hexpand(true);
+    set_vexpand(false);
     label = nullptr;
     adjusterListener = nullptr;
     afterReset = false;
     blocked = false;
     automatic = nullptr;
     eventPending = false;
+    grid = NULL;
+    imageIcon1 = imgIcon1;
+
+    if (imageIcon1) {
+        setExpandAlignProperties(imageIcon1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    }
+
+    imageIcon2 = imgIcon2;
+
+    if (imageIcon2) {
+        setExpandAlignProperties(imageIcon2, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    }
 
     slider2value = slider2value_ ? slider2value_ : one2one;
     value2slider = value2slider_ ? value2slider_ : one2one;
@@ -51,78 +65,74 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
     delay = options.adjusterMinDelay;
 
-    set_border_width (0);
-    set_spacing (0);
-
-    hbox = Gtk::manage (new Gtk::HBox ());
-    hbox->set_border_width(0);
-    hbox->set_spacing(2);
+    set_column_spacing(0);
+    set_column_homogeneous(false);
+    set_row_spacing(0);
+    set_row_homogeneous(false);
 
     editedCheckBox = nullptr;
 
     if (!vlabel.empty()) {
         adjustmentName = vlabel;
-        label = Gtk::manage (new Gtk::Label (adjustmentName, Gtk::ALIGN_LEFT));
+        label = Gtk::manage (new Gtk::Label (adjustmentName));
+        setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     }
 
     reset = Gtk::manage (new Gtk::Button ());
     reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+    setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     reset->set_relief (Gtk::RELIEF_NONE);
-    reset->set_border_width (0);
     reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
+    reset->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     reset->set_can_focus(false);
 
     spin = Gtk::manage (new MySpinButton ());
-    spin->set_has_frame(false);
-    spin->set_name("FramelessSpinButton");
+    setExpandAlignProperties(spin, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    spin->set_input_purpose(Gtk::INPUT_PURPOSE_DIGITS);
 
     reset->set_size_request (-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height() : MIN_RESET_BUTTON_HEIGHT);
 
     slider = Gtk::manage (new MyHScale ());
+    setExpandAlignProperties(slider, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     slider->set_draw_value (false);
-
-    pack_start (*hbox, true, true);
+    //slider->set_has_origin(false);  // ------------------ This will remove the colored part on the left of the slider's knob
 
     if (vlabel.empty()) {
-        // No label, everything goes in hbox
-        if (imgIcon1) {
-            hbox->pack_start (*imgIcon1, Gtk::PACK_SHRINK, 0);
+        // No label, everything goes in a single row
+        attach_next_to(*slider, Gtk::POS_LEFT, 1, 1);
+
+        if (imageIcon1) {
+            attach_next_to(*imageIcon1, *slider, Gtk::POS_LEFT, 1, 1);
         }
 
-        hbox->pack_start (*slider, Gtk::PACK_EXPAND_WIDGET, 0);
-
-        if (imgIcon2) {
-            hbox->pack_start (*imgIcon2, Gtk::PACK_SHRINK, 0);
+        if (imageIcon2) {
+            attach_next_to(*imageIcon2, *slider, Gtk::POS_RIGHT, 1, 1);
+            attach_next_to(*spin, *imageIcon2, Gtk::POS_RIGHT, 1, 1);
+        } else {
+            attach_next_to(*spin, *slider, Gtk::POS_RIGHT, 1, 1);
         }
 
-        hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0);
-        hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+        attach_next_to(*reset, *spin, Gtk::POS_RIGHT, 1, 1);
     } else {
         // A label is provided, spreading the widgets in 2 rows
-        hbox->pack_start (*label);
-        hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0);
-        hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+        attach_next_to(*label, Gtk::POS_LEFT, 1, 1);
+        attach_next_to(*spin, Gtk::POS_RIGHT, 1, 1);
+        // A second HBox is necessary
+        grid = Gtk::manage(new Gtk::Grid());
+        grid->attach_next_to(*slider, Gtk::POS_LEFT, 1, 1);
 
-        if (!imgIcon1 || !imgIcon2) {
-            pack_start (*slider, true, true);
-        } else {
-            Gtk::HBox *hbox2 = nullptr;
-
-            // A second HBox is necessary
-            hbox2 = Gtk::manage (new Gtk::HBox());
-
-            if (imgIcon1) {
-                hbox2->pack_start (*imgIcon1, Gtk::PACK_SHRINK, 0);
-            }
-
-            hbox2->pack_start (*slider, true, true);
-
-            if (imgIcon2) {
-                hbox2->pack_start (*imgIcon2, Gtk::PACK_SHRINK, 0);
-            }
-
-            pack_start (*hbox2, true, true);
+        if (imageIcon1) {
+            grid->attach_next_to(*imageIcon1, *slider, Gtk::POS_LEFT, 1, 1);
         }
+
+        if (imageIcon2) {
+            grid->attach_next_to(*imageIcon2, Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*reset, *imageIcon2, Gtk::POS_RIGHT, 1, 1);
+        } else {
+            grid->attach_next_to(*reset, *slider, Gtk::POS_RIGHT, 1, 1);
+        }
+
+        attach_next_to(*grid, *label, Gtk::POS_BOTTOM, 2, 1);
     }
 
     setLimits (vmin, vmax, vstep, vdefault);
@@ -135,7 +145,6 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     sliderChange = slider->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::sliderChanged) );
     spinChange = spin->signal_value_changed().connect ( sigc::mem_fun(*this, &Adjuster::spinChanged), true);
     reset->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::resetPressed) );
-    slider->set_update_policy (Gtk::UPDATE_CONTINUOUS);
 
     show_all ();
 }
@@ -158,19 +167,24 @@ void Adjuster::addAutoButton (Glib::ustring tooltip)
     if (!automatic) {
         automatic = new Gtk::CheckButton ();
         //automatic->add (*Gtk::manage (new RTImage ("processing.png")));
-        automatic->set_border_width (0);
         automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
+        setExpandAlignProperties(automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
 
-        hbox->pack_end (*automatic, Gtk::PACK_SHRINK, 0);
-        hbox->reorder_child (*automatic, 0);
+        if (grid) {
+            // Hombre, adding the checbox next to the reset button because adding it next to the spin button (as before)
+            // would diminish the available size for the label and would require a much heavier reorganization of the grid !
+            grid->attach_next_to(*automatic, *reset, Gtk::POS_RIGHT, 1, 1);
+        } else {
+            attach_next_to(*automatic, *reset, Gtk::POS_RIGHT, 1, 1);
+        }
     }
 }
 
 void Adjuster::delAutoButton ()
 {
     if (automatic) {
-        removeIfThere(hbox, automatic);
+        removeIfThere(grid, automatic);
         delete automatic;
         automatic = nullptr;
     }
@@ -524,13 +538,30 @@ void Adjuster::showEditedCB ()
 {
 
     if (label) {
-        removeIfThere(hbox, label, false);
+        removeIfThere(this, label, false);
     }
 
     if (!editedCheckBox) {
         editedCheckBox = Gtk::manage(new Gtk::CheckButton (adjustmentName));
-        hbox->pack_start (*editedCheckBox, Gtk::PACK_SHRINK, 2);
-        hbox->reorder_child (*editedCheckBox, 0);
+        editedCheckBox->set_vexpand(false);
+
+        if (grid) {
+            editedCheckBox->set_hexpand(true);
+            editedCheckBox->set_halign(Gtk::ALIGN_START);
+            editedCheckBox->set_valign(Gtk::ALIGN_CENTER);
+            attach_next_to(*editedCheckBox, *spin, Gtk::POS_LEFT, 1, 1);
+        } else {
+            editedCheckBox->set_hexpand(false);
+            editedCheckBox->set_halign(Gtk::ALIGN_START);
+            editedCheckBox->set_valign(Gtk::ALIGN_CENTER);
+
+            if (imageIcon1) {
+                attach_next_to(*editedCheckBox, *imageIcon1, Gtk::POS_LEFT, 1, 1);
+            } else {
+                attach_next_to(*editedCheckBox, *slider, Gtk::POS_LEFT, 1, 1);
+            }
+        }
+
         editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
         editedCheckBox->show();
     }
@@ -539,7 +570,7 @@ void Adjuster::showEditedCB ()
 void Adjuster::refreshLabelStyle ()
 {
 
-    /*  Glib::RefPtr<Gtk::Style> style = label->get_style ();
+    /*  Glib::RefPtr<Gtk::StyleContext> style = label->get_style_context ();
         Pango::FontDescription fd = style->get_font ();
         fd.set_weight (editedState==Edited ? Pango::WEIGHT_BOLD : Pango::WEIGHT_NORMAL);
         style->set_font (fd);

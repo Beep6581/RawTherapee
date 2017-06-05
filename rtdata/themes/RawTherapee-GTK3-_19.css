@@ -1,0 +1,502 @@
+/*
+  This file is part of RawTherapee.
+
+  Copyright (c) 2015-2017 DrSlony
+  Copyright (c) 2016-2017 Hombre
+
+  RawTherapee is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  RawTherapee is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+* {
+    color: #AAAAAA;
+}
+
+.view:selected {
+    color: #262626;
+    background-color: #AAAAAA
+}
+
+/* The Places and Dir browser panels */
+.view {
+    background-color: #262626;
+}
+/* The headers of these panels */
+.view .button {
+    background-color: #363636;
+    padding: 2px;
+}
+
+.plainback {
+    background-color: #404040;
+}
+
+GtkBox {
+    border-width: 0;
+    border-style: none;
+    border-radius: 0;
+    margin: 0;
+	padding: 0;
+}
+
+GtkGrid {
+    margin: 2px;
+    padding: 0;
+    border-width: 0;
+    border-style: none;
+    border-radius: 0;
+}
+
+/* Affects all frames except in the toolbox */
+GtkFrame {
+    border-width: 0;
+    border-color: #303030;
+    border-radius: 0;
+    border-style: solid;
+    /*border-style: none none none solid;*/
+    padding: 4px;
+}
+
+GtkFrame > GtkLabel {
+    color: #D8D8D8;
+}
+
+#FileBrowser {
+    padding: 10px;
+    margin: 10px;
+}
+
+/* Frames in Preferences */
+#PrefNotebook GtkFrame {
+    background-color: #3B3B3B;
+    border: 1px solid #505050;
+    border-radius: 4px;
+}
+
+/* Frames in the toolbox. Not MyExpander frames. */
+GtkEventBox .frame {
+    border-color: #565656;
+}
+
+/*.EditorTopPanel .button, .ToolBarPanelFileBrowser .button, .EditorZoomPanel .button {*/
+.button {
+     padding: 1px;
+     margin: 1px;
+}
+
+/* Adjusters */
+.text-button {
+    padding: 0;
+}
+
+/* Any text-button which is a real button, unlike Slider label */
+.text-button.button {
+    padding: 4px;
+}
+
+.separator {
+    color: #363636;
+}
+
+GtkProgressBar {
+    -GtkProgressBar-min-vertical-bar-width: 10;
+    -GtkProgressBar-min-horizontal-bar-height: 10;
+}
+
+GtkDrawingArea {
+    border-radius: 0;
+    background-color: #363636;
+    border: 1px solid #252525;
+}
+
+GtkDrawingArea:selected {
+    background-color: #565656;
+    border-radius: 10px;
+}
+
+GtkImage {
+    padding: 1px;
+}
+
+
+
+
+
+GtkScale.slider {
+    margin: 1px;
+}
+GtkScale.slider:hover {
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+}
+GtkScale.slider:insensitive {
+    background-image: none;
+    background-color: #444;
+    border-color: #282828;
+}
+GtkScale.trough {
+    background-color: #2A2A2A;
+}
+GtkScale.trough:insensitive {
+    background-color: #444;
+    border-color: #282828;
+}
+
+
+
+GtkLabel {
+    margin: 0 1px;
+}
+
+
+GtkButton {
+    padding: 0;
+    margin: 1px;
+}
+GtkButton, GtkButton.flat:hover {
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+GtkButton.flat, GtkCheckButton {
+    background-image: none;
+}
+
+/* Vertical group of buttons in 1 column */
+GtkButton.Top {
+    border-radius: 10px 4px 0 0;
+    border-style: solid solid none solid;
+    margin-bottom: 0;
+}
+GtkButton.MiddleV {
+    border-radius: 0;
+    border-style: none solid none solid;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+GtkButton.Bottom {
+    border-radius: 0 0 4px 4px;
+    border-style: none solid solid solid;
+    margin-top: 0;
+}
+/* end */
+
+/* Horizontal group of buttons in 1 row */
+GtkButton.Left {
+    border-radius: 4px 0 0 4px;
+    border-style: solid none solid solid;
+    margin-right: 0;
+}
+GtkButton.MiddleH {
+    border-radius: 0;
+    border-style: solid none solid none;
+    margin-left: 0;
+    margin-right: 0;
+}
+GtkButton.Right {
+    border-radius: 0 4px 4px 0;
+    border-style: solid solid solid none;
+    margin-left: 0;
+}
+/* end */
+
+/* [1.23[-][+]] */
+GtkEntry, GtkSpinButton {
+    background-color: #262626;
+}
+
+GtkEntry:insensitive, GtkSpinButton:insensitive {
+    background-color: #363636;
+}
+
+GtkEntry:hover, GtkSpinButton:hover {
+    background-color: #565656;
+}
+
+GtkEntry:selected {
+    color: #262626;
+    background-color: #AAAAAA;
+}
+
+/* Context menus */
+GtkMenu {
+    background-color: #262626;
+    color: #909090;
+}
+
+/* Context menu item */
+.menuitem {
+    padding: 2px;
+}
+
+#MyExpander {
+    margin: 10px;
+    padding: 5px;
+}
+
+/* Tool background */
+#ExpanderBox {
+    background-color: #363636;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    border-color: #252525;
+    margin: 9px;
+    padding: 4px;
+}
+
+#ExpanderBox GtkDrawingArea {
+    background-color: #363636;
+}
+
+#ExpanderBox GtkFrame {
+    background-color: #3B3B3B;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: #313131;
+    margin: 3px;
+    padding: 2px;
+}
+
+#ExpanderBox GtkFrame GtkDrawingArea {
+    background-color: #3B3B3B;
+}
+
+#ExpanderBox GtkFrame GtkFrame {
+    background-color: #414141;
+    border: 1px solid #373737;
+    border-radius: 4px;
+    margin: 3px;
+    padding: 2px;
+}
+
+#ExpanderBox GtkFrame GtkFrame GtkDrawingArea {
+    background-color: #414141;
+}
+
+/* Sub-tool (MyExpander) background */
+#ExpanderBox2 {
+    background-color: #3B3B3B;
+    border: 1px solid #2A2A2A;
+    border-radius: 4px;
+    margin: 9px;
+    padding: 4px;
+}
+
+#ExpanderBox2 GtkDrawingArea {
+    background-color: #3B3B3B;
+}
+
+#ExpanderBox2 GtkFrame {
+    background-color: #414141;
+    border: 1px solid #373737;
+    border-radius: 4px;
+    margin: 3px;
+    padding: 2px;
+}
+
+#ExpanderBox2 GtkFrame GtkDrawingArea {
+    background-color: #414141;
+}
+
+#ExpanderBox2 GtkFrame GtkFrame {
+    background-color: #474747;
+    border: 1px solid #3D3D3D;
+    border-radius: 4px;
+    margin: 3px;
+    padding: 2px;
+}
+
+#ExpanderBox2 GtkFrame GtkFrame GtkDrawingArea {
+    background-color: #474747;
+}
+
+#MyExpanderTitle {
+    margin: 5px;
+    padding: 3px 1px 3px 1px;
+    font-size: 120%;
+}
+#MyExpanderTitle GtkLabel {
+    color: #CCCCCC;
+}
+#MyExpanderTitle:hover {
+    background-color: #202020;
+}
+#MyExpanderTitle GtkEventBox:hover GtkImage {
+    background-color: #202020;
+    border-radius: 3px;
+}
+#MyExpanderTitle:hover GtkLabel {
+    color: #D8D8D8;
+}
+
+#ExpanderBox2 GtkSeparator, #ExpanderBox3 GtkSeparator {
+    color: #292929;
+}
+
+/* Editor tab button */
+#MainNotebook > GtkGrid GtkLabel, #MainNotebook > GtkGrid GtkImage  {
+    /* OK */
+    padding: 1px;
+}
+
+/* File Browser right side tabs - Toolbox, Inspector, Fast Export, Filter */
+GtkNotebook tab {
+    background-color: #383838;
+    border-width: 1px;
+    border-style: none;
+    border-color: #262626;
+    border-radius: 0;
+    padding: 3px;
+}
+
+GtkNotebook tab:hover {
+    background-color: #505050;
+}
+
+GtkNotebook tab:active {
+    border-width: 5px;
+    border-color: #989898;
+}
+
+/* Get rid of shitty notebook header shadow */
+GtkNotebook.top tab {
+    border-bottom-style: solid;
+    padding-bottom: 8px;
+}
+GtkNotebook.right tab {
+    border-left-style: solid;
+    padding-left: 8px;
+}
+GtkNotebook.bottom tab {
+    border-top-style: solid;
+    padding-top: 8px;
+}
+GtkNotebook.left tab {
+    border-right-style: solid;
+    padding-right: 8px;
+}
+
+/* Get rid of notebook frame border - too many borders */
+GtkNotebook.top.header, GtkNotebook.right.header, GtkNotebook.bottom.header, GtkNotebook.left.header {
+    box-shadow: none;
+    border-width: 1px;
+    border-color: #262626;
+    border-style: none;
+    border-radius: 0;
+    background-color: #383838;
+    padding: 0;
+}
+/* Get rid of notebook header border - too many borders */
+GtkNotebook.top.header {
+    /* OK */
+    border-bottom-style: solid;
+}
+GtkNotebook.right.header {
+    /* OK */
+    border-left-style: solid;
+}
+GtkNotebook.bottom.header {
+    /* OK */
+    border-top-style: solid;
+}
+GtkNotebook.left.header {
+    /* OK */
+    border-right-style: solid;
+}
+GtkNotebook.frame {
+    /* OK */
+    border-radius: 0;
+    border-style: none;
+}
+
+/* Pad notebooks, makes the other borders look nicer */
+GtkNotebook {
+    /* OK */
+    background-color: #484848;
+    padding: 0;
+}
+
+
+#MainNotebook.header {
+    /* OK */
+    background-color: #2A2A2A;
+}
+#MainNotebook > tab {
+    /* OK */
+    background-color: #2A2A2A;
+}
+#MainNotebook > tab:hover {
+    /* OK */
+    background-color: #505050;
+}
+#MainNotebook > tab:active {
+    /* OK */
+    border-color: #989898;
+}
+
+#RightNotebook.header {
+    /* OK */
+    background-color: #2A2A2A;
+}
+#RightNotebook > tab {
+    /* OK */
+    background-color: #2A2A2A;
+}
+#RightNotebook > tab:hover {
+    /* OK */
+    background-color: #505050;
+}
+#RightNotebook > tab:active {
+    /* OK */
+    border-color: #989898;
+}
+
+
+/* All tool panels have a frame except for Meta which unlike the rest is a notebook itself.
+ * So we use CSS to make it look like a frame. */
+#MetaPanelNotebook.frame {
+    border: 1px solid #262626;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top-width: 0;
+}
+
+#MetaPanelNotebook.header {
+    border: 1px solid #262626;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-width: 0;
+    padding: 5px;
+    margin: 5px;
+}
+
+.tooltip {
+    padding: 0;
+}
+
+
+/* make the "partial profile" dialog a little bit more readable */
+#PartialPasteHeader {
+    margin: 1.5em 0 0 0;
+    padding: 0;
+    font-weight: bold;
+    color: #363636;
+}
+
+#PartialPasteHeaderSep {
+    color: #D8D8D8;
+}

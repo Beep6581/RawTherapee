@@ -25,31 +25,21 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), inspector(nullptr), isInspectorActive(false), location(THLOC_FILEBROWSER)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1)
 {
     inW = -1;
     inH = -1;
 
-    Gtk::HBox* hb1 = Gtk::manage( new Gtk::HBox () );
-    Gtk::HBox* hb2 = Gtk::manage( new Gtk::HBox () );
-    Gtk::Frame* frame = Gtk::manage( new Gtk::Frame () );
-    frame->add (internal);
-    frame->set_shadow_type (Gtk::SHADOW_IN );
-    hb1->pack_start (*frame);
-    hb1->pack_end (vscroll, Gtk::PACK_SHRINK, 0);
-
-    pack_start (*hb1);
-
-    hb2->pack_start (hscroll);
-
-    pack_start (*hb2, Gtk::PACK_SHRINK, 0);
+    setExpandAlignProperties(&internal, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(&hscroll, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(&vscroll, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    attach (internal, 0, 0, 1, 1);
+    attach (vscroll, 1, 0, 1, 1);
+    attach (hscroll, 0, 1, 1, 1);
 
     internal.setParent (this);
 
     show_all ();
-
-    hscroll.set_update_policy (Gtk::UPDATE_CONTINUOUS);
-    vscroll.set_update_policy (Gtk::UPDATE_CONTINUOUS);
 
     vscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
     hscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
@@ -683,6 +673,15 @@ void ThumbBrowserBase::enableInspector()
     }
 }
 
+void ThumbBrowserBase::Internal::on_style_updated()
+{
+    style = get_style_context ();
+    textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
+    texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
+    bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+}
+
 void ThumbBrowserBase::Internal::on_realize()
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
@@ -691,10 +690,17 @@ void ThumbBrowserBase::Internal::on_realize()
     get_pango_context()->set_cairo_font_options (cfo);
 
     Gtk::DrawingArea::on_realize();
+
+    style = get_style_context ();
+    textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
+    texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
+    bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+
     Glib::RefPtr<Gdk::Window> window = get_window();
-    set_flags (Gtk::CAN_FOCUS);
+    set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
-    gc_ = Gdk::GC::create(window);
+    //cc = window->create_cairo_context();
     set_has_tooltip (true);
     signal_query_tooltip().connect( sigc::mem_fun(*this, &ThumbBrowserBase::Internal::on_query_tooltip) );
 }
@@ -722,7 +728,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
     }
 }
 
-void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ThumbBrowserBase::on_style_updated ()
 {
     // GUI will be acquired by refreshThumbImages
     refreshThumbImages ();
@@ -730,6 +736,8 @@ void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
 
 ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(nullptr), dirty(true)
 {
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    set_name("FileCatalog");
 }
 
 void ThumbBrowserBase::Internal::setParent (ThumbBrowserBase* p)
@@ -762,7 +770,8 @@ bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event)
     GdkRectangle rect;
     rect.x = 0;
     rect.y = 0;
-    window->get_size (rect.width, rect.height);
+    rect.width = window->get_width();
+    rect.height = window->get_height();
 
     gdk_window_invalidate_rect (window->gobj(), &rect, true);
     gdk_window_process_updates (window->gobj(), true);
@@ -827,7 +836,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
 
 }
 
-bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event)
+bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
@@ -838,10 +847,13 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event)
     int w = get_width();
     int h = get_height();
 
-    window->clear();
     // draw thumbnails
+
+    cr->set_antialias(Cairo::ANTIALIAS_NONE);
+    cr->set_line_join(Cairo::LINE_JOIN_MITER);
+    style->render_background(cr, 0., 0., w, h);
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
-    context->set_font_description (get_style()->get_font());
+    context->set_font_description (style->get_font());
 
     {
         MYWRITERLOCK(l, parent->entryRW);
@@ -851,13 +863,42 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event)
                 parent->fd[i]->updatepriority = false;
             } else {
                 parent->fd[i]->updatepriority = true;
-                parent->fd[i]->draw ();
+                parent->fd[i]->draw (cr);
             }
         }
     }
+    style->render_frame(cr, 0., 0., w, h);
 
     return true;
 }
+
+Gtk::SizeRequestMode ThumbBrowserBase::Internal::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height = 20;
+    natural_height = 80;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 200;
+    natural_width = 1000;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc(minimum_height, natural_height);
+}
+
+void ThumbBrowserBase::Internal::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
+
 
 bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event)
 {

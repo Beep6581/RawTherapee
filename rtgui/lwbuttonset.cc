@@ -72,7 +72,7 @@ void LWButtonSet::arrangeButtons (int x, int y, int w, int h)
 
     for (size_t i = 0; i < buttons.size(); i++) {
         LWButton::Alignment halign, valign;
-        int bx, by, bw, bh;
+        int bx = 0, by = 0, bw = 0, bh = 0;
         buttons[i]->getSize (bw, bh);
         buttons[i]->getAlignment (halign, valign);
 
@@ -187,7 +187,7 @@ void LWButtonSet::getAllocatedDimensions (int& w, int& h)
     h = ah;
 }
 
-void LWButtonSet::setColors (const Gdk::Color& bg, const Gdk::Color& fg)
+void LWButtonSet::setColors (const Gdk::RGBA& bg, const Gdk::RGBA& fg)
 {
 
     for (size_t i = 0; i < buttons.size(); i++) {

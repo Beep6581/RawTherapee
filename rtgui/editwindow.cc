@@ -23,6 +23,7 @@
 #include <gtk/gtk.h>
 #include "rtimage.h"
 #include "threadutils.h"
+#include "../rtengine/icons.h"
 
 // Check if the system has more than one display and option is set
 bool EditWindow::isMultiDisplayEnabled()
@@ -58,8 +59,8 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
 EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
 {
 
-    Glib::ustring fName = "rt-logo.png";
-    Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
+    Glib::ustring fName = "rt-logo-tiny.png";
+    Glib::ustring fullPath = rtengine::findIconAbsolutePath(fName);
 
     try {
         set_default_icon_from_file (fullPath);
@@ -68,7 +69,6 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
     }
 
     set_title_decorated("");
-    property_allow_shrink() = true;
     set_modal(false);
     set_resizable(true);
 
@@ -92,7 +92,7 @@ void EditWindow::on_realize ()
 {
     Gtk::Window::on_realize ();
 
-    cursorManager.init (get_window());
+    editWindowCursorManager.init (get_window());
 }
 
 bool EditWindow::on_window_state_event(GdkEventWindowState* event)
@@ -108,10 +108,10 @@ bool EditWindow::on_window_state_event(GdkEventWindowState* event)
     return true;
 }
 
-void EditWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num)
+void EditWindow::on_mainNB_switch_page(Gtk::Widget* widget, guint page_num)
 {
     //if (page_num > 1) {
-    EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
+    EditorPanel *ep = static_cast<EditorPanel*>(widget);
 
     if (mainNB->get_n_pages() > 1 && page_num <= (filesEdited.size() - 1)) {
         set_title_decorated(ep->getFileName());
@@ -134,12 +134,10 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
     closeb->set_relief (Gtk::RELIEF_NONE);
     closeb->set_focus_on_click (false);
-    // make the button as small as possible
-    Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
-    style->set_xthickness (0);
-    style->set_ythickness (0);
 
-    closeb->modify_style (style);
+    // make the button as small as possible thanks via css
+    closeb->set_name("notebook_close_button");
+
     closeb->signal_clicked().connect( sigc::bind (sigc::mem_fun(*this, &EditWindow::remEditorPanel) , ep));
     hb->pack_end (*closeb);
     hb->set_spacing (2);
@@ -196,12 +194,12 @@ bool EditWindow::keyPressed (GdkEventKey* event)
 {
     bool ctrl = event->state & GDK_CONTROL_MASK;
 
-    if(event->keyval == GDK_F11) {
+    if(event->keyval == GDK_KEY_F11) {
         toggleFullscreen();
         return true;
     } else {
         if(mainNB->get_n_pages () > 0) { //pass the handling for the editor panels, if there are any
-            if (event->keyval == GDK_w && ctrl) { //remove editor panel
+            if (event->keyval == GDK_KEY_w && ctrl) { //remove editor panel
                 EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
                 remEditorPanel (ep);
                 return true;
