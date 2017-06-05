@@ -8502,6 +8502,12 @@ PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe)
     }
 }
 
+PartialProfile::~PartialProfile()
+{
+    delete pparams;
+    delete pedited;
+}
+
 int PartialProfile::load (const Glib::ustring &fName)
 {
     if (!pparams) {
