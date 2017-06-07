@@ -1701,6 +1701,15 @@ DCPStore* DCPStore::getInstance()
     return &instance;
 }
 
+
+DCPStore::~DCPStore()
+{
+    for (auto &p : profile_cache) {
+        delete p.second;
+    }
+}
+
+
 void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 {
     MyMutex::MyLock lock(mutex);

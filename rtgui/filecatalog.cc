@@ -720,6 +720,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 {
 
     if ( dir_id != selectedDirectoryId ) {
+        delete fdn;
         return;
     }
 
