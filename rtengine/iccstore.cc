@@ -288,6 +288,11 @@ public:
                 cmsCloseProfile(p.second);
             }
         }
+        for (auto &p : fileProfiles) {
+            if(p.second) {
+                cmsCloseProfile(p.second);
+            }
+        }
     }
 
     void init(const Glib::ustring& usrICCDir, const Glib::ustring& rtICCDir, bool loadAll)
