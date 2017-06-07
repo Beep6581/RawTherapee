@@ -293,6 +293,12 @@ public:
                 cmsCloseProfile(p.second);
             }
         }
+        if(srgb) {
+            cmsCloseProfile(srgb);
+        }
+        if(xyz) {
+            cmsCloseProfile(xyz);
+        }
     }
 
     void init(const Glib::ustring& usrICCDir, const Glib::ustring& rtICCDir, bool loadAll)
