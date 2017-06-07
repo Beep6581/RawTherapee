@@ -295,8 +295,8 @@ find_package(PNG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(ZLIB REQUIRED)
 if (WITH_SYSTEM_KLT)
-  find_package (KLT REQUIRED)
-endif(WITH_SYSTEM_KLT)
+    find_package (KLT REQUIRED)
+endif()
 
 # Link with bzip:
 if(WITH_BZIP)
