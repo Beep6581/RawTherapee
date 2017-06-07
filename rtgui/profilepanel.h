@@ -43,6 +43,7 @@ private:
     Gtk::ToggleButton* fillMode;
     Gtk::TreeIter currRow;
     ProfileStoreEntry *lastSavedPSE;
+    ProfileStoreEntry *customPSE;
 
     void          profileFillModeToggled ();
     bool          isCustomSelected ();
