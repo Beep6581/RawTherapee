@@ -39,7 +39,7 @@ void ProfilePanel::cleanup ()
     delete partialProfileDlg;
 }
 
-ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), imagePath("")
+ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastFilename(""), imagePath(""), lastSavedPSE(nullptr)
 {
 
     tpc = nullptr;
@@ -128,6 +128,7 @@ ProfilePanel::~ProfilePanel ()
 
     delete profileFillModeOnImage;
     delete profileFillModeOffImage;
+    delete lastSavedPSE;
 }
 
 bool ProfilePanel::isCustomSelected()
@@ -171,7 +172,7 @@ Gtk::TreeIter ProfilePanel::addCustomRow()
 
 Gtk::TreeIter ProfilePanel::addLastSavedRow()
 {
-    const ProfileStoreEntry *lastSavedPSE = new ProfileStoreEntry(Glib::ustring ("(" + M("PROFILEPANEL_PLASTSAVED") + ")"), PSET_FILE, 0, 0);
+    lastSavedPSE = new ProfileStoreEntry(Glib::ustring ("(" + M("PROFILEPANEL_PLASTSAVED") + ")"), PSET_FILE, 0, 0);
     Gtk::TreeIter newEntry = profiles->addRow(lastSavedPSE);
     return newEntry;
 }

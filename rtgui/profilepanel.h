@@ -42,6 +42,7 @@ private:
     RTImage *profileFillModeOffImage;
     Gtk::ToggleButton* fillMode;
     Gtk::TreeIter currRow;
+    ProfileStoreEntry *lastSavedPSE;
 
     void          profileFillModeToggled ();
     bool          isCustomSelected ();
