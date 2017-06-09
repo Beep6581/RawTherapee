@@ -492,103 +492,96 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
     float focalLengthLog = log(focalLength); //, apertureLog=aperture>0 ? log(aperture) : 0;
     float focusDistLog = focusDist > 0 ? log(focusDist) + euler : 0;
 
-    if (mode > 0) {
-        // matching logic taken from lensfun-convert-lcp
-        // see https://github.com/lensfun/lensfun
-        std::map<float, LCPPersModel *> m;
-        for (int pm = 0; pm < persModelCount; pm++) {
-            auto cur = aPersModel[pm];
-            if (cur->hasModeData(mode)) {
-                float f = cur->focLen;
-                auto it = m.find(f);
-                if (it == m.end()) {
-                    m[f] = cur;
-                } else {
-                    auto prev = it->second;
-                    float curdist = cur->focDist ? cur->focDist : -1;
-                    float prevdist = prev->focDist ? prev->focDist : -2;
-                    if (curdist > prevdist) {
-                        float curaper = cur->aperture > 0 ? cur->aperture : 1000;
-                        float prevaper = prev->aperture > 0 ? prev->aperture : 1000;
-                        if (std::abs(curaper - 8) < std::abs(prevaper - 8)) {
-                            m[f] = cur;
-                        }
-                    }
-                }
+    // Pass 1: determining best focal length, if possible different focusDistances (for the focDist is not given case)
+    for (int pm = 0; pm < persModelCount; pm++) {
+        float f = aPersModel[pm]->focLen;
+
+        if (aPersModel[pm]->hasModeData(mode)) {
+            if (f <= focalLength && (pLow == nullptr || f > pLow->focLen || (focusDist == 0 && f == pLow->focLen && pLow->focDist > aPersModel[pm]->focDist))) {
+                pLow = aPersModel[pm];
+            }
+
+            if (f >= focalLength && (pHigh == nullptr || f < pHigh->focLen || (focusDist == 0 && f == pHigh->focLen && pHigh->focDist < aPersModel[pm]->focDist))) {
+                pHigh = aPersModel[pm];
             }
         }
-        auto it = m.lower_bound(focalLength);
-        if (it != m.end()) {
-            pLow = it->second;
-        }
-        it = m.upper_bound(focalLength);
-        if (it != m.end()) {
-            pHigh = it->second;
-        }
-        if ((pLow == nullptr) != (pHigh == nullptr)) {
-            pLow = pHigh;
-        }
+    }
+
+    if (!pLow) {
+        pLow = pHigh;
+    } else if (!pHigh) {
+        pHigh = pLow;
     } else {
-        // Pass 1: determining best focal length, if possible different focusDistances (for the focDist is not given case)
+        // Pass 2: We have some, so take the best aperture for vignette and best focus for CA and distortion
+        // there are usually several frame per focal length. In the end pLow will have both flen and apterure/focdis below the target,
+        // and vice versa pHigh
+        float bestFocLenLow = pLow->focLen, bestFocLenHigh = pHigh->focLen;
+
         for (int pm = 0; pm < persModelCount; pm++) {
-            float f = aPersModel[pm]->focLen;
-
+            float aper = aPersModel[pm]->aperture; // float aperLog=log(aper);
+            float focDist = aPersModel[pm]->focDist;
+            float focDistLog = log(focDist) + euler;
+            double meanErr;
             if (aPersModel[pm]->hasModeData(mode)) {
-                if (f <= focalLength && (pLow == nullptr || f > pLow->focLen || (focusDist == 0 && f == pLow->focLen && pLow->focDist > aPersModel[pm]->focDist))) {
-                    pLow = aPersModel[pm];
+                double lowMeanErr, highMeanErr;
+                switch (mode) {
+                case 0:
+                    meanErr = aPersModel[pm]->vignette.mean_error;
+                    lowMeanErr = pLow->vignette.mean_error;
+                    highMeanErr = pHigh->vignette.mean_error;
+                    break;
+                case 1:
+                    meanErr = aPersModel[pm]->base.mean_error;
+                    lowMeanErr = pLow->base.mean_error;
+                    highMeanErr = pHigh->base.mean_error;
+                    break;
+                default: //case 2:
+                    meanErr = aPersModel[pm]->chromG.mean_error;
+                    lowMeanErr = pLow->chromG.mean_error;
+                    highMeanErr = pHigh->chromG.mean_error;
+                    break;
                 }
 
-                if (f >= focalLength && (pHigh == nullptr || f < pHigh->focLen || (focusDist == 0 && f == pHigh->focLen && pHigh->focDist < aPersModel[pm]->focDist))) {
-                    pHigh = aPersModel[pm];
-                }
-            }
-        }
-
-        if (!pLow) {
-            pLow = pHigh;
-        } else if (!pHigh) {
-            pHigh = pLow;
-        } else {
-            // Pass 2: We have some, so take the best aperture for vignette and best focus for CA and distortion
-            // there are usually several frame per focal length. In the end pLow will have both flen and apterure/focdis below the target,
-            // and vice versa pHigh
-            float bestFocLenLow = pLow->focLen, bestFocLenHigh = pHigh->focLen;
-
-            for (int pm = 0; pm < persModelCount; pm++) {
-                float aper = aPersModel[pm]->aperture; // float aperLog=log(aper);
-                // float focDist = aPersModel[pm]->focDist;
-                // float focDistLog = log(focDist) + euler;
-                if (aPersModel[pm]->hasModeData(mode)) {
-                    double meanErr = aPersModel[pm]->vignette.mean_error;
-                    double lowMeanErr = pLow->vignette.mean_error;
-                    double highMeanErr = pHigh->vignette.mean_error;
-
-                    if (aperture > 0) {
-                        if (aPersModel[pm]->focLen == bestFocLenLow && (
-                                (aper == aperture && lowMeanErr > meanErr)
-                                || (aper >= aperture && aper < pLow->aperture && pLow->aperture > aperture)
+                if (aperture > 0 && mode != 2) {
+                    if (aPersModel[pm]->focLen == bestFocLenLow && (
+                            (aper == aperture && lowMeanErr > meanErr)
+                            || (aper >= aperture && aper < pLow->aperture && pLow->aperture > aperture)
                                 || (aper <= aperture && (pLow->aperture > aperture || fabs(aperture - aper) < fabs(aperture - pLow->aperture))))) {
-                            pLow = aPersModel[pm];
-                        }
-
-                        if (aPersModel[pm]->focLen == bestFocLenHigh && (
-                                (aper == aperture && highMeanErr > meanErr)
-                                || (aper <= aperture && aper > pHigh->aperture && pHigh->aperture < aperture)
-                                || (aper >= aperture && (pHigh->aperture < aperture || fabs(aperture - aper) < fabs(aperture - pHigh->aperture))))) {
-                            pHigh = aPersModel[pm];
-                        }
-                    } else {
-                        // no focus distance available, just error
-                        if (aPersModel[pm]->focLen == bestFocLenLow && lowMeanErr > meanErr) {
-                            pLow = aPersModel[pm];
-                        }
-
-                        if (aPersModel[pm]->focLen == bestFocLenHigh && highMeanErr > meanErr) {
-                            pHigh = aPersModel[pm];
-                        }
+                        pLow = aPersModel[pm];
                     }
-                
+
+                    if (aPersModel[pm]->focLen == bestFocLenHigh && (
+                            (aper == aperture && highMeanErr > meanErr)
+                            || (aper <= aperture && aper > pHigh->aperture && pHigh->aperture < aperture)
+                            || (aper >= aperture && (pHigh->aperture < aperture || fabs(aperture - aper) < fabs(aperture - pHigh->aperture))))) {
+                        pHigh = aPersModel[pm];
+                    }
+                } else if (focusDist > 0 && mode != 0) {
+                    // by focus distance
+                    if (aPersModel[pm]->focLen == bestFocLenLow && (
+                            (focDist == focusDist && lowMeanErr > meanErr)
+                            || (focDist >= focusDist && focDist < pLow->focDist && pLow->focDist > focusDist)
+                            || (focDist <= focusDist && (pLow->focDist > focusDist || fabs(focusDistLog - focDistLog) < fabs(focusDistLog - (log(pLow->focDist) + euler)))))) {
+                        pLow = aPersModel[pm];
+                    }
+
+                    if (aPersModel[pm]->focLen == bestFocLenHigh && (
+                            (focDist == focusDist && highMeanErr > meanErr)
+                            || (focDist <= focusDist && focDist > pHigh->focDist && pHigh->focDist < focusDist)
+                            || (focDist >= focusDist && (pHigh->focDist < focusDist || fabs(focusDistLog - focDistLog) < fabs(focusDistLog - (log(pHigh->focDist) + euler)))))) {
+                        pHigh = aPersModel[pm];
+                    }
+                } else {
+                    // no focus distance available, just error
+                    if (aPersModel[pm]->focLen == bestFocLenLow && lowMeanErr > meanErr) {
+                        pLow = aPersModel[pm];
+                    }
+
+                    if (aPersModel[pm]->focLen == bestFocLenHigh && highMeanErr > meanErr) {
+                        pHigh = aPersModel[pm];
+                    }
                 }
+                
             }
         }
     }
