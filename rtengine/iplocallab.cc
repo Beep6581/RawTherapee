@@ -1764,6 +1764,8 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                                     difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
                                     difa *= factorx * (100.f + realstrch * falu * falL) / 100.f;
                                     difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                    difa *= kch * fach;
+                                    difb *= kch * fach;
                                     transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
 
@@ -1791,6 +1793,9 @@ void ImProcFunctions::Reti_Local (int call, float **buflight, float **bufchro, c
                                     difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
                                     difa *= (100.f + realstrch * falu * falL) / 100.f;
                                     difb *= (100.f + realstrch * falu * falL) / 100.f;
+                                    difa *= kch * fach;
+                                    difb *= kch * fach;
+
                                     transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
                                     transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
 
