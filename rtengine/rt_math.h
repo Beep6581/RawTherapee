@@ -87,6 +87,13 @@ constexpr T CLIP(const T& a)
     return LIM(a, static_cast<T>(0), static_cast<T>(MAXVAL));
 }
 
+template <typename T>
+constexpr T SGN(const T& a)
+{
+    // returns -1 for a < 0, 0 for a = 0 and +1 for a > 0
+    return (T(0) < a) - (a < T(0));
+}
+
 template<typename T>
 constexpr T intp(T a, T b, T c)
 {

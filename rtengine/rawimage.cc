@@ -39,6 +39,7 @@ RawImage::~RawImage()
 {
     if(ifp) {
         fclose(ifp);
+        ifp = nullptr;
     }
 
     if( image ) {
@@ -410,7 +411,11 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
     verbose = settings->verbose;
     oprof = nullptr;
 
-    ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+    if(!ifp) {
+        ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+    } else  {
+        fseek (ifp, 0, SEEK_SET);
+    }
 
     if (!ifp) {
         return 3;
@@ -547,8 +552,8 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
             crop_masked_pixels();
             free (raw_image);
             raw_image = nullptr;
-        } else {
-            if (is_foveon && cc && cc->has_rawCrop()) { // foveon images
+        } else { 
+            if (get_maker() == "Sigma" && cc && cc->has_rawCrop()) { // foveon images
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);
                 left_margin = lm;

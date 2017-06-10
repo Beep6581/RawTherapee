@@ -444,8 +444,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         cropgl->cropInit (cropHandler.cropParams.x, cropHandler.cropParams.y, cropHandler.cropParams.w, cropHandler.cropParams.h);
                     } else if (iarea->getToolMode () == TMHand) {
                         if (editSubscriber) {
-                            needRedraw = editSubscriber->button1Pressed(bstate);
                             if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) || editSubscriber->getEditingType() == ET_OBJECTS) {
+                                needRedraw = editSubscriber->button1Pressed(bstate);
                                 if (editSubscriber->isDragging()) {
                                     state = SEditDrag1;
                                 } else if (editSubscriber->isPicking()) {
@@ -2214,6 +2214,10 @@ void CropWindow::screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& c
     if (zoomSteps[cropZoom].zoom > 1.) {
         cropx = int(double(cropx) / zoomSteps[cropZoom].zoom);
         cropy = int(double(cropy) / zoomSteps[cropZoom].zoom);
+    } else {
+        float czoom = float((zoomSteps[cropZoom].czoom/10) * 10) / float(zoomSteps[cropZoom].czoom);
+        cropx = cropx / czoom;
+        cropy = cropy / czoom;
     }
 
     cropx += crop->getLeftBorder();

@@ -1164,7 +1164,7 @@ Camera constants:
     { // Quality B, frame corrections
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
-        "raw_crop": [ 0, 0, -8, 0 ], // full frame 5312x2988, 8 black columns at the left
+        "raw_crop": [ 0, 0, 0, 0 ], // full frame 5312x2988, 8 black columns at the left
         "ranges": { "white_max": 1023 }
     },
 
@@ -1931,6 +1931,11 @@ Camera constants:
         "dcraw_matrix": [ 2517,1175,-621,-587,7080,404,-4677,12402,4231 ], // experimental, inverted icc DP1_Merrill_dpreview_daylight WP1.4
         "ranges": { "black": 16, "white": 4070 }, // BL is 16 or 31, should be measured at the horizontal black stripe at the bottom
         "raw_crop": [ 12, 0, -110, -62 ] // for small size all numbers/2
+    },
+
+    { // Quality C, only raw crop for now - see #3858
+        "make_model": "Sigma sd Quattro",
+        "raw_crop": [ 200, 74, 5632, 3698 ]
     },
 
     { // Quality A, correction for color matrix from Colin Walker's d50 to dng d65

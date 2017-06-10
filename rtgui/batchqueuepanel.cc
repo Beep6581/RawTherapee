@@ -102,7 +102,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
 #else
     outdirFolder = Gtk::manage (new MyFileChooserButton (M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     hb3->pack_start (*outdirFolder);
-    outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));
+    outdirFolder->signal_selection_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));
     outdirFolder->set_tooltip_markup (M("PREFERENCES_OUTDIRFOLDERHINT"));
 
     if (Glib::file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) {

@@ -425,7 +425,7 @@ int processLineParams( int argc, char **argv )
 
             case 't':
                 outputType = "tif";
-                compression = ((currParam.at(2) != 'z') ? 0 : 1);
+                compression = ((currParam.size() < 3 || currParam.at(2) != 'z') ? 0 : 1);
                 break;
 
             case 'n':
@@ -549,9 +549,8 @@ int processLineParams( int argc, char **argv )
                 std::cout << std::endl;
 #endif
                 std::cout << "Options:" << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] [-f] -c <input>" << std::endl;
+                std::cout << "  " << Glib::path_get_basename(argv[0]) << "[-o <output>|-O <output>] [-q] [-a] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] [-f] -c <input>" << std::endl;
                 std::cout << std::endl;
-                std::cout << "  -q               Quick Start mode : do not load cached files to speedup start time." << std::endl;
                 std::cout << "  -c <files>       Specify one or more input files or directory." << std::endl;
                 std::cout << "                   When specifying directories, Rawtherapee will look for images files that comply with the" << std::endl;
                 std::cout << "                   selected extensions (see also '-a')." << std::endl;
@@ -560,8 +559,9 @@ int processLineParams( int argc, char **argv )
                 std::cout << "                   Saves output file alongside input file if -o is not specified." << std::endl;
                 std::cout << "  -O <file>|<dir>  Set output file or folder and copy " << pparamsExt << " file into it." << std::endl;
                 std::cout << "                   Saves output file alongside input file if -O is not specified." << std::endl;
-                std::cout << "  -a               stand for 'all'. When specifying a directory, process all images specified in the" << std::endl;
-                std::cout << "                   extension list from the options file, even those currently not seleted" << std::endl;
+                std::cout << "  -q               Quick-start mode. Does not load cached files to speedup start time." << std::endl;
+                std::cout << "  -a               Process all supported image file types when specifying a folder, even those" << std::endl;
+                std::cout << "                   not currently selected in Preferences > File Browser > Parsed Extensions." << std::endl;
                 std::cout << "  -s               Use the existing sidecar file to build the processing parameters," << std::endl;
                 std::cout << "                   e.g. for photo.raw there should be a photo.raw." << pparamsExt << " file in the same folder." << std::endl;
                 std::cout << "                   If the sidecar file does not exist, neutral values will be used." << std::endl;

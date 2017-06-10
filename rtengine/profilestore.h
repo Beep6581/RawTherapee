@@ -106,6 +106,7 @@ class ProfileStore : public rtengine::NonCopyable, public DynamicProfileRules
         STORESTATE_LIGHTWEIGHT,
         STORESTATE_BEINGINITIALIZED,
         STORESTATE_INITIALIZED,
+        STORESTATE_DIRTY,
         STORESTATE_DELETED
     } StoreState;
 
@@ -153,6 +154,11 @@ private:
       *                       if false, only one root directory is expected
       */
     bool parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath, Glib::ustring& currDir, unsigned int parentId, unsigned char level, bool displayLevel0);
+    /** @brief Will parse the profiles's dir only once. Subsequent call to this function will be ignored unless the profile list has been cleared
+     */
+    void parseProfilesOnce ();
+    /** @brief Will scan the directory to fill the profile list
+     */
     void _parseProfiles ();
     void clearFileList ();
     void clearProfileList ();
