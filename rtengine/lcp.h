@@ -110,6 +110,7 @@ public:
     LCPPersModel* aPersModel[MaxPersModelCount];  // Do NOT use std::list or something, it's buggy in GCC!
 
     explicit LCPProfile(const Glib::ustring &fname);
+    ~LCPProfile();
 
     void calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const;  // Interpolates between the persModels frames
 
@@ -124,6 +125,7 @@ class LCPStore
     std::map<Glib::ustring, LCPProfile*> profileCache;
 
 public:
+    ~LCPStore();
     Glib::ustring getDefaultCommonDirectory() const;
     bool isValidLCPFileName(Glib::ustring filename) const;
     LCPProfile* getProfile(Glib::ustring filename);

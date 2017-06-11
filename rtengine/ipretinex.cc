@@ -273,8 +273,9 @@ void RawImageSource::MSR (float** luminance, float** originalLuminance, float **
                 }
             }
 
-            float varx = 0.f;
-            float limdx, ilimdx;
+            float varx = vart;
+            float limdx = limD;
+            float ilimdx = ilimD;
 
             if (gradvart != 0) {
                 if (gradvart == 1) {
@@ -294,10 +295,6 @@ void RawImageSource::MSR (float** luminance, float** originalLuminance, float **
                     limdx = limD * (0.4f * it + 0.6f);
                     ilimdx = 1.f / limdx;
                 }
-            } else {
-                varx = vart;
-                limdx = limD;
-                ilimdx = ilimD;
             }
 
             scal = round (sc);

@@ -53,12 +53,6 @@ public:
     }
 };
 
-struct FileBrowserIdleHelper {
-    FileBrowser* fbrowser;
-    bool destroyed;
-    int pending;
-};
-
 /*
  * Class handling actions common to all thumbnails of the file browser
  */
@@ -71,6 +65,7 @@ private:
     typedef sigc::signal<void> type_trash_changed;
 
     IdleRegister idle_register;
+    unsigned int session_id_;
 
 protected:
     Gtk::MenuItem* rank[6];
@@ -129,7 +124,6 @@ protected:
     FileBrowserListener* tbl;
     BrowserFilter filter;
     int numFiltered;
-    FileBrowserIdleHelper* fbih;
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
@@ -151,6 +145,8 @@ public:
     void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread
     FileBrowserEntry*  delEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
     void close ();
+
+    unsigned int session_id() const { return session_id_; }
 
     void setBatchPParamsChangeListener (BatchPParamsChangeListener* l)
     {

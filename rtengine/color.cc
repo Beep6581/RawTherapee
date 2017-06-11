@@ -773,37 +773,38 @@ void Color::hsl2rgb01 (float h, float s, float l, float &r, float &g, float &b)
 
 void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v)
 {
-    double var_R = r / 65535.0;
-    double var_G = g / 65535.0;
-    double var_B = b / 65535.0;
+    const double var_R = r / 65535.0;
+    const double var_G = g / 65535.0;
+    const double var_B = b / 65535.0;
 
-    double var_Min = min(var_R, var_G, var_B);
-    double var_Max = max(var_R, var_G, var_B);
-    double del_Max = var_Max - var_Min;
+    const double var_Min = min(var_R, var_G, var_B);
+    const double var_Max = max(var_R, var_G, var_B);
+    const double del_Max = var_Max - var_Min;
+
+    h = 0.f;
     v = var_Max;
 
     if (del_Max < 0.00001 && del_Max > -0.00001) { // no fabs, slow!
-        h = 0;
-        s = 0;
+        s = 0.f;
     } else {
         s = del_Max / var_Max;
 
-        if      ( var_R == var_Max ) {
+        if (var_R == var_Max) {
             h = (var_G - var_B) / del_Max;
-        } else if ( var_G == var_Max ) {
+        } else if (var_G == var_Max) {
             h = 2.0 + (var_B - var_R) / del_Max;
-        } else if ( var_B == var_Max ) {
+        } else if (var_B == var_Max) {
             h = 4.0 + (var_R - var_G) / del_Max;
         }
 
-        h /= 6.0;
+        h /= 6.f;
 
-        if ( h < 0 ) {
-            h += 1;
+        if (h < 0.f) {
+            h += 1.f;
         }
 
-        if ( h > 1 ) {
-            h -= 1;
+        if (h > 1.f) {
+            h -= 1.f;
         }
     }
 }

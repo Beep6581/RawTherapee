@@ -152,7 +152,7 @@ public:
     the more compression is applied, with Compression = 1 giving no effect and above 1 the opposite effect. You can totally
     use Compression = 1 and play with DetailBoost for some really sweet unsharp masking. If working on luma/grey, consider giving it a logarithm.
     In place calculation to save memory (Source == Compressed) is totally ok. Reweightings > 0 invokes CreateIteratedBlur instead of CreateBlur. */
-    float *CompressDynamicRange(float *Source, float Scale = 1.0f, float EdgeStopping = 1.4f, float CompressionExponent = 0.8f, float DetailBoost = 0.1f, int Iterates = 20, int Reweightings = 0, float *Compressed = nullptr);
+    void CompressDynamicRange(float *Source, float Scale = 1.0f, float EdgeStopping = 1.4f, float CompressionExponent = 0.8f, float DetailBoost = 0.1f, int Iterates = 20, int Reweightings = 0);
 
 private:
     MultiDiagonalSymmetricMatrix *A;    //The equations are simple enough to not mandate a matrix class, but fast solution NEEDS a complicated preconditioner.
