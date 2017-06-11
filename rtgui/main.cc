@@ -137,12 +137,12 @@ int main(int argc, char **argv)
     // get the path where the rawtherapee executable is stored
 #ifdef WIN32
     WCHAR exnameU[512] = {0};
-    GetModuleFileNameW (NULL, exnameU, 512);
-    WideCharToMultiByte(CP_UTF8, 0, exnameU, -1, exname, 512, 0, 0 );
+    GetModuleFileNameW (NULL, exnameU, 511);
+    WideCharToMultiByte(CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
 #else
 
-    if (readlink("/proc/self/exe", exname, 512) < 0) {
-        strncpy(exname, argv[0], 512);
+    if (readlink("/proc/self/exe", exname, 511) < 0) {
+        strncpy(exname, argv[0], 511);
     }
 
 #endif

@@ -1435,11 +1435,15 @@ public:
     PartialProfile      (bool createInstance = false, bool paramsEditedValue = false);
     PartialProfile      (ProcParams* pp, ParamsEdited* pe = nullptr, bool fullCopy = false);
     PartialProfile      (const ProcParams* pp, const ParamsEdited* pe = nullptr);
+    ~PartialProfile     ();
     void deleteInstance ();
     void clearGeneral   ();
     int  load           (const Glib::ustring &fName);
     void set            (bool v);
     const void applyTo  (ProcParams *destParams) const ;
+private:
+    bool ownsPparams;
+    bool ownsPedited;
 };
 
 /**

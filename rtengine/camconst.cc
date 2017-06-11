@@ -314,6 +314,7 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
     return cc;
 
 parse_error:
+    delete cc;
     return nullptr;
 }
 
