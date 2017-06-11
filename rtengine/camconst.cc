@@ -27,9 +27,6 @@ CameraConst::CameraConst()
     white_max = 0;
 }
 
-CameraConst::~CameraConst()
-{
-}
 
 bool
 CameraConst::parseApertureScaling(CameraConst *cc, void *ji_)
@@ -707,6 +704,14 @@ parse_error:
 
 CameraConstantsStore::CameraConstantsStore()
 {
+}
+
+
+CameraConstantsStore::~CameraConstantsStore()
+{
+    for (auto &p : mCameraConstants) {
+        delete p.second;
+    }
 }
 
 void CameraConstantsStore::init(Glib::ustring baseDir, Glib::ustring userSettingsDir)

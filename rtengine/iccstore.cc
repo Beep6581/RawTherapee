@@ -276,6 +276,31 @@ public:
         }
     }
 
+    ~Implementation()
+    {
+        for (auto &p : wProfiles) {
+            if (p.second) {
+                cmsCloseProfile(p.second);
+            }
+        }
+        for (auto &p : wProfilesGamma) {
+            if (p.second) {
+                cmsCloseProfile(p.second);
+            }
+        }
+        for (auto &p : fileProfiles) {
+            if(p.second) {
+                cmsCloseProfile(p.second);
+            }
+        }
+        if(srgb) {
+            cmsCloseProfile(srgb);
+        }
+        if(xyz) {
+            cmsCloseProfile(xyz);
+        }
+    }
+
     void init(const Glib::ustring& usrICCDir, const Glib::ustring& rtICCDir, bool loadAll)
     {
         // Reads all profiles from the given profiles dir

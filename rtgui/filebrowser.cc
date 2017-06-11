@@ -128,11 +128,7 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 FileBrowser::FileBrowser ()
     : tbl(nullptr), numFiltered(0)
 {
-
-    fbih = new FileBrowserIdleHelper;
-    fbih->fbrowser = this;
-    fbih->destroyed = false;
-    fbih->pending = 0;
+    session_id_ = 0;
 
     ProfileStore::getInstance()->addListener(this);
 
@@ -546,36 +542,26 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
 void FileBrowser::addEntry (FileBrowserEntry* entry)
 {
     struct addparams {
-        FileBrowserIdleHelper* fbih;
-        FileBrowserEntry* entry;
+        FileBrowser *browser;
+        FileBrowserEntry *entry;
+        unsigned int session_id;
     };
 
-    fbih->pending++;
-    entry->setParent (this);
     addparams* const ap = new addparams;
-    ap->fbih = fbih;
+    entry->setParent (this);
+    ap->browser = this;
     ap->entry = entry;
+    ap->session_id = session_id();
 
     const auto func = [](gpointer data) -> gboolean {
         addparams* const ap = static_cast<addparams*>(data);
-        FileBrowserIdleHelper* fbih = ap->fbih;
-
-        if (fbih->destroyed) {
-            if (fbih->pending == 1) {
-                delete fbih;
-            } else {
-                fbih->pending--;
-            }
-
+        if (ap->session_id != ap->browser->session_id()) {
             delete ap->entry;
             delete ap;
-
-            return 0;
+        } else {
+            ap->browser->addEntry_(ap->entry);
+            delete ap;
         }
-
-        ap->fbih->fbrowser->addEntry_ (ap->entry);
-        delete ap;
-        fbih->pending--;
 
         return FALSE;
     };
@@ -653,16 +639,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
 
 void FileBrowser::close ()
 {
-    if (fbih->pending) {
-        fbih->destroyed = true;
-    } else {
-        delete fbih;
-    }
-
-    fbih = new FileBrowserIdleHelper;
-    fbih->fbrowser = this;
-    fbih->destroyed = false;
-    fbih->pending = 0;
+    ++session_id_;
 
     {
         MYWRITERLOCK(l, entryRW);

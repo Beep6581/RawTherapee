@@ -248,6 +248,8 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
     if (!fileFound && (level > 0 || displayLevel0)) {
         // no files found in this level, we delete the subdirectory entry
         folders.pop_back();
+
+        delete entries.back();
         entries.pop_back();
     }
 

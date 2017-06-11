@@ -361,6 +361,11 @@ SSEFUNCTION void LCPMapper::processVignetteLine3Channels(int width, int y, float
 
 LCPProfile::LCPProfile(const Glib::ustring &fname)
 {
+    for (int i = 0; i < MaxPersModelCount; i++) {
+        aPersModel[i] = nullptr;
+    }
+    pCurPersModel = nullptr;
+
     const int BufferSize = 8192;
     char buf[BufferSize];
 
@@ -377,10 +382,6 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
 
     isFisheye = inCamProfiles = firstLIDone = inPerspect = inAlternateLensID = inAlternateLensNames = false;
     sensorFormatFactor = 1;
-
-    for (int i = 0; i < MaxPersModelCount; i++) {
-        aPersModel[i] = nullptr;
-    }
 
     persModelCount = 0;
     *inInvalidTag = 0;
@@ -410,6 +411,19 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
     filterBadFrames(2.0, 0);
     // from the non-distorded, filter again on new average basis, but only if there are enough frames left
     filterBadFrames(1.5, 100);
+}
+
+
+LCPProfile::~LCPProfile()
+{
+    if (pCurPersModel) {
+        delete pCurPersModel;
+    }
+    for (int i = 0; i < MaxPersModelCount; i++) {
+        if (aPersModel[i]) {
+            delete aPersModel[i];
+        }
+    }
 }
 
 // from all frames not marked as bad already, take average and filter out frames with higher deviation than this if there are enough values
@@ -885,6 +899,15 @@ LCPStore* LCPStore::getInstance()
     static LCPStore instance_;
     return &instance_;
 }
+
+
+LCPStore::~LCPStore()
+{
+    for (auto &p : profileCache) {
+        delete p.second;
+    }
+}
+
 
 LCPProfile* LCPStore::getProfile (Glib::ustring filename)
 {

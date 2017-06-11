@@ -1026,6 +1026,12 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             cropHandler.cimg.lock ();
             int vx = x - xpos - imgX;
             int vy = y - ypos - imgY;
+
+            if(decorated) {
+                vx -= sideBorderWidth;
+                vy -= (titleHeight + upperBorderWidth + sepWidth);
+            }
+
 //          guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
 //          if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
 //              pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
