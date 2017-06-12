@@ -30,8 +30,8 @@ set(PROC_TARGET_NUMBER 0 CACHE STRING "Target Processor")
 # CMAKE_C_FLAGS and CMAKE_EXE_LINKER_FLAGS to select between 32/64bit build
 set(CMAKE_CXX_FLAGS "-mwin32 -m64 -mthreads -msse2" CACHE STRING "Compiler options for C++ source files")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g2" CACHE STRING "Compiler options for C++ source files and Debug target")
-set(CMAKE_CXX_FLAGS_RELEASE "-mwindows -Wno-aggressive-loop-optimizations -DNDEBUG -O3" CACHE STRING "Compiler options for C++ source files and Release target")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "-mwindows -DNDEBUG -Os" CACHE STRING "Compiler options for C++ source files and MinSizeRel target")
+set(CMAKE_CXX_FLAGS_RELEASE "-Wno-aggressive-loop-optimizations -DNDEBUG -O3" CACHE STRING "Compiler options for C++ source files and Release target")
+set(CMAKE_CXX_FLAGS_MINSIZEREL "-DNDEBUG -Os" CACHE STRING "Compiler options for C++ source files and MinSizeRel target")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler options for C++ source files and RelWithDebInfo target")
 
 # Uncomment the next line and set the right value to override the default value (special compiling flags for RTEngine)
@@ -39,12 +39,12 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler options for C
 
 set(CMAKE_C_FLAGS "-mwin32 -m64 -mthreads -msse2" CACHE STRING "Compiler options for C source files")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g2" CACHE STRING "Compiler options for C source files and Debug target")
-set(CMAKE_C_FLAGS_RELEASE "-mwindows -DNDEBUG -O2" CACHE STRING "Compiler options for C source files and Release target")
-set(CMAKE_C_FLAGS_MINSIZEREL "-mwindows -DNDEBUG -Os" CACHE STRING "Compiler options for C source files and MinSizeRel target")
+set(CMAKE_C_FLAGS_RELEASE "-DNDEBUG -O2" CACHE STRING "Compiler options for C source files and Release target")
+set(CMAKE_C_FLAGS_MINSIZEREL "-DNDEBUG -Os" CACHE STRING "Compiler options for C source files and MinSizeRel target")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler options for C source files and RelWithDebInfo target")
 
 set(CMAKE_EXE_LINKER_FLAGS "-m64 -mthreads -static-libgcc" CACHE STRING "Linker options")
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-O0" CACHE STRING "Linkage options for the Debug target")
-set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-mwindows -s -O3" CACHE STRING "Linkage options for the Release target")
-set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "-mwindows -s -Os" CACHE STRING "Linkage options for the MinSizeRel target")
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-s -O3" CACHE STRING "Linkage options for the Release target")
+set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "-s -Os" CACHE STRING "Linkage options for the MinSizeRel target")
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "-s -O2" CACHE STRING "Linkage options for the RelWithDebInfo target")
