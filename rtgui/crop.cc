@@ -1219,10 +1219,6 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2)
         W = maxw;
     }
 
-    if (H > maxh) {
-        H = maxh;
-    }
-
     if (fixr->get_active()) {
         double r = getRatio ();
 

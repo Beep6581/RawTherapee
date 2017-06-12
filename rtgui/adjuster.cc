@@ -588,38 +588,23 @@ void Adjuster::editedToggled ()
     eventPending = false;
 }
 
-double Adjuster::trimValue (double val)
+void Adjuster::trimValue (double &val)
 {
 
-    if      (val > vMax) {
-        val = vMax;    // shapeValue(vMax) ?
-    } else if (val < vMin) {
-        val = vMin;    // shapeValue(vMin) ?
-    }
+    val = rtengine::LIM(val, vMin, vMax);
 
-    return val;
 }
 
-int Adjuster::trimValue (int val)
+void Adjuster::trimValue (int &val)
 {
 
-    if      (val > (int)vMax) {
-        val = (int)vMax;    // shapeValue(vMax) ?
-    } else if (val < (int)vMin) {
-        val = (int)vMin;    // shapeValue(vMin) ?
-    }
+    val = rtengine::LIM(val, static_cast<int>(vMin), static_cast<int>(vMax));
 
-    return val;
 }
 
-float Adjuster::trimValue (float val)
+void Adjuster::trimValue (float &val)
 {
 
-    if      (val > (float)vMax) {
-        val = (float)vMax;    // shapeValue(vMax) ?
-    } else if (val < (float)vMin) {
-        val = (float)vMin;    // shapeValue(vMin) ?
-    }
+    val = rtengine::LIM(val, static_cast<float>(vMin), static_cast<float>(vMax));
 
-    return val;
 }

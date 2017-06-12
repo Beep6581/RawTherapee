@@ -895,7 +895,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
     } else if (state == SDragPicker) {
         Coord imgPos;
         action_x = x - press_x;
-        action_x = y - press_y;
+        action_y = y - press_y;
         screenCoordToImage (x, y, imgPos.x, imgPos.y);
         if (imgPos.x < 0) {
             imgPos.x = 0;

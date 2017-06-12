@@ -525,7 +525,8 @@ void DiagonalCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int mo
 
     case (DCT_Parametric):
         if (editedAdjuster) {
-            int trimmedValue = editedAdjuster->trimValue(editedAdjusterValue - (provider->deltaScreen.y / 2));
+            int trimmedValue = editedAdjusterValue - (provider->deltaScreen.y / 2);
+            editedAdjuster->trimValue(trimmedValue);
 
             if (trimmedValue != editedAdjuster->getIntValue()) {
                 editedAdjuster->setValue(trimmedValue);

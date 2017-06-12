@@ -780,6 +780,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     // (only a small part of it will actually be parsed though)
     if ((int)type < 1 || (int)type > 14 || count > 10 * 1024 * 1024) {
         type = INVALID;
+        valuesize = 0;
         return;
     }
 
@@ -1346,7 +1347,9 @@ void Tag::fromString (const char* v, int size)
         value = new unsigned char [valuesize];
     }
 
-    memcpy ((char*)value, v, valuesize);
+    if(value) {
+        memcpy ((char*)value, v, valuesize);
+    }
 }
 
 int Tag::toInt (int ofs, TagType astype)
@@ -1450,7 +1453,6 @@ double Tag::toDouble (int ofs)
             return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
     }
 
-    return 0.;
 }
 
 /**
@@ -1655,17 +1657,15 @@ int Tag::calculateSize ()
         if (j > 1) {
             size += 4 * j;
         }
+        if (makerNoteKind != NOMK) {
+            count = directory[0]->calculateSize () / getTypeSize (type);
+        }
     } else if (valuesize > 4) {
         size += valuesize + (valuesize % 2);    // we align tags to even byte positions
     }
 
-    if (makerNoteKind != NOMK) {
-        count = directory[0]->calculateSize () / getTypeSize (type);
-    }
 
-    if (makerNoteKind == NIKON3 || makerNoteKind == OLYMPUS2 || makerNoteKind == FUJI) {
-        size += valuesize;
-    } else if (makerNoteKind == HEADERIFD) {
+    if (makerNoteKind == NIKON3 || makerNoteKind == OLYMPUS2 || makerNoteKind == FUJI || makerNoteKind == HEADERIFD) {
         size += valuesize;
     }
 
@@ -1913,14 +1913,19 @@ TagDirectory* ExifManager::parseCIFF (FILE* f, int base, int length)
 Tag* ExifManager::saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const char* name)
 {
     int s = ftell (f);
-    char* data = new char [len];
-    fread (data, len, 1, f);
-    TagDirectory* mn = root->getTag ("Exif")->getDirectory()->getTag ("MakerNote")->getDirectory();
-    Tag* cs = new Tag (mn, lookupAttrib (canonAttribs, name));
-    cs->initUndefArray (data, len);
-    mn->addTag (cs);
-    fseek (f, s, SEEK_SET);
-    return cs;
+    if(s >= 0) {
+        char* data = new char [len];
+        fread (data, len, 1, f);
+        TagDirectory* mn = root->getTag ("Exif")->getDirectory()->getTag ("MakerNote")->getDirectory();
+        Tag* cs = new Tag (mn, lookupAttrib (canonAttribs, name));
+        cs->initUndefArray (data, len);
+        mn->addTag (cs);
+        fseek (f, s, SEEK_SET);
+        delete [] data;
+        return cs;
+    } else {
+        return nullptr;
+    }
 }
 
 void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
@@ -2500,6 +2505,8 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
                     if (*p1 != '\0') {
                         t->initInt (atoi (p1), LONG);
                         exif->getDirectory()->addTagFront (t);
+                    } else {
+                        delete t;
                     }
                 } else if (strcmp (tag, "DateTimeOriginal") == 0 &&
                            sscanf (val, "%d-%d-%dT%d:%d:%dZ",

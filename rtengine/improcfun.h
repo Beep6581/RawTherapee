@@ -89,7 +89,7 @@ class ImProcFunctions
         }
 
         double rd, gd, bd;
-        double yr[4], yg[4], yb[4];
+        double yr[4] = {0.0}, yg[4] = {0.0}, yb[4] = {0.0};
 
         for (int k = ys, kx = 0; k < ys + 4; k++, kx++) {
             rd = gd = bd = 0.0;

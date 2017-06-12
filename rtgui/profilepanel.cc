@@ -753,7 +753,6 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
 
     // adding the Last Saved combobox entry, if needed
     if (lastsaved) {
-        defprofile = lastsaved;
         lasSavedEntry = getLastSavedRow();
     }
 

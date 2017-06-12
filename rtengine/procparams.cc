@@ -768,6 +768,8 @@ void WaveletParams::setDefaults()
     for(int i = 0; i < 9; i ++) {
         ch[i] = 0;
     }
+    greenlow = greenmed = greenhigh = 0.0;
+    bluelow = bluemed = bluehigh = 0.0;
 
 }
 
@@ -832,6 +834,7 @@ void DirPyrDenoiseParams::setDefaults()
     redchro = 0;
     bluechro = 0;
     gamma = 1.7;
+    perform = false;
 }
 
 void DirPyrDenoiseParams::getCurves(NoiseCurve &lCurve, NoiseCurve &cCurve) const

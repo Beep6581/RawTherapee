@@ -22,7 +22,7 @@
 #include "inspector.h"
 #include "placesbrowser.h"
 
-FilePanel::FilePanel () : parent(nullptr)
+FilePanel::FilePanel () : parent(nullptr), error(0)
 {
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
