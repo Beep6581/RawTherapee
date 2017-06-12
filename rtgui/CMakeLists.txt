@@ -224,7 +224,10 @@ add_dependencies(rth UpdateInfo)
 add_dependencies(rth-cli UpdateInfo)
 
 # Set executables targets properties, i.e. output filename and compile flags
-set_target_properties(rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" LINK_FLAGS "-mwindows" OUTPUT_NAME rawtherapee)
+if(WIN32)
+set_target_properties(rth PROPERTIES LINK_FLAGS "-mwindows")
+endif()
+set_target_properties(rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)
 set_target_properties(rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee-cli)
 
 # Add linked libraries dependencies to executables targets
