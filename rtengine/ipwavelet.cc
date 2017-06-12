@@ -1265,6 +1265,10 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         delete dsttmp;
     }
 
+#ifdef _DEBUG
+    delete MunsDebugInfo;
+#endif
+
 }
 
 #undef TS

@@ -1988,21 +1988,25 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
 {
 
-    FILE* f = g_fopen (fname.c_str (), "rb");
+    embProfileData = nullptr;
+    embProfile = nullptr;
+    embProfileLength = 0;
 
-    if (!f) {
-        embProfileData = nullptr;
-        embProfile = nullptr;
-        embProfileLength = 0;
-    } else {
-        fseek (f, 0, SEEK_END);
-        embProfileLength = ftell (f);
-        fseek (f, 0, SEEK_SET);
-        embProfileData = new unsigned char[embProfileLength];
-        fread (embProfileData, 1, embProfileLength, f);
+    FILE* f = g_fopen (fname.c_str (), "rb");
+    if (f) {
+        if(!fseek (f, 0, SEEK_END)) {
+            int profileLength = ftell (f);
+            if(profileLength > 0) {
+                embProfileLength = profileLength;
+                if(!fseek (f, 0, SEEK_SET)) {
+                    embProfileData = new unsigned char[embProfileLength];
+                    fread (embProfileData, 1, embProfileLength, f);
+                    embProfile = cmsOpenProfileFromMem (embProfileData, embProfileLength);
+                }
+            }
+        }
         fclose (f);
-        embProfile = cmsOpenProfileFromMem (embProfileData, embProfileLength);
-        return true;
+        return embProfile != nullptr;
     }
 
     return false;

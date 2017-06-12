@@ -362,7 +362,7 @@ void ImageData::extractInfo ()
                     if (!lensOk && mnote->getTag ("Lens")) {
                         std::string ldata = mnote->getTag ("Lens")->valueToString ();
                         size_t i = 0, j = 0;
-                        double n[4];
+                        double n[4] = {0.0};
 
                         for (int m = 0; m < 4; m++) {
                             while (i < ldata.size() && ldata[i] != '/') {
@@ -380,7 +380,7 @@ void ImageData::extractInfo ()
                             int den = atoi(ldata.substr(j, i).c_str());
                             j = i + 2;
                             i += 2;
-                            n[m] = (double) nom / den;
+                            n[m] = (double) nom / std::max(den,1);
                         }
 
                         std::ostringstream str;
