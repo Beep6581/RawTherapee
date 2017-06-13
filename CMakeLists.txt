@@ -108,7 +108,6 @@ endif()
 
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build with -std=c++0x" OFF)
 option(BUILD_SHARED "Build with shared libraries" OFF)
-option(WITH_BZIP "Build with Bzip2 support" ON)
 option(WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option(WITH_LTO "Build with link-time optimizations" OFF)
 option(WITH_SAN "Build with run-time sanitizer" OFF)
@@ -293,16 +292,6 @@ find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(ZLIB REQUIRED)
-
-# Link with bzip:
-if(WITH_BZIP)
-    find_package(BZip2)
-    if(BZIP2_FOUND)
-        add_definitions(-DBZIP_SUPPORT)
-        set(EXTRA_INCDIR ${BZIP2_INCLUDE_DIR})
-        set(EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
-    endif()
-endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND(NOT APPLE))
