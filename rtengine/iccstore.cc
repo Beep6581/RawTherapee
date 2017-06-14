@@ -1225,8 +1225,7 @@ cmsHPROFILE rtengine::ICCStore::createCustomGammaOutputProfile(const procparams:
     }
 
     // Calculate output profile's rTRC gTRC bTRC
-    cmsToneCurve* GammaTRC = nullptr;
-    GammaTRC = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
+    cmsToneCurve* GammaTRC = cmsBuildParametricToneCurve(nullptr, 5, Parameters);
     cmsWriteTag(outputProfile, cmsSigRedTRCTag,(void*)GammaTRC );
     cmsWriteTag(outputProfile, cmsSigGreenTRCTag,(void*)GammaTRC );
     cmsWriteTag(outputProfile, cmsSigBlueTRCTag,(void*)GammaTRC );

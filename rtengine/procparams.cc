@@ -819,6 +819,7 @@ void DirPyrDenoiseParams::setDefaults()
     enhance = false;
     median = false;
     autochroma = false;
+    perform = false;
     luma = 0;
     passes = 1;
     dmethod = "Lab";

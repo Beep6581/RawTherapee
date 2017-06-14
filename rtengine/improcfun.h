@@ -150,7 +150,7 @@ class ImProcFunctions
         }
 
         double rd;
-        double yr[4];
+        double yr[4] = {0.0};
 
         for (int k = ys, kx = 0; k < ys + 4; k++, kx++) {
             rd = 0.0;

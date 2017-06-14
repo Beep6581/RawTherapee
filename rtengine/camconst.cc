@@ -180,11 +180,10 @@ CameraConst::parseLevels(CameraConst *cc, int bw, void *ji_)
 CameraConst *
 CameraConst::parseEntry(void *cJSON_, const char *make_model)
 {
-    CameraConst *cc = nullptr;
     cJSON *js, *ji, *jranges;
     js = (cJSON *)cJSON_;
 
-    cc = new CameraConst;
+    CameraConst *cc = new CameraConst;
     cc->make_model = Glib::ustring(make_model);
 
     ji = cJSON_GetObjectItem(js, "dcraw_matrix");

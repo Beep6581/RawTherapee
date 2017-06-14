@@ -690,7 +690,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 
     for (int y = 0; y < transformed->getHeight(); y++) {
-        double vig_y_d = (double) (y + cy) - vig_h2 ;
+        double vig_y_d = applyVignetting ? (double) (y + cy) - vig_h2 : 0.0;
 
         for (int x = 0; x < transformed->getWidth(); x++) {
             double factor = 1.0;
