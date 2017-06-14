@@ -1531,7 +1531,7 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
                                  int toDo, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
     float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z, XL, YL, ZL;
-    float L1 = 0.f, L2, LL, a_1 = 0.f, b_1 = 0.f, a_2, b_2, a_L, b_L;
+    float L1 = 0.f, L2, LL, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L, b_L;
 
     // converting color 1 to Lab  (image)
     Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);

@@ -3404,14 +3404,18 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     bool useOpacity;
-    float mulOpacity;
+    float mulOpacity = 0.f;
 
     if(useChannelA) {
         useOpacity = cp.opaRG;
-        mulOpacity = cp.mulopaRG[level];
+        if(level < 9) {
+            mulOpacity = cp.mulopaRG[level];
+        }
     } else {
         useOpacity = cp.opaBY;
-        mulOpacity = cp.mulopaBY[level];
+        if(level < 9) {
+            mulOpacity = cp.mulopaBY[level];
+        }
     }
 
     if((useOpacity && level < 9 && mulOpacity != 0.f) && cp.toningena) { //toning
