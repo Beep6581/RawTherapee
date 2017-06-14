@@ -99,7 +99,6 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
         int error = rawImage.load(fname, true);
 
         if (!error) {
-            rtengine::Image8 *output = nullptr;
             const unsigned char *data = nullptr;
             int fw, fh;
 
@@ -114,27 +113,27 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             params.raw.xtranssensor.method = RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::fast];
             rawImage.preprocess(params.raw, params.lensProf, params.coarse);
             rawImage.demosaic(params.raw);
-            Imagefloat* image = new rtengine::Imagefloat (fw, fh);
-            rawImage.getImage (wb, TR_NONE, image, pp, params.toneCurve, params.icm, params.raw);
-            output = new Image8(fw, fh);
-            rawImage.convertColorSpace(image, params.icm, wb);
+            Imagefloat image(fw, fh);
+            rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.icm, params.raw);
+            rtengine::Image8 output(fw, fh);
+            rawImage.convertColorSpace(&image, params.icm, wb);
             #pragma omp parallel for schedule(dynamic, 10)
             for (int i = 0; i < fh; ++i)
                 for (int j = 0; j < fw; ++j) {
-                    image->r(i, j) = Color::gamma2curve[image->r(i, j)];
-                    image->g(i, j) = Color::gamma2curve[image->g(i, j)];
-                    image->b(i, j) = Color::gamma2curve[image->b(i, j)];
+                    image.r(i, j) = Color::gamma2curve[image.r(i, j)];
+                    image.g(i, j) = Color::gamma2curve[image.g(i, j)];
+                    image.b(i, j) = Color::gamma2curve[image.b(i, j)];
                 }
 
 
-            image->resizeImgTo<Image8>(fw, fh, TI_Nearest, output);
-            data = output->getData();
+            image.resizeImgTo<Image8>(fw, fh, TI_Nearest, &output);
+            data = output.getData();
 
 
             if (data) {
                 int w, h;
-                w = output->getWidth();
-                h = output->getHeight();
+                w = output.getWidth();
+                h = output.getHeight();
                 previewImage = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
                 previewImage->flush();
 
@@ -150,10 +149,6 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 
                         poke255_uc(dst, r, g, b);
                     }
-                }
-
-                if (output) {
-                    delete output;
                 }
 
                 previewImage->mark_dirty();
