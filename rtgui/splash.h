@@ -48,7 +48,6 @@ private:
     Gtk::ScrolledWindow* releaseNotesSW;
 
 public:
-    Splash (Gtk::Window& parent, int maxtime);
     explicit Splash (Gtk::Window& parent);
 
     bool hasReleaseNotes()
