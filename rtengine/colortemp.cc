@@ -1154,7 +1154,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     double fx[50], fy[50], fz[50];
 
     int palet = -1;
-    bool palette = false;
+//    bool palette = false;
     // double tempalet; // correlated temperature
 
     // We first test for specially handled methods
@@ -1321,128 +1321,128 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
     gmul /= max;
     bmul /= max;
 
-    if(palette) // palette of color : 32 skin, 4 grey, 4 blue sky
-        //calculate L a b in function of color and illuminant
-        //J.Desmis january 2012
-    {
-        double x_x, y_y, z_z;
-        // illuminants
-        // color
-        const double* spec_colorpalet[] = {
-            ColabSkin98_m2_10_spect, ColabSkin95_0_4_spect, ColabSkin91_4_14_spect, ColabSkin90_m1_20_spect,
-            ColorchechSGSkiK285_11_17_spect, ColabSkin87_8_8_spect, ColabSkin87_3_10_spect, ColabSkin89_8_21_spect,
-            ColabSkin70_7_32_spect, ColabSkin77_12_21_spect, ColabSkin75_8_4_spect, ColabSkin75_10_33_spect,
-            ColorchechSkiB166_18_18_spect, ColabSkin65_7_24_spect, ColorchechSGSkiF763_14_26_spect, ColabSkin65_33_11_spect,
-            ColabSkin57_19_6_spect, ColabSkin57_4_19_spect, ColabSkin57_10_28_spect, ColabSkin57_22_18_spect,
-            ColabSkin40_17_17_spect, ColabSkin40_7_19_spect, ColabSkin40_4_11_spect, ColabSkin40_17_6_spect,
-            ColorchechSkiA138_13_14_spect, ColabSkin33_6_15_spect, ColabSkin35_15_17_spect, ColabSkin33_15_5_spect,
-            ColabSkin26_18_18_spect, ColabSkin24_7_5_spect, ColabSkin24_5_6_spect, ColabSkin20_4_2_spect,
-            ColabSky42_0_m24_spect, ColorchechBluC150_m5_m22_spect, ColorchechWhiA496_spect, ColorchechSGBlaN3_6_spect,
-            JDC468_GraK14_44_spect, ColorchechGraC4_67_spect, ColabSky60_0_m31_spect, ColorchechDCBluN881_m7_m14_spect
-            //ColabSkin33_10_15_spect,
-            //ColabSkin81_2_14_spect,
-        };
-
-        int N_col = sizeof(spec_colorpalet) / sizeof(spec_colorpalet[0]); //number of color
-
-        if(palet < 28) {
-            const double* spect_illummax[] = {
-                Daylight5300_spect, Cloudy6200_spect, Shade7600_spect, A2856_spect, FluoF1_spect, FluoF2_spect, FluoF3_spect, FluoF4_spect, FluoF5_spect, FluoF6_spect, FluoF7_spect,
-                FluoF8_spect, FluoF9_spect, FluoF10_spect, FluoF11_spect, FluoF12_spect, HMI_spect, GTI_spect, JudgeIII_spect, Solux3500_spect, Solux4100_spect, Solux4700_spect, NG_Solux4700_spect, NG_CRSSP12WWMR16_spect, NG_CRSSP12WWMR16_spect,
-                Flash5500_spect, Flash6000_spect, Flash6500_spect
-            };
-            for(int i = 0; i < N_col; i++)   {
-                spectrum_to_color_xyz_preset(spec_colorpalet[i], spect_illummax[palet], x_x, y_y, z_z);
-                Xpal[i] = x_x;
-                Ypal[i] = y_y;
-                Zpal[i] = z_z;
-            }
-        } else /*if(palet >= 28)*/ {
-            if(temp < INITIALBLACKBODY) {
-                for(int i = 0; i < N_col; i++) {
-                    spectrum_to_color_xyz_blackbody(spec_colorpalet[i], temp, x_x, y_y, z_z);
-                    Xpal[i] = x_x;
-                    Ypal[i] = y_y;
-                    Zpal[i] = z_z;
-                }
-            } else {
-                double m11p, m22p;
-                m11p = m1;
-                m22p = m2;
-
-                for(int i = 0; i < N_col; i++) { // calculate XYZ palette for illuminant and color
-                    spectrum_to_color_xyz_daylight(spec_colorpalet[i], m11p, m22p, x_x, y_y, z_z);
-                    Xpal[i] = x_x;
-                    Ypal[i] = y_y;
-                    Zpal[i] = z_z;
-                }
-            }
-        }
-
-        double xp = xD;
-        double yp = yD;
-        double Xwbpal = xp / yp; //white balance
-        double Ywbpal = 1.0;
-        double Zwbpal = (1.0 - xp - yp) / yp;
-        //chromatic adaptation CIECAT02 at temp
-        double adap = 1.0;
-        cieCAT02(Xwbpal, Ywbpal, Zwbpal, CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22, adap);
-
-        //here new value of X,Y,Z with chromatic CAM02 adaptation
-        for(int i = 0; i < N_col; i++) {
-            Xcam02pal[i] = CAM02BB00 * Xpal[i] + CAM02BB01 * Ypal[i] + CAM02BB02 * Zpal[i] ;
-            Ycam02pal[i] = CAM02BB10 * Xpal[i] + CAM02BB11 * Ypal[i] + CAM02BB12 * Zpal[i] ;
-            Zcam02pal[i] = CAM02BB20 * Xpal[i] + CAM02BB21 * Ypal[i] + CAM02BB22 * Zpal[i] ;
-            //printf("CoulXYZ %i X %f Y %f Z %f\n", i, Xpal[i],Ypal[i],Zpal[i]);
-            //printf("CoulCAM %i X %f Y %f Z %f\n", i, Xcam02pal[i],Ycam02pal[i],Zcam02pal[i]);
-        }
-
-        //Calculate Lab
-        for(int i = 0; i < N_col; i++) {
-            xr[i] = Xcam02pal[i] / whiteD50[0];
-            yr[i] = Ycam02pal[i] / whiteD50[1];
-            zr[i] = Zcam02pal[i] / whiteD50[2];
-
-            // xr, yr , zr > epsilon
-            if(xr[i] > epsilon) {
-                fx[i] = std::cbrt(xr[i]);
-            } else {
-                fx[i] = (903.3 * xr[i] + 16.0) / 116.0;
-            }
-
-            if(yr[i] > epsilon) {
-                fy[i] = std::cbrt(yr[i]);
-            } else {
-                fy[i] = (903.3 * yr[i] + 16.0) / 116.0;
-            }
-
-            if(zr[i] > epsilon) {
-                fz[i] = std::cbrt(zr[i]);
-            } else {
-                fz[i] = (903.3 * zr[i] + 16.0) / 116.0;
-            }
-        }
-
-        //Lab values in function of color and illuminant
-        //these values can be compared to preview values when using white-balance (skin / sky / BW)
-        double Lpal[50], apal[50], bpal[50];
-
-        for(int i = 0; i < N_col; i++) {
-            Lpal[i] = 116.0 * fy[i] - 16.0;
-            apal[i] = 500.0 * (fx[i] - fy[i]);
-            bpal[i] = 200.0 * (fy[i] - fz[i]);
-        }
-
-        // uncomment to display Lab values
-        //for(int i=0;i<N_col;i++) {
-        //  printf("Lpal=%2.2f apal=%2.2f bpal=%2.2f\n", Lpal[i],apal[i],bpal[i]);
-        if(settings->CRI_color != 0) {
-            printf("Lpal=%2.2f apal=%2.2f bpal=%2.2f\n", Lpal[0], apal[0], bpal[0]);    //sample
-        }
-
-        //}
-
-    } //end palette
+//    if(palette) // palette of color : 32 skin, 4 grey, 4 blue sky
+//        //calculate L a b in function of color and illuminant
+//        //J.Desmis january 2012
+//    {
+//        double x_x, y_y, z_z;
+//        // illuminants
+//        // color
+//        const double* spec_colorpalet[] = {
+//            ColabSkin98_m2_10_spect, ColabSkin95_0_4_spect, ColabSkin91_4_14_spect, ColabSkin90_m1_20_spect,
+//            ColorchechSGSkiK285_11_17_spect, ColabSkin87_8_8_spect, ColabSkin87_3_10_spect, ColabSkin89_8_21_spect,
+//            ColabSkin70_7_32_spect, ColabSkin77_12_21_spect, ColabSkin75_8_4_spect, ColabSkin75_10_33_spect,
+//            ColorchechSkiB166_18_18_spect, ColabSkin65_7_24_spect, ColorchechSGSkiF763_14_26_spect, ColabSkin65_33_11_spect,
+//            ColabSkin57_19_6_spect, ColabSkin57_4_19_spect, ColabSkin57_10_28_spect, ColabSkin57_22_18_spect,
+//            ColabSkin40_17_17_spect, ColabSkin40_7_19_spect, ColabSkin40_4_11_spect, ColabSkin40_17_6_spect,
+//            ColorchechSkiA138_13_14_spect, ColabSkin33_6_15_spect, ColabSkin35_15_17_spect, ColabSkin33_15_5_spect,
+//            ColabSkin26_18_18_spect, ColabSkin24_7_5_spect, ColabSkin24_5_6_spect, ColabSkin20_4_2_spect,
+//            ColabSky42_0_m24_spect, ColorchechBluC150_m5_m22_spect, ColorchechWhiA496_spect, ColorchechSGBlaN3_6_spect,
+//            JDC468_GraK14_44_spect, ColorchechGraC4_67_spect, ColabSky60_0_m31_spect, ColorchechDCBluN881_m7_m14_spect
+//            //ColabSkin33_10_15_spect,
+//            //ColabSkin81_2_14_spect,
+//        };
+//
+//        int N_col = sizeof(spec_colorpalet) / sizeof(spec_colorpalet[0]); //number of color
+//
+//        if(palet < 28) {
+//            const double* spect_illummax[] = {
+//                Daylight5300_spect, Cloudy6200_spect, Shade7600_spect, A2856_spect, FluoF1_spect, FluoF2_spect, FluoF3_spect, FluoF4_spect, FluoF5_spect, FluoF6_spect, FluoF7_spect,
+//                FluoF8_spect, FluoF9_spect, FluoF10_spect, FluoF11_spect, FluoF12_spect, HMI_spect, GTI_spect, JudgeIII_spect, Solux3500_spect, Solux4100_spect, Solux4700_spect, NG_Solux4700_spect, NG_CRSSP12WWMR16_spect, NG_CRSSP12WWMR16_spect,
+//                Flash5500_spect, Flash6000_spect, Flash6500_spect
+//            };
+//            for(int i = 0; i < N_col; i++)   {
+//                spectrum_to_color_xyz_preset(spec_colorpalet[i], spect_illummax[palet], x_x, y_y, z_z);
+//                Xpal[i] = x_x;
+//                Ypal[i] = y_y;
+//                Zpal[i] = z_z;
+//            }
+//        } else /*if(palet >= 28)*/ {
+//            if(temp < INITIALBLACKBODY) {
+//                for(int i = 0; i < N_col; i++) {
+//                    spectrum_to_color_xyz_blackbody(spec_colorpalet[i], temp, x_x, y_y, z_z);
+//                    Xpal[i] = x_x;
+//                    Ypal[i] = y_y;
+//                    Zpal[i] = z_z;
+//                }
+//            } else {
+//                double m11p, m22p;
+//                m11p = m1;
+//                m22p = m2;
+//
+//                for(int i = 0; i < N_col; i++) { // calculate XYZ palette for illuminant and color
+//                    spectrum_to_color_xyz_daylight(spec_colorpalet[i], m11p, m22p, x_x, y_y, z_z);
+//                    Xpal[i] = x_x;
+//                    Ypal[i] = y_y;
+//                    Zpal[i] = z_z;
+//                }
+//            }
+//        }
+//
+//        double xp = xD;
+//        double yp = yD;
+//        double Xwbpal = xp / yp; //white balance
+//        double Ywbpal = 1.0;
+//        double Zwbpal = (1.0 - xp - yp) / yp;
+//        //chromatic adaptation CIECAT02 at temp
+//        double adap = 1.0;
+//        cieCAT02(Xwbpal, Ywbpal, Zwbpal, CAM02BB00, CAM02BB01, CAM02BB02, CAM02BB10, CAM02BB11, CAM02BB12, CAM02BB20, CAM02BB21, CAM02BB22, adap);
+//
+//        //here new value of X,Y,Z with chromatic CAM02 adaptation
+//        for(int i = 0; i < N_col; i++) {
+//            Xcam02pal[i] = CAM02BB00 * Xpal[i] + CAM02BB01 * Ypal[i] + CAM02BB02 * Zpal[i] ;
+//            Ycam02pal[i] = CAM02BB10 * Xpal[i] + CAM02BB11 * Ypal[i] + CAM02BB12 * Zpal[i] ;
+//            Zcam02pal[i] = CAM02BB20 * Xpal[i] + CAM02BB21 * Ypal[i] + CAM02BB22 * Zpal[i] ;
+//            //printf("CoulXYZ %i X %f Y %f Z %f\n", i, Xpal[i],Ypal[i],Zpal[i]);
+//            //printf("CoulCAM %i X %f Y %f Z %f\n", i, Xcam02pal[i],Ycam02pal[i],Zcam02pal[i]);
+//        }
+//
+//        //Calculate Lab
+//        for(int i = 0; i < N_col; i++) {
+//            xr[i] = Xcam02pal[i] / whiteD50[0];
+//            yr[i] = Ycam02pal[i] / whiteD50[1];
+//            zr[i] = Zcam02pal[i] / whiteD50[2];
+//
+//            // xr, yr , zr > epsilon
+//            if(xr[i] > epsilon) {
+//                fx[i] = std::cbrt(xr[i]);
+//            } else {
+//                fx[i] = (903.3 * xr[i] + 16.0) / 116.0;
+//            }
+//
+//            if(yr[i] > epsilon) {
+//                fy[i] = std::cbrt(yr[i]);
+//            } else {
+//                fy[i] = (903.3 * yr[i] + 16.0) / 116.0;
+//            }
+//
+//            if(zr[i] > epsilon) {
+//                fz[i] = std::cbrt(zr[i]);
+//            } else {
+//                fz[i] = (903.3 * zr[i] + 16.0) / 116.0;
+//            }
+//        }
+//
+//        //Lab values in function of color and illuminant
+//        //these values can be compared to preview values when using white-balance (skin / sky / BW)
+//        double Lpal[50], apal[50], bpal[50];
+//
+//        for(int i = 0; i < N_col; i++) {
+//            Lpal[i] = 116.0 * fy[i] - 16.0;
+//            apal[i] = 500.0 * (fx[i] - fy[i]);
+//            bpal[i] = 200.0 * (fy[i] - fz[i]);
+//        }
+//
+//        // uncomment to display Lab values
+//        //for(int i=0;i<N_col;i++) {
+//        //  printf("Lpal=%2.2f apal=%2.2f bpal=%2.2f\n", Lpal[i],apal[i],bpal[i]);
+//        if(settings->CRI_color != 0) {
+//            printf("Lpal=%2.2f apal=%2.2f bpal=%2.2f\n", Lpal[0], apal[0], bpal[0]);    //sample
+//        }
+//
+//        //}
+//
+//    } //end palette
 
     // begin CRI_RT : color rendering index RT - adaptation of CRI by J.Desmis
     // CRI = 100 for Blackbody and Daylight
