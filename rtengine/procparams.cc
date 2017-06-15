@@ -3874,18 +3874,20 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
         // load channel mixer curve
         if (keyFile.has_group ("Channel Mixer")) {
             if (keyFile.has_key ("Channel Mixer", "Red") && keyFile.has_key ("Channel Mixer", "Green") && keyFile.has_key ("Channel Mixer", "Blue")) {
+                const std::vector<int> rmix = keyFile.get_integer_list ("Channel Mixer", "Red");
+                const std::vector<int> gmix = keyFile.get_integer_list ("Channel Mixer", "Green");
+                const std::vector<int> bmix = keyFile.get_integer_list ("Channel Mixer", "Blue");
+                if(rmix.size() == 3 && gmix.size() == 3 && bmix.size() == 3) {
+                    memcpy (chmixer.red, rmix.data(), 3 * sizeof(int));
+                    memcpy (chmixer.green, gmix.data(), 3 * sizeof(int));
+                    memcpy (chmixer.blue, bmix.data(), 3 * sizeof(int));
+                }
+
                 if (pedited) {
                     pedited->chmixer.red[0]   = pedited->chmixer.red[1]   = pedited->chmixer.red[2] = true;
                     pedited->chmixer.green[0] = pedited->chmixer.green[1] = pedited->chmixer.green[2] = true;
                     pedited->chmixer.blue[0]  = pedited->chmixer.blue[1]  = pedited->chmixer.blue[2] = true;
                 }
-
-                Glib::ArrayHandle<int> rmix = keyFile.get_integer_list ("Channel Mixer", "Red");
-                Glib::ArrayHandle<int> gmix = keyFile.get_integer_list ("Channel Mixer", "Green");
-                Glib::ArrayHandle<int> bmix = keyFile.get_integer_list ("Channel Mixer", "Blue");
-                memcpy (chmixer.red, rmix.data(), 3 * sizeof(int));
-                memcpy (chmixer.green, gmix.data(), 3 * sizeof(int));
-                memcpy (chmixer.blue, bmix.data(), 3 * sizeof(int));
             }
         }
 
@@ -4560,8 +4562,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     int thresh = min(keyFile.get_integer ("Sharpening", "Threshold"), 2000);
                     sharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
                 } else {
-                    Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Sharpening", "Threshold");
-                    sharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+                    const std::vector<int> thresh = keyFile.get_integer_list ("Sharpening", "Threshold");
+                    if(thresh.size() >= 4) {
+                        sharpening.threshold.setValues(thresh[0], thresh[1], min(thresh[2], 2000), min(thresh[3], 2000));
+                    }
                 }
 
                 if (pedited) {
@@ -4751,8 +4755,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     int thresh = keyFile.get_integer ("Vibrance", "PSThreshold");
                     vibrance.psthreshold.setValues(thresh, thresh);
                 } else {
-                    Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Vibrance", "PSThreshold");
-                    vibrance.psthreshold.setValues(thresh.data()[0], thresh.data()[1]);
+                    const std::vector<int> thresh = keyFile.get_integer_list ("Vibrance", "PSThreshold");
+                    if(thresh.size() >= 2 ) {
+                        vibrance.psthreshold.setValues(thresh[0], thresh[1]);
+                    }
                 }
 
                 if (pedited) {
@@ -5929,8 +5935,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     int thresh = min(keyFile.get_integer ("PostResizeSharpening", "Threshold"), 2000);
                     prsharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
                 } else {
-                    Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("PostResizeSharpening", "Threshold");
-                    prsharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+                    const std::vector<int> thresh = keyFile.get_integer_list ("PostResizeSharpening", "Threshold");
+                    if(thresh.size() >= 4) {
+                        prsharpening.threshold.setValues(thresh[0], thresh[1], min(thresh[2], 2000), min(thresh[3], 2000));
+                    }
                 }
 
                 if (pedited) {
@@ -6653,8 +6661,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "Hueskin"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Hueskin");
-                wavelet.hueskin.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Hueskin");
+                if(thresh.size() >= 4) {
+                    wavelet.hueskin.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->wavelet.hueskin = true;
@@ -6662,8 +6672,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "HueRange"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "HueRange");
-                wavelet.hueskin2.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "HueRange");
+                if(thresh.size() >= 4) {
+                    wavelet.hueskin2.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->wavelet.hueskin2 = true;
@@ -6671,8 +6683,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "HLRange"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "HLRange");
-                wavelet.hllev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "HLRange");
+                if(thresh.size() >= 4) {
+                    wavelet.hllev.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->wavelet.hllev = true;
@@ -6680,8 +6694,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "SHRange"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "SHRange");
-                wavelet.bllev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "SHRange");
+                if(thresh.size() >= 4) {
+                    wavelet.bllev.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->wavelet.bllev = true;
@@ -6689,8 +6705,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "Edgcont"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Edgcont");
-                wavelet.edgcont.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Edgcont");
+                if(thresh.size() >= 4) {
+                    wavelet.edgcont.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->wavelet.edgcont = true;
@@ -6698,8 +6716,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "Level0noise"))   {
-                Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level0noise");
-                wavelet.level0noise.setValues(thresh.data()[0], thresh.data()[1]);
+                const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level0noise");
+                if(thresh.size() >= 2) {
+                    wavelet.level0noise.setValues(thresh[0], thresh[1]);
+                }
 
                 if (pedited) {
                     pedited->wavelet.level0noise = true;
@@ -6707,8 +6727,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "Level1noise"))   {
-                Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level1noise");
-                wavelet.level1noise.setValues(thresh.data()[0], thresh.data()[1]);
+                const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level1noise");
+                if(thresh.size() >= 2) {
+                    wavelet.level1noise.setValues(thresh[0], thresh[1]);
+                }
 
                 if (pedited) {
                     pedited->wavelet.level1noise = true;
@@ -6716,8 +6738,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "Level2noise"))   {
-                Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level2noise");
-                wavelet.level2noise.setValues(thresh.data()[0], thresh.data()[1]);
+                const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level2noise");
+                if(thresh.size() >= 2) {
+                    wavelet.level2noise.setValues(thresh[0], thresh[1]);
+                }
 
                 if (pedited) {
                     pedited->wavelet.level2noise = true;
@@ -6725,8 +6749,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "Level3noise"))   {
-                Glib::ArrayHandle<double> thresh = keyFile.get_double_list ("Wavelet", "Level3noise");
-                wavelet.level3noise.setValues(thresh.data()[0], thresh.data()[1]);
+                const std::vector<double> thresh = keyFile.get_double_list ("Wavelet", "Level3noise");
+                if(thresh.size() >= 2) {
+                    wavelet.level3noise.setValues(thresh[0], thresh[1]);
+                }
 
                 if (pedited) {
                     pedited->wavelet.level3noise = true;
@@ -6735,8 +6761,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
 
             if (keyFile.has_key ("Wavelet", "Pastlev"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Pastlev");
-                wavelet.pastlev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Pastlev");
+                if(thresh.size() >= 4) {
+                    wavelet.pastlev.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->wavelet.pastlev = true;
@@ -6744,8 +6772,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("Wavelet", "Satlev"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Wavelet", "Satlev");
-                wavelet.satlev.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Wavelet", "Satlev");
+                if(thresh.size() >= 4) {
+                    wavelet.satlev.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->wavelet.satlev = true;
@@ -6876,8 +6906,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
 //   if (keyFile.has_key ("Directional Pyramid Equalizer", "Algorithm")) { dirpyrequalizer.algo = keyFile.get_string ("Directional Pyramid Equalizer", "Algorithm"); if (pedited) pedited->dirpyrequalizer.algo = true; }
             if (keyFile.has_key ("Directional Pyramid Equalizer", "Hueskin"))   {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
-                dirpyrequalizer.hueskin.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 300), min(thresh.data()[3], 300));
+                const std::vector<int> thresh = keyFile.get_integer_list ("Directional Pyramid Equalizer", "Hueskin");
+                if(thresh.size() >= 4) {
+                    dirpyrequalizer.hueskin.setValues(thresh[0], thresh[1], min(thresh[2], 300), min(thresh[3], 300));
+                }
 
                 if (pedited) {
                     pedited->dirpyrequalizer.hueskin = true;
@@ -7118,8 +7150,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("ColorToning", "HighlightsColorSaturation")) {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "HighlightsColorSaturation");
-                colorToning.hlColSat.setValues(thresh.data()[0], thresh.data()[1]);
+                const std::vector<int> thresh = keyFile.get_integer_list ("ColorToning", "HighlightsColorSaturation");
+                if(thresh.size() >= 2) {
+                    colorToning.hlColSat.setValues(thresh[0], thresh[1]);
+                }
 
                 if (pedited) {
                     pedited->colorToning.hlColSat = true;
@@ -7127,8 +7161,10 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key ("ColorToning", "ShadowsColorSaturation")) {
-                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("ColorToning", "ShadowsColorSaturation");
-                colorToning.shadowsColSat.setValues(thresh.data()[0], thresh.data()[1]);
+                const std::vector<int> thresh = keyFile.get_integer_list ("ColorToning", "ShadowsColorSaturation");
+                if(thresh.size() >= 2) {
+                    colorToning.shadowsColSat.setValues(thresh[0], thresh[1]);
+                }
 
                 if (pedited) {
                     pedited->colorToning.shadowsColSat = true;
