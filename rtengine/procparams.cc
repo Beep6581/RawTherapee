@@ -31,6 +31,16 @@
 using namespace std;
 extern Options options;
 
+namespace {
+
+void avoidEmptyCurve(std::vector<double> &curve) {
+    if(curve.empty()) {
+        curve.push_back(FCT_Linear);
+    }
+}
+
+}
+
 namespace rtengine
 {
 namespace procparams
@@ -3827,7 +3837,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             if (ppVersion > 200) {
                 if (keyFile.has_key ("Exposure", "Curve"))          {
                     toneCurve.curve         = keyFile.get_double_list ("Exposure", "Curve");
-
+                    avoidEmptyCurve(toneCurve.curve);
                     if (pedited) {
                         pedited->toneCurve.curve = true;
                     }
@@ -3835,7 +3845,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (keyFile.has_key ("Exposure", "Curve2"))         {
                     toneCurve.curve2        = keyFile.get_double_list ("Exposure", "Curve2");
-
+                    avoidEmptyCurve(toneCurve.curve2);
                     if (pedited) {
                         pedited->toneCurve.curve2 = true;
                     }
@@ -4019,7 +4029,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Black & White", "LuminanceCurve"))      {
                 blackwhite.luminanceCurve = keyFile.get_double_list ("Black & White", "LuminanceCurve");
-
+                avoidEmptyCurve(blackwhite.luminanceCurve);
                 if (pedited) {
                     pedited->blackwhite.luminanceCurve = true;
                 }
@@ -4027,7 +4037,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Black & White", "BeforeCurve"))         {
                 blackwhite.beforeCurve    = keyFile.get_double_list ("Black & White", "BeforeCurve");
-
+                avoidEmptyCurve(blackwhite.beforeCurve);
                 if (pedited) {
                     pedited->blackwhite.beforeCurve = true;
                 }
@@ -4061,7 +4071,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Black & White", "AfterCurve"))          {
                 blackwhite.afterCurve     = keyFile.get_double_list ("Black & White", "AfterCurve");
-
+                avoidEmptyCurve(blackwhite.afterCurve);
                 if (pedited) {
                     pedited->blackwhite.afterCurve = true;
                 }
@@ -4264,7 +4274,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Retinex", "CDCurve"))         {
                 retinex.cdcurve            = keyFile.get_double_list ("Retinex", "CDCurve");
-
+                avoidEmptyCurve(retinex.cdcurve);
                 if (pedited) {
                     pedited->retinex.cdcurve = true;
                 }
@@ -4272,7 +4282,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Retinex", "MAPCurve"))         {
                 retinex.mapcurve            = keyFile.get_double_list ("Retinex", "MAPCurve");
-
+                avoidEmptyCurve(retinex.mapcurve);
                 if (pedited) {
                     pedited->retinex.mapcurve = true;
                 }
@@ -4280,7 +4290,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Retinex", "CDHCurve"))         {
                 retinex.cdHcurve            = keyFile.get_double_list ("Retinex", "CDHCurve");
-
+                avoidEmptyCurve(retinex.cdHcurve);
                 if (pedited) {
                     pedited->retinex.cdHcurve = true;
                 }
@@ -4288,7 +4298,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Retinex", "LHCurve"))         {
                 retinex.lhcurve            = keyFile.get_double_list ("Retinex", "LHCurve");
-
+                avoidEmptyCurve(retinex.lhcurve);
                 if (pedited) {
                     pedited->retinex.lhcurve = true;
                 }
@@ -4338,7 +4348,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Retinex", "TransmissionCurve"))         {
                 retinex.transmissionCurve            = keyFile.get_double_list ("Retinex", "TransmissionCurve");
-
+                avoidEmptyCurve(retinex.transmissionCurve);
                 if (pedited) {
                     pedited->retinex.transmissionCurve = true;
                 }
@@ -4347,7 +4357,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Retinex", "GainTransmissionCurve"))         {
                 retinex.gaintransmissionCurve            = keyFile.get_double_list ("Retinex", "GainTransmissionCurve");
-
+                avoidEmptyCurve(retinex.gaintransmissionCurve);
                 if (pedited) {
                     pedited->retinex.gaintransmissionCurve = true;
                 }
@@ -4447,7 +4457,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "LCurve"))          {
                 labCurve.lcurve             = keyFile.get_double_list ("Luminance Curve", "LCurve");
-
+                avoidEmptyCurve(labCurve.lcurve);
                 if (pedited) {
                     pedited->labCurve.lcurve = true;
                 }
@@ -4455,7 +4465,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "aCurve"))          {
                 labCurve.acurve             = keyFile.get_double_list ("Luminance Curve", "aCurve");
-
+                avoidEmptyCurve(labCurve.acurve);
                 if (pedited) {
                     pedited->labCurve.acurve = true;
                 }
@@ -4463,7 +4473,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "bCurve"))          {
                 labCurve.bcurve             = keyFile.get_double_list ("Luminance Curve", "bCurve");
-
+                avoidEmptyCurve(labCurve.bcurve);
                 if (pedited) {
                     pedited->labCurve.bcurve = true;
                 }
@@ -4471,7 +4481,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "ccCurve"))         {
                 labCurve.cccurve            = keyFile.get_double_list ("Luminance Curve", "ccCurve");
-
+                avoidEmptyCurve(labCurve.cccurve);
                 if (pedited) {
                     pedited->labCurve.cccurve = true;
                 }
@@ -4479,7 +4489,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "chCurve"))         {
                 labCurve.chcurve            = keyFile.get_double_list ("Luminance Curve", "chCurve");
-
+                avoidEmptyCurve(labCurve.chcurve);
                 if (pedited) {
                     pedited->labCurve.chcurve = true;
                 }
@@ -4487,7 +4497,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "lhCurve"))         {
                 labCurve.lhcurve            = keyFile.get_double_list ("Luminance Curve", "lhCurve");
-
+                avoidEmptyCurve(labCurve.lhcurve);
                 if (pedited) {
                     pedited->labCurve.lhcurve = true;
                 }
@@ -4495,7 +4505,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "hhCurve"))         {
                 labCurve.hhcurve            = keyFile.get_double_list ("Luminance Curve", "hhCurve");
-
+                avoidEmptyCurve(labCurve.hhcurve);
                 if (pedited) {
                     pedited->labCurve.hhcurve = true;
                 }
@@ -4503,7 +4513,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "LcCurve"))         {
                 labCurve.lccurve            = keyFile.get_double_list ("Luminance Curve", "LcCurve");
-
+                avoidEmptyCurve(labCurve.lccurve);
                 if (pedited) {
                     pedited->labCurve.lccurve = true;
                 }
@@ -4511,7 +4521,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Luminance Curve", "ClCurve"))         {
                 labCurve.clcurve            = keyFile.get_double_list ("Luminance Curve", "ClCurve");
-
+                avoidEmptyCurve(labCurve.clcurve);
                 if (pedited) {
                     pedited->labCurve.clcurve = true;
                 }
@@ -4776,7 +4786,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Vibrance", "SkinTonesCurve"))         {
                 vibrance.skintonescurve     = keyFile.get_double_list ("Vibrance", "SkinTonesCurve");
-
+                avoidEmptyCurve(vibrance.skintonescurve);
                 if (pedited) {
                     pedited->vibrance.skintonescurve = true;
                 }
@@ -4879,7 +4889,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Defringing", "HueCurve"))       {
                 defringe.huecurve  = keyFile.get_double_list ("Defringing", "HueCurve");
-
+                avoidEmptyCurve(defringe.huecurve);
                 if (pedited) {
                     pedited->defringe.huecurve = true;
                 }
@@ -5122,7 +5132,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             if (ppVersion > 200) {
                 if (keyFile.has_key ("Color appearance", "Curve"))          {
                     colorappearance.curve         = keyFile.get_double_list ("Color appearance", "Curve");
-
+                    avoidEmptyCurve(colorappearance.curve);
                     if (pedited) {
                         pedited->colorappearance.curve = true;
                     }
@@ -5130,7 +5140,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (keyFile.has_key ("Color appearance", "Curve2"))         {
                     colorappearance.curve2        = keyFile.get_double_list ("Color appearance", "Curve2");
-
+                    avoidEmptyCurve(colorappearance.curve2);
                     if (pedited) {
                         pedited->colorappearance.curve2 = true;
                     }
@@ -5138,7 +5148,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (keyFile.has_key ("Color appearance", "Curve3"))         {
                     colorappearance.curve3        = keyFile.get_double_list ("Color appearance", "Curve3");
-
+                    avoidEmptyCurve(colorappearance.curve3);
                     if (pedited) {
                         pedited->colorappearance.curve3 = true;
                     }
@@ -5300,7 +5310,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Directional Pyramid Denoising", "LCurve"))          {
                 dirpyrDenoise.lcurve             = keyFile.get_double_list ("Directional Pyramid Denoising", "LCurve");
-
+                avoidEmptyCurve(dirpyrDenoise.lcurve);
                 if (pedited) {
                     pedited->dirpyrDenoise.lcurve = true;
                 }
@@ -5308,7 +5318,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Directional Pyramid Denoising", "CCCurve"))          {
                 dirpyrDenoise.cccurve             = keyFile.get_double_list ("Directional Pyramid Denoising", "CCCurve");
-
+                avoidEmptyCurve(dirpyrDenoise.cccurve);
                 if (pedited) {
                     pedited->dirpyrDenoise.cccurve = true;
                 }
@@ -6580,7 +6590,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "ContrastCurve")) {
                 wavelet.ccwcurve = keyFile.get_double_list ("Wavelet", "ContrastCurve");
-
+                avoidEmptyCurve(wavelet.ccwcurve);
                 if (pedited) {
                     pedited->wavelet.ccwcurve = true;
                 }
@@ -6588,7 +6598,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "OpacityCurveRG"))    {
                 wavelet.opacityCurveRG = keyFile.get_double_list ("Wavelet", "OpacityCurveRG");
-
+                avoidEmptyCurve(wavelet.opacityCurveRG);
                 if (pedited) {
                     pedited->wavelet.opacityCurveRG = true;
                 }
@@ -6596,7 +6606,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "OpacityCurveBY"))    {
                 wavelet.opacityCurveBY = keyFile.get_double_list ("Wavelet", "OpacityCurveBY");
-
+                avoidEmptyCurve(wavelet.opacityCurveBY);
                 if (pedited) {
                     pedited->wavelet.opacityCurveBY = true;
                 }
@@ -6604,7 +6614,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "OpacityCurveW"))    {
                 wavelet.opacityCurveW = keyFile.get_double_list ("Wavelet", "OpacityCurveW");
-
+                avoidEmptyCurve(wavelet.opacityCurveW);
                 if (pedited) {
                     pedited->wavelet.opacityCurveW = true;
                 }
@@ -6612,7 +6622,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "OpacityCurveWL"))    {
                 wavelet.opacityCurveWL = keyFile.get_double_list ("Wavelet", "OpacityCurveWL");
-
+                avoidEmptyCurve(wavelet.opacityCurveWL);
                 if (pedited) {
                     pedited->wavelet.opacityCurveWL = true;
                 }
@@ -6620,7 +6630,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "HHcurve"))    {
                 wavelet.hhcurve = keyFile.get_double_list ("Wavelet", "HHcurve");
-
+                avoidEmptyCurve(wavelet.hhcurve);
                 if (pedited) {
                     pedited->wavelet.hhcurve = true;
                 }
@@ -6628,7 +6638,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "CHcurve"))    {
                 wavelet.Chcurve = keyFile.get_double_list ("Wavelet", "CHcurve");
-
+                avoidEmptyCurve(wavelet.Chcurve);
                 if (pedited) {
                     pedited->wavelet.Chcurve = true;
                 }
@@ -6636,7 +6646,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("Wavelet", "WavclCurve"))    {
                 wavelet.wavclCurve = keyFile.get_double_list ("Wavelet", "WavclCurve");
-
+                avoidEmptyCurve(wavelet.wavclCurve);
                 if (pedited) {
                     pedited->wavelet.wavclCurve = true;
                 }
@@ -6966,7 +6976,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             if (ppVersion >= 300) {
                 if (keyFile.has_key ("HSV Equalizer", "HCurve")) {
                     hsvequalizer.hcurve = keyFile.get_double_list ("HSV Equalizer", "HCurve");
-
+                    avoidEmptyCurve(hsvequalizer.hcurve);
                     if (pedited) {
                         pedited->hsvequalizer.hcurve = true;
                     }
@@ -6974,7 +6984,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (keyFile.has_key ("HSV Equalizer", "SCurve")) {
                     hsvequalizer.scurve = keyFile.get_double_list ("HSV Equalizer", "SCurve");
-
+                    avoidEmptyCurve(hsvequalizer.scurve);
                     if (pedited) {
                         pedited->hsvequalizer.scurve = true;
                     }
@@ -6982,7 +6992,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (keyFile.has_key ("HSV Equalizer", "VCurve")) {
                     hsvequalizer.vcurve = keyFile.get_double_list ("HSV Equalizer", "VCurve");
-
+                    avoidEmptyCurve(hsvequalizer.vcurve);
                     if (pedited) {
                         pedited->hsvequalizer.vcurve = true;
                     }
@@ -7002,7 +7012,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("RGB Curves", "rCurve")) {
                 rgbCurves.rcurve = keyFile.get_double_list ("RGB Curves", "rCurve");
-
+                avoidEmptyCurve(rgbCurves.rcurve);
                 if (pedited) {
                     pedited->rgbCurves.rcurve = true;
                 }
@@ -7010,7 +7020,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("RGB Curves", "gCurve")) {
                 rgbCurves.gcurve = keyFile.get_double_list ("RGB Curves", "gCurve");
-
+                avoidEmptyCurve(rgbCurves.gcurve);
                 if (pedited) {
                     pedited->rgbCurves.gcurve = true;
                 }
@@ -7018,7 +7028,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("RGB Curves", "bCurve")) {
                 rgbCurves.bcurve  = keyFile.get_double_list ("RGB Curves", "bCurve");
-
+                avoidEmptyCurve(rgbCurves.bcurve);
                 if (pedited) {
                     pedited->rgbCurves.bcurve = true;
                 }
@@ -7061,7 +7071,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("ColorToning", "OpacityCurve"))  {
                 colorToning.opacityCurve = keyFile.get_double_list ("ColorToning", "OpacityCurve");
-
+                avoidEmptyCurve(colorToning.opacityCurve);
                 if (pedited) {
                     pedited->colorToning.opacityCurve = true;
                 }
@@ -7069,7 +7079,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("ColorToning", "ColorCurve"))    {
                 colorToning.colorCurve = keyFile.get_double_list ("ColorToning", "ColorCurve");
-
+                avoidEmptyCurve(colorToning.colorCurve);
                 if (pedited) {
                     pedited->colorToning.colorCurve = true;
                 }
@@ -7127,7 +7137,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("ColorToning", "ClCurve"))       {
                 colorToning.clcurve = keyFile.get_double_list ("ColorToning", "ClCurve");
-
+                avoidEmptyCurve(colorToning.clcurve);
                 if (pedited) {
                     pedited->colorToning.clcurve = true;
                 }
@@ -7135,7 +7145,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
             if (keyFile.has_key ("ColorToning", "Cl2Curve"))      {
                 colorToning.cl2curve = keyFile.get_double_list ("ColorToning", "Cl2Curve");
-
+                avoidEmptyCurve(colorToning.cl2curve);
                 if (pedited) {
                     pedited->colorToning.cl2curve = true;
                 }
