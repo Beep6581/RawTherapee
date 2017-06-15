@@ -1608,10 +1608,10 @@ void Tag::toString (char* buffer, int ofs)
 std::string Tag::nameToString (int i)
 {
 
-    char buffer[1024];
+    char buffer[1025];
 
     if (attrib) {
-        strcpy (buffer, attrib->name);
+        strncpy (buffer, attrib->name, 1024);
     } else {
         sprintf (buffer, "0x%x", tag);
     }
@@ -3115,8 +3115,8 @@ bool extractLensInfo (std::string &fullname, double &minFocal, double &maxFocal,
     maxFocal = 0.0;
     maxApertureAtMinFocal = 0.0;
     maxApertureAtMaxFocal = 0.0;
-    char buffer[1024];
-    strcpy (buffer, fullname.c_str());
+    char buffer[1025];
+    strncpy (buffer, fullname.c_str(), 1024);
     char *pF = strstr (buffer, "f/" );
 
     if ( pF ) {
