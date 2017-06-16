@@ -38,7 +38,7 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
-    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
+    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
 {
     thumbnail = thm;
 

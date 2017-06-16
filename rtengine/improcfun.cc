@@ -5471,7 +5471,6 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
         editID = pipetteBuffer->getEditID();
 
         if (editID != EUID_None) {
-            editPipette = true;
 
             switch  (pipetteBuffer->getDataProvider()->getCurrSubscriber()->getPipetteBufferType()) {
                 case (BT_IMAGEFLOAT):
@@ -5481,6 +5480,7 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                     break;
 
                 case (BT_SINGLEPLANE_FLOAT):
+                    editPipette = true;
                     editWhatever = pipetteBuffer->getSinglePlaneBuffer();
                     break;
             }

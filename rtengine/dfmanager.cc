@@ -211,9 +211,12 @@ void dfInfo::updateRawImage()
 
 void dfInfo::updateBadPixelList( RawImage *df )
 {
+    if(!df) {
+        return;
+    }
     const float threshold = 10.f / 8.f;
 
-    if( ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS ) {
+    if( df->getSensorType() == ST_BAYER || df->getSensorType() == ST_FUJI_XTRANS ) {
         std::vector<badPix> badPixelsTemp;
 
         #pragma omp parallel

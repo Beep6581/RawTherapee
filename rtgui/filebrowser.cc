@@ -125,8 +125,21 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
 }
 
-FileBrowser::FileBrowser ()
-    : tbl(nullptr), numFiltered(0)
+FileBrowser::FileBrowser () :
+    menuLabel(nullptr),
+    selectDF(nullptr),
+    thisIsDF(nullptr),
+    autoDF(nullptr),
+    selectFF(nullptr),
+    thisIsFF(nullptr),
+    autoFF(nullptr),
+    clearFromCache(nullptr),
+    clearFromCacheFull(nullptr),
+    colorLabel_actionData(nullptr),
+    bppcl(nullptr),
+    tbl(nullptr),
+    numFiltered(0),
+    exportPanel(nullptr)
 {
     session_id_ = 0;
 

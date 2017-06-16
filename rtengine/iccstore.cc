@@ -216,15 +216,19 @@ rtengine::ProfileContent::ProfileContent(const Glib::ustring& fileName)
     }
 
     fseek(f, 0, SEEK_END);
-    const long length = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    char* d = new char[length + 1];
-    fread(d, length, 1, f);
-    d[length] = 0;
+    long length = ftell(f);
+    if(length > 0) {
+        char* d = new char[length + 1];
+        fseek(f, 0, SEEK_SET);
+        length = fread(d, length, 1, f);
+        d[length] = 0;
+        data.assign(d, length);
+        delete[] d;
+    } else {
+        data.clear();
+    }
     fclose(f);
 
-    data.assign(d, length);
-    delete[] d;
 }
 
 rtengine::ProfileContent::ProfileContent(cmsHPROFILE hProfile)
