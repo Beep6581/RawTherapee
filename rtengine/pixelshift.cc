@@ -773,10 +773,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         continue;
                     }
                 }
-
-                if(showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
-                    red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
-                }
             }
         }
 
