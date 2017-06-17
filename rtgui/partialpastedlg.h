@@ -101,8 +101,6 @@ public:
     Gtk::CheckButton* raw_black;
     Gtk::CheckButton* raw_ca_autocorrect;
     Gtk::CheckButton* raw_caredblue;
-    Gtk::CheckButton* raw_cablue;
-    Gtk::CheckButton* raw_caautostrength;
     Gtk::CheckButton* raw_hotpix_filt;
     Gtk::CheckButton* raw_deadpix_filt;
     Gtk::CheckButton* raw_linenoise;

@@ -41,7 +41,7 @@ static Glib::ustring makeFolderLabel(Glib::ustring path)
     return path;
 }
 
-BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog)
+BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 {
 
     batchQueue = Gtk::manage( new BatchQueue(aFileCatalog) );

@@ -21,7 +21,7 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(nullptr), cursor_type( CSArrow)
+MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(nullptr), cursor_type(CSArrow), graphW(0), graphH(0), mod_type(Gdk::MODIFIER_MASK), cursorX(0), cursorY(0), snapToMinDistX(0.0), snapToMinDistY(0.0), snapToValX(0.0), snapToValY(0.0)
 {
 
     graphX = get_allocation().get_width() - RADIUS * 2;

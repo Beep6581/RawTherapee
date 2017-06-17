@@ -822,7 +822,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
         tpp->init ();
     }
 
-    if (!initial_ && tpp) {
+    if (!initial_) {
         tw = tpp->getImageWidth (getProcParamsU(), th, imgRatio);    // this might return 0 if image was just building
     }
 }

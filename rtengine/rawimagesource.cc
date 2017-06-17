@@ -5010,9 +5010,9 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 
     //    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
 
-    double reds   = avg_r / rn * refwb_red;
-    double greens = avg_g / gn * refwb_green;
-    double blues  = avg_b / bn * refwb_blue;
+    double reds   = avg_r / std::max(1, rn) * refwb_red;
+    double greens = avg_g / std::max(1, gn) * refwb_green;
+    double blues  = avg_b / std::max(1, bn) * refwb_blue;
 
     redAWBMul   = rm = imatrices.rgb_cam[0][0] * reds + imatrices.rgb_cam[0][1] * greens + imatrices.rgb_cam[0][2] * blues;
     greenAWBMul = gm = imatrices.rgb_cam[1][0] * reds + imatrices.rgb_cam[1][1] * greens + imatrices.rgb_cam[1][2] * blues;

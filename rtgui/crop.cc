@@ -54,7 +54,7 @@ int notifyListenerUI (void* data)
 
 }
 
-Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true)
+Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true), opt(0), wDirty(true), hDirty(true), xDirty(true), yDirty(true), lastFixRatio(true)
 {
 
     clistener = nullptr;
