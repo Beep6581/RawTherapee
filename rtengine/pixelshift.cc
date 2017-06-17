@@ -561,83 +561,98 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     float blueBrightness[4] = {1.f, 1.f, 1.f, 1.f};
 
     if(equalBrightness) {
-        LUT<uint32_t> *histogreen[4];
-        LUT<uint32_t> *histored[4];
-        LUT<uint32_t> *histoblue[4];
-
-        for(int i = 0; i < 4; ++i) {
-            histogreen[i] = new LUT<uint32_t>(65536);
-            histogreen[i]->clear();
-            histored[i] = new LUT<uint32_t>(65536);
-            histored[i]->clear();
-            histoblue[i] = new LUT<uint32_t>(65536);
-            histoblue[i]->clear();
-        }
-
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-            LUT<uint32_t> *histogreenThr[4];
-            LUT<uint32_t> *historedThr[4];
-            LUT<uint32_t> *histoblueThr[4];
+        if(rawDirty) {
+            LUT<uint32_t> *histogreen[4];
+            LUT<uint32_t> *histored[4];
+            LUT<uint32_t> *histoblue[4];
 
             for(int i = 0; i < 4; ++i) {
-                histogreenThr[i] = new LUT<uint32_t>(65536);
-                histogreenThr[i]->clear();
-                historedThr[i] = new LUT<uint32_t>(65536);
-                historedThr[i]->clear();
-                histoblueThr[i] = new LUT<uint32_t>(65536);
-                histoblueThr[i]->clear();
+                histogreen[i] = new LUT<uint32_t>(65536);
+                histogreen[i]->clear();
+                histored[i] = new LUT<uint32_t>(65536);
+                histored[i]->clear();
+                histoblue[i] = new LUT<uint32_t>(65536);
+                histoblue[i]->clear();
             }
 
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16) nowait
+            #pragma omp parallel
+#endif
+            {
+                LUT<uint32_t> *histogreenThr[4];
+                LUT<uint32_t> *historedThr[4];
+                LUT<uint32_t> *histoblueThr[4];
+
+                for(int i = 0; i < 4; ++i) {
+                    histogreenThr[i] = new LUT<uint32_t>(65536);
+                    histogreenThr[i]->clear();
+                    historedThr[i] = new LUT<uint32_t>(65536);
+                    historedThr[i]->clear();
+                    histoblueThr[i] = new LUT<uint32_t>(65536);
+                    histoblueThr[i]->clear();
+                }
+
+#ifdef _OPENMP
+                #pragma omp for schedule(dynamic,16) nowait
 #endif
 
-            for(int i = winy + 1; i < winh - 1; ++i) {
-                int j = winx + 1;
-                int c = FC(i, j);
+                for(int i = winy + 1; i < winh - 1; ++i) {
+                    int j = winx + 1;
+                    int c = FC(i, j);
 
-                bool bluerow = (c + FC(i, j + 1)) == 3;
+                    bool bluerow = (c + FC(i, j + 1)) == 3;
 
-                for(int j = winx + 1, offset = FC(i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
-                    (*histogreenThr[1 - offset])[(*rawDataFrames[1 - offset])[i - offset + 1][j]]++;
-                    (*histogreenThr[3 - offset])[(*rawDataFrames[3 - offset])[i + offset][j + 1]]++;
+                    for(int j = winx + 1, offset = FC(i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
+                        (*histogreenThr[1 - offset])[(*rawDataFrames[1 - offset])[i - offset + 1][j]]++;
+                        (*histogreenThr[3 - offset])[(*rawDataFrames[3 - offset])[i + offset][j + 1]]++;
 
-                    if(bluerow) {
-                        (*historedThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
-                        (*histoblueThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
-                    } else {
-                        (*historedThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
-                        (*histoblueThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
+                        if(bluerow) {
+                            (*historedThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
+                            (*histoblueThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
+                        } else {
+                            (*historedThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
+                            (*histoblueThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
+                        }
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp critical
+#endif
+                {
+                    for(int i = 0; i < 4; ++i) {
+                        (*histogreen[i]) += (*histogreenThr[i]);
+                        delete histogreenThr[i];
+                        (*histored[i]) += (*historedThr[i]);
+                        delete historedThr[i];
+                        (*histoblue[i]) += (*histoblueThr[i]);
+                        delete histoblueThr[i];
                     }
                 }
             }
 
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            {
-                for(int i = 0; i < 4; ++i) {
-                    (*histogreen[i]) += (*histogreenThr[i]);
-                    delete histogreenThr[i];
-                    (*histored[i]) += (*historedThr[i]);
-                    delete historedThr[i];
-                    (*histoblue[i]) += (*histoblueThr[i]);
-                    delete histoblueThr[i];
-                }
+            calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histored, redBrightness);
+            calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histoblue, blueBrightness);
+            calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 2, histogreen, greenBrightness);
+
+            for(int i = 0; i < 4; ++i) {
+                psRedBrightness[i] = redBrightness[i];
+                psGreenBrightness[i] = greenBrightness[i];
+                psBlueBrightness[i] = blueBrightness[i];
             }
-        }
+            rawDirty = false;
 
-        calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histored, redBrightness);
-        calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histoblue, blueBrightness);
-        calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 2, histogreen, greenBrightness);
-
-        for(int i = 0; i < 4; ++i) {
-            delete histored[i];
-            delete histoblue[i];
-            delete histogreen[i];
+            for(int i = 0; i < 4; ++i) {
+                delete histored[i];
+                delete histoblue[i];
+                delete histogreen[i];
+            }
+        } else {
+            for(int i = 0; i < 4; ++i) {
+                redBrightness[i] = psRedBrightness[i];
+                greenBrightness[i] = psGreenBrightness[i];
+                blueBrightness[i] = psBlueBrightness[i];
+            }
         }
     }
 
