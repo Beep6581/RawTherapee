@@ -2210,7 +2210,7 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, const Reti
             }
     }
     */
-    if(retinexParams.gammaretinex != "none" && retinexParams.str != 0) {//gamma
+    if(retinexParams.gammaretinex != "none" && retinexParams.str != 0 && retinexgamtab) {//gamma
 
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -5005,7 +5005,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     }
 
     if( settings->verbose ) {
-        printf ("AVG: %g %g %g\n", avg_r / rn, avg_g / gn, avg_b / bn);
+        printf ("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
     //    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
@@ -5134,9 +5134,9 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
                 }
             }
 
-            rloc /= rnbrs;
-            gloc /= gnbrs;
-            bloc /= bnbrs;
+            rloc /= std::max(1, rnbrs);
+            gloc /= std::max(1, gnbrs);
+            bloc /= std::max(1, bnbrs);
 
             if (rloc * initialGain < 64000. && gloc * initialGain < 64000. && bloc * initialGain < 64000.) {
                 reds += rloc;
@@ -5222,9 +5222,9 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     if (2u * rn < red.size()) {
         return ColorTemp (equal);
     } else {
-        reds = reds / rn * refwb_red;
-        greens = greens / rn * refwb_green;
-        blues = blues / rn * refwb_blue;
+        reds = reds / std::max(1u, rn) * refwb_red;
+        greens = greens / std::max(1u, rn) * refwb_green;
+        blues = blues / std::max(1u, rn) * refwb_blue;
 
         double rm = imatrices.rgb_cam[0][0] * reds + imatrices.rgb_cam[0][1] * greens + imatrices.rgb_cam[0][2] * blues;
         double gm = imatrices.rgb_cam[1][0] * reds + imatrices.rgb_cam[1][1] * greens + imatrices.rgb_cam[1][2] * blues;

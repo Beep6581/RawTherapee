@@ -184,7 +184,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
                     n++;
                 }
 
-                b = cg[j] + b / n;
+                b = cg[j] + b / std::max(1, n);
                 ab[j] = b;
             } else {
                 // linear R-G interp. horizontally
@@ -309,7 +309,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
                     n++;
                 }
 
-                b = g_mul * cg[j] + b / n;
+                b = g_mul * cg[j] + b / std::max(1, n);
                 ab[jx] = b;
             } else {
                 // linear R-G interp. horizontally

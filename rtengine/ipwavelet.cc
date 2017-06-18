@@ -923,9 +923,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                         ind = 1;
                         //Flat curve for Contrast=f(H) in levels
-                        FlatCurve* ChCurve = nullptr;//curve C=f(H)
+                        FlatCurve* ChCurve = new FlatCurve(params->wavelet.Chcurve); //curve C=f(H)
                         bool Chutili = false;
-                        ChCurve = new FlatCurve(params->wavelet.Chcurve);
 
                         if (!ChCurve || ChCurve->isIdentity()) {
                             if (ChCurve) {
@@ -953,9 +952,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 }
 
                 //Flat curve for H=f(H) in residual image
-                FlatCurve* hhCurve = nullptr;//curve H=f(H)
+                FlatCurve* hhCurve = new FlatCurve(params->wavelet.hhcurve); //curve H=f(H)
                 bool hhutili = false;
-                hhCurve = new FlatCurve(params->wavelet.hhcurve);
 
                 if (!hhCurve || hhCurve->isIdentity()) {
                     if (hhCurve) {
