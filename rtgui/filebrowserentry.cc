@@ -60,9 +60,7 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
         iconsLoaded = true;
     }
 
-    if (thm) {
-        thm->addThumbnailListener (this);
-    }
+    thumbnail->addThumbnailListener (this);
 }
 
 FileBrowserEntry::~FileBrowserEntry ()

@@ -1111,8 +1111,10 @@ bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
             curve.y.insert (ity, 0);
 
             // the graph is refreshed only if a new point is created (snapped to a pixel)
-            curve.x.at(lit_point) = clampedX;
-            curve.y.at(lit_point) = clampedY;
+            if (lit_point >= 0) {
+                curve.x.at(lit_point) = clampedX;
+                curve.y.at(lit_point) = clampedY;
+            }
 
             if (lit_point > -1 && grab_point == -1 && coordinateAdjuster->is_visible()) {
                 std::vector<double> position;

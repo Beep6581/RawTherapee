@@ -1258,7 +1258,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     omp_set_nested(oldNested);
 #endif
 
-    if(numtiles > 1) {
+    if(numtiles != 1) {
         dst->CopyFrom(dsttmp);
         delete dsttmp;
     }
