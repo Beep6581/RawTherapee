@@ -369,12 +369,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 }
             }
         }
-    } else if(bayerParams.pixelShiftMotionCorrectionMethod != RAWParams::BayerSensor::Off) {
-        if(bayerParams.pixelShiftLmmse) {
-            lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
-        } else {
-            amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
-        }
     }
 
     const bool adaptive = bayerParams.pixelShiftAutomatic;
@@ -647,6 +641,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 delete histoblue[i];
                 delete histogreen[i];
             }
+            if(plistener) {
+                plistener->setProgress(0.15);
+            }
+
         } else {
             for(int i = 0; i < 4; ++i) {
                 redBrightness[i] = psRedBrightness[i];
@@ -654,11 +652,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 blueBrightness[i] = psBlueBrightness[i];
             }
         }
-    }
-
-    if(!equalChannel) {
-        for(int i = 0; i < 4; ++i) {
-            redBrightness[i] = blueBrightness[i] = greenBrightness[i];
+        if(!equalChannel) {
+            for(int i = 0; i < 4; ++i) {
+                redBrightness[i] = blueBrightness[i] = greenBrightness[i];
+            }
         }
     }
 
@@ -697,6 +694,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * ngbright[ng ^ 1][2 - offset];
                 offset ^= 1; // 0 => 1 or 1 => 0
             }
+        }
+
+        if(plistener) {
+            plistener->setProgress(0.3);
         }
 
         // now that the temporary planes are filled for easy access we do the motion detection
@@ -776,6 +777,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             }
         }
 
+        if(plistener) {
+            plistener->setProgress(0.45);
+        }
+
         if(blurMap) {
 #ifdef _OPENMP
             #pragma omp parallel
@@ -783,6 +788,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             {
                 gaussianBlur(psMask, psMask, winw, winh, sigma);
             }
+            if(plistener) {
+                plistener->setProgress(0.6);
+            }
+
         }
 
         array2D<uint8_t> mask(winw, winh, ARRAY2D_CLEAR_DATA);
@@ -816,11 +825,19 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             }
         }
 
+        if(plistener) {
+            plistener->setProgress(0.75);
+        }
+
         if(holeFill) {
             array2D<uint8_t> maskInv(winw, winh);
             invertMask(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), mask, maskInv);
             floodFill4(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), maskInv);
             xorMasks(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), maskInv, mask);
+        }
+
+        if(plistener) {
+            plistener->setProgress(0.9);
         }
 
 #ifdef _OPENMP
