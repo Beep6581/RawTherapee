@@ -38,20 +38,13 @@ struct _FileFormat
 #define N_(s) s
 #define _(s) s
 
-/* some magic numbers taken from
- * http://www.garykessler.net/library/file_sigs.html
- *
- * see also
- * http://fileformats.archiveteam.org/wiki/Cameras_and_Digital_Image_Sensors
- */
 static const FileFormat file_formats[] =
 {
   {
     N_("Raw Canon"),
     "image/x-canon-cr2,image/x-canon-crw",
     "cr2,crw",
-    "0,string,II*\\0\\020\\0\\0\\0CR,"             /* cr2  */
-    "0,string,II\\024\\0\\0\\0HEAPCCDR,"           /* crw  */
+    NULL,
 
     "file-rawtherapee-canon-load",
     "Load files in the Canon raw formats via rawtherapee",
@@ -204,7 +197,7 @@ static const FileFormat file_formats[] =
     N_("Raw Olympus ORF"),
     "image/x-olympus-orf",
     "orf",
-    "0,string,IIRO,0,string,MMOR,0,string,IIRS",
+    NULL,
 
     "file-rawtherapee-orf-load",
     "Load files in the ORF raw format via rawtherapee",
@@ -248,7 +241,7 @@ static const FileFormat file_formats[] =
     N_("Raw Fujifilm RAF"),
     "image/x-fuji-raf",
     "raf",
-    "0,string,FUJIFILMCCD-RAW",
+    NULL,
 
     "file-rawtherapee-raf-load",
     "Load files in the RAF raw format via rawtherapee",
@@ -259,7 +252,7 @@ static const FileFormat file_formats[] =
     N_("Raw Panasonic"),
     "image/x-panasonic-raw,image/x-panasonic-rw2",
     "raw,rw2",
-    "0,string,IIU\\0",
+    NULL,
 
     "file-rawtherapee-panasonic-load",
     "Load files in the Panasonic raw formats via rawtherapee",
@@ -303,7 +296,7 @@ static const FileFormat file_formats[] =
     N_("Raw Sigma X3F"),
     "image/x-sigma-x3f",
     "x3f",
-    "0,string,FOVb",
+    NULL,
 
     "file-rawtherapee-x3f-load",
     "Load files in the X3F raw format via rawtherapee",

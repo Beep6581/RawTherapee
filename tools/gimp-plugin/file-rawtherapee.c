@@ -51,8 +51,6 @@ static gint32   load_image           (const gchar      *filename,
 
 static gint32   load_thumbnail_image (const gchar      *filename,
                                       gint             thumb_size,
-                                      gint             *width,
-                                      gint             *height,
                                       GError          **error);
 
 const GimpPlugInInfo PLUG_IN_INFO =
@@ -89,9 +87,7 @@ query (void)
 
   static const GimpParamDef thumb_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Thumbnail image"               },
-    { GIMP_PDB_INT32,  "image-width",  "Width of full-sized image"     },
-    { GIMP_PDB_INT32,  "image-height", "Height of full-sized image"    }
+    { GIMP_PDB_IMAGE,  "image",        "Thumbnail image"               }
   };
 
   /* check if rawtherapee is installed
@@ -220,24 +216,15 @@ run (const gchar      *name,
         }
       else if (! strcmp (name, LOAD_THUMB_PROC))
         {
-          gint width  = 0;
-          gint height = 0;
-
           image_ID = load_thumbnail_image (param[0].data.d_string,
                                            param[1].data.d_int32,
-                                           &width,
-                                           &height,
                                            &error);
 
           if (image_ID != -1)
             {
-              *nreturn_vals = 6;
+              *nreturn_vals = 4;
               values[1].type         = GIMP_PDB_IMAGE;
               values[1].data.d_image = image_ID;
-              values[2].type         = GIMP_PDB_INT32;
-              values[2].data.d_int32 = width;
-              values[3].type         = GIMP_PDB_INT32;
-              values[3].data.d_int32 = height;
               values[4].type         = GIMP_PDB_INT32;
               values[4].data.d_int32 = GIMP_RGB_IMAGE;
               values[5].type         = GIMP_PDB_INT32;
@@ -320,8 +307,6 @@ load_image (const gchar  *filename,
 static gint32
 load_thumbnail_image (const gchar   *filename,
                       gint           thumb_size,
-                      gint          *width,
-                      gint          *height,
                       GError       **error)
 {
   gint32  image_ID         = -1;
@@ -400,8 +385,6 @@ load_thumbnail_image (const gchar   *filename,
   gimp_progress_init_printf (_("Opening thumbnail for '%s'"),
                              gimp_filename_to_utf8 (filename));
 
-  *width = *height = thumb_size;
-
   if (thumb_pp3_f &&
       g_spawn_sync (NULL,
                     argv,
@@ -422,15 +405,6 @@ load_thumbnail_image (const gchar   *filename,
                                  filename_out);
       if (image_ID != -1)
         {
-          /* /\* the size reported by raw files isn't precise, */
-          /*  * but it should be close enough to get an idea. */
-          /*  *\/ */
-          /* gchar *start_of_size = g_strstr_len (rawtherapee_stdout, */
-          /*                                      -1, */
-          /*                                      "[dt4gimp]"); */
-          /* if (start_of_size) */
-          /*   sscanf (start_of_size, "[dt4gimp] %d %d", width, height); */
-
           /* is this needed for thumbnails? */
           gimp_image_set_filename (image_ID, filename);
         }
