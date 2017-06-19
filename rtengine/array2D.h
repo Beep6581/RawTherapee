@@ -281,34 +281,6 @@ public:
         return (x > 0 && y > 0);
     }
 
-    array2D<T> & operator=( array2D<T> & rhs)
-    {
-        if (this != &rhs)
-
-        {
-            flags = rhs.flags;
-            lock = rhs.lock;
-            if (!owner) { // we can only copy same size data
-                if ((x != rhs.x) || (y != rhs.y)) {
-                    printf(" assignment error in array2D\n");
-                    printf(" sizes differ and not owner\n");
-                    raise( SIGSEGV);
-                }
-
-            } else {
-                ar_realloc(rhs.x, rhs.y);
-            }
-
-            // we could have been created from a different
-            // array format where each row is created by 'new'
-            for (int i = 0; i < y; i++) {
-                memcpy(ptr[i], rhs.ptr[i], x * sizeof(T));
-            }
-        }
-
-        return *this;
-    }
-
 };
 template<typename T, const size_t num>
 class multi_array2D

@@ -190,8 +190,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
         }
 
         // walking through the directory
-        Glib::Dir* dir = nullptr;
-        dir = new Glib::Dir (realPath);
+        Glib::Dir* dir = new Glib::Dir (realPath);
 
         for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
             currDir = *i;

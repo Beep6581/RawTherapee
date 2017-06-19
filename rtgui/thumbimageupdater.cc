@@ -184,11 +184,6 @@ ThumbImageUpdater::ThumbImageUpdater():
 {
 }
 
-ThumbImageUpdater::~ThumbImageUpdater()
-{
-    delete impl_;
-}
-
 void
 ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l)
 {

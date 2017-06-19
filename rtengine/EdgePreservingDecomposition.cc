@@ -425,7 +425,10 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     //Initialize the decomposition - setup memory, start rows, etc.
 
     MultiDiagonalSymmetricMatrix *ic = new MultiDiagonalSymmetricMatrix(n, mic);
-    ic->CreateDiagonal(0, 0);   //There's always a main diagonal in this type of decomposition.
+    if(!ic->CreateDiagonal(0, 0)) { //There's always a main diagonal in this type of decomposition.
+        delete ic;
+        return false;
+    }
     mic = 1;
 
     for(int ii = 1; ii < m; ii++) {
@@ -659,7 +662,7 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
     }
 }
 
-EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height)
+EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height) : a0(nullptr) , a_1(nullptr), a_w(nullptr), a_w_1(nullptr), a_w1(nullptr)
 {
     w = width;
     h = height;

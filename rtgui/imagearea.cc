@@ -25,7 +25,7 @@
 #include "../rtengine/refreshmap.h"
 #include "options.h"
 
-ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true)
+ImageArea::ImageArea (ImageAreaPanel* p) : parent(p), firstOpen(true), fullImageWidth(0), fullImageHeight(0)
 {
 
     infotext = "";

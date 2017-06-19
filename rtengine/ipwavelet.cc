@@ -923,9 +923,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet (LabImage * lab, LabImage * dst, in
 
                         ind = 1;
                         //Flat curve for Contrast=f(H) in levels
-                        FlatCurve* ChCurve = nullptr;//curve C=f(H)
+                        FlatCurve* ChCurve = new FlatCurve(params->wavelet.Chcurve); //curve C=f(H)
                         bool Chutili = false;
-                        ChCurve = new FlatCurve (params->wavelet.Chcurve);
 
                         if (!ChCurve || ChCurve->isIdentity()) {
                             if (ChCurve) {
@@ -953,9 +952,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet (LabImage * lab, LabImage * dst, in
                 }
 
                 //Flat curve for H=f(H) in residual image
-                FlatCurve* hhCurve = nullptr;//curve H=f(H)
+                FlatCurve* hhCurve = new FlatCurve(params->wavelet.hhcurve); //curve H=f(H)
                 bool hhutili = false;
-                hhCurve = new FlatCurve (params->wavelet.hhcurve);
 
                 if (!hhCurve || hhCurve->isIdentity()) {
                     if (hhCurve) {
@@ -1260,10 +1258,14 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet (LabImage * lab, LabImage * dst, in
     omp_set_nested (oldNested);
 #endif
 
-    if (numtiles > 1) {
-        dst->CopyFrom (dsttmp);
+    if(numtiles != 1) {
+        dst->CopyFrom(dsttmp);
         delete dsttmp;
     }
+
+#ifdef _DEBUG
+    delete MunsDebugInfo;
+#endif
 
 }
 
@@ -3400,14 +3402,18 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     bool useOpacity;
-    float mulOpacity;
+    float mulOpacity = 0.f;
 
     if (useChannelA) {
         useOpacity = cp.opaRG;
-        mulOpacity = cp.mulopaRG[level];
+        if(level < 9) {
+            mulOpacity = cp.mulopaRG[level];
+        }
     } else {
         useOpacity = cp.opaBY;
-        mulOpacity = cp.mulopaBY[level];
+        if(level < 9) {
+            mulOpacity = cp.mulopaBY[level];
+        }
     }
 
     if ((useOpacity && level < 9 && mulOpacity != 0.f) && cp.toningena) { //toning

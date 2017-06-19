@@ -169,6 +169,11 @@ public:
     {
         data = nullptr;
         reset();
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+        maxsv = ZEROV;
+        sizev = ZEROV;
+        sizeiv = _mm_setzero_si128();
+#endif
     }
 
     ~LUT()

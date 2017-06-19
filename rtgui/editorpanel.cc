@@ -212,10 +212,12 @@ private:
         spGamutCheck.show ();
     }
 
+#if !defined(__APPLE__)
     void profileBoxChanged ()
     {
         updateParameters ();
     }
+#endif
 
     void intentBoxChanged (int)
     {

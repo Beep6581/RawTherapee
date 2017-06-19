@@ -369,12 +369,6 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 }
             }
         }
-    } else if(bayerParams.pixelShiftMotionCorrectionMethod != RAWParams::BayerSensor::Off) {
-        if(bayerParams.pixelShiftLmmse) {
-            lmmse_interpolate_omp(winw, winh, rawData, red, green, blue, bayerParams.lmmse_iterations);
-        } else {
-            amaze_demosaic_RT(winx, winy, winw, winh, rawData, red, green, blue);
-        }
     }
 
     const bool adaptive = bayerParams.pixelShiftAutomatic;
@@ -561,89 +555,107 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
     float blueBrightness[4] = {1.f, 1.f, 1.f, 1.f};
 
     if(equalBrightness) {
-        LUT<uint32_t> *histogreen[4];
-        LUT<uint32_t> *histored[4];
-        LUT<uint32_t> *histoblue[4];
-
-        for(int i = 0; i < 4; ++i) {
-            histogreen[i] = new LUT<uint32_t>(65536);
-            histogreen[i]->clear();
-            histored[i] = new LUT<uint32_t>(65536);
-            histored[i]->clear();
-            histoblue[i] = new LUT<uint32_t>(65536);
-            histoblue[i]->clear();
-        }
-
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-            LUT<uint32_t> *histogreenThr[4];
-            LUT<uint32_t> *historedThr[4];
-            LUT<uint32_t> *histoblueThr[4];
+        if(rawDirty) {
+            LUT<uint32_t> *histogreen[4];
+            LUT<uint32_t> *histored[4];
+            LUT<uint32_t> *histoblue[4];
 
             for(int i = 0; i < 4; ++i) {
-                histogreenThr[i] = new LUT<uint32_t>(65536);
-                histogreenThr[i]->clear();
-                historedThr[i] = new LUT<uint32_t>(65536);
-                historedThr[i]->clear();
-                histoblueThr[i] = new LUT<uint32_t>(65536);
-                histoblueThr[i]->clear();
+                histogreen[i] = new LUT<uint32_t>(65536);
+                histogreen[i]->clear();
+                histored[i] = new LUT<uint32_t>(65536);
+                histored[i]->clear();
+                histoblue[i] = new LUT<uint32_t>(65536);
+                histoblue[i]->clear();
             }
 
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16) nowait
+            #pragma omp parallel
+#endif
+            {
+                LUT<uint32_t> *histogreenThr[4];
+                LUT<uint32_t> *historedThr[4];
+                LUT<uint32_t> *histoblueThr[4];
+
+                for(int i = 0; i < 4; ++i) {
+                    histogreenThr[i] = new LUT<uint32_t>(65536);
+                    histogreenThr[i]->clear();
+                    historedThr[i] = new LUT<uint32_t>(65536);
+                    historedThr[i]->clear();
+                    histoblueThr[i] = new LUT<uint32_t>(65536);
+                    histoblueThr[i]->clear();
+                }
+
+#ifdef _OPENMP
+                #pragma omp for schedule(dynamic,16) nowait
 #endif
 
-            for(int i = winy + 1; i < winh - 1; ++i) {
-                int j = winx + 1;
-                int c = FC(i, j);
+                for(int i = winy + 1; i < winh - 1; ++i) {
+                    int j = winx + 1;
+                    int c = FC(i, j);
 
-                bool bluerow = (c + FC(i, j + 1)) == 3;
+                    bool bluerow = (c + FC(i, j + 1)) == 3;
 
-                for(int j = winx + 1, offset = FC(i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
-                    (*histogreenThr[1 - offset])[(*rawDataFrames[1 - offset])[i - offset + 1][j]]++;
-                    (*histogreenThr[3 - offset])[(*rawDataFrames[3 - offset])[i + offset][j + 1]]++;
+                    for(int j = winx + 1, offset = FC(i, j) & 1; j < winw - 1; ++j, offset ^= 1) {
+                        (*histogreenThr[1 - offset])[(*rawDataFrames[1 - offset])[i - offset + 1][j]]++;
+                        (*histogreenThr[3 - offset])[(*rawDataFrames[3 - offset])[i + offset][j + 1]]++;
 
-                    if(bluerow) {
-                        (*historedThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
-                        (*histoblueThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
-                    } else {
-                        (*historedThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
-                        (*histoblueThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
+                        if(bluerow) {
+                            (*historedThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
+                            (*histoblueThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
+                        } else {
+                            (*historedThr[(offset << 1) + offset])[(*rawDataFrames[(offset << 1) + offset])[i][j + offset]]++;
+                            (*histoblueThr[2 - offset])[(*rawDataFrames[2 - offset])[i + 1][j - offset + 1]]++;
+                        }
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp critical
+#endif
+                {
+                    for(int i = 0; i < 4; ++i) {
+                        (*histogreen[i]) += (*histogreenThr[i]);
+                        delete histogreenThr[i];
+                        (*histored[i]) += (*historedThr[i]);
+                        delete historedThr[i];
+                        (*histoblue[i]) += (*histoblueThr[i]);
+                        delete histoblueThr[i];
                     }
                 }
             }
 
-#ifdef _OPENMP
-            #pragma omp critical
-#endif
-            {
-                for(int i = 0; i < 4; ++i) {
-                    (*histogreen[i]) += (*histogreenThr[i]);
-                    delete histogreenThr[i];
-                    (*histored[i]) += (*historedThr[i]);
-                    delete historedThr[i];
-                    (*histoblue[i]) += (*histoblueThr[i]);
-                    delete histoblueThr[i];
-                }
+            calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histored, redBrightness);
+            calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histoblue, blueBrightness);
+            calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 2, histogreen, greenBrightness);
+
+            for(int i = 0; i < 4; ++i) {
+                psRedBrightness[i] = redBrightness[i];
+                psGreenBrightness[i] = greenBrightness[i];
+                psBlueBrightness[i] = blueBrightness[i];
+            }
+            rawDirty = false;
+
+            for(int i = 0; i < 4; ++i) {
+                delete histored[i];
+                delete histoblue[i];
+                delete histogreen[i];
+            }
+            if(plistener) {
+                plistener->setProgress(0.15);
+            }
+
+        } else {
+            for(int i = 0; i < 4; ++i) {
+                redBrightness[i] = psRedBrightness[i];
+                greenBrightness[i] = psGreenBrightness[i];
+                blueBrightness[i] = psBlueBrightness[i];
             }
         }
-
-        calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histored, redBrightness);
-        calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 4, histoblue, blueBrightness);
-        calcFrameBrightnessFactor(frame, (winh - 2) * (winw - 2) / 2, histogreen, greenBrightness);
-
-        for(int i = 0; i < 4; ++i) {
-            delete histored[i];
-            delete histoblue[i];
-            delete histogreen[i];
-        }
-    }
-
-    if(!equalChannel) {
-        for(int i = 0; i < 4; ++i) {
-            redBrightness[i] = blueBrightness[i] = greenBrightness[i];
+        if(!equalChannel) {
+            for(int i = 0; i < 4; ++i) {
+                redBrightness[i] = blueBrightness[i] = greenBrightness[i];
+            }
         }
     }
 
@@ -682,6 +694,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                 nonGreenDest1[j] = (*rawDataFrames[2 - offset])[i + 1][j - offset + 1] * ngbright[ng ^ 1][2 - offset];
                 offset ^= 1; // 0 => 1 or 1 => 0
             }
+        }
+
+        if(plistener) {
+            plistener->setProgress(0.3);
         }
 
         // now that the temporary planes are filled for easy access we do the motion detection
@@ -758,11 +774,11 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
                         continue;
                     }
                 }
-
-                if(showOnlyMask) { // we want only motion mask => paint areas without motion in pure black
-                    red[i + offsY][j + offsX] = green[i + offsY][j + offsX] = blue[i + offsY][j + offsX] = 0.f;
-                }
             }
+        }
+
+        if(plistener) {
+            plistener->setProgress(0.45);
         }
 
         if(blurMap) {
@@ -772,6 +788,10 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             {
                 gaussianBlur(psMask, psMask, winw, winh, sigma);
             }
+            if(plistener) {
+                plistener->setProgress(0.6);
+            }
+
         }
 
         array2D<uint8_t> mask(winw, winh, ARRAY2D_CLEAR_DATA);
@@ -805,11 +825,19 @@ void RawImageSource::pixelshift(int winx, int winy, int winw, int winh, const RA
             }
         }
 
+        if(plistener) {
+            plistener->setProgress(0.75);
+        }
+
         if(holeFill) {
             array2D<uint8_t> maskInv(winw, winh);
             invertMask(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), mask, maskInv);
             floodFill4(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), maskInv);
             xorMasks(winx + border - offsX, winw - (border + offsX), winy + border - offsY, winh - (border + offsY), maskInv, mask);
+        }
+
+        if(plistener) {
+            plistener->setProgress(0.9);
         }
 
 #ifdef _OPENMP

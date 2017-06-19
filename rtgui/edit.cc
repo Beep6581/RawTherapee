@@ -1153,7 +1153,7 @@ OPIcon::OPIcon (const Cairo::RefPtr<Cairo::ImageSurface> &normal,
     }
 
     if (dragged) {
-        draggedImg = active;
+        draggedImg = dragged;
     }
 
     if (insensitive) {

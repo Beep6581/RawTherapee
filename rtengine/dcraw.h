@@ -345,7 +345,7 @@ void nokia_load_raw();
 // pana_bits(int nbits);
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *&i,unsigned &u):ifp(i),load_flags(u){}
+   pana_bits_t(IMFILE *&i,unsigned &u):ifp(i),load_flags(u),vbits(0){}
    unsigned operator()(int nbits);
 private:
    IMFILE *&ifp;

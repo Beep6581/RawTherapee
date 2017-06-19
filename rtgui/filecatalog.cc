@@ -44,12 +44,16 @@ using namespace std;
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     filepanel(filepanel),
     selectedDirectoryId(1),
+    actionNextPrevious(NAV_NONE),
     listener(nullptr),
     fslistener(nullptr),
+    iatlistener(nullptr),
     hasValidCurrentEFS(false),
     filterPanel(nullptr),
+    exportPanel(nullptr),
     previewsToLoad(0),
     previewsLoaded(0),
+    modifierKey(0),
     coarsePanel(cp),
     toolBar(tb)
 {

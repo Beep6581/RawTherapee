@@ -26,7 +26,7 @@ using namespace rtengine::procparams;
 
 Glib::ustring eventDescrArray[NUMOFEVENTS];
 
-History::History (bool bookmarkSupport) : blistener (nullptr), tpc (nullptr), bmnum (1)
+History::History (bool bookmarkSupport) : historyVPaned(nullptr), blistener(nullptr), tpc (nullptr), bmnum (1)
 {
 
     blistenerLock = false; // sets default that the Before preview will not be locked

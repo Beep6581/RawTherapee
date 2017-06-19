@@ -36,7 +36,7 @@ using namespace rtengine;
 
 CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
     : ObjectMOBuffer(parent), state(SNormal), press_x(0), press_y(0), action_x(0), action_y(0), pickedObject(-1), pickModifierKey(0), rot_deg(0), onResizeArea(false), deleted(false),
-      fitZoomEnabled(true), fitZoom(false), /*isLowUpdatePriority(isLowUpdatePriority_),*/ hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
+      fitZoomEnabled(true), fitZoom(false), cursor_type(CSArrow), /*isLowUpdatePriority(isLowUpdatePriority_),*/ hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
       backColor(options.bgcolor), decorated(true), isFlawnOver(false), titleHeight(30), sideBorderWidth(3), lowerBorderWidth(3),
       upperBorderWidth(1), sepWidth(2), xpos(30), ypos(30), width(0), height(0), imgAreaX(0), imgAreaY(0), imgAreaW(0), imgAreaH(0),
       imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(nullptr),
@@ -895,7 +895,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
     } else if (state == SDragPicker) {
         Coord imgPos;
         action_x = x - press_x;
-        action_x = y - press_y;
+        action_y = y - press_y;
         screenCoordToImage (x, y, imgPos.x, imgPos.y);
         if (imgPos.x < 0) {
             imgPos.x = 0;
@@ -1619,8 +1619,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 
                     const int hlThreshold = options.highlightThreshold;
                     const int shThreshold = options.shadowThreshold;
-                    const float ShawdowFac = 64 / (options.shadowThreshold + 1);
-                    const float HighlightFac = 64 / (256 - options.highlightThreshold);
+                    const float ShawdowFac = 64.f / (options.shadowThreshold + 1);
+                    const float HighlightFac = 64.f / (256 - options.highlightThreshold);
                     const bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any of RGB chanels is clipped
 
 #ifdef _OPENMP

@@ -174,19 +174,6 @@ protected:
     TextOrIcon* toiW;
     TextOrIcon* toiL;
 
-    Gtk::Label* labelE;
-    Gtk::Label* labelD;
-    Gtk::Label* labelC;
-    Gtk::Label* labelT;
-    Gtk::Label* labelR;
-    Gtk::Label* labelM;
-
-    Gtk::Image* imgIconE;
-    Gtk::Image* imgIconD;
-    Gtk::Image* imgIconC;
-    Gtk::Image* imgIconT;
-    Gtk::Image* imgIconR;
-    Gtk::Image* imgIconM;
     Gtk::Image* imgPanelEnd[7];
     Gtk::VBox* vbPanelEnd[7];
 

@@ -1290,10 +1290,10 @@ public:
         buffer[0] = 0;  //
         return buffer;  // TODO: how to get the string content!?
 
-        // normal path below (copy the content of the string), but has to be bug fixed
-        memcpy (buffer, t->getValue(), 30);
-        buffer[30] = 0;
-        return buffer;
+//        // normal path below (copy the content of the string), but has to be bug fixed
+//        memcpy (buffer, t->getValue(), 30);
+//        buffer[30] = 0;
+//        return buffer;
     }
 };
 PALensModelQInterpreter paLensModelQInterpreter;
@@ -1308,10 +1308,10 @@ public:
         buffer[0] = 0;
         return buffer;  // TODO: how to get the string content!?
 
-        // normal path below (copy the content of the string), but has to be bug fixed
-        memcpy (buffer, t->getValue(), 20);
-        buffer[20] = 0;
-        return buffer;
+//        // normal path below (copy the content of the string), but has to be bug fixed
+//        memcpy (buffer, t->getValue(), 20);
+//        buffer[20] = 0;
+//        return buffer;
     }
 };
 PALensInfoQInterpreter paLensInfoQInterpreter;

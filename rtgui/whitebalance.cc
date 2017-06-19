@@ -428,7 +428,7 @@ void WhiteBalance::optChanged ()
             equal->setEditedState (UnEdited);
             tempBias->setEditedState (UnEdited);
         } else {
-            int methodId = findWBEntryId (row[methodColumns.colLabel], WBLT_GUI);
+            unsigned int methodId = findWBEntryId (row[methodColumns.colLabel], WBLT_GUI);
             WBEntry* currMethod = WBParams::wbEntries[methodId];
 
             tempBias->set_sensitive(currMethod->type == WBT_AUTO);
@@ -792,7 +792,7 @@ void WhiteBalance::cache_customWB(int temp, double green)
     cache_customGreen (green);
 }
 
-int WhiteBalance::findWBEntryId (Glib::ustring label, enum WB_LabelType lblType)
+unsigned int WhiteBalance::findWBEntryId (const Glib::ustring &label, enum WB_LabelType lblType)
 {
     for (unsigned int i = 0; i < WBParams::wbEntries.size(); i++) {
         if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i]->GUILabel : WBParams::wbEntries[i]->ppLabel)) {
@@ -800,7 +800,7 @@ int WhiteBalance::findWBEntryId (Glib::ustring label, enum WB_LabelType lblType)
         }
     }
 
-    return -1;
+    return 0; // default to camera wb
 }
 
 WBEntry* WhiteBalance::findWBEntry (Glib::ustring label, enum WB_LabelType lblType)

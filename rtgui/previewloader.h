@@ -88,7 +88,6 @@ public:
 private:
 
     PreviewLoader();
-    ~PreviewLoader();
 
     class Impl;
     Impl* impl_;

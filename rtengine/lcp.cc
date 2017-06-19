@@ -172,7 +172,7 @@ void LCPPersModel::print() const
 
 // if !vignette then geometric and CA
 LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP,
-                     int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
+                     int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg) :useCADist(false), swapXY(false), isFisheye(false), enableCA(false)
 {
     if (pProf == nullptr) {
         return;
@@ -388,18 +388,20 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
 
     FILE *pFile = g_fopen(fname.c_str (), "rb");
 
-    bool done;
+    if(pFile) {
+        bool done;
 
-    do {
-        int bytesRead = (int)fread(buf, 1, BufferSize, pFile);
-        done = feof(pFile);
+        do {
+            int bytesRead = (int)fread(buf, 1, BufferSize, pFile);
+            done = feof(pFile);
 
-        if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
-            throw "Invalid XML in LCP file";
-        }
-    } while (!done);
+            if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
+                throw "Invalid XML in LCP file";
+            }
+        } while (!done);
 
-    fclose(pFile);
+        fclose(pFile);
+    }
 
     XML_ParserFree(parser);
 
@@ -736,7 +738,7 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
                 nameStart++;
             }
 
-            strcpy(pProf->lastTag, nameStart);
+            strncpy(pProf->lastTag, nameStart, 255);
 
             pProf->handle_text(attr[i+1]);
             //XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));

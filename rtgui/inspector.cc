@@ -259,6 +259,7 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
                 images.push_back(iBuffer);
                 currImage = images.at(images.size() - 1);
             } else {
+                delete iBuffer;
                 currImage = nullptr;
             }
         }

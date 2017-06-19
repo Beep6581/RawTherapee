@@ -168,11 +168,6 @@ PreviewLoader::PreviewLoader():
 {
 }
 
-PreviewLoader::~PreviewLoader()
-{
-    delete impl_;
-}
-
 PreviewLoader* PreviewLoader::getInstance()
 {
     static PreviewLoader instance_;

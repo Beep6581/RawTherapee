@@ -420,7 +420,6 @@ void deleteProcParams (std::vector<rtengine::procparams::PartialProfile*> &ppara
 
 int processLineParams ( int argc, char **argv )
 {
-    unsigned errors = 0;
 
     for( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam(argv[iArg]);
@@ -477,5 +476,5 @@ int processLineParams ( int argc, char **argv )
         return 1;
     }
 
-    return errors > 0 ? -2 : 0;
+    return 0;
 }

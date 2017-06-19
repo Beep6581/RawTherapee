@@ -191,7 +191,7 @@ void FilmSimulation::setAdjusterBehavior( bool strength )
 
 void FilmSimulation::trimValues( rtengine::procparams::ProcParams* pp )
 {
-    pp->filmSimulation.strength = m_strength->trimValue( pp->filmSimulation.strength );
+    m_strength->trimValue( pp->filmSimulation.strength );
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -1281,6 +1281,8 @@ MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileNam
     if (!imageFileName.empty()) {
         image = Gtk::manage( new RTImage(imageFileName) );
         box->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
+    } else {
+        image = nullptr;
     }
 
     box->attach_next_to(*this->label, Gtk::POS_RIGHT, 1, 1);
