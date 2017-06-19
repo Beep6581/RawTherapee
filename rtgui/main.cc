@@ -294,8 +294,6 @@ int main(int argc, char **argv)
 
 #endif
 
-    //simpleEditor = false;
-
     if (!argv1.empty()) {
         if( Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
             simpleEditor = true;

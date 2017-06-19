@@ -287,8 +287,7 @@ RTWindow::RTWindow ()
         if (!argv1.empty()) {
             Thumbnail* thm = cacheMgr->getEntry(argv1);
             if (thm) {
-                std::vector<Thumbnail *> entries(1, thm);
-                fpanel->fileCatalog->openRequested(entries);
+                fpanel->fileCatalog->openRequested({thm});
             }
         }
     }

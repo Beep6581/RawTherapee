@@ -1893,7 +1893,7 @@ void EditorPanel::sendToGimpPressed ()
 }
 
 
-bool EditorPanel::saveImmediately(const Glib::ustring &filename, SaveFormat sf)
+bool EditorPanel::saveImmediately(const Glib::ustring &filename, const SaveFormat &sf)
 {
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
