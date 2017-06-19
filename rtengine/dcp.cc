@@ -407,6 +407,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     valid(false),
     baseline_exposure_offset(0.0)
 {
+    delta_info.hue_step = delta_info.val_step = look_info.hue_step = look_info.val_step = 0;
     constexpr int tiff_float_size = 4;
 
     enum class TagKey : int {
@@ -1700,6 +1701,15 @@ DCPStore* DCPStore::getInstance()
     static DCPStore instance;
     return &instance;
 }
+
+
+DCPStore::~DCPStore()
+{
+    for (auto &p : profile_cache) {
+        delete p.second;
+    }
+}
+
 
 void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 {

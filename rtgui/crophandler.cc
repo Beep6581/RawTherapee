@@ -545,6 +545,7 @@ void CropHandler::colorPick (const rtengine::Coord &pickerPos, float &r, float &
         }
     }
 
+    count = std::max(1u, count);
     // Averaging
     r = (float)r2 / (float)count / 255.f;
     g = (float)g2 / (float)count / 255.f;
@@ -569,6 +570,8 @@ void CropHandler::colorPick (const rtengine::Coord &pickerPos, float &r, float &
             }
         }
     }
+
+    count = std::max(1u, count);
     // Averaging
     rpreview = (float)r2 / (float)count / 255.f;
     gpreview = (float)g2 / (float)count / 255.f;

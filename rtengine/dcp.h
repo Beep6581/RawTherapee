@@ -152,6 +152,7 @@ class DCPStore final :
     public NonCopyable
 {
 public:
+    ~DCPStore();
     static DCPStore* getInstance();
 
     void init(const Glib::ustring& rt_profile_dir, bool loadAll = true);

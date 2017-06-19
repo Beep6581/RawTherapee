@@ -172,7 +172,7 @@ void LCPPersModel::print() const
 
 // if !vignette then geometric and CA
 LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP,
-                     int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
+                     int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg) :useCADist(false), swapXY(false), isFisheye(false), enableCA(false)
 {
     if (pProf == nullptr) {
         return;
@@ -361,6 +361,11 @@ SSEFUNCTION void LCPMapper::processVignetteLine3Channels(int width, int y, float
 
 LCPProfile::LCPProfile(const Glib::ustring &fname)
 {
+    for (int i = 0; i < MaxPersModelCount; i++) {
+        aPersModel[i] = nullptr;
+    }
+    pCurPersModel = nullptr;
+
     const int BufferSize = 8192;
     char buf[BufferSize];
 
@@ -378,27 +383,25 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
     isFisheye = inCamProfiles = firstLIDone = inPerspect = inAlternateLensID = inAlternateLensNames = false;
     sensorFormatFactor = 1;
 
-    for (int i = 0; i < MaxPersModelCount; i++) {
-        aPersModel[i] = nullptr;
-    }
-
     persModelCount = 0;
     *inInvalidTag = 0;
 
     FILE *pFile = g_fopen(fname.c_str (), "rb");
 
-    bool done;
+    if(pFile) {
+        bool done;
 
-    do {
-        int bytesRead = (int)fread(buf, 1, BufferSize, pFile);
-        done = feof(pFile);
+        do {
+            int bytesRead = (int)fread(buf, 1, BufferSize, pFile);
+            done = feof(pFile);
 
-        if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
-            throw "Invalid XML in LCP file";
-        }
-    } while (!done);
+            if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
+                throw "Invalid XML in LCP file";
+            }
+        } while (!done);
 
-    fclose(pFile);
+        fclose(pFile);
+    }
 
     XML_ParserFree(parser);
 
@@ -410,6 +413,19 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
     filterBadFrames(2.0, 0);
     // from the non-distorded, filter again on new average basis, but only if there are enough frames left
     filterBadFrames(1.5, 100);
+}
+
+
+LCPProfile::~LCPProfile()
+{
+    if (pCurPersModel) {
+        delete pCurPersModel;
+    }
+    for (int i = 0; i < MaxPersModelCount; i++) {
+        if (aPersModel[i]) {
+            delete aPersModel[i];
+        }
+    }
 }
 
 // from all frames not marked as bad already, take average and filter out frames with higher deviation than this if there are enough values
@@ -722,7 +738,7 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
                 nameStart++;
             }
 
-            strcpy(pProf->lastTag, nameStart);
+            strncpy(pProf->lastTag, nameStart, 255);
 
             pProf->handle_text(attr[i+1]);
             //XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));
@@ -737,7 +753,7 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     if (!pProf->inCamProfiles || pProf->inAlternateLensID || pProf->inAlternateLensNames || *pProf->inInvalidTag) {
         return;
     }
-    
+
     for (int i = 0; i < len; ++i) {
         pProf->textbuf << s[i];
     }
@@ -746,8 +762,6 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
 
 void LCPProfile::handle_text(std::string text)
 {
-    const char *raw = text.c_str();
-    
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace = true;
     for (size_t i = 0; i < text.size(); ++i) {
@@ -765,6 +779,8 @@ void LCPProfile::handle_text(std::string text)
 
     // convert to null terminated
     char* tag = pProf->lastTag;
+
+    const char* raw = text.c_str();
 
     // Common data section
     if (!pProf->firstLIDone) {
@@ -885,6 +901,15 @@ LCPStore* LCPStore::getInstance()
     static LCPStore instance_;
     return &instance_;
 }
+
+
+LCPStore::~LCPStore()
+{
+    for (auto &p : profileCache) {
+        delete p.second;
+    }
+}
+
 
 LCPProfile* LCPStore::getProfile (Glib::ustring filename)
 {

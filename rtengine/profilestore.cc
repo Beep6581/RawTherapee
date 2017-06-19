@@ -190,8 +190,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
         }
 
         // walking through the directory
-        Glib::Dir* dir = nullptr;
-        dir = new Glib::Dir (realPath);
+        Glib::Dir* dir = new Glib::Dir (realPath);
 
         for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
             currDir = *i;
@@ -248,6 +247,8 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
     if (!fileFound && (level > 0 || displayLevel0)) {
         // no files found in this level, we delete the subdirectory entry
         folders.pop_back();
+
+        delete entries.back();
         entries.pop_back();
     }
 

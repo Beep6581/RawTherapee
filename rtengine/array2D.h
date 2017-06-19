@@ -113,7 +113,7 @@ public:
     // use as empty declaration, resize before use!
     // very useful as a member object
     array2D() :
-        x(0), y(0), owner(0), flags(0), ptr(nullptr), data(nullptr), lock(0)
+        x(0), y(0), owner(0), flags(0), ptr(nullptr), data(nullptr), lock(false)
     {
         //printf("got empty array2D init\n");
     }
@@ -143,7 +143,7 @@ public:
     {
         flags = flgs;
         //if (lock) { printf("array2D attempt to overwrite data\n");raise(SIGSEGV);}
-        lock |= flags & ARRAY2D_LOCK_DATA;
+        lock = flags & ARRAY2D_LOCK_DATA;
         // when by reference
         // TODO: improve this code with ar_realloc()
         owner = (flags & ARRAY2D_BYREFERENCE) ? 0 : 1;
@@ -279,34 +279,6 @@ public:
     operator bool()
     {
         return (x > 0 && y > 0);
-    }
-
-    array2D<T> & operator=( array2D<T> & rhs)
-    {
-        if (this != &rhs)
-
-        {
-            flags = rhs.flags;
-            lock = rhs.lock;
-            if (!owner) { // we can only copy same size data
-                if ((x != rhs.x) || (y != rhs.y)) {
-                    printf(" assignment error in array2D\n");
-                    printf(" sizes differ and not owner\n");
-                    raise( SIGSEGV);
-                }
-
-            } else {
-                ar_realloc(rhs.x, rhs.y);
-            }
-
-            // we could have been created from a different
-            // array format where each row is created by 'new'
-            for (int i = 0; i < y; i++) {
-                memcpy(ptr[i], rhs.ptr[i], x * sizeof(T));
-            }
-        }
-
-        return *this;
     }
 
 };

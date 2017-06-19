@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), editDataProvider(nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), hasChanged(false), editDataProvider(nullptr)
 {
 
     exposurePanel   = Gtk::manage (new ToolVBox ());
@@ -509,11 +509,11 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     toneCurve->enableAll ();
     toneCurve->enableListener ();
 
-    const rtengine::ImageMetaData* pMetaData = ipc->getInitialImage()->getMetaData();
-    exifpanel->setImageData (pMetaData);
-    iptcpanel->setImageData (pMetaData);
-
     if (ipc) {
+        const rtengine::ImageMetaData* pMetaData = ipc->getInitialImage()->getMetaData();
+        exifpanel->setImageData (pMetaData);
+        iptcpanel->setImageData (pMetaData);
+
         ipc->setAutoExpListener (toneCurve);
         ipc->setAutoCamListener (colorappearance);
         ipc->setAutoBWListener (blackwhite);
@@ -526,12 +526,12 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
         ipc->setImageTypeListener (this);
+        flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
+
+        icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData);
+        lensProf->setRawMeta (raw, pMetaData);
     }
 
-    flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
-
-    icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData);
-    lensProf->setRawMeta (raw, pMetaData);
 
     toneCurve->setRaw (raw);
     hasChanged = true;

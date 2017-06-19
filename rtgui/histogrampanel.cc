@@ -1179,6 +1179,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
                               LUTu & data, double scale, int hsize, int vsize)
 {
     cr->move_to (0, vsize - 1);
+    scale = scale <= 0.f ? 0.001f : scale; // avoid division by zero and negative values
 
     for (int i = 0; i < 256; i++) {
         double val = data[i] * (double)(vsize - 2) / scale;

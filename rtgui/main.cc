@@ -139,12 +139,12 @@ int main(int argc, char **argv)
     // get the path where the rawtherapee executable is stored
 #ifdef WIN32
     WCHAR exnameU[512] = {0};
-    GetModuleFileNameW (NULL, exnameU, 512);
-    WideCharToMultiByte(CP_UTF8, 0, exnameU, -1, exname, 512, 0, 0 );
+    GetModuleFileNameW (NULL, exnameU, 511);
+    WideCharToMultiByte(CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
 #else
 
-    if (readlink("/proc/self/exe", exname, 512) < 0) {
-        strncpy(exname, argv[0], 512);
+    if (readlink("/proc/self/exe", exname, 511) < 0) {
+        strncpy(exname, argv[0], 511);
     }
 
 #endif
@@ -437,7 +437,6 @@ void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparam
 
 int processLineParams( int argc, char **argv )
 {
-    unsigned errors = 0;
 
     for( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam(argv[iArg]);
@@ -512,5 +511,5 @@ int processLineParams( int argc, char **argv )
         return 1;
     }
 
-    return errors > 0 ? -2 : 0;
+    return 0;
 }

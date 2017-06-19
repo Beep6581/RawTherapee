@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGEOM_LABEL")), rlistener(nullptr)
+LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGEOM_LABEL")), rlistener(nullptr), lastFill(false)
 {
 
     fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));

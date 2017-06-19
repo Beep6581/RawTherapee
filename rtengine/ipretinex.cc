@@ -136,7 +136,7 @@ namespace rtengine
 
 extern const Settings* settings;
 
-void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
+void RawImageSource::MSR(float** luminance, float** originalLuminance, float **exLuminance,  LUTf & mapcurve, bool &mapcontlutili, int width, int height, const RetinexParams &deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax)
 {
 
     if (deh.enabled) {//enabled
@@ -273,8 +273,9 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 }
             }
 
-            float varx = 0.f;
-            float limdx, ilimdx;
+            float varx = vart;
+            float limdx = limD;
+            float ilimdx = ilimD;
 
             if(gradvart != 0) {
                 if(gradvart == 1) {
@@ -294,10 +295,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                     limdx = limD * (0.4f * it + 0.6f);
                     ilimdx = 1.f / limdx;
                 }
-            } else {
-                varx = vart;
-                limdx = limD;
-                ilimdx = ilimD;
             }
 
             scal = round(sc);

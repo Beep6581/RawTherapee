@@ -886,7 +886,9 @@ void BlackWhite::neutral_pressed ()
 
     updateRGBLabel();
 
-    listener->panelChanged (EvNeutralBW, M("ADJUSTER_RESET_TO_DEFAULT"));
+    if(listener) {
+        listener->panelChanged (EvNeutralBW, M("ADJUSTER_RESET_TO_DEFAULT"));
+    }
 }
 
 void BlackWhite::enabledcc_toggled ()

@@ -21,7 +21,7 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false)
+MyDiagonalCurve::MyDiagonalCurve () : closest_point(0), clampedX(0.0), clampedY(0.0), deltaX(0.0), deltaY(0.0), distanceX(0.0), distanceY(0.0), ugpX(0.0), ugpY(0.0), activeParam(-1), bghistvalid(false)
 {
 
     graphW = get_allocation().get_width() - RADIUS * 2;
@@ -1111,8 +1111,10 @@ bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
             curve.y.insert (ity, 0);
 
             // the graph is refreshed only if a new point is created (snapped to a pixel)
-            curve.x.at(lit_point) = clampedX;
-            curve.y.at(lit_point) = clampedY;
+            if (lit_point >= 0) {
+                curve.x.at(lit_point) = clampedX;
+                curve.y.at(lit_point) = clampedY;
+            }
 
             if (lit_point > -1 && grab_point == -1 && coordinateAdjuster->is_visible()) {
                 std::vector<double> position;

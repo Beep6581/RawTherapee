@@ -226,7 +226,7 @@ void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview)
 
 int PreviewModePanel::GetbackColor()
 {
-    int backColor;
+    int backColor = 0;
 
     if (backColor0->get_active ()) {
         backColor = 0;
