@@ -237,7 +237,12 @@ bool BatchQueue::saveBatchQueue ()
             const auto& saveFormat = entry->saveFormat;
 
             // Warning: for code's simplicity in loadBatchQueue, each field must end by the '|' character, safer than ';' or ',' since it can't be used in paths
+#ifdef WIN32
+            // on windows it crashes if we don't use c_str() and filename etc. contain special (e.g. chinese) characters, see issue 3387
+            file << entry->filename.c_str() << '|' << entry->savedParamsFile.c_str() << '|' << entry->outFileName.c_str() << '|' << saveFormat.format << '|'
+#else
             file << entry->filename << '|' << entry->savedParamsFile << '|' << entry->outFileName << '|' << saveFormat.format << '|'
+#endif
                  << saveFormat.jpegQuality << '|' << saveFormat.jpegSubSamp << '|'
                  << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
                  << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
