@@ -467,7 +467,7 @@ public:
     int            deconviter;
     int            deconvdamping;
 
-    SharpeningParams() : threshold(20, 80, 2000, 1200, false) {};
+    SharpeningParams();
 };
 class SharpenEdgeParams
 {
@@ -502,7 +502,7 @@ public:
     bool           pastsattog;
     std::vector<double> skintonescurve;
 
-    VibranceParams() : psthreshold(0, 75,  false) {};
+    VibranceParams();
 };
 
 /**

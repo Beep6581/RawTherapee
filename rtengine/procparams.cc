@@ -593,6 +593,13 @@ void ColorToningParams::getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurv
         opacityCurveLUT.Set(oCurve, opautili);
     }
 }
+
+SharpeningParams::SharpeningParams() : enabled(false), radius(0.5), amount(200), threshold(20, 80, 2000, 1200, false), edgesonly(false), edges_radius(1.9), edges_tolerance(1800), halocontrol(false), halocontrol_amount(85), deconvamount(75), deconvradius(0.75), deconviter(30), deconvdamping(20) {};
+
+
+VibranceParams::VibranceParams() : enabled(false), pastels(0), saturated(0), psthreshold(0, 75,  false), protectskins(false), avoidcolorshift(true), pastsattog(true) {};
+
+
 //WaveletParams::WaveletParams (): hueskin(-5, 25, 170, 120, false), hueskin2(-260, -250, -130, -140, false), hllev(50, 75, 100, 98, false), bllev(0, 2, 50, 25, false), pastlev(0, 2, 30, 20, false), satlev(30, 45, 130, 100, false), edgcont(0, 20, 100, 75, false){
 
 WaveletParams::WaveletParams (): hueskin(-5, 25, 170, 120, false), hueskin2(-260, -250, -130, -140, false), hllev(50, 75, 100, 98, false), bllev(0, 2, 50, 25, false),
