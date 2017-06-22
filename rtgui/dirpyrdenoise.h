@@ -50,9 +50,7 @@ public:
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
-    void enhanceChanged  ();
     void medianChanged  ();
-    void autochromaChanged  ();
     void chromaChanged (double autchroma, double autred, double autblue);
     bool chromaComputed_ ();
     void noiseChanged (double nresid, double highresid);
@@ -92,13 +90,9 @@ private:
     FlatCurveEditor* lshape;
     FlatCurveEditor* ccshape;
 
-    Gtk::CheckButton* enhance;
-    bool lastenhance;
-    sigc::connection enhanConn, medianConn, autochromaConn;
+    sigc::connection medianConn;
     Gtk::CheckButton* median;
     bool lastmedian;
-    Gtk::CheckButton* autochroma;
-    bool lastautochroma;
     Gtk::Label*    NoiseLabels;
     Gtk::Label*    TileLabels;
     Gtk::Label*    PrevLabels;

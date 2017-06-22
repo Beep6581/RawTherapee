@@ -26,7 +26,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 extern Options options;
 
-DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP_DIRPYRDENOISE_LABEL"), true, true), lastenhance(false), lastmedian(false), lastautochroma(false)
+DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP_DIRPYRDENOISE_LABEL"), true, true), lastmedian(false)
 {
     std::vector<GradientMilestone> milestones;
     CurveListener::setMulti(true);
@@ -82,10 +82,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     Gtk::VBox *chromaVBox = Gtk::manage ( new Gtk::VBox());
     chromaVBox->set_spacing(2);
-
-    autochroma = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_AUTO")));
-    autochroma->set_active (true);
-    autochroma->set_tooltip_text (M("TP_DIRPYRDENOISE_AUTO_TOOLTIP"));
 
     ctboxC = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* labmC = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_CTYPE") + ":"));
@@ -167,7 +163,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     luma->hide();
     Ldetail->show();
 
-//  autochroma->show();
     NoiseLabels->show();
     TileLabels->show();
     PrevLabels->show();
@@ -178,9 +173,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     gamma->show();
 //  perform->set_active (true);
 
-    enhance = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_ENH")));
-    enhance->set_active (false);
-    enhance->set_tooltip_text (M("TP_DIRPYRDENOISE_ENH_TOOLTIP"));
     // ---- Median FIltering ----
 
     Gtk::Frame* medianFrame = Gtk::manage (new Gtk::Frame ());
@@ -192,10 +184,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     median = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_MED") + ":"));
     median->set_active (true);
     medianFrame->set_label_widget(*median);
-
-
-    Gtk::HSeparator *hsep2 = Gtk::manage (new  Gtk::HSeparator());
-    hsep2->show ();
 
     methodmed = Gtk::manage (new MyComboBoxText ());
     methodmed->append (M("TP_DIRPYRDENOISE_LM"));
@@ -292,12 +280,10 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
 
     pack_start (*gamma);
-    //pack_start (*enhance);
     pack_start (*hsep4);
 
 //  pack_start( *hb11, Gtk::PACK_SHRINK, 4);
 
-//  pack_start (*hsep2);
 //  pack_start (*median);
 
     ctboxm->pack_start (*methodmed);
@@ -318,8 +304,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
 
 //  pack_start (*perform);
-    enhanConn = enhance->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enhanceChanged) );
-    autochromaConn = autochroma->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::autochromaChanged) );
     medianConn = median->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::medianChanged) );
     ctboxrgb->hide();
 
@@ -475,13 +459,11 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
     Cmethodconn.block(true);
     C2methodconn.block(true);
     smethodconn.block(true);
-    autochromaConn.block(true);
     medmethodconn.block(true);
     rgbmethodconn.block(true);
     methodmedconn.block(true);
 
 
-    autochromaChanged ();
     dmethod->set_active (0);
 
     if (pp->dirpyrDenoise.dmethod == "Lab") {
@@ -641,7 +623,6 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
         gamma->setEditedState      (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
         passes->setEditedState     (pedited->dirpyrDenoise.passes ? Edited : UnEdited);
         set_inconsistent           (multiImage && !pedited->dirpyrDenoise.enabled);
-        enhance->set_inconsistent  (!pedited->dirpyrDenoise.enhance);
         median->set_inconsistent   (!pedited->dirpyrDenoise.median);
         ccshape->setUnChanged      (!pedited->dirpyrDenoise.cccurve);
 
@@ -650,15 +631,11 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 //  perfconn.block (true);
     setEnabled(pp->dirpyrDenoise.enabled);
-    enhance->set_active (pp->dirpyrDenoise.enhance);
 //   perform->set_active (pp->dirpyrDenoise.perform);
     median->set_active (pp->dirpyrDenoise.median);
-    autochroma->set_active (pp->dirpyrDenoise.autochroma);
 
 //   perfconn.block (false);
     lastmedian = pp->dirpyrDenoise.median;
-    lastautochroma = pp->dirpyrDenoise.autochroma;
-    lastenhance = pp->dirpyrDenoise.enhance;
 //  lastperform = pp->dirpyrDenoise.perform;
     luma->setValue    (pp->dirpyrDenoise.luma);
     Ldetail->setValue (pp->dirpyrDenoise.Ldetail);
@@ -671,7 +648,6 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
     lshape->setCurve   (pp->dirpyrDenoise.lcurve);
     ccshape->setCurve   (pp->dirpyrDenoise.cccurve);
 
-    autochromaConn.block(false);
 
     dmethodconn.block(false);
     Lmethodconn.block(false);
@@ -708,10 +684,8 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
     pp->dirpyrDenoise.gamma     = gamma->getValue ();
     pp->dirpyrDenoise.passes    = passes->getValue ();
     pp->dirpyrDenoise.enabled   = getEnabled();
-    pp->dirpyrDenoise.enhance   = enhance->get_active();
 //  pp->dirpyrDenoise.perform   = perform->get_active();
     pp->dirpyrDenoise.median   = median->get_active();
-    pp->dirpyrDenoise.autochroma   = autochroma->get_active();
     pp->dirpyrDenoise.lcurve  = lshape->getCurve ();
     pp->dirpyrDenoise.cccurve  = ccshape->getCurve ();
 
@@ -732,9 +706,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->dirpyrDenoise.gamma    = gamma->getEditedState ();
         pedited->dirpyrDenoise.passes    = passes->getEditedState ();
         pedited->dirpyrDenoise.enabled  = !get_inconsistent();
-        pedited->dirpyrDenoise.enhance  = !enhance->get_inconsistent();
         pedited->dirpyrDenoise.median  = !median->get_inconsistent();
-        pedited->dirpyrDenoise.autochroma  = !autochroma->get_inconsistent();
         pedited->dirpyrDenoise.lcurve    = !lshape->isUnChanged ();
         pedited->dirpyrDenoise.cccurve    = !ccshape->isUnChanged ();
 
@@ -1086,32 +1058,6 @@ void DirPyrDenoise::enabledChanged ()
     }
 }
 
-void DirPyrDenoise::enhanceChanged ()
-{
-
-    if (batchMode) {
-        if (enhance->get_inconsistent()) {
-            enhance->set_inconsistent (false);
-            enhanConn.block (true);
-            enhance->set_active (false);
-            enhanConn.block (false);
-        } else if (lastenhance) {
-            enhance->set_inconsistent (true);
-        }
-
-        lastenhance = enhance->get_active ();
-    }
-
-    if (listener) {
-
-        if (enhance->get_active ()) {
-            listener->panelChanged (EvDPDNenhance, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged (EvDPDNenhance, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
 void DirPyrDenoise::medianChanged ()
 {
 
@@ -1138,49 +1084,6 @@ void DirPyrDenoise::medianChanged ()
 
     }
 }
-void DirPyrDenoise::autochromaChanged ()
-{
-//  printf("Autochroma\n");
-    if (batchMode) {
-        if (autochroma->get_inconsistent()) {
-            autochroma->set_inconsistent (false);
-            autochromaConn.block (true);
-            autochroma->set_active (false);
-            autochromaConn.block (false);
-        } else if (lastautochroma) {
-            autochroma->set_inconsistent (true);
-        }
-
-        lastautochroma = autochroma->get_active ();
-    }
-
-    if (autochroma->get_active ()) {
-        chroma->set_sensitive(false);
-        redchro->set_sensitive(false);
-        bluechro->set_sensitive(false);
-    } else {
-        chroma->set_sensitive(true);
-        redchro->set_sensitive(true);
-        bluechro->set_sensitive(true);
-    }
-
-    if (listener) {
-        if (autochroma->get_active ()) {
-            listener->panelChanged (EvDPDNautochroma, M("GENERAL_ENABLED"));
-            //  chroma->set_sensitive(false);
-            //  redchro->set_sensitive(false);
-            //  bluechro->set_sensitive(false);
-        } else {
-            listener->panelChanged (EvDPDNautochroma, M("GENERAL_DISABLED"));
-            //chroma->set_sensitive(true);
-            //redchro->set_sensitive(true);
-            //bluechro->set_sensitive(true);
-        }
-
-
-    }
-}
-
 
 /*
 void DirPyrDenoise::perform_toggled () {

@@ -235,7 +235,6 @@ void ParamsEdited::set (bool v)
     dirpyrDenoise.lcurve      = v;
     dirpyrDenoise.cccurve      = v;
     dirpyrDenoise.median      = v;
-    dirpyrDenoise.autochroma      = v;
     dirpyrDenoise.luma         = v;
     dirpyrDenoise.Ldetail      = v;
     dirpyrDenoise.chroma       = v;
@@ -759,7 +758,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
         dirpyrDenoise.enhance = dirpyrDenoise.enhance && p.dirpyrDenoise.enhance == other.dirpyrDenoise.enhance;
         dirpyrDenoise.median = dirpyrDenoise.median && p.dirpyrDenoise.median == other.dirpyrDenoise.median;
-        dirpyrDenoise.autochroma = dirpyrDenoise.autochroma && p.dirpyrDenoise.autochroma == other.dirpyrDenoise.autochroma;
 //       dirpyrDenoise.perform = dirpyrDenoise.perform && p.dirpyrDenoise.perform == other.dirpyrDenoise.perform;
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
         dirpyrDenoise.lcurve = dirpyrDenoise.lcurve && p.dirpyrDenoise.lcurve == other.dirpyrDenoise.lcurve;
@@ -1823,10 +1821,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (dirpyrDenoise.median) {
         toEdit.dirpyrDenoise.median   = mods.dirpyrDenoise.median;
-    }
-
-    if (dirpyrDenoise.autochroma) {
-        toEdit.dirpyrDenoise.autochroma   = mods.dirpyrDenoise.autochroma;
     }
 
     if (dirpyrDenoise.luma) {

@@ -3497,7 +3497,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                     bdecomp = new wavelet_decomposition (labdn->data + 2 * datalen, labdn->W, labdn->H, levwav, 1);
                 }
             }
-            bool autoch = dnparams.autochroma;
+            const bool autoch = (settings->leveldnautsimpl == 1 && (dnparams.Cmethod == "AUT" || dnparams.Cmethod == "PRE")) || (settings->leveldnautsimpl == 0 && (dnparams.C2method == "AUTO" || dnparams.C2method == "PREV"));
+
 
             if (comptlevel == 0) {
                 WaveletDenoiseAll_info(

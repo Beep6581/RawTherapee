@@ -321,7 +321,6 @@ public:
     bool enabled;
     bool enhance;
     bool median;
-    bool autochroma;
     bool Ldetail;
     bool luma;
     bool chroma;

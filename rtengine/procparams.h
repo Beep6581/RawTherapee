@@ -690,7 +690,6 @@ public:
     bool    enabled;
     bool    enhance;
     bool    median;
-    bool    autochroma;
 
     bool    perform;
     double  luma;

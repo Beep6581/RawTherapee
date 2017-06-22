@@ -835,7 +835,6 @@ void DirPyrDenoiseParams::setDefaults()
     enabled = false;
     enhance = false;
     median = false;
-    autochroma = false;
     perform = false;
     luma = 0;
     passes = 1;
@@ -2256,10 +2255,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->dirpyrDenoise.median) {
             keyFile.set_boolean ("Directional Pyramid Denoising", "Median", dirpyrDenoise.median);
-        }
-
-        if (!pedited || pedited->dirpyrDenoise.autochroma) {
-            keyFile.set_boolean ("Directional Pyramid Denoising", "Auto", dirpyrDenoise.autochroma);
         }
 
 //   if (!pedited || pedited->dirpyrDenoise.perform) keyFile.set_boolean ("Directional Pyramid Denoising", "Perform", dirpyrDenoise.perform);
@@ -5212,14 +5207,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->dirpyrDenoise.median = true;
-                }
-            }
-
-            if (keyFile.has_key ("Directional Pyramid Denoising", "Auto"))    {
-                dirpyrDenoise.autochroma = keyFile.get_boolean ("Directional Pyramid Denoising", "Auto");
-
-                if (pedited) {
-                    pedited->dirpyrDenoise.autochroma = true;
                 }
             }
 
@@ -8198,7 +8185,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && dirpyrDenoise.enabled == other.dirpyrDenoise.enabled
         && dirpyrDenoise.enhance == other.dirpyrDenoise.enhance
         && dirpyrDenoise.median == other.dirpyrDenoise.median
-        && dirpyrDenoise.autochroma == other.dirpyrDenoise.autochroma
 //      && dirpyrDenoise.perform == other.dirpyrDenoise.perform
         && dirpyrDenoise.luma == other.dirpyrDenoise.luma
         && dirpyrDenoise.lcurve == other.dirpyrDenoise.lcurve
