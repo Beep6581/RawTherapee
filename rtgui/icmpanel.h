@@ -56,9 +56,7 @@ protected:
     sigc::connection hsmconn;
     bool lastobpc;
     sigc::connection obpcconn;
-    bool lastBlendCMSMatrix;
     bool isBatchMode;
-    sigc::connection blendcmsconn;
 
 private:
     Gtk::VBox       *  iVBox;
@@ -78,7 +76,6 @@ private:
     Gtk::CheckButton*  ckbApplyLookTable;
     Gtk::CheckButton*  ckbApplyBaselineExposureOffset;
     Gtk::CheckButton*  ckbApplyHueSatMap;
-    Gtk::CheckButton*  ckbBlendCMSMatrix;
     MyComboBoxText*    wnames;
     sigc::connection   wnamesconn;
     MyComboBoxText*    wgamma;
@@ -119,7 +116,6 @@ public:
     void gpChanged ();
     void GamChanged ();
     void ipSelectionChanged ();
-    void blendCMSMatrixChanged();
     void dcpIlluminantChanged();
     void toneCurveChanged();
     void applyLookTableChanged();

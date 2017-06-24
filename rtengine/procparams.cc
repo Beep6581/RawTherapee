@@ -974,7 +974,6 @@ void RAWParams::setDefaults()
 void ColorManagementParams::setDefaults()
 {
     input   = "(cameraICC)";
-    blendCMSMatrix = false;
     toneCurve = false;
     applyLookTable = false;
     applyBaselineExposureOffset = true;
@@ -2677,10 +2676,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->icm.applyHueSatMap) {
             keyFile.set_boolean ("Color Management", "ApplyHueSatMap",   icm.applyHueSatMap);
-        }
-
-        if (!pedited || pedited->icm.blendCMSMatrix) {
-            keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
         }
 
         if (!pedited || pedited->icm.dcpIlluminant) {
@@ -6063,14 +6058,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) {
-                icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix");
-
-                if (pedited) {
-                    pedited->icm.blendCMSMatrix = true;
-                }
-            }
-
             if (keyFile.has_key ("Color Management", "DCPIlluminant"))  {
                 icm.dcpIlluminant  = keyFile.get_integer ("Color Management", "DCPIlluminant");
 
@@ -8366,7 +8353,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && icm.applyLookTable == other.icm.applyLookTable
         && icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset
         && icm.applyHueSatMap == other.icm.applyHueSatMap
-        && icm.blendCMSMatrix == other.icm.blendCMSMatrix
         && icm.dcpIlluminant == other.icm.dcpIlluminant
         && icm.working == other.icm.working
         && icm.output == other.icm.output

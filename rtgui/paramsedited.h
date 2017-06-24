@@ -539,7 +539,6 @@ public:
     bool applyLookTable;
     bool applyBaselineExposureOffset;
     bool applyHueSatMap;
-    bool blendCMSMatrix;
     bool dcpIlluminant;
     bool working;
     bool output;

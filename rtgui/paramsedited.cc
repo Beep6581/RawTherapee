@@ -348,7 +348,6 @@ void ParamsEdited::set (bool v)
     icm.applyLookTable = v;
     icm.applyBaselineExposureOffset = v;
     icm.applyHueSatMap = v;
-    icm.blendCMSMatrix = v;
     icm.dcpIlluminant = v;
     icm.working      = v;
     icm.output       = v;
@@ -874,7 +873,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.applyLookTable = icm.applyLookTable && p.icm.applyLookTable == other.icm.applyLookTable;
         icm.applyBaselineExposureOffset = icm.applyBaselineExposureOffset && p.icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset;
         icm.applyHueSatMap = icm.applyHueSatMap && p.icm.applyHueSatMap == other.icm.applyHueSatMap;
-        icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
         icm.dcpIlluminant = icm.dcpIlluminant && p.icm.dcpIlluminant == other.icm.dcpIlluminant;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
@@ -2252,10 +2250,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (icm.applyHueSatMap) {
         toEdit.icm.applyHueSatMap = mods.icm.applyHueSatMap;
-    }
-
-    if (icm.blendCMSMatrix) {
-        toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
     }
 
     if (icm.dcpIlluminant) {

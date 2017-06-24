@@ -982,7 +982,6 @@ public:
     bool          applyLookTable;
     bool          applyBaselineExposureOffset;
     bool          applyHueSatMap;
-    bool          blendCMSMatrix; // setting no longer used
     int dcpIlluminant;
     Glib::ustring working;
     Glib::ustring output;
