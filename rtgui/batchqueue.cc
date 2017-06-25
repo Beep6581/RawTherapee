@@ -19,6 +19,7 @@
 #include <glibmm.h>
 #include <glib/gstdio.h>
 #include <cstring>
+#include <functional>
 #include "../rtengine/rt_math.h"
 
 #include <fstream>
