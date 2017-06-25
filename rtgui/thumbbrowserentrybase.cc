@@ -61,7 +61,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
         backBuffer.reset();
     }
     if (!backBuffer) {
-        backBuffer = Glib::RefPtr<BackBuffer> ( new BackBuffer (exp_width, exp_height, Cairo::FORMAT_RGB24) );
+        backBuffer = Glib::RefPtr<BackBuffer>(new BackBuffer(exp_width, exp_height));
     }
 
     // If thumbnail is hidden by a filter, drawing to it will crash
