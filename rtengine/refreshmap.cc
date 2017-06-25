@@ -73,7 +73,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNRadius: obsolete,
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
-    ALL,              // EvBlendCMSMatrix,
+    0,                // free entry
     RGBCURVE,         // EvDCPToneCurve,
     ALLNORAW,         // EvDCPIlluminant,
     RETINEX,          // EvSHEnabled,

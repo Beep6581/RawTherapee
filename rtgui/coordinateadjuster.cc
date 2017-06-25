@@ -42,13 +42,9 @@ void Axis::setValues(Glib::ustring label, unsigned int decimal, double increment
 
 CoordinateAdjuster::AxisAdjuster::AxisAdjuster(CoordinateAdjuster *parent, const Axis *axis, char index) : idx(index), parent(parent), rangeLowerBound(0.f), rangeUpperBound(0.f)
 {
-    label = Gtk::manage( new Gtk::Label(axis->label) );
-    spinButton = Gtk::manage( new Gtk::SpinButton() );
 
-    label = Gtk::manage (new Gtk::Label(axis->label));
-    //label->set_alignment(Gtk::ALIGN_MIDDLE, Gtk::ALIGN_MIDDLE);
-
-    spinButton = Gtk::manage (new Gtk::SpinButton());
+    label = Gtk::manage(new Gtk::Label(axis->label));
+    spinButton = Gtk::manage(new Gtk::SpinButton());
     spinButton->set_name("AxisAdjuster");
     spinButton->set_digits(axis->decimal);
     spinButton->set_increments(axis->increment, axis->pageIncrement);

@@ -548,7 +548,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsep2 = Gtk::manage (new Gtk::VSeparator ());
-    Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
 
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider (iareapanel->imageArea);
@@ -699,6 +698,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     colorMgmtToolBar->pack_right_in (iops);
 
     if (!simpleEditor && !options.tabbedUI) {
+        Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
         iops->attach_next_to (*vsep3, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to (*navPrev, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to (*navSync, Gtk::POS_RIGHT, 1, 1);

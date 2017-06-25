@@ -88,10 +88,6 @@ ExifPanel::ExifPanel () : idata(nullptr)
 
     pack_start (*scrolledWindow);
 
-    Gtk::Grid* buttons = Gtk::manage(new Gtk::Grid());
-    buttons->set_row_homogeneous(true);
-    buttons->set_column_homogeneous(true);
-    setExpandAlignProperties(buttons, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     Gtk::Grid* buttons1 = Gtk::manage(new Gtk::Grid());
     buttons1->set_row_homogeneous(true);
     buttons1->set_column_homogeneous(true);
