@@ -3,8 +3,11 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wparentheses"
-#if (__GNUC__ == 6)
+#if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#if (__GNUC__ >= 7)
+#pragma GCC diagnostic ignored "-Wdangling-else"
+#endif
 #endif
 #endif
 
