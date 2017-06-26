@@ -111,13 +111,21 @@ set(RTENGINESOURCEFILES
     utils.cc
     )
 
-if (NOT WITH_SYSTEM_KLT)
-    set (RTENGINESOURCEFILES ${RTENGINESOURCEFILES}
-	klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
-	klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
-    )
-    set (KLT_LIBRARIES)
-endif ()
+if(NOT WITH_SYSTEM_KLT)
+    set(RTENGINESOURCEFILES ${RTENGINESOURCEFILES}
+        klt/convolve.cc
+        klt/error.cc
+        klt/klt.cc
+        klt/klt_util.cc
+        klt/pnmio.cc
+        klt/pyramid.cc
+        klt/selectGoodFeatures.cc
+        klt/storeFeatures.cc
+        klt/trackFeatures.cc
+        klt/writeFeatures.cc
+        )
+    set(KLT_LIBRARIES)
+endif()
 
 include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 

@@ -15,59 +15,52 @@
 #
 
 
-if (KLT_LIBRARIES AND KLT_INCLUDE_DIRS)
-  # in cache already
-  set(KLT_FOUND TRUE)
-else (KLT_LIBRARIES AND KLT_INCLUDE_DIRS)
+if(KLT_LIBRARIES AND KLT_INCLUDE_DIRS)
+    # in cache already
+    set(KLT_FOUND TRUE)
+else()
+    find_path(KLT_INCLUDE_DIR
+        NAMES
+            klt.h
+        PATHS
+            /usr/include
+            /usr/local/include
+            /opt/local/include
+            /sw/include
+            ${CMAKE_INSTALL_PREFIX}/include
+        PATH_SUFFIXES
+            klt
+        )
+    mark_as_advanced(KLT_INCLUDE_DIR)
 
-  find_path(KLT_INCLUDE_DIR
-    NAMES
-        klt.h
-    PATHS
-        /usr/include
-        /usr/local/include
-        /opt/local/include
-        /sw/include
-        ${CMAKE_INSTALL_PREFIX}/include
-    PATH_SUFFIXES
-        klt
-  )
-  mark_as_advanced(KLT_INCLUDE_DIR)
+    find_library(KLT_LIBRARY
+        NAMES
+            klt
+        PATHS
+            /usr/lib64
+            /usr/lib
+            /usr/local/lib
+            /opt/local/lib
+            /sw/lib
+            ${CMAKE_INSTALL_PREFIX}/lib
+        )
+    mark_as_advanced(KLT_LIBRARY)
 
-  find_library(KLT_LIBRARY
-    NAMES
-        klt
-    PATHS
-        /usr/lib64
-        /usr/lib
-        /usr/local/lib
-        /opt/local/lib
-        /sw/lib
-        ${CMAKE_INSTALL_PREFIX}/lib
-  )
-  mark_as_advanced(KLT_LIBRARY)
+    set(KLT_INCLUDE_DIRS ${KLT_INCLUDE_DIR})
 
-  set(KLT_INCLUDE_DIRS
-    ${KLT_INCLUDE_DIR}
-  )
+    set(KLT_LIBRARIES ${KLT_LIBRARY})
 
-  set(KLT_LIBRARIES
-    ${KLT_LIBRARY}
-  )
+    if(KLT_INCLUDE_DIRS AND KLT_LIBRARIES)
+        set(KLT_FOUND TRUE)
+    endif()
 
-  if (KLT_INCLUDE_DIRS AND KLT_LIBRARIES)
-     set(KLT_FOUND TRUE)
-  endif (KLT_INCLUDE_DIRS AND KLT_LIBRARIES)
+    if(KLT_FOUND)
+        if(NOT KLT_FIND_QUIETLY)
+            message(STATUS "Found KLT: ${KLT_LIBRARIES}")
+        endif()
+    else()
+        message(STATUS "KLT not found.")
+    endif()
 
-  if (KLT_FOUND)
-    if (NOT KLT_FIND_QUIETLY)
-      message(STATUS "Found KLT: ${KLT_LIBRARIES}")
-    endif (NOT KLT_FIND_QUIETLY)
-  else (KLT_FOUND)
-      message(STATUS "KLT not found.")
-  endif (KLT_FOUND)
-
-  mark_as_advanced(KLT_INCLUDE_DIRS KLT_LIBRARIES)
-
-endif (KLT_LIBRARIES AND KLT_INCLUDE_DIRS)
-
+    mark_as_advanced(KLT_INCLUDE_DIRS KLT_LIBRARIES)
+endif()
