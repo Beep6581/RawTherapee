@@ -810,7 +810,9 @@ private:
         if (ipf.needsTransform()) {
             Imagefloat* trImg = new Imagefloat (fw, fh);
             ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(),
-                           imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), true);
+                           imgsrc->getMetaData()->getFocusDist(),
+                           imgsrc->getMetaData()->getFNumber(),
+                           imgsrc->getRotateDegree(), true);
             delete baseImg;
             baseImg = trImg;
         }
