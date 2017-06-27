@@ -1085,7 +1085,7 @@ defsubdirs:
     // read value
     value = new unsigned char [valuesize];
     fread (value, 1, valuesize, f);
-    int pos = ftell (f);
+
     // count the number of valid subdirs
     int sdcount = count;
 
@@ -1102,7 +1102,6 @@ defsubdirs:
             int newpos = base + toInt (j * 4, LONG);
             fseek (f, newpos, SEEK_SET);
             directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
-            fseek (f, pos, SEEK_SET);
         }
 
         // set the terminating NULL
@@ -2741,7 +2740,7 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
         Tag* tmodel4 = root->getTag ("LocalizedCameraModel");
 
         if (tmodel4) {
-            const char *model4 = (tmodel4) ? (const char *)tmodel4->getValue() : "";
+            const char *model4 = (const char *)tmodel4->getValue();
 
             if (strstr (model4, "Hasselblad ") == model4) {
                 model4 = model4 + 11;
@@ -2786,27 +2785,29 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
 TagDirectory* ExifManager::parseJPEG (FILE* f, int offset)
 {
 
-    fseek (f, offset, SEEK_SET);
-    unsigned char markerl = 0xff;
-    unsigned char c;
-    fread (&c, 1, 1, f);
-    const char exifid[] = "Exif\0\0";
-    char idbuff[8];
-    int tiffbase = -1;
+    if(!fseek (f, offset, SEEK_SET)) {
+        unsigned char c;
+        if(fread (&c, 1, 1, f) == 1) {
+            constexpr unsigned char markerl = 0xff;
+            const char exifid[] = "Exif\0\0";
+            char idbuff[8];
+            int tiffbase = -1;
 
-    while (fread (&c, 1, 1, f)) {
-        if (c != markerl) {
-            continue;
-        }
+            while (fread (&c, 1, 1, f)) {
+                if (c != markerl) {
+                    continue;
+                }
 
-        if (fread (&c, 1, 1, f) && c == 0xe1) { // APP1 marker found
-            if (fread (idbuff, 1, 8, f) < 8) {
-                return nullptr;
-            }
+                if (fread (&c, 1, 1, f) && c == 0xe1) { // APP1 marker found
+                    if (fread (idbuff, 1, 8, f) < 8) {
+                        return nullptr;
+                    }
 
-            if (!memcmp (idbuff + 2, exifid, 6)) {  // Exif info found
-                tiffbase = ftell (f);
-                return parse (f, tiffbase);
+                    if (!memcmp (idbuff + 2, exifid, 6)) {  // Exif info found
+                        tiffbase = ftell (f);
+                        return parse (f, tiffbase);
+                    }
+                }
             }
         }
     }

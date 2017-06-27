@@ -697,10 +697,8 @@ void ThumbBrowserBase::Internal::on_realize()
     bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
     bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
 
-    Glib::RefPtr<Gdk::Window> window = get_window();
     set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
-    //cc = window->create_cairo_context();
     set_has_tooltip (true);
     signal_query_tooltip().connect( sigc::mem_fun(*this, &ThumbBrowserBase::Internal::on_query_tooltip) );
 }
@@ -841,8 +839,6 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
     dirty = false;
-
-    Glib::RefPtr<Gdk::Window> window = get_window();
 
     int w = get_width();
     int h = get_height();

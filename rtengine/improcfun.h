@@ -237,7 +237,7 @@ public:
     void sharpening       (LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
     void sharpeningcam    (CieImage* ncie, float** buffer);
     void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
-                           double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage);
+                           double focalLen, double focalLen35mm, float focusDist, double fNumber, int rawRotationDeg, bool fullImage);
     float resizeScale     (const ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb   (LabImage* lab, Image8* image);
     void resize           (Image16* src, Image16* dst, float dScale);

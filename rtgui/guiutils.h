@@ -509,7 +509,6 @@ protected:
 public:
     BackBuffer();
     BackBuffer(int w, int h, Cairo::Format format = Cairo::FORMAT_RGB24);
-    BackBuffer(int w, int h, Glib::RefPtr<Gdk::Window> referenceWindow);
 
     // set the destination drawing rectangle; return true if the dimensions are different
     // Note: newW & newH must be > 0

@@ -220,7 +220,7 @@ rtengine::ProfileContent::ProfileContent(const Glib::ustring& fileName)
     if(length > 0) {
         char* d = new char[length + 1];
         fseek(f, 0, SEEK_SET);
-        length = fread(d, length, 1, f);
+        length = fread(d, 1, length, f);
         d[length] = 0;
         data.assign(d, length);
         delete[] d;

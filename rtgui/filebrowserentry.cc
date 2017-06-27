@@ -205,11 +205,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
         cropParams
     };
 
-#if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
-    const gint priority = G_PRIORITY_DEFAULT;
-#else
     const gint priority = G_PRIORITY_LOW;
-#endif
 
     const auto func = [](gpointer data) -> gboolean {
         tiupdate* const params = static_cast<tiupdate*>(data);

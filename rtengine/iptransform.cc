@@ -307,7 +307,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 }
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
-                                 double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage)
+                                 double focalLen, double focalLen35mm, float focusDist, double fNumber, int rawRotationDeg, bool fullImage)
 {
 
     LCPMapper *pLCPMap = nullptr;
@@ -317,7 +317,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
 
         if (pLCPProf) {
             pLCPMap = new LCPMapper (pLCPProf, focalLen, focalLen35mm,
-                                     focusDist, 0, false,
+                                     focusDist, fNumber, false,
                                      params->lensProf.useDist,
                                      oW, oH, params->coarse, rawRotationDeg);
         }

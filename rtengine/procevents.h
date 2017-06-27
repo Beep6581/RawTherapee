@@ -73,7 +73,7 @@ enum ProcEvent {
     EvLDNRadius = 43, // obsolete
     EvLDNEdgeTolerance = 44, // obsolete
     EvCDNEnabled = 45, // obsolete
-    EvBlendCMSMatrix = 46,
+    EvBlendCMSMatrix = 46, // obsolete
     EvDCPToneCurve = 47,
     EvDCPIlluminant = 48,
     EvSHEnabled = 49,

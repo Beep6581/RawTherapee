@@ -48,6 +48,7 @@ ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, RawMetaDataL
 
 ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(0), aperture(0.), shutter(0.)
 {
+    memset (&time, 0, sizeof(time));
     root = nullptr;
     iptc = nullptr;
 
@@ -110,7 +111,6 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(
         orientation = "Unknown";
         expcomp = 0;
         focal_len = 0;
-        memset (&time, 0, sizeof(time));
     }
 }
 

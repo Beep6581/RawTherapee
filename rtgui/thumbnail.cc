@@ -219,35 +219,36 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
     const bool create = (!hasProcParams() || force);
+    const bool run_cpb = !options.CPBPath.empty() && !defaultPparamsPath.empty() && cfs && cfs->exifValid && create;
 
     const Glib::ustring outFName =
         (options.paramsLoadLocation == PLL_Input && options.saveParamsFile) ?
         fname + paramFileExtension :
         getCacheFileName("profiles", paramFileExtension);
 
-    if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
-        rtengine::ImageMetaData* imageMetaData;
-        if (getType() == FT_Raw) {
-            rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
-            imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
-        } else {
-            imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
+    if (!run_cpb) {
+        if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
+            rtengine::ImageMetaData* imageMetaData;
+            if (getType() == FT_Raw) {
+                rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
+                imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
+            } else {
+                imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
+            }
+            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
+            int err = pp->pparams->save(outFName);
+            pp->deleteInstance();
+            delete pp;
+            if (!err) {
+                loadProcParams();
+            }
+        } else if (create && defProf != DEFPROFILE_DYNAMIC) {
+            const PartialProfile *p = ProfileStore::getInstance()->getProfile(defProf);
+            if (p && !p->pparams->save(outFName)) {
+                loadProcParams();
+            }
         }
-        PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
-        int err = pp->pparams->save(outFName);
-        pp->deleteInstance();
-        delete pp;
-        if (!err) {
-            loadProcParams();
-        }
-    } else if (create && defProf != DEFPROFILE_DYNAMIC) {
-        const PartialProfile *p = ProfileStore::getInstance()->getProfile(defProf);
-        if (p && !p->pparams->save(outFName)) {
-            loadProcParams();
-        }
-    }
-    
-    if (!options.CPBPath.empty() && !defaultPparamsPath.empty() && create && cfs && cfs->exifValid) {
+    } else {
         // First generate the communication file, with general values and EXIF metadata
         rtengine::ImageMetaData* imageMetaData;
 

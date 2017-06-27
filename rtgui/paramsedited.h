@@ -321,7 +321,6 @@ public:
     bool enabled;
     bool enhance;
     bool median;
-    bool autochroma;
     bool Ldetail;
     bool luma;
     bool chroma;
@@ -617,7 +616,6 @@ public:
     bool applyLookTable;
     bool applyBaselineExposureOffset;
     bool applyHueSatMap;
-    bool blendCMSMatrix;
     bool dcpIlluminant;
     bool working;
     bool output;

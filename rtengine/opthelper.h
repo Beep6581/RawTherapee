@@ -55,7 +55,7 @@
         #define RESTRICT    __restrict__
         #define LIKELY(x)   __builtin_expect (!!(x), 1)
         #define UNLIKELY(x) __builtin_expect (!!(x), 0)
-        #if ((__GNUC__ == 4 && __GNUC_MINOR__ >= 9) || __GNUC__ > 4) && (!defined(WIN32) || defined( __x86_64__ ))
+        #if (!defined(WIN32) || defined( __x86_64__ ))
             #define ALIGNED64 __attribute__ ((aligned (64)))
             #define ALIGNED16 __attribute__ ((aligned (16)))
         #else // there is a bug in gcc 4.7.x when using openmp and aligned memory and -O3, also needed for WIN32 builds

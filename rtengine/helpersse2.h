@@ -30,7 +30,7 @@ typedef __m128i vint2;
 
 //
 #ifdef __GNUC__
-#if ((__GNUC__ == 4 && __GNUC_MINOR__ >= 9) || __GNUC__ > 4) && (!defined(WIN32) || defined( __x86_64__ ))
+#if (!defined(WIN32) || defined( __x86_64__ ))
 #define LVF(x) _mm_load_ps((float*)&x)
 #define LVFU(x) _mm_loadu_ps(&x)
 #define STVF(x,y) _mm_store_ps(&x,y)

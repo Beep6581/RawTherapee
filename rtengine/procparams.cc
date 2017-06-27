@@ -593,6 +593,13 @@ void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCur
         opacityCurveLUT.Set (oCurve, opautili);
     }
 }
+
+SharpeningParams::SharpeningParams() : enabled(false), radius(0.5), amount(200), threshold(20, 80, 2000, 1200, false), edgesonly(false), edges_radius(1.9), edges_tolerance(1800), halocontrol(false), halocontrol_amount(85), deconvamount(75), deconvradius(0.75), deconviter(30), deconvdamping(20) {};
+
+
+VibranceParams::VibranceParams() : enabled(false), pastels(0), saturated(0), psthreshold(0, 75,  false), protectskins(false), avoidcolorshift(true), pastsattog(true) {};
+
+
 //WaveletParams::WaveletParams (): hueskin(-5, 25, 170, 120, false), hueskin2(-260, -250, -130, -140, false), hllev(50, 75, 100, 98, false), bllev(0, 2, 50, 25, false), pastlev(0, 2, 30, 20, false), satlev(30, 45, 130, 100, false), edgcont(0, 20, 100, 75, false){
 
 WaveletParams::WaveletParams (): hueskin (-5, 25, 170, 120, false), hueskin2 (-260, -250, -130, -140, false), hllev (50, 75, 100, 98, false), bllev (0, 2, 50, 25, false),
@@ -827,7 +834,6 @@ void DirPyrDenoiseParams::setDefaults()
     enabled = false;
     enhance = false;
     median = false;
-    autochroma = false;
     perform = false;
     luma = 0;
     passes = 1;
@@ -1162,7 +1168,6 @@ void RAWParams::setDefaults()
 void ColorManagementParams::setDefaults()
 {
     input   = "(cameraICC)";
-    blendCMSMatrix = false;
     toneCurve = false;
     applyLookTable = false;
     applyBaselineExposureOffset = true;
@@ -2445,10 +2450,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Directional Pyramid Denoising", "Median", dirpyrDenoise.median);
         }
 
-        if (!pedited || pedited->dirpyrDenoise.autochroma) {
-            keyFile.set_boolean ("Directional Pyramid Denoising", "Auto", dirpyrDenoise.autochroma);
-        }
-
 //   if (!pedited || pedited->dirpyrDenoise.perform) keyFile.set_boolean ("Directional Pyramid Denoising", "Perform", dirpyrDenoise.perform);
         if (!pedited || pedited->dirpyrDenoise.luma) {
             keyFile.set_double ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
@@ -3166,10 +3167,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->icm.applyHueSatMap) {
             keyFile.set_boolean ("Color Management", "ApplyHueSatMap",   icm.applyHueSatMap);
-        }
-
-        if (!pedited || pedited->icm.blendCMSMatrix) {
-            keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
         }
 
         if (!pedited || pedited->icm.dcpIlluminant) {
@@ -6283,14 +6280,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("Directional Pyramid Denoising", "Auto"))    {
-                dirpyrDenoise.autochroma = keyFile.get_boolean ("Directional Pyramid Denoising", "Auto");
-
-                if (pedited) {
-                    pedited->dirpyrDenoise.autochroma = true;
-                }
-            }
-
 //   if (keyFile.has_key ("Directional Pyramid Denoising", "Perform"))    { dirpyrDenoise.perform = keyFile.get_boolean ("Directional Pyramid Denoising", "Perform"); if (pedited) pedited->dirpyrDenoise.perform = true; }
             if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       {
                 dirpyrDenoise.luma    = keyFile.get_double ("Directional Pyramid Denoising", "Luma");
@@ -7142,14 +7131,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->icm.applyHueSatMap = true;
-                }
-            }
-
-            if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) {
-                icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix");
-
-                if (pedited) {
-                    pedited->icm.blendCMSMatrix = true;
                 }
             }
 
@@ -9284,7 +9265,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && dirpyrDenoise.enabled == other.dirpyrDenoise.enabled
         && dirpyrDenoise.enhance == other.dirpyrDenoise.enhance
         && dirpyrDenoise.median == other.dirpyrDenoise.median
-        && dirpyrDenoise.autochroma == other.dirpyrDenoise.autochroma
 //      && dirpyrDenoise.perform == other.dirpyrDenoise.perform
         && dirpyrDenoise.luma == other.dirpyrDenoise.luma
         && dirpyrDenoise.lcurve == other.dirpyrDenoise.lcurve
@@ -9536,7 +9516,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && icm.applyLookTable == other.icm.applyLookTable
         && icm.applyBaselineExposureOffset == other.icm.applyBaselineExposureOffset
         && icm.applyHueSatMap == other.icm.applyHueSatMap
-        && icm.blendCMSMatrix == other.icm.blendCMSMatrix
         && icm.dcpIlluminant == other.icm.dcpIlluminant
         && icm.working == other.icm.working
         && icm.output == other.icm.output

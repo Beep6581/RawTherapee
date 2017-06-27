@@ -548,7 +548,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsep2 = Gtk::manage (new Gtk::VSeparator ());
-    Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
 
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider (iareapanel->imageArea);
@@ -681,13 +680,17 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->attach_next_to (*vsep2, Gtk::POS_LEFT, 1, 1);
     iops->attach_next_to (*progressLabel, Gtk::POS_LEFT, 1, 1);
     iops->attach_next_to (*vsep1, Gtk::POS_LEFT, 1, 1);
-    iops->attach_next_to (*sendtogimp, Gtk::POS_LEFT, 1, 1);
+    if (!gimpPlugin) {
+        iops->attach_next_to (*sendtogimp, Gtk::POS_LEFT, 1, 1);
+    }
 
-    if (!simpleEditor) {
+    if (!gimpPlugin) {
         iops->attach_next_to (*queueimg, Gtk::POS_LEFT, 1, 1);
     }
 
-    iops->attach_next_to (*saveimgas, Gtk::POS_LEFT, 1, 1);
+    if (!gimpPlugin) {
+        iops->attach_next_to (*saveimgas, Gtk::POS_LEFT, 1, 1);
+    }
 
 
     // Color management toolbar
@@ -695,6 +698,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     colorMgmtToolBar->pack_right_in (iops);
 
     if (!simpleEditor && !options.tabbedUI) {
+        Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
         iops->attach_next_to (*vsep3, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to (*navPrev, Gtk::POS_RIGHT, 1, 1);
         iops->attach_next_to (*navSync, Gtk::POS_RIGHT, 1, 1);
@@ -1579,7 +1583,9 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 return true;
 
             case GDK_KEY_s:
-                saveAsPressed();
+                if (!gimpPlugin) {
+                    saveAsPressed();
+                }
                 return true;
 
             case GDK_KEY_b:
@@ -1590,7 +1596,9 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 return true;
 
             case GDK_KEY_e:
-                sendToGimpPressed();
+                if (!gimpPlugin) {
+                    sendToGimpPressed();
+                }
                 return true;
 
             case GDK_KEY_z:
@@ -1886,6 +1894,30 @@ void EditorPanel::sendToGimpPressed ()
                    sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_sendToGimp ), ld, openThm->getFileName() ));
     saveimgas->set_sensitive (false);
     sendtogimp->set_sensitive (false);
+}
+
+
+bool EditorPanel::saveImmediately(const Glib::ustring &filename, const SaveFormat &sf)
+{
+    rtengine::procparams::ProcParams pparams;
+    ipc->getParams (&pparams);
+    std::unique_ptr<rtengine::ProcessingJob> job(rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams));
+
+    // save immediately
+    rtengine::IImage16 *img = rtengine::processImage(job.get(), err, nullptr, options.tunnelMetaData, false);
+
+    int err = 0;
+    if (sf.format == "tif") {
+        err = img->saveAsTIFF(filename, sf.tiffBits, sf.tiffUncompressed);
+    } else if (sf.format == "png") {
+        err = img->saveAsPNG(filename, sf.pngCompression, sf.pngBits);
+    } else if (sf.format == "jpg") {
+        err = img->saveAsJPEG(filename, sf.jpegQuality, sf.jpegSubSamp);
+    } else {
+        err = 1;
+    }
+    img->free();
+    return !err;
 }
 
 

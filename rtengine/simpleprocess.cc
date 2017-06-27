@@ -822,7 +822,9 @@ private:
         if (ipf.needsTransform()) {
             Imagefloat* trImg = new Imagefloat (fw, fh);
             ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(),
-                           imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), true);
+                           imgsrc->getMetaData()->getFocusDist(),
+                           imgsrc->getMetaData()->getFNumber(),
+                           imgsrc->getRotateDegree(), true);
             delete baseImg;
             baseImg = trImg;
         }
@@ -2289,13 +2291,7 @@ void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, boo
 {
 
     if (bpl)
-#if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
-        // See Issue 2384 "Very bad response time on win7/64 using gcc 4.8 when queue is running"
-        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-
-#else
-        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
-#endif
+        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
 
 }
 

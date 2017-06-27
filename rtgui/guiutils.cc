@@ -1330,26 +1330,6 @@ BackBuffer::BackBuffer(int width, int height, Cairo::Format format) : x(0), y(0)
     }
 }
 
-BackBuffer::BackBuffer(int width, int height, Glib::RefPtr<Gdk::Window> referenceWindow) : x(0), y(0), w(width), h(height), offset(0, 0), dirty(true)
-{
-    if (w > 0 && h > 0 && referenceWindow) {
-        Cairo::RefPtr<Cairo::Surface> surf = referenceWindow->create_similar_image_surface(Cairo::FORMAT_RGB24, w, h, 0);
-        Cairo::SurfaceType type = surf->get_type();
-
-        if (type == Cairo::SURFACE_TYPE_IMAGE || type == Cairo::SURFACE_TYPE_WIN32) {
-            surface = Cairo::RefPtr<Cairo::ImageSurface>::cast_static(surf);
-
-            if (!surface || !surface->get_width() || !surface->get_height()) {
-                printf("ERRRROOOOORRRR!\n");
-            }
-        } else {
-            printf("ERROR: wrong surface type. 0 or 7 was expected, but we've got %d instead.\n", type);
-        }
-    } else {
-        w = h = 0;
-    }
-}
-
 void BackBuffer::setDestPosition(int x, int y)
 {
     // values will be clamped when used...
