@@ -165,7 +165,6 @@ RTWindow::RTWindow ()
         mainNB->set_scrollable (true);
         mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
-
         // Editor panel
         fpanel =  new FilePanel () ;
         fpanel->setParent (this);
@@ -203,28 +202,9 @@ RTWindow::RTWindow ()
         mainNB->append_page (*bpanel, *lbq);
 
 
-        // Editor panel, single-tab mode only
-        epanel = Gtk::manage ( new EditorPanel (fpanel) );
-        epanel->setParent (this);
-
-        // decorate tab
-        Gtk::Grid* editorLabelGrid = Gtk::manage (new Gtk::Grid ());
-        setExpandAlignProperties(editorLabelGrid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
-        Gtk::Label* el = Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
-
-        if (options.mainNBVertical) {
-            el->set_angle (90);
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_TOP, 1, 1);
-            editorLabelGrid->attach_next_to(*el, Gtk::POS_TOP, 1, 1);
-        } else {
-            editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), Gtk::POS_RIGHT, 1, 1);
-            editorLabelGrid->attach_next_to(*el, Gtk::POS_RIGHT, 1, 1);
+        if(isSingleTabMode()) {
+            createSetmEditor();
         }
-
-        editorLabelGrid->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
-        editorLabelGrid->show_all ();
-        epanel->tbTopPanel_1_visible(true); //show the toggle Top Panel button
-        mainNB->append_page (*epanel, *editorLabelGrid);
 
         mainNB->set_current_page (mainNB->page_num (*fpanel));
 
@@ -290,10 +270,6 @@ RTWindow::RTWindow ()
                 fpanel->fileCatalog->openRequested({thm});
             }
         }
-    }
-
-    if (!isSingleTabMode() && !simpleEditor) {
-        epanel->hide();
     }
 }
 
@@ -861,4 +837,48 @@ bool RTWindow::isEditorPanel(Widget* panel)
 bool RTWindow::isEditorPanel(guint pageNum)
 {
     return isEditorPanel(mainNB->get_nth_page(pageNum));
+}
+
+void RTWindow::setEditorMode(bool tabbedUI)
+{
+    MoveFileBrowserToMain();
+    CloseOpenEditors();
+    SetMainCurrent();
+
+    if(tabbedUI) {
+        mainNB->remove_page(*epanel);
+        epanel = nullptr;
+        set_title_decorated("");
+    } else {
+        createSetmEditor();
+        epanel->show_all();
+        set_title_decorated("");
+    }
+}
+
+void RTWindow::createSetmEditor()
+{
+    // Editor panel, single-tab mode only
+    epanel = Gtk::manage ( new EditorPanel (fpanel) );
+    epanel->setParent (this);
+
+    // decorate tab
+    Gtk::Grid* const editorLabelGrid = Gtk::manage (new Gtk::Grid ());
+    setExpandAlignProperties(editorLabelGrid, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    Gtk::Label* const el = Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
+
+    const auto pos = options.mainNBVertical ? Gtk::POS_TOP : Gtk::POS_RIGHT;
+
+    if (options.mainNBVertical) {
+        el->set_angle(90);
+    }
+
+    editorLabelGrid->attach_next_to(*Gtk::manage (new RTImage ("rt-logo-small.png")), pos, 1, 1);
+    editorLabelGrid->attach_next_to(*el, pos, 1, 1);
+
+    editorLabelGrid->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
+    editorLabelGrid->show_all ();
+    epanel->tbTopPanel_1_visible(true); //show the toggle Top Panel button
+    mainNB->append_page (*epanel, *editorLabelGrid);
+
 }

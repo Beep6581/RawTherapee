@@ -849,13 +849,15 @@ bool MyExpander::get_expanded()
     return expBox ? expBox->get_visible() : false;
 }
 
-void MyExpander::add  (Gtk::Container& widget)
+void MyExpander::add  (Gtk::Container& widget, bool setChild)
 {
-    child = &widget;
+    if(setChild) {
+        child = &widget;
+    }
     expBox = Gtk::manage (new ExpanderBox (child));
-    expBox->add (*child);
+    expBox->add (widget);
     pack_start(*expBox, Gtk::PACK_SHRINK, 0);
-    child->show();
+    widget.show();
     expBox->hideBox();
 }
 
@@ -887,11 +889,6 @@ bool MyExpander::on_toggle(GdkEventButton* event)
     }
 
     return false;
-}
-
-Gtk::Container* MyExpander::getChild()
-{
-    return child;
 }
 
 // used to connect a function to the enabled_toggled signal
