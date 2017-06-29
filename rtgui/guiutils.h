@@ -265,9 +265,6 @@ public:
         return headerWidget ? headerWidget : label;
     }
 
-    /// Get the widget shown/hidden by the expander
-    Gtk::Container* getChild();
-
     /// Set the collapsed/expanded state of the expander
     void set_expanded( bool expanded );
 
@@ -276,7 +273,7 @@ public:
 
     /// Add a Gtk::Container for the content of the expander
     /// Warning: do not manually Show/Hide the widget, because this parameter is handled by the click on the Expander's title
-    void add  (Gtk::Container& widget);
+    void add  (Gtk::Container& widget, bool setChild = true);
 
     void updateVScrollbars(bool hide);
 };
