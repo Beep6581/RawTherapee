@@ -116,6 +116,8 @@ public:
     }
     void set_title_decorated(Glib::ustring fname);
     void CloseOpenEditors();
+    void setEditorMode(bool tabbedUI);
+    void createSetmEditor();
 };
 
 #endif
