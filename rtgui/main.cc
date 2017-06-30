@@ -586,8 +586,7 @@ int main(int argc, char **argv)
 
     int ret = 0;
     if (remote) {
-        char *app_argv[2] = { nullptr, nullptr };
-        app_argv[0] = const_cast<char *>(argv0.c_str());
+        char *app_argv[2] = { const_cast<char *>(argv0.c_str()) };
         int app_argc = 1;
         if (!argv1.empty()) {
             app_argc = 2;
@@ -599,7 +598,7 @@ int main(int argc, char **argv)
         if (init_rt()) {
             Gtk::Main m(&argc, &argv);
             gdk_threads_enter();
-            RTWindow *rtWindow = create_rt_window();
+            const std::unique_ptr<RTWindow> rtWindow(create_rt_window());
             m.run(*rtWindow);
             gdk_threads_leave();
 
@@ -615,7 +614,6 @@ int main(int argc, char **argv)
                     ret = -2;
                 }
             }
-            delete rtWindow;
             cleanup_rt();
         } else {
             Gtk::Main m(&argc, &argv);
