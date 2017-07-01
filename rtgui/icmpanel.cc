@@ -199,7 +199,7 @@ ICMPanel::ICMPanel () : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunch
     Gtk::HBox *riHBox = Gtk::manage ( new Gtk::HBox());
     Gtk::Label* outputIntentLbl = Gtk::manage (new Gtk::Label(M("TP_ICM_PROFILEINTENT")+":"));
     riHBox->pack_start (*outputIntentLbl, Gtk::PACK_SHRINK);
-    ointent = Gtk::manage (new PopUpButton ());
+    ointent.reset (new PopUpButton ());
     ointent->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
     ointent->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
     ointent->addEntry("intent-saturation.png", M("PREFERENCES_INTENT_SATURATION"));
