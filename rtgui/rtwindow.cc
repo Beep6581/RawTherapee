@@ -754,7 +754,9 @@ void RTWindow::MoveFileBrowserToEditor()
 
 void RTWindow::updateProfiles(const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
 {
-    epanel->updateProfiles(printerProfile, printerIntent, printerBPC);
+    if(epanel) {
+        epanel->updateProfiles(printerProfile, printerIntent, printerBPC);
+    }
 
     for(auto panel : epanels) {
         panel.second->updateProfiles(printerProfile, printerIntent, printerBPC);
@@ -764,7 +766,9 @@ void RTWindow::updateProfiles(const Glib::ustring &printerProfile, rtengine::Ren
 void RTWindow::updateTPVScrollbar (bool hide)
 {
     fpanel->updateTPVScrollbar (hide);
-    epanel->updateTPVScrollbar (hide);
+    if(epanel) {
+        epanel->updateTPVScrollbar (hide);
+    }
 
     for(auto panel : epanels) {
         panel.second->updateTPVScrollbar (hide);
@@ -774,7 +778,9 @@ void RTWindow::updateTPVScrollbar (bool hide)
 void RTWindow::updateTabsUsesIcons (bool useIcons)
 {
     fpanel->updateTabsUsesIcons (useIcons);
-    epanel->updateTabsUsesIcons (useIcons);
+    if(epanel) {
+        epanel->updateTabsUsesIcons (useIcons);
+    }
 
     for(auto panel : epanels) {
         panel.second->updateTabsUsesIcons (useIcons);
@@ -793,8 +799,9 @@ void RTWindow::updateFBToolBarVisibility (bool showFilmStripToolBar)
 
 void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 {
-    epanel->updateHistogramPosition (oldPosition, newPosition);
-
+    if(epanel) {
+        epanel->updateHistogramPosition (oldPosition, newPosition);
+    }
     for(auto panel : epanels) {
         panel.second->updateHistogramPosition (oldPosition, newPosition);
     }
