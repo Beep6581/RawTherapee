@@ -10,10 +10,10 @@
 
 revision="tip"
 inFile='http://rawtherapee.com/shared/test_images/colorspace_flowers.pef'
-sidecarDefault=("Neutral.pp3" "Default.pp3")
+sidecarDefault=("Default.pp3")
 buildType="release"
 branch="default"
-rtExe="rawtherapee"
+rtExe="rawtherapee-cli"
 repo="${HOME}/rawtherapee"
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 outFileFormat="-t"
@@ -181,7 +181,7 @@ if [[ $testAllTools -ne 1 ]]; then
         sidecarDir="${tmpDir}/"
       else
         printf "%s\n" "" "Could not find \"${sidecar}\" in \"${rtExeDir}/profiles/\" where it was expected to be." "Downloading the latest \"${sidecar}\" from the repository." ""
-        download "https://rawtherapee.googlecode.com/hg/rtdata/profiles/${sidecar}"
+        download "https://raw.githubusercontent.com/Beep6581/RawTherapee/dev/rtdata/profiles/${sidecar}"
         sidecarDir="${tmpDir}/"
       fi
     done
@@ -233,7 +233,7 @@ for s in "${!sidecarFiles[@]}"; do
     runTime=${runTime#*[[:blank:]]}
 #   runTime=0m4.751s
     minOnly=${runTime%m*}
-    secOnly=${runTime#*m}; secOnly=${secOnly%s*}
+    secOnly=${runTime#*m}; secOnly=${secOnly%s*}; secOnly="$(tr , . <<<$secOnly)"
     t="$( printf "%s\n" "scale=3; $secOnly+$minOnly*60" | bc )"
 #   t=4.751
 ##  t="$(( $RANDOM %20 )).$(( $RANDOM %999 ))"
