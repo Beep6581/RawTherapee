@@ -181,7 +181,7 @@ if [[ $testAllTools -ne 1 ]]; then
         sidecarDir="${tmpDir}/"
       else
         printf "%s\n" "" "Could not find \"${sidecar}\" in \"${rtExeDir}/profiles/\" where it was expected to be." "Downloading the latest \"${sidecar}\" from the repository." ""
-        download "https://rawtherapee.googlecode.com/hg/rtdata/profiles/${sidecar}"
+        download "https://raw.githubusercontent.com/Beep6581/RawTherapee/dev/rtdata/profiles/${sidecar}"
         sidecarDir="${tmpDir}/"
       fi
     done
