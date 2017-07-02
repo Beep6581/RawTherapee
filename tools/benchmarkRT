@@ -10,7 +10,7 @@
 
 revision="tip"
 inFile='http://rawtherapee.com/shared/test_images/colorspace_flowers.pef'
-sidecarDefault=("Neutral.pp3" "Default.pp3")
+sidecarDefault=("Default.pp3")
 buildType="release"
 branch="default"
 rtExe="rawtherapee-cli"
