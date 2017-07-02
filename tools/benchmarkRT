@@ -233,8 +233,8 @@ for s in "${!sidecarFiles[@]}"; do
     runTime=${runTime#*[[:blank:]]}
 #   runTime=0m4.751s
     minOnly=${runTime%m*}
-    secOnly=${runTime#*m}; secOnly=${secOnly%s*}
-    t="$( printf "%s\n" "scale=3; $secOnly+$minOnly*60" | bc )"; secOnly="$(tr , . <<<$secOnly)"
+    secOnly=${runTime#*m}; secOnly=${secOnly%s*}; secOnly="$(tr , . <<<$secOnly)"
+    t="$( printf "%s\n" "scale=3; $secOnly+$minOnly*60" | bc )"
 #   t=4.751
 ##  t="$(( $RANDOM %20 )).$(( $RANDOM %999 ))"
 #   benchmark stores time array of each run, gets reset after each PP3
