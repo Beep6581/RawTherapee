@@ -315,7 +315,7 @@ std::string CacheManager::getMD5 (const Glib::ustring& fname)
 
         try
         {
-            const auto info = file->query_info("standard::*")
+            const auto info = file->query_info("standard::*");
             if (info) {
                 // We only use name and size to identify a file.
                 const auto identifier = Glib::ustring::compose("%1%2", fname, info->get_size());
