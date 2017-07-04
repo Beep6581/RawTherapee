@@ -7,6 +7,7 @@
 # v4  2013-03-07
 # v5  2013-03-23
 # v6  2017-07-03
+# v7  2017-07-04
 # www.rawtherapee.com
 
 inFile='http://rawtherapee.com/shared/test_images/colorspace_flowers.pef'
@@ -16,10 +17,18 @@ tmpDir="/tmp/rawtherapee-benchmark"
 runs=5
 echo
 
+die () {
+    printf '%s\n' "Cleaning up."
+    rm -rv "${tmpDir}"
+    exit 1
+}
+
+trap die HUP INT QUIT ABRT TERM
+
 download () {
     local retries=3
     while [[ $retries -ne 0 ]]; do
-        wget --progress=dot:binary --continue --trust-server-names --tries=5 --timestamping "$1" 2>&1 | sed "s/^/\t/"
+        wget --progress=dot:binary --continue --trust-server-names --tries=1 --timestamping "$1" 2>&1 | sed "s/^/\t/"
         return=${PIPESTATUS[0]}
         ((retries--))
         if [[ $return -eq 0 ]]; then # I don't trust wget to only exit with 0 if it downloaded the file succesfully, so I check.
@@ -37,35 +46,47 @@ download () {
 }
 
 howto() {
-    fold -s <<END
-    Benchmark the time it takes for RawTherapee to process an image. The designated file will be processed n times in a row, and the average time of those five runs will be calculated.
+    cat<<END
+    Introduction
+    ------------
+    Benchmark the time it takes for RawTherapee to process an image.
+    The designated file will be processed ${runs} times in a row, and
+    the average time of those ${runs} runs will be calculated.
 
     All options are optional.
 
-    Make sure you have no unnecessary background activity - no programs intensively using the CPU. Turn off all P2P, multimedia, graphics editing, games, database, server and other "heavy" software, otherwise the timings will be skewed. You can use the "top" and "ps ux" commands to see a list of running processes and their CPU usage.
+    Make sure you have no unnecessary background activity - no programs
+    intensively using the CPU. Turn off all P2P, multimedia, graphics
+    editing, games, database, server and other "heavy" software,
+    otherwise the timings will be skewed. You can use the "top" and
+    "ps ux" commands to see a list of running processes and their CPU usage.
 
-    Usage:
+    Usage
+    -----
     ./benchmarkRT [OPTIONS]
 
-    Options:
+    Options
+    -------
     -a        - Run a benchmark for all the tools available in RT.
+
     -e        - Absolute path to but excluding the "${rtExe}" executable.
-    e.g. "-e ${HOME}/programs/code-rawtherapee/build/release"
+                e.g. "-e ${HOME}/programs/code-rawtherapee/build/release"
 
     -h        - Print this help screen.
 
     -i <file> - Absolute path to image file. This can be a file on your
     hard drive or a url. The url must start with "http". The default
-    behavior if you do not use -i is to download a test file from
+    behavior if you do not specify -i is to download a raw image from
     ${inFile}
 
     -s <PP3-1> -s <PP3-2> -s <PP3-#> - Absolute path to sidecar file.
     You can specify multiple sidecar files, use -s each time.
     The processing profile can be a file on your hard drive or a url.
-    The default behaviour if you do not use -s is to use the
+    The default behaviour if you do not specify -s is to use the
     "Neutral" profile.
 
-    Examples:
+    Examples
+    --------
     Run the default benchmark (recommended)
     ./benchmarkRT
 
@@ -73,7 +94,8 @@ howto() {
     custom directory, and multiple processing profiles:
     ./benchmarkRT -i /tmp/kittens.raw -s /tmp/noise_reduction.pp3 -s /tmp/tonemapping.pp3 -s /tmp/retinex.pp3
 
-    Further help:
+    Further Help
+    ------------
     If you need further help, discover bugs or want to request new
     functionality, then tell us in the forum or on IRC:
         https://discuss.pixls.us/t/welcome-to-the-rawtherapee-forum-read-this-first/473
@@ -111,8 +133,6 @@ if [[ ! -e "${tmpDir}" ]]; then
     mkdir "$tmpDir"
 fi
 
-trap 'rm -rv "${tmpDir}"; exit 1' HUP INT QUIT ABRT TERM
-
 cd "$tmpDir"
 
 if [[ ${inFile} = http* ]]; then # if inFile is a url and if we haven't downloaded it already, then download it
@@ -136,7 +156,6 @@ rtExeDirs=("${customExeDir}" "${HOME}/rt" "${HOME}/programs/code-rawtherapee/bui
 found="false"
 for rtExeDir in "${rtExeDirs[@]}"; do
     if [[ -x "${rtExeDir}/${rtExe}" ]]; then
-        printf "%s\n" "Using RawTherapee executable:" "${rtExeDir}/${rtExe}"
         found="true"
         break
     fi
@@ -182,10 +201,10 @@ else
     done
 fi
 
-printf "%s\n" "" "--------------------------------------------------------------------------------" "" "Benchmark of RawTherapee"
 printf "%s\n" "$(uname -srvmpio)" ""
-hash cpufreq-info 2>/dev/null && cpufreq-info -mo
-printf "%s\n" ""
+hash cpufreq-info 2>/dev/null && { cpufreq-info -mo; printf "%s\n" ""; }
+
+printf "%s\n" "RawTherapee executable: ${rtExeDir}/${rtExe}"
 
 if [[ ! -f "${rtExeDir}/AboutThisBuild.txt" ]]; then
     printf "%s\n" "[Could not find ${rtExeDir}/AboutThisBuild.txt]" ""
@@ -204,6 +223,10 @@ echo
 
 declare -A avgTable
 unset benchmark total sidecar sorted
+
+# Unfudge numbers to make sed/PE possible without spaghetti.
+export LC_ALL=C
+
 for s in "${!sidecarFinal[@]}"; do
     IFS=";" read sidecar toolNameHuman <<< "${sidecarFinal[s]}"
     unset benchmark
