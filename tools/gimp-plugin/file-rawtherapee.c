@@ -20,18 +20,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include "config.h"
+#include "config.h"
 
 #include <stdlib.h>
 #include <errno.h>
-#include <string.h>
 
 #include <glib/gstdio.h>
 
 #include <libgimp/gimp.h>
-#include <libgimp/gimpui.h>
 
-//#include "libgimp/stdplugins-intl.h"
+#include "libgimp/stdplugins-intl.h"
 
 #include "file-formats.h"
 
@@ -39,6 +37,7 @@
 #define LOAD_THUMB_PROC "file-rawtherapee-load-thumb"
 
 
+static void     init                 (void);
 static void     query                (void);
 static void     run                  (const gchar      *name,
                                       gint              nparams,
@@ -55,7 +54,7 @@ static gint32   load_thumbnail_image (const gchar      *filename,
 
 const GimpPlugInInfo PLUG_IN_INFO =
 {
-  NULL,  /* init_proc */
+  init,  /* init_proc */
   NULL,  /* quit_proc */
   query, /* query proc */
   run,   /* run_proc */
@@ -65,7 +64,7 @@ MAIN ()
 
 
 static void
-query (void)
+init (void)
 {
   static const GimpParamDef load_args[] =
   {
@@ -117,7 +116,7 @@ query (void)
                   &rtversion) == 1)
         {
           have_rawtherapee = TRUE;
-          free(rtversion);
+          free (rtversion);
         }
 
       g_free (rawtherapee_stdout);
@@ -169,6 +168,17 @@ query (void)
 }
 
 static void
+query (void)
+{
+  /* query() is run only the first time for efficiency. Yet this plugin
+   * is dependent on the presence of rawtherapee which may be installed
+   * or uninstalled between GIMP startups. Therefore we should move the
+   * usual gimp_install_procedure() to init() so that the check is done
+   * at every startup instead.
+   */
+}
+
+static void
 run (const gchar      *name,
      gint              nparams,
      const GimpParam  *param,
@@ -182,7 +192,7 @@ run (const gchar      *name,
   GError            *error = NULL;
   gint               i;
 
-//  INIT_I18N ();
+  INIT_I18N ();
 
   run_mode = param[0].data.d_int32;
 
@@ -278,7 +288,7 @@ load_image (const gchar  *filename,
   if (g_spawn_sync (NULL,
                     argv,
                     NULL,
-//                     G_SPAWN_STDOUT_TO_DEV_NULL |
+                    /*G_SPAWN_STDOUT_TO_DEV_NULL |*/
                     G_SPAWN_STDERR_TO_DEV_NULL |
                     G_SPAWN_SEARCH_PATH,
                     NULL,
@@ -293,8 +303,8 @@ load_image (const gchar  *filename,
         gimp_image_set_filename (image_ID, filename);
     }
 
-// if (rawtherapee_stdout) printf ("%s\n", rawtherapee_stdout);
-  g_free(rawtherapee_stdout);
+  /*if (rawtherapee_stdout) printf ("%s\n", rawtherapee_stdout);*/
+  g_free (rawtherapee_stdout);
 
   g_unlink (filename_out);
   g_free (filename_out);
@@ -312,9 +322,7 @@ load_thumbnail_image (const gchar   *filename,
   gint32  image_ID         = -1;
   gchar  *filename_out     = gimp_temp_name ("jpg");
   gchar  *thumb_pp3        = gimp_temp_name ("pp3");
-  gchar  *size             = g_strdup_printf ("%d", thumb_size);
-  FILE   *thumb_pp3_f      = fopen(thumb_pp3, "w");
-  gboolean pp3_ok          = FALSE;
+  FILE   *thumb_pp3_f      = fopen (thumb_pp3, "w");
   gchar  *rawtherapee_stdout = NULL;
   const char *pp3_content =
     "[Version]\n"
@@ -360,7 +368,7 @@ load_thumbnail_image (const gchar   *filename,
     "\n"
     "[RAW X-Trans]\n"
     "Method=fast\n";
- 
+
 
   gchar *argv[] =
     {
@@ -376,8 +384,8 @@ load_thumbnail_image (const gchar   *filename,
     };
 
   if (thumb_pp3_f) {
-    if (fprintf(thumb_pp3_f, pp3_content, thumb_size, thumb_size) < 0) {
-      fclose(thumb_pp3_f);
+    if (fprintf (thumb_pp3_f, pp3_content, thumb_size, thumb_size) < 0) {
+      fclose (thumb_pp3_f);
       thumb_pp3_f = NULL;
     }
   }
@@ -413,7 +421,7 @@ load_thumbnail_image (const gchar   *filename,
   gimp_progress_update (1.0);
 
   if (thumb_pp3_f) {
-    fclose(thumb_pp3_f);
+    fclose (thumb_pp3_f);
   }
   g_unlink (thumb_pp3);
   g_free (filename_out);

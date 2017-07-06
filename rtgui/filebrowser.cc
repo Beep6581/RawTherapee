@@ -600,13 +600,18 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     {
         MYWRITERLOCK(l, entryRW);
 
-        std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
-
-        while (i != fd.end() && *entry < * ((FileBrowserEntry*)*i)) {
-            ++i;
-        }
-
-        fd.insert (i, entry);
+        fd.insert(
+            std::lower_bound(
+                fd.begin(),
+                fd.end(),
+                (ThumbBrowserEntryBase*)entry,
+                [](ThumbBrowserEntryBase* a, ThumbBrowserEntryBase* b)
+                {
+                    return *b < *a;
+                }
+            ),
+            (ThumbBrowserEntryBase*)entry
+        );
 
         initEntry (entry);
     }

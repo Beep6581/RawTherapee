@@ -1792,38 +1792,36 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
 {
-    if (!file) {
-        return;
-    }
 
-    if (!file->query_exists()) {
+    if (!file) {
         return;
     }
 
     try {
 
-        auto info = file->query_info ();
+        const auto info = file->query_info("standard::*");
 
-        if (!info || info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
+        if (!info || info->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
             return;
         }
 
-        if (!options.fbShowHidden && info->is_hidden ()) {
+        if (!options.fbShowHidden && info->is_hidden()) {
             return;
         }
 
         Glib::ustring ext;
 
-        const auto lastdot = info->get_name ().find_last_of ('.');
+        const auto lastdot = info->get_name().find_last_of('.');
+
         if (lastdot != Glib::ustring::npos) {
-            ext = info->get_name ().substr (lastdot + 1);
+            ext = info->get_name().substr(lastdot + 1);
         }
 
-        if (!options.is_extention_enabled (ext)) {
+        if (!options.is_extention_enabled(ext)) {
             return;
         }
 
-        previewLoader->add (selectedDirectoryId, file->get_parse_name (), this);
+        previewLoader->add(selectedDirectoryId, file->get_parse_name(), this);
         previewsToLoad++;
 
     } catch(Gio::Error&) {}

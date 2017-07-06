@@ -83,7 +83,7 @@ private:
 
     MyComboBoxText*    onames;
     sigc::connection   onamesconn;
-    PopUpButton*       ointent;
+    std::unique_ptr<PopUpButton>       ointent;
     sigc::connection   ointentconn;
     Gtk::RadioButton*  iunchanged;
     MyFileChooserButton* ipDialog;

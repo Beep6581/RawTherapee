@@ -2436,18 +2436,8 @@ void Preferences::switchFontTo (const Glib::ustring &newFontFamily, const int ne
 void Preferences::workflowUpdate ()
 {
 
-    if (moptions.tabbedUI != options.tabbedUI) {
-        parent->MoveFileBrowserToMain();
-        parent->CloseOpenEditors();
-        parent->SetMainCurrent();
-
-        if (moptions.tabbedUI) {
-            parent->epanel->hide();
-            parent->set_title_decorated ("");
-        } else {
-            parent->epanel->show_all();
-            parent->set_title_decorated (parent->epanel->getFileName());
-        }
+    if(moptions.tabbedUI != options.tabbedUI) {
+        parent->setEditorMode(moptions.tabbedUI);
     }
 
     if (moptions.hideTPVScrollbar != options.hideTPVScrollbar) {

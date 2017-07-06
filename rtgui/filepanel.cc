@@ -157,6 +157,8 @@ FilePanel::~FilePanel ()
     if (inspectorPanel) {
         delete inspectorPanel;
     }
+
+    delete tpc;
 }
 
 void FilePanel::on_realize ()
