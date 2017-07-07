@@ -124,6 +124,7 @@ void EditWindow::on_mainNB_switch_page(Gtk::Widget* widget, guint page_num)
 void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 {
     ep->setParent (parent);
+    ep->setParentWindow(this);
 
     // construct closeable tab for the image
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());

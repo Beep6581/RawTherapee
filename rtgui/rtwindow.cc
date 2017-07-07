@@ -146,6 +146,7 @@ RTWindow::RTWindow ()
     if(simpleEditor) {
         epanel = Gtk::manage( new EditorPanel (nullptr) );
         epanel->setParent (this);
+        epanel->setParentWindow(this);
         add (*epanel);
         show_all ();
 
@@ -387,6 +388,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         wndEdit->addEditorPanel(ep, name);
     } else {
         ep->setParent (this);
+        ep->setParentWindow(this);
 
         // construct closeable tab for the image
         Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
@@ -868,6 +870,7 @@ void RTWindow::createSetmEditor()
     // Editor panel, single-tab mode only
     epanel = Gtk::manage ( new EditorPanel (fpanel) );
     epanel->setParent (this);
+    epanel->setParentWindow(this);
 
     // decorate tab
     Gtk::Grid* const editorLabelGrid = Gtk::manage (new Gtk::Grid ());
