@@ -167,9 +167,9 @@ public:
     void setPosition        (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
-    bool operator< (ThumbBrowserEntryBase& other)
+    bool operator <(const ThumbBrowserEntryBase& other) const
     {
-        return shortname.casefold() > other.shortname.casefold();
+        return shortname.casefold() < other.shortname.casefold();
     }
 
     ThumbBrowserEntryBase* getOriginal () const;

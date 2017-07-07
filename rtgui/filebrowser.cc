@@ -604,13 +604,13 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
             std::lower_bound(
                 fd.begin(),
                 fd.end(),
-                (ThumbBrowserEntryBase*)entry,
-                [](ThumbBrowserEntryBase* a, ThumbBrowserEntryBase* b)
+                entry,
+                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
                 {
-                    return *b < *a;
+                    return *a < *b;
                 }
             ),
-            (ThumbBrowserEntryBase*)entry
+            entry
         );
 
         initEntry (entry);
