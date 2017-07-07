@@ -523,63 +523,49 @@ void ThumbBrowserBase::arrangeFiles ()
     // We could lock it one more time, there's no harm excepted (negligible) speed penalty
     //GThreadLock lock;
 
-    int N = fd.size ();
-
-    // apply filter
-    for (int i = 0; i < N; i++) {
-        fd[i]->filtered = !checkFilter (fd[i]);
-    }
+    const int N = fd.size();
 
     int rowHeight = 0;
 
-    // compute size of the items
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < N; i++) {
+        // apply filter
+        fd[i]->filtered = !checkFilter (fd[i]);
+
+        // compute size of the items
         if (!fd[i]->filtered && fd[i]->getMinimalHeight() > rowHeight) {
             rowHeight = fd[i]->getMinimalHeight ();
         }
+    }
 
     if (arrangement == TB_Horizontal) {
         numOfCols = 1;
-        int numOfRows = 1;
-//        if (rowHeight>0) {
-//            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
-//            if (numOfRows<1)
-//                numOfRows = 1;
-//        }
 
         int ct = 0;
         int currx = 0;
 
         while (ct < N) {
-            // find widest item in the column
-            int maxw = 0;
-
-            for (int i = 0; ct + i < N && i < numOfRows; i++)
-                if (fd[ct + i]->getMinimalWidth() > maxw) {
-                    maxw = fd[ct + i]->getMinimalWidth ();
-                }
-
             // arrange items in the column
             int curry = 0;
 
-            for (int i = 0; ct < N && i < numOfRows; i++, ct++) {
-                while (ct < N && fd[ct]->filtered) {
-                    fd[ct++]->drawable = false;
-                }
-
-                if (ct < N) {
-                    fd[ct]->setPosition (currx, curry, maxw, rowHeight);
-                    fd[ct]->drawable = true;
-                    curry += rowHeight;
-                }
+            while (ct < N && fd[ct]->filtered) {
+                fd[ct++]->drawable = false;
             }
 
-            currx += maxw;
+            if (ct < N) {
+                const int maxw = fd[ct]->getMinimalWidth();
+
+                fd[ct]->setPosition(currx, curry, maxw, rowHeight);
+                fd[ct]->drawable = true;
+                currx += maxw;
+                curry += rowHeight;
+
+                ++ct;
+            }
         }
 
         MYREADERLOCK_RELEASE(l);
         // This will require a Writer access
-        resizeThumbnailArea (currx, numOfRows * rowHeight);
+        resizeThumbnailArea (currx, rowHeight);
     } else {
         int availWidth = internal.get_width();
         // initial number of columns
