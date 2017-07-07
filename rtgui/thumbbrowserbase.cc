@@ -575,6 +575,9 @@ void ThumbBrowserBase::arrangeFiles()
             if (!fd[i]->filtered && colsWidth + fd[i]->getMinimalWidth() <= availWidth) {
                 colsWidth += fd[numOfCols]->getMinimalWidth();
                 ++numOfCols;
+                if(colsWidth > availWidth) {
+                    break;
+                }
             }
         }
 
