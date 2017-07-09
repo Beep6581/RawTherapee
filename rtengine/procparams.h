@@ -312,7 +312,6 @@ public:
     double  gam;
     double  slope;
     int     neigh;
-    int     gain;
     int     offs;
     int     highlights;
     int     htonalwidth;
@@ -328,7 +327,6 @@ public:
     int     vart;
     int     limd;
     int     highl;
-    double     baselog;
     int     skal;
     bool    medianmap;
     RetinexParams ();

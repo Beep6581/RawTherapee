@@ -144,8 +144,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         constexpr float eps = 2.f;
         bool useHsl = deh.retinexcolorspace == "HSLLOG";
         bool useHslLin = deh.retinexcolorspace == "HSLLIN";
-        float gain2 = (float) deh.gain / 100.f; //def =1  not use
-        gain2 = useHslLin ? gain2 * 0.5f : gain2;
         float offse = (float) deh.offs; //def = 0  not use
         int iter = deh.iter;
         int gradient = deh.scal;
@@ -160,15 +158,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         limD *= useHslLin ? 10.f : 1.f;
         float ilimD = 1.f / limD;
         float hig = ((float) deh.highl) / 100.f;
-        float elogt;
-        float hl = deh.baselog;
         scal = deh.skal;
-
-        if(hl >= 2.71828f) {
-            elogt = 2.71828f + SQR(SQR(hl - 2.71828f));
-        } else {
-            elogt = hl;
-        }
 
         int H_L = height;
         int W_L = width;
@@ -176,7 +166,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         float *tran[H_L] ALIGNED16;
         float *tranBuffer = nullptr;
 
-        elogt = 2.71828f;//disabled baselog
+        constexpr float elogt = 2.71828f;
         bool lhutili = false;
 
         FlatCurve* shcurve = new FlatCurve(deh.lhcurve); //curve L=f(H)
@@ -661,7 +651,6 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
                 delta = 1.0f;
             }
 
-            //  float cdfactor = gain2 * 32768.f / delta;
             float cdfactor = 32768.f / delta;
             maxCD = -9999999.f;
             minCD = 9999999.f;

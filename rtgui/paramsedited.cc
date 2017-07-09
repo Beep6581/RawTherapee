@@ -67,12 +67,10 @@ void ParamsEdited::set (bool v)
     retinex.gam    = v;
     retinex.slope    = v;
     retinex.neigh    = v;
-    retinex.gain    = v;
     retinex.offs    = v;
     retinex.vart    = v;
     retinex.limd    = v;
     retinex.highl    = v;
-    retinex.baselog    = v;
     retinex.skal    = v;
     retinex.medianmap = v;
     retinex.transmissionCurve   = v;
@@ -592,12 +590,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.gam = retinex.gam && p.retinex.gam == other.retinex.gam;
         retinex.slope = retinex.slope && p.retinex.slope == other.retinex.slope;
         retinex.neigh = retinex.neigh && p.retinex.neigh == other.retinex.neigh;
-        retinex.gain = retinex.gain && p.retinex.gain == other.retinex.gain;
         retinex.offs = retinex.offs && p.retinex.offs == other.retinex.offs;
         retinex.vart = retinex.vart && p.retinex.vart == other.retinex.vart;
         retinex.limd = retinex.limd && p.retinex.limd == other.retinex.limd;
         retinex.highl = retinex.highl && p.retinex.highl == other.retinex.highl;
-        retinex.baselog = retinex.baselog && p.retinex.baselog == other.retinex.baselog;
         retinex.skal = retinex.skal && p.retinex.skal == other.retinex.skal;
         retinex.medianmap = retinex.medianmap && p.retinex.medianmap == other.retinex.medianmap;
         retinex.highlights = retinex.highlights && p.retinex.highlights == other.retinex.highlights;
@@ -1227,16 +1223,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.highl   = mods.retinex.highl;
     }
 
-    if (retinex.baselog) {
-        toEdit.retinex.baselog   = mods.retinex.baselog;
-    }
-
     if (retinex.skal) {
         toEdit.retinex.skal   = mods.retinex.skal;
-    }
-
-    if (retinex.gain) {
-        toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_RETI_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;
     }
 
     if (retinex.offs) {

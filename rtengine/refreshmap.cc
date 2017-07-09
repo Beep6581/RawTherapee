@@ -451,7 +451,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvLgam
     DEMOSAIC,         // EvLslope
     RETINEX,          // EvLhighl
-    DEMOSAIC,         // EvLbaselog
+    0,                // --unused--
     DEMOSAIC,         // EvRetinexlhcurve
     OUTPUTPROFILE,    // EvOIntent
     MONITORTRANSFORM, // EvMonitorTransform: no history message

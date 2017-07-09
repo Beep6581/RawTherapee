@@ -173,7 +173,6 @@ void RetinexParams::setDefaults()
     gam        = 1.30;
     slope   = 3.;
     neigh      = 80;
-    gain        = 50;
     offs    = 0;
     vart    = 200;
     limd = 8;
@@ -184,7 +183,6 @@ void RetinexParams::setDefaults()
     stonalwidth   = 80;
     radius        = 40;
 
-    baselog = 2.71828;
     skal = 3;
     retinexMethod = "high";
     mapMethod = "none";
@@ -1573,10 +1571,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("Retinex", "Neigh",               retinex.neigh);
         }
 
-        if (!pedited || pedited->retinex.gain) {
-            keyFile.set_integer ("Retinex", "Gain",               retinex.gain);
-        }
-
         if (!pedited || pedited->retinex.offs) {
             keyFile.set_integer ("Retinex", "Offs",               retinex.offs);
         }
@@ -1591,10 +1585,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->retinex.highl) {
             keyFile.set_integer ("Retinex", "highl",               retinex.highl);
-        }
-
-        if (!pedited || pedited->retinex.baselog) {
-            keyFile.set_double ("Retinex", "baselog",               retinex.baselog);
         }
 
         if (!pedited || pedited->retinex.skal) {
@@ -4210,14 +4200,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key ("Retinex", "Gain"))     {
-                retinex.gain   = keyFile.get_integer ("Retinex", "Gain");
-
-                if (pedited) {
-                    pedited->retinex.gain = true;
-                }
-            }
-
             if (keyFile.has_key ("Retinex", "Offs"))     {
                 retinex.offs   = keyFile.get_integer ("Retinex", "Offs");
 
@@ -4247,14 +4229,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->retinex.highl = true;
-                }
-            }
-
-            if (keyFile.has_key ("Retinex", "baselog"))     {
-                retinex.baselog   = keyFile.get_double ("Retinex", "baselog");
-
-                if (pedited) {
-                    pedited->retinex.baselog = true;
                 }
             }
 
@@ -8043,7 +8017,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.gam == other.retinex.gam
         && retinex.slope == other.retinex.slope
         && retinex.neigh == other.retinex.neigh
-        && retinex.gain == other.retinex.gain
         && retinex.limd == other.retinex.limd
         && retinex.highl == other.retinex.highl
         && retinex.highlights == other.retinex.highlights
@@ -8051,8 +8024,6 @@ bool ProcParams::operator== (const ProcParams& other)
         && retinex.shadows == other.retinex.shadows
         && retinex.stonalwidth == other.retinex.stonalwidth
         && retinex.radius == other.retinex.radius
-
-        && retinex.baselog == other.retinex.baselog
         && retinex.skal == other.retinex.skal
         && retinex.offs == other.retinex.offs
         && retinex.retinexMethod == other.retinex.retinexMethod
