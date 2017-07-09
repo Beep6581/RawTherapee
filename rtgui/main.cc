@@ -481,8 +481,9 @@ int main(int argc, char **argv)
     // suppression of annoying error boxes
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 
-    if (argc > 1 || options.rtSettings.verbose) {
-        if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
+    if(argc > 1) {
+        int ret = processLineParams( argc, argv);
+        if (options.rtSettings.verbose || (!remote && !Glib::file_test (argv1, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR))) {
             bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
             bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
 
@@ -536,18 +537,14 @@ int main(int argc, char **argv)
             }
         }
 
-        if(argc > 1) {
-            int ret = processLineParams( argc, argv);
-
-            if( ret <= 0 ) {
-                if(consoleOpened) {
-                    printf("Press any key to exit RawTherapee\n");
-                    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-                    getch();
-                }
-
-                return ret;
+        if( ret <= 0 ) {
+            if(consoleOpened) {
+                printf("Press any key to exit RawTherapee\n");
+                FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+                getch();
             }
+
+            return ret;
         }
     }
 
