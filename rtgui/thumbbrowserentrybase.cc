@@ -17,33 +17,73 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "thumbbrowserentrybase.h"
-#include "thumbbrowserbase.h"
+
 #include "options.h"
+#include "thumbbrowserbase.h"
+
 #include "../rtengine/mytime.h"
 
-ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname)
-    : fnlabw(0), fnlabh(0), dtlabw(0), dtlabh(0), exlabw(0), exlabh(0), prew(0), preh(0),
-      prex(0), prey(0), upperMargin(6), borderWidth(1), textGap(6), sideMargin(8), lowerMargin(8),
-      preview(nullptr), dispname(Glib::path_get_basename (fname)), buttonSet(nullptr), width(0), height(0),
-      exp_width(0), exp_height(0), startx(0), starty(0), ofsX(0), ofsY(0), redrawRequests(0),
-      parent(nullptr), original(nullptr), bbSelected(false), bbFramed(false), bbPreview(nullptr), cursor_type(CSUndefined),
-      thumbnail(nullptr), filename(fname), shortname(dispname), exifline(""), datetimeline(""),
-      selected(false), drawable(false), filtered(false), framed(false), processing(false), italicstyle(false),
-      edited(false), recentlysaved(false), updatepriority(false), withFilename(WFNAME_NONE) {}
+ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
+    fnlabw(0),
+    fnlabh(0),
+    dtlabw(0),
+    dtlabh(0),
+    exlabw(0),
+    exlabh(0),
+    prew(0),
+    preh(0),
+    prex(0),
+    prey(0),
+    upperMargin(6),
+    borderWidth(1),
+    textGap(6),
+    sideMargin(8),
+    lowerMargin(8),
+    preview(nullptr),
+    dispname(Glib::path_get_basename(fname)),
+    buttonSet(nullptr),
+    width(0),
+    height(0),
+    exp_width(0),
+    exp_height(0),
+    startx(0),
+    starty(0),
+    ofsX(0),
+    ofsY(0),
+    redrawRequests(0),
+    parent(nullptr),
+    original(nullptr),
+    bbSelected(false),
+    bbFramed(false),
+    bbPreview(nullptr),
+    cursor_type(CSUndefined),
+    collate_name(dispname.casefold().collate_key()),
+    thumbnail(nullptr),
+    filename(fname),
+    shortname(dispname),
+    exifline(""),
+    datetimeline(""),
+    selected(false),
+    drawable(false),
+    filtered(false),
+    framed(false),
+    processing(false),
+    italicstyle(false),
+    edited(false),
+    recentlysaved(false),
+    updatepriority(false),
+    withFilename(WFNAME_NONE)
+{
+}
 
 ThumbBrowserEntryBase::~ThumbBrowserEntryBase ()
 {
-
-    if (preview) {
-        delete [] preview;
-    }
-
+    delete[] preview;
     delete buttonSet;
 }
 
 void ThumbBrowserEntryBase::addButtonSet (LWButtonSet* bs)
 {
-
     buttonSet = bs;
 }
 
