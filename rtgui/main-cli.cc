@@ -476,14 +476,14 @@ int processLineParams( int argc, char **argv )
 
                         try {
 
-                            auto enumerator = dir->enumerate_children ();
+                            auto enumerator = dir->enumerate_children("standard::name,standard::type");
 
-                            while (auto file = enumerator->next_file ()) {
+                            while (auto file = enumerator->next_file()) {
 
-                                const auto fileName = Glib::build_filename (argument, file->get_name ());
-                                bool isDir = Glib::file_test (fileName, Glib::FILE_TEST_IS_DIR);
-                                bool notAll = allExtensions && !options.is_parse_extention (fileName);
-                                bool notRetained = !allExtensions && !options.has_retained_extention (fileName);
+                                const auto fileName = Glib::build_filename(argument, file->get_name());
+                                bool isDir = file->get_file_type() == Gio::FILE_TYPE_DIRECTORY;
+                                bool notAll = allExtensions && !options.is_parse_extention(fileName);
+                                bool notRetained = !allExtensions && !options.has_retained_extention(fileName);
 
                                 if (isDir || notAll || notRetained) {
                                     if (isDir) {
