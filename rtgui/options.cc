@@ -1260,7 +1260,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "MeowMonitor")) {
-                    windowMaximized = keyFile.get_integer ("GUI", "MeowMonitor");
+                    meowMonitor = keyFile.get_integer ("GUI", "MeowMonitor");
                 }
 
                 if (keyFile.has_key ("GUI", "WindowMaximized")) {
