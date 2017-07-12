@@ -28,7 +28,7 @@
 // Check if the system has more than one display and option is set
 bool EditWindow::isMultiDisplayEnabled()
 {
-    return options.multiDisplayMode > 0 && Gdk::Screen::get_default()->get_n_monitors () > 1;
+    return options.multiDisplayMode > 0 && Gdk::Screen::get_default()->get_n_monitors() > 1;
 }
 
 // Should only be created once, auto-creates window on correct display
@@ -40,12 +40,17 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
 
         explicit EditWindowInstance(RTWindow* p) : editWnd(p)
         {
-            // Determine the other display and maximize the window on that
-            const Glib::RefPtr< Gdk::Window >& wnd = p->get_window();
-            int monNo = p->get_screen()->get_monitor_at_window (wnd);
-
+            int meowMonitor = 0;
+            if(isMultiDisplayEnabled()) {
+                if(options.meowMonitor >= 0) { // use display from last session if available
+                    meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors());
+                } else { // Determine the other display
+                    const Glib::RefPtr< Gdk::Window >& wnd = p->get_window();
+                    meowMonitor = p->get_screen()->get_monitor_at_window(wnd) == 0 ? 1 : 0;
+                }
+            }
             Gdk::Rectangle lMonitorRect;
-            editWnd.get_screen()->get_monitor_geometry(isMultiDisplayEnabled() ? (monNo == 0 ?  1 : 0) : monNo, lMonitorRect);
+            editWnd.get_screen()->get_monitor_geometry(meowMonitor, lMonitorRect);
             editWnd.move(lMonitorRect.get_x(), lMonitorRect.get_y());
             editWnd.maximize();
         }
@@ -245,7 +250,12 @@ bool EditWindow::on_delete_event(GdkEventAny* event)
     filesEdited.clear();
     parent->fpanel->refreshEditedState (filesEdited);
 
+    if(isMultiDisplayEnabled()) {
+        options.meowMonitor = get_screen()->get_monitor_at_window (get_window());
+    }
+
     hide ();
+
     return false;
 }
 

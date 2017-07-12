@@ -134,6 +134,7 @@ public:
     int historyPanelWidth;
     int windowWidth;
     int windowHeight;
+    int meowMonitor;
     int windowX;
     int windowY;
     bool windowMaximized;
