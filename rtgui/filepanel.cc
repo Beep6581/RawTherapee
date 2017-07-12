@@ -279,9 +279,23 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             if (options.tabbedUI) {
                 EditorPanel* epanel;
                 {
+#ifdef WIN32
+                    int winGdiHandles = GetGuiResources( GetCurrentProcess(), GR_GDIOBJECTS);
+                    if(winGdiHandles > 0 && winGdiHandles <= 8500) // 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
+#endif
+                    {
                     GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
                     epanel = Gtk::manage (new EditorPanel ());
                     parent->addEditorPanel (epanel, pl->thm->getFileName());
+                    }
+#ifdef WIN32
+                    else {
+                        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
+                        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+                        msgd.run ();
+                        goto MAXGDIHANDLESREACHED;
+                    }
+#endif
                 }
                 epanel->open(pl->thm, pl->pc->returnValue() );
 
@@ -301,7 +315,9 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
-
+#ifdef WIN32
+MAXGDIHANDLESREACHED:
+#endif
         delete pl->pc;
 
         {
