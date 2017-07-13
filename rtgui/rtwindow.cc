@@ -131,7 +131,6 @@ RTWindow::RTWindow ()
 
     if (options.windowMaximized) {
         maximize();
-        //get_style_context()->add_class("maximized");
     } else {
         unmaximize();
         move(options.windowX, options.windowY);
