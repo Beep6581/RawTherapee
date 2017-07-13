@@ -294,6 +294,7 @@ int processLineParams( int argc, char **argv )
     Glib::ustring outputPath = "";
     std::vector<rtengine::procparams::PartialProfile*> processingParams;
     bool outputDirectory = false;
+    bool leaveUntouched = false;
     bool overwriteFiles = false;
     bool sideProcParams = false;
     bool copyParamsFile = false;
@@ -324,7 +325,11 @@ int processLineParams( int argc, char **argv )
 #if ECLIPSE_ARGS
                     outputPath = outputPath.substr(1, outputPath.length()-2);
 #endif
-                    if( Glib::file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
+                    if(outputPath.substr(0,9) == "/dev/null") {
+                        outputPath.assign("/dev/null");  // removing any useless chars or filename
+                        outputDirectory = false;
+                        leaveUntouched = true;
+                    } else if(Glib::file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
                         outputDirectory = true;
                     }
                 }
@@ -696,9 +701,13 @@ int processLineParams( int argc, char **argv )
             Glib::ustring::size_type ext = s.find_last_of('.');
             outputFile = Glib::build_filename(outputPath, s.substr(0, ext) + "." + outputType);
         } else {
-            Glib::ustring s = outputPath;
-            Glib::ustring::size_type ext = s.find_last_of('.');
-            outputFile =  s.substr(0, ext) + "." + outputType;
+            if (leaveUntouched) {
+                outputFile = outputPath;
+            } else {
+                Glib::ustring s = outputPath;
+                Glib::ustring::size_type ext = s.find_last_of('.');
+                outputFile = s.substr(0, ext) + "." + outputType;
+            }
         }
 
         if( inputFile == outputFile) {
