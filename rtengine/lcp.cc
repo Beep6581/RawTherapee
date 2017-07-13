@@ -447,7 +447,7 @@ int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft)
         }
 
         if (aPersModel[pm]->hasModeData(2)) {
-            errChrom += std::max(std::max(aPersModel[pm]->chromRG.mean_error, aPersModel[pm]->chromG.mean_error), aPersModel[pm]->chromBG.mean_error);
+            errChrom += rtengine::max(aPersModel[pm]->chromRG.mean_error, aPersModel[pm]->chromG.mean_error, aPersModel[pm]->chromBG.mean_error);
             chromCount++;
         }
     }
