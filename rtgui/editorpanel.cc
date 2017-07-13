@@ -453,7 +453,7 @@ public:
 };
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
-    : catalogPane(nullptr), realized(false), tbBeforeLock(nullptr), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), previewHandler(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), beforeLabel(nullptr), afterLabel(nullptr), beforeHeaderBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), openThm(nullptr), isrc(nullptr), ipc(nullptr), beforeIpc(nullptr), err(0), isProcessing(false)
+    : catalogPane(nullptr), realized(false), tbBeforeLock(nullptr), iHistoryShow(nullptr), iHistoryHide(nullptr), iTopPanel_1_Show(nullptr), iTopPanel_1_Hide(nullptr), iRightPanel_1_Show(nullptr), iRightPanel_1_Hide(nullptr), iBeforeLockON(nullptr), iBeforeLockOFF(nullptr), previewHandler(nullptr), beforePreviewHandler(nullptr), beforeIarea(nullptr), beforeBox(nullptr), afterBox(nullptr), beforeLabel(nullptr), afterLabel(nullptr), beforeHeaderBox(nullptr), afterHeaderBox(nullptr), parent(nullptr), parentWindow(nullptr), openThm(nullptr), isrc(nullptr), ipc(nullptr), beforeIpc(nullptr), err(0), isProcessing(false)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -899,7 +899,7 @@ void EditorPanel::rightPaneButtonReleased (GdkEventButton *event)
 {
     if (event->button == 1) {
         int winW, winH;
-        parent->get_size (winW, winH);
+        parentWindow->get_size (winW, winH);
         // Button 1 released : it's a resize
         options.toolPanelWidth = winW - hpanedr->get_position();
     }
@@ -929,7 +929,7 @@ void EditorPanel::showTopPanel (bool show)
 void EditorPanel::setAspect ()
 {
     int winW, winH;
-    parent->get_size (winW, winH);
+    parentWindow->get_size (winW, winH);
     hpanedl->set_position (options.historyPanelWidth);
     hpanedr->set_position (winW - options.toolPanelWidth);
 

@@ -88,6 +88,9 @@ protected:
     // called during updateBackBuffer for custom overlays
     virtual void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) {}
 
+private:
+    const std::string collate_name;
+
 public:
 
     Thumbnail* thumbnail;
@@ -167,9 +170,9 @@ public:
     void setPosition        (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
-    bool operator< (ThumbBrowserEntryBase& other)
+    bool operator <(const ThumbBrowserEntryBase& other) const
     {
-        return shortname.casefold() > other.shortname.casefold();
+        return collate_name < other.collate_name;
     }
 
     ThumbBrowserEntryBase* getOriginal () const;

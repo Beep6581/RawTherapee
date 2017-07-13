@@ -2005,13 +2005,12 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             plistener->setProgressStr ("CA Auto Correction...");
             plistener->setProgress (0.0);
         }
-
-        if (numFrames == 4) {
-            for (int i = 0; i < 4; ++i) {
-                CA_correct_RT (raw.ca_autocorrect, raw.cared, raw.cablue, 10.0 - raw.caautostrength, *rawDataFrames[i]);
+        if(numFrames == 4) {
+            for(int i=0; i<4; ++i) {
+                CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, *rawDataFrames[i]);
             }
         } else {
-            CA_correct_RT (raw.ca_autocorrect, raw.cared, raw.cablue, 10.0 - raw.caautostrength, rawData);
+            CA_correct_RT(raw.ca_autocorrect, raw.cared, raw.cablue, 8.0, rawData);
         }
     }
 

@@ -825,6 +825,9 @@ void FileCatalog::previewsFinishedUI ()
         refImageForOpen_fname = "";
         actionNextPrevious = NAV_NONE;
     }
+
+    // newly added item might have been already trashed in a previous session
+    trashChanged();
 }
 
 void FileCatalog::previewsFinished (int dir_id)

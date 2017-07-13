@@ -67,7 +67,6 @@ public:
     bool gam;
     bool slope;
     bool neigh;
-    bool gain;
     bool offs;
     bool retinexMethod;
     bool mapMethod;
@@ -823,7 +822,6 @@ public:
     XTransSensor xtranssensor;
 
     bool caCorrection;
-    bool caAutoStrength;
     bool caRed;
     bool caBlue;
     bool hotPixelFilter;

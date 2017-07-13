@@ -67,6 +67,12 @@ public:
     {
         parent = p;
     }
+
+    void setParentWindow (Gtk::Window* p)
+    {
+        parentWindow = p;
+    }
+
     void writeOptions();
 
     void showTopPanel (bool show);
@@ -196,6 +202,7 @@ private:
     HistogramPanel* histogramPanel;
     ToolPanelCoordinator* tpc;
     RTWindow* parent;
+    Gtk::Window* parentWindow;
     //SaveAsDialog* saveAsDialog;
     FilePanel* fPanel;
 

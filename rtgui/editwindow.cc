@@ -73,7 +73,7 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
     set_resizable(true);
 
     property_destroy_with_parent().set_value(false);
-    signal_window_state_event().connect( sigc::mem_fun(*this, &EditWindow::on_window_state_event) );
+    //signal_window_state_event().connect( sigc::mem_fun(*this, &EditWindow::on_window_state_event) );
 
     mainNB = Gtk::manage (new Gtk::Notebook ());
     mainNB->set_scrollable (true);
@@ -95,18 +95,16 @@ void EditWindow::on_realize ()
     editWindowCursorManager.init (get_window());
 }
 
+/*  HOMBRE: Disabling this since it's maximized when opened anyway.
+ *  Someday, the EditorWindow migh save it own position and state, so it'll have to be uncommented
 bool EditWindow::on_window_state_event(GdkEventWindowState* event)
 {
-    if (!event->new_window_state) {
-        // Window mode
-        options.windowMaximized = false;
-    } else if (event->new_window_state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) {
-        // Fullscreen mode
-        options.windowMaximized = true;
+    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
+        options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     }
 
-    return true;
-}
+    return Gtk::Widget::on_window_state_event(event);
+}*/
 
 void EditWindow::on_mainNB_switch_page(Gtk::Widget* widget, guint page_num)
 {
@@ -124,6 +122,7 @@ void EditWindow::on_mainNB_switch_page(Gtk::Widget* widget, guint page_num)
 void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 {
     ep->setParent (parent);
+    ep->setParentWindow(this);
 
     // construct closeable tab for the image
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());

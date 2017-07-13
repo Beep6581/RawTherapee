@@ -604,21 +604,18 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
             std::lower_bound(
                 fd.begin(),
                 fd.end(),
-                (ThumbBrowserEntryBase*)entry,
-                [](ThumbBrowserEntryBase* a, ThumbBrowserEntryBase* b)
+                entry,
+                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
                 {
-                    return *b < *a;
+                    return *a < *b;
                 }
             ),
-            (ThumbBrowserEntryBase*)entry
+            entry
         );
 
         initEntry (entry);
     }
     redraw ();
-
-    // newly added item might have been already trashed in a previous session
-    trash_changed().emit();
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)

@@ -29,7 +29,6 @@ class RAWCACorr : public ToolParamBlock, public AdjusterListener, public CheckBo
 
 protected:
     CheckBox* caAutocorrect;
-    Adjuster* caStrength;
     Adjuster* caRed;
     Adjuster* caBlue;
 

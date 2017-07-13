@@ -67,12 +67,10 @@ void ParamsEdited::set (bool v)
     retinex.gam    = v;
     retinex.slope    = v;
     retinex.neigh    = v;
-    retinex.gain    = v;
     retinex.offs    = v;
     retinex.vart    = v;
     retinex.limd    = v;
     retinex.highl    = v;
-    retinex.baselog    = v;
     retinex.skal    = v;
     retinex.medianmap = v;
     retinex.transmissionCurve   = v;
@@ -484,7 +482,6 @@ void ParamsEdited::set (bool v)
     raw.xtranssensor.exBlackGreen = v;
     raw.xtranssensor.exBlackBlue = v;
     raw.caCorrection = v;
-    raw.caAutoStrength  = v;
     raw.caBlue  = v;
     raw.caRed   = v;
     raw.hotPixelFilter = v;
@@ -670,12 +667,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         retinex.gam = retinex.gam && p.retinex.gam == other.retinex.gam;
         retinex.slope = retinex.slope && p.retinex.slope == other.retinex.slope;
         retinex.neigh = retinex.neigh && p.retinex.neigh == other.retinex.neigh;
-        retinex.gain = retinex.gain && p.retinex.gain == other.retinex.gain;
         retinex.offs = retinex.offs && p.retinex.offs == other.retinex.offs;
         retinex.vart = retinex.vart && p.retinex.vart == other.retinex.vart;
         retinex.limd = retinex.limd && p.retinex.limd == other.retinex.limd;
         retinex.highl = retinex.highl && p.retinex.highl == other.retinex.highl;
-        retinex.baselog = retinex.baselog && p.retinex.baselog == other.retinex.baselog;
         retinex.skal = retinex.skal && p.retinex.skal == other.retinex.skal;
         retinex.medianmap = retinex.medianmap && p.retinex.medianmap == other.retinex.medianmap;
         retinex.highlights = retinex.highlights && p.retinex.highlights == other.retinex.highlights;
@@ -1085,7 +1080,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
         raw.xtranssensor.exBlackBlue = raw.xtranssensor.exBlackBlue && p.raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
-        raw.caAutoStrength = raw.caAutoStrength && p.raw.caautostrength == other.raw.caautostrength;
         raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
         raw.hotPixelFilter = raw.hotPixelFilter && p.raw.hotPixelFilter == other.raw.hotPixelFilter;
@@ -1382,16 +1376,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.retinex.highl   = mods.retinex.highl;
     }
 
-    if (retinex.baselog) {
-        toEdit.retinex.baselog   = mods.retinex.baselog;
-    }
-
     if (retinex.skal) {
         toEdit.retinex.skal   = mods.retinex.skal;
-    }
-
-    if (retinex.gain) {
-        toEdit.retinex.gain   = dontforceSet && options.baBehav[ADDSET_RETI_GAIN] ? toEdit.retinex.gain + mods.retinex.gain : mods.retinex.gain;
     }
 
     if (retinex.offs) {
@@ -2928,10 +2914,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
     }
 
-    if (raw.caAutoStrength) {
-        toEdit.raw.caautostrength           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.caautostrength + mods.raw.caautostrength : mods.raw.caautostrength;
-    }
-
     if (raw.caRed) {
         toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
     }
@@ -3419,7 +3401,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 
 bool RAWParamsEdited::isUnchanged() const
 {
-    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caAutoStrength && caRed && caBlue && hotPixelFilter && deadPixelFilter && hotDeadPixelThresh && darkFrame
+    return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && caCorrection && caRed && caBlue && hotPixelFilter && deadPixelFilter && hotDeadPixelThresh && darkFrame
             && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && exPreser && ff_AutoClipControl && ff_clipControl;
 }
 

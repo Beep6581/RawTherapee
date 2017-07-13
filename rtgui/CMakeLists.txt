@@ -225,7 +225,8 @@ add_dependencies(rth UpdateInfo)
 add_dependencies(rth-cli UpdateInfo)
 
 # Set executables targets properties, i.e. output filename and compile flags
-if(WIN32)
+# for "Debug" builds, open a console in all cases for Windows version
+if((WIN32) AND NOT(UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG"))
 set_target_properties(rth PROPERTIES LINK_FLAGS "-mwindows")
 endif()
 set_target_properties(rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)

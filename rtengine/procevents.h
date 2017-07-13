@@ -451,7 +451,7 @@ enum ProcEvent {
     EvLgam = 421,
     EvLslope = 422,
     EvLhighl = 423,
-    EvLbaselog = 424,
+//    EvLbaselog = 424,   -- can be reused --
     EvRetinexlhcurve = 425,
     EvOIntent = 426,
     EvMonitorTransform = 427,
