@@ -744,7 +744,7 @@ private:
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = *(ipf_p.get());
+        ImProcFunctions &ipf = * (ipf_p.get());
 
         // perform luma/chroma denoise
 //  CieImage *cieView;
@@ -809,7 +809,7 @@ private:
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = *(ipf_p.get());
+        ImProcFunctions &ipf = * (ipf_p.get());
 
         imgsrc->convertColorSpace (baseImg, params.icm, currWB);
 
@@ -834,7 +834,7 @@ private:
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = *(ipf_p.get());
+        ImProcFunctions &ipf = * (ipf_p.get());
 
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
             const int W = baseImg->getWidth();
@@ -1040,6 +1040,7 @@ private:
 
             LocretigainCurve locRETgainCurve;
             LocLHCurve loclhCurve;
+            LocHHCurve lochhCurve;
 
             LocretigainCurverab locRETgainCurverab;
             LUTf lllocalcurve (65536, 0);
@@ -1113,6 +1114,9 @@ private:
 
                 std::string *ccstrs;
                 ccstrs = new std::string[maxspot];
+
+                std::string *hhstrs;
+                hhstrs = new std::string[maxspot];
 
                 {
                     dataspots[2][0] =  params.locallab.circrad;
@@ -1325,11 +1329,32 @@ private:
 
                     std::string lh_str = "";
 
-                    for (int j = 0; j < sizl; j++) {
+                    for (int j = 0; j < sizh; j++) {
                         lh_str = lh_str + std::to_string (s_datcurh[j]) + delim[j];
                     }
 
                     lhstrs[0] = lh_str + "@";
+
+                    int sizhh = params.locallab.HHcurve.size();
+
+                    if (sizhh > 69) {
+                        sizhh = 69;
+                    }
+
+                    //     int s_curh[sizh + 1];
+                    int s_datcurhh[sizhh + 1];
+
+                    for (int j = 0; j < sizhh; j++) {
+                        s_datcurhh[j] = (int)  (1000. * params.locallab.HHcurve[j]);
+                    }
+
+                    std::string hh_str = "";
+
+                    for (int j = 0; j < sizhh; j++) {
+                        hh_str = hh_str + std::to_string (s_datcurhh[j]) + delim[j];
+                    }
+
+                    hhstrs[0] = hh_str + "@";
 
 
                 }
@@ -1433,6 +1458,23 @@ private:
                             }
 
                             lhstrs[ns] = str3;
+                            //    sizelh = longeh;
+                        }
+
+                        if (spotline.substr (0, pos) == "curveHH") {
+                            std::string cursthh;
+                            //      int longecurh;
+                            std::string strendhh = spotline.substr (posend - 1, 1);
+                            //      std::size_t poszh = spotline.find (strendh);
+                            //      int longeh;
+
+                            for (int sh = 0; sh < 69; sh++) {
+                                if (delim[sh] == strendhh) {
+                                    //             longeh = sh + 1;
+                                }
+                            }
+
+                            hhstrs[ns] = str3;
                             //    sizelh = longeh;
                         }
 
@@ -1648,20 +1690,45 @@ private:
                         clhend.push_back ((double) (s_datch[j]) / 1000.);
                     }
 
+                    int *s_datchh;
+                    s_datchh = new int[70];
+                    int sizhh;
+
+                    ipf.strcurv_data (hhstrs[sp], s_datchh, sizhh);
+
+
+                    std::vector<double>   chhend;
+
+                    for (int j = 0; j < sizhh; j++) {
+                        chhend.push_back ((double) (s_datchh[j]) / 1000.);
+                    }
 
                     params.locallab.localTgaincurve.clear();
                     params.locallab.llcurve.clear();
                     params.locallab.LHcurve.clear();
                     params.locallab.cccurve.clear();
+                    params.locallab.HHcurve.clear();
 
                     params.locallab.localTgaincurve = cretiend;
                     params.locallab.llcurve = cllend;
                     params.locallab.LHcurve = clhend;
                     params.locallab.cccurve = cccend;
+                    params.locallab.HHcurve = chhend;
+
+                    bool LHutili = false;
+                    bool HHutili = false;
+                    std::string t_curvhhref = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y@";
+
+                    if (lhstrs[sp].c_str() != t_curvhhref) {
+                        LHutili = true;
+                    }
+
+                    if (hhstrs[sp].c_str() != t_curvhhref) {
+                        HHutili = true;
+                    }
 
 
-
-                    params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve);
+                    params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
                     bool locallutili = false;
                     bool localcutili = false;
 
@@ -1674,7 +1741,7 @@ private:
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
 
-                    ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                    ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
 
@@ -1695,6 +1762,7 @@ private:
                 delete [] llstrs;
                 delete [] lhstrs;
                 delete [] ccstrs;
+                delete [] hhstrs;
 
                 if (params.locallab.inverssha) {
 
@@ -2062,7 +2130,7 @@ private:
     {
         procparams::ProcParams& params = job->pparams;
         //ImProcFunctions ipf (&params, true);
-        ImProcFunctions &ipf = *(ipf_p.get());
+        ImProcFunctions &ipf = * (ipf_p.get());
 
         int imw, imh;
         double scale_factor = ipf.resizeScale (&params, fw, fh, imw, imh);
@@ -2098,7 +2166,7 @@ private:
             tmplab = std::move (resized);
         }
 
-        adjust_procparams(scale_factor);
+        adjust_procparams (scale_factor);
 
         fw = imw;
         fh = imh;
@@ -2133,21 +2201,27 @@ private:
         params.dirpyrDenoise.luma *= scale_factor;
         //params.dirpyrDenoise.Ldetail += (100 - params.dirpyrDenoise.Ldetail) * scale_factor;
         auto &lcurve = params.dirpyrDenoise.lcurve;
+
         for (size_t i = 2; i < lcurve.size(); i += 4) {
-            lcurve[i] *= min(scale_factor * 2, 1.0);
+            lcurve[i] *= min (scale_factor * 2, 1.0);
         }
-        noiseLCurve.Set(lcurve);
+
+        noiseLCurve.Set (lcurve);
         const char *medmethods[] = { "soft", "33", "55soft", "55", "77", "99" };
+
         if (params.dirpyrDenoise.median) {
             auto &key = params.dirpyrDenoise.methodmed == "RGB" ? params.dirpyrDenoise.rgbmethod : params.dirpyrDenoise.medmethod;
-            for (int i = 1; i < int(sizeof(medmethods)/sizeof(const char *)); ++i) {
+
+            for (int i = 1; i < int (sizeof (medmethods) / sizeof (const char *)); ++i) {
                 if (key == medmethods[i]) {
-                    int j = i - int(1.0 / scale_factor);
+                    int j = i - int (1.0 / scale_factor);
+
                     if (j < 0) {
                         params.dirpyrDenoise.median = false;
                     } else {
                         key = medmethods[j];
                     }
+
                     break;
                 }
             }
@@ -2162,6 +2236,7 @@ private:
             adjust_radius (defaultparams.dirpyrequalizer.mult[i], dirpyreq_scale,
                            params.dirpyrequalizer.mult[i]);
         }
+
         params.dirpyrequalizer.threshold *= scale_factor;
 
         adjust_radius (defaultparams.defringe.radius, scale_factor,
@@ -2175,6 +2250,7 @@ private:
                 procparams::RAWParams::XTransSensor::methodstring[
                     procparams::RAWParams::XTransSensor::onePass];
         }
+
         if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::pixelshift]) {
             params.raw.bayersensor.method = procparams::RAWParams::BayerSensor::methodstring[params.raw.bayersensor.pixelShiftLmmse ? procparams::RAWParams::BayerSensor::lmmse : procparams::RAWParams::BayerSensor::amaze];
         }
@@ -2290,8 +2366,9 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
 void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData)
 {
 
-    if (bpl)
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+    if (bpl) {
+        Glib::Thread::create (sigc::bind (sigc::ptr_fun (batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+    }
 
 }
 

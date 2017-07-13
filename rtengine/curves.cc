@@ -1244,6 +1244,51 @@ void LocretigainCurverab::Set (const std::vector<double> &curvePoints)
     }
 }
 
+
+LocHHCurve::LocHHCurve() : sum (0.f) {};
+
+void LocHHCurve::Reset()
+{
+    lutLocHHCurve.reset();
+    sum = 0.f;
+}
+void LocHHCurve::Set (const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHCurve (501); // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHCurve[i] = pCurve.getVal (double (i) / 500.);
+
+        if (lutLocHHCurve[i] < 0.02f) {
+            lutLocHHCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocHHCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocHHCurve::Set (const std::vector<double> &curvePoints, bool &HHutili)
+{
+    if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve (curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue (0.);
+        Set (ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
 LocLHCurve::LocLHCurve() : sum (0.f) {};
 
 void LocLHCurve::Reset()
@@ -1275,10 +1320,13 @@ void LocLHCurve::Set (const Curve &pCurve)
     //lutLocCurve.dump("wav");
 }
 
-void LocLHCurve::Set (const std::vector<double> &curvePoints)
+
+
+
+void LocLHCurve::Set (const std::vector<double> &curvePoints, bool &LHutili)
 {
 
-    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (LHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
         FlatCurve tcurve (curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
         tcurve.setIdentityValue (0.);
         Set (tcurve);

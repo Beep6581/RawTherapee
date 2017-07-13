@@ -1728,7 +1728,6 @@ public:
 
         return (hr);
     }
-
 };
 
 }

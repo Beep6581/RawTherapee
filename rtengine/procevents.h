@@ -572,6 +572,7 @@ enum ProcEvent {
     Evlocallabhueref = 542,
     Evlocallabchromaref = 543,
     Evlocallablumaref = 544,
+    EvlocallabHHshape = 545,
     NUMOFEVENTS
 
 

@@ -17,7 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "dcrop.h"
 #include "curves.h"
 #include "mytime.h"
@@ -712,8 +712,9 @@ void Crop::update (int todo)
                                    parent->imgsrc->getMetaData()->getFocusDist(),
                                    parent->imgsrc->getMetaData()->getFNumber(),
                                    parent->imgsrc->getRotateDegree(), false);
-        else
-            baseCrop->copyData(transCrop);
+        else {
+            baseCrop->copyData (transCrop);
+        }
 
         if (transCrop) {
             baseCrop = transCrop;
@@ -819,11 +820,14 @@ void Crop::update (int todo)
         LUTf lllocalcurve2 (65536, 0);
         bool localcutili = parent->locallutili;
         LUTf cclocalcurve2 (65536, 0);
+        bool LHutili = parent->LHutili;
+        bool HHutili = parent->HHutili;
 
         LUTu dummy;
         bool needslocal = params.locallab.enabled;
         LocretigainCurve locRETgainCurve;
         LocLHCurve loclhCurve;
+        LocHHCurve lochhCurve;
 
         LocretigainCurverab locRETgainCurverab;
         locallutili = false;
@@ -1021,7 +1025,16 @@ void Crop::update (int todo)
                         params.locallab.LHcurve.clear();
                         params.locallab.LHcurve = lhc;
 
-                        params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve);
+                        std::vector<double>   hhc;
+
+                        for (int j = 0; j < parent->sizehhcs[sp]; j++) {
+                            hhc.push_back ((double) (parent->hhcurvs[sp * 500 + j]) / 1000.);
+                        }
+
+                        params.locallab.HHcurve.clear();
+                        params.locallab.HHcurve = hhc;
+
+                        params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
                         locallutili = false;
                         CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve2, sca);
                         localcutili = false;
@@ -1033,7 +1046,7 @@ void Crop::update (int todo)
 
                         // printf ("dcr1 sp=%i huer=%f \n", sp, parent->huerefs[sp] / 100.f );
 
-                        parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, cclocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                        parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                         lllocalcurve2.clear();
                         cclocalcurve2.clear();
 
@@ -1257,7 +1270,16 @@ void Crop::update (int todo)
                 params.locallab.LHcurve.clear();
                 params.locallab.LHcurve = lhcL;
 
-                params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve);
+                std::vector<double>   hhcL;
+
+                for (int j = 0; j < parent->sizehhcs[sp]; j++) {
+                    hhcL.push_back ((double) (parent->hhcurvs[0 * 500 + j]) / 1000.);
+                    parent->hhcurvs[sp * 500 + j] = parent->hhcurvs[0 * 500 + j] ;
+                }
+
+                params.locallab.HHcurve.clear();
+                params.locallab.HHcurve = hhcL;
+                params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
                 locallutili = false;
                 localcutili = false;
 
@@ -1269,7 +1291,7 @@ void Crop::update (int todo)
                 params.locallab.chromaref = parent->chromarefs[sp];
                 params.locallab.lumaref = parent->lumarefs[sp];
                 // printf ("dcr2   sp=%i huer=%f \n", sp, parent->huerefs[sp] / 100.f);
-                parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, cclocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();
@@ -1631,7 +1653,7 @@ bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool inte
 
     parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
 
-    if (check_need_larger_crop_for_lcp_distortion(parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
+    if (check_need_larger_crop_for_lcp_distortion (parent->fw, parent->fh, orx, ory, orw, orh, parent->params)) {
         // TODO - this is an estimate of the max distortion relative to the image size. ATM it is hardcoded to be 15%, which seems enough. If not, need to revise
         int dW = int (double (parent->fw) * 0.15 / (2 * skip));
         int dH = int (double (parent->fh) * 0.15 / (2 * skip));

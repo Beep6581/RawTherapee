@@ -5812,6 +5812,9 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
                     float l_r;//Luminance Lab in 0..1
                     l_r = Lprov1 / 100.f;
                     {
+						//double hr = 0.5 * ((HH / rtengine::RT_PI) + 1.);
+                        //float valparam = float ((lhCurve->getVal (hr - 0.5f)*2));//get l_r=f(H)
+						
                         float valparam = float ((lhCurve->getVal (Color::huelab_to_huehsv2 (HH)) - 0.5f)); //get l_r=f(H)
                         float valparamneg;
                         valparamneg = valparam;
@@ -5874,7 +5877,9 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
 
 //          calculate C=f(H)
                 if (chutili) {
-                    double hr = Color::huelab_to_huehsv2 (HH);
+					double hr = Color::huelab_to_huehsv2 (HH);
+                    //double hr = 0.5 * ((HH / rtengine::RT_PI) + 1.);
+					
                     float chparam = float ((chCurve->getVal (hr) - 0.5f) * 2.0f); //get C=f(H)
                     float chromaChfactor = 1.0f + chparam;
                     atmp *= chromaChfactor;//apply C=f(H)
@@ -5883,9 +5888,19 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
 
                 if (hhutili) {  // H=f(H)
                     //hue Lab in -PI +PI
-                    float valparam = float ((hhCurve->getVal (Color::huelab_to_huehsv2 (HH)) - 0.5f) * 1.7f) + HH; //get H=f(H)  1.7 optimisation !
-                    HH = valparam;
-                    sincosval = xsincosf (HH);
+                    double hr = 0.5 * ((HH / rtengine::RT_PI) + 1.);
+
+                    //    float valparam = float ((hhCurve->getVal (Color::huelab_to_huehsv2 (HH)) - 0.5f) * 1.7f) + hr; //get H=f(H)  1.7 optimisation !
+                    float valparam = float ((hhCurve->getVal (hr - 0.5f)) * 2.) + hr;
+
+                    if (valparam > 1.0f) {
+                        valparam -= 1.0f;
+                    } else if ( valparam < 0.0f) {
+                        valparam  += 1.0f;
+                    }
+
+                    float v = (2.f * valparam - 1.f) * rtengine::RT_PI;
+                    sincosval = xsincosf (v);
                 }
 
                 if (!bwToning) {

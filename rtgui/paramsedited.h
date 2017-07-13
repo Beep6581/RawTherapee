@@ -478,6 +478,7 @@ public:
     bool llcurve;
     bool cccurve;
     bool LHcurve;
+    bool HHcurve;
     bool chrrt;
     bool mult[5];
     bool threshold;

@@ -147,6 +147,7 @@ protected:
     LocretigainCurve locRETgainCurve;
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;
+    LocHHCurve lochhCurve;
 
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
@@ -223,12 +224,15 @@ protected:
     bool wavcontlutili;
     bool locallutili;
     bool localcutili;
+    bool LHutili;
+    bool HHutili;
 
     int **dataspot;
     std::string *retistr;
     std::string *llstr;
     std::string *lhstr;
     std::string *ccstr;
+    std::string *hhstr;
 
     LUTi circrads;
     LUTi centerx;
@@ -294,7 +298,9 @@ protected:
     LUTi llcurvs;
     LUTi sizellcs;
     LUTi lhcurvs;
+    LUTi hhcurvs;
     LUTi sizelhcs;
+    LUTi sizehhcs;
     LUTi cccurvs;
     LUTi sizecccs;
 
