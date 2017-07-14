@@ -40,24 +40,33 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
 
         explicit EditWindowInstance(RTWindow* p) : editWnd(p)
         {
-            int meowMonitor = 0;
-            if(isMultiDisplayEnabled()) {
-                if(options.meowMonitor >= 0) { // use display from last session if available
-                    meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors());
-                } else { // Determine the other display
-                    const Glib::RefPtr< Gdk::Window >& wnd = p->get_window();
-                    meowMonitor = p->get_screen()->get_monitor_at_window(wnd) == 0 ? 1 : 0;
-                }
-            }
-            Gdk::Rectangle lMonitorRect;
-            editWnd.get_screen()->get_monitor_geometry(meowMonitor, lMonitorRect);
-            editWnd.move(lMonitorRect.get_x(), lMonitorRect.get_y());
-            editWnd.maximize();
         }
     };
 
     static EditWindowInstance instance_(p);
-    instance_.editWnd.show_all();
+    if(!instance_.editWnd.is_maximized()) {
+        int meowMonitor = 0;
+        if(isMultiDisplayEnabled()) {
+            if(options.meowMonitor >= 0) { // use display from last session if available
+                meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors());
+            } else { // Determine the other display
+                const Glib::RefPtr< Gdk::Window >& wnd = p->get_window();
+                meowMonitor = p->get_screen()->get_monitor_at_window(wnd) == 0 ? 1 : 0;
+            }
+        }
+        Gdk::Rectangle lMonitorRect;
+        instance_.editWnd.get_screen()->get_monitor_geometry(meowMonitor, lMonitorRect);
+        instance_.editWnd.move(lMonitorRect.get_x(), lMonitorRect.get_y());
+        instance_.editWnd.maximize();
+        instance_.editWnd.show_all ();
+    }
+
+    if(Gdk::Screen::get_default()->get_n_monitors() == 1) {
+        // when using MEOW mode on a single monitor we need to present the secondary window.
+        // If we don't it will stay in background when opening 2nd, 3rd... editor, which is annoying
+        instance_.editWnd.present();
+    }
+
     return &instance_.editWnd;
 }
 
@@ -90,7 +99,6 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
     mainBox->pack_start (*mainNB);
 
     add (*mainBox);
-    show_all ();
 }
 
 void EditWindow::on_realize ()
@@ -252,7 +260,8 @@ bool EditWindow::on_delete_event(GdkEventAny* event)
         options.meowMonitor = get_screen()->get_monitor_at_window (get_window());
     }
 
-    hide ();
+    hide();
+    unmaximize();
 
     return false;
 }
