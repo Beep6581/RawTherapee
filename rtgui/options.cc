@@ -296,6 +296,7 @@ void Options::setDefaults ()
     windowY = 0;
     windowMaximized = true;
     meowMonitor = -1;
+    meowFullScreen = false;
     saveAsDialogWidth = 920;
     saveAsDialogHeight = 680;
     savesParamsAtExit = true;
@@ -1263,6 +1264,10 @@ int Options::readFromFile (Glib::ustring fname)
                     meowMonitor = keyFile.get_integer ("GUI", "MeowMonitor");
                 }
 
+                if (keyFile.has_key ("GUI", "MeowFullScreen")) {
+                    meowFullScreen = keyFile.get_boolean ("GUI", "MeowFullScreen");
+                }
+
                 if (keyFile.has_key ("GUI", "WindowMaximized")) {
                     windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
                 }
@@ -2015,6 +2020,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("GUI", "WindowX", windowX);
         keyFile.set_integer ("GUI", "WindowY", windowY);
         keyFile.set_integer ("GUI", "MeowMonitor", meowMonitor);
+        keyFile.set_boolean ("GUI", "MeowFullScreen", meowFullScreen);
         keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
         keyFile.set_integer ("GUI", "DetailWindowWidth", detailWindowWidth);
         keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);

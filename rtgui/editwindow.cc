@@ -57,7 +57,15 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
         Gdk::Rectangle lMonitorRect;
         instance_.editWnd.get_screen()->get_monitor_geometry(meowMonitor, lMonitorRect);
         instance_.editWnd.move(lMonitorRect.get_x(), lMonitorRect.get_y());
-        instance_.editWnd.maximize();
+
+        if(!options.meowFullScreen) {
+            instance_.editWnd.maximize();
+            instance_.editWnd.setFullScreen(false);
+        } else {
+            instance_.editWnd.fullscreen();
+            instance_.editWnd.setFullScreen(true);
+        }
+
         instance_.editWnd.show_all ();
     }
 
@@ -257,8 +265,10 @@ bool EditWindow::on_delete_event(GdkEventAny* event)
     parent->fpanel->refreshEditedState (filesEdited);
 
     if(isMultiDisplayEnabled()) {
-        options.meowMonitor = get_screen()->get_monitor_at_window (get_window());
+        options.meowMonitor = get_screen()->get_monitor_at_window(get_window());
     }
+
+    options.meowFullScreen = isFullscreen;
 
     hide();
     unmaximize();
