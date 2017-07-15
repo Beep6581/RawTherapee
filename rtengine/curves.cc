@@ -447,6 +447,24 @@ void CurveFactory::curveCCLocal (bool & localcutili, const std::vector<double>& 
 
 }
 
+void CurveFactory::curveskLocal (bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip)
+{
+    bool needed = false;
+    std::unique_ptr<DiagonalCurve> dCurve;
+
+    if (!curvePoints.empty() && curvePoints[0] != 0) {
+        dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS / skip));
+
+        if (dCurve && !dCurve->isIdentity()) {
+            needed = true;
+            localskutili = true;
+        }
+    }
+
+    fillCurveArray (dCurve.get(), LocalskCurve, skip, needed);
+
+}
+
 
 void CurveFactory::localLCurve (double br, double contr, /*const std::vector<double>& curvePoints,*/
                                 LUTu & histogram, LUTf & outCurve,

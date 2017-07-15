@@ -33,6 +33,7 @@
 #include <fstream>
 #include <string>
 #include "../rtgui/md5helper.h"
+#include "../rtgui/thresholdselector.h"
 
 
 #undef THREAD_PRIORITY_NORMAL
@@ -1045,6 +1046,7 @@ private:
             LocretigainCurverab locRETgainCurverab;
             LUTf lllocalcurve (65536, 0);
             LUTf cclocalcurve (65536, 0);
+            LUTf sklocalcurve (65536, 0);
 
             //    int realspot = params.locallab.nbspot;
             int maxspot = settings->nspot + 1;
@@ -1096,9 +1098,9 @@ private:
                 std::string inser;
 
                 int **dataspots;
-                dataspots = new int*[61];
+                dataspots = new int*[67];
 
-                for (int i = 0; i < 61; i++) {
+                for (int i = 0; i < 67; i++) {
                     dataspots[i] = new int[maxspot];
                 }
 
@@ -1117,6 +1119,12 @@ private:
 
                 std::string *hhstrs;
                 hhstrs = new std::string[maxspot];
+
+                std::string *skinstrs;
+                skinstrs = new std::string[maxspot];
+
+                std::string *pthstrs;
+                pthstrs = new std::string[maxspot];
 
                 {
                     dataspots[2][0] =  params.locallab.circrad;
@@ -1243,9 +1251,31 @@ private:
                         dataspots[57][0] =  2;
                     }
 
-                    dataspots[58][0] = 100.f * params.locallab.hueref;
-                    dataspots[59][0] = params.locallab.chromaref;
-                    dataspots[60][0] = params.locallab.lumaref;
+                    dataspots[58][0] = params.locallab.sensiv;
+                    dataspots[59][0] = params.locallab.pastels;
+                    dataspots[60][0] = params.locallab.saturated;
+
+                    if (!params.locallab.protectskins) {
+                        dataspots[61][0] = 0;
+                    } else {
+                        dataspots[61][0] = 1;
+                    }
+
+                    if (!params.locallab.avoidcolorshift) {
+                        dataspots[62][0] = 0;
+                    } else {
+                        dataspots[62][0] = 1;
+                    }
+
+                    if (!params.locallab.pastsattog) {
+                        dataspots[63][0] = 0;
+                    } else {
+                        dataspots[63][0] = 1;
+                    }
+
+                    dataspots[64][0] = 100.f * params.locallab.hueref;
+                    dataspots[65][0] = params.locallab.chromaref;
+                    dataspots[66][0] = params.locallab.lumaref;
 
                     //curve Reti local
                     int siz = params.locallab.localTgaincurve.size();
@@ -1356,6 +1386,46 @@ private:
 
                     hhstrs[0] = hh_str + "@";
 
+                    //Skin curve
+                    int sizsk = params.locallab.skintonescurve.size();
+
+                    if (sizsk > 69) {
+                        sizsk = 69;//to avoid crash
+                    }
+
+
+                    int s_datcursk[sizsk + 1];
+
+                    for (int j = 0; j < sizsk; j++) {
+                        s_datcursk[j] = (int)  (1000. * params.locallab.skintonescurve[j]);
+                    }
+
+                    std::string sk_str = "";
+
+                    for (int j = 0; j < sizsk; j++) {
+                        sk_str = sk_str + std::to_string (s_datcursk[j]) + delim[j];
+                    }
+
+                    skinstrs[0] = sk_str + "@";
+
+                    //end local skin
+                    //PSThreshold
+                    int sizps = 2;
+                    int s_datps[sizps + 1];
+                    s_datps[1] =  static_cast<int> (params.locallab.psthreshold.value[ThresholdSelector::TS_TOPLEFT]);
+
+                    s_datps[0] =  static_cast<int> (params.locallab.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]);
+
+                    std::string ps_str = "";
+
+                    for (int j = 0; j < sizps; j++) {
+                        ps_str = ps_str + std::to_string (s_datps[j]) + delim[j];
+                    }
+
+                    pthstrs[0] = ps_str + "@";
+
+                    //end local ps
+
 
                 }
                 //     locallutili = false;
@@ -1404,7 +1474,7 @@ private:
                             dataspots[16][0] = std::stoi (str3.c_str());
                         }
 
-                        if (cont > 16  && cont < 61) {
+                        if (cont > 16  && cont < 67) {
                             dataspots[cont][ns] = std::stoi (str3.c_str());
 
                         }
@@ -1493,6 +1563,39 @@ private:
 
                             ccstrs[ns] = str3;
                             //    sizecc = longec;
+                        }
+
+                        if (spotline.substr (0, pos) == "curveskin") {
+                            std::string curstskin;
+                            //      int longecurh;
+                            std::string strendsk = spotline.substr (posend - 1, 1);
+                            //      std::size_t poszh = spotline.find (strendh);
+                            //      int longeh;
+
+                            for (int sh = 0; sh < 69; sh++) {
+                                if (delim[sh] == strendsk) {
+                                    //             longeh = sh + 1;
+                                }
+                            }
+
+                            skinstrs[ns] = str3;
+                            //    sizelh = longeh;
+                        }
+
+                        if (spotline.substr (0, pos) == "pthres") {
+                            std::string curstpth;
+                            //      int longecurh;
+                            std::string strendpt = spotline.substr (posend - 1, 1);
+                            //      std::size_t poszh = spotline.find (strendh);
+                            //      int longeh;
+
+                            for (int sh = 0; sh < 69; sh++) {
+                                if (delim[sh] == strendpt) {
+                                    //             longeh = sh + 1;
+                                }
+                            }
+
+                            pthstrs[ns] = str3;
                         }
 
                     }
@@ -1629,9 +1732,32 @@ private:
                         params.locallab.qualitycurveMethod = "enh" ;
                     }
 
-                    params.locallab.hueref = ((float) dataspots[58][sp]) / 100.f;
-                    params.locallab.chromaref = dataspots[59][sp];
-                    params.locallab.lumaref = dataspots[60][sp];
+
+                    params.locallab.sensiv = dataspots[58][sp];
+                    params.locallab.pastels = dataspots[59][sp];
+                    params.locallab.saturated = dataspots[60][sp];
+
+                    if (dataspots[61][sp] ==  0) {
+                        params.locallab.protectskins = false;
+                    } else {
+                        params.locallab.protectskins  = true;
+                    }
+
+                    if (dataspots[62][sp] ==  0) {
+                        params.locallab.avoidcolorshift = false;
+                    } else {
+                        params.locallab.avoidcolorshift  = true;
+                    }
+
+                    if (dataspots[63][sp] ==  0) {
+                        params.locallab.pastsattog = false;
+                    } else {
+                        params.locallab.pastsattog  = true;
+                    }
+
+                    params.locallab.hueref = ((float) dataspots[64][sp]) / 100.f;
+                    params.locallab.chromaref = dataspots[65][sp];
+                    params.locallab.lumaref = dataspots[66][sp];
 
 
                     int *s_datc;
@@ -1703,17 +1829,43 @@ private:
                         chhend.push_back ((double) (s_datchh[j]) / 1000.);
                     }
 
+                    delete [] s_datchh;
+
+                    int *s_datcsk;
+                    s_datcsk = new int[70];
+                    int sizsk;
+
+                    ipf.strcurv_data (skinstrs[sp], s_datcsk, sizsk);
+
+
+                    std::vector<double>   cskend;
+
+                    for (int j = 0; j < sizsk; j++) {
+                        cskend.push_back ((double) (s_datcsk[j]) / 1000.);
+                    }
+
+                    delete [] s_datcsk;
+
+                    //PSThreshold + 1
+                    int sizps = 2;
+                    int s_datcps[sizps + 1];
+                    ipf.strcurv_data (pthstrs[sp], s_datcps, sizps);
+
+                    params.locallab.psthreshold.setValues (s_datcps[0], s_datcps[1]);
+
                     params.locallab.localTgaincurve.clear();
                     params.locallab.llcurve.clear();
                     params.locallab.LHcurve.clear();
                     params.locallab.cccurve.clear();
                     params.locallab.HHcurve.clear();
+                    params.locallab.skintonescurve.clear();
 
                     params.locallab.localTgaincurve = cretiend;
                     params.locallab.llcurve = cllend;
                     params.locallab.LHcurve = clhend;
                     params.locallab.cccurve = cccend;
                     params.locallab.HHcurve = chhend;
+                    params.locallab.skintonescurve = cskend;
 
                     bool LHutili = false;
                     bool HHutili = false;
@@ -1731,9 +1883,12 @@ private:
                     params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
                     bool locallutili = false;
                     bool localcutili = false;
+                    bool localskutili = false;
 
                     CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, 1);
                     CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, 1);
+                    CurveFactory::curveskLocal (localskutili, params.locallab.skintonescurve, sklocalcurve, 1);
+
                     double huere, chromare, lumare;
 
                     ipf.calc_ref (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, huere, chromare, lumare);
@@ -1744,6 +1899,7 @@ private:
                     ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
+                    sklocalcurve.clear();
 
                 }
 

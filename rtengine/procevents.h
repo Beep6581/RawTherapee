@@ -573,6 +573,16 @@ enum ProcEvent {
     Evlocallabchromaref = 543,
     Evlocallablumaref = 544,
     EvlocallabHHshape = 545,
+    EvLocenavibrance = 546,
+    EvlocallabSkinTonesCurve = 547,
+    EvlocallabProtectSkins = 548,
+    EvlocallabAvoidColorShift = 549,
+    EvlocallabPastSatTog = 550,
+    EvlocallabPastels = 551,
+    EvlocallabSaturated = 552,
+    EvlocallabPastSatThreshold = 553,
+    Evlocallabsensiv = 554,
+
     NUMOFEVENTS
 
 

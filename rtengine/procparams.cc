@@ -954,6 +954,16 @@ void LocallabParams::setDefaults()
     lightness = 0;
     contrast = 0;
     chroma = 0;
+    pastels            = 0;
+    saturated          = 0;
+    psthreshold.setValues (0, 75);
+    protectskins       = false;
+    avoidcolorshift    = true;
+    pastsattog         = true;
+    skintonescurve.clear ();
+    skintonescurve.push_back (DCT_Linear);
+    sensiv = 19;
+
     noiselumf = 0;
     noiselumc = 0;
     noisechrof = 0;
@@ -1000,6 +1010,7 @@ void LocallabParams::setDefaults()
     cccurve.clear ();
     cccurve.push_back (DCT_Linear);
     expcolor = false;
+    expvibrance = false;
     expblur = false;
     exptonemap = false;
     expreti = false;
@@ -2747,6 +2758,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Locallab", "Expcolor", locallab.expcolor);
         }
 
+        if (!pedited || pedited->locallab.expvibrance) {
+            keyFile.set_boolean ("Locallab", "Expvibrance", locallab.expvibrance);
+        }
+
         if (!pedited || pedited->locallab.expblur) {
             keyFile.set_boolean ("Locallab", "Expblur", locallab.expblur);
         }
@@ -2896,6 +2911,42 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         if (!pedited || pedited->locallab.chroma) {
             keyFile.set_integer ("Locallab", "Chroma", locallab.chroma);
         }
+
+        if (!pedited || pedited->locallab.pastels) {
+            keyFile.set_integer ("Locallab", "Pastels", locallab.pastels);
+        }
+
+        if (!pedited || pedited->locallab.saturated) {
+            keyFile.set_integer ("Locallab", "Saturated", locallab.saturated);
+        }
+
+        if (!pedited || pedited->locallab.psthreshold) {
+            Glib::ArrayHandle<int> thresh (locallab.psthreshold.value, 2, Glib::OWNERSHIP_NONE);
+            keyFile.set_integer_list ("Locallab", "PSThreshold", thresh);
+        }
+
+        if (!pedited || pedited->locallab.sensiv) {
+            keyFile.set_integer ("Locallab", "Sensiv", locallab.sensiv);
+        }
+
+        if (!pedited || pedited->locallab.protectskins) {
+            keyFile.set_boolean ("Locallab", "ProtectSkins", locallab.protectskins);
+        }
+
+        if (!pedited || pedited->locallab.avoidcolorshift) {
+            keyFile.set_boolean ("Locallab", "AvoidColorShift", locallab.avoidcolorshift);
+        }
+
+        if (!pedited || pedited->locallab.pastsattog) {
+            keyFile.set_boolean ("Locallab", "PastSatTog", locallab.pastsattog);
+        }
+
+        if (!pedited || pedited->locallab.skintonescurve)  {
+            Glib::ArrayHandle<double> skintonescurve = locallab.skintonescurve;
+            keyFile.set_double_list ("Locallab", "SkinTonesCurve", skintonescurve);
+        }
+
+
 
         if (!pedited || pedited->locallab.noiselumf) {
             keyFile.set_integer ("Locallab", "noiselumf", locallab.noiselumf);
@@ -4404,6 +4455,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "Expvibrance")) {
+                locallab.expvibrance = keyFile.get_boolean ("Locallab", "Expvibrance");
+
+                if (pedited) {
+                    pedited->locallab.expvibrance = true;
+                }
+            }
+
             if (keyFile.has_key ("Locallab", "Expblur")) {
                 locallab.expblur = keyFile.get_boolean ("Locallab", "Expblur");
 
@@ -4895,6 +4954,73 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->locallab.contrast = true;
                 }
             }
+
+            if (keyFile.has_key ("Locallab", "Sensiv"))  {
+                locallab.sensiv  = keyFile.get_integer ("Locallab", "Sensiv");
+
+                if (pedited) {
+                    pedited->locallab.sensiv = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Pastels")) {
+                locallab.pastels            = keyFile.get_integer ("Locallab", "Pastels");
+
+                if (pedited) {
+                    pedited->locallab.pastels = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Saturated")) {
+                locallab.saturated          = keyFile.get_integer ("Locallab", "Saturated");
+
+                if (pedited) {
+                    pedited->locallab.saturated = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "PSThreshold")) {
+                Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Locallab", "PSThreshold");
+                locallab.psthreshold.setValues (thresh.data()[0], thresh.data()[1]);
+
+
+                if (pedited) {
+                    pedited->locallab.psthreshold = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "ProtectSkins")) {
+                locallab.protectskins       = keyFile.get_boolean ("Locallab", "ProtectSkins");
+
+                if (pedited) {
+                    pedited->locallab.protectskins = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "AvoidColorShift")) {
+                locallab.avoidcolorshift    = keyFile.get_boolean ("Locallab", "AvoidColorShift");
+
+                if (pedited) {
+                    pedited->locallab.avoidcolorshift = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "PastSatTog")) {
+                locallab.pastsattog         = keyFile.get_boolean ("Locallab", "PastSatTog");
+
+                if (pedited) {
+                    pedited->locallab.pastsattog = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "SkinTonesCurve")) {
+                locallab.skintonescurve     = keyFile.get_double_list ("Locallab", "SkinTonesCurve");
+
+                if (pedited) {
+                    pedited->locallab.skintonescurve = true;
+                }
+            }
+
 
 //IND
             if (keyFile.has_key ("Locallab", "Radius"))  {
@@ -9424,6 +9550,14 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.lightness == other.locallab.lightness
         && locallab.contrast == other.locallab.contrast
         && locallab.chroma == other.locallab.chroma
+        && locallab.pastels == other.locallab.pastels
+        && locallab.sensiv == other.locallab.sensiv
+        && locallab.saturated == other.locallab.saturated
+        && locallab.psthreshold == other.locallab.psthreshold
+        && locallab.protectskins == other.locallab.protectskins
+        && locallab.avoidcolorshift == other.locallab.avoidcolorshift
+        && locallab.pastsattog == other.locallab.pastsattog
+        && locallab.skintonescurve == other.locallab.skintonescurve
         && locallab.noiselumf == other.locallab.noiselumf
         && locallab.noiselumc == other.locallab.noiselumc
         && locallab.noisechrof == other.locallab.noisechrof
@@ -9458,6 +9592,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.vart == other.locallab.vart
         && locallab.threshold == other.locallab.threshold
         && locallab.expcolor == other.locallab.expcolor
+        && locallab.expvibrance == other.locallab.expvibrance
         && locallab.expblur == other.locallab.expblur
         && locallab.exptonemap == other.locallab.exptonemap
         && locallab.expreti == other.locallab.expreti

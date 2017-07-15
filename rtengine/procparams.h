@@ -879,6 +879,7 @@ public:
     Glib::ustring qualityMethod;
     Glib::ustring qualitycurveMethod;
     bool expcolor;
+    bool expvibrance;
     bool expblur;
     bool exptonemap;
     bool expreti;
@@ -889,6 +890,16 @@ public:
     int     lightness;
     int     contrast;
     int     chroma;
+
+    int            pastels;
+    int            saturated;
+    Threshold<int> psthreshold;
+    bool           protectskins;
+    bool           avoidcolorshift;
+    bool           pastsattog;
+    std::vector<double> skintonescurve;
+    int sensiv;
+
     int     sharradius;
     int     sharamount;
     int     shardamping;
@@ -941,7 +952,7 @@ public:
     double mult[5];
     double threshold;
 
-    LocallabParams ()
+    LocallabParams (): psthreshold (0, 75,  false)
     {
         setDefaults();
     }

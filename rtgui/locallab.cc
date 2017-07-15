@@ -41,6 +41,7 @@ Locallab::Locallab ():
     FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABEL"), false, true),
     EditSubscriber (ET_OBJECTS), lastObject (-1),
     expcolor (new MyExpander (true, M ("TP_LOCALLAB_COFR"))),
+    expvibrance (new MyExpander (true, M ("TP_LOCALLAB_VIBRANCE"))),
     expblur (new MyExpander (true, M ("TP_LOCALLAB_BLUFR"))),
     exptonemap (new MyExpander (true, M ("TP_LOCALLAB_TM"))),
     expreti (new MyExpander (true, M ("TP_LOCALLAB_RETI"))),
@@ -180,6 +181,9 @@ Locallab::Locallab ():
     expcolor->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expcolor) );
     enablecolorConn = expcolor->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expcolor) );
 
+    expvibrance->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expvibrance) );
+    enablevibranceConn = expvibrance->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expvibrance) );
+
     expblur->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expblur) );
     enableblurConn = expblur->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expblur) );
 
@@ -302,7 +306,7 @@ Locallab::Locallab ():
     LHshape->setBottomBarBgGradient (milestones);
 
     rtengine::LocallabParams::getDefaultHHCurve (defaultCurve5);
-	
+
     HHshape = static_cast<FlatCurveEditor*> (llCurveEditorG->addCurve (CT_Flat, "H(H)", nullptr, false, true));
 
     HHshape->setIdentityValue (0.);
@@ -320,7 +324,7 @@ Locallab::Locallab ():
     }
 
     HHshape->setBottomBarBgGradient (milestones);
-	
+
 
     llCurveEditorG->curveListComplete();
 
@@ -601,6 +605,76 @@ Locallab::Locallab ():
     expcolor->add (*colorBox);
     expcolor->setLevel (2);
     pack_start (*expcolor);
+
+
+    ToolParamBlock* const vibranceBox = Gtk::manage (new ToolParamBlock());
+    std::vector<GradientMilestone> milestonesvib;
+    float R, G, B;
+    // -0.1 rad < Hue < 1.6 rad
+    Color::hsv2rgb01 (0.92f, 0.45f, 0.6f, R, G, B);
+    milestonesvib.push_back ( GradientMilestone (0.0, double (R), double (G), double (B)) );
+    Color::hsv2rgb01 (0.14056f, 0.45f, 0.6f, R, G, B);
+    milestonesvib.push_back ( GradientMilestone (1.0, double (R), double (G), double (B)) );
+
+    saturated = Gtk::manage (new Adjuster (M ("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.));
+    saturated->setAdjusterListener (this);
+    saturated->set_sensitive (false);
+    vibranceBox->pack_start ( *saturated, Gtk::PACK_SHRINK, 0);
+
+    pastels = Gtk::manage (new Adjuster (M ("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.));
+    pastels->setAdjusterListener (this);
+    vibranceBox->pack_start ( *pastels, Gtk::PACK_SHRINK, 0);
+
+    psThreshold = Gtk::manage (new ThresholdAdjuster (M ("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M ("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M ("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false));
+    psThreshold->setAdjusterListener (this);
+    psThreshold->set_tooltip_markup (M ("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
+    psThreshold->set_sensitive (false);
+    vibranceBox->pack_start ( *psThreshold, Gtk::PACK_SHRINK, 0);
+
+    protectSkins = Gtk::manage (new Gtk::CheckButton (M ("TP_VIBRANCE_PROTECTSKINS")));
+    protectSkins->set_active (true);
+    vibranceBox->pack_start (*protectSkins, Gtk::PACK_SHRINK, 0);
+
+    avoidColorShift = Gtk::manage (new Gtk::CheckButton (M ("TP_VIBRANCE_AVOIDCOLORSHIFT")));
+    avoidColorShift->set_active (true);
+    vibranceBox->pack_start (*avoidColorShift, Gtk::PACK_SHRINK, 0);
+
+    pastSatTog = Gtk::manage (new Gtk::CheckButton (M ("TP_VIBRANCE_PASTSATTOG")));
+    pastSatTog->set_active (true);
+    vibranceBox->pack_start (*pastSatTog, Gtk::PACK_SHRINK, 0);
+
+    sensiv = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19));
+    sensiv->setAdjusterListener (this);
+
+    vibranceBox->pack_start (*sensiv, Gtk::PACK_SHRINK, 0);
+
+    curveEditorGG = new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"));
+    curveEditorGG->setCurveListener (this);
+
+    skinTonesCurve = static_cast<DiagonalCurveEditor*> (curveEditorGG->addCurve (CT_Diagonal, M ("TP_VIBRANCE_CURVEEDITOR_SKINTONES")));
+    skinTonesCurve->setTooltip (M ("TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP"));
+    skinTonesCurve->setBottomBarBgGradient (milestonesvib);
+    skinTonesCurve->setLeftBarBgGradient (milestonesvib);
+    skinTonesCurve->setRangeLabels (
+        M ("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1"), M ("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2"),
+        M ("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3"), M ("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4")
+    );
+    skinTonesCurve->setRangeDefaultMilestones (0.1, 0.4, 0.85);
+    curveEditorGG->curveListComplete();
+
+    vibranceBox->pack_start (*curveEditorGG, Gtk::PACK_SHRINK, 4);
+
+    pskinsconn = protectSkins->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::protectskins_toggled) );
+    ashiftconn = avoidColorShift->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::avoidcolorshift_toggled) );
+    pastsattogconn = pastSatTog->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::pastsattog_toggled) );
+
+    expvibrance->add (*vibranceBox);
+    expvibrance->setLevel (2);
+    pack_start (*expvibrance);
+
+
+
+
     ToolParamBlock* const blurrBox = Gtk::manage (new ToolParamBlock());
 
     blurrBox->pack_start (*radius);
@@ -938,6 +1012,7 @@ void Locallab::foldAllButMe (GdkEventButton* event, MyExpander *expander)
     if (event->button == 3) {
         expsettings->set_expanded (expsettings == expander);
         expcolor->set_expanded (expcolor == expander);
+        expvibrance->set_expanded (expvibrance == expander);
         expblur->set_expanded (expblur == expander);
         exptonemap->set_expanded (exptonemap == expander);
         expreti->set_expanded (expreti == expander);
@@ -955,6 +1030,8 @@ void Locallab::enableToggled (MyExpander *expander)
 
         if (expander == expcolor) {
             event = EvLocenacolor;
+        } else if (expander == expvibrance) {
+            event = EvLocenavibrance;
         } else if (expander == expblur) {
             event = EvLocenablur;
         } else if (expander == exptonemap) {
@@ -986,6 +1063,7 @@ void Locallab::writeOptions (std::vector<int> &tpOpen)
 {
     tpOpen.push_back (expsettings->get_expanded ());
     tpOpen.push_back (expcolor->get_expanded ());
+    tpOpen.push_back (expvibrance->get_expanded ());
     tpOpen.push_back (expblur->get_expanded ());
     tpOpen.push_back (exptonemap->get_expanded ());
     tpOpen.push_back (expreti->get_expanded ());
@@ -997,15 +1075,16 @@ void Locallab::writeOptions (std::vector<int> &tpOpen)
 
 void Locallab::updateToolState (std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() == 8) {
+    if (tpOpen.size() == 9) {
         expsettings->set_expanded (tpOpen.at (0));
         expcolor->set_expanded (tpOpen.at (1));
-        expblur->set_expanded (tpOpen.at (2));
-        exptonemap->set_expanded (tpOpen.at (3));
-        expreti->set_expanded (tpOpen.at (4));
-        expsharp->set_expanded (tpOpen.at (5));
-        expcbdl->set_expanded (tpOpen.at (6));
-        expdenoi->set_expanded (tpOpen.at (7));
+        expvibrance->set_expanded (tpOpen.at (2));
+        expblur->set_expanded (tpOpen.at (3));
+        exptonemap->set_expanded (tpOpen.at (4));
+        expreti->set_expanded (tpOpen.at (5));
+        expsharp->set_expanded (tpOpen.at (6));
+        expcbdl->set_expanded (tpOpen.at (7));
+        expdenoi->set_expanded (tpOpen.at (8));
     }
 }
 
@@ -1214,7 +1293,28 @@ bool Locallab::localretComputed_ ()
     delete [] s_datchh;
 
     HHshape->setCurve (chh);
-	
+
+    //skinTonesCurve
+    int *s_datcsk;
+    s_datcsk = new int[70];
+    int sizsk;
+    ImProcFunctions::strcurv_data (nextsk_str2, s_datcsk, sizsk);
+    std::vector<double>   csk;
+
+    for (int j = 0; j < sizsk; j++) {
+        csk.push_back ((double) (s_datcsk[j]) / 1000.);
+    }
+
+    delete [] s_datcsk;
+
+    skinTonesCurve->setCurve (csk);
+
+    //PSthreshold
+    int sizps = 2;
+    int s_datcps[sizps + 1];
+    ImProcFunctions::strcurv_data (nextps_str2, s_datcps, sizps);
+    psThreshold->setValue (s_datcps[0], s_datcps[1]);
+
     enableListener ();
 
     //update all sliders by this strange process!
@@ -1288,7 +1388,16 @@ bool Locallab::localretComputed_ ()
     if (listener) {//for curve
         listener->panelChanged (EvlocallabHHshape, M (""));
     }
-	
+
+    if (listener) {//for curve
+        listener->panelChanged (EvlocallabSkinTonesCurve, M (""));
+    }
+
+    if (listener) {//for PSthreshold
+        listener->panelChanged (EvlocallabPastSatThreshold, M (""));
+    }
+
+
     return false;
 
 }
@@ -1441,10 +1550,35 @@ bool Locallab::localComputed_ ()
         qualitycurveMethod->set_active (2);
     }
 
-    double intermed = 0.01 * (double) nextdatasp[58];
+    sensiv->setValue (nextdatasp[58]);
+    pastels->setValue (nextdatasp[59]);
+    saturated->setValue (nextdatasp[60]);
+
+    //protectskin
+    if (nextdatasp[61] == 0) {
+        protectSkins->set_active (false);
+    } else {
+        protectSkins->set_active (true);
+    }
+
+    //avoidColorShift
+    if (nextdatasp[62] == 0) {
+        avoidColorShift->set_active (false);
+    } else {
+        avoidColorShift->set_active (true);
+    }
+
+    //pastSatTog
+    if (nextdatasp[63] == 0) {
+        pastSatTog->set_active (false);
+    } else {
+        pastSatTog->set_active (true);
+    }
+
+    double intermed = 0.01 * (double) nextdatasp[64];
     hueref->setValue (intermed);
-    chromaref->setValue (nextdatasp[59]);
-    lumaref->setValue (nextdatasp[60]);
+    chromaref->setValue (nextdatasp[65]);
+    lumaref->setValue (nextdatasp[66]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -1526,9 +1660,27 @@ bool Locallab::localComputed_ ()
 
     delete [] s_datchh;
     HHshape->setCurve (chh);
-	
 
-    //  usleep(10000);
+    //skinTonesCurve
+    int *s_datcsk;
+    s_datcsk = new int[70];
+    int sizsk;
+    ImProcFunctions::strcurv_data (nextsk_str, s_datcsk, sizsk);
+    std::vector<double>   csk;
+
+    for (int j = 0; j < sizsk; j++) {
+        csk.push_back ((double) (s_datcsk[j]) / 1000.);
+    }
+
+    delete [] s_datcsk;
+
+    skinTonesCurve->setCurve (csk);
+
+    //PSthreshold
+    int sizps = 2;
+    int s_datcps[sizps + 1];
+    ImProcFunctions::strcurv_data (nextps_str, s_datcps, sizps);
+    psThreshold->setValue (s_datcps[0], s_datcps[1]);
 
 
     enableListener ();
@@ -1644,13 +1796,34 @@ bool Locallab::localComputed_ ()
     if (listener) {//for curve LH
         listener->panelChanged (EvlocallabHHshape, M (""));
     }
-	
+
+    if (listener) {//for curve Skin
+        listener->panelChanged (EvlocallabSkinTonesCurve, M (""));
+    }
+
+    if (listener) {//for PSthreshold
+        listener->panelChanged (EvlocallabPastSatThreshold, M (""));
+    }
+
+    //for checkbox
+    if (listener) {//for PSthreshold
+        listener->panelChanged (EvlocallabProtectSkins, M (""));
+    }
+
+    if (listener) {//for PSthreshold
+        listener->panelChanged (EvlocallabAvoidColorShift, M (""));
+    }
+
+    if (listener) {//for PSthreshold
+        listener->panelChanged (EvlocallabPastSatTog, M (""));
+    }
+
     return false;
 }
 
-void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, int sp, int maxdat)
+void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 61; i++) {
+    for (int i = 2; i < 67; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -1659,12 +1832,14 @@ void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_
     nextlh_str = lh_str;
     nextcc_str = cc_str;
     nexthh_str = hh_str;
+    nextsk_str = sk_str;
+    nextps_str = ps_str;
 
     nextlength = maxdat;
     g_idle_add (localChangedUI, this);
 }
 
-void Locallab::localretChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, int sp, int maxdat)
+void Locallab::localretChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat)
 {
     nextlength = maxdat;
     nextstr2 = datastr;
@@ -1672,6 +1847,8 @@ void Locallab::localretChanged  (int **datasp, std::string datastr, std::string 
     nextlh_str2 = lh_str;
     nextcc_str2 = cc_str;
     nexthh_str2 = hh_str;
+    nextsk_str2 = sk_str;
+    nextps_str2 = ps_str;
 
     g_idle_add (localretChangedUI, this);
 }
@@ -1686,6 +1863,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener ();
     enablecolorConn.block (true);
+    enablevibranceConn.block (true);
     enableblurConn.block (true);
     enabletonemapConn.block (true);
     enableretiConn.block (true);
@@ -1717,6 +1895,15 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         noiselumc->setEditedState (pedited->locallab.noiselumc ? Edited : UnEdited);
         noisechrof->setEditedState (pedited->locallab.noisechrof ? Edited : UnEdited);
         noisechroc->setEditedState (pedited->locallab.noisechroc ? Edited : UnEdited);
+
+        pastels->setEditedState           (pedited->locallab.pastels ? Edited : UnEdited);
+        saturated->setEditedState         (pedited->locallab.saturated ? Edited : UnEdited);
+        psThreshold->setEditedState       (pedited->locallab.psthreshold ? Edited : UnEdited);
+        protectSkins->set_inconsistent    (!pedited->locallab.protectskins);
+        avoidColorShift->set_inconsistent (!pedited->locallab.avoidcolorshift);
+        pastSatTog->set_inconsistent      (!pedited->locallab.pastsattog);
+        skinTonesCurve->setUnChanged      (!pedited->locallab.skintonescurve);
+        sensiv->setEditedState (pedited->locallab.sensiv ? Edited : UnEdited);
 
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setEditedState (pedited->locallab.mult[i] ? Edited : UnEdited);
@@ -1763,6 +1950,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         inversret->set_inconsistent (multiImage && !pedited->locallab.inversret);
         cTgainshaperab->setUnChanged  (!pedited->locallab.localTgaincurverab);
         expcolor->set_inconsistent   (!pedited->locallab.expcolor);
+        expvibrance->set_inconsistent   (!pedited->locallab.expvibrance);
         expblur->set_inconsistent   (!pedited->locallab.expblur);
         exptonemap->set_inconsistent   (!pedited->locallab.exptonemap);
         expreti->set_inconsistent   (!pedited->locallab.expreti);
@@ -1871,6 +2059,43 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     noisechrof->setValue (pp->locallab.noisechrof);
     noisechroc->setValue (pp->locallab.noisechroc);
     expcolor->setEnabled (pp->locallab.expcolor);
+    expvibrance->setEnabled (pp->locallab.expvibrance);
+    sensiv->setValue (pp->locallab.sensiv);
+
+    pskinsconn.block (true);
+    protectSkins->set_active (pp->locallab.protectskins);
+    pskinsconn.block (false);
+    lastProtectSkins = pp->locallab.protectskins;
+
+    ashiftconn.block (true);
+    avoidColorShift->set_active (pp->locallab.avoidcolorshift);
+    ashiftconn.block (false);
+    lastAvoidColorShift = pp->locallab.avoidcolorshift;
+
+    pastsattogconn.block (true);
+    pastSatTog->set_active (pp->locallab.pastsattog);
+    pastsattogconn.block (false);
+    lastPastSatTog = pp->locallab.pastsattog;
+
+    pastels->setValue (pp->locallab.pastels);
+    psThreshold->setValue<int> (pp->locallab.psthreshold);
+
+    if (lastPastSatTog) {
+        // Link both slider, so we set saturated and psThresholds unsensitive
+        psThreshold->set_sensitive (false);
+        saturated->set_sensitive (false);
+        saturated->setValue (pp->locallab.pastels);    // Pastels and Saturated are linked
+    } else {
+        // Separate sliders, so we set saturated and psThresholds sensitive again
+        psThreshold->set_sensitive (true);
+        saturated->set_sensitive (true);
+        saturated->setValue (pp->locallab.saturated);  // Pastels and Saturated are separate
+    }
+
+    skinTonesCurve->setCurve (pp->locallab.skintonescurve);
+
+
+
     expblur->setEnabled (pp->locallab.expblur);
     exptonemap->setEnabled (pp->locallab.exptonemap);
     expreti->setEnabled (pp->locallab.expreti);
@@ -1966,6 +2191,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     enablecolorConn.block (false);
+    enablevibranceConn.block (false);
     enableblurConn.block (false);
     enabletonemapConn.block (false);
     enableretiConn.block (false);
@@ -2252,6 +2478,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.LHcurve       = LHshape->getCurve ();
     pp->locallab.HHcurve       = HHshape->getCurve ();
     pp->locallab.expcolor      = expcolor->getEnabled();
+    pp->locallab.expvibrance      = expvibrance->getEnabled();
     pp->locallab.expblur      = expblur->getEnabled();
     pp->locallab.exptonemap      = exptonemap->getEnabled();
     pp->locallab.expreti      = expreti->getEnabled();
@@ -2264,6 +2491,16 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->locallab.threshold = threshold->getIntValue();
+
+    pp->locallab.pastels         = pastels->getIntValue();
+    pp->locallab.saturated       = pastSatTog->get_active() ? pp->locallab.pastels : saturated->getIntValue ();
+    pp->locallab.psthreshold     = psThreshold->getValue<int> ();
+    pp->locallab.protectskins    = protectSkins->get_active ();
+    pp->locallab.avoidcolorshift = avoidColorShift->get_active ();
+    pp->locallab.pastsattog      = pastSatTog->get_active ();
+    pp->locallab.skintonescurve  = skinTonesCurve->getCurve ();
+    pp->locallab.sensiv = sensiv->getIntValue ();
+
 
     if (pedited) {
         pedited->locallab.degree = degree->getEditedState ();
@@ -2331,6 +2568,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.LHcurve        = !LHshape->isUnChanged ();
         pedited->locallab.HHcurve        = !HHshape->isUnChanged ();
         pedited->locallab.expcolor     = !expcolor->get_inconsistent();
+        pedited->locallab.expvibrance     = !expvibrance->get_inconsistent();
         pedited->locallab.expblur     = !expblur->get_inconsistent();
         pedited->locallab.exptonemap     = !exptonemap->get_inconsistent();
         pedited->locallab.expreti     = !expreti->get_inconsistent();
@@ -2343,6 +2581,14 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         }
 
         pedited->locallab.threshold = threshold->getEditedState();
+        pedited->locallab.pastels         = pastels->getEditedState ();
+        pedited->locallab.saturated       = saturated->getEditedState ();
+        pedited->locallab.psthreshold     = psThreshold->getEditedState ();
+        pedited->locallab.protectskins    = !protectSkins->get_inconsistent();
+        pedited->locallab.avoidcolorshift = !avoidColorShift->get_inconsistent();
+        pedited->locallab.pastsattog      = !pastSatTog->get_inconsistent();
+        pedited->locallab.skintonescurve  = !skinTonesCurve->isUnChanged ();
+        pedited->locallab.sensiv = sensiv->getEditedState ();
 
     }
 
@@ -2402,6 +2648,92 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pp->locallab.locYT = locYT->getValue();
     }
 }
+
+void Locallab::protectskins_toggled ()
+{
+    if (batchMode) {
+        if (protectSkins->get_inconsistent()) {
+            protectSkins->set_inconsistent (false);
+            pskinsconn.block (true);
+            protectSkins->set_active (false);
+            pskinsconn.block (false);
+        } else if (lastProtectSkins) {
+            protectSkins->set_inconsistent (true);
+        }
+
+        lastProtectSkins = protectSkins->get_active ();
+    }
+
+    if (listener && getEnabled()) {
+        if (protectSkins->get_active ()) {
+            listener->panelChanged (EvlocallabProtectSkins, M ("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvlocallabProtectSkins, M ("GENERAL_DISABLED"));
+        }
+    }
+}
+
+void Locallab::avoidcolorshift_toggled ()
+{
+    if (batchMode) {
+        if (avoidColorShift->get_inconsistent()) {
+            avoidColorShift->set_inconsistent (false);
+            ashiftconn.block (true);
+            avoidColorShift->set_active (false);
+            ashiftconn.block (false);
+        } else if (lastAvoidColorShift) {
+            avoidColorShift->set_inconsistent (true);
+        }
+
+        lastAvoidColorShift = avoidColorShift->get_active ();
+    }
+
+    if (listener && getEnabled()) {
+        if (avoidColorShift->get_active ()) {
+            listener->panelChanged (EvlocallabAvoidColorShift, M ("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvlocallabAvoidColorShift, M ("GENERAL_DISABLED"));
+        }
+    }
+}
+
+void Locallab::pastsattog_toggled ()
+{
+    if (batchMode) {
+        if (pastSatTog->get_inconsistent()) {
+            pastSatTog->set_inconsistent (false);
+            pastsattogconn.block (true);
+            pastSatTog->set_active (false);
+            pastsattogconn.block (false);
+        } else if (lastPastSatTog) {
+            pastSatTog->set_inconsistent (true);
+        }
+
+        lastPastSatTog = pastSatTog->get_active ();
+    }
+
+    if (pastSatTog->get_active()) {
+        // Link both slider, so we set saturated and psThresholds unsensitive
+        psThreshold->set_sensitive (false);
+        saturated->set_sensitive (false);
+        saturated->setValue (pastels->getValue());     // Pastels and Saturated are linked
+    } else {
+        // Separate sliders, so we set saturated and psThresholds sensitive again
+        psThreshold->set_sensitive (true);
+        saturated->set_sensitive (true);
+    }
+
+    if (listener && getEnabled()) {
+        if (pastSatTog->get_active ()) {
+            listener->panelChanged (EvlocallabPastSatTog, M ("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvlocallabPastSatTog, M ("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
+
 
 void Locallab::curveChanged (CurveEditor* ce)
 {
@@ -2463,7 +2795,22 @@ void Locallab::curveChanged (CurveEditor* ce)
 
             adjusterChanged (retrab, strval);
 
+
+        } else if (ce == skinTonesCurve) {
+            listener->panelChanged (EvlocallabSkinTonesCurve, M ("HISTORY_CUSTOMCURVE"));
+            int strval = retrab->getValue();
+            //update MIP
+            retrab->setValue (strval + 1);
+            adjusterChanged (retrab, strval + 1);
+            usleep (10000); //to test
+            retrab->setValue (strval);
+
+            adjusterChanged (retrab, strval);
+
+
+
         }
+
 
     }
 }
@@ -2830,6 +3177,10 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
     }
 
     threshold->setDefault (defParams->locallab.threshold);
+    pastels->setDefault (defParams->locallab.pastels);
+    saturated->setDefault (defParams->locallab.saturated);
+    psThreshold->setDefault<int> (defParams->locallab.psthreshold);
+    sensiv->setDefault (defParams->locallab.sensiv);
 
 
     if (pedited) {
@@ -2885,6 +3236,11 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
 
         threshold->setDefaultEditedState (pedited->locallab.threshold ? Edited : UnEdited);
 
+        pastels->setDefaultEditedState     (pedited->locallab.pastels ? Edited : UnEdited);
+        saturated->setDefaultEditedState   (pedited->locallab.saturated ? Edited : UnEdited);
+        psThreshold->setDefaultEditedState (pedited->locallab.psthreshold ? Edited : UnEdited);
+        sensiv->setDefaultEditedState (pedited->locallab.sensiv ? Edited : UnEdited);
+
     } else {
         degree->setDefaultEditedState (Irrelevant);
         locY->setDefaultEditedState (Irrelevant);
@@ -2938,9 +3294,21 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
 
         threshold->setDefaultEditedState (Irrelevant);
 
+        pastels->setDefaultEditedState     (Irrelevant);
+        saturated->setDefaultEditedState   (Irrelevant);
+        psThreshold->setDefaultEditedState (Irrelevant);
+        sensiv->setDefaultEditedState (Irrelevant);
 
     }
 }
+
+void Locallab::adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop)
+{
+    if (listener && getEnabled()) {
+        listener->panelChanged (EvlocallabPastSatThreshold, psThreshold->getHistoryString());
+    }
+}
+
 
 void Locallab::adjusterChanged (Adjuster * a, double newval)
 {
@@ -3018,6 +3386,17 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
             listener->panelChanged (Evlocallabcontrast, contrast->getTextValue());
         } else if (a == chroma) {
             listener->panelChanged (Evlocallabchroma, chroma->getTextValue());
+        } else if (a == pastels ) {
+            listener->panelChanged (EvlocallabPastels, pastels->getTextValue() );
+        } else if (a == saturated && !pastSatTog->get_active()) {
+            listener->panelChanged (EvlocallabSaturated, saturated->getTextValue() );
+        } else if (a == sensiv) {
+            listener->panelChanged (Evlocallabsensiv, sensiv->getTextValue());
+
+
+
+
+
         } else if (a == noiselumf) {
             listener->panelChanged (Evlocallabnoiselumf, noiselumf->getTextValue());
         } else if (a == noiselumc) {
@@ -3222,6 +3601,9 @@ void Locallab::trimValues (rtengine::procparams::ProcParams * pp)
     }
 
     threshold->trimValue (pp->locallab.threshold);
+    pastels->trimValue (pp->locallab.pastels);
+    saturated->trimValue (pp->locallab.saturated);
+    sensiv->trimValue (pp->locallab.sensiv);
 
 }
 
@@ -3290,8 +3672,66 @@ void Locallab::setBatchMode (bool batchMode)
     }
 
     threshold->showEditedCB();
+    pastels->showEditedCB   ();
+    saturated->showEditedCB ();
+    psThreshold->showEditedCB ();
+    sensiv->showEditedCB ();
+
+    curveEditorGG->setBatchMode (batchMode);
 
 }
+
+std::vector<double> Locallab::getCurvePoints (ThresholdSelector* tAdjuster) const
+{
+    std::vector<double> points;
+    double threshold, transitionWeighting;
+    tAdjuster->getPositions<double> (transitionWeighting, threshold); // ( range -100;+100,   range 0;+100 )
+    transitionWeighting /= 100.; // range -1., +1.
+    threshold /= 100.;      // range  0., +1.
+
+    // Initial point
+    points.push_back (0.);
+    points.push_back (0.);
+
+    double p2 = 3.0 * threshold / 4.0;             // same one than in ipvibrance.cc
+    double s0 = threshold + (1.0 - threshold) / 4.0; // same one than in ipvibrance.cc
+
+    // point at the beginning of the first linear transition
+    points.push_back (p2);
+    points.push_back (0.);
+
+    // Y value of the chroma mean point, calculated to get a straight line between p2 and s0
+    double chromaMean = (threshold / 4.0) / (s0 - p2);
+
+    // move chromaMean up or down depending on transitionWeighting
+    if (transitionWeighting > 0.0) {
+        // positive values -> give more weight to Saturated
+        chromaMean = (1.0 - chromaMean) * transitionWeighting + chromaMean;
+    } else if (transitionWeighting < 0.0) {
+        // negative values -> give more weight to Pastels
+        chromaMean =      chromaMean  * transitionWeighting + chromaMean;
+    }
+
+    // point at the location of the Top cursor, at the end of the first linear transition and the beginning of the second one
+    points.push_back (threshold);
+    points.push_back (chromaMean);
+
+    if (threshold < 1.0) {
+
+        // point at the end of the second linear transition
+        points.push_back (s0);
+        points.push_back (1.0);
+
+        // end point
+        points.push_back (1.0);
+        points.push_back (1.0);
+    }
+
+    return points;
+}
+
+
+
 
 void Locallab::setEditProvider (EditDataProvider * provider)
 {

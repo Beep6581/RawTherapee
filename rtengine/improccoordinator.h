@@ -112,6 +112,8 @@ protected:
     LUTf clToningcurve;
     LUTf lllocalcurve;
     LUTf cclocalcurve;
+    LUTf sklocalcurve;
+	
     LUTf cl2Toningcurve;
     LUTf Noisecurve;
     LUTf NoiseCCcurve;
@@ -224,6 +226,7 @@ protected:
     bool wavcontlutili;
     bool locallutili;
     bool localcutili;
+    bool localskutili;
     bool LHutili;
     bool HHutili;
 
@@ -233,6 +236,8 @@ protected:
     std::string *lhstr;
     std::string *ccstr;
     std::string *hhstr;
+    std::string *skinstr;
+    std::string *pthstr;
 
     LUTi circrads;
     LUTi centerx;
@@ -283,7 +288,7 @@ protected:
     LUTi thresholds;
     LUTi sensicbs;
     LUTi activlums;
-    int versionmip;	
+    int versionmip;
     LUTi strens;
     LUTi gammas;
     LUTi estops;
@@ -303,6 +308,16 @@ protected:
     LUTi sizehhcs;
     LUTi cccurvs;
     LUTi sizecccs;
+
+    LUTi sensivs;
+    LUTi saturateds;
+    LUTi pastels;
+    LUTi psthresholds;
+    LUTi protectskinss;
+    LUTi avoidcolorshifts;
+    LUTi pastsattogs;
+    LUTi skintonescurves;
+    LUTi sizeskintonecurves;
 
     LUTf huerefs;
     LUTf chromarefs;

@@ -15,6 +15,7 @@
 #include "options.h"
 #include <string>
 #include "../rtengine/improcfun.h"
+#include "thresholdadjuster.h"
 
 
 class Locallab :
@@ -24,7 +25,9 @@ class Locallab :
     public rtengine::localListener,
     public CurveListener,
     public EditSubscriber,
-    public ColorProvider
+    public ColorProvider,
+    public ThresholdCurveProvider,
+    public ThresholdAdjusterListener
 
 {
 private:
@@ -35,6 +38,7 @@ private:
 //protected:
 
     MyExpander* const expcolor;
+    MyExpander* const expvibrance;
     MyExpander* const expblur;
     MyExpander* const exptonemap;
     MyExpander* const expreti;
@@ -153,13 +157,30 @@ private:
     FlatCurveEditor* LHshape;
     FlatCurveEditor* HHshape;
 
+    CurveEditorGroup* curveEditorGG;
+    Adjuster* pastels;
+    Adjuster* saturated;
+    ThresholdAdjuster* psThreshold;
+    Gtk::CheckButton* protectSkins;
+    Gtk::CheckButton* avoidColorShift;
+    Gtk::CheckButton* pastSatTog;
+    DiagonalCurveEditor* skinTonesCurve;
+    Adjuster* sensiv;
+
+    bool lastProtectSkins;
+    bool lastAvoidColorShift;
+    bool lastPastSatTog;
+
+    sigc::connection pskinsconn;
+    sigc::connection ashiftconn;
+    sigc::connection pastsattogconn;
 
 
 
     sigc::connection lumaneutralPressedConn;
     sigc::connection lumacontrastPlusPressedConn;
     sigc::connection lumacontrastMinusPressedConn;
-    sigc::connection enablecolorConn, enableblurConn, enabletonemapConn;
+    sigc::connection enablecolorConn, enablevibranceConn, enableblurConn, enabletonemapConn;
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
     sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
@@ -170,7 +191,7 @@ private:
 
 
 
-    int nextdatasp[61];
+    int nextdatasp[67];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
@@ -182,6 +203,10 @@ private:
     std::string nextcc_str2;
     std::string nexthh_str;
     std::string nexthh_str2;
+    std::string nextsk_str;
+    std::string nextsk_str2;
+    std::string nextps_str;
+    std::string nextps_str2;
 
     double draggedPointOldAngle;
     double draggedPointAdjusterAngle;
@@ -213,6 +238,8 @@ public:
     void updateToolState (std::vector<int> &tpOpen);
 
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
+
     void enabledChanged ();
     void setAdjusterBehavior (bool degreeadd, bool locYadd, bool locXadd, bool locYTadd, bool locXLadd, bool centeradd, bool lightnessadd, bool contrastadd, bool chromaadd, bool sensiadd, bool transitadd, bool radiusadd, bool strengthadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
@@ -225,8 +252,8 @@ public:
     void inversshaChanged ();
     void curveChanged (CurveEditor* ce);
     void autoOpenCurve ();
-    void localChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, int sp, int maxdat);
-    void localretChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, int sp, int maxdat);
+    void localChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat);
+    void localretChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat);
     bool localComputed_         ();
     bool localretComputed_         ();
     void setEditProvider (EditDataProvider* provider);
@@ -238,6 +265,10 @@ public:
     void lumacontrastMinusPressed ();
     void neutral_pressed       ();
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller);
+    void protectskins_toggled    ();
+    void avoidcolorshift_toggled ();
+    void pastsattog_toggled      ();
+    std::vector<double> getCurvePoints (ThresholdSelector* tAdjuster) const;
 
     // EditSubscriber interface
     CursorShape getCursor (int objectID);

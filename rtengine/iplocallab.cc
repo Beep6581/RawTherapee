@@ -2924,12 +2924,13 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float *
                         original->b[y][x] = 0.01f;
                     }
 
-                    float eps = 0.f;
+                    /*
+                                        float eps = 0.f;
 
-                    if (fabs (original->b[y][x]) < 0.001f) {
-                        eps = 0.01f;
-                    }
-
+                                        if (fabs (original->b[y][x]) < 0.001f) {
+                                            eps = 0.01f;
+                                        }
+                    */
                     //retriev data curve lightness
                     float cli = (buflight[loy - begy][lox - begx]);
                     //parameters for linear interpolation in function of real hue
@@ -2959,7 +2960,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float *
                     float amoinsclighsl = (clisl - 1.f) / delhu;
                     float bmoinsclighsl = 1.f - amoinsclighsl * huemoins;
 
-                    float kab = (original->a[y][x] / (original->b[y][x] + eps));
+                    //   float kab = (original->a[y][x] / (original->b[y][x] + eps));
 
                     //prepare shape detection
                     // real... = coefficient to apply at lightness, chroma,...
@@ -3356,8 +3357,6 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float *
 
                                 diflc *= factorx; //transition lightness
                                 transformed->L[y][x] = CLIPL (1.f * (original->L[y][x] + diflc));
-                                bool toty = false;
-
 
 
                                 if (lochhCurve  && lp.qualcurvemet >= 1 && HHutili) {
@@ -3470,9 +3469,8 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float *
                                 kdiff *= fach * kch;
                                 diflc *= kdiff ;
                                 transformed->L[y][x] = CLIPL (1.f * (original->L[y][x] + diflc));
-                                float ka = 0.f, kb = 0.f;
-                                float newchro = sqrt (SQR (original->a[y][x]) + SQR (original->b[y][x]));
-                                bool toty = false;
+
+                                //                              float newchro = sqrt (SQR (original->a[y][x]) + SQR (original->b[y][x]));
 
                                 if (lochhCurve && lp.qualcurvemet >= 1 && HHutili) {
                                     float addh = 0.f;
@@ -4216,7 +4214,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.qualcurvemet != 0) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
-            float ddhue = 0.f;
+            // float ddhue = 0.f;
 
             //printf("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhue);
             if (hueplus > rtengine::RT_PI) {
@@ -4231,7 +4229,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
             float chprov = 1.f;
             float chpro = 1.f;
             float cligh = 1.f;
-            float hhpro = 1.f;
             float clighL = 1.f;
             float clighmax ;
             float **buflight = nullptr;
@@ -4385,94 +4382,12 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                             }
 
-                            bool tyty = false;
-
-                            //  if(HHutili) printf("HHutili true\n");
 
                             if (lochhCurve && lp.qualcurvemet == 2 && HHutili) {
-                                //   printf("a");
-                                //    if (tyty) {
                                 float hhforcurv = xatan2f (bufcolorig->b[loy - begy][lox - begx], bufcolorig->a[loy - begy][lox - begx]);
 
                                 float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2 (hhforcurv)] - 0.5f)); //get H=f(H)  1.7 optimisation !
                                 float ddhue = CLIPRET (200.f * valparam);
-
-                                //  float aa =  bufcolorig->a[loy - begy][lox - begx];
-                                //  float bb =  bufcolorig->b[loy - begy][lox - begx];
-                                // float ll =  bufcolorig->L[loy - begy][lox - begx];
-                                /*
-                                TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
-                                TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
-
-                                float wip[3][3] = {
-                                    {static_cast<float> (wiprof[0][0]), static_cast<float> (wiprof[0][1]), static_cast<float> (wiprof[0][2])},
-                                    {static_cast<float> (wiprof[1][0]), static_cast<float> (wiprof[1][1]), static_cast<float> (wiprof[1][2])},
-                                    {static_cast<float> (wiprof[2][0]), static_cast<float> (wiprof[2][1]), static_cast<float> (wiprof[2][2])}
-                                };
-                                float wp[3][3] = {
-                                    {static_cast<float> (wprof[0][0]), static_cast<float> (wprof[0][1]), static_cast<float> (wprof[0][2])},
-                                    {static_cast<float> (wprof[1][0]), static_cast<float> (wprof[1][1]), static_cast<float> (wprof[1][2])},
-                                    {static_cast<float> (wprof[2][0]), static_cast<float> (wprof[2][1]), static_cast<float> (wprof[2][2])}
-                                };
-                                */
-                                /*
-                                float X, Y, Z;
-                                float r, g, b;
-                                float hh, s, v;
-                                Color::Lab2XYZ (ll, aa, bb, X, Y, Z);
-                                Color::xyz2rgb (X, Y, Z, r, g, b, wip);
-                                Color::rgb2hsv (r, g, b, hh, s, v);
-                                */
-                                // float hr = 0.f; // = Color::huelab_to_huehsv2 (hhforcurv);
-                                /*
-                                                                if (hhforcurv >= 0.6f && hhforcurv < rtengine::RT_PI) {
-                                                                    hr = hhforcurv * 0.1652507f - 0.09915f;// hr 0 0.42
-                                                                }
-
-                                                                if (hhforcurv >= -rtengine::RT_PI && hhforcurv < 0.6f) {
-                                                                    hr =  hhforcurv * 0.155014f +  0.90699f;
-                                                                }
-
-
-                                                                float valparam = float ((lochhCurve[500.f * (hr)] - 0.5f)); // + hr; //get H=f(H)
-                                */
-                                //////////         float  hh = 0.5 * ((hhforcurv / rtengine::RT_PI) + 1.);
-                                //   float hr = Color::huelab_to_huehsv2 (hhforcurv);
-
-                                //    float valparam = float ((hhCurve->getVal (Color::huelab_to_huehsv2 (HH)) - 0.5f) * 1.7f) + hr; //get H=f(H)  1.7 optimisation !
-                                //    float valparam = float ((hhCurve->getVal (hr - 0.5f))* 2.); //get H=f(H)  1.7 optimisation !
-                                ///////////      float valparamdh = float ((lochhCurve[500.f * (hh)] - 0.5f) * 2); // + hr; //get H=f(H)
-
-                                //float hhhh = (2  * valparamdh - 1)* rtengine::RT_PI;
-                                /*
-                                                                if (valparamdh > 1.0f) {
-                                                                    valparamdh -= 1.0f;
-                                                                } else if ( valparamdh < 0.0f) {
-                                                                    valparamdh  += 1.0f;
-                                                                }
-                                                                */
-                                /*
-                                float R, G, B;
-                                float xx, yy, zz;
-                                Color::hsv2rgb (valparamdh, s, v, R, G, B);
-                                Color::rgbxyz (R, G, B, xx, yy, zz, wp);
-                                float llf, aaf, bbf;
-                                Color::XYZ2Lab (xx, yy, zz, llf, aaf, bbf);
-                                float hhfin = xatan2f (bbf, aaf);
-                                float hhresult = hhfin - hhforcurv;
-                                */
-                                // float dh = valparam;
-
-                                /*
-                                                                if (valparam < 0.42f) {
-                                                                    dh = 6.051411f * valparam + 0.6f;
-                                                                } else {
-                                                                    dh = -4.38205629f * valparam + 4.98205629f;
-                                                                }
-
-                                                                // float dh = Color::huehsv2_to_huelab (valparam);
-                                */
-                                //  float hhhh = (2  * valparamdh - 1)* rtengine::RT_PI;
                                 bufhh[loy - begy][lox - begx] = ddhue;//valparamdh; //
 
                             }

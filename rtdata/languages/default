@@ -1814,6 +1814,7 @@ TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_TRANSIT;Transition
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
+TP_LOCALLAB_VIBRANCE;Vibrance
 TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right

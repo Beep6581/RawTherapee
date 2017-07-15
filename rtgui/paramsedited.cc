@@ -291,6 +291,7 @@ void ParamsEdited::set (bool v)
     gradient.centerY = v;
     locallab.enabled = v;
     locallab.expcolor = v;
+    locallab.expvibrance = v;
     locallab.expblur = v;
     locallab.exptonemap = v;
     locallab.expreti = v;
@@ -365,6 +366,15 @@ void ParamsEdited::set (bool v)
     }
 
     locallab.threshold = v;
+    locallab.pastels          = v;
+    locallab.saturated        = v;
+    locallab.psthreshold      = v;
+    locallab.protectskins     = v;
+    locallab.avoidcolorshift  = v;
+    locallab.pastsattog       = v;
+    locallab.skintonescurve   = v;
+    locallab.sensiv = v;
+
 
     pcvignette.enabled = v;
     pcvignette.strength = v;
@@ -953,6 +963,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.LHcurve = locallab.LHcurve && p.locallab.LHcurve == other.locallab.LHcurve;
         locallab.HHcurve = locallab.HHcurve && p.locallab.HHcurve == other.locallab.HHcurve;
         locallab.expcolor = locallab.expcolor && p.locallab.expcolor == other.locallab.expcolor;
+        locallab.expvibrance = locallab.expvibrance && p.locallab.expvibrance == other.locallab.expvibrance;
         locallab.expblur = locallab.expblur && p.locallab.expblur == other.locallab.expblur;
         locallab.exptonemap = locallab.exptonemap && p.locallab.exptonemap == other.locallab.exptonemap;
         locallab.expreti = locallab.expreti && p.locallab.expreti == other.locallab.expreti;
@@ -965,6 +976,14 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         }
 
         locallab.threshold = locallab.threshold && p.locallab.threshold == other.locallab.threshold;
+        locallab.pastels = locallab.pastels && p.locallab.pastels == other.locallab.pastels;
+        locallab.saturated = locallab.saturated && p.locallab.saturated == other.locallab.saturated;
+        locallab.psthreshold = locallab.psthreshold && p.locallab.psthreshold == other.locallab.psthreshold;
+        locallab.protectskins = locallab.protectskins && p.locallab.protectskins == other.locallab.protectskins;
+        locallab.avoidcolorshift = locallab.avoidcolorshift && p.locallab.avoidcolorshift == other.locallab.avoidcolorshift;
+        locallab.pastsattog = locallab.pastsattog && p.locallab.pastsattog == other.locallab.pastsattog;
+        locallab.skintonescurve = locallab.skintonescurve && p.locallab.skintonescurve == other.locallab.skintonescurve;
+        locallab.sensiv = locallab.sensiv && p.locallab.sensiv == other.locallab.sensiv;
 
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
         pcvignette.strength = pcvignette.strength && p.pcvignette.strength == other.pcvignette.strength;
@@ -2201,6 +2220,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.expcolor   = mods.locallab.expcolor;
     }
 
+    if (locallab.expvibrance) {
+        toEdit.locallab.expvibrance   = mods.locallab.expvibrance;
+    }
+
     if (locallab.expblur) {
         toEdit.locallab.expblur   = mods.locallab.expblur;
     }
@@ -2320,6 +2343,39 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (locallab.chroma) {
         toEdit.locallab.chroma    = mods.locallab.chroma;
     }
+
+    if (locallab.pastels) {
+        toEdit.locallab.pastels           = mods.locallab.pastels;
+    }
+
+    if (locallab.saturated) {
+        toEdit.locallab.saturated           = mods.locallab.saturated;
+    }
+
+    if (locallab.psthreshold) {
+        toEdit.locallab.psthreshold       = mods.locallab.psthreshold;
+    }
+
+    if (locallab.protectskins) {
+        toEdit.locallab.protectskins  = mods.locallab.protectskins;
+    }
+
+    if (locallab.avoidcolorshift) {
+        toEdit.locallab.avoidcolorshift   = mods.locallab.avoidcolorshift;
+    }
+
+    if (locallab.pastsattog) {
+        toEdit.locallab.pastsattog        = mods.locallab.pastsattog;
+    }
+
+    if (locallab.skintonescurve) {
+        toEdit.locallab.skintonescurve    = mods.locallab.skintonescurve;
+    }
+
+    if (locallab.sensiv) {
+        toEdit.locallab.sensiv     = mods.locallab.sensiv;
+    }
+
 
     if (locallab.noiselumf) {
         toEdit.locallab.noiselumf    = mods.locallab.noiselumf;
@@ -2469,7 +2525,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (locallab.HHcurve) {
         toEdit.locallab.HHcurve   = mods.locallab.HHcurve;
     }
-	
+
     if (locallab.localTgaincurverab) {
         toEdit.locallab.localTgaincurverab   = mods.locallab.localTgaincurverab;
     }

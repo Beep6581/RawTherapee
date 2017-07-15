@@ -482,12 +482,22 @@ public:
     bool mult[5];
     bool threshold;
     bool expcolor;
+    bool expvibrance;
     bool expblur;
     bool exptonemap;
     bool expreti;
     bool expsharp;
     bool expcbdl;
     bool expdenoi;
+    bool pastels;
+    bool saturated;
+    bool psthreshold;
+    bool protectskins;
+    bool avoidcolorshift;
+    bool pastsattog;
+    bool skintonescurve;
+    bool sensiv;
+
 
 };
 
