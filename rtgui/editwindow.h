@@ -47,8 +47,12 @@ public:
     void addEditorPanel (EditorPanel* ep, const std::string &name);
     void remEditorPanel (EditorPanel* ep);
     bool selectEditorPanel(const std::string &name);
+    bool closeOpenEditors();
+    bool isProcessing();
 
+    void toFront();
     bool keyPressed (GdkEventKey* event);
+    bool on_configure_event(GdkEventConfigure* event);
     bool on_delete_event(GdkEventAny* event);
     //bool on_window_state_event(GdkEventWindowState* event);
     void on_mainNB_switch_page(Gtk::Widget* page, guint page_num);

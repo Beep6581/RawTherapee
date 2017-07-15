@@ -44,36 +44,6 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
     };
 
     static EditWindowInstance instance_(p);
-    if(!instance_.editWnd.is_maximized()) {
-        int meowMonitor = 0;
-        if(isMultiDisplayEnabled()) {
-            if(options.meowMonitor >= 0) { // use display from last session if available
-                meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors());
-            } else { // Determine the other display
-                const Glib::RefPtr< Gdk::Window >& wnd = p->get_window();
-                meowMonitor = p->get_screen()->get_monitor_at_window(wnd) == 0 ? 1 : 0;
-            }
-        }
-        Gdk::Rectangle lMonitorRect;
-        instance_.editWnd.get_screen()->get_monitor_geometry(meowMonitor, lMonitorRect);
-        instance_.editWnd.move(lMonitorRect.get_x(), lMonitorRect.get_y());
-
-        if(!options.meowFullScreen) {
-            instance_.editWnd.maximize();
-            instance_.editWnd.setFullScreen(false);
-        } else {
-            instance_.editWnd.fullscreen();
-            instance_.editWnd.setFullScreen(true);
-        }
-
-        instance_.editWnd.show_all ();
-    }
-
-    if(Gdk::Screen::get_default()->get_n_monitors() == 1) {
-        // when using MEOW mode on a single monitor we need to present the secondary window.
-        // If we don't it will stay in background when opening 2nd, 3rd... editor, which is annoying
-        instance_.editWnd.present();
-    }
 
     return &instance_.editWnd;
 }
@@ -93,6 +63,8 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
     set_title_decorated("");
     set_modal(false);
     set_resizable(true);
+    set_default_size(options.meowWidth, options.meowHeight);
+    //set_parent(*parent);
 
     property_destroy_with_parent().set_value(false);
     //signal_window_state_event().connect( sigc::mem_fun(*this, &EditWindow::on_window_state_event) );
@@ -107,6 +79,30 @@ EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false)
     mainBox->pack_start (*mainNB);
 
     add (*mainBox);
+
+    if(!is_maximized()) {
+        int meowMonitor = 0;
+        if(isMultiDisplayEnabled()) {
+            if(options.meowMonitor >= 0) { // use display from last session if available
+                meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors());
+            } else { // Determine the other display
+                const Glib::RefPtr< Gdk::Window >& wnd = p->get_window();
+                meowMonitor = p->get_screen()->get_monitor_at_window(wnd) == 0 ? 1 : 0;
+            }
+        }
+        Gdk::Rectangle lMonitorRect;
+        get_screen()->get_monitor_geometry(meowMonitor, lMonitorRect);
+        move(lMonitorRect.get_x(), lMonitorRect.get_y());
+
+        maximize();
+        show_all ();
+        if(!options.meowFullScreen) {
+            setFullScreen(false);
+        } else {
+            fullscreen();
+            setFullScreen(true);
+        }
+    }
 }
 
 void EditWindow::on_realize ()
@@ -114,6 +110,15 @@ void EditWindow::on_realize ()
     Gtk::Window::on_realize ();
 
     editWindowCursorManager.init (get_window());
+}
+
+bool EditWindow::on_configure_event(GdkEventConfigure* event)
+{
+    if (!is_maximized() && get_realized() && is_visible()) {
+        get_size(options.meowWidth, options.meowHeight);
+    }
+
+    return Gtk::Widget::on_configure_event(event);
 }
 
 /*  HOMBRE: Disabling this since it's maximized when opened anyway.
@@ -210,6 +215,14 @@ bool EditWindow::selectEditorPanel(const std::string &name)
     return false;
 }
 
+void EditWindow::toFront ()
+{
+    // when using MEOW mode on a single monitor we need to present the secondary window.
+    // If we don't it will stay in background when opening 2nd, 3rd... editor, which is annoying
+    // It will also deiconify the window
+    present();
+}
+
 bool EditWindow::keyPressed (GdkEventKey* event)
 {
     bool ctrl = event->state & GDK_CONTROL_MASK;
@@ -237,22 +250,61 @@ bool EditWindow::keyPressed (GdkEventKey* event)
 void EditWindow::toggleFullscreen ()
 {
     isFullscreen ? unfullscreen() : fullscreen();
-    isFullscreen = !isFullscreen;
+    options.meowFullScreen = isFullscreen = !isFullscreen;
 }
 
 bool EditWindow::on_delete_event(GdkEventAny* event)
 {
-    // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
-    bool isProcessing = false;
 
-    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end() && !isProcessing; ++iter ) {
+    if (!closeOpenEditors()) {
+        return true;
+    }
+
+    if(isMultiDisplayEnabled()) {
+        options.meowMonitor = get_screen()->get_monitor_at_window(get_window());
+    }
+
+    hide();
+    unmaximize();
+
+    return false;
+}
+
+bool EditWindow::isProcessing ()
+{
+    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end(); ++iter ) {
         if (epanels[*iter]->getIsProcessing()) {
-            isProcessing = true;
+            return true;
         }
     }
 
-    if (isProcessing) {
-        return true;
+    return false;
+}
+
+bool EditWindow::closeOpenEditors()
+{
+    // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
+    if (isProcessing()) {
+        return false;
+    }
+
+    if (epanels.size()) {
+        int page = mainNB->get_current_page();
+        Gtk::Widget *w = mainNB->get_nth_page(page);
+        bool optionsWritten = false;
+
+        for (std::map<Glib::ustring, EditorPanel*>::iterator i = epanels.begin(); i != epanels.end(); ++i) {
+            if (i->second == w) {
+                i->second->writeOptions();
+                optionsWritten = true;
+            }
+        }
+
+        if (!optionsWritten) {
+            // fallback solution: save the options of the first editor panel
+            std::map<Glib::ustring, EditorPanel*>::iterator i = epanels.begin();
+            i->second->writeOptions();
+        }
     }
 
     for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end(); ++iter ) {
@@ -260,20 +312,10 @@ bool EditWindow::on_delete_event(GdkEventAny* event)
     }
 
     epanels.clear();
-
     filesEdited.clear();
     parent->fpanel->refreshEditedState (filesEdited);
 
-    if(isMultiDisplayEnabled()) {
-        options.meowMonitor = get_screen()->get_monitor_at_window(get_window());
-    }
-
-    options.meowFullScreen = isFullscreen;
-
-    hide();
-    unmaximize();
-
-    return false;
+    return true;
 }
 
 void EditWindow::set_title_decorated(Glib::ustring fname)
