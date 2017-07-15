@@ -128,7 +128,8 @@ install -d "${ETC}/gtk-3.0"
 cp "${GTK_PREFIX}/etc/gtk-3.0/im-multipress.conf" "${ETC}/gtk-3.0"
 "${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
 "${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/gtk-3.0/*/immodules/*.so      > "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|${PWD}|/tmp|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+#sed -i "" -e "s|${PWD}|/tmp|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|@executable_path/../|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
 "${GTK_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
