@@ -51,8 +51,8 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
     indclippedh->set_active (options.showClippedHighlights);
     indclippeds->set_active (options.showClippedShadows);
 
-    pack_start (*indclippedh, Gtk::PACK_SHRINK, 0);
     pack_start (*indclippeds, Gtk::PACK_SHRINK, 0);
+    pack_start (*indclippedh, Gtk::PACK_SHRINK, 0);
 
     indclippedh->signal_toggled().connect( sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled) );
     indclippeds->signal_toggled().connect( sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled) );
