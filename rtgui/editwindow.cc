@@ -240,9 +240,7 @@ void EditWindow::toFront ()
     // when using the secondary window on the same monitor as the primary window we need to present the secondary window.
     // If we don't, it will stay in background when opening 2nd, 3rd... editor, which is annoying
     // It will also deiconify the window
-    if(parent->get_screen()->get_monitor_at_window(parent->get_window()) == parent->get_screen()->get_monitor_at_window(this->get_window())) {
-        present();
-    }
+    present();
 }
 
 bool EditWindow::keyPressed (GdkEventKey* event)
