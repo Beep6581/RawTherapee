@@ -93,7 +93,7 @@ struct local_params {
     int prox;
     int chro, cont, sens, sensh, senscb, sensbn, senstm;
     float ligh;
-    int shamo, shdamp, shiter, senssha;
+    int shamo, shdamp, shiter, senssha, sensv;
     double shrad;
     double rad;
     double stren;
@@ -125,6 +125,10 @@ struct local_params {
     bool sharpena;
     bool cbdlena;
     bool denoiena;
+    bool expvib;
+    float past;
+    float satur;
+	
 };
 
 static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, struct local_params& lp)
@@ -149,6 +153,10 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     double local_dyy = locallab.proxi / 8000.0;
     float iterati = (float) locallab.proxi;
 //    double local_dyy = locallab.proxi;
+
+    float chromaPastel = float (locallab.pastels)   / 100.0f;
+    float chromaSatur  = float (locallab.saturated) / 100.0f;
+    int local_sensiv = locallab.sensiv;
 
     if (locallab.qualityMethod == "std") {
         lp.qualmet = 0;
@@ -265,6 +273,10 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     lp.sharpena = locallab.expsharp;
     lp.cbdlena = locallab.expcbdl;
     lp.denoiena = locallab.expdenoi;
+    lp.expvib = locallab.expvibrance;
+    lp.sensv = local_sensiv;
+    lp.past =  chromaPastel;
+    lp.satur = chromaSatur;
 
 }
 
@@ -3591,7 +3603,7 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
     }
 
 }
-void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, double & hueref, double & chromaref, double & lumaref)
+void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, LUTf & cclocalcurve, LUTf & sklocalcurve, double & hueref, double & chromaref, double & lumaref)
 {
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
@@ -3636,7 +3648,7 @@ void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * o
     }
 }
 
-void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, bool &LHutili, bool &HHutili, LUTf & cclocalcurve, double & hueref, double & chromaref, double & lumaref)
+void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, double & hueref, double & chromaref, double & lumaref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
