@@ -54,7 +54,6 @@ History::History (bool bookmarkSupport) : historyVPaned(nullptr), blistener(null
     hTreeView->set_hscroll_policy(Gtk::SCROLL_MINIMUM);
     hTreeView->set_vscroll_policy(Gtk::SCROLL_NATURAL);
     hTreeView->set_size_request(80, -1);
-    hTreeView->set_resize_mode(Gtk::RESIZE_QUEUE);
 
     Gtk::CellRendererText *changecrt = Gtk::manage (new Gtk::CellRendererText());
     changecrt->property_ellipsize() = Pango::ELLIPSIZE_END;

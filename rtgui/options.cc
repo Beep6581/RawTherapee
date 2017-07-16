@@ -295,6 +295,13 @@ void Options::setDefaults ()
     windowX = 0;
     windowY = 0;
     windowMaximized = true;
+    meowMonitor = -1;
+    meowFullScreen = false;
+    meowMaximized = true;
+    meowWidth = 1200;
+    meowHeight = 680;
+    meowX = 0;
+    meowY = 0;
     saveAsDialogWidth = 920;
     saveAsDialogHeight = 680;
     savesParamsAtExit = true;
@@ -1258,6 +1265,34 @@ int Options::readFromFile (Glib::ustring fname)
                     windowY    = keyFile.get_integer ("GUI", "WindowY");
                 }
 
+                if (keyFile.has_key ("GUI", "MeowMonitor")) {
+                    meowMonitor = keyFile.get_integer ("GUI", "MeowMonitor");
+                }
+
+                if (keyFile.has_key ("GUI", "MeowFullScreen")) {
+                    meowFullScreen = keyFile.get_boolean ("GUI", "MeowFullScreen");
+                }
+
+                if (keyFile.has_key ("GUI", "MeowMaximized")) {
+                    meowMaximized = keyFile.get_boolean ("GUI", "MeowMaximized");
+                }
+
+                if (keyFile.has_key ("GUI", "MeowWidth")) {
+                    meowWidth      = keyFile.get_integer ("GUI", "MeowWidth");
+                }
+
+                if (keyFile.has_key ("GUI", "MeowHeight")) {
+                    meowHeight     = keyFile.get_integer ("GUI", "MeowHeight");
+                }
+
+                if (keyFile.has_key ("GUI", "MeowX")) {
+                    meowX     = keyFile.get_integer ("GUI", "MeowX");
+                }
+
+                if (keyFile.has_key ("GUI", "MeowY")) {
+                    meowY     = keyFile.get_integer ("GUI", "MeowY");
+                }
+
                 if (keyFile.has_key ("GUI", "WindowMaximized")) {
                     windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
                 }
@@ -2009,6 +2044,13 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer ("GUI", "WindowX", windowX);
         keyFile.set_integer ("GUI", "WindowY", windowY);
+        keyFile.set_integer ("GUI", "MeowMonitor", meowMonitor);
+        keyFile.set_boolean ("GUI", "MeowFullScreen", meowFullScreen);
+        keyFile.set_boolean ("GUI", "MeowMaximized", meowMaximized);
+        keyFile.set_integer ("GUI", "MeowWidth", meowWidth);
+        keyFile.set_integer ("GUI", "MeowHeight", meowHeight);
+        keyFile.set_integer ("GUI", "MeowX", meowX);
+        keyFile.set_integer ("GUI", "MeowY", meowY);
         keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
         keyFile.set_integer ("GUI", "DetailWindowWidth", detailWindowWidth);
         keyFile.set_integer ("GUI", "DetailWindowHeight", detailWindowHeight);
