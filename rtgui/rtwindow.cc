@@ -601,7 +601,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     if (isSingleTabMode() || simpleEditor) {
         isProcessing = epanel->getIsProcessing();
     } else if (options.multiDisplayMode > 0) {
-        editWindow = EditWindow::getInstance(this);
+        editWindow = EditWindow::getInstance(this, false);
 
         if (editWindow->isProcessing ()) {
             return true;
@@ -634,7 +634,8 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     }
     else {
         if (options.multiDisplayMode > 0) {
-            editWindow->closeOpenEditors ();
+            editWindow->closeOpenEditors();
+            editWindow->writeOptions();
         }
         // Storing the options of the last EditorPanel before Gtk destroys everything
         // Look at the active panel first, if any, otherwise look at the first one (sorted on the filename)

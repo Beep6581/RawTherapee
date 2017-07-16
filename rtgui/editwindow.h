@@ -33,17 +33,20 @@ private:
     std::map<Glib::ustring, EditorPanel*> epanels;
 
     bool isFullscreen;
+    bool isClosed;
     void toggleFullscreen ();
+    void restoreWindow();
 
 public:
     // Check if the system has more than one display and option is set
     static bool isMultiDisplayEnabled();
 
     // Should only be created once, auto-creates window on correct display
-    static EditWindow* getInstance(RTWindow* p);
+    static EditWindow* getInstance(RTWindow* p, bool restore = true);
 
     explicit EditWindow (RTWindow* p);
 
+    void writeOptions();
     void addEditorPanel (EditorPanel* ep, const std::string &name);
     void remEditorPanel (EditorPanel* ep);
     bool selectEditorPanel(const std::string &name);
@@ -57,8 +60,6 @@ public:
     //bool on_window_state_event(GdkEventWindowState* event);
     void on_mainNB_switch_page(Gtk::Widget* page, guint page_num);
     void set_title_decorated(Glib::ustring fname);
-    void setFullScreen (bool fullScreen) { isFullscreen = fullScreen; }
-
     void on_realize ();
 };
 

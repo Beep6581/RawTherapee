@@ -139,8 +139,11 @@ public:
     bool windowMaximized;
     int meowMonitor;
     bool meowFullScreen;
+    bool meowMaximized;
     int meowWidth;
     int meowHeight;
+    int meowX;
+    int meowY;
     int detailWindowWidth;
     int detailWindowHeight;
     int dirBrowserWidth;
