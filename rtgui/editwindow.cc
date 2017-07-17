@@ -88,7 +88,7 @@ void EditWindow::restoreWindow() {
         int meowMonitor = 0;
         if(isMultiDisplayEnabled()) {
             if(options.meowMonitor >= 0) { // use display from last session if available
-                meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors());
+                meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1);
             } else { // Determine the other display
                 const Glib::RefPtr< Gdk::Window >& wnd = parent->get_window();
                 meowMonitor = parent->get_screen()->get_monitor_at_window(wnd) == 0 ? 1 : 0;

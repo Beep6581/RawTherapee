@@ -137,6 +137,7 @@ public:
     int windowWidth;
     int windowHeight;
     bool windowMaximized;
+    int windowMonitor;
     int meowMonitor;
     bool meowFullScreen;
     bool meowMaximized;

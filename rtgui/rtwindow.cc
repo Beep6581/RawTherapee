@@ -128,11 +128,19 @@ RTWindow::RTWindow ()
     set_default_size(options.windowWidth, options.windowHeight);
     set_modal(false);
 
+    Gdk::Rectangle lMonitorRect;
+    get_screen()->get_monitor_geometry(std::min(options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
     if (options.windowMaximized) {
+        move(lMonitorRect.get_x(), lMonitorRect.get_y());
         maximize();
     } else {
         unmaximize();
-        move(options.windowX, options.windowY);
+        resize(options.windowWidth, options.windowHeight);
+        if(options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
+            move(options.windowX, options.windowY);
+        } else {
+            move(lMonitorRect.get_x(), lMonitorRect.get_y());
+        }
     }
 
     on_delete_has_run = false;
@@ -597,15 +605,11 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     bool isProcessing = false;
     EditWindow* editWindow = nullptr;
 
-
     if (isSingleTabMode() || simpleEditor) {
         isProcessing = epanel->getIsProcessing();
     } else if (options.multiDisplayMode > 0) {
         editWindow = EditWindow::getInstance(this, false);
-
-        if (editWindow->isProcessing ()) {
-            return true;
-        }
+        isProcessing = editWindow->isProcessing();
     } else {
         int pageCount = mainNB->get_n_pages();
 
@@ -631,15 +635,14 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     if ((isSingleTabMode() || simpleEditor) && epanel->isRealized()) {
         epanel->saveProfile();
         epanel->writeOptions ();
-    }
-    else {
-        if (options.multiDisplayMode > 0) {
+    } else {
+        if (options.multiDisplayMode > 0 && editWindow) {
             editWindow->closeOpenEditors();
             editWindow->writeOptions();
-        }
-        // Storing the options of the last EditorPanel before Gtk destroys everything
-        // Look at the active panel first, if any, otherwise look at the first one (sorted on the filename)
-        else if (epanels.size()) {
+        } else if (epanels.size()) {
+            // Storing the options of the last EditorPanel before Gtk destroys everything
+            // Look at the active panel first, if any, otherwise look at the first one (sorted on the filename)
+
             int page = mainNB->get_current_page();
             Gtk::Widget *w = mainNB->get_nth_page(page);
             bool optionsWritten = false;
@@ -667,6 +670,8 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
         get_size(options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
+
+    options.windowMonitor = get_screen()->get_monitor_at_window(get_window());
 
     Options::save ();
     hide();
