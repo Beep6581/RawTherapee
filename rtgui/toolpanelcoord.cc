@@ -600,8 +600,9 @@ void ToolPanelCoordinator::updateToolState()
             temp.push_back (options.tpOpen.at (i + expList.size()));
         }
 
-        wavelet->updateToolState (temp);
-        wavelet->setExpanded (true);
+        wavelet->updateToolState(temp);
+        wavelet->setExpanded(true);
+        retinex->updateToolState(temp);
     }
 }
 

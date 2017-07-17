@@ -124,7 +124,6 @@ RTWindow::RTWindow ()
 
     set_title_decorated("");
     set_resizable(true);
-    set_resize_mode(Gtk::ResizeMode::RESIZE_QUEUE);
     set_decorated(true);
     set_default_size(options.windowWidth, options.windowHeight);
     set_modal(false);
@@ -339,12 +338,21 @@ void RTWindow::on_realize ()
     }
 }
 
+bool RTWindow::on_configure_event(GdkEventConfigure* event)
+{
+    if (!is_maximized() && is_visible()) {
+        get_size(options.windowWidth, options.windowHeight);
+        get_position (options.windowX, options.windowY);
+    }
+
+    return Gtk::Widget::on_configure_event(event);
+}
+
 bool RTWindow::on_window_state_event(GdkEventWindowState* event)
 {
     if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
         options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     }
-
     return Gtk::Widget::on_window_state_event(event);
 }
 
@@ -385,6 +393,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         EditWindow * wndEdit = EditWindow::getInstance(this);
         wndEdit->show();
         wndEdit->addEditorPanel(ep, name);
+        wndEdit->toFront();
     } else {
         ep->setParent (this);
         ep->setParentWindow(this);
@@ -462,6 +471,7 @@ bool RTWindow::selectEditorPanel(const std::string &name)
 
         if (wndEdit->selectEditorPanel(name)) {
             set_title_decorated(name);
+            wndEdit->toFront();
             return true;
         }
     } else {
@@ -585,9 +595,17 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
 
     // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
     bool isProcessing = false;
+    EditWindow* editWindow = nullptr;
+
 
     if (isSingleTabMode() || simpleEditor) {
         isProcessing = epanel->getIsProcessing();
+    } else if (options.multiDisplayMode > 0) {
+        editWindow = EditWindow::getInstance(this, false);
+
+        if (editWindow->isProcessing ()) {
+            return true;
+        }
     } else {
         int pageCount = mainNB->get_n_pages();
 
@@ -613,10 +631,15 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     if ((isSingleTabMode() || simpleEditor) && epanel->isRealized()) {
         epanel->saveProfile();
         epanel->writeOptions ();
-    } else {
+    }
+    else {
+        if (options.multiDisplayMode > 0) {
+            editWindow->closeOpenEditors();
+            editWindow->writeOptions();
+        }
         // Storing the options of the last EditorPanel before Gtk destroys everything
         // Look at the active panel first, if any, otherwise look at the first one (sorted on the filename)
-        if (epanels.size()) {
+        else if (epanels.size()) {
             int page = mainNB->get_current_page();
             Gtk::Widget *w = mainNB->get_nth_page(page);
             bool optionsWritten = false;
@@ -826,7 +849,7 @@ void RTWindow::set_title_decorated(Glib::ustring fname)
     set_title(versionStr + subtitle);
 }
 
-void RTWindow::CloseOpenEditors()
+void RTWindow::closeOpenEditors()
 {
     std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
     itr = epanels.begin();
@@ -850,7 +873,7 @@ bool RTWindow::isEditorPanel(guint pageNum)
 void RTWindow::setEditorMode(bool tabbedUI)
 {
     MoveFileBrowserToMain();
-    CloseOpenEditors();
+    closeOpenEditors();
     SetMainCurrent();
 
     if(tabbedUI) {

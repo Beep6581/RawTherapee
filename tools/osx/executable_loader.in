@@ -17,7 +17,7 @@ etc="${resources}"/etc
 
 # export GTK_EXE_PREFIX="${resources}"
 # export GTK_DATA_PREFIX="${resources}"
-# export XDG_DATA_DIRS="${resources}/share"
+export XDG_DATA_DIRS="${resources}/share"
 # export GTK_IM_MODULE_FILE="${etc}/gtk-3.0/gtk.immodules"
 
 export DYLD_LIBRARY_PATH="${lib}"
@@ -41,9 +41,11 @@ export RT_CACHE="${HOME}/Library/Application Support/RawTherapee/cache"
 case "$1" in
     -psn_*) shift ;;
 esac
-if [[ -d "/tmp/RawTherapee.app" ]]; then
-  rm -rf "/tmp/RawTherapee.app"
-fi
-ln -sf "${app}" /tmp
+
+# Commented-out as part of "crash-on-startup part 2" fix, see https://github.com/Beep6581/RawTherapee/issues/3882#issuecomment-311703141
+#if [[ -d "/tmp/RawTherapee.app" ]]; then
+#  rm -rf "/tmp/RawTherapee.app"
+#fi
+#ln -sf "${app}" /tmp
 
 exec "${cwd}/rawtherapee-bin" "$@"

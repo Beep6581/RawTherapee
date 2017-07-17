@@ -51,10 +51,9 @@ History::History (bool bookmarkSupport) : historyVPaned(nullptr), blistener(null
     historyModel = Gtk::ListStore::create (historyColumns);
     hTreeView->set_model (historyModel);
     hTreeView->set_headers_visible (false);
-    hTreeView->set_hscroll_policy (Gtk::SCROLL_MINIMUM);
-    hTreeView->set_vscroll_policy (Gtk::SCROLL_NATURAL);
-    hTreeView->set_size_request (80, -1);
-    hTreeView->set_resize_mode (Gtk::RESIZE_QUEUE);
+    hTreeView->set_hscroll_policy(Gtk::SCROLL_MINIMUM);
+    hTreeView->set_vscroll_policy(Gtk::SCROLL_NATURAL);
+    hTreeView->set_size_request(80, -1);
 
     Gtk::CellRendererText *changecrt = Gtk::manage (new Gtk::CellRendererText());
     changecrt->property_ellipsize() = Pango::ELLIPSIZE_END;

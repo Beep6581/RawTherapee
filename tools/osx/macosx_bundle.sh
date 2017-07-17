@@ -16,11 +16,11 @@ fMagenta="$(tput setaf 5)"
 fRed="$(tput setaf 1)"
 
 function msg {
-    printf "\n${fBold}-- %s${fNormal}\n" "${@}"
+    printf "\\n${fBold}-- %s${fNormal}\\n" "${@}"
 }
 
 function msgError {
-    printf "\n${fBold}Error:${fNormal}\n%s\n" "${@}"
+    printf "\\n${fBold}Error:${fNormal}\\n%s\\n" "${@}"
 }
 
 function GetDependencies {
@@ -28,9 +28,9 @@ function GetDependencies {
 }
 
 function CheckLink {
-    GetDependencies "$1" | while read; do
+    GetDependencies "$1" | while read -r; do
         local dest="${LIB}/$(basename "${REPLY}")"
-        test -f "${dest}" || { ditto --arch ${arch} "${REPLY}" "${dest}"; CheckLink "${dest}"; }
+        test -f "${dest}" || { ditto --arch "${arch}" "${REPLY}" "${dest}"; CheckLink "${dest}"; }
     done
 }
 
@@ -121,14 +121,15 @@ ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
 ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
 
 msg "Removing static libraries and cache files:"
-find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read; do rm "${REPLY}"; done
+find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${REPLY}"; done
 
 msg "Copying configuration files from ${GTK_PREFIX}:"
 install -d "${ETC}/gtk-3.0"
 cp "${GTK_PREFIX}/etc/gtk-3.0/im-multipress.conf" "${ETC}/gtk-3.0"
 "${GTK_PREFIX}/bin/gdk-pixbuf-query-loaders" "${LIB}"/gdk-pixbuf-2.0/*/loaders/*.so > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
 "${GTK_PREFIX}/bin/gtk-query-immodules-3.0"  "${LIB}"/gtk-3.0/*/immodules/*.so      > "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|${PWD}|/tmp|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+#sed -i "" -e "s|${PWD}|/tmp|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
+sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|@executable_path/../|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
 
 ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
 "${GTK_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
@@ -154,13 +155,13 @@ ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 # fi
 
 # Install names
-find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee|.*\.(dylib|so))' | while read x; do
+find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
     msg "Modifying install names: ${x}"
     {
         # id
         case ${x} in *.dylib) echo "   install_name_tool -id '@rpath/$(basename "${x}")' '${x}'";; esac
         # names
-        GetDependencies "${x}" | while read y; do
+        GetDependencies "${x}" | while read -r y; do
             echo "   install_name_tool -change '${y}' '@rpath/$(basename "${y}")' '${x}'"
         done
     } | bash -v

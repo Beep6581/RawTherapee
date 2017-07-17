@@ -3040,7 +3040,7 @@ void Wavelet::writeOptions(std::vector<int> &tpOpen)
 
 void Wavelet::updateToolState(std::vector<int> &tpOpen)
 {
-    if(tpOpen.size() == 9) {
+    if(tpOpen.size() >= 9) {
         expsettings->set_expanded(tpOpen.at(0));
         expcontrast->set_expanded(tpOpen.at(1));
         expchroma->set_expanded(tpOpen.at(2));

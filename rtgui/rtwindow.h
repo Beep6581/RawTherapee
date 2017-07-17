@@ -80,6 +80,7 @@ public:
     void addBatchQueueJobs      (std::vector<BatchQueueEntry*> &entries);
 
     bool keyPressed (GdkEventKey* event);
+    bool on_configure_event(GdkEventConfigure* event);
     bool on_delete_event(GdkEventAny* event);
     bool on_window_state_event(GdkEventWindowState* event);
     void on_mainNB_switch_page(Gtk::Widget* widget, guint page_num);
@@ -115,7 +116,7 @@ public:
         return is_fullscreen;
     }
     void set_title_decorated(Glib::ustring fname);
-    void CloseOpenEditors();
+    void closeOpenEditors();
     void setEditorMode(bool tabbedUI);
     void createSetmEditor();
 };

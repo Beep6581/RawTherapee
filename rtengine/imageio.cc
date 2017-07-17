@@ -867,8 +867,8 @@ int ImageIO::loadTIFF (Glib::ustring fname)
                   );
 
 #endif
-        float minVal = min( min( minValue[0], minValue[1] ), minValue[2] );
-        float maxVal = max( max( maxValue[0], maxValue[1] ), maxValue[2] );
+        float minVal = rtengine::min(minValue[0], minValue[1], minValue[2]);
+        float maxVal = rtengine::max(maxValue[0], maxValue[1], maxValue[2]);
         normalizeFloat(minVal, maxVal);
     }
 
