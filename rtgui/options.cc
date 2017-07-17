@@ -299,6 +299,7 @@ void Options::setDefaults ()
     windowX = 0;
     windowY = 0;
     windowMaximized = true;
+    windowMonitor = 0;
     meowMonitor = -1;
     meowFullScreen = false;
     meowMaximized = true;
@@ -1311,6 +1312,10 @@ int Options::readFromFile (Glib::ustring fname)
                     windowY    = keyFile.get_integer ("GUI", "WindowY");
                 }
 
+                if (keyFile.has_key ("GUI", "WindowMonitor")) {
+                    windowMonitor = keyFile.get_integer ("GUI", "WindowMonitor");
+                }
+
                 if (keyFile.has_key ("GUI", "MeowMonitor")) {
                     meowMonitor = keyFile.get_integer ("GUI", "MeowMonitor");
                 }
@@ -2106,6 +2111,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer ("GUI", "WindowX", windowX);
         keyFile.set_integer ("GUI", "WindowY", windowY);
+        keyFile.set_integer ("GUI", "WindowMonitor", windowMonitor);
         keyFile.set_integer ("GUI", "MeowMonitor", meowMonitor);
         keyFile.set_boolean ("GUI", "MeowFullScreen", meowFullScreen);
         keyFile.set_boolean ("GUI", "MeowMaximized", meowMaximized);
