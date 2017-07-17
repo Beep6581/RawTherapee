@@ -2390,6 +2390,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     HHutili = true;
                 }
 
+                std::string t_curvskinref = "3000A0B0C1000D1000E@";
+                std::string t_none = "0A@";
+
+                if (skinstr[sp].c_str() != t_curvskinref  && skinstr[sp].c_str() != t_none) {
+                    localskutili = true;
+                }
+
                 // printf ("HHstr=%s\n", hhstr[sp].c_str());
                 params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
                 CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, sca); //scale == 1 ? 1 : 16);
@@ -2809,6 +2816,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             locallutili = false;
             localcutili = false;
             localskutili = false;
+
+            std::string t_curvskinref2 = "3000A0B0C1000D1000E@";
+            std::string t_none2 = "0A@";
+
+            //  printf("skstr=%s \n", skinstr[sp].c_str());
+            if (skinstr[sp].c_str() != t_curvskinref2 && skinstr[sp].c_str() != t_none2) {
+                localskutili = true;
+            }
 
             CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, sca); //scale == 1 ? 1 : 16);
             CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, sca); //scale == 1 ? 1 : 16);

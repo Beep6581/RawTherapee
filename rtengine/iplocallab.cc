@@ -38,6 +38,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "../rtgui/thresholdselector.h"
 
 #include "cplx_wavelet_dec.h"
 
@@ -381,6 +382,691 @@ void ImProcFunctions::strcurv_data (std::string retistr, int *s_datc, int &siz)
         printf("calc str=%s\n", cur_str.c_str());
     */
     siz = longe;
+
+}
+
+void ImProcFunctions::vibrancelocal (const local_params& lp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve)
+{
+    if (!params->locallab.expvibrance) {
+        return;
+    }
+/*
+//  int skip=1; //scale==1 ? 1 : 16;
+    bool skinCurveIsSet = false;
+    DiagonalCurve* dcurve = nullptr;
+    dcurve = new DiagonalCurve (params->localrgb.skintonescurve, CURVES_MIN_POLY_POINTS);
+
+    if (dcurve) {
+        if (!dcurve->isIdentity()) {
+            skinCurveIsSet = true;
+        } else {
+            delete dcurve;
+            dcurve = nullptr;
+        }
+    }
+
+    if (!skinCurveIsSet && !params->localrgb.pastels && !params->localrgb.saturated) {
+        if (dcurve) {
+            delete dcurve;
+            dcurve = nullptr;
+        }
+
+        return;
+    }
+*/
+    const int width = bfw;
+    const int height = bfh;
+
+#ifdef _DEBUG
+    MyTime t1e, t2e;
+    t1e.set();
+    int negat = 0, moreRGB = 0, negsat = 0, moresat = 0;
+#endif
+/*
+    // skin hue curve
+    // I use diagonal because I think it's better
+    LUTf skin_curve (65536, 0);
+
+    if (skinCurveIsSet) {
+        fillCurveArrayVibloc (dcurve, skin_curve);
+    }
+
+    if (dcurve) {
+        delete dcurve;
+        dcurve = nullptr;
+    }
+*/
+
+
+    const float chromaPastel = float (params->locallab.pastels)   / 100.0f;
+    const float chromaSatur  = float (params->locallab.saturated) / 100.0f;
+    const float p00 = 0.07f;
+    const float limitpastelsatur =    (static_cast<float> (params->locallab.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f) * (1.0f - p00) + p00;
+    const float maxdp = (limitpastelsatur - p00) / 4.0f;
+    const float maxds = (1.0 - limitpastelsatur) / 4.0f;
+    const float p0 = p00 + maxdp;
+    const float p1 = p00 + 2.0f * maxdp;
+    const float p2 = p00 + 3.0f * maxdp;
+    const float s0 = limitpastelsatur + maxds;
+    const float s1 = limitpastelsatur + 2.0f * maxds;
+    const float s2 = limitpastelsatur + 3.0f * maxds;
+    const float transitionweighting = static_cast<float> (params->locallab.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
+    float chromamean = 0.0f;
+
+    if (chromaPastel != chromaSatur) {
+        //if sliders pastels and saturated are different: transition with a double linear interpolation: between p2 and limitpastelsatur, and between limitpastelsatur and s0
+        //modify the "mean" point in function of double threshold  => differential transition
+        chromamean = maxdp * (chromaSatur - chromaPastel) / (s0 - p2) + chromaPastel;
+
+        // move chromaMean up or down depending on transitionCtrl
+        if (transitionweighting > 0.0f) {
+            chromamean = (chromaSatur - chromamean) * transitionweighting + chromamean;
+        } else if (transitionweighting < 0.0f) {
+            chromamean = (chromamean - chromaPastel)  * transitionweighting + chromamean;
+        }
+    }
+
+    const float chromaPastel_a = (chromaPastel - chromamean) / (p2 - limitpastelsatur);
+    const float chromaPastel_b = chromaPastel - chromaPastel_a * p2;
+
+    const float chromaSatur_a = (chromaSatur - chromamean) / (s0 - limitpastelsatur);
+    const float chromaSatur_b = chromaSatur - chromaSatur_a * s0;
+
+    const float dhue = 0.15f; //hue transition
+    const float dchr = 20.0f; //chroma transition
+    const float skbeg = -0.05f; //begin hue skin
+    const float skend = 1.60f; //end hue skin
+    const float xx = 0.5f; //soft : between 0.3 and 1.0
+    const float ask = 65535.0f / (skend - skbeg);
+    const float bsk = -skbeg * ask;
+
+
+    const bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
+    const bool protectskins = params->locallab.protectskins;
+    const bool avoidcolorshift = params->locallab.avoidcolorshift;
+
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
+    //inverse matrix user select
+    const double wip[3][3] = {
+        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+    };
+
+
+#ifdef _DEBUG
+    MunsellDebugInfo* MunsDebugInfo = nullptr;
+
+    if (avoidcolorshift) {
+        MunsDebugInfo = new MunsellDebugInfo();
+    }
+
+    #pragma omp parallel default(shared) firstprivate(lab, dest, MunsDebugInfo) reduction(+: negat, moreRGB, negsat, moresat) if (multiThread)
+#else
+    #pragma omp parallel default(shared) if (multiThread)
+#endif
+    {
+
+        float sathue[5], sathue2[4]; // adjust sat in function of hue
+
+        /*
+            // Fitting limitpastelsatur into the real 0.07->1.0 range
+        //  limitpastelsatur = limitpastelsatur*(1.0f-p00) + p00;
+            float p0,p1,p2;//adapt limit of pyramid to psThreshold
+            float s0,s1,s2;
+        */
+
+#ifdef _OPENMP
+
+        if (settings->verbose && omp_get_thread_num() == 0) {
+#else
+
+        if (settings->verbose) {
+#endif
+            printf ("vibrance:  p0=%1.2f  p1=%1.2f  p2=%1.2f  s0=%1.2f s1=%1.2f s2=%1.2f\n", p0, p1, p2, s0, s1, s2);
+            printf ("           pastel=%f   satur=%f   limit= %1.2f   chromamean=%0.5f\n", 1.0f + chromaPastel, 1.0f + chromaSatur, limitpastelsatur, chromamean);
+        }
+
+        #pragma omp for schedule(dynamic, 16)
+
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++) {
+                float LL = lab->L[i][j] / 327.68f;
+                float CC = sqrt (SQR (lab->a[i][j]) + SQR (lab->b[i][j])) / 327.68f;
+                float HH = xatan2f (lab->b[i][j], lab->a[i][j]);
+
+                float satredu = 1.0f; //reduct sat in function of skin
+
+                if (protectskins) {
+                    Color::SkinSat (LL, HH, CC, satredu);// for skin colors
+                }
+
+                // here we work on Chromaticity and Hue
+                // variation of Chromaticity  ==> saturation via RGB
+                // Munsell correction, then conversion to Lab
+                float Lprov = LL;
+                float Chprov = CC;
+                float R, G, B;
+                float2 sincosval;
+
+                if (CC == 0.0f) {
+                    sincosval.y = 1.f;
+                    sincosval.x = 0.0f;
+                } else {
+                    sincosval.y = lab->a[i][j] / (CC * 327.68f);
+                    sincosval.x = lab->b[i][j] / (CC * 327.68f);
+                }
+
+#ifdef _DEBUG
+                bool neg = false;
+                bool more_rgb = false;
+                //gamut control : Lab values are in gamut
+                Color::gamutLchonly (HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f, neg, more_rgb);
+
+                if (neg) {
+                    negat++;
+                }
+
+                if (more_rgb) {
+                    moreRGB++;
+                }
+
+#else
+                //gamut control : Lab values are in gamut
+                Color::gamutLchonly (HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f);
+#endif
+
+                if (Chprov > 6.0f) {
+                    const float saturation = SAT (R, G, B);
+
+                    if (saturation > 0.0f) {
+                        if (satredu != 1.0f) {
+                            // for skin, no differentiation
+                            sathue [0] = sathue [1] = sathue [2] = sathue [3] = sathue[4] = 1.0f;
+                            sathue2[0] = sathue2[1] = sathue2[2] = sathue2[3]          = 1.0f;
+                        } else {
+                            //double pyramid: LL and HH
+                            //I try to take into account: Munsell response (human vision) and Gamut..(less response for red): preferably using Prophoto or WideGamut
+                            //blue: -1.80 -3.14  green = 2.1 3.14   green-yellow=1.4 2.1  red:0 1.4  blue-purple:-0.7  -1.4   purple: 0 -0.7
+                            //these values allow a better and differential response
+                            if (LL < 20.0f) { //more for blue-purple, blue and red modulate
+                                if     (/*HH> -3.1415f &&*/ HH < -1.5f   ) {
+                                    sathue[0] = 1.3f;    //blue
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.05f;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                    sathue[0] = 1.6f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f;
+                                    sathue[3] = 1.2f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.2f ;
+                                    sathue2[1] = 1.15f;
+                                    sathue2[2] = 1.1f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                    sathue[0] = 1.3f;    //red   0.8 0.7
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                    sathue[0] = 1.0f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.4f;    //green
+                                    sathue[1] = 1.3f;
+                                    sathue[2] = 1.2f;
+                                    sathue[3] = 1.15f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.15f;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                }
+                            } else if (LL < 50.0f) { //more for blue and green, less for red and green-yellow
+                                if     (/*HH> -3.1415f &&*/ HH < -1.5f   ) {
+                                    sathue[0] = 1.5f;    //blue
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f;
+                                    sathue[3] = 1.2f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.2f ;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                    sathue[0] = 1.3f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.05f;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                    sathue[0] = 1.1f;    //red   0.8 0.7
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 0.8f ;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                    sathue[0] = 1.1f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.1f;
+                                    sathue[2] = 1.1f;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 0.9f ;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.7f ;
+                                    sathue2[3] = 0.6f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.5f;    //green
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f;
+                                    sathue[3] = 1.2f ;
+                                    sathue[4] = 0.4f;
+                                    sathue2[0] = 1.2f ;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                }
+
+                            } else if (LL < 80.0f) { //more for green, less for red and green-yellow
+                                if     (/*HH> -3.1415f &&*/ HH < -1.5f   ) {
+                                    sathue[0] = 1.3f;    //blue
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.15f;
+                                    sathue[3] = 1.1f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.1f ;
+                                    sathue2[1] = 1.1f ;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                    sathue[0] = 1.3f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.15f;
+                                    sathue[3] = 1.1f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.1f ;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f ;
+                                    sathue[3] = 1.0f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 1.0f ;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                    sathue[0] = 1.1f;    //red   0.8 0.7
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f ;
+                                    sathue[3] = 0.8f ;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 0.8f ;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                    sathue[0] = 1.3f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.2f;
+                                    sathue[2] = 1.1f ;
+                                    sathue[3] = 1.05f;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.0f ;
+                                    sathue2[1] = 0.9f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.7f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.6f;    //green - even with Prophoto green are too "little"  1.5 1.3
+                                    sathue[1] = 1.4f;
+                                    sathue[2] = 1.3f ;
+                                    sathue[3] = 1.25f;
+                                    sathue[4] = 0.3f;
+                                    sathue2[0] = 1.25f;
+                                    sathue2[1] = 1.2f ;
+                                    sathue2[2] = 1.15f;
+                                    sathue2[3] = 1.05f;
+                                }
+                            } else { /*if (LL>=80.0f)*/ //more for green-yellow, less for red and purple
+                                if     (/*HH> -3.1415f &&*/ HH < -1.5f   ) {
+                                    sathue[0] = 1.0f;    //blue
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.8f;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                    sathue[0] = 1.0f;    //blue purple  1.2 1.1
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.8f;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                    sathue[0] = 1.2f;    //purple
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 1.0f;
+                                    sathue[3] = 0.9f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.9f;
+                                    sathue2[1] = 0.9f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                }
+                                //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                    sathue[0] = 1.1f;    //red   0.8 0.7
+                                    sathue[1] = 1.0f;
+                                    sathue[2] = 0.9f;
+                                    sathue[3] = 0.8f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 0.8f;
+                                    sathue2[1] = 0.8f ;
+                                    sathue2[2] = 0.8f ;
+                                    sathue2[3] = 0.8f;
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                    sathue[0] = 1.6f;    //green yellow 1.2 1.1
+                                    sathue[1] = 1.5f;
+                                    sathue[2] = 1.4f;
+                                    sathue[3] = 1.2f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 1.1f;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.0f ;
+                                    sathue2[3] = 1.0f;
+                                } else { /*if(HH>  2.1f    && HH<= 3.1415f)*/
+                                    sathue[0] = 1.4f;    //green
+                                    sathue[1] = 1.3f;
+                                    sathue[2] = 1.2f;
+                                    sathue[3] = 1.1f;
+                                    sathue[4] = 0.2f;
+                                    sathue2[0] = 1.1f;
+                                    sathue2[1] = 1.05f;
+                                    sathue2[2] = 1.05f;
+                                    sathue2[3] = 1.0f;
+                                }
+                            }
+                        }
+
+                        float chmodpastel = 0.f, chmodsat = 0.f;
+                        // variables to improve transitions
+                        float pa, pb;// transition = pa*saturation + pb
+                        float chl00 = chromaPastel * satredu * sathue[4];
+                        float chl0  = chromaPastel * satredu * sathue[0];
+                        float chl1  = chromaPastel * satredu * sathue[1];
+                        float chl2  = chromaPastel * satredu * sathue[2];
+                        float chl3  = chromaPastel * satredu * sathue[3];
+                        float chs0  = chromaSatur * satredu * sathue2[0];
+                        float chs1  = chromaSatur * satredu * sathue2[1];
+                        float chs2  = chromaSatur * satredu * sathue2[2];
+                        float chs3  = chromaSatur * satredu * sathue2[3];
+                        float s3    = 1.0f;
+
+                        // We handle only positive values here ;  improve transitions
+                        if      (saturation < p00) {
+                            chmodpastel = chl00 ;    //neutral tones
+                        } else if (saturation < p0 )               {
+                            pa = (chl00 - chl0) / (p00 - p0);
+                            pb = chl00 - pa * p00;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < p1)                {
+                            pa = (chl0 - chl1) / (p0 - p1);
+                            pb = chl0 - pa * p0;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < p2)                {
+                            pa = (chl1 - chl2) / (p1 - p2);
+                            pb = chl1 - pa * p1;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < limitpastelsatur)  {
+                            pa = (chl2 - chl3) / (p2 - limitpastelsatur);
+                            pb = chl2 - pa * p2;
+                            chmodpastel = pa * saturation + pb;
+                        } else if (saturation < s0)                {
+                            pa = (chl3 - chs0) / (limitpastelsatur - s0) ;
+                            pb = chl3 - pa * limitpastelsatur;
+                            chmodsat    = pa * saturation + pb;
+                        } else if (saturation < s1)                {
+                            pa = (chs0 - chs1) / (s0 - s1);
+                            pb = chs0 - pa * s0;
+                            chmodsat    = pa * saturation + pb;
+                        } else if (saturation < s2)                {
+                            pa = (chs1 - chs2) / (s1 - s2);
+                            pb = chs1 - pa * s1;
+                            chmodsat    = pa * saturation + pb;
+                        } else                                     {
+                            pa = (chs2 - chs3) / (s2 - s3);
+                            pb = chs2 - pa * s2;
+                            chmodsat    = pa * saturation + pb;
+                        }
+
+                        if (chromaPastel != chromaSatur) {
+
+                            // Pastels
+                            if (saturation > p2 && saturation < limitpastelsatur) {
+                                float newchromaPastel = chromaPastel_a * saturation + chromaPastel_b;
+                                chmodpastel = newchromaPastel * satredu * sathue[3];
+                            }
+
+                            // Saturated
+                            if (saturation < s0 && saturation >= limitpastelsatur) {
+                                float newchromaSatur = chromaSatur_a * saturation + chromaSatur_b;
+                                chmodsat = newchromaSatur * satredu * sathue2[0];
+                            }
+                        }// end transition
+
+                        if (saturation <= limitpastelsatur) {
+                            if (chmodpastel >  2.0f ) {
+                                chmodpastel = 2.0f;    //avoid too big values
+                            } else if (chmodpastel < -0.93f) {
+                                chmodpastel = -0.93f;    //avoid negative values
+                            }
+
+                            Chprov *= (1.0f + chmodpastel);
+
+                            if (Chprov < 6.0f) {
+                                Chprov = 6.0f;
+                            }
+                        } else { //if (saturation > limitpastelsatur)
+                            if (chmodsat >  1.8f ) {
+                                chmodsat = 1.8f;    //saturated
+                            } else if (chmodsat < -0.93f) {
+                                chmodsat = -0.93f;
+                            }
+
+                            Chprov *= 1.0f + chmodsat;
+
+                            if (Chprov < 6.0f) {
+                                Chprov = 6.0f;
+                            }
+                        }
+                    }
+                }
+
+                bool hhModified = false;
+
+                // Vibrance's Skin curve
+                if (sklocalcurve  && localskutili) {
+                    if (HH > skbeg && HH < skend) {
+                        if (Chprov < 60.0f) { //skin hue  : todo ==> transition
+                            float HHsk = ask * HH + bsk;
+                            float Hn = (sklocalcurve[HHsk] - bsk) / ask;
+                            float Hc = (Hn * xx + HH * (1.0f - xx));
+                            HH = Hc;
+                            hhModified = true;
+                        } else if (Chprov < (60.0f + dchr)) { //transition chroma
+                            float HHsk = ask * HH + bsk;
+                            float Hn = (sklocalcurve[HHsk] - bsk) / ask;
+                            float Hc = (Hn * xx + HH * (1.0f - xx));
+                            float aa = (HH - Hc) / dchr ;
+                            float bb = HH - (60.0f + dchr) * aa;
+                            HH = aa * Chprov + bb;
+                            hhModified = true;
+                        }
+                    }
+                    //transition hue
+                    else if (HH > (skbeg - dhue) && HH <= skbeg && Chprov < (60.0f + dchr * 0.5f)) {
+                        float HHsk = ask * skbeg + bsk;
+                        float Hn = (sklocalcurve[HHsk] - bsk) / ask;
+                        float Hcc = (Hn * xx + skbeg * (1.0f - xx));
+                        float adh = (Hcc - (skbeg - dhue)) / (dhue);
+                        float bdh = Hcc - adh * skbeg;
+                        HH = adh * HH + bdh;
+                        hhModified = true;
+                    } else if (HH >= skend && HH < (skend + dhue) && Chprov < (60.0f + dchr * 0.5f)) {
+                        float HHsk = ask * skend + bsk;
+                        float Hn = (sklocalcurve[HHsk] - bsk) / ask;
+                        float Hcc = (Hn * xx + skend * (1.0f - xx));
+                        float adh = (skend + dhue - Hcc) / (dhue);
+                        float bdh = Hcc - adh * skend;
+                        HH = adh * HH + bdh;
+                        hhModified = true;
+                    }
+                } // end skin hue
+
+                //Munsell correction
+//          float2 sincosval;
+                if (!avoidcolorshift && hhModified) {
+                    sincosval = xsincosf (HH);
+                }
+
+                float aprovn, bprovn;
+                bool inGamut;
+
+                do {
+                    inGamut = true;
+
+                    if (avoidcolorshift) {
+                        float correctionHue = 0.0f;
+                        float correctlum = 0.0f;
+
+#ifdef _DEBUG
+                        Color::AllMunsellLch (/*lumaMuns*/false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum, MunsDebugInfo);
+#else
+                        Color::AllMunsellLch (/*lumaMuns*/false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum);
+#endif
+
+                        if (correctionHue != 0.f || hhModified) {
+                            sincosval = xsincosf (HH + correctionHue);
+                            hhModified = false;
+                        }
+                    }
+
+                    aprovn = Chprov * sincosval.y;
+                    bprovn = Chprov * sincosval.x;
+
+                    float fyy = (0.00862069f * Lprov ) + 0.137932f;
+                    float fxx = (0.002f * aprovn) + fyy;
+                    float fzz = fyy - (0.005f * bprovn);
+                    float xx_ = 65535.f * Color::f2xyz (fxx) * Color::D50x;
+                    //  float yy_ = 65535.0f * Color::f2xyz(fyy);
+                    float zz_ = 65535.f * Color::f2xyz (fzz) * Color::D50z;
+                    float yy_ = 65535.f * ((Lprov > Color::epskap) ? fyy * fyy*fyy : Lprov / Color::kappa);
+
+                    Color::xyz2rgb (xx_, yy_, zz_, R, G, B, wip);
+
+                    if (R < 0.0f || G < 0.0f || B < 0.0f) {
+#ifdef _DEBUG
+                        negsat++;
+#endif
+                        Chprov *= 0.98f;
+                        inGamut = false;
+                    }
+
+                    // if "highlight reconstruction" enabled don't control Gamut for highlights
+                    if ((!highlight) && (R > 65535.0f || G > 65535.0f || B > 65535.0f)) {
+#ifdef _DEBUG
+                        moresat++;
+#endif
+                        Chprov *= 0.98f;
+                        inGamut = false;
+                    }
+                } while (!inGamut);
+
+                //put new values in Lab
+                dest->L[i][j] = Lprov * 327.68f;
+                dest->a[i][j] = aprovn * 327.68f;
+                dest->b[i][j] = bprovn * 327.68f;
+            }
+    } // end of parallelization
+
+#ifdef _DEBUG
+    t2e.set();
+
+    if (settings->verbose) {
+        printf ("Vibrance local (performed in %d usec):\n", t2e.etime (t1e));
+        printf ("   Gamut: G1negat=%iiter G165535=%iiter G2negsat=%iiter G265535=%iiter\n", negat, moreRGB, negsat, moresat);
+
+        if (MunsDebugInfo) {
+            printf ("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0], MunsDebugInfo->maxdhue[1], MunsDebugInfo->maxdhue[2], MunsDebugInfo->maxdhue[3], MunsDebugInfo->depass);
+        }
+    }
+
+    if (MunsDebugInfo) {
+        delete MunsDebugInfo;
+    }
+
+#endif
 
 }
 
@@ -2780,6 +3466,414 @@ void ImProcFunctions::Sharp_Local (int call, int sp, float **loctemp, const floa
     }
 }
 
+void ImProcFunctions::Expose_Local (int sen, int call, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy)
+{
+
+//local exposure
+    BENCHFUN {
+        const float ach = (float)lp.trans / 100.f;
+        float varsens =  lp.sens;
+
+        if (sen == 1)
+        {
+            varsens =  lp.sens;
+        }
+
+        if (sen == 2)
+        {
+            varsens =  lp.sensv;
+        }
+
+        //chroma
+        constexpr float amplchsens = 2.5f;
+        constexpr float achsens = (amplchsens - 1.f) / (100.f - 20.f); //20. default locallab.sensih
+        constexpr float bchsens = 1.f - 20.f * achsens;
+        const float multchro = varsens * achsens + bchsens;
+
+        //luma
+
+        //skin
+        constexpr float amplchsensskin = 1.6f;
+        constexpr float achsensskin = (amplchsensskin - 1.f) / (100.f - 20.f); //20. default locallab.sensih
+        constexpr float bchsensskin = 1.f - 20.f * achsensskin;
+        const float multchroskin = varsens * achsensskin + bchsensskin;
+
+        //transition = difficult to avoid artifact with scope on flat area (sky...)
+
+        constexpr float delhu = 0.1f; //between 0.05 and 0.2
+
+        const float apl = (-1.f) / delhu;
+        const float bpl = - apl * hueplus;
+        const float amo = 1.f / delhu;
+        const float bmo = - amo * huemoins;
+
+
+        const float pb = 4.f;
+        const float pa = (1.f - pb) / 40.f;
+
+        const float ahu = 1.f / (2.8f * varsens - 280.f);
+        const float bhu = 1.f - ahu * 2.8f * varsens;
+
+        const float alum = 1.f / (varsens - 100.f);
+        const float blum = 1.f - alum * varsens;
+        //float maxc = -100000.f;
+        //float minc = 100000.f;
+
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+#ifdef __SSE2__
+            float atan2Buffer[transformed->W] ALIGNED16;
+            float sqrtBuffer[transformed->W] ALIGNED16;
+            vfloat c327d68v = F2V (327.68f);
+#endif
+
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for (int y = 0; y < transformed->H; y++)
+            {
+
+                const int loy = cy + y;
+                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                    for (int x = 0; x < transformed->W; x++) {
+                        transformed->L[y][x] = original->L[y][x];
+                    }
+
+                    continue;
+                }
+
+#ifdef __SSE2__
+                int i = 0;
+
+                for (; i < transformed->W - 3; i += 4) {
+                    vfloat av = LVFU (original->a[y][i]);
+                    vfloat bv = LVFU (original->b[y][i]);
+                    STVF (atan2Buffer[i], xatan2f (bv, av));
+                    STVF (sqrtBuffer[i], _mm_sqrt_ps (SQRV (bv) + SQRV (av)) / c327d68v);
+                }
+
+                for (; i < transformed->W; i++) {
+                    atan2Buffer[i] = xatan2f (original->b[y][i], original->a[y][i]);
+                    sqrtBuffer[i] = sqrt (SQR (original->b[y][i]) + SQR (original->a[y][i])) / 327.68f;
+                }
+
+#endif
+
+                for (int x = 0; x < transformed->W; x++) {
+                    int lox = cx + x;
+                    int begx = int (lp.xc - lp.lxL);
+                    int begy = int (lp.yc - lp.lyT);
+
+                    int zone = 0;
+                    float localFactor = 1.f;
+                    calcTransition (lox, loy, ach, lp, zone, localFactor);
+
+                    if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                        transformed->L[y][x] = original->L[y][x];
+                        continue;
+                    }
+
+#ifdef __SSE2__
+                    float rhue = atan2Buffer[x];
+                    float rchro = sqrtBuffer[x];
+#else
+                    float rhue = xatan2f (original->b[y][x], original->a[y][x]);
+                    float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
+#endif
+                    float rL = original->L[y][x] / 327.68f;
+
+                    float cli = 1.f;
+                    float clc = 1.f;
+
+                    //                       if (lp.curvact == true) {
+                    cli = (buflight[loy - begy][lox - begx]);
+                    clc = (bufchro[loy - begy][lox - begx]);
+                    //printf("cl=%f",clc);
+
+                    //                      } else {
+                    //                          cli = lp.str;
+                    //                           clc = params->locallab.chrrt;
+                    //                       }
+
+                    float aplus = (1.f - cli) / delhu;
+                    float bplus = 1.f - aplus * hueplus;
+                    float amoins = (cli - 1.f) / delhu;
+                    float bmoins = 1.f - amoins * huemoins;
+
+                    float aplusch = (1.f - clc) / delhu;
+                    float bplusch = 1.f - aplusch * hueplus;
+                    float amoinsch = (clc - 1.f) / delhu;
+                    float bmoinsch = 1.f - amoinsch * huemoins;
+
+                    float realstr = 1.f;
+                    float realstrch = 1.f;
+                    //prepare shape detection
+                    float deltachro = fabs (rchro - chromaref);
+                    float deltahue = fabs (rhue - hueref);
+
+                    if (deltahue > rtengine::RT_PI) {
+                        deltahue = - (deltahue - 2.f * rtengine::RT_PI);
+                    }
+
+                    float deltaE = 20.f * deltahue + deltachro; //between 0 and 280
+                    float deltaL = fabs (lumaref - rL); //between 0 and 100
+
+                    float kch = 1.f;
+                    float khu = 0.f;
+                    float fach = 1.f;
+                    float falu = 1.f;
+
+                    if (deltachro < 160.f * SQR (varsens / 100.f)) {
+                        kch = 1.f;
+                    } else {
+                        float ck = 160.f * SQR (varsens / 100.f);
+                        float ak = 1.f / (ck - 160.f);
+                        float bk = -160.f * ak;
+                        kch = ak * deltachro + bk;
+                    }
+
+                    if (varsens < 40.f ) {
+                        kch = pow (kch, pa * varsens + pb);   //increase under 40
+                    }
+
+                    bool kzon = false;
+
+                    //transition = difficult to avoid artifact with scope on flat area (sky...)
+                    //hue detection
+                    if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
+                        if (rhue >= hueplus - delhu)  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+
+                        } else if (rhue < huemoins + delhu)  {
+                            realstr = amoins * rhue + bmoins;
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            khu = amo * rhue + bmo;
+
+                        } else {
+                            realstr = cli;
+                            khu = 1.f;
+                            realstrch = clc;
+
+                        }
+
+                        kzon = true;
+                    } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            realstr = amoins * rhue + bmoins;
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            khu = amo * rhue + bmo;
+
+                        } else {
+                            realstr = cli;
+                            khu = 1.f;
+                            realstrch = clc;
+
+                        }
+
+                        kzon = true;
+                    }
+
+                    if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            realstr = amoins * rhue + bmoins;
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            khu = amo * rhue + bmo;
+
+                        } else {
+                            realstr = cli;
+                            khu = 1.f;
+                            realstrch = clc;
+
+                        }
+
+                        kzon = true;
+                    } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
+                        if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                            realstr = aplus * rhue + bplus;
+                            realstrch = aplusch * rhue + bplusch;
+                            khu  = apl * rhue + bpl;
+
+                        } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                            realstr = amoins * rhue + bmoins;
+                            realstrch = amoinsch * rhue + bmoinsch;
+                            khu = amo * rhue + bmo;
+
+                        } else {
+                            realstr = cli;
+                            khu = 1.f;
+                            realstrch = clc;
+
+                        }
+
+                        kzon = true;
+                    }
+
+                    /*
+                                        //printf("re=%f",  realstrch);
+                                        if (realstrch > maxc) {
+                                            maxc = realstrch;
+                                        }
+
+                                        if (realstrch < minc) {
+                                            minc = realstrch;
+                                        }
+                    */
+                    //shape detection for hue chroma and luma
+                    if (varsens <= 20.f) { //to try...
+
+                        if (deltaE <  2.8f * varsens) {
+                            fach = khu;
+                        } else {
+                            fach = khu * (ahu * deltaE + bhu);
+                        }
+
+                        float kcr = 10.f;
+
+                        if (rchro < kcr) {
+                            fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                        }
+
+                        if (lp.qualmet >= 1) {
+                        } else {
+                            fach = 1.f;
+                        }
+
+                        if (deltaL <  varsens) {
+                            falu = 1.f;
+                        } else {
+                            falu = alum * deltaL + blum;
+                        }
+
+                    }
+
+                    //    float kdiff = 0.f;
+                    // I add these functions...perhaps not good
+                    if (kzon) {
+                        if (varsens < 60.f) { //arbitrary value
+                            if (hueref < -1.1f && hueref > -2.8f) { // detect blue sky
+                                if (chromaref > 0.f && chromaref < 35.f * multchro) { // detect blue sky
+                                    if ( (rhue > -2.79f && rhue < -1.11f) && (rchro < 35.f * multchro)) {
+                                        realstr *= 0.9f;
+                                    } else {
+                                        realstr = 1.f;
+                                    }
+                                }
+                            } else {
+                                realstr = cli;
+                            }
+
+                            if (varsens < 50.f) { //&& lp.chro > 0.f
+                                if (hueref > -0.1f && hueref < 1.6f) { // detect skin
+                                    if (chromaref > 0.f && chromaref < 55.f * multchroskin) { // detect skin
+                                        if ( (rhue > -0.09f && rhue < 1.59f) && (rchro < 55.f * multchroskin)) {
+                                            realstr *= 0.7f;
+                                        } else {
+                                            realstr = 1.f;
+                                        }
+                                    }
+                                } else {
+                                    realstr = cli;
+                                }
+                            }
+                        }
+
+                    }
+
+                    float kcr = 100.f * lp.thr;
+                    float falL = 1.f;
+
+                    if (rchro < kcr && chromaref > kcr) { // reduce artifacts in grey tones near hue spot and improve algorithm
+                        falL *= pow (rchro / kcr, lp.iterat / 10.f);
+                    }
+
+                    //                     int zone;
+                    //                     float localFactor;
+                    //                     calcTransition (lox, loy, ach, lp, zone, localFactor);
+
+                    if (rL > 0.1f) { //to avoid crash with very low gamut in rare cases ex : L=0.01 a=0.5 b=-0.9
+                        switch (zone) {
+                            case 0: { // outside selection and outside transition zone => no effect, keep original values
+                                transformed->L[y][x] = original->L[y][x];
+                                transformed->a[y][x] = original->a[y][x];
+                                transformed->b[y][x] = original->b[y][x];
+
+                                break;
+                            }
+
+                            case 1: { // inside transition zone
+                                float factorx = localFactor;
+
+                                float difL;
+                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                                difL *= factorx * (100.f + realstr * falL) / 100.f;
+                                difL *= kch * fach;
+
+                                transformed->L[y][x] = original->L[y][x] + difL;
+                                float difa, difb;
+
+                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                                difa *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                difb *= factorx * (100.f + realstrch * falu * falL) / 100.f;
+                                difa *= kch * fach;
+                                difb *= kch * fach;
+                                transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                                transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+
+
+                                break;
+
+                            }
+
+                            case 2: { // inside selection => full effect, no transition
+                                float difL;
+
+                                difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
+                                difL *= (100.f + realstr * falL) / 100.f;
+                                difL *= kch * fach;
+                                transformed->L[y][x] = original->L[y][x] + difL;
+                                float difa, difb;
+
+                                difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
+                                difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
+                                difa *= (100.f + realstrch * falu * falL) / 100.f;
+                                difb *= (100.f + realstrch * falu * falL) / 100.f;
+                                difa *= kch * fach;
+                                difb *= kch * fach;
+
+                                transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                                transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+
+                            }
+                        }
+
+                        //}
+                    }
+                }
+            }
+
+            //    printf ("minc=%f maxc=%f \n", minc, maxc);
+        }
+
+    }
+}
 
 
 void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float ** buflight, float ** bufchro, float ** bufhh, float ** buflightslid, bool &LHutili, bool &HHutili, int sp, float moy, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve, const LocHHCurve & lochhCurve, LUTf & cclocalcurve, float chprov, float cligh, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
@@ -3725,6 +4819,8 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
         float dhue = ared * lp.sens + bred; //delta hue lght chroma
 
+        float dhuev = ared * lp.sensv + bred; //delta hue lght chroma
+		
         float dhueret = ared * lp.sensh + bred; //delta hue retinex
 
         float dhuebn = ared * lp.sensbn + bred; //delta hue blur
@@ -4678,6 +5774,170 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 
 // end contrast interior and exterior
+
+//vibrance
+
+        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
+            //  printf("OK appel vib loc\n");
+            float hueplus = hueref + dhuev;
+            float huemoins = hueref - dhuev;
+
+          //  printf ("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhuev);
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhuev - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhuev + 2.f * rtengine::RT_PI;
+            }
+
+            LabImage *bufexporig = nullptr;
+            LabImage *bufexpfin = nullptr;
+            float **buflight = nullptr;
+            float **bufl_ab = nullptr;
+
+            int bfh = 0.f, bfw = 0.f;
+
+
+            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
+                bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+                bfw = int (lp.lx + lp.lxL) + del;
+
+
+                bufexporig = new LabImage (bfw, bfh);//buffer for data in zone limit
+                bufexpfin = new LabImage (bfw, bfh);//buffer for data in zone limit
+
+                buflight   = new float*[bfh];//for lightness
+
+                for (int i = 0; i < bfh; i++) {
+                    buflight[i] = new float[bfw];
+                }
+
+                bufl_ab   = new float*[bfh];//for chroma
+
+                for (int i = 0; i < bfh; i++) {
+                    bufl_ab[i] = new float[bfw];
+                }
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int jr = 0; jr < bfw; jr++) {
+                        bufexporig->L[ir][jr] = 0.f;
+                        bufexporig->a[ir][jr] = 0.f;
+                        bufexporig->b[ir][jr] = 0.f;
+                        bufexpfin->L[ir][jr] = 0.f;
+                        bufexpfin->a[ir][jr] = 0.f;
+                        bufexpfin->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufl_ab[ir][jr] = 0.f;
+
+
+                    }
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                     //       bufworking->r (loy - begy, lox - begx) = working->r (y, x); //fill square buffer with datas
+                     //       bufworking->g (loy - begy, lox - begx) = working->g (y, x); //fill square buffer with datas
+                     //       bufworking->b (loy - begy, lox - begx) = working->b (y, x); //fill square buffer with datas
+
+                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+
+                        }
+                    }
+
+
+
+                ImProcFunctions::vibrancelocal (lp, bfw, bfh, bufexporig, bufexpfin, localskutili, sklocalcurve);
+
+
+                //          float maxc = -10000.f;
+                //          float minc = 100000.f;
+                //          float chpro = 0.f;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                            float lL;
+                            float amplil = 140.f;
+                            float lighL = bufexporig->L[loy - begy][lox - begx];
+                            float lighLnew = bufexpfin->L[loy - begy][lox - begx];
+                            float rL;
+                            rL = CLIPRET ((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
+
+                            buflight[loy - begy][lox - begx] = rL;
+
+
+                            float chp;
+                            chp = CLIPRET ((sqrt (SQR (bufexpfin->a[loy - begy][lox - begx]) + SQR (bufexpfin->b[loy - begy][lox - begx])) - sqrt (SQR (bufexporig->a[loy - begy][lox - begx]) + SQR (bufexporig->b[loy - begy][lox - begx]))) / 250.f);
+                            /*
+                              if (chp > maxc) {
+                                   maxc = chp;
+                               }
+
+                               if (chp < minc) {
+                                   minc = chp;
+                               }
+                            */
+                            //  chpro = CLIPCHRO (amplil * ra - amplil); //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+
+                            //ra = 1.f;
+                            bufl_ab[loy - begy][lox - begx] = chp;
+
+                        }
+                    }
+
+                //   printf ("min=%2.2f max=%2.2f", minc, maxc);
+                Expose_Local (2, call, buflight, bufl_ab, hueplus, huemoins, hueref, dhuev, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
+
+            }
+
+            if (call <= 3) {
+
+                delete bufexporig;
+                delete bufexpfin;
+
+                for (int i = 0; i < bfh; i++) {
+                    delete [] buflight[i];
+                }
+
+                delete [] buflight;
+
+                for (int i = 0; i < bfh; i++) {
+                    delete [] bufl_ab[i];
+                }
+
+                delete [] bufl_ab;
+
+            }
+
+        }
+
 
 //Tone mapping
 

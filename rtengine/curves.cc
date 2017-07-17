@@ -452,12 +452,12 @@ void CurveFactory::curveskLocal (bool & localskutili, const std::vector<double>&
     bool needed = false;
     std::unique_ptr<DiagonalCurve> dCurve;
 
-    if (!curvePoints.empty() && curvePoints[0] != 0) {
+    if (localskutili && !curvePoints.empty() && curvePoints[0] != 0) {
         dCurve = std::unique_ptr<DiagonalCurve> (new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (dCurve && !dCurve->isIdentity()) {
             needed = true;
-            localskutili = true;
+            //  localskutili = true;
         }
     }
 

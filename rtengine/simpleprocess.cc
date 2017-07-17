@@ -1885,6 +1885,13 @@ private:
                     bool localcutili = false;
                     bool localskutili = false;
 
+                    std::string t_curvskinref = "3000A0B0C1000D1000E@";
+                    std::string t_none = "0A@";
+
+                    if (skinstrs[sp].c_str() != t_curvskinref  && skinstrs[sp].c_str() != t_none) {
+                        localskutili = true;
+                    }
+
                     CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, 1);
                     CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, 1);
                     CurveFactory::curveskLocal (localskutili, params.locallab.skintonescurve, sklocalcurve, 1);

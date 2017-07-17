@@ -836,7 +836,7 @@ void Crop::update (int todo)
         locallutili = false;
         int sca = skip;
 
-        bool tyty = false;
+        //  bool tyty = false;
         int maxspot = settings->nspot + 1;
 
         if (needslocal ) {
@@ -1075,7 +1075,7 @@ void Crop::update (int todo)
                         CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve2, sca);
                         localcutili = false;
                         CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve2, sca);
-                        localskutili = false;
+                        //localskutili = false;
                         CurveFactory::curveskLocal (localskutili, params.locallab.skintonescurve, sklocalcurve2, sca);
 
                         params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
@@ -1371,7 +1371,7 @@ void Crop::update (int todo)
                 params.locallab.getCurves (locRETgainCurve, locRETgainCurverab, loclhCurve, lochhCurve, LHutili, HHutili);
                 locallutili = false;
                 localcutili = false;
-                localskutili = false;
+                //localskutili = false;
 
                 CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve2, sca);
                 CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve2, sca);

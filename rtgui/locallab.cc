@@ -1571,8 +1571,14 @@ bool Locallab::localComputed_ ()
     //pastSatTog
     if (nextdatasp[63] == 0) {
         pastSatTog->set_active (false);
+        adjusterChanged (pastels, pastels->getValue());
+        adjusterChanged (saturated, saturated->getValue());
+
     } else {
         pastSatTog->set_active (true);
+        adjusterChanged (pastels, pastels->getValue());
+        adjusterChanged (saturated, saturated->getValue());
+
     }
 
     double intermed = 0.01 * (double) nextdatasp[64];
@@ -3318,6 +3324,10 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
     hueref->hide();
     chromaref->hide();
     lumaref->hide();
+
+    if (a == pastels && pastSatTog->get_active()) {
+        saturated->setValue (newval);
+    }
 
     if (listener && getEnabled()) {
         if (a == degree) {

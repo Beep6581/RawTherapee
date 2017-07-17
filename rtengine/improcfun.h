@@ -291,6 +291,8 @@ public:
     void TM_Local (int call, int sp, LabImage* tmp1, float ** buflight, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
     static void strcurv_data (std::string retistr, int *s_datc, int &siz);
     void InverseContrast_Local (float ave, const struct local_contra& lco, const struct local_params& lp, LabImage* original, LabImage* transformed, int cx, int cy);
+    void vibrancelocal (const local_params& lp, int bfw, int bfh, LabImage* lab,  LabImage* dest, bool & localskutili, LUTf & sklocalcurve);
+    void Expose_Local (int sen, int call, float **buflight, float **bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy);
 
     void DeNoise_Local (int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy);
 
