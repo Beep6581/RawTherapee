@@ -1346,19 +1346,20 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 //PSThreshold
                 int sizps = 2;
                 int s_datps[sizps + 1];
-                s_datps[1] =  psthresholds[0] =  static_cast<int> (params.locallab.psthreshold.value[ThresholdSelector::TS_TOPLEFT]);
+                s_datps[1] =  psthresholds[1] =  static_cast<int> (params.locallab.psthreshold.value[ThresholdSelector::TS_TOPLEFT]);
 
-                s_datps[0] =  psthresholds[1] = static_cast<int> (params.locallab.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]);
+                s_datps[0] =  psthresholds[0] = static_cast<int> (params.locallab.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]);
 
                 std::string ps_str = "";
 
-                //printf("0=%i 1=%i\n", s_datps[0], s_datps[1]);
-                for (int j = 0; j < sizps; j++) {
-                    ps_str = ps_str + std::to_string (s_datps[j]) + delim[j];
-                }
+           //     printf("0=%i 1=%i\n", s_datps[0], s_datps[1]);
+				ps_str = ps_str  + std::to_string (s_datps[0]) +  delim[0] + std::to_string (s_datps[1]) +  delim[1];
+      //          for (int j = 0; j < sizps; j++) {
+      //              ps_str = ps_str + std::to_string (s_datps[j]) + delim[j];
+      //          }
 
                 pthstr[0] = ps_str + "@";
-
+			//	printf("ps0=%s\n", pthstr[0].c_str());
                 //end local ps
 
                 //spot references
@@ -2348,7 +2349,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 psthresholds[sp * 500] = s_datcps[0];
                 psthresholds[sp * 500 + 1] = s_datcps[1];
-
+			//	printf("A 0=%i 1=%i\n", s_datcps[0], s_datcps[1]);
                 params.locallab.psthreshold.setValues (s_datcps[0], s_datcps[1]);
 
                 //end local PS
@@ -2794,6 +2795,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             psthresholds[sp * 500] = s_datcps[0];
             psthresholds[sp * 500 + 1] = s_datcps[1];
+//			printf("B 0=%i 1=%i\n", s_datcps[0], s_datcps[1]);
+            std::string ps_str2 = "";
+
+			ps_str2 = ps_str2  + std::to_string (s_datcps[0]) +  delim[0] + std::to_string (s_datcps[1]) +  delim[1];
+            pthstr[0] = ps_str2 + "@";
+			
             pthstr[sp] = pthstr[0];
             params.locallab.psthreshold.setValues (s_datcps[0], s_datcps[1]);
 
