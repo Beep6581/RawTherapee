@@ -809,7 +809,7 @@ void Crop::update (int todo)
         parent->ipf.vibrance (labnCrop);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
-            parent->ipf.EPDToneMap(labnCrop, 5, 1);
+            parent->ipf.EPDToneMap(labnCrop, 5, skip);
         }
 
         //parent->ipf.EPDToneMap(labnCrop, 5, 1);    //Go with much fewer than normal iterates for fast redisplay.
