@@ -633,7 +633,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         ipf.vibrance(nprevl);
 
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) {
-            ipf.EPDToneMap(nprevl, 5, 1);
+            ipf.EPDToneMap(nprevl, 5, scale);
         }
 
         // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
