@@ -153,7 +153,9 @@ int main(int argc, char **argv)
 
     bool quickstart = dontLoadCache(argc, argv);
 
-    if (!Options::load (quickstart)) {
+    try {
+        Options::load (quickstart);
+    } catch (Options::Error &) {
         printf("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!\n");
         return -2;
     }

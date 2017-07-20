@@ -207,7 +207,10 @@ int processLineParams( int argc, char **argv )
 
 bool init_rt()
 {
-    if (!Options::load ()) {
+    try {
+        Options::load();
+    } catch (Options::Error &e) {
+        std::cout << "ERROR: " << e.get_msg() << std::endl;
         return false;
     }
 

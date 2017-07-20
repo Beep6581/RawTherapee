@@ -673,7 +673,12 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
 
     options.windowMonitor = get_screen()->get_monitor_at_window(get_window());
 
-    Options::save ();
+    try {
+        Options::save ();
+    } catch (Options::Error &e) {
+        Gtk::MessageDialog msgd(getToplevelWindow(this), e.get_msg(), true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
+        msgd.run();
+    }
     hide();
 
     on_delete_has_run = true;

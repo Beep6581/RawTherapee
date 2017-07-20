@@ -303,7 +303,12 @@ void ExportPanel::SaveSettingsAsDefault()
 #undef FE_OPT_STORE_
 
     if (changed) {
-        Options::save();
+        try {
+            Options::save();
+        } catch (Options::Error &e) {
+            Gtk::MessageDialog msgd(getToplevelWindow(this), e.get_msg(), true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
+            msgd.run();
+        }
     }
 }
 
