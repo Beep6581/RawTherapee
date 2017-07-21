@@ -41,6 +41,7 @@
 #40 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
 #41 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
 #42 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
+#43 21.07.2017 Erweiterung (TooWaBoo) RT 5.1
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -759,7 +760,7 @@ HISTORY_MSG_471;(Sensor-Matrix)\nFarbinterpolation\nBewegungskorrektur
 HISTORY_MSG_472;(Sensor-Matrix)\nFarbinterpolation\nWeicher Übergang
 HISTORY_MSG_473;(Sensor-Matrix)\nFarbinterpolation\nLMMSE für Bewegungs-\nteile verwenden
 HISTORY_MSG_474;(Sensor-Matrix)\nFarbinterpolation\nFrame-Helligkeit angleichen
-HISTORY_MSG_475;(Sensor-Matrix)\nAusgleich pro Kanal
+HISTORY_MSG_475;(Sensor-Matrix)\nFarbinterpolation)\nAusgleich pro Kanal
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -2189,4 +2190,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
+MAIN_MSG_TOOMANYOPENEDITORS;Zu viele geöffnete Editorfenster.\nUm fortzufahren, schließen sie bitte ein Editorfenster.
