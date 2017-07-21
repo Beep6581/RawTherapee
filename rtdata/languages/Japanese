@@ -1975,6 +1975,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
+!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MONITOR_PROFILE_SYSTEM;System default
 !PARTIALPASTE_PRSHARPENING;Post-resize sharpening
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue

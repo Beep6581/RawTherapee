@@ -1060,6 +1060,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoes not exist. Please set a correct path in Preferences.
 !MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
+!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>

@@ -2064,6 +2064,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_473;PS - Use LMMSE
 !HISTORY_MSG_474;PS - Equalize
 !HISTORY_MSG_475;PS - Equalize channel
+!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
