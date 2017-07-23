@@ -135,6 +135,7 @@ public:
     static LUTf igammatab_srgb;
     static LUTf igammatab_srgb1;
     static LUTf gammatab_srgb;
+    static LUTf gammatab_srgb327;
     static LUTf gammatab_srgb1;
 
     static LUTf denoiseGammaTab;
@@ -1189,6 +1190,11 @@ public:
     {
         return gammatab_srgb[x];
     }
+    static inline float  gamma_srgb327       (char x)
+    {
+        return gammatab_srgb327[x];
+    }
+
     static inline float  gamma            (char x)
     {
         return gammatab[x];

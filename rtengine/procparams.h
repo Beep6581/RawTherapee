@@ -879,6 +879,7 @@ public:
     Glib::ustring qualityMethod;
     Glib::ustring qualitycurveMethod;
     bool expcolor;
+    bool expexpose;
     bool expvibrance;
     bool expblur;
     bool exptonemap;
@@ -890,6 +891,12 @@ public:
     int     lightness;
     int     contrast;
     int     chroma;
+    int      expcomp;
+    int         black;
+    int         shcompr;
+    int         hlcompr;
+    int         hlcomprthresh;
+
 
     int            pastels;
     int            saturated;
@@ -910,6 +917,7 @@ public:
     int     noisechroc;
 
     int     sensi;
+    int     sensiex;
     int     sensih;
     int     retrab;
     int     sensicb;
@@ -948,6 +956,7 @@ public:
     std::vector<double> cccurve;
     std::vector<double> LHcurve;
     std::vector<double> HHcurve;
+    std::vector<double> excurve;
 
     double mult[5];
     double threshold;
@@ -964,6 +973,7 @@ public:
     static void getDefaultLHCurve (std::vector<double> &curve);
     static void getDefaultCCCurve (std::vector<double> &curve);
     static void getDefaultHHCurve (std::vector<double> &curve);
+    static void getDefaultexCurve (std::vector<double> &curve);
 
 };
 

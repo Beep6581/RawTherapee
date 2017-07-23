@@ -1757,6 +1757,7 @@ TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_LUM;Curves
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
+TP_LOCALLAB_EXPOSE;Exposure
 TP_LOCALLAB_NOISELUMFINE;Luminance fine
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse
 TP_LOCALLAB_NOISECHROFINE;Chroma fine
@@ -1812,6 +1813,7 @@ TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_SYM;Symmetrical (mouse)
+TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_TRANSIT;Transition
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas.
 TP_LOCALLAB_VIBRANCE;Vibrance

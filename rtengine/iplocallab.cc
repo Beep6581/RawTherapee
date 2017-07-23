@@ -92,7 +92,7 @@ struct local_params {
     int cir;
     float thr;
     int prox;
-    int chro, cont, sens, sensh, senscb, sensbn, senstm;
+    int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex;
     float ligh;
     int shamo, shdamp, shiter, senssha, sensv;
     double shrad;
@@ -127,9 +127,15 @@ struct local_params {
     bool cbdlena;
     bool denoiena;
     bool expvib;
+    bool exposena;
     float past;
     float satur;
-	
+    int blac;
+    int shcomp;
+    int hlcomp;
+    int hlcompthr;
+    double expcomp;
+
 };
 
 static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, struct local_params& lp)
@@ -158,6 +164,7 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     float chromaPastel = float (locallab.pastels)   / 100.0f;
     float chromaSatur  = float (locallab.saturated) / 100.0f;
     int local_sensiv = locallab.sensiv;
+    int local_sensiex = locallab.sensiex;
 
     if (locallab.qualityMethod == "std") {
         lp.qualmet = 0;
@@ -279,6 +286,16 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     lp.past =  chromaPastel;
     lp.satur = chromaSatur;
 
+    lp.exposena = locallab.expexpose;
+
+    lp.blac = locallab.black;
+    lp.shcomp = locallab.shcompr;
+    lp.hlcomp = locallab.hlcompr;
+    lp.hlcompthr = locallab.hlcomprthresh;
+    lp.expcomp = locallab.expcomp / 100.;
+    lp.sensex = local_sensiex;
+
+
 }
 
 static void calcTransition (const float lox, const float loy, const float ach, const local_params& lp, int &zone, float &localFactor)
@@ -390,30 +407,31 @@ void ImProcFunctions::vibrancelocal (const local_params& lp, int bfw, int bfh, L
     if (!params->locallab.expvibrance) {
         return;
     }
-/*
-//  int skip=1; //scale==1 ? 1 : 16;
-    bool skinCurveIsSet = false;
-    DiagonalCurve* dcurve = nullptr;
-    dcurve = new DiagonalCurve (params->localrgb.skintonescurve, CURVES_MIN_POLY_POINTS);
 
-    if (dcurve) {
-        if (!dcurve->isIdentity()) {
-            skinCurveIsSet = true;
-        } else {
-            delete dcurve;
-            dcurve = nullptr;
-        }
-    }
+    /*
+    //  int skip=1; //scale==1 ? 1 : 16;
+        bool skinCurveIsSet = false;
+        DiagonalCurve* dcurve = nullptr;
+        dcurve = new DiagonalCurve (params->localrgb.skintonescurve, CURVES_MIN_POLY_POINTS);
 
-    if (!skinCurveIsSet && !params->localrgb.pastels && !params->localrgb.saturated) {
         if (dcurve) {
-            delete dcurve;
-            dcurve = nullptr;
+            if (!dcurve->isIdentity()) {
+                skinCurveIsSet = true;
+            } else {
+                delete dcurve;
+                dcurve = nullptr;
+            }
         }
 
-        return;
-    }
-*/
+        if (!skinCurveIsSet && !params->localrgb.pastels && !params->localrgb.saturated) {
+            if (dcurve) {
+                delete dcurve;
+                dcurve = nullptr;
+            }
+
+            return;
+        }
+    */
     const int width = bfw;
     const int height = bfh;
 
@@ -422,20 +440,20 @@ void ImProcFunctions::vibrancelocal (const local_params& lp, int bfw, int bfh, L
     t1e.set();
     int negat = 0, moreRGB = 0, negsat = 0, moresat = 0;
 #endif
-/*
-    // skin hue curve
-    // I use diagonal because I think it's better
-    LUTf skin_curve (65536, 0);
+    /*
+        // skin hue curve
+        // I use diagonal because I think it's better
+        LUTf skin_curve (65536, 0);
 
-    if (skinCurveIsSet) {
-        fillCurveArrayVibloc (dcurve, skin_curve);
-    }
+        if (skinCurveIsSet) {
+            fillCurveArrayVibloc (dcurve, skin_curve);
+        }
 
-    if (dcurve) {
-        delete dcurve;
-        dcurve = nullptr;
-    }
-*/
+        if (dcurve) {
+            delete dcurve;
+            dcurve = nullptr;
+        }
+    */
 
 
     const float chromaPastel = float (params->locallab.pastels)   / 100.0f;
@@ -1070,6 +1088,147 @@ void ImProcFunctions::vibrancelocal (const local_params& lp, int bfw, int bfh, L
 
 }
 
+void ImProcFunctions::exlabLocal (const local_params& lp, int bfh, int bfw, LabImage* bufexporig, LabImage* lab,  LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve)
+{
+
+    float maxran = 32768.f; //65536
+    const float exp_scale = pow (2.0, lp.expcomp);//lp.expcomp
+    const float comp = (max (0.0, lp.expcomp) + 1.0) * lp.hlcomp / 100.0;
+    const float shoulder = ((maxran / max (1.0f, exp_scale)) * (lp.hlcompthr / 200.0)) + 0.1;
+    const float hlrange = maxran - shoulder;
+
+
+#define TS 112
+
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+        char *buffer;
+
+        buffer = (char *) malloc (3 * sizeof (float) * TS * TS + 20 * 64 + 63);
+        char *data;
+        data = (char*) ( ( uintptr_t (buffer) + uintptr_t (63)) / 64 * 64);
+
+        float *Ltemp = (float (*))data;
+        float *atemp = (float (*))         ((char*)Ltemp + sizeof (float) * TS * TS + 4 * 64);
+        float *btemp = (float (*))         ((char*)atemp + sizeof (float) * TS * TS + 8 * 64);
+        int istart;
+        int jstart;
+        int tW;
+        int tH;
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic) collapse(2)
+#endif
+
+        for (int ii = 0; ii < bfh; ii += TS)
+            for (int jj = 0; jj < bfw; jj += TS) {
+
+                istart = ii;
+                jstart = jj;
+                tH = min (ii + TS, bfh);
+                tW = min (jj + TS, bfw);
+
+
+                for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                        Ltemp[ti * TS + tj] = 2.f * bufexporig->L[i][j];
+                        atemp[ti * TS + tj] = bufexporig->a[i][j];
+                        btemp[ti * TS + tj] = bufexporig->b[i][j];;
+                    }
+                }
+
+
+                float niv = maxran;
+
+                for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+
+                        float L = Ltemp[ti * TS + tj];
+                        float a = atemp[ti * TS + tj];
+                        float b = btemp[ti * TS + tj];
+                        float tonefactor = (L < MAXVALF ? hltonecurve[L] : CurveFactory::hlcurveloc (exp_scale, comp, hlrange, L, niv) );
+                        Ltemp[ti * TS + tj] = L * tonefactor;
+                    }
+                }
+
+                for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+
+                        float L = Ltemp[ti * TS + tj];
+                        float a = atemp[ti * TS + tj];
+                        float b = btemp[ti * TS + tj];
+
+                        //shadow tone curve
+                        float Y = L;
+                        float tonefactor = shtonecurve[Y];
+                        Ltemp[ti * TS + tj] = Ltemp[ti * TS + tj] * tonefactor;
+                    }
+                }
+
+                for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+
+                        //brightness/contrast
+                        Ltemp[ti * TS + tj] = tonecurve[Ltemp[ti * TS + tj] ];
+
+                    }
+                }
+
+                /*
+                                if (hasToneCurve1) {
+                                    if (curveMode == LocalrgbParams::TC_MODE_STD) { // Standard
+                                        for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                                            for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                                                const StandardToneCurveL& userToneCurve = static_cast<const StandardToneCurveL&> (customToneCurve1);
+                                                userToneCurve.Apply (Ltemp[ti * TS + tj]);
+                                            }
+                                        }
+                                    }
+                                }
+                */
+
+
+
+                if (lp.chro != 0) {
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+
+                            float satby100 = lp.chro / 100.f;
+                            float L = 2.f * Ltemp[ti * TS + tj];
+                            float a = atemp[ti * TS + tj];
+                            float b = btemp[ti * TS + tj];
+
+                            atemp[ti * TS + tj] = a * (1.f + satby100);
+                            btemp[ti * TS + tj] = b * (1.f + satby100);
+                        }
+                    }
+                }
+
+
+                bool vasy = true;
+
+                if (vasy) {
+                    // ready, fill lab
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+
+                            lab->L[i][j] = 0.5f * Ltemp[ti * TS + tj];
+                            lab->a[i][j] = atemp[ti * TS + tj];
+                            lab->b[i][j] = btemp[ti * TS + tj];
+                        }
+                    }
+                }
+            }
+
+        free (buffer);
+
+
+    }
+
+
+}
 
 
 void ImProcFunctions::addGaNoise (LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk)
@@ -3472,11 +3631,11 @@ void ImProcFunctions::Expose_Local (int sen, int call, float **buflight, float *
 //local exposure
     BENCHFUN {
         const float ach = (float)lp.trans / 100.f;
-        float varsens =  lp.sens;
+        float varsens =  lp.sensex;
 
         if (sen == 1)
         {
-            varsens =  lp.sens;
+            varsens =  lp.sensex;
         }
 
         if (sen == 2)
@@ -4742,7 +4901,7 @@ void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * o
     }
 }
 
-void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, double & hueref, double & chromaref, double & lumaref)
+void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk, const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve, bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref)
 {
     //general call of others functions : important return hueref, chromaref, lumaref
     if (params->locallab.enabled) {
@@ -4819,8 +4978,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
         float dhue = ared * lp.sens + bred; //delta hue lght chroma
 
-        float dhuev = ared * lp.sensv + bred; //delta hue lght chroma
-		
+        float dhuev = ared * lp.sensv + bred; //delta hue vibr
+
+        float dhueex = ared * lp.sensex + bred; //delta hue vibr
+
         float dhueret = ared * lp.sensh + bred; //delta hue retinex
 
         float dhuebn = ared * lp.sensbn + bred; //delta hue blur
@@ -4980,7 +5141,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
         bool execdenoi = false ;
         bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0.f); // only if one slider ore more is engaged
         bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f) ;//only if user want cbdl
-        execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f));
+        execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena  && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib  && lp.past != 0.f));
 
         if (((lp.noiself > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) || execdenoi) {
             StopWatch Stop1 ("locallab Denoise called");
@@ -5775,14 +5936,11 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
 // end contrast interior and exterior
 
-//vibrance
-
-        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
-            //  printf("OK appel vib loc\n");
+//exposure
+        if (lp.exposena && (lp.expcomp != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
             float hueplus = hueref + dhuev;
             float huemoins = hueref - dhuev;
 
-          //  printf ("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhuev);
 
             if (hueplus > rtengine::RT_PI) {
                 hueplus = hueref + dhuev - 2.f * rtengine::RT_PI;
@@ -5852,9 +6010,166 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                         int loy = cy + y;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                     //       bufworking->r (loy - begy, lox - begx) = working->r (y, x); //fill square buffer with datas
-                     //       bufworking->g (loy - begy, lox - begx) = working->g (y, x); //fill square buffer with datas
-                     //       bufworking->b (loy - begy, lox - begx) = working->b (y, x); //fill square buffer with datas
+
+                            bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
+                            bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
+                            bufexporig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
+
+                        }
+                    }
+
+
+                ImProcFunctions::exlabLocal (lp, bfh, bfw, bufexporig, bufexpfin, hltonecurveloc, shtonecurveloc, tonecurveloc);
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+
+                            float lL;
+                            float amplil = 140.f;
+                            float lighL = bufexporig->L[loy - begy][lox - begx];
+                            float lighLnew = bufexpfin->L[loy - begy][lox - begx];
+                            float rL;
+                            rL = CLIPRET ((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
+
+                            buflight[loy - begy][lox - begx] = rL;
+
+
+                            float chp;
+                            chp = CLIPRET ((sqrt (SQR (bufexpfin->a[loy - begy][lox - begx]) + SQR (bufexpfin->b[loy - begy][lox - begx])) - sqrt (SQR (bufexporig->a[loy - begy][lox - begx]) + SQR (bufexporig->b[loy - begy][lox - begx]))) / 250.f);
+                            /*
+                              if (chp > maxc) {
+                                   maxc = chp;
+                               }
+
+                               if (chp < minc) {
+                                   minc = chp;
+                               }
+                            */
+                            //  chpro = CLIPCHRO (amplil * ra - amplil); //ampli = 25.f arbitrary empirical coefficient between 5 and 50
+
+                            //ra = 1.f;
+                            bufl_ab[loy - begy][lox - begx] = chp;
+
+                        }
+                    }
+
+                //   printf ("min=%2.2f max=%2.2f", minc, maxc);
+                Expose_Local (1, call, buflight, bufl_ab, hueplus, huemoins, hueref, dhueex, chromaref, lumaref, lp, original, transformed, bufexpfin, cx, cy);
+
+            }
+
+            if (call <= 3) {
+
+                delete bufexporig;
+                delete bufexpfin;
+
+                for (int i = 0; i < bfh; i++) {
+                    delete [] buflight[i];
+                }
+
+                delete [] buflight;
+
+                for (int i = 0; i < bfh; i++) {
+                    delete [] bufl_ab[i];
+                }
+
+                delete [] bufl_ab;
+
+            }
+
+        }
+
+
+
+//vibrance
+
+        if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f)) { //interior ellipse renforced lightness and chroma  //locallutili
+            //  printf("OK appel vib loc\n");
+            float hueplus = hueref + dhuev;
+            float huemoins = hueref - dhuev;
+
+            //  printf ("hueplus=%f huemoins=%f dhu=%f\n", hueplus, huemoins, dhuev);
+
+            if (hueplus > rtengine::RT_PI) {
+                hueplus = hueref + dhuev - 2.f * rtengine::RT_PI;
+            }
+
+            if (huemoins < -rtengine::RT_PI) {
+                huemoins = hueref - dhuev + 2.f * rtengine::RT_PI;
+            }
+
+            LabImage *bufexporig = nullptr;
+            LabImage *bufexpfin = nullptr;
+            float **buflight = nullptr;
+            float **bufl_ab = nullptr;
+
+            int bfh = 0.f, bfw = 0.f;
+
+
+            if (call <= 3) { //simpleprocess, dcrop, improccoordinator
+                bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+                bfw = int (lp.lx + lp.lxL) + del;
+
+
+                bufexporig = new LabImage (bfw, bfh);//buffer for data in zone limit
+                bufexpfin = new LabImage (bfw, bfh);//buffer for data in zone limit
+
+                buflight   = new float*[bfh];//for lightness
+
+                for (int i = 0; i < bfh; i++) {
+                    buflight[i] = new float[bfw];
+                }
+
+                bufl_ab   = new float*[bfh];//for chroma
+
+                for (int i = 0; i < bfh; i++) {
+                    bufl_ab[i] = new float[bfw];
+                }
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++) //fill with 0
+                    for (int jr = 0; jr < bfw; jr++) {
+                        bufexporig->L[ir][jr] = 0.f;
+                        bufexporig->a[ir][jr] = 0.f;
+                        bufexporig->b[ir][jr] = 0.f;
+                        bufexpfin->L[ir][jr] = 0.f;
+                        bufexpfin->a[ir][jr] = 0.f;
+                        bufexpfin->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufl_ab[ir][jr] = 0.f;
+
+
+                    }
+
+                int begy = lp.yc - lp.lyT;
+                int begx = lp.xc - lp.lxL;
+                int yEn = lp.yc + lp.ly;
+                int xEn = lp.xc + lp.lx;
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int y = 0; y < transformed->H ; y++) //{
+                    for (int x = 0; x < transformed->W; x++) {
+                        int lox = cx + x;
+                        int loy = cy + y;
+
+                        if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
+                            //       bufworking->r (loy - begy, lox - begx) = working->r (y, x); //fill square buffer with datas
+                            //       bufworking->g (loy - begy, lox - begx) = working->g (y, x); //fill square buffer with datas
+                            //       bufworking->b (loy - begy, lox - begx) = working->b (y, x); //fill square buffer with datas
 
                             bufexporig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufexporig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
@@ -5993,7 +6308,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
                 tmp1 = new LabImage (bfw, bfh);
-                ImProcFunctions::EPDToneMaplocal (bufgb, tmp1, 5 , 1);
+                ImProcFunctions::EPDToneMaplocal (bufgb, tmp1, 5 , sk);
             } /*else { //stay here in case of
 
                 tmp = new LabImage (transformed->W, transformed->H);

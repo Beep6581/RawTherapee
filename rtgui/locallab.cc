@@ -41,6 +41,7 @@ Locallab::Locallab ():
     FoldableToolPanel (this, "locallab", M ("TP_LOCALLAB_LABEL"), false, true),
     EditSubscriber (ET_OBJECTS), lastObject (-1),
     expcolor (new MyExpander (true, M ("TP_LOCALLAB_COFR"))),
+    expexpose (new MyExpander (true, M ("TP_LOCALLAB_EXPOSE"))),
     expvibrance (new MyExpander (true, M ("TP_LOCALLAB_VIBRANCE"))),
     expblur (new MyExpander (true, M ("TP_LOCALLAB_BLUFR"))),
     exptonemap (new MyExpander (true, M ("TP_LOCALLAB_TM"))),
@@ -70,6 +71,12 @@ Locallab::Locallab ():
     contrast (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
     sensi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
+    expcomp (Gtk::manage (new Adjuster (M ("TP_EXPOSURE_EXPCOMP"), -200, 200, 5, 0))),
+    hlcompr (Gtk::manage (new Adjuster (M ("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 20))),
+    hlcomprthresh (Gtk::manage (new Adjuster (M ("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33))),
+    black (Gtk::manage (new Adjuster (M ("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0))),
+    shcompr (Gtk::manage (new Adjuster (M ("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50))),
+    sensiex (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
     radius (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_RADIUS"), 1, 100, 1, 1) )),
     strength (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0) )),
     sensibn (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 60))),
@@ -77,7 +84,7 @@ Locallab::Locallab ():
     stren (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STREN"), -50, 100, 1, 0))),
     gamma (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_GAM"), 80, 150, 1, 100))),
     estop (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ESTOP"), 10, 400, 1, 140))),
-    scaltm (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SCALTM"), 1, 100, 1, 3))),
+    scaltm (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SCALTM"), 1, 100, 1, 10))),
     rewei (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_REWEI"), 0, 9, 1, 0))),
     sensitm (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSI"), 0, 100, 1, 19))),
     str (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_STR"), 0, 100, 1, 0))),
@@ -180,6 +187,9 @@ Locallab::Locallab ():
 
     expcolor->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expcolor) );
     enablecolorConn = expcolor->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expcolor) );
+
+    expexpose->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expexpose) );
+    enableexposeConn = expexpose->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expexpose) );
 
     expvibrance->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &Locallab::foldAllButMe), expvibrance) );
     enablevibranceConn = expvibrance->signal_enabled_toggled().connect ( sigc::bind ( sigc::mem_fun (this, &Locallab::enableToggled), expvibrance) );
@@ -341,6 +351,16 @@ Locallab::Locallab ():
 
     sensi->set_tooltip_text (M ("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensi->setAdjusterListener (this);
+
+//exposure
+
+    expcomp->setAdjusterListener (this);
+    hlcomprthresh->setAdjusterListener (this);
+    black->setAdjusterListener (this);
+    hlcompr->setAdjusterListener (this);
+    shcompr->setAdjusterListener (this);
+    sensiex->set_tooltip_text (M ("TP_LOCALLAB_SENSI_TOOLTIP"));
+    sensiex->setAdjusterListener (this);
 
     //radius->set_tooltip_text (M("TP_LOCALLAB_RADIUS_TOOLTIP"));
     radius->setAdjusterListener (this);
@@ -606,6 +626,27 @@ Locallab::Locallab ():
     expcolor->setLevel (2);
     pack_start (*expcolor);
 
+    ToolParamBlock* const exposeBox = Gtk::manage (new ToolParamBlock());
+
+    curveEditorG = new CurveEditorGroup (options.lastlocalCurvesDir, M ("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"));
+    curveEditorG->setCurveListener (this);
+
+    shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, ""));
+    shape->setTooltip (M ("TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP"));
+    curveEditorG->curveListComplete();
+
+
+    exposeBox->pack_start (*expcomp);
+    exposeBox->pack_start (*hlcompr);
+    exposeBox->pack_start (*hlcomprthresh);
+    exposeBox->pack_start (*black);
+    exposeBox->pack_start (*shcompr);
+    exposeBox->pack_start (*sensiex);
+    exposeBox->pack_start (*curveEditorG);
+
+    expexpose->add (*exposeBox);
+    expexpose->setLevel (2);
+    pack_start (*expexpose);
 
     ToolParamBlock* const vibranceBox = Gtk::manage (new ToolParamBlock());
     std::vector<GradientMilestone> milestonesvib;
@@ -1012,6 +1053,7 @@ void Locallab::foldAllButMe (GdkEventButton* event, MyExpander *expander)
     if (event->button == 3) {
         expsettings->set_expanded (expsettings == expander);
         expcolor->set_expanded (expcolor == expander);
+        expexpose->set_expanded (expexpose == expander);
         expvibrance->set_expanded (expvibrance == expander);
         expblur->set_expanded (expblur == expander);
         exptonemap->set_expanded (exptonemap == expander);
@@ -1030,6 +1072,8 @@ void Locallab::enableToggled (MyExpander *expander)
 
         if (expander == expcolor) {
             event = EvLocenacolor;
+        } else if (expander == expexpose) {
+            event = EvLocenaexpose;
         } else if (expander == expvibrance) {
             event = EvLocenavibrance;
         } else if (expander == expblur) {
@@ -1063,6 +1107,7 @@ void Locallab::writeOptions (std::vector<int> &tpOpen)
 {
     tpOpen.push_back (expsettings->get_expanded ());
     tpOpen.push_back (expcolor->get_expanded ());
+    tpOpen.push_back (expexpose->get_expanded ());
     tpOpen.push_back (expvibrance->get_expanded ());
     tpOpen.push_back (expblur->get_expanded ());
     tpOpen.push_back (exptonemap->get_expanded ());
@@ -1075,16 +1120,17 @@ void Locallab::writeOptions (std::vector<int> &tpOpen)
 
 void Locallab::updateToolState (std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() == 9) {
+    if (tpOpen.size() == 10) {
         expsettings->set_expanded (tpOpen.at (0));
         expcolor->set_expanded (tpOpen.at (1));
-        expvibrance->set_expanded (tpOpen.at (2));
-        expblur->set_expanded (tpOpen.at (3));
-        exptonemap->set_expanded (tpOpen.at (4));
-        expreti->set_expanded (tpOpen.at (5));
-        expsharp->set_expanded (tpOpen.at (6));
-        expcbdl->set_expanded (tpOpen.at (7));
-        expdenoi->set_expanded (tpOpen.at (8));
+        expexpose->set_expanded (tpOpen.at (2));
+        expvibrance->set_expanded (tpOpen.at (3));
+        expblur->set_expanded (tpOpen.at (4));
+        exptonemap->set_expanded (tpOpen.at (5));
+        expreti->set_expanded (tpOpen.at (6));
+        expsharp->set_expanded (tpOpen.at (7));
+        expcbdl->set_expanded (tpOpen.at (8));
+        expdenoi->set_expanded (tpOpen.at (9));
     }
 }
 
@@ -1581,6 +1627,14 @@ bool Locallab::localComputed_ ()
 
     }
 
+    expcomp->setValue (nextdatasp[64]);
+    black->setValue (nextdatasp[65]);
+    hlcompr->setValue (nextdatasp[66]);
+    hlcomprthresh->setValue (nextdatasp[67]);
+    shcompr->setValue (nextdatasp[68]);
+    sensiex->setValue (nextdatasp[69]);
+	
+	
     double intermed = 0.01 * (double) nextdatasp[64];
     hueref->setValue (intermed);
     chromaref->setValue (nextdatasp[65]);
@@ -1829,7 +1883,7 @@ bool Locallab::localComputed_ ()
 
 void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 67; i++) {
+    for (int i = 2; i < 73; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -1892,6 +1946,13 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         lightness->setEditedState (pedited->locallab.lightness ? Edited : UnEdited);
         contrast->setEditedState (pedited->locallab.contrast ? Edited : UnEdited);
         chroma->setEditedState (pedited->locallab.chroma ? Edited : UnEdited);
+        expcomp->setEditedState (pedited->locallab.expcomp ? Edited : UnEdited);
+        hlcompr->setEditedState (pedited->locallab.hlcompr ? Edited : UnEdited);
+        hlcomprthresh->setEditedState (pedited->locallab.hlcomprthresh ? Edited : UnEdited);
+        black->setEditedState (pedited->locallab.black ? Edited : UnEdited);
+        shcompr->setEditedState (pedited->locallab.shcompr ? Edited : UnEdited);
+        sensiex->setEditedState (pedited->locallab.sensiex ? Edited : UnEdited);
+
         sharradius->setEditedState (pedited->locallab.sharradius ? Edited : UnEdited);
         sharamount->setEditedState (pedited->locallab.sharamount ? Edited : UnEdited);
         shardamping->setEditedState (pedited->locallab.shardamping ? Edited : UnEdited);
@@ -1953,9 +2014,11 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         ccshape->setUnChanged  (!pedited->locallab.cccurve);
         LHshape->setUnChanged  (!pedited->locallab.LHcurve);
         HHshape->setUnChanged  (!pedited->locallab.HHcurve);
+        shape->setUnChanged  (!pedited->locallab.excurve);
         inversret->set_inconsistent (multiImage && !pedited->locallab.inversret);
         cTgainshaperab->setUnChanged  (!pedited->locallab.localTgaincurverab);
         expcolor->set_inconsistent   (!pedited->locallab.expcolor);
+        expexpose->set_inconsistent   (!pedited->locallab.expexpose);
         expvibrance->set_inconsistent   (!pedited->locallab.expvibrance);
         expblur->set_inconsistent   (!pedited->locallab.expblur);
         exptonemap->set_inconsistent   (!pedited->locallab.exptonemap);
@@ -2024,12 +2087,20 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     lightness->setValue (pp->locallab.lightness);
     contrast->setValue (pp->locallab.contrast);
     chroma->setValue (pp->locallab.chroma);
+    expcomp->setValue (pp->locallab.expcomp);
+    hlcompr->setValue (pp->locallab.hlcompr);
+    hlcomprthresh->setValue (pp->locallab.hlcomprthresh);
+    black->setValue (pp->locallab.black);
+    shcompr->setValue (pp->locallab.shcompr);
+    shcompr->set_sensitive (! ((int)black->getValue () == 0));  //at black=0 shcompr value has no effect
+
     sharradius->setValue (pp->locallab.sharradius);
     sharamount->setValue (pp->locallab.sharamount);
     shardamping->setValue (pp->locallab.shardamping);
     shariter->setValue (pp->locallab.shariter);
     sensisha->setValue (pp->locallab.sensisha);
     sensi->setValue (pp->locallab.sensi);
+    sensiex->setValue (pp->locallab.sensiex);
     sensih->setValue (pp->locallab.sensih);
     retrab->setValue (pp->locallab.retrab);
     sensicb->setValue (pp->locallab.sensicb);
@@ -2057,6 +2128,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     llshape->setCurve (pp->locallab.llcurve);
     ccshape->setCurve (pp->locallab.cccurve);
     LHshape->setCurve (pp->locallab.LHcurve);
+    shape->setCurve (pp->locallab.excurve);
     HHshape->setCurve (pp->locallab.HHcurve);
     lastactivlum = pp->locallab.activlum;
     lastanbspot = pp->locallab.anbspot;
@@ -2065,6 +2137,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     noisechrof->setValue (pp->locallab.noisechrof);
     noisechroc->setValue (pp->locallab.noisechroc);
     expcolor->setEnabled (pp->locallab.expcolor);
+    expexpose->setEnabled (pp->locallab.expexpose);
     expvibrance->setEnabled (pp->locallab.expvibrance);
     sensiv->setValue (pp->locallab.sensiv);
 
@@ -2437,6 +2510,11 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.lightness = lightness->getIntValue ();
     pp->locallab.contrast = contrast->getIntValue ();
     pp->locallab.chroma = chroma->getIntValue ();
+    pp->locallab.expcomp = expcomp->getValue ();
+    pp->locallab.black = (int)black->getValue ();
+    pp->locallab.hlcompr = (int)hlcompr->getValue ();
+    pp->locallab.hlcomprthresh = (int)hlcomprthresh->getValue ();
+    pp->locallab.shcompr = (int)shcompr->getValue ();
     pp->locallab.noiselumc = noiselumc->getIntValue ();
     pp->locallab.noiselumf = noiselumf->getIntValue ();
     pp->locallab.noisechrof = noisechrof->getIntValue ();
@@ -2447,6 +2525,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.shariter = shariter->getIntValue ();
     pp->locallab.sensisha = sensisha->getIntValue ();
     pp->locallab.sensi = sensi->getIntValue ();
+    pp->locallab.sensiex = sensiex->getIntValue ();
     pp->locallab.sensih = sensih->getIntValue ();
     pp->locallab.retrab = retrab->getIntValue ();
     pp->locallab.sensicb = sensicb->getIntValue ();
@@ -2483,7 +2562,9 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.cccurve       = ccshape->getCurve ();
     pp->locallab.LHcurve       = LHshape->getCurve ();
     pp->locallab.HHcurve       = HHshape->getCurve ();
+    pp->locallab.excurve       = shape->getCurve ();
     pp->locallab.expcolor      = expcolor->getEnabled();
+    pp->locallab.expexpose      = expexpose->getEnabled();
     pp->locallab.expvibrance      = expvibrance->getEnabled();
     pp->locallab.expblur      = expblur->getEnabled();
     pp->locallab.exptonemap      = exptonemap->getEnabled();
@@ -2526,6 +2607,12 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.lightness = lightness->getEditedState ();
         pedited->locallab.contrast = contrast->getEditedState ();
         pedited->locallab.chroma = chroma->getEditedState ();
+        pedited->locallab.expcomp    = expcomp->getEditedState ();
+        pedited->locallab.black      = black->getEditedState ();
+        pedited->locallab.hlcompr    = hlcompr->getEditedState ();
+        pedited->locallab.hlcomprthresh = hlcomprthresh->getEditedState ();
+        pedited->locallab.shcompr    = shcompr->getEditedState ();
+
         pedited->locallab.noiselumf = noiselumf->getEditedState ();
         pedited->locallab.noiselumc = noiselumc->getEditedState ();
         pedited->locallab.noisechrof = noisechrof->getEditedState ();
@@ -2536,6 +2623,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.shariter = shariter->getEditedState ();
         pedited->locallab.sensisha = sensisha->getEditedState ();
         pedited->locallab.sensi = sensi->getEditedState ();
+        pedited->locallab.sensiex = sensiex->getEditedState ();
         pedited->locallab.sensih = sensih->getEditedState ();
         pedited->locallab.retrab = retrab->getEditedState ();
         pedited->locallab.sensicb = sensicb->getEditedState ();
@@ -2572,8 +2660,10 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.llcurve        = !llshape->isUnChanged ();
         pedited->locallab.cccurve        = !ccshape->isUnChanged ();
         pedited->locallab.LHcurve        = !LHshape->isUnChanged ();
+        pedited->locallab.excurve        = !shape->isUnChanged ();
         pedited->locallab.HHcurve        = !HHshape->isUnChanged ();
         pedited->locallab.expcolor     = !expcolor->get_inconsistent();
+        pedited->locallab.expexpose     = !expexpose->get_inconsistent();
         pedited->locallab.expvibrance     = !expvibrance->get_inconsistent();
         pedited->locallab.expblur     = !expblur->get_inconsistent();
         pedited->locallab.exptonemap     = !exptonemap->get_inconsistent();
@@ -2777,6 +2867,16 @@ void Locallab::curveChanged (CurveEditor* ce)
             adjusterChanged (retrab, strval + 1);
             usleep (10000); //to test
             retrab->setValue (strval);
+        } else if (ce == shape) {
+            listener->panelChanged (Evlocallabshape, M (""));
+            int strval = retrab->getValue();
+            //update MIP
+            retrab->setValue (strval + 1);
+            adjusterChanged (retrab, strval + 1);
+            usleep (10000); //to test
+            retrab->setValue (strval);
+
+            adjusterChanged (retrab, strval);
 
 
         } else if (ce == llshape) {
@@ -3144,6 +3244,12 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
     lightness->setDefault (defParams->locallab.lightness);
     contrast->setDefault (defParams->locallab.contrast);
     chroma->setDefault (defParams->locallab.chroma);
+    expcomp->setDefault (defParams->locallab.expcomp);
+    black->setDefault (defParams->locallab.black);
+    hlcompr->setDefault (defParams->locallab.hlcompr);
+    hlcomprthresh->setDefault (defParams->locallab.hlcomprthresh);
+    shcompr->setDefault (defParams->locallab.shcompr);
+
     noiselumf->setDefault (defParams->locallab.noiselumf);
     noiselumc->setDefault (defParams->locallab.noiselumc);
     noisechrof->setDefault (defParams->locallab.noisechrof);
@@ -3154,6 +3260,7 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
     shariter->setDefault (defParams->locallab.shariter);
     sensisha->setDefault (defParams->locallab.sensisha);
     sensi->setDefault (defParams->locallab.sensi);
+    sensiex->setDefault (defParams->locallab.sensiex);
     sensih->setDefault (defParams->locallab.sensih);
     retrab->setDefault (defParams->locallab.retrab);
     sensicb->setDefault (defParams->locallab.sensicb);
@@ -3203,6 +3310,12 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         lightness->setDefaultEditedState (pedited->locallab.lightness ? Edited : UnEdited);
         contrast->setDefaultEditedState (pedited->locallab.contrast ? Edited : UnEdited);
         chroma->setDefaultEditedState (pedited->locallab.chroma ? Edited : UnEdited);
+        expcomp->setDefaultEditedState (pedited->locallab.expcomp ? Edited : UnEdited);
+        black->setDefaultEditedState (pedited->locallab.black ? Edited : UnEdited);
+        hlcompr->setDefaultEditedState (pedited->locallab.hlcompr ? Edited : UnEdited);
+        hlcomprthresh->setDefaultEditedState (pedited->locallab.hlcomprthresh ? Edited : UnEdited);
+        shcompr->setDefaultEditedState (pedited->locallab.shcompr ? Edited : UnEdited);
+
         noiselumf->setDefaultEditedState (pedited->locallab.noiselumf ? Edited : UnEdited);
         noiselumc->setDefaultEditedState (pedited->locallab.noiselumc ? Edited : UnEdited);
         noisechrof->setDefaultEditedState (pedited->locallab.noisechrof ? Edited : UnEdited);
@@ -3213,6 +3326,7 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         shariter->setDefaultEditedState (pedited->locallab.shariter ? Edited : UnEdited);
         sensisha->setDefaultEditedState (pedited->locallab.sensisha ? Edited : UnEdited);
         sensi->setDefaultEditedState (pedited->locallab.sensi ? Edited : UnEdited);
+        sensiex->setDefaultEditedState (pedited->locallab.sensiex ? Edited : UnEdited);
         sensih->setDefaultEditedState (pedited->locallab.sensih ? Edited : UnEdited);
         retrab->setDefaultEditedState (pedited->locallab.retrab ? Edited : UnEdited);
         sensicb->setDefaultEditedState (pedited->locallab.sensicb ? Edited : UnEdited);
@@ -3261,6 +3375,12 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         lightness->setDefaultEditedState (Irrelevant);
         contrast->setDefaultEditedState (Irrelevant);
         chroma->setDefaultEditedState (Irrelevant);
+        expcomp->setDefaultEditedState (Irrelevant);
+        black->setDefaultEditedState (Irrelevant);
+        hlcompr->setDefaultEditedState (Irrelevant);
+        hlcomprthresh->setDefaultEditedState (Irrelevant);
+        shcompr->setDefaultEditedState (Irrelevant);
+
         noiselumf->setDefaultEditedState (Irrelevant);
         noiselumc->setDefaultEditedState (Irrelevant);
         noisechrof->setDefaultEditedState (Irrelevant);
@@ -3271,6 +3391,7 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         shariter->setDefaultEditedState (Irrelevant);
         sensisha->setDefaultEditedState (Irrelevant);
         sensi->setDefaultEditedState (Irrelevant);
+        sensiex->setDefaultEditedState (Irrelevant);
         sensih->setDefaultEditedState (Irrelevant);
         retrab->setDefaultEditedState (Irrelevant);
         sensicb->setDefaultEditedState (Irrelevant);
@@ -3396,6 +3517,21 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
             listener->panelChanged (Evlocallabcontrast, contrast->getTextValue());
         } else if (a == chroma) {
             listener->panelChanged (Evlocallabchroma, chroma->getTextValue());
+        } else if (a == expcomp) {
+            listener->panelChanged (Evlocallabexpcomp, expcomp->getTextValue());
+        } else if (a == hlcompr) {
+            listener->panelChanged (Evlocallabhlcompr, hlcompr->getTextValue());
+        } else if (a == hlcomprthresh) {
+            listener->panelChanged (Evlocallabhlcomprthresh, hlcomprthresh->getTextValue());
+        } else if (a == black) {
+            listener->panelChanged (Evlocallabblack, black->getTextValue());
+            shcompr->set_sensitive (! ((int)black->getValue () == 0));  //at black=0 shcompr value has no effect
+        } else if (a == shcompr) {
+            listener->panelChanged (Evlocallabshcompr, shcompr->getTextValue());
+        } else if (a == sensiex) {
+            listener->panelChanged (Evlocallabsensiex, sensiex->getTextValue());
+
+
         } else if (a == pastels ) {
             listener->panelChanged (EvlocallabPastels, pastels->getTextValue() );
         } else if (a == saturated && !pastSatTog->get_active()) {
@@ -3572,6 +3708,12 @@ void Locallab::trimValues (rtengine::procparams::ProcParams * pp)
     lightness->trimValue (pp->locallab.lightness);
     contrast->trimValue (pp->locallab.contrast);
     chroma->trimValue (pp->locallab.chroma);
+    expcomp->trimValue (pp->locallab.expcomp);
+    hlcompr->trimValue (pp->locallab.hlcompr);
+    hlcomprthresh->trimValue (pp->locallab.hlcomprthresh);
+    black->trimValue (pp->locallab.black);
+    shcompr->trimValue (pp->locallab.shcompr);
+
     noiselumf->trimValue (pp->locallab.noiselumf);
     noiselumc->trimValue (pp->locallab.noiselumc);
     noisechrof->trimValue (pp->locallab.noisechrof);
@@ -3582,6 +3724,7 @@ void Locallab::trimValues (rtengine::procparams::ProcParams * pp)
     shariter->trimValue (pp->locallab.shariter);
     sensisha->trimValue (pp->locallab.sensisha);
     sensi->trimValue (pp->locallab.sensi);
+    sensiex->trimValue (pp->locallab.sensiex);
     sensih->trimValue (pp->locallab.sensih);
     retrab->trimValue (pp->locallab.retrab);
     sensicb->trimValue (pp->locallab.sensicb);
@@ -3639,6 +3782,12 @@ void Locallab::setBatchMode (bool batchMode)
     lightness->showEditedCB ();
     contrast->showEditedCB ();
     chroma->showEditedCB ();
+    expcomp->showEditedCB ();
+    black->showEditedCB ();
+    hlcompr->showEditedCB ();
+    hlcomprthresh->showEditedCB ();
+    shcompr->showEditedCB ();
+
     noiselumf->showEditedCB ();
     noiselumc->showEditedCB ();
     noisechroc->showEditedCB ();
@@ -3649,6 +3798,7 @@ void Locallab::setBatchMode (bool batchMode)
     shariter->showEditedCB ();
     sensisha->showEditedCB ();
     sensi->showEditedCB ();
+    sensiex->showEditedCB ();
     sensih->showEditedCB ();
     retrab->showEditedCB ();
     sensicb->showEditedCB ();

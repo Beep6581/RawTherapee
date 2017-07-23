@@ -822,7 +822,9 @@ void Crop::update (int todo)
         LUTf cclocalcurve2 (65536, 0);
         bool localskutili = parent->localskutili;
         LUTf sklocalcurve2 (65536, 0);
-
+        LUTf hltonecurveloc2 (32768, 0);//65536
+        LUTf shtonecurveloc2 (32768, 0);
+        LUTf tonecurveloc2 (32768, 0);
         bool LHutili = parent->LHutili;
         bool HHutili = parent->HHutili;
 
@@ -1014,6 +1016,14 @@ void Crop::update (int todo)
                             params.locallab.pastsattog = true;
                         }
 
+
+                        params.locallab.expcomp = parent->expcomps[sp];
+                        params.locallab.black = parent->blacks[sp];
+                        params.locallab.hlcompr = parent->hlcomprs[sp];
+                        params.locallab.hlcomprthresh = parent->hlcomprthreshs[sp];
+                        params.locallab.shcompr = parent->shcomprs[sp];
+                        params.locallab.sensiex = parent->sensiexs[sp];
+
                         std::vector<double>   cretie;
 
                         for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1078,13 +1088,26 @@ void Crop::update (int todo)
                         //localskutili = false;
                         CurveFactory::curveskLocal (localskutili, params.locallab.skintonescurve, sklocalcurve2, sca);
 
+
+                        double br = 0.;
+                        double contr = 0.;
+                        double ecomp = params.locallab.expcomp;
+                        double black = params.locallab.black;
+                        double hlcompr = params.locallab.hlcompr;
+                        double hlcomprthresh = params.locallab.hlcomprthresh;
+                        double shcompr = params.locallab.shcompr;
+
+                        CurveFactory::complexCurvelocal (ecomp, black, hlcompr, hlcomprthresh, shcompr, br, contr,
+                                                         parent->lhist16, hltonecurveloc2 , shtonecurveloc2, tonecurveloc2,
+                                                         sca);
+
                         params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
                         params.locallab.chromaref = parent->chromarefs[sp];
                         params.locallab.lumaref = parent->lumarefs[sp];
 
                         // printf ("dcr1 sp=%i huer=%f \n", sp, parent->huerefs[sp] / 100.f );
 
-                        parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                        parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, hltonecurveloc2 , shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                         lllocalcurve2.clear();
                         cclocalcurve2.clear();
                         sklocalcurve2.clear();
@@ -1303,6 +1326,13 @@ void Crop::update (int todo)
 
                 }
 
+                parent->expcomps[sp] = params.locallab.expcomp = parent->expcomps[0];
+                parent->blacks[sp] = params.locallab.black = parent->blacks[0];
+                parent->hlcomprs[sp] = params.locallab.hlcompr = parent->hlcomprs[0];
+                parent->hlcomprthreshs[sp] = params.locallab.hlcomprthresh = parent->hlcomprthreshs[0];
+                parent->shcomprs[sp] = params.locallab.shcompr = parent->shcomprs[0];
+                parent->sensiexs[sp] = params.locallab.sensiex = parent->sensiexs[0];
+
                 std::vector<double>   ccret;
 
                 for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1377,12 +1407,23 @@ void Crop::update (int todo)
                 CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve2, sca);
                 CurveFactory::curveskLocal (localskutili, params.locallab.skintonescurve, sklocalcurve2, sca);
 
+                double br = 0.;
+                double contr = 0.;
+                double ecomp = params.locallab.expcomp;
+                double black = params.locallab.black;
+                double hlcompr = params.locallab.hlcompr;
+                double hlcomprthresh = params.locallab.hlcomprthresh;
+                double shcompr = params.locallab.shcompr;
+
+                CurveFactory::complexCurvelocal (ecomp, black, hlcompr, hlcomprthresh, shcompr, br, contr,
+                                                 parent->lhist16, hltonecurveloc2 , shtonecurveloc2, tonecurveloc2,
+                                                 sca);
 
                 params.locallab.hueref = (parent->huerefs[sp]) / 100.f;
                 params.locallab.chromaref = parent->chromarefs[sp];
                 params.locallab.lumaref = parent->lumarefs[sp];
                 // printf ("dcr2   = sp=%i huer=%f \n", sp, parent->huerefs[sp] / 100.f);
-                parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                parent->ipf.Lab_Local (1, sp, (float**)shbuffer, labnCrop, labnCrop, trafx / skip, trafy / skip, cropx / skip, cropy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->fw, parent->fh, locutili, skip,  locRETgainCurve, locallutili, lllocalcurve2, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve2, localskutili, sklocalcurve2, hltonecurveloc2 , shtonecurveloc2, tonecurveloc2, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
 
                 lllocalcurve2.clear();
                 cclocalcurve2.clear();

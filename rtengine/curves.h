@@ -279,12 +279,40 @@ public:
         }
     }
 
+    static inline float hlcurveloc (const float exp_scale, const float comp, const float hlrange, float level, float niv)
+    {
+        if (comp > 0.0) {
+            float val = level + (hlrange - niv);//655536 32768
+
+            if (val == 0.0f) { // to avoid division by zero
+                val = 0.000001f;
+            }
+
+            float Y = val * exp_scale / hlrange;
+            Y *= comp;
+
+            if (Y <= -1.0) { // to avoid log(<=0)
+                Y = -.999999f;
+            }
+
+            float R = hlrange / (val * comp);
+            return log1p (Y) * R;
+        } else {
+            return exp_scale;
+        }
+    }
+	
 public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
                               procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
                               LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
 
                               int skip = 1);
+
+    static void complexCurvelocal (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
+                                   LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
+                                   int skip = 1);
+
     static void curveBW (const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2, const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,
                          ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip);
 
@@ -299,6 +327,7 @@ public:
     static void curveLocal ( bool & locallutili, const std::vector<double>& curvePoints, LUTf & LocalLCurve, int skip);
     static void curveCCLocal ( bool & localcutili, const std::vector<double>& curvePoints, LUTf & LocalCCurve, int skip);
     static void curveskLocal ( bool & localskutili, const std::vector<double>& curvePoints, LUTf & LocalskCurve, int skip);
+    static void curveexLocal ( bool & localexutili, const std::vector<double>& curvePoints, LUTf & LocalexCurve, int skip);
 
     static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & clcutili, const std::vector<double>& acurvePoints,
                                   const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints, const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,

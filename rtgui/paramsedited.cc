@@ -291,6 +291,7 @@ void ParamsEdited::set (bool v)
     gradient.centerY = v;
     locallab.enabled = v;
     locallab.expcolor = v;
+    locallab.expexpose = v;
     locallab.expvibrance = v;
     locallab.expblur = v;
     locallab.exptonemap = v;
@@ -313,6 +314,12 @@ void ParamsEdited::set (bool v)
     locallab.lightness = v;
     locallab.contrast = v;
     locallab.chroma = v;
+    locallab.expcomp = v;
+    locallab.hlcompr = v;
+    locallab.hlcomprthresh = v;
+    locallab.black = v;
+    locallab.shcompr = v;
+
     locallab.noiselumf = v;
     locallab.noiselumc = v;
     locallab.noisechrof = v;
@@ -322,6 +329,7 @@ void ParamsEdited::set (bool v)
     locallab.shardamping = v;
     locallab.shariter = v;
     locallab.sensi = v;
+    locallab.sensiex = v;
     locallab.sensih = v;
     locallab.retrab = v;
     locallab.sensicb = v;
@@ -360,6 +368,7 @@ void ParamsEdited::set (bool v)
     locallab.cccurve = v;
     locallab.LHcurve = v;
     locallab.HHcurve = v;
+    locallab.excurve = v;
 
     for (int i = 0; i < 5; i++) {
         locallab.mult[i] = v;
@@ -925,6 +934,13 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.lightness = locallab.lightness && p.locallab.lightness == other.locallab.lightness;
         locallab.contrast = locallab.contrast && p.locallab.contrast == other.locallab.contrast;
         locallab.chroma = locallab.chroma && p.locallab.chroma == other.locallab.chroma;
+        locallab.expcomp = locallab.expcomp && p.locallab.expcomp == other.locallab.expcomp;
+        locallab.hlcompr = locallab.hlcompr && p.locallab.hlcompr == other.locallab.hlcompr;
+        locallab.hlcomprthresh = locallab.hlcomprthresh && p.locallab.hlcomprthresh == other.locallab.hlcomprthresh;
+        locallab.black = locallab.black && p.locallab.black == other.locallab.black;
+        locallab.shcompr = locallab.shcompr && p.locallab.shcompr == other.locallab.shcompr;
+
+
         locallab.noiselumf = locallab.noiselumf && p.locallab.noiselumf == other.locallab.noiselumf;
         locallab.noiselumc = locallab.noiselumc && p.locallab.noiselumc == other.locallab.noiselumc;
         locallab.noisechrof = locallab.noisechrof && p.locallab.noisechrof == other.locallab.noisechrof;
@@ -933,6 +949,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.sharamount = locallab.sharamount && p.locallab.sharamount == other.locallab.sharamount;
         locallab.shariter = locallab.shariter && p.locallab.shariter == other.locallab.shariter;
         locallab.sensi = locallab.sensi && p.locallab.sensi == other.locallab.sensi;
+        locallab.sensiex = locallab.sensiex && p.locallab.sensiex == other.locallab.sensiex;
         locallab.sensih = locallab.sensih && p.locallab.sensih == other.locallab.sensih;
         locallab.retrab = locallab.retrab && p.locallab.retrab == other.locallab.retrab;
         locallab.sensicb = locallab.sensicb && p.locallab.sensicb == other.locallab.sensicb;
@@ -962,7 +979,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.cccurve = locallab.cccurve && p.locallab.cccurve == other.locallab.cccurve;
         locallab.LHcurve = locallab.LHcurve && p.locallab.LHcurve == other.locallab.LHcurve;
         locallab.HHcurve = locallab.HHcurve && p.locallab.HHcurve == other.locallab.HHcurve;
+        locallab.excurve = locallab.excurve && p.locallab.excurve == other.locallab.excurve;
         locallab.expcolor = locallab.expcolor && p.locallab.expcolor == other.locallab.expcolor;
+        locallab.expexpose = locallab.expexpose && p.locallab.expexpose == other.locallab.expexpose;
         locallab.expvibrance = locallab.expvibrance && p.locallab.expvibrance == other.locallab.expvibrance;
         locallab.expblur = locallab.expblur && p.locallab.expblur == other.locallab.expblur;
         locallab.exptonemap = locallab.exptonemap && p.locallab.exptonemap == other.locallab.exptonemap;
@@ -2220,6 +2239,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.expcolor   = mods.locallab.expcolor;
     }
 
+    if (locallab.expexpose) {
+        toEdit.locallab.expexpose   = mods.locallab.expexpose;
+    }
+
     if (locallab.expvibrance) {
         toEdit.locallab.expvibrance   = mods.locallab.expvibrance;
     }
@@ -2344,6 +2367,26 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.chroma    = mods.locallab.chroma;
     }
 
+    if (locallab.expcomp) {
+        toEdit.locallab.expcomp     = mods.locallab.expcomp;
+    }
+
+    if (locallab.hlcompr) {
+        toEdit.locallab.hlcompr     = mods.locallab.hlcompr;
+    }
+
+    if (locallab.hlcomprthresh) {
+        toEdit.locallab.hlcomprthresh     = mods.locallab.hlcomprthresh;
+    }
+
+    if (locallab.black) {
+        toEdit.locallab.black     = mods.locallab.black;
+    }
+
+    if (locallab.shcompr) {
+        toEdit.locallab.shcompr     = mods.locallab.shcompr;
+    }
+
     if (locallab.pastels) {
         toEdit.locallab.pastels           = mods.locallab.pastels;
     }
@@ -2376,6 +2419,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.sensiv     = mods.locallab.sensiv;
     }
 
+    if (locallab.sensiex) {
+        toEdit.locallab.sensiex     = mods.locallab.sensiex;
+    }
 
     if (locallab.noiselumf) {
         toEdit.locallab.noiselumf    = mods.locallab.noiselumf;
@@ -2520,6 +2566,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (locallab.LHcurve) {
         toEdit.locallab.LHcurve   = mods.locallab.LHcurve;
+    }
+
+    if (locallab.excurve) {
+        toEdit.locallab.excurve   = mods.locallab.excurve;
     }
 
     if (locallab.HHcurve) {

@@ -6448,7 +6448,7 @@ void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, float 
 
     //Jacques Desmis : always Iterates=5 for compatibility images between preview and output
 
-    epd.CompressDynamicRange (Qpr, (float)sca / skip, (float)edgest, Compression, DetailBoost, Iterates, rew);
+    epd.CompressDynamicRange (Qpr, sca / (float) skip, edgest, Compression, DetailBoost, Iterates, rew);
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf (Compression, 1.5856f) / (1.0f + 38.7889f * powf (Compression, 1.5856f));

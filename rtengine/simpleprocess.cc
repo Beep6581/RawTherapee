@@ -1047,7 +1047,10 @@ private:
             LUTf lllocalcurve (65536, 0);
             LUTf cclocalcurve (65536, 0);
             LUTf sklocalcurve (65536, 0);
-
+            LUTf hltonecurveloc (32768, 0);
+            LUTf shtonecurveloc (32768, 0);
+            LUTf tonecurveloc (32768, 0);
+            LUTf exlocalcurve (32768, 0);
             //    int realspot = params.locallab.nbspot;
             int maxspot = settings->nspot + 1;
             ifstream fic0 (datalab, ios::in);
@@ -1098,9 +1101,9 @@ private:
                 std::string inser;
 
                 int **dataspots;
-                dataspots = new int*[67];
+                dataspots = new int*[73];
 
-                for (int i = 0; i < 67; i++) {
+                for (int i = 0; i < 73; i++) {
                     dataspots[i] = new int[maxspot];
                 }
 
@@ -1273,9 +1276,16 @@ private:
                         dataspots[63][0] = 1;
                     }
 
-                    dataspots[64][0] = 100.f * params.locallab.hueref;
-                    dataspots[65][0] = params.locallab.chromaref;
-                    dataspots[66][0] = params.locallab.lumaref;
+                    dataspots[64][0] = params.locallab.expcomp;
+                    dataspots[65][0] = params.locallab.black;
+                    dataspots[66][0] = params.locallab.hlcompr;
+                    dataspots[67][0] = params.locallab.hlcomprthresh;
+                    dataspots[68][0] = params.locallab.shcompr;
+                    dataspots[69][0] = params.locallab.sensiex;
+
+                    dataspots[70][0] = 100.f * params.locallab.hueref;
+                    dataspots[71][0] = params.locallab.chromaref;
+                    dataspots[72][0] = params.locallab.lumaref;
 
                     //curve Reti local
                     int siz = params.locallab.localTgaincurve.size();
@@ -1474,7 +1484,7 @@ private:
                             dataspots[16][0] = std::stoi (str3.c_str());
                         }
 
-                        if (cont > 16  && cont < 67) {
+                        if (cont > 16  && cont < 73) {
                             dataspots[cont][ns] = std::stoi (str3.c_str());
 
                         }
@@ -1755,9 +1765,16 @@ private:
                         params.locallab.pastsattog  = true;
                     }
 
-                    params.locallab.hueref = ((float) dataspots[64][sp]) / 100.f;
-                    params.locallab.chromaref = dataspots[65][sp];
-                    params.locallab.lumaref = dataspots[66][sp];
+                    params.locallab.expcomp = dataspots[64][sp];
+                    params.locallab.black = dataspots[65][sp];
+                    params.locallab.hlcompr = dataspots[66][sp];
+                    params.locallab.hlcomprthresh = dataspots[67][sp];
+                    params.locallab.shcompr =  dataspots[68][sp];
+                    params.locallab.sensiex =  dataspots[69][sp];
+
+                    params.locallab.hueref = ((float) dataspots[70][sp]) / 100.f;
+                    params.locallab.chromaref = dataspots[71][sp];
+                    params.locallab.lumaref = dataspots[72][sp];
 
 
                     int *s_datc;
@@ -1884,7 +1901,7 @@ private:
                     bool locallutili = false;
                     bool localcutili = false;
                     bool localskutili = false;
-
+                    bool localexutili = false;
                     std::string t_curvskinref = "3000A0B0C1000D1000E@";
                     std::string t_none = "0A@";
 
@@ -1896,6 +1913,20 @@ private:
                     CurveFactory::curveCCLocal (localcutili, params.locallab.cccurve, cclocalcurve, 1);
                     CurveFactory::curveskLocal (localskutili, params.locallab.skintonescurve, sklocalcurve, 1);
 
+                    CurveFactory::curveexLocal (localexutili, params.locallab.excurve, exlocalcurve, 1);
+                    //provisory
+                    double br = 0.;
+                    double contr = 0.;
+                    double ecomp = params.locallab.expcomp;
+                    double black = params.locallab.black;
+                    double hlcompr = params.locallab.hlcompr;
+                    double hlcomprthresh = params.locallab.hlcomprthresh;
+                    double shcompr = params.locallab.shcompr;
+
+                    CurveFactory::complexCurvelocal (ecomp, black, hlcompr, hlcomprthresh, shcompr, br, contr,
+                                                     hist16, hltonecurveloc , shtonecurveloc, tonecurveloc,
+                                                     1);
+
                     double huere, chromare, lumare;
 
                     ipf.calc_ref (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, cclocalcurve, sklocalcurve, huere, chromare, lumare);
@@ -1903,16 +1934,17 @@ private:
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
 
-                    ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                    ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, hltonecurveloc , shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
                     sklocalcurve.clear();
+                    exlocalcurve.clear();
 
                 }
 
 
 
-                for (int i = 0; i < 61; i++) {
+                for (int i = 0; i < 73; i++) {
                     delete [] dataspots[i];
                 }
 

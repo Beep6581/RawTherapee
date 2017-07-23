@@ -113,7 +113,13 @@ protected:
     LUTf lllocalcurve;
     LUTf cclocalcurve;
     LUTf sklocalcurve;
-	
+    LUTf exlocalcurve;
+
+    LUTf hltonecurveloc;
+    LUTf shtonecurveloc;
+    LUTf tonecurveloc;
+//    ToneCurve customToneCurve1loc;
+
     LUTf cl2Toningcurve;
     LUTf Noisecurve;
     LUTf NoiseCCcurve;
@@ -128,7 +134,7 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
-
+	LUTu lhist16;
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
     LUTf rCurve;
@@ -227,8 +233,10 @@ protected:
     bool locallutili;
     bool localcutili;
     bool localskutili;
+    bool localexutili;
     bool LHutili;
     bool HHutili;
+    bool curveutili;
 
     int **dataspot;
     std::string *retistr;
@@ -250,6 +258,13 @@ protected:
     LUTi contrs;
     LUTi chroms;
     LUTi sensis;
+    LUTi expcomps;
+    LUTi blacks;
+    LUTi hlcomprs;
+    LUTi hlcomprthreshs;
+    LUTi shcomprs;
+    LUTi sensiexs;
+
     LUTi transits;
     LUTi inverss;
     LUTi curvactivs;
@@ -318,6 +333,10 @@ protected:
     LUTi pastsattogs;
     LUTi skintonescurves;
     LUTi sizeskintonecurves;
+//    LUTi hltonecurvelocs;
+//    LUTi shtonecurvelocs;
+//    LUTi tonecurvelocs;
+//    LUTi customToneCurve1locs;
 
     LUTf huerefs;
     LUTf chromarefs;

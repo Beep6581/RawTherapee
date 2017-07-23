@@ -582,6 +582,15 @@ enum ProcEvent {
     EvlocallabSaturated = 552,
     EvlocallabPastSatThreshold = 553,
     Evlocallabsensiv = 554,
+    EvLocenaexpose = 555,
+    Evlocallabexpcomp = 556,
+    Evlocallabhlcompr = 557,
+    Evlocallabhlcomprthresh = 558,
+    Evlocallabblack = 559,
+    Evlocallabshcompr = 560,
+    Evlocallabsensiex = 561,
+    Evlocallabshape = 562,
+
 
     NUMOFEVENTS
 

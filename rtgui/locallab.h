@@ -38,6 +38,7 @@ private:
 //protected:
 
     MyExpander* const expcolor;
+    MyExpander* const expexpose;
     MyExpander* const expvibrance;
     MyExpander* const expblur;
     MyExpander* const exptonemap;
@@ -73,6 +74,18 @@ private:
     Adjuster* const contrast;
     Adjuster* const chroma;
     Adjuster* const sensi;
+
+    Adjuster* const expcomp;
+    Adjuster* const hlcompr;
+    Adjuster* const hlcomprthresh;
+    Adjuster* const black;
+    Adjuster* const shcompr;
+    /*
+    Adjuster* const lightnessex;
+    Adjuster* const contrastex;
+    Adjuster* const chromaex;
+    */
+    Adjuster* const sensiex;
     Adjuster* const radius;
     Adjuster* const strength;
     Adjuster* const sensibn;
@@ -149,6 +162,11 @@ private:
     Gtk::Button* neutral1;
     Gtk::HBox* neutrHBox1;
 
+    CurveEditorGroup* curveEditorG;
+    CurveEditorGroup* curveEditorG2;
+    DiagonalCurveEditor* shape;
+    DiagonalCurveEditor* shape2;
+
     FlatCurveEditor* cTgainshape;
     FlatCurveEditor* cTgainshaperab;
     DiagonalCurveEditor* llshape;
@@ -180,7 +198,7 @@ private:
     sigc::connection lumaneutralPressedConn;
     sigc::connection lumacontrastPlusPressedConn;
     sigc::connection lumacontrastMinusPressedConn;
-    sigc::connection enablecolorConn, enablevibranceConn, enableblurConn, enabletonemapConn;
+    sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enableblurConn, enabletonemapConn;
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
     sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
@@ -191,7 +209,7 @@ private:
 
 
 
-    int nextdatasp[67];
+    int nextdatasp[73];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;

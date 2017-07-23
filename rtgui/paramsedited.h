@@ -432,6 +432,12 @@ public:
     bool lightness;
     bool contrast;
     bool chroma;
+    bool expcomp;
+    bool hlcompr;
+    bool hlcomprthresh;
+    bool black;
+    bool shcompr;
+
     bool noiselumf;
     bool noiselumc;
     bool noisechrof;
@@ -441,6 +447,7 @@ public:
     bool shardamping;
     bool shariter;
     bool sensi;
+    bool sensiex;
     bool sensih;
     bool retrab;
     bool sensicb;
@@ -478,10 +485,12 @@ public:
     bool cccurve;
     bool LHcurve;
     bool HHcurve;
+    bool excurve;
     bool chrrt;
     bool mult[5];
     bool threshold;
     bool expcolor;
+    bool expexpose;
     bool expvibrance;
     bool expblur;
     bool exptonemap;

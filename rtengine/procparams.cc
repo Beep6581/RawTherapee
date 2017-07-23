@@ -954,6 +954,12 @@ void LocallabParams::setDefaults()
     lightness = 0;
     contrast = 0;
     chroma = 0;
+    expcomp       = 0;
+    black         = 0;
+    hlcompr       = 20;
+    hlcomprthresh = 33;
+    shcompr       = 50;
+
     pastels            = 0;
     saturated          = 0;
     psthreshold.setValues (0, 75);
@@ -973,6 +979,7 @@ void LocallabParams::setDefaults()
     shardamping = 75;
     shariter = 30;
     sensi = 19;
+    sensiex = 19;
     sensih = 19;
     retrab = 500;
     sensicb = 19;
@@ -995,7 +1002,7 @@ void LocallabParams::setDefaults()
     stren = 0;
     gamma = 100;
     estop = 140;
-    scaltm = 3;
+    scaltm = 10;
     rewei = 0;
     hueref = 1.;
     chromaref = 50.;
@@ -1010,6 +1017,7 @@ void LocallabParams::setDefaults()
     cccurve.clear ();
     cccurve.push_back (DCT_Linear);
     expcolor = false;
+    expexpose = false;
     expvibrance = false;
     expblur = false;
     exptonemap = false;
@@ -1023,6 +1031,8 @@ void LocallabParams::setDefaults()
     }
 
     threshold = 20;
+    excurve.clear ();
+    excurve.push_back (DCT_Linear);
 
     getDefaultLocalgainCurveT (localTgaincurve);
     getDefaultLocalgainCurveTrab (localTgaincurverab);
@@ -1030,6 +1040,7 @@ void LocallabParams::setDefaults()
     getDefaultLHCurve (LHcurve);
     getDefaultCCCurve (cccurve);
     getDefaultHHCurve (HHcurve);
+    getDefaultexCurve (excurve);
 
 }
 
@@ -1138,6 +1149,21 @@ void LocallabParams::getDefaultLLCurve (std::vector<double> &curve)
 }
 
 void LocallabParams::getDefaultCCCurve (std::vector<double> &curve)
+{
+    double v[4] = { 0.00, 0.00,
+                    //  0.499, 0.501,
+                    1.00, 1.00
+                  };
+
+    curve.resize (5);
+    curve.at (0) = double (DCT_NURBS);
+
+    for (size_t i = 1; i < curve.size(); ++i) {
+        curve.at (i) = v[i - 1];
+    }
+}
+
+void LocallabParams::getDefaultexCurve (std::vector<double> &curve)
 {
     double v[4] = { 0.00, 0.00,
                     //  0.499, 0.501,
@@ -2758,6 +2784,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Locallab", "Expcolor", locallab.expcolor);
         }
 
+        if (!pedited || pedited->locallab.expexpose) {
+            keyFile.set_boolean ("Locallab", "Expexpose", locallab.expexpose);
+        }
+
         if (!pedited || pedited->locallab.expvibrance) {
             keyFile.set_boolean ("Locallab", "Expvibrance", locallab.expvibrance);
         }
@@ -2912,6 +2942,28 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("Locallab", "Chroma", locallab.chroma);
         }
 
+        if (!pedited || pedited->locallab.expcomp) {
+            keyFile.set_integer ("Locallab", "Expcomp", locallab.expcomp);
+        }
+
+        if (!pedited || pedited->locallab.hlcompr) {
+            keyFile.set_integer ("Locallab", "Hlcompr", locallab.hlcompr);
+        }
+
+        if (!pedited || pedited->locallab.hlcomprthresh) {
+            keyFile.set_integer ("Locallab", "Hlcomprthresh", locallab.hlcomprthresh);
+        }
+
+        if (!pedited || pedited->locallab.black) {
+            keyFile.set_integer ("Locallab", "Black", locallab.black);
+        }
+
+        if (!pedited || pedited->locallab.shcompr) {
+            keyFile.set_integer ("Locallab", "Shcompr", locallab.shcompr);
+        }
+
+
+
         if (!pedited || pedited->locallab.pastels) {
             keyFile.set_integer ("Locallab", "Pastels", locallab.pastels);
         }
@@ -2946,6 +2998,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_double_list ("Locallab", "SkinTonesCurve", skintonescurve);
         }
 
+        if (!pedited || pedited->locallab.excurve)  {
+            Glib::ArrayHandle<double> excurve = locallab.excurve;
+            keyFile.set_double_list ("Locallab", "ExCurve", excurve);
+        }
 
 
         if (!pedited || pedited->locallab.noiselumf) {
@@ -2982,6 +3038,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->locallab.sensi) {
             keyFile.set_integer ("Locallab", "Sensi", locallab.sensi);
+        }
+
+        if (!pedited || pedited->locallab.sensiex) {
+            keyFile.set_integer ("Locallab", "Sensiex", locallab.sensiex);
         }
 
         if (!pedited || pedited->locallab.sensitm) {
@@ -4455,6 +4515,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "Expexpose")) {
+                locallab.expexpose = keyFile.get_boolean ("Locallab", "Expexpose");
+
+                if (pedited) {
+                    pedited->locallab.expexpose = true;
+                }
+            }
+
             if (keyFile.has_key ("Locallab", "Expvibrance")) {
                 locallab.expvibrance = keyFile.get_boolean ("Locallab", "Expvibrance");
 
@@ -4729,6 +4797,47 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "Expcomp"))  {
+                locallab.expcomp  = keyFile.get_integer ("Locallab", "Expcomp");
+
+                if (pedited) {
+                    pedited->locallab.expcomp = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Hlcompr"))  {
+                locallab.hlcompr  = keyFile.get_integer ("Locallab", "Hlcompr");
+
+                if (pedited) {
+                    pedited->locallab.hlcompr = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Hlcomprthresh"))  {
+                locallab.hlcomprthresh  = keyFile.get_integer ("Locallab", "Hlcomprthresh");
+
+                if (pedited) {
+                    pedited->locallab.hlcomprthresh = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Black"))  {
+                locallab.black  = keyFile.get_integer ("Locallab", "Black");
+
+                if (pedited) {
+                    pedited->locallab.black = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Shcompr"))  {
+                locallab.shcompr  = keyFile.get_integer ("Locallab", "Shcompr");
+
+                if (pedited) {
+                    pedited->locallab.shcompr = true;
+                }
+            }
+
+
             if (keyFile.has_key ("Locallab", "noiselumf"))  {
                 locallab.noiselumf  = keyFile.get_integer ("Locallab", "noiselumf");
 
@@ -4798,6 +4907,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->locallab.sensi = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Sensiex"))  {
+                locallab.sensiex  = keyFile.get_integer ("Locallab", "Sensiex");
+
+                if (pedited) {
+                    pedited->locallab.sensiex = true;
                 }
             }
 
@@ -5021,6 +5138,13 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "ExCurve")) {
+                locallab.excurve     = keyFile.get_double_list ("Locallab", "ExCurve");
+
+                if (pedited) {
+                    pedited->locallab.excurve = true;
+                }
+            }
 
 //IND
             if (keyFile.has_key ("Locallab", "Radius"))  {
@@ -9550,6 +9674,12 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.lightness == other.locallab.lightness
         && locallab.contrast == other.locallab.contrast
         && locallab.chroma == other.locallab.chroma
+        && locallab.expcomp == other.locallab.expcomp
+        && locallab.hlcompr == other.locallab.hlcompr
+        && locallab.hlcomprthresh == other.locallab.hlcomprthresh
+        && locallab.shcompr == other.locallab.shcompr
+        && locallab.black == other.locallab.black
+
         && locallab.pastels == other.locallab.pastels
         && locallab.sensiv == other.locallab.sensiv
         && locallab.saturated == other.locallab.saturated
@@ -9558,6 +9688,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.avoidcolorshift == other.locallab.avoidcolorshift
         && locallab.pastsattog == other.locallab.pastsattog
         && locallab.skintonescurve == other.locallab.skintonescurve
+        && locallab.excurve == other.locallab.excurve
         && locallab.noiselumf == other.locallab.noiselumf
         && locallab.noiselumc == other.locallab.noiselumc
         && locallab.noisechrof == other.locallab.noisechrof
@@ -9567,6 +9698,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.shardamping == other.locallab.shardamping
         && locallab.shariter == other.locallab.shariter
         && locallab.sensi == other.locallab.sensi
+        && locallab.sensiex == other.locallab.sensiex
         && locallab.sensitm == other.locallab.sensitm
         && locallab.sensih == other.locallab.sensih
         && locallab.retrab == other.locallab.retrab
@@ -9592,6 +9724,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.vart == other.locallab.vart
         && locallab.threshold == other.locallab.threshold
         && locallab.expcolor == other.locallab.expcolor
+        && locallab.expexpose == other.locallab.expexpose
         && locallab.expvibrance == other.locallab.expvibrance
         && locallab.expblur == other.locallab.expblur
         && locallab.exptonemap == other.locallab.exptonemap
