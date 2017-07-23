@@ -34,6 +34,15 @@ CURVEEDITOR_TOOLTIPPASTE;Colle la courbe du presse-papier
 CURVEEDITOR_TOOLTIPSAVE;Enregistrer la courbe actuelle
 CURVEEDITOR_TYPE;Type:
 DIRBROWSER_FOLDERS;Répertoires
+DYNPROFILEEDITOR_DELETE;Supprimer
+DYNPROFILEEDITOR_EDIT;Modifier
+DYNPROFILEEDITOR_EDIT_RULE;Modifier une règle de Profil Dynamique
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;La correspondance est insensible à la casse.\nUtilisez le préfix "re:" pour entrer\nune expression régulière.
+DYNPROFILEEDITOR_MOVE_DOWN;Déplacer vers le bas
+DYNPROFILEEDITOR_MOVE_UP;Déplacer vers le haut
+DYNPROFILEEDITOR_NEW;Nouveau
+DYNPROFILEEDITOR_NEW_RULE;Nouvelle Règle de Profil Dynamique
+DYNPROFILEEDITOR_PROFILE;Profil de Traitement
 EDITWINDOW_TITLE;Édition d'image
 EDIT_OBJECT_TOOLTIP;Affiche des éléments dans la fenêtre de prévisualisation qui vous permettront d'ajuster cet outil.
 EDIT_PIPETTE_TOOLTIP;Pour ajouter un point d'ajustement de la courbe, maintenez la touche Ctrl pressée et cliquez dans l'image avec le bouton gauche.\nPour ajuster le point, pressez la touche Ctrl lors du clic-gauche sur la zone correspondante dans l'aperçu, puis relachez Ctrl (sauf si vous désirez un contrôle plus fin) et tout en gardant le bouton gauche appuyé, déplacez le curseur vers le haut ou le bas pour ajuster la position du point.
@@ -60,6 +69,7 @@ EXIFPANEL_RESETALL;Réinitialiser tout
 EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
 EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur initiale
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
+EXPORT_BYPASS;Étapes de traitement à ignorer
 EXPORT_BYPASS_ALL;Sélectionner / Désélectionner tout
 EXPORT_BYPASS_DEFRINGE;Ignorer la corr. d'aberration chromatique
 EXPORT_BYPASS_DIRPYRDENOISE;Ignorer la réduction du bruit
@@ -82,8 +92,12 @@ EXPORT_FASTEXPORTOPTIONS;<b>Options d'Export Rapide</b>
 EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateurs de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désire une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
 EXPORT_MAXHEIGHT;Hauteur maximum:
 EXPORT_MAXWIDTH;Largeur maximum:
+EXPORT_PIPELINE;Pipeline de Traitement
 EXPORT_PUTTOQUEUEFAST;Mettre dans la file de traitement\npour Export Rapide
 EXPORT_RAW_DMETHOD;Méthode de dématriçage
+EXPORT_USE_FAST_PIPELINE;Dédié\n(traitement complet sur une image rédimmentionnée)
+EXPORT_USE_FAST_PIPELINE_TIP;Utilise un pipeline de traitement dédié pour les images en Export Rapide, qui priviliégie la vitesse sur la qualité. Le redimentionnement des images est fait dès que possible, au lieu d'être fait à la fin comme dans le pipeline normal. L'accélération peut être significative, mais soyez prêt à voir des artéfacts et une dégradation générale de la qualité de sortie.
+EXPORT_USE_NORMAL_PIPELINE;Standard\n(ignore des étapes, redimentionne à la fin)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;file de traitement
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
@@ -155,6 +169,7 @@ FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nRaccourci: <b>Shift-3</b>
 FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nRaccourci: <b>Shift-4</b>
 FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nRaccourci: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renommage du fichier
+FILEBROWSER_RESETDEFAULTPROFILE;Réinitialise au traitement par défaut
 FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
 FILEBROWSER_SELECTFLATFIELD;Sélectionner un Champ Uniforme...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Afficher les images avec un label Rouge\nRaccourci: <b>Alt-1</b>
@@ -671,6 +686,22 @@ HISTORY_MSG_440;CpND - Méthode
 HISTORY_MSG_441;Retinex - Gain de Tansmission
 HISTORY_MSG_442;Retinex - Échelle
 HISTORY_MSG_443;Compensation du Point Noir de Sortie
+HISTORY_MSG_444;BdB - Ajustement Temp
+HISTORY_MSG_445;Sous-image RAW
+HISTORY_MSG_449;PS - Adaptation ISO
+HISTORY_MSG_452;PS - Voir les zones de mouvement
+HISTORY_MSG_453;PS - Voir uniquement le masque
+HISTORY_MSG_457;PS - Vérifier le rouge/bleu
+HISTORY_MSG_462;PS - Vérifier le vert
+HISTORY_MSG_464;PS - Flouter le masque de mouvement
+HISTORY_MSG_465;PS - Rayons de floutage
+HISTORY_MSG_468;PS - Remplir les trous
+HISTORY_MSG_469;PS - Médiane
+HISTORY_MSG_471;PS - Correction de mouvement
+HISTORY_MSG_472;PS - Adoucir les transitions
+HISTORY_MSG_473;PS - Utiliser LMMSE
+HISTORY_MSG_474;PS - Égaliser
+HISTORY_MSG_475;PS - Égaliser par canal
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Capture
@@ -750,6 +781,7 @@ MAIN_MSG_OPERATIONCANCELLED;Opération annulée
 MAIN_MSG_PATHDOESNTEXIST;Le chemin \n\n<b>%1</b>\n\nn'existe pas. S.V.P indiquez un chemin correct dans la fenêtre Préférences.
 MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
 MAIN_MSG_SETPATHFIRST;Vous devez d'abord choisir un dossier cible dans Préférences\npour pouvoir utiliser cette fonction!
+MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 MAIN_MSG_WRITEFAILED;Échec de l'enregistrement du fichier\n\n<b>"%1"</b>\n\nAssurez-vous que le dossier existe et qu'il est permis d'y écrire.
 MAIN_TAB_COLOR;Couleur
 MAIN_TAB_COLOR_TOOLTIP;Raccourci:<b>Alt-c</b>
@@ -860,6 +892,7 @@ PARTIALPASTE_RAW_DCBENHANCE;Amélioration de DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
 PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
 PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
+PARTIALPASTE_RAW_IMAGENUM;Sub-image
 PARTIALPASTE_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 PARTIALPASTE_RESIZE;Redimentionnement
@@ -1032,8 +1065,10 @@ PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
 PREFERENCES_PROFILEPRFILE;Profil accolé au fichier d'entrée
+PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
 PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Cache
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
+PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 PREFERENCES_PROFILE_NONE;Aucun
 PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PRTINTENT;Intention de rendu
@@ -1068,6 +1103,7 @@ PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_STDAUT;Standard
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
+PREFERENCES_TAB_DYNAMICPROFILE;Règles de Profil Dynamique
 PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_PERFORMANCE;Performance
@@ -1095,6 +1131,7 @@ PROFILEPANEL_MODE_TIP;Mode de complètement des profils de traitement.\n\nBouton
 PROFILEPANEL_MYPROFILES;Mes profils
 PROFILEPANEL_PASTEPPASTE;Paramètres à coller
 PROFILEPANEL_PCUSTOM;Personnel
+PROFILEPANEL_PDYNAMIC;Dynamique
 PROFILEPANEL_PFILE;Depuis le fichier
 PROFILEPANEL_PINTERNAL;Neutre
 PROFILEPANEL_PLASTSAVED;Dernière sauvegarde
@@ -1637,21 +1674,82 @@ TP_RAWEXPOS_LINEAR;Corr. du Point Blanc
 TP_RAWEXPOS_PRESER;Préservation des HL
 TP_RAWEXPOS_RGB;Rouge, Vert, Bleu
 TP_RAWEXPOS_TWOGREEN;Lier les verts
+TP_RAW_1PASSMEDIUM;1-Passe (Medium)
+TP_RAW_3PASSBEST;3-Passes (Meilleur)
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_DCB;DCB
 TP_RAW_DCBENHANCE;Amélioration de DCB
 TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
 TP_RAW_DMETHOD;Méthode
 TP_RAW_DMETHOD_PROGRESSBAR;Dématriçage %1...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Affinage du dématriçage...
 TP_RAW_DMETHOD_TOOLTIP;Note: IGV et LMMSE sont dédiés aux images à haut ISO
+TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
+TP_RAW_FAST;Fast
 TP_RAW_HD;Seuil
 TP_RAW_HD_TOOLTIP;Des valeurs basses rendront la détection de pixel chaud/mort plus agressive, mais les faux positifs peuvent conduire à des artéfacts. Si vous observez de quelconques artéfacts en activant le 'Filtre de pixel chaud/mort', augmentez graduellement ce seuil jusqu'à leur disparition.
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;Sous-image
+TP_RAW_IMAGENUM_TOOLTIP;Certains fichiers RAW consistent en plusieurs sous-images (Pentax Pixel Shift, Pentax HDR 3-en-1, Canon Dual Pixel).\n\nLors de l'usage d'une méthode de dématriçage autre que Pixel Shift, ceci sélectionne quel sous-image est utilisée.\n\nLors de l'usage de la méthode de dématriçage Pixel Shift sur un fichier RAW Pixel, toutes les sous-images sont utilisées, et ceci sélectionne quelle sous-image devrait être utilisé pour la détection de mouvement.
 TP_RAW_LABEL;Dématriçage
+TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 TP_RAW_LMMSE_TOOLTIP;Ajoute gamma (niveau 1) + médian (niveau 2-4) + affinage (niveau 5-6) pour réduire les artéfacts et améliorer le rapport signal/bruit
+TP_RAW_MONO;Mono
+TP_RAW_NONE;Aucun (montre ce que voit le capteur)
+TP_RAW_PIXELSHIFT;Pixel Shift
+TP_RAW_PIXELSHIFTADAPTIVE;Détection adaptative
+TP_RAW_PIXELSHIFTBLUR;Flouter le masque de mouvement
+TP_RAW_PIXELSHIFTEPERISO;Adaptation ISO
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;La valeur par défaut de 0 devrait bien fonctionner pour l'ISO de base.\nAugmenter la valeur pour améliorer la détection de mouvement pour les ISO plus haut.\nAugmentez par petit incrément et vérifier le masque de mouvement à chaque itération.
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Égaliser la luminosité des sous-images
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Égaliser par canal
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Activé: Égalise les canaux RVB individuellement.\nDésactivé: Utilise le même facteur d'égalisation pour tous les canaux.
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Égalise la luminosité des sous-images à la luminosité de la sous-image sélectionnée.\nS'il y a des zones surexposées dans les sous-images, sélectionne la sous-image la plus lumineuse pour éviter des dérives coiuleurs magenta dans les zone surexposées ou permettre la détection de mouvement.
+TP_RAW_PIXELSHIFTEXP0;Expérimental
+TP_RAW_PIXELSHIFTGREEN;Vérifier le canal vert pour le mouvement
+TP_RAW_PIXELSHIFTHOLEFILL;Rempli les trous dans le masque de mouvement
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Rempli les trous dans le masque de mouvement
+TP_RAW_PIXELSHIFTLMMSE;Utilise LMMSE pour les zone de mouvement
+TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Utilise LMMSE au lieu d'AMaZE pour les zone de mouvement.\nutil pour les images de haut ISO.
+TP_RAW_PIXELSHIFTMASKTHRESHOLD;Nouveau seuil 3x3
+TP_RAW_PIXELSHIFTMEDIAN;Utilise la médiane pour les zones de mouvement
+TP_RAW_PIXELSHIFTMEDIAN3;Exclure la sous-image sélectionnée de la médiane
+TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Exclu la sous-image sélectionné de la médiane.\nUtil si mes objets en mouvement se chevauchent dans les sous-images 2 et 3
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Utilise la médianes de toutes les sous-images au lieu de la sous-images sélectionnée pour les zones de mouvement.\nRetir les objets qui sont à des endroits différents dans toutes les sous-images.\nDonne un effet de mouvement aux objets se déplaçant lentement (se chevauchant).
+TP_RAW_PIXELSHIFTMM_AUTO;Automatique
+TP_RAW_PIXELSHIFTMM_CUSTOM;Manuel
+TP_RAW_PIXELSHIFTMM_OFF;Arrêt
+TP_RAW_PIXELSHIFTMOTION;Niveau de détection de mouvement (dépréconisé)
+TP_RAW_PIXELSHIFTMOTIONCORRECTION;Taille de la correction de mouvement vert
+TP_RAW_PIXELSHIFTMOTIONMETHOD;Correction de Mouvement
+TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 signifie pas de détection de mouvement.\n1 - 99 signifie que le mouvement sera détecté par-rapport à cette valeur. Augmentez cette valeur pour augmenter le taux de détection.\n100 signifie que la sous-image sélectionnée et dématricée en AMaZE sera utilisée tel quel.
+TP_RAW_PIXELSHIFTNONGREENAMAZE;Vérifier rouge/bleu AMaZE
+TP_RAW_PIXELSHIFTNONGREENCROSS;Vérifier les canaux rouge/bleu pour le mouvement
+TP_RAW_PIXELSHIFTNONGREENCROSS2;Vérifier vert AMaZE
+TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Vérifier rouge/bleu horizontal
+TP_RAW_PIXELSHIFTNONGREENVERTICAL;Vérifier rouge/bleu vertical
+TP_RAW_PIXELSHIFTNREADISO;Lire
+TP_RAW_PIXELSHIFTPRNU;PRNU (%)
+TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Poid Rouge&Bleu
+TP_RAW_PIXELSHIFTSHOWMOTION;Voir le masque de mouvement
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Voir uniquement le masque
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Affiche le masque sans l'image.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Superpose sur l'image le masque montrant les zones avec mouvement.
+TP_RAW_PIXELSHIFTSIGMA;Rayon de floutage
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Le rayon par défaut de 1.0 fonctionne généralement bien pour l'ISO de base.\nAugmentez cette valeur pour les images de haut ISO, 5.0 est un bon point de départ.\nContrôlez le masque de mouvement à chaque nouvelle valeur.
+TP_RAW_PIXELSHIFTSMOOTH;Adoucir les transitions
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Adouci les transitions entre les zones avec mouvement et les zones sans.\nRéglez à 0 pour désactiver l'adoucissement des transitions.\nRéglez à 1 pour obtenir soit le résultat du dématriçage AMaZE/LMMSE de la sous-image sélectionnée (selon que "Utilise LMMSE" est sélectionné), ou la médiane des 4 sous-images si "Utilise la médiane ..." est sélectionné.
+TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;Facteur DevStd Bleu
+TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;Facteur DevStd Vert
+TP_RAW_PIXELSHIFTSTDDEVFACTORRED;Facteur DevStd Rouge
 TP_RAW_SENSOR_BAYER_LABEL;Capteur à matrice de Bayer
 TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-passes donne les meilleurs résultats (recommendé pour les images de faible ISO).\n1-passe est presque indifférentiable de 3-passes pour les images à haut ISO et est plus rapide.
 TP_RAW_SENSOR_XTRANS_LABEL;Capteur à matrice X-Trans
+TP_RAW_VNG4;VNG4
 TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_CROPPEDAREA;La zone recadrée
 TP_RESIZE_FITBOX;Boîte englobante
@@ -2016,6 +2114,8 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (fabricant)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Point de mesure
+TP_WBALANCE_TEMPBIAS;Ajustement de la température BdB
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Permet d'ajuster le calcul de la "Balance des blancs auto" en recherchant une température plus chaude ou plus froide. L'ajustement est éxprimé comme un poucentage de la température calculée, de manière à ce que le résultat soit "tempCalculé + tempCalculé * ajustement".
 TP_WBALANCE_TEMPERATURE;Température
 TP_WBALANCE_TUNGSTEN;Tungstène
 TP_WBALANCE_WATER1;Sous-marin 1
@@ -2029,106 +2129,3 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!DYNPROFILEEDITOR_DELETE;Delete
-!DYNPROFILEEDITOR_EDIT;Edit
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the "re:" prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
-!DYNPROFILEEDITOR_MOVE_UP;Move Up
-!DYNPROFILEEDITOR_NEW;New
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!DYNPROFILEEDITOR_PROFILE;Processing Profile
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!HISTORY_MSG_444;WB - Temp bias
-!HISTORY_MSG_445;Raw sub-image
-!HISTORY_MSG_449;PS - ISO adaption
-!HISTORY_MSG_452;PS - Show motion
-!HISTORY_MSG_453;PS - Show mask only
-!HISTORY_MSG_457;PS - Check red/blue
-!HISTORY_MSG_462;PS - Check green
-!HISTORY_MSG_464;PS - Blur motion mask
-!HISTORY_MSG_465;PS - Blur radius
-!HISTORY_MSG_468;PS - Fill holes
-!HISTORY_MSG_469;PS - Median
-!HISTORY_MSG_471;PS - Motion correction
-!HISTORY_MSG_472;PS - Smooth transitions
-!HISTORY_MSG_473;PS - Use LMMSE
-!HISTORY_MSG_474;PS - Equalize
-!HISTORY_MSG_475;PS - Equalize channel
-!PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
-!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PROFILEPANEL_PDYNAMIC;Dynamic
-!TP_RAW_1PASSMEDIUM;1-Pass (Medium)
-!TP_RAW_3PASSBEST;3-Pass (Best)
-!TP_RAW_AHD;AHD
-!TP_RAW_AMAZE;AMaZE
-!TP_RAW_DCB;DCB
-!TP_RAW_EAHD;EAHD
-!TP_RAW_FAST;Fast
-!TP_RAW_HPHD;HPHD
-!TP_RAW_IGV;IGV
-!TP_RAW_IMAGENUM;Sub-image
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
-!TP_RAW_LMMSE;LMMSE
-!TP_RAW_MONO;Mono
-!TP_RAW_NONE;None (Shows sensor pattern)
-!TP_RAW_PIXELSHIFT;Pixel Shift
-!TP_RAW_PIXELSHIFTADAPTIVE;Adaptive detection
-!TP_RAW_PIXELSHIFTBLUR;Blur motion mask
-!TP_RAW_PIXELSHIFTEPERISO;ISO adaption
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nIncrease the value to improve motion detection for higher ISO.\nIncrease in small steps and watch the motion mask while increasing.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT;Equalize brightness of frames
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
-!TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Equalize the brightness of the frames to the brightness of the selected frame.\nIf there are overexposed areas in the frames select the brightest frame to avoid magenta colour cast in overexposed areas or enable motion correction.
-!TP_RAW_PIXELSHIFTEXP0;Experimental
-!TP_RAW_PIXELSHIFTGREEN;Check green channel for motion
-!TP_RAW_PIXELSHIFTHOLEFILL;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fill holes in motion mask
-!TP_RAW_PIXELSHIFTLMMSE;Use LMMSE for moving parts
-!TP_RAW_PIXELSHIFTLMMSE_TOOLTIP;Use LMMSE instead of AMaZE for areas of motion.\nUseful for high ISO images.
-!TP_RAW_PIXELSHIFTMASKTHRESHOLD;3x3 new threshold
-!TP_RAW_PIXELSHIFTMEDIAN;Use median for moving parts
-!TP_RAW_PIXELSHIFTMEDIAN3;Exclude selected frame from median
-!TP_RAW_PIXELSHIFTMEDIAN3_TOOLTIP;Excludes selected frame from median.\nUseful if moving objects overlap in frame 2 and 3
-!TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Use median of all frames instead of selected frame for regions with motion.\nRemoves objects which are at different places in all frames.\nGives motion effect on slow moving (overlapping) objects.
-!TP_RAW_PIXELSHIFTMM_AUTO;Automatic
-!TP_RAW_PIXELSHIFTMM_CUSTOM;Custom
-!TP_RAW_PIXELSHIFTMM_OFF;Off
-!TP_RAW_PIXELSHIFTMOTION;Motion detection level (deprecated)
-!TP_RAW_PIXELSHIFTMOTIONCORRECTION;Green motion correction size
-!TP_RAW_PIXELSHIFTMOTIONMETHOD;Motion Correction
-!TP_RAW_PIXELSHIFTMOTION_TOOLTIP;0 means no motion detection.\n1 - 99 means motion will be detected according to this value. Increase value to increase detection rate.\n100 means the AMaZE-demosaiced frame will be used.
-!TP_RAW_PIXELSHIFTNONGREENAMAZE;Check red/blue AMaZE
-!TP_RAW_PIXELSHIFTNONGREENCROSS;Check red/blue channels for motion
-!TP_RAW_PIXELSHIFTNONGREENCROSS2;Check green AMaZE
-!TP_RAW_PIXELSHIFTNONGREENHORIZONTAL;Check red/blue horizontal
-!TP_RAW_PIXELSHIFTNONGREENVERTICAL;Check red/blue vertical
-!TP_RAW_PIXELSHIFTNREADISO;nRead
-!TP_RAW_PIXELSHIFTPRNU;PRNU (%)
-!TP_RAW_PIXELSHIFTREDBLUEWEIGHT;Red&Blue weight
-!TP_RAW_PIXELSHIFTSHOWMOTION;Show motion mask
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Show only motion mask
-!TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Shows the motion mask without the image.
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a mask showing the regions with motion.
-!TP_RAW_PIXELSHIFTSIGMA;Blur radius
-!TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;The default radius of 1.0 usually fits well for base ISO.\nIncrease the value for high ISO shots, 5.0 is a good starting point.\nWatch the motion mask while changing the value.
-!TP_RAW_PIXELSHIFTSMOOTH;Smooth transitions
-!TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Smooth transitions between areas with motion and areas without.\nSet to 0 to disable transition smoothing.\nSet to 1 to either get the AMaZE/LMMSE result of the selected frame (depending on whether "Use LMMSE" is selected), or the median of all four frames if "Use median" is selected.
-!TP_RAW_PIXELSHIFTSTDDEVFACTORBLUE;StdDev factor Blue
-!TP_RAW_PIXELSHIFTSTDDEVFACTORGREEN;StdDev factor Green
-!TP_RAW_PIXELSHIFTSTDDEVFACTORRED;StdDev factor Red
-!TP_RAW_VNG4;VNG4
-!TP_WBALANCE_TEMPBIAS;AWB temperature bias
-!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".

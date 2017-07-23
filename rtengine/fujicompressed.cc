@@ -841,7 +841,7 @@ void CLASS fuji_decode_strip (const struct fuji_compressed_params* info_common, 
     cur_block_width = fuji_block_width;
 
     if (cur_block + 1 == fuji_total_blocks) {
-        cur_block_width = raw_width % fuji_block_width;
+        cur_block_width = raw_width - cur_block * fuji_block_width;
     }
 
     struct i_pair {
@@ -992,10 +992,10 @@ void CLASS parse_fuji_compressed_header()
             || h_raw_width < 0x300
             || h_raw_width % 24
             || h_raw_rounded_width > 0x3000
-            ||  h_raw_rounded_width < h_block_size
+            || h_block_size != 0x300
+            || h_raw_rounded_width < h_block_size
             || h_raw_rounded_width % h_block_size
             || h_raw_rounded_width - h_raw_width >= h_block_size
-            || h_block_size != 0x300
             || h_blocks_in_row > 0x10
             || h_blocks_in_row == 0
             || h_blocks_in_row != h_raw_rounded_width / h_block_size

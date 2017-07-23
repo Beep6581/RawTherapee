@@ -1547,11 +1547,11 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 return true;
 
             case GDK_KEY_less:
-                iareapanel->imageArea->indClippedPanel->toggleClipped (true);
+                iareapanel->imageArea->indClippedPanel->toggleClipped (false);
                 return true;
 
             case GDK_KEY_greater:
-                iareapanel->imageArea->indClippedPanel->toggleClipped (false);
+                iareapanel->imageArea->indClippedPanel->toggleClipped (true);
                 return true;
 
             case GDK_KEY_F5:

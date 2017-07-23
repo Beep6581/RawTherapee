@@ -2293,10 +2293,13 @@ int Options::saveToFile (Glib::ustring fname)
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (f == nullptr) {
-        if (options.rtSettings.verbose) {
-            printf ("Options::saveToFile / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
-        }
-
+        std::cout << "Warning! Unable to save your preferences to: " << fname << std::endl;
+#ifndef RAWTHERAPEE_CLI
+        Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), fname.c_str());
+        //writeFailed (getToplevelWindow (this), msg_);
+        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
+        msgd.run ();
+#endif
         return 1;
     } else {
         fprintf (f, "%s", keyData.c_str ());

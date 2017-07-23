@@ -1723,6 +1723,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_TAB_INSPECT; Inspect
 !MAIN_TAB_WAVELET;Wavelet
 !MAIN_TAB_WAVELET_TOOLTIP;Shortcut: <b>Alt-w</b>

@@ -271,7 +271,7 @@ RTWindow::RTWindow ()
 
         bpanel->init (this);
 
-        if (!argv1.empty()) {
+        if (!argv1.empty() && !remote) {
             Thumbnail* thm = cacheMgr->getEntry(argv1);
             if (thm) {
                 fpanel->fileCatalog->openRequested({thm});
