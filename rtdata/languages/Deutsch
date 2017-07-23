@@ -840,6 +840,7 @@ MAIN_MSG_OPERATIONCANCELLED;Ausführung abgebrochen
 MAIN_MSG_PATHDOESNTEXIST;Der Pfad\n\n<b>%1</b>\n\nexistiert nicht. Bitte setzen Sie den richtigen Pfad in den Einstellungen.
 MAIN_MSG_QOVERWRITE;Möchten Sie die Datei überschreiben?
 MAIN_MSG_SETPATHFIRST;Um diese Funktion zu nutzen, müssen Sie zuerst in den Einstellungen einen Zielpfad setzen.
+MAIN_MSG_TOOMANYOPENEDITORS;Zu viele geöffnete Editorfenster.\nUm fortzufahren, schließen sie bitte ein Editorfenster.
 MAIN_MSG_WRITEFAILED;Fehler beim Schreiben von\n\n<b>"%1"</b>\n\nStellen Sie sicher, dass das Verzeichnis existiert und dass Sie Schreibrechte besitzen.
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_COLOR_TOOLTIP;Taste: <b>Alt</b> + <b>c</b>
@@ -2186,8 +2187,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-MAIN_MSG_TOOMANYOPENEDITORS;Zu viele geöffnete Editorfenster.\nUm fortzufahren, schließen sie bitte ein Editorfenster.
