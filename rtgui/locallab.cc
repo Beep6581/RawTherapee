@@ -2901,7 +2901,7 @@ void Locallab::curveChanged (CurveEditor* ce)
 
             adjusterChanged (retrab, strval);
         } else if (ce == HHshape) {
-            listener->panelChanged (EvlocallabHHshape, M (""));
+            listener->panelChanged (EvlocallabHHshape, M ("HISTORY_CUSTOMCURVE"));
             int strval = retrab->getValue();
             //update MIP
             retrab->setValue (strval + 1);
@@ -2909,7 +2909,7 @@ void Locallab::curveChanged (CurveEditor* ce)
             usleep (10000); //to test
             retrab->setValue (strval);
         } else if (ce == shape) {
-            listener->panelChanged (Evlocallabshape, M (""));
+            listener->panelChanged (Evlocallabshape, M ("HISTORY_CUSTOMCURVE"));
             int strval = retrab->getValue();
             //update MIP
             retrab->setValue (strval + 1);
