@@ -790,6 +790,21 @@ HISTORY_MSG_542;Local - curve method
 HISTORY_MSG_543;Local - hueref
 HISTORY_MSG_544;Local - chromaref
 HISTORY_MSG_545;Local - lumaref
+HISTORY_MSG_547;Local - Vibrance
+HISTORY_MSG_548;Local - Vib H curve
+HISTORY_MSG_550;Local - Vib avoid colorshift
+HISTORY_MSG_551;Local - Vib link
+HISTORY_MSG_552;Local - Vib Pastel
+HISTORY_MSG_553;Local - Vib Saturated
+HISTORY_MSG_554;Local - Vib Threshold
+HISTORY_MSG_555;Local - Vib Scope
+HISTORY_MSG_556;Local - Exposure
+HISTORY_MSG_557;Local - Exp Compensation
+HISTORY_MSG_558;Local - Exp Hlcompr
+HISTORY_MSG_559;Local - Exp hlcomprthresh
+HISTORY_MSG_560;Local - Exp black
+HISTORY_MSG_561;Local - Exp Shcompr
+HISTORY_MSG_562;Local - Exp Scope
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
