@@ -1,10 +1,17 @@
 RAWTHERAPEE 5.2 RELEASE NOTES
 -----------------------------
-This is RawTherapee 5.2 stable, released on 2017-07-23.
+This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
 
 RawTherapee provides you with a selection of powerful tools with which you can practice the art of developing raw photos. Be sure to read RawPedia to understand how each tool works so that you may make the most of it.
 http://rawpedia.rawtherapee.com/
 A great place to start is the "Getting Started" article. Click on "Main page" in the top-left corner when you have finished reading that article to see all other articles.
+
+While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
+- Development versions only had limited testing, so there may be bugs unknown to us.
+- You should report these bugs so that they get fixed for the next stable release. See
+  www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
+- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
+- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
 
 News Relevant to Photographers
 ------------------------------
@@ -17,22 +24,8 @@ In order to use RawTherapee efficiently you should know that:
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to meaningful axes (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
-New features since 5.1:
-- GIMP plugin to open raw images in GIMP using RawTherapee - see RawPedia.
-- "Remote" mode (-R command line option) to allow opening images ("Open with" or passed as arguments) in a full-fledged instance. The -R mode allows you to open an image in an already-running instance of RawTherapee, if that instance was also started using -R. Opening an image without the -R option will open RawTherapee in "no-File-Browser" mode which lacks the File Browser and Queue tabs, and the Preferences button.
-
-While this release introduced several new features, the main focus was to refine what's already there. Both the speed and stability of various tools and of RawTherapee in general were significantly improved, particularly when dealing with folders containing thousands of images.
-
-Most significant improvements:
-- 4x speedup of the Microcontrast tool.
-- CIECAM02 curves no longer cause a sudden jump in brightness.
-- Improved stability in METM (Multiple Editor Tabs Mode) in Windows.
-- Improvement to the MEOW (Multiple Editor Tabs in Own Window) mode.
-- LCP files lead to better results.
-- Large speedup and stability improvement when opening folders containing hundreds or thousands of images.
-- Many memory leaks fixed.
-- Pixel Shift speedups, reduction of memory requirements, and motion mask preview accuracy improved.
-- The preview of the Tone Mapping tool is now much more accurate at any zoom level.
+New features since 5.2:
+- To be filled in once 5.3 is released.
 
 News Relevant to Package Maintainers
 ------------------------------------
@@ -44,9 +37,8 @@ In general:
 - For stable releases use -DCACHE_NAME_SUFFIX=""
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
-Changes since 5.1:
-- BZIP2 support removed - no more BZIP2 dependency.
-- Added possibility to use system KLT library if available, otherwise our shipped version is used.
+Changes since 5.2:
+- To be filled in once 5.3 is released.
 
 News Relevant to Developers
 ---------------------------

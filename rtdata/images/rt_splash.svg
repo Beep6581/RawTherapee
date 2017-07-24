@@ -17,7 +17,7 @@
    inkscape:version="0.92.1 r"
    sodipodi:docname="rt_splash.svg"
    style="enable-background:new"
-   inkscape:export-filename="/tmp/rt_splash_52.png"
+   inkscape:export-filename="/tmp/rt_splash_52_dev.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <title
@@ -579,7 +579,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2.2109826"
      inkscape:cx="297.71082"
-     inkscape:cy="117.59478"
+     inkscape:cy="135.68628"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -689,7 +689,7 @@
            rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -1029,11 +1029,11 @@
          sodipodi:role="line">. 2</tspan></text>
     <g
        id="g3712"
-       transform="translate(196.80957,24.28384)"
-       style="fill:#ff0000">
+       transform="translate(-3.19043,24.28384)"
+       style="fill:#ffffff">
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;text-align:end;letter-spacing:-1.06666672px;word-spacing:0px;text-anchor:end;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;text-align:end;letter-spacing:-1.06666672px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          x="596.36224"
          y="49.720543"
          id="text3690"
@@ -1042,7 +1042,7 @@
            sodipodi:role="line"
            x="595.29559"
            y="49.720543"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ff0000;stroke-width:1.06666672px">Development</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px">Development</tspan></text>
     </g>
   </g>
   <g
