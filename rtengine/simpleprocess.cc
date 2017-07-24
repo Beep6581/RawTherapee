@@ -1129,6 +1129,9 @@ private:
                 std::string *pthstrs;
                 pthstrs = new std::string[maxspot];
 
+                std::string *exstrs;
+                exstrs = new std::string[maxspot];
+
                 {
                     dataspots[2][0] =  params.locallab.circrad;
                     dataspots[3][0] =  params.locallab.locX;
@@ -1436,6 +1439,31 @@ private:
 
                     //end local ps
 
+                    //expos
+                    //Skin curve
+                    int sizex = params.locallab.excurve.size();
+
+                    if (sizex > 69) {
+                        sizex = 69;//to avoid crash
+                    }
+
+
+                    int s_datcurex[sizsk + 1];
+
+                    for (int j = 0; j < sizex; j++) {
+                        s_datcurex[j] = (int)  (1000. * params.locallab.excurve[j]);
+                    }
+
+                    std::string ex_str = "";
+
+                    for (int j = 0; j < sizex; j++) {
+                        ex_str = ex_str + std::to_string (s_datcurex[j]) + delim[j];
+                    }
+
+                    exstrs[0] = ex_str + "@";
+
+
+
 
                 }
                 //     locallutili = false;
@@ -1607,6 +1635,24 @@ private:
 
                             pthstrs[ns] = str3;
                         }
+
+                        if (spotline.substr (0, pos) == "curveex") {
+                            std::string curstex;
+                            //      int longecurh;
+                            std::string strendex = spotline.substr (posend - 1, 1);
+                            //      std::size_t poszh = spotline.find (strendh);
+                            //      int longeh;
+
+                            for (int sh = 0; sh < 69; sh++) {
+                                if (delim[sh] == strendex) {
+                                    //             longeh = sh + 1;
+                                }
+                            }
+
+                            exstrs[ns] = str3;
+                            //    sizelh = longeh;
+                        }
+
 
                     }
 
@@ -1870,12 +1916,29 @@ private:
 
                     params.locallab.psthreshold.setValues (s_datcps[0], s_datcps[1]);
 
+                    //expos
+                    int *s_datcex;
+                    s_datcex = new int[70];
+                    int sizex;
+
+                    ipf.strcurv_data (exstrs[sp], s_datcex, sizex);
+
+
+                    std::vector<double>   cexend;
+
+                    for (int j = 0; j < sizex; j++) {
+                        cexend.push_back ((double) (s_datcex[j]) / 1000.);
+                    }
+
+                    delete [] s_datcex;
+
                     params.locallab.localTgaincurve.clear();
                     params.locallab.llcurve.clear();
                     params.locallab.LHcurve.clear();
                     params.locallab.cccurve.clear();
                     params.locallab.HHcurve.clear();
                     params.locallab.skintonescurve.clear();
+                    params.locallab.excurve.clear();
 
                     params.locallab.localTgaincurve = cretiend;
                     params.locallab.llcurve = cllend;
@@ -1883,6 +1946,7 @@ private:
                     params.locallab.cccurve = cccend;
                     params.locallab.HHcurve = chhend;
                     params.locallab.skintonescurve = cskend;
+                    params.locallab.excurve = cexend;
 
                     bool LHutili = false;
                     bool HHutili = false;
@@ -1907,6 +1971,12 @@ private:
 
                     if (skinstrs[sp].c_str() != t_curvskinref  && skinstrs[sp].c_str() != t_none) {
                         localskutili = true;
+                    }
+
+                    std::string t_curvexref = "3000A0B0C1000D1000E@";
+
+                    if (exstrs[sp].c_str() != t_curvexref  && exstrs[sp].c_str() != t_none) {
+                        localexutili = true;
                     }
 
                     CurveFactory::curveLocal (locallutili, params.locallab.llcurve, lllocalcurve, 1);
@@ -1934,7 +2004,8 @@ private:
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
 
-                    ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, hltonecurveloc , shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                    ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
+                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc , shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
                     sklocalcurve.clear();
@@ -1958,6 +2029,8 @@ private:
                 delete [] lhstrs;
                 delete [] ccstrs;
                 delete [] hhstrs;
+                delete [] skinstrs;
+                delete [] exstrs;
 
                 if (params.locallab.inverssha) {
 

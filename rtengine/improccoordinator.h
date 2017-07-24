@@ -134,7 +134,7 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
-	LUTu lhist16;
+    LUTu lhist16;
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
     LUTf rCurve;
@@ -246,6 +246,7 @@ protected:
     std::string *hhstr;
     std::string *skinstr;
     std::string *pthstr;
+    std::string *exstr;
 
     LUTi circrads;
     LUTi centerx;
@@ -333,10 +334,8 @@ protected:
     LUTi pastsattogs;
     LUTi skintonescurves;
     LUTi sizeskintonecurves;
-//    LUTi hltonecurvelocs;
-//    LUTi shtonecurvelocs;
-//    LUTi tonecurvelocs;
-//    LUTi customToneCurve1locs;
+    LUTi excurves;
+    LUTi sizeexcurves;
 
     LUTf huerefs;
     LUTf chromarefs;

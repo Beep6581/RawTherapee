@@ -1040,7 +1040,7 @@ void LocallabParams::setDefaults()
     getDefaultLHCurve (LHcurve);
     getDefaultCCCurve (cccurve);
     getDefaultHHCurve (HHcurve);
-    getDefaultexCurve (excurve);
+ //   getDefaultexCurve (excurve);
 
 }
 
@@ -1162,7 +1162,7 @@ void LocallabParams::getDefaultCCCurve (std::vector<double> &curve)
         curve.at (i) = v[i - 1];
     }
 }
-
+/*
 void LocallabParams::getDefaultexCurve (std::vector<double> &curve)
 {
     double v[4] = { 0.00, 0.00,
@@ -1178,6 +1178,7 @@ void LocallabParams::getDefaultexCurve (std::vector<double> &curve)
     }
 }
 
+*/
 
 void LocallabParams::getCurves (LocretigainCurve &cTgainCurve, LocretigainCurverab &cTgainCurverab, LocLHCurve &lhCurve, LocHHCurve &hhCurve,  bool &LHutili,  bool &HHutili) const
 {

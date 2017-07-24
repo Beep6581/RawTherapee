@@ -1361,6 +1361,22 @@ bool Locallab::localretComputed_ ()
     ImProcFunctions::strcurv_data (nextps_str2, s_datcps, sizps);
     psThreshold->setValue (s_datcps[0], s_datcps[1]);
 
+
+    //exCurve
+    int *s_datcex;
+    s_datcex = new int[70];
+    int sizex;
+    ImProcFunctions::strcurv_data (nextex_str2, s_datcex, sizex);
+    std::vector<double>   cex;
+
+    for (int j = 0; j < sizex; j++) {
+        cex.push_back ((double) (s_datcex[j]) / 1000.);
+    }
+
+    delete [] s_datcex;
+
+    shape->setCurve (cex);
+
     enableListener ();
 
     //update all sliders by this strange process!
@@ -1441,6 +1457,10 @@ bool Locallab::localretComputed_ ()
 
     if (listener) {//for PSthreshold
         listener->panelChanged (EvlocallabPastSatThreshold, M (""));
+    }
+
+    if (listener) {//for PSthreshold
+        listener->panelChanged (Evlocallabshape, M (""));
     }
 
 
@@ -1633,8 +1653,8 @@ bool Locallab::localComputed_ ()
     hlcomprthresh->setValue (nextdatasp[67]);
     shcompr->setValue (nextdatasp[68]);
     sensiex->setValue (nextdatasp[69]);
-	
-	
+
+
     double intermed = 0.01 * (double) nextdatasp[64];
     hueref->setValue (intermed);
     chromaref->setValue (nextdatasp[65]);
@@ -1741,6 +1761,21 @@ bool Locallab::localComputed_ ()
     int s_datcps[sizps + 1];
     ImProcFunctions::strcurv_data (nextps_str, s_datcps, sizps);
     psThreshold->setValue (s_datcps[0], s_datcps[1]);
+
+
+    //exCurve
+    int *s_datcex;
+    s_datcex = new int[70];
+    int sizex;
+    ImProcFunctions::strcurv_data (nextex_str, s_datcex, sizex);
+    std::vector<double>   cex;
+
+    for (int j = 0; j < sizex; j++) {
+        cex.push_back ((double) (s_datcex[j]) / 1000.);
+    }
+
+    delete [] s_datcex;
+    shape->setCurve (cex);
 
 
     enableListener ();
@@ -1866,22 +1901,26 @@ bool Locallab::localComputed_ ()
     }
 
     //for checkbox
-    if (listener) {//for PSthreshold
+    if (listener) {//f
         listener->panelChanged (EvlocallabProtectSkins, M (""));
     }
 
-    if (listener) {//for PSthreshold
+    if (listener) {//fo
         listener->panelChanged (EvlocallabAvoidColorShift, M (""));
     }
 
-    if (listener) {//for PSthreshold
+    if (listener) {//for
         listener->panelChanged (EvlocallabPastSatTog, M (""));
+    }
+
+    if (listener) {//for
+        listener->panelChanged (Evlocallabshape, M (""));
     }
 
     return false;
 }
 
-void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat)
+void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
     for (int i = 2; i < 73; i++) {
         nextdatasp[i] = datasp[i][sp];
@@ -1894,12 +1933,13 @@ void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_
     nexthh_str = hh_str;
     nextsk_str = sk_str;
     nextps_str = ps_str;
+    nextex_str = ex_str;
 
     nextlength = maxdat;
     g_idle_add (localChangedUI, this);
 }
 
-void Locallab::localretChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat)
+void Locallab::localretChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
     nextlength = maxdat;
     nextstr2 = datastr;
@@ -1909,6 +1949,7 @@ void Locallab::localretChanged  (int **datasp, std::string datastr, std::string 
     nexthh_str2 = hh_str;
     nextsk_str2 = sk_str;
     nextps_str2 = ps_str;
+    nextex_str2 = ex_str;
 
     g_idle_add (localretChangedUI, this);
 }

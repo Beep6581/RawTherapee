@@ -973,7 +973,7 @@ public:
     static void getDefaultLHCurve (std::vector<double> &curve);
     static void getDefaultCCCurve (std::vector<double> &curve);
     static void getDefaultHHCurve (std::vector<double> &curve);
-    static void getDefaultexCurve (std::vector<double> &curve);
+//    static void getDefaultexCurve (std::vector<double> &curve);
 
 };
 

@@ -225,6 +225,8 @@ private:
     std::string nextsk_str2;
     std::string nextps_str;
     std::string nextps_str2;
+    std::string nextex_str;
+    std::string nextex_str2;
 
     double draggedPointOldAngle;
     double draggedPointAdjusterAngle;
@@ -270,8 +272,8 @@ public:
     void inversshaChanged ();
     void curveChanged (CurveEditor* ce);
     void autoOpenCurve ();
-    void localChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat);
-    void localretChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, int sp, int maxdat);
+    void localChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);
+    void localretChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);
     bool localComputed_         ();
     bool localretComputed_         ();
     void setEditProvider (EditDataProvider* provider);
