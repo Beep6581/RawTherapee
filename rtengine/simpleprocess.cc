@@ -1993,7 +1993,7 @@ private:
                     double hlcomprthresh = params.locallab.hlcomprthresh;
                     double shcompr = params.locallab.shcompr;
 
-                    CurveFactory::complexCurvelocal (ecomp, black, hlcompr, hlcomprthresh, shcompr, br, contr,
+                    CurveFactory::complexCurvelocal (ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
                                                      hist16, hltonecurveloc , shtonecurveloc, tonecurveloc,
                                                      1);
 

@@ -2609,7 +2609,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 double hlcomprthresh = params.locallab.hlcomprthresh;
                 double shcompr = params.locallab.shcompr;
 
-                CurveFactory::complexCurvelocal (ecomp, black, hlcompr, hlcomprthresh, shcompr, br, contr,
+                CurveFactory::complexCurvelocal (ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
                                                  lhist16, hltonecurveloc , shtonecurveloc, tonecurveloc,
                                                  sca);
 
@@ -3088,7 +3088,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double hlcomprthresh = params.locallab.hlcomprthresh;
             double shcompr = params.locallab.shcompr;
 
-            CurveFactory::complexCurvelocal (ecomp, black, hlcompr, hlcomprthresh, shcompr, br, contr,
+            CurveFactory::complexCurvelocal (ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
                                              lhist16, hltonecurveloc , shtonecurveloc, tonecurveloc,
                                              sca);
 
