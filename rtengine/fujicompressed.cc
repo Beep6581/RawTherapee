@@ -18,6 +18,21 @@ it under the terms of the one of three licenses as you choose:
 
  */
 
+namespace {
+
+int bitDiff (int value1, int value2)
+{
+    int decBits = 0;
+
+    if ( value2 < value1 )
+        while (decBits <= 12 && (value2 << ++decBits) < value1)
+            ;
+
+    return decBits;
+}
+
+}
+
 void CLASS init_fuji_compr (struct fuji_compressed_params* info)
 {
     int cur_val;
@@ -90,6 +105,10 @@ void CLASS fuji_fill_buffer (struct fuji_compressed_block *info)
     if (info->cur_pos >= info->cur_buf_size) {
         info->cur_pos = 0;
         info->cur_buf_offset += info->cur_buf_size;
+#ifdef MYFILE_MMAP
+        info->cur_buf_size = info->max_read_size;
+        info->cur_buf = fdata(info->cur_buf_offset, info->input);
+#else
 #ifdef _OPENMP
         #pragma omp critical
 #endif
@@ -97,14 +116,13 @@ void CLASS fuji_fill_buffer (struct fuji_compressed_block *info)
             fseek (info->input, info->cur_buf_offset, SEEK_SET);
             info->cur_buf_size = fread (info->cur_buf, 1, std::min (info->max_read_size, FUJI_BUF_SIZE), info->input);
         }
-
+#endif
         if (info->cur_buf_size < 1) { // nothing read
             if (info->fillbytes > 0) {
                 int ls = std::max (1, std::min (info->fillbytes, (int)FUJI_BUF_SIZE));
                 memset (info->cur_buf, 0, ls);
                 info->fillbytes -= ls;
-            } else
-                ;
+            }
         }
 
         info->max_read_size -= info->cur_buf_size;
@@ -128,8 +146,10 @@ void CLASS init_fuji_block (struct fuji_compressed_block* info, const struct fuj
     }
 
     // init buffer
+#ifndef MYFILE_MMAP
     info->cur_buf = (uchar*)malloc (FUJI_BUF_SIZE);
     merror (info->cur_buf, "init_fuji_block()");
+#endif
     info->cur_bit = 0;
     info->cur_pos = 0;
     info->cur_buf_offset = raw_offset;
@@ -172,12 +192,12 @@ void CLASS copy_line_to_xtrans (struct fuji_compressed_block* info, int cur_line
 
         while (static_cast<int>(pixel_count) < cur_block_width) {
             switch (xtrans_abs[row_count][ (pixel_count % 6)]) {
-                case 0:     // red
-                    line_buf = lineBufR[row_count >> 1];
-                    break;
-
                 case 1:     // green
                     line_buf = lineBufG[row_count];
+                    break;
+
+                case 0:     // red
+                    line_buf = lineBufR[row_count >> 1];
                     break;
 
                 case 2:     // blue
@@ -256,7 +276,7 @@ void CLASS copy_line_to_bayer (struct fuji_compressed_block *info, int cur_line,
 
 #define fuji_quant_gradient(i,v1,v2) (9*i->q_table[i->q_point[4]+(v1)] + i->q_table[i->q_point[4]+(v2)])
 
-void CLASS fuji_zerobits (struct fuji_compressed_block* info, int *count)
+inline void CLASS fuji_zerobits (struct fuji_compressed_block* info, int *count)
 {
     uchar zero = 0;
     *count = 0;
@@ -268,7 +288,9 @@ void CLASS fuji_zerobits (struct fuji_compressed_block* info, int *count)
 
         if (!info->cur_bit) {
             ++info->cur_pos;
+#ifndef MYFILE_MMAP
             fuji_fill_buffer (info);
+#endif
         }
 
         if (zero) {
@@ -279,15 +301,16 @@ void CLASS fuji_zerobits (struct fuji_compressed_block* info, int *count)
     }
 }
 
-void CLASS fuji_read_code (struct fuji_compressed_block* info, int *data, int bits_to_read)
+inline void CLASS fuji_read_code (struct fuji_compressed_block* info, int *data, int bits_to_read)
 {
-    uchar bits_left = bits_to_read;
-    uchar bits_left_in_byte = 8 - (info->cur_bit & 7);
     *data = 0;
 
     if (!bits_to_read) {
         return;
     }
+
+    uchar bits_left = bits_to_read;
+    uchar bits_left_in_byte = 8 - (info->cur_bit & 7);
 
     if (bits_to_read >= bits_left_in_byte) {
         do {
@@ -295,7 +318,9 @@ void CLASS fuji_read_code (struct fuji_compressed_block* info, int *data, int bi
             bits_left -= bits_left_in_byte;
             *data |= info->cur_buf[info->cur_pos] & ((1 << bits_left_in_byte) - 1);
             ++info->cur_pos;
+#ifndef MYFILE_MMAP
             fuji_fill_buffer (info);
+#endif
             bits_left_in_byte = 8;
         } while (bits_left >= 8);
     }
@@ -309,17 +334,6 @@ void CLASS fuji_read_code (struct fuji_compressed_block* info, int *data, int bi
     bits_left_in_byte -= bits_left;
     *data |= ((1 << bits_left) - 1) & ((unsigned)info->cur_buf[info->cur_pos] >> bits_left_in_byte);
     info->cur_bit = (8 - (bits_left_in_byte & 7)) & 7;
-}
-
-int CLASS bitDiff (int value1, int value2)
-{
-    int decBits = 0;
-
-    if ( value2 < value1 )
-        while (decBits <= 12 && (value2 << ++decBits) < value1)
-            ;
-
-    return decBits;
 }
 
 int CLASS fuji_decode_sample_even (struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads)
@@ -878,7 +892,9 @@ void CLASS fuji_decode_strip (const struct fuji_compressed_params* info_common, 
 
     // release data
     free (info.linealloc);
+#ifndef MYFILE_MMAP
     free (info.cur_buf);
+#endif
 }
 
 static unsigned sgetn (int n, uchar *s)
