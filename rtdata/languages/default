@@ -793,6 +793,7 @@ HISTORY_MSG_545;Local - lumaref
 HISTORY_MSG_546;Local - H curve
 HISTORY_MSG_547;Local - Vibrance
 HISTORY_MSG_548;Local - Vib H curve
+HISTORY_MSG_549;Local - Vib Protect skin tones
 HISTORY_MSG_550;Local - Vib avoid colorshift
 HISTORY_MSG_551;Local - Vib link
 HISTORY_MSG_552;Local - Vib Pastel
@@ -1755,7 +1756,7 @@ TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
 TP_LOCALLAB_ACTIV;Blur luminance only
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
-TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Retinex, ToneMapping, CBDL.
+TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BLUFR;Blur & Noise
 TP_LOCALLAB_CENTER_X;Center X
@@ -1772,6 +1773,7 @@ TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVENH;Super
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_LUM;Curves
+TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
 TP_LOCALLAB_EXPOSE;Exposure
