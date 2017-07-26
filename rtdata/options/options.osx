@@ -24,7 +24,8 @@ PathTemplate=%p1/converted/%f
 CustomProfileBuilder=
 
 [GUI]
-Font=Sans 12
+FontFamily=Arial Regular
+FontSize=12
 
 # Set here an absolute or relative path (to the rawtherapee.exe file) to the directory containing your own profiles.
 # If MultiUser=true, each user will have their own "options" file, and can set a common or different absolu path
