@@ -254,6 +254,15 @@ RTWindow *create_rt_window()
         Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
 
+#if defined(__APPLE__)
+        double resolution = screen->get_resolution ();
+        printf("Screen resolution is %.1f", (float)resolution);
+
+        // This will force screen resolution regarding font, but I don't think it's compliant with Gtk guidelines...
+        // Do not confuse with screen scaling, where everything is scaled up !
+        screen->set_resolution (96.);
+#endif
+
         Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
         Glib::ustring filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
         if (!regex->match(options.theme + ".css") || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
