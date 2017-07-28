@@ -80,8 +80,8 @@ public:
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
 
 private:
-    bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
-    bool srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
     Glib::RefPtr<Gtk::Tooltip> bgTTips;
     Glib::RefPtr<Gtk::Tooltip> srTTips;
@@ -101,6 +101,10 @@ private:
     Adjuster* contrast;
     Adjuster* qcontrast;
     Adjuster* colorh;
+    Adjuster* tempout;
+    Adjuster* greenout;
+    Adjuster* ybout;
+
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     MyComboBoxText* toneCurveMode3;

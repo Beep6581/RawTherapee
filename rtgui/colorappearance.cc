@@ -21,8 +21,98 @@
 #include "guiutils.h"
 #include "../rtengine/color.h"
 
+#define MINTEMP0 1500   //1200
+#define MAXTEMP0 12000  //12000
+#define CENTERTEMP0 5000
+#define MINGREEN0 0.8
+#define MAXGREEN0 1.2
+
+
 using namespace rtengine;
 using namespace rtengine::procparams;
+
+static double wbSlider2Temp (double sval)
+{
+
+    // slider range: 0 - 10000
+    double temp;
+
+    if (sval <= 5000) {
+        // linear below center-temp
+        temp = MINTEMP0 + (sval / 5000.0) * (CENTERTEMP0 - MINTEMP0);
+    } else {
+        const double slope = (double) (CENTERTEMP0 - MINTEMP0) / (MAXTEMP0 - CENTERTEMP0);
+        double x = (sval - 5000) / 5000; // x 0..1
+        double y = x * slope + (1.0 - slope) * pow (x, 4.0);
+        //double y = pow(x, 4.0);
+        temp = CENTERTEMP0 + y * (MAXTEMP0 - CENTERTEMP0);
+    }
+
+    if (temp < MINTEMP0) {
+        temp = MINTEMP0;
+    }
+
+    if (temp > MAXTEMP0) {
+        temp = MAXTEMP0;
+    }
+
+    return temp;
+}
+
+static double wbTemp2Slider (double temp)
+{
+
+    double sval;
+
+    if (temp <= CENTERTEMP0) {
+        sval = ((temp - MINTEMP0) / (CENTERTEMP0 - MINTEMP0)) * 5000.0;
+    } else {
+        const double slope = (double) (CENTERTEMP0 - MINTEMP0) / (MAXTEMP0 - CENTERTEMP0);
+        const double y = (temp - CENTERTEMP0) / (MAXTEMP0 - CENTERTEMP0);
+        double x = pow (y, 0.25); // rough guess of x, will be a little lower
+        double k = 0.1;
+        bool add = true;
+
+        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
+        // from tests, worst case is about 20 iterations, ie no problem
+        for (;;) {
+            double y1 = x * slope + (1.0 - slope) * pow (x, 4.0);
+
+            if (5000 * fabs (y1 - y) < 0.1) {
+                break;
+            }
+
+            if (y1 < y) {
+                if (!add) {
+                    k /= 2;
+                }
+
+                x += k;
+                add = true;
+            } else {
+                if (add) {
+                    k /= 2;
+                }
+
+                x -= k;
+                add = false;
+            }
+        }
+
+        sval = 5000.0 + x * 5000.0;
+    }
+
+    if (sval < 0) {
+        sval = 0;
+    }
+
+    if (sval > 10000) {
+        sval = 10000;
+    }
+
+    return sval;
+}
+
 
 ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance", M ("TP_COLORAPP_LABEL"), false, true)
 {
@@ -353,6 +443,24 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     adaplum->set_tooltip_markup (M ("TP_COLORAPP_ADAPTVIEWING_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+//   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
+//   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+
+    tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR, itempL, &wbSlider2Temp, &wbTemp2Slider));
+    greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR, igreenL));
+    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 50, 1, 18));
+
+    tempout->show();
+    greenout->show();
+    ybout->show();
+    p3VBox->pack_start (*tempout);
+    p3VBox->pack_start (*greenout);
+    p3VBox->pack_start (*ybout);
+
     Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
     surrHBox->set_spacing (2);
     surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
@@ -418,6 +526,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     contrast->setAdjusterListener  (this);
     qcontrast->setAdjusterListener  (this);
     rstprotection->setAdjusterListener  (this);
+    tempout->setAdjusterListener  (this);
+    greenout->setAdjusterListener  (this);
+    ybout->setAdjusterListener  (this);
+
 
     show_all();
 }
@@ -469,6 +581,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         schroma->setEditedState       (pedited->colorappearance.schroma ? Edited : UnEdited);
         mchroma->setEditedState       (pedited->colorappearance.mchroma ? Edited : UnEdited);
         rstprotection->setEditedState (pedited->colorappearance.rstprotection ? Edited : UnEdited);
+        tempout->setEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
+        greenout->setEditedState (pedited->colorappearance.greenout ? Edited : UnEdited);
+        ybout->setEditedState (pedited->colorappearance.ybout ? Edited : UnEdited);
         contrast->setEditedState      (pedited->colorappearance.contrast ? Edited : UnEdited);
         qcontrast->setEditedState     (pedited->colorappearance.qcontrast ? Edited : UnEdited);
         colorh->setEditedState        (pedited->colorappearance.colorh ? Edited : UnEdited);
@@ -599,6 +714,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     contrast->setValue (pp->colorappearance.contrast);
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
+    tempout->setValue (pp->colorappearance.tempout);
+    greenout->setValue (pp->colorappearance.greenout);
+    ybout->setValue (pp->colorappearance.ybout);
 
     tcmode3conn.block (false);
     tcmode2conn.block (false);
@@ -642,6 +760,9 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve         = shape->getCurve ();
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
+    pp->colorappearance.tempout        = tempout->getValue ();
+    pp->colorappearance.greenout        = greenout->getValue ();
+    pp->colorappearance.ybout        = ybout->getValue ();
 
     int tcMode = toneCurveMode->get_active_row_number();
 
@@ -701,6 +822,10 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.curveMode     = toneCurveMode->get_active_row_number() != 2;
         pedited->colorappearance.curveMode2    = toneCurveMode2->get_active_row_number() != 2;
         pedited->colorappearance.curveMode3    = toneCurveMode3->get_active_row_number() != 3;
+        pedited->colorappearance.tempout        = tempout->getEditedState ();
+        pedited->colorappearance.greenout        = greenout->getEditedState ();
+        pedited->colorappearance.ybout        = ybout->getEditedState ();
+
     }
 
     if (surround->get_active_row_number() == 0) {
@@ -971,6 +1096,9 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
     contrast->setDefault (defParams->colorappearance.contrast);
     qcontrast->setDefault (defParams->colorappearance.qcontrast);
     colorh->setDefault (defParams->colorappearance.colorh);
+    tempout->setDefault (defParams->colorappearance.tempout);
+    greenout->setDefault (defParams->colorappearance.greenout);
+    ybout->setDefault (defParams->colorappearance.ybout);
 
     if (pedited) {
         degree->setDefaultEditedState (pedited->colorappearance.degree ? Edited : UnEdited);
@@ -986,6 +1114,9 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         contrast->setDefaultEditedState (pedited->colorappearance.contrast ? Edited : UnEdited);
         qcontrast->setDefaultEditedState (pedited->colorappearance.qcontrast ? Edited : UnEdited);
         colorh->setDefaultEditedState (pedited->colorappearance.colorh ? Edited : UnEdited);
+        tempout->setDefaultEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
+        greenout->setDefaultEditedState (pedited->colorappearance.greenout ? Edited : UnEdited);
+        ybout->setDefaultEditedState (pedited->colorappearance.ybout ? Edited : UnEdited);
 
     } else {
         degree->setDefaultEditedState (Irrelevant);
@@ -1001,6 +1132,9 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         qcontrast->setDefaultEditedState (Irrelevant);
         rstprotection->setDefaultEditedState (Irrelevant);
         colorh->setDefaultEditedState (Irrelevant);
+        tempout->setDefaultEditedState (Irrelevant);
+        greenout->setDefaultEditedState (Irrelevant);
+        ybout->setDefaultEditedState (Irrelevant);
 
     }
 }
@@ -1104,6 +1238,13 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvCAThue, a->getTextValue());
         } else if (a == qcontrast) {
             listener->panelChanged (EvCATQContrast, a->getTextValue());
+        } else if (a == tempout) {
+            listener->panelChanged (EvCATtempout, a->getTextValue());
+        } else if (a == greenout) {
+            listener->panelChanged (EvCATgreenout, a->getTextValue());
+        } else if (a == ybout) {
+            listener->panelChanged (EvCATybout, a->getTextValue());
+
         }
 
     }
@@ -1281,6 +1422,9 @@ void ColorAppearance::setBatchMode (bool batchMode)
     contrast->showEditedCB ();
     qcontrast->showEditedCB ();
     colorh->showEditedCB ();
+    tempout->showEditedCB ();
+    greenout->showEditedCB ();
+    ybout->showEditedCB ();
 
     surround->append (M ("GENERAL_UNCHANGED"));
     wbmodel->append (M ("GENERAL_UNCHANGED"));
@@ -1337,4 +1481,8 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
     contrast->trimValue (pp->colorappearance.contrast);
     qcontrast->trimValue (pp->colorappearance.qcontrast);
     colorh->trimValue (pp->colorappearance.colorh);
+    tempout->trimValue (pp->colorappearance.tempout);
+    greenout->trimValue (pp->colorappearance.greenout);
+    ybout->trimValue (pp->colorappearance.ybout);
+
 }
