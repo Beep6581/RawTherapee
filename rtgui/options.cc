@@ -640,8 +640,8 @@ void Options::setDefaults ()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
-    rtSettings.viewingdevice = 0;
-    rtSettings.viewingdevicegrey = 3;
+ //   rtSettings.viewingdevice = 0;
+ //   rtSettings.viewingdevicegrey = 3;
     rtSettings.viewinggreySc = 1;
     rtSettings.leveldnv = 2;
     rtSettings.leveldnti = 0;
@@ -1546,7 +1546,7 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Color Management", "DenoiseLabgamma")) {
                     rtSettings.denoiselabgamma      = keyFile.get_integer ("Color Management", "DenoiseLabgamma");
                 }
-
+/*
                 if (keyFile.has_key ("Color Management", "view")) {
                     rtSettings.viewingdevice        = keyFile.get_integer ("Color Management", "view");
                 }
@@ -1554,7 +1554,7 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Color Management", "grey")) {
                     rtSettings.viewingdevicegrey    = keyFile.get_integer ("Color Management", "grey");
                 }
-
+*/
                 if (keyFile.has_key ("Color Management", "greySc")) {
                     rtSettings.viewinggreySc        = keyFile.get_integer ("Color Management", "greySc");
                 }
@@ -2123,8 +2123,8 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
         keyFile.set_integer ("Color Management", "Intent", rtSettings.monitorIntent);
         keyFile.set_boolean ("Color Management", "MonitorBPC", rtSettings.monitorBPC);
-        keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
-        keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
+ //       keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
+ //       keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
         keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
 
         keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
