@@ -29,6 +29,7 @@ Developement contributors, in last name alphabetical order:
   Jan Rinze
   Ben S.
   Andrey Skvortsov
+  Lukas Stratmann
   Fabio Suprani
   Anders Torger
   Ingo Weyrich

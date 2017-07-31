@@ -2,11 +2,13 @@
 #define _PPVERSION_
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 326
+#define PPVERSION 327
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   327  2017-07-31
+        Syntax of PP3 files now includes information about data types.
    326  2015-07-26
         [Exposure] Added 'Perceptual' tone curve mode
    325  2015-07-23
