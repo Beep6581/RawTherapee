@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _MYFILE_
-#define _MYFILE_
+#ifndef _KEYFILEWRAPPER_
+#define _KEYFILEWRAPPER_
 
 #include <glib.h>
 #include <glibmm.h>
