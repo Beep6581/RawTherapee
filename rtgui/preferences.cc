@@ -1987,16 +1987,15 @@ void Preferences::fillPreferences ()
     addc.block (true);
     setc.block (true);
 
-    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-        for (size_t i = 0; i < moptions.baBehav.size(); i++)
-            for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
-                for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)
-                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
-                        adjs->set_value (behavColumns.badd, moptions.baBehav[i] == 1);
-                        adjs->set_value (behavColumns.bset, moptions.baBehav[i] != 1);
-                        break;
-                    }
-    }
+    moptions.baBehav.resize (ADDSET_PARAM_NUM);
+    for (size_t i = 0; i < moptions.baBehav.size(); i++)
+        for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
+            for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)
+                if (adjs->get_value (behavColumns.addsetid) == (int)i) {
+                    adjs->set_value (behavColumns.badd, moptions.baBehav[i] == 1);
+                    adjs->set_value (behavColumns.bset, moptions.baBehav[i] != 1);
+                    break;
+                }
 
     addc.block (false);
     setc.block (false);
