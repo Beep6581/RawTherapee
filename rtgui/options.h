@@ -315,6 +315,7 @@ public:
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
     Glib::ustring lastLensProfileDir;
+    bool gimpPluginShowInfoDialog;
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders

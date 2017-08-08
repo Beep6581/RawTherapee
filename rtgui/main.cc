@@ -416,6 +416,19 @@ private:
     RTWindow *rtWindow;
 };
 
+void show_gimp_plugin_info_dialog(Gtk::Window *parent)
+{
+    if (options.gimpPluginShowInfoDialog) {
+        Gtk::MessageDialog info(*parent, M("GIMP_PLUGIN_INFO"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+        Gtk::Box *box = info.get_message_area();
+        Gtk::CheckButton dontshowagain(M("DONT_SHOW_AGAIN"));
+        dontshowagain.show();
+        box->pack_start(dontshowagain);
+        info.run();
+        options.gimpPluginShowInfoDialog = !dontshowagain.get_active();
+    }
+}
+
 } // namespace
 
 
@@ -602,6 +615,9 @@ int main(int argc, char **argv)
             Gtk::Main m(&argc, &argv);
             gdk_threads_enter();
             const std::unique_ptr<RTWindow> rtWindow(create_rt_window());
+            if (gimpPlugin) {
+                show_gimp_plugin_info_dialog(rtWindow.get());
+            }
             m.run(*rtWindow);
             gdk_threads_leave();
 

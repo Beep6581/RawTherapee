@@ -724,6 +724,7 @@ void Options::setDefaults ()
     lastProfilingReferenceDir = "";
     lastBWCurvesDir = "";
     lastLensProfileDir = "";
+    gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
 }
 
@@ -1852,6 +1853,9 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet (keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
                 safeDirGet (keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
+                if (keyFile.has_key ("Dialogs", "GimpPluginShowInfoDialog")) {
+                    gimpPluginShowInfoDialog = keyFile.get_boolean("Dialogs", "GimpPluginShowInfoDialog");
+                }
             }
 
 // --------------------------------------------------------------------------------------------------------
@@ -2217,6 +2221,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
+        keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyData = keyFile.to_data ();
 
