@@ -110,7 +110,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     conUseDist.block(false);
 }
 
-void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta)
+void LensProfilePanel::setRawMeta(bool raw, const rtengine::FramesMetaData* pMeta)
 {
     if (!raw || pMeta->getFocusDist() <= 0) {
         disableListener();

@@ -338,11 +338,8 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
             return &(iter->second);
         }
 
-        RawMetaDataLocation rml;
-        rml.exifBase = ri.get_exifBase();
-        rml.ciffBase = ri.get_ciffBase();
-        rml.ciffLength = ri.get_ciffLen();
-        ImageData idata(filename, &rml);
+        RawMetaDataLocation rml(ri.get_exifBase(), ri.get_ciffBase(), ri.get_ciffLen());
+        FramesData idata(filename, &rml, true);
         /* Files are added in the map, divided by same maker/model,lens and aperture*/
         std::string key( ffInfo::key(idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber()) );
         iter = ffList.find( key );

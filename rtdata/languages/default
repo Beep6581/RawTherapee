@@ -1157,8 +1157,16 @@ PROGRESSBAR_SAVEPNG;Saving PNG file...
 PROGRESSBAR_SAVETIFF;Saving TIFF file...
 PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
+QINFO_HDR;HDR / %1 frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif data not available.
+QINFO_PIXELSHIFT;PixelShift / %1 frame(s)
+SAMPLEFORMAT_0;Unknown data format
+SAMPLEFORMAT_1;Unsigned 8 bits
+SAMPLEFORMAT_2;Unsigned 16 bits
+SAMPLEFORMAT_4;LogLuv 24 bits
+SAMPLEFORMAT_8;LogLuv 32 bits
+SAMPLEFORMAT_16;32 bits floating point
 SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FORCEFORMATOPTS;Force saving options

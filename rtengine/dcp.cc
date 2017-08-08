@@ -696,7 +696,8 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         return;
     }
 
-    std::unique_ptr<TagDirectory> tagDir(ExifManager::parseTIFF(file, false));
+    ExifManager exifManager(file, nullptr, true);
+    std::unique_ptr<TagDirectory> tagDir(exifManager.parseTIFF(false));
 
     Tag* tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_1));
     light_source_1 =

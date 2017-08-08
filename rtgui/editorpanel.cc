@@ -1268,13 +1268,14 @@ void EditorPanel::info_toggled ()
     Glib::ustring infoString2; //2-nd line
     Glib::ustring infoString3; //3-rd line
     Glib::ustring infoString4; //4-th line
+    Glib::ustring infoString5; //5-th line
     Glib::ustring expcomp;
 
     if (!ipc || !openThm) {
         return;
     }
 
-    const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
+    const rtengine::FramesMetaData* idata = ipc->getInitialImage()->getMetaData();
 
     if (idata && idata->hasExif()) {
         infoString1 = Glib::ustring::compose ("%1 + %2",
@@ -1305,6 +1306,24 @@ void EditorPanel::info_toggled ()
         infoString4 = Glib::ustring::compose ("<span size=\"small\">%1 MP (%2x%3)</span>", Glib::ustring::format (std::setw (4), std::fixed, std::setprecision (1), (float)ww * hh / 1000000), ww, hh);
 
         infoString = Glib::ustring::compose ("%1\n%2\n%3\n%4", infoString1, infoString2, infoString3, infoString4);
+
+        //adding special characteristics
+        bool isHDR = idata->getHDR();
+        bool isPixelShift = idata->getPixelShift();
+        int numFrames = idata->getFrameCount();
+        if (isHDR) {
+            infoString5 = Glib::ustring::compose (M("QINFO_HDR"), numFrames);
+            if (numFrames == 1) {
+                int sampleFormat = idata->getSampleFormat();
+                infoString5 = Glib::ustring::compose ("%1 / %2", infoString5, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
+            }
+        } else if (isPixelShift) {
+            infoString5 = Glib::ustring::compose (M("QINFO_PIXELSHIFT"), numFrames);
+        }
+        if (!infoString5.empty()) {
+            infoString = Glib::ustring::compose ("%1\n%2", infoString, infoString5);
+        }
+
     } else {
         infoString = M ("QINFO_NOEXIF");
     }

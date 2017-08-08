@@ -177,15 +177,28 @@ void ExifPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
     defChangeList = defParams->exif;
 }
 
-void ExifPanel::setImageData (const ImageMetaData* id)
+void ExifPanel::setImageData (const FramesMetaData* id)
 {
 
     idata = id;
     exifTreeModel->clear ();
 
-    if (id && id->getExifData ()) {
-//        id->getExifData ()->printAll ();
-        addDirectory (id->getExifData (), exifTreeModel->children());
+    if (id) {
+        //bool first = true;
+        // HOMBRE: Should we only display the current frame's Exifs ?
+        for (int frameNum = 0; frameNum < id->getFrameCount (); ++frameNum) {
+            if ( id->getExifData (frameNum)) {
+                /*
+                if (!first) {
+                    Gtk::Separator *sep = Gtk::manage (new Gtk::Separator);
+                    sep->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+                    first = false;
+                }
+                */
+                //id->getExifData ()->printAll ();
+                addDirectory (id->getExifData (frameNum), exifTreeModel->children());
+            }
+        }
     }
 }
 

@@ -31,7 +31,7 @@
 namespace rtengine
 {
 
-class ImageData : public ImageMetaData
+class FrameData
 {
 
 protected:
@@ -49,13 +49,34 @@ protected:
     std::string make, model, serial;
     std::string orientation;
     std::string lens;
+    IIOSampleFormat sampleFormat;
+
+    // each frame has the knowledge of "being an"
+    // or "being part of an" HDR or PS image
+    bool isPixelShift;
+    int isHDR; // Number of frame
 
     void extractInfo ();
 
 public:
 
-    ImageData (Glib::ustring fname, RawMetaDataLocation* rml = nullptr);
-    virtual ~ImageData ();
+    FrameData ();
+    FrameData (rtexif::ExifManager &exifManager);
+    virtual ~FrameData ();
+
+    bool getPixelShift () const
+    {
+        return isPixelShift;
+    }
+    int getHDR () const
+    {
+        return isHDR;
+    }
+
+    IIOSampleFormat getSampleFormat () const
+    {
+        return sampleFormat;
+    }
 
     const rtexif::TagDirectory*   getExifData () const
     {
@@ -128,5 +149,154 @@ public:
         return orientation;
     }
 };
+
+class RawFrameData : public FrameData
+{
+public:
+    RawFrameData (rtexif::ExifManager &exifManager);
+};
+
+class JpegFrameData : public FrameData
+{
+public:
+    JpegFrameData (rtexif::ExifManager &exifManager);
+};
+
+class TiffFrameData : public FrameData
+{
+public:
+    TiffFrameData (rtexif::ExifManager &exifManager);
+};
+
+class FramesData : public FramesMetaData {
+private:
+    std::vector<FrameData*> frames;
+    int dcrawFrameCount;
+
+public:
+    FramesData (Glib::ustring fname, RawMetaDataLocation* rml = nullptr, bool firstFrameOnly = false, bool loadAll = false);
+    ~FramesData ();
+
+    void setDCRawFrameCount (int frameCount)
+    {
+        dcrawFrameCount = frameCount;
+    }
+
+    int getFrameCount () const
+    {
+        return dcrawFrameCount ? dcrawFrameCount : frames.size();
+    }
+    FrameData *getFrameData (int frame) const
+    {
+        return frames.at(frame);
+    }
+
+    bool getPixelShift (int frame = 0) const
+    {
+        // So far only Pentax provide multi-frame HDR file.
+        // Only the first frame contains the HDR tag
+        // If more brand have to be supported, this rule may need
+        // to evolve
+
+        //return frames.at(frame)->getPixelShift ();
+        return frames.at(0)->getPixelShift ();
+    }
+    int getHDR (int frame = 0) const
+    {
+        // So far only Pentax provide multi-frame HDR file.
+        // Only the first frame contains the HDR tag
+        // If more brand have to be supported, this rule may need
+        // to evolve
+
+        //return frames.at(frame)->getPixelShift ();
+        if (frames.size()) {
+            return frames.at(frame)->getHDR ();
+        } else {
+            return 0;
+        }
+    }
+
+    IIOSampleFormat getSampleFormat (int frame = 0) const
+    {
+        return frames.at(frame)->getSampleFormat ();
+    }
+
+    const rtexif::TagDirectory*   getExifData (int frame = 0) const
+    {
+        return frames.at(frame)->getExifData ();
+    }
+    const procparams::IPTCPairs   getIPTCData (int frame = 0) const
+    {
+        return frames.at(frame)->getIPTCData ();
+    }
+
+    bool hasExif (int frame = 0) const
+    {
+        return frames.at(frame)->hasExif ();
+    }
+    bool hasIPTC (int frame = 0) const
+    {
+        return frames.at(frame)->hasIPTC ();
+    }
+
+    struct tm   getDateTime (int frame = 0) const {
+        return frames.at(frame)->getDateTime ();
+    }
+    time_t      getDateTimeAsTS(int frame = 0) const
+    {
+        return frames.at(frame)->getDateTimeAsTS ();
+    }
+    int         getISOSpeed (int frame = 0) const
+    {
+        return frames.at(frame)->getISOSpeed ();
+    }
+    double      getFNumber  (int frame = 0) const
+    {
+        return frames.at(frame)->getFNumber ();
+    }
+    double      getFocalLen (int frame = 0) const
+    {
+        return frames.at(frame)->getFocalLen ();
+    }
+    double      getFocalLen35mm (int frame = 0) const
+    {
+        return frames.at(frame)->getFocalLen35mm ();
+    }
+    float       getFocusDist (int frame = 0) const
+    {
+        return frames.at(frame)->getFocusDist ();
+    }
+    double      getShutterSpeed (int frame = 0) const
+    {
+        return frames.at(frame)->getShutterSpeed ();
+    }
+    double      getExpComp  (int frame = 0) const
+    {
+        return frames.at(frame)->getExpComp ();
+    }
+    std::string getMake     (int frame = 0) const
+    {
+        return frames.at(frame)->getMake ();
+    }
+    std::string getModel    (int frame = 0) const
+    {
+        return frames.at(frame)->getModel ();
+    }
+    std::string getLens     (int frame = 0) const
+    {
+        return frames.at(frame)->getLens ();
+    }
+    std::string getSerialNumber (int frame = 0) const
+    {
+        return frames.at(frame)->getSerialNumber ();
+    }
+    std::string getOrientation (int frame = 0) const
+    {
+        return frames.at(frame)->getOrientation ();
+    }
+
+};
+
+
 }
 #endif

@@ -510,7 +510,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     toneCurve->enableListener ();
 
     if (ipc) {
-        const rtengine::ImageMetaData* pMetaData = ipc->getInitialImage()->getMetaData();
+        const rtengine::FramesMetaData* pMetaData = ipc->getInitialImage()->getMetaData();
         exifpanel->setImageData (pMetaData);
         iptcpanel->setImageData (pMetaData);
 
@@ -528,7 +528,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setImageTypeListener (this);
         flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 
-        icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData);
+        icm->setRawMeta (raw, (const rtengine::FramesData*)pMetaData);
         lensProf->setRawMeta (raw, pMetaData);
     }
 
@@ -677,7 +677,7 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
         return nullptr;
     }
 
-    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    const rtengine::FramesMetaData *imd = ipc->getInitialImage()->getMetaData();
 
     if(imd) {
         int iso = imd->getISOSpeed();
@@ -698,7 +698,7 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
         return nullptr;
     }
 
-    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    const rtengine::FramesMetaData *imd = ipc->getInitialImage()->getMetaData();
 
     if(imd) {
         // int iso = imd->getISOSpeed();              temporarilly removed because unused

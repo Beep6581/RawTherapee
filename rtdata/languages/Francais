@@ -1155,8 +1155,16 @@ PROGRESSBAR_SAVEPNG;Enregistrement du fichier PNG...
 PROGRESSBAR_SAVETIFF;Enregistrement du fichier TIFF...
 PROGRESSBAR_SNAPSHOT_ADDED;Signet ajouté
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil modifié dans le navigateur
+QINFO_HDR;HDR / %1 image(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Données EXIF non disponibles.
+QINFO_PIXELSHIFT;PixelShift / %1 images
+SAMPLEFORMAT_0;Format de donnée inconnu
+SAMPLEFORMAT_1;8 bits non signé
+SAMPLEFORMAT_2;16 bits non signé
+SAMPLEFORMAT_4;LogLuv 24 bits
+SAMPLEFORMAT_8;LogLuv 32 bits
+SAMPLEFORMAT_16;32 bits à virgule flottante
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement

@@ -19,6 +19,7 @@
 #ifndef _RTENGINE_
 #define _RTENGINE_
 
+#include "imageformat.h"
 #include "rt_math.h"
 #include "procparams.h"
 #include "procevents.h"
@@ -49,57 +50,68 @@ class IImage16;
 class IImagefloat;
 
 /**
-  * This class represents provides functions to obtain exif and IPTC metadata information
-  * from the image file
+  * This class provides functions to obtain exif and IPTC metadata information
+  * from any of the sub-frame of an image file
   */
-class ImageMetaData
+class FramesMetaData
 {
 
 public:
+    /** @return Returns the number of frame contained in the file based on Metadata */
+    virtual int getFrameCount () const = 0;
+
     /** Checks the availability of exif metadata tags.
       * @return Returns true if image contains exif metadata tags */
-    virtual bool hasExif () const = 0;
+    virtual bool hasExif (int frame = 0) const = 0;
     /** Returns the directory of exif metadata tags.
       * @return The directory of exif metadata tags */
-    virtual const rtexif::TagDirectory* getExifData () const = 0;
+    virtual const rtexif::TagDirectory* getExifData (int frame = 0) const = 0;
     /** Checks the availability of IPTC tags.
       * @return Returns true if image contains IPTC tags */
-    virtual bool hasIPTC () const = 0;
+    virtual bool hasIPTC (int frame = 0) const = 0;
     /** Returns the directory of IPTC tags.
       * @return The directory of IPTC tags */
-    virtual const procparams::IPTCPairs getIPTCData () const = 0;
+    virtual const procparams::IPTCPairs getIPTCData (int frame = 0) const = 0;
     /** @return a struct containing the date and time of the image */
-    virtual struct tm   getDateTime () const = 0;
+    virtual struct tm   getDateTime (int frame = 0) const = 0;
     /** @return a timestamp containing the date and time of the image */
-    virtual time_t   getDateTimeAsTS() const = 0;
+    virtual time_t   getDateTimeAsTS(int frame = 0) const = 0;
     /** @return the ISO of the image */
-    virtual int         getISOSpeed () const = 0;
+    virtual int         getISOSpeed (int frame = 0) const = 0;
     /** @return the F number of the image */
-    virtual double      getFNumber  () const = 0;
+    virtual double      getFNumber  (int frame = 0) const = 0;
     /** @return the focal length used at the exposure */
-    virtual double      getFocalLen () const = 0;
+    virtual double      getFocalLen (int frame = 0) const = 0;
     /** @return the focal length in 35mm used at the exposure */
-    virtual double      getFocalLen35mm () const = 0;
+    virtual double      getFocalLen35mm (int frame = 0) const = 0;
     /** @return the focus distance in meters, 0=unknown, 10000=infinity */
-    virtual float       getFocusDist () const = 0;
+    virtual float       getFocusDist (int frame = 0) const = 0;
     /** @return the shutter speed */
-    virtual double      getShutterSpeed () const = 0;
+    virtual double      getShutterSpeed (int frame = 0) const = 0;
     /** @return the exposure compensation */
-    virtual double      getExpComp () const = 0;
+    virtual double      getExpComp (int frame = 0) const = 0;
     /** @return the maker of the camera */
-    virtual std::string getMake     () const = 0;
+    virtual std::string getMake     (int frame = 0) const = 0;
     /** @return the model of the camera */
-    virtual std::string getModel    () const = 0;
+    virtual std::string getModel    (int frame = 0) const = 0;
 
-    std::string         getCamera   () const
+    std::string         getCamera   (int frame = 0) const
     {
-        return getMake() + " " + getModel();
+        return getMake(frame) + " " + getModel(frame);
     }
 
     /** @return the lens on the camera  */
-    virtual std::string getLens     () const = 0;
+    virtual std::string getLens     (int frame = 0) const = 0;
     /** @return the orientation of the image */
-    virtual std::string getOrientation () const = 0;
+    virtual std::string getOrientation (int frame = 0) const = 0;
+
+    /** @return true if the file is a PixelShift shot (Pentax bodies) */
+    virtual bool getPixelShift (int frame = 0) const = 0;
+    /** @return 0: not ah HDR file ; 1: single shot HDR (e.g. 32 bit float DNG file or Log compressed) ; >1: multi-frame HDR file */
+    virtual int getHDR (int frame = 0) const = 0;
+    /** @return the sample format based on MetaData */
+    virtual IIOSampleFormat getSampleFormat (int frame = 0) const = 0;
+
     /** Functions to convert between floating point and string representation of shutter and aperture */
     static std::string apertureToString (double aperture);
     /** Functions to convert between floating point and string representation of shutter and aperture */
@@ -111,14 +123,15 @@ public:
     /** Functions to convert between floating point and string representation of exposure compensation */
     static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
 
-    virtual ~ImageMetaData () {}
+    virtual ~FramesMetaData () {}
 
     /** Reads metadata from file.
       * @param fname is the name of the file
-      * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
-      * of jpgs and tiffs pass a NULL pointer.
+      * @param rml is a struct containing information about metadata location of the first frame.
+      * Use it only for raw files. In caseof jpgs and tiffs pass a NULL pointer.
+      * @param firstFrameOnly must be true to get the MetaData of the first frame only, e.g. for a PixelShift file.
       * @return The metadata */
-    static ImageMetaData* fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml);
+    static FramesMetaData* fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml, bool firstFrameOnly = false);
 };
 
 /** This listener interface is used to indicate the progress of time consuming operations */
@@ -157,9 +170,9 @@ public:
     /** Returns the embedded icc profile of the image.
       * @return The handle of the embedded profile */
     virtual cmsHPROFILE getEmbeddedProfile () = 0;
-    /** Returns a class providing access to the exif and iptc metadata tags of the image.
-      * @return An instance of the ImageMetaData class */
-    virtual const ImageMetaData* getMetaData () = 0;
+    /** Returns a class providing access to the exif and iptc metadata tags of all frames of the image.
+      * @return An instance of the FramesMetaData class */
+    virtual const FramesMetaData* getMetaData () = 0;
     /** This is a function used for internal purposes only. */
     virtual ImageSource* getImageSource () = 0;
     /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */

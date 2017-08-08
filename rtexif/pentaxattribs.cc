@@ -1228,6 +1228,7 @@ public:
         choices[2]    = "HDR 1";
         choices[3]    = "HDR 2";
         choices[4]    = "HDR 3";
+        choices[5]    = "Advanced";
 
         choices1[0]   = "Auto-align Off";
         choices1[1]   = "Auto-align On";

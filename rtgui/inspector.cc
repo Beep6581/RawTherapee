@@ -59,7 +59,7 @@ InspectorBuffer::~InspectorBuffer() {
 //int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
 //{
 //
-//    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, nullptr);
+//    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
 //
 //    if (!idata) {
 //        return 0;

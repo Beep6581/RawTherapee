@@ -770,6 +770,8 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
             if (cfs->focalLen > dirEFS.focalTo) {
                 dirEFS.focalTo = cfs->focalLen;
             }
+
+            //TODO: ass filters for HDR and PixelShift files
         }
 
         dirEFS.filetypes.insert (cfs->filetype);

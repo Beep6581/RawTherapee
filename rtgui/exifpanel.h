@@ -26,7 +26,7 @@ class ExifPanel : public Gtk::VBox, public ToolPanel
 {
 
 private:
-    const rtengine::ImageMetaData* idata;
+    const rtengine::FramesMetaData* idata;
     rtengine::procparams::ExifPairs changeList;
     rtengine::procparams::ExifPairs defChangeList;
     bool recursiveOp;
@@ -91,7 +91,7 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
-    void setImageData (const rtengine::ImageMetaData* id);
+    void setImageData (const rtengine::FramesMetaData* id);
 
     void exifSelectionChanged ();
     void removePressed ();

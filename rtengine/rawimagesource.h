@@ -166,9 +166,9 @@ public:
         return ri->get_rotateDegree();
     }
 
-    ImageData*  getImageData ()
+    FrameData*  getImageData (int frameNum)
     {
-        return idata;
+        return idata->getFrameData (frameNum);
     }
     ImageMatrices* getImageMatrices ()
     {

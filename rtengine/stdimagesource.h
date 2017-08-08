@@ -68,9 +68,9 @@ public:
     void        getFullSize (int& w, int& h, int tr = TR_NONE);
     void        getSize     (const PreviewProps &pp, int& w, int& h);
 
-    ImageData*  getImageData ()
+    FrameData*  getImageData (int frameNum)
     {
-        return idata;
+        return idata->getFrameData (frameNum);
     }
     ImageIO*    getImageIO   ()
     {

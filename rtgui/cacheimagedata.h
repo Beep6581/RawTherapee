@@ -21,6 +21,7 @@
 
 #include <glibmm.h>
 #include "options.h"
+#include "../rtengine/imageformat.h"
 
 class CacheImageData
 {
@@ -51,6 +52,9 @@ public:
     double focalLen, focalLen35mm;
     float focusDist;
     unsigned iso;
+    int isHDR;  // null if no HDR, otherwise provide the number of frame for this HDR file
+    bool isPixelShift;
+    rtengine::IIO_Sample_Format sampleFormat;
     Glib::ustring lens;
     Glib::ustring camMake;
     Glib::ustring camModel;

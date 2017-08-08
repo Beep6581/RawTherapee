@@ -31,6 +31,7 @@
 
 #include "../rtengine/procparams.h"
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/rawmetadatalocation.h"
 
 class CacheImageData;
 
@@ -46,7 +47,7 @@ enum ActionCode {
 
     AC_INVALID = 100,  // invalid state
 };
-enum ByteOrder {INTEL = 0x4949, MOTOROLA = 0x4D4D};
+enum ByteOrder {UNKNOWN = 0, INTEL = 0x4949, MOTOROLA = 0x4D4D};
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
 const enum ByteOrder HOSTORDER = INTEL;
 #else
@@ -99,10 +100,10 @@ class TagDirectory
 {
 
 protected:
-    std::vector<Tag*> tags;     // tags in the directory
-    const TagAttrib*  attribs;  // descriptor table to decode the tags
-    ByteOrder         order;    // byte order
-    TagDirectory*     parent;   // parent directory (NULL if root)
+    std::vector<Tag*> tags;         // tags in the directory
+    const TagAttrib*  attribs;      // descriptor table to decode the tags
+    ByteOrder         order;        // byte order
+    TagDirectory*     parent;       // parent directory (NULL if root)
     static Glib::ustring getDumpKey (int tagID, const Glib::ustring &tagName);
 
 public:
@@ -309,13 +310,37 @@ public:
 class ExifManager
 {
 
-    static Tag* saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const char* name);
+    Tag* saveCIFFMNTag (TagDirectory* root, int len, const char* name);
+    TagDirectory* parseIFD (int ifdOffset, bool skipIgnored);
+
 public:
-    static TagDirectory* parse (FILE*f, int base, bool skipIgnored = true);
-    static TagDirectory* parseJPEG (FILE*f, int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
-    static TagDirectory* parseTIFF (FILE*f, bool skipIgnored = true);
-    static TagDirectory* parseCIFF (FILE* f, int base, int length);
-    static void          parseCIFF (FILE* f, int base, int length, TagDirectory* root);
+    FILE* f;
+    rtengine::RawMetaDataLocation *rml;
+    ByteOrder order;
+    bool onlyFirst;  // Only first IFD
+    unsigned int IFDOffset;
+    unsigned int nextIFDOffset;
+
+    ExifManager (FILE* fHandle, rtengine::RawMetaDataLocation *rml, bool onlyFirstIFD)
+        : f(fHandle), rml(rml), order(UNKNOWN), onlyFirst(onlyFirstIFD),
+          IFDOffset(0), nextIFDOffset(0) {}
+
+    void setIFDOffset(unsigned int offset)
+    {
+        IFDOffset = offset;
+    }
+
+    unsigned int getNextIFDOffset()
+    {
+        return nextIFDOffset;
+    }
+
+    // The following functions parse only one IFD at a time and store the "next IFD offset"
+    TagDirectory* parse (bool skipIgnored = true);
+    TagDirectory* parseJPEG (int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
+    TagDirectory* parseTIFF (bool skipIgnored = true);
+    TagDirectory* parseCIFF ();
+    void          parseCIFF (int length, TagDirectory* root);
 
     /// @brief Get default tag for TIFF
     /// @param forthis The byte order will be taken from the given directory.

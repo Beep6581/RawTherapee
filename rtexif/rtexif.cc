@@ -19,6 +19,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <cstdio>
+#include <iostream>
 #include <cmath>
 #include <cstring>
 #include <ctime>
@@ -289,6 +290,8 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
             kf->set_double ("Common Data", "Shutter", cfs->shutter);
             kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
             kf->set_integer ("Common Data", "ISO", cfs->iso);
+            kf->set_integer ("Common Data", "IsHDR", cfs->isHDR);
+            kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
             kf->set_string ("Common Data", "Lens", cfs->lens);
             kf->set_string ("Common Data", "Make", cfs->camMake);
             kf->set_string ("Common Data", "Model", cfs->camModel);
@@ -849,7 +852,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     }
 
     if (tag == 0x002e) { // location of the embedded preview image in raw files of Panasonic cameras
-        TagDirectory* previewdir = ExifManager::parseJPEG (f, ftell (f)); // try to parse the exif data from the preview image
+        TagDirectory* previewdir;
+        {
+        ExifManager exifManager(f, 0, true);
+        previewdir = exifManager.parseJPEG (ftell (f)); // try to parse the exif data from the preview image
+        }
 
         if (previewdir) {
             if (previewdir->getTag ("Exif")) {
@@ -1894,7 +1901,7 @@ const TagAttrib* lookupAttrib (const TagAttrib* dir, const char* field)
 }
 
 
-TagDirectory* ExifManager::parseCIFF (FILE* f, int base, int length)
+TagDirectory* ExifManager::parseCIFF ()
 {
 
     TagDirectory* root = new TagDirectory (nullptr, ifdAttribs, INTEL);
@@ -1904,12 +1911,12 @@ TagDirectory* ExifManager::parseCIFF (FILE* f, int base, int length)
     mn->initMakerNote (IFD, canonAttribs);
     root->addTag (exif);
     exif->getDirectory()->addTag (mn);
-    parseCIFF (f, base, length, root);
+    parseCIFF (rml->ciffLength, root);
     root->sort ();
     return root;
 }
 
-Tag* ExifManager::saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const char* name)
+Tag* ExifManager::saveCIFFMNTag (TagDirectory* root, int len, const char* name)
 {
     int s = ftell (f);
     if(s >= 0) {
@@ -1927,15 +1934,22 @@ Tag* ExifManager::saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const cha
     }
 }
 
-void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
+void ExifManager::parseCIFF (int length, TagDirectory* root)
 {
+
+    if (!f) {
+        #ifndef NDEBUG
+        std::cerr << "ERROR : no file opened !" << std::endl;
+        #endif
+        return;
+    }
 
     char buffer[1024];
     Tag* t;
 
-    fseek (f, base + length - 4, SEEK_SET);
+    fseek (f, rml->ciffBase + length - 4, SEEK_SET);
 
-    int dirStart = get4 (f, INTEL) + base;
+    int dirStart = get4 (f, INTEL) + rml->ciffBase;
     fseek (f, dirStart, SEEK_SET);
 
     int numOfTags = get2 (f, INTEL);
@@ -1960,10 +1974,12 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
         int nextPos = ftell (f) + 4;
 
         // seek to the location of the value
-        fseek (f, base + get4 (f, INTEL), SEEK_SET);
+        fseek (f, rml->ciffBase + get4 (f, INTEL), SEEK_SET);
 
         if ((((type >> 8) + 8) | 8) == 0x38) {
-            parseCIFF (f, ftell (f), len, root);   // Parse a sub-table
+            rtengine::RawMetaDataLocation rml2(ftell (f), len);
+            ExifManager exifManager(f, &rml2, true);
+            exifManager.parseCIFF (len, root);   // Parse a sub-table
         }
 
         if (type == 0x0810) {
@@ -1994,8 +2010,9 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
 
         }
 
+        ExifManager exifManager(f, 0, true);
         if (type == 0x102d) {
-            Tag* t = saveCIFFMNTag (f, root, len, "CanonCameraSettings");
+            Tag* t = exifManager.saveCIFFMNTag (root, len, "CanonCameraSettings");
             int mm = t->toInt (34, SHORT);
             Tag* nt = new Tag (exif, lookupAttrib (exifAttribs, "MeteringMode"));
 
@@ -2074,31 +2091,31 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
         }
 
         if (type == 0x1029) {
-            saveCIFFMNTag (f, root, len, "CanonFocalLength");
+            exifManager.saveCIFFMNTag (root, len, "CanonFocalLength");
         }
 
         if (type == 0x1031) {
-            saveCIFFMNTag (f, root, len, "SensorInfo");
+            exifManager.saveCIFFMNTag (root, len, "SensorInfo");
         }
 
         if (type == 0x1033) {
-            saveCIFFMNTag (f, root, len, "CustomFunctions");
+            exifManager.saveCIFFMNTag (root, len, "CustomFunctions");
         }
 
         if (type == 0x1038) {
-            saveCIFFMNTag (f, root, len, "CanonAFInfo");
+            exifManager.saveCIFFMNTag (root, len, "CanonAFInfo");
         }
 
         if (type == 0x1093) {
-            saveCIFFMNTag (f, root, len, "CanonFileInfo");
+            exifManager.saveCIFFMNTag (root, len, "CanonFileInfo");
         }
 
         if (type == 0x10a9) {
-            saveCIFFMNTag (f, root, len, "ColorBalance");
+            exifManager.saveCIFFMNTag (root, len, "ColorBalance");
         }
 
         if (type == 0x102a) {
-            saveCIFFMNTag (f, root, len, "CanonShotInfo");
+            exifManager.saveCIFFMNTag (root, len, "CanonShotInfo");
 
             iso = pow (2, (get4 (f, INTEL), get2 (f, INTEL)) / 32.0 - 4) * 50;
             aperture  = (get2 (f, INTEL), (short)get2 (f, INTEL)) / 32.0f;
@@ -2530,22 +2547,47 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
     }
 }
 
-TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
+TagDirectory* ExifManager::parse (bool skipIgnored)
 {
+    int ifd = IFDOffset;
+
+    if (!f) {
+        #ifndef NDEBUG
+        std::cerr << "ERROR : no file opened !" << std::endl;
+        #endif
+        return nullptr;
+    }
     setlocale (LC_NUMERIC, "C"); // to set decimal point in sscanf
-    // read tiff header
-    fseek (f, base, SEEK_SET);
-    unsigned short bo;
-    fread (&bo, 1, 2, f);
-    ByteOrder order = (ByteOrder) ((int)bo);
-    get2 (f, order);
-    int firstifd = get4 (f, order);
+
+    if (order == ByteOrder::UNKNOWN) {
+        // read tiff header
+        fseek (f, rml->exifBase, SEEK_SET);
+        unsigned short bo;
+        fread (&bo, 1, 2, f);
+        order = (ByteOrder) ((int)bo);
+        get2 (f, order);
+        if (!ifd) {
+            ifd = get4 (f, order);
+        }
+    }
+
+    return parseIFD (ifd, skipIgnored);
+}
+
+TagDirectory* ExifManager::parseIFD (int ifdOffset, bool skipIgnored)
+{
+    if (!f) {
+        #ifndef NDEBUG
+        std::cerr << "ERROR : no file opened !" << std::endl;
+        #endif
+        return nullptr;
+    }
 
     // seek to IFD0
-    fseek (f, base + firstifd, SEEK_SET);
+    fseek (f, rml->exifBase + ifdOffset, SEEK_SET);
 
     // first read the IFD directory
-    TagDirectory* root =  new TagDirectory (nullptr, f, base, ifdAttribs, order, skipIgnored);
+    TagDirectory* root =  new TagDirectory (nullptr, f, rml->exifBase, ifdAttribs, order, skipIgnored);
 
     // fix ISO issue with nikon and panasonic cameras
     Tag* make = root->getTag ("Make");
@@ -2580,8 +2622,8 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
     if (make && !strncmp ((char*)make->getValue(), "Kodak", 5)) {
         if (!exif) {
             // old Kodak cameras may have exif tags in IFD0, reparse and create an exif subdir
-            fseek (f, base + firstifd, SEEK_SET);
-            TagDirectory* exifdir =  new TagDirectory (nullptr, f, base, exifAttribs, order, true);
+            fseek (f, rml->exifBase + ifdOffset, SEEK_SET);
+            TagDirectory* exifdir =  new TagDirectory (nullptr, f, rml->exifBase, exifAttribs, order, true);
 
             exif = new Tag (root, root->getAttrib ("Exif"));
             exif->initSubDir (exifdir);
@@ -2777,13 +2819,20 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
         }
     }
 
-// root->printAll ();
+    nextIFDOffset = get4 (f, order);
 
+    //root->printAll ();
     return root;
 }
 
-TagDirectory* ExifManager::parseJPEG (FILE* f, int offset)
+TagDirectory* ExifManager::parseJPEG (int offset)
 {
+    if (!f) {
+        #ifndef NDEBUG
+        std::cerr << "ERROR : no file opened !" << std::endl;
+        #endif
+        return nullptr;
+    }
 
     if(!fseek (f, offset, SEEK_SET)) {
         unsigned char c;
@@ -2805,7 +2854,20 @@ TagDirectory* ExifManager::parseJPEG (FILE* f, int offset)
 
                     if (!memcmp (idbuff + 2, exifid, 6)) {  // Exif info found
                         tiffbase = ftell (f);
-                        return parse (f, tiffbase);
+
+                        // We need a RawMetaDataLocation to put the 'tiffbase' value
+                        bool rmlCreated = false;
+                        if (!rml) {
+                            rml = new rtengine::RawMetaDataLocation (0);
+                            rmlCreated = true;
+                        }
+                        rml->exifBase = tiffbase;
+                        TagDirectory*  tagDir = parse ();
+                        if (rmlCreated) {
+                            delete rml;
+                            rml = nullptr;
+                        }
+                        return tagDir;
                     }
                 }
             }
@@ -2815,10 +2877,17 @@ TagDirectory* ExifManager::parseJPEG (FILE* f, int offset)
     return nullptr;
 }
 
-TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored)
+TagDirectory* ExifManager::parseTIFF (bool skipIgnored)
 {
 
-    return parse (f, 0, skipIgnored);
+    if (!rml) {
+        rml = new rtengine::RawMetaDataLocation(0);
+        TagDirectory* tagDir = parse (skipIgnored);
+        delete rml;
+        return tagDir;
+    } else {
+        return parse (skipIgnored);
+    }
 }
 
 std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)

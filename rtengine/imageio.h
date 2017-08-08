@@ -29,6 +29,7 @@
 #define IMIO_CANNOTWRITEFILE       7
 
 #include "rtengine.h"
+#include "imageformat.h"
 #include <glibmm.h>
 #include "procparams.h"
 #include <libiptcdata/iptc-data.h>
@@ -42,31 +43,6 @@ namespace rtengine
 
 class ProgressListener;
 class Imagefloat;
-
-typedef enum IIO_Sample_Format {
-    IIOSF_UNKNOWN        = 0,       // Unknown or Unsupported file type; Has to remain 0
-    //IIOSF_SIGNED_INT         ,    // Not yet supported
-    IIOSF_UNSIGNED_CHAR  = 1 << 0,
-    IIOSF_UNSIGNED_SHORT = 1 << 1,
-    //IIOSF_HALF               ,    // OpenEXR & NVidia's Half Float, not yet supported
-    IIOSF_LOGLUV24       = 1 << 2,
-    IIOSF_LOGLUV32       = 1 << 3,
-    IIOSF_FLOAT          = 1 << 4
-} IIOSampleFormat;
-
-typedef enum IIO_Sample_Arrangement {
-    IIOSA_UNKNOWN,       // Unknown or Unsupported file type
-    IIOSA_CHUNKY,
-    IIOSA_PLANAR
-} IIOSampleArrangement;
-
-typedef enum SensorType {
-    ST_NONE,   // use this value if the image is already demosaiced (i.e. not a raw file)
-    ST_BAYER,
-    ST_FUJI_XTRANS,
-    ST_FOVEON,
-    //ST_FUJI_EXR
-} eSensorType;
 
 class ImageIO : virtual public ImageDatas
 {

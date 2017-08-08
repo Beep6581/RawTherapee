@@ -22,7 +22,7 @@
 #include <ctime>
 
 #include "dcraw.h"
-#include "imageio.h"
+#include "imageformat.h"
 #include "noncopyable.h"
 
 namespace rtengine
