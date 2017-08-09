@@ -186,7 +186,7 @@ void ExifPanel::setImageData (const FramesMetaData* id)
     if (id) {
         //bool first = true;
         // HOMBRE: Should we only display the current frame's Exifs ?
-        for (int frameNum = 0; frameNum < id->getFrameCount (); ++frameNum) {
+        for (unsigned int frameNum = 0; frameNum < id->getFrameCount (); ++frameNum) {
             if ( id->getExifData (frameNum)) {
                 /*
                 if (!first) {

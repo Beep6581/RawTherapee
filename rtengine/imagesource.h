@@ -78,7 +78,7 @@ public:
     virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
     virtual void        MSR (LabImage* lab, LUTf & mapcurve, bool &mapcontlutili, int width, int height, int skip, RetinexParams deh, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax) {};
 
-    virtual bool        IsrgbSourceModified () const = 0; // tracks whether cached rgb output of demosaic has been modified
+    virtual bool        IsRGBSourceModified () const = 0; // tracks whether cached rgb output of demosaic has been modified
 
     virtual void        setCurrentFrame (unsigned int frameNum) = 0;
     virtual int         getFrameCount () = 0;

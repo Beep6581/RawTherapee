@@ -52,7 +52,7 @@ public:
     double focalLen, focalLen35mm;
     float focusDist;
     unsigned iso;
-    int isHDR;  // null if no HDR, otherwise provide the number of frame for this HDR file
+    bool isHDR;
     bool isPixelShift;
     rtengine::IIO_Sample_Format sampleFormat;
     Glib::ustring lens;

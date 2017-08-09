@@ -49,7 +49,7 @@ enum ActionCode {
 };
 enum ByteOrder {UNKNOWN = 0, INTEL = 0x4949, MOTOROLA = 0x4D4D};
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-const enum ByteOrder HOSTORDER = INTEL;
+const ByteOrder HOSTORDER = INTEL;
 #else
 const enum ByteOrder HOSTORDER = MOTOROLA;
 #endif
@@ -312,6 +312,7 @@ class ExifManager
 
     Tag* saveCIFFMNTag (TagDirectory* root, int len, const char* name);
     TagDirectory* parseIFD (int ifdOffset, bool skipIgnored);
+    void parseCIFF (int length, TagDirectory* root);
 
 public:
     FILE* f;
@@ -340,7 +341,6 @@ public:
     TagDirectory* parseJPEG (int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
     TagDirectory* parseTIFF (bool skipIgnored = true);
     TagDirectory* parseCIFF ();
-    void          parseCIFF (int length, TagDirectory* root);
 
     /// @brief Get default tag for TIFF
     /// @param forthis The byte order will be taken from the given directory.

@@ -290,7 +290,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
             kf->set_double ("Common Data", "Shutter", cfs->shutter);
             kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
             kf->set_integer ("Common Data", "ISO", cfs->iso);
-            kf->set_integer ("Common Data", "IsHDR", cfs->isHDR);
+            kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
             kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
             kf->set_string ("Common Data", "Lens", cfs->lens);
             kf->set_string ("Common Data", "Make", cfs->camMake);
@@ -2881,10 +2881,8 @@ TagDirectory* ExifManager::parseTIFF (bool skipIgnored)
 {
 
     if (!rml) {
-        rml = new rtengine::RawMetaDataLocation(0);
-        TagDirectory* tagDir = parse (skipIgnored);
-        delete rml;
-        return tagDir;
+        std::unique_ptr<rtengine::RawMetaDataLocation> rml(new rtengine::RawMetaDataLocation(0));
+        return parse (skipIgnored);
     } else {
         return parse (skipIgnored);
     }

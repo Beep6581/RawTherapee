@@ -58,59 +58,59 @@ class FramesMetaData
 
 public:
     /** @return Returns the number of frame contained in the file based on Metadata */
-    virtual int getFrameCount () const = 0;
+    virtual unsigned int getFrameCount () const = 0;
 
     /** Checks the availability of exif metadata tags.
       * @return Returns true if image contains exif metadata tags */
-    virtual bool hasExif (int frame = 0) const = 0;
+    virtual bool hasExif (unsigned int frame = 0) const = 0;
     /** Returns the directory of exif metadata tags.
       * @return The directory of exif metadata tags */
-    virtual const rtexif::TagDirectory* getExifData (int frame = 0) const = 0;
+    virtual rtexif::TagDirectory* getExifData (unsigned int frame = 0) const = 0;
     /** Checks the availability of IPTC tags.
       * @return Returns true if image contains IPTC tags */
-    virtual bool hasIPTC (int frame = 0) const = 0;
+    virtual bool hasIPTC (unsigned int frame = 0) const = 0;
     /** Returns the directory of IPTC tags.
       * @return The directory of IPTC tags */
-    virtual const procparams::IPTCPairs getIPTCData (int frame = 0) const = 0;
+    virtual procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const = 0;
     /** @return a struct containing the date and time of the image */
-    virtual struct tm   getDateTime (int frame = 0) const = 0;
+    virtual tm getDateTime (unsigned int frame = 0) const = 0;
     /** @return a timestamp containing the date and time of the image */
-    virtual time_t   getDateTimeAsTS(int frame = 0) const = 0;
+    virtual time_t getDateTimeAsTS(unsigned int frame = 0) const = 0;
     /** @return the ISO of the image */
-    virtual int         getISOSpeed (int frame = 0) const = 0;
+    virtual int getISOSpeed (unsigned int frame = 0) const = 0;
     /** @return the F number of the image */
-    virtual double      getFNumber  (int frame = 0) const = 0;
+    virtual double getFNumber  (unsigned int frame = 0) const = 0;
     /** @return the focal length used at the exposure */
-    virtual double      getFocalLen (int frame = 0) const = 0;
+    virtual double getFocalLen (unsigned int frame = 0) const = 0;
     /** @return the focal length in 35mm used at the exposure */
-    virtual double      getFocalLen35mm (int frame = 0) const = 0;
+    virtual double getFocalLen35mm (unsigned int frame = 0) const = 0;
     /** @return the focus distance in meters, 0=unknown, 10000=infinity */
-    virtual float       getFocusDist (int frame = 0) const = 0;
+    virtual float getFocusDist (unsigned int frame = 0) const = 0;
     /** @return the shutter speed */
-    virtual double      getShutterSpeed (int frame = 0) const = 0;
+    virtual double getShutterSpeed (unsigned int frame = 0) const = 0;
     /** @return the exposure compensation */
-    virtual double      getExpComp (int frame = 0) const = 0;
+    virtual double getExpComp (unsigned int frame = 0) const = 0;
     /** @return the maker of the camera */
-    virtual std::string getMake     (int frame = 0) const = 0;
+    virtual std::string getMake     (unsigned int frame = 0) const = 0;
     /** @return the model of the camera */
-    virtual std::string getModel    (int frame = 0) const = 0;
+    virtual std::string getModel    (unsigned int frame = 0) const = 0;
 
-    std::string         getCamera   (int frame = 0) const
+    std::string getCamera   (unsigned int frame = 0) const
     {
         return getMake(frame) + " " + getModel(frame);
     }
 
     /** @return the lens on the camera  */
-    virtual std::string getLens     (int frame = 0) const = 0;
+    virtual std::string getLens     (unsigned int frame = 0) const = 0;
     /** @return the orientation of the image */
-    virtual std::string getOrientation (int frame = 0) const = 0;
+    virtual std::string getOrientation (unsigned int frame = 0) const = 0;
 
     /** @return true if the file is a PixelShift shot (Pentax bodies) */
-    virtual bool getPixelShift (int frame = 0) const = 0;
+    virtual bool getPixelShift (unsigned int frame = 0) const = 0;
     /** @return 0: not ah HDR file ; 1: single shot HDR (e.g. 32 bit float DNG file or Log compressed) ; >1: multi-frame HDR file */
-    virtual int getHDR (int frame = 0) const = 0;
+    virtual bool getHDR (unsigned int frame = 0) const = 0;
     /** @return the sample format based on MetaData */
-    virtual IIOSampleFormat getSampleFormat (int frame = 0) const = 0;
+    virtual IIOSampleFormat getSampleFormat (unsigned int frame = 0) const = 0;
 
     /** Functions to convert between floating point and string representation of shutter and aperture */
     static std::string apertureToString (double aperture);
@@ -123,7 +123,7 @@ public:
     /** Functions to convert between floating point and string representation of exposure compensation */
     static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
 
-    virtual ~FramesMetaData () {}
+    virtual ~FramesMetaData () = default;
 
     /** Reads metadata from file.
       * @param fname is the name of the file

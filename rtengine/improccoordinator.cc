@@ -220,8 +220,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if (   (todo & M_RAW)
             || (!highDetailRawComputed && highDetailNeeded)
-            || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->IsrgbSourceModified())
-            || (!params.toneCurve.hrenabled && params.toneCurve.method == "Color" && imgsrc->IsrgbSourceModified())) {
+            || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->IsRGBSourceModified())
+            || (!params.toneCurve.hrenabled && params.toneCurve.method == "Color" && imgsrc->IsRGBSourceModified())) {
 
         if (settings->verbose) {
             if (imgsrc->getSensorType() == ST_BAYER) {

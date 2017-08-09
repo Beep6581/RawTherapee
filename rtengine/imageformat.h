@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 20017 Jean-Christophe Frisch <natureh.510@gmail.com>
+ *  Copyright (c) 2017 Jean-Christophe Frisch <natureh.510@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

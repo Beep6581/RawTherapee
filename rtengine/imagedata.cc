@@ -626,7 +626,7 @@ FrameData::~FrameData ()
     }
 }
 
-const procparams::IPTCPairs FrameData::getIPTCData () const
+procparams::IPTCPairs FrameData::getIPTCData () const
 {
 
     procparams::IPTCPairs iptcc;
@@ -671,6 +671,210 @@ const procparams::IPTCPairs FrameData::getIPTCData () const
     iptcc["SupplementalCategories"] = suppCategories;
     return iptcc;
 }
+
+
+bool FrameData::getPixelShift () const
+{
+    return isPixelShift;
+}
+bool FrameData::getHDR () const
+{
+    return isHDR;
+}
+IIOSampleFormat FrameData::getSampleFormat () const
+{
+    return sampleFormat;
+}
+rtexif::TagDirectory* FrameData::getExifData () const
+{
+    return root;
+}
+bool FrameData::hasExif () const
+{
+    return root && root->getCount();
+}
+bool FrameData::hasIPTC () const
+{
+    return iptc;
+}
+tm FrameData::getDateTime () const
+{
+    return time;
+}
+time_t FrameData::getDateTimeAsTS () const
+{
+    return timeStamp;
+}
+int FrameData::getISOSpeed () const
+{
+    return iso_speed;
+}
+double FrameData::getFNumber () const
+{
+    return aperture;
+}
+double FrameData::getFocalLen () const
+{
+    return focal_len;
+}
+double FrameData::getFocalLen35mm () const
+{
+    return focal_len35mm;
+}
+float FrameData::getFocusDist () const
+{
+    return focus_dist;
+}
+double FrameData::getShutterSpeed () const
+{
+    return shutter;
+}
+double FrameData::getExpComp () const
+{
+    return expcomp;
+}
+std::string FrameData::getMake () const
+{
+    return make;
+}
+std::string FrameData::getModel () const
+{
+    return model;
+}
+std::string FrameData::getLens () const
+{
+    return lens;
+}
+std::string FrameData::getSerialNumber () const
+{
+    return serial;
+}
+std::string FrameData::getOrientation () const
+{
+    return orientation;
+}
+
+
+
+void FramesData::setDCRawFrameCount (unsigned int frameCount)
+{
+    dcrawFrameCount = frameCount;
+}
+
+unsigned int FramesData::getFrameCount () const
+{
+    return dcrawFrameCount ? dcrawFrameCount : frames.size();
+}
+FrameData *FramesData::getFrameData (int frame) const
+{
+    return frames.at(frame);
+}
+
+bool FramesData::getPixelShift (unsigned int frame) const
+{
+    // So far only Pentax provide multi-frame HDR file.
+    // Only the first frame contains the HDR tag
+    // If more brand have to be supported, this rule may need
+    // to evolve
+
+    //return frames.at(frame)->getPixelShift ();
+    return frames.at(0)->getPixelShift ();
+}
+bool FramesData::getHDR (unsigned int frame) const
+{
+    // So far only Pentax provide multi-frame HDR file.
+    // Only the first frame contains the HDR tag
+    // If more brand have to be supported, this rule may need
+    // to evolve
+
+    //return frames.at(frame)->getHDR ();
+    if (frames.size()) {
+        return frames.at(0)->getHDR ();
+    } else {
+        return 0;
+    }
+}
+
+IIOSampleFormat FramesData::getSampleFormat (unsigned int frame) const
+{
+    return frames.at(frame)->getSampleFormat ();
+}
+
+rtexif::TagDirectory* FramesData::getExifData (unsigned int frame) const
+{
+    return frames.at(frame)->getExifData ();
+}
+procparams::IPTCPairs FramesData::getIPTCData (unsigned int frame) const
+{
+    return frames.at(frame)->getIPTCData ();
+}
+
+bool FramesData::hasExif (unsigned int frame) const
+{
+    return frames.at(frame)->hasExif ();
+}
+bool FramesData::hasIPTC (unsigned int frame) const
+{
+    return frames.at(frame)->hasIPTC ();
+}
+
+tm FramesData::getDateTime (unsigned int frame) const
+{
+    return frames.at(frame)->getDateTime ();
+}
+time_t FramesData::getDateTimeAsTS(unsigned int frame) const
+{
+    return frames.at(frame)->getDateTimeAsTS ();
+}
+int FramesData::getISOSpeed (unsigned int frame) const
+{
+    return frames.at(frame)->getISOSpeed ();
+}
+double FramesData::getFNumber  (unsigned int frame) const
+{
+    return frames.at(frame)->getFNumber ();
+}
+double FramesData::getFocalLen (unsigned int frame) const
+{
+    return frames.at(frame)->getFocalLen ();
+}
+double FramesData::getFocalLen35mm (unsigned int frame) const
+{
+    return frames.at(frame)->getFocalLen35mm ();
+}
+float FramesData::getFocusDist (unsigned int frame) const
+{
+    return frames.at(frame)->getFocusDist ();
+}
+double FramesData::getShutterSpeed (unsigned int frame) const
+{
+    return frames.at(frame)->getShutterSpeed ();
+}
+double FramesData::getExpComp  (unsigned int frame) const
+{
+    return frames.at(frame)->getExpComp ();
+}
+std::string FramesData::getMake     (unsigned int frame) const
+{
+    return frames.at(frame)->getMake ();
+}
+std::string FramesData::getModel    (unsigned int frame) const
+{
+    return frames.at(frame)->getModel ();
+}
+std::string FramesData::getLens     (unsigned int frame) const
+{
+    return frames.at(frame)->getLens ();
+}
+std::string FramesData::getSerialNumber (unsigned int frame) const
+{
+    return frames.at(frame)->getSerialNumber ();
+}
+std::string FramesData::getOrientation (unsigned int frame) const
+{
+    return frames.at(frame)->getOrientation ();
+}
+
 
 //------inherited functions--------------//
 

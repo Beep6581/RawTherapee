@@ -1264,11 +1264,6 @@ void EditorPanel::info_toggled ()
 {
 
     Glib::ustring infoString;
-    Glib::ustring infoString1; //1-st line
-    Glib::ustring infoString2; //2-nd line
-    Glib::ustring infoString3; //3-rd line
-    Glib::ustring infoString4; //4-th line
-    Glib::ustring infoString5; //5-th line
     Glib::ustring expcomp;
 
     if (!ipc || !openThm) {
@@ -1278,11 +1273,9 @@ void EditorPanel::info_toggled ()
     const rtengine::FramesMetaData* idata = ipc->getInitialImage()->getMetaData();
 
     if (idata && idata->hasExif()) {
-        infoString1 = Glib::ustring::compose ("%1 + %2",
+        infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
                                               Glib::ustring (idata->getMake() + " " + idata->getModel()),
-                                              Glib::ustring (idata->getLens()));
-
-        infoString2 = Glib::ustring::compose ("<span size=\"small\">f/</span><span size=\"large\">%1</span>  <span size=\"large\">%2</span><span size=\"small\">s</span>  <span size=\"small\">%3</span><span size=\"large\">%4</span>  <span size=\"large\">%5</span><span size=\"small\">mm</span>",
+                                              Glib::ustring (idata->getLens()),
                                               Glib::ustring (idata->apertureToString (idata->getFNumber())),
                                               Glib::ustring (idata->shutterToString (idata->getShutterSpeed())),
                                               M ("QINFO_ISO"), idata->getISOSpeed(),
@@ -1290,40 +1283,39 @@ void EditorPanel::info_toggled ()
 
         expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(), true)); // maskZeroexpcomp
 
-        if (expcomp != "") {
-            infoString2 = Glib::ustring::compose ("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
-                                                  infoString2,
+        if (!expcomp.empty ()) {
+            infoString = Glib::ustring::compose ("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
+                                                  infoString,
                                                   expcomp /*Glib::ustring(idata->expcompToString(idata->getExpComp()))*/);
         }
 
-        infoString3 = Glib::ustring::compose ("<span size=\"small\">%1</span><span>%2</span>",
+        infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2</span><span>%3</span>",
+                                              infoString,
                                               escapeHtmlChars (Glib::path_get_dirname (openThm->getFileName())) + G_DIR_SEPARATOR_S,
                                               escapeHtmlChars (Glib::path_get_basename (openThm->getFileName()))  );
 
         int ww = ipc->getFullWidth();
         int hh = ipc->getFullHeight();
         //megapixels
-        infoString4 = Glib::ustring::compose ("<span size=\"small\">%1 MP (%2x%3)</span>", Glib::ustring::format (std::setw (4), std::fixed, std::setprecision (1), (float)ww * hh / 1000000), ww, hh);
-
-        infoString = Glib::ustring::compose ("%1\n%2\n%3\n%4", infoString1, infoString2, infoString3, infoString4);
+        infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2 MP (%2x%3)</span>",
+                                             infoString,
+                                             Glib::ustring::format (std::setw (4), std::fixed, std::setprecision (1), (float)ww * hh / 1000000),
+                                             ww, hh);
 
         //adding special characteristics
         bool isHDR = idata->getHDR();
         bool isPixelShift = idata->getPixelShift();
-        int numFrames = idata->getFrameCount();
+        unsigned int numFrames = idata->getFrameCount();
         if (isHDR) {
-            infoString5 = Glib::ustring::compose (M("QINFO_HDR"), numFrames);
+            infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
             if (numFrames == 1) {
                 int sampleFormat = idata->getSampleFormat();
-                infoString5 = Glib::ustring::compose ("%1 / %2", infoString5, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
+                infoString = Glib::ustring::compose ("%1 / %2", infoString, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
             }
         } else if (isPixelShift) {
-            infoString5 = Glib::ustring::compose (M("QINFO_PIXELSHIFT"), numFrames);
+            infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
+            infoString = Glib::ustring::compose ("%1\n" + M("QINFO_PIXELSHIFT"), infoString, numFrames);
         }
-        if (!infoString5.empty()) {
-            infoString = Glib::ustring::compose ("%1\n%2", infoString, infoString5);
-        }
-
     } else {
         infoString = M ("QINFO_NOEXIF");
     }
