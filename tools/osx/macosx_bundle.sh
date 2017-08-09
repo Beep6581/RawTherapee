@@ -169,6 +169,7 @@ done
 
 msg "Registering @loader_path into the executable:"
 echo "   install_name_tool -add_rpath @loader_path/../Frameworks '${EXECUTABLE}'" | bash -v
+echo "   install_name_tool -add_rpath @loader_path/../Frameworks '${EXECUTABLE}-cli'" | bash -v
 
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"

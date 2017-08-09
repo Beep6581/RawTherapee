@@ -18,9 +18,12 @@
  */
 
 #include "improcfun.h"
+
+#include "alignedbuffer.h"
+#include "opthelper.h"
 #include "rt_math.h"
 #include "sleef.c"
-#include "opthelper.h"
+
 //#define PROFILE
 
 #ifdef PROFILE
@@ -180,9 +183,9 @@ SSEFUNCTION void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, f
     const int support = static_cast<int> (2.0f * a / sc) + 1;
 
     // storage for precomputed parameters for horizontal interpolation
-    float * wwh = new float[support * dst->W];
-    int * jj0 = new int[dst->W];
-    int * jj1 = new int[dst->W];
+    float* const wwh = new float[support * dst->W];
+    int* const jj0 = new int[dst->W];
+    int* const jj1 = new int[dst->W];
 
     // Phase 1: precompute coefficients for horizontal interpolation
     for (int j = 0; j < dst->W; j++) {
@@ -218,9 +221,12 @@ SSEFUNCTION void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, f
 #endif
     {
         // temporal storage for vertically-interpolated row of pixels
-        float * lL = new float[src->W];
-        float * la = new float[src->W];
-        float * lb = new float[src->W];
+        AlignedBuffer<float> aligned_buffer_ll(src->W);
+        AlignedBuffer<float> aligned_buffer_la(src->W);
+        AlignedBuffer<float> aligned_buffer_lb(src->W);
+        float* const lL = aligned_buffer_ll.data;
+        float* const la = aligned_buffer_la.data;
+        float* const lb = aligned_buffer_lb.data;
         // weights for interpolation in y direction
         float w[support] ALIGNED64;
 
@@ -315,10 +321,6 @@ SSEFUNCTION void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, f
                 dst->b[i][j] = b;
             }
         }
-
-        delete[] lL;
-        delete[] la;
-        delete[] lb;
     }
     delete[] jj0;
     delete[] jj1;

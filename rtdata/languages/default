@@ -1048,7 +1048,7 @@ PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 PREFERENCES_CLUTSDIR;HaldCLUT directory
 PREFERENCES_CMMBPC;Black point compensation
-PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
+PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 PREFERENCES_CURVEBBOXPOS_BELOW;Below
 PREFERENCES_CURVEBBOXPOS_LEFT;Left
@@ -2335,3 +2335,5 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
+GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
+DONT_SHOW_AGAIN;Don't show this message again.

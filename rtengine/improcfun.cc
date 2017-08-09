@@ -211,11 +211,11 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params ,
                                  const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int scalecd, int rtt)
+                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int rtt)
 {
     if (params->colorappearance.enabled) {
 //int lastskip;
-//if(rtt==1) {lastskip=scalecd;} //not for Rtthumbnail
+//if(rtt==1) {lastskip=scale;} //not for Rtthumbnail
 
 #ifdef _DEBUG
         MyTime t1e, t2e;
@@ -561,7 +561,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
 
 #ifndef _DEBUG
-        #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW, scalecd)
+        #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW, scale)
 #endif
         {
             //matrix for current working space
@@ -1254,7 +1254,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                     float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
                     float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
                     int choice = 0; //not disabled in case of ! always 0
-                    dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scalecd);   //contrast by detail adapted to CIECAM
+                    dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale);   //contrast by detail adapted to CIECAM
                 }
             }
 
@@ -1460,7 +1460,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, int scalecd, int rtt)
+                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, int rtt)
 {
     if (params->colorappearance.enabled) {
 
@@ -2617,7 +2617,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
                         int choice = 0; // I have not suppress this statement in case of !! always to 0
                         lab->deleteLab();
-                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect,  true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scalecd); //contrast by detail adapted to CIECAM
+                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect,  true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
                     }
 

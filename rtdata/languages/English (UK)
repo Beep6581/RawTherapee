@@ -1012,7 +1012,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
+!PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left

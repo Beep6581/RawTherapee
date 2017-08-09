@@ -1297,7 +1297,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         CAMMean = NAN;
         CAMBrightCurveJ.dirty = true;
         CAMBrightCurveQ.dirty = true;
-        ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, execsharp, d, sk, rtt);
+        ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, rtt);
         delete cieView;
     }
 

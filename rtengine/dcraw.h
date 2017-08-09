@@ -278,7 +278,6 @@ void copy_line_to_xtrans(struct fuji_compressed_block* info, int cur_line, int c
 void copy_line_to_bayer(struct fuji_compressed_block* info, int cur_line, int cur_block, int cur_block_width);
 void fuji_zerobits(struct fuji_compressed_block* info, int *count);
 void fuji_read_code(struct fuji_compressed_block* info, int *data, int bits_to_read);
-int bitDiff(int value1, int value2);
 int fuji_decode_sample_even(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
 int fuji_decode_sample_odd(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
 void fuji_decode_interpolation_even(int line_width, ushort* line_buf, int pos);
