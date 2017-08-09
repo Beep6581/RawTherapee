@@ -511,117 +511,117 @@ void Options::setDefaults ()
 
     // Reminder: 0 = SET mode, 1 = ADD mode
     baBehav = {
-        0, // ADDSET_TC_EXPCOMP
-        0, // ADDSET_TC_BRIGHTNESS
-        0, // ADDSET_TC_BLACKLEVEL
-        0, // ADDSET_TC_CONTRAST
-        0, // ADDSET_SH_HIGHLIGHTS
-        0, // ADDSET_SH_SHADOWS
-        0, // ADDSET_SH_LOCALCONTRAST
-        0, // ADDSET_LC_BRIGHTNESS
-        0, // ADDSET_LC_CONTRAST
-        0, // ADDSET_SHARP_AMOUNT
-        0, // ADDSET_WB_TEMPERATURE
-        0, // ADDSET_WB_GREEN
-        0, // ADDSET_ROTATE_DEGREE
-        0, // ADDSET_DIST_AMOUNT
-        0, // ADDSET_PERSPECTIVE
-        0, // ADDSET_CA
-        0, // ADDSET_VIGN_AMOUNT
-        0, // ADDSET_VIGN_RADIUS
-        0, // ADDSET_VIGN_STRENGTH
-        0, // ADDSET_VIGN_CENTER
-        0, // ADDSET_LC_CHROMATICITY
-        0, // ADDSET_TC_SATURATION
-        0, // ADDSET_TC_HLCOMPAMOUNT
-        0, // ADDSET_TC_HLCOMPTHRESH
-        0, // ADDSET_TC_SHCOMP
-        0, // ADDSET_DIRPYREQ
-        0, // ADDSET_DIRPYRDN_LUMA
-        0, // ADDSET_DIRPYRDN_LUDET
-        0, // ADDSET_DIRPYRDN_CHROMA
-        0, // ADDSET_DIRPYRDN_CHROMARED
-        0, // ADDSET_DIRPYRDN_CHROMABLUE
-        0, // ADDSET_DIRPYRDN_GAMMA
-        0, // ADDSET_CHMIXER
-        0, // ADDSET_PREPROCESS_GREENEQUIL
-        0, // ADDSET_PREPROCESS_LINEDENOISE
-        0, // ADDSET_RAWCACORR
-        0, // ADDSET_RAWEXPOS_LINEAR
-        0, // ADDSET_RAWEXPOS_PRESER
-        0, // ADDSET_RAWEXPOS_BLACKS
-        0, // ADDSET_SHARPENEDGE_AMOUNT
-        0, // ADDSET_SHARPENMICRO_AMOUNT
-        0, // ADDSET_SHARPENEDGE_PASS
-        0, // ADDSET_SHARPENMICRO_UNIFORMITY
-        0, // ADDSET_VIBRANCE_PASTELS
-        0, // ADDSET_VIBRANCE_SATURATED
-        0, // ADDSET_FREE_OUPUT_GAMMA
-        0, // ADDSET_FREE_OUTPUT_SLOPE
-        0, // ADDSET_CAT_DEGREE
-        0, // ADDSET_CAT_ADAPSCEN
-        0, // ADDSET_CAT_ADAPLUM
-        0, // ADDSET_CAT_LIGHT
-        0, // ADDSET_CAT_RSTPRO
-        0, // ADDSET_CAT_BADPIX
-        0, // ADDSET_CAT_JLIGHT
-        0, // ADDSET_CAT_CHROMA
-        0, // ADDSET_CAT_CONTRAST
-        0, // ADDSET_CAT_CHROMA_S
-        0, // ADDSET_CAT_CHROMA_M
-        0, // ADDSET_CAT_HUE
-        0, // ADDSET_CAT_BADPIX
-        0, // ADDSET_WB_EQUAL
-        0, // ADDSET_GRADIENT_DEGREE
-        0, // ADDSET_GRADIENT_FEATHER
-        0, // ADDSET_GRADIENT_STRENGTH
-        0, // ADDSET_GRADIENT_CENTER
-        0, // ADDSET_PCVIGNETTE_STRENGTH
-        0, // ADDSET_PCVIGNETTE_FEATHER
-        0, // ADDSET_PCVIGNETTE_ROUNDNESS
-        0, // ADDSET_BLACKWHITE_HUES
-        0, // ADDSET_BLACKWHITE_GAMMA
-        0, // ADDSET_DIRPYREQ_THRESHOLD
-        0, // ADDSET_DIRPYREQ_SKINPROTECT
-        0, // ADDSET_COLORTONING_SPLIT
-        0, // ADDSET_COLORTONING_SATTHRESHOLD
-        0, // ADDSET_COLORTONING_SATOPACITY
-        0, // ADDSET_COLORTONING_BALANCE
-        0, // ADDSET_COLORTONING_STRENGTH
-        0, // ADDSET_DIRPYRDN_PASSES
-        0, // ADDSET_RAWFFCLIPCONTROL
-        0, // ADDSET_FILMSIMULATION_STRENGTH
-        0, // ADDSET_WA
-        0, // ADDSET_WA_SKINPROTECT
-        0, // ADDSET_WA_THRESHOLD2
-        0, // ADDSET_WA_THRR
-        0, // ADDSET_WA_THRRH
-        0, // ADDSET_WA_THRESHOLD
-        0, // ADDSET_WA_THRESHOLD2
-        0, // ADDSET_WA_CHRO
-        0, // ADDSET_WA_CHROMA
-        0, // ADDSET_WA_CONTRAST
-        0, // ADDSET_WA_RESCON
-        0, // ADDSET_WA_RESCONH
-        0, // ADDSET_WA_RESCHRO
-        0, // ADDSET_WA_SKYPROTECT
-        0, // ADDSET_WA_EDGRAD
-        0, // ADDSET_WA_EDGVAL
-        0, // ADDSET_WA_STRENGTH
-        0, // ADDSET_WA_EDGEDETECT
-        0, // ADDSET_WA_EDGEDETECTTHR
-        0, // ADDSET_WA_EDGEDETECTTHR2
-        0, // ADDSET_WA_TMRS
-        0, // ADDSET_WA_GAMMA
-        0, // ADDSET_RETI_STR
-        0, // ADDSET_RETI_NEIGH
-        0, // ADDSET_RETI_LIMD
-        0, // ADDSET_RETI_GAIN
-        0, // ADDSET_RETI_OFFS
-        0, // ADDSET_RETI_VART
-        0, // ADDSET_RETI_GAM
-        0, // ADDSET_RETI_SLO
-        0, // ADDSET_WB_TEMPBIAS
+        1, // ADDSET_TC_EXPCOMP
+        1, // ADDSET_TC_BRIGHTNESS
+        1, // ADDSET_TC_BLACKLEVEL
+        1, // ADDSET_TC_CONTRAST
+        1, // ADDSET_SH_HIGHLIGHTS
+        1, // ADDSET_SH_SHADOWS
+        1, // ADDSET_SH_LOCALCONTRAST
+        1, // ADDSET_LC_BRIGHTNESS
+        1, // ADDSET_LC_CONTRAST
+        1, // ADDSET_SHARP_AMOUNT
+        1, // ADDSET_WB_TEMPERATURE
+        1, // ADDSET_WB_GREEN
+        1, // ADDSET_ROTATE_DEGREE
+        1, // ADDSET_DIST_AMOUNT
+        1, // ADDSET_PERSPECTIVE
+        1, // ADDSET_CA
+        1, // ADDSET_VIGN_AMOUNT
+        1, // ADDSET_VIGN_RADIUS
+        1, // ADDSET_VIGN_STRENGTH
+        1, // ADDSET_VIGN_CENTER
+        1, // ADDSET_LC_CHROMATICITY
+        1, // ADDSET_TC_SATURATION
+        1, // ADDSET_TC_HLCOMPAMOUNT
+        1, // ADDSET_TC_HLCOMPTHRESH
+        1, // ADDSET_TC_SHCOMP
+        1, // ADDSET_DIRPYREQ
+        1, // ADDSET_DIRPYRDN_LUMA
+        1, // ADDSET_DIRPYRDN_LUDET
+        1, // ADDSET_DIRPYRDN_CHROMA
+        1, // ADDSET_DIRPYRDN_CHROMARED
+        1, // ADDSET_DIRPYRDN_CHROMABLUE
+        1, // ADDSET_DIRPYRDN_GAMMA
+        1, // ADDSET_CHMIXER
+        1, // ADDSET_PREPROCESS_GREENEQUIL
+        1, // ADDSET_PREPROCESS_LINEDENOISE
+        1, // ADDSET_RAWCACORR
+        1, // ADDSET_RAWEXPOS_LINEAR
+        1, // ADDSET_RAWEXPOS_PRESER
+        1, // ADDSET_RAWEXPOS_BLACKS
+        1, // ADDSET_SHARPENEDGE_AMOUNT
+        1, // ADDSET_SHARPENMICRO_AMOUNT
+        1, // ADDSET_SHARPENEDGE_PASS
+        1, // ADDSET_SHARPENMICRO_UNIFORMITY
+        1, // ADDSET_VIBRANCE_PASTELS
+        1, // ADDSET_VIBRANCE_SATURATED
+        1, // ADDSET_FREE_OUPUT_GAMMA
+        1, // ADDSET_FREE_OUTPUT_SLOPE
+        1, // ADDSET_CAT_DEGREE
+        1, // ADDSET_CAT_ADAPSCEN
+        1, // ADDSET_CAT_ADAPLUM
+        1, // ADDSET_CAT_LIGHT
+        1, // ADDSET_CAT_RSTPRO
+        1, // ADDSET_CAT_BADPIX
+        1, // ADDSET_CAT_JLIGHT
+        1, // ADDSET_CAT_CHROMA
+        1, // ADDSET_CAT_CONTRAST
+        1, // ADDSET_CAT_CHROMA_S
+        1, // ADDSET_CAT_CHROMA_M
+        1, // ADDSET_CAT_HUE
+        1, // ADDSET_CAT_BADPIX
+        1, // ADDSET_WB_EQUAL
+        1, // ADDSET_GRADIENT_DEGREE
+        1, // ADDSET_GRADIENT_FEATHER
+        1, // ADDSET_GRADIENT_STRENGTH
+        1, // ADDSET_GRADIENT_CENTER
+        1, // ADDSET_PCVIGNETTE_STRENGTH
+        1, // ADDSET_PCVIGNETTE_FEATHER
+        1, // ADDSET_PCVIGNETTE_ROUNDNESS
+        1, // ADDSET_BLACKWHITE_HUES
+        1, // ADDSET_BLACKWHITE_GAMMA
+        1, // ADDSET_DIRPYREQ_THRESHOLD
+        1, // ADDSET_DIRPYREQ_SKINPROTECT
+        1, // ADDSET_COLORTONING_SPLIT
+        1, // ADDSET_COLORTONING_SATTHRESHOLD
+        1, // ADDSET_COLORTONING_SATOPACITY
+        1, // ADDSET_COLORTONING_BALANCE
+        1, // ADDSET_COLORTONING_STRENGTH
+        1, // ADDSET_DIRPYRDN_PASSES
+        1, // ADDSET_RAWFFCLIPCONTROL
+        1, // ADDSET_FILMSIMULATION_STRENGTH
+        1, // ADDSET_WA
+        1, // ADDSET_WA_SKINPROTECT
+        1, // ADDSET_WA_THRESHOLD2
+        1, // ADDSET_WA_THRR
+        1, // ADDSET_WA_THRRH
+        1, // ADDSET_WA_THRESHOLD
+        1, // ADDSET_WA_THRESHOLD2
+        1, // ADDSET_WA_CHRO
+        1, // ADDSET_WA_CHROMA
+        1, // ADDSET_WA_CONTRAST
+        1, // ADDSET_WA_RESCON
+        1, // ADDSET_WA_RESCONH
+        1, // ADDSET_WA_RESCHRO
+        1, // ADDSET_WA_SKYPROTECT
+        1, // ADDSET_WA_EDGRAD
+        1, // ADDSET_WA_EDGVAL
+        1, // ADDSET_WA_STRENGTH
+        1, // ADDSET_WA_EDGEDETECT
+        1, // ADDSET_WA_EDGEDETECTTHR
+        1, // ADDSET_WA_EDGEDETECTTHR2
+        1, // ADDSET_WA_TMRS
+        1, // ADDSET_WA_GAMMA
+        1, // ADDSET_RETI_STR
+        1, // ADDSET_RETI_NEIGH
+        1, // ADDSET_RETI_LIMD
+        1, // ADDSET_RETI_GAIN
+        1, // ADDSET_RETI_OFFS
+        1, // ADDSET_RETI_VART
+        1, // ADDSET_RETI_GAM
+        1, // ADDSET_RETI_SLO
+        1, // ADDSET_WB_TEMPBIAS
     };
 
     rtSettings.darkFramesPath = "";
@@ -724,6 +724,7 @@ void Options::setDefaults ()
     lastProfilingReferenceDir = "";
     lastBWCurvesDir = "";
     lastLensProfileDir = "";
+    gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
 }
 
@@ -1852,6 +1853,9 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet (keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
                 safeDirGet (keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
+                if (keyFile.has_key ("Dialogs", "GimpPluginShowInfoDialog")) {
+                    gimpPluginShowInfoDialog = keyFile.get_boolean("Dialogs", "GimpPluginShowInfoDialog");
+                }
             }
 
 // --------------------------------------------------------------------------------------------------------
@@ -2217,6 +2221,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
+        keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyData = keyFile.to_data ();
 
