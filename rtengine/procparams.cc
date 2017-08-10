@@ -1154,6 +1154,8 @@ void ProcParams::setDefaults ()
     colorappearance.tempout        = 5000;
     colorappearance.greenout        = 1.0;
     colorappearance.ybout        = 18;
+    colorappearance.tempsc        = 5000;
+    colorappearance.greensc        = 1.0;
 
     impulseDenoise.enabled      = false;
     impulseDenoise.thresh       = 50;
@@ -2149,6 +2151,14 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_double  ("Color appearance", "Greenout",       colorappearance.greenout);
         }
 
+        if (!pedited || pedited->colorappearance.tempsc) {
+            keyFile.set_integer  ("Color appearance", "Tempsc",       colorappearance.tempsc);
+        }
+
+        if (!pedited || pedited->colorappearance.greensc) {
+            keyFile.set_double  ("Color appearance", "Greensc",       colorappearance.greensc);
+        }
+		
         if (!pedited || pedited->colorappearance.ybout) {
             keyFile.set_integer  ("Color appearance", "Ybout",       colorappearance.ybout);
         }
@@ -5124,6 +5134,22 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Color appearance", "Tempsc"))       {
+                colorappearance.tempsc        = keyFile.get_integer  ("Color appearance", "Tempsc");
+
+                if (pedited) {
+                    pedited->colorappearance.tempsc = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Greensc"))       {
+                colorappearance.greensc        = keyFile.get_double  ("Color appearance", "Greensc");
+
+                if (pedited) {
+                    pedited->colorappearance.greensc = true;
+                }
+            }
+			
             if (keyFile.has_key ("Color appearance", "Ybout"))       {
                 colorappearance.ybout        = keyFile.get_integer  ("Color appearance", "Ybout");
 
@@ -8260,6 +8286,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && colorappearance.colorh == other.colorappearance.colorh
         && colorappearance.tempout == other.colorappearance.tempout
         && colorappearance.greenout == other.colorappearance.greenout
+        && colorappearance.tempsc == other.colorappearance.tempsc
+        && colorappearance.greensc == other.colorappearance.greensc
         && colorappearance.ybout == other.colorappearance.ybout
         && impulseDenoise.enabled == other.impulseDenoise.enabled
         && impulseDenoise.thresh == other.impulseDenoise.thresh

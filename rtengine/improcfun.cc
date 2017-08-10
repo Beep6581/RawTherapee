@@ -541,7 +541,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         xw = 100.0 * Xw;
         yw = 100.0 * Yw;
         zw = 100.0 * Zw;
-        double xw1, yw1, zw1, xw2, yw2, zw2;
+        double xw1 =0., yw1 = 0., zw1 = 0., xw2 = 0., yw2 = 0., zw2 = 0.;
 
         // settings of WB: scene and viewing
         if (params->colorappearance.wbmodel == "RawT") {
@@ -1497,10 +1497,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         double Xw, Zw;
         float f, nc, yb = 0.f, la, c, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
         float fl, n, nbb, ncb, aw; //d
-        float xwd, ywd, zwd;
+        float xwd, ywd, zwd, xws, yws, zws;
         int alg = 0;
         bool algepd = false;
         double Xwout, Zwout;
+        double Xwsc, Zwsc;
 
         const bool epdEnabled = params->epd.enabled;
         bool ciedata = (params->colorappearance.datacie && pW != 1) && ! ((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
@@ -1509,6 +1510,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
         ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
 
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
@@ -1556,6 +1558,12 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         xwd = 100.f * Xwout;
         zwd = 100.f * Zwout;
         ywd = 100.f / params->colorappearance.greenout;//approximation to simplify
+		
+        xws = 100.f * Xwsc;
+        zws = 100.f * Zwsc;
+        yws = 100.f / params->colorappearance.greensc;//approximation to simplify
+		
+		
         /*
                 //settings white point of output device - or illuminant viewing
                 if (settings->viewingdevice == 0) {
@@ -1841,7 +1849,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         xw = 100.0f * Xw;
         yw = 100.0f * Yw;
         zw = 100.0f * Zw;
-        float xw1, yw1, zw1, xw2, yw2, zw2;
+        float xw1 = 0.f, yw1 = 0.f, zw1 = 0.f, xw2 = 0.f, yw2 = 0.f, zw2 = 0.f;
 
         // settings of WB: scene and viewing
         if (params->colorappearance.wbmodel == "RawT") {
@@ -1851,14 +1859,22 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else { /*if(params->colorappearance.wbmodel == "RawTCAT02")*/
+        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        }
+        } else if(params->colorappearance.wbmodel == "free") {
+            xw1 = xws;    // free temp and green
+            yw1 = yws;
+            zw1 = zws;
+            xw2 = xwd;
+            yw2 = ywd;
+            zw2 = zwd;		
+		}	
+
 
         float cz, wh, pfl;
         Ciecam02::initcam1float (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);

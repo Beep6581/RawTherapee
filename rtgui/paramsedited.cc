@@ -209,6 +209,8 @@ void ParamsEdited::set (bool v)
     colorappearance.tempout     = v;
     colorappearance.greenout     = v;
     colorappearance.ybout     = v;
+    colorappearance.tempsc     = v;
+    colorappearance.greensc     = v;
 
     //colorBoost.amount         = v;
     //colorBoost.avoidclip      = v;
@@ -734,6 +736,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.tempout = colorappearance.tempout && p.colorappearance.tempout == other.colorappearance.tempout;
         colorappearance.greenout = colorappearance.greenout && p.colorappearance.greenout == other.colorappearance.greenout;
         colorappearance.ybout = colorappearance.ybout && p.colorappearance.ybout == other.colorappearance.ybout;
+        colorappearance.tempsc = colorappearance.tempsc && p.colorappearance.tempsc == other.colorappearance.tempsc;
+        colorappearance.greensc = colorappearance.greensc && p.colorappearance.greensc == other.colorappearance.greensc;
 
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
@@ -1759,6 +1763,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.colorappearance.greenout       = mods.colorappearance.greenout;
     }
 
+    if (colorappearance.tempsc) {
+        toEdit.colorappearance.tempsc       = mods.colorappearance.tempsc;
+    }
+
+    if (colorappearance.greensc) {
+        toEdit.colorappearance.greensc       = mods.colorappearance.greensc;
+    }
+	
     if (colorappearance.ybout) {
         toEdit.colorappearance.ybout       = mods.colorappearance.ybout;
     }

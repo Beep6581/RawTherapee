@@ -105,6 +105,8 @@ private:
     Adjuster* tempout;
     Adjuster* greenout;
     Adjuster* ybout;
+    Adjuster* tempsc;
+    Adjuster* greensc;
 
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;

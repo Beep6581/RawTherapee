@@ -316,6 +316,8 @@ public:
     bool tempout;
     bool greenout;
     bool ybout;
+    bool tempsc;
+    bool greensc;
 
 };
 

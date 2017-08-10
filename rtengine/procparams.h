@@ -619,6 +619,8 @@ public:
     int tempout;
     int ybout;
     double greenout;
+    int tempsc;
+    double greensc;
 
     //      bool          sharpcie;
 };

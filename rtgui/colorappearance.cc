@@ -159,10 +159,27 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     wbmodel = Gtk::manage (new MyComboBoxText ());
     wbmodel->append (M ("TP_COLORAPP_WBRT"));
     wbmodel->append (M ("TP_COLORAPP_WBCAM"));
+    wbmodel->append (M ("TP_COLORAPP_FREE"));
+	
     wbmodel->set_active (0);
     wbmHBox->pack_start (*wbmodel);
     p1VBox->pack_start (*wbmHBox);
 
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+	
+	
+    tempsc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR, itempL, &wbSlider2Temp, &wbTemp2Slider));
+    greensc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR, igreenL));
+
+    tempsc->show();
+    greensc->show();
+    p1VBox->pack_start (*tempsc);
+    p1VBox->pack_start (*greensc);
+	
+	
     adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), 0.001, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
 
     if (adapscen->delay < options.adjusterMaxDelay) {
@@ -443,10 +460,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     adaplum->set_tooltip_markup (M ("TP_COLORAPP_ADAPTVIEWING_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
 //   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
 //   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
 
@@ -541,6 +554,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     tempout->setAdjusterListener  (this);
     greenout->setAdjusterListener  (this);
     ybout->setAdjusterListener  (this);
+    tempsc->setAdjusterListener  (this);
+    greensc->setAdjusterListener  (this);
 
 
     show_all();
@@ -597,6 +612,8 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         tempout->setEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
         greenout->setEditedState (pedited->colorappearance.greenout ? Edited : UnEdited);
         ybout->setEditedState (pedited->colorappearance.ybout ? Edited : UnEdited);
+        tempsc->setEditedState (pedited->colorappearance.tempsc ? Edited : UnEdited);
+        greensc->setEditedState (pedited->colorappearance.greensc ? Edited : UnEdited);
         contrast->setEditedState      (pedited->colorappearance.contrast ? Edited : UnEdited);
         qcontrast->setEditedState     (pedited->colorappearance.qcontrast ? Edited : UnEdited);
         colorh->setEditedState        (pedited->colorappearance.colorh ? Edited : UnEdited);
@@ -654,11 +671,13 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     wbmodelconn.block (true);
 
     if (pedited && !pedited->colorappearance.wbmodel) {
-        wbmodel->set_active (2);
+        wbmodel->set_active (3);
     } else if (pp->colorappearance.wbmodel == "RawT") {
         wbmodel->set_active (0);
     } else if (pp->colorappearance.wbmodel == "RawTCAT02") {
         wbmodel->set_active (1);
+    } else if (pp->colorappearance.wbmodel == "free") {
+        wbmodel->set_active (2);
     }
 
     wbmodelconn.block (false);
@@ -734,6 +753,8 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tempout->setValue (pp->colorappearance.tempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
+    tempsc->setValue (pp->colorappearance.tempsc);
+    greensc->setValue (pp->colorappearance.greensc);
 
     tcmode3conn.block (false);
     tcmode2conn.block (false);
@@ -782,6 +803,8 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.tempout        = tempout->getValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
+    pp->colorappearance.tempsc        = tempsc->getValue ();
+    pp->colorappearance.greensc        = greensc->getValue ();
 
     int tcMode = toneCurveMode->get_active_row_number();
 
@@ -846,6 +869,8 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.tempout        = tempout->getEditedState ();
         pedited->colorappearance.greenout        = greenout->getEditedState ();
         pedited->colorappearance.ybout        = ybout->getEditedState ();
+        pedited->colorappearance.tempsc        = tempsc->getEditedState ();
+        pedited->colorappearance.greensc        = greensc->getEditedState ();
 
     }
 
@@ -863,6 +888,9 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorappearance.wbmodel = "RawT";
     } else if (wbmodel->get_active_row_number() == 1) {
         pp->colorappearance.wbmodel = "RawTCAT02";
+    } else if (wbmodel->get_active_row_number() == 2) {
+        pp->colorappearance.wbmodel = "free";
+		
     }
 
     if (algo->get_active_row_number() == 0) {
@@ -1121,6 +1149,8 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
     tempout->setDefault (defParams->colorappearance.tempout);
     greenout->setDefault (defParams->colorappearance.greenout);
     ybout->setDefault (defParams->colorappearance.ybout);
+    tempsc->setDefault (defParams->colorappearance.tempsc);
+    greensc->setDefault (defParams->colorappearance.greensc);
 
     if (pedited) {
         degree->setDefaultEditedState (pedited->colorappearance.degree ? Edited : UnEdited);
@@ -1140,6 +1170,8 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         tempout->setDefaultEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
         greenout->setDefaultEditedState (pedited->colorappearance.greenout ? Edited : UnEdited);
         ybout->setDefaultEditedState (pedited->colorappearance.ybout ? Edited : UnEdited);
+        tempsc->setDefaultEditedState (pedited->colorappearance.tempsc ? Edited : UnEdited);
+        greensc->setDefaultEditedState (pedited->colorappearance.greensc ? Edited : UnEdited);
 
     } else {
         degree->setDefaultEditedState (Irrelevant);
@@ -1159,6 +1191,8 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         tempout->setDefaultEditedState (Irrelevant);
         greenout->setDefaultEditedState (Irrelevant);
         ybout->setDefaultEditedState (Irrelevant);
+        tempsc->setDefaultEditedState (Irrelevant);
+        greensc->setDefaultEditedState (Irrelevant);
 
     }
 }
@@ -1272,6 +1306,10 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvCATgreenout, a->getTextValue());
         } else if (a == ybout) {
             listener->panelChanged (EvCATybout, a->getTextValue());
+        } else if (a == tempsc) {
+            listener->panelChanged (EvCATtempsc, a->getTextValue());
+        } else if (a == greensc) {
+            listener->panelChanged (EvCATgreensc, a->getTextValue());
 
         }
 
@@ -1373,6 +1411,14 @@ void ColorAppearance::surroundChanged ()
 
 void ColorAppearance::wbmodelChanged ()
 {
+    if (wbmodel->get_active_row_number() == 0 || wbmodel->get_active_row_number() == 1) {
+		tempsc->hide();
+		greensc->hide();
+	}
+	if (wbmodel->get_active_row_number() == 2){
+		tempsc->show();
+		greensc->show();
+	}
 
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATMethodWB, wbmodel->get_active_text ());
@@ -1474,6 +1520,8 @@ void ColorAppearance::setBatchMode (bool batchMode)
     tempout->showEditedCB ();
     greenout->showEditedCB ();
     ybout->showEditedCB ();
+    tempsc->showEditedCB ();
+    greensc->showEditedCB ();
 
     surround->append (M ("GENERAL_UNCHANGED"));
     wbmodel->append (M ("GENERAL_UNCHANGED"));
@@ -1534,5 +1582,7 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
     tempout->trimValue (pp->colorappearance.tempout);
     greenout->trimValue (pp->colorappearance.greenout);
     ybout->trimValue (pp->colorappearance.ybout);
+    tempsc->trimValue (pp->colorappearance.tempsc);
+    greensc->trimValue (pp->colorappearance.greensc);
 
 }
