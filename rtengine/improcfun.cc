@@ -263,6 +263,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         double Yw;
         Yw = 1.0;
         double Xw, Zw;
+        double Xwout, Zwout;
         double f, c, nc, yb = 0., la, xw, yw, zw, f2 = 0., c2 = 0., nc2 = 0., yb2 = 0., la2;
         double fl, n, nbb, ncb, aw;
         double xwd = 0., ywd, zwd = 0.;
@@ -273,6 +274,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         bool ciedata = params->colorappearance.datacie;
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
 
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
@@ -319,59 +321,66 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
         bool needJ = (alg == 0 || alg == 1 || alg == 3);
         bool needQ = (alg == 2 || alg == 3);
+        /*
+                //settings white point of output device - or illuminant viewing
+                if (settings->viewingdevice == 0) {
+                    xwd = 96.42;    //5000K
+                    ywd = 100.0;
+                    zwd = 82.52;
+                } else if (settings->viewingdevice == 1) {
+                    xwd = 95.68;    //5500
+                    ywd = 100.0;
+                    zwd = 92.15;
+                } else if (settings->viewingdevice == 2) {
+                    xwd = 95.24;    //6000
+                    ywd = 100.0;
+                    zwd = 100.81;
+                } else if (settings->viewingdevice == 3)  {
+                    xwd = 95.04;    //6500
+                    ywd = 100.0;
+                    zwd = 108.88;
+                } else if (settings->viewingdevice == 4)  {
+                    xwd = 109.85;    //tungsten
+                    ywd = 100.0;
+                    zwd = 35.58;
+                } else if (settings->viewingdevice == 5)  {
+                    xwd = 99.18;    //fluo F2
+                    ywd = 100.0;
+                    zwd = 67.39;
+                } else if (settings->viewingdevice == 6)  {
+                    xwd = 95.04;    //fluo F7
+                    ywd = 100.0;
+                    zwd = 108.75;
+                } else if (settings->viewingdevice == 7)  {
+                    xwd = 100.96;    //fluo F11
+                    ywd = 100.0;
+                    zwd = 64.35;
+                }
+        */
 
-        //settings white point of output device - or illuminant viewing
-        if (settings->viewingdevice == 0) {
-            xwd = 96.42;    //5000K
-            ywd = 100.0;
-            zwd = 82.52;
-        } else if (settings->viewingdevice == 1) {
-            xwd = 95.68;    //5500
-            ywd = 100.0;
-            zwd = 92.15;
-        } else if (settings->viewingdevice == 2) {
-            xwd = 95.24;    //6000
-            ywd = 100.0;
-            zwd = 100.81;
-        } else if (settings->viewingdevice == 3)  {
-            xwd = 95.04;    //6500
-            ywd = 100.0;
-            zwd = 108.88;
-        } else if (settings->viewingdevice == 4)  {
-            xwd = 109.85;    //tungsten
-            ywd = 100.0;
-            zwd = 35.58;
-        } else if (settings->viewingdevice == 5)  {
-            xwd = 99.18;    //fluo F2
-            ywd = 100.0;
-            zwd = 67.39;
-        } else if (settings->viewingdevice == 6)  {
-            xwd = 95.04;    //fluo F7
-            ywd = 100.0;
-            zwd = 108.75;
-        } else if (settings->viewingdevice == 7)  {
-            xwd = 100.96;    //fluo F11
-            ywd = 100.0;
-            zwd = 64.35;
-        }
+        xwd = 100. * Xwout;
+        zwd = 100. * Zwout;
+        ywd = 100. / params->colorappearance.greenout;//approximation to simplify
 
-
-        //settings mean Luminance Y of output device or viewing
-        if (settings->viewingdevicegrey == 0) {
-            yb2 = 5.0;
-        } else if (settings->viewingdevicegrey == 1) {
-            yb2 = 10.0;
-        } else if (settings->viewingdevicegrey == 2) {
-            yb2 = 15.0;
-        } else if (settings->viewingdevicegrey == 3) {
-            yb2 = 18.0;
-        } else if (settings->viewingdevicegrey == 4) {
-            yb2 = 23.0;
-        } else if (settings->viewingdevicegrey == 5)  {
-            yb2 = 30.0;
-        } else if (settings->viewingdevicegrey == 6)  {
-            yb2 = 40.0;
-        }
+        /*
+                //settings mean Luminance Y of output device or viewing
+                if (settings->viewingdevicegrey == 0) {
+                    yb2 = 5.0;
+                } else if (settings->viewingdevicegrey == 1) {
+                    yb2 = 10.0;
+                } else if (settings->viewingdevicegrey == 2) {
+                    yb2 = 15.0;
+                } else if (settings->viewingdevicegrey == 3) {
+                    yb2 = 18.0;
+                } else if (settings->viewingdevicegrey == 4) {
+                    yb2 = 23.0;
+                } else if (settings->viewingdevicegrey == 5)  {
+                    yb2 = 30.0;
+                } else if (settings->viewingdevicegrey == 6)  {
+                    yb2 = 40.0;
+                }
+        */
+        yb2 = params->colorappearance.ybout;
 
         //La and la2 = ambiant luminosity scene and viewing
         la = double (params->colorappearance.adapscen);
@@ -1491,6 +1500,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         float xwd, ywd, zwd;
         int alg = 0;
         bool algepd = false;
+        double Xwout, Zwout;
 
         const bool epdEnabled = params->epd.enabled;
         bool ciedata = (params->colorappearance.datacie && pW != 1) && ! ((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
@@ -1498,6 +1508,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                        || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
 
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
@@ -1542,59 +1553,64 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             algepd = true;
         }
 
-        //settings white point of output device - or illuminant viewing
-        if (settings->viewingdevice == 0) {
-            xwd = 96.42f;    //5000K
-            ywd = 100.0f;
-            zwd = 82.52f;
-        } else if (settings->viewingdevice == 1) {
-            xwd = 95.68f;    //5500
-            ywd = 100.0f;
-            zwd = 92.15f;
-        } else if (settings->viewingdevice == 2) {
-            xwd = 95.24f;    //6000
-            ywd = 100.0f;
-            zwd = 100.81f;
-        } else if (settings->viewingdevice == 3)  {
-            xwd = 95.04f;    //6500
-            ywd = 100.0f;
-            zwd = 108.88f;
-        } else if (settings->viewingdevice == 4)  {
-            xwd = 109.85f;    //tungsten
-            ywd = 100.0f;
-            zwd = 35.58f;
-        } else if (settings->viewingdevice == 5)  {
-            xwd = 99.18f;    //fluo F2
-            ywd = 100.0f;
-            zwd = 67.39f;
-        } else if (settings->viewingdevice == 6)  {
-            xwd = 95.04f;    //fluo F7
-            ywd = 100.0f;
-            zwd = 108.75f;
-        } else { /*if(settings->viewingdevice == 7) */
-            xwd = 100.96f;    //fluo F11
-            ywd = 100.0f;
-            zwd = 64.35f;
-        }
-
-
-        //settings mean Luminance Y of output device or viewing
-        if (settings->viewingdevicegrey == 0) {
-            yb2 = 5.0f;
-        } else if (settings->viewingdevicegrey == 1) {
-            yb2 = 10.0f;
-        } else if (settings->viewingdevicegrey == 2) {
-            yb2 = 15.0f;
-        } else if (settings->viewingdevicegrey == 3) {
-            yb2 = 18.0f;
-        } else if (settings->viewingdevicegrey == 4) {
-            yb2 = 23.0f;
-        } else if (settings->viewingdevicegrey == 5)  {
-            yb2 = 30.0f;
-        } else { /* if(settings->viewingdevicegrey == 6)*/
-            yb2 = 40.0f;
-        }
-
+        xwd = 100.f * Xwout;
+        zwd = 100.f * Zwout;
+        ywd = 100.f / params->colorappearance.greenout;//approximation to simplify
+        /*
+                //settings white point of output device - or illuminant viewing
+                if (settings->viewingdevice == 0) {
+                    xwd = 96.42f;    //5000K
+                    ywd = 100.0f;
+                    zwd = 82.52f;
+                } else if (settings->viewingdevice == 1) {
+                    xwd = 95.68f;    //5500
+                    ywd = 100.0f;
+                    zwd = 92.15f;
+                } else if (settings->viewingdevice == 2) {
+                    xwd = 95.24f;    //6000
+                    ywd = 100.0f;
+                    zwd = 100.81f;
+                } else if (settings->viewingdevice == 3)  {
+                    xwd = 95.04f;    //6500
+                    ywd = 100.0f;
+                    zwd = 108.88f;
+                } else if (settings->viewingdevice == 4)  {
+                    xwd = 109.85f;    //tungsten
+                    ywd = 100.0f;
+                    zwd = 35.58f;
+                } else if (settings->viewingdevice == 5)  {
+                    xwd = 99.18f;    //fluo F2
+                    ywd = 100.0f;
+                    zwd = 67.39f;
+                } else if (settings->viewingdevice == 6)  {
+                    xwd = 95.04f;    //fluo F7
+                    ywd = 100.0f;
+                    zwd = 108.75f;
+                } else {
+                    xwd = 100.96f;    //fluo F11
+                    ywd = 100.0f;
+                    zwd = 64.35f;
+                }
+        */
+        yb2 = params->colorappearance.ybout;
+        /*
+                //settings mean Luminance Y of output device or viewing
+                if (settings->viewingdevicegrey == 0) {
+                    yb2 = 5.0f;
+                } else if (settings->viewingdevicegrey == 1) {
+                    yb2 = 10.0f;
+                } else if (settings->viewingdevicegrey == 2) {
+                    yb2 = 15.0f;
+                } else if (settings->viewingdevicegrey == 3) {
+                    yb2 = 18.0f;
+                } else if (settings->viewingdevicegrey == 4) {
+                    yb2 = 23.0f;
+                } else if (settings->viewingdevicegrey == 5)  {
+                    yb2 = 30.0f;
+                } else {
+                    yb2 = 40.0f;
+                }
+        */
         //La and la2 = ambiant luminosity scene and viewing
         la = float (params->colorappearance.adapscen);
 

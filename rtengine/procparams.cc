@@ -1149,6 +1149,9 @@ void ProcParams::setDefaults ()
     colorappearance.curve3.clear ();
     colorappearance.curve3.push_back (DCT_Linear);
     colorappearance.curveMode3    = ColorAppearanceParams::TC_MODE_CHROMA;
+    colorappearance.tempout        = 5000;
+    colorappearance.greenout        = 1.0;
+    colorappearance.ybout        = 18;
 
     impulseDenoise.enabled      = false;
     impulseDenoise.thresh       = 50;
@@ -2126,6 +2129,18 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->colorappearance.gamut) {
             keyFile.set_boolean ("Color appearance", "Gamut",         colorappearance.gamut);
+        }
+
+        if (!pedited || pedited->colorappearance.tempout) {
+            keyFile.set_integer  ("Color appearance", "Tempout",       colorappearance.tempout);
+        }
+
+        if (!pedited || pedited->colorappearance.greenout) {
+            keyFile.set_double  ("Color appearance", "Greenout",       colorappearance.greenout);
+        }
+
+        if (!pedited || pedited->colorappearance.ybout) {
+            keyFile.set_integer  ("Color appearance", "Ybout",       colorappearance.ybout);
         }
 
 //    if (!pedited || pedited->colorappearance.badpix)        keyFile.set_boolean ("Color appearance", "Badpix",        colorappearance.badpix);
@@ -5064,6 +5079,30 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->colorappearance.gamut = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Tempout"))       {
+                colorappearance.tempout        = keyFile.get_integer  ("Color appearance", "Tempout");
+
+                if (pedited) {
+                    pedited->colorappearance.tempout = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Greenout"))       {
+                colorappearance.greenout        = keyFile.get_double  ("Color appearance", "Greenout");
+
+                if (pedited) {
+                    pedited->colorappearance.greenout = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Ybout"))       {
+                colorappearance.ybout        = keyFile.get_integer  ("Color appearance", "Ybout");
+
+                if (pedited) {
+                    pedited->colorappearance.ybout = true;
                 }
             }
 
@@ -8191,6 +8230,9 @@ bool ProcParams::operator== (const ProcParams& other)
         && colorappearance.contrast == other.colorappearance.contrast
         && colorappearance.qcontrast == other.colorappearance.qcontrast
         && colorappearance.colorh == other.colorappearance.colorh
+        && colorappearance.tempout == other.colorappearance.tempout
+        && colorappearance.greenout == other.colorappearance.greenout
+        && colorappearance.ybout == other.colorappearance.ybout
         && impulseDenoise.enabled == other.impulseDenoise.enabled
         && impulseDenoise.thresh == other.impulseDenoise.thresh
         && dirpyrDenoise.enabled == other.dirpyrDenoise.enabled

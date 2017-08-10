@@ -204,6 +204,9 @@ void ParamsEdited::set (bool v)
     colorappearance.curveMode  = v;
     colorappearance.curveMode2 = v;
     colorappearance.curveMode3 = v;
+    colorappearance.tempout     = v;
+    colorappearance.greenout     = v;
+    colorappearance.ybout     = v;
 
     //colorBoost.amount         = v;
     //colorBoost.avoidclip      = v;
@@ -724,6 +727,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.curveMode = colorappearance.curveMode && p.colorappearance.curveMode == other.colorappearance.curveMode;
         colorappearance.curveMode2 = colorappearance.curveMode2 && p.colorappearance.curveMode2 == other.colorappearance.curveMode2;
         colorappearance.curveMode3 = colorappearance.curveMode3 && p.colorappearance.curveMode3 == other.colorappearance.curveMode3;
+        colorappearance.tempout = colorappearance.tempout && p.colorappearance.tempout == other.colorappearance.tempout;
+        colorappearance.greenout = colorappearance.greenout && p.colorappearance.greenout == other.colorappearance.greenout;
+        colorappearance.ybout = colorappearance.ybout && p.colorappearance.ybout == other.colorappearance.ybout;
 
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
@@ -1731,6 +1737,18 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (colorappearance.algo) {
         toEdit.colorappearance.algo       = mods.colorappearance.algo;
+    }
+
+    if (colorappearance.tempout) {
+        toEdit.colorappearance.tempout       = mods.colorappearance.tempout;
+    }
+
+    if (colorappearance.greenout) {
+        toEdit.colorappearance.greenout       = mods.colorappearance.greenout;
+    }
+
+    if (colorappearance.ybout) {
+        toEdit.colorappearance.ybout       = mods.colorappearance.ybout;
     }
 
     if (colorappearance.jlight) {

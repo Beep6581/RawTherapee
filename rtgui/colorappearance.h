@@ -101,6 +101,10 @@ private:
     Adjuster* contrast;
     Adjuster* qcontrast;
     Adjuster* colorh;
+    Adjuster* tempout;
+    Adjuster* greenout;
+    Adjuster* ybout;
+
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     MyComboBoxText* toneCurveMode3;
