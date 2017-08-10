@@ -1831,6 +1831,7 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            )) {
                     fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
                 }
+
                 if (keyFile.has_key ("Fast Export", "fastexport_use_fast_pipeline"            )) {
                     fastexport_use_fast_pipeline           = keyFile.get_integer ("Fast Export", "fastexport_use_fast_pipeline"            );
                 }
@@ -1853,8 +1854,9 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet (keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
                 safeDirGet (keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
+
                 if (keyFile.has_key ("Dialogs", "GimpPluginShowInfoDialog")) {
-                    gimpPluginShowInfoDialog = keyFile.get_boolean("Dialogs", "GimpPluginShowInfoDialog");
+                    gimpPluginShowInfoDialog = keyFile.get_boolean ("Dialogs", "GimpPluginShowInfoDialog");
                 }
             }
 
@@ -2221,7 +2223,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
-        keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
+        keyFile.set_boolean ("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyData = keyFile.to_data ();
 
@@ -2236,7 +2238,7 @@ int Options::saveToFile (Glib::ustring fname)
     if (f == nullptr) {
         std::cout << "Warning! Unable to save your preferences to: " << fname << std::endl;
 #ifndef RAWTHERAPEE_CLI
-        Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), fname.c_str());
+        Glib::ustring msg_ = Glib::ustring::compose (M ("MAIN_MSG_WRITEFAILED"), fname.c_str());
         //writeFailed (getToplevelWindow (this), msg_);
         Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
         msgd.run ();

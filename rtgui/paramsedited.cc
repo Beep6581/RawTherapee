@@ -507,11 +507,11 @@ void ParamsEdited::set (bool v)
     wavelet.exptoning = v;
     wavelet.expnoise = v;
 
-    for(int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; i++) {
         wavelet.c[i] = v;
     }
 
-    for(int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; i++) {
         wavelet.ch[i] = v;
     }
 
@@ -520,7 +520,7 @@ void ParamsEdited::set (bool v)
     dirpyrequalizer.cbdlMethod = v;
 
 
-    for(int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         dirpyrequalizer.mult[i] = v;
     }
 
@@ -1025,11 +1025,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         wavelet.exptoning = wavelet.exptoning && p.wavelet.exptoning == other.wavelet.exptoning;
         wavelet.expnoise = wavelet.expnoise && p.wavelet.expnoise == other.wavelet.expnoise;
 
-        for(int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             wavelet.c[i] = wavelet.c[i] && p.wavelet.c[i] == other.wavelet.c[i];
         }
 
-        for(int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             wavelet.ch[i] = wavelet.ch[i] && p.wavelet.ch[i] == other.wavelet.ch[i];
         }
 
@@ -1037,7 +1037,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrequalizer.gamutlab = dirpyrequalizer.gamutlab && p.dirpyrequalizer.gamutlab == other.dirpyrequalizer.gamutlab;
         dirpyrequalizer.cbdlMethod = dirpyrequalizer.cbdlMethod && p.dirpyrequalizer.cbdlMethod == other.dirpyrequalizer.cbdlMethod;
 
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
         }
 
@@ -2771,14 +2771,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.wavelet.expnoise   = mods.wavelet.expnoise;
     }
 
-    for(int i = 0; i < 9; i++) {
-        if(wavelet.c[i]) {
+    for (int i = 0; i < 9; i++) {
+        if (wavelet.c[i]) {
             toEdit.wavelet.c[i] = dontforceSet && options.baBehav[ADDSET_WA] ? toEdit.wavelet.c[i] + mods.wavelet.c[i] : mods.wavelet.c[i];
         }
     }
 
-    for(int i = 0; i < 9; i++) {
-        if(wavelet.ch[i]) {
+    for (int i = 0; i < 9; i++) {
+        if (wavelet.ch[i]) {
             toEdit.wavelet.ch[i] = dontforceSet && options.baBehav[ADDSET_WA] ? toEdit.wavelet.ch[i] + mods.wavelet.ch[i] : mods.wavelet.ch[i];
         }
     }
@@ -2884,8 +2884,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.dirpyrequalizer.cbdlMethod   = mods.dirpyrequalizer.cbdlMethod;
     }
 
-    for(int i = 0; i < 6; i++) {
-        if(dirpyrequalizer.mult[i]) {
+    for (int i = 0; i < 6; i++) {
+        if (dirpyrequalizer.mult[i]) {
             toEdit.dirpyrequalizer.mult[i]    = dontforceSet && options.baBehav[ADDSET_DIRPYREQ] ? toEdit.dirpyrequalizer.mult[i] + mods.dirpyrequalizer.mult[i] : mods.dirpyrequalizer.mult[i];
         }
     }

@@ -208,7 +208,7 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params ,
+void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                  const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
                                  LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int rtt)
 {
@@ -607,7 +607,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                                     x,  y,  z,
                                                     xw1, yw1,  zw1,
                                                     yb,  la,
-                                                    f, c,  nc,  pilot, gamu , n, nbb, ncb, pfl, cz, d );
+                                                    f, c,  nc,  pilot, gamu, n, nbb, ncb, pfl, cz, d );
                     Jpro = J;
                     Cpro = C;
                     hpro = h;
@@ -635,7 +635,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             schr = -99.8;
                         }
 
-                        Ciecam02::curvecolor (schr, Sp , sres, parsat);
+                        Ciecam02::curvecolor (schr, Sp, sres, parsat);
                         double coe = pow (fl, 0.25);
                         float dred = 100.f; // in C mode
                         float protect_red = 80.0f; // in C mode
@@ -671,9 +671,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (alg == 3 || alg == 2) {
-                            Ciecam02::curvecolor (mchr, Mp , sres, parsat);
+                            Ciecam02::curvecolor (mchr, Mp, sres, parsat);
                         } else {
-                            Ciecam02::curvecolor (0.0, Mp , sres, parsat);   //colorfullness
+                            Ciecam02::curvecolor (0.0, Mp, sres, parsat);    //colorfullness
                         }
 
                         float dred = 100.f; //in C mode
@@ -708,9 +708,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (alg == 3) {
-                            Ciecam02::curvecolor (schr, Sp , sres, parsat);
+                            Ciecam02::curvecolor (schr, Sp, sres, parsat);
                         }   else {
-                            Ciecam02::curvecolor (0.0, Sp , sres, parsat);   //saturation
+                            Ciecam02::curvecolor (0.0, Sp, sres, parsat);    //saturation
                         }
 
                         dred = 100.f; // in C mode
@@ -730,9 +730,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (alg != 2) {
-                            Ciecam02::curvecolor (chr, Cp , sres, parsat);
+                            Ciecam02::curvecolor (chr, Cp, sres, parsat);
                         } else {
-                            Ciecam02::curvecolor (0.0, Cp , sres, parsat);   //chroma
+                            Ciecam02::curvecolor (0.0, Cp, sres, parsat);    //chroma
                         }
 
                         dred = 55.f;
@@ -1222,7 +1222,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                     float chrom = 50.f;
                     {
                         int hotbad = 0;
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2 , b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect , chrom, hotbad);    //enabled remove artifacts for cbDL
+                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad);      //enabled remove artifacts for cbDL
                     }
                 }
             }
@@ -2014,7 +2014,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
                         float sres;
-                        Ciecam02::curvecolorfloat (chr, Cp , sres, 1.8f);
+                        Ciecam02::curvecolorfloat (chr, Cp, sres, 1.8f);
                         Color::skinredfloat (Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
                     } else if (alg == 1)  {
                         // Lightness saturation
@@ -2022,7 +2022,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         float sres;
                         float Sp = spro / 100.0f;
                         float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
-                        Ciecam02::curvecolorfloat (schr, Sp , sres, parsat);
+                        Ciecam02::curvecolorfloat (schr, Sp, sres, parsat);
                         float dred = 100.f; // in C mode
                         float protect_red = 80.0f; // in C mode
                         dred = 100.0f * sqrtf ((dred * coe) / Qpro);
@@ -2034,7 +2034,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Qpro = CAMBrightCurveQ[ (float) (Qpro * coefQ)]; //brightness and contrast
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
-                        Ciecam02::curvecolorfloat (mchr, Mp , sres, 2.5f);
+                        Ciecam02::curvecolorfloat (mchr, Mp, sres, 2.5f);
                         float dred = 100.f; //in C mode
                         float protect_red = 80.0f; // in C mode
                         dred *= coe; //in M mode
@@ -2049,7 +2049,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
-                        Ciecam02::curvecolorfloat (mchr, Mp , sres, 2.5f);
+                        Ciecam02::curvecolorfloat (mchr, Mp, sres, 2.5f);
                         float dred = 100.f; //in C mode
                         float protect_red = 80.0f; // in C mode
                         dred *= coe; //in M mode
@@ -2066,7 +2066,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                         Jpro = CAMBrightCurveJ[ (float) (Jpro * 327.68f)]; //lightness CIECAM02 + contrast
                         float Sp = spro / 100.0f;
-                        Ciecam02::curvecolorfloat (schr, Sp , sres, 1.5f);
+                        Ciecam02::curvecolorfloat (schr, Sp, sres, 1.5f);
                         dred = 100.f; // in C mode
                         protect_red = 80.0f; // in C mode
                         dred = 100.0f * sqrtf ((dred * coe) / Q);
@@ -2075,7 +2075,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Qpro = QproFactor * sqrtf (Jpro);
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
-                        Ciecam02::curvecolorfloat (chr, Cp , sres, 1.8f);
+                        Ciecam02::curvecolorfloat (chr, Cp, sres, 1.8f);
                         Color::skinredfloat (Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
 // disabled this code, Issue 2690
 //              if(Jpro < 1.f && Cpro > 12.f) Cpro=12.f;//reduce artifacts by "pseudo gamut control CIECAM"
@@ -2573,7 +2573,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         int hotbad = 0;
                         float chrom = 50.f;
                         lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2 , b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad); //enabled remove artifacts for cbDL
+                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad);  //enabled remove artifacts for cbDL
                         lab->reallocLab();
                     }
                 }
@@ -2935,15 +2935,15 @@ filmlike_clip (float *r, float *g, float *b)
 }
 
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve )
 {
-    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve);
+    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve )
 {
     BENCHFUN
@@ -6585,7 +6585,7 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
     fwrite(L, N, sizeof(float), f);
     fclose(f);*/
 
-    epd.CompressDynamicRange (L, sca / float(skip), edgest, Compression, DetailBoost, Iterates, rew);
+    epd.CompressDynamicRange (L, sca / float (skip), edgest, Compression, DetailBoost, Iterates, rew);
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf (Compression, 1.5856f) / (1.0f + 38.7889f * powf (Compression, 1.5856f));
