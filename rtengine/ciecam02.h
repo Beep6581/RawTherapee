@@ -108,7 +108,7 @@ public:
     static void initcam1float(float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                               float &cz, float &aw, float &wh, float &pfl, float &fl, float &c);
 
-    static void initcam2float(float gamu, float yb, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+    static void initcam2float(float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                               float &cz, float &aw, float &fl);
 
     static void xyz2jchqms_ciecam02( double &J, double &C, double &h,

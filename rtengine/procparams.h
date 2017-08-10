@@ -585,6 +585,8 @@ public:
     bool          enabled;
     int           degree;
     bool          autodegree;
+    int           degreeout;
+    bool          autodegreeout;
     std::vector<double> curve;
     std::vector<double> curve2;
     std::vector<double> curve3;

@@ -1468,7 +1468,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, int rtt)
+                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, int rtt)
 {
     if (params->colorappearance.enabled) {
 
@@ -1630,6 +1630,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         const float deg = (params->colorappearance.degree) / 100.0f;
         const float pilot = params->colorappearance.autodegree ? 2.0f : deg;
 
+        const float degout = (params->colorappearance.degreeout) / 100.0f;
+        const float pilotout = params->colorappearance.autodegreeout ? 2.0f : degout;
+		
         //algoritm's params
         float chr = 0.f;
 
@@ -1860,8 +1863,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         float cz, wh, pfl;
         Ciecam02::initcam1float (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
         const float pow1 = pow_F ( 1.64f - pow_F ( 0.29f, n ), 0.73f );
-        float nj, dj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float (gamu, yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        float nj, nbbj, ncbj, czj, awj, flj;
+        Ciecam02::initcam2float (gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
         const float reccmcz = 1.f / (c2 * czj);
         const float pow1n = pow_F ( 1.64f - pow_F ( 0.29f, nj ), 0.73f );
 

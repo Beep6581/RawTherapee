@@ -746,7 +746,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             int begh = 0;
             int endh = pH;
-            float d;
+            float d, dj;
             bool execsharp = false;
 
             if(!ncie) {
@@ -766,10 +766,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CAMBrightCurveJ.dirty = true;
             CAMBrightCurveQ.dirty = true;
 
-            ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, 1);
+            ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, dj, 1);
 
             if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) {
-                acListener->autoCamChanged(100.*(double)d);
+                acListener->autoCamChanged(100.*(double)d, 100.*(double)dj);
             }
 
             if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) {

@@ -450,6 +450,17 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 //   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
 //   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
 
+    degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
+
+    if (degreeout->delay < options.adjusterMaxDelay) {
+        degreeout->delay = options.adjusterMaxDelay;
+    }
+
+    degreeout->throwOnButtonRelease();
+    degreeout->addAutoButton (M ("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
+    degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    p3VBox->pack_start (*degreeout);
+
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR, itempL, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR, igreenL));
     ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 50, 1, 18));
@@ -514,6 +525,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::surroundChanged) );
 
     degree->setAdjusterListener  (this);
+    degreeout->setAdjusterListener  (this);
     adapscen->setAdjusterListener (this);
     adaplum->setAdjusterListener (this);
     badpixsl->setAdjusterListener (this);
@@ -572,6 +584,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
+        degreeout->setEditedState        (pedited->colorappearance.degreeout ? Edited : UnEdited);
         adapscen->setEditedState      (pedited->colorappearance.adapscen ? Edited : UnEdited);
         adaplum->setEditedState       (pedited->colorappearance.adaplum ? Edited : UnEdited);
         badpixsl->setEditedState      (pedited->colorappearance.badpixsl ? Edited : UnEdited);
@@ -595,6 +608,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         //  sharpcie->set_inconsistent    (!pedited->colorappearance.sharpcie);
 
         degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
+        degreeout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegreeout);
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
 
@@ -697,11 +711,14 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastAutoDegree = pp->colorappearance.autodegree;
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
+    lastAutoDegreeout = pp->colorappearance.autodegreeout;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
     adapscen->setValue (pp->colorappearance.adapscen);
     adapscen->setAutoValue (pp->colorappearance.autoadapscen);
+    degreeout->setValue (pp->colorappearance.degreeout);
+    degreeout->setAutoValue (pp->colorappearance.autodegreeout);
 
     adaplum->setValue (pp->colorappearance.adaplum);
     badpixsl->setValue (pp->colorappearance.badpixsl);
@@ -737,6 +754,8 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->colorappearance.degree        = degree->getValue ();
     pp->colorappearance.autodegree    = degree->getAutoValue ();
+    pp->colorappearance.degreeout        = degreeout->getValue ();
+    pp->colorappearance.autodegreeout    = degreeout->getAutoValue ();
     pp->colorappearance.enabled       = getEnabled();
     pp->colorappearance.adapscen      = adapscen->getValue ();
     pp->colorappearance.autoadapscen  = adapscen->getAutoValue ();
@@ -792,6 +811,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->colorappearance.degree        = degree->getEditedState ();
+        pedited->colorappearance.degreeout        = degreeout->getEditedState ();
         pedited->colorappearance.adapscen      = adapscen->getEditedState ();
         pedited->colorappearance.adaplum       = adaplum->getEditedState ();
         pedited->colorappearance.badpixsl      = badpixsl->getEditedState ();
@@ -805,6 +825,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.colorh        = colorh->getEditedState ();
         pedited->colorappearance.rstprotection = rstprotection->getEditedState ();
         pedited->colorappearance.autodegree    = !degree->getAutoInconsistent();
+        pedited->colorappearance.autodegreeout    = !degreeout->getAutoInconsistent();
         pedited->colorappearance.autoadapscen  = !adapscen->getAutoInconsistent();
         pedited->colorappearance.enabled       = !get_inconsistent();
         pedited->colorappearance.surround      = surround->get_active_text() != M ("GENERAL_UNCHANGED");
@@ -1084,6 +1105,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 {
 
     degree->setDefault (defParams->colorappearance.degree);
+    degreeout->setDefault (defParams->colorappearance.degreeout);
     adapscen->setDefault (defParams->colorappearance.adapscen);
     adaplum->setDefault (defParams->colorappearance.adaplum);
     badpixsl->setDefault (defParams->colorappearance.badpixsl);
@@ -1102,6 +1124,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 
     if (pedited) {
         degree->setDefaultEditedState (pedited->colorappearance.degree ? Edited : UnEdited);
+        degreeout->setDefaultEditedState (pedited->colorappearance.degreeout ? Edited : UnEdited);
         adapscen->setDefaultEditedState (pedited->colorappearance.adapscen ? Edited : UnEdited);
         adaplum->setDefaultEditedState (pedited->colorappearance.adaplum ? Edited : UnEdited);
         badpixsl->setDefaultEditedState (pedited->colorappearance.badpixsl ? Edited : UnEdited);
@@ -1120,6 +1143,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 
     } else {
         degree->setDefaultEditedState (Irrelevant);
+        degreeout->setDefaultEditedState (Irrelevant);
         adapscen->setDefaultEditedState (Irrelevant);
         adaplum->setDefaultEditedState (Irrelevant);
         badpixsl->setDefaultEditedState (Irrelevant);
@@ -1139,9 +1163,10 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
     }
 }
 
-void ColorAppearance::autoCamChanged (double ccam)
+void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 {
     nextCcam = ccam;
+	nextCcamout = ccamout;
 
     const auto func = [] (gpointer data) -> gboolean {
         static_cast<ColorAppearance*> (data)->autoCamComputed_();
@@ -1157,6 +1182,7 @@ bool ColorAppearance::autoCamComputed_ ()
     disableListener ();
 //  degree->setEnabled (true);
     degree->setValue (nextCcam);
+	degreeout->setValue (nextCcamout);
     enableListener ();
 
     return false;
@@ -1214,6 +1240,8 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
     if (listener && (multiImage || getEnabled()) ) {
         if (a == degree) {
             listener->panelChanged (EvCATDegree, a->getTextValue());
+        } else if (a == degreeout) {
+            listener->panelChanged (EvCATDegreeout, a->getTextValue());			
         } else if (a == adapscen) {
             listener->panelChanged (EvCATAdapscen, a->getTextValue());
         } else if (a == adaplum) {
@@ -1263,6 +1291,15 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
 
         lastAutoDegree = degree->getAutoValue();
 
+        if (degreeout->getAutoInconsistent()) {
+            degreeout->setAutoInconsistent (false);
+            degreeout->setAutoValue (false);
+        } else if (lastAutoDegreeout) {
+            degreeout->setAutoInconsistent (true);
+        }
+
+        lastAutoDegreeout = degreeout->getAutoValue();
+		
         if (adapscen->getAutoInconsistent()) {
             adapscen->setAutoInconsistent (false);
             adapscen->setAutoValue (false);
@@ -1285,6 +1322,17 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
                 listener->panelChanged (EvCATAutoDegree, M ("GENERAL_DISABLED"));
             }
         }
+		
+        if (a == degreeout) {
+            if (degreeout->getAutoInconsistent()) {
+                listener->panelChanged (EvCATAutoDegreeout, M ("GENERAL_UNCHANGED"));
+            } else if (degreeout->getAutoValue()) {
+                listener->panelChanged (EvCATAutoDegreeout, M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvCATAutoDegreeout, M ("GENERAL_DISABLED"));
+            }
+        }
+		
 
         if (a == adapscen) {
             if (adapscen->getAutoInconsistent()) {
@@ -1410,6 +1458,7 @@ void ColorAppearance::setBatchMode (bool batchMode)
     ToolPanel::setBatchMode (batchMode);
 
     degree->showEditedCB ();
+    degreeout->showEditedCB ();
     adapscen->showEditedCB ();
     adaplum->showEditedCB ();
     badpixsl->showEditedCB ();
@@ -1469,6 +1518,7 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
     degree->trimValue (pp->colorappearance.degree);
+    degreeout->trimValue (pp->colorappearance.degreeout);
     adapscen->trimValue (pp->colorappearance.adapscen);
     adaplum->trimValue (pp->colorappearance.adaplum);
     badpixsl->trimValue (pp->colorappearance.badpixsl);

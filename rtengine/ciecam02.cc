@@ -728,6 +728,8 @@ void Ciecam02::initcam2(double gamu, double yb, double f, double la, double xw, 
                         double &cz, double &aw, double &fl)
 {
     n = yb / yw;
+	
+	
     d = d_factor( f, la );
     fl = calculate_fl_from_la_ciecam02( la );
     nbb = ncb = 0.725 * pow( 1.0 / n, 0.2 );
@@ -742,11 +744,18 @@ void Ciecam02::initcam2(double gamu, double yb, double f, double la, double xw, 
 #endif
 }
 
-void Ciecam02::initcam2float(float gamu, float yb, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+void Ciecam02::initcam2float(float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
                              float &cz, float &aw, float &fl)
 {
     n = yb / yw;
-    d = d_factorfloat( f, la );
+	
+    if (pilotd == 2.0) {
+        d = d_factorfloat( f, la );
+    } else {
+        d = pilotd;
+    }
+	
+ //   d = d_factorfloat( f, la );
     fl = calculate_fl_from_la_ciecam02float( la );
     nbb = ncb = 0.725f * pow_F( 1.0f / n, 0.2f );
     cz = 1.48f + sqrt( n );

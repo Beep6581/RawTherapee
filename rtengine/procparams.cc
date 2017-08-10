@@ -1118,6 +1118,8 @@ void ProcParams::setDefaults ()
     colorappearance.enabled       = false;
     colorappearance.degree        = 90;
     colorappearance.autodegree    = true;
+    colorappearance.degreeout        = 90;
+    colorappearance.autodegreeout    = true;
     colorappearance.surround      = "Average";
     colorappearance.adaplum       = 16;
     colorappearance.badpixsl       = 0;
@@ -2058,6 +2060,14 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Color appearance", "AutoDegree",    colorappearance.autodegree);
         }
 
+        if (!pedited || pedited->colorappearance.degreeout) {
+            keyFile.set_integer ("Color appearance", "Degreeout",        colorappearance.degreeout);
+        }
+
+        if (!pedited || pedited->colorappearance.autodegreeout) {
+            keyFile.set_boolean ("Color appearance", "AutoDegreeout",    colorappearance.autodegreeout);
+        }
+		
         if (!pedited || pedited->colorappearance.surround) {
             keyFile.set_string  ("Color appearance", "Surround",      colorappearance.surround);
         }
@@ -4937,6 +4947,22 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Color appearance", "Degreeout"))        {
+                colorappearance.degreeout        = keyFile.get_integer ("Color appearance", "Degreeout");
+
+                if (pedited) {
+                    pedited->colorappearance.degreeout = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "AutoDegreeout"))    {
+                colorappearance.autodegreeout    = keyFile.get_boolean ("Color appearance", "AutoDegreeout");
+
+                if (pedited) {
+                    pedited->colorappearance.autodegreeout = true;
+                }
+            }
+			
             if (keyFile.has_key ("Color appearance", "Surround"))      {
                 colorappearance.surround      = keyFile.get_string  ("Color appearance", "Surround");
 
@@ -8211,6 +8237,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && colorappearance.enabled == other.colorappearance.enabled
         && colorappearance.degree == other.colorappearance.degree
         && colorappearance.autodegree == other.colorappearance.autodegree
+        && colorappearance.degreeout == other.colorappearance.degreeout
+        && colorappearance.autodegreeout == other.colorappearance.autodegreeout
         && colorappearance.surround == other.colorappearance.surround
         && colorappearance.adapscen == other.colorappearance.adapscen
         && colorappearance.autoadapscen == other.colorappearance.autoadapscen

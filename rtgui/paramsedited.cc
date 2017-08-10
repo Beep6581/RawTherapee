@@ -175,6 +175,8 @@ void ParamsEdited::set (bool v)
     colorappearance.enabled    = v;
     colorappearance.degree     = v;
     colorappearance.autodegree = v;
+    colorappearance.degreeout     = v;
+    colorappearance.autodegreeout = v;
     colorappearance.surround     = v;
     colorappearance.adapscen    = v;
     colorappearance.autoadapscen = v;
@@ -699,6 +701,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.enabled = colorappearance.enabled && p.colorappearance.enabled == other.colorappearance.enabled;
         colorappearance.degree = colorappearance.degree && p.colorappearance.degree == other.colorappearance.degree;
         colorappearance.autodegree = colorappearance.autodegree && p.colorappearance.autodegree == other.colorappearance.autodegree;
+        colorappearance.degreeout = colorappearance.degreeout && p.colorappearance.degreeout == other.colorappearance.degreeout;
+        colorappearance.autodegreeout = colorappearance.autodegreeout && p.colorappearance.autodegreeout == other.colorappearance.autodegreeout;
         colorappearance.surround = colorappearance.surround && p.colorappearance.surround == other.colorappearance.surround;
         colorappearance.adapscen = colorappearance.adapscen && p.colorappearance.adapscen == other.colorappearance.adapscen;
         colorappearance.autoadapscen = colorappearance.autoadapscen && p.colorappearance.autoadapscen == other.colorappearance.autoadapscen;
@@ -1711,6 +1715,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.colorappearance.autodegree = mods.colorappearance.autodegree;
     }
 
+    if (colorappearance.degreeout) {
+        toEdit.colorappearance.degreeout     = mods.colorappearance.degreeout;
+    }
+
+    if (colorappearance.autodegreeout) {
+        toEdit.colorappearance.autodegreeout = mods.colorappearance.autodegreeout;
+    }
+	
     if (colorappearance.surround) {
         toEdit.colorappearance.surround       = mods.colorappearance.surround;
     }

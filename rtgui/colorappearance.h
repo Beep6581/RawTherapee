@@ -57,7 +57,7 @@ public:
     void datacie_toggled     ();
     void tonecie_toggled     ();
 //    void sharpcie_toggled     ();
-    void autoCamChanged (double ccam);
+    void autoCamChanged (double ccam, double ccamout);
     bool autoCamComputed_ ();
     void adapCamChanged (double cadap);
     bool adapCamComputed_ ();
@@ -91,6 +91,7 @@ private:
     Adjuster* degree;
     Adjuster* adapscen;
     Adjuster* adaplum;
+    Adjuster* degreeout;
     Adjuster* badpixsl;
     Adjuster* jlight;
     Adjuster* qbright;
@@ -133,9 +134,10 @@ private:
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
-    double nextCcam, nextCadap;
+    double nextCcam, nextCcamout, nextCadap;
     bool lastAutoDegree;
     bool lastAutoAdapscen;
+    bool lastAutoDegreeout;
     bool lastsurr;
     bool lastgamut;
     bool lastdatacie;

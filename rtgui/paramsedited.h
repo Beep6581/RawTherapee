@@ -289,6 +289,8 @@ public:
     bool enabled;
     bool degree;
     bool autodegree;
+    bool degreeout;
+    bool autodegreeout;
     bool autoadapscen;
     bool surround;
     bool adapscen;
