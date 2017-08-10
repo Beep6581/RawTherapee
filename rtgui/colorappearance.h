@@ -29,12 +29,12 @@
 #include "colorprovider.h"
 
 class ColorAppearance final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel,
-    public rtengine::AutoCamListener,
-    public CurveListener,
-    public ColorProvider
+        public ToolParamBlock,
+        public AdjusterListener,
+        public FoldableToolPanel,
+        public rtengine::AutoCamListener,
+        public CurveListener,
+        public ColorProvider
 {
 public:
     ColorAppearance ();

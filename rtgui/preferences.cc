@@ -283,11 +283,11 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_COLORTONING_LABEL"));
-    appendBehavList (mi, M ("TP_COLORTONING_SPLITCOCO"), ADDSET_COLORTONING_SPLIT , true);
-    appendBehavList (mi, M ("TP_COLORTONING_SATURATIONTHRESHOLD"), ADDSET_COLORTONING_SATTHRESHOLD , true);
-    appendBehavList (mi, M ("TP_COLORTONING_SATURATEDOPACITY"), ADDSET_COLORTONING_SATOPACITY , true);
-    appendBehavList (mi, M ("TP_COLORTONING_BALANCE"), ADDSET_COLORTONING_BALANCE , true);
-    appendBehavList (mi, M ("TP_COLORTONING_STRENGTH"), ADDSET_COLORTONING_STRENGTH , true);
+    appendBehavList (mi, M ("TP_COLORTONING_SPLITCOCO"), ADDSET_COLORTONING_SPLIT, true);
+    appendBehavList (mi, M ("TP_COLORTONING_SATURATIONTHRESHOLD"), ADDSET_COLORTONING_SATTHRESHOLD, true);
+    appendBehavList (mi, M ("TP_COLORTONING_SATURATEDOPACITY"), ADDSET_COLORTONING_SATOPACITY, true);
+    appendBehavList (mi, M ("TP_COLORTONING_BALANCE"), ADDSET_COLORTONING_BALANCE, true);
+    appendBehavList (mi, M ("TP_COLORTONING_STRENGTH"), ADDSET_COLORTONING_STRENGTH, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_ROTATE_LABEL"));
@@ -509,14 +509,14 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
     darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *dfLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_DIRDARKFRAMES") + ":"));
-    hb42->pack_start (*dfLab , Gtk::PACK_SHRINK, 4 );
+    hb42->pack_start (*dfLab, Gtk::PACK_SHRINK, 4 );
     hb42->pack_start (*darkFrameDir, Gtk::PACK_EXPAND_WIDGET, 4);
     dfLabel = Gtk::manage (new Gtk::Label ("Found:"));
     Gtk::VBox* vbdf = Gtk::manage (new Gtk::VBox ());
     vbdf->pack_start ( *hb42, Gtk::PACK_SHRINK, 4);
     vbdf->pack_start ( *dfLabel, Gtk::PACK_SHRINK, 4 );
     fdf->add ( *vbdf );
-    mvbpp->pack_start ( *fdf , Gtk::PACK_SHRINK, 4);
+    mvbpp->pack_start ( *fdf, Gtk::PACK_SHRINK, 4);
 
     //dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
     dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged), true);
@@ -526,14 +526,14 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     Gtk::HBox* hb43 = Gtk::manage (new Gtk::HBox ());
     flatFieldDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *ffLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_FLATFIELDSDIR") + ":"));
-    hb43->pack_start (*ffLab , Gtk::PACK_SHRINK, 4 );
+    hb43->pack_start (*ffLab, Gtk::PACK_SHRINK, 4 );
     hb43->pack_start (*flatFieldDir);
     ffLabel = Gtk::manage (new Gtk::Label ("Found:"));
     Gtk::VBox* vbff = Gtk::manage (new Gtk::VBox ());
     vbff->pack_start ( *hb43, Gtk::PACK_SHRINK, 4);
     vbff->pack_start ( *ffLabel, Gtk::PACK_SHRINK, 4 );
     fff->add ( *vbff );
-    mvbpp->pack_start ( *fff , Gtk::PACK_SHRINK, 4);
+    mvbpp->pack_start ( *fff, Gtk::PACK_SHRINK, 4);
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
     ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::flatFieldChanged), true);
@@ -847,14 +847,14 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 
     //-------------------------  CIECAM ----------------------
 
-  //  Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
-  //  setExpandAlignProperties (viewlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    //  Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
+    //  setExpandAlignProperties (viewlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-  //  view = Gtk::manage (new Gtk::ComboBoxText ());
- //   setExpandAlignProperties (view, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    //  view = Gtk::manage (new Gtk::ComboBoxText ());
+//   setExpandAlignProperties (view, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 //    view->append (M("PREFERENCES_D50_MENU"));
 
- //   view->append (M ("PREFERENCES_D50"));
+//   view->append (M ("PREFERENCES_D50"));
 //   view->append (M("PREFERENCES_D55"));
 //   view->append (M("PREFERENCES_D60"));
 //   view->append (M("PREFERENCES_D65"));
@@ -1710,8 +1710,8 @@ void Preferences::storePreferences ()
 #endif
 
     moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
- //   moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
- //   moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
+//   moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
+//   moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
     moptions.rtSettings.viewinggreySc   = greySc->get_active_row_number ();
     //  moptions.rtSettings.autocielab            = cbAutocielab->get_active ();
     moptions.rtSettings.ciecamfloat             = cbciecamfloat->get_active ();
@@ -1870,8 +1870,8 @@ void Preferences::fillPreferences ()
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
     }
 
- //   view->set_active (moptions.rtSettings.viewingdevice);
- //   grey->set_active (moptions.rtSettings.viewingdevicegrey);
+//   view->set_active (moptions.rtSettings.viewingdevice);
+//   grey->set_active (moptions.rtSettings.viewingdevicegrey);
     greySc->set_active (moptions.rtSettings.viewinggreySc);
     dnv->set_active (moptions.rtSettings.leveldnv);
     dnti->set_active (moptions.rtSettings.leveldnti);
@@ -2021,6 +2021,7 @@ void Preferences::fillPreferences ()
     setc.block (true);
 
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
+
     for (size_t i = 0; i < moptions.baBehav.size(); i++)
         for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
             for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)

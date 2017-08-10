@@ -640,8 +640,8 @@ void Options::setDefaults ()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
- //   rtSettings.viewingdevice = 0;
- //   rtSettings.viewingdevicegrey = 3;
+//   rtSettings.viewingdevice = 0;
+//   rtSettings.viewingdevicegrey = 3;
     rtSettings.viewinggreySc = 1;
     rtSettings.leveldnv = 2;
     rtSettings.leveldnti = 0;
@@ -1547,15 +1547,16 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Color Management", "DenoiseLabgamma")) {
                     rtSettings.denoiselabgamma      = keyFile.get_integer ("Color Management", "DenoiseLabgamma");
                 }
-/*
-                if (keyFile.has_key ("Color Management", "view")) {
-                    rtSettings.viewingdevice        = keyFile.get_integer ("Color Management", "view");
-                }
 
-                if (keyFile.has_key ("Color Management", "grey")) {
-                    rtSettings.viewingdevicegrey    = keyFile.get_integer ("Color Management", "grey");
-                }
-*/
+                /*
+                                if (keyFile.has_key ("Color Management", "view")) {
+                                    rtSettings.viewingdevice        = keyFile.get_integer ("Color Management", "view");
+                                }
+
+                                if (keyFile.has_key ("Color Management", "grey")) {
+                                    rtSettings.viewingdevicegrey    = keyFile.get_integer ("Color Management", "grey");
+                                }
+                */
                 if (keyFile.has_key ("Color Management", "greySc")) {
                     rtSettings.viewinggreySc        = keyFile.get_integer ("Color Management", "greySc");
                 }
@@ -1831,6 +1832,7 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            )) {
                     fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
                 }
+
                 if (keyFile.has_key ("Fast Export", "fastexport_use_fast_pipeline"            )) {
                     fastexport_use_fast_pipeline           = keyFile.get_integer ("Fast Export", "fastexport_use_fast_pipeline"            );
                 }
@@ -1853,8 +1855,9 @@ int Options::readFromFile (Glib::ustring fname)
                 safeDirGet (keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet (keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
                 safeDirGet (keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
+
                 if (keyFile.has_key ("Dialogs", "GimpPluginShowInfoDialog")) {
-                    gimpPluginShowInfoDialog = keyFile.get_boolean("Dialogs", "GimpPluginShowInfoDialog");
+                    gimpPluginShowInfoDialog = keyFile.get_boolean ("Dialogs", "GimpPluginShowInfoDialog");
                 }
             }
 
@@ -2127,8 +2130,8 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
         keyFile.set_integer ("Color Management", "Intent", rtSettings.monitorIntent);
         keyFile.set_boolean ("Color Management", "MonitorBPC", rtSettings.monitorBPC);
- //       keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
- //       keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
+//       keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
+//       keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
         keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
 
         keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
@@ -2221,7 +2224,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
-        keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
+        keyFile.set_boolean ("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyData = keyFile.to_data ();
 
@@ -2236,7 +2239,7 @@ int Options::saveToFile (Glib::ustring fname)
     if (f == nullptr) {
         std::cout << "Warning! Unable to save your preferences to: " << fname << std::endl;
 #ifndef RAWTHERAPEE_CLI
-        Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), fname.c_str());
+        Glib::ustring msg_ = Glib::ustring::compose (M ("MAIN_MSG_WRITEFAILED"), fname.c_str());
         //writeFailed (getToplevelWindow (this), msg_);
         Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
         msgd.run ();
