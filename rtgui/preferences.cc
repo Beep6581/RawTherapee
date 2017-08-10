@@ -847,35 +847,37 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
 
     //-------------------------  CIECAM ----------------------
 
-    //  Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
-    //  setExpandAlignProperties (viewlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+/*
+    Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties (viewlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    //  view = Gtk::manage (new Gtk::ComboBoxText ());
-//   setExpandAlignProperties (view, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-//    view->append (M("PREFERENCES_D50_MENU"));
+    view = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties (view, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    view->append (M("PREFERENCES_D50_MENU"));
 
-//   view->append (M ("PREFERENCES_D50"));
-//   view->append (M("PREFERENCES_D55"));
-//   view->append (M("PREFERENCES_D60"));
-//   view->append (M("PREFERENCES_D65"));
-//   view->append (M("PREFERENCES_BLACKBODY"));
-//   view->append (M("PREFERENCES_FLUOF2"));
-//   view->append (M("PREFERENCES_FLUOF7"));
-//   view->append (M("PREFERENCES_FLUOF11"));
+    view->append (M ("PREFERENCES_D50"));
+    view->append (M("PREFERENCES_D55"));
+    view->append (M("PREFERENCES_D60"));
+    view->append (M("PREFERENCES_D65"));
+    view->append (M("PREFERENCES_BLACKBODY"));
+    view->append (M("PREFERENCES_FLUOF2"));
+    view->append (M("PREFERENCES_FLUOF7"));
+    view->append (M("PREFERENCES_FLUOF11"));
 
-//    Gtk::Label* greylab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREY") + ":", Gtk::ALIGN_START));
-//    setExpandAlignProperties (greylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-//    grey = Gtk::manage (new Gtk::ComboBoxText ());
-//    setExpandAlignProperties (grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-//   grey->append (M("PREFERENCES_GREY05"));
-//   grey->append (M("PREFERENCES_GREY10"));
-//   grey->append (M("PREFERENCES_GREY15"));
-//    grey->append (M ("PREFERENCES_GREY18"));
-//   grey->append (M("PREFERENCES_GREY18_MENU"));
+    Gtk::Label* greylab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREY") + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties (greylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    grey = Gtk::manage (new Gtk::ComboBoxText ());
+    setExpandAlignProperties (grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    grey->append (M("PREFERENCES_GREY05"));
+    grey->append (M("PREFERENCES_GREY10"));
+    grey->append (M("PREFERENCES_GREY15"));
+    grey->append (M ("PREFERENCES_GREY18"));
+    grey->append (M("PREFERENCES_GREY18_MENU"));
 
-//   grey->append (M("PREFERENCES_GREY23"));
-//   grey->append (M("PREFERENCES_GREY30"));
-//   grey->append (M("PREFERENCES_GREY40"));
+    grey->append (M("PREFERENCES_GREY23"));
+    grey->append (M("PREFERENCES_GREY30"));
+    grey->append (M("PREFERENCES_GREY40"));
+*/
 
     Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
     setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
