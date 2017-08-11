@@ -102,7 +102,7 @@ public:
     static void initcam1(double gamu, double yb, double pilotd, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
                          double &cz, double &aw, double &wh, double &pfl, double &fl, double &c);
 
-    static void initcam2(double gamu, double yb, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
+    static void initcam2(double gamu, double yb, double pilotd, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
                          double &cz, double &aw, double &fl);
 
     static void initcam1float(float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,

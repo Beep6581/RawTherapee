@@ -724,13 +724,18 @@ void Ciecam02::initcam1float(float gamu, float yb, float pilotd, float f, float 
 #endif
 }
 
-void Ciecam02::initcam2(double gamu, double yb, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
+void Ciecam02::initcam2(double gamu, double yb, double pilotd, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
                         double &cz, double &aw, double &fl)
 {
     n = yb / yw;
 	
+    if (pilotd == 2.0) {
+        d = d_factorfloat( f, la );
+    } else {
+        d = pilotd;
+    }
 	
-    d = d_factor( f, la );
+//    d = d_factor( f, la );
     fl = calculate_fl_from_la_ciecam02( la );
     nbb = ncb = 0.725 * pow( 1.0 / n, 0.2 );
     cz = 1.48 + sqrt( n );

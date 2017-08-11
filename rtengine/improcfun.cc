@@ -210,7 +210,7 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                  const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int rtt)
+                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, double &dj, int rtt)
 {
     if (params->colorappearance.enabled) {
 //int lastskip;
@@ -264,9 +264,12 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         Yw = 1.0;
         double Xw, Zw;
         double Xwout, Zwout;
+        double Xwsc, Zwsc;
+		
         double f, c, nc, yb = 0., la, xw, yw, zw, f2 = 0., c2 = 0., nc2 = 0., yb2 = 0., la2;
         double fl, n, nbb, ncb, aw;
         double xwd = 0., ywd, zwd = 0.;
+		double xws, yws, zws;
         int alg = 0;
         bool algepd = false;
         float sum = 0.f;
@@ -275,6 +278,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
         ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
 
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
@@ -362,6 +366,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         zwd = 100. * Zwout;
         ywd = 100. / params->colorappearance.greenout;//approximation to simplify
 
+        xws = 100. * Xwsc;
+        zws = 100. * Zwsc;
+        yws = 100. / params->colorappearance.greensc;//approximation to simplify
+		
         /*
                 //settings mean Luminance Y of output device or viewing
                 if (settings->viewingdevicegrey == 0) {
@@ -397,6 +405,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         double deg = (params->colorappearance.degree) / 100.0;
         double pilot = params->colorappearance.autodegree ? 2.0 : deg;
 
+
+        const float degout = (params->colorappearance.degreeout) / 100.0;
+        const float pilotout = params->colorappearance.autodegreeout ? 2.0 : degout;
+		
         //algoritm's params
         float jli = params->colorappearance.jlight;
         float chr = params->colorappearance.chroma;
@@ -551,19 +563,26 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else { /*if(params->colorappearance.wbmodel == "RawTCAT02")*/
+        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        }
+        }else if(params->colorappearance.wbmodel == "free") {
+            xw1 = xws;    // free temp and green
+            yw1 = yws;
+            zw1 = zws;
+            xw2 = xwd;
+            yw2 = ywd;
+            zw2 = zwd;		
+		}	
 
         double cz, wh, pfl;
         Ciecam02::initcam1 (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
-        double nj, dj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2 (gamu, yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        double nj, nbbj, ncbj, czj, awj, flj;
+        Ciecam02::initcam2 (gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
 
 
 

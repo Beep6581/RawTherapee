@@ -171,8 +171,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
 	
 	
-    tempsc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR, itempL, &wbSlider2Temp, &wbTemp2Slider));
-    greensc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR, igreenL));
+    tempsc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
+    greensc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenL, igreenR));
 
     tempsc->show();
     greensc->show();
@@ -474,8 +474,13 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
     p3VBox->pack_start (*degreeout);
 
-    tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR, itempL, &wbSlider2Temp, &wbTemp2Slider));
-    greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR, igreenL));
+    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+	
+    tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
+    greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
     ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 50, 1, 18));
 
     tempout->show();
