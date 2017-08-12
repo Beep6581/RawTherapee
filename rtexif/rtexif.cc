@@ -852,11 +852,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     }
 
     if (tag == 0x002e) { // location of the embedded preview image in raw files of Panasonic cameras
-        TagDirectory* previewdir;
-        {
-        ExifManager exifManager(f, 0, true);
-        previewdir = exifManager.parseJPEG (ftell (f)); // try to parse the exif data from the preview image
-        }
+        const TagDirectory* const previewdir =
+            [&f]()
+            {
+                return ExifManager(f, nullptr, true).parseJPEG(ftell(f)); // try to parse the exif data from the preview image
+            }();
 
         if (previewdir) {
             if (previewdir->getTag ("Exif")) {
@@ -1977,9 +1977,16 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
         fseek (f, rml->ciffBase + get4 (f, INTEL), SEEK_SET);
 
         if ((((type >> 8) + 8) | 8) == 0x38) {
-            rtengine::RawMetaDataLocation rml2(ftell (f), len);
-            ExifManager exifManager(f, &rml2, true);
-            exifManager.parseCIFF (len, root);   // Parse a sub-table
+            ExifManager(
+                f,
+                std::unique_ptr<rtengine::RawMetaDataLocation>(
+                    new rtengine::RawMetaDataLocation(
+                        ftell(f),
+                        len
+                    )
+                ),
+                true
+            ).parseCIFF(len, root); // Parse a sub-table
         }
 
         if (type == 0x0810) {
@@ -2010,7 +2017,7 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
 
         }
 
-        ExifManager exifManager(f, 0, true);
+        ExifManager exifManager(f, nullptr, true);
         if (type == 0x102d) {
             Tag* t = exifManager.saveCIFFMNTag (root, len, "CanonCameraSettings");
             int mm = t->toInt (34, SHORT);
@@ -2856,16 +2863,14 @@ TagDirectory* ExifManager::parseJPEG (int offset)
                         tiffbase = ftell (f);
 
                         // We need a RawMetaDataLocation to put the 'tiffbase' value
-                        bool rmlCreated = false;
-                        if (!rml) {
-                            rml = new rtengine::RawMetaDataLocation (0);
-                            rmlCreated = true;
+                        const bool rmlCreated = !rml;
+                        if (rmlCreated) {
+                            rml.reset(new rtengine::RawMetaDataLocation(0));
                         }
                         rml->exifBase = tiffbase;
                         TagDirectory*  tagDir = parse ();
                         if (rmlCreated) {
-                            delete rml;
-                            rml = nullptr;
+                            rml.reset();
                         }
                         return tagDir;
                     }
@@ -2879,10 +2884,11 @@ TagDirectory* ExifManager::parseJPEG (int offset)
 
 TagDirectory* ExifManager::parseTIFF (bool skipIgnored)
 {
-
     if (!rml) {
-        std::unique_ptr<rtengine::RawMetaDataLocation> rml(new rtengine::RawMetaDataLocation(0));
-        return parse (skipIgnored);
+        rml.reset(new rtengine::RawMetaDataLocation(0));
+        TagDirectory* const res = parse(skipIgnored);
+        rml.reset();
+        return res;
     } else {
         return parse (skipIgnored);
     }

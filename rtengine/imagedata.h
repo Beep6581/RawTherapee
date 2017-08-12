@@ -20,12 +20,17 @@
 #define __IMAGEDATA_H__
 
 #include <cstdio>
-#include "rawimage.h"
+#include <memory>
 #include <string>
+
 #include <glibmm.h>
-#include "../rtexif/rtexif.h"
-#include "procparams.h"
+
 #include <libiptcdata/iptc-data.h>
+
+#include "../rtexif/rtexif.h"
+
+#include "procparams.h"
+#include "rawimage.h"
 #include "rtengine.h"
 
 namespace rtengine
@@ -111,7 +116,7 @@ private:
     unsigned int dcrawFrameCount;
 
 public:
-    FramesData (Glib::ustring fname, RawMetaDataLocation* rml = nullptr, bool firstFrameOnly = false, bool loadAll = false);
+    FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false, bool loadAll = false);
     ~FramesData ();
 
     void setDCRawFrameCount (unsigned int frameCount);

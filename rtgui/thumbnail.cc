@@ -145,7 +145,7 @@ void Thumbnail::_generateThumbnailImage ()
         if (tpp) {
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
-            infoFromImage (fname, &ri);
+            infoFromImage (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(ri)));
         }
     }
 
@@ -229,9 +229,8 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
             rtengine::FramesMetaData* imageMetaData;
             if (getType() == FT_Raw) {
-                rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
                 // Should we ask all frame's MetaData ?
-                imageMetaData = rtengine::FramesMetaData::fromFile (fname, &metaData, true);
+                imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
             } else {
                 // Should we ask all frame's MetaData ?
                 imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
@@ -255,9 +254,8 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         rtengine::FramesMetaData* imageMetaData;
 
         if (getType() == FT_Raw) {
-            rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
             // Should we ask all frame's MetaData ?
-            imageMetaData = rtengine::FramesMetaData::fromFile (fname, &metaData, true);
+            imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
         } else {
             // Should we ask all frame's MetaData ?
             imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
@@ -713,10 +711,9 @@ ThFileType Thumbnail::getType ()
     return (ThFileType) cfs.format;
 }
 
-int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml)
+int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml)
 {
-
-    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname, rml);
+    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname, std::move(rml));
 
     if (!idata) {
         return 0;

@@ -19,14 +19,16 @@
 #ifndef _MEXIF3_
 #define _MEXIF3_
 
-#include <cstdio>
-#include <vector>
-#include <map>
-#include <string>
-#include <sstream>
-#include <iomanip>
-#include <cstdlib>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <iomanip>
+#include <map>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include <glibmm.h>
 
 #include "../rtengine/procparams.h"
@@ -316,14 +318,14 @@ class ExifManager
 
 public:
     FILE* f;
-    rtengine::RawMetaDataLocation *rml;
+    std::unique_ptr<rtengine::RawMetaDataLocation> rml;
     ByteOrder order;
     bool onlyFirst;  // Only first IFD
     unsigned int IFDOffset;
     unsigned int nextIFDOffset;
 
-    ExifManager (FILE* fHandle, rtengine::RawMetaDataLocation *rml, bool onlyFirstIFD)
-        : f(fHandle), rml(rml), order(UNKNOWN), onlyFirst(onlyFirstIFD),
+    ExifManager (FILE* fHandle, std::unique_ptr<rtengine::RawMetaDataLocation> _rml, bool onlyFirstIFD)
+        : f(fHandle), rml(std::move(_rml)), order(UNKNOWN), onlyFirst(onlyFirstIFD),
           IFDOffset(0), nextIFDOffset(0) {}
 
     void setIFDOffset(unsigned int offset)

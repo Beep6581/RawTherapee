@@ -41,9 +41,9 @@ Glib::ustring to_utf8 (const std::string& str)
 
 }
 
-FramesMetaData* FramesMetaData::fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml, bool firstFrameOnly)
+FramesMetaData* FramesMetaData::fromFile (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly)
 {
-    return new FramesData (fname, rml, firstFrameOnly);
+    return new FramesData (fname, std::move(rml), firstFrameOnly);
 }
 
 FrameData::FrameData ()
@@ -1000,18 +1000,20 @@ failure:
 
 }
 
-FramesData::FramesData (Glib::ustring fname, RawMetaDataLocation* rml, bool firstFrameOnly, bool loadAll) : dcrawFrameCount (0)
+FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly, bool loadAll) :
+    dcrawFrameCount (0)
 {
     if (rml && (rml->exifBase >= 0 || rml->ciffBase >= 0)) {
         FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
-            rtexif::ExifManager exifManager (f, rml, firstFrameOnly);
+            const bool has_rml_exif_base = rml->exifBase >= 0;
+            rtexif::ExifManager exifManager (f, std::move(rml), firstFrameOnly);
 
-            if (rml->exifBase >= 0) {
+            if (has_rml_exif_base) {
                 FrameData *idata = new RawFrameData (exifManager);
                 frames.push_back(idata);
-                if (rml && !firstFrameOnly) {
+                if (!firstFrameOnly) {
                     while (exifManager.getNextIFDOffset ()) {
                         int nextIFD = exifManager.getNextIFDOffset ();
                         exifManager.setIFDOffset (nextIFD);
@@ -1026,7 +1028,8 @@ FramesData::FramesData (Glib::ustring fname, RawMetaDataLocation* rml, bool firs
         FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
-            rtexif::ExifManager exifManager (f, rml, true);
+            rtexif::ExifManager exifManager (f, std::move(rml), true);
+
             FrameData *idata = new JpegFrameData (exifManager);
             frames.push_back(idata);
             fclose (f);
@@ -1035,10 +1038,12 @@ FramesData::FramesData (Glib::ustring fname, RawMetaDataLocation* rml, bool firs
         FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
-            rtexif::ExifManager exifManager (f, rml, firstFrameOnly);
+            const bool has_rml = static_cast<bool>(rml);
+            rtexif::ExifManager exifManager (f, std::move(rml), firstFrameOnly);
+
             FrameData *idata = new TiffFrameData (exifManager);
             frames.push_back(idata);
-            if (rml && !firstFrameOnly) {
+            if (has_rml && !firstFrameOnly) {
                 while (exifManager.getNextIFDOffset ()) {
                     exifManager.setIFDOffset (exifManager.getNextIFDOffset ());
                     idata = new TiffFrameData (exifManager);

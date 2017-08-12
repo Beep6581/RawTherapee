@@ -1698,12 +1698,9 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
     }
 
 
-    //Load complete Exif informations
-    RawMetaDataLocation rml;
-    rml.exifBase = ri->get_exifBase();
-    rml.ciffBase = ri->get_ciffBase();
-    rml.ciffLength = ri->get_ciffLen();
-    idata = new FramesData (fname, &rml);
+    // Load complete Exif informations
+    std::unique_ptr<RawMetaDataLocation> rml(new RawMetaDataLocation (ri->get_exifBase(), ri->get_ciffBase(), ri->get_ciffLen()));
+    idata = new FramesData (fname, std::move(rml));
     idata->setDCRawFrameCount (numFrames);
 
     green(W, H);

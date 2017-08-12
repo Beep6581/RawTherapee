@@ -131,7 +131,7 @@ public:
       * Use it only for raw files. In caseof jpgs and tiffs pass a NULL pointer.
       * @param firstFrameOnly must be true to get the MetaData of the first frame only, e.g. for a PixelShift file.
       * @return The metadata */
-    static FramesMetaData* fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml, bool firstFrameOnly = false);
+    static FramesMetaData* fromFile (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly = false);
 };
 
 /** This listener interface is used to indicate the progress of time consuming operations */
