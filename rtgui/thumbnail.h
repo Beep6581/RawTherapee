@@ -107,6 +107,8 @@ public:
     void              imageEnqueued ();
     void              imageRemovedFromQueue ();
     bool              isEnqueued ();
+    bool              isPixelShift ();
+    bool              isHDR ();
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
     rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);

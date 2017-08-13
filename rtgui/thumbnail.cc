@@ -499,6 +499,15 @@ bool Thumbnail::isEnqueued ()
     return enqueueNumber > 0;
 }
 
+bool Thumbnail::isPixelShift ()
+{
+    return cfs.isPixelShift;
+}
+bool Thumbnail::isHDR ()
+{
+    return cfs.isHDR;
+}
+
 void Thumbnail::increaseRef ()
 {
     MyMutex::MyLock lock(mutex);

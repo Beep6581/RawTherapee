@@ -139,7 +139,7 @@ int CacheImageData::load (const Glib::ustring& fname)
                     }
 
                     if (keyFile.has_key ("ExifInfo", "IsHDR")) {
-                        isHDR = keyFile.get_integer ("ExifInfo", "IsHDR");
+                        isHDR = keyFile.get_boolean ("ExifInfo", "IsHDR");
                     }
 
                     if (keyFile.has_key ("ExifInfo", "IsPixelShift")) {

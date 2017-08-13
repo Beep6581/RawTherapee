@@ -128,7 +128,7 @@ public:
     void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
 
-    bool        IsRGBSourceModified() const
+    bool        isRGBSourceModified() const
     {
         return rgbSourceModified;   // tracks whether cached rgb output of demosaic has been modified
     }

@@ -160,6 +160,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     // draw icons onto the thumbnail area
     bbIcons = getIconsOnImageArea ();
+    bbSpecificityIcons = getSpecificityIconsOnImageArea ();
 
     int infow, infoh;
     getTextSizes (infow, infoh);
@@ -221,6 +222,19 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             cc->rectangle(istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height());
             cc->fill();
             istartx += bbIcons[i]->get_width() + igap;
+        }
+    }
+
+    if (!bbSpecificityIcons.empty()) {
+        int igap = 2;
+        int istartx2 = prex + prew - 1 + igap;
+        int istarty2 = prey + preh - igap - 1;
+
+        for (size_t i = 0; i < bbSpecificityIcons.size(); ++i) {
+            istartx2 -= bbSpecificityIcons[i]->get_width() - igap;
+            Gdk::Cairo::set_source_pixbuf(cc, bbSpecificityIcons[i], istartx2, istarty2 - bbSpecificityIcons[i]->get_height());
+            cc->rectangle(istartx2, istarty2 - bbSpecificityIcons[i]->get_height(), bbSpecificityIcons[i]->get_width(), bbSpecificityIcons[i]->get_height());
+            cc->fill();
         }
     }
 
@@ -512,7 +526,9 @@ void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
     }
 
     if (!backBuffer || selected != bbSelected || framed != bbFramed || preview != bbPreview
-            || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons || backBuffer->isDirty()) {
+            || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons
+            || getSpecificityIconsOnImageArea() != bbSpecificityIcons || backBuffer->isDirty())
+    {
         updateBackBuffer ();
     }
 
@@ -588,6 +604,11 @@ bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h)
 }
 
 std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getIconsOnImageArea()
+{
+    return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
+}
+
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getSpecificityIconsOnImageArea()
 {
     return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
 }

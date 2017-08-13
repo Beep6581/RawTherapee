@@ -93,7 +93,7 @@ public:
     void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
     static void colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
 
-    bool        IsRGBSourceModified() const
+    bool        isRGBSourceModified() const
     {
         return rgbSourceModified;
     }
