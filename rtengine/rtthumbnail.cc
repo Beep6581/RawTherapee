@@ -1260,7 +1260,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             16);
         int begh = 0, endh = labView->H;
         bool execsharp = false;
-        float d, dj;
+        float d, dj, yb;
         float fnum = fnumber;// F number
         float fiso = iso;// ISO
         float fspeed = shutter;//speed
@@ -1296,7 +1296,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         CAMMean = NAN;
         CAMBrightCurveJ.dirty = true;
         CAMBrightCurveQ.dirty = true;
-        ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, rtt);
+        ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
 

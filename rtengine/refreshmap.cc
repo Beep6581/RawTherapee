@@ -508,7 +508,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvCATDegreeout
     LUMINANCECURVE,   // EvCATAutoDegreeout
     LUMINANCECURVE,   // EvCATtempsc
-    LUMINANCECURVE   // EvCATgreensc
+    LUMINANCECURVE,   // EvCATgreensc
+    LUMINANCECURVE,   // EvCATybscen
+    LUMINANCECURVE   // EvCATAutoyb
 
 
 };

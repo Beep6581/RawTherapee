@@ -597,6 +597,8 @@ public:
     Glib::ustring surround;
     double        adapscen;
     bool          autoadapscen;
+    int        ybscen;
+    bool          autoybscen;
 
     double        adaplum;
     int           badpixsl;

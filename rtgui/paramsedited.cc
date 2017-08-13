@@ -180,6 +180,8 @@ void ParamsEdited::set (bool v)
     colorappearance.surround     = v;
     colorappearance.adapscen    = v;
     colorappearance.autoadapscen = v;
+    colorappearance.ybscen    = v;
+    colorappearance.autoybscen = v;
     colorappearance.adaplum    = v;
     colorappearance.badpixsl    = v;
     colorappearance.wbmodel    = v;
@@ -708,6 +710,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.surround = colorappearance.surround && p.colorappearance.surround == other.colorappearance.surround;
         colorappearance.adapscen = colorappearance.adapscen && p.colorappearance.adapscen == other.colorappearance.adapscen;
         colorappearance.autoadapscen = colorappearance.autoadapscen && p.colorappearance.autoadapscen == other.colorappearance.autoadapscen;
+        colorappearance.ybscen = colorappearance.ybscen && p.colorappearance.ybscen == other.colorappearance.ybscen;
+        colorappearance.autoybscen = colorappearance.autoybscen && p.colorappearance.autoybscen == other.colorappearance.autoybscen;
         colorappearance.adaplum = colorappearance.adaplum && p.colorappearance.adaplum == other.colorappearance.adaplum;
         colorappearance.badpixsl = colorappearance.badpixsl && p.colorappearance.badpixsl == other.colorappearance.badpixsl;
         colorappearance.wbmodel = colorappearance.wbmodel && p.colorappearance.wbmodel == other.colorappearance.wbmodel;
@@ -1739,6 +1743,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.colorappearance.adapscen   = mods.colorappearance.adapscen;
     }
 
+    if (colorappearance.autoybscen) {
+        toEdit.colorappearance.autoybscen   = mods.colorappearance.autoybscen;
+    }
+
+    if (colorappearance.ybscen) {
+        toEdit.colorappearance.ybscen   = mods.colorappearance.ybscen;
+    }
+	
     if (colorappearance.adaplum) {
         toEdit.colorappearance.adaplum        = dontforceSet && options.baBehav[ADDSET_CAT_ADAPTVIEWING] ? toEdit.colorappearance.adaplum + mods.colorappearance.adaplum : mods.colorappearance.adaplum;
     }

@@ -958,9 +958,9 @@ void Crop::update (int todo)
             }
 
             if (settings->ciecamfloat) {
-                float d, dj; // not used after this block
+                float d, dj, yb; // not used after this block
                 parent->ipf.ciecam_02float (cieCrop, float (adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, 1);
+                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1);
             } else {
                 double dd, dj; // not used after this block
 

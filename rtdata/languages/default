@@ -1276,9 +1276,9 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nShortcuts:\n<b>[</b> - Multiple Editor Tabs Mode,\n<b>Alt-[</b> - Single Editor Tab Mode.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nShortcuts:\n<b>]</b> - Multiple Editor Tabs Mode,\n<b>Alt-]</b> - Single Editor Tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically.
-TP_COLORAPP_ADAPTSCENE;Scene luminosity
+TP_COLORAPP_ADAPTSCENE;Scene absolute luminance
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
-TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
+TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²).
 TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first.
 TP_COLORAPP_ALGO;Algorithm
@@ -1325,6 +1325,8 @@ TP_COLORAPP_LIGHT;Lightness (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
 TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected bu user, output device's white balance is set in Viewing Conditions.
+TP_COLORAPP_NEUTRAL;Reset
+TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SHARPCIE;--unused--
@@ -1349,7 +1351,9 @@ TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
-TP_COLORAPP_YB;Yb (mean luminance)
+TP_COLORAPP_YB;Yb%(mean luminance)
+TP_COLORAPP_YBSCENE;Yb%(mean luminance)
+TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance 
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automatic
 TP_COLORTONING_BALANCE;Balance

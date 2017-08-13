@@ -1487,7 +1487,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, int rtt)
+                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt)
 {
     if (params->colorappearance.enabled) {
 
@@ -1514,7 +1514,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         float Yw;
         Yw = 1.0;
         double Xw, Zw;
-        float f, nc, yb = 0.f, la, c, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
+        float f, nc, la, c, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
         float fl, n, nbb, ncb, aw; //d
         float xwd, ywd, zwd, xws, yws, zws;
         int alg = 0;
@@ -1834,7 +1834,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             //evaluate lightness, contrast
         }
 
-        if (settings->viewinggreySc == 0) { //auto
+		
+		
+      //  if (settings->viewinggreySc == 0) { //auto
+            if (params->colorappearance.autoybscen  &&  pwb == 2) {//auto
+		
             if     (mean < 15.f) {
                 yb = 3.0f;
             } else if (mean < 30.f) {
@@ -1858,8 +1862,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             } else {
                 yb = 90.0f;
             }
-        } else if (settings->viewinggreySc == 1) {
-            yb = 18.0f;    //fixed
+//        } else if (settings->viewinggreySc == 1) {
+			} else {
+            yb =  (float) params->colorappearance.ybscen;
         }
 
         const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated

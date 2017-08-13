@@ -59,7 +59,7 @@ public:
 //    void sharpcie_toggled     ();
     void autoCamChanged (double ccam, double ccamout);
     bool autoCamComputed_ ();
-    void adapCamChanged (double cadap);
+    void adapCamChanged (double cadap, int ybscn);
     bool adapCamComputed_ ();
 
     void curveChanged        (CurveEditor* ce);
@@ -69,6 +69,7 @@ public:
     bool curveMode2Changed_  ();
     void curveMode3Changed   ();
     bool curveMode3Changed_  ();
+    void neutral_pressed       ();
 
     void expandCurve         (bool isExpanded);
     bool isCurveExpanded     ();
@@ -78,10 +79,13 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
+    void updateToolState (std::vector<int> &tpOpen);
+    void writeOptions (std::vector<int> &tpOpen);
 
 private:
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
 
     Glib::RefPtr<Gtk::Tooltip> bgTTips;
     Glib::RefPtr<Gtk::Tooltip> srTTips;
@@ -90,6 +94,7 @@ private:
 
     Adjuster* degree;
     Adjuster* adapscen;
+    Adjuster* ybscen;
     Adjuster* adaplum;
     Adjuster* degreeout;
     Adjuster* badpixsl;
@@ -108,6 +113,8 @@ private:
     Adjuster* tempsc;
     Adjuster* greensc;
 
+    MyExpander* expadjust;
+	
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     MyComboBoxText* toneCurveMode3;
@@ -119,6 +126,7 @@ private:
     Gtk::CheckButton* datacie;
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
+    Gtk::Button* neutral;
 
     MyComboBoxText*   surround;
     sigc::connection  surroundconn;
@@ -128,7 +136,7 @@ private:
     sigc::connection  algoconn;
     sigc::connection  surrconn;
     sigc::connection  gamutconn, datacieconn, tonecieconn /*,badpixconn , sharpcieconn*/;
-    sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn;
+    sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn, neutralconn;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
     CurveEditorGroup* curveEditorG3;
@@ -137,9 +145,11 @@ private:
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
     double nextCcam, nextCcamout, nextCadap;
+	int nextYbscn;
     bool lastAutoDegree;
     bool lastAutoAdapscen;
     bool lastAutoDegreeout;
+    bool lastAutoybscen;
     bool lastsurr;
     bool lastgamut;
     bool lastdatacie;

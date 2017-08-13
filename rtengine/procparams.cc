@@ -1159,6 +1159,8 @@ void ProcParams::setDefaults ()
     colorappearance.badpixsl       = 0;
     colorappearance.adapscen      = 2000.0;
     colorappearance.autoadapscen    = true;
+    colorappearance.ybscen      = 18;
+    colorappearance.autoybscen    = true;
     colorappearance.algo          = "No";
     colorappearance.wbmodel       = "RawT";
     colorappearance.jlight        = 0.0;
@@ -2169,6 +2171,14 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Color appearance", "AutoAdapscen", colorappearance.autoadapscen);
         }
 
+        if (!pedited || pedited->colorappearance.ybscen) {
+            keyFile.set_integer ("Color appearance", "YbScene", colorappearance.ybscen);
+        }
+
+        if (!pedited || pedited->colorappearance.autoybscen) {
+            keyFile.set_boolean ("Color appearance", "Autoybscen", colorappearance.autoybscen);
+        }
+		
         if (!pedited || pedited->colorappearance.surrsource) {
             keyFile.set_boolean ("Color appearance", "SurrSource", colorappearance.surrsource);
         }
@@ -5136,6 +5146,22 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Color appearance", "YbScene")) {
+                colorappearance.ybscen = keyFile.get_integer ("Color appearance", "YbScene");
+
+                if (pedited) {
+                    pedited->colorappearance.ybscen = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Autoybscen")) {
+                colorappearance.autoybscen = keyFile.get_boolean ("Color appearance", "Autoybscen");
+
+                if (pedited) {
+                    pedited->colorappearance.autoybscen = true;
+                }
+            }
+			
             if (keyFile.has_key ("Color appearance", "SurrSource")) {
                 colorappearance.surrsource = keyFile.get_boolean ("Color appearance", "SurrSource");
 
@@ -8302,6 +8328,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && colorappearance.surround == other.colorappearance.surround
         && colorappearance.adapscen == other.colorappearance.adapscen
         && colorappearance.autoadapscen == other.colorappearance.autoadapscen
+        && colorappearance.ybscen == other.colorappearance.ybscen
+        && colorappearance.autoybscen == other.colorappearance.autoybscen
         && colorappearance.adaplum == other.colorappearance.adaplum
         && colorappearance.badpixsl == other.colorappearance.badpixsl
         && colorappearance.wbmodel == other.colorappearance.wbmodel

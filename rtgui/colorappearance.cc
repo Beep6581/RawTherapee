@@ -191,6 +191,17 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPTSCENE_TOOLTIP"));
     p1VBox->pack_start (*adapscen);
 
+    ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YBSCENE"), 1, 90, 1, 18)); 
+
+    if (ybscen->delay < options.adjusterMaxDelay) {
+        ybscen->delay = options.adjusterMaxDelay;
+    }
+
+    ybscen->throwOnButtonRelease();
+    ybscen->addAutoButton (M ("TP_COLORAPP_ADAP_AUTO_TOOLTIP"));
+    ybscen->set_tooltip_markup (M ("TP_COLORAPP_YBSCENE_TOOLTIP"));
+    p1VBox->pack_start (*ybscen);
+	
     p1Frame->add (*p1VBox);
     pack_start (*p1Frame, Gtk::PACK_EXPAND_WIDGET, 4);
 
@@ -199,12 +210,19 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
     // Process 1 frame
+
+    expadjust = Gtk::manage(new MyExpander(false, M ("TP_COLORAPP_LABEL_CAM02")));
+    setExpandAlignProperties (expadjust, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expadjust->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ColorAppearance::foldAllButMe), expadjust) );
+/*	
     Gtk::Frame *p2Frame;
     // Vertical box container for the content of the Process 1 frame
     Gtk::VBox *p2VBox;
 
     p2Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_CAM02")) );
     p2Frame->set_label_align (0.025, 0.5);
+*/
+    Gtk::VBox *p2VBox;
 
     p2VBox = Gtk::manage ( new Gtk::VBox());
     p2VBox->set_spacing (2);
@@ -429,10 +447,12 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 
-    p2Frame->add (*p2VBox);
+//    p2Frame->add (*p2VBox);
+    expadjust->add (*p2VBox, false);
+    expadjust->setLevel(2);
+	pack_start (*expadjust);
 
-
-    pack_start (*p2Frame, Gtk::PACK_EXPAND_WIDGET, 4);
+//    pack_start (*p2Frame, Gtk::PACK_EXPAND_WIDGET, 4);
 
 
 
@@ -450,7 +470,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox = Gtk::manage ( new Gtk::VBox());
     p3VBox->set_spacing (2);
 
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  1000., 0.1,   16.));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  16384., 0.1,   16.));
 
     if (adaplum->delay < options.adjusterMaxDelay) {
         adaplum->delay = options.adjusterMaxDelay;
@@ -481,7 +501,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 	
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
-    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 50, 1, 18));
+    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 90, 1, 18));
 
     tempout->show();
     greenout->show();
@@ -533,6 +553,21 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     badpixsl->throwOnButtonRelease();
     badpixsl->set_tooltip_markup (M ("TP_COLORAPP_BADPIXSL_TOOLTIP"));
     pack_start (*badpixsl, Gtk::PACK_SHRINK);
+	
+	
+	//reset button
+    neutral = Gtk::manage (new Gtk::Button (M ("TP_COLORAPP_NEUTRAL")));
+    setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    neutral->set_image (*resetImg);
+    neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));
+    neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &ColorAppearance::neutral_pressed) );
+    neutral->show();
+
+    //-------------
+	
+    pack_start (*neutral);
 
     // ------------------------ Listening events
 
@@ -545,6 +580,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     degree->setAdjusterListener  (this);
     degreeout->setAdjusterListener  (this);
     adapscen->setAdjusterListener (this);
+    ybscen->setAdjusterListener (this);
     adaplum->setAdjusterListener (this);
     badpixsl->setAdjusterListener (this);
     jlight->setAdjusterListener  (this);
@@ -575,7 +611,58 @@ ColorAppearance::~ColorAppearance ()
     delete curveEditorG3;
 }
 
+void ColorAppearance::foldAllButMe (GdkEventButton* event, MyExpander *expander)
+{
+    if (event->button == 3) {
+        expadjust->set_expanded(expadjust == expander);
+    }
+}
 
+void ColorAppearance::writeOptions(std::vector<int> &tpOpen)
+{
+    tpOpen.push_back (expadjust->get_expanded ());
+}
+
+void ColorAppearance::updateToolState(std::vector<int> &tpOpen)
+{
+    if(tpOpen.size() >= 1) {
+        expadjust->set_expanded(tpOpen.at(0));
+    }
+}
+
+void ColorAppearance::neutral_pressed ()
+{
+	    jlight->resetValue (false);
+	    qbright->resetValue (false);
+	    chroma->resetValue (false);
+	    schroma->resetValue (false);
+	    mchroma->resetValue (false);
+	    rstprotection->resetValue (false);
+	    contrast->resetValue (false);
+	    qcontrast->resetValue (false);
+	    colorh->resetValue (false);
+	    tempout->resetValue (false);
+	    greenout->resetValue (false);
+	    ybout->resetValue (false);
+	    tempsc->resetValue (false);
+	    greensc->resetValue (false);
+		badpixsl->resetValue (false);
+		wbmodel->set_active (0);
+		toneCurveMode->set_active (0);
+		toneCurveMode2->set_active (0);
+		toneCurveMode3->set_active (0);
+		shape->reset();
+		shape2->reset();
+		shape3->reset();
+		degree->setAutoValue (true);
+		degree->resetValue (false);
+		adapscen->resetValue (false);
+		adapscen->setAutoValue (true);
+		degreeout->resetValue (false);
+		degreeout->setAutoValue (true);
+		ybscen->resetValue (false);
+		ybscen->setAutoValue (true);		
+}
 
 bool ColorAppearance::bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
 {
@@ -606,6 +693,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
         degreeout->setEditedState        (pedited->colorappearance.degreeout ? Edited : UnEdited);
         adapscen->setEditedState      (pedited->colorappearance.adapscen ? Edited : UnEdited);
+        ybscen->setEditedState      (pedited->colorappearance.ybscen ? Edited : UnEdited);
         adaplum->setEditedState       (pedited->colorappearance.adaplum ? Edited : UnEdited);
         badpixsl->setEditedState      (pedited->colorappearance.badpixsl ? Edited : UnEdited);
         jlight->setEditedState        (pedited->colorappearance.jlight ? Edited : UnEdited);
@@ -632,6 +720,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
         degreeout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegreeout);
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
+        ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
@@ -736,6 +825,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastAutoDegree = pp->colorappearance.autodegree;
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
     lastAutoDegreeout = pp->colorappearance.autodegreeout;
+    lastAutoybscen = pp->colorappearance.autoybscen;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
@@ -743,6 +833,8 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     adapscen->setAutoValue (pp->colorappearance.autoadapscen);
     degreeout->setValue (pp->colorappearance.degreeout);
     degreeout->setAutoValue (pp->colorappearance.autodegreeout);
+    ybscen->setValue (pp->colorappearance.ybscen);
+    ybscen->setAutoValue (pp->colorappearance.autoybscen);
 
     adaplum->setValue (pp->colorappearance.adaplum);
     badpixsl->setValue (pp->colorappearance.badpixsl);
@@ -785,6 +877,8 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.enabled       = getEnabled();
     pp->colorappearance.adapscen      = adapscen->getValue ();
     pp->colorappearance.autoadapscen  = adapscen->getAutoValue ();
+    pp->colorappearance.ybscen      = ybscen->getValue ();
+    pp->colorappearance.autoybscen  = ybscen->getAutoValue ();
     pp->colorappearance.adaplum       = adaplum->getValue ();
     pp->colorappearance.badpixsl      = badpixsl->getValue ();
     pp->colorappearance.jlight        = jlight->getValue ();
@@ -842,6 +936,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.degreeout        = degreeout->getEditedState ();
         pedited->colorappearance.adapscen      = adapscen->getEditedState ();
         pedited->colorappearance.adaplum       = adaplum->getEditedState ();
+        pedited->colorappearance.ybscen      = ybscen->getEditedState ();
         pedited->colorappearance.badpixsl      = badpixsl->getEditedState ();
         pedited->colorappearance.jlight        = jlight->getEditedState ();
         pedited->colorappearance.qbright       = qbright->getEditedState ();
@@ -855,6 +950,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.autodegree    = !degree->getAutoInconsistent();
         pedited->colorappearance.autodegreeout    = !degreeout->getAutoInconsistent();
         pedited->colorappearance.autoadapscen  = !adapscen->getAutoInconsistent();
+        pedited->colorappearance.autoybscen  = !ybscen->getAutoInconsistent();
         pedited->colorappearance.enabled       = !get_inconsistent();
         pedited->colorappearance.surround      = surround->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.wbmodel       = wbmodel->get_active_text() != M ("GENERAL_UNCHANGED");
@@ -1140,6 +1236,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
     degree->setDefault (defParams->colorappearance.degree);
     degreeout->setDefault (defParams->colorappearance.degreeout);
     adapscen->setDefault (defParams->colorappearance.adapscen);
+    ybscen->setDefault (defParams->colorappearance.ybscen);
     adaplum->setDefault (defParams->colorappearance.adaplum);
     badpixsl->setDefault (defParams->colorappearance.badpixsl);
     jlight->setDefault (defParams->colorappearance.jlight);
@@ -1161,6 +1258,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         degree->setDefaultEditedState (pedited->colorappearance.degree ? Edited : UnEdited);
         degreeout->setDefaultEditedState (pedited->colorappearance.degreeout ? Edited : UnEdited);
         adapscen->setDefaultEditedState (pedited->colorappearance.adapscen ? Edited : UnEdited);
+        ybscen->setDefaultEditedState (pedited->colorappearance.ybscen ? Edited : UnEdited);
         adaplum->setDefaultEditedState (pedited->colorappearance.adaplum ? Edited : UnEdited);
         badpixsl->setDefaultEditedState (pedited->colorappearance.badpixsl ? Edited : UnEdited);
         jlight->setDefaultEditedState (pedited->colorappearance.jlight ? Edited : UnEdited);
@@ -1182,6 +1280,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         degree->setDefaultEditedState (Irrelevant);
         degreeout->setDefaultEditedState (Irrelevant);
         adapscen->setDefaultEditedState (Irrelevant);
+        ybscen->setDefaultEditedState (Irrelevant);
         adaplum->setDefaultEditedState (Irrelevant);
         badpixsl->setDefaultEditedState (Irrelevant);
         jlight->setDefaultEditedState (Irrelevant);
@@ -1227,9 +1326,10 @@ bool ColorAppearance::autoCamComputed_ ()
     return false;
 }
 
-void ColorAppearance::adapCamChanged (double cadap)
+void ColorAppearance::adapCamChanged (double cadap, int ybsc)
 {
     nextCadap = cadap;
+	nextYbscn = ybsc;
 
     const auto func = [] (gpointer data) -> gboolean {
         static_cast<ColorAppearance*> (data)->adapCamComputed_();
@@ -1245,6 +1345,7 @@ bool ColorAppearance::adapCamComputed_ ()
     disableListener ();
 //  degree->setEnabled (true);
     adapscen->setValue (nextCadap);
+	ybscen->setValue (nextYbscn);
     enableListener ();
 
     return false;
@@ -1283,6 +1384,8 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvCATDegreeout, a->getTextValue());			
         } else if (a == adapscen) {
             listener->panelChanged (EvCATAdapscen, a->getTextValue());
+        } else if (a == ybscen) {
+            listener->panelChanged (EvCATybscen, a->getTextValue());
         } else if (a == adaplum) {
             listener->panelChanged (EvCATAdapLum, a->getTextValue());
         } else if (a == badpixsl) {
@@ -1352,6 +1455,15 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
 
         lastAutoAdapscen = adapscen->getAutoValue();
 
+        if (ybscen->getAutoInconsistent()) {
+            ybscen->setAutoInconsistent (false);
+            ybscen->setAutoValue (false);
+        } else if (lastAutoybscen) {
+            ybscen->setAutoInconsistent (true);
+        }
+
+        lastAutoybscen = ybscen->getAutoValue();
+		
     }
 
     if (listener && (multiImage || getEnabled()) ) {
@@ -1387,6 +1499,16 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
             }
         }
 
+        if (a == ybscen) {
+            if (ybscen->getAutoInconsistent()) {
+                listener->panelChanged (EvCATAutoyb, M ("GENERAL_UNCHANGED"));
+            } else if (ybscen->getAutoValue()) {
+                listener->panelChanged (EvCATAutoyb, M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
+            }
+        }
+		
 
     }
 }
@@ -1512,6 +1634,7 @@ void ColorAppearance::setBatchMode (bool batchMode)
     degreeout->showEditedCB ();
     adapscen->showEditedCB ();
     adaplum->showEditedCB ();
+    ybscen->showEditedCB ();
     badpixsl->showEditedCB ();
     jlight->showEditedCB ();
     qbright->showEditedCB ();
@@ -1573,6 +1696,7 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
     degree->trimValue (pp->colorappearance.degree);
     degreeout->trimValue (pp->colorappearance.degreeout);
     adapscen->trimValue (pp->colorappearance.adapscen);
+    ybscen->trimValue (pp->colorappearance.ybscen);
     adaplum->trimValue (pp->colorappearance.adaplum);
     badpixsl->trimValue (pp->colorappearance.badpixsl);
     jlight->trimValue (pp->colorappearance.jlight);

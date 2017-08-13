@@ -292,9 +292,11 @@ public:
     bool degreeout;
     bool autodegreeout;
     bool autoadapscen;
+    bool autoybscen;
     bool surround;
     bool adapscen;
     bool adaplum;
+    bool ybscen;
     bool badpixsl;
     bool wbmodel;
     bool algo;

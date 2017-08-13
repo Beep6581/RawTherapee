@@ -509,6 +509,8 @@ enum ProcEvent {
     EvCATAutoDegreeout = 479,
     EvCATtempsc = 480,
     EvCATgreensc = 481,
+    EvCATybscen = 482,
+    EvCATAutoyb = 483,
 
     NUMOFEVENTS
 
