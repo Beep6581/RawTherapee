@@ -208,7 +208,7 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params ,
+void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                  const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
                                  LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int rtt)
 {
@@ -263,6 +263,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         double Yw;
         Yw = 1.0;
         double Xw, Zw;
+        double Xwout, Zwout;
         double f, c, nc, yb = 0., la, xw, yw, zw, f2 = 0., c2 = 0., nc2 = 0., yb2 = 0., la2;
         double fl, n, nbb, ncb, aw;
         double xwd = 0., ywd, zwd = 0.;
@@ -273,6 +274,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         bool ciedata = params->colorappearance.datacie;
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
 
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
@@ -319,59 +321,66 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
         bool needJ = (alg == 0 || alg == 1 || alg == 3);
         bool needQ = (alg == 2 || alg == 3);
+        /*
+                //settings white point of output device - or illuminant viewing
+                if (settings->viewingdevice == 0) {
+                    xwd = 96.42;    //5000K
+                    ywd = 100.0;
+                    zwd = 82.52;
+                } else if (settings->viewingdevice == 1) {
+                    xwd = 95.68;    //5500
+                    ywd = 100.0;
+                    zwd = 92.15;
+                } else if (settings->viewingdevice == 2) {
+                    xwd = 95.24;    //6000
+                    ywd = 100.0;
+                    zwd = 100.81;
+                } else if (settings->viewingdevice == 3)  {
+                    xwd = 95.04;    //6500
+                    ywd = 100.0;
+                    zwd = 108.88;
+                } else if (settings->viewingdevice == 4)  {
+                    xwd = 109.85;    //tungsten
+                    ywd = 100.0;
+                    zwd = 35.58;
+                } else if (settings->viewingdevice == 5)  {
+                    xwd = 99.18;    //fluo F2
+                    ywd = 100.0;
+                    zwd = 67.39;
+                } else if (settings->viewingdevice == 6)  {
+                    xwd = 95.04;    //fluo F7
+                    ywd = 100.0;
+                    zwd = 108.75;
+                } else if (settings->viewingdevice == 7)  {
+                    xwd = 100.96;    //fluo F11
+                    ywd = 100.0;
+                    zwd = 64.35;
+                }
+        */
 
-        //settings white point of output device - or illuminant viewing
-        if (settings->viewingdevice == 0) {
-            xwd = 96.42;    //5000K
-            ywd = 100.0;
-            zwd = 82.52;
-        } else if (settings->viewingdevice == 1) {
-            xwd = 95.68;    //5500
-            ywd = 100.0;
-            zwd = 92.15;
-        } else if (settings->viewingdevice == 2) {
-            xwd = 95.24;    //6000
-            ywd = 100.0;
-            zwd = 100.81;
-        } else if (settings->viewingdevice == 3)  {
-            xwd = 95.04;    //6500
-            ywd = 100.0;
-            zwd = 108.88;
-        } else if (settings->viewingdevice == 4)  {
-            xwd = 109.85;    //tungsten
-            ywd = 100.0;
-            zwd = 35.58;
-        } else if (settings->viewingdevice == 5)  {
-            xwd = 99.18;    //fluo F2
-            ywd = 100.0;
-            zwd = 67.39;
-        } else if (settings->viewingdevice == 6)  {
-            xwd = 95.04;    //fluo F7
-            ywd = 100.0;
-            zwd = 108.75;
-        } else if (settings->viewingdevice == 7)  {
-            xwd = 100.96;    //fluo F11
-            ywd = 100.0;
-            zwd = 64.35;
-        }
+        xwd = 100. * Xwout;
+        zwd = 100. * Zwout;
+        ywd = 100. / params->colorappearance.greenout;//approximation to simplify
 
-
-        //settings mean Luminance Y of output device or viewing
-        if (settings->viewingdevicegrey == 0) {
-            yb2 = 5.0;
-        } else if (settings->viewingdevicegrey == 1) {
-            yb2 = 10.0;
-        } else if (settings->viewingdevicegrey == 2) {
-            yb2 = 15.0;
-        } else if (settings->viewingdevicegrey == 3) {
-            yb2 = 18.0;
-        } else if (settings->viewingdevicegrey == 4) {
-            yb2 = 23.0;
-        } else if (settings->viewingdevicegrey == 5)  {
-            yb2 = 30.0;
-        } else if (settings->viewingdevicegrey == 6)  {
-            yb2 = 40.0;
-        }
+        /*
+                //settings mean Luminance Y of output device or viewing
+                if (settings->viewingdevicegrey == 0) {
+                    yb2 = 5.0;
+                } else if (settings->viewingdevicegrey == 1) {
+                    yb2 = 10.0;
+                } else if (settings->viewingdevicegrey == 2) {
+                    yb2 = 15.0;
+                } else if (settings->viewingdevicegrey == 3) {
+                    yb2 = 18.0;
+                } else if (settings->viewingdevicegrey == 4) {
+                    yb2 = 23.0;
+                } else if (settings->viewingdevicegrey == 5)  {
+                    yb2 = 30.0;
+                } else if (settings->viewingdevicegrey == 6)  {
+                    yb2 = 40.0;
+                }
+        */
+        yb2 = params->colorappearance.ybout;
 
         //La and la2 = ambiant luminosity scene and viewing
         la = double (params->colorappearance.adapscen);
@@ -607,7 +616,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                                     x,  y,  z,
                                                     xw1, yw1,  zw1,
                                                     yb,  la,
-                                                    f, c,  nc,  pilot, gamu , n, nbb, ncb, pfl, cz, d );
+                                                    f, c,  nc,  pilot, gamu, n, nbb, ncb, pfl, cz, d );
                     Jpro = J;
                     Cpro = C;
                     hpro = h;
@@ -635,7 +644,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             schr = -99.8;
                         }
 
-                        Ciecam02::curvecolor (schr, Sp , sres, parsat);
+                        Ciecam02::curvecolor (schr, Sp, sres, parsat);
                         double coe = pow (fl, 0.25);
                         float dred = 100.f; // in C mode
                         float protect_red = 80.0f; // in C mode
@@ -671,9 +680,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (alg == 3 || alg == 2) {
-                            Ciecam02::curvecolor (mchr, Mp , sres, parsat);
+                            Ciecam02::curvecolor (mchr, Mp, sres, parsat);
                         } else {
-                            Ciecam02::curvecolor (0.0, Mp , sres, parsat);   //colorfullness
+                            Ciecam02::curvecolor (0.0, Mp, sres, parsat);    //colorfullness
                         }
 
                         float dred = 100.f; //in C mode
@@ -708,9 +717,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (alg == 3) {
-                            Ciecam02::curvecolor (schr, Sp , sres, parsat);
+                            Ciecam02::curvecolor (schr, Sp, sres, parsat);
                         }   else {
-                            Ciecam02::curvecolor (0.0, Sp , sres, parsat);   //saturation
+                            Ciecam02::curvecolor (0.0, Sp, sres, parsat);    //saturation
                         }
 
                         dred = 100.f; // in C mode
@@ -730,9 +739,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (alg != 2) {
-                            Ciecam02::curvecolor (chr, Cp , sres, parsat);
+                            Ciecam02::curvecolor (chr, Cp, sres, parsat);
                         } else {
-                            Ciecam02::curvecolor (0.0, Cp , sres, parsat);   //chroma
+                            Ciecam02::curvecolor (0.0, Cp, sres, parsat);    //chroma
                         }
 
                         dred = 55.f;
@@ -1222,7 +1231,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                     float chrom = 50.f;
                     {
                         int hotbad = 0;
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2 , b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect , chrom, hotbad);    //enabled remove artifacts for cbDL
+                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad);      //enabled remove artifacts for cbDL
                     }
                 }
             }
@@ -1491,6 +1500,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         float xwd, ywd, zwd;
         int alg = 0;
         bool algepd = false;
+        double Xwout, Zwout;
 
         const bool epdEnabled = params->epd.enabled;
         bool ciedata = (params->colorappearance.datacie && pW != 1) && ! ((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
@@ -1498,6 +1508,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                        || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
 
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
@@ -1542,59 +1553,64 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             algepd = true;
         }
 
-        //settings white point of output device - or illuminant viewing
-        if (settings->viewingdevice == 0) {
-            xwd = 96.42f;    //5000K
-            ywd = 100.0f;
-            zwd = 82.52f;
-        } else if (settings->viewingdevice == 1) {
-            xwd = 95.68f;    //5500
-            ywd = 100.0f;
-            zwd = 92.15f;
-        } else if (settings->viewingdevice == 2) {
-            xwd = 95.24f;    //6000
-            ywd = 100.0f;
-            zwd = 100.81f;
-        } else if (settings->viewingdevice == 3)  {
-            xwd = 95.04f;    //6500
-            ywd = 100.0f;
-            zwd = 108.88f;
-        } else if (settings->viewingdevice == 4)  {
-            xwd = 109.85f;    //tungsten
-            ywd = 100.0f;
-            zwd = 35.58f;
-        } else if (settings->viewingdevice == 5)  {
-            xwd = 99.18f;    //fluo F2
-            ywd = 100.0f;
-            zwd = 67.39f;
-        } else if (settings->viewingdevice == 6)  {
-            xwd = 95.04f;    //fluo F7
-            ywd = 100.0f;
-            zwd = 108.75f;
-        } else { /*if(settings->viewingdevice == 7) */
-            xwd = 100.96f;    //fluo F11
-            ywd = 100.0f;
-            zwd = 64.35f;
-        }
-
-
-        //settings mean Luminance Y of output device or viewing
-        if (settings->viewingdevicegrey == 0) {
-            yb2 = 5.0f;
-        } else if (settings->viewingdevicegrey == 1) {
-            yb2 = 10.0f;
-        } else if (settings->viewingdevicegrey == 2) {
-            yb2 = 15.0f;
-        } else if (settings->viewingdevicegrey == 3) {
-            yb2 = 18.0f;
-        } else if (settings->viewingdevicegrey == 4) {
-            yb2 = 23.0f;
-        } else if (settings->viewingdevicegrey == 5)  {
-            yb2 = 30.0f;
-        } else { /* if(settings->viewingdevicegrey == 6)*/
-            yb2 = 40.0f;
-        }
-
+        xwd = 100.f * Xwout;
+        zwd = 100.f * Zwout;
+        ywd = 100.f / params->colorappearance.greenout;//approximation to simplify
+        /*
+                //settings white point of output device - or illuminant viewing
+                if (settings->viewingdevice == 0) {
+                    xwd = 96.42f;    //5000K
+                    ywd = 100.0f;
+                    zwd = 82.52f;
+                } else if (settings->viewingdevice == 1) {
+                    xwd = 95.68f;    //5500
+                    ywd = 100.0f;
+                    zwd = 92.15f;
+                } else if (settings->viewingdevice == 2) {
+                    xwd = 95.24f;    //6000
+                    ywd = 100.0f;
+                    zwd = 100.81f;
+                } else if (settings->viewingdevice == 3)  {
+                    xwd = 95.04f;    //6500
+                    ywd = 100.0f;
+                    zwd = 108.88f;
+                } else if (settings->viewingdevice == 4)  {
+                    xwd = 109.85f;    //tungsten
+                    ywd = 100.0f;
+                    zwd = 35.58f;
+                } else if (settings->viewingdevice == 5)  {
+                    xwd = 99.18f;    //fluo F2
+                    ywd = 100.0f;
+                    zwd = 67.39f;
+                } else if (settings->viewingdevice == 6)  {
+                    xwd = 95.04f;    //fluo F7
+                    ywd = 100.0f;
+                    zwd = 108.75f;
+                } else {
+                    xwd = 100.96f;    //fluo F11
+                    ywd = 100.0f;
+                    zwd = 64.35f;
+                }
+        */
+        yb2 = params->colorappearance.ybout;
+        /*
+                //settings mean Luminance Y of output device or viewing
+                if (settings->viewingdevicegrey == 0) {
+                    yb2 = 5.0f;
+                } else if (settings->viewingdevicegrey == 1) {
+                    yb2 = 10.0f;
+                } else if (settings->viewingdevicegrey == 2) {
+                    yb2 = 15.0f;
+                } else if (settings->viewingdevicegrey == 3) {
+                    yb2 = 18.0f;
+                } else if (settings->viewingdevicegrey == 4) {
+                    yb2 = 23.0f;
+                } else if (settings->viewingdevicegrey == 5)  {
+                    yb2 = 30.0f;
+                } else {
+                    yb2 = 40.0f;
+                }
+        */
         //La and la2 = ambiant luminosity scene and viewing
         la = float (params->colorappearance.adapscen);
 
@@ -2014,7 +2030,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
                         float sres;
-                        Ciecam02::curvecolorfloat (chr, Cp , sres, 1.8f);
+                        Ciecam02::curvecolorfloat (chr, Cp, sres, 1.8f);
                         Color::skinredfloat (Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
                     } else if (alg == 1)  {
                         // Lightness saturation
@@ -2022,7 +2038,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         float sres;
                         float Sp = spro / 100.0f;
                         float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
-                        Ciecam02::curvecolorfloat (schr, Sp , sres, parsat);
+                        Ciecam02::curvecolorfloat (schr, Sp, sres, parsat);
                         float dred = 100.f; // in C mode
                         float protect_red = 80.0f; // in C mode
                         dred = 100.0f * sqrtf ((dred * coe) / Qpro);
@@ -2034,7 +2050,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Qpro = CAMBrightCurveQ[ (float) (Qpro * coefQ)]; //brightness and contrast
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
-                        Ciecam02::curvecolorfloat (mchr, Mp , sres, 2.5f);
+                        Ciecam02::curvecolorfloat (mchr, Mp, sres, 2.5f);
                         float dred = 100.f; //in C mode
                         float protect_red = 80.0f; // in C mode
                         dred *= coe; //in M mode
@@ -2049,7 +2065,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
-                        Ciecam02::curvecolorfloat (mchr, Mp , sres, 2.5f);
+                        Ciecam02::curvecolorfloat (mchr, Mp, sres, 2.5f);
                         float dred = 100.f; //in C mode
                         float protect_red = 80.0f; // in C mode
                         dred *= coe; //in M mode
@@ -2066,7 +2082,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
                         Jpro = CAMBrightCurveJ[ (float) (Jpro * 327.68f)]; //lightness CIECAM02 + contrast
                         float Sp = spro / 100.0f;
-                        Ciecam02::curvecolorfloat (schr, Sp , sres, 1.5f);
+                        Ciecam02::curvecolorfloat (schr, Sp, sres, 1.5f);
                         dred = 100.f; // in C mode
                         protect_red = 80.0f; // in C mode
                         dred = 100.0f * sqrtf ((dred * coe) / Q);
@@ -2075,7 +2091,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Qpro = QproFactor * sqrtf (Jpro);
                         float Cp = (spro * spro * Qpro) / (1000000.f);
                         Cpro = Cp * 100.f;
-                        Ciecam02::curvecolorfloat (chr, Cp , sres, 1.8f);
+                        Ciecam02::curvecolorfloat (chr, Cp, sres, 1.8f);
                         Color::skinredfloat (Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
 // disabled this code, Issue 2690
 //              if(Jpro < 1.f && Cpro > 12.f) Cpro=12.f;//reduce artifacts by "pseudo gamut control CIECAM"
@@ -2573,7 +2589,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         int hotbad = 0;
                         float chrom = 50.f;
                         lab->deleteLab();
-                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2 , b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad); //enabled remove artifacts for cbDL
+                        ImProcFunctions::badpixcam (ncie, artifact, 5, 2, b_l, t_l, t_r, b_r, params->dirpyrequalizer.skinprotect, chrom, hotbad);  //enabled remove artifacts for cbDL
                         lab->reallocLab();
                     }
                 }
@@ -2935,15 +2951,15 @@ filmlike_clip (float *r, float *g, float *b)
 }
 
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili,  LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve )
 {
-    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve);
+    rgbProc (working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, dcpProf, asIn, histToneCurve);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit , float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, bool opautili, LUTf & clToningcurve, LUTf & cl2Toningcurve,
                                const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1, const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState &asIn, LUTu &histToneCurve )
 {
     BENCHFUN
@@ -6585,7 +6601,7 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
     fwrite(L, N, sizeof(float), f);
     fclose(f);*/
 
-    epd.CompressDynamicRange (L, sca / float(skip), edgest, Compression, DetailBoost, Iterates, rew);
+    epd.CompressDynamicRange (L, sca / float (skip), edgest, Compression, DetailBoost, Iterates, rew);
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf (Compression, 1.5856f) / (1.0f + 38.7889f * powf (Compression, 1.5856f));

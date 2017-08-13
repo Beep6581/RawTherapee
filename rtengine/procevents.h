@@ -502,6 +502,10 @@ enum ProcEvent {
     EvPixelShiftLmmse = 472,
     EvPixelShiftEqualBright = 473,
     EvPixelShiftEqualBrightChannel = 474,
+    EvCATtempout = 475,
+    EvCATgreenout = 476,
+    EvCATybout = 477,
+
     NUMOFEVENTS
 
 };

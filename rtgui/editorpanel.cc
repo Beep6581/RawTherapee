@@ -1912,10 +1912,10 @@ bool EditorPanel::saveImmediately(const Glib::ustring &filename, const SaveForma
 {
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    std::unique_ptr<rtengine::ProcessingJob> job(rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams));
+    rtengine::ProcessingJob *job = rtengine::ProcessingJob::create(ipc->getInitialImage(), pparams);
 
     // save immediately
-    rtengine::IImage16 *img = rtengine::processImage(job.get(), err, nullptr, options.tunnelMetaData, false);
+    rtengine::IImage16 *img = rtengine::processImage(job, err, nullptr, options.tunnelMetaData, false);
 
     int err = 0;
     if (sf.format == "tif") {
