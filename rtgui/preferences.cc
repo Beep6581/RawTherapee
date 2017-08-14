@@ -87,20 +87,20 @@ Preferences::Preferences  (RTWindow *rtwindow)
     get_action_area()->pack_end (*ok);
     get_action_area()->pack_end (*cancel);
 
-    nb->append_page (*getGeneralPanel(),         M("PREFERENCES_TAB_GENERAL"));
-    nb->append_page (*getProcParamsPanel(),      M("PREFERENCES_TAB_IMPROC"));
-    nb->append_page (*getDynProfilePanel(),      M("PREFERENCES_TAB_DYNAMICPROFILE"));
-    nb->append_page (*getFileBrowserPanel(),     M("PREFERENCES_TAB_BROWSER"));
-    nb->append_page (*getColorManagementPanel(), M("PREFERENCES_TAB_COLORMGR"));
-    nb->append_page (*getBatchProcPanel(),       M("PREFERENCES_BATCH_PROCESSING"));
-    nb->append_page (*getPerformancePanel(),     M("PREFERENCES_TAB_PERFORMANCE"));
+    nb->append_page (*getGeneralPanel(),         M ("PREFERENCES_TAB_GENERAL"));
+    nb->append_page (*getProcParamsPanel(),      M ("PREFERENCES_TAB_IMPROC"));
+    nb->append_page (*getDynProfilePanel(),      M ("PREFERENCES_TAB_DYNAMICPROFILE"));
+    nb->append_page (*getFileBrowserPanel(),     M ("PREFERENCES_TAB_BROWSER"));
+    nb->append_page (*getColorManagementPanel(), M ("PREFERENCES_TAB_COLORMGR"));
+    nb->append_page (*getBatchProcPanel(),       M ("PREFERENCES_BATCH_PROCESSING"));
+    nb->append_page (*getPerformancePanel(),     M ("PREFERENCES_TAB_PERFORMANCE"));
     // Sounds only on Windows and Linux
 #if defined(WIN32) || defined(__linux__)
-    nb->append_page (*getSoundPanel(),           M("PREFERENCES_TAB_SOUND"));
+    nb->append_page (*getSoundPanel(),           M ("PREFERENCES_TAB_SOUND"));
 #endif
     nb->set_current_page (0);
 
-    ProfileStore::getInstance()->addListener(this);
+    ProfileStore::getInstance()->addListener (this);
 
     fillPreferences ();
 
@@ -111,8 +111,8 @@ Preferences::Preferences  (RTWindow *rtwindow)
 Preferences::~Preferences ()
 {
 
-    ProfileStore::getInstance()->removeListener(this);
-    get_size(options.preferencesWidth, options.preferencesHeight);
+    ProfileStore::getInstance()->removeListener (this);
+    get_size (options.preferencesWidth, options.preferencesHeight);
 }
 
 int Preferences::getThemeRowNumber (Glib::ustring& longThemeFName)
@@ -302,11 +302,11 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_COLORTONING_LABEL"));
-    appendBehavList (mi, M ("TP_COLORTONING_SPLITCOCO"), ADDSET_COLORTONING_SPLIT , true);
-    appendBehavList (mi, M ("TP_COLORTONING_SATURATIONTHRESHOLD"), ADDSET_COLORTONING_SATTHRESHOLD , true);
-    appendBehavList (mi, M ("TP_COLORTONING_SATURATEDOPACITY"), ADDSET_COLORTONING_SATOPACITY , true);
-    appendBehavList (mi, M ("TP_COLORTONING_BALANCE"), ADDSET_COLORTONING_BALANCE , true);
-    appendBehavList (mi, M ("TP_COLORTONING_STRENGTH"), ADDSET_COLORTONING_STRENGTH , true);
+    appendBehavList (mi, M ("TP_COLORTONING_SPLITCOCO"), ADDSET_COLORTONING_SPLIT, true);
+    appendBehavList (mi, M ("TP_COLORTONING_SATURATIONTHRESHOLD"), ADDSET_COLORTONING_SATTHRESHOLD, true);
+    appendBehavList (mi, M ("TP_COLORTONING_SATURATEDOPACITY"), ADDSET_COLORTONING_SATOPACITY, true);
+    appendBehavList (mi, M ("TP_COLORTONING_BALANCE"), ADDSET_COLORTONING_BALANCE, true);
+    appendBehavList (mi, M ("TP_COLORTONING_STRENGTH"), ADDSET_COLORTONING_STRENGTH, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_ROTATE_LABEL"));
@@ -466,16 +466,16 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     Gtk::Label* drlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_FORRAW") + ":", Gtk::ALIGN_START));
     rprofiles = Gtk::manage (new ProfileStoreComboBox ());
     const ProfileStoreEntry* dynpse = ProfileStore::getInstance()->getInternalDynamicPSE();
-    rprofiles->addRow(dynpse);
-    setExpandAlignProperties(rprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    rprofiles->set_size_request(50, -1);
-    rpconn = rprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forRAWComboChanged) );
-    Gtk::Label* drimg = Gtk::manage (new Gtk::Label (M("PREFERENCES_FORIMAGE") + ":", Gtk::ALIGN_START));
+    rprofiles->addRow (dynpse);
+    setExpandAlignProperties (rprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    rprofiles->set_size_request (50, -1);
+    rpconn = rprofiles->signal_changed().connect ( sigc::mem_fun (*this, &Preferences::forRAWComboChanged) );
+    Gtk::Label* drimg = Gtk::manage (new Gtk::Label (M ("PREFERENCES_FORIMAGE") + ":", Gtk::ALIGN_START));
     iprofiles = Gtk::manage (new ProfileStoreComboBox ());
-    iprofiles->addRow(dynpse);
-    iprofiles->set_size_request(50, -1);
-    setExpandAlignProperties(iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    ipconn = iprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forImageComboChanged) );
+    iprofiles->addRow (dynpse);
+    iprofiles->set_size_request (50, -1);
+    setExpandAlignProperties (iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    ipconn = iprofiles->signal_changed().connect ( sigc::mem_fun (*this, &Preferences::forImageComboChanged) );
     Gtk::Table* defpt = Gtk::manage (new Gtk::Table (2, 2));
     defpt->attach (*drlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     defpt->attach (*rprofiles, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -543,34 +543,34 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
     darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *dfLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_DIRDARKFRAMES") + ":"));
-    hb42->pack_start (*dfLab , Gtk::PACK_SHRINK, 4 );
+    hb42->pack_start (*dfLab, Gtk::PACK_SHRINK, 4 );
     hb42->pack_start (*darkFrameDir, Gtk::PACK_EXPAND_WIDGET, 4);
     dfLabel = Gtk::manage (new Gtk::Label ("Found:"));
     Gtk::VBox* vbdf = Gtk::manage (new Gtk::VBox ());
     vbdf->pack_start ( *hb42, Gtk::PACK_SHRINK, 4);
     vbdf->pack_start ( *dfLabel, Gtk::PACK_SHRINK, 4 );
     fdf->add ( *vbdf );
-    mvbpp->pack_start ( *fdf , Gtk::PACK_SHRINK, 4);
+    mvbpp->pack_start ( *fdf, Gtk::PACK_SHRINK, 4);
 
     //dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
-    dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
+    dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged), true);
 
     // FLATFIELD
     Gtk::Frame* fff = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_FLATFIELD")) );
     Gtk::HBox* hb43 = Gtk::manage (new Gtk::HBox ());
     flatFieldDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *ffLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_FLATFIELDSDIR") + ":"));
-    hb43->pack_start (*ffLab , Gtk::PACK_SHRINK, 4 );
+    hb43->pack_start (*ffLab, Gtk::PACK_SHRINK, 4 );
     hb43->pack_start (*flatFieldDir);
     ffLabel = Gtk::manage (new Gtk::Label ("Found:"));
     Gtk::VBox* vbff = Gtk::manage (new Gtk::VBox ());
     vbff->pack_start ( *hb43, Gtk::PACK_SHRINK, 4);
     vbff->pack_start ( *ffLabel, Gtk::PACK_SHRINK, 4 );
     fff->add ( *vbff );
-    mvbpp->pack_start ( *fff , Gtk::PACK_SHRINK, 4);
+    mvbpp->pack_start ( *fff, Gtk::PACK_SHRINK, 4);
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
-    ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
+    ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::flatFieldChanged), true);
 
     //Cluts Dir
     Gtk::Frame* clutsDirFrame = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_FILMSIMULATION")) );
@@ -2092,6 +2092,7 @@ void Preferences::fillPreferences ()
     setc.block (true);
 
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
+
     for (size_t i = 0; i < moptions.baBehav.size(); i++)
         for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
             for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)
@@ -2339,8 +2340,8 @@ void Preferences::updateProfileList()
     rprofiles->updateProfileList();
     iprofiles->updateProfileList();
     const ProfileStoreEntry* dynpse = ProfileStore::getInstance()->getInternalDynamicPSE();
-    rprofiles->addRow(dynpse);
-    iprofiles->addRow(dynpse);
+    rprofiles->addRow (dynpse);
+    iprofiles->addRow (dynpse);
 }
 
 void Preferences::restoreValue()
@@ -2435,8 +2436,8 @@ void Preferences::switchFontTo (const Glib::ustring &newFontFamily, const int ne
 void Preferences::workflowUpdate ()
 {
 
-    if(moptions.tabbedUI != options.tabbedUI) {
-        parent->setEditorMode(moptions.tabbedUI);
+    if (moptions.tabbedUI != options.tabbedUI) {
+        parent->setEditorMode (moptions.tabbedUI);
     }
 
     if (moptions.hideTPVScrollbar != options.hideTPVScrollbar) {

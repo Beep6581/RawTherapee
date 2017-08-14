@@ -29,12 +29,12 @@
 #include "colorprovider.h"
 
 class ColorAppearance final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel,
-    public rtengine::AutoCamListener,
-    public CurveListener,
-    public ColorProvider
+        public ToolParamBlock,
+        public AdjusterListener,
+        public FoldableToolPanel,
+        public rtengine::AutoCamListener,
+        public CurveListener,
+        public ColorProvider
 {
 public:
     ColorAppearance ();
@@ -80,8 +80,8 @@ public:
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
 
 private:
-    bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
-    bool srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
     Glib::RefPtr<Gtk::Tooltip> bgTTips;
     Glib::RefPtr<Gtk::Tooltip> srTTips;

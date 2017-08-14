@@ -70,40 +70,40 @@ bool ToneCurveParams::HLReconstructionNecessary (LUTu &histRedRaw, LUTu &histGre
 void WBParams::init()
 {
     // Creation of the different methods and its associated temperature value
-    wbEntries.push_back (new WBEntry ("Camera"              , WBT_CAMERA,      M ("TP_WBALANCE_CAMERA"),        0, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Auto"                , WBT_AUTO,        M ("TP_WBALANCE_AUTO"),          0, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Daylight"            , WBT_DAYLIGHT,    M ("TP_WBALANCE_DAYLIGHT"),   5300, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Cloudy"              , WBT_CLOUDY,      M ("TP_WBALANCE_CLOUDY"),     6200, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Shade"               , WBT_SHADE,       M ("TP_WBALANCE_SHADE"),      7600, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Water 1"             , WBT_WATER,       M ("TP_WBALANCE_WATER1"),    35000, 0.3f,   1.1f, 0.f));
-    wbEntries.push_back (new WBEntry ("Water 2"             , WBT_WATER,       M ("TP_WBALANCE_WATER2"),    48000, 0.63f, 1.38f, 0.f));
-    wbEntries.push_back (new WBEntry ("Tungsten"            , WBT_TUNGSTEN,    M ("TP_WBALANCE_TUNGSTEN"),   2856, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F1"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO1"),      6430, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F2"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO2"),      4230, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F3"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO3"),      3450, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F4"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO4"),      2940, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F5"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO5"),      6350, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F6"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO6"),      4150, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F7"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO7"),      6500, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F8"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO8"),      5020, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F9"             , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO9"),      4330, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F10"            , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO10"),     5300, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F11"            , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO11"),     4000, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Fluo F12"            , WBT_FLUORESCENT, M ("TP_WBALANCE_FLUO12"),     3000, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("HMI Lamp"            , WBT_LAMP,        M ("TP_WBALANCE_HMI"),        4800, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("GTI Lamp"            , WBT_LAMP,        M ("TP_WBALANCE_GTI"),        5000, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("JudgeIII Lamp"       , WBT_LAMP,        M ("TP_WBALANCE_JUDGEIII"),   5100, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Solux Lamp 3500K"    , WBT_LAMP,        M ("TP_WBALANCE_SOLUX35"),    3480, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Solux Lamp 4100K"    , WBT_LAMP,        M ("TP_WBALANCE_SOLUX41"),    3930, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Solux Lamp 4700K"    , WBT_LAMP,        M ("TP_WBALANCE_SOLUX47"),    4700, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("NG Solux Lamp 4700K" , WBT_LAMP,        M ("TP_WBALANCE_SOLUX47_NG"), 4480, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("LED LSI Lumelex 2040", WBT_LED,         M ("TP_WBALANCE_LED_LSI"),    2970, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("LED CRS SP12 WWMR16" , WBT_LED,         M ("TP_WBALANCE_LED_CRS"),    3050, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Flash 5500K"         , WBT_FLASH,       M ("TP_WBALANCE_FLASH55"),    5500, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Flash 6000K"         , WBT_FLASH,       M ("TP_WBALANCE_FLASH60"),    6000, 1.f,     1.f, 0.f));
-    wbEntries.push_back (new WBEntry ("Flash 6500K"         , WBT_FLASH,       M ("TP_WBALANCE_FLASH65"),    6500, 1.f,     1.f, 0.f));
+    wbEntries.push_back (new WBEntry ("Camera",                 WBT_CAMERA,         M ("TP_WBALANCE_CAMERA"),         0, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Auto",                   WBT_AUTO,           M ("TP_WBALANCE_AUTO"),           0, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Daylight",               WBT_DAYLIGHT,       M ("TP_WBALANCE_DAYLIGHT"),    5300, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Cloudy",                 WBT_CLOUDY,         M ("TP_WBALANCE_CLOUDY"),      6200, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Shade",                  WBT_SHADE,          M ("TP_WBALANCE_SHADE"),       7600, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Water 1",                WBT_WATER,          M ("TP_WBALANCE_WATER1"),     35000, 0.3f,   1.1f,   0.f));
+    wbEntries.push_back (new WBEntry ("Water 2",                WBT_WATER,          M ("TP_WBALANCE_WATER2"),     48000, 0.63f,  1.38f,  0.f));
+    wbEntries.push_back (new WBEntry ("Tungsten",               WBT_TUNGSTEN,       M ("TP_WBALANCE_TUNGSTEN"),    2856, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F1",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO1"),       6430, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F2",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO2"),       4230, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F3",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO3"),       3450, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F4",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO4"),       2940, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F5",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO5"),       6350, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F6",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO6"),       4150, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F7",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO7"),       6500, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F8",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO8"),       5020, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F9",                WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO9"),       4330, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F10",               WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO10"),      5300, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F11",               WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO11"),      4000, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Fluo F12",               WBT_FLUORESCENT,    M ("TP_WBALANCE_FLUO12"),      3000, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("HMI Lamp",               WBT_LAMP,           M ("TP_WBALANCE_HMI"),         4800, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("GTI Lamp",               WBT_LAMP,           M ("TP_WBALANCE_GTI"),         5000, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("JudgeIII Lamp",          WBT_LAMP,           M ("TP_WBALANCE_JUDGEIII"),    5100, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Solux Lamp 3500K",       WBT_LAMP,           M ("TP_WBALANCE_SOLUX35"),     3480, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Solux Lamp 4100K",       WBT_LAMP,           M ("TP_WBALANCE_SOLUX41"),     3930, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Solux Lamp 4700K",       WBT_LAMP,           M ("TP_WBALANCE_SOLUX47"),     4700, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("NG Solux Lamp 4700K",    WBT_LAMP,           M ("TP_WBALANCE_SOLUX47_NG"),  4480, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("LED LSI Lumelex 2040",   WBT_LED,            M ("TP_WBALANCE_LED_LSI"),     2970, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("LED CRS SP12 WWMR16",    WBT_LED,            M ("TP_WBALANCE_LED_CRS"),     3050, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Flash 5500K",            WBT_FLASH,          M ("TP_WBALANCE_FLASH55"),     5500, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Flash 6000K",            WBT_FLASH,          M ("TP_WBALANCE_FLASH60"),     6000, 1.f,    1.f,    0.f));
+    wbEntries.push_back (new WBEntry ("Flash 6500K",            WBT_FLASH,          M ("TP_WBALANCE_FLASH65"),     6500, 1.f,    1.f,    0.f));
     // Should remain the last one
-    wbEntries.push_back (new WBEntry ("Custom"              , WBT_CUSTOM,      M ("TP_WBALANCE_CUSTOM"),        0, 1.f,     1.f, 0.f));
+    wbEntries.push_back (new WBEntry ("Custom",                 WBT_CUSTOM,         M ("TP_WBALANCE_CUSTOM"),        0, 1.f,    1.f,    0.f));
 }
 
 void WBParams::cleanup()
@@ -1040,7 +1040,7 @@ void LocallabParams::setDefaults()
     getDefaultLHCurve (LHcurve);
     getDefaultCCCurve (cccurve);
     getDefaultHHCurve (HHcurve);
- //   getDefaultexCurve (excurve);
+//   getDefaultexCurve (excurve);
 
 }
 
