@@ -216,7 +216,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
         CursorShape newType = cursor_type;
 
         if (isMoving) {
-            mainCropWin->remoteMove ((int)((event->x - (double)press_x) / zoom), (int)((event->y - (double)press_y) / zoom));
+            mainCropWin->remoteMove ((event->x - press_x) / zoom, (event->y - press_y) / zoom);
             press_x = event->x;
             press_y = event->y;
         } else if (inside) {

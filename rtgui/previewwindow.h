@@ -36,7 +36,7 @@ private:
     ImageArea* imageArea;
     int imgX, imgY, imgW, imgH;
     double zoom;
-    int press_x, press_y;
+    double press_x, press_y;
     bool isMoving;
     bool needsUpdate;
     CursorShape cursor_type;
