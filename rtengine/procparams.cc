@@ -1155,6 +1155,7 @@ void ProcParams::setDefaults ()
     colorappearance.degreeout        = 90;
     colorappearance.autodegreeout    = true;
     colorappearance.surround      = "Average";
+    colorappearance.surrsrc      = "Average";
     colorappearance.adaplum       = 16;
     colorappearance.badpixsl       = 0;
     colorappearance.adapscen      = 2000.0;
@@ -2110,6 +2111,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_string ("Color appearance", "Surround", colorappearance.surround);
         }
 
+        if (!pedited || pedited->colorappearance.surrsrc) {
+            keyFile.set_string ("Color appearance", "Surrsrc", colorappearance.surrsrc);
+        }
+		
 // if (!pedited || pedited->colorappearance.backgrd) keyFile.set_integer ("Color appearance", "Background", colorappearance.backgrd);
         if (!pedited || pedited->colorappearance.adaplum) {
             keyFile.set_double ("Color appearance", "AdaptLum", colorappearance.adaplum);
@@ -5025,6 +5030,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Color appearance", "Surrsrc")) {
+                colorappearance.surrsrc = keyFile.get_string ("Color appearance", "Surrsrc");
+
+                if (pedited) {
+                    pedited->colorappearance.surrsrc = true;
+                }
+            }
+			
 // if (keyFile.has_key ("Color appearance", "Background")) {colorappearance.backgrd = keyFile.get_integer ("Color appearance", "Background"); if (pedited) pedited->colorappearance.backgrd = true; }
             if (keyFile.has_key ("Color appearance", "AdaptLum")) {
                 colorappearance.adaplum = keyFile.get_double ("Color appearance", "AdaptLum");
@@ -8326,6 +8339,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && colorappearance.degreeout == other.colorappearance.degreeout
         && colorappearance.autodegreeout == other.colorappearance.autodegreeout
         && colorappearance.surround == other.colorappearance.surround
+        && colorappearance.surrsrc == other.colorappearance.surrsrc
         && colorappearance.adapscen == other.colorappearance.adapscen
         && colorappearance.autoadapscen == other.colorappearance.autoadapscen
         && colorappearance.ybscen == other.colorappearance.ybscen

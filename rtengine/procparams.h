@@ -595,6 +595,7 @@ public:
     eCTCModeId    curveMode3;
 
     Glib::ustring surround;
+    Glib::ustring surrsrc;
     double        adapscen;
     bool          autoadapscen;
     int        ybscen;

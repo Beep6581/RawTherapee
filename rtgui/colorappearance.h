@@ -49,6 +49,7 @@ public:
 //    void adjusterAdapToggled (Adjuster* a, bool newval);
     void enabledChanged      ();
     void surroundChanged     ();
+    void surrsrcChanged     ();
     void wbmodelChanged      ();
     void algoChanged         ();
     void surrsource_toggled  ();
@@ -59,8 +60,10 @@ public:
 //    void sharpcie_toggled     ();
     void autoCamChanged (double ccam, double ccamout);
     bool autoCamComputed_ ();
-    void adapCamChanged (double cadap, int ybscn);
+    void adapCamChanged (double cadap);
     bool adapCamComputed_ ();
+    void ybCamChanged (int yb);
+    bool ybCamComputed_ ();
 
     void curveChanged        (CurveEditor* ce);
     void curveMode1Changed   ();
@@ -127,6 +130,8 @@ private:
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
     Gtk::Button* neutral;
+    MyComboBoxText* surrsrc;
+    sigc::connection  surrsrcconn;
 
     MyComboBoxText*   surround;
     sigc::connection  surroundconn;

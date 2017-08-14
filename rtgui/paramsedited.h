@@ -294,6 +294,7 @@ public:
     bool autoadapscen;
     bool autoybscen;
     bool surround;
+    bool surrsrc;
     bool adapscen;
     bool adaplum;
     bool ybscen;

@@ -274,7 +274,9 @@ class AutoCamListener
 public :
     virtual ~AutoCamListener() {}
     virtual void autoCamChanged (double ccam, double ccamout) {}
-    virtual void adapCamChanged (double cadap, int ybscn) {}
+    virtual void adapCamChanged (double cadap) {}
+    virtual void ybCamChanged (int yb) {}
+	
 };
 
 class AutoChromaListener

@@ -772,10 +772,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 acListener->autoCamChanged(100.*(double)d, 100.*(double)dj);
             }
 
-            if((params.colorappearance.autoadapscen || params.colorappearance.autoybscen) && acListener && params.colorappearance.enabled) {
-                acListener->adapCamChanged(adap, (int) yb);    //real value of adapt scene luminosity and Yb scene
+            if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) {
+                acListener->adapCamChanged(adap);    //real value of adapt scene
             }
 
+            if(params.colorappearance.autoybscen && acListener && params.colorappearance.enabled) {
+                acListener->ybCamChanged((int) yb);    //real value Yb scene
+            }
+			
             readyphase++;
         } else {
             // CIECAM is disabled, we free up its image buffer to save some space

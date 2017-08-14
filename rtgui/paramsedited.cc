@@ -178,6 +178,7 @@ void ParamsEdited::set (bool v)
     colorappearance.degreeout     = v;
     colorappearance.autodegreeout = v;
     colorappearance.surround     = v;
+    colorappearance.surrsrc     = v;
     colorappearance.adapscen    = v;
     colorappearance.autoadapscen = v;
     colorappearance.ybscen    = v;
@@ -708,6 +709,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.degreeout = colorappearance.degreeout && p.colorappearance.degreeout == other.colorappearance.degreeout;
         colorappearance.autodegreeout = colorappearance.autodegreeout && p.colorappearance.autodegreeout == other.colorappearance.autodegreeout;
         colorappearance.surround = colorappearance.surround && p.colorappearance.surround == other.colorappearance.surround;
+        colorappearance.surrsrc = colorappearance.surrsrc && p.colorappearance.surrsrc == other.colorappearance.surrsrc;
         colorappearance.adapscen = colorappearance.adapscen && p.colorappearance.adapscen == other.colorappearance.adapscen;
         colorappearance.autoadapscen = colorappearance.autoadapscen && p.colorappearance.autoadapscen == other.colorappearance.autoadapscen;
         colorappearance.ybscen = colorappearance.ybscen && p.colorappearance.ybscen == other.colorappearance.ybscen;
@@ -1735,6 +1737,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.colorappearance.surround       = mods.colorappearance.surround;
     }
 
+    if (colorappearance.surrsrc) {
+        toEdit.colorappearance.surrsrc       = mods.colorappearance.surrsrc;
+    }
+	
     if (colorappearance.autoadapscen) {
         toEdit.colorappearance.autoadapscen   = mods.colorappearance.autoadapscen;
     }
