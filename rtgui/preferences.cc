@@ -992,7 +992,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     // ---------------------------------------------
 
-    Gtk::Frame* flang = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_DEFAULTLANG")) );
+    Gtk::Frame* flang = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_LANG")) );
     setExpandAlignProperties (flang, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* langGrid = Gtk::manage ( new Gtk::Grid() );
     langGrid->set_column_spacing (4);
@@ -1027,7 +1027,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     // ---------------------------------------------
 
-    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_DEFAULTTHEME")) );
+    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_THEME")) );
     setExpandAlignProperties (ftheme, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* themeGrid = Gtk::manage ( new Gtk::Grid() );
     themeGrid->set_column_spacing (4);

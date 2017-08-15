@@ -1001,8 +1001,6 @@ PREFERENCES_DATEFORMAT;Formát data
 PREFERENCES_DATEFORMATHINT;Lze použít následující formátovací řetězce:\n<b>%y</b>\t- rok (year)\n<b>%m</b>\t- měsíc (month)\n<b>%d</b>\t- den (day)\n\nNapříklad český formát data:\n<b>%d. %m. %y</b>
 PREFERENCES_DAUB_LABEL;Použít D6 Daubechiesové vlnky namísto D4
 PREFERENCES_DAUB_TOOLTIP;Nástroje Redukce šumu a Úrovně vlnky používají Daubechiesové mateřskou vlnku. Pokud místo D4 vyberete D6 zvýší se počet ortogonálních Daubechiesové koeficientů a pravděpodobně zvýší kvalitu úrovní malého měřítka. Není zde rozdíl ve spotřebě paměti nebo délce zpracování.
-PREFERENCES_DEFAULTLANG;Výchozí jazyk
-PREFERENCES_DEFAULTTHEME;Výchozí vzhled
 PREFERENCES_DIRDARKFRAMES;Složka tmavých snímků
 PREFERENCES_DIRHOME;Domovská složka
 PREFERENCES_DIRLAST;Poslední navštívená složka
@@ -2167,3 +2165,17 @@ ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrázek obrazovce\nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit\nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit\nZkratka: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!DONT_SHOW_AGAIN;Don't show this message again.
+!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
+!HISTORY_MSG_476;CAM02 - Temp out
+!HISTORY_MSG_477;CAM02 - Green out
+!HISTORY_MSG_478;CAM02 - Yb out
+!PREFERENCES_D50_OLD;5000K
+!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
+!PREFERENCES_LANG;Language
+!PREFERENCES_THEME;Theme
+!TP_COLORAPP_YB;Yb (mean luminance)

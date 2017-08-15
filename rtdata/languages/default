@@ -36,6 +36,7 @@ CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
 CURVEEDITOR_TOOLTIPSAVE;Save current curve.
 CURVEEDITOR_TYPE;Type:
 DIRBROWSER_FOLDERS;Folders
+DONT_SHOW_AGAIN;Don't show this message again.
 DYNPROFILEEDITOR_DELETE;Delete
 DYNPROFILEEDITOR_EDIT;Edit
 DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
@@ -234,6 +235,7 @@ GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Save
 GENERAL_UNCHANGED;(Unchanged)
 GENERAL_WARNING;Warning
+GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram.
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
 HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
@@ -955,8 +957,8 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-PREFERENCES_D50_OLD;5000K
 PREFERENCES_D50;Settings in main menu
+PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
@@ -968,8 +970,6 @@ PREFERENCES_DATEFORMAT;Date format
 PREFERENCES_DATEFORMATHINT;You can use the following formatting strings:\n<b>%y</b>	- year\n<b>%m</b>	- month\n<b>%d</b>	- day\n\nFor example, the ISO 8601 standard dictates the date format as follows:\n<b>%y-%m-%d</b>
 PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
-PREFERENCES_DEFAULTLANG;Default Language
-PREFERENCES_DEFAULTTHEME;Default Theme
 PREFERENCES_DIRDARKFRAMES;Dark-frames directory
 PREFERENCES_DIRHOME;Home directory
 PREFERENCES_DIRLAST;Last visited directory
@@ -1001,8 +1001,8 @@ PREFERENCES_GREY;Output device's Yb luminance (%)
 PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
 PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 PREFERENCES_GREY18;Settings in main menu
+PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
@@ -1024,6 +1024,7 @@ PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
+PREFERENCES_LANG;Language
 PREFERENCES_LANGAUTODETECT;Use system language
 PREFERENCES_LEVAUTDN;Denoising level
 PREFERENCES_LEVDN;Cell size
@@ -1115,6 +1116,7 @@ PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 PREFERENCES_TAB_SOUND;Sounds
+PREFERENCES_THEME;Theme
 PREFERENCES_TIMAX;High
 PREFERENCES_TINB;Number of tiles
 PREFERENCES_TISTD;Standard
@@ -2135,5 +2137,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
-GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-DONT_SHOW_AGAIN;Don't show this message again.
