@@ -46,7 +46,7 @@ Glib::ustring Options::rtdir;
 Glib::ustring Options::cacheBaseDir;
 
 Options options;
-Glib::ustring versionString       = RTVERSION;
+Glib::ustring versionString = RTVERSION;
 Glib::ustring paramFileExtension = ".pp3";
 
 Options::Options ()
@@ -648,8 +648,8 @@ void Options::setDefaults ()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
-    rtSettings.viewingdevice = 0;
-    rtSettings.viewingdevicegrey = 3;
+//   rtSettings.viewingdevice = 0;
+//   rtSettings.viewingdevicegrey = 3;
     rtSettings.viewinggreySc = 1;
     rtSettings.leveldnv = 2;
     rtSettings.leveldnti = 0;
@@ -782,7 +782,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("General", "StartupDirectory")) {
-                    if      ( keyFile.get_string ("General", "StartupDirectory") == "home") {
+                    if ( keyFile.get_string ("General", "StartupDirectory") == "home") {
                         startupDir = STARTUPDIR_HOME;
                     } else if ( keyFile.get_string ("General", "StartupDirectory") == "current") {
                         startupDir = STARTUPDIR_CURRENT;
@@ -794,19 +794,19 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("General", "StartupPath")) {
-                    startupPath     = keyFile.get_string ("General", "StartupPath");
+                    startupPath = keyFile.get_string ("General", "StartupPath");
                 }
 
                 if (keyFile.has_key ("General", "DateFormat")) {
-                    dateFormat      = keyFile.get_string ("General", "DateFormat");
+                    dateFormat = keyFile.get_string ("General", "DateFormat");
                 }
 
                 if (keyFile.has_key ("General", "AdjusterMinDelay")) {
-                    adjusterMinDelay   = keyFile.get_integer ("General", "AdjusterMinDelay");
+                    adjusterMinDelay = keyFile.get_integer ("General", "AdjusterMinDelay");
                 }
 
                 if (keyFile.has_key ("General", "AdjusterMaxDelay")) {
-                    adjusterMaxDelay   = keyFile.get_integer ("General", "AdjusterMaxDelay");
+                    adjusterMaxDelay = keyFile.get_integer ("General", "AdjusterMaxDelay");
                 }
 
                 if (keyFile.has_key ("General", "StoreLastProfile")) {
@@ -814,15 +814,15 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("General", "MultiUser")) {
-                    multiUser       = keyFile.get_boolean ("General", "MultiUser");
+                    multiUser = keyFile.get_boolean ("General", "MultiUser");
                 }
 
                 if (keyFile.has_key ("General", "Version")) {
-                    version         = keyFile.get_string ("General", "Version");
+                    version = keyFile.get_string ("General", "Version");
                 }
 
                 if (keyFile.has_key ("General", "Language")) {
-                    language        = keyFile.get_string ("General", "Language");
+                    language = keyFile.get_string ("General", "Language");
                 }
 
                 if (keyFile.has_key ("General", "LanguageAutoDetect")) {
@@ -830,7 +830,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("General", "Theme")) {
-                    theme           = keyFile.get_string ("General", "Theme");
+                    theme = keyFile.get_string ("General", "Theme");
                 }
 
                 if ( keyFile.has_key ("General", "DarkFramesPath")) {
@@ -846,19 +846,19 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("General", "BotLeft")) {
-                    rtSettings.bot_left          = keyFile.get_double ("General", "BotLeft");
+                    rtSettings.bot_left = keyFile.get_double ("General", "BotLeft");
                 }
 
                 if (keyFile.has_key ("General", "TopLeft")) {
-                    rtSettings.top_left          = keyFile.get_double ("General", "TopLeft");
+                    rtSettings.top_left = keyFile.get_double ("General", "TopLeft");
                 }
 
                 if (keyFile.has_key ("General", "TopRight")) {
-                    rtSettings.top_right          = keyFile.get_double ("General", "TopRight");
+                    rtSettings.top_right = keyFile.get_double ("General", "TopRight");
                 }
 
                 if (keyFile.has_key ("General", "BotRight")) {
-                    rtSettings.bot_right          = keyFile.get_double ("General", "BotRight");
+                    rtSettings.bot_right = keyFile.get_double ("General", "BotRight");
                 }
 
                 if (keyFile.has_key ("General", "Nspot")) {
@@ -883,23 +883,23 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("General", "EDdetec")) {
-                    rtSettings.ed_detec          = keyFile.get_double ("General", "EDdetec");
+                    rtSettings.ed_detec = keyFile.get_double ("General", "EDdetec");
                 }
 
                 if (keyFile.has_key ("General", "EDdetecStr")) {
-                    rtSettings.ed_detecStr          = keyFile.get_double ("General", "EDdetecStr");
+                    rtSettings.ed_detecStr = keyFile.get_double ("General", "EDdetecStr");
                 }
 
                 if (keyFile.has_key ("General", "EDLow")) {
-                    rtSettings.ed_low          = keyFile.get_double ("General", "EDLow");
+                    rtSettings.ed_low = keyFile.get_double ("General", "EDLow");
                 }
 
                 if (keyFile.has_key ("General", "EDLipinfl")) {
-                    rtSettings.ed_lipinfl          = keyFile.get_double ("General", "EDLipinfl");
+                    rtSettings.ed_lipinfl = keyFile.get_double ("General", "EDLipinfl");
                 }
 
                 if (keyFile.has_key ("General", "EDLipampl")) {
-                    rtSettings.ed_lipampl          = keyFile.get_double ("General", "EDLipampl");
+                    rtSettings.ed_lipampl = keyFile.get_double ("General", "EDLipampl");
                 }
 
 
@@ -907,45 +907,45 @@ int Options::readFromFile (Glib::ustring fname)
 
             if (keyFile.has_group ("External Editor")) {
                 if (keyFile.has_key ("External Editor", "EditorKind")) {
-                    editorToSendTo   = keyFile.get_integer ("External Editor", "EditorKind");
+                    editorToSendTo = keyFile.get_integer ("External Editor", "EditorKind");
                 }
 
                 if (keyFile.has_key ("External Editor", "GimpDir")) {
-                    gimpDir          = keyFile.get_string  ("External Editor", "GimpDir");
+                    gimpDir = keyFile.get_string ("External Editor", "GimpDir");
                 }
 
                 if (keyFile.has_key ("External Editor", "PhotoshopDir")) {
-                    psDir            = keyFile.get_string  ("External Editor", "PhotoshopDir");
+                    psDir = keyFile.get_string ("External Editor", "PhotoshopDir");
                 }
 
                 if (keyFile.has_key ("External Editor", "CustomEditor")) {
-                    customEditorProg = keyFile.get_string  ("External Editor", "CustomEditor");
+                    customEditorProg = keyFile.get_string ("External Editor", "CustomEditor");
                 }
             }
 
             if (keyFile.has_group ("Output")) {
                 if (keyFile.has_key ("Output", "Format")) {
-                    saveFormat.format          = keyFile.get_string ("Output", "Format");
+                    saveFormat.format = keyFile.get_string ("Output", "Format");
                 }
 
                 if (keyFile.has_key ("Output", "JpegQuality")) {
-                    saveFormat.jpegQuality     = keyFile.get_integer ("Output", "JpegQuality");
+                    saveFormat.jpegQuality = keyFile.get_integer ("Output", "JpegQuality");
                 }
 
                 if (keyFile.has_key ("Output", "JpegSubSamp")) {
-                    saveFormat.jpegSubSamp     = keyFile.get_integer ("Output", "JpegSubSamp");
+                    saveFormat.jpegSubSamp = keyFile.get_integer ("Output", "JpegSubSamp");
                 }
 
                 if (keyFile.has_key ("Output", "PngCompression")) {
-                    saveFormat.pngCompression  = keyFile.get_integer ("Output", "PngCompression");
+                    saveFormat.pngCompression = keyFile.get_integer ("Output", "PngCompression");
                 }
 
                 if (keyFile.has_key ("Output", "PngBps")) {
-                    saveFormat.pngBits         = keyFile.get_integer ("Output", "PngBps");
+                    saveFormat.pngBits = keyFile.get_integer ("Output", "PngBps");
                 }
 
                 if (keyFile.has_key ("Output", "TiffBps")) {
-                    saveFormat.tiffBits        = keyFile.get_integer ("Output", "TiffBps");
+                    saveFormat.tiffBits = keyFile.get_integer ("Output", "TiffBps");
                 }
 
                 if (keyFile.has_key ("Output", "TiffUncompressed")) {
@@ -953,32 +953,32 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Output", "SaveProcParams")) {
-                    saveFormat.saveParams      = keyFile.get_boolean ("Output", "SaveProcParams");
+                    saveFormat.saveParams = keyFile.get_boolean ("Output", "SaveProcParams");
                 }
 
 
                 if (keyFile.has_key ("Output", "FormatBatch")) {
-                    saveFormatBatch.format          = keyFile.get_string ("Output", "FormatBatch");
+                    saveFormatBatch.format = keyFile.get_string ("Output", "FormatBatch");
                 }
 
                 if (keyFile.has_key ("Output", "JpegQualityBatch")) {
-                    saveFormatBatch.jpegQuality     = keyFile.get_integer ("Output", "JpegQualityBatch");
+                    saveFormatBatch.jpegQuality = keyFile.get_integer ("Output", "JpegQualityBatch");
                 }
 
                 if (keyFile.has_key ("Output", "JpegSubSampBatch")) {
-                    saveFormatBatch.jpegSubSamp     = keyFile.get_integer ("Output", "JpegSubSampBatch");
+                    saveFormatBatch.jpegSubSamp = keyFile.get_integer ("Output", "JpegSubSampBatch");
                 }
 
                 if (keyFile.has_key ("Output", "PngCompressionBatch")) {
-                    saveFormatBatch.pngCompression  = keyFile.get_integer ("Output", "PngCompressionBatch");
+                    saveFormatBatch.pngCompression = keyFile.get_integer ("Output", "PngCompressionBatch");
                 }
 
                 if (keyFile.has_key ("Output", "PngBpsBatch")) {
-                    saveFormatBatch.pngBits         = keyFile.get_integer ("Output", "PngBpsBatch");
+                    saveFormatBatch.pngBits = keyFile.get_integer ("Output", "PngBpsBatch");
                 }
 
                 if (keyFile.has_key ("Output", "TiffBpsBatch")) {
-                    saveFormatBatch.tiffBits        = keyFile.get_integer ("Output", "TiffBpsBatch");
+                    saveFormatBatch.tiffBits = keyFile.get_integer ("Output", "TiffBpsBatch");
                 }
 
                 if (keyFile.has_key ("Output", "TiffUncompressedBatch")) {
@@ -986,135 +986,135 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Output", "SaveProcParamsBatch")) {
-                    saveFormatBatch.saveParams      = keyFile.get_boolean ("Output", "SaveProcParamsBatch");
+                    saveFormatBatch.saveParams = keyFile.get_boolean ("Output", "SaveProcParamsBatch");
                 }
 
                 if (keyFile.has_key ("Output", "Path")) {
-                    savePathTemplate           = keyFile.get_string ("Output", "Path");
+                    savePathTemplate = keyFile.get_string ("Output", "Path");
                 }
 
                 if (keyFile.has_key ("Output", "PathTemplate")) {
-                    savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
+                    savePathTemplate = keyFile.get_string ("Output", "PathTemplate");
                 }
 
                 if (keyFile.has_key ("Output", "PathFolder")) {
-                    savePathFolder             = keyFile.get_string ("Output", "PathFolder");
+                    savePathFolder = keyFile.get_string ("Output", "PathFolder");
                 }
 
                 if (keyFile.has_key ("Output", "AutoSuffix")) {
-                    autoSuffix                 = keyFile.get_boolean ("Output", "AutoSuffix");
+                    autoSuffix = keyFile.get_boolean ("Output", "AutoSuffix");
                 }
 
                 if (keyFile.has_key ("Output", "ForceFormatOpts")) {
-                    forceFormatOpts            = keyFile.get_boolean ("Output", "ForceFormatOpts");
+                    forceFormatOpts = keyFile.get_boolean ("Output", "ForceFormatOpts");
                 }
 
                 if (keyFile.has_key ("Output", "SaveMethodNum")) {
-                    saveMethodNum              = keyFile.get_integer ("Output", "SaveMethodNum");
+                    saveMethodNum = keyFile.get_integer ("Output", "SaveMethodNum");
                 }
 
                 if (keyFile.has_key ("Output", "UsePathTemplate")) {
-                    saveUsePathTemplate        = keyFile.get_boolean ("Output", "UsePathTemplate");
+                    saveUsePathTemplate = keyFile.get_boolean ("Output", "UsePathTemplate");
                 }
 
                 if (keyFile.has_key ("Output", "LastSaveAsPath")) {
-                    lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
+                    lastSaveAsPath = keyFile.get_string ("Output", "LastSaveAsPath");
                 }
 
                 if (keyFile.has_key ("Output", "OverwriteOutputFile")) {
-                    overwriteOutputFile    = keyFile.get_boolean ("Output", "OverwriteOutputFile");
+                    overwriteOutputFile = keyFile.get_boolean ("Output", "OverwriteOutputFile");
                 }
 
                 if (keyFile.has_key ("Output", "TunnelMetaData")) {
-                    tunnelMetaData             = keyFile.get_boolean ("Output", "TunnelMetaData");
+                    tunnelMetaData = keyFile.get_boolean ("Output", "TunnelMetaData");
                 }
             }
 
             if (keyFile.has_group ("Profiles")) {
                 if (keyFile.has_key ("Profiles", "Directory")) {
-                    profilePath          = keyFile.get_string  ("Profiles", "Directory");
+                    profilePath = keyFile.get_string ("Profiles", "Directory");
                 }
 
                 if (keyFile.has_key ("Profiles", "UseBundledProfiles")) {
-                    useBundledProfiles   = keyFile.get_boolean ("Profiles", "UseBundledProfiles");
+                    useBundledProfiles = keyFile.get_boolean ("Profiles", "UseBundledProfiles");
                 }
 
                 if (keyFile.has_key ("Profiles", "LoadSaveProfilePath")) {
-                    loadSaveProfilePath  = keyFile.get_string  ("Profiles", "LoadSaveProfilePath");
+                    loadSaveProfilePath = keyFile.get_string ("Profiles", "LoadSaveProfilePath");
                 }
 
                 if (keyFile.has_key ("Profiles", "RawDefault")) {
-                    defProfRaw           = keyFile.get_string  ("Profiles", "RawDefault");
+                    defProfRaw = keyFile.get_string ("Profiles", "RawDefault");
                 }
 
                 if (keyFile.has_key ("Profiles", "ImgDefault")) {
-                    defProfImg           = keyFile.get_string  ("Profiles", "ImgDefault");
+                    defProfImg = keyFile.get_string ("Profiles", "ImgDefault");
                 }
 
                 if (keyFile.has_key ("Profiles", "FilledProfile")) {
-                    filledProfile        = keyFile.get_boolean ("Profiles", "FilledProfile");
+                    filledProfile = keyFile.get_boolean ("Profiles", "FilledProfile");
                 }
 
                 if (keyFile.has_key ("Profiles", "SaveParamsWithFile")) {
-                    saveParamsFile       = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
+                    saveParamsFile = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
                 }
 
                 if (keyFile.has_key ("Profiles", "SaveParamsToCache")) {
-                    saveParamsCache      = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
+                    saveParamsCache = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
                 }
 
                 if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) {
-                    paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
+                    paramsLoadLocation = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
                 }
 
                 if (keyFile.has_key ("Profiles", "CustomProfileBuilder")) {
-                    CPBPath              = keyFile.get_string  ("Profiles", "CustomProfileBuilder");    // for backward compatibility only
+                    CPBPath = keyFile.get_string ("Profiles", "CustomProfileBuilder"); // for backward compatibility only
                 }
 
                 if (keyFile.has_key ("Profiles", "CustomProfileBuilderPath")) {
-                    CPBPath              = keyFile.get_string  ("Profiles", "CustomProfileBuilderPath");
+                    CPBPath = keyFile.get_string ("Profiles", "CustomProfileBuilderPath");
                 }
 
                 if (keyFile.has_key ("Profiles", "CustomProfileBuilderKeys")) {
-                    CPBKeys              = (CPBKeyType)keyFile.get_integer ("Profiles", "CustomProfileBuilderKeys");
+                    CPBKeys = (CPBKeyType)keyFile.get_integer ("Profiles", "CustomProfileBuilderKeys");
                 }
             }
 
             if (keyFile.has_group ("File Browser")) {
                 if (keyFile.has_key ("File Browser", "ThumbnailSize")) {
-                    thumbSize          = keyFile.get_integer ("File Browser", "ThumbnailSize");
+                    thumbSize = keyFile.get_integer ("File Browser", "ThumbnailSize");
                 }
 
                 if (keyFile.has_key ("File Browser", "ThumbnailSizeTab")) {
-                    thumbSizeTab       = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
+                    thumbSizeTab = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
                 }
 
                 if (keyFile.has_key ("File Browser", "ThumbnailSizeQueue")) {
-                    thumbSizeQueue     = keyFile.get_integer ("File Browser", "ThumbnailSizeQueue");
+                    thumbSizeQueue = keyFile.get_integer ("File Browser", "ThumbnailSizeQueue");
                 }
 
                 if (keyFile.has_key ("File Browser", "SameThumbSize")) {
-                    sameThumbSize      = keyFile.get_integer ("File Browser", "SameThumbSize");
+                    sameThumbSize = keyFile.get_integer ("File Browser", "SameThumbSize");
                 }
 
                 if (keyFile.has_key ("File Browser", "BrowseOnlyRaw")) {
-                    fbOnlyRaw          = keyFile.get_boolean ("File Browser", "BrowseOnlyRaw");
+                    fbOnlyRaw = keyFile.get_boolean ("File Browser", "BrowseOnlyRaw");
                 }
 
                 if (keyFile.has_key ("File Browser", "BrowserShowsDate")) {
-                    fbShowDateTime     = keyFile.get_boolean ("File Browser", "BrowserShowsDate");
+                    fbShowDateTime = keyFile.get_boolean ("File Browser", "BrowserShowsDate");
                 }
 
                 if (keyFile.has_key ("File Browser", "BrowserShowsExif")) {
-                    fbShowBasicExif    = keyFile.get_boolean ("File Browser", "BrowserShowsExif");
+                    fbShowBasicExif = keyFile.get_boolean ("File Browser", "BrowserShowsExif");
                 }
 
                 if (keyFile.has_key ("File Browser", "BrowserShowsExpComp")) {
-                    fbShowExpComp      = keyFile.get_boolean ("File Browser", "BrowserShowsExpComp");
+                    fbShowExpComp = keyFile.get_boolean ("File Browser", "BrowserShowsExpComp");
                 }
 
                 if (keyFile.has_key ("File Browser", "BrowserShowsHidden")) {
-                    fbShowHidden       = keyFile.get_boolean ("File Browser", "BrowserShowsHidden");
+                    fbShowHidden = keyFile.get_boolean ("File Browser", "BrowserShowsHidden");
                 }
 
                 if (keyFile.has_key ("File Browser", "MaxPreviewHeight")) {
@@ -1122,31 +1122,31 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("File Browser", "MaxCacheEntries")) {
-                    maxCacheEntries    = keyFile.get_integer ("File Browser", "MaxCacheEntries");
+                    maxCacheEntries = keyFile.get_integer ("File Browser", "MaxCacheEntries");
                 }
 
                 if (keyFile.has_key ("File Browser", "ParseExtensions")) {
-                    parseExtensions    = keyFile.get_string_list ("File Browser", "ParseExtensions");
+                    parseExtensions = keyFile.get_string_list ("File Browser", "ParseExtensions");
                 }
 
                 if (keyFile.has_key ("File Browser", "ParseExtensionsEnabled")) {
-                    parseExtensionsEnabled    = keyFile.get_integer_list ("File Browser", "ParseExtensionsEnabled");
+                    parseExtensionsEnabled = keyFile.get_integer_list ("File Browser", "ParseExtensionsEnabled");
                 }
 
                 if (keyFile.has_key ("File Browser", "ThumbnailArrangement")) {
-                    fbArrangement    = keyFile.get_integer ("File Browser", "ThumbnailArrangement");
+                    fbArrangement = keyFile.get_integer ("File Browser", "ThumbnailArrangement");
                 }
 
                 if (keyFile.has_key ("File Browser", "ThumbnailInterpolation")) {
-                    thumbInterp    = keyFile.get_integer ("File Browser", "ThumbnailInterpolation");
+                    thumbInterp = keyFile.get_integer ("File Browser", "ThumbnailInterpolation");
                 }
 
                 if (keyFile.has_key ("File Browser", "FavoriteDirs")) {
-                    favoriteDirs       = keyFile.get_string_list ("File Browser", "FavoriteDirs");
+                    favoriteDirs = keyFile.get_string_list ("File Browser", "FavoriteDirs");
                 }
 
                 if (keyFile.has_key ("File Browser", "RenameTemplates")) {
-                    renameTemplates    = keyFile.get_string_list ("File Browser", "RenameTemplates");
+                    renameTemplates = keyFile.get_string_list ("File Browser", "RenameTemplates");
                 }
 
                 if (keyFile.has_key ("File Browser", "RenameUseTemplates")) {
@@ -1158,7 +1158,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("File Browser", "OverlayedFileNames")) {
-                    overlayedFileNames          = keyFile.get_boolean ("File Browser", "OverlayedFileNames");
+                    overlayedFileNames = keyFile.get_boolean ("File Browser", "OverlayedFileNames");
                 }
 
                 if (keyFile.has_key ("File Browser", "FilmStripOverlayedFileNames")) {
@@ -1166,45 +1166,45 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("File Browser", "ShowFileNames")) {
-                    showFileNames               = keyFile.get_boolean ("File Browser", "ShowFileNames");
+                    showFileNames = keyFile.get_boolean ("File Browser", "ShowFileNames");
                 }
 
                 if (keyFile.has_key ("File Browser", "FilmStripShowFileNames")) {
-                    filmStripShowFileNames      = keyFile.get_boolean ("File Browser", "FilmStripShowFileNames");
+                    filmStripShowFileNames = keyFile.get_boolean ("File Browser", "FilmStripShowFileNames");
                 }
 
                 if (keyFile.has_key ("File Browser", "InternalThumbIfUntouched")) {
-                    internalThumbIfUntouched    = keyFile.get_boolean ("File Browser", "InternalThumbIfUntouched");
+                    internalThumbIfUntouched = keyFile.get_boolean ("File Browser", "InternalThumbIfUntouched");
                 }
 
                 if (keyFile.has_key ("File Browser", "menuGroupRank")) {
-                    menuGroupRank               = keyFile.get_boolean ("File Browser", "menuGroupRank");
+                    menuGroupRank = keyFile.get_boolean ("File Browser", "menuGroupRank");
                 }
 
                 if (keyFile.has_key ("File Browser", "menuGroupLabel")) {
-                    menuGroupLabel              = keyFile.get_boolean ("File Browser", "menuGroupLabel");
+                    menuGroupLabel = keyFile.get_boolean ("File Browser", "menuGroupLabel");
                 }
 
                 if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) {
-                    menuGroupFileOperations     = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
+                    menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
                 }
 
                 if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) {
-                    menuGroupProfileOperations  = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
+                    menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
                 }
 
                 if (keyFile.has_key ("File Browser", "menuGroupExtProg")) {
-                    menuGroupExtProg            = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
+                    menuGroupExtProg = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
                 }
 
                 if (keyFile.has_key ("File Browser", "MaxRecentFolders")) {
-                    maxRecentFolders    = keyFile.get_integer ("File Browser", "MaxRecentFolders");
+                    maxRecentFolders = keyFile.get_integer ("File Browser", "MaxRecentFolders");
                 }
 
                 recentFolders.reserve (maxRecentFolders + 10); // reserve some more than maxRecentFolders, because at runtime it stores more than that
 
                 if (keyFile.has_key ("File Browser", "RecentFolders")) {
-                    recentFolders    = keyFile.get_string_list ("File Browser", "RecentFolders");
+                    recentFolders = keyFile.get_string_list ("File Browser", "RecentFolders");
                 }
             }
 
@@ -1214,29 +1214,29 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Clipping Indication", "ShadowThreshold")) {
-                    shadowThreshold   = keyFile.get_integer ("Clipping Indication", "ShadowThreshold");
+                    shadowThreshold = keyFile.get_integer ("Clipping Indication", "ShadowThreshold");
                 }
 
                 if (keyFile.has_key ("Clipping Indication", "BlinkClipped")) {
-                    blinkClipped      = keyFile.get_boolean ("Clipping Indication", "BlinkClipped");
+                    blinkClipped = keyFile.get_boolean ("Clipping Indication", "BlinkClipped");
                 }
             }
 
             if (keyFile.has_group ("Performance")) {
                 if (keyFile.has_key ("Performance", "RgbDenoiseThreadLimit")) {
-                    rgbDenoiseThreadLimit      = keyFile.get_integer ("Performance", "RgbDenoiseThreadLimit");
+                    rgbDenoiseThreadLimit = keyFile.get_integer ("Performance", "RgbDenoiseThreadLimit");
                 }
 
                 if ( keyFile.has_key ("Performance", "NRauto")) {
-                    rtSettings.nrauto          = keyFile.get_double  ("Performance", "NRauto");
+                    rtSettings.nrauto = keyFile.get_double ("Performance", "NRauto");
                 }
 
                 if ( keyFile.has_key ("Performance", "NRautomax")) {
-                    rtSettings.nrautomax       = keyFile.get_double  ("Performance", "NRautomax");
+                    rtSettings.nrautomax = keyFile.get_double ("Performance", "NRautomax");
                 }
 
                 if ( keyFile.has_key ("Performance", "NRhigh")) {
-                    rtSettings.nrhigh          = keyFile.get_double  ("Performance", "NRhigh");
+                    rtSettings.nrhigh = keyFile.get_double ("Performance", "NRhigh");
                 }
 
                 if (rtSettings.nrhigh == 0.0) { //avoid crash by division by zero in noise reduction
@@ -1244,23 +1244,23 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if ( keyFile.has_key ("Performance", "NRWavlevel")) {
-                    rtSettings.nrwavlevel      = keyFile.get_integer ("Performance", "NRWavlevel");
+                    rtSettings.nrwavlevel = keyFile.get_integer ("Performance", "NRWavlevel");
                 }
 
                 if (keyFile.has_key ("Performance", "LevNR")) {
-                    rtSettings.leveldnv        = keyFile.get_integer ("Performance", "LevNR");
+                    rtSettings.leveldnv = keyFile.get_integer ("Performance", "LevNR");
                 }
 
                 if (keyFile.has_key ("Performance", "LevNRTI")) {
-                    rtSettings.leveldnti       = keyFile.get_integer ("Performance", "LevNRTI");
+                    rtSettings.leveldnti = keyFile.get_integer ("Performance", "LevNRTI");
                 }
 
                 if (keyFile.has_key ("Performance", "LevNRAUT")) {
-                    rtSettings.leveldnaut      = keyFile.get_integer ("Performance", "LevNRAUT");
+                    rtSettings.leveldnaut = keyFile.get_integer ("Performance", "LevNRAUT");
                 }
 
                 if (keyFile.has_key ("Performance", "LevNRLISS")) {
-                    rtSettings.leveldnliss     = keyFile.get_integer ("Performance", "LevNRLISS");
+                    rtSettings.leveldnliss = keyFile.get_integer ("Performance", "LevNRLISS");
                 }
 
                 if (keyFile.has_key ("Performance", "SIMPLNRAUT")) {
@@ -1268,15 +1268,15 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Performance", "ClutCacheSize")) {
-                    clutCacheSize              = keyFile.get_integer ("Performance", "ClutCacheSize");
+                    clutCacheSize = keyFile.get_integer ("Performance", "ClutCacheSize");
                 }
 
                 if (keyFile.has_key ("Performance", "MaxInspectorBuffers")) {
-                    maxInspectorBuffers        = keyFile.get_integer ("Performance", "MaxInspectorBuffers");
+                    maxInspectorBuffers = keyFile.get_integer ("Performance", "MaxInspectorBuffers");
                 }
 
                 if (keyFile.has_key ("Performance", "PreviewDemosaicFromSidecar")) {
-                    prevdemo             = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
+                    prevdemo = (prevdemo_t)keyFile.get_integer ("Performance", "PreviewDemosaicFromSidecar");
                 }
 
                 if (keyFile.has_key ("Performance", "Localajustqual")) {
@@ -1288,29 +1288,29 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Performance", "Daubechies")) {
-                    rtSettings.daubech         = keyFile.get_boolean ("Performance", "Daubechies");
+                    rtSettings.daubech = keyFile.get_boolean ("Performance", "Daubechies");
                 }
 
                 if (keyFile.has_key ("Performance", "SerializeTiffRead")) {
-                    serializeTiffRead          = keyFile.get_boolean ("Performance", "SerializeTiffRead");
+                    serializeTiffRead = keyFile.get_boolean ("Performance", "SerializeTiffRead");
                 }
             }
 
             if (keyFile.has_group ("GUI")) {
                 if (keyFile.has_key ("GUI", "WindowWidth")) {
-                    windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
+                    windowWidth = keyFile.get_integer ("GUI", "WindowWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "WindowHeight")) {
-                    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
+                    windowHeight = keyFile.get_integer ("GUI", "WindowHeight");
                 }
 
                 if (keyFile.has_key ("GUI", "WindowX")) {
-                    windowX     = keyFile.get_integer ("GUI", "WindowX");
+                    windowX = keyFile.get_integer ("GUI", "WindowX");
                 }
 
                 if (keyFile.has_key ("GUI", "WindowY")) {
-                    windowY    = keyFile.get_integer ("GUI", "WindowY");
+                    windowY = keyFile.get_integer ("GUI", "WindowY");
                 }
 
                 if (keyFile.has_key ("GUI", "WindowMonitor")) {
@@ -1330,19 +1330,19 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "MeowWidth")) {
-                    meowWidth      = keyFile.get_integer ("GUI", "MeowWidth");
+                    meowWidth = keyFile.get_integer ("GUI", "MeowWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "MeowHeight")) {
-                    meowHeight     = keyFile.get_integer ("GUI", "MeowHeight");
+                    meowHeight = keyFile.get_integer ("GUI", "MeowHeight");
                 }
 
                 if (keyFile.has_key ("GUI", "MeowX")) {
-                    meowX     = keyFile.get_integer ("GUI", "MeowX");
+                    meowX = keyFile.get_integer ("GUI", "MeowX");
                 }
 
                 if (keyFile.has_key ("GUI", "MeowY")) {
-                    meowY     = keyFile.get_integer ("GUI", "MeowY");
+                    meowY = keyFile.get_integer ("GUI", "MeowY");
                 }
 
                 if (keyFile.has_key ("GUI", "WindowMaximized")) {
@@ -1350,47 +1350,47 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "DetailWindowWidth")) {
-                    detailWindowWidth        = keyFile.get_integer ("GUI", "DetailWindowWidth");
+                    detailWindowWidth = keyFile.get_integer ("GUI", "DetailWindowWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "DetailWindowHeight")) {
-                    detailWindowHeight       = keyFile.get_integer ("GUI", "DetailWindowHeight");
+                    detailWindowHeight = keyFile.get_integer ("GUI", "DetailWindowHeight");
                 }
 
                 if (keyFile.has_key ("GUI", "DirBrowserWidth")) {
-                    dirBrowserWidth          = keyFile.get_integer ("GUI", "DirBrowserWidth");
+                    dirBrowserWidth = keyFile.get_integer ("GUI", "DirBrowserWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "DirBrowserHeight")) {
-                    dirBrowserHeight         = keyFile.get_integer ("GUI", "DirBrowserHeight");
+                    dirBrowserHeight = keyFile.get_integer ("GUI", "DirBrowserHeight");
                 }
 
                 if (keyFile.has_key ("GUI", "SortType")) {
-                    dirBrowserSortType       = static_cast<Gtk::SortType> (keyFile.get_integer ("GUI", "SortType"));
+                    dirBrowserSortType = static_cast<Gtk::SortType> (keyFile.get_integer ("GUI", "SortType"));
                 }
 
                 if (keyFile.has_key ("GUI", "PreferencesWidth")) {
-                    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
+                    preferencesWidth = keyFile.get_integer ("GUI", "PreferencesWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "PreferencesHeight")) {
-                    preferencesHeight        = keyFile.get_integer ("GUI", "PreferencesHeight");
+                    preferencesHeight = keyFile.get_integer ("GUI", "PreferencesHeight");
                 }
 
                 if (keyFile.has_key ("GUI", "SaveAsDialogWidth")) {
-                    saveAsDialogWidth        = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
+                    saveAsDialogWidth = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "SaveAsDialogHeight")) {
-                    saveAsDialogHeight       = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
+                    saveAsDialogHeight = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
                 }
 
                 if (keyFile.has_key ("GUI", "ToolPanelWidth")) {
-                    toolPanelWidth           = keyFile.get_integer ("GUI", "ToolPanelWidth");
+                    toolPanelWidth = keyFile.get_integer ("GUI", "ToolPanelWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "BrowserToolPanelWidth")) {
-                    browserToolPanelWidth  = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
+                    browserToolPanelWidth = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
                 }
 
                 if (keyFile.has_key ("GUI", "BrowserToolPanelHeight")) {
@@ -1402,11 +1402,11 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "BrowserDirPanelOpened")) {
-                    browserDirPanelOpened  = keyFile.get_boolean ("GUI", "BrowserDirPanelOpened");
+                    browserDirPanelOpened = keyFile.get_boolean ("GUI", "BrowserDirPanelOpened");
                 }
 
                 if (keyFile.has_key ("GUI", "EditorFilmStripOpened")) {
-                    editorFilmStripOpened  = keyFile.get_boolean ("GUI", "EditorFilmStripOpened");
+                    editorFilmStripOpened = keyFile.get_boolean ("GUI", "EditorFilmStripOpened");
                 }
 
                 if (keyFile.has_key ("GUI", "HistoryPanelWidth")) {
@@ -1414,39 +1414,39 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "FontFamily")) {
-                    fontFamily        = keyFile.get_string  ("GUI", "FontFamily");
+                    fontFamily = keyFile.get_string ("GUI", "FontFamily");
                 }
 
                 if (keyFile.has_key ("GUI", "FontSize")) {
-                    fontSize          = keyFile.get_integer ("GUI", "FontSize");
+                    fontSize = keyFile.get_integer ("GUI", "FontSize");
                 }
 
                 if (keyFile.has_key ("GUI", "CPFontFamily")) {
-                    CPFontFamily      = keyFile.get_string  ("GUI", "CPFontFamily");
+                    CPFontFamily = keyFile.get_string ("GUI", "CPFontFamily");
                 }
 
                 if (keyFile.has_key ("GUI", "CPFontSize")) {
-                    CPFontSize        = keyFile.get_integer ("GUI", "CPFontSize");
+                    CPFontSize = keyFile.get_integer ("GUI", "CPFontSize");
                 }
 
                 if (keyFile.has_key ("GUI", "LastPreviewScale")) {
-                    lastScale         = keyFile.get_integer ("GUI", "LastPreviewScale");
+                    lastScale = keyFile.get_integer ("GUI", "LastPreviewScale");
                 }
 
                 if (keyFile.has_key ("GUI", "PanAccelFactor")) {
-                    panAccelFactor    = keyFile.get_integer ("GUI", "PanAccelFactor");
+                    panAccelFactor = keyFile.get_integer ("GUI", "PanAccelFactor");
                 }
 
                 if (keyFile.has_key ("GUI", "RememberZoomAndPan")) {
-                    rememberZoomAndPan        = keyFile.get_boolean ("GUI", "RememberZoomAndPan");
+                    rememberZoomAndPan = keyFile.get_boolean ("GUI", "RememberZoomAndPan");
                 }
 
                 if (keyFile.has_key ("GUI", "LastCropSize")) {
-                    lastCropSize      = keyFile.get_integer ("GUI", "LastCropSize");
+                    lastCropSize = keyFile.get_integer ("GUI", "LastCropSize");
                 }
 
                 if (keyFile.has_key ("GUI", "ShowHistory")) {
-                    showHistory       = keyFile.get_boolean ("GUI", "ShowHistory");
+                    showHistory = keyFile.get_boolean ("GUI", "ShowHistory");
                 }
 
                 if (keyFile.has_key ("GUI", "ShowFilePanelState")) {
@@ -1454,11 +1454,11 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "ShowInfo")) {
-                    showInfo          = keyFile.get_boolean ("GUI", "ShowInfo");
+                    showInfo = keyFile.get_boolean ("GUI", "ShowInfo");
                 }
 
                 if (keyFile.has_key ("GUI", "MainNBVertical")) {
-                    mainNBVertical    = keyFile.get_boolean ("GUI", "MainNBVertical");
+                    mainNBVertical = keyFile.get_boolean ("GUI", "MainNBVertical");
                 }
 
                 if (keyFile.has_key ("GUI", "ShowClippedHighlights")) {
@@ -1470,7 +1470,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "FrameColor")) {
-                    bgcolor           = keyFile.get_integer ("GUI", "FrameColor");
+                    bgcolor = keyFile.get_integer ("GUI", "FrameColor");
                 }
 
                 if (keyFile.has_key ("GUI", "ProcessingQueueEnbled")) {
@@ -1478,44 +1478,44 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "ToolPanelsExpanded")) {
-                    tpOpen            = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
+                    tpOpen = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
                 }
 
                 if (keyFile.has_key ("GUI", "MultiDisplayMode")) {
-                    multiDisplayMode  = keyFile.get_integer ("GUI", "MultiDisplayMode");
+                    multiDisplayMode = keyFile.get_integer ("GUI", "MultiDisplayMode");
                 }
 
-                //if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen           = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
+                //if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
                 if (keyFile.has_key ("GUI", "CutOverlayBrush")) {
-                    cutOverlayBrush     = keyFile.get_double_list ("GUI", "CutOverlayBrush");
+                    cutOverlayBrush = keyFile.get_double_list ("GUI", "CutOverlayBrush");
                 }
 
                 if (keyFile.has_key ("GUI", "NavGuideBrush")) {
-                    navGuideBrush       = keyFile.get_double_list ("GUI", "NavGuideBrush");
+                    navGuideBrush = keyFile.get_double_list ("GUI", "NavGuideBrush");
                 }
 
                 if (keyFile.has_key ("GUI", "HistogramPosition")) {
-                    histogramPosition   = keyFile.get_integer ("GUI", "HistogramPosition");
+                    histogramPosition = keyFile.get_integer ("GUI", "HistogramPosition");
                 }
 
                 if (keyFile.has_key ("GUI", "HistogramBar")) {
-                    histogramBar        = keyFile.get_boolean ("GUI", "HistogramBar");
+                    histogramBar = keyFile.get_boolean ("GUI", "HistogramBar");
                 }
 
                 if (keyFile.has_key ("GUI", "HistogramFullMode")) {
-                    histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
+                    histogramFullMode = keyFile.get_boolean ("GUI", "HistogramFullMode");
                 }
 
                 if (keyFile.has_key ("GUI", "NavigatorRGBUnit")) {
-                    navRGBUnit          = (NavigatorUnit)keyFile.get_integer ("GUI", "NavigatorRGBUnit");
+                    navRGBUnit = (NavigatorUnit)keyFile.get_integer ("GUI", "NavigatorRGBUnit");
                 }
 
                 if (keyFile.has_key ("GUI", "NavigatorHSVUnit")) {
-                    navHSVUnit          = (NavigatorUnit)keyFile.get_integer ("GUI", "NavigatorHSVUnit");
+                    navHSVUnit = (NavigatorUnit)keyFile.get_integer ("GUI", "NavigatorHSVUnit");
                 }
 
                 if (keyFile.has_key ("GUI", "ShowFilmStripToolBar")) {
-                    showFilmStripToolBar        = keyFile.get_boolean ("GUI", "ShowFilmStripToolBar");
+                    showFilmStripToolBar = keyFile.get_boolean ("GUI", "ShowFilmStripToolBar");
                 }
 
                 if (keyFile.has_key ("GUI", "Showdelimspot")) {
@@ -1527,11 +1527,11 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "HideTPVScrollbar")) {
-                    hideTPVScrollbar            = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
+                    hideTPVScrollbar = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
                 }
 
                 if (keyFile.has_key ("GUI", "UseIconNoText")) {
-                    UseIconNoText               = keyFile.get_boolean ("GUI", "UseIconNoText");
+                    UseIconNoText = keyFile.get_boolean ("GUI", "UseIconNoText");
                 }
 
                 if (keyFile.has_key ("GUI", "HistogramWorking")) {
@@ -1539,35 +1539,35 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("GUI", "CurveBBoxPosition")) {
-                    curvebboxpos                        = keyFile.get_integer ("GUI", "CurveBBoxPosition");
+                    curvebboxpos = keyFile.get_integer ("GUI", "CurveBBoxPosition");
                 }
             }
 
             if (keyFile.has_group ("Crop Settings")) {
                 if (keyFile.has_key ("Crop Settings", "PPI")) {
-                    cropPPI      = keyFile.get_integer ("Crop Settings", "PPI");
+                    cropPPI = keyFile.get_integer ("Crop Settings", "PPI");
                 }
             }
 
             if (keyFile.has_group ("Color Management")) {
                 if (keyFile.has_key ("Color Management", "ICCDirectory")) {
-                    rtSettings.iccDirectory         = keyFile.get_string ("Color Management", "ICCDirectory");
+                    rtSettings.iccDirectory = keyFile.get_string ("Color Management", "ICCDirectory");
                 }
 
                 if (keyFile.has_key ("Color Management", "PrinterIntent")) {
-                    rtSettings.printerIntent   = static_cast<rtengine::RenderingIntent> (keyFile.get_integer ("Color Management", "PrinterIntent"));
+                    rtSettings.printerIntent = static_cast<rtengine::RenderingIntent> (keyFile.get_integer ("Color Management", "PrinterIntent"));
                 }
 
                 if (keyFile.has_key ("Color Management", "PrinterBPC")) {
-                    rtSettings.printerBPC           = keyFile.get_boolean ("Color Management", "PrinterBPC");
+                    rtSettings.printerBPC = keyFile.get_boolean ("Color Management", "PrinterBPC");
                 }
 
                 if (keyFile.has_key ("Color Management", "PrinterProfile")) {
-                    rtSettings.printerProfile       = keyFile.get_string ("Color Management", "PrinterProfile");
+                    rtSettings.printerProfile = keyFile.get_string ("Color Management", "PrinterProfile");
                 }
 
                 if (keyFile.has_key ("Color Management", "MonitorProfile")) {
-                    rtSettings.monitorProfile       = keyFile.get_string ("Color Management", "MonitorProfile");
+                    rtSettings.monitorProfile = keyFile.get_string ("Color Management", "MonitorProfile");
                 }
 
                 if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) {
@@ -1583,122 +1583,124 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Color Management", "Intent")) {
-                    rtSettings.monitorIntent   = static_cast<rtengine::RenderingIntent> (keyFile.get_integer ("Color Management", "Intent"));
+                    rtSettings.monitorIntent = static_cast<rtengine::RenderingIntent> (keyFile.get_integer ("Color Management", "Intent"));
                 }
 
                 if (keyFile.has_key ("Color Management", "MonitorBPC")) {
-                    rtSettings.monitorBPC           = keyFile.get_boolean ("Color Management", "MonitorBPC");
+                    rtSettings.monitorBPC = keyFile.get_boolean ("Color Management", "MonitorBPC");
                 }
 
                 if (keyFile.has_key ("Color Management", "CRI")) {
-                    rtSettings.CRI_color            = keyFile.get_integer ("Color Management", "CRI");
+                    rtSettings.CRI_color = keyFile.get_integer ("Color Management", "CRI");
                 }
 
                 if (keyFile.has_key ("Color Management", "DenoiseLabgamma")) {
-                    rtSettings.denoiselabgamma      = keyFile.get_integer ("Color Management", "DenoiseLabgamma");
+                    rtSettings.denoiselabgamma = keyFile.get_integer ("Color Management", "DenoiseLabgamma");
                 }
 
+                /*
                 if (keyFile.has_key ("Color Management", "view")) {
-                    rtSettings.viewingdevice        = keyFile.get_integer ("Color Management", "view");
+                rtSettings.viewingdevice = keyFile.get_integer ("Color Management", "view");
                 }
 
                 if (keyFile.has_key ("Color Management", "grey")) {
-                    rtSettings.viewingdevicegrey    = keyFile.get_integer ("Color Management", "grey");
+                rtSettings.viewingdevicegrey = keyFile.get_integer ("Color Management", "grey");
                 }
+                */
 
                 if (keyFile.has_key ("Color Management", "greySc")) {
-                    rtSettings.viewinggreySc        = keyFile.get_integer ("Color Management", "greySc");
+                    rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
                 }
 
                 if (keyFile.has_key ("Color Management", "CBDLArtif")) {
-                    rtSettings.artifact_cbdl        = keyFile.get_double ("Color Management", "CBDLArtif");
+                    rtSettings.artifact_cbdl = keyFile.get_double ("Color Management", "CBDLArtif");
                 }
 
                 if (keyFile.has_key ("Color Management", "CBDLlevel0")) {
-                    rtSettings.level0_cbdl          = keyFile.get_double ("Color Management", "CBDLlevel0");
+                    rtSettings.level0_cbdl = keyFile.get_double ("Color Management", "CBDLlevel0");
                 }
 
                 if (keyFile.has_key ("Color Management", "CBDLlevel123")) {
-                    rtSettings.level123_cbdl        = keyFile.get_double ("Color Management", "CBDLlevel123");
+                    rtSettings.level123_cbdl = keyFile.get_double ("Color Management", "CBDLlevel123");
                 }
 
-//   if (keyFile.has_key ("Color Management", "Colortoningab"))  rtSettings.colortoningab            = keyFile.get_double("Color Management", "Colortoningab");
-//   if (keyFile.has_key ("Color Management", "Decaction"))   rtSettings.decaction        = keyFile.get_double("Color Management", "Decaction");
+                //if (keyFile.has_key ("Color Management", "Colortoningab")) rtSettings.colortoningab = keyFile.get_double("Color Management", "Colortoningab");
+                //if (keyFile.has_key ("Color Management", "Decaction")) rtSettings.decaction = keyFile.get_double("Color Management", "Decaction");
 
                 if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) {
-                    whiteBalanceSpotSize      = keyFile.get_integer ("Color Management", "WhiteBalanceSpotSize");
+                    whiteBalanceSpotSize = keyFile.get_integer ("Color Management", "WhiteBalanceSpotSize");
                 }
 
                 if ( keyFile.has_key ("Color Management", "GamutICC")) {
-                    rtSettings.gamutICC             = keyFile.get_boolean ("Color Management", "GamutICC");
+                    rtSettings.gamutICC = keyFile.get_boolean ("Color Management", "GamutICC");
                 }
 
-//   if( keyFile.has_key ("Color Management", "BWcomplement"))   rtSettings.bw_complementary     = keyFile.get_boolean("Color Management", "BWcomplement");
+                //if ( keyFile.has_key ("Color Management", "BWcomplement")) rtSettings.bw_complementary = keyFile.get_boolean("Color Management", "BWcomplement");
                 if ( keyFile.has_key ("Color Management", "Ciecamfloat")) {
-                    rtSettings.ciecamfloat          = keyFile.get_boolean ("Color Management", "Ciecamfloat");
+                    rtSettings.ciecamfloat = keyFile.get_boolean ("Color Management", "Ciecamfloat");
                 }
 
                 if ( keyFile.has_key ("Color Management", "AdobeRGB")) {
-                    rtSettings.adobe                = keyFile.get_string ("Color Management", "AdobeRGB");
+                    rtSettings.adobe = keyFile.get_string ("Color Management", "AdobeRGB");
                 }
 
                 if ( keyFile.has_key ("Color Management", "ProPhoto")) {
-                    rtSettings.prophoto             = keyFile.get_string ("Color Management", "ProPhoto");
+                    rtSettings.prophoto = keyFile.get_string ("Color Management", "ProPhoto");
                 }
 
                 if ( keyFile.has_key ("Color Management", "ProPhoto10")) {
-                    rtSettings.prophoto10           = keyFile.get_string ("Color Management", "ProPhoto10");
+                    rtSettings.prophoto10 = keyFile.get_string ("Color Management", "ProPhoto10");
                 }
 
                 if ( keyFile.has_key ("Color Management", "WideGamut")) {
-                    rtSettings.widegamut            = keyFile.get_string ("Color Management", "WideGamut");
+                    rtSettings.widegamut = keyFile.get_string ("Color Management", "WideGamut");
                 }
 
                 if ( keyFile.has_key ("Color Management", "sRGB")) {
-                    rtSettings.srgb                 = keyFile.get_string ("Color Management", "sRGB");
+                    rtSettings.srgb = keyFile.get_string ("Color Management", "sRGB");
                 }
 
                 if ( keyFile.has_key ("Color Management", "sRGB10")) {
-                    rtSettings.srgb10               = keyFile.get_string ("Color Management", "sRGB10");
+                    rtSettings.srgb10 = keyFile.get_string ("Color Management", "sRGB10");
                 }
 
                 if ( keyFile.has_key ("Color Management", "Beta")) {
-                    rtSettings.beta                 = keyFile.get_string ("Color Management", "Beta");
+                    rtSettings.beta = keyFile.get_string ("Color Management", "Beta");
                 }
 
                 if ( keyFile.has_key ("Color Management", "Best")) {
-                    rtSettings.best                 = keyFile.get_string ("Color Management", "Best");
+                    rtSettings.best = keyFile.get_string ("Color Management", "Best");
                 }
 
                 if ( keyFile.has_key ("Color Management", "Rec2020")) {
-                    rtSettings.rec2020                 = keyFile.get_string ("Color Management", "Rec2020");
+                    rtSettings.rec2020 = keyFile.get_string ("Color Management", "Rec2020");
                 }
 
                 if ( keyFile.has_key ("Color Management", "Bruce")) {
-                    rtSettings.bruce                = keyFile.get_string ("Color Management", "Bruce");
+                    rtSettings.bruce = keyFile.get_string ("Color Management", "Bruce");
                 }
 
                 if ( keyFile.has_key ("Color Management", "GamutLch")) {
-                    rtSettings.gamutLch             = keyFile.get_boolean ("Color Management", "GamutLch");
+                    rtSettings.gamutLch = keyFile.get_boolean ("Color Management", "GamutLch");
                 }
 
                 if ( keyFile.has_key ("Color Management", "ProtectRed")) {
-                    rtSettings.protectred           = keyFile.get_integer ("Color Management", "ProtectRed");
+                    rtSettings.protectred = keyFile.get_integer ("Color Management", "ProtectRed");
                 }
 
                 if ( keyFile.has_key ("Color Management", "ProtectRedH")) {
-                    rtSettings.protectredh          = keyFile.get_double ("Color Management", "ProtectRedH");
+                    rtSettings.protectredh = keyFile.get_double ("Color Management", "ProtectRedH");
                 }
 
                 if ( keyFile.has_key ("Color Management", "Amountchroma")) {
-                    rtSettings.amchroma            = keyFile.get_integer ("Color Management", "Amountchroma");
+                    rtSettings.amchroma = keyFile.get_integer ("Color Management", "Amountchroma");
                 }
 
                 if ( keyFile.has_key ("Color Management", "ClutsDirectory")) {
-                    clutsDir             = keyFile.get_string ("Color Management", "ClutsDirectory");
+                    clutsDir = keyFile.get_string ("Color Management", "ClutsDirectory");
                 }
 
-//    if( keyFile.has_key ("Color Management", "Ciebadpixgauss")) rtSettings.ciebadpixgauss       = keyFile.get_boolean("Color Management", "Ciebadpixgauss");
+                //if( keyFile.has_key ("Color Management", "Ciebadpixgauss")) rtSettings.ciebadpixgauss = keyFile.get_boolean("Color Management", "Ciebadpixgauss");
 
             }
 
@@ -1710,7 +1712,7 @@ int Options::readFromFile (Glib::ustring fname)
 
             if (keyFile.has_group ("Sounds")) {
                 if (keyFile.has_key ("Sounds", "Enable")) {
-                    sndEnable              = keyFile.get_boolean ("Sounds", "Enable");
+                    sndEnable = keyFile.get_boolean ("Sounds", "Enable");
                 }
 
                 if (keyFile.has_key ("Sounds", "BatchQueueDone")) {
@@ -1718,7 +1720,7 @@ int Options::readFromFile (Glib::ustring fname)
                 }
 
                 if (keyFile.has_key ("Sounds", "LngEditProcDone")) {
-                    sndLngEditProcDone     = keyFile.get_string ("Sounds", "LngEditProcDone");
+                    sndLngEditProcDone = keyFile.get_string ("Sounds", "LngEditProcDone");
                 }
 
                 if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) {
@@ -1727,163 +1729,163 @@ int Options::readFromFile (Glib::ustring fname)
             }
 
             if (keyFile.has_group ("Fast Export")) {
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpening"        )) {
-                    fastexport_bypass_sharpening          = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpening"        );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpening" )) {
+                    fastexport_bypass_sharpening = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpening" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenEdge"       )) {
-                    fastexport_bypass_sharpenEdge         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"       );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenEdge" )) {
+                    fastexport_bypass_sharpenEdge = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenEdge" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenMicro"      )) {
-                    fastexport_bypass_sharpenMicro        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"      );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenMicro" )) {
+                    fastexport_bypass_sharpenMicro = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenMicro" );
                 }
 
-                //if (keyFile.has_key ("Fast Export", "fastexport_bypass_lumaDenoise"     ))  fastexport_bypass_lumaDenoise         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"       );
-                //if (keyFile.has_key ("Fast Export", "fastexport_bypass_colorDenoise"    ))  fastexport_bypass_colorDenoise        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_colorDenoise"      );
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_defringe"          )) {
-                    fastexport_bypass_defringe            = keyFile.get_boolean ("Fast Export", "fastexport_bypass_defringe"          );
+                //if (keyFile.has_key ("Fast Export", "fastexport_bypass_lumaDenoise" )) fastexport_bypass_lumaDenoise = keyFile.get_boolean ("Fast Export", "fastexport_bypass_lumaDenoise" );
+                //if (keyFile.has_key ("Fast Export", "fastexport_bypass_colorDenoise" )) fastexport_bypass_colorDenoise = keyFile.get_boolean ("Fast Export", "fastexport_bypass_colorDenoise" );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_defringe" )) {
+                    fastexport_bypass_defringe = keyFile.get_boolean ("Fast Export", "fastexport_bypass_defringe" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrDenoise"     )) {
-                    fastexport_bypass_dirpyrDenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"     );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrDenoise" )) {
+                    fastexport_bypass_dirpyrDenoise = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sh_hq"             )) {
-                    fastexport_bypass_sh_hq               = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sh_hq"             );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_sh_hq" )) {
+                    fastexport_bypass_sh_hq = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sh_hq" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrequalizer"   )) {
-                    fastexport_bypass_dirpyrequalizer     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"   );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrequalizer" )) {
+                    fastexport_bypass_dirpyrequalizer = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_wavelet"   )) {
-                    fastexport_bypass_wavelet     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_wavelet"   );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_wavelet" )) {
+                    fastexport_bypass_wavelet = keyFile.get_boolean ("Fast Export", "fastexport_bypass_wavelet" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_raw_dmethod"              )) {
-                    fastexport_raw_bayer_method           = keyFile.get_string  ("Fast Export", "fastexport_raw_dmethod"              );
+                if (keyFile.has_key ("Fast Export", "fastexport_raw_dmethod" )) {
+                    fastexport_raw_bayer_method = keyFile.get_string ("Fast Export", "fastexport_raw_dmethod" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_raw_bayer_method"         )) {
-                    fastexport_raw_bayer_method           = keyFile.get_string  ("Fast Export", "fastexport_raw_bayer_method"         );
+                if (keyFile.has_key ("Fast Export", "fastexport_raw_bayer_method" )) {
+                    fastexport_raw_bayer_method = keyFile.get_string ("Fast Export", "fastexport_raw_bayer_method" );
                 }
 
-                //if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_all_enhance"   )) fastexport_bypass_raw_bayer_all_enhance       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"           );
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_iterations"        )) {
-                    fastexport_bypass_raw_bayer_dcb_iterations    = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations"        );
+//if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_all_enhance" )) fastexport_bypass_raw_bayer_all_enhance = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance" );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_iterations" )) {
+                    fastexport_bypass_raw_bayer_dcb_iterations = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations"  )) {
-                    fastexport_bypass_raw_bayer_dcb_iterations    = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations"  );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations" )) {
+                    fastexport_bypass_raw_bayer_dcb_iterations = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_enhance"           )) {
-                    fastexport_bypass_raw_bayer_dcb_enhance       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance"           );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_enhance" )) {
+                    fastexport_bypass_raw_bayer_dcb_enhance = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance"     )) {
-                    fastexport_bypass_raw_bayer_dcb_enhance       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance"     );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance" )) {
+                    fastexport_bypass_raw_bayer_dcb_enhance = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_lmmse_iterations"      )) {
-                    fastexport_bypass_raw_bayer_lmmse_iterations  = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_lmmse_iterations"      );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_lmmse_iterations" )) {
+                    fastexport_bypass_raw_bayer_lmmse_iterations = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_lmmse_iterations" );
                 }
 
                 if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_lmmse_iterations")) {
-                    fastexport_bypass_raw_bayer_lmmse_iterations  = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_lmmse_iterations");
+                    fastexport_bypass_raw_bayer_lmmse_iterations = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_lmmse_iterations");
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_linenoise"             )) {
-                    fastexport_bypass_raw_bayer_linenoise         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_linenoise"             );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_linenoise" )) {
+                    fastexport_bypass_raw_bayer_linenoise = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_linenoise" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_linenoise"       )) {
-                    fastexport_bypass_raw_bayer_linenoise         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_linenoise"       );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_linenoise" )) {
+                    fastexport_bypass_raw_bayer_linenoise = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_linenoise" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_greenthresh"           )) {
-                    fastexport_bypass_raw_bayer_greenthresh       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_greenthresh"           );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_greenthresh" )) {
+                    fastexport_bypass_raw_bayer_greenthresh = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_greenthresh" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_greenthresh"     )) {
-                    fastexport_bypass_raw_bayer_greenthresh       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_greenthresh"     );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_bayer_greenthresh" )) {
+                    fastexport_bypass_raw_bayer_greenthresh = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_bayer_greenthresh" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_raw_xtrans_method"        )) {
-                    fastexport_raw_xtrans_method          = keyFile.get_string  ("Fast Export", "fastexport_raw_xtrans_method"        );
+                if (keyFile.has_key ("Fast Export", "fastexport_raw_xtrans_method" )) {
+                    fastexport_raw_xtrans_method = keyFile.get_string ("Fast Export", "fastexport_raw_xtrans_method" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ccSteps"       )) {
-                    fastexport_bypass_raw_ccSteps         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"       );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ccSteps" )) {
+                    fastexport_bypass_raw_ccSteps = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ca"            )) {
-                    fastexport_bypass_raw_ca              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ca"            );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ca" )) {
+                    fastexport_bypass_raw_ca = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ca" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_df"            )) {
-                    fastexport_bypass_raw_df              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_df"            );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_df" )) {
+                    fastexport_bypass_raw_df = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_df" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ff"            )) {
-                    fastexport_bypass_raw_ff              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ff"            );
+                if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ff" )) {
+                    fastexport_bypass_raw_ff = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ff" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_icm_input"                )) {
-                    fastexport_icm_input                  = keyFile.get_string  ("Fast Export", "fastexport_icm_input"                );
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_input" )) {
+                    fastexport_icm_input = keyFile.get_string ("Fast Export", "fastexport_icm_input" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_icm_working"              )) {
-                    fastexport_icm_working                = keyFile.get_string  ("Fast Export", "fastexport_icm_working"              );
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_working" )) {
+                    fastexport_icm_working = keyFile.get_string ("Fast Export", "fastexport_icm_working" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_icm_output"               )) {
-                    fastexport_icm_output                 = keyFile.get_string  ("Fast Export", "fastexport_icm_output"               );
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_output" )) {
+                    fastexport_icm_output = keyFile.get_string ("Fast Export", "fastexport_icm_output" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_icm_output_intent"        )) {
-                    fastexport_icm_outputIntent           = static_cast<rtengine::RenderingIntent> (keyFile.get_integer  ("Fast Export", "fastexport_icm_output_intent"        ));
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_output_intent" )) {
+                    fastexport_icm_outputIntent = static_cast<rtengine::RenderingIntent> (keyFile.get_integer ("Fast Export", "fastexport_icm_output_intent" ));
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_icm_output_bpc"        )) {
-                    fastexport_icm_outputBPC              = keyFile.get_boolean ("Fast Export", "fastexport_icm_output_bpc"           );
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_output_bpc" )) {
+                    fastexport_icm_outputBPC = keyFile.get_boolean ("Fast Export", "fastexport_icm_output_bpc" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma"                )) {
-                    fastexport_icm_gamma                  = keyFile.get_string  ("Fast Export", "fastexport_icm_gamma"                );
+                if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma" )) {
+                    fastexport_icm_gamma = keyFile.get_string ("Fast Export", "fastexport_icm_gamma" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_resize_enabled"           )) {
-                    fastexport_resize_enabled             = keyFile.get_boolean ("Fast Export", "fastexport_resize_enabled"           );
+                if (keyFile.has_key ("Fast Export", "fastexport_resize_enabled" )) {
+                    fastexport_resize_enabled = keyFile.get_boolean ("Fast Export", "fastexport_resize_enabled" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_resize_scale"             )) {
-                    fastexport_resize_scale               = keyFile.get_double  ("Fast Export", "fastexport_resize_scale"             );
+                if (keyFile.has_key ("Fast Export", "fastexport_resize_scale" )) {
+                    fastexport_resize_scale = keyFile.get_double ("Fast Export", "fastexport_resize_scale" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_resize_appliesTo"         )) {
-                    fastexport_resize_appliesTo           = keyFile.get_string  ("Fast Export", "fastexport_resize_appliesTo"         );
+                if (keyFile.has_key ("Fast Export", "fastexport_resize_appliesTo" )) {
+                    fastexport_resize_appliesTo = keyFile.get_string ("Fast Export", "fastexport_resize_appliesTo" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_resize_method"            )) {
-                    fastexport_resize_method              = keyFile.get_string  ("Fast Export", "fastexport_resize_method"            );
+                if (keyFile.has_key ("Fast Export", "fastexport_resize_method" )) {
+                    fastexport_resize_method = keyFile.get_string ("Fast Export", "fastexport_resize_method" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_resize_dataspec"          )) {
-                    fastexport_resize_dataspec            = keyFile.get_integer ("Fast Export", "fastexport_resize_dataspec"          );
+                if (keyFile.has_key ("Fast Export", "fastexport_resize_dataspec" )) {
+                    fastexport_resize_dataspec = keyFile.get_integer ("Fast Export", "fastexport_resize_dataspec" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_resize_width"             )) {
-                    fastexport_resize_width               = keyFile.get_integer ("Fast Export", "fastexport_resize_width"             );
+                if (keyFile.has_key ("Fast Export", "fastexport_resize_width" )) {
+                    fastexport_resize_width = keyFile.get_integer ("Fast Export", "fastexport_resize_width" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            )) {
-                    fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
+                if (keyFile.has_key ("Fast Export", "fastexport_resize_height" )) {
+                    fastexport_resize_height = keyFile.get_integer ("Fast Export", "fastexport_resize_height" );
                 }
 
-                if (keyFile.has_key ("Fast Export", "fastexport_use_fast_pipeline"            )) {
-                    fastexport_use_fast_pipeline           = keyFile.get_integer ("Fast Export", "fastexport_use_fast_pipeline"            );
+                if (keyFile.has_key ("Fast Export", "fastexport_use_fast_pipeline" )) {
+                    fastexport_use_fast_pipeline = keyFile.get_integer ("Fast Export", "fastexport_use_fast_pipeline" );
                 }
             }
 
@@ -1982,15 +1984,15 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
         keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
-        keyFile.set_double ("General", "BotLeft", rtSettings.bot_left);
-        keyFile.set_double ("General", "TopLeft", rtSettings.top_left);
-        keyFile.set_double ("General", "TopRight", rtSettings.top_right);
-        keyFile.set_double ("General", "BotRight", rtSettings.bot_right);
-        keyFile.set_double ("General", "EDdetec", rtSettings.ed_detec);
-        keyFile.set_double ("General", "EDdetecStr", rtSettings.ed_detecStr);
-        keyFile.set_double ("General", "EDLow", rtSettings.ed_low);
-        keyFile.set_double ("General", "EDLipinfl", rtSettings.ed_lipinfl);
-        keyFile.set_double ("General", "EDLipampl", rtSettings.ed_lipampl);
+        keyFile.set_double  ("General", "BotLeft", rtSettings.bot_left);
+        keyFile.set_double  ("General", "TopLeft", rtSettings.top_left);
+        keyFile.set_double  ("General", "TopRight", rtSettings.top_right);
+        keyFile.set_double  ("General", "BotRight", rtSettings.bot_right);
+        keyFile.set_double  ("General", "EDdetec", rtSettings.ed_detec);
+        keyFile.set_double  ("General", "EDdetecStr", rtSettings.ed_detecStr);
+        keyFile.set_double  ("General", "EDLow", rtSettings.ed_low);
+        keyFile.set_double  ("General", "EDLipinfl", rtSettings.ed_lipinfl);
+        keyFile.set_double  ("General", "EDLipampl", rtSettings.ed_lipampl);
 
         keyFile.set_integer ("General", "Nspot", rtSettings.nspot);
         keyFile.set_boolean ("General", "Locdelay", rtSettings.locdelay);
@@ -2191,8 +2193,8 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
         keyFile.set_integer ("Color Management", "Intent", rtSettings.monitorIntent);
         keyFile.set_boolean ("Color Management", "MonitorBPC", rtSettings.monitorBPC);
-        keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
-        keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
+        //keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
+        //keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
         keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
 
         keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
@@ -2207,7 +2209,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
         keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
         keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
-//   keyFile.set_boolean ("Color Management", "BWcomplement", rtSettings.bw_complementary);
+        //keyFile.set_boolean ("Color Management", "BWcomplement", rtSettings.bw_complementary);
         keyFile.set_boolean ("Color Management", "Ciecamfloat", rtSettings.ciecamfloat);
         keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
         keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
@@ -2215,13 +2217,13 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
         keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
         keyFile.set_integer ("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);
-//    keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
-        keyFile.set_double ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
-        keyFile.set_double ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
-        keyFile.set_double ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
-//   keyFile.set_double ("Color Management", "Colortoningab", rtSettings.colortoningab);
-//    keyFile.set_double ("Color Management", "Decaction", rtSettings.decaction);
-        keyFile.set_string ("Color Management", "ClutsDirectory", clutsDir);
+        //keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
+        keyFile.set_double  ("Color Management", "CBDLArtif", rtSettings.artifact_cbdl);
+        keyFile.set_double  ("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
+        keyFile.set_double  ("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
+        //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
+        //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);
+        keyFile.set_string  ("Color Management", "ClutsDirectory", clutsDir);
 
 
         Glib::ArrayHandle<int> bab = baBehav;
@@ -2233,20 +2235,20 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
 
 
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpening", fastexport_bypass_sharpening        );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenEdge", fastexport_bypass_sharpenEdge       );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenMicro", fastexport_bypass_sharpenMicro      );
-        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"      , fastexport_bypass_lumaDenoise       );
-        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise"     , fastexport_bypass_colorDenoise      );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_defringe", fastexport_bypass_defringe          );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise", fastexport_bypass_dirpyrDenoise     );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq", fastexport_bypass_sh_hq             );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer", fastexport_bypass_dirpyrequalizer   );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_wavelet", fastexport_bypass_wavelet   );
-        keyFile.set_string  ("Fast Export", "fastexport_raw_bayer_method", fastexport_raw_bayer_method         );
-        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_bayer_raw_all_enhance"   , fastexport_bypass_raw_bayer_all_enhance     );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations", fastexport_bypass_raw_bayer_dcb_iterations  );
-        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance", fastexport_bypass_raw_bayer_dcb_enhance     );
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpening", fastexport_bypass_sharpening);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenEdge", fastexport_bypass_sharpenEdge);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenMicro", fastexport_bypass_sharpenMicro);
+        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise" , fastexport_bypass_lumaDenoise);
+        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise" , fastexport_bypass_colorDenoise);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_defringe", fastexport_bypass_defringe);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise", fastexport_bypass_dirpyrDenoise);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq", fastexport_bypass_sh_hq);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer", fastexport_bypass_dirpyrequalizer);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_wavelet", fastexport_bypass_wavelet);
+        keyFile.set_string  ("Fast Export", "fastexport_raw_bayer_method", fastexport_raw_bayer_method);
+        //keyFile.set_boolean ("Fast Export", "fastexport_bypass_bayer_raw_all_enhance" , fastexport_bypass_raw_bayer_all_enhance);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_iterations", fastexport_bypass_raw_bayer_dcb_iterations);
+        keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_dcb_enhance", fastexport_bypass_raw_bayer_dcb_enhance);
         keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_lmmse_iterations", fastexport_bypass_raw_bayer_lmmse_iterations);
         keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_linenoise", fastexport_bypass_raw_bayer_linenoise       );
         keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_bayer_greenthresh", fastexport_bypass_raw_bayer_greenthresh     );

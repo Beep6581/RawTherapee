@@ -590,7 +590,9 @@ enum ProcEvent {
     Evlocallabshcompr = 560,
     Evlocallabsensiex = 561,
     Evlocallabshape = 562,
-
+    EvCATtempout = 563,
+    EvCATgreenout = 564,
+    EvCATybout = 565,
 
     NUMOFEVENTS
 

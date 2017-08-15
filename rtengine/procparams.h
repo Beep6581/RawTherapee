@@ -619,6 +619,10 @@ public:
     //      bool          badpix;
     bool          datacie;
     bool          tonecie;
+    int tempout;
+    int ybout;
+    double greenout;
+
     //      bool          sharpcie;
 };
 
