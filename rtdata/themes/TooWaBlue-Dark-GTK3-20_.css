@@ -43,7 +43,7 @@
 
 @define-color bg-light-grey rgb(75,75,75);
 @define-color bg-grey rgb(58,58,58);
-@define-color bg-dark-grey rgb(36,36,36);
+@define-color bg-dark-grey rgb(30,30,30);
 
 @define-color bg-button-hover rgba(0,0,0,.3);
 @define-color bg-button-active rgba(0,0,0,.7);
@@ -66,4 +66,7 @@
 @define-color headline-big rgb(187,187,187);
 @define-color headline-hl rgb(215,215,215);
 @define-color headline-frame rgb(210,210,210);
+/*** New Color Variable v2.53 ************************************************************************/
+@define-color fg-disabled rgb(128,128,128);
+@define-color bg-tb-spinbutton shade(@bg-grey, 1.35);
 /***********************************************************************************************/

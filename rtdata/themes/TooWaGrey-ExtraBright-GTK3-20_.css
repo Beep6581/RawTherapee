@@ -25,48 +25,48 @@
 
 /*** Change me *** rgb(red,green,blue) *** allowed values from 0 to 255 for each color ***/
 
-@define-color accent-color rgb(43,119,196);              /*** Active color for Lists, Menu, Borders ... * Default: rgb(35,99,166) ***/
+@define-color accent-color rgb(110,110,110);              /*** Active color for Lists, Menu, Borders ... * Default: rgb(35,99,166) ***/
 @define-color text-hl-color rgb(255,255,255);           /*** Active text color * Default: rgb(210,210,210) ***/
 
-@define-color bg-highlighted-text-color rgb(43,119,196); /*** Highlighted text color background* Default: rgb(35,99,166) ***/
+@define-color bg-highlighted-text-color rgb(49,132,220); /*** Highlighted text color background* Default: rgb(35,99,166) ***/
 @define-color highlighted-text-color rgb(255,255,255);  /*** Highlighted text color * Default: rgb(210,210,210) ***/
 
-@define-color bg-image rgb(95,95,95);                   /*** Image area & File Browser background * Default: rgb(70,70,70) ***/
+@define-color bg-image rgb(120,120,120);                   /*** Image area & File Browser background * Default: rgb(70,70,70) ***/
 
-@define-color accent-color2 rgb(43,119,196);             /*** Scale, Progressbar, Scrollbar, Tabs * Default: rgb(35,99,166) ***/
-@define-color accent-color4 rgb(135,135,135);           /*** Slider knob * Default: rgb(115,115,115) ***/
+@define-color accent-color2 rgb(49,132,220);             /*** Scale, Progressbar, Scrollbar, Tabs * Default: rgb(35,99,166) ***/
+@define-color accent-color4 rgb(155,155,155);           /*** Slider knob * Default: rgb(115,115,115) ***/
 
-@define-color accent-color3 rgb(43,119,196);             /*** Selected thumbnail background color * Default: rgb(35,99,166) ***/
-@define-color text-hl-color3 rgb(255,255,255);          /*** Selected thumbnail text color * Default: rgb(210,210,210) ***/
+@define-color accent-color3 rgb(85,85,85);             /*** Selected thumbnail background color * Default: rgb(35,99,166) ***/
+@define-color text-hl-color3 rgb(230,230,230);          /*** Selected thumbnail text color * Default: rgb(210,210,210) ***/
 
 /*** Change me end *****************************************************************************/
 
-@define-color bg-light-grey rgb(115,115,115);
-@define-color bg-grey rgb(95,95,95);
-@define-color bg-dark-grey rgb(55,55,55);
+@define-color bg-light-grey rgb(135,135,135);
+@define-color bg-grey rgb(120,120,120);
+@define-color bg-dark-grey rgb(85,85,85);
 
-@define-color bg-button-hover rgba(0,0,0,.25);
-@define-color bg-button-active rgba(0,0,0,.60);
+@define-color bg-button-hover rgba(0,0,0,.15);
+@define-color bg-button-active rgba(0,0,0,.5);
 
 @define-color winHeaderbar rgb(75,75,75);
 @define-color winTitle rgb(210,210,210);
 
 @define-color bg-tooltip rgb(210,210,210);
-@define-color border-tooltip rgb(36,36,36);
-@define-color text-tooltip rgb(36,36,36);
+@define-color border-tooltip rgb(50,50,50);
+@define-color text-tooltip rgb(50,50,50);
 /***********************************************/
-@define-color text-color rgb(210,210,210);
-@define-color text-tbEntry rgb(230,230,230);
+@define-color text-color rgb(230,230,230);
+@define-color text-tbEntry rgb(245,245,245);
 @define-color border-color rgba(255,255,255,.35);
-@define-color bg-list-hover rgb(68,68,68);
+@define-color bg-list-hover rgb(95,95,95);
 @define-color bg-scale-entry rgba(0,0,0,.14);
-@define-color bg-button-border rgba(0,0,0,.5);
+@define-color bg-button-border rgba(0,0,0,.45);
 @define-color bg-entry-border rgba(0,0,0,.40);
 @define-color view-grid-border rgba(255,255,255,0.25);
 @define-color headline-big rgb(210,210,210);
 @define-color headline-hl rgb(255,255,255);
 @define-color headline-frame rgb(245,245,245);
 /*** New Color Variable v2.53 ************************************************************************/
-@define-color fg-disabled rgb(145,145,145);
-@define-color bg-tb-spinbutton shade(@bg-grey, 1.3);
+@define-color fg-disabled rgb(180,180,180);
+@define-color bg-tb-spinbutton shade(@bg-grey, 1.20);
 /***********************************************************************************************/
