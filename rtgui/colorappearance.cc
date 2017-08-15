@@ -27,6 +27,9 @@
 #define MINGREEN0 0.8
 #define MAXGREEN0 1.2
 
+#define MINLA0 0.01  
+#define MAXLA0 16384 
+#define CENTERLA0 500
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -58,6 +61,90 @@ static double wbSlider2Temp (double sval)
 
     return temp;
 }
+
+static double wbSlider2la (double sval)
+{
+
+    // slider range: 0 - 10000
+    double la;
+
+    if (sval <= 500) {
+        // linear below center-temp
+        la= MINLA0 + (sval / 500.0) * (CENTERLA0 - MINLA0);
+    } else {
+        const double slope = (double) (CENTERLA0 - MINLA0) / (MAXLA0 - CENTERLA0);
+        double x = (sval - 500) / 500; // x 0..1
+        double y = x * slope + (1.0 - slope) * pow (x, 4.0);
+        //double y = pow(x, 4.0);
+        la = CENTERLA0 + y * (MAXLA0 - CENTERLA0);
+    }
+
+    if (la < MINLA0) {
+        la = MINLA0;
+    }
+
+    if (la > MAXLA0) {
+        la = MAXLA0;
+    }
+
+    return la;
+}
+
+static double wbla2Slider (double la)
+{
+
+    double sval;
+
+    if (la <= CENTERLA0) {
+        sval = ((la - MINLA0) / (CENTERLA0 - MINLA0)) * 500.0;
+    } else {
+        const double slope = (double) (CENTERLA0 - MINLA0) / (MAXLA0 - CENTERLA0);
+        const double y = (la - CENTERLA0) / (MAXLA0 - CENTERLA0);
+        double x = pow (y, 0.25); // rough guess of x, will be a little lower
+        double k = 0.1;
+        bool add = true;
+
+        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
+        // from tests, worst case is about 20 iterations, ie no problem
+        for (;;) {
+            double y1 = x * slope + (1.0 - slope) * pow (x, 4.0);
+
+            if (500 * fabs (y1 - y) < 0.1) {
+                break;
+            }
+
+            if (y1 < y) {
+                if (!add) {
+                    k /= 2;
+                }
+
+                x += k;
+                add = true;
+            } else {
+                if (add) {
+                    k /= 2;
+                }
+
+                x -= k;
+                add = false;
+            }
+        }
+
+        sval = 500.0 + x * 500.0;
+    }
+
+    if (sval < 0) {
+        sval = 0;
+    }
+
+    if (sval > 16384.) {
+        sval = 16384.;
+    }
+
+    return sval;
+}
+
+
 
 static double wbTemp2Slider (double temp)
 {
@@ -197,7 +284,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p1VBox->pack_start (*greensc);
 	
 	
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), 0.001, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
+ //   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adapscen->delay < options.adjusterMaxDelay) {
         adapscen->delay = options.adjusterMaxDelay;
@@ -486,8 +574,13 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
     p3VBox = Gtk::manage ( new Gtk::VBox());
     p3VBox->set_spacing (2);
-
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  16384., 0.1,   16.));
+	
+    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+ //   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  16384., 0.1,   16.));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adaplum->delay < options.adjusterMaxDelay) {
         adaplum->delay = options.adjusterMaxDelay;
@@ -510,12 +603,12 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     degreeout->addAutoButton (M ("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
     degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
     p3VBox->pack_start (*degreeout);
-
+/*
     Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
     Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
     Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
     Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
-	
+*/	
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
     ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 90, 1, 18));
