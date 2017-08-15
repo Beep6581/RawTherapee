@@ -767,7 +767,7 @@ unsigned int FramesData::getFrameCount () const
 }
 FrameData *FramesData::getFrameData (int frame) const
 {
-    return frames.at(frame);
+    return frames.empty() ? nullptr : frames.at(frame);
 }
 
 bool FramesData::getPixelShift (unsigned int frame) const
@@ -778,7 +778,7 @@ bool FramesData::getPixelShift (unsigned int frame) const
     // to evolve
 
     //return frames.at(frame)->getPixelShift ();
-    return frames.at(0)->getPixelShift ();
+    return frames.empty() ? false : frames.at(0)->getPixelShift ();
 }
 bool FramesData::getHDR (unsigned int frame) const
 {
@@ -788,91 +788,97 @@ bool FramesData::getHDR (unsigned int frame) const
     // to evolve
 
     //return frames.at(frame)->getHDR ();
-    if (frames.size()) {
-        return frames.at(0)->getHDR ();
-    } else {
-        return 0;
-    }
+    return frames.empty() ? false : frames.at(0)->getHDR ();
 }
 
 IIOSampleFormat FramesData::getSampleFormat (unsigned int frame) const
 {
-    return frames.at(frame)->getSampleFormat ();
+    return frames.empty() ? IIOSF_UNKNOWN : frames.at(frame)->getSampleFormat ();
 }
 
 rtexif::TagDirectory* FramesData::getExifData (unsigned int frame) const
 {
-    return frames.at(frame)->getExifData ();
+    return frames.empty() ? nullptr : frames.at(frame)->getExifData ();
 }
 procparams::IPTCPairs FramesData::getIPTCData (unsigned int frame) const
 {
-    return frames.at(frame)->getIPTCData ();
+    if (frames.empty()) {
+        procparams::IPTCPairs emptyPairs;
+        return emptyPairs;
+    } else {
+        return frames.at(frame)->getIPTCData ();
+    }
 }
 
 bool FramesData::hasExif (unsigned int frame) const
 {
-    return frames.at(frame)->hasExif ();
+    return frames.empty() ? false : frames.at(frame)->hasExif ();
 }
 bool FramesData::hasIPTC (unsigned int frame) const
 {
-    return frames.at(frame)->hasIPTC ();
+    return frames.empty() ?  false : frames.at(frame)->hasIPTC ();
 }
 
 tm FramesData::getDateTime (unsigned int frame) const
 {
-    return frames.at(frame)->getDateTime ();
+    if (frames.empty()) {
+        tm emptytm = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        return emptytm;
+    } else {
+        return frames.at(frame)->getDateTime ();
+    }
 }
 time_t FramesData::getDateTimeAsTS(unsigned int frame) const
 {
-    return frames.at(frame)->getDateTimeAsTS ();
+     return frames.empty() ? 0 : frames.at(frame)->getDateTimeAsTS ();
 }
 int FramesData::getISOSpeed (unsigned int frame) const
 {
-    return frames.at(frame)->getISOSpeed ();
+    return frames.empty() ? 0 : frames.at(frame)->getISOSpeed ();
 }
 double FramesData::getFNumber  (unsigned int frame) const
 {
-    return frames.at(frame)->getFNumber ();
+    return frames.empty() ? 0. : frames.at(frame)->getFNumber ();
 }
 double FramesData::getFocalLen (unsigned int frame) const
 {
-    return frames.at(frame)->getFocalLen ();
+    return frames.empty() ? 0. : frames.at(frame)->getFocalLen ();
 }
 double FramesData::getFocalLen35mm (unsigned int frame) const
 {
-    return frames.at(frame)->getFocalLen35mm ();
+    return frames.empty() ? 0. : frames.at(frame)->getFocalLen35mm ();
 }
 float FramesData::getFocusDist (unsigned int frame) const
 {
-    return frames.at(frame)->getFocusDist ();
+    return frames.empty() ? 0.f : frames.at(frame)->getFocusDist ();
 }
 double FramesData::getShutterSpeed (unsigned int frame) const
 {
-    return frames.at(frame)->getShutterSpeed ();
+    return frames.empty() ? 0. : frames.at(frame)->getShutterSpeed ();
 }
 double FramesData::getExpComp  (unsigned int frame) const
 {
-    return frames.at(frame)->getExpComp ();
+    return frames.empty() ? 0. : frames.at(frame)->getExpComp ();
 }
 std::string FramesData::getMake     (unsigned int frame) const
 {
-    return frames.at(frame)->getMake ();
+    return frames.empty() ? std::string() : frames.at(frame)->getMake ();
 }
 std::string FramesData::getModel    (unsigned int frame) const
 {
-    return frames.at(frame)->getModel ();
+    return frames.empty() ? std::string() : frames.at(frame)->getModel ();
 }
 std::string FramesData::getLens     (unsigned int frame) const
 {
-    return frames.at(frame)->getLens ();
+    return frames.empty() ? std::string() : frames.at(frame)->getLens ();
 }
 std::string FramesData::getSerialNumber (unsigned int frame) const
 {
-    return frames.at(frame)->getSerialNumber ();
+    return frames.empty() ? std::string() : frames.at(frame)->getSerialNumber ();
 }
 std::string FramesData::getOrientation (unsigned int frame) const
 {
-    return frames.at(frame)->getOrientation ();
+    return frames.empty() ? std::string() : frames.at(frame)->getOrientation ();
 }
 
 
