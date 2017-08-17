@@ -40,6 +40,7 @@ public:
     Gtk::CheckButton* meta;
     Gtk::CheckButton* raw;
     Gtk::CheckButton* wav;
+    Gtk::CheckButton* loc;
 
     // options in basic:
     Gtk::CheckButton* wb;
@@ -51,7 +52,6 @@ public:
     Gtk::CheckButton* gradient;
     Gtk::CheckButton* labcurve;
     Gtk::CheckButton* colorappearance;
-//   Gtk::CheckButton* locallab;
 
     // options in detail:
     Gtk::CheckButton* sharpen;
@@ -66,6 +66,9 @@ public:
     // options in wavelet
     Gtk::CheckButton* wavelet;
 
+    // options in loc
+	Gtk::CheckButton* locallab;
+	
     // options in color:
     Gtk::CheckButton* icm;
     Gtk::CheckButton* vibrance;
@@ -122,9 +125,9 @@ public:
     Gtk::CheckButton* ff_BlurType;
     Gtk::CheckButton* ff_ClipControl;
 
-    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, wavConn;
+    sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaConn, rawConn, wavConn, locConn;
 
-    sigc::connection wbConn, exposureConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn; // locallabConn;
+    sigc::connection wbConn, exposureConn, shConn, pcvignetteConn, gradientConn, labcurveConn, colorappearanceConn, locallabConn;
     sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, defringeConn, epdConn, dirpyreqConn, waveletConn, retinexConn;
     sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn, chmixerbwConn, colortoningConn, filmSimulationConn;
     sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
@@ -147,6 +150,8 @@ public:
     void metaToggled ();
     void rawToggled ();
     void wavToggled ();
+    void locToggled ();
+	
 };
 
 #endif

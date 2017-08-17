@@ -45,6 +45,8 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw         ->set_name ("PartialPasteHeader");
     wav         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_WAVELETGROUP")));
     wav         ->set_name ("PartialPasteHeader");
+    loc			= Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LOCGROUP")));
+    loc         ->set_name ("PartialPasteHeader");
 
     // options in basic:
     wb          = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_WHITEBALANCE")));
@@ -55,7 +57,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     pcvignette  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_PCVIGNETTE")));
     gradient    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_GRADIENT")));
     labcurve    = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LABCURVE")));
-//    locallab  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LOCALLAB")));
     colorappearance = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_COLORAPP")));
 
     // options in detail:
@@ -68,7 +69,9 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     // options in wavelet:
     wavelet     = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_EQUALIZER"))); //TODO - rename to wavelet
-
+    // options in loc:
+    locallab  = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_LOCALLAB")));
+	
     // options in color:
     icm         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_ICMSETTINGS")));
     //gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
@@ -127,10 +130,10 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     ff_BlurType         = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FLATFIELDBLURTYPE")));
     ff_ClipControl      = Gtk::manage (new Gtk::CheckButton (M ("PARTIALPASTE_FLATFIELDCLIPCONTROL")));
 
-    Gtk::VBox* vboxes[8];
-    Gtk::HSeparator* hseps[8];
+    Gtk::VBox* vboxes[9];
+    Gtk::HSeparator* hseps[9];
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
         vboxes[i] = Gtk::manage (new Gtk::VBox ());
         vboxes[i]->set_name ("PartialPasteGroupContainer");
         hseps[i] = Gtk::manage (new Gtk::HSeparator ());
@@ -148,7 +151,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[0]->pack_start (*pcvignette, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*gradient, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*labcurve, Gtk::PACK_SHRINK, 2);
-//   vboxes[0]->pack_start (*locallab, Gtk::PACK_SHRINK, 2);
+//	vboxes[0]->pack_start (*locallab, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*colorappearance, Gtk::PACK_SHRINK, 2);
 
     //DETAIL
@@ -199,44 +202,49 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[5]->pack_start (*hseps[5], Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*wavelet, Gtk::PACK_SHRINK, 2);
 
-    //RAW
-    vboxes[6]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
+    //LOC
+    vboxes[6]->pack_start (*loc, Gtk::PACK_SHRINK, 2);
     vboxes[6]->pack_start (*hseps[6], Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_method, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_imagenum, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_pixelshift, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_lmmse_iterations, Gtk::PACK_SHRINK, 2);
+    vboxes[6]->pack_start (*locallab, Gtk::PACK_SHRINK, 2);
+	
+    //RAW
+    vboxes[7]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*hseps[7], Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_method, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_imagenum, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_pixelshift, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_lmmse_iterations, Gtk::PACK_SHRINK, 2);
     //vboxes[6]->pack_start (*raw_all_enhance, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
-    vboxes[6]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_hotpix_filt, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_deadpix_filt, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
-    vboxes[6]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_preser, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_black, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
-    vboxes[6]->pack_start (*df_file, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*df_AutoSelect, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
-    vboxes[6]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
-    vboxes[6]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
-    vboxes[6]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[7]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_hotpix_filt, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_deadpix_filt, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[7]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_preser, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_black, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[7]->pack_start (*df_file, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*df_AutoSelect, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[7]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[7]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
+    vboxes[7]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
 
     //META
-    vboxes[7]->pack_start (*meta, Gtk::PACK_SHRINK, 2);
-    vboxes[7]->pack_start (*hseps[7], Gtk::PACK_SHRINK, 2);
-    vboxes[7]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
-    vboxes[7]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*meta, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*hseps[8], Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
 
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
     Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
@@ -246,11 +254,11 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
         vbCol1->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
 
-    for (int i = 3; i < 6; i++) {
+    for (int i = 3; i < 7; i++) {
         vbCol2->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
 
-    for (int i = 6; i < 8; i++) {
+    for (int i = 7; i < 9; i++) {
         vbCol3->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
 
@@ -295,6 +303,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     metaConn        = meta->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::metaToggled));
     rawConn         = raw->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::rawToggled));
     wavConn         = wav->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::wavToggled));
+    locConn         = loc->signal_toggled().connect (sigc::mem_fun (*this, &PartialPasteDlg::locToggled));
 
     wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
@@ -304,7 +313,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
     gradientConn    = gradient->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
-//   locallabConn     = locallab->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
     colorappearanceConn = colorappearance->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
 
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
@@ -316,6 +324,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun (*detail, &Gtk::CheckButton::set_inconsistent), true));
 
     waveletConn = wavelet->signal_toggled().connect (sigc::bind (sigc::mem_fun (*wav, &Gtk::CheckButton::set_inconsistent), true));
+	locallabConn     = locallab->signal_toggled().connect (sigc::bind (sigc::mem_fun (*basic, &Gtk::CheckButton::set_inconsistent), true));
 
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun (*color, &Gtk::CheckButton::set_inconsistent), true));
     //gamcsconn      = gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -387,6 +396,7 @@ void PartialPasteDlg::everythingToggled ()
     metaConn.block (true);
     rawConn.block (true);
     wavConn.block (true);
+    locConn.block (true);
 
     everything->set_inconsistent (false);
 
@@ -399,6 +409,7 @@ void PartialPasteDlg::everythingToggled ()
     meta->set_active (everything->get_active());
     raw->set_active (everything->get_active());
     wav->set_active (everything->get_active());
+    loc->set_active (everything->get_active());
 
     //toggle group children
     PartialPasteDlg::basicToggled ();
@@ -409,6 +420,7 @@ void PartialPasteDlg::everythingToggled ()
     PartialPasteDlg::metaToggled ();
     PartialPasteDlg::rawToggled ();
     PartialPasteDlg::wavToggled ();
+    PartialPasteDlg::locToggled ();
 
     basicConn.block (false);
     detailConn.block (false);
@@ -418,6 +430,7 @@ void PartialPasteDlg::everythingToggled ()
     metaConn.block (false);
     rawConn.block (false);
     wavConn.block (false);
+    locConn.block (false);
 }
 
 void PartialPasteDlg::rawToggled ()
@@ -512,7 +525,7 @@ void PartialPasteDlg::basicToggled ()
     gradientConn.block (true);
     labcurveConn.block (true);
     colorappearanceConn.block (true);
-    //  locallabConn.block (true);
+    locallabConn.block (true);
     retinexConn.block (true);
 
     basic->set_inconsistent (false);
@@ -526,7 +539,7 @@ void PartialPasteDlg::basicToggled ()
     retinex->set_active (basic->get_active ());
     labcurve->set_active (basic->get_active ());
     colorappearance->set_active (basic->get_active ());
-    //  locallab->set_active (basic->get_active ());
+    locallab->set_active (basic->get_active ());
 
     wbConn.block (false);
     exposureConn.block (false);
@@ -537,7 +550,7 @@ void PartialPasteDlg::basicToggled ()
     retinexConn.block (false);
 
     labcurveConn.block (false);
-//   locallabConn.block (false);
+	locallabConn.block (false);
     colorappearanceConn.block (false);
 }
 
@@ -581,6 +594,18 @@ void PartialPasteDlg::wavToggled ()
 
     waveletConn.block (false);
 }
+
+void PartialPasteDlg::locToggled ()
+{
+
+    locallabConn.block (true);
+
+    loc->set_inconsistent (false);
+    locallab->set_active (loc->get_active ());
+
+    locallabConn.block (false);
+}
+
 
 void PartialPasteDlg::colorToggled ()
 {
@@ -729,11 +754,11 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.gradient   = falsePE.gradient;
     }
 
-    /*
+    
         if (!locallab->get_active ()) {
             filterPE.locallab   = falsePE.locallab;
         }
-    */
+    
     if (!labcurve->get_active ()) {
         filterPE.labCurve   = falsePE.labCurve;
     }
