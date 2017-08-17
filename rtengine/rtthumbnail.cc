@@ -42,83 +42,91 @@
 namespace
 {
 
-    bool checkRawImageThumb(const rtengine::RawImage& raw_image)
-    {
-        if (!raw_image.is_supportedThumb()) {
-            return false;
-        }
-
-        const ssize_t length =
-            fdata(raw_image.get_thumbOffset(), raw_image.get_file())[1] != 0xD8 && raw_image.is_ppmThumb()
-                ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
-                : raw_image.get_thumbLength();
-
-        return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
+bool checkRawImageThumb (const rtengine::RawImage& raw_image)
+{
+    if (!raw_image.is_supportedThumb()) {
+        return false;
     }
 
+    const ssize_t length =
+        fdata (raw_image.get_thumbOffset(), raw_image.get_file())[1] != 0xD8 && raw_image.is_ppmThumb()
+        ? raw_image.get_thumbWidth() * raw_image.get_thumbHeight() * (raw_image.get_thumbBPS() / 8) * 3
+        : raw_image.get_thumbLength();
 
-void scale_colors(rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
+    return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
+}
+
+
+void scale_colors (rtengine::RawImage *ri, float scale_mul[4], float cblack[4])
 {
     DCraw::dcrawImage_t image = ri->get_image();
-    if(ri->isBayer()) {
+
+    if (ri->isBayer()) {
         const int height = ri->get_iheight();
         const int width = ri->get_iwidth();
-        for(int row = 0; row < height; ++row) {
-            unsigned c0 = ri->FC(row,0);
-            unsigned c1 = ri->FC(row,1);
+
+        for (int row = 0; row < height; ++row) {
+            unsigned c0 = ri->FC (row, 0);
+            unsigned c1 = ri->FC (row, 1);
             int col = 0;
-            for(; col < width - 1; col += 2) {
+
+            for (; col < width - 1; col += 2) {
                 float val0 = image[row * width + col][c0];
                 float val1 = image[row * width + col + 1][c1];
                 val0 -= cblack[c0];
                 val1 -= cblack[c1];
                 val0 *= scale_mul[c0];
                 val1 *= scale_mul[c1];
-                image[row * width + col][c0] = rtengine::CLIP(val0);
-                image[row * width + col + 1][c1] = rtengine::CLIP(val1);
+                image[row * width + col][c0] = rtengine::CLIP (val0);
+                image[row * width + col + 1][c1] = rtengine::CLIP (val1);
             }
-            if(col < width) { // in case width is odd
+
+            if (col < width) { // in case width is odd
                 float val0 = image[row * width + col][c0];
                 val0 -= cblack[c0];
                 val0 *= scale_mul[c0];
-                image[row * width + col][c0] = rtengine::CLIP(val0);
+                image[row * width + col][c0] = rtengine::CLIP (val0);
             }
         }
-    } else if(ri->isXtrans()) {
+    } else if (ri->isXtrans()) {
         const int height = ri->get_iheight();
         const int width = ri->get_iwidth();
         unsigned c[6];
-        for(int row = 0; row < height; ++row) {
-            for(int i = 0; i < 6; ++i) {
-                c[i] = ri->XTRANSFC(row,i);
+
+        for (int row = 0; row < height; ++row) {
+            for (int i = 0; i < 6; ++i) {
+                c[i] = ri->XTRANSFC (row, i);
             }
 
             int col = 0;
-            for(; col < width - 5; col += 6) {
-                for(int i = 0; i < 6; ++i) {
+
+            for (; col < width - 5; col += 6) {
+                for (int i = 0; i < 6; ++i) {
                     const unsigned ccol = c[i];
                     float val = image[row * width + col + i][ccol];
                     val -= cblack[ccol];
                     val *= scale_mul[ccol];
-                    image[row * width + col + i][ccol] = rtengine::CLIP(val);
+                    image[row * width + col + i][ccol] = rtengine::CLIP (val);
                 }
             }
-            for(; col < width; ++col) { // remaining columns
-                const unsigned ccol = ri->XTRANSFC(row,col);
+
+            for (; col < width; ++col) { // remaining columns
+                const unsigned ccol = ri->XTRANSFC (row, col);
                 float val = image[row * width + col][ccol];
                 val -= cblack[ccol];
                 val *= scale_mul[ccol];
-                image[row * width + col][ccol] = rtengine::CLIP(val);
+                image[row * width + col][ccol] = rtengine::CLIP (val);
             }
         }
     } else {
         const int size = ri->get_iheight() * ri->get_iwidth();
+
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < 4; ++j) {
                 float val = image[i][j];
                 val -= cblack[j];
                 val *= scale_mul[j];
-                image[i][j] = rtengine::CLIP(val);
+                image[i][j] = rtengine::CLIP (val);
             }
         }
     }
@@ -137,7 +145,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     StdImageSource imgSrc;
 
-    if (imgSrc.load(fname)) {
+    if (imgSrc.load (fname)) {
         return nullptr;
     }
 
@@ -157,7 +165,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     tpp->defGain = 1.0;
     tpp->gammaCorrected = false;
     tpp->isRaw = 0;
-    memset (tpp->colorMatrix, 0, sizeof(tpp->colorMatrix));
+    memset (tpp->colorMatrix, 0, sizeof (tpp->colorMatrix));
     tpp->colorMatrix[0][0] = 1.0;
     tpp->colorMatrix[1][1] = 1.0;
     tpp->colorMatrix[2][2] = 1.0;
@@ -187,21 +195,21 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
         // we want an Image8
         if (img->getType() == rtengine::sImage8) {
             // copy the image
-            Image8 *srcImg = static_cast<Image8*>(img);
+            Image8 *srcImg = static_cast<Image8*> (img);
             Image8 *thImg = new Image8 (w, h);
-            srcImg->copyData(thImg);
+            srcImg->copyData (thImg);
             tpp->thumbImg = thImg;
         } else {
             // copy the image with a conversion
-            tpp->thumbImg = resizeTo<Image8>(w, h, TI_Bilinear, img);
+            tpp->thumbImg = resizeTo<Image8> (w, h, TI_Bilinear, img);
         }
     } else {
         // we want the same image type than the source file
-        tpp->thumbImg = resizeToSameType(w, h, TI_Bilinear, img);
+        tpp->thumbImg = resizeToSameType (w, h, TI_Bilinear, img);
 
         // histogram computation
         tpp->aeHistCompression = 3;
-        tpp->aeHistogram(65536 >> tpp->aeHistCompression);
+        tpp->aeHistogram (65536 >> tpp->aeHistCompression);
 
         double avg_r = 0;
         double avg_g = 0;
@@ -209,24 +217,24 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
         int n = 0;
 
         if (img->getType() == rtengine::sImage8) {
-            Image8 *image = static_cast<Image8*>(img);
-            image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+            Image8 *image = static_cast<Image8*> (img);
+            image->computeHistogramAutoWB (avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
         } else if (img->getType() == sImage16) {
-            Image16 *image = static_cast<Image16*>(img);
-            image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+            Image16 *image = static_cast<Image16*> (img);
+            image->computeHistogramAutoWB (avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
         } else if (img->getType() == sImagefloat) {
-            Imagefloat *image = static_cast<Imagefloat*>(img);
-            image->computeHistogramAutoWB(avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
+            Imagefloat *image = static_cast<Imagefloat*> (img);
+            image->computeHistogramAutoWB (avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
         } else {
-            printf("loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
+            printf ("loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
         }
 
         if (n > 0) {
             ColorTemp cTemp;
 
-            tpp->redAWBMul   = avg_r / double(n);
-            tpp->greenAWBMul = avg_g / double(n);
-            tpp->blueAWBMul  = avg_b / double(n);
+            tpp->redAWBMul   = avg_r / double (n);
+            tpp->greenAWBMul = avg_g / double (n);
+            tpp->blueAWBMul  = avg_b / double (n);
             tpp->wbEqual = wbEq;
             tpp->wbTempBias = 0.0;
 
@@ -241,11 +249,11 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
 Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
 {
-    RawImage *ri = new RawImage(fname);
+    RawImage *ri = new RawImage (fname);
     unsigned int imageNum = 0;
-    int r = ri->loadRaw(false, imageNum, false);
+    int r = ri->loadRaw (false, imageNum, false);
 
-    if( r ) {
+    if ( r ) {
         delete ri;
         return nullptr;
     }
@@ -257,25 +265,25 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     Image8* img = new Image8 ();
     // No sample format detection occurred earlier, so we set them here,
     // as they are mandatory for the setScanline method
-    img->setSampleFormat(IIOSF_UNSIGNED_CHAR);
-    img->setSampleArrangement(IIOSA_CHUNKY);
+    img->setSampleFormat (IIOSF_UNSIGNED_CHAR);
+    img->setSampleArrangement (IIOSA_CHUNKY);
 
     int err = 1;
 
     // See if it is something we support
-    if (checkRawImageThumb(*ri)) {
-        const char* data((const char*)fdata(ri->get_thumbOffset(), ri->get_file()));
+    if (checkRawImageThumb (*ri)) {
+        const char* data ((const char*)fdata (ri->get_thumbOffset(), ri->get_file()));
 
         if ( (unsigned char)data[1] == 0xd8 ) {
-            err = img->loadJPEGFromMemory(data, ri->get_thumbLength());
+            err = img->loadJPEGFromMemory (data, ri->get_thumbLength());
         } else if (ri->is_ppmThumb()) {
-            err = img->loadPPMFromMemory(data, ri->get_thumbWidth(), ri->get_thumbHeight(), ri->get_thumbSwap(), ri->get_thumbBPS());
+            err = img->loadPPMFromMemory (data, ri->get_thumbWidth(), ri->get_thumbHeight(), ri->get_thumbSwap(), ri->get_thumbBPS());
         }
     }
 
     // did we succeed?
     if ( err ) {
-        printf("Could not extract thumb from %s\n", fname.data());
+        printf ("Could not extract thumb from %s\n", fname.data());
         delete img;
         delete ri;
         return nullptr;
@@ -284,7 +292,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     Thumbnail* tpp = new Thumbnail ();
 
     tpp->isRaw = 1;
-    memset (tpp->colorMatrix, 0, sizeof(tpp->colorMatrix));
+    memset (tpp->colorMatrix, 0, sizeof (tpp->colorMatrix));
     tpp->colorMatrix[0][0] = 1.0;
     tpp->colorMatrix[1][1] = 1.0;
     tpp->colorMatrix[2][2] = 1.0;
@@ -312,21 +320,21 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     if (inspectorMode) {
         tpp->thumbImg = img;
     } else {
-        tpp->thumbImg = resizeTo<Image8>(w, h, TI_Nearest, img);
+        tpp->thumbImg = resizeTo<Image8> (w, h, TI_Nearest, img);
         delete img;
     }
 
     if (rotate && ri->get_rotateDegree() > 0) {
         std::string fname = ri->get_filename();
-        std::string suffix = fname.length() > 4 ? fname.substr(fname.length() - 3) : "";
+        std::string suffix = fname.length() > 4 ? fname.substr (fname.length() - 3) : "";
 
         for (unsigned int i = 0; i < suffix.length(); i++) {
-            suffix[i] = std::tolower(suffix[i]);
+            suffix[i] = std::tolower (suffix[i]);
         }
 
         // Leaf .mos, Mamiya .mef and Phase One .iiq files have thumbnails already rotated.
         if (suffix != "mos" && suffix != "mef" && suffix != "iiq")  {
-            tpp->thumbImg->rotate(ri->get_rotateDegree());
+            tpp->thumbImg->rotate (ri->get_rotateDegree());
             // width/height may have changed after rotating
             w = tpp->thumbImg->getWidth();
             h = tpp->thumbImg->getHeight();
@@ -356,12 +364,12 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     rml.ciffBase = -1;
     rml.ciffLength = -1;
 
-    RawImage ri(fname);
+    RawImage ri (fname);
     unsigned int imageNum = 0;
 
-    int r = ri.loadRaw(false, imageNum);
+    int r = ri.loadRaw (false, imageNum);
 
-    if( !r ) {
+    if ( !r ) {
         rml.exifBase = ri.get_exifBase();
         rml.ciffBase = ri.get_ciffBase();
         rml.ciffLength = ri.get_ciffLen();
@@ -375,9 +383,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
 
-    int r = ri->loadRaw(1, tempImageNum, 0);
+    int r = ri->loadRaw (1, tempImageNum, 0);
 
-    if( r ) {
+    if ( r ) {
         delete ri;
         return nullptr;
     }
@@ -392,18 +400,18 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->embProfileLength = ri->get_profileLen();
 
     if (ri->get_profileLen())
-        tpp->embProfile = cmsOpenProfileFromMem(ri->get_profile(),
-                                                ri->get_profileLen()); //\ TODO check if mutex is needed
+        tpp->embProfile = cmsOpenProfileFromMem (ri->get_profile(),
+                          ri->get_profileLen()); //\ TODO check if mutex is needed
 
-    tpp->redMultiplier = ri->get_pre_mul(0);
-    tpp->greenMultiplier = ri->get_pre_mul(1);
-    tpp->blueMultiplier = ri->get_pre_mul(2);
+    tpp->redMultiplier = ri->get_pre_mul (0);
+    tpp->greenMultiplier = ri->get_pre_mul (1);
+    tpp->blueMultiplier = ri->get_pre_mul (2);
 
     //ri->scale_colors();
     float pre_mul[4], scale_mul[4], cblack[4];
-    ri->get_colorsCoeff(pre_mul, scale_mul, cblack, false);
-    scale_colors(ri, scale_mul, cblack);
-    
+    ri->get_colorsCoeff (pre_mul, scale_mul, cblack, false);
+    scale_colors (ri, scale_mul, cblack);
+
     ri->pre_interpolate();
 
     rml.exifBase = ri->get_exifBase();
@@ -414,7 +422,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->camwbGreen = tpp->greenMultiplier / pre_mul[1]; //ri->get_pre_mul(1);
     tpp->camwbBlue = tpp->blueMultiplier / pre_mul[2]; //ri->get_pre_mul(2);
     //tpp->defGain = 1.0 / min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
-    tpp->defGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+    tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
 
     tpp->gammaCorrected = true;
 
@@ -422,8 +430,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     int firstgreen = 1;
 
     // locate first green location in the first row
-    if(ri->getSensorType() == ST_BAYER)
-        while (!FISGREEN(filter, 1, firstgreen) && firstgreen < 3) {
+    if (ri->getSensorType() == ST_BAYER)
+        while (!FISGREEN (filter, 1, firstgreen) && firstgreen < 3) {
             firstgreen++;
         }
 
@@ -431,9 +439,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     if (ri->get_FujiWidth() != 0) {
         if (fixwh == 1) { // fix height, scale width
-            skip = ((ri->get_height() - ri->get_FujiWidth()) / sqrt(0.5) - firstgreen - 1) / h;
+            skip = ((ri->get_height() - ri->get_FujiWidth()) / sqrt (0.5) - firstgreen - 1) / h;
         } else {
-            skip = (ri->get_FujiWidth() / sqrt(0.5) - firstgreen - 1) / w;
+            skip = (ri->get_FujiWidth() / sqrt (0.5) - firstgreen - 1) / w;
         }
     } else {
         if (fixwh == 1) { // fix height, scale width
@@ -453,7 +461,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     int hskip = skip, vskip = skip;
 
-    if (!ri->get_model().compare("D1X")) {
+    if (!ri->get_model().compare ("D1X")) {
         hskip *= 2;
     }
 
@@ -463,7 +471,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     DCraw::dcrawImage_t image = ri->get_image();
 
-    Imagefloat* tmpImg = new Imagefloat(tmpw, tmph);
+    Imagefloat* tmpImg = new Imagefloat (tmpw, tmph);
 
     if (ri->getSensorType() == ST_BAYER) {
         // demosaicing! (sort of)
@@ -475,7 +483,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
                 int g = image[ofs][1];
                 int r, b;
 
-                if (FISRED(filter, row, col + 1)) {
+                if (FISRED (filter, row, col + 1)) {
                     r = (image[ofs + 1    ][0] + image[ofs - 1    ][0]) >> 1;
                     b = (image[ofs + width][2] + image[ofs - width][2]) >> 1;
                 } else {
@@ -483,9 +491,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
                     r = (image[ofs + width][0] + image[ofs - width][0]) >> 1;
                 }
 
-                tmpImg->r(y, x) = r;
-                tmpImg->g(y, x) = g;
-                tmpImg->b(y, x) = b;
+                tmpImg->r (y, x) = r;
+                tmpImg->g (y, x) = g;
+                tmpImg->b (y, x) = b;
             }
         }
     } else if (ri->get_colors() == 1) {
@@ -495,45 +503,45 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
             for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col
                     += hskip, x++) {
                 int ofs = rofs + col;
-                tmpImg->r(y, x) = tmpImg->g(y, x) = tmpImg->b(y, x) = image[ofs][0];
+                tmpImg->r (y, x) = tmpImg->g (y, x) = tmpImg->b (y, x) = image[ofs][0];
             }
         }
     } else {
-        if(ri->getSensorType() == ST_FUJI_XTRANS) {
-            for( int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
+        if (ri->getSensorType() == ST_FUJI_XTRANS) {
+            for ( int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
                 rofs = row * width;
 
-                for( int col = 1, x = 0; col < width - 1 && x < tmpw; col += hskip, x++ ) {
+                for ( int col = 1, x = 0; col < width - 1 && x < tmpw; col += hskip, x++ ) {
                     int ofs = rofs + col;
                     float sum[3] = {};
                     int c;
 
-                    for(int v = -1; v <= 1; v++) {
-                        for(int h = -1; h <= 1; h++) {
-                            c = ri->XTRANSFC(row + v, col + h);
+                    for (int v = -1; v <= 1; v++) {
+                        for (int h = -1; h <= 1; h++) {
+                            c = ri->XTRANSFC (row + v, col + h);
                             sum[c] += image[ofs + v * width + h][c];
                         }
                     }
 
-                    c = ri->XTRANSFC(row, col);
+                    c = ri->XTRANSFC (row, col);
 
                     switch (c) {
                         case 0:
-                            tmpImg->r(y, x) = image[ofs][0];
-                            tmpImg->g(y, x) = sum[1] / 5.f;
-                            tmpImg->b(y, x) = sum[2] / 3.f;
+                            tmpImg->r (y, x) = image[ofs][0];
+                            tmpImg->g (y, x) = sum[1] / 5.f;
+                            tmpImg->b (y, x) = sum[2] / 3.f;
                             break;
 
                         case 1:
-                            tmpImg->r(y, x) = sum[0] / 2.f;
-                            tmpImg->g(y, x) = image[ofs][1];
-                            tmpImg->b(y, x) = sum[2] / 2.f;
+                            tmpImg->r (y, x) = sum[0] / 2.f;
+                            tmpImg->g (y, x) = image[ofs][1];
+                            tmpImg->b (y, x) = sum[2] / 2.f;
                             break;
 
                         case 2:
-                            tmpImg->r(y, x) = sum[0] / 3.f;
-                            tmpImg->g(y, x) = sum[1] / 5.f;
-                            tmpImg->b(y, x) = image[ofs][2];
+                            tmpImg->r (y, x) = sum[0] / 3.f;
+                            tmpImg->g (y, x) = sum[1] / 5.f;
+                            tmpImg->b (y, x) = image[ofs][2];
                             break;
                     }
                 }
@@ -546,29 +554,34 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
             int top_margin = ri->get_topmargin();
             int wmax = tmpw;
             int hmax = tmph;
-            if(ri->get_maker() == "Sigma" && ri->DNGVERSION()) { // Hack to prevent sigma dng files from crashing
+
+            if (ri->get_maker() == "Sigma" && ri->DNGVERSION()) { // Hack to prevent sigma dng files from crashing
                 wmax = (width - 2 - left_margin) / hskip;
                 hmax = (height - 2 - top_margin) / vskip;
             }
 
             int y = 0;
+
             for (int row = 1 + top_margin; row < iheight + top_margin  - 1 && y < hmax; row += vskip, y++) {
                 rofs = row * iwidth;
 
                 int x = 0;
+
                 for (int col = firstgreen; col < iwidth + left_margin - 1 && x < wmax; col += hskip, x++) {
                     int ofs = rofs + col;
-                    tmpImg->r(y, x) = image[ofs][0];
-                    tmpImg->g(y, x) = image[ofs][1];
-                    tmpImg->b(y, x) = image[ofs][2];
+                    tmpImg->r (y, x) = image[ofs][0];
+                    tmpImg->g (y, x) = image[ofs][1];
+                    tmpImg->b (y, x) = image[ofs][2];
                 }
+
                 for (; x < tmpw; ++x) {
-                    tmpImg->r(y, x) = tmpImg->g(y, x) = tmpImg->b(y, x) = 0;
+                    tmpImg->r (y, x) = tmpImg->g (y, x) = tmpImg->b (y, x) = 0;
                 }
             }
+
             for (; y < tmph; ++y) {
                 for (int x = 0; x < tmpw; ++x) {
-                    tmpImg->r(y, x) = tmpImg->g(y, x) = tmpImg->b(y, x) = 0;
+                    tmpImg->r (y, x) = tmpImg->g (y, x) = tmpImg->b (y, x) = 0;
                 }
             }
         }
@@ -576,10 +589,10 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     if (ri->get_FujiWidth() != 0) {
         int fw = ri->get_FujiWidth() / hskip;
-        double step = sqrt(0.5);
+        double step = sqrt (0.5);
         int wide = fw / step;
         int high = (tmph - fw) / step;
-        Imagefloat* fImg = new Imagefloat(wide, high);
+        Imagefloat* fImg = new Imagefloat (wide, high);
         float r, c;
 
         for (int row = 0; row < high; row++)
@@ -593,9 +606,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
                 double fr = r - ur;
                 double fc = c - uc;
-                fImg->r(row, col) = (tmpImg->r(ur, uc) * (1 - fc) + tmpImg->r(ur, uc + 1) * fc) * (1 - fr)   +   (tmpImg->r(ur + 1, uc) * (1 - fc) + tmpImg->r(ur + 1, uc + 1) * fc) * fr;
-                fImg->g(row, col) = (tmpImg->g(ur, uc) * (1 - fc) + tmpImg->g(ur, uc + 1) * fc) * (1 - fr)   +   (tmpImg->g(ur + 1, uc) * (1 - fc) + tmpImg->g(ur + 1, uc + 1) * fc) * fr;
-                fImg->b(row, col) = (tmpImg->b(ur, uc) * (1 - fc) + tmpImg->b(ur, uc + 1) * fc) * (1 - fr)   +   (tmpImg->b(ur + 1, uc) * (1 - fc) + tmpImg->b(ur + 1, uc + 1) * fc) * fr;
+                fImg->r (row, col) = (tmpImg->r (ur, uc) * (1 - fc) + tmpImg->r (ur, uc + 1) * fc) * (1 - fr)   +   (tmpImg->r (ur + 1, uc) * (1 - fc) + tmpImg->r (ur + 1, uc + 1) * fc) * fr;
+                fImg->g (row, col) = (tmpImg->g (ur, uc) * (1 - fc) + tmpImg->g (ur, uc + 1) * fc) * (1 - fr)   +   (tmpImg->g (ur + 1, uc) * (1 - fc) + tmpImg->g (ur + 1, uc + 1) * fc) * fr;
+                fImg->b (row, col) = (tmpImg->b (ur, uc) * (1 - fc) + tmpImg->b (ur, uc + 1) * fc) * (1 - fr)   +   (tmpImg->b (ur + 1, uc) * (1 - fc) + tmpImg->b (ur + 1, uc + 1) * fc) * fr;
             }
 
         delete tmpImg;
@@ -612,7 +625,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         );
 
     if (rotate_90) {
-        std::swap(tmpw, tmph);
+        std::swap (tmpw, tmph);
     }
 
     if (fixwh == 1) { // fix height, scale width
@@ -626,10 +639,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     }
 
     if (rotate_90) {
-        tpp->thumbImg = resizeTo<Image16>(h, w, TI_Bilinear, tmpImg);
+        tpp->thumbImg = resizeTo<Image16> (h, w, TI_Bilinear, tmpImg);
     } else {
-        tpp->thumbImg = resizeTo<Image16>(w, h, TI_Bilinear, tmpImg);
+        tpp->thumbImg = resizeTo<Image16> (w, h, TI_Bilinear, tmpImg);
     }
+
     delete tmpImg;
 
 
@@ -641,7 +655,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     // generate histogram for auto exposure
     tpp->aeHistCompression = 3;
-    tpp->aeHistogram(65536 >> tpp->aeHistCompression);
+    tpp->aeHistogram (65536 >> tpp->aeHistCompression);
     tpp->aeHistogram.clear();
     int radd = 4;
     int gadd = 4;
@@ -656,8 +670,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
         if (ri->get_FujiWidth() != 0) {
             int fw = ri->get_FujiWidth();
-            start = ABS(fw - i) + 8;
-            end = min(height + width - fw - i, fw + i) - 8;
+            start = ABS (fw - i) + 8;
+            end = min (height + width - fw - i, fw + i) - 8;
         } else {
             start = 8;
             end = width - 8;
@@ -665,33 +679,33 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
         if (ri->get_colors() == 1) {
             for (int j = start; j < end; j++) {
-                tpp->aeHistogram[((int)(image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
-                tpp->aeHistogram[((int)(image[i * width + j][0])) >> tpp->aeHistCompression] += gadd;
-                tpp->aeHistogram[((int)(image[i * width + j][0])) >> tpp->aeHistCompression] += badd;
+                tpp->aeHistogram[ ((int) (image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
+                tpp->aeHistogram[ ((int) (image[i * width + j][0])) >> tpp->aeHistCompression] += gadd;
+                tpp->aeHistogram[ ((int) (image[i * width + j][0])) >> tpp->aeHistCompression] += badd;
             }
-        } else if(ri->getSensorType() == ST_BAYER) {
+        } else if (ri->getSensorType() == ST_BAYER) {
             for (int j = start; j < end; j++)
-                if (FISGREEN(filter, i, j)) {
-                    tpp->aeHistogram[((int)(tpp->camwbGreen * image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
-                } else if (FISRED(filter, i, j)) {
-                    tpp->aeHistogram[((int)(tpp->camwbRed * image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
-                } else if (FISBLUE(filter, i, j)) {
-                    tpp->aeHistogram[((int)(tpp->camwbBlue * image[i * width + j][2])) >> tpp->aeHistCompression] += badd;
+                if (FISGREEN (filter, i, j)) {
+                    tpp->aeHistogram[ ((int) (tpp->camwbGreen * image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
+                } else if (FISRED (filter, i, j)) {
+                    tpp->aeHistogram[ ((int) (tpp->camwbRed * image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
+                } else if (FISBLUE (filter, i, j)) {
+                    tpp->aeHistogram[ ((int) (tpp->camwbBlue * image[i * width + j][2])) >> tpp->aeHistCompression] += badd;
                 }
-        } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
+        } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
             for (int j = start; j < end; j++)
-                if (ri->ISXTRANSGREEN(i, j)) {
-                    tpp->aeHistogram[((int)(tpp->camwbGreen * image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
-                } else if (ri->ISXTRANSRED(i, j)) {
-                    tpp->aeHistogram[((int)(tpp->camwbRed * image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
-                } else if (ri->ISXTRANSBLUE(i, j)) {
-                    tpp->aeHistogram[((int)(tpp->camwbBlue * image[i * width + j][2])) >> tpp->aeHistCompression] += badd;
+                if (ri->ISXTRANSGREEN (i, j)) {
+                    tpp->aeHistogram[ ((int) (tpp->camwbGreen * image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
+                } else if (ri->ISXTRANSRED (i, j)) {
+                    tpp->aeHistogram[ ((int) (tpp->camwbRed * image[i * width + j][0])) >> tpp->aeHistCompression] += radd;
+                } else if (ri->ISXTRANSBLUE (i, j)) {
+                    tpp->aeHistogram[ ((int) (tpp->camwbBlue * image[i * width + j][2])) >> tpp->aeHistCompression] += badd;
                 }
         } else { /* if(ri->getSensorType()==ST_FOVEON) */
             for (int j = start; j < end; j++) {
-                tpp->aeHistogram[((int)(image[i * width + j][0] * 2.f)) >> tpp->aeHistCompression] += radd;
-                tpp->aeHistogram[((int)(image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
-                tpp->aeHistogram[((int)(image[i * width + j][2] * 0.5f)) >> tpp->aeHistCompression] += badd;
+                tpp->aeHistogram[ ((int) (image[i * width + j][0] * 2.f)) >> tpp->aeHistCompression] += radd;
+                tpp->aeHistogram[ ((int) (image[i * width + j][1])) >> tpp->aeHistCompression] += gadd;
+                tpp->aeHistogram[ ((int) (image[i * width + j][2] * 0.5f)) >> tpp->aeHistCompression] += badd;
             }
         }
     }
@@ -709,14 +723,14 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
         if (ri->get_FujiWidth() != 0) {
             int fw = ri->get_FujiWidth();
-            start = ABS(fw - i) + 32;
-            end = min(height + width - fw - i, fw + i) - 32;
+            start = ABS (fw - i) + 32;
+            end = min (height + width - fw - i, fw + i) - 32;
         } else {
             start = 32;
             end = width - 32;
         }
 
-        if(ri->getSensorType() == ST_BAYER) {
+        if (ri->getSensorType() == ST_BAYER) {
             for (int j = start; j < end; j++) {
                 if (!filter) {
                     double d = tpp->defGain * image[i * width + j][0];
@@ -731,7 +745,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
                     rn++;
                     gn++;
                     bn++;
-                } else if (FISGREEN(filter, i, j)) {
+                } else if (FISGREEN (filter, i, j)) {
                     double d = tpp->defGain * image[i * width + j][1];
 
                     if (d > 64000.) {
@@ -740,7 +754,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
                     avg_g += d;
                     gn++;
-                } else if (FISRED(filter, i, j)) {
+                } else if (FISRED (filter, i, j)) {
                     double d = tpp->defGain * image[i * width + j][0];
 
                     if (d > 64000.) {
@@ -749,7 +763,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
                     avg_r += d;
                     rn++;
-                } else if (FISBLUE(filter, i, j)) {
+                } else if (FISBLUE (filter, i, j)) {
                     double d = tpp->defGain * image[i * width + j][2];
 
                     if (d > 64000.) {
@@ -760,9 +774,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
                     bn++;
                 }
             }
-        } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
+        } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
             for (int j = start; j < end; j++) {
-                if (ri->ISXTRANSGREEN(i, j)) {
+                if (ri->ISXTRANSGREEN (i, j)) {
                     double d = tpp->defGain * image[i * width + j][1];
 
                     if (d > 64000.) {
@@ -771,7 +785,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
                     avg_g += d;
                     gn++;
-                } else if (ri->ISXTRANSRED(i, j)) {
+                } else if (ri->ISXTRANSRED (i, j)) {
                     double d = tpp->defGain * image[i * width + j][0];
 
                     if (d > 64000.) {
@@ -780,7 +794,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
                     avg_r += d;
                     rn++;
-                } else if (ri->ISXTRANSBLUE(i, j)) {
+                } else if (ri->ISXTRANSBLUE (i, j)) {
                     double d = tpp->defGain * image[i * width + j][2];
 
                     if (d > 64000.) {
@@ -821,22 +835,22 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     double greens = avg_g / gn * tpp->camwbGreen;
     double blues = avg_b / bn * tpp->camwbBlue;
 
-    tpp->redAWBMul   = ri->get_rgb_cam(0, 0) * reds + ri->get_rgb_cam(0, 1) * greens + ri->get_rgb_cam(0, 2) * blues;
-    tpp->greenAWBMul = ri->get_rgb_cam(1, 0) * reds + ri->get_rgb_cam(1, 1) * greens + ri->get_rgb_cam(1, 2) * blues;
-    tpp->blueAWBMul  = ri->get_rgb_cam(2, 0) * reds + ri->get_rgb_cam(2, 1) * greens + ri->get_rgb_cam(2, 2) * blues;
+    tpp->redAWBMul   = ri->get_rgb_cam (0, 0) * reds + ri->get_rgb_cam (0, 1) * greens + ri->get_rgb_cam (0, 2) * blues;
+    tpp->greenAWBMul = ri->get_rgb_cam (1, 0) * reds + ri->get_rgb_cam (1, 1) * greens + ri->get_rgb_cam (1, 2) * blues;
+    tpp->blueAWBMul  = ri->get_rgb_cam (2, 0) * reds + ri->get_rgb_cam (2, 1) * greens + ri->get_rgb_cam (2, 2) * blues;
     tpp->wbEqual = wbEq;
     tpp->wbTempBias = 0.0;
 
     ColorTemp cTemp;
-    cTemp.mul2temp(tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
+    cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
 
     if (rotate && ri->get_rotateDegree() > 0) {
-        tpp->thumbImg->rotate(ri->get_rotateDegree());
+        tpp->thumbImg->rotate (ri->get_rotateDegree());
     }
 
     for (int a = 0; a < 3; a++)
         for (int b = 0; b < 3; b++) {
-            tpp->colorMatrix[a][b] = ri->get_rgb_cam(a, b);
+            tpp->colorMatrix[a][b] = ri->get_rgb_cam (a, b);
         }
 
     tpp->init();
@@ -851,7 +865,7 @@ void Thumbnail::init ()
 {
     RawImageSource::inverse33 (colorMatrix, iColorMatrix);
     //colorMatrix is rgb_cam
-    memset (cam2xyz, 0, sizeof(cam2xyz));
+    memset (cam2xyz, 0, sizeof (cam2xyz));
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
@@ -863,33 +877,33 @@ void Thumbnail::init ()
 }
 
 Thumbnail::Thumbnail () :
-    camProfile(nullptr),
+    camProfile (nullptr),
     iColorMatrix{},
     cam2xyz{},
-    thumbImg(nullptr),
-    camwbRed(1.0),
-    camwbGreen(1.0),
-    camwbBlue(1.0),
-    redAWBMul(-1.0),
-    greenAWBMul(-1.0),
-    blueAWBMul(-1.0),
-    autoWBTemp(2700),
-    autoWBGreen(1.0),
-    wbEqual(-1.0),
-    wbTempBias(0.0),
-    aeHistCompression(3),
-    embProfileLength(0),
-    embProfileData(nullptr),
-    embProfile(nullptr),
-    redMultiplier(1.0),
-    greenMultiplier(1.0),
-    blueMultiplier(1.0),
-    scale(1.0),
-    defGain(1.0),
-    scaleForSave(8192),
-    gammaCorrected(false),
+    thumbImg (nullptr),
+    camwbRed (1.0),
+    camwbGreen (1.0),
+    camwbBlue (1.0),
+    redAWBMul (-1.0),
+    greenAWBMul (-1.0),
+    blueAWBMul (-1.0),
+    autoWBTemp (2700),
+    autoWBGreen (1.0),
+    wbEqual (-1.0),
+    wbTempBias (0.0),
+    aeHistCompression (3),
+    embProfileLength (0),
+    embProfileData (nullptr),
+    embProfile (nullptr),
+    redMultiplier (1.0),
+    greenMultiplier (1.0),
+    blueMultiplier (1.0),
+    scale (1.0),
+    defGain (1.0),
+    scaleForSave (8192),
+    gammaCorrected (false),
     colorMatrix{},
-    isRaw(true)
+    isRaw (true)
 {
 }
 
@@ -901,11 +915,11 @@ Thumbnail::~Thumbnail ()
     delete [] embProfileData;
 
     if (embProfile) {
-        cmsCloseProfile(embProfile);
+        cmsCloseProfile (embProfile);
     }
 
     if (camProfile) {
-        cmsCloseProfile(camProfile);
+        cmsCloseProfile (camProfile);
     }
 }
 
@@ -922,7 +936,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
         rwidth = thumbImg->getWidth() * rheight / thumbImg->getHeight();
     }
 
-    Image8* baseImg = resizeTo<Image8>(rwidth, rheight, interp, thumbImg);
+    Image8* baseImg = resizeTo<Image8> (rwidth, rheight, interp, thumbImg);
 
     if (params.coarse.rotate) {
         baseImg->rotate (params.coarse.rotate);
@@ -995,13 +1009,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
         rwidth = rheight;
-        rheight = int(size_t(thumbImg->getHeight()) * size_t(rwidth) / size_t(thumbImg->getWidth()));
+        rheight = int (size_t (thumbImg->getHeight()) * size_t (rwidth) / size_t (thumbImg->getWidth()));
     } else {
-        rwidth = int(size_t(thumbImg->getWidth()) * size_t(rheight) / size_t(thumbImg->getHeight()));
+        rwidth = int (size_t (thumbImg->getWidth()) * size_t (rheight) / size_t (thumbImg->getHeight()));
     }
 
 
-    Imagefloat* baseImg = resizeTo<Imagefloat>(rwidth, rheight, interp, thumbImg);
+    Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
     if (params.coarse.rotate) {
         baseImg->rotate (params.coarse.rotate);
@@ -1025,12 +1039,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 #endif
 
         for (int j = 0; j < rwidth; j++) {
-            float red = baseImg->r(i, j) * rmi;
-            baseImg->r(i, j) = CLIP(red);
-            float green = baseImg->g(i, j) * gmi;
-            baseImg->g(i, j) = CLIP(green);
-            float blue = baseImg->b(i, j) * bmi;
-            baseImg->b(i, j) = CLIP(blue);
+            float red = baseImg->r (i, j) * rmi;
+            baseImg->r (i, j) = CLIP (red);
+            float green = baseImg->g (i, j) * gmi;
+            baseImg->g (i, j) = CLIP (green);
+            float blue = baseImg->b (i, j) * bmi;
+            baseImg->b (i, j) = CLIP (blue);
 
         }
     }
@@ -1051,7 +1065,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
 
     ImProcFunctions ipf (&params, false);
-    ipf.setScale (sqrt(double(fw * fw + fh * fh)) / sqrt(double(thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
+    ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
     ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), options.rtSettings.monitorIntent, false, false);
 
     LUTu hist16 (65536);
@@ -1064,7 +1078,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         int origFW;
         int origFH;
         double tscale = 0.0;
-        getDimensions(origFW, origFH, tscale);
+        getDimensions (origFW, origFH, tscale);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, focalLen, focalLen35mm, focusDist, fnumber, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
@@ -1075,7 +1089,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh, false);
-        double radius = sqrt (double(fw * fw + fh * fh)) / 2.0;
+        double radius = sqrt (double (fw * fw + fh * fh)) / 2.0;
         double shradius = params.sh.radius;
 
         if (!params.sh.hq) {
@@ -1104,7 +1118,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     LUTf satcurve (65536);
     LUTf lhskcurve (65536);
-    LUTf lumacurve(32770, 0); // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
+    LUTf lumacurve (32770, 0); // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
     LUTf clcurve (65536);
     LUTf clToningcurve;
     LUTf cl2Toningcurve;
@@ -1134,7 +1148,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     bool opautili = false;
 
-    if(params.colorToning.enabled) {
+    if (params.colorToning.enabled) {
         TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
         double wp[3][3] = {
             {wprof[0][0], wprof[0][1], wprof[0][2]},
@@ -1147,36 +1161,36 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
             {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
-        params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, wip, opautili);
+        params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, wip, opautili);
 
         clToningcurve (65536);
-        CurveFactory::curveToning(params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
 
         cl2Toningcurve (65536);
-        CurveFactory::curveToning(params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::curveToning (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
     }
 
-    if(params.blackwhite.enabled) {
+    if (params.blackwhite.enabled) {
         CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 16);
     }
 
     double rrm, ggm, bbm;
     float autor, autog, autob;
-    float satLimit = float(params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
-    float satLimitOpacity = 1.f - (float(params.colorToning.saturatedOpacity) / 100.f);
+    float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
+    float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
 
-    if(params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
+    if (params.colorToning.enabled  && params.colorToning.autosat) { //for colortoning evaluation of saturation settings
         float moyS = 0.f;
         float eqty = 0.f;
         ipf.moyeqt (baseImg, moyS, eqty);//return image : mean saturation and standard dev of saturation
         //printf("moy=%f ET=%f\n", moyS,eqty);
         float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
 
-        if(satp >= 0.92f) {
+        if (satp >= 0.92f) {
             satp = 0.92f;    //avoid values too high (out of gamut)
         }
 
-        if(satp <= 0.15f) {
+        if (satp <= 0.15f) {
             satp = 0.15f;    //avoid too low values
         }
 
@@ -1193,15 +1207,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     if (isRaw) {
         cmsHPROFILE dummy;
-        RawImageSource::findInputProfile(params.icm.input, nullptr, camName, &dcpProf, dummy);
+        RawImageSource::findInputProfile (params.icm.input, nullptr, camName, &dcpProf, dummy);
 
         if (dcpProf) {
-            dcpProf->setStep2ApplyState(params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
+            dcpProf->setStep2ApplyState (params.icm.working, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);
         }
     }
 
     LUTu histToneCurve;
-    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
+    ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
     // freeing up some memory
     customToneCurve1.Reset();
@@ -1216,12 +1230,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     }
 
     // luminance histogram update
-    if(params.labCurve.contrast != 0) {
+    if (params.labCurve.contrast != 0) {
         hist16.clear();
 
         for (int i = 0; i < fh; i++)
             for (int j = 0; j < fw; j++) {
-                hist16[(int)((labView->L[i][j]))]++;
+                hist16[ (int) ((labView->L[i][j]))]++;
             }
     }
 
@@ -1233,7 +1247,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                                  hist16, lumacurve, dummy, 16, utili);
 
     bool clcutili;
-    CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, 16);
+    CurveFactory::curveCL (clcutili, params.labCurve.clcurve, clcurve, 16);
 
     bool autili, butili, ccutili, cclutili;
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
@@ -1241,13 +1255,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
-    ipf.vibrance(labView);
+    ipf.vibrance (labView);
 
-    if((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
-        ipf.EPDToneMap(labView, 5, 6);
+    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
+        ipf.EPDToneMap (labView, 5, 6);
     }
 
-    if(params.colorappearance.enabled) {
+    if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
             params.colorappearance.curve,
             params.colorappearance.curve2,
@@ -1265,13 +1279,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         float fiso = iso;// ISO
         float fspeed = shutter;//speed
         char * writ = new char[expcomp_.size() + 1];//convert expcomp_ to char
-        std::copy(expcomp_.begin(), expcomp_.end(), writ);
+        std::copy (expcomp_.begin(), expcomp_.end(), writ);
         writ[expcomp_.size()] = '\0';
-        float fcomp = atof(writ); //compensation + -
+        float fcomp = atof (writ); //compensation + -
         delete[] writ;
         float adap;
 
-        if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f)
+        if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f)
             //if no exif data or wrong
         {
             adap = 2000.f;
@@ -1280,9 +1294,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             float expo2 = params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
             E_V += expo2;
             float expo1;//exposure raw white point
-            expo1 = log2(params.raw.expos); //log2 ==>linear to EV
+            expo1 = log2 (params.raw.expos); //log2 ==>linear to EV
             E_V += expo1;
-            adap = powf(2.f, E_V - 3.f); //cd / m2
+            adap = powf (2.f, E_V - 3.f); //cd / m2
             //end calculation adaptation scene luminosity
         }
 
@@ -1343,12 +1357,12 @@ int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight,
     int rwidth;
 
     if (params.coarse.rotate == 90 || params.coarse.rotate == 270) {
-        ratio = (float)(thumbImg->getHeight()) / (float)(thumbImg->getWidth());
+        ratio = (float) (thumbImg->getHeight()) / (float) (thumbImg->getWidth());
     } else {
-        ratio = (float)(thumbImg->getWidth()) / (float)(thumbImg->getHeight());
+        ratio = (float) (thumbImg->getWidth()) / (float) (thumbImg->getHeight());
     }
 
-    rwidth = (int)(ratio * (float)rheight);
+    rwidth = (int) (ratio * (float)rheight);
 
     return rwidth;
 }
@@ -1386,7 +1400,7 @@ void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tem
         wbEqual = equal;
         wbTempBias = tempBias;
         // compute autoWBTemp and autoWBGreen
-        cTemp.mul2temp(redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
         autoWBTemp += autoWBTemp * tempBias;
     }
 
@@ -1406,7 +1420,7 @@ void Thumbnail::applyAutoExp (procparams::ProcParams& params)
 
     if (params.toneCurve.autoexp && aeHistogram) {
         ImProcFunctions ipf (&params, false);
-        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain) / log(2.0), params.toneCurve.clip, params.toneCurve.expcomp,
+        ipf.getAutoExp (aeHistogram, aeHistCompression, log (defGain) / log (2.0), params.toneCurve.clip, params.toneCurve.expcomp,
                         params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
     }
 }
@@ -1430,11 +1444,11 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
 
     ImProcFunctions ipf (&params, false);
     ipf.transCoord (fw, fh, points, red, green, blue);
-    int tr = getCoarseBitMask(params.coarse);
+    int tr = getCoarseBitMask (params.coarse);
     // calculate spot wb (copy & pasted from stdimagesource)
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
-    thumbImg->getSpotWBData(reds, greens, blues, rn, gn, bn, red, green, blue, tr);
+    thumbImg->getSpotWBData (reds, greens, blues, rn, gn, bn, red, green, blue, tr);
     reds = reds / rn * camwbRed;
     greens = greens / gn * camwbGreen;
     blues = blues / bn * camwbBlue;
@@ -1508,19 +1522,19 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
 
         // Calc the histogram
         unsigned int* hist16 = new unsigned int [65536];
-        memset(hist16, 0, sizeof(int) * 65536);
+        memset (hist16, 0, sizeof (int) * 65536);
 
         if (thumbImg->getType() == sImage8) {
-            Image8 *image = static_cast<Image8*>(thumbImg);
-            image->calcGrayscaleHist(hist16);
+            Image8 *image = static_cast<Image8*> (thumbImg);
+            image->calcGrayscaleHist (hist16);
         } else if (thumbImg->getType() == sImage16) {
-            Image16 *image = static_cast<Image16*>(thumbImg);
-            image->calcGrayscaleHist(hist16);
+            Image16 *image = static_cast<Image16*> (thumbImg);
+            image->calcGrayscaleHist (hist16);
         } else if (thumbImg->getType() == sImagefloat) {
-            Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
-            image->calcGrayscaleHist(hist16);
+            Imagefloat *image = static_cast<Imagefloat*> (thumbImg);
+            image->calcGrayscaleHist (hist16);
         } else {
-            printf("getGrayscaleHistEQ #1: Unsupported image type \"%s\"!\n", thumbImg->getType());
+            printf ("getGrayscaleHistEQ #1: Unsupported image type \"%s\"!\n", thumbImg->getType());
         }
 
         // Go down till we cut off that many pixels
@@ -1539,45 +1553,45 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
 
         // Correction and gamma to 8 Bit
         if (thumbImg->getType() == sImage8) {
-            Image8 *image = static_cast<Image8*>(thumbImg);
+            Image8 *image = static_cast<Image8*> (thumbImg);
 
             for (int i = 0; i < thumbImg->getHeight(); i++)
                 for (int j = (thumbImg->getWidth() - trim_width) / 2; j < trim_width + (thumbImg->getWidth() - trim_width) / 2; j++) {
                     unsigned short r_, g_, b_;
-                    image->convertTo(image->r(i, j), r_);
-                    image->convertTo(image->g(i, j), g_);
-                    image->convertTo(image->b(i, j), b_);
-                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    image->convertTo (image->r (i, j), r_);
+                    image->convertTo (image->g (i, j), g_);
+                    image->convertTo (image->b (i, j), b_);
+                    int r = Color::gammatabThumb[min (r_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min (g_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min (b_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImage16) {
-            Image16 *image = static_cast<Image16*>(thumbImg);
+            Image16 *image = static_cast<Image16*> (thumbImg);
 
             for (int i = 0; i < thumbImg->getHeight(); i++)
                 for (int j = (thumbImg->getWidth() - trim_width) / 2; j < trim_width + (thumbImg->getWidth() - trim_width) / 2; j++) {
                     unsigned short r_, g_, b_;
-                    image->convertTo(image->r(i, j), r_);
-                    image->convertTo(image->g(i, j), g_);
-                    image->convertTo(image->b(i, j), b_);
-                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    image->convertTo (image->r (i, j), r_);
+                    image->convertTo (image->g (i, j), g_);
+                    image->convertTo (image->b (i, j), b_);
+                    int r = Color::gammatabThumb[min (r_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min (g_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min (b_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImagefloat) {
-            Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
+            Imagefloat *image = static_cast<Imagefloat*> (thumbImg);
 
             for (int i = 0; i < thumbImg->getHeight(); i++)
                 for (int j = (thumbImg->getWidth() - trim_width) / 2; j < trim_width + (thumbImg->getWidth() - trim_width) / 2; j++) {
                     unsigned short r_, g_, b_;
-                    image->convertTo(image->r(i, j), r_);
-                    image->convertTo(image->g(i, j), g_);
-                    image->convertTo(image->b(i, j), b_);
-                    int r = Color::gammatabThumb[min(r_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g = Color::gammatabThumb[min(g_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b = Color::gammatabThumb[min(b_, static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    image->convertTo (image->r (i, j), r_);
+                    image->convertTo (image->g (i, j), g_);
+                    image->convertTo (image->b (i, j), b_);
+                    int r = Color::gammatabThumb[min (r_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
+                    int g = Color::gammatabThumb[min (g_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
+                    int b = Color::gammatabThumb[min (b_, static_cast<unsigned short> (max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         }
@@ -1586,25 +1600,25 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
         int max = 0;
 
         if (thumbImg->getType() == sImage8) {
-            Image8 *image = static_cast<Image8*>(thumbImg);
+            Image8 *image = static_cast<Image8*> (thumbImg);
             unsigned char max_ = 0;
 
             for (int row = 0; row < image->getHeight(); row++)
                 for (int col = 0; col < image->getWidth(); col++) {
-                    if (image->r(row, col) > max_) {
-                        max_ = image->r(row, col);
+                    if (image->r (row, col) > max_) {
+                        max_ = image->r (row, col);
                     }
 
-                    if (image->g(row, col) > max_) {
-                        max_ = image->g(row, col);
+                    if (image->g (row, col) > max_) {
+                        max_ = image->g (row, col);
                     }
 
-                    if (image->b(row, col) > max_) {
-                        max_ = image->b(row, col);
+                    if (image->b (row, col) > max_) {
+                        max_ = image->b (row, col);
                     }
                 }
 
-            image->convertTo(max_, max);
+            image->convertTo (max_, max);
 
             if (max < 16384) {
                 max = 16384;
@@ -1616,34 +1630,34 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             for (int i = 0; i < image->getHeight(); i++)
                 for (int j = (image->getWidth() - trim_width) / 2; j < trim_width + (image->getWidth() - trim_width) / 2; j++) {
                     unsigned short rtmp, gtmp, btmp;
-                    image->convertTo(image->r(i, j), rtmp);
-                    image->convertTo(image->g(i, j), gtmp);
-                    image->convertTo(image->b(i, j), btmp);
+                    image->convertTo (image->r (i, j), rtmp);
+                    image->convertTo (image->g (i, j), gtmp);
+                    image->convertTo (image->b (i, j), btmp);
                     int r = rtmp * scaleForSave >> 21;
                     int g = gtmp * scaleForSave >> 21;
                     int b = btmp * scaleForSave >> 21;
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImage16) {
-            Image16 *image = static_cast<Image16*>(thumbImg);
+            Image16 *image = static_cast<Image16*> (thumbImg);
             unsigned short max_ = 0;
 
             for (int row = 0; row < image->getHeight(); row++)
                 for (int col = 0; col < image->getWidth(); col++) {
-                    if (image->r(row, col) > max_) {
-                        max_ = image->r(row, col);
+                    if (image->r (row, col) > max_) {
+                        max_ = image->r (row, col);
                     }
 
-                    if (image->g(row, col) > max_) {
-                        max_ = image->g(row, col);
+                    if (image->g (row, col) > max_) {
+                        max_ = image->g (row, col);
                     }
 
-                    if (image->b(row, col) > max_) {
-                        max_ = image->b(row, col);
+                    if (image->b (row, col) > max_) {
+                        max_ = image->b (row, col);
                     }
                 }
 
-            image->convertTo(max_, max);
+            image->convertTo (max_, max);
 
             if (max < 16384) {
                 max = 16384;
@@ -1655,34 +1669,34 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             for (int i = 0; i < image->getHeight(); i++)
                 for (int j = (image->getWidth() - trim_width) / 2; j < trim_width + (image->getWidth() - trim_width) / 2; j++) {
                     unsigned short rtmp, gtmp, btmp;
-                    image->convertTo(image->r(i, j), rtmp);
-                    image->convertTo(image->g(i, j), gtmp);
-                    image->convertTo(image->b(i, j), btmp);
+                    image->convertTo (image->r (i, j), rtmp);
+                    image->convertTo (image->g (i, j), gtmp);
+                    image->convertTo (image->b (i, j), btmp);
                     int r = rtmp * scaleForSave >> 21;
                     int g = gtmp * scaleForSave >> 21;
                     int b = btmp * scaleForSave >> 21;
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else if (thumbImg->getType() == sImagefloat) {
-            Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
+            Imagefloat *image = static_cast<Imagefloat*> (thumbImg);
             float max_ = 0.f;
 
             for (int row = 0; row < image->getHeight(); row++)
                 for (int col = 0; col < image->getWidth(); col++) {
-                    if (image->r(row, col) > max_) {
-                        max_ = image->r(row, col);
+                    if (image->r (row, col) > max_) {
+                        max_ = image->r (row, col);
                     }
 
-                    if (image->g(row, col) > max_) {
-                        max_ = image->g(row, col);
+                    if (image->g (row, col) > max_) {
+                        max_ = image->g (row, col);
                     }
 
-                    if (image->b(row, col) > max_) {
-                        max_ = image->b(row, col);
+                    if (image->b (row, col) > max_) {
+                        max_ = image->b (row, col);
                     }
                 }
 
-            image->convertTo(max_, max);
+            image->convertTo (max_, max);
 
             if (max < 16384) {
                 max = 16384;
@@ -1694,16 +1708,16 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             for (int i = 0; i < image->getHeight(); i++)
                 for (int j = (image->getWidth() - trim_width) / 2; j < trim_width + (image->getWidth() - trim_width) / 2; j++) {
                     unsigned short rtmp, gtmp, btmp;
-                    image->convertTo(image->r(i, j), rtmp);
-                    image->convertTo(image->g(i, j), gtmp);
-                    image->convertTo(image->b(i, j), btmp);
+                    image->convertTo (image->r (i, j), rtmp);
+                    image->convertTo (image->g (i, j), gtmp);
+                    image->convertTo (image->b (i, j), btmp);
                     int r = rtmp * scaleForSave >> 21;
                     int g = gtmp * scaleForSave >> 21;
                     int b = btmp * scaleForSave >> 21;
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else {
-            printf("getGrayscaleHistEQ #2: Unsupported image type \"%s\"!\n", thumbImg->getType());
+            printf ("getGrayscaleHistEQ #2: Unsupported image type \"%s\"!\n", thumbImg->getType());
         }
     }
 
@@ -1750,22 +1764,22 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format)
         return false;
     }
 
-    fwrite (thumbImg->getType(), sizeof (char), strlen(thumbImg->getType()), f);
+    fwrite (thumbImg->getType(), sizeof (char), strlen (thumbImg->getType()), f);
     fputc ('\n', f);
-    guint32 w = guint32(thumbImg->getWidth());
-    guint32 h = guint32(thumbImg->getHeight());
+    guint32 w = guint32 (thumbImg->getWidth());
+    guint32 h = guint32 (thumbImg->getHeight());
     fwrite (&w, sizeof (guint32), 1, f);
     fwrite (&h, sizeof (guint32), 1, f);
 
     if (thumbImg->getType() == sImage8) {
-        Image8 *image = static_cast<Image8*>(thumbImg);
-        image->writeData(f);
+        Image8 *image = static_cast<Image8*> (thumbImg);
+        image->writeData (f);
     } else if (thumbImg->getType() == sImage16) {
-        Image16 *image = static_cast<Image16*>(thumbImg);
-        image->writeData(f);
+        Image16 *image = static_cast<Image16*> (thumbImg);
+        image->writeData (f);
     } else if (thumbImg->getType() == sImagefloat) {
-        Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
-        image->writeData(f);
+        Imagefloat *image = static_cast<Imagefloat*> (thumbImg);
+        image->writeData (f);
     }
 
     //thumbImg->writeData(f);
@@ -1794,8 +1808,8 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
     }
 
     char imgType[31];  // 30 -> arbitrary size, but should be enough for all image type's name
-    fgets(imgType, 30, f);
-    imgType[strlen(imgType) - 1] = '\0'; // imgType has a \n trailing character, so we overwrite it by the \0 char
+    fgets (imgType, 30, f);
+    imgType[strlen (imgType) - 1] = '\0'; // imgType has a \n trailing character, so we overwrite it by the \0 char
 
     guint32 width, height;
     fread (&width, 1, sizeof (guint32), f);
@@ -1803,36 +1817,36 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
 
     bool success = false;
 
-    if (!strcmp(imgType, sImage8)) {
-        Image8 *image = new Image8(width, height);
-        image->readData(f);
+    if (!strcmp (imgType, sImage8)) {
+        Image8 *image = new Image8 (width, height);
+        image->readData (f);
         thumbImg = image;
         success = true;
-    } else if (!strcmp(imgType, sImage16)) {
-        Image16 *image = new Image16(width, height);
-        image->readData(f);
+    } else if (!strcmp (imgType, sImage16)) {
+        Image16 *image = new Image16 (width, height);
+        image->readData (f);
         thumbImg = image;
         success = true;
-    } else if (!strcmp(imgType, sImagefloat)) {
-        Imagefloat *image = new Imagefloat(width, height);
-        image->readData(f);
+    } else if (!strcmp (imgType, sImagefloat)) {
+        Imagefloat *image = new Imagefloat (width, height);
+        image->readData (f);
         thumbImg = image;
         success = true;
     } else {
-        printf("readImage: Unsupported image type \"%s\"!\n", imgType);
+        printf ("readImage: Unsupported image type \"%s\"!\n", imgType);
     }
 
-    fclose(f);
+    fclose (f);
     return success;
 }
 
 bool Thumbnail::readData  (const Glib::ustring& fname)
 {
-    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
+    setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
     Glib::KeyFile keyFile;
 
     try {
-        MyMutex::MyLock thmbLock(thumbMutex);
+        MyMutex::MyLock thmbLock (thumbMutex);
 
         try {
             keyFile.load_from_file (fname);
@@ -1911,11 +1925,11 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
         return true;
     } catch (Glib::Error &err) {
         if (options.rtSettings.verbose) {
-            printf("Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            printf ("Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
         if (options.rtSettings.verbose) {
-            printf("Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
+            printf ("Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
     }
 
@@ -1924,7 +1938,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
 
 bool Thumbnail::writeData  (const Glib::ustring& fname)
 {
-    MyMutex::MyLock thmbLock(thumbMutex);
+    MyMutex::MyLock thmbLock (thumbMutex);
 
     Glib::ustring keyData;
 
@@ -1957,11 +1971,11 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 
     } catch (Glib::Error& err) {
         if (options.rtSettings.verbose) {
-            printf("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            printf ("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
         if (options.rtSettings.verbose) {
-            printf("Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
+            printf ("Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
         }
     }
 
@@ -1973,7 +1987,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 
     if (!f) {
         if (options.rtSettings.verbose) {
-            printf("Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
+            printf ("Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
 
         return false;
@@ -1993,18 +2007,22 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
     embProfileLength = 0;
 
     FILE* f = g_fopen (fname.c_str (), "rb");
+
     if (f) {
-        if(!fseek (f, 0, SEEK_END)) {
+        if (!fseek (f, 0, SEEK_END)) {
             int profileLength = ftell (f);
-            if(profileLength > 0) {
+
+            if (profileLength > 0) {
                 embProfileLength = profileLength;
-                if(!fseek (f, 0, SEEK_SET)) {
+
+                if (!fseek (f, 0, SEEK_SET)) {
                     embProfileData = new unsigned char[embProfileLength];
                     fread (embProfileData, 1, embProfileLength, f);
                     embProfile = cmsOpenProfileFromMem (embProfileData, embProfileLength);
                 }
             }
         }
+
         fclose (f);
         return embProfile != nullptr;
     }
@@ -2016,7 +2034,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 {
 
     if (embProfileData) {
-        FILE* f = g_fopen(fname.c_str (), "wb");
+        FILE* f = g_fopen (fname.c_str (), "wb");
 
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
@@ -2034,10 +2052,10 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
     FILE* f = g_fopen (fname.c_str (), "rb");
 
     if (!f) {
-        aeHistogram(0);
+        aeHistogram (0);
     } else {
-        aeHistogram(65536 >> aeHistCompression);
-        fread (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof(aeHistogram[0]), f);
+        aeHistogram (65536 >> aeHistCompression);
+        fread (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
         fclose (f);
         return true;
     }
@@ -2052,7 +2070,7 @@ bool Thumbnail::writeAEHistogram (const Glib::ustring& fname)
         FILE* f = g_fopen (fname.c_str (), "wb");
 
         if (f) {
-            fwrite (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof(aeHistogram[0]), f);
+            fwrite (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
             fclose (f);
             return true;
         }
@@ -2064,7 +2082,7 @@ bool Thumbnail::writeAEHistogram (const Glib::ustring& fname)
 unsigned char* Thumbnail::getImage8Data()
 {
     if (thumbImg && thumbImg->getType() == rtengine::sImage8) {
-        Image8* img8 = static_cast<Image8*>(thumbImg);
+        Image8* img8 = static_cast<Image8*> (thumbImg);
         return img8->data;
     }
 

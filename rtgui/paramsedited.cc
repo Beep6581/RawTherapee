@@ -1732,7 +1732,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (colorappearance.autodegreeout) {
         toEdit.colorappearance.autodegreeout = mods.colorappearance.autodegreeout;
     }
-	
+
     if (colorappearance.surround) {
         toEdit.colorappearance.surround       = mods.colorappearance.surround;
     }
@@ -1740,7 +1740,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (colorappearance.surrsrc) {
         toEdit.colorappearance.surrsrc       = mods.colorappearance.surrsrc;
     }
-	
+
     if (colorappearance.autoadapscen) {
         toEdit.colorappearance.autoadapscen   = mods.colorappearance.autoadapscen;
     }
@@ -1756,7 +1756,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (colorappearance.ybscen) {
         toEdit.colorappearance.ybscen   = mods.colorappearance.ybscen;
     }
-	
+
     if (colorappearance.adaplum) {
         toEdit.colorappearance.adaplum        = dontforceSet && options.baBehav[ADDSET_CAT_ADAPTVIEWING] ? toEdit.colorappearance.adaplum + mods.colorappearance.adaplum : mods.colorappearance.adaplum;
     }
@@ -1788,7 +1788,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (colorappearance.greensc) {
         toEdit.colorappearance.greensc       = mods.colorappearance.greensc;
     }
-	
+
     if (colorappearance.ybout) {
         toEdit.colorappearance.ybout       = mods.colorappearance.ybout;
     }

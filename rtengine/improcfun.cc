@@ -265,11 +265,11 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         double Xw, Zw;
         double Xwout, Zwout;
         double Xwsc, Zwsc;
-		
+
         double f = 0., c = 0., nc = 0., yb = 0., la, xw, yw, zw, f2 = 0., c2 = 0., nc2 = 0., yb2 = 0., la2;
         double fl, n, nbb, ncb, aw;
         double xwd = 0., ywd, zwd = 0.;
-		double xws, yws, zws;
+        double xws, yws, zws;
         int alg = 0;
         bool algepd = false;
         float sum = 0.f;
@@ -298,8 +298,8 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             c  = 0.41;
             nc = 0.8;
         }
-		
-		
+
+
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
             f2 = 1.0, c2 = 0.69, nc2 = 1.0;
@@ -316,14 +316,15 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             c2  = 0.41;
             nc2 = 0.8;
         }
-/*
-        //scene condition for surround
-        if (params->colorappearance.surrsource)  {
-            f  = 0.85;    // if user => source image has surround very dark
-            c  = 0.55;
-            nc = 0.85;
-        }
-*/
+
+        /*
+                //scene condition for surround
+                if (params->colorappearance.surrsource)  {
+                    f  = 0.85;    // if user => source image has surround very dark
+                    c  = 0.55;
+                    nc = 0.85;
+                }
+        */
         //with which algorithme
         if     (params->colorappearance.algo == "JC") {
             alg = 0;
@@ -383,7 +384,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         xws = 100. * Xwsc;
         zws = 100. * Zwsc;
         yws = 100. / params->colorappearance.greensc;//approximation to simplify
-		
+
         /*
                 //settings mean Luminance Y of output device or viewing
                 if (settings->viewingdevicegrey == 0) {
@@ -422,7 +423,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
         const float degout = (params->colorappearance.degreeout) / 100.0;
         const float pilotout = params->colorappearance.autodegreeout ? 2.0 : degout;
-		
+
         //algoritm's params
         float jli = params->colorappearance.jlight;
         float chr = params->colorappearance.chroma;
@@ -527,9 +528,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             }
         }
 
-     //   if (settings->viewinggreySc == 0) { //auto
+        //   if (settings->viewinggreySc == 0) { //auto
         if (params->colorappearance.autoybscen  &&  pwb == 2) {//auto
-		
+
             if     (mean < 15.f) {
                 yb = 3.0;
             } else if (mean < 30.f) {
@@ -554,8 +555,8 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                 yb = 90.0;
             }
         } else {
-			yb = params->colorappearance.ybscen;
-		}
+            yb = params->colorappearance.ybscen;
+        }
 
         if (settings->viewinggreySc == 1) {
             yb = 18.0;
@@ -571,7 +572,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         xw = 100.0 * Xw;
         yw = 100.0 * Yw;
         zw = 100.0 * Zw;
-        double xw1 =0., yw1 = 0., zw1 = 0., xw2 = 0., yw2 = 0., zw2 = 0.;
+        double xw1 = 0., yw1 = 0., zw1 = 0., xw2 = 0., yw2 = 0., zw2 = 0.;
 
         // settings of WB: scene and viewing
         if (params->colorappearance.wbmodel == "RawT") {
@@ -581,21 +582,21 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
+        } else if (params->colorappearance.wbmodel == "RawTCAT02") {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        }else if(params->colorappearance.wbmodel == "free") {
+        } else if (params->colorappearance.wbmodel == "free") {
             xw1 = xws;    // free temp and green
             yw1 = yws;
             zw1 = zws;
             xw2 = xwd;
             yw2 = ywd;
-            zw2 = zwd;		
-		}	
+            zw2 = zwd;
+        }
 
         double cz, wh, pfl;
         Ciecam02::initcam1 (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
@@ -1567,8 +1568,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             c  = 0.41f;
             nc = 0.8f;
         }
-		
-		
+
+
         //viewing condition for surround
         if (params->colorappearance.surround == "Average") {
             f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
@@ -1585,14 +1586,15 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             c2  = 0.41f;
             nc2 = 0.8f;
         }
-/*
-        //scene condition for surround
-        if (params->colorappearance.surrsource)  {
-            f  = 0.85f;    // if user => source image has surround very dark
-            c  = 0.55f;
-            nc = 0.85f;
-        }
-*/
+
+        /*
+                //scene condition for surround
+                if (params->colorappearance.surrsource)  {
+                    f  = 0.85f;    // if user => source image has surround very dark
+                    c  = 0.55f;
+                    nc = 0.85f;
+                }
+        */
         //with which algorithm
         if     (params->colorappearance.algo == "JC") {
             alg = 0;
@@ -1609,12 +1611,12 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         xwd = 100.f * Xwout;
         zwd = 100.f * Zwout;
         ywd = 100.f / params->colorappearance.greenout;//approximation to simplify
-		
+
         xws = 100.f * Xwsc;
         zws = 100.f * Zwsc;
         yws = 100.f / params->colorappearance.greensc;//approximation to simplify
-		
-		
+
+
         /*
                 //settings white point of output device - or illuminant viewing
                 if (settings->viewingdevice == 0) {
@@ -1691,7 +1693,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
         const float degout = (params->colorappearance.degreeout) / 100.0f;
         const float pilotout = params->colorappearance.autodegreeout ? 2.0f : degout;
-		
+
         //algoritm's params
         float chr = 0.f;
 
@@ -1866,11 +1868,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             //evaluate lightness, contrast
         }
 
-		
-		
-      //  if (settings->viewinggreySc == 0) { //auto
-            if (params->colorappearance.autoybscen  &&  pwb == 2) {//auto
-		
+
+
+        //  if (settings->viewinggreySc == 0) { //auto
+        if (params->colorappearance.autoybscen  &&  pwb == 2) {//auto
+
             if     (mean < 15.f) {
                 yb = 3.0f;
             } else if (mean < 30.f) {
@@ -1894,8 +1896,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             } else {
                 yb = 90.0f;
             }
+
 //        } else if (settings->viewinggreySc == 1) {
-			} else {
+        } else {
             yb =  (float) params->colorappearance.ybscen;
         }
 
@@ -1915,21 +1918,21 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else if(params->colorappearance.wbmodel == "RawTCAT02") {
+        } else if (params->colorappearance.wbmodel == "RawTCAT02") {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else if(params->colorappearance.wbmodel == "free") {
+        } else if (params->colorappearance.wbmodel == "free") {
             xw1 = xws;    // free temp and green
             yw1 = yws;
             zw1 = zws;
             xw2 = xwd;
             yw2 = ywd;
-            zw2 = zwd;		
-		}	
+            zw2 = zwd;
+        }
 
 
         float cz, wh, pfl;

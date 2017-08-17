@@ -2106,7 +2106,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         if (!pedited || pedited->colorappearance.autodegreeout) {
             keyFile.set_boolean ("Color appearance", "AutoDegreeout",    colorappearance.autodegreeout);
         }
-		
+
         if (!pedited || pedited->colorappearance.surround) {
             keyFile.set_string ("Color appearance", "Surround", colorappearance.surround);
         }
@@ -2114,7 +2114,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         if (!pedited || pedited->colorappearance.surrsrc) {
             keyFile.set_string ("Color appearance", "Surrsrc", colorappearance.surrsrc);
         }
-		
+
 // if (!pedited || pedited->colorappearance.backgrd) keyFile.set_integer ("Color appearance", "Background", colorappearance.backgrd);
         if (!pedited || pedited->colorappearance.adaplum) {
             keyFile.set_double ("Color appearance", "AdaptLum", colorappearance.adaplum);
@@ -2183,7 +2183,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         if (!pedited || pedited->colorappearance.autoybscen) {
             keyFile.set_boolean ("Color appearance", "Autoybscen", colorappearance.autoybscen);
         }
-		
+
         if (!pedited || pedited->colorappearance.surrsource) {
             keyFile.set_boolean ("Color appearance", "SurrSource", colorappearance.surrsource);
         }
@@ -2207,7 +2207,7 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         if (!pedited || pedited->colorappearance.greensc) {
             keyFile.set_double  ("Color appearance", "Greensc",       colorappearance.greensc);
         }
-		
+
         if (!pedited || pedited->colorappearance.ybout) {
             keyFile.set_integer ("Color appearance", "Ybout", colorappearance.ybout);
         }
@@ -5021,7 +5021,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->colorappearance.autodegreeout = true;
                 }
             }
-			
+
             if (keyFile.has_key ("Color appearance", "Surround")) {
                 colorappearance.surround = keyFile.get_string ("Color appearance", "Surround");
 
@@ -5037,7 +5037,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->colorappearance.surrsrc = true;
                 }
             }
-			
+
 // if (keyFile.has_key ("Color appearance", "Background")) {colorappearance.backgrd = keyFile.get_integer ("Color appearance", "Background"); if (pedited) pedited->colorappearance.backgrd = true; }
             if (keyFile.has_key ("Color appearance", "AdaptLum")) {
                 colorappearance.adaplum = keyFile.get_double ("Color appearance", "AdaptLum");
@@ -5174,7 +5174,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->colorappearance.autoybscen = true;
                 }
             }
-			
+
             if (keyFile.has_key ("Color appearance", "SurrSource")) {
                 colorappearance.surrsource = keyFile.get_boolean ("Color appearance", "SurrSource");
 
@@ -5222,7 +5222,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->colorappearance.greensc = true;
                 }
             }
-			
+
             if (keyFile.has_key ("Color appearance", "Ybout")) {
                 colorappearance.ybout = keyFile.get_integer ("Color appearance", "Ybout");
 

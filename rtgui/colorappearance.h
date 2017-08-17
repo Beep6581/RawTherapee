@@ -117,7 +117,7 @@ private:
     Adjuster* greensc;
 
     MyExpander* expadjust;
-	
+
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     MyComboBoxText* toneCurveMode3;
@@ -150,7 +150,7 @@ private:
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
     double nextCcam, nextCcamout, nextCadap;
-	int nextYbscn;
+    int nextYbscn;
     bool lastAutoDegree;
     bool lastAutoAdapscen;
     bool lastAutoDegreeout;
