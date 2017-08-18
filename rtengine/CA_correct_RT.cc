@@ -27,6 +27,8 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "median.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 namespace {
 
@@ -113,6 +115,7 @@ using namespace rtengine;
 
 void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData)
 {
+    BENCHFUN
 // multithreaded and partly vectorized by Ingo Weyrich
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
@@ -136,7 +139,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
     // local variables
     const int width = W, height = H;
     //temporary array to store simple interpolation of G
-    float *Gtmp = (float (*)) calloc ((height) * (width), sizeof * Gtmp);
+    float *Gtmp = (float (*)) malloc ((height * width + ((height * width) & 1)) / 2 * sizeof * Gtmp);
 
     // temporary array to avoid race conflicts, only every second pixel needs to be saved here
     float *RawDataTmp = (float*) malloc( (height * width + ((height * width) & 1)) * sizeof(float) / 2);
@@ -185,7 +188,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
         float   blockavethr[2][2] = {{0, 0}, {0, 0}}, blocksqavethr[2][2] = {{0, 0}, {0, 0}}, blockdenomthr[2][2] = {{0, 0}, {0, 0}};
 
         // assign working space
-        constexpr int buffersize = 3 * sizeof(float) * ts * ts + 6 * sizeof(float) * ts * tsh + 8 * 64 + 63;
+        constexpr int buffersize = sizeof(float) * ts * ts + 8 * sizeof(float) * ts * tsh + 8 * 64 + 63;
         char *buffer = (char *) malloc(buffersize);
         char *data = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
 
@@ -194,22 +197,21 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
         //rgb data in a tile
         float* rgb[3];
         rgb[0]         = (float (*)) data;
-        rgb[1]         = (float (*)) (data + 1 * sizeof(float) * ts * ts + 1 * 64);
-        rgb[2]         = (float (*)) (data + 2 * sizeof(float) * ts * ts + 2 * 64);
+        rgb[1]         = (float (*)) (data + sizeof(float) * ts * tsh + 1 * 64);
+        rgb[2]         = (float (*)) (data + sizeof(float) * (ts * ts + ts * tsh) + 2 * 64);
 
         //high pass filter for R/B in vertical direction
-        float *rbhpfh  = (float (*)) (data + 3 * sizeof(float) * ts * ts + 3 * 64);
+        float *rbhpfh  = (float (*)) (data + 2 * sizeof(float) * ts * ts + 3 * 64);
         //high pass filter for R/B in horizontal direction
-        float *rbhpfv  = (float (*)) (data + 3 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64);
+        float *rbhpfv  = (float (*)) (data + 2 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 4 * 64);
         //low pass filter for R/B in horizontal direction
-        float *rblpfh  = (float (*)) (data + 4 * sizeof(float) * ts * ts + 5 * 64);
+        float *rblpfh  = (float (*)) (data + 3 * sizeof(float) * ts * ts + 5 * 64);
         //low pass filter for R/B in vertical direction
-        float *rblpfv  = (float (*)) (data + 4 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 6 * 64);
+        float *rblpfv  = (float (*)) (data + 3 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 6 * 64);
         //low pass filter for colour differences in horizontal direction
-        float *grblpfh = (float (*)) (data + 5 * sizeof(float) * ts * ts + 7 * 64);
+        float *grblpfh = (float (*)) (data + 4 * sizeof(float) * ts * ts + 7 * 64);
         //low pass filter for colour differences in vertical direction
-        float *grblpfv = (float (*)) (data + 5 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 8 * 64);
-        //colour differences
+        float *grblpfv = (float (*)) (data + 4 * sizeof(float) * ts * ts + sizeof(float) * ts * tsh + 8 * 64);
         float *grbdiff = rbhpfh; // there is no overlap in buffer usage => share
         //green interpolated to optical sample points for R/B
         float *gshift  = rbhpfv; // there is no overlap in buffer usage => share
@@ -236,13 +238,38 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     // rgb values should be floating point numbers between 0 and 1
                     // after white balance multipliers are applied
 
-                    for (int rr = rrmin; rr < rrmax; rr++)
-                        for (int row = rr + top, cc = ccmin; cc < ccmax; cc++) {
-                            int col = cc + left;
+#ifdef __SSE2__
+                    vfloat c65535v = F2V(65535.f);
+#endif
+
+                    for (int rr = rrmin; rr < rrmax; rr++) {
+                        int row = rr + top;
+                        int cc = ccmin;
+                        int col = cc + left;
+#ifdef __SSE2__
+                        int c0 = FC(rr, cc);
+                        if(c0 == 1) {
+                            rgb[c0][rr * ts + cc] = rawData[row][col] / 65535.f;
+                            cc++;
+                            col++;
+                            c0 = FC(rr, cc);
+                        }
+                        int indx1 = rr * ts + cc;
+                        for (; cc < ccmax - 7; cc+=8, col+=8, indx1 += 8) {
+                            vfloat val1 = LVFU(rawData[row][col]) / c65535v;
+                            vfloat val2 = LVFU(rawData[row][col + 4]) / c65535v;
+                            vfloat nonGreenv = _mm_shuffle_ps(val1,val2,_MM_SHUFFLE( 2,0,2,0 ));
+                            STVFU(rgb[c0][indx1 >> 1], nonGreenv);
+                            STVFU(rgb[1][indx1], val1);
+                            STVFU(rgb[1][indx1 + 4], val2);
+                        }
+#endif
+                        for (; cc < ccmax; cc++, col++) {
                             int c = FC(rr, cc);
                             int indx1 = rr * ts + cc;
-                            rgb[c][indx1] = (rawData[row][col]) / 65535.0f;
+                            rgb[c][indx1 >> ((c & 1) ^ 1)] = rawData[row][col] / 65535.f;
                         }
+                    }
 
                     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     //fill borders
@@ -250,7 +277,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = ccmin; cc < ccmax; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][rr * ts + cc] = rgb[c][(border2 - rr) * ts + cc];
+                                rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][((border2 - rr) * ts + cc) >> ((c & 1) ^ 1)];
                             }
                     }
 
@@ -258,7 +285,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = ccmin; cc < ccmax; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rrmax + rr)*ts + cc] = (rawData[(height - rr - 2)][left + cc]) / 65535.0f;
+                                rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = rawData[(height - rr - 2)][left + cc] / 65535.f;
                             }
                     }
 
@@ -266,7 +293,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = rrmin; rr < rrmax; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][rr * ts + cc] = rgb[c][rr * ts + border2 - cc];
+                                rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][(rr * ts + border2 - cc) >> ((c & 1) ^ 1)];
                             }
                     }
 
@@ -274,7 +301,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = rrmin; rr < rrmax; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][rr * ts + ccmax + cc] = (rawData[(top + rr)][(width - cc - 2)]) / 65535.0f;
+                                rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = rawData[(top + rr)][(width - cc - 2)] / 65535.f;
                             }
                     }
 
@@ -283,7 +310,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rr)*ts + cc] = (rawData[border2 - rr][border2 - cc]) / 65535.0f;
+                                rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rawData[border2 - rr][border2 - cc] / 65535.f;
                             }
                     }
 
@@ -291,7 +318,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rrmax + rr)*ts + ccmax + cc] = (rawData[(height - rr - 2)][(width - cc - 2)]) / 65535.0f;
+                                rgb[c][((rrmax + rr)*ts + ccmax + cc) >> ((c & 1) ^ 1)] = rawData[(height - rr - 2)][(width - cc - 2)] / 65535.f;
                             }
                     }
 
@@ -299,7 +326,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rr)*ts + ccmax + cc] = (rawData[(border2 - rr)][(width - cc - 2)]) / 65535.0f;
+                                rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = rawData[(border2 - rr)][(width - cc - 2)] / 65535.f;
                             }
                     }
 
@@ -307,7 +334,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rrmax + rr)*ts + cc] = (rawData[(height - rr - 2)][(border2 - cc)]) / 65535.0f;
+                                rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = rawData[(height - rr - 2)][(border2 - cc)] / 65535.f;
                             }
                     }
 
@@ -328,30 +355,45 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 #ifdef __SSE2__
                         for (; cc < cc1 - 9; cc+=8, indx+=8) {
                             //compute directional weights using image gradients
-                            vfloat wtuv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx + v1]) - LC2VFU(rgb[1][indx - v1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx - v2])) + vabsf(LC2VFU(rgb[1][indx - v1]) - LC2VFU(rgb[1][indx - v3])));
-                            vfloat wtdv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx - v1]) - LC2VFU(rgb[1][indx + v1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx + v2])) + vabsf(LC2VFU(rgb[1][indx + v1]) - LC2VFU(rgb[1][indx + v3])));
-                            vfloat wtlv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx - 1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx - 2])) + vabsf(LC2VFU(rgb[1][indx - 1]) - LC2VFU(rgb[1][indx - 3])));
-                            vfloat wtrv = onev / SQRV(epsv + vabsf(LC2VFU(rgb[1][indx - 1]) - LC2VFU(rgb[1][indx + 1])) + vabsf(LC2VFU(rgb[c][indx]) - LC2VFU(rgb[c][indx + 2])) + vabsf(LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx + 3])));
+                            vfloat rgb1mv1v = LC2VFU(rgb[1][indx - v1]);
+                            vfloat rgb1pv1v = LC2VFU(rgb[1][indx + v1]);
+                            vfloat rgbcv = LVFU(rgb[c][indx >> 1]);
+                            vfloat temp1v = epsv + vabsf(rgb1mv1v - rgb1pv1v);
+                            vfloat wtuv = onev / SQRV(temp1v + vabsf(rgbcv - LVFU(rgb[c][(indx - v2) >> 1])) + vabsf(rgb1mv1v - LC2VFU(rgb[1][indx - v3])));
+                            vfloat wtdv = onev / SQRV(temp1v + vabsf(rgbcv - LVFU(rgb[c][(indx + v2) >> 1])) + vabsf(rgb1pv1v - LC2VFU(rgb[1][indx + v3])));
+                            vfloat rgb1m1v = LC2VFU(rgb[1][indx - 1]);
+                            vfloat rgb1p1v = LC2VFU(rgb[1][indx + 1]);
+                            vfloat temp2v = epsv + vabsf(rgb1m1v - rgb1p1v);
+                            vfloat wtlv = onev / SQRV(temp2v + vabsf(rgbcv - LVFU(rgb[c][(indx - 2) >> 1])) + vabsf(rgb1m1v - LC2VFU(rgb[1][indx - 3])));
+                            vfloat wtrv = onev / SQRV(temp2v + vabsf(rgbcv - LVFU(rgb[c][(indx + 2) >> 1])) + vabsf(rgb1p1v - LC2VFU(rgb[1][indx + 3])));
 
                             //store in rgb array the interpolated G value at R/B grid points using directional weighted average
-                            STC2VFU(rgb[1][indx], (wtuv * LC2VFU(rgb[1][indx - v1]) + wtdv * LC2VFU(rgb[1][indx + v1]) + wtlv * LC2VFU(rgb[1][indx - 1]) + wtrv * LC2VFU(rgb[1][indx + 1])) / (wtuv + wtdv + wtlv + wtrv));
+                            STC2VFU(rgb[1][indx], (wtuv * rgb1mv1v + wtdv * rgb1pv1v + wtlv * rgb1m1v + wtrv * rgb1p1v) / (wtuv + wtdv + wtlv + wtrv));
                         }
 
 #endif
                         for (; cc < cc1 - 3; cc+=2, indx+=2) {
                             //compute directional weights using image gradients
-                            float wtu = 1.f / SQR(eps + fabsf(rgb[1][indx + v1] - rgb[1][indx - v1]) + fabsf(rgb[c][indx] - rgb[c][indx - v2]) + fabsf(rgb[1][indx - v1] - rgb[1][indx - v3]));
-                            float wtd = 1.f / SQR(eps + fabsf(rgb[1][indx - v1] - rgb[1][indx + v1]) + fabsf(rgb[c][indx] - rgb[c][indx + v2]) + fabsf(rgb[1][indx + v1] - rgb[1][indx + v3]));
-                            float wtl = 1.f / SQR(eps + fabsf(rgb[1][indx + 1] - rgb[1][indx - 1]) + fabsf(rgb[c][indx] - rgb[c][indx - 2]) + fabsf(rgb[1][indx - 1] - rgb[1][indx - 3]));
-                            float wtr = 1.f / SQR(eps + fabsf(rgb[1][indx - 1] - rgb[1][indx + 1]) + fabsf(rgb[c][indx] - rgb[c][indx + 2]) + fabsf(rgb[1][indx + 1] - rgb[1][indx + 3]));
+                            float wtu = 1.f / SQR(eps + fabsf(rgb[1][indx + v1] - rgb[1][indx - v1]) + fabsf(rgb[c][indx >> 1] - rgb[c][(indx - v2) >> 1]) + fabsf(rgb[1][indx - v1] - rgb[1][indx - v3]));
+                            float wtd = 1.f / SQR(eps + fabsf(rgb[1][indx - v1] - rgb[1][indx + v1]) + fabsf(rgb[c][indx >> 1] - rgb[c][(indx + v2) >> 1]) + fabsf(rgb[1][indx + v1] - rgb[1][indx + v3]));
+                            float wtl = 1.f / SQR(eps + fabsf(rgb[1][indx + 1] - rgb[1][indx - 1]) + fabsf(rgb[c][indx >> 1] - rgb[c][(indx - 2) >> 1]) + fabsf(rgb[1][indx - 1] - rgb[1][indx - 3]));
+                            float wtr = 1.f / SQR(eps + fabsf(rgb[1][indx - 1] - rgb[1][indx + 1]) + fabsf(rgb[c][indx >> 1] - rgb[c][(indx + 2) >> 1]) + fabsf(rgb[1][indx + 1] - rgb[1][indx + 3]));
 
                             //store in rgb array the interpolated G value at R/B grid points using directional weighted average
                             rgb[1][indx] = (wtu * rgb[1][indx - v1] + wtd * rgb[1][indx + v1] + wtl * rgb[1][indx - 1] + wtr * rgb[1][indx + 1]) / (wtu + wtd + wtl + wtr);
                         }
 
                         if (row > -1 && row < height) {
-                            for(int col = max(left + 3, 0), indx = rr * ts + 3 - (left < 0 ? (left+3) : 0); col < min(cc1 + left - 3, width); col++, indx++) {
-                                Gtmp[row * width + col] = rgb[1][indx];
+                            int offset = (FC(row,max(left + 3, 0)) & 1);
+                            int col = max(left + 3, 0) + offset;
+                            int indx = rr * ts + 3 - (left < 0 ? (left+3) : 0) + offset;
+#ifdef __SSE2__
+                            for(; col < min(cc1 + left - 3, width) - 7; col+=8, indx+=8) {
+                                STVFU(Gtmp[(row * width + col) >> 1], LC2VFU(rgb[1][indx]));
+                            }
+#endif
+                            for(; col < min(cc1 + left - 3, width); col+=2, indx+=2) {
+                                Gtmp[(row * width + col) >> 1] = rgb[1][indx];
                             }
                         }
 
@@ -361,47 +403,53 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     vfloat zd25v = F2V(0.25f);
 #endif
                     for (int rr = 4; rr < rr1 - 4; rr++) {
-                        int cc = 4 + (FC(rr, 2) & 1), indx = rr * ts + cc, c = FC(rr, cc);
+                        int cc = 4 + (FC(rr, 2) & 1);
+                        int indx = rr * ts + cc;
+                        int c = FC(rr, cc);
 #ifdef __SSE2__
                         for (; cc < cc1 - 10; cc += 8, indx += 8) {
                             vfloat rgb1v = LC2VFU(rgb[1][indx]);
-                            vfloat rgbcv = LC2VFU(rgb[c][indx]);
-                            vfloat temp1v = vabsf(vabsf((rgb1v - rgbcv) - (LC2VFU(rgb[1][indx + v4]) - LC2VFU(rgb[c][indx + v4]))) +
-                                                      vabsf(LC2VFU(rgb[1][indx - v4]) - LC2VFU(rgb[c][indx - v4]) - rgb1v + rgbcv) -
-                                                      vabsf(LC2VFU(rgb[1][indx - v4]) - LC2VFU(rgb[c][indx - v4]) - LC2VFU(rgb[1][indx + v4]) + LC2VFU(rgb[c][indx + v4])));
+                            vfloat rgbcv = LVFU(rgb[c][indx >> 1]);
+                            vfloat rgb1mv4 = LC2VFU(rgb[1][indx - v4]);
+                            vfloat rgb1pv4 = LC2VFU(rgb[1][indx + v4]);
+                            vfloat temp1v = vabsf(vabsf((rgb1v - rgbcv) - (rgb1pv4 - LVFU(rgb[c][(indx + v4) >> 1]))) +
+                                                      vabsf(rgb1mv4 - LVFU(rgb[c][(indx - v4) >> 1]) - rgb1v + rgbcv) -
+                                                      vabsf(rgb1mv4 - LVFU(rgb[c][(indx - v4) >> 1]) - rgb1pv4 + LVFU(rgb[c][(indx + v4) >> 1])));
                             STVFU(rbhpfv[indx >> 1], temp1v);
-                            vfloat temp2v = vabsf(vabsf((rgb1v - rgbcv) - (LC2VFU(rgb[1][indx + 4]) - LC2VFU(rgb[c][indx + 4]))) +
-                                                      vabsf(LC2VFU(rgb[1][indx - 4]) - LC2VFU(rgb[c][indx - 4]) - rgb1v + rgbcv) -
-                                                      vabsf(LC2VFU(rgb[1][indx - 4]) - LC2VFU(rgb[c][indx - 4]) - LC2VFU(rgb[1][indx + 4]) + LC2VFU(rgb[c][indx + 4])));
+                            vfloat rgb1m4 = LC2VFU(rgb[1][indx - 4]);
+                            vfloat rgb1p4 = LC2VFU(rgb[1][indx + 4]);
+                            vfloat temp2v = vabsf(vabsf((rgb1v - rgbcv) - (rgb1p4 - LVFU(rgb[c][(indx + 4) >> 1]))) +
+                                                      vabsf(rgb1m4 - LVFU(rgb[c][(indx - 4) >> 1]) - rgb1v + rgbcv) -
+                                                      vabsf(rgb1m4 - LVFU(rgb[c][(indx - 4) >> 1]) - rgb1p4 + LVFU(rgb[c][(indx + 4) >> 1])));
                             STVFU(rbhpfh[indx >> 1], temp2v);
 
                             //low and high pass 1D filters of G in vertical/horizontal directions
                             rgb1v = vmul2f(rgb1v);
-                            vfloat glpfvv = zd25v * (rgb1v + LC2VFU(rgb[1][indx + v2]) + LC2VFU(rgb[1][indx - v2]));
-                            vfloat glpfhv = zd25v * (rgb1v + LC2VFU(rgb[1][indx + 2]) + LC2VFU(rgb[1][indx - 2]));
+                            vfloat glpfvv = (rgb1v + LC2VFU(rgb[1][indx + v2]) + LC2VFU(rgb[1][indx - v2]));
+                            vfloat glpfhv = (rgb1v + LC2VFU(rgb[1][indx + 2]) + LC2VFU(rgb[1][indx - 2]));
                             rgbcv = vmul2f(rgbcv);
-                            STVFU(rblpfv[indx >> 1], epsv + vabsf(glpfvv - zd25v * (rgbcv + LC2VFU(rgb[c][indx + v2]) + LC2VFU(rgb[c][indx - v2]))));
-                            STVFU(rblpfh[indx >> 1], epsv + vabsf(glpfhv - zd25v * (rgbcv + LC2VFU(rgb[c][indx + 2]) + LC2VFU(rgb[c][indx - 2]))));
-                            STVFU(grblpfv[indx >> 1], glpfvv + zd25v * (rgbcv + LC2VFU(rgb[c][indx + v2]) + LC2VFU(rgb[c][indx - v2])));
-                            STVFU(grblpfh[indx >> 1], glpfhv + zd25v * (rgbcv + LC2VFU(rgb[c][indx + 2]) + LC2VFU(rgb[c][indx - 2])));
+                            STVFU(rblpfv[indx >> 1], zd25v * vabsf(glpfvv - (rgbcv + LVFU(rgb[c][(indx + v2) >> 1]) + LVFU(rgb[c][(indx - v2) >> 1]))));
+                            STVFU(rblpfh[indx >> 1], zd25v * vabsf(glpfhv - (rgbcv + LVFU(rgb[c][(indx + 2) >> 1]) + LVFU(rgb[c][(indx - 2) >> 1]))));
+                            STVFU(grblpfv[indx >> 1], zd25v * (glpfvv + (rgbcv + LVFU(rgb[c][(indx + v2) >> 1]) + LVFU(rgb[c][(indx - v2) >> 1]))));
+                            STVFU(grblpfh[indx >> 1], zd25v * (glpfhv + (rgbcv + LVFU(rgb[c][(indx + 2) >> 1]) + LVFU(rgb[c][(indx - 2) >> 1]))));
                         }
 
 #endif
                         for (; cc < cc1 - 4; cc += 2, indx += 2) {
-                            rbhpfv[indx >> 1] = fabsf(fabsf((rgb[1][indx] - rgb[c][indx]) - (rgb[1][indx + v4] - rgb[c][indx + v4])) +
-                                                      fabsf((rgb[1][indx - v4] - rgb[c][indx - v4]) - (rgb[1][indx] - rgb[c][indx])) -
-                                                      fabsf((rgb[1][indx - v4] - rgb[c][indx - v4]) - (rgb[1][indx + v4] - rgb[c][indx + v4])));
-                            rbhpfh[indx >> 1] = fabsf(fabsf((rgb[1][indx] - rgb[c][indx]) - (rgb[1][indx + 4] - rgb[c][indx + 4])) +
-                                                      fabsf((rgb[1][indx - 4] - rgb[c][indx - 4]) - (rgb[1][indx] - rgb[c][indx])) -
-                                                      fabsf((rgb[1][indx - 4] - rgb[c][indx - 4]) - (rgb[1][indx + 4] - rgb[c][indx + 4])));
+                            rbhpfv[indx >> 1] = fabsf(fabsf((rgb[1][indx] - rgb[c][indx >> 1]) - (rgb[1][indx + v4] - rgb[c][(indx + v4) >> 1])) +
+                                                      fabsf((rgb[1][indx - v4] - rgb[c][(indx - v4) >> 1]) - (rgb[1][indx] - rgb[c][indx >> 1])) -
+                                                      fabsf((rgb[1][indx - v4] - rgb[c][(indx - v4) >> 1]) - (rgb[1][indx + v4] - rgb[c][(indx + v4) >> 1])));
+                            rbhpfh[indx >> 1] = fabsf(fabsf((rgb[1][indx] - rgb[c][indx >> 1]) - (rgb[1][indx + 4] - rgb[c][(indx + 4) >> 1])) +
+                                                      fabsf((rgb[1][indx - 4] - rgb[c][(indx - 4) >> 1]) - (rgb[1][indx] - rgb[c][indx >> 1])) -
+                                                      fabsf((rgb[1][indx - 4] - rgb[c][(indx - 4) >> 1]) - (rgb[1][indx + 4] - rgb[c][(indx + 4) >> 1])));
 
                             //low and high pass 1D filters of G in vertical/horizontal directions
-                            float glpfv = 0.25f * (2.f * rgb[1][indx] + rgb[1][indx + v2] + rgb[1][indx - v2]);
-                            float glpfh = 0.25f * (2.f * rgb[1][indx] + rgb[1][indx + 2] + rgb[1][indx - 2]);
-                            rblpfv[indx >> 1] = eps + fabsf(glpfv - 0.25f * (2.f * rgb[c][indx] + rgb[c][indx + v2] + rgb[c][indx - v2]));
-                            rblpfh[indx >> 1] = eps + fabsf(glpfh - 0.25f * (2.f * rgb[c][indx] + rgb[c][indx + 2] + rgb[c][indx - 2]));
-                            grblpfv[indx >> 1] = glpfv + 0.25f * (2.f * rgb[c][indx] + rgb[c][indx + v2] + rgb[c][indx - v2]);
-                            grblpfh[indx >> 1] = glpfh + 0.25f * (2.f * rgb[c][indx] + rgb[c][indx + 2] + rgb[c][indx - 2]);
+                            float glpfv = (2.f * rgb[1][indx] + rgb[1][indx + v2] + rgb[1][indx - v2]);
+                            float glpfh = (2.f * rgb[1][indx] + rgb[1][indx + 2] + rgb[1][indx - 2]);
+                            rblpfv[indx >> 1] = 0.25f * fabsf(glpfv - (2.f * rgb[c][indx >> 1] + rgb[c][(indx + v2) >> 1] + rgb[c][(indx - v2) >> 1]));
+                            rblpfh[indx >> 1] = 0.25f * fabsf(glpfh - (2.f * rgb[c][indx >> 1] + rgb[c][(indx + 2) >> 1] + rgb[c][(indx - 2) >> 1]));
+                            grblpfv[indx >> 1] = 0.25f * (glpfv + (2.f * rgb[c][indx >> 1] + rgb[c][(indx + v2) >> 1] + rgb[c][(indx - v2) >> 1]));
+                            grblpfh[indx >> 1] = 0.25f * (glpfh + (2.f * rgb[c][indx >> 1] + rgb[c][(indx + 2) >> 1] + rgb[c][(indx - 2) >> 1]));
                         }
                     }
 
@@ -414,10 +462,9 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     }
 
 #ifdef __SSE2__
-                    vfloat zd3125v = F2V(0.3125f);
-                    vfloat zd09375v = F2V(0.09375f);
+                    vfloat zd3v = F2V(0.3f);
                     vfloat zd1v = F2V(0.1f);
-                    vfloat zd125v = F2V(0.125f);
+                    vfloat zd5v = F2V(0.5f);
 #endif
 
                     // along line segments, find the point along each segment that minimizes the colour variance
@@ -439,29 +486,27 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                             //solve for the interpolation position that minimizes colour difference variance over the tile
 
                             //vertical
-                            vfloat gdiffv = zd3125v * (LC2VFU(rgb[1][indx + ts]) - LC2VFU(rgb[1][indx - ts])) + zd09375v * (LC2VFU(rgb[1][indx + ts + 1]) - LC2VFU(rgb[1][indx - ts + 1]) + LC2VFU(rgb[1][indx + ts - 1]) - LC2VFU(rgb[1][indx - ts - 1]));
-                            vfloat deltgrbv = LC2VFU(rgb[c][indx]) - LC2VFU(rgb[1][indx]);
+                            vfloat temp1 = zd3v * (LC2VFU(rgb[1][indx + ts + 1]) - LC2VFU(rgb[1][indx - ts - 1]));
+                            vfloat temp2 = zd3v * (LC2VFU(rgb[1][indx - ts + 1]) - LC2VFU(rgb[1][indx + ts - 1]));
+                            vfloat gdiffvv = (LC2VFU(rgb[1][indx + ts]) - LC2VFU(rgb[1][indx - ts])) + (temp1 - temp2);
+                            vfloat deltgrbv = LVFU(rgb[c][indx >> 1]) - LC2VFU(rgb[1][indx]);
 
-                            vfloat gradwtv = vabsf(zd25v * LVFU(rbhpfv[indx >> 1]) + zd125v * (LVFU(rbhpfv[(indx >> 1) + 1]) + LVFU(rbhpfv[(indx >> 1) - 1])) ) * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) / (epsv + zd1v * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) + LVFU(rblpfv[(indx >> 1) - v1]) + LVFU(rblpfv[(indx >> 1) + v1]));
+                            vfloat gradwtvv = (LVFU(rbhpfv[indx >> 1]) + zd5v * (LVFU(rbhpfv[(indx >> 1) + 1]) + LVFU(rbhpfv[(indx >> 1) - 1]))) * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) / (epsv + zd1v * (LVFU(grblpfv[(indx >> 1) - v1]) + LVFU(grblpfv[(indx >> 1) + v1])) + LVFU(rblpfv[(indx >> 1) - v1]) + LVFU(rblpfv[(indx >> 1) + v1]));
 
-                            coeff00v += gradwtv * deltgrbv * deltgrbv;
-                            coeff01v += gradwtv * gdiffv * deltgrbv;
-                            coeff02v += gradwtv * gdiffv * gdiffv;
+                            coeff00v += gradwtvv * deltgrbv * deltgrbv;
+                            coeff01v += gradwtvv * gdiffvv * deltgrbv;
+                            coeff02v += gradwtvv * gdiffvv * gdiffvv;
 
                             //horizontal
-                            gdiffv = zd3125v * (LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx - 1])) + zd09375v * (LC2VFU(rgb[1][indx + 1 + ts]) - LC2VFU(rgb[1][indx - 1 + ts]) + LC2VFU(rgb[1][indx + 1 - ts]) - LC2VFU(rgb[1][indx - 1 - ts]));
+                            vfloat gdiffhv = (LC2VFU(rgb[1][indx + 1]) - LC2VFU(rgb[1][indx - 1])) + (temp1 + temp2);
 
-                            gradwtv = vabsf(zd25v * LVFU(rbhpfh[indx >> 1]) + zd125v * (LVFU(rbhpfh[(indx >> 1) + v1]) + LVFU(rbhpfh[(indx >> 1) - v1])) ) * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) / (epsv + zd1v * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) + LVFU(rblpfh[(indx >> 1) - 1]) + LVFU(rblpfh[(indx >> 1) + 1]));
+                            vfloat gradwthv = (LVFU(rbhpfh[indx >> 1]) + zd5v * (LVFU(rbhpfh[(indx >> 1) + v1]) + LVFU(rbhpfh[(indx >> 1) - v1]))) * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) / (epsv + zd1v * (LVFU(grblpfh[(indx >> 1) - 1]) + LVFU(grblpfh[(indx >> 1) + 1])) + LVFU(rblpfh[(indx >> 1) - 1]) + LVFU(rblpfh[(indx >> 1) + 1]));
 
-                            coeff10v += gradwtv * deltgrbv * deltgrbv;
-                            coeff11v += gradwtv * gdiffv * deltgrbv;
-                            coeff12v += gradwtv * gdiffv * gdiffv;
-
-                            //  In Mathematica,
-                            //  f[x_]=Expand[Total[Flatten[
-                            //  ((1-x) RotateLeft[Gint,shift1]+x RotateLeft[Gint,shift2]-cfapad)^2[[dv;;-1;;2,dh;;-1;;2]]]]];
-                            //  extremum = -.5Coefficient[f[x],x]/Coefficient[f[x],x^2]
+                            coeff10v += gradwthv * deltgrbv * deltgrbv;
+                            coeff11v += gradwthv * gdiffhv * deltgrbv;
+                            coeff12v += gradwthv * gdiffhv * gdiffhv;
                         }
+
                         coeff[0][0][c>>1] += vhadd(coeff00v);
                         coeff[0][1][c>>1] += vhadd(coeff01v);
                         coeff[0][2][c>>1] += vhadd(coeff02v);
@@ -476,19 +521,19 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                             //solve for the interpolation position that minimizes colour difference variance over the tile
 
                             //vertical
-                            float gdiff = 0.3125f * (rgb[1][indx + ts] - rgb[1][indx - ts]) + 0.09375f * (rgb[1][indx + ts + 1] - rgb[1][indx - ts + 1] + rgb[1][indx + ts - 1] - rgb[1][indx - ts - 1]);
-                            float deltgrb = (rgb[c][indx] - rgb[1][indx]);
+                            float gdiff = (rgb[1][indx + ts] - rgb[1][indx - ts]) + 0.3f * (rgb[1][indx + ts + 1] - rgb[1][indx - ts + 1] + rgb[1][indx + ts - 1] - rgb[1][indx - ts - 1]);
+                            float deltgrb = (rgb[c][indx >> 1] - rgb[1][indx]);
 
-                            float gradwt = fabsf(0.25f * rbhpfv[indx >> 1] + 0.125f * (rbhpfv[(indx >> 1) + 1] + rbhpfv[(indx >> 1) - 1]) ) * (grblpfv[(indx >> 1) - v1] + grblpfv[(indx >> 1) + v1]) / (eps + 0.1f * (grblpfv[(indx >> 1) - v1] + grblpfv[(indx >> 1) + v1]) + rblpfv[(indx >> 1) - v1] + rblpfv[(indx >> 1) + v1]);
+                            float gradwt = (rbhpfv[indx >> 1] + 0.5f * (rbhpfv[(indx >> 1) + 1] + rbhpfv[(indx >> 1) - 1]) ) * (grblpfv[(indx >> 1) - v1] + grblpfv[(indx >> 1) + v1]) / (eps + 0.1f * (grblpfv[(indx >> 1) - v1] + grblpfv[(indx >> 1) + v1]) + rblpfv[(indx >> 1) - v1] + rblpfv[(indx >> 1) + v1]);
 
                             coeff[0][0][c>>1] += gradwt * deltgrb * deltgrb;
                             coeff[0][1][c>>1] += gradwt * gdiff * deltgrb;
                             coeff[0][2][c>>1] += gradwt * gdiff * gdiff;
 
                             //horizontal
-                            gdiff = 0.3125f * (rgb[1][indx + 1] - rgb[1][indx - 1]) + 0.09375f * (rgb[1][indx + 1 + ts] - rgb[1][indx - 1 + ts] + rgb[1][indx + 1 - ts] - rgb[1][indx - 1 - ts]);
+                            gdiff = (rgb[1][indx + 1] - rgb[1][indx - 1]) + 0.3f * (rgb[1][indx + 1 + ts] - rgb[1][indx - 1 + ts] + rgb[1][indx + 1 - ts] - rgb[1][indx - 1 - ts]);
 
-                            gradwt = fabsf(0.25f * rbhpfh[indx >> 1] + 0.125f * (rbhpfh[(indx >> 1) + v1] + rbhpfh[(indx >> 1) - v1]) ) * (grblpfh[(indx >> 1) - 1] + grblpfh[(indx >> 1) + 1]) / (eps + 0.1f * (grblpfh[(indx >> 1) - 1] + grblpfh[(indx >> 1) + 1]) + rblpfh[(indx >> 1) - 1] + rblpfh[(indx >> 1) + 1]);
+                            gradwt = (rbhpfh[indx >> 1] + 0.5f * (rbhpfh[(indx >> 1) + v1] + rbhpfh[(indx >> 1) - v1]) ) * (grblpfh[(indx >> 1) - 1] + grblpfh[(indx >> 1) + 1]) / (eps + 0.1f * (grblpfh[(indx >> 1) - 1] + grblpfh[(indx >> 1) + 1]) + rblpfh[(indx >> 1) - 1] + rblpfh[(indx >> 1) + 1]);
 
                             coeff[1][0][c>>1] += gradwt * deltgrb * deltgrb;
                             coeff[1][1][c>>1] += gradwt * gdiff * deltgrb;
@@ -498,6 +543,19 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                             //  f[x_]=Expand[Total[Flatten[
                             //  ((1-x) RotateLeft[Gint,shift1]+x RotateLeft[Gint,shift2]-cfapad)^2[[dv;;-1;;2,dh;;-1;;2]]]]];
                             //  extremum = -.5Coefficient[f[x],x]/Coefficient[f[x],x^2]
+                        }
+                    }
+
+                    for (int dir = 0; dir < 2; dir++) {
+                        for (int k = 0; k < 3; k++) {
+                            for (int c = 0; c < 2; c++) {
+                                coeff[dir][k][c] *= 0.25f;
+                                if(k == 1) {
+                                    coeff[dir][k][c] *= 0.3125f;
+                                } else if(k == 2) {
+                                    coeff[dir][k][c] *= SQR(0.3125f);
+                                }
+                            }
                         }
                     }
 
@@ -719,26 +777,51 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     // rgb values should be floating point number between 0 and 1
                     // after white balance multipliers are applied
 
-                    for (int rr = rrmin; rr < rrmax; rr++)
-                        for (int row = rr + top, cc = ccmin; cc < ccmax; cc++) {
-                            int col = cc + left;
+#ifdef __SSE2__
+                    vfloat c65535v = F2V(65535.f);
+                    vmask gmask = _mm_set_epi32(0, 0xffffffff, 0, 0xffffffff);
+#endif
+                    for (int rr = rrmin; rr < rrmax; rr++) {
+                        int row = rr + top;
+                        int cc = ccmin;
+                        int col = cc + left;
+                        int indx = row * width + col;
+                        int indx1 = rr * ts + cc;
+#ifdef __SSE2__
+                        int c = FC(rr, cc);
+                        if(c & 1) {
+                            rgb[1][indx1] = rawData[row][col] / 65535.f;
+                            indx++;
+                            indx1++;
+                            cc++;
+                            col++;
+                            c = FC(rr, cc);
+                        }
+                        for (; cc < ccmax - 7; cc += 8, col += 8, indx += 8, indx1 += 8) {
+                            vfloat val1v = LVFU(rawData[row][col]) / c65535v;
+                            vfloat val2v = LVFU(rawData[row][col + 4]) / c65535v;
+                            STVFU(rgb[c][indx1 >> 1], _mm_shuffle_ps(val1v, val2v, _MM_SHUFFLE(2, 0, 2, 0)));
+                            vfloat gtmpv = LVFU(Gtmp[indx >> 1]);
+                            STVFU(rgb[1][indx1], vself(gmask, PERMUTEPS(gtmpv, _MM_SHUFFLE(1, 1, 0, 0)), val1v));
+                            STVFU(rgb[1][indx1 + 4], vself(gmask, PERMUTEPS(gtmpv, _MM_SHUFFLE(3, 3, 2, 2)), val2v));
+                        }
+#endif
+                        for (; cc < ccmax; cc++, col++, indx++, indx1++) {
                             int c = FC(rr, cc);
-                            int indx = row * width + col;
-                            int indx1 = rr * ts + cc;
-                            rgb[c][indx1] = (rawData[row][col]) / 65535.0f;
+                            rgb[c][indx1 >> ((c & 1) ^ 1)] = rawData[row][col] / 65535.f;
 
                             if ((c & 1) == 0) {
-                                rgb[1][indx1] = Gtmp[indx];
+                                rgb[1][indx1] = Gtmp[indx >> 1];
                             }
                         }
-
+                    }
                     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     //fill borders
                     if (rrmin > 0) {
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = ccmin; cc < ccmax; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][rr * ts + cc] = rgb[c][(border2 - rr) * ts + cc];
+                                rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][((border2 - rr) * ts + cc) >> ((c & 1) ^ 1)];
                                 rgb[1][rr * ts + cc] = rgb[1][(border2 - rr) * ts + cc];
                             }
                     }
@@ -747,8 +830,10 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = ccmin; cc < ccmax; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rrmax + rr)*ts + cc] = (rawData[(height - rr - 2)][left + cc]) / 65535.0f;
-                                rgb[1][(rrmax + rr)*ts + cc] = Gtmp[(height - rr - 2) * width + left + cc];
+                                rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][left + cc]) / 65535.f;
+                                if ((c & 1) == 0) {
+                                    rgb[1][(rrmax + rr)*ts + cc] = Gtmp[((height - rr - 2) * width + left + cc) >> 1];
+                                }
                             }
                     }
 
@@ -756,7 +841,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = rrmin; rr < rrmax; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][rr * ts + cc] = rgb[c][rr * ts + border2 - cc];
+                                rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = rgb[c][(rr * ts + border2 - cc) >> ((c & 1) ^ 1)];
                                 rgb[1][rr * ts + cc] = rgb[1][rr * ts + border2 - cc];
                             }
                     }
@@ -765,8 +850,10 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = rrmin; rr < rrmax; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][rr * ts + ccmax + cc] = (rawData[(top + rr)][(width - cc - 2)]) / 65535.0f;
-                                rgb[1][rr * ts + ccmax + cc] = Gtmp[(top + rr) * width + (width - cc - 2)];
+                                rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(top + rr)][(width - cc - 2)]) / 65535.f;
+                                if ((c & 1) == 0) {
+                                    rgb[1][rr * ts + ccmax + cc] = Gtmp[((top + rr) * width + (width - cc - 2)) >> 1];
+                                }
                             }
                     }
 
@@ -775,8 +862,10 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rr)*ts + cc] = (rawData[border2 - rr][border2 - cc]) / 65535.0f;
-                                rgb[1][(rr)*ts + cc] = Gtmp[(border2 - rr) * width + border2 - cc];
+                                rgb[c][(rr * ts + cc) >> ((c & 1) ^ 1)] = (rawData[border2 - rr][border2 - cc]) / 65535.f;
+                                if ((c & 1) == 0) {
+                                    rgb[1][rr * ts + cc] = Gtmp[((border2 - rr) * width + border2 - cc) >> 1];
+                                }
                             }
                     }
 
@@ -784,8 +873,10 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rrmax + rr)*ts + ccmax + cc] = (rawData[(height - rr - 2)][(width - cc - 2)]) / 65535.0f;
-                                rgb[1][(rrmax + rr)*ts + ccmax + cc] = Gtmp[(height - rr - 2) * width + (width - cc - 2)];
+                                rgb[c][((rrmax + rr)*ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][(width - cc - 2)]) / 65535.f;
+                                if ((c & 1) == 0) {
+                                    rgb[1][(rrmax + rr)*ts + ccmax + cc] = Gtmp[((height - rr - 2) * width + (width - cc - 2)) >> 1];
+                                }
                             }
                     }
 
@@ -793,8 +884,10 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rr)*ts + ccmax + cc] = (rawData[(border2 - rr)][(width - cc - 2)]) / 65535.0f;
-                                rgb[1][(rr)*ts + ccmax + cc] = Gtmp[(border2 - rr) * width + (width - cc - 2)];
+                                rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(border2 - rr)][(width - cc - 2)]) / 65535.f;
+                                if ((c & 1) == 0) {
+                                    rgb[1][rr * ts + ccmax + cc] = Gtmp[((border2 - rr) * width + (width - cc - 2)) >> 1];
+                                }
                             }
                     }
 
@@ -802,8 +895,10 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         for (int rr = 0; rr < border; rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
-                                rgb[c][(rrmax + rr)*ts + cc] = (rawData[(height - rr - 2)][(border2 - cc)]) / 65535.0f;
-                                rgb[1][(rrmax + rr)*ts + cc] = Gtmp[(height - rr - 2) * width + (border2 - cc)];
+                                rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][(border2 - cc)]) / 65535.f;
+                                if ((c & 1) == 0) {
+                                    rgb[1][(rrmax + rr)*ts + cc] = Gtmp[((height - rr - 2) * width + (border2 - cc)) >> 1];
+                                }
                             }
                     }
 
@@ -813,24 +908,20 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     if (!autoCA) {
                         //manual CA correction; use red/blue slider values to set CA shift parameters
                         for (int rr = 3; rr < rr1 - 3; rr++)
-                            for (int row = rr + top, cc = 3, indx = rr * ts + cc; cc < cc1 - 3; cc++, indx++) {
-                                int col = cc + left;
+                            for (int cc = 3, indx = rr * ts + cc; cc < cc1 - 3; cc++, indx++) {
                                 int c = FC(rr, cc);
 
                                 if (c != 1) {
                                     //compute directional weights using image gradients
-                                    float wtu = 1.0 / SQR(eps + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr - 1) * ts + cc]) + fabsf(rgb[c][(rr) * ts + cc] - rgb[c][(rr - 2) * ts + cc]) + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr - 3) * ts + cc]));
-                                    float wtd = 1.0 / SQR(eps + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr + 1) * ts + cc]) + fabsf(rgb[c][(rr) * ts + cc] - rgb[c][(rr + 2) * ts + cc]) + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr + 3) * ts + cc]));
-                                    float wtl = 1.0 / SQR(eps + fabsf(rgb[1][(rr) * ts + cc + 1] - rgb[1][(rr) * ts + cc - 1]) + fabsf(rgb[c][(rr) * ts + cc] - rgb[c][(rr) * ts + cc - 2]) + fabsf(rgb[1][(rr) * ts + cc - 1] - rgb[1][(rr) * ts + cc - 3]));
-                                    float wtr = 1.0 / SQR(eps + fabsf(rgb[1][(rr) * ts + cc - 1] - rgb[1][(rr) * ts + cc + 1]) + fabsf(rgb[c][(rr) * ts + cc] - rgb[c][(rr) * ts + cc + 2]) + fabsf(rgb[1][(rr) * ts + cc + 1] - rgb[1][(rr) * ts + cc + 3]));
+                                    float wtu = 1.f / SQR(eps + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr - 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr - 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr - 3) * ts + cc]));
+                                    float wtd = 1.f / SQR(eps + fabsf(rgb[1][(rr - 1) * ts + cc] - rgb[1][(rr + 1) * ts + cc]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][((rr + 2) * ts + cc) >> 1]) + fabsf(rgb[1][(rr + 1) * ts + cc] - rgb[1][(rr + 3) * ts + cc]));
+                                    float wtl = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc - 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc - 2) >> 1]) + fabsf(rgb[1][rr * ts + cc - 1] - rgb[1][rr * ts + cc - 3]));
+                                    float wtr = 1.f / SQR(eps + fabsf(rgb[1][rr * ts + cc - 1] - rgb[1][rr * ts + cc + 1]) + fabsf(rgb[c][(rr * ts + cc) >> 1] - rgb[c][(rr * ts + cc + 2) >> 1]) + fabsf(rgb[1][rr * ts + cc + 1] - rgb[1][rr * ts + cc + 3]));
 
                                     //store in rgb array the interpolated G value at R/B grid points using directional weighted average
                                     rgb[1][indx] = (wtu * rgb[1][indx - v1] + wtd * rgb[1][indx + v1] + wtl * rgb[1][indx - 1] + wtr * rgb[1][indx + 1]) / (wtu + wtd + wtl + wtr);
                                 }
 
-                                if (row > -1 && row < height && col > -1 && col < width) {
-                                    Gtmp[row * width + col] = rgb[1][indx];
-                                }
                             }
 
                         float hfrac = -((float)(hblock - 0.5) / (hblsz - 2) - 0.5);
@@ -884,34 +975,39 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     for (int rr = 4; rr < rr1 - 4; rr++) {
                         int cc = 4 + (FC(rr, 2) & 1);
                         int c = FC(rr, cc);
+                        int indx = (rr * ts + cc) >> 1;
+                        int indxfc = (rr + shiftvfloor[c]) * ts + cc + shifthceil[c];
+                        int indxff = (rr + shiftvfloor[c]) * ts + cc + shifthfloor[c];
+                        int indxcc = (rr + shiftvceil[c]) * ts + cc + shifthceil[c];
+                        int indxcf = (rr + shiftvceil[c]) * ts + cc + shifthfloor[c];
 #ifdef __SSE2__
                         vfloat shifthfracv = F2V(shifthfrac[c]);
                         vfloat shiftvfracv = F2V(shiftvfrac[c]);
-                        for (; cc < cc1 - 10; cc += 8) {
+                        for (; cc < cc1 - 10; cc += 8, indxfc += 8, indxff += 8, indxcc += 8, indxcf += 8, indx += 4) {
                             //perform CA correction using colour ratios or colour differences
-                            vfloat Ginthfloorv = vintpf(shifthfracv, LC2VFU(rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthceil[c]]), LC2VFU(rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthfloor[c]]));
-                            vfloat Ginthceilv = vintpf(shifthfracv, LC2VFU(rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthceil[c]]), LC2VFU(rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthfloor[c]]));
+                            vfloat Ginthfloorv = vintpf(shifthfracv, LC2VFU(rgb[1][indxfc]), LC2VFU(rgb[1][indxff]));
+                            vfloat Ginthceilv = vintpf(shifthfracv, LC2VFU(rgb[1][indxcc]), LC2VFU(rgb[1][indxcf]));
                             //Gint is bilinear interpolation of G at CA shift point
                             vfloat Gintv = vintpf(shiftvfracv, Ginthceilv, Ginthfloorv);
 
                             //determine R/B at grid points using colour differences at shift point plus interpolated G value at grid point
                             //but first we need to interpolate G-R/G-B to grid points...
-                            STVFU(grbdiff[((rr)*ts + cc) >> 1], Gintv - LC2VFU(rgb[c][(rr) * ts + cc]));
-                            STVFU(gshift[((rr)*ts + cc) >> 1], Gintv);
+                            STVFU(grbdiff[indx], Gintv - LVFU(rgb[c][indx]));
+                            STVFU(gshift[indx], Gintv);
                         }
 
 #endif
-                        for (; cc < cc1 - 4; cc += 2) {
+                        for (; cc < cc1 - 4; cc += 2, indxfc += 2, indxff += 2, indxcc += 2, indxcf += 2, ++indx) {
                             //perform CA correction using colour ratios or colour differences
-                            float Ginthfloor = intp(shifthfrac[c], rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthceil[c]], rgb[1][(rr + shiftvfloor[c]) * ts + cc + shifthfloor[c]]);
-                            float Ginthceil = intp(shifthfrac[c], rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthceil[c]], rgb[1][(rr + shiftvceil[c]) * ts + cc + shifthfloor[c]]);
+                            float Ginthfloor = intp(shifthfrac[c], rgb[1][indxfc], rgb[1][indxff]);
+                            float Ginthceil = intp(shifthfrac[c], rgb[1][indxcc], rgb[1][indxcf]);
                             //Gint is bilinear interpolation of G at CA shift point
                             float Gint = intp(shiftvfrac[c], Ginthceil, Ginthfloor);
 
                             //determine R/B at grid points using colour differences at shift point plus interpolated G value at grid point
                             //but first we need to interpolate G-R/G-B to grid points...
-                            grbdiff[((rr)*ts + cc) >> 1] = Gint - rgb[c][(rr) * ts + cc];
-                            gshift[((rr)*ts + cc) >> 1] = Gint;
+                            grbdiff[indx] = Gint - rgb[c][indx];
+                            gshift[indx] = Gint;
                         }
                     }
 
@@ -920,54 +1016,105 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     shiftvfrac[0] /= 2.f;
                     shiftvfrac[2] /= 2.f;
 
-                    // this loop does not deserve vectorization in mainly because the most expensive part with the divisions does not happen often (less than 1/10 in my tests)
-                    for (int rr = 8; rr < rr1 - 8; rr++)
-                        for (int cc = 8 + (FC(rr, 2) & 1), c = FC(rr, cc), indx = rr * ts + cc; cc < cc1 - 8; cc += 2, indx += 2) {
+#ifdef __SSE2__
+                    vfloat zd25v = F2V(0.25f);
+                    vfloat onev = F2V(1.f);
+                    vfloat zd5v = F2V(0.5f);
+                    vfloat epsv = F2V(eps);
+#endif
+                    for (int rr = 8; rr < rr1 - 8; rr++) {
+                        int cc = 8 + (FC(rr, 2) & 1);
+                        int c = FC(rr, cc);
+                        int GRBdir0 = GRBdir[0][c];
+                        int GRBdir1 = GRBdir[1][c];
+                        vfloat shifthfracc = F2V(shifthfrac[c]);
+                        vfloat shiftvfracc = F2V(shiftvfrac[c]);
+#ifdef __SSE2__
+                        for (int indx = rr * ts + cc; cc < cc1 - 14; cc += 8, indx += 8) {
+                            //interpolate colour difference from optical R/B locations to grid locations
+                            vfloat grbdiffinthfloor = vintpf(shifthfracc, LVFU(grbdiff[(indx - GRBdir1) >> 1]), LVFU(grbdiff[indx >> 1]));
+                            vfloat grbdiffinthceil = vintpf(shifthfracc, LVFU(grbdiff[((rr - GRBdir0) * ts + cc - GRBdir1) >> 1]), LVFU(grbdiff[((rr - GRBdir0) * ts + cc) >> 1]));
+                            //grbdiffint is bilinear interpolation of G-R/G-B at grid point
+                            vfloat grbdiffint = vintpf(shiftvfracc, grbdiffinthceil, grbdiffinthfloor);
 
-                            float grbdiffold = rgb[1][indx] - rgb[c][indx];
+                            //now determine R/B at grid points using interpolated colour differences and interpolated G value at grid point
+                            vfloat cinv = LVFU(rgb[c][indx >> 1]);
+                            vfloat rinv = LC2VFU(rgb[1][indx]);
+                            vfloat RBint = rinv - grbdiffint;
+                            vmask cmask = vmaskf_ge(vabsf(RBint - cinv), zd25v * (RBint + cinv));
+                            if(_mm_movemask_ps((vfloat)cmask)) {
+                                // if for any of the 4 pixels the condition is true, do the math for all 4 pixels and mask the unused out at the end
+                                //gradient weights using difference from G at CA shift points and G at grid points
+                                vfloat p0 = onev / (epsv + vabsf(rinv - LVFU(gshift[indx >> 1])));
+                                vfloat p1 = onev / (epsv + vabsf(rinv - LVFU(gshift[(indx - GRBdir1) >> 1])));
+                                vfloat p2 = onev / (epsv + vabsf(rinv - LVFU(gshift[((rr - GRBdir0) * ts + cc) >> 1])));
+                                vfloat p3 = onev / (epsv + vabsf(rinv - LVFU(gshift[((rr - GRBdir0) * ts + cc - GRBdir1) >> 1])));
+
+                                grbdiffint = vself(cmask, (p0 * LVFU(grbdiff[indx >> 1]) + p1 * LVFU(grbdiff[(indx - GRBdir1) >> 1]) +
+                                              p2 * LVFU(grbdiff[((rr - GRBdir0) * ts + cc) >> 1]) + p3 * LVFU(grbdiff[((rr - GRBdir0) * ts + cc - GRBdir1) >> 1])) / (p0 + p1 + p2 + p3), grbdiffint);
+
+                            }
+                            vfloat grbdiffold = rinv - cinv;
+                            RBint = rinv - grbdiffint;
+                            RBint = vself(vmaskf_gt(vabsf(grbdiffold), vabsf(grbdiffint)), RBint, cinv);
+                            RBint = vself(vmaskf_lt(grbdiffold * grbdiffint, ZEROV), rinv - zd5v * (grbdiffold + grbdiffint), RBint);
+                            STVFU(rgb[c][indx >> 1], RBint);
+                        }
+#endif
+                        for (int c = FC(rr, cc), indx = rr * ts + cc; cc < cc1 - 8; cc += 2, indx += 2) {
+                            float grbdiffold = rgb[1][indx] - rgb[c][indx >> 1];
 
                             //interpolate colour difference from optical R/B locations to grid locations
-                            float grbdiffinthfloor = intp(shifthfrac[c], grbdiff[(indx - GRBdir[1][c]) >> 1], grbdiff[indx >> 1]);
-                            float grbdiffinthceil = intp(shifthfrac[c], grbdiff[((rr - GRBdir[0][c]) * ts + cc - GRBdir[1][c]) >> 1], grbdiff[((rr - GRBdir[0][c]) * ts + cc) >> 1]);
+                            float grbdiffinthfloor = intp(shifthfrac[c], grbdiff[(indx - GRBdir1) >> 1], grbdiff[indx >> 1]);
+                            float grbdiffinthceil = intp(shifthfrac[c], grbdiff[((rr - GRBdir0) * ts + cc - GRBdir1) >> 1], grbdiff[((rr - GRBdir0) * ts + cc) >> 1]);
                             //grbdiffint is bilinear interpolation of G-R/G-B at grid point
                             float grbdiffint = intp(shiftvfrac[c], grbdiffinthceil, grbdiffinthfloor);
 
                             //now determine R/B at grid points using interpolated colour differences and interpolated G value at grid point
                             float RBint = rgb[1][indx] - grbdiffint;
 
-                            if (fabsf(RBint - rgb[c][indx]) < 0.25f * (RBint + rgb[c][indx])) {
+                            if (fabsf(RBint - rgb[c][indx >> 1]) < 0.25f * (RBint + rgb[c][indx >> 1])) {
                                 if (fabsf(grbdiffold) > fabsf(grbdiffint) ) {
-                                    rgb[c][indx] = RBint;
+                                    rgb[c][indx >> 1] = RBint;
                                 }
                             } else {
 
                                 //gradient weights using difference from G at CA shift points and G at grid points
-                                float p0 = 1.0f / (eps + fabsf(rgb[1][indx] - gshift[indx >> 1]));
-                                float p1 = 1.0f / (eps + fabsf(rgb[1][indx] - gshift[(indx - GRBdir[1][c]) >> 1]));
-                                float p2 = 1.0f / (eps + fabsf(rgb[1][indx] - gshift[((rr - GRBdir[0][c]) * ts + cc) >> 1]));
-                                float p3 = 1.0f / (eps + fabsf(rgb[1][indx] - gshift[((rr - GRBdir[0][c]) * ts + cc - GRBdir[1][c]) >> 1]));
+                                float p0 = 1.f / (eps + fabsf(rgb[1][indx] - gshift[indx >> 1]));
+                                float p1 = 1.f / (eps + fabsf(rgb[1][indx] - gshift[(indx - GRBdir1) >> 1]));
+                                float p2 = 1.f / (eps + fabsf(rgb[1][indx] - gshift[((rr - GRBdir0) * ts + cc) >> 1]));
+                                float p3 = 1.f / (eps + fabsf(rgb[1][indx] - gshift[((rr - GRBdir0) * ts + cc - GRBdir1) >> 1]));
 
-                                grbdiffint = (p0 * grbdiff[indx >> 1] + p1 * grbdiff[(indx - GRBdir[1][c]) >> 1] +
-                                              p2 * grbdiff[((rr - GRBdir[0][c]) * ts + cc) >> 1] + p3 * grbdiff[((rr - GRBdir[0][c]) * ts + cc - GRBdir[1][c]) >> 1]) / (p0 + p1 + p2 + p3) ;
+                                grbdiffint = (p0 * grbdiff[indx >> 1] + p1 * grbdiff[(indx - GRBdir1) >> 1] +
+                                              p2 * grbdiff[((rr - GRBdir0) * ts + cc) >> 1] + p3 * grbdiff[((rr - GRBdir0) * ts + cc - GRBdir1) >> 1]) / (p0 + p1 + p2 + p3) ;
 
                                 //now determine R/B at grid points using interpolated colour differences and interpolated G value at grid point
                                 if (fabsf(grbdiffold) > fabsf(grbdiffint) ) {
-                                    rgb[c][indx] = rgb[1][indx] - grbdiffint;
+                                    rgb[c][indx >> 1] = rgb[1][indx] - grbdiffint;
                                 }
                             }
 
                             //if colour difference interpolation overshot the correction, just desaturate
                             if (grbdiffold * grbdiffint < 0) {
-                                rgb[c][indx] = rgb[1][indx] - 0.5f * (grbdiffold + grbdiffint);
+                                rgb[c][indx >> 1] = rgb[1][indx] - 0.5f * (grbdiffold + grbdiffint);
                             }
                         }
+                    }
 
                     // copy CA corrected results to temporary image matrix
                     for (int rr = border; rr < rr1 - border; rr++) {
                         int c = FC(rr + top, left + border + (FC(rr + top, 2) & 1));
-
-                        for (int row = rr + top, cc = border + (FC(rr, 2) & 1), indx = (row * width + cc + left) >> 1; cc < cc1 - border; cc += 2, indx++) {
-                            RawDataTmp[indx] = 65535.0f * rgb[c][(rr) * ts + cc];
+                        int row = rr + top;
+                        int cc = border + (FC(rr, 2) & 1);
+                        int indx = (row * width + cc + left) >> 1;
+                        int indx1 = (rr * ts + cc) >> 1;
+#ifdef __SSE2__
+                        for (; indx < (row * width + cc1 - border - 7 + left) >> 1; indx+=4, indx1 += 4) {
+                            STVFU(RawDataTmp[indx], c65535v * LVFU(rgb[c][indx1]));
+                        }
+#endif
+                        for (; indx < (row * width + cc1 - border + left) >> 1; indx++, indx1++) {
+                            RawDataTmp[indx] = 65535.f * rgb[c][indx1];
                         }
                     }
 
@@ -993,17 +1140,23 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 // copy temporary image matrix back to image matrix
             #pragma omp for
 
-            for(int row = 0; row < height; row++)
-                for(int col = 0 + (FC(row, 0) & 1), indx = (row * width + col) >> 1; col < width; col += 2, indx++) {
+            for(int row = 0; row < height; row++) {
+                int col = FC(row, 0) & 1;
+                int indx = (row * width + col) >> 1;
+#ifdef __SSE2__
+                for(; col < width - 7; col += 8, indx += 4) {
+                    STC2VFU(rawData[row][col], LVFU(RawDataTmp[indx]));
+                }
+#endif
+                for(; col < width; col += 2, indx++) {
                     rawData[row][col] = RawDataTmp[indx];
                 }
+            }
 
         }
 
         // clean up
         free(buffer);
-
-
     }
 
     free(Gtmp);
