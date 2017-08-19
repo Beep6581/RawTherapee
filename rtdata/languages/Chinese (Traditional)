@@ -966,6 +966,12 @@ TP_WBALANCE_TEMPERATURE;色溫
 !HISTORY_MSG_476;CAM02 - Temp out
 !HISTORY_MSG_477;CAM02 - Green out
 !HISTORY_MSG_478;CAM02 - Yb out
+!HISTORY_MSG_479;CAM02 - CAT02 adaptation out
+!HISTORY_MSG_480;CAM02 - Automatic CAT02 out
+!HISTORY_MSG_481;CAM02 - Temp scene
+!HISTORY_MSG_482;CAM02 - Green scene
+!HISTORY_MSG_483;CAM02 - Yb scene
+!HISTORY_MSG_484;CAM02 - Auto Yb scene
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1363,11 +1369,11 @@ TP_WBALANCE_TEMPERATURE;色溫
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_COLORAPP_ADAPTSCENE;Scene luminosity
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
-!TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²).
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first.
+!TP_COLORAPP_ADAPTSCENE;Scene absolute luminance
+!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environment (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
+!TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m²)
+!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
+!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from the Exif data.\nTo set the value manually, uncheck the checkbox first.
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -1387,8 +1393,8 @@ TP_WBALANCE_TEMPERATURE;色溫
 !TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
 !TP_COLORAPP_CONTRAST;Contrast (J)
 !TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from L*a*b* and RGB contrast.
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from L*a*b* and RGB contrast.
+!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Differs from L*a*b* and RGB contrast.
+!TP_COLORAPP_CONTRAST_TOOLTIP;Differs from L*a*b* and RGB contrast.
 !TP_COLORAPP_CURVEEDITOR1;Tone curve 1
 !TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 !TP_COLORAPP_CURVEEDITOR2;Tone curve 2
@@ -1399,6 +1405,7 @@ TP_WBALANCE_TEMPERATURE;色溫
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
+!TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 !TP_COLORAPP_HUE;Hue (h)
@@ -1410,9 +1417,11 @@ TP_WBALANCE_TEMPERATURE;色溫
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
 !TP_COLORAPP_MODEL;WP Model
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.
+!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected bu user, output device's white balance is set in Viewing Conditions.
+!TP_COLORAPP_NEUTRAL;Reset
+!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
-!TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin-tones protection affects both sliders and curves.
+!TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 !TP_COLORAPP_SHARPCIE;--unused--
 !TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
 !TP_COLORAPP_SURROUND;Surround
@@ -1431,11 +1440,14 @@ TP_WBALANCE_TEMPERATURE;色溫
 !TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_COLORAPP_YB;Yb (mean luminance)
+!TP_COLORAPP_YB;Yb% (mean luminance)
+!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
+!TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
@@ -1625,17 +1637,17 @@ TP_WBALANCE_TEMPERATURE;色溫
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
-!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
+!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYHUESATMAP;Base table
-!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
+!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYLOOKTABLE;Look table
-!TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
+!TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
-!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 !TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
@@ -1649,7 +1661,7 @@ TP_WBALANCE_TEMPERATURE;色溫
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 !TP_ICM_TONECURVE;Tone curve
-!TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
+!TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
 !TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
