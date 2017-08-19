@@ -189,7 +189,7 @@ button  {
 }
 
 /* Curve mode buttons and drop-downs */
-button:checked.Left, button:checked.Left + button {
+button:checked.Left {
     background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
     background-color: #585858;
 }
