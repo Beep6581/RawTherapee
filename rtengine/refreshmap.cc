@@ -504,7 +504,13 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,          // EvPixelShiftEqualBrightChannel
     LUMINANCECURVE,   // EvCATtempout
     LUMINANCECURVE,   // EvCATgreenout
-    LUMINANCECURVE   // EvCATybout
+    LUMINANCECURVE,   // EvCATybout
+    LUMINANCECURVE,   // EvCATDegreeout
+    LUMINANCECURVE,   // EvCATAutoDegreeout
+    LUMINANCECURVE,   // EvCATtempsc
+    LUMINANCECURVE,   // EvCATgreensc
+    LUMINANCECURVE,   // EvCATybscen
+    LUMINANCECURVE   // EvCATAutoyb
 
 
 };

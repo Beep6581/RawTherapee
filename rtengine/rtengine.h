@@ -273,8 +273,10 @@ class AutoCamListener
 {
 public :
     virtual ~AutoCamListener() {}
-    virtual void autoCamChanged (double ccam) {}
+    virtual void autoCamChanged (double ccam, double ccamout) {}
     virtual void adapCamChanged (double cadap) {}
+    virtual void ybCamChanged (int yb) {}
+
 };
 
 class AutoChromaListener
@@ -314,21 +316,21 @@ class AutoWBListener
 {
 public :
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(double temp, double green) = 0;
+    virtual void WBChanged (double temp, double green) = 0;
 };
 
 class FrameCountListener
 {
 public :
     virtual ~FrameCountListener() = default;
-    virtual void FrameCountChanged(int n, int frameNum) = 0;
+    virtual void FrameCountChanged (int n, int frameNum) = 0;
 };
 
 class ImageTypeListener
 {
 public :
     virtual ~ImageTypeListener() = default;
-    virtual void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans) = 0;
+    virtual void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans) = 0;
 };
 
 class WaveletListener
@@ -386,7 +388,7 @@ public:
     virtual void        endUpdateParams (ProcEvent change) = 0;
     virtual void        endUpdateParams (int changeFlags) = 0;
     // Starts a minimal update
-    virtual void        startProcessing(int changeCode) = 0;
+    virtual void        startProcessing (int changeCode) = 0;
     /** Stops image processing. When it returns, the image processing is already stopped. */
     virtual void        stopProcessing () = 0;
     /** Sets the scale of the preview image. The larger the number is, the faster the image updates are (typical values are 4-5).
@@ -479,7 +481,7 @@ public:
        * @param isRaw shall be true if it is a raw file
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-    static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, bool fast=false);
+    static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, bool fast = false);
 
     /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately. This function increases the reference count of the initialImage. If you decide not the process the image you
@@ -488,7 +490,7 @@ public:
        * @param initialImage is a loaded and pre-processed initial image
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-    static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, bool fast=false);
+    static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, bool fast = false);
 
     /** Cancels and destroys a processing job. The reference count of the corresponding initialImage (if any) is decreased. After the call of this function the ProcessingJob instance
       * gets invalid, you must not use it any more. Dont call this function while the job is being processed.
@@ -517,7 +519,7 @@ public:
                    * @param img is the result of the last ProcessingJob
                    * @return the next ProcessingJob to process */
     virtual ProcessingJob* imageReady (IImage16* img) = 0;
-    virtual void error(Glib::ustring message) = 0;
+    virtual void error (Glib::ustring message) = 0;
 };
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
    * When it finishes, it calls the BatchProcessingListener with the resulting image and asks for the next job. It the listener gives a new job, it goes on
