@@ -175,9 +175,14 @@ void ParamsEdited::set (bool v)
     colorappearance.enabled    = v;
     colorappearance.degree     = v;
     colorappearance.autodegree = v;
+    colorappearance.degreeout     = v;
+    colorappearance.autodegreeout = v;
     colorappearance.surround     = v;
+    colorappearance.surrsrc     = v;
     colorappearance.adapscen    = v;
     colorappearance.autoadapscen = v;
+    colorappearance.ybscen    = v;
+    colorappearance.autoybscen = v;
     colorappearance.adaplum    = v;
     colorappearance.badpixsl    = v;
     colorappearance.wbmodel    = v;
@@ -207,6 +212,8 @@ void ParamsEdited::set (bool v)
     colorappearance.tempout     = v;
     colorappearance.greenout     = v;
     colorappearance.ybout     = v;
+    colorappearance.tempsc     = v;
+    colorappearance.greensc     = v;
 
     //colorBoost.amount         = v;
     //colorBoost.avoidclip      = v;
@@ -795,9 +802,14 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.enabled = colorappearance.enabled && p.colorappearance.enabled == other.colorappearance.enabled;
         colorappearance.degree = colorappearance.degree && p.colorappearance.degree == other.colorappearance.degree;
         colorappearance.autodegree = colorappearance.autodegree && p.colorappearance.autodegree == other.colorappearance.autodegree;
+        colorappearance.degreeout = colorappearance.degreeout && p.colorappearance.degreeout == other.colorappearance.degreeout;
+        colorappearance.autodegreeout = colorappearance.autodegreeout && p.colorappearance.autodegreeout == other.colorappearance.autodegreeout;
         colorappearance.surround = colorappearance.surround && p.colorappearance.surround == other.colorappearance.surround;
+        colorappearance.surrsrc = colorappearance.surrsrc && p.colorappearance.surrsrc == other.colorappearance.surrsrc;
         colorappearance.adapscen = colorappearance.adapscen && p.colorappearance.adapscen == other.colorappearance.adapscen;
         colorappearance.autoadapscen = colorappearance.autoadapscen && p.colorappearance.autoadapscen == other.colorappearance.autoadapscen;
+        colorappearance.ybscen = colorappearance.ybscen && p.colorappearance.ybscen == other.colorappearance.ybscen;
+        colorappearance.autoybscen = colorappearance.autoybscen && p.colorappearance.autoybscen == other.colorappearance.autoybscen;
         colorappearance.adaplum = colorappearance.adaplum && p.colorappearance.adaplum == other.colorappearance.adaplum;
         colorappearance.badpixsl = colorappearance.badpixsl && p.colorappearance.badpixsl == other.colorappearance.badpixsl;
         colorappearance.wbmodel = colorappearance.wbmodel && p.colorappearance.wbmodel == other.colorappearance.wbmodel;
@@ -826,6 +838,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.tempout = colorappearance.tempout && p.colorappearance.tempout == other.colorappearance.tempout;
         colorappearance.greenout = colorappearance.greenout && p.colorappearance.greenout == other.colorappearance.greenout;
         colorappearance.ybout = colorappearance.ybout && p.colorappearance.ybout == other.colorappearance.ybout;
+        colorappearance.tempsc = colorappearance.tempsc && p.colorappearance.tempsc == other.colorappearance.tempsc;
+        colorappearance.greensc = colorappearance.greensc && p.colorappearance.greensc == other.colorappearance.greensc;
 
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
@@ -1902,8 +1916,20 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.colorappearance.autodegree = mods.colorappearance.autodegree;
     }
 
+    if (colorappearance.degreeout) {
+        toEdit.colorappearance.degreeout     = mods.colorappearance.degreeout;
+    }
+
+    if (colorappearance.autodegreeout) {
+        toEdit.colorappearance.autodegreeout = mods.colorappearance.autodegreeout;
+    }
+
     if (colorappearance.surround) {
         toEdit.colorappearance.surround       = mods.colorappearance.surround;
+    }
+
+    if (colorappearance.surrsrc) {
+        toEdit.colorappearance.surrsrc       = mods.colorappearance.surrsrc;
     }
 
     if (colorappearance.autoadapscen) {
@@ -1912,6 +1938,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (colorappearance.adapscen) {
         toEdit.colorappearance.adapscen   = mods.colorappearance.adapscen;
+    }
+
+    if (colorappearance.autoybscen) {
+        toEdit.colorappearance.autoybscen   = mods.colorappearance.autoybscen;
+    }
+
+    if (colorappearance.ybscen) {
+        toEdit.colorappearance.ybscen   = mods.colorappearance.ybscen;
     }
 
     if (colorappearance.adaplum) {
@@ -1936,6 +1970,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (colorappearance.greenout) {
         toEdit.colorappearance.greenout       = mods.colorappearance.greenout;
+    }
+
+    if (colorappearance.tempsc) {
+        toEdit.colorappearance.tempsc       = mods.colorappearance.tempsc;
+    }
+
+    if (colorappearance.greensc) {
+        toEdit.colorappearance.greensc       = mods.colorappearance.greensc;
     }
 
     if (colorappearance.ybout) {

@@ -590,6 +590,8 @@ public:
     bool          enabled;
     int           degree;
     bool          autodegree;
+    int           degreeout;
+    bool          autodegreeout;
     std::vector<double> curve;
     std::vector<double> curve2;
     std::vector<double> curve3;
@@ -598,8 +600,11 @@ public:
     eCTCModeId    curveMode3;
 
     Glib::ustring surround;
+    Glib::ustring surrsrc;
     double        adapscen;
     bool          autoadapscen;
+    int        ybscen;
+    bool          autoybscen;
 
     double        adaplum;
     int           badpixsl;
@@ -622,6 +627,8 @@ public:
     int tempout;
     int ybout;
     double greenout;
+    int tempsc;
+    double greensc;
 
     //      bool          sharpcie;
 };

@@ -244,8 +244,6 @@ PREFERENCES_CACHETHUMBHEIGHT;Keša maksimālais sīktēla augstums
 PREFERENCES_CLIPPINGIND;Cirpšanas pazīme
 PREFERENCES_DATEFORMAT;Datuma formāts
 PREFERENCES_DATEFORMATHINT;Jūs varat lietot šāduas formatēšanas parametrus:\n%y : gads\n%m : mēnesis\n%d : diena\n\nPiemēram, ungāru datuma formāts ir:\n%y/%m/%d
-PREFERENCES_DEFAULTLANG;Noklusētā valoda
-PREFERENCES_DEFAULTTHEME;Noklusētā tēma
 PREFERENCES_DIRHOME;Mājas mape
 PREFERENCES_DIRLAST;Pēdējā lietotā mape
 PREFERENCES_DIROTHER;Cita
@@ -449,6 +447,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard.
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
 !CURVEEDITOR_TYPE;Type:
+!DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_DELETE;Delete
 !DYNPROFILEEDITOR_EDIT;Edit
 !DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
@@ -578,6 +577,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !GENERAL_OPEN;Open
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
+!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 !HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
@@ -959,6 +959,9 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !HISTORY_MSG_473;PS - Use LMMSE
 !HISTORY_MSG_474;PS - Equalize
 !HISTORY_MSG_475;PS - Equalize channel
+!HISTORY_MSG_476;CAM02 - Temp out
+!HISTORY_MSG_477;CAM02 - Green out
+!HISTORY_MSG_478;CAM02 - Yb out
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1132,7 +1135,8 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_D50;5000K
+!PREFERENCES_D50;Settings in main menu
+!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_D55;5500K
 !PREFERENCES_D60;6000K
 !PREFERENCES_D65;6500K
@@ -1161,7 +1165,8 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !PREFERENCES_GREY05;Yb=05 CIE L#30
 !PREFERENCES_GREY10;Yb=10 CIE L#40
 !PREFERENCES_GREY15;Yb=15 CIE L#45
-!PREFERENCES_GREY18;Yb=18 CIE L#50
+!PREFERENCES_GREY18;Settings in main menu
+!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_GREY23;Yb=23 CIE L#55
 !PREFERENCES_GREY30;Yb=30 CIE L#60
 !PREFERENCES_GREY40;Yb=40 CIE L#70
@@ -1176,6 +1181,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
+!PREFERENCES_LANG;Language
 !PREFERENCES_LANGAUTODETECT;Use system language
 !PREFERENCES_LEVAUTDN;Denoising level
 !PREFERENCES_LEVDN;Cell size
@@ -1241,6 +1247,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 !PREFERENCES_TAB_SOUND;Sounds
+!PREFERENCES_THEME;Theme
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
@@ -1401,7 +1408,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
 !TP_COLORAPP_MODEL;WP Model
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in <i>Preferences > Color Management</i>.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in <i>Preferences - Color Management</i>.
+!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin-tones protection affects both sliders and curves.
 !TP_COLORAPP_SHARPCIE;--unused--
@@ -1426,6 +1433,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
+!TP_COLORAPP_YB;Yb (mean luminance)
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance

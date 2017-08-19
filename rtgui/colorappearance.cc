@@ -27,6 +27,9 @@
 #define MINGREEN0 0.8
 #define MAXGREEN0 1.2
 
+#define MINLA0 0.01
+#define MAXLA0 16384
+#define CENTERLA0 500
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -58,6 +61,90 @@ static double wbSlider2Temp (double sval)
 
     return temp;
 }
+
+static double wbSlider2la (double sval)
+{
+
+    // slider range: 0 - 10000
+    double la;
+
+    if (sval <= 500) {
+        // linear below center-temp
+        la = MINLA0 + (sval / 500.0) * (CENTERLA0 - MINLA0);
+    } else {
+        const double slope = (double) (CENTERLA0 - MINLA0) / (MAXLA0 - CENTERLA0);
+        double x = (sval - 500) / 500; // x 0..1
+        double y = x * slope + (1.0 - slope) * pow (x, 4.0);
+        //double y = pow(x, 4.0);
+        la = CENTERLA0 + y * (MAXLA0 - CENTERLA0);
+    }
+
+    if (la < MINLA0) {
+        la = MINLA0;
+    }
+
+    if (la > MAXLA0) {
+        la = MAXLA0;
+    }
+
+    return la;
+}
+
+static double wbla2Slider (double la)
+{
+
+    double sval;
+
+    if (la <= CENTERLA0) {
+        sval = ((la - MINLA0) / (CENTERLA0 - MINLA0)) * 500.0;
+    } else {
+        const double slope = (double) (CENTERLA0 - MINLA0) / (MAXLA0 - CENTERLA0);
+        const double y = (la - CENTERLA0) / (MAXLA0 - CENTERLA0);
+        double x = pow (y, 0.25); // rough guess of x, will be a little lower
+        double k = 0.1;
+        bool add = true;
+
+        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
+        // from tests, worst case is about 20 iterations, ie no problem
+        for (;;) {
+            double y1 = x * slope + (1.0 - slope) * pow (x, 4.0);
+
+            if (500 * fabs (y1 - y) < 0.1) {
+                break;
+            }
+
+            if (y1 < y) {
+                if (!add) {
+                    k /= 2;
+                }
+
+                x += k;
+                add = true;
+            } else {
+                if (add) {
+                    k /= 2;
+                }
+
+                x -= k;
+                add = false;
+            }
+        }
+
+        sval = 500.0 + x * 500.0;
+    }
+
+    if (sval < 0) {
+        sval = 0;
+    }
+
+    if (sval > 16384.) {
+        sval = 16384.;
+    }
+
+    return sval;
+}
+
+
 
 static double wbTemp2Slider (double temp)
 {
@@ -147,9 +234,25 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     degree->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
     p1VBox->pack_start (*degree);
 
-    surrsource = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_SURSOURCE")));
-    surrsource->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
-    p1VBox->pack_start (*surrsource, Gtk::PACK_SHRINK);
+    // surrsource = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_SURSOURCE")));
+    // surrsource->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
+
+
+    Gtk::HBox* surrHBox1 = Gtk::manage (new Gtk::HBox ());
+    surrHBox1->set_spacing (2);
+    surrHBox1->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
+    Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    surrHBox1->pack_start (*surrLabel1, Gtk::PACK_SHRINK);
+    surrsrc = Gtk::manage (new MyComboBoxText ());
+    surrsrc->append (M ("TP_COLORAPP_SURROUND_AVER"));
+    surrsrc->append (M ("TP_COLORAPP_SURROUND_DIM"));
+    surrsrc->append (M ("TP_COLORAPP_SURROUND_DARK"));
+    surrsrc->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
+    surrsrc->set_active (0);
+    surrHBox1->pack_start (*surrsrc);
+    p1VBox->pack_start (*surrHBox1);
+
+//   p1VBox->pack_start (*surrsource, Gtk::PACK_SHRINK);
 
     Gtk::HBox* wbmHBox = Gtk::manage (new Gtk::HBox ());
     wbmHBox->set_spacing (2);
@@ -159,11 +262,30 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     wbmodel = Gtk::manage (new MyComboBoxText ());
     wbmodel->append (M ("TP_COLORAPP_WBRT"));
     wbmodel->append (M ("TP_COLORAPP_WBCAM"));
+    wbmodel->append (M ("TP_COLORAPP_FREE"));
+
     wbmodel->set_active (0);
     wbmHBox->pack_start (*wbmodel);
     p1VBox->pack_start (*wbmHBox);
 
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), 0.001, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+
+
+    tempsc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
+    greensc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenL, igreenR));
+    tempsc->set_tooltip_markup (M ("TP_COLORAPP_TEMP_TOOLTIP"));
+
+    tempsc->show();
+    greensc->show();
+    p1VBox->pack_start (*tempsc);
+    p1VBox->pack_start (*greensc);
+
+
+//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTSCENE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adapscen->delay < options.adjusterMaxDelay) {
         adapscen->delay = options.adjusterMaxDelay;
@@ -174,6 +296,17 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPTSCENE_TOOLTIP"));
     p1VBox->pack_start (*adapscen);
 
+    ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YBSCENE"), 1, 90, 1, 18));
+
+    if (ybscen->delay < options.adjusterMaxDelay) {
+        ybscen->delay = options.adjusterMaxDelay;
+    }
+
+    ybscen->throwOnButtonRelease();
+    ybscen->addAutoButton (M ("TP_COLORAPP_ADAP_AUTO_TOOLTIP"));
+    ybscen->set_tooltip_markup (M ("TP_COLORAPP_YBSCENE_TOOLTIP"));
+    p1VBox->pack_start (*ybscen);
+
     p1Frame->add (*p1VBox);
     pack_start (*p1Frame, Gtk::PACK_EXPAND_WIDGET, 4);
 
@@ -182,12 +315,19 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
     // Process 1 frame
-    Gtk::Frame *p2Frame;
-    // Vertical box container for the content of the Process 1 frame
-    Gtk::VBox *p2VBox;
 
-    p2Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_CAM02")) );
-    p2Frame->set_label_align (0.025, 0.5);
+    expadjust = Gtk::manage (new MyExpander (false, M ("TP_COLORAPP_LABEL_CAM02")));
+    setExpandAlignProperties (expadjust, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    expadjust->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ColorAppearance::foldAllButMe), expadjust) );
+    /*
+        Gtk::Frame *p2Frame;
+        // Vertical box container for the content of the Process 1 frame
+        Gtk::VBox *p2VBox;
+
+        p2Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_CAM02")) );
+        p2Frame->set_label_align (0.025, 0.5);
+    */
+    Gtk::VBox *p2VBox;
 
     p2VBox = Gtk::manage ( new Gtk::VBox());
     p2VBox->set_spacing (2);
@@ -412,10 +552,12 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 
-    p2Frame->add (*p2VBox);
+//    p2Frame->add (*p2VBox);
+    expadjust->add (*p2VBox, false);
+    expadjust->setLevel (2);
+    pack_start (*expadjust);
 
-
-    pack_start (*p2Frame, Gtk::PACK_EXPAND_WIDGET, 4);
+//    pack_start (*p2Frame, Gtk::PACK_EXPAND_WIDGET, 4);
 
 
 
@@ -433,7 +575,12 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox = Gtk::manage ( new Gtk::VBox());
     p3VBox->set_spacing (2);
 
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  1000., 0.1,   16.));
+    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), 0.1,  16384., 0.1,   16.));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ADAPTVIEWING"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
 
     if (adaplum->delay < options.adjusterMaxDelay) {
         adaplum->delay = options.adjusterMaxDelay;
@@ -443,16 +590,29 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     adaplum->set_tooltip_markup (M ("TP_COLORAPP_ADAPTVIEWING_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
 //   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
 //   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
 
-    tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR, itempL, &wbSlider2Temp, &wbTemp2Slider));
-    greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR, igreenL));
-    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 50, 1, 18));
+    degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
+
+    if (degreeout->delay < options.adjusterMaxDelay) {
+        degreeout->delay = options.adjusterMaxDelay;
+    }
+
+    degreeout->throwOnButtonRelease();
+    degreeout->addAutoButton (M ("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
+    degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    p3VBox->pack_start (*degreeout);
+    /*
+        Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+        Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+        Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+        Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+    */
+    tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
+    greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
+    ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_YB"), 5, 90, 1, 18));
+    tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP_TOOLTIP"));
 
     tempout->show();
     greenout->show();
@@ -505,16 +665,34 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     badpixsl->set_tooltip_markup (M ("TP_COLORAPP_BADPIXSL_TOOLTIP"));
     pack_start (*badpixsl, Gtk::PACK_SHRINK);
 
+
+    //reset button
+    neutral = Gtk::manage (new Gtk::Button (M ("TP_COLORAPP_NEUTRAL")));
+    setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+    setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    neutral->set_image (*resetImg);
+    neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));
+    neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &ColorAppearance::neutral_pressed) );
+    neutral->show();
+
+    //-------------
+
+    pack_start (*neutral);
+
     // ------------------------ Listening events
 
 
-    surrconn = surrsource->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::surrsource_toggled) );
+//   surrconn = surrsource->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::surrsource_toggled) );
     wbmodelconn = wbmodel->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::wbmodelChanged) );
     algoconn = algo->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::algoChanged) );
     surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::surroundChanged) );
+    surrsrcconn = surrsrc->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::surrsrcChanged) );
 
     degree->setAdjusterListener  (this);
+    degreeout->setAdjusterListener  (this);
     adapscen->setAdjusterListener (this);
+    ybscen->setAdjusterListener (this);
     adaplum->setAdjusterListener (this);
     badpixsl->setAdjusterListener (this);
     jlight->setAdjusterListener  (this);
@@ -529,6 +707,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     tempout->setAdjusterListener  (this);
     greenout->setAdjusterListener  (this);
     ybout->setAdjusterListener  (this);
+    tempsc->setAdjusterListener  (this);
+    greensc->setAdjusterListener  (this);
 
 
     show_all();
@@ -543,7 +723,61 @@ ColorAppearance::~ColorAppearance ()
     delete curveEditorG3;
 }
 
+void ColorAppearance::foldAllButMe (GdkEventButton* event, MyExpander *expander)
+{
+    if (event->button == 3) {
+        expadjust->set_expanded (expadjust == expander);
+    }
+}
 
+void ColorAppearance::writeOptions (std::vector<int> &tpOpen)
+{
+    tpOpen.push_back (expadjust->get_expanded ());
+}
+
+void ColorAppearance::updateToolState (std::vector<int> &tpOpen)
+{
+    if (tpOpen.size() >= 1) {
+        expadjust->set_expanded (tpOpen.at (0));
+    }
+}
+
+void ColorAppearance::neutral_pressed ()
+{
+    jlight->resetValue (false);
+    qbright->resetValue (false);
+    chroma->resetValue (false);
+    schroma->resetValue (false);
+    mchroma->resetValue (false);
+    rstprotection->resetValue (false);
+    contrast->resetValue (false);
+    qcontrast->resetValue (false);
+    colorh->resetValue (false);
+    tempout->resetValue (false);
+    greenout->resetValue (false);
+    ybout->resetValue (false);
+    tempsc->resetValue (false);
+    greensc->resetValue (false);
+    badpixsl->resetValue (false);
+    wbmodel->set_active (0);
+    toneCurveMode->set_active (0);
+    toneCurveMode2->set_active (0);
+    toneCurveMode3->set_active (0);
+    shape->reset();
+    shape2->reset();
+    shape3->reset();
+    gamutconn.block (true);
+    gamut->set_active (true);
+    gamutconn.block (false);
+    degree->setAutoValue (true);
+    degree->resetValue (false);
+    adapscen->resetValue (false);
+    adapscen->setAutoValue (true);
+    degreeout->resetValue (false);
+    degreeout->setAutoValue (true);
+    ybscen->resetValue (false);
+    ybscen->setAutoValue (true);
+}
 
 bool ColorAppearance::bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
 {
@@ -572,7 +806,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
+        degreeout->setEditedState        (pedited->colorappearance.degreeout ? Edited : UnEdited);
         adapscen->setEditedState      (pedited->colorappearance.adapscen ? Edited : UnEdited);
+        ybscen->setEditedState      (pedited->colorappearance.ybscen ? Edited : UnEdited);
         adaplum->setEditedState       (pedited->colorappearance.adaplum ? Edited : UnEdited);
         badpixsl->setEditedState      (pedited->colorappearance.badpixsl ? Edited : UnEdited);
         jlight->setEditedState        (pedited->colorappearance.jlight ? Edited : UnEdited);
@@ -584,10 +820,12 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         tempout->setEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
         greenout->setEditedState (pedited->colorappearance.greenout ? Edited : UnEdited);
         ybout->setEditedState (pedited->colorappearance.ybout ? Edited : UnEdited);
+        tempsc->setEditedState (pedited->colorappearance.tempsc ? Edited : UnEdited);
+        greensc->setEditedState (pedited->colorappearance.greensc ? Edited : UnEdited);
         contrast->setEditedState      (pedited->colorappearance.contrast ? Edited : UnEdited);
         qcontrast->setEditedState     (pedited->colorappearance.qcontrast ? Edited : UnEdited);
         colorh->setEditedState        (pedited->colorappearance.colorh ? Edited : UnEdited);
-        surrsource->set_inconsistent  (!pedited->colorappearance.surrsource);
+//        surrsource->set_inconsistent  (!pedited->colorappearance.surrsource);
         gamut->set_inconsistent       (!pedited->colorappearance.gamut);
         //  badpix->set_inconsistent      (!pedited->colorappearance.badpix);
         datacie->set_inconsistent     (!pedited->colorappearance.datacie);
@@ -595,7 +833,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         //  sharpcie->set_inconsistent    (!pedited->colorappearance.sharpcie);
 
         degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
+        degreeout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegreeout);
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
+        ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
@@ -619,6 +859,25 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     setEnabled (pp->colorappearance.enabled);
 
+    surrsrcconn.block (true);
+
+    if (pedited && !pedited->colorappearance.surrsrc) {
+        surrsrc->set_active (4);
+    } else if (pp->colorappearance.surrsrc == "Average") {
+        surrsrc->set_active (0);
+    } else if (pp->colorappearance.surrsrc == "Dim") {
+        surrsrc->set_active (1);
+    } else if (pp->colorappearance.surrsrc == "Dark") {
+        surrsrc->set_active (2);
+    } else if (pp->colorappearance.surrsrc == "ExtremelyDark") {
+        surrsrc->set_active (3);
+    }
+
+    surrsrcconn.block (false);
+    // Have to be manually called to handle initial state update
+    surrsrcChanged();
+
+
     surroundconn.block (true);
 
     if (pedited && !pedited->colorappearance.surround) {
@@ -637,14 +896,18 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     // Have to be manually called to handle initial state update
     surroundChanged();
 
+
+
     wbmodelconn.block (true);
 
     if (pedited && !pedited->colorappearance.wbmodel) {
-        wbmodel->set_active (2);
+        wbmodel->set_active (3);
     } else if (pp->colorappearance.wbmodel == "RawT") {
         wbmodel->set_active (0);
     } else if (pp->colorappearance.wbmodel == "RawTCAT02") {
         wbmodel->set_active (1);
+    } else if (pp->colorappearance.wbmodel == "free") {
+        wbmodel->set_active (2);
     }
 
     wbmodelconn.block (false);
@@ -669,9 +932,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     // Have to be manually called to handle initial state update
     algoChanged();
 
-    surrconn.block (true);
-    surrsource->set_active (pp->colorappearance.surrsource);
-    surrconn.block (false);
+    //  surrconn.block (true);
+    //  surrsource->set_active (pp->colorappearance.surrsource);
+    //  surrconn.block (false);
     gamutconn.block (true);
     gamut->set_active (pp->colorappearance.gamut);
     gamutconn.block (false);
@@ -688,7 +951,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 //  sharpcie->set_active (pp->colorappearance.sharpcie);
 //  sharpcieconn.block (false);
 
-    lastsurr = pp->colorappearance.surrsource;
+//   lastsurr = pp->colorappearance.surrsource;
     lastgamut = pp->colorappearance.gamut;
 //  lastbadpix=pp->colorappearance.badpix;
     lastdatacie = pp->colorappearance.datacie;
@@ -697,11 +960,17 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastAutoDegree = pp->colorappearance.autodegree;
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
+    lastAutoDegreeout = pp->colorappearance.autodegreeout;
+    lastAutoybscen = pp->colorappearance.autoybscen;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
     adapscen->setValue (pp->colorappearance.adapscen);
     adapscen->setAutoValue (pp->colorappearance.autoadapscen);
+    degreeout->setValue (pp->colorappearance.degreeout);
+    degreeout->setAutoValue (pp->colorappearance.autodegreeout);
+    ybscen->setValue (pp->colorappearance.ybscen);
+    ybscen->setAutoValue (pp->colorappearance.autoybscen);
 
     adaplum->setValue (pp->colorappearance.adaplum);
     badpixsl->setValue (pp->colorappearance.badpixsl);
@@ -717,6 +986,8 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tempout->setValue (pp->colorappearance.tempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
+    tempsc->setValue (pp->colorappearance.tempsc);
+    greensc->setValue (pp->colorappearance.greensc);
 
     tcmode3conn.block (false);
     tcmode2conn.block (false);
@@ -737,9 +1008,13 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->colorappearance.degree        = degree->getValue ();
     pp->colorappearance.autodegree    = degree->getAutoValue ();
+    pp->colorappearance.degreeout        = degreeout->getValue ();
+    pp->colorappearance.autodegreeout    = degreeout->getAutoValue ();
     pp->colorappearance.enabled       = getEnabled();
     pp->colorappearance.adapscen      = adapscen->getValue ();
     pp->colorappearance.autoadapscen  = adapscen->getAutoValue ();
+    pp->colorappearance.ybscen      = ybscen->getValue ();
+    pp->colorappearance.autoybscen  = ybscen->getAutoValue ();
     pp->colorappearance.adaplum       = adaplum->getValue ();
     pp->colorappearance.badpixsl      = badpixsl->getValue ();
     pp->colorappearance.jlight        = jlight->getValue ();
@@ -751,7 +1026,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.qcontrast     = qcontrast->getValue ();
     pp->colorappearance.colorh        = colorh->getValue ();
     pp->colorappearance.rstprotection = rstprotection->getValue ();
-    pp->colorappearance.surrsource    = surrsource->get_active();
+    //  pp->colorappearance.surrsource    = surrsource->get_active();
     pp->colorappearance.gamut         = gamut->get_active();
 //  pp->colorappearance.badpix        = badpix->get_active();
     pp->colorappearance.datacie       = datacie->get_active();
@@ -763,6 +1038,8 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.tempout        = tempout->getValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
+    pp->colorappearance.tempsc        = tempsc->getValue ();
+    pp->colorappearance.greensc        = greensc->getValue ();
 
     int tcMode = toneCurveMode->get_active_row_number();
 
@@ -792,8 +1069,10 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->colorappearance.degree        = degree->getEditedState ();
+        pedited->colorappearance.degreeout        = degreeout->getEditedState ();
         pedited->colorappearance.adapscen      = adapscen->getEditedState ();
         pedited->colorappearance.adaplum       = adaplum->getEditedState ();
+        pedited->colorappearance.ybscen      = ybscen->getEditedState ();
         pedited->colorappearance.badpixsl      = badpixsl->getEditedState ();
         pedited->colorappearance.jlight        = jlight->getEditedState ();
         pedited->colorappearance.qbright       = qbright->getEditedState ();
@@ -805,12 +1084,15 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.colorh        = colorh->getEditedState ();
         pedited->colorappearance.rstprotection = rstprotection->getEditedState ();
         pedited->colorappearance.autodegree    = !degree->getAutoInconsistent();
+        pedited->colorappearance.autodegreeout    = !degreeout->getAutoInconsistent();
         pedited->colorappearance.autoadapscen  = !adapscen->getAutoInconsistent();
+        pedited->colorappearance.autoybscen  = !ybscen->getAutoInconsistent();
         pedited->colorappearance.enabled       = !get_inconsistent();
         pedited->colorappearance.surround      = surround->get_active_text() != M ("GENERAL_UNCHANGED");
+        pedited->colorappearance.surrsrc      = surrsrc->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.wbmodel       = wbmodel->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->colorappearance.algo          = algo->get_active_text() != M ("GENERAL_UNCHANGED");
-        pedited->colorappearance.surrsource    = !surrsource->get_inconsistent();
+        //     pedited->colorappearance.surrsource    = !surrsource->get_inconsistent();
         pedited->colorappearance.gamut         = !gamut->get_inconsistent();
         //  pedited->colorappearance.badpix        = !badpix->get_inconsistent();
         pedited->colorappearance.datacie       = !datacie->get_inconsistent();
@@ -825,8 +1107,21 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.tempout        = tempout->getEditedState ();
         pedited->colorappearance.greenout        = greenout->getEditedState ();
         pedited->colorappearance.ybout        = ybout->getEditedState ();
+        pedited->colorappearance.tempsc        = tempsc->getEditedState ();
+        pedited->colorappearance.greensc        = greensc->getEditedState ();
 
     }
+
+    if (surrsrc->get_active_row_number() == 0) {
+        pp->colorappearance.surrsrc = "Average";
+    } else if (surrsrc->get_active_row_number() == 1) {
+        pp->colorappearance.surrsrc = "Dim";
+    } else if (surrsrc->get_active_row_number() == 2) {
+        pp->colorappearance.surrsrc = "Dark";
+    } else if (surrsrc->get_active_row_number() == 3) {
+        pp->colorappearance.surrsrc = "ExtremelyDark";
+    }
+
 
     if (surround->get_active_row_number() == 0) {
         pp->colorappearance.surround = "Average";
@@ -842,6 +1137,9 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorappearance.wbmodel = "RawT";
     } else if (wbmodel->get_active_row_number() == 1) {
         pp->colorappearance.wbmodel = "RawTCAT02";
+    } else if (wbmodel->get_active_row_number() == 2) {
+        pp->colorappearance.wbmodel = "free";
+
     }
 
     if (algo->get_active_row_number() == 0) {
@@ -929,7 +1227,7 @@ bool ColorAppearance::curveMode3Changed_ ()
 
     return false;
 }
-
+/*
 void ColorAppearance::surrsource_toggled ()
 {
 
@@ -954,7 +1252,7 @@ void ColorAppearance::surrsource_toggled ()
         }
     }
 }
-
+*/
 void ColorAppearance::gamut_toggled ()
 {
 
@@ -1084,7 +1382,9 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 {
 
     degree->setDefault (defParams->colorappearance.degree);
+    degreeout->setDefault (defParams->colorappearance.degreeout);
     adapscen->setDefault (defParams->colorappearance.adapscen);
+    ybscen->setDefault (defParams->colorappearance.ybscen);
     adaplum->setDefault (defParams->colorappearance.adaplum);
     badpixsl->setDefault (defParams->colorappearance.badpixsl);
     jlight->setDefault (defParams->colorappearance.jlight);
@@ -1099,10 +1399,14 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
     tempout->setDefault (defParams->colorappearance.tempout);
     greenout->setDefault (defParams->colorappearance.greenout);
     ybout->setDefault (defParams->colorappearance.ybout);
+    tempsc->setDefault (defParams->colorappearance.tempsc);
+    greensc->setDefault (defParams->colorappearance.greensc);
 
     if (pedited) {
         degree->setDefaultEditedState (pedited->colorappearance.degree ? Edited : UnEdited);
+        degreeout->setDefaultEditedState (pedited->colorappearance.degreeout ? Edited : UnEdited);
         adapscen->setDefaultEditedState (pedited->colorappearance.adapscen ? Edited : UnEdited);
+        ybscen->setDefaultEditedState (pedited->colorappearance.ybscen ? Edited : UnEdited);
         adaplum->setDefaultEditedState (pedited->colorappearance.adaplum ? Edited : UnEdited);
         badpixsl->setDefaultEditedState (pedited->colorappearance.badpixsl ? Edited : UnEdited);
         jlight->setDefaultEditedState (pedited->colorappearance.jlight ? Edited : UnEdited);
@@ -1117,10 +1421,14 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         tempout->setDefaultEditedState (pedited->colorappearance.tempout ? Edited : UnEdited);
         greenout->setDefaultEditedState (pedited->colorappearance.greenout ? Edited : UnEdited);
         ybout->setDefaultEditedState (pedited->colorappearance.ybout ? Edited : UnEdited);
+        tempsc->setDefaultEditedState (pedited->colorappearance.tempsc ? Edited : UnEdited);
+        greensc->setDefaultEditedState (pedited->colorappearance.greensc ? Edited : UnEdited);
 
     } else {
         degree->setDefaultEditedState (Irrelevant);
+        degreeout->setDefaultEditedState (Irrelevant);
         adapscen->setDefaultEditedState (Irrelevant);
+        ybscen->setDefaultEditedState (Irrelevant);
         adaplum->setDefaultEditedState (Irrelevant);
         badpixsl->setDefaultEditedState (Irrelevant);
         jlight->setDefaultEditedState (Irrelevant);
@@ -1135,13 +1443,16 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
         tempout->setDefaultEditedState (Irrelevant);
         greenout->setDefaultEditedState (Irrelevant);
         ybout->setDefaultEditedState (Irrelevant);
+        tempsc->setDefaultEditedState (Irrelevant);
+        greensc->setDefaultEditedState (Irrelevant);
 
     }
 }
 
-void ColorAppearance::autoCamChanged (double ccam)
+void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 {
     nextCcam = ccam;
+    nextCcamout = ccamout;
 
     const auto func = [] (gpointer data) -> gboolean {
         static_cast<ColorAppearance*> (data)->autoCamComputed_();
@@ -1157,6 +1468,7 @@ bool ColorAppearance::autoCamComputed_ ()
     disableListener ();
 //  degree->setEnabled (true);
     degree->setValue (nextCcam);
+    degreeout->setValue (nextCcamout);
     enableListener ();
 
     return false;
@@ -1180,11 +1492,35 @@ bool ColorAppearance::adapCamComputed_ ()
     disableListener ();
 //  degree->setEnabled (true);
     adapscen->setValue (nextCadap);
+//  ybscen->setValue (nextYbscn);
     enableListener ();
 
     return false;
 }
 
+void ColorAppearance::ybCamChanged (int ybsc)
+{
+    nextYbscn = ybsc;
+
+    const auto func = [] (gpointer data) -> gboolean {
+        static_cast<ColorAppearance*> (data)->ybCamComputed_();
+        return FALSE;
+    };
+
+    idle_register.add (func, this);
+}
+
+bool ColorAppearance::ybCamComputed_ ()
+{
+
+    disableListener ();
+//  degree->setEnabled (true);
+//    adapscen->setValue (nextCadap);
+    ybscen->setValue (nextYbscn);
+    enableListener ();
+
+    return false;
+}
 
 void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
@@ -1214,8 +1550,12 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
     if (listener && (multiImage || getEnabled()) ) {
         if (a == degree) {
             listener->panelChanged (EvCATDegree, a->getTextValue());
+        } else if (a == degreeout) {
+            listener->panelChanged (EvCATDegreeout, a->getTextValue());
         } else if (a == adapscen) {
             listener->panelChanged (EvCATAdapscen, a->getTextValue());
+        } else if (a == ybscen) {
+            listener->panelChanged (EvCATybscen, a->getTextValue());
         } else if (a == adaplum) {
             listener->panelChanged (EvCATAdapLum, a->getTextValue());
         } else if (a == badpixsl) {
@@ -1244,6 +1584,10 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval)
             listener->panelChanged (EvCATgreenout, a->getTextValue());
         } else if (a == ybout) {
             listener->panelChanged (EvCATybout, a->getTextValue());
+        } else if (a == tempsc) {
+            listener->panelChanged (EvCATtempsc, a->getTextValue());
+        } else if (a == greensc) {
+            listener->panelChanged (EvCATgreensc, a->getTextValue());
 
         }
 
@@ -1263,6 +1607,15 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
 
         lastAutoDegree = degree->getAutoValue();
 
+        if (degreeout->getAutoInconsistent()) {
+            degreeout->setAutoInconsistent (false);
+            degreeout->setAutoValue (false);
+        } else if (lastAutoDegreeout) {
+            degreeout->setAutoInconsistent (true);
+        }
+
+        lastAutoDegreeout = degreeout->getAutoValue();
+
         if (adapscen->getAutoInconsistent()) {
             adapscen->setAutoInconsistent (false);
             adapscen->setAutoValue (false);
@@ -1271,6 +1624,15 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
         }
 
         lastAutoAdapscen = adapscen->getAutoValue();
+
+        if (ybscen->getAutoInconsistent()) {
+            ybscen->setAutoInconsistent (false);
+            ybscen->setAutoValue (false);
+        } else if (lastAutoybscen) {
+            ybscen->setAutoInconsistent (true);
+        }
+
+        lastAutoybscen = ybscen->getAutoValue();
 
     }
 
@@ -1286,6 +1648,17 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
             }
         }
 
+        if (a == degreeout) {
+            if (degreeout->getAutoInconsistent()) {
+                listener->panelChanged (EvCATAutoDegreeout, M ("GENERAL_UNCHANGED"));
+            } else if (degreeout->getAutoValue()) {
+                listener->panelChanged (EvCATAutoDegreeout, M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvCATAutoDegreeout, M ("GENERAL_DISABLED"));
+            }
+        }
+
+
         if (a == adapscen) {
             if (adapscen->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutoAdap, M ("GENERAL_UNCHANGED"));
@@ -1293,6 +1666,16 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval)
                 listener->panelChanged (EvCATAutoAdap, M ("GENERAL_ENABLED"));
             } else {
                 listener->panelChanged (EvCATAutoAdap, M ("GENERAL_DISABLED"));
+            }
+        }
+
+        if (a == ybscen) {
+            if (ybscen->getAutoInconsistent()) {
+                listener->panelChanged (EvCATAutoyb, M ("GENERAL_UNCHANGED"));
+            } else if (ybscen->getAutoValue()) {
+                listener->panelChanged (EvCATAutoyb, M ("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
             }
         }
 
@@ -1315,6 +1698,15 @@ void ColorAppearance::enabledChanged ()
     }
 }
 
+void ColorAppearance::surrsrcChanged ()
+{
+
+    if (listener && (multiImage || getEnabled()) ) {
+        listener->panelChanged (EvCATsurr, surrsrc->get_active_text ());
+    }
+}
+
+
 void ColorAppearance::surroundChanged ()
 {
 
@@ -1325,6 +1717,15 @@ void ColorAppearance::surroundChanged ()
 
 void ColorAppearance::wbmodelChanged ()
 {
+    if (wbmodel->get_active_row_number() == 0 || wbmodel->get_active_row_number() == 1) {
+        tempsc->hide();
+        greensc->hide();
+    }
+
+    if (wbmodel->get_active_row_number() == 2) {
+        tempsc->show();
+        greensc->show();
+    }
 
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATMethodWB, wbmodel->get_active_text ());
@@ -1410,8 +1811,10 @@ void ColorAppearance::setBatchMode (bool batchMode)
     ToolPanel::setBatchMode (batchMode);
 
     degree->showEditedCB ();
+    degreeout->showEditedCB ();
     adapscen->showEditedCB ();
     adaplum->showEditedCB ();
+    ybscen->showEditedCB ();
     badpixsl->showEditedCB ();
     jlight->showEditedCB ();
     qbright->showEditedCB ();
@@ -1425,8 +1828,11 @@ void ColorAppearance::setBatchMode (bool batchMode)
     tempout->showEditedCB ();
     greenout->showEditedCB ();
     ybout->showEditedCB ();
+    tempsc->showEditedCB ();
+    greensc->showEditedCB ();
 
     surround->append (M ("GENERAL_UNCHANGED"));
+    surrsrc->append (M ("GENERAL_UNCHANGED"));
     wbmodel->append (M ("GENERAL_UNCHANGED"));
     algo->append (M ("GENERAL_UNCHANGED"));
     toneCurveMode->append (M ("GENERAL_UNCHANGED"));
@@ -1469,7 +1875,9 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
     degree->trimValue (pp->colorappearance.degree);
+    degreeout->trimValue (pp->colorappearance.degreeout);
     adapscen->trimValue (pp->colorappearance.adapscen);
+    ybscen->trimValue (pp->colorappearance.ybscen);
     adaplum->trimValue (pp->colorappearance.adaplum);
     badpixsl->trimValue (pp->colorappearance.badpixsl);
     jlight->trimValue (pp->colorappearance.jlight);
@@ -1484,5 +1892,7 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
     tempout->trimValue (pp->colorappearance.tempout);
     greenout->trimValue (pp->colorappearance.greenout);
     ybout->trimValue (pp->colorappearance.ybout);
+    tempsc->trimValue (pp->colorappearance.tempsc);
+    greensc->trimValue (pp->colorappearance.greensc);
 
 }

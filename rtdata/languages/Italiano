@@ -667,8 +667,6 @@ PREFERENCES_DARKFRAMESHOTS;fotogrammi
 PREFERENCES_DARKFRAMETEMPLATES;modelli
 PREFERENCES_DATEFORMAT;Formato della data
 PREFERENCES_DATEFORMATHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%y</b><i> : anno</i>\n<b>%m</b><i> : mese</i>\n<b>%d</b><i> : giorno</i>\n<i>\nPer esempio, il formato italiano per la data è:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DEFAULTLANG;Lingua predefinita
-PREFERENCES_DEFAULTTHEME;Tema predefinito
 PREFERENCES_DIRDARKFRAMES;Cartella dei fotogrammi di fondo (Dark Frame)
 PREFERENCES_DIRHOME;Cartella personale dell'utente (home directory)
 PREFERENCES_DIRLAST;Ultima cartella visitata
@@ -1338,6 +1336,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
+!DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_DELETE;Delete
 !DYNPROFILEEDITOR_EDIT;Edit
 !DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
@@ -1366,6 +1365,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !GENERAL_APPLY;Apply
 !GENERAL_ASIMAGE;As Image
 !GENERAL_OPEN;Open
+!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_256;NR - Median type
 !HISTORY_MSG_257;Color Toning
@@ -1571,6 +1571,9 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !HISTORY_MSG_473;PS - Use LMMSE
 !HISTORY_MSG_474;PS - Equalize
 !HISTORY_MSG_475;PS - Equalize channel
+!HISTORY_MSG_476;CAM02 - Temp out
+!HISTORY_MSG_477;CAM02 - Green out
+!HISTORY_MSG_478;CAM02 - Yb out
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1630,12 +1633,14 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
 !PREFERENCES_CURVEBBOXPOS_RIGHT;Right
+!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 !PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 !PREFERENCES_EXPAUT;Expert
 !PREFERENCES_FILMSIMULATION;Film Simulation
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_GREYSC;Scene Yb luminance (%)
 !PREFERENCES_GREYSC18;Yb=18 CIE L#50
 !PREFERENCES_GREYSCA;Automatic
@@ -1643,6 +1648,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_INSPECT_LABEL;Inspect
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
+!PREFERENCES_LANG;Language
 !PREFERENCES_LEVAUTDN;Denoising level
 !PREFERENCES_LEVDN;Cell size
 !PREFERENCES_LISS;Auto multi-zone smoothing
@@ -1680,6 +1686,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !PREFERENCES_SMA;Small (250x287)
 !PREFERENCES_STDAUT;Standard
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PREFERENCES_THEME;Theme
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
@@ -1697,6 +1704,7 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
+!TP_COLORAPP_YB;Yb (mean luminance)
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance

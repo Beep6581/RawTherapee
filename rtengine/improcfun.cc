@@ -211,7 +211,7 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                  const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, int rtt)
+                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, double &dj, double &yb, int rtt)
 {
     if (params->colorappearance.enabled) {
 //int lastskip;
@@ -265,9 +265,12 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         Yw = 1.0;
         double Xw, Zw;
         double Xwout, Zwout;
-        double f, c, nc, yb = 0., la, xw, yw, zw, f2 = 0., c2 = 0., nc2 = 0., yb2 = 0., la2;
+        double Xwsc, Zwsc;
+
+        double f = 0., c = 0., nc = 0., yb = 0., la, xw, yw, zw, f2 = 0., c2 = 0., nc2 = 0., yb2 = 0., la2;
         double fl, n, nbb, ncb, aw;
         double xwd = 0., ywd, zwd = 0.;
+        double xws, yws, zws;
         int alg = 0;
         bool algepd = false;
         float sum = 0.f;
@@ -276,37 +279,53 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
         ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
 
-        //viewing condition for surround
-        if (params->colorappearance.surround == "Average") {
+        //viewing condition for surrsrc
+        if (params->colorappearance.surrsrc == "Average") {
             f  = 1.00;
             c  = 0.69;
             nc = 1.00;
+        } else if (params->colorappearance.surrsrc == "Dim") {
+            f  = 0.9;
+            c  = 0.59;
+            nc = 0.9;
+        } else if (params->colorappearance.surrsrc == "Dark") {
+            f  = 0.8;
+            c  = 0.525;
+            nc = 0.8;
+        } else if (params->colorappearance.surrsrc == "ExtremelyDark") {
+            f  = 0.8;
+            c  = 0.41;
+            nc = 0.8;
+        }
+
+
+        //viewing condition for surround
+        if (params->colorappearance.surround == "Average") {
             f2 = 1.0, c2 = 0.69, nc2 = 1.0;
         } else if (params->colorappearance.surround == "Dim") {
             f2  = 0.9;
             c2  = 0.59;
             nc2 = 0.9;
-            f = 1.0, c = 0.69, nc = 1.0;
         } else if (params->colorappearance.surround == "Dark") {
             f2  = 0.8;
             c2  = 0.525;
             nc2 = 0.8;
-            f = 1.0, c = 0.69, nc = 1.0;
         } else if (params->colorappearance.surround == "ExtremelyDark") {
             f2  = 0.8;
             c2  = 0.41;
             nc2 = 0.8;
-            f = 1.0, c = 0.69, nc = 1.0;
         }
 
-        //scene condition for surround
-        if (params->colorappearance.surrsource)  {
-            f  = 0.85;    // if user => source image has surround very dark
-            c  = 0.55;
-            nc = 0.85;
-        }
-
+        /*
+                //scene condition for surround
+                if (params->colorappearance.surrsource)  {
+                    f  = 0.85;    // if user => source image has surround very dark
+                    c  = 0.55;
+                    nc = 0.85;
+                }
+        */
         //with which algorithme
         if     (params->colorappearance.algo == "JC") {
             alg = 0;
@@ -363,6 +382,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         zwd = 100. * Zwout;
         ywd = 100. / params->colorappearance.greenout;//approximation to simplify
 
+        xws = 100. * Xwsc;
+        zws = 100. * Zwsc;
+        yws = 100. / params->colorappearance.greensc;//approximation to simplify
+
         /*
                 //settings mean Luminance Y of output device or viewing
                 if (settings->viewingdevicegrey == 0) {
@@ -397,6 +420,10 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         // level of adaptation
         double deg = (params->colorappearance.degree) / 100.0;
         double pilot = params->colorappearance.autodegree ? 2.0 : deg;
+
+
+        const float degout = (params->colorappearance.degreeout) / 100.0;
+        const float pilotout = params->colorappearance.autodegreeout ? 2.0 : degout;
 
         //algoritm's params
         float jli = params->colorappearance.jlight;
@@ -502,7 +529,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             }
         }
 
-        if (settings->viewinggreySc == 0) { //auto
+        //   if (settings->viewinggreySc == 0) { //auto
+        if (params->colorappearance.autoybscen  &&  pwb == 2) {//auto
+
             if     (mean < 15.f) {
                 yb = 3.0;
             } else if (mean < 30.f) {
@@ -526,6 +555,8 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             } else {
                 yb = 90.0;
             }
+        } else {
+            yb = params->colorappearance.ybscen;
         }
 
         if (settings->viewinggreySc == 1) {
@@ -542,7 +573,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         xw = 100.0 * Xw;
         yw = 100.0 * Yw;
         zw = 100.0 * Zw;
-        double xw1, yw1, zw1, xw2, yw2, zw2;
+        double xw1 = 0., yw1 = 0., zw1 = 0., xw2 = 0., yw2 = 0., zw2 = 0.;
 
         // settings of WB: scene and viewing
         if (params->colorappearance.wbmodel == "RawT") {
@@ -552,10 +583,17 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else { /*if(params->colorappearance.wbmodel == "RawTCAT02")*/
+        } else if (params->colorappearance.wbmodel == "RawTCAT02") {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
+            xw2 = xwd;
+            yw2 = ywd;
+            zw2 = zwd;
+        } else if (params->colorappearance.wbmodel == "free") {
+            xw1 = xws;    // free temp and green
+            yw1 = yws;
+            zw1 = zws;
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
@@ -563,8 +601,8 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
         double cz, wh, pfl;
         Ciecam02::initcam1 (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
-        double nj, dj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2 (gamu, yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        double nj, nbbj, ncbj, czj, awj, flj;
+        Ciecam02::initcam2 (gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
 
 
 
@@ -1469,7 +1507,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, int rtt)
+                                      LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt)
 {
     if (params->colorappearance.enabled) {
 
@@ -1496,12 +1534,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         float Yw;
         Yw = 1.0;
         double Xw, Zw;
-        float f, nc, yb = 0.f, la, c, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
+        float f = 0.f, nc = 0.f, la, c = 0.f, xw, yw, zw, f2 = 1.f, c2 = 1.f, nc2 = 1.f, yb2;
         float fl, n, nbb, ncb, aw; //d
-        float xwd, ywd, zwd;
+        float xwd, ywd, zwd, xws, yws, zws;
         int alg = 0;
         bool algepd = false;
         double Xwout, Zwout;
+        double Xwsc, Zwsc;
 
         const bool epdEnabled = params->epd.enabled;
         bool ciedata = (params->colorappearance.datacie && pW != 1) && ! ((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
@@ -1510,37 +1549,53 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
         ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
         ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
 
-        //viewing condition for surround
-        if (params->colorappearance.surround == "Average") {
+        //viewing condition for surrsrc
+        if (params->colorappearance.surrsrc == "Average") {
             f  = 1.00f;
             c  = 0.69f;
             nc = 1.00f;
+        } else if (params->colorappearance.surrsrc == "Dim") {
+            f  = 0.9f;
+            c  = 0.59f;
+            nc = 0.9f;
+        } else if (params->colorappearance.surrsrc == "Dark") {
+            f  = 0.8f;
+            c  = 0.525f;
+            nc = 0.8f;
+        } else if (params->colorappearance.surrsrc == "ExtremelyDark") {
+            f  = 0.8f;
+            c  = 0.41f;
+            nc = 0.8f;
+        }
+
+
+        //viewing condition for surround
+        if (params->colorappearance.surround == "Average") {
             f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
         } else if (params->colorappearance.surround == "Dim") {
             f2  = 0.9f;
             c2  = 0.59f;
             nc2 = 0.9f;
-            f = 1.0f, c = 0.69f, nc = 1.0f;
         } else if (params->colorappearance.surround == "Dark") {
             f2  = 0.8f;
             c2  = 0.525f;
             nc2 = 0.8f;
-            f = 1.0f, c = 0.69f, nc = 1.0f;
         } else if (params->colorappearance.surround == "ExtremelyDark") {
             f2  = 0.8f;
             c2  = 0.41f;
             nc2 = 0.8f;
-            f = 1.0f, c = 0.69f, nc = 1.0f;
         }
 
-        //scene condition for surround
-        if (params->colorappearance.surrsource)  {
-            f  = 0.85f;    // if user => source image has surround very dark
-            c  = 0.55f;
-            nc = 0.85f;
-        }
-
+        /*
+                //scene condition for surround
+                if (params->colorappearance.surrsource)  {
+                    f  = 0.85f;    // if user => source image has surround very dark
+                    c  = 0.55f;
+                    nc = 0.85f;
+                }
+        */
         //with which algorithm
         if     (params->colorappearance.algo == "JC") {
             alg = 0;
@@ -1557,6 +1612,12 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         xwd = 100.f * Xwout;
         zwd = 100.f * Zwout;
         ywd = 100.f / params->colorappearance.greenout;//approximation to simplify
+
+        xws = 100.f * Xwsc;
+        zws = 100.f * Zwsc;
+        yws = 100.f / params->colorappearance.greensc;//approximation to simplify
+
+
         /*
                 //settings white point of output device - or illuminant viewing
                 if (settings->viewingdevice == 0) {
@@ -1630,6 +1691,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         // level of adaptation
         const float deg = (params->colorappearance.degree) / 100.0f;
         const float pilot = params->colorappearance.autodegree ? 2.0f : deg;
+
+        const float degout = (params->colorappearance.degreeout) / 100.0f;
+        const float pilotout = params->colorappearance.autodegreeout ? 2.0f : degout;
 
         //algoritm's params
         float chr = 0.f;
@@ -1805,7 +1869,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             //evaluate lightness, contrast
         }
 
-        if (settings->viewinggreySc == 0) { //auto
+
+
+        //  if (settings->viewinggreySc == 0) { //auto
+        if (params->colorappearance.autoybscen  &&  pwb == 2) {//auto
+
             if     (mean < 15.f) {
                 yb = 3.0f;
             } else if (mean < 30.f) {
@@ -1829,8 +1897,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             } else {
                 yb = 90.0f;
             }
-        } else if (settings->viewinggreySc == 1) {
-            yb = 18.0f;    //fixed
+
+//        } else if (settings->viewinggreySc == 1) {
+        } else {
+            yb =  (float) params->colorappearance.ybscen;
         }
 
         const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
@@ -1839,7 +1909,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         xw = 100.0f * Xw;
         yw = 100.0f * Yw;
         zw = 100.0f * Zw;
-        float xw1, yw1, zw1, xw2, yw2, zw2;
+        float xw1 = 0.f, yw1 = 0.f, zw1 = 0.f, xw2 = 0.f, yw2 = 0.f, zw2 = 0.f;
 
         // settings of WB: scene and viewing
         if (params->colorappearance.wbmodel == "RawT") {
@@ -1849,20 +1919,28 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
-        } else { /*if(params->colorappearance.wbmodel == "RawTCAT02")*/
+        } else if (params->colorappearance.wbmodel == "RawTCAT02") {
             xw1 = xw;    // Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
             yw1 = yw;
             zw1 = zw;
             xw2 = xwd;
             yw2 = ywd;
             zw2 = zwd;
+        } else if (params->colorappearance.wbmodel == "free") {
+            xw1 = xws;    // free temp and green
+            yw1 = yws;
+            zw1 = zws;
+            xw2 = xwd;
+            yw2 = ywd;
+            zw2 = zwd;
         }
+
 
         float cz, wh, pfl;
         Ciecam02::initcam1float (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
         const float pow1 = pow_F ( 1.64f - pow_F ( 0.29f, n ), 0.73f );
-        float nj, dj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float (gamu, yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        float nj, nbbj, ncbj, czj, awj, flj;
+        Ciecam02::initcam2float (gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
         const float reccmcz = 1.f / (c2 * czj);
         const float pow1n = pow_F ( 1.64f - pow_F ( 0.29f, nj ), 0.73f );
 

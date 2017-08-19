@@ -212,10 +212,8 @@ private:
             multi_array2D<float, 4> conversionBuffer (1, 1);
             imgsrc->retinexPrepareBuffers (params.icm, params.retinex, conversionBuffer, dummy);
             imgsrc->retinexPrepareCurves (params.retinex, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, dehacontlutili, mapcontlutili, useHsl, dummy, dummy );
-
             float minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax;
             imgsrc->retinex ( params.icm, params.retinex, params.toneCurve, cdcurve, mapcurve, dehatransmissionCurve, dehagaintransmissionCurve, conversionBuffer, dehacontlutili, mapcontlutili, useHsl, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax, dummy);
-
         }
 
         if (pl) {
@@ -326,7 +324,7 @@ private:
                         for (int hcr = 0; hcr < numtiles_H; hcr++) {
                             int beg_tileW = wcr * tileWskip + tileWskip / 2.f - crW / 2.f;
                             int beg_tileH = hcr * tileHskip + tileHskip / 2.f - crH / 2.f;
-                            PreviewProps ppP (beg_tileW , beg_tileH, crW, crH, skipP);
+                            PreviewProps ppP (beg_tileW, beg_tileH, crW, crH, skipP);
                             imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
@@ -546,7 +544,7 @@ private:
 
                     for (int wcr = 0; wcr <= 2; wcr++) {
                         for (int hcr = 0; hcr <= 2; hcr++) {
-                            PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
+                            PreviewProps ppP (coordW[wcr], coordH[hcr], crW, crH, 1);
                             imgsrc->getImage (currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw);
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
@@ -940,7 +938,7 @@ private:
 
         LUTu histToneCurve;
 
-        ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit , satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
+        ipf.rgbProc (baseImg, labView, nullptr, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve);
 
         if (settings->verbose) {
             printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
@@ -2172,19 +2170,19 @@ private:
 
             if (params.sharpening.enabled) {
                 if (settings->ciecamfloat) {
-                    float d;
-                    ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1);
+                    float d, dj, yb;
+                    ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
                 } else {
-                    double dd;
-                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1);
+                    double dd, dj, yb;
+                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, yb, 1);
                 }
             } else {
                 if (settings->ciecamfloat) {
-                    float d;
-                    ipf.ciecam_02float (cieView, float(adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, 1);
+                    float d, dj, yb;
+                    ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
                 } else {
-                    double dd;
-                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, 1);
+                    double dd, dj, yb;
+                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, yb, 1);
                 }
             }
         }
@@ -2513,10 +2511,10 @@ private:
 
         if (params.raw.xtranssensor.method ==
                 procparams::RAWParams::XTransSensor::methodstring[
-                    procparams::RAWParams::XTransSensor::threePass]) {
+             procparams::RAWParams::XTransSensor::threePass]) {
             params.raw.xtranssensor.method =
                 procparams::RAWParams::XTransSensor::methodstring[
-                    procparams::RAWParams::XTransSensor::onePass];
+            procparams::RAWParams::XTransSensor::onePass];
         }
 
         if (params.raw.bayersensor.method == procparams::RAWParams::BayerSensor::methodstring[procparams::RAWParams::BayerSensor::pixelshift]) {

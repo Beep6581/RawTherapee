@@ -939,14 +939,14 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
         grey->append (M("PREFERENCES_GREY30"));
         grey->append (M("PREFERENCES_GREY40"));
     */
-
+/*
     Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
     setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     greySc = Gtk::manage (new Gtk::ComboBoxText ());
     setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     greySc->append (M ("PREFERENCES_GREYSCA"));
     greySc->append (M ("PREFERENCES_GREYSC18"));
-
+*/
     Gtk::Frame* fcielab = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CIEART_FRAME")) );
     setExpandAlignProperties (fcielab, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -961,8 +961,8 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
         colo->attach    (*greylab,        0, 2, 1, 1);
         colo->attach    (*grey,           1, 2, 1, 1);
     */
-    colo->attach    (*greySclab,      0, 3, 1, 1);
-    colo->attach    (*greySc,         1, 3, 1, 1);
+//    colo->attach    (*greySclab,      0, 3, 1, 1);
+//    colo->attach    (*greySc,         1, 3, 1, 1);
     cbciecamfloat = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_CIEART_LABEL")));
     setExpandAlignProperties (cbciecamfloat, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     colo->attach (*cbciecamfloat, 0, 4, 2, 1);
@@ -1068,7 +1068,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     // ---------------------------------------------
 
-    Gtk::Frame* flang = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_DEFAULTLANG")) );
+    Gtk::Frame* flang = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_LANG")) );
     setExpandAlignProperties (flang, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* langGrid = Gtk::manage ( new Gtk::Grid() );
     langGrid->set_column_spacing (4);
@@ -1103,7 +1103,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     // ---------------------------------------------
 
-    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_DEFAULTTHEME")) );
+    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_THEME")) );
     setExpandAlignProperties (ftheme, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* themeGrid = Gtk::manage ( new Gtk::Grid() );
     themeGrid->set_column_spacing (4);
@@ -1794,7 +1794,7 @@ void Preferences::storePreferences ()
     moptions.rtSettings.iccDirectory = iccDir->get_filename ();
 // moptions.rtSettings.viewingdevice = view->get_active_row_number ();
 // moptions.rtSettings.viewingdevicegrey = grey->get_active_row_number ();
-    moptions.rtSettings.viewinggreySc = greySc->get_active_row_number ();
+//    moptions.rtSettings.viewinggreySc = greySc->get_active_row_number ();
 // moptions.rtSettings.autocielab = cbAutocielab->get_active ();
     moptions.rtSettings.ciecamfloat = cbciecamfloat->get_active ();
     moptions.rtSettings.HistogramWorking = ckbHistogramWorking->get_active ();
@@ -1957,7 +1957,7 @@ void Preferences::fillPreferences ()
 
 //   view->set_active (moptions.rtSettings.viewingdevice);
 //   grey->set_active (moptions.rtSettings.viewingdevicegrey);
-    greySc->set_active (moptions.rtSettings.viewinggreySc);
+//    greySc->set_active (moptions.rtSettings.viewinggreySc);
     dnv->set_active (moptions.rtSettings.leveldnv);
     dnti->set_active (moptions.rtSettings.leveldnti);
     dnliss->set_active (moptions.rtSettings.leveldnliss);

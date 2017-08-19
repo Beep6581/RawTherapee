@@ -460,7 +460,7 @@ void Crop::update (int todo)
 
                 for (int wcr = 0; wcr <= 2; wcr++) {
                     for (int hcr = 0; hcr <= 2; hcr++) {
-                        PreviewProps ppP (coordW[wcr] , coordH[hcr], crW, crH, 1);
+                        PreviewProps ppP (coordW[wcr], coordH[hcr], crW, crH, 1);
                         parent->imgsrc->getImage (parent->currWB, tr, origCropPart, ppP, params.toneCurve, params.icm, params.raw );
 
                         // we only need image reduced to 1/4 here
@@ -779,7 +779,7 @@ void Crop::update (int todo)
 
         LUTu histToneCurve;
         parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit , parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
+                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                              parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                              parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
     }
@@ -1616,14 +1616,14 @@ void Crop::update (int todo)
             }
 
             if (settings->ciecamfloat) {
-                float d; // not used after this block
-                parent->ipf.ciecam_02float (cieCrop, float(adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, 1);
+                float d, dj, yb; // not used after this block
+                parent->ipf.ciecam_02float (cieCrop, float (adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, d, dj, yb, 1);
             } else {
-                double dd; // not used after this block
+                double dd, dj, yb; // not used after this block
 
                 parent->ipf.ciecam_02 (cieCrop, adap, begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, dd, 1);
+                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, skip, execsharp, dd, dj, yb, 1);
             }
         } else {
             // CIECAM is disbaled, we free up its image buffer to save some space

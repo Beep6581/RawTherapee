@@ -962,8 +962,6 @@ PREFERENCES_DATEFORMAT;Format
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatées suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DAUB_LABEL;Utiliser les ondelettes de Daubechies D6 au lieu de D4
 PREFERENCES_DAUB_TOOLTIP;Les outils de Réduction de Bruit et de Niveaux d'Ondelettes utilisent une ondelette de Debauchie mère. Si vous choisissez D6 au lieu de D4 vous augmentez le nombre de coéf. orthogonaux de Daubechies et augmentez probablement la qualité des niveaux de taille moyenne. Il n'y a pas de différence de consommation mémoire ou de temps de traitement entre les deux.
-PREFERENCES_DEFAULTLANG;Langue par défaut
-PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DIRDARKFRAMES;Dossier des images de Trame Noire
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
@@ -2129,3 +2127,17 @@ ZOOMPANEL_ZOOMFITSCREEN;Affiche l'image entière\nRaccourci: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom Avant\nRaccourci: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!DONT_SHOW_AGAIN;Don't show this message again.
+!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
+!HISTORY_MSG_476;CAM02 - Temp out
+!HISTORY_MSG_477;CAM02 - Green out
+!HISTORY_MSG_478;CAM02 - Yb out
+!PREFERENCES_D50_OLD;5000K
+!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
+!PREFERENCES_LANG;Language
+!PREFERENCES_THEME;Theme
+!TP_COLORAPP_YB;Yb (mean luminance)
