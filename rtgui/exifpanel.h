@@ -43,6 +43,7 @@ private:
         Gtk::TreeModelColumn<rtexif::ActionCode> action;
         Gtk::TreeModelColumn<bool> editable;
         Gtk::TreeModelColumn<bool> edited;
+        Gtk::TreeModelColumn<bool> isSeparator;
 
         ExifColumns()
         {
@@ -55,6 +56,7 @@ private:
             add(value_nopango);
             add(editable);
             add(orig_value);
+            add(isSeparator);
         }
     };
     Glib::RefPtr<Gdk::Pixbuf> delicon;
@@ -76,6 +78,7 @@ private:
     void editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib::ustring value);
     void updateChangeList (Gtk::TreeModel::Children root, std::string prefix);
     void addDirectory (const rtexif::TagDirectory* dir, Gtk::TreeModel::Children root);
+    Gtk::TreeModel::Children addSeparator ();
     Glib::ustring getSelection (bool onlyifeditable = false);
     Glib::ustring getSelectedValue ();
     void updateChangeList ();

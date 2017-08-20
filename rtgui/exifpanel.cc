@@ -45,6 +45,11 @@ ExifPanel::ExifPanel () : idata(nullptr)
 
     exifTreeModel = Gtk::TreeStore::create(exifColumns);
     exifTree->set_model (exifTreeModel);
+    exifTree->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_NONE);
+    exifTree->set_row_separator_func(
+            [&](const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::iterator& row)
+            { return row->get_value (exifColumns.isSeparator); }
+    );
 
     delicon = RTImage::createFromFile ("gtk-close.png");
     keepicon = RTImage::createFromFile ("gtk-apply.png");
@@ -184,18 +189,12 @@ void ExifPanel::setImageData (const FramesMetaData* id)
     exifTreeModel->clear ();
 
     if (id) {
-        //bool first = true;
-        // HOMBRE: Should we only display the current frame's Exifs ?
         for (unsigned int frameNum = 0; frameNum < id->getFrameCount (); ++frameNum) {
             if ( id->getExifData (frameNum)) {
-                /*
-                if (!first) {
-                    Gtk::Separator *sep = Gtk::manage (new Gtk::Separator);
-                    sep->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
-                    first = false;
-                }
-                */
                 //id->getExifData ()->printAll ();
+                if (frameNum > 0) {
+                    addSeparator();
+                }
                 addDirectory (id->getExifData (frameNum), exifTreeModel->children());
             }
         }
@@ -229,6 +228,21 @@ Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root
         row[exifColumns.field] = escapeHtmlChars(field);
         row[exifColumns.value] = escapeHtmlChars(value);
     }
+
+    return row.children();
+}
+
+Gtk::TreeModel::Children ExifPanel::addSeparator ()
+{
+
+    Gtk::TreeModel::Row row = *(exifTreeModel->append(exifTreeModel->children()));
+    row[exifColumns.action] = rtexif::ActionCode::AC_INVALID;
+    row[exifColumns.editable] = false;
+    row[exifColumns.edited] = false;
+    row[exifColumns.field_nopango] = "";
+    row[exifColumns.value_nopango] = "";
+    row[exifColumns.orig_value] = "";
+    row[exifColumns.isSeparator] = true;
 
     return row.children();
 }
