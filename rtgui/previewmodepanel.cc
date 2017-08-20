@@ -103,8 +103,8 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     vbbackColor = Gtk::manage (new Gtk::VBox ());
     vbbackColor->pack_start (*backColor0, Gtk::PACK_SHRINK, 0);
     vbbackColor->pack_start (*backColor1, Gtk::PACK_SHRINK, 0);
-    vbbackColor->pack_start (*backColor2, Gtk::PACK_SHRINK, 0);
     vbbackColor->pack_start (*backColor3, Gtk::PACK_SHRINK, 0);
+    vbbackColor->pack_start (*backColor2, Gtk::PACK_SHRINK, 0);
     pack_start (*vbbackColor, Gtk::PACK_SHRINK, 0);
 
     pack_start (*previewR, Gtk::PACK_SHRINK, 0);
