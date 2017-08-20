@@ -35,7 +35,6 @@ protected:
     Gtk::ToggleButton* backColor1;
     Gtk::ToggleButton* backColor2;
     Gtk::ToggleButton* backColor3;
-    Gtk::VBox* vbbackColor;
     ImageArea* imageArea;
 
     Gtk::Image* iR, *igR;

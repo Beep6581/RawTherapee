@@ -57,7 +57,7 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     backColor3 = Gtk::manage (new Gtk::ToggleButton ());
     backColor3->set_relief(Gtk::RELIEF_NONE);
     backColor3->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR3"));
-    backColor3->set_image(options.bgcolor == 2 ? *iBC3 : *igBC3);
+    backColor3->set_image(options.bgcolor == 3 ? *iBC3 : *igBC3);
 
     backColor2 = Gtk::manage (new Gtk::ToggleButton ());
     backColor2->set_relief(Gtk::RELIEF_NONE);
@@ -100,12 +100,12 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     backColor2->set_active (options.bgcolor == 2);
     backColor3->set_active (options.bgcolor == 3);
 
-    vbbackColor = Gtk::manage (new Gtk::VBox ());
-    vbbackColor->pack_start (*backColor0, Gtk::PACK_SHRINK, 0);
-    vbbackColor->pack_start (*backColor1, Gtk::PACK_SHRINK, 0);
-    vbbackColor->pack_start (*backColor3, Gtk::PACK_SHRINK, 0);
-    vbbackColor->pack_start (*backColor2, Gtk::PACK_SHRINK, 0);
-    pack_start (*vbbackColor, Gtk::PACK_SHRINK, 0);
+    pack_start (*backColor0, Gtk::PACK_SHRINK, 0);
+    pack_start (*backColor1, Gtk::PACK_SHRINK, 0);
+    pack_start (*backColor3, Gtk::PACK_SHRINK, 0);
+    pack_start (*backColor2, Gtk::PACK_SHRINK, 0);
+
+    pack_start (*Gtk::manage (new Gtk::VSeparator ()), Gtk::PACK_SHRINK, 2);
 
     pack_start (*previewR, Gtk::PACK_SHRINK, 0);
     pack_start (*previewG, Gtk::PACK_SHRINK, 0);
