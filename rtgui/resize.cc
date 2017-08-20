@@ -29,22 +29,21 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     croph = 0;
 
     Gtk::Table* combos = Gtk::manage (new Gtk::Table (2, 2));
-    Gtk::Label *label = nullptr;
 
     appliesTo = Gtk::manage (new MyComboBoxText ());
-    appliesTo->append_text (M("TP_RESIZE_CROPPEDAREA"));
-    appliesTo->append_text (M("TP_RESIZE_FULLIMAGE"));
+    appliesTo->append (M("TP_RESIZE_CROPPEDAREA"));
+    appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
 
-    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
+    Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
     label->set_alignment(0., 0.);
     combos->attach (*label, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     combos->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     // See Resize::methodChanged() when adding a new method.
     method = Gtk::manage (new MyComboBoxText ());
-    method->append_text (M("TP_RESIZE_LANCZOS"));
-    method->append_text (M("TP_RESIZE_NEAREST"));
+    method->append (M("TP_RESIZE_LANCZOS"));
+    method->append (M("TP_RESIZE_NEAREST"));
     method->set_active (0);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD")));
@@ -53,10 +52,10 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     combos->attach (*method, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
     spec = Gtk::manage (new MyComboBoxText ());
-    spec->append_text (M("TP_RESIZE_SCALE"));
-    spec->append_text (M("TP_RESIZE_WIDTH"));
-    spec->append_text (M("TP_RESIZE_HEIGHT"));
-    spec->append_text (M("TP_RESIZE_FITBOX"));
+    spec->append (M("TP_RESIZE_SCALE"));
+    spec->append (M("TP_RESIZE_WIDTH"));
+    spec->append (M("TP_RESIZE_HEIGHT"));
+    spec->append (M("TP_RESIZE_FITBOX"));
     spec->set_active (0);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY")));
@@ -118,7 +117,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
 Resize::~Resize ()
 {
-
+    idle_register.destroy();
     delete scale;
     delete sizeBox;
 }
@@ -352,68 +351,76 @@ void Resize::sizeChanged (int mw, int mh, int ow, int oh)
 
 void Resize::setDimensions ()
 {
+    const auto func = [](gpointer data) -> gboolean {
+        Resize* const self = static_cast<Resize*>(data);
 
-    int refw, refh;
+        self->wconn.block(true);
+        self->hconn.block(true);
+        self->scale->block(true);
 
-    wconn.block (true);
-    hconn.block (true);
-    scale->block(true);
+        int refw, refh;
 
-    if (appliesTo->get_active_row_number() == 0 && cropw) {
-        // Applies to Cropped area
-        refw = cropw;
-        refh = croph;
-    } else {
-        // Applies to Full image or crop is disabled
-        refw = maxw;
-        refh = maxh;
-    }
-
-    GThreadLock lock;
-    w->set_range (32, 4 * refw);
-    h->set_range (32, 4 * refh);
-
-    double tmpScale;
-
-    switch (spec->get_active_row_number()) {
-    case (0):   // Scale mode
-        w->set_value((double)((int)( (double)(refw) * scale->getValue() + 0.5) ));
-        h->set_value((double)((int)( (double)(refh) * scale->getValue() + 0.5) ));
-        break;
-
-    case (1):   // Width mode
-        tmpScale = w->get_value() / (double)refw;
-        scale->setValue (tmpScale);
-        h->set_value((double)((int)( (double)(refh) * tmpScale + 0.5) ));
-        break;
-
-    case (2):   // Height mode
-        tmpScale = h->get_value() / (double)refh;
-        scale->setValue (tmpScale);
-        w->set_value((double)((int)( (double)(refw) * tmpScale + 0.5) ));
-        break;
-
-    case (3): { // Bounding box mode
-        double wSliderValue = w->get_value();
-        double hSliderValue = h->get_value();
-
-        if ( (wSliderValue / hSliderValue) < ((double)refw / (double)refh)) {
-            tmpScale = wSliderValue / (double)refw;
+        if (self->appliesTo->get_active_row_number() == 0 && self->cropw) {
+            // Applies to Cropped area
+            refw = self->cropw;
+            refh = self->croph;
         } else {
-            tmpScale = hSliderValue / (double)refh;
+            // Applies to Full image or crop is disabled
+            refw = self->maxw;
+            refh = self->maxh;
         }
 
-        scale->setValue (tmpScale);
-        break;
-    }
+        self->w->set_range(32, 4 * refw);
+        self->h->set_range(32, 4 * refh);
 
-    default:
-        break;
-    }
+        switch (self->spec->get_active_row_number()) {
+            case 0: {
+                // Scale mode
+                self->w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * self->scale->getValue() + 0.5)));
+                self->h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * self->scale->getValue() + 0.5)));
+                break;
+            }
 
-    scale->block(false);
-    wconn.block (false);
-    hconn.block (false);
+            case 1: {
+                // Width mode
+                const double tmp_scale = self->w->get_value() / static_cast<double>(refw);
+                self->scale->setValue(tmp_scale);
+                self->h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                break;
+            }
+
+            case 2: {
+                // Height mode
+                const double tmp_scale = self->h->get_value() / static_cast<double>(refh);
+                self->scale->setValue(tmp_scale);
+                self->w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                break;
+            }
+
+            case 3: {
+                // Bounding box mode
+                const double tmp_scale =
+                    self->w->get_value() / self->h->get_value() < static_cast<double>(refw) / static_cast<double>(refh)
+                        ? self->w->get_value() / static_cast<double>(refw)
+                        : self->h->get_value() / static_cast<double>(refh);
+
+                self->scale->setValue(tmp_scale);
+                break;
+            }
+
+            default: {
+                break;
+            }
+        }
+
+        self->scale->block(false);
+        self->wconn.block(false);
+        self->hconn.block(false);
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void Resize::fitBoxScale()
@@ -593,8 +600,8 @@ void Resize::notifyBBox()
 void Resize::setBatchMode (bool batchMode)
 {
 
-    method->append_text (M("GENERAL_UNCHANGED"));
-    spec->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
+    spec->append (M("GENERAL_UNCHANGED"));
     ToolPanel::setBatchMode (batchMode);
     scale->showEditedCB ();
 }

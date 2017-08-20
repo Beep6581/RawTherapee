@@ -16,103 +16,114 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include <algorithm>
 #include <cstring>
 
 #include "lcp.h"
-#include "iccmatrices.h"
-#include "iccstore.h"
-#include "rawimagesource.h"
-#include "improcfun.h"
-#include "rt_math.h"
+#include <glib/gstdio.h>
 
 #ifdef WIN32
 #include <windows.h>
-// for GCC32
-#ifndef _WIN32_IE
-#define _WIN32_IE 0x0600
-#endif
 #include <shlobj.h>
 #endif
 
+#include "settings.h"
 
 using namespace std;
 using namespace rtengine;
-using namespace rtexif;
 
 
-LCPModelCommon::LCPModelCommon()
+namespace rtengine {
+
+extern const Settings* settings;
+
+}
+
+LCPModelCommon::LCPModelCommon() :
+    foc_len_x(-1.0f),
+    foc_len_y(-1.0f),
+    img_center_x(0.5f),
+    img_center_y(0.5f),
+    param{{}},
+    scale_factor(1.0f),
+    mean_error(0.0),
+    bad_error(false),
+    x0(0.0f),
+    y0(0.0f),
+    fx(0.0f),
+    fy(0.0f),
+    rfx(0.0f),
+    rfy(0.0f),
+    vign_param{{}}
 {
-    focLenX = focLenY = -1;
-    imgXCenter = imgYCenter = 0.5;
-    x0 = y0 = fx = fy = meanErr = 0;
-    badErr = false;
-
-    for (int i = 0; i < 5; i++) {
-        param[i] = 0;
-    }
-
-    scaleFac = 1;
 }
 
 bool LCPModelCommon::empty() const
 {
-    return param[0] == 0 && param[1] == 0 && param[2] == 0;
+    return param[0] == 0.0f && param[1] == 0.0f && param[2] == 0.0f;
 }
 
 void LCPModelCommon::print() const
 {
-    printf("focLen %g/%g; imgCenter %g/%g; scale %g; err %g\n", focLenX, focLenY, imgXCenter, imgYCenter, scaleFac, meanErr);
+    printf("focLen %g/%g; imgCenter %g/%g; scale %g; err %g\n", foc_len_x, foc_len_y, img_center_x, img_center_y, scale_factor, mean_error);
     printf("xy0 %g/%g  fxy %g/%g\n", x0, y0, fx, fy);
     printf("param: %g/%g/%g/%g/%g\n", param[0], param[1], param[2], param[3], param[4]);
 }
 
-// weightened merge two parameters
+// weighted merge two parameters
 void LCPModelCommon::merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA)
 {
-    float facB = 1 - facA;
+    const float facB = 1.0f - facA;
 
-    focLenX    = facA * a.focLenX    + facB * b.focLenX;
-    focLenY    = facA * a.focLenY    + facB * b.focLenY;
-    imgXCenter = facA * a.imgXCenter + facB * b.imgXCenter;
-    imgYCenter = facA * a.imgYCenter + facB * b.imgYCenter;
-    scaleFac   = facA * a.scaleFac   + facB * b.scaleFac;
-    meanErr    = facA * a.meanErr    + facB * b.meanErr;
+    foc_len_x    = facA * a.foc_len_x    + facB * b.foc_len_x;
+    foc_len_y    = facA * a.foc_len_y    + facB * b.foc_len_y;
+    img_center_x = facA * a.img_center_x + facB * b.img_center_x;
+    img_center_y = facA * a.img_center_y + facB * b.img_center_y;
+    scale_factor = facA * a.scale_factor + facB * b.scale_factor;
+    mean_error   = facA * a.mean_error   + facB * b.mean_error;
 
     for (int i = 0; i < 5; i++) {
         param[i] = facA * a.param[i] + facB * b.param[i];
     }
+
+    const float param0Sqr = param[0] * param[0];
+
+    vign_param[0] = -param[0];
+    vign_param[1] = param0Sqr - param[1];
+    vign_param[2] = param0Sqr * param[0] - 2.0f * param[0] * param[1] + param[2];
+    vign_param[3] = param0Sqr * param0Sqr + param[1] * param[1] + 2.0f * param[0] * param[2] - 3.0f * param0Sqr * param[1];
+
 }
 
 void LCPModelCommon::prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY)
 {
     // Mention that the Adobe technical paper has a bug here, the DMAX is handled differently for focLen and imgCenter
-    int Dmax = fullWidth;
-
-    if (fullHeight > fullWidth) {
-        Dmax = fullHeight;
-    }
+    const int Dmax = std::max(fullWidth, fullHeight);
 
     // correct focLens
-    if (focLenX < 0) { // they may not be given
+    if (foc_len_x < 0.0f) { // they may not be given
         // and 35mm may not be given either
-        if (focalLength35mm < 1) {
+        if (focalLength35mm < 1.0f) {
             focalLength35mm = focalLength * sensorFormatFactor;
         }
 
-        focLenX = focLenY = focalLength / ( 35 * focalLength / focalLength35mm); // focLen must be calculated in pixels
+        foc_len_x = foc_len_y = focalLength / (35.0f * focalLength / focalLength35mm); // focLen must be calculated in pixels
     }
 
     if (swapXY) {
-        x0 = (mirrorX ? 1. - imgYCenter : imgYCenter) * fullWidth;
-        y0 = (mirrorY ? 1. - imgXCenter : imgXCenter) * fullHeight;
-        fx = focLenY * Dmax;
-        fy = focLenX * Dmax;
+        x0 = (mirrorX ? 1.0f - img_center_y : img_center_y) * fullWidth;
+        y0 = (mirrorY ? 1.0f - img_center_x : img_center_x) * fullHeight;
+        fx = foc_len_y * Dmax;
+        fy = foc_len_x * Dmax;
     } else {
-        x0 = (mirrorX ? 1. - imgXCenter : imgXCenter) * fullWidth;
-        y0 = (mirrorY ? 1. - imgYCenter : imgYCenter) * fullHeight;
-        fx = focLenX * Dmax;
-        fy = focLenY * Dmax;
+        x0 = (mirrorX ? 1.0f - img_center_x : img_center_x) * fullWidth;
+        y0 = (mirrorY ? 1.0f - img_center_y : img_center_y) * fullHeight;
+        fx = foc_len_x * Dmax;
+        fy = foc_len_y * Dmax;
     }
+    rfx = 1.0f / fx;
+    rfy = 1.0f / fy;
 
     //printf("FW %i /X0 %g   FH %i /Y0 %g  %g\n",fullWidth,x0,fullHeight,y0, imgYCenter);
 }
@@ -125,9 +136,9 @@ LCPPersModel::LCPPersModel()
 // mode: 0=distortion, 1=vignette, 2=CA
 bool LCPPersModel::hasModeData(int mode) const
 {
-    return (mode == 0 && !vignette.empty() && !vignette.badErr) || (mode == 1 && !base.empty() && !base.badErr)
+    return (mode == 0 && !vignette.empty() && !vignette.bad_error) || (mode == 1 && !base.empty() && !base.bad_error)
            || (mode == 2 && !chromRG.empty() && !chromG.empty() && !chromBG.empty() &&
-               !chromRG.badErr && !chromG.badErr && !chromBG.badErr);
+               !chromRG.bad_error && !chromG.bad_error && !chromBG.bad_error);
 }
 
 void LCPPersModel::print() const
@@ -161,7 +172,7 @@ void LCPPersModel::print() const
 
 // if !vignette then geometric and CA
 LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP,
-                     int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
+                     int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg) :useCADist(false), swapXY(false), isFisheye(false), enableCA(false)
 {
     if (pProf == nullptr) {
         return;
@@ -180,7 +191,9 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
     swapXY  = (rot == 90  || rot == 270);
     bool mirrorX = (rot == 90  || rot == 180);
     bool mirrorY = (rot == 180 || rot == 270);
-    //printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+    if (settings->verbose) {
+        printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+    }
 
     pProf->calcParams(vignette ? 0 : 1, focalLength, focusDist, aperture, &mc, nullptr, nullptr);
     mc.prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
@@ -194,24 +207,52 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
     }
 
     enableCA = !vignette && focusDist > 0;
+    isFisheye = pProf->isFisheye;
 }
 
-void LCPMapper::correctDistortion(double& x, double& y) const
+void LCPMapper::correctDistortion(double& x, double& y, double scale) const
 {
-    double xd = (x - mc.x0) / mc.fx, yd = (y - mc.y0) / mc.fy;
+    if (isFisheye) {
+        double u = x * scale;
+        double v = y * scale;
+        double u0 = mc.x0 * scale;
+        double v0 = mc.y0 * scale;
+        double du = (u - u0);
+        double dv = (v - v0);
+        double fx = mc.fx;
+        double fy = mc.fy;
+        double k1 = mc.param[0];
+        double k2 = mc.param[1];
+        double r = sqrt(du * du + dv * dv);
+        double f = sqrt(fx*fy / (scale * scale));
+        double th = atan2(r, f);
+        double th2 = th * th;
+        double cfact = (((k2 * th2 + k1) * th2 + 1) * th) / r;
+        double ud = cfact * fx * du + u0;
+        double vd = cfact * fy * dv + v0;
 
-    const float* aDist = mc.param;
-    double rsqr      = xd * xd + yd * yd;
-    double xfac = aDist[swapXY ? 3 : 4], yfac = aDist[swapXY ? 4 : 3];
+        x = ud;
+        y = vd;
+    } else {
+        x *= scale;
+        y *= scale;
+        double x0 = mc.x0 * scale;
+        double y0 = mc.y0 * scale;
+        double xd = (x - x0) / mc.fx, yd = (y - y0) / mc.fy;
 
-    double commonFac = (((aDist[2] * rsqr + aDist[1]) * rsqr + aDist[0]) * rsqr + 1.)
-                       + 2. * (yfac * yd + xfac * xd);
+        const LCPModelCommon::Param aDist = mc.param;
+        double rsqr      = xd * xd + yd * yd;
+        double xfac = aDist[swapXY ? 3 : 4], yfac = aDist[swapXY ? 4 : 3];
 
-    double xnew = xd * commonFac + xfac * rsqr;
-    double ynew = yd * commonFac + yfac * rsqr;
+        double commonFac = (((aDist[2] * rsqr + aDist[1]) * rsqr + aDist[0]) * rsqr + 1.)
+            + 2. * (yfac * yd + xfac * xd);
 
-    x = xnew * mc.fx + mc.x0;
-    y = ynew * mc.fy + mc.y0;
+        double xnew = xd * commonFac + xfac * rsqr;
+        double ynew = yd * commonFac + yfac * rsqr;
+
+        x = xnew * mc.fx + x0;
+        y = ynew * mc.fy + y0;
+    }
 }
 
 void LCPMapper::correctCA(double& x, double& y, int channel) const
@@ -228,7 +269,7 @@ void LCPMapper::correctCA(double& x, double& y, int channel) const
 
     // Green contains main distortion, just like base
     if (useCADist) {
-        const float* aDist = chrom[1].param;
+        const LCPModelCommon::Param aDist = chrom[1].param;
         double rsqr      = xd * xd + yd * yd;
         double xfac = aDist[swapXY ? 3 : 4], yfac = aDist[swapXY ? 4 : 3];
 
@@ -252,32 +293,79 @@ void LCPMapper::correctCA(double& x, double& y, int channel) const
         yd = ygreen;
         rsqr = xd * xd + yd * yd;
 
-        const float* aCA = chrom[channel].param;
+        const LCPModelCommon::Param aCA = chrom[channel].param;
         double xfac = aCA[swapXY ? 3 : 4], yfac = aCA[swapXY ? 4 : 3];
         double commonSum = 1. + rsqr * (aCA[0] + rsqr * (aCA[1] + aCA[2] * rsqr)) + 2. * (yfac * yd + xfac * xd);
 
-        x = (chrom[channel].scaleFac * ( xd * commonSum + xfac * rsqr )) * chrom[channel].fx + chrom[channel].x0;
-        y = (chrom[channel].scaleFac * ( yd * commonSum + yfac * rsqr )) * chrom[channel].fy + chrom[channel].y0;
+        x = (chrom[channel].scale_factor * ( xd * commonSum + xfac * rsqr )) * chrom[channel].fx + chrom[channel].x0;
+        y = (chrom[channel].scale_factor * ( yd * commonSum + yfac * rsqr )) * chrom[channel].fy + chrom[channel].y0;
     }
 }
 
-float LCPMapper::calcVignetteFac(int x, int y) const
+SSEFUNCTION void LCPMapper::processVignetteLine(int width, int y, float *line) const
 {
     // No need for swapXY, since vignette is in RAW and always before rotation
-    double xd = ((double)x - mc.x0) / mc.fx, yd = ((double)y - mc.y0) / mc.fy;
+    float yd = ((float)y - mc.y0) * mc.rfy;
+    yd *= yd;
+    int x = 0;
+#ifdef __SSE2__
+    const vfloat fourv = F2V(4.f);
+    const vfloat zerov = F2V(0.f);
+    const vfloat ydv = F2V(yd);
+    const vfloat p0 = F2V(mc.vign_param[0]);
+    const vfloat p1 = F2V(mc.vign_param[1]);
+    const vfloat p2 = F2V(mc.vign_param[2]);
+    const vfloat p3 = F2V(mc.vign_param[3]);
+    const vfloat x0v = F2V(mc.x0);
+    const vfloat rfxv = F2V(mc.rfx);
 
-    const float* aVig = mc.param;
-    double rsqr      = xd * xd + yd * yd;
-    double param0Sqr = aVig[0] * aVig[0];
-
-    return 1. + rsqr * (-aVig[0] + rsqr * ((param0Sqr - aVig[1])
-                                           - (param0Sqr * aVig[0] - 2.*aVig[0] * aVig[1] + aVig[2]) * rsqr
-                                           + (param0Sqr * param0Sqr + aVig[1] * aVig[1]
-                                                   + 2.*aVig[0] * aVig[2] - 3.*param0Sqr * aVig[1]) * rsqr * rsqr));
+    vfloat xv = _mm_setr_ps(0.f, 1.f, 2.f, 3.f);
+    for (; x < width-3; x+=4) {
+        vfloat xdv = (xv - x0v) * rfxv;
+        vfloat rsqr = xdv * xdv + ydv;
+        vfloat vignFactorv = rsqr * (p0 + rsqr * (p1 - p2 * rsqr + p3 * rsqr * rsqr));
+        vfloat valv = LVFU(line[x]);
+        valv += valv * vselfzero(vmaskf_gt(valv, zerov), vignFactorv);
+        STVFU(line[x], valv);
+        xv += fourv;
+    }
+#endif // __SSE2__
+    for (; x < width; x++) {
+        if (line[x] > 0) {
+            float xd = ((float)x - mc.x0) * mc.rfx;
+            const LCPModelCommon::VignParam vignParam = mc.vign_param;
+            float rsqr = xd * xd + yd;
+            line[x] += line[x] * rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
+        }
+    }
 }
+
+SSEFUNCTION void LCPMapper::processVignetteLine3Channels(int width, int y, float *line) const
+{
+    // No need for swapXY, since vignette is in RAW and always before rotation
+    float yd = ((float)y - mc.y0) * mc.rfy;
+    yd *= yd;
+    const LCPModelCommon::VignParam vignParam = mc.vign_param;
+    for (int x = 0; x < width; x++) {
+        float xd = ((float)x - mc.x0) * mc.rfx;
+        float rsqr = xd * xd + yd;
+        float vignetteFactor = rsqr * (vignParam[0] + rsqr * ((vignParam[1]) - (vignParam[2]) * rsqr + (vignParam[3]) * rsqr * rsqr));
+        for(int c = 0;c < 3; ++c) {
+            if (line[3*x+c] > 0) {
+                line[3*x+c] += line[3*x+c] * vignetteFactor;
+            }
+        }
+    }
+}
+
 
 LCPProfile::LCPProfile(const Glib::ustring &fname)
 {
+    for (int i = 0; i < MaxPersModelCount; i++) {
+        aPersModel[i] = nullptr;
+    }
+    pCurPersModel = nullptr;
+
     const int BufferSize = 8192;
     char buf[BufferSize];
 
@@ -295,36 +383,49 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
     isFisheye = inCamProfiles = firstLIDone = inPerspect = inAlternateLensID = inAlternateLensNames = false;
     sensorFormatFactor = 1;
 
-    for (int i = 0; i < MaxPersModelCount; i++) {
-        aPersModel[i] = nullptr;
-    }
-
     persModelCount = 0;
     *inInvalidTag = 0;
 
     FILE *pFile = g_fopen(fname.c_str (), "rb");
 
-    bool done;
+    if(pFile) {
+        bool done;
 
-    do {
-        int bytesRead = (int)fread(buf, 1, BufferSize, pFile);
-        done = feof(pFile);
+        do {
+            int bytesRead = (int)fread(buf, 1, BufferSize, pFile);
+            done = feof(pFile);
 
-        if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
-            throw "Invalid XML in LCP file";
-        }
-    } while (!done);
+            if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
+                throw "Invalid XML in LCP file";
+            }
+        } while (!done);
 
-    fclose(pFile);
+        fclose(pFile);
+    }
 
     XML_ParserFree(parser);
 
-    //printf("Parsing %s\n", fname.c_str());
+    if (settings->verbose) {
+        printf("Parsing %s\n", fname.c_str());
+    }
     // Two phase filter: first filter out the very rough ones, that distord the average a lot
     // force it, even if there are few frames (community profiles)
-    filterBadFrames(2.0, 0);
+//    filterBadFrames(2.0, 0);
     // from the non-distorded, filter again on new average basis, but only if there are enough frames left
-    filterBadFrames(1.5, 100);
+//    filterBadFrames(1.5, 100);
+}
+
+
+LCPProfile::~LCPProfile()
+{
+    if (pCurPersModel) {
+        delete pCurPersModel;
+    }
+    for (int i = 0; i < MaxPersModelCount; i++) {
+        if (aPersModel[i]) {
+            delete aPersModel[i];
+        }
+    }
 }
 
 // from all frames not marked as bad already, take average and filter out frames with higher deviation than this if there are enough values
@@ -336,17 +437,17 @@ int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft)
 
     for (int pm = 0; pm < MaxPersModelCount && aPersModel[pm]; pm++) {
         if (aPersModel[pm]->hasModeData(0)) {
-            errVignette += aPersModel[pm]->vignette.meanErr;
+            errVignette += aPersModel[pm]->vignette.mean_error;
             vignetteCount++;
         }
 
         if (aPersModel[pm]->hasModeData(1)) {
-            errBase += aPersModel[pm]->base.meanErr;
+            errBase += aPersModel[pm]->base.mean_error;
             baseCount++;
         }
 
         if (aPersModel[pm]->hasModeData(2)) {
-            errChrom += std::max(std::max(aPersModel[pm]->chromRG.meanErr, aPersModel[pm]->chromG.meanErr), aPersModel[pm]->chromBG.meanErr);
+            errChrom += rtengine::max(aPersModel[pm]->chromRG.mean_error, aPersModel[pm]->chromG.mean_error, aPersModel[pm]->chromBG.mean_error);
             chromCount++;
         }
     }
@@ -369,25 +470,27 @@ int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft)
 
         // Now mark all the bad ones as bad, and hasModeData will return false;
         for (int pm = 0; pm < MaxPersModelCount && aPersModel[pm]; pm++) {
-            if (aPersModel[pm]->hasModeData(0) && aPersModel[pm]->vignette.meanErr > maxAvgDevFac * errVignette) {
-                aPersModel[pm]->vignette.badErr = true;
+            if (aPersModel[pm]->hasModeData(0) && aPersModel[pm]->vignette.mean_error > maxAvgDevFac * errVignette) {
+                aPersModel[pm]->vignette.bad_error = true;
                 filtered++;
             }
 
-            if (aPersModel[pm]->hasModeData(1) && aPersModel[pm]->base.meanErr > maxAvgDevFac * errBase) {
-                aPersModel[pm]->base.badErr = true;
+            if (aPersModel[pm]->hasModeData(1) && aPersModel[pm]->base.mean_error > maxAvgDevFac * errBase) {
+                aPersModel[pm]->base.bad_error = true;
                 filtered++;
             }
 
             if (aPersModel[pm]->hasModeData(2) &&
-                    (aPersModel[pm]->chromRG.meanErr > maxAvgDevFac * errChrom || aPersModel[pm]->chromG.meanErr > maxAvgDevFac * errChrom
-                     || aPersModel[pm]->chromBG.meanErr > maxAvgDevFac * errChrom)) {
-                aPersModel[pm]->chromRG.badErr = aPersModel[pm]->chromG.badErr = aPersModel[pm]->chromBG.badErr = true;
+                    (aPersModel[pm]->chromRG.mean_error > maxAvgDevFac * errChrom || aPersModel[pm]->chromG.mean_error > maxAvgDevFac * errChrom
+                     || aPersModel[pm]->chromBG.mean_error > maxAvgDevFac * errChrom)) {
+                aPersModel[pm]->chromRG.bad_error = aPersModel[pm]->chromG.bad_error = aPersModel[pm]->chromBG.bad_error = true;
                 filtered++;
             }
         }
 
-        //printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
+        if (settings->verbose) {
+            printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
+        }
     }
 
     return filtered;
@@ -435,55 +538,66 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
             float focDist = aPersModel[pm]->focDist;
             float focDistLog = log(focDist) + euler;
             double meanErr;
-
             if (aPersModel[pm]->hasModeData(mode)) {
-                if (mode == 0) {
-                    meanErr = aPersModel[pm]->vignette.meanErr;
+                double lowMeanErr, highMeanErr;
+                switch (mode) {
+                case 0:
+                    meanErr = aPersModel[pm]->vignette.mean_error;
+                    lowMeanErr = pLow->vignette.mean_error;
+                    highMeanErr = pHigh->vignette.mean_error;
+                    break;
+                case 1:
+                    meanErr = aPersModel[pm]->base.mean_error;
+                    lowMeanErr = pLow->base.mean_error;
+                    highMeanErr = pHigh->base.mean_error;
+                    break;
+                default: //case 2:
+                    meanErr = aPersModel[pm]->chromG.mean_error;
+                    lowMeanErr = pLow->chromG.mean_error;
+                    highMeanErr = pHigh->chromG.mean_error;
+                    break;
+                }
 
-                    // by aperture (vignette), and max out focus distance
-                    // tests showed doing this by log(aperture) is not as advisable
+                if (aperture > 0 && mode != 2) {
                     if (aPersModel[pm]->focLen == bestFocLenLow && (
-                                (aper == aperture && pLow->vignette.meanErr > meanErr)
-                                || (aper >= aperture && aper < pLow->aperture && pLow->aperture > aperture)
+                            (aper == aperture && lowMeanErr > meanErr)
+                            || (aper >= aperture && aper < pLow->aperture && pLow->aperture > aperture)
                                 || (aper <= aperture && (pLow->aperture > aperture || fabs(aperture - aper) < fabs(aperture - pLow->aperture))))) {
                         pLow = aPersModel[pm];
                     }
 
                     if (aPersModel[pm]->focLen == bestFocLenHigh && (
-                                (aper == aperture && pHigh->vignette.meanErr > meanErr)
-                                || (aper <= aperture && aper > pHigh->aperture && pHigh->aperture < aperture)
-                                || (aper >= aperture && (pHigh->aperture < aperture || fabs(aperture - aper) < fabs(aperture - pHigh->aperture))))) {
+                            (aper == aperture && highMeanErr > meanErr)
+                            || (aper <= aperture && aper > pHigh->aperture && pHigh->aperture < aperture)
+                            || (aper >= aperture && (pHigh->aperture < aperture || fabs(aperture - aper) < fabs(aperture - pHigh->aperture))))) {
+                        pHigh = aPersModel[pm];
+                    }
+                } else if (focusDist > 0 && mode != 0) {
+                    // by focus distance
+                    if (aPersModel[pm]->focLen == bestFocLenLow && (
+                            (focDist == focusDist && lowMeanErr > meanErr)
+                            || (focDist >= focusDist && focDist < pLow->focDist && pLow->focDist > focusDist)
+                            || (focDist <= focusDist && (pLow->focDist > focusDist || fabs(focusDistLog - focDistLog) < fabs(focusDistLog - (log(pLow->focDist) + euler)))))) {
+                        pLow = aPersModel[pm];
+                    }
+
+                    if (aPersModel[pm]->focLen == bestFocLenHigh && (
+                            (focDist == focusDist && highMeanErr > meanErr)
+                            || (focDist <= focusDist && focDist > pHigh->focDist && pHigh->focDist < focusDist)
+                            || (focDist >= focusDist && (pHigh->focDist < focusDist || fabs(focusDistLog - focDistLog) < fabs(focusDistLog - (log(pHigh->focDist) + euler)))))) {
                         pHigh = aPersModel[pm];
                     }
                 } else {
-                    meanErr = (mode == 1 ? aPersModel[pm]->base.meanErr : aPersModel[pm]->chromG.meanErr);
+                    // no focus distance available, just error
+                    if (aPersModel[pm]->focLen == bestFocLenLow && lowMeanErr > meanErr) {
+                        pLow = aPersModel[pm];
+                    }
 
-                    if (focusDist > 0) {
-                        // by focus distance
-                        if (aPersModel[pm]->focLen == bestFocLenLow && (
-                                    (focDist == focusDist && (mode == 1 ? pLow->base.meanErr : pLow->chromG.meanErr) > meanErr)
-                                    || (focDist >= focusDist && focDist < pLow->focDist && pLow->focDist > focusDist)
-                                    || (focDist <= focusDist && (pLow->focDist > focusDist || fabs(focusDistLog - focDistLog) < fabs(focusDistLog - (log(pLow->focDist) + euler)))))) {
-                            pLow = aPersModel[pm];
-                        }
-
-                        if (aPersModel[pm]->focLen == bestFocLenHigh && (
-                                    (focDist == focusDist && (mode == 1 ? pHigh->base.meanErr : pHigh->chromG.meanErr) > meanErr)
-                                    || (focDist <= focusDist && focDist > pHigh->focDist && pHigh->focDist < focusDist)
-                                    || (focDist >= focusDist && (pHigh->focDist < focusDist || fabs(focusDistLog - focDistLog) < fabs(focusDistLog - (log(pHigh->focDist) + euler)))))) {
-                            pHigh = aPersModel[pm];
-                        }
-                    } else {
-                        // no focus distance available, just error
-                        if (aPersModel[pm]->focLen == bestFocLenLow && (mode == 1 ? pLow->base.meanErr : pLow->chromG.meanErr) > meanErr) {
-                            pLow = aPersModel[pm];
-                        }
-
-                        if (aPersModel[pm]->focLen == bestFocLenHigh && (mode == 1 ? pHigh->base.meanErr : pHigh->chromG.meanErr) > meanErr) {
-                            pHigh = aPersModel[pm];
-                        }
+                    if (aPersModel[pm]->focLen == bestFocLenHigh && highMeanErr > meanErr) {
+                        pHigh = aPersModel[pm];
                     }
                 }
+                
             }
         }
     }
@@ -527,9 +641,13 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
             break;
         }
 
-        //printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
+        if (settings->verbose) {
+            printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
+        }
     } else {
-        printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
+        if (settings->verbose) {
+            printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
+        }
     }
 }
 
@@ -631,8 +749,10 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
                 nameStart++;
             }
 
-            strcpy(pProf->lastTag, nameStart);
-            XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));
+            strncpy(pProf->lastTag, nameStart, 255);
+
+            pProf->handle_text(attr[i+1]);
+            //XmlTextHandler(pLCPProfile, attr[i + 1], strlen(attr[i + 1]));
         }
     }
 }
@@ -645,24 +765,33 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
         return;
     }
 
+    for (int i = 0; i < len; ++i) {
+        pProf->textbuf << s[i];
+    }
+}
+
+
+void LCPProfile::handle_text(std::string text)
+{
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace = true;
-    int i = 0;
-
-    while (i < len && onlyWhiteSpace) {
-        onlyWhiteSpace = isspace(s[i]);
-        i++;
+    for (size_t i = 0; i < text.size(); ++i) {
+        if (!isspace(text[i])) {
+            onlyWhiteSpace = false;
+            break;
+        }
     }
 
     if (onlyWhiteSpace) {
         return;
     }
 
+    LCPProfile *pProf = this;
+
     // convert to null terminated
-    char raw[len + 1];
-    memcpy(raw, s, len);
-    raw[len] = 0;
     char* tag = pProf->lastTag;
+
+    const char* raw = text.c_str();
 
     // Common data section
     if (!pProf->firstLIDone) {
@@ -686,15 +815,12 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     // WARNING: called by different threads, that may run on different local settings,
     // so don't use system params
     if (atof("1,2345") == 1.2345) {
-        char* p = raw;
-
-        while (*p) {
-            if (*p == '.') {
-                *p = ',';
+        for (size_t i = 0; i < text.size(); ++i) {
+            if (text[i] == '.') {
+                text[i] = ',';
             }
-
-            p++;
         }
+        raw = text.c_str();
     }
 
     if (!pProf->firstLIDone) {
@@ -715,17 +841,17 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
 
     // Section depended
     if (!strcmp("FocalLengthX", tag)) {
-        pProf->pCurCommon->focLenX = atof(raw);
+        pProf->pCurCommon->foc_len_x = atof(raw);
     } else if (!strcmp("FocalLengthY", tag)) {
-        pProf->pCurCommon->focLenY = atof(raw);
+        pProf->pCurCommon->foc_len_y = atof(raw);
     } else if (!strcmp("ImageXCenter", tag)) {
-        pProf->pCurCommon->imgXCenter = atof(raw);
+        pProf->pCurCommon->img_center_x = atof(raw);
     } else if (!strcmp("ImageYCenter", tag)) {
-        pProf->pCurCommon->imgYCenter = atof(raw);
+        pProf->pCurCommon->img_center_y = atof(raw);
     } else if (!strcmp("ScaleFactor", tag)) {
-        pProf->pCurCommon->scaleFac = atof(raw);
+        pProf->pCurCommon->scale_factor = atof(raw);
     } else if (!strcmp("ResidualMeanError", tag)) {
-        pProf->pCurCommon->meanErr = atof(raw);
+        pProf->pCurCommon->mean_error = atof(raw);
     } else if (!strcmp("RadialDistortParam1", tag) || !strcmp("VignetteModelParam1", tag)) {
         pProf->pCurCommon->param[0] = atof(raw);
     } else if (!strcmp("RadialDistortParam2", tag) || !strcmp("VignetteModelParam2", tag)) {
@@ -742,6 +868,9 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
 void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el)
 {
     LCPProfile *pProf = static_cast<LCPProfile*>(pLCPProfile);
+
+    pProf->handle_text(pProf->textbuf.str());
+    pProf->textbuf.str("");
 
     // We ignore everything in dirty tag till it's gone
     if (*pProf->inInvalidTag) {
@@ -784,6 +913,15 @@ LCPStore* LCPStore::getInstance()
     return &instance_;
 }
 
+
+LCPStore::~LCPStore()
+{
+    for (auto &p : profileCache) {
+        delete p.second;
+    }
+}
+
+
 LCPProfile* LCPStore::getProfile (Glib::ustring filename)
 {
     if (filename.length() == 0 || !isValidLCPFileName(filename)) {
@@ -800,7 +938,9 @@ LCPProfile* LCPStore::getProfile (Glib::ustring filename)
 
     // Add profile (if exists)
     profileCache[filename] = new LCPProfile(filename);
-    //profileCache[filename]->print();
+    if (settings->verbose) {
+        profileCache[filename]->print();
+    }
     return profileCache[filename];
 }
 
@@ -820,7 +960,6 @@ Glib::ustring LCPStore::getDefaultCommonDirectory() const
 
 #ifdef WIN32
     WCHAR pathW[MAX_PATH] = {0};
-    char pathA[MAX_PATH];
 
     if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_COMMON_APPDATA, false)) {
         char pathA[MAX_PATH];

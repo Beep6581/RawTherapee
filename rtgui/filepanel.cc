@@ -22,37 +22,40 @@
 #include "inspector.h"
 #include "placesbrowser.h"
 
-int FilePanelInitUI (void* data)
-{
-    (static_cast<FilePanel*>(data))->init ();
-    return 0;
-}
-
-FilePanel::FilePanel () : parent(nullptr)
+FilePanel::FilePanel () : parent(nullptr), error(0)
 {
 
+    // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
     dirpaned = Gtk::manage ( new Gtk::HPaned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
+    // The directory tree
     dirBrowser = Gtk::manage ( new DirBrowser () );
+    // Places
     placesBrowser = Gtk::manage ( new PlacesBrowser () );
+    // Recent Folders
     recentBrowser = Gtk::manage ( new RecentBrowser () );
 
+    // The whole left panel. Contains Places, Recent Folders and Folders.
     placespaned = Gtk::manage ( new Gtk::VPaned () );
-    placespaned->set_size_request(50, 100);
+    placespaned->set_name ("PlacesPaned");
+    placespaned->set_size_request(250, 100);
     placespaned->set_position (options.dirBrowserHeight);
 
     Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
+    obox->get_style_context()->add_class ("plainback");
     obox->pack_start (*recentBrowser, Gtk::PACK_SHRINK, 4);
     obox->pack_start (*dirBrowser);
 
     placespaned->pack1 (*placesBrowser, false, true);
     placespaned->pack2 (*obox, true, true);
 
-    dirpaned->pack1 (*placespaned, false, true);
+    dirpaned->pack1 (*placespaned, false, false);
 
     tpc = new BatchToolPanelCoordinator (this);
+    // Location bar
     fileCatalog = Gtk::manage ( new FileCatalog (tpc->coarse, tpc->getToolBar(), this) );
+    // Holds the location bar and thumbnails
     ribbonPane = Gtk::manage ( new Gtk::Paned() );
     ribbonPane->add(*fileCatalog);
     ribbonPane->set_size_request(50, 150);
@@ -69,7 +72,7 @@ FilePanel::FilePanel () : parent(nullptr)
     fileCatalog->setFileSelectionListener (this);
 
     rightBox = Gtk::manage ( new Gtk::HBox () );
-    rightBox->set_size_request(50, 100);
+    rightBox->set_size_request(350, 100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
     //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
@@ -82,7 +85,6 @@ FilePanel::FilePanel () : parent(nullptr)
     Gtk::ScrolledWindow* sFilterPanel = Gtk::manage ( new Gtk::ScrolledWindow() );
     filterPanel = Gtk::manage ( new FilterPanel () );
     sFilterPanel->add (*filterPanel);
-    sFilterPanel->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
     inspectorPanel = new Inspector();
     fileCatalog->setInspector(inspectorPanel);
@@ -102,46 +104,61 @@ FilePanel::FilePanel () : parent(nullptr)
     rightNotebook->set_tab_pos (Gtk::POS_LEFT);
 
     Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
+    devLab->set_name ("LabelRightNotebook");
     devLab->set_angle (90);
     Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
+    inspectLab->set_name ("LabelRightNotebook");
     inspectLab->set_angle (90);
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
+    filtLab->set_name ("LabelRightNotebook");
     filtLab->set_angle (90);
     //Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
     //tagLab->set_angle (90);
     Gtk::Label* exportLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_EXPORT")) );
+    exportLab->set_name ("LabelRightNotebook");
     exportLab->set_angle (90);
 
     tpcPaned = Gtk::manage ( new Gtk::VPaned () );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, true);
 
-    rightNotebook->append_page (*tpcPaned, *devLab);
-    rightNotebook->append_page (*inspectorPanel, *inspectLab);
     rightNotebook->append_page (*sFilterPanel, *filtLab);
+    rightNotebook->append_page (*inspectorPanel, *inspectLab);
+    rightNotebook->append_page (*tpcPaned, *devLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
+    rightNotebook->set_name ("RightNotebook");
 
     rightBox->pack_start (*rightNotebook);
 
     pack1(*dirpaned, true, true);
-    pack2(*rightBox, false, true);
+    pack2(*rightBox, false, false);
 
     fileCatalog->setFileSelectionChangeListener (tpc);
 
     fileCatalog->setFileSelectionListener (this);
-    g_idle_add (FilePanelInitUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<FilePanel*>(data)->init();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 
     show_all ();
 }
 
 FilePanel::~FilePanel ()
 {
+    idle_register.destroy();
+
     rightNotebookSwitchConn.disconnect();
 
     if (inspectorPanel) {
         delete inspectorPanel;
     }
+
+    delete tpc;
 }
 
 void FilePanel::on_realize ()
@@ -172,12 +189,15 @@ void FilePanel::setAspect ()
 void FilePanel::init ()
 {
 
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (argv1 != "" && Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
-        dirBrowser->open (argv1);
+    if (!argv1.empty() && Glib::file_test (argv1, Glib::FILE_TEST_EXISTS)) {
+        Glib::ustring d(argv1);
+        if (!Glib::file_test(d, Glib::FILE_TEST_IS_DIR)) {
+            d = Glib::path_get_dirname(d);
+        }
+        dirBrowser->open(d);
     } else {
         if (options.startupDir == STARTUPDIR_HOME) {
             dirBrowser->open (PlacesBrowser::userPicturesDir ());
@@ -194,7 +214,7 @@ void FilePanel::init ()
     }
 }
 
-void FilePanel::on_NB_switch_page(GtkNotebookPage* page, guint page_num)
+void FilePanel::on_NB_switch_page(Gtk::Widget* page, guint page_num)
 {
     if (page_num == 1) {
         // switching the inspector "on"
@@ -259,9 +279,23 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             if (options.tabbedUI) {
                 EditorPanel* epanel;
                 {
+#ifdef WIN32
+                    int winGdiHandles = GetGuiResources( GetCurrentProcess(), GR_GDIOBJECTS);
+                    if(winGdiHandles > 0 && winGdiHandles <= 8500) // 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
+#endif
+                    {
                     GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
                     epanel = Gtk::manage (new EditorPanel ());
                     parent->addEditorPanel (epanel, pl->thm->getFileName());
+                    }
+#ifdef WIN32
+                    else {
+                        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
+                        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+                        msgd.run ();
+                        goto MAXGDIHANDLESREACHED;
+                    }
+#endif
                 }
                 epanel->open(pl->thm, pl->pc->returnValue() );
 
@@ -281,7 +315,9 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
-
+#ifdef WIN32
+MAXGDIHANDLESREACHED:
+#endif
         delete pl->pc;
 
         {

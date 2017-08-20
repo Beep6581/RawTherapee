@@ -35,13 +35,15 @@ public:
 
 typedef double(*double2double_fun)(double val);
 
-class Adjuster : public Gtk::VBox
+class Adjuster : public Gtk::Grid
 {
 
 protected:
     Glib::ustring adjustmentName;
-    Gtk::HBox* hbox;
+    Gtk::Grid* grid;
     Gtk::Label* label;
+    Gtk::Image *imageIcon1;
+    Gtk::Image *imageIcon2;
     MyHScale* slider;
     MySpinButton* spin;
     Gtk::Button* reset;
@@ -54,13 +56,11 @@ protected:
     sigc::connection autoChange;
     sigc::connection buttonReleaseSlider;
     sigc::connection buttonReleaseSpin;
-    bool listenerReady;
     double defaultVal;          // current default value (it can change when switching from ADD or SET mode)
     double ctorDefaultVal;      // default value at construction time
     EditedState editedState;
     EditedState defEditedState;
     EditedState autoState;
-    EditedState defAutoState;
     int digits;
     Gtk::CheckButton* editedCheckBox;
     bool afterReset;
@@ -144,6 +144,7 @@ public:
     void setNbDisplayedChars (int nbr)
     {
         spin->set_width_chars(nbr);
+        spin->set_max_width_chars(nbr);
     }
     void setEditedState (EditedState eState);
     EditedState getEditedState ();
@@ -169,9 +170,9 @@ public:
     void resetValue (bool toInitial);
     void resetPressed (GdkEventButton* event);
     void editedToggled ();
-    double trimValue (double val);
-    float trimValue (float val);
-    int trimValue (int val);
+    void trimValue (double &val);
+    void trimValue (float &val);
+    void trimValue (int &val);
 };
 
 #endif

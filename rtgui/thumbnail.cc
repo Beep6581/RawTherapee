@@ -26,10 +26,12 @@
 #include <glibmm.h>
 #include "../rtengine/imagedata.h"
 #include <glib/gstdio.h>
+
+#include "../rtengine/dynamicprofile.h"
 #include "guiutils.h"
-#include "profilestore.h"
 #include "batchqueue.h"
 #include "extprog.h"
+#include "profilestorecombobox.h"
 
 using namespace rtengine::procparams;
 
@@ -63,7 +65,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(nullptr), pparamsValid(false),
-      pparamsSet(false), needsReProcessing(true), imageLoading(false), lastImg(nullptr),
+      needsReProcessing(true), imageLoading(false), lastImg(nullptr),
       lastW(0), lastH(0), lastScale(0.0), initial_(true)
 {
 
@@ -137,7 +139,7 @@ void Thumbnail::_generateThumbnailImage ()
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, pparams.wb.equal, TRUE);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, pparams.wb.equal, TRUE, pparams.raw.bayersensor.imageNum);
         }
 
         if (tpp) {
@@ -176,7 +178,7 @@ const ProcParams& Thumbnail::getProcParamsU ()
     if (pparamsValid) {
         return pparams;
     } else {
-        pparams = *(profileStore.getDefaultProcParams (getType() == FT_Raw));
+        pparams = *(ProfileStore::getInstance()->getDefaultProcParams (getType() == FT_Raw));
 
         if (pparams.wb.method == "Camera") {
             double ct;
@@ -184,7 +186,7 @@ const ProcParams& Thumbnail::getProcParamsU ()
             pparams.wb.temperature = ct;
         } else if (pparams.wb.method == "Auto") {
             double ct;
-            getAutoWB (ct, pparams.wb.green, pparams.wb.equal);
+            getAutoWB (ct, pparams.wb.green, pparams.wb.equal, pparams.wb.tempBias);
             pparams.wb.temperature = ct;
         }
     }
@@ -197,14 +199,13 @@ const ProcParams& Thumbnail::getProcParamsU ()
  *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
  *
  *  @param returnParams Ask to return a pointer to a ProcParams object if true
- *  @param forceCPB True if the Custom Profile Builder has to be invoked, False if the CPB has to be invoked if the profile doesn't
- *                  exist yet. It depends on other conditions too
+ *  @param force True if the profile has to be re-generated even if it already exists
  *  @param flaggingMode True if the ProcParams will be created because the file browser is being flagging an image
  *                      (rang, to trash, color labels). This parameter is passed to the CPB.
  *
  *  @return Return a pointer to a ProcPamas structure to be updated if returnParams is true and if everything went fine, NULL otherwise.
  */
-rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB, bool flaggingMode)
+rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool force, bool flaggingMode)
 {
 
     static int index = 0; // Will act as unique identifier during the session
@@ -216,8 +217,37 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     const CacheImageData* cfs = getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
+    const bool create = (!hasProcParams() || force);
+    const bool run_cpb = !options.CPBPath.empty() && !defaultPparamsPath.empty() && cfs && cfs->exifValid && create;
 
-    if (!options.CPBPath.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+    const Glib::ustring outFName =
+        (options.paramsLoadLocation == PLL_Input && options.saveParamsFile) ?
+        fname + paramFileExtension :
+        getCacheFileName("profiles", paramFileExtension);
+
+    if (!run_cpb) {
+        if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
+            rtengine::ImageMetaData* imageMetaData;
+            if (getType() == FT_Raw) {
+                rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
+                imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
+            } else {
+                imageMetaData = rtengine::ImageMetaData::fromFile (fname, nullptr);
+            }
+            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
+            int err = pp->pparams->save(outFName);
+            pp->deleteInstance();
+            delete pp;
+            if (!err) {
+                loadProcParams();
+            }
+        } else if (create && defProf != DEFPROFILE_DYNAMIC) {
+            const PartialProfile *p = ProfileStore::getInstance()->getProfile(defProf);
+            if (p && !p->pparams->save(outFName)) {
+                loadProcParams();
+            }
+        }
+    } else {
         // First generate the communication file, with general values and EXIF metadata
         rtengine::ImageMetaData* imageMetaData;
 
@@ -233,14 +263,6 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         const rtexif::TagDirectory* exifDir = nullptr;
 
         if (imageMetaData && (exifDir = imageMetaData->getExifData())) {
-            Glib::ustring outFName;
-
-            if (options.paramsLoadLocation == PLL_Input) {
-                outFName = fname + paramFileExtension;
-            } else {
-                outFName = getCacheFileName("profiles", paramFileExtension);
-            }
-
             exifDir->CPBDump(tmpFileName, fname, outFName,
                              defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
                              cfs,
@@ -295,7 +317,7 @@ void Thumbnail::loadProcParams ()
 
     pparamsValid = false;
     pparams.setDefaults();
-    const PartialProfile *defaultPP = profileStore.getDefaultPartialProfile(getType() == FT_Raw);
+    const PartialProfile *defaultPP = ProfileStore::getInstance()->getDefaultPartialProfile(getType() == FT_Raw);
     defaultPP->applyTo(&pparams);
 
     if (options.paramsLoadLocation == PLL_Input) {
@@ -669,7 +691,7 @@ const Glib::ustring& Thumbnail::getDateTimeString ()
     return dateTimeString;
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green, double equal)
+void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
 {
     if (cfs.redAWBMul != -1.0) {
         rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal);
@@ -801,7 +823,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
         tpp->init ();
     }
 
-    if (!initial_ && tpp) {
+    if (!initial_) {
         tw = tpp->getImageWidth (getProcParamsU(), th, imgRatio);    // this might return 0 if image was just building
     }
 }

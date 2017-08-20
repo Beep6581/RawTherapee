@@ -33,38 +33,12 @@
 #include "progressconnector.h"
 
 class RTWindow;
-class FilePanel : public Gtk::HPaned,
+
+class FilePanel final :
+    public Gtk::HPaned,
     public FileSelectionListener,
     public PParamsChangeListener
 {
-
-protected:
-    //DirBrowser* dirBrowser;
-    PlacesBrowser* placesBrowser;
-    RecentBrowser* recentBrowser;
-    // FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
-
-    Inspector* inspectorPanel;
-    Gtk::VPaned* tpcPaned;
-    BatchToolPanelCoordinator* tpc;
-    History* history;
-    //FilterPanel* filterPanel;
-    RTWindow* parent;
-    Gtk::Notebook* rightNotebook;
-    sigc::connection rightNotebookSwitchConn;
-
-    struct pendingLoad {
-        bool complete;
-        ProgressConnector<rtengine::InitialImage*> *pc;
-        Thumbnail *thm;
-    };
-    MyMutex pendingLoadMutex;
-    std::vector<struct pendingLoad*> pendingLoads;
-
-    int error;
-
-    void on_NB_switch_page(GtkNotebookPage* page, guint page_num);
-
 public:
     FilePanel ();
     ~FilePanel ();
@@ -107,6 +81,32 @@ public:
     bool handleShortcutKey (GdkEventKey* event);
     void updateTPVScrollbar (bool hide);
     void updateTabsUsesIcons (bool useIcons);
+
+private:
+    void on_NB_switch_page(Gtk::Widget* page, guint page_num);
+
+    PlacesBrowser* placesBrowser;
+    RecentBrowser* recentBrowser;
+
+    Inspector* inspectorPanel;
+    Gtk::VPaned* tpcPaned;
+    BatchToolPanelCoordinator* tpc;
+    History* history;
+    RTWindow* parent;
+    Gtk::Notebook* rightNotebook;
+    sigc::connection rightNotebookSwitchConn;
+
+    struct pendingLoad {
+        bool complete;
+        ProgressConnector<rtengine::InitialImage*> *pc;
+        Thumbnail *thm;
+    };
+    MyMutex pendingLoadMutex;
+    std::vector<struct pendingLoad*> pendingLoads;
+
+    int error;
+
+    IdleRegister idle_register;
 };
 
 #endif

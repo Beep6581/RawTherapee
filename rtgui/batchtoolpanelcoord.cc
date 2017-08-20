@@ -152,7 +152,7 @@ void BatchToolPanelCoordinator::initSession ()
 
             toneCurve->setAdjusterBehavior (false, false, false, false, false, false, false, false);
             lcurve->setAdjusterBehavior (false, false, false);
-            whitebalance->setAdjusterBehavior (false, false, false);
+            whitebalance->setAdjusterBehavior (false, false, false, false);
             vibrance->setAdjusterBehavior (false, false);
             vignetting->setAdjusterBehavior (false, false, false, false);
             colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
@@ -171,7 +171,7 @@ void BatchToolPanelCoordinator::initSession ()
             blackwhite->setAdjusterBehavior (false, false);
             colortoning->setAdjusterBehavior (false, false, false, false, false);
             filmSimulation->setAdjusterBehavior(false);
-            retinex->setAdjusterBehavior (false, false, false, false, false, false, false, false);
+            retinex->setAdjusterBehavior (false, false, false, false, false, false, false);
 
             shadowshighlights->setAdjusterBehavior (false, false, false);
             dirpyrequalizer->setAdjusterBehavior (false, false, false);
@@ -191,7 +191,7 @@ void BatchToolPanelCoordinator::initSession ()
 
             toneCurve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT], options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL], options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
             lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_CHROMATICITY]);
-            whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN], options.baBehav[ADDSET_WB_EQUAL]);
+            whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN], options.baBehav[ADDSET_WB_EQUAL], options.baBehav[ADDSET_WB_TEMPBIAS]);
             vibrance->setAdjusterBehavior (options.baBehav[ADDSET_VIBRANCE_PASTELS], options.baBehav[ADDSET_VIBRANCE_SATURATED]);
             vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
             colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE]);
@@ -208,7 +208,7 @@ void BatchToolPanelCoordinator::initSession ()
 //          colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRPROTECT], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             colortoning->setAdjusterBehavior (options.baBehav[ADDSET_COLORTONING_SPLIT], options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD], options.baBehav[ADDSET_COLORTONING_SATOPACITY], options.baBehav[ADDSET_COLORTONING_STRENGTH], options.baBehav[ADDSET_COLORTONING_BALANCE]);
             filmSimulation->setAdjusterBehavior(options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]);
-            retinex->setAdjusterBehavior (options.baBehav[ADDSET_RETI_STR], options.baBehav[ADDSET_RETI_NEIGH], options.baBehav[ADDSET_RETI_LIMD], options.baBehav[ADDSET_RETI_GAIN], options.baBehav[ADDSET_RETI_OFFS], options.baBehav[ADDSET_RETI_VART], options.baBehav[ADDSET_RETI_GAM], options.baBehav[ADDSET_RETI_SLO]);
+            retinex->setAdjusterBehavior (options.baBehav[ADDSET_RETI_STR], options.baBehav[ADDSET_RETI_NEIGH], options.baBehav[ADDSET_RETI_LIMD], options.baBehav[ADDSET_RETI_OFFS], options.baBehav[ADDSET_RETI_VART], options.baBehav[ADDSET_RETI_GAM], options.baBehav[ADDSET_RETI_SLO]);
 
             chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
             blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES], options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
@@ -325,6 +325,10 @@ void BatchToolPanelCoordinator::initSession ()
                 pparams.wb.equal = 0;
             }
 
+            if (options.baBehav[ADDSET_WB_TEMPBIAS]) {
+                pparams.wb.tempBias = 0;
+            }
+            
             if (options.baBehav[ADDSET_VIBRANCE_PASTELS]) {
                 pparams.vibrance.pastels = 0;
             }
@@ -598,10 +602,6 @@ void BatchToolPanelCoordinator::initSession ()
                 pparams.retinex.limd = 0;
             }
 
-            if (options.baBehav[ADDSET_RETI_GAIN]) {
-                pparams.retinex.gain = 0;
-            }
-
             if (options.baBehav[ADDSET_RETI_OFFS]) {
                 pparams.retinex.offs = 0;
             }
@@ -856,11 +856,11 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
     }
 }
 
-void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal)
+void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, double tempBias)
 {
 
     if (!selected.empty()) {
-        selected[0]->getAutoWB (temp, green, equal);
+        selected[0]->getAutoWB (temp, green, equal, tempBias);
     }
 }
 

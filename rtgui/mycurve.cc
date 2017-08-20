@@ -21,7 +21,7 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(nullptr), cursor_type( CSArrow)
+MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(nullptr), cursor_type(CSArrow), graphW(0), graphH(0), mod_type(Gdk::MODIFIER_MASK), cursorX(0), cursorY(0), snapToMinDistX(0.0), snapToMinDistY(0.0), snapToValX(0.0), snapToValY(0.0)
 {
 
     graphX = get_allocation().get_width() - RADIUS * 2;
@@ -33,19 +33,12 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
     leftBar = nullptr;
     bottomBar = nullptr;
     colorProvider = nullptr;
-    sized = RS_Pending;
     snapToElmt = -100;
     curveIsDirty = true;
     edited_point = -1;
 
-    set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
-#if defined (__APPLE__)
-    // Workaround: disabling POINTER_MOTION_HINT_MASK as for gtk 2.24.22 the get_pointer() function is buggy for quartz and modifier mask is not updated correctly.
-    // This workaround should be removed when bug is fixed in GTK2 or when migrating to GTK3
-    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK |  Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
-#else
-    add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK |  Gdk::POINTER_MOTION_HINT_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
-#endif
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
+    get_style_context()->add_class("drawingarea");
 
     mcih = new MyCurveIdleHelper;
     mcih->myCurve = this;
@@ -55,7 +48,6 @@ MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal
 
 MyCurve::~MyCurve ()
 {
-
     if (mcih->pending) {
         mcih->destroyed = true;
     } else {
@@ -70,19 +62,64 @@ int MyCurve::calcDimensions ()
     newRequestedW = newRequestedH = get_allocation().get_width();
 
     if (leftBar && !bottomBar) {
-        newRequestedH -= getBarWidth() + CBAR_MARGIN - RADIUS;
+        newRequestedH -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
     }
 
     if (!leftBar && bottomBar) {
-        newRequestedH += getBarWidth() + CBAR_MARGIN - RADIUS;
+        newRequestedH += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
     }
 
-    graphW = newRequestedW - RADIUS - (leftBar   ? (getBarWidth() + CBAR_MARGIN) : RADIUS);
-    graphH = newRequestedH - RADIUS - (bottomBar ? (getBarWidth() + CBAR_MARGIN) : RADIUS);
+    graphW = newRequestedW - RADIUS - (leftBar   ? (CBAR_WIDTH + CBAR_MARGIN) : RADIUS);
+    graphH = newRequestedH - RADIUS - (bottomBar ? (CBAR_WIDTH + CBAR_MARGIN) : RADIUS);
     graphX = newRequestedW - RADIUS - graphW;
     graphY = RADIUS + graphH;
 
     return newRequestedH;
+}
+
+Gtk::SizeRequestMode MyCurve::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+}
+
+void MyCurve::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    int minimumWidth = 0;
+    int naturalWidth = 0;
+    get_preferred_width_vfunc (minimumWidth, naturalWidth);
+    get_preferred_height_for_width_vfunc (minimumWidth, minimum_height, natural_height);
+}
+
+void MyCurve::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    natural_width = minimum_width = GRAPH_SIZE + 2 * RADIUS;
+}
+
+void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    minimum_height = width;
+
+    if (leftBar && !bottomBar) {
+        minimum_height -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+    }
+
+    if (!leftBar && bottomBar) {
+        minimum_height += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+    }
+
+    /*
+    graphW = width          - RADIUS - (leftBar   ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
+    graphH = minimum_height - RADIUS - (bottomBar ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
+    graphX = width          - RADIUS - graphW;
+    graphY = RADIUS + graphH;
+    */
+
+    natural_height = minimum_height;
+}
+
+void MyCurve::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
 void MyCurve::setColoredBar (ColoredBar *left, ColoredBar *bottom)
@@ -137,14 +174,14 @@ bool MyCurve::snapCoordinateY(double testedVal, double realVal)
 
 float MyCurve::getVal(LUTf &curve, int x)
 {
-    if ((graphW - 2) == curve.getSize()) {
+    if (size_t(graphW - 2) == curve.getSize()) {
         return curve[x];
     } else {
         return curve.getVal01(float(x) / (graphW - 3));
     }
 }
 
-void MyCurve::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void MyCurve::on_style_updated ()
 {
     setDirty(true);
     queue_draw ();

@@ -36,20 +36,6 @@
 #include "multilangmgr.h"
 #include "threadutils.h"
 
-
-class DirEntry
-{
-
-public:
-    Glib::ustring fullName;
-
-    explicit DirEntry (const Glib::ustring& n) : fullName (n) {}
-
-    bool operator< (DirEntry& other)
-    {
-        return fullName.casefold() < other.fullName.casefold();
-    }
-};
 class FilePanel;
 /*
  * Class:
@@ -95,6 +81,8 @@ private:
     Gtk::HBox* fltrEditedBox;
     Gtk::HBox* fltrRecentlySavedBox;
     Gtk::VBox* fltrVbox2;
+
+    Gtk::VSeparator* vSepiLeftPanel;
 
     Gtk::ToggleButton* tbLeftPanel_1;
     Gtk::ToggleButton* tbRightPanel_1;
@@ -158,6 +146,8 @@ private:
 #else
     WinDirMonitor* wdMonitor;
 #endif
+
+    IdleRegister idle_register;
 
     void addAndOpenFile (const Glib::ustring& fname);
     void checkAndAddFile (Glib::RefPtr<Gio::File> info);

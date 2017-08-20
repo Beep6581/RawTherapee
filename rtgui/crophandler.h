@@ -36,56 +36,15 @@ public:
     virtual void setDisplayPosition  (int x, int y) {}
 };
 
-class CropHandler;
-struct CropHandlerIdleHelper {
-    CropHandler* cropHandler;
-    bool destroyed;
-    int pending;
-};
-
 /**
  *  This class handle the displayed part of the image, ask for the initial data and process it so it can display it.
  *  Its position on the preview is handled not set by this class but by the CropHandlerListener (i.e. CropWindow) with which it works closely.
  */
-class CropHandler : public rtengine::DetailedCropListener, public rtengine::SizeListener
+class CropHandler final :
+    public rtengine::DetailedCropListener,
+    public rtengine::SizeListener
 {
-
-    friend int createpixbufs (void* data);
-
-protected:
-    int zoom;               // scale factor (e.g. 5 if 1:5 scale) ; if 1:1 scale and bigger, factor is multiplied by 1000  (i.e. 1000 for 1:1 scale, 2000 for 2:1, etc...)
-    int ww, wh;             // size of the crop's canvas on the screen ; might be bigger than the displayed image, but not smaller
-    int imx, imy, imw, imh; // this is a copy of the cropwindow's parameters
-    int cax, cay;           // clamped crop anchor's coordinate, i.e. point of the image that coincide to the center of the display area, expressed in image coordinates; cannot be outside the image's bounds; but if cax==cay==-1, designate the center of the image
-    int cx, cy, cw, ch;     // position and size of the requested crop ; position expressed in image coordinates, so cx and cy might be negative and cw and ch higher than the image's 1:1 size
-    int cropX, cropY, cropW, cropH; // cropPixbuf's displayed area (position and size), i.e. coordinates in 1:1 scale, i.e. cx, cy, cw & ch trimmed to the image's bounds
-    bool enabled;
-    unsigned char* cropimg;
-    unsigned char* cropimgtrue;
-    int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
-    bool initial;
-    bool isLowUpdatePriority;
-
-    rtengine::StagedImageProcessor* ipc;
-    rtengine::DetailedCrop* crop;
-
-    CropDisplayHandler* displayHandler;
-    CropHandlerIdleHelper* chi;
-
-    void    compDim ();
-
 public:
-
-    void    update  ();
-
-
-    rtengine::procparams::CropParams cropParams;
-    rtengine::procparams::ColorManagementParams colorParams;
-    Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
-    Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
-
-    MyMutex cimg;
-
     CropHandler ();
     ~CropHandler ();
 
@@ -127,6 +86,45 @@ public:
     bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
     // SizeListener interface
     void    sizeChanged  (int w, int h, int ow, int oh);
+
+    void    update  ();
+
+
+    rtengine::procparams::CropParams cropParams;
+    rtengine::procparams::ColorManagementParams colorParams;
+    Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
+    Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
+
+    MyMutex cimg;
+
+private:
+    struct IdleHelper {
+        CropHandler* cropHandler;
+        bool destroyed;
+        int pending;
+    };
+
+    void    compDim ();
+
+    int zoom;               // scale factor (e.g. 5 if 1:5 scale) ; if 1:1 scale and bigger, factor is multiplied by 1000  (i.e. 1000 for 1:1 scale, 2000 for 2:1, etc...)
+    int ww, wh;             // size of the crop's canvas on the screen ; might be bigger than the displayed image, but not smaller
+    int cax, cay;           // clamped crop anchor's coordinate, i.e. point of the image that coincide to the center of the display area, expressed in image coordinates; cannot be outside the image's bounds; but if cax==cay==-1, designate the center of the image
+    int cx, cy, cw, ch;     // position and size of the requested crop ; position expressed in image coordinates, so cx and cy might be negative and cw and ch higher than the image's 1:1 size
+    int cropX, cropY, cropW, cropH; // cropPixbuf's displayed area (position and size), i.e. coordinates in 1:1 scale, i.e. cx, cy, cw & ch trimmed to the image's bounds
+    bool enabled;
+    unsigned char* cropimg;
+    unsigned char* cropimgtrue;
+    int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
+    bool initial;
+    bool isLowUpdatePriority;
+
+    rtengine::StagedImageProcessor* ipc;
+    rtengine::DetailedCrop* crop;
+
+    CropDisplayHandler* displayHandler;
+    IdleHelper* idle_helper;
+
+    IdleRegister idle_register;
 };
 
 #endif

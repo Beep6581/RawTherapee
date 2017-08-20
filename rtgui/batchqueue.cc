@@ -19,10 +19,10 @@
 #include <glibmm.h>
 #include <glib/gstdio.h>
 #include <cstring>
+#include <functional>
 #include "../rtengine/rt_math.h"
 
 #include <fstream>
-#include <functional>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -35,6 +35,7 @@
 #include "guiutils.h"
 #include "rtimage.h"
 #include <sys/time.h>
+
 using namespace std;
 using namespace rtengine;
 
@@ -52,31 +53,27 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(head = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"))), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "toleftend.png")), 0, 1, p, p + 1);
     p++;
-    head->set_image(*Gtk::manage(new RTImage ("toleftend.png")));
 
-    pmenu.attach (*Gtk::manage(tail = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"))), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "torightend.png")), 0, 1, p, p + 1);
     p++;
-    tail->set_image(*Gtk::manage(new RTImage ("torightend.png")));
 
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(cancel = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"))), 0, 1, p, p + 1);
-    p++;
-    cancel->set_image(*Gtk::manage(new RTImage ("gtk-close.png")));
+    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "gtk-close.png")), 0, 1, p, p + 1);
 
     pmenu.show_all ();
 
     // Accelerators
     pmaccelgroup = Gtk::AccelGroup::create ();
     pmenu.set_accel_group (pmaccelgroup);
-    open->add_accelerator ("activate", pmaccelgroup, GDK_e, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
-    selall->add_accelerator ("activate", pmaccelgroup, GDK_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
-    head->add_accelerator ("activate", pmaccelgroup, GDK_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
-    tail->add_accelerator ("activate", pmaccelgroup, GDK_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
-    cancel->add_accelerator ("activate", pmaccelgroup, GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    open->add_accelerator ("activate", pmaccelgroup, GDK_KEY_e, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    selall->add_accelerator ("activate", pmaccelgroup, GDK_KEY_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    head->add_accelerator ("activate", pmaccelgroup, GDK_KEY_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    tail->add_accelerator ("activate", pmaccelgroup, GDK_KEY_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    cancel->add_accelerator ("activate", pmaccelgroup, GDK_KEY_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
 
     open->signal_activate().connect(sigc::mem_fun(*this, &BatchQueue::openLastSelectedItemInEditor));
     cancel->signal_activate().connect (std::bind (&BatchQueue::cancelItems, this, std::ref (selected)));
@@ -89,6 +86,8 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
 
 BatchQueue::~BatchQueue ()
 {
+    idle_register.destroy();
+
     MYWRITERLOCK(l, entryRW);
 
     // The listener merges parameters with old values, so delete afterwards
@@ -147,19 +146,19 @@ bool BatchQueue::keyPressed (GdkEventKey* event)
 {
     bool ctrl  = event->state & GDK_CONTROL_MASK;
 
-    if ((event->keyval == GDK_A || event->keyval == GDK_a) && ctrl) {
+    if ((event->keyval == GDK_KEY_A || event->keyval == GDK_KEY_a) && ctrl) {
         selectAll ();
         return true;
-    } else if ((event->keyval == GDK_E || event->keyval == GDK_e) && ctrl) {
+    } else if ((event->keyval == GDK_KEY_E || event->keyval == GDK_KEY_e) && ctrl) {
         openLastSelectedItemInEditor();
         return true;
-    } else if (event->keyval == GDK_Home) {
+    } else if (event->keyval == GDK_KEY_Home) {
         headItems (selected);
         return true;
-    } else if (event->keyval == GDK_End) {
+    } else if (event->keyval == GDK_KEY_End) {
         tailItems (selected);
         return true;
-    } else if (event->keyval == GDK_Delete) {
+    } else if (event->keyval == GDK_KEY_Delete) {
         cancelItems (selected);
         return true;
     }
@@ -229,7 +228,7 @@ bool BatchQueue::saveBatchQueue ()
 
         // The column's header is mandatory (the first line will be skipped when loaded)
         file << "input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
-             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|<end of line>"
+             << "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|fast export|<end of line>"
              << std::endl;
 
         // method is already running with entryLock, so no need to lock again
@@ -239,11 +238,17 @@ bool BatchQueue::saveBatchQueue ()
             const auto& saveFormat = entry->saveFormat;
 
             // Warning: for code's simplicity in loadBatchQueue, each field must end by the '|' character, safer than ';' or ',' since it can't be used in paths
+#ifdef WIN32
+            // on windows it crashes if we don't use c_str() and filename etc. contain special (e.g. chinese) characters, see issue 3387
+            file << entry->filename.c_str() << '|' << entry->savedParamsFile.c_str() << '|' << entry->outFileName.c_str() << '|' << saveFormat.format << '|'
+#else
             file << entry->filename << '|' << entry->savedParamsFile << '|' << entry->outFileName << '|' << saveFormat.format << '|'
+#endif
                  << saveFormat.jpegQuality << '|' << saveFormat.jpegSubSamp << '|'
                  << saveFormat.pngBits << '|' << saveFormat.pngCompression << '|'
                  << saveFormat.tiffBits << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
+                 << entry->job->fastPipeline() << '|'
                  << std::endl;
         }
     }
@@ -310,6 +315,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto tiffUncompressed = nextIntOr (options.saveFormat.tiffUncompressed);
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
+            const auto fast = nextIntOr(false);
 
             rtengine::procparams::ProcParams pparams;
 
@@ -321,7 +327,7 @@ bool BatchQueue::loadBatchQueue ()
             if (!thumb)
                 continue;
 
-            auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams);
+            auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams, fast);
 
             auto prevh = getMaxThumbnailHeight ();
             auto prevw = prevh;
@@ -387,16 +393,6 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     return savedParamPath;
 }
 
-int cancelItemUI (void* data)
-{
-    const auto bqe = static_cast<BatchQueueEntry*>(data);
-
-    g_remove (bqe->savedParamsFile.c_str ());
-    delete bqe;
-
-    return 0;
-}
-
 void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
 {
     {
@@ -421,7 +417,16 @@ void BatchQueue::cancelItems (const std::vector<ThumbBrowserEntryBase*>& items)
             if (entry->thumbnail)
                 entry->thumbnail->imageRemovedFromQueue ();
 
-            g_idle_add (cancelItemUI, entry);
+            const auto func = [](gpointer data) -> gboolean {
+                const BatchQueueEntry* const bqe = static_cast<BatchQueueEntry*>(data);
+
+                ::g_remove(bqe->savedParamsFile.c_str());
+                delete bqe;
+
+                return FALSE;
+            };
+
+            idle_register.add(func, entry);
         }
 
         for (const auto entry : fd)
@@ -780,7 +785,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 
                 if (options.savePathTemplate[ix] == 'p') {
                     ix++;
-                    int i = options.savePathTemplate[ix] - '0';
+                    unsigned int i = options.savePathTemplate[ix] - '0';
 
                     if (i < pa.size()) {
                         path = path + pa[pa.size() - i - 1] + '/';
@@ -789,7 +794,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     ix++;
                 } else if (options.savePathTemplate[ix] == 'd') {
                     ix++;
-                    int i = options.savePathTemplate[ix] - '0';
+                    unsigned i = options.savePathTemplate[ix] - '0';
 
                     if (i < da.size()) {
                         path = path + da[da.size() - i - 1];
@@ -881,12 +886,6 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     return "";
 }
 
-int setProgressUI (void* p)
-{
-    (static_cast<BatchQueue*>(p))->redraw();
-    return 0;
-}
-
 void BatchQueue::setProgress (double p)
 {
 
@@ -895,7 +894,12 @@ void BatchQueue::setProgress (double p)
     }
 
     // No need to acquire the GUI, setProgressUI will do it
-    g_idle_add (setProgressUI, this);
+    const auto func = [](gpointer data) -> gboolean {
+        static_cast<BatchQueue*>(data)->redraw();
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
 
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData)
@@ -923,7 +927,6 @@ struct NLParams {
 
 int bqnotifylistenerUI (void* data)
 {
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     NLParams* params = static_cast<NLParams*>(data);
     params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
     delete params;
@@ -942,7 +945,7 @@ void BatchQueue::notifyListener (bool queueEmptied)
         }
         params->queueEmptied = queueEmptied;
         params->queueError = false;
-        g_idle_add (bqnotifylistenerUI, params);
+        idle_register.add(bqnotifylistenerUI, params);
     }
 }
 
@@ -972,6 +975,6 @@ void BatchQueue::error (Glib::ustring msg)
         params->queueEmptied = false;
         params->queueError = true;
         params->queueErrorMessage = msg;
-        g_idle_add (bqnotifylistenerUI, params);
+        idle_register.add(bqnotifylistenerUI, params);
     }
 }

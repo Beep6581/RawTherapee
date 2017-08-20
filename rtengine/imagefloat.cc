@@ -217,7 +217,7 @@ void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, cons
     int maxx = width; // Source image
     int maxy = height; // Source image
     int mtran = tran & TR_ROT;
-    int skip = pp.skip;
+    int skip = pp.getSkip();
 
     // improve speed by integrating the area division into the multipliers
     // switched to using ints for the red/green/blue channel buffer.
@@ -443,7 +443,7 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
     hist.clear();
 
     // Set up factors to calc the lightness
-    TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.working);
 
     float facRed   = wprof[1][0];
     float facGreen = wprof[1][1];
@@ -461,10 +461,8 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
         #pragma omp for nowait
 
         for (int y = y1; y < y2; y++) {
-            int i;
-
             for (int x = x1; x < x2; x++) {
-                i = (int)(facRed * r(y, x) + facGreen * g(y, x) + facBlue * b(y, x));
+                int i = (int)(facRed * r(y, x) + facGreen * g(y, x) + facBlue * b(y, x));
 
                 if (i < 0) {
                     i = 0;

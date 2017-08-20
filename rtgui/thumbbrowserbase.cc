@@ -14,42 +14,35 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <glibmm.h>
-#include "../rtengine/rt_math.h"
+#include <numeric>
 
-#include "thumbbrowserbase.h"
+#include <glibmm.h>
+
 #include "multilangmgr.h"
 #include "options.h"
+#include "thumbbrowserbase.h"
+
 #include "../rtengine/mytime.h"
+#include "../rtengine/rt_math.h"
 
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), inspector(nullptr), isInspectorActive(false), location(THLOC_FILEBROWSER)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), arrangement(TB_Horizontal)
 {
     inW = -1;
     inH = -1;
 
-    Gtk::HBox* hb1 = Gtk::manage( new Gtk::HBox () );
-    Gtk::HBox* hb2 = Gtk::manage( new Gtk::HBox () );
-    Gtk::Frame* frame = Gtk::manage( new Gtk::Frame () );
-    frame->add (internal);
-    frame->set_shadow_type (Gtk::SHADOW_IN );
-    hb1->pack_start (*frame);
-    hb1->pack_end (vscroll, Gtk::PACK_SHRINK, 0);
-
-    pack_start (*hb1);
-
-    hb2->pack_start (hscroll);
-
-    pack_start (*hb2, Gtk::PACK_SHRINK, 0);
+    setExpandAlignProperties(&internal, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(&hscroll, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(&vscroll, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    attach (internal, 0, 0, 1, 1);
+    attach (vscroll, 1, 0, 1, 1);
+    attach (hscroll, 0, 1, 1, 1);
 
     internal.setParent (this);
 
     show_all ();
-
-    hscroll.set_update_policy (Gtk::UPDATE_CONTINUOUS);
-    vscroll.set_update_policy (Gtk::UPDATE_CONTINUOUS);
 
     vscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
     hscroll.signal_value_changed().connect( sigc::mem_fun(*this, &ThumbBrowserBase::scrollChanged) );
@@ -525,7 +518,7 @@ void ThumbBrowserBase::configScrollBars ()
     }
 }
 
-void ThumbBrowserBase::arrangeFiles ()
+void ThumbBrowserBase::arrangeFiles()
 {
     MYREADERLOCK(l, entryRW);
 
@@ -533,74 +526,60 @@ void ThumbBrowserBase::arrangeFiles ()
     // We could lock it one more time, there's no harm excepted (negligible) speed penalty
     //GThreadLock lock;
 
-    int N = fd.size ();
-
-    // apply filter
-    for (int i = 0; i < N; i++) {
-        fd[i]->filtered = !checkFilter (fd[i]);
-    }
-
     int rowHeight = 0;
 
-    // compute size of the items
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < fd.size(); i++) {
+        // apply filter
+        fd[i]->filtered = !checkFilter (fd[i]);
+
+        // compute size of the items
         if (!fd[i]->filtered && fd[i]->getMinimalHeight() > rowHeight) {
             rowHeight = fd[i]->getMinimalHeight ();
         }
+    }
 
     if (arrangement == TB_Horizontal) {
         numOfCols = 1;
-        int numOfRows = 1;
-//        if (rowHeight>0) {
-//            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
-//            if (numOfRows<1)
-//                numOfRows = 1;
-//        }
 
-        int ct = 0;
         int currx = 0;
 
-        while (ct < N) {
-            // find widest item in the column
-            int maxw = 0;
-
-            for (int i = 0; ct + i < N && i < numOfRows; i++)
-                if (fd[ct + i]->getMinimalWidth() > maxw) {
-                    maxw = fd[ct + i]->getMinimalWidth ();
-                }
-
+        for (unsigned int ct = 0; ct < fd.size(); ++ct) {
             // arrange items in the column
             int curry = 0;
 
-            for (int i = 0; ct < N && i < numOfRows; i++, ct++) {
-                while (ct < N && fd[ct]->filtered) {
-                    fd[ct++]->drawable = false;
-                }
-
-                if (ct < N) {
-                    fd[ct]->setPosition (currx, curry, maxw, rowHeight);
-                    fd[ct]->drawable = true;
-                    curry += rowHeight;
-                }
+            for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                fd[ct]->drawable = false;
             }
 
-            currx += maxw;
+            if (ct < fd.size()) {
+                const int maxw = fd[ct]->getMinimalWidth();
+
+                fd[ct]->setPosition(currx, curry, maxw, rowHeight);
+                fd[ct]->drawable = true;
+                currx += maxw;
+                curry += rowHeight;
+            }
         }
 
         MYREADERLOCK_RELEASE(l);
         // This will require a Writer access
-        resizeThumbnailArea (currx, numOfRows * rowHeight);
+        resizeThumbnailArea(currx, rowHeight);
     } else {
-        int availWidth = internal.get_width();
+        const int availWidth = internal.get_width();
+
         // initial number of columns
         numOfCols = 0;
         int colsWidth = 0;
 
-        for (int i = 0; i < N; i++)
+        for (unsigned int i = 0; i < fd.size(); ++i) {
             if (!fd[i]->filtered && colsWidth + fd[i]->getMinimalWidth() <= availWidth) {
-                colsWidth += fd[numOfCols]->getMinimalWidth ();
-                numOfCols++;
+                colsWidth += fd[numOfCols]->getMinimalWidth();
+                ++numOfCols;
+                if(colsWidth > availWidth) {
+                    break;
+                }
             }
+        }
 
         if (numOfCols < 1) {
             numOfCols = 1;
@@ -608,30 +587,22 @@ void ThumbBrowserBase::arrangeFiles ()
 
         std::vector<int> colWidths;
 
-        for (; numOfCols > 0; numOfCols--) {
+        for (; numOfCols > 0; --numOfCols) {
             // compute column widths
-            colWidths.resize (numOfCols);
+            colWidths.assign(numOfCols, 0);
 
-            for (int i = 0; i < numOfCols; i++) {
-                colWidths[i] = 0;
-            }
-
-            for (int i = 0, j = 0; i < N; i++) {
+            for (unsigned int i = 0, j = 0; i < fd.size(); ++i) {
                 if (!fd[i]->filtered && fd[i]->getMinimalWidth() > colWidths[j % numOfCols]) {
-                    colWidths[j % numOfCols] = fd[i]->getMinimalWidth ();
+                    colWidths[j % numOfCols] = fd[i]->getMinimalWidth();
                 }
 
                 if (!fd[i]->filtered) {
-                    j++;
+                    ++j;
                 }
             }
 
             // if not wider than the space available, arrange it and we are ready
-            colsWidth = 0;
-
-            for (int i = 0; i < numOfCols; i++) {
-                colsWidth += colWidths[i];
-            }
+            colsWidth = std::accumulate(colWidths.begin(), colWidths.end(), 0);
 
             if (numOfCols == 1 || colsWidth < availWidth) {
                 break;
@@ -639,20 +610,19 @@ void ThumbBrowserBase::arrangeFiles ()
         }
 
         // arrange files
-        int ct = 0;
         int curry = 0;
 
-        while (ct < N) {
+        for (unsigned int ct = 0; ct < fd.size();) {
             // arrange items in the row
             int currx = 0;
 
-            for (int i = 0; ct < N && i < numOfCols; i++, ct++) {
-                while (ct < N && fd[ct]->filtered) {
-                    fd[ct++]->drawable = false;
+            for (int i = 0; ct < fd.size() && i < numOfCols; ++i, ++ct) {
+                for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                    fd[ct]->drawable = false;
                 }
 
-                if (ct < N) {
-                    fd[ct]->setPosition (currx, curry, colWidths[i % numOfCols], rowHeight);
+                if (ct < fd.size()) {
+                    fd[ct]->setPosition(currx, curry, colWidths[i % numOfCols], rowHeight);
                     fd[ct]->drawable = true;
                     currx += colWidths[i % numOfCols];
                 }
@@ -683,6 +653,15 @@ void ThumbBrowserBase::enableInspector()
     }
 }
 
+void ThumbBrowserBase::Internal::on_style_updated()
+{
+    style = get_style_context ();
+    textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
+    texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
+    bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+}
+
 void ThumbBrowserBase::Internal::on_realize()
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
@@ -691,10 +670,15 @@ void ThumbBrowserBase::Internal::on_realize()
     get_pango_context()->set_cairo_font_options (cfo);
 
     Gtk::DrawingArea::on_realize();
-    Glib::RefPtr<Gdk::Window> window = get_window();
-    set_flags (Gtk::CAN_FOCUS);
+
+    style = get_style_context ();
+    textn = style->get_color(Gtk::STATE_FLAG_NORMAL);
+    texts = style->get_color(Gtk::STATE_FLAG_SELECTED);
+    bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
+    bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
+
+    set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
-    gc_ = Gdk::GC::create(window);
     set_has_tooltip (true);
     signal_query_tooltip().connect( sigc::mem_fun(*this, &ThumbBrowserBase::Internal::on_query_tooltip) );
 }
@@ -722,7 +706,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
     }
 }
 
-void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
+void ThumbBrowserBase::on_style_updated ()
 {
     // GUI will be acquired by refreshThumbImages
     refreshThumbImages ();
@@ -730,6 +714,8 @@ void ThumbBrowserBase::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
 
 ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(nullptr), dirty(true)
 {
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    set_name("FileCatalog");
 }
 
 void ThumbBrowserBase::Internal::setParent (ThumbBrowserBase* p)
@@ -762,7 +748,8 @@ bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event)
     GdkRectangle rect;
     rect.x = 0;
     rect.y = 0;
-    window->get_size (rect.width, rect.height);
+    rect.width = window->get_width();
+    rect.height = window->get_height();
 
     gdk_window_invalidate_rect (window->gobj(), &rect, true);
     gdk_window_process_updates (window->gobj(), true);
@@ -827,21 +814,22 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
 
 }
 
-bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event)
+bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
     dirty = false;
 
-    Glib::RefPtr<Gdk::Window> window = get_window();
-
     int w = get_width();
     int h = get_height();
 
-    window->clear();
     // draw thumbnails
+
+    cr->set_antialias(Cairo::ANTIALIAS_NONE);
+    cr->set_line_join(Cairo::LINE_JOIN_MITER);
+    style->render_background(cr, 0., 0., w, h);
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
-    context->set_font_description (get_style()->get_font());
+    context->set_font_description (style->get_font());
 
     {
         MYWRITERLOCK(l, parent->entryRW);
@@ -851,13 +839,42 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event)
                 parent->fd[i]->updatepriority = false;
             } else {
                 parent->fd[i]->updatepriority = true;
-                parent->fd[i]->draw ();
+                parent->fd[i]->draw (cr);
             }
         }
     }
+    style->render_frame(cr, 0., 0., w, h);
 
     return true;
 }
+
+Gtk::SizeRequestMode ThumbBrowserBase::Internal::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_CONSTANT_SIZE;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
+{
+    minimum_height = 20;
+    natural_height = 80;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
+{
+    minimum_width = 200;
+    natural_width = 1000;
+}
+
+void ThumbBrowserBase::Internal::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
+{
+    get_preferred_height_vfunc(minimum_height, natural_height);
+}
+
+void ThumbBrowserBase::Internal::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
+{
+    get_preferred_width_vfunc (minimum_width, natural_width);
+}
+
 
 bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event)
 {

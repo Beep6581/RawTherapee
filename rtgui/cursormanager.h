@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 
 enum CursorShape {
-    CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft,
+    CSUndefined, CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft,
     CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal,
     CSResizeTopLeft, CSResizeTopRight, CSResizeBottomLeft, CSResizeBottomRight,
     CSMove2D, CSMove1DH, CSMove1DV, CSMoveRotate,
@@ -32,40 +32,46 @@ enum CursorShape {
 class CursorManager
 {
 
-protected:
-    Gdk::Cursor* cResizeWidth;
-    Gdk::Cursor* cResizeHeight;
-    Gdk::Cursor* cResizeDiag;
-    Gdk::Cursor* cResizeTopLeft;
-    Gdk::Cursor* cResizeTopRight;
-    Gdk::Cursor* cResizeBottomLeft;
-    Gdk::Cursor* cResizeBottomRight;
-    Gdk::Cursor* cCropMove;
-    Gdk::Cursor* cCropMoving;
-    Gdk::Cursor* cLeftTanMove;
-    Gdk::Cursor* cRightTanMove;
-    Gdk::Cursor* cNormal;
-    Gdk::Cursor* cCropSelection;
-    Gdk::Cursor* cAdd;
-    Gdk::Cursor* cWait;
-    Gdk::Cursor* cHand;
-    Gdk::Cursor* cClosedHand;
-    Gdk::Cursor* cWB;
-    Gdk::Cursor* cAddPicker;
-    Gdk::Cursor* cHidden;
-    Gdk::Cursor* cMove2D;
-    Gdk::Cursor* cMove1DH;
-    Gdk::Cursor* cMove1DV;
-    Gdk::Cursor* cMoveRotate;
-    Glib::RefPtr<Gdk::Window> mainWindow;
+private:
+    Glib::RefPtr<Gdk::Cursor> cResizeWidth;
+    Glib::RefPtr<Gdk::Cursor> cResizeHeight;
+    Glib::RefPtr<Gdk::Cursor> cResizeDiag;
+    Glib::RefPtr<Gdk::Cursor> cResizeTopLeft;
+    Glib::RefPtr<Gdk::Cursor> cResizeTopRight;
+    Glib::RefPtr<Gdk::Cursor> cResizeBottomLeft;
+    Glib::RefPtr<Gdk::Cursor> cResizeBottomRight;
+    Glib::RefPtr<Gdk::Cursor> cCropMove;
+    Glib::RefPtr<Gdk::Cursor> cCropMoving;
+    Glib::RefPtr<Gdk::Cursor> cLeftTanMove;
+    Glib::RefPtr<Gdk::Cursor> cRightTanMove;
+    Glib::RefPtr<Gdk::Cursor> cNormal;
+    Glib::RefPtr<Gdk::Cursor> cCropSelection;
+    Glib::RefPtr<Gdk::Cursor> cAdd;
+    Glib::RefPtr<Gdk::Cursor> cWait;
+    Glib::RefPtr<Gdk::Cursor> cHand;
+    Glib::RefPtr<Gdk::Cursor> cClosedHand;
+    Glib::RefPtr<Gdk::Cursor> cWB;
+    Glib::RefPtr<Gdk::Cursor> cAddPicker;
+    Glib::RefPtr<Gdk::Cursor> cHidden;
+    Glib::RefPtr<Gdk::Cursor> cMove2D;
+    Glib::RefPtr<Gdk::Cursor> cMove1DH;
+    Glib::RefPtr<Gdk::Cursor> cMove1DV;
+    Glib::RefPtr<Gdk::Cursor> cMoveRotate;
+
+    Glib::RefPtr<Gdk::Display> display;
+    Glib::RefPtr<Gdk::Window> window;
+
+    void setCursor (CursorShape shape);
+    void setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape);
 
 public:
-    void init        (Glib::RefPtr<Gdk::Window> mainWin);
-    void setCursor   (Glib::RefPtr<Gdk::Window> window, CursorShape shape);
-    void setCursor   (CursorShape shape);
+    void init                         (Glib::RefPtr<Gdk::Window> mainWindow);
+    static void setWidgetCursor       (Glib::RefPtr<Gdk::Window> window, CursorShape shape);
+    static void setCursorOfMainWindow (Glib::RefPtr<Gdk::Window> window, CursorShape shape);
 };
 
-extern CursorManager cursorManager;
+extern CursorManager mainWindowCursorManager;
+extern CursorManager editWindowCursorManager;
 
 #endif
 

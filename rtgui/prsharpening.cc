@@ -32,13 +32,12 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     //setEnabledTooltipMarkup(M("TP_PRSHARPENING_TOOLTIP"));
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    hb->set_border_width (4);
     hb->show ();
     Gtk::Label* ml = Gtk::manage (new Gtk::Label (M("TP_SHARPENING_METHOD") + ":"));
     ml->show ();
     method = Gtk::manage (new MyComboBoxText ());
-    method->append_text (M("TP_SHARPENING_USM"));
-    method->append_text (M("TP_SHARPENING_RLD"));
+    method->append (M("TP_SHARPENING_USM"));
+    method->append (M("TP_SHARPENING_RLD"));
     method->show ();
     hb->pack_start(*ml, Gtk::PACK_SHRINK, 4);
     hb->pack_start(*method);
@@ -465,7 +464,7 @@ void PrSharpening::setBatchMode (bool batchMode)
     damount->showEditedCB ();
     ddamping->showEditedCB ();
     diter->showEditedCB ();
-    method->append_text (M("GENERAL_UNCHANGED"));
+    method->append (M("GENERAL_UNCHANGED"));
 }
 
 void PrSharpening::setAdjusterBehavior (bool amountadd)

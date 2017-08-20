@@ -21,8 +21,6 @@
 ImageAreaPanel::ImageAreaPanel () : before(nullptr), after(nullptr)
 {
 
-    set_border_width (2);
-
     imageArea = new ImageArea (this);
 
     Gtk::HBox*  hb1   = Gtk::manage (new Gtk::HBox ());

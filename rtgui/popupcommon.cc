@@ -23,35 +23,34 @@
 #include "multilangmgr.h"
 #include "popupcommon.h"
 #include "rtimage.h"
+#include "guiutils.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
-    : selected (-1) // -1 means that the button is invalid
+    : buttonImage (nullptr)
     , menu (nullptr)
-    , buttonImage (nullptr)
+    , selected (-1) // -1 means that the button is invalid
 {
     button = thisButton;
     hasMenu = false;
-    imageContainer = Gtk::manage( new Gtk::HBox(false, 0));
+    imageContainer = Gtk::manage( new Gtk::Grid());
+    setExpandAlignProperties(imageContainer, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     button->set_relief (Gtk::RELIEF_NORMAL);
-    button->set_border_width (0);
     button->add(*imageContainer);
 
-    if (label.size()) {
+    if (!label.empty()) {
         Gtk::Label* buttonLabel = Gtk::manage ( new Gtk::Label(label + " ") );
-        imageContainer->pack_start(*buttonLabel, Gtk::PACK_SHRINK, 0);
+        setExpandAlignProperties(buttonLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        imageContainer->attach(*buttonLabel, 0, 0, 1, 1);
     }
 
     // Create the global container and put the button in it
-    buttonGroup = Gtk::manage( new Gtk::HBox(false, 0));
-    buttonGroup->pack_start(*button, Gtk::PACK_EXPAND_WIDGET, 0);
+    buttonGroup = Gtk::manage( new Gtk::Grid());
+    setExpandAlignProperties(buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    buttonGroup->attach(*button, 0, 0, 1, 1);
 }
 
 PopUpCommon::~PopUpCommon ()
 {
-    for (std::vector<RTImage*>::iterator i = images.begin(); i != images.end(); ++i) {
-        delete *i;
-    }
-
     delete menu;
     delete buttonImage;
 }
@@ -61,21 +60,19 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
     if (label.empty ())
          return false;
 
-    // Create the image
-    RTImage* newImage = new RTImage(fileName);
-    images.push_back(newImage);
-    imageFilenames.push_back(fileName);
-    int currPos = (int)images.size();
-    // Create the menu item
-    Gtk::ImageMenuItem* newItem = Gtk::manage(new Gtk::ImageMenuItem (*newImage, label));
+    // Create the menu item and image
+    MyImageMenuItem* newItem = Gtk::manage (new MyImageMenuItem (label, fileName));
+    imageFilenames.push_back (fileName);
+    images.push_back (newItem->getImage ());
 
     if (selected == -1) {
         // Create the menu on the first item
         menu = new Gtk::Menu ();
         // Create the image for the button
         buttonImage = new RTImage(fileName);
+        setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
         // Use the first image by default
-        imageContainer->pack_start(*buttonImage, Gtk::PACK_EXPAND_WIDGET);
+        imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
         selected = 0;
     }
 
@@ -83,16 +80,18 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
     if (images.size() == 1) {
         Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
         RTImage* arrowImage = Gtk::manage( new RTImage("popuparrow.png") );
+        setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
         arrowButton->add(*arrowImage); //menuSymbol);
-        arrowButton->set_relief (Gtk::RELIEF_NONE);
-        arrowButton->set_border_width (0);
-        buttonGroup->pack_start(*arrowButton, Gtk::PACK_SHRINK, 0);
+        buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
         arrowButton->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
+        button->get_style_context()->add_class("Left");
+        arrowButton->get_style_context()->add_class("Right");
+        arrowButton->get_style_context()->add_class("popupbutton-arrow");
         hasMenu = true;
     }
 
-    newItem->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &PopUpCommon::entrySelected), currPos - 1));
-    menu->attach (*newItem, 0, 1, currPos - 1, currPos);
+    newItem->signal_activate ().connect (sigc::bind (sigc::mem_fun (*this, &PopUpCommon::entrySelected), images.size () - 1));
+    menu->append (*newItem);
 
     return true;
 }
@@ -101,15 +100,18 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
 
 void PopUpCommon::entrySelected (int i)
 {
-    // Emit a a signal if the selected item has changed
+    // Emit a signal if the selected item has changed
     if (setSelected (i))
-        message (selected);
+        messageChanged (selected);
+
+    // Emit a signal in all case (i.e. propagate the signal_activate event)
+    messageItemSelected (selected);
 }
 
-void PopUpCommon::setItemSensitivity (int i, bool isSensitive) {
-    Gtk::Menu_Helpers::MenuList items = menu->items();
-    if (i < items.size()) {
-        items[i].set_sensitive(isSensitive);
+void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
+    const auto items = menu->get_children ();
+    if (size_t(index) < items.size ()) {
+        items[size_t(index)]->set_sensitive (isSensitive);
     }
 }
 
@@ -151,12 +153,12 @@ void PopUpCommon::setButtonHint()
     }
 
     if (selected > -1) {
-        // HACK: Gtk::MenuItem::get_label does not seem to work reliably.
-        Gtk::MenuItem& item = menu->items ()[selected];
-        Gtk::Label* label = dynamic_cast<Gtk::Label*>(item.get_child ());
+        auto widget = menu->get_children ()[selected];
+        auto item = dynamic_cast<MyImageMenuItem*>(widget);
 
-        if (label)
-            hint += label->get_text ();
+        if (item) {
+            hint += item->getLabel ()->get_text ();
+        }
     }
 
     button->set_tooltip_markup(hint);

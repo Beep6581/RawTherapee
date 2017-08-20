@@ -22,21 +22,24 @@
 #include <gtkmm.h>
 #include "previewhandler.h"
 #include "cropwindow.h"
+#include "guiutils.h"
+#include "cursormanager.h"
 
 class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public CropWindowListener
 {
 
 private:
-    Glib::RefPtr<Gdk::Pixmap> backBuffer;
+    Cairo::RefPtr<BackBuffer> backBuffer;
     PreviewHandler* previewHandler;
     sigc::connection rconn;
     CropWindow* mainCropWin;
     ImageArea* imageArea;
     int imgX, imgY, imgW, imgH;
     double zoom;
-    int press_x, press_y;
+    double press_x, press_y;
     bool isMoving;
     bool needsUpdate;
+    CursorShape cursor_type;
 
     void updatePreviewImage     ();
     void getObservedFrameArea   (int& x, int& y, int& w, int& h);
@@ -49,10 +52,15 @@ public:
 
     void on_realize             ();
     void on_resized             (Gtk::Allocation& req);
-    bool on_expose_event        (GdkEventExpose* event);
+    bool on_draw                (const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_motion_notify_event (GdkEventMotion* event);
     bool on_button_press_event  (GdkEventButton* event);
     bool on_button_release_event(GdkEventButton* event);
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
 
     // PreviewListener interface
     void previewImageChanged ();

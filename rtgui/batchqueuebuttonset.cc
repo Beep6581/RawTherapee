@@ -21,8 +21,6 @@
 #include "multilangmgr.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
 bool BatchQueueButtonSet::iconsLoaded = false;
 
 Cairo::RefPtr<Cairo::ImageSurface> BatchQueueButtonSet::cancelIcon;

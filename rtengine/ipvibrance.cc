@@ -33,6 +33,7 @@
 #include <omp.h>
 #endif
 
+
 using namespace std;
 
 namespace rtengine
@@ -44,7 +45,7 @@ using namespace procparams;
 
 extern const Settings* settings;
 
-void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve)
+void fillCurveArrayVib (DiagonalCurve* diagCurve, LUTf &outCurve)
 {
 
     if (diagCurve) {
@@ -56,7 +57,7 @@ void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve)
             // change to [0,1] range
             // apply custom/parametric/NURBS curve, if any
             // and store result in a temporary array
-            outCurve[i] = 65535.f * diagCurve->getVal( double(i) / 65535.0 );
+            outCurve[i] = 65535.f * diagCurve->getVal ( double (i) / 65535.0 );
         }
     } else {
         outCurve.makeIdentity();
@@ -77,8 +78,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
 //  int skip=1; //scale==1 ? 1 : 16;
     bool skinCurveIsSet = false;
-    DiagonalCurve* dcurve = nullptr;
-    dcurve = new DiagonalCurve (params->vibrance.skintonescurve, CURVES_MIN_POLY_POINTS);
+    DiagonalCurve* dcurve = new DiagonalCurve (params->vibrance.skintonescurve, CURVES_MIN_POLY_POINTS);
 
     if (dcurve) {
         if (!dcurve->isIdentity()) {
@@ -111,8 +111,8 @@ void ImProcFunctions::vibrance (LabImage* lab)
     // I use diagonal because I think it's better
     LUTf skin_curve (65536, 0);
 
-    if(skinCurveIsSet) {
-        fillCurveArrayVib(dcurve, skin_curve);
+    if (skinCurveIsSet) {
+        fillCurveArrayVib (dcurve, skin_curve);
     }
 
     if (dcurve) {
@@ -123,10 +123,10 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
 // skin_curve.dump("skin_curve");
 
-    const float chromaPastel = float(params->vibrance.pastels)   / 100.0f;
-    const float chromaSatur  = float(params->vibrance.saturated) / 100.0f;
+    const float chromaPastel = float (params->vibrance.pastels)   / 100.0f;
+    const float chromaSatur  = float (params->vibrance.saturated) / 100.0f;
     const float p00 = 0.07f;
-    const float limitpastelsatur =    (static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f) * (1.0f - p00) + p00;
+    const float limitpastelsatur =    (static_cast<float> (params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f) * (1.0f - p00) + p00;
     const float maxdp = (limitpastelsatur - p00) / 4.0f;
     const float maxds = (1.0 - limitpastelsatur) / 4.0f;
     const float p0 = p00 + maxdp;
@@ -135,10 +135,10 @@ void ImProcFunctions::vibrance (LabImage* lab)
     const float s0 = limitpastelsatur + maxds;
     const float s1 = limitpastelsatur + 2.0f * maxds;
     const float s2 = limitpastelsatur + 3.0f * maxds;
-    const float transitionweighting = static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
+    const float transitionweighting = static_cast<float> (params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
     float chromamean = 0.0f;
 
-    if(chromaPastel != chromaSatur) {
+    if (chromaPastel != chromaSatur) {
         //if sliders pastels and saturated are different: transition with a double linear interpolation: between p2 and limitpastelsatur, and between limitpastelsatur and s0
         //modify the "mean" point in function of double threshold  => differential transition
         chromamean = maxdp * (chromaSatur - chromaPastel) / (s0 - p2) + chromaPastel;
@@ -170,7 +170,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
     const bool protectskins = params->vibrance.protectskins;
     const bool avoidcolorshift = params->vibrance.avoidcolorshift;
 
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
     //inverse matrix user select
     const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -208,8 +208,8 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
         if (settings->verbose) {
 #endif
-            printf("vibrance:  p0=%1.2f  p1=%1.2f  p2=%1.2f  s0=%1.2f s1=%1.2f s2=%1.2f\n", p0, p1, p2, s0, s1, s2);
-            printf("           pastel=%f   satur=%f   limit= %1.2f   chromamean=%0.5f\n", 1.0f + chromaPastel, 1.0f + chromaSatur, limitpastelsatur, chromamean);
+            printf ("vibrance:  p0=%1.2f  p1=%1.2f  p2=%1.2f  s0=%1.2f s1=%1.2f s2=%1.2f\n", p0, p1, p2, s0, s1, s2);
+            printf ("           pastel=%f   satur=%f   limit= %1.2f   chromamean=%0.5f\n", 1.0f + chromaPastel, 1.0f + chromaSatur, limitpastelsatur, chromamean);
         }
 
         #pragma omp for schedule(dynamic, 16)
@@ -217,12 +217,12 @@ void ImProcFunctions::vibrance (LabImage* lab)
         for (int i = 0; i < height; i++)
             for (int j = 0; j < width; j++) {
                 float LL = lab->L[i][j] / 327.68f;
-                float CC = sqrt(SQR(lab->a[i][j]) + SQR(lab->b[i][j])) / 327.68f;
-                float HH = xatan2f(lab->b[i][j], lab->a[i][j]);
+                float CC = sqrt (SQR (lab->a[i][j]) + SQR (lab->b[i][j])) / 327.68f;
+                float HH = xatan2f (lab->b[i][j], lab->a[i][j]);
 
                 float satredu = 1.0f; //reduct sat in function of skin
 
-                if(protectskins) {
+                if (protectskins) {
                     Color::SkinSat (LL, HH, CC, satredu);// for skin colors
                 }
 
@@ -234,7 +234,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                 float R, G, B;
                 float2 sincosval;
 
-                if(CC == 0.0f) {
+                if (CC == 0.0f) {
                     sincosval.y = 1.f;
                     sincosval.x = 0.0f;
                 } else {
@@ -246,26 +246,26 @@ void ImProcFunctions::vibrance (LabImage* lab)
                 bool neg = false;
                 bool more_rgb = false;
                 //gamut control : Lab values are in gamut
-                Color::gamutLchonly(HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f, neg, more_rgb);
+                Color::gamutLchonly (HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f, neg, more_rgb);
 
-                if(neg) {
+                if (neg) {
                     negat++;
                 }
 
-                if(more_rgb) {
+                if (more_rgb) {
                     moreRGB++;
                 }
 
 #else
                 //gamut control : Lab values are in gamut
-                Color::gamutLchonly(HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f);
+                Color::gamutLchonly (HH, sincosval, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f);
 #endif
 
-                if(Chprov > 6.0f) {
-                    const float saturation = SAT(R, G, B);
+                if (Chprov > 6.0f) {
+                    const float saturation = SAT (R, G, B);
 
-                    if(saturation > 0.0f) {
-                        if(satredu != 1.0f) {
+                    if (saturation > 0.0f) {
+                        if (satredu != 1.0f) {
                             // for skin, no differentiation
                             sathue [0] = sathue [1] = sathue [2] = sathue [3] = sathue[4] = 1.0f;
                             sathue2[0] = sathue2[1] = sathue2[2] = sathue2[3]          = 1.0f;
@@ -274,7 +274,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                             //I try to take into account: Munsell response (human vision) and Gamut..(less response for red): preferably using Prophoto or WideGamut
                             //blue: -1.80 -3.14  green = 2.1 3.14   green-yellow=1.4 2.1  red:0 1.4  blue-purple:-0.7  -1.4   purple: 0 -0.7
                             //these values allow a better and differential response
-                            if(LL < 20.0f) {//more for blue-purple, blue and red modulate
+                            if (LL < 20.0f) { //more for blue-purple, blue and red modulate
                                 if     (/*HH> -3.1415f &&*/ HH < -1.5f   ) {
                                     sathue[0] = 1.3f;    //blue
                                     sathue[1] = 1.2f;
@@ -285,7 +285,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 1.1f ;
                                     sathue2[2] = 1.05f;
                                     sathue2[3] = 1.0f;
-                                } else if(/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
                                     sathue[0] = 1.6f;    //blue purple  1.2 1.1
                                     sathue[1] = 1.4f;
                                     sathue[2] = 1.3f;
@@ -295,7 +295,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 1.15f;
                                     sathue2[2] = 1.1f ;
                                     sathue2[3] = 1.0f;
-                                } else if(/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
                                     sathue[0] = 1.2f;    //purple
                                     sathue[1] = 1.0f;
                                     sathue[2] = 1.0f;
@@ -307,7 +307,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[3] = 1.0f;
                                 }
                                 //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=1.1f;sathue[1]=1.1f;sathue[2]=1.1f;sathue[3]=1.0f ;sathue[4]=0.4f;sathue2[0]=1.0f ;sathue2[1]=1.0f ;sathue2[2]=1.0f ;sathue2[3]=1.0f;}//red   0.8 0.7
-                                else if(/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
                                     sathue[0] = 1.3f;    //red   0.8 0.7
                                     sathue[1] = 1.2f;
                                     sathue[2] = 1.1f;
@@ -317,7 +317,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 1.0f ;
                                     sathue2[2] = 1.0f ;
                                     sathue2[3] = 1.0f;
-                                } else if(/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
                                     sathue[0] = 1.0f;    //green yellow 1.2 1.1
                                     sathue[1] = 1.0f;
                                     sathue[2] = 1.0f;
@@ -349,7 +349,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 1.1f ;
                                     sathue2[2] = 1.05f;
                                     sathue2[3] = 1.0f;
-                                } else if(/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
                                     sathue[0] = 1.3f;    //blue purple  1.2 1.1
                                     sathue[1] = 1.2f;
                                     sathue[2] = 1.1f;
@@ -359,7 +359,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 1.05f;
                                     sathue2[2] = 1.0f ;
                                     sathue2[3] = 1.0f;
-                                } else if(/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
                                     sathue[0] = 1.2f;    //purple
                                     sathue[1] = 1.0f;
                                     sathue[2] = 1.0f;
@@ -371,7 +371,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[3] = 1.0f;
                                 }
                                 //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f ;sathue[4]=0.4f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-                                else if(/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
                                     sathue[0] = 1.1f;    //red   0.8 0.7
                                     sathue[1] = 1.0f;
                                     sathue[2] = 0.9f;
@@ -381,7 +381,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 0.8f ;
                                     sathue2[2] = 0.8f ;
                                     sathue2[3] = 0.8f;
-                                } else if(/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
                                     sathue[0] = 1.1f;    //green yellow 1.2 1.1
                                     sathue[1] = 1.1f;
                                     sathue[2] = 1.1f;
@@ -414,7 +414,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 1.1f ;
                                     sathue2[2] = 1.05f;
                                     sathue2[3] = 1.0f;
-                                } else if(/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
                                     sathue[0] = 1.3f;    //blue purple  1.2 1.1
                                     sathue[1] = 1.2f;
                                     sathue[2] = 1.15f;
@@ -424,7 +424,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 1.05f;
                                     sathue2[2] = 1.0f ;
                                     sathue2[3] = 1.0f;
-                                } else if(/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
                                     sathue[0] = 1.2f;    //purple
                                     sathue[1] = 1.0f;
                                     sathue[2] = 1.0f ;
@@ -436,7 +436,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[3] = 1.0f;
                                 }
                                 //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f ;sathue[3]=0.8f ;sathue[4]=0.3f;sathue2[0]=0.8f ;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-                                else if(/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
                                     sathue[0] = 1.1f;    //red   0.8 0.7
                                     sathue[1] = 1.0f;
                                     sathue[2] = 0.9f ;
@@ -446,7 +446,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 0.8f ;
                                     sathue2[2] = 0.8f ;
                                     sathue2[3] = 0.8f;
-                                } else if(/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
                                     sathue[0] = 1.3f;    //green yellow 1.2 1.1
                                     sathue[1] = 1.2f;
                                     sathue[2] = 1.1f ;
@@ -478,7 +478,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 0.8f ;
                                     sathue2[2] = 0.8f ;
                                     sathue2[3] = 0.8f;
-                                } else if(/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
+                                } else if (/*HH>=-1.5f    &&*/ HH < -0.7f   ) {
                                     sathue[0] = 1.0f;    //blue purple  1.2 1.1
                                     sathue[1] = 1.0f;
                                     sathue[2] = 0.9f;
@@ -488,7 +488,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 0.8f ;
                                     sathue2[2] = 0.8f ;
                                     sathue2[3] = 0.8f;
-                                } else if(/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
+                                } else if (/*HH>=-0.7f    &&*/ HH <  0.0f   ) {
                                     sathue[0] = 1.2f;    //purple
                                     sathue[1] = 1.0f;
                                     sathue[2] = 1.0f;
@@ -500,7 +500,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[3] = 0.8f;
                                 }
                                 //          else if(  HH>= 0.0f    &&   HH<= 1.4f   ) {sathue[0]=0.8f;sathue[1]=0.8f;sathue[2]=0.8f;sathue[3]=0.8f;sathue[4]=0.2f;sathue2[0]=0.8f;sathue2[1]=0.8f ;sathue2[2]=0.8f ;sathue2[3]=0.8f;}//red   0.8 0.7
-                                else if(/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
+                                else if (/*HH>= 0.0f    &&*/ HH <= 1.4f   ) {
                                     sathue[0] = 1.1f;    //red   0.8 0.7
                                     sathue[1] = 1.0f;
                                     sathue[2] = 0.9f;
@@ -510,7 +510,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                                     sathue2[1] = 0.8f ;
                                     sathue2[2] = 0.8f ;
                                     sathue2[3] = 0.8f;
-                                } else if(/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
+                                } else if (/*HH>  1.4f    &&*/ HH <= 2.1f   ) {
                                     sathue[0] = 1.6f;    //green yellow 1.2 1.1
                                     sathue[1] = 1.5f;
                                     sathue[2] = 1.4f;
@@ -534,7 +534,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                             }
                         }
 
-                        float chmodpastel, chmodsat;
+                        float chmodpastel = 0.f, chmodsat = 0.f;
                         // variables to improve transitions
                         float pa, pb;// transition = pa*saturation + pb
                         float chl00 = chromaPastel * satredu * sathue[4];
@@ -585,16 +585,16 @@ void ImProcFunctions::vibrance (LabImage* lab)
                             chmodsat    = pa * saturation + pb;
                         }
 
-                        if(chromaPastel != chromaSatur) {
+                        if (chromaPastel != chromaSatur) {
 
                             // Pastels
-                            if(saturation > p2 && saturation < limitpastelsatur) {
+                            if (saturation > p2 && saturation < limitpastelsatur) {
                                 float newchromaPastel = chromaPastel_a * saturation + chromaPastel_b;
                                 chmodpastel = newchromaPastel * satredu * sathue[3];
                             }
 
                             // Saturated
-                            if(saturation < s0 && saturation >= limitpastelsatur) {
+                            if (saturation < s0 && saturation >= limitpastelsatur) {
                                 float newchromaSatur = chromaSatur_a * saturation + chromaSatur_b;
                                 chmodsat = newchromaSatur * satredu * sathue2[0];
                             }
@@ -603,25 +603,25 @@ void ImProcFunctions::vibrance (LabImage* lab)
                         if (saturation <= limitpastelsatur) {
                             if (chmodpastel >  2.0f ) {
                                 chmodpastel = 2.0f;    //avoid too big values
-                            } else if(chmodpastel < -0.93f) {
+                            } else if (chmodpastel < -0.93f) {
                                 chmodpastel = -0.93f;    //avoid negative values
                             }
 
                             Chprov *= (1.0f + chmodpastel);
 
-                            if(Chprov < 6.0f) {
+                            if (Chprov < 6.0f) {
                                 Chprov = 6.0f;
                             }
                         } else { //if (saturation > limitpastelsatur)
                             if (chmodsat >  1.8f ) {
                                 chmodsat = 1.8f;    //saturated
-                            } else if(chmodsat < -0.93f) {
+                            } else if (chmodsat < -0.93f) {
                                 chmodsat = -0.93f;
                             }
 
                             Chprov *= 1.0f + chmodsat;
 
-                            if(Chprov < 6.0f) {
+                            if (Chprov < 6.0f) {
                                 Chprov = 6.0f;
                             }
                         }
@@ -631,15 +631,15 @@ void ImProcFunctions::vibrance (LabImage* lab)
                 bool hhModified = false;
 
                 // Vibrance's Skin curve
-                if(skinCurveIsSet) {
+                if (skinCurveIsSet) {
                     if (HH > skbeg && HH < skend) {
-                        if(Chprov < 60.0f) {//skin hue  : todo ==> transition
+                        if (Chprov < 60.0f) { //skin hue  : todo ==> transition
                             float HHsk = ask * HH + bsk;
                             float Hn = (skin_curve[HHsk] - bsk) / ask;
                             float Hc = (Hn * xx + HH * (1.0f - xx));
                             HH = Hc;
                             hhModified = true;
-                        } else if(Chprov < (60.0f + dchr)) { //transition chroma
+                        } else if (Chprov < (60.0f + dchr)) { //transition chroma
                             float HHsk = ask * HH + bsk;
                             float Hn = (skin_curve[HHsk] - bsk) / ask;
                             float Hc = (Hn * xx + HH * (1.0f - xx));
@@ -650,7 +650,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                         }
                     }
                     //transition hue
-                    else if(HH > (skbeg - dhue) && HH <= skbeg && Chprov < (60.0f + dchr * 0.5f)) {
+                    else if (HH > (skbeg - dhue) && HH <= skbeg && Chprov < (60.0f + dchr * 0.5f)) {
                         float HHsk = ask * skbeg + bsk;
                         float Hn = (skin_curve[HHsk] - bsk) / ask;
                         float Hcc = (Hn * xx + skbeg * (1.0f - xx));
@@ -658,7 +658,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                         float bdh = Hcc - adh * skbeg;
                         HH = adh * HH + bdh;
                         hhModified = true;
-                    } else if(HH >= skend && HH < (skend + dhue) && Chprov < (60.0f + dchr * 0.5f)) {
+                    } else if (HH >= skend && HH < (skend + dhue) && Chprov < (60.0f + dchr * 0.5f)) {
                         float HHsk = ask * skend + bsk;
                         float Hn = (skin_curve[HHsk] - bsk) / ask;
                         float Hcc = (Hn * xx + skend * (1.0f - xx));
@@ -671,8 +671,8 @@ void ImProcFunctions::vibrance (LabImage* lab)
 
                 //Munsell correction
 //          float2 sincosval;
-                if(!avoidcolorshift && hhModified) {
-                    sincosval = xsincosf(HH);
+                if (!avoidcolorshift && hhModified) {
+                    sincosval = xsincosf (HH);
                 }
 
                 float aprovn, bprovn;
@@ -681,18 +681,18 @@ void ImProcFunctions::vibrance (LabImage* lab)
                 do {
                     inGamut = true;
 
-                    if(avoidcolorshift) {
+                    if (avoidcolorshift) {
                         float correctionHue = 0.0f;
                         float correctlum = 0.0f;
 
 #ifdef _DEBUG
-                        Color::AllMunsellLch(/*lumaMuns*/false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum, MunsDebugInfo);
+                        Color::AllMunsellLch (/*lumaMuns*/false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum, MunsDebugInfo);
 #else
-                        Color::AllMunsellLch(/*lumaMuns*/false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum);
+                        Color::AllMunsellLch (/*lumaMuns*/false, Lprov, Lprov, HH, Chprov, CC, correctionHue, correctlum);
 #endif
 
-                        if(correctionHue != 0.f || hhModified) {
-                            sincosval = xsincosf(HH + correctionHue);
+                        if (correctionHue != 0.f || hhModified) {
+                            sincosval = xsincosf (HH + correctionHue);
                             hhModified = false;
                         }
                     }
@@ -703,14 +703,14 @@ void ImProcFunctions::vibrance (LabImage* lab)
                     float fyy = (0.00862069f * Lprov ) + 0.137932f;
                     float fxx = (0.002f * aprovn) + fyy;
                     float fzz = fyy - (0.005f * bprovn);
-                    float xx_ = 65535.f * Color::f2xyz(fxx) * Color::D50x;
+                    float xx_ = 65535.f * Color::f2xyz (fxx) * Color::D50x;
                     //  float yy_ = 65535.0f * Color::f2xyz(fyy);
-                    float zz_ = 65535.f * Color::f2xyz(fzz) * Color::D50z;
+                    float zz_ = 65535.f * Color::f2xyz (fzz) * Color::D50z;
                     float yy_ = 65535.f * ((Lprov > Color::epskap) ? fyy * fyy*fyy : Lprov / Color::kappa);
 
-                    Color::xyz2rgb(xx_, yy_, zz_, R, G, B, wip);
+                    Color::xyz2rgb (xx_, yy_, zz_, R, G, B, wip);
 
-                    if(R < 0.0f || G < 0.0f || B < 0.0f) {
+                    if (R < 0.0f || G < 0.0f || B < 0.0f) {
 #ifdef _DEBUG
                         negsat++;
 #endif
@@ -719,7 +719,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
                     }
 
                     // if "highlight reconstruction" enabled don't control Gamut for highlights
-                    if((!highlight) && (R > 65535.0f || G > 65535.0f || B > 65535.0f)) {
+                    if ((!highlight) && (R > 65535.0f || G > 65535.0f || B > 65535.0f)) {
 #ifdef _DEBUG
                         moresat++;
 #endif
@@ -740,11 +740,11 @@ void ImProcFunctions::vibrance (LabImage* lab)
     t2e.set();
 
     if (settings->verbose) {
-        printf("Vibrance (performed in %d usec):\n", t2e.etime(t1e));
-        printf("   Gamut: G1negat=%iiter G165535=%iiter G2negsat=%iiter G265535=%iiter\n", negat, moreRGB, negsat, moresat);
+        printf ("Vibrance (performed in %d usec):\n", t2e.etime (t1e));
+        printf ("   Gamut: G1negat=%iiter G165535=%iiter G2negsat=%iiter G265535=%iiter\n", negat, moreRGB, negsat, moresat);
 
         if (MunsDebugInfo) {
-            printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0], MunsDebugInfo->maxdhue[1], MunsDebugInfo->maxdhue[2], MunsDebugInfo->maxdhue[3], MunsDebugInfo->depass);
+            printf ("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%u\n", MunsDebugInfo->maxdhue[0], MunsDebugInfo->maxdhue[1], MunsDebugInfo->maxdhue[2], MunsDebugInfo->maxdhue[3], MunsDebugInfo->depass);
         }
     }
 

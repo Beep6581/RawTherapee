@@ -59,6 +59,12 @@ protected:
     ImageAreaToolListener* listener;
 
     CropWindow* getCropWindow (int x, int y);
+    Gtk::SizeRequestMode get_request_mode_vfunc () const;
+    void get_preferred_height_vfunc (int &minimum_height, int &natural_height) const;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const;
+
     bool firstOpen;
     int fullImageWidth, fullImageHeight;
 public:
@@ -93,14 +99,14 @@ public:
 
     // widget base events
     void on_realize ();
-    bool on_expose_event         (GdkEventExpose* event);
+    bool on_draw                 (const ::Cairo::RefPtr< Cairo::Context> &cr);
     bool on_motion_notify_event  (GdkEventMotion* event);
     bool on_button_press_event   (GdkEventButton* event);
     bool on_button_release_event (GdkEventButton* event);
     bool on_scroll_event         (GdkEventScroll* event);
     bool on_leave_notify_event   (GdkEventCrossing* event);
     void on_resized              (Gtk::Allocation& req);
-    void on_style_changed        (const Glib::RefPtr<Gtk::Style>& style);
+    void on_style_updated        ();
     void syncBeforeAfterViews    ();
 
     void            setCropGUIListener       (CropGUIListener* l);

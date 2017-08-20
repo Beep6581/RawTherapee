@@ -70,6 +70,7 @@ protected:
     ColorTemp autoWB;
 
     double lastAwbEqual;
+    double lastAwbTempBias;
 
     ImProcFunctions ipf;
     PreviewProps previewProps;
@@ -158,6 +159,10 @@ protected:
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
     AutoBWListener* abwListener;
+    AutoWBListener* awbListener;
+    FrameCountListener *frameCountListener;
+    ImageTypeListener *imageTypeListener;
+
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
@@ -220,7 +225,7 @@ public:
         *dst = params;
     }
 
-    void        startProcessing(int changeCode);
+    void        startProcessing (int changeCode);
     ProcParams* beginUpdateParams ();
     void        endUpdateParams (ProcEvent change);  // must be called after beginUpdateParams, triggers update
     void        endUpdateParams (int changeFlags);
@@ -258,7 +263,7 @@ public:
 
     DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow);
 
-    bool getAutoWB   (double& temp, double& green, double equal);
+    bool getAutoWB   (double& temp, double& green, double equal, double tempBias);
     void getCamWB    (double& temp, double& green);
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
@@ -301,7 +306,7 @@ public:
     {
         aeListener = ael;
     }
-    void setHistogramListener(HistogramListener *h)
+    void setHistogramListener (HistogramListener *h)
     {
         hListener = h;
     }
@@ -312,6 +317,10 @@ public:
     void setAutoBWListener   (AutoBWListener* abw)
     {
         abwListener = abw;
+    }
+    void setAutoWBListener   (AutoWBListener* awb)
+    {
+        awbListener = awb;
     }
     void setAutoColorTonListener   (AutoColorTonListener* bwct)
     {
@@ -330,6 +339,16 @@ public:
         awavListener = awa;
     }
 
+    void setFrameCountListener  (FrameCountListener* fcl)
+    {
+        frameCountListener = fcl;
+    }
+
+    void setImageTypeListener  (ImageTypeListener* itl)
+    {
+        imageTypeListener = itl;
+    }
+
     void saveInputICCReference (const Glib::ustring& fname, bool apply_wb);
 
     InitialImage*  getInitialImage ()
@@ -338,7 +357,7 @@ public:
     }
 
     struct DenoiseInfoStore {
-        DenoiseInfoStore () : chM(0), max_r{}, max_b{}, ch_M{}, valid(false)  {}
+        DenoiseInfoStore () : chM (0), max_r{}, max_b{}, ch_M{}, valid (false)  {}
         float chM;
         float max_r[9];
         float max_b[9];

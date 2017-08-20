@@ -132,15 +132,15 @@ Wavelet::Wavelet() :
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
-    expchroma(new MyExpander(true, M("TP_WAVELET_LEVCH"))),
-    expcontrast(new MyExpander(true, M("TP_WAVELET_LEVF"))),
-    expedge(new MyExpander(true, M("TP_WAVELET_EDGE"))),
-    expfinal(new MyExpander(true, M("TP_WAVELET_FINAL"))),
-    expgamut(new MyExpander(false, M("TP_WAVELET_CONTR"))),
-    expnoise(new MyExpander(true, M("TP_WAVELET_NOISE"))),
-    expresid(new MyExpander(true, M("TP_WAVELET_RESID"))),
-    expsettings(new MyExpander(false, M("TP_WAVELET_SETTINGS"))),
-    exptoning(new MyExpander(true, M("TP_WAVELET_TON"))),
+    expchroma(Gtk::manage(new MyExpander(true, M("TP_WAVELET_LEVCH")))),
+    expcontrast(Gtk::manage(new MyExpander(true, M("TP_WAVELET_LEVF")))),
+    expedge(Gtk::manage(new MyExpander(true, M("TP_WAVELET_EDGE")))),
+    expfinal(Gtk::manage(new MyExpander(true, M("TP_WAVELET_FINAL")))),
+    expgamut(Gtk::manage(new MyExpander(false, M("TP_WAVELET_CONTR")))),
+    expnoise(Gtk::manage(new MyExpander(true, M("TP_WAVELET_NOISE")))),
+    expresid(Gtk::manage(new MyExpander(true, M("TP_WAVELET_RESID")))),
+    expsettings(Gtk::manage(new MyExpander(false, M("TP_WAVELET_SETTINGS")))),
+    exptoning(Gtk::manage(new MyExpander(true, M("TP_WAVELET_TON")))),
     neutrHBox(Gtk::manage(new Gtk::HBox()))
 {
     CurveListener::setMulti(true);
@@ -172,18 +172,16 @@ Wavelet::Wavelet() :
     enableFinalConn = expfinal->signal_enabled_toggled().connect ( sigc::bind( sigc::mem_fun(this, &Wavelet::enableToggled), expfinal) );
 
 // Wavelet Settings
-    Gtk::VBox* const settingsVBox = Gtk::manage(new Gtk::VBox());
-    settingsVBox->set_border_width(4);
-    settingsVBox->set_spacing(2);
+    ToolParamBlock* const settingsBox = Gtk::manage (new ToolParamBlock());
 
     strength->setAdjusterListener (this);
 
     thres->set_tooltip_text (M("TP_WAVELET_LEVELS_TOOLTIP"));
     thres->setAdjusterListener (this);
 
-    Tilesmethod->append_text (M("TP_WAVELET_TILESFULL"));
-    Tilesmethod->append_text (M("TP_WAVELET_TILESBIG"));
-    Tilesmethod->append_text (M("TP_WAVELET_TILESLIT"));
+    Tilesmethod->append (M("TP_WAVELET_TILESFULL"));
+    Tilesmethod->append (M("TP_WAVELET_TILESBIG"));
+    Tilesmethod->append (M("TP_WAVELET_TILESLIT"));
     Tilesmethodconn = Tilesmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::TilesmethodChanged) );
     Tilesmethod->set_tooltip_text (M("TP_WAVELET_TILES_TOOLTIP"));
     Gtk::HBox* const tilesizeHBox = Gtk::manage(new Gtk::HBox());
@@ -192,11 +190,11 @@ Wavelet::Wavelet() :
     tilesizeHBox->pack_start(*Tilesmethod);
 
     daubcoeffmethod->set_sensitive(true);
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB2"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB4"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB6"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB10"));
-    daubcoeffmethod->append_text (M("TP_WAVELET_DAUB14"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB2"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB4"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB6"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB10"));
+    daubcoeffmethod->append (M("TP_WAVELET_DAUB14"));
     daubcoeffmethodconn = daubcoeffmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::daubcoeffmethodChanged) );
     daubcoeffmethod->set_tooltip_text (M("TP_WAVELET_DAUB_TOOLTIP"));
     Gtk::Label* const daubcoeffLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUB") + ":"));
@@ -204,19 +202,19 @@ Wavelet::Wavelet() :
     daubcoeffHBox->pack_start(*daubcoeffLabel, Gtk::PACK_SHRINK, 4);
     daubcoeffHBox->pack_start(*daubcoeffmethod);
 
-    Backmethod->append_text (M("TP_WAVELET_B0"));
-    Backmethod->append_text (M("TP_WAVELET_B1"));
-    Backmethod->append_text (M("TP_WAVELET_B2"));
+    Backmethod->append (M("TP_WAVELET_B0"));
+    Backmethod->append (M("TP_WAVELET_B1"));
+    Backmethod->append (M("TP_WAVELET_B2"));
     Backmethodconn = Backmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::BackmethodChanged) );
     Gtk::HBox* const backgroundHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const backgroundLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_BACKGROUND") + ":"));
     backgroundHBox->pack_start(*backgroundLabel, Gtk::PACK_SHRINK, 4);
     backgroundHBox->pack_start(*Backmethod);
 
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_ONE"));
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_INF"));
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_SUP"));
-    CLmethod->append_text (M("TP_WAVELET_LEVDIR_ALL"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_ONE"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_INF"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_SUP"));
+    CLmethod->append (M("TP_WAVELET_LEVDIR_ALL"));
     CLmethodconn = CLmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::CLmethodChanged) );
     Gtk::HBox* const levdirMainHBox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const levdirMainLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_PROC") + ":"));
@@ -225,42 +223,39 @@ Wavelet::Wavelet() :
 
     Lmethod->set_sensitive(false);
     Lmethod->set_sensitive(false);
-    Lmethod->append_text (M("TP_WAVELET_1"));
-    Lmethod->append_text (M("TP_WAVELET_2"));
-    Lmethod->append_text (M("TP_WAVELET_3"));
-    Lmethod->append_text (M("TP_WAVELET_4"));
-    Lmethod->append_text (M("TP_WAVELET_5"));
-    Lmethod->append_text (M("TP_WAVELET_6"));
-    Lmethod->append_text (M("TP_WAVELET_7"));
-    Lmethod->append_text (M("TP_WAVELET_8"));
-    Lmethod->append_text (M("TP_WAVELET_9"));
-    Lmethod->append_text (M("TP_WAVELET_SUPE"));
-    Lmethod->append_text (M("TP_WAVELET_RESID"));
+    Lmethod->append (M("TP_WAVELET_1"));
+    Lmethod->append (M("TP_WAVELET_2"));
+    Lmethod->append (M("TP_WAVELET_3"));
+    Lmethod->append (M("TP_WAVELET_4"));
+    Lmethod->append (M("TP_WAVELET_5"));
+    Lmethod->append (M("TP_WAVELET_6"));
+    Lmethod->append (M("TP_WAVELET_7"));
+    Lmethod->append (M("TP_WAVELET_8"));
+    Lmethod->append (M("TP_WAVELET_9"));
+    Lmethod->append (M("TP_WAVELET_SUPE"));
+    Lmethod->append (M("TP_WAVELET_RESID"));
     Lmethod->set_active(0);
     Dirmethod->set_sensitive(false);
-    Dirmethod->append_text (M("TP_WAVELET_DONE"));
-    Dirmethod->append_text (M("TP_WAVELET_DTWO"));
-    Dirmethod->append_text (M("TP_WAVELET_DTHR"));
-    Dirmethod->append_text (M("TP_WAVELET_DALL"));
+    Dirmethod->append (M("TP_WAVELET_DONE"));
+    Dirmethod->append (M("TP_WAVELET_DTWO"));
+    Dirmethod->append (M("TP_WAVELET_DTHR"));
+    Dirmethod->append (M("TP_WAVELET_DALL"));
     Lmethodconn = Lmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::LmethodChanged) );
     Dirmethodconn = Dirmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::DirmethodChanged) );
     Gtk::HBox* const levdirSubHBox = Gtk::manage(new Gtk::HBox());
     levdirSubHBox->pack_start(*Lmethod);
     levdirSubHBox->pack_start(*Dirmethod, Gtk::PACK_EXPAND_WIDGET, 2); // same, but 2 not 4?
 
-    settingsVBox->pack_start(*strength);
-    settingsVBox->pack_start(*thres);
-    settingsVBox->pack_start(*tilesizeHBox);
-    settingsVBox->pack_start(*daubcoeffHBox);
-    settingsVBox->pack_start(*backgroundHBox);
-    settingsVBox->pack_start(*levdirMainHBox);
-    settingsVBox->pack_start(*levdirSubHBox);
+    settingsBox->pack_start(*strength);
+    settingsBox->pack_start(*thres);
+    settingsBox->pack_start(*tilesizeHBox);
+    settingsBox->pack_start(*daubcoeffHBox);
+    settingsBox->pack_start(*backgroundHBox);
+    settingsBox->pack_start(*levdirMainHBox);
+    settingsBox->pack_start(*levdirSubHBox);
 
 // Contrast
-    Gtk::VBox* const levBox = Gtk::manage (new Gtk::VBox());
-    levBox->set_border_width(4);
-    levBox->set_spacing(2);
-
+    ToolParamBlock* const levBox = Gtk::manage (new ToolParamBlock());
 
     Gtk::HBox* const buttonBox = Gtk::manage (new Gtk::HBox(true, 10));
     levBox->pack_start(*buttonBox, Gtk::PACK_SHRINK, 2);
@@ -306,11 +301,10 @@ Wavelet::Wavelet() :
     levBox->pack_start (*wavLabels);
 
     Gtk::VBox* const contrastSHVBox = Gtk::manage(new Gtk::VBox);
-    contrastSHVBox->set_border_width(4);
     contrastSHVBox->set_spacing(2);
 
-    HSmethod->append_text (M("TP_WAVELET_HS1"));
-    HSmethod->append_text (M("TP_WAVELET_HS2"));
+    HSmethod->append (M("TP_WAVELET_HS1"));
+    HSmethod->append (M("TP_WAVELET_HS2"));
     HSmethodconn = HSmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::HSmethodChanged) );
 
     const std::vector<GradientMilestone> milestones2 = {
@@ -330,7 +324,7 @@ Wavelet::Wavelet() :
     threshold2->setAdjusterListener (this);
     threshold2->set_tooltip_text (M("TP_WAVELET_THRESHOLD2_TOOLTIP"));
 
-    contrastSHVBox->pack_start(*HSmethod); //remove 2?
+    contrastSHVBox->pack_start(*HSmethod);
     contrastSHVBox->pack_start(*hllev);
     contrastSHVBox->pack_start(*threshold);
     contrastSHVBox->pack_start(*bllev);
@@ -340,17 +334,15 @@ Wavelet::Wavelet() :
     levBox->pack_start(*contrastSHFrame);
 
 // Chromaticity
-    Gtk::VBox* const chBox = Gtk::manage (new Gtk::VBox());
-    chBox->set_border_width(4);
-    chBox->set_spacing(2);
+    ToolParamBlock* const chBox = Gtk::manage (new ToolParamBlock());
 
     Gtk::Label* const labmch = Gtk::manage(new Gtk::Label(M("TP_WAVELET_CHTYPE") + ":"));
     Gtk::HBox* const ctboxch = Gtk::manage(new Gtk::HBox());
     ctboxch->pack_start (*labmch, Gtk::PACK_SHRINK, 1);
 
-    CHmethod->append_text (M("TP_WAVELET_CH1"));
-    CHmethod->append_text (M("TP_WAVELET_CH2"));
-    CHmethod->append_text (M("TP_WAVELET_CH3"));
+    CHmethod->append (M("TP_WAVELET_CH1"));
+    CHmethod->append (M("TP_WAVELET_CH2"));
+    CHmethod->append (M("TP_WAVELET_CH3"));
     CHmethodconn = CHmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::CHmethodChanged) );
     ctboxch->pack_start(*CHmethod);
     chBox->pack_start(*ctboxch);
@@ -358,8 +350,8 @@ Wavelet::Wavelet() :
     Gtk::HBox* const ctboxCH = Gtk::manage(new Gtk::HBox());
     ctboxCH->pack_start (*labmC, Gtk::PACK_SHRINK, 1);
 
-    CHSLmethod->append_text (M("TP_WAVELET_CHSL"));
-    CHSLmethod->append_text (M("TP_WAVELET_CHCU"));
+    CHSLmethod->append (M("TP_WAVELET_CHSL"));
+    CHSLmethod->append (M("TP_WAVELET_CHCU"));
     CHSLmethodconn = CHSLmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::CHSLmethodChanged) );
     ctboxCH->pack_start(*CHSLmethod);
 
@@ -412,9 +404,7 @@ Wavelet::Wavelet() :
     }
 
 // Toning
-    Gtk::VBox* const tonBox = Gtk::manage (new Gtk::VBox());
-    tonBox->set_border_width(4);
-    tonBox->set_spacing(2);
+    ToolParamBlock* const tonBox = Gtk::manage (new ToolParamBlock());
 
     opaCurveEditorG->setCurveListener (this);
 
@@ -443,9 +433,7 @@ Wavelet::Wavelet() :
     tonBox->pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
 // Denoise and Refine
-    Gtk::VBox* const noiseBox = Gtk::manage (new Gtk::VBox());
-    noiseBox->set_border_width(4);
-    noiseBox->set_spacing(2);
+    ToolParamBlock* const noiseBox = Gtk::manage (new ToolParamBlock());
 
     linkedg->set_active (true);
     linkedgConn = linkedg->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::linkedgToggled) );
@@ -469,9 +457,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start( *level3noise, Gtk::PACK_SHRINK, 0);
 
 // Edge Sharpness
-    Gtk::VBox* const edgBox = Gtk::manage (new Gtk::VBox());
-    edgBox->set_border_width(4);
-    edgBox->set_spacing(2);
+    ToolParamBlock* const edgBox = Gtk::manage (new ToolParamBlock());
 
     edgval->setAdjusterListener(this);
     edgBox->pack_start(*edgval);
@@ -488,9 +474,9 @@ Wavelet::Wavelet() :
     Gtk::HBox* const edbox = Gtk::manage(new Gtk::HBox());
     edbox->pack_start (*labmedgr, Gtk::PACK_SHRINK, 1);
 
-    Medgreinf->append_text (M("TP_WAVELET_RE1"));
-    Medgreinf->append_text (M("TP_WAVELET_RE2"));
-    Medgreinf->append_text (M("TP_WAVELET_RE3"));
+    Medgreinf->append (M("TP_WAVELET_RE1"));
+    Medgreinf->append (M("TP_WAVELET_RE2"));
+    Medgreinf->append (M("TP_WAVELET_RE3"));
     MedgreinfConn = Medgreinf->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::MedgreinfChanged) );
     Medgreinf->set_tooltip_markup (M("TP_WAVELET_EDGREINF_TOOLTIP"));
     edbox->pack_start(*Medgreinf);
@@ -503,8 +489,8 @@ Wavelet::Wavelet() :
     Gtk::HBox* const ctboxED = Gtk::manage(new Gtk::HBox());
     ctboxED->pack_start (*labmED, Gtk::PACK_SHRINK, 1);
 
-    EDmethod->append_text (M("TP_WAVELET_EDSL"));
-    EDmethod->append_text (M("TP_WAVELET_EDCU"));
+    EDmethod->append (M("TP_WAVELET_EDSL"));
+    EDmethod->append (M("TP_WAVELET_EDCU"));
     EDmethodconn = EDmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::EDmethodChanged) );
     ctboxED->pack_start(*EDmethod);
     edgBox->pack_start (*ctboxED);
@@ -549,10 +535,8 @@ Wavelet::Wavelet() :
     edgedetectthr->set_tooltip_text (M("TP_WAVELET_EDGEDETECTTHR_TOOLTIP"));
     edgBox->pack_start(*edgedetectthr);
 
-
     edgedetectthr2->setAdjusterListener (this);
     edgBox->pack_start(*edgedetectthr2);
-
 
     edgBox->pack_start(*separatoredge, Gtk::PACK_SHRINK, 2);
 
@@ -564,22 +548,19 @@ Wavelet::Wavelet() :
     edgesensi->setAdjusterListener (this);
     edgBox->pack_start(*edgesensi);
 
-
     edgeampli->setAdjusterListener (this);
     edgBox->pack_start(*edgeampli);
 
-
     Gtk::VBox* const ctboxES = Gtk::manage (new Gtk::VBox());
 
-    ctboxES->set_border_width(4);
     ctboxES->set_spacing(2);
 
     Gtk::HBox* const ctboxNP = Gtk::manage(new Gtk::HBox());
     ctboxNP->pack_start (*labmNP, Gtk::PACK_SHRINK, 1);
 
-    NPmethod->append_text (M("TP_WAVELET_NPNONE"));
-    NPmethod->append_text (M("TP_WAVELET_NPLOW"));
-    NPmethod->append_text (M("TP_WAVELET_NPHIGH"));
+    NPmethod->append (M("TP_WAVELET_NPNONE"));
+    NPmethod->append (M("TP_WAVELET_NPLOW"));
+    NPmethod->append (M("TP_WAVELET_NPHIGH"));
     NPmethodconn = NPmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::NPmethodChanged) );
     NPmethod->set_tooltip_text (M("TP_WAVELET_NPTYPE_TOOLTIP"));
 
@@ -589,9 +570,7 @@ Wavelet::Wavelet() :
     edgBox->pack_start(*ctboxES);
 
 // Gamut
-    Gtk::VBox* const conBox = Gtk::manage (new Gtk::VBox());
-    conBox->set_border_width(4);
-    conBox->set_spacing(2);
+    ToolParamBlock* const conBox = Gtk::manage (new ToolParamBlock());
 
     median->set_active (true);
     medianConn = median->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::medianToggled) );
@@ -641,9 +620,7 @@ Wavelet::Wavelet() :
     conBox->pack_start(*avoid);
 
 // Residual Image
-    Gtk::VBox* const resBox = Gtk::manage (new Gtk::VBox());
-    resBox->set_border_width(4);
-    resBox->set_spacing(2);
+    ToolParamBlock* const resBox = Gtk::manage (new ToolParamBlock());
 
     rescon->setAdjusterListener (this);
     resBox->pack_start(*rescon, Gtk::PACK_SHRINK);
@@ -672,8 +649,8 @@ Wavelet::Wavelet() :
     Gtk::HSeparator* const separatorR0 = Gtk::manage (new  Gtk::HSeparator());
     resBox->pack_start(*separatorR0, Gtk::PACK_SHRINK, 2);
 
-    TMmethod->append_text (M("TP_WAVELET_COMPCONT"));
-    TMmethod->append_text (M("TP_WAVELET_COMPTM"));
+    TMmethod->append (M("TP_WAVELET_COMPCONT"));
+    TMmethod->append (M("TP_WAVELET_COMPTM"));
     TMmethodconn = TMmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::TMmethodChanged) );
     ctboxTM->pack_start(*TMmethod);
     resBox->pack_start (*ctboxTM);
@@ -771,9 +748,6 @@ Wavelet::Wavelet() :
     resBox->pack_start(*chanMixerMidFrame, Gtk::PACK_SHRINK);
     resBox->pack_start(*chanMixerShadowsFrame, Gtk::PACK_SHRINK);
 
-    // Reset sliders
-    neutrHBox->set_border_width (2);
-
     //RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
     //neutral->set_image(*resetImg);
     Gtk::Button* const neutral = Gtk::manage(new Gtk::Button(M("TP_COLORTONING_NEUTRAL")));
@@ -787,7 +761,6 @@ Wavelet::Wavelet() :
 // Final Touchup
     Gtk::VBox* const ctboxBA = Gtk::manage (new Gtk::VBox());
 
-    ctboxBA->set_border_width(4);
     ctboxBA->set_spacing(2);
 
     //Gtk::HSeparator *separatorfin = Gtk::manage (new  Gtk::HSeparator());
@@ -796,9 +769,9 @@ Wavelet::Wavelet() :
     Gtk::HBox* const ctboxFI = Gtk::manage(new Gtk::HBox());
     ctboxFI->pack_start (*labmBA, Gtk::PACK_SHRINK, 1);
 
-    BAmethod->append_text (M("TP_WAVELET_BANONE"));
-    BAmethod->append_text (M("TP_WAVELET_BASLI"));
-    BAmethod->append_text (M("TP_WAVELET_BACUR"));
+    BAmethod->append (M("TP_WAVELET_BANONE"));
+    BAmethod->append (M("TP_WAVELET_BASLI"));
+    BAmethod->append (M("TP_WAVELET_BACUR"));
     BAmethodconn = BAmethod->signal_changed().connect ( sigc::mem_fun(*this, &Wavelet::BAmethodChanged) );
     ctboxFI->pack_start(*BAmethod);
     ctboxBA->pack_start(*ctboxFI);
@@ -848,9 +821,7 @@ Wavelet::Wavelet() :
     tmr->set_tooltip_text (M("TP_WAVELET_BALCHRO_TOOLTIP"));
     tmrConn = tmr->signal_toggled().connect( sigc::mem_fun(*this, &Wavelet::tmrToggled) );
 
-    Gtk::VBox* const finalBox = Gtk::manage (new Gtk::VBox());
-    finalBox->set_border_width(4);
-    finalBox->set_spacing(2);
+    ToolParamBlock* const finalBox = Gtk::manage (new ToolParamBlock());
 
     finalBox->pack_start (*ctboxBA);
     finalBox->pack_start(*balance);
@@ -867,36 +838,47 @@ Wavelet::Wavelet() :
 
 //-----------------------------
 
-    expsettings->add(*settingsVBox);
+    expsettings->add(*settingsBox, false);
+    expsettings->setLevel(2);
     pack_start (*expsettings);
 
-    expcontrast->add(*levBox);
+    expcontrast->add(*levBox, false);
+    expcontrast->setLevel(2);
     pack_start (*expcontrast);
 
-    expchroma->add(*chBox);
+    expchroma->add(*chBox, false);
+    expchroma->setLevel(2);
     pack_start (*expchroma);
 
-    exptoning->add(*tonBox);
+    exptoning->add(*tonBox, false);
+    exptoning->setLevel(2);
     pack_start (*exptoning);
 
-    expnoise->add(*noiseBox);
+    expnoise->add(*noiseBox, false);
+    expnoise->setLevel(2);
     pack_start (*expnoise);
 
-    expedge->add(*edgBox);
+    expedge->add(*edgBox, false);
+    expedge->setLevel(2);
     pack_start (*expedge);
 
-    expgamut->add(*conBox);
+    expgamut->add(*conBox, false);
+    expgamut->setLevel(2);
     pack_start (*expgamut);
 
-    expresid->add(*resBox);
+    expresid->add(*resBox, false);
+    expresid->setLevel(2);
     pack_start(*expresid);
 
-    expfinal->add(*finalBox);
+    expfinal->add(*finalBox, false);
+    expfinal->setLevel(2);
     pack_start(*expfinal);
 }
 
 Wavelet::~Wavelet ()
 {
+    idle_register.destroy();
+
     delete opaCurveEditorG;
     delete opacityCurveEditorG;
     delete CCWcurveEditorG;
@@ -905,28 +887,31 @@ Wavelet::~Wavelet ()
     delete curveEditorG;
     delete opacityCurveEditorW;
     delete opacityCurveEditorWL;
-}
 
-int wavUpdateUI (void* data)
-{
-    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
-    (static_cast<Wavelet*>(data))->wavComputed_ ();
-    return 0;
 }
 
 void Wavelet::wavChanged (double nlevel)
 {
     nextnlevel = nlevel;
-    g_idle_add (wavUpdateUI, this);
+
+    const auto func = [](gpointer data) -> gboolean {
+        GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+        static_cast<Wavelet*>(data)->wavComputed_();
+
+        return FALSE;
+    };
+
+    idle_register.add(func, this);
 }
+
 bool Wavelet::wavComputed_ ()
 {
-
     disableListener ();
     enableListener ();
     updatewavLabel ();
     return false;
 }
+
 void Wavelet::updatewavLabel ()
 {
     if (!batchMode) {
@@ -2319,20 +2304,20 @@ void Wavelet::LmethodChanged()
 
 void Wavelet::setBatchMode (bool batchMode)
 {
-    Lmethod->append_text (M("GENERAL_UNCHANGED"));
-    CLmethod->append_text (M("GENERAL_UNCHANGED"));
-    Backmethod->append_text (M("GENERAL_UNCHANGED"));
-    Tilesmethod->append_text (M("GENERAL_UNCHANGED"));
-    daubcoeffmethod->append_text (M("GENERAL_UNCHANGED"));
-    CHmethod->append_text (M("GENERAL_UNCHANGED"));
-    Medgreinf->append_text (M("GENERAL_UNCHANGED"));
-    CHSLmethod->append_text (M("GENERAL_UNCHANGED"));
-    EDmethod->append_text (M("GENERAL_UNCHANGED"));
-    NPmethod->append_text (M("GENERAL_UNCHANGED"));
-    BAmethod->append_text (M("GENERAL_UNCHANGED"));
-    TMmethod->append_text (M("GENERAL_UNCHANGED"));
-    HSmethod->append_text (M("GENERAL_UNCHANGED"));
-    Dirmethod->append_text (M("GENERAL_UNCHANGED"));
+    Lmethod->append (M("GENERAL_UNCHANGED"));
+    CLmethod->append (M("GENERAL_UNCHANGED"));
+    Backmethod->append (M("GENERAL_UNCHANGED"));
+    Tilesmethod->append (M("GENERAL_UNCHANGED"));
+    daubcoeffmethod->append (M("GENERAL_UNCHANGED"));
+    CHmethod->append (M("GENERAL_UNCHANGED"));
+    Medgreinf->append (M("GENERAL_UNCHANGED"));
+    CHSLmethod->append (M("GENERAL_UNCHANGED"));
+    EDmethod->append (M("GENERAL_UNCHANGED"));
+    NPmethod->append (M("GENERAL_UNCHANGED"));
+    BAmethod->append (M("GENERAL_UNCHANGED"));
+    TMmethod->append (M("GENERAL_UNCHANGED"));
+    HSmethod->append (M("GENERAL_UNCHANGED"));
+    Dirmethod->append (M("GENERAL_UNCHANGED"));
     CCWcurveEditorG->setBatchMode (batchMode);
     opaCurveEditorG->setBatchMode (batchMode);
     opacityCurveEditorG->setBatchMode (batchMode);
@@ -2883,7 +2868,7 @@ void Wavelet::tmrToggled ()
 void Wavelet::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
-    float R, G, B;
+    float R = 0.f, G = 0.f, B = 0.f;
 
     if (elemType == ColorCaller::CCET_VERTICAL_BAR) {
         valY = 0.5;
@@ -3055,7 +3040,7 @@ void Wavelet::writeOptions(std::vector<int> &tpOpen)
 
 void Wavelet::updateToolState(std::vector<int> &tpOpen)
 {
-    if(tpOpen.size() == 9) {
+    if(tpOpen.size() >= 9) {
         expsettings->set_expanded(tpOpen.at(0));
         expcontrast->set_expanded(tpOpen.at(1));
         expchroma->set_expanded(tpOpen.at(2));

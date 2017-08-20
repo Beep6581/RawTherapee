@@ -23,6 +23,8 @@
 #include "lwbuttonset.h"
 #include "thumbnail.h"
 #include "threadutils.h"
+#include "guiutils.h"
+#include "cursormanager.h"
 
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase
@@ -74,16 +76,20 @@ protected:
     ThumbBrowserBase* parent;
     ThumbBrowserEntryBase* original;
 
-    Glib::RefPtr<Gdk::Pixmap> backBuffer;
+    Glib::RefPtr<BackBuffer> backBuffer;
     bool bbSelected, bbFramed;
     guint8* bbPreview;
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbIcons;
+    CursorShape cursor_type;
 
-    void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::Color& bg, const Gdk::Color& fg);
+    void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::RGBA& bg, const Gdk::RGBA& fg);
     void getTextSizes (int& w, int& h);
 
     // called during updateBackBuffer for custom overlays
     virtual void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) {}
+
+private:
+    const std::string collate_name;
 
 public:
 
@@ -117,7 +123,7 @@ public:
 
     void updateBackBuffer   ();
     void resize             (int h);
-    virtual void draw       ();
+    virtual void draw       (Cairo::RefPtr<Cairo::Context> cc);
 
     void addButtonSet       (LWButtonSet* bs);
     int getMinimalHeight    ()
@@ -164,9 +170,9 @@ public:
     void setPosition        (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
-    bool operator< (ThumbBrowserEntryBase& other)
+    bool operator <(const ThumbBrowserEntryBase& other) const
     {
-        return shortname.casefold() > other.shortname.casefold();
+        return collate_name < other.collate_name;
     }
 
     ThumbBrowserEntryBase* getOriginal () const;
@@ -176,7 +182,7 @@ public:
     virtual void refreshQuickThumbnailImage () {}
     virtual void calcThumbnailSize () {}
 
-    virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h) {}
+    virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) {}
 
     virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
     virtual void getIconSize (int& w, int& h);

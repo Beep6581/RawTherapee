@@ -125,7 +125,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, const int width, 
         medBuffer[1] = dst;
     }
 
-    float ** medianIn, ** medianOut;
+    float ** medianIn, ** medianOut = nullptr;
     int BufferIndex = 0;
 
     for (int iteration = 1; iteration <= iterations; ++iteration) {
@@ -454,10 +454,10 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
     const bool useNoiseLCurve = (noiseLCurve && noiseLCurve.getSum() >= 7.f);
     const bool autoch = (settings->leveldnautsimpl == 1 && (dnparams.Cmethod == "AUT" || dnparams.Cmethod == "PRE")) || (settings->leveldnautsimpl == 0 && (dnparams.C2method == "AUTO" || dnparams.C2method == "PREV"));
 
-    float** lumcalc;
-    float* lumcalcBuffer;
-    float** ccalc;
-    float* ccalcBuffer;
+    float** lumcalc = nullptr;
+    float* lumcalcBuffer = nullptr;
+    float** ccalc = nullptr;
+    float* ccalcBuffer = nullptr;
 
     bool ponder = false;
     float ponderCC = 1.f;
@@ -495,9 +495,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
     //printf("NL=%f \n",noisevarL);
     if (useNoiseLCurve || useNoiseCCurve) {
-        int hei = calclum->height;
-        int wid = calclum->width;
-        TMatrix wprofi = iccStore->workingSpaceMatrix (params->icm.working);
+        int hei = calclum->getHeight();
+        int wid = calclum->getWidth();
+        TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
         const float wpi[3][3] = {
             {static_cast<float>(wprofi[0][0]), static_cast<float>(wprofi[0][1]), static_cast<float>(wprofi[0][2])},
@@ -518,7 +518,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
             ccalc[i] = ccalcBuffer + (i * wid);
         }
 
-        float cn100Precalc;
+        float cn100Precalc = 0.f;
 
         if (useNoiseCCurve) {
             cn100Precalc = SQR(1.f + ponderCC * (4.f * noiseCCurve[100.f / 60.f]));
@@ -573,7 +573,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
         calclum = nullptr;
     }
 
-    const short int imheight = src->height, imwidth = src->width;
+    const short int imheight = src->getHeight(), imwidth = src->getWidth();
 
     if (dnparams.luma != 0 || dnparams.chroma != 0 || dnparams.methodmed == "Lab" || dnparams.methodmed == "Lonly") {
         // gamma transform for input data
@@ -622,13 +622,13 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 
             for (int i = 0; i < TS; ++i) {
                 float i1 = abs((i > TS / 2 ? i - TS + 1 : i));
-                float vmask = (i1 < border ? SQR(sin((M_PI * i1) / (2 * border))) : 1.0f);
-                float vmask2 = (i1 < 2 * border ? SQR(sin((M_PI * i1) / (2 * border))) : 1.0f);
+                float vmask = (i1 < border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
+                float vmask2 = (i1 < 2 * border ? SQR(sin((rtengine::RT_PI * i1) / (2 * border))) : 1.0f);
 
                 for (int j = 0; j < TS; ++j) {
                     float j1 = abs((j > TS / 2 ? j - TS + 1 : j));
-                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((M_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
-                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((M_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_in[i][j] = (vmask * (j1 < border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
+                    tilemask_out[i][j] = (vmask2 * (j1 < 2 * border ? SQR(sin((rtengine::RT_PI * j1) / (2 * border))) : 1.0f)) + epsilon;
 
                 }
             }
@@ -764,7 +764,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 }
             }
 
-            TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
             //inverse matrix user select
             const float wip[3][3] = {
                 {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
@@ -772,7 +772,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
             };
 
-            TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
             const float wp[3][3] = {
                 {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
@@ -1512,7 +1512,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                                 }
 
                                 for (int i = 0; i < overlap; ++i) {
-                                    float mask = SQR(xsinf((M_PI * i) / (2 * overlap)));
+                                    float mask = SQR(xsinf((rtengine::RT_PI * i) / (2 * overlap)));
 
                                     if (tiletop > 0) {
                                         Vmask[i] = mask;
@@ -1717,8 +1717,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
                 #pragma omp parallel for
 #endif
 
-                for (int i = 0; i < dst->height; ++i) {
-                    for (int j = 0; j < dst->width; ++j) {
+                for (int i = 0; i < dst->getHeight(); ++i) {
+                    for (int j = 0; j < dst->getWidth(); ++j) {
                         dst->r(i, j) = Color::gammatab_srgb[ dst->r(i, j) ];
                         dst->g(i, j) = Color::gammatab_srgb[ dst->g(i, j) ];
                         dst->b(i, j) = Color::gammatab_srgb[ dst->b(i, j) ];
@@ -1746,7 +1746,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagef
 //median 3x3 in complement on RGB
     if (dnparams.methodmed == "RGB" && dnparams.median) {
 //printf("RGB den\n");
-        int wid = dst->width, hei = dst->height;
+        int wid = dst->getWidth(), hei = dst->getHeight();
         float** tm;
         tm = new float*[hei];
 
@@ -3115,9 +3115,9 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
     float** lumcalc;
     float** acalc;
     float** bcalc;
-    hei = provicalc->height;
-    wid = provicalc->width;
-    TMatrix wprofi = iccStore->workingSpaceMatrix (params->icm.working);
+    hei = provicalc->getHeight();
+    wid = provicalc->getWidth();
+    TMatrix wprofi = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
 
     const float wpi[3][3] = {
         {static_cast<float>(wprofi[0][0]), static_cast<float>(wprofi[0][1]), static_cast<float>(wprofi[0][2])},
@@ -3165,7 +3165,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    const int imheight = src->height, imwidth = src->width;
+    const int imheight = src->getHeight(), imwidth = src->getWidth();
 
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
@@ -3192,7 +3192,7 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
 
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.working);
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
         {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
@@ -3497,7 +3497,8 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                     bdecomp = new wavelet_decomposition (labdn->data + 2 * datalen, labdn->W, labdn->H, levwav, 1);
                 }
             }
-            bool autoch = dnparams.autochroma;
+            const bool autoch = (settings->leveldnautsimpl == 1 && (dnparams.Cmethod == "AUT" || dnparams.Cmethod == "PRE")) || (settings->leveldnautsimpl == 0 && (dnparams.C2method == "AUTO" || dnparams.C2method == "PREV"));
+
 
             if (comptlevel == 0) {
                 WaveletDenoiseAll_info(

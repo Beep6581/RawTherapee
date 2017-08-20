@@ -102,6 +102,9 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
     if (n < 5) {
         printf ("Not sufficient features.\n");
         distortion = 0.0;
+        KLTFreeFeatureTable(ft);
+        KLTFreeFeatureList(fl);
+        KLTFreeTrackingContext(tc);
         return -1;
     }
 
@@ -154,6 +157,9 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
     if (new_n < 5) {
         printf ("Not sufficient features.\n");
         distortion = 0.0;
+        KLTFreeFeatureTable(ft);
+        KLTFreeFeatureList(fl);
+        KLTFreeTrackingContext(tc);
         return -1;
     }
 
@@ -252,17 +258,27 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
     if (total_delta / new_n > DELTA_2) {
         printf ("Deviation is too big.\n");
         distortion = 0.0;
+        KLTFreeFeatureTable(ft);
+        KLTFreeFeatureList(fl);
+        KLTFreeTrackingContext(tc);
         return -2;
     }
 
     if (rxy < RXY_LIMIT) {
         printf ("Not linear enough\n");
         distortion = 0.0;
+        KLTFreeFeatureTable(ft);
+        KLTFreeFeatureList(fl);
+        KLTFreeTrackingContext(tc);
         return -3;
     }
 
     printf ("distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta / n, rxy);
     distortion = a;
+
+    KLTFreeFeatureTable(ft);
+    KLTFreeFeatureList(fl);
+    KLTFreeTrackingContext(tc);
     return 1;
 }
 

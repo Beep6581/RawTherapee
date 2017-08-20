@@ -393,6 +393,9 @@ public:
                     v(y, x) = tmp;
                 }
             }
+#ifdef _OPENMP
+            static_cast<void>(bigImage); // to silence cppcheck warning
+#endif
         }
     }
 
@@ -477,6 +480,9 @@ public:
                 v(i, j) = v(i, x);
                 v(i, x) = temp;
             }
+#ifdef _OPENMP
+        static_cast<void>(bigImage); // to silence cppcheck warning
+#endif
     }
 
     void vflip ()
@@ -499,6 +505,9 @@ public:
                 v(i, j) = v(y, j);
                 v(y, j) = temp;
             }
+#ifdef _OPENMP
+        static_cast<void>(bigImage); // to silence cppcheck warning
+#endif
     }
 
     void calcHist(unsigned int *hist16)
@@ -826,6 +835,9 @@ public:
                     b(y, x) = tmp;
                 }
             }
+#ifdef _OPENMP
+            static_cast<void>(bigImage); // to silence cppcheck warning
+#endif
         }
     }
 
@@ -914,6 +926,9 @@ public:
                 b(i, j) = b(i, x);
                 b(i, x) = temp;
             }
+#ifdef _OPENMP
+        static_cast<void>(bigImage); // to silence cppcheck warning
+#endif
     }
 
     void vflip ()
@@ -944,6 +959,9 @@ public:
                 b(i, j) = b(y, j);
                 b(y, j) = tempB;
             }
+#ifdef _OPENMP
+        static_cast<void>(bigImage); // to silence cppcheck warning
+#endif
     }
 
     void calcGrayscaleHist(unsigned int *hist16)
@@ -1327,7 +1345,7 @@ public:
         b.height_ = height;
 #endif
 
-        abData.resize(width * height * 3);
+        abData.resize(width * height * 3u);
 
         if (!abData.isEmpty()) {
             data = abData.data;

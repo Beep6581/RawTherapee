@@ -4,15 +4,17 @@
  *  Created on: 20/nov/2010
  */
 
-#include "rawimage.h"
-#include "settings.h"
-#include "camconst.h"
-#include "utils.h"
+#include <strings.h>
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
+
+#include "rawimage.h"
+#include "settings.h"
+#include "camconst.h"
+#include "utils.h"
 
 namespace rtengine
 {
@@ -23,9 +25,9 @@ RawImage::RawImage(  const Glib::ustring &name )
     : data(nullptr)
     , prefilters(0)
     , filename(name)
+    , rotate_deg(0)
     , profile_data(nullptr)
     , allocation(nullptr)
-    , rotate_deg(0)
 {
     memset(maximum_c4, 0, sizeof(maximum_c4));
     RT_matrix_from_constant = 0;
@@ -37,6 +39,7 @@ RawImage::~RawImage()
 {
     if(ifp) {
         fclose(ifp);
+        ifp = nullptr;
     }
 
     if( image ) {
@@ -82,9 +85,9 @@ eSensorType RawImage::getSensorType()
  */
 void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB)
 {
-    unsigned  row, col, x, y, c, sum[8];
-    unsigned  W = this->get_width();
-    unsigned  H = this->get_height();
+    unsigned sum[8], c;
+    unsigned W = this->get_width();
+    unsigned H = this->get_height();
     float val;
     double dsum[8], dmin, dmax;
 
@@ -96,6 +99,9 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
         }
     } else if ((this->get_cblack(4) + 1) / 2 == 1 && (this->get_cblack(5) + 1) / 2 == 1) {
         for (int c = 0; c < 4; c++) {
+            cblack_[c] = this->get_cblack(c);
+        }
+        for (int c = 0; c < 4; c++) {
             cblack_[FC(c / 2, c % 2)] = this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
             pre_mul_[c] = this->get_pre_mul(c);
         }
@@ -106,7 +112,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
         }
     }
 
-    if ( this->get_cam_mul(0) == -1 || forceAutoWB) {
+    if (data && (this->get_cam_mul(0) == -1 || forceAutoWB)) {
         memset(dsum, 0, sizeof dsum);
 
         if (this->isBayer()) {
@@ -116,7 +122,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
             dsum[FC(1, 0) + 4] += (int)(((W + 1) / 2) * (H / 2));
             dsum[FC(1, 1) + 4] += (int)((W / 2) * (H / 2));
 
-            #pragma omp parallel private(val,row,col,x,y)
+            #pragma omp parallel private(val)
             {
                 double dsumthr[8];
                 memset(dsumthr, 0, sizeof dsumthr);
@@ -133,15 +139,15 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
                 float *tempdata = data[0];
                 #pragma omp for nowait
 
-                for (row = 0; row < H; row += 8) {
-                    int ymax = row + 8 < H ? row + 8 : H;
+                for (size_t row = 0; row < H; row += 8) {
+                    size_t ymax = row + 8 < H ? row + 8 : H;
 
-                    for (col = 0; col < W ; col += 8) {
-                        int xmax = col + 8 < W ? col + 8 : W;
+                    for (size_t col = 0; col < W ; col += 8) {
+                        size_t xmax = col + 8 < W ? col + 8 : W;
                         memset(sum, 0, sizeof sum);
 
-                        for (y = row; y < ymax; y++)
-                            for (x = col; x < xmax; x++) {
+                        for (size_t y = row; y < ymax; y++)
+                            for (size_t x = col; x < xmax; x++) {
                                 int c = FC(y, x);
                                 val = tempdata[y * W + x];
 
@@ -202,13 +208,13 @@ skip_block2:
 
                 #pragma omp for nowait
 
-                for (int row = 0; row < H; row += 8)
-                    for (int col = 0; col < W ; col += 8)
+                for (size_t row = 0; row < H; row += 8)
+                    for (size_t col = 0; col < W ; col += 8)
                     {
                         memset(sum, 0, sizeof sum);
 
-                        for (int y = row; y < row + 8 && y < H; y++)
-                            for (int x = col; x < col + 8 && x < W; x++) {
+                        for (size_t y = row; y < row + 8 && y < H; y++)
+                            for (size_t x = col; x < col + 8 && x < W; x++) {
                                 int c = XTRANSFC(y, x);
                                 float val = data[y][x];
 
@@ -246,12 +252,12 @@ skip_block3:
                 pre_mul_[c] = 1;
             }
         } else {
-            for (row = 0; row < H; row += 8)
-                for (col = 0; col < W ; col += 8) {
+            for (size_t row = 0; row < H; row += 8)
+                for (size_t col = 0; col < W ; col += 8) {
                     memset(sum, 0, sizeof sum);
 
-                    for (y = row; y < row + 8 && y < H; y++)
-                        for (x = col; x < col + 8 && x < W; x++)
+                    for (size_t y = row; y < row + 8 && y < H; y++)
+                        for (size_t x = col; x < col + 8 && x < W; x++)
                             for (int c = 0; c < 3; c++) {
                                 if (this->isBayer()) {
                                     c = FC(y, x);
@@ -292,8 +298,8 @@ skip_block:
     } else {
         memset(sum, 0, sizeof sum);
 
-        for (row = 0; row < 8; row++)
-            for (col = 0; col < 8; col++) {
+        for (size_t row = 0; row < 8; row++)
+            for (size_t col = 0; col < 8; col++) {
                 int c = FC(row, col);
 
                 if ((val = white[row][col] - cblack_[c]) > 0) {
@@ -398,14 +404,18 @@ skip_block:
     }
 }
 
-int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistener, double progressRange)
+int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
 {
     ifname = filename.c_str();
     image = nullptr;
     verbose = settings->verbose;
     oprof = nullptr;
 
-    ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+    if(!ifp) {
+        ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+    } else  {
+        fseek (ifp, 0, SEEK_SET);
+    }
 
     if (!ifp) {
         return 3;
@@ -422,7 +432,12 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
     raw_image = nullptr;
 
     //***************** Read ALL raw file info
-    identify ();
+    // set the number of the frame to extract. If the number is larger then number of existing frames - 1, dcraw will handle that correctly
+
+    shot_select = imageNum;
+    identify();
+    // in case dcraw didn't handle the above mentioned case...
+    shot_select = std::min(shot_select, std::max(is_raw, 1u) - 1);
 
     if (!is_raw) {
         fclose(ifp);
@@ -434,6 +449,10 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
 
         return 2;
     }
+
+    if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2u != raw_size) {
+        parse_fuji_compressed_header();
+	}
 
     if (flip == 5) {
         this->rotate_deg = 270;
@@ -534,7 +553,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
             free (raw_image);
             raw_image = nullptr;
         } else {
-            if (is_foveon && cc && cc->has_rawCrop()) { // foveon images
+            if (get_maker() == "Sigma" && cc && cc->has_rawCrop()) { // foveon images
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);
                 left_margin = lm;
@@ -593,7 +612,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
                     if(tiff_bps > 0 && maximum_c4[i] > 0 && !isFoveon()) {
                         unsigned compare = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
 
-                        while(maximum_c4[i] > compare) {
+                        while(static_cast<uint64_t>(maximum_c4[i]) > compare) {
                             maximum_c4[i] >>= 1;
                         }
                     }
@@ -621,7 +640,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
         }
 
         for (int c = 0; c < 4; c++) {
-            if (cblack[c] < black_c4[c]) {
+            if (static_cast<int>(cblack[c]) < black_c4[c]) {
                 cblack[c] = black_c4[c];
             }
         }
@@ -654,7 +673,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile, ProgressListener *plistene
     return 0;
 }
 
-float** RawImage::compress_image()
+float** RawImage::compress_image(int frameNum)
 {
     if( !image ) {
         return nullptr;
@@ -662,11 +681,12 @@ float** RawImage::compress_image()
 
     if (isBayer() || isXtrans()) {
         if (!allocation) {
-            allocation = new float[height * width];
+            // shift the beginning of all frames but the first by 32 floats to avoid cache miss conflicts on CPUs which have <= 4-way associative L1-Cache
+            allocation = new float[height * width + frameNum * 32];
             data = new float*[height];
 
             for (int i = 0; i < height; i++) {
-                data[i] = allocation + i * width;
+                data[i] = allocation + i * width + frameNum * 32;
             }
         }
     } else if (colors == 1) {
@@ -723,6 +743,10 @@ float** RawImage::compress_image()
                 this->data[row][col] = image[row * width + col][0];
             }
     } else {
+        if(get_maker() == "Sigma" && dng_version) { // Hack to prevent sigma dng files from crashing
+            height -= top_margin;
+            width -= left_margin;
+        }
         #pragma omp parallel for
 
         for (int row = 0; row < height; row++)
@@ -763,7 +787,7 @@ RawImage::is_ppmThumb() const
              !thumb_load_raw );
 }
 
-void RawImage::getXtransMatrix( char XtransMatrix[6][6])
+void RawImage::getXtransMatrix( int XtransMatrix[6][6])
 {
     for(int row = 0; row < 6; row++)
         for(int col = 0; col < 6; col++) {
@@ -1058,7 +1082,7 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
     char name[strlen(make) + strlen(model) + 32];
     sprintf(name, "%s %s", make, model);
 
-    for (int i = 0; i < sizeof table / sizeof(table[0]); i++) {
+    for (size_t i = 0; i < sizeof table / sizeof(table[0]); i++) {
         if (strcasecmp(name, table[i].prefix) == 0) {
             *black_level = table[i].black_level;
             *white_level = table[i].white_level;

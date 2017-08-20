@@ -45,15 +45,14 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 //
 //==============================================================================
 
-    double fMaxElem;
     double fAcc;
 
-    int i, j, k, m;
+    int i, j, k;
 
     for(k = 0; k < (nDim - 1); k++) { // base row of matrix
         // search of line with max element
-        fMaxElem = fabs( pfMatr[k * nDim + k] );
-        m = k;
+        double fMaxElem = fabs( pfMatr[k * nDim + k] );
+        int m = k;
 
         for (i = k + 1; i < nDim; i++) {
             if(fMaxElem < fabs(pfMatr[i * nDim + k]) ) {
@@ -112,7 +111,7 @@ bool LinEqSolve(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
 using namespace std;
 using namespace rtengine;
 
-void RawImageSource::CA_correct_RT(const double cared, const double cablue, const double caautostrength)
+void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData)
 {
 // multithreaded and partly vectorized by Ingo Weyrich
     constexpr int ts = 128;
@@ -134,7 +133,6 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
         plistener->setProgress (progress);
     }
 
-    const bool autoCA = (cared == 0 && cablue == 0);
     // local variables
     const int width = W, height = H;
     //temporary array to store simple interpolation of G
@@ -242,7 +240,6 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                         for (int row = rr + top, cc = ccmin; cc < ccmax; cc++) {
                             int col = cc + left;
                             int c = FC(rr, cc);
-                            int indx = row * width + col;
                             int indx1 = rr * ts + cc;
                             rgb[c][indx1] = (rawData[row][col]) / 65535.0f;
                         }
@@ -695,7 +692,7 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
                 //fitparams[polyord*i+j] gives the coefficients of (vblock^i hblock^j) in a polynomial fit for i,j<=4
             }
             //end of initialization for CA correction pass
-            //only executed if cared and cablue are zero
+            //only executed if autoCA is true
         }
 
         // Main algorithm: Tile loop
@@ -967,11 +964,10 @@ void RawImageSource::CA_correct_RT(const double cared, const double cablue, cons
 
                     // copy CA corrected results to temporary image matrix
                     for (int rr = border; rr < rr1 - border; rr++) {
-                        int c = FC(rr + top, left + border + FC(rr + top, 2) & 1);
+                        int c = FC(rr + top, left + border + (FC(rr + top, 2) & 1));
 
                         for (int row = rr + top, cc = border + (FC(rr, 2) & 1), indx = (row * width + cc + left) >> 1; cc < cc1 - border; cc += 2, indx++) {
-                            int col = cc + left;
-                            RawDataTmp[indx] = 65535.0f * rgb[c][(rr) * ts + cc] + 0.5f;
+                            RawDataTmp[indx] = 65535.0f * rgb[c][(rr) * ts + cc];
                         }
                     }
 

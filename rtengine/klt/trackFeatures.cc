@@ -640,31 +640,31 @@ static void _am_getGradientWinAffine(
   
 }
 
-/*********************************************************************
- * _computeAffineMappedImage
- * used only for DEBUG output
- *     
-*/
-
-static void _am_computeAffineMappedImage(
-					 _KLT_FloatImage img,   /* images */
-					 float x, float y,      /* center of window  */
-					 float Axx, float Ayx , float Axy, float Ayy,    /* affine mapping */   
-					 int width, int height,  /* size of window */
-					 _FloatWindow imgdiff)   /* output */
-{
-  int hw = width/2, hh = height/2;
-  int i, j;
-  float mi, mj;
-
-  /* Compute values */
-  for (j = -hh ; j <= hh ; j++)
-    for (i = -hw ; i <= hw ; i++)  {
-      mi = Axx * i + Axy * j;
-      mj = Ayx * i + Ayy * j;
-      *imgdiff++ = _interpolate(x+mi, y+mj, img);
-    }
-}
+///*********************************************************************
+// * _computeAffineMappedImage
+// * used only for DEBUG output
+// *     
+//*/
+//
+//static void _am_computeAffineMappedImage(
+//					 _KLT_FloatImage img,   /* images */
+//					 float x, float y,      /* center of window  */
+//					 float Axx, float Ayx , float Axy, float Ayy,    /* affine mapping */   
+//					 int width, int height,  /* size of window */
+//					 _FloatWindow imgdiff)   /* output */
+//{
+//  int hw = width/2, hh = height/2;
+//  int i, j;
+//  float mi, mj;
+//
+//  /* Compute values */
+//  for (j = -hh ; j <= hh ; j++)
+//    for (i = -hw ; i <= hw ; i++)  {
+//      mi = Axx * i + Axy * j;
+//      mj = Ayx * i + Ayy * j;
+//      *imgdiff++ = _interpolate(x+mi, y+mj, img);
+//    }
+//}
 
 
 /*********************************************************************
@@ -986,7 +986,7 @@ static int _am_trackFeatureAffine(
 
 
   _FloatWindow imgdiff, gradx, grady;
-  float gxx, gxy, gyy, ex, ey, dx, dy;
+  float gxx, gxy, gyy, ex, ey, dx = 0.f, dy = 0.f;
   int iteration = 0;
   int status = 0;
   int hw = width/2;
@@ -1253,7 +1253,7 @@ void KLTTrackFeatures(
 		pyramid2, pyramid2_gradx, pyramid2_grady;
 	float subsampling = (float) tc->subsampling;
 	float xloc, yloc, xlocout, ylocout;
-	int val;
+	int val = 0;
 	int indx, r;
 	KLT_BOOL floatimg1_created = FALSE;
 	int i;

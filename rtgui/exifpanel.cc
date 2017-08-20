@@ -38,7 +38,6 @@ ExifPanel::ExifPanel () : idata(nullptr)
     exifTree->set_reorderable(false);
     exifTree->set_enable_search(true);
     exifTree->get_selection()->set_mode (Gtk::SELECTION_MULTIPLE);
-    scrolledWindow->set_border_width(2);
     scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledWindow->set_policy(Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
     scrolledWindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
@@ -54,10 +53,16 @@ ExifPanel::ExifPanel () : idata(nullptr)
     Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
     Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());
     Gtk::CellRendererText *render_txt = Gtk::manage(new Gtk::CellRendererText());
+    render_txt->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcol->pack_start (*render_pb, false);
     viewcol->pack_start (*render_txt, true);
     viewcol->add_attribute (*render_pb, "pixbuf", exifColumns.icon);
     viewcol->add_attribute (*render_txt, "markup", exifColumns.field);
+    viewcol->set_expand(true);
+    viewcol->set_resizable (true);
+    viewcol->set_fixed_width(35);
+    viewcol->set_min_width(35);
+    viewcol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     render_pb->property_ypad() = 0;
     render_txt->property_ypad() = 0;
@@ -68,8 +73,14 @@ ExifPanel::ExifPanel () : idata(nullptr)
 
     Gtk::TreeView::Column *viewcolv = Gtk::manage(new Gtk::TreeView::Column ("Value"));
     Gtk::CellRendererText *render_txtv = Gtk::manage(new Gtk::CellRendererText());
+    render_txtv->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcolv->pack_start (*render_txtv, true);
     viewcolv->add_attribute (*render_txtv, "markup", exifColumns.value);
+    viewcolv->set_expand(true);
+    viewcolv->set_resizable (true);
+    viewcol->set_fixed_width(35);
+    viewcolv->set_min_width(35);
+    viewcolv->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
     render_txtv->property_ypad() = 0;
 
@@ -77,33 +88,49 @@ ExifPanel::ExifPanel () : idata(nullptr)
 
     pack_start (*scrolledWindow);
 
-    Gtk::HBox* buttons1 = Gtk::manage(new Gtk::HBox ());
-    Gtk::HBox* buttons2 = Gtk::manage(new Gtk::HBox ());
+    Gtk::Grid* buttons1 = Gtk::manage(new Gtk::Grid());
+    buttons1->set_row_homogeneous(true);
+    buttons1->set_column_homogeneous(true);
+    setExpandAlignProperties(buttons1, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    Gtk::Grid* buttons2 = Gtk::manage(new Gtk::Grid());
+    buttons2->set_row_homogeneous(true);
+    buttons2->set_column_homogeneous(true);
+    setExpandAlignProperties(buttons2, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    remove = Gtk::manage(new Gtk::Button (M("EXIFPANEL_REMOVE")));
+    remove = Gtk::manage(new Gtk::Button ());  // M("EXIFPANEL_REMOVE")
     remove->set_image (*Gtk::manage(new Gtk::Image (delicon)));
     remove->set_tooltip_text (M("EXIFPANEL_REMOVEHINT"));
-    buttons1->pack_start (*remove);
+    remove->get_style_context()->add_class("Left");
+    setExpandAlignProperties(remove, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    buttons1->attach_next_to(*remove, Gtk::POS_LEFT, 1, 1);
 
-    keep = Gtk::manage(new Gtk::Button (M("EXIFPANEL_KEEP")));
+    keep = Gtk::manage(new Gtk::Button ());  // M("EXIFPANEL_KEEP")
     keep->set_image (*Gtk::manage(new Gtk::Image (keepicon)));
     keep->set_tooltip_text (M("EXIFPANEL_KEEPHINT"));
-    buttons1->pack_start (*keep);
+    keep->get_style_context()->add_class("MiddleH");
+    setExpandAlignProperties(keep, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    buttons1->attach_next_to(*keep, Gtk::POS_RIGHT, 1, 1);
 
-    add = Gtk::manage(new Gtk::Button (M("EXIFPANEL_ADDEDIT")));
+    add = Gtk::manage(new Gtk::Button ());  // M("EXIFPANEL_ADDEDIT")
     add->set_image (*Gtk::manage(new Gtk::Image (editicon)));
     add->set_tooltip_text (M("EXIFPANEL_ADDEDITHINT"));
-    buttons1->pack_start (*add);
+    add->get_style_context()->add_class("Right");
+    setExpandAlignProperties(add, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    buttons1->attach_next_to(*add, Gtk::POS_RIGHT, 1, 1);
 
-    reset = Gtk::manage(new Gtk::Button (M("EXIFPANEL_RESET")));
+    reset = Gtk::manage(new Gtk::Button ());  // M("EXIFPANEL_RESET")
     reset->set_image (*Gtk::manage(new RTImage ("gtk-undo-ltr.png", "gtk-undo-rtl.png")));
     reset->set_tooltip_text (M("EXIFPANEL_RESETHINT"));
-    buttons2->pack_start (*reset);
+    reset->get_style_context()->add_class("Left");
+    setExpandAlignProperties(reset, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    buttons2->attach_next_to(*reset, Gtk::POS_LEFT, 1, 1);
 
-    resetAll = Gtk::manage(new Gtk::Button (M("EXIFPANEL_RESETALL")));
+    resetAll = Gtk::manage(new Gtk::Button ());  // M("EXIFPANEL_RESETALL")
     resetAll->set_image (*Gtk::manage(new RTImage ("gtk-undoall-ltr.png", "gtk-undoall-rtl.png")));
     resetAll->set_tooltip_text (M("EXIFPANEL_RESETALLHINT"));
-    buttons2->pack_start (*resetAll);
+    resetAll->get_style_context()->add_class("Right");
+    setExpandAlignProperties(resetAll, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    buttons2->attach_next_to(*resetAll, Gtk::POS_RIGHT, 1, 1);
 
     pack_end (*buttons2, Gtk::PACK_SHRINK);
     pack_end (*buttons1, Gtk::PACK_SHRINK);
@@ -155,18 +182,6 @@ void ExifPanel::setImageData (const ImageMetaData* id)
 
     idata = id;
     exifTreeModel->clear ();
-
-    const std::vector<Tag*> defTags = ExifManager::getDefaultTIFFTags (nullptr);
-
-    for (size_t i = 0; i < defTags.size(); i++) {
-        Tag* defTag = defTags[i];
-        if (defTag->nameToString() == "ImageWidth" || defTag->nameToString() == "ImageHeight" || defTag->nameToString() == "BitsPerSample") {
-            addTag (exifTreeModel->children(), defTag->nameToString(), "?", AC_SYSTEM, false);
-        } else {
-            addTag (exifTreeModel->children(), defTag->nameToString(), defTag->valueToString(), AC_SYSTEM, false);
-        }
-        delete defTag;
-    }
 
     if (id && id->getExifData ()) {
 //        id->getExifData ()->printAll ();
@@ -400,7 +415,7 @@ void ExifPanel::resetAllPressed ()
 void ExifPanel::addPressed ()
 {
 
-    Gtk::Dialog* dialog = new Gtk::Dialog (M("EXIFPANEL_ADDTAGDLG_TITLE"), *((Gtk::Window*)get_toplevel()), true, true);
+    Gtk::Dialog* dialog = new Gtk::Dialog (M("EXIFPANEL_ADDTAGDLG_TITLE"), *((Gtk::Window*)get_toplevel()), true);
     dialog->add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
     dialog->add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 
@@ -410,10 +425,10 @@ void ExifPanel::addPressed ()
     Gtk::Label* tlabel = new Gtk::Label (M("EXIFPANEL_ADDTAGDLG_SELECTTAG") + ":");
     MyComboBoxText* tcombo = new MyComboBoxText ();
 
-    tcombo->append_text ("Artist");
-    tcombo->append_text ("Copyright");
-    tcombo->append_text ("ImageDescription");
-    tcombo->append_text ("Exif.UserComment");
+    tcombo->append ("Artist");
+    tcombo->append ("Copyright");
+    tcombo->append ("ImageDescription");
+    tcombo->append ("Exif.UserComment");
 
     hb1->pack_start (*tlabel, Gtk::PACK_SHRINK, 4);
     hb1->pack_start (*tcombo);
@@ -431,7 +446,7 @@ void ExifPanel::addPressed ()
         tcombo->set_active_text (sel);
 
         if (!tcombo->get_active ()) {
-            tcombo->append_text (sel);
+            tcombo->append (sel);
             tcombo->set_active_text (sel);
         }
 
@@ -440,8 +455,8 @@ void ExifPanel::addPressed ()
 
     ventry->set_activates_default (true);
     dialog->set_default_response (Gtk::RESPONSE_OK);
-    dialog->get_vbox()->pack_start (*hb1, Gtk::PACK_SHRINK);
-    dialog->get_vbox()->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
+    dialog->get_content_area()->pack_start (*hb1, Gtk::PACK_SHRINK);
+    dialog->get_content_area()->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
     tlabel->show ();
     tcombo->show ();
     vlabel->show ();

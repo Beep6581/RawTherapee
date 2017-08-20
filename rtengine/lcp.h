@@ -17,36 +17,53 @@
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _LCP_
-#define _LCP_
+#pragma once
+
+#include <array>
+#include <map>
+#include <string>
+#include <sstream>
+
+#include <glibmm.h>
+#include <expat.h>
 
 #include "imagefloat.h"
-#include "../rtgui/threadutils.h"
-#include <glibmm.h>
-#include <map>
-#include <list>
-#include <string>
-#include <expat.h>
+#include "opthelper.h"
 
 namespace rtengine
 {
+
 // Perspective model common data, also used for Vignette and Fisheye
-class LCPModelCommon
+class LCPModelCommon final
 {
 public:
-    float focLenX, focLenY, imgXCenter, imgYCenter;
-    float param[5];  // k1..k5, resp. alpha1..5
-    float scaleFac;  // alpha0
-    double meanErr;
-    bool badErr;
-
-    double x0, y0, fx, fy; // prepared params
-
     LCPModelCommon();
     bool empty() const;  // is it empty
     void print() const;  // printf all values
     void merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA);
     void prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY);
+
+//private:
+    using Param = std::array<float, 5>;
+    using VignParam = std::array<float, 4>;
+
+    float foc_len_x;
+    float foc_len_y;
+    float img_center_x;
+    float img_center_y;
+    Param param;  // k1..k5, resp. alpha1..5
+    float scale_factor;  // alpha0
+    double mean_error;
+    bool bad_error;
+
+    // prepared params
+    float x0;
+    float y0;
+    float fx;
+    float fy;
+    float rfx;
+    float rfy;
+    VignParam vign_param;
 };
 
 class LCPPersModel
@@ -78,6 +95,9 @@ class LCPProfile
 
     int filterBadFrames(double maxAvgDevFac, int minFramesLeft);
 
+    void handle_text(std::string text);
+    std::ostringstream textbuf;
+
 public:
     // Common data
     Glib::ustring profileName, lensPrettyName, cameraPrettyName, lens, camera;  // lens/camera(=model) can be auto-matched with DNG
@@ -90,6 +110,7 @@ public:
     LCPPersModel* aPersModel[MaxPersModelCount];  // Do NOT use std::list or something, it's buggy in GCC!
 
     explicit LCPProfile(const Glib::ustring &fname);
+    ~LCPProfile();
 
     void calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const;  // Interpolates between the persModels frames
 
@@ -104,6 +125,7 @@ class LCPStore
     std::map<Glib::ustring, LCPProfile*> profileCache;
 
 public:
+    ~LCPStore();
     Glib::ustring getDefaultCommonDirectory() const;
     bool isValidLCPFileName(Glib::ustring filename) const;
     LCPProfile* getProfile(Glib::ustring filename);
@@ -122,6 +144,7 @@ class LCPMapper
     bool swapXY;
     LCPModelCommon mc;
     LCPModelCommon chrom[3];  // in order RedGreen/Green/BlueGreen
+    bool isFisheye;
 
 public:
     bool enableCA;  // is the mapper capable if CA correction?
@@ -130,9 +153,10 @@ public:
     LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
               const CoarseTransformParams& coarse, int rawRotationDeg);
 
-    void  correctDistortion(double& x, double& y) const;  // MUST be the first stage
-    void  correctCA(double& x, double& y, int channel) const;
-    float calcVignetteFac  (int x, int y) const;  // MUST be in RAW
+    void correctDistortion(double& x, double& y, double scale) const;  // MUST be the first stage
+    void correctCA(double& x, double& y, int channel) const;
+    void processVignetteLine(int width, int y, float *line) const;
+    void processVignetteLine3Channels(int width, int y, float *line) const;
 };
+
 }
-#endif

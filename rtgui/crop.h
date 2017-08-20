@@ -27,23 +27,73 @@
 
 class CropPanelListener
 {
-
 public:
-    virtual void cropSelectRequested () {}
+    virtual ~CropPanelListener() = default;
+
+    virtual void cropSelectRequested() = 0;
 };
 
-class CropRatio
-{
-
-public:
+struct CropRatio {
     Glib::ustring label;
     double value;
 };
 
-class Crop : public ToolParamBlock, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener
+class Crop final :
+    public ToolParamBlock,
+    public CropGUIListener,
+    public FoldableToolPanel,
+    public rtengine::SizeListener
 {
+public:
+    Crop();
+    ~Crop();
 
-protected:
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setBatchMode   (bool batchMode);
+
+    void ratioChanged   ();
+    void ratioFixedChanged ();  // The toggle button
+    void refreshSize    ();
+    void selectPressed  ();
+    void setDimensions   (int mw, int mh);
+    void enabledChanged ();
+    void positionChanged ();
+    void widthChanged   ();
+    void heightChanged  ();
+    bool refreshSpins   (bool notify = false);
+    void notifyListener ();
+    void sizeChanged    (int w, int h, int ow, int oh);
+    void trim           (rtengine::procparams::ProcParams* pp, int ow, int oh);
+    void readOptions    ();
+    void writeOptions   ();
+
+    void cropMoved          (int &x, int &y, int &w, int &h);
+    void cropWidth1Resized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropWidth2Resized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropHeight1Resized (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropHeight2Resized (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropTopLeftResized     (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropTopRightResized    (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropBottomLeftResized  (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropBottomRightResized (int &x, int &y, int &w, int &h, float custom_ratio=0.f);
+    void cropInit           (int &x, int &y, int &w, int &h);
+    void cropResized        (int &x, int &y, int& x2, int& y2);
+    void cropManipReady     ();
+    bool inImageArea        (int x, int y);
+    double getRatio         ();
+
+    void setCropPanelListener (CropPanelListener* cl)
+    {
+        clistener = cl;
+    }
+
+    void resizeScaleChanged (double rsc);
+    void hFlipCrop          ();
+    void vFlipCrop          ();
+    void rotateCrop         (int deg, bool hflip, bool vflip);
+
+private:
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;
     MyComboBoxText* orientation;
@@ -69,54 +119,7 @@ protected:
     void adjustCropToRatio();
     std::vector<CropRatio>   cropratio;
 
-public:
-
-    Crop ();
-
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setBatchMode   (bool batchMode);
-
-    void ratioChanged   ();
-    void ratioFixedChanged ();  // The toggle button
-    void refreshSize    ();
-    void selectPressed  ();
-    void setDimensions   (int mw, int mh);
-    void enabledChanged ();
-    void positionChanged ();
-    void widthChanged   ();
-    void heightChanged  ();
-    bool refreshSpins   (bool notify = false);
-    void notifyListener ();
-    void sizeChanged    (int w, int h, int ow, int oh);
-    void trim           (rtengine::procparams::ProcParams* pp, int ow, int oh);
-    void readOptions    ();
-    void writeOptions   ();
-
-    void cropMoved          (int &x, int &y, int &w, int &h);
-    void cropWidth1Resized  (int &x, int &y, int &w, int &h);
-    void cropWidth2Resized  (int &x, int &y, int &w, int &h);
-    void cropHeight1Resized (int &x, int &y, int &w, int &h);
-    void cropHeight2Resized (int &x, int &y, int &w, int &h);
-    void cropTopLeftResized     (int &x, int &y, int &w, int &h);
-    void cropTopRightResized    (int &x, int &y, int &w, int &h);
-    void cropBottomLeftResized  (int &x, int &y, int &w, int &h);
-    void cropBottomRightResized (int &x, int &y, int &w, int &h);
-    void cropInit           (int &x, int &y, int &w, int &h);
-    void cropResized        (int &x, int &y, int& x2, int& y2);
-    void cropManipReady     ();
-    bool inImageArea        (int x, int y);
-    double getRatio         ();
-
-    void setCropPanelListener (CropPanelListener* cl)
-    {
-        clistener = cl;
-    }
-
-    void resizeScaleChanged (double rsc);
-    void hFlipCrop          ();
-    void vFlipCrop          ();
-    void rotateCrop         (int deg, bool hflip, bool vflip);
+    IdleRegister idle_register;
 };
 
 #endif

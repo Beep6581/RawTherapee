@@ -42,6 +42,7 @@ public:
         choices[3] = "TIFF";
         choices[4] = "RAW";
         choices[5] = "Premium";
+        choices[6] = "RAW (HDR enabled)";
         choices[7] = "RAW (pixel shift enabled)";
         choices[65535] = "n/a";
     }
@@ -371,6 +372,12 @@ public:
         choices[37] = "128000";
         choices[38] = "160000";
         choices[39] = "204800";
+        choices[40] = "256000";
+        choices[41] = "320000";
+        choices[42] = "409600";
+        choices[43] = "512000";
+        choices[44] = "640000";
+        choices[45] = "819200";
         choices[50] = "50";
         choices[100] = "100";
         choices[200] = "200";
@@ -412,7 +419,7 @@ public:
         char buffer[32];
         double v = t->toDouble() / 10;
 
-        if( v < 0. || v > 1000. ) {
+        if ( v < 0. || v > 1000. ) {
             return "undef";
         }
 
@@ -604,14 +611,14 @@ public:
     }
     virtual std::string toString (Tag* t)
     {
-        int c = 256 * t->toInt(0, BYTE) + t->toInt(1, BYTE);
+        int c = 256 * t->toInt (0, BYTE) + t->toInt (1, BYTE);
         std::map<int, std::string>::iterator r = choices.find (c);
 
         if (r != choices.end()) {
             std::ostringstream s;
             s << r->second;
 
-            if( t->toInt(1, BYTE) == 0 ) {
+            if ( t->toInt (1, BYTE) == 0 ) {
                 s << "\n1/2 EV steps";
             } else {
                 s << "\n1/3 EV steps";
@@ -663,10 +670,10 @@ public:
     }
     virtual std::string toString (Tag* t)
     {
-        std::map<int, std::string>::iterator r  = choices.find (t->toInt(0, BYTE));
-        std::map<int, std::string>::iterator r1 = choices1.find (t->toInt(1, BYTE));
-        std::map<int, std::string>::iterator r2 = choices2.find (t->toInt(2, BYTE));
-        std::map<int, std::string>::iterator r3 = choices3.find (t->toInt(3, BYTE));
+        std::map<int, std::string>::iterator r  = choices.find (t->toInt (0, BYTE));
+        std::map<int, std::string>::iterator r1 = choices1.find (t->toInt (1, BYTE));
+        std::map<int, std::string>::iterator r2 = choices2.find (t->toInt (2, BYTE));
+        std::map<int, std::string>::iterator r3 = choices3.find (t->toInt (3, BYTE));
         std::ostringstream s;
         s << ((r != choices.end()) ? r->second : "");
         s << ((r1 != choices1.end()) ? r1->second : "") << " ";
@@ -693,335 +700,338 @@ class PALensTypeInterpreter : public IntLensInterpreter< int >
 public:
     PALensTypeInterpreter ()
     {
-        choices.insert(p_t(256 * 0 + 0, "M-42 or No Lens"));
-        choices.insert(p_t(256 * 1 + 0, "K or M Lens"));
-        choices.insert(p_t(256 * 2 + 0, "A Series Lens"));
-        choices.insert(p_t(256 * 3 + 0, "Sigma"));
-        choices.insert(p_t(256 * 3 + 17, "smc PENTAX-FA SOFT 85mm f/2.8"));
-        choices.insert(p_t(256 * 3 + 18, "smc PENTAX-F 1.7X AF ADAPTER"));
-        choices.insert(p_t(256 * 3 + 19, "smc PENTAX-F 24-50mm f/4"));
-        choices.insert(p_t(256 * 3 + 20, "smc PENTAX-F 35-80mm f/4-5.6"));
-        choices.insert(p_t(256 * 3 + 21, "smc PENTAX-F 80-200mm f/4.7-5.6"));
-        choices.insert(p_t(256 * 3 + 22, "smc PENTAX-F FISH-EYE 17-28mm f/3.5-4.5"));
-        choices.insert(p_t(256 * 3 + 23, "smc PENTAX-F 100-300mm f/4.5-5.6 or Sigma Lens"));
-        choices.insert(p_t(256 * 3 + 23, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
-        choices.insert(p_t(256 * 3 + 23, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
-        choices.insert(p_t(256 * 3 + 23, "Tokina 80-200mm f/2.8 ATX-Pro"));
-        choices.insert(p_t(256 * 3 + 24, "smc PENTAX-F 35-135mm f/3.5-4.5"));
-        choices.insert(p_t(256 * 3 + 25, "smc PENTAX-F 35-105mm f/4-5.6 or Sigma or Tokina Lens"));
-        choices.insert(p_t(256 * 3 + 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
-        choices.insert(p_t(256 * 3 + 25, "Sigma 55-200mm f/4-5.6 DC"));
-        choices.insert(p_t(256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DL IF"));
-        choices.insert(p_t(256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
-        choices.insert(p_t(256 * 3 + 25, "Tokina 80-200mm f/2.8 ATX-Pro"));
-        choices.insert(p_t(256 * 3 + 26, "smc PENTAX-F* 250-600mm f/5.6 ED[IF]"));
-        choices.insert(p_t(256 * 3 + 27, "smc PENTAX-F 28-80mm f/3.5-4.5 or Tokina Lens"));
-        choices.insert(p_t(256 * 3 + 27, "Tokina AT-X Pro AF 28-70mm f/2.6-2.8"));
-        choices.insert(p_t(256 * 3 + 28, "smc PENTAX-F 35-70mm f/3.5-4.5 or Tokina Lens"));
-        choices.insert(p_t(256 * 3 + 28, "Tokina 19-35mm f/3.5-4.5 AF"));
-        choices.insert(p_t(256 * 3 + 28, "Tokina AT-X AF 400mm f/5.6"));
-        choices.insert(p_t(256 * 3 + 29, "PENTAX-F 28-80mm f/3.5-4.5 or Sigma or Tokina Lens"));
-        choices.insert(p_t(256 * 3 + 29, "Sigma AF 18-125mm f/3.5-5.6 DC"));
-        choices.insert(p_t(256 * 3 + 29, "Tokina AT-X PRO 28-70mm f/2.6-2.8"));
-        choices.insert(p_t(256 * 3 + 30, "PENTAX-F 70-200mm f/4-5.6"));
-        choices.insert(p_t(256 * 3 + 31, "smc PENTAX-F 70-210mm f/4-5.6 or Tokina or Takumar Lens"));
-        choices.insert(p_t(256 * 3 + 31, "Tokina AF 730 75-300mm f/4.5-5.6"));
-        choices.insert(p_t(256 * 3 + 31, "Takumar-F 70-210mm f/4-5.6"));
-        choices.insert(p_t(256 * 3 + 32, "smc PENTAX-F 50mm f/1.4"));
-        choices.insert(p_t(256 * 3 + 33, "smc PENTAX-F 50mm f/1.7"));
-        choices.insert(p_t(256 * 3 + 34, "smc PENTAX-F 135mm f/2.8 [IF]"));
-        choices.insert(p_t(256 * 3 + 35, "smc PENTAX-F 28mm f/2.8"));
-        choices.insert(p_t(256 * 3 + 36, "Sigma 20mm f/1.8 EX DG Aspherical RF"));
-        choices.insert(p_t(256 * 3 + 38, "smc PENTAX-F* 300mm f/4.5 ED[IF]"));
-        choices.insert(p_t(256 * 3 + 39, "smc PENTAX-F* 600mm f/4 ED[IF]"));
-        choices.insert(p_t(256 * 3 + 40, "smc PENTAX-F Macro 100mm f/2.8"));
-        choices.insert(p_t(256 * 3 + 41, "smc PENTAX-F Macro 50mm f/2.8 or Sigma Lens"));
-        choices.insert(p_t(256 * 3 + 41, "Sigma 50mm f/2.8 Macro"));
-        choices.insert(p_t(256 * 3 + 42, "Sigma 300mm f/2.8 EX DG APO IF"));
-        choices.insert(p_t(256 * 3 + 44, "Sigma or Tamron Lens (3 44)"));
-        choices.insert(p_t(256 * 3 + 44, "Sigma AF 10-20mm f/4-5.6 EX DC"));
-        choices.insert(p_t(256 * 3 + 44, "Sigma 12-24mm f/4.5-5.6 EX DG"));
-        choices.insert(p_t(256 * 3 + 44, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
-        choices.insert(p_t(256 * 3 + 44, "Sigma 18-50mm f/3.5-5.6 DC"));
-        choices.insert(p_t(256 * 3 + 44, "Sigma 17-35mm f/2.8-4 EX DG"));
-        choices.insert(p_t(256 * 3 + 44, "Tamron 35-90mm f/4 AF"));
-        choices.insert(p_t(256 * 3 + 46, "Sigma or Samsung Lens (3 46)"));
-        choices.insert(p_t(256 * 3 + 46, "Sigma APO 70-200mm f/2.8 EX"));
-        choices.insert(p_t(256 * 3 + 46, "Sigma EX APO 100-300mm f/4 IF"));
-        choices.insert(p_t(256 * 3 + 46, "Samsung/Schneider D-XENON 50-200mm f/4-5.6 ED"));
-        choices.insert(p_t(256 * 3 + 50, "smc PENTAX-FA 28-70mm f/4 AL"));
-        choices.insert(p_t(256 * 3 + 51, "Sigma 28mm f/1.8 EX DG Aspherical Macro"));
-        choices.insert(p_t(256 * 3 + 52, "smc PENTAX-FA 28-200mm f/3.8-5.6 AL[IF] or Tamron Lens"));
-        choices.insert(p_t(256 * 3 + 52, "Tamron AF LD 28-200mm f/3.8-5.6 [IF] Aspherical (171D)"));
-        choices.insert(p_t(256 * 3 + 53, "smc PENTAX-FA 28-80mm f/3.5-5.6 AL"));
-        choices.insert(p_t(256 * 3 + 247, "smc PENTAX-DA FISH-EYE 10-17mm f/3.5-4.5 ED[IF]"));
-        choices.insert(p_t(256 * 3 + 248, "smc PENTAX-DA 12-24mm f/4 ED AL[IF]"));
-        choices.insert(p_t(256 * 3 + 250, "smc PENTAX-DA 50-200mm f/4-5.6 ED"));
-        choices.insert(p_t(256 * 3 + 251, "smc PENTAX-DA 40mm f/2.8 Limited"));
-        choices.insert(p_t(256 * 3 + 252, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
-        choices.insert(p_t(256 * 3 + 253, "smc PENTAX-DA 14mm f/2.8 ED[IF]"));
-        choices.insert(p_t(256 * 3 + 254, "smc PENTAX-DA 16-45mm f/4 ED AL"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma Lens (3 255)"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma 18-200mm f/3.5-6.3 DC"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma DL-II 35-80mm f/4-5.6"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma DL Zoom 75-300mm f/4-5.6"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma DF EX Aspherical 28-70mm f/2.8"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma AF Tele 400mm f/5.6 Multi-coated"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma 24-60mm f/2.8 EX DG"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma 70-300mm f/4-5.6 Macro"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma 55-200mm f/4-5.6 DC"));
-        choices.insert(p_t(256 * 3 + 255, "Sigma 18-50mm f/2.8 EX DC"));
-        choices.insert(p_t(256 * 4 + 1, "smc PENTAX-FA SOFT 28mm f/2.8"));
-        choices.insert(p_t(256 * 4 + 2, "smc PENTAX-FA 80-320mm f/4.5-5.6"));
-        choices.insert(p_t(256 * 4 + 3, "smc PENTAX-FA 43mm f/1.9 Limited"));
-        choices.insert(p_t(256 * 4 + 6, "smc PENTAX-FA 35-80mm f/4-5.6"));
-        choices.insert(p_t(256 * 4 + 12, "smc PENTAX-FA 50mm f/1.4"));
-        choices.insert(p_t(256 * 4 + 15, "smc PENTAX-FA 28-105mm f/4-5.6 [IF]"));
-        choices.insert(p_t(256 * 4 + 16, "Tamron AF 80-210mm f/4-5.6 (178D)"));
-        choices.insert(p_t(256 * 4 + 19, "Tamron SP AF 90mm f/2.8 (172E)"));
-        choices.insert(p_t(256 * 4 + 20, "smc PENTAX-FA 28-80mm f/3.5-5.6"));
-        choices.insert(p_t(256 * 4 + 21, "Cosina AF 100-300mm f/5.6-6.7"));
-        choices.insert(p_t(256 * 4 + 22, "Tokina 28-80mm f/3.5-5.6"));
-        choices.insert(p_t(256 * 4 + 23, "smc PENTAX-FA 20-35mm f/4 AL"));
-        choices.insert(p_t(256 * 4 + 24, "smc PENTAX-FA 77mm f/1.8 Limited"));
-        choices.insert(p_t(256 * 4 + 25, "Tamron SP AF 14mm f/2.8"));
-        choices.insert(p_t(256 * 4 + 26, "smc PENTAX-FA Macro 100mm f/3.5 or Cosina Lens"));
-        choices.insert(p_t(256 * 4 + 26, "Cosina 100mm f/3.5 Macro"));
-        choices.insert(p_t(256 * 4 + 27, "Tamron AF 28-300mm f/3.5-6.3 LD Aspherical[IF] Macro (185D/285D)"));
-        choices.insert(p_t(256 * 4 + 28, "smc PENTAX-FA 35mm f/2 AL"));
-        choices.insert(p_t(256 * 4 + 29, "Tamron AF 28-200mm f/3.8-5.6 LD Super II Macro (371D)"));
-        choices.insert(p_t(256 * 4 + 34, "smc PENTAX-FA 24-90mm f/3.5-4.5 AL[IF]"));
-        choices.insert(p_t(256 * 4 + 35, "smc PENTAX-FA 100-300mm f/4.7-5.8"));
-        choices.insert(p_t(256 * 4 + 36, "Tamron AF 70-300mm f/4-5.6 LD Macro 1:2"));
-        choices.insert(p_t(256 * 4 + 37, "Tamron SP AF 24-135mm f/3.5-5.6 AD AL (190D)"));
-        choices.insert(p_t(256 * 4 + 38, "smc PENTAX-FA 28-105mm f/3.2-4.5 AL[IF]"));
-        choices.insert(p_t(256 * 4 + 39, "smc PENTAX-FA 31mm f/1.8 AL Limited"));
-        choices.insert(p_t(256 * 4 + 41, "Tamron AF 28-200mm Super Zoom f/3.8-5.6 Aspherical XR [IF] Macro (A03)"));
-        choices.insert(p_t(256 * 4 + 43, "smc PENTAX-FA 28-90mm f/3.5-5.6"));
-        choices.insert(p_t(256 * 4 + 44, "smc PENTAX-FA J 75-300mm f/4.5-5.8 AL"));
-        choices.insert(p_t(256 * 4 + 45, "Tamron Lens (4 45)"));
-        choices.insert(p_t(256 * 4 + 45, "Tamron 28-300mm f/3.5-6.3 Ultra zoom XR"));
-        choices.insert(p_t(256 * 4 + 45, "Tamron AF 28-300mm f/3.5-6.3 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(256 * 4 + 46, "smc PENTAX-FA J 28-80mm f/3.5-5.6 AL"));
-        choices.insert(p_t(256 * 4 + 47, "smc PENTAX-FA J 18-35mm f/4-5.6 AL"));
-        choices.insert(p_t(256 * 4 + 49, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
-        choices.insert(p_t(256 * 4 + 51, "smc PENTAX-D FA 50mm f/2.8 Macro"));
-        choices.insert(p_t(256 * 4 + 52, "smc PENTAX-D FA 100mm f/2.8 Macro"));
-        choices.insert(p_t(256 * 4 + 55, "Samsung/Schneider D-XENOGON 35mm f/2"));
-        choices.insert(p_t(256 * 4 + 56, "Samsung/Schneider D-XENON 100mm f/2.8 Macro"));
-        choices.insert(p_t(256 * 4 + 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
-        choices.insert(p_t(256 * 4 + 214, "smc PENTAX-DA 35mm f/2.4 AL"));
-        choices.insert(p_t(256 * 4 + 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
-        choices.insert(p_t(256 * 4 + 230, "Tamron SP AF 17-50mm f/2.8 XR Di II"));
-        choices.insert(p_t(256 * 4 + 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
-        choices.insert(p_t(256 * 4 + 237, "Samsung/Schneider D-XENOGON 10-17mm f/3.5-4.5"));
-        choices.insert(p_t(256 * 4 + 239, "Samsung/Schneider D-XENON 12-24mm f/4 ED AL [IF]"));
-        choices.insert(p_t(256 * 4 + 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
-        choices.insert(p_t(256 * 4 + 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
-        choices.insert(p_t(256 * 4 + 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
-        choices.insert(p_t(256 * 4 + 245, "Samsung/Schneider D-XENON 50-200mm f/4-5.6"));
-        choices.insert(p_t(256 * 4 + 246, "Samsung/Schneider D-XENON 18-55mm f/3.5-5.6"));
-        choices.insert(p_t(256 * 4 + 247, "smc PENTAX-DA FISH-EYE 10-17mm f/3.5-4.5 ED[IF]"));
-        choices.insert(p_t(256 * 4 + 248, "smc PENTAX-DA 12-24mm f/4 ED AL [IF]"));
-        choices.insert(p_t(256 * 4 + 249, "Tamron XR DiII 18-200mm f/3.5-6.3 (A14)"));
-        choices.insert(p_t(256 * 4 + 250, "smc PENTAX-DA 50-200mm f/4-5.6 ED"));
-        choices.insert(p_t(256 * 4 + 251, "smc PENTAX-DA 40mm f/2.8 Limited"));
-        choices.insert(p_t(256 * 4 + 252, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
-        choices.insert(p_t(256 * 4 + 253, "smc PENTAX-DA 14mm f/2.8 ED[IF]"));
-        choices.insert(p_t(256 * 4 + 254, "smc PENTAX-DA 16-45mm f/4 ED AL"));
-        choices.insert(p_t(256 * 5 + 1, "smc PENTAX-FA* 24mm f/2 AL[IF]"));
-        choices.insert(p_t(256 * 5 + 2, "smc PENTAX-FA 28mm f/2.8 AL"));
-        choices.insert(p_t(256 * 5 + 3, "smc PENTAX-FA 50mm f/1.7"));
-        choices.insert(p_t(256 * 5 + 4, "smc PENTAX-FA 50mm f/1.4"));
-        choices.insert(p_t(256 * 5 + 5, "smc PENTAX-FA* 600mm f/4 ED[IF]"));
-        choices.insert(p_t(256 * 5 + 6, "smc PENTAX-FA* 300mm f/4.5 ED[IF]"));
-        choices.insert(p_t(256 * 5 + 7, "smc PENTAX-FA 135mm f/2.8 [IF]"));
-        choices.insert(p_t(256 * 5 + 8, "smc PENTAX-FA Macro 50mm f/2.8"));
-        choices.insert(p_t(256 * 5 + 9, "smc PENTAX-FA Macro 100mm f/2.8"));
-        choices.insert(p_t(256 * 5 + 10, "smc PENTAX-FA* 85mm f/1.4 [IF]"));
-        choices.insert(p_t(256 * 5 + 11, "smc PENTAX-FA* 200mm f/2.8 ED[IF]"));
-        choices.insert(p_t(256 * 5 + 12, "smc PENTAX-FA 28-80mm f/3.5-4.7"));
-        choices.insert(p_t(256 * 5 + 13, "smc PENTAX-FA 70-200mm f/4-5.6"));
-        choices.insert(p_t(256 * 5 + 14, "smc PENTAX-FA* 250-600mm f/5.6 ED[IF]"));
-        choices.insert(p_t(256 * 5 + 15, "smc PENTAX-FA 28-105mm f/4-5.6"));
-        choices.insert(p_t(256 * 5 + 16, "smc PENTAX-FA 100-300mm f/4.5-5.6"));
-        choices.insert(p_t(256 * 5 + 98, "smc PENTAX-FA 100-300mm f/4.5-5.6"));
-        choices.insert(p_t(256 * 6 + 1, "smc PENTAX-FA* 85mm f/1.4 [IF]"));
-        choices.insert(p_t(256 * 6 + 2, "smc PENTAX-FA* 200mm f/2.8 ED[IF]"));
-        choices.insert(p_t(256 * 6 + 3, "smc PENTAX-FA* 300mm f/2.8 ED[IF]"));
-        choices.insert(p_t(256 * 6 + 4, "smc PENTAX-FA* 28-70mm f/2.8 AL"));
-        choices.insert(p_t(256 * 6 + 5, "smc PENTAX-FA* 80-200mm f/2.8 ED[IF]"));
-        choices.insert(p_t(256 * 6 + 6, "smc PENTAX-FA* 28-70mm f/2.8 AL"));
-        choices.insert(p_t(256 * 6 + 7, "smc PENTAX-FA* 80-200mm f/2.8 ED[IF]"));
-        choices.insert(p_t(256 * 6 + 8, "smc PENTAX-FA 28-70mm f/4AL"));
-        choices.insert(p_t(256 * 6 + 9, "smc PENTAX-FA 20mm f/2.8"));
-        choices.insert(p_t(256 * 6 + 10, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
-        choices.insert(p_t(256 * 6 + 13, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
-        choices.insert(p_t(256 * 6 + 14, "smc PENTAX-FA* Macro 200mm f/4 ED[IF]"));
-        choices.insert(p_t(256 * 7 + 0, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
-        choices.insert(p_t(256 * 7 + 58, "smc PENTAX-D FA Macro 100mm f/2.8 WR"));
-        choices.insert(p_t(256 * 7 + 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
-        choices.insert(p_t(256 * 7 + 201, "smc Pentax-DA L 50-200mm f/4-5.6 ED WR"));
-        choices.insert(p_t(256 * 7 + 202, "smc PENTAX-DA L 18-55mm f/3.5-5.6 AL WR"));
-        choices.insert(p_t(256 * 7 + 203, "HD PENTAX-DA 55-300mm f/4-5.8 ED WR"));
-        choices.insert(p_t(256 * 7 + 204, "HD PENTAX-DA 15mm f/4 ED AL Limited"));
-        choices.insert(p_t(256 * 7 + 205, "HD PENTAX-DA 35mm f/2.8 Macro Limited"));
-        choices.insert(p_t(256 * 7 + 206, "HD PENTAX-DA 70mm f/2.4 Limited"));
-        choices.insert(p_t(256 * 7 + 207, "HD PENTAX-DA 21mm f/3.2 ED AL Limited"));
-        choices.insert(p_t(256 * 7 + 208, "HD PENTAX-DA 40mm f/2.8 Limited"));
-        choices.insert(p_t(256 * 7 + 212, "smc PENTAX-DA 50mm f/1.8"));
-        choices.insert(p_t(256 * 7 + 213, "smc PENTAX-DA 40mm f/2.8 XS"));
-        choices.insert(p_t(256 * 7 + 214, "smc PENTAX-DA 35mm f/2.4 AL"));
-        choices.insert(p_t(256 * 7 + 216, "smc PENTAX-DA L 55-300mm f/4-5.8 ED"));
-        choices.insert(p_t(256 * 7 + 217, "smc PENTAX-DA 50-200mm f/4-5.6 ED WR"));
-        choices.insert(p_t(256 * 7 + 218, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL WR"));
-        choices.insert(p_t(256 * 7 + 220, "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical [IF]"));
-        choices.insert(p_t(256 * 7 + 221, "smc PENTAX-DA L 50-200mm f/4-5.6 ED"));
-        choices.insert(p_t(256 * 7 + 222, "smc PENTAX-DA L 18-55mm f/3.5-5.6"));
-        choices.insert(p_t(256 * 7 + 223, "Samsung/Schneider D-XENON 18-55mm f/3.5-5.6 II"));
-        choices.insert(p_t(256 * 7 + 224, "smc PENTAX-DA 15mm f/4 ED AL Limited"));
-        choices.insert(p_t(256 * 7 + 225, "Samsung/Schneider D-XENON 18-250mm f/3.5-6.3"));
-        choices.insert(p_t(256 * 7 + 226, "smc PENTAX-DA* 55mm f/1.4 SDM (SDM unused)"));
-        choices.insert(p_t(256 * 7 + 227, "smc PENTAX-DA* 60-250mm f/4 [IF] SDM (SDM unused)"));
-        choices.insert(p_t(256 * 7 + 228, "Samsung 16-45mm f/4 ED"));
-        choices.insert(p_t(256 * 7 + 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
-        choices.insert(p_t(256 * 7 + 230, "Tamron AF 17-50mm f/2.8 XR Di-II LD (Model A16)"));
-        choices.insert(p_t(256 * 7 + 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
-        choices.insert(p_t(256 * 7 + 233, "smc PENTAX-DA 35mm f/2.8 Macro Limited"));
-        choices.insert(p_t(256 * 7 + 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM (SDM unused)"));
-        choices.insert(p_t(256 * 7 + 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM (SDM unused)"));
-        choices.insert(p_t(256 * 7 + 236, "smc PENTAX-DA 55-300mm f/4-5.8 ED"));
-        choices.insert(p_t(256 * 7 + 238, "Tamron AF 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
-        choices.insert(p_t(256 * 7 + 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM (SDM unused)"));
-        choices.insert(p_t(256 * 7 + 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
-        choices.insert(p_t(256 * 7 + 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
-        choices.insert(p_t(256 * 7 + 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
-        choices.insert(p_t(256 * 8 + 0, "Sigma 50-150mm f/2.8 II APO EX DC HSM"));
-        choices.insert(p_t(256 * 8 + 3, "Sigma AF 18-125mm f/3.5-5.6 DC"));
-        choices.insert(p_t(256 * 8 + 4, "Sigma 50mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(256 * 8 + 7, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
-        choices.insert(p_t(256 * 8 + 8, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
-        choices.insert(p_t(256 * 8 + 11, "Sigma 10-20mm f/3.5 EX DC HSM"));
-        choices.insert(p_t(256 * 8 + 12, "Sigma 70-300mm f/4-5.6 DG OS"));
-        choices.insert(p_t(256 * 8 + 13, "Sigma 120-400mm f/4.5-5.6 APO DG OS HSM"));
-        choices.insert(p_t(256 * 8 + 14, "Sigma 17-70mm f/2.8-4.0 DC Macro OS HSM"));
-        choices.insert(p_t(256 * 8 + 15, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
-        choices.insert(p_t(256 * 8 + 16, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
-        choices.insert(p_t(256 * 8 + 17, "Sigma 50-500mm f/4.5-6.3 DG OS HSM"));
-        choices.insert(p_t(256 * 8 + 18, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
-        choices.insert(p_t(256 * 8 + 21, "Sigma 17-50mm f/2.8 EX DC OS HSM"));
-        choices.insert(p_t(256 * 8 + 22, "Sigma 85mm f/1.4 EX DG HSM"));
-        choices.insert(p_t(256 * 8 + 23, "Sigma 70-200mm f/2.8 APO EX DG OS HSM"));
-        choices.insert(p_t(256 * 8 + 25, "Sigma 17-50mm f/2.8 EX DC HSM"));
-        choices.insert(p_t(256 * 8 + 27, "Sigma 18-200mm f/3.5-6.3 II DC HSM"));
-        choices.insert(p_t(256 * 8 + 28, "Sigma 18-250mm f/3.5-6.3 DC Macro HSM"));
-        choices.insert(p_t(256 * 8 + 29, "Sigma 35mm f/1.4 DG HSM"));
-        choices.insert(p_t(256 * 8 + 30, "Sigma 17-70mm f/2.8-4 DC Macro HSM | C"));
-        choices.insert(p_t(256 * 8 + 31, "Sigma 18-35mm f/1.8 DC HSM"));
-        choices.insert(p_t(256 * 8 + 32, "Sigma 30mm f/1.4 DC HSM | A"));
-        choices.insert(p_t(256 * 8 + 34, "Sigma 18-300mm f/3.5-6.3 DC Macro HSM"));
-        choices.insert(p_t(256 * 8 + 59, "HD PENTAX-D FA 150-450mm f/4.5-5.6 ED DC AW"));
-        choices.insert(p_t(256 * 8 + 60, "HD PENTAX-D FA* 70-200mm f/2.8 ED DC AW"));
-        choices.insert(p_t(256 * 8 + 61, "HD PENTAX-D FA 28-105mm f/3.5-5.6 ED DC WR"));
-        choices.insert(p_t(256 * 8 + 62, "HD PENTAX-D FA 24-70mm f/2.8 ED SDM WR"));
-        choices.insert(p_t(256 * 8 + 63, "HD PENTAX-D FA 15-30mm f/2.8 ED SDM WR"));
-        choices.insert(p_t(256 * 8 + 197, "HD PENTAX-DA 55-300mm f/4.5-6.3 ED PLM WR RE"));
-        choices.insert(p_t(256 * 8 + 198, "smc PENTAX-DA L 18-50mm f/4-5.6 DC WR RE"));
-        choices.insert(p_t(256 * 8 + 199, "HD PENTAX-DA 18-50mm f/4-5.6 DC WR RE"));
-        choices.insert(p_t(256 * 8 + 200, "HD PENTAX-DA 16-85mm f/3.5-5.6 ED DC WR"));
-        choices.insert(p_t(256 * 8 + 209, "HD PENTAX-DA 20-40mm f/2.8-4 ED Limited DC WR"));
-        choices.insert(p_t(256 * 8 + 210, "smc PENTAX-DA 18-270mm f/3.5-6.3 ED SDM"));
-        choices.insert(p_t(256 * 8 + 211, "HD PENTAX-DA 560mm f/5.6 ED AW"));
-        choices.insert(p_t(256 * 8 + 215, "smc PENTAX-DA 18-135mm f/3.5-5.6 ED AL [IF] DC WR"));
-        choices.insert(p_t(256 * 8 + 226, "smc PENTAX-DA* 55mm f/1.4 SDM"));
-        choices.insert(p_t(256 * 8 + 227, "smc PENTAX-DA* 60-250mm f/4 [IF] SDM"));
-        choices.insert(p_t(256 * 8 + 232, "smc PENTAX-DA 17-70mm f/4 AL [IF] SDM"));
-        choices.insert(p_t(256 * 8 + 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM"));
-        choices.insert(p_t(256 * 8 + 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM"));
-        choices.insert(p_t(256 * 8 + 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM"));
-        choices.insert(p_t(256 * 8 + 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM"));
-        choices.insert(p_t(256 * 8 + 255, "Sigma Lens (8 255)"));
-        choices.insert(p_t(256 * 8 + 255, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
-        choices.insert(p_t(256 * 8 + 255, "Sigma 150-500mm f/5-6.3 DG APO [OS] HSM"));
-        choices.insert(p_t(256 * 8 + 255, "Sigma 50-150mm f/2.8 II APO EX DC HSM"));
-        choices.insert(p_t(256 * 8 + 255, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
-        choices.insert(p_t(256 * 8 + 255, "Sigma 50-200mm f/4-5.6 DC OS"));
-        choices.insert(p_t(256 * 8 + 255, "Sigma 24-70mm f/2.8 EX DG HSM"));
-        choices.insert(p_t(256 * 9 + 0, "645 Manual Lens"));
-        choices.insert(p_t(256 * 10 + 0, "645 A Series Lens"));
-        choices.insert(p_t(256 * 11 + 1, "smc PENTAX-FA 645 75mm f/2.8"));
-        choices.insert(p_t(256 * 11 + 2, "smc PENTAX-FA 645 45mm f/2.8"));
-        choices.insert(p_t(256 * 11 + 3, "smc PENTAX-FA* 645 300mm f/4 ED [IF]"));
-        choices.insert(p_t(256 * 11 + 4, "smc PENTAX-FA 645 45-85mm f/4.5"));
-        choices.insert(p_t(256 * 11 + 5, "smc PENTAX-FA 645 400mm f/5.6 ED [IF]"));
-        choices.insert(p_t(256 * 11 + 7, "smc PENTAX-FA 645 Macro 120mm f/4"));
-        choices.insert(p_t(256 * 11 + 8, "smc PENTAX-FA 645 80-160mm f/4.5"));
-        choices.insert(p_t(256 * 11 + 9, "smc PENTAX-FA 645 200mm f/4 [IF]"));
-        choices.insert(p_t(256 * 11 + 10, "smc PENTAX-FA 645 150mm f/2.8 [IF]"));
-        choices.insert(p_t(256 * 11 + 11, "smc PENTAX-FA 645 35mm f/3.5 AL [IF]"));
-        choices.insert(p_t(256 * 11 + 12, "smc PENTAX-FA 645 300mm f/5.6 ED [IF]"));
-        choices.insert(p_t(256 * 11 + 14, "smc PENTAX-FA 645 55-110mm f/5.6"));
-        choices.insert(p_t(256 * 11 + 16, "smc PENTAX-FA 645 33-55mm f/4.5 AL"));
-        choices.insert(p_t(256 * 11 + 17, "smc PENTAX-FA 645 150-300mm f/5.6 ED [IF]"));
-        choices.insert(p_t(256 * 11 + 21, "HD PENTAX-D FA 645 35mm f/3.5 AL [IF]"));
-        choices.insert(p_t(256 * 13 + 18, "smc PENTAX-D FA 645 55mm f/2.8 AL [IF] SDM AW"));
-        choices.insert(p_t(256 * 13 + 19, "smc PENTAX-D FA 645 25mm f/4 AL [IF] SDM AW"));
-        choices.insert(p_t(256 * 13 + 20, "HD PENTAX-D FA 645 90mm f/2.8 ED AW SR"));
-        choices.insert(p_t(256 * 13 + 253, "HD PENTAX-DA 645 28-45mm f/4.5 ED AW SR"));
-        choices.insert(p_t(256 * 21 + 0, "Pentax Q Manual Lens"));
-        choices.insert(p_t(256 * 21 + 1, "01 Standard Prime 8.5mm f/1.9"));
-        choices.insert(p_t(256 * 21 + 2, "02 Standard Zoom 5-15mm f/2.8-4.5"));
-        choices.insert(p_t(256 * 21 + 6, "06 Telephoto Zoom 15-45mm f/2.8"));
-        choices.insert(p_t(256 * 21 + 7, "07 Mount Shield 11.5mm f/9"));
-        choices.insert(p_t(256 * 21 + 8, "08 Wide Zoom 3.8-5.9mm f/3.7-4"));
-        choices.insert(p_t(256 * 22 + 3, "03 Fish-eye 3.2mm f/5.6"));
-        choices.insert(p_t(256 * 22 + 4, "04 Toy Lens Wide 6.3mm f/7.1"));
-        choices.insert(p_t(256 * 22 + 5, "05 Toy Lens Telephoto 18mm f/8"));
+        choices.insert (p_t (256 * 0 + 0, "M-42 or No Lens"));
+        choices.insert (p_t (256 * 1 + 0, "K or M Lens"));
+        choices.insert (p_t (256 * 2 + 0, "A Series Lens"));
+        choices.insert (p_t (256 * 3 + 0, "Sigma"));
+        choices.insert (p_t (256 * 3 + 17, "smc PENTAX-FA SOFT 85mm f/2.8"));
+        choices.insert (p_t (256 * 3 + 18, "smc PENTAX-F 1.7X AF ADAPTER"));
+        choices.insert (p_t (256 * 3 + 19, "smc PENTAX-F 24-50mm f/4"));
+        choices.insert (p_t (256 * 3 + 20, "smc PENTAX-F 35-80mm f/4-5.6"));
+        choices.insert (p_t (256 * 3 + 21, "smc PENTAX-F 80-200mm f/4.7-5.6"));
+        choices.insert (p_t (256 * 3 + 22, "smc PENTAX-F FISH-EYE 17-28mm f/3.5-4.5"));
+        choices.insert (p_t (256 * 3 + 23, "smc PENTAX-F 100-300mm f/4.5-5.6 or Sigma Lens"));
+        choices.insert (p_t (256 * 3 + 23, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
+        choices.insert (p_t (256 * 3 + 23, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
+        choices.insert (p_t (256 * 3 + 23, "Tokina 80-200mm f/2.8 ATX-Pro"));
+        choices.insert (p_t (256 * 3 + 24, "smc PENTAX-F 35-135mm f/3.5-4.5"));
+        choices.insert (p_t (256 * 3 + 25, "smc PENTAX-F 35-105mm f/4-5.6 or Sigma or Tokina Lens"));
+        choices.insert (p_t (256 * 3 + 25, "Sigma 55-200mm f/4-5.6 DC"));
+        choices.insert (p_t (256 * 3 + 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
+        choices.insert (p_t (256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DL IF"));
+        choices.insert (p_t (256 * 3 + 25, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
+        choices.insert (p_t (256 * 3 + 25, "Tokina 80-200mm f/2.8 ATX-Pro"));
+        choices.insert (p_t (256 * 3 + 26, "smc PENTAX-F* 250-600mm f/5.6 ED[IF]"));
+        choices.insert (p_t (256 * 3 + 27, "smc PENTAX-F 28-80mm f/3.5-4.5 or Tokina Lens"));
+        choices.insert (p_t (256 * 3 + 27, "Tokina AT-X Pro AF 28-70mm f/2.6-2.8"));
+        choices.insert (p_t (256 * 3 + 28, "smc PENTAX-F 35-70mm f/3.5-4.5 or Tokina Lens"));
+        choices.insert (p_t (256 * 3 + 28, "Tokina 19-35mm f/3.5-4.5 AF"));
+        choices.insert (p_t (256 * 3 + 28, "Tokina AT-X AF 400mm f/5.6"));
+        choices.insert (p_t (256 * 3 + 29, "PENTAX-F 28-80mm f/3.5-4.5 or Sigma or Tokina Lens"));
+        choices.insert (p_t (256 * 3 + 29, "Sigma AF 18-125mm f/3.5-5.6 DC"));
+        choices.insert (p_t (256 * 3 + 29, "Tokina AT-X PRO 28-70mm f/2.6-2.8"));
+        choices.insert (p_t (256 * 3 + 30, "PENTAX-F 70-200mm f/4-5.6"));
+        choices.insert (p_t (256 * 3 + 31, "smc PENTAX-F 70-210mm f/4-5.6 or Tokina or Takumar Lens"));
+        choices.insert (p_t (256 * 3 + 31, "Tokina AF 730 75-300mm f/4.5-5.6"));
+        choices.insert (p_t (256 * 3 + 31, "Takumar-F 70-210mm f/4-5.6"));
+        choices.insert (p_t (256 * 3 + 32, "smc PENTAX-F 50mm f/1.4"));
+        choices.insert (p_t (256 * 3 + 33, "smc PENTAX-F 50mm f/1.7"));
+        choices.insert (p_t (256 * 3 + 34, "smc PENTAX-F 135mm f/2.8 [IF]"));
+        choices.insert (p_t (256 * 3 + 35, "smc PENTAX-F 28mm f/2.8"));
+        choices.insert (p_t (256 * 3 + 36, "Sigma 20mm f/1.8 EX DG Aspherical RF"));
+        choices.insert (p_t (256 * 3 + 38, "smc PENTAX-F* 300mm f/4.5 ED[IF]"));
+        choices.insert (p_t (256 * 3 + 39, "smc PENTAX-F* 600mm f/4 ED[IF]"));
+        choices.insert (p_t (256 * 3 + 40, "smc PENTAX-F Macro 100mm f/2.8"));
+        choices.insert (p_t (256 * 3 + 41, "smc PENTAX-F Macro 50mm f/2.8 or Sigma Lens"));
+        choices.insert (p_t (256 * 3 + 41, "Sigma 50mm f/2.8 Macro"));
+        choices.insert (p_t (256 * 3 + 42, "Sigma 300mm f/2.8 EX DG APO IF"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma or Tamron Lens (3 44)"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma AF 10-20mm f/4-5.6 EX DC"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma 12-24mm f/4.5-5.6 EX DG"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma 18-50mm f/3.5-5.6 DC"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma 17-35mm f/2.8-4 EX DG"));
+        choices.insert (p_t (256 * 3 + 44, "Tamron 35-90mm f/4 AF"));
+        choices.insert (p_t (256 * 3 + 44, "Sigma AF 18-35mm f/3.5-4.5 Aspherical"));
+        choices.insert (p_t (256 * 3 + 46, "Sigma or Samsung Lens (3 46)"));
+        choices.insert (p_t (256 * 3 + 46, "Sigma APO 70-200mm f/2.8 EX"));
+        choices.insert (p_t (256 * 3 + 46, "Sigma EX APO 100-300mm f/4 IF"));
+        choices.insert (p_t (256 * 3 + 46, "Samsung/Schneider D-XENON 50-200mm f/4-5.6 ED"));
+        choices.insert (p_t (256 * 3 + 50, "smc PENTAX-FA 28-70mm f/4 AL"));
+        choices.insert (p_t (256 * 3 + 51, "Sigma 28mm f/1.8 EX DG Aspherical Macro"));
+        choices.insert (p_t (256 * 3 + 52, "smc PENTAX-FA 28-200mm f/3.8-5.6 AL[IF] or Tamron Lens"));
+        choices.insert (p_t (256 * 3 + 52, "Tamron AF LD 28-200mm f/3.8-5.6 [IF] Aspherical (171D)"));
+        choices.insert (p_t (256 * 3 + 53, "smc PENTAX-FA 28-80mm f/3.5-5.6 AL"));
+        choices.insert (p_t (256 * 3 + 247, "smc PENTAX-DA FISH-EYE 10-17mm f/3.5-4.5 ED[IF]"));
+        choices.insert (p_t (256 * 3 + 248, "smc PENTAX-DA 12-24mm f/4 ED AL[IF]"));
+        choices.insert (p_t (256 * 3 + 250, "smc PENTAX-DA 50-200mm f/4-5.6 ED"));
+        choices.insert (p_t (256 * 3 + 251, "smc PENTAX-DA 40mm f/2.8 Limited"));
+        choices.insert (p_t (256 * 3 + 252, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
+        choices.insert (p_t (256 * 3 + 253, "smc PENTAX-DA 14mm f/2.8 ED[IF]"));
+        choices.insert (p_t (256 * 3 + 254, "smc PENTAX-DA 16-45mm f/4 ED AL"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma Lens (3 255)"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma 18-200mm f/3.5-6.3 DC"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma DL-II 35-80mm f/4-5.6"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma DL Zoom 75-300mm f/4-5.6"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma DF EX Aspherical 28-70mm f/2.8"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma AF Tele 400mm f/5.6 Multi-coated"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma 24-60mm f/2.8 EX DG"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma 70-300mm f/4-5.6 Macro"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma 55-200mm f/4-5.6 DC"));
+        choices.insert (p_t (256 * 3 + 255, "Sigma 18-50mm f/2.8 EX DC"));
+        choices.insert (p_t (256 * 4 + 1, "smc PENTAX-FA SOFT 28mm f/2.8"));
+        choices.insert (p_t (256 * 4 + 2, "smc PENTAX-FA 80-320mm f/4.5-5.6"));
+        choices.insert (p_t (256 * 4 + 3, "smc PENTAX-FA 43mm f/1.9 Limited"));
+        choices.insert (p_t (256 * 4 + 6, "smc PENTAX-FA 35-80mm f/4-5.6"));
+        choices.insert (p_t (256 * 4 + 10, "Irix 15mm f/2.4"));
+        choices.insert (p_t (256 * 4 + 12, "smc PENTAX-FA 50mm f/1.4"));
+        choices.insert (p_t (256 * 4 + 15, "smc PENTAX-FA 28-105mm f/4-5.6 [IF]"));
+        choices.insert (p_t (256 * 4 + 16, "Tamron AF 80-210mm f/4-5.6 (178D)"));
+        choices.insert (p_t (256 * 4 + 19, "Tamron SP AF 90mm f/2.8 (172E)"));
+        choices.insert (p_t (256 * 4 + 20, "smc PENTAX-FA 28-80mm f/3.5-5.6"));
+        choices.insert (p_t (256 * 4 + 21, "Cosina AF 100-300mm f/5.6-6.7"));
+        choices.insert (p_t (256 * 4 + 22, "Tokina 28-80mm f/3.5-5.6"));
+        choices.insert (p_t (256 * 4 + 23, "smc PENTAX-FA 20-35mm f/4 AL"));
+        choices.insert (p_t (256 * 4 + 24, "smc PENTAX-FA 77mm f/1.8 Limited"));
+        choices.insert (p_t (256 * 4 + 25, "Tamron SP AF 14mm f/2.8"));
+        choices.insert (p_t (256 * 4 + 26, "smc PENTAX-FA Macro 100mm f/3.5 or Cosina Lens"));
+        choices.insert (p_t (256 * 4 + 26, "Cosina 100mm f/3.5 Macro"));
+        choices.insert (p_t (256 * 4 + 27, "Tamron AF 28-300mm f/3.5-6.3 LD Aspherical[IF] Macro (185D/285D)"));
+        choices.insert (p_t (256 * 4 + 28, "smc PENTAX-FA 35mm f/2 AL"));
+        choices.insert (p_t (256 * 4 + 29, "Tamron AF 28-200mm f/3.8-5.6 LD Super II Macro (371D)"));
+        choices.insert (p_t (256 * 4 + 34, "smc PENTAX-FA 24-90mm f/3.5-4.5 AL[IF]"));
+        choices.insert (p_t (256 * 4 + 35, "smc PENTAX-FA 100-300mm f/4.7-5.8"));
+        choices.insert (p_t (256 * 4 + 36, "Tamron AF 70-300mm f/4-5.6 LD Macro 1:2"));
+        choices.insert (p_t (256 * 4 + 37, "Tamron SP AF 24-135mm f/3.5-5.6 AD AL (190D)"));
+        choices.insert (p_t (256 * 4 + 38, "smc PENTAX-FA 28-105mm f/3.2-4.5 AL[IF]"));
+        choices.insert (p_t (256 * 4 + 39, "smc PENTAX-FA 31mm f/1.8 AL Limited"));
+        choices.insert (p_t (256 * 4 + 41, "Tamron AF 28-200mm Super Zoom f/3.8-5.6 Aspherical XR [IF] Macro (A03)"));
+        choices.insert (p_t (256 * 4 + 43, "smc PENTAX-FA 28-90mm f/3.5-5.6"));
+        choices.insert (p_t (256 * 4 + 44, "smc PENTAX-FA J 75-300mm f/4.5-5.8 AL"));
+        choices.insert (p_t (256 * 4 + 45, "Tamron Lens (4 45)"));
+        choices.insert (p_t (256 * 4 + 45, "Tamron 28-300mm f/3.5-6.3 Ultra zoom XR"));
+        choices.insert (p_t (256 * 4 + 45, "Tamron AF 28-300mm f/3.5-6.3 XR Di LD Aspherical [IF] Macro"));
+        choices.insert (p_t (256 * 4 + 46, "smc PENTAX-FA J 28-80mm f/3.5-5.6 AL"));
+        choices.insert (p_t (256 * 4 + 47, "smc PENTAX-FA J 18-35mm f/4-5.6 AL"));
+        choices.insert (p_t (256 * 4 + 49, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"));
+        choices.insert (p_t (256 * 4 + 51, "smc PENTAX-D FA 50mm f/2.8 Macro"));
+        choices.insert (p_t (256 * 4 + 52, "smc PENTAX-D FA 100mm f/2.8 Macro"));
+        choices.insert (p_t (256 * 4 + 55, "Samsung/Schneider D-XENOGON 35mm f/2"));
+        choices.insert (p_t (256 * 4 + 56, "Samsung/Schneider D-XENON 100mm f/2.8 Macro"));
+        choices.insert (p_t (256 * 4 + 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
+        choices.insert (p_t (256 * 4 + 214, "smc PENTAX-DA 35mm f/2.4 AL"));
+        choices.insert (p_t (256 * 4 + 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
+        choices.insert (p_t (256 * 4 + 230, "Tamron SP AF 17-50mm f/2.8 XR Di II"));
+        choices.insert (p_t (256 * 4 + 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
+        choices.insert (p_t (256 * 4 + 237, "Samsung/Schneider D-XENOGON 10-17mm f/3.5-4.5"));
+        choices.insert (p_t (256 * 4 + 239, "Samsung/Schneider D-XENON 12-24mm f/4 ED AL [IF]"));
+        choices.insert (p_t (256 * 4 + 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
+        choices.insert (p_t (256 * 4 + 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
+        choices.insert (p_t (256 * 4 + 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+        choices.insert (p_t (256 * 4 + 245, "Samsung/Schneider D-XENON 50-200mm f/4-5.6"));
+        choices.insert (p_t (256 * 4 + 246, "Samsung/Schneider D-XENON 18-55mm f/3.5-5.6"));
+        choices.insert (p_t (256 * 4 + 247, "smc PENTAX-DA FISH-EYE 10-17mm f/3.5-4.5 ED[IF]"));
+        choices.insert (p_t (256 * 4 + 248, "smc PENTAX-DA 12-24mm f/4 ED AL [IF]"));
+        choices.insert (p_t (256 * 4 + 249, "Tamron XR DiII 18-200mm f/3.5-6.3 (A14)"));
+        choices.insert (p_t (256 * 4 + 250, "smc PENTAX-DA 50-200mm f/4-5.6 ED"));
+        choices.insert (p_t (256 * 4 + 251, "smc PENTAX-DA 40mm f/2.8 Limited"));
+        choices.insert (p_t (256 * 4 + 252, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
+        choices.insert (p_t (256 * 4 + 253, "smc PENTAX-DA 14mm f/2.8 ED[IF]"));
+        choices.insert (p_t (256 * 4 + 254, "smc PENTAX-DA 16-45mm f/4 ED AL"));
+        choices.insert (p_t (256 * 5 + 1, "smc PENTAX-FA* 24mm f/2 AL[IF]"));
+        choices.insert (p_t (256 * 5 + 2, "smc PENTAX-FA 28mm f/2.8 AL"));
+        choices.insert (p_t (256 * 5 + 3, "smc PENTAX-FA 50mm f/1.7"));
+        choices.insert (p_t (256 * 5 + 4, "smc PENTAX-FA 50mm f/1.4"));
+        choices.insert (p_t (256 * 5 + 5, "smc PENTAX-FA* 600mm f/4 ED[IF]"));
+        choices.insert (p_t (256 * 5 + 6, "smc PENTAX-FA* 300mm f/4.5 ED[IF]"));
+        choices.insert (p_t (256 * 5 + 7, "smc PENTAX-FA 135mm f/2.8 [IF]"));
+        choices.insert (p_t (256 * 5 + 8, "smc PENTAX-FA Macro 50mm f/2.8"));
+        choices.insert (p_t (256 * 5 + 9, "smc PENTAX-FA Macro 100mm f/2.8"));
+        choices.insert (p_t (256 * 5 + 10, "smc PENTAX-FA* 85mm f/1.4 [IF]"));
+        choices.insert (p_t (256 * 5 + 11, "smc PENTAX-FA* 200mm f/2.8 ED[IF]"));
+        choices.insert (p_t (256 * 5 + 12, "smc PENTAX-FA 28-80mm f/3.5-4.7"));
+        choices.insert (p_t (256 * 5 + 13, "smc PENTAX-FA 70-200mm f/4-5.6"));
+        choices.insert (p_t (256 * 5 + 14, "smc PENTAX-FA* 250-600mm f/5.6 ED[IF]"));
+        choices.insert (p_t (256 * 5 + 15, "smc PENTAX-FA 28-105mm f/4-5.6"));
+        choices.insert (p_t (256 * 5 + 16, "smc PENTAX-FA 100-300mm f/4.5-5.6"));
+        choices.insert (p_t (256 * 5 + 98, "smc PENTAX-FA 100-300mm f/4.5-5.6"));
+        choices.insert (p_t (256 * 6 + 1, "smc PENTAX-FA* 85mm f/1.4 [IF]"));
+        choices.insert (p_t (256 * 6 + 2, "smc PENTAX-FA* 200mm f/2.8 ED[IF]"));
+        choices.insert (p_t (256 * 6 + 3, "smc PENTAX-FA* 300mm f/2.8 ED[IF]"));
+        choices.insert (p_t (256 * 6 + 4, "smc PENTAX-FA* 28-70mm f/2.8 AL"));
+        choices.insert (p_t (256 * 6 + 5, "smc PENTAX-FA* 80-200mm f/2.8 ED[IF]"));
+        choices.insert (p_t (256 * 6 + 6, "smc PENTAX-FA* 28-70mm f/2.8 AL"));
+        choices.insert (p_t (256 * 6 + 7, "smc PENTAX-FA* 80-200mm f/2.8 ED[IF]"));
+        choices.insert (p_t (256 * 6 + 8, "smc PENTAX-FA 28-70mm f/4AL"));
+        choices.insert (p_t (256 * 6 + 9, "smc PENTAX-FA 20mm f/2.8"));
+        choices.insert (p_t (256 * 6 + 10, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
+        choices.insert (p_t (256 * 6 + 13, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
+        choices.insert (p_t (256 * 6 + 14, "smc PENTAX-FA* Macro 200mm f/4 ED[IF]"));
+        choices.insert (p_t (256 * 7 + 0, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+        choices.insert (p_t (256 * 7 + 58, "smc PENTAX-D FA Macro 100mm f/2.8 WR"));
+        choices.insert (p_t (256 * 7 + 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
+        choices.insert (p_t (256 * 7 + 201, "smc Pentax-DA L 50-200mm f/4-5.6 ED WR"));
+        choices.insert (p_t (256 * 7 + 202, "smc PENTAX-DA L 18-55mm f/3.5-5.6 AL WR"));
+        choices.insert (p_t (256 * 7 + 203, "HD PENTAX-DA 55-300mm f/4-5.8 ED WR"));
+        choices.insert (p_t (256 * 7 + 204, "HD PENTAX-DA 15mm f/4 ED AL Limited"));
+        choices.insert (p_t (256 * 7 + 205, "HD PENTAX-DA 35mm f/2.8 Macro Limited"));
+        choices.insert (p_t (256 * 7 + 206, "HD PENTAX-DA 70mm f/2.4 Limited"));
+        choices.insert (p_t (256 * 7 + 207, "HD PENTAX-DA 21mm f/3.2 ED AL Limited"));
+        choices.insert (p_t (256 * 7 + 208, "HD PENTAX-DA 40mm f/2.8 Limited"));
+        choices.insert (p_t (256 * 7 + 212, "smc PENTAX-DA 50mm f/1.8"));
+        choices.insert (p_t (256 * 7 + 213, "smc PENTAX-DA 40mm f/2.8 XS"));
+        choices.insert (p_t (256 * 7 + 214, "smc PENTAX-DA 35mm f/2.4 AL"));
+        choices.insert (p_t (256 * 7 + 216, "smc PENTAX-DA L 55-300mm f/4-5.8 ED"));
+        choices.insert (p_t (256 * 7 + 217, "smc PENTAX-DA 50-200mm f/4-5.6 ED WR"));
+        choices.insert (p_t (256 * 7 + 218, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL WR"));
+        choices.insert (p_t (256 * 7 + 220, "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical [IF]"));
+        choices.insert (p_t (256 * 7 + 221, "smc PENTAX-DA L 50-200mm f/4-5.6 ED"));
+        choices.insert (p_t (256 * 7 + 222, "smc PENTAX-DA L 18-55mm f/3.5-5.6"));
+        choices.insert (p_t (256 * 7 + 223, "Samsung/Schneider D-XENON 18-55mm f/3.5-5.6 II"));
+        choices.insert (p_t (256 * 7 + 224, "smc PENTAX-DA 15mm f/4 ED AL Limited"));
+        choices.insert (p_t (256 * 7 + 225, "Samsung/Schneider D-XENON 18-250mm f/3.5-6.3"));
+        choices.insert (p_t (256 * 7 + 226, "smc PENTAX-DA* 55mm f/1.4 SDM (SDM unused)"));
+        choices.insert (p_t (256 * 7 + 227, "smc PENTAX-DA* 60-250mm f/4 [IF] SDM (SDM unused)"));
+        choices.insert (p_t (256 * 7 + 228, "Samsung 16-45mm f/4 ED"));
+        choices.insert (p_t (256 * 7 + 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
+        choices.insert (p_t (256 * 7 + 230, "Tamron AF 17-50mm f/2.8 XR Di-II LD (Model A16)"));
+        choices.insert (p_t (256 * 7 + 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
+        choices.insert (p_t (256 * 7 + 233, "smc PENTAX-DA 35mm f/2.8 Macro Limited"));
+        choices.insert (p_t (256 * 7 + 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM (SDM unused)"));
+        choices.insert (p_t (256 * 7 + 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM (SDM unused)"));
+        choices.insert (p_t (256 * 7 + 236, "smc PENTAX-DA 55-300mm f/4-5.8 ED"));
+        choices.insert (p_t (256 * 7 + 238, "Tamron AF 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
+        choices.insert (p_t (256 * 7 + 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM (SDM unused)"));
+        choices.insert (p_t (256 * 7 + 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
+        choices.insert (p_t (256 * 7 + 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
+        choices.insert (p_t (256 * 7 + 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+        choices.insert (p_t (256 * 8 + 0, "Sigma 50-150mm f/2.8 II APO EX DC HSM"));
+        choices.insert (p_t (256 * 8 + 3, "Sigma AF 18-125mm f/3.5-5.6 DC"));
+        choices.insert (p_t (256 * 8 + 4, "Sigma 50mm f/1.4 EX DG HSM"));
+        choices.insert (p_t (256 * 8 + 7, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
+        choices.insert (p_t (256 * 8 + 8, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
+        choices.insert (p_t (256 * 8 + 11, "Sigma 10-20mm f/3.5 EX DC HSM"));
+        choices.insert (p_t (256 * 8 + 12, "Sigma 70-300mm f/4-5.6 DG OS"));
+        choices.insert (p_t (256 * 8 + 13, "Sigma 120-400mm f/4.5-5.6 APO DG OS HSM"));
+        choices.insert (p_t (256 * 8 + 14, "Sigma 17-70mm f/2.8-4.0 DC Macro OS HSM"));
+        choices.insert (p_t (256 * 8 + 15, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
+        choices.insert (p_t (256 * 8 + 16, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
+        choices.insert (p_t (256 * 8 + 17, "Sigma 50-500mm f/4.5-6.3 DG OS HSM"));
+        choices.insert (p_t (256 * 8 + 18, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
+        choices.insert (p_t (256 * 8 + 21, "Sigma 17-50mm f/2.8 EX DC OS HSM"));
+        choices.insert (p_t (256 * 8 + 22, "Sigma 85mm f/1.4 EX DG HSM"));
+        choices.insert (p_t (256 * 8 + 23, "Sigma 70-200mm f/2.8 APO EX DG OS HSM"));
+        choices.insert (p_t (256 * 8 + 25, "Sigma 17-50mm f/2.8 EX DC HSM"));
+        choices.insert (p_t (256 * 8 + 27, "Sigma 18-200mm f/3.5-6.3 II DC HSM"));
+        choices.insert (p_t (256 * 8 + 28, "Sigma 18-250mm f/3.5-6.3 DC Macro HSM"));
+        choices.insert (p_t (256 * 8 + 29, "Sigma 35mm f/1.4 DG HSM"));
+        choices.insert (p_t (256 * 8 + 30, "Sigma 17-70mm f/2.8-4 DC Macro HSM | C"));
+        choices.insert (p_t (256 * 8 + 31, "Sigma 18-35mm f/1.8 DC HSM"));
+        choices.insert (p_t (256 * 8 + 32, "Sigma 30mm f/1.4 DC HSM | A"));
+        choices.insert (p_t (256 * 8 + 34, "Sigma 18-300mm f/3.5-6.3 DC Macro HSM"));
+        choices.insert (p_t (256 * 8 + 59, "HD PENTAX-D FA 150-450mm f/4.5-5.6 ED DC AW"));
+        choices.insert (p_t (256 * 8 + 60, "HD PENTAX-D FA* 70-200mm f/2.8 ED DC AW"));
+        choices.insert (p_t (256 * 8 + 61, "HD PENTAX-D FA 28-105mm f/3.5-5.6 ED DC WR"));
+        choices.insert (p_t (256 * 8 + 62, "HD PENTAX-D FA 24-70mm f/2.8 ED SDM WR"));
+        choices.insert (p_t (256 * 8 + 63, "HD PENTAX-D FA 15-30mm f/2.8 ED SDM WR"));
+        choices.insert (p_t (256 * 8 + 197, "HD PENTAX-DA 55-300mm f/4.5-6.3 ED PLM WR RE"));
+        choices.insert (p_t (256 * 8 + 198, "smc PENTAX-DA L 18-50mm f/4-5.6 DC WR RE"));
+        choices.insert (p_t (256 * 8 + 199, "HD PENTAX-DA 18-50mm f/4-5.6 DC WR RE"));
+        choices.insert (p_t (256 * 8 + 200, "HD PENTAX-DA 16-85mm f/3.5-5.6 ED DC WR"));
+        choices.insert (p_t (256 * 8 + 209, "HD PENTAX-DA 20-40mm f/2.8-4 ED Limited DC WR"));
+        choices.insert (p_t (256 * 8 + 210, "smc PENTAX-DA 18-270mm f/3.5-6.3 ED SDM"));
+        choices.insert (p_t (256 * 8 + 211, "HD PENTAX-DA 560mm f/5.6 ED AW"));
+        choices.insert (p_t (256 * 8 + 215, "smc PENTAX-DA 18-135mm f/3.5-5.6 ED AL [IF] DC WR"));
+        choices.insert (p_t (256 * 8 + 226, "smc PENTAX-DA* 55mm f/1.4 SDM"));
+        choices.insert (p_t (256 * 8 + 227, "smc PENTAX-DA* 60-250mm f/4 [IF] SDM"));
+        choices.insert (p_t (256 * 8 + 232, "smc PENTAX-DA 17-70mm f/4 AL [IF] SDM"));
+        choices.insert (p_t (256 * 8 + 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM"));
+        choices.insert (p_t (256 * 8 + 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM"));
+        choices.insert (p_t (256 * 8 + 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM"));
+        choices.insert (p_t (256 * 8 + 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma Lens (8 255)"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 150-500mm f/5-6.3 DG APO [OS] HSM"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 50-150mm f/2.8 II APO EX DC HSM"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 50-200mm f/4-5.6 DC OS"));
+        choices.insert (p_t (256 * 8 + 255, "Sigma 24-70mm f/2.8 EX DG HSM"));
+        choices.insert (p_t (256 * 9 + 0, "645 Manual Lens"));
+        choices.insert (p_t (256 * 10 + 0, "645 A Series Lens"));
+        choices.insert (p_t (256 * 11 + 1, "smc PENTAX-FA 645 75mm f/2.8"));
+        choices.insert (p_t (256 * 11 + 2, "smc PENTAX-FA 645 45mm f/2.8"));
+        choices.insert (p_t (256 * 11 + 3, "smc PENTAX-FA* 645 300mm f/4 ED [IF]"));
+        choices.insert (p_t (256 * 11 + 4, "smc PENTAX-FA 645 45-85mm f/4.5"));
+        choices.insert (p_t (256 * 11 + 5, "smc PENTAX-FA 645 400mm f/5.6 ED [IF]"));
+        choices.insert (p_t (256 * 11 + 7, "smc PENTAX-FA 645 Macro 120mm f/4"));
+        choices.insert (p_t (256 * 11 + 8, "smc PENTAX-FA 645 80-160mm f/4.5"));
+        choices.insert (p_t (256 * 11 + 9, "smc PENTAX-FA 645 200mm f/4 [IF]"));
+        choices.insert (p_t (256 * 11 + 10, "smc PENTAX-FA 645 150mm f/2.8 [IF]"));
+        choices.insert (p_t (256 * 11 + 11, "smc PENTAX-FA 645 35mm f/3.5 AL [IF]"));
+        choices.insert (p_t (256 * 11 + 12, "smc PENTAX-FA 645 300mm f/5.6 ED [IF]"));
+        choices.insert (p_t (256 * 11 + 14, "smc PENTAX-FA 645 55-110mm f/5.6"));
+        choices.insert (p_t (256 * 11 + 16, "smc PENTAX-FA 645 33-55mm f/4.5 AL"));
+        choices.insert (p_t (256 * 11 + 17, "smc PENTAX-FA 645 150-300mm f/5.6 ED [IF]"));
+        choices.insert (p_t (256 * 11 + 21, "HD PENTAX-D FA 645 35mm f/3.5 AL [IF]"));
+        choices.insert (p_t (256 * 13 + 18, "smc PENTAX-D FA 645 55mm f/2.8 AL [IF] SDM AW"));
+        choices.insert (p_t (256 * 13 + 19, "smc PENTAX-D FA 645 25mm f/4 AL [IF] SDM AW"));
+        choices.insert (p_t (256 * 13 + 20, "HD PENTAX-D FA 645 90mm f/2.8 ED AW SR"));
+        choices.insert (p_t (256 * 13 + 253, "HD PENTAX-DA 645 28-45mm f/4.5 ED AW SR"));
+        choices.insert (p_t (256 * 21 + 0, "Pentax Q Manual Lens"));
+        choices.insert (p_t (256 * 21 + 1, "01 Standard Prime 8.5mm f/1.9"));
+        choices.insert (p_t (256 * 21 + 2, "02 Standard Zoom 5-15mm f/2.8-4.5"));
+        choices.insert (p_t (256 * 21 + 6, "06 Telephoto Zoom 15-45mm f/2.8"));
+        choices.insert (p_t (256 * 21 + 7, "07 Mount Shield 11.5mm f/9"));
+        choices.insert (p_t (256 * 21 + 8, "08 Wide Zoom 3.8-5.9mm f/3.7-4"));
+        choices.insert (p_t (256 * 21 + 233, "Adapter Q for K-mount Lens"));
+        choices.insert (p_t (256 * 22 + 3, "03 Fish-eye 3.2mm f/5.6"));
+        choices.insert (p_t (256 * 22 + 4, "04 Toy Lens Wide 6.3mm f/7.1"));
+        choices.insert (p_t (256 * 22 + 5, "05 Toy Lens Telephoto 18mm f/8"));
     }
     virtual std::string toString (Tag* t)
     {
         double *liArray = nullptr;
         double maxApertureAtFocal = 0.;
         double focalLength = 0.;
-        int lensID = 256 * t->toInt(0, BYTE) + t->toInt(1, BYTE);
+        int lensID = 256 * t->toInt (0, BYTE) + t->toInt (1, BYTE);
         TagDirectory *root = t->getParent()->getRoot();
 
         if (root) {
 
             Tag *t1;
-            t1 = root->findTag("FocalLength");  // Should get tag 0x920A (rational64u) from the standard Exif tag list
+            t1 = root->findTag ("FocalLength"); // Should get tag 0x920A (rational64u) from the standard Exif tag list
 
-            if( t1) {
+            if ( t1) {
                 focalLength = t1->toDouble();    // Focal Length
             }
 
-            t1 = root->findTag("MaxAperture");
+            t1 = root->findTag ("MaxAperture");
 
-            if(t1) {
+            if (t1) {
                 double maxAperture = t1->toDouble(); // MaxApertureValue at focal Length
 
                 if (maxAperture != 0.) {
                     maxApertureAtFocal = maxAperture;
                 } else {
-                    t1 = root->findTag("NominalMaxAperture");
+                    t1 = root->findTag ("NominalMaxAperture");
 
-                    if(t1) {
+                    if (t1) {
                         maxApertureAtFocal = t1->toDouble();
                     }
                 }
             }
 
-            t1 = root->getTagP("LensInfo");
+            t1 = root->getTagP ("LensInfo");
 
-            if(t1) {
+            if (t1) {
                 liArray = t1->toDoubleArray();
             }
 
             // Focal length below 10mm are set to 0 by the camera in the standard Exif tag, so we'll look into the makernotes
             // This value will have decimals, which reflects more precision... or imprecision, due to the packed form of this value, who knows?
             if (focalLength == 0.) {
-                rtexif::TagDirectory* mnote = root->findTag("MakerNote")->getDirectory();
-                rtexif::Tag* flt = mnote->getTagP("LensInfo/FocalLength");
+                rtexif::TagDirectory* mnote = root->findTag ("MakerNote")->getDirectory();
+                rtexif::Tag* flt = mnote->getTagP ("LensInfo/FocalLength");
 
                 if (flt) {
                     focalLength = flt->toDouble ();
@@ -1031,9 +1041,9 @@ public:
             }
         }
 
-        std::string retval = guess( lensID, focalLength, maxApertureAtFocal, liArray);
+        std::string retval = guess ( lensID, focalLength, maxApertureAtFocal, liArray);
 
-        if(liArray) {
+        if (liArray) {
             delete [] liArray;
         }
 
@@ -1049,7 +1059,7 @@ public:
     virtual std::string toString (Tag* t)
     {
         std::ostringstream str;
-        int b = t->toInt(0, BYTE);
+        int b = t->toInt (0, BYTE);
 
         if (!b) {
             str << "Not stabilized";
@@ -1136,9 +1146,9 @@ public:
         int idx = 0;
 
         if (t->getCount() == 1) {
-            idx = t->toInt(0, BYTE);
+            idx = t->toInt (0, BYTE);
         } else if (t->getCount() == 2) {
-            idx = t->toInt(0, BYTE) << 8 | t->toInt(1, BYTE);
+            idx = t->toInt (0, BYTE) << 8 | t->toInt (1, BYTE);
         }
 
         std::map<int, std::string>::iterator r  = choices.find (idx);
@@ -1160,7 +1170,7 @@ public:
     }
     virtual std::string toString (Tag* t)
     {
-        std::map<int, std::string>::iterator r  = choices.find (t->toInt(0, BYTE));
+        std::map<int, std::string>::iterator r  = choices.find (t->toInt (0, BYTE));
         std::ostringstream s;
         s << ((r != choices.end()) ? r->second : "n/a");
         return s.str();
@@ -1198,7 +1208,7 @@ public:
     }
     virtual std::string toString (Tag* t)
     {
-        std::map<int, std::string>::iterator r  = choices.find (t->toInt(0, BYTE));
+        std::map<int, std::string>::iterator r  = choices.find (t->toInt (0, BYTE));
         std::ostringstream s;
         s << ((r != choices.end()) ? r->second : "n/a");
         return s.str();
@@ -1229,9 +1239,9 @@ public:
     }
     virtual std::string toString (Tag* t)
     {
-        std::map<int, std::string>::iterator r  = choices.find  (t->toInt(0, BYTE));
-        std::map<int, std::string>::iterator r1 = choices1.find (t->toInt(1, BYTE));
-        std::map<int, std::string>::iterator r2 = choices2.find (t->toInt(2, BYTE));
+        std::map<int, std::string>::iterator r  = choices.find  (t->toInt (0, BYTE));
+        std::map<int, std::string>::iterator r1 = choices1.find (t->toInt (1, BYTE));
+        std::map<int, std::string>::iterator r2 = choices2.find (t->toInt (2, BYTE));
         std::ostringstream s;
         s << ((r != choices.end() ) ?  r->second : "") << std::endl;
         s << ((r1 != choices1.end()) ? r1->second : "") << std::endl;
@@ -1280,10 +1290,10 @@ public:
         buffer[0] = 0;  //
         return buffer;  // TODO: how to get the string content!?
 
-        // normal path below (copy the content of the string), but has to be bug fixed
-        memcpy(buffer, t->getValue(), 30);
-        buffer[30] = 0;
-        return buffer;
+//        // normal path below (copy the content of the string), but has to be bug fixed
+//        memcpy (buffer, t->getValue(), 30);
+//        buffer[30] = 0;
+//        return buffer;
     }
 };
 PALensModelQInterpreter paLensModelQInterpreter;
@@ -1298,10 +1308,10 @@ public:
         buffer[0] = 0;
         return buffer;  // TODO: how to get the string content!?
 
-        // normal path below (copy the content of the string), but has to be bug fixed
-        memcpy(buffer, t->getValue(), 20);
-        buffer[20] = 0;
-        return buffer;
+//        // normal path below (copy the content of the string), but has to be bug fixed
+//        memcpy (buffer, t->getValue(), 20);
+//        buffer[20] = 0;
+//        return buffer;
     }
 };
 PALensInfoQInterpreter paLensInfoQInterpreter;
@@ -1315,9 +1325,9 @@ public:
         int a;
 
         if (t->getCount() == 1) {
-            a = t->toInt(0, SLONG) / 256;    // int32u
+            a = t->toInt (0, SLONG) / 256;   // int32u
         } else {
-            a = t->toInt(0, SBYTE) / 6;    // int8u[2]
+            a = t->toInt (0, SBYTE) / 6;   // int8u[2]
         }
 
         char buffer[32];
@@ -1329,12 +1339,12 @@ public:
         int a;
 
         if (t->getCount() == 1) {
-            a = t->toInt(0, SLONG) / 256;    // int32u
+            a = t->toInt (0, SLONG) / 256;   // int32u
         } else {
-            a = t->toInt(0, SBYTE) / 6;    // int8u[2]
+            a = t->toInt (0, SBYTE) / 6;   // int8u[2]
         }
 
-        return double(a);
+        return double (a);
     }
 };
 PAFlashExposureCompInterpreter paFlashExposureCompInterpreter;
@@ -1345,9 +1355,9 @@ public:
     PAFocalLengthInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        double a = double(t->toInt(0, LONG));
+        double a = double (t->toInt (0, LONG));
 
-        if(a > 1.) {
+        if (a > 1.) {
             char buffer[32];
             sprintf (buffer, "%.2f", a / 100. );
             return buffer;
@@ -1357,9 +1367,9 @@ public:
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        double a = double(t->toInt(0, LONG));
+        double a = double (t->toInt (0, LONG));
 
-        if(a > 1.) {
+        if (a > 1.) {
             return a / 100.;
         } else {
             return 0.;
@@ -1374,10 +1384,10 @@ public:
     PALensDataFocalLengthInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int a = t->toInt(0, BYTE);
-        float b = float(10 * int(a >> 2)) * pow(4.f, float(int(a & 0x03) - 2));
+        int a = t->toInt (0, BYTE);
+        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
 
-        if(b > 1.f) {
+        if (b > 1.f) {
             char buffer[32];
             sprintf (buffer, "%.2f", b );
             return buffer;
@@ -1387,10 +1397,10 @@ public:
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(ofs, BYTE);
-        float b = float(10 * int(a >> 2)) * pow(4.f, float(int(a & 0x03) - 2));
+        int a = t->toInt (ofs, BYTE);
+        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
 
-        if(b > 1.f) {
+        if (b > 1.f) {
             return b;
         } else {
             return 0.;
@@ -1405,16 +1415,16 @@ public:
     PAISOfInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         char buffer[32];
-        double v = 100.*exp(double(a - 32) * log(2.) / 8.);
+        double v = 100.*exp (double (a - 32) * log (2.) / 8.);
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(0, BYTE);
-        return 100.*exp(double(a - 32) * log(2.) / 8.);
+        int a = t->toInt (0, BYTE);
+        return 100.*exp (double (a - 32) * log (2.) / 8.);
     }
 };
 PAISOfInterpreter paISOfInterpreter;
@@ -1425,14 +1435,14 @@ public:
     PAMaxApertureInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         a &= 0x7F;
 
-        if(a > 1) {
+        if (a > 1) {
             char buffer[32];
-            double v = pow(2.0, (a - 1) / 32.0);
+            double v = pow (2.0, (a - 1) / 32.0);
 
-            if( v < 0. || v > 1000. ) {
+            if ( v < 0. || v > 1000. ) {
                 return "undef";
             }
 
@@ -1444,11 +1454,11 @@ public:
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         a &= 0x7F;
 
-        if(a > 1) {
-            return pow(2.0, double(a - 1) / 32.0);
+        if (a > 1) {
+            return pow (2.0, double (a - 1) / 32.0);
         } else {
             return 0.;
         }
@@ -1462,16 +1472,16 @@ public:
     PAAEXvInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         char buffer[32];
-        double v = double(a - 64) / 8.;
+        double v = double (a - 64) / 8.;
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(0, BYTE);
-        return double(a - 64) / 8.;
+        int a = t->toInt (0, BYTE);
+        return double (a - 64) / 8.;
     }
 };
 PAAEXvInterpreter paAEXvInterpreter;
@@ -1482,16 +1492,16 @@ public:
     PAAEBXvInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int a = t->toInt(0, SBYTE);
+        int a = t->toInt (0, SBYTE);
         char buffer[32];
-        double v = double(a) / 8.;
+        double v = double (a) / 8.;
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(0, SBYTE);
-        return double(a) / 8.;
+        int a = t->toInt (0, SBYTE);
+        return double (a) / 8.;
     }
 };
 PAAEBXvInterpreter paAEBXvInterpreter;
@@ -1502,16 +1512,16 @@ public:
     PAApertureInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         char buffer[32];
-        double v = exp((double(a) - 68.) * log(2.) / 16.);
+        double v = exp ((double (a) - 68.) * log (2.) / 16.);
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(0, BYTE);
-        return exp((double(a) - 68.) * log(2.) / 16.);
+        int a = t->toInt (0, BYTE);
+        return exp ((double (a) - 68.) * log (2.) / 16.);
     }
 };
 PAApertureInterpreter paApertureInterpreter;
@@ -1522,16 +1532,16 @@ public:
     PAExposureTimeInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         char buffer[32];
-        double v = 24.*exp(-(double(a) - 32.) * log(2.) / 8.);
+        double v = 24.*exp (- (double (a) - 32.) * log (2.) / 8.);
         sprintf (buffer, "%.6f", v );
         return buffer;
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(0, BYTE);
-        return 24.*exp(-(double(a) - 32.) * log(2.) / 8.);
+        int a = t->toInt (0, BYTE);
+        return 24.*exp (- (double (a) - 32.) * log (2.) / 8.);
     }
 };
 PAExposureTimeInterpreter paExposureTimeInterpreter;
@@ -1543,15 +1553,15 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         int mina = a & 0x0F;
-        sprintf (buffer, "%.1f", double(int(pow(2.0, double(mina + 10) / 4.0) + 0.2)));
+        sprintf (buffer, "%.1f", double (int (pow (2.0, double (mina + 10) / 4.0) + 0.2)));
         return buffer;
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = t->toInt(0, BYTE) & 0x0F;
-        return double(int(pow(2.0, double(a + 10) / 4.0) + 0.2));
+        int a = t->toInt (0, BYTE) & 0x0F;
+        return double (int (pow (2.0, double (a + 10) / 4.0) + 0.2));
     }
 };
 PANominalMinApertureInterpreter paNominalMinApertureInterpreter;
@@ -1563,15 +1573,15 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        int a = t->toInt(0, BYTE);
+        int a = t->toInt (0, BYTE);
         int maxa = (a & 0xF0) >> 4;
-        sprintf (buffer, "%.1f", double(int(pow(2.0, double(maxa) / 4.0) + 0.2)) );
+        sprintf (buffer, "%.1f", double (int (pow (2.0, double (maxa) / 4.0) + 0.2)) );
         return buffer;
     }
     virtual double toDouble (Tag* t, int ofs)
     {
-        int a = ( t->toInt(0, BYTE) & 0xF0) >> 4;
-        return double(int(pow(2.0, double(a) / 4.0) + 0.2));
+        int a = ( t->toInt (0, BYTE) & 0xF0) >> 4;
+        return double (int (pow (2.0, double (a) / 4.0) + 0.2));
     }
 };
 PANominalMaxApertureInterpreter paNominalMaxApertureInterpreter;
@@ -1681,8 +1691,8 @@ public:
     virtual std::string toString (Tag* t)
     {
         char buffer[32];
-        int b = t->toInt(0, BYTE) & 0x1F;
-        sprintf (buffer, "%.0f", pow(2., b / 16. + 4) );
+        int b = t->toInt (0, BYTE) & 0x1F;
+        sprintf (buffer, "%.0f", pow (2., b / 16. + 4) );
         return buffer;
     }
 };
@@ -1696,7 +1706,7 @@ public:
     {
         std::ostringstream str;
 
-        if( t->toInt(0, BYTE) & 0x20 ) {
+        if ( t->toInt (0, BYTE) & 0x20 ) {
             str << "1/3 EV steps";
         } else {
             str << "1/2 EV steps";
@@ -1715,7 +1725,7 @@ public:
     {
         std::ostringstream str;
 
-        if(  t->toInt(0, BYTE) & 0x40 ) {
+        if (  t->toInt (0, BYTE) & 0x40 ) {
             str << "P Shift";
         } else {
             str << "Tv or Av";
@@ -1734,7 +1744,7 @@ public:
     {
         std::ostringstream str;
 
-        if(  t->toInt(0, BYTE) & 0x80 ) {
+        if (  t->toInt (0, BYTE) & 0x80 ) {
             str << "Permitted";
         } else {
             str << "Prohibited";
@@ -1762,7 +1772,7 @@ public:
     }
     virtual std::string toString (Tag* t)
     {
-        std::map<int, std::string>::iterator r = choices.find (t->toInt(0, BYTE) >> 4);
+        std::map<int, std::string>::iterator r = choices.find (t->toInt (0, BYTE) >> 4);
 
         if (r != choices.end()) {
             return r->second;
@@ -1782,13 +1792,13 @@ public:
     virtual std::string toString (Tag* t)
     {
         std::ostringstream str;
-        int v = (t->toInt(0, BYTE) & 0xF);
+        int v = (t->toInt (0, BYTE) & 0xF);
 
-        if(!v) {
+        if (!v) {
             str << "Multi-segment";
-        } else if(v & 1) {
+        } else if (v & 1) {
             str << "Center-weighted average";
-        } else if(v & 2) {
+        } else if (v & 2) {
             str << "Spot";
         }
 
@@ -1846,31 +1856,31 @@ public:
     virtual std::string toString (Tag* t)
     {
         std::ostringstream str;
-        int c = t->toInt(0, BYTE);
+        int c = t->toInt (0, BYTE);
 
-        switch(c & 0xf) {
-        case 0:
-            str << "Manual";
-            break;
+        switch (c & 0xf) {
+            case 0:
+                str << "Manual";
+                break;
 
-        case 1:
-            str << "AF-S";
-            break;
+            case 1:
+                str << "AF-S";
+                break;
 
-        case 2:
-            str << "AF-C";
-            break;
+            case 2:
+                str << "AF-C";
+                break;
 
-        case 3:
-            str << "AF-A";
-            break;
+            case 3:
+                str << "AF-A";
+                break;
         }
 
-        if( (c & 0xF0) == 0) {
+        if ( (c & 0xF0) == 0) {
             str << ", Point Selection Auto";
-        } else if( c & 0x20 ) {
+        } else if ( c & 0x20 ) {
             str << ", Fixed Center Point Selected";
-        } else if( c & 0x10 ) {
+        } else if ( c & 0x10 ) {
             str << ", Point Selected";
         }
 
@@ -1885,18 +1895,18 @@ public:
     PAAFModeInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        switch(t->toInt(0, BYTE) & 0x3) {
-        case 0:
-            return "Normal";
+        switch (t->toInt (0, BYTE) & 0x3) {
+            case 0:
+                return "Normal";
 
-        case 1:
-            return "Hi Speed";
+            case 1:
+                return "Hi Speed";
 
-        case 2:
-            return "Depth";
+            case 2:
+                return "Depth";
 
-        case 3:
-            return "MTF";
+            case 3:
+                return "MTF";
         }
 
         return"Normal";
@@ -1911,14 +1921,15 @@ public:
     PAAFPointSelectedInterpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int c = t->toInt(0, SHORT);
+        int c = t->toInt (0, SHORT);
 
-        if( !c ) {
+        if ( !c ) {
             return "Auto";
         } else {
             const char *ps[] = {"Upper-left", "Top", "Upper-right", "Left", "Mid-left", "Center", "Mid-right", "Right", "Lower-left", "Bottom", "Lower-right"};
-            for( int iBit = 0; iBit < 11; iBit++)
-                if( c & (1 << iBit) ) {
+
+            for ( int iBit = 0; iBit < 11; iBit++)
+                if ( c & (1 << iBit) ) {
                     return ps[iBit];
                 }
 
@@ -1934,25 +1945,25 @@ public:
     PADriveMode2Interpreter() {}
     virtual std::string toString (Tag* t)
     {
-        int c = t->toInt(0, BYTE);
+        int c = t->toInt (0, BYTE);
 
-        if( !c ) {
+        if ( !c ) {
             return "Single-frame";
-        } else if( c & 0x01) {
+        } else if ( c & 0x01) {
             return "Continuous";
-        } else if( c & 0x02) {
+        } else if ( c & 0x02) {
             return "Continuous (Lo)";
-        } else if( c & 0x04) {
+        } else if ( c & 0x04) {
             return "Self-timer (12 s)";
-        } else if( c & 0x08) {
+        } else if ( c & 0x08) {
             return "Self-timer (2 s)";
-        } else if( c & 0x10 ) {
+        } else if ( c & 0x10 ) {
             return "Remote Control (3 s delay)";
-        } else if( c & 0x20) {
+        } else if ( c & 0x20) {
             return "Remote Control";
-        } else if( c & 0x40) {
+        } else if ( c & 0x40) {
             return "Exposure Bracket";
-        } else if( c & 0x80) {
+        } else if ( c & 0x80) {
             return "Multiple Exposure";
         } else {
             return "Unknown";

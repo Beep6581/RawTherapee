@@ -4,9 +4,7 @@
 #ifndef _VERSION_
 #define _VERSION_
 
-#define VERSION "${GIT_VERSION}"
-#define VERSION_SUFFIX "${VERSION_SUFFIX}"
-#define TAGDISTANCE ${GIT_TAGDISTANCE}
+#define RTVERSION "${GIT_DESCRIBE}"
 #define CACHEFOLDERNAME "RawTherapee${CACHE_NAME_SUFFIX}"
 
 #endif

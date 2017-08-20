@@ -28,6 +28,7 @@
 #include <list>
 #include "cropguilistener.h"
 #include "pointermotionlistener.h"
+#include "cursormanager.h"
 #include "edit.h"
 
 class CropWindow;
@@ -57,7 +58,8 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     bool deleted;
     bool fitZoomEnabled;
     bool fitZoom;
-    bool isLowUpdatePriority;
+    //bool isLowUpdatePriority;
+    CursorShape cursor_type;
 
     // color pickers
     std::vector<LockableColorPicker*> colorPickers;
@@ -95,6 +97,8 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
 
     CropWindow* observedCropWin;  // Pointer to the currently active detail CropWindow
 
+    float crop_custom_ratio;
+
     bool onArea                    (CursorArea a, int x, int y);
     void updateCursor              (int x, int y);
     void drawDecoration            (Cairo::RefPtr<Cairo::Context> cr);
@@ -112,6 +116,21 @@ class CropWindow : public LWButtonListener, public CropDisplayHandler, public Ed
     // Used by the mainCropWindow only
     void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw = 0, int rh = 0);
 
+    struct ZoomStep {
+        Glib::ustring label;
+        double zoom;
+        int czoom;
+        bool is_major;
+
+        explicit ZoomStep(const Glib::ustring &l="", double z=0.0,
+                          int cz=0, bool m=false):
+            label(l), zoom(z), czoom(cz), is_major(m) {}
+    };
+    std::vector<ZoomStep> zoomSteps;
+    size_t zoom11index;
+
+    void initZoomSteps();
+    
 public:
     CropHandler cropHandler;
     CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow);

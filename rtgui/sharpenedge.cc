@@ -48,8 +48,6 @@ SharpenEdge::SharpenEdge () : FoldableToolPanel(this, "sharpenedge", M("TP_SHARP
     pack_start( *amount, Gtk::PACK_SHRINK, 0);//amount
     pack_start( *threechannels, Gtk::PACK_SHRINK, 0);//one or 3 channels Lab
 
-    show ();
-
     chanthreeconn = threechannels->signal_toggled().connect( sigc::mem_fun(*this, &SharpenEdge::chanthree_toggled) );
 }
 

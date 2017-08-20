@@ -53,14 +53,13 @@ class BatchQueuePanel : public Gtk::VBox,
     Gtk::HBox* bottomBox;
     Gtk::HBox* topBox;
 
+    IdleRegister idle_register;
+
 public:
-
     explicit BatchQueuePanel (FileCatalog* aFileCatalog);
+    ~BatchQueuePanel();
 
-    void setParent (RTWindow* p)
-    {
-        parent = p;
-    }
+    void init (RTWindow* parent);
 
     void addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries , bool head = false);
 

@@ -1,0 +1,875 @@
+/*
+  This file is part of RawTherapee.
+
+  Copyright (c) 2015-2017 DrSlony
+  Copyright (c) 2016-2017 Hombre
+
+  RawTherapee is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  RawTherapee is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* Scrollbar stuck workaround */
+scrollbar:not(.overlay-indicator):hover {
+    min-width: 1px;
+}
+
+* {
+    color: #AAAAAA;
+}
+
+*:disabled {
+    color: #666666;
+}
+
+.view:selected {
+    color: #262626;
+    background-color: #AAAAAA
+}
+
+/* The Places and Dir browser panels */
+.view, .textview, textview, textview.view {
+    background-color: #262626;
+}
+/* The headers of these panels */
+.view .button {
+    background-color: #363636;
+    padding: 2px;
+}
+
+window.background {
+    background-color: #484848;
+}
+
+/*** Window decoration *********************************************************/
+@define-color winHeaderbar rgb(50,50,50);
+
+:not(.popup):not(tooltip) > decoration {
+    background-color: #484848;
+    background-image: none;
+    border-radius: 5px 5px 0 0;
+    border: none;
+    padding: 0;
+    box-shadow: 0 3px 9px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px #242424;
+    margin: 10px;
+}
+headerbar {
+    background-color: shade(@winHeaderbar,1.12);
+    box-shadow: inset 0 1px rgba(200,200,200,.13);
+    background-image: linear-gradient(shade(@winHeaderbar,1.14), shade(@winHeaderbar,.86));
+    border-bottom: 1px solid #242424;
+    border-radius: 5px 5px 0 0;
+    min-height: 26px;
+    padding: 1px 5px 0;
+    margin: 0;
+}
+.csd #MainNotebook > header.top {
+    border-top: 1px solid #484848;
+}
+
+/* Window state */
+.maximized > headerbar {
+    border-radius: 0;
+}
+/**/
+
+/*** End Window decoration *****************************************************/
+
+dialog.background {
+    background-color: #484848;
+}
+
+box, grid {
+    border-width: 0;
+    border-style: none;
+    border-radius: 0;
+    margin: 1px;
+    padding: 0;
+    min-height: 5px;
+    min-width: 5px;
+}
+
+/* Affects all frames except in the toolbox */
+frame {
+    border-width: 0;
+    border-color: #303030;
+    border-radius: 0;
+    border-style: solid;
+    /*border-style: none none none solid;*/
+    padding: 0;
+    margin: 3px 0 ;
+    background-color: rgba(0,0,0,0.);
+}
+
+/* Create space between frame contents and frame border */
+frame border {
+    padding: 4px;
+    border-radius: 4px;
+    background-color: #383838
+}
+
+frame > label {
+    color: #D8D8D8;
+}
+
+tooltip {
+    background-color: rgba(0,0,0,0.95);
+    border-style: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+grid separator, box separator {
+    background-color: rgba(0, 0, 0, 0.17);
+    padding: 0;
+}
+
+grid separator.horizontal, box separator.horizontal {
+    margin: 0.3em 0.45em;
+}
+
+grid separator.vertical, box separator.vertical {
+    margin: 0.45em 0.3em;
+}
+
+#FileBrowser {
+    padding: 2px;
+    margin: 0px;
+}
+
+#FileCatalog {
+    background-color: #393939;
+}
+#FileCatalog:selected {
+    background-color: #565656;
+}
+
+#BeforeAfterContainer frame {
+    background-color: #262626;
+    padding: 0;
+    margin: 1px;
+}
+
+#BeforeAfterContainer frame border {
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Frames in the toolbox. Not MyExpander frames. */
+eventbox.frame {
+    border-color: #565656;
+}
+
+scrollbar {
+    background-color: #303030;
+}
+scrollbar slider {
+    background-color: #808080;
+}
+scrollbar slider:hover {
+    background-color: #999999;
+}
+
+button  {
+    padding: 0;
+    min-height: 5px;
+    min-width: 5px;
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+/* Curve mode buttons and drop-downs */
+button:checked.Left {
+    background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
+    background-color: #585858;
+}
+
+button.flat  {
+    background-image: none;
+}
+
+button.flat:checked {
+    background-image:  linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+checkbutton > check {
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+radiobutton > radio {
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+button:hover , button.flat:hover, checkbutton:hover > check, radiobutton:hover > radio {
+    background-image: linear-gradient(shade(#343434,1.3), shade(#2E2E2E,1.3), shade(#292929,1.3));
+}
+
+button.popupbutton-arrow {
+    min-width: 18px;
+}
+
+/* Save, Cancel, OK ... buttons */
+.dialog-action-area button {
+    min-height: 24px;
+    margin-top: 6px;
+}
+/**/
+
+combobox {
+    min-height: 5px;
+    min-width: 5px;
+    margin-left: 2px;
+}
+
+scale {
+    padding: 0;
+    min-height: 5px;
+    margin: 0 7px 0 0;
+}
+
+scale slider {
+    /* Slider size is min-width x min-height ; margin have to be half of those values, but negative */
+    min-width: 12px;
+    min-height: 12px;
+    margin: -6px;
+    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+}
+scale slider:hover {
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+}
+scale:disabled slider {
+    background-image: none;
+    background-color: #444;
+    border-color: #282828;
+}
+scale trough {
+    margin: 6px 6px;  /* have to be half of "scale slider / min-width min-height" */
+    background-color: #2A2A2A;
+}
+scale.fine-tune trough {
+    margin: 5px;
+    padding: 1px;
+}
+scale.fine-tune trough highlight {
+    margin: -2px;
+}
+scale:disabled trough {
+    background-color: #444;
+    border-color: #282828;
+}
+
+/*.EditorTopPanel .button, .ToolBarPanelFileBrowser .button, .EditorZoomPanel .button {*/
+.button {
+    padding: 1px;
+    margin: 1px;
+    padding: 0;
+    min-height: 5px;
+    min-width: 5px;
+}
+
+/* Adjusters */
+.text-button {
+    padding: 0;
+}
+
+/* Any text-button which is a real button, unlike Slider label */
+.text-button.button {
+    padding: 4px;
+}
+
+separator {
+    color: #363636;
+    margin: 5px;
+}
+
+progressbar.vertical trough {
+    min-width: 6px;
+}
+progressbar.vertical trough progress {
+    min-width: 6px;
+}
+
+progressbar.horizontal trough {
+    min-height: 6px;
+}
+progressbar.horizontal trough progress {
+    min-height: 6px;
+}
+
+progressbar trough {
+    background-color: #2A2A2A;
+    border-color: #202020;
+}
+
+notebook header progressbar trough {
+    background-color: #202020;
+    border-color: #181818;
+}
+
+.drawingarea {
+    border-radius: 0;
+    background-color: #2A2A2A;
+    border: 1px solid #1D1D1D;
+}
+.drawingarea:disabled {
+    background-color: #444;
+    border-color: #282828;
+}
+
+.drawingarea:selected {
+    background-color: #565656;
+    border-radius: 10px;
+}
+
+image {
+    padding: 1px;
+}
+
+/* Vertical group of buttons in 1 column */
+button.Top {
+    border-radius: 10px 4px 0 0;
+    border-style: solid solid none solid;
+    margin-bottom: 0;
+}
+button.MiddleV {
+    border-radius: 0;
+    border-style: none solid none solid;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+button.Bottom {
+    border-radius: 0 0 4px 4px;
+    border-style: none solid solid solid;
+    margin-top: 0;
+}
+/* end */
+
+/* Horizontal group of buttons in 1 row */
+button.Left {
+    border-radius: 4px 0 0 4px;
+    border-style: solid none solid solid;
+    margin-right: 0;
+}
+button.MiddleH {
+    border-radius: 0;
+    border-style: solid none solid none;
+    margin-left: 0;
+    margin-right: 0;
+}
+button.Right {
+    border-radius: 0 4px 4px 0;
+    border-style: solid solid solid none;
+    margin-left: 0;
+}
+/* end */
+
+/* [1.23[-][+]] */
+entry, spinbutton {
+    min-height: 10px;
+    background-color: #262626;
+}
+
+spinbutton entry {
+    padding-right: 6px;
+}
+
+entry:disabled, spinbutton:disabled {
+    background-color: #363636;
+}
+
+entry:hover, spinbutton:hover {
+    background-color: #565656;
+}
+
+entry:selected {
+    color: #262626;
+    background-color: #AAAAAA;
+}
+
+/* Context menus */
+menu {
+    background-color: #262626;
+    color: #909090;
+}
+
+/* Context menu item */
+menuitem {
+    padding: 2px;
+    margin: 0;
+    min-height: 10px;
+}
+
+#HistogramPanel {
+    margin: 0;
+    padding: 0;
+}
+
+#MyExpander {
+    margin: 0;
+    padding: 0;
+}
+#MyExpander.withScrollbar {
+    margin-right: 6px;
+}
+
+/* Tool background */
+#ExpanderBox > box, #ExpanderBox > grid {
+    background-color: #363636;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    border-color: #252525;
+    margin: 0;
+    padding: 3px;
+}
+
+#ExpanderBox drawingarea {
+    background-color: #363636;
+}
+
+#ExpanderBox  frame,
+#ExpanderBox2 frame,
+#ExpanderBox3 frame {
+    padding: 2px 0 0 0;
+    border-style: none;
+}
+#ExpanderBox frame > border {
+    background-color: #3B3B3B;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: #313131;
+    margin: 3px;
+    padding: 3px;
+}
+
+#ExpanderBox  frame > label, #ExpanderBox  frame frame > label,
+#ExpanderBox2 frame > label, #ExpanderBox2 frame frame > label,
+#ExpanderBox3 frame > label, #ExpanderBox3 frame frame > label {
+    margin-left: 7pt;
+    margin-top: 0;
+}
+#ExpanderBox  frame > box, #ExpanderBox  frame frame > box, #ExpanderBox  frame > grid, #ExpanderBox  frame frame > grid,
+#ExpanderBox2 frame > box, #ExpanderBox2 frame frame > box, #ExpanderBox2 frame > grid, #ExpanderBox2 frame frame > grid,
+#ExpanderBox3 frame > box, #ExpanderBox3 frame frame > box, #ExpanderBox3 frame > grid, #ExpanderBox3 frame frame > grid {
+    margin: 2px;
+}
+
+#ExpanderBox  > box > checkbutton, #ExpanderBox  > box > box, #ExpanderBox  > grid > checkbutton, #ExpanderBox  > box > grid, #ExpanderBox  > grid > grid, #ExpanderBox  frame > box > grid, #ExpanderBox  frame > grid > grid, #ExpanderBox  frame > grid > box,
+#ExpanderBox2 > box > checkbutton, #ExpanderBox2 > box > box, #ExpanderBox2 > grid > checkbutton, #ExpanderBox2 > box > grid, #ExpanderBox2 > grid > grid, #ExpanderBox2 frame > box > grid, #ExpanderBox2 frame > grid > grid, #ExpanderBox2 frame > grid > box,
+#ExpanderBox3 > box > checkbutton, #ExpanderBox3 > box > box, #ExpanderBox3 > grid > checkbutton, #ExpanderBox3 > box > grid, #ExpanderBox3 > grid > grid, #ExpanderBox3 frame > box > grid, #ExpanderBox3 frame > grid > grid, #ExpanderBox3 frame > grid > box {
+    margin-top: 2px;
+}
+
+#ExpanderBox frame drawingarea {
+    background-color: #3B3B3B;
+}
+
+#ExpanderBox frame frame > border {
+    background-color: #414141;
+    border: 1px solid #373737;
+    border-radius: 4px;
+    margin: 3px;
+    padding: 3px;
+}
+
+#ExpanderBox frame frame drawingarea {
+    background-color: #414141;
+}
+
+/* Sub-tool (MyExpander) background */
+#ExpanderBox2 > box, #ExpanderBox2 > grid {
+    background-color: #3B3B3B;
+    border: 1px solid #2A2A2A;
+    border-radius: 4px;
+    margin: 0;
+    padding: 3px;
+}
+
+#ExpanderBox2 drawingarea {
+    background-color: #3B3B3B;
+}
+
+#ExpanderBox2 frame > border {
+    background-color: #414141;
+    border: 1px solid #373737;
+    border-radius: 4px;
+    margin: 3px;
+    padding: 3px;
+}
+
+#ExpanderBox2 frame drawingarea {
+    background-color: #414141;
+}
+
+#ExpanderBox2 frame frame > border {
+    background-color: #474747;
+    border: 1px solid #3D3D3D;
+    border-radius: 4px;
+    margin: 3px;
+    padding: 3px;
+}
+
+#ExpanderBox2 frame frame drawingarea {
+    background-color: #474747;
+}
+
+#MyExpanderTitle > box {
+    margin: 2px 0;
+    padding: 2px 0;
+}
+
+#MyExpanderTitle label {
+    color: #CCCCCC;
+    padding: 0;
+    margin: 0 3px 0 3px;
+}
+#MyExpanderTitle:hover {
+    background-color: #202020;
+}
+#MyExpanderTitle eventbox:hover image {
+    background-color: #202020;
+    border-radius: 3px;
+}
+#MyExpanderTitle:hover label {
+    color: #D8D8D8;
+}
+
+#ExpanderBox2 separator, #ExpanderBox3 separator {
+    color: #292929;
+}
+
+/* Editor tab button */
+#MainNotebook grid label, #MainNotebook grid image  {
+    /* OK */
+    padding: 1px;
+}
+
+/* File Browser right side tabs - Toolbox, Inspector, Fast Export, Filter */
+notebook {
+    padding: 0;
+    margin: 0;
+    border-style: none;
+}
+
+notebook header {
+    box-shadow: none;
+    background-color: #383838;
+    border-width: 1px;
+    border-style: none;
+    border-color: #262626;
+    border-radius: 0;
+    padding: 2px;
+    margin: 0;
+}
+
+notebook tabs {
+    padding: 1px;
+    margin: 0;
+}
+
+notebook tab {
+    padding: 1px;
+    margin: 2px;
+    min-height: 15px;
+    min-width: 15px;
+}
+
+notebook tab:hover {
+    background-color: #505050;
+}
+
+notebook tab:active {
+    padding: 3px;
+    border-width: 5px;
+    border-color: #989898;
+}
+
+notebook tab button {
+    padding: 0 0;
+    margin: 0 3px;
+}
+
+/* Get rid of shitty notebook header shadow */
+notebook header.top {
+    border-bottom-style: solid;
+    padding-bottom: 3px;
+}
+notebook header.right {
+    border-left-style: solid;
+    padding-left: 3px;
+}
+notebook header.bottom {
+    border-top-style: solid;
+    padding-top: 3px;
+}
+notebook header.left {
+    border-right-style: solid;
+    padding-right: 3px;
+}
+
+notebook.frame {
+    /* OK */
+    border-radius: 0;
+    border-style: none;
+}
+
+/* Pad notebooks, makes the other borders look nicer */
+notebook stack {
+    /* OK */
+    background-color: #484848;
+    padding: 0;
+    margin: 0;
+}
+
+paned box, paned grid {
+    padding: 0;
+    margin: 0;
+    border-style: none;
+}
+
+paned > separator {
+    border-width: 1px;
+    border-color: #484848;
+    margin: 0;
+    padding: 0;
+}
+paned.horizontal > separator {
+    min-width: 2px;
+    border-style: none solid;
+}
+paned.vertical > separator {
+    min-height: 2px;
+    border-style: solid none;
+}
+
+#PlacesPaned {
+    padding: 0px 0px 5px 5px;
+}
+#PlacesPaned:first-child {
+    padding: 0;
+    margin: 2px 0 4px 4px;
+}
+
+#MainNotebook > header.left tab image {
+    margin: 0.5em 0 0 0;
+}
+#MainNotebook > header.top tab image {
+    margin: 0 0.5em 0 0;
+}
+#MainNotebook > header.left tab {
+    margin: 0.5em 0 0.5em 0;
+}
+#MainNotebook > header.top tab {
+    margin: 0 0.5em 0 0.5em;
+}
+
+#MainNotebook header {
+    /* OK */
+    background-color: #2A2A2A;
+    border: 0;
+    padding: 0;
+}
+#MainNotebook tabs {
+    /* OK */
+    background-color: #2A2A2A;
+}
+#MainNotebook tab:hover {
+    /* OK */
+    background-color: #505050;
+}
+#MainNotebook tab:active {
+    /* OK */
+    border-color: #989898;
+}
+
+#RightNotebook header {
+    /* OK */
+    background-color: #2A2A2A;
+}
+#RightNotebook tabs {
+    /* OK */
+    background-color: #2A2A2A;
+    padding-bottom: 5px;
+}
+#RightNotebook tab:hover {
+    /* OK */
+    background-color: #505050;
+    color: #D6D6D6;
+}
+#RightNotebook tab:active {
+    /* OK */
+    border-color: #A5A5A5;
+}
+
+#LabelRightNotebook {
+    padding: 5px;
+    margin: 2px;
+}
+
+#ToolPanelNotebook header {
+    background-color: #383838;
+    border-color: #262626;
+    padding: 0;
+    margin: 0;
+}
+
+#ToolPanelNotebook header tabs {
+    background-color: #383838;
+}
+
+#ToolPanelNotebook header tab {
+    padding: 3px;
+    margin: 0;
+}
+
+/* All tool panels have a frame except for Meta which unlike the rest is a notebook itself.
+ * So we use CSS to make it look like a frame. */
+#MetaPanelNotebook > stack > box {
+    border: 1px solid #262626;
+    background-color: #363636;
+    border-radius: 0 0 4px 4px;
+    border-top-style: none;
+    padding: 0 3px 3px 3px;
+    margin: 0 5px 5px 5px;
+}
+
+#MetaPanelNotebook header {
+    border: 1px solid #262626;
+    background-color: #363636;
+    border-radius: 4px 4px 0 0;
+    border-bottom-style: none;
+    padding: 5px;
+    margin: 5px 5px 0 5px;
+}
+
+#MetaPanelNotebook > header > tabs {
+    background-color: #363636;
+}
+
+#MetaPanelNotebook > header tab {
+    margin: 0 5px;
+    padding: 5px;
+}
+
+#MetaPanelNotebook textview {
+    border-radius: 3px;
+}
+
+#MetaPanelNotebook entry, #MetaPanelNotebook scrolledwindow, #MetaPanelNotebook combobox {
+    margin: 2px 0 2px 0;
+}
+
+#MetaPanelNotebook entry {
+    padding: 0 1px;
+}
+
+#MetaPanelNotebook label {
+    padding: 0 5px;
+}
+
+#MetaPanelNotebook text {
+    border-color: #202020;
+    background-color: #262626;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+}
+
+#MetaPanelNotebook stack > box > scrolledwindow > viewport {
+    margin-left: 15px;
+}
+
+#PreviewWindow {
+    border-style: solid;
+}
+
+/* Decently sized tabs */
+#PrefNotebook tab, #AboutNotebook tab {
+    padding: 0.8em;
+}
+
+#PrefNotebook, #AboutNotebook {
+    padding: 0;
+    margin: 0 0 3pt 0;
+}
+
+#PrefNotebook header, #AboutNotebook header {
+    padding: 0;
+    margin: 0;
+}
+
+#PrefNotebook header tabs, #AboutNotebook header tabs {
+    padding: 0;
+    margin: 0;
+}
+
+#PrefNotebook stack, #AboutNotebook stack {
+    padding: 3pt;
+    margin: 0;
+}
+
+/* Add space between bottom panel and window edge */
+#IopsPanel {
+    padding: 0 2px 2px;
+}
+
+/* Move places paned (Places and Folders) away from window edges */
+#PlacesPaned {
+    padding: 5px;
+}
+
+#EditorLeftPaned:first-child {
+    padding: 0 0 0 3px;
+}
+
+#EditorLeftPaned:last-child {
+    padding: 10px 0 0 10px;
+}
+
+#EditorRightPaned:last-child {
+    padding: 0 4px 0 0;
+}
+
+#MainNotebook > header #CloseButton {
+    padding: 0;
+    margin: 0 0 0 0.3em;
+}
+#MainNotebook > header #CloseButton image {
+    padding: 0;
+    margin: 0;
+}
+
+#RightNotebook #ToolPanelNotebook stack {
+    margin: 0px;
+}
+
+#RightNotebook #HistoryPanel {
+    padding: 4px;
+}
+
+#RightNotebook scrolledwindow {
+    padding: 4px;
+}
+
+
+/* make the "partial profile" dialog a little bit more readable */
+#PartialPasteHeader {
+    margin: 1.5em 0 0 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+#PartialPasteHeaderSep {
+    background-color: #D8D8D8;
+}

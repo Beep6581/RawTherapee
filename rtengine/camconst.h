@@ -26,7 +26,6 @@ private:
     std::map<float, float> mApertureScaling;
 
     CameraConst();
-    ~CameraConst();
     static bool parseLevels(CameraConst *cc, int bw, void *ji);
     static bool parseApertureScaling(CameraConst *cc, void *ji);
     bool get_Levels(struct camera_const_levels & lvl, int bw, int iso, float fnumber);
@@ -43,6 +42,7 @@ public:
     int get_BlackLevel(int idx, int iso_speed);
     int get_WhiteLevel(int idx, int iso_speed, float fnumber);
     void update_Levels(const CameraConst *other);
+    void update_Crop(CameraConst *other);
 };
 
 class CameraConstantsStore
@@ -54,6 +54,7 @@ private:
     bool parse_camera_constants_file(Glib::ustring filename);
 
 public:
+    ~CameraConstantsStore();
     void init(Glib::ustring baseDir, Glib::ustring userSettingsDir);
     static CameraConstantsStore *getInstance(void);
     CameraConst *get(const char make[], const char model[]);

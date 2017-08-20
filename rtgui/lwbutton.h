@@ -60,7 +60,7 @@ public:
     bool    inside              (int x, int y);
     void    setIcon             (Cairo::RefPtr<Cairo::ImageSurface> i);
     Cairo::RefPtr<Cairo::ImageSurface> getIcon ();
-    void    setColors           (const Gdk::Color& bg, const Gdk::Color& fg);
+    void    setColors           (const Gdk::RGBA& bg, const Gdk::RGBA& fg);
     void    setToolTip          (const Glib::ustring& tooltip);
 
     bool    motionNotify        (int x, int y);

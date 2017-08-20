@@ -444,7 +444,7 @@ Camera constants:
                 { "aperture": 2.2, "scale_factor": 1.035 }, // 13954/13422=1.039
                 { "aperture": 2.5, "scale_factor": 1.025 }, // 11400/11000=1.028
                 { "aperture": 2.8, "scale_factor": 1.015 }, // 13562/13422 - 13731,13688,13562
-                { "aperture": 3.2, "scale_factor": 1.010 }, // 
+                { "aperture": 3.2, "scale_factor": 1.010 }, // guessed
                 { "aperture": 3.5, "scale_factor": 1.005 } // 13508/13422
             ]
         }
@@ -470,7 +470,7 @@ Camera constants:
                 { "aperture": 1.8, "scale_factor": 1.040 }, // 15501/14733=1.0521, 15352/14733=1.042 16030/15390
                 { "aperture": 2.0, "scale_factor": 1.025 }, // 15129/14733=1.0268 - 15800/15383=1.027
                 { "aperture": 2.2, "scale_factor": 1.013 }, // 15591/15383, 14931/14733
-                { "aperture": 2.5, "scale_factor": 1.008 }, // 14857/14733guessed
+                { "aperture": 2.5, "scale_factor": 1.008 }, // 14857/14733
                 { "aperture": 2.8, "scale_factor": 1.003 }, // 14783/14733 15435/15383
                 { "aperture": 3.2, "scale_factor": 1.001 }, // 15409/15383
                 { "aperture": 3.5, "scale_factor": 1.000 } // 14733/14733
@@ -505,6 +505,41 @@ Camera constants:
                 { "aperture": 2.8, "scale_factor": 1.010 }, // 15437/15283
                 { "aperture": 3.2, "scale_factor": 1.005 }, // 15361/15283
                 { "aperture": 3.5, "scale_factor": 1.000 } // no sample
+            ]
+        }
+    },
+
+    { // Quality B, some missing scaling factors are safely guessed
+        "make_model": "Canon EOS 6D Mark II",
+        "dcraw_matrix": [ 6875,-970,-932,-4691,12459,2501,-874,1953,5809 ], // DNG v_9.12 D65
+        "raw_crop": [ 120, 44, 6264, 4180 ], // fullraw size 6384x4224 usefull 120,44,6264x4180
+        // "raw_crop": [ 128, 52, 6248, 4168 ], // official jpeg crop 120+12,44+12,6240x4160
+        "masked_areas": [ 44, 4, 4220, 116 ], 
+        "ranges": {
+            "white": [
+                { "iso": [ 50, 100, 125, 200, 250, 400, 500, 800, 1000, 1600, 2000, 3200 ], "levels": 16300 }, // typical 16383
+                { "iso": [ 4000, 6400, 8000, 12800 ], "levels": 16200 }, // typical 16383
+                { "iso": [ 16000, 25600 ], "levels": 16100 }, // typical 16383
+                { "iso": [ 160 ], "levels": 13000 }, // typical 13044
+                { "iso": [ 320, 640, 1250, 2500 ], "levels": 13250 }, // typical 13337
+                { "iso": [ 5000, 10000 ], "levels": 13100 }, // typical 13367
+                { "iso": [ 20000, 40000 ], "levels": 12900 }, // typical 13367
+                { "iso": [ 51200, 102400  ], "levels": 15900 } // typical 16383
+            ],
+            "white_max": 16383,
+            "aperture_scaling": [
+                // no scale factors known for f/1.0 (had no lenses to test with), but the
+                // ISO 160-320... 13044 white levels maxes out at "white_max" for f/1.2 and below anyway.
+                { "aperture": 1.2, "scale_factor": 1.130 }, // guessed
+                { "aperture": 1.4, "scale_factor": 1.100 }, // guessed
+                { "aperture": 1.6, "scale_factor": 1.080 }, // guessed
+                { "aperture": 1.8, "scale_factor": 1.060 }, // 13890/13044=1.065 11284/10512 = 1.073
+                { "aperture": 2.0, "scale_factor": 1.040 }, // 13602/13044=1.042 11151/10512 = 1.060
+                { "aperture": 2.2, "scale_factor": 1.030 }, // 10982/10512=1.045
+                { "aperture": 2.5, "scale_factor": 1.020 }, // 10840/10512 = 1.030
+                { "aperture": 2.8, "scale_factor": 1.010 }, // 13530/13367= 1.012 - 12225/12048 = 1.015
+                { "aperture": 3.2, "scale_factor": 1.005 }, // 12194/12048 = 1.012
+                { "aperture": 3.5, "scale_factor": 1.000 } // 12092/12048 = 1.004
             ]
         }
     },
@@ -696,7 +731,7 @@ Camera constants:
         }
     },
 
-    { // Quality C, White Levels not properly indicated, aperture scaling..missing scaling factors are guessed
+    { // Quality B, White Levels not properly indicated, aperture scaling..missing scaling factors are guessed
         "make_model": "Canon EOS 80D",
         "dcraw_matrix": [ 7457,-671,-937,-4849,12495,2643,-1213,2354,5492 ], // DNG_V9.5 D65
         "raw_crop": [ 264, 34, 6024, 4022 ], // full size 6288x4056, official crop 276,46,6275,4045
@@ -724,6 +759,38 @@ Camera constants:
                 { "aperture": 2.2, "scale_factor": 1.025 }, // 13438/13097 = 1.026
                 { "aperture": 2.5, "scale_factor": 1.005 }, // 13190/13097 = 1.007
                 { "aperture": 2.8, "scale_factor": 1.000 }  // 13097/13097
+            ]
+        }
+    },
+
+    { // Quality B, aperture scaling..missing scaling factors are guessed
+        "make_model": [ "Canon EOS 77D", "Canon EOS 9000D" ],
+        "dcraw_matrix": [ 7377,-742,-998,-4235,11981,2549,-673,1918,5538 ], // DNG_V9.10.1 D65
+        "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056, official crop 276,48,6275,4047
+        "masked_areas": [ 40, 96, 4000, 260 ],
+        "ranges": {
+            "white": [
+                { "iso": [ 100 ], "levels": 16300 }, // nominal 16383
+                { "iso": [ 125, 200, 250, 400 ], "levels": 16300 }, // nominal 16383
+                { "iso": [ 160 ], "levels": 13000 }, // nominal 13109,
+                { "iso": [ 320, 640, 1250 ], "levels": 13300 }, // G1,G2 13403
+                { "iso": [ 500, 800, 1000 ], "levels": 16200 }, // nominal 16383
+                { "iso": [ 1600, 2000, 3200 ], "levels": 16100 }, // nominal 16383
+                { "iso": [ 2500, 5000 ], "levels": 13150 }, // G1,G2 13423
+                { "iso": [ 4000, 6400 ], "levels": 16000 }, // nominal 16383
+                { "iso": [ 8000, 10000,12800, 16000 ], "levels": 15800 }, // R,G1,G2 16383
+                { "iso": [ 25600, 51200 ], "levels": 15500 } // R,G1,G2 16383
+            ],
+            "white_max": 16383,
+            "aperture_scaling": [
+                // need for more data to properly fill all scale factors
+                { "aperture": 1.4, "scale_factor": 1.200 }, // guessed
+                { "aperture": 1.6, "scale_factor": 1.130 }, // 15264/13423
+                { "aperture": 1.8, "scale_factor": 1.090 }, // guessed
+                { "aperture": 2.0, "scale_factor": 1.060 }, // guessed
+                { "aperture": 2.2, "scale_factor": 1.025 }, // guessed
+                { "aperture": 2.5, "scale_factor": 1.005 }, // guessed
+                { "aperture": 2.8, "scale_factor": 1.000 }  // guessed
             ]
         }
     },
@@ -833,6 +900,70 @@ Camera constants:
                 { "aperture": 2.8, "scale_factor": 1.007 }, // guessed
                 { "aperture": 3.2, "scale_factor": 1.000 }, // guessed
                 { "aperture": 3.5, "scale_factor": 1.000 }
+            ]
+        }
+    },
+
+    { // Quality C, white levels and apperture scaling copied from Canon EOS77d
+        "make_model": [ "Canon EOS Rebel T7i", "Canon EOS 800D", "Canon EOS Kiss X9i" ],
+        "dcraw_matrix": [ 6970,-512,-968,-4425,12161,2553,-739,1982,5601 ], // DNG_V9.10.1 D65
+        "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056, official crop 276,48,6275,4047
+        "masked_areas": [ 40, 96, 4000, 260 ],
+        "ranges": {
+            "white": [
+                { "iso": [ 100 ], "levels": 16300 }, // nominal 16383
+                { "iso": [ 125, 200, 250, 400 ], "levels": 16300 }, // nominal 16383
+                { "iso": [ 160 ], "levels": 13000 }, // nominal 13109,
+                { "iso": [ 320, 640, 1250 ], "levels": 13300 }, // G1,G2 13403
+                { "iso": [ 500, 800, 1000 ], "levels": 16200 }, // nominal 16383
+                { "iso": [ 1600, 2000, 3200 ], "levels": 16100 }, // nominal 16383
+                { "iso": [ 2500, 5000 ], "levels": 13150 }, // G1,G2 13423
+                { "iso": [ 4000, 6400 ], "levels": 16000 }, // nominal 16383
+                { "iso": [ 8000, 10000,12800, 16000 ], "levels": 15800 }, // R,G1,G2 16383
+                { "iso": [ 25600, 51200 ], "levels": 15500 } // R,G1,G2 16383
+            ],
+            "white_max": 16383,
+            "aperture_scaling": [
+                // need for more data to properly fill all scale factors
+                { "aperture": 1.4, "scale_factor": 1.200 }, // guessed
+                { "aperture": 1.6, "scale_factor": 1.130 }, // 15264/13423
+                { "aperture": 1.8, "scale_factor": 1.090 }, // guessed
+                { "aperture": 2.0, "scale_factor": 1.060 }, // guessed
+                { "aperture": 2.2, "scale_factor": 1.025 }, // guessed
+                { "aperture": 2.5, "scale_factor": 1.005 }, // guessed
+                { "aperture": 2.8, "scale_factor": 1.000 }  // guessed
+            ]
+        }
+    },
+
+    { // Quality B, apperture scaling copied from Canon EOS77d
+        "make_model": [ "Canon EOS Rebel SL2", "Canon EOS 200D", "Canon EOS Kiss X9" ],
+        "dcraw_matrix": [ 7377,-742,-998,-4235,11981,2549,-673,1918,5538 ], // DNG_V9.12 D65
+        "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056, official crop 276,48,6275,4047
+        "masked_areas": [ 40, 96, 4000, 260 ],
+        "ranges": {
+            "white": [
+                { "iso": [ 100 ], "levels": 16300 }, // nominal 16383
+                { "iso": [ 125, 200, 250, 400 ], "levels": 16300 }, // nominal 16383
+                { "iso": [ 160 ], "levels": 13000 }, // nominal 13106,
+                { "iso": [ 320, 640, 1250 ], "levels": 13300 }, // G1,G2 13423
+                { "iso": [ 500, 800, 1000 ], "levels": 16200 }, // nominal 16383
+                { "iso": [ 1600, 2000, 3200 ], "levels": 16100 }, // nominal 16383
+                { "iso": [ 2500, 5000 ], "levels": 13150 }, // G1,G2 13423
+                { "iso": [ 4000, 6400 ], "levels": 16000 }, // nominal 16383
+                { "iso": [ 8000, 10000,12800, 16000 ], "levels": 15800 }, // R,G1,G2 16383
+                { "iso": [ 25600, 51200 ], "levels": 15500 } // R,G1,G2 16383
+            ],
+            "white_max": 16383,
+            "aperture_scaling": [
+                // need for more data to properly fill all scale factors
+                { "aperture": 1.4, "scale_factor": 1.200 }, // guessed
+                { "aperture": 1.6, "scale_factor": 1.130 }, // 15264/13423
+                { "aperture": 1.8, "scale_factor": 1.090 }, // guessed
+                { "aperture": 2.0, "scale_factor": 1.060 }, // guessed
+                { "aperture": 2.2, "scale_factor": 1.025 }, // guessed
+                { "aperture": 2.5, "scale_factor": 1.005 }, // guessed
+                { "aperture": 2.8, "scale_factor": 1.000 }  // guessed
             ]
         }
     },
@@ -958,7 +1089,7 @@ Camera constants:
     },
 
     { // Quality C, White Levels not properly indicated, aperture scaling..missing factors are guessed
-        "make_model": "Canon EOS M5",
+        "make_model": [ "Canon EOS M5","Canon EOS M6" ], 
         "dcraw_matrix": [ 8532,-701,-1167,-4095,11879,2508,-797,2424,7010 ], // DNG_V9.8 D65
         "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056,
         //"raw_crop": [ 272, 44, 6008, 4008 ], //  matched to official crop 276,48,6275,4047 - official jpeg 6000X4000
@@ -966,11 +1097,13 @@ Camera constants:
         "ranges": {
             "white": [
                 { "iso": [ 100, 125, 200, 250 ], "levels": 15600 }, // nominal 15660-15800
-                { "iso": [ 160 ], "levels": 13000 }, // guessed
-                { "iso": [ 320 ], "levels": 13200 }, // nominal green13528-14466-14380-14368 - blue13262-14186,
-                { "iso": [ 640, 1250 ], "levels": 13150 }, // iso 640 G1,G2 13260-13450 - blue13230-13430 -iso 1250 13430
-                { "iso": [ 2500, 5000, 10000 ], "levels": 13100 }, //
-                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400 ], "levels": 16100 }, // 16383
+                { "iso": [ 160 ], "levels": 12600 }, // green 12650-12750
+                { "iso": [ 320 ], "levels": 13100 }, // nominal green 13200, 13528-14466-14380-14368 - blue13262-14186,
+                { "iso": [ 640, 1250 ], "levels": 13200 }, // iso 640 G1,G2 13260-13450 - blue13230-13430 -iso 1250 13430
+                { "iso": [ 2500, 5000, 10000 ], "levels": 13000 }, //
+                { "iso": [ 400, 500, 800, 1000, 1600, 2000, 3200, 4000, 6400 ], "levels": 16100 }, // 16383 
+                //  { "iso": [ 1600 ], "levels": 15000 }, // one sample of m6 = 15100 !!
+                //  { "iso": [ 6400 ], "levels": 15500 }, // one sample of m6 = 15600 !!
                 { "iso": [ 8000, 12800, 16000, 25600 ], "levels": 16000 } // R,G1,G2 16383, B 16243
             ],
             "white_max": 16383,
@@ -978,8 +1111,8 @@ Camera constants:
                 // need for more data to properly fill all scale factors
                 { "aperture": 1.4, "scale_factor": 1.200 }, // 31/25
                 { "aperture": 1.6, "scale_factor": 1.080 }, // guessed
-                { "aperture": 1.8, "scale_factor": 1.050 }, // guessed
-                { "aperture": 2.0, "scale_factor": 1.030 }, // 15292/ 14916/ 320-14466/ 320-13528/
+                { "aperture": 1.8, "scale_factor": 1.060 }, // guessed
+                { "aperture": 2.0, "scale_factor": 1.040 }, // 15292/ 14916/ 320-14466/ 320-13528/
                 { "aperture": 2.2, "scale_factor": 1.020 }, // guessed
                 { "aperture": 2.5, "scale_factor": 1.010 }, // guessed
                 { "aperture": 2.8, "scale_factor": 1.000 }, //
@@ -1048,12 +1181,12 @@ Camera constants:
     },
 
     { // Quality B,
-        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G9 X", "Canon PowerShot G7 X Mark II" ],
+        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G9 X", "Canon PowerShot G7 X Mark II", "Canon PowerShot G9 X Mark II" ],
         "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 ], // DNG_V8.7 D65
         //"raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
         "masked_areas": [ 40, 4, 3680, 76 ],
-        "ranges": { "white": 16300 }
+        "ranges": { "white": 15500 } // some sporadic samples are clipped lower than 16383, one ISO125 sample at 15500
     },
 
     { // Quality A, changes for raw crop which is wrong (larger) in dcraw
@@ -1070,6 +1203,15 @@ Camera constants:
         "raw_crop": [ 120, 34, 4616, 3464 ], // full raw 4768x3516, Usable 96,16,4672,3498 - Canon official 4608x3456 left 124 top 38,
         "masked_areas": [ 20, 2, 3480, 80 ],
         "ranges": { "white": 4050 } // nominal 4080-4093
+    },
+
+    { // Quality B
+        "make_model": "FUJIFILM GFX 50S",
+        "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65
+        //"dcraw_matrix": [ 12407,-5222,-1086,-2971,11116,2120,-294,1029,5284 ], // copy from X-A3 DNGv9.8 D65
+        "raw_crop": [ 0, 0, 8280, 6208 ], // full raw 9216X6210 - usefull 8280x6208
+        //"raw_crop": [ 6, 6, 8264, 6200 ], // fuji official JPEG 8256X6192 10,11,9,8 - experimental crop to match with official
+        "ranges": { "white": 16000 }
     },
 
     { // Quality A
@@ -1123,7 +1265,7 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "FUJIFILM X-PRO2", "FUJIFILM X-T2" ],
+        "make_model": [ "FUJIFILM X-PRO2", "FUJIFILM X-T2", "FUJIFILM X100F", "FUJIFILM X-T20" ],
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
         //"raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - experimental crop
         "ranges": { "white": 16100 }
@@ -1153,11 +1295,17 @@ Camera constants:
         "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
     },
 
-    { // Quality B, frame corrections
+    { // Quality C
         "make_model": "LG mobile LG-H815",
         "dcraw_matrix": [ 5859,547,-1250,-6484,15547,547,-2422,5625,3906 ], // DNG D65
-        "raw_crop": [ 0, 0, -8, 0 ], // full frame 5312x2988, 8 black columns at the left
-        "ranges": { "white_max": 1023 }
+        //"dcraw_matrix": [ 11563,-2891,-3203,-5313,15625,625,-781,2813,5625 ], // DNG A
+        "ranges": { "white_max": 1000 }
+    },
+    { // Quality C
+        "make_model": "LG mobile LG-H850",
+        //"dcraw_matrix": [ 10000,-2188,-2813,-5156,15469,625,-703,2734,5078 ], // DNG A
+        "dcraw_matrix": [ 5313,1016,-1172,-6250,15391,547,-2344,5547,3359 ], // DNG D65
+        "ranges": { "white_max": 1000 }
     },
 
     { // Quality A
@@ -1280,6 +1428,12 @@ Camera constants:
         "ranges": { "white": 16300 } // WL value is for 14-bit files, RT auto adapts it for 12-bit files. WL typical 16383 set to 16300 for safety,
     },
 
+    { // Quality B
+        "make_model": "Nikon D7500",
+        "dcraw_matrix": [ 8813,-3210,-1036,-4703,12868,2021,-1054,1940,6129 ], // adobe dng_v9.12 d65
+        "ranges": { "white": 16300 } // WL value is for 14-bit files, RT auto adapts it for 12-bit files. WL typical 16383 set to 16300 for safety,
+    },
+
     { // Quality B, samples by joachip at RT forums, are measures at long exposures with LongExposureNoiseReduction
       // aperture scaling known to exist, but little to gain as the levels are so close to white_max
         "make_model": "Nikon D600",
@@ -1329,7 +1483,7 @@ Camera constants:
     },
 
     { // Quality B, data from RussellCottrell at RT forums. Largest aperture scale factor is 1.013, about 1/50th of a stop
-        "make_model": "Nikon D800E",
+        "make_model": [ "Nikon D800", "Nikon D800E" ],
         "dcraw_matrix": [ 7866,-2108,-555,-4869,12483,2681,-1176,2069,7501 ], // D800/D800E from dcraw.c
         "ranges": {
             "white": [
@@ -1345,6 +1499,12 @@ Camera constants:
         "dcraw_matrix": [ 9369,-3195,-791,-4488,12430,2301,-893,1796,6872 ], // dcp_v8.6 d65
         "raw_crop": [ 0, 0, 7380, 4928 ], // Official raw crop 7380x4928,
         "ranges": { "white": 16300 } // WL values for 14-bit files, RT auto adapts it for 12-bit files. Typical WL at 16383
+    },
+
+    { // Quality B
+        "make_model": "Nikon D80",
+        "dcraw_matrix": [ 8629,-2410,-883,-9055,16940,2171,-1490,1363,8520 ], // Dcraw.c d65
+        "ranges": { "white": 3980 } // 12-bit files.
     },
 
     { // Quality B, 16Mp and 64Mp raw frames
@@ -1417,6 +1577,12 @@ Camera constants:
     { // Quality B, per ISO WL measures missing
         "make_model": [ "OLYMPUS SH-2", "Olympus SH-3" ],
         "dcraw_matrix": [ 10156,-3425,-1077,-2611,11177,1624,-385,1592,5080 ], // DNG_V9.1 D65
+        "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
+    },
+
+    { // Quality B,
+        "make_model": "OLYMPUS TG-5",
+        "dcraw_matrix": [ 10899,-3833,-1082,-2112,10736,1575,-267,1452,5269 ], // DNG_V9.12 D65
         "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
     },
 
@@ -1594,7 +1760,7 @@ Camera constants:
 
     { // Quality A, Replicated from rawimage.cc
         "make_model": "Panasonic DMC-GH2",
-        // "dcraw_matrix": [ 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 ], // Colin Walker - disabled due to problems with underwater
+        //"dcraw_matrix": [ 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 ], // Colin Walker - disabled due to problems with underwater
         "dcraw_matrix": [ 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 ], // dcraw d65
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
@@ -1626,6 +1792,19 @@ Camera constants:
                 { "iso": 100, "levels": 2700 }, // gaussian center at 2870-2920 range +/- 150, Exif 2111
                 { "iso": 125, "levels": 3100 }, // guessed
                 { "iso": [ 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
+            ]
+        }
+    },
+
+    { // Quality C
+        "make_model": "Panasonic DC-GH5",
+        "dcraw_matrix": [ 7641,-2336,-605,-3218,11299,2187,-485,1338,5121 ], // DNG_v9.9 D65
+        "ranges": {
+            "black": 15, // 16 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
+            "white": [
+                { "iso": 100, "levels": 4080 }, // Exif_linearitylimit 2111
+                { "iso": 125, "levels": 4080 }, // Exif_linearitylimit 2626
+                { "iso": [ 160, 200, 250, 320, 400,500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 4000, 5000, 6400, 12800, 25600 ], "levels": 4080 } // nominal 4095
             ]
         }
     },
@@ -1765,7 +1944,7 @@ Camera constants:
         //"dcraw_matrix": [ 8050,-2061,-1264,-4359,12953,1515,-1096,1965,6075 ], // PENTAX DNG D65
         "dcraw_matrix": [ 8766,-3149,-747,-3976,11943,2292,-517,1259,5552 ], // Adobe DNGv9.8 D65
         "raw_crop": [ 58, 28, 6022, 4020 ], // full frame 6080x4064, usefull raw frame 56,28,6080,4049, official DNG raw_crop 58,28,6080,4052, official jpeg crop 58+8,28+4 6000x4000
-        // "raw_crop": [ 62, 28, 6000, 4000 ], // matched to official jpeg crop 58+8,28+4 6000x4000
+        //"raw_crop": [ 62, 28, 6000, 4000 ], // matched to official jpeg crop 58+8,28+4 6000x4000
         "ranges": {
             "white": [
                 { "iso": 100, "levels": 16300 }, // 16319-16377
@@ -1780,11 +1959,31 @@ Camera constants:
         }
     },
 
+    { // Quality B, Intemediate ISO samples missing. Pentax_DNG WLtags are after BL sutraction and not valid
+        "make_model": [ "RICOH PENTAX KP", "PENTAX KP" ],
+        "dcraw_matrix": [ 7357,-2031,-1320,-4842,13555,1349,-1538,2416,5736 ], // Adobe DNGv9.12 D65
+        "raw_crop": [ 52, 28, 6032, 4030 ], // full frame 6112x4060, usefull raw frame 52,28,6084,4049, official DNG raw_crop 54,28,6082,4060
+        "ranges": {
+            "white": [
+                { "iso": 100, "levels": 16300 }, // 16383
+                { "iso": 200, "levels": 16250 }, // 16383
+                { "iso": 400, "levels": 16250 }, // 16383
+                { "iso": 800, "levels": 16200 }, // 16383
+                { "iso": 1600, "levels": 16100 }, // 16383
+                { "iso": [ 3200, 6400 ], "levels": 16000 }, // 16383
+                { "iso": [ 12800, 25600 ], "levels": 15800 }, // 16383
+                { "iso": [ 51200, 102400 ], "levels": 15500 }, // 16383
+                { "iso": [ 204800, 409600 ], "levels": 15000 }, // 16383
+                { "iso": [ 819200 ], "levels": 14500 } // 16383-16200
+            ]
+        }
+    },
+
     { // Quality B, Intemediate ISO samples missing, Pentax_DNG WLtags are after BL sutraction and not valid
         "make_model": [ "RICOH PENTAX K-1", "PENTAX K-1" ],
         "dcraw_matrix": [ 8596,-2981,-639,-4202,12046,2431,-685,1424,6122 ], // adobe DNG v9.7 D65
         //"dcraw_matrix": [ 8566,-2746,-1201,-3612,12204,1550,-893,1680,6264 ], // PENTAX DNG
-        "raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
+        //"raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
         "ranges": {
             "white": [
                 { "iso": [ 100, 200, 400, 800 ], "levels": 16300 }, // 16380
@@ -1920,6 +2119,10 @@ Camera constants:
         "raw_crop": [ 12, 0, -110, -62 ] // for small size all numbers/2
     },
 
+    { // Quality C, only raw crop for now - see #3858
+        "make_model": "Sigma sd Quattro",
+        "raw_crop": [ 200, 74, 5632, 3698 ]
+    },
     { // Quality A, correction for color matrix from Colin Walker's d50 to dng d65
         "make_model": "Sony NEX-C3",
         //"dcraw_matrix": [ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 ], // Colin walker's d50 kept for possible consistency issues
@@ -2000,6 +2203,13 @@ Camera constants:
         "make_model": [ "Sony ILCE-7RM2", "Sony DSC-RX1RM2" ],
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
+        "ranges": { "black": 512, "white": 16300 }
+    },
+
+    { // Quality B, color matrix copied from a7rm2
+        "make_model": "Sony ILCE-9",
+        "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // DNG_v9.12 D65
+        "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
         "ranges": { "black": 512, "white": 16300 }
     },
 

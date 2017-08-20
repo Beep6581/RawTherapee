@@ -18,7 +18,7 @@
  */
 
 #include "edit.h"
-#include "rtimage.h"
+#include "../rtengine/icons.h"
 
 ObjectMOBuffer::ObjectMOBuffer(EditDataProvider *dataProvider) : objectMap(nullptr), objectMode(OM_255), dataProvider(dataProvider) {}
 
@@ -191,7 +191,7 @@ void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
             center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
         }
 
-        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*M_PI);
+        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
         cr->stroke();
     }
 }
@@ -225,7 +225,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
         }
 
         if (filled && state != INSENSITIVE) {
-            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*M_PI);
+            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
             if (innerLineWidth > 0.) {
                 cr->fill_preserve();
@@ -234,7 +234,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
                 cr->fill();
             }
         } else if (innerLineWidth > 0.) {
-            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*M_PI);
+            cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
             if (state == INSENSITIVE) {
                 std::valarray<double> ds(1);
@@ -274,7 +274,7 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short 
         } else {
             cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
         }
-        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*M_PI);
+        cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*rtengine::RT_PI);
 
         if (filled) {
             if (innerLineWidth > 0.) {
@@ -822,7 +822,7 @@ OPIcon::OPIcon(const Cairo::RefPtr<Cairo::ImageSurface> &normal,
     }
 
     if (dragged) {
-        draggedImg = active;
+        draggedImg = dragged;
     }
 
     if (insensitive) {
@@ -834,23 +834,23 @@ OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustri
                Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
 {
     if (!normalImage.empty()) {
-        normalImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(normalImage) );
+        normalImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(normalImage) );
     }
 
     if (!prelightImage.empty()) {
-        prelightImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(prelightImage) );
+        prelightImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(prelightImage) );
     }
 
     if (!activeImage.empty()) {
-        activeImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(activeImage) );
+        activeImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(activeImage) );
     }
 
     if (!draggedImage.empty()) {
-        draggedImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(draggedImage) );
+        draggedImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(draggedImage) );
     }
 
     if (!insensitiveImage.empty()) {
-        insensitiveImg = Cairo::ImageSurface::create_from_png( RTImage::findIconAbsolutePath(insensitiveImage) );
+        insensitiveImg = Cairo::ImageSurface::create_from_png( rtengine::findIconAbsolutePath(insensitiveImage) );
     }
 }
 

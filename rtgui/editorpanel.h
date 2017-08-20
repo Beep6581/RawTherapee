@@ -36,6 +36,8 @@
 #include "filepanel.h"
 
 class EditorPanel;
+class MyProgressBar;
+
 struct EditorPanelIdleHelper {
     EditorPanel* epanel;
     bool destroyed;
@@ -43,117 +45,37 @@ struct EditorPanelIdleHelper {
 };
 
 class RTWindow;
-class EditorPanel : public Gtk::VBox,
+class EditorPanel final :
+    public Gtk::VBox,
     public PParamsChangeListener,
     public rtengine::ProgressListener,
     public ThumbnailListener,
     public HistoryBeforeLineListener,
     public rtengine::HistogramListener
 {
-private:
-
-    Glib::ustring lastSaveAsFileName;
-    bool realized;
-
-protected:
-    Gtk::ProgressBar  *progressLabel;
-    Gtk::ToggleButton* info;
-    Gtk::ToggleButton* hidehp;
-    Gtk::ToggleButton* tbShowHideSidePanels;
-    Gtk::ToggleButton* tbTopPanel_1;
-    Gtk::ToggleButton* tbRightPanel_1;
-    Gtk::ToggleButton* tbBeforeLock;
-    //bool bAllSidePanelsVisible;
-    Gtk::ToggleButton* beforeAfter;
-    Gtk::HPaned* hpanedl;
-    Gtk::HPaned* hpanedr;
-    Gtk::HBox* statusBox;
-    Gtk::Image *iHistoryShow, *iHistoryHide;
-    Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
-    Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
-    Gtk::Image *iShowHideSidePanels;
-    Gtk::Image *iShowHideSidePanels_exit;
-    Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
-    Gtk::VBox *leftbox;
-    Gtk::VBox *vboxright;
-
-    Gtk::Button* queueimg;
-    Gtk::Button* saveimgas;
-    Gtk::Button* sendtogimp;
-    Gtk::Button* navSync;
-    Gtk::Button* navNext;
-    Gtk::Button* navPrev;
-
-    class ColorManagementToolbar;
-    std::unique_ptr<ColorManagementToolbar> colorMgmtToolBar;
-
-    ImageAreaPanel* iareapanel;
-    PreviewHandler* previewHandler;
-    PreviewHandler* beforePreviewHandler;   // for the before-after view
-    Navigator* navigator;
-    ImageAreaPanel* beforeIarea;    // for the before-after view
-    Gtk::VBox* beforeBox;
-    Gtk::VBox* afterBox;
-    Gtk::Label* beforeLabel;
-    Gtk::Label* afterLabel;
-    Gtk::HBox* beforeAfterBox;
-    Gtk::HBox* beforeHeaderBox;
-    Gtk::HBox* afterHeaderBox;
-
-    Gtk::Frame* ppframe;
-    ProfilePanel* profilep;
-    History* history;
-    HistogramPanel* histogramPanel;
-    ToolPanelCoordinator* tpc;
-    RTWindow* parent;
-    //SaveAsDialog* saveAsDialog;
-    BatchToolPanelCoordinator* btpCoordinator;
-    FilePanel* fPanel;
-
-    bool firstProcessingDone;
-
-    Thumbnail* openThm;  // may get invalid on external delete event
-    Glib::ustring fname;  // must be saved separately
-
-    rtengine::InitialImage* isrc;
-    rtengine::StagedImageProcessor* ipc;
-    rtengine::StagedImageProcessor* beforeIpc;    // for the before-after view
-
-    EditorPanelIdleHelper* epih;
-
-    void close ();
-
-    BatchQueueEntry*    createBatchQueueEntry ();
-    bool                idle_imageSaved(ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf);
-    bool                idle_saveImage(ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf);
-    bool                idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname);
-    bool                idle_sentToGimp(ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring filename);
-    int err;
-
-    time_t processingStartedTime;
-
-    sigc::connection ShowHideSidePanelsconn;
-
-    bool isProcessing;
-
-
 public:
     explicit EditorPanel (FilePanel* filePanel = nullptr);
-    virtual ~EditorPanel ();
+    ~EditorPanel ();
 
     void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
     void setAspect ();
     void on_realize ();
-    void leftPaneButtonReleased(GdkEventButton *event);
-    void rightPaneButtonReleased(GdkEventButton *event);
+    void leftPaneButtonReleased (GdkEventButton *event);
+    void rightPaneButtonReleased (GdkEventButton *event);
 
     void setParent (RTWindow* p)
     {
         parent = p;
     }
+
+    void setParentWindow (Gtk::Window* p)
+    {
+        parentWindow = p;
+    }
+
     void writeOptions();
 
-    void showTopPanel(bool show);
+    void showTopPanel (bool show);
     bool isRealized()
     {
         return realized;
@@ -208,11 +130,102 @@ public:
     {
         return isProcessing;
     }
+    void updateProfiles(const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateTabsUsesIcons (bool useIcons);
     void updateHistogramPosition (int oldPosition, int newPosition);
 
-    Gtk::Paned *catalogPane;
+    void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile);
+
+    bool saveImmediately(const Glib::ustring &filename, const SaveFormat &sf);
+
+    Gtk::Paned* catalogPane;
+
+private:
+    void close ();
+
+    BatchQueueEntry*    createBatchQueueEntry ();
+    bool                idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf);
+    bool                idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf);
+    bool                idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname);
+    bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring filename);
+
+    Glib::ustring lastSaveAsFileName;
+    bool realized;
+
+    MyProgressBar  *progressLabel;
+    Gtk::ToggleButton* info;
+    Gtk::ToggleButton* hidehp;
+    Gtk::ToggleButton* tbShowHideSidePanels;
+    Gtk::ToggleButton* tbTopPanel_1;
+    Gtk::ToggleButton* tbRightPanel_1;
+    Gtk::ToggleButton* tbBeforeLock;
+    //bool bAllSidePanelsVisible;
+    Gtk::ToggleButton* beforeAfter;
+    Gtk::Paned* hpanedl;
+    Gtk::Paned* hpanedr;
+    Gtk::Image *iHistoryShow, *iHistoryHide;
+    Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
+    Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
+    Gtk::Image *iShowHideSidePanels;
+    Gtk::Image *iShowHideSidePanels_exit;
+    Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
+    Gtk::VBox *leftbox;
+    Gtk::VBox *vboxright;
+
+    Gtk::Button* queueimg;
+    Gtk::Button* saveimgas;
+    Gtk::Button* sendtogimp;
+    Gtk::Button* navSync;
+    Gtk::Button* navNext;
+    Gtk::Button* navPrev;
+
+    class ColorManagementToolbar;
+    std::unique_ptr<ColorManagementToolbar> colorMgmtToolBar;
+
+    ImageAreaPanel* iareapanel;
+    PreviewHandler* previewHandler;
+    PreviewHandler* beforePreviewHandler;   // for the before-after view
+    Navigator* navigator;
+    ImageAreaPanel* beforeIarea;    // for the before-after view
+    Gtk::VBox* beforeBox;
+    Gtk::VBox* afterBox;
+    Gtk::Label* beforeLabel;
+    Gtk::Label* afterLabel;
+    Gtk::HBox* beforeAfterBox;
+    Gtk::HBox* beforeHeaderBox;
+    Gtk::HBox* afterHeaderBox;
+
+    Gtk::Frame* ppframe;
+    ProfilePanel* profilep;
+    History* history;
+    HistogramPanel* histogramPanel;
+    ToolPanelCoordinator* tpc;
+    RTWindow* parent;
+    Gtk::Window* parentWindow;
+    //SaveAsDialog* saveAsDialog;
+    FilePanel* fPanel;
+
+    bool firstProcessingDone;
+
+    Thumbnail* openThm;  // may get invalid on external delete event
+    Glib::ustring fname;  // must be saved separately
+
+    rtengine::InitialImage* isrc;
+    rtengine::StagedImageProcessor* ipc;
+    rtengine::StagedImageProcessor* beforeIpc;    // for the before-after view
+
+    EditorPanelIdleHelper* epih;
+
+    int err;
+
+    time_t processingStartedTime;
+
+    sigc::connection ShowHideSidePanelsconn;
+
+    bool isProcessing;
+
+    IdleRegister idle_register;
 };
 
 #endif

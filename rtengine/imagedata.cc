@@ -16,9 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <strings.h>
+#include <glib/gstdio.h>
+
 #include "imagedata.h"
 #include "iptcpairs.h"
-#include <glib/gstdio.h>
 
 using namespace rtengine;
 
@@ -46,8 +48,7 @@ ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, RawMetaDataL
 
 ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(0), aperture(0.), shutter(0.)
 {
-
-    size_t dotpos = fname.find_last_of ('.');
+    memset (&time, 0, sizeof(time));
     root = nullptr;
     iptc = nullptr;
 
@@ -72,7 +73,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(
             fclose (f);
             extractInfo ();
         }
-    } else if ((dotpos < fname.size() - 3 && !fname.casefold().compare (dotpos, 4, ".jpg")) || (dotpos < fname.size() - 4 && !fname.casefold().compare (dotpos, 5, ".jpeg"))) {
+    } else if (hasJpegExtension(fname)) {
         FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
@@ -83,7 +84,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(
             iptc = iptc_data_new_from_jpeg_file (ff);
             fclose (ff);
         }
-    } else if ((dotpos < fname.size() - 3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos < fname.size() - 4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
+    } else if (hasTiffExtension(fname)) {
         FILE* f = g_fopen (fname.c_str (), "rb");
 
         if (f) {
@@ -110,7 +111,6 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) : iso_speed(
         orientation = "Unknown";
         expcomp = 0;
         focal_len = 0;
-        memset (&time, 0, sizeof(time));
     }
 }
 
@@ -157,7 +157,8 @@ void ImageData::extractInfo ()
             "SAMSUNG",
             "Mamiya",
             "MOTOROLA",
-            "Leaf"
+            "Leaf",
+            "Panasonic"
         }) {
             if (make.find(corp) != std::string::npos) { // Simplify company names
                 make = corp;
@@ -331,7 +332,7 @@ void ImageData::extractInfo ()
 
                     if (mnote->getTag ("LensData")) {
                         std::string ldata = mnote->getTag ("LensData")->valueToString ();
-                        int pos;
+                        size_t pos;
 
                         if (ldata.size() > 10 && (pos = ldata.find ("Lens = ")) != Glib::ustring::npos) {
                             lens = ldata.substr (pos + 7);
@@ -339,7 +340,7 @@ void ImageData::extractInfo ()
                             if (lens.compare (0, 7, "Unknown")) {
                                 lensOk = true;
                             } else {
-                                int pos = lens.find("$FL$");        // is there a placeholder for focallength?
+                                size_t pos = lens.find("$FL$");        // is there a placeholder for focallength?
 
                                 if(pos != Glib::ustring::npos) {                // then fill in focallength
                                     lens = lens.replace(pos, 4, exif->getTag ("FocalLength")->valueToString ());
@@ -361,7 +362,7 @@ void ImageData::extractInfo ()
                     if (!lensOk && mnote->getTag ("Lens")) {
                         std::string ldata = mnote->getTag ("Lens")->valueToString ();
                         size_t i = 0, j = 0;
-                        double n[4];
+                        double n[4] = {0.0};
 
                         for (int m = 0; m < 4; m++) {
                             while (i < ldata.size() && ldata[i] != '/') {
@@ -379,7 +380,7 @@ void ImageData::extractInfo ()
                             int den = atoi(ldata.substr(j, i).c_str());
                             j = i + 2;
                             i += 2;
-                            n[m] = (double) nom / den;
+                            n[m] = (double) nom / std::max(den,1);
                         }
 
                         std::ostringstream str;
@@ -482,6 +483,17 @@ void ImageData::extractInfo ()
                             lens = eq->getTag ("LensType")->valueToString ();
                         }
                     }
+                } else if (mnote && !make.compare (0, 9, "Panasonic")) {
+                    if (mnote->getTag ("LensType")) {
+                        std::string panalens = mnote->getTag("LensType")->valueToString();
+
+                        if (panalens.find("LUMIX") != Glib::ustring::npos) {
+                            lens = "Panasonic " + panalens;
+                        }
+                        else {
+                            lens = panalens;
+                        }
+                    }
                 }
             } else if (exif->getTag ("DNGLensInfo")) {
                 lens = exif->getTag ("DNGLensInfo")->valueToString ();
@@ -566,7 +578,7 @@ std::string ImageMetaData::shutterToString (double shutter)
 
     char buffer[256];
 
-    if (shutter > 0.0 && shutter < 0.9) {
+    if (shutter > 0.0 && shutter <= 0.5) {
         sprintf (buffer, "1/%0.0f", 1.0 / shutter);
     } else {
         sprintf (buffer, "%0.1f", shutter);

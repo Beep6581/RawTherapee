@@ -93,7 +93,6 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     backColor2->set_active (options.bgcolor == 2);
 
     vbbackColor = Gtk::manage (new Gtk::VBox ());
-    vbbackColor->set_border_width (0);
     vbbackColor->pack_start (*backColor0, Gtk::PACK_SHRINK, 0);
     vbbackColor->pack_start (*backColor1, Gtk::PACK_SHRINK, 0);
     vbbackColor->pack_start (*backColor2, Gtk::PACK_SHRINK, 0);
@@ -227,7 +226,7 @@ void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview)
 
 int PreviewModePanel::GetbackColor()
 {
-    int backColor;
+    int backColor = 0;
 
     if (backColor0->get_active ()) {
         backColor = 0;

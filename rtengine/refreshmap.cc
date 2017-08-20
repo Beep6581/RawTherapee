@@ -73,7 +73,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNRadius: obsolete,
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
-    ALL,              // EvBlendCMSMatrix,
+    0,                // free entry
     RGBCURVE,         // EvDCPToneCurve,
     ALLNORAW,         // EvDCPIlluminant,
     RETINEX,          // EvSHEnabled,
@@ -451,7 +451,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvLgam
     DEMOSAIC,         // EvLslope
     RETINEX,          // EvLhighl
-    DEMOSAIC,         // EvLbaselog
+    SPOT,             // EvSpotEnabled
     DEMOSAIC,         // EvRetinexlhcurve
     OUTPUTPROFILE,    // EvOIntent
     MONITORTRANSFORM, // EvMonitorTransform: no history message
@@ -470,6 +470,48 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvRetinexgaintransmission
     RETINEX,          // EvLskal
     OUTPUTPROFILE,    // EvOBPCompens
-    SPOT              // EvSpotEnabled
+    ALLNORAW,         // EvWBtempBias
+    DARKFRAME,        // EvRawImageNum
+    DEMOSAIC,         // EvPixelShiftMotion
+    DEMOSAIC,         // EvPixelShiftMotionCorrection
+    DEMOSAIC,         // EvPixelShiftStddevFactorGreen
+    DEMOSAIC,         // EvPixelShiftEperIso
+    DEMOSAIC,         // EvPixelShiftNreadIso
+    DEMOSAIC,         // EvPixelShiftPrnu
+    DEMOSAIC,         // EvPixelshiftShowMotion
+    DEMOSAIC,         // EvPixelshiftShowMotionMaskOnly
+    DEMOSAIC,         // EvPixelShiftAutomatic
+    DEMOSAIC,         // EvPixelShiftNonGreenHorizontal
+    DEMOSAIC,         // EvPixelShiftNonGreenVertical
+    DEMOSAIC,         // EvPixelShiftNonGreenCross
+    DEMOSAIC,         // EvPixelShiftStddevFactorRed
+    DEMOSAIC,         // EvPixelShiftStddevFactorBlue
+    DEMOSAIC,         // EvPixelShiftNonGreenCross2
+    DEMOSAIC,         // EvPixelShiftNonGreenAmaze
+    DEMOSAIC,         // EvPixelShiftGreen
+    DEMOSAIC,         // EvPixelShiftRedBlueWeight
+    DEMOSAIC,         // EvPixelShiftBlur
+    DEMOSAIC,         // EvPixelShiftSigma
+    DEMOSAIC,         // EvPixelShiftSum
+    DEMOSAIC,         // EvPixelShiftExp0
+    DEMOSAIC,         // EvPixelShiftHoleFill
+    DEMOSAIC,         // EvPixelShiftMedian
+    DEMOSAIC,         // EvPixelShiftMedian3
+    DEMOSAIC,         // EvPixelShiftMotionMethod
+    DEMOSAIC,         // EvPixelShiftSmooth
+    DEMOSAIC,         // EvPixelShiftLmmse
+    DEMOSAIC,         // EvPixelShiftEqualBright
+    DEMOSAIC,         // EvPixelShiftEqualBrightChannel
+    LUMINANCECURVE,   // EvCATtempout
+    LUMINANCECURVE,   // EvCATgreenout
+    LUMINANCECURVE,   // EvCATybout
+    LUMINANCECURVE,   // EvCATDegreeout
+    LUMINANCECURVE,   // EvCATAutoDegreeout
+    LUMINANCECURVE,   // EvCATtempsc
+    LUMINANCECURVE,   // EvCATgreensc
+    LUMINANCECURVE,   // EvCATybscen
+    LUMINANCECURVE    // EvCATAutoyb
+
+
 };
 

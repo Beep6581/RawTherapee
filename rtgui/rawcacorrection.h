@@ -21,19 +21,16 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "checkbox.h"
 #include "toolpanel.h"
-#include "../rtengine/rawimage.h"
 
-class RAWCACorr : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class RAWCACorr : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel
 {
 
 protected:
-    Gtk::CheckButton* caAutocorrect;
-    Adjuster* caStrength;
+    CheckBox* caAutocorrect;
     Adjuster* caRed;
     Adjuster* caBlue;
-    bool lastCA;
-    sigc::connection caacsconn;
 
 public:
 
@@ -47,7 +44,7 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp);
 
     void adjusterChanged     (Adjuster* a, double newval);
-    void caCorrectionChanged ();
+    void checkBoxToggled     (CheckBox* c, CheckValue newval);
 };
 
 #endif

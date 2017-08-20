@@ -169,6 +169,11 @@ public:
     {
         data = nullptr;
         reset();
+#if defined( __SSE2__ ) && defined( __x86_64__ )
+        maxsv = ZEROV;
+        sizev = ZEROV;
+        sizeiv = _mm_setzero_si128();
+#endif
     }
 
     ~LUT()
@@ -579,7 +584,7 @@ public:
             numVals = std::min(numVals, passThrough.getSize());
             float mult = dest.size - 1;
 
-            for (int i = 0; i < numVals; i++) {
+            for (unsigned int i = 0; i < numVals; i++) {
                 int hi = (int)(mult * passThrough[i]);
                 dest[hi] += this->data[i] ;
             }
@@ -599,7 +604,7 @@ public:
         vint sumv = (vint)ZEROV;
         vfloat avgv = ZEROV;
 
-        for(; i < size - 3; i += 4) {
+        for(; i < static_cast<int>(size) - 3; i += 4) {
             vint datav = _mm_loadu_si128((__m128i*)&data[i]);
             sumv += datav;
             avgv += iv * _mm_cvtepi32_ps(datav);
@@ -611,7 +616,7 @@ public:
         avg = vhadd(avgv);
 #endif
 
-        for (; i < size; i++) {
+        for (; i < static_cast<int>(size); i++) {
             T val = data[i];
             sum += val;
             avg += i * val;

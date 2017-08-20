@@ -1,31 +1,51 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-cwd="$(cd "$(dirname "$0")"; pwd)"
+cd "$(dirname "$0")" || exit 1
+
+cwd="$(pwd)"
 app="${cwd%/Contents/*}"
-etc="${cwd}"/etc
+lib="${app}/Contents/Frameworks"
+resources="${app}/Contents/Resources"
+etc="${resources}"/etc
 
-# for different os x versions
-# see https://github.com/Beep6581/RawTherapee/issues/1779
-cups_dir=/tmp/RT4
-install -d ${cups_dir}
-cp -f /usr/lib/libcups.2.dylib ${cups_dir}
+### Pending deletion:
+# See https://github.com/Beep6581/RawTherapee/issues/1779
+# cups_dir=/tmp/RT5
+# install -d "${cups_dir}"
+# cp -f /usr/lib/libcups.2.dylib "${cups_dir}"
+# export DYLD_LIBRARY_PATH="${lib}:${cups_dir}"
 
-export DYLD_LIBRARY_PATH="${cwd}"/lib:${cups_dir}
-export GTK_EXE_PREFIX="${cwd}"
-export GTK_DATA_PREFIX="${cwd}"
-export GTK_IM_MODULE_FILE="${etc}"/gtk-2.0/gtk.immodules
-export GDK_PIXBUF_MODULE_FILE="${etc}"/gtk-2.0/gdk-pixbuf.loaders
-export XDG_DATA_DIRS="${cwd}"/share
-export PANGO_RC_FILE="${etc}"/pango/pangorc
+# export GTK_EXE_PREFIX="${resources}"
+# export GTK_DATA_PREFIX="${resources}"
+export XDG_DATA_DIRS="${resources}/share"
+# export GTK_IM_MODULE_FILE="${etc}/gtk-3.0/gtk.immodules"
 
-# environment variables for X11 backend
-if test -d "${etc}"/fonts; then
-  export FONTCONFIG_PATH="${etc}"/fonts
-fi
+export DYLD_LIBRARY_PATH="${lib}"
 
-# strip out system argument
-case $1 in -psn_*) shift;; esac
+export GTK_PATH="${lib}/gtk-3.0/3.0.0"
+export XDG_DATA_HOME="${resources}/share"
+export GSETTINGS_SCHEMA_DIR="${resources}/share/glib-2.0/schemas"
+export GDK_PIXBUF_MODULE_FILE="${etc}/gtk-3.0/gdk-pixbuf.loaders"
+export GDK_PIXBUF_MODULEDIR="${lib}/gdk-pixbuf-2.0/2.10.0/loaders"
 
-ln -sf "${app}" /tmp
+export RT_SETTINGS="${HOME}/Library/Application Support/RawTherapee/config"
+export RT_CACHE="${HOME}/Library/Application Support/RawTherapee/cache"
 
-exec "${cwd}"/rawtherapee-bin "$@"
+### Pending deletion:
+# Environment variables for X11 backend
+#if [[ -d ${etc}/fonts ]]; then
+#    export FONTCONFIG_PATH="${etc}/fonts"
+#fi
+
+# Strip out system argument
+case "$1" in
+    -psn_*) shift ;;
+esac
+
+# Commented-out as part of "crash-on-startup part 2" fix, see https://github.com/Beep6581/RawTherapee/issues/3882#issuecomment-311703141
+#if [[ -d "/tmp/RawTherapee.app" ]]; then
+#  rm -rf "/tmp/RawTherapee.app"
+#fi
+#ln -sf "${app}" /tmp
+
+exec "${cwd}/rawtherapee-bin" "$@"

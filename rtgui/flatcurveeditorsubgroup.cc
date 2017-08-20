@@ -40,64 +40,47 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     valUnchanged = (int)FCT_Unchanged;
     parent = prt;
 
-    curveBBoxPos = options.curvebboxpos;
+    Gtk::PositionType sideStart = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
+    Gtk::PositionType sideEnd = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_RIGHT : Gtk::POS_BOTTOM;
 
     // ControlPoints curve
-    CPointsCurveBox = new Gtk::VBox ();
-    CPointsCurveBox->set_spacing(4);
-    Gtk::HBox* CPointsCurveAndButtons = Gtk::manage (new Gtk::HBox ());
-    CPointsCurveAndButtons->set_spacing(4);
+    CPointsCurveGrid = new Gtk::Grid ();
+    CPointsCurveGrid->set_row_spacing(2);
+    CPointsCurveGrid->set_column_spacing(2);
+    CPointsCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+
     CPointsCurve = Gtk::manage (new MyFlatCurve ());
-    CPointsCurve->set_size_request (GRAPH_SIZE + 2 * RADIUS + 1, GRAPH_SIZE + 2 * RADIUS + 1);
     CPointsCurve->setType (FCT_MinMaxCPoints);
 
-    Gtk::Box* CPointsbbox; // curvebboxpos 0=above, 1=right, 2=below, 3=left
+    Gtk::Grid* CPointsbbox = Gtk::manage (new Gtk::Grid ()); // curvebboxpos 0=above, 1=right, 2=below, 3=left
 
-    if (options.curvebboxpos == 1 || options.curvebboxpos == 3) {
-        CPointsbbox = Gtk::manage (new Gtk::VBox ());
+    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(CPointsbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        CPointsbbox = Gtk::manage (new Gtk::HBox ());
+        CPointsbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(CPointsbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
-    CPointsbbox->set_spacing(4);
-
-    pasteCPoints = Gtk::manage (new Gtk::Button ());
-    pasteCPoints->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    copyCPoints = Gtk::manage (new Gtk::Button ());
-    copyCPoints->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    saveCPoints = Gtk::manage (new Gtk::Button ());
-    saveCPoints->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    loadCPoints = Gtk::manage (new Gtk::Button ());
-    loadCPoints->add (*Gtk::manage (new RTImage ("gtk-open.png")));
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
+    initButton(*editCPoints, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editPointCPoints = Gtk::manage (new Gtk::ToggleButton ());
-    editPointCPoints->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
-    editPointCPoints->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
-    editCPoints->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editCPoints->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
-    editCPoints->hide();
+    initButton(*editPointCPoints,  Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, Glib::ustring(M("CURVEEDITOR_EDITPOINT_HINT")));
+    copyCPoints = Gtk::manage (new Gtk::Button ());
+    initButton(*copyCPoints, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
+    pasteCPoints = Gtk::manage (new Gtk::Button ());
+    initButton(*pasteCPoints,  Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
+    loadCPoints = Gtk::manage (new Gtk::Button ());
+    initButton(*loadCPoints,  Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
+    saveCPoints = Gtk::manage (new Gtk::Button ());
+    initButton(*saveCPoints,  Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
 
-    CPointsbbox->pack_end (*pasteCPoints, Gtk::PACK_SHRINK, 0);
-    CPointsbbox->pack_end (*copyCPoints, Gtk::PACK_SHRINK, 0);
-    CPointsbbox->pack_end (*saveCPoints, Gtk::PACK_SHRINK, 0);
-    CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 0);
-    CPointsbbox->pack_start(*editPointCPoints, Gtk::PACK_SHRINK, 0);
-    CPointsbbox->pack_start(*editCPoints, Gtk::PACK_SHRINK, 0);
-
-    CPointsCurveAndButtons->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 0);
-    CPointsCurveAndButtons->pack_start (*CPointsbbox, Gtk::PACK_SHRINK, 0);
-    CPointsCurveBox->pack_start (*CPointsCurveAndButtons, Gtk::PACK_EXPAND_WIDGET);
-
-    if (options.curvebboxpos == 0) {
-        removeIfThere (CPointsCurveAndButtons, CPointsbbox, false);
-        CPointsCurveBox->pack_start (*CPointsbbox);
-        CPointsCurveBox->reorder_child(*CPointsbbox, 0);
-    } else if (options.curvebboxpos == 2) {
-        removeIfThere (CPointsCurveAndButtons, CPointsbbox, false);
-        CPointsCurveBox->pack_start (*CPointsbbox);
-    } else if (options.curvebboxpos == 3) {
-        CPointsCurveAndButtons->reorder_child(*CPointsbbox, 0);
-    }
+    CPointsbbox->attach_next_to(*editPointCPoints, sideStart, 1, 1);
+    CPointsbbox->attach_next_to(*editCPoints,      sideStart, 1, 1);
+    CPointsbbox->attach_next_to(*copyCPoints,      sideEnd, 1, 1);
+    CPointsbbox->attach_next_to(*pasteCPoints,     sideEnd, 1, 1);
+    CPointsbbox->attach_next_to(*loadCPoints,      sideEnd, 1, 1);
+    CPointsbbox->attach_next_to(*saveCPoints,      sideEnd, 1, 1);
 
     {
         std::vector<Axis> axis;
@@ -107,16 +90,27 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
         axis.at(2).setValues(M("CURVEEDITOR_AXIS_LEFT_TAN"), 5, 0.01, 0.1, 0., 1.);
         axis.at(3).setValues(M("CURVEEDITOR_AXIS_RIGHT_TAN"), 5, 0.01, 0.1, 0., 1.);
         CPointsCoordAdjuster = Gtk::manage (new CoordinateAdjuster(CPointsCurve, this, axis));
-        CPointsCurveBox->pack_start(*CPointsCoordAdjuster, Gtk::PACK_SHRINK, 0);
-
-        if (options.curvebboxpos == 2) {
-            CPointsCurveBox->reorder_child(*CPointsCoordAdjuster, 2);
-        }
-
-        CPointsCoordAdjuster->show_all();
     }
 
-    CPointsCurveBox->show_all ();
+    // Button box position: 0=above, 1=right, 2=below, 3=left
+    CPointsCurveGrid->add(*CPointsCurve);
+    CPointsCurve->set_hexpand(true);
+
+    if (options.curvebboxpos == 0) {
+        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurve, Gtk::POS_TOP, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurve, Gtk::POS_BOTTOM, 1, 1);
+    } else if (options.curvebboxpos == 1) {
+        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurve, Gtk::POS_RIGHT, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurve, Gtk::POS_BOTTOM, 2, 1);
+    } else if (options.curvebboxpos == 2) {
+        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsCurve, Gtk::POS_BOTTOM, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCoordAdjuster, Gtk::POS_BOTTOM, 1, 1);
+    } else if (options.curvebboxpos == 3) {
+        CPointsCurveGrid->attach_next_to(*CPointsbbox, *CPointsCurve, Gtk::POS_LEFT, 1, 1);
+        CPointsCurveGrid->attach_next_to(*CPointsCoordAdjuster, *CPointsbbox, Gtk::POS_BOTTOM, 2, 1);
+    }
+
+    CPointsCurveGrid->show_all ();
     CPointsCoordAdjuster->hide();
 
     saveCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::savePressed) );
@@ -136,7 +130,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
 FlatCurveEditorSubGroup::~FlatCurveEditorSubGroup()
 {
-    delete CPointsCurveBox;
+    delete CPointsCurveGrid;
 }
 
 /*
@@ -341,10 +335,10 @@ void FlatCurveEditorSubGroup::switchGUI()
             CPointsCurve->setPoints (dCurve->controlPointsCurveEd);
             CPointsCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
             CPointsCurve->setColoredBar(leftBar, bottomBar);
-            CPointsCurve->forceResize();
+            CPointsCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editCPoints, editCPointsConn);
-            parent->pack_start (*CPointsCurveBox);
-            CPointsCurveBox->check_resize();
+            parent->attachCurve (CPointsCurveGrid);
+            CPointsCurveGrid->check_resize();
             break;
 
         default:    // (DCT_Linear, DCT_Unchanged)
@@ -580,7 +574,7 @@ const std::vector<double> FlatCurveEditorSubGroup::getCurveFromGUI (int type)
  */
 void FlatCurveEditorSubGroup::removeEditor ()
 {
-    removeIfThere (parent, CPointsCurveBox, false);
+    removeIfThere (parent, CPointsCurveGrid, false);
 }
 
 bool FlatCurveEditorSubGroup::curveReset(CurveEditor *ce)

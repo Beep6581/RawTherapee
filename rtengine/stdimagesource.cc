@@ -74,27 +74,19 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
     sFormat = IIOSF_UNKNOWN;
     sArrangement = IIOSA_UNKNOWN;
 
-    size_t lastdot = fname.find_last_of ('.');
-
-    if( Glib::ustring::npos == lastdot ) {
-        return;
-    }
-
-    if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
-            !fname.casefold().compare (lastdot, 5, ".jpeg")) {
+    if (hasJpegExtension(fname)) {
         // For now, png and jpeg files are converted to unsigned short by the loader itself,
         // but there should be functions that read the sample format first, like the TIFF case below
         sFormat = IIOSF_UNSIGNED_CHAR;
         sArrangement = IIOSA_CHUNKY;
         return;
-    } else if (!fname.casefold().compare (lastdot, 4, ".png")) {
+    } else if (hasPngExtension(fname)) {
         int result = ImageIO::getPNGSampleFormat (fname, sFormat, sArrangement);
 
         if (result == IMIO_SUCCESS) {
             return;
         }
-    } else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
-               !fname.casefold().compare (lastdot, 5, ".tiff")) {
+    } else if (hasTiffExtension(fname)) {
         int result = ImageIO::getTIFFSampleFormat (fname, sFormat, sArrangement);
 
         if (result == IMIO_SUCCESS) {
@@ -110,7 +102,7 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
  * and RT's image data type (Image8, Image16 and Imagefloat), then it will
  * load the image into it
  */
-int StdImageSource::load (const Glib::ustring &fname, bool batch)
+int StdImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 {
 
     fileName = fname;
@@ -125,22 +117,19 @@ int StdImageSource::load (const Glib::ustring &fname, bool batch)
 
     switch (sFormat) {
     case (IIOSF_UNSIGNED_CHAR): {
-        Image8 *img_8 = new Image8 ();
-        img = img_8;
+        img = new Image8;
         break;
     }
 
     case (IIOSF_UNSIGNED_SHORT): {
-        Image16 *img_16 = new Image16 ();
-        img = img_16;
+        img = new Image16;
         break;
     }
 
     case (IIOSF_LOGLUV24):
     case (IIOSF_LOGLUV32):
     case (IIOSF_FLOAT): {
-        Imagefloat *img_float = new Imagefloat ();
-        img = img_float;
+        img = new Imagefloat;
         break;
     }
 
@@ -229,7 +218,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
     bool skipTransform = false;
     cmsHPROFILE in = nullptr;
-    cmsHPROFILE out = iccStore->workingSpace (cmp.working);
+    cmsHPROFILE out = ICCStore::getInstance()->workingSpace (cmp.working);
 
     if (cmp.input == "(embedded)" || cmp.input == "" || cmp.input == "(camera)" || cmp.input == "(cameraICC)") {
         if (embedded) {
@@ -238,12 +227,12 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
             if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
                 skipTransform = true;
             } else {
-                in = iccStore->getsRGBProfile ();
+                in = ICCStore::getInstance()->getsRGBProfile ();
             }
         }
     } else {
         if (cmp.input != "(none)") {
-            in = iccStore->getProfile (cmp.input);
+            in = ICCStore::getInstance()->getProfile (cmp.input);
 
             if (in == nullptr && embedded) {
                 in = embedded;
@@ -251,7 +240,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
                 if (sampleFormat & (IIOSF_LOGLUV24 | IIOSF_LOGLUV32 | IIOSF_FLOAT)) {
                     skipTransform = true;
                 } else {
-                    in = iccStore->getsRGBProfile ();
+                    in = ICCStore::getInstance()->getsRGBProfile ();
                 }
             }
         }
@@ -260,7 +249,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
     if (!skipTransform && in) {
         if(in == embedded && cmsGetColorSpace(in) != cmsSigRgbData) { // if embedded profile is not an RGB profile, use sRGB
             printf("embedded profile is not an RGB profile, using sRGB as input profile\n");
-            in = iccStore->getsRGBProfile ();
+            in = ICCStore::getInstance()->getsRGBProfile ();
         }
 
         lcmsMutex->lock ();
@@ -287,20 +276,19 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 void StdImageSource::getFullSize (int& w, int& h, int tr)
 {
 
-    w = img->width;
-    h = img->height;
+    w = img->getWidth();
+    h = img->getHeight();
 
     if ((tr & TR_ROT) == TR_R90 || (tr & TR_ROT) == TR_R270) {
-        w = img->height;
-        h = img->width;
+        w = img->getHeight();
+        h = img->getWidth();
     }
 }
 
-void StdImageSource::getSize (PreviewProps pp, int& w, int& h)
+void StdImageSource::getSize (const PreviewProps &pp, int& w, int& h)
 {
-
-    w = pp.w / pp.skip + (pp.w % pp.skip > 0);
-    h = pp.h / pp.skip + (pp.h % pp.skip > 0);
+    w = pp.getWidth() / pp.getSkip() + (pp.getWidth() % pp.getSkip() > 0);
+    h = pp.getHeight() / pp.getSkip() + (pp.getHeight() % pp.getSkip() > 0);
 }
 
 void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)

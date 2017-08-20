@@ -85,12 +85,21 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     if (!hq) {
         fillLuminance( img, map, lumi);
 
+        float *buffer = nullptr;
+
+        if(radius > 40.) {
+            // When we pass another buffer to gaussianBlur, it will use iterated boxblur which is less prone to artifacts
+            buffer = new float[W * H];
+        }
+
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
         {
-            gaussianBlur (map, map, W, H, radius);
+            gaussianBlur (map, map, W, H, radius, buffer);
         }
+
+        delete [] buffer;
     }
 
     else {
@@ -367,7 +376,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 #endif
         {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v, fg;
+            vfloat dirwtv, valv, normv, dftemp1v, dftemp2v;
 #endif // __SSE2__
             int j;
 #ifdef _OPENMP
@@ -474,7 +483,7 @@ SSEFUNCTION void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, i
 #endif
         {
 #if defined( __SSE2__ ) && defined( __x86_64__ )
-            __m128 dirwtv, valv, normv, dftemp1v, dftemp2v, fgg;
+            vfloat dirwtv, valv, normv, dftemp1v, dftemp2v;
             float domkerv[5][5][4] ALIGNED16 = {{{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {2, 2, 2, 2}, {2, 2, 2, 2}, {2, 2, 2, 2}, {1, 1, 1, 1}}, {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}}};
 
 #endif // __SSE2__

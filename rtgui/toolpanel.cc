@@ -23,46 +23,22 @@
 using namespace rtengine::procparams;
 
 
-ToolVBox::ToolVBox()
-{
-    updateStyle();
+ToolVBox::ToolVBox() {
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    set_spacing(1);       // Vertical space between tools
+    set_border_width(3);  // Space separating the tab's frame and the tools
+#endif
+//GTK318
 }
 
-void ToolVBox::updateStyle()
-{
-    if (options.slimUI) {
-        set_spacing(1);       // Vertical space between tools
-        set_border_width(1);  // Space separating the tab's frame and the tools
-    } else {
-        set_spacing(2);       // Vertical space between tools
-        set_border_width(1);  // Space separating the tab's frame and the tools  3
-    }
-}
-
-void ToolVBox::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
-{
-    updateStyle();
-}
-
-ToolParamBlock::ToolParamBlock()
-{
-    updateStyle();
-}
-
-void ToolParamBlock::updateStyle()
-{
-    if (options.slimUI) {
-        set_spacing(2);       // Vertical space between parameters in a single tool
-        set_border_width(6);  // Space separating the parameters of a tool and its surrounding frame  6
-    } else {
-        set_spacing(4);       // Vertical space between parameters in a single tool
-        set_border_width(8);  // Space separating the parameters of a tool and its surrounding frame  8
-    }
-}
-
-void ToolParamBlock::on_style_changed (const Glib::RefPtr<Gtk::Style>& style)
-{
-    updateStyle();
+ToolParamBlock::ToolParamBlock() {
+//GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+    set_spacing(2);       // Vertical space between parameters in a single tool
+    set_border_width(5);  // Space separating the parameters of a tool and its surrounding frame
+#endif
+//GTK318
 }
 
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(nullptr), exp(nullptr), lastEnabled(true)
@@ -71,14 +47,13 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
         return;
     }
 
-//  exp->set_border_width (5);
 //  exp->set_use_markup (true);
     if (need11) {
         Gtk::HBox *titleHBox = Gtk::manage(new Gtk::HBox());
 
         Gtk::Label *label = Gtk::manage(new Gtk::Label());
         label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
-        label->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER);
+        label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         titleHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
         RTImage *image = Gtk::manage (new RTImage("zoom-100-identifier.png"));
@@ -134,6 +109,13 @@ bool FoldableToolPanel::get_inconsistent()
 void FoldableToolPanel::set_inconsistent(bool isInconsistent)
 {
     exp->set_inconsistent(isInconsistent);
+}
+
+void FoldableToolPanel::setLevel (int level)
+{
+    if (exp) {
+        exp->setLevel(level);
+    }
 }
 
 bool FoldableToolPanel::getEnabled()

@@ -30,10 +30,11 @@ class SpotWBListener
 {
 
 public:
+    virtual ~SpotWBListener () {}
     virtual void spotWBRequested (int size) {}
 };
 
-class WhiteBalance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
+class WhiteBalance : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoWBListener
 {
 
     enum WB_LabelType {
@@ -64,6 +65,7 @@ protected:
     Adjuster* temp;
     Adjuster* green;
     Adjuster* equal;
+    Adjuster* tempBias;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -84,7 +86,7 @@ protected:
     int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
 
     Gtk::TreeModel::Row            getActiveMethod ();
-    int                            findWBEntryId   (Glib::ustring label, enum WB_LabelType lblType = WBLT_GUI);
+    unsigned int                   findWBEntryId   (const Glib::ustring &label, enum WB_LabelType lblType = WBLT_GUI);
     rtengine::procparams::WBEntry* findWBEntry     (Glib::ustring label, enum WB_LabelType lblType = WBLT_GUI);
 
 public:
@@ -113,8 +115,9 @@ public:
         wblistener = l;
     }
     void setWB (int temp, double green);
+    void WBChanged           (double temp, double green);
 
-    void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd);
+    void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

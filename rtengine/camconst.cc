@@ -27,9 +27,6 @@ CameraConst::CameraConst()
     white_max = 0;
 }
 
-CameraConst::~CameraConst()
-{
-}
 
 bool
 CameraConst::parseApertureScaling(CameraConst *cc, void *ji_)
@@ -183,11 +180,10 @@ CameraConst::parseLevels(CameraConst *cc, int bw, void *ji_)
 CameraConst *
 CameraConst::parseEntry(void *cJSON_, const char *make_model)
 {
-    CameraConst *cc = nullptr;
     cJSON *js, *ji, *jranges;
     js = (cJSON *)cJSON_;
 
-    cc = new CameraConst;
+    CameraConst *cc = new CameraConst;
     cc->make_model = Glib::ustring(make_model);
 
     ji = cJSON_GetObjectItem(js, "dcraw_matrix");
@@ -317,6 +313,7 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
     return cc;
 
 parse_error:
+    delete cc;
     return nullptr;
 }
 
@@ -416,6 +413,18 @@ CameraConst::update_Levels(const CameraConst *other)
 
 //  for (std::map<int, struct camera_const_levels>::iterator i=other->mLevels[0].begin(); i!=other->mLevels[0].end(); i++) {
 //  }
+}
+
+void
+CameraConst::update_Crop(CameraConst *other)
+{
+    if (!other) {
+        return;
+    }
+
+    if (other->has_rawCrop()) {
+        other->get_rawCrop(raw_crop[0], raw_crop[1], raw_crop[2], raw_crop[3]);
+    }
 }
 
 bool
@@ -668,6 +677,7 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
                 existingcc->update_dcrawMatrix(cc->get_dcrawMatrix());
                 // deleting all the existing levels, replaced by the new ones
                 existingcc->update_Levels(cc);
+                existingcc->update_Crop(cc);
 
                 if (settings->verbose) {
                     printf("Merging camera constants for \"%s\"\n", make_model.c_str());
@@ -694,6 +704,14 @@ parse_error:
 
 CameraConstantsStore::CameraConstantsStore()
 {
+}
+
+
+CameraConstantsStore::~CameraConstantsStore()
+{
+    for (auto &p : mCameraConstants) {
+        delete p.second;
+    }
 }
 
 void CameraConstantsStore::init(Glib::ustring baseDir, Glib::ustring userSettingsDir)

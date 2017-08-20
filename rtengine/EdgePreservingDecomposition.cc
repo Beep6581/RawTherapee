@@ -6,7 +6,6 @@
 #endif
 #include "sleef.c"
 #include "opthelper.h"
-
 #define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 #define DIAGONALS 5
@@ -21,7 +20,7 @@ Takes less memory with OkToModify_b = true, and Preconditioner = nullptr. */
 float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b,
                                float *x, float RMSResidual, void *Pass, int MaximumIterates, void Preconditioner(float *Product, float *x, void *Pass))
 {
-    int iterate, i;
+    int iterate;
 
     float* buffer = (float*)malloc(2 * n * sizeof(float) + 128);
     float *r = (buffer + 16);
@@ -395,6 +394,9 @@ SSEFUNCTION void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Pro
             }
         }
     }
+#ifdef _OPENMP
+    static_cast<void>(chunkSize); // to silence cppcheck warning
+#endif
 }
 
 bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int MaxFillAbove)
@@ -411,7 +413,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 
     //How many diagonals in the decomposition?
     MaxFillAbove++; //Conceptually, now "fill" includes an existing diagonal. Simpler in the math that follows.
-    int i, j, mic, fp;
+    int j, mic, fp;
     mic = 1;
     fp = 1;
 
@@ -423,7 +425,10 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     //Initialize the decomposition - setup memory, start rows, etc.
 
     MultiDiagonalSymmetricMatrix *ic = new MultiDiagonalSymmetricMatrix(n, mic);
-    ic->CreateDiagonal(0, 0);   //There's always a main diagonal in this type of decomposition.
+    if(!ic->CreateDiagonal(0, 0)) { //There's always a main diagonal in this type of decomposition.
+        delete ic;
+        return false;
+    }
     mic = 1;
 
     for(int ii = 1; ii < m; ii++) {
@@ -441,8 +446,8 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
     }
 
     //It's all initialized? Uhkay. Do the actual math then.
-    int sss, ss;
-    int MaxStartRow = StartRows[m - 1];  //Handy number.
+    int sss;
+   // int MaxStartRow = StartRows[m - 1];  //Handy number.
     float **l = ic->Diagonals;
     float  *d = ic->Diagonals[0];       //Describes D in LDLt.
     int icm = ic->m;
@@ -657,7 +662,7 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* R
     }
 }
 
-EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height)
+EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height) : a0(nullptr) , a_1(nullptr), a_w(nullptr), a_w_1(nullptr), a_w1(nullptr)
 {
     w = width;
     h = height;
@@ -880,7 +885,7 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
     return Blur;
 }
 
-SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings, float *Compressed)
+SSEFUNCTION void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings)
 {
     if(w < 300 && h < 300) { // set number of Reweightings to zero for small images (thumbnails). We could try to find a better solution here.
         Reweightings = 0;
@@ -923,12 +928,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Sour
     //Blur. Also setup memory for Compressed (we can just use u since each element of u is used in one calculation).
     float *u = CreateIteratedBlur(Source, Scale, EdgeStopping, Iterates, Reweightings);
 
-    if(Compressed == nullptr) {
-        Compressed = u;
-    }
-
     //Apply compression, detail boost, unlogging. Compression is done on the logged data and detail boost on unlogged.
-//  float temp = CompressionExponent - 1.0f;
     float temp;
 
     if(DetailBoost > 0.f) {
@@ -955,8 +955,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Sour
             cev = xexpf(LVFU(Source[i]) + LVFU(u[i]) * (tempv)) - epsv;
             uev = xexpf(LVFU(u[i])) - epsv;
             sourcev = xexpf(LVFU(Source[i])) - epsv;
-            _mm_storeu_ps( &Source[i], sourcev);
-            _mm_storeu_ps( &Compressed[i], cev + DetailBoostv * (sourcev - uev) );
+            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev) );
         }
     }
 
@@ -964,7 +963,7 @@ SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Sour
         float ce = xexpf(Source[i] + u[i] * (temp)) - eps;
         float ue = xexpf(u[i]) - eps;
         Source[i] = xexpf(Source[i]) - eps;
-        Compressed[i] = ce + DetailBoost * (Source[i] - ue);
+        Source[i] = ce + DetailBoost * (Source[i] - ue);
     }
 
 #else
@@ -976,16 +975,11 @@ SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Sour
         float ce = xexpf(Source[i] + u[i] * (temp)) - eps;
         float ue = xexpf(u[i]) - eps;
         Source[i] = xexpf(Source[i]) - eps;
-        Compressed[i] = ce + DetailBoost * (Source[i] - ue);
+        Source[i] = ce + DetailBoost * (Source[i] - ue);
     }
 
 #endif
 
-    if(Compressed != u) {
-        delete[] u;
-    }
-
-    return Compressed;
-
+    delete[] u;
 }
 

@@ -11,33 +11,45 @@ using namespace rtengine::procparams;
 namespace
 {
 
+Glib::ustring stripPrefixDir(const Glib::ustring& filename, const Glib::ustring& dir)
+{
+    const Glib::ustring full_dir =
+        !Glib::str_has_suffix(dir, G_DIR_SEPARATOR_S)
+            ? dir + G_DIR_SEPARATOR_S
+            : dir;
+    return
+        Glib::str_has_prefix(filename, full_dir)
+            ? filename.substr(full_dir.size())
+            : filename;
+}
+
 bool notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
 {
-    static enum
-    {
-        Undecided,
-        Cancel,
-        Continue
-    }
-    decision = Undecided;
+    enum Decision {
+        UNDECIDED,
+        CANCEL,
+        CONTINUE
+    };
 
-    if (decision == Cancel) {
+    static Decision decision = UNDECIDED;
+
+    if (decision == CANCEL) {
         return false;
-    } else if (decision == Continue) {
+    } else if (decision == CONTINUE) {
         return true;
     }
 
-    const auto now = std::chrono::system_clock::now ();
-    if (now - startedAt < std::chrono::seconds (10)) {
+    const auto now = std::chrono::system_clock::now();
+    if (now - startedAt < std::chrono::seconds(10)) {
         return true;
     }
 
-    Gtk::MessageDialog dialog (M ("TP_FILMSIMULATION_SLOWPARSEDIR"), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-    if (dialog.run () == Gtk::RESPONSE_YES) {
-        decision = Cancel;
+    Gtk::MessageDialog dialog(M("TP_FILMSIMULATION_SLOWPARSEDIR"), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+    if (dialog.run() == Gtk::RESPONSE_YES) {
+        decision = CANCEL;
         return false;
     } else {
-        decision = Continue;
+        decision = CONTINUE;
         return true;
     }
 }
@@ -111,32 +123,41 @@ void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const Par
 {
     //copypasted from lensprofile.cc & sharpening.cc
     disableListener();
-    updateDisable( true );
+    updateDisable(true);
 
-    setEnabled (pp->filmSimulation.enabled);
+    setEnabled(pp->filmSimulation.enabled);
 
-    if ( !pp->filmSimulation.clutFilename.empty() ) {
-        m_clutComboBox->setSelectedClut( pp->filmSimulation.clutFilename );
+    if (!pp->filmSimulation.clutFilename.empty()) {
+        m_clutComboBox->setSelectedClut(
+            !Glib::path_is_absolute(pp->filmSimulation.clutFilename)
+                ? Glib::ustring(Glib::build_filename(options.clutsDir, pp->filmSimulation.clutFilename))
+                : pp->filmSimulation.clutFilename
+        );
+        m_oldClutFilename = m_clutComboBox->getSelectedClut();
     }
 
-    m_strength->setValue( pp->filmSimulation.strength );
+    m_strength->setValue(pp->filmSimulation.strength);
 
     if (pedited) {
         set_inconsistent (multiImage && !pedited->filmSimulation.enabled);
-        m_strength->setEditedState (pedited->filmSimulation.strength ? Edited : UnEdited);
+        m_strength->setEditedState(
+            pedited->filmSimulation.strength
+                ? Edited
+                : UnEdited
+        );
 
-        if ( !pedited->filmSimulation.clutFilename ) {
+        if (!pedited->filmSimulation.clutFilename) {
             m_clutComboBox->setSelectedClut("NULL");
         }
     }
 
-    if ( !get_inconsistent() && !pp->filmSimulation.enabled ) {
+    if (!get_inconsistent() && !pp->filmSimulation.enabled) {
         if (options.clutCacheSize == 1) {
             CLUTStore::getInstance().clearCache();
         }
     }
 
-    updateDisable( false );
+    updateDisable(false);
     enableListener();
 }
 
@@ -147,17 +168,17 @@ void FilmSimulation::updateDisable( bool value )
 
 void FilmSimulation::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited )
 {
-    if ( pedited ) {
-        pedited->filmSimulation.enabled  = !get_inconsistent();
-        pedited->filmSimulation.strength = m_strength->getEditedState ();
+    if (pedited) {
+        pedited->filmSimulation.enabled = !get_inconsistent();
+        pedited->filmSimulation.strength = m_strength->getEditedState();
         pedited->filmSimulation.clutFilename = m_clutComboBox->getSelectedClut() != "NULL";
     }
 
     pp->filmSimulation.enabled = getEnabled();
-    Glib::ustring clutFName = m_clutComboBox->getSelectedClut();
+    const Glib::ustring clutFName = m_clutComboBox->getSelectedClut();
 
-    if ( clutFName != "NULL" ) { // We do not want to set "NULL" in clutFilename, even if "unedited"
-        pp->filmSimulation.clutFilename = clutFName;
+    if (clutFName != "NULL") { // We do not want to set "NULL" in clutFilename, even if "unedited"
+        pp->filmSimulation.clutFilename = stripPrefixDir(clutFName, options.clutsDir);
     }
 
     pp->filmSimulation.strength = m_strength->getValue();
@@ -170,7 +191,7 @@ void FilmSimulation::setAdjusterBehavior( bool strength )
 
 void FilmSimulation::trimValues( rtengine::procparams::ProcParams* pp )
 {
-    pp->filmSimulation.strength = m_strength->trimValue( pp->filmSimulation.strength );
+    m_strength->trimValue( pp->filmSimulation.strength );
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

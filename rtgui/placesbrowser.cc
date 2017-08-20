@@ -36,18 +36,28 @@ PlacesBrowser::PlacesBrowser ()
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
     pack_start (*scrollw);
 
-    add = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_ADD")));
-    del = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_DEL")));
-    add->set_image (*Gtk::manage (new RTImage ("gtk-add.png")));
+    // Since Gtk3, we can't have image+text buttons natively. We'll comply to the Gtk guidelines and choose one of them (icons here)
+    add = Gtk::manage (new Gtk::Button ());
+    add->set_tooltip_text(M("MAIN_FRAME_PLACES_ADD"));
+    setExpandAlignProperties(add, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    //add->get_style_context()->set_junction_sides(Gtk::JUNCTION_RIGHT);
+    add->get_style_context()->add_class("Left");
+    add->set_image (*Gtk::manage (new RTImage ("list-add.png")));
+    del = Gtk::manage (new Gtk::Button ());
+    del->set_tooltip_text(M("MAIN_FRAME_PLACES_DEL"));
+    setExpandAlignProperties(del, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    //del->get_style_context()->set_junction_sides(Gtk::JUNCTION_LEFT);
+    del->get_style_context()->add_class("Right");
     del->set_image (*Gtk::manage (new RTImage ("list-remove.png")));
-    Gtk::HBox* buttonBox = Gtk::manage (new Gtk::HBox ());
-    buttonBox->pack_start (*add);
-    buttonBox->pack_start (*del);
+    Gtk::Grid* buttonBox = Gtk::manage (new Gtk::Grid ());
+    buttonBox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+    buttonBox->attach_next_to(*add, Gtk::POS_LEFT, 1, 1);
+    buttonBox->attach_next_to(*del, *add, Gtk::POS_RIGHT, 1, 1);
 
     pack_start (*buttonBox, Gtk::PACK_SHRINK, 2);
 
     treeView = Gtk::manage (new Gtk::TreeView ());
-    treeView->unset_flags (Gtk::CAN_FOCUS);
+    treeView->set_can_focus(false);
     scrollw->add (*treeView);
 
     placesModel = Gtk::ListStore::create (placesColumns);
@@ -57,6 +67,7 @@ PlacesBrowser::PlacesBrowser ()
     Gtk::TreeView::Column *iviewcol = Gtk::manage (new Gtk::TreeView::Column (M("MAIN_FRAME_PLACES")));
     Gtk::CellRendererPixbuf *iconCR  = Gtk::manage (new Gtk::CellRendererPixbuf());
     Gtk::CellRendererText *labelCR  = Gtk::manage (new Gtk::CellRendererText());
+    labelCR->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
     iviewcol->pack_start (*iconCR, false);
     iviewcol->pack_start (*labelCR, true);
     iviewcol->add_attribute (*iconCR, "gicon", 0);

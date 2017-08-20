@@ -83,7 +83,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
 
     hbox = Gtk::manage (new Gtk::HBox ());
 
-    this->label = Gtk::manage (new Gtk::Label (label, Gtk::ALIGN_LEFT));
+    this->label = Gtk::manage (new Gtk::Label (label, Gtk::ALIGN_START));
 
     if (editedcb) {
         editedCheckBox = Gtk::manage (new Gtk::CheckButton ());
@@ -98,7 +98,6 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
     reset = Gtk::manage (new Gtk::Button ());
     reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
     reset->set_relief (Gtk::RELIEF_NONE);
-    reset->set_border_width (0);
     reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
 
     hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0);
@@ -319,7 +318,7 @@ void ThresholdAdjuster::showEditedCB ()
 void ThresholdAdjuster::refreshLabelStyle ()
 {
 
-    /*  Glib::RefPtr<Gtk::Style> style = label->get_style ();
+    /*  Glib::RefPtr<Gtk::StyleContext> style = label->get_style_context ();
         Pango::FontDescription fd = style->get_font ();
         fd.set_weight (editedState==Edited ? Pango::WEIGHT_BOLD : Pango::WEIGHT_NORMAL);
         style->set_font (fd);

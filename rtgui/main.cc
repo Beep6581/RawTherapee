@@ -16,12 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-// generated 2004/6/3 19:15:32 CEST by gabor@darkstar.(none)
-// using glademm V2.5.0
-//
-// newer (non customized) versions of this file go to raw.cc_new
-
-// This file is for your program, I won't touch it again!
 
 #ifdef __GNUC__
 #if defined(__FAST_MATH__)
@@ -34,6 +28,7 @@
 #include <giomm.h>
 #include <iostream>
 #include <tiffio.h>
+#include "../rtengine/icons.h"
 #include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
@@ -43,6 +38,7 @@
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
+#include "../rtengine/dynamicprofile.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -54,6 +50,9 @@
 #include "conio.h"
 #endif
 
+// Set this to 1 to make RT work when started with Eclipse and arguments, at least on Windows platform
+#define ECLIPSE_ARGS 0
+
 extern Options options;
 
 // stores path to data files
@@ -61,8 +60,13 @@ Glib::ustring argv0;
 Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
-bool simpleEditor;
-Glib::Thread* mainThread;
+Glib::ustring argv2;
+bool simpleEditor = false;
+bool gimpPlugin = false;
+bool remote = false;
+Glib::RefPtr<Gtk::CssProvider> cssForced;
+Glib::RefPtr<Gtk::CssProvider> cssRT;
+//Glib::Threads::Thread* mainThread;
 
 namespace
 {
@@ -86,14 +90,8 @@ Glib::ustring fname_to_utf8 (const char* fname)
 #endif
 }
 
-}
-
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
-#ifdef WIN32
-static Glib::RecMutex myGdkRecMutex;
-#else
 static Glib::Threads::RecMutex myGdkRecMutex;
-#endif
 
 static void myGdkLockEnter()
 {
@@ -103,13 +101,14 @@ static void myGdkLockLeave()
 {
     // Automatic gdk_flush for non main tread
 #if AUTO_GDK_FLUSH
-    if (Glib::Thread::self() != mainThread) {
-        gdk_flush();
-    }
+    //if (Glib::Thread::self() != mainThread) {
+    //    gdk_flush();
+    //}
 
 #endif
     myGdkRecMutex.unlock();
 }
+
 
 /* Process line command options
  * Returns
@@ -119,19 +118,360 @@ static void myGdkLockLeave()
  *  -1 if there is an error in parameters
  *  -2 if an error occurred during processing
  *  -3 if at least one required procparam file was not found */
-int processLineParams( int argc, char **argv );
+int processLineParams( int argc, char **argv )
+{
+    for( int iArg = 1; iArg < argc; iArg++) {
+        Glib::ustring currParam(argv[iArg]);
+#if ECLIPSE_ARGS
+        currParam = currParam.substr(1, currParam.length()-2);
+#endif
+        if( currParam.at(0) == '-' ) {
+            switch( currParam.at(1) ) {
+#ifdef WIN32
+
+            case 'w': // This case is handled outside this function
+                break;
+#endif
+            case 'v':
+                return 0;
+
+#ifndef __APPLE__ // TODO agriggio - there seems to be already some "single instance app" support for OSX in rtwindow. Disabling it here until I understand how to merge the two
+            case 'R':
+                if (!gimpPlugin) {
+                    remote = true;
+                }
+                break;
+#endif
+                
+            case 'g':
+                if (currParam == "-gimp") {
+                    gimpPlugin = true;
+                    simpleEditor = true;
+                    remote = false;
+                    break;
+                }
+                // no break here on purpose
+
+            case 'h':
+            case '?':
+            default: {
+                Glib::ustring pparamsExt = paramFileExtension.substr(1);
+                std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
+                std::cout << std::endl;
+                std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
+                std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
+                std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
+                std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
+                std::cout << std::endl;
+                std::cout << "Symbols:" << std::endl;
+                std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
+              //std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
+              //std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
+              //std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
+                std::cout << std::endl;
+                std::cout << "Usage:" << std::endl;
+                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
+                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
+                std::cout << std::endl;
+                std::cout << "Options:" << std::endl;
+#ifdef WIN32
+                std::cout << "  -w Do not open the Windows console" << std::endl;
+#endif
+                std::cout << "  -v Print RawTherapee version number and exit" << std::endl;
+#ifndef __APPLE__
+                std::cout << "  -R Raise an already running RawTherapee instance (if available)" << std::endl;
+#endif
+                std::cout << "  -h -? Display this help message" << std::endl;
+                return -1;
+            }
+            }
+        } else {
+            if (argv1.empty()) {
+                argv1 = Glib::ustring(fname_to_utf8(argv[iArg]));
+#if ECLIPSE_ARGS
+                argv1 = argv1.substr(1, argv1.length()-2);
+#endif
+            } else if (gimpPlugin) {
+                argv2 = Glib::ustring(fname_to_utf8(argv[iArg]));
+                break;
+            }
+            if (!gimpPlugin) {
+                break;
+            }
+        }
+    }
+
+    return 1;
+}
+
+
+bool init_rt()
+{
+    if (!Options::load ()) {
+        return false;
+    }
+
+    extProgStore->init();
+    SoundManager::init();
+
+    if( !options.rtSettings.verbose ) {
+        TIFFSetWarningHandler(nullptr);    // avoid annoying message boxes
+    }
+
+#ifndef WIN32
+
+    // Move the old path to the new one if the new does not exist
+    if (Glib::file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
+        g_rename(Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
+    }
+
+#endif
+
+    return true;
+}
+
+
+void cleanup_rt()
+{
+    rtengine::cleanup();
+}
+
+
+RTWindow *create_rt_window()
+{
+    Glib::ustring icon_path = Glib::build_filename(argv0, "images");
+    Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
+    defaultIconTheme->append_search_path(icon_path);
+
+    rtengine::setPaths(options);
+    MyExpander::init();  // has to stay AFTER rtengine::setPaths
+
+    // ------- loading theme files
+
+    Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+
+    if (screen) {
+        Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
+        Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
+
+#if defined(__APPLE__)
+        // This will force screen resolution regarding font, but I don't think it's compliant with Gtk guidelines...
+        // Do not confuse with screen scaling, where everything is scaled up !
+        screen->set_resolution (96.);
+#endif
+
+        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
+        Glib::ustring filename;
+        Glib::MatchInfo mInfo;
+        bool match = regex->match(options.theme + ".css", mInfo);
+        if (match) {
+            // save old theme (name + version)
+            Glib::ustring initialTheme(options.theme);
+
+            // update version
+            auto pos = options.theme.find("-GTK3-");
+            Glib::ustring themeRootName(options.theme.substr(0, pos));
+            if (GTK_MINOR_VERSION < 20) {
+                options.theme = themeRootName + "-GTK3-_19";
+            } else {
+                options.theme = themeRootName + "-GTK3-20_";
+            }
+            // check if this version exist
+            if (!Glib::file_test(Glib::build_filename(argv0, "themes", options.theme + ".css"), Glib::FILE_TEST_EXISTS)) {
+                // set back old theme version if the actual one doesn't exist yet
+                options.theme = initialTheme;
+            }
+        }
+        filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+
+        if (!match || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+            options.theme = "RawTherapee-GTK";
+            // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
+            if (GTK_MINOR_VERSION < 20) {
+                options.theme = options.theme + "3-_19";
+            } else {
+                options.theme = options.theme + "3-20_";
+            }
+            filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+        }
+        cssRT = Gtk::CssProvider::create();
+
+        try {
+            cssRT->load_from_path (filename);
+            Gtk::StyleContext::add_provider_for_screen(screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        } catch (Glib::Error &err) {
+            printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+        } catch (...) {
+            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+        }
+
+        // Set the font face and size
+        if (options.fontFamily != "default") {
+            try {
+                cssForced = Gtk::CssProvider::create();
+                //GTK318
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
+                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
+#else
+                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
+#endif
+                //GTK318
+                Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            } catch (Glib::Error &err) {
+                printf("Error: \"%s\"\n", err.what().c_str());
+            } catch (...) {
+                printf("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
+            }
+        }
+    }
+
+#ifndef NDEBUG
+    else if (!screen) {
+        printf("ERROR: Can't get default screen!\n");
+    }
+
+#endif
+
+    // ------- end loading theme files
+
+    //gdk_threads_enter ();
+    RTWindow *rtWindow = new RTWindow();
+
+    // alerting users if the default raw and image profiles are missing
+    if (options.is_defProfRawMissing()) {
+        Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
+
+    if (options.is_defProfImgMissing()) {
+        Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
+
+    return rtWindow;
+}
+
+
+class RTApplication: public Gtk::Application {
+public:
+    RTApplication():
+        Gtk::Application("com.rawtherapee.application",
+                         Gio::APPLICATION_HANDLES_OPEN),
+        rtWindow(nullptr)
+    {
+    }
+
+    ~RTApplication()
+    {
+        if (rtWindow) {
+            delete rtWindow;
+        }
+        cleanup_rt();
+    }
+
+private:
+    bool create_window()
+    {
+        if (rtWindow) {
+            return true;
+        }
+        
+        if (!init_rt()) {
+            Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            add_window(msgd);
+            msgd.run ();
+            return false;
+        } else {
+            rtWindow = create_rt_window();
+            add_window(*rtWindow);
+            return true;
+        }
+    }
+    
+    // Override default signal handlers:
+    void on_activate() override
+    {
+        if (create_window()) {
+            rtWindow->present();
+        }
+    }
+    
+    void on_open(const Gio::Application::type_vec_files& files,
+                 const Glib::ustring& hint) override
+    {
+        if (create_window()) {
+            struct Data {
+                std::vector<Thumbnail *> entries;
+                Glib::ustring lastfilename;
+                FileCatalog *filecatalog;
+            };
+            Data *d = new Data;
+            d->filecatalog = rtWindow->fpanel->fileCatalog;
+            
+            for (const auto &f : files) {
+                Thumbnail *thm = cacheMgr->getEntry(f->get_path());
+                if (thm) {
+                    d->entries.push_back(thm);
+                    d->lastfilename = f->get_path();
+                }
+            }
+                
+            if (!d->entries.empty()) {
+                const auto doit =
+                    [](gpointer data) -> gboolean
+                    {
+                        Data *d = static_cast<Data *>(data);
+                        d->filecatalog->openRequested(d->entries);
+                        d->filecatalog->selectImage(d->lastfilename, true);
+                        delete d;
+                        return FALSE;
+                    };
+                gdk_threads_add_idle(doit, d);
+            } else {
+                delete d;
+            }
+            rtWindow->present();
+        }
+    }
+
+private:
+    RTWindow *rtWindow;
+};
+
+void show_gimp_plugin_info_dialog(Gtk::Window *parent)
+{
+    if (options.gimpPluginShowInfoDialog) {
+        Gtk::MessageDialog info(*parent, M("GIMP_PLUGIN_INFO"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+        Gtk::Box *box = info.get_message_area();
+        Gtk::CheckButton dontshowagain(M("DONT_SHOW_AGAIN"));
+        dontshowagain.show();
+        box->pack_start(dontshowagain);
+        info.run();
+        options.gimpPluginShowInfoDialog = !dontshowagain.get_active();
+    }
+}
+
+} // namespace
+
 
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL, "");
     setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
-    // Uncomment the following line if you want to use the "--g-fatal-warnings" command line flag
-    //gtk_init (&argc, &argv);
 
-    Glib::thread_init();
+    simpleEditor = false;
+    gimpPlugin = false;
+    remote = false;
+    argv0 = "";
+    argv1 = "";
+    argv2 = "";
+
+    Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
     gdk_threads_init();
+    gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
     Gio::init ();
+
 
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
@@ -139,12 +479,12 @@ int main(int argc, char **argv)
     // get the path where the rawtherapee executable is stored
 #ifdef WIN32
     WCHAR exnameU[512] = {0};
-    GetModuleFileNameW (NULL, exnameU, 512);
-    WideCharToMultiByte(CP_UTF8, 0, exnameU, -1, exname, 512, 0, 0 );
+    GetModuleFileNameW (NULL, exnameU, 511);
+    WideCharToMultiByte(CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
 #else
 
-    if (readlink("/proc/self/exe", exname, 512) < 0) {
-        strncpy(exname, argv[0], 512);
+    if (readlink("/proc/self/exe", exname, 511) < 0) {
+        strncpy(exname, argv[0], 511);
     }
 
 #endif
@@ -174,24 +514,17 @@ int main(int argc, char **argv)
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
 #endif
-
-    mainThread = Glib::Thread::self();
-
-    if (!Options::load ()) {
-        Gtk::Main m(&argc, &argv);
-        Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-        return -2;
-    }
-
-    extProgStore->init();
-    SoundManager::init();
-
+    
+    
 #ifdef WIN32
     bool consoleOpened = false;
 
-    if (argc > 1 || options.rtSettings.verbose) {
-        if (options.rtSettings.verbose || ( !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_EXISTS ) && !Glib::file_test (fname_to_utf8 (argv[1]), Glib::FILE_TEST_IS_DIR))) {
+    // suppression of annoying error boxes
+    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
+
+    if(argc > 1) {
+        int ret = processLineParams( argc, argv);
+        if (options.rtSettings.verbose || (!remote && !Glib::file_test (argv1, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR))) {
             bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
             bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
 
@@ -207,14 +540,13 @@ int main(int argc, char **argv)
                         break;
                     }
 
-                if(Console) {
-                    AllocConsole();
+                if(Console && AllocConsole()) {
                     AttachConsole( GetCurrentProcessId() ) ;
                     // Don't allow CTRL-C in console to terminate RT
                     SetConsoleCtrlHandler( NULL, true );
                     // Set title of console
                     char consoletitle[128];
-                    sprintf(consoletitle, "RawTherapee %s Console", VERSION);
+                    sprintf(consoletitle, "RawTherapee %s Console", RTVERSION);
                     SetConsoleTitle(consoletitle);
                     // increase size of screen buffer
                     COORD c;
@@ -240,13 +572,11 @@ int main(int argc, char **argv)
                     consoleOpened = true;
 
                     // printing RT's version in every case, particularly useful for the 'verbose' mode, but also for the batch processing
-                    std::cout << "RawTherapee, version " << VERSION << std::endl;
+                    std::cout << "RawTherapee, version " << RTVERSION << std::endl;
                     std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
                 }
             }
         }
-
-        int ret = processLineParams( argc, argv);
 
         if( ret <= 0 ) {
             if(consoleOpened) {
@@ -263,7 +593,7 @@ int main(int argc, char **argv)
 
     if (argc > 1 || options.rtSettings.verbose) {
         // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-        std::cout << "RawTherapee, version " << VERSION << std::endl;
+        std::cout << "RawTherapee, version " << RTVERSION << std::endl;
 #ifdef WIN32
         std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
 #endif
@@ -279,92 +609,60 @@ int main(int argc, char **argv)
 
 #endif
 
-    if( !options.rtSettings.verbose ) {
-        TIFFSetWarningHandler(nullptr);    // avoid annoying message boxes
-    }
-
-#ifndef WIN32
-
-    // Move the old path to the new one if the new does not exist
-    if (Glib::file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
-        g_rename(Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
-    }
-
-#endif
-
-    simpleEditor = false;
-
-    if( !argv1.empty() )
-        if( Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
-            simpleEditor = true;
+    if (gimpPlugin) {
+        if (!Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
+            printf("Error: argv1 doesn't exist\n");
+            return 1;
         }
+        if (argv2.empty()) {
+            printf("Error: -gimp requires two arguments\n");
+            return 1;
+        }
+    } else if (!remote && Glib::file_test(argv1, Glib::FILE_TEST_EXISTS)) {
+        simpleEditor = true;
+    }
 
-    if (options.theme.empty()) {
-        options.theme = "21-Gray-Gray";
+    int ret = 0;
+    if (remote) {
+        char *app_argv[2] = { const_cast<char *>(argv0.c_str()) };
+        int app_argc = 1;
+        if (!argv1.empty()) {
+            app_argc = 2;
+            app_argv[1] = const_cast<char *>(argv1.c_str());
+        }
+        RTApplication app;
+        ret = app.run(app_argc, app_argv);
     } else {
-        std::string themeFile = argv0 + "/themes/" + options.theme + ".gtkrc";
-        if (!std::ifstream(themeFile.c_str())) {
-            printf ("Current theme in options file is invalid:  %s\nChanging to 21-Gray-Gray\n", options.theme.c_str());
-            options.theme = "21-Gray-Gray";
+        if (init_rt()) {
+            Gtk::Main m(&argc, &argv);
+            gdk_threads_enter();
+            const std::unique_ptr<RTWindow> rtWindow(create_rt_window());
+            if (gimpPlugin) {
+                show_gimp_plugin_info_dialog(rtWindow.get());
+            }
+            m.run(*rtWindow);
+            gdk_threads_leave();
+
+            if (gimpPlugin &&
+                rtWindow->epanel && rtWindow->epanel->isRealized()) {
+                SaveFormat sf;
+                sf.format = "tif";
+                sf.tiffBits = 16;
+                sf.tiffUncompressed = true;
+                sf.saveParams = true;
+            
+                if (!rtWindow->epanel->saveImmediately(argv2, sf)) {
+                    ret = -2;
+                }
+            }
+            cleanup_rt();
+        } else {
+            Gtk::Main m(&argc, &argv);
+            Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            msgd.run ();
+            ret = -2;
         }
     }
-
-    if (!options.useSystemTheme) {
-        std::vector<Glib::ustring> rcfiles;
-        rcfiles.push_back (argv0 + "/themes/" + options.theme + ".gtkrc");
-
-        if (options.slimUI) {
-            rcfiles.push_back (argv0 + "/themes/slim");
-        }
-
-        // Set the font face and size
-        Gtk::RC::parse_string (Glib::ustring::compose(
-                                   "style \"clearlooks-default\" { font_name = \"%1\" }", options.font));
-        Gtk::RC::set_default_files (rcfiles);
-    }
-
-    Gtk::Main m(&argc, &argv);
-
-    Glib::ustring icon_path = Glib::build_filename(argv0, "images");
-    Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
-    defaultIconTheme->append_search_path(icon_path);
-
-    RTImage::setPaths(options);
-    MyExpander::init();  // has to stay AFTER RTImage::setPaths
-
-#ifndef WIN32
-    // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...
-    // Anyway, the problem was Linux only
-    static Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();
-
-    if (settings) {
-        settings->property_gtk_button_images().set_value(true);
-    } else {
-        printf("Error: no default settings to update!\n");
-    }
-
-#endif
-
-    gdk_threads_enter ();
-    RTWindow *rtWindow = new class RTWindow();
-
-    // alerting users if the default raw and image profiles are missing
-    if (options.is_defProfRawMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
-    if (options.is_defProfImgMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-
-    // opening the main window
-    m.run(*rtWindow);
-
-    gdk_threads_leave ();
-    delete rtWindow;
-    rtengine::cleanup();
 
 #ifdef WIN32
 
@@ -376,503 +674,6 @@ int main(int argc, char **argv)
 
 #endif
 
-    return 0;
-}
-
-void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparams)
-{
-    for (unsigned int i = 0; i < pparams.size(); i++) {
-        pparams[i]->deleteInstance();
-        delete pparams[i];
-        pparams[i] = NULL;
-    }
-
-    return;
-}
-
-int processLineParams( int argc, char **argv )
-{
-    rtengine::procparams::PartialProfile *rawParams = nullptr, *imgParams = nullptr;
-    std::vector<Glib::ustring> inputFiles;
-    Glib::ustring outputPath = "";
-    std::vector<rtengine::procparams::PartialProfile*> processingParams;
-    bool outputDirectory = false;
-    bool overwriteFiles = false;
-    bool sideProcParams = false;
-    bool copyParamsFile = false;
-    bool skipIfNoSidecar = false;
-    bool useDefault = false;
-    unsigned int sideCarFilePos = 0;
-    int compression = 92;
-    int subsampling = 3;
-    int bits = -1;
-    std::string outputType = "";
-    unsigned errors = 0;
-
-    for( int iArg = 1; iArg < argc; iArg++) {
-        if( argv[iArg][0] == '-' ) {
-            switch( argv[iArg][1] ) {
-            case 'O':
-                copyParamsFile = true;
-
-            case 'o': // outputfile or dir
-                if( iArg + 1 < argc ) {
-                    iArg++;
-                    outputPath = fname_to_utf8 (argv[iArg]);
-
-                    if( Glib::file_test (outputPath, Glib::FILE_TEST_IS_DIR)) {
-                        outputDirectory = true;
-                    }
-                }
-
-                break;
-
-            case 'p': // processing parameters for all inputs; all set procparams are required, so
-
-                // RT stop if any of them can't be loaded for any reason.
-                if( iArg + 1 < argc ) {
-                    iArg++;
-                    Glib::ustring fname = fname_to_utf8 (argv[iArg]);
-
-                    if (fname.at(0) == '-') {
-                        std::cerr << "Error: filename missing next to the -p switch" << std::endl;
-                        deleteProcParams(processingParams);
-                        return -3;
-                    }
-
-                    rtengine::procparams::PartialProfile* currentParams = new rtengine::procparams::PartialProfile(true);
-
-                    if (!(currentParams->load ( fname ))) {
-                        processingParams.push_back(currentParams);
-                    } else {
-                        std::cerr << "Error: \"" << fname << "\" not found" << std::endl;
-                        deleteProcParams(processingParams);
-                        return -3;
-                    }
-                }
-
-                break;
-
-            case 'S':
-                skipIfNoSidecar = true;
-
-            case 's': // Processing params next to file (file extension appended)
-                sideProcParams = true;
-                sideCarFilePos = processingParams.size();
-                break;
-
-            case 'd':
-                useDefault = true;
-                break;
-
-            case 'Y':
-                overwriteFiles = true;
-                break;
-
-            case 'j':
-                if (strlen(argv[iArg]) > 2 && argv[iArg][2] == 's') {
-                    if (strlen(argv[iArg]) == 3) {
-                        std::cerr << "Error: the -js switch requires a mandatory value!" << std::endl;
-                        deleteProcParams(processingParams);
-                        return -3;
-                    }
-
-                    // looking for the subsampling parameter
-                    sscanf(&argv[iArg][3], "%d", &subsampling);
-
-                    if (subsampling < 1 || subsampling > 3) {
-                        std::cerr << "Error: the value accompanying the -js switch has to be in the [1-3] range!" << std::endl;
-                        deleteProcParams(processingParams);
-                        return -3;
-                    }
-                } else {
-                    outputType = "jpg";
-                    sscanf(&argv[iArg][2], "%d", &compression);
-
-                    if (compression < 0 || compression > 100) {
-                        std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
-                        deleteProcParams(processingParams);
-                        return -3;
-                    }
-                }
-
-                break;
-
-            case 'b':
-                sscanf(&argv[iArg][2], "%d", &bits);
-
-                if (bits != 8 && bits != 16) {
-                    std::cerr << "Error: specify -b8 for 8-bit or -b16 for 16-bit output." << std::endl;
-                    deleteProcParams(processingParams);
-                    return -3;
-                }
-
-                break;
-
-            case 't':
-                outputType = "tif";
-                compression = ((argv[iArg][2] != 'z') ? 0 : 1);
-                break;
-
-            case 'n':
-                outputType = "png";
-                compression = -1;
-                break;
-
-            case 'c': // MUST be last option
-                while (iArg + 1 < argc) {
-                    iArg++;
-
-                    const auto argument = fname_to_utf8 (argv[iArg]);
-
-                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_REGULAR)) {
-                        inputFiles.emplace_back (argument);
-                        continue;
-                    }
-
-                    if (Glib::file_test (argument, Glib::FILE_TEST_IS_DIR)) {
-
-                        auto dir = Gio::File::create_for_path (argument);
-                        if (!dir || !dir->query_exists()) {
-                            continue;
-                        }
-
-                        try {
-
-                            auto enumerator = dir->enumerate_children ();
-
-                            while (auto file = enumerator->next_file ()) {
-
-                                const auto fileName = Glib::build_filename (argument, file->get_name ());
-
-                                if (Glib::file_test (fileName, Glib::FILE_TEST_IS_DIR)) {
-                                    continue;
-                                }
-
-                                // skip files without extension and sidecar files
-                                auto lastdot = fileName.find_last_of('.');
-                                if (lastdot == Glib::ustring::npos) {
-                                    continue;
-                                }
-
-                                if (fileName.substr (lastdot).compare (paramFileExtension) == 0) {
-                                    continue;
-                                }
-
-                                inputFiles.emplace_back (fileName);
-                            }
-
-                        } catch (Glib::Exception&) {}
-
-                        continue;
-                    }
-
-                    std::cerr << "\"" << argument << "\" is neither a regular file nor a directory." << std::endl;
-                }
-
-                break;
-#ifdef WIN32
-
-            case 'w': // This case is handled outside this function
-                break;
-#endif
-
-            case 'h':
-            case '?':
-            default: {
-                Glib::ustring pparamsExt = paramFileExtension.substr(1);
-                std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
-                std::cout << std::endl;
-                std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
-                std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
-                std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
-                std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
-                std::cout << std::endl;
-                std::cout << "Symbols:" << std::endl;
-                std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
-                std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
-                std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
-                std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
-                std::cout << std::endl;
-                std::cout << "Usage:" << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " -c <dir>|<files>   Convert files in batch with default parameters." << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <other options> -c <dir>|<files>   Convert files in batch with your own settings." << std::endl;
-                std::cout << std::endl;
-#ifdef WIN32
-                std::cout << "  -w Do not open the Windows console" << std::endl;
-                std::cout << std::endl;
-#endif
-                std::cout << "Options:" << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <one.pp3> [-p <two.pp3> ...] ] [-d] [ -j[1-100] [-js<1-3>] | [-b<8|16>] [-t[z] | [-n]] ] [-Y] -c <input>" << std::endl;
-                std::cout << std::endl;
-                std::cout << "  -c <files>       Specify one or more input files." << std::endl;
-                std::cout << "                   -c must be the last option." << std::endl;
-                std::cout << "  -o <file>|<dir>  Set output file or folder." << std::endl;
-                std::cout << "                   Saves output file alongside input file if -o is not specified." << std::endl;
-                std::cout << "  -O <file>|<dir>  Set output file or folder and copy " << pparamsExt << " file into it." << std::endl;
-                std::cout << "                   Saves output file alongside input file if -O is not specified." << std::endl;
-                std::cout << "  -s               Use the existing sidecar file to build the processing parameters," << std::endl;
-                std::cout << "                   e.g. for photo.raw there should be a photo.raw." << pparamsExt << " file in the same folder." << std::endl;
-                std::cout << "                   If the sidecar file does not exist, neutral values will be used." << std::endl;
-                std::cout << "  -S               Like -s but skip if the sidecar file does not exist." << std::endl;
-                std::cout << "  -p <file.pp3>    Specify processing profile to be used for all conversions." << std::endl;
-                std::cout << "                   You can specify as many sets of \"-p <file.pp3>\" options as you like," << std::endl;
-                std::cout << "                   each will be built on top of the previous one, as explained below." << std::endl;
-                std::cout << "  -d               Use the default raw or non-raw processing profile as set in" << std::endl;
-                std::cout << "                   Preferences > Image Processing > Default Processing Profile" << std::endl;
-                std::cout << "  -j[1-100]        Specify output to be JPEG (default, if -t and -n are not set)." << std::endl;
-                std::cout << "                   Optionally, specify compression 1-100 (default value: 92)." << std::endl;
-                std::cout << "  -js<1-3>         Specify the JPEG chroma subsampling parameter, where:" << std::endl;
-                std::cout << "                   1 = Best compression:   2x2, 1x1, 1x1 (4:2:0)" << std::endl;
-                std::cout << "                       Chroma halved vertically and horizontally." << std::endl;
-                std::cout << "                   2 = Balanced (default): 2x1, 1x1, 1x1 (4:2:2)" << std::endl;
-                std::cout << "                       Chroma halved horizontally." << std::endl;
-                std::cout << "                   3 = Best quality:       1x1, 1x1, 1x1 (4:4:4)" << std::endl;
-                std::cout << "                       No chroma subsampling." << std::endl;
-                std::cout << "  -b<8|16>         Specify bit depth per channel (default value: 16 for TIFF, 8 for PNG)." << std::endl;
-                std::cout << "                   Only applies to TIFF and PNG output, JPEG is always 8." << std::endl;
-                std::cout << "  -t[z]            Specify output to be TIFF." << std::endl;
-                std::cout << "                   Uncompressed by default, or deflate compression with 'z'." << std::endl;
-                std::cout << "  -n               Specify output to be compressed PNG." << std::endl;
-                std::cout << "                   Compression is hard-coded to 6." << std::endl;
-                std::cout << "  -Y               Overwrite output if present." << std::endl;
-                std::cout << std::endl;
-                std::cout << "Your " << pparamsExt << " files can be incomplete, RawTherapee will build the final values as follows:" << std::endl;
-                std::cout << "  1- A new processing profile is created using neutral values," << std::endl;
-                std::cout << "  2- If the \"-d\" option is set, the values are overridden by those found in" << std::endl;
-                std::cout << "     the default raw or non-raw processing profile." << std::endl;
-                std::cout << "  3- If one or more \"-p\" options are set, the values are overridden by those" << std::endl;
-                std::cout << "     found in these processing profiles." << std::endl;
-                std::cout << "  4- If the \"-s\" or \"-S\" options are set, the values are finally overridden by those" << std::endl;
-                std::cout << "     found in the sidecar files." << std::endl;
-                std::cout << "  The processing profiles are processed in the order specified on the command line." << std::endl;
-                return -1;
-            }
-            }
-        } else {
-            argv1 = fname_to_utf8 (argv[iArg]);
-
-            if( outputDirectory ) {
-                options.savePathFolder = outputPath;
-                options.saveUsePathTemplate = false;
-            } else {
-                options.saveUsePathTemplate = true;
-
-                if (options.savePathTemplate.empty())
-                    // If the save path template is empty, we use its default value
-                {
-                    options.savePathTemplate = "%p1/converted/%f";
-                }
-            }
-
-            if (outputType == "jpg") {
-                options.saveFormat.format = outputType;
-                options.saveFormat.jpegQuality = compression;
-                options.saveFormat.jpegSubSamp = subsampling;
-            } else if (outputType == "tif") {
-                options.saveFormat.format = outputType;
-            } else if (outputType == "png") {
-                options.saveFormat.format = outputType;
-            }
-
-            break;
-        }
-    }
-
-    if( !argv1.empty() ) {
-        return 1;
-    }
-
-    if( inputFiles.empty() ) {
-        return 2;
-    }
-
-    if (useDefault) {
-        rawParams = new rtengine::procparams::PartialProfile(true, true);
-        Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
-
-        if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfRaw.substr(5) + paramFileExtension))) {
-            std::cerr << "Error: default raw processing profile not found" << std::endl;
-            rawParams->deleteInstance();
-            delete rawParams;
-            deleteProcParams(processingParams);
-            return -3;
-        }
-
-        imgParams = new rtengine::procparams::PartialProfile(true);
-        profPath = options.findProfilePath(options.defProfImg);
-
-        if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(profPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(profPath, options.defProfImg.substr(5) + paramFileExtension))) {
-            std::cerr << "Error: default non-raw processing profile not found" << std::endl;
-            imgParams->deleteInstance();
-            delete imgParams;
-            rawParams->deleteInstance();
-            delete rawParams;
-            deleteProcParams(processingParams);
-            return -3;
-        }
-    }
-
-    for( size_t iFile = 0; iFile < inputFiles.size(); iFile++) {
-
-        // Has to be reinstanciated at each profile to have a ProcParams object with default values
-        rtengine::procparams::ProcParams currentParams;
-
-        Glib::ustring inputFile = inputFiles[iFile];
-        std::cout << "Processing: " << inputFile << std::endl;
-
-        rtengine::InitialImage* ii = nullptr;
-        rtengine::ProcessingJob* job = nullptr;
-        int errorCode;
-        bool isRaw = false;
-
-        Glib::ustring outputFile;
-
-        if( outputType.empty() ) {
-            outputType = "jpg";
-        }
-
-        if( outputPath.empty() ) {
-            Glib::ustring s = inputFile;
-            Glib::ustring::size_type ext = s.find_last_of('.');
-            outputFile = s.substr(0, ext) + "." + outputType;
-        } else if( outputDirectory ) {
-            Glib::ustring s = Glib::path_get_basename( inputFile );
-            Glib::ustring::size_type ext = s.find_last_of('.');
-            outputFile = outputPath + "/" + s.substr(0, ext) + "." + outputType;
-        } else {
-            Glib::ustring s = outputPath;
-            Glib::ustring::size_type ext = s.find_last_of('.');
-            outputFile =  s.substr(0, ext) + "." + outputType;
-        }
-
-        if( inputFile == outputFile) {
-            std::cerr << "Cannot overwrite: " << inputFile << std::endl;
-            continue;
-        }
-
-        if( !overwriteFiles && Glib::file_test( outputFile , Glib::FILE_TEST_EXISTS ) ) {
-            std::cerr << outputFile  << " already exists: use -Y option to overwrite. This image has been skipped." << std::endl;
-            continue;
-        }
-
-        // Load the image
-        isRaw = true;
-        Glib::ustring ext = getExtension (inputFile);
-
-        if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg" || ext.lowercase() == "tif" || ext.lowercase() == "tiff" || ext.lowercase() == "png") {
-            isRaw = false;
-        }
-
-        ii = rtengine::InitialImage::load ( inputFile, isRaw, &errorCode, nullptr );
-
-        if (!ii) {
-            errors++;
-            std::cerr << "Error loading file: " << inputFile << std::endl;
-            continue;
-        }
-
-        if (useDefault) {
-            if (isRaw) {
-                std::cout << "  Merging default raw processing profile" << std::endl;
-                rawParams->applyTo(&currentParams);
-            } else {
-                std::cout << "  Merging default non-raw processing profile" << std::endl;
-                imgParams->applyTo(&currentParams);
-            }
-        }
-
-        bool sideCarFound = false;
-        unsigned int i = 0;
-
-        // Iterate the procparams file list in order to build the final ProcParams
-        do {
-            if (sideProcParams && i == sideCarFilePos) {
-                // using the sidecar file
-                Glib::ustring sideProcessingParams = inputFile + paramFileExtension;
-
-                // the "load" method don't reset the procparams values anymore, so values found in the procparam file override the one of currentParams
-                if( !Glib::file_test( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || currentParams.load ( sideProcessingParams )) {
-                    std::cerr << "Warning: sidecar file requested but not found for: " << sideProcessingParams << std::endl;
-                } else {
-                    sideCarFound = true;
-                    std::cout << "  Merging sidecar procparams" << std::endl;
-                }
-            }
-
-            if( processingParams.size() > i  ) {
-                std::cout << "  Merging procparams #" << i << std::endl;
-                processingParams[i]->applyTo(&currentParams);
-            }
-
-            i++;
-        } while (i < processingParams.size() + (sideProcParams ? 1 : 0));
-
-        if( sideProcParams && !sideCarFound && skipIfNoSidecar ) {
-            delete ii;
-            errors++;
-            std::cerr << "Error: no sidecar procparams found for: " << inputFile << std::endl;
-            continue;
-        }
-
-        job = rtengine::ProcessingJob::create (ii, currentParams);
-
-        if( !job ) {
-            errors++;
-            std::cerr << "Error creating processing for: " << inputFile << std::endl;
-            ii->decreaseRef();
-            continue;
-        }
-
-        // Process image
-        rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, nullptr, options.tunnelMetaData);
-
-        if( !resultImage ) {
-            errors++;
-            std::cerr << "Error processing: " << inputFile << std::endl;
-            rtengine::ProcessingJob::destroy( job );
-            continue;
-        }
-
-        // save image to disk
-        if( outputType == "jpg" ) {
-            errorCode = resultImage->saveAsJPEG( outputFile, compression, subsampling );
-        } else if( outputType == "tif" ) {
-            errorCode = resultImage->saveAsTIFF( outputFile, bits, compression == 0  );
-        } else if( outputType == "png" ) {
-            errorCode = resultImage->saveAsPNG( outputFile, compression, bits );
-        } else {
-            errorCode = resultImage->saveToFile (outputFile);
-        }
-
-        if(errorCode) {
-            errors++;
-            std::cerr << "Error saving to: " << outputFile << std::endl;
-        } else {
-            if( copyParamsFile ) {
-                Glib::ustring outputProcessingParams = outputFile + paramFileExtension;
-                currentParams.save( outputProcessingParams );
-            }
-        }
-
-        ii->decreaseRef();
-        resultImage->free();
-    }
-
-    if (imgParams) {
-        imgParams->deleteInstance();
-        delete imgParams;
-    }
-
-    if (rawParams) {
-        rawParams->deleteInstance();
-        delete rawParams;
-    }
-
-    deleteProcParams(processingParams);
-
-    return errors > 0 ? -2 : 0;
+    return ret;
 }
 

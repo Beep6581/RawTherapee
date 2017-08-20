@@ -33,9 +33,9 @@ protected:
     Gtk::CheckButton* forceFormatOpts;
     SaveFormatPanel* formatOpts;
     Glib::ustring fname;
-    Gtk::FileFilter filter_jpg;
-    Gtk::FileFilter filter_tif;
-    Gtk::FileFilter filter_png;
+    Glib::RefPtr<Gtk::FileFilter> filter_jpg;
+    Glib::RefPtr<Gtk::FileFilter> filter_tif;
+    Glib::RefPtr<Gtk::FileFilter> filter_png;
     Gtk::RadioButton* saveMethod[3]; /*  0 -> immediately
                                       *  1 -> putToQueueHead
                                       *  2 -> putToQueueTail
@@ -45,7 +45,7 @@ protected:
     void  putToQueueClicked ();
 
 public:
-    explicit SaveAsDialog (const Glib::ustring &initialDir);
+    explicit SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent);
 
     Glib::ustring   getFileName        ();
     Glib::ustring   getDirectory       ();

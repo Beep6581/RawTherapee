@@ -167,8 +167,8 @@ void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const P
 
     transform (pp, tran, sx1, sy1, sx2, sy2);
 
-    int imwidth = image->width; // Destination image
-    int imheight = image->height; // Destination image
+    int imwidth = image->getWidth(); // Destination image
+    int imheight = image->getHeight(); // Destination image
 
     if (((tran & TR_ROT) == TR_R90) || ((tran & TR_ROT) == TR_R270)) {
         int swap = imwidth;
@@ -179,7 +179,7 @@ void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, const P
     int maxx = width; // Source image
     int maxy = height; // Source image
     int mtran = tran & TR_ROT;
-    int skip = pp.skip;
+    int skip = pp.getSkip();
 
     //if ((sx1 + skip*imwidth)>maxx) imwidth -- ; // we have a boundary condition that can cause errors
 

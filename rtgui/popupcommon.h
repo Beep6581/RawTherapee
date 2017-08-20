@@ -27,7 +27,7 @@
 
 namespace Gtk
 {
-class HBox;
+class Grid;
 class Menu;
 class Button;
 class ImageMenuItem;
@@ -42,8 +42,10 @@ class PopUpCommon
 
 public:
     typedef sigc::signal<void, int> type_signal_changed;
+    typedef sigc::signal<void, int> type_signal_item_selected;
     type_signal_changed signal_changed();
-    Gtk::HBox* buttonGroup;     // this is the widget to be packed
+    type_signal_item_selected signal_item_selected();
+    Gtk::Grid* buttonGroup;    // this is the widget to be packed
 
     PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
@@ -57,13 +59,14 @@ public:
     void setItemSensitivity (int i, bool isSensitive);
 
 private:
-    type_signal_changed message;
+    type_signal_changed messageChanged;
+    type_signal_item_selected messageItemSelected;
 
     std::vector<Glib::ustring> imageFilenames;
-    std::vector<RTImage*> images;
+    std::vector<const RTImage*> images;
     Glib::ustring buttonHint;
     RTImage* buttonImage;
-    Gtk::HBox* imageContainer;
+    Gtk::Grid* imageContainer;
     Gtk::Menu* menu;
     Gtk::Button* button;
     int selected;
@@ -78,7 +81,12 @@ protected:
 
 inline PopUpCommon::type_signal_changed PopUpCommon::signal_changed ()
 {
-    return message;
+    return messageChanged;
+}
+
+inline PopUpCommon::type_signal_item_selected PopUpCommon::signal_item_selected ()
+{
+    return messageItemSelected;
 }
 
 inline int PopUpCommon::getEntryCount () const

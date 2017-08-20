@@ -25,6 +25,8 @@
 #include "windirmonitor.h"
 #endif
 
+#include "guiutils.h"
+
 class DirBrowser : public Gtk::VBox
 #ifdef WIN32
     , public WinDirChangeListener
@@ -95,8 +97,11 @@ private:
     Gtk::TreePath expandToDir (const Glib::ustring& dirName);
     void updateDir (const Gtk::TreeModel::iterator& iter);
 
+    IdleRegister idle_register;
+
 public:
     DirBrowser ();
+    ~DirBrowser();
 
     void fillDirTree ();
     void on_sort_column_changed() const;

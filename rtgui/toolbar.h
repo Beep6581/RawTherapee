@@ -39,10 +39,10 @@ public:
 class ToolBar : public Gtk::HBox
 {
 private:
-    RTImage* handimg;
-    RTImage* editinghandimg;
-    RTImage* showcolpickersimg;
-    RTImage* hidecolpickersimg;
+    std::unique_ptr<RTImage> handimg;
+    std::unique_ptr<RTImage> editinghandimg;
+    std::unique_ptr<RTImage> showcolpickersimg;
+    std::unique_ptr<RTImage> hidecolpickersimg;
     bool showColPickers;
 
     void hand_pressed ();
@@ -62,6 +62,7 @@ protected:
     ToolBarListener* listener;
     LockablePickerToolListener* pickerListener;
     ToolMode current;
+    bool allowNoTool;
     bool editingMode;  // true if the cursor is being used to remotely edit tool's values
     sigc::connection  handConn;
     sigc::connection  wbConn;
@@ -71,7 +72,6 @@ protected:
 
 public:
     ToolBar ();
-    ~ToolBar ();
 
     void     setTool (ToolMode tool);
     ToolMode getTool ()

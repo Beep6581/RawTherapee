@@ -38,7 +38,7 @@ public:
     void    getMinimalDimensions (int& w, int& h);
     void    getAllocatedDimensions (int& w, int& h);
     void    arrangeButtons (int x, int y, int w, int h);
-    void    setColors     (const Gdk::Color& bg, const Gdk::Color& fg);
+    void    setColors     (const Gdk::RGBA& bg, const Gdk::RGBA& fg);
     bool    motionNotify  (int x, int y);
     bool    pressNotify   (int x, int y);
     bool    releaseNotify (int x, int y);

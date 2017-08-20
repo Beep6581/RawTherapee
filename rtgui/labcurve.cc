@@ -559,7 +559,7 @@ void LCurve::adjusterChanged (Adjuster* a, double newval)
 void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
-    float R, G, B;
+    float R = 0.f, G = 0.f, B = 0.f;
 
     if (elemType == ColorCaller::CCET_VERTICAL_BAR) {
         valY = 0.5;
@@ -574,6 +574,21 @@ void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType
         // whole hue range
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
         Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+    } else if (callerId == 6) {  // cc - left bar
+
+        float value = (1.f - 0.7f) * float(valX) + 0.7f;
+            float hue = (1.14056f - 0.92f) * float(valY) + 0.92f;
+
+            if (hue > 1.0f) {
+                hue -= 1.0f;
+            }
+
+            // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+            Color::hsv2rgb01(hue, float(valX), value, R, G, B);
+		
+        // whole hue range
+        // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+      //  Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
     } else if (callerId == 3) {  // lc - bottom bar
 
         float value = (1.f - 0.7f) * float(valX) + 0.7f;

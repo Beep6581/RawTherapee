@@ -62,22 +62,22 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         //float radius = float (entry.radius) + 0.5f;
 
         float featherRadius = entry.radius * (1.f + entry.feather);
-        int scaledFeatherRadius = featherRadius / pp.skip;
+        int scaledFeatherRadius = featherRadius / pp.getSkip ();
 
-        int src_XMin = int ((srcX - featherRadius - pp.x) / float (pp.skip) + 0.5f);
-        int src_XMax = int ((srcX + featherRadius - pp.x) / float (pp.skip) + 0.5f);
-        int src_YMin = int ((srcY - featherRadius - pp.y) / float (pp.skip) + 0.5f);
-        int src_YMax = int ((srcY + featherRadius - pp.y) / float (pp.skip) + 0.5f);
+        int src_XMin = int ((srcX - featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
+        int src_XMax = int ((srcX + featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
+        int src_YMin = int ((srcY - featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
+        int src_YMax = int ((srcY + featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
 
-        int dst_XMin = int ((dstX - featherRadius - pp.x) / float (pp.skip) + 0.5f);
-        int dst_XMax = int ((dstX + featherRadius - pp.x) / float (pp.skip) + 0.5f);
-        int dst_YMin = int ((dstY - featherRadius - pp.y) / float (pp.skip) + 0.5f);
-        int dst_YMax = int ((dstY + featherRadius - pp.y) / float (pp.skip) + 0.5f);
+        int dst_XMin = int ((dstX - featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
+        int dst_XMax = int ((dstX + featherRadius - pp.getX()) / float (pp.getSkip()) + 0.5f);
+        int dst_YMin = int ((dstY - featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
+        int dst_YMax = int ((dstY + featherRadius - pp.getY()) / float (pp.getSkip()) + 0.5f);
 
         //printf("  -> X: %04d > %04d\n  -> Y: %04d > %04d\n", dst_XMin, dst_XMax, dst_YMin, dst_YMax);
 
         // scaled spot is too small, we do not preview it
-        if (scaledFeatherRadius < 2 && pp.skip != 1) {
+        if (scaledFeatherRadius < 2 && pp.getSkip() != 1) {
 #ifndef NDEBUG
             if (options.rtSettings.verbose) {
                 printf ("Skipping spot located at %d x %d, too small for the preview zoom rate\n", entry.sourcePos.x, entry.sourcePos.y);
@@ -97,24 +97,24 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         }
 
         // skipping entries where the source circle isn't completely inside the image bounds
-        if (src_XMin < 0 || src_XMax >= img->width || src_YMin < 0 || src_YMax >= img->height) {
+        if (src_XMin < 0 || src_XMax >= img->getWidth() || src_YMin < 0 || src_YMax >= img->getHeight()) {
 #ifndef NDEBUG
             if (options.rtSettings.verbose) {
                 printf ("Skipping spot located at %d x %d, from the data at %d x %d, radius=%d, feather=%.3f, opacity=%.3f: source out of bounds\n", entry.sourcePos.x, entry.sourcePos.y, entry.targetPos.x, entry.targetPos.y, entry.radius, entry.feather, entry.opacity);
                 printf ("%d < 0 || %d >= %d || %d < 0 || %d >= %d\n",
-                        src_XMin, src_XMax, img->width, src_YMin, src_YMax, img->height);
+                        src_XMin, src_XMax, img->getWidth(), src_YMin, src_YMax, img->getHeight());
             }
 #endif
             continue;
         }
 
         // skipping entries where the dest circle is completely outside the image bounds
-        if (dst_XMin >= img->width || dst_XMax <= 0 || dst_YMin >= img->height || dst_YMax <= 0) {
+        if (dst_XMin >= img->getWidth() || dst_XMax <= 0 || dst_YMin >= img->getHeight() || dst_YMax <= 0) {
 #ifndef NDEBUG
             if (options.rtSettings.verbose) {
                 printf ("Skipping spot located at %d x %d, from the data at %d x %d, radius=%d, feather=%.3f, opacity=%.3f: source out of bounds\n", entry.sourcePos.x, entry.sourcePos.y, entry.targetPos.x, entry.targetPos.y, entry.radius, entry.feather, entry.opacity);
                 printf ("%d >= %d || %d <= 0 || %d >= %d || %d <= 0\n",
-                        dst_XMin, img->width, dst_XMax, dst_YMin, img->height, dst_YMax);
+                        dst_XMin, img->getWidth(), dst_XMax, dst_YMin, img->getHeight(), dst_YMax);
             }
 #endif
             continue;
@@ -123,10 +123,10 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         // ----------------- Core function -----------------
 
 #if 0
-        int scaledPPX = pp.x / pp.skip;
-        int scaledPPY = pp.y / pp.skip;
-        int scaledPPW = pp.w / pp.skip + (pp.w % pp.skip > 0);
-        int scaledPPH = pp.h / pp.skip + (pp.h % pp.skip > 0);
+        int scaledPPX = pp.getX() / pp.skip;
+        int scaledPPY = pp.getY() / pp.skip;
+        int scaledPPW = pp.getWidth() / pp.skip + (pp.getWidth() % pp.getSkip() > 0);
+        int scaledPPH = pp.getHeight() / pp.skip + (pp.getHeight() % pp.skip > 0);
 
         int sizeX = dst_XMax - dst_XMin + 1;
         int sizeY = dst_YMax - dst_YMin + 1;
@@ -340,11 +340,11 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
 
         // add solution to original image and store in tempPR
         for     (int i = 0, i2 = dst_YMin; i2 < dst_YMax - 1; ++i, ++i2) {
-            if (i2 < 0 || i2 >= img->height) {
+            if (i2 < 0 || i2 >= img->getHeight()) {
                 continue;
             }
             for (int j = 0, j2 = dst_XMin; j2 < dst_XMax - 1; ++j, ++j2) {
-                if (j2 < 0 || j2 >= img->width) {
+                if (j2 < 0 || j2 >= img->getWidth()) {
                     continue;
                 }
                 //float c2 = float (mask (i, j)) / 255.f;

@@ -148,8 +148,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     // init variables to display Munsell corrections
     MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
 #endif
-    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
-    double wip[3][3] = {
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
+    const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
@@ -250,7 +250,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         cp.edgampl = (float) params->wavelet.edgeampli;
     }
 
-    int N = imheight * imwidth;
+    //int N = imheight * imwidth;
     int maxmul = params->wavelet.thres;
     cp.maxilev = maxmul;
     static const float scales[10] = {1.f, 2.f, 4.f, 8.f, 16.f, 32.f, 64.f, 128.f, 256.f, 512.f};
@@ -537,7 +537,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
     // begin tile processing of image
 
     //output buffer
-    int realtile;
+    int realtile = 0;
 
     if(params->wavelet.Tilesmethod == "big") {
         realtile = 22;
@@ -699,7 +699,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 int width  = tileright - tileleft;
                 int height = tilebottom - tiletop;
                 LabImage * labco;
-                float **Lold;
+                float **Lold = nullptr;
                 float *LoldBuffer = nullptr;
 
                 if(numtiles == 1) { // untiled processing => we can use output buffer for labco
@@ -923,9 +923,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
 
                         ind = 1;
                         //Flat curve for Contrast=f(H) in levels
-                        FlatCurve* ChCurve = nullptr;//curve C=f(H)
+                        FlatCurve* ChCurve = new FlatCurve(params->wavelet.Chcurve); //curve C=f(H)
                         bool Chutili = false;
-                        ChCurve = new FlatCurve(params->wavelet.Chcurve);
 
                         if (!ChCurve || ChCurve->isIdentity()) {
                             if (ChCurve) {
@@ -953,9 +952,8 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                 }
 
                 //Flat curve for H=f(H) in residual image
-                FlatCurve* hhCurve = nullptr;//curve H=f(H)
+                FlatCurve* hhCurve = new FlatCurve(params->wavelet.hhcurve); //curve H=f(H)
                 bool hhutili = false;
-                hhCurve = new FlatCurve(params->wavelet.hhcurve);
 
                 if (!hhCurve || hhCurve->isIdentity()) {
                     if (hhCurve) {
@@ -1058,7 +1056,7 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
                         }
 
                         for (int i = 0; i < overlap; i++) {
-                            float mask = SQR(sin((M_PI * i) / (2 * overlap)));
+                            float mask = SQR(sin((rtengine::RT_PI * i) / (2 * overlap)));
 
                             if (tiletop > 0) {
                                 Vmask[i] = mask;
@@ -1253,16 +1251,21 @@ SSEFUNCTION void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int
         delete [] meanN;
         delete [] sigma;
         delete [] sigmaN;
-
+        delete [] MaxP;
+        delete [] MaxN;
     }
 #ifdef _RT_NESTED_OPENMP
     omp_set_nested(oldNested);
 #endif
 
-    if(numtiles > 1) {
+    if(numtiles != 1) {
         dst->CopyFrom(dsttmp);
         delete dsttmp;
     }
+
+#ifdef _DEBUG
+    delete MunsDebugInfo;
+#endif
 
 }
 
@@ -1653,7 +1656,7 @@ void ImProcFunctions::EPDToneMapResid(float * WavCoeffs_L0,  unsigned int Iterat
     }
 
 
-    epd2.CompressDynamicRange(WavCoeffs_L0, (float)sca / skip, edgest, Compression, DetailBoost, Iterates, rew, WavCoeffs_L0);
+    epd2.CompressDynamicRange(WavCoeffs_L0, (float)sca / skip, edgest, Compression, DetailBoost, Iterates, rew);
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
 #ifdef _RT_NESTED_OPENMP
@@ -2597,7 +2600,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
     float bedstr = 1.f - 10.f * aedstr;
 
     if(cp.val > 0  && cp.edgeena) {
-        float * koe;
+        float * koe = nullptr;
         float maxkoe = 0.f;
 
         if(!lipschitz) {
@@ -2766,7 +2769,7 @@ void ImProcFunctions::ContAllL (float *koeLi[12], float *maxkoeLi, bool lipschit
             float asig = 0.166f / sigma[level];
             float bsig = 0.5f - asig * mean[level];
             float amean = 0.5f / mean[level];
-            float absciss;
+            float absciss = 0.f;
             float kinterm;
             float kmul;
             int borderL = 1;
@@ -3399,14 +3402,18 @@ void ImProcFunctions::ContAllAB (LabImage * labco, int maxlvl, float ** varhue, 
     }
 
     bool useOpacity;
-    float mulOpacity;
+    float mulOpacity = 0.f;
 
     if(useChannelA) {
         useOpacity = cp.opaRG;
-        mulOpacity = cp.mulopaRG[level];
+        if(level < 9) {
+            mulOpacity = cp.mulopaRG[level];
+        }
     } else {
         useOpacity = cp.opaBY;
-        mulOpacity = cp.mulopaBY[level];
+        if(level < 9) {
+            mulOpacity = cp.mulopaBY[level];
+        }
     }
 
     if((useOpacity && level < 9 && mulOpacity != 0.f) && cp.toningena) { //toning

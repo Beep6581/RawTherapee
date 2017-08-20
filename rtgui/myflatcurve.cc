@@ -21,7 +21,25 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyFlatCurve::MyFlatCurve ()
+MyFlatCurve::MyFlatCurve () :
+    clampedX(0.0),
+    clampedY(0.0),
+    deltaX(0.0),
+    deltaY(0.0),
+    distanceX(0.0),
+    distanceY(0.0),
+    ugpX(0.0),
+    ugpY(0.0),
+    leftTanX(0.0),
+    rightTanX(0.0),
+    preciseCursorX(0.0),
+    preciseCursorY(0.0),
+    minDistanceX(0.0),
+    minDistanceY(0.0),
+    deletedPointX(0.0),
+    leftTanHandle({0.0, 0.0}),
+    rightTanHandle({0.0, 0.0}),
+    draggingElement(false)
 {
 
     graphW = get_allocation().get_width() - RADIUS * 2;
@@ -116,39 +134,41 @@ void MyFlatCurve::draw ()
         return;
     }
 
-    Glib::RefPtr<Gdk::Window> win = get_window();
-
-    if (!surfaceCreated() || !win) {
+    if (!surfaceCreated()) {
         return;
     }
 
     // re-calculate curve if dimensions changed
     int currPointSize = point.getUpperBound();
 
-    if (curveIsDirty || /*prevGraphW != graphW || prevGraphH != graphH ||*/ (currPointSize == 200 && (graphW - 3 > 200)) || (currPointSize > 200 && (graphW - 2 <= 200 || graphW - 3 != currPointSize))) {
+    if (curveIsDirty || /*prevGraphW != graphW || prevGraphH != graphH ||*/ (currPointSize == GRAPH_SIZE && (graphW - 3 > GRAPH_SIZE)) || (currPointSize > GRAPH_SIZE && (graphW - 2 <= GRAPH_SIZE || graphW - 3 != currPointSize))) {
         interpolate ();
     }
 
     double innerW = double(graphW - 2);
     double innerH = double(graphH - 2);
 
-    Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
+    Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
 
-    Glib::RefPtr<Gtk::Style> style = get_style ();
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Cairo::RefPtr<Cairo::Context> cr = getContext();
     cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
     // clear background
-    Gdk::Color c = style->get_bg (Gtk::STATE_NORMAL);
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->rectangle (0, 0, double(getWidth()), double(getHeight()));
-    cr->fill ();
+    cr->set_source_rgba (0., 0., 0., 0.);
+    cr->set_operator (Cairo::OPERATOR_CLEAR);
+    cr->paint ();
+    cr->set_operator (Cairo::OPERATOR_OVER);
+
+    style->render_background(cr, graphX, graphY-graphH, graphW, graphH);
+
+    Gdk::RGBA c;
 
     cr->set_line_width (1.0);
 
     // draw f(x)=0.5 line
-    c = style->get_dark (state);
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    c = style->get_border_color(state);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     std::valarray<double> ds (1);
     ds[0] = 4;
     cr->set_dash (ds, 0);
@@ -165,14 +185,14 @@ void MyFlatCurve::draw ()
     // draw the left colored bar
     if (leftBar) {
         // first the background
-        int bWidth = getBarWidth();
+        int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
-        leftBar->setDrawRectangle(win, 1, graphY - graphH + 1, bWidth - 2, graphH - 2);
-        leftBar->expose(bb);
+        leftBar->setDrawRectangle(1, graphY - graphH + 1, bWidth - 2, graphH - 2);
+        leftBar->expose(*this, bb);
 
         // now the border
-        c = style->get_dark (state);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_border_color(state);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->rectangle(0.5, graphY - graphH + 0.5, bWidth - 1, graphH - 1);
         cr->stroke();
     }
@@ -180,14 +200,14 @@ void MyFlatCurve::draw ()
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
-        int bWidth = getBarWidth();
+        int bWidth = CBAR_WIDTH;
         BackBuffer *bb = this;
-        bottomBar->setDrawRectangle(win, graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
-        bottomBar->expose(bb);
+        bottomBar->setDrawRectangle(graphX + 1, graphY + CBAR_MARGIN + 1, graphW - 2, bWidth - 2);
+        bottomBar->expose(*this, bb);
 
         // now the border
-        c = style->get_dark (state);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        c = style->get_border_color(state);
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         cr->rectangle(graphX + 0.5, graphY + CBAR_MARGIN + 0.5, graphW - 1, bWidth - 1 );
         cr->stroke();
     }
@@ -197,7 +217,7 @@ void MyFlatCurve::draw ()
     // draw the pipette values
     if (pipetteR > -1.f || pipetteG > -1.f || pipetteB > -1.f) {
         cr->set_line_width (0.75);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         int n = 0;
 
         if (pipetteR > -1.f) {
@@ -237,8 +257,8 @@ void MyFlatCurve::draw ()
 
         if (pipetteVal > -1.f) {
             cr->set_line_width (2.);
-            c = style->get_fg (state);
-            cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+            c = style->get_color (state);
+            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
             cr->move_to (double(graphX) + 1.5 + double(graphW - 3)*pipetteVal, double(graphY) - 1.5);
             cr->rel_line_to (0, double(-graphH + 3));
             cr->stroke ();
@@ -329,8 +349,8 @@ void MyFlatCurve::draw ()
     cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
     // draw the graph's borders:
-    c = style->get_dark (state);
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    c = style->get_border_color(state);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     cr->rectangle(double(graphX) + 0.5, double(graphY) - 0.5, double(graphW - 1), double(-graphH + 1));
     cr->stroke ();
 
@@ -417,8 +437,8 @@ void MyFlatCurve::draw ()
     }
 
     // draw curve
-    c = style->get_fg (state);
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    c = style->get_color(state);
+    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     float graphH_ = float(graphH - 3);
     float graphX_ = float(graphX) + 1.5;
     float graphY_ = float(graphY) - 1.5;
@@ -448,19 +468,19 @@ void MyFlatCurve::draw ()
             } else if (curve.y.at(i) == 0.5) {
                 cr->set_source_rgb (0.0, 0.5, 0.0);
             } else {
-                cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+                cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
             }
 
             double x = double(graphX + 1) + innerW * curve.x.at(i); // project (curve.x.at(i), 0, 1, graphW);
             double y = double(graphY - 1) - innerH * curve.y.at(i); // project (curve.y.at(i), 0, 1, graphH);
 
-            cr->arc (x, y, (double)RADIUS, 0, 2 * M_PI);
+            cr->arc (x, y, (double)RADIUS, 0, 2 * rtengine::RT_PI);
             cr->fill ();
 
             if (i == edited_point) {
                 cr->set_source_rgb (1.0, 0.0, 0.0);
                 cr->set_line_width(2.);
-                cr->arc (x, y, RADIUS + 3.5, 0, 2 * M_PI);
+                cr->arc (x, y, RADIUS + 3.5, 0, 2 * rtengine::RT_PI);
                 cr->stroke();
                 cr->set_line_width(1.);
             }
@@ -499,6 +519,27 @@ void MyFlatCurve::draw ()
     setDirty(false);
     queue_draw();
 }
+
+bool MyFlatCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
+{
+    Gtk::Allocation allocation = get_allocation();
+    allocation.set_x(0);
+    allocation.set_y(0);
+
+    // setDrawRectangle will allocate the backbuffer Surface
+    if (setDrawRectangle(Cairo::FORMAT_ARGB32, allocation)) {
+        setDirty(true);
+
+        if (prevGraphW > GRAPH_SIZE || graphW > GRAPH_SIZE) {
+            curveIsDirty = true;
+        }
+    }
+
+    draw ();
+    copySurface(cr);
+    return false;
+}
+
 
 /*
  * Return the X1, X2, Y position of the tangential handles.
@@ -571,42 +612,6 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
     minDistanceY = double(MIN_DISTANCE) / double(graphH - 1);
 
     switch (event->type) {
-    case Gdk::CONFIGURE: {
-        // Happen when the the window is resized
-        if (sized & (RS_Pending | RS_Force)) {
-            set_size_request(-1, calcDimensions());
-            sized = RS_Done;
-        }
-
-        retval = true;
-        break;
-    }
-
-    case Gdk::EXPOSE: {
-        Glib::RefPtr<Gdk::Window> win = get_window();
-
-        if (sized & (RS_Pending | RS_Force)) {
-            set_size_request(-1, calcDimensions());
-        }
-
-        sized = RS_Pending;
-
-        // setDrawRectangle will allocate the backbuffer Surface
-        if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height())) {
-            setDirty(true);
-
-            if (prevGraphW > 200 || graphW > 200) {
-                curveIsDirty = true;
-            }
-        }
-
-        draw ();
-        GdkRectangle *rectangle = &(event->expose.area);
-        copySurface(win, rectangle);
-
-        retval = true;
-        break;
-    }
 
     case Gdk::BUTTON_PRESS:
         if (edited_point == -1) { //curve.type!=FCT_Parametric) {
@@ -724,7 +729,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                             setDirty(true);
                             draw ();
                             std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
-                            unsigned int size = curve.x.size();
+                            int size = curve.x.size();
 
                             if      (edited_point == 0)      {
                                 newBoundaries.at(0).minVal = 0.;
@@ -774,7 +779,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                         setDirty(true);
                         draw ();
                         std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
-                        unsigned int size = curve.x.size();
+                        int size = curve.x.size();
 
                         if      (edited_point == 0)      {
                             newBoundaries.at(0).minVal = 0.;
@@ -1195,7 +1200,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
     if (new_type != cursor_type) {
         cursor_type = new_type;
-        cursorManager.setCursor(cursor_type);
+        CursorManager::setCursorOfMainWindow(get_window(), cursor_type);
     }
 
     return retval;
@@ -1207,6 +1212,7 @@ void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider,
         // occurs when leaving the preview area -> cleanup the curve editor
         pipetteR = pipetteG = pipetteB = -1.f;
         lit_point = -1;
+        editedHandle = FCT_EditedHandle_None;
         return;
     }
 
@@ -1308,7 +1314,7 @@ bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
     switch (area) {
 
     case (FCT_Area_Insertion): {
-        rtengine::FlatCurve rtCurve(getPoints(), 200);
+        rtengine::FlatCurve rtCurve(getPoints(), GRAPH_SIZE);
 
         std::vector<double>::iterator itx, ity, itlt, itrt;
         int num = (int)curve.x.size();
@@ -1557,7 +1563,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag)
             }
 
             if (curve.y.size() > 2) {
-                if (lit_point == (curve.y.size() - 1)) {
+                if (lit_point == int(curve.y.size()) - 1) {
                     if (snapCoordinateY(curve.y.at(0), ugpY)) {
                         snapToElmt = 0;
                     }

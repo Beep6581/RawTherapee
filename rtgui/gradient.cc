@@ -424,7 +424,7 @@ bool Gradient::button1Pressed(const int modifierKey)
 
             draggedPoint = currPos - centerPos;
             // compute the projected value of the dragged point
-            draggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+            draggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
             if (lastObject == 3) {
                 draggedFeatherOffset = -draggedFeatherOffset;
@@ -526,7 +526,7 @@ bool Gradient::drag1(const int modifierKey)
         currPos.y = p;
 
         draggedPoint = currPos - centerPos;
-        double currDraggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*M_PI);
+        double currDraggedFeatherOffset = draggedPoint.radius * sin((draggedPoint.angle - degree->getValue()) / 180.*rtengine::RT_PI);
 
         if (lastObject == 2)
             // Dragging the upper feather bar

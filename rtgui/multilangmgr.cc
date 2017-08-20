@@ -196,7 +196,8 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 #elif defined (__linux__) || defined (__APPLE__)
 
     // Query the current locale and force decimal point to dot.
-    if (const char* locale = setlocale (LC_CTYPE, "")) {
+    const char *locale = getenv("LANG");
+    if (locale || (locale = setlocale (LC_CTYPE, ""))) {
         langName = localeToLang (locale);
     }
 

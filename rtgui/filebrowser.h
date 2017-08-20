@@ -29,7 +29,7 @@
 #include "partialpastedlg.h"
 #include "exportpanel.h"
 #include "extprog.h"
-#include "profilestore.h"
+#include "profilestorecombobox.h"
 
 class ProfileStoreLabel;
 class FileBrowser;
@@ -53,12 +53,6 @@ public:
     }
 };
 
-struct FileBrowserIdleHelper {
-    FileBrowser* fbrowser;
-    bool destroyed;
-    int pending;
-};
-
 /*
  * Class handling actions common to all thumbnails of the file browser
  */
@@ -67,17 +61,19 @@ class FileBrowser  : public ThumbBrowserBase,
     public ExportPanelListener,
     public ProfileStoreListener
 {
-
+private:
     typedef sigc::signal<void> type_trash_changed;
 
-protected:
+    IdleRegister idle_register;
+    unsigned int session_id_;
 
+protected:
     Gtk::MenuItem* rank[6];
-    Gtk::ImageMenuItem* colorlabel[6];
+    MyImageMenuItem* colorlabel[6];
     Gtk::MenuItem* trash;
     Gtk::MenuItem* untrash;
-    Gtk::ImageMenuItem* develop;
-    Gtk::ImageMenuItem* developfast;
+    Gtk::MenuItem* develop;
+    Gtk::MenuItem* developfast;
     Gtk::MenuItem* rename;
     Gtk::MenuItem* remove;
     Gtk::MenuItem* removeInclProc;
@@ -89,7 +85,7 @@ protected:
     Gtk::MenuItem* menuRank;
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
-    Gtk::ImageMenuItem* menuProfileOperations;
+    MyImageMenuItem* menuProfileOperations;
     Gtk::MenuItem* menuExtProg;
     Gtk::MenuItem** amiExtProg;
     Gtk::MenuItem* miOpenDefaultViewer;
@@ -110,14 +106,14 @@ protected:
     Gtk::MenuItem* partpasteprof;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* applypartprof;
-    Gtk::MenuItem* execcustprof;
+    Gtk::MenuItem* resetdefaultprof;
     Gtk::MenuItem* clearprof;
     Gtk::MenuItem* cachemenu;
     Gtk::MenuItem* clearFromCache;
     Gtk::MenuItem* clearFromCacheFull;
     Gtk::Menu* pmenu;
 
-    Gtk::ImageMenuItem* colorlabel_pop[6];
+    MyImageMenuItem* colorlabel_pop[6];
     Gtk::Menu* pmenuColorLabels;
     void* colorLabel_actionData;
     void menuColorlabelActivated (Gtk::MenuItem* m); // use only when menu is invoked via FileBrowser::buttonPressed to pass actionData
@@ -128,8 +124,6 @@ protected:
     FileBrowserListener* tbl;
     BrowserFilter filter;
     int numFiltered;
-    PartialPasteDlg partialPasteDlg;
-    FileBrowserIdleHelper* fbih;
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
@@ -144,7 +138,6 @@ protected:
     type_trash_changed m_trash_changed;
 
 public:
-
     FileBrowser ();
     ~FileBrowser ();
 
@@ -152,6 +145,8 @@ public:
     void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread
     FileBrowserEntry*  delEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
     void close ();
+
+    unsigned int session_id() const { return session_id_; }
 
     void setBatchPParamsChangeListener (BatchPParamsChangeListener* l)
     {

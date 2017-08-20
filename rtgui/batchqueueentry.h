@@ -60,7 +60,7 @@ public:
     void refreshThumbnailImage ();
     void calcThumbnailSize ();
 
-    void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h);
+    void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h);
 
     void removeButtonSet ();
 

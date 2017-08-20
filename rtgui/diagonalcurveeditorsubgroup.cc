@@ -38,7 +38,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     editedAdjuster = nullptr;
     editedAdjusterValue = 0;
 
-    curveBBoxPos = options.curvebboxpos;
+    Gtk::PositionType sideStart = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_LEFT : Gtk::POS_TOP;
+    Gtk::PositionType sideEnd = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::POS_RIGHT : Gtk::POS_BOTTOM;
 
     valLinear = (int)DCT_Linear;
     valUnchanged = (int)DCT_Unchanged;
@@ -47,72 +48,66 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     activeParamControl = -1;
 
     // custom curve
-    customCurveBox = new Gtk::VBox ();
-    customCurveBox->set_spacing(4);
-    Gtk::HBox* customCurveAndButtons = Gtk::manage (new Gtk::HBox ());
-    customCurveAndButtons->set_spacing(4);
+    customCurveGrid = new Gtk::Grid ();
+    customCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    customCurveGrid->set_row_spacing(2);
+    customCurveGrid->set_column_spacing(2);
+
     customCurve = Gtk::manage (new MyDiagonalCurve ());
-    customCurve->set_size_request (GRAPH_SIZE + 2 * RADIUS, GRAPH_SIZE + 2 * RADIUS);
     customCurve->setType (DCT_Spline);
 
-    Gtk::Box* custombbox; // curvebboxpos 0=above, 1=right, 2=below, 3=left
+    Gtk::Grid* custombbox = Gtk::manage (new Gtk::Grid ()); // curvebboxpos 0=above, 1=right, 2=below, 3=left
 
-    if (options.curvebboxpos == 1 || options.curvebboxpos == 3) {
-        custombbox = Gtk::manage (new Gtk::VBox ());
+    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+        custombbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(custombbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        custombbox = Gtk::manage (new Gtk::HBox ());
+        custombbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(custombbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
-    custombbox->set_spacing(4);
-
-    pasteCustom = Gtk::manage (new Gtk::Button ());
-    pasteCustom->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    copyCustom = Gtk::manage (new Gtk::Button ());
-    copyCustom->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    saveCustom = Gtk::manage (new Gtk::Button ());
-    saveCustom->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    loadCustom = Gtk::manage (new Gtk::Button ());
-    loadCustom->add (*Gtk::manage (new RTImage ("gtk-open.png")));
     editPointCustom = Gtk::manage (new Gtk::ToggleButton ());
-    editPointCustom->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
-    editPointCustom->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
+    initButton(*editPointCustom, Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, Glib::ustring(M("CURVEEDITOR_EDITPOINT_HINT")));
     editCustom = Gtk::manage (new Gtk::ToggleButton());
-    editCustom->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editCustom->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
+    initButton(*editCustom, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editCustom->hide();
+    copyCustom = Gtk::manage (new Gtk::Button ());
+    initButton(*copyCustom, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
+    pasteCustom = Gtk::manage (new Gtk::Button ());
+    initButton(*pasteCustom, Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
+    loadCustom = Gtk::manage (new Gtk::Button ());
+    initButton(*loadCustom, Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
+    saveCustom = Gtk::manage (new Gtk::Button ());
+    initButton(*saveCustom, Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
 
-    custombbox->pack_end (*pasteCustom, Gtk::PACK_SHRINK, 0);
-    custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
-    custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
-    custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
-    custombbox->pack_start(*editPointCustom, Gtk::PACK_SHRINK, 0);
-    custombbox->pack_start(*editCustom, Gtk::PACK_SHRINK, 0);
-
-    customCurveAndButtons->pack_start (*customCurve, Gtk::PACK_EXPAND_WIDGET, 0);
-    customCurveAndButtons->pack_start (*custombbox, Gtk::PACK_SHRINK, 0);
-    customCurveBox->pack_start (*customCurveAndButtons, Gtk::PACK_EXPAND_WIDGET);
-
-    if (options.curvebboxpos == 0) {
-        removeIfThere (customCurveAndButtons, custombbox, false);
-        customCurveBox->pack_start (*custombbox);
-        customCurveBox->reorder_child(*custombbox, 0);
-    } else if (options.curvebboxpos == 2) {
-        removeIfThere (customCurveAndButtons, custombbox, false);
-        customCurveBox->pack_start (*custombbox);
-    } else if (options.curvebboxpos == 3) {
-        customCurveAndButtons->reorder_child(*custombbox, 0);
-    }
+    custombbox->attach_next_to(*editPointCustom, sideStart, 1, 1);
+    custombbox->attach_next_to(*editCustom,      sideStart, 1, 1);
+    custombbox->attach_next_to(*copyCustom,      sideEnd, 1, 1);
+    custombbox->attach_next_to(*pasteCustom,     sideEnd, 1, 1);
+    custombbox->attach_next_to(*loadCustom,      sideEnd, 1, 1);
+    custombbox->attach_next_to(*saveCustom,      sideEnd, 1, 1);
 
     customCoordAdjuster = Gtk::manage (new CoordinateAdjuster(customCurve, this));
-    customCurveBox->pack_start(*customCoordAdjuster, Gtk::PACK_SHRINK, 0);
 
-    if (options.curvebboxpos == 2) {
-        customCurveBox->reorder_child(*customCoordAdjuster, 2);
+    // Button box position: 0=above, 1=right, 2=below, 3=left
+    customCurveGrid->add(*customCurve);
+    customCurve->set_hexpand(true);
+
+    if (options.curvebboxpos == 0) {
+        customCurveGrid->attach_next_to(*custombbox, *customCurve, Gtk::POS_TOP, 1, 1);
+        customCurveGrid->attach_next_to(*customCoordAdjuster, *customCurve, Gtk::POS_BOTTOM, 1, 1);
+    } else if (options.curvebboxpos == 1) {
+        customCurveGrid->attach_next_to(*custombbox, *customCurve, Gtk::POS_RIGHT, 1, 1);
+        customCurveGrid->attach_next_to(*customCoordAdjuster, *customCurve, Gtk::POS_BOTTOM, 2, 1);
+    } else if (options.curvebboxpos == 2) {
+        customCurveGrid->attach_next_to(*customCoordAdjuster, *customCurve, Gtk::POS_BOTTOM, 1, 1);
+        customCurveGrid->attach_next_to(*custombbox, *customCoordAdjuster, Gtk::POS_BOTTOM, 1, 1);
+    } else if (options.curvebboxpos == 3) {
+        customCurveGrid->attach_next_to(*custombbox, *customCurve, Gtk::POS_LEFT, 1, 1);
+        customCurveGrid->attach_next_to(*customCoordAdjuster, *custombbox, Gtk::POS_BOTTOM, 2, 1);
     }
 
-    customCoordAdjuster->show_all();
-
-    customCurveBox->show_all ();
+    customCurveGrid->show_all ();
     customCoordAdjuster->hide();
 
     saveCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
@@ -130,71 +125,66 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 
     // NURBS curve
-    NURBSCurveBox = new Gtk::VBox ();
-    NURBSCurveBox->set_spacing(4);
-    Gtk::HBox* NURBSCurveAndButtons = Gtk::manage (new Gtk::HBox ());
-    NURBSCurveAndButtons->set_spacing(4);
+    NURBSCurveGrid = new Gtk::Grid ();
+    NURBSCurveGrid->set_row_spacing(4);
+    NURBSCurveGrid->set_column_spacing(4);
+    NURBSCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+
     NURBSCurve = Gtk::manage (new MyDiagonalCurve ());
-    NURBSCurve->set_size_request (GRAPH_SIZE + 2 * RADIUS, GRAPH_SIZE + 2 * RADIUS);
     NURBSCurve->setType (DCT_NURBS);
 
-    Gtk::Box* NURBSbbox;
+    Gtk::Grid* NURBSbbox = Gtk::manage (new Gtk::Grid ());
 
-    if (options.curvebboxpos == 1 || options.curvebboxpos == 3) {
-        NURBSbbox = Gtk::manage (new Gtk::VBox ());
+    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+        NURBSbbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(NURBSbbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        NURBSbbox = Gtk::manage (new Gtk::HBox ());
+        NURBSbbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(NURBSbbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
-    NURBSbbox->set_spacing(4);
-
-    pasteNURBS = Gtk::manage (new Gtk::Button ());
-    pasteNURBS->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    copyNURBS = Gtk::manage (new Gtk::Button ());
-    copyNURBS->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    saveNURBS = Gtk::manage (new Gtk::Button ());
-    saveNURBS->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    loadNURBS = Gtk::manage (new Gtk::Button ());
-    loadNURBS->add (*Gtk::manage (new RTImage ("gtk-open.png")));
     editPointNURBS = Gtk::manage (new Gtk::ToggleButton ());
-    editPointNURBS->add (*Gtk::manage (new RTImage ("gtk-edit.png")));
-    editPointNURBS->set_tooltip_text(M("CURVEEDITOR_EDITPOINT_HINT"));
+    initButton(*editPointNURBS, Glib::ustring("gtk-edit.png"), Gtk::ALIGN_START, false, Glib::ustring(M("CURVEEDITOR_EDITPOINT_HINT")));
     editNURBS = Gtk::manage (new Gtk::ToggleButton());
-    editNURBS->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editNURBS->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
+    initButton(*editNURBS, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editNURBS->hide();
-    NURBSbbox->pack_end (*pasteNURBS, Gtk::PACK_SHRINK, 0);
-    NURBSbbox->pack_end (*copyNURBS, Gtk::PACK_SHRINK, 0);
-    NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 0);
-    NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 0);
-    NURBSbbox->pack_start(*editPointNURBS, Gtk::PACK_SHRINK, 0);
-    NURBSbbox->pack_start(*editNURBS, Gtk::PACK_SHRINK, 0);
+    copyNURBS = Gtk::manage (new Gtk::Button ());
+    initButton(*copyNURBS, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
+    pasteNURBS = Gtk::manage (new Gtk::Button ());
+    initButton(*pasteNURBS, Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
+    loadNURBS = Gtk::manage (new Gtk::Button ());
+    initButton(*loadNURBS, Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
+    saveNURBS = Gtk::manage (new Gtk::Button ());
+    initButton(*saveNURBS, Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
 
-    NURBSCurveAndButtons->pack_start (*NURBSCurve, Gtk::PACK_EXPAND_WIDGET, 0);
-    NURBSCurveAndButtons->pack_start (*NURBSbbox, Gtk::PACK_SHRINK, 0);
-    NURBSCurveBox->pack_start (*NURBSCurveAndButtons, Gtk::PACK_EXPAND_WIDGET);
-
-    if (options.curvebboxpos == 0) {
-        removeIfThere (NURBSCurveAndButtons, NURBSbbox, false);
-        NURBSCurveBox->pack_start (*NURBSbbox);
-        NURBSCurveBox->reorder_child(*NURBSbbox, 0);
-    } else if (options.curvebboxpos == 2) {
-        removeIfThere (NURBSCurveAndButtons, NURBSbbox, false);
-        NURBSCurveBox->pack_start (*NURBSbbox);
-    } else if (options.curvebboxpos == 3) {
-        NURBSCurveAndButtons->reorder_child(*NURBSbbox, 0);
-    }
+    NURBSbbox->attach_next_to(*editPointNURBS, sideStart, 1, 1);
+    NURBSbbox->attach_next_to(*editNURBS,      sideStart, 1, 1);
+    NURBSbbox->attach_next_to(*copyNURBS,      sideEnd,   1, 1);
+    NURBSbbox->attach_next_to(*pasteNURBS,     sideEnd,   1, 1);
+    NURBSbbox->attach_next_to(*loadNURBS,      sideEnd,   1, 1);
+    NURBSbbox->attach_next_to(*saveNURBS,      sideEnd,   1, 1);
 
     NURBSCoordAdjuster = Gtk::manage (new CoordinateAdjuster(NURBSCurve, this));
-    NURBSCurveBox->pack_start(*NURBSCoordAdjuster, Gtk::PACK_SHRINK, 0);
 
-    if (options.curvebboxpos == 2) {
-        NURBSCurveBox->reorder_child(*NURBSCoordAdjuster, 2);
+    // Button box position: 0=above, 1=right, 2=below, 3=left
+    NURBSCurveGrid->add(*NURBSCurve);
+    NURBSCurve->set_hexpand(true);
+
+    if (options.curvebboxpos == 0) {
+        NURBSCurveGrid->attach_next_to(*NURBSbbox, *NURBSCurve, Gtk::POS_TOP, 1, 1);
+        NURBSCurveGrid->attach_next_to(*NURBSCoordAdjuster, *NURBSCurve, Gtk::POS_BOTTOM, 1, 1);
+    } else if (options.curvebboxpos == 1) {
+        NURBSCurveGrid->attach_next_to(*NURBSbbox, *NURBSCurve, Gtk::POS_RIGHT, 1, 1);
+        NURBSCurveGrid->attach_next_to(*NURBSCoordAdjuster, *NURBSCurve, Gtk::POS_BOTTOM, 2, 1);
+    } else if (options.curvebboxpos == 2) {
+        NURBSCurveGrid->attach_next_to(*NURBSCoordAdjuster, *NURBSCurve, Gtk::POS_BOTTOM, 1, 1);
+        NURBSCurveGrid->attach_next_to(*NURBSbbox, *NURBSCoordAdjuster, Gtk::POS_BOTTOM, 1, 1);
+    } else if (options.curvebboxpos == 3) {
+        NURBSCurveGrid->attach_next_to(*NURBSbbox, *NURBSCurve, Gtk::POS_LEFT, 1, 1);
+        NURBSCurveGrid->attach_next_to(*NURBSCoordAdjuster, *NURBSbbox, Gtk::POS_BOTTOM, 2, 1);
     }
 
-    NURBSCoordAdjuster->show_all();
-
-    NURBSCurveBox->show_all ();
+    NURBSCurveGrid->show_all ();
     NURBSCoordAdjuster->hide();
 
     saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
@@ -212,46 +202,44 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 
     // parametric curve
-    paramCurveBox = new Gtk::VBox ();
-    paramCurveBox->set_spacing(4);
-    Gtk::HBox* paramCurveAndButtons = Gtk::manage (new Gtk::HBox ());
-    paramCurveAndButtons->set_spacing(4);
-    Gtk::VBox* paramCurveAndShcVBox = Gtk::manage (new Gtk::VBox ());
+    paramCurveGrid = new Gtk::Grid ();
+    paramCurveGrid->set_row_spacing(4);
+    paramCurveGrid->set_column_spacing(4);
+    paramCurveGrid->set_orientation(Gtk::ORIENTATION_VERTICAL);
+
     paramCurve = Gtk::manage (new MyDiagonalCurve ());
-    paramCurve->set_size_request (GRAPH_SIZE + 2 * RADIUS, GRAPH_SIZE + 2 * RADIUS);
     paramCurve->setType (DCT_Parametric);
 
-    Gtk::Box* parambbox;
+    Gtk::Grid* parambbox = Gtk::manage (new Gtk::Grid ());
 
-    if (options.curvebboxpos == 1 || options.curvebboxpos == 3) {
-        parambbox = Gtk::manage (new Gtk::VBox ());
+    if (options.curvebboxpos == 0 || options.curvebboxpos == 2) {
+        parambbox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+        setExpandAlignProperties(parambbox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     } else {
-        parambbox = Gtk::manage (new Gtk::HBox ());
+        parambbox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+        setExpandAlignProperties(parambbox, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     }
 
-    parambbox->set_spacing(4);
-
     shcSelector = Gtk::manage (new SHCSelector ());
-    shcSelector->set_size_request (GRAPH_SIZE - 100, 10); // width, height
-    //* shcSelector->set_size_request ((GRAPH_SIZE+2*RADIUS)-20, 20);
+    shcSelector->set_name("CurveSHCSelector");  // To handle the 4px gap between the SHCSelector and the curve through CSS
 
-    pasteParam = Gtk::manage (new Gtk::Button ());
-    pasteParam->add (*Gtk::manage (new RTImage ("edit-paste.png")));
-    copyParam = Gtk::manage (new Gtk::Button ());
-    copyParam->add (*Gtk::manage (new RTImage ("edit-copy.png")));
-    saveParam = Gtk::manage (new Gtk::Button ());
-    saveParam->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
-    loadParam = Gtk::manage (new Gtk::Button ());
-    loadParam->add (*Gtk::manage (new RTImage ("gtk-open.png")));
     editParam = Gtk::manage (new Gtk::ToggleButton());
-    editParam->add (*Gtk::manage (new RTImage ("editmodehand.png")));
-    editParam->set_tooltip_text(M("EDIT_PIPETTE_TOOLTIP"));
+    initButton(*editParam, Glib::ustring("editmodehand.png"), Gtk::ALIGN_START, false, Glib::ustring(M("EDIT_PIPETTE_TOOLTIP")));
     editParam->hide();
-    parambbox->pack_end (*pasteParam, Gtk::PACK_SHRINK, 0);
-    parambbox->pack_end (*copyParam, Gtk::PACK_SHRINK, 0);
-    parambbox->pack_end (*saveParam, Gtk::PACK_SHRINK, 0);
-    parambbox->pack_end (*loadParam, Gtk::PACK_SHRINK, 0);
-    parambbox->pack_start(*editParam, Gtk::PACK_SHRINK, 0);
+    copyParam = Gtk::manage (new Gtk::Button ());
+    initButton(*copyParam, Glib::ustring("edit-copy.png"), Gtk::ALIGN_END, true);
+    pasteParam = Gtk::manage (new Gtk::Button ());
+    initButton(*pasteParam, Glib::ustring("edit-paste.png"), Gtk::ALIGN_END, false);
+    loadParam = Gtk::manage (new Gtk::Button ());
+    initButton(*loadParam, Glib::ustring("gtk-open.png"), Gtk::ALIGN_END, false);
+    saveParam = Gtk::manage (new Gtk::Button ());
+    initButton(*saveParam, Glib::ustring("gtk-save-large.png"), Gtk::ALIGN_END, false);
+
+    parambbox->attach_next_to(*editParam,  sideStart, 1, 1);
+    parambbox->attach_next_to(*copyParam,  sideEnd,   1, 1);
+    parambbox->attach_next_to(*pasteParam, sideEnd,   1, 1);
+    parambbox->attach_next_to(*loadParam,  sideEnd,   1, 1);
+    parambbox->attach_next_to(*saveParam,  sideEnd,   1, 1);
 
     saveParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
     loadParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
@@ -280,41 +268,46 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     evshadows->add (*shadows);
 
     // paramCurveSliderBox needed to set vspacing(4) between curve+shc and sliders without vspacing between each slider
-    Gtk::VBox* paramCurveSliderBox = Gtk::manage (new Gtk::VBox ());
-    paramCurveSliderBox->set_spacing(4);
+    Gtk::Grid* paramCurveSliderBox = Gtk::manage (new Gtk::Grid());
+    paramCurveSliderBox->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    paramCurveSliderBox->set_column_spacing(2);
+    paramCurveSliderBox->set_row_spacing(2);
 
-    paramCurveSliderBox->pack_start (*evhighlights);
-    paramCurveSliderBox->pack_start (*evlights);
-    paramCurveSliderBox->pack_start (*evdarks);
-    paramCurveSliderBox->pack_start (*evshadows);
+    paramCurveSliderBox->attach_next_to(*evhighlights, Gtk::POS_TOP, 1, 1);
+    paramCurveSliderBox->attach_next_to(*evlights, Gtk::POS_TOP, 1, 1);
+    paramCurveSliderBox->attach_next_to(*evdarks, Gtk::POS_TOP, 1, 1);
+    paramCurveSliderBox->attach_next_to(*evshadows, Gtk::POS_TOP, 1, 1);
 
-    paramCurveBox->show_all ();
+    paramCurveGrid->show_all ();
 
-    paramCurveAndShcVBox->pack_start (*paramCurve, Gtk::PACK_EXPAND_WIDGET);
-    paramCurveAndShcVBox->pack_start (*shcSelector, Gtk::PACK_EXPAND_WIDGET);
-    paramCurveAndButtons->pack_start (*paramCurveAndShcVBox);
-    paramCurveAndButtons->pack_start (*parambbox, Gtk::PACK_SHRINK);
-    paramCurveBox->pack_start (*paramCurveAndButtons);
-    paramCurveBox->pack_start (*paramCurveSliderBox);
+    // Button box position: 0=above, 1=right, 2=below, 3=left
+    paramCurveGrid->add(*paramCurve);
+    paramCurve->set_hexpand(true);
 
     if (options.curvebboxpos == 0) {
-        removeIfThere (paramCurveAndButtons, parambbox, false);
-        paramCurveBox->pack_start (*parambbox);
-        paramCurveBox->reorder_child(*parambbox, 0);
+        paramCurveGrid->attach_next_to(*parambbox, *paramCurve, Gtk::POS_TOP, 1, 1);
+        paramCurveGrid->attach_next_to(*shcSelector, *paramCurve, Gtk::POS_BOTTOM, 1, 1);
+        paramCurveGrid->attach_next_to(*paramCurveSliderBox, *shcSelector, Gtk::POS_BOTTOM, 1, 1);
+    } else if (options.curvebboxpos == 1) {
+        paramCurveGrid->attach_next_to(*shcSelector, *paramCurve, Gtk::POS_BOTTOM, 1, 1);
+        paramCurveGrid->attach_next_to(*parambbox, *paramCurve, Gtk::POS_RIGHT, 1, 2);
+        paramCurveGrid->attach_next_to(*paramCurveSliderBox, *shcSelector, Gtk::POS_BOTTOM, 2, 1);
     } else if (options.curvebboxpos == 2) {
-        removeIfThere (paramCurveAndButtons, parambbox, false);
-        paramCurveBox->pack_start (*parambbox);
-        //paramCurveBox->reorder_child(*parambbox, 1);
+        paramCurveGrid->attach_next_to(*shcSelector, *paramCurve, Gtk::POS_BOTTOM, 1, 1);
+        paramCurveGrid->attach_next_to(*parambbox, *shcSelector, Gtk::POS_BOTTOM, 1, 1);
+        paramCurveGrid->attach_next_to(*paramCurveSliderBox, *parambbox, Gtk::POS_BOTTOM, 1, 1);
     } else if (options.curvebboxpos == 3) {
-        paramCurveAndButtons->reorder_child(*parambbox, 0);
+        paramCurveGrid->attach_next_to(*shcSelector, *paramCurve, Gtk::POS_BOTTOM, 1, 1);
+        paramCurveGrid->attach_next_to(*parambbox, *paramCurve, Gtk::POS_LEFT, 1, 2);
+        paramCurveGrid->attach_next_to(*paramCurveSliderBox, *parambbox, Gtk::POS_BOTTOM, 2, 1);
     }
 
-    paramCurveBox->show_all ();
+    paramCurveGrid->show_all ();
     // parametric curve end
 
 
-    customCurveBox->reference ();
-    paramCurveBox->reference ();
+    customCurveGrid->reference ();
+    paramCurveGrid->reference ();
 
     customCurve->setCurveListener (parent); // Send the message directly to the parent
     NURBSCurve->setCurveListener (parent);
@@ -342,9 +335,9 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 DiagonalCurveEditorSubGroup::~DiagonalCurveEditorSubGroup()
 {
-    delete customCurveBox;
-    delete paramCurveBox;
-    delete NURBSCurveBox;
+    delete customCurveGrid;
+    delete paramCurveGrid;
+    delete NURBSCurveGrid;
 }
 
 /*
@@ -532,7 +525,8 @@ void DiagonalCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int mo
 
     case (DCT_Parametric):
         if (editedAdjuster) {
-            int trimmedValue = editedAdjuster->trimValue(editedAdjusterValue - (provider->deltaScreen.y / 2));
+            int trimmedValue = editedAdjusterValue - (provider->deltaScreen.y / 2);
+            editedAdjuster->trimValue(trimmedValue);
 
             if (trimmedValue != editedAdjuster->getIntValue()) {
                 editedAdjuster->setValue(trimmedValue);
@@ -610,7 +604,7 @@ void DiagonalCurveEditorSubGroup::switchGUI()
 
     if (dCurve) {
 
-        // Initializing GUI values + repacking the appropriated widget
+        // Initializing GUI values + attaching the appropriated widget
         //dCurve->typeconn.block(true);
 
         // first we update the colored bar
@@ -627,7 +621,9 @@ void DiagonalCurveEditorSubGroup::switchGUI()
         } else {
             // dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
             if (!leftBar) {
-                leftBar = new ColoredBar(RTO_Bottom2Top);
+				leftBar = new ColoredBar(RTO_Bottom2Top);
+				
+				
             }
 
             if (barColorProvider) {
@@ -670,10 +666,10 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             customCurve->setPoints (dCurve->customCurveEd);
             customCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
             customCurve->setColoredBar(leftBar, bottomBar);
-            customCurve->forceResize();
+            customCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editCustom, editCustomConn);
-            parent->pack_start (*customCurveBox);
-            customCurveBox->check_resize();
+            parent->attachCurve (customCurveGrid);
+            customCurveGrid->check_resize();
             break;
 
         case (DCT_Parametric): {
@@ -697,13 +693,13 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             darks->setLabel(label[1]);
             shadows->setValue (dCurve->paramCurveEd.at(7));
             shadows->setLabel(label[0]);
-            shcSelector->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
-            shcSelector->setBgGradient(bgGradient);
-            shcSelector->setMargins( (leftBar ? MyCurve::getBarWidth() + CBAR_MARGIN : RADIUS), RADIUS );
+            shcSelector->coloredBar.setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
+            shcSelector->coloredBar.setBgGradient(bgGradient);
+            shcSelector->setMargins( (leftBar ? CBAR_WIDTH + CBAR_MARGIN : RADIUS), RADIUS );
             paramCurve->setColoredBar(leftBar, nullptr);
-            paramCurve->forceResize();
+            paramCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editParam, editParamConn);
-            parent->pack_start (*paramCurveBox);
+            parent->attachCurve (paramCurveGrid);
             break;
         }
 
@@ -711,10 +707,10 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             NURBSCurve->setPoints (dCurve->NURBSCurveEd);
             NURBSCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
             NURBSCurve->setColoredBar(leftBar, bottomBar);
-            NURBSCurve->forceResize();
+            NURBSCurve->queue_resize_no_redraw();
             updateEditButton(dCurve, editNURBS, editNURBSConn);
-            parent->pack_start (*NURBSCurveBox);
-            NURBSCurveBox->check_resize();
+            parent->attachCurve (NURBSCurveGrid);
+            NURBSCurveGrid->check_resize();
             break;
 
         default:    // (DCT_Linear, DCT_Unchanged)
@@ -1100,9 +1096,9 @@ const std::vector<double> DiagonalCurveEditorSubGroup::getCurveFromGUI (int type
  */
 void DiagonalCurveEditorSubGroup::removeEditor ()
 {
-    removeIfThere (parent, customCurveBox, false);
-    removeIfThere (parent, paramCurveBox, false);
-    removeIfThere (parent, NURBSCurveBox, false);
+    removeIfThere (parent, customCurveGrid, false);
+    removeIfThere (parent, paramCurveGrid, false);
+    removeIfThere (parent, NURBSCurveGrid, false);
 }
 
 bool DiagonalCurveEditorSubGroup::curveReset(CurveEditor *ce)

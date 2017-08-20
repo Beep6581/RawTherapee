@@ -70,7 +70,7 @@ public:
  *
  * The position of the Axis in the vector will be used in the communication between the Adjuster and the Provider to identify the Axis
  */
-class CoordinateAdjuster : public Gtk::HBox
+class CoordinateAdjuster : public Gtk::FlowBox
 {
 
 public:

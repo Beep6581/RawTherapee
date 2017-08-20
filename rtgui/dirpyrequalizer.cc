@@ -60,8 +60,8 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     cdbox->pack_start (*labmcd, Gtk::PACK_SHRINK, 1);
 
     cbdlMethod = Gtk::manage (new MyComboBoxText ());
-    cbdlMethod->append_text (M("TP_CBDL_BEF"));
-    cbdlMethod->append_text (M("TP_CBDL_AFT"));
+    cbdlMethod->append (M("TP_CBDL_BEF"));
+    cbdlMethod->append (M("TP_CBDL_AFT"));
     cbdlMethod->set_active(0);
     cbdlMethodConn = cbdlMethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrEqualizer::cbdlMethodChanged) );
     cbdlMethod->set_tooltip_markup (M("TP_CBDL_METHOD_TOOLTIP"));
@@ -115,7 +115,6 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     pack_start(*separator4, Gtk::PACK_SHRINK, 2);
     /*
         algoHBox = Gtk::manage (new Gtk::HBox ());
-        algoHBox->set_border_width (0);
         algoHBox->set_spacing (2);
         algoHBox->set_tooltip_markup (M("TP_DIRPYREQUALIZER_ALGO_TOOLTIP"));
     */
@@ -123,8 +122,8 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
 //  algoHBox->pack_start (*alLabel, Gtk::PACK_SHRINK);
     /*
         algo = Gtk::manage (new MyComboBoxText ());
-        algo->append_text (M("TP_DIRPYREQUALIZER_ALGO_FI"));
-        algo->append_text (M("TP_DIRPYREQUALIZER_ALGO_LA"));
+        algo->append (M("TP_DIRPYREQUALIZER_ALGO_FI"));
+        algo->append (M("TP_DIRPYREQUALIZER_ALGO_LA"));
         algo->set_active (1);
     //  algoHBox->pack_start (*algo);
     //  pack_start(*algoHBox);
@@ -317,7 +316,7 @@ void DirPyrEqualizer::setBatchMode (bool batchMode)
     threshold->showEditedCB();
     skinprotect->showEditedCB();
     hueskin->showEditedCB ();
-//   algo->append_text (M("GENERAL_UNCHANGED"));
+//   algo->append (M("GENERAL_UNCHANGED"));
 }
 
 void DirPyrEqualizer::cbdlMethodChanged()

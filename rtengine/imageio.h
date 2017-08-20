@@ -176,7 +176,7 @@ public:
 
     void setMetadata (const rtexif::TagDirectory* eroot);
     void setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc);
-    void setOutputProfile  (char* pdata, int plen);
+    void setOutputProfile  (const char* pdata, int plen);
     MyMutex& mutex ()
     {
         return imutex;

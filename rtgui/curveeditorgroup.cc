@@ -26,12 +26,13 @@
 #include "multilangmgr.h"
 #include "rtimage.h"
 
-CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), curve_reset(nullptr),
+CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)
 {
 
     // We set the label to the one provided as parameter, even if it's an empty string
-    curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_LEFT));
+    curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_START));
+    setExpandAlignProperties(curveGroupLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 }
 
 CurveEditorGroup::~CurveEditorGroup()
@@ -117,44 +118,55 @@ void CurveEditorGroup::newLine()
 {
 
     if (curveEditors.size() > numberOfPackedCurve) {
-        Gtk::HBox* headerBox = Gtk::manage (new Gtk::HBox ());
+        Gtk::Grid* currLine = Gtk::manage (new Gtk::Grid ());
+        setExpandAlignProperties(currLine, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+        bool isHeader = false;
+        int x = 0;
 
         if (!numberOfPackedCurve) {
-            headerBox->pack_start(*curveGroupLabel, Gtk::PACK_SHRINK, 2);
-
-            curve_reset = Gtk::manage (new Gtk::Button ());
-            curve_reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
-            curve_reset->set_relief (Gtk::RELIEF_NONE);
-            curve_reset->set_border_width (0);
-            curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));
-            curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::curveResetPressed) );
-
-            headerBox->pack_end (*curve_reset, Gtk::PACK_SHRINK, 0);
+            isHeader = true;
+            currLine->attach(*curveGroupLabel, x++, 0, 1, 1);
         }
-
-        int j = numberOfPackedCurve;
 
         bool rwe = false;
 
-        for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
+        for (int i = numberOfPackedCurve; i < (int)(curveEditors.size()); ++i) {
             if (curveEditors[i]->relatedWidget != nullptr && curveEditors[i]->expandRelatedWidget) {
                 rwe = true;
             }
         }
 
-        for (int i = (int)(curveEditors.size()) - 1; i >= j; i--) {
+        for (int i = numberOfPackedCurve; i < (int)(curveEditors.size()); ++i) {
+            setExpandAlignProperties(curveEditors[i]->curveType->buttonGroup, !rwe, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+            currLine->attach(*curveEditors[i]->curveType->buttonGroup, x++, 0, 1, 1);
+
             if (curveEditors[i]->relatedWidget != nullptr) {
-                headerBox->pack_end (*curveEditors[i]->relatedWidget, curveEditors[i]->expandRelatedWidget ? Gtk::PACK_EXPAND_WIDGET : Gtk::PACK_SHRINK, 2);
+                setExpandAlignProperties(curveEditors[i]->relatedWidget, curveEditors[i]->expandRelatedWidget, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+                currLine->attach(*curveEditors[i]->relatedWidget, x++, 0, 1, 1);
             }
 
-            headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, rwe ? Gtk::PACK_SHRINK : Gtk::PACK_EXPAND_WIDGET, 2);
             numberOfPackedCurve++;
         }
 
-        pack_start (*headerBox, Gtk::PACK_SHRINK, 2);
+        if (isHeader) {
+            curve_reset = Gtk::manage (new Gtk::Button ());
+            setExpandAlignProperties(curve_reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+            curve_reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+            curve_reset->set_relief (Gtk::RELIEF_NONE);
+            curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));
+            curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::curveResetPressed) );
+
+            currLine->attach(*curve_reset, x++, 0, 1, 1);
+        }
+
+        attach(*currLine, 0, line++, 1, 1);
     }
+}
 
-
+void CurveEditorGroup::attachCurve (Gtk::Grid* curve)
+{
+    attach(*curve, 0, line, 1, 1);
 }
 
 /*
@@ -182,7 +194,7 @@ void CurveEditorGroup::curveListComplete()
  */
 void CurveEditorGroup::typeSelectionChanged (CurveEditor* ce, int n)
 {
-    // Same type : do nothing
+    // Same curve and same type : do nothing
     if (ce == displayedCurve && n == (int)ce->selected) {
         return;
     }
@@ -383,7 +395,7 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce)
     }
 }
 
-CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename(""), valLinear(0), valUnchanged(0), parent(nullptr), curveBBoxPos(0)
+CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename(""), valLinear(0), valUnchanged(0), parent(nullptr)
 {
     leftBar = nullptr;
     bottomBar = nullptr;
@@ -398,6 +410,32 @@ CurveEditorSubGroup::~CurveEditorSubGroup()
     if (bottomBar) {
         delete bottomBar;
     }
+}
+
+void CurveEditorSubGroup::initButton (Gtk::Button &button, const Glib::ustring &iconName, Gtk::Align align, bool separatorButton, const Glib::ustring &tooltip)
+{
+    bool hExpand, vExpand;
+    if (separatorButton) {
+        hExpand = vExpand = true;
+    } else {
+        vExpand = options.curvebboxpos == 0 || options.curvebboxpos == 2;
+        hExpand = !vExpand;
+    }
+    Gtk::Align hAlign, vAlign;
+    if (align == Gtk::ALIGN_START) {
+        hAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::ALIGN_START : Gtk::ALIGN_FILL;
+        vAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ? Gtk::ALIGN_FILL : Gtk::ALIGN_START;
+    } else {
+        hAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ?  Gtk::ALIGN_END : Gtk::ALIGN_FILL;
+        vAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ?  Gtk::ALIGN_FILL : Gtk::ALIGN_END;
+    }
+
+    button.add (*Gtk::manage (new RTImage (iconName)));
+    button.get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
+    if (!tooltip.empty()) {
+        button.set_tooltip_text(M(tooltip));
+    }
+    setExpandAlignProperties(&button, hExpand, vExpand, hAlign, vAlign);
 }
 
 void CurveEditorSubGroup::updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection)
@@ -427,17 +465,17 @@ Glib::ustring CurveEditorSubGroup::outputFile ()
     bindCurrentFolder (dialog, curveDir);
     dialog.set_current_name (lastFilename);
 
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_APPLY);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_SAVE"), Gtk::RESPONSE_APPLY);
 
-    Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("FILECHOOSER_FILTER_CURVE"));
-    filter_pp.add_pattern("*.rtc");
+    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    filter_pp->set_name(M("FILECHOOSER_FILTER_CURVE"));
+    filter_pp->add_pattern("*.rtc");
     dialog.add_filter(filter_pp);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
     //dialog.set_do_overwrite_confirmation (true);
@@ -471,17 +509,17 @@ Glib::ustring CurveEditorSubGroup::inputFile ()
     Gtk::FileChooserDialog dialog (getToplevelWindow (parent), M("CURVEEDITOR_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
     bindCurrentFolder (dialog, curveDir);
 
-    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(M("GENERAL_APPLY"), Gtk::RESPONSE_APPLY);
 
-    Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("FILECHOOSER_FILTER_CURVE"));
-    filter_pp.add_pattern("*.rtc");
+    Glib::RefPtr<Gtk::FileFilter> filter_pp = Gtk::FileFilter::create();
+    filter_pp->set_name(M("FILECHOOSER_FILTER_CURVE"));
+    filter_pp->add_pattern("*.rtc");
     dialog.add_filter(filter_pp);
 
-    Gtk::FileFilter filter_any;
-    filter_any.set_name(M("FILECHOOSER_FILTER_ANY"));
-    filter_any.add_pattern("*");
+    Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
+    filter_any->set_name(M("FILECHOOSER_FILTER_ANY"));
+    filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
     int result = dialog.run();

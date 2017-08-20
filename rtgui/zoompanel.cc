@@ -23,8 +23,7 @@
 
 ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
 {
-
-    set_border_width (0);
+    set_name ("EditorZoomPanel");
 
     Gtk::Image* imageOut = Gtk::manage (new RTImage ("gtk-zoom-out.png"));
     imageOut->set_padding(0, 0);
@@ -40,34 +39,41 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
     zoomOut = Gtk::manage (new Gtk::Button());
     zoomOut->add (*imageOut);
     zoomOut->set_relief(Gtk::RELIEF_NONE);
+    setExpandAlignProperties(zoomOut, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     zoomIn = Gtk::manage (new Gtk::Button());
     zoomIn->add (*imageIn);
     zoomIn->set_relief(Gtk::RELIEF_NONE);
+    setExpandAlignProperties(zoomIn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     zoomFit = Gtk::manage (new Gtk::Button());
     zoomFit->add (*imageFit);
     zoomFit->set_relief(Gtk::RELIEF_NONE);
+    setExpandAlignProperties(zoomFit, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     zoomFitCrop = Gtk::manage (new Gtk::Button());
     zoomFitCrop->add (*imageFitCrop);
     zoomFitCrop->set_relief(Gtk::RELIEF_NONE);
+    setExpandAlignProperties(zoomFitCrop, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     zoom11 = Gtk::manage (new Gtk::Button());
     zoom11->add (*image11);
     zoom11->set_relief(Gtk::RELIEF_NONE);
+    setExpandAlignProperties(zoom11, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    pack_start (*zoomOut, Gtk::PACK_SHRINK, 0);
-    pack_start (*zoomIn, Gtk::PACK_SHRINK, 0);
-    pack_start (*zoomFit, Gtk::PACK_SHRINK, 0);
-    pack_start (*zoomFitCrop, Gtk::PACK_SHRINK, 0);
-    pack_start (*zoom11, Gtk::PACK_SHRINK, 0);
+    attach_next_to (*zoomOut, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*zoomIn, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*zoomFit, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*zoomFitCrop, Gtk::POS_RIGHT, 1, 1);
+    attach_next_to (*zoom11, Gtk::POS_RIGHT, 1, 1);
 
     zoomLabel = Gtk::manage (new Gtk::Label ());
-    pack_start (*zoomLabel, Gtk::PACK_SHRINK, 4);
+    setExpandAlignProperties(zoomLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    attach_next_to (*zoomLabel, Gtk::POS_RIGHT, 1, 1);
 
     Gtk::Image* imageCrop = Gtk::manage (new RTImage ("new-detail-window.png"));
     imageCrop->set_padding(0, 0);
     newCrop = Gtk::manage (new Gtk::Button());
     newCrop->add (*imageCrop);
     newCrop->set_relief(Gtk::RELIEF_NONE);
-    pack_start (*newCrop, Gtk::PACK_SHRINK, 4);
+    setExpandAlignProperties(newCrop, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    attach_next_to (*newCrop, Gtk::POS_RIGHT, 1, 1);
 
     show_all_children ();
 
