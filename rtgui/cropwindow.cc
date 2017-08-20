@@ -1324,6 +1324,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             cr->set_source_rgb (0, 0, 0);
         } else if (backColor == 2) {
             cr->set_source_rgb (1, 1, 1);
+        } else if (backColor == 3) {
+            cr->set_source_rgb (0.467, 0.467, 0.467);
         }
 
         cr->set_line_width (0.);
