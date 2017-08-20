@@ -1695,17 +1695,17 @@ TP_HSVEQUALIZER_LABEL;HSV Equalizer
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
-TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 TP_ICM_APPLYHUESATMAP;Base table
-TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
+TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 TP_ICM_APPLYLOOKTABLE;Look table
-TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 TP_ICM_BPC;Black Point Compensation
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
-TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
@@ -1727,7 +1727,7 @@ TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_TONECURVE;Tone curve
-TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
+TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
