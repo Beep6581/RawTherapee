@@ -1915,43 +1915,46 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (((idata->getMake().size() >= 7 && idata->getMake().substr(0, 7) == "OLYMPUS" && idata->getModel()[0] == 'E') || (idata->getMake().size() >= 9 && idata->getMake().substr(0, 9) == "Panasonic")) && raw.bayersensor.method != RAWParams::BayerSensor::methodstring[ RAWParams::BayerSensor::vng4])) ) {
+        StopWatch stop1("gel part one");
         // global correction
-        int ng1 = 0, ng2 = 0, i = 0;
+        int ng1 = 0, ng2 = 0;
         double avgg1 = 0., avgg2 = 0.;
 
 #ifdef _OPENMP
-        #pragma omp parallel for default(shared) private(i) reduction(+: ng1, ng2, avgg1, avgg2)
+        #pragma omp parallel for reduction(+: ng1, ng2, avgg1, avgg2) schedule(dynamic,16)
 #endif
 
-        for (i = border; i < H - border; i++)
-            for (int j = border; j < W - border; j++)
-                if (ri->ISGREEN(i, j)) {
-                    if (i & 1) {
-                        avgg2 += rawData[i][j];
-                        ng2++;
-                    } else {
-                        avgg1 += rawData[i][j];
-                        ng1++;
-                    }
-                }
-
-        double corrg1 = ((double)avgg1 / ng1 + (double)avgg2 / ng2) / 2.0 / ((double)avgg1 / ng1);
-        double corrg2 = ((double)avgg1 / ng1 + (double)avgg2 / ng2) / 2.0 / ((double)avgg2 / ng2);
+        for (int i = border; i < H - border; i++) {
+            double avgg = 0.;
+            for (int j = border + ((FC(i, border) & 1) ^ 1); j < W - border; j += 2) {
+                avgg += rawData[i][j];
+            }
+            int ng = (W - 2 * border + (FC(i, border) & 1)) / 2;
+            if (i & 1) {
+                avgg2 += avgg;
+                ng2 += ng;
+            } else {
+                avgg1 += avgg;
+                ng1 += ng;
+            }
+        }
+        double corrg1 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg1 / ng1);
+        double corrg2 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg2 / ng2);
 
 #ifdef _OPENMP
-        #pragma omp parallel for default(shared)
+        #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-        for (int i = border; i < H - border; i++)
-            for (int j = border; j < W - border; j++)
-                if (ri->ISGREEN(i, j)) {
-                    float currData;
-                    currData = (float)(rawData[i][j] * ((i & 1) ? corrg2 : corrg1));
-                    rawData[i][j] = (currData);
-                }
+        for (int i = border; i < H - border; i++) {
+            double corrg = (i & 1) ? corrg2 : corrg1;
+            for (int j = border + ((FC(i, border) & 1) ^ 1); j < W - border; j += 2) {
+                rawData[i][j] *= corrg;
+            }
+        }
     }
 
     if ( ri->getSensorType() == ST_BAYER && raw.bayersensor.greenthresh > 0) {
+        StopWatch Stop1("gel part two");
         if (plistener) {
             plistener->setProgressStr ("Green equilibrate...");
             plistener->setProgress (0.0);

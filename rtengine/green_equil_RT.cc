@@ -30,6 +30,8 @@
 
 #include "rt_math.h"
 #include "rawimagesource.h"
+#include "opthelper.h"
+
 namespace rtengine
 {
 
@@ -42,15 +44,25 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
     int height = H, width = W;
 
     // local variables
-    float** rawptr = rawData;
-    array2D<float> cfa (width, height, rawptr);
-    //array2D<int> checker (width,height,ARRAY2D_CLEAR_DATA);
+    array2D<float> cfa(width / 2 + (width & 1), height);
 
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+    for(int i = 0; i < height; ++i) {
+        int j = (FC(i,0) & 1) ^ 1;
+#ifdef __SSE2__
+        for(; j < width - 7; j += 8) {
+            STVFU(cfa[i][j>>1], LC2VFU(rawData[i][j]));
+        }
+#endif
+        for(; j < width; j += 2) {
+            cfa[i][j>>1] = rawData[i][j];
+        }
+    }
 
-    //int verbose=1;
-
-    static const float eps = 1.0; //tolerance to avoid dividing by zero
-
+    constexpr float eps = 1.f; //tolerance to avoid dividing by zero
+    const float thresh6 = 6 * thresh;
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     // Fill G interpolated values with border interpolation and input values
@@ -59,93 +71,116 @@ void RawImageSource::green_equilibrate(float thresh, array2D<float> &rawData)
     //int counter, vtest;
 
     //The green equilibration algorithm starts here
-    /*
-    #ifdef _OPENMP
-    #pragma omp parallel for
-    #endif
-    for (int rr=1; rr < height-1; rr++)
-        for (int cc=3-(FC(rr,2)&1); cc < width-2; cc+=2) {
-
-            float pcorr = (cfa[rr+1][cc+1]-cfa[rr][cc])*(cfa[rr-1][cc-1]-cfa[rr][cc]);
-            float mcorr = (cfa[rr-1][cc+1]-cfa[rr][cc])*(cfa[rr+1][cc-1]-cfa[rr][cc]);
-
-            if (pcorr>0 && mcorr>0) {checker[rr][cc]=1;} else {checker[rr][cc]=0;}
-
-            checker[rr][cc]=1;//test what happens if we always interpolate
-        }
-
-    counter=vtest=0;
-    */
     //now smooth the cfa data
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
+    #pragma omp parallel
+#endif
+{
+#ifdef __SSE2__
+    vfloat zd5v = F2V(0.5f);
+    vfloat onev = F2V(1.f);
+    vfloat threshv = F2V(thresh);
+    vfloat thresh6v = F2V(thresh6);
+    vfloat epsv = F2V(eps);
+#endif
+#ifdef _OPENMP
+    #pragma omp for schedule(dynamic,16)
 #endif
 
-    for (int rr = 4; rr < height - 4; rr++)
-        for (int cc = 5 - (FC(rr, 2) & 1); cc < width - 6; cc += 2) {
-            //if (checker[rr][cc]) {
-            //%%%%%%%%%%%%%%%%%%%%%%
-            //neighbor checking code from Manuel Llorens Garcia
-            float o1_1 = cfa[(rr - 1)][cc - 1];
-            float o1_2 = cfa[(rr - 1)][cc + 1];
-            float o1_3 = cfa[(rr + 1)][cc - 1];
-            float o1_4 = cfa[(rr + 1)][cc + 1];
-            float o2_1 = cfa[(rr - 2)][cc];
-            float o2_2 = cfa[(rr + 2)][cc];
-            float o2_3 = cfa[(rr)][cc - 2];
-            float o2_4 = cfa[(rr)][cc + 2];
+    for (int rr = 4; rr < height - 4; rr++) {
+        int cc = 5 - (FC(rr, 2) & 1);
+#ifdef __SSE2__
+        for (; cc < width - 12; cc += 8) {
+            //neighbour checking code from Manuel Llorens Garcia
+            vfloat o1_1 = LVFU(cfa[rr - 1][(cc - 1)>>1]);
+            vfloat o1_2 = LVFU(cfa[rr - 1][(cc + 1)>>1]);
+            vfloat o1_3 = LVFU(cfa[rr + 1][(cc - 1)>>1]);
+            vfloat o1_4 = LVFU(cfa[rr + 1][(cc + 1)>>1]);
+            vfloat o2_1 = LVFU(cfa[rr - 2][cc>>1]);
+            vfloat o2_2 = LVFU(cfa[rr + 2][cc>>1]);
+            vfloat o2_3 = LVFU(cfa[rr][(cc - 2)>>1]);
+            vfloat o2_4 = LVFU(cfa[rr][(cc + 2)>>1]);
 
-            float d1 = (o1_1 + o1_2 + o1_3 + o1_4) * 0.25f;
-            float d2 = (o2_1 + o2_2 + o2_3 + o2_4) * 0.25f;
+            vfloat d1 = (o1_1 + o1_2 + o1_3 + o1_4);
+            vfloat d2 = (o2_1 + o2_2 + o2_3 + o2_4);
 
-            float c1 = (fabs(o1_1 - o1_2) + fabs(o1_1 - o1_3) + fabs(o1_1 - o1_4) + fabs(o1_2 - o1_3) + fabs(o1_3 - o1_4) + fabs(o1_2 - o1_4)) / 6.f;
-            float c2 = (fabs(o2_1 - o2_2) + fabs(o2_1 - o2_3) + fabs(o2_1 - o2_4) + fabs(o2_2 - o2_3) + fabs(o2_3 - o2_4) + fabs(o2_2 - o2_4)) / 6.f;
-            //%%%%%%%%%%%%%%%%%%%%%%
+            vfloat c1 = (vabsf(o1_1 - o1_2) + vabsf(o1_1 - o1_3) + vabsf(o1_1 - o1_4) + vabsf(o1_2 - o1_3) + vabsf(o1_3 - o1_4) + vabsf(o1_2 - o1_4));
+            vfloat c2 = (vabsf(o2_1 - o2_2) + vabsf(o2_1 - o2_3) + vabsf(o2_1 - o2_4) + vabsf(o2_2 - o2_3) + vabsf(o2_3 - o2_4) + vabsf(o2_2 - o2_4));
 
-            //vote1=(checker[rr-2][cc]+checker[rr][cc-2]+checker[rr][cc+2]+checker[rr+2][cc]);
-            //vote2=(checker[rr+1][cc-1]+checker[rr+1][cc+1]+checker[rr-1][cc-1]+checker[rr-1][cc+1]);
-            //if ((vote1==0 || vote2==0) && (c1+c2)<2*thresh*fabs(d1-d2)) vtest++;
-            //if (vote1>0 && vote2>0 && (c1+c2)<4*thresh*fabs(d1-d2)) {
-            if ((c1 + c2) < 4 * thresh * fabs(d1 - d2)) {
+            vmask mask1 = vmaskf_lt(c1 + c2, thresh6v * vabsf(d1 - d2));
+            if(_mm_movemask_ps((vfloat)mask1)) { // if for any of the 4 pixels the condition is true, do the maths for all 4 pixels and mask the unused out at the end
                 //pixel interpolation
-                float gin = cfa[rr][cc];
+                vfloat gin = LVFU(cfa[rr][cc>>1]);
 
-                float gse = (cfa[rr + 1][cc + 1]) + 0.5f * (cfa[rr][cc] - cfa[rr + 2][cc + 2]);
-                float gnw = (cfa[rr - 1][cc - 1]) + 0.5f * (cfa[rr][cc] - cfa[rr - 2][cc - 2]);
-                float gne = (cfa[rr - 1][cc + 1]) + 0.5f * (cfa[rr][cc] - cfa[rr - 2][cc + 2]);
-                float gsw = (cfa[rr + 1][cc - 1]) + 0.5f * (cfa[rr][cc] - cfa[rr + 2][cc - 2]);
+                vfloat gmp2p2 = gin - LVFU(cfa[rr + 2][(cc + 2)>>1]);
+                vfloat gmm2m2 = gin - LVFU(cfa[rr - 2][(cc - 2)>>1]);
+                vfloat gmm2p2 = gin - LVFU(cfa[rr - 2][(cc + 2)>>1]);
+                vfloat gmp2m2 = gin - LVFU(cfa[rr + 2][(cc - 2)>>1]);
 
+                vfloat gse = o1_4 + zd5v * gmp2p2;
+                vfloat gnw = o1_1 + zd5v * gmm2m2;
+                vfloat gne = o1_2 + zd5v * gmm2p2;
+                vfloat gsw = o1_3 + zd5v * gmp2m2;
 
+                vfloat wtse = onev / (epsv + SQRV(gmp2p2) + SQRV(LVFU(cfa[rr + 3][(cc + 3)>>1]) - o1_4));
+                vfloat wtnw = onev / (epsv + SQRV(gmm2m2) + SQRV(LVFU(cfa[rr - 3][(cc - 3)>>1]) - o1_1));
+                vfloat wtne = onev / (epsv + SQRV(gmm2p2) + SQRV(LVFU(cfa[rr - 3][(cc + 3)>>1]) - o1_2));
+                vfloat wtsw = onev / (epsv + SQRV(gmp2m2) + SQRV(LVFU(cfa[rr + 3][(cc - 3)>>1]) - o1_3));
 
-                float wtse = 1.0f / (eps + SQR(cfa[rr + 2][cc + 2] - cfa[rr][cc]) + SQR(cfa[rr + 3][cc + 3] - cfa[rr + 1][cc + 1]));
-                float wtnw = 1.0f / (eps + SQR(cfa[rr - 2][cc - 2] - cfa[rr][cc]) + SQR(cfa[rr - 3][cc - 3] - cfa[rr - 1][cc - 1]));
-                float wtne = 1.0f / (eps + SQR(cfa[rr - 2][cc + 2] - cfa[rr][cc]) + SQR(cfa[rr - 3][cc + 3] - cfa[rr - 1][cc + 1]));
-                float wtsw = 1.0f / (eps + SQR(cfa[rr + 2][cc - 2] - cfa[rr][cc]) + SQR(cfa[rr + 3][cc - 3] - cfa[rr + 1][cc - 1]));
+                vfloat ginterp = (gse * wtse + gnw * wtnw + gne * wtne + gsw * wtsw) / (wtse + wtnw + wtne + wtsw);
+
+                vfloat val = vself(vmaskf_lt(ginterp - gin, threshv * (ginterp + gin)), zd5v * (ginterp + gin), gin);
+                val = vself(mask1, val, gin);
+                STC2VFU(rawData[rr][cc], val);
+            }
+        }
+#endif
+        for (; cc < width - 6; cc += 2) {
+            //neighbour checking code from Manuel Llorens Garcia
+            float o1_1 = cfa[rr - 1][(cc - 1)>>1];
+            float o1_2 = cfa[rr - 1][(cc + 1)>>1];
+            float o1_3 = cfa[rr + 1][(cc - 1)>>1];
+            float o1_4 = cfa[rr + 1][(cc + 1)>>1];
+            float o2_1 = cfa[rr - 2][cc>>1];
+            float o2_2 = cfa[rr + 2][cc>>1];
+            float o2_3 = cfa[rr][(cc - 2)>>1];
+            float o2_4 = cfa[rr][(cc + 2)>>1];
+
+            float d1 = (o1_1 + o1_2) + (o1_3 + o1_4);
+            float d2 = (o2_1 + o2_2) + (o2_3 + o2_4);
+
+            float c1 = (fabs(o1_1 - o1_2) + fabs(o1_1 - o1_3) + fabs(o1_1 - o1_4) + fabs(o1_2 - o1_3) + fabs(o1_3 - o1_4) + fabs(o1_2 - o1_4));
+            float c2 = (fabs(o2_1 - o2_2) + fabs(o2_1 - o2_3) + fabs(o2_1 - o2_4) + fabs(o2_2 - o2_3) + fabs(o2_3 - o2_4) + fabs(o2_2 - o2_4));
+
+            if (c1 + c2 < thresh6 * fabs(d1 - d2)) {
+                //pixel interpolation
+                float gin = cfa[rr][cc>>1];
+
+                float gmp2p2 = gin - cfa[rr + 2][(cc + 2)>>1];
+                float gmm2m2 = gin - cfa[rr - 2][(cc - 2)>>1];
+                float gmm2p2 = gin - cfa[rr - 2][(cc + 2)>>1];
+                float gmp2m2 = gin - cfa[rr + 2][(cc - 2)>>1];
+
+                float gse = o1_4 + 0.5f * gmp2p2;
+                float gnw = o1_1 + 0.5f * gmm2m2;
+                float gne = o1_2 + 0.5f * gmm2p2;
+                float gsw = o1_3 + 0.5f * gmp2m2;
+
+                float wtse = 1.f / (eps + SQR(gmp2p2) + SQR(cfa[rr + 3][(cc + 3)>>1] - o1_4));
+                float wtnw = 1.f / (eps + SQR(gmm2m2) + SQR(cfa[rr - 3][(cc - 3)>>1] - o1_1));
+                float wtne = 1.f / (eps + SQR(gmm2p2) + SQR(cfa[rr - 3][(cc + 3)>>1] - o1_2));
+                float wtsw = 1.f / (eps + SQR(gmp2m2) + SQR(cfa[rr + 3][(cc - 3)>>1] - o1_3));
 
                 float ginterp = (gse * wtse + gnw * wtnw + gne * wtne + gsw * wtsw) / (wtse + wtnw + wtne + wtsw);
 
-                if ( ((ginterp - gin) < thresh * (ginterp + gin)) ) {
+                if (ginterp - gin < thresh * (ginterp + gin)) {
                     rawData[rr][cc] = 0.5f * (ginterp + gin);
-                    //counter++;
                 }
 
             }
-
-            //  }
         }
-
-    //printf("pixfix count= %d; vtest= %d \n",counter,vtest);
-    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-    // done
-    /*t2 = clock();
-     dt = ((double)(t2-t1)) / CLOCKS_PER_SEC;
-     if (verbose) {
-     fprintf(stderr,_("elapsed time = %5.3fs\n"),dt);
-     }*/
-
-
+    }
+}
 }
 }
 
