@@ -680,6 +680,36 @@ bool RTWindow::on_delete_event(GdkEventAny* event)
     return false;
 }
 
+
+void RTWindow::writeToolExpandedStatus(std::vector<int> &tpOpen)
+{
+    if ((isSingleTabMode() || gimpPlugin) && epanel->isRealized()) {
+        epanel->writeToolExpandedStatus(tpOpen);
+    } else {
+        // Storing the options of the last EditorPanel before Gtk destroys everything
+        // Look at the active panel first, if any, otherwise look at the first one (sorted on the filename)
+        if (epanels.size()) {
+            int page = mainNB->get_current_page();
+            Gtk::Widget *w = mainNB->get_nth_page(page);
+            bool optionsWritten = false;
+
+            for (std::map<Glib::ustring, EditorPanel*>::iterator i = epanels.begin(); i != epanels.end(); ++i) {
+                if (i->second == w) {
+                    i->second->writeToolExpandedStatus(tpOpen);
+                    optionsWritten = true;
+                }
+            }
+
+            if (!optionsWritten) {
+                // fallback solution: save the options of the first editor panel
+                std::map<Glib::ustring, EditorPanel*>::iterator i = epanels.begin();
+                i->second->writeToolExpandedStatus(tpOpen);
+            }
+        }
+    }
+}
+
+
 void RTWindow::showPreferences ()
 {
     Preferences *pref = new Preferences (this);

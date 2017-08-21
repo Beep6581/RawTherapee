@@ -986,8 +986,21 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
     workflowGrid->attach_next_to (*ckbUseIconNoText, *ckbHideTPVScrollbar, Gtk::POS_RIGHT, 1, 1);
+    ckbAutoSaveTpOpen = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_AUTOSAVE_TP_OPEN")));
+    workflowGrid->attach_next_to(*ckbAutoSaveTpOpen, *hb4label, Gtk::POS_BOTTOM, 1, 1);
+    btnSaveTpOpenNow = Gtk::manage(new Gtk::Button(M("PREFERENCES_SAVE_TP_OPEN_NOW")));
+    setExpandAlignProperties(btnSaveTpOpenNow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    workflowGrid->attach_next_to(*btnSaveTpOpenNow, *ckbAutoSaveTpOpen, Gtk::POS_RIGHT, 1, 1);
+
+    auto save_tp_open_now =
+        [&]() -> void
+        {
+            parent->writeToolExpandedStatus(moptions.tpOpen);
+        };
+    btnSaveTpOpenNow->signal_clicked().connect(save_tp_open_now);
 
     fworklflow->add (*workflowGrid);
+
     mvbsd->attach_next_to (*fworklflow, Gtk::POS_TOP, 2, 1);
 
     // ---------------------------------------------
@@ -1792,6 +1805,8 @@ void Preferences::storePreferences ()
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
+    moptions.autoSaveTpOpen = ckbAutoSaveTpOpen->get_active();
+
     moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
@@ -2009,6 +2024,8 @@ void Preferences::fillPreferences ()
     ckbHideTPVScrollbar->set_active (moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active (moptions.UseIconNoText);
 
+    ckbAutoSaveTpOpen->set_active(moptions.autoSaveTpOpen);
+    
     rgbDenoiseTreadLimitSB->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);

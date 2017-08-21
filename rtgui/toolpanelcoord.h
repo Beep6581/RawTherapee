@@ -239,6 +239,8 @@ public:
     // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
     void readOptions        ();
     void writeOptions       ();
+    void writeToolExpandedStatus(std::vector<int> &tpOpen);
+    
 
     // wbprovider interface
     void getAutoWB (double& temp, double& green, double equal, double tempBias)

@@ -119,6 +119,8 @@ public:
     void closeOpenEditors();
     void setEditorMode(bool tabbedUI);
     void createSetmEditor();
+
+    void writeToolExpandedStatus(std::vector<int> &tpOpen);
 };
 
 #endif

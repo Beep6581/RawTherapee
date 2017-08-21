@@ -919,6 +919,14 @@ void EditorPanel::writeOptions()
     }
 }
 
+
+void EditorPanel::writeToolExpandedStatus(std::vector<int> &tpOpen)
+{
+    if (tpc) {
+        tpc->writeToolExpandedStatus(tpOpen);
+    }
+}
+
 void EditorPanel::showTopPanel (bool show)
 {
     if (tbTopPanel_1->get_active() != show) {

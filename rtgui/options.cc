@@ -405,6 +405,7 @@ void Options::setDefaults ()
     editorToSendTo = 1;
     favoriteDirs.clear();
     tpOpen.clear ();
+    autoSaveTpOpen = true;
     //crvOpen.clear ();
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
@@ -1434,6 +1435,9 @@ int Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("GUI", "ToolPanelsExpanded")) {
                     tpOpen = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
                 }
+                if (keyFile.has_key("GUI", "ToolPanelsExpandedAutoSave")) {
+                    autoSaveTpOpen = keyFile.get_boolean("GUI", "ToolPanelsExpandedAutoSave");
+                }
 
                 if (keyFile.has_key ("GUI", "MultiDisplayMode")) {
                     multiDisplayMode = keyFile.get_integer ("GUI", "MultiDisplayMode");
@@ -2100,6 +2104,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
         Glib::ArrayHandle<int> tpopen = tpOpen;
         keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+        keyFile.set_boolean("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
         keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
         keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
         keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);

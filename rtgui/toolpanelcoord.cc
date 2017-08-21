@@ -597,14 +597,23 @@ void ToolPanelCoordinator::writeOptions ()
 {
 
     crop->writeOptions ();
-    options.tpOpen.clear ();
+
+    if (options.autoSaveTpOpen) {
+        writeToolExpandedStatus(options.tpOpen);
+    }
+}
+
+
+void ToolPanelCoordinator::writeToolExpandedStatus(std::vector<int> &tpOpen)
+{
+    tpOpen.clear ();
 
     for (size_t i = 0; i < expList.size(); i++) {
-        options.tpOpen.push_back (expList.at(i)->get_expanded ());
+        tpOpen.push_back (expList.at(i)->get_expanded ());
     }
 
-    wavelet->writeOptions(options.tpOpen);
-    retinex->writeOptions(options.tpOpen);
+    wavelet->writeOptions(tpOpen);
+    retinex->writeOptions(tpOpen);
 }
 
 

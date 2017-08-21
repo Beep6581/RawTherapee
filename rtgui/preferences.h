@@ -201,6 +201,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ckbHideTPVScrollbar;
     Gtk::CheckButton* ckbUseIconNoText;
 
+    Gtk::CheckButton* ckbAutoSaveTpOpen;
+    Gtk::Button* btnSaveTpOpenNow;
+
     DynamicProfilePanel *dynProfilePanel;
 
     Glib::ustring storedValueRaw;
