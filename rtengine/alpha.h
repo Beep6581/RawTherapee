@@ -38,11 +38,11 @@ public:
     Alpha (int width, int height);
     //~Alpha ();
 
-    void setSize(int width, int height);
+    void setSize (int width, int height);
     int getWidth();
     int getHeight();
 
-    const Cairo::RefPtr<Cairo::ImageSurface> getSurface ();
+    Cairo::RefPtr<Cairo::ImageSurface> getSurface ();
 
     // TODO: to make the editing faster, we should add an iterator class
 
@@ -50,27 +50,8 @@ public:
     unsigned char* operator () (unsigned row) const;
     // Will send back a value at a given row, col position
     unsigned char& operator () (unsigned row, unsigned col);
-    const unsigned char operator () (unsigned row, unsigned col) const;
+    unsigned char operator () (unsigned row, unsigned col) const;
 };
-
-
-
-inline const Cairo::RefPtr<Cairo::ImageSurface> Alpha::getSurface () {
-    return surface; // to be used in bitmap edition
-}
-
-inline const unsigned char Alpha::operator () (unsigned row,
-        unsigned col) const {
-    return *(surface->get_data () + row * surface->get_width () + col);
-}
-
-inline unsigned char& Alpha::operator () (unsigned row, unsigned col) {
-    return *(surface->get_data () + row * surface->get_width () + col);
-}
-
-inline unsigned char* Alpha::operator () (unsigned row) const {
-    return surface->get_data () + row * surface->get_width ();
-}
 
 }
 

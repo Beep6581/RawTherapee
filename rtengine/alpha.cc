@@ -27,7 +27,7 @@ Alpha::Alpha () {}
 Alpha::Alpha (int width, int height)
 {
     if (width > 0 && height > 0) {
-        surface = Cairo::ImageSurface::create(Cairo::FORMAT_A8, width, height);
+        surface = Cairo::ImageSurface::create (Cairo::FORMAT_A8, width, height);
     }
 }
 
@@ -37,7 +37,7 @@ Alpha::~Alpha () {
 }
 */
 
-void Alpha::setSize(int width, int height)
+void Alpha::setSize (int width, int height)
 {
     if (width > 0 && height > 0) {
         if (surface) {
@@ -48,7 +48,7 @@ void Alpha::setSize(int width, int height)
             }
         }
 
-        surface = Cairo::ImageSurface::create(Cairo::FORMAT_A8, width, height);
+        surface = Cairo::ImageSurface::create (Cairo::FORMAT_A8, width, height);
     } else if (surface) {
         surface.clear();
     }
@@ -70,6 +70,27 @@ int Alpha::getHeight()
     }
 
     return -1;
+}
+
+
+Cairo::RefPtr<Cairo::ImageSurface> Alpha::getSurface ()
+{
+    return surface; // to be used in bitmap edition
+}
+
+unsigned char Alpha::operator () (unsigned row, unsigned col) const
+{
+    return * (surface->get_data () + row * surface->get_width () + col);
+}
+
+unsigned char& Alpha::operator () (unsigned row, unsigned col)
+{
+    return * (surface->get_data () + row * surface->get_width () + col);
+}
+
+unsigned char* Alpha::operator () (unsigned row) const
+{
+    return surface->get_data () + row * surface->get_width ();
 }
 
 }

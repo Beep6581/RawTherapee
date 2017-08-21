@@ -14,7 +14,7 @@ using namespace rtengine::procparams;
 #define STATIC_MO_OBJ_NBR 6
 
 Spot::Spot() : FoldableToolPanel (this, "spot", M ("TP_SPOT_LABEL"), true, true), EditSubscriber (ET_OBJECTS), lastObject (-1), activeSpot (-1),
-    sourceIcon ("spot-normal.png", "spot-active.png", "spot-active.png", "spot-prelight.png", "", Geometry::DP_CENTERCENTER), editedCheckBox(NULL)
+    sourceIcon ("spot-normal.png", "spot-active.png", "spot-active.png", "spot-prelight.png", "", Geometry::DP_CENTERCENTER), editedCheckBox (NULL)
 {
     countLabel = Gtk::manage (new Gtk::Label (Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0)));
 
@@ -74,6 +74,7 @@ Spot::~Spot()
             delete EditSubscriber::visibleGeometry.at (i);
         }
     }
+
     // We do not delete the mouseOverGeometry, because the referenced objects are either
     // shared with visibleGeometry or instantiated by the class's ctor
 }
@@ -170,11 +171,11 @@ void Spot::enabledChanged ()
 {
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvSpotEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged (EvSpotEnabled, M ("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvSpotEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged (EvSpotEnabled, M ("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvSpotEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged (EvSpotEnabled, M ("GENERAL_DISABLED"));
         }
     }
 }
@@ -215,7 +216,7 @@ void Spot::createGeometry ()
     int nbrEntry = spots.size();
 
     if (!batchMode) {
-        countLabel->set_text(Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), nbrEntry));
+        countLabel->set_text (Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), nbrEntry));
     }
 
     //printf("CreateGeometry(%d)\n", nbrEntry);
@@ -242,7 +243,7 @@ void Spot::createGeometry ()
     Cairo::RefPtr<Cairo::ImageSurface> activeImg   = sourceIcon.getActiveImg();
 
     for (; j < EditSubscriber::visibleGeometry.size() - STATIC_VISIBLE_OBJ_NBR; ++i, ++j) {
-        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<Cairo::ImageSurface>(NULL), Cairo::RefPtr<Cairo::ImageSurface>(NULL), Geometry::DP_CENTERCENTER);
+        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<Cairo::ImageSurface> (NULL), Cairo::RefPtr<Cairo::ImageSurface> (NULL), Geometry::DP_CENTERCENTER);
         EditSubscriber::visibleGeometry.at (j)->setActive (true);
         EditSubscriber::visibleGeometry.at (j)->datum = Geometry::IMAGE;
         EditSubscriber::visibleGeometry.at (j)->state = Geometry::NORMAL;
@@ -379,9 +380,11 @@ void Spot::deleteSelectedEntry()
     // delete the activeSpot
     if (activeSpot > -1) {
         std::vector<rtengine::SpotEntry>::iterator i = spots.begin();
+
         for (int j = 0; j < activeSpot; ++j) {
             ++i;
         }
+
         spots.erase (i);
     }
 
@@ -492,11 +495,11 @@ bool Spot::button2Pressed (const int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
-    if (!editProvider || lastObject == -1 || activeSpot==-1) {
+    if (!editProvider || lastObject == -1 || activeSpot == -1) {
         return false;
     }
 
-    if (!(modifierKey & (GDK_SHIFT_MASK|GDK_SHIFT_MASK))) {
+    if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
         EditSubscriber::action = ES_ACTION_PICKING;
     }
 
@@ -508,7 +511,7 @@ bool Spot::button3Pressed (const int modifierKey)
 {
     EditDataProvider* editProvider = getEditProvider();
 
-    if (!editProvider || lastObject == -1 || activeSpot==-1) {
+    if (!editProvider || lastObject == -1 || activeSpot == -1) {
         return false;
     }
 
@@ -517,7 +520,7 @@ bool Spot::button3Pressed (const int modifierKey)
         sourceIcon.state = Geometry::DRAGGED;
         EditSubscriber::action = ES_ACTION_DRAGGING;
         return true;
-    } else if (!(modifierKey & (GDK_SHIFT_MASK|GDK_SHIFT_MASK))) {
+    } else if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
         EditSubscriber::action = ES_ACTION_PICKING;
     }
 
@@ -597,7 +600,7 @@ bool Spot::drag1 (const int modifierKey)
         //printf("sourceFeatherCircle / deltaPrevImage = %d / %d\n", editProvider->deltaImage.x, editProvider->deltaImage.y);
         float currFeather = spots.at (activeSpot).feather;
         rtengine::Coord currPos = editProvider->posImage + editProvider->deltaImage;
-        rtengine::PolarCoord currPolar (currPos -spots.at (activeSpot).sourcePos);
+        rtengine::PolarCoord currPolar (currPos - spots.at (activeSpot).sourcePos);
         spots.at (activeSpot).feather = LIM01<float> ((currPolar.radius - double (spots.at (activeSpot).radius)) / double (spots.at (activeSpot).radius));
 
         if (spots.at (activeSpot).feather != currFeather) {
@@ -650,9 +653,9 @@ bool Spot::drag3 (const int modifierKey)
     return modified;
 }
 
-bool Spot::pick2(const bool picked)
+bool Spot::pick2 (const bool picked)
 {
-    return pick3(picked);
+    return pick3 (picked);
 }
 
 bool Spot::pick3 (const bool picked)

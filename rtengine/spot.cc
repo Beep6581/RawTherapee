@@ -79,9 +79,11 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         // scaled spot is too small, we do not preview it
         if (scaledFeatherRadius < 2 && pp.getSkip() != 1) {
 #ifndef NDEBUG
+
             if (options.rtSettings.verbose) {
                 printf ("Skipping spot located at %d x %d, too small for the preview zoom rate\n", entry.sourcePos.x, entry.sourcePos.y);
             }
+
 #endif
             continue;
         }
@@ -89,9 +91,11 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         // skipping entries totally transparent
         if (entry.opacity == 0.) {
 #ifndef NDEBUG
+
             if (options.rtSettings.verbose) {
                 printf ("Skipping spot located at %d x %d: opacity=%.3f\n", entry.sourcePos.x, entry.sourcePos.y, entry.opacity);
             }
+
             continue;
 #endif
         }
@@ -99,11 +103,13 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         // skipping entries where the source circle isn't completely inside the image bounds
         if (src_XMin < 0 || src_XMax >= img->getWidth() || src_YMin < 0 || src_YMax >= img->getHeight()) {
 #ifndef NDEBUG
+
             if (options.rtSettings.verbose) {
                 printf ("Skipping spot located at %d x %d, from the data at %d x %d, radius=%d, feather=%.3f, opacity=%.3f: source out of bounds\n", entry.sourcePos.x, entry.sourcePos.y, entry.targetPos.x, entry.targetPos.y, entry.radius, entry.feather, entry.opacity);
                 printf ("%d < 0 || %d >= %d || %d < 0 || %d >= %d\n",
                         src_XMin, src_XMax, img->getWidth(), src_YMin, src_YMax, img->getHeight());
             }
+
 #endif
             continue;
         }
@@ -111,11 +117,13 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
         // skipping entries where the dest circle is completely outside the image bounds
         if (dst_XMin >= img->getWidth() || dst_XMax <= 0 || dst_YMin >= img->getHeight() || dst_YMax <= 0) {
 #ifndef NDEBUG
+
             if (options.rtSettings.verbose) {
                 printf ("Skipping spot located at %d x %d, from the data at %d x %d, radius=%d, feather=%.3f, opacity=%.3f: source out of bounds\n", entry.sourcePos.x, entry.sourcePos.y, entry.targetPos.x, entry.targetPos.y, entry.radius, entry.feather, entry.opacity);
                 printf ("%d >= %d || %d <= 0 || %d >= %d || %d <= 0\n",
                         dst_XMin, img->getWidth(), dst_XMax, dst_YMin, img->getHeight(), dst_YMax);
             }
+
 #endif
             continue;
         }
@@ -343,10 +351,12 @@ void ImProcFunctions::removeSpots (Imagefloat* img, const std::vector<SpotEntry>
             if (i2 < 0 || i2 >= img->getHeight()) {
                 continue;
             }
+
             for (int j = 0, j2 = dst_XMin; j2 < dst_XMax - 1; ++j, ++j2) {
                 if (j2 < 0 || j2 >= img->getWidth()) {
                     continue;
                 }
+
                 //float c2 = float (mask (i, j)) / 255.f;
                 //float c1 = 1.f - c2;
                 //resultPR->r(i,j) = (unsigned char) CLAMP0255 ( ROUND( double(first->r(i,j)) + double(secondPR->r(i,j)) ) );
