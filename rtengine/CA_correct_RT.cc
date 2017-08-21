@@ -27,8 +27,6 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "median.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 namespace {
 
@@ -115,8 +113,7 @@ using namespace rtengine;
 
 void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const double cablue, const double caautostrength, array2D<float> &rawData)
 {
-    BENCHFUN
-// multithreaded and partly vectorized by Ingo Weyrich
+// multithreaded and vectorized by Ingo Weyrich
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
     //shifts to location of vertical and diagonal neighbors
@@ -413,14 +410,14 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                             vfloat rgb1mv4 = LC2VFU(rgb[1][indx - v4]);
                             vfloat rgb1pv4 = LC2VFU(rgb[1][indx + v4]);
                             vfloat temp1v = vabsf(vabsf((rgb1v - rgbcv) - (rgb1pv4 - LVFU(rgb[c][(indx + v4) >> 1]))) +
-                                                      vabsf(rgb1mv4 - LVFU(rgb[c][(indx - v4) >> 1]) - rgb1v + rgbcv) -
-                                                      vabsf(rgb1mv4 - LVFU(rgb[c][(indx - v4) >> 1]) - rgb1pv4 + LVFU(rgb[c][(indx + v4) >> 1])));
+                                                  vabsf(rgb1mv4 - LVFU(rgb[c][(indx - v4) >> 1]) - rgb1v + rgbcv) -
+                                                  vabsf(rgb1mv4 - LVFU(rgb[c][(indx - v4) >> 1]) - rgb1pv4 + LVFU(rgb[c][(indx + v4) >> 1])));
                             STVFU(rbhpfv[indx >> 1], temp1v);
                             vfloat rgb1m4 = LC2VFU(rgb[1][indx - 4]);
                             vfloat rgb1p4 = LC2VFU(rgb[1][indx + 4]);
                             vfloat temp2v = vabsf(vabsf((rgb1v - rgbcv) - (rgb1p4 - LVFU(rgb[c][(indx + 4) >> 1]))) +
-                                                      vabsf(rgb1m4 - LVFU(rgb[c][(indx - 4) >> 1]) - rgb1v + rgbcv) -
-                                                      vabsf(rgb1m4 - LVFU(rgb[c][(indx - 4) >> 1]) - rgb1p4 + LVFU(rgb[c][(indx + 4) >> 1])));
+                                                  vabsf(rgb1m4 - LVFU(rgb[c][(indx - 4) >> 1]) - rgb1v + rgbcv) -
+                                                  vabsf(rgb1m4 - LVFU(rgb[c][(indx - 4) >> 1]) - rgb1p4 + LVFU(rgb[c][(indx + 4) >> 1])));
                             STVFU(rbhpfh[indx >> 1], temp2v);
 
                             //low and high pass 1D filters of G in vertical/horizontal directions
