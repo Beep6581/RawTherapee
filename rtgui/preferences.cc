@@ -878,14 +878,14 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
         grey->append (M("PREFERENCES_GREY30"));
         grey->append (M("PREFERENCES_GREY40"));
     */
-/*
-    Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
-    setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    greySc = Gtk::manage (new Gtk::ComboBoxText ());
-    setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    greySc->append (M ("PREFERENCES_GREYSCA"));
-    greySc->append (M ("PREFERENCES_GREYSC18"));
-*/
+    /*
+        Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
+        setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        greySc = Gtk::manage (new Gtk::ComboBoxText ());
+        setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        greySc->append (M ("PREFERENCES_GREYSCA"));
+        greySc->append (M ("PREFERENCES_GREYSC18"));
+    */
     Gtk::Frame* fcielab = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CIEART_FRAME")) );
     setExpandAlignProperties (fcielab, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -986,18 +986,17 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
     workflowGrid->attach_next_to (*ckbUseIconNoText, *ckbHideTPVScrollbar, Gtk::POS_RIGHT, 1, 1);
-    ckbAutoSaveTpOpen = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_AUTOSAVE_TP_OPEN")));
-    workflowGrid->attach_next_to(*ckbAutoSaveTpOpen, *hb4label, Gtk::POS_BOTTOM, 1, 1);
-    btnSaveTpOpenNow = Gtk::manage(new Gtk::Button(M("PREFERENCES_SAVE_TP_OPEN_NOW")));
-    setExpandAlignProperties(btnSaveTpOpenNow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    workflowGrid->attach_next_to(*btnSaveTpOpenNow, *ckbAutoSaveTpOpen, Gtk::POS_RIGHT, 1, 1);
+    ckbAutoSaveTpOpen = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_AUTOSAVE_TP_OPEN")));
+    workflowGrid->attach_next_to (*ckbAutoSaveTpOpen, *hb4label, Gtk::POS_BOTTOM, 1, 1);
+    btnSaveTpOpenNow = Gtk::manage (new Gtk::Button (M ("PREFERENCES_SAVE_TP_OPEN_NOW")));
+    setExpandAlignProperties (btnSaveTpOpenNow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    workflowGrid->attach_next_to (*btnSaveTpOpenNow, *ckbAutoSaveTpOpen, Gtk::POS_RIGHT, 1, 1);
 
     auto save_tp_open_now =
-        [&]() -> void
-        {
-            parent->writeToolExpandedStatus(moptions.tpOpen);
-        };
-    btnSaveTpOpenNow->signal_clicked().connect(save_tp_open_now);
+    [&]() -> void {
+        parent->writeToolExpandedStatus (moptions.tpOpen);
+    };
+    btnSaveTpOpenNow->signal_clicked().connect (save_tp_open_now);
 
     fworklflow->add (*workflowGrid);
 
@@ -2024,8 +2023,8 @@ void Preferences::fillPreferences ()
     ckbHideTPVScrollbar->set_active (moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active (moptions.UseIconNoText);
 
-    ckbAutoSaveTpOpen->set_active(moptions.autoSaveTpOpen);
-    
+    ckbAutoSaveTpOpen->set_active (moptions.autoSaveTpOpen);
+
     rgbDenoiseTreadLimitSB->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
