@@ -43,17 +43,16 @@
 // Special name for the Dynamic profile
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
-struct SaveFormat
-{
+struct SaveFormat {
     SaveFormat() :
-        format("jpg"),
-        pngBits(8),
-        pngCompression(6),
-        jpegQuality(90),
-        jpegSubSamp(2),
-        tiffBits(8),
-        tiffUncompressed(true),
-        saveParams(true)
+        format ("jpg"),
+        pngBits (8),
+        pngCompression (6),
+        jpegQuality (90),
+        jpegSubSamp (2),
+        tiffBits (8),
+        tiffUncompressed (true),
+        saveParams (true)
     {
     }
 
@@ -75,11 +74,18 @@ enum prevdemo_t {PD_Sidecar = 1, PD_Fast = 0};
 class Options
 {
 public:
-    class Error: public std::exception {
+    class Error: public std::exception
+    {
     public:
-        Error(const Glib::ustring &msg): msg_(msg) {}
-        const char *what() const throw() { return msg_.c_str(); }
-        const Glib::ustring &get_msg() const throw() { return msg_; }
+        Error (const Glib::ustring &msg): msg_ (msg) {}
+        const char *what() const throw()
+        {
+            return msg_.c_str();
+        }
+        const Glib::ustring &get_msg() const throw()
+        {
+            return msg_;
+        }
 
     private:
         Glib::ustring msg_;
@@ -90,8 +96,8 @@ private:
     bool defProfImgMissing;
     Glib::ustring userProfilePath;
     Glib::ustring globalProfilePath;
-    bool checkProfilePath(Glib::ustring &path);
-    bool checkDirPath(Glib::ustring &path, Glib::ustring errString);
+    bool checkProfilePath (Glib::ustring &path);
+    bool checkDirPath (Glib::ustring &path, Glib::ustring errString);
     void updatePaths();
     int getString (const char* src, char* dst);
     void error (int line);
@@ -106,8 +112,8 @@ private:
      * @param destination destination variable to store to
      * @return @c true if @p destination was changed
      */
-    bool safeDirGet(const Glib::KeyFile& keyFile, const Glib::ustring& section,
-                    const Glib::ustring& entryName, Glib::ustring& destination);
+    bool safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& section,
+                     const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
 
@@ -336,9 +342,9 @@ public:
     Options*    copyFrom        (Options* other);
     void        filterOutParsedExtensions ();
     void        setDefaults     ();
-    void readFromFile(Glib::ustring fname);
-    void saveToFile(Glib::ustring fname);
-    static void load(bool lightweight = false);
+    void readFromFile (Glib::ustring fname);
+    void saveToFile (Glib::ustring fname);
+    static void load (bool lightweight = false);
     static void save();
 
     // if multiUser=false, send back the global profile path
@@ -351,10 +357,10 @@ public:
     {
         return globalProfilePath;
     }
-    Glib::ustring findProfilePath(Glib::ustring &profName);
+    Glib::ustring findProfilePath (Glib::ustring &profName);
     bool        is_parse_extention (Glib::ustring fname);
     bool        has_retained_extention (Glib::ustring fname);
-    bool        is_extention_enabled(Glib::ustring ext);
+    bool        is_extention_enabled (Glib::ustring ext);
     bool        is_defProfRawMissing()
     {
         return defProfRawMissing;
@@ -363,11 +369,11 @@ public:
     {
         return defProfImgMissing;
     }
-    void        setDefProfRawMissing(bool value)
+    void        setDefProfRawMissing (bool value)
     {
         defProfRawMissing = value;
     }
-    void        setDefProfImgMissing(bool value)
+    void        setDefProfImgMissing (bool value)
     {
         defProfImgMissing = value;
     }

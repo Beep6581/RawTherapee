@@ -750,8 +750,8 @@ void Options::readFromFile (Glib::ustring fname)
     Glib::KeyFile keyFile;
 
     if ( !Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
-        Glib::ustring msg = Glib::ustring::compose("Options file %1 does not exist", fname);
-        throw Error(msg);
+        Glib::ustring msg = Glib::ustring::compose ("Options file %1 does not exist", fname);
+        throw Error (msg);
     }
 
     try {
@@ -1831,6 +1831,7 @@ void Options::readFromFile (Glib::ustring fname)
                 if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            )) {
                     fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
                 }
+
                 if (keyFile.has_key ("Fast Export", "fastexport_use_fast_pipeline"            )) {
                     fastexport_use_fast_pipeline           = keyFile.get_integer ("Fast Export", "fastexport_use_fast_pipeline"            );
                 }
@@ -1863,17 +1864,21 @@ void Options::readFromFile (Glib::ustring fname)
 
         }
     } catch (Glib::Error &err) {
-        Glib::ustring msg = Glib::ustring::compose("Options::readFromFile / Error code %1 while reading values from \"%2\":\n%3", err.code(), fname, err.what());
-        if (options.rtSettings.verbose) {
-            printf("%s\n", msg.c_str());
-        }
-        throw Error(msg);
-    } catch (...) {
-        Glib::ustring msg = Glib::ustring::compose("Options::readFromFile / Unknown exception while trying to load \"%1\"!", fname);
+        Glib::ustring msg = Glib::ustring::compose ("Options::readFromFile / Error code %1 while reading values from \"%2\":\n%3", err.code(), fname, err.what());
+
         if (options.rtSettings.verbose) {
             printf ("%s\n", msg.c_str());
         }
-        throw Error(msg);
+
+        throw Error (msg);
+    } catch (...) {
+        Glib::ustring msg = Glib::ustring::compose ("Options::readFromFile / Unknown exception while trying to load \"%1\"!", fname);
+
+        if (options.rtSettings.verbose) {
+            printf ("%s\n", msg.c_str());
+        }
+
+        throw Error (msg);
     }
 }
 
@@ -2223,15 +2228,15 @@ void Options::saveToFile (Glib::ustring fname)
         keyData = keyFile.to_data ();
 
     } catch (Glib::KeyFileError &e) {
-        throw Error(e.what());
+        throw Error (e.what());
     }
 
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (f == nullptr) {
         std::cout << "Warning! Unable to save your preferences to: " << fname << std::endl;
-        Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), fname.c_str());
-        throw Error(msg_);
+        Glib::ustring msg_ = Glib::ustring::compose (M ("MAIN_MSG_WRITEFAILED"), fname.c_str());
+        throw Error (msg_);
     } else {
         fprintf (f, "%s", keyData.c_str ());
         fclose (f);
@@ -2252,8 +2257,8 @@ void Options::load (bool lightweight)
         rtdir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (rtdir)) {
-            Glib::ustring msg = Glib::ustring::compose("Settings path %1 is not absolute", rtdir);
-            throw Error(msg);
+            Glib::ustring msg = Glib::ustring::compose ("Settings path %1 is not absolute", rtdir);
+            throw Error (msg);
         }
     } else {
 #ifdef WIN32
@@ -2291,8 +2296,8 @@ void Options::load (bool lightweight)
         cacheBaseDir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (cacheBaseDir)) {
-            Glib::ustring msg = Glib::ustring::compose("Cache base dir %1 is not absolute", cacheBaseDir);
-            throw Error(msg);
+            Glib::ustring msg = Glib::ustring::compose ("Cache base dir %1 is not absolute", cacheBaseDir);
+            throw Error (msg);
         }
     }
     // No environment variable provided, so falling back to the multi user mode, is enabled
