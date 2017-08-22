@@ -1129,6 +1129,8 @@ PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
+PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
+PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)

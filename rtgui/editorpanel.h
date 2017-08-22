@@ -46,12 +46,12 @@ struct EditorPanelIdleHelper {
 
 class RTWindow;
 class EditorPanel final :
-    public Gtk::VBox,
-    public PParamsChangeListener,
-    public rtengine::ProgressListener,
-    public ThumbnailListener,
-    public HistoryBeforeLineListener,
-    public rtengine::HistogramListener
+        public Gtk::VBox,
+        public PParamsChangeListener,
+        public rtengine::ProgressListener,
+        public ThumbnailListener,
+        public HistoryBeforeLineListener,
+        public rtengine::HistogramListener
 {
 public:
     explicit EditorPanel (FilePanel* filePanel = nullptr);
@@ -74,6 +74,7 @@ public:
     }
 
     void writeOptions();
+    void writeToolExpandedStatus (std::vector<int> &tpOpen);
 
     void showTopPanel (bool show);
     bool isRealized()
@@ -130,14 +131,14 @@ public:
     {
         return isProcessing;
     }
-    void updateProfiles(const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
+    void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateTabsUsesIcons (bool useIcons);
     void updateHistogramPosition (int oldPosition, int newPosition);
 
-    void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile);
+    void defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile);
 
-    bool saveImmediately(const Glib::ustring &filename, const SaveFormat &sf);
+    bool saveImmediately (const Glib::ustring &filename, const SaveFormat &sf);
 
     Gtk::Paned* catalogPane;
 

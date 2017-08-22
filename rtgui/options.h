@@ -223,6 +223,7 @@ public:
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::vector<int> tpOpen;
+    bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;

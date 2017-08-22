@@ -405,6 +405,7 @@ void Options::setDefaults ()
     editorToSendTo = 1;
     favoriteDirs.clear();
     tpOpen.clear ();
+    autoSaveTpOpen = true;
     //crvOpen.clear ();
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
@@ -642,7 +643,7 @@ void Options::setDefaults ()
 #endif
 //   rtSettings.viewingdevice = 0;
 //   rtSettings.viewingdevicegrey = 3;
-  //  rtSettings.viewinggreySc = 1;
+    //  rtSettings.viewinggreySc = 1;
     rtSettings.leveldnv = 2;
     rtSettings.leveldnti = 0;
     rtSettings.leveldnaut = 0;
@@ -1436,6 +1437,10 @@ void Options::readFromFile (Glib::ustring fname)
                     tpOpen = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
                 }
 
+                if (keyFile.has_key ("GUI", "ToolPanelsExpandedAutoSave")) {
+                    autoSaveTpOpen = keyFile.get_boolean ("GUI", "ToolPanelsExpandedAutoSave");
+                }
+
                 if (keyFile.has_key ("GUI", "MultiDisplayMode")) {
                     multiDisplayMode = keyFile.get_integer ("GUI", "MultiDisplayMode");
                 }
@@ -1558,11 +1563,11 @@ void Options::readFromFile (Glib::ustring fname)
                 rtSettings.viewingdevicegrey = keyFile.get_integer ("Color Management", "grey");
                 }
                 */
-/*
-                if (keyFile.has_key ("Color Management", "greySc")) {
-                    rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
-                }
-*/
+                /*
+                                if (keyFile.has_key ("Color Management", "greySc")) {
+                                    rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
+                                }
+                */
                 if (keyFile.has_key ("Color Management", "CBDLArtif")) {
                     rtSettings.artifact_cbdl = keyFile.get_double ("Color Management", "CBDLArtif");
                 }
@@ -2106,6 +2111,7 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
         Glib::ArrayHandle<int> tpopen = tpOpen;
         keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+        keyFile.set_boolean ("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
         keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
         keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
         keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
