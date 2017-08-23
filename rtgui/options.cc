@@ -409,6 +409,7 @@ void Options::setDefaults ()
     editorToSendTo = 1;
     favoriteDirs.clear();
     tpOpen.clear ();
+    autoSaveTpOpen = true;
     //crvOpen.clear ();
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
@@ -650,7 +651,7 @@ void Options::setDefaults ()
 #endif
 //   rtSettings.viewingdevice = 0;
 //   rtSettings.viewingdevicegrey = 3;
-  //  rtSettings.viewinggreySc = 1;
+    //  rtSettings.viewinggreySc = 1;
     rtSettings.leveldnv = 2;
     rtSettings.leveldnti = 0;
     rtSettings.leveldnaut = 0;
@@ -761,14 +762,15 @@ void Options::filterOutParsedExtensions ()
         }
 }
 
-int Options::readFromFile (Glib::ustring fname)
+void Options::readFromFile (Glib::ustring fname)
 {
     setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
 
     Glib::KeyFile keyFile;
 
     if ( !Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
-        return 1;
+        Glib::ustring msg = Glib::ustring::compose ("Options file %1 does not exist", fname);
+        throw Error (msg);
     }
 
     try {
@@ -1481,6 +1483,10 @@ int Options::readFromFile (Glib::ustring fname)
                     tpOpen = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
                 }
 
+                if (keyFile.has_key ("GUI", "ToolPanelsExpandedAutoSave")) {
+                    autoSaveTpOpen = keyFile.get_boolean ("GUI", "ToolPanelsExpandedAutoSave");
+                }
+
                 if (keyFile.has_key ("GUI", "MultiDisplayMode")) {
                     multiDisplayMode = keyFile.get_integer ("GUI", "MultiDisplayMode");
                 }
@@ -1607,11 +1613,11 @@ int Options::readFromFile (Glib::ustring fname)
                 rtSettings.viewingdevicegrey = keyFile.get_integer ("Color Management", "grey");
                 }
                 */
-/*
-                if (keyFile.has_key ("Color Management", "greySc")) {
-                    rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
-                }
-*/
+                /*
+                                if (keyFile.has_key ("Color Management", "greySc")) {
+                                    rtSettings.viewinggreySc = keyFile.get_integer ("Color Management", "greySc");
+                                }
+                */
                 if (keyFile.has_key ("Color Management", "CBDLArtif")) {
                     rtSettings.artifact_cbdl = keyFile.get_double ("Color Management", "CBDLArtif");
                 }
@@ -1918,21 +1924,26 @@ int Options::readFromFile (Glib::ustring fname)
 
             filterOutParsedExtensions ();
 
-            return 0;
+            return;
 
         }
     } catch (Glib::Error &err) {
+        Glib::ustring msg = Glib::ustring::compose ("Options::readFromFile / Error code %1 while reading values from \"%2\":\n%3", err.code(), fname, err.what());
+
         if (options.rtSettings.verbose) {
-            printf ("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            printf ("%s\n", msg.c_str());
         }
+
+        throw Error (msg);
     } catch (...) {
+        Glib::ustring msg = Glib::ustring::compose ("Options::readFromFile / Unknown exception while trying to load \"%1\"!", fname);
+
         if (options.rtSettings.verbose) {
-            printf ("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
+            printf ("%s\n", msg.c_str());
         }
+
+        throw Error (msg);
     }
-
-    return 1;
-
 }
 
 bool Options::safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& section,
@@ -1950,7 +1961,7 @@ bool Options::safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& sec
     return false;
 }
 
-int Options::saveToFile (Glib::ustring fname)
+void Options::saveToFile (Glib::ustring fname)
 {
 
     Glib::ustring keyData;
@@ -2161,6 +2172,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
         Glib::ArrayHandle<int> tpopen = tpOpen;
         keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+        keyFile.set_boolean ("GUI", "ToolPanelsExpandedAutoSave", autoSaveTpOpen);
         keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
         keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
         keyFile.set_double_list ("GUI", "NavGuideBrush", navGuideBrush);
@@ -2292,31 +2304,23 @@ int Options::saveToFile (Glib::ustring fname)
 
         keyData = keyFile.to_data ();
 
-    } catch (Glib::KeyFileError&) {}
-
-    if (keyData.empty ()) {
-        return 1;
+    } catch (Glib::KeyFileError &e) {
+        throw Error (e.what());
     }
 
     FILE *f = g_fopen (fname.c_str (), "wt");
 
     if (f == nullptr) {
         std::cout << "Warning! Unable to save your preferences to: " << fname << std::endl;
-#ifndef RAWTHERAPEE_CLI
         Glib::ustring msg_ = Glib::ustring::compose (M ("MAIN_MSG_WRITEFAILED"), fname.c_str());
-        //writeFailed (getToplevelWindow (this), msg_);
-        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
-        msgd.run ();
-#endif
-        return 1;
+        throw Error (msg_);
     } else {
         fprintf (f, "%s", keyData.c_str ());
         fclose (f);
-        return 0;
     }
 }
 
-bool Options::load (bool lightweight)
+void Options::load (bool lightweight)
 {
 
     // Find the application data path
@@ -2330,7 +2334,8 @@ bool Options::load (bool lightweight)
         rtdir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (rtdir)) {
-            return false;
+            Glib::ustring msg = Glib::ustring::compose ("Settings path %1 is not absolute", rtdir);
+            throw Error (msg);
         }
     } else {
 #ifdef WIN32
@@ -2355,7 +2360,11 @@ bool Options::load (bool lightweight)
     cacheBaseDir = Glib::build_filename (argv0, "cache");
 
     // Read the global option file (the one located in the application's base folder)
-    options.readFromFile (Glib::build_filename (argv0, "options"));
+    try {
+        options.readFromFile (Glib::build_filename (argv0, "options"));
+    } catch (Options::Error &) {
+        // ignore errors here
+    }
 
     // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
     path = g_getenv ("RT_CACHE");
@@ -2364,7 +2373,8 @@ bool Options::load (bool lightweight)
         cacheBaseDir = Glib::ustring (path);
 
         if (!Glib::path_is_absolute (cacheBaseDir)) {
-            return false;
+            Glib::ustring msg = Glib::ustring::compose ("Cache base dir %1 is not absolute", cacheBaseDir);
+            throw Error (msg);
         }
     }
     // No environment variable provided, so falling back to the multi user mode, is enabled
@@ -2380,12 +2390,14 @@ bool Options::load (bool lightweight)
     if (options.multiUser) {
         // Read the user option file (the one located somewhere in the user's home folder)
         // Those values supersets those of the global option file
-        int r = options.readFromFile (Glib::build_filename (rtdir, "options"));
-
-        // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
-        if (r && !g_mkdir_with_parents (rtdir.c_str (), 511)) {
-            // Save the option file
-            options.saveToFile (Glib::build_filename (rtdir, "options"));
+        try {
+            options.readFromFile (Glib::build_filename (rtdir, "options"));
+        } catch (Options::Error &) {
+            // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
+            if (!g_mkdir_with_parents (rtdir.c_str (), 511)) {
+                // Save the option file
+                options.saveToFile (Glib::build_filename (rtdir, "options"));
+            }
         }
 
 #ifdef __APPLE__
@@ -2478,8 +2490,6 @@ bool Options::load (bool lightweight)
     langMgr.load (localeTranslation, new MultiLangMgr (languageTranslation, new MultiLangMgr (defaultTranslation)));
 
     rtengine::init (&options.rtSettings, argv0, rtdir, !lightweight);
-
-    return true;
 }
 
 void Options::save ()

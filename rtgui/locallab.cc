@@ -1120,7 +1120,7 @@ void Locallab::writeOptions (std::vector<int> &tpOpen)
 
 void Locallab::updateToolState (std::vector<int> &tpOpen)
 {
-    if (tpOpen.size() == 10) {
+    if (tpOpen.size() >= 10) {
         expsettings->set_expanded (tpOpen.at (0));
         expcolor->set_expanded (tpOpen.at (1));
         expexpose->set_expanded (tpOpen.at (2));

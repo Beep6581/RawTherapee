@@ -875,78 +875,6 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     fprinter->add (*gprinter);
 
     mvbcm->pack_start (*fprinter, Gtk::PACK_SHRINK);
-/*
-<<<<<<< HEAD
-    //-------------------------  CIECAM ----------------------
-
-    Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
-    setExpandAlignProperties (viewlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
-    view = Gtk::manage (new Gtk::ComboBoxText ());
-    setExpandAlignProperties (view, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    view->append (M ("PREFERENCES_D50"));
-    view->append (M ("PREFERENCES_D55"));
-    view->append (M ("PREFERENCES_D60"));
-    view->append (M ("PREFERENCES_D65"));
-    view->append (M ("PREFERENCES_BLACKBODY"));
-    view->append (M ("PREFERENCES_FLUOF2"));
-    view->append (M ("PREFERENCES_FLUOF7"));
-    view->append (M ("PREFERENCES_FLUOF11"));
-
-    Gtk::Label* greylab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREY") + ":", Gtk::ALIGN_START));
-    setExpandAlignProperties (greylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    grey = Gtk::manage (new Gtk::ComboBoxText ());
-    setExpandAlignProperties (grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    grey->append (M ("PREFERENCES_GREY05"));
-    grey->append (M ("PREFERENCES_GREY10"));
-    grey->append (M ("PREFERENCES_GREY15"));
-    grey->append (M ("PREFERENCES_GREY18"));
-    grey->append (M ("PREFERENCES_GREY23"));
-    grey->append (M ("PREFERENCES_GREY30"));
-    grey->append (M ("PREFERENCES_GREY40"));
-=======
-*/
-    //------------------------- CIECAM ----------------------
-
-    /*
-        Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_VIEW") + ":", Gtk::ALIGN_START));
-        setExpandAlignProperties (viewlab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
-        view = Gtk::manage (new Gtk::ComboBoxText ());
-        setExpandAlignProperties (view, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-        view->append (M("PREFERENCES_D50_MENU"));
-
-        view->append (M ("PREFERENCES_D50"));
-        view->append (M("PREFERENCES_D55"));
-        view->append (M("PREFERENCES_D60"));
-        view->append (M("PREFERENCES_D65"));
-        view->append (M("PREFERENCES_BLACKBODY"));
-        view->append (M("PREFERENCES_FLUOF2"));
-        view->append (M("PREFERENCES_FLUOF7"));
-        view->append (M("PREFERENCES_FLUOF11"));
-
-        Gtk::Label* greylab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREY") + ":", Gtk::ALIGN_START));
-        setExpandAlignProperties (greylab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-        grey = Gtk::manage (new Gtk::ComboBoxText ());
-        setExpandAlignProperties (grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-        grey->append (M("PREFERENCES_GREY05"));
-        grey->append (M("PREFERENCES_GREY10"));
-        grey->append (M("PREFERENCES_GREY15"));
-        grey->append (M ("PREFERENCES_GREY18"));
-        grey->append (M("PREFERENCES_GREY18_MENU"));
-
-        grey->append (M("PREFERENCES_GREY23"));
-        grey->append (M("PREFERENCES_GREY30"));
-        grey->append (M("PREFERENCES_GREY40"));
-    */
-/*
-    Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
-    setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    greySc = Gtk::manage (new Gtk::ComboBoxText ());
-    setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    greySc->append (M ("PREFERENCES_GREYSCA"));
-    greySc->append (M ("PREFERENCES_GREYSC18"));
-*/
     Gtk::Frame* fcielab = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CIEART_FRAME")) );
     setExpandAlignProperties (fcielab, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -1047,7 +975,20 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
     workflowGrid->attach_next_to (*ckbUseIconNoText, *ckbHideTPVScrollbar, Gtk::POS_RIGHT, 1, 1);
+    ckbAutoSaveTpOpen = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_AUTOSAVE_TP_OPEN")));
+    workflowGrid->attach_next_to (*ckbAutoSaveTpOpen, *hb4label, Gtk::POS_BOTTOM, 1, 1);
+    btnSaveTpOpenNow = Gtk::manage (new Gtk::Button (M ("PREFERENCES_SAVE_TP_OPEN_NOW")));
+    setExpandAlignProperties (btnSaveTpOpenNow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    workflowGrid->attach_next_to (*btnSaveTpOpenNow, *ckbAutoSaveTpOpen, Gtk::POS_RIGHT, 1, 1);
+
+    auto save_tp_open_now =
+    [&]() -> void {
+        parent->writeToolExpandedStatus (moptions.tpOpen);
+    };
+    btnSaveTpOpenNow->signal_clicked().connect (save_tp_open_now);
+
     fworklflow->add (*workflowGrid);
+
     mvbsd->attach_next_to (*fworklflow, Gtk::POS_TOP, 2, 1);
 
     // ---------------------------------------------
@@ -1873,6 +1814,8 @@ void Preferences::storePreferences ()
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
+    moptions.autoSaveTpOpen = ckbAutoSaveTpOpen->get_active();
+
     moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
     moptions.maxInspectorBuffers = maxInspectorBuffersSB->get_value_as_int();
@@ -2093,6 +2036,8 @@ void Preferences::fillPreferences ()
     ckbHideTPVScrollbar->set_active (moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active (moptions.UseIconNoText);
 
+    ckbAutoSaveTpOpen->set_active (moptions.autoSaveTpOpen);
+
     rgbDenoiseTreadLimitSB->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
@@ -2187,7 +2132,14 @@ void Preferences::okPressed ()
     workflowUpdate();
     options.copyFrom (&moptions);
     options.filterOutParsedExtensions();
-    Options::save ();
+
+    try {
+        Options::save ();
+    } catch (Options::Error &e) {
+        Gtk::MessageDialog msgd (getToplevelWindow (this), e.get_msg(), true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
+        msgd.run();
+    }
+
     dynProfilePanel->save();
     hide ();
 }

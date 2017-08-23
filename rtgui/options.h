@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
+#include <exception>
 
 #define STARTUPDIR_CURRENT 0
 #define STARTUPDIR_HOME    1
@@ -74,6 +75,23 @@ enum locaaju_t {lo_std = 0, lo_enh = 1, lo_enhde = 2};
 
 class Options
 {
+public:
+    class Error: public std::exception
+    {
+    public:
+        Error (const Glib::ustring &msg): msg_ (msg) {}
+        const char *what() const throw()
+        {
+            return msg_.c_str();
+        }
+        const Glib::ustring &get_msg() const throw()
+        {
+            return msg_;
+        }
+
+    private:
+        Glib::ustring msg_;
+    };
 
 private:
     bool defProfRawMissing;
@@ -207,6 +225,7 @@ public:
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::vector<int> tpOpen;
+    bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;
@@ -331,10 +350,10 @@ public:
     Options*    copyFrom        (Options* other);
     void        filterOutParsedExtensions ();
     void        setDefaults     ();
-    int         readFromFile    (Glib::ustring fname);
-    int         saveToFile      (Glib::ustring fname);
-    static bool load            (bool lightweight = false);
-    static void save            ();
+    void readFromFile (Glib::ustring fname);
+    void saveToFile (Glib::ustring fname);
+    static void load (bool lightweight = false);
+    static void save();
 
     // if multiUser=false, send back the global profile path
     Glib::ustring getPreferredProfilePath();
@@ -346,7 +365,7 @@ public:
     {
         return globalProfilePath;
     }
-    Glib::ustring findProfilePath(Glib::ustring &profName);
+    Glib::ustring findProfilePath (Glib::ustring &profName);
     bool        is_parse_extention (Glib::ustring fname);
     bool        has_retained_extention (Glib::ustring fname);
     bool        is_extention_enabled (Glib::ustring ext);

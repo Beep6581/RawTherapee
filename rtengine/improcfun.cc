@@ -1114,13 +1114,13 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
-                            chsacol = 327.;
+                            chsacol = 400.;//327.;
                             colch = 0;
                         } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
                             chsacol = 450.0;
                             colch = 1;
                         } else if (curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) {
-                            chsacol = 327.0;
+                            chsacol = 400.;//327.0;
                             colch = 2;
                         }
 
@@ -1383,13 +1383,13 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         }
 
                         if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
-                            chsacol = 327.;
+                            chsacol = 400.;//327.;
                             colch = 0;
                         } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
                             chsacol = 450.0;
                             colch = 1;
                         } else if (curveMode3 == ColorAppearanceParams::TC_MODE_COLORF) {
-                            chsacol = 327.0;
+                            chsacol = 400.;//327.0;
                             colch = 2;
                         }
 
@@ -2813,13 +2813,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             hist16JCAM[posl]++;
 
                             if (curveMode3 == ColorAppearanceParams::TC_MODE_CHROMA) {
-                                chsacol = 327.f;
+                                chsacol = 400.f;//327.f;
                                 colch = ncie_C_p;
                             } else if (curveMode3 == ColorAppearanceParams::TC_MODE_SATUR) {
                                 chsacol = 450.0f;
                                 colch = 100.f * sqrtf (ncie_C_p / ncie->Q_p[i][j]);
                             } else { /*if(curveMode3 == ColorAppearanceParams::TC_MODE_COLORF)*/
-                                chsacol = 327.0f;
+                                chsacol = 400.f;//327.0f;
                                 colch = ncie->M_p[i][j];
                             }
 

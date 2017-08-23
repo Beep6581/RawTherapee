@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), hasChanged(false), editDataProvider(nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false), editDataProvider (nullptr)
 {
 
     exposurePanel   = Gtk::manage (new ToolVBox ());
@@ -323,12 +323,13 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans)
+void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans)
 {
     GThreadLock lock;
 
-    if(isRaw) {
-        rawPanelSW->set_sensitive(true);
+    if (isRaw) {
+        rawPanelSW->set_sensitive (true);
+
         if (isBayer) {
             sensorxtrans->FoldableToolPanel::hide();
             sensorbayer->FoldableToolPanel::show();
@@ -346,7 +347,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
             flatfield->FoldableToolPanel::hide();
         }
     } else {
-        rawPanelSW->set_sensitive(false);
+        rawPanelSW->set_sensitive (false);
     }
 
 }
@@ -546,7 +547,8 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
         ipc->setImageTypeListener (this);
-        flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
+        flatfield->setShortcutPath (Glib::path_get_dirname (ipc->getInitialImage()->getFileName()));
+
         icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData);
         lensProf->setRawMeta (raw, pMetaData);
     }
@@ -600,9 +602,12 @@ void ToolPanelCoordinator::updateToolState()
             temp.push_back (options.tpOpen.at (i + expList.size()));
         }
 
-        wavelet->updateToolState(temp);
-        wavelet->setExpanded(true);
-        retinex->updateToolState(temp);
+        wavelet->updateToolState (temp);
+        wavelet->setExpanded (true);
+        retinex->updateToolState (temp);
+        locallab->updateToolState (temp);
+        locallab->setExpanded (true);
+		
     }
 }
 
@@ -616,14 +621,25 @@ void ToolPanelCoordinator::writeOptions ()
 {
 
     crop->writeOptions ();
-    options.tpOpen.clear ();
+
+    if (options.autoSaveTpOpen) {
+        writeToolExpandedStatus (options.tpOpen);
+    }
+}
+
+
+void ToolPanelCoordinator::writeToolExpandedStatus (std::vector<int> &tpOpen)
+{
+    tpOpen.clear ();
 
     for (size_t i = 0; i < expList.size(); i++) {
-        options.tpOpen.push_back (expList.at (i)->get_expanded ());
+        tpOpen.push_back (expList.at (i)->get_expanded ());
     }
 
-    wavelet->writeOptions (options.tpOpen);
-    retinex->writeOptions (options.tpOpen);
+    wavelet->writeOptions (tpOpen);
+    retinex->writeOptions (tpOpen);
+    locallab->writeOptions (tpOpen);
+	
 }
 
 
@@ -903,7 +919,8 @@ void ToolPanelCoordinator::updateTabsHeader (bool useIcons)
     toiC->switchTo (type);
     toiT->switchTo (type);
     toiR->switchTo (type);
-
+	toiL->switchTo (type);
+	
     if (toiM) {
         toiM->switchTo (type);
     }
