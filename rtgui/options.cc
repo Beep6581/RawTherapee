@@ -442,6 +442,7 @@ void Options::setDefaults ()
     maxInspectorBuffers = 2; //  a rather conservative value for low specced systems...
     serializeTiffRead = true;
 
+    editorIopsSingleRow = true;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     UseIconNoText = true;
@@ -1472,6 +1473,10 @@ int Options::readFromFile (Glib::ustring fname)
                     showFilmStripToolBar = keyFile.get_boolean ("GUI", "ShowFilmStripToolBar");
                 }
 
+                if (keyFile.has_key ("GUI", "EditorIopsSingleRow")) {
+                    editorIopsSingleRow = keyFile.get_boolean ("GUI", "EditorIopsSingleRow");
+                }
+
                 if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) {
                     FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
                 }
@@ -2109,6 +2114,7 @@ int Options::saveToFile (Glib::ustring fname)
         keyFile.set_integer ("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer ("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean ("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
+        keyFile.set_boolean ("GUI", "EditorIopsSingleRow", editorIopsSingleRow);
         keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
         keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
         keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);

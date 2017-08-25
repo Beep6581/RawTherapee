@@ -987,6 +987,7 @@ PREFERENCES_EDITORLAYOUT;Editor Layout
 PREFERENCES_EXPAUT;Expert
 PREFERENCES_EXTERNALEDITOR;External Editor
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
+PREFERENCES_EDITORIOPSSINGLEROW;Single row Editor under-preview toolbar\n(de-select for low resolution display)
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 PREFERENCES_FILEFORMAT;File format
 PREFERENCES_FILMSIMULATION;Film Simulation

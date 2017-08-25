@@ -970,11 +970,15 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to (*ckbHistogramPositionLeft, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbHistogramWorking, *curveBBoxPosC, Gtk::POS_BOTTOM, 2, 1);
 
+    ckbEditorIopsSingleRow = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_EDITORIOPSSINGLEROW")) );
+    setExpandAlignProperties (ckbEditorIopsSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    workflowGrid->attach_next_to (*ckbEditorIopsSingleRow, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
+
     ckbFileBrowserToolbarSingleRow = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
     setExpandAlignProperties (ckbFileBrowserToolbarSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     ckbShowFilmStripToolBar = Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_SHOWFILMSTRIPTOOLBAR")) );
     setExpandAlignProperties (ckbShowFilmStripToolBar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
-    workflowGrid->attach_next_to (*ckbFileBrowserToolbarSingleRow, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to (*ckbFileBrowserToolbarSingleRow, *ckbEditorIopsSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbShowFilmStripToolBar, *ckbHistogramWorking, Gtk::POS_BOTTOM, 2, 1);
 
     Gtk::Label* hb4label = Gtk::manage ( new Gtk::Label (M ("PREFERENCES_TP_LABEL")) );
@@ -1786,6 +1790,7 @@ void Preferences::storePreferences ()
 
     moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
+    moptions.editorIopsSingleRow = ckbEditorIopsSingleRow->get_active();
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
@@ -2004,6 +2009,7 @@ void Preferences::fillPreferences ()
     curveBBoxPosC->set_active (moptions.curvebboxpos);
     ckbHistogramPositionLeft->set_active (moptions.histogramPosition == 1);
 //   ckbHistogramWorking->set_active(moptions.histogramWorking==1);
+    ckbEditorIopsSingleRow->set_active (moptions.editorIopsSingleRow);
     ckbFileBrowserToolbarSingleRow->set_active (moptions.FileBrowserToolbarSingleRow);
     ckbShowFilmStripToolBar->set_active (moptions.showFilmStripToolBar);
     ckbHideTPVScrollbar->set_active (moptions.hideTPVScrollbar);

@@ -545,9 +545,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::VSeparator* vsepz2 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz3 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz4 = Gtk::manage (new Gtk::VSeparator ());
-
     Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsep2 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
 
     iareapanel = new ImageAreaPanel ();
     tpc->setEditProvider (iareapanel->imageArea);
@@ -620,7 +620,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     setExpandAlignProperties (sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
     // Status box
-    progressLabel = Gtk::manage (new MyProgressBar (300));
+    progressLabel = Gtk::manage (new MyProgressBar (200));
     progressLabel->set_show_text (true);
     setExpandAlignProperties (progressLabel, true, false, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
     progressLabel->set_fraction (0.0);
@@ -676,40 +676,62 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // ==================  PACKING THE BOTTOM WIDGETS =================
 
-    // Adding widgets from center to the left, on the left side (using Gtk::POS_LEFT)
-    iops->attach_next_to (*vsep2, Gtk::POS_LEFT, 1, 1);
-    iops->attach_next_to (*progressLabel, Gtk::POS_LEFT, 1, 1);
-    iops->attach_next_to (*vsep1, Gtk::POS_LEFT, 1, 1);
-    if (!gimpPlugin) {
-        iops->attach_next_to (*sendtogimp, Gtk::POS_LEFT, 1, 1);
-    }
+    Gtk::Grid *iopsTop = Gtk::manage (new Gtk::Grid ());
+    Gtk::Grid *iopsBtm = Gtk::manage (new Gtk::Grid ());
+    Gtk::Grid *iopsExport = Gtk::manage (new Gtk::Grid ());
+    Gtk::Grid *iopsNav = Gtk::manage (new Gtk::Grid ());
+    Gtk::Grid *iopsZoom = Gtk::manage (new Gtk::Grid ());
 
-    if (!gimpPlugin && !simpleEditor) {
-        iops->attach_next_to (*queueimg, Gtk::POS_LEFT, 1, 1);
-    }
-
-    if (!gimpPlugin) {
-        iops->attach_next_to (*saveimgas, Gtk::POS_LEFT, 1, 1);
-    }
-
-
-    // Color management toolbar
     colorMgmtToolBar.reset (new ColorManagementToolbar (ipc));
-    colorMgmtToolBar->pack_right_in (iops);
+
+    if (!gimpPlugin) {
+        iopsExport->attach_next_to (*saveimgas, Gtk::POS_RIGHT, 1, 1);
+
+        if (!simpleEditor) {
+            iopsExport->attach_next_to (*queueimg, Gtk::POS_RIGHT, 1, 1);
+        }
+
+        iopsExport->attach_next_to (*sendtogimp, Gtk::POS_RIGHT, 1, 1);
+        iopsExport->attach_next_to (*vsep1, Gtk::POS_RIGHT, 1, 1);
+    }
 
     if (!simpleEditor && !options.tabbedUI) {
-        Gtk::VSeparator* vsep3 = Gtk::manage (new Gtk::VSeparator ());
-        iops->attach_next_to (*vsep3, Gtk::POS_RIGHT, 1, 1);
-        iops->attach_next_to (*navPrev, Gtk::POS_RIGHT, 1, 1);
-        iops->attach_next_to (*navSync, Gtk::POS_RIGHT, 1, 1);
-        iops->attach_next_to (*navNext, Gtk::POS_RIGHT, 1, 1);
+        iopsNav->attach_next_to (*navPrev, Gtk::POS_RIGHT, 1, 1);
+        iopsNav->attach_next_to (*navSync, Gtk::POS_RIGHT, 1, 1);
+        iopsNav->attach_next_to (*navNext, Gtk::POS_RIGHT, 1, 1);
     }
 
-    iops->attach_next_to (*vsepz2, Gtk::POS_RIGHT, 1, 1);
-    iops->attach_next_to (*iareapanel->imageArea->zoomPanel, Gtk::POS_RIGHT, 1, 1);
-    iops->attach_next_to (*vsepz3, Gtk::POS_RIGHT, 1, 1);
-    iops->attach_next_to (*tbShowHideSidePanels, Gtk::POS_RIGHT, 1, 1);
-    iops->attach_next_to (*tbRightPanel_1, Gtk::POS_RIGHT, 1, 1);
+    iopsZoom->attach_next_to (*vsepz2, Gtk::POS_RIGHT, 1, 1);
+    iopsZoom->attach_next_to (*iareapanel->imageArea->zoomPanel, Gtk::POS_RIGHT, 1, 1);
+    iopsZoom->attach_next_to (*vsepz3, Gtk::POS_RIGHT, 1, 1);
+    iopsZoom->attach_next_to (*tbShowHideSidePanels, Gtk::POS_RIGHT, 1, 1);
+    iopsZoom->attach_next_to (*tbRightPanel_1, Gtk::POS_RIGHT, 1, 1);
+
+    iopsBtm->attach_next_to (*iopsExport, Gtk::POS_RIGHT, 1, 1);
+
+    if (options.editorIopsSingleRow) {
+        setExpandAlignProperties (progressLabel, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+        colorMgmtToolBar->pack_right_in (iopsBtm);
+        iopsBtm->attach_next_to (*vsep2, Gtk::POS_RIGHT, 1, 1);
+        iopsBtm->attach_next_to (*progressLabel, Gtk::POS_RIGHT, 1, 1);
+        iopsBtm->attach_next_to (*vsep3, Gtk::POS_RIGHT, 1, 1);
+    } else {
+        colorMgmtToolBar->pack_right_in (iopsTop);
+        iopsTop->attach_next_to (*vsep2, Gtk::POS_RIGHT, 1, 1);
+        iopsTop->attach_next_to (*progressLabel, Gtk::POS_RIGHT, 1, 1);
+        setExpandAlignProperties (progressLabel, true, false, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+        setExpandAlignProperties (iopsNav, true, false, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+        setExpandAlignProperties (iopsZoom, false, false, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
+    }
+
+    iopsBtm->attach_next_to (*iopsNav, Gtk::POS_RIGHT, 1, 1);
+    iopsBtm->attach_next_to (*iopsZoom, Gtk::POS_RIGHT, 1, 1);
+
+    if (!options.editorIopsSingleRow) {
+        iops->attach (*iopsTop, 0, 0, 1, 1);
+        setExpandAlignProperties (iopsBtm, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    }
+    iops->attach (*iopsBtm, 0, 1, 1, 1);
 
     editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
     editbox->show_all ();
