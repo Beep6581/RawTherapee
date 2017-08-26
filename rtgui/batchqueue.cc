@@ -743,8 +743,15 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
         da.push_back (tok);
     }
 
-    if (origFileName[0] == '/' || origFileName[0] == '\\') {
+    if (origFileName[0] == '/') {
         pa.push_back ("/" + da[0]);
+	} else if (origFileName[0] == '\\') {
+		if (origFileName[1] == '\\') {
+			pa.push_back ("\\\\" + da[0]);
+		}
+		else {
+			pa.push_back ("/" + da[0]);
+		}
     } else {
         pa.push_back (da[0]);
     }
