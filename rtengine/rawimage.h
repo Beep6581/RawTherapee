@@ -20,6 +20,8 @@
 #define __RAWIMAGE_H
 
 #include <ctime>
+#include <cmath>
+#include <iostream>
 
 #include "dcraw.h"
 #include "imageio.h"
@@ -233,7 +235,13 @@ public:
     }
     float get_pre_mul(int c )const
     {
-        return pre_mul[c];
+        if(std::isfinite(pre_mul[c])) {
+            return pre_mul[c];
+        } else {
+            std::cout << "Failure decoding '" << filename << "', please file a bug report including the raw file and the line below:" << std::endl;
+            std::cout << "rawimage.h get_pre_mul() : pre_mul[" << c << "] value " << pre_mul[c] << " automatically replaced by value 1.0" << std::endl;
+            return 1.f;
+        }
     }
     float get_rgb_cam( int r, int c) const
     {
