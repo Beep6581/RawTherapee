@@ -18,6 +18,7 @@
  */
 #include <glib/gstdio.h>
 #include "procparams.h"
+#include "keyfile_wrapper.h"
 #include "rt_math.h"
 #include "curves.h"
 #include "../rtgui/multilangmgr.h"
@@ -1433,7 +1434,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
     try {
 
-        Glib::KeyFile keyFile;
+        // Use a wrapper class for Glib::KeyFile to make data types unambiguous in the PP3.
+        KeyFileWrapper keyFile;
 
         keyFile.set_string ("Version", "AppVersion", APPVERSION);
         keyFile.set_integer ("Version", "Version", PPVERSION);
@@ -3701,7 +3703,8 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
         return 1;
     }
 
-    Glib::KeyFile keyFile;
+    // Must use wrapper for loading strongly typed PP3 files (after version 326).
+    KeyFileWrapper keyFileWrapper;
 
     try {
 
@@ -3724,11 +3727,12 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
         delete [] buffer;
 
-        if (!keyFile.load_from_data (ostr.str())) {
+        if (!keyFileWrapper.load_from_data (ostr.str())) {
             return 1;
         }
 
         fclose (f);
+        Glib::KeyFile& keyFile(keyFileWrapper.getKeyFile());
 
         // load tonecurve:
 

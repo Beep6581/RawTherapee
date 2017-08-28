@@ -80,6 +80,7 @@ set(RTENGINESOURCEFILES
     ipwavelet.cc
     jdatasrc.cc
     jpeg_ijg/jpeg_memsrc.cc
+    keyfile_wrapper.cc
     klt/convolve.cc
     klt/error.cc
     klt/klt.cc
