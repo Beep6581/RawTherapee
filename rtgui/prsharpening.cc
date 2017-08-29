@@ -240,20 +240,20 @@ void PrSharpening::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (pedited) {
-        pedited->prsharpening.amount            = amount->getEditedState ();
-        pedited->prsharpening.radius            = radius->getEditedState ();
-        pedited->prsharpening.threshold         = threshold->getEditedState ();
-        pedited->prsharpening.edges_radius  = eradius->getEditedState ();
-        pedited->prsharpening.edges_tolerance = etolerance->getEditedState ();
+        pedited->prsharpening.amount             = amount->getEditedState ();
+        pedited->prsharpening.radius             = radius->getEditedState ();
+        pedited->prsharpening.threshold          = threshold->getEditedState ();
+        pedited->prsharpening.edges_radius       = eradius->getEditedState ();
+        pedited->prsharpening.edges_tolerance    = etolerance->getEditedState ();
         pedited->prsharpening.halocontrol_amount = hcamount->getEditedState ();
-        pedited->prsharpening.deconvamount  = damount->getEditedState ();
-        pedited->prsharpening.deconvradius  = dradius->getEditedState ();
-        pedited->prsharpening.deconviter        = diter->getEditedState ();
-        pedited->prsharpening.deconvdamping     = ddamping->getEditedState ();
-        pedited->prsharpening.method            =  method->get_active_row_number() != 2;
-        pedited->prsharpening.halocontrol   =  !halocontrol->get_inconsistent();
-        pedited->prsharpening.edgesonly         =  !edgesonly->get_inconsistent();
-        pedited->prsharpening.enabled       =  !get_inconsistent();
+        pedited->prsharpening.deconvamount       = damount->getEditedState ();
+        pedited->prsharpening.deconvradius       = dradius->getEditedState ();
+        pedited->prsharpening.deconviter         = diter->getEditedState ();
+        pedited->prsharpening.deconvdamping      = ddamping->getEditedState ();
+        pedited->prsharpening.method             = method->get_active_row_number() != 2;
+        pedited->prsharpening.halocontrol        = !halocontrol->get_inconsistent();
+        pedited->prsharpening.edgesonly          = !edgesonly->get_inconsistent();
+        pedited->prsharpening.enabled            = !get_inconsistent();
     }
 }
 
@@ -420,13 +420,15 @@ void PrSharpening::halocontrol_toggled ()
 void PrSharpening::method_changed ()
 {
 
-    removeIfThere (this, usm, false);
-    removeIfThere (this, rld, false);
+    if (!batchMode) {
+        removeIfThere (this, usm, false);
+        removeIfThere (this, rld, false);
 
-    if (method->get_active_row_number() == 0) {
-        pack_start (*usm);
-    } else if (method->get_active_row_number() == 1) {
-        pack_start (*rld);
+        if (method->get_active_row_number() == 0) {
+            pack_start (*usm);
+        } else if (method->get_active_row_number() == 1) {
+            pack_start (*rld);
+        }
     }
 
     if (listener && (multiImage || getEnabled()) ) {
@@ -467,16 +469,30 @@ void PrSharpening::setBatchMode (bool batchMode)
     method->append (M("GENERAL_UNCHANGED"));
 }
 
-void PrSharpening::setAdjusterBehavior (bool amountadd)
+void PrSharpening::setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd)
 {
 
+    radius->setAddMode(radiusadd);
+    dradius->setAddMode(radiusadd);
     amount->setAddMode(amountadd);
     damount->setAddMode(amountadd);
+    ddamping->setAddMode(dampingadd);
+    diter->setAddMode(iteradd);
+    eradius->setAddMode(radiusadd);
+    etolerance->setAddMode(edgetoladd);
+    hcamount->setAddMode(haloctrladd);
 }
 
 void PrSharpening::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
-    amount->trimValue(pp->prsharpening.amount);
-    damount->trimValue(pp->prsharpening.deconvamount);
+    radius->trimValue(pp->sharpening.radius);
+    dradius->trimValue(pp->sharpening.deconvradius);
+    amount->trimValue(pp->sharpening.amount);
+    damount->trimValue(pp->sharpening.deconvamount);
+    ddamping->trimValue(pp->sharpening.deconvdamping);
+    diter->trimValue(pp->sharpening.deconviter);
+    eradius->trimValue(pp->sharpening.edges_radius);
+    etolerance->trimValue(pp->sharpening.edges_tolerance);
+    hcamount->trimValue(pp->sharpening.halocontrol_amount);
 }
