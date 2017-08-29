@@ -486,13 +486,13 @@ void PrSharpening::setAdjusterBehavior (bool radiusadd, bool amountadd, bool dam
 void PrSharpening::trimValues (rtengine::procparams::ProcParams* pp)
 {
 
-    radius->trimValue(pp->sharpening.radius);
-    dradius->trimValue(pp->sharpening.deconvradius);
-    amount->trimValue(pp->sharpening.amount);
-    damount->trimValue(pp->sharpening.deconvamount);
-    ddamping->trimValue(pp->sharpening.deconvdamping);
-    diter->trimValue(pp->sharpening.deconviter);
-    eradius->trimValue(pp->sharpening.edges_radius);
-    etolerance->trimValue(pp->sharpening.edges_tolerance);
-    hcamount->trimValue(pp->sharpening.halocontrol_amount);
+    radius->trimValue(pp->prsharpening.radius);
+    dradius->trimValue(pp->prsharpening.deconvradius);
+    amount->trimValue(pp->prsharpening.amount);
+    damount->trimValue(pp->prsharpening.deconvamount);
+    ddamping->trimValue(pp->prsharpening.deconvdamping);
+    diter->trimValue(pp->prsharpening.deconviter);
+    eradius->trimValue(pp->prsharpening.edges_radius);
+    etolerance->trimValue(pp->prsharpening.edges_tolerance);
+    hcamount->trimValue(pp->prsharpening.halocontrol_amount);
 }
