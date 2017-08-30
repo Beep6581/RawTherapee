@@ -318,10 +318,37 @@ class ph1_bithuff_t {
 public:
    ph1_bithuff_t(DCraw *p,IMFILE *&i,short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
+   unsigned operator()(int nbits);
+   unsigned operator()();
+    ushort get2() {
+        uchar str[2] = { 0xff,0xff };
+        fread (str, 1, 2, ifp);
+        if (order == 0x4949) { /* "II" means little-endian */
+            return str[0] | str[1] << 8;
+        } else { /* "MM" means big-endian */
+            return str[0] << 8 | str[1];
+        }
+    }
 private:
-   unsigned get4(){
-	 return parent->get4();
+    inline unsigned get4() {
+        unsigned val = 0xffffff;
+        uchar* str = (uchar*)&val;
+        fread (str, 1, 4, ifp);
+        if (order == 0x4949) {
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+            return val;
+#else
+            return str[0] | str[1] << 8 | str[2] << 16 | str[3] << 24;
+#endif
+        } else {
+#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
+            return str[0] << 24 | str[1] << 16 | str[2] << 8 | str[3];
+#else
+            return val;
+#endif
+        }
    }
+
    DCraw *parent;
    short &order;
    IMFILE *&ifp;
