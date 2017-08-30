@@ -455,6 +455,7 @@ void PrSharpening::setBatchMode (bool batchMode)
     hcbin->pack_start (*hcbox);
     removeIfThere (edgebin, edgebox, false);
     edgebin->pack_start (*edgebox);
+    pack_start (*rld);
 
     radius->showEditedCB ();
     amount->showEditedCB ();
