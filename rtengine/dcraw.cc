@@ -1476,13 +1476,15 @@ void CLASS phase_one_flat_field (int is_float, int nc)
                 if (nc > 2) {
                     mult0 += (c0 & 1) ? mult1 : 0;
                     for (unsigned col = cend - uhead[4] + (c0 & 1); col < std::min(colLimit, cend); col += 2) {
-                        RAW(row, col) *= mult0;
+                        int val = RAW(row, col) * mult0;
+                        RAW(row, col) = LIM(val, 0, 65535);
                         mult0 += mult1;
                         mult0 += mult1; // <= this could be reduced to one addition inside the loop, but then the result is not exactly the same as with old code, though it should be even more accurate then
                     }
                 } else {
                     for (unsigned col = cend - uhead[4]; col < std::min(colLimit, cend); col++) {
-                        RAW(row, col) *= mult0;
+                        int val = RAW(row, col) * mult0;
+                        RAW(row, col) = LIM(val, 0, 65535);
                         mult0 += mult1;
                     }
                 }
