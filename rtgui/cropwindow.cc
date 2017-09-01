@@ -1361,13 +1361,13 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             imgH = cropHandler.cropPixbuf->get_height ();
             exposeVersion++;
 
-            bool showcs = iarea->indClippedPanel->showClippedShadows();
-            bool showch = iarea->indClippedPanel->showClippedHighlights();
             const bool showR  = iarea->previewModePanel->showR(); // will show clipping if R channel is clipped
             const bool showG  = iarea->previewModePanel->showG(); // will show clipping if G channel is clipped
             const bool showB  = iarea->previewModePanel->showB(); // will show clipping if B channel is clipped
             const bool showL  = iarea->previewModePanel->showL(); // will show clipping if L value   is clipped
-            const bool showFocusMask  = iarea->previewModePanel->showFocusMask();
+            const bool showFocusMask  = iarea->indClippedPanel->showFocusMask();
+            bool showcs = iarea->indClippedPanel->showClippedShadows();
+            bool showch = iarea->indClippedPanel->showClippedHighlights();
 
             // While the Right-side ALT is pressed, auto-enable highlight and shadow clipping indicators
             // TODO: Add linux/MacOS specific functions for alternative

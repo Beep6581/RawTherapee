@@ -25,24 +25,34 @@ class IndicateClippedPanel : public Gtk::HBox
 {
 
 protected:
+    Gtk::Image* iFon, *iFoff;
+    Gtk::ToggleButton* previewFocusMask;
     Gtk::ToggleButton* indclippedh;
     Gtk::ToggleButton* indclippeds;
     ImageArea* imageArea;
 
 public:
-    explicit IndicateClippedPanel (ImageArea* ia);
+    explicit IndicateClippedPanel(ImageArea* ia);
+    ~IndicateClippedPanel();
 
-    void buttonToggled   ();
+    void buttonToggled(Gtk::ToggleButton* tb);
+    void toggleClipped(bool highlights);  // inverts a toggle programmatically
+    void toggleFocusMask();
 
-    void toggleClipped (bool highlights);  // inverts a toggle programmatically
+    sigc::connection connFocusMask, connClippedS, connClippedH;
 
-    bool showClippedShadows    ()
+
+    bool showFocusMask ()
     {
-        return indclippeds->get_active ();
+        return previewFocusMask->get_active ();
     }
-    bool showClippedHighlights ()
+    bool showClippedShadows()
     {
-        return indclippedh->get_active ();
+        return indclippeds->get_active();
+    }
+    bool showClippedHighlights()
+    {
+        return indclippedh->get_active();
     }
 };
 

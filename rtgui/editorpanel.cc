@@ -1539,11 +1539,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 return true;
 
             case GDK_KEY_F: //preview mode Focus Mask
-                iareapanel->imageArea->previewModePanel->toggleFocusMask();
-                return true;
-
-            case GDK_KEY_f:
-                iareapanel->imageArea->zoomPanel->zoomFitClicked();
+                iareapanel->imageArea->indClippedPanel->toggleFocusMask();
                 return true;
 
             case GDK_KEY_less:
@@ -1552,6 +1548,10 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
             case GDK_KEY_greater:
                 iareapanel->imageArea->indClippedPanel->toggleClipped (true);
+                return true;
+
+            case GDK_KEY_f:
+                iareapanel->imageArea->zoomPanel->zoomFitClicked();
                 return true;
 
             case GDK_KEY_F5:
