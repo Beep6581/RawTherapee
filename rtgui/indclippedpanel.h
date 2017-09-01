@@ -27,8 +27,8 @@ class IndicateClippedPanel : public Gtk::HBox
 protected:
     Gtk::Image* iFon, *iFoff;
     Gtk::ToggleButton* previewFocusMask;
-    Gtk::ToggleButton* indclippedh;
-    Gtk::ToggleButton* indclippeds;
+    Gtk::ToggleButton* indClippedH;
+    Gtk::ToggleButton* indClippedS;
     ImageArea* imageArea;
 
 public:
@@ -48,11 +48,11 @@ public:
     }
     bool showClippedShadows()
     {
-        return indclippeds->get_active();
+        return indClippedS->get_active();
     }
     bool showClippedHighlights()
     {
-        return indclippedh->get_active();
+        return indClippedH->get_active();
     }
 };
 
