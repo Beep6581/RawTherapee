@@ -285,8 +285,7 @@ bool dontLoadCache ( int argc, char **argv )
 #if ECLIPSE_ARGS
         currParam = currParam.substr (1, currParam.length() - 2);
 #endif
-
-        if ( currParam.at (0) == '-' && currParam.at (1) == 'q' ) {
+        if ( currParam.length() > 1 && currParam.at(0) == '-' && currParam.at(1) == 'q' ) {
             return true;
         }
     }
@@ -317,6 +316,9 @@ int processLineParams ( int argc, char **argv )
 
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
+        if ( currParam.empty() ) {
+            continue;
+        }
 #if ECLIPSE_ARGS
         currParam = currParam.substr (1, currParam.length() - 2);
 #endif
