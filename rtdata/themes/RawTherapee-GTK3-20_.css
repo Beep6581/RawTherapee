@@ -639,18 +639,11 @@ paned box, paned grid {
 }
 
 paned > separator {
-    border-width: 1px;
-    border-color: #484848;
-    margin: 0;
-    padding: 0;
-}
-paned.horizontal > separator {
-    min-width: 2px;
-    border-style: none solid;
-}
-paned.vertical > separator {
-    min-height: 2px;
-    border-style: solid none;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    border-color: #404040;
+    padding: 0px;
+    margin: 4px;
 }
 
 #PlacesPaned {
