@@ -37,7 +37,7 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
     indClippedH = Gtk::manage (new Gtk::ToggleButton ());
     indClippedH->set_relief(Gtk::RELIEF_NONE);
     indClippedH->add (*Gtk::manage (new RTImage ("warnhl.png")));
-    tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_indClippedH"), M("MAIN_TOOLTIP_THRESHOLD"), options.highlightThreshold);
+    tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDH"), M("MAIN_TOOLTIP_THRESHOLD"), options.highlightThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {
         indClippedH->set_tooltip_text (tt);
@@ -48,7 +48,7 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
     indClippedS = Gtk::manage (new Gtk::ToggleButton ());
     indClippedS->set_relief(Gtk::RELIEF_NONE);
     indClippedS->add (*Gtk::manage (new RTImage ("warnsh.png")));
-    tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_indClippedS"), M("MAIN_TOOLTIP_THRESHOLD"), options.shadowThreshold);
+    tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDS"), M("MAIN_TOOLTIP_THRESHOLD"), options.shadowThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {
         indClippedS->set_tooltip_text (tt);
