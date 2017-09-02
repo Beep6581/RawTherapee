@@ -60,7 +60,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false
     colorappearance     = Gtk::manage (new ColorAppearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
-    retinex               = Gtk::manage (new Retinex ());
+    retinex             = Gtk::manage (new Retinex ());
     gradient            = Gtk::manage (new Gradient ());
     pcvignette          = Gtk::manage (new PCVignette ());
     perspective         = Gtk::manage (new PerspCorrection ());

@@ -248,13 +248,13 @@ void BatchToolPanelCoordinator::initSession ()
                 pparams.prsharpening.radius = pparams.prsharpening.deconvradius = pparams.prsharpening.edges_radius = 0;
             }
             if (options.baBehav[ADDSET_SHARP_AMOUNT]) {
-                pparams.sharpening.amount = pparams.sharpening.deconvamount = 0;
+                pparams.sharpening.amount = pparams.sharpening.deconvamount =
                 pparams.prsharpening.amount = pparams.prsharpening.deconvamount = 0;
             }
-            if (options.baBehav[ADDSET_SHARP_DAMPING]) { pparams.sharpening.deconvdamping = 0; pparams.prsharpening.deconvdamping = 0; }
-            if (options.baBehav[ADDSET_SHARP_ITER]) { pparams.sharpening.deconviter = 0; pparams.prsharpening.deconviter = 0; }
-            if (options.baBehav[ADDSET_SHARP_EDGETOL]) { pparams.sharpening.edges_tolerance = 0; pparams.prsharpening.edges_tolerance = 0; }
-            if (options.baBehav[ADDSET_SHARP_HALOCTRL]) { pparams.sharpening.halocontrol_amount = 0; pparams.prsharpening.halocontrol_amount = 0; }
+            if (options.baBehav[ADDSET_SHARP_DAMPING]) { pparams.sharpening.deconvdamping = pparams.prsharpening.deconvdamping = 0; }
+            if (options.baBehav[ADDSET_SHARP_ITER]) { pparams.sharpening.deconviter = pparams.prsharpening.deconviter = 0; }
+            if (options.baBehav[ADDSET_SHARP_EDGETOL]) { pparams.sharpening.edges_tolerance = pparams.prsharpening.edges_tolerance = 0; }
+            if (options.baBehav[ADDSET_SHARP_HALOCTRL]) { pparams.sharpening.halocontrol_amount = pparams.prsharpening.halocontrol_amount = 0; }
             if (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT]) { pparams.sharpenEdge.amount = 0; }
             if (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT]) { pparams.sharpenMicro.amount = 0; }
             if (options.baBehav[ADDSET_SHARPENEDGE_PASS]) { pparams.sharpenEdge.passes = 0; }
@@ -309,18 +309,15 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_GRADIENT_DEGREE]) { pparams.gradient.degree = 0; }
             if (options.baBehav[ADDSET_GRADIENT_FEATHER]) { pparams.gradient.feather = 0; }
             if (options.baBehav[ADDSET_GRADIENT_STRENGTH]) { pparams.gradient.strength = 0; }
-            if (options.baBehav[ADDSET_GRADIENT_CENTER]) { pparams.gradient.centerX = 0; }
-            if (options.baBehav[ADDSET_GRADIENT_CENTER]) { pparams.gradient.centerY = 0; }
+            if (options.baBehav[ADDSET_GRADIENT_CENTER]) { pparams.gradient.centerX = pparams.gradient.centerY = 0; }
             if (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH]) { pparams.pcvignette.strength = 0; }
             if (options.baBehav[ADDSET_PCVIGNETTE_FEATHER]) { pparams.pcvignette.feather = 0; }
             if (options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]) { pparams.pcvignette.roundness = 0; }
-            if (options.baBehav[ADDSET_CA]) { pparams.cacorrection.red = 0; }
-            if (options.baBehav[ADDSET_CA]) { pparams.cacorrection.blue = 0; }
+            if (options.baBehav[ADDSET_CA]) { pparams.cacorrection.red = pparams.cacorrection.blue = 0; }
             if (options.baBehav[ADDSET_VIGN_AMOUNT]) { pparams.vignetting.amount = 0; }
             if (options.baBehav[ADDSET_VIGN_RADIUS]) { pparams.vignetting.radius = 0; }
             if (options.baBehav[ADDSET_VIGN_STRENGTH]) { pparams.vignetting.strength = 0; }
-            if (options.baBehav[ADDSET_VIGN_CENTER]) { pparams.vignetting.centerX = 0; }
-            if (options.baBehav[ADDSET_VIGN_CENTER]) { pparams.vignetting.centerY = 0; }
+            if (options.baBehav[ADDSET_VIGN_CENTER]) { pparams.vignetting.centerX = pparams.vignetting.centerY = 0; }
             if (options.baBehav[ADDSET_DIRPYREQ]) for (int i = 0; i < 6; i++) { pparams.dirpyrequalizer.mult[i] = 0; }
             if (options.baBehav[ADDSET_DIRPYREQ_THRESHOLD]) { pparams.dirpyrequalizer.threshold = 0; }
             if (options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]) { pparams.dirpyrequalizer.skinprotect = 0; }
@@ -361,7 +358,7 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_RAWEXPOS_LINEAR]) { pparams.raw.expos = 0; }
             if (options.baBehav[ADDSET_RAWEXPOS_PRESER]) { pparams.raw.preser = 0; }
             if (options.baBehav[ADDSET_RAWEXPOS_BLACKS]) {
-                pparams.raw.bayersensor.black0 = pparams.raw.bayersensor.black1 = pparams.raw.bayersensor.black2 = pparams.raw.bayersensor.black3 = 0;
+                pparams.raw.bayersensor.black0 = pparams.raw.bayersensor.black1 = pparams.raw.bayersensor.black2 = pparams.raw.bayersensor.black3 =
                 pparams.raw.xtranssensor.blackred = pparams.raw.xtranssensor.blackgreen = pparams.raw.xtranssensor.blackblue = 0;
             }
             if (options.baBehav[ADDSET_RAWFFCLIPCONTROL]) { pparams.raw.ff_clipControl = 0; }
