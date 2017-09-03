@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.55 - requires RT 5.0 (Gtk+ >= 3.20)
+  Version 2.56 - requires RT 5.0 (Gtk+ >= 3.20)
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1035,14 +1035,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-right: 0;
 }
 
-#EditorTopPanel > box:nth-child(9) > button.image-button:not(:last-child) {
+#EditorTopPanel > box:nth-child(9) > button.image-button {
     min-width: 0;
     padding-left: 0.25em;
     padding-right: 0.25em;
-}
-
-#EditorTopPanel > box:nth-child(9) > button.image-button:last-child {
-    -gtk-icon-shadow: none;
 }
 
 /*Button editor bottom*/
@@ -1841,5 +1837,4 @@ headerbar:backdrop {
 headerbar .title:backdrop {
     color: alpha(@winTitle,.60);
 }
-/**/
 /*** end ***************************************************************************************/
