@@ -150,59 +150,59 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
     *****************/
     int NumberOfCropRatios = 26;    //!!! change this value when adding new crop ratios
     cropratio.resize (NumberOfCropRatios);
-
+                                                    // Landscape    Portrait
     cropratio[0].label  = "3:2";
-    cropratio[0].value  = 3.0 / 2.0;
+    cropratio[0].value  = 3.0 / 2.0;                // 1.5          0.666...
     cropratio[1].label  = "4:3";
-    cropratio[1].value  = 4.0 / 3.0;
+    cropratio[1].value  = 4.0 / 3.0;                // 1.333...     0.75
     cropratio[2].label  = "16:9";
-    cropratio[2].value  = 16.0 / 9.0;
+    cropratio[2].value  = 16.0 / 9.0;               // 1.777...     0.5625
     cropratio[3].label  = "16:10";
-    cropratio[3].value  = 16.0 / 10.0;
+    cropratio[3].value  = 16.0 / 10.0;              // 1.6          0.625
     cropratio[4].label  = "1:1";
-    cropratio[4].value  = 1.0 / 1.0;
+    cropratio[4].value  = 1.0 / 1.0;                // 1            1
     cropratio[5].label  = "2:1";
-    cropratio[5].value  = 2.0 / 1.0;
+    cropratio[5].value  = 2.0 / 1.0;                // 2            0.5
     cropratio[6].label  = "3:1";
-    cropratio[6].value  = 3.0 / 1.0;
+    cropratio[6].value  = 3.0 / 1.0;                // 3            0.333...
     cropratio[7].label  = "4:1";
-    cropratio[7].value  = 4.0 / 1.0;
+    cropratio[7].value  = 4.0 / 1.0;                // 4            0.25
     cropratio[8].label  = "5:1";
-    cropratio[8].value  = 5.0 / 1.0;
+    cropratio[8].value  = 5.0 / 1.0;                // 5            0.2
     cropratio[9].label  = "6:1";
-    cropratio[9].value  = 6.0 / 1.0;
+    cropratio[9].value  = 6.0 / 1.0;                // 6            0.1666...
     cropratio[10].label = "7:1";
-    cropratio[10].value = 7.0 / 1.0;
+    cropratio[10].value = 7.0 / 1.0;                // 7            0.142
     cropratio[11].label = "4:5";
-    cropratio[11].value = 4.0 / 5.0;
+    cropratio[11].value = 4.0 / 5.0;                // 1.25         0.8
     cropratio[12].label = "5:7";
-    cropratio[12].value = 5.0 / 7.0;
+    cropratio[12].value = 5.0 / 7.0;                // 1.4          0.714...
     cropratio[13].label = "6:7";
-    cropratio[13].value = 6.0 / 7.0;
+    cropratio[13].value = 6.0 / 7.0;                // 1,166...     0.857...
     cropratio[14].label = "6:17";
-    cropratio[14].value = 6.0 / 17.0;
+    cropratio[14].value = 6.0 / 17.0;               // 2.833...     0.352...
     cropratio[15].label = "24:65 - XPAN";
-    cropratio[15].value = 24.0 / 65.0;
+    cropratio[15].value = 24.0 / 65.0;              // 2.708...     0.369...
     cropratio[16].label = "1.414 - DIN EN ISO 216";
-    cropratio[16].value = 1.414;
+    cropratio[16].value = 1.414;                    // 1.414        0.707...
     cropratio[17].label = "3.5:5";
-    cropratio[17].value = 3.5 / 5.0;
+    cropratio[17].value = 3.5 / 5.0;                // 1.428        0.7
     cropratio[18].label = "8.5:11 - US Letter";
-    cropratio[18].value = 8.5 / 11.0;
+    cropratio[18].value = 8.5 / 11.0;               // 1.294        0.772...
     cropratio[19].label = "9.5:12";
-    cropratio[19].value = 9.5 / 12.0;
+    cropratio[19].value = 9.5 / 12.0;               // 1.263        0.791...
     cropratio[20].label = "10:12";
-    cropratio[20].value = 10.0 / 12.0;
+    cropratio[20].value = 10.0 / 12.0;              // 1.2          0.833...
     cropratio[21].label = "11:14";
-    cropratio[21].value = 11.0 / 14.0;
+    cropratio[21].value = 11.0 / 14.0;              // 1.272...     0.785
     cropratio[22].label = "11:17 - Tabloid";
-    cropratio[22].value = 11.0 / 17.0;
+    cropratio[22].value = 11.0 / 17.0;              // 1.545...     0.647...
     cropratio[23].label = "13:19";
-    cropratio[23].value = 13.0 / 19.0;
+    cropratio[23].value = 13.0 / 19.0;              // 1.461...     0.684
     cropratio[24].label = "17:22";
-    cropratio[24].value = 17.0 / 22.0;
+    cropratio[24].value = 17.0 / 22.0;              // 1.294        0.772...
     cropratio[25].label = "45:35 - ePassport";
-    cropratio[25].value = 45.0 / 35.0;
+    cropratio[25].value = 45.0 / 35.0;              // 1.285        0.777...
 
 
 
