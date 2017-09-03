@@ -148,7 +148,7 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
     /****************
     * Crop Ratio
     *****************/
-    int NumberOfCropRatios = 26;    //!!! change this value when adding new crop ratios
+    int NumberOfCropRatios = 27;    //!!! change this value when adding new crop ratios
     cropratio.resize (NumberOfCropRatios);
                                                     // Landscape    Portrait
     cropratio[0].label  = "3:2";
@@ -203,8 +203,8 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
     cropratio[24].value = 17.0 / 22.0;              // 1.294        0.772...
     cropratio[25].label = "45:35 - ePassport";
     cropratio[25].value = 45.0 / 35.0;              // 1.285        0.777...
-
-
+    cropratio[26].label = "64:27";
+    cropratio[26].value = 64.0 / 27.0;              // 2.370...     0.421...
 
     // populate the combobox
     for (int i = 0; i < NumberOfCropRatios; i++) {
