@@ -307,8 +307,14 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 }
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
-                                 double focalLen, double focalLen35mm, float focusDist, double fNumber, int rawRotationDeg, bool fullImage)
+                                 const ImageMetaData *metadata,
+                                 //double focalLen, double focalLen35mm, float focusDist, double fNumber,
+                                 int rawRotationDeg, bool fullImage)
 {
+    double focalLen = metadata->getFocalLen();
+    double focalLen35mm = metadata->getFocalLen35mm();
+    float focusDist = metadata->getFocusDist();
+    double fNumber = metadata->getFNumber();
 
     LCPMapper *pLCPMap = nullptr;
 

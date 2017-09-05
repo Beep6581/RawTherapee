@@ -21,8 +21,9 @@
 
 #include <glibmm.h>
 #include "options.h"
+#include "rtengine.h"
 
-class CacheImageData
+class CacheImageData: public rtengine::ImageMetaData
 {
 
 public:
@@ -76,9 +77,31 @@ public:
     int load (const Glib::ustring& fname);
     int save (const Glib::ustring& fname);
 
-    Glib::ustring getCamera() const
-    {
-        return Glib::ustring(camMake + " " + camModel);
-    }
+    // Glib::ustring getCamera() const
+    // {
+    //     return Glib::ustring(camMake + " " + camModel);
+    // }
+
+    //-------------------------------------------------------------------------
+    // ImageMetaData interface
+    //-------------------------------------------------------------------------
+
+    bool hasExif() const { return false; }
+    const rtexif::TagDirectory *getExifData() const { return NULL; }
+    bool hasIPTC() const { return false; }
+    const procparams::IPTCPairs getIPTCData () const { return procparams::IPTCPairs(); }
+    struct tm getDateTime () const { struct tm ret; return ret; }
+    time_t getDateTimeAsTS() const { time_t ret; return ret; }
+    int getISOSpeed() const { return iso; }
+    double getFNumber() const { return fnumber; }
+    double getFocalLen() const { return focalLen; }
+    double getFocalLen35mm() const { return focalLen35mm; }
+    float getFocusDist() const { return focusDist; }
+    double getShutterSpeed() const { return shutter; }
+    double getExpComp() const { return atof(expcomp.c_str()); }
+    std::string getMake() const { return camMake; }
+    std::string getModel() const { return camModel; }
+    std::string getLens() const { return lens; }
+    std::string getOrientation() const { return ""; } // TODO
 };
 #endif
