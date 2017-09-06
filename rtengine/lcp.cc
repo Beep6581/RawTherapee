@@ -134,11 +134,20 @@ LCPPersModel::LCPPersModel()
 }
 
 // mode: 0=distortion, 1=vignette, 2=CA
-bool LCPPersModel::hasModeData(int mode) const
+bool LCPPersModel::hasModeData(LCPCorrectionMode mode) const
 {
-    return (mode == 0 && !vignette.empty() && !vignette.bad_error) || (mode == 1 && !base.empty() && !base.bad_error)
-           || (mode == 2 && !chromRG.empty() && !chromG.empty() && !chromBG.empty() &&
-               !chromRG.bad_error && !chromG.bad_error && !chromBG.bad_error);
+    switch (mode) {
+    case LCP_MODE_VIGNETTE:
+        return !vignette.empty() && !vignette.bad_error;
+    case LCP_MODE_DISTORTION:
+        return !base.empty() && !base.bad_error;
+    case LCP_MODE_CA:
+        return !chromRG.empty() && !chromG.empty() && !chromBG.empty() &&
+            !chromRG.bad_error && !chromG.bad_error && !chromBG.bad_error;
+    default:
+        assert(false);
+        return false;
+    }
 }
 
 void LCPPersModel::print() const
@@ -195,11 +204,11 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
         printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
     }
 
-    pProf->calcParams(vignette ? 0 : 1, focalLength, focusDist, aperture, &mc, nullptr, nullptr);
+    pProf->calcParams(vignette ? LCP_MODE_VIGNETTE : LCP_MODE_DISTORTION, focalLength, focusDist, aperture, &mc, nullptr, nullptr);
     mc.prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
 
     if (!vignette) {
-        pProf->calcParams(2, focalLength, focusDist, aperture, &chrom[0], &chrom[1], &chrom[2]);
+        pProf->calcParams(LCP_MODE_CA, focalLength, focusDist, aperture, &chrom[0], &chrom[1], &chrom[2]);
 
         for (int i = 0; i < 3; i++) {
             chrom[i].prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
@@ -410,9 +419,11 @@ LCPProfile::LCPProfile(const Glib::ustring &fname)
     }
     // Two phase filter: first filter out the very rough ones, that distord the average a lot
     // force it, even if there are few frames (community profiles)
-//    filterBadFrames(2.0, 0);
+    filterBadFrames(LCP_MODE_VIGNETTE, 2.0, 0);
+    filterBadFrames(LCP_MODE_CA, 2.0, 0);
     // from the non-distorded, filter again on new average basis, but only if there are enough frames left
-//    filterBadFrames(1.5, 100);
+    filterBadFrames(LCP_MODE_VIGNETTE, 1.5, 50);
+    filterBadFrames(LCP_MODE_CA, 1.5, 50);
 }
 
 
@@ -429,67 +440,66 @@ LCPProfile::~LCPProfile()
 }
 
 // from all frames not marked as bad already, take average and filter out frames with higher deviation than this if there are enough values
-int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft)
+int LCPProfile::filterBadFrames(LCPCorrectionMode mode, double maxAvgDevFac, int minFramesLeft)
 {
-    // take average error per type, then calculated the maximum deviation allowed
-    double errBase = 0, errChrom = 0, errVignette = 0;
-    int baseCount = 0, chromCount = 0, vignetteCount = 0;
+    // take average error, then calculated the maximum deviation allowed
+    double err = 0;
+    int count = 0;
 
     for (int pm = 0; pm < MaxPersModelCount && aPersModel[pm]; pm++) {
-        if (aPersModel[pm]->hasModeData(0)) {
-            errVignette += aPersModel[pm]->vignette.mean_error;
-            vignetteCount++;
-        }
-
-        if (aPersModel[pm]->hasModeData(1)) {
-            errBase += aPersModel[pm]->base.mean_error;
-            baseCount++;
-        }
-
-        if (aPersModel[pm]->hasModeData(2)) {
-            errChrom += rtengine::max(aPersModel[pm]->chromRG.mean_error, aPersModel[pm]->chromG.mean_error, aPersModel[pm]->chromBG.mean_error);
-            chromCount++;
+        if (aPersModel[pm]->hasModeData(mode)) {
+            count++;
+            switch (mode) {
+            case LCP_MODE_VIGNETTE:
+                err += aPersModel[pm]->vignette.mean_error;
+                break;
+            case LCP_MODE_DISTORTION:
+                err += aPersModel[pm]->base.mean_error;
+                break;
+            case LCP_MODE_CA:
+                err += rtengine::max(aPersModel[pm]->chromRG.mean_error, aPersModel[pm]->chromG.mean_error, aPersModel[pm]->chromBG.mean_error);
+                break;
+            }
         }
     }
 
     // Only if we have enough frames, filter out errors
     int filtered = 0;
 
-    if (baseCount + chromCount + vignetteCount >= minFramesLeft) {
-        if (baseCount > 0) {
-            errBase /= (double)baseCount;
-        }
-
-        if (chromCount > 0) {
-            errChrom /= (double)chromCount;
-        }
-
-        if (vignetteCount > 0) {
-            errVignette /= (double)vignetteCount;
+    if (count >= minFramesLeft) {
+        if (count > 0) {
+            err /= (double)count;
         }
 
         // Now mark all the bad ones as bad, and hasModeData will return false;
         for (int pm = 0; pm < MaxPersModelCount && aPersModel[pm]; pm++) {
-            if (aPersModel[pm]->hasModeData(0) && aPersModel[pm]->vignette.mean_error > maxAvgDevFac * errVignette) {
-                aPersModel[pm]->vignette.bad_error = true;
-                filtered++;
-            }
-
-            if (aPersModel[pm]->hasModeData(1) && aPersModel[pm]->base.mean_error > maxAvgDevFac * errBase) {
-                aPersModel[pm]->base.bad_error = true;
-                filtered++;
-            }
-
-            if (aPersModel[pm]->hasModeData(2) &&
-                    (aPersModel[pm]->chromRG.mean_error > maxAvgDevFac * errChrom || aPersModel[pm]->chromG.mean_error > maxAvgDevFac * errChrom
-                     || aPersModel[pm]->chromBG.mean_error > maxAvgDevFac * errChrom)) {
-                aPersModel[pm]->chromRG.bad_error = aPersModel[pm]->chromG.bad_error = aPersModel[pm]->chromBG.bad_error = true;
-                filtered++;
+            if (aPersModel[pm]->hasModeData(mode)) {
+                switch (mode) {
+                case LCP_MODE_VIGNETTE:
+                    if (aPersModel[pm]->vignette.mean_error > maxAvgDevFac * err) {
+                        aPersModel[pm]->vignette.bad_error = true;
+                        filtered++;
+                    }
+                    break;
+                case LCP_MODE_DISTORTION:
+                    if (aPersModel[pm]->base.mean_error > maxAvgDevFac * err) {
+                        aPersModel[pm]->base.bad_error = true;
+                        filtered++;
+                    }
+                    break;
+                case LCP_MODE_CA:
+                    if ((aPersModel[pm]->chromRG.mean_error > maxAvgDevFac * err || aPersModel[pm]->chromG.mean_error > maxAvgDevFac * err
+                     || aPersModel[pm]->chromBG.mean_error > maxAvgDevFac * err)) {
+                        aPersModel[pm]->chromRG.bad_error = aPersModel[pm]->chromG.bad_error = aPersModel[pm]->chromBG.bad_error = true;
+                        filtered++;
+                    }
+                    break;
+                }
             }
         }
 
         if (settings->verbose) {
-            printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
+            printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./count, maxAvgDevFac, count-filtered);
         }
     }
 
@@ -497,8 +507,7 @@ int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft)
 }
 
 
-// mode: 0=vignette, 1=distortion, 2=CA
-void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const
+void LCPProfile::calcParams(LCPCorrectionMode mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const
 {
     float euler = exp(1.0);
 
@@ -541,24 +550,24 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
             if (aPersModel[pm]->hasModeData(mode)) {
                 double lowMeanErr, highMeanErr;
                 switch (mode) {
-                case 0:
+                case LCP_MODE_VIGNETTE:
                     meanErr = aPersModel[pm]->vignette.mean_error;
                     lowMeanErr = pLow->vignette.mean_error;
                     highMeanErr = pHigh->vignette.mean_error;
                     break;
-                case 1:
+                case LCP_MODE_DISTORTION:
                     meanErr = aPersModel[pm]->base.mean_error;
                     lowMeanErr = pLow->base.mean_error;
                     highMeanErr = pHigh->base.mean_error;
                     break;
-                default: //case 2:
+                default: // LCP_MODE_CA
                     meanErr = aPersModel[pm]->chromG.mean_error;
                     lowMeanErr = pLow->chromG.mean_error;
                     highMeanErr = pHigh->chromG.mean_error;
                     break;
                 }
 
-                if (aperture > 0 && mode != 2) {
+                if (aperture > 0 && mode != LCP_MODE_CA) {
                     if (aPersModel[pm]->focLen == bestFocLenLow && (
                             (aper == aperture && lowMeanErr > meanErr)
                             || (aper >= aperture && aper < pLow->aperture && pLow->aperture > aperture)
@@ -572,7 +581,7 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
                             || (aper >= aperture && (pHigh->aperture < aperture || fabs(aperture - aper) < fabs(aperture - pHigh->aperture))))) {
                         pHigh = aPersModel[pm];
                     }
-                } else if (focusDist > 0 && mode != 0) {
+                } else if (focusDist > 0 && mode != LCP_MODE_VIGNETTE) {
                     // by focus distance
                     if (aPersModel[pm]->focLen == bestFocLenLow && (
                             (focDist == focusDist && lowMeanErr > meanErr)
@@ -615,26 +624,26 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
         }
 
         // and average the other factor if available
-        if (mode == 0 && pLow->aperture < aperture && pHigh->aperture > aperture) {
+        if (mode == LCP_MODE_VIGNETTE && pLow->aperture < aperture && pHigh->aperture > aperture) {
             // Mix in aperture
             float facAperLow = (pHigh->aperture - aperture) / (pHigh->aperture - pLow->aperture);
             facLow = focLenOnSpot ? facAperLow : (0.5 * facLow + 0.5 * facAperLow);
-        } else if (mode != 0 && focusDist > 0 && pLow->focDist < focusDist && pHigh->focDist > focusDist) {
+        } else if (mode != LCP_MODE_VIGNETTE && focusDist > 0 && pLow->focDist < focusDist && pHigh->focDist > focusDist) {
             // focus distance for all else (if focus distance is given)
             float facDistLow = (log(pHigh->focDist) + euler - focusDistLog) / (log(pHigh->focDist) - log(pLow->focDist));
             facLow = focLenOnSpot ? facDistLow : (0.8 * facLow + 0.2 * facDistLow);
         }
 
         switch (mode) {
-        case 0:  // vignette
+        case LCP_MODE_VIGNETTE:
             pCorr1->merge(pLow->vignette, pHigh->vignette, facLow);
             break;
 
-        case 1:  // distortion
+        case LCP_MODE_DISTORTION:
             pCorr1->merge(pLow->base, pHigh->base, facLow);
             break;
 
-        case 2:  // CA
+        case LCP_MODE_CA:
             pCorr1->merge(pLow->chromRG, pHigh->chromRG, facLow);
             pCorr2->merge(pLow->chromG,  pHigh->chromG,  facLow);
             pCorr3->merge(pLow->chromBG, pHigh->chromBG, facLow);
@@ -646,7 +655,7 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
         }
     } else {
         if (settings->verbose) {
-            printf("Error: LCP file contained no %s parameters\n", mode == 0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
+            printf("Error: LCP file contained no %s parameters\n", mode == LCP_MODE_VIGNETTE ? "vignette" : mode == LCP_MODE_DISTORTION ? "distortion" : "CA" );
         }
     }
 }

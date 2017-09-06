@@ -33,6 +33,12 @@
 namespace rtengine
 {
 
+enum LCPCorrectionMode {
+    LCP_MODE_VIGNETTE = 0,
+    LCP_MODE_DISTORTION = 1,
+    LCP_MODE_CA = 2
+};
+
 // Perspective model common data, also used for Vignette and Fisheye
 class LCPModelCommon final
 {
@@ -76,7 +82,7 @@ public:
     LCPModelCommon vignette;  // vignette (may be empty)
 
     LCPPersModel();
-    bool hasModeData(int mode) const;
+    bool hasModeData(LCPCorrectionMode mode) const;
     void print() const;
 };
 
@@ -93,7 +99,7 @@ class LCPProfile
     static void XMLCALL XmlTextHandler (void *pLCPProfile, const XML_Char *s, int len);
     static void XMLCALL XmlEndHandler  (void *pLCPProfile, const char *el);
 
-    int filterBadFrames(double maxAvgDevFac, int minFramesLeft);
+    int filterBadFrames(LCPCorrectionMode mode, double maxAvgDevFac, int minFramesLeft);
 
     void handle_text(std::string text);
     std::ostringstream textbuf;
@@ -112,7 +118,7 @@ public:
     explicit LCPProfile(const Glib::ustring &fname);
     ~LCPProfile();
 
-    void calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const;  // Interpolates between the persModels frames
+    void calcParams(LCPCorrectionMode mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const;  // Interpolates between the persModels frames
 
     void print() const;
 };
