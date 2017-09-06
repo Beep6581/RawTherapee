@@ -272,6 +272,7 @@ pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.44)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.44)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.44)
 pkg_check_modules (SIGC    REQUIRED sigc++-2.0>=2.3.1)
+pkg_check_modules (LENSFUN REQUIRED lensfun>=0.2)
 
 if(WIN32)
     add_definitions(-DWIN32)

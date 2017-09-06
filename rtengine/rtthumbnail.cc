@@ -959,9 +959,6 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, const ImageMetaData *metadata, double& myscale)
 {
     std::string camName = metadata->getCamera();
-    double focalLen = metadata->getFocalLen();
-    double focalLen35mm = metadata->getFocalLen35mm();
-    float focusDist = metadata->getFocusDist();
     float shutter = metadata->getShutterSpeed();
     float fnumber = metadata->getFNumber();
     float iso = metadata->getISOSpeed();

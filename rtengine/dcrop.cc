@@ -1086,8 +1086,9 @@ bool check_need_larger_crop_for_lcp_distortion (int fw, int fh, int x, int y, in
         return false;
     }
 
-    return (params.lensProf.lcpFile.length() > 0 &&
-            params.lensProf.useDist);
+    return (params.lensProf.useDist &&
+            (params.lensProf.useLensfun ||
+             params.lensProf.lcpFile.length() > 0));
 }
 
 } // namespace

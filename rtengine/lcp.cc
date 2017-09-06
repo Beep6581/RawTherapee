@@ -210,8 +210,11 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
     isFisheye = pProf->isFisheye;
 }
 
-void LCPMapper::correctDistortion(double& x, double& y, double scale) const
+void LCPMapper::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
 {
+    x += cx;
+    y += cy;
+    
     if (isFisheye) {
         double u = x * scale;
         double v = y * scale;
@@ -253,6 +256,9 @@ void LCPMapper::correctDistortion(double& x, double& y, double scale) const
         x = xnew * mc.fx + x0;
         y = ynew * mc.fy + y0;
     }
+
+    x -= cx * scale;
+    y -= cy * scale;
 }
 
 void LCPMapper::correctCA(double& x, double& y, int channel) const

@@ -21,7 +21,7 @@
 
 #include <glibmm.h>
 #include "options.h"
-#include "rtengine.h"
+#include "../rtengine/rtengine.h"
 
 class CacheImageData: public rtengine::ImageMetaData
 {
@@ -89,9 +89,9 @@ public:
     bool hasExif() const { return false; }
     const rtexif::TagDirectory *getExifData() const { return NULL; }
     bool hasIPTC() const { return false; }
-    const procparams::IPTCPairs getIPTCData () const { return procparams::IPTCPairs(); }
+    const rtengine::procparams::IPTCPairs getIPTCData () const { return rtengine::procparams::IPTCPairs(); }
     struct tm getDateTime () const { struct tm ret; return ret; }
-    time_t getDateTimeAsTS() const { time_t ret; return ret; }
+    time_t getDateTimeAsTS() const { return time_t(-1); }
     int getISOSpeed() const { return iso; }
     double getFNumber() const { return fnumber; }
     double getFocalLen() const { return focalLen; }

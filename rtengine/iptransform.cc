@@ -24,6 +24,7 @@
 #include "mytime.h"
 #include "rt_math.h"
 #include "sleef.c"
+#include "rtlensfun.h"
 
 
 using namespace std;
@@ -86,16 +87,18 @@ float normn (float a, float b, int n)
 }
 
 
-void correct_distortion(const rtengine::LCPMapper *lcp, double &x, double &y,
+inline void correct_distortion(const rtengine::LensCorrection *lcp, double &x, double &y,
                         int cx, int cy, double scale)
 {
     assert (lcp);
 
-    x += cx;
-    y += cy;
-    lcp->correctDistortion(x, y, scale);
-    x -= (cx * scale);
-    y -= (cy * scale);
+    // x += cx;
+    // y += cy;
+    // std::cout << "DIST: x=" << x << ", y=" << y;
+    lcp->correctDistortion(x, y, cx, cy, scale);
+    // std::cout << " --> pos[0]=" << x << ", pos[1]=" << y << std::endl;
+    // x -= (cx * scale);
+    // y -= (cy * scale);
 }
 
 }
@@ -107,7 +110,7 @@ namespace rtengine
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 
 bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef,
-                                  const LCPMapper *pLCPMap)
+                                  const LensCorrection *pLCPMap)
 {
 
     bool clipped = false;
@@ -209,7 +212,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
 }
 
 // Transform all corners and critical sidelines of an image
-bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef, const LCPMapper *pLCPMap)
+bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef, const LensCorrection *pLCPMap)
 {
     const int DivisionsPerBorder = 32;
 
@@ -316,9 +319,30 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     float focusDist = metadata->getFocusDist();
     double fNumber = metadata->getFNumber();
 
-    LCPMapper *pLCPMap = nullptr;
+    LensCorrection *pLCPMap = nullptr;
 
-    if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
+    if (needsLensfun()) {
+        const LFDatabase *db = LFDatabase::getInstance();
+        Glib::ustring make, model, lens;
+        if (params->lensProf.lfAutoMatch) {
+            make = metadata->getMake();
+            model = metadata->getModel();
+            lens = metadata->getLens();
+        } else {
+            make = params->lensProf.lfCameraMake;
+            model = params->lensProf.lfCameraModel;
+            lens = params->lensProf.lfLens;
+        }
+        LFCamera c = db->findCamera(make, model);
+        LFLens l = db->findLens(c, lens);
+        pLCPMap = db->getModifier(c, l, fW, fH, focalLen, fNumber, focusDist);
+
+        std::cout << "LENSFUN:\n"
+                  << "  camera: " << c.getDisplayString() << "\n"
+                  << "  lens: " << l.getDisplayString() << "\n"
+                  << "  correction? " << (pLCPMap ? "yes" : "no") << std::endl;
+        
+    } else if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         LCPProfile *pLCPProf = lcpStore->getProfile (params->lensProf.lcpFile);
 
         if (pLCPProf) {
@@ -329,7 +353,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
         }
     }
 
-    if (! (needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
+    if (! (needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
         transformLuminanceOnly (original, transformed, cx, cy, oW, oH, fW, fH);
     } else {
         TransformMode mode;
@@ -734,7 +758,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 }
 
 
-void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap)
+void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap)
 {
     double w2 = (double) oW  / 2.0 - 0.5;
     double h2 = (double) oH  / 2.0 - 0.5;
@@ -801,7 +825,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
     switch (mode) {
     case ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE:
-        enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->enableCA;
+        enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->supportsCA();
         // no break on purpose
     case ImProcFunctions::TRANSFORM_HIGH_QUALITY:
         enableLCPDist = pLCPMap && params->lensProf.useDist;
@@ -958,9 +982,13 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 }
 
 
-double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap)
+double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LensCorrection *pLCPMap)
 {
     if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap == nullptr)) {
+        return 1;
+    }
+
+    if (pLCPMap && !pLCPMap->supportsAutoFill()) {
         return 1;
     }
 
@@ -1019,12 +1047,17 @@ bool ImProcFunctions::needsVignetting ()
 
 bool ImProcFunctions::needsLCP ()
 {
-    return params->lensProf.lcpFile.length() > 0;
+    return params->lensProf.lcpFile.length() > 0 && !needsLensfun();
+}
+
+bool ImProcFunctions::needsLensfun()
+{
+    return params->lensProf.useLensfun;
 }
 
 bool ImProcFunctions::needsTransform ()
 {
-    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP();
+    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsLensfun();
 }
 
 

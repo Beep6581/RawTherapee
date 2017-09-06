@@ -26,32 +26,46 @@ namespace rtengine {
 // LFModifier
 //-----------------------------------------------------------------------------
 
-bool LFModifier::ok() const
+LFModifier::LFModifier(lfModifier *m):
+    data_(m)
 {
-    return data_.get();
 }
 
 
-void LFModifier::correctDistortion(double &x, double &y)
+LFModifier::~LFModifier()
+{
+    if (data_) {
+        data_->Destroy();
+    }
+}
+
+bool LFModifier::ok() const
+{
+    return data_;
+}
+
+
+void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
 {
     if (!ok()) {
         return;
     }
 
     float pos[2];
-    data_->ApplyGeometryDistortion(x, y, 1, 1, pos);
-    x = pos[0];
-    y = pos[1];
+    if (data_->ApplyGeometryDistortion(x+cx, y+cy, 1, 1, pos)) {
+        x = pos[0] - cx;
+        y = pos[1] - cy;
+    }
 }
 
 
-void LFModifier::processVignetteLine(int width, int y, float *line)
+void LFModifier::processVignetteLine(int width, int y, float *line) const
 {
     // TODO
 }
 
 
-void LFModifier::processVignetteLine3Channels(int width, int y, float *line)
+void LFModifier::processVignetteLine3Channels(int width, int y, float *line) const
 {
     // TODO
 }
@@ -61,15 +75,21 @@ void LFModifier::processVignetteLine3Channels(int width, int y, float *line)
 // LFCamera
 //-----------------------------------------------------------------------------
 
+LFCamera::LFCamera():
+    data_(nullptr)
+{
+}
+
+
 bool LFCamera::ok() const
 {
-    return data_.get();
+    return data_;
 }
 
 
 Glib::ustring LFCamera::getMake() const
 {
-    if (ok()) {
+    if (data_) {
         return data_->Maker;
     } else {
         return "";
@@ -79,7 +99,7 @@ Glib::ustring LFCamera::getMake() const
 
 Glib::ustring LFCamera::getModel() const
 {
-    if (ok()) {
+    if (data_) {
         return data_->Model;
     } else {
         return "";
@@ -89,7 +109,7 @@ Glib::ustring LFCamera::getModel() const
 
 float LFCamera::getCropFactor() const
 {
-    if (ok()) {
+    if (data_) {
         return data_->CropFactor;
     } else {
         return 0;
@@ -99,7 +119,7 @@ float LFCamera::getCropFactor() const
 
 Glib::ustring LFCamera::getDisplayString() const
 {
-    if (ok()) {
+    if (data_) {
         return Glib::ustring::compose("%1 %2", getMake(), getModel());
     } else {
         return "---";
@@ -111,15 +131,21 @@ Glib::ustring LFCamera::getDisplayString() const
 // LFLens
 //-----------------------------------------------------------------------------
 
+LFLens::LFLens():
+    data_(nullptr)
+{
+}
+
+
 bool LFLens::ok() const
 {
-    return data_->get();
+    return data_;
 }
 
 
 Glib::ustring LFLens::getDisplayString() const
 {
-    if (ok()) {
+    if (data_) {
         return Glib::ustring::compose("%1 %2", data_->Maker, data_->Model);
     } else {
         return "---";
@@ -136,87 +162,111 @@ LFDatabase LFDatabase::instance_;
 
 bool LFDatabase::init()
 {
-    instance_.data_.reset(new lfDatabase());
+    instance_.data_ = lfDatabase::Create();
     return instance_.data_->Load() != LF_NO_ERROR;
 }
 
 
-LFDatabase *LFDatabase::getInstance()
+LFDatabase::LFDatabase():
+    data_(nullptr)
+{
+}
+
+
+LFDatabase::~LFDatabase()
+{
+    if (data_) {
+        data_->Destroy();
+    }
+}
+
+
+const LFDatabase *LFDatabase::getInstance()
 {
     return &instance_;
 }
 
 
-std::vector<LFCamera> LFDatabase::getCameras()
+std::vector<LFCamera> LFDatabase::getCameras() const
 {
-    auto cams = data_->GetCameras();
     std::vector<LFCamera> ret;
-    while (*cams) {
-        ret.emplace_back(LFCamera());
-        ret.back().data_.reset(new lfCamera(**cams));
-        ++cams;
-    }
+    if (data_) {
+        auto cams = data_->GetCameras();
+        while (*cams) {
+            ret.emplace_back(LFCamera());
+            ret.back().data_ = *cams;
+            ++cams;
+        }
+    }    
     return ret;
 }
 
 
-std::vector<LFLens> getLenses(const LFCamera &camera)
+std::vector<LFLens> LFDatabase::getLenses(const LFCamera &camera) const
 {
-    auto lenses = data_->FindLenses(*camera.data_->get(), NULL, "", LF_SEARCH_LOOSE | LF_SEARCH_SORT_AND_UNIQUIFY);
     std::vector<LFLens> ret;
-    while (*lenses) {
-        ret.emplace_back(LFLens());
-        ret.back().data_.reset(new lfLens(**lenses));
-        ++lenses;
+    if (data_) {
+        auto lenses = data_->FindLenses(camera.data_, NULL, "", LF_SEARCH_LOOSE /*| LF_SEARCH_SORT_AND_UNIQUIFY*/);
+        while (*lenses) {
+            ret.emplace_back(LFLens());
+            ret.back().data_ = *lenses;
+            ++lenses;
+        }
+        lf_free(lenses);
     }
-    lf_free(lenses);
     return ret;
 }
 
 
-LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model)
+LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model) const
 {
     LFCamera ret;
-    auto found = data_->FindCamerasExt(make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
-    if (found) {
-        ret.data_.reset(new lfCamera(*found[0]));
-        lf_free(found);
-    }
-    return ret;
-}
-
-
-LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name)
-{
-    LFLens ret;
-    auto found = data_->FindLenses(camera.data_.get(), NULL, name.c_str(), LF_SEARCH_LOOSE);
-    if (!found) {
-        // try to split the maker from the model of the lens
-        Glib::ustring make, model;
-        auto i = name.find_first_of(' ');
-        if (i != Glib::ustring::npos) {
-            make = name.substr(0, i);
-            model = name.substr(i+1);
-            found = data_->FindLenses(camera.data_.get(), make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
+    if (data_) {
+        auto found = data_->FindCamerasExt(make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
+        if (found) {
+            ret.data_ = found[0];
+            lf_free(found);
         }
     }
-    if (found) {
-        ret.data_.reset(new lfLens(*found[0]));
-        lf_free(found);
+    return ret;
+}
+
+
+LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) const
+{
+    LFLens ret;
+    if (data_) {
+        auto found = data_->FindLenses(camera.data_, NULL, name.c_str(), LF_SEARCH_LOOSE);
+        if (!found) {
+            // try to split the maker from the model of the lens
+            Glib::ustring make, model;
+            auto i = name.find_first_of(' ');
+            if (i != Glib::ustring::npos) {
+                make = name.substr(0, i);
+                model = name.substr(i+1);
+                found = data_->FindLenses(camera.data_, make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
+            }
+        }
+        if (found) {
+            ret.data_ = found[0];
+            lf_free(found);
+        }
     }
     return ret;
 }
 
 
-LFModifier LFDatabase::getModifier(const LFCamera &camera, const LFLens &lens,
-                                   int width, int height, float focalLen,
-                                   float aperture)
+LFModifier *LFDatabase::getModifier(const LFCamera &camera, const LFLens &lens,
+                                    int width, int height, float focalLen,
+                                    float aperture, float focusDist) const
 {
-    LFModifier ret;
-    if (camera.ok() && lens.ok()) {
-        lfModifier *mod = lfModifier::Create(lens.data_.get(), camera.getCropFactor(), width, height);
-        mod->Initialize(lens.data_.get(), LF_PF_F32, focalLen, aperture, 1000, 1, LF_RECTILINEAR, LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION, false);
-        ret.data_.reset(mod);
+    LFModifier *ret = nullptr;
+    if (data_) {
+        if (camera.ok() && lens.ok()) {
+            lfModifier *mod = lfModifier::Create(lens.data_, camera.getCropFactor(), width, height);
+            mod->Initialize(lens.data_, LF_PF_F32, focalLen, aperture, focusDist > 0 ? focusDist : 1000, 0.0, LF_RECTILINEAR, LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION, false);
+            ret = new LFModifier(mod);
+        }
     }
     return ret;
 }

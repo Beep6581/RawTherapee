@@ -169,6 +169,7 @@ if(WIN32)
         ${GLIBMM_INCLUDE_DIRS}
         ${GTKMM_INCLUDE_DIRS}
         ${GTK_INCLUDE_DIRS}
+        ${LENSFUN_INCLUDE_DIRS}
         )
     link_directories(. "${PROJECT_SOURCE_DIR}/rtexif"
         ${EXTRA_LIBDIR}
@@ -194,6 +195,7 @@ else()
         ${GTK_INCLUDE_DIRS}
         ${IPTCDATA_INCLUDE_DIRS}
         ${LCMS_INCLUDE_DIRS}
+        ${LENSFUN_INCLUDE_DIRS}
         )
     link_directories(${EXTRA_LIBDIR}
         ${CANBERRA-GTK_LIBRARY_DIRS}
@@ -251,6 +253,7 @@ target_link_libraries(rth rtengine
     ${PNG_LIBRARIES}
     ${TIFF_LIBRARIES}
     ${ZLIB_LIBRARIES}
+    ${LENSFUN_LIBRARIES}
     )
 
 target_link_libraries(rth-cli rtengine
@@ -270,6 +273,7 @@ target_link_libraries(rth-cli rtengine
     ${PNG_LIBRARIES}
     ${TIFF_LIBRARIES}
     ${ZLIB_LIBRARIES}
+    ${LENSFUN_LIBRARIES}
     )
 
 # Install executables

@@ -291,6 +291,11 @@ void ParamsEdited::set (bool v)
     lensProf.useDist = v;
     lensProf.useVign = v;
     lensProf.useCA = v;
+    lensProf.useLensfun = v;
+    lensProf.lfAutoMatch = v;
+    lensProf.lfCameraMake = v;
+    lensProf.lfCameraModel = v;
+    lensProf.lfLens = v;
     perspective.horizontal = v;
     perspective.vertical = v;
     gradient.enabled = v;
@@ -825,6 +830,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         lensProf.useDist = lensProf.useDist && p.lensProf.useDist == other.lensProf.useDist;
         lensProf.useVign = lensProf.useVign && p.lensProf.useVign == other.lensProf.useVign;
         lensProf.useCA = lensProf.useCA && p.lensProf.useCA == other.lensProf.useCA;
+        lensProf.useLensfun = lensProf.useLensfun && p.lensProf.useLensfun == other.lensProf.useLensfun;
+        lensProf.lfAutoMatch = lensProf.lfAutoMatch && p.lensProf.lfAutoMatch == other.lensProf.lfAutoMatch;
+        lensProf.lfCameraMake = lensProf.lfCameraMake && p.lensProf.lfCameraMake == other.lensProf.lfCameraMake;
+        lensProf.lfCameraModel = lensProf.lfCameraModel && p.lensProf.lfCameraModel == other.lensProf.lfCameraModel;
+        lensProf.lfLens = lensProf.lfLens && p.lensProf.lfLens == other.lensProf.lfLens;
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
         gradient.enabled = gradient.enabled && p.gradient.enabled == other.gradient.enabled;

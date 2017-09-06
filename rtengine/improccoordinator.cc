@@ -400,8 +400,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         }
 
         if (needstransform)
-            ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
+            ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, 
                            imgsrc->getMetaData(),
+                           // imgsrc->getMetaData()->getFocalLen(),
                            // imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getMetaData()->getFNumber(),
                            imgsrc->getRotateDegree(), false);
         else {
@@ -1120,7 +1121,7 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 
     MyMutex::MyLock lock (mProcessing);
 
-    LCPMapper *pLCPMap = nullptr;
+    LensCorrection *pLCPMap = nullptr;
 
     if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen() > 0) {
         LCPProfile *pLCPProf = lcpStore->getProfile (params.lensProf.lcpFile);

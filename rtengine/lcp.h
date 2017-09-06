@@ -136,8 +136,20 @@ public:
 #define lcpStore LCPStore::getInstance()
 
 
+class LensCorrection {
+public:
+    virtual ~LensCorrection() {}
+    virtual void correctDistortion(double &x, double &y, int cx, int cy, double scale) const = 0;
+    virtual bool supportsAutoFill() const = 0;
+    virtual bool supportsCA() const = 0;
+    virtual void correctCA(double &x, double &y, int channel) const = 0;
+    virtual void processVignetteLine(int width, int y, float *line) const = 0;
+    virtual void processVignetteLine3Channels(int width, int y, float *line) const = 0;
+};
+
+
 // Once precalculated class to correct a point
-class LCPMapper
+class LCPMapper: public LensCorrection
 {
 
     bool useCADist;  // should the distortion in the CA info be used?
@@ -153,7 +165,9 @@ public:
     LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
               const CoarseTransformParams& coarse, int rawRotationDeg);
 
-    void correctDistortion(double& x, double& y, double scale) const;  // MUST be the first stage
+    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const;  // MUST be the first stage
+    bool supportsCA() const { return enableCA; }
+    bool supportsAutoFill() const { return true; }
     void correctCA(double& x, double& y, int channel) const;
     void processVignetteLine(int width, int y, float *line) const;
     void processVignetteLine3Channels(int width, int y, float *line) const;

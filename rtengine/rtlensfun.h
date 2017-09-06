@@ -23,24 +23,34 @@
 #include <lensfun.h>
 #include <glibmm.h>
 #include <memory>
+#include "lcp.h"
 
 namespace rtengine {
 
-class LFModifier {
+class LFModifier: public LensCorrection {
 public:
+    ~LFModifier();
     bool ok() const;
     
-    void correctDistortion(double &x, double &y);
-    void processVignetteLine(int width, int y, float *line);
-    void processVignetteLine3Channels(int width, int y, float *line);
+    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const;
+    bool supportsAutoFill() const { return false; }
+    bool supportsCA() const { return false; }
+    void correctCA(double &x, double &y, int channel) const {}
+    void processVignetteLine(int width, int y, float *line) const;
+    void processVignetteLine3Channels(int width, int y, float *line) const;
     
 private:
+    explicit LFModifier(lfModifier *m);
+    LFModifier(const LFModifier &);
+    LFModifier &operator=(const LFModifier &);
+    
     friend class LFDatabase;
-    std::shared_ptr<lfModifier> data_;
+    lfModifier *data_;
 };
 
 class LFCamera {
 public:
+    LFCamera();
     bool ok() const;
     
     Glib::ustring getMake() const;
@@ -51,35 +61,41 @@ public:
 
 private:
     friend class LFDatabase;
-    std::shared_ptr<lfCamera> data_;
+    const lfCamera *data_;
 };
 
 class LFLens {
 public:
+    LFLens();
     bool ok() const;
     
     Glib::ustring getDisplayString() const;
 private:
     friend class LFDatabase;
-    std::shared_ptr<lfLens> data_;
+    const lfLens *data_;
 };
 
 class LFDatabase {
 public:
     static bool init();
-    static LFDatabase *getInstance();
+    static const LFDatabase *getInstance();
 
-    std::vector<LFCamera> getCameras();
-    std::vector<LFLens> getLenses(const LFCamera &camera);
-    LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model);
-    LFLens findLens(const LFCamera &camera, const Glib::ustring &name);
-    LFModifier getModifier(const LFCamera &camera, const LFLens &lens,
-                           int width, int height,
-                           float focalLen, float aperture);
+    ~LFDatabase();
+    
+    std::vector<LFCamera> getCameras() const;
+    std::vector<LFLens> getLenses(const LFCamera &camera) const;
+    LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
+    LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
+    LFModifier *getModifier(const LFCamera &camera, const LFLens &lens,
+                            int width, int height,
+                            float focalLen, float aperture, float focusDist) const;
 
 private:
+    LFDatabase();
+    LFDatabase(const LFDatabase &);
+    LFDatabase &operator=(const LFDatabase &);
     static LFDatabase instance_;
-    std::shared_ptr<lfDatabase> data_;
+    lfDatabase *data_;
 };
 
 } // namespace rtengine
