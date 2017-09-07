@@ -39,6 +39,7 @@ protected:
     void updateDisabled(bool enable);
     bool allowFocusDep;
     bool isRaw;
+    const rtengine::ImageMetaData* metadata;    
     LensGeometry *lensgeomLcpFill;
 
     Gtk::RadioButton::Group corrGroup;

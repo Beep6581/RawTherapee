@@ -36,6 +36,7 @@ LensProfilePanel::LensProfilePanel () :
     useVignChanged(false),
     useCAChanged(false),
     isRaw(true),
+    metadata(nullptr),
     lensgeomLcpFill(nullptr),
     useLensfunChanged(false),
     lensfunAutoChanged(false),
@@ -64,14 +65,14 @@ LensProfilePanel::LensProfilePanel () :
     lensfunLenses->pack_start(lensfunModelLens.lens);
     
     Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
-    hb->pack_start(*Gtk::manage(new Gtk::Label(M("LENSFUN_CAMERA"))), Gtk::PACK_SHRINK, 4);
+    hb->pack_start(*Gtk::manage(new Gtk::Label(M("EXIFFILTER_CAMERA"))), Gtk::PACK_SHRINK, 4);
     hb->pack_start(*lensfunCameras);
     pack_start(*hb);
 
     fillLensfunCameras();
     
     hb = Gtk::manage(new Gtk::HBox());
-    hb->pack_start(*Gtk::manage(new Gtk::Label(M("LENSFUN_LENS"))), Gtk::PACK_SHRINK, 4);
+    hb->pack_start(*Gtk::manage(new Gtk::Label(M("EXIFFILTER_LENS"))), Gtk::PACK_SHRINK, 4);
     hb->pack_start(*lensfunLenses);
     pack_start(*hb);
 
@@ -140,6 +141,8 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     disableListener ();
     conUseDist.block(true);
 
+    corrLensfunAuto->set_sensitive(true);
+    
     if (pp->lensProf.useLensfun) {
         if (pp->lensProf.lfAutoMatch) {
             corrLensfunAuto->set_active(true);
@@ -214,6 +217,16 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
     useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
 
+    if (!batchMode && metadata && pp->lensProf.useLensfun) {
+        std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(pp->lensProf, metadata, 100, 100, pp->coarse, -1));
+        if (!mod) {
+            corrOff->set_active(true);
+            if (pp->lensProf.lfAutoMatch) {
+                corrLensfunAuto->set_sensitive(false);
+            }
+        }
+    }
+
     enableListener ();
     conUseDist.block(false);
 }
@@ -232,6 +245,7 @@ void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta
     }
 
     isRaw = raw;
+    metadata = pMeta;
 }
 
 void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
