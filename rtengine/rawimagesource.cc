@@ -1858,20 +1858,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     if (!hasFlatField && lensProf.useVign) {
         std::unique_ptr<LensCorrection> pmap;
         if (lensProf.useLensfun) {
-            const LFDatabase *db = LFDatabase::getInstance();
-            Glib::ustring make, model, lens;
-            if (lensProf.lfAutoMatch) {
-                make = idata->getMake();
-                model = idata->getModel();
-                lens = idata->getLens();
-            } else {
-                make = lensProf.lfCameraMake;
-                model = lensProf.lfCameraModel;
-                lens = lensProf.lfLens;
-            }
-            LFCamera c = db->findCamera(make, model);
-            LFLens l = db->findLens(c, lens);
-            pmap.reset(db->getModifier(c, l, W, H, idata->getFocalLen(), idata->getFNumber(), idata->getFocusDist()));
+            pmap.reset(LFDatabase::findModifier(lensProf, idata, W, H, coarse, -1));
         } else {
             LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
 

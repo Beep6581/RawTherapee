@@ -24,6 +24,7 @@
 #include <glibmm.h>
 #include <memory>
 #include "lcp.h"
+#include "procparams.h"
 
 namespace rtengine {
 
@@ -40,12 +41,13 @@ public:
     void processVignetteLine3Channels(int width, int y, float *line) const;
     
 private:
-    explicit LFModifier(lfModifier *m);
+    explicit LFModifier(lfModifier *m, bool rotateXY);
     LFModifier(const LFModifier &);
     LFModifier &operator=(const LFModifier &);
     
     friend class LFDatabase;
     lfModifier *data_;
+    bool swap_xy_;
 };
 
 class LFCamera {
@@ -87,8 +89,10 @@ public:
     LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
     LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
     LFModifier *getModifier(const LFCamera &camera, const LFLens &lens,
-                            int width, int height,
-                            float focalLen, float aperture, float focusDist) const;
+                            float focalLen, float aperture, float focusDist,
+                            int width, int height, bool swap_xy) const;
+
+    static LFModifier *findModifier(const LensProfParams &lensProf, const ImageMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg);
 
 private:
     LFDatabase();

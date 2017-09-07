@@ -322,26 +322,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     LensCorrection *pLCPMap = nullptr;
 
     if (needsLensfun()) {
-        const LFDatabase *db = LFDatabase::getInstance();
-        Glib::ustring make, model, lens;
-        if (params->lensProf.lfAutoMatch) {
-            make = metadata->getMake();
-            model = metadata->getModel();
-            lens = metadata->getLens();
-        } else {
-            make = params->lensProf.lfCameraMake;
-            model = params->lensProf.lfCameraModel;
-            lens = params->lensProf.lfLens;
-        }
-        LFCamera c = db->findCamera(make, model);
-        LFLens l = db->findLens(c, lens);
-        pLCPMap = db->getModifier(c, l, fW, fH, focalLen, fNumber, focusDist);
-
-        std::cout << "LENSFUN:\n"
-                  << "  camera: " << c.getDisplayString() << "\n"
-                  << "  lens: " << l.getDisplayString() << "\n"
-                  << "  correction? " << (pLCPMap ? "yes" : "no") << std::endl;
-        
+        pLCPMap = LFDatabase::findModifier(params->lensProf, metadata, fW, fH, params->coarse, rawRotationDeg);
     } else if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         LCPProfile *pLCPProf = lcpStore->getProfile (params->lensProf.lcpFile);
 

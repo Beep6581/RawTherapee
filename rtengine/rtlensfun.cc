@@ -19,15 +19,20 @@
  */
 
 #include "rtlensfun.h"
+#include "settings.h"
+#include <iostream>
 
 namespace rtengine {
+
+extern const Settings *settings;
 
 //-----------------------------------------------------------------------------
 // LFModifier
 //-----------------------------------------------------------------------------
 
-LFModifier::LFModifier(lfModifier *m):
-    data_(m)
+LFModifier::LFModifier(lfModifier *m, bool swap_xy):
+    data_(m),
+    swap_xy_(swap_xy)
 {
 }
 
@@ -52,9 +57,17 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double 
     }
 
     float pos[2];
-    if (data_->ApplyGeometryDistortion(x+cx, y+cy, 1, 1, pos)) {
+    float xx = x + cx;
+    float yy = y + cy;
+    if (swap_xy_) {
+        std::swap(xx, yy);
+    }
+    if (data_->ApplyGeometryDistortion(xx, yy, 1, 1, pos)) {
         x = pos[0] - cx;
         y = pos[1] - cy;
+        if (swap_xy_) {
+            std::swap(x, y);
+        }
     }
 }
 
@@ -257,17 +270,55 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
 
 
 LFModifier *LFDatabase::getModifier(const LFCamera &camera, const LFLens &lens,
-                                    int width, int height, float focalLen,
-                                    float aperture, float focusDist) const
+                                    float focalLen, float aperture, float focusDist,
+                                    int width, int height, bool swap_xy) const
 {
     LFModifier *ret = nullptr;
     if (data_) {
         if (camera.ok() && lens.ok()) {
             lfModifier *mod = lfModifier::Create(lens.data_, camera.getCropFactor(), width, height);
             mod->Initialize(lens.data_, LF_PF_F32, focalLen, aperture, focusDist > 0 ? focusDist : 1000, 0.0, LF_RECTILINEAR, LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION, false);
-            ret = new LFModifier(mod);
+            ret = new LFModifier(mod, swap_xy);
         }
     }
+    return ret;
+}
+
+
+LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const ImageMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg)
+{
+    const LFDatabase *db = getInstance();
+    Glib::ustring make, model, lens;
+    if (lensProf.lfAutoMatch) {
+        make = idata->getMake();
+        model = idata->getModel();
+        lens = idata->getLens();
+    } else {
+        make = lensProf.lfCameraMake;
+        model = lensProf.lfCameraModel;
+        lens = lensProf.lfLens;
+    }
+    LFCamera c = db->findCamera(make, model);
+    LFLens l = db->findLens(c, lens);
+    bool swap_xy = false;
+    if (rawRotationDeg >= 0) {
+        int rot = (coarse.rotate + rawRotationDeg) % 360;
+        swap_xy = (rot == 90 || rot == 270);
+        if (swap_xy) {
+            std::swap(width, height);
+        }
+    }
+    
+    LFModifier *ret = db->getModifier(c, l, idata->getFocalLen(), idata->getFNumber(), idata->getFocusDist(), width, height, swap_xy);
+
+
+    if (settings->verbose) {
+        std::cout << "LENSFUN:\n"
+                  << "  camera: " << c.getDisplayString() << "\n"
+                  << "  lens: " << l.getDisplayString() << "\n"
+                  << "  correction? " << (ret ? "yes" : "no") << std::endl;
+    }
+
     return ret;
 }
     
