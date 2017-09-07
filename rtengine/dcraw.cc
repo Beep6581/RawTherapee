@@ -25,7 +25,8 @@
 /*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
-
+#define BENCHMARK
+#include "StopWatch.h"
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2016 by Dave Coffin, dcoffin a cybercom o net
@@ -9754,7 +9755,40 @@ static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max
     fprintf(stderr, "DNG Float: NaN data found in input file\n");
 }
 
+static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned char *out) {
+
+    int ret;
+    z_stream strm;
+    /* allocate inflate state */
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    strm.avail_in = 0;
+    strm.next_in = Z_NULL;
+    ret = inflateInit(&strm);
+    if (ret != Z_OK) {
+        return ret;
+    }
+    strm.avail_out = dstLen;
+    strm.next_out = out;
+    strm.avail_in = srcLen;
+    strm.next_in = in;
+    ret = inflate(&strm, Z_NO_FLUSH);
+    switch (ret) {
+    case Z_NEED_DICT:
+        ret = Z_DATA_ERROR;     /* and fall through */
+    case Z_DATA_ERROR:
+    case Z_MEM_ERROR:
+        (void)inflateEnd(&strm);
+        return ret;
+    }
+    /* clean up and return */
+    (void)inflateEnd(&strm);
+    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+}
+
 void CLASS deflate_dng_load_raw() {
+    BENCHFUN
     float_raw_image = new float[raw_width * raw_height];
 
 #ifdef _OPENMP
@@ -9815,27 +9849,27 @@ void CLASS deflate_dng_load_raw() {
     }
     uLongf dstLen = tile_width * tile_length * 4;
 
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
+#ifdef _OPENMP
 #pragma omp parallel
 #endif
 {
     Bytef * cBuffer = new Bytef[maxCompressed];
     Bytef * uBuffer = new Bytef[dstLen];
 
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
-#pragma omp for collapse(2) nowait
+#ifdef _OPENMP
+#pragma omp for collapse(2) schedule(dynamic) nowait
 #endif
     for (size_t y = 0; y < raw_height; y += tile_length) {
       for (size_t x = 0; x < raw_width; x += tile_width) {
 		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
+#ifdef _OPENMP
 #pragma omp critical
 #endif
 {
         fseek(ifp, tileOffsets[t], SEEK_SET);
         fread(cBuffer, 1, tileBytes[t], ifp);
 }
-        int err = uncompress(uBuffer, &dstLen, cBuffer, tileBytes[t]);
+        int err = decompress(tileBytes[t], dstLen, cBuffer, uBuffer);
         if (err != Z_OK) {
           fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
         } else if (ifd->sample_format == 3) {  // Floating point data
