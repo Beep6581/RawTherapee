@@ -1024,9 +1024,9 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         int c = FC(rr, cc);
                         int GRBdir0 = GRBdir[0][c];
                         int GRBdir1 = GRBdir[1][c];
+#ifdef __SSE2__
                         vfloat shifthfracc = F2V(shifthfrac[c]);
                         vfloat shiftvfracc = F2V(shiftvfrac[c]);
-#ifdef __SSE2__
                         for (int indx = rr * ts + cc; cc < cc1 - 14; cc += 8, indx += 8) {
                             //interpolate colour difference from optical R/B locations to grid locations
                             vfloat grbdiffinthfloor = vintpf(shifthfracc, LVFU(grbdiff[(indx - GRBdir1) >> 1]), LVFU(grbdiff[indx >> 1]));
