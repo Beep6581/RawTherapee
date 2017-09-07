@@ -54,7 +54,43 @@ int notifyListenerUI (void* data)
 
 }
 
-Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true), opt(0), wDirty(true), hDirty(true), xDirty(true), yDirty(true), lastFixRatio(true)
+Crop::Crop():
+    FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
+    crop_ratios{
+        {"3:2", 3.0 / 2.0},                 // L1.5,        P0.666...
+        {"4:3", 4.0 / 3.0},                 // L1.333...,   P0.75
+        {"16:9", 16.0 / 9.0},               // L1.777...,   P0.5625
+        {"16:10", 16.0 / 10.0},             // L1.6,        P0.625
+        {"1:1", 1.0 / 1.0},                 // L1,          P1
+        {"2:1", 2.0 / 1.0},                 // L2,          P0.5
+        {"3:1", 3.0 / 1.0},                 // L3,          P0.333...
+        {"4:1", 4.0 / 1.0},                 // L4,          P0.25
+        {"5:1", 5.0 / 1.0},                 // L5,          P0.2
+        {"6:1", 6.0 / 1.0},                 // L6,          P0.1666...
+        {"7:1", 7.0 / 1.0},                 // L7,          P0.142...
+        {"4:5", 4.0 / 5.0},                 // L1.25,       P0.8
+        {"5:7", 5.0 / 7.0},                 // L1.4,        P0.714...
+        {"6:7", 6.0 / 7.0},                 // L1.166...,   P0.857...
+        {"6:17", 6.0 / 17.0},               // L2.833...,   P0.352...
+        {"24:65 - XPAN", 24.0 / 65.0},      // L2.708...,   P0.369...
+        {"1.414 - DIN EN ISO 216", 1.414},  // L1.414,      P0.707...
+        {"3.5:5", 3.5 / 5.0},               // L1.428...,   P0.7
+        {"8.5:11 - US Letter", 8.5 / 11.0}, // L1.294...,   P0.772...
+        {"9.5:12", 9.5 / 12.0},             // L1.263...,   P0.791...
+        {"10:12", 10.0 / 12.0},             // L1.2,        P0.833...
+        {"11:14", 11.0 / 14.0},             // L1.272...,   P0.785...
+        {"11:17 - Tabloid", 11.0 / 17.0},   // L1.545...,   P0.647...
+        {"13:19", 13.0 / 19.0},             // L1.461...,   P0.684...
+        {"17:22", 17.0 / 22.0},             // L1.294...,   P0.772...
+        {"45:35 - ePassport", 45.0 / 35.0}, // L1.285,...   P0.777...
+        {"64:27", 64.0 / 27.0},             // L2.370...,   P0.421...
+    },
+    opt(0),
+    wDirty(true),
+    hDirty(true),
+    xDirty(true),
+    yDirty(true),
+    lastFixRatio(true)
 {
 
     clistener = nullptr;
@@ -145,70 +181,9 @@ Crop::Crop (): FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
     ppi->set_value (300);
     // ppibox END
 
-    /****************
-    * Crop Ratio
-    *****************/
-    int NumberOfCropRatios = 26;    //!!! change this value when adding new crop ratios
-    cropratio.resize (NumberOfCropRatios);
-                                                    // Landscape    Portrait
-    cropratio[0].label  = "3:2";
-    cropratio[0].value  = 3.0 / 2.0;                // 1.5          0.666...
-    cropratio[1].label  = "4:3";
-    cropratio[1].value  = 4.0 / 3.0;                // 1.333...     0.75
-    cropratio[2].label  = "16:9";
-    cropratio[2].value  = 16.0 / 9.0;               // 1.777...     0.5625
-    cropratio[3].label  = "16:10";
-    cropratio[3].value  = 16.0 / 10.0;              // 1.6          0.625
-    cropratio[4].label  = "1:1";
-    cropratio[4].value  = 1.0 / 1.0;                // 1            1
-    cropratio[5].label  = "2:1";
-    cropratio[5].value  = 2.0 / 1.0;                // 2            0.5
-    cropratio[6].label  = "3:1";
-    cropratio[6].value  = 3.0 / 1.0;                // 3            0.333...
-    cropratio[7].label  = "4:1";
-    cropratio[7].value  = 4.0 / 1.0;                // 4            0.25
-    cropratio[8].label  = "5:1";
-    cropratio[8].value  = 5.0 / 1.0;                // 5            0.2
-    cropratio[9].label  = "6:1";
-    cropratio[9].value  = 6.0 / 1.0;                // 6            0.1666...
-    cropratio[10].label = "7:1";
-    cropratio[10].value = 7.0 / 1.0;                // 7            0.142
-    cropratio[11].label = "4:5";
-    cropratio[11].value = 4.0 / 5.0;                // 1.25         0.8
-    cropratio[12].label = "5:7";
-    cropratio[12].value = 5.0 / 7.0;                // 1.4          0.714...
-    cropratio[13].label = "6:7";
-    cropratio[13].value = 6.0 / 7.0;                // 1,166...     0.857...
-    cropratio[14].label = "6:17";
-    cropratio[14].value = 6.0 / 17.0;               // 2.833...     0.352...
-    cropratio[15].label = "24:65 - XPAN";
-    cropratio[15].value = 24.0 / 65.0;              // 2.708...     0.369...
-    cropratio[16].label = "1.414 - DIN EN ISO 216";
-    cropratio[16].value = 1.414;                    // 1.414        0.707...
-    cropratio[17].label = "3.5:5";
-    cropratio[17].value = 3.5 / 5.0;                // 1.428        0.7
-    cropratio[18].label = "8.5:11 - US Letter";
-    cropratio[18].value = 8.5 / 11.0;               // 1.294        0.772...
-    cropratio[19].label = "9.5:12";
-    cropratio[19].value = 9.5 / 12.0;               // 1.263        0.791...
-    cropratio[20].label = "10:12";
-    cropratio[20].value = 10.0 / 12.0;              // 1.2          0.833...
-    cropratio[21].label = "11:14";
-    cropratio[21].value = 11.0 / 14.0;              // 1.272...     0.785
-    cropratio[22].label = "11:17 - Tabloid";
-    cropratio[22].value = 11.0 / 17.0;              // 1.545...     0.647...
-    cropratio[23].label = "13:19";
-    cropratio[23].value = 13.0 / 19.0;              // 1.461...     0.684
-    cropratio[24].label = "17:22";
-    cropratio[24].value = 17.0 / 22.0;              // 1.294        0.772...
-    cropratio[25].label = "45:35 - ePassport";
-    cropratio[25].value = 45.0 / 35.0;              // 1.285        0.777...
-
-
-
-    // populate the combobox
-    for (int i = 0; i < NumberOfCropRatios; i++) {
-        ratio->append (cropratio[i].label);
+    // Populate the combobox
+    for (const auto& crop_ratio : crop_ratios) {
+        ratio->append (crop_ratio.label);
     }
 
     ratio->set_active (0);
@@ -320,7 +295,7 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
     ratio->set_active_text (pp->crop.ratio);
     fixr->set_active (pp->crop.fixratio);
 
-    const bool flip_orientation = pp->crop.fixratio && cropratio[ratio->get_active_row_number()].value < 1.0;
+    const bool flip_orientation = pp->crop.fixratio && crop_ratios[ratio->get_active_row_number()].value < 1.0;
 
     if (pp->crop.orientation == "Landscape") {
         orientation->set_active (flip_orientation ? 1 : 0);
@@ -415,7 +390,7 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
     pp->crop.ratio = ratio->get_active_text ();
 
     // for historical reasons we store orientation different if ratio is written as 2:3 instead of 3:2, but in GUI 'landscape' is always long side horizontal regardless of the ratio is written short or long side first.
-    const bool flip_orientation = fixr->get_active() && cropratio[ratio->get_active_row_number()].value < 1.0;
+    const bool flip_orientation = fixr->get_active() && crop_ratios[ratio->get_active_row_number()].value < 1.0;
 
     if (orientation->get_active_row_number() == 0) {
         pp->crop.orientation = flip_orientation ? "Portrait" : "Landscape";
@@ -1289,7 +1264,7 @@ double Crop::getRatio ()
         return r;
     }
 
-    r = cropratio[ratio->get_active_row_number()].value;
+    r = crop_ratios[ratio->get_active_row_number()].value;
 
     if (r < 1.0) {
         r = 1.0 / r;    // convert to long side first (eg 4:5 becomes 5:4)
