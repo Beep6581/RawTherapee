@@ -322,7 +322,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     LensCorrection *pLCPMap = nullptr;
 
     if (needsLensfun()) {
-        pLCPMap = LFDatabase::findModifier(params->lensProf, metadata, fW, fH, params->coarse, rawRotationDeg);
+        pLCPMap = LFDatabase::findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
     } else if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         LCPProfile *pLCPProf = lcpStore->getProfile (params->lensProf.lcpFile);
 
