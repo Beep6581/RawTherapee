@@ -33,6 +33,7 @@
 #include "dcp.h"
 #include "rt_math.h"
 #include "improcfun.h"
+#include "rtlensfun.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -1855,11 +1856,32 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     // Correct vignetting of lens profile
     if (!hasFlatField && lensProf.useVign) {
-        LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
+        std::unique_ptr<LensCorrection> pmap;
+        if (lensProf.useLensfun) {
+            const LFDatabase *db = LFDatabase::getInstance();
+            Glib::ustring make, model, lens;
+            if (lensProf.lfAutoMatch) {
+                make = idata->getMake();
+                model = idata->getModel();
+                lens = idata->getLens();
+            } else {
+                make = lensProf.lfCameraMake;
+                model = lensProf.lfCameraModel;
+                lens = lensProf.lfLens;
+            }
+            LFCamera c = db->findCamera(make, model);
+            LFLens l = db->findLens(c, lens);
+            pmap.reset(db->getModifier(c, l, W, H, idata->getFocalLen(), idata->getFNumber(), idata->getFocusDist()));
+        } else {
+            LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
 
-        if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
-            LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
+            if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
+                pmap.reset(new LCPMapper(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1));
+            }
+        }
 
+        if (pmap) {
+            LensCorrection &map = *pmap;
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
                 if(numFrames == 4) {
                     for(int i = 0; i < 4; ++i) {

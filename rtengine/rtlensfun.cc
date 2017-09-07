@@ -61,13 +61,13 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double 
 
 void LFModifier::processVignetteLine(int width, int y, float *line) const
 {
-    // TODO
+    data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_1(INTENSITY), 0);
 }
 
 
 void LFModifier::processVignetteLine3Channels(int width, int y, float *line) const
 {
-    // TODO
+    data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_3(RED, GREEN, BLUE), 0);
 }
 
 
