@@ -140,7 +140,6 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     disableListener ();
     conUseDist.block(true);
 
-    corrOff->set_active(true);
     if (pp->lensProf.useLensfun) {
         if (pp->lensProf.lfAutoMatch) {
             corrLensfunAuto->set_active(true);
@@ -164,6 +163,8 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         }
 
         updateDisabled(false);
+
+        corrOff->set_active(true);
     }
 
     ckbUseDist->set_active (pp->lensProf.useDist);
@@ -415,6 +416,7 @@ void LensProfilePanel::onCorrModeChanged()
 
     if (corrOff->get_active()) {
         useLensfunChanged = true;
+        lensfunAutoChanged = true;
         lcpFileChanged = true;
         
         lensfunCameras->set_sensitive(false);
@@ -426,6 +428,7 @@ void LensProfilePanel::onCorrModeChanged()
         mode = M("LENSPROFILE_CORRECTION_OFF");
     } else if (corrLensfunAuto->get_active()) {
         useLensfunChanged = true;
+        lensfunAutoChanged = true;
         lcpFileChanged = true;
         useDistChanged = true;
         useVignChanged = true;
@@ -440,7 +443,7 @@ void LensProfilePanel::onCorrModeChanged()
         mode = M("LENSPROFILE_CORRECTION_AUTOMATCH");
     } else if (corrLensfunManual->get_active()) {
         useLensfunChanged = true;
-        lcpFileChanged = true;
+        lensfunAutoChanged = true;
         lcpFileChanged = true;
         useDistChanged = true;
         useVignChanged = true;
@@ -455,7 +458,7 @@ void LensProfilePanel::onCorrModeChanged()
         mode = M("LENSPROFILE_CORRECTION_MANUAL");
     } else if (corrLcpFile->get_active()) {
         useLensfunChanged = true;
-        lcpFileChanged = true;
+        lensfunAutoChanged = true;
         lcpFileChanged = true;
         useDistChanged = true;
         useVignChanged = true;

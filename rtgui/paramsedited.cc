@@ -2078,6 +2078,26 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.lensProf.useCA           = mods.lensProf.useCA;
     }
 
+    if (lensProf.useLensfun) {
+        toEdit.lensProf.useLensfun = mods.lensProf.useLensfun;
+    }
+
+    if (lensProf.lfAutoMatch) {
+        toEdit.lensProf.lfAutoMatch = mods.lensProf.lfAutoMatch;
+    }
+
+    if (lensProf.lfCameraMake) {
+        toEdit.lensProf.lfCameraMake = mods.lensProf.lfCameraMake;
+    }
+
+    if (lensProf.lfCameraModel) {
+        toEdit.lensProf.lfCameraModel = mods.lensProf.lfCameraModel;
+    }
+
+    if (lensProf.lfLens) {
+        toEdit.lensProf.lfLens = mods.lensProf.lfLens;
+    }
+
     if (perspective.horizontal) {
         toEdit.perspective.horizontal     = dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
     }
