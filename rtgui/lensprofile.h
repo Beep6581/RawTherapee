@@ -41,6 +41,42 @@ protected:
     bool isRaw;
     LensGeometry *lensgeomLcpFill;
 
+    Gtk::RadioButton::Group corrGroup;
+    Gtk::RadioButton *corrOff;
+    Gtk::RadioButton *corrLensfunAuto;
+    Gtk::RadioButton *corrLensfunManual;
+    Gtk::RadioButton *corrLcpFile;
+    Gtk::RadioButton *corrUnchanged;
+    MyComboBox *lensfunCameras;
+    MyComboBox *lensfunLenses;
+
+    class LFModelCam: public Gtk::TreeModel::ColumnRecord {
+    public:
+        LFModelCam() { add(make); add(model); }
+        Gtk::TreeModelColumn<Glib::ustring> make;
+        Gtk::TreeModelColumn<Glib::ustring> model;
+    };
+
+    class LFModelLens: public Gtk::TreeModel::ColumnRecord {
+    public:
+        LFModelLens() { add(lens); }
+        Gtk::TreeModelColumn<Glib::ustring> lens;
+    };
+
+    LFModelCam lensfunModelCam;
+    LFModelLens lensfunModelLens;
+    
+    Glib::RefPtr<Gtk::TreeStore> lensfunCameraModel;
+    Glib::RefPtr<Gtk::TreeStore> lensfunLensModel;
+
+    bool useLensfunChanged;
+    bool lensfunAutoChanged;
+    bool lensfunCameraChanged;
+    bool lensfunLensChanged;
+
+    void fillLensfunCameras();
+    void fillLensfunLenses();
+    
 public:
 
     LensProfilePanel ();
@@ -58,6 +94,12 @@ public:
     {
         lensgeomLcpFill = foo ;
     };
+
+    void setBatchMode(bool yes);
+
+    void onLensfunCameraChanged();
+    void onLensfunLensChanged();
+    void onCorrModeChanged();
 };
 
 #endif

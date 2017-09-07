@@ -215,17 +215,16 @@ std::vector<LFCamera> LFDatabase::getCameras() const
 }
 
 
-std::vector<LFLens> LFDatabase::getLenses(const LFCamera &camera) const
+std::vector<LFLens> LFDatabase::getLenses() const
 {
     std::vector<LFLens> ret;
     if (data_) {
-        auto lenses = data_->FindLenses(camera.data_, NULL, "", LF_SEARCH_LOOSE /*| LF_SEARCH_SORT_AND_UNIQUIFY*/);
+        auto lenses = data_->GetLenses();
         while (*lenses) {
             ret.emplace_back(LFLens());
             ret.back().data_ = *lenses;
             ++lenses;
         }
-        lf_free(lenses);
     }
     return ret;
 }

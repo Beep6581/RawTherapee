@@ -511,6 +511,10 @@ enum ProcEvent {
     EvCATgreensc = 481,
     EvCATybscen = 482,
     EvCATAutoyb = 483,
+    // profiled lens correction new events
+    EvLensCorrMode = 484,
+    EvLensCorrLensfunCamera = 488,
+    EvLensCorrLensfunLens = 489,
 
     NUMOFEVENTS
 

@@ -22,15 +22,66 @@
 #include "../rtengine/lcp.h"
 #include <sstream>
 #include "rtimage.h"
+#include "../rtengine/rtlensfun.h"
+#include <map>
+#include <set>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL")), lcpFileChanged(false), useDistChanged(false), useVignChanged(false), useCAChanged(false), isRaw(true), lensgeomLcpFill(nullptr)
+LensProfilePanel::LensProfilePanel () :
+    FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL")),
+    lcpFileChanged(false),
+    useDistChanged(false),
+    useVignChanged(false),
+    useCAChanged(false),
+    isRaw(true),
+    lensgeomLcpFill(nullptr),
+    useLensfunChanged(false),
+    lensfunAutoChanged(false),
+    lensfunCameraChanged(false),
+    lensfunLensChanged(false)
 {
-    hbLCPFile = Gtk::manage(new Gtk::HBox());
+    corrOff = Gtk::manage(new Gtk::RadioButton(M("LENSPROFILE_CORRECTION_OFF")));
+    pack_start(*corrOff);
 
-    lLCPFileHead = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
+    corrGroup = corrOff->get_group();
+    
+    corrLensfunAuto = Gtk::manage(new Gtk::RadioButton(corrGroup, M("LENSPROFILE_CORRECTION_AUTOMATCH")));
+    pack_start(*corrLensfunAuto);
+    
+    corrLensfunManual = Gtk::manage(new Gtk::RadioButton(corrGroup, M("LENSPROFILE_CORRECTION_MANUAL")));
+    pack_start(*corrLensfunManual);
+
+    lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
+    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
+    
+    lensfunCameras = Gtk::manage(new MyComboBox());
+    lensfunCameras->set_model(lensfunCameraModel);
+    lensfunCameras->pack_start(lensfunModelCam.model);
+    lensfunLenses = Gtk::manage(new MyComboBox());
+    lensfunLenses->set_model(lensfunLensModel);
+    lensfunLenses->pack_start(lensfunModelLens.lens);
+    
+    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    hb->pack_start(*Gtk::manage(new Gtk::Label(M("LENSFUN_CAMERA"))), Gtk::PACK_SHRINK, 4);
+    hb->pack_start(*lensfunCameras);
+    pack_start(*hb);
+
+    fillLensfunCameras();
+    
+    hb = Gtk::manage(new Gtk::HBox());
+    hb->pack_start(*Gtk::manage(new Gtk::Label(M("LENSFUN_LENS"))), Gtk::PACK_SHRINK, 4);
+    hb->pack_start(*lensfunLenses);
+    pack_start(*hb);
+
+    fillLensfunLenses();
+    
+    corrLcpFile = Gtk::manage(new Gtk::RadioButton(corrGroup));
+    hbLCPFile = Gtk::manage(new Gtk::HBox());
+    hbLCPFile->pack_start(*corrLcpFile, Gtk::PACK_SHRINK);
+
+    lLCPFileHead = Gtk::manage(new Gtk::Label(M("LENSPROFILE_CORRECTION_LCPFILE")));
     hbLCPFile->pack_start(*lLCPFileHead, Gtk::PACK_SHRINK, 4);
 
     fcbLCPFile = Gtk::manage(new MyFileChooserButton(M("TP_LENSPROFILE_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -74,6 +125,13 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
     ckbUseVign->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseVignChanged) );
     ckbUseCA->signal_toggled().connect( sigc::mem_fun(*this, &LensProfilePanel::onUseCAChanged) );
 
+    lensfunCameras->signal_changed().connect(sigc::mem_fun(*this, &LensProfilePanel::onLensfunCameraChanged));
+    lensfunLenses->signal_changed().connect(sigc::mem_fun(*this, &LensProfilePanel::onLensfunLensChanged));
+    corrOff->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
+    corrLensfunAuto->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
+    corrLensfunManual->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
+    corrLcpFile->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
+
     allowFocusDep = true;
 }
 
@@ -82,7 +140,15 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     disableListener ();
     conUseDist.block(true);
 
-    if (!pp->lensProf.lcpFile.empty() && lcpStore->isValidLCPFileName(pp->lensProf.lcpFile)) {
+    corrOff->set_active(true);
+    if (pp->lensProf.useLensfun) {
+        if (pp->lensProf.lfAutoMatch) {
+            corrLensfunAuto->set_active(true);
+        } else {
+            corrLensfunManual->set_active(true);
+        }
+    } else if (!pp->lensProf.lcpFile.empty() && lcpStore->isValidLCPFileName(pp->lensProf.lcpFile)) {
+        corrLcpFile->set_active(true);
         fcbLCPFile->set_filename (pp->lensProf.lcpFile);
         updateDisabled(true);
     } else {
@@ -104,7 +170,48 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
     ckbUseCA->set_active   (pp->lensProf.useCA && isRaw);
 
+    if (!pp->lensProf.lfCameraMake.empty() && !pp->lensProf.lfCameraModel.empty()) {
+        // search for the active row
+        for (auto row : lensfunCameraModel->children()) {
+            if (row[lensfunModelCam.make] == pp->lensProf.lfCameraMake) {
+                auto &c = row.children();
+                for (auto it = c.begin(), end = c.end(); it != end; ++it) {
+                    auto &childrow = *it;
+                    if (childrow[lensfunModelCam.model] == pp->lensProf.lfCameraModel) {
+                        lensfunCameras->set_active(it);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    if (!pp->lensProf.lfLens.empty()) {
+        // search for the active row
+        auto pos = pp->lensProf.lfLens.find_first_of(' ');
+        Glib::ustring make = "(Unknown)";
+        if (pos != Glib::ustring::npos) {
+            make = pp->lensProf.lfLens.substr(0, pos);
+        }
+        
+        for (auto row : lensfunCameraModel->children()) {
+            if (row[lensfunModelLens.lens] == make) {
+                auto &c = row.children();
+                for (auto it = c.begin(), end = c.end(); it != end; ++it) {
+                    auto &childrow = *it;
+                    if (childrow[lensfunModelLens.lens] == pp->lensProf.lfLens) {
+                        lensfunLenses->set_active(it);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    
     lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
+    useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
 
     enableListener ();
     conUseDist.block(false);
@@ -128,7 +235,7 @@ void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta
 
 void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-    if (lcpStore->isValidLCPFileName(fcbLCPFile->get_filename())) {
+    if (corrLcpFile->get_active() && lcpStore->isValidLCPFileName(fcbLCPFile->get_filename())) {
         pp->lensProf.lcpFile = fcbLCPFile->get_filename();
     } else {
         pp->lensProf.lcpFile = "";
@@ -138,11 +245,33 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
     pp->lensProf.useVign = ckbUseVign->get_active();
     pp->lensProf.useCA   = ckbUseCA->get_active();
 
+    pp->lensProf.useLensfun = corrLensfunAuto->get_active() || corrLensfunManual->get_active();
+    pp->lensProf.lfAutoMatch = corrLensfunAuto->get_active();
+    auto itc = lensfunCameras->get_active();
+    if (itc) {
+        pp->lensProf.lfCameraMake = (*itc)[lensfunModelCam.make];
+        pp->lensProf.lfCameraModel = (*itc)[lensfunModelCam.model];
+    } else {
+        pp->lensProf.lfCameraMake = "";
+        pp->lensProf.lfCameraModel = "";
+    }
+    auto itl = lensfunLenses->get_active();
+    if (itl) {
+        pp->lensProf.lfLens = (*itl)[lensfunModelLens.lens];
+    } else {
+        pp->lensProf.lfLens = "";
+    }
+
     if (pedited) {
         pedited->lensProf.lcpFile = lcpFileChanged;
         pedited->lensProf.useDist = useDistChanged;
         pedited->lensProf.useVign = useVignChanged;
         pedited->lensProf.useCA   = useCAChanged;
+        pedited->lensProf.useLensfun = useLensfunChanged;
+        pedited->lensProf.lfAutoMatch = lensfunAutoChanged;
+        pedited->lensProf.lfCameraMake = lensfunCameraChanged;
+        pedited->lensProf.lfCameraModel = lensfunCameraChanged;
+        pedited->lensProf.lfLens = lensfunLensChanged;
     }
 }
 
@@ -198,4 +327,147 @@ void LensProfilePanel::updateDisabled(bool enable)
     ckbUseDist->set_sensitive(enable);
     ckbUseVign->set_sensitive(enable && isRaw);
     ckbUseCA->set_sensitive(enable && allowFocusDep);
+}
+
+void LensProfilePanel::setBatchMode(bool yes)
+{
+    FoldableToolPanel::setBatchMode(yes);
+}
+
+
+void LensProfilePanel::fillLensfunCameras()
+{
+    std::map<Glib::ustring, std::set<Glib::ustring>> camnames;
+    auto camlist = LFDatabase::getInstance()->getCameras();
+    for (auto &c : camlist) {
+        camnames[c.getMake()].insert(c.getModel());
+    }
+    for (auto &p : camnames) {
+        Gtk::TreeModel::Row row = *(lensfunCameraModel->append());
+        row[lensfunModelCam.make] = p.first;
+        row[lensfunModelCam.model] = "";
+        for (auto &c : p.second) {
+            Gtk::TreeModel::Row child = *(lensfunCameraModel->append(row.children()));
+            child[lensfunModelCam.make] = p.first;
+            child[lensfunModelCam.model] = c;
+        }
+    }
+}
+
+
+void LensProfilePanel::fillLensfunLenses()
+{
+    std::map<Glib::ustring, std::set<Glib::ustring>> lenses;
+    auto lenslist = LFDatabase::getInstance()->getLenses();
+    for (auto &l : lenslist) {
+        auto name = l.getDisplayString();
+        auto pos = name.find_first_of(' ');
+        Glib::ustring make = "(Unknown)";
+        if (pos != Glib::ustring::npos) {
+            make = name.substr(0, pos);
+        }
+        lenses[make].insert(name);
+    }
+    for (auto &p : lenses) {
+        Gtk::TreeModel::Row row = *(lensfunLensModel->append());
+        row[lensfunModelLens.lens] = p.first;
+        for (auto &c : p.second) {
+            Gtk::TreeModel::Row child = *(lensfunLensModel->append(row.children()));
+            child[lensfunModelLens.lens] = c;
+        }
+    }
+}
+
+
+void LensProfilePanel::onLensfunCameraChanged()
+{
+    auto iter = lensfunCameras->get_active();
+
+    if (iter) {
+        lensfunCameraChanged = true;
+
+        if (listener) {
+            Glib::ustring name = (*iter)[lensfunModelCam.model];
+            listener->panelChanged(EvLensCorrLensfunCamera, name);
+        }
+    }
+}
+
+
+void LensProfilePanel::onLensfunLensChanged()
+{
+    auto iter = lensfunLenses->get_active();
+
+    if (iter) {
+        lensfunLensChanged = true;
+
+        if (listener) {
+            Glib::ustring name = (*iter)[lensfunModelLens.lens];
+            listener->panelChanged(EvLensCorrLensfunLens, name);
+        }
+    }
+}
+
+
+void LensProfilePanel::onCorrModeChanged()
+{
+    Glib::ustring mode;
+
+    if (corrOff->get_active()) {
+        useLensfunChanged = true;
+        lcpFileChanged = true;
+        
+        lensfunCameras->set_sensitive(false);
+        lensfunLenses->set_sensitive(false);
+        ckbUseDist->set_sensitive(false);
+        ckbUseVign->set_sensitive(false);
+        ckbUseCA->set_sensitive(false);
+        
+        mode = M("LENSPROFILE_CORRECTION_OFF");
+    } else if (corrLensfunAuto->get_active()) {
+        useLensfunChanged = true;
+        lcpFileChanged = true;
+        useDistChanged = true;
+        useVignChanged = true;
+
+        lensfunCameras->set_sensitive(false);
+        lensfunLenses->set_sensitive(false);
+
+        ckbUseDist->set_sensitive(true);
+        ckbUseVign->set_sensitive(true);
+        ckbUseCA->set_sensitive(false);
+
+        mode = M("LENSPROFILE_CORRECTION_AUTOMATCH");
+    } else if (corrLensfunManual->get_active()) {
+        useLensfunChanged = true;
+        lcpFileChanged = true;
+        lcpFileChanged = true;
+        useDistChanged = true;
+        useVignChanged = true;
+
+        lensfunCameras->set_sensitive(true);
+        lensfunLenses->set_sensitive(true);
+
+        ckbUseDist->set_sensitive(true);
+        ckbUseVign->set_sensitive(true);
+        ckbUseCA->set_sensitive(false);
+
+        mode = M("LENSPROFILE_CORRECTION_MANUAL");
+    } else if (corrLcpFile->get_active()) {
+        useLensfunChanged = true;
+        lcpFileChanged = true;
+        lcpFileChanged = true;
+        useDistChanged = true;
+        useVignChanged = true;
+
+        lensfunCameras->set_sensitive(false);
+        lensfunLenses->set_sensitive(false);
+        updateDisabled(true);
+
+        mode = M("LENSPROFILE_CORRECTION_LCPFILE");
+    }
+    
+    if (listener) {
+        listener->panelChanged(EvLensCorrMode, mode);
+    }
 }
