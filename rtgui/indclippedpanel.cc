@@ -24,38 +24,49 @@
 IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
 {
 
+    iFon  = new RTImage ("previewmodeF-focusScreen-on.png");
+    iFoff = new RTImage ("previewmodeF-focusScreen-off.png");
+
+    previewFocusMask = Gtk::manage (new Gtk::ToggleButton ());
+    previewFocusMask->set_relief(Gtk::RELIEF_NONE);
+    previewFocusMask->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWFOCUSMASK"));
+    previewFocusMask->set_image(*iFoff);
+
     Glib::ustring tt;
 
-    indclippedh = Gtk::manage (new Gtk::ToggleButton ());
-    indclippedh->set_relief(Gtk::RELIEF_NONE);
-    indclippedh->add (*Gtk::manage (new RTImage ("warnhl.png")));
+    indClippedH = Gtk::manage (new Gtk::ToggleButton ());
+    indClippedH->set_relief(Gtk::RELIEF_NONE);
+    indClippedH->add (*Gtk::manage (new RTImage ("warnhl.png")));
     tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDH"), M("MAIN_TOOLTIP_THRESHOLD"), options.highlightThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {
-        indclippedh->set_tooltip_text (tt);
+        indClippedH->set_tooltip_text (tt);
     } else {
-        indclippedh->set_tooltip_markup (tt);
+        indClippedH->set_tooltip_markup (tt);
     }
 
-    indclippeds = Gtk::manage (new Gtk::ToggleButton ());
-    indclippeds->set_relief(Gtk::RELIEF_NONE);
-    indclippeds->add (*Gtk::manage (new RTImage ("warnsh.png")));
+    indClippedS = Gtk::manage (new Gtk::ToggleButton ());
+    indClippedS->set_relief(Gtk::RELIEF_NONE);
+    indClippedS->add (*Gtk::manage (new RTImage ("warnsh.png")));
     tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDS"), M("MAIN_TOOLTIP_THRESHOLD"), options.shadowThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {
-        indclippeds->set_tooltip_text (tt);
+        indClippedS->set_tooltip_text (tt);
     } else {
-        indclippeds->set_tooltip_markup (tt);
+        indClippedS->set_tooltip_markup (tt);
     }
 
-    indclippedh->set_active (options.showClippedHighlights);
-    indclippeds->set_active (options.showClippedShadows);
+    previewFocusMask->set_active (false);
+    indClippedH->set_active (options.showClippedHighlights);
+    indClippedS->set_active (options.showClippedShadows);
 
-    pack_start (*indclippeds, Gtk::PACK_SHRINK, 0);
-    pack_start (*indclippedh, Gtk::PACK_SHRINK, 0);
+    pack_start (*previewFocusMask, Gtk::PACK_SHRINK, 0);
+    pack_start (*indClippedS, Gtk::PACK_SHRINK, 0);
+    pack_start (*indClippedH, Gtk::PACK_SHRINK, 0);
 
-    indclippedh->signal_toggled().connect( sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled) );
-    indclippeds->signal_toggled().connect( sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled) );
+    connFocusMask = previewFocusMask->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled), previewFocusMask) );
+    connClippedS = indClippedS->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled), indClippedS) );
+    connClippedH = indClippedH->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &IndicateClippedPanel::buttonToggled), indClippedH) );
 
     show_all ();
 }
@@ -64,14 +75,41 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
 void IndicateClippedPanel::toggleClipped (bool highlights)
 {
     if (highlights) {
-        indclippedh->set_active(!indclippedh->get_active());
+        indClippedH->set_active(!indClippedH->get_active());
     } else {
-        indclippeds->set_active(!indclippeds->get_active());
+        indClippedS->set_active(!indClippedS->get_active());
     }
 }
 
-void IndicateClippedPanel::buttonToggled ()
+void IndicateClippedPanel::toggleFocusMask ()
 {
+    previewFocusMask->set_active(!previewFocusMask->get_active());
+}
+
+void IndicateClippedPanel::buttonToggled (Gtk::ToggleButton* tb)
+{
+
+    connFocusMask.block(true);
+    connClippedS.block(true);
+    connClippedH.block(true);
+
+    if (tb != previewFocusMask) {
+        previewFocusMask->set_active(false);
+    } else {
+        if (indClippedS->get_active()) {
+            indClippedS->set_active(false);
+        }
+        if (indClippedH->get_active()) {
+            indClippedH->set_active(false);
+        }
+    }
+
+    previewFocusMask->set_image(previewFocusMask->get_active() ? *iFon : *iFoff);
+
+    connFocusMask.block(false);
+    connClippedS.block(false);
+    connClippedH.block(false);
+
     imageArea->queue_draw ();
 
     // this will redraw the linked Before image area
@@ -79,4 +117,10 @@ void IndicateClippedPanel::buttonToggled ()
     if (imageArea->iLinkedImageArea != nullptr) {
         imageArea->iLinkedImageArea->queue_draw ();
     }
+}
+
+IndicateClippedPanel::~IndicateClippedPanel ()
+{
+    delete iFon;
+    delete iFoff;
 }

@@ -134,12 +134,12 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
     }
 
     // local variables
-    const int width = W, height = H;
+    const int width = W + (W & 1), height = H;
     //temporary array to store simple interpolation of G
-    float *Gtmp = (float (*)) malloc ((height * width + ((height * width) & 1)) / 2 * sizeof * Gtmp);
+    float *Gtmp = (float (*)) malloc ((height * width) / 2 * sizeof * Gtmp);
 
     // temporary array to avoid race conflicts, only every second pixel needs to be saved here
-    float *RawDataTmp = (float*) malloc( (height * width + ((height * width) & 1)) * sizeof(float) / 2);
+    float *RawDataTmp = (float*) malloc( (height * width) * sizeof(float) / 2);
 
     float blockave[2][2] = {{0, 0}, {0, 0}}, blocksqave[2][2] = {{0, 0}, {0, 0}}, blockdenom[2][2] = {{0, 0}, {0, 0}}, blockvar[2][2];
 

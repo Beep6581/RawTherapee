@@ -122,6 +122,9 @@ int processLineParams ( int argc, char **argv )
 {
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
+        if ( currParam.empty() ) {
+            continue;
+        }
 #if ECLIPSE_ARGS
         currParam = currParam.substr (1, currParam.length() - 2);
 #endif
@@ -697,4 +700,3 @@ int main (int argc, char **argv)
 
     return ret;
 }
-
