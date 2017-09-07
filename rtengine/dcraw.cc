@@ -25,8 +25,7 @@
 /*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
-#define BENCHMARK
-#include "StopWatch.h"
+
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
    Copyright 1997-2016 by Dave Coffin, dcoffin a cybercom o net
@@ -9756,6 +9755,8 @@ static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max
 }
 
 static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned char *out) {
+    // At least in zlib 1.2.11 the uncompress function is not thread save while it is thread save in zlib 1.2.8
+    // This simple replacement is thread save. Used example code from https://zlib.net/zlib_how.html
 
     int ret;
     z_stream strm;
@@ -9788,11 +9789,10 @@ static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned 
 }
 
 void CLASS deflate_dng_load_raw() {
-    BENCHFUN
     float_raw_image = new float[raw_width * raw_height];
 
 #ifdef _OPENMP
-#pragma omp parallel for
+    #pragma omp parallel for
 #endif
     for (size_t i = 0; i < raw_width * raw_height; ++i)
       float_raw_image[i] = 0.0f;
@@ -9857,36 +9857,37 @@ void CLASS deflate_dng_load_raw() {
     Bytef * uBuffer = new Bytef[dstLen];
 
 #ifdef _OPENMP
-#pragma omp for collapse(2) schedule(dynamic) nowait
+    #pragma omp for collapse(2) schedule(dynamic) nowait
 #endif
     for (size_t y = 0; y < raw_height; y += tile_length) {
-      for (size_t x = 0; x < raw_width; x += tile_width) {
-		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
+        for (size_t x = 0; x < raw_width; x += tile_width) {
+            size_t t = (y / tile_length) * tilesWide + (x / tile_width);
 #ifdef _OPENMP
-#pragma omp critical
+            #pragma omp critical
 #endif
-{
-        fseek(ifp, tileOffsets[t], SEEK_SET);
-        fread(cBuffer, 1, tileBytes[t], ifp);
-}
-        int err = decompress(tileBytes[t], dstLen, cBuffer, uBuffer);
-        if (err != Z_OK) {
-          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
-        } else if (ifd->sample_format == 3) {  // Floating point data
-          int bytesps = ifd->bps >> 3;
-          size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
-          size_t thisTileWidth = x + tile_width > raw_width ? raw_width - x : tile_width;
-          for (size_t row = 0; row < thisTileLength; ++row) {
-            Bytef * src = uBuffer + row*tile_width*bytesps;
-            Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
-            if (predFactor)
-              decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
-            expandFloats(dst, thisTileWidth, bytesps);
-          }
-        } else {  // 32-bit Integer data
-          // TODO
+            {
+                fseek(ifp, tileOffsets[t], SEEK_SET);
+                fread(cBuffer, 1, tileBytes[t], ifp);
+            }
+            int err = decompress(tileBytes[t], dstLen, cBuffer, uBuffer);
+            if (err != Z_OK) {
+                fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
+            } else if (ifd->sample_format == 3) {  // Floating point data
+                int bytesps = ifd->bps >> 3;
+                size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
+                size_t thisTileWidth = x + tile_width > raw_width ? raw_width - x : tile_width;
+                for (size_t row = 0; row < thisTileLength; ++row) {
+                    Bytef * src = uBuffer + row*tile_width*bytesps;
+                    Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
+                    if (predFactor) {
+                        decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
+                    }
+                    expandFloats(dst, thisTileWidth, bytesps);
+                }
+            } else {  // 32-bit Integer data
+                // TODO
+            }
         }
-      }
     }
 
     delete [] cBuffer;
