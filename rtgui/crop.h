@@ -33,11 +33,6 @@ public:
     virtual void cropSelectRequested() = 0;
 };
 
-struct CropRatio {
-    Glib::ustring label;
-    double value;
-};
-
 class Crop final :
     public ToolParamBlock,
     public CropGUIListener,
@@ -94,6 +89,15 @@ public:
     void rotateCrop         (int deg, bool hflip, bool vflip);
 
 private:
+    struct CropRatio {
+        Glib::ustring label;
+        double value;
+    };
+
+    const std::vector<CropRatio> crop_ratios;
+
+    void adjustCropToRatio();
+
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;
     MyComboBoxText* orientation;
@@ -116,8 +120,6 @@ private:
     int lastRotationDeg;
     sigc::connection xconn, yconn, wconn, hconn, fconn, rconn, oconn, gconn;
     bool wDirty, hDirty, xDirty, yDirty, lastFixRatio;
-    void adjustCropToRatio();
-    std::vector<CropRatio>   cropratio;
 
     IdleRegister idle_register;
 };
