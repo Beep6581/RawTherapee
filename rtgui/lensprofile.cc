@@ -360,7 +360,7 @@ void LensProfilePanel::fillLensfunCameras()
     for (auto &p : camnames) {
         Gtk::TreeModel::Row row = *(lensfunCameraModel->append());
         row[lensfunModelCam.make] = p.first;
-        row[lensfunModelCam.model] = "";
+        row[lensfunModelCam.model] = p.first;
         for (auto &c : p.second) {
             Gtk::TreeModel::Row child = *(lensfunCameraModel->append(row.children()));
             child[lensfunModelCam.make] = p.first;
