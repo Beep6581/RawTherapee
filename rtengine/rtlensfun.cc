@@ -30,9 +30,10 @@ extern const Settings *settings;
 // LFModifier
 //-----------------------------------------------------------------------------
 
-LFModifier::LFModifier(lfModifier *m, bool swap_xy):
+LFModifier::LFModifier(lfModifier *m, bool swap_xy, int flags):
     data_(m),
-    swap_xy_(swap_xy)
+    swap_xy_(swap_xy),
+    flags_(flags)
 {
 }
 
@@ -83,6 +84,31 @@ void LFModifier::processVignetteLine(int width, int y, float *line) const
 void LFModifier::processVignetteLine3Channels(int width, int y, float *line) const
 {
     data_->ApplyColorModification(line, 0, y, width, 1, LF_CR_3(RED, GREEN, BLUE), 0);
+}
+
+
+Glib::ustring LFModifier::getDisplayString() const
+{
+    if (!data_) {
+        return "NONE";
+    } else {
+        Glib::ustring ret;
+        Glib::ustring sep = "";
+        if (flags_ & LF_MODIFY_DISTORTION) {
+            ret += "distortion";
+            sep = ", ";
+        }
+        if (flags_ & LF_MODIFY_VIGNETTING) {
+            ret += sep;
+            ret += "vignetting";
+            sep = ", ";
+        }
+        if (flags_ & LF_MODIFY_SCALE) {
+            ret += sep;
+            ret += "autoscaling";
+        }
+        return ret;
+    }
 }
 
 
@@ -158,7 +184,7 @@ bool LFLens::ok() const
 }
 
 
-Glib::ustring LFLens::getDisplayString() const
+Glib::ustring LFLens::getLens() const
 {
     if (data_) {
         return Glib::ustring::compose("%1 %2", data_->Maker, data_->Model);
@@ -251,12 +277,11 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
     LFLens ret;
     if (data_) {
         const char *lname = name.c_str();
-        const lfCamera *cam = nullptr;
-        if (name.empty() || name.find("Unknown ") == 0) {
+        bool stdlens = camera.ok() && (name.empty() || name.find("Unknown ") == 0);
+        if (stdlens) {
             lname = "Standard";
-            cam = camera.data_;
         }
-        auto found = data_->FindLenses(cam, nullptr, lname, LF_SEARCH_LOOSE);
+        auto found = data_->FindLenses(camera.data_, nullptr, lname, LF_SEARCH_LOOSE);
         if (!found) {
             // try to split the maker from the model of the lens
             Glib::ustring make, model;
@@ -264,12 +289,14 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
             if (i != Glib::ustring::npos) {
                 make = name.substr(0, i);
                 model = name.substr(i+1);
-                found = data_->FindLenses(cam, make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
+                found = data_->FindLenses(camera.data_, make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
             }
         }
         if (found) {
             ret.data_ = found[0];
             lf_free(found);
+        } else if (camera.ok() && !stdlens) {
+            ret = findLens(LFCamera(), name);
         }
     }
     return ret;
@@ -281,11 +308,11 @@ LFModifier *LFDatabase::getModifier(const LFCamera &camera, const LFLens &lens,
                                     int width, int height, bool swap_xy) const
 {
     LFModifier *ret = nullptr;
-    if (data_) {
+    if (data_ && focalLen > 0) {
         if (camera.ok() && lens.ok()) {
             lfModifier *mod = lfModifier::Create(lens.data_, camera.getCropFactor(), width, height);
-            mod->Initialize(lens.data_, LF_PF_F32, focalLen, aperture, focusDist > 0 ? focusDist : 1000, 0.0, LF_RECTILINEAR, LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION, false);
-            ret = new LFModifier(mod, swap_xy);
+            int flags = mod->Initialize(lens.data_, LF_PF_F32, focalLen, aperture, focusDist > 0 ? focusDist : 1000, 0.0, LF_RECTILINEAR, LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION | LF_MODIFY_SCALE, false);
+            ret = new LFModifier(mod, swap_xy, flags);
         }
     }
     return ret;
@@ -323,7 +350,8 @@ LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const Image
         std::cout << "LENSFUN:\n"
                   << "  camera: " << c.getDisplayString() << "\n"
                   << "  lens: " << l.getDisplayString() << "\n"
-                  << "  correction? " << (ret ? "yes" : "no") << std::endl;
+                  << "  correction: "
+                  << (ret ? ret->getDisplayString() : "NONE") << std::endl;
     }
 
     return ret;

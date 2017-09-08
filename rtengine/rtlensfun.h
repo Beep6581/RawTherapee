@@ -39,15 +39,18 @@ public:
     void correctCA(double &x, double &y, int channel) const {}
     void processVignetteLine(int width, int y, float *line) const;
     void processVignetteLine3Channels(int width, int y, float *line) const;
+
+    Glib::ustring getDisplayString() const;
     
 private:
-    explicit LFModifier(lfModifier *m, bool rotateXY);
+    explicit LFModifier(lfModifier *m, bool swap_xy, int flags);
     LFModifier(const LFModifier &);
     LFModifier &operator=(const LFModifier &);
     
     friend class LFDatabase;
     lfModifier *data_;
     bool swap_xy_;
+    int flags_;
 };
 
 class LFCamera {
@@ -70,8 +73,8 @@ class LFLens {
 public:
     LFLens();
     bool ok() const;
-    
-    Glib::ustring getDisplayString() const;
+    Glib::ustring getLens() const;
+    Glib::ustring getDisplayString() const { return getLens(); }
 private:
     friend class LFDatabase;
     const lfLens *data_;
