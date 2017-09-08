@@ -174,25 +174,31 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
     ckbUseCA->set_active   (pp->lensProf.useCA && isRaw);
 
-    setLensfunCamera(pp->lensProf.lfCameraMake, pp->lensProf.lfCameraModel);
-    setLensfunLens(pp->lensProf.lfLens);
+    const LFDatabase *db = LFDatabase::getInstance();
+    LFCamera c;
+    LFLens l;
+    if (metadata) {
+        c = db->findCamera(metadata->getMake(), metadata->getModel());
+        l = db->findLens(c, metadata->getLens());
+    }
+    
+    if (!setLensfunCamera(pp->lensProf.lfCameraMake, pp->lensProf.lfCameraModel) && pp->lensProf.lfAutoMatch) {
+        setLensfunCamera(c.getMake(), c.getModel());        
+    }
+    if (!setLensfunLens(pp->lensProf.lfLens) && pp->lensProf.lfAutoMatch) {
+        setLensfunLens(l.getLens());
+    }
     
     lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
     useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
 
-    if (!batchMode && metadata && pp->lensProf.useLensfun) {
+    if (metadata) {
         std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(pp->lensProf, metadata, 100, 100, pp->coarse, -1));
         if (!mod) {
-            corrOff->set_active(true);
-            if (pp->lensProf.lfAutoMatch) {
-                corrLensfunAuto->set_sensitive(false);
+            if (pp->lensProf.useLensfun) {
+                corrOff->set_active(true);
             }
-        } else if (pp->lensProf.lfAutoMatch) {
-            const LFDatabase *db = LFDatabase::getInstance();
-            LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
-            LFLens l = db->findLens(c, metadata->getLens());
-            setLensfunCamera(c.getMake(), c.getModel());
-            setLensfunLens(l.getLens());
+            corrLensfunAuto->set_sensitive(false);
         }
     }
 
@@ -366,6 +372,11 @@ void LensProfilePanel::fillLensfunLenses()
 bool LensProfilePanel::setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model)
 {
     if (!make.empty() && !model.empty()) {
+        auto it = lensfunCameras->get_active();
+        if (it && (*it)[lensfunModelCam.make] == make && (*it)[lensfunModelCam.model] == model) {
+            return true;
+        }
+        
         // search for the active row
         for (auto row : lensfunCameraModel->children()) {
             if (row[lensfunModelCam.make] == make) {
@@ -381,6 +392,7 @@ bool LensProfilePanel::setLensfunCamera(const Glib::ustring &make, const Glib::u
             }
         }
     }
+    lensfunCameras->set_active(-1);
     return false;
 }
 
@@ -388,6 +400,11 @@ bool LensProfilePanel::setLensfunCamera(const Glib::ustring &make, const Glib::u
 bool LensProfilePanel::setLensfunLens(const Glib::ustring &lens)
 {
     if (!lens.empty()) {
+        auto it = lensfunLenses->get_active();
+        if (it && (*it)[lensfunModelLens.lens] == lens) {
+            return true;
+        }
+        
         // search for the active row
         auto pos = lens.find_first_of(' ');
         Glib::ustring make = "(Unknown)";
@@ -409,6 +426,7 @@ bool LensProfilePanel::setLensfunLens(const Glib::ustring &lens)
             }
         }
     }
+    lensfunLenses->set_active(-1);
     return false;
 }
 
