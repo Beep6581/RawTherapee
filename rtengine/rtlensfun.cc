@@ -250,7 +250,13 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
 {
     LFLens ret;
     if (data_) {
-        auto found = data_->FindLenses(camera.data_, NULL, name.c_str(), LF_SEARCH_LOOSE);
+        const char *lname = name.c_str();
+        const lfCamera *cam = nullptr;
+        if (name.empty() || name.find("Unknown ") == 0) {
+            lname = "Standard";
+            cam = camera.data_;
+        }
+        auto found = data_->FindLenses(cam, nullptr, lname, LF_SEARCH_LOOSE);
         if (!found) {
             // try to split the maker from the model of the lens
             Glib::ustring make, model;
@@ -258,7 +264,7 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
             if (i != Glib::ustring::npos) {
                 make = name.substr(0, i);
                 model = name.substr(i+1);
-                found = data_->FindLenses(camera.data_, make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
+                found = data_->FindLenses(cam, make.c_str(), model.c_str(), LF_SEARCH_LOOSE);
             }
         }
         if (found) {
