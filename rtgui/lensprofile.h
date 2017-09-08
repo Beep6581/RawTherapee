@@ -77,6 +77,8 @@ protected:
 
     void fillLensfunCameras();
     void fillLensfunLenses();
+    bool setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model);
+    bool setLensfunLens(const Glib::ustring &lens);
     
 public:
 

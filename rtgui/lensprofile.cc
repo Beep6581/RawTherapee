@@ -174,45 +174,8 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     ckbUseVign->set_active (pp->lensProf.useVign && isRaw);
     ckbUseCA->set_active   (pp->lensProf.useCA && isRaw);
 
-    if (!pp->lensProf.lfCameraMake.empty() && !pp->lensProf.lfCameraModel.empty()) {
-        // search for the active row
-        for (auto row : lensfunCameraModel->children()) {
-            if (row[lensfunModelCam.make] == pp->lensProf.lfCameraMake) {
-                auto &c = row.children();
-                for (auto it = c.begin(), end = c.end(); it != end; ++it) {
-                    auto &childrow = *it;
-                    if (childrow[lensfunModelCam.model] == pp->lensProf.lfCameraModel) {
-                        lensfunCameras->set_active(it);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    }
-
-    if (!pp->lensProf.lfLens.empty()) {
-        // search for the active row
-        auto pos = pp->lensProf.lfLens.find_first_of(' ');
-        Glib::ustring make = "(Unknown)";
-        if (pos != Glib::ustring::npos) {
-            make = pp->lensProf.lfLens.substr(0, pos);
-        }
-        
-        for (auto row : lensfunCameraModel->children()) {
-            if (row[lensfunModelLens.lens] == make) {
-                auto &c = row.children();
-                for (auto it = c.begin(), end = c.end(); it != end; ++it) {
-                    auto &childrow = *it;
-                    if (childrow[lensfunModelLens.lens] == pp->lensProf.lfLens) {
-                        lensfunLenses->set_active(it);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    }
+    setLensfunCamera(pp->lensProf.lfCameraMake, pp->lensProf.lfCameraModel);
+    setLensfunLens(pp->lensProf.lfLens);
     
     lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
     useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
@@ -224,6 +187,12 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
             if (pp->lensProf.lfAutoMatch) {
                 corrLensfunAuto->set_sensitive(false);
             }
+        } else if (pp->lensProf.lfAutoMatch) {
+            const LFDatabase *db = LFDatabase::getInstance();
+            LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
+            LFLens l = db->findLens(c, metadata->getLens());
+            setLensfunCamera(c.getMake(), c.getModel());
+            setLensfunLens(l.getLens());
         }
     }
 
@@ -392,6 +361,57 @@ void LensProfilePanel::fillLensfunLenses()
         }
     }
 }
+
+
+bool LensProfilePanel::setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model)
+{
+    if (!make.empty() && !model.empty()) {
+        // search for the active row
+        for (auto row : lensfunCameraModel->children()) {
+            if (row[lensfunModelCam.make] == make) {
+                auto &c = row.children();
+                for (auto it = c.begin(), end = c.end(); it != end; ++it) {
+                    auto &childrow = *it;
+                    if (childrow[lensfunModelCam.model] == model) {
+                        lensfunCameras->set_active(it);
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    return false;
+}
+
+
+bool LensProfilePanel::setLensfunLens(const Glib::ustring &lens)
+{
+    if (!lens.empty()) {
+        // search for the active row
+        auto pos = lens.find_first_of(' ');
+        Glib::ustring make = "(Unknown)";
+        if (pos != Glib::ustring::npos) {
+            make = lens.substr(0, pos);
+        }
+        
+        for (auto row : lensfunLensModel->children()) {
+            if (row[lensfunModelLens.lens] == make) {
+                auto &c = row.children();
+                for (auto it = c.begin(), end = c.end(); it != end; ++it) {
+                    auto &childrow = *it;
+                    if (childrow[lensfunModelLens.lens] == lens) {
+                        lensfunLenses->set_active(it);
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    return false;
+}
+
 
 
 void LensProfilePanel::onLensfunCameraChanged()
