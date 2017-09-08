@@ -63,11 +63,13 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double 
         std::swap(xx, yy);
     }
     if (data_->ApplyGeometryDistortion(xx, yy, 1, 1, pos)) {
-        x = pos[0] - cx;
-        y = pos[1] - cy;
+        x = pos[0];
+        y = pos[1];
         if (swap_xy_) {
             std::swap(x, y);
         }
+        x -= cx;
+        y -= cy;
     }
 }
 
