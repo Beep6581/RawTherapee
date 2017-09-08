@@ -57,6 +57,9 @@ public:
     void setDimensions    ();
     void enabledChanged   ();
 
+    void setAdjusterBehavior (bool scaleadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
+
 private:
     void fitBoxScale ();
     int getComputedWidth ();

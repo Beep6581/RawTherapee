@@ -70,7 +70,7 @@ public:
     void halocontrol_toggled ();
     void method_changed ();
 
-    void setAdjusterBehavior (bool amountadd);
+    void setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

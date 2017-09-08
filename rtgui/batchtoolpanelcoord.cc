@@ -157,13 +157,15 @@ void BatchToolPanelCoordinator::initSession ()
             vignetting->setAdjusterBehavior (false, false, false, false);
             colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
             rotate->setAdjusterBehavior (false);
+            resize->setAdjusterBehavior (false);
             distortion->setAdjusterBehavior (false);
             perspective->setAdjusterBehavior (false);
             gradient->setAdjusterBehavior (false, false, false, false);
             locallab->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
-            sharpening->setAdjusterBehavior (false);
+            sharpening->setAdjusterBehavior (false, false, false, false, false, false);
+            prsharpening->setAdjusterBehavior (false, false, false, false, false, false);
             sharpenEdge->setAdjusterBehavior (false, false);
             sharpenMicro->setAdjusterBehavior (false, false);
             icm->setAdjusterBehavior (false, false);
@@ -197,13 +199,16 @@ void BatchToolPanelCoordinator::initSession ()
             vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
             colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE]);
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
+            resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
             distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
             perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
             // locallab->setAdjusterBehavior (options.baBehav[ADDSET_LOCALLAB_DEGREE], options.baBehav[ADDSET_LOCALLAB_LOCY], options.baBehav[ADDSET_LOCALLAB_LOCX], options.baBehav[ADDSET_LOCALLAB_LOCYT], options.baBehav[ADDSET_LOCALLAB_LOCXL], options.baBehav[ADDSET_LOCALLAB_CENTER], options.baBehav[ADDSET_LOCALLAB_LIGHTNESS], options.baBehav[ADDSET_LOCALLAB_CONTRAST], options.baBehav[ADDSET_LOCALLAB_CHROMA], options.baBehav[ADDSET_LOCALLAB_SENSI], options.baBehav[ADDSET_LOCALLAB_RADIUS], options.baBehav[ADDSET_LOCALLAB_STRENGTH], options.baBehav[ADDSET_LOCALLAB_TRANSIT]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
-            sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
+            sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
+            prsharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_RADIUS], options.baBehav[ADDSET_SHARP_AMOUNT], options.baBehav[ADDSET_SHARP_DAMPING], options.baBehav[ADDSET_SHARP_ITER], options.baBehav[ADDSET_SHARP_EDGETOL], options.baBehav[ADDSET_SHARP_HALOCTRL]);
+
             sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT], options.baBehav[ADDSET_SHARPENEDGE_PASS]);
             sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT], options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
             icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA], options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
@@ -225,507 +230,143 @@ void BatchToolPanelCoordinator::initSession ()
             bayerrawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_BLACKS]);
             xtransrawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_BLACKS]);
 
-            if (options.baBehav[ADDSET_TC_EXPCOMP]) {
-                pparams.toneCurve.expcomp = 0;
+            // *INDENT-OFF*
+            if (options.baBehav[ADDSET_TC_EXPCOMP]) { pparams.toneCurve.expcomp = 0; }
+            if (options.baBehav[ADDSET_TC_HLCOMPAMOUNT]) { pparams.toneCurve.hlcompr = 0; }
+            if (options.baBehav[ADDSET_TC_HLCOMPTHRESH]) { pparams.toneCurve.hlcomprthresh = 0; }
+            if (options.baBehav[ADDSET_TC_BRIGHTNESS]) { pparams.toneCurve.brightness = 0; }
+            if (options.baBehav[ADDSET_TC_BLACKLEVEL]) {pparams.toneCurve.black = 0; }
+            if (options.baBehav[ADDSET_TC_SHCOMP]) { pparams.toneCurve.shcompr = 0; }
+            if (options.baBehav[ADDSET_TC_CONTRAST]) { pparams.toneCurve.contrast = 0; }
+            if (options.baBehav[ADDSET_TC_SATURATION]) { pparams.toneCurve.saturation = 0;}
+            if (options.baBehav[ADDSET_SH_HIGHLIGHTS]) { pparams.sh.highlights = 0; }
+            if (options.baBehav[ADDSET_SH_SHADOWS]) { pparams.sh.shadows = 0; }
+            if (options.baBehav[ADDSET_SH_LOCALCONTRAST]) { pparams.sh.localcontrast = 0; }
+            if (options.baBehav[ADDSET_LC_BRIGHTNESS]) { pparams.labCurve.brightness = 0; }
+            if (options.baBehav[ADDSET_LC_CONTRAST]) { pparams.labCurve.contrast = 0; }
+            if (options.baBehav[ADDSET_LC_CHROMATICITY]) { pparams.labCurve.chromaticity = 0; }
+            if (options.baBehav[ADDSET_SHARP_RADIUS]) {
+                pparams.sharpening.radius = pparams.sharpening.deconvradius = pparams.sharpening.edges_radius = 0;
+                pparams.prsharpening.radius = pparams.prsharpening.deconvradius = pparams.prsharpening.edges_radius = 0;
             }
-
-            if (options.baBehav[ADDSET_TC_HLCOMPAMOUNT]) {
-                pparams.toneCurve.hlcompr = 0;
-            }
-
-            if (options.baBehav[ADDSET_TC_HLCOMPTHRESH]) {
-                pparams.toneCurve.hlcomprthresh = 0;
-            }
-
-            if (options.baBehav[ADDSET_TC_BRIGHTNESS]) {
-                pparams.toneCurve.brightness = 0;
-            }
-
-            if (options.baBehav[ADDSET_TC_BLACKLEVEL]) {
-                pparams.toneCurve.black = 0;
-            }
-
-            if (options.baBehav[ADDSET_TC_SHCOMP]) {
-                pparams.toneCurve.shcompr = 0;
-            }
-
-            if (options.baBehav[ADDSET_TC_CONTRAST]) {
-                pparams.toneCurve.contrast = 0;
-            }
-
-            if (options.baBehav[ADDSET_TC_SATURATION]) {
-                pparams.toneCurve.saturation = 0;
-            }
-
-            if (options.baBehav[ADDSET_SH_HIGHLIGHTS]) {
-                pparams.sh.highlights = 0;
-            }
-
-            if (options.baBehav[ADDSET_SH_SHADOWS]) {
-                pparams.sh.shadows = 0;
-            }
-
-            if (options.baBehav[ADDSET_SH_LOCALCONTRAST]) {
-                pparams.sh.localcontrast = 0;
-            }
-
-            if (options.baBehav[ADDSET_LC_BRIGHTNESS]) {
-                pparams.labCurve.brightness = 0;
-            }
-
-            if (options.baBehav[ADDSET_LC_CONTRAST]) {
-                pparams.labCurve.contrast = 0;
-            }
-
-            if (options.baBehav[ADDSET_LC_CHROMATICITY]) {
-                pparams.labCurve.chromaticity = 0;
-            }
-
             if (options.baBehav[ADDSET_SHARP_AMOUNT]) {
-                pparams.sharpening.amount = 0;
+                pparams.sharpening.amount = pparams.sharpening.deconvamount =
+                pparams.prsharpening.amount = pparams.prsharpening.deconvamount = 0;
             }
-
-            if (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT]) {
-                pparams.sharpenEdge.amount = 0;
+            if (options.baBehav[ADDSET_SHARP_DAMPING]) { pparams.sharpening.deconvdamping = pparams.prsharpening.deconvdamping = 0; }
+            if (options.baBehav[ADDSET_SHARP_ITER]) { pparams.sharpening.deconviter = pparams.prsharpening.deconviter = 0; }
+            if (options.baBehav[ADDSET_SHARP_EDGETOL]) { pparams.sharpening.edges_tolerance = pparams.prsharpening.edges_tolerance = 0; }
+            if (options.baBehav[ADDSET_SHARP_HALOCTRL]) { pparams.sharpening.halocontrol_amount = pparams.prsharpening.halocontrol_amount = 0; }
+            if (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT]) { pparams.sharpenEdge.amount = 0; }
+            if (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT]) { pparams.sharpenMicro.amount = 0; }
+            if (options.baBehav[ADDSET_SHARPENEDGE_PASS]) { pparams.sharpenEdge.passes = 0; }
+            if (options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]) { pparams.sharpenMicro.uniformity = 0; }
+            if (options.baBehav[ADDSET_CHMIXER]) for (int i = 0; i < 3; i++) { pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0; }
+            if (options.baBehav[ADDSET_BLACKWHITE_HUES]) {
+                pparams.blackwhite.mixerRed = pparams.blackwhite.mixerOrange = pparams.blackwhite.mixerYellow =
+                pparams.blackwhite.mixerGreen = pparams.blackwhite.mixerCyan = pparams.blackwhite.mixerBlue =
+                pparams.blackwhite.mixerMagenta = pparams.blackwhite.mixerPurple = 0;
             }
-
-            if (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT]) {
-                pparams.sharpenMicro.amount = 0;
-            }
-
-            if (options.baBehav[ADDSET_SHARPENEDGE_PASS]) {
-                pparams.sharpenEdge.passes = 0;
-            }
-
-            if (options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]) {
-                pparams.sharpenMicro.uniformity = 0;
-            }
-
-            if (options.baBehav[ADDSET_CHMIXER]) for (int i = 0; i < 3; i++) {
-                    pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0;
-                }
-
-            if (options.baBehav[ADDSET_BLACKWHITE_HUES]) pparams.blackwhite.mixerRed = pparams.blackwhite.mixerOrange = pparams.blackwhite.mixerYellow =
-                            pparams.blackwhite.mixerGreen = pparams.blackwhite.mixerCyan = pparams.blackwhite.mixerBlue =
-                                        pparams.blackwhite.mixerMagenta = pparams.blackwhite.mixerPurple = 0;
-
-            if (options.baBehav[ADDSET_BLACKWHITE_GAMMA]) {
-                pparams.blackwhite.gammaRed = pparams.blackwhite.gammaGreen = pparams.blackwhite.gammaBlue = 0;
-            }
-
+            if (options.baBehav[ADDSET_BLACKWHITE_GAMMA]) { pparams.blackwhite.gammaRed = pparams.blackwhite.gammaGreen = pparams.blackwhite.gammaBlue = 0; }
             //if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
-
-            if (options.baBehav[ADDSET_WB_TEMPERATURE]) {
-                pparams.wb.temperature = 0;
-            }
-
-            if (options.baBehav[ADDSET_WB_GREEN]) {
-                pparams.wb.green = 0;
-            }
-
-            if (options.baBehav[ADDSET_WB_EQUAL]) {
-                pparams.wb.equal = 0;
-            }
-
-            if (options.baBehav[ADDSET_WB_TEMPBIAS]) {
-                pparams.wb.tempBias = 0;
-            }
-
-            if (options.baBehav[ADDSET_VIBRANCE_PASTELS]) {
-                pparams.vibrance.pastels = 0;
-            }
-
-            if (options.baBehav[ADDSET_VIBRANCE_SATURATED]) {
-                pparams.vibrance.saturated = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_DEGREE]) {
-                pparams.colorappearance.degree = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_ADAPTSCENE]) {
-                pparams.colorappearance.adapscen = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_ADAPTVIEWING]) {
-                pparams.colorappearance.adaplum = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_BADPIX]) {
-                pparams.colorappearance.badpixsl = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_LIGHT]) {
-                pparams.colorappearance.jlight = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_BRIGHT]) {
-                pparams.colorappearance.qbright = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_CHROMA]) {
-                pparams.colorappearance.chroma = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_CHROMA_S]) {
-                pparams.colorappearance.schroma = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_CHROMA_M]) {
-                pparams.colorappearance.mchroma = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_RSTPRO]) {
-                pparams.colorappearance.rstprotection = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_CONTRAST]) {
-                pparams.colorappearance.contrast = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_CONTRAST_Q]) {
-                pparams.colorappearance.qcontrast = 0;
-            }
-
-            if (options.baBehav[ADDSET_CAT_HUE]) {
-                pparams.colorappearance.colorh = 0;
-            }
-
-            if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA]) {
-                pparams.icm.gampos = 0;
-            }
-
-            if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]) {
-                pparams.icm.slpos = 0;
-            }
-
+            if (options.baBehav[ADDSET_WB_TEMPERATURE]) { pparams.wb.temperature = 0; }
+            if (options.baBehav[ADDSET_WB_GREEN]) { pparams.wb.green = 0; }
+            if (options.baBehav[ADDSET_WB_EQUAL]) { pparams.wb.equal = 0; }
+            if (options.baBehav[ADDSET_WB_TEMPBIAS]) { pparams.wb.tempBias = 0; }
+            if (options.baBehav[ADDSET_VIBRANCE_PASTELS]) { pparams.vibrance.pastels = 0; }
+            if (options.baBehav[ADDSET_VIBRANCE_SATURATED]) { pparams.vibrance.saturated = 0; }
+            if (options.baBehav[ADDSET_CAT_DEGREE]) { pparams.colorappearance.degree = 0; }
+            if (options.baBehav[ADDSET_CAT_ADAPTSCENE]) { pparams.colorappearance.adapscen = 0; }
+            if (options.baBehav[ADDSET_CAT_ADAPTVIEWING]) { pparams.colorappearance.adaplum = 0; }
+            if (options.baBehav[ADDSET_CAT_BADPIX]) { pparams.colorappearance.badpixsl = 0; }
+            if (options.baBehav[ADDSET_CAT_LIGHT]) { pparams.colorappearance.jlight = 0; }
+            if (options.baBehav[ADDSET_CAT_BRIGHT]) { pparams.colorappearance.qbright = 0; }
+            if (options.baBehav[ADDSET_CAT_CHROMA]) { pparams.colorappearance.chroma = 0; }
+            if (options.baBehav[ADDSET_CAT_CHROMA_S]) { pparams.colorappearance.schroma = 0; }
+            if (options.baBehav[ADDSET_CAT_CHROMA_M]) { pparams.colorappearance.mchroma = 0; }
+            if (options.baBehav[ADDSET_CAT_RSTPRO]) { pparams.colorappearance.rstprotection = 0; }
+            if (options.baBehav[ADDSET_CAT_CONTRAST]) { pparams.colorappearance.contrast = 0; }
+            if (options.baBehav[ADDSET_CAT_CONTRAST_Q]) { pparams.colorappearance.qcontrast = 0; }
+            if (options.baBehav[ADDSET_CAT_HUE]) { pparams.colorappearance.colorh = 0; }
+            if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA]) { pparams.icm.gampos = 0; }
+            if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]) { pparams.icm.slpos = 0; }
             //if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
-
             //if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
             //if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
-            if (options.baBehav[ADDSET_COLORTONING_SPLIT]) pparams.colorToning.redlow  = pparams.colorToning.greenlow  = pparams.colorToning.bluelow =
-                            pparams.colorToning.redmed  = pparams.colorToning.greenmed  = pparams.colorToning.bluemed =
-                                        pparams.colorToning.redhigh = pparams.colorToning.greenhigh = pparams.colorToning.bluehigh =
-                                                    pparams.colorToning.satlow = pparams.colorToning.sathigh = 0;
-
-            if (options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD]) {
-                pparams.colorToning.satProtectionThreshold = 0;
+            if (options.baBehav[ADDSET_COLORTONING_SPLIT]) {
+                pparams.colorToning.redlow  = pparams.colorToning.greenlow  = pparams.colorToning.bluelow =
+                pparams.colorToning.redmed  = pparams.colorToning.greenmed  = pparams.colorToning.bluemed =
+                pparams.colorToning.redhigh = pparams.colorToning.greenhigh = pparams.colorToning.bluehigh =
+                pparams.colorToning.satlow = pparams.colorToning.sathigh = 0;
             }
-
-            if (options.baBehav[ADDSET_COLORTONING_SATOPACITY]) {
-                pparams.colorToning.saturatedOpacity = 0;
-            }
-
-            if (options.baBehav[ADDSET_COLORTONING_BALANCE]) {
-                pparams.colorToning.balance = 0;
-            }
-
-            if (options.baBehav[ADDSET_COLORTONING_STRENGTH]) {
-                pparams.colorToning.strength = 0;
-            }
-
-            if (options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]) {
-                pparams.filmSimulation.strength = 0;
-            }
-
-            if (options.baBehav[ADDSET_ROTATE_DEGREE]) {
-                pparams.rotate.degree = 0;
-            }
-
-            if (options.baBehav[ADDSET_DIST_AMOUNT]) {
-                pparams.distortion.amount = 0;
-            }
-
-            if (options.baBehav[ADDSET_PERSPECTIVE]) {
-                pparams.perspective.horizontal = pparams.perspective.vertical = 0;
-            }
-
-            if (options.baBehav[ADDSET_GRADIENT_DEGREE]) {
-                pparams.gradient.degree = 0;
-            }
-
-            if (options.baBehav[ADDSET_GRADIENT_FEATHER]) {
-                pparams.gradient.feather = 0;
-            }
-
-            if (options.baBehav[ADDSET_GRADIENT_STRENGTH]) {
-                pparams.gradient.strength = 0;
-            }
-
-            if (options.baBehav[ADDSET_GRADIENT_CENTER]) {
-                pparams.gradient.centerX = 0;
-            }
-
-            if (options.baBehav[ADDSET_GRADIENT_CENTER]) {
-                pparams.gradient.centerY = 0;
-            }
-
-            /*
-                        if (options.baBehav[ADDSET_LOCALLAB_DEGREE]) {
-                            pparams.locallab.degree = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_LOCY]) {
-                            pparams.locallab.locY = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_LOCX]) {
-                            pparams.locallab.locX = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_LOCYT]) {
-                            pparams.locallab.locYT = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_LOCXL]) {
-                            pparams.locallab.locXL = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_CENTER]) {
-                            pparams.locallab.centerX = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_CENTER]) {
-                            pparams.locallab.centerY = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_LIGHTNESS]) {
-                            pparams.locallab.lightness = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_CONTRAST]) {
-                            pparams.locallab.contrast = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_CHROMA]) {
-                            pparams.locallab.chroma = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_SENSI]) {
-                            pparams.locallab.sensi = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_RADIUS]) {
-                            pparams.locallab.radius = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_STRENGTH]) {
-                            pparams.locallab.strength = 0;
-                        }
-
-                        if (options.baBehav[ADDSET_LOCALLAB_TRANSIT]) {
-                            pparams.locallab.transit = 0;
-                        }
-            */
-            if (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH]) {
-                pparams.pcvignette.strength = 0;
-            }
-
-            if (options.baBehav[ADDSET_PCVIGNETTE_FEATHER]) {
-                pparams.pcvignette.feather = 0;
-            }
-
-            if (options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]) {
-                pparams.pcvignette.roundness = 0;
-            }
-
-            if (options.baBehav[ADDSET_CA]) {
-                pparams.cacorrection.red = 0;
-            }
-
-            if (options.baBehav[ADDSET_CA]) {
-                pparams.cacorrection.blue = 0;
-            }
-
-            if (options.baBehav[ADDSET_VIGN_AMOUNT]) {
-                pparams.vignetting.amount = 0;
-            }
-
-            if (options.baBehav[ADDSET_VIGN_RADIUS]) {
-                pparams.vignetting.radius = 0;
-            }
-
-            if (options.baBehav[ADDSET_VIGN_STRENGTH]) {
-                pparams.vignetting.strength = 0;
-            }
-
-            if (options.baBehav[ADDSET_VIGN_CENTER]) {
-                pparams.vignetting.centerX = 0;
-            }
-
-            if (options.baBehav[ADDSET_VIGN_CENTER]) {
-                pparams.vignetting.centerY = 0;
-            }
-
-            if (options.baBehav[ADDSET_DIRPYREQ]) for (int i = 0; i < 6; i++) {
-                    pparams.dirpyrequalizer.mult[i] = 0;
-                }
-
-            if (options.baBehav[ADDSET_DIRPYREQ_THRESHOLD]) {
-                pparams.dirpyrequalizer.threshold = 0;
-            }
-
-            if (options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]) {
-                pparams.dirpyrequalizer.skinprotect = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA]) for (int i = 0; i < 8; i++) {
-                    pparams.wavelet.c[i] = 0;
-                }
-
-            if (options.baBehav[ADDSET_WA_THRESHOLD]) {
-                pparams.wavelet.threshold = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_THRESHOLD2]) {
-                pparams.wavelet.threshold2 = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_SKINPROTECT]) {
-                pparams.wavelet.skinprotect = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_CHRO]) {
-                pparams.wavelet.chro = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_CHROMA]) {
-                pparams.wavelet.chroma = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_CONTRAST]) {
-                pparams.wavelet.contrast = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_THRES]) {
-                pparams.wavelet.thres = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_RESCON]) {
-                pparams.wavelet.rescon = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_RESCONH]) {
-                pparams.wavelet.resconH = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_RESCHRO]) {
-                pparams.wavelet.reschro = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_TMRS]) {
-                pparams.wavelet.tmrs = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_THRR]) {
-                pparams.wavelet.thr = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_THRRH]) {
-                pparams.wavelet.thrH = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_SKYPROTECT]) {
-                pparams.wavelet.sky = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_EDGRAD]) {
-                pparams.wavelet.edgrad = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_EDGVAL]) {
-                pparams.wavelet.edgval = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_STRENGTH]) {
-                pparams.wavelet.strength = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_EDGEDETECT]) {
-                pparams.wavelet.edgedetect = 0;
-            }
-
-            if (options.baBehav[ADDSET_WA_GAMMA]) {
-                pparams.wavelet.gamma = 0;
-            }
-
-            if (options.baBehav[ADDSET_RETI_STR]) {
-                pparams.retinex.str = 0;
-            }
-
-            if (options.baBehav[ADDSET_RETI_NEIGH]) {
-                pparams.retinex.neigh = 0;
-            }
-
-            if (options.baBehav[ADDSET_RETI_LIMD]) {
-                pparams.retinex.limd = 0;
-            }
-
-            if (options.baBehav[ADDSET_RETI_OFFS]) {
-                pparams.retinex.offs = 0;
-            }
-
-            if (options.baBehav[ADDSET_RETI_VART]) {
-                pparams.retinex.vart = 0;
-            }
-
-            if (options.baBehav[ADDSET_RETI_GAM]) {
-                pparams.retinex.gam = 0;
-            }
-
-            if (options.baBehav[ADDSET_RETI_SLO]) {
-                pparams.retinex.slope = 0;
-            }
-
-            if (options.baBehav[ADDSET_DIRPYRDN_LUMA]) {
-                pparams.dirpyrDenoise.luma = 0;
-            }
-
-            if (options.baBehav[ADDSET_DIRPYRDN_CHROMA]) {
-                pparams.dirpyrDenoise.chroma = 0;
-            }
-
-            if (options.baBehav[ADDSET_DIRPYRDN_CHROMARED]) {
-                pparams.dirpyrDenoise.redchro = 0;
-            }
-
-            if (options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE]) {
-                pparams.dirpyrDenoise.bluechro = 0;
-            }
-
-//          pparams.dirpyrDenoise.Ldetail = pparams.dirpyrDenoise.luma = pparams.dirpyrDenoise.chroma = 0;
-            if (options.baBehav[ADDSET_DIRPYRDN_GAMMA]) {
-                pparams.dirpyrDenoise.gamma = 0;
-            }
-
-            if (options.baBehav[ADDSET_RAWCACORR]) {
-                pparams.raw.cablue = pparams.raw.cared = 0;
-            }
-
-            if (options.baBehav[ADDSET_RAWEXPOS_LINEAR]) {
-                pparams.raw.expos = 0;
-            }
-
-            if (options.baBehav[ADDSET_RAWEXPOS_PRESER]) {
-                pparams.raw.preser = 0;
-            }
-
+            if (options.baBehav[ADDSET_COLORTONING_SATTHRESHOLD]) { pparams.colorToning.satProtectionThreshold = 0; }
+            if (options.baBehav[ADDSET_COLORTONING_SATOPACITY]) { pparams.colorToning.saturatedOpacity = 0; }
+            if (options.baBehav[ADDSET_COLORTONING_BALANCE]) { pparams.colorToning.balance = 0; }
+            if (options.baBehav[ADDSET_COLORTONING_STRENGTH]) { pparams.colorToning.strength = 0; }
+            if (options.baBehav[ADDSET_FILMSIMULATION_STRENGTH]) { pparams.filmSimulation.strength = 0; }
+            if (options.baBehav[ADDSET_ROTATE_DEGREE]) { pparams.rotate.degree = 0; }
+            if (options.baBehav[ADDSET_RESIZE_SCALE]) { pparams.resize.scale = 0; }
+            if (options.baBehav[ADDSET_DIST_AMOUNT]) { pparams.distortion.amount = 0; }
+            if (options.baBehav[ADDSET_PERSPECTIVE]) { pparams.perspective.horizontal = pparams.perspective.vertical = 0; }
+            if (options.baBehav[ADDSET_GRADIENT_DEGREE]) { pparams.gradient.degree = 0; }
+            if (options.baBehav[ADDSET_GRADIENT_FEATHER]) { pparams.gradient.feather = 0; }
+            if (options.baBehav[ADDSET_GRADIENT_STRENGTH]) { pparams.gradient.strength = 0; }
+            if (options.baBehav[ADDSET_GRADIENT_CENTER]) { pparams.gradient.centerX = pparams.gradient.centerY = 0; }
+            if (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH]) { pparams.pcvignette.strength = 0; }
+            if (options.baBehav[ADDSET_PCVIGNETTE_FEATHER]) { pparams.pcvignette.feather = 0; }
+            if (options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]) { pparams.pcvignette.roundness = 0; }
+            if (options.baBehav[ADDSET_CA]) { pparams.cacorrection.red = pparams.cacorrection.blue = 0; }
+            if (options.baBehav[ADDSET_VIGN_AMOUNT]) { pparams.vignetting.amount = 0; }
+            if (options.baBehav[ADDSET_VIGN_RADIUS]) { pparams.vignetting.radius = 0; }
+            if (options.baBehav[ADDSET_VIGN_STRENGTH]) { pparams.vignetting.strength = 0; }
+            if (options.baBehav[ADDSET_VIGN_CENTER]) { pparams.vignetting.centerX = pparams.vignetting.centerY = 0; }
+            if (options.baBehav[ADDSET_DIRPYREQ]) for (int i = 0; i < 6; i++) { pparams.dirpyrequalizer.mult[i] = 0; }
+            if (options.baBehav[ADDSET_DIRPYREQ_THRESHOLD]) { pparams.dirpyrequalizer.threshold = 0; }
+            if (options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]) { pparams.dirpyrequalizer.skinprotect = 0; }
+            if (options.baBehav[ADDSET_WA]) for (int i = 0; i < 8; i++) { pparams.wavelet.c[i] = 0; }
+            if (options.baBehav[ADDSET_WA_THRESHOLD]) { pparams.wavelet.threshold = 0; }
+            if (options.baBehav[ADDSET_WA_THRESHOLD2]) { pparams.wavelet.threshold2 = 0; }
+            if (options.baBehav[ADDSET_WA_SKINPROTECT]) { pparams.wavelet.skinprotect = 0; }
+            if (options.baBehav[ADDSET_WA_CHRO]) { pparams.wavelet.chro = 0; }
+            if (options.baBehav[ADDSET_WA_CHROMA]) { pparams.wavelet.chroma = 0; }
+            if (options.baBehav[ADDSET_WA_CONTRAST]) { pparams.wavelet.contrast = 0; }
+            if (options.baBehav[ADDSET_WA_THRES]) { pparams.wavelet.thres = 0; }
+            if (options.baBehav[ADDSET_WA_RESCON]) { pparams.wavelet.rescon = 0; }
+            if (options.baBehav[ADDSET_WA_RESCONH]) { pparams.wavelet.resconH = 0; }
+            if (options.baBehav[ADDSET_WA_RESCHRO]) { pparams.wavelet.reschro = 0; }
+            if (options.baBehav[ADDSET_WA_TMRS]) { pparams.wavelet.tmrs = 0; }
+            if (options.baBehav[ADDSET_WA_THRR]) { pparams.wavelet.thr = 0; }
+            if (options.baBehav[ADDSET_WA_THRRH]) { pparams.wavelet.thrH = 0; }
+            if (options.baBehav[ADDSET_WA_SKYPROTECT]) { pparams.wavelet.sky = 0; }
+            if (options.baBehav[ADDSET_WA_EDGRAD]) { pparams.wavelet.edgrad = 0; }
+            if (options.baBehav[ADDSET_WA_EDGVAL]) { pparams.wavelet.edgval = 0; }
+            if (options.baBehav[ADDSET_WA_STRENGTH]) { pparams.wavelet.strength = 0; }
+            if (options.baBehav[ADDSET_WA_EDGEDETECT]) { pparams.wavelet.edgedetect = 0; }
+            if (options.baBehav[ADDSET_WA_GAMMA]) { pparams.wavelet.gamma = 0; }
+            if (options.baBehav[ADDSET_RETI_STR]) { pparams.retinex.str = 0; }
+            if (options.baBehav[ADDSET_RETI_NEIGH]) { pparams.retinex.neigh = 0; }
+            if (options.baBehav[ADDSET_RETI_LIMD]) { pparams.retinex.limd = 0; }
+            if (options.baBehav[ADDSET_RETI_OFFS]) { pparams.retinex.offs = 0; }
+            if (options.baBehav[ADDSET_RETI_VART]) { pparams.retinex.vart = 0; }
+            if (options.baBehav[ADDSET_RETI_GAM]) { pparams.retinex.gam = 0; }
+            if (options.baBehav[ADDSET_RETI_SLO]) { pparams.retinex.slope = 0; }
+            if (options.baBehav[ADDSET_DIRPYRDN_LUMA]) { pparams.dirpyrDenoise.luma = 0; }
+            if (options.baBehav[ADDSET_DIRPYRDN_CHROMA]) { pparams.dirpyrDenoise.chroma = 0; }
+            if (options.baBehav[ADDSET_DIRPYRDN_CHROMARED]) { pparams.dirpyrDenoise.redchro = 0; }
+            if (options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE]) { pparams.dirpyrDenoise.bluechro = 0; }
+            //pparams.dirpyrDenoise.Ldetail = pparams.dirpyrDenoise.luma = pparams.dirpyrDenoise.chroma = 0;
+            if (options.baBehav[ADDSET_DIRPYRDN_GAMMA]) { pparams.dirpyrDenoise.gamma = 0; }
+            if (options.baBehav[ADDSET_RAWCACORR]) { pparams.raw.cablue = pparams.raw.cared = 0; }
+            if (options.baBehav[ADDSET_RAWEXPOS_LINEAR]) { pparams.raw.expos = 0; }
+            if (options.baBehav[ADDSET_RAWEXPOS_PRESER]) { pparams.raw.preser = 0; }
             if (options.baBehav[ADDSET_RAWEXPOS_BLACKS]) {
-                pparams.raw.bayersensor.black0 = pparams.raw.bayersensor.black1 = pparams.raw.bayersensor.black2 = pparams.raw.bayersensor.black3 = 0;
+                pparams.raw.bayersensor.black0 = pparams.raw.bayersensor.black1 = pparams.raw.bayersensor.black2 = pparams.raw.bayersensor.black3 =
                 pparams.raw.xtranssensor.blackred = pparams.raw.xtranssensor.blackgreen = pparams.raw.xtranssensor.blackblue = 0;
             }
-
-            if (options.baBehav[ADDSET_RAWFFCLIPCONTROL]) {
-                pparams.raw.ff_clipControl = 0;
-            }
-
-            if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]) {
-                pparams.raw.bayersensor.greenthresh = 0;
-            }
-
-            if (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE]) {
-                pparams.raw.bayersensor.linenoise = 0;
-            }
+            if (options.baBehav[ADDSET_RAWFFCLIPCONTROL]) { pparams.raw.ff_clipControl = 0; }
+            if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]) { pparams.raw.bayersensor.greenthresh = 0; }
+            if (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE]) { pparams.raw.bayersensor.linenoise = 0; }
+            // *INDENT-ON*
         }
 
         for (size_t i = 0; i < toolPanels.size(); i++) {

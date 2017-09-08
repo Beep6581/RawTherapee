@@ -210,9 +210,12 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
     appendBehavList (mi, M ("TP_LABCURVE_CHROMATICITY"), ADDSET_LC_CHROMATICITY, false);
 
-    mi = behModel->append ();
+    mi = behModel->append (); // Used for both Resize and Post-Resize sharpening
     mi->set_value (behavColumns.label, M ("TP_SHARPENING_LABEL"));
+    appendBehavList (mi, M ("TP_SHARPENING_RADIUS"), ADDSET_SHARP_RADIUS, false);
     appendBehavList (mi, M ("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
+    appendBehavList (mi, M ("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
+    appendBehavList (mi, M ("TP_SHARPENING_RLD_ITERATIONS"), ADDSET_SHARP_ITER, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_SHARPENEDGE_LABEL"));
@@ -292,6 +295,11 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_ROTATE_LABEL"));
     appendBehavList (mi, M ("TP_ROTATE_DEGREE"), ADDSET_ROTATE_DEGREE, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_RESIZE_LABEL"));
+    appendBehavList (mi, M ("TP_RESIZE_SCALE"), ADDSET_RESIZE_SCALE, true);
+
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_DISTORTION_LABEL"));
