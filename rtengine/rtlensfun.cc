@@ -306,10 +306,14 @@ LFModifier *LFDatabase::getModifier(const LFCamera &camera, const LFLens &lens,
                                     int width, int height, bool swap_xy) const
 {
     LFModifier *ret = nullptr;
-    if (data_ && focalLen > 0) {
+    if (data_) {
         if (camera.ok() && lens.ok()) {
             lfModifier *mod = lfModifier::Create(lens.data_, camera.getCropFactor(), width, height);
-            int flags = mod->Initialize(lens.data_, LF_PF_F32, focalLen, aperture, focusDist > 0 ? focusDist : 1000, 0.0, LF_RECTILINEAR, LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION | LF_MODIFY_SCALE, false);
+            int flags = LF_MODIFY_DISTORTION | LF_MODIFY_SCALE;
+            if (aperture > 0) {
+                flags |= LF_MODIFY_VIGNETTING;
+            }
+            flags = mod->Initialize(lens.data_, LF_PF_F32, focalLen, aperture, focusDist > 0 ? focusDist : 1000, 0.0, LF_RECTILINEAR, flags, false);
             ret = new LFModifier(mod, swap_xy, flags);
         }
     }
@@ -321,7 +325,11 @@ LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const Image
 {
     const LFDatabase *db = getInstance();
     Glib::ustring make, model, lens;
+    float focallen = idata->getFocalLen();
     if (lensProf.lfAutoMatch) {
+        if (focallen <= 0) {
+            return nullptr;
+        }
         make = idata->getMake();
         model = idata->getModel();
         lens = idata->getLens();
@@ -332,6 +340,12 @@ LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const Image
     }
     LFCamera c = db->findCamera(make, model);
     LFLens l = db->findLens(lensProf.lfAutoMatch ? c : LFCamera(), lens);
+    if (focallen <= 0 && l.data_ && l.data_->MinFocal == l.data_->MaxFocal) {
+        focallen = l.data_->MinFocal;
+    }
+    if (focallen <= 0) {
+        return nullptr;
+    }
     bool swap_xy = false;
     if (rawRotationDeg >= 0) {
         int rot = (coarse.rotate + rawRotationDeg) % 360;
@@ -342,7 +356,6 @@ LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const Image
     }
     
     LFModifier *ret = db->getModifier(c, l, idata->getFocalLen(), idata->getFNumber(), idata->getFocusDist(), width, height, swap_xy);
-
 
     if (settings->verbose) {
         std::cout << "LENSFUN:\n"
