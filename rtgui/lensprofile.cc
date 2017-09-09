@@ -526,10 +526,17 @@ LensProfilePanel::LFDbHelper::LFDbHelper()
 
 void LensProfilePanel::LFDbHelper::fillLensfunCameras()
 {
+    if (options.rtSettings.verbose) {
+        std::cout << "LENSFUN, scanning cameras:" << std::endl;
+    }
     std::map<Glib::ustring, std::set<Glib::ustring>> camnames;
     auto camlist = LFDatabase::getInstance()->getCameras();
     for (auto &c : camlist) {
         camnames[c.getMake()].insert(c.getModel());
+
+        if (options.rtSettings.verbose) {
+            std::cout << "  found: " << c.getDisplayString() << std::endl;
+        }        
     }
     for (auto &p : camnames) {
         Gtk::TreeModel::Row row = *(lensfunCameraModel->append());
@@ -546,12 +553,19 @@ void LensProfilePanel::LFDbHelper::fillLensfunCameras()
 
 void LensProfilePanel::LFDbHelper::fillLensfunLenses()
 {
+    if (options.rtSettings.verbose) {
+        std::cout << "LENSFUN, scanning lenses:" << std::endl;
+    }
     std::map<Glib::ustring, std::set<Glib::ustring>> lenses;
     auto lenslist = LFDatabase::getInstance()->getLenses();
     for (auto &l : lenslist) {
         auto name = l.getLens();
         auto make = l.getMake();
         lenses[make].insert(name);
+
+        if (options.rtSettings.verbose) {
+            std::cout << "  found: " << l.getDisplayString() << std::endl;
+        }
     }
     for (auto &p : lenses) {
         Gtk::TreeModel::Row row = *(lensfunLensModel->append());
