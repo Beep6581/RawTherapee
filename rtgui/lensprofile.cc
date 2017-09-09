@@ -29,6 +29,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+LensProfilePanel::LFDbHelper *LensProfilePanel::lf(nullptr);
+
 LensProfilePanel::LensProfilePanel () :
     FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL")),
     lcpFileChanged(false),
@@ -43,6 +45,10 @@ LensProfilePanel::LensProfilePanel () :
     lensfunCameraChanged(false),
     lensfunLensChanged(false)
 {
+    if (!lf) {
+        lf = new LFDbHelper();
+    }
+    
     corrOff = Gtk::manage(new Gtk::RadioButton(M("LENSPROFILE_CORRECTION_OFF")));
     pack_start(*corrOff);
 
@@ -54,30 +60,23 @@ LensProfilePanel::LensProfilePanel () :
     corrLensfunManual = Gtk::manage(new Gtk::RadioButton(corrGroup, M("LENSPROFILE_CORRECTION_MANUAL")));
     pack_start(*corrLensfunManual);
 
-    lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
-    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
-    
     lensfunCameras = Gtk::manage(new MyComboBox());
-    lensfunCameras->set_model(lensfunCameraModel);
-    lensfunCameras->pack_start(lensfunModelCam.model);
+    lensfunCameras->set_model(lf->lensfunCameraModel);
+    lensfunCameras->pack_start(lf->lensfunModelCam.model);
     lensfunLenses = Gtk::manage(new MyComboBox());
-    lensfunLenses->set_model(lensfunLensModel);
-    lensfunLenses->pack_start(lensfunModelLens.lens);
+    lensfunLenses->set_model(lf->lensfunLensModel);
+    lensfunLenses->pack_start(lf->lensfunModelLens.prettylens);
     
     Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("EXIFFILTER_CAMERA"))), Gtk::PACK_SHRINK, 4);
     hb->pack_start(*lensfunCameras);
     pack_start(*hb);
 
-    fillLensfunCameras();
-    
     hb = Gtk::manage(new Gtk::HBox());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("EXIFFILTER_LENS"))), Gtk::PACK_SHRINK, 4);
     hb->pack_start(*lensfunLenses);
     pack_start(*hb);
 
-    fillLensfunLenses();
-    
     corrLcpFile = Gtk::manage(new Gtk::RadioButton(corrGroup));
     hbLCPFile = Gtk::manage(new Gtk::HBox());
     hbLCPFile->pack_start(*corrLcpFile, Gtk::PACK_SHRINK);
@@ -249,15 +248,15 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
     pp->lensProf.lfAutoMatch = corrLensfunAuto->get_active();
     auto itc = lensfunCameras->get_active();
     if (itc) {
-        pp->lensProf.lfCameraMake = (*itc)[lensfunModelCam.make];
-        pp->lensProf.lfCameraModel = (*itc)[lensfunModelCam.model];
+        pp->lensProf.lfCameraMake = (*itc)[lf->lensfunModelCam.make];
+        pp->lensProf.lfCameraModel = (*itc)[lf->lensfunModelCam.model];
     } else {
         pp->lensProf.lfCameraMake = "";
         pp->lensProf.lfCameraModel = "";
     }
     auto itl = lensfunLenses->get_active();
     if (itl) {
-        pp->lensProf.lfLens = (*itl)[lensfunModelLens.lens];
+        pp->lensProf.lfLens = (*itl)[lf->lensfunModelLens.lens];
     } else {
         pp->lensProf.lfLens = "";
     }
@@ -335,61 +334,21 @@ void LensProfilePanel::setBatchMode(bool yes)
 }
 
 
-void LensProfilePanel::fillLensfunCameras()
-{
-    std::map<Glib::ustring, std::set<Glib::ustring>> camnames;
-    auto camlist = LFDatabase::getInstance()->getCameras();
-    for (auto &c : camlist) {
-        camnames[c.getMake()].insert(c.getModel());
-    }
-    for (auto &p : camnames) {
-        Gtk::TreeModel::Row row = *(lensfunCameraModel->append());
-        row[lensfunModelCam.make] = p.first;
-        row[lensfunModelCam.model] = p.first;
-        for (auto &c : p.second) {
-            Gtk::TreeModel::Row child = *(lensfunCameraModel->append(row.children()));
-            child[lensfunModelCam.make] = p.first;
-            child[lensfunModelCam.model] = c;
-        }
-    }
-}
-
-
-void LensProfilePanel::fillLensfunLenses()
-{
-    std::map<Glib::ustring, std::set<Glib::ustring>> lenses;
-    auto lenslist = LFDatabase::getInstance()->getLenses();
-    for (auto &l : lenslist) {
-        auto name = l.getLens();
-        auto make = l.getMake();
-        lenses[make].insert(name);
-    }
-    for (auto &p : lenses) {
-        Gtk::TreeModel::Row row = *(lensfunLensModel->append());
-        row[lensfunModelLens.lens] = p.first;
-        for (auto &c : p.second) {
-            Gtk::TreeModel::Row child = *(lensfunLensModel->append(row.children()));
-            child[lensfunModelLens.lens] = c;
-        }
-    }
-}
-
-
 bool LensProfilePanel::setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model)
 {
     if (!make.empty() && !model.empty()) {
         auto it = lensfunCameras->get_active();
-        if (it && (*it)[lensfunModelCam.make] == make && (*it)[lensfunModelCam.model] == model) {
+        if (it && (*it)[lf->lensfunModelCam.make] == make && (*it)[lf->lensfunModelCam.model] == model) {
             return true;
         }
         
         // search for the active row
-        for (auto row : lensfunCameraModel->children()) {
-            if (row[lensfunModelCam.make] == make) {
+        for (auto row : lf->lensfunCameraModel->children()) {
+            if (row[lf->lensfunModelCam.make] == make) {
                 auto &c = row.children();
                 for (auto it = c.begin(), end = c.end(); it != end; ++it) {
                     auto &childrow = *it;
-                    if (childrow[lensfunModelCam.model] == model) {
+                    if (childrow[lf->lensfunModelCam.model] == model) {
                         lensfunCameras->set_active(it);
                         return true;
                     }
@@ -407,16 +366,16 @@ bool LensProfilePanel::setLensfunLens(const Glib::ustring &lens)
 {
     if (!lens.empty()) {
         auto it = lensfunLenses->get_active();
-        if (it && (*it)[lensfunModelLens.lens] == lens) {
+        if (it && (*it)[lf->lensfunModelLens.lens] == lens) {
             return true;
         }
         
-        for (auto row : lensfunLensModel->children()) {
-            if (lens.find(row[lensfunModelLens.lens]) == 0) {
+        for (auto row : lf->lensfunLensModel->children()) {
+            if (lens.find(row[lf->lensfunModelLens.lens]) == 0) {
                 auto &c = row.children();
                 for (auto it = c.begin(), end = c.end(); it != end; ++it) {
                     auto &childrow = *it;
-                    if (childrow[lensfunModelLens.lens] == lens) {
+                    if (childrow[lf->lensfunModelLens.lens] == lens) {
                         lensfunLenses->set_active(it);
                         return true;
                     }
@@ -439,7 +398,7 @@ void LensProfilePanel::onLensfunCameraChanged()
         lensfunCameraChanged = true;
 
         if (listener) {
-            Glib::ustring name = (*iter)[lensfunModelCam.model];
+            Glib::ustring name = (*iter)[lf->lensfunModelCam.model];
             listener->panelChanged(EvLensCorrLensfunCamera, name);
         }
     }
@@ -454,7 +413,7 @@ void LensProfilePanel::onLensfunLensChanged()
         lensfunLensChanged = true;
 
         if (listener) {
-            Glib::ustring name = (*iter)[lensfunModelLens.lens];
+            Glib::ustring name = (*iter)[lf->lensfunModelLens.lens];
             listener->panelChanged(EvLensCorrLensfunLens, name);
         }
     }
@@ -549,4 +508,63 @@ bool LensProfilePanel::checkLensfunCanCorrect(bool automatch)
     lpp.lensProf.lfAutoMatch = automatch;
     std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(lpp.lensProf, metadata, 100, 100, lpp.coarse, -1));
     return mod.get() != nullptr;
+}
+
+
+//-----------------------------------------------------------------------------
+// LFDbHelper
+//-----------------------------------------------------------------------------
+
+LensProfilePanel::LFDbHelper::LFDbHelper()
+{
+    lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
+    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
+
+    fillLensfunCameras();
+    fillLensfunLenses();
+}
+
+void LensProfilePanel::LFDbHelper::fillLensfunCameras()
+{
+    std::map<Glib::ustring, std::set<Glib::ustring>> camnames;
+    auto camlist = LFDatabase::getInstance()->getCameras();
+    for (auto &c : camlist) {
+        camnames[c.getMake()].insert(c.getModel());
+    }
+    for (auto &p : camnames) {
+        Gtk::TreeModel::Row row = *(lensfunCameraModel->append());
+        row[lensfunModelCam.make] = p.first;
+        row[lensfunModelCam.model] = p.first;
+        for (auto &c : p.second) {
+            Gtk::TreeModel::Row child = *(lensfunCameraModel->append(row.children()));
+            child[lensfunModelCam.make] = p.first;
+            child[lensfunModelCam.model] = c;
+        }
+    }
+}
+
+
+void LensProfilePanel::LFDbHelper::fillLensfunLenses()
+{
+    std::map<Glib::ustring, std::set<Glib::ustring>> lenses;
+    auto lenslist = LFDatabase::getInstance()->getLenses();
+    for (auto &l : lenslist) {
+        auto name = l.getLens();
+        auto make = l.getMake();
+        lenses[make].insert(name);
+    }
+    for (auto &p : lenses) {
+        Gtk::TreeModel::Row row = *(lensfunLensModel->append());
+        row[lensfunModelLens.lens] = p.first;
+        row[lensfunModelLens.prettylens] = p.first;
+        for (auto &c : p.second) {
+            Gtk::TreeModel::Row child = *(lensfunLensModel->append(row.children()));
+            child[lensfunModelLens.lens] = c;
+            if (c.find(p.first, p.first.size()+1) == p.first.size()+1) {
+                child[lensfunModelLens.prettylens] = c.substr(p.first.size()+1);
+            } else {
+                child[lensfunModelLens.prettylens] = c;
+            }
+        }
+    }
 }
