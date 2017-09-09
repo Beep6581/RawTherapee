@@ -91,13 +91,13 @@ public:
     std::vector<LFLens> getLenses() const;
     LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
     LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
-    LFModifier *getModifier(const LFCamera &camera, const LFLens &lens,
-                            float focalLen, float aperture, float focusDist,
-                            int width, int height, bool swap_xy) const;
 
     static LFModifier *findModifier(const LensProfParams &lensProf, const ImageMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg);
 
 private:
+    LFModifier *getModifier(const LFCamera &camera, const LFLens &lens,
+                            float focalLen, float aperture, float focusDist,
+                            int width, int height, bool swap_xy) const;
     LFDatabase();
     LFDatabase(const LFDatabase &);
     LFDatabase &operator=(const LFDatabase &);

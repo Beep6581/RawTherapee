@@ -295,8 +295,6 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
         if (found) {
             ret.data_ = found[0];
             lf_free(found);
-        } else if (camera.ok() && !stdlens) {
-            ret = findLens(LFCamera(), name);
         }
     }
     return ret;
@@ -333,7 +331,7 @@ LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const Image
         lens = lensProf.lfLens;
     }
     LFCamera c = db->findCamera(make, model);
-    LFLens l = db->findLens(c, lens);
+    LFLens l = db->findLens(lensProf.lfAutoMatch ? c : LFCamera(), lens);
     bool swap_xy = false;
     if (rawRotationDeg >= 0) {
         int rot = (coarse.rotate + rawRotationDeg) % 360;
