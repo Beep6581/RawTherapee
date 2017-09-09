@@ -492,13 +492,15 @@ void LensProfilePanel::onCorrModeChanged()
         ckbUseCA->set_sensitive(false);
 
         if (metadata) {
-            disableListener();
+            bool b = disableListener();
             const LFDatabase *db = LFDatabase::getInstance();
             LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
             LFLens l = db->findLens(c, metadata->getLens());
             setLensfunCamera(c.getMake(), c.getModel());
             setLensfunLens(l.getLens());
-            enableListener();
+            if (b) {
+                enableListener();
+            }
         }
 
         mode = M("LENSPROFILE_CORRECTION_AUTOMATCH");
