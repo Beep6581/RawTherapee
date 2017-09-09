@@ -1121,7 +1121,7 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
     LCPMapper *pLCPMap = nullptr;
 
     if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen() > 0) {
-        LCPProfile *pLCPProf = lcpStore->getProfile (params.lensProf.lcpFile);
+        const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile (params.lensProf.lcpFile);
 
         if (pLCPProf) pLCPMap = new LCPMapper (pLCPProf, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(),
                                                    0, false, params.lensProf.useDist, fullw, fullh, params.coarse, imgsrc->getRotateDegree());

@@ -1855,7 +1855,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     // Correct vignetting of lens profile
     if (!hasFlatField && lensProf.useVign) {
-        LCPProfile *pLCPProf = lcpStore->getProfile(lensProf.lcpFile);
+        const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile(lensProf.lcpFile);
 
         if (pLCPProf) { // don't check focal length to allow distortion correction for lenses without chip, also pass dummy focal length 1 in case of 0
             LCPMapper map(pLCPProf, max(idata->getFocalLen(), 1.0), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);

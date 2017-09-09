@@ -41,7 +41,7 @@ LensProfilePanel::LensProfilePanel () : FoldableToolPanel(this, "lensprof", M("T
     filterLCP->add_pattern("*.LCP");
     fcbLCPFile->add_filter(filterLCP);
 
-    Glib::ustring defDir = lcpStore->getDefaultCommonDirectory();
+    Glib::ustring defDir = LCPStore::getInstance()->getDefaultCommonDirectory();
 
     if (!defDir.empty()) {
 #ifdef WIN32
@@ -82,7 +82,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     disableListener ();
     conUseDist.block(true);
 
-    if (!pp->lensProf.lcpFile.empty() && lcpStore->isValidLCPFileName(pp->lensProf.lcpFile)) {
+    if (!pp->lensProf.lcpFile.empty() && LCPStore::getInstance()->isValidLCPFileName(pp->lensProf.lcpFile)) {
         fcbLCPFile->set_filename (pp->lensProf.lcpFile);
         updateDisabled(true);
     } else {
@@ -128,7 +128,7 @@ void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta
 
 void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-    if (lcpStore->isValidLCPFileName(fcbLCPFile->get_filename())) {
+    if (LCPStore::getInstance()->isValidLCPFileName(fcbLCPFile->get_filename())) {
         pp->lensProf.lcpFile = fcbLCPFile->get_filename();
     } else {
         pp->lensProf.lcpFile = "";
@@ -149,7 +149,7 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 void LensProfilePanel::onLCPFileChanged()
 {
     lcpFileChanged = true;
-    updateDisabled(lcpStore->isValidLCPFileName(fcbLCPFile->get_filename()));
+    updateDisabled(LCPStore::getInstance()->isValidLCPFileName(fcbLCPFile->get_filename()));
 
     if (listener) {
         listener->panelChanged (EvLCPFile, Glib::path_get_basename(fcbLCPFile->get_filename()));

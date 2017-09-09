@@ -313,7 +313,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     LCPMapper *pLCPMap = nullptr;
 
     if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
-        LCPProfile *pLCPProf = lcpStore->getProfile (params->lensProf.lcpFile);
+        const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile (params->lensProf.lcpFile);
 
         if (pLCPProf) {
             pLCPMap = new LCPMapper (pLCPProf, focalLen, focalLen35mm,
@@ -784,7 +784,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
     double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, true /*fullImage*/ ? pLCPMap : nullptr) : 1.0;
 
     // smaller crop images are a problem, so only when processing fully
-    bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage && pLCPMap->enableCA;
+    bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage && pLCPMap->isCACorrectionAvailable();
     bool enableLCPDist = pLCPMap && params->lensProf.useDist; // && fullImage;
 
     if (enableLCPCA) {
