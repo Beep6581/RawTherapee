@@ -183,7 +183,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     }
     
     if (!setLensfunCamera(pp->lensProf.lfCameraMake, pp->lensProf.lfCameraModel) && pp->lensProf.lfAutoMatch) {
-        setLensfunCamera(c.getMake(), c.getModel());        
+        setLensfunCamera(c.getMake(), c.getModel());
     }
     if (!setLensfunLens(pp->lensProf.lfLens) && pp->lensProf.lfAutoMatch) {
         setLensfunLens(l.getLens());
@@ -192,15 +192,25 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
     useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
 
-    if (metadata) {
-        std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(pp->lensProf, metadata, 100, 100, pp->coarse, -1));
-        if (!mod) {
-            if (pp->lensProf.useLensfun) {
-                corrOff->set_active(true);
-            }
-            corrLensfunAuto->set_sensitive(false);
+    if (!checkLensfunCanCorrect(true)) {
+        if (corrLensfunAuto->get_active()) {
+            corrOff->set_active(true);
         }
+        corrLensfunAuto->set_sensitive(false);
     }
+
+    if (corrLensfunManual->get_active() && !checkLensfunCanCorrect(false)) {
+        corrOff->set_active(true);
+    }
+    // if (metadata) {
+    //     std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(pp->lensProf, metadata, 100, 100, pp->coarse, -1));
+    //     if (!mod) {
+    //         if (pp->lensProf.useLensfun) {
+    //             corrOff->set_active(true);
+    //         }
+    //         corrLensfunAuto->set_sensitive(false);
+    //     }
+    // }
 
     enableListener ();
     conUseDist.block(false);
@@ -525,4 +535,17 @@ void LensProfilePanel::onCorrModeChanged()
     if (listener) {
         listener->panelChanged(EvLensCorrMode, mode);
     }
+}
+
+
+bool LensProfilePanel::checkLensfunCanCorrect(bool automatch)
+{
+    if (!metadata) {
+        return false;
+    }
+    rtengine::procparams::ProcParams lpp;
+    write(&lpp);
+    lpp.lensProf.lfAutoMatch = automatch;
+    std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(lpp.lensProf, metadata, 100, 100, lpp.coarse, -1));
+    return mod.get() != nullptr;
 }
