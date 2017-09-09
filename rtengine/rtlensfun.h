@@ -73,6 +73,7 @@ class LFLens {
 public:
     LFLens();
     bool ok() const;
+    Glib::ustring getMake() const;
     Glib::ustring getLens() const;
     Glib::ustring getDisplayString() const { return getLens(); }
 private:

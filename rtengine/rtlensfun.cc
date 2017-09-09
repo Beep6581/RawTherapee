@@ -184,6 +184,16 @@ bool LFLens::ok() const
 }
 
 
+Glib::ustring LFLens::getMake() const
+{
+    if (data_) {
+        return data_->Maker;
+    } else {
+        return "";
+    }
+}
+
+
 Glib::ustring LFLens::getLens() const
 {
     if (data_) {

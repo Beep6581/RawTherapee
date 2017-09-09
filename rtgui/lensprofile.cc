@@ -360,12 +360,8 @@ void LensProfilePanel::fillLensfunLenses()
     std::map<Glib::ustring, std::set<Glib::ustring>> lenses;
     auto lenslist = LFDatabase::getInstance()->getLenses();
     for (auto &l : lenslist) {
-        auto name = l.getDisplayString();
-        auto pos = name.find_first_of(' ');
-        Glib::ustring make = "(Unknown)";
-        if (pos != Glib::ustring::npos) {
-            make = name.substr(0, pos);
-        }
+        auto name = l.getLens();
+        auto make = l.getMake();
         lenses[make].insert(name);
     }
     for (auto &p : lenses) {
@@ -415,15 +411,8 @@ bool LensProfilePanel::setLensfunLens(const Glib::ustring &lens)
             return true;
         }
         
-        // search for the active row
-        auto pos = lens.find_first_of(' ');
-        Glib::ustring make = "(Unknown)";
-        if (pos != Glib::ustring::npos) {
-            make = lens.substr(0, pos);
-        }
-        
         for (auto row : lensfunLensModel->children()) {
-            if (row[lensfunModelLens.lens] == make) {
+            if (lens.find(row[lensfunModelLens.lens]) == 0) {
                 auto &c = row.children();
                 for (auto it = c.begin(), end = c.end(); it != end; ++it) {
                     auto &childrow = *it;
@@ -501,6 +490,16 @@ void LensProfilePanel::onCorrModeChanged()
         ckbUseDist->set_sensitive(true);
         ckbUseVign->set_sensitive(true);
         ckbUseCA->set_sensitive(false);
+
+        if (metadata) {
+            disableListener();
+            const LFDatabase *db = LFDatabase::getInstance();
+            LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
+            LFLens l = db->findLens(c, metadata->getLens());
+            setLensfunCamera(c.getMake(), c.getModel());
+            setLensfunLens(l.getLens());
+            enableListener();
+        }
 
         mode = M("LENSPROFILE_CORRECTION_AUTOMATCH");
     } else if (corrLensfunManual->get_active()) {
