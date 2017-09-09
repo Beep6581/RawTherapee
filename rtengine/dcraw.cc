@@ -2563,6 +2563,12 @@ void CLASS kodak_radc_load_raw()
   for (row=0; row < height; row+=4) {
     FORC3 mul[c] = getbits(6);
     FORC3 {
+        if (!mul[c]) {
+            mul[c] = 1;
+            derror();
+        }
+    }
+    FORC3 {
       val = ((0x1000000/last[c] + 0x7ff) >> 12) * mul[c];
       s = val > 65564 ? 10:12;
       x = ~(-1 << (s-1));
