@@ -66,9 +66,18 @@ LensProfilePanel::LensProfilePanel () :
     lensfunCameras = Gtk::manage(new MyComboBox());
     lensfunCameras->set_model(lf->lensfunCameraModel);
     lensfunCameras->pack_start(lf->lensfunModelCam.model);
+    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(lensfunCameras->get_first_cell());
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+    cellRenderer->property_ellipsize_set() = true;
+    lensfunCameras->setPreferredWidth(50, 120);
+
     lensfunLenses = Gtk::manage(new MyComboBox());
     lensfunLenses->set_model(lf->lensfunLensModel);
     lensfunLenses->pack_start(lf->lensfunModelLens.prettylens);
+    cellRenderer = dynamic_cast<Gtk::CellRendererText*>(lensfunLenses->get_first_cell());
+    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+    cellRenderer->property_ellipsize_set() = true;
+    lensfunLenses->setPreferredWidth(50, 120);
     
     Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("EXIFFILTER_CAMERA"))), Gtk::PACK_SHRINK, 4);
