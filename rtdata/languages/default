@@ -2152,7 +2152,6 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
-LENSPROFILE_CORRECTION_OFF;None
 LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
 LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 LENSPROFILE_CORRECTION_LCPFILE;LCP File

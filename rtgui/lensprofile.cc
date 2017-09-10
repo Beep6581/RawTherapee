@@ -48,11 +48,14 @@ LensProfilePanel::LensProfilePanel () :
     if (!lf) {
         lf = new LFDbHelper();
     }
-    
-    corrOff = Gtk::manage(new Gtk::RadioButton(M("LENSPROFILE_CORRECTION_OFF")));
-    pack_start(*corrOff);
 
-    corrGroup = corrOff->get_group();
+    corrUnchanged = Gtk::manage(new Gtk::RadioButton(M("GENERAL_UNCHANGED")));
+    pack_start(*corrUnchanged);
+
+    corrGroup = corrUnchanged->get_group();
+
+    corrOff = Gtk::manage(new Gtk::RadioButton(corrGroup, M("GENERAL_NONE")));
+    pack_start(*corrOff);
     
     corrLensfunAuto = Gtk::manage(new Gtk::RadioButton(corrGroup, M("LENSPROFILE_CORRECTION_AUTOMATCH")));
     pack_start(*corrLensfunAuto);
@@ -132,6 +135,8 @@ LensProfilePanel::LensProfilePanel () :
     corrLensfunManual->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
     corrLcpFile->signal_toggled().connect(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged));
 
+    corrUnchanged->hide();
+    
     allowFocusDep = true;
 }
 
@@ -139,6 +144,10 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 {
     disableListener ();
     conUseDist.block(true);
+
+    if (!batchMode) {
+        corrUnchanged->hide();
+    }
 
     corrLensfunAuto->set_sensitive(true);
     
@@ -331,6 +340,12 @@ void LensProfilePanel::updateDisabled(bool enable)
 void LensProfilePanel::setBatchMode(bool yes)
 {
     FoldableToolPanel::setBatchMode(yes);
+    if (yes) {
+        corrUnchanged->show();
+        corrUnchanged->set_active(true);
+    } else {
+        corrUnchanged->hide();
+    }
 }
 
 
@@ -490,6 +505,14 @@ void LensProfilePanel::onCorrModeChanged()
         updateDisabled(true);
 
         mode = M("LENSPROFILE_CORRECTION_LCPFILE");
+    } else if (corrUnchanged->get_active()) {
+        useLensfunChanged = false;
+        lensfunAutoChanged = false;
+        lcpFileChanged = false;
+        lensfunCameraChanged = false;
+        lensfunLensChanged = false;
+        
+        mode = M("GENERAL_UNCHANGED");
     }
     
     if (listener) {
