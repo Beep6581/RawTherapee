@@ -34,7 +34,6 @@ public:
     bool ok() const;
     
     void correctDistortion(double &x, double &y, int cx, int cy, double scale) const;
-    bool supportsAutoFill() const { return false; }
     bool supportsCA() const { return false; }
     void correctCA(double &x, double &y, int channel) const {}
     void processVignetteLine(int width, int y, float *line) const;

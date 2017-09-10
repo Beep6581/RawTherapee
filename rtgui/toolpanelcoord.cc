@@ -53,7 +53,6 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false
     colortoning         = Gtk::manage (new ColorToning ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     lensProf            = Gtk::manage (new LensProfilePanel ());
-    lensProf->setLensGeomRef (lensgeom);
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     vibrance            = Gtk::manage (new Vibrance ());

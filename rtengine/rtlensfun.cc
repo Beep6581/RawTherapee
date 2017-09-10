@@ -72,6 +72,8 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double 
         x -= cx;
         y -= cy;
     }
+    x *= scale;
+    y *= scale;
 }
 
 

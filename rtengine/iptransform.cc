@@ -969,10 +969,6 @@ double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LensCorrecti
         return 1;
     }
 
-    if (pLCPMap && !pLCPMap->supportsAutoFill()) {
-        return 1;
-    }
-
     double scaleU = 2, scaleL = 0.001;  // upper and lower border, iterate inbetween
 
     do {

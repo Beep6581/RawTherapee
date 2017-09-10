@@ -40,7 +40,6 @@ protected:
     bool allowFocusDep;
     bool isRaw;
     const rtengine::ImageMetaData* metadata;    
-    LensGeometry *lensgeomLcpFill;
 
     Gtk::RadioButton::Group corrGroup;
     Gtk::RadioButton *corrOff;
@@ -87,7 +86,6 @@ protected:
     bool setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model);
     bool setLensfunLens(const Glib::ustring &lens);
     bool checkLensfunCanCorrect(bool automatch);
-    void setAutoFill();
     
 public:
 
@@ -102,10 +100,6 @@ public:
     void onUseDistChanged();
     void onUseVignChanged();
     void onUseCAChanged();
-    void setLensGeomRef( LensGeometry *foo)
-    {
-        lensgeomLcpFill = foo ;
-    };
 
     void setBatchMode(bool yes);
 

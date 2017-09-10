@@ -39,7 +39,6 @@ LensProfilePanel::LensProfilePanel () :
     useCAChanged(false),
     isRaw(true),
     metadata(nullptr),
-    lensgeomLcpFill(nullptr),
     useLensfunChanged(false),
     lensfunAutoChanged(false),
     lensfunCameraChanged(false),
@@ -220,7 +219,6 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         corrOff->set_active(true);
     }
 
-    setAutoFill();
     enableListener ();
     conUseDist.block(false);
 }
@@ -516,8 +514,6 @@ void LensProfilePanel::onCorrModeChanged()
         mode = M("GENERAL_UNCHANGED");
     }
 
-    setAutoFill();
-    
     if (listener) {
         listener->panelChanged(EvLensCorrMode, mode);
     }
@@ -534,23 +530,6 @@ bool LensProfilePanel::checkLensfunCanCorrect(bool automatch)
     lpp.lensProf.lfAutoMatch = automatch;
     std::unique_ptr<LFModifier> mod(LFDatabase::findModifier(lpp.lensProf, metadata, 100, 100, lpp.coarse, -1));
     return mod.get() != nullptr;
-}
-
-
-void LensProfilePanel::setAutoFill()
-{
-    if (lensgeomLcpFill) {
-        bool b = lensgeomLcpFill->disableListener();
-        if (corrLensfunAuto->get_active() || corrLensfunManual->get_active()) {
-            lensgeomLcpFill->getFill()->set_active(true);
-            lensgeomLcpFill->getFill()->set_sensitive(false);
-        } else {
-            lensgeomLcpFill->getFill()->set_sensitive(true);            
-        }
-        if (b) {
-            lensgeomLcpFill->enableListener();
-        }
-    }
 }
 
 
