@@ -287,7 +287,7 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
     LFLens ret;
     if (data_) {
         Glib::ustring lname = name;
-        bool stdlens = camera.ok() && (name.empty() || name.find("Unknown ") == 0);
+        bool stdlens = camera.ok() && (name.empty() || name.find("Unknown") == 0);
         if (stdlens) {
             lname = camera.getModel(); // "Standard"
         }
