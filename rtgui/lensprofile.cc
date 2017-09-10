@@ -208,7 +208,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
     useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
 
-    if (!checkLensfunCanCorrect(true)) {
+    if (!batchMode && !checkLensfunCanCorrect(true)) {
         if (corrLensfunAuto->get_active()) {
             corrOff->set_active(true);
         }
@@ -510,6 +510,12 @@ void LensProfilePanel::onCorrModeChanged()
         lcpFileChanged = false;
         lensfunCameraChanged = false;
         lensfunLensChanged = false;
+
+        lensfunCameras->set_sensitive(true);
+        lensfunLenses->set_sensitive(true);
+        ckbUseDist->set_sensitive(true);
+        ckbUseVign->set_sensitive(true);
+        ckbUseCA->set_sensitive(true);
         
         mode = M("GENERAL_UNCHANGED");
     }
