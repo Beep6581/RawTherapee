@@ -281,9 +281,9 @@ HISTORY_MSG_30;RLD - Radius
 HISTORY_MSG_31;RLD - Amount
 HISTORY_MSG_32;RLD - Damping
 HISTORY_MSG_33;RLD - Iterations
-HISTORY_MSG_34;LCP distortion correction
-HISTORY_MSG_35;LCP vignetting correction
-HISTORY_MSG_36;LCP CA correction
+HISTORY_MSG_34;Lens Correction - Distortion
+HISTORY_MSG_35;Lens Correction - Vignetting
+HISTORY_MSG_36;Lens Correction - CA
 HISTORY_MSG_37;Exposure - Auto levels
 HISTORY_MSG_38;White Balance - Method
 HISTORY_MSG_39;WB - Temperature
@@ -332,7 +332,7 @@ HISTORY_MSG_81;Resize
 HISTORY_MSG_82;Profile changed
 HISTORY_MSG_83;S/H - Sharp mask
 HISTORY_MSG_84;Perspective correction
-HISTORY_MSG_85;LCP
+HISTORY_MSG_85;Lens Correction - LCP file
 HISTORY_MSG_86;RGB Curves - Luminosity mode
 HISTORY_MSG_87;Impulse Noise Reduction
 HISTORY_MSG_88;Impulse NR threshold
@@ -715,6 +715,9 @@ HISTORY_MSG_481;CAM02 - Temp scene
 HISTORY_MSG_482;CAM02 - Green scene
 HISTORY_MSG_483;CAM02 - Yb scene
 HISTORY_MSG_484;CAM02 - Auto Yb scene
+HISTORY_MSG_485;Lens Correction
+HISTORY_MSG_486;Lens Correction - Camera
+HISTORY_MSG_487;Lens Correction - Lens
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot

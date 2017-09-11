@@ -449,7 +449,7 @@ void LensProfilePanel::onCorrModeChanged()
         ckbUseVign->set_sensitive(false);
         ckbUseCA->set_sensitive(false);
         
-        mode = M("LENSPROFILE_CORRECTION_OFF");
+        mode = M("GENERAL_NONE");
     } else if (corrLensfunAuto->get_active()) {
         useLensfunChanged = true;
         lensfunAutoChanged = true;
