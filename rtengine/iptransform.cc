@@ -324,7 +324,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     if (needsLensfun()) {
         pLCPMap = LFDatabase::findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
     } else if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
-        LCPProfile *pLCPProf = lcpStore->getProfile (params->lensProf.lcpFile);
+        const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile (params->lensProf.lcpFile);
 
         if (pLCPProf) {
             pLCPMap = new LCPMapper (pLCPProf, focalLen, focalLen35mm,
@@ -806,7 +806,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
 
     switch (mode) {
     case ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE:
-        enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->supportsCA();
+        enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable();
         // no break on purpose
     case ImProcFunctions::TRANSFORM_HIGH_QUALITY:
         enableLCPDist = pLCPMap && params->lensProf.useDist;
