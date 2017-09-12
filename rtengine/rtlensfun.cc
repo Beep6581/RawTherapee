@@ -206,6 +206,16 @@ Glib::ustring LFLens::getLens() const
 }
 
 
+float LFLens::getCropFactor() const
+{
+    if (data_) {
+        return data_->CropFactor;
+    } else {
+        return 0;
+    }
+}
+
+
 //-----------------------------------------------------------------------------
 // LFDatabase
 //-----------------------------------------------------------------------------

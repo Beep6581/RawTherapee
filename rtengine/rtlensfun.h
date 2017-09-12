@@ -75,6 +75,7 @@ public:
     Glib::ustring getMake() const;
     Glib::ustring getLens() const;
     Glib::ustring getDisplayString() const { return getLens(); }
+    float getCropFactor() const;
 private:
     friend class LFDatabase;
     const lfLens *data_;

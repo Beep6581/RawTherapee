@@ -86,6 +86,11 @@ LensProfilePanel::LensProfilePanel () :
     hb = Gtk::manage(new Gtk::HBox());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("EXIFFILTER_LENS"))), Gtk::PACK_SHRINK, 4);
     hb->pack_start(*lensfunLenses);
+    warning = Gtk::manage(new Gtk::Image());
+    warning->set_from_icon_name("dialog-warning", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    warning->set_tooltip_text(M("LENSPROFILE_LENS_WARNING"));
+    warning->hide();
+    hb->pack_start(*warning, Gtk::PACK_SHRINK, 4);
     pack_start(*hb);
 
     corrLcpFile = Gtk::manage(new Gtk::RadioButton(corrGroup));
@@ -219,8 +224,33 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         corrOff->set_active(true);
     }
 
+    updateLensfunWarning();
+
     enableListener ();
     conUseDist.block(false);
+}
+
+
+void LensProfilePanel::updateLensfunWarning()
+{
+    warning->hide();
+    if (corrLensfunManual->get_active()) {
+        const LFDatabase *db = LFDatabase::getInstance();
+        
+        auto itc = lensfunCameras->get_active();
+        if (!itc) {
+            return;
+        }
+        LFCamera c = db->findCamera((*itc)[lf->lensfunModelCam.make], (*itc)[lf->lensfunModelCam.model]);
+        auto itl = lensfunLenses->get_active();
+        if (!itl) {
+            return;
+        }
+        LFLens l = db->findLens(LFCamera(), (*itl)[lf->lensfunModelLens.lens]);
+        if (l.getCropFactor() - c.getCropFactor() >= 0.01) {
+            warning->show();
+        }
+    }
 }
 
 void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta)
@@ -430,6 +460,8 @@ void LensProfilePanel::onLensfunCameraChanged()
             listener->panelChanged(EvLensCorrLensfunCamera, name);
         }
     }
+
+    updateLensfunWarning();
 }
 
 
@@ -449,6 +481,8 @@ void LensProfilePanel::onLensfunLensChanged()
             listener->panelChanged(EvLensCorrLensfunLens, name);
         }
     }
+
+    updateLensfunWarning();
 }
 
 
@@ -525,6 +559,8 @@ void LensProfilePanel::onCorrModeChanged()
         
         mode = M("GENERAL_UNCHANGED");
     }
+
+    updateLensfunWarning();    
 
     if (listener) {
         listener->panelChanged(EvLensCorrMode, mode);

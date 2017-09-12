@@ -2158,3 +2158,4 @@ ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
 LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
 LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
 LENSPROFILE_CORRECTION_LCPFILE;LCP File
+LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.

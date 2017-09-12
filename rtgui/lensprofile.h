@@ -49,6 +49,7 @@ protected:
     Gtk::RadioButton *corrUnchanged;
     MyComboBox *lensfunCameras;
     MyComboBox *lensfunLenses;
+    Gtk::Image *warning;
 
     class LFDbHelper {
     public:
@@ -86,6 +87,7 @@ protected:
     bool setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model);
     bool setLensfunLens(const Glib::ustring &lens);
     bool checkLensfunCanCorrect(bool automatch);
+    void updateLensfunWarning();
     
 public:
 
