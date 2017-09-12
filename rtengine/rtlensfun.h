@@ -76,6 +76,8 @@ public:
     Glib::ustring getLens() const;
     Glib::ustring getDisplayString() const { return getLens(); }
     float getCropFactor() const;
+    bool hasVignettingCorrection() const;
+    bool hasDistortionCorrection() const;
 private:
     friend class LFDatabase;
     const lfLens *data_;

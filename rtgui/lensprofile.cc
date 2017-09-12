@@ -250,6 +250,8 @@ void LensProfilePanel::updateLensfunWarning()
         if (l.getCropFactor() - c.getCropFactor() >= 0.01) {
             warning->show();
         }
+        ckbUseVign->set_sensitive(l.hasVignettingCorrection());
+        ckbUseDist->set_sensitive(l.hasDistortionCorrection());
     }
 }
 

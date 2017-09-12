@@ -215,6 +215,24 @@ float LFLens::getCropFactor() const
     }
 }
 
+bool LFLens::hasVignettingCorrection() const
+{
+    if (data_) {
+        return data_->CalibVignetting;
+    } else {
+        return false;
+    }
+}
+
+bool LFLens::hasDistortionCorrection() const
+{
+    if (data_) {
+        return data_->CalibDistortion;
+    } else {
+        return false;
+    }
+}
+
 
 //-----------------------------------------------------------------------------
 // LFDatabase
