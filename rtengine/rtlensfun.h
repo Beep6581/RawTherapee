@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -20,43 +20,52 @@
 
 #pragma once
 
-#include <lensfun.h>
-#include <glibmm.h>
 #include <memory>
+#include <vector>
+
+#include <glibmm.h>
+
+#include <lensfun.h>
+
 #include "lcp.h"
+#include "noncopyable.h"
 #include "procparams.h"
 
 namespace rtengine {
 
-class LFModifier: public LensCorrection {
+class LFModifier final :
+    public LensCorrection,
+    public NonCopyable
+{
 public:
     ~LFModifier();
-    bool ok() const;
-    
-    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const;
-    bool isCACorrectionAvailable() const { return false; }
-    void correctCA(double &x, double &y, int channel) const {}
-    void processVignetteLine(int width, int y, float *line) const;
+
+    explicit operator bool() const;
+
+    void correctDistortion(double &x, double &y, int cx, int cy, double scale) const override;
+    bool isCACorrectionAvailable() const override;
+    void correctCA(double &x, double &y, int channel) const override;
+    void processVignetteLine(int width, int y, float *line) const override;
     void processVignetteLine3Channels(int width, int y, float *line) const;
 
     Glib::ustring getDisplayString() const;
-    
+
 private:
-    explicit LFModifier(lfModifier *m, bool swap_xy, int flags);
-    LFModifier(const LFModifier &);
-    LFModifier &operator=(const LFModifier &);
-    
+    LFModifier(lfModifier *m, bool swap_xy, int flags);
+
     friend class LFDatabase;
     lfModifier *data_;
     bool swap_xy_;
     int flags_;
 };
 
-class LFCamera {
+class LFCamera final
+{
 public:
     LFCamera();
-    bool ok() const;
-    
+
+    explicit operator bool() const;
+
     Glib::ustring getMake() const;
     Glib::ustring getModel() const;
     float getCropFactor() const;
@@ -68,42 +77,46 @@ private:
     const lfCamera *data_;
 };
 
-class LFLens {
+class LFLens final
+{
 public:
     LFLens();
-    bool ok() const;
+
+    explicit operator bool() const;
+
     Glib::ustring getMake() const;
     Glib::ustring getLens() const;
     Glib::ustring getDisplayString() const { return getLens(); }
     float getCropFactor() const;
     bool hasVignettingCorrection() const;
     bool hasDistortionCorrection() const;
+
 private:
     friend class LFDatabase;
     const lfLens *data_;
 };
 
-class LFDatabase {
+class LFDatabase final :
+    public NonCopyable
+{
 public:
     static bool init();
     static const LFDatabase *getInstance();
 
     ~LFDatabase();
-    
+
     std::vector<LFCamera> getCameras() const;
     std::vector<LFLens> getLenses() const;
     LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
     LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
 
-    static LFModifier *findModifier(const LensProfParams &lensProf, const ImageMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg);
+    static std::unique_ptr<LFModifier> findModifier(const LensProfParams &lensProf, const ImageMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg);
 
 private:
-    LFModifier *getModifier(const LFCamera &camera, const LFLens &lens,
-                            float focalLen, float aperture, float focusDist,
-                            int width, int height, bool swap_xy) const;
+    std::unique_ptr<LFModifier> getModifier(const LFCamera &camera, const LFLens &lens,
+                                            float focalLen, float aperture, float focusDist,
+                                            int width, int height, bool swap_xy) const;
     LFDatabase();
-    LFDatabase(const LFDatabase &);
-    LFDatabase &operator=(const LFDatabase &);
     static LFDatabase instance_;
     lfDatabase *data_;
 };

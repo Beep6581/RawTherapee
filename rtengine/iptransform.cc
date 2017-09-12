@@ -319,18 +319,21 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
     float focusDist = metadata->getFocusDist();
     double fNumber = metadata->getFNumber();
 
-    LensCorrection *pLCPMap = nullptr;
+    std::unique_ptr<const LensCorrection> pLCPMap;
 
     if (needsLensfun()) {
-        pLCPMap = LFDatabase::findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
+        pLCPMap = std::move(LFDatabase::findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg));
     } else if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile (params->lensProf.lcpFile);
 
         if (pLCPProf) {
-            pLCPMap = new LCPMapper (pLCPProf, focalLen, focalLen35mm,
-                                     focusDist, fNumber, false,
-                                     params->lensProf.useDist,
-                                     oW, oH, params->coarse, rawRotationDeg);
+            pLCPMap.reset(
+                new LCPMapper (pLCPProf, focalLen, focalLen35mm,
+                               focusDist, fNumber, false,
+                               params->lensProf.useDist,
+                               oW, oH, params->coarse, rawRotationDeg
+                )
+            );
         }
     }
 
@@ -345,11 +348,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
         } else {
             mode = TRANSFORM_HIGH_QUALITY_FULLIMAGE;
         }
-        transformGeneral(mode, original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap);
-    }
-
-    if (pLCPMap) {
-        delete pLCPMap;
+        transformGeneral(mode, original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get());
     }
 }
 

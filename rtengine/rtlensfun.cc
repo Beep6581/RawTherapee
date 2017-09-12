@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -30,14 +30,6 @@ extern const Settings *settings;
 // LFModifier
 //-----------------------------------------------------------------------------
 
-LFModifier::LFModifier(lfModifier *m, bool swap_xy, int flags):
-    data_(m),
-    swap_xy_(swap_xy),
-    flags_(flags)
-{
-}
-
-
 LFModifier::~LFModifier()
 {
     if (data_) {
@@ -45,7 +37,8 @@ LFModifier::~LFModifier()
     }
 }
 
-bool LFModifier::ok() const
+
+LFModifier::operator bool() const
 {
     return data_;
 }
@@ -53,7 +46,7 @@ bool LFModifier::ok() const
 
 void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
 {
-    if (!ok()) {
+    if (!data_) {
         return;
     }
 
@@ -74,6 +67,17 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double 
     }
     x *= scale;
     y *= scale;
+}
+
+
+bool LFModifier::isCACorrectionAvailable() const
+{
+    return false;
+}
+
+
+void LFModifier::correctCA(double &x, double &y, int channel) const
+{
 }
 
 
@@ -114,6 +118,14 @@ Glib::ustring LFModifier::getDisplayString() const
 }
 
 
+LFModifier::LFModifier(lfModifier *m, bool swap_xy, int flags):
+    data_(m),
+    swap_xy_(swap_xy),
+    flags_(flags)
+{
+}
+
+
 //-----------------------------------------------------------------------------
 // LFCamera
 //-----------------------------------------------------------------------------
@@ -124,7 +136,7 @@ LFCamera::LFCamera():
 }
 
 
-bool LFCamera::ok() const
+LFCamera::operator bool() const
 {
     return data_;
 }
@@ -180,7 +192,7 @@ LFLens::LFLens():
 }
 
 
-bool LFLens::ok() const
+LFLens::operator bool() const
 {
     return data_;
 }
@@ -274,11 +286,11 @@ std::vector<LFCamera> LFDatabase::getCameras() const
     if (data_) {
         auto cams = data_->GetCameras();
         while (*cams) {
-            ret.emplace_back(LFCamera());
+            ret.emplace_back();
             ret.back().data_ = *cams;
             ++cams;
         }
-    }    
+    }
     return ret;
 }
 
@@ -289,7 +301,7 @@ std::vector<LFLens> LFDatabase::getLenses() const
     if (data_) {
         auto lenses = data_->GetLenses();
         while (*lenses) {
-            ret.emplace_back(LFLens());
+            ret.emplace_back();
             ret.back().data_ = *lenses;
             ++lenses;
         }
@@ -317,7 +329,7 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
     LFLens ret;
     if (data_) {
         Glib::ustring lname = name;
-        bool stdlens = camera.ok() && (name.empty() || name.find("Unknown") == 0);
+        bool stdlens = camera && (name.empty() || name.find("Unknown") == 0);
         if (stdlens) {
             lname = camera.getModel(); // "Standard"
         }
@@ -341,27 +353,27 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
 }
 
 
-LFModifier *LFDatabase::getModifier(const LFCamera &camera, const LFLens &lens,
+std::unique_ptr<LFModifier> LFDatabase::getModifier(const LFCamera &camera, const LFLens &lens,
                                     float focalLen, float aperture, float focusDist,
                                     int width, int height, bool swap_xy) const
 {
-    LFModifier *ret = nullptr;
+    std::unique_ptr<LFModifier> ret;
     if (data_) {
-        if (camera.ok() && lens.ok()) {
+        if (camera && lens) {
             lfModifier *mod = lfModifier::Create(lens.data_, camera.getCropFactor(), width, height);
             int flags = LF_MODIFY_DISTORTION | LF_MODIFY_SCALE;
             if (aperture > 0) {
                 flags |= LF_MODIFY_VIGNETTING;
             }
             flags = mod->Initialize(lens.data_, LF_PF_F32, focalLen, aperture, focusDist > 0 ? focusDist : 1000, 0.0, LF_RECTILINEAR, flags, false);
-            ret = new LFModifier(mod, swap_xy, flags);
+            ret.reset(new LFModifier(mod, swap_xy, flags));
         }
     }
     return ret;
 }
 
 
-LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const ImageMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg)
+std::unique_ptr<LFModifier> LFDatabase::findModifier(const LensProfParams &lensProf, const ImageMetaData *idata, int width, int height, const CoarseTransformParams &coarse, int rawRotationDeg)
 {
     const LFDatabase *db = getInstance();
     Glib::ustring make, model, lens;
@@ -394,8 +406,8 @@ LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const Image
             std::swap(width, height);
         }
     }
-    
-    LFModifier *ret = db->getModifier(c, l, idata->getFocalLen(), idata->getFNumber(), idata->getFocusDist(), width, height, swap_xy);
+
+    std::unique_ptr<LFModifier> ret = db->getModifier(c, l, idata->getFocalLen(), idata->getFNumber(), idata->getFocusDist(), width, height, swap_xy);
 
     if (settings->verbose) {
         std::cout << "LENSFUN:\n"
@@ -407,6 +419,6 @@ LFModifier *LFDatabase::findModifier(const LensProfParams &lensProf, const Image
 
     return ret;
 }
-    
+
 
 } // namespace rtengine
