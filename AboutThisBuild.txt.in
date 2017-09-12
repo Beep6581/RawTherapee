@@ -7,6 +7,7 @@ Processor: ${PROC_LABEL}
 System: ${SYSTEM}
 Bit depth: ${PROC_BIT_DEPTH}
 Gtkmm: V${GTKMM_VERSION}
+Lensfun: V${LENSFUN_VERSION}
 Build type: ${BUILD_TYPE}
 Build flags: ${CXX_FLAGS}
 Link flags: ${LFLAGS}
