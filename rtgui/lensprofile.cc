@@ -285,9 +285,15 @@ void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 void LensProfilePanel::onLCPFileChanged()
 {
     lcpFileChanged = true;
-    updateDisabled(LCPStore::getInstance()->isValidLCPFileName(fcbLCPFile->get_filename()));
+    bool valid = LCPStore::getInstance()->isValidLCPFileName(fcbLCPFile->get_filename());
+    updateDisabled(valid);
 
     if (listener) {
+        if (valid) {
+            disableListener();
+            corrLcpFile->set_active(true);
+            enableListener();
+        }
         listener->panelChanged (EvLCPFile, Glib::path_get_basename(fcbLCPFile->get_filename()));
     }
 }
@@ -299,7 +305,11 @@ void LensProfilePanel::onLCPFileReset()
     fcbLCPFile->unselect_filename(fcbLCPFile->get_filename());
     updateDisabled(false);
 
+
     if (listener) {
+        disableListener();
+        corrOff->set_active(true);
+        enableListener();
         listener->panelChanged (EvLCPFile, M("GENERAL_NONE"));
     }
 }
@@ -412,6 +422,10 @@ void LensProfilePanel::onLensfunCameraChanged()
         lensfunCameraChanged = true;
 
         if (listener) {
+            disableListener();
+            corrLensfunManual->set_active(true);
+            enableListener();
+            
             Glib::ustring name = (*iter)[lf->lensfunModelCam.model];
             listener->panelChanged(EvLensCorrLensfunCamera, name);
         }
@@ -427,7 +441,11 @@ void LensProfilePanel::onLensfunLensChanged()
         lensfunLensChanged = true;
 
         if (listener) {
-            Glib::ustring name = (*iter)[lf->lensfunModelLens.lens];
+            disableListener();
+            corrLensfunManual->set_active(true);
+            enableListener();
+            
+            Glib::ustring name = (*iter)[lf->lensfunModelLens.prettylens];
             listener->panelChanged(EvLensCorrLensfunLens, name);
         }
     }
@@ -443,8 +461,6 @@ void LensProfilePanel::onCorrModeChanged()
         lensfunAutoChanged = true;
         lcpFileChanged = true;
         
-        lensfunCameras->set_sensitive(false);
-        lensfunLenses->set_sensitive(false);
         ckbUseDist->set_sensitive(false);
         ckbUseVign->set_sensitive(false);
         ckbUseCA->set_sensitive(false);
@@ -456,9 +472,6 @@ void LensProfilePanel::onCorrModeChanged()
         lcpFileChanged = true;
         useDistChanged = true;
         useVignChanged = true;
-
-        lensfunCameras->set_sensitive(false);
-        lensfunLenses->set_sensitive(false);
 
         ckbUseDist->set_sensitive(true);
         ckbUseVign->set_sensitive(true);
@@ -484,9 +497,6 @@ void LensProfilePanel::onCorrModeChanged()
         useDistChanged = true;
         useVignChanged = true;
 
-        lensfunCameras->set_sensitive(true);
-        lensfunLenses->set_sensitive(true);
-
         ckbUseDist->set_sensitive(true);
         ckbUseVign->set_sensitive(true);
         ckbUseCA->set_sensitive(false);
@@ -499,8 +509,6 @@ void LensProfilePanel::onCorrModeChanged()
         useDistChanged = true;
         useVignChanged = true;
 
-        lensfunCameras->set_sensitive(false);
-        lensfunLenses->set_sensitive(false);
         updateDisabled(true);
 
         mode = M("LENSPROFILE_CORRECTION_LCPFILE");
@@ -511,8 +519,6 @@ void LensProfilePanel::onCorrModeChanged()
         lensfunCameraChanged = false;
         lensfunLensChanged = false;
 
-        lensfunCameras->set_sensitive(true);
-        lensfunLenses->set_sensitive(true);
         ckbUseDist->set_sensitive(true);
         ckbUseVign->set_sensitive(true);
         ckbUseCA->set_sensitive(true);
