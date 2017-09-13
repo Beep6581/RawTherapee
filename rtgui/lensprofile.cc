@@ -247,7 +247,9 @@ void LensProfilePanel::updateLensfunWarning()
             return;
         }
         LFLens l = db->findLens(LFCamera(), (*itl)[lf->lensfunModelLens.lens]);
-        if (l.getCropFactor() - c.getCropFactor() >= 0.01) {
+        float lenscrop = l.getCropFactor();
+        float camcrop = c.getCropFactor();
+        if (lenscrop <= 0 || camcrop <= 0 || lenscrop / camcrop >= 1.01f) {
             warning->show();
         }
         ckbUseVign->set_sensitive(l.hasVignettingCorrection());
