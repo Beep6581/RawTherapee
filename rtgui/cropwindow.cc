@@ -1623,7 +1623,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                     const int shThreshold = options.shadowThreshold;
                     const float ShawdowFac = 64.f / (options.shadowThreshold + 1);
                     const float HighlightFac = 64.f / (256 - options.highlightThreshold);
-                    const bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any of RGB chanels is clipped
+                    const bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any (all) of RGB chanels is (shadow) clipped
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -1681,17 +1681,21 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                             }
 
                             if (showcs) {
-                                if ((showclippedAny || showR) && currWS[0] <= shThreshold ) {
+                                bool scR = currWS[0] <= shThreshold;
+                                bool scG = currWS[1] <= shThreshold;
+                                bool scB = currWS[2] <= shThreshold;
+
+                                if (((showclippedAny && (scG && scB)) || showR) && scR ) {
                                     delta += currWS[0];
                                     changedSH = true;
                                 }
 
-                                if ((showclippedAny || showG) && currWS[1] <= shThreshold ) {
+                                if (((showclippedAny && (scR && scB)) || showG) && scG ) {
                                     delta += currWS[1];
                                     changedSH = true;
                                 }
 
-                                if ((showclippedAny || showB) && currWS[2] <= shThreshold ) {
+                                if (((showclippedAny && (scR && scG)) || showB) && scB ) {
                                     delta += currWS[2];
                                     changedSH = true;
                                 }
