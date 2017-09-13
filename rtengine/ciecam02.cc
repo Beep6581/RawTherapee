@@ -178,6 +178,8 @@ void Ciecam02::curveJ (double br, double contr, int db, LUTf & outCurve, LUTu & 
     for (int i = 0; i < (db * 32768); i++) {
         outCurve[i] = db * 32768.0 * dcurve[i];
     }
+//	printf("double out500=%f out15000=%f\n", outCurve[500], outCurve[15000]);
+	
 }
 
 void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf & outCurve)
@@ -268,6 +270,8 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
     }
 
     outCurve *= 32767.f;
+	//printf("out500=%f out15000=%f\n", outCurve[500], outCurve[15000]);
+	//outCurve.dump("brig");
 }
 
 /**
