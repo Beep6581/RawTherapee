@@ -85,7 +85,7 @@ public:
     const rtexif::TagDirectory *getExifData() const { return NULL; }
     bool hasIPTC() const { return false; }
     const rtengine::procparams::IPTCPairs getIPTCData () const { return rtengine::procparams::IPTCPairs(); }
-    struct tm getDateTime () const { struct tm ret; return ret; }
+    tm getDateTime () const { return tm{}; }
     time_t getDateTimeAsTS() const { return time_t(-1); }
     int getISOSpeed() const { return iso; }
     double getFNumber() const { return fnumber; }

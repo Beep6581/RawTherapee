@@ -789,18 +789,25 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
     bool enableCA = false;
 
     switch (mode) {
-    case ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE:
-        enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable();
-        // no break on purpose
-    case ImProcFunctions::TRANSFORM_HIGH_QUALITY:
-        enableLCPDist = pLCPMap && params->lensProf.useDist;
-        if (enableLCPCA) {
-            enableLCPDist = false;
+        case ImProcFunctions::TRANSFORM_HIGH_QUALITY_FULLIMAGE: {
+            enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable();
         }
-        enableCA = enableLCPCA || needsCA();
-    default: // ImProcFunctions::TRANSFORM_PREVIEW
-        enableLCPDist = pLCPMap && params->lensProf.useDist;
-        break;
+        //no break on purpose
+
+        case ImProcFunctions::TRANSFORM_HIGH_QUALITY: {
+            enableLCPDist = pLCPMap && params->lensProf.useDist;
+            if (enableLCPCA) {
+                enableLCPDist = false;
+            }
+            enableCA = enableLCPCA || needsCA();
+        }
+        //no break on purpose
+
+        default:
+        case ImProcFunctions::TRANSFORM_PREVIEW: {
+            enableLCPDist = pLCPMap && params->lensProf.useDist;
+            break;
+        }
     }
 
     if (!enableCA) {

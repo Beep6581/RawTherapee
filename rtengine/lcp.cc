@@ -650,8 +650,8 @@ int rtengine::LCPProfile::filterBadFrames(LCPCorrectionMode mode, double maxAvgD
             }
         }
 
-        if (settings->verbose) {
-            std::printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered *100.f / count, maxAvgDevFac, count - filtered);
+        if (settings->verbose && count) {
+            std::printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered * 100.f / count, maxAvgDevFac, count - filtered);
         }
     }
 
@@ -1030,7 +1030,7 @@ void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy
 {
     x += cx;
     y += cy;
-    
+
     if (isFisheye) {
         const double u = x * scale;
         const double v = y * scale;
