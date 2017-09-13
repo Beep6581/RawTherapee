@@ -846,6 +846,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         } else if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
                             //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
+                            float Qanc = Qpro;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
                             float Qold100 = (float) Qpro / coef;
 
@@ -871,8 +872,15 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
                             }
 
-                            Qpro = (double) (Qq * (coef) / 327.68f);
-                            Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
+                            }
+
+                            Qpro = Qanc * (Qq / Qold);
+                            Jpro = Jpro * SQR (Qq / Qold);
+
+//                           Qpro = (double) (Qq * (coef) / 327.68f);
+//                           Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
                             t1B = true;
 
                             if (Jpro < 1.) {
@@ -927,6 +935,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             }
 
                         } else if (curveMode2 == ColorAppearanceParams::TC_MODE_BRIGHT) { //
+                            float Qanc = Qpro;
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
                             float Qold100 = (float) Qpro / coef;
@@ -953,8 +962,16 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
                             }
 
-                            Qpro = (double) (Qq * (coef) / 327.68f);
-                            Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
+                            }
+
+                            //  Qpro = (float) (Qq * (coef) / 327.68f);
+                            Qpro = Qanc * (Qq / Qold);
+                            Jpro = Jpro * SQR (Qq / Qold);
+
+                            //      Qpro = (double) (Qq * (coef) / 327.68f);
+                            //      Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
                             t2B = true;
 
                             if (t1L) { //to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
@@ -2267,6 +2284,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
                             }
 
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
+                            }
+
                             Qpro = Qanc * (Qq / Qold);
                             //   Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
                             Jpro = Jpro * SQR (Qq / Qold);
@@ -2343,6 +2364,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                 Qq = 0.5f * (Qq - Qold) + Qold;
                             } else if (Qq >= 0.f) {
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
+                            }
+
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
                             }
 
                             //  Qpro = (float) (Qq * (coef) / 327.68f);
