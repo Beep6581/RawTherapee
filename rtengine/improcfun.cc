@@ -1681,11 +1681,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             }
         }
 
-        /*
+        
                 if (alg >= 2 && la < 200.f) {
                     la = 200.f;
                 }
-        */
+        
         const float la2 = float (params->colorappearance.adaplum);
 
         // level of adaptation
