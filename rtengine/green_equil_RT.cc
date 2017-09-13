@@ -62,6 +62,16 @@ void RawImageSource::green_equilibrate_global(array2D<float> &rawData)
         }
     }
 
+    // Avoid division by zero
+    if(ng1 == 0 || avgg1 == 0.0) {
+        ng1 = 1;
+        avgg1 = 1.0;
+    }
+    if(ng2 == 0 || avgg2 == 0.0) {
+        ng2 = 1;
+        avgg2 = 1.0;
+    }
+
     double corrg1 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg1 / ng1);
     double corrg2 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg2 / ng2);
 
