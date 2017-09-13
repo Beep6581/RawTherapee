@@ -77,11 +77,6 @@ public:
     int load (const Glib::ustring& fname);
     int save (const Glib::ustring& fname);
 
-    // Glib::ustring getCamera() const
-    // {
-    //     return Glib::ustring(camMake + " " + camModel);
-    // }
-
     //-------------------------------------------------------------------------
     // ImageMetaData interface
     //-------------------------------------------------------------------------

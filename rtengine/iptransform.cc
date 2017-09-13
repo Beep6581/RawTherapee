@@ -87,20 +87,6 @@ float normn (float a, float b, int n)
 }
 
 
-inline void correct_distortion(const rtengine::LensCorrection *lcp, double &x, double &y,
-                        int cx, int cy, double scale)
-{
-    assert (lcp);
-
-    // x += cx;
-    // y += cy;
-    // std::cout << "DIST: x=" << x << ", y=" << y;
-    lcp->correctDistortion(x, y, cx, cy, scale);
-    // std::cout << " --> pos[0]=" << x << ", pos[1]=" << y << std::endl;
-    // x -= (cx * scale);
-    // y -= (cy * scale);
-}
-
 }
 
 namespace rtengine
@@ -160,7 +146,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         double x_d = src[i].x, y_d = src[i].y;
 
         if (pLCPMap && params->lensProf.useDist) {
-            correct_distortion (pLCPMap, x_d, y_d, 0, 0, ascale);
+            pLCPMap->correctDistortion(x_d, y_d, 0, 0, ascale);
         } else {
             x_d *= ascale;
             y_d *= ascale;
@@ -311,7 +297,6 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
                                  const ImageMetaData *metadata,
-                                 //double focalLen, double focalLen35mm, float focusDist, double fNumber,
                                  int rawRotationDeg, bool fullImage)
 {
     double focalLen = metadata->getFocalLen();
@@ -831,7 +816,7 @@ void ImProcFunctions::transformGeneral(ImProcFunctions::TransformMode mode, Imag
             double x_d = x, y_d = y;
 
             if (enableLCPDist) {
-                correct_distortion(pLCPMap, x_d, y_d, cx, cy, ascale); // must be first transform
+                pLCPMap->correctDistortion(x_d, y_d, cx, cy, ascale); // must be first transform
             } else {
                 x_d *= ascale;
                 y_d *= ascale;

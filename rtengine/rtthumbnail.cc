@@ -954,8 +954,6 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-// IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName,
-//                                   double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso, std::string expcomp_, double& myscale)
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, const ImageMetaData *metadata, double& myscale)
 {
     std::string camName = metadata->getCamera();
@@ -1086,7 +1084,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         int origFH;
         double tscale = 0.0;
         getDimensions (origFW, origFH, tscale);
-        // ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, focalLen, focalLen35mm, focusDist, fnumber, 0, true); // Raw rotate degree not detectable here
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, metadata, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
@@ -1286,11 +1283,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         float fnum = fnumber;// F number
         float fiso = iso;// ISO
         float fspeed = shutter;//speed
-        // char * writ = new char[expcomp_.size() + 1];//convert expcomp_ to char
-        // std::copy (expcomp_.begin(), expcomp_.end(), writ);
-        // writ[expcomp_.size()] = '\0';
-        // float fcomp = atof (writ); //compensation + -
-        // delete[] writ;
         float adap;
 
         if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f)

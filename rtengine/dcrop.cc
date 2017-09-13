@@ -699,9 +699,6 @@ void Crop::update (int todo)
         if (needstransform)
             parent->ipf.transform (baseCrop, transCrop, cropx / skip, cropy / skip, trafx / skip, trafy / skip, skips (parent->fw, skip), skips (parent->fh, skip), parent->getFullWidth(), parent->getFullHeight(),
                                    parent->imgsrc->getMetaData(),
-                                   // parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(),
-                                   // parent->imgsrc->getMetaData()->getFocusDist(),
-                                   // parent->imgsrc->getMetaData()->getFNumber(),
                                    parent->imgsrc->getRotateDegree(), false);
         else {
             baseCrop->copyData (transCrop);
