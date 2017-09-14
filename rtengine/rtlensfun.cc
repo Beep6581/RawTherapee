@@ -175,7 +175,7 @@ float LFCamera::getCropFactor() const
 Glib::ustring LFCamera::getDisplayString() const
 {
     if (data_) {
-        return Glib::ustring::compose("%1 %2", getMake(), getModel());
+        return getMake() + ' ' + getModel();
     } else {
         return "---";
     }
@@ -211,7 +211,7 @@ Glib::ustring LFLens::getMake() const
 Glib::ustring LFLens::getLens() const
 {
     if (data_) {
-        return Glib::ustring::compose("%1 %2", data_->Maker, data_->Model);
+        return Glib::ustring(data_->Maker) + ' ' + data_->Model;
     } else {
         return "---";
     }
