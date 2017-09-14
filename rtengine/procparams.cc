@@ -922,6 +922,11 @@ void LensProfParams::setDefaults()
     lcpFile = "";
     useDist = useVign = true;
     useCA = false;
+    useLensfun = false;
+    lfAutoMatch = true;
+    lfCameraMake = "";
+    lfCameraModel = "";
+    lfLens = "";
 }
 
 void CoarseTransformParams::setDefaults()
@@ -2825,6 +2830,22 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->lensProf.useCA) {
             keyFile.set_boolean ("LensProfile", "UseCA", lensProf.useCA);
+        }
+
+        if (!pedited || pedited->lensProf.useLensfun) {
+            keyFile.set_boolean("LensProfile", "UseLensfun", lensProf.useLensfun);
+        }
+        if (!pedited || pedited->lensProf.lfAutoMatch) {
+            keyFile.set_boolean("LensProfile", "LFAutoMatch", lensProf.lfAutoMatch);
+        }
+        if (!pedited || pedited->lensProf.lfCameraMake) {
+            keyFile.set_string("LensProfile", "LFCameraMake", lensProf.lfCameraMake);
+        }
+        if (!pedited || pedited->lensProf.lfCameraModel) {
+            keyFile.set_string("LensProfile", "LFCameraModel", lensProf.lfCameraModel);
+        }
+        if (!pedited || pedited->lensProf.lfLens) {
+            keyFile.set_string("LensProfile", "LFLens", lensProf.lfLens);
         }
 
 // save perspective correction
@@ -7197,6 +7218,41 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->lensProf.useCA = true;
                 }
             }
+
+            if (keyFile.has_key("LensProfile", "UseLensfun")) {
+                lensProf.useLensfun = keyFile.get_boolean("LensProfile", "UseLensfun");
+                if (pedited) {
+                    pedited->lensProf.useLensfun = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFAutoMatch")) {
+                lensProf.lfAutoMatch = keyFile.get_boolean("LensProfile", "LFAutoMatch");
+                if (pedited) {
+                    pedited->lensProf.lfAutoMatch = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraMake")) {
+                lensProf.lfCameraMake = keyFile.get_string("LensProfile", "LFCameraMake");
+                if (pedited) {
+                    pedited->lensProf.lfCameraMake = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraModel")) {
+                lensProf.lfCameraModel = keyFile.get_string("LensProfile", "LFCameraModel");
+                if (pedited) {
+                    pedited->lensProf.lfCameraModel = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFLens")) {
+                lensProf.lfLens = keyFile.get_string("LensProfile", "LFLens");
+                if (pedited) {
+                    pedited->lensProf.lfLens = true;
+                }
+            }
         }
 
 // load perspective correction
@@ -9813,6 +9869,11 @@ bool ProcParams::operator== (const ProcParams& other)
         && lensProf.useDist == other.lensProf.useDist
         && lensProf.useVign == other.lensProf.useVign
         && lensProf.useCA == other.lensProf.useCA
+        && lensProf.useLensfun == other.lensProf.useLensfun
+        && lensProf.lfAutoMatch == other.lensProf.lfAutoMatch
+        && lensProf.lfCameraMake == other.lensProf.lfCameraMake
+        && lensProf.lfCameraModel == other.lensProf.lfCameraModel
+        && lensProf.lfLens == other.lensProf.lfLens
         && perspective.horizontal == other.perspective.horizontal
         && perspective.vertical == other.perspective.vertical
         && gradient.enabled == other.gradient.enabled

@@ -33,6 +33,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
+#include <lensfun.h>
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
@@ -139,6 +140,7 @@ int processLineParams ( int argc, char **argv )
 #endif
 
                 case 'v':
+                    std::cout << "Using lensfun " << LF_VERSION_MAJOR << "." << LF_VERSION_MINOR << "." << LF_VERSION_MICRO << "." << LF_VERSION_BUGFIX << std::endl;
                     return 0;
 
 #ifndef __APPLE__ // TODO agriggio - there seems to be already some "single instance app" support for OSX in rtwindow. Disabling it here until I understand how to merge the two

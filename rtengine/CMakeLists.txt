@@ -9,6 +9,7 @@ include_directories(${EXTRA_INCDIR}
     ${GTK_INCLUDE_DIRS}
     ${IPTCDATA_INCLUDE_DIRS}
     ${LCMS_INCLUDE_DIRS}
+    ${LENSFUN_INCLUDE_DIRS}
     )
 
 link_directories("${PROJECT_SOURCE_DIR}/rtexif"
@@ -110,6 +111,7 @@ set(RTENGINESOURCEFILES
     slicer.cc
     stdimagesource.cc
     utils.cc
+    rtlensfun.cc
     )
 
 if(NOT WITH_SYSTEM_KLT)
@@ -154,6 +156,7 @@ target_link_libraries(rtengine rtexif
     ${PNG_LIBRARIES}
     ${TIFF_LIBRARIES}
     ${ZLIB_LIBRARIES}
+    ${LENSFUN_LIBRARIES}
     )
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

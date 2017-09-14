@@ -836,6 +836,11 @@ class LensProfParams
 public:
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
+    bool useLensfun;
+    bool lfAutoMatch;
+    Glib::ustring lfCameraMake;
+    Glib::ustring lfCameraModel;
+    Glib::ustring lfLens;
 
     LensProfParams()
     {
@@ -843,6 +848,7 @@ public:
     }
     void setDefaults();
 };
+
 
 /**
   * Parameters of the perspective correction

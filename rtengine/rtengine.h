@@ -49,6 +49,7 @@ class IImage8;
 class IImage16;
 class IImagefloat;
 
+
 /**
   * This class represents provides functions to obtain exif and IPTC metadata information
   * from the image file

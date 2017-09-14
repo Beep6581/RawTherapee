@@ -18,7 +18,6 @@
  */
 
 #include <gtkmm.h>
-#include <regex>
 #include "rtwindow.h"
 #include "options.h"
 #include "preferences.h"
@@ -315,37 +314,27 @@ void RTWindow::on_realize ()
 
     // Display release notes only if new major version.
     // Pattern matches "5.1" from "5.1-23-g12345678"
-    std::string vs[] = {versionString, options.version};
-    std::regex pat ("(^[0-9.]+).*");
-    std::smatch sm;
+    const std::string vs[] = {versionString, options.version};
     std::vector<std::string> vMajor;
 
-    for (const auto &v : vs) {
-        if (std::regex_match (v, sm, pat)) {
-            if (sm.size() == 2) {
-                std::ssub_match smsub = sm[1];
-                vMajor.push_back (smsub.str());
-            }
-        }
+    for (const auto& v : vs) {
+        vMajor.emplace_back(v, 0, v.find_first_not_of("0123456789."));
     }
 
-    if (vMajor.size() == 2) {
-        if (vMajor[0] != vMajor[1]) {
+    if (vMajor.size() == 2 && vMajor[0] != vMajor[1]) {
+        // Update the version parameter with the right value
+        options.version = versionString;
 
-            // Update the version parameter with the right value
-            options.version = versionString;
+        splash = new Splash (*this);
+        splash->set_transient_for (*this);
+        splash->signal_delete_event().connect ( sigc::mem_fun (*this, &RTWindow::splashClosed) );
 
-            splash = new Splash (*this);
-            splash->set_transient_for (*this);
-            splash->signal_delete_event().connect ( sigc::mem_fun (*this, &RTWindow::splashClosed) );
-
-            if (splash->hasReleaseNotes()) {
-                splash->showReleaseNotes();
-                splash->show ();
-            } else {
-                delete splash;
-                splash = nullptr;
-            }
+        if (splash->hasReleaseNotes()) {
+            splash->showReleaseNotes();
+            splash->show ();
+        } else {
+            delete splash;
+            splash = nullptr;
         }
     }
 }

@@ -281,9 +281,9 @@ HISTORY_MSG_30;RLD - Radius
 HISTORY_MSG_31;RLD - Amount
 HISTORY_MSG_32;RLD - Damping
 HISTORY_MSG_33;RLD - Iterations
-HISTORY_MSG_34;LCP distortion correction
-HISTORY_MSG_35;LCP vignetting correction
-HISTORY_MSG_36;LCP CA correction
+HISTORY_MSG_34;Lens Correction - Distortion
+HISTORY_MSG_35;Lens Correction - Vignetting
+HISTORY_MSG_36;Lens Correction - CA
 HISTORY_MSG_37;Exposure - Auto levels
 HISTORY_MSG_38;White Balance - Method
 HISTORY_MSG_39;WB - Temperature
@@ -332,7 +332,7 @@ HISTORY_MSG_81;Resize
 HISTORY_MSG_82;Profile changed
 HISTORY_MSG_83;S/H - Sharp mask
 HISTORY_MSG_84;Perspective correction
-HISTORY_MSG_85;LCP
+HISTORY_MSG_85;Lens Correction - LCP file
 HISTORY_MSG_86;RGB Curves - Luminosity mode
 HISTORY_MSG_87;Impulse Noise Reduction
 HISTORY_MSG_88;Impulse NR threshold
@@ -731,94 +731,97 @@ HISTORY_MSG_481;CAM02 - Temp scene
 HISTORY_MSG_482;CAM02 - Green scene
 HISTORY_MSG_483;CAM02 - Yb scene
 HISTORY_MSG_484;CAM02 - Auto Yb scene
-HISTORY_MSG_485;Local L*a*b*
-HISTORY_MSG_486;Local - Bottom
-HISTORY_MSG_487;Local - Right
-HISTORY_MSG_488;Local - Center
-HISTORY_MSG_489;Local - Lightness/
-HISTORY_MSG_490;Local - Lightness
-HISTORY_MSG_491;Local - Contrast
-HISTORY_MSG_492;Local - Chrominance
-HISTORY_MSG_493;Local - Transition
-HISTORY_MSG_494;Local - Avoid color shift
-HISTORY_MSG_495;Local - Top
-HISTORY_MSG_496;Local - Left
-HISTORY_MSG_497;Local - Method
-HISTORY_MSG_498;Local - Color Inverse
-HISTORY_MSG_499;Local - Radius
-HISTORY_MSG_500;Local - Blur Inverse
-HISTORY_MSG_501;Local - Noise
-HISTORY_MSG_502;Local - Scope
-HISTORY_MSG_503;Local - Retinex method
-HISTORY_MSG_504;Local - Retinex strength
-HISTORY_MSG_505;Local - Retinex radius
-HISTORY_MSG_506;Local - Retinex contrast
-HISTORY_MSG_507;Local - Retinex Gain curve
-HISTORY_MSG_508;Local - Retinex chroma
-HISTORY_MSG_509;Local - Retinex Inverse
-HISTORY_MSG_510;Local - Hue scope
-HISTORY_MSG_511;Local - Spot
-HISTORY_MSG_512;Local - Blur Luminance only
-HISTORY_MSG_513;Local - Update GUI and Mip -1
-HISTORY_MSG_514;Local - Sh Radius
-HISTORY_MSG_515;Local - Sh Amount
-HISTORY_MSG_516;Local - Sh Damping
-HISTORY_MSG_517;Local - Sh Iterations
-HISTORY_MSG_518;Local - Sh Scope
-HISTORY_MSG_519;Local - Sh Inverse
-HISTORY_MSG_520;Local - Spot size
-HISTORY_MSG_521;Local - artifacts theshold
-HISTORY_MSG_522;Local - artifacts iterations
-HISTORY_MSG_523;Local - Quality
-HISTORY_MSG_524;Local - Noise lum f
-HISTORY_MSG_525;Local - Noise lum c
-HISTORY_MSG_526;Local - Noise chro f
-HISTORY_MSG_527;Local - Noise chro c
-HISTORY_MSG_528;Local - cbdl threshold
-HISTORY_MSG_529;Local - cbdl mult
-HISTORY_MSG_530;Local - cbdl scope
-HISTORY_MSG_531;Local - Blur scope
-HISTORY_MSG_532;Local - TM strength
-HISTORY_MSG_533;Local - TM gamma
-HISTORY_MSG_534;Local - TM edge stopping
-HISTORY_MSG_535;Local - TM scale
-HISTORY_MSG_536;Local - TM Reweighting
-HISTORY_MSG_537;Local - TM scope
-HISTORY_MSG_538;Local - Update GUI and Mip -2
-HISTORY_MSG_539;Local - Update GUI and Mip -3
-HISTORY_MSG_540;Local - LL Curve
-HISTORY_MSG_541;Local - Color and light
-HISTORY_MSG_542;Local - Blur and noise
-HISTORY_MSG_543;Local - Tone mapping
-HISTORY_MSG_544;Local - Retinex
-HISTORY_MSG_545;Local - Sharpening
-HISTORY_MSG_546;Local - CBDL
-HISTORY_MSG_547;Local - Denoise
-HISTORY_MSG_548;Local - LH Curve
-HISTORY_MSG_549;Local - Enable super
-HISTORY_MSG_550;Local - CC curve
-HISTORY_MSG_551;Local - curve method
-HISTORY_MSG_552;Local - hueref
-HISTORY_MSG_553;Local - chromaref
-HISTORY_MSG_554;Local - lumaref
-HISTORY_MSG_555;Local - H curve
-HISTORY_MSG_556;Local - Vibrance
-HISTORY_MSG_557;Local - Vib H curve
-HISTORY_MSG_558;Local - Vib Protect skin tones
-HISTORY_MSG_559;Local - Vib avoid colorshift
-HISTORY_MSG_560;Local - Vib link
-HISTORY_MSG_561;Local - Vib Pastel
-HISTORY_MSG_562;Local - Vib Saturated
-HISTORY_MSG_563;Local - Vib Threshold
-HISTORY_MSG_564;Local - Vib Scope
-HISTORY_MSG_565;Local - Exposure
-HISTORY_MSG_566;Local - Exp Compensation
-HISTORY_MSG_567;Local - Exp Hlcompr
-HISTORY_MSG_568;Local - Exp hlcomprthresh
-HISTORY_MSG_569;Local - Exp black
-HISTORY_MSG_570;Local - Exp Shcompr
-HISTORY_MSG_571;Local - Exp Scope
-HISTORY_MSG_572;Local - Exp Contrast curve
+HISTORY_MSG_485;Lens Correction
+HISTORY_MSG_486;Lens Correction - Camera
+HISTORY_MSG_487;Lens Correction - Lens
+HISTORY_MSG_488;Local L*a*b*
+HISTORY_MSG_489;Local - Bottom
+HISTORY_MSG_490;Local - Right
+HISTORY_MSG_491;Local - Center
+HISTORY_MSG_492;Local - Lightness/
+HISTORY_MSG_493;Local - Lightness
+HISTORY_MSG_494;Local - Contrast
+HISTORY_MSG_495;Local - Chrominance
+HISTORY_MSG_496;Local - Transition
+HISTORY_MSG_497;Local - Avoid color shift
+HISTORY_MSG_498;Local - Top
+HISTORY_MSG_499;Local - Left
+HISTORY_MSG_500;Local - Method
+HISTORY_MSG_501;Local - Color Inverse
+HISTORY_MSG_502;Local - Radius
+HISTORY_MSG_503;Local - Blur Inverse
+HISTORY_MSG_504;Local - Noise
+HISTORY_MSG_505;Local - Scope
+HISTORY_MSG_506;Local - Retinex method
+HISTORY_MSG_507;Local - Retinex strength
+HISTORY_MSG_508;Local - Retinex radius
+HISTORY_MSG_509;Local - Retinex contrast
+HISTORY_MSG_510;Local - Retinex Gain curve
+HISTORY_MSG_511;Local - Retinex chroma
+HISTORY_MSG_512;Local - Retinex Inverse
+HISTORY_MSG_513;Local - Hue scope
+HISTORY_MSG_514;Local - Spot
+HISTORY_MSG_515;Local - Blur Luminance only
+HISTORY_MSG_516;Local - Update GUI and Mip -1
+HISTORY_MSG_517;Local - Sh Radius
+HISTORY_MSG_518;Local - Sh Amount
+HISTORY_MSG_519;Local - Sh Damping
+HISTORY_MSG_520;Local - Sh Iterations
+HISTORY_MSG_521;Local - Sh Scope
+HISTORY_MSG_522;Local - Sh Inverse
+HISTORY_MSG_523;Local - Spot size
+HISTORY_MSG_524;Local - artifacts theshold
+HISTORY_MSG_525;Local - artifacts iterations
+HISTORY_MSG_526;Local - Quality
+HISTORY_MSG_527;Local - Noise lum f
+HISTORY_MSG_528;Local - Noise lum c
+HISTORY_MSG_529;Local - Noise chro f
+HISTORY_MSG_530;Local - Noise chro c
+HISTORY_MSG_531;Local - cbdl threshold
+HISTORY_MSG_532;Local - cbdl mult
+HISTORY_MSG_533;Local - cbdl scope
+HISTORY_MSG_534;Local - Blur scope
+HISTORY_MSG_535;Local - TM strength
+HISTORY_MSG_536;Local - TM gamma
+HISTORY_MSG_537;Local - TM edge stopping
+HISTORY_MSG_538;Local - TM scale
+HISTORY_MSG_539;Local - TM Reweighting
+HISTORY_MSG_540;Local - TM scope
+HISTORY_MSG_541;Local - Update GUI and Mip -2
+HISTORY_MSG_542;Local - Update GUI and Mip -3
+HISTORY_MSG_543;Local - LL Curve
+HISTORY_MSG_544;Local - Color and light
+HISTORY_MSG_545;Local - Blur and noise
+HISTORY_MSG_546;Local - Tone mapping
+HISTORY_MSG_547;Local - Retinex
+HISTORY_MSG_548;Local - Sharpening
+HISTORY_MSG_549;Local - CBDL
+HISTORY_MSG_550;Local - Denoise
+HISTORY_MSG_551;Local - LH Curve
+HISTORY_MSG_552;Local - Enable super
+HISTORY_MSG_553;Local - CC curve
+HISTORY_MSG_554;Local - curve method
+HISTORY_MSG_555;Local - hueref
+HISTORY_MSG_556;Local - chromaref
+HISTORY_MSG_557;Local - lumaref
+HISTORY_MSG_558;Local - H curve
+HISTORY_MSG_559;Local - Vibrance
+HISTORY_MSG_560;Local - Vib H curve
+HISTORY_MSG_561;Local - Vib Protect skin tones
+HISTORY_MSG_562;Local - Vib avoid colorshift
+HISTORY_MSG_563;Local - Vib link
+HISTORY_MSG_564;Local - Vib Pastel
+HISTORY_MSG_565;Local - Vib Saturated
+HISTORY_MSG_566;Local - Vib Threshold
+HISTORY_MSG_567;Local - Vib Scope
+HISTORY_MSG_568;Local - Exposure
+HISTORY_MSG_569;Local - Exp Compensation
+HISTORY_MSG_570;Local - Exp Hlcompr
+HISTORY_MSG_571;Local - Exp hlcomprthresh
+HISTORY_MSG_572;Local - Exp black
+HISTORY_MSG_573;Local - Exp Shcompr
+HISTORY_MSG_574;Local - Exp Scope
+HISTORY_MSG_575;Local - Exp Contrast curve
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -993,9 +996,9 @@ PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 PARTIALPASTE_IPTCINFO;IPTC
 PARTIALPASTE_LABCURVE;L*a*b* adjustments
 PARTIALPASTE_LENSGROUP;Lens Related Settings
-PARTIALPASTE_LENSPROFILE;Lens correction profile
 PARTIALPASTE_LOCALLAB;Local L*a*b*
 PARTIALPASTE_LOCGROUP;Local 
+PARTIALPASTE_LENSPROFILE;Profiled lens correction
 PARTIALPASTE_METAGROUP;Metadata
 PARTIALPASTE_PCVIGNETTE;Vignette filter
 PARTIALPASTE_PERSPECTIVE;Perspective
@@ -1774,7 +1777,7 @@ TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
 TP_LENSGEOM_AUTOCROP;Auto-Crop
 TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
-TP_LENSPROFILE_LABEL;Lens Correction Profile
+TP_LENSPROFILE_LABEL;Profiled Lens Correction
 TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
@@ -2359,3 +2362,7 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
+LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+LENSPROFILE_CORRECTION_LCPFILE;LCP File
+LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.

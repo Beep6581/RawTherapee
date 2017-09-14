@@ -847,6 +847,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                         } else if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
                             //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
+                            float Qanc = Qpro;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
                             float Qold100 = (float) Qpro / coef;
 
@@ -872,8 +873,15 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
                             }
 
-                            Qpro = (double) (Qq * (coef) / 327.68f);
-                            Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
+                            }
+
+                            Qpro = Qanc * (Qq / Qold);
+                            Jpro = Jpro * SQR (Qq / Qold);
+
+//                           Qpro = (double) (Qq * (coef) / 327.68f);
+//                           Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
                             t1B = true;
 
                             if (Jpro < 1.) {
@@ -928,6 +936,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                             }
 
                         } else if (curveMode2 == ColorAppearanceParams::TC_MODE_BRIGHT) { //
+                            float Qanc = Qpro;
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
                             float Qold100 = (float) Qpro / coef;
@@ -954,8 +963,16 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
                             }
 
-                            Qpro = (double) (Qq * (coef) / 327.68f);
-                            Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
+                            }
+
+                            //  Qpro = (float) (Qq * (coef) / 327.68f);
+                            Qpro = Qanc * (Qq / Qold);
+                            Jpro = Jpro * SQR (Qq / Qold);
+
+                            //      Qpro = (double) (Qq * (coef) / 327.68f);
+                            //      Jpro = 100.* (Qpro * Qpro) / ((4.0 / c) * (4.0 / c) * (aw + 4.0) * (aw + 4.0));
                             t2B = true;
 
                             if (t1L) { //to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
@@ -1682,10 +1699,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             }
         }
 
-        if (alg >= 2 && la < 200.f) {
-            la = 200.f;
-        }
-
+        /*
+                if (alg >= 2 && la < 200.f) {
+                    la = 200.f;
+                }
+        */
         const float la2 = float (params->colorappearance.adaplum);
 
         // level of adaptation
@@ -1776,6 +1794,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             }
 
             float sum = 0.f;
+            float sumQ = 0.f;
 
 #ifdef _OPENMP
             const int numThreads = min (max (width * height / 65536, 1), omp_get_max_threads());
@@ -1795,7 +1814,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     hist16Qthr.clear();
                 }
 
-                #pragma omp for reduction(+:sum)
+                #pragma omp for reduction(+:sum,sumQ)
 
                 for (int i = 0; i < height; i++)
                     for (int j = 0; j < width; j++) { //rough correspondence between L and J
@@ -1840,11 +1859,26 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             hist16Jthr[ (int) ((koef * lab->L[i][j]))]++;  //evaluate histogram luminance L # J
                         }
 
+                        //estimation of wh only with La
+                        float whestim = 500.f;
+
+                        if (la < 200.f) {
+                            whestim = 200.f;
+                        } else if (la < 2500.f) {
+                            whestim = 350.f;
+                        } else {
+                            whestim = 500.f;
+                        }
+
                         if (needQ) {
-                            hist16Qthr[ (int) (sqrtf ((koef * (lab->L[i][j])) * 32768.f))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+                            hist16Qthr[CLIP ((int) (32768.f * sqrt ((koef * (lab->L[i][j])) / 32768.f)))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+                            //perhaps  needs to introduce whestim ??
+                            //   hist16Qthr[ (int) (sqrtf ((koef * (lab->L[i][j])) * 32768.f))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                         }
 
                         sum += koef * lab->L[i][j]; //evaluate mean J to calculate Yb
+                        sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
+                        //can be used in case of...
                     }
 
                 #pragma omp critical
@@ -1858,12 +1892,14 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     }
 
                 }
+                float meanQ;
 
                 if (std::isnan (mean)) {
                     mean = (sum / ((height) * width)) / 327.68f; //for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
+                    meanQ = (sumQ / ((height) * width));//in case of
+
                 }
             }
-
 
 
             //evaluate lightness, contrast
@@ -1938,6 +1974,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
         float cz, wh, pfl;
         Ciecam02::initcam1float (gamu, yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
+        //printf ("wh=%f \n", wh);
+
         const float pow1 = pow_F ( 1.64f - pow_F ( 0.29f, n ), 0.73f );
         float nj, nbbj, ncbj, czj, awj, flj;
         Ciecam02::initcam2float (gamu, yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
@@ -1955,7 +1993,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         const bool LabPassOne = ! ((params->colorappearance.tonecie && (epdEnabled)) || (params->sharpening.enabled && settings->autocielab && execsharp)
                                    || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
                                    || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
-
+        //printf("coQ=%f\n", coefQ);
 
         if (needJ) {
             if (!CAMBrightCurveJ) {
@@ -1976,7 +2014,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
             if (CAMBrightCurveQ.dirty) {
                 Ciecam02::curveJfloat (params->colorappearance.qbright, params->colorappearance.qcontrast, hist16Q, CAMBrightCurveQ);//brightness and contrast Q
-                CAMBrightCurveQ /= coefQ;
+                //  CAMBrightCurveQ /= coefQ;
                 CAMBrightCurveQ.dirty = false;
             }
         }
@@ -2126,7 +2164,11 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Qpro = QproFactor * sqrtf (Jpro);
                         Cpro = (spro * spro * Qpro) / (10000.0f);
                     } else if (alg == 2) {
-                        Qpro = CAMBrightCurveQ[ (float) (Qpro * coefQ)]; //brightness and contrast
+                        //printf("Qp0=%f ", Qpro);
+
+                        Qpro = CAMBrightCurveQ[ (float) (Qpro * coefQ)] / coefQ; //brightness and contrast
+                        //printf("Qpaf=%f ", Qpro);
+
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
                         Ciecam02::curvecolorfloat (mchr, Mp, sres, 2.5f);
@@ -2140,7 +2182,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
                         spro = 100.0f * sqrtf ( Mpro / Qpro );
                     } else { /*if(alg == 3) */
-                        Qpro = CAMBrightCurveQ[ (float) (Qpro * coefQ)];  //brightness and contrast
+                        Qpro = CAMBrightCurveQ[ (float) (Qpro * coefQ)] / coefQ; //brightness and contrast
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
@@ -2217,6 +2259,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         } else if (curveMode == ColorAppearanceParams::TC_MODE_BRIGHT) {
                             //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
+                            float Qanc = Qpro;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
                             float Qold100 = (float) Qpro / coef;
 
@@ -2242,8 +2285,13 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
                             }
 
-                            Qpro = (float) (Qq * (coef) / 327.68f);
-                            Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
+                            }
+
+                            Qpro = Qanc * (Qq / Qold);
+                            //   Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
+                            Jpro = Jpro * SQR (Qq / Qold);
 
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
@@ -2291,6 +2339,8 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                             }
 
                         } else if (curveMode2 == ColorAppearanceParams::TC_MODE_BRIGHT) { //
+                            float Qanc = Qpro;
+
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qq = (float) Qpro * 327.68f * (1.f / coef);
                             float Qold100 = (float) Qpro / coef;
@@ -2317,8 +2367,15 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                                 Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
                             }
 
-                            Qpro = (float) (Qq * (coef) / 327.68f);
-                            Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
+                            if (Qold == 0.f) {
+                                Qold = 0.001f;
+                            }
+
+                            //  Qpro = (float) (Qq * (coef) / 327.68f);
+                            Qpro = Qanc * (Qq / Qold);
+                            Jpro = Jpro * SQR (Qq / Qold);
+
+                            // Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
 
                             if (t1L) { //to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
                                 coef = 2.f; //adapt Q to J approximation

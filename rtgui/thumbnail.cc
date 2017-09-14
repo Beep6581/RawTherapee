@@ -603,7 +603,8 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
         image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
     } else {
         // Full thumbnail: apply profile
-        image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
+        // image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
+        image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, &cfs, scale );
     }
 
     tpp->getDimensions(lastW, lastH, lastScale);
@@ -628,7 +629,8 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
         return nullptr;
     }
 
-    rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
+    // rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
+    rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, &cfs, scale );
     tpp->getDimensions(lastW, lastH, lastScale);
 
     delete tpp;
