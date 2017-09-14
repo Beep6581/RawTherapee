@@ -267,7 +267,7 @@ bool LFDatabase::init(const Glib::ustring &dbdir)
         std::cout << "..." << std::flush;
     }
 
-    bool ok = instance_.data_->Load(dbdir.empty() ? nullptr : dbdir.c_str()) == LF_NO_ERROR;
+    bool ok = dbdir.empty() ? instance_.data_->Load() : instance_.data_->Load(dbdir.c_str()) == LF_NO_ERROR;
 
     if (settings->verbose) {
         std::cout << (ok ? "OK" : "FAIL") << std::endl;
