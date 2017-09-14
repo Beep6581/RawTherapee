@@ -253,10 +253,27 @@ bool LFLens::hasDistortionCorrection() const
 LFDatabase LFDatabase::instance_;
 
 
-bool LFDatabase::init()
+bool LFDatabase::init(const Glib::ustring &dbdir)
 {
     instance_.data_ = lfDatabase::Create();
-    return instance_.data_->Load() != LF_NO_ERROR;
+
+    if (settings->verbose) {
+        std::cout << "Loading lensfun database from ";
+        if (dbdir.empty()) {
+            std::cout << "the default directories";
+        } else {
+            std::cout << "'" << dbdir << "'";
+        }
+        std::cout << "..." << std::flush;
+    }
+
+    bool ok = instance_.data_->Load(dbdir.empty() ? nullptr : dbdir.c_str()) == LF_NO_ERROR;
+
+    if (settings->verbose) {
+        std::cout << (ok ? "OK" : "FAIL") << std::endl;
+    }
+    
+    return ok;
 }
 
 

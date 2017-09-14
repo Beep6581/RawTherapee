@@ -100,7 +100,7 @@ class LFDatabase final :
     public NonCopyable
 {
 public:
-    static bool init();
+    static bool init(const Glib::ustring &dbdir);
     static const LFDatabase *getInstance();
 
     ~LFDatabase();
