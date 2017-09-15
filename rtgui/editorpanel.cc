@@ -1734,15 +1734,18 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
         ProgressConnector<int> *ld = new ProgressConnector<int>();
         img->setSaveProgressListener (parent->getProgressListener());
 
+        rtengine::procparams::ProcParams pparams;
+        ipc->getParams (&pparams);
+
         if (sf.format == "tif")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsTIFF), fname, sf.tiffBits, sf.tiffUncompressed),
-                           sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf));
+                           sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "png")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsPNG), fname, sf.pngCompression, sf.pngBits),
-                           sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf));
+                           sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "jpg")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality, sf.jpegSubSamp),
-                           sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf));
+                           sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else {
             delete ld;
         }
@@ -1762,7 +1765,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
     return false;
 }
 
-bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf)
+bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
 {
     img->free ();
 
@@ -1771,11 +1774,8 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage1
 
         // save processing parameters, if needed
         if (sf.saveParams) {
-            rtengine::procparams::ProcParams pparams;
-            ipc->getParams (&pparams);
             // We keep the extension to avoid overwriting the profile when we have
             // the same output filename with different extension
-            //pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
             pparams.save (fname + ".out" + paramFileExtension);
         }
     } else {
