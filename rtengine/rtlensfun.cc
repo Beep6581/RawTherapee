@@ -395,7 +395,7 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(const LensProfParams &lensP
     const LFDatabase *db = getInstance();
     Glib::ustring make, model, lens;
     float focallen = idata->getFocalLen();
-    if (lensProf.lfAutoMatch) {
+    if (lensProf.lfAutoMatch()) {
         if (focallen <= 0) {
             return nullptr;
         }
@@ -408,7 +408,7 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(const LensProfParams &lensP
         lens = lensProf.lfLens;
     }
     LFCamera c = db->findCamera(make, model);
-    LFLens l = db->findLens(lensProf.lfAutoMatch ? c : LFCamera(), lens);
+    LFLens l = db->findLens(lensProf.lfAutoMatch() ? c : LFCamera(), lens);
     if (focallen <= 0 && l.data_ && l.data_->MinFocal == l.data_->MaxFocal) {
         focallen = l.data_->MinFocal;
     }

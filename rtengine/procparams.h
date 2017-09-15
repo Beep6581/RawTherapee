@@ -829,10 +829,17 @@ class LensProfParams
 {
 
 public:
+    enum class eLcMode {
+        none,               // No lens correction
+        lensfunAutoMatch,   // Lens correction using auto matched lensfun database entry
+        lensfunManual,      // Lens correction using manually selected lensfun database entry
+        lcp                 // Lens correction using lcp file
+    };
+
+    static const char *methodstring[static_cast<size_t>(eLcMode::lcp) + 1u];
+    eLcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
-    bool useLensfun;
-    bool lfAutoMatch;
     Glib::ustring lfCameraMake;
     Glib::ustring lfCameraModel;
     Glib::ustring lfLens;
@@ -842,6 +849,41 @@ public:
         setDefaults();
     }
     void setDefaults();
+
+    bool useLensfun() const
+    {
+        return lcMode == eLcMode::lensfunAutoMatch || lcMode == eLcMode::lensfunManual;
+    }
+
+    bool lfAutoMatch() const
+    {
+        return lcMode == eLcMode::lensfunAutoMatch;
+    }
+
+    bool useLcp() const
+    {
+        return lcMode == eLcMode::lcp && lcpFile.length() > 0;
+    }
+
+    bool lfManual() const
+    {
+        return lcMode == eLcMode::lensfunManual;
+    }
+
+    Glib::ustring getMethodString(eLcMode mode) const
+    {
+        return methodstring[static_cast<size_t>(mode)];
+    }
+
+    eLcMode getMethodNumber(const Glib::ustring &mode) const
+    {
+        for(size_t i = 0; i < static_cast<size_t>(eLcMode::lcp); ++i) {
+            if(methodstring[i] == mode) {
+                return static_cast<eLcMode>(i);
+            }
+        }
+        return eLcMode::none;
+    }
 };
 
 
