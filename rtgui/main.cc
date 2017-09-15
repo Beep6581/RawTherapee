@@ -640,7 +640,7 @@ int main (int argc, char **argv)
             printf ("Error: -gimp requires two arguments\n");
             return 1;
         }
-    } else if (!remote && Glib::file_test (argv1, Glib::FILE_TEST_EXISTS)) {
+    } else if (!remote && Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
         simpleEditor = true;
     }
 
