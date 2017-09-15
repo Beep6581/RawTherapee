@@ -3603,7 +3603,7 @@ bool RAWParamsEdited::isUnchanged() const
 
 bool LensProfParamsEdited::isUnchanged() const
 {
-    return lcpFile;
+    return lcpFile && useVign && lfLens;
 }
 
 bool RetinexParamsEdited::isUnchanged() const

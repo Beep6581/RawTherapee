@@ -231,6 +231,10 @@ if(NOT DEFINED APPDATADIR)
     endif()
 endif()
 
+if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
+    set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
+endif()
+
 # Enforce absolute paths for non-bundle builds:
 if(NOT BUILD_BUNDLE)
     foreach(path BINDIR DATADIR LIBDIR DOCDIR CREDITSDIR LICENCEDIR)

@@ -175,7 +175,7 @@ float LFCamera::getCropFactor() const
 Glib::ustring LFCamera::getDisplayString() const
 {
     if (data_) {
-        return Glib::ustring::compose("%1 %2", getMake(), getModel());
+        return getMake() + ' ' + getModel();
     } else {
         return "---";
     }
@@ -211,7 +211,7 @@ Glib::ustring LFLens::getMake() const
 Glib::ustring LFLens::getLens() const
 {
     if (data_) {
-        return Glib::ustring::compose("%1 %2", data_->Maker, data_->Model);
+        return Glib::ustring(data_->Maker) + ' ' + data_->Model;
     } else {
         return "---";
     }
@@ -253,10 +253,27 @@ bool LFLens::hasDistortionCorrection() const
 LFDatabase LFDatabase::instance_;
 
 
-bool LFDatabase::init()
+bool LFDatabase::init(const Glib::ustring &dbdir)
 {
     instance_.data_ = lfDatabase::Create();
-    return instance_.data_->Load() != LF_NO_ERROR;
+
+    if (settings->verbose) {
+        std::cout << "Loading lensfun database from ";
+        if (dbdir.empty()) {
+            std::cout << "the default directories";
+        } else {
+            std::cout << "'" << dbdir << "'";
+        }
+        std::cout << "..." << std::flush;
+    }
+
+    bool ok = dbdir.empty() ? (instance_.data_->Load() ==  LF_NO_ERROR) : instance_.data_->LoadDirectory(dbdir.c_str());
+
+    if (settings->verbose) {
+        std::cout << (ok ? "OK" : "FAIL") << std::endl;
+    }
+    
+    return ok;
 }
 
 
