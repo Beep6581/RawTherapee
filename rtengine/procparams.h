@@ -830,13 +830,13 @@ class LensProfParams
 
 public:
     enum class eLcMode {
-        none,               // No lens correction
-        lensfunAutoMatch,   // Lens correction using auto matched lensfun database entry
-        lensfunManual,      // Lens correction using manually selected lensfun database entry
-        lcp                 // Lens correction using lcp file
+        LC_NOCORRECTION,       // No lens correction
+        LC_LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
+        LC_LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
+        LC_LCP                 // Lens correction using lcp file
     };
 
-    static const char *methodstring[static_cast<size_t>(eLcMode::lcp) + 1u];
+    static const char *methodstring[static_cast<size_t>(eLcMode::LC_LCP) + 1u];
     eLcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
@@ -852,22 +852,22 @@ public:
 
     bool useLensfun() const
     {
-        return lcMode == eLcMode::lensfunAutoMatch || lcMode == eLcMode::lensfunManual;
+        return lcMode == eLcMode::LC_LENSFUNAUTOMATCH || lcMode == eLcMode::LC_LENSFUNMANUAL;
     }
 
     bool lfAutoMatch() const
     {
-        return lcMode == eLcMode::lensfunAutoMatch;
+        return lcMode == eLcMode::LC_LENSFUNAUTOMATCH;
     }
 
     bool useLcp() const
     {
-        return lcMode == eLcMode::lcp && lcpFile.length() > 0;
+        return lcMode == eLcMode::LC_LCP && lcpFile.length() > 0;
     }
 
     bool lfManual() const
     {
-        return lcMode == eLcMode::lensfunManual;
+        return lcMode == eLcMode::LC_LENSFUNMANUAL;
     }
 
     Glib::ustring getMethodString(eLcMode mode) const
@@ -877,12 +877,12 @@ public:
 
     eLcMode getMethodNumber(const Glib::ustring &mode) const
     {
-        for(size_t i = 0; i < static_cast<size_t>(eLcMode::lcp); ++i) {
+        for(size_t i = 0; i < static_cast<size_t>(eLcMode::LC_LCP); ++i) {
             if(methodstring[i] == mode) {
                 return static_cast<eLcMode>(i);
             }
         }
-        return eLcMode::none;
+        return eLcMode::LC_NOCORRECTION;
     }
 };
 

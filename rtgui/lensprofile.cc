@@ -160,14 +160,18 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     corrLensfunAuto->set_sensitive(true);
 
-    if(pp->lensProf.lcMode == procparams::LensProfParams::eLcMode::lcp) {
-        corrLcpFile->set_active(true);
-    } else if(pp->lensProf.lcMode == procparams::LensProfParams::eLcMode::lensfunAutoMatch) {
-        corrLensfunAuto->set_active(true);
-    } else if(pp->lensProf.lcMode == procparams::LensProfParams::eLcMode::lensfunManual) {
-        corrLensfunManual->set_active(true);
-    } else {
-        corrOff->set_active(true);
+    switch(pp->lensProf.lcMode) {
+        case procparams::LensProfParams::eLcMode::LC_LCP :
+            corrLcpFile->set_active(true);
+            break;
+        case procparams::LensProfParams::eLcMode::LC_LENSFUNAUTOMATCH :
+            corrLensfunAuto->set_active(true);
+            break;
+        case procparams::LensProfParams::eLcMode::LC_LENSFUNMANUAL :
+            corrLensfunManual->set_active(true);
+            break;
+        case procparams::LensProfParams::eLcMode::LC_NOCORRECTION :
+            corrOff->set_active(true);
     }
 
     if (pp->lensProf.lcpFile.empty()) {
@@ -270,13 +274,13 @@ void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta
 void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     if (corrLcpFile->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::lcp;
+        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_LCP;
     } else if(corrLensfunManual->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::lensfunManual;
+        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_LENSFUNMANUAL;
     } else if(corrLensfunAuto->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::lensfunAutoMatch;
+        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_LENSFUNAUTOMATCH;
     } else if(corrOff->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::none;
+        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_NOCORRECTION;
     }
 
     if (LCPStore::getInstance()->isValidLCPFileName(fcbLCPFile->get_filename())) {
