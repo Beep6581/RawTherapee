@@ -1722,7 +1722,7 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
     }
 }
 
-bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf)
+bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
 {
     rtengine::IImage16* img = pc->returnValue();
     delete pc;
@@ -1733,9 +1733,6 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
 
         ProgressConnector<int> *ld = new ProgressConnector<int>();
         img->setSaveProgressListener (parent->getProgressListener());
-
-        rtengine::procparams::ProcParams pparams;
-        ipc->getParams (&pparams);
 
         if (sf.format == "tif")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImage16::saveAsTIFF), fname, sf.tiffBits, sf.tiffUncompressed),
@@ -1892,7 +1889,7 @@ void EditorPanel::saveAsPressed ()
 
                 ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
                 ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData, false ),
-                               sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_saveImage ), ld, fnameOut, sf ));
+                               sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_saveImage ), ld, fnameOut, sf, pparams));
                 saveimgas->set_sensitive (false);
                 sendtogimp->set_sensitive (false);
             }
