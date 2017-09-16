@@ -265,7 +265,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
         const rtexif::TagDirectory* exifDir = nullptr;
 
-        if (imageMetaData && (exifDir = imageMetaData->getExifData())) {
+        if (imageMetaData && (exifDir = imageMetaData->getRootExifData())) {
             exifDir->CPBDump(tmpFileName, fname, outFName,
                              defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
                              cfs,

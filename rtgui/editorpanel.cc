@@ -1297,7 +1297,7 @@ void EditorPanel::info_toggled ()
         int ww = ipc->getFullWidth();
         int hh = ipc->getFullHeight();
         //megapixels
-        infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2 MP (%2x%3)</span>",
+        infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2 MP (%3x%4)</span>",
                                              infoString,
                                              Glib::ustring::format (std::setw (4), std::fixed, std::setprecision (1), (float)ww * hh / 1000000),
                                              ww, hh);
@@ -1313,7 +1313,6 @@ void EditorPanel::info_toggled ()
                 infoString = Glib::ustring::compose ("%1 / %2", infoString, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
             }
         } else if (isPixelShift) {
-            infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
             infoString = Glib::ustring::compose ("%1\n" + M("QINFO_PIXELSHIFT"), infoString, numFrames);
         }
     } else {

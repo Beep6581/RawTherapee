@@ -128,16 +128,31 @@ public:
         return tags.size ();
     }
     const TagAttrib* getAttrib     (int id);
-    const TagAttrib* getAttrib     (const char* name);  // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
-    const TagAttrib* getAttribP    (const char* name);  // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
+    const TagAttrib* getAttrib     (const char* name);
+    // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    const TagAttrib* getAttribP    (const char* name);
     const TagAttrib* getAttribTable()
     {
         return attribs;
     }
-    Tag*             getTag        (const char* name) const;  // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
-    Tag*             getTagP       (const char* name) const;  // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
+    Tag*             getTag        (const char* name) const;
+    // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    Tag*             getTagP       (const char* name) const;
     Tag*             getTag        (int ID) const;
-    virtual Tag*     findTag       (const char* name) const;
+
+    // Try to get the Tag in the current directory and in subdirectories
+    // if lookUpward = true, it will scan the parents TagDirectory up to the root one,
+    // but w/o looking into their subdirs
+    virtual Tag*     findTag       (const char* name, bool lookUpward = false) const;
+    // Find a all Tags with the given name by scanning the whole tag tree
+    std::vector<const Tag*> findTags (const char* name);
+    // Find a all Tags with the given ID by scanning the whole tag tree
+    std::vector<const Tag*> findTags (int ID);
+    // Try to get the Tag in the current directory and in parent directories
+    // (won't look into subdirs)
+    virtual Tag*     findTagUpward (const char* name) const;
     bool             getXMPTagValue (const char* name, char* value) const;
 
     void             keepTag       (int ID);
@@ -263,9 +278,9 @@ public:
     }
 
     // read/write value
-    int     toInt         (int ofs = 0, TagType astype = INVALID);
+    int     toInt         (int ofs = 0, TagType astype = INVALID) const;
     void    fromInt       (int v);
-    double  toDouble      (int ofs = 0);
+    double  toDouble      (int ofs = 0) const;
     double *toDoubleArray (int ofs = 0);
     void    toRational    (int& num, int& denom, int ofs = 0);
     void    toString      (char* buffer, int ofs = 0);
@@ -313,8 +328,8 @@ class ExifManager
 {
 
     Tag* saveCIFFMNTag (TagDirectory* root, int len, const char* name);
-    TagDirectory* parseIFD (int ifdOffset, bool skipIgnored);
     void parseCIFF (int length, TagDirectory* root);
+    void parse (bool isRaw, bool skipIgnored = true);
 
 public:
     FILE* f;
@@ -322,27 +337,21 @@ public:
     ByteOrder order;
     bool onlyFirst;  // Only first IFD
     unsigned int IFDOffset;
-    unsigned int nextIFDOffset;
+    std::vector<TagDirectory*> roots;
+    std::vector<TagDirectory*> frames;
 
     ExifManager (FILE* fHandle, std::unique_ptr<rtengine::RawMetaDataLocation> _rml, bool onlyFirstIFD)
         : f(fHandle), rml(std::move(_rml)), order(UNKNOWN), onlyFirst(onlyFirstIFD),
-          IFDOffset(0), nextIFDOffset(0) {}
+          IFDOffset(0) {}
 
-    void setIFDOffset(unsigned int offset)
-    {
-        IFDOffset = offset;
-    }
+    void setIFDOffset(unsigned int offset);
 
-    unsigned int getNextIFDOffset()
-    {
-        return nextIFDOffset;
-    }
 
-    // The following functions parse only one IFD at a time and store the "next IFD offset"
-    TagDirectory* parse (bool skipIgnored = true);
-    TagDirectory* parseJPEG (int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
-    TagDirectory* parseTIFF (bool skipIgnored = true);
-    TagDirectory* parseCIFF ();
+    void parseRaw (bool skipIgnored = true);
+    void parseStd (bool skipIgnored = true);
+    void parseJPEG (int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
+    void parseTIFF (bool skipIgnored = true);
+    void parseCIFF ();
 
     /// @brief Get default tag for TIFF
     /// @param forthis The byte order will be taken from the given directory.
@@ -379,7 +388,7 @@ public:
         }
     }
     // Get the value as a double
-    virtual double toDouble (Tag* t, int ofs = 0)
+    virtual double toDouble (const Tag* t, int ofs = 0)
     {
         double ud, dd;
 
@@ -420,7 +429,7 @@ public:
         }
     }
     // Get the value as an int
-    virtual int toInt (Tag* t, int ofs = 0, TagType astype = INVALID)
+    virtual int toInt (const Tag* t, int ofs = 0, TagType astype = INVALID)
     {
         int a;
 

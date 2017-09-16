@@ -1277,9 +1277,9 @@ private:
         }
 
         if (tunnelMetaData) {
-            readyImg->setMetadata (ii->getMetaData()->getExifData ());
+            readyImg->setMetadata (ii->getMetaData()->getRootExifData ());
         } else {
-            readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
+            readyImg->setMetadata (ii->getMetaData()->getRootExifData (), params.exif, params.iptc);
         }
 
 

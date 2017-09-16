@@ -40,7 +40,7 @@ class FrameData
 {
 
 protected:
-    rtexif::TagDirectory* root;
+    rtexif::TagDirectory* frameRootDir;
     IptcData* iptc;
 
     struct tm time;
@@ -65,8 +65,7 @@ protected:
 
 public:
 
-    FrameData ();
-    FrameData (rtexif::ExifManager &exifManager);
+    FrameData (rtexif::TagDirectory* frameRootDir);
     virtual ~FrameData ();
 
     bool getPixelShift () const;
@@ -74,6 +73,7 @@ public:
     IIOSampleFormat getSampleFormat () const;
     rtexif::TagDirectory* getExifData () const;
     procparams::IPTCPairs getIPTCData () const;
+    static procparams::IPTCPairs getIPTCData (IptcData* iptc_);
     bool hasExif () const;
     bool hasIPTC () const;
     tm getDateTime () const;
@@ -92,27 +92,13 @@ public:
     std::string getOrientation () const;
 };
 
-class RawFrameData : public FrameData
-{
-public:
-    RawFrameData (rtexif::ExifManager &exifManager);
-};
-
-class JpegFrameData : public FrameData
-{
-public:
-    JpegFrameData (rtexif::ExifManager &exifManager);
-};
-
-class TiffFrameData : public FrameData
-{
-public:
-    TiffFrameData (rtexif::ExifManager &exifManager);
-};
-
 class FramesData : public FramesMetaData {
 private:
+    // frame's root IFD, can be a file root IFD or a SUB-IFD
     std::vector<FrameData*> frames;
+    // root IFD in the file
+    std::vector<rtexif::TagDirectory*> roots;
+    IptcData* iptc;
     unsigned int dcrawFrameCount;
 
 public:
@@ -120,12 +106,14 @@ public:
     ~FramesData ();
 
     void setDCRawFrameCount (unsigned int frameCount);
+    unsigned int getRootCount () const;
     unsigned int getFrameCount () const;
     FrameData *getFrameData (int frame) const;
     bool getPixelShift (unsigned int frame = 0) const;
     bool getHDR (unsigned int frame = 0) const;
     IIOSampleFormat getSampleFormat (unsigned int frame = 0) const;
-    rtexif::TagDirectory* getExifData (unsigned int frame = 0) const;
+    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const;
+    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const;
     procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const;
     bool hasExif (unsigned int frame = 0) const;
     bool hasIPTC (unsigned int frame = 0) const;

@@ -189,13 +189,13 @@ void ExifPanel::setImageData (const FramesMetaData* id)
     exifTreeModel->clear ();
 
     if (id) {
-        for (unsigned int frameNum = 0; frameNum < id->getFrameCount (); ++frameNum) {
-            if ( id->getExifData (frameNum)) {
-                //id->getExifData ()->printAll ();
-                if (frameNum > 0) {
+        for (unsigned int rootNum = 0; rootNum < id->getRootCount (); ++rootNum) {
+            if ( id->getRootExifData (rootNum)) {
+                //id->getRootExifData ()->printAll ();
+                if (rootNum > 0) {
                     addSeparator();
                 }
-                addDirectory (id->getExifData (frameNum), exifTreeModel->children());
+                addDirectory (id->getRootExifData (rootNum), exifTreeModel->children());
             }
         }
     }

@@ -57,6 +57,8 @@ class FramesMetaData
 {
 
 public:
+    /** @return Returns the number of root Metadata */
+    virtual unsigned int getRootCount () const = 0;
     /** @return Returns the number of frame contained in the file based on Metadata */
     virtual unsigned int getFrameCount () const = 0;
 
@@ -64,8 +66,13 @@ public:
       * @return Returns true if image contains exif metadata tags */
     virtual bool hasExif (unsigned int frame = 0) const = 0;
     /** Returns the directory of exif metadata tags.
+      * @param root root number in the metadata tree
       * @return The directory of exif metadata tags */
-    virtual rtexif::TagDirectory* getExifData (unsigned int frame = 0) const = 0;
+    virtual rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const = 0;
+    /** Returns the directory of exif metadata tags.
+      * @param frame frame number in the metadata tree
+      * @return The directory of exif metadata tags */
+    virtual rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const = 0;
     /** Checks the availability of IPTC tags.
       * @return Returns true if image contains IPTC tags */
     virtual bool hasIPTC (unsigned int frame = 0) const = 0;
@@ -107,7 +114,7 @@ public:
 
     /** @return true if the file is a PixelShift shot (Pentax bodies) */
     virtual bool getPixelShift (unsigned int frame = 0) const = 0;
-    /** @return 0: not ah HDR file ; 1: single shot HDR (e.g. 32 bit float DNG file or Log compressed) ; >1: multi-frame HDR file */
+    /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual bool getHDR (unsigned int frame = 0) const = 0;
     /** @return the sample format based on MetaData */
     virtual IIOSampleFormat getSampleFormat (unsigned int frame = 0) const = 0;
