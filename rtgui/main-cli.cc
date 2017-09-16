@@ -59,6 +59,7 @@ Glib::ustring argv0;
 Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
+Glib::ustring lensfunDbPath;
 //bool simpleEditor;
 //Glib::Threads::Thread* mainThread;
 
@@ -145,10 +146,17 @@ int main (int argc, char **argv)
         licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
     }
 
+    if (Glib::path_is_absolute(LENSFUN_DB_PATH)) {
+        lensfunDbPath = LENSFUN_DB_PATH;
+    } else {
+        lensfunDbPath = Glib::build_filename(exePath, LENSFUN_DB_PATH);
+    }
+
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
+    lensfunDbPath = LENSFUN_DB_PATH;
 #endif
 
     bool quickstart = dontLoadCache (argc, argv);

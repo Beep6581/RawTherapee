@@ -24,7 +24,6 @@
 #include "addsetids.h"
 #include "guiutils.h"
 #include "version.h"
-#include "config.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -49,6 +48,8 @@ Glib::ustring Options::cacheBaseDir;
 Options options;
 Glib::ustring versionString = RTVERSION;
 Glib::ustring paramFileExtension = ".pp3";
+
+extern Glib::ustring lensfunDbPath; // defined in main
 
 Options::Options ()
 {
@@ -729,7 +730,7 @@ void Options::setDefaults ()
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
 
-    rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    rtSettings.lensfunDbDirectory = lensfunDbPath;
 }
 
 Options* Options::copyFrom (Options* other)
