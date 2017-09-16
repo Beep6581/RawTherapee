@@ -22,6 +22,7 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
     ${GTHREAD_LIBRARY_DIRS}
     ${IPTCDATA_LIBRARY_DIRS}
     ${LCMS_LIBRARY_DIRS}
+    ${LENSFUN_LIBRARY_DIRS}
     )
 
 set(CAMCONSTSFILE "camconst.json")

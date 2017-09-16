@@ -179,6 +179,7 @@ if(WIN32)
         ${GLIBMM_LIBRARY_DIRS}
         ${GTKMM_LIBRARY_DIRS}
         ${GTK_LIBRARY_DIRS}
+        ${LENSFUN_LIBRARY_DIRS}
         )
 else()
     include_directories(${EXTRA_INCDIR}
@@ -211,6 +212,7 @@ else()
         ${GTK_LIBRARY_DIRS}
         ${IPTCDATA_LIBRARY_DIRS}
         ${LCMS_LIBRARY_DIRS}
+        ${LENSFUN_LIBRARY_DIRS}
         )
 endif()
 
