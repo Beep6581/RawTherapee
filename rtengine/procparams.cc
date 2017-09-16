@@ -52,6 +52,7 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
+const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::eLcMode::LC_LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
 const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
@@ -919,11 +920,10 @@ void ToneCurveParams::setDefaults()
 
 void LensProfParams::setDefaults()
 {
+    lcMode = eLcMode::LC_NOCORRECTION;
     lcpFile = "";
     useDist = useVign = true;
     useCA = false;
-    useLensfun = false;
-    lfAutoMatch = true;
     lfCameraMake = "";
     lfCameraModel = "";
     lfLens = "";
@@ -2554,6 +2554,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
 // lens profile
+        if (!pedited || pedited->lensProf.lcMode) {
+            keyFile.set_string ("LensProfile", "LcMode", lensProf.getMethodString (lensProf.lcMode));
+        }
+
         if (!pedited || pedited->lensProf.lcpFile) {
             keyFile.set_string ("LensProfile", "LCPFile", relativePathIfInside (fname, fnameAbsolute, lensProf.lcpFile));
         }
@@ -2570,12 +2574,6 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("LensProfile", "UseCA", lensProf.useCA);
         }
 
-        if (!pedited || pedited->lensProf.useLensfun) {
-            keyFile.set_boolean("LensProfile", "UseLensfun", lensProf.useLensfun);
-        }
-        if (!pedited || pedited->lensProf.lfAutoMatch) {
-            keyFile.set_boolean("LensProfile", "LFAutoMatch", lensProf.lfAutoMatch);
-        }
         if (!pedited || pedited->lensProf.lfCameraMake) {
             keyFile.set_string("LensProfile", "LFCameraMake", lensProf.lfCameraMake);
         }
@@ -5822,11 +5820,23 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
 // lens profile
         if (keyFile.has_group ("LensProfile")) {
+            if (keyFile.has_key ("LensProfile", "LcMode")) {
+                lensProf.lcMode = lensProf.getMethodNumber (keyFile.get_string ("LensProfile", "LcMode"));
+
+                if (pedited) {
+                    pedited->lensProf.lcMode = true;
+                }
+            }
+
             if (keyFile.has_key ("LensProfile", "LCPFile")) {
                 lensProf.lcpFile = expandRelativePath (fname, "", keyFile.get_string ("LensProfile", "LCPFile"));
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
+                }
+
+                if(ppVersion < 327 && !lensProf.lcpFile.empty()) {
+                    lensProf.lcMode = LensProfParams::eLcMode::LC_LCP;
                 }
             }
 
@@ -5851,20 +5861,6 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->lensProf.useCA = true;
-                }
-            }
-
-            if (keyFile.has_key("LensProfile", "UseLensfun")) {
-                lensProf.useLensfun = keyFile.get_boolean("LensProfile", "UseLensfun");
-                if (pedited) {
-                    pedited->lensProf.useLensfun = true;
-                }
-            }
-
-            if (keyFile.has_key("LensProfile", "LFAutoMatch")) {
-                lensProf.lfAutoMatch = keyFile.get_boolean("LensProfile", "LFAutoMatch");
-                if (pedited) {
-                    pedited->lensProf.lfAutoMatch = true;
                 }
             }
 
@@ -8484,12 +8480,11 @@ bool ProcParams::operator== (const ProcParams& other)
         && rotate.degree == other.rotate.degree
         && commonTrans.autofill == other.commonTrans.autofill
         && distortion.amount == other.distortion.amount
+        && lensProf.lcMode == other.lensProf.lcMode
         && lensProf.lcpFile == other.lensProf.lcpFile
         && lensProf.useDist == other.lensProf.useDist
         && lensProf.useVign == other.lensProf.useVign
         && lensProf.useCA == other.lensProf.useCA
-        && lensProf.useLensfun == other.lensProf.useLensfun
-        && lensProf.lfAutoMatch == other.lensProf.lfAutoMatch
         && lensProf.lfCameraMake == other.lensProf.lfCameraMake
         && lensProf.lfCameraModel == other.lensProf.lfCameraModel
         && lensProf.lfLens == other.lensProf.lfLens

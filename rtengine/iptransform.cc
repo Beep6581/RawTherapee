@@ -1015,12 +1015,12 @@ bool ImProcFunctions::needsVignetting ()
 
 bool ImProcFunctions::needsLCP ()
 {
-    return params->lensProf.lcpFile.length() > 0 && !needsLensfun();
+    return params->lensProf.useLcp();
 }
 
 bool ImProcFunctions::needsLensfun()
 {
-    return params->lensProf.useLensfun;
+    return params->lensProf.useLensfun();
 }
 
 bool ImProcFunctions::needsTransform ()
