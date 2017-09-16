@@ -117,6 +117,8 @@ private:
                                             float focalLen, float aperture, float focusDist,
                                             int width, int height, bool swap_xy) const;
     LFDatabase();
+    bool LoadDirectory(const char *dirname);
+    
     static LFDatabase instance_;
     lfDatabase *data_;
 };

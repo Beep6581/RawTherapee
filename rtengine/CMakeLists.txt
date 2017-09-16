@@ -113,6 +113,11 @@ set(RTENGINESOURCEFILES
     rtlensfun.cc
     )
 
+if(LENSFUN_HAS_LOAD_DIRECTORY)
+    set_source_files_properties(rtlensfun.cc PROPERTIES COMPILE_DEFINITIONS RT_LENSFUN_HAS_LOAD_DIRECTORY)
+endif()
+
+
 if(NOT WITH_SYSTEM_KLT)
     set(RTENGINESOURCEFILES ${RTENGINESOURCEFILES}
         klt/convolve.cc

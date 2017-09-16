@@ -445,6 +445,19 @@ if(UNIX)
     install(FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif()
 
+# check whether the used version of lensfun has lfDatabase::LoadDirectory
+include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_INCLUDES ${LENSFUN_INCLUDE_DIRS})
+check_cxx_source_compiles(
+    "#include <lensfun.h>
+int main()
+{
+    lfDatabase *db = 0;
+    bool b = db->LoadDirectory(0);
+    return 0;
+}" LENSFUN_HAS_LOAD_DIRECTORY)
+
+
 add_subdirectory(rtexif)
 add_subdirectory(rtengine)
 add_subdirectory(rtgui)

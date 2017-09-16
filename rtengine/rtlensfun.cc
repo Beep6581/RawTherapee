@@ -267,13 +267,55 @@ bool LFDatabase::init(const Glib::ustring &dbdir)
         std::cout << "..." << std::flush;
     }
 
-    bool ok = dbdir.empty() ? (instance_.data_->Load() ==  LF_NO_ERROR) : instance_.data_->LoadDirectory(dbdir.c_str());
+    bool ok = false;
+    if (dbdir.empty()) {
+        ok = (instance_.data_->Load() ==  LF_NO_ERROR);
+    } else {
+        ok = instance_.LoadDirectory(dbdir.c_str());
+    }
 
     if (settings->verbose) {
         std::cout << (ok ? "OK" : "FAIL") << std::endl;
     }
     
     return ok;
+}
+
+
+bool LFDatabase::LoadDirectory(const char *dirname)
+{
+#if RT_LENSFUN_HAS_LOAD_DIRECTORY
+    instance_.data_->LoadDirectory(dirname);
+#else
+    // backported from lensfun 0.3.x
+    bool database_found = false;
+
+    GDir *dir = g_dir_open (dirname, 0, NULL);
+    if (dir)
+    {
+        GPatternSpec *ps = g_pattern_spec_new ("*.xml");
+        if (ps)
+        {
+            const gchar *fn;
+            while ((fn = g_dir_read_name (dir)))
+            {
+                size_t sl = strlen (fn);
+                if (g_pattern_match (ps, sl, fn, NULL))
+                {
+                    gchar *ffn = g_build_filename (dirname, fn, NULL);
+                    /* Ignore errors */
+                    if (data_->Load (ffn) == LF_NO_ERROR)
+                        database_found = true;
+                    g_free (ffn);
+                }
+            }
+            g_pattern_spec_free (ps);
+        }
+        g_dir_close (dir);
+    }
+
+    return database_found;
+#endif
 }
 
 
