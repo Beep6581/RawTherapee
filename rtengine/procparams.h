@@ -585,6 +585,8 @@ public:
     bool          enabled;
     int           degree;
     bool          autodegree;
+    int           degreeout;
+    bool          autodegreeout;
     std::vector<double> curve;
     std::vector<double> curve2;
     std::vector<double> curve3;
@@ -593,8 +595,11 @@ public:
     eCTCModeId    curveMode3;
 
     Glib::ustring surround;
+    Glib::ustring surrsrc;
     double        adapscen;
     bool          autoadapscen;
+    int        ybscen;
+    bool          autoybscen;
 
     double        adaplum;
     int           badpixsl;
@@ -617,6 +622,8 @@ public:
     int tempout;
     int ybout;
     double greenout;
+    int tempsc;
+    double greensc;
 
     //      bool          sharpcie;
 };
@@ -822,15 +829,63 @@ class LensProfParams
 {
 
 public:
+    enum class eLcMode {
+        LC_NOCORRECTION,       // No lens correction
+        LC_LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
+        LC_LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
+        LC_LCP                 // Lens correction using lcp file
+    };
+
+    static const char *methodstring[static_cast<size_t>(eLcMode::LC_LCP) + 1u];
+    eLcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
+    Glib::ustring lfCameraMake;
+    Glib::ustring lfCameraModel;
+    Glib::ustring lfLens;
 
     LensProfParams()
     {
         setDefaults();
     }
     void setDefaults();
+
+    bool useLensfun() const
+    {
+        return lcMode == eLcMode::LC_LENSFUNAUTOMATCH || lcMode == eLcMode::LC_LENSFUNMANUAL;
+    }
+
+    bool lfAutoMatch() const
+    {
+        return lcMode == eLcMode::LC_LENSFUNAUTOMATCH;
+    }
+
+    bool useLcp() const
+    {
+        return lcMode == eLcMode::LC_LCP && lcpFile.length() > 0;
+    }
+
+    bool lfManual() const
+    {
+        return lcMode == eLcMode::LC_LENSFUNMANUAL;
+    }
+
+    Glib::ustring getMethodString(eLcMode mode) const
+    {
+        return methodstring[static_cast<size_t>(mode)];
+    }
+
+    eLcMode getMethodNumber(const Glib::ustring &mode) const
+    {
+        for(size_t i = 0; i < static_cast<size_t>(eLcMode::LC_LCP); ++i) {
+            if(methodstring[i] == mode) {
+                return static_cast<eLcMode>(i);
+            }
+        }
+        return eLcMode::LC_NOCORRECTION;
+    }
 };
+
 
 /**
   * Parameters of the perspective correction

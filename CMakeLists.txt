@@ -231,6 +231,10 @@ if(NOT DEFINED APPDATADIR)
     endif()
 endif()
 
+if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
+    set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
+endif()
+
 # Enforce absolute paths for non-bundle builds:
 if(NOT BUILD_BUNDLE)
     foreach(path BINDIR DATADIR LIBDIR DOCDIR CREDITSDIR LICENCEDIR)
@@ -272,6 +276,7 @@ pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.44)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.44)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.44)
 pkg_check_modules (SIGC    REQUIRED sigc++-2.0>=2.3.1)
+pkg_check_modules (LENSFUN REQUIRED lensfun>=0.2)
 
 if(WIN32)
     add_definitions(-DWIN32)
@@ -389,7 +394,8 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
     -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
     -DOPTION_OMP:STRING=${OPTION_OMP}
-    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
+    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+    -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
 
 if(WIN32)
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
@@ -438,6 +444,19 @@ endif()
 if(UNIX)
     install(FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif()
+
+# check whether the used version of lensfun has lfDatabase::LoadDirectory
+include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_INCLUDES ${LENSFUN_INCLUDE_DIRS})
+check_cxx_source_compiles(
+    "#include <lensfun.h>
+int main()
+{
+    lfDatabase *db = 0;
+    bool b = db->LoadDirectory(0);
+    return 0;
+}" LENSFUN_HAS_LOAD_DIRECTORY)
+
 
 add_subdirectory(rtexif)
 add_subdirectory(rtengine)

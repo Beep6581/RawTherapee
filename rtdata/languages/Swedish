@@ -878,8 +878,6 @@ PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATHINT;Du kan använda följande format:\n<b>%y</b>: år\n<b>%m</b>: månad\n<b>%d</b>: dag\n\nTill exempel är det svenska datumformatet:\n<b>%y-%m-%d</b>
 PREFERENCES_DAUB_LABEL;Använd Daubechies D6-wavelets istället för D4
 PREFERENCES_DAUB_TOOLTIP;Brusreduceringen och wavelet-verktyget använder en Debauchies moder-wavelet. Om du väljer D6 istället för D4 ökas antalet ortogonala Daubechies-koefficienter och troligtvis ökas också kvaliteten på de småskaliga nivåerna. Det blir ingen skillnad i minnesanvändning eller beräkningstid.
-PREFERENCES_DEFAULTLANG;Förvalt språk
-PREFERENCES_DEFAULTTHEME;Förvalt tema
 PREFERENCES_DIRDARKFRAMES;Katalog för svartbilder
 PREFERENCES_DIRHOME;Hemkatalog
 PREFERENCES_DIRLAST;Senaste besökta katalog
@@ -1888,6 +1886,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
+!DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_DELETE;Delete
 !DYNPROFILEEDITOR_EDIT;Edit
 !DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
@@ -1903,6 +1902,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
+!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_257;Color Toning
 !HISTORY_MSG_288;Flat Field - Clip control
 !HISTORY_MSG_289;Flat Field - Clip control - Auto
@@ -1942,6 +1942,15 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !HISTORY_MSG_473;PS - Use LMMSE
 !HISTORY_MSG_474;PS - Equalize
 !HISTORY_MSG_475;PS - Equalize channel
+!HISTORY_MSG_476;CAM02 - Temp out
+!HISTORY_MSG_477;CAM02 - Green out
+!HISTORY_MSG_478;CAM02 - Yb out
+!HISTORY_MSG_479;CAM02 - CAT02 adaptation out
+!HISTORY_MSG_480;CAM02 - Automatic CAT02 out
+!HISTORY_MSG_481;CAM02 - Temp scene
+!HISTORY_MSG_482;CAM02 - Green scene
+!HISTORY_MSG_483;CAM02 - Yb scene
+!HISTORY_MSG_484;CAM02 - Auto Yb scene
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1974,7 +1983,10 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
 !PREFERENCES_CMMBPC;Black point compensation
+!PREFERENCES_D50_OLD;5000K
+!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
+!PREFERENCES_LANG;Language
 !PREFERENCES_LISS;Auto multi-zone smoothing
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
@@ -1987,8 +1999,16 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_PRTPROFILE;Color profile
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PREFERENCES_THEME;Theme
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !TP_CBDL_METHOD;Process located
+!TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
+!TP_COLORAPP_NEUTRAL;Reset
+!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_YB;Yb% (mean luminance)
+!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
+!TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_LABEL;Color Toning
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
@@ -2008,8 +2028,8 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, clip control can lead to color cast.
-!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
-!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
+!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
+!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_PROFILEINTENT;Rendering Intent
 !TP_ICM_SAVEREFERENCE;Save Reference Image

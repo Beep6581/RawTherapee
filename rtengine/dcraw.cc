@@ -2563,6 +2563,12 @@ void CLASS kodak_radc_load_raw()
   for (row=0; row < height; row+=4) {
     FORC3 mul[c] = getbits(6);
     FORC3 {
+        if (!mul[c]) {
+            mul[c] = 1;
+            derror();
+        }
+    }
+    FORC3 {
       val = ((0x1000000/last[c] + 0x7ff) >> 12) * mul[c];
       s = val > 65564 ? 10:12;
       x = ~(-1 << (s-1));
@@ -2924,9 +2930,13 @@ void CLASS kodak_65000_load_raw()
       pred[0] = pred[1] = 0;
       len = MIN (256, width-col);
       ret = kodak_65000_decode (buf, len);
-      for (i=0; i < len; i++)
-	if ((RAW(row,col+i) =	curve[ret ? buf[i] :
-		(pred[i & 1] += buf[i])]) >> 12) derror();
+      for (i=0; i < len; i++) {
+	    int idx = ret ? buf[i] : (pred[i & 1] += buf[i]);
+        if(idx >=0 && idx <= 0xffff) {
+          if ((RAW(row,col+i) = curve[idx]) >> 12) derror();
+        } else
+          derror();
+      }
     }
 }
 
@@ -9754,11 +9764,45 @@ static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max
     fprintf(stderr, "DNG Float: NaN data found in input file\n");
 }
 
+static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned char *out) {
+    // At least in zlib 1.2.11 the uncompress function is not thread save while it is thread save in zlib 1.2.8
+    // This simple replacement is thread save. Used example code from https://zlib.net/zlib_how.html
+
+    int ret;
+    z_stream strm;
+    /* allocate inflate state */
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    strm.avail_in = 0;
+    strm.next_in = Z_NULL;
+    ret = inflateInit(&strm);
+    if (ret != Z_OK) {
+        return ret;
+    }
+    strm.avail_out = dstLen;
+    strm.next_out = out;
+    strm.avail_in = srcLen;
+    strm.next_in = in;
+    ret = inflate(&strm, Z_NO_FLUSH);
+    switch (ret) {
+    case Z_NEED_DICT:
+        ret = Z_DATA_ERROR;     /* and fall through */
+    case Z_DATA_ERROR:
+    case Z_MEM_ERROR:
+        (void)inflateEnd(&strm);
+        return ret;
+    }
+    /* clean up and return */
+    (void)inflateEnd(&strm);
+    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+}
+
 void CLASS deflate_dng_load_raw() {
     float_raw_image = new float[raw_width * raw_height];
 
 #ifdef _OPENMP
-#pragma omp parallel for
+    #pragma omp parallel for
 #endif
     for (size_t i = 0; i < raw_width * raw_height; ++i)
       float_raw_image[i] = 0.0f;
@@ -9815,44 +9859,45 @@ void CLASS deflate_dng_load_raw() {
     }
     uLongf dstLen = tile_width * tile_length * 4;
 
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
+#ifdef _OPENMP
 #pragma omp parallel
 #endif
 {
     Bytef * cBuffer = new Bytef[maxCompressed];
     Bytef * uBuffer = new Bytef[dstLen];
 
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
-#pragma omp for collapse(2) nowait
+#ifdef _OPENMP
+    #pragma omp for collapse(2) schedule(dynamic) nowait
 #endif
     for (size_t y = 0; y < raw_height; y += tile_length) {
-      for (size_t x = 0; x < raw_width; x += tile_width) {
-		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
-#pragma omp critical
+        for (size_t x = 0; x < raw_width; x += tile_width) {
+            size_t t = (y / tile_length) * tilesWide + (x / tile_width);
+#ifdef _OPENMP
+            #pragma omp critical
 #endif
-{
-        fseek(ifp, tileOffsets[t], SEEK_SET);
-        fread(cBuffer, 1, tileBytes[t], ifp);
-}
-        int err = uncompress(uBuffer, &dstLen, cBuffer, tileBytes[t]);
-        if (err != Z_OK) {
-          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
-        } else if (ifd->sample_format == 3) {  // Floating point data
-          int bytesps = ifd->bps >> 3;
-          size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
-          size_t thisTileWidth = x + tile_width > raw_width ? raw_width - x : tile_width;
-          for (size_t row = 0; row < thisTileLength; ++row) {
-            Bytef * src = uBuffer + row*tile_width*bytesps;
-            Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
-            if (predFactor)
-              decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
-            expandFloats(dst, thisTileWidth, bytesps);
-          }
-        } else {  // 32-bit Integer data
-          // TODO
+            {
+                fseek(ifp, tileOffsets[t], SEEK_SET);
+                fread(cBuffer, 1, tileBytes[t], ifp);
+            }
+            int err = decompress(tileBytes[t], dstLen, cBuffer, uBuffer);
+            if (err != Z_OK) {
+                fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
+            } else if (ifd->sample_format == 3) {  // Floating point data
+                int bytesps = ifd->bps >> 3;
+                size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
+                size_t thisTileWidth = x + tile_width > raw_width ? raw_width - x : tile_width;
+                for (size_t row = 0; row < thisTileLength; ++row) {
+                    Bytef * src = uBuffer + row*tile_width*bytesps;
+                    Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
+                    if (predFactor) {
+                        decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
+                    }
+                    expandFloats(dst, thisTileWidth, bytesps);
+                }
+            } else {  // 32-bit Integer data
+                // TODO
+            }
         }
-      }
     }
 
     delete [] cBuffer;

@@ -620,3 +620,14 @@ void Resize::enabledChanged ()
     }
 }
 
+void Resize::setAdjusterBehavior (bool scaleadd)
+{
+
+    scale->setAddMode(scaleadd);
+}
+
+void Resize::trimValues (rtengine::procparams::ProcParams* pp)
+{
+
+    scale->trimValue(pp->resize.scale);
+}

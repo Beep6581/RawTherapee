@@ -33,6 +33,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
+#include <lensfun.h>
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
@@ -118,83 +119,93 @@ static void myGdkLockLeave()
  *  -1 if there is an error in parameters
  *  -2 if an error occurred during processing
  *  -3 if at least one required procparam file was not found */
-int processLineParams( int argc, char **argv )
+int processLineParams ( int argc, char **argv )
 {
-    for( int iArg = 1; iArg < argc; iArg++) {
-        Glib::ustring currParam(argv[iArg]);
+    for ( int iArg = 1; iArg < argc; iArg++) {
+        Glib::ustring currParam (argv[iArg]);
+        if ( currParam.empty() ) {
+            continue;
+        }
 #if ECLIPSE_ARGS
-        currParam = currParam.substr(1, currParam.length()-2);
+        currParam = currParam.substr (1, currParam.length() - 2);
 #endif
-        if( currParam.at(0) == '-' ) {
-            switch( currParam.at(1) ) {
+
+        if ( currParam.at (0) == '-' ) {
+            switch ( currParam.at (1) ) {
 #ifdef WIN32
 
-            case 'w': // This case is handled outside this function
-                break;
+                case 'w': // This case is handled outside this function
+                    break;
 #endif
-            case 'v':
-                return 0;
+
+                case 'v':
+                    std::cout << "Using lensfun " << LF_VERSION_MAJOR << "." << LF_VERSION_MINOR << "." << LF_VERSION_MICRO << "." << LF_VERSION_BUGFIX << std::endl;
+                    return 0;
 
 #ifndef __APPLE__ // TODO agriggio - there seems to be already some "single instance app" support for OSX in rtwindow. Disabling it here until I understand how to merge the two
-            case 'R':
-                if (!gimpPlugin) {
-                    remote = true;
-                }
-                break;
-#endif
-                
-            case 'g':
-                if (currParam == "-gimp") {
-                    gimpPlugin = true;
-                    simpleEditor = true;
-                    remote = false;
+
+                case 'R':
+                    if (!gimpPlugin) {
+                        remote = true;
+                    }
+
                     break;
-                }
+#endif
+
+                case 'g':
+                    if (currParam == "-gimp") {
+                        gimpPlugin = true;
+                        simpleEditor = true;
+                        remote = false;
+                        break;
+                    }
+
                 // no break here on purpose
 
-            case 'h':
-            case '?':
-            default: {
-                Glib::ustring pparamsExt = paramFileExtension.substr(1);
-                std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
-                std::cout << std::endl;
-                std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
-                std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
-                std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
-                std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
-                std::cout << std::endl;
-                std::cout << "Symbols:" << std::endl;
-                std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
-              //std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
-              //std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
-              //std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
-                std::cout << std::endl;
-                std::cout << "Usage:" << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
-                std::cout << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
-                std::cout << std::endl;
-                std::cout << "Options:" << std::endl;
+                case 'h':
+                case '?':
+                default: {
+                    Glib::ustring pparamsExt = paramFileExtension.substr (1);
+                    std::cout << "  An advanced, cross-platform program for developing raw photos." << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "  Website: http://www.rawtherapee.com/" << std::endl;
+                    std::cout << "  Documentation: http://rawpedia.rawtherapee.com/" << std::endl;
+                    std::cout << "  Forum: https://discuss.pixls.us/c/software/rawtherapee" << std::endl;
+                    std::cout << "  Code and bug reports: https://github.com/Beep6581/RawTherapee" << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "Symbols:" << std::endl;
+                    std::cout << "  <Chevrons> indicate parameters you can change." << std::endl;
+                    //std::cout << "  [Square brackets] mean the parameter is optional." << std::endl;
+                    //std::cout << "  The pipe symbol | indicates a choice of one or the other." << std::endl;
+                    //std::cout << "  The dash symbol - denotes a range of possible values from one to the other." << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "Usage:" << std::endl;
+                    std::cout << "  " << Glib::path_get_basename (argv[0]) << " <folder>           Start File Browser inside folder." << std::endl;
+                    std::cout << "  " << Glib::path_get_basename (argv[0]) << " <file>             Start Image Editor with file." << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "Options:" << std::endl;
 #ifdef WIN32
-                std::cout << "  -w Do not open the Windows console" << std::endl;
+                    std::cout << "  -w Do not open the Windows console" << std::endl;
 #endif
-                std::cout << "  -v Print RawTherapee version number and exit" << std::endl;
+                    std::cout << "  -v Print RawTherapee version number and exit" << std::endl;
 #ifndef __APPLE__
-                std::cout << "  -R Raise an already running RawTherapee instance (if available)" << std::endl;
+                    std::cout << "  -R Raise an already running RawTherapee instance (if available)" << std::endl;
 #endif
-                std::cout << "  -h -? Display this help message" << std::endl;
-                return -1;
-            }
+                    std::cout << "  -h -? Display this help message" << std::endl;
+                    return -1;
+                }
             }
         } else {
             if (argv1.empty()) {
-                argv1 = Glib::ustring(fname_to_utf8(argv[iArg]));
+                argv1 = Glib::ustring (fname_to_utf8 (argv[iArg]));
 #if ECLIPSE_ARGS
-                argv1 = argv1.substr(1, argv1.length()-2);
+                argv1 = argv1.substr (1, argv1.length() - 2);
 #endif
             } else if (gimpPlugin) {
-                argv2 = Glib::ustring(fname_to_utf8(argv[iArg]));
+                argv2 = Glib::ustring (fname_to_utf8 (argv[iArg]));
                 break;
             }
+
             if (!gimpPlugin) {
                 break;
             }
@@ -207,22 +218,25 @@ int processLineParams( int argc, char **argv )
 
 bool init_rt()
 {
-    if (!Options::load ()) {
+    try {
+        Options::load();
+    } catch (Options::Error &e) {
+        std::cout << "ERROR: " << e.get_msg() << std::endl;
         return false;
     }
 
     extProgStore->init();
     SoundManager::init();
 
-    if( !options.rtSettings.verbose ) {
-        TIFFSetWarningHandler(nullptr);    // avoid annoying message boxes
+    if ( !options.rtSettings.verbose ) {
+        TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
     }
 
 #ifndef WIN32
 
     // Move the old path to the new one if the new does not exist
-    if (Glib::file_test(Glib::build_filename(options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
-        g_rename(Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
+    if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
+        g_rename (Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ());
     }
 
 #endif
@@ -239,11 +253,11 @@ void cleanup_rt()
 
 RTWindow *create_rt_window()
 {
-    Glib::ustring icon_path = Glib::build_filename(argv0, "images");
+    Glib::ustring icon_path = Glib::build_filename (argv0, "images");
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
-    defaultIconTheme->append_search_path(icon_path);
+    defaultIconTheme->append_search_path (icon_path);
 
-    rtengine::setPaths(options);
+    rtengine::setPaths (options);
     MyExpander::init();  // has to stay AFTER rtengine::setPaths
 
     // ------- loading theme files
@@ -251,8 +265,8 @@ RTWindow *create_rt_window()
     Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
 
     if (screen) {
-        Gtk::Settings::get_for_screen(screen)->property_gtk_theme_name() = "Adwaita";
-        Gtk::Settings::get_for_screen(screen)->property_gtk_application_prefer_dark_theme() = true;
+        Gtk::Settings::get_for_screen (screen)->property_gtk_theme_name() = "Adwaita";
+        Gtk::Settings::get_for_screen (screen)->property_gtk_application_prefer_dark_theme() = true;
 
 #if defined(__APPLE__)
         // This will force screen resolution regarding font, but I don't think it's compliant with Gtk guidelines...
@@ -260,27 +274,52 @@ RTWindow *create_rt_window()
         screen->set_resolution (96.);
 #endif
 
-        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create(THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
-        Glib::ustring filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
-        if (!regex->match(options.theme + ".css") || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
+        Glib::ustring filename;
+        Glib::MatchInfo mInfo;
+        bool match = regex->match(options.theme + ".css", mInfo);
+        if (match) {
+            // save old theme (name + version)
+            Glib::ustring initialTheme(options.theme);
+
+            // update version
+            auto pos = options.theme.find("-GTK3-");
+            Glib::ustring themeRootName(options.theme.substr(0, pos));
+            if (GTK_MINOR_VERSION < 20) {
+                options.theme = themeRootName + "-GTK3-_19";
+            } else {
+                options.theme = themeRootName + "-GTK3-20_";
+            }
+            // check if this version exist
+            if (!Glib::file_test(Glib::build_filename(argv0, "themes", options.theme + ".css"), Glib::FILE_TEST_EXISTS)) {
+                // set back old theme version if the actual one doesn't exist yet
+                options.theme = initialTheme;
+            }
+        }
+        filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+
+        if (!match || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
             options.theme = "RawTherapee-GTK";
+
             // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
             if (GTK_MINOR_VERSION < 20) {
                 options.theme = options.theme + "3-_19";
             } else {
                 options.theme = options.theme + "3-20_";
             }
-            filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+
+            filename = Glib::build_filename (argv0, "themes", options.theme + ".css");
         }
+
         cssRT = Gtk::CssProvider::create();
 
         try {
             cssRT->load_from_path (filename);
-            Gtk::StyleContext::add_provider_for_screen(screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            Gtk::StyleContext::add_provider_for_screen (screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         } catch (Glib::Error &err) {
-            printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+            printf ("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
         } catch (...) {
-            printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+            printf ("Error: Can't load css file \"%s\"\n", filename.c_str());
         }
 
         // Set the font face and size
@@ -289,23 +328,23 @@ RTWindow *create_rt_window()
                 cssForced = Gtk::CssProvider::create();
                 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
+                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", options.fontFamily, options.fontSize));
 #else
-                cssForced->load_from_data (Glib::ustring::compose("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
+                cssForced->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", options.fontFamily, options.fontSize));
 #endif
                 //GTK318
-                Gtk::StyleContext::add_provider_for_screen(screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                Gtk::StyleContext::add_provider_for_screen (screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
             } catch (Glib::Error &err) {
-                printf("Error: \"%s\"\n", err.what().c_str());
+                printf ("Error: \"%s\"\n", err.what().c_str());
             } catch (...) {
-                printf("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
+                printf ("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
             }
         }
     }
 
 #ifndef NDEBUG
     else if (!screen) {
-        printf("ERROR: Can't get default screen!\n");
+        printf ("ERROR: Can't get default screen!\n");
     }
 
 #endif
@@ -317,12 +356,12 @@ RTWindow *create_rt_window()
 
     // alerting users if the default raw and image profiles are missing
     if (options.is_defProfRawMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
     }
 
     if (options.is_defProfImgMissing()) {
-        Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd (Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
     }
 
@@ -330,12 +369,13 @@ RTWindow *create_rt_window()
 }
 
 
-class RTApplication: public Gtk::Application {
+class RTApplication: public Gtk::Application
+{
 public:
     RTApplication():
-        Gtk::Application("com.rawtherapee.application",
-                         Gio::APPLICATION_HANDLES_OPEN),
-        rtWindow(nullptr)
+        Gtk::Application ("com.rawtherapee.application",
+                          Gio::APPLICATION_HANDLES_OPEN),
+        rtWindow (nullptr)
     {
     }
 
@@ -344,6 +384,7 @@ public:
         if (rtWindow) {
             delete rtWindow;
         }
+
         cleanup_rt();
     }
 
@@ -353,19 +394,19 @@ private:
         if (rtWindow) {
             return true;
         }
-        
+
         if (!init_rt()) {
             Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-            add_window(msgd);
+            add_window (msgd);
             msgd.run ();
             return false;
         } else {
             rtWindow = create_rt_window();
-            add_window(*rtWindow);
+            add_window (*rtWindow);
             return true;
         }
     }
-    
+
     // Override default signal handlers:
     void on_activate() override
     {
@@ -373,9 +414,9 @@ private:
             rtWindow->present();
         }
     }
-    
-    void on_open(const Gio::Application::type_vec_files& files,
-                 const Glib::ustring& hint) override
+
+    void on_open (const Gio::Application::type_vec_files& files,
+                  const Glib::ustring& hint) override
     {
         if (create_window()) {
             struct Data {
@@ -385,29 +426,30 @@ private:
             };
             Data *d = new Data;
             d->filecatalog = rtWindow->fpanel->fileCatalog;
-            
+
             for (const auto &f : files) {
-                Thumbnail *thm = cacheMgr->getEntry(f->get_path());
+                Thumbnail *thm = cacheMgr->getEntry (f->get_path());
+
                 if (thm) {
-                    d->entries.push_back(thm);
+                    d->entries.push_back (thm);
                     d->lastfilename = f->get_path();
                 }
             }
-                
+
             if (!d->entries.empty()) {
                 const auto doit =
-                    [](gpointer data) -> gboolean
-                    {
-                        Data *d = static_cast<Data *>(data);
-                        d->filecatalog->openRequested(d->entries);
-                        d->filecatalog->selectImage(d->lastfilename, true);
-                        delete d;
-                        return FALSE;
-                    };
-                gdk_threads_add_idle(doit, d);
+                [] (gpointer data) -> gboolean {
+                    Data *d = static_cast<Data *> (data);
+                    d->filecatalog->openRequested (d->entries);
+                    d->filecatalog->selectImage (d->lastfilename, true);
+                    delete d;
+                    return FALSE;
+                };
+                gdk_threads_add_idle (doit, d);
             } else {
                 delete d;
             }
+
             rtWindow->present();
         }
     }
@@ -432,10 +474,10 @@ void show_gimp_plugin_info_dialog(Gtk::Window *parent)
 } // namespace
 
 
-int main(int argc, char **argv)
+int main (int argc, char **argv)
 {
-    setlocale(LC_ALL, "");
-    setlocale(LC_NUMERIC, "C"); // to set decimal point to "."
+    setlocale (LC_ALL, "");
+    setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
 
     simpleEditor = false;
     gimpPlugin = false;
@@ -445,7 +487,7 @@ int main(int argc, char **argv)
     argv2 = "";
 
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
-    gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
+    gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
     gdk_threads_init();
     gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
     Gio::init ();
@@ -458,33 +500,33 @@ int main(int argc, char **argv)
 #ifdef WIN32
     WCHAR exnameU[512] = {0};
     GetModuleFileNameW (NULL, exnameU, 511);
-    WideCharToMultiByte(CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
+    WideCharToMultiByte (CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
 #else
 
-    if (readlink("/proc/self/exe", exname, 511) < 0) {
-        strncpy(exname, argv[0], 511);
+    if (readlink ("/proc/self/exe", exname, 511) < 0) {
+        strncpy (exname, argv[0], 511);
     }
 
 #endif
-    exePath = Glib::path_get_dirname(exname);
+    exePath = Glib::path_get_dirname (exname);
 
     // set paths
-    if (Glib::path_is_absolute(DATA_SEARCH_PATH)) {
+    if (Glib::path_is_absolute (DATA_SEARCH_PATH)) {
         argv0 = DATA_SEARCH_PATH;
     } else {
-        argv0 = Glib::build_filename(exePath, DATA_SEARCH_PATH);
+        argv0 = Glib::build_filename (exePath, DATA_SEARCH_PATH);
     }
 
-    if (Glib::path_is_absolute(CREDITS_SEARCH_PATH)) {
+    if (Glib::path_is_absolute (CREDITS_SEARCH_PATH)) {
         creditsPath = CREDITS_SEARCH_PATH;
     } else {
-        creditsPath = Glib::build_filename(exePath, CREDITS_SEARCH_PATH);
+        creditsPath = Glib::build_filename (exePath, CREDITS_SEARCH_PATH);
     }
 
-    if (Glib::path_is_absolute(LICENCE_SEARCH_PATH)) {
+    if (Glib::path_is_absolute (LICENCE_SEARCH_PATH)) {
         licensePath = LICENCE_SEARCH_PATH;
     } else {
-        licensePath = Glib::build_filename(exePath, LICENCE_SEARCH_PATH);
+        licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
     }
 
 #else
@@ -492,60 +534,61 @@ int main(int argc, char **argv)
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
 #endif
-    
-    
+
+
 #ifdef WIN32
     bool consoleOpened = false;
 
     // suppression of annoying error boxes
-    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
+    SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 
-    if(argc > 1) {
-        int ret = processLineParams( argc, argv);
+    if (argc > 1) {
+        int ret = processLineParams ( argc, argv);
+
         if (options.rtSettings.verbose || (!remote && !Glib::file_test (argv1, Glib::FILE_TEST_EXISTS ) && !Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR))) {
-            bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
-            bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
+            bool stdoutRedirectedtoFile = (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0001);
+            bool stderrRedirectedtoFile = (GetFileType (GetStdHandle (STD_ERROR_HANDLE)) == 0x0001);
 
             // no console, if stdout and stderr both are redirected to file
-            if( !(stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
+            if ( ! (stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
                 // check if parameter -w was passed.
                 // We have to do that in this step, because it controls whether to open a console to show the output of following steps
                 bool Console = true;
 
-                for(int i = 1; i < argc; i++)
-                    if(!strcmp(argv[i], "-w")) {
+                for (int i = 1; i < argc; i++)
+                    if (!strcmp (argv[i], "-w")) {
                         Console = false;
                         break;
                     }
 
-                if(Console && AllocConsole()) {
-                    AttachConsole( GetCurrentProcessId() ) ;
+                if (Console && AllocConsole()) {
+                    AttachConsole ( GetCurrentProcessId() ) ;
                     // Don't allow CTRL-C in console to terminate RT
-                    SetConsoleCtrlHandler( NULL, true );
+                    SetConsoleCtrlHandler ( NULL, true );
                     // Set title of console
                     char consoletitle[128];
-                    sprintf(consoletitle, "RawTherapee %s Console", RTVERSION);
-                    SetConsoleTitle(consoletitle);
+                    sprintf (consoletitle, "RawTherapee %s Console", RTVERSION);
+                    SetConsoleTitle (consoletitle);
                     // increase size of screen buffer
                     COORD c;
                     c.X = 200;
                     c.Y = 1000;
-                    SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), c );
+                    SetConsoleScreenBufferSize ( GetStdHandle ( STD_OUTPUT_HANDLE ), c );
                     // Disable console-Cursor
                     CONSOLE_CURSOR_INFO cursorInfo;
                     cursorInfo.dwSize = 100;
                     cursorInfo.bVisible = false;
-                    SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursorInfo );
+                    SetConsoleCursorInfo ( GetStdHandle ( STD_OUTPUT_HANDLE ), &cursorInfo );
 
-                    if(!stdoutRedirectedtoFile) {
-                        freopen( "CON", "w", stdout ) ;
+                    if (!stdoutRedirectedtoFile) {
+                        freopen ( "CON", "w", stdout ) ;
                     }
 
-                    if(!stderrRedirectedtoFile) {
-                        freopen( "CON", "w", stderr ) ;
+                    if (!stderrRedirectedtoFile) {
+                        freopen ( "CON", "w", stderr ) ;
                     }
 
-                    freopen( "CON", "r", stdin ) ;
+                    freopen ( "CON", "r", stdin ) ;
 
                     consoleOpened = true;
 
@@ -556,10 +599,10 @@ int main(int argc, char **argv)
             }
         }
 
-        if( ret <= 0 ) {
-            if(consoleOpened) {
-                printf("Press any key to exit RawTherapee\n");
-                FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+        if ( ret <= 0 ) {
+            if (consoleOpened) {
+                printf ("Press any key to exit RawTherapee\n");
+                FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
                 getch();
             }
 
@@ -577,9 +620,9 @@ int main(int argc, char **argv)
 #endif
 
         if (argc > 1) {
-            int ret = processLineParams( argc, argv);
+            int ret = processLineParams ( argc, argv);
 
-            if( ret <= 0 ) {
+            if ( ret <= 0 ) {
                 return ret;
             }
         }
@@ -588,54 +631,59 @@ int main(int argc, char **argv)
 #endif
 
     if (gimpPlugin) {
-        if (!Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
-            printf("Error: argv1 doesn't exist\n");
+        if (!Glib::file_test (argv1, Glib::FILE_TEST_EXISTS) || Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
+            printf ("Error: argv1 doesn't exist\n");
             return 1;
         }
+
         if (argv2.empty()) {
-            printf("Error: -gimp requires two arguments\n");
+            printf ("Error: -gimp requires two arguments\n");
             return 1;
         }
-    } else if (!remote && Glib::file_test(argv1, Glib::FILE_TEST_EXISTS)) {
+    } else if (!remote && Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
         simpleEditor = true;
     }
 
     int ret = 0;
+
     if (remote) {
-        char *app_argv[2] = { const_cast<char *>(argv0.c_str()) };
+        char *app_argv[2] = { const_cast<char *> (argv0.c_str()) };
         int app_argc = 1;
+
         if (!argv1.empty()) {
             app_argc = 2;
-            app_argv[1] = const_cast<char *>(argv1.c_str());
+            app_argv[1] = const_cast<char *> (argv1.c_str());
         }
+
         RTApplication app;
-        ret = app.run(app_argc, app_argv);
+        ret = app.run (app_argc, app_argv);
     } else {
         if (init_rt()) {
-            Gtk::Main m(&argc, &argv);
+            Gtk::Main m (&argc, &argv);
             gdk_threads_enter();
-            const std::unique_ptr<RTWindow> rtWindow(create_rt_window());
+            const std::unique_ptr<RTWindow> rtWindow (create_rt_window());
             if (gimpPlugin) {
                 show_gimp_plugin_info_dialog(rtWindow.get());
             }
-            m.run(*rtWindow);
+            m.run (*rtWindow);
             gdk_threads_leave();
 
             if (gimpPlugin &&
-                rtWindow->epanel && rtWindow->epanel->isRealized()) {
+                    rtWindow->epanel && rtWindow->epanel->isRealized()) {
                 SaveFormat sf;
                 sf.format = "tif";
                 sf.tiffBits = 16;
                 sf.tiffUncompressed = true;
                 sf.saveParams = true;
-            
-                if (!rtWindow->epanel->saveImmediately(argv2, sf)) {
+
+                if (!rtWindow->epanel->saveImmediately (argv2, sf)) {
                     ret = -2;
                 }
             }
+
             cleanup_rt();
         } else {
-            Gtk::Main m(&argc, &argv);
+            Gtk::Main m (&argc, &argv);
             Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
             ret = -2;
@@ -645,8 +693,8 @@ int main(int argc, char **argv)
 #ifdef WIN32
 
     if (consoleOpened) {
-        printf("Press any key to exit RawTherapee\n");
-        FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+        printf ("Press any key to exit RawTherapee\n");
+        FlushConsoleInputBuffer (GetStdHandle (STD_INPUT_HANDLE));
         getch();
     }
 
@@ -654,4 +702,3 @@ int main(int argc, char **argv)
 
     return ret;
 }
-

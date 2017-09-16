@@ -210,9 +210,12 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
     appendBehavList (mi, M ("TP_LABCURVE_CHROMATICITY"), ADDSET_LC_CHROMATICITY, false);
 
-    mi = behModel->append ();
+    mi = behModel->append (); // Used for both Resize and Post-Resize sharpening
     mi->set_value (behavColumns.label, M ("TP_SHARPENING_LABEL"));
+    appendBehavList (mi, M ("TP_SHARPENING_RADIUS"), ADDSET_SHARP_RADIUS, false);
     appendBehavList (mi, M ("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
+    appendBehavList (mi, M ("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
+    appendBehavList (mi, M ("TP_SHARPENING_RLD_ITERATIONS"), ADDSET_SHARP_ITER, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_SHARPENEDGE_LABEL"));
@@ -292,6 +295,11 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_ROTATE_LABEL"));
     appendBehavList (mi, M ("TP_ROTATE_DEGREE"), ADDSET_ROTATE_DEGREE, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M ("TP_RESIZE_LABEL"));
+    appendBehavList (mi, M ("TP_RESIZE_SCALE"), ADDSET_RESIZE_SCALE, true);
+
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_DISTORTION_LABEL"));
@@ -878,14 +886,14 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
         grey->append (M("PREFERENCES_GREY30"));
         grey->append (M("PREFERENCES_GREY40"));
     */
-
-    Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
-    setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    greySc = Gtk::manage (new Gtk::ComboBoxText ());
-    setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    greySc->append (M ("PREFERENCES_GREYSCA"));
-    greySc->append (M ("PREFERENCES_GREYSC18"));
-
+    /*
+        Gtk::Label* greySclab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_GREYSC") + ":", Gtk::ALIGN_START));
+        setExpandAlignProperties (greySclab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+        greySc = Gtk::manage (new Gtk::ComboBoxText ());
+        setExpandAlignProperties (greySc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+        greySc->append (M ("PREFERENCES_GREYSCA"));
+        greySc->append (M ("PREFERENCES_GREYSC18"));
+    */
     Gtk::Frame* fcielab = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CIEART_FRAME")) );
     setExpandAlignProperties (fcielab, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -900,8 +908,8 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
         colo->attach    (*greylab,        0, 2, 1, 1);
         colo->attach    (*grey,           1, 2, 1, 1);
     */
-    colo->attach    (*greySclab,      0, 3, 1, 1);
-    colo->attach    (*greySc,         1, 3, 1, 1);
+//    colo->attach    (*greySclab,      0, 3, 1, 1);
+//    colo->attach    (*greySc,         1, 3, 1, 1);
     cbciecamfloat = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_CIEART_LABEL")));
     setExpandAlignProperties (cbciecamfloat, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     colo->attach (*cbciecamfloat, 0, 4, 2, 1);
@@ -986,13 +994,25 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     workflowGrid->attach_next_to (*hb4label, *ckbFileBrowserToolbarSingleRow, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to (*ckbHideTPVScrollbar, *hb4label, Gtk::POS_RIGHT, 1, 1);
     workflowGrid->attach_next_to (*ckbUseIconNoText, *ckbHideTPVScrollbar, Gtk::POS_RIGHT, 1, 1);
+    ckbAutoSaveTpOpen = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_AUTOSAVE_TP_OPEN")));
+    workflowGrid->attach_next_to (*ckbAutoSaveTpOpen, *hb4label, Gtk::POS_BOTTOM, 1, 1);
+    btnSaveTpOpenNow = Gtk::manage (new Gtk::Button (M ("PREFERENCES_SAVE_TP_OPEN_NOW")));
+    setExpandAlignProperties (btnSaveTpOpenNow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    workflowGrid->attach_next_to (*btnSaveTpOpenNow, *ckbAutoSaveTpOpen, Gtk::POS_RIGHT, 1, 1);
+
+    auto save_tp_open_now =
+    [&]() -> void {
+        parent->writeToolExpandedStatus (moptions.tpOpen);
+    };
+    btnSaveTpOpenNow->signal_clicked().connect (save_tp_open_now);
 
     fworklflow->add (*workflowGrid);
+
     mvbsd->attach_next_to (*fworklflow, Gtk::POS_TOP, 2, 1);
 
     // ---------------------------------------------
 
-    Gtk::Frame* flang = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_DEFAULTLANG")) );
+    Gtk::Frame* flang = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_LANG")) );
     setExpandAlignProperties (flang, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* langGrid = Gtk::manage ( new Gtk::Grid() );
     langGrid->set_column_spacing (4);
@@ -1027,7 +1047,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     // ---------------------------------------------
 
-    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_DEFAULTTHEME")) );
+    Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_THEME")) );
     setExpandAlignProperties (ftheme, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* themeGrid = Gtk::manage ( new Gtk::Grid() );
     themeGrid->set_column_spacing (4);
@@ -1716,7 +1736,7 @@ void Preferences::storePreferences ()
     moptions.rtSettings.iccDirectory = iccDir->get_filename ();
 // moptions.rtSettings.viewingdevice = view->get_active_row_number ();
 // moptions.rtSettings.viewingdevicegrey = grey->get_active_row_number ();
-    moptions.rtSettings.viewinggreySc = greySc->get_active_row_number ();
+//    moptions.rtSettings.viewinggreySc = greySc->get_active_row_number ();
 // moptions.rtSettings.autocielab = cbAutocielab->get_active ();
     moptions.rtSettings.ciecamfloat = cbciecamfloat->get_active ();
     moptions.rtSettings.HistogramWorking = ckbHistogramWorking->get_active ();
@@ -1791,6 +1811,8 @@ void Preferences::storePreferences ()
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
+
+    moptions.autoSaveTpOpen = ckbAutoSaveTpOpen->get_active();
 
     moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
     moptions.clutCacheSize = clutCacheSizeSB->get_value_as_int();
@@ -1876,7 +1898,7 @@ void Preferences::fillPreferences ()
 
 //   view->set_active (moptions.rtSettings.viewingdevice);
 //   grey->set_active (moptions.rtSettings.viewingdevicegrey);
-    greySc->set_active (moptions.rtSettings.viewinggreySc);
+//    greySc->set_active (moptions.rtSettings.viewinggreySc);
     dnv->set_active (moptions.rtSettings.leveldnv);
     dnti->set_active (moptions.rtSettings.leveldnti);
     dnliss->set_active (moptions.rtSettings.leveldnliss);
@@ -2009,6 +2031,8 @@ void Preferences::fillPreferences ()
     ckbHideTPVScrollbar->set_active (moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active (moptions.UseIconNoText);
 
+    ckbAutoSaveTpOpen->set_active (moptions.autoSaveTpOpen);
+
     rgbDenoiseTreadLimitSB->set_value (moptions.rgbDenoiseThreadLimit);
     clutCacheSizeSB->set_value (moptions.clutCacheSize);
     maxInspectorBuffersSB->set_value (moptions.maxInspectorBuffers);
@@ -2103,7 +2127,14 @@ void Preferences::okPressed ()
     workflowUpdate();
     options.copyFrom (&moptions);
     options.filterOutParsedExtensions();
-    Options::save ();
+
+    try {
+        Options::save ();
+    } catch (Options::Error &e) {
+        Gtk::MessageDialog msgd (getToplevelWindow (this), e.get_msg(), true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true);
+        msgd.run();
+    }
+
     dynProfilePanel->save();
     hide ();
 }

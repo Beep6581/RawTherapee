@@ -52,6 +52,7 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
+const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::eLcMode::LC_LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
 const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
@@ -919,9 +920,13 @@ void ToneCurveParams::setDefaults()
 
 void LensProfParams::setDefaults()
 {
+    lcMode = eLcMode::LC_NOCORRECTION;
     lcpFile = "";
     useDist = useVign = true;
     useCA = false;
+    lfCameraMake = "";
+    lfCameraModel = "";
+    lfLens = "";
 }
 
 void CoarseTransformParams::setDefaults()
@@ -1144,26 +1149,31 @@ void ProcParams::setDefaults ()
     vibrance.skintonescurve.clear ();
     vibrance.skintonescurve.push_back (DCT_Linear);
 
-    wb.method = "Camera";
-    wb.temperature = 6504;
-    wb.green = 1.0;
-    wb.equal = 1.0;
-    wb.tempBias = 0.0;
-    colorappearance.enabled = false;
-    colorappearance.degree = 90;
-    colorappearance.autodegree = true;
-    colorappearance.surround = "Average";
-    colorappearance.adaplum = 16;
-    colorappearance.badpixsl = 0;
-    colorappearance.adapscen = 2000.0;
-    colorappearance.autoadapscen = true;
-    colorappearance.algo = "No";
-    colorappearance.wbmodel = "RawT";
-    colorappearance.jlight = 0.0;
-    colorappearance.qbright = 0.0;
-    colorappearance.chroma = 0.0;
-    colorappearance.schroma = 0.0;
-    colorappearance.mchroma = 0.0;
+    wb.method       = "Camera";
+    wb.temperature  = 6504;
+    wb.green        = 1.0;
+    wb.equal        = 1.0;
+    wb.tempBias     = 0.0;
+    colorappearance.enabled       = false;
+    colorappearance.degree        = 90;
+    colorappearance.autodegree    = true;
+    colorappearance.degreeout        = 90;
+    colorappearance.autodegreeout    = true;
+    colorappearance.surround      = "Average";
+    colorappearance.surrsrc      = "Average";
+    colorappearance.adaplum       = 16;
+    colorappearance.badpixsl       = 0;
+    colorappearance.adapscen      = 2000.0;
+    colorappearance.autoadapscen    = true;
+    colorappearance.ybscen      = 18;
+    colorappearance.autoybscen    = true;
+    colorappearance.algo          = "No";
+    colorappearance.wbmodel       = "RawT";
+    colorappearance.jlight        = 0.0;
+    colorappearance.qbright       = 0.0;
+    colorappearance.chroma        = 0.0;
+    colorappearance.schroma       = 0.0;
+    colorappearance.mchroma       = 0.0;
     colorappearance.rstprotection = 0.0;
     colorappearance.contrast = 0.0;
     colorappearance.qcontrast = 0.0;
@@ -1182,10 +1192,12 @@ void ProcParams::setDefaults ()
     colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_LIGHT;
     colorappearance.curve3.clear ();
     colorappearance.curve3.push_back (DCT_Linear);
-    colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_CHROMA;
-    colorappearance.tempout = 5000;
-    colorappearance.greenout = 1.0;
-    colorappearance.ybout = 18;
+    colorappearance.curveMode3    = ColorAppearanceParams::TC_MODE_CHROMA;
+    colorappearance.tempout        = 5000;
+    colorappearance.greenout        = 1.0;
+    colorappearance.ybout        = 18;
+    colorappearance.tempsc        = 5000;
+    colorappearance.greensc        = 1.0;
 
     impulseDenoise.enabled = false;
     impulseDenoise.thresh = 50;
@@ -2092,8 +2104,20 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Color appearance", "AutoDegree", colorappearance.autodegree);
         }
 
+        if (!pedited || pedited->colorappearance.degreeout) {
+            keyFile.set_integer ("Color appearance", "Degreeout",        colorappearance.degreeout);
+        }
+
+        if (!pedited || pedited->colorappearance.autodegreeout) {
+            keyFile.set_boolean ("Color appearance", "AutoDegreeout",    colorappearance.autodegreeout);
+        }
+
         if (!pedited || pedited->colorappearance.surround) {
             keyFile.set_string ("Color appearance", "Surround", colorappearance.surround);
+        }
+
+        if (!pedited || pedited->colorappearance.surrsrc) {
+            keyFile.set_string ("Color appearance", "Surrsrc", colorappearance.surrsrc);
         }
 
 // if (!pedited || pedited->colorappearance.backgrd) keyFile.set_integer ("Color appearance", "Background", colorappearance.backgrd);
@@ -2157,6 +2181,14 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Color appearance", "AutoAdapscen", colorappearance.autoadapscen);
         }
 
+        if (!pedited || pedited->colorappearance.ybscen) {
+            keyFile.set_integer ("Color appearance", "YbScene", colorappearance.ybscen);
+        }
+
+        if (!pedited || pedited->colorappearance.autoybscen) {
+            keyFile.set_boolean ("Color appearance", "Autoybscen", colorappearance.autoybscen);
+        }
+
         if (!pedited || pedited->colorappearance.surrsource) {
             keyFile.set_boolean ("Color appearance", "SurrSource", colorappearance.surrsource);
         }
@@ -2171,6 +2203,14 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->colorappearance.greenout) {
             keyFile.set_double ("Color appearance", "Greenout", colorappearance.greenout);
+        }
+
+        if (!pedited || pedited->colorappearance.tempsc) {
+            keyFile.set_integer  ("Color appearance", "Tempsc",       colorappearance.tempsc);
+        }
+
+        if (!pedited || pedited->colorappearance.greensc) {
+            keyFile.set_double  ("Color appearance", "Greensc",       colorappearance.greensc);
         }
 
         if (!pedited || pedited->colorappearance.ybout) {
@@ -2514,6 +2554,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
 // lens profile
+        if (!pedited || pedited->lensProf.lcMode) {
+            keyFile.set_string ("LensProfile", "LcMode", lensProf.getMethodString (lensProf.lcMode));
+        }
+
         if (!pedited || pedited->lensProf.lcpFile) {
             keyFile.set_string ("LensProfile", "LCPFile", relativePathIfInside (fname, fnameAbsolute, lensProf.lcpFile));
         }
@@ -2528,6 +2572,16 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->lensProf.useCA) {
             keyFile.set_boolean ("LensProfile", "UseCA", lensProf.useCA);
+        }
+
+        if (!pedited || pedited->lensProf.lfCameraMake) {
+            keyFile.set_string("LensProfile", "LFCameraMake", lensProf.lfCameraMake);
+        }
+        if (!pedited || pedited->lensProf.lfCameraModel) {
+            keyFile.set_string("LensProfile", "LFCameraModel", lensProf.lfCameraModel);
+        }
+        if (!pedited || pedited->lensProf.lfLens) {
+            keyFile.set_string("LensProfile", "LFLens", lensProf.lfLens);
         }
 
 // save perspective correction
@@ -4971,11 +5025,35 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Color appearance", "Degreeout"))        {
+                colorappearance.degreeout        = keyFile.get_integer ("Color appearance", "Degreeout");
+
+                if (pedited) {
+                    pedited->colorappearance.degreeout = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "AutoDegreeout"))    {
+                colorappearance.autodegreeout    = keyFile.get_boolean ("Color appearance", "AutoDegreeout");
+
+                if (pedited) {
+                    pedited->colorappearance.autodegreeout = true;
+                }
+            }
+
             if (keyFile.has_key ("Color appearance", "Surround")) {
                 colorappearance.surround = keyFile.get_string ("Color appearance", "Surround");
 
                 if (pedited) {
                     pedited->colorappearance.surround = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Surrsrc")) {
+                colorappearance.surrsrc = keyFile.get_string ("Color appearance", "Surrsrc");
+
+                if (pedited) {
+                    pedited->colorappearance.surrsrc = true;
                 }
             }
 
@@ -5100,6 +5178,22 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Color appearance", "YbScene")) {
+                colorappearance.ybscen = keyFile.get_integer ("Color appearance", "YbScene");
+
+                if (pedited) {
+                    pedited->colorappearance.ybscen = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Autoybscen")) {
+                colorappearance.autoybscen = keyFile.get_boolean ("Color appearance", "Autoybscen");
+
+                if (pedited) {
+                    pedited->colorappearance.autoybscen = true;
+                }
+            }
+
             if (keyFile.has_key ("Color appearance", "SurrSource")) {
                 colorappearance.surrsource = keyFile.get_boolean ("Color appearance", "SurrSource");
 
@@ -5129,6 +5223,22 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->colorappearance.greenout = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Tempsc"))       {
+                colorappearance.tempsc = keyFile.get_integer  ("Color appearance", "Tempsc");
+
+                if (pedited) {
+                    pedited->colorappearance.tempsc = true;
+                }
+            }
+
+            if (keyFile.has_key ("Color appearance", "Greensc"))       {
+                colorappearance.greensc = keyFile.get_double  ("Color appearance", "Greensc");
+
+                if (pedited) {
+                    pedited->colorappearance.greensc = true;
                 }
             }
 
@@ -5710,11 +5820,23 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
 // lens profile
         if (keyFile.has_group ("LensProfile")) {
+            if (keyFile.has_key ("LensProfile", "LcMode")) {
+                lensProf.lcMode = lensProf.getMethodNumber (keyFile.get_string ("LensProfile", "LcMode"));
+
+                if (pedited) {
+                    pedited->lensProf.lcMode = true;
+                }
+            }
+
             if (keyFile.has_key ("LensProfile", "LCPFile")) {
                 lensProf.lcpFile = expandRelativePath (fname, "", keyFile.get_string ("LensProfile", "LCPFile"));
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
+                }
+
+                if(ppVersion < 327 && !lensProf.lcpFile.empty()) {
+                    lensProf.lcMode = LensProfParams::eLcMode::LC_LCP;
                 }
             }
 
@@ -5739,6 +5861,27 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->lensProf.useCA = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraMake")) {
+                lensProf.lfCameraMake = keyFile.get_string("LensProfile", "LFCameraMake");
+                if (pedited) {
+                    pedited->lensProf.lfCameraMake = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraModel")) {
+                lensProf.lfCameraModel = keyFile.get_string("LensProfile", "LFCameraModel");
+                if (pedited) {
+                    pedited->lensProf.lfCameraModel = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFLens")) {
+                lensProf.lfLens = keyFile.get_string("LensProfile", "LFLens");
+                if (pedited) {
+                    pedited->lensProf.lfLens = true;
                 }
             }
         }
@@ -8245,9 +8388,14 @@ bool ProcParams::operator== (const ProcParams& other)
         && colorappearance.enabled == other.colorappearance.enabled
         && colorappearance.degree == other.colorappearance.degree
         && colorappearance.autodegree == other.colorappearance.autodegree
+        && colorappearance.degreeout == other.colorappearance.degreeout
+        && colorappearance.autodegreeout == other.colorappearance.autodegreeout
         && colorappearance.surround == other.colorappearance.surround
+        && colorappearance.surrsrc == other.colorappearance.surrsrc
         && colorappearance.adapscen == other.colorappearance.adapscen
         && colorappearance.autoadapscen == other.colorappearance.autoadapscen
+        && colorappearance.ybscen == other.colorappearance.ybscen
+        && colorappearance.autoybscen == other.colorappearance.autoybscen
         && colorappearance.adaplum == other.colorappearance.adaplum
         && colorappearance.badpixsl == other.colorappearance.badpixsl
         && colorappearance.wbmodel == other.colorappearance.wbmodel
@@ -8266,6 +8414,8 @@ bool ProcParams::operator== (const ProcParams& other)
         && colorappearance.colorh == other.colorappearance.colorh
         && colorappearance.tempout == other.colorappearance.tempout
         && colorappearance.greenout == other.colorappearance.greenout
+        && colorappearance.tempsc == other.colorappearance.tempsc
+        && colorappearance.greensc == other.colorappearance.greensc
         && colorappearance.ybout == other.colorappearance.ybout
         && impulseDenoise.enabled == other.impulseDenoise.enabled
         && impulseDenoise.thresh == other.impulseDenoise.thresh
@@ -8330,10 +8480,14 @@ bool ProcParams::operator== (const ProcParams& other)
         && rotate.degree == other.rotate.degree
         && commonTrans.autofill == other.commonTrans.autofill
         && distortion.amount == other.distortion.amount
+        && lensProf.lcMode == other.lensProf.lcMode
         && lensProf.lcpFile == other.lensProf.lcpFile
         && lensProf.useDist == other.lensProf.useDist
         && lensProf.useVign == other.lensProf.useVign
         && lensProf.useCA == other.lensProf.useCA
+        && lensProf.lfCameraMake == other.lensProf.lfCameraMake
+        && lensProf.lfCameraModel == other.lensProf.lfCameraModel
+        && lensProf.lfLens == other.lensProf.lfLens
         && perspective.horizontal == other.perspective.horizontal
         && perspective.vertical == other.perspective.vertical
         && gradient.enabled == other.gradient.enabled

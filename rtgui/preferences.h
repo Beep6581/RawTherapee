@@ -36,8 +36,8 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
         Gtk::TreeModelColumn<Glib::ustring>  ext;
         ExtensionColumns()
         {
-            add(enabled);
-            add(ext);
+            add (enabled);
+            add (ext);
         }
     };
     ExtensionColumns extensionColumns;
@@ -54,11 +54,11 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
         Gtk::TreeModelColumn<int>           addsetid;
         BehavColumns()
         {
-            add(label);
-            add(badd);
-            add(bset);
-            add(visible);
-            add(addsetid);
+            add (label);
+            add (badd);
+            add (bset);
+            add (visible);
+            add (addsetid);
         }
     };
 
@@ -68,7 +68,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
         Glib::ustring shortFName;
         Glib::ustring longFName;
 
-        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName(sfname), longFName(lfname) {}
+        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName (sfname), longFName (lfname) {}
     };
 
     Glib::RefPtr<Gtk::TreeStore> behModel;
@@ -122,9 +122,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
 
-    Gtk::ComboBoxText* view;
-    Gtk::ComboBoxText* grey;
-    Gtk::ComboBoxText* greySc;
+//   Gtk::ComboBoxText* view;
+//    Gtk::ComboBoxText* grey;
+//    Gtk::ComboBoxText* greySc;
     Gtk::ComboBoxText* dnv;
     Gtk::ComboBoxText* dnti;
     Gtk::ComboBoxText* dnaut;
@@ -201,6 +201,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     Gtk::CheckButton* ckbHideTPVScrollbar;
     Gtk::CheckButton* ckbUseIconNoText;
 
+    Gtk::CheckButton* ckbAutoSaveTpOpen;
+    Gtk::Button* btnSaveTpOpenNow;
+
     DynamicProfilePanel *dynProfilePanel;
 
     Glib::ustring storedValueRaw;
@@ -232,9 +235,9 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener
     void iccDirChanged ();
     void switchThemeTo (Glib::ustring newTheme);
     void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
-    bool splashClosed(GdkEventAny* event);
+    bool splashClosed (GdkEventAny* event);
 
-    int getThemeRowNumber(Glib::ustring& longThemeFName);
+    int getThemeRowNumber (Glib::ustring& longThemeFName);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
