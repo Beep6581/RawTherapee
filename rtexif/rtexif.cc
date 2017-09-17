@@ -35,6 +35,9 @@
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
 
+// see end of ExifManager::parse(bool, bool)
+#define PRINT_METADATA_TREE 0
+
 using namespace std;
 
 namespace rtexif
@@ -288,12 +291,14 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
             kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
             kf->set_boolean ("RT General", "FlaggingMode", flagMode);
 
+            kf->set_integer ("Common Data", "FrameCount", cfs->frameCount);
+            kf->set_integer ("Common Data", "SampleFormat", cfs->sampleFormat);
+            kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
+            kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
             kf->set_double ("Common Data", "FNumber", cfs->fnumber);
             kf->set_double ("Common Data", "Shutter", cfs->shutter);
             kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
             kf->set_integer ("Common Data", "ISO", cfs->iso);
-            kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
-            kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
             kf->set_string ("Common Data", "Lens", cfs->lens);
             kf->set_string ("Common Data", "Make", cfs->camMake);
             kf->set_string ("Common Data", "Model", cfs->camModel);
@@ -457,13 +462,18 @@ Tag* TagDirectory::findTag (const char* name, bool lookUpward) const
         return t;
     }
 
-    for (size_t i = 0; i < tags.size(); i++) {
-        if (tags[i]->isDirectory()) {
-            TagDirectory *dir = tags[i]->getDirectory();
-            Tag* t = dir->findTag (name);
+    for (auto tag : tags) {
+        if (tag->isDirectory()) {
+            TagDirectory *dir;
+            int i = 0;
+            while ((dir = tag->getDirectory(i)) != nullptr) {
+                TagDirectory *dir = tag->getDirectory();
+                Tag* t = dir->findTag (name);
 
-            if (t) {
-                return t;
+                if (t) {
+                    return t;
+                }
+                ++i;
             }
         }
     }
@@ -492,15 +502,19 @@ std::vector<const Tag*> TagDirectory::findTags (int ID)
 
     for (auto tag : tags) {
         if (tag->isDirectory()) {
-            TagDirectory *dir = tag->getDirectory();
-            std::vector<const Tag*> subTagList = dir->findTags (ID);
+            TagDirectory *dir;
+            int i = 0;
+            while ((dir = tag->getDirectory(i)) != nullptr) {
+                std::vector<const Tag*> subTagList = dir->findTags (ID);
 
-            if (!subTagList.empty()) {
-                // concatenating the 2 vectors
-                // not really optimal in a memory efficiency pov
-                for (auto tag2 : subTagList) {
-                    tagList.push_back(tag2);
+                if (!subTagList.empty()) {
+                    // concatenating the 2 vectors
+                    // not really optimal in a memory efficiency pov
+                    for (auto tag2 : subTagList) {
+                        tagList.push_back(tag2);
+                    }
                 }
+                ++i;
             }
         }
     }
@@ -521,15 +535,19 @@ std::vector<const Tag*> TagDirectory::findTags (const char* name)
 
     for (auto tag : tags) {
         if (tag->isDirectory()) {
-            TagDirectory *dir = tag->getDirectory();
-            std::vector<const Tag*> subTagList = dir->findTags (name);
+            TagDirectory *dir;
+            int i = 0;
+            while ((dir = tag->getDirectory(i)) != nullptr) {
+                std::vector<const Tag*> subTagList = dir->findTags (name);
 
-            if (!subTagList.empty()) {
-                // concatenating the 2 vectors
-                // not really optimal in a memory efficiency pov
-                for (auto tag2 : subTagList) {
-                    tagList.push_back(tag2);
+                if (!subTagList.empty()) {
+                    // concatenating the 2 vectors
+                    // not really optimal in a memory efficiency pov, but adding 10 items should be a maximum
+                    for (auto tag2 : subTagList) {
+                        tagList.push_back(tag2);
+                    }
                 }
+                ++i;
             }
         }
     }
@@ -540,7 +558,7 @@ std::vector<const Tag*> TagDirectory::findTags (const char* name)
 
 Tag* TagDirectory::findTagUpward (const char* name) const
 {
-    Tag* t = getTag(name);
+    Tag* t = findTag(name);
     if (t) {
         return t;
     }
@@ -2650,7 +2668,6 @@ void ExifManager::parseStd (bool skipIgnored) {
     parse(false, skipIgnored);
 }
 
-// return a root TagDirectory
 void ExifManager::parse (bool isRaw, bool skipIgnored)
 {
     int ifdOffset = IFDOffset;
@@ -2924,8 +2941,10 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
                     frames.push_back(sft->getParent());
                     frameRootDetected = true;
 
-                    //printf("\n--------------- FRAME -----------------------------\n\n");
-                    //sft->getParent()->printAll ();
+#if PRINT_METADATA_TREE
+                    printf("\n--------------- FRAME (SUBFILETYPE) ---------------\n\n");
+                    sft->getParent()->printAll ();
+#endif
                 }
             }
         }
@@ -2939,8 +2958,10 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
                         frames.push_back(sft->getParent());
                         frameRootDetected = true;
 
-                        //printf("\n--------------- FRAME -----------------------------\n\n");
-                        //sft->getParent()->printAll ();
+#if PRINT_METADATA_TREE
+                        printf("\n--------------- FRAME (OSUBFILETYPE) ---------------\n\n");
+                        sft->getParent()->printAll ();
+#endif
                     }
                 }
             }
@@ -2955,8 +2976,10 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
                         frames.push_back(pi->getParent());
                         //frameRootDetected = true;  not used afterward
 
-                        //printf("\n--------------- FRAME -----------------------------\n\n");
-                        //pi->getParent()->printAll ();
+#if PRINT_METADATA_TREE
+                        printf("\n--------------- FRAME (PHOTOMETRIC) ---------------\n\n");
+                        pi->getParent()->printAll ();
+#endif
                     }
                 }
             }
@@ -2968,8 +2991,10 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
 
         roots.push_back(root);
 
-        //printf("\n~~~~~~~~~ ROOT ~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
-        //root->printAll ();
+#if PRINT_METADATA_TREE
+        printf("\n~~~~~~~~~ ROOT ~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+        root->printAll ();
+#endif
 
     } while (ifdOffset && !onlyFirst);
 

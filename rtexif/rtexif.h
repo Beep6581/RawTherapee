@@ -19,15 +19,15 @@
 #ifndef _MEXIF3_
 #define _MEXIF3_
 
-#include <cmath>
 #include <cstdio>
-#include <cstdlib>
-#include <iomanip>
-#include <map>
-#include <memory>
-#include <sstream>
-#include <string>
 #include <vector>
+#include <map>
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <cstdlib>
+#include <cmath>
+#include <memory>
 
 #include <glibmm.h>
 

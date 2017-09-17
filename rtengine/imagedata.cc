@@ -23,6 +23,8 @@
 #include "imagedata.h"
 #include "iptcpairs.h"
 
+#define PRINT_HDR_PS_DETECTION 0
+
 using namespace rtengine;
 
 extern "C" IptcData *iptc_data_new_from_jpeg_file (FILE* infile);
@@ -477,6 +479,9 @@ void FrameData::extractInfo ()
         if (hdr) {
             if (hdr->toInt() > 0 && hdr->toInt(2) > 0) {
                 isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+                printf("HDR detected ! -> \"HDR\" tag found\n");
+#endif
             }
         } else {
             rtexif::Tag* dm = mnote->findTag("DriveMode");
@@ -486,6 +491,9 @@ void FrameData::extractInfo ()
                 buffer[3] = 0;
                 if (!strcmp(buffer, "HDR")) {
                     isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+                    printf("HDR detected ! -> DriveMode = \"HDR\"\n");
+#endif
                 }
             }
         }
@@ -494,6 +502,9 @@ void FrameData::extractInfo ()
             rtexif::Tag* q = mnote->findTag("Quality");
             if (q && q->toInt() == 7) {
                 isPixelShift = true;
+#if PRINT_HDR_PS_DETECTION
+                printf("PixelShift detected ! -> \"Quality\" = 7\n");
+#endif
             }
         }
     }
@@ -546,12 +557,18 @@ void FrameData::extractInfo ()
             if (bitspersample == 32) {
                 sampleFormat = IIOSF_FLOAT;
                 isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+                printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+#endif
             }
         }
     } else if (photometric == PHOTOMETRIC_CFA) {
         if (sampleformat == SAMPLEFORMAT_IEEEFP) {
             sampleFormat = IIOSF_FLOAT;
             isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+#endif
         } else if (sampleformat == SAMPLEFORMAT_INT || sampleformat == SAMPLEFORMAT_UINT) {
             if (bitspersample == 8) {   // shouldn't occur...
                 sampleFormat = IIOSF_UNSIGNED_CHAR;
@@ -563,9 +580,15 @@ void FrameData::extractInfo ()
         if (compression == COMPRESSION_SGILOG24) {
             sampleFormat = IIOSF_LOGLUV24;
             isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+#endif
         } else if (compression == COMPRESSION_SGILOG) {
             sampleFormat = IIOSF_LOGLUV32;
             isHDR = true;
+#if PRINT_HDR_PS_DETECTION
+            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+#endif
         }
     }
 }
