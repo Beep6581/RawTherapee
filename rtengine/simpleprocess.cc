@@ -812,11 +812,17 @@ private:
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
-            Imagefloat* trImg = new Imagefloat (fw, fh);
-            ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
+            Imagefloat* trImg = nullptr;
+            if (ipf.needsLuminanceOnly()) {
+                trImg = baseImg;
+            } else {
+                trImg = new Imagefloat (fw, fh);
+            }           ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
                            imgsrc->getMetaData(), imgsrc->getRotateDegree(), true);
-            delete baseImg;
-            baseImg = trImg;
+            if(trImg != baseImg) {
+                delete baseImg;
+                baseImg = trImg;
+            }
         }
     }
 
