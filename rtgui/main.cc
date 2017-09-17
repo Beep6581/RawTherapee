@@ -60,7 +60,6 @@ extern Options options;
 Glib::ustring argv0;
 Glib::ustring creditsPath;
 Glib::ustring licensePath;
-Glib::ustring lensfunDbPath;
 Glib::ustring argv1;
 Glib::ustring argv2;
 bool simpleEditor = false;
@@ -531,16 +530,16 @@ int main (int argc, char **argv)
     }
 
     if (Glib::path_is_absolute (LENSFUN_DB_PATH)) {
-        lensfunDbPath = LENSFUN_DB_PATH;
+        options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
     } else {
-        lensfunDbPath = Glib::build_filename (exePath, LENSFUN_DB_PATH);
+        options.rtSettings.lensfunDbDirectory = Glib::build_filename (exePath, LENSFUN_DB_PATH);
     }
     
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
-    lensfunDbPath = LENSFUN_DB_PATH;
+    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
 #endif
 
 

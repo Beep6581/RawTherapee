@@ -49,8 +49,6 @@ Options options;
 Glib::ustring versionString = RTVERSION;
 Glib::ustring paramFileExtension = ".pp3";
 
-extern Glib::ustring lensfunDbPath; // defined in main
-
 Options::Options ()
 {
 
@@ -729,8 +727,7 @@ void Options::setDefaults ()
     lastLensProfileDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
-
-    rtSettings.lensfunDbDirectory = lensfunDbPath;
+    rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
 }
 
 Options* Options::copyFrom (Options* other)
