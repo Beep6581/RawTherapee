@@ -46,7 +46,7 @@ public:
     bool isCACorrectionAvailable() const override;
     void correctCA(double &x, double &y, int channel) const override;
     void processVignetteLine(int width, int y, float *line) const override;
-    void processVignetteLine3Channels(int width, int y, float *line) const;
+    void processVignetteLine3Channels(int width, int y, float *line) const override;
 
     Glib::ustring getDisplayString() const;
 
@@ -118,7 +118,7 @@ private:
                                             int width, int height, bool swap_xy) const;
     LFDatabase();
     bool LoadDirectory(const char *dirname);
-    
+
     static LFDatabase instance_;
     lfDatabase *data_;
 };
