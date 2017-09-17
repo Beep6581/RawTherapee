@@ -52,7 +52,7 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
-const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::eLcMode::LC_LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
+const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::LcMode::LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
 const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
@@ -920,7 +920,7 @@ void ToneCurveParams::setDefaults()
 
 void LensProfParams::setDefaults()
 {
-    lcMode = eLcMode::LC_NOCORRECTION;
+    lcMode = LcMode::NONE;
     lcpFile = "";
     useDist = useVign = true;
     useCA = false;
@@ -5836,7 +5836,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
 
                 if(ppVersion < 327 && !lensProf.lcpFile.empty()) {
-                    lensProf.lcMode = LensProfParams::eLcMode::LC_LCP;
+                    lensProf.lcMode = LensProfParams::LcMode::LCP;
                 }
             }
 
