@@ -448,6 +448,11 @@ endif()
 # check whether the used version of lensfun has lfDatabase::LoadDirectory
 include(CheckCXXSourceCompiles)
 set(CMAKE_REQUIRED_INCLUDES ${LENSFUN_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_LIBRARIES)
+foreach(l ${LENSFUN_LIBRARIES})
+    find_library(_l ${l} PATHS ${LENSFUN_LIBRARY_DIRS} NO_DEFAULT_PATH)
+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_l})
+endforeach()
 check_cxx_source_compiles(
     "#include <lensfun.h>
 int main()

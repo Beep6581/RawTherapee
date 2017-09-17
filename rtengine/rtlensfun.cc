@@ -285,7 +285,7 @@ bool LFDatabase::init(const Glib::ustring &dbdir)
 bool LFDatabase::LoadDirectory(const char *dirname)
 {
 #if RT_LENSFUN_HAS_LOAD_DIRECTORY
-    instance_.data_->LoadDirectory(dirname);
+    return instance_.data_->LoadDirectory(dirname);
 #else
     // backported from lensfun 0.3.x
     bool database_found = false;
