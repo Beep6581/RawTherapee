@@ -1146,8 +1146,8 @@ void ImProcFunctions::exlabLocal (const local_params& lp, int bfh, int bfw, LabI
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                         float L = Ltemp[ti * TS + tj];
-                        float a = atemp[ti * TS + tj];
-                        float b = btemp[ti * TS + tj];
+                    //    float a = atemp[ti * TS + tj];
+                    //    float b = btemp[ti * TS + tj];
                         float tonefactor = (L < MAXVALF ? hltonecurve[L] : CurveFactory::hlcurveloc (exp_scale, comp, hlrange, L, niv) );
                         Ltemp[ti * TS + tj] = L * tonefactor;
                     }
@@ -1157,8 +1157,8 @@ void ImProcFunctions::exlabLocal (const local_params& lp, int bfh, int bfw, LabI
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                         float L = Ltemp[ti * TS + tj];
-                        float a = atemp[ti * TS + tj];
-                        float b = btemp[ti * TS + tj];
+                    //    float a = atemp[ti * TS + tj];
+                    //    float b = btemp[ti * TS + tj];
 
                         //shadow tone curve
                         float Y = L;
@@ -1196,7 +1196,7 @@ void ImProcFunctions::exlabLocal (const local_params& lp, int bfh, int bfw, LabI
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                             float satby100 = lp.chro / 100.f;
-                            float L = 2.f * Ltemp[ti * TS + tj];
+                        //    float L = 2.f * Ltemp[ti * TS + tj];
                             float a = atemp[ti * TS + tj];
                             float b = btemp[ti * TS + tj];
 
@@ -6055,10 +6055,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                            float lL;
-                            float amplil = 140.f;
-                            float lighL = bufexporig->L[loy - begy][lox - begx];
-                            float lighLnew = bufexpfin->L[loy - begy][lox - begx];
+                         //   float lL;
+                         //   float amplil = 140.f;
+                         //   float lighL = bufexporig->L[loy - begy][lox - begx];
+                         //   float lighLnew = bufexpfin->L[loy - begy][lox - begx];
                             float rL;
                             rL = CLIPRET ((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
 
@@ -6220,10 +6220,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                            float lL;
-                            float amplil = 140.f;
-                            float lighL = bufexporig->L[loy - begy][lox - begx];
-                            float lighLnew = bufexpfin->L[loy - begy][lox - begx];
+                        //    float lL;
+                        //    float amplil = 140.f;
+                        //    float lighL = bufexporig->L[loy - begy][lox - begx];
+                        //    float lighLnew = bufexpfin->L[loy - begy][lox - begx];
                             float rL;
                             rL = CLIPRET ((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
 
