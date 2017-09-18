@@ -287,6 +287,7 @@ void ParamsEdited::set (bool v)
     commonTrans.autofill = v;
     rotate.degree = v;
     distortion.amount = v;
+    lensProf.lcMode = v;
     lensProf.lcpFile = v;
     lensProf.useDist = v;
     lensProf.useVign = v;
@@ -922,12 +923,13 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
+        lensProf.lcMode = lensProf.lcMode && p.lensProf.lcMode == other.lensProf.lcMode;
         lensProf.lcpFile = lensProf.lcpFile && p.lensProf.lcpFile == other.lensProf.lcpFile;
         lensProf.useDist = lensProf.useDist && p.lensProf.useDist == other.lensProf.useDist;
         lensProf.useVign = lensProf.useVign && p.lensProf.useVign == other.lensProf.useVign;
         lensProf.useCA = lensProf.useCA && p.lensProf.useCA == other.lensProf.useCA;
-        lensProf.useLensfun = lensProf.useLensfun && p.lensProf.useLensfun == other.lensProf.useLensfun;
-        lensProf.lfAutoMatch = lensProf.lfAutoMatch && p.lensProf.lfAutoMatch == other.lensProf.lfAutoMatch;
+        lensProf.useLensfun = lensProf.useLensfun && p.lensProf.useLensfun() == other.lensProf.useLensfun();
+        lensProf.lfAutoMatch = lensProf.lfAutoMatch && p.lensProf.lfAutoMatch() == other.lensProf.lfAutoMatch();
         lensProf.lfCameraMake = lensProf.lfCameraMake && p.lensProf.lfCameraMake == other.lensProf.lfCameraMake;
         lensProf.lfCameraModel = lensProf.lfCameraModel && p.lensProf.lfCameraModel == other.lensProf.lfCameraModel;
         lensProf.lfLens = lensProf.lfLens && p.lensProf.lfLens == other.lensProf.lfLens;
@@ -2253,6 +2255,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.distortion.amount      = dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
     }
 
+    if (lensProf.lcMode) {
+        toEdit.lensProf.lcMode         = mods.lensProf.lcMode;
+    }
+
     if (lensProf.lcpFile) {
         toEdit.lensProf.lcpFile         = mods.lensProf.lcpFile;
     }
@@ -2267,14 +2273,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (lensProf.useCA) {
         toEdit.lensProf.useCA           = mods.lensProf.useCA;
-    }
-
-    if (lensProf.useLensfun) {
-        toEdit.lensProf.useLensfun = mods.lensProf.useLensfun;
-    }
-
-    if (lensProf.lfAutoMatch) {
-        toEdit.lensProf.lfAutoMatch = mods.lensProf.lfAutoMatch;
     }
 
     if (lensProf.lfCameraMake) {
@@ -3603,7 +3601,7 @@ bool RAWParamsEdited::isUnchanged() const
 
 bool LensProfParamsEdited::isUnchanged() const
 {
-    return lcpFile && useVign && lfLens;
+    return lcMode && lcpFile && useVign && lfLens;
 }
 
 bool RetinexParamsEdited::isUnchanged() const

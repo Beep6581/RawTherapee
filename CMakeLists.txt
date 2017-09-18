@@ -445,6 +445,34 @@ if(UNIX)
     install(FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif()
 
+# check whether the used version of lensfun has lfDatabase::LoadDirectory
+include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_INCLUDES ${LENSFUN_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_LIBRARIES)
+foreach(l ${LENSFUN_LIBRARIES})
+    if(LENSFUN_LIBRARY_DIRS)
+        # the NO_DEFAULT_PATH is to make sure we find the lensfun version we
+        # want, and not the system's one (e.g. if we have a custom version
+        # installed in a non-standard location)
+        find_library(_l ${l} PATHS ${LENSFUN_LIBRARY_DIRS} NO_DEFAULT_PATH)
+    else()
+        # LENSFUN_LIBRARY_DIRS can be empty if lensfun is installed in the
+        # default path. In this case, adding NO_DEFAULT_PATH would make
+        # find_library fail...
+        find_library(_l ${l})
+    endif()
+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_l})
+endforeach()
+check_cxx_source_compiles(
+    "#include <lensfun.h>
+int main()
+{
+    lfDatabase *db = 0;
+    bool b = db->LoadDirectory(0);
+    return 0;
+}" LENSFUN_HAS_LOAD_DIRECTORY)
+
+
 add_subdirectory(rtexif)
 add_subdirectory(rtengine)
 add_subdirectory(rtgui)

@@ -204,7 +204,7 @@ public:
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
         : monitorTransform (nullptr), lab2outputTransform (nullptr), output2monitorTransform (nullptr), params (iparams), scale (1), multiThread (imultiThread), lumimul{} {}
     ~ImProcFunctions      ();
-
+    bool needsLuminanceOnly() { return !(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient());}
     void setScale         (double iscale);
 
     bool needsTransform   ();

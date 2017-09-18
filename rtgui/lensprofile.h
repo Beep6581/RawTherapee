@@ -32,9 +32,8 @@ protected:
     MyFileChooserButton *fcbLCPFile;
     Gtk::CheckButton *ckbUseDist, *ckbUseVign, *ckbUseCA;
     Gtk::HBox *hbLCPFile;
-    Gtk::Button *btnReset;
     Gtk::Label *lLCPFileHead;
-    bool lcpFileChanged, useDistChanged, useVignChanged, useCAChanged;
+    bool lcModeChanged, lcpFileChanged, useDistChanged, useVignChanged, useCAChanged;
     sigc::connection conLCPFile, conUseDist, conUseVign, conUseCA;
     void updateDisabled(bool enable);
     bool allowFocusDep;
@@ -98,7 +97,6 @@ public:
     void setRawMeta     (bool raw, const rtengine::ImageMetaData* pMeta);
 
     void onLCPFileChanged ();
-    void onLCPFileReset   ();
     void onUseDistChanged();
     void onUseVignChanged();
     void onUseCAChanged();
