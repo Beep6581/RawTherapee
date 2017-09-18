@@ -161,16 +161,16 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     corrLensfunAuto->set_sensitive(true);
 
     switch(pp->lensProf.lcMode) {
-        case procparams::LensProfParams::eLcMode::LC_LCP :
+        case procparams::LensProfParams::LcMode::LCP :
             corrLcpFile->set_active(true);
             break;
-        case procparams::LensProfParams::eLcMode::LC_LENSFUNAUTOMATCH :
+        case procparams::LensProfParams::LcMode::LENSFUNAUTOMATCH :
             corrLensfunAuto->set_active(true);
             break;
-        case procparams::LensProfParams::eLcMode::LC_LENSFUNMANUAL :
+        case procparams::LensProfParams::LcMode::LENSFUNMANUAL :
             corrLensfunManual->set_active(true);
             break;
-        case procparams::LensProfParams::eLcMode::LC_NOCORRECTION :
+        case procparams::LensProfParams::LcMode::NONE :
             corrOff->set_active(true);
     }
 
@@ -274,13 +274,13 @@ void LensProfilePanel::setRawMeta(bool raw, const rtengine::FramesMetaData* pMet
 void LensProfilePanel::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
     if (corrLcpFile->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_LCP;
+        pp->lensProf.lcMode = procparams::LensProfParams::LcMode::LCP;
     } else if(corrLensfunManual->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_LENSFUNMANUAL;
+        pp->lensProf.lcMode = procparams::LensProfParams::LcMode::LENSFUNMANUAL;
     } else if(corrLensfunAuto->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_LENSFUNAUTOMATCH;
+        pp->lensProf.lcMode = procparams::LensProfParams::LcMode::LENSFUNAUTOMATCH;
     } else if(corrOff->get_active()) {
-        pp->lensProf.lcMode = procparams::LensProfParams::eLcMode::LC_NOCORRECTION;
+        pp->lensProf.lcMode = procparams::LensProfParams::LcMode::NONE;
     }
 
     if (LCPStore::getInstance()->isValidLCPFileName(fcbLCPFile->get_filename())) {

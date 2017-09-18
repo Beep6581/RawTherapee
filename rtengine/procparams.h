@@ -829,15 +829,15 @@ class LensProfParams
 {
 
 public:
-    enum class eLcMode {
-        LC_NOCORRECTION,       // No lens correction
-        LC_LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
-        LC_LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
-        LC_LCP                 // Lens correction using lcp file
+    enum class LcMode {
+        NONE,               // No lens correction
+        LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
+        LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
+        LCP                 // Lens correction using lcp file
     };
 
-    static const char *methodstring[static_cast<size_t>(eLcMode::LC_LCP) + 1u];
-    eLcMode lcMode;
+    static const char *methodstring[static_cast<size_t>(LcMode::LCP) + 1u];
+    LcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
     Glib::ustring lfCameraMake;
@@ -852,37 +852,37 @@ public:
 
     bool useLensfun() const
     {
-        return lcMode == eLcMode::LC_LENSFUNAUTOMATCH || lcMode == eLcMode::LC_LENSFUNMANUAL;
+        return lcMode == LcMode::LENSFUNAUTOMATCH || lcMode == LcMode::LENSFUNMANUAL;
     }
 
     bool lfAutoMatch() const
     {
-        return lcMode == eLcMode::LC_LENSFUNAUTOMATCH;
+        return lcMode == LcMode::LENSFUNAUTOMATCH;
     }
 
     bool useLcp() const
     {
-        return lcMode == eLcMode::LC_LCP && lcpFile.length() > 0;
+        return lcMode == LcMode::LCP && lcpFile.length() > 0;
     }
 
     bool lfManual() const
     {
-        return lcMode == eLcMode::LC_LENSFUNMANUAL;
+        return lcMode == LcMode::LENSFUNMANUAL;
     }
 
-    Glib::ustring getMethodString(eLcMode mode) const
+    Glib::ustring getMethodString(LcMode mode) const
     {
         return methodstring[static_cast<size_t>(mode)];
     }
 
-    eLcMode getMethodNumber(const Glib::ustring &mode) const
+    LcMode getMethodNumber(const Glib::ustring &mode) const
     {
-        for(size_t i = 0; i < static_cast<size_t>(eLcMode::LC_LCP); ++i) {
+        for(size_t i = 0; i <= static_cast<size_t>(LcMode::LCP); ++i) {
             if(methodstring[i] == mode) {
-                return static_cast<eLcMode>(i);
+                return static_cast<LcMode>(i);
             }
         }
-        return eLcMode::LC_NOCORRECTION;
+        return LcMode::NONE;
     }
 };
 
