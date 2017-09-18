@@ -1335,7 +1335,7 @@ public:
         sprintf (buffer, "%d", a );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a;
 
@@ -1366,7 +1366,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         double a = double (t->toInt (0, LONG));
 
@@ -1396,7 +1396,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (ofs, BYTE);
         float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
@@ -1422,7 +1422,7 @@ public:
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (0, BYTE);
         return 100.*exp (double (a - 32) * log (2.) / 8.);
@@ -1453,7 +1453,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (0, BYTE);
         a &= 0x7F;
@@ -1479,7 +1479,7 @@ public:
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (0, BYTE);
         return double (a - 64) / 8.;
@@ -1499,7 +1499,7 @@ public:
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (0, SBYTE);
         return double (a) / 8.;
@@ -1519,7 +1519,7 @@ public:
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (0, BYTE);
         return exp ((double (a) - 68.) * log (2.) / 16.);
@@ -1539,7 +1539,7 @@ public:
         sprintf (buffer, "%.6f", v );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (0, BYTE);
         return 24.*exp (- (double (a) - 32.) * log (2.) / 8.);
@@ -1559,7 +1559,7 @@ public:
         sprintf (buffer, "%.1f", double (int (pow (2.0, double (mina + 10) / 4.0) + 0.2)));
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->toInt (0, BYTE) & 0x0F;
         return double (int (pow (2.0, double (a + 10) / 4.0) + 0.2));
@@ -1579,7 +1579,7 @@ public:
         sprintf (buffer, "%.1f", double (int (pow (2.0, double (maxa) / 4.0) + 0.2)) );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = ( t->toInt (0, BYTE) & 0xF0) >> 4;
         return double (int (pow (2.0, double (a) / 4.0) + 0.2));

@@ -2010,7 +2010,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
@@ -2029,7 +2029,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2070,7 +2070,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
@@ -2089,7 +2089,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2130,7 +2130,7 @@ public:
             return "Auto";
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2166,7 +2166,7 @@ public:
         sprintf (buffer, "%.2f", a );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         // Get the value
         int a = t->getValue()[ofs];
@@ -2186,7 +2186,7 @@ public:
         sprintf (buffer, "%d", t->getValue()[0] - 20);
         return buffer;
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         return t->getValue()[0] - 20;
     }
@@ -2207,7 +2207,7 @@ public:
 
         return "Off";
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         return (t->getValue()[0] & 0x80) == 0x80 ? 1 : 0;
     }
@@ -2225,7 +2225,7 @@ public:
         sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
         return buffer;
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         return t->getValue()[0] & 0x7f;
     }
@@ -2281,7 +2281,7 @@ public:
         sprintf (buffer, "%d", t->toInt());
         return buffer;
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         int a = 0;
 
