@@ -534,6 +534,22 @@ public:
 };
 UTF8BinInterpreter utf8BinInterpreter;
 
+class RawImageSegmentationInterpreter : public Interpreter
+{
+public:
+    virtual std::string toString (Tag* t)
+    {
+        int segmentNumber = t->toInt(0, SHORT);
+        int segmentWidth = t->toInt(2, SHORT);
+        int lastSegmentWidth = t->toInt(4, SHORT);
+
+        char buffer[32];
+        sprintf (buffer, "%d %d %d", segmentNumber, segmentWidth, lastSegmentWidth);
+        return buffer;
+    }
+};
+RawImageSegmentationInterpreter rawImageSegmentationInterpreter;
+
 const TagAttrib exifAttribs[] = {
     {0, AC_SYSTEM,    0, nullptr, 0x0100, AUTO, "ImageWidth", &stdInterpreter},
     {0, AC_SYSTEM,    0, nullptr, 0x0101, AUTO, "ImageHeight", &stdInterpreter},
@@ -644,9 +660,9 @@ const TagAttrib exifAttribs[] = {
     {0, AC_WRITE,     0, nullptr, 0xC68B, AUTO, "OriginalRawFileName", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC68D, AUTO, "ActiveArea", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC68E, AUTO, "MaskedAreas", &stdInterpreter},
-// {0, AC_WRITE,     0, 0, 0xC68F, AUTO, "AsShotICCProfile", & ???},
+//  {0, AC_WRITE,     0, nullptr, 0xC68F, AUTO, "AsShotICCProfile", & ???},
     {0, AC_WRITE,     0, nullptr, 0xC690, AUTO, "AsShotPreProfileMatrix", &stdInterpreter},
-// {0, AC_WRITE,     0, 0, 0xC691, AUTO, "CurrentICCProfile", & ???},
+//  {0, AC_WRITE,     0, nullptr, 0xC691, AUTO, "CurrentICCProfile", & ???},
     {0, AC_WRITE,     0, nullptr, 0xC692, AUTO, "CurrentPreProfileMatrix", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC6BF, AUTO, "ColorimetricReference", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC6F3, AUTO, "CameraCalibrationSig", &stdInterpreter},
@@ -671,13 +687,13 @@ const TagAttrib exifAttribs[] = {
     {0, AC_WRITE,     0, nullptr, 0xC71B, AUTO, "PreviewDateTime", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC71C, AUTO, "RawImageDigest", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC71D, AUTO, "OriginalRawFileDigest", &stdInterpreter},
-// {0, AC_WRITE,     0, 0, 0xC71E, AUTO, "SubTileBlockSize", & ???},
-// {0, AC_WRITE,     0, 0, 0xC71F, AUTO, "RowInterleaveFactor", & ???},
+//  {0, AC_WRITE,     0, nullptr, 0xC71E, AUTO, "SubTileBlockSize", & ???},
+//  {0, AC_WRITE,     0, nullptr, 0xC71F, AUTO, "RowInterleaveFactor", & ???},
     {0, AC_WRITE,     0, nullptr, 0xC725, AUTO, "ProfileLookTableDims", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC726, AUTO, "ProfileLookTableData", &stdInterpreter},
-// {0, AC_WRITE,     0, 0, 0xC740, AUTO, "OpcodeList1", & ???},
-// {0, AC_WRITE,     0, 0, 0xC741, AUTO, "OpcodeList2", & ???},
-// {0, AC_WRITE,     0, 0, 0xC74E, AUTO, "OpcodeList3", & ???},
+//  {0, AC_WRITE,     0, nullptr, 0xC740, AUTO, "OpcodeList1", & ???},
+//  {0, AC_WRITE,     0, nullptr, 0xC741, AUTO, "OpcodeList2", & ???},
+//  {0, AC_WRITE,     0, nullptr, 0xC74E, AUTO, "OpcodeList3", & ???},
     {0, AC_WRITE,     0, nullptr, 0xC761, AUTO, "NoiseProfile", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC763, AUTO, "TimeCodes", &stdInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xC764, AUTO, "FrameRate", &stdInterpreter},
@@ -754,6 +770,7 @@ const TagAttrib iopAttribs[] = {
 
 const TagAttrib ifdAttribs[] = {
     {0, AC_SYSTEM,    0, nullptr, 0x0017, AUTO, "PanaISO", &stdInterpreter},
+    {0, AC_SYSTEM,    0, nullptr, 0x00fe, AUTO, "NewSubFileType", &stdInterpreter},
     {0, AC_SYSTEM,    0, nullptr, 0x0100, AUTO, "ImageWidth", &stdInterpreter},
     {0, AC_SYSTEM,    0, nullptr, 0x0101, AUTO, "ImageHeight", &stdInterpreter},
     {0, AC_SYSTEM,    0, nullptr, 0x0102, AUTO, "BitsPerSample", &stdInterpreter},
@@ -809,9 +826,9 @@ const TagAttrib ifdAttribs[] = {
     {0, AC_WRITE,     0, nullptr, 0xc62f, AUTO, "CameraSerialNumber", &stdInterpreter},
     {0, AC_SYSTEM,    0, nullptr, 0xc630, AUTO, "DNGLensInfo", &stdInterpreter},
     {0, AC_DONTWRITE, 0, nullptr, 0xC634, AUTO, "MakerNote", &stdInterpreter}, //DNGPrivateData
+    {0, AC_DONTWRITE, 0, nullptr, 0xC640, AUTO, "RawImageSegmentation", &rawImageSegmentationInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xc65d, AUTO, "RawDataUniqueID", &stdInterpreter},
     {0, AC_DONTWRITE, 0, nullptr, 0xc761, AUTO, "NoiseProfile", &stdInterpreter},
-    {0, AC_SYSTEM,    0, nullptr, 0x00fe, AUTO, "NewSubFileType", &stdInterpreter},
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }

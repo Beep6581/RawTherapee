@@ -1356,6 +1356,8 @@ void EditorPanel::info_toggled ()
             }
         } else if (isPixelShift) {
             infoString = Glib::ustring::compose ("%1\n" + M("QINFO_PIXELSHIFT"), infoString, numFrames);
+        } else if (numFrames > 1) {
+            infoString = Glib::ustring::compose ("%1\n" + M("QINFO_FRAMECOUNT"), infoString, numFrames);
         }
     } else {
         infoString = M ("QINFO_NOEXIF");

@@ -2318,9 +2318,6 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
         root->addTag (t);
     }
 
-    if (root->getTag("RawImageSegmentation")) { // Canon CR2 files
-        frames.push_back(root);
-    }
     roots.push_back(root);
 
 }
@@ -2932,25 +2929,42 @@ void ExifManager::parse (bool isRaw, bool skipIgnored)
         // --- detecting image root IFD based on SubFileType, or if not provided, on PhotometricInterpretation
 
         bool frameRootDetected = false;
-        std::vector<const Tag*> sftTagList = root->findTags(TIFFTAG_SUBFILETYPE);
 
-        if (!sftTagList.empty()) {
-            for (auto sft : sftTagList) {
-                int sftVal = sft->toInt();
-                if (sftVal == (isRaw ? 0 : 2)) {
-                    frames.push_back(sft->getParent());
+        if(!frameRootDetected) {
+            std::vector<const Tag*> risTagList = root->findTags("RawImageSegmentation");
+            if (!risTagList.empty()) {
+                for (auto ris : risTagList) {
+                    frames.push_back(ris->getParent());
                     frameRootDetected = true;
 
-#if PRINT_METADATA_TREE
-                    printf("\n--------------- FRAME (SUBFILETYPE) ---------------\n\n");
-                    sft->getParent()->printAll ();
-#endif
+    #if PRINT_METADATA_TREE
+                    printf("\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
+                    ris->getParent()->printAll ();
+    #endif
                 }
             }
         }
 
         if(!frameRootDetected) {
-            sftTagList = root->findTags(TIFFTAG_OSUBFILETYPE);
+            std::vector<const Tag*> sftTagList = root->findTags(TIFFTAG_SUBFILETYPE);
+            if (!sftTagList.empty()) {
+                for (auto sft : sftTagList) {
+                    int sftVal = sft->toInt();
+                    if (sftVal == (isRaw ? 0 : 2)) {
+                        frames.push_back(sft->getParent());
+                        frameRootDetected = true;
+
+#if PRINT_METADATA_TREE
+                        printf("\n--------------- FRAME (SUBFILETYPE) ---------------\n\n");
+                        sft->getParent()->printAll ();
+#endif
+                    }
+                }
+            }
+        }
+
+        if(!frameRootDetected) {
+            std::vector<const Tag*> sftTagList = root->findTags(TIFFTAG_OSUBFILETYPE);
             if (!sftTagList.empty()) {
                 for (auto sft : sftTagList) {
                     int sftVal = sft->toInt();

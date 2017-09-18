@@ -1068,22 +1068,6 @@ public:
 };
 CAFocalPlaneInterpreter caFocalPlaneInterpreter;
 
-class RawImageSegmentationInterpreter : public Interpreter
-{
-public:
-    virtual std::string toString (Tag* t)
-    {
-        int segmentNumber = t->toInt(0, SHORT);
-        int segmentWidth = t->toInt(2, SHORT);
-        int lastSegmentWidth = t->toInt(4, SHORT);
-
-        char buffer[32];
-        sprintf (buffer, "%d %d %d", segmentNumber, segmentWidth, lastSegmentWidth);
-        return buffer;
-    }
-};
-RawImageSegmentationInterpreter rawImageSegmentationInterpreter;
-
 class CAExposureTimeInterpreter : public Interpreter
 {
 public:
@@ -2011,7 +1995,6 @@ const TagAttrib canonAttribs[] = {
     {1, AC_WRITE, 0, nullptr, 0x4005, AUTO, "UnknownBlock2", &stdInterpreter},
     {1, AC_WRITE, 0, nullptr, 0x4008, AUTO, "BlackLevel", &stdInterpreter},
     {1, AC_WRITE, 0, canonMicroAdjustAttrib, 0x4013, AUTO, "AFMicroAdj", &stdInterpreter},
-    {1, AC_WRITE, 0, nullptr, 0xc640, AUTO, "RawImageSegmentation", &rawImageSegmentationInterpreter},
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }

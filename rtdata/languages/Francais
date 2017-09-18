@@ -1153,6 +1153,7 @@ PROGRESSBAR_SAVEPNG;Enregistrement du fichier PNG...
 PROGRESSBAR_SAVETIFF;Enregistrement du fichier TIFF...
 PROGRESSBAR_SNAPSHOT_ADDED;Signet ajouté
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil modifié dans le navigateur
+QINFO_FRAMECOUNT;%2 images
 QINFO_HDR;HDR / %2 image(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Données EXIF non disponibles.
