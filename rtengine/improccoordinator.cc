@@ -1533,51 +1533,53 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         ns =  std::stoi (str3.c_str());
                     }
 
-                    if (cont >= 2  && cont < 16) {
-                        dataspot[cont][ns] = std::stoi (str3.c_str());
-                    }
+                    if (ns < maxspot) {
+                        if (cont >= 2  && cont < 16) {
+                            dataspot[cont][ns] = std::stoi (str3.c_str());
+                        }
 
-                    if (spotline.substr (0, pos) == "Currentspot") {
-                        dataspot[16][0] = std::stoi (str3.c_str());
-                    }
+                        if (spotline.substr (0, pos) == "Currentspot") {
+                            dataspot[16][0] = std::stoi (str3.c_str());
+                        }
 
-                    if (cont > 16  && cont < maxind) {
-                        dataspot[cont][ns] = std::stoi (str3.c_str());
-                    }
-
-
-                    if (excurvret && spotline.substr (0, pos) == "curveReti") {
-                        retistr[ns] = str3;
-                    }
-
-                    if (excurvll && spotline.substr (0, pos) == "curveLL") {
-                        llstr[ns] = str3;
-                    }
+                        if (cont > 16  && cont < maxind) {
+                            dataspot[cont][ns] = std::stoi (str3.c_str());
+                        }
 
 
-                    if (excurvlh && spotline.substr (0, pos) == "curveLH") {
+                        if (excurvret && spotline.substr (0, pos) == "curveReti") {
+                            retistr[ns] = str3;
+                        }
 
-                        lhstr[ns] = str3;
-                    }
+                        if (excurvll && spotline.substr (0, pos) == "curveLL") {
+                            llstr[ns] = str3;
+                        }
 
-                    if (excurvcc && spotline.substr (0, pos) == "curveCC") {
-                        ccstr[ns] = str3;
-                    }
 
-                    if (excurvhh && spotline.substr (0, pos) == "curveHH") {
-                        hhstr[ns] = str3;
-                    }
+                        if (excurvlh && spotline.substr (0, pos) == "curveLH") {
 
-                    if (excurvsk && spotline.substr (0, pos) == "curveskin") {
-                        skinstr[ns] = str3;
-                    }
+                            lhstr[ns] = str3;
+                        }
 
-                    if (excpth && spotline.substr (0, pos) == "pthres") {
-                        pthstr[ns] = str3;
-                    }
+                        if (excurvcc && spotline.substr (0, pos) == "curveCC") {
+                            ccstr[ns] = str3;
+                        }
 
-                    if (excurvex && spotline.substr (0, pos) == "curveex") {
-                        exstr[ns] = str3;
+                        if (excurvhh && spotline.substr (0, pos) == "curveHH") {
+                            hhstr[ns] = str3;
+                        }
+
+                        if (excurvsk && spotline.substr (0, pos) == "curveskin") {
+                            skinstr[ns] = str3;
+                        }
+
+                        if (excpth && spotline.substr (0, pos) == "pthres") {
+                            pthstr[ns] = str3;
+                        }
+
+                        if (excurvex && spotline.substr (0, pos) == "curveex") {
+                            exstr[ns] = str3;
+                        }
                     }
 
                 }
@@ -1929,7 +1931,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                             llstr[ns2] = str32;
                         }
 
-
                         if (spotline2.substr (0, pos2) == "curveLH") {
                             lhstr[ns2] = str32;
                         }
@@ -1939,16 +1940,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         }
 
                         if (spotline2.substr (0, pos2) == "curveHH") {
-
                             hhstr[ns2] = str32;
-
                         }
-
 
                         if (spotline2.substr (0, pos2) == "curveskin") {
                             skinstr[ns2] = str32;
                         }
-
 
                         if (spotline2.substr (0, pos2) == "pthres") {
                             pthstr[ns2] = str32;
@@ -2391,10 +2388,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
 
 
-
             int sp ;
             sp = realspot;
-
 
             int maxreal = 1;//do nothing..in case of
 
@@ -2648,9 +2643,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             params.locallab.localTgaincurve.clear();
             params.locallab.localTgaincurve = cretiend;
-
-            //      int lenc = params.locallab.localTgaincurve.size();
-
 
             delete [] s_datc;
 
