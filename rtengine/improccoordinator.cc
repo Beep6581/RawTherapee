@@ -862,7 +862,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 fic0.close();
             }
 
-            printf ("mipvers=%i\n", versionmip);
+            printf ("current mipvers=%i\n", versionmip);
             ifstream fic (datal, ios::in);
 
 
@@ -1810,7 +1810,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-
+//			printf("ns=%i \n", ns);
+			
             if (ns <  (maxspot - 1)) {
                 ofstream fic (datal, ios::out | ios::app); // ouverture en écriture avec effacement du fichier ouvert
 
@@ -1887,9 +1888,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     std::string t_curvcc = "3000A0B0C1000D1000E";
                     //10007
                     int t_qualitycurveMethod = 0;
-                    std::string t_curvhh = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
                     //10008
-                    std::string t_curvskin = "3000A0B0C1000D1000E"; //"3000A0B0C499D501E1000F1000G"; //"3000A0B0C1000D1000E";//0 points with marks
+                    std::string t_curvhh = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
 
                     //10009
                     int t_sensiv = 19;
@@ -1899,6 +1899,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_proskin = 0;
                     int t_avoidcsh = 0;
                     int t_pastsat = 0;
+                    std::string t_curvskin = "3000A0B0C1000D1000E"; //"3000A0B0C499D501E1000F1000G"; //"3000A0B0C1000D1000E";//0 points with marks
 
                     int t_expcomp       = 0;
                     int t_black         = 0;
@@ -1997,7 +1998,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 fic.close();
 
-
                 ifstream fich2 (datal, ios::in);
 
                 if (fich2) {
@@ -2056,7 +2056,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            retistr[ns] = str32;
+                            retistr[ns2] = str32;
                             //     sizecu2 = longe2;
 
                         }
@@ -2074,7 +2074,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            llstr[ns] = str32;
+                            llstr[ns2] = str32;
                             //    sizell2 = longe2l;
 
                         }
@@ -2093,7 +2093,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            lhstr[ns] = str32;
+                            lhstr[ns2] = str32;
                             //    sizelh2 = longe2h;
 
                         }
@@ -2111,7 +2111,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            ccstr[ns] = str32;
+                            ccstr[ns2] = str32;
                             //    sizecc2 = longe2c;
 
                         }
@@ -2129,7 +2129,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            hhstr[ns] = str32;
+                            hhstr[ns2] = str32;
                             //    sizelh2 = longe2h;
 
                         }
@@ -2148,7 +2148,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            skinstr[ns] = str32;
+                            skinstr[ns2] = str32;
                             //    sizelh2 = longe2h;
 
                         }
@@ -2167,7 +2167,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            pthstr[ns] = str32;
+                            pthstr[ns2] = str32;
                             //    sizelh = longeh;
                         }
 
@@ -2184,7 +2184,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                 }
                             }
 
-                            exstr[ns] = str32;
+                            exstr[ns2] = str32;
                             //    sizelh2 = longe2h;
 
                         }
