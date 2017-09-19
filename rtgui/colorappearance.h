@@ -29,12 +29,12 @@
 #include "colorprovider.h"
 
 class ColorAppearance final :
-    public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel,
-    public rtengine::AutoCamListener,
-    public CurveListener,
-    public ColorProvider
+        public ToolParamBlock,
+        public AdjusterListener,
+        public FoldableToolPanel,
+        public rtengine::AutoCamListener,
+        public CurveListener,
+        public ColorProvider
 {
 public:
     ColorAppearance ();
@@ -49,6 +49,7 @@ public:
 //    void adjusterAdapToggled (Adjuster* a, bool newval);
     void enabledChanged      ();
     void surroundChanged     ();
+    void surrsrcChanged     ();
     void wbmodelChanged      ();
     void algoChanged         ();
     void surrsource_toggled  ();
@@ -57,10 +58,12 @@ public:
     void datacie_toggled     ();
     void tonecie_toggled     ();
 //    void sharpcie_toggled     ();
-    void autoCamChanged (double ccam);
+    void autoCamChanged (double ccam, double ccamout);
     bool autoCamComputed_ ();
     void adapCamChanged (double cadap);
     bool adapCamComputed_ ();
+    void ybCamChanged (int yb);
+    bool ybCamComputed_ ();
 
     void curveChanged        (CurveEditor* ce);
     void curveMode1Changed   ();
@@ -69,6 +72,7 @@ public:
     bool curveMode2Changed_  ();
     void curveMode3Changed   ();
     bool curveMode3Changed_  ();
+    void neutral_pressed       ();
 
     void expandCurve         (bool isExpanded);
     bool isCurveExpanded     ();
@@ -78,10 +82,13 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve,/* LUTu & histCLurve, LUTu & histLLCurve,*/ LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histLRETI);
     virtual void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller);
+    void updateToolState (std::vector<int> &tpOpen);
+    void writeOptions (std::vector<int> &tpOpen);
 
 private:
-    bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
-    bool srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
 
     Glib::RefPtr<Gtk::Tooltip> bgTTips;
     Glib::RefPtr<Gtk::Tooltip> srTTips;
@@ -90,7 +97,9 @@ private:
 
     Adjuster* degree;
     Adjuster* adapscen;
+    Adjuster* ybscen;
     Adjuster* adaplum;
+    Adjuster* degreeout;
     Adjuster* badpixsl;
     Adjuster* jlight;
     Adjuster* qbright;
@@ -101,6 +110,14 @@ private:
     Adjuster* contrast;
     Adjuster* qcontrast;
     Adjuster* colorh;
+    Adjuster* tempout;
+    Adjuster* greenout;
+    Adjuster* ybout;
+    Adjuster* tempsc;
+    Adjuster* greensc;
+
+    MyExpander* expadjust;
+
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     MyComboBoxText* toneCurveMode3;
@@ -112,6 +129,9 @@ private:
     Gtk::CheckButton* datacie;
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
+    Gtk::Button* neutral;
+    MyComboBoxText* surrsrc;
+    sigc::connection  surrsrcconn;
 
     MyComboBoxText*   surround;
     sigc::connection  surroundconn;
@@ -121,7 +141,7 @@ private:
     sigc::connection  algoconn;
     sigc::connection  surrconn;
     sigc::connection  gamutconn, datacieconn, tonecieconn /*,badpixconn , sharpcieconn*/;
-    sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn;
+    sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn, neutralconn;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
     CurveEditorGroup* curveEditorG3;
@@ -129,9 +149,12 @@ private:
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
-    double nextCcam, nextCadap;
+    double nextCcam, nextCcamout, nextCadap;
+    int nextYbscn;
     bool lastAutoDegree;
     bool lastAutoAdapscen;
+    bool lastAutoDegreeout;
+    bool lastAutoybscen;
     bool lastsurr;
     bool lastgamut;
     bool lastdatacie;

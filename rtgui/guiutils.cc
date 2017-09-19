@@ -247,8 +247,9 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         cr->set_source_rgb (0, 0, 0);
     } else if (options.bgcolor == 2) {
         cr->set_source_rgb (1, 1, 1);
+    } else if (options.bgcolor == 3) {
+        cr->set_source_rgb (0.467, 0.467, 0.467);
     }
-
 
     cr->rectangle (imx, imy, imw + 0.5, round(c1y) + 0.5);
     cr->rectangle (imx, round(imy + c2y) + 0.5, imw + 0.5, round(imh - c2y) + 0.5);

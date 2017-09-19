@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), hasChanged(false), editDataProvider(nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false), editDataProvider (nullptr)
 {
 
     exposurePanel   = Gtk::manage (new ToolVBox ());
@@ -53,14 +53,13 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), hasChanged(false),
     colortoning         = Gtk::manage (new ColorToning ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     lensProf            = Gtk::manage (new LensProfilePanel ());
-    lensProf->setLensGeomRef(lensgeom);
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     vibrance            = Gtk::manage (new Vibrance ());
     colorappearance     = Gtk::manage (new ColorAppearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
-    retinex               = Gtk::manage (new Retinex ());
+    retinex             = Gtk::manage (new Retinex ());
     gradient            = Gtk::manage (new Gradient ());
     pcvignette          = Gtk::manage (new PCVignette ());
     perspective         = Gtk::manage (new PerspCorrection ());
@@ -203,8 +202,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), hasChanged(false),
     toolPanelNotebook = new Gtk::Notebook ();
     toolPanelNotebook->set_name ("ToolPanelNotebook");
 
-    metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
-    metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));
+    metadataPanel->append_page (*exifpanel, M ("MAIN_TAB_EXIF"));
+    metadataPanel->append_page (*iptcpanel, M ("MAIN_TAB_IPTC"));
 
     exposurePanelSW    = Gtk::manage (new MyScrolledWindow ());
     detailsPanelSW     = Gtk::manage (new MyScrolledWindow ());
@@ -217,47 +216,47 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), hasChanged(false),
     // load panel endings
     for (int i = 0; i < 6; i++) {
         vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
-        imgPanelEnd[i] = Gtk::manage (new RTImage("PanelEnding.png"));
+        imgPanelEnd[i] = Gtk::manage (new RTImage ("PanelEnding.png"));
         imgPanelEnd[i]->show ();
         vbPanelEnd[i]->pack_start (*imgPanelEnd[i], Gtk::PACK_SHRINK);
         vbPanelEnd[i]->show_all();
     }
 
     exposurePanelSW->add  (*exposurePanel);
-    exposurePanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    exposurePanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     exposurePanel->pack_start (*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
 
     detailsPanelSW->add   (*detailsPanel);
-    detailsPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    detailsPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     detailsPanel->pack_start (*vbPanelEnd[1], Gtk::PACK_SHRINK, 4);
 
     colorPanelSW->add     (*colorPanel);
-    colorPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    colorPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     colorPanel->pack_start (*vbPanelEnd[2], Gtk::PACK_SHRINK, 4);
 
     waveletPanelSW->add       (*waveletPanel);
-    waveletPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    waveletPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     waveletPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
 
     transformPanelSW->add (*transformPanel);
-    transformPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    transformPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     transformPanel->pack_start (*vbPanelEnd[3], Gtk::PACK_SHRINK, 4);
 
     rawPanelSW->add       (*rawPanel);
-    rawPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
+    rawPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     rawPanel->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK, 0);
 
 
 
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
 
-    toiE = Gtk::manage (new TextOrIcon ("exposure.png" , M("MAIN_TAB_EXPOSURE") , M("MAIN_TAB_EXPOSURE_TOOLTIP") , type));
-    toiD = Gtk::manage (new TextOrIcon ("detail.png"   , M("MAIN_TAB_DETAIL")   , M("MAIN_TAB_DETAIL_TOOLTIP")   , type));
-    toiC = Gtk::manage (new TextOrIcon ("colour.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
-    toiW = Gtk::manage (new TextOrIcon ("wavelet.png"  , M("MAIN_TAB_WAVELET")  , M("MAIN_TAB_WAVELET_TOOLTIP") , type));
-    toiT = Gtk::manage (new TextOrIcon ("transform.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
-    toiR = Gtk::manage (new TextOrIcon ("raw.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
-    toiM = Gtk::manage (new TextOrIcon ("meta.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
+    toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP"), type));
+    toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP"), type));
+    toiC = Gtk::manage (new TextOrIcon ("colour.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP"), type));
+    toiW = Gtk::manage (new TextOrIcon ("wavelet.png", M ("MAIN_TAB_WAVELET"), M ("MAIN_TAB_WAVELET_TOOLTIP"), type));
+    toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
+    toiR = Gtk::manage (new TextOrIcon ("raw.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP"), type));
+    toiM = Gtk::manage (new TextOrIcon ("meta.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP"), type));
 
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
@@ -287,17 +286,17 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(nullptr), hasChanged(false),
     icm->setICMPanelListener (this);
 
     toolBar = new ToolBar ();
-    toolBar->setToolBarListener(this);
+    toolBar->setToolBarListener (this);
 }
 
 void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level)
 {
 
-    panel->setParent(where);
-    panel->setLevel(level);
+    panel->setParent (where);
+    panel->setLevel (level);
 
     expList.push_back (panel->getExpander());
-    where->pack_start(*panel->getExpander(), false, false);
+    where->pack_start (*panel->getExpander(), false, false);
 }
 
 ToolPanelCoordinator::~ToolPanelCoordinator ()
@@ -309,12 +308,13 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans)
+void ToolPanelCoordinator::imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans)
 {
     GThreadLock lock;
 
-    if(isRaw) {
-        rawPanelSW->set_sensitive(true);
+    if (isRaw) {
+        rawPanelSW->set_sensitive (true);
+
         if (isBayer) {
             sensorxtrans->FoldableToolPanel::hide();
             sensorbayer->FoldableToolPanel::show();
@@ -332,7 +332,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
             flatfield->FoldableToolPanel::hide();
         }
     } else {
-        rawPanelSW->set_sensitive(false);
+        rawPanelSW->set_sensitive (false);
     }
 
 }
@@ -345,7 +345,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         return;
     }
 
-    int changeFlags = refreshmap[(int)event];
+    int changeFlags = refreshmap[ (int)event];
 
     ProcParams* params = ipc->beginUpdateParams ();
 
@@ -355,14 +355,15 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
     // Compensate rotation on flip
     if (event == rtengine::EvCTHFlip || event == rtengine::EvCTVFlip) {
-        if (fabs(params->rotate.degree) > 0.001) {
+        if (fabs (params->rotate.degree) > 0.001) {
             params->rotate.degree *= -1;
-            changeFlags |= refreshmap[(int)rtengine::EvROTDegree];
+            changeFlags |= refreshmap[ (int)rtengine::EvROTDegree];
             rotate->read (params);
         }
     }
 
     int tr = TR_NONE;
+
     if (params->coarse.rotate == 90) {
         tr = TR_R90;
     } else if (params->coarse.rotate == 180) {
@@ -427,14 +428,14 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
     }
 
     // And apply the partial profile nparams to mergedParams
-    nparams->applyTo(mergedParams);
+    nparams->applyTo (mergedParams);
 
     // Derive the effective changes, if it's a profile change, to prevent slow RAW rerendering if not necessary
     bool filterRawRefresh = false;
 
     if (event != rtengine::EvPhotoLoaded) {
-        ParamsEdited pe(true);
-        std::vector<rtengine::procparams::ProcParams> lParams(2);
+        ParamsEdited pe (true);
+        std::vector<rtengine::procparams::ProcParams> lParams (2);
         lParams[0] = *params;
         lParams[1] = *mergedParams;
         pe.initFrom (lParams);
@@ -446,6 +447,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
     delete mergedParams;
 
     tr = TR_NONE;
+
     if (params->coarse.rotate == 90) {
         tr = TR_R90;
     } else if (params->coarse.rotate == 180) {
@@ -456,7 +458,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
 
     // trimming overflowing cropped area
     ipc->getInitialImage()->getImageSource()->getFullSize (fw, fh, tr);
-    crop->trim(params, fw, fh);
+    crop->trim (params, fw, fh);
 
     // updating the GUI with updated values
     for (auto toolPanel : toolPanels) {
@@ -474,7 +476,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
 
     // start the IPC processing
     if (filterRawRefresh) {
-        ipc->endUpdateParams ( refreshmap[(int)event] & ALLNORAW );
+        ipc->endUpdateParams ( refreshmap[ (int)event] & ALLNORAW );
     } else {
         ipc->endUpdateParams (event);
     }
@@ -526,7 +528,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
         ipc->setImageTypeListener (this);
-        flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
+        flatfield->setShortcutPath (Glib::path_get_dirname (ipc->getInitialImage()->getFileName()));
 
         icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData);
         lensProf->setRawMeta (raw, pMetaData);
@@ -552,7 +554,7 @@ void ToolPanelCoordinator::closeAllTools()
 
     for (size_t i = 0; i < options.tpOpen.size(); i++)
         if (i < expList.size()) {
-            expList.at(i)->set_expanded (false);
+            expList.at (i)->set_expanded (false);
         }
 }
 
@@ -561,7 +563,7 @@ void ToolPanelCoordinator::openAllTools()
 
     for (size_t i = 0; i < options.tpOpen.size(); i++)
         if (i < expList.size()) {
-            expList.at(i)->set_expanded (true);
+            expList.at (i)->set_expanded (true);
         }
 }
 
@@ -570,20 +572,20 @@ void ToolPanelCoordinator::updateToolState()
 
     for (size_t i = 0; i < options.tpOpen.size(); i++)
         if (i < expList.size()) {
-            expList.at(i)->set_expanded (options.tpOpen.at(i));
+            expList.at (i)->set_expanded (options.tpOpen.at (i));
         }
 
-    if(options.tpOpen.size() > expList.size()) {
+    if (options.tpOpen.size() > expList.size()) {
         size_t sizeWavelet = options.tpOpen.size() - expList.size();
         std::vector<int> temp;
 
         for (size_t i = 0; i < sizeWavelet; i++) {
-            temp.push_back(options.tpOpen.at(i + expList.size()));
+            temp.push_back (options.tpOpen.at (i + expList.size()));
         }
 
-        wavelet->updateToolState(temp);
-        wavelet->setExpanded(true);
-        retinex->updateToolState(temp);
+        wavelet->updateToolState (temp);
+        wavelet->setExpanded (true);
+        retinex->updateToolState (temp);
     }
 }
 
@@ -597,14 +599,23 @@ void ToolPanelCoordinator::writeOptions ()
 {
 
     crop->writeOptions ();
-    options.tpOpen.clear ();
+
+    if (options.autoSaveTpOpen) {
+        writeToolExpandedStatus (options.tpOpen);
+    }
+}
+
+
+void ToolPanelCoordinator::writeToolExpandedStatus (std::vector<int> &tpOpen)
+{
+    tpOpen.clear ();
 
     for (size_t i = 0; i < expList.size(); i++) {
-        options.tpOpen.push_back (expList.at(i)->get_expanded ());
+        tpOpen.push_back (expList.at (i)->get_expanded ());
     }
 
-    wavelet->writeOptions(options.tpOpen);
-    retinex->writeOptions(options.tpOpen);
+    wavelet->writeOptions (tpOpen);
+    retinex->writeOptions (tpOpen);
 }
 
 
@@ -679,14 +690,14 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
 
     const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
 
-    if(imd) {
+    if (imd) {
         int iso = imd->getISOSpeed();
         double shutter = imd->getShutterSpeed();
-        std::string maker( imd->getMake()  );
-        std::string model( imd->getModel() );
+        std::string maker ( imd->getMake()  );
+        std::string model ( imd->getModel() );
         time_t timestamp = imd->getDateTimeAsTS();
 
-        return rtengine::dfm.searchDarkFrame( maker, model, iso, shutter, timestamp);
+        return rtengine::dfm.searchDarkFrame ( maker, model, iso, shutter, timestamp);
     }
 
     return nullptr;
@@ -700,17 +711,17 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
 
     const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
 
-    if(imd) {
+    if (imd) {
         // int iso = imd->getISOSpeed();              temporarilly removed because unused
         // double shutter = imd->getShutterSpeed();   temporarilly removed because unused
         double aperture = imd->getFNumber();
         double focallength = imd->getFocalLen();
-        std::string maker( imd->getMake()  );
-        std::string model( imd->getModel() );
-        std::string lens(  imd->getLens()  );
+        std::string maker ( imd->getMake()  );
+        std::string model ( imd->getModel() );
+        std::string lens (  imd->getLens()  );
         time_t timestamp = imd->getDateTimeAsTS();
 
-        return rtengine::ffm.searchFlatField( maker, model, lens, focallength, aperture, timestamp);
+        return rtengine::ffm.searchFlatField ( maker, model, lens, focallength, aperture, timestamp);
     }
 
     return nullptr;
@@ -783,8 +794,8 @@ void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histToneCurve,
     colorappearance->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM,  histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
     toneCurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve,*/ histLCAM,  histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
     lcurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
-    rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve, */histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
-    retinex->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve, */histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+    rgbcurves->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve, */histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+    retinex->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve,/* histCLurve, histLLCurve, */histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
 
 }
 
@@ -798,10 +809,10 @@ void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* o
             if (currentTP->getParent() == parent) {
                 // Section in the same tab, we unfold it if it's not the one that has been clicked
                 if (currentTP != openedSection) {
-                    currentTP->setExpanded(false);
+                    currentTP->setExpanded (false);
                 } else {
                     if (!currentTP->getExpanded()) {
-                        currentTP->setExpanded(true);
+                        currentTP->setExpanded (true);
                     }
                 }
             }
@@ -817,36 +828,36 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event)
     bool alt = event->state & GDK_MOD1_MASK;
 
     if (alt) {
-        switch(event->keyval) {
-        case GDK_KEY_e:
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exposurePanelSW));
-            return true;
-
-        case GDK_KEY_d:
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*detailsPanelSW));
-            return true;
-
-        case GDK_KEY_c:
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*colorPanelSW));
-            return true;
-
-        case GDK_KEY_t:
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*transformPanelSW));
-            return true;
-
-        case GDK_KEY_r:
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
-            return true;
-
-        case GDK_KEY_w:
-            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*waveletPanelSW));
-            return true;
-
-        case GDK_KEY_m:
-            if (metadataPanel) {
-                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
+        switch (event->keyval) {
+            case GDK_KEY_e:
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*exposurePanelSW));
                 return true;
-            }
+
+            case GDK_KEY_d:
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*detailsPanelSW));
+                return true;
+
+            case GDK_KEY_c:
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*colorPanelSW));
+                return true;
+
+            case GDK_KEY_t:
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*transformPanelSW));
+                return true;
+
+            case GDK_KEY_r:
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*rawPanelSW));
+                return true;
+
+            case GDK_KEY_w:
+                toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*waveletPanelSW));
+                return true;
+
+            case GDK_KEY_m:
+                if (metadataPanel) {
+                    toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*metadataPanel));
+                    return true;
+                }
         }
     }
 
@@ -865,7 +876,7 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide)
     waveletPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
 
     for (auto currExp : expList) {
-        currExp->updateVScrollbars(hide);
+        currExp->updateVScrollbars (hide);
     }
 }
 
@@ -874,14 +885,14 @@ void ToolPanelCoordinator::updateTabsHeader (bool useIcons)
     GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     TOITypes type = useIcons ? TOI_ICON : TOI_TEXT;
 
-    toiE->switchTo(type);
-    toiD->switchTo(type);
-    toiC->switchTo(type);
-    toiT->switchTo(type);
-    toiR->switchTo(type);
+    toiE->switchTo (type);
+    toiD->switchTo (type);
+    toiC->switchTo (type);
+    toiT->switchTo (type);
+    toiR->switchTo (type);
 
     if (toiM) {
-        toiM->switchTo(type);
+        toiM->switchTo (type);
     }
 }
 
@@ -900,24 +911,24 @@ void ToolPanelCoordinator::toolSelected (ToolMode tool)
     GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 
     switch (tool) {
-    case TMCropSelect:
-        crop->setExpanded(true);
-        toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
-        break;
+        case TMCropSelect:
+            crop->setExpanded (true);
+            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*transformPanelSW));
+            break;
 
-    case TMSpotWB:
-        whitebalance->setExpanded(true);
-        toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*colorPanelSW));
-        break;
+        case TMSpotWB:
+            whitebalance->setExpanded (true);
+            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*colorPanelSW));
+            break;
 
-    case TMStraighten:
-        lensgeom->setExpanded(true);
-        rotate->setExpanded(true);
-        toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
-        break;
+        case TMStraighten:
+            lensgeom->setExpanded (true);
+            rotate->setExpanded (true);
+            toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*transformPanelSW));
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -931,14 +942,14 @@ void ToolPanelCoordinator::editModeSwitchedOff ()
 void ToolPanelCoordinator::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile)
 {
 
-    flatfield->setShortcutPath(dirname);
+    flatfield->setShortcutPath (dirname);
 }
 
-void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider)
+void ToolPanelCoordinator::setEditProvider (EditDataProvider *provider)
 {
     editDataProvider = provider;
 
     for (size_t i = 0; i < toolPanels.size(); i++) {
-        toolPanels.at(i)->setEditProvider(provider);
+        toolPanels.at (i)->setEditProvider (provider);
     }
 }

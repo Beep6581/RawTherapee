@@ -100,9 +100,12 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
 
 void PopUpCommon::entrySelected (int i)
 {
-    // Emit a a signal if the selected item has changed
+    // Emit a signal if the selected item has changed
     if (setSelected (i))
-        message (selected);
+        messageChanged (selected);
+
+    // Emit a signal in all case (i.e. propagate the signal_activate event)
+    messageItemSelected (selected);
 }
 
 void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {

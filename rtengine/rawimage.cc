@@ -112,7 +112,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
         }
     }
 
-    if ( this->get_cam_mul(0) == -1 || forceAutoWB) {
+    if (data && (this->get_cam_mul(0) == -1 || forceAutoWB)) {
         memset(dsum, 0, sizeof dsum);
 
         if (this->isBayer()) {
@@ -552,7 +552,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
             crop_masked_pixels();
             free (raw_image);
             raw_image = nullptr;
-        } else { 
+        } else {
             if (get_maker() == "Sigma" && cc && cc->has_rawCrop()) { // foveon images
                 int lm, tm, w, h;
                 cc->get_rawCrop(lm, tm, w, h);

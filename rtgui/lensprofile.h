@@ -32,15 +32,62 @@ protected:
     MyFileChooserButton *fcbLCPFile;
     Gtk::CheckButton *ckbUseDist, *ckbUseVign, *ckbUseCA;
     Gtk::HBox *hbLCPFile;
-    Gtk::Button *btnReset;
     Gtk::Label *lLCPFileHead;
-    bool lcpFileChanged, useDistChanged, useVignChanged, useCAChanged;
+    bool lcModeChanged, lcpFileChanged, useDistChanged, useVignChanged, useCAChanged;
     sigc::connection conLCPFile, conUseDist, conUseVign, conUseCA;
     void updateDisabled(bool enable);
     bool allowFocusDep;
     bool isRaw;
-    LensGeometry *lensgeomLcpFill;
+    const rtengine::ImageMetaData* metadata;    
 
+    Gtk::RadioButton::Group corrGroup;
+    Gtk::RadioButton *corrOff;
+    Gtk::RadioButton *corrLensfunAuto;
+    Gtk::RadioButton *corrLensfunManual;
+    Gtk::RadioButton *corrLcpFile;
+    Gtk::RadioButton *corrUnchanged;
+    MyComboBox *lensfunCameras;
+    MyComboBox *lensfunLenses;
+    Gtk::Image *warning;
+
+    class LFDbHelper {
+    public:
+        class LFModelCam: public Gtk::TreeModel::ColumnRecord {
+        public:
+            LFModelCam() { add(make); add(model); }
+            Gtk::TreeModelColumn<Glib::ustring> make;
+            Gtk::TreeModelColumn<Glib::ustring> model;
+        };
+
+        class LFModelLens: public Gtk::TreeModel::ColumnRecord {
+        public:
+            LFModelLens() { add(lens); add(prettylens); }
+            Gtk::TreeModelColumn<Glib::ustring> lens;
+            Gtk::TreeModelColumn<Glib::ustring> prettylens;
+        };
+
+        LFModelCam lensfunModelCam;
+        LFModelLens lensfunModelLens;
+    
+        Glib::RefPtr<Gtk::TreeStore> lensfunCameraModel;
+        Glib::RefPtr<Gtk::TreeStore> lensfunLensModel;
+
+        LFDbHelper();
+        void fillLensfunCameras();
+        void fillLensfunLenses();
+    };
+    static LFDbHelper *lf;
+
+    bool useLensfunChanged;
+    bool lensfunAutoChanged;
+    bool lensfunCameraChanged;
+    bool lensfunLensChanged;
+
+    bool setLensfunCamera(const Glib::ustring &make, const Glib::ustring &model);
+    bool setLensfunLens(const Glib::ustring &lens);
+    bool checkLensfunCanCorrect(bool automatch);
+    void updateLensfunWarning();
+    
 public:
 
     LensProfilePanel ();
@@ -50,14 +97,15 @@ public:
     void setRawMeta     (bool raw, const rtengine::ImageMetaData* pMeta);
 
     void onLCPFileChanged ();
-    void onLCPFileReset   ();
     void onUseDistChanged();
     void onUseVignChanged();
     void onUseCAChanged();
-    void setLensGeomRef( LensGeometry *foo)
-    {
-        lensgeomLcpFill = foo ;
-    };
+
+    void setBatchMode(bool yes);
+
+    void onLensfunCameraChanged();
+    void onLensfunLensChanged();
+    void onCorrModeChanged();
 };
 
 #endif
