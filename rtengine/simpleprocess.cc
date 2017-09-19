@@ -820,13 +820,17 @@ private:
         // perform transform (excepted resizing)
         if (ipf.needsTransform()) {
             Imagefloat* trImg = nullptr;
+
             if (ipf.needsLuminanceOnly()) {
                 trImg = baseImg;
             } else {
                 trImg = new Imagefloat (fw, fh);
-            }           ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
+            }
+
+            ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, fw, fh,
                            imgsrc->getMetaData(), imgsrc->getRotateDegree(), true);
-            if(trImg != baseImg) {
+
+            if (trImg != baseImg) {
                 delete baseImg;
                 baseImg = trImg;
             }
@@ -1098,14 +1102,15 @@ private:
             }
 
             ifstream fich (datalab, ios::in);
+            int maxdata = 73;
 
             if (fich && versionmip != 0) {
                 std::string inser;
 
                 int **dataspots;
-                dataspots = new int*[73];
+                dataspots = new int*[maxdata];
 
-                for (int i = 0; i < 73; i++) {
+                for (int i = 0; i < maxdata; i++) {
                     dataspots[i] = new int[maxspot];
                 }
 
@@ -1288,9 +1293,9 @@ private:
                     dataspots[68][0] = params.locallab.shcompr;
                     dataspots[69][0] = params.locallab.sensiex;
 
-                    dataspots[70][0] = 100.f * params.locallab.hueref;
-                    dataspots[71][0] = params.locallab.chromaref;
-                    dataspots[72][0] = params.locallab.lumaref;
+                    dataspots[maxdata - 3][0] = 100.f * params.locallab.hueref;
+                    dataspots[maxdata - 2][0] = params.locallab.chromaref;
+                    dataspots[maxdata - 1][0] = params.locallab.lumaref;
 
                     //curve Reti local
                     int siz = params.locallab.localTgaincurve.size();
@@ -1468,21 +1473,15 @@ private:
 
 
                 }
-                //     locallutili = false;
 
 
                 int ns = 0;
-                //      int realsp = params.locallab.nbspot;
 
                 if (fich) {
 
                     std::string line;
                     std::string spotline;
                     int cont = 0;
-                    //   int sizecu = 0;
-                    //   int sizell;
-                    //   int sizelh;
-                    //   int sizecc;
 
                     while (getline (fich, line)) {
                         spotline = line;
@@ -1514,145 +1513,41 @@ private:
                             dataspots[16][0] = std::stoi (str3.c_str());
                         }
 
-                        if (cont > 16  && cont < 73) {
+                        if (cont > 16  && cont < maxdata) {
                             dataspots[cont][ns] = std::stoi (str3.c_str());
 
                         }
 
                         if (spotline.substr (0, pos) == "curveReti") {
-                            std::string curstr;
-                            //        int longecur;
-                            std::string strend = spotline.substr (posend - 1, 1);
-                            //        std::size_t posz = spotline.find (strend);
-                            //        int longe;
-
-                            for (int sl = 0; sl < 69; sl++) {
-                                if (delim[sl] == strend) {
-                                    //                longe = sl + 1;
-                                }
-                            }
-
                             retistrs[ns] = str3;
-                            //   sizecu = longe;
                         }
 
                         if (spotline.substr (0, pos) == "curveLL") {
-                            std::string curstrl;
-                            //       int longecurl;
-                            std::string strendl = spotline.substr (posend - 1, 1);
-                            //       std::size_t poszl = spotline.find (strendl);
-                            //       int longel;
-
-                            for (int sl = 0; sl < 69; sl++) {
-                                if (delim[sl] == strendl) {
-                                    //     longel = sl + 1;
-                                }
-                            }
-
                             llstrs[ns] = str3;
-                            //  sizell = longel;
-
                         }
 
                         if (spotline.substr (0, pos) == "curveLH") {
-                            std::string curstrh;
-                            //      int longecurh;
-                            std::string strendh = spotline.substr (posend - 1, 1);
-                            //      std::size_t poszh = spotline.find (strendh);
-                            //     int longeh;
-
-                            for (int sh = 0; sh < 69; sh++) {
-                                if (delim[sh] == strendh) {
-                                    //            longeh = sh + 1;
-                                }
-                            }
-
                             lhstrs[ns] = str3;
-                            //    sizelh = longeh;
                         }
 
                         if (spotline.substr (0, pos) == "curveHH") {
-                            std::string cursthh;
-                            //      int longecurh;
-                            std::string strendhh = spotline.substr (posend - 1, 1);
-                            //      std::size_t poszh = spotline.find (strendh);
-                            //      int longeh;
-
-                            for (int sh = 0; sh < 69; sh++) {
-                                if (delim[sh] == strendhh) {
-                                    //             longeh = sh + 1;
-                                }
-                            }
-
                             hhstrs[ns] = str3;
-                            //    sizelh = longeh;
                         }
 
                         if (spotline.substr (0, pos) == "curveCC") {
-                            std::string curstrc;
-                            //       int longecurc;
-                            std::string strendc = spotline.substr (posend - 1, 1);
-                            //       std::size_t poszc = spotline.find (strendc);
-                            //      int longec;
-
-                            for (int sh = 0; sh < 69; sh++) {
-                                if (delim[sh] == strendc) {
-                                    //               longec = sh + 1;
-                                }
-                            }
-
                             ccstrs[ns] = str3;
-                            //    sizecc = longec;
                         }
 
                         if (spotline.substr (0, pos) == "curveskin") {
-                            std::string curstskin;
-                            //      int longecurh;
-                            std::string strendsk = spotline.substr (posend - 1, 1);
-                            //      std::size_t poszh = spotline.find (strendh);
-                            //      int longeh;
-
-                            for (int sh = 0; sh < 69; sh++) {
-                                if (delim[sh] == strendsk) {
-                                    //             longeh = sh + 1;
-                                }
-                            }
-
                             skinstrs[ns] = str3;
-                            //    sizelh = longeh;
                         }
 
                         if (spotline.substr (0, pos) == "pthres") {
-                            std::string curstpth;
-                            //      int longecurh;
-                            std::string strendpt = spotline.substr (posend - 1, 1);
-                            //      std::size_t poszh = spotline.find (strendh);
-                            //      int longeh;
-
-                            for (int sh = 0; sh < 69; sh++) {
-                                if (delim[sh] == strendpt) {
-                                    //             longeh = sh + 1;
-                                }
-                            }
-
                             pthstrs[ns] = str3;
                         }
 
                         if (spotline.substr (0, pos) == "curveex") {
-                            std::string curstex;
-                            //      int longecurh;
-                            std::string strendex = spotline.substr (posend - 1, 1);
-                            //      std::size_t poszh = spotline.find (strendh);
-                            //      int longeh;
-
-                            for (int sh = 0; sh < 69; sh++) {
-                                if (delim[sh] == strendex) {
-                                    //             longeh = sh + 1;
-                                }
-                            }
-
                             exstrs[ns] = str3;
-                            //    sizelh = longeh;
                         }
 
 
@@ -1820,9 +1715,9 @@ private:
                     params.locallab.shcompr =  dataspots[68][sp];
                     params.locallab.sensiex =  dataspots[69][sp];
 
-                    params.locallab.hueref = ((float) dataspots[70][sp]) / 100.f;
-                    params.locallab.chromaref = dataspots[71][sp];
-                    params.locallab.lumaref = dataspots[72][sp];
+                    params.locallab.hueref = ((float) dataspots[maxdata - 3][sp]) / 100.f;
+                    params.locallab.chromaref = dataspots[maxdata - 2][sp];
+                    params.locallab.lumaref = dataspots[maxdata - 1][sp];
 
 
                     int *s_datc;
@@ -1996,7 +1891,7 @@ private:
                     double shcompr = params.locallab.shcompr;
 
                     CurveFactory::complexCurvelocal (ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, contr,
-                                                     hist16, hltonecurveloc , shtonecurveloc, tonecurveloc,
+                                                     hist16, hltonecurveloc, shtonecurveloc, tonecurveloc,
                                                      1);
 
                     double huere, chromare, lumare;
@@ -2007,7 +1902,7 @@ private:
                     params.locallab.lumaref = lumare;
 
                     ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
-                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc , shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
+                                   LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();
                     sklocalcurve.clear();
@@ -2017,7 +1912,7 @@ private:
 
 
 
-                for (int i = 0; i < 73; i++) {
+                for (int i = 0; i < maxdata; i++) {
                     delete [] dataspots[i];
                 }
 

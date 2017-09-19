@@ -162,7 +162,6 @@ Locallab::Locallab ():
 
 
     realnbspot = options.rtSettings.nspot;
-
     nbspot = Gtk::manage (new Adjuster (M ("TP_LOCALLAB_NBSPOT"), 1, realnbspot, 1, 1));
 
     if (options.rtSettings.locdelay) {
