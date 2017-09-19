@@ -1078,7 +1078,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
 
             int realspot = params.locallab.nbspot;
+
+            if (realspot >= maxspot) {
+                params.locallab.nbspot = realspot = 1;
+            }
+
             std::string inser;
+
             dataspot = new int*[maxdata];//67
 
             for (int i = 0; i < maxdata; i++) {
