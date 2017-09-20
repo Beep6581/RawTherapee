@@ -1515,8 +1515,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
 
                 if (versionmip == 10009) {
-                    maxind = 58;
+                    maxind = 69;
                 }
+
+// I have forgotten 10010  ==> probably crash...but now it's passed...
+//enabled this code after...
+//               if (versionmip == 10011) {
+//                   maxind = 70;
+//               }
 
                 while (getline (fich, line)) {
                     spotline = line;
@@ -1663,7 +1669,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
 
             if (versionmip == 10008) {
-
+				//vibrance
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
 
                     dataspot[58][sp] = 19;
@@ -1678,7 +1684,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10009) {
+            if (versionmip == 10009) {//exposure
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     dataspot[64][sp] = 0;
                     dataspot[65][sp] = 0;

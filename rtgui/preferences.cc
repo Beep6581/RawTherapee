@@ -1001,22 +1001,6 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     // ---------------------------------------------
 
-    Gtk::Frame* flocal = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_LOCAL")) );
-    setExpandAlignProperties (flocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    Gtk::Grid* localGrid = Gtk::manage ( new Gtk::Grid() );
-    localGrid->set_column_spacing (4);
-    localGrid->set_row_spacing (4);
-    setExpandAlignProperties (localGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-
-    ckbShowdelimspot =  Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_LOCALSHOWDELIMSPOT")) );
-    setExpandAlignProperties (ckbShowdelimspot, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
-    localGrid->attach_next_to (*ckbShowdelimspot, Gtk::POS_LEFT, 3, 1);
-
-    flocal->add (*localGrid);
-    mvbsd->attach_next_to (*flocal, *fworklflow, Gtk::POS_BOTTOM, 2, 1);
-
-    // ---------------------------------------------
-
     Gtk::Frame* flang = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_LANG")) );
     setExpandAlignProperties (flang, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Grid* langGrid = Gtk::manage ( new Gtk::Grid() );
@@ -1051,6 +1035,23 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     mvbsd->attach_next_to (*flang, *fworklflow, Gtk::POS_BOTTOM, 2, 1);
 
     // ---------------------------------------------
+	
+
+    Gtk::Frame* flocal = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_LOCAL")) );
+    setExpandAlignProperties (flocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    Gtk::Grid* localGrid = Gtk::manage ( new Gtk::Grid() );
+    localGrid->set_column_spacing (4);
+    localGrid->set_row_spacing (4);
+    setExpandAlignProperties (localGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+
+    ckbShowdelimspot =  Gtk::manage ( new Gtk::CheckButton (M ("PREFERENCES_LOCALSHOWDELIMSPOT")) );
+    setExpandAlignProperties (ckbShowdelimspot, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
+    localGrid->attach_next_to (*ckbShowdelimspot, Gtk::POS_LEFT, 3, 1);
+
+    flocal->add (*localGrid);
+    mvbsd->attach_next_to (*flocal, *flang, Gtk::POS_BOTTOM, 2, 1);
+
+	//--------------------------------------------------
 
     Gtk::Frame* ftheme = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_THEME")) );
     setExpandAlignProperties (ftheme, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -1121,7 +1122,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
     themeGrid->attach_next_to (*butNavGuideCol, *navGuideLabel, Gtk::POS_RIGHT, 1, 1);
 
     ftheme->add (*themeGrid);
-    mvbsd->attach_next_to (*ftheme, *flang, Gtk::POS_BOTTOM, 2, 1);
+    mvbsd->attach_next_to (*ftheme, *flocal, Gtk::POS_BOTTOM, 2, 1);
 
     // ---------------------------------------------
 
