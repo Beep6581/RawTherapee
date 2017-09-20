@@ -530,10 +530,17 @@ int main (int argc, char **argv)
         licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
     }
 
+    if (Glib::path_is_absolute (LENSFUN_DB_PATH)) {
+        options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    } else {
+        options.rtSettings.lensfunDbDirectory = Glib::build_filename (exePath, LENSFUN_DB_PATH);
+    }
+    
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
+    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
 #endif
 
 

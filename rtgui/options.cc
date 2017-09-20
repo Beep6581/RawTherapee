@@ -24,7 +24,6 @@
 #include "addsetids.h"
 #include "guiutils.h"
 #include "version.h"
-#include "config.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -745,8 +744,7 @@ void Options::setDefaults ()
     lastLensProfileDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
-
-    rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
 }
 
 Options* Options::copyFrom (Options* other)
