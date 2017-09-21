@@ -22,17 +22,17 @@ CURVEEDITOR_HIGHLIGHTS;高亮
 CURVEEDITOR_LIGHTS;光
 CURVEEDITOR_LINEAR;线性
 CURVEEDITOR_LOADDLGLABEL;正读取曲线...
-CURVEEDITOR_SAVEDLGLABEL;正保存曲线...
-CURVEEDITOR_SHADOWS;阴影
-CURVEEDITOR_TOOLTIPLINEAR;重置曲线
-CURVEEDITOR_TOOLTIPLOAD;读取曲线
-CURVEEDITOR_TOOLTIPSAVE;保存曲线
-CURVEEDITOR_TYPE;类型：
 CURVEEDITOR_MINMAXCPOINTS;均衡器
 CURVEEDITOR_NURBS;控制点
 CURVEEDITOR_PARAMETRIC;参数
+CURVEEDITOR_SAVEDLGLABEL;正保存曲线...
+CURVEEDITOR_SHADOWS;阴影
 CURVEEDITOR_TOOLTIPCOPY;复制当前曲线到剪贴板
+CURVEEDITOR_TOOLTIPLINEAR;重置曲线
+CURVEEDITOR_TOOLTIPLOAD;读取曲线
 CURVEEDITOR_TOOLTIPPASTE;从剪贴板粘贴曲线
+CURVEEDITOR_TOOLTIPSAVE;保存曲线
+CURVEEDITOR_TYPE;类型：
 DIRBROWSER_FOLDERS;文件夹
 DONT_SHOW_AGAIN;不再显示该信息
 DYNPROFILEEDITOR_DELETE;删除
@@ -47,13 +47,13 @@ DYNPROFILEEDITOR_PROFILE;处理配置规则
 EDITWINDOW_TITLE;图片修改
 EXIFFILTER_APERTURE;光圈
 EXIFFILTER_CAMERA;相机
+EXIFFILTER_EXPOSURECOMPENSATION;曝光补偿值 (EV)
 EXIFFILTER_FILETYPE;文件类型
 EXIFFILTER_FOCALLEN;焦距
 EXIFFILTER_ISO;感光度
 EXIFFILTER_LENS;镜头
-EXIFFILTER_SHUTTER;快门
-EXIFFILTER_EXPOSURECOMPENSATION;曝光补偿值 (EV)
 EXIFFILTER_METADATAFILTER;启用元数据过滤器
+EXIFFILTER_SHUTTER;快门
 EXIFPANEL_ADDEDIT;添加/编辑
 EXIFPANEL_ADDEDITHINT;添加/编辑标签
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;输入内容
@@ -69,54 +69,60 @@ EXIFPANEL_RESETALLHINT;重置所有标签内容
 EXIFPANEL_RESETHINT;重置所选标签内容
 EXIFPANEL_SUBDIRECTORY;子文件夹
 EXPORT_BYPASS_ALL;(取消)选择全部
-EXPORT_BYPASS_RAW_FF;不应用 [raw] 平场
-EXPORT_BYPASS_RAW_LINENOISE;不应用 [raw] 线噪过滤
 EXPORT_BYPASS_DEFRINGE;不应用去边处理
 EXPORT_BYPASS_DIRPYRDENOISE;不应用降噪处理
 EXPORT_BYPASS_DIRPYREQUALIZER;不应用分频反差调整
 EXPORT_BYPASS_EQUALIZER;不应用小波变换级别处理
 EXPORT_BYPASS_RAW_CA;不应用 [raw] 色差矫正
 EXPORT_BYPASS_RAW_CCSTEPS;不应用 [raw] 摩尔纹控制
+EXPORT_BYPASS_RAW_DF;不应用 [raw] 暗场处理
+EXPORT_BYPASS_RAW_FF;不应用 [raw] 平场
+EXPORT_BYPASS_RAW_GREENTHRESH;不应用 [raw] 绿色偏纠正
+EXPORT_BYPASS_RAW_LINENOISE;不应用 [raw] 线噪过滤
 EXPORT_BYPASS_SHARPENEDGE;不应用边缘锐化
 EXPORT_BYPASS_SHARPENING;不应用锐化
 EXPORT_BYPASS_SHARPENMICRO;不应用微反差调节
-EXPORT_BYPASS_RAW_DF;不应用 [raw] 暗场处理
-EXPORT_BYPASS_RAW_GREENTHRESH;不应用 [raw] 绿色偏纠正
 EXPORT_FASTEXPORTOPTIONS;<b>快速导出选项</b>
 EXPORT_MAXHEIGHT;最大高度
 EXPORT_MAXWIDTH;最大宽度
-EXPORT_RAW_DMETHOD;反拜尔算法
 EXPORT_PUTTOQUEUEFAST;  放入快速导出序列
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
-!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
-!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
-!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-EXTPROGTARGET_2;队列已处理
+EXPORT_RAW_DMETHOD;反拜尔算法
 EXTPROGTARGET_1;raw
+EXTPROGTARGET_2;队列已处理
+FILEBROWSER_ADDDELTEMPLATE;增加/删除模板...
 FILEBROWSER_APPLYPROFILE;应用配置
+FILEBROWSER_APPLYPROFILE_PARTIAL;应用 - 局部
+FILEBROWSER_AUTODARKFRAME;自动暗场
+FILEBROWSER_AUTOFLATFIELD;自动平场
+FILEBROWSER_BROWSEPATHBUTTONHINT;点击浏览选择的路径
 FILEBROWSER_CACHE;缓存
 FILEBROWSER_CACHECLEARFROMFULL;清空缓存
 FILEBROWSER_CACHECLEARFROMPARTIAL;清理缓存
 FILEBROWSER_CLEARPROFILE;清空配置
 FILEBROWSER_COPYPROFILE;复制配置
 FILEBROWSER_CURRENT_NAME;当前名称：
+FILEBROWSER_DARKFRAME;暗场
 FILEBROWSER_DELETEDLGLABEL;确认删除
 FILEBROWSER_DELETEDLGMSG;确定删除所选的%1个文件？
+FILEBROWSER_DELETEDLGMSGINCLPROC;你确认要删除选择的 <b>%1</b> 文件 <b>包括</b> 一个处理队列中的版本?
 FILEBROWSER_EMPTYTRASH;清空垃圾箱
 FILEBROWSER_EMPTYTRASHHINT;永久清空垃圾箱
 FILEBROWSER_EXTPROGMENU;调用程序...
+FILEBROWSER_FLATFIELD;平场
+FILEBROWSER_MOVETODARKFDIR;移动到暗场路径
+FILEBROWSER_MOVETOFLATFIELDDIR;移动到平场路径
 FILEBROWSER_NEW_NAME;新名称：
 FILEBROWSER_OPENDEFAULTVIEWER;Windows 默认阅览工具 (序列)
 FILEBROWSER_PARTIALPASTEPROFILE;选择性粘贴
 FILEBROWSER_PASTEPROFILE;粘贴配置
 FILEBROWSER_POPUPCANCELJOB;取消任务
 FILEBROWSER_POPUPCOLORLABEL;彩色标帖
+FILEBROWSER_POPUPCOLORLABEL0;Label: 无
+FILEBROWSER_POPUPCOLORLABEL1;Label: 红
+FILEBROWSER_POPUPCOLORLABEL2;Label: 黄
+FILEBROWSER_POPUPCOLORLABEL3;Label: 绿
+FILEBROWSER_POPUPCOLORLABEL4;Label: 蓝
+FILEBROWSER_POPUPCOLORLABEL5;Label: 紫
 FILEBROWSER_POPUPCOPYTO;复制至...
 FILEBROWSER_POPUPFILEOPERATIONS;文件操作
 FILEBROWSER_POPUPMOVEEND;移动到队列尾部
@@ -127,6 +133,8 @@ FILEBROWSER_POPUPOPENINEDITOR;打开在编辑器
 FILEBROWSER_POPUPPROCESS;放入队列
 FILEBROWSER_POPUPPROCESSFAST;放入序列（快速导出）
 FILEBROWSER_POPUPPROFILEOPERATIONS;处理色彩档案
+FILEBROWSER_POPUPRANK;评分
+FILEBROWSER_POPUPRANK0;去评分
 FILEBROWSER_POPUPRANK1;评 1 星
 FILEBROWSER_POPUPRANK2;评 2 星
 FILEBROWSER_POPUPRANK3;评 3 星
@@ -147,6 +155,7 @@ FILEBROWSER_RANK3_TOOLTIP;评分 3 *\n快捷键：Shift-3
 FILEBROWSER_RANK4_TOOLTIP;评分 4 *\n快捷键：Shift-4
 FILEBROWSER_RANK5_TOOLTIP;评分 5 *\n快捷键：Shift-5
 FILEBROWSER_RENAMEDLGLABEL;文件重命名
+FILEBROWSER_RESETDEFAULTPROFILE;还原到默认
 FILEBROWSER_SELECTDARKFRAME;选择暗场...
 FILEBROWSER_SELECTFLATFIELD;选择平场……
 FILEBROWSER_SHOWDIRHINT;显示文件夹中所有图片
@@ -166,25 +175,6 @@ FILEBROWSER_STOPPROCESSINGHINT;停止处理图片
 FILEBROWSER_THUMBSIZE;缩略图大小
 FILEBROWSER_ZOOMINHINT;增大缩略图
 FILEBROWSER_ZOOMOUTHINT;减小缩略图
-FILEBROWSER_ADDDELTEMPLATE;增加/删除模板...
-FILEBROWSER_APPLYPROFILE_PARTIAL;应用 - 局部
-FILEBROWSER_AUTODARKFRAME;自动暗场
-FILEBROWSER_AUTOFLATFIELD;自动平场
-FILEBROWSER_BROWSEPATHBUTTONHINT;点击浏览选择的路径
-FILEBROWSER_DARKFRAME;暗场
-FILEBROWSER_DELETEDLGMSGINCLPROC;你确认要删除选择的 <b>%1</b> 文件 <b>包括</b> 一个处理队列中的版本?
-FILEBROWSER_FLATFIELD;平场
-FILEBROWSER_MOVETODARKFDIR;移动到暗场路径
-FILEBROWSER_MOVETOFLATFIELDDIR;移动到平场路径
-FILEBROWSER_POPUPCOLORLABEL0;Label: 无
-FILEBROWSER_POPUPCOLORLABEL1;Label: 红
-FILEBROWSER_POPUPCOLORLABEL2;Label: 黄
-FILEBROWSER_POPUPCOLORLABEL3;Label: 绿
-FILEBROWSER_POPUPCOLORLABEL4;Label: 蓝
-FILEBROWSER_POPUPCOLORLABEL5;Label: 紫
-FILEBROWSER_POPUPRANK;评分
-FILEBROWSER_POPUPRANK0;去评分
-FILEBROWSER_RESETDEFAULTPROFILE;还原到默认
 FILECHOOSER_FILTER_ANY;所有文件
 FILECHOOSER_FILTER_COLPROF;色彩配置文件
 FILECHOOSER_FILTER_CURVE;曲线文件
@@ -194,6 +184,8 @@ FILECHOOSER_FILTER_SAME;与当前照片格式相同
 FILECHOOSER_FILTER_TIFF;TIFF 文件
 GENERAL_ABOUT;关于
 GENERAL_AFTER;之后
+GENERAL_APPLY;应用
+GENERAL_ASIMAGE;跟随图像
 GENERAL_AUTO;自动
 GENERAL_BEFORE;之前
 GENERAL_CANCEL;取消
@@ -208,13 +200,11 @@ GENERAL_NA;不适用
 GENERAL_NO;否
 GENERAL_NONE;无
 GENERAL_OK;确定
+GENERAL_OPEN;打开
 GENERAL_PORTRAIT;纵向
 GENERAL_SAVE;保存
 GENERAL_UNCHANGED;（未改变）
 GENERAL_WARNING;警告
-GENERAL_APPLY;应用
-GENERAL_ASIMAGE;跟随图像
-GENERAL_OPEN;打开
 HISTOGRAM_TOOLTIP_B;显示/隐藏 蓝色直方图
 HISTOGRAM_TOOLTIP_G;显示/隐藏 绿色直方图
 HISTOGRAM_TOOLTIP_L;显示/隐藏 CIELAB 亮度直方图
@@ -390,22 +380,22 @@ MAIN_MSG_NAVIGATOR;浏览器
 MAIN_MSG_OPERATIONCANCELLED;取消
 MAIN_MSG_QOVERWRITE;是否覆盖？
 MAIN_TAB_COLOR;色彩
+MAIN_TAB_COLOR_TOOLTIP;快捷键：<b>Alt-c</b>
 MAIN_TAB_DETAIL;细节
+MAIN_TAB_DETAIL_TOOLTIP;快捷键: <b>Alt-d</b>
 MAIN_TAB_DEVELOP;图片调整
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPORT; 快速导出
 MAIN_TAB_EXPOSURE;曝光
+MAIN_TAB_EXPOSURE_TOOLTIP;快捷键：<b>Alt-e</b>
 MAIN_TAB_FILTER;过滤器
+MAIN_TAB_INSPECT; 检阅
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;元数据
+MAIN_TAB_METADATA_TOOLTIP;快捷键：<b>Alt-m</b>
 MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;快捷键：<b>Alt-R</b>
 MAIN_TAB_TRANSFORM;变换
-MAIN_TAB_COLOR_TOOLTIP;快捷键：<b>Alt-c</b>
-MAIN_TAB_DETAIL_TOOLTIP;快捷键: <b>Alt-d</b>
-MAIN_TAB_EXPOSURE_TOOLTIP;快捷键：<b>Alt-e</b>
-MAIN_TAB_INSPECT; 检阅
-MAIN_TAB_METADATA_TOOLTIP;快捷键：<b>Alt-m</b>
 MAIN_TAB_TRANSFORM_TOOLTIP;快捷键：<b>Alt-t</b>
 MAIN_TAB_WAVELET;小波变换
 MAIN_TAB_WAVELET_TOOLTIP;快捷键：<b>Alt-w</b>
@@ -438,22 +428,33 @@ PARTIALPASTE_CHANNELMIXERBW;黑白
 PARTIALPASTE_COARSETRANS;90度旋转/翻转
 PARTIALPASTE_COLORAPP;CIECAM02
 PARTIALPASTE_COLORGROUP;色彩相关设定
+PARTIALPASTE_COLORTONING;色调
 PARTIALPASTE_COMMONTRANSFORMPARAMS;自动填充
 PARTIALPASTE_COMPOSITIONGROUP;构图设置
 PARTIALPASTE_CROP;剪裁
 PARTIALPASTE_DARKFRAMEAUTOSELECT;暗场自动选择
 PARTIALPASTE_DARKFRAMEFILE;暗场文件
+PARTIALPASTE_DEFRINGE;去边
 PARTIALPASTE_DETAILGROUP;细节设置
 PARTIALPASTE_DIALOGLABEL;选择性粘贴配置
 PARTIALPASTE_DIRPYRDENOISE;降噪
+PARTIALPASTE_DIRPYREQUALIZER;分频反差调整
 PARTIALPASTE_DISTORTION;畸变矫正
 PARTIALPASTE_EPD;色调映射
+PARTIALPASTE_EQUALIZER;小波变换等级
 PARTIALPASTE_EVERYTHING;全部
 PARTIALPASTE_EXIFCHANGES;对exif所做的修改
 PARTIALPASTE_EXPOSURE;曝光
+PARTIALPASTE_FILMSIMULATION;胶片模拟
+PARTIALPASTE_FLATFIELDAUTOSELECT;平场自动选择
+PARTIALPASTE_FLATFIELDBLURRADIUS;平场模糊半径
+PARTIALPASTE_FLATFIELDBLURTYPE;平场模糊类型
+PARTIALPASTE_FLATFIELDCLIPCONTROL;平场剪切控制
+PARTIALPASTE_FLATFIELDFILE;平场文件夹
 PARTIALPASTE_GRADIENT;渐变过滤
 PARTIALPASTE_HSVEQUALIZER;HSV均衡
 PARTIALPASTE_ICMSETTINGS;ICM 设置
+PARTIALPASTE_IMPULSEDENOISE;脉冲噪声降低
 PARTIALPASTE_IPTCINFO;IPTC 信息
 PARTIALPASTE_LABCURVE;Lab调整
 PARTIALPASTE_LENSGROUP;镜头相关设置
@@ -461,11 +462,26 @@ PARTIALPASTE_LENSPROFILE;镜片修正档案
 PARTIALPASTE_METAGROUP;元数据
 PARTIALPASTE_PCVIGNETTE;暗角滤镜
 PARTIALPASTE_PERSPECTIVE;视角
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;坏点过滤器
 PARTIALPASTE_PREPROCESS_GREENEQUIL;绿平衡
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;热噪过滤器
 PARTIALPASTE_PREPROCESS_LINEDENOISE;线条噪点过滤
+PARTIALPASTE_PRSHARPENING;调整大小后锐化
 PARTIALPASTE_RAWCACORR_AUTO;CA自动更正
+PARTIALPASTE_RAWCACORR_CAREDBLUE;红蓝色散
+PARTIALPASTE_RAWEXPOS_BLACK;黑色等级
+PARTIALPASTE_RAWEXPOS_LINEAR;白点纠正
+PARTIALPASTE_RAWEXPOS_PRESER;高光补偿
 PARTIALPASTE_RAWGROUP;Raw设置
+PARTIALPASTE_RAW_DCBENHANCE;DCB 增强
+PARTIALPASTE_RAW_DCBITERATIONS;DCB 反复
+PARTIALPASTE_RAW_DMETHOD;解马赛克方法
+PARTIALPASTE_RAW_FALSECOLOR;摩尔纹抑制
+PARTIALPASTE_RAW_IMAGENUM;子图像
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE 增强级数
+PARTIALPASTE_RAW_PIXELSHIFT;像素位移
 PARTIALPASTE_RESIZE;缩放
+PARTIALPASTE_RETINEX;Retinex增强算法
 PARTIALPASTE_RGBCURVES;RGB曲线
 PARTIALPASTE_ROTATION;旋转
 PARTIALPASTE_SHADOWSHIGHLIGHTS;阴影/高光
@@ -474,117 +490,33 @@ PARTIALPASTE_SHARPENING;锐化
 PARTIALPASTE_SHARPENMICRO;微处对比
 PARTIALPASTE_VIBRANCE;鲜艳度
 PARTIALPASTE_VIGNETTING;暗角修正
-PARTIALPASTE_WHITEBALANCE;白平衡
-PARTIALPASTE_COLORTONING;色调
-PARTIALPASTE_DEFRINGE;去边
-PARTIALPASTE_DIRPYREQUALIZER;分频反差调整
-PARTIALPASTE_EQUALIZER;小波变换等级
-PARTIALPASTE_FILMSIMULATION;胶片模拟
-PARTIALPASTE_FLATFIELDAUTOSELECT;平场自动选择
-PARTIALPASTE_FLATFIELDBLURRADIUS;平场模糊半径
-PARTIALPASTE_FLATFIELDBLURTYPE;平场模糊类型
-PARTIALPASTE_FLATFIELDCLIPCONTROL;平场剪切控制
-PARTIALPASTE_FLATFIELDFILE;平场文件夹
-PARTIALPASTE_IMPULSEDENOISE;脉冲噪声降低
-PARTIALPASTE_PREPROCESS_DEADPIXFILT;坏点过滤器
-PARTIALPASTE_PREPROCESS_HOTPIXFILT;热噪过滤器
-PARTIALPASTE_PRSHARPENING;调整大小后锐化
-PARTIALPASTE_RAWCACORR_CAREDBLUE;红蓝色散
-PARTIALPASTE_RAWEXPOS_BLACK;黑色等级
-PARTIALPASTE_RAWEXPOS_LINEAR;白点纠正
-PARTIALPASTE_RAWEXPOS_PRESER;高光补偿
-PARTIALPASTE_RAW_DCBENHANCE;DCB 增强
-PARTIALPASTE_RAW_DCBITERATIONS;DCB 反复
-PARTIALPASTE_RAW_DMETHOD;解马赛克方法
-PARTIALPASTE_RAW_FALSECOLOR;摩尔纹抑制
-PARTIALPASTE_RAW_IMAGENUM;子图像
-PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE 增强级数
-PARTIALPASTE_RAW_PIXELSHIFT;像素位移
-PARTIALPASTE_RETINEX;Retinex增强算法
 PARTIALPASTE_WAVELETGROUP;小波变换等级
+PARTIALPASTE_WHITEBALANCE;白平衡
 PREFERENCES_ADD;添加
 PREFERENCES_APPLNEXTSTARTUP;下次启动生效
+PREFERENCES_AUTLISLOW;低
+PREFERENCES_AUTLISMAX;最大 - 所有块平均值
+PREFERENCES_AUTLISSTD;高
+PREFERENCES_AUTLISVLOW;无
+PREFERENCES_AUTLOW;低
 PREFERENCES_AUTOMONPROFILE;使用操作系统主显示器的色彩档案
+PREFERENCES_AUTSTD;标准
 PREFERENCES_BATCH_PROCESSING;批处理
 PREFERENCES_BEHADDALL;全 '添加'
 PREFERENCES_BEHAVIOR;行为
 PREFERENCES_BEHSETALL;全 '设定'
+PREFERENCES_BLACKBODY;钨丝灯
 PREFERENCES_CACHECLEARALL;全部清除
 PREFERENCES_CACHECLEARPROFILES;清除配置
 PREFERENCES_CACHECLEARTHUMBS;清除缩略图
 PREFERENCES_CACHEMAXENTRIES;最大缓存数量
 PREFERENCES_CACHEOPTS;缓存选项
 PREFERENCES_CACHETHUMBHEIGHT;最大缩略图高度
-PREFERENCES_CLIPPINGIND;高光溢出提示
-PREFERENCES_D50;5000K
-PREFERENCES_D55;5500K
-PREFERENCES_D60;6000K
-PREFERENCES_D65;6500K
-PREFERENCES_DATEFORMAT;日期格式
-PREFERENCES_DATEFORMATHINT;<i>可以使用下列控制符:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月h</i>\n<b>%d</b><i> : 日</i>\n<i>\n例如, 中文日期格式:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DIRHOME;用户文件路径
-PREFERENCES_DIRLAST;上次访问路径
-PREFERENCES_DIROTHER;其他
-PREFERENCES_DIRSELECTDLG;启动时选择图片路径...
-PREFERENCES_DIRSOFTWARE;软件安装路径
-PREFERENCES_EDITORCMDLINE;其他命令行
-PREFERENCES_EXTERNALEDITOR;外部编辑器
-PREFERENCES_FBROWSEROPTS;文件浏览选项
-PREFERENCES_FILEFORMAT;文件格式
-PREFERENCES_FLATFIELD;平场
-PREFERENCES_FLATFIELDFOUND;找到
-PREFERENCES_FORIMAGE;用于图片文件
-PREFERENCES_FORRAW;用于Raw文件
-PREFERENCES_GIMPPATH;GIMP安装文件夹
-PREFERENCES_HLTHRESHOLD;高光溢出阈值
-PREFERENCES_ICCDIR;ICC配置路径
-PREFERENCES_IMPROCPARAMS;默认图片处理参数
-PREFERENCES_INTENT_ABSOLUTE;绝对比色
-PREFERENCES_INTENT_PERCEPTUAL;可感知
-PREFERENCES_INTENT_RELATIVE;相对比色
-PREFERENCES_INTENT_SATURATION;饱和度
-PREFERENCES_MENUGROUPRANK;组 "评价"
-PREFERENCES_OUTDIR;输出路径
-PREFERENCES_OUTDIRFOLDER;保存至文件夹
-PREFERENCES_OUTDIRFOLDERHINT;将已寸图片放至所选文件夹
-PREFERENCES_OUTDIRTEMPLATE;使用模板
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹 \n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开, 控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;已知扩展名
-PREFERENCES_PARSEDEXTADD;添加扩展名
-PREFERENCES_PARSEDEXTADDHINT;输入扩展名并按此按钮将其添加至列表
-PREFERENCES_PARSEDEXTDELHINT;从列表中删除选中的扩展名
-PREFERENCES_PROFILEHANDLING;图片处理配置管理
-PREFERENCES_PROFILELOADPR;配置文件读取优先级
-PREFERENCES_PROFILEPRCACHE;缓存中的配置文件
-PREFERENCES_PROFILEPRFILE;与图片并列存放的配置文件
-PREFERENCES_PROFILESAVECACHE;将配置文件写至缓存
-PREFERENCES_PROFILESAVEINPUT;将配置文件与图片并列存放
-PREFERENCES_PROPERTY;属性
-PREFERENCES_PSPATH;Adobe Photoshop安装路径
-PREFERENCES_SELECTLANG;选择语言
-PREFERENCES_SELECTTHEME;选择主题
-PREFERENCES_SHOWBASICEXIF;显示基本Exif信息
-PREFERENCES_SHOWDATETIME;显示时间日期
-PREFERENCES_SHTHRESHOLD;阴影过暗阈值
-PREFERENCES_STARTUPIMDIR;启动时路径
-PREFERENCES_TAB_BROWSER;文件浏览器
-PREFERENCES_TAB_COLORMGR;色彩管理
-PREFERENCES_TAB_GENERAL;一般
-PREFERENCES_TAB_IMPROC;图片处理
-PREFERENCES_TAB_SOUND;音效
-PREFERENCES_TP_LABEL;工具栏
-PREFERENCES_WORKFLOW;排版
-PREFERENCES_AUTLISLOW;低
-PREFERENCES_AUTLISMAX;最大 - 所有块平均值
-PREFERENCES_AUTLISSTD;高
-PREFERENCES_AUTLISVLOW;无
-PREFERENCES_AUTLOW;低
-PREFERENCES_AUTSTD;标准
-PREFERENCES_BLACKBODY;钨丝灯
 PREFERENCES_CIEART;CIECAM02 优化
 PREFERENCES_CIEART_FRAME;CIECAM02-特定选项
 PREFERENCES_CIEART_LABEL;使用单浮点精度而不是双精度
 PREFERENCES_CIEART_TOOLTIP;如果启用, CIECAM02 将使用单精度浮点计算, 结果是品质轻微下降, 速度则可以提高一些
+PREFERENCES_CLIPPINGIND;高光溢出提示
 PREFERENCES_CLUTSCACHE;HaldCLUT 缓存
 PREFERENCES_CLUTSCACHE_LABEL;CLUTs 最大缓存数
 PREFERENCES_CLUTSDIR;HaldCLUT 路径
@@ -600,26 +532,46 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;可执行文件路径
 PREFERENCES_CUTOVERLAYBRUSH;裁切遮罩色彩和透明度
+PREFERENCES_D50;5000K
 PREFERENCES_D50_OLD;5000K
+PREFERENCES_D55;5500K
+PREFERENCES_D60;6000K
+PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAME;暗场
 PREFERENCES_DARKFRAMEFOUND;找到
 PREFERENCES_DARKFRAMESHOTS;张
 PREFERENCES_DARKFRAMETEMPLATES;模板
+PREFERENCES_DATEFORMAT;日期格式
+PREFERENCES_DATEFORMATHINT;<i>可以使用下列控制符:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月h</i>\n<b>%d</b><i> : 日</i>\n<i>\n例如, 中文日期格式:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DAUB_LABEL;使用 Daubechies D6 小波变换而不是 D4
 PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and 小波变换等级 tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 PREFERENCES_DIRDARKFRAMES;暗场图像路径
+PREFERENCES_DIRHOME;用户文件路径
+PREFERENCES_DIRLAST;上次访问路径
+PREFERENCES_DIROTHER;其他
+PREFERENCES_DIRSELECTDLG;启动时选择图片路径...
+PREFERENCES_DIRSOFTWARE;软件安装路径
+PREFERENCES_EDITORCMDLINE;其他命令行
 PREFERENCES_EDITORLAYOUT;编辑器布局
 PREFERENCES_EXPAUT;进阶
+PREFERENCES_EXTERNALEDITOR;外部编辑器
+PREFERENCES_FBROWSEROPTS;文件浏览选项
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
+PREFERENCES_FILEFORMAT;文件格式
 PREFERENCES_FILMSIMULATION;胶片模拟
+PREFERENCES_FLATFIELD;平场
+PREFERENCES_FLATFIELDFOUND;找到
 PREFERENCES_FLATFIELDSDIR;平场图像路径
 PREFERENCES_FLATFIELDSHOTS;张
 PREFERENCES_FLATFIELDTEMPLATES;模板
 PREFERENCES_FLUOF2;Fluorescent F2
 PREFERENCES_FLUOF7;Fluorescent F7
 PREFERENCES_FLUOF11;Fluorescent F11
+PREFERENCES_FORIMAGE;用于图片文件
+PREFERENCES_FORRAW;用于Raw文件
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
+PREFERENCES_GIMPPATH;GIMP安装文件夹
 PREFERENCES_GREY;Output device's Yb luminance (%)
 PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
@@ -635,10 +587,17 @@ PREFERENCES_GREYSCA;自动
 PREFERENCES_HISTOGRAMPOSITIONLEFT;直方图放置在左面板
 PREFERENCES_HISTOGRAMWORKING;使用工作色彩空间显示直方图和导航器
 PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
+PREFERENCES_HLTHRESHOLD;高光溢出阈值
+PREFERENCES_ICCDIR;ICC配置路径
 PREFERENCES_IMG_RELOAD_NEEDED;这些改变需要重载图片生效
+PREFERENCES_IMPROCPARAMS;默认图片处理参数
 PREFERENCES_INSPECT_LABEL;检阅
 PREFERENCES_INSPECT_MAXBUFFERS_LABEL;最大缓存图片数
 PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
+PREFERENCES_INTENT_ABSOLUTE;绝对比色
+PREFERENCES_INTENT_PERCEPTUAL;可感知
+PREFERENCES_INTENT_RELATIVE;相对比色
+PREFERENCES_INTENT_SATURATION;饱和度
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;如果RAW文件没有修改, 显示内嵌JPEG缩略图
 PREFERENCES_LANG;语言
 PREFERENCES_LANGAUTODETECT;使用系统语言
@@ -652,6 +611,7 @@ PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File operations"
 PREFERENCES_MENUGROUPLABEL;Group "Color label"
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing profile operations"
+PREFERENCES_MENUGROUPRANK;组 "评价"
 PREFERENCES_MENUOPTIONS;子菜单选项
 PREFERENCES_METADATA;元数据
 PREFERENCES_MIN;Mini (100x115)
@@ -664,10 +624,19 @@ PREFERENCES_MULTITABDUALMON;多编辑器标签独立模式
 PREFERENCES_NAVGUIDEBRUSH;导航器引导颜色
 PREFERENCES_NAVIGATIONFRAME;导航器
 PREFERENCES_NOISE;降噪
+PREFERENCES_OUTDIR;输出路径
+PREFERENCES_OUTDIRFOLDER;保存至文件夹
+PREFERENCES_OUTDIRFOLDERHINT;将已寸图片放至所选文件夹
+PREFERENCES_OUTDIRTEMPLATE;使用模板
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>可以使用下列控制符:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\n这些控制符指向RAW文件所在文件夹及子文件夹 \n\n例如 假如</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>已经打开, 控制符的意义如下：\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n如果想将输出文件保存到输入文件所在位置：\n</i><b>%p1/%f\n</b><i>\n如果想将输出文件保存至输入文件夹内的'converted'子文件夹：\n</i><b>%p1/converted/%f\n</b><i>\n如果想将输出文件保存至 '/home/tom/converted' 并保留按日期所分的子文件夹：\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails in the file browser
 PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 PREFERENCES_PANFACTORLABEL;Pan rate amplification
+PREFERENCES_PARSEDEXT;已知扩展名
+PREFERENCES_PARSEDEXTADD;添加扩展名
+PREFERENCES_PARSEDEXTADDHINT;输入扩展名并按此按钮将其添加至列表
+PREFERENCES_PARSEDEXTDELHINT;从列表中删除选中的扩展名
 PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 PREFERENCES_PREVDEMO;预览解马赛克方法
@@ -675,23 +644,36 @@ PREFERENCES_PREVDEMO_FAST;快速
 PREFERENCES_PREVDEMO_LABEL;小于100%缩放查看时使用的解马赛克算法：
 PREFERENCES_PREVDEMO_SIDECAR;与PP3相同
 PREFERENCES_PRINTER;打印机 (软打样)
+PREFERENCES_PROFILEHANDLING;图片处理配置管理
+PREFERENCES_PROFILELOADPR;配置文件读取优先级
+PREFERENCES_PROFILEPRCACHE;缓存中的配置文件
+PREFERENCES_PROFILEPRFILE;与图片并列存放的配置文件
 PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
+PREFERENCES_PROFILESAVECACHE;将配置文件写至缓存
+PREFERENCES_PROFILESAVEINPUT;将配置文件与图片并列存放
 PREFERENCES_PROFILESAVELOCATION;处理配置文件存储路径
 PREFERENCES_PROFILE_NONE;无
+PREFERENCES_PROPERTY;属性
 PREFERENCES_PRTINTENT;渲染意图
 PREFERENCES_PRTPROFILE;色彩配置文件
+PREFERENCES_PSPATH;Adobe Photoshop安装路径
 PREFERENCES_REMEMBERZOOMPAN;记忆缩放和位置
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 PREFERENCES_RGBDTL_LABEL;降噪和小波变换等级可用的最大线程数
 PREFERENCES_RGBDTL_TOOLTIP;"0"表示自动选择最大可用线程数 线程越多处理越快, 同时消耗更多内存 
 PREFERENCES_SELECTFONT;设置主要字体
 PREFERENCES_SELECTFONT_COLPICKER;设置色彩选择器字体
+PREFERENCES_SELECTLANG;选择语言
+PREFERENCES_SELECTTHEME;选择主题
 PREFERENCES_SERIALIZE_TIFF_READ;Tiff 读取设定
 PREFERENCES_SERIALIZE_TIFF_READ_LABEL;连续载入tiff文件
 PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;开启后可以提高在无压缩tiff图片文件夹中的缩略图生成速度
 PREFERENCES_SET;设置
+PREFERENCES_SHOWBASICEXIF;显示基本Exif信息
+PREFERENCES_SHOWDATETIME;显示时间日期
 PREFERENCES_SHOWEXPOSURECOMPENSATION;附加曝光补偿
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;显示图像胶片栏
+PREFERENCES_SHTHRESHOLD;阴影过暗阈值
 PREFERENCES_SIMPLAUT;工具模式
 PREFERENCES_SINGLETAB;单编辑器栏模式
 PREFERENCES_SINGLETABVERTAB;单编辑器栏模式, 标签栏垂直
@@ -700,13 +682,20 @@ PREFERENCES_SND_BATCHQUEUEDONE;队列处理完成
 PREFERENCES_SND_HELP;输入完整路径来指定声音文件, 或者留空表示无声 \nWindows系统声音可以使用 "SystemDefault",  "SystemAsterisk" 等  Linux则可以使用 "complete", "window-attention" 等 
 PREFERENCES_SND_LNGEDITPROCDONE;编辑器处理完成
 PREFERENCES_SND_TRESHOLDSECS;几秒之后
+PREFERENCES_STARTUPIMDIR;启动时路径
 PREFERENCES_STDAUT;标准
+PREFERENCES_TAB_BROWSER;文件浏览器
+PREFERENCES_TAB_COLORMGR;色彩管理
 PREFERENCES_TAB_DYNAMICPROFILE;动态预设规则
+PREFERENCES_TAB_GENERAL;一般
+PREFERENCES_TAB_IMPROC;图片处理
 PREFERENCES_TAB_PERFORMANCE;性能和品质
+PREFERENCES_TAB_SOUND;音效
 PREFERENCES_THEME;主题
 PREFERENCES_TIMAX;高
 PREFERENCES_TINB;块数量
 PREFERENCES_TISTD;标准
+PREFERENCES_TP_LABEL;工具栏
 PREFERENCES_TP_USEICONORTEXT;标签使用图标而不是文本
 PREFERENCES_TP_VSCROLLBAR;隐藏垂直滚动栏
 PREFERENCES_TUNNELMETADATA;无损复制 Exif/IPTC/XMP 到输出文件
@@ -716,6 +705,7 @@ PREFERENCES_WAVLEV;在质量为"高"时增加小波变换等级
 PREFERENCES_WLONE;一级
 PREFERENCES_WLTWO;二级
 PREFERENCES_WLZER;无
+PREFERENCES_WORKFLOW;排版
 PROFILEPANEL_LABEL;处理参数配置
 PROFILEPANEL_LOADDLGLABEL;加载处理参数为...
 PROFILEPANEL_MYPROFILES;我的档案
@@ -817,10 +807,14 @@ TP_COLORAPP_TCMODE_LIGHTNESS;光度
 TP_COLORAPP_TCMODE_SATUR;色彩饱和度
 TP_CROP_FIXRATIO;比例:
 TP_CROP_GTDIAGONALS;对角线法则
+TP_CROP_GTEPASSPORT;生物辨识护照
 TP_CROP_GTFRAME;框架
 TP_CROP_GTGRID;方格
+TP_CROP_GTHARMMEANS;调和平均律
 TP_CROP_GTNONE;无
 TP_CROP_GTRULETHIRDS;三等份法则
+TP_CROP_GTTRIANGLE1;黄金三角 1
+TP_CROP_GTTRIANGLE2;黄金三角 2
 TP_CROP_GUIDETYPE;辅助方式:
 TP_CROP_H;高
 TP_CROP_LABEL;剪裁
@@ -829,14 +823,14 @@ TP_CROP_SELECTCROP;选择预设
 TP_CROP_W;宽
 TP_CROP_X;x
 TP_CROP_Y;y
-TP_CROP_GTEPASSPORT;生物辨识护照
-TP_CROP_GTHARMMEANS;调和平均律
-TP_CROP_GTTRIANGLE1;黄金三角 1
-TP_CROP_GTTRIANGLE2;黄金三角 2
 TP_DARKFRAME_AUTOSELECT;自动选择
 TP_DARKFRAME_LABEL;黑框架
 TP_DEFRINGE_LABEL;去色彩边缘(紫边)
 TP_DEFRINGE_RADIUS;半径
+TP_DIRPYRDENOISE_LABEL;降噪
+TP_DIRPYRDENOISE_LDETAIL;明亮度细节
+TP_DIRPYRDENOISE_LUMA;光亮度/发光度
+TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_ALGO;皮肤色彩范围
 TP_DIRPYREQUALIZER_ARTIF;减少杂色
 TP_DIRPYREQUALIZER_HUESKIN;皮肤色相
@@ -846,10 +840,6 @@ TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;反差 -
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;反差 +
 TP_DIRPYREQUALIZER_LUMAFINEST;最细
 TP_DIRPYREQUALIZER_LUMANEUTRAL;自然
-TP_DIRPYRDENOISE_LABEL;降噪
-TP_DIRPYRDENOISE_LDETAIL;明亮度细节
-TP_DIRPYRDENOISE_LUMA;光亮度/发光度
-TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_SKIN;皮肤色彩 针对/保护
 TP_DIRPYREQUALIZER_THRESHOLD;阈值
 TP_DISTORTION_AMOUNT;数量
@@ -1036,24 +1026,14 @@ TP_WBALANCE_WATER_HEADER;水下
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;开启(新)细节窗口
 ZOOMPANEL_ZOOM100;缩放到100%\n快捷键: <b>z</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;适应屏幕\n快捷键: <b>f</b>
 ZOOMPANEL_ZOOMIN;缩放拉近\n快捷键: <b>+</b>
 ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
-ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</b>
-
-
-
-
-
-
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
 
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
@@ -1062,7 +1042,16 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
-
+!EXPORT_BYPASS;Processing steps to bypass
+!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
+!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
+!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
+!EXPORT_BYPASS_SH_HQ;Bypass Sharp Mask Shadows/Highlights
+!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+!EXPORT_PIPELINE;Processing pipeline
+!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
+!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<b>Ctrl-o</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\nPath shortcuts:\n<b>~</b>	- user's home directory.\n<b>!</b>	- user's pictures directory
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate the search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nExclude search terms by prefixing them with <i>!=</i>\ne.g.\n<i>!=1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
@@ -1434,6 +1423,9 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !HISTORY_MSG_482;CAM02 - Green scene
 !HISTORY_MSG_483;CAM02 - Yb scene
 !HISTORY_MSG_484;CAM02 - Auto Yb scene
+!HISTORY_MSG_485;Lens Correction
+!HISTORY_MSG_486;Lens Correction - Camera
+!HISTORY_MSG_487;Lens Correction - Lens
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
 !IPTCPANEL_COPYRIGHT;Copyright notice
@@ -1459,6 +1451,10 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+!LENSPROFILE_CORRECTION_LCPFILE;LCP File
+!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
@@ -1470,6 +1466,7 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
 !MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
@@ -1478,6 +1475,11 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !MONITOR_PROFILE_SYSTEM;System default
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_LOADPPASTE;Parameters to load
@@ -1489,9 +1491,6 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scripts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colors from the output profile.
@@ -1699,10 +1698,10 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !TP_DIRPYRDENOISE_SHALBI;High
 !TP_DIRPYRDENOISE_SLI;Slider
 !TP_DIRPYRDENOISE_TILELABEL;Tile size=%1, Center: Tx=%2  Ty=%3
+!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
+!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
-!TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_GAMMA;Gamma
@@ -2170,4 +2169,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;适应边缘到屏幕\n快捷键：<b>Alt</b>-<b>f</
 !TP_WBALANCE_TEMPBIAS;AWB temperature bias
 !TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the "auto white balance"\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by "computedTemp + computedTemp * bias".
 !TP_WBALANCE_TUNGSTEN;Tungsten
-
