@@ -3060,20 +3060,45 @@ void CLASS sony_arw_load_raw()
 
 void CLASS sony_arw2_load_raw()
 {
-  BENCHFUN
-  uchar *data, *dp;
-  ushort pix[16];
-  int row, col, val, max, min, imax, imin, sh, bit, i;
+    BENCHFUN
+//  uchar *data, *dp;
+//  ushort pix[16];
+//  int row, col, val, max, min, imax, imin, sh, bit, i;
 
-  data = (uchar *) malloc (raw_width+1);
-  merror (data, "sony_arw2_load_raw()");
-  for (row=0; row < height; row++) {
-    fread (data, 1, raw_width, ifp);
+//  data = (uchar *) malloc (raw_width+1);
+//  merror (data, "sony_arw2_load_raw()");
+#pragma omp parallel
+{
+    IMFILE *ifpthr = new IMFILE; 
+    ifpthr->fd = ifp->fd; 
+    ifpthr->pos = ifp->pos; 
+    ifpthr->size = ifp->size; 
+    ifpthr->data = ifp->data; 
+    ifpthr->eof = ifp->eof; 
+    ifpthr->plistener = nullptr; 
+    ifpthr->progress_range = ifp->progress_range; 
+    ifpthr->progress_next = ifp->progress_next; 
+    ifpthr->progress_current = ifp->progress_current;
+    uchar *data, *dp;
+    data = (uchar *) malloc (raw_width+1);
+    merror (data, "sony_arw2_load_raw()");
+    ushort pix[16];
+    int val;
+    int col;
+    int sh;
+    int i;
+    int bit;
+    int pos = ifpthr->pos;
+#pragma omp for
+
+  for (int row=0; row < height; row++) {
+    fseek(ifpthr, pos + row * raw_width, SEEK_SET);
+    fread (data, 1, raw_width, ifpthr);
     for (dp=data, col=0; col < raw_width-30; dp+=16) {
-      max = 0x7ff & (val = sget4(dp));
-      min = 0x7ff & val >> 11;
-      imax = 0x0f & val >> 22;
-      imin = 0x0f & val >> 26;
+      int max = 0x7ff & (val = sget4(dp));
+      int min = 0x7ff & val >> 11;
+      int imax = 0x0f & val >> 22;
+      int imin = 0x0f & val >> 26;
       for (sh=0; sh < 4 && 0x80 << sh <= max-min; sh++);
       for (bit=30, i=0; i < 16; i++)
 	if      (i == imax) pix[i] = max;
@@ -3089,6 +3114,9 @@ void CLASS sony_arw2_load_raw()
     }
   }
   free (data);
+  delete ifpthr;
+
+}
   maximum = curve[0x7ff << 1]; // RT: fix maximum.
   maximum = 16300; // RT: conservative white level tested on various ARW2 cameras. This constant was set in 2013-12-17, may need re-evaluation in the future.
 }
