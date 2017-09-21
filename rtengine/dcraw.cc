@@ -25,6 +25,8 @@
 /*RT*/#include "jpeg.h"
 
 #include "opthelper.h"
+#define BENCHMARK
+#include "StopWatch.h"
 
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
@@ -3058,6 +3060,7 @@ void CLASS sony_arw_load_raw()
 
 void CLASS sony_arw2_load_raw()
 {
+  BENCHFUN
   uchar *data, *dp;
   ushort pix[16];
   int row, col, val, max, min, imax, imin, sh, bit, i;
