@@ -826,7 +826,7 @@ const TagAttrib ifdAttribs[] = {
     {0, AC_WRITE,     0, nullptr, 0xc62f, AUTO, "CameraSerialNumber", &stdInterpreter},
     {0, AC_SYSTEM,    0, nullptr, 0xc630, AUTO, "DNGLensInfo", &stdInterpreter},
     {0, AC_DONTWRITE, 0, nullptr, 0xC634, AUTO, "MakerNote", &stdInterpreter}, //DNGPrivateData
-    {0, AC_DONTWRITE, 0, nullptr, 0xC640, AUTO, "RawImageSegmentation", &rawImageSegmentationInterpreter},
+    {0, AC_SYSTEM,    0, nullptr, 0xC640, AUTO, "RawImageSegmentation", &rawImageSegmentationInterpreter},
     {0, AC_WRITE,     0, nullptr, 0xc65d, AUTO, "RawDataUniqueID", &stdInterpreter},
     {0, AC_DONTWRITE, 0, nullptr, 0xc761, AUTO, "NoiseProfile", &stdInterpreter},
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}

@@ -68,6 +68,7 @@ EXIFPANEL_RESET;Réinitialiser
 EXIFPANEL_RESETALL;Réinitialiser tout
 EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
 EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur initiale
+EXIFPANEL_SHOWALL;Voir tout
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 EXPORT_BYPASS;Étapes de traitement à ignorer
 EXPORT_BYPASS_ALL;Sélectionner / Désélectionner tout
