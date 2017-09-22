@@ -52,6 +52,7 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
+const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::LcMode::LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
 const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
@@ -919,9 +920,13 @@ void ToneCurveParams::setDefaults()
 
 void LensProfParams::setDefaults()
 {
+    lcMode = LcMode::NONE;
     lcpFile = "";
     useDist = useVign = true;
     useCA = false;
+    lfCameraMake = "";
+    lfCameraModel = "";
+    lfLens = "";
 }
 
 void CoarseTransformParams::setDefaults()
@@ -2549,6 +2554,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
 // lens profile
+        if (!pedited || pedited->lensProf.lcMode) {
+            keyFile.set_string ("LensProfile", "LcMode", lensProf.getMethodString (lensProf.lcMode));
+        }
+
         if (!pedited || pedited->lensProf.lcpFile) {
             keyFile.set_string ("LensProfile", "LCPFile", relativePathIfInside (fname, fnameAbsolute, lensProf.lcpFile));
         }
@@ -2563,6 +2572,16 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->lensProf.useCA) {
             keyFile.set_boolean ("LensProfile", "UseCA", lensProf.useCA);
+        }
+
+        if (!pedited || pedited->lensProf.lfCameraMake) {
+            keyFile.set_string("LensProfile", "LFCameraMake", lensProf.lfCameraMake);
+        }
+        if (!pedited || pedited->lensProf.lfCameraModel) {
+            keyFile.set_string("LensProfile", "LFCameraModel", lensProf.lfCameraModel);
+        }
+        if (!pedited || pedited->lensProf.lfLens) {
+            keyFile.set_string("LensProfile", "LFLens", lensProf.lfLens);
         }
 
 // save perspective correction
@@ -5801,11 +5820,23 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
 // lens profile
         if (keyFile.has_group ("LensProfile")) {
+            if (keyFile.has_key ("LensProfile", "LcMode")) {
+                lensProf.lcMode = lensProf.getMethodNumber (keyFile.get_string ("LensProfile", "LcMode"));
+
+                if (pedited) {
+                    pedited->lensProf.lcMode = true;
+                }
+            }
+
             if (keyFile.has_key ("LensProfile", "LCPFile")) {
                 lensProf.lcpFile = expandRelativePath (fname, "", keyFile.get_string ("LensProfile", "LCPFile"));
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
+                }
+
+                if(ppVersion < 327 && !lensProf.lcpFile.empty()) {
+                    lensProf.lcMode = LensProfParams::LcMode::LCP;
                 }
             }
 
@@ -5830,6 +5861,27 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->lensProf.useCA = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraMake")) {
+                lensProf.lfCameraMake = keyFile.get_string("LensProfile", "LFCameraMake");
+                if (pedited) {
+                    pedited->lensProf.lfCameraMake = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFCameraModel")) {
+                lensProf.lfCameraModel = keyFile.get_string("LensProfile", "LFCameraModel");
+                if (pedited) {
+                    pedited->lensProf.lfCameraModel = true;
+                }
+            }
+
+            if (keyFile.has_key("LensProfile", "LFLens")) {
+                lensProf.lfLens = keyFile.get_string("LensProfile", "LFLens");
+                if (pedited) {
+                    pedited->lensProf.lfLens = true;
                 }
             }
         }
@@ -8428,10 +8480,14 @@ bool ProcParams::operator== (const ProcParams& other)
         && rotate.degree == other.rotate.degree
         && commonTrans.autofill == other.commonTrans.autofill
         && distortion.amount == other.distortion.amount
+        && lensProf.lcMode == other.lensProf.lcMode
         && lensProf.lcpFile == other.lensProf.lcpFile
         && lensProf.useDist == other.lensProf.useDist
         && lensProf.useVign == other.lensProf.useVign
         && lensProf.useCA == other.lensProf.useCA
+        && lensProf.lfCameraMake == other.lensProf.lfCameraMake
+        && lensProf.lfCameraModel == other.lensProf.lfCameraModel
+        && lensProf.lfLens == other.lensProf.lfLens
         && perspective.horizontal == other.perspective.horizontal
         && perspective.vertical == other.perspective.vertical
         && gradient.enabled == other.gradient.enabled

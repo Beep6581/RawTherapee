@@ -727,6 +727,7 @@ void Options::setDefaults ()
     lastLensProfileDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
 }
 
 Options* Options::copyFrom (Options* other)
@@ -1868,6 +1869,12 @@ void Options::readFromFile (Glib::ustring fname)
                 }
             }
 
+            if (keyFile.has_group ("Lensfun")) {
+                if (keyFile.has_key ("Lensfun", "DBDirectory")) {
+                    rtSettings.lensfunDbDirectory = keyFile.get_string ("Lensfun", "DBDirectory");
+                }
+            }
+
 // --------------------------------------------------------------------------------------------------------
 
             filterOutParsedExtensions ();
@@ -2238,6 +2245,8 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string  ("Dialogs", "LastLensProfileDir", lastLensProfileDir);
         keyFile.set_boolean ("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
+
+        keyFile.set_string  ("Lensfun", "DBDirectory", rtSettings.lensfunDbDirectory);        
 
         keyData = keyFile.to_data ();
 

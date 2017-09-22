@@ -33,6 +33,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
+#include <lensfun.h>
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
@@ -122,6 +123,9 @@ int processLineParams ( int argc, char **argv )
 {
     for ( int iArg = 1; iArg < argc; iArg++) {
         Glib::ustring currParam (argv[iArg]);
+        if ( currParam.empty() ) {
+            continue;
+        }
 #if ECLIPSE_ARGS
         currParam = currParam.substr (1, currParam.length() - 2);
 #endif
@@ -135,6 +139,7 @@ int processLineParams ( int argc, char **argv )
 #endif
 
                 case 'v':
+                    std::cout << "Using lensfun " << LF_VERSION_MAJOR << "." << LF_VERSION_MINOR << "." << LF_VERSION_MICRO << "." << LF_VERSION_BUGFIX << std::endl;
                     return 0;
 
 #ifndef __APPLE__ // TODO agriggio - there seems to be already some "single instance app" support for OSX in rtwindow. Disabling it here until I understand how to merge the two
@@ -524,10 +529,17 @@ int main (int argc, char **argv)
         licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
     }
 
+    if (Glib::path_is_absolute (LENSFUN_DB_PATH)) {
+        options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    } else {
+        options.rtSettings.lensfunDbDirectory = Glib::build_filename (exePath, LENSFUN_DB_PATH);
+    }
+    
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
+    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
 #endif
 
 
@@ -635,7 +647,7 @@ int main (int argc, char **argv)
             printf ("Error: -gimp requires two arguments\n");
             return 1;
         }
-    } else if (!remote && Glib::file_test (argv1, Glib::FILE_TEST_EXISTS)) {
+    } else if (!remote && Glib::file_test(argv1, Glib::FILE_TEST_EXISTS) && !Glib::file_test(argv1, Glib::FILE_TEST_IS_DIR)) {
         simpleEditor = true;
     }
 
@@ -697,4 +709,3 @@ int main (int argc, char **argv)
 
     return ret;
 }
-

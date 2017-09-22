@@ -428,6 +428,8 @@ class LensProfParamsEdited
 {
 public:
     bool lcpFile, useDist, useVign, useCA;
+    bool useLensfun, lfAutoMatch, lfCameraMake, lfCameraModel, lfLens;
+    bool lcMode;
 
     bool isUnchanged() const;
 };

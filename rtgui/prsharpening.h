@@ -70,7 +70,7 @@ public:
     void method_changed ();
     void adjusterChanged (ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR);
 
-    void setAdjusterBehavior (bool amountadd);
+    void setAdjusterBehavior (bool radiusadd, bool amountadd, bool dampingadd, bool iteradd, bool edgetoladd, bool haloctrladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

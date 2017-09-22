@@ -54,9 +54,13 @@ class ImProcFunctions
 
     void calcVignettingParams (int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
 
-    void transformPreview       (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap);
+    enum TransformMode {
+        TRANSFORM_PREVIEW,
+        TRANSFORM_HIGH_QUALITY,
+        TRANSFORM_HIGH_QUALITY_FULLIMAGE
+    };
     void transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);
-    void transformHighQuality   (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap, bool fullImage);
+    void transformGeneral(TransformMode mode, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap);
 
     void sharpenHaloCtrl    (float** luminance, float** blurmap, float** base, int W, int H, const SharpeningParams &sharpenParam);
     void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H, SharpeningParams &sharpenParam);
@@ -70,6 +74,7 @@ class ImProcFunctions
     bool needsGradient      ();
     bool needsVignetting    ();
     bool needsLCP           ();
+    bool needsLensfun();
 //   static cmsUInt8Number* Mempro = NULL;
 
     inline void interpolateTransformCubic (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul)
@@ -198,7 +203,7 @@ public:
     ImProcFunctions       (const ProcParams* iparams, bool imultiThread = true)
         : monitorTransform (nullptr), lab2outputTransform (nullptr), output2monitorTransform (nullptr), params (iparams), scale (1), multiThread (imultiThread), lumimul{} {}
     ~ImProcFunctions      ();
-
+    bool needsLuminanceOnly() { return !(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient());}
     void setScale         (double iscale);
 
     bool needsTransform   ();
@@ -235,8 +240,7 @@ public:
     void colorCurve       (LabImage* lold, LabImage* lnew);
     void sharpening       (LabImage* lab, float** buffer, SharpeningParams &sharpenParam);
     void sharpeningcam    (CieImage* ncie, float** buffer);
-    void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
-                           double focalLen, double focalLen35mm, float focusDist, double fNumber, int rawRotationDeg, bool fullImage);
+    void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const ImageMetaData *metadata, int rawRotationDeg, bool fullImage);
     float resizeScale     (const ProcParams* params, int fw, int fh, int &imw, int &imh);
     void lab2monitorRgb   (LabImage* lab, Image8* image);
     void resize           (Image16* src, Image16* dst, float dScale);
@@ -347,11 +351,11 @@ public:
     Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool bw, GammaValues *ga = nullptr);
     // CieImage *ciec;
 
-    bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LCPMapper *pLCPMap = nullptr);
-    bool transCoord       (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LCPMapper *pLCPMap = nullptr);
+    bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
+    bool transCoord       (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr);
     static void getAutoExp       (const LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
     static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);
-    double getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap = nullptr);
+    double getTransformAutoFill (int oW, int oH, const LensCorrection *pLCPMap = nullptr);
     void rgb2lab (const Imagefloat &src, LabImage &dst, const Glib::ustring &workingSpace);
     void lab2rgb (const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace);
 };

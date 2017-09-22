@@ -53,14 +53,13 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false
     colortoning         = Gtk::manage (new ColorToning ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     lensProf            = Gtk::manage (new LensProfilePanel ());
-    lensProf->setLensGeomRef (lensgeom);
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     vibrance            = Gtk::manage (new Vibrance ());
     colorappearance     = Gtk::manage (new ColorAppearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
-    retinex               = Gtk::manage (new Retinex ());
+    retinex             = Gtk::manage (new Retinex ());
     gradient            = Gtk::manage (new Gradient ());
     pcvignette          = Gtk::manage (new PCVignette ());
     perspective         = Gtk::manage (new PerspCorrection ());

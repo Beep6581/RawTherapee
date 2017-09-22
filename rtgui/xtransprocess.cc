@@ -19,7 +19,7 @@
 #include "xtransprocess.h"
 #include "options.h"
 #include "guiutils.h"
-#include <regex>
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -30,8 +30,30 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     method = Gtk::manage (new MyComboBoxText ());
 
     for( size_t i = 0; i < procparams::RAWParams::XTransSensor::numMethods; i++) {
-        static const std::regex what ("[() -]");
-        const std::string langKey = std::regex_replace (procparams::RAWParams::XTransSensor::methodstring[i], what, "");
+        const std::string langKey =
+            [i]() -> std::string
+            {
+                const std::string str(procparams::RAWParams::XTransSensor::methodstring[i]);
+
+                std::string res;
+                for (const auto& c : str) {
+                    switch (c) {
+                        case '(':
+                        case ')':
+                        case ' ':
+                        case '-': {
+                            continue;
+                        }
+
+                        default: {
+                            res += c;
+                            break;
+                        }
+                    }
+                }
+
+                return res;
+            }();
         method->append(M("TP_RAW_" + Glib::ustring(langKey).uppercase()));
     }
 

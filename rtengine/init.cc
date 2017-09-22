@@ -30,6 +30,7 @@
 #include "rtthumbnail.h"
 #include "profilestore.h"
 #include "../rtgui/threadutils.h"
+#include "rtlensfun.h"
 
 namespace rtengine
 {
@@ -50,6 +51,7 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     Color::init ();
     PerceptualToneCurve::init ();
     RawImageSource::init ();
+    LFDatabase::init(s->lensfunDbDirectory);
     delete lcmsMutex;
     lcmsMutex = new MyMutex;
     dfm.init( s->darkFramesPath );

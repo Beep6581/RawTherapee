@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.53 - requires RT 5.0 (Gtk+ >= 3.20)
+  Version 2.56 - requires RT 5.0 (Gtk+ >= 3.20)
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1035,36 +1035,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-right: 0;
 }
 
-#EditorTopPanel > box:nth-child(9) > button.image-button:not(:nth-child(6)) {
+#EditorTopPanel > box:nth-child(9) > button.image-button {
     min-width: 0;
-    padding-left: 0.33334em;
-    padding-right: 0.33334em;
-}
-
-#EditorTopPanel > box:nth-child(9) > button.image-button:nth-child(6) {
-    -gtk-icon-shadow: none;
-}
-#EditorTopPanel > box > box > button {
-    min-height: 0.625em;
-    min-width: 0;
-    margin: 0 0.16667em;
-    padding: 0 0.16667em;
-    border: 0.08334em solid transparent;
-    background-color: transparent;
-    background-image: none;
-    box-shadow: none;
-}
-#EditorTopPanel > box > box > button:hover {
-    background-color: transparent;
-    background-image: none;
-    border: 0.08334em solid transparent;
-    box-shadow: none;
-}
-#EditorTopPanel > box > box > button:checked {
-    background-color: transparent;
-    background-image: none;
-    border: 0.08334em solid @bg-button-border;
-    box-shadow: none;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
 }
 
 /*Button editor bottom*/
@@ -1863,5 +1837,4 @@ headerbar:backdrop {
 headerbar .title:backdrop {
     color: alpha(@winTitle,.60);
 }
-/**/
 /*** end ***************************************************************************************/

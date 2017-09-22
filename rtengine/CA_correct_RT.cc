@@ -134,12 +134,12 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
     }
 
     // local variables
-    const int width = W, height = H;
+    const int width = W + (W & 1), height = H;
     //temporary array to store simple interpolation of G
-    float *Gtmp = (float (*)) malloc ((height * width + ((height * width) & 1)) / 2 * sizeof * Gtmp);
+    float *Gtmp = (float (*)) malloc ((height * width) / 2 * sizeof * Gtmp);
 
     // temporary array to avoid race conflicts, only every second pixel needs to be saved here
-    float *RawDataTmp = (float*) malloc( (height * width + ((height * width) & 1)) * sizeof(float) / 2);
+    float *RawDataTmp = (float*) malloc( (height * width) * sizeof(float) / 2);
 
     float blockave[2][2] = {{0, 0}, {0, 0}}, blocksqave[2][2] = {{0, 0}, {0, 0}}, blockdenom[2][2] = {{0, 0}, {0, 0}}, blockvar[2][2];
 
@@ -1024,9 +1024,9 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                         int c = FC(rr, cc);
                         int GRBdir0 = GRBdir[0][c];
                         int GRBdir1 = GRBdir[1][c];
+#ifdef __SSE2__
                         vfloat shifthfracc = F2V(shifthfrac[c]);
                         vfloat shiftvfracc = F2V(shiftvfrac[c]);
-#ifdef __SSE2__
                         for (int indx = rr * ts + cc; cc < cc1 - 14; cc += 8, indx += 8) {
                             //interpolate colour difference from optical R/B locations to grid locations
                             vfloat grbdiffinthfloor = vintpf(shifthfracc, LVFU(grbdiff[(indx - GRBdir1) >> 1]), LVFU(grbdiff[indx >> 1]));
