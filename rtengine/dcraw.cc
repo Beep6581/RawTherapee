@@ -3066,25 +3066,25 @@ void CLASS sony_arw2_load_raw()
 #pragma omp parallel
 #endif
 {
+    uchar *data = new (std::nothrow) uchar[raw_width + 1];
+    merror(data, "sony_arw2_load_raw()");
     IMFILE ifpthr = *ifp;
+    int pos = ifpthr.pos;
+    ushort pix[16];
+
 #if defined( _OPENMP ) && defined( MYFILE_MMAP )
+    // only master thread will update the progress bar
+    ifpthr.plistener = nullptr;
     #pragma omp master
-#endif
     {
     ifpthr.plistener = ifp->plistener;
     }
-    uchar *data = new (std::nothrow) uchar[raw_width + 1];
-    merror(data, "sony_arw2_load_raw()");
-    ushort pix[16];
-    int pos = ifpthr.pos;
-
-#if defined( _OPENMP ) && defined( MYFILE_MMAP )
     #pragma omp for schedule(dynamic,16) nowait
 #endif
 
     for (int row = 0; row < height; row++) {
         fseek(&ifpthr, pos + row * raw_width, SEEK_SET);
-        fread (data, 1, raw_width, &ifpthr);
+        fread(data, 1, raw_width, &ifpthr);
         uchar *dp = data;
         for (int col = 0; col < raw_width - 30; dp += 16) {
             int val = sget4(dp);
@@ -3093,14 +3093,14 @@ void CLASS sony_arw2_load_raw()
             int imax = 0x0f & val >> 22;
             int imin = 0x0f & val >> 26;
             int bit = 30;
-            for (int i=0; i < 16; i++) {
+            for (int i = 0; i < 16; i++) {
                 if (i == imax) {
                     pix[i] = max;
                 } else if (i == imin) {
                     pix[i] = min;
                 } else {
                     int sh;
-                    for (sh = 0; sh < 4 && 0x80 << sh <= max-min; sh++)
+                    for (sh = 0; sh < 4 && 0x80 << sh <= max - min; sh++)
                         ;
                     pix[i] = ((sget2(dp + (bit >> 3)) >> (bit & 7) & 0x7f) << sh) + min;
                     pix[i] = std::min(pix[i], (ushort)0x7ff);
