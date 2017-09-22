@@ -42,6 +42,7 @@
 #41 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
 #42 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
 #43 21.07.2017 Erweiterung (TooWaBoo) RT 5.1
+#44 21.09.2017 Erweiterung (TooWaBoo) RT 5.2
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -463,8 +464,8 @@ HISTORY_MSG_173;(Rauschreduzierung)\nLuminanzdetails
 HISTORY_MSG_174;(CIECAM02)
 HISTORY_MSG_175;(CIECAM02) - Szene\nCAT02-Adaptation
 HISTORY_MSG_176;(CIECAM02)\nBetrachtungsbed.\nUmgebung
-HISTORY_MSG_177;(CIECAM02) - Szene\nLeuchtstärke
-HISTORY_MSG_178;(CIECAM02)\nBetrachtungsbed.\nLeuchtstärke
+HISTORY_MSG_177;(CIECAM02) - Szene\nLuminanz
+HISTORY_MSG_178;(CIECAM02)\nBetrachtungsbed.\nLuminanz
 HISTORY_MSG_179;(CIECAM02) - Szene\nWeißpunktmodell
 HISTORY_MSG_180;(CIECAM02) - Helligkeit (J)
 HISTORY_MSG_181;(CIECAM02) - Buntheit (H)
@@ -492,7 +493,7 @@ HISTORY_MSG_202;(Rauschreduzierung)\nDelta-Chrominanz\nBlau / Gelb
 HISTORY_MSG_203;(Rauschreduzierung)\nMethode
 HISTORY_MSG_204;(Sensor-Matrix)\nFarbinterpolation\nLMMSE-Verbesserung
 HISTORY_MSG_205;(CIECAM02)\nBetrachtungsbed.\nHot / Bad-Pixelfilter
-HISTORY_MSG_206;(CIECAM02) - Szene\nAuto-Leuchtstärke
+HISTORY_MSG_206;(CIECAM02) - Szene\nAuto-Luminanz
 HISTORY_MSG_207;(Farbsaum entfernen)\nFarbtonkurve
 HISTORY_MSG_208;(Weißabgleich)\nBlau / Rot-Korrektur
 HISTORY_MSG_210;(Grauverlaufsfilter)\nRotationswinkel
@@ -1322,9 +1323,9 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen\nTaste: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen\nTaste: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Vertikal spiegeln
-TP_COLORAPP_ADAPTSCENE;Leuchtstärke (cd/m²)
+TP_COLORAPP_ADAPTSCENE;Luminanz (cd/m²)
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute Luminanz der Szenenleuchstärket\n(normalerweise 2000cd/m²)
-TP_COLORAPP_ADAPTVIEWING;Leuchtstärke (cd/m²)
+TP_COLORAPP_ADAPTVIEWING;Luminanz (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute Luminanz der Betrachtungsumgebung\n(normalerweise 16cd/m²)
 TP_COLORAPP_ADAP_AUTO_TOOLTIP;Wenn aktiviert (empfohlen), werden die optimalen\nWerte aus den Exif-Daten automatisch berechnet.
 TP_COLORAPP_ALGO;Algorithmus
@@ -2189,35 +2190,35 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!DONT_SHOW_AGAIN;Don't show this message again.
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTORY_MSG_476;CAM02 - Temp out
-!HISTORY_MSG_477;CAM02 - Green out
-!HISTORY_MSG_478;CAM02 - Yb out
-!HISTORY_MSG_479;CAM02 - CAT02 adaptation out
-!HISTORY_MSG_480;CAM02 - Automatic CAT02 out
-!HISTORY_MSG_481;CAM02 - Temp scene
-!HISTORY_MSG_482;CAM02 - Green scene
-!HISTORY_MSG_483;CAM02 - Yb scene
-!HISTORY_MSG_484;CAM02 - Auto Yb scene
-!HISTORY_MSG_485;Lens Correction
-!HISTORY_MSG_486;Lens Correction - Camera
-!HISTORY_MSG_487;Lens Correction - Lens
-!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-!LENSPROFILE_CORRECTION_LCPFILE;LCP File
-!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
-!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
-!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-!PREFERENCES_D50_OLD;5000K
-!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-!PREFERENCES_LANG;Language
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
-!PREFERENCES_THEME;Theme
-!TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
-!TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_YB;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
-!TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
+DONT_SHOW_AGAIN;Meldung nicht mehr anzeigen.
+GIMP_PLUGIN_INFO;Willkommen zum RawTherapee GIMP-Plugin!\nNach den Änderungen bitte das RawTherapee-Fenster schließen.\nDas Bild wird dann automatisch in GIMP importiert.
+HISTORY_MSG_476;(CIECAM02)\nBetrachtungsbed.\nFarbtemperatur
+HISTORY_MSG_477;(CIECAM02)\nBetrachtungsbed.\nTönung
+HISTORY_MSG_478;(CIECAM02)\nBetrachtungsbed.\nYb% (Ø Luminanz)
+HISTORY_MSG_479;(CIECAM02)\nBetrachtungsbed.\nCAT02 Adaptation
+HISTORY_MSG_480;(CIECAM02)\nBetrachtungsbed.\nAuto CAT02 Adaptation
+HISTORY_MSG_481;(CIECAM02) - Szene\nFarbtemperatur
+HISTORY_MSG_482;(CIECAM02) - Szene\nTönung
+HISTORY_MSG_483;(CIECAM02) - Szene\nYb% (Ø Luminanz)
+HISTORY_MSG_484;(CIECAM02) - Szene\nAuto Yb%
+HISTORY_MSG_485;(Objektivkorrektur)\nProfil
+HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
+HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
+LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
+LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
+LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
+LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
+MAIN_TOOLTIP_BACKCOLOR3;Hintergrundfarbe der Vorschau: <b>Mittleres Grau</b>\nTaste: <b>9</b>
+PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
+PREFERENCES_D50_OLD;5000K
+PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
+PREFERENCES_LANG;Sprache
+PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt sichern
+PREFERENCES_THEME;Oberflächendesign
+TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02 + [Ausgabe]
+TP_COLORAPP_NEUTRAL;Zurücksetzen
+TP_COLORAPP_NEUTRAL_TIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
+TP_COLORAPP_TEMP_TOOLTIP;Um eine Farbtemperatur auszuwählen\nsetzen Sie die Tönung immer auf "1".\nA Temp=2856\nD50 Temp=5003\nD55 Temp=5503\nD65 Temp=6504\nD75 Temp=7504
+TP_COLORAPP_YB;Yb% (Ø Luminanz)
+TP_COLORAPP_YBSCENE;Yb% (Ø Luminanz)
+TP_COLORAPP_YBSCENE_TOOLTIP;Wenn aktiviert, wird der Durchschnittswert der Luminanz berechnet.
