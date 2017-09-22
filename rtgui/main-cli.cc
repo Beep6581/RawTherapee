@@ -424,12 +424,16 @@ int processLineParams ( int argc, char **argv )
                         }
                     } else {
                         outputType = "jpg";
-                        compression = atoi (currParam.substr (2).c_str());
+                        if(currParam.size() < 3) {
+                            compression = 92;
+                        } else {
+                            compression = atoi (currParam.substr (2).c_str());
 
-                        if (compression < 0 || compression > 100) {
-                            std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
-                            deleteProcParams (processingParams);
-                            return -3;
+                            if (compression < 0 || compression > 100) {
+                                std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
+                                deleteProcParams (processingParams);
+                                return -3;
+                            }
                         }
                     }
 
