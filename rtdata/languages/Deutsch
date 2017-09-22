@@ -78,6 +78,7 @@ CURVEEDITOR_TOOLTIPPASTE;Kurve aus Zwischenablage einfügen
 CURVEEDITOR_TOOLTIPSAVE;Kurve speichern
 CURVEEDITOR_TYPE;Typ:
 DIRBROWSER_FOLDERS;Ordner
+DONT_SHOW_AGAIN;Meldung nicht mehr anzeigen.
 DYNPROFILEEDITOR_DELETE;Löschen
 DYNPROFILEEDITOR_EDIT;Ändern
 DYNPROFILEEDITOR_EDIT_RULE;Profilregel ändern
@@ -276,6 +277,7 @@ GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Speichern
 GENERAL_UNCHANGED;(Unverändert)
 GENERAL_WARNING;Warnung
+GIMP_PLUGIN_INFO;Willkommen zum RawTherapee GIMP-Plugin!\nNach den Änderungen bitte das RawTherapee-Fenster schließen.\nDas Bild wird dann automatisch in GIMP importiert.
 HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden\n\nZum Fixieren/Lösen der Anzeige muss mit der\nrechten Maustaste ins Bildfenster geklickt werden.
 HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein/ausblenden
@@ -762,6 +764,18 @@ HISTORY_MSG_472;(Sensor-Matrix)\nFarbinterpolation\nWeicher Übergang
 HISTORY_MSG_473;(Sensor-Matrix)\nFarbinterpolation\nLMMSE für Bewegungs-\nteile verwenden
 HISTORY_MSG_474;(Sensor-Matrix)\nFarbinterpolation\nFrame-Helligkeit angleichen
 HISTORY_MSG_475;(Sensor-Matrix)\nFarbinterpolation)\nAusgleich pro Kanal
+HISTORY_MSG_476;(CIECAM02)\nBetrachtungsbed.\nFarbtemperatur
+HISTORY_MSG_477;(CIECAM02)\nBetrachtungsbed.\nTönung
+HISTORY_MSG_478;(CIECAM02)\nBetrachtungsbed.\nYb% (Ø Luminanz)
+HISTORY_MSG_479;(CIECAM02)\nBetrachtungsbed.\nCAT02 Adaptation
+HISTORY_MSG_480;(CIECAM02)\nBetrachtungsbed.\nAuto CAT02 Adaptation
+HISTORY_MSG_481;(CIECAM02) - Szene\nFarbtemperatur
+HISTORY_MSG_482;(CIECAM02) - Szene\nTönung
+HISTORY_MSG_483;(CIECAM02) - Szene\nYb% (Ø Luminanz)
+HISTORY_MSG_484;(CIECAM02) - Szene\nAuto Yb%
+HISTORY_MSG_485;(Objektivkorrektur)\nProfil
+HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
+HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -808,6 +822,10 @@ IPTCPANEL_TITLE;Titel
 IPTCPANEL_TITLEHINT;Geben Sie einen kurzen lesbaren Namen\nfür das Bild ein, z.B. den Dateinamen.
 IPTCPANEL_TRANSREFERENCE;Verarbeitungs-ID
 IPTCPANEL_TRANSREFERENCEHINT;Geben Sie eine Kennung zur Kontrolle oder\nVerfolgung des Arbeitsablaufes ein.
+LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
+LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
+LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
+LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
@@ -866,6 +884,7 @@ MAIN_TAB_WAVELET_TOOLTIP;Taste: <b>Alt</b> + <b>w</b>
 MAIN_TOOLTIP_BACKCOLOR0;Hintergrundfarbe der Vorschau basierend auf dem: <b>Oberflächendesign</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Hintergrundfarbe der Vorschau: <b>Schwarz\n</b>Taste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Hintergrundfarbe der Vorschau: <b>Weiß</b>\nTaste: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;Hintergrundfarbe der Vorschau: <b>Mittleres Grau</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher-Ansicht:</b> Sperren / Entsperren\n\n<b>Gesperrt</b>: Friert die Vorher-Ansicht ein, so\ndass sich die Gesamtwirkung mehrerer\nBearbeitungsschritte beurteilen lässt.\n\n<b>Entsperrt</b>: Die Vorher-Ansicht hinkt dem\naktuellen Bild immer einen Bearbeitungs-\nschritt hinterher.
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden\nTaste: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten\nTaste: <b>&lt;</b>
@@ -975,6 +994,7 @@ PREFERENCES_AUTLISSTD;Hoch
 PREFERENCES_AUTLISVLOW;Keine
 PREFERENCES_AUTLOW;Niedrig
 PREFERENCES_AUTOMONPROFILE;Automatisch das für den aktuellen Monitor festgelegte Profil verwenden.
+PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
 PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHADDALL;Alle hinzufügen
@@ -1011,6 +1031,7 @@ PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;Tag-ID
 PREFERENCES_CUSTPROFBUILDPATH;Anwendungspfad
 PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transparenz für Schnittmaske
 PREFERENCES_D50;5000K
+PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
@@ -1054,6 +1075,7 @@ PREFERENCES_GREY05;Yb = 05 CIE L#30
 PREFERENCES_GREY10;Yb = 10 CIE L#40
 PREFERENCES_GREY15;Yb = 15 CIE L#45
 PREFERENCES_GREY18;Yb = 18 CIE L#50
+PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb = 23 CIE L#55
 PREFERENCES_GREY30;Yb = 30 CIE L#60
 PREFERENCES_GREY40;Yb = 40 CIE L#70
@@ -1075,6 +1097,7 @@ PREFERENCES_INTENT_PERCEPTUAL;Wahrnehmungsabhängig
 PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Zeige das eingebettete JPEG als Miniaturbild, wenn die RAW-Datei noch nicht editiert wurde
+PREFERENCES_LANG;Sprache
 PREFERENCES_LANGAUTODETECT;Systemsprache verwenden
 PREFERENCES_LEVAUTDN;Rauschreduzierungsstufe
 PREFERENCES_LEVDN;Zellengröße
@@ -1136,6 +1159,7 @@ PREFERENCES_REMEMBERZOOMPAN;Zoom und Bildposition merken
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Öffnen eines neuen Bildes mit den Zoom- und Positionswerten\ndes vorangegangenen Bildes.\n\nFunktioniert nur unter folgenden Bedingungen:\nEin-Reitermodus aktiv\n“Demosaikmethode für 100%-Ansicht“ muss auf “Wie im Bild-\nverarbeitungsprofil vorgegeben“ eingestellt sein.
 PREFERENCES_RGBDTL_LABEL;Maximale Anzahl Threads für Rauschreduzierung
 PREFERENCES_RGBDTL_TOOLTIP;Die Rauschreduzierung benötigt mindestens 128MB RAM für ein 10 Megapixel-Bild oder 512MB für ein 40 Megapixel-Bild, und zusätzlich 128MB RAM pro Thread. Je mehr Threads parallel ablaufen, desto schneller ist die Berechnung. Bei Einstellung "0" werden so viele Threads wie möglich benutzt.
+PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt sichern
 PREFERENCES_SELECTFONT;Schriftart
 PREFERENCES_SELECTFONT_COLPICKER;Schriftart für die Farbwähler
 PREFERENCES_SELECTLANG;Sprache
@@ -1166,6 +1190,7 @@ PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_PERFORMANCE;Performance & Qualität
 PREFERENCES_TAB_SOUND;Klänge
+PREFERENCES_THEME;Oberflächendesign
 PREFERENCES_TIMAX;Hoch
 PREFERENCES_TINB;Anzahl Kacheln
 PREFERENCES_TISTD;Standard
@@ -1359,6 +1384,7 @@ TP_COLORAPP_DATACIE;CIECAM02-Ausgabe-Histogramm in\nKurven anzeigen
 TP_COLORAPP_DATACIE_TOOLTIP;Wenn aktiviert, zeigen die Histogramme\nder CIECAM02-Kurven die angenäherten\nWerte/Bereiche für <b>J oder Q</b> und <b>C, S oder M</b>\nNACH den CIECAM02-Anpassungen an. Das\nbetrifft nicht das Haupt-Histogramm.\n\nWenn deaktiviert, zeigen die Histogramme\nder CIECAM02-Kurven die L*a*b*-Werte\nVOR den CIECAM02-Anpassungen an.
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Wenn aktiviert (empfohlen), wird ein optimaler\nWert berechnet, der von CAT02 und CIECAM02\nverwendet wird.\nUm den Wert manuell zu setzen, muss die Option\ndeaktiviert sein (Werte über 64 sind empfohlen).
 TP_COLORAPP_DEGREE_TOOLTIP;Umfang der “CIE Chromatic Adaptation Transform 2002“
+TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02 + [Ausgabe]
 TP_COLORAPP_GAMUT;Gamutkontrolle (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Gamutkontrolle im L*a*b*-Modus erlauben.
 TP_COLORAPP_HUE;Farbton (H)
@@ -1371,6 +1397,8 @@ TP_COLORAPP_LIGHT;Helligkeit (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Helligkeit in CIECAM02 unterscheidet sich\nvon L*a*b* und RGB Helligkeit
 TP_COLORAPP_MODEL;Weißpunktmodell
 TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRT's Weißabgleich wird für die Szene verwendet,\nCIECAM02 auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02] + [Ausgabe]:</b>\nRT's Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
+TP_COLORAPP_NEUTRAL;Zurücksetzen
+TP_COLORAPP_NEUTRAL_TIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
 TP_COLORAPP_RSTPRO_TOOLTIP;Hautfarbtöne schützen\nWirkt sich auf Regler und Kurven aus.
 TP_COLORAPP_SHARPCIE;--unused--
@@ -1391,10 +1419,14 @@ TP_COLORAPP_TCMODE_LABEL2;Tonwertkurve 2 Modus
 TP_COLORAPP_TCMODE_LABEL3;Farbkurve Modus
 TP_COLORAPP_TCMODE_LIGHTNESS;Helligkeit (J)
 TP_COLORAPP_TCMODE_SATUR;Sättigung (S)
+TP_COLORAPP_TEMP_TOOLTIP;Um eine Farbtemperatur auszuwählen\nsetzen Sie die Tönung immer auf "1".\nA Temp=2856\nD50 Temp=5003\nD55 Temp=5503\nD65 Temp=6504\nD75 Temp=7504
 TP_COLORAPP_TONECIE;Dynamikkompression mittels\nCIECAM02-Helligkeit (Q)
 TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird die Dynamikkompression im L*a*b*-Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für die Dynamikkompression verwendet. Das Werkzeug Dynamikkompression muss aktiviert sein, damit diese Option berücksichtigt wird.
 TP_COLORAPP_WBCAM;[RT+CAT02] + [Ausgabe]
 TP_COLORAPP_WBRT;[RT] + [Ausgabe]
+TP_COLORAPP_YB;Yb% (Ø Luminanz)
+TP_COLORAPP_YBSCENE;Yb% (Ø Luminanz)
+TP_COLORAPP_YBSCENE_TOOLTIP;Wenn aktiviert, wird der Durchschnittswert der Luminanz berechnet.
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automatisch
 TP_COLORTONING_BALANCE;Farbausgleich
@@ -2186,39 +2218,3 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-DONT_SHOW_AGAIN;Meldung nicht mehr anzeigen.
-GIMP_PLUGIN_INFO;Willkommen zum RawTherapee GIMP-Plugin!\nNach den Änderungen bitte das RawTherapee-Fenster schließen.\nDas Bild wird dann automatisch in GIMP importiert.
-HISTORY_MSG_476;(CIECAM02)\nBetrachtungsbed.\nFarbtemperatur
-HISTORY_MSG_477;(CIECAM02)\nBetrachtungsbed.\nTönung
-HISTORY_MSG_478;(CIECAM02)\nBetrachtungsbed.\nYb% (Ø Luminanz)
-HISTORY_MSG_479;(CIECAM02)\nBetrachtungsbed.\nCAT02 Adaptation
-HISTORY_MSG_480;(CIECAM02)\nBetrachtungsbed.\nAuto CAT02 Adaptation
-HISTORY_MSG_481;(CIECAM02) - Szene\nFarbtemperatur
-HISTORY_MSG_482;(CIECAM02) - Szene\nTönung
-HISTORY_MSG_483;(CIECAM02) - Szene\nYb% (Ø Luminanz)
-HISTORY_MSG_484;(CIECAM02) - Szene\nAuto Yb%
-HISTORY_MSG_485;(Objektivkorrektur)\nProfil
-HISTORY_MSG_486;(Objektivkorrektur)\nProfil - Kamera
-HISTORY_MSG_487;(Objektivkorrektur)\nProfil - Objektiv
-LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
-LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
-LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
-LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
-MAIN_TOOLTIP_BACKCOLOR3;Hintergrundfarbe der Vorschau: <b>Mittleres Grau</b>\nTaste: <b>9</b>
-PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
-PREFERENCES_D50_OLD;5000K
-PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
-PREFERENCES_LANG;Sprache
-PREFERENCES_SAVE_TP_OPEN_NOW;Werkzeugstatus jetzt sichern
-PREFERENCES_THEME;Oberflächendesign
-TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02 + [Ausgabe]
-TP_COLORAPP_NEUTRAL;Zurücksetzen
-TP_COLORAPP_NEUTRAL_TIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
-TP_COLORAPP_TEMP_TOOLTIP;Um eine Farbtemperatur auszuwählen\nsetzen Sie die Tönung immer auf "1".\nA Temp=2856\nD50 Temp=5003\nD55 Temp=5503\nD65 Temp=6504\nD75 Temp=7504
-TP_COLORAPP_YB;Yb% (Ø Luminanz)
-TP_COLORAPP_YBSCENE;Yb% (Ø Luminanz)
-TP_COLORAPP_YBSCENE_TOOLTIP;Wenn aktiviert, wird der Durchschnittswert der Luminanz berechnet.
