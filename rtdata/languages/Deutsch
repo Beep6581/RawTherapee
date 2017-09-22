@@ -2209,7 +2209,7 @@ LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
 LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
 LENSPROFILE_LENS_WARNING;Warnung: Der Cropfaktor des Profils entspricht nicht dem des Objektivs.\nDies kann zu einem fehlerhaften Ergebnis führen.
 MAIN_TOOLTIP_BACKCOLOR3;Hintergrundfarbe der Vorschau: <b>Mittleres Grau</b>\nTaste: <b>9</b>
-PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern.
+PREFERENCES_AUTOSAVE_TP_OPEN;Werkzeugstatus vor dem Beenden automatisch speichern
 PREFERENCES_D50_OLD;5000K
 PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 PREFERENCES_LANG;Sprache
