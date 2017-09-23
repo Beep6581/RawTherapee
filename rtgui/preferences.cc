@@ -216,6 +216,8 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     appendBehavList (mi, M ("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
     appendBehavList (mi, M ("TP_SHARPENING_RLD_DAMPING"), ADDSET_SHARP_DAMPING, false);
     appendBehavList (mi, M ("TP_SHARPENING_RLD_ITERATIONS"), ADDSET_SHARP_ITER, false);
+    appendBehavList (mi, M ("TP_SHARPENING_EDTOLERANCE"), ADDSET_SHARP_EDGETOL, false);
+    appendBehavList (mi, M ("TP_SHARPENING_HALOCONTROL"), ADDSET_SHARP_HALOCTRL, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_SHARPENEDGE_LABEL"));
@@ -342,7 +344,6 @@ Gtk::Widget* Preferences::getBatchProcPanel ()
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M ("TP_WAVELET_LABEL"));
     appendBehavList (mi, M ("TP_WAVELET_LEVELS"), ADDSET_WA_THRES, true);
-    //appendBehavList (mi, M("TP_WAVELET_CONTRAST"), ADDSET_WA, true);
     appendBehavList (mi, M ("TP_WAVELET_THRESHOLD"), ADDSET_WA_THRESHOLD, true);
     appendBehavList (mi, M ("TP_WAVELET_THRESHOLD2"), ADDSET_WA_THRESHOLD2, true);
     appendBehavList (mi, M ("TP_WAVELET_CHRO"), ADDSET_WA_CHRO, true);
