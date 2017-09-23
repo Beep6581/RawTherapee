@@ -31,7 +31,7 @@ scrollbar:not(.overlay-indicator):hover {
     color: #666666;
 }
 
-.view:selected {
+.view:selected:not(check):not(radio) {
     color: #262626;
     background-color: #AAAAAA
 }
