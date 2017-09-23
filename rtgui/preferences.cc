@@ -420,22 +420,21 @@ void Preferences::appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustri
     ci->set_value (behavColumns.addsetid, id);
 }
 
+void Preferences::behAddSetRadioToggled (const Glib::ustring& path, bool add)
+{
+    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
+    iter->set_value(behavColumns.badd, add);
+    iter->set_value(behavColumns.bset, !add);
+}
+
 void Preferences::behAddRadioToggled (const Glib::ustring& path)
 {
-
-    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
-    //bool set = iter->get_value (behavColumns.bset);
-    iter->set_value (behavColumns.bset, false);
-    iter->set_value (behavColumns.badd, true);
+    behAddSetRadioToggled(path, true);
 }
 
 void Preferences::behSetRadioToggled (const Glib::ustring& path)
 {
-
-    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
-    //bool add = iter->get_value (behavColumns.badd);
-    iter->set_value (behavColumns.bset, true);
-    iter->set_value (behavColumns.badd, false);
+    behAddSetRadioToggled(path, false);
 }
 
 
@@ -2051,14 +2050,13 @@ void Preferences::fillPreferences ()
 
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
 
-    for (size_t i = 0; i < moptions.baBehav.size(); i++)
-        for (Gtk::TreeIter sections = behModel->children().begin(); sections != behModel->children().end(); sections++)
-            for (Gtk::TreeIter adjs = sections->children().begin(); adjs != sections->children().end(); adjs++)
-                if (adjs->get_value (behavColumns.addsetid) == (int)i) {
-                    adjs->set_value (behavColumns.badd, moptions.baBehav[i] == 1);
-                    adjs->set_value (behavColumns.bset, moptions.baBehav[i] != 1);
-                    break;
-                }
+    for (Gtk::TreeIter sections = behModel->children().begin(); sections != behModel->children().end(); ++sections) {
+        for (Gtk::TreeIter adjs = sections->children().begin(); adjs != sections->children().end(); ++adjs) {
+            const bool add = moptions.baBehav[adjs->get_value(behavColumns.addsetid)];
+            adjs->set_value (behavColumns.badd, add);
+            adjs->set_value (behavColumns.bset, !add);
+        }
+    }
 
     addc.block (false);
     setc.block (false);
@@ -2563,32 +2561,24 @@ bool Preferences::splashClosed (GdkEventAny* event)
     return true;
 }
 
+void Preferences::behAddSetAllPressed (bool add)
+{
+    moptions.baBehav.clear();
+    moptions.baBehav.resize(ADDSET_PARAM_NUM, add);
+    for (Gtk::TreeIter sections = behModel->children().begin(); sections != behModel->children().end(); ++sections) {
+        for (Gtk::TreeIter adjs = sections->children().begin(); adjs != sections->children().end(); ++adjs) {
+            adjs->set_value(behavColumns.badd, add);
+            adjs->set_value(behavColumns.bset, !add);
+        }
+    }
+}
+
 void Preferences::behAddAllPressed ()
 {
-
-    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-        for (size_t i = 0; i < moptions.baBehav.size(); i++)
-            for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
-                for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)
-                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
-                        adjs->set_value (behavColumns.badd, true);
-                        adjs->set_value (behavColumns.bset, false);
-                        break;
-                    }
-    }
+    behAddSetAllPressed(true);
 }
 
 void Preferences::behSetAllPressed ()
 {
-
-    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-        for (size_t i = 0; i < moptions.baBehav.size(); i++)
-            for (Gtk::TreeIter sections = behModel->children().begin();  sections != behModel->children().end(); sections++)
-                for (Gtk::TreeIter adjs = sections->children().begin();  adjs != sections->children().end(); adjs++)
-                    if (adjs->get_value (behavColumns.addsetid) == (int)i) {
-                        adjs->set_value (behavColumns.badd, false);
-                        adjs->set_value (behavColumns.bset, true);
-                        break;
-                    }
-    }
+    behAddSetAllPressed(false);
 }

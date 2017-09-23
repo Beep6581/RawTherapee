@@ -275,8 +275,10 @@ public:
     void clearThumbImagesPressed ();
     void clearAllPressed ();
 
+    void behAddSetRadioToggled (const Glib::ustring& path, bool add);
     void behAddRadioToggled (const Glib::ustring& path);
     void behSetRadioToggled (const Glib::ustring& path);
+    void behAddSetAllPressed (bool add);
     void behAddAllPressed ();
     void behSetAllPressed ();
 
