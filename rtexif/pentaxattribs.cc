@@ -928,6 +928,7 @@ public:
         choices.insert (p_t (256 * 8 + 30, "Sigma 17-70mm f/2.8-4 DC Macro HSM | C"));
         choices.insert (p_t (256 * 8 + 31, "Sigma 18-35mm f/1.8 DC HSM"));
         choices.insert (p_t (256 * 8 + 32, "Sigma 30mm f/1.4 DC HSM | A"));
+        choices.insert (p_t (256 * 8 + 33, "Sigma 18-200mm f/3.5-6.3 DC MACRO HSM"));
         choices.insert (p_t (256 * 8 + 34, "Sigma 18-300mm f/3.5-6.3 DC Macro HSM"));
         choices.insert (p_t (256 * 8 + 59, "HD PENTAX-D FA 150-450mm f/4.5-5.6 ED DC AW"));
         choices.insert (p_t (256 * 8 + 60, "HD PENTAX-D FA* 70-200mm f/2.8 ED DC AW"));
@@ -977,6 +978,7 @@ public:
         choices.insert (p_t (256 * 13 + 19, "smc PENTAX-D FA 645 25mm f/4 AL [IF] SDM AW"));
         choices.insert (p_t (256 * 13 + 20, "HD PENTAX-D FA 645 90mm f/2.8 ED AW SR"));
         choices.insert (p_t (256 * 13 + 253, "HD PENTAX-DA 645 28-45mm f/4.5 ED AW SR"));
+        choices.insert (p_t (256 * 13 + 254, "smc PENTAX-DA 645 25mm f/4 AL [IF] SDM AW"));
         choices.insert (p_t (256 * 21 + 0, "Pentax Q Manual Lens"));
         choices.insert (p_t (256 * 21 + 1, "01 Standard Prime 8.5mm f/1.9"));
         choices.insert (p_t (256 * 21 + 2, "02 Standard Zoom 5-15mm f/2.8-4.5"));

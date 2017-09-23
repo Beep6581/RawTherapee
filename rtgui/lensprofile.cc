@@ -182,7 +182,9 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
         updateDisabled(false);
     } else if (LCPStore::getInstance()->isValidLCPFileName(pp->lensProf.lcpFile)) {
         fcbLCPFile->set_filename (pp->lensProf.lcpFile);
-        updateDisabled(true);
+        if(corrLcpFile->get_active()) {
+            updateDisabled(true);
+        }
     } else {
         fcbLCPFile->unselect_filename(fcbLCPFile->get_filename());
         updateDisabled(false);
@@ -194,17 +196,18 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     const LFDatabase *db = LFDatabase::getInstance();
     LFCamera c;
-    LFLens l;
-    if (metadata) {
-        c = db->findCamera(metadata->getMake(), metadata->getModel());
-        l = db->findLens(c, metadata->getLens());
-    }
     
     if (!setLensfunCamera(pp->lensProf.lfCameraMake, pp->lensProf.lfCameraModel) && !pp->lensProf.lfManual()) {
-        setLensfunCamera(c.getMake(), c.getModel());
+        if (metadata) {
+            c = db->findCamera(metadata->getMake(), metadata->getModel());
+            setLensfunCamera(c.getMake(), c.getModel());
+        }
     }
     if (!setLensfunLens(pp->lensProf.lfLens) && !pp->lensProf.lfManual()) {
-        setLensfunLens(l.getLens());
+        if (metadata) {
+            LFLens l = db->findLens(c, metadata->getLens());
+            setLensfunLens(l.getLens());
+        }
     }
     
     lcModeChanged = lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
@@ -231,7 +234,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 void LensProfilePanel::updateLensfunWarning()
 {
     warning->hide();
-    if (corrLensfunManual->get_active()) {
+    if (corrLensfunManual->get_active() || corrLensfunAuto->get_active()) {
         const LFDatabase *db = LFDatabase::getInstance();
         
         auto itc = lensfunCameras->get_active();
