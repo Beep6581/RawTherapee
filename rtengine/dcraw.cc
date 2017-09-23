@@ -1489,8 +1489,8 @@ void CLASS phase_one_flat_field (int is_float, int nc)
                     }
                 }
             }
-            for (unsigned x=0; x < wide; x++) {
-                for (unsigned c=0; c < nc; c+=2) {
+            for (unsigned x = 0; x < wide; x++) {
+                for (unsigned c = 0; c < nc; c += 2) {
                     mrow[c * wide + x] += mrow[(c + 1) * wide + x];
                 }
             }
@@ -1841,81 +1841,86 @@ void CLASS phase_one_load_raw_c()
 {
 BENCHFUN
     static const int length[] = { 8,7,6,9,11,10,5,12,14,13 };
-    short (*cblack)[2], (*rblack)[2];
 
-    int *offset = (int *) calloc(raw_width * 2 + raw_height * 4, 2);
+    int *offset = (int *)calloc(raw_width * 2 + raw_height * 4, 2);
     fseek(ifp, strip_offset, SEEK_SET);
-    for (int row=0; row < raw_height; row++) {
+    for (int row = 0; row < raw_height; row++) {
         offset[row] = get4();
     }
-    cblack = (short (*)[2]) (offset + raw_height);
+
+    short (*cblack)[2] = (short (*)[2]) (offset + raw_height);
     fseek(ifp, ph1.black_col, SEEK_SET);
     if (ph1.black_col) {
         read_shorts ((ushort *) cblack[0], raw_height * 2);
     }
-    rblack = cblack + raw_height;
+
+    short (*rblack)[2] = cblack + raw_height;
     fseek(ifp, ph1.black_row, SEEK_SET);
     if (ph1.black_row) {
         read_shorts ((ushort *) rblack[0], raw_width * 2);
     }
-    for (int i=0; i < 256; i++) {
+
+    for (int i = 0; i < 256; i++) {
         curve[i] = i * i / 3.969 + 0.5;
     }
 
+#ifdef _OPENMP
 #pragma omp parallel
+#endif
 {
     int len[2], pred[2];
-    IMFILE *ifpthr = new IMFILE;
-    ifpthr->fd = ifp->fd;
-    ifpthr->pos = ifp->pos;
-    ifpthr->size = ifp->size;
-    ifpthr->data = ifp->data;
-    ifpthr->eof = ifp->eof;
-    ifpthr->plistener = nullptr;
-    ifpthr->progress_range = ifp->progress_range;
-    ifpthr->progress_next = ifp->progress_next;
-    ifpthr->progress_current = ifp->progress_current;
+    IMFILE ifpthr = *ifp;
+    ifpthr.plistener = nullptr;
 
-    ph1_bithuff_t ph1_bithuff(this, ifpthr, order);
-    ushort pixel;
+#ifdef _OPENMP
+#pragma omp master
+#endif
+{
+    ifpthr.plistener = ifp->plistener;
+}
 
+    ph1_bithuff_t ph1_bithuff(this, &ifpthr, order);
+
+#ifdef _OPENMP
     #pragma omp for schedule(dynamic,16)
-    for (int row=0; row < raw_height; row++) {
-        int shift = 2*(ph1.format != 8);
-        fseek(ifpthr, data_offset + offset[row], SEEK_SET);
+#endif
+
+    for (int row = 0; row < raw_height; row++) {
+        const int shift = 2 * (ph1.format != 8);
+        fseek(&ifpthr, data_offset + offset[row], SEEK_SET);
         ph1_init();
         pred[0] = pred[1] = 0;
-        for (int col=0; col < raw_width; col++) {
+        for (int col = 0; col < raw_width; col++) {
             if (col >= (raw_width & -8)) {
 	            len[0] = len[1] = 14;
             } else if ((col & 7) == 0) {
-                for (int i=0; i < 2; i++) {
+                for (int i = 0; i < 2; i++) {
                     int j;
-                    for (j=0; j < 5 && !ph1_bits(1); j++);
+                    for (j = 0; j < 5 && !ph1_bits(1); j++)
+                        ;
 	                if (j--) {
-                        len[i] = length[j*2 + ph1_bits(1)];
+                        len[i] = length[j * 2 + ph1_bits(1)];
 	                }
 	            }
             }
-            int i;
-            if ((i = len[col & 1]) == 14) {
+
+            int i = len[col & 1];
+            ushort pixel;
+            if (i == 14) {
 	            pixel = pred[col & 1] = ph1_bits(16);
             } else {
 	            pixel = pred[col & 1] += ph1_bits(i) + 1 - (1 << (i - 1));
             }
-            if (UNLIKELY(pred[col & 1] >> 16)) {
+            if (UNLIKELY(pixel >> 16)) {
                 derror();
             }
             if (ph1.format == 5 && pixel < 256) {
 	            pixel = curve[pixel];
             }
-            int rawVal = (pixel << shift) - ph1.black
-	            + cblack[row][col >= ph1.split_col]
-	            + rblack[col][row >= ph1.split_row];
+            int rawVal = (pixel << shift) - ph1.black + cblack[row][col >= ph1.split_col] + rblack[col][row >= ph1.split_row];
             RAW(row,col) = std::max(rawVal, 0);
         }
     }
-  delete ifpthr;
 }
   free(offset);
   maximum = 0xfffc - ph1.black;
