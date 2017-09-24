@@ -112,7 +112,10 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
         }
     }
 
-    if (data && (this->get_cam_mul(0) == -1 || forceAutoWB)) {
+    if (this->get_cam_mul(0) == -1 || forceAutoWB) {
+        if(!data) { // this happens only for thumbnail creation when get_cam_mul(0) == -1
+            compress_image(0, false);
+        }
         memset(dsum, 0, sizeof dsum);
 
         if (this->isBayer()) {
@@ -673,7 +676,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
     return 0;
 }
 
-float** RawImage::compress_image(int frameNum)
+float** RawImage::compress_image(int frameNum, bool freeImage)
 {
     if( !image ) {
         return nullptr;
@@ -757,8 +760,10 @@ float** RawImage::compress_image(int frameNum)
             }
     }
 
-    free(image); // we don't need this anymore
-    image = nullptr;
+    if(freeImage) {
+        free(image); // we don't need this anymore
+        image = nullptr;
+    }
     return data;
 }
 
