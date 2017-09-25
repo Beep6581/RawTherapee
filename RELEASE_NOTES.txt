@@ -36,7 +36,7 @@ In general:
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
 Changes since 5.2:
-- Lensfun required, specify the path to the lensfun database using the CMake option -DLENSFUNDBDIR="share/lensfun"
+- Lensfun is required. To use the system-wide lensfun database, do not set the CMake option -DLENSFUNDBDIR. To use a custom lensfun database, set -DLENSFUNDBDIR="/absolute/path/to/database"
 
 News Relevant to Developers
 ---------------------------
