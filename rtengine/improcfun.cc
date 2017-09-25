@@ -1892,12 +1892,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     }
 
                 }
-                float meanQ;
 
                 if (std::isnan (mean)) {
                     mean = (sum / ((height) * width)) / 327.68f; //for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
-                    meanQ = (sumQ / ((height) * width));//in case of
-
                 }
             }
 
