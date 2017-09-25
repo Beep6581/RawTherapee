@@ -511,8 +511,7 @@ void Options::setDefaults ()
 #endif
 
     // 0 = SET mode, 1 = ADD mode
-    baBehav.clear();
-    baBehav.resize(ADDSET_PARAM_NUM, 0);
+    baBehav.assign(ADDSET_PARAM_NUM, 0);
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
