@@ -1,21 +1,15 @@
-RAWTHERAPEE 5.2 RELEASE NOTES
------------------------------
-This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
+RAWTHERAPEE 5.3-rc1 RELEASE NOTES
+---------------------------------
+This is RawTherapee 5.3 Release Candidate 1 stable, released on 2017-09-25.
 
 RawTherapee provides you with a selection of powerful tools with which you can practice the art of developing raw photos. Be sure to read RawPedia to understand how each tool works so that you may make the most of it.
 http://rawpedia.rawtherapee.com/
 A great place to start is the "Getting Started" article. Click on "Main page" in the top-left corner when you have finished reading that article to see all other articles.
 
-While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
-- Development versions only had limited testing, so there may be bugs unknown to us.
-- You should report these bugs so that they get fixed for the next stable release. See
-  www.rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
-- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
-- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
-
 News Relevant to Photographers
 ------------------------------
-RawTherapee supports most raw formats, including some unusual ones like those from cameras using Foveon and X-Trans sensors. If you're wondering whether it supports your camera's raw format, first download RawTherapee and try for yourself. If a raw format is not supported it will either not open, or the preview in the Editor tab will appear black, white, or have a strong color cast - usually magenta. In that case, read the "Adding Support for New Raw Formats" RawPedia article.
+RawTherapee supports most raw formats, including Pentax Pixel Shift, Canon Dual-Pixel, and those from Foveon and X-Trans sensors.
+If you're wondering whether it supports your camera's raw format, first download RawTherapee and try for yourself. If a raw format is not supported it will either not open, or the preview in the Editor tab will appear black, white, or have a strong color cast - usually magenta. In that case, read the "Adding Support for New Raw Formats" RawPedia article.
 
 In order to use RawTherapee efficiently you should know that:
 - You can scroll all panels using the mouse scroll-wheel.
@@ -25,7 +19,11 @@ In order to use RawTherapee efficiently you should know that:
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
 
 New features since 5.2:
-- To be filled in once 5.3 is released.
+- CIECAM02 enhanced with control over the scene and viewing conditions.
+- CIECAM02-friendly "Average Surround" color theme and L* middle gray preview background color, takes into account human vision and color appearance with regard to the surrounding color.
+- Manually save the collapsed/expanded state of tools.
+- Lensfun support, for automatic (and manual) profiled lens correction.
+- ACES, DCI-P3 Theater and DCI-P3 D65 output color profiles.
 
 News Relevant to Package Maintainers
 ------------------------------------
@@ -38,14 +36,13 @@ In general:
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
 Changes since 5.2:
-- To be filled in once 5.3 is released.
+- Lensfun required, specify the path to the lensfun database using the CMake option -DLENSFUNDBDIR="share/lensfun"
 
 News Relevant to Developers
 ---------------------------
 - Announce and discuss your plans in GitHub before starting work.
 - Keep branches small so that completed and working features can be merged into the "dev" branch often, and so that they can be abandoned if they head in the wrong direction.
 - Use C++11.
-- Code must be run through astyle.
 
 DOCUMENTATION
 -------------
