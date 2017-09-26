@@ -764,6 +764,10 @@ IPTCPANEL_TITLE;Title
 IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 IPTCPANEL_TRANSREFERENCE;Job ID
 IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+LENSPROFILE_CORRECTION_LCPFILE;LCP File
+LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -932,6 +936,7 @@ PREFERENCES_AUTLISSTD;High
 PREFERENCES_AUTLISVLOW;None
 PREFERENCES_AUTLOW;Low
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
+PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 PREFERENCES_AUTSTD;Standard
 PREFERENCES_BATCH_PROCESSING;Batch Processing
 PREFERENCES_BEHADDALL;All to 'Add'
@@ -1096,6 +1101,7 @@ PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
+PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 PREFERENCES_SELECTFONT;Select main font
 PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 PREFERENCES_SELECTLANG;Select language
@@ -1133,8 +1139,6 @@ PREFERENCES_TISTD;Standard
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
-PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
-PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 PREFERENCES_TUNNELMETADATA;Copy Exif/IPTC/XMP unchanged to output file
 PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
@@ -1357,7 +1361,7 @@ TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
 TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 TP_COLORAPP_TCMODE_SATUR;Saturation
-TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
@@ -2155,7 +2159,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
-LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
-LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
-LENSPROFILE_CORRECTION_LCPFILE;LCP File
-LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.

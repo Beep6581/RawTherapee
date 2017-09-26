@@ -785,6 +785,7 @@ public:
         choices.insert (p_t (183, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"));
         choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | C"));
         choices.insert (p_t (183, "Sigma 150-600mm f/5-6.3 DG OS HSM | S"));
+        choices.insert (p_t (183, "Sigma 100-400mm f/5-6.3 DG OS HSM"));
         choices.insert (p_t (184, "Canon EF 400mm f/2.8L + 2x"));
         choices.insert (p_t (185, "Canon EF 600mm f/4L IS"));
         choices.insert (p_t (186, "Canon EF 70-200mm f/4L"));
@@ -797,7 +798,8 @@ public:
         choices.insert (p_t (194, "Canon EF 80-200mm f/4.5-5.6 USM"));
         choices.insert (p_t (195, "Canon EF 35-105mm f/4.5-5.6 USM"));
         choices.insert (p_t (196, "Canon EF 75-300mm f/4-5.6 USM"));
-        choices.insert (p_t (197, "Canon EF 75-300mm f/4-5.6 IS USM"));
+        choices.insert (p_t (197, "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens"));
+        choices.insert (p_t (197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HS"));
         choices.insert (p_t (198, "Canon EF 50mm f/1.4 USM or Zeiss Lens"));
         choices.insert (p_t (198, "Zeiss Otus 55mm f/1.4 ZE"));
         choices.insert (p_t (198, "Zeiss Otus 85mm f/1.4 ZE"));
@@ -859,11 +861,13 @@ public:
         choices.insert (p_t (490, "Canon EF 8-15mm f/4L Fisheye USM"));
         choices.insert (p_t (491, "Canon EF 300mm f/2.8L IS II USM or Tamron Lens"));
         choices.insert (p_t (491, "Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025)"));
+        choices.insert (p_t (491, "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)"));
         choices.insert (p_t (492, "Canon EF 400mm f/2.8L IS II USM"));
         choices.insert (p_t (493, "Canon EF 500mm f/4L IS II USM or EF 24-105mm f4L IS USM"));
         choices.insert (p_t (493, "Canon EF 24-105mm f/4L IS USM"));
         choices.insert (p_t (494, "Canon EF 600mm f/4.0L IS II USM"));
-        choices.insert (p_t (495, "Canon EF 24-70mm f/2.8L II USM"));
+        choices.insert (p_t (495, "Canon EF 24-70mm f/2.8L II USM or Sigma Lens"));
+        choices.insert (p_t (495, "Sigma 24-70mm F2.8 DG OS HSM | A"));
         choices.insert (p_t (496, "Canon EF 200-400mm f/4L IS USM"));
         choices.insert (p_t (499, "Canon EF 200-400mm f/4L IS USM + 1.4x"));
         choices.insert (p_t (502, "Canon EF 28mm f/2.8 IS USM"));
@@ -872,7 +876,8 @@ public:
         choices.insert (p_t (505, "Canon EF 35mm f/2 IS USM"));
         choices.insert (p_t (506, "Canon EF 400mm f/4 DO IS II USM"));
         choices.insert (p_t (507, "Canon EF 16-35mm f/4L IS USM"));
-        choices.insert (p_t (508, "Canon EF 11-24mm f/4L USM"));
+        choices.insert (p_t (508, "Canon EF 11-24mm f/4L USM or Tamron Lens"));
+        choices.insert (p_t (508, "Tamron 10-24mm f/3.5-4.5 Di II VC HLD"));
         choices.insert (p_t (747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"));
         choices.insert (p_t (747, "Tamron SP 150-600mm F5-6.3 Di VC USD G2"));
         choices.insert (p_t (748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x"));
@@ -896,8 +901,10 @@ public:
         choices.insert (p_t (4156, "Canon EF 50mm f/1.8 STM"));
         choices.insert (p_t (4157, "Canon EF-M 18-150mm 1:3.5-6.3 IS STM"));
         choices.insert (p_t (4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"));
+        choices.insert (p_t (4160, "Canon EF-S 35mm f/2.8 Macro IS STM"));
         choices.insert (p_t (36910, "Canon EF 70-300mm f/4-5.6 IS II USM"));
         choices.insert (p_t (36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"));
+        choices.insert (p_t (61494, "Canon CN-E 85mm T1.3 L F"));
         choices.insert (p_t (65535, "n/a"));
     }
 
@@ -1577,7 +1584,7 @@ public:
         choices[41353216] = "PowerShot SD940 IS / Digital IXUS 120 IS / IXY Digital 220 IS";
         choices[41943040] = "PowerShot A495";
         choices[42008576] = "PowerShot A490";
-        choices[42074112] = "PowerShot A3100 IS / A3150 IS";
+        choices[42074112] = "PowerShot A3100/A3150 IS";
         choices[42139648] = "PowerShot A3000 IS";
         choices[42205184] = "PowerShot SD1400 IS / IXUS 130 / IXY 400F";
         choices[42270720] = "PowerShot SD1300 IS / IXUS 105 / IXY 200F";
@@ -1621,7 +1628,7 @@ public:
         choices[52887552] = "PowerShot A2400 IS";
         choices[52953088] = "PowerShot A2300";
         choices[53673984] = "PowerShot G15";
-        choices[53739520] = "PowerShot SX50";
+        choices[53739520] = "PowerShot SX50 HS";
         choices[53805056] = "PowerShot SX160 IS";
         choices[53870592] = "PowerShot S110 (new)";
         choices[53936128] = "PowerShot SX500 IS";
@@ -1631,6 +1638,7 @@ public:
         choices[54591488] = "PowerShot SX270 HS";
         choices[54657024] = "PowerShot A3500 IS";
         choices[54722560] = "PowerShot A2600";
+        choices[54788096] = "PowerShot SX275 HS";
         choices[54853632] = "PowerShot A1400";
         choices[54919168] = "PowerShot ELPH 130 IS / IXUS 140 / IXY 110F";
         choices[54984704] = "PowerShot ELPH 115/120 IS / IXUS 132/135 / IXY 90F/100F";
@@ -1679,6 +1687,11 @@ public:
         choices[67371009] = "IXY 180";
         choices[67436544] = "PowerShot SX720 HS";
         choices[67502080] = "PowerShot SX620 HS";
+        choices[67567616] = "EOS M6";
+        choices[68157440] = "PowerShot G9 X Mark II";
+        choices[68485120] = "PowerShot ELPH 185 / IXUS 185 / IXY 200";
+        choices[68550656] = "PowerShot SX430 IS";
+        choices[68616192] = "PowerShot SX730 HS";
         choices[100925440] = "PowerShot S100 / Digital IXUS / IXY Digital";
         choices[1074255475] = "DC19/DC21/DC22";
         choices[1074255476] = "XH A1";
@@ -1763,6 +1776,10 @@ public:
         choices[2147484563] = "EOS Rebel T6i / 750D / Kiss X8i";
         choices[2147484673] = "EOS 5DS R";
         choices[2147484676] = "EOS Rebel T6 / 1300D / Kiss X80";
+        choices[2147484677] = "EOS Rebel T7i / 800D / Kiss X9i";
+        choices[2147484678] = "EOS 6D Mark II";
+        choices[2147484680] = "EOS 77D / 9000D";
+        choices[2147484695] = "EOS Rebel SL2 / 200D / Kiss X9";
     }
 };
 CAModelIDInterpreter caModelIDInterpreter;

@@ -529,10 +529,13 @@ int main (int argc, char **argv)
         licensePath = Glib::build_filename (exePath, LICENCE_SEARCH_PATH);
     }
 
+    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
+    options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
 #endif
 
 
