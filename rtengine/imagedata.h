@@ -56,11 +56,9 @@ protected:
     bool isPixelShift;
     bool isHDR;
 
-    void extractInfo ();
-
 public:
 
-    FrameData (rtexif::TagDirectory* frameRootDir);
+    FrameData (rtexif::TagDirectory* frameRootDir, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir);
     virtual ~FrameData ();
 
     bool getPixelShift () const;

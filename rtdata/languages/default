@@ -71,6 +71,7 @@ EXIFPANEL_RESET;Reset
 EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values.
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values.
+EXIFPANEL_SHOWALL;Show all
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 EXPORT_BYPASS;Processing steps to bypass
 EXPORT_BYPASS_ALL;Select / Unselect All

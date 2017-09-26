@@ -48,24 +48,19 @@ FramesMetaData* FramesMetaData::fromFile (const Glib::ustring& fname, std::uniqu
     return new FramesData (fname, std::move(rml), firstFrameOnly);
 }
 
-FrameData::FrameData (rtexif::TagDirectory* frameRootDir)
-    : frameRootDir(frameRootDir), iptc(nullptr), time(), timeStamp(), iso_speed(0), aperture(0.), focal_len(0.), focal_len35mm(0.), focus_dist(0.f),
+FrameData::FrameData (rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir)
+    : frameRootDir(frameRootDir_), iptc(nullptr), time(), timeStamp(), iso_speed(0), aperture(0.), focal_len(0.), focal_len35mm(0.), focus_dist(0.f),
       shutter(0.), expcomp(0.), make("Unknown"), model("Unknown"), orientation("Unknown"), lens("Unknown"),
       sampleFormat(IIOSF_UNKNOWN), isPixelShift(false), isHDR(false)
 {
     memset (&time, 0, sizeof(time));
-
-    extractInfo();
-}
-
-void FrameData::extractInfo ()
-{
 
     if (!frameRootDir) {
         return;
     }
 
     rtexif::Tag* tag;
+    rtexif::TagDirectory* newFrameRootDir = frameRootDir;
 
     memset(&time, 0, sizeof(time));
     timeStamp = 0;
@@ -82,7 +77,16 @@ void FrameData::extractInfo ()
     orientation.clear();
     lens.clear();
 
-    tag = frameRootDir->findTagUpward("Make");
+    tag = newFrameRootDir->findTag("Make");
+    if (!tag) {
+        newFrameRootDir = rootDir;
+        tag = newFrameRootDir->findTag("Make");
+        if (!tag) {
+            // For some raw files (like Canon's CR2 files), the metadata are contained in the first root directory
+            newFrameRootDir = firstRootDir;
+            tag = newFrameRootDir->findTag("Make");
+        }
+    }
     if (tag) {
         make = tag->valueToString();
         // Same dcraw treatment
@@ -116,7 +120,7 @@ void FrameData::extractInfo ()
         make.erase(make.find_last_not_of(' ') + 1);
     }
 
-    tag = frameRootDir->findTagUpward("Model");
+    tag = newFrameRootDir->findTagUpward("Model");
     if (tag) {
         model = tag->valueToString();
     }
@@ -150,19 +154,19 @@ void FrameData::extractInfo ()
         model = "Unknown";
     }
 
-    tag = frameRootDir->findTagUpward("Orientation");
+    tag = newFrameRootDir->findTagUpward("Orientation");
     if (tag) {
         orientation = tag->valueToString ();
     }
 
-    tag = frameRootDir->findTagUpward("MakerNote");
+    tag = newFrameRootDir->findTagUpward("MakerNote");
     rtexif::TagDirectory* mnote = nullptr;
     if (tag) {
         mnote = tag->getDirectory();
     }
 
     rtexif::TagDirectory* exif = nullptr;
-    tag = frameRootDir->findTagUpward("Exif");
+    tag = newFrameRootDir->findTagUpward("Exif");
     if (tag) {
         exif = tag->getDirectory ();
     }
@@ -211,7 +215,7 @@ void FrameData::extractInfo ()
             // Second try, XMP data
             char sXMPVal[64];
 
-            if (frameRootDir->getXMPTagValue("aux:ApproximateFocusDistance", sXMPVal)) {
+            if (newFrameRootDir->getXMPTagValue("aux:ApproximateFocusDistance", sXMPVal)) {
                 sscanf(sXMPVal, "%d/%d", &num, &denom);
             }
         }
@@ -458,7 +462,7 @@ void FrameData::extractInfo ()
         }
     }
 
-    rtexif::Tag* t = frameRootDir->getTag(0x83BB);
+    rtexif::Tag* t = newFrameRootDir->getTag(0x83BB);
     if (t) {
         iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
     }
@@ -1027,7 +1031,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
 
                 // creating FrameData
                 for (auto currFrame : exifManager.frames) {
-                    FrameData* fd = new FrameData(currFrame);
+                    FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
 
                     frames.push_back(fd);
                 }
@@ -1051,7 +1055,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
                 exifManager.parseJPEG ();
                 roots = exifManager.roots;
                 for (auto currFrame : exifManager.frames) {
-                    FrameData* fd = new FrameData(currFrame);
+                    FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
                     frames.push_back(fd);
                 }
                 rewind (exifManager.f); // Not sure this is necessary
@@ -1069,7 +1073,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
 
             // creating FrameData
             for (auto currFrame : exifManager.frames) {
-                FrameData* fd = new FrameData(currFrame);
+                FrameData* fd = new FrameData(currFrame, currFrame->getRoot(), roots.at(0));
 
                 frames.push_back(fd);
             }
