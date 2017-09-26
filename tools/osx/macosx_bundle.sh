@@ -154,6 +154,10 @@ ditto {"${GTK_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 #     cp -RL "${GTK_PREFIX}/etc/fonts" "${ETC}"
 # fi
 
+# Copy the Lensfun database into the app bundle
+mkdir -p "${RESOURCES}/share/lensfun"
+cp /opt/local/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
+
 # Install names
 find -E "${CONTENTS}" -type f -regex '.*/(rawtherapee-cli|rawtherapee|.*\.(dylib|so))' | while read -r x; do
     msg "Modifying install names: ${x}"

@@ -51,7 +51,11 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     Color::init ();
     PerceptualToneCurve::init ();
     RawImageSource::init ();
-    LFDatabase::init(s->lensfunDbDirectory);
+    if (s->lensfunDbDirectory.empty() || Glib::path_is_absolute(s->lensfunDbDirectory)) {
+        LFDatabase::init(s->lensfunDbDirectory);
+    } else {
+        LFDatabase::init(Glib::build_filename(baseDir, s->lensfunDbDirectory));
+    }
     delete lcmsMutex;
     lcmsMutex = new MyMutex;
     dfm.init( s->darkFramesPath );

@@ -2563,8 +2563,7 @@ bool Preferences::splashClosed (GdkEventAny* event)
 
 void Preferences::behAddSetAllPressed (bool add)
 {
-    moptions.baBehav.clear();
-    moptions.baBehav.resize(ADDSET_PARAM_NUM, add);
+    moptions.baBehav.assign(ADDSET_PARAM_NUM, add);
     for (Gtk::TreeIter sections = behModel->children().begin(); sections != behModel->children().end(); ++sections) {
         for (Gtk::TreeIter adjs = sections->children().begin(); adjs != sections->children().end(); ++adjs) {
             adjs->set_value(behavColumns.badd, add);
