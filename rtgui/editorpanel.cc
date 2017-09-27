@@ -484,7 +484,12 @@ public:
 };
 
 EditorPanel::EditorPanel (FilePanel* filePanel)
-    : catalogPane (nullptr), realized (false), tbBeforeLock (nullptr), iHistoryShow (nullptr), iHistoryHide (nullptr), iTopPanel_1_Show (nullptr), iTopPanel_1_Hide (nullptr), iRightPanel_1_Show (nullptr), iRightPanel_1_Hide (nullptr), iBeforeLockON (nullptr), iBeforeLockOFF (nullptr), previewHandler (nullptr), beforePreviewHandler (nullptr), beforeIarea (nullptr), beforeBox (nullptr), afterBox (nullptr), beforeLabel (nullptr), afterLabel (nullptr), beforeHeaderBox (nullptr), afterHeaderBox (nullptr), parent (nullptr), parentWindow (nullptr), openThm (nullptr), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false)
+    : catalogPane (nullptr), realized (false), tbBeforeLock (nullptr), iHistoryShow (nullptr), iHistoryHide (nullptr),
+      iTopPanel_1_Show (nullptr), iTopPanel_1_Hide (nullptr), iRightPanel_1_Show (nullptr), iRightPanel_1_Hide (nullptr),
+      iBeforeLockON (nullptr), iBeforeLockOFF (nullptr), previewHandler (nullptr), beforePreviewHandler (nullptr),
+      beforeIarea (nullptr), beforeBox (nullptr), afterBox (nullptr), beforeLabel (nullptr), afterLabel (nullptr),
+      beforeHeaderBox (nullptr), afterHeaderBox (nullptr), parent (nullptr), parentWindow (nullptr), openThm (nullptr),
+      selectedFrame(0), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -1137,6 +1142,9 @@ void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, r
 
 //    if (ev!=EvPhotoLoaded)
 //        saveLabel->set_markup (Glib::ustring("<span foreground=\"#AA0000\" weight=\"bold\">") + M("MAIN_BUTTON_SAVE") + "</span>");
+
+    selectedFrame = params->raw.bayersensor.imageNum;
+    info_toggled();
 }
 
 void EditorPanel::setProgressState (bool inProcessing)
@@ -1314,16 +1322,16 @@ void EditorPanel::info_toggled ()
 
     const rtengine::FramesMetaData* idata = ipc->getInitialImage()->getMetaData();
 
-    if (idata && idata->hasExif()) {
+    if (idata && idata->hasExif(selectedFrame)) {
         infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
                                               Glib::ustring (idata->getMake() + " " + idata->getModel()),
                                               Glib::ustring (idata->getLens()),
-                                              Glib::ustring (idata->apertureToString (idata->getFNumber())),
-                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed())),
-                                              M ("QINFO_ISO"), idata->getISOSpeed(),
-                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen()));
+                                              Glib::ustring (idata->apertureToString (idata->getFNumber(selectedFrame))),
+                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed(selectedFrame))),
+                                              M ("QINFO_ISO"), idata->getISOSpeed(selectedFrame),
+                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen(selectedFrame)));
 
-        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(), true)); // maskZeroexpcomp
+        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(selectedFrame), true)); // maskZeroexpcomp
 
         if (!expcomp.empty ()) {
             infoString = Glib::ustring::compose ("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
@@ -1351,7 +1359,7 @@ void EditorPanel::info_toggled ()
         if (isHDR) {
             infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
             if (numFrames == 1) {
-                int sampleFormat = idata->getSampleFormat();
+                int sampleFormat = idata->getSampleFormat(selectedFrame);
                 infoString = Glib::ustring::compose ("%1 / %2", infoString, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
             }
         } else if (isPixelShift) {
