@@ -1794,7 +1794,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             }
 
             float sum = 0.f;
-            float sumQ = 0.f;
+//            float sumQ = 0.f;
 
 #ifdef _OPENMP
             const int numThreads = min (max (width * height / 65536, 1), omp_get_max_threads());
@@ -1814,8 +1814,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     hist16Qthr.clear();
                 }
 
-                #pragma omp for reduction(+:sum,sumQ)
+            //    #pragma omp for reduction(+:sum,sumQ)
+                #pragma omp for reduction(+:sum)
 
+				
                 for (int i = 0; i < height; i++)
                     for (int j = 0; j < width; j++) { //rough correspondence between L and J
                         float currL = lab->L[i][j] / 327.68f;
@@ -1860,6 +1862,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         }
 
                         //estimation of wh only with La
+/*						
                         float whestim = 500.f;
 
                         if (la < 200.f) {
@@ -1869,7 +1872,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         } else {
                             whestim = 500.f;
                         }
-
+*/
                         if (needQ) {
                             hist16Qthr[CLIP ((int) (32768.f * sqrt ((koef * (lab->L[i][j])) / 32768.f)))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                             //perhaps  needs to introduce whestim ??
@@ -1877,7 +1880,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         }
 
                         sum += koef * lab->L[i][j]; //evaluate mean J to calculate Yb
-                        sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
+					//	sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
                         //can be used in case of...
                     }
 
