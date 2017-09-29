@@ -265,7 +265,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
         Gtk::TreeModel::Row newrow = *(historyModel->append());
         newrow[historyColumns.realText] = eventDescrArray[ev];
         newrow[historyColumns.text] = text;
-        newrow[historyColumns.value] = descr;
+        newrow[historyColumns.value] = g_markup_escape_text(descr.c_str(), -1);
         newrow[historyColumns.chev] = ev;
         newrow[historyColumns.params] = *params;
         newrow[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
@@ -284,7 +284,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     else {
         row[historyColumns.realText] = eventDescrArray[ev];
         row[historyColumns.text] = text;
-        row[historyColumns.value] = descr;
+        row[historyColumns.value] = g_markup_escape_text(descr.c_str(), -1);
         row[historyColumns.chev] = ev;
         row[historyColumns.params] = *params;
         row[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
