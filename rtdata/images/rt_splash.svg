@@ -599,7 +599,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -905,11 +905,11 @@
          sodipodi:role="line">. 3</tspan></text>
     <g
        id="g3712"
-       transform="matrix(0.24804687,0,0,0.2480469,42.481182,273.1232)"
-       style="fill:#808080;enable-background:new">
+       transform="matrix(0.24804687,0,0,0.2480469,-10.282719,273.1232)"
+       style="fill:#ffffff;enable-background:new">
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;text-align:end;letter-spacing:-1.06666672px;word-spacing:0px;text-anchor:end;fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;text-align:end;letter-spacing:-1.06666672px;word-spacing:0px;text-anchor:end;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          x="596.36224"
          y="49.720543"
          id="text3690"
@@ -918,7 +918,7 @@
            sodipodi:role="line"
            x="595.29559"
            y="49.720543"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#808080;stroke-width:1.06666672px">Development</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;line-height:110.00000238%;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';text-align:end;letter-spacing:-1.06666672px;text-anchor:end;fill:#ffffff;stroke-width:1.06666672px">Development</tspan></text>
     </g>
   </g>
 </svg>
