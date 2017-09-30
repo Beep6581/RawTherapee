@@ -601,7 +601,7 @@ void LensProfilePanel::LFDbHelper::fillLensfunCameras()
         camnames[c.getMake()].insert(c.getModel());
 
         if (options.rtSettings.verbose) {
-            std::cout << "  found: " << c.getDisplayString() << std::endl;
+            std::cout << "  found: " << c.getDisplayString().c_str() << std::endl;
         }        
     }
     for (auto &p : camnames) {
@@ -630,7 +630,7 @@ void LensProfilePanel::LFDbHelper::fillLensfunLenses()
         lenses[make].insert(name);
 
         if (options.rtSettings.verbose) {
-            std::cout << "  found: " << l.getDisplayString() << std::endl;
+            std::cout << "  found: " << l.getDisplayString().c_str() << std::endl;
         }
     }
     for (auto &p : lenses) {
