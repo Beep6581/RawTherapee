@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.3-rc1 RELEASE NOTES
----------------------------------
-This is RawTherapee 5.3 Release Candidate 1 stable, released on 2017-09-25.
+RAWTHERAPEE 5.3 RELEASE NOTES
+-----------------------------
+This is RawTherapee 5.3 stable, released on 2017-09-30.
 
 RawTherapee provides you with a selection of powerful tools with which you can practice the art of developing raw photos. Be sure to read RawPedia to understand how each tool works so that you may make the most of it.
 http://rawpedia.rawtherapee.com/
@@ -24,6 +24,7 @@ New features since 5.2:
 - Manually save the collapsed/expanded state of tools.
 - Lensfun support, for automatic (and manual) profiled lens correction.
 - ACES, DCI-P3 Theater and DCI-P3 D65 output color profiles.
+- Numerous speed optimizations and bug fixes.
 
 News Relevant to Package Maintainers
 ------------------------------------
@@ -36,7 +37,7 @@ In general:
 - For development builds and release-candidates use -DCACHE_NAME_SUFFIX="5-dev"
 
 Changes since 5.2:
-- Lensfun is required. To use the system-wide lensfun database, do not set the CMake option -DLENSFUNDBDIR. To use a custom lensfun database, set -DLENSFUNDBDIR="/absolute/path/to/database"
+- Lensfun is required. To use the system-wide lensfun database, do not set the CMake option -DLENSFUNDBDIR. To use a custom lensfun database, set -DLENSFUNDBDIR="path/to/database". See the compilation instructions in RawPedia for more information.
 
 News Relevant to Developers
 ---------------------------
