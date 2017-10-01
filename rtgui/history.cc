@@ -26,7 +26,7 @@ using namespace rtengine::procparams;
 
 Glib::ustring eventDescrArray[NUMOFEVENTS];
 
-History::History (bool bookmarkSupport) : historyVPaned(nullptr), blistener(nullptr), tpc (nullptr), bmnum (1)
+History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nullptr), tpc (nullptr), bmnum (1)
 {
 
     blistenerLock = false; // sets default that the Before preview will not be locked
@@ -51,9 +51,9 @@ History::History (bool bookmarkSupport) : historyVPaned(nullptr), blistener(null
     historyModel = Gtk::ListStore::create (historyColumns);
     hTreeView->set_model (historyModel);
     hTreeView->set_headers_visible (false);
-    hTreeView->set_hscroll_policy(Gtk::SCROLL_MINIMUM);
-    hTreeView->set_vscroll_policy(Gtk::SCROLL_NATURAL);
-    hTreeView->set_size_request(80, -1);
+    hTreeView->set_hscroll_policy (Gtk::SCROLL_MINIMUM);
+    hTreeView->set_vscroll_policy (Gtk::SCROLL_NATURAL);
+    hTreeView->set_size_request (80, -1);
 
     Gtk::CellRendererText *changecrt = Gtk::manage (new Gtk::CellRendererText());
     changecrt->property_ellipsize() = Pango::ELLIPSIZE_END;
@@ -261,38 +261,36 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     }
 
     // if there is no last item or its chev!=ev, create a new one
-    if (descr != "") {
-        if (size == 0 || !row || row[historyColumns.chev] != ev || ev == EvProfileChanged) {
-            Gtk::TreeModel::Row newrow = * (historyModel->append());
-            newrow[historyColumns.realText] = eventDescrArray[ev];
-            newrow[historyColumns.text] = text;
-            newrow[historyColumns.value] = descr;
-            newrow[historyColumns.chev] = ev;
-            newrow[historyColumns.params] = *params;
-            newrow[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
+    if (size == 0 || !row || row[historyColumns.chev] != ev || ev == EvProfileChanged) {
+        Gtk::TreeModel::Row newrow = * (historyModel->append());
+        newrow[historyColumns.realText] = eventDescrArray[ev];
+        newrow[historyColumns.text] = text;
+        newrow[historyColumns.value] = g_markup_escape_text (descr.c_str(), -1);
+        newrow[historyColumns.chev] = ev;
+        newrow[historyColumns.params] = *params;
+        newrow[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
 
-            if (ev != EvBookmarkSelected) {
-                selection->select (newrow);
-            }
-
-            if (blistener && row && !blistenerLock) {
-                blistener->historyBeforeLineChanged (row[historyColumns.params]);
-            } else if (blistener && size == 0 && !blistenerLock) {
-                blistener->historyBeforeLineChanged (newrow[historyColumns.params]);
-            }
+        if (ev != EvBookmarkSelected) {
+            selection->select (newrow);
         }
-        // else just update it
-        else {
-            row[historyColumns.realText] = eventDescrArray[ev];
-            row[historyColumns.text] = text;
-            row[historyColumns.value] = descr;
-            row[historyColumns.chev] = ev;
-            row[historyColumns.params] = *params;
-            row[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
 
-            if (ev != EvBookmarkSelected) {
-                selection->select (row);
-            }
+        if (blistener && row && !blistenerLock) {
+            blistener->historyBeforeLineChanged (row[historyColumns.params]);
+        } else if (blistener && size == 0 && !blistenerLock) {
+            blistener->historyBeforeLineChanged (newrow[historyColumns.params]);
+        }
+    }
+    // else just update it
+    else {
+        row[historyColumns.realText] = eventDescrArray[ev];
+        row[historyColumns.text] = text;
+        row[historyColumns.value] = g_markup_escape_text (descr.c_str(), -1);
+        row[historyColumns.chev] = ev;
+        row[historyColumns.params] = *params;
+        row[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
+
+        if (ev != EvBookmarkSelected) {
+            selection->select (row);
         }
     }
 

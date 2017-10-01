@@ -1814,10 +1814,10 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     hist16Qthr.clear();
                 }
 
-            //    #pragma omp for reduction(+:sum,sumQ)
+                //    #pragma omp for reduction(+:sum,sumQ)
                 #pragma omp for reduction(+:sum)
 
-				
+
                 for (int i = 0; i < height; i++)
                     for (int j = 0; j < width; j++) { //rough correspondence between L and J
                         float currL = lab->L[i][j] / 327.68f;
@@ -1862,25 +1862,25 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         }
 
                         //estimation of wh only with La
-/*						
-                        float whestim = 500.f;
+                        /*
+                           float whestim = 500.f;
 
-                        if (la < 200.f) {
-                            whestim = 200.f;
-                        } else if (la < 2500.f) {
-                            whestim = 350.f;
-                        } else {
-                            whestim = 500.f;
-                        }
-*/
+                           if (la < 200.f) {
+                           whestim = 200.f;
+                           } else if (la < 2500.f) {
+                           whestim = 350.f;
+                           } else {
+                           whestim = 500.f;
+                           }
+                        */
                         if (needQ) {
                             hist16Qthr[CLIP ((int) (32768.f * sqrt ((koef * (lab->L[i][j])) / 32768.f)))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                             //perhaps  needs to introduce whestim ??
-                            //   hist16Qthr[ (int) (sqrtf ((koef * (lab->L[i][j])) * 32768.f))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+                            //hist16Qthr[ (int) (sqrtf ((koef * (lab->L[i][j])) * 32768.f))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                         }
 
                         sum += koef * lab->L[i][j]; //evaluate mean J to calculate Yb
-					//	sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
+                        //sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
                         //can be used in case of...
                     }
 
