@@ -1024,6 +1024,16 @@ void Crop::update (int todo)
                         params.locallab.shcompr = parent->shcomprs[sp];
                         params.locallab.sensiex = parent->sensiexs[sp];
 
+                        params.locallab.centerXbuf = parent->centerxbufs[sp];
+                        params.locallab.centerYbuf = parent->centerybufs[sp];
+                        params.locallab.adjblur = parent->adjblurs[sp];
+
+                        if (parent->cutpasts[sp] ==  0) {
+                            params.locallab.cutpast = false;
+                        } else {
+                            params.locallab.cutpast = true;
+                        }
+
                         std::vector<double>   cretie;
 
                         for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1343,6 +1353,19 @@ void Crop::update (int todo)
                 parent->hlcomprthreshs[sp] = params.locallab.hlcomprthresh = parent->hlcomprthreshs[0];
                 parent->shcomprs[sp] = params.locallab.shcompr = parent->shcomprs[0];
                 parent->sensiexs[sp] = params.locallab.sensiex = parent->sensiexs[0];
+
+                parent->centerxbufs[sp] = params.locallab.centerXbuf = parent->centerxbufs[0];
+                parent->centerybufs[sp] = params.locallab.centerYbuf = parent->centerybufs[0];
+                parent->adjblurs[sp] = params.locallab.adjblur = parent->adjblurs[0];
+
+                if (parent->cutpasts[0] ==  0) {
+                    params.locallab.cutpast = false;
+                    parent->cutpasts[sp] = 0;
+                } else {
+                    params.locallab.cutpast = true;
+                    parent->cutpasts[sp] = 1;
+
+                }
 
                 std::vector<double>   ccret;
 

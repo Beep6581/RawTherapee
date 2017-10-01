@@ -841,7 +841,7 @@ public:
         LCP                 // Lens correction using lcp file
     };
 
-    static const char *methodstring[static_cast<size_t>(LcMode::LCP) + 1u];
+    static const char *methodstring[static_cast<size_t> (LcMode::LCP) + 1u];
     LcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
@@ -875,18 +875,19 @@ public:
         return lcMode == LcMode::LENSFUNMANUAL;
     }
 
-    Glib::ustring getMethodString(LcMode mode) const
+    Glib::ustring getMethodString (LcMode mode) const
     {
-        return methodstring[static_cast<size_t>(mode)];
+        return methodstring[static_cast<size_t> (mode)];
     }
 
-    LcMode getMethodNumber(const Glib::ustring &mode) const
+    LcMode getMethodNumber (const Glib::ustring &mode) const
     {
-        for(size_t i = 0; i <= static_cast<size_t>(LcMode::LCP); ++i) {
-            if(methodstring[i] == mode) {
-                return static_cast<LcMode>(i);
+        for (size_t i = 0; i <= static_cast<size_t> (LcMode::LCP); ++i) {
+            if (methodstring[i] == mode) {
+                return static_cast<LcMode> (i);
             }
         }
+
         return LcMode::NONE;
     }
 };
@@ -933,6 +934,9 @@ public:
     int     centerX;
     int     centerY;
     int     circrad;
+    int     centerXbuf;
+    int     centerYbuf;
+    int     adjblur;
     int     thres;
     int     proxi;
     Glib::ustring qualityMethod;
@@ -995,6 +999,7 @@ public:
     Glib::ustring Smethod;
     Glib::ustring retinexMethod;
     bool    invers;
+    bool    cutpast;
     bool    curvactiv;
     bool    activlum;
     bool    inversrad;

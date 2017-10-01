@@ -52,7 +52,7 @@ const int br = (int) options.rtSettings.bot_right;
 const int tl = (int) options.rtSettings.top_left;
 const int bl = (int) options.rtSettings.bot_left;
 
-const char *LensProfParams::methodstring[static_cast<size_t>(LensProfParams::LcMode::LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
+const char *LensProfParams::methodstring[static_cast<size_t> (LensProfParams::LcMode::LCP) + 1u] = {"none", "lfauto", "lfmanual", "lcp"};
 const char *RAWParams::BayerSensor::methodstring[RAWParams::BayerSensor::numMethods] = {"amaze", "igv", "lmmse", "eahd", "hphd", "vng4", "dcb", "ahd", "fast", "mono", "none", "pixelshift" };
 const char *RAWParams::XTransSensor::methodstring[RAWParams::XTransSensor::numMethods] = {"3-pass (best)", "1-pass (medium)", "fast", "mono", "none" };
 
@@ -977,6 +977,9 @@ void LocallabParams::setDefaults()
     centerX = 0;
     centerY = 0;
     circrad = 18;
+    centerXbuf = 0;
+    centerYbuf = 0;
+    adjblur = 0;
 
     if (options.locaaju == 0) {
         qualityMethod = "std";
@@ -1031,6 +1034,7 @@ void LocallabParams::setDefaults()
     Smethod = "IND";
     retinexMethod = "high";
     invers = false;
+    cutpast = false;
     curvactiv = false;
     activlum = false;
     radius = 1;
@@ -2837,13 +2841,15 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
         }
 
         if (!pedited || pedited->lensProf.lfCameraMake) {
-            keyFile.set_string("LensProfile", "LFCameraMake", lensProf.lfCameraMake);
+            keyFile.set_string ("LensProfile", "LFCameraMake", lensProf.lfCameraMake);
         }
+
         if (!pedited || pedited->lensProf.lfCameraModel) {
-            keyFile.set_string("LensProfile", "LFCameraModel", lensProf.lfCameraModel);
+            keyFile.set_string ("LensProfile", "LFCameraModel", lensProf.lfCameraModel);
         }
+
         if (!pedited || pedited->lensProf.lfLens) {
-            keyFile.set_string("LensProfile", "LFLens", lensProf.lfLens);
+            keyFile.set_string ("LensProfile", "LFLens", lensProf.lfLens);
         }
 
 // save perspective correction
@@ -2959,6 +2965,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_boolean ("Locallab", "Invers", locallab.invers);
         }
 
+        if (!pedited || pedited->locallab.cutpast) {
+            keyFile.set_boolean ("Locallab", "Cutpast", locallab.cutpast);
+        }
+
         if (!pedited || pedited->locallab.curvactiv) {
             keyFile.set_boolean ("Locallab", "Curvactiv", locallab.curvactiv);
         }
@@ -3025,6 +3035,18 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
 
         if (!pedited || pedited->locallab.circrad) {
             keyFile.set_integer ("Locallab", "Circrad", locallab.circrad);
+        }
+
+        if (!pedited || pedited->locallab.centerXbuf) {
+            keyFile.set_integer ("Locallab", "CenterXbuf", locallab.centerXbuf);
+        }
+
+        if (!pedited || pedited->locallab.centerYbuf) {
+            keyFile.set_integer ("Locallab", "CenterYbuf", locallab.centerYbuf);
+        }
+
+        if (!pedited || pedited->locallab.adjblur) {
+            keyFile.set_integer ("Locallab", "Adjblur", locallab.adjblur);
         }
 
         if (!pedited || pedited->locallab.thres) {
@@ -3255,8 +3277,8 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("Locallab", "Rewei", locallab.rewei);
         }
 
-		
-		
+
+
 // save post-crop vignette
         if (!pedited || pedited->pcvignette.enabled) {
             keyFile.set_boolean ("PCVignette", "Enabled", pcvignette.enabled);
@@ -4738,6 +4760,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "Cutpast"))  {
+                locallab.cutpast  = keyFile.get_boolean ("Locallab", "Cutpast");
+
+                if (pedited) {
+                    pedited->locallab.cutpast = true;
+                }
+            }
+
             if (keyFile.has_key ("Locallab", "Curvactiv"))  {
                 locallab.curvactiv  = keyFile.get_boolean ("Locallab", "Curvactiv");
 
@@ -4872,6 +4902,30 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->locallab.circrad = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "CenterXbuf"))  {
+                locallab.centerXbuf  = keyFile.get_integer ("Locallab", "CenterXbuf");
+
+                if (pedited) {
+                    pedited->locallab.centerXbuf = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "CenterYbuf"))  {
+                locallab.centerYbuf  = keyFile.get_integer ("Locallab", "CenterYbuf");
+
+                if (pedited) {
+                    pedited->locallab.centerYbuf = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Adjblur"))  {
+                locallab.adjblur  = keyFile.get_integer ("Locallab", "Adjblur");
+
+                if (pedited) {
+                    pedited->locallab.adjblur = true;
                 }
             }
 
@@ -5325,7 +5379,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
             }
 
         }
-		
+
         // load channel mixer curve
         if (keyFile.has_group ("Channel Mixer")) {
             if (keyFile.has_key ("Channel Mixer", "Red") && keyFile.has_key ("Channel Mixer", "Green") && keyFile.has_key ("Channel Mixer", "Blue")) {
@@ -7200,7 +7254,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->lensProf.lcpFile = true;
                 }
 
-                if(ppVersion < 327 && !lensProf.lcpFile.empty()) {
+                if (ppVersion < 327 && !lensProf.lcpFile.empty()) {
                     lensProf.lcMode = LensProfParams::LcMode::LCP;
                 }
             }
@@ -7229,22 +7283,25 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
-            if (keyFile.has_key("LensProfile", "LFCameraMake")) {
-                lensProf.lfCameraMake = keyFile.get_string("LensProfile", "LFCameraMake");
+            if (keyFile.has_key ("LensProfile", "LFCameraMake")) {
+                lensProf.lfCameraMake = keyFile.get_string ("LensProfile", "LFCameraMake");
+
                 if (pedited) {
                     pedited->lensProf.lfCameraMake = true;
                 }
             }
 
-            if (keyFile.has_key("LensProfile", "LFCameraModel")) {
-                lensProf.lfCameraModel = keyFile.get_string("LensProfile", "LFCameraModel");
+            if (keyFile.has_key ("LensProfile", "LFCameraModel")) {
+                lensProf.lfCameraModel = keyFile.get_string ("LensProfile", "LFCameraModel");
+
                 if (pedited) {
                     pedited->lensProf.lfCameraModel = true;
                 }
             }
 
-            if (keyFile.has_key("LensProfile", "LFLens")) {
-                lensProf.lfLens = keyFile.get_string("LensProfile", "LFLens");
+            if (keyFile.has_key ("LensProfile", "LFLens")) {
+                lensProf.lfLens = keyFile.get_string ("LensProfile", "LFLens");
+
                 if (pedited) {
                     pedited->lensProf.lfLens = true;
                 }
@@ -9880,6 +9937,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.enabled == other.locallab.enabled
         && locallab.avoid == other.locallab.avoid
         && locallab.invers == other.locallab.invers
+        && locallab.cutpast == other.locallab.cutpast
         && locallab.curvactiv == other.locallab.curvactiv
         && locallab.activlum == other.locallab.activlum
         && locallab.inversrad == other.locallab.inversrad
@@ -9897,6 +9955,9 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.centerX == other.locallab.centerX
         && locallab.centerY == other.locallab.centerY
         && locallab.circrad == other.locallab.circrad
+        && locallab.centerXbuf == other.locallab.centerXbuf
+        && locallab.centerYbuf == other.locallab.centerYbuf
+        && locallab.adjblur == other.locallab.adjblur
         && locallab.thres == other.locallab.thres
         && locallab.proxi == other.locallab.proxi
         && locallab.lightness == other.locallab.lightness
@@ -9966,7 +10027,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.cccurve == other.locallab.cccurve
         && locallab.LHcurve == other.locallab.LHcurve
         && locallab.HHcurve == other.locallab.HHcurve
-		
+
         && pcvignette.enabled == other.pcvignette.enabled
         && pcvignette.strength == other.pcvignette.strength
         && pcvignette.feather == other.pcvignette.feather

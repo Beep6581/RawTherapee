@@ -251,6 +251,11 @@ protected:
     LUTi circrads;
     LUTi centerx;
     LUTi centery;
+    LUTi centerxbufs;
+    LUTi centerybufs;
+    LUTi adjblurs;
+    LUTi cutpasts;
+
     LUTi locx;
     LUTi locy;
     LUTi locxl;

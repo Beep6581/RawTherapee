@@ -323,6 +323,9 @@ void ParamsEdited::set (bool v)
     locallab.centerX = v;
     locallab.centerY = v;
     locallab.circrad = v;
+    locallab.centerXbuf = v;
+    locallab.centerYbuf = v;
+    locallab.adjblur = v;
     locallab.thres = v;
     locallab.proxi = v;
     locallab.qualityMethod = v;
@@ -365,6 +368,7 @@ void ParamsEdited::set (bool v)
     locallab.Smethod = v;
     locallab.retinexMethod = v;
     locallab.invers = v;
+    locallab.cutpast = v;
     locallab.curvactiv = v;
     locallab.activlum = v;
     locallab.inversrad = v;
@@ -944,6 +948,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.enabled = locallab.enabled && p.locallab.enabled == other.locallab.enabled;
         locallab.avoid = locallab.avoid && p.locallab.avoid == other.locallab.avoid;
         locallab.invers = locallab.invers && p.locallab.invers == other.locallab.invers;
+        locallab.cutpast = locallab.cutpast && p.locallab.cutpast == other.locallab.cutpast;
         locallab.curvactiv = locallab.curvactiv && p.locallab.curvactiv == other.locallab.curvactiv;
         locallab.activlum = locallab.activlum && p.locallab.activlum == other.locallab.activlum;
         locallab.inversrad = locallab.inversrad && p.locallab.inversrad == other.locallab.inversrad;
@@ -959,6 +964,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         locallab.centerX = locallab.centerX && p.locallab.centerX == other.locallab.centerX;
         locallab.centerY = locallab.centerY && p.locallab.centerY == other.locallab.centerY;
         locallab.circrad = locallab.circrad && p.locallab.circrad == other.locallab.circrad;
+        locallab.centerXbuf = locallab.centerXbuf && p.locallab.centerXbuf == other.locallab.centerXbuf;
+        locallab.centerYbuf = locallab.centerYbuf && p.locallab.centerYbuf == other.locallab.centerYbuf;
+        locallab.adjblur = locallab.adjblur && p.locallab.adjblur == other.locallab.adjblur;
         locallab.thres = locallab.thres && p.locallab.thres == other.locallab.thres;
         locallab.proxi = locallab.proxi && p.locallab.proxi == other.locallab.proxi;
         locallab.qualityMethod = locallab.qualityMethod && p.locallab.qualityMethod == other.locallab.qualityMethod;
@@ -1721,7 +1729,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     }
 
     if (sharpening.edges_radius) {
-        toEdit.sharpening.edges_radius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.edges_radius + mods.sharpening.edges_radius: mods.sharpening.edges_radius;
+        toEdit.sharpening.edges_radius = dontforceSet && options.baBehav[ADDSET_SHARP_RADIUS] ? toEdit.sharpening.edges_radius + mods.sharpening.edges_radius : mods.sharpening.edges_radius;
     }
 
     if (sharpening.edges_tolerance) {
@@ -2367,6 +2375,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
         toEdit.locallab.invers    = mods.locallab.invers;
     }
 
+    if (locallab.cutpast) {
+        toEdit.locallab.cutpast    = mods.locallab.cutpast;
+    }
+
     if (locallab.curvactiv) {
         toEdit.locallab.curvactiv    = mods.locallab.curvactiv;
     }
@@ -2433,6 +2445,18 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (locallab.circrad) {
         toEdit.locallab.circrad   = mods.locallab.circrad;
+    }
+
+    if (locallab.centerXbuf) {
+        toEdit.locallab.centerXbuf   = mods.locallab.centerXbuf;
+    }
+
+    if (locallab.centerYbuf) {
+        toEdit.locallab.centerYbuf   = mods.locallab.centerYbuf;
+    }
+
+    if (locallab.adjblur) {
+        toEdit.locallab.adjblur   = mods.locallab.adjblur;
     }
 
     if (locallab.thres) {

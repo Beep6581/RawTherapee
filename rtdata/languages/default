@@ -822,6 +822,9 @@ HISTORY_MSG_572;Local - Exp black
 HISTORY_MSG_573;Local - Exp Shcompr
 HISTORY_MSG_574;Local - Exp Scope
 HISTORY_MSG_575;Local - Exp Contrast curve
+HISTORY_MSG_576;Local - Centerbuf
+HISTORY_MSG_577;Local - adjblur
+HISTORY_MSG_578;Local - cut past
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1786,6 +1789,7 @@ TP_LENSPROFILE_USECA;Chromatic aberration correction
 TP_LENSPROFILE_USEDIST;Distortion correction
 TP_LENSPROFILE_USEVIGN;Vignetting correction
 TP_LOCALLAB_ACTIV;Blur luminance only
+TP_LOCALLAB_ADJBLUR;Adjust and Blur
 TP_LOCALLAB_ARTIF;Reduce artifacts - Improve algoritm
 TP_LOCALLAB_ARTIF_TOOLTIP;Only active for Color-light, Exposure, Retinex, Vibrance, ToneMapping, CBDL.
 TP_LOCALLAB_AVOID;Avoid color shift
@@ -1802,7 +1806,9 @@ TP_LOCALLAB_CURV;Lightness - Contrast "Super"
 TP_LOCALLAB_CURVNONE;Disable curves
 TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVENH;Super
+TP_LOCALLAB_CUTPAST;Copy past buffer
 TP_LOCALLAB_DENOIS;Denoise
+TP_LOCALLAB_DUST;Dust Spot Removal
 TP_LOCALLAB_LUM;Curves
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 

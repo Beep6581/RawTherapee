@@ -116,6 +116,9 @@ private:
     Adjuster* const hueref;
     Adjuster* const chromaref;
     Adjuster* const lumaref;
+    Adjuster* const centerXbuf;
+    Adjuster* const centerYbuf;
+    Adjuster* const adjblur;
 
     MyComboBoxText*   const Smethod;
     MyComboBoxText*   const retinexMethod;
@@ -126,6 +129,7 @@ private:
     Gtk::Frame* const artifFrame;
     Gtk::Frame* const shapeFrame;
     Gtk::Frame* const superFrame;
+    Gtk::Frame* const dustFrame;
 
     Gtk::Label* const labmdh;
     Gtk::Label* const labqual;
@@ -156,6 +160,7 @@ private:
     Gtk::CheckButton* const inversrad;
     Gtk::CheckButton* const inversret;
     Gtk::CheckButton* const inverssha;
+    Gtk::CheckButton* const cutpast;
 
     Gtk::Button* neutral;
     Gtk::HBox* neutrHBox;
@@ -201,7 +206,7 @@ private:
     sigc::connection enablecolorConn, enableexposeConn, enablevibranceConn, enableblurConn, enabletonemapConn;
     sigc::connection enableretiConn, enablesharpConn, enablecbdlConn;
     sigc::connection enabledenoiConn;
-    sigc::connection  editConn, avoidConn, inversConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
+    sigc::connection  editConn, avoidConn, inversConn, cutpastConn, curvactivConn, activlumConn, inversradConn, inversretConn, inversshaConn,  neutralconn, neutralconn1;
     sigc::connection  Smethodconn;
     sigc::connection retinexMethodConn;
     sigc::connection qualityMethodConn;
@@ -209,7 +214,7 @@ private:
 
 
 
-    int nextdatasp[73];
+    int nextdatasp[77];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;
@@ -236,7 +241,7 @@ private:
     double draggedlocYTOffset;
     double draggedlocXLOffset;
     rtengine::Coord draggedCenter;
-    bool lastavoid, lastinvers, lastinversrad, lastinversret, lastactivlum, lastinverssha, lastcurvactiv;
+    bool lastavoid, lastinvers, lastcutpast, lastinversrad, lastinversret, lastactivlum, lastinverssha, lastcurvactiv;
     int lastanbspot;
 
     void editToggled ();
@@ -270,6 +275,7 @@ public:
     void inversradChanged ();
     void inversretChanged ();
     void inversshaChanged ();
+    void cutpastChanged ();
     void curveChanged (CurveEditor* ce);
     void autoOpenCurve ();
     void localChanged           (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat);

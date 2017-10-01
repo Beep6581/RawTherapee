@@ -107,6 +107,9 @@ Locallab::Locallab ():
     hueref (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_HUEREF"), -3.15, 3.15, 0.01, 0))),
     chromaref (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHROMAREF"), 0, 200, 0.01, 0))),
     lumaref (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LUMAMAREF"), 0, 100, 0.01, 0))),
+    centerXbuf (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTERBUF_X"), -1000, 1000, 1, 0))),
+    centerYbuf (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTERBUF_Y"), -1000, 1000, 1, 0))),
+    adjblur (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_ADJBLUR"), 0, 100, 1, 0))),
 
     Smethod (Gtk::manage (new MyComboBoxText ())),
     retinexMethod (Gtk::manage (new MyComboBoxText ())),
@@ -116,6 +119,7 @@ Locallab::Locallab ():
     artifFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_ARTIF")))),
     shapeFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_SHFR")))),
     superFrame (Gtk::manage (new Gtk::Frame ())),
+    dustFrame (Gtk::manage (new Gtk::Frame (M ("TP_LOCALLAB_DUST")))),
 
     //  artifVBox (Gtk::manage (new Gtk::VBox ())),
 //   shapeVBox (Gtk::manage (new Gtk::VBox ())),
@@ -146,6 +150,7 @@ Locallab::Locallab ():
     inversrad (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
     inversret (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
     inverssha (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_INVERS")))),
+    cutpast (Gtk::manage (new Gtk::CheckButton (M ("TP_LOCALLAB_CUTPAST")))),
     draggedPointOldAngle (-1000.)
 
 {
@@ -351,6 +356,10 @@ Locallab::Locallab ():
     sensi->set_tooltip_text (M ("TP_LOCALLAB_SENSI_TOOLTIP"));
     sensi->setAdjusterListener (this);
 
+    centerXbuf->setAdjusterListener (this);;
+    centerYbuf->setAdjusterListener (this);;
+    adjblur->setAdjusterListener (this);;
+
 //exposure
 
     expcomp->setAdjusterListener (this);
@@ -388,6 +397,9 @@ Locallab::Locallab ():
     inversret->set_active (false);
     inversretConn  = inversret->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::inversretChanged) );
 
+    cutpast->set_active (false);
+    cutpastConn  = cutpast->signal_toggled().connect ( sigc::mem_fun (*this, &Locallab::cutpastChanged) );
+    cutpast->set_tooltip_text (M ("TP_LOCALLAB_CUTPAST_TOOLTIP"));
 //tone mapping local
 
     stren->setAdjusterListener (this);
@@ -603,6 +615,7 @@ Locallab::Locallab ():
     superFrame->set_label_widget (*curvactiv);
     ToolParamBlock* const colorBox = Gtk::manage (new ToolParamBlock());
 
+    ToolParamBlock* const dustBox = Gtk::manage (new ToolParamBlock());
 
     superBox->pack_start (*lightness);
     superBox->pack_start (*contrast);
@@ -611,6 +624,17 @@ Locallab::Locallab ():
 
     colorBox->pack_start (*chroma);
     colorBox->pack_start (*sensi);
+
+    dustFrame->set_label_align (0.025, 0.5);
+
+    dustBox->pack_start (*cutpast);
+    dustBox->pack_start (*centerXbuf);
+    dustBox->pack_start (*centerYbuf);
+    dustBox->pack_start (*adjblur);
+    dustFrame->add (*dustBox);
+//    colorBox->pack_start (*dustFrame);
+    centerXbuf->hide();
+    centerYbuf->hide();
 
     qualcurvbox->pack_start (*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start (*qualitycurveMethod);
@@ -1145,6 +1169,10 @@ void Locallab::neutral_pressed ()
     centerX->resetValue (false);
     centerY->resetValue (false);
     circrad->resetValue (false);
+    centerXbuf->resetValue (false);
+    centerYbuf->resetValue (false);
+    adjblur->resetValue (false);
+
     qualityMethod->set_active (0);
     qualitycurveMethod->set_active (0);
     thres->resetValue (false);
@@ -1158,6 +1186,7 @@ void Locallab::neutral_pressed ()
     transit->resetValue (false);
     sensibn->resetValue (false);
     invers->set_active (false);
+    cutpast->set_active (false);
     curvactiv->set_active (false);
     inversrad->set_active (false);
     inversret->set_active (false);
@@ -1653,11 +1682,21 @@ bool Locallab::localComputed_ ()
     shcompr->setValue (nextdatasp[68]);
     sensiex->setValue (nextdatasp[69]);
 
+    centerXbuf->setValue (nextdatasp[70]);
+    centerYbuf->setValue (nextdatasp[71]);
+    adjblur->setValue (nextdatasp[72]);
 
-    double intermed = 0.01 * (double) nextdatasp[64];
+    //protectskin
+    if (nextdatasp[73] == 0) {
+        cutpast->set_active (false);
+    } else {
+        cutpast->set_active (true);
+    }
+
+    double intermed = 0.01 * (double) nextdatasp[74];
     hueref->setValue (intermed);
-    chromaref->setValue (nextdatasp[65]);
-    lumaref->setValue (nextdatasp[66]);
+    chromaref->setValue (nextdatasp[75]);
+    lumaref->setValue (nextdatasp[76]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -1839,6 +1878,10 @@ bool Locallab::localComputed_ ()
         listener->panelChanged (Evlocallabinvers, M ("GENERAL_ENABLED"));
     }
 
+    if (listener) {//for cutpast
+        listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
+    }
+
     if (listener) {//for curvactiv
         listener->panelChanged (Evlocallabcurvactiv, M ("GENERAL_ENABLED"));
     }
@@ -1921,7 +1964,7 @@ bool Locallab::localComputed_ ()
 
 void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 73; i++) {
+    for (int i = 2; i < 77; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -1960,6 +2003,8 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     hueref->hide();
     chromaref->hide();
     lumaref->hide();
+    centerXbuf->hide();
+    centerYbuf->hide();
 
     disableListener ();
     enablecolorConn.block (true);
@@ -1981,6 +2026,9 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         centerX->setEditedState (pedited->locallab.centerX ? Edited : UnEdited);
         centerY->setEditedState (pedited->locallab.centerY ? Edited : UnEdited);
         circrad->setEditedState (pedited->locallab.circrad ? Edited : UnEdited);
+        centerXbuf->setEditedState (pedited->locallab.centerXbuf ? Edited : UnEdited);
+        centerYbuf->setEditedState (pedited->locallab.centerYbuf ? Edited : UnEdited);
+        adjblur->setEditedState (pedited->locallab.adjblur ? Edited : UnEdited);
         thres->setEditedState (pedited->locallab.thres ? Edited : UnEdited);
         proxi->setEditedState (pedited->locallab.proxi ? Edited : UnEdited);
         lightness->setEditedState (pedited->locallab.lightness ? Edited : UnEdited);
@@ -2046,6 +2094,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         avoid->set_inconsistent (multiImage && !pedited->locallab.avoid);
         activlum->set_inconsistent (multiImage && !pedited->locallab.activlum);
         invers->set_inconsistent (multiImage && !pedited->locallab.invers);
+        cutpast->set_inconsistent (multiImage && !pedited->locallab.cutpast);
         curvactiv->set_inconsistent (multiImage && !pedited->locallab.curvactiv);
         inversrad->set_inconsistent (multiImage && !pedited->locallab.inversrad);
         inverssha->set_inconsistent (multiImage && !pedited->locallab.inverssha);
@@ -2101,6 +2150,9 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     inversConn.block (true);
     invers->set_active (pp->locallab.invers);
     inversConn.block (false);
+    cutpastConn.block (true);
+    cutpast->set_active (pp->locallab.cutpast);
+    cutpastConn.block (false);
     curvactivConn.block (true);
     curvactiv->set_active (pp->locallab.curvactiv);
     curvactivConn.block (false);
@@ -2122,6 +2174,9 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     centerX->setValue (pp->locallab.centerX);
     centerY->setValue (pp->locallab.centerY);
     circrad->setValue (pp->locallab.circrad);
+    centerXbuf->setValue (pp->locallab.centerXbuf);
+    centerYbuf->setValue (pp->locallab.centerYbuf);
+    adjblur->setValue (pp->locallab.adjblur);
     thres->setValue (pp->locallab.thres);
     proxi->setValue (pp->locallab.proxi);
     lightness->setValue (pp->locallab.lightness);
@@ -2230,12 +2285,14 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastavoid = pp->locallab.avoid;
     lastinvers = pp->locallab.invers;
+    lastcutpast = pp->locallab.cutpast;
     lastcurvactiv = pp->locallab.curvactiv;
     lastinversrad = pp->locallab.inversrad;
     lastinversret = pp->locallab.inversret;
     lastinverssha = pp->locallab.inverssha;
     activlumChanged();
     inversChanged();
+    cutpastChanged();
     curvactivChanged();
     inversradChanged();
     inversretChanged();
@@ -2293,6 +2350,8 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     hueref->hide();
     chromaref->hide();
     lumaref->hide();
+    centerXbuf->hide();
+    centerYbuf->hide();
 
     if (pp->locallab.Smethod == "SYM" || pp->locallab.Smethod == "SYMSL") {
         locXL->setValue (locX->getValue());
@@ -2479,54 +2538,54 @@ void Locallab::updateGeometry (const int centerX_, const int centerY_, const int
         double decay45T = (1.414 * decayX * decayYT) / sqrt (SQR (decayX) + SQR (decayYT));
 
         //printf("decayX=%f decayY=%f decay10=%f decay45=%f oriX=%i origY=%i\n", decayX, decayY, decay10, decay45, origin.x, origin.y);
-        updateBeziers (visibleGeometry.at (5), decayX, decay5  , decay15, 0., 5., 15.);
-        updateBeziers (mouseOverGeometry.at (5), decayX, decay5 , decay15, 0., 5., 15.);
+        updateBeziers (visibleGeometry.at (5), decayX, decay5, decay15, 0., 5., 15.);
+        updateBeziers (mouseOverGeometry.at (5), decayX, decay5, decay15, 0., 5., 15.);
 
-        updateBeziers (visibleGeometry.at (6), decay15, decay30 , decay45, 15., 30., 45.);
-        updateBeziers (mouseOverGeometry.at (6), decay15, decay30 , decay45, 15., 30., 45.);
+        updateBeziers (visibleGeometry.at (6), decay15, decay30, decay45, 15., 30., 45.);
+        updateBeziers (mouseOverGeometry.at (6), decay15, decay30, decay45, 15., 30., 45.);
 
-        updateBeziers (visibleGeometry.at (7), decay45, decay60 , decay75, 45., 60., 75.);
-        updateBeziers (mouseOverGeometry.at (7), decay45, decay60 , decay75, 45., 60., 75.);
+        updateBeziers (visibleGeometry.at (7), decay45, decay60, decay75, 45., 60., 75.);
+        updateBeziers (mouseOverGeometry.at (7), decay45, decay60, decay75, 45., 60., 75.);
 
-        updateBeziers (visibleGeometry.at (8), decay75, decay85 , decayY, 75., 85., 90.);
-        updateBeziers (mouseOverGeometry.at (8), decay75, decay85 , decayY, 75., 85., 90.);
+        updateBeziers (visibleGeometry.at (8), decay75, decay85, decayY, 75., 85., 90.);
+        updateBeziers (mouseOverGeometry.at (8), decay75, decay85, decayY, 75., 85., 90.);
 
-        updateBeziers (visibleGeometry.at (9), decayY, decay85L  , decay75L, 90., 95., 105.);
-        updateBeziers (mouseOverGeometry.at (9), decayY, decay85L , decay75L, 90., 95., 105.);
+        updateBeziers (visibleGeometry.at (9), decayY, decay85L, decay75L, 90., 95., 105.);
+        updateBeziers (mouseOverGeometry.at (9), decayY, decay85L, decay75L, 90., 95., 105.);
 
-        updateBeziers (visibleGeometry.at (10), decay75L, decay60L  , decay45L, 105., 120., 135.);
-        updateBeziers (mouseOverGeometry.at (10), decay75L, decay60L , decay45L, 105., 120., 135.);
+        updateBeziers (visibleGeometry.at (10), decay75L, decay60L, decay45L, 105., 120., 135.);
+        updateBeziers (mouseOverGeometry.at (10), decay75L, decay60L, decay45L, 105., 120., 135.);
 
-        updateBeziers (visibleGeometry.at (11), decay45L, decay30L  , decay15L, 135., 150., 165.);
-        updateBeziers (mouseOverGeometry.at (11), decay45L, decay30L , decay15L, 135., 150., 165.);
+        updateBeziers (visibleGeometry.at (11), decay45L, decay30L, decay15L, 135., 150., 165.);
+        updateBeziers (mouseOverGeometry.at (11), decay45L, decay30L, decay15L, 135., 150., 165.);
 
-        updateBeziers (visibleGeometry.at (12), decay15L, decay5L  , decayXL, 165., 175., 180.);
-        updateBeziers (mouseOverGeometry.at (12), decay15L, decay5L , decayXL, 165., 175., 180.);
+        updateBeziers (visibleGeometry.at (12), decay15L, decay5L, decayXL, 165., 175., 180.);
+        updateBeziers (mouseOverGeometry.at (12), decay15L, decay5L, decayXL, 165., 175., 180.);
 
 
-        updateBeziers (visibleGeometry.at (13), decayXL, decay5LT  , decay15LT, 180., 185., 195.);
-        updateBeziers (mouseOverGeometry.at (13), decayXL, decay5LT , decay15LT, 180., 185., 195.);
+        updateBeziers (visibleGeometry.at (13), decayXL, decay5LT, decay15LT, 180., 185., 195.);
+        updateBeziers (mouseOverGeometry.at (13), decayXL, decay5LT, decay15LT, 180., 185., 195.);
 
-        updateBeziers (visibleGeometry.at (14), decay15LT, decay30LT  , decay45LT, 195., 210., 225.);
-        updateBeziers (mouseOverGeometry.at (14), decay15LT, decay30LT , decay45LT, 195., 210., 225.);
+        updateBeziers (visibleGeometry.at (14), decay15LT, decay30LT, decay45LT, 195., 210., 225.);
+        updateBeziers (mouseOverGeometry.at (14), decay15LT, decay30LT, decay45LT, 195., 210., 225.);
 
-        updateBeziers (visibleGeometry.at (15), decay45LT, decay60LT  , decay75LT, 225., 240., 255.);
-        updateBeziers (mouseOverGeometry.at (15), decay45LT, decay60LT , decay75LT, 225., 240., 255.);
+        updateBeziers (visibleGeometry.at (15), decay45LT, decay60LT, decay75LT, 225., 240., 255.);
+        updateBeziers (mouseOverGeometry.at (15), decay45LT, decay60LT, decay75LT, 225., 240., 255.);
 
-        updateBeziers (visibleGeometry.at (16), decay75LT, decay85LT  , decayYT, 255., 265., 270.);
-        updateBeziers (mouseOverGeometry.at (16), decay75LT, decay85LT , decayYT, 255., 265., 270.);
+        updateBeziers (visibleGeometry.at (16), decay75LT, decay85LT, decayYT, 255., 265., 270.);
+        updateBeziers (mouseOverGeometry.at (16), decay75LT, decay85LT, decayYT, 255., 265., 270.);
 
-        updateBeziers (visibleGeometry.at (17), decayYT, decay85T  , decay75T, 270., 275., 285.);
-        updateBeziers (mouseOverGeometry.at (17), decayYT, decay85T , decay75T, 270., 275., 285.);
+        updateBeziers (visibleGeometry.at (17), decayYT, decay85T, decay75T, 270., 275., 285.);
+        updateBeziers (mouseOverGeometry.at (17), decayYT, decay85T, decay75T, 270., 275., 285.);
 
-        updateBeziers (visibleGeometry.at (18), decay75T, decay60T  , decay45T, 285., 300., 315.);
-        updateBeziers (mouseOverGeometry.at (18), decay75T, decay60T , decay45T, 285., 300., 315.);
+        updateBeziers (visibleGeometry.at (18), decay75T, decay60T, decay45T, 285., 300., 315.);
+        updateBeziers (mouseOverGeometry.at (18), decay75T, decay60T, decay45T, 285., 300., 315.);
 
-        updateBeziers (visibleGeometry.at (19), decay45T, decay30T  , decay15T, 315., 330., 345.);
-        updateBeziers (mouseOverGeometry.at (19), decay45T, decay30T , decay15T, 315., 330., 345.);
+        updateBeziers (visibleGeometry.at (19), decay45T, decay30T, decay15T, 315., 330., 345.);
+        updateBeziers (mouseOverGeometry.at (19), decay45T, decay30T, decay15T, 315., 330., 345.);
 
-        updateBeziers (visibleGeometry.at (20), decay15T, decay5T  , decayX, 345., 355., 360.);
-        updateBeziers (mouseOverGeometry.at (20), decay15T, decay5T , decayX, 345., 355., 360.);
+        updateBeziers (visibleGeometry.at (20), decay15T, decay5T, decayX, 345., 355., 360.);
+        updateBeziers (mouseOverGeometry.at (20), decay15T, decay5T, decayX, 345., 355., 360.);
 
     }
 
@@ -2545,6 +2604,9 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.centerX = centerX->getIntValue ();
     pp->locallab.centerY = centerY->getIntValue ();
     pp->locallab.circrad = circrad->getIntValue ();
+    pp->locallab.centerXbuf = centerXbuf->getIntValue ();
+    pp->locallab.centerYbuf = centerYbuf->getIntValue ();
+    pp->locallab.adjblur = adjblur->getIntValue ();
     pp->locallab.proxi = proxi->getIntValue ();
     pp->locallab.thres = thres->getIntValue ();
     pp->locallab.lightness = lightness->getIntValue ();
@@ -2583,6 +2645,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     pp->locallab.avoid = avoid->get_active();
     pp->locallab.activlum = activlum->get_active();
     pp->locallab.invers = invers->get_active();
+    pp->locallab.cutpast = cutpast->get_active();
     pp->locallab.curvactiv = curvactiv->get_active();
     pp->locallab.inversrad = inversrad->get_active();
     pp->locallab.inversret = inversret->get_active();
@@ -2642,6 +2705,9 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.centerX = centerX->getEditedState ();
         pedited->locallab.centerY = centerY->getEditedState ();
         pedited->locallab.circrad = circrad->getEditedState ();
+        pedited->locallab.centerXbuf = centerXbuf->getEditedState ();
+        pedited->locallab.centerYbuf = centerYbuf->getEditedState ();
+        pedited->locallab.adjblur = adjblur->getEditedState ();
         pedited->locallab.proxi = proxi->getEditedState ();
         pedited->locallab.thres = thres->getEditedState ();
         pedited->locallab.lightness = lightness->getEditedState ();
@@ -2680,6 +2746,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->locallab.enabled = !get_inconsistent();
         pedited->locallab.avoid = !avoid->get_inconsistent();
         pedited->locallab.invers = !invers->get_inconsistent();
+        pedited->locallab.cutpast = !cutpast->get_inconsistent();
         pedited->locallab.curvactiv = !curvactiv->get_inconsistent();
         pedited->locallab.activlum = !activlum->get_inconsistent();
         pedited->locallab.inversret = !inversret->get_inconsistent();
@@ -3119,6 +3186,32 @@ void Locallab::inversChanged ()
     }
 }
 
+void Locallab::cutpastChanged ()
+{
+
+    if (batchMode) {
+        if (cutpast->get_inconsistent()) {
+            cutpast->set_inconsistent (false);
+            cutpastConn.block (true);
+            cutpast->set_active (false);
+            cutpastConn.block (false);
+        } else if (lastcutpast) {
+            cutpast->set_inconsistent (true);
+        }
+
+        lastcutpast = cutpast->get_active ();
+    }
+
+
+    if (listener) {
+        if (getEnabled()) {
+            listener->panelChanged (Evlocallabcutpast, M ("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (Evlocallabcutpast, M ("GENERAL_DISABLED"));
+        }
+    }
+}
+
 void Locallab::curvactivChanged ()
 {
 
@@ -3279,6 +3372,9 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
     centerX->setDefault (defParams->locallab.centerX);
     centerY->setDefault (defParams->locallab.centerY);
     circrad->setDefault (defParams->locallab.circrad);
+    centerXbuf->setDefault (defParams->locallab.centerXbuf);
+    centerYbuf->setDefault (defParams->locallab.centerYbuf);
+    adjblur->setDefault (defParams->locallab.adjblur);
     thres->setDefault (defParams->locallab.thres);
     proxi->setDefault (defParams->locallab.proxi);
     lightness->setDefault (defParams->locallab.lightness);
@@ -3345,6 +3441,9 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         centerX->setDefaultEditedState (pedited->locallab.centerX ? Edited : UnEdited);
         centerY->setDefaultEditedState (pedited->locallab.centerY ? Edited : UnEdited);
         circrad->setDefaultEditedState (pedited->locallab.circrad ? Edited : UnEdited);
+        centerXbuf->setDefaultEditedState (pedited->locallab.centerXbuf ? Edited : UnEdited);
+        centerYbuf->setDefaultEditedState (pedited->locallab.centerYbuf ? Edited : UnEdited);
+        adjblur->setDefaultEditedState (pedited->locallab.adjblur ? Edited : UnEdited);
         thres->setDefaultEditedState (pedited->locallab.thres ? Edited : UnEdited);
         proxi->setDefaultEditedState (pedited->locallab.proxi ? Edited : UnEdited);
         lightness->setDefaultEditedState (pedited->locallab.lightness ? Edited : UnEdited);
@@ -3410,6 +3509,9 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         centerX->setDefaultEditedState (Irrelevant);
         centerY->setDefaultEditedState (Irrelevant);
         circrad->setDefaultEditedState (Irrelevant);
+        centerXbuf->setDefaultEditedState (Irrelevant);
+        centerYbuf->setDefaultEditedState (Irrelevant);
+        adjblur->setDefaultEditedState (Irrelevant);
         thres->setDefaultEditedState (Irrelevant);
         proxi->setDefaultEditedState (Irrelevant);
         lightness->setDefaultEditedState (Irrelevant);
@@ -3485,6 +3587,8 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
     hueref->hide();
     chromaref->hide();
     lumaref->hide();
+    centerXbuf->hide();
+    centerYbuf->hide();
 
     if (a == pastels && pastSatTog->get_active()) {
         saturated->setValue (newval);
@@ -3655,8 +3759,12 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
             listener->panelChanged (Evlocallabsensibn, sensibn->getTextValue());
         } else if (a == proxi) {
             listener->panelChanged (Evlocallabproxi, proxi->getTextValue());
+        } else if (a == adjblur) {
+            listener->panelChanged (Evlocallabadjblur, adjblur->getTextValue());
         } else if (a == centerX || a == centerY) {
             listener->panelChanged (EvlocallabCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
+        } else if (a == centerXbuf || a == centerYbuf) {
+            listener->panelChanged (EvlocallabCenterbuf, Glib::ustring::compose ("X=%1\nY=%2", centerXbuf->getTextValue(), centerYbuf->getTextValue()));
         } else {
             listener->panelChanged (EvlocallabEqualizer,
                                     Glib::ustring::compose ("%1, %2, %3, %4, %5",
@@ -3743,6 +3851,9 @@ void Locallab::trimValues (rtengine::procparams::ProcParams * pp)
     centerX->trimValue (pp->locallab.centerX);
     centerY->trimValue (pp->locallab.centerY);
     circrad->trimValue (pp->locallab.circrad);
+    centerXbuf->trimValue (pp->locallab.centerXbuf);
+    centerYbuf->trimValue (pp->locallab.centerYbuf);
+    adjblur->trimValue (pp->locallab.adjblur);
     thres->trimValue (pp->locallab.thres);
     proxi->trimValue (pp->locallab.proxi);
     lightness->trimValue (pp->locallab.lightness);
@@ -3817,6 +3928,9 @@ void Locallab::setBatchMode (bool batchMode)
     centerX->showEditedCB ();
     centerY->showEditedCB ();
     circrad->showEditedCB ();
+    centerXbuf->showEditedCB ();
+    centerYbuf->showEditedCB ();
+    adjblur->showEditedCB ();
     thres->showEditedCB ();
     proxi->showEditedCB ();
     lightness->showEditedCB ();

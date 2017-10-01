@@ -436,6 +436,9 @@ public:
     bool centerX;
     bool centerY;
     bool circrad;
+    bool centerXbuf;
+    bool centerYbuf;
+    bool adjblur;
     bool thres;
     bool proxi;
     bool qualityMethod;
@@ -486,6 +489,7 @@ public:
     bool vart;
     bool activlum;
     bool invers;
+    bool cutpast;
     bool curvactiv;
     bool inversrad;
     bool inversret;

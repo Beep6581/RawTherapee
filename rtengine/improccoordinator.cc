@@ -104,6 +104,11 @@ ImProcCoordinator::ImProcCoordinator ()
       circrads (500, -10000),
       centerx (500, -10000),
       centery (500, -10000),
+      centerxbufs (500, -10000),
+      centerybufs (500, -10000),
+      adjblurs (500, -10000),
+      cutpasts (500, -10000),
+
       locx (500, -10000),
       locy (500, -10000),
       locxl (500, -10000),
@@ -833,7 +838,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 73;
+            int maxdata = 77;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -876,7 +881,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 {
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10011;//new value for tone mapping
+                        int t_mipversion = 10012;//new value for tone mapping
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -976,6 +981,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         //10011
                         std::string t_curvex = "3000A0B0C1000D1000E";
 
+                        //10012
+                        int t_centerXbuf = 0;
+                        int t_centerYbuf = 0;
+                        int t_adjblur = 0;
+                        int t_cutpast = 0;
+
+
                         //all variables except locRETgainCurve 'coomon for all)
                         fic << "Mipversion=" << t_mipversion << '@' << endl;
                         fic << "Spot=" << t_sp << '@' << endl;
@@ -1053,6 +1065,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         fic << "Shcompr=" << t_shcompr  << '@' << endl;
                         fic << "Sensiex=" << t_sensiex << '@' << endl;
 
+                        fic << "CenterXbuf=" << t_centerXbuf << '@' << endl;
+                        fic << "CenterYbuf=" << t_centerYbuf << '@' << endl;
+                        fic << "Adjblur=" << t_adjblur << '@' << endl;
+                        fic << "Cutpast=" << t_cutpast << '@' <<  endl;
+
                         fic << "curveReti=" << t_curvret << '@' << endl;
                         fic << "curveLL=" << t_curvll << '@' << endl;
                         fic << "curveLH=" << t_curvlh << '@' << endl;
@@ -1061,6 +1078,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         fic << "curveskin=" << t_curvskin << '@' << endl;
                         fic << "pthres=" << t_psthres << '@' << endl;
                         fic << "curveex=" << t_curvex << '@' << endl;
+
+
 
                         fic << endl;
                     }
@@ -1256,6 +1275,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 dataspot[67][0] = hlcomprthreshs[0] = params.locallab.hlcomprthresh;
                 dataspot[68][0] = shcomprs[0] = params.locallab.shcompr;
                 dataspot[69][0] = sensiexs[0] = params.locallab.sensiex;
+
+                dataspot[70][0] = centerxbufs[0] = params.locallab.centerXbuf;
+                dataspot[71][0] = centerybufs[0] = params.locallab.centerYbuf;
+                dataspot[72][0] = adjblurs[0] = params.locallab.adjblur;
+
+                if (!params.locallab.cutpast) {
+                    dataspot[73][0] = cutpasts[0] = 0;
+                } else {
+                    dataspot[73][0] = cutpasts[0] = 1;
+                }
 
                 //curve Reti local
                 int siz = params.locallab.localTgaincurve.size();
@@ -1520,9 +1549,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
 // I have forgotten 10010  ==> probably crash...but now it's passed...
 //enabled this code after...
-//               if (versionmip == 10011) {
-//                   maxind = 70;
-//               }
+                if (versionmip == 10011) {
+                    maxind = 70;
+                }
 
                 while (getline (fich, line)) {
                     spotline = line;
@@ -1669,7 +1698,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             }
 
             if (versionmip == 10008) {
-				//vibrance
+                //vibrance
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
 
                     dataspot[58][sp] = 19;
@@ -1704,6 +1733,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
+
+            if (versionmip == 10011) {
+
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[70][sp] = 0;
+                    dataspot[71][sp] = 0;
+                    dataspot[72][sp] = 0;
+                    dataspot[73][sp] = 0;
+                }
+            }
+
 //          printf("ns=%i \n", ns);
 
             if (ns <  (maxspot - 1)) {
@@ -1712,7 +1752,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10011;
+                    int t_mipversion = 10012;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -1804,6 +1844,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     //10010
                     std::string t_curvex = "3000A0B0C1000D1000E";
 
+                    //10012
+                    int t_centerXbuf = 0;
+                    int t_centerYbuf = 0;
+                    int t_adjblur = 0;
+                    int t_cutpast = 0;
+
                     fic << "Mipversion=" << t_mipversion << '@' << endl;
                     fic << "Spot=" << t_sp << '@' << endl;
                     fic << "Circrad=" << t_circrad << '@' << endl;
@@ -1878,6 +1924,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fic << "Shcompr=" << t_shcompr  << '@' << endl;
                     fic << "Sensiex=" << t_sensiex << '@' << endl;
 
+                    fic << "CenterXbuf=" << t_centerXbuf << '@' << endl;
+                    fic << "CenterYbuf=" << t_centerYbuf << '@' << endl;
+                    fic << "Adjblur=" << t_adjblur << '@' << endl;
+                    fic << "Cutpast=" << t_cutpast << '@' <<  endl;
+
                     fic << "curveReti=" << t_curvret << '@' << endl;
                     fic << "curveLL=" << t_curvll << '@' << endl;
                     fic << "curveLH=" << t_curvlh << '@' << endl;
@@ -1886,6 +1937,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fic << "curveskin=" << t_curvskin << '@' << endl;
                     fic << "pthres=" << t_psthres << '@' << endl;
                     fic << "curveex=" << t_curvex << '@' << endl;
+
+
 
                     fic << endl;
                 }
@@ -2168,6 +2221,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 params.locallab.hlcomprthresh = hlcomprthreshs[sp] = dataspot[67][sp];
                 params.locallab.shcompr = shcomprs[sp] = dataspot[68][sp];
                 params.locallab.sensiex = sensiexs[sp] = dataspot[69][sp];
+
+                params.locallab.centerXbuf = centerxbufs[sp] = dataspot[70][sp];
+                params.locallab.centerYbuf = centerybufs[sp] = dataspot[71][sp];
+                params.locallab.adjblur = adjblurs[sp] = dataspot[72][sp];
+
+                if (dataspot[73][sp] ==  0) {
+                    cutpasts[sp] = 0;
+                    params.locallab.cutpast = false;
+                } else {
+                    cutpasts[sp] = 1;
+                    params.locallab.cutpast  = true;
+                }
 
 
                 int *s_datc;
@@ -2635,6 +2700,19 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             dataspot[68][sp] = shcomprs[sp] = params.locallab.shcompr = dataspot[68][0];
             dataspot[69][sp] = sensiexs[sp] = params.locallab.sensiex = dataspot[69][0];
 
+            dataspot[70][sp] = centerxbufs[sp] = params.locallab.centerXbuf = dataspot[70][0];
+            dataspot[71][sp] = centerybufs[sp] = params.locallab.centerYbuf = dataspot[71][0];
+            dataspot[72][sp] = adjblurs[sp] = params.locallab.adjblur = dataspot[72][0];
+
+            if (dataspot[73][0] == 0) {
+                params.locallab.cutpast = false;
+                dataspot[73][sp] = 0;
+                cutpasts[sp] = 0;
+            } else {
+                params.locallab.cutpast = true;
+                dataspot[73][sp] = 1;
+                cutpasts[sp] = 1;
+            }
 
 
             int *s_datc;
@@ -2874,7 +2952,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 100011;
+                    int t_mipversion = 10012;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -2946,6 +3024,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_hlcomprthresh = dataspot[67][spe];
                     int t_shcompr = dataspot[68][spe];
                     int t_sensiex = dataspot[69][spe];
+
+                    int t_centerXbuf = dataspot[70][spe];
+                    int t_centerYbuf = dataspot[71][spe];
+                    int t_adjblur = dataspot[72][spe];
+                    int t_cutpast = dataspot[73][spe];
 
                     int t_hueref = dataspot[maxdata - 3][spe];
                     int t_chromaref = dataspot[maxdata - 2][spe];
@@ -3037,6 +3120,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fou << "Shcompr=" << t_shcompr  << '@' << endl;
                     fou << "Sensiex=" << t_sensiex << '@' << endl;
 
+                    fou << "CenterXbuf=" << t_centerXbuf << '@' << endl;
+                    fou << "CenterYbuf=" << t_centerYbuf << '@' << endl;
+                    fou << "Adjblur=" << t_adjblur << '@' << endl;
+                    fou << "Cutpast=" << t_cutpast << '@' <<  endl;
 
                     fou << "hueref=" << t_hueref << '@' << endl;
                     fou << "chromaref=" << t_chromaref << '@' << endl;

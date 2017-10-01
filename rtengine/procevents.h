@@ -602,6 +602,9 @@ enum ProcEvent {
     Evlocallabshcompr = 572,
     Evlocallabsensiex = 573,
     Evlocallabshape = 574,
+    EvlocallabCenterbuf = 575,
+    Evlocallabadjblur = 576,
+    Evlocallabcutpast = 577,
 
     NUMOFEVENTS
 
