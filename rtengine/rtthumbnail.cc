@@ -720,9 +720,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     double avg_r = 0;
     double avg_g = 0;
     double avg_b = 0;
-    const float eps = 1e-5; //tolerance to avoid dividing by zero
 
-    float rn = eps, gn = eps, bn = eps;
+    unsigned int rn = 0, gn = 0, bn = 0;
 
     for (int i = 32; i < height - 32; i++) {
         int start, end;
@@ -837,9 +836,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         }
     }
 
-    double reds = avg_r / rn * tpp->camwbRed;
-    double greens = avg_g / gn * tpp->camwbGreen;
-    double blues = avg_b / bn * tpp->camwbBlue;
+    double reds = avg_r / std::max(rn, 1u) * tpp->camwbRed;
+    double greens = avg_g / std::max(gn, 1u) * tpp->camwbGreen;
+    double blues = avg_b / std::max(bn, 1u) * tpp->camwbBlue;
 
     tpp->redAWBMul   = ri->get_rgb_cam (0, 0) * reds + ri->get_rgb_cam (0, 1) * greens + ri->get_rgb_cam (0, 2) * blues;
     tpp->greenAWBMul = ri->get_rgb_cam (1, 0) * reds + ri->get_rgb_cam (1, 1) * greens + ri->get_rgb_cam (1, 2) * blues;

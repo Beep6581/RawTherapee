@@ -1793,7 +1793,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
             }
 
             float sum = 0.f;
-            float sumQ = 0.f;
+//            float sumQ = 0.f;
 
 #ifdef _OPENMP
             const int numThreads = min (max (width * height / 65536, 1), omp_get_max_threads());
@@ -1813,7 +1813,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     hist16Qthr.clear();
                 }
 
-                #pragma omp for reduction(+:sum,sumQ)
+                //    #pragma omp for reduction(+:sum,sumQ)
+                #pragma omp for reduction(+:sum)
+
 
                 for (int i = 0; i < height; i++)
                     for (int j = 0; j < width; j++) { //rough correspondence between L and J
@@ -1859,24 +1861,25 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                         }
 
                         //estimation of wh only with La
-                        float whestim = 500.f;
+                        /*
+                           float whestim = 500.f;
 
-                        if (la < 200.f) {
-                            whestim = 200.f;
-                        } else if (la < 2500.f) {
-                            whestim = 350.f;
-                        } else {
-                            whestim = 500.f;
-                        }
-
+                           if (la < 200.f) {
+                           whestim = 200.f;
+                           } else if (la < 2500.f) {
+                           whestim = 350.f;
+                           } else {
+                           whestim = 500.f;
+                           }
+                        */
                         if (needQ) {
                             hist16Qthr[CLIP ((int) (32768.f * sqrt ((koef * (lab->L[i][j])) / 32768.f)))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                             //perhaps  needs to introduce whestim ??
-                            //   hist16Qthr[ (int) (sqrtf ((koef * (lab->L[i][j])) * 32768.f))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+                            //hist16Qthr[ (int) (sqrtf ((koef * (lab->L[i][j])) * 32768.f))]++;  //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                         }
 
                         sum += koef * lab->L[i][j]; //evaluate mean J to calculate Yb
-                        sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
+                        //sumQ += whestim * sqrt ((koef * (lab->L[i][j])) / 32768.f);
                         //can be used in case of...
                     }
 
@@ -1891,12 +1894,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
                     }
 
                 }
-                float meanQ;
 
                 if (std::isnan (mean)) {
                     mean = (sum / ((height) * width)) / 327.68f; //for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
-                    meanQ = (sumQ / ((height) * width));//in case of
-
                 }
             }
 

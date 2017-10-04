@@ -299,7 +299,7 @@ void SaveAsDialog::formatChanged (Glib::ustring f)
 
 void SaveAsDialog::setInitialFileName (Glib::ustring fname)
 {
-
+    this->fname = fname;
     fchooser->set_current_name(fname);
 }
 

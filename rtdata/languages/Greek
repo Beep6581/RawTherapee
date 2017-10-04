@@ -584,7 +584,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !HISTORY_MSG_82;Profile changed
 !HISTORY_MSG_83;S/H - Sharp mask
 !HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;LCP
+!HISTORY_MSG_85;Lens Correction - LCP file
 !HISTORY_MSG_86;RGB Curves - Luminosity mode
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR threshold
@@ -967,6 +967,9 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !HISTORY_MSG_482;CAM02 - Green scene
 !HISTORY_MSG_483;CAM02 - Yb scene
 !HISTORY_MSG_484;CAM02 - Auto Yb scene
+!HISTORY_MSG_485;Lens Correction
+!HISTORY_MSG_486;Lens Correction - Camera
+!HISTORY_MSG_487;Lens Correction - Lens
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -993,6 +996,10 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+!LENSPROFILE_CORRECTION_LCPFILE;LCP File
+!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
@@ -1028,6 +1035,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
 !MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
@@ -1078,7 +1086,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_LABCURVE;L*a*b* adjustments
-!PARTIALPASTE_LENSPROFILE;Lens correction profile
+!PARTIALPASTE_LENSPROFILE;Profiled lens correction
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PERSPECTIVE;Perspective
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
@@ -1112,6 +1120,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_AUTLISVLOW;None
 !PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
+!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_AUTSTD;Standard
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHADDALL;All to 'Add'
@@ -1232,6 +1241,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_SELECTFONT;Select main font
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
@@ -1437,7 +1447,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always Tint=1.\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
@@ -1701,7 +1711,7 @@ TP_WBALANCE_TEMPERATURE;Θερμοκρασία
 !TP_LENSGEOM_AUTOCROP;Auto-Crop
 !TP_LENSGEOM_FILL;Auto-fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_LABEL;Profiled Lens Correction
 !TP_LENSPROFILE_USECA;Chromatic aberration correction
 !TP_LENSPROFILE_USEDIST;Distortion correction
 !TP_LENSPROFILE_USEVIGN;Vignetting correction

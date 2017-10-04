@@ -975,15 +975,11 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             bppcl->endBatchPParamsChange();
         }
     } else if (m == clearFromCache) {
-        for (size_t i = 0; i < mselected.size(); i++) {
-            tbl->clearFromCacheRequested (mselected, false);
-        }
+        tbl->clearFromCacheRequested (mselected, false);
 
         //queue_draw ();
     } else if (m == clearFromCacheFull) {
-        for (size_t i = 0; i < mselected.size(); i++) {
-            tbl->clearFromCacheRequested (mselected, true);
-        }
+        tbl->clearFromCacheRequested (mselected, true);
 
         //queue_draw ();
     } else if (miOpenDefaultViewer != nullptr && m == miOpenDefaultViewer) {

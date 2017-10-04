@@ -3058,34 +3058,60 @@ void CLASS sony_arw_load_raw()
 
 void CLASS sony_arw2_load_raw()
 {
-  uchar *data, *dp;
-  ushort pix[16];
-  int row, col, val, max, min, imax, imin, sh, bit, i;
 
-  data = (uchar *) malloc (raw_width+1);
-  merror (data, "sony_arw2_load_raw()");
-  for (row=0; row < height; row++) {
-    fread (data, 1, raw_width, ifp);
-    for (dp=data, col=0; col < raw_width-30; dp+=16) {
-      max = 0x7ff & (val = sget4(dp));
-      min = 0x7ff & val >> 11;
-      imax = 0x0f & val >> 22;
-      imin = 0x0f & val >> 26;
-      for (sh=0; sh < 4 && 0x80 << sh <= max-min; sh++);
-      for (bit=30, i=0; i < 16; i++)
-	if      (i == imax) pix[i] = max;
-	else if (i == imin) pix[i] = min;
-	else {
-	  pix[i] = ((sget2(dp+(bit >> 3)) >> (bit & 7) & 0x7f) << sh) + min;
-	  if (pix[i] > 0x7ff) pix[i] = 0x7ff;
-	  bit += 7;
-	}
-      for (i=0; i < 16; i++, col+=2)
-       RAW(row,col) = curve[pix[i] << 1]; // >> 2; RT: disabled shifting to avoid precision loss
-      col -= col & 1 ? 1:31;
+#if defined( _OPENMP ) && defined( MYFILE_MMAP )
+#pragma omp parallel
+#endif
+{
+    uchar *data = new (std::nothrow) uchar[raw_width + 1];
+    merror(data, "sony_arw2_load_raw()");
+    IMFILE ifpthr = *ifp;
+    int pos = ifpthr.pos;
+    ushort pix[16];
+
+#if defined( _OPENMP ) && defined( MYFILE_MMAP )
+    // only master thread will update the progress bar
+    ifpthr.plistener = nullptr;
+    #pragma omp master
+    {
+    ifpthr.plistener = ifp->plistener;
     }
-  }
-  free (data);
+    #pragma omp for schedule(dynamic,16) nowait
+#endif
+
+    for (int row = 0; row < height; row++) {
+        fseek(&ifpthr, pos + row * raw_width, SEEK_SET);
+        fread(data, 1, raw_width, &ifpthr);
+        uchar *dp = data;
+        for (int col = 0; col < raw_width - 30; dp += 16) {
+            int val = sget4(dp);
+            int max = 0x7ff & val;
+            int min = 0x7ff & val >> 11;
+            int imax = 0x0f & val >> 22;
+            int imin = 0x0f & val >> 26;
+            int bit = 30;
+            for (int i = 0; i < 16; i++) {
+                if (i == imax) {
+                    pix[i] = max;
+                } else if (i == imin) {
+                    pix[i] = min;
+                } else {
+                    int sh;
+                    for (sh = 0; sh < 4 && 0x80 << sh <= max - min; sh++)
+                        ;
+                    pix[i] = ((sget2(dp + (bit >> 3)) >> (bit & 7) & 0x7f) << sh) + min;
+                    pix[i] = std::min(pix[i], (ushort)0x7ff);
+                    bit += 7;
+                }
+            }
+            for (int i = 0; i < 16; i++, col += 2) {
+                RAW(row,col) = curve[pix[i] << 1]; // >> 2; RT: disabled shifting to avoid precision loss
+            }
+            col -= col & 1 ? 1:31;
+        }
+    }
+  delete [] data;
+}
   maximum = curve[0x7ff << 1]; // RT: fix maximum.
   maximum = 16300; // RT: conservative white level tested on various ARW2 cameras. This constant was set in 2013-12-17, may need re-evaluation in the future.
 }
@@ -9034,6 +9060,10 @@ canon_a5:
       flip = 6;
     } else if (load_raw != &CLASS packed_load_raw)
       maximum = (is_raw == 2 && shot_select) ? 0x2f00 : 0x3e00;
+    if (!strncmp(model,"X-A10",5)) {
+        raw_width = 4912;
+        raw_height = 3278;
+    }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
     if (width == 2848 || width == 3664) filters = 0x16161616;
@@ -9520,7 +9550,7 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 	adobe_coeff (make, model);
-  if((!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4) || !strncmp(model, "K-1",3))) && filters != 0)
+  if((!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4) || !strncmp(model, "K-1",3) || !strncmp(model, "KP",2))) && filters != 0)
 	adobe_coeff (make, model);
   if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
     adobe_coeff (make, model);
