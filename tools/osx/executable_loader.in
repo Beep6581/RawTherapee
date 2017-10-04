@@ -48,4 +48,7 @@ esac
 #fi
 #ln -sf "${app}" /tmp
 
+AppleLocale=`defaults read -g AppleLocale`
+export LANG=${AppleLocale%@*}.UTF-8
+
 exec "${cwd}/rawtherapee-bin" "$@"
