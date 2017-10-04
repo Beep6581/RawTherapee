@@ -25,8 +25,9 @@
 CacheImageData::CacheImageData ()
     : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
       timeValid(false), year(0), month(0), day(0), hour(0), min(0), sec(0), exifValid(false), frameCount(1),
-      fnumber(0.0), shutter(0.0), focalLen(0.0), focalLen35mm(0.0), focusDist(0.f), iso(0), isHDR (false), isPixelShift (false),
-      sampleFormat(rtengine::IIOSF_UNKNOWN), redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0), rotate(0), thumbImgType(0)
+      fnumber(0.0), shutter(0.0), focalLen(0.0), focalLen35mm(0.0), focusDist(0.f), iso(0), isHDR (false),
+      isPixelShift (false), sensortype(rtengine::ST_NONE), sampleFormat(rtengine::IIOSF_UNKNOWN),
+      redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0), rotate(0), thumbImgType(0)
 {
 }
 
@@ -180,6 +181,9 @@ int CacheImageData::load (const Glib::ustring& fname)
                 if (keyFile.has_key ("ExtraRawInfo", "ThumbImageType")) {
                     thumbImgType    = keyFile.get_integer ("ExtraRawInfo", "ThumbImageType");
                 }
+                if (keyFile.has_key ("ExtraRawInfo", "SensorType")) {
+                    sensortype  = keyFile.get_integer ("ExtraRawInfo", "SensorType");
+                }
             } else {
                 rotate = 0;
                 thumbImgType = 0;
@@ -263,6 +267,7 @@ int CacheImageData::save (const Glib::ustring& fname)
 
     if (format == FT_Raw) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageType", thumbImgType);
+        keyFile.set_integer ("ExtraRawInfo", "SensorType", sensortype);
     }
 
     keyData = keyFile.to_data ();

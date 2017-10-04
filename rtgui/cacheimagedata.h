@@ -56,6 +56,7 @@ public:
     unsigned iso;
     bool isHDR;
     bool isPixelShift;
+    int sensortype;
     rtengine::IIO_Sample_Format sampleFormat;
     Glib::ustring lens;
     Glib::ustring camMake;
@@ -91,6 +92,7 @@ public:
     bool hasExif (unsigned int frame = 0) const  { return false; }
     rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const { return nullptr; }
     rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const { return nullptr; }
+    rtexif::TagDirectory* getBestExifData (rtengine::ImageSource *imgSource, rtengine::procparams::RAWParams *rawParams) const { return nullptr; }
     bool hasIPTC (unsigned int frame = 0) const { return false; }
     rtengine::procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const { return rtengine::procparams::IPTCPairs(); }
     tm getDateTime (unsigned int frame = 0) const { return tm{}; }

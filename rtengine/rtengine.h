@@ -48,7 +48,7 @@ namespace rtengine
 class IImage8;
 class IImage16;
 class IImagefloat;
-
+class ImageSource;
 
 /**
   * This class provides functions to obtain exif and IPTC metadata information
@@ -74,6 +74,12 @@ public:
       * @param frame frame number in the metadata tree
       * @return The directory of exif metadata tags */
     virtual rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const = 0;
+    /** Returns the directory of exif metadata tags containing at least the 'Make' tag for the requested frame.
+      * If no usable metadata exist in the frame, send back the best TagDirectory describing the frame content.
+      * @param imgSource rawimage that we want the metadata from
+      * @param rawParams RawParams to select the frame number
+      * @return The directory of exif metadata tags containing at least the 'Make' tag */
+    virtual rtexif::TagDirectory* getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const = 0;
     /** Checks the availability of IPTC tags.
       * @return Returns true if image contains IPTC tags */
     virtual bool hasIPTC (unsigned int frame = 0) const = 0;

@@ -28,6 +28,7 @@
 #include <tiff.h>
 
 #include <glib/gstdio.h>
+#include <glib/gunicode.h>
 
 #include "rtexif.h"
 
@@ -707,7 +708,7 @@ int TagDirectory::write (int start, unsigned char* buffer)
     return maxPos;
 }
 
-void TagDirectory::applyChange (std::string name, std::string value)
+void TagDirectory::applyChange (std::string name, Glib::ustring value)
 {
 
     std::string::size_type dp = name.find_first_of ('.');
@@ -741,7 +742,12 @@ void TagDirectory::applyChange (std::string name, std::string value)
 
             if (attrib) {
                 Tag* nt = new Tag (this, attrib);
-                nt->initString (value.c_str());
+                if (name == "UserComment") {
+                    // UserComment can be Unicode
+                    nt->initUserComment (value);
+                } else {
+                    nt->initString (value.c_str());
+                }
                 addTag (nt);
             }
         }
@@ -1905,6 +1911,28 @@ void Tag::initInt (int data, TagType t, int cnt)
     valuesize *= count;
     value = new unsigned char[valuesize];
     setInt (data, 0, t);
+}
+
+void Tag::initUserComment (const Glib::ustring &text)
+{
+    type = UNDEFINED;
+    if (text.is_ascii()) {
+        count = 8 + strlen (text.c_str());
+        valuesize = count;
+        value = new unsigned char[valuesize];
+        strcpy ((char*)value, "ASCII");
+        value[5] = value[6] = value[7] = 0;
+        strcpy ((char*)value + 8, text.c_str());
+    } else {
+        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, NULL, NULL, NULL);
+        count = 8 + wcslen(commentStr)*2;
+        valuesize = count;
+        value = (unsigned char*)new char[valuesize];
+        strcpy ((char*)value, "UNICODE");
+        value[7] = 0;
+        wcscpy(((wchar_t*)value) + 4, commentStr);
+        g_free(commentStr);
+    }
 }
 
 void Tag::initString (const char* text)

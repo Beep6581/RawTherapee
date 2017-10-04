@@ -22,6 +22,8 @@
 
 #include "imagedata.h"
 #include "iptcpairs.h"
+#include "imagesource.h"
+#include "rt_math.h"
 
 #define PRINT_HDR_PS_DETECTION 0
 
@@ -789,6 +791,39 @@ IIOSampleFormat FramesData::getSampleFormat (unsigned int frame) const
 rtexif::TagDirectory* FramesData::getFrameExifData (unsigned int frame) const
 {
     return frames.empty() || frame >= frames.size()  ? nullptr : frames.at(frame)->getExifData ();
+}
+
+rtexif::TagDirectory* FramesData::getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const
+{
+    rtexif::TagDirectory *td = nullptr;
+    if (frames.empty()) {
+        return nullptr;
+    }
+    if (imgSource && rawParams) {
+        eSensorType sensorType = imgSource->getSensorType();
+        unsigned int imgNum = 0;
+        if (sensorType == ST_BAYER) {
+            imgNum = rtengine::LIM<unsigned int>(rawParams->bayersensor.imageNum, 1, frames.size());
+        /*
+        // might exist someday ?
+        } else if (sensorType == ST_FUJI_XTRANS) {
+            imgNum = rtengine::LIM(rawParams->xtranssensor.imageNum, 1, frames.size());
+        } else if (sensorType == ST_NONE && !imgSource->isRAW()) {
+            // standard image multiframe support should come here (when implemented in GUI)
+        */
+        }
+
+        frames[imgNum]->getExifData ();
+
+        td = getFrameExifData (imgNum);
+        rtexif::Tag* makeTag;
+        if (td && (makeTag = td->findTag("Make", true))) {
+            td = makeTag->getParent();
+        } else {
+            td = getRootExifData(0);
+        }
+    }
+    return td;
 }
 
 rtexif::TagDirectory* FramesData::getRootExifData (unsigned int root) const

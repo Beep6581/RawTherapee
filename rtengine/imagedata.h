@@ -107,6 +107,7 @@ public:
     IIOSampleFormat getSampleFormat (unsigned int frame = 0) const;
     rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const;
     rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const;
+    rtexif::TagDirectory* getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const;
     procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const;
     bool hasExif (unsigned int frame = 0) const;
     bool hasIPTC (unsigned int frame = 0) const;

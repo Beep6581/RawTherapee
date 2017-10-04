@@ -171,7 +171,7 @@ public:
     virtual int      calculateSize ();
     virtual int      write         (int start, unsigned char* buffer);
     virtual TagDirectory* clone    (TagDirectory* parent);
-    virtual void     applyChange   (std::string field, std::string value);
+    virtual void     applyChange   (std::string field, Glib::ustring value);
 
     virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
     virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
@@ -225,15 +225,16 @@ public:
     Tag (TagDirectory* parent, const TagAttrib* attr, const char* data);  // create a new tag from array (used
 
     ~Tag ();
-    void initType       (unsigned char *data, TagType type);
-    void initInt        (int data, TagType t, int count = 1);
-    void initString     (const char* text);
-    void initSubDir     ();
-    void initSubDir     (TagDirectory* dir);
-    void initMakerNote  (MNKind mnk, const TagAttrib* ta);
-    void initUndefArray (const char* data, int len);
-    void initLongArray  (const char* data, int len);
-    void initRational   (int num, int den);
+    void initType        (unsigned char *data, TagType type);
+    void initInt         (int data, TagType t, int count = 1);
+    void initUserComment (const Glib::ustring &text);
+    void initString      (const char* text);
+    void initSubDir      ();
+    void initSubDir      (TagDirectory* dir);
+    void initMakerNote   (MNKind mnk, const TagAttrib* ta);
+    void initUndefArray  (const char* data, int len);
+    void initLongArray   (const char* data, int len);
+    void initRational    (int num, int den);
 
     // get basic tag properties
     int                  getID          () const

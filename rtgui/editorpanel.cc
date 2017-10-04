@@ -1143,7 +1143,16 @@ void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, r
 //    if (ev!=EvPhotoLoaded)
 //        saveLabel->set_markup (Glib::ustring("<span foreground=\"#AA0000\" weight=\"bold\">") + M("MAIN_BUTTON_SAVE") + "</span>");
 
-    selectedFrame = params->raw.bayersensor.imageNum;
+    rtengine::eSensorType sensorType = isrc->getImageSource()->getSensorType();
+
+    selectedFrame = 0;
+    if (sensorType == rtengine::ST_BAYER) {
+        selectedFrame = params->raw.bayersensor.imageNum;
+    //} else if (sensorType == rtengine::ST_FUJI_XTRANS) {
+    //    selectedFrame = params->raw.xtranssensor.imageNum;
+    }
+    selectedFrame = rtengine::LIM<int>(selectedFrame, 0, isrc->getImageSource()->getMetaData()->getFrameCount() - 1);
+
     info_toggled();
 }
 

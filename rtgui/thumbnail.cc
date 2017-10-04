@@ -132,16 +132,18 @@ void Thumbnail::_generateThumbnailImage ()
         bool quick = false;
         rtengine::RawMetaDataLocation ri;
 
+        rtengine::eSensorType sensorType = rtengine::ST_NONE;
         if ( initial_ && options.internalThumbIfUntouched) {
             quick = true;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1, TRUE);
+            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, tw, th, 1, TRUE);
         }
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, pparams.wb.equal, TRUE, pparams.raw.bayersensor.imageNum);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams.wb.equal, TRUE, pparams.raw.bayersensor.imageNum);
         }
 
+        cfs.sensortype = sensorType;
         if (tpp) {
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
@@ -614,7 +616,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
     } else {
         // Full thumbnail: apply profile
         // image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
-        image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, &cfs, scale );
+        image = tpp->processImage (pparams, static_cast<rtengine::eSensorType>(cfs.sensortype), h, rtengine::TI_Bilinear, &cfs, scale );
     }
 
     tpp->getDimensions(lastW, lastH, lastScale);
@@ -640,7 +642,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
     }
 
     // rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
-    rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, &cfs, scale );
+    rtengine::IImage8* image = tpp->processImage (pparams, static_cast<rtengine::eSensorType>(cfs.sensortype), h, rtengine::TI_Bilinear, &cfs, scale );
     tpp->getDimensions(lastW, lastH, lastScale);
 
     delete tpp;
