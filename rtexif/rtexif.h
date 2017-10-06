@@ -290,9 +290,10 @@ public:
 
 
     // additional getter/setter for more comfortable use
-    std::string valueToString   ();
-    std::string nameToString    (int i = 0);
-    void        valueFromString (const std::string& value);
+    std::string valueToString         ();
+    std::string nameToString          (int i = 0);
+    void        valueFromString       (const std::string& value);
+    void        userCommentFromString (const Glib::ustring& text);
 
     // functions for writing
     int  calculateSize ();

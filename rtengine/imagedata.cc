@@ -803,11 +803,11 @@ rtexif::TagDirectory* FramesData::getBestExifData (ImageSource *imgSource, procp
         eSensorType sensorType = imgSource->getSensorType();
         unsigned int imgNum = 0;
         if (sensorType == ST_BAYER) {
-            imgNum = rtengine::LIM<unsigned int>(rawParams->bayersensor.imageNum, 1, frames.size());
+            imgNum = rtengine::LIM<unsigned int>(rawParams->bayersensor.imageNum, 0, frames.size() - 1);
         /*
         // might exist someday ?
         } else if (sensorType == ST_FUJI_XTRANS) {
-            imgNum = rtengine::LIM(rawParams->xtranssensor.imageNum, 1, frames.size());
+            imgNum = rtengine::LIM<unsigned int>(rawParams->xtranssensor.imageNum, 0, frames.size() - 1);
         } else if (sensorType == ST_NONE && !imgSource->isRAW()) {
             // standard image multiframe support should come here (when implemented in GUI)
         */

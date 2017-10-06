@@ -730,7 +730,12 @@ void TagDirectory::applyChange (std::string name, Glib::ustring value)
         } else if (value == "#delete" && t) {
             t->setKeep (false);
         } else if (t && !t->isDirectory()) {
-            t->valueFromString (value);
+            if (name == "UserComment") {
+                // UserComment can be Unicode
+                t->userCommentFromString (value);
+            } else {
+                t->valueFromString (value);
+            }
         } else {
             const TagAttrib* attrib = nullptr;
 
@@ -1750,6 +1755,19 @@ void Tag::valueFromString (const std::string& value)
     if (attrib && attrib->interpreter) {
         attrib->interpreter->fromString (this, value);
     }
+}
+
+void Tag::userCommentFromString (const Glib::ustring& text)
+{
+
+    if (!allocOwnMemory) {
+        return;
+    }
+    if (value) {
+        delete [] value;
+        value = nullptr;
+    }
+    initUserComment(text);
 }
 
 int Tag::calculateSize ()

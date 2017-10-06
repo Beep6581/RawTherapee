@@ -284,11 +284,12 @@ void ExifPanel::addDirectory (const TagDirectory* dir, Gtk::TreeModel::Children 
             continue;
         }
 
-        if (t->isDirectory())
+        if (t->isDirectory()) {
             for (int j = 0; t->getDirectory (j); j++) {
                 Gtk::TreeModel::Children ch = addTag (root, t->nameToString (j), M ("EXIFPANEL_SUBDIRECTORY"), currAttrib ? currAttrib->action : AC_DONTWRITE, currAttrib && currAttrib->editable);
                 addDirectory (t->getDirectory (j), ch);
-            } else {
+            }
+        } else {
             addTag (root, t->nameToString (), t->valueToString (), currAttrib ? (t->getOwnMemory() ? currAttrib->action : AC_SYSTEM) : AC_DONTWRITE, currAttrib && currAttrib->editable);
         }
     }
@@ -631,11 +632,11 @@ Glib::ustring ExifPanel::getSelection (bool onlyeditable)
     while (iter) {
         if (first) {
             ret = iter->get_value (exifColumns.field_nopango);
+            editable = iter->get_value (exifColumns.editable);
         } else {
             ret = iter->get_value (exifColumns.field_nopango) + "." + ret;
         }
 
-        editable = iter->get_value (exifColumns.editable);
         iter = iter->parent ();
         first = false;
     }
