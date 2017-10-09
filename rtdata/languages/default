@@ -114,7 +114,10 @@ FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n\nKeyboard shortcuts:\n<
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
-FILEBROWSER_CLEARPROFILE;Clear
+FILEBROWSER_CLEARALL;Clear all
+FILEBROWSER_CLEAREXIF;Clear EXIF modifications
+FILEBROWSER_CLEARIPTC;Clear IPTC data
+FILEBROWSER_CLEARPARAMS;Clear processing parameters
 FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_COPYPROFILE;Copy
 FILEBROWSER_CURRENT_NAME;Current name:
@@ -829,6 +832,7 @@ MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut:
 MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
+MAIN_TOOLTIP_DELETEPROFILE;Delete the side-car and/or cached processing parameter file
 MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
@@ -838,6 +842,7 @@ MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
 MAIN_TOOLTIP_QINFO;Quick info on the image.\nShortcut: <b>i</b>
+MAIN_TOOLTIP_SAVEPROFILE;Silently save the current processing parameters. Does not save the History nor the Snapshots\nSee also the automatic save on closing in the Preferences\nShortcut: <b>Ctrl+Shift+s</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-l</b>
@@ -1093,6 +1098,8 @@ PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next t
 PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
+PREFERENCES_PROFILESAVEONEXIT;Save profile the closing the editor or switching to another image
+PREFERENCES_PROFILESAVEUNMODIFIED;Save profile even if leaved untouched in the Editor
 PREFERENCES_PROFILE_NONE;None
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PRTINTENT;Rendering intent

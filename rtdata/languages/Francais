@@ -111,7 +111,10 @@ FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir\n<b>Ctrl-O</b> pour 
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache (complet)
 FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache (partiel)
-FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
+FILEBROWSER_CLEARALL;Supprimer tout
+FILEBROWSER_CLEAREXIF;Supprimer les modifications de données EXIF
+FILEBROWSER_CLEARIPTC;Supprimer les  données IPTC
+FILEBROWSER_CLEARPARAMS;Supprimer les paramètres de traitement d'image
 FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou le raccourci clavier:\n<b>Shift-Ctrl-0</b> Pas de couleur\n<b>Shift-Ctrl-1</b> Rouge\n<b>Shift-Ctrl-2</b> Jaune\n<b>Shift-Ctrl-3</b> Vert\n<b>Shift-Ctrl-4</b> Bleu\n<b>Shift-Ctrl-5</b> Pourpre
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
@@ -808,6 +811,7 @@ MAIN_TOOLTIP_BACKCOLOR0;Couleur de fond de l'aperçu: <b>Selon le thème</b>\nRa
 MAIN_TOOLTIP_BACKCOLOR1;Couleur de fond de l'aperçu: <b>Noir</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Couleur de fond de l'aperçu: <b>Blanc</b>\nRaccourci: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumulatif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
+MAIN_TOOLTIP_DELETEPROFILE;Supprime le fichier de paramètre accolé à l'image et/ou dans le cache
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique)\nRaccourci: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine\nRaccourci: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Indication ombres hors domaine\nRaccourci: <b>&gt;</b>
@@ -817,6 +821,7 @@ MAIN_TOOLTIP_PREVIEWG;Affichage du <b>canal Vert</b>\nRaccourci: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Affichage de la <b>Luminosité</b>\nRaccourci: <b>v</b>\n\n0.299*R + 0.587*V + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Affichage du <b>canal Rouge</b>\nRaccourci: <b>r</b>
 MAIN_TOOLTIP_QINFO;Informations rapide sur l'image\nRaccourci: <b>i</b>
+MAIN_TOOLTIP_SAVEPROFILE;Enregistrer silencieusement les paramètres de développement courants. N'enregistre pas l'Historique ni les Captures.\nVoir également l'option de sauvegarde automatique à la fermeture dans les Préférences.\nRaccourci: <b>Ctrl+Shift+s</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Montrer/Cacher le panneau gauche\nRaccourci: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Afficher/Cacher le panneau droit\nRaccourci: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Afficher/Cacher le panneau supérieur\nRaccourci: <b>Shift-L</b>
@@ -1065,9 +1070,11 @@ PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
 PREFERENCES_PROFILEPRFILE;Profil accolé au fichier d'entrée
 PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Cache
-PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
+PREFERENCES_PROFILESAVECACHE;Enregistrer les paramètres de traitement dans le Cache
+PREFERENCES_PROFILESAVEINPUT;Enregistrer les paramètres de traitement accolé au fichier d'entrée
 PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
+PREFERENCES_PROFILESAVEONEXIT;Enregistrer le profile lors de la fermeture de l'Éditeur\nou lors du passage à une autre image
+PREFERENCES_PROFILESAVEUNMODIFIED;Enregistrer le profil même si non modifié dans l'Éditeur
 PREFERENCES_PROFILE_NONE;Aucun
 PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PRTINTENT;Intention de rendu
