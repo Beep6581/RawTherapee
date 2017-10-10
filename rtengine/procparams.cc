@@ -4640,6 +4640,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                 }
             }
 
+            if (keyFile.has_key ("Locallab", "Expcbdl")) {
+                locallab.expcbdl = keyFile.get_boolean ("Locallab", "Expcbdl");
+
+                if (pedited) {
+                    pedited->locallab.expcbdl = true;
+                }
+            }
+			
             if (keyFile.has_key ("Locallab", "Expexpose")) {
                 locallab.expexpose = keyFile.get_boolean ("Locallab", "Expexpose");
 
