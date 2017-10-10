@@ -824,7 +824,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     }
 
                     if (rrmax < rr1) {
-                        for (int rr = 0; rr < border; rr++)
+                        for (int rr = 0; rr < std::min(border, rr1 - rrmax); rr++)
                             for (int cc = ccmin; cc < ccmax; cc++) {
                                 int c = FC(rr, cc);
                                 rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][left + cc]) / 65535.f;
@@ -845,7 +845,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
                     if (ccmax < cc1) {
                         for (int rr = rrmin; rr < rrmax; rr++)
-                            for (int cc = 0; cc < border; cc++) {
+                            for (int cc = 0; cc < std::min(border, cc1 - ccmax); cc++) {
                                 int c = FC(rr, cc);
                                 rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(top + rr)][(width - cc - 2)]) / 65535.f;
                                 if ((c & 1) == 0) {
@@ -867,8 +867,8 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     }
 
                     if (rrmax < rr1 && ccmax < cc1) {
-                        for (int rr = 0; rr < border; rr++)
-                            for (int cc = 0; cc < border; cc++) {
+                        for (int rr = 0; rr < std::min(border, rr1 - rrmax); rr++)
+                            for (int cc = 0; cc < std::min(border, cc1 - ccmax); cc++) {
                                 int c = FC(rr, cc);
                                 rgb[c][((rrmax + rr)*ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][(width - cc - 2)]) / 65535.f;
                                 if ((c & 1) == 0) {
@@ -879,7 +879,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
 
                     if (rrmin > 0 && ccmax < cc1) {
                         for (int rr = 0; rr < border; rr++)
-                            for (int cc = 0; cc < border; cc++) {
+                            for (int cc = 0; cc < std::min(border, cc1 - ccmax); cc++) {
                                 int c = FC(rr, cc);
                                 rgb[c][(rr * ts + ccmax + cc) >> ((c & 1) ^ 1)] = (rawData[(border2 - rr)][(width - cc - 2)]) / 65535.f;
                                 if ((c & 1) == 0) {
@@ -889,7 +889,7 @@ void RawImageSource::CA_correct_RT(const bool autoCA, const double cared, const 
                     }
 
                     if (rrmax < rr1 && ccmin > 0) {
-                        for (int rr = 0; rr < border; rr++)
+                        for (int rr = 0; rr < std::min(border, rr1 - rrmax); rr++)
                             for (int cc = 0; cc < border; cc++) {
                                 int c = FC(rr, cc);
                                 rgb[c][((rrmax + rr)*ts + cc) >> ((c & 1) ^ 1)] = (rawData[(height - rr - 2)][(border2 - cc)]) / 65535.f;
