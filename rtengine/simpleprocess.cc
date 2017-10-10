@@ -1922,7 +1922,7 @@ private:
                     params.locallab.chromaref = chromare;
                     params.locallab.lumaref = lumare;
 
-                    ipf.Lab_Local (2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
+                    ipf.Lab_Local (params.locallab, 2, sp, (float**)shbuffer, labView, labView, 0, 0, 0, 0, fw, fh, fw, fh, locutili, 1, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve,
                                    LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                     lllocalcurve.clear();
                     cclocalcurve.clear();

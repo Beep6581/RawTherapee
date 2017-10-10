@@ -879,9 +879,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 if (fic)
 
                 {
+                    //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10012;//new value for tone mapping
+                        int t_mipversion = 10012;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -1104,8 +1105,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             std::string inser;
 
-            dataspot = new int*[maxdata];//67
+            //create data for mip files
+            dataspot = new int*[maxdata];
 
+            //initilize data "0" with params
             for (int i = 0; i < maxdata; i++) {
                 dataspot[i] = new int[maxspot];
             }
@@ -1122,7 +1125,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             {
                 sps[0] = 0;
-                dataspot[2][0] =  circrads[0] = params.locallab.circrad;
+                dataspot[2][0] =  circrads[0] = params.locallab.circrad;//copy params in dataspot and in LUTi
                 dataspot[3][0] =  locx[0] = params.locallab.locX;
                 dataspot[4][0] =  locy[0] = params.locallab.locY;
                 dataspot[5][0] =  locyt[0] = params.locallab.locYT;
@@ -1286,10 +1289,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     dataspot[73][0] = cutpasts[0] = 1;
                 }
 
+                // for all curves work around - I do not know how to do with params curves...
                 //curve Reti local
                 int siz = params.locallab.localTgaincurve.size();
 
-                if (siz > 69) {
+                if (siz > 69) {//max due to codage with strcurv_data ()
                     siz = 69;    //to avoid crash
                 }
 
@@ -1333,7 +1337,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 //curve local C chrom
                 int sizc = params.locallab.cccurve.size();
 
-                if (sizc > 69) {
+                if (sizc > 69) {//max
                     sizc = 69;//to avoid crash
                 }
 
@@ -1496,12 +1500,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             ifstream fich (datal, ios::in);
 
+            //read mip file
             if (fich) {//may be a file with versionmip = 10000
                 //we must add new fields at the good place
                 std::string line;
                 std::string spotline;
                 int cont = 0;
-                int maxind = maxdata - 3 ; //70;//64
+                int maxind = maxdata - 3 ; //
 
                 if (versionmip == 10000) {
                     maxind = 49;
@@ -1628,7 +1633,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 fich.close();
             }
 
-
+            //new filed for each update
             //new fields for TM
             if (versionmip == 10000) {
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
@@ -1733,18 +1738,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-
-            if (versionmip == 10011) {
-
-                for (int sp = 1; sp < maxspot; sp++) { // spots default
-                    dataspot[70][sp] = 0;
-                    dataspot[71][sp] = 0;
-                    dataspot[72][sp] = 0;
-                    dataspot[73][sp] = 0;
-                }
-            }
-
-//          printf("ns=%i \n", ns);
+            //here we change the number of spot
 
             if (ns <  (maxspot - 1)) {
                 ofstream fic (datal, ios::out | ios::app); // ouverture en écriture avec effacement du fichier ouvert
@@ -2027,7 +2021,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             }
 
-
+            //main algorithm for all spots
             for (int sp = 1; sp < maxspot; sp++) { //spots default
                 params.locallab.hueref = dataspot[maxdata - 3][sp] / 100.;
                 params.locallab.chromaref = dataspot[maxdata - 2][sp];
@@ -2239,7 +2233,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 s_datc = new int[70];
                 int siz;
 
-                ipf.strcurv_data (retistr[sp], s_datc, siz);
+                ipf.strcurv_data (retistr[sp], s_datc, siz);//convert data in int string with strcurv_data () - it is a work around !
 
                 sizeretics[sp] = siz;
 
@@ -2455,7 +2449,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 dataspot[maxdata - 2][sp] = chromarefs[sp] = params.locallab.chromaref;
                 dataspot[maxdata - 1][sp] = lumarefs[sp] = params.locallab.lumaref;
                 //printf("sp=%i huerefsp=%f\n", sp, huerefs[sp]);
-                ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve,  lochhCurve,
+                ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve,  lochhCurve,
                                LHutili, HHutili, cclocalcurve, localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref);
                 lllocalcurve.clear();
                 cclocalcurve.clear();
@@ -2467,9 +2461,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
             int sp ;
             sp = realspot;
+            //now for current spot
+            int maxreal = 1;
 
-            int maxreal = 1;//do nothing..in case of
-
+            //update GUI and Mip files
             if (aloListener && realspot != dataspot[16][0]) {
                 //update GUI and MIP
                 aloListener->localChanged (dataspot, retistr[sp], llstr[sp], lhstr[sp], ccstr[sp], hhstr[sp], skinstr[sp], pthstr[sp], exstr[sp], sp, maxreal);
@@ -2937,13 +2932,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             params.locallab.chromaref = chromarefs[sp];
             params.locallab.lumaref = lumarefs[sp];
 
-            ipf.Lab_Local (3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
+            ipf.Lab_Local (params.locallab, 3, sp, (float**)shbuffer, nprevl, nprevl, 0, 0, 0, 0, pW, pH, fw, fh, locutili, scale, locRETgainCurve, locallutili, lllocalcurve, loclhCurve, lochhCurve, LHutili, HHutili, cclocalcurve,
                            localskutili, sklocalcurve, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, params.locallab.hueref, params.locallab.chromaref, params.locallab.lumaref );
             lllocalcurve.clear();
             cclocalcurve.clear();
             sklocalcurve.clear();
             exlocalcurve.clear();
 
+            //write mip file in real time
             ofstream fou (datal, ios::out | ios::trunc);
 
             if (fou)

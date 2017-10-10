@@ -83,8 +83,10 @@ using namespace procparams;
 
 extern const Settings* settings;
 
+
 struct local_params {
     float yc, xc;
+    float ycbuf, xcbuf;
     float lx, ly;
     float lxL, lyT;
     float dxx, dyy;
@@ -128,6 +130,7 @@ struct local_params {
     bool denoiena;
     bool expvib;
     bool exposena;
+    bool cut_past;
     float past;
     float satur;
     int blac;
@@ -156,6 +159,8 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     double local_yT = locallab.locYT / 2000.0;
     double local_center_x = locallab.centerX / 2000.0 + 0.5;
     double local_center_y = locallab.centerY / 2000.0 + 0.5;
+    double local_center_xbuf = locallab.centerXbuf / 2000.0;
+    double local_center_ybuf = locallab.centerYbuf / 2000.0;
     double local_dxx = locallab.proxi / 8000.0;//for proxi = 2==> # 1 pixel
     double local_dyy = locallab.proxi / 8000.0;
     float iterati = (float) locallab.proxi;
@@ -211,6 +216,7 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     bool inverse = locallab.invers;
     bool curvacti = locallab.curvactiv;
     bool acti = locallab.activlum;
+    bool cupas = locallab.cutpast;
 
     bool inverserad = locallab.inversrad;
     bool inverseret = locallab.inversret;
@@ -220,6 +226,9 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     lp.cir = circr;
     lp.actsp = acti;
     lp.xc = w * local_center_x;
+    lp.yc = h * local_center_y;
+    lp.xcbuf = w * local_center_xbuf;
+    lp.ycbuf = h * local_center_ybuf;
     lp.yc = h * local_center_y;
     lp.lx = w * local_x;
     lp.ly = h * local_y;
@@ -287,7 +296,7 @@ static void calcLocalParams (int oW, int oH, const LocallabParams& locallab, str
     lp.satur = chromaSatur;
 
     lp.exposena = locallab.expexpose;
-
+    lp.cut_past = cupas;
     lp.blac = locallab.black;
     lp.shcomp = locallab.shcompr;
     lp.hlcomp = locallab.hlcompr;
@@ -1146,8 +1155,8 @@ void ImProcFunctions::exlabLocal (const local_params& lp, int bfh, int bfw, LabI
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                         float L = Ltemp[ti * TS + tj];
-                    //    float a = atemp[ti * TS + tj];
-                    //    float b = btemp[ti * TS + tj];
+                        //    float a = atemp[ti * TS + tj];
+                        //    float b = btemp[ti * TS + tj];
                         float tonefactor = (L < MAXVALF ? hltonecurve[L] : CurveFactory::hlcurveloc (exp_scale, comp, hlrange, L, niv) );
                         Ltemp[ti * TS + tj] = L * tonefactor;
                     }
@@ -1157,8 +1166,8 @@ void ImProcFunctions::exlabLocal (const local_params& lp, int bfh, int bfw, LabI
                     for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                         float L = Ltemp[ti * TS + tj];
-                    //    float a = atemp[ti * TS + tj];
-                    //    float b = btemp[ti * TS + tj];
+                        //    float a = atemp[ti * TS + tj];
+                        //    float b = btemp[ti * TS + tj];
 
                         //shadow tone curve
                         float Y = L;
@@ -1196,7 +1205,7 @@ void ImProcFunctions::exlabLocal (const local_params& lp, int bfh, int bfw, LabI
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
 
                             float satby100 = lp.chro / 100.f;
-                        //    float L = 2.f * Ltemp[ti * TS + tj];
+                            //    float L = 2.f * Ltemp[ti * TS + tj];
                             float a = atemp[ti * TS + tj];
                             float b = btemp[ti * TS + tj];
 
@@ -4589,7 +4598,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float *
                                 }
 
                                 if (lp.ligh != 0.f && lp.curvact == false) {
-                                    calclight (lumnew, lp.ligh , lumnew, true);//replace L-curve
+                                    calclight (lumnew, lp.ligh, lumnew, true); //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -4702,7 +4711,7 @@ void ImProcFunctions::ColorLight_Local (int call, LabImage * bufcolorig, float *
 
 
                                 if (lp.ligh != 0.f && lp.curvact == false) {
-                                    calclight (lumnew, lp.ligh , lumnew, true);//replace L-curve
+                                    calclight (lumnew, lp.ligh, lumnew, true); //replace L-curve
                                     lightcont = lumnew;
 
                                 } else {
@@ -4814,7 +4823,7 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
                     float lumnew = original->L[y][x];
 
                     if (lp.ligh != 0.f) {
-                        calclight (original->L[y][x], lp.ligh , lumnew, false);
+                        calclight (original->L[y][x], lp.ligh, lumnew, false);
                     }
 
                     float lightcont = lumnew ; //original->L[y][x] + (lp.ligh /100.f)*original->L[y][x] ; //apply lightness
@@ -4833,7 +4842,7 @@ void ImProcFunctions::InverseColorLight_Local (const struct local_params & lp, L
                     float lumnew = original->L[y][x];
 
                     if (lp.ligh != 0.f) {
-                        calclight (original->L[y][x], lp.ligh , lumnew, false);
+                        calclight (original->L[y][x], lp.ligh, lumnew, false);
                     }
 
                     float lightcont = lumnew ; //apply lightness
@@ -4876,6 +4885,10 @@ void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * o
         //O.88623 = sqrt(PI / 4) ==> sqare equal to circle
 
         // very small region, don't use omp here
+//      printf("cy=%i cx=%i yc=%f xc=%f circ=%i spot=%i tH=%i tW=%i sk=%i\n", cy, cx, lp.yc, lp.xc, lp.cir, spotSize, transformed->H, transformed->W, sk);
+//      printf("ymin=%i ymax=%i\n", max (cy, (int) (lp.yc - spotSize)),min (transformed->H + cy, (int) (lp.yc + spotSize + 1)) );
+//      printf("xmin=%i xmax=%i\n", max (cx, (int) (lp.xc - spotSize)),min (transformed->W + cx, (int) (lp.xc + spotSize + 1)) );
+
         for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
             for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
                 aveL += original->L[y - cy][x - cx];
@@ -4901,7 +4914,98 @@ void ImProcFunctions::calc_ref (int call, int sp, float** shbuffer, LabImage * o
     }
 }
 
-void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk,
+void ImProcFunctions::copy_ref (int call, int sp, LabImage * spotbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, int sk, const struct local_params & lp, double & huerefspot, double & chromarefspot, double & lumarefspot)
+{
+    if (params->locallab.enabled) {
+
+// double precision for large summations
+        double aveA = 0.;
+        double aveB = 0.;
+        double aveL = 0.;
+        double aveChro = 0.;
+// int precision for the counters
+        int nab = 0;
+// single precision for the result
+        float avA, avB, avL;
+        //  int spotSize = 0.88623f * max (1,  lp.cir / sk); //18
+        int spotSize = max (1,  lp.cir / sk);
+
+        //O.88623 = sqrt(PI / 4) ==> sqare equal to circle
+        /*
+                // very small region, don't use omp here
+                printf ("COPYcy=%i cx=%i yc=%f xc=%f circ=%i spot=%i tH=%i tW=%i sk=%i\n", cy, cx, lp.yc, lp.xc, lp.cir, spotSize, transformed->H, transformed->W, sk);
+                printf ("COPYymin=%i ymax=%i\n", max (cy, (int) (lp.yc - spotSize)), min (transformed->H + cy, (int) (lp.yc + spotSize + 1)) );
+                printf ("COPYxmin=%i xmax=%i\n", max (cx, (int) (lp.xc - spotSize)), min (transformed->W + cx, (int) (lp.xc + spotSize + 1)) );
+        */
+        for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
+            for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
+
+                int yb = max (cy, (int) (lp.yc - spotSize));
+                //    int ye = min (transformed->H + cy, (int) (lp.yc + spotSize + 1));
+
+                int xb = max (cx, (int) (lp.xc - spotSize));
+                //    int xe = min (transformed->W + cx, (int) (lp.xc + spotSize + 1));
+
+                aveL += original->L[y - cy][x - cx];
+                int z = y - yb;
+                int u = x - xb;
+                spotbuffer->L[z][u] = original->L[y - cy][x - cx];
+//              printf("spBUFL=%f ", spotbuffer->L[z][u]);
+                spotbuffer->a[z][u] = original->a[y - cy][x - cx];
+                spotbuffer->b[z][u] = original->b[y - cy][x - cx];
+
+                aveA += original->a[y - cy][x - cx];
+                aveB += original->b[y - cy][x - cx];
+                aveChro += sqrtf (SQR (original->b[y - cy][x - cx]) + SQR (original->a[y - cy][x - cx]));
+
+                nab++;
+            }
+        }
+
+        aveL = aveL / nab;
+        aveA = aveA / nab;
+        aveB = aveB / nab;
+        aveChro = aveChro / nab;
+        aveChro /= 327.68f;
+        avA = aveA / 327.68f;
+        avB = aveB / 327.68f;
+        avL = aveL / 327.68f;
+        huerefspot = xatan2f (avB, avA);   //mean hue
+        chromarefspot = aveChro;
+        lumarefspot = avL;
+    }
+}
+
+void ImProcFunctions::paste_ref (int call, int sp, LabImage * spotbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, int sk, const struct local_params & lp, double & huerefspot, double & chromarefspot, double & lumarefspot)
+{
+    if (params->locallab.enabled) {
+
+        int nab = 0;
+        int spotSize = max (1,  lp.cir / sk);
+
+        for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
+            for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
+                int yb = max (cy, (int) (lp.yc - spotSize));
+                //    int ye = min (transformed->H + cy, (int) (lp.yc + spotSize + 1));
+
+                int xb = max (cx, (int) (lp.xc - spotSize));
+                //    int xe = min (transformed->W + cx, (int) (lp.xc + spotSize + 1));
+
+                //    aveL += original->L[y - cy][x - cx];
+                int z = y - yb;
+                int u = x - xb;
+                //  printf("z=%i u=%i spotbufferL=%f", z, u, spotbuffer->L[z][u]);
+                transformed->L[y - cy][x - cx] = spotbuffer->L[z][u];
+                transformed->a[y - cy][x - cx] = spotbuffer->a[z][u];
+                transformed->b[y - cy][x - cx] = spotbuffer->b[z][u];
+                nab++;
+            }
+        }
+
+    }
+}
+
+void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, int sx, int sy, int cx, int cy, int oW, int oH,  int fw, int fh, bool locutili, int sk,
                                  const LocretigainCurve & locRETgainCcurve, bool locallutili, LUTf & lllocalcurve, const LocLHCurve & loclhCurve,  const LocHHCurve & lochhCurve,
                                  bool &LHutili, bool &HHutili, LUTf & cclocalcurve, bool & localskutili, LUTf & sklocalcurve, bool & localexutili, LUTf & exlocalcurve, LUTf & hltonecurveloc, LUTf & shtonecurveloc, LUTf & tonecurveloc, double & hueref, double & chromaref, double & lumaref)
 {
@@ -5482,7 +5586,32 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
         }
 
 //local color and light
+
         if (!lp.inv  && (lp.chro != 0 || lp.ligh != 0.f || lp.qualcurvemet != 0) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+            // double huerefspot = 0., chromarefspot = 0., lumarefspot = 0.;
+            //      int spotSi = 1 + 2 * max (1,  lp.cir / sk);
+            /*
+                        if (!lastcutpast && loc.cutpast) {
+                            spotbuffer = new LabImage (spotSi, spotSi);//buffer for data in zone limit
+
+
+                            copy_ref (call, 1,  spotbuffer, original, transformed, sx, sy, cx, cy,  oW, oH,  fw,  fh,  sk, lp, huerefspot, chromarefspot, lumarefspot);
+                            loc.centerXbuf = loc.centerX;
+                            loc.centerYbuf = loc.centerY;
+                            lastcutpast = true;
+                        }
+            */
+            /*
+                        if (lastcutpast && !loc.cutpast) {
+
+                            paste_ref (call, 1,  spotbuffer, original, transformed, sx, sy, cx, cy,  oW, oH,  fw,  fh,  sk, lp, huerefspot, chromarefspot, lumarefspot);
+                            loc.centerXbuf = 0 ;
+                            loc.centerYbuf = 0 ;
+                            lastcutpast = false;
+                            delete spotbuffer;
+
+                        }
+            */
             float hueplus = hueref + dhue;
             float huemoins = hueref - dhue;
             // float ddhue = 0.f;
@@ -5618,6 +5747,42 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                             }
                 */
 
+                /*
+                                    printf("Pastbef \n");
+
+                                if (lastcutpast && !loc.cutpast) {
+
+                                    printf("Past \n");
+                                    int nab = 0;
+                                    int spotSize = max (1,  lp.cir / sk);
+
+                                    for (int y = max (cy, (int) (lp.yc - spotSize)); y < min (transformed->H + cy, (int) (lp.yc + spotSize + 1)); y++) {
+                                        for (int x = max (cx, (int) (lp.xc - spotSize)); x < min (transformed->W + cx, (int) (lp.xc + spotSize + 1)); x++) {
+                                            int yb = max (cy, (int) (lp.yc - spotSize));
+                                            int ye = min (transformed->H + cy, (int) (lp.yc + spotSize + 1));
+                                            int xb = max (cx, (int) (lp.xc - spotSize));
+                                            int xe = min (transformed->W + cx, (int) (lp.xc + spotSize + 1));
+                                            int z = y - yb;
+                                            int u = x - xb;
+                                            original->L[y - cy][x - cx] = spotbuffer->L[z][u];
+                                            original->a[y - cy][x - cx] = spotbuffer->a[z][u];
+                                            original->b[y - cy][x - cx] = spotbuffer->b[z][u];
+
+                                            nab++;
+                                        }
+                                    }
+
+                                 //   loc.centerXbuf = 0 ;
+                                 //   loc.centerYbuf = 0 ;
+                                    lastcutpast = false;
+
+                                    delete spotbuffer;
+                                }
+                                    printf("PastAft \n");
+
+
+                                    int spotSize = max (1,  lp.cir / sk);
+                                    */
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16)
@@ -5627,12 +5792,15 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     for (int x = 0; x < transformed->W; x++) {
                         int lox = cx + x;
                         int loy = cy + y;
+                        //     int yb = max (cy, (int) (lp.yc - spotSize));
+                        //     int xb = max (cx, (int) (lp.xc - spotSize));
+                        //     int z = y - yb;
+                        //     int u = x - xb;
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
                             bufcolorig->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
                             bufcolorig->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
                             bufcolorig->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-
                             chprov = 0.f;
                             chpro = 0.f;
 
@@ -5671,7 +5839,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                                 float lighLnew;
                                 float amplil = 140.f;
                                 float lighL = bufcolorig->L[loy - begy][lox - begx];
-                                calclight (lighL, lp.ligh , lighLnew, true);//replace L-curve
+                                calclight (lighL, lp.ligh, lighLnew, true); //replace L-curve
                                 lL = lighLnew / lighL;
 
                                 if (lL <= 1.f) {//convert data curve near values of slider -100 + 100, to be used after to detection shape
@@ -5705,7 +5873,6 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         }
                     }
-
             }
 
 
@@ -6055,10 +6222,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                         //   float lL;
-                         //   float amplil = 140.f;
-                         //   float lighL = bufexporig->L[loy - begy][lox - begx];
-                         //   float lighLnew = bufexpfin->L[loy - begy][lox - begx];
+                            //   float lL;
+                            //   float amplil = 140.f;
+                            //   float lighL = bufexporig->L[loy - begy][lox - begx];
+                            //   float lighLnew = bufexpfin->L[loy - begy][lox - begx];
                             float rL;
                             rL = CLIPRET ((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
 
@@ -6220,10 +6387,10 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
 
                         if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
 
-                        //    float lL;
-                        //    float amplil = 140.f;
-                        //    float lighL = bufexporig->L[loy - begy][lox - begx];
-                        //    float lighLnew = bufexpfin->L[loy - begy][lox - begx];
+                            //    float lL;
+                            //    float amplil = 140.f;
+                            //    float lighL = bufexporig->L[loy - begy][lox - begx];
+                            //    float lighLnew = bufexpfin->L[loy - begy][lox - begx];
                             float rL;
                             rL = CLIPRET ((bufexpfin->L[loy - begy][lox - begx] - bufexporig->L[loy - begy][lox - begx]) / 328.f);
 
@@ -6330,7 +6497,7 @@ void ImProcFunctions::Lab_Local (int call, int sp, float** shbuffer, LabImage * 
                     }
 
                 tmp1 = new LabImage (bfw, bfh);
-                ImProcFunctions::EPDToneMaplocal (bufgb, tmp1, 5 , sk);
+                ImProcFunctions::EPDToneMaplocal (bufgb, tmp1, 5, sk);
             } /*else { //stay here in case of
 
                 tmp = new LabImage (transformed->W, transformed->H);
