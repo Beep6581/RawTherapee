@@ -48,6 +48,7 @@ esac
 #fi
 #ln -sf "${app}" /tmp
 
+# Prevent crash when directory name contains special characters
 AppleLocale=`defaults read -g AppleLocale`
 export LANG=${AppleLocale%@*}.UTF-8
 
