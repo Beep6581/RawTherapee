@@ -395,6 +395,7 @@ void ParamsEdited::set (bool v)
     }
 
     locallab.threshold = v;
+    locallab.chromacbdl = v;
     locallab.pastels          = v;
     locallab.saturated        = v;
     locallab.psthreshold      = v;
@@ -1035,6 +1036,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         }
 
         locallab.threshold = locallab.threshold && p.locallab.threshold == other.locallab.threshold;
+        locallab.chromacbdl = locallab.chromacbdl && p.locallab.chromacbdl == other.locallab.chromacbdl;
         locallab.pastels = locallab.pastels && p.locallab.pastels == other.locallab.pastels;
         locallab.saturated = locallab.saturated && p.locallab.saturated == other.locallab.saturated;
         locallab.psthreshold = locallab.psthreshold && p.locallab.psthreshold == other.locallab.psthreshold;
@@ -2700,6 +2702,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
     if (locallab.threshold) {
         toEdit.locallab.threshold = mods.locallab.threshold;
+    }
+
+    if (locallab.chromacbdl) {
+        toEdit.locallab.chromacbdl = mods.locallab.chromacbdl;
     }
 
     if (pcvignette.enabled) {

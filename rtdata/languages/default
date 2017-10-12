@@ -825,6 +825,7 @@ HISTORY_MSG_575;Local - Exp Contrast curve
 HISTORY_MSG_576;Local - Centerbuf
 HISTORY_MSG_577;Local - adjblur
 HISTORY_MSG_578;Local - cut past
+HISTORY_MSG_579;Local - cbdl chroma
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1810,6 +1811,8 @@ TP_LOCALLAB_CUTPAST;Copy past buffer
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DUST;Dust Spot Removal
 TP_LOCALLAB_LUM;Curves
+TP_LOCALLAB_CHROMACBDL;Chroma
+TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must check button 'Enable curves' 
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.

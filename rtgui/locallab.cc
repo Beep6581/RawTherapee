@@ -64,7 +64,7 @@ Locallab::Locallab ():
     locYT (Gtk::manage (new Adjuster (M ("TP_LOCAL_HEIGHT_T"), 0, 1500, 1, 250))),
     centerX (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0))),
     centerY (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
-    circrad (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CIRCRADIUS"), 4, 150, 1, 18))),
+    circrad (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
     thres (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_THRES"), 1, 35, 1, 18))),
     proxi (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_PROXI"), 0, 60, 1, 20))),
     lightness (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_LIGHTNESS"), -100, 100, 1, 0))),
@@ -93,6 +93,7 @@ Locallab::Locallab ():
     chrrt (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_CHRRT"), 0, 100, 1, 0))),
     sensih (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSIH"), 0, 100, 1, 19))),
     retrab (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_RETRAB"), 0, 10000, 1, 500))),
+    chromacbdl (Gtk::manage ( new Adjuster (M ("TP_LOCALLAB_CHROMACBDL"), 0, 300, 1, 0) )),
     threshold (Gtk::manage ( new Adjuster (M ("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 100, 1, 20) )),
     sensicb (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SENSICB"), 0, 100, 1, 19))),
     sharradius (Gtk::manage (new Adjuster (M ("TP_LOCALLAB_SHARRADIUS"), 42, 500, 1, 4))),
@@ -551,6 +552,11 @@ Locallab::Locallab ():
 
     Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
     cbdlBox->pack_start (*separator3, Gtk::PACK_SHRINK, 2);
+
+    chromacbdl->set_tooltip_text (M ("TP_LOCALLAB_CHROMACB_TOOLTIP"));
+
+    chromacbdl->setAdjusterListener (this);
+    cbdlBox->pack_start (*chromacbdl);
 
     threshold->setAdjusterListener (this);
     cbdlBox->pack_start (*threshold);
@@ -1211,6 +1217,7 @@ void Locallab::neutral_pressed ()
         multiplier[i]->resetValue (false);
     }
 
+    chromacbdl->resetValue (false);
     threshold->resetValue (false);
     sensicb->resetValue (false);
     sharradius->resetValue (false);
@@ -1693,10 +1700,12 @@ bool Locallab::localComputed_ ()
         cutpast->set_active (true);
     }
 
-    double intermed = 0.01 * (double) nextdatasp[74];
+    chromacbdl->setValue (nextdatasp[74]);
+
+    double intermed = 0.01 * (double) nextdatasp[75];
     hueref->setValue (intermed);
-    chromaref->setValue (nextdatasp[75]);
-    lumaref->setValue (nextdatasp[76]);
+    chromaref->setValue (nextdatasp[76]);
+    lumaref->setValue (nextdatasp[77]);
 
     int *s_datc;
     s_datc = new int[70];
@@ -1964,7 +1973,7 @@ bool Locallab::localComputed_ ()
 
 void Locallab::localChanged  (int **datasp, std::string datastr, std::string ll_str, std::string lh_str, std::string cc_str, std::string hh_str, std::string sk_str, std::string ps_str, std::string ex_str, int sp, int maxdat)
 {
-    for (int i = 2; i < 77; i++) {
+    for (int i = 2; i < 78; i++) {
         nextdatasp[i] = datasp[i][sp];
     }
 
@@ -2065,6 +2074,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         threshold->setEditedState (pedited->locallab.threshold ? Edited : UnEdited);
+        chromacbdl->setEditedState (pedited->locallab.chromacbdl ? Edited : UnEdited);
 
         sensi->setEditedState (pedited->locallab.sensi ? Edited : UnEdited);
         sensih->setEditedState (pedited->locallab.sensih ? Edited : UnEdited);
@@ -2282,6 +2292,7 @@ void Locallab::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     threshold->setValue (pp->locallab.threshold);
+    chromacbdl->setValue (pp->locallab.chromacbdl);
 
     lastavoid = pp->locallab.avoid;
     lastinvers = pp->locallab.invers;
@@ -2681,6 +2692,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->locallab.threshold = threshold->getIntValue();
+    pp->locallab.chromacbdl = chromacbdl->getIntValue();
 
     pp->locallab.pastels         = pastels->getIntValue();
     pp->locallab.saturated       = pastSatTog->get_active() ? pp->locallab.pastels : saturated->getIntValue ();
@@ -2784,6 +2796,7 @@ void Locallab::write (ProcParams* pp, ParamsEdited* pedited)
         }
 
         pedited->locallab.threshold = threshold->getEditedState();
+        pedited->locallab.chromacbdl = chromacbdl->getEditedState();
         pedited->locallab.pastels         = pastels->getEditedState ();
         pedited->locallab.saturated       = saturated->getEditedState ();
         pedited->locallab.psthreshold     = psThreshold->getEditedState ();
@@ -3426,6 +3439,7 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
     }
 
     threshold->setDefault (defParams->locallab.threshold);
+    chromacbdl->setDefault (defParams->locallab.chromacbdl);
     pastels->setDefault (defParams->locallab.pastels);
     saturated->setDefault (defParams->locallab.saturated);
     psThreshold->setDefault<int> (defParams->locallab.psthreshold);
@@ -3494,6 +3508,7 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         }
 
         threshold->setDefaultEditedState (pedited->locallab.threshold ? Edited : UnEdited);
+        chromacbdl->setDefaultEditedState (pedited->locallab.chromacbdl ? Edited : UnEdited);
 
         pastels->setDefaultEditedState     (pedited->locallab.pastels ? Edited : UnEdited);
         saturated->setDefaultEditedState   (pedited->locallab.saturated ? Edited : UnEdited);
@@ -3562,6 +3577,7 @@ void Locallab::setDefaults (const ProcParams * defParams, const ParamsEdited * p
         }
 
         threshold->setDefaultEditedState (Irrelevant);
+        chromacbdl->setDefaultEditedState (Irrelevant);
 
         pastels->setDefaultEditedState     (Irrelevant);
         saturated->setDefaultEditedState   (Irrelevant);
@@ -3753,6 +3769,8 @@ void Locallab::adjusterChanged (Adjuster * a, double newval)
             listener->panelChanged (Evlocallabthres, thres->getTextValue());
         } else if (a == threshold) {
             listener->panelChanged (EvlocallabThresho, threshold->getTextValue());
+        } else if (a == chromacbdl) {
+            listener->panelChanged (Evlocallabchromacbdl, chromacbdl->getTextValue());
         } else if (a == sensicb) {
             listener->panelChanged (Evlocallabsensicb, sensicb->getTextValue());
         } else if (a == sensibn) {
@@ -3904,6 +3922,8 @@ void Locallab::trimValues (rtengine::procparams::ProcParams * pp)
         multiplier[i]->trimValue (pp->locallab.mult[i]);
     }
 
+    chromacbdl->trimValue (pp->locallab.chromacbdl);
+
     threshold->trimValue (pp->locallab.threshold);
     pastels->trimValue (pp->locallab.pastels);
     saturated->trimValue (pp->locallab.saturated);
@@ -3986,6 +4006,7 @@ void Locallab::setBatchMode (bool batchMode)
     }
 
     threshold->showEditedCB();
+    chromacbdl->showEditedCB();
     pastels->showEditedCB   ();
     saturated->showEditedCB ();
     psThreshold->showEditedCB ();

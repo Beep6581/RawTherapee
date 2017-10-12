@@ -1034,6 +1034,8 @@ void Crop::update (int todo)
                             params.locallab.cutpast = true;
                         }
 
+                        params.locallab.chromacbdl = parent->chromacbdls[sp];
+
                         std::vector<double>   cretie;
 
                         for (int j = 0; j < parent->sizeretics[sp]; j++) {
@@ -1366,6 +1368,8 @@ void Crop::update (int todo)
                     parent->cutpasts[sp] = 1;
 
                 }
+
+                parent->chromacbdls[sp] = params.locallab.chromacbdl = parent->chromacbdls[0];
 
                 std::vector<double>   ccret;
 

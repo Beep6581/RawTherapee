@@ -504,6 +504,7 @@ public:
     bool chrrt;
     bool mult[5];
     bool threshold;
+    bool chromacbdl;
     bool expcolor;
     bool expexpose;
     bool expvibrance;

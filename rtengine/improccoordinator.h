@@ -306,6 +306,7 @@ protected:
     LUTi mult2s;
     LUTi mult3s;
     LUTi mult4s;
+    LUTi chromacbdls;
     LUTi thresholds;
     LUTi sensicbs;
     LUTi activlums;

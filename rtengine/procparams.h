@@ -1024,6 +1024,7 @@ public:
 
     double mult[5];
     double threshold;
+    int chromacbdl;
 
     LocallabParams (): psthreshold (0, 75,  false)
     {

@@ -1074,6 +1074,7 @@ void LocallabParams::setDefaults()
     }
 
     threshold = 20;
+    chromacbdl = 0;
     excurve.clear ();
     excurve.push_back (DCT_Linear);
 
@@ -3257,6 +3258,10 @@ int ProcParams::save (const Glib::ustring &fname, const Glib::ustring &fname2, b
             keyFile.set_integer ("Locallab", "Threshold", locallab.threshold);
         }
 
+        if (!pedited || pedited->locallab.chromacbdl) {
+            keyFile.set_integer ("Locallab", "Chromacbdl", locallab.chromacbdl);
+        }
+
         if (!pedited || pedited->locallab.stren) {
             keyFile.set_integer ("Locallab", "Stren", locallab.stren);
         }
@@ -4647,7 +4652,7 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
                     pedited->locallab.expcbdl = true;
                 }
             }
-			
+
             if (keyFile.has_key ("Locallab", "Expexpose")) {
                 locallab.expexpose = keyFile.get_boolean ("Locallab", "Expexpose");
 
@@ -5383,6 +5388,14 @@ int ProcParams::load (const Glib::ustring &fname, ParamsEdited* pedited)
 
                 if (pedited) {
                     pedited->locallab.threshold = true;
+                }
+            }
+
+            if (keyFile.has_key ("Locallab", "Chromacbdl"))   {
+                locallab.chromacbdl = keyFile.get_integer ("Locallab", "Chromacbdl");
+
+                if (pedited) {
+                    pedited->locallab.chromacbdl = true;
                 }
             }
 
@@ -10020,6 +10033,7 @@ bool ProcParams::operator== (const ProcParams& other)
         && locallab.lumaref == other.locallab.lumaref
         && locallab.vart == other.locallab.vart
         && locallab.threshold == other.locallab.threshold
+        && locallab.chromacbdl == other.locallab.chromacbdl
         && locallab.expcolor == other.locallab.expcolor
         && locallab.expexpose == other.locallab.expexpose
         && locallab.expvibrance == other.locallab.expvibrance

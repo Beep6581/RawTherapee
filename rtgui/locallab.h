@@ -102,6 +102,7 @@ private:
     Adjuster* const chrrt;
     Adjuster* const sensih;
     Adjuster* const retrab;
+    Adjuster* const chromacbdl;
     Adjuster* const threshold;
     Adjuster* const sensicb;
     Adjuster* const sharradius;
@@ -214,7 +215,7 @@ private:
 
 
 
-    int nextdatasp[77];
+    int nextdatasp[78];
     int nextlength;
     std::string nextstr;
     std::string nextstr2;

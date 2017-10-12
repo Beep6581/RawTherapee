@@ -261,7 +261,7 @@ SSEFUNCTION void ImProcFunctions :: dirpyr_equalizer (float ** src, float ** dst
 
 }
 
-SSEFUNCTION void ImProcFunctions :: cbdl_local_temp (float ** src, float ** dst, float ** loctemp, int srcwidth, int srcheight, const float * mult, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
+SSEFUNCTION void ImProcFunctions :: cbdl_local_temp (float ** src, float ** dst, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev)
 {
     int lastlevel = maxlevelloc;
 
@@ -312,18 +312,17 @@ SSEFUNCTION void ImProcFunctions :: cbdl_local_temp (float ** src, float ** dst,
 
         if (lv >= 1) {
             if (scalefl[lv] < 1.f) {
-                multi[lv] = (atten123 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+                if(mult[lv] > 1.f) multi[lv] = (atten123 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
             } else {
                 multi[lv] = (float) mult[lv];
             }
         } else  {
             if (scalefl[lv] < 1.f) {
-                multi[lv] = (atten0 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+                if(mult[lv] > 1.f) multi[lv] = (atten0 * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
             } else {
                 multi[lv] = (float) mult[lv];
             }
         }
-
     }
 
     if (settings->verbose) {
@@ -377,6 +376,7 @@ SSEFUNCTION void ImProcFunctions :: cbdl_local_temp (float ** src, float ** dst,
         for (int j = 0; j < srcwidth; j++) {
             dst[i][j] = src[i][j];
             loctemp[i][j] = CLIP (buffer[i][j]); // TODO: Really a clip necessary?
+          //  dst[i][j] = CLIP (buffer[i][j]); // TODO: Really a clip necessary?
         }
 
 }

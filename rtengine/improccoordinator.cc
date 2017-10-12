@@ -160,6 +160,7 @@ ImProcCoordinator::ImProcCoordinator ()
       mult2s (500, -10000),
       mult3s (500, -10000),
       mult4s (500, -10000),
+      chromacbdls (500, -10000),
       thresholds (500, -10000),
       sensicbs (500, -10000),
       activlums (500, -10000),
@@ -838,7 +839,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                                     };
 
 
-            int maxdata = 77;//73 for 10011
+            int maxdata = 78;//73 for 10011
 
             if (fic0) {
                 //find current version mip
@@ -882,7 +883,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     //initilize newues when first utilisation of Locallab. Prepare creation of Mip files
                     for (int sp = 1; sp < maxspot; sp++) { // spots default
                         int t_sp = sp;
-                        int t_mipversion = 10012;//new value for each change
+                        int t_mipversion = 10013;//new value for each change
                         int t_circrad = 18;
                         int t_locX = 250;
                         int t_locY = 250;
@@ -988,6 +989,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         int t_adjblur = 0;
                         int t_cutpast = 0;
 
+                        //10013
+                        int t_chromacbdl = 0;
 
                         //all variables except locRETgainCurve 'coomon for all)
                         fic << "Mipversion=" << t_mipversion << '@' << endl;
@@ -1070,6 +1073,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         fic << "CenterYbuf=" << t_centerYbuf << '@' << endl;
                         fic << "Adjblur=" << t_adjblur << '@' << endl;
                         fic << "Cutpast=" << t_cutpast << '@' <<  endl;
+
+                        fic << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
 
                         fic << "curveReti=" << t_curvret << '@' << endl;
                         fic << "curveLL=" << t_curvll << '@' << endl;
@@ -1288,6 +1293,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 } else {
                     dataspot[73][0] = cutpasts[0] = 1;
                 }
+
+                dataspot[74][0] = chromacbdls[0] = params.locallab.chromacbdl;
 
                 // for all curves work around - I do not know how to do with params curves...
                 //curve Reti local
@@ -1544,7 +1551,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     maxind = 57;
                 }
 
-                if (versionmip == 10007 || versionmip == 10008) {
+                if (versionmip == 10008) {
                     maxind = 58;
                 }
 
@@ -1556,6 +1563,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 //enabled this code after...
                 if (versionmip == 10011) {
                     maxind = 70;
+                }
+
+                if (versionmip == 10012) {
+                    maxind = 74;
                 }
 
                 while (getline (fich, line)) {
@@ -1647,7 +1658,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10001) {
+            if (versionmip <= 10001) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     dataspot[55][sp] = 500; //retrab
@@ -1656,7 +1667,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10002) {
+            if (versionmip <= 10002) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     std::string ll_str = "3000A0B0C1000D1000E"; //"3000A0B0C499D501E1000F1000G"; //"3000A0B0C1000D1000E"; //"3000A0B0C200D200E800F800G1000H1000I";//"0A"
@@ -1664,7 +1675,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10003) {
+            if (versionmip <= 10003) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     std::string lh_str = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
@@ -1672,14 +1683,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10004) {
+            if (versionmip <= 10004) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     dataspot[56][sp] = 0; //curvactiv
                 }
             }
 
-            if (versionmip == 10005) {
+            if (versionmip <= 10005) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     std::string cc_str = "3000A0B0C1000D1000E";
@@ -1687,14 +1698,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10006) {
+            if (versionmip <= 10006) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     dataspot[57][sp] = 0; //qualitycurveMethod
                 }
             }
 
-            if (versionmip == 10007) {
+            if (versionmip <= 10007) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     std::string hh_str = "1000A0B500C350D350E166F500G350H350I333J500K350L350M500N500O350P350Q666R500S350T350U833V500W350X350Y";
@@ -1702,7 +1713,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10008) {
+            if (versionmip <= 10008) {
                 //vibrance
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
 
@@ -1718,7 +1729,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10009) {//exposure
+            if (versionmip <= 10009) {//exposure
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     dataspot[64][sp] = 0;
                     dataspot[65][sp] = 0;
@@ -1730,11 +1741,28 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 }
             }
 
-            if (versionmip == 10010) {
+            if (versionmip <= 10010) {
 
                 for (int sp = 1; sp < maxspot; sp++) { // spots default
                     std::string ex_str = "3000A0B0C1000D1000E";
                     exstr[sp] = ex_str + "@";
+                }
+            }
+
+            if (versionmip <= 10011) {//
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[70][sp] = 0;
+                    dataspot[71][sp] = 0;
+                    dataspot[72][sp] = 0;
+                    dataspot[73][sp] = 0;
+
+                }
+            }
+
+            if (versionmip <= 10012) {//
+                for (int sp = 1; sp < maxspot; sp++) { // spots default
+                    dataspot[74][sp] = 0;
+
                 }
             }
 
@@ -1746,7 +1774,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int sp = ns + 1 ; sp < maxspot; sp++) { // spots default
                     int t_sp = sp;
-                    int t_mipversion = 10012;
+                    int t_mipversion = 10013;
                     int t_circrad = 18;
                     int t_locX = 250;
                     int t_locY = 250;
@@ -1844,6 +1872,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_adjblur = 0;
                     int t_cutpast = 0;
 
+                    //10013
+                    int t_chromacbdl = 0;
+
                     fic << "Mipversion=" << t_mipversion << '@' << endl;
                     fic << "Spot=" << t_sp << '@' << endl;
                     fic << "Circrad=" << t_circrad << '@' << endl;
@@ -1922,6 +1953,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fic << "CenterYbuf=" << t_centerYbuf << '@' << endl;
                     fic << "Adjblur=" << t_adjblur << '@' << endl;
                     fic << "Cutpast=" << t_cutpast << '@' <<  endl;
+
+                    fic << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
 
                     fic << "curveReti=" << t_curvret << '@' << endl;
                     fic << "curveLL=" << t_curvll << '@' << endl;
@@ -2228,6 +2261,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     params.locallab.cutpast  = true;
                 }
 
+                params.locallab.chromacbdl = chromacbdls[sp] = dataspot[74][sp];
 
                 int *s_datc;
                 s_datc = new int[70];
@@ -2709,6 +2743,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 cutpasts[sp] = 1;
             }
 
+            dataspot[74][sp] = chromacbdls[sp] = params.locallab.chromacbdl = dataspot[74][0];
 
             int *s_datc;
             s_datc = new int[70];
@@ -2948,7 +2983,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
                 for (int spe = 1; spe < maxspot; spe++) {
                     int t_sp = spe;
-                    int t_mipversion = 10012;
+                    int t_mipversion = 10013;
                     int t_circrad  = dataspot[2][spe];
                     int t_locX  = dataspot[3][spe];
                     int t_locY  = dataspot[4][spe];
@@ -3025,6 +3060,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_centerYbuf = dataspot[71][spe];
                     int t_adjblur = dataspot[72][spe];
                     int t_cutpast = dataspot[73][spe];
+
+                    int t_chromacbdl = dataspot[74][spe];
 
                     int t_hueref = dataspot[maxdata - 3][spe];
                     int t_chromaref = dataspot[maxdata - 2][spe];
@@ -3120,6 +3157,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     fou << "CenterYbuf=" << t_centerYbuf << '@' << endl;
                     fou << "Adjblur=" << t_adjblur << '@' << endl;
                     fou << "Cutpast=" << t_cutpast << '@' <<  endl;
+
+                    fou << "Chromacbdl=" << t_chromacbdl << '@' <<  endl;
 
                     fou << "hueref=" << t_hueref << '@' << endl;
                     fou << "chromaref=" << t_chromaref << '@' << endl;
