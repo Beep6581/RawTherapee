@@ -184,7 +184,7 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
     js = (cJSON *)cJSON_;
 
     CameraConst *cc = new CameraConst;
-    cc->make_model = Glib::ustring(make_model);
+    cc->make_model = make_model;
 
     ji = cJSON_GetObjectItem(js, "dcraw_matrix");
 
@@ -739,7 +739,7 @@ CameraConstantsStore::get(const char make[], const char model[])
     key += " ";
     key += model;
     key = key.uppercase();
-    std::map<Glib::ustring, CameraConst *>::iterator it;
+    std::map<std::string, CameraConst *>::iterator it;
     it = mCameraConstants.find(key);
 
     if (it == mCameraConstants.end()) {
