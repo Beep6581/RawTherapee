@@ -28,7 +28,7 @@
 
 using namespace rtengine::procparams;
 
-ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false), editDataProvider (nullptr)
+ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), hasChanged (false), editDataProvider (nullptr)
 {
 
     exposurePanel   = Gtk::manage (new ToolVBox ());
@@ -70,8 +70,10 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false
     prsharpening        = Gtk::manage (new PrSharpening());
     crop                = Gtk::manage (new Crop ());
     icm                 = Gtk::manage (new ICMPanel ());
-    exifpanel           = Gtk::manage (new ExifPanel ());
-    iptcpanel           = Gtk::manage (new IPTCPanel ());
+    if(!batch) {
+        exifpanel           = Gtk::manage (new ExifPanel ());
+        iptcpanel           = Gtk::manage (new IPTCPanel ());
+    }
     wavelet             = Gtk::manage (new Wavelet ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
     hsvequalizer        = Gtk::manage (new HSVEqualizer ());
@@ -99,111 +101,68 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false
     //     Medium -> High ISO
 
     addPanel (colorPanel, whitebalance);
-    toolPanels.push_back (whitebalance);
     addPanel (exposurePanel, toneCurve);
-    toolPanels.push_back (toneCurve);
     addPanel (colorPanel, vibrance);
-    toolPanels.push_back (vibrance);
     addPanel (colorPanel, chmixer);
-    toolPanels.push_back (chmixer); // << TODO: Add "Enabled"
     addPanel (colorPanel, blackwhite);
-    toolPanels.push_back (blackwhite);
     addPanel (exposurePanel, shadowshighlights);
-    toolPanels.push_back (shadowshighlights);
     addPanel (detailsPanel, sharpening);
-    toolPanels.push_back (sharpening);
     addPanel (detailsPanel, sharpenEdge);
-    toolPanels.push_back (sharpenEdge);
     addPanel (detailsPanel, sharpenMicro);
-    toolPanels.push_back (sharpenMicro);
     addPanel (colorPanel, hsvequalizer);
-    toolPanels.push_back (hsvequalizer); // << TODO: Add "Enabled"
     addPanel (colorPanel, filmSimulation);
-    toolPanels.push_back (filmSimulation);
     addPanel (colorPanel, rgbcurves);
-    toolPanels.push_back (rgbcurves); // << TODO: Add "Enabled"
     addPanel (colorPanel, colortoning);
-    toolPanels.push_back (colortoning);
     addPanel (exposurePanel, epd);
-    toolPanels.push_back (epd);
     addPanel (exposurePanel, retinex);
-    toolPanels.push_back (retinex);
     addPanel (exposurePanel, pcvignette);
-    toolPanels.push_back (pcvignette);
     addPanel (exposurePanel, gradient);
-    toolPanels.push_back (gradient);
     addPanel (exposurePanel, lcurve);
-    toolPanels.push_back (lcurve); // << TODO: Add "Enabled" ???
     addPanel (exposurePanel, colorappearance);
-    toolPanels.push_back (colorappearance);
     addPanel (detailsPanel, impulsedenoise);
-    toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, dirpyrdenoise);
-    toolPanels.push_back (dirpyrdenoise);
     addPanel (detailsPanel, defringe);
-    toolPanels.push_back (defringe);
     addPanel (detailsPanel, dirpyrequalizer);
-    toolPanels.push_back (dirpyrequalizer);
     addPanel (waveletPanel, wavelet);
-    toolPanels.push_back (wavelet);
     addPanel (transformPanel, crop);
-    toolPanels.push_back (crop);
     addPanel (transformPanel, resize);
-    toolPanels.push_back (resize);
     addPanel (resize->getPackBox(), prsharpening, 2);
-    toolPanels.push_back (prsharpening);
     addPanel (transformPanel, lensgeom);
-    toolPanels.push_back (lensgeom);
     addPanel (lensgeom->getPackBox(), rotate, 2);
-    toolPanels.push_back (rotate);
     addPanel (lensgeom->getPackBox(), perspective, 2);
-    toolPanels.push_back (perspective);
     addPanel (lensgeom->getPackBox(), lensProf, 2);
-    toolPanels.push_back (lensProf);
     addPanel (lensgeom->getPackBox(), distortion, 2);
-    toolPanels.push_back (distortion);
     addPanel (lensgeom->getPackBox(), cacorrection, 2);
-    toolPanels.push_back (cacorrection);
     addPanel (lensgeom->getPackBox(), vignetting, 2);
-    toolPanels.push_back (vignetting);
     addPanel (colorPanel, icm);
-    toolPanels.push_back (icm);
     addPanel (rawPanel, sensorbayer);
-    toolPanels.push_back (sensorbayer);
     addPanel (sensorbayer->getPackBox(), bayerprocess, 2);
-    toolPanels.push_back (bayerprocess);
     addPanel (sensorbayer->getPackBox(), bayerrawexposure, 2);
-    toolPanels.push_back (bayerrawexposure);
     addPanel (sensorbayer->getPackBox(), bayerpreprocess, 2);
-    toolPanels.push_back (bayerpreprocess);
     addPanel (sensorbayer->getPackBox(), rawcacorrection, 2);
-    toolPanels.push_back (rawcacorrection);
     addPanel (rawPanel, sensorxtrans);
-    toolPanels.push_back (sensorxtrans);
     addPanel (sensorxtrans->getPackBox(), xtransprocess, 2);
-    toolPanels.push_back (xtransprocess);
     addPanel (sensorxtrans->getPackBox(), xtransrawexposure, 2);
-    toolPanels.push_back (xtransrawexposure);
     addPanel (rawPanel, rawexposure);
-    toolPanels.push_back (rawexposure);
     addPanel (rawPanel, preprocess);
-    toolPanels.push_back (preprocess);
     addPanel (rawPanel, darkframe);
-    toolPanels.push_back (darkframe);
     addPanel (rawPanel, flatfield);
-    toolPanels.push_back (flatfield);
 
     toolPanels.push_back (coarse);
-    toolPanels.push_back (exifpanel);
-    toolPanels.push_back (iptcpanel);
 
-    metadataPanel = Gtk::manage (new Gtk::Notebook ());
-    metadataPanel->set_name ("MetaPanelNotebook");
+    if(!batch) {
+        toolPanels.push_back (exifpanel);
+        toolPanels.push_back (iptcpanel);
+        metadataPanel = Gtk::manage (new Gtk::Notebook ());
+        metadataPanel->set_name ("MetaPanelNotebook");
+        metadataPanel->append_page (*exifpanel, M ("MAIN_TAB_EXIF"));
+        metadataPanel->append_page (*iptcpanel, M ("MAIN_TAB_IPTC"));
+    } else {
+        metadataPanel = nullptr;
+    }
     toolPanelNotebook = new Gtk::Notebook ();
     toolPanelNotebook->set_name ("ToolPanelNotebook");
 
-    metadataPanel->append_page (*exifpanel, M ("MAIN_TAB_EXIF"));
-    metadataPanel->append_page (*iptcpanel, M ("MAIN_TAB_IPTC"));
 
     exposurePanelSW    = Gtk::manage (new MyScrolledWindow ());
     detailsPanelSW     = Gtk::manage (new MyScrolledWindow ());
@@ -256,7 +215,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false
     toiW = Gtk::manage (new TextOrIcon ("wavelet.png", M ("MAIN_TAB_WAVELET"), M ("MAIN_TAB_WAVELET_TOOLTIP"), type));
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage (new TextOrIcon ("raw.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP"), type));
-    toiM = Gtk::manage (new TextOrIcon ("meta.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP"), type));
+    if(!batch) {
+        toiM = Gtk::manage (new TextOrIcon ("meta.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP"), type));
+    } else {
+        toiM = nullptr;
+    }
 
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
@@ -264,7 +227,9 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc (nullptr), hasChanged (false
     toolPanelNotebook->append_page (*waveletPanelSW,   *toiW);
     toolPanelNotebook->append_page (*transformPanelSW, *toiT);
     toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
-    toolPanelNotebook->append_page (*metadataPanel,    *toiM);
+    if(!batch) {
+        toolPanelNotebook->append_page (*metadataPanel,    *toiM);
+    }
 
     toolPanelNotebook->set_current_page (0);
 
@@ -297,6 +262,7 @@ void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, 
 
     expList.push_back (panel->getExpander());
     where->pack_start (*panel->getExpander(), false, false);
+    toolPanels.push_back (panel);
 }
 
 ToolPanelCoordinator::~ToolPanelCoordinator ()

@@ -25,30 +25,13 @@
 
 using namespace rtengine::procparams;
 
-BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(), somethingChanged(false), parent(parent)
+BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(true), somethingChanged(false), parent(parent)
 {
 
     blockedUpdate = false;
-    // remove exif panel and iptc panel
-    std::vector<ToolPanel*>::iterator epi = std::find (toolPanels.begin(), toolPanels.end(), exifpanel);
-
-    if (epi != toolPanels.end()) {
-        toolPanels.erase (epi);
-    }
-
-    std::vector<ToolPanel*>::iterator ipi = std::find (toolPanels.begin(), toolPanels.end(), iptcpanel);
-
-    if (ipi != toolPanels.end()) {
-        toolPanels.erase (ipi);
-    }
-
     if (toolBar) {
         toolBar->setBatchMode ();
     }
-
-    toolPanelNotebook->remove_page (*metadataPanel);
-    metadataPanel = nullptr;
-    toiM = nullptr;
 
     for (size_t i = 0; i < toolPanels.size(); i++) {
         toolPanels[i]->setBatchMode (true);
