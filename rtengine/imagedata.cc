@@ -757,7 +757,7 @@ unsigned int FramesData::getFrameCount () const
     return dcrawFrameCount ? dcrawFrameCount : frames.size();
 }
 
-FrameData *FramesData::getFrameData (int frame) const
+FrameData *FramesData::getFrameData (unsigned int frame) const
 {
     return frames.empty() || frame >= frames.size() ? nullptr : frames.at(frame);
 }

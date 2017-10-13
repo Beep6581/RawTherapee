@@ -101,7 +101,7 @@ public:
     void setDCRawFrameCount (unsigned int frameCount);
     unsigned int getRootCount () const;
     unsigned int getFrameCount () const;
-    FrameData *getFrameData (int frame) const;
+    FrameData *getFrameData (unsigned int frame) const;
     bool getPixelShift (unsigned int frame = 0) const;
     bool getHDR (unsigned int frame = 0) const;
     IIOSampleFormat getSampleFormat (unsigned int frame = 0) const;
