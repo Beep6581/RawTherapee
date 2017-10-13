@@ -501,7 +501,9 @@ public:
                )
                ||(
                    type==ICCStore::ProfileType::OUTPUT
-                   && (cmsGetDeviceClass(profile.second) == cmsSigDisplayClass || cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
+                   && (cmsGetDeviceClass(profile.second) == cmsSigDisplayClass
+                       || cmsGetDeviceClass(profile.second) == cmsSigInputClass
+                       || cmsGetDeviceClass(profile.second) == cmsSigOutputClass)
                    && cmsGetColorSpace(profile.second) == cmsSigRgbData
                )
             ) {

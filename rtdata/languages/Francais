@@ -1183,8 +1183,8 @@ SAVEDLG_SUBSAMP_TOOLTIP;Meilleurs compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma div
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
 SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
-SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profil de sortie
-SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, simule le rendu généré par le profile de sortie de l'outil ICM. Particulièrement utile pour simuler le rendu en sortie d'imprimante.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Si activé, indique en gris les pixels dont la couleurs est en dehors du gamut du profil Imprimante
+SOFTPROOF_TOOLTIP;Épreuvage écran\nSi activé, vous permet de simuler le rendu obtenu par votre imprimante en utilisant le profil Imprimante réglé dans Préférences > Gestion des couleurs.
 THRESHOLDSELECTOR_B;Bas
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
