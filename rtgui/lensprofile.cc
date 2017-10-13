@@ -177,7 +177,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (pp->lensProf.lcpFile.empty()) {
         Glib::ustring lastFolder = fcbLCPFile->get_current_folder();
         fcbLCPFile->set_current_folder(lastFolder);
-        fcbLCPFile->set_filename(lastFolder + "/.");
+        fcbLCPFile->unselect_all();
         bindCurrentFolder(*fcbLCPFile, options.lastLensProfileDir);
         updateDisabled(false);
     } else if (LCPStore::getInstance()->isValidLCPFileName(pp->lensProf.lcpFile)) {
