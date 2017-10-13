@@ -62,8 +62,8 @@ bool notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
 FilmSimulation::FilmSimulation()
     :   FoldableToolPanel( this, "filmsimulation", M("TP_FILMSIMULATION_LABEL"), false, true )
 {
-    m_clutComboBox = Gtk::manage( new ClutComboBox() );
-    int foundClutsCount = m_clutComboBox->fillFromDir( options.clutsDir );
+    m_clutComboBox = Gtk::manage( new ClutComboBox(options.clutsDir) );
+    int foundClutsCount = m_clutComboBox->foundClutsCount();
 
     if ( foundClutsCount == 0 ) {
         pack_start( *Gtk::manage( new Gtk::Label( M("TP_FILMSIMULATION_ZEROCLUTSFOUND") ) ) );
@@ -117,7 +117,7 @@ void FilmSimulation::adjusterChanged( Adjuster* a, double newval )
 void FilmSimulation::setBatchMode( bool batchMode )
 {
     ToolPanel::setBatchMode( batchMode );
-    m_clutComboBox->addUnchangedEntry();
+    m_clutComboBox->setBatchMode(batchMode);
 }
 
 void FilmSimulation::read( const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited )
@@ -197,27 +197,100 @@ void FilmSimulation::trimValues( rtengine::procparams::ProcParams* pp )
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+
+std::unique_ptr<ClutComboBox::ClutModel> ClutComboBox::cm;
+std::unique_ptr<ClutComboBox::ClutModel> ClutComboBox::cm2;
+
+ClutComboBox::ClutComboBox(const Glib::ustring &path):
+    MyComboBox(),
+    batchMode(false)
+{
+    if (!cm) {
+        cm.reset(new ClutModel(path));
+    }
+    if (!cm2 && options.multiDisplayMode) {
+        cm2.reset(new ClutModel(path));
+    }
+
+    set_model(m_model());
+
+    if (cm->count > 0) {
+        pack_start(m_columns().label, false);
+    }
+
+    if (!options.multiDisplayMode) {
+        signal_map().connect(sigc::mem_fun(*this, &ClutComboBox::updateUnchangedEntry));
+    }
+}
+
+
+inline Glib::RefPtr<Gtk::TreeStore> &ClutComboBox::m_model()
+{
+    if (!batchMode || !options.multiDisplayMode) {
+        return cm->m_model;
+    } else {
+        return cm2->m_model;
+    }
+}
+
+
+inline ClutComboBox::ClutColumns &ClutComboBox::m_columns()
+{
+    if (!batchMode || !options.multiDisplayMode) {
+        return cm->m_columns;
+    } else {
+        return cm2->m_columns;
+    }
+}
+
+
+void ClutComboBox::setBatchMode(bool yes)
+{
+    if (batchMode != yes) {
+        batchMode = yes;
+        set_model(m_model());
+        if (batchMode && options.multiDisplayMode) {
+            updateUnchangedEntry();
+        }
+    }
+}
+
+
+void ClutComboBox::updateUnchangedEntry()
+{
+    auto c = m_model()->children();
+    
+    if (batchMode) {
+        if (c.empty() || c[c.size()-1][m_columns().clutFilename] != "NULL") {
+            Gtk::TreeModel::Row row = *(m_model()->append());
+            row[m_columns().label] = M("GENERAL_UNCHANGED");
+            row[m_columns().clutFilename] = "NULL";
+        }
+    } else {
+        if (c.size() > 0) {
+            Gtk::TreeModel::Row row = c[c.size()-1];
+            if (row[m_columns().clutFilename] == "NULL") {
+                std::cout << "  removing " << ((void *)this) << std::endl;
+                m_model()->erase(row);
+            }
+        }
+    }
+}
+
 ClutComboBox::ClutColumns::ClutColumns()
 {
     add( label );
     add( clutFilename );
 }
 
-int ClutComboBox::fillFromDir (const Glib::ustring& path)
+ClutComboBox::ClutModel::ClutModel(const Glib::ustring &path)
 {
     m_model = Gtk::TreeStore::create (m_columns);
-    set_model (m_model);
-
-    const auto result = parseDir (path);
-
-    if (result > 0) {
-        pack_start (m_columns.label, false);
-    }
-
-    return result;
+    //set_model (m_model);
+    count = parseDir(path);
 }
 
-int ClutComboBox::parseDir(const Glib::ustring& path)
+int ClutComboBox::ClutModel::parseDir(const Glib::ustring& path)
 {
     if (path.empty() || !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
         return 0;
@@ -327,6 +400,11 @@ int ClutComboBox::parseDir(const Glib::ustring& path)
     return fileCount;
 }
 
+int ClutComboBox::foundClutsCount() const
+{
+    return cm->count;
+}
+
 Glib::ustring ClutComboBox::getSelectedClut()
 {
     Glib::ustring result;
@@ -334,7 +412,7 @@ Glib::ustring ClutComboBox::getSelectedClut()
     Gtk::TreeModel::Row row = *current;
 
     if ( row ) {
-        result = row[ m_columns.clutFilename ];
+        result = row[ m_columns().clutFilename ];
     }
 
     return result;
@@ -343,7 +421,7 @@ Glib::ustring ClutComboBox::getSelectedClut()
 void ClutComboBox::setSelectedClut( Glib::ustring filename )
 {
     if ( !filename.empty() ) {
-        Gtk::TreeIter found = findRowByClutFilename( m_model->children(), filename );
+        Gtk::TreeIter found = findRowByClutFilename( m_model()->children(), filename );
 
         if ( found ) {
             set_active( found );
@@ -358,7 +436,7 @@ Gtk::TreeIter ClutComboBox::findRowByClutFilename( Gtk::TreeModel::Children chil
     for( Gtk::TreeModel::Children::iterator it = childs.begin(); !result && it != childs.end(); ++it ) {
         Gtk::TreeModel::Row row = *it;
 
-        if ( row[ m_columns.clutFilename ] == filename ) {
+        if ( row[ m_columns().clutFilename ] == filename ) {
             result = it;
         } else {
             result = findRowByClutFilename( it->children(), filename );
@@ -366,11 +444,4 @@ Gtk::TreeIter ClutComboBox::findRowByClutFilename( Gtk::TreeModel::Children chil
     }
 
     return result;
-}
-
-void ClutComboBox::addUnchangedEntry()
-{
-    Gtk::TreeModel::Row row = *(m_model->append());
-    row[m_columns.label] = M("GENERAL_UNCHANGED");
-    row[m_columns.clutFilename] = "NULL";
 }

@@ -11,12 +11,16 @@
 class ClutComboBox : public MyComboBox
 {
 public:
-    int fillFromDir (const Glib::ustring& path);
+    ClutComboBox(const Glib::ustring &path);
+    //int fillFromDir (const Glib::ustring& path);
+    int foundClutsCount() const;
     Glib::ustring getSelectedClut();
     void setSelectedClut( Glib::ustring filename );
-    void addUnchangedEntry();
-
+    void setBatchMode(bool yes);
+    
 private:
+    void updateUnchangedEntry(); // in batchMode we need to add an extra entry "(Unchanged)". We do this whenever the widget is mapped (connecting to signal_map()), unless options.multiDisplayMode (see the comment below about cm2 in this case)
+    
     class ClutColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
@@ -25,11 +29,24 @@ private:
         ClutColumns();
     };
 
-    int parseDir (const Glib::ustring& path);
+    class ClutModel {
+    public:
+        Glib::RefPtr<Gtk::TreeStore> m_model;
+        ClutColumns m_columns;
+        int count;
+        ClutModel(const Glib::ustring &path);
+        int parseDir (const Glib::ustring& path);
+    };
+
+    Glib::RefPtr<Gtk::TreeStore> &m_model();
+    ClutColumns &m_columns();
+
     Gtk::TreeIter findRowByClutFilename(  Gtk::TreeModel::Children childs, Glib::ustring filename );
 
-    Glib::RefPtr<Gtk::TreeStore> m_model;
-    ClutColumns m_columns;
+    static std::unique_ptr<ClutModel> cm; // we use a shared TreeModel for all the combo boxes, to save time (no need to reparse the clut dir multiple times)...
+    static std::unique_ptr<ClutModel> cm2; // ... except when options.multiDisplayMode (i.e. editors in their own window), where we need two. This is because we might have two combo boxes displayed at the same time in this case
+    int count; // the number of clut entries
+    bool batchMode;
 };
 
 class FilmSimulation : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
