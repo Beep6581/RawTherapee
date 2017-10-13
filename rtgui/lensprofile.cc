@@ -583,11 +583,25 @@ bool LensProfilePanel::checkLensfunCanCorrect(bool automatch)
 
 LensProfilePanel::LFDbHelper::LFDbHelper()
 {
+#ifdef _OPENMP
+#pragma omp parallel sections
+#endif
+{
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
     lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
-    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
-
     fillLensfunCameras();
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
     fillLensfunLenses();
+}
+}
 }
 
 void LensProfilePanel::LFDbHelper::fillLensfunCameras()
