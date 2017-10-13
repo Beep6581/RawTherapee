@@ -2140,6 +2140,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !DONT_SHOW_AGAIN;Don't show this message again.
+!EXIFPANEL_SHOWALL;Show all
 !GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_475;PS - Equalize channel
@@ -2169,6 +2170,15 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
 !PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_THEME;Theme
+!QINFO_FRAMECOUNT;%2 frames
+!QINFO_HDR;HDR / %2 frame(s)
+!QINFO_PIXELSHIFT;PixelShift / %2 frame(s)
+!SAMPLEFORMAT_0;Unknown data format
+!SAMPLEFORMAT_1;Unsigned 8 bits
+!SAMPLEFORMAT_2;Unsigned 16 bits
+!SAMPLEFORMAT_4;LogLuv 24 bits
+!SAMPLEFORMAT_8;LogLuv 32 bits
+!SAMPLEFORMAT_16;32 bits floating point
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset
 !TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
