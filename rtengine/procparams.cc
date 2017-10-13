@@ -991,7 +991,7 @@ void LocallabParams::setDefaults()
 
     // qualityMethod = "enhden";
     qualitycurveMethod = "none";
-    proxi = 20;
+    proxi = 0;
     thres = 18;
     lightness = 0;
     contrast = 0;

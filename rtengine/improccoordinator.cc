@@ -918,7 +918,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                         int t_inverssha = 0;
                         int t_qualityMethod = 2;
                         int t_thres = 18;
-                        int t_proxi = 20;
+                        int t_proxi = 0;
                         int t_noiselumf = 0;
                         int t_noiselumc = 0;
                         int t_noisechrof = 0;
@@ -1809,7 +1809,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                     int t_inverssha = 0;
                     int t_qualityMethod = 2;
                     int t_thres = 18;
-                    int t_proxi = 20;
+                    int t_proxi = 0;
                     int t_noiselumf = 0;
                     int t_noiselumc = 0;
                     int t_noisechrof = 0;

@@ -1782,6 +1782,10 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
     const float ahu = 1.f / (2.8f * lp.senstm - 280.f);
     const float bhu = 1.f - ahu * 2.8f * lp.senstm;
 
+    const float alum = 1.f / (lp.senstm - 100.f);
+    const float blum = 1.f - alum * lp.senstm;
+
+
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
 #endif
@@ -1849,6 +1853,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                     float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
 #endif
                     // int zone;
+                    float rL = original->L[y][x] / 327.68f;
 
                     //retrieve data
                     float cli = 1.f;
@@ -1873,6 +1878,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                     float khu = 0.f;
                     float kch = 1.f;
                     float fach = 1.f;
+					float falu = 1.f;
                     float deltachro = fabs (rchro - chromaref);
                     float deltahue = fabs (rhue - hueref);
 
@@ -1881,6 +1887,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                     }
 
                     float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
+                    float deltaL = fabs (lumaref - rL); //between 0 and 100
 
                     //kch to modulate action with chroma
                     if (deltachro < 160.f * SQR (lp.senstm / 100.f)) {
@@ -1969,22 +1976,31 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 //                            kzon = true;
                         }
 
-                        if (deltaE <  2.8f * lp.senstm) {
-                            fach = khu;
-                        } else {
-                            fach = khu * (ahu * deltaE + bhu);
-                        }
+                        if (lp.senstm <= 20.f) {
+
+                            if (deltaE <  2.8f * lp.senstm) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
 
-                        float kcr = 10.f;
+                            float kcr = 10.f;
 
-                        if (rchro < kcr) {
-                            fach *= (1.f / (kcr * kcr)) * rchro * rchro;
-                        }
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
 
-                        if (lp.qualmet == 1) {
-                        } else {
-                            fach = 1.f;
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
+
+                            if (deltaL <  lp.senstm) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
                         }
 
                         //fach = khu ;
@@ -2026,8 +2042,8 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                             transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
 
 
-                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach;//same as Luma
-                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach;//same as Luma
+                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach * falu;//same as Luma
+                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach * falu;//same as Luma
 
                             break;
                         }
@@ -2042,8 +2058,8 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                             transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
 
 
-                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach;//same as Luma
-                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach;//same as Luma
+                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach * falu;//same as Luma
+                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach * falu;//same as Luma
                         }
                     }
 
@@ -2181,7 +2197,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 
 
                     // algo with detection of hue ==> artifacts for noisy images  ==> denoise before
-                    if (lp.qualmet == 1 && lp.sensbn < 20.f) { //to try...
+                    if (lp.qualmet >= 1 && lp.sensbn < 20.f) { //to try...
                         //hue detection
                         if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                             if (rhue >= hueplus - delhu )  {
@@ -6831,7 +6847,7 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                                 int loy = cy + y;
 
                                 if (lox >= begx && lox < xEn && loy >= begy && loy < yEn) {
-                                    rch = CLIPRET ((loctempch[loy - begy][lox - begx] - sqrt (SQR (original->a[y][x]) + SQR (original->b[y][x]))) / 3.f);
+                                    rch = CLIPRET ((loctempch[loy - begy][lox - begx] - sqrt (SQR (original->a[y][x]) + SQR (original->b[y][x]))) / 200.f);
                                     bufchrom[loy - begy][lox - begx]  = rch;
                                 }
                             }
