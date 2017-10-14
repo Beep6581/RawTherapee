@@ -1109,7 +1109,7 @@ public:
         sprintf (buffer, "%d", a);
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = Interpreter::toInt (t, ofs);
 
@@ -1120,7 +1120,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         int a = Interpreter::toInt (t, ofs, astype);
 

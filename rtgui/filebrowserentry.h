@@ -70,6 +70,8 @@ public:
     static Glib::RefPtr<Gdk::Pixbuf> editedIcon;
     static Glib::RefPtr<Gdk::Pixbuf> recentlySavedIcon;
     static Glib::RefPtr<Gdk::Pixbuf> enqueuedIcon;
+    static Glib::RefPtr<Gdk::Pixbuf> hdr;
+    static Glib::RefPtr<Gdk::Pixbuf> ps;
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry ();
@@ -87,6 +89,7 @@ public:
     void calcThumbnailSize ();
 
     virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea ();
     virtual void getIconSize (int& w, int& h);
 
     // thumbnaillistener interface

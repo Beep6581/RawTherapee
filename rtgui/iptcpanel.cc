@@ -434,7 +434,7 @@ void IPTCPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
     defChangeList = defParams->iptc;
 }
 
-void IPTCPanel::setImageData (const ImageMetaData* id)
+void IPTCPanel::setImageData (const FramesMetaData* id)
 {
 
     if (id) {

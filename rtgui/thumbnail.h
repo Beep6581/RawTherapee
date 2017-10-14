@@ -70,7 +70,7 @@ class Thumbnail
     void            _loadThumbnail (bool firstTrial = true);
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
-    int             infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml = nullptr);
+    int             infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml = nullptr);
     void            loadThumbnail (bool firstTrial = true);
     void            generateExifDateTimeStrings ();
 
@@ -107,6 +107,8 @@ public:
     void              imageEnqueued ();
     void              imageRemovedFromQueue ();
     bool              isEnqueued ();
+    bool              isPixelShift ();
+    bool              isHDR ();
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
     rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);

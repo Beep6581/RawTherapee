@@ -498,7 +498,7 @@ void ProfileStore::dumpFolderList()
     printf ("\n");
 }
 
-PartialProfile *ProfileStore::loadDynamicProfile (const ImageMetaData *im)
+PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
 {
     if (storeState == STORESTATE_NOTINITIALIZED) {
         parseProfilesOnce();

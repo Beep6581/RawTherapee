@@ -26,7 +26,7 @@ class ExifPanel : public Gtk::VBox, public ToolPanel
 {
 
 private:
-    const rtengine::ImageMetaData* idata;
+    const rtengine::FramesMetaData* idata;
     rtengine::procparams::ExifPairs changeList;
     rtengine::procparams::ExifPairs defChangeList;
     bool recursiveOp;
@@ -43,18 +43,20 @@ private:
         Gtk::TreeModelColumn<rtexif::ActionCode> action;
         Gtk::TreeModelColumn<bool> editable;
         Gtk::TreeModelColumn<bool> edited;
+        Gtk::TreeModelColumn<bool> isSeparator;
 
         ExifColumns()
         {
-            add(field);
-            add(value);
-            add(icon);
-            add(action);
-            add(edited);
-            add(field_nopango);
-            add(value_nopango);
-            add(editable);
-            add(orig_value);
+            add (field);
+            add (value);
+            add (icon);
+            add (action);
+            add (edited);
+            add (field_nopango);
+            add (value_nopango);
+            add (editable);
+            add (orig_value);
+            add (isSeparator);
         }
     };
     Glib::RefPtr<Gdk::Pixbuf> delicon;
@@ -71,37 +73,41 @@ private:
     Gtk::Button* add;
     Gtk::Button* reset;
     Gtk::Button* resetAll;
+    Gtk::ToggleButton* showAll;
 
-    Gtk::TreeModel::Children addTag  (const Gtk::TreeModel::Children& root, Glib::ustring field, Glib::ustring value, rtexif::ActionCode action, bool editable);
+    Gtk::TreeModel::Children addTag (const Gtk::TreeModel::Children& root, Glib::ustring field, Glib::ustring value, rtexif::ActionCode action, bool editable);
     void editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib::ustring value);
     void updateChangeList (Gtk::TreeModel::Children root, std::string prefix);
-    void addDirectory (const rtexif::TagDirectory* dir, Gtk::TreeModel::Children root);
+    void addDirectory (const rtexif::TagDirectory* dir, Gtk::TreeModel::Children root, bool checkForSeparator = false);
+    Gtk::TreeModel::Children addSeparator();
     Glib::ustring getSelection (bool onlyifeditable = false);
-    Glib::ustring getSelectedValue ();
-    void updateChangeList ();
-    void applyChangeList ();
-    void keepIt  (Gtk::TreeModel::iterator iter);
-    void delIt   (Gtk::TreeModel::iterator iter);
+    Glib::ustring getSelectedValue();
+    void updateChangeList();
+    void applyChangeList();
+    void keepIt (Gtk::TreeModel::iterator iter);
+    void delIt (Gtk::TreeModel::iterator iter);
     Gtk::TreeModel::iterator resetIt (Gtk::TreeModel::iterator iter);
+    void removePressed();
+    void keepPressed();
+    void resetPressed();
+    void resetAllPressed();
+    void addPressed();
+    void showAlltoggled();
+
 public:
     ExifPanel ();
-    virtual ~ExifPanel ();
+    virtual ~ExifPanel();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
+    void read (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
+    void write (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
+    void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
-    void setImageData (const rtengine::ImageMetaData* id);
+    void setImageData (const rtengine::FramesMetaData* id);
 
-    void exifSelectionChanged ();
-    void removePressed ();
-    void keepPressed ();
-    void resetPressed ();
-    void resetAllPressed ();
-    void addPressed ();
+    void exifSelectionChanged();
     void row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
 
-    void notifyListener ();
+    void notifyListener();
 
 };
 

@@ -177,7 +177,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (pp->lensProf.lcpFile.empty()) {
         Glib::ustring lastFolder = fcbLCPFile->get_current_folder();
         fcbLCPFile->set_current_folder(lastFolder);
-        fcbLCPFile->set_filename(lastFolder + "/.");
+        fcbLCPFile->unselect_all();
         bindCurrentFolder(*fcbLCPFile, options.lastLensProfileDir);
         updateDisabled(false);
     } else if (LCPStore::getInstance()->isValidLCPFileName(pp->lensProf.lcpFile)) {
@@ -257,7 +257,7 @@ void LensProfilePanel::updateLensfunWarning()
     }
 }
 
-void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta)
+void LensProfilePanel::setRawMeta(bool raw, const rtengine::FramesMetaData* pMeta)
 {
     if (!raw || pMeta->getFocusDist() <= 0) {
         disableListener();
@@ -583,11 +583,25 @@ bool LensProfilePanel::checkLensfunCanCorrect(bool automatch)
 
 LensProfilePanel::LFDbHelper::LFDbHelper()
 {
+#ifdef _OPENMP
+#pragma omp parallel sections
+#endif
+{
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
     lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
-    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
-
     fillLensfunCameras();
+}
+#ifdef _OPENMP
+#pragma omp section
+#endif
+{
+    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
     fillLensfunLenses();
+}
+}
 }
 
 void LensProfilePanel::LFDbHelper::fillLensfunCameras()

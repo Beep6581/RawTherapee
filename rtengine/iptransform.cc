@@ -296,7 +296,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 }
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
-                                 const ImageMetaData *metadata,
+                                 const FramesMetaData *metadata,
                                  int rawRotationDeg, bool fullImage)
 {
     double focalLen = metadata->getFocalLen();

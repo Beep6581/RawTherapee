@@ -377,11 +377,7 @@ dfInfo* DFManager::addFileInfo (const Glib::ustring& filename, bool pool)
             return &(iter->second);
         }
 
-        RawMetaDataLocation rml;
-        rml.exifBase = ri.get_exifBase();
-        rml.ciffBase = ri.get_ciffBase();
-        rml.ciffLength = ri.get_ciffLen();
-        ImageData idata(filename, &rml);
+        FramesData idata(filename, std::unique_ptr<RawMetaDataLocation>(new RawMetaDataLocation(ri.get_exifBase(), ri.get_ciffBase(), ri.get_ciffLen())), true);
         /* Files are added in the map, divided by same maker/model,ISO and shutter*/
         std::string key(dfInfo::key(((Glib::ustring)idata.getMake()).uppercase(), ((Glib::ustring)idata.getModel()).uppercase(), idata.getISOSpeed(), idata.getShutterSpeed()));
         iter = dfList.find(key);

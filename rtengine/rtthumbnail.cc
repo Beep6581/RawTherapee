@@ -247,7 +247,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     return tpp;
 }
 
-Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int imageNum = 0;
@@ -255,8 +255,11 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     if ( r ) {
         delete ri;
+        sensorType = ST_NONE;
         return nullptr;
     }
+
+    sensorType = ri->getSensorType();
 
     rml.exifBase = ri->get_exifBase();
     rml.ciffBase = ri->get_ciffBase();
@@ -378,7 +381,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -387,8 +390,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
     if ( r ) {
         delete ri;
+        sensorType = ST_NONE;
         return nullptr;
     }
+
+    sensorType = ri->getSensorType();
 
     int width = ri->get_width();
     int height = ri->get_height();
@@ -953,13 +959,21 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, const ImageMetaData *metadata, double& myscale)
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale)
 {
-    std::string camName = metadata->getCamera();
-    float shutter = metadata->getShutterSpeed();
-    float fnumber = metadata->getFNumber();
-    float iso = metadata->getISOSpeed();
-    float fcomp = metadata->getExpComp();
+    unsigned int imgNum = 0;
+    if (isRaw) {
+        if (sensorType == ST_BAYER) {
+            imgNum = rtengine::LIM<unsigned int>(params.raw.bayersensor.imageNum, 0, metadata->getFrameCount() - 1);
+        } else if (sensorType == ST_FUJI_XTRANS) {
+            //imgNum = rtengine::LIM<unsigned int>(params.raw.xtranssensor.imageNum, 0, metadata->getFrameCount() - 1)
+        }
+    }
+    std::string camName = metadata->getCamera(imgNum);
+    float shutter = metadata->getShutterSpeed(imgNum);
+    float fnumber = metadata->getFNumber(imgNum);
+    float iso = metadata->getISOSpeed(imgNum);
+    float fcomp = metadata->getExpComp(imgNum);
     
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {

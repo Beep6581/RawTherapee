@@ -31,11 +31,11 @@
 namespace rtengine
 {
 
-class ImageData : public ImageMetaData
+class FrameData
 {
 
 protected:
-    rtexif::TagDirectory* root;
+    rtexif::TagDirectory* frameRootDir;
     IptcData* iptc;
 
     struct tm time;
@@ -49,84 +49,84 @@ protected:
     std::string make, model, serial;
     std::string orientation;
     std::string lens;
+    IIOSampleFormat sampleFormat;
 
-    void extractInfo ();
+    // each frame has the knowledge of "being an"
+    // or "being part of an" HDR or PS image
+    bool isPixelShift;
+    bool isHDR;
 
 public:
 
-    ImageData (Glib::ustring fname, RawMetaDataLocation* rml = nullptr);
-    virtual ~ImageData ();
+    FrameData (rtexif::TagDirectory* frameRootDir, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir);
+    virtual ~FrameData ();
 
-    const rtexif::TagDirectory*   getExifData () const
-    {
-        return root;
-    }
-    const procparams::IPTCPairs   getIPTCData () const;
-
-    bool hasExif () const
-    {
-        return root && root->getCount();
-    }
-    bool hasIPTC () const
-    {
-        return iptc;
-    }
-
-    struct tm   getDateTime () const {
-        return time;
-    }
-    time_t      getDateTimeAsTS() const
-    {
-        return timeStamp;
-    }
-    int         getISOSpeed () const
-    {
-        return iso_speed;
-    }
-    double      getFNumber  () const
-    {
-        return aperture;
-    }
-    double      getFocalLen () const
-    {
-        return focal_len;
-    }
-    double      getFocalLen35mm () const
-    {
-        return focal_len35mm;
-    }
-    float       getFocusDist () const
-    {
-        return focus_dist;
-    }
-    double      getShutterSpeed () const
-    {
-        return shutter;
-    }
-    double      getExpComp  () const
-    {
-        return expcomp;
-    }
-    std::string getMake     () const
-    {
-        return make;
-    }
-    std::string getModel    () const
-    {
-        return model;
-    }
-    std::string getLens     () const
-    {
-        return lens;
-    }
-    std::string getSerialNumber () const
-    {
-        return serial;
-    }
-    std::string getOrientation () const
-    {
-        return orientation;
-    }
+    bool getPixelShift () const;
+    bool getHDR () const;
+    IIOSampleFormat getSampleFormat () const;
+    rtexif::TagDirectory* getExifData () const;
+    procparams::IPTCPairs getIPTCData () const;
+    static procparams::IPTCPairs getIPTCData (IptcData* iptc_);
+    bool hasExif () const;
+    bool hasIPTC () const;
+    tm getDateTime () const;
+    time_t getDateTimeAsTS () const;
+    int getISOSpeed () const;
+    double getFNumber () const;
+    double getFocalLen () const;
+    double getFocalLen35mm () const;
+    float getFocusDist () const;
+    double getShutterSpeed () const;
+    double getExpComp  () const;
+    std::string getMake () const;
+    std::string getModel () const;
+    std::string getLens () const;
+    std::string getSerialNumber () const;
+    std::string getOrientation () const;
 };
+
+class FramesData : public FramesMetaData {
+private:
+    // frame's root IFD, can be a file root IFD or a SUB-IFD
+    std::vector<FrameData*> frames;
+    // root IFD in the file
+    std::vector<rtexif::TagDirectory*> roots;
+    IptcData* iptc;
+    unsigned int dcrawFrameCount;
+
+public:
+    FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false, bool loadAll = false);
+    ~FramesData ();
+
+    void setDCRawFrameCount (unsigned int frameCount);
+    unsigned int getRootCount () const;
+    unsigned int getFrameCount () const;
+    FrameData *getFrameData (unsigned int frame) const;
+    bool getPixelShift (unsigned int frame = 0) const;
+    bool getHDR (unsigned int frame = 0) const;
+    IIOSampleFormat getSampleFormat (unsigned int frame = 0) const;
+    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const;
+    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const;
+    rtexif::TagDirectory* getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const;
+    procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const;
+    bool hasExif (unsigned int frame = 0) const;
+    bool hasIPTC (unsigned int frame = 0) const;
+    tm getDateTime (unsigned int frame = 0) const;
+    time_t getDateTimeAsTS (unsigned int frame = 0) const;
+    int getISOSpeed (unsigned int frame = 0) const;
+    double getFNumber (unsigned int frame = 0) const;
+    double getFocalLen (unsigned int frame = 0) const;
+    double getFocalLen35mm (unsigned int frame = 0) const;
+    float getFocusDist (unsigned int frame = 0) const;
+    double getShutterSpeed (unsigned int frame = 0) const;
+    double getExpComp (unsigned int frame = 0) const;
+    std::string getMake (unsigned int frame = 0) const;
+    std::string getModel (unsigned int frame = 0) const;
+    std::string getLens (unsigned int frame = 0) const;
+    std::string getSerialNumber (unsigned int frame = 0) const;
+    std::string getOrientation (unsigned int frame = 0) const;
+};
+
+
 }
 #endif

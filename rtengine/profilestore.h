@@ -195,7 +195,7 @@ public:
     void addListener (ProfileStoreListener *listener);
     void removeListener (ProfileStoreListener *listener);
 
-    rtengine::procparams::PartialProfile*        loadDynamicProfile (const rtengine::ImageMetaData *im);
+    rtengine::procparams::PartialProfile*        loadDynamicProfile (const rtengine::FramesMetaData *im);
 
     void dumpFolderList();
 };

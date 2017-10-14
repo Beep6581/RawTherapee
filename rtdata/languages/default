@@ -71,6 +71,7 @@ EXIFPANEL_RESET;Reset
 EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values.
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values.
+EXIFPANEL_SHOWALL;Show all
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 EXPORT_BYPASS;Processing steps to bypass
 EXPORT_BYPASS_ALL;Select / Unselect All
@@ -1304,8 +1305,17 @@ PROGRESSBAR_SAVEPNG;Saving PNG file...
 PROGRESSBAR_SAVETIFF;Saving TIFF file...
 PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
+QINFO_FRAMECOUNT;%2 frames
+QINFO_HDR;HDR / %2 frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif data not available.
+QINFO_PIXELSHIFT;PixelShift / %2 frame(s)
+SAMPLEFORMAT_0;Unknown data format
+SAMPLEFORMAT_1;Unsigned 8 bits
+SAMPLEFORMAT_2;Unsigned 16 bits
+SAMPLEFORMAT_4;LogLuv 24 bits
+SAMPLEFORMAT_8;LogLuv 32 bits
+SAMPLEFORMAT_16;32 bits floating point
 SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FORCEFORMATOPTS;Force saving options

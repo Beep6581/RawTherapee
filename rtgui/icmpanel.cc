@@ -958,7 +958,7 @@ void ICMPanel::oBPCChanged ()
     }
 }
 
-void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta)
+void ICMPanel::setRawMeta (bool raw, const rtengine::FramesData* pMeta)
 {
 
     disableListener ();
