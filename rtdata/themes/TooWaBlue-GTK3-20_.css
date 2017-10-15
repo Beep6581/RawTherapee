@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.56 - requires RT 5.0 (Gtk+ >= 3.20)
+  Version 2.57
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -916,8 +916,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     min-width: 1.66667em;
 }
 #MetaPanelNotebook > stack > box > grid > button {
-    margin-top: 0.08334em;
-    margin-bottom: 0.08334em;
+    margin: 0.08334em;
     min-height: 2.16667em;
 }
 
@@ -1182,7 +1181,7 @@ entry > window > frame > border {
     padding: 0.08334em;
     border: 0.08334em solid @accent-color;
 }
-.csd entry > window > frame > border {
+entry > window > frame > border {
     margin: 0.08334em;
 }
 /* end */
@@ -1190,15 +1189,14 @@ entry > window > frame > border {
 /*** end ***************************************************************************************/
 
 /*** Popover *** Context menu filechooser ******************************************************/
-.csd popover.background {
-    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
-}
+
 popover.background {
     background-color: @bg-dark-grey;
     border: 0.08334em solid  @accent-color;
     border-radius: 0;
     padding: 0;
     margin: 0;
+    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
 }
 popover.background > box {
     padding: 0;
