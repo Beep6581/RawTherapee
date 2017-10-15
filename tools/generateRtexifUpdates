@@ -11,7 +11,7 @@
 # Blame DrSlony
 # Please report bugs or enhancements to https://github.com/Beep6581/RawTherapee
 
-et="$HOME/programs/Image-ExifTool-10.61/exiftool"
+et="$HOME/programs/code-exiftool/exiftool"
 
 hash "$et" 2>/dev/null || { echo >&2 "ExifTool not found, install it first."; exit 1; }
 hash xmlstarlet 2>/dev/null || { echo >&2 "XMLStarlet not found, install it first."; exit 1; }

@@ -650,8 +650,11 @@ public:
         choices.insert (p_t (53, "Canon EF-S 18-55mm f/3.5-5.6 III"));
         choices.insert (p_t (54, "Canon EF-S 55-250mm f/4-5.6 IS II"));
         choices.insert (p_t (60, "Irix 11mm f/4"));
+        choices.insert (p_t (80, "Canon TS-E 50mm f/2.8L Macro"));
+        choices.insert (p_t (81, "Canon TS-E 90mm f/2.8L Macro"));
+        choices.insert (p_t (82, "Canon TS-E 135mm f/4L Macro"));
         choices.insert (p_t (94, "Canon TS-E 17mm f/4L"));
-        choices.insert (p_t (95, "Canon TS-E 24.0mm f/3.5 L II"));
+        choices.insert (p_t (95, "Canon TS-E 24mm f/3.5L II"));
         choices.insert (p_t (124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"));
         choices.insert (p_t (125, "Canon TS-E 24mm f/3.5L"));
         choices.insert (p_t (126, "Canon TS-E 45mm f/2.8"));
@@ -904,7 +907,11 @@ public:
         choices.insert (p_t (4160, "Canon EF-S 35mm f/2.8 Macro IS STM"));
         choices.insert (p_t (36910, "Canon EF 70-300mm f/4-5.6 IS II USM"));
         choices.insert (p_t (36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"));
+        choices.insert (p_t (61491, "Canon CN-E 14mm T3.1 L F"));
+        choices.insert (p_t (61492, "Canon CN-E 24mm T1.5 L F"));
         choices.insert (p_t (61494, "Canon CN-E 85mm T1.3 L F"));
+        choices.insert (p_t (61495, "Canon CN-E 135mm T2.2 L F"));
+        choices.insert (p_t (61496, "Canon CN-E 35mm T1.5 L F"));
         choices.insert (p_t (65535, "n/a"));
     }
 
@@ -1679,6 +1686,7 @@ public:
         choices[60030976] = "EOS M5";
         choices[60096512] = "PowerShot G5 X";
         choices[60227584] = "PowerShot G7 X Mark II";
+        choices[60293120] = "EOS M100";
         choices[60358656] = "PowerShot ELPH 360 HS / IXUS 285 HS / IXY 650";
         choices[67174400] = "PowerShot SX540 HS";
         choices[67239936] = "PowerShot SX420 IS";
@@ -1721,6 +1729,7 @@ public:
         choices[1074256527] = "HF M30/M31/M36/M300/M306";
         choices[1074256528] = "HF S20/S21/S200";
         choices[1074256530] = "FS31/FS36/FS37/FS300/FS305/FS306/FS307";
+        choices[1074257056] = "EOS C300";
         choices[1074257321] = "HF G25";
         choices[1074257844] = "XC10";
         choices[2147483649] = "EOS-1D";
