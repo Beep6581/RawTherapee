@@ -212,6 +212,8 @@ private:
     Thumbnail* openThm;  // may get invalid on external delete event
     Glib::ustring fname;  // must be saved separately
 
+    int selectedFrame;
+
     rtengine::InitialImage* isrc;
     rtengine::StagedImageProcessor* ipc;
     rtengine::StagedImageProcessor* beforeIpc;    // for the before-after view

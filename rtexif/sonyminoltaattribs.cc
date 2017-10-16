@@ -665,6 +665,12 @@ public:
             {128, "Sigma 18-35mm f/1.8 DC HSM"},
             {128, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"},
             {128, "Sigma 24-105mm f/4 DG HSM | A"},
+            {128, "Sigma 30mm f/1.4"},
+            {128, "Sigma 35mm f/1.4 DG HSM | A"},
+            {128, "Sigma 105mm f/2.8 EX DG OS HSM Macro"},
+            {128, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
+            {128, "Sigma 18-300mm f/3.5-6.3 DC Macro HSM | C"},
+            {128, "Sigma 18-50mm f/2.8-4.5 DC HSM"},
             {129, "Tamron Lens (129)"},
             {129, "Tamron 200-400mm f/5.6 LD"},
             {129, "Tamron 70-300mm f/4-5.6 LD"},
@@ -2044,7 +2050,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
@@ -2063,7 +2069,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2104,7 +2110,7 @@ public:
             return "n/a";
         }
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         TagType astype = t->getType();
@@ -2123,7 +2129,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2164,7 +2170,7 @@ public:
             return "Auto";
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         // Get the value; Depending on the camera model, this parameter can be a BYTE or a SHORT
         int a = 0;
@@ -2200,7 +2206,7 @@ public:
         sprintf (buffer, "%.2f", a );
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         // Get the value
         int a = t->getValue()[ofs];
@@ -2220,7 +2226,7 @@ public:
         sprintf (buffer, "%d", t->getValue()[0] - 20);
         return buffer;
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         return t->getValue()[0] - 20;
     }
@@ -2241,7 +2247,7 @@ public:
 
         return "Off";
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         return (t->getValue()[0] & 0x80) == 0x80 ? 1 : 0;
     }
@@ -2259,7 +2265,7 @@ public:
         sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
         return buffer;
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         return t->getValue()[0] & 0x7f;
     }
@@ -2315,7 +2321,7 @@ public:
         sprintf (buffer, "%d", t->toInt());
         return buffer;
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         int a = 0;
 

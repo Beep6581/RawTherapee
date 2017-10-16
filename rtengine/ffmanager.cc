@@ -21,6 +21,7 @@
 #include "rawimage.h"
 #include "imagedata.h"
 #include "median.h"
+#include "utils.h"
 
 namespace rtengine
 {
@@ -288,43 +289,36 @@ void FFManager::init( Glib::ustring pathname )
 
 ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 {
-    auto file = Gio::File::create_for_path (filename);
+    auto ext = getFileExtension(filename);
+
+    if (ext.empty() || !options.is_extention_enabled(ext)) {
+        return nullptr;
+    }
+
+    auto file = Gio::File::create_for_path(filename);
 
     if (!file ) {
         return nullptr;
     }
 
-    if (!file->query_exists ()) {
+    if (!file->query_exists()) {
         return nullptr;
     }
 
     try {
 
-        auto info = file->query_info ();
+        auto info = file->query_info("standard::name,standard::type,standard::is-hidden");
 
-        if (!info || info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
+        if (!info || info->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
             return nullptr;
         }
 
-        if (!options.fbShowHidden && info->is_hidden ()) {
+        if (!options.fbShowHidden && info->is_hidden()) {
             return nullptr;
         }
 
-        Glib::ustring ext;
-
-        auto lastdot = info->get_name ().find_last_of ('.');
-
-        if (lastdot != Glib::ustring::npos) {
-            ext = info->get_name ().substr (lastdot + 1);
-        }
-
-        if (!options.is_extention_enabled (ext)) {
-            return nullptr;
-        }
-
-
-        RawImage ri (filename);
-        int res = ri.loadRaw (false); // Read informations about shot
+        RawImage ri(filename);
+        int res = ri.loadRaw(false); // Read informations about shot
 
         if (res != 0) {
             return nullptr;
@@ -334,32 +328,28 @@ ffInfo* FFManager::addFileInfo (const Glib::ustring& filename, bool pool)
 
         if(!pool) {
             ffInfo n(filename, "", "", "", 0, 0, 0);
-            iter = ffList.insert(std::pair< std::string, ffInfo>( "", n ) );
+            iter = ffList.emplace("", n);
             return &(iter->second);
         }
 
-        RawMetaDataLocation rml;
-        rml.exifBase = ri.get_exifBase();
-        rml.ciffBase = ri.get_ciffBase();
-        rml.ciffLength = ri.get_ciffLen();
-        ImageData idata(filename, &rml);
+        FramesData idata(filename, std::unique_ptr<RawMetaDataLocation>(new RawMetaDataLocation(ri.get_exifBase(), ri.get_ciffBase(), ri.get_ciffLen())), true);
         /* Files are added in the map, divided by same maker/model,lens and aperture*/
-        std::string key( ffInfo::key(idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber()) );
-        iter = ffList.find( key );
+        std::string key(ffInfo::key(idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber()));
+        iter = ffList.find(key);
 
-        if( iter == ffList.end() ) {
+        if(iter == ffList.end()) {
             ffInfo n(filename, idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber(), idata.getDateTimeAsTS());
-            iter = ffList.insert(std::pair< std::string, ffInfo>( key, n ) );
+            iter = ffList.emplace(key, n);
         } else {
-            while( iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) > 60 * 60 * 6 ) { // 6 hour difference
+            while(iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) > 60 * 60 * 6) { // 6 hour difference
                 ++iter;
             }
 
-            if( iter != ffList.end() ) {
-                iter->second.pathNames.push_back( filename );
+            if(iter != ffList.end()) {
+                iter->second.pathNames.push_back(filename);
             } else {
                 ffInfo n(filename, idata.getMake(), idata.getModel(), idata.getLens(), idata.getFocalLen(), idata.getFNumber(), idata.getDateTimeAsTS());
-                iter = ffList.insert(std::pair< std::string, ffInfo>( key, n ) );
+                iter = ffList.emplace(key, n);
             }
         }
 

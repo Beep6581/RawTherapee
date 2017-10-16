@@ -17,7 +17,7 @@ struct camera_const_levels {
 class CameraConst
 {
 private:
-    Glib::ustring make_model;
+    std::string make_model;
     short dcraw_matrix[12];
     int raw_crop[4];
     int raw_mask[8][4];
@@ -48,7 +48,7 @@ public:
 class CameraConstantsStore
 {
 private:
-    std::map<Glib::ustring, CameraConst *> mCameraConstants;
+    std::map<std::string, CameraConst *> mCameraConstants;
 
     CameraConstantsStore();
     bool parse_camera_constants_file(Glib::ustring filename);

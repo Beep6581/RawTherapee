@@ -43,6 +43,7 @@
 #42 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
 #43 21.07.2017 Erweiterung (TooWaBoo) RT 5.1
 #44 21.09.2017 Erweiterung (TooWaBoo) RT 5.2
+#45 15.10.2017 Erweiterung (TooWaBoo) RT 5.3
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -113,6 +114,7 @@ EXIFPANEL_RESET;Zurücksetzen
 EXIFPANEL_RESETALL;Alle zurücksetzen
 EXIFPANEL_RESETALLHINT;Alle Attribute auf die ursprünglichen Werte zurücksetzen
 EXIFPANEL_RESETHINT;Gewählte Attribute auf die ursprünglichen Werte zurücksetzen
+EXIFPANEL_SHOWALL;Alle anzeigen
 EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
 EXPORT_BYPASS;Verarbeitungsschritte überspringen
 EXPORT_BYPASS_ALL;Alle/Keine auswählen
@@ -1238,8 +1240,17 @@ PROGRESSBAR_SAVEPNG;Speichere PNG...
 PROGRESSBAR_SAVETIFF;Speichere TIFF...
 PROGRESSBAR_SNAPSHOT_ADDED;Schnappschuss hinzugefügt
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil wurde in der Dateiverwaltung geändert
+QINFO_FRAMECOUNT;%2 Frames
+QINFO_HDR;HDR / %2 Frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
+QINFO_PIXELSHIFT;Pixel Shift / %2 Frame(s)
+SAMPLEFORMAT_0;Unbekanntes Format
+SAMPLEFORMAT_1;Ohne Vorzeichen 8 Bits
+SAMPLEFORMAT_2;Ohne Vorzeichen 16 Bits
+SAMPLEFORMAT_4;LogLuv 24 Bits
+SAMPLEFORMAT_8;LogLuv 32 Bits
+SAMPLEFORMAT_16;32 Bits Fließkomma
 SAVEDLG_AUTOSUFFIX;Suffix anfügen, wenn die Datei bereits existiert
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen

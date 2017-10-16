@@ -38,7 +38,7 @@ protected:
     void updateDisabled(bool enable);
     bool allowFocusDep;
     bool isRaw;
-    const rtengine::ImageMetaData* metadata;    
+    const rtengine::FramesMetaData* metadata;
 
     Gtk::RadioButton::Group corrGroup;
     Gtk::RadioButton *corrOff;
@@ -94,7 +94,7 @@ public:
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
-    void setRawMeta     (bool raw, const rtengine::ImageMetaData* pMeta);
+    void setRawMeta     (bool raw, const rtengine::FramesMetaData* pMeta);
 
     void onLCPFileChanged ();
     void onUseDistChanged();

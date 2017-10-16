@@ -6387,6 +6387,16 @@ guess_cfa_pc:
     free (buf);
   }
 
+  /* RT -- do not use CameraCalibration matrices for DNGs - see #4129 */
+  for (j=0; j < 4; j++) {
+      ab[j] = 1;
+      for (i=0; i < 4; i++) {
+          cc[0][j][i] = i == j;
+          cc[1][j][i] = i == j;
+      }
+  }
+  /* RT end */
+
   for (i=0; i < colors; i++)
     FORCC cc[cm_D65][i][c] *= ab[i];
   if (use_cm) {

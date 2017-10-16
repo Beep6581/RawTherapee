@@ -914,7 +914,7 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &
 {
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
-    findInputProfile(cmp.input, nullptr, (static_cast<const ImageData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
+    findInputProfile(cmp.input, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
 
     if (dcpProf == nullptr) {
         if (settings->verbose) {
@@ -930,7 +930,7 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &
 void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb)
 {
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
-    colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
+    colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const FramesData*>(getMetaData()))->getCamera());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1699,12 +1699,10 @@ int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
     }
 
 
-    //Load complete Exif informations
-    RawMetaDataLocation rml;
-    rml.exifBase = ri->get_exifBase();
-    rml.ciffBase = ri->get_ciffBase();
-    rml.ciffLength = ri->get_ciffLen();
-    idata = new ImageData (fname, &rml);
+    // Load complete Exif informations
+    std::unique_ptr<RawMetaDataLocation> rml(new RawMetaDataLocation (ri->get_exifBase(), ri->get_ciffBase(), ri->get_ciffLen()));
+    idata = new FramesData (fname, std::move(rml));
+    idata->setDCRawFrameCount (numFrames);
 
     green(W, H);
     red(W, H);

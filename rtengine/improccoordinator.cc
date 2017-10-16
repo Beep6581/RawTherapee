@@ -220,8 +220,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
 
     if (   (todo & M_RAW)
             || (!highDetailRawComputed && highDetailNeeded)
-            || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->IsrgbSourceModified())
-            || (!params.toneCurve.hrenabled && params.toneCurve.method == "Color" && imgsrc->IsrgbSourceModified())) {
+            || ( params.toneCurve.hrenabled && params.toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+            || (!params.toneCurve.hrenabled && params.toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
 
         if (settings->verbose) {
             if (imgsrc->getSensorType() == ST_BAYER) {
@@ -732,10 +732,21 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CurveFactory::curveLightBrightColor (params.colorappearance.curve, params.colorappearance.curve2, params.colorappearance.curve3,
                                                  lhist16CAM, histLCAM, lhist16CCAM, histCCAM,
                                                  customColCurve1, customColCurve2, customColCurve3, 1);
-            float fnum = imgsrc->getMetaData()->getFNumber  ();        // F number
-            float fiso = imgsrc->getMetaData()->getISOSpeed () ;       // ISO
-            float fspeed = imgsrc->getMetaData()->getShutterSpeed () ; // Speed
-            double fcomp = imgsrc->getMetaData()->getExpComp  ();      // Compensation +/-
+
+            const FramesMetaData* metaData = imgsrc->getMetaData();
+            int imgNum = 0;
+            if (imgsrc->isRAW()) {
+                if (imgsrc->getSensorType() == ST_BAYER) {
+                    imgNum = rtengine::LIM<unsigned int>(params.raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
+                } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+                    //imgNum = rtengine::LIM<unsigned int>(params.raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
+                }
+            }
+
+            float fnum = metaData->getFNumber (imgNum);         // F number
+            float fiso = metaData->getISOSpeed (imgNum) ;       // ISO
+            float fspeed = metaData->getShutterSpeed (imgNum) ; // Speed
+            double fcomp = metaData->getExpComp (imgNum);       // Compensation +/-
             double adap;
 
             if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong

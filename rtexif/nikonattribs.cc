@@ -55,7 +55,7 @@ public:
         sprintf (buffer, "%d", a);
         return buffer;
     }
-    virtual double toDouble (Tag* t, int ofs)
+    virtual double toDouble (const Tag* t, int ofs)
     {
         int a = t->getValue()[ofs];
 
@@ -66,7 +66,7 @@ public:
             return 0.;
         }
     }
-    virtual int toInt (Tag* t, int ofs, TagType astype)
+    virtual int toInt (const Tag* t, int ofs, TagType astype)
     {
         int a = t->getValue()[ofs];
 
@@ -557,8 +557,10 @@ public:
 };
 NALensDataInterpreter naLensDataInterpreter;
 const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
-    // The key is a composite string made of 8 HEX bytes
-    // LensIDNumber LensFStops MinFocalLength MaxFocalLength MaxApertureAtMinFocal MaxApertureAtMaxFocal MCUVersion and LensType
+    /*
+     * The Nikon LensID is constructed as a Composite tag from the raw hex values of 8 other tags:
+     * LensIDNumber, LensFStops, MinFocalLength, MaxFocalLength, MaxApertureAtMinFocal, MaxApertureAtMaxFocal, MCUVersion and LensType, in that order.
+     */
     {"00 00 00 00 00 00 00 01", "Manual Lens No CPU"},
     {"00 00 00 00 00 00 E1 12", "TC-17E II"},
     {"00 00 00 00 00 00 F1 0C", "TC-14E [II] or Sigma APO Tele Converter 1.4x EX DG or Kenko Teleplus PRO 300 DG 1.4x"},
@@ -953,6 +955,7 @@ const std::map<std::string, std::string> NALensDataInterpreter::lenses = {
     {"92 48 24 37 24 24 94 06", "AF-S Zoom-Nikkor 14-24mm f/2.8G ED"},
     {"93 48 37 5C 24 24 95 06", "AF-S Zoom-Nikkor 24-70mm f/2.8G ED"},
     {"94 40 2D 53 2C 3C 96 06", "AF-S DX Zoom-Nikkor 18-55mm f/3.5-5.6G ED II"},
+    {"94 48 7C 7C 24 24 4B 0E", "Sigma 180mm f/2.8 APO Macro EX DG OS"},
     {"95 00 37 37 2C 2C 97 06", "PC-E Nikkor 24mm f/3.5D ED"},
     {"95 4C 37 37 2C 2C 97 02", "PC-E Nikkor 24mm f/3.5D ED"},
     {"96 38 1F 37 34 3C 4B 06", "Sigma 12-24mm f/4.5-5.6 II DG HSM"},

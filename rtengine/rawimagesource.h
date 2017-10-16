@@ -128,7 +128,7 @@ public:
     void        refinement_lassus (int PassCount);
     void        refinement(int PassCount);
 
-    bool        IsrgbSourceModified() const
+    bool        isRGBSourceModified() const
     {
         return rgbSourceModified;   // tracks whether cached rgb output of demosaic has been modified
     }
@@ -166,9 +166,9 @@ public:
         return ri->get_rotateDegree();
     }
 
-    ImageData*  getImageData ()
+    FrameData*  getImageData (unsigned int frameNum)
     {
-        return idata;
+        return idata->getFrameData (frameNum);
     }
     ImageMatrices* getImageMatrices ()
     {

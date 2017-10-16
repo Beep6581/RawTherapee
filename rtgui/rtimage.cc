@@ -28,7 +28,7 @@
 namespace
 {
 
-std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf>> pixbufCache;
+std::map<std::string, Glib::RefPtr<Gdk::Pixbuf>> pixbufCache;
 
 }
 

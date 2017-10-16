@@ -36,6 +36,8 @@ bool FileBrowserEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
@@ -57,6 +59,8 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
         editedIcon = RTImage::createFromFile ("edited.png");
         recentlySavedIcon = RTImage::createFromFile ("recent-save.png");
         enqueuedIcon = RTImage::createFromFile ("processing.png");
+        hdr = RTImage::createFromFile ("HDR-thumbnail.png");
+        ps = RTImage::createFromFile ("PixelShift-thumbnail.png");
         iconsLoaded = true;
     }
 
@@ -132,6 +136,26 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getIconsOnImageArea ()
 
     if (thumbnail->isEnqueued () && enqueuedIcon) {
         ret.push_back (enqueuedIcon);
+    }
+
+    return ret;
+}
+
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getSpecificityIconsOnImageArea ()
+{
+
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
+
+    if (!thumbnail) {
+        return ret;
+    }
+
+    if (thumbnail->isHDR() && hdr) {
+        ret.push_back (hdr);
+    }
+
+    if (thumbnail->isPixelShift() && ps) {
+        ret.push_back (ps);
     }
 
     return ret;

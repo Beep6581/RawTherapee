@@ -22,11 +22,19 @@
 namespace rtengine
 {
 
-struct RawMetaDataLocation {
+class RawMetaDataLocation {
+
+public:
     int exifBase;
     int ciffBase;
     int ciffLength;
+
+    RawMetaDataLocation () : exifBase(-1), ciffBase(-1), ciffLength(-1) {}
+    RawMetaDataLocation (int exifBase) : exifBase(exifBase), ciffBase(-1), ciffLength(-1) {}
+    RawMetaDataLocation (int ciffBase, int ciffLength) : exifBase(-1), ciffBase(ciffBase), ciffLength(ciffLength) {}
+    RawMetaDataLocation (int exifBase, int ciffBase, int ciffLength) : exifBase(exifBase), ciffBase(ciffBase), ciffLength(ciffLength) {}
 };
+
 }
 
 #endif

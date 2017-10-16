@@ -59,7 +59,8 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             }
         } else {
             rtengine::RawMetaDataLocation ri;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, width, height, 1, true, true);
+            eSensorType sensorType = rtengine::ST_NONE;
+            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, width, height, 1, true, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();

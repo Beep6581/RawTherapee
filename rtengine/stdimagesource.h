@@ -68,9 +68,9 @@ public:
     void        getFullSize (int& w, int& h, int tr = TR_NONE);
     void        getSize     (const PreviewProps &pp, int& w, int& h);
 
-    ImageData*  getImageData ()
+    FrameData*  getImageData (unsigned int frameNum)
     {
-        return idata;
+        return idata->getFrameData (frameNum);
     }
     ImageIO*    getImageIO   ()
     {
@@ -93,7 +93,7 @@ public:
     void        convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);// RAWParams raw will not be used for non-raw files (see imagesource.h)
     static void colorSpaceConversion (Imagefloat* im, const ColorManagementParams &cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
 
-    bool        IsrgbSourceModified() const
+    bool        isRGBSourceModified() const
     {
         return rgbSourceModified;
     }

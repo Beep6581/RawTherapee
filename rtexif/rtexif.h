@@ -27,10 +27,13 @@
 #include <iomanip>
 #include <cstdlib>
 #include <cmath>
+#include <memory>
+
 #include <glibmm.h>
 
 #include "../rtengine/procparams.h"
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/rawmetadatalocation.h"
 
 class CacheImageData;
 
@@ -46,9 +49,9 @@ enum ActionCode {
 
     AC_INVALID = 100,  // invalid state
 };
-enum ByteOrder {INTEL = 0x4949, MOTOROLA = 0x4D4D};
+enum ByteOrder {UNKNOWN = 0, INTEL = 0x4949, MOTOROLA = 0x4D4D};
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-const enum ByteOrder HOSTORDER = INTEL;
+const ByteOrder HOSTORDER = INTEL;
 #else
 const enum ByteOrder HOSTORDER = MOTOROLA;
 #endif
@@ -99,10 +102,10 @@ class TagDirectory
 {
 
 protected:
-    std::vector<Tag*> tags;     // tags in the directory
-    const TagAttrib*  attribs;  // descriptor table to decode the tags
-    ByteOrder         order;    // byte order
-    TagDirectory*     parent;   // parent directory (NULL if root)
+    std::vector<Tag*> tags;         // tags in the directory
+    const TagAttrib*  attribs;      // descriptor table to decode the tags
+    ByteOrder         order;        // byte order
+    TagDirectory*     parent;       // parent directory (NULL if root)
     static Glib::ustring getDumpKey (int tagID, const Glib::ustring &tagName);
 
 public:
@@ -125,16 +128,31 @@ public:
         return tags.size ();
     }
     const TagAttrib* getAttrib     (int id);
-    const TagAttrib* getAttrib     (const char* name);  // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
-    const TagAttrib* getAttribP    (const char* name);  // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
+    const TagAttrib* getAttrib     (const char* name);
+    // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    const TagAttrib* getAttribP    (const char* name);
     const TagAttrib* getAttribTable()
     {
         return attribs;
     }
-    Tag*             getTag        (const char* name) const;  // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
-    Tag*             getTagP       (const char* name) const;  // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
+    Tag*             getTag        (const char* name) const;
+    // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
+    Tag*             getTagP       (const char* name) const;
     Tag*             getTag        (int ID) const;
-    virtual Tag*     findTag       (const char* name) const;
+
+    // Try to get the Tag in the current directory and in subdirectories
+    // if lookUpward = true, it will scan the parents TagDirectory up to the root one,
+    // but w/o looking into their subdirs
+    virtual Tag*     findTag       (const char* name, bool lookUpward = false) const;
+    // Find a all Tags with the given name by scanning the whole tag tree
+    std::vector<const Tag*> findTags (const char* name);
+    // Find a all Tags with the given ID by scanning the whole tag tree
+    std::vector<const Tag*> findTags (int ID);
+    // Try to get the Tag in the current directory and in parent directories
+    // (won't look into subdirs)
+    virtual Tag*     findTagUpward (const char* name) const;
     bool             getXMPTagValue (const char* name, char* value) const;
 
     void             keepTag       (int ID);
@@ -153,7 +171,7 @@ public:
     virtual int      calculateSize ();
     virtual int      write         (int start, unsigned char* buffer);
     virtual TagDirectory* clone    (TagDirectory* parent);
-    virtual void     applyChange   (std::string field, std::string value);
+    virtual void     applyChange   (std::string field, Glib::ustring value);
 
     virtual void     printAll      (unsigned  int level = 0) const; // reentrant debug function, keep level=0 on first call !
     virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
@@ -207,15 +225,16 @@ public:
     Tag (TagDirectory* parent, const TagAttrib* attr, const char* data);  // create a new tag from array (used
 
     ~Tag ();
-    void initType       (unsigned char *data, TagType type);
-    void initInt        (int data, TagType t, int count = 1);
-    void initString     (const char* text);
-    void initSubDir     ();
-    void initSubDir     (TagDirectory* dir);
-    void initMakerNote  (MNKind mnk, const TagAttrib* ta);
-    void initUndefArray (const char* data, int len);
-    void initLongArray  (const char* data, int len);
-    void initRational   (int num, int den);
+    void initType        (unsigned char *data, TagType type);
+    void initInt         (int data, TagType t, int count = 1);
+    void initUserComment (const Glib::ustring &text);
+    void initString      (const char* text);
+    void initSubDir      ();
+    void initSubDir      (TagDirectory* dir);
+    void initMakerNote   (MNKind mnk, const TagAttrib* ta);
+    void initUndefArray  (const char* data, int len);
+    void initLongArray   (const char* data, int len);
+    void initRational    (int num, int den);
 
     // get basic tag properties
     int                  getID          () const
@@ -260,9 +279,9 @@ public:
     }
 
     // read/write value
-    int     toInt         (int ofs = 0, TagType astype = INVALID);
+    int     toInt         (int ofs = 0, TagType astype = INVALID) const;
     void    fromInt       (int v);
-    double  toDouble      (int ofs = 0);
+    double  toDouble      (int ofs = 0) const;
     double *toDoubleArray (int ofs = 0);
     void    toRational    (int& num, int& denom, int ofs = 0);
     void    toString      (char* buffer, int ofs = 0);
@@ -271,9 +290,10 @@ public:
 
 
     // additional getter/setter for more comfortable use
-    std::string valueToString   ();
-    std::string nameToString    (int i = 0);
-    void        valueFromString (const std::string& value);
+    std::string valueToString         ();
+    std::string nameToString          (int i = 0);
+    void        valueFromString       (const std::string& value);
+    void        userCommentFromString (const Glib::ustring& text);
 
     // functions for writing
     int  calculateSize ();
@@ -309,13 +329,31 @@ public:
 class ExifManager
 {
 
-    static Tag* saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const char* name);
+    Tag* saveCIFFMNTag (TagDirectory* root, int len, const char* name);
+    void parseCIFF (int length, TagDirectory* root);
+    void parse (bool isRaw, bool skipIgnored = true);
+
 public:
-    static TagDirectory* parse (FILE*f, int base, bool skipIgnored = true);
-    static TagDirectory* parseJPEG (FILE*f, int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
-    static TagDirectory* parseTIFF (FILE*f, bool skipIgnored = true);
-    static TagDirectory* parseCIFF (FILE* f, int base, int length);
-    static void          parseCIFF (FILE* f, int base, int length, TagDirectory* root);
+    FILE* f;
+    std::unique_ptr<rtengine::RawMetaDataLocation> rml;
+    ByteOrder order;
+    bool onlyFirst;  // Only first IFD
+    unsigned int IFDOffset;
+    std::vector<TagDirectory*> roots;
+    std::vector<TagDirectory*> frames;
+
+    ExifManager (FILE* fHandle, std::unique_ptr<rtengine::RawMetaDataLocation> _rml, bool onlyFirstIFD)
+        : f(fHandle), rml(std::move(_rml)), order(UNKNOWN), onlyFirst(onlyFirstIFD),
+          IFDOffset(0) {}
+
+    void setIFDOffset(unsigned int offset);
+
+
+    void parseRaw (bool skipIgnored = true);
+    void parseStd (bool skipIgnored = true);
+    void parseJPEG (int offset = 0); // offset: to extract exif data from a embedded preview/thumbnail
+    void parseTIFF (bool skipIgnored = true);
+    void parseCIFF ();
 
     /// @brief Get default tag for TIFF
     /// @param forthis The byte order will be taken from the given directory.
@@ -352,7 +390,7 @@ public:
         }
     }
     // Get the value as a double
-    virtual double toDouble (Tag* t, int ofs = 0)
+    virtual double toDouble (const Tag* t, int ofs = 0)
     {
         double ud, dd;
 
@@ -393,7 +431,7 @@ public:
         }
     }
     // Get the value as an int
-    virtual int toInt (Tag* t, int ofs = 0, TagType astype = INVALID)
+    virtual int toInt (const Tag* t, int ofs = 0, TagType astype = INVALID)
     {
         int a;
 

@@ -1896,6 +1896,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !DYNPROFILEEDITOR_NEW;New
 !DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
 !DYNPROFILEEDITOR_PROFILE;Processing Profile
+!EXIFPANEL_SHOWALL;Show all
 !EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
@@ -1989,7 +1990,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
+!PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_CMMBPC;Black point compensation
 !PREFERENCES_D50_OLD;5000K
@@ -2011,6 +2012,15 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_THEME;Theme
 !PROFILEPANEL_PDYNAMIC;Dynamic
+!QINFO_FRAMECOUNT;%2 frames
+!QINFO_HDR;HDR / %2 frame(s)
+!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!SAMPLEFORMAT_0;Unknown data format
+!SAMPLEFORMAT_1;Unsigned 8 bits
+!SAMPLEFORMAT_2;Unsigned 16 bits
+!SAMPLEFORMAT_4;LogLuv 24 bits
+!SAMPLEFORMAT_8;LogLuv 32 bits
+!SAMPLEFORMAT_16;32 bits floating point
 !TP_CBDL_METHOD;Process located
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_NEUTRAL;Reset

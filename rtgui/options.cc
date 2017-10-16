@@ -354,6 +354,7 @@ void Options::setDefaults ()
     CPFontFamily = "default";
     CPFontSize = 8;
     lastScale = 5;
+    lastShowAllExif = false;
     panAccelFactor = 5;
     rememberZoomAndPan = true;
     lastCropSize = 1;
@@ -1278,6 +1279,10 @@ void Options::readFromFile (Glib::ustring fname)
                     lastScale = keyFile.get_integer ("GUI", "LastPreviewScale");
                 }
 
+                if (keyFile.has_key ("GUI", "LastShowAllExif")) {
+                    lastShowAllExif = keyFile.get_boolean ("GUI", "LastShowAllExif");
+                }
+
                 if (keyFile.has_key ("GUI", "PanAccelFactor")) {
                     panAccelFactor = keyFile.get_integer ("GUI", "PanAccelFactor");
                 }
@@ -1993,6 +1998,7 @@ void Options::saveToFile (Glib::ustring fname)
         keyFile.set_string  ("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer ("GUI", "CPFontSize", CPFontSize);
         keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
+        keyFile.set_boolean ("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
         keyFile.set_boolean ("GUI", "RememberZoomAndPan", rememberZoomAndPan);
         keyFile.set_integer ("GUI", "LastCropSize", lastCropSize);

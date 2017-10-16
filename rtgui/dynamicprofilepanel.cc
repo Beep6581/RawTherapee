@@ -405,7 +405,7 @@ void DynamicProfilePanel::render_fnumber (
     RENDER_RANGE_ (double, fnumber,
     [] (double f) {
         return std::string ("f/") +
-               rtengine::ImageMetaData::apertureToString (f);
+               rtengine::FramesMetaData::apertureToString (f);
     });
 }
 
@@ -421,7 +421,7 @@ void DynamicProfilePanel::render_shutterspeed (
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
     RENDER_RANGE_ (double, shutterspeed,
-                   rtengine::ImageMetaData::shutterToString);
+                   rtengine::FramesMetaData::shutterToString);
 }
 
 

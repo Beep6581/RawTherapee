@@ -122,7 +122,7 @@ public:
     void applyBaselineExposureOffsetChanged();
     void applyHueSatMapChanged();
 
-    void setRawMeta (bool raw, const rtengine::ImageData* pMeta);
+    void setRawMeta (bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed ();
 
     void setICMPanelListener (ICMPanelListener* ipl)
