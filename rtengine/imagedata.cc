@@ -1105,6 +1105,7 @@ FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataL
             rtexif::ExifManager exifManager (f, std::move(rml), firstFrameOnly);
 
             exifManager.parseTIFF();
+            roots = exifManager.roots;
 
             // creating FrameData
             for (auto currFrame : exifManager.frames) {
