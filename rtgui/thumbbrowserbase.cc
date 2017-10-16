@@ -14,18 +14,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <glibmm.h>
-#include "../rtengine/rt_math.h"
+#include <numeric>
 
-#include "thumbbrowserbase.h"
+#include <glibmm.h>
+
 #include "multilangmgr.h"
 #include "options.h"
+#include "thumbbrowserbase.h"
+
 #include "../rtengine/mytime.h"
+#include "../rtengine/rt_math.h"
 
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase ()
-    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1)
+    : location(THLOC_FILEBROWSER), inspector(nullptr), isInspectorActive(false), eventTime(0), lastClicked(nullptr), previewHeight(options.thumbSize), numOfCols(1), arrangement(TB_Horizontal)
 {
     inW = -1;
     inH = -1;
@@ -515,7 +518,7 @@ void ThumbBrowserBase::configScrollBars ()
     }
 }
 
-void ThumbBrowserBase::arrangeFiles ()
+void ThumbBrowserBase::arrangeFiles()
 {
     MYREADERLOCK(l, entryRW);
 
@@ -523,74 +526,60 @@ void ThumbBrowserBase::arrangeFiles ()
     // We could lock it one more time, there's no harm excepted (negligible) speed penalty
     //GThreadLock lock;
 
-    int N = fd.size ();
-
-    // apply filter
-    for (int i = 0; i < N; i++) {
-        fd[i]->filtered = !checkFilter (fd[i]);
-    }
-
     int rowHeight = 0;
 
-    // compute size of the items
-    for (int i = 0; i < N; i++)
+    for (unsigned int i = 0; i < fd.size(); i++) {
+        // apply filter
+        fd[i]->filtered = !checkFilter (fd[i]);
+
+        // compute size of the items
         if (!fd[i]->filtered && fd[i]->getMinimalHeight() > rowHeight) {
             rowHeight = fd[i]->getMinimalHeight ();
         }
+    }
 
     if (arrangement == TB_Horizontal) {
         numOfCols = 1;
-        int numOfRows = 1;
-//        if (rowHeight>0) {
-//            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
-//            if (numOfRows<1)
-//                numOfRows = 1;
-//        }
 
-        int ct = 0;
         int currx = 0;
 
-        while (ct < N) {
-            // find widest item in the column
-            int maxw = 0;
-
-            for (int i = 0; ct + i < N && i < numOfRows; i++)
-                if (fd[ct + i]->getMinimalWidth() > maxw) {
-                    maxw = fd[ct + i]->getMinimalWidth ();
-                }
-
+        for (unsigned int ct = 0; ct < fd.size(); ++ct) {
             // arrange items in the column
             int curry = 0;
 
-            for (int i = 0; ct < N && i < numOfRows; i++, ct++) {
-                while (ct < N && fd[ct]->filtered) {
-                    fd[ct++]->drawable = false;
-                }
-
-                if (ct < N) {
-                    fd[ct]->setPosition (currx, curry, maxw, rowHeight);
-                    fd[ct]->drawable = true;
-                    curry += rowHeight;
-                }
+            for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                fd[ct]->drawable = false;
             }
 
-            currx += maxw;
+            if (ct < fd.size()) {
+                const int maxw = fd[ct]->getMinimalWidth();
+
+                fd[ct]->setPosition(currx, curry, maxw, rowHeight);
+                fd[ct]->drawable = true;
+                currx += maxw;
+                curry += rowHeight;
+            }
         }
 
         MYREADERLOCK_RELEASE(l);
         // This will require a Writer access
-        resizeThumbnailArea (currx, numOfRows * rowHeight);
+        resizeThumbnailArea(currx, rowHeight);
     } else {
-        int availWidth = internal.get_width();
+        const int availWidth = internal.get_width();
+
         // initial number of columns
         numOfCols = 0;
         int colsWidth = 0;
 
-        for (int i = 0; i < N; i++)
+        for (unsigned int i = 0; i < fd.size(); ++i) {
             if (!fd[i]->filtered && colsWidth + fd[i]->getMinimalWidth() <= availWidth) {
-                colsWidth += fd[numOfCols]->getMinimalWidth ();
-                numOfCols++;
+                colsWidth += fd[numOfCols]->getMinimalWidth();
+                ++numOfCols;
+                if(colsWidth > availWidth) {
+                    break;
+                }
             }
+        }
 
         if (numOfCols < 1) {
             numOfCols = 1;
@@ -598,30 +587,22 @@ void ThumbBrowserBase::arrangeFiles ()
 
         std::vector<int> colWidths;
 
-        for (; numOfCols > 0; numOfCols--) {
+        for (; numOfCols > 0; --numOfCols) {
             // compute column widths
-            colWidths.resize (numOfCols);
+            colWidths.assign(numOfCols, 0);
 
-            for (int i = 0; i < numOfCols; i++) {
-                colWidths[i] = 0;
-            }
-
-            for (int i = 0, j = 0; i < N; i++) {
+            for (unsigned int i = 0, j = 0; i < fd.size(); ++i) {
                 if (!fd[i]->filtered && fd[i]->getMinimalWidth() > colWidths[j % numOfCols]) {
-                    colWidths[j % numOfCols] = fd[i]->getMinimalWidth ();
+                    colWidths[j % numOfCols] = fd[i]->getMinimalWidth();
                 }
 
                 if (!fd[i]->filtered) {
-                    j++;
+                    ++j;
                 }
             }
 
             // if not wider than the space available, arrange it and we are ready
-            colsWidth = 0;
-
-            for (int i = 0; i < numOfCols; i++) {
-                colsWidth += colWidths[i];
-            }
+            colsWidth = std::accumulate(colWidths.begin(), colWidths.end(), 0);
 
             if (numOfCols == 1 || colsWidth < availWidth) {
                 break;
@@ -629,20 +610,19 @@ void ThumbBrowserBase::arrangeFiles ()
         }
 
         // arrange files
-        int ct = 0;
         int curry = 0;
 
-        while (ct < N) {
+        for (unsigned int ct = 0; ct < fd.size();) {
             // arrange items in the row
             int currx = 0;
 
-            for (int i = 0; ct < N && i < numOfCols; i++, ct++) {
-                while (ct < N && fd[ct]->filtered) {
-                    fd[ct++]->drawable = false;
+            for (int i = 0; ct < fd.size() && i < numOfCols; ++i, ++ct) {
+                for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                    fd[ct]->drawable = false;
                 }
 
-                if (ct < N) {
-                    fd[ct]->setPosition (currx, curry, colWidths[i % numOfCols], rowHeight);
+                if (ct < fd.size()) {
+                    fd[ct]->setPosition(currx, curry, colWidths[i % numOfCols], rowHeight);
                     fd[ct]->drawable = true;
                     currx += colWidths[i % numOfCols];
                 }
@@ -697,10 +677,8 @@ void ThumbBrowserBase::Internal::on_realize()
     bgn = style->get_background_color(Gtk::STATE_FLAG_NORMAL);
     bgs = style->get_background_color(Gtk::STATE_FLAG_SELECTED);
 
-    Glib::RefPtr<Gdk::Window> window = get_window();
     set_can_focus(true);
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
-    //cc = window->create_cairo_context();
     set_has_tooltip (true);
     signal_query_tooltip().connect( sigc::mem_fun(*this, &ThumbBrowserBase::Internal::on_query_tooltip) );
 }
@@ -841,8 +819,6 @@ bool ThumbBrowserBase::Internal::on_draw(const ::Cairo::RefPtr< Cairo::Context> 
     // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
     dirty = false;
-
-    Glib::RefPtr<Gdk::Window> window = get_window();
 
     int w = get_width();
     int h = get_height();

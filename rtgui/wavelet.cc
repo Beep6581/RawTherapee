@@ -132,15 +132,15 @@ Wavelet::Wavelet() :
     wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     labmC(Gtk::manage(new Gtk::Label(M("TP_WAVELET_CTYPE") + ":"))),
     labmNP(Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"))),
-    expchroma(new MyExpander(true, M("TP_WAVELET_LEVCH"))),
-    expcontrast(new MyExpander(true, M("TP_WAVELET_LEVF"))),
-    expedge(new MyExpander(true, M("TP_WAVELET_EDGE"))),
-    expfinal(new MyExpander(true, M("TP_WAVELET_FINAL"))),
-    expgamut(new MyExpander(false, M("TP_WAVELET_CONTR"))),
-    expnoise(new MyExpander(true, M("TP_WAVELET_NOISE"))),
-    expresid(new MyExpander(true, M("TP_WAVELET_RESID"))),
-    expsettings(new MyExpander(false, M("TP_WAVELET_SETTINGS"))),
-    exptoning(new MyExpander(true, M("TP_WAVELET_TON"))),
+    expchroma(Gtk::manage(new MyExpander(true, M("TP_WAVELET_LEVCH")))),
+    expcontrast(Gtk::manage(new MyExpander(true, M("TP_WAVELET_LEVF")))),
+    expedge(Gtk::manage(new MyExpander(true, M("TP_WAVELET_EDGE")))),
+    expfinal(Gtk::manage(new MyExpander(true, M("TP_WAVELET_FINAL")))),
+    expgamut(Gtk::manage(new MyExpander(false, M("TP_WAVELET_CONTR")))),
+    expnoise(Gtk::manage(new MyExpander(true, M("TP_WAVELET_NOISE")))),
+    expresid(Gtk::manage(new MyExpander(true, M("TP_WAVELET_RESID")))),
+    expsettings(Gtk::manage(new MyExpander(false, M("TP_WAVELET_SETTINGS")))),
+    exptoning(Gtk::manage(new MyExpander(true, M("TP_WAVELET_TON")))),
     neutrHBox(Gtk::manage(new Gtk::HBox()))
 {
     CurveListener::setMulti(true);
@@ -838,39 +838,39 @@ Wavelet::Wavelet() :
 
 //-----------------------------
 
-    expsettings->add(*settingsBox);
+    expsettings->add(*settingsBox, false);
     expsettings->setLevel(2);
     pack_start (*expsettings);
 
-    expcontrast->add(*levBox);
+    expcontrast->add(*levBox, false);
     expcontrast->setLevel(2);
     pack_start (*expcontrast);
 
-    expchroma->add(*chBox);
+    expchroma->add(*chBox, false);
     expchroma->setLevel(2);
     pack_start (*expchroma);
 
-    exptoning->add(*tonBox);
+    exptoning->add(*tonBox, false);
     exptoning->setLevel(2);
     pack_start (*exptoning);
 
-    expnoise->add(*noiseBox);
+    expnoise->add(*noiseBox, false);
     expnoise->setLevel(2);
     pack_start (*expnoise);
 
-    expedge->add(*edgBox);
+    expedge->add(*edgBox, false);
     expedge->setLevel(2);
     pack_start (*expedge);
 
-    expgamut->add(*conBox);
+    expgamut->add(*conBox, false);
     expgamut->setLevel(2);
     pack_start (*expgamut);
 
-    expresid->add(*resBox);
+    expresid->add(*resBox, false);
     expresid->setLevel(2);
     pack_start(*expresid);
 
-    expfinal->add(*finalBox);
+    expfinal->add(*finalBox, false);
     expfinal->setLevel(2);
     pack_start(*expfinal);
 }
@@ -887,6 +887,7 @@ Wavelet::~Wavelet ()
     delete curveEditorG;
     delete opacityCurveEditorW;
     delete opacityCurveEditorWL;
+
 }
 
 void Wavelet::wavChanged (double nlevel)
@@ -3039,7 +3040,7 @@ void Wavelet::writeOptions(std::vector<int> &tpOpen)
 
 void Wavelet::updateToolState(std::vector<int> &tpOpen)
 {
-    if(tpOpen.size() == 9) {
+    if(tpOpen.size() >= 9) {
         expsettings->set_expanded(tpOpen.at(0));
         expcontrast->set_expanded(tpOpen.at(1));
         expchroma->set_expanded(tpOpen.at(2));

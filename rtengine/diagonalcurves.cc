@@ -58,7 +58,9 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 x[i] = p[ix++];
                 y[i] = p[ix++];
 
-                if (x[i] != y[i]) {
+                if (std::fabs(x[i] - y[i]) >= 0.000009) {
+                    // the smallest possible difference between x and y curve point values is ~ 0.00001
+                    // checking against >= 0.000009 is a bit saver than checking against >= 0.00001
                     identity = false;
                 }
             }

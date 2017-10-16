@@ -46,12 +46,12 @@ struct EditorPanelIdleHelper {
 
 class RTWindow;
 class EditorPanel final :
-    public Gtk::VBox,
-    public PParamsChangeListener,
-    public rtengine::ProgressListener,
-    public ThumbnailListener,
-    public HistoryBeforeLineListener,
-    public rtengine::HistogramListener
+        public Gtk::VBox,
+        public PParamsChangeListener,
+        public rtengine::ProgressListener,
+        public ThumbnailListener,
+        public HistoryBeforeLineListener,
+        public rtengine::HistogramListener
 {
 public:
     explicit EditorPanel (FilePanel* filePanel = nullptr);
@@ -67,7 +67,14 @@ public:
     {
         parent = p;
     }
+
+    void setParentWindow (Gtk::Window* p)
+    {
+        parentWindow = p;
+    }
+
     void writeOptions();
+    void writeToolExpandedStatus (std::vector<int> &tpOpen);
 
     void showTopPanel (bool show);
     bool isRealized()
@@ -124,12 +131,14 @@ public:
     {
         return isProcessing;
     }
-    void updateProfiles(const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
+    void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateTabsUsesIcons (bool useIcons);
     void updateHistogramPosition (int oldPosition, int newPosition);
 
-    void defaultMonitorProfileChanged(const Glib::ustring &profile_name, bool auto_monitor_profile);
+    void defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile);
+
+    bool saveImmediately (const Glib::ustring &filename, const SaveFormat &sf);
 
     Gtk::Paned* catalogPane;
 
@@ -137,8 +146,8 @@ private:
     void close ();
 
     BatchQueueEntry*    createBatchQueueEntry ();
-    bool                idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf);
-    bool                idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf);
+    bool                idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams);
+    bool                idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams);
     bool                idle_sendToGimp ( ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname);
     bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImage16* img, Glib::ustring filename);
 
@@ -194,6 +203,7 @@ private:
     HistogramPanel* histogramPanel;
     ToolPanelCoordinator* tpc;
     RTWindow* parent;
+    Gtk::Window* parentWindow;
     //SaveAsDialog* saveAsDialog;
     FilePanel* fPanel;
 
@@ -201,6 +211,8 @@ private:
 
     Thumbnail* openThm;  // may get invalid on external delete event
     Glib::ustring fname;  // must be saved separately
+
+    int selectedFrame;
 
     rtengine::InitialImage* isrc;
     rtengine::StagedImageProcessor* ipc;

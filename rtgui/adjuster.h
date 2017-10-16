@@ -56,13 +56,11 @@ protected:
     sigc::connection autoChange;
     sigc::connection buttonReleaseSlider;
     sigc::connection buttonReleaseSpin;
-    bool listenerReady;
     double defaultVal;          // current default value (it can change when switching from ADD or SET mode)
     double ctorDefaultVal;      // default value at construction time
     EditedState editedState;
     EditedState defEditedState;
     EditedState autoState;
-    EditedState defAutoState;
     int digits;
     Gtk::CheckButton* editedCheckBox;
     bool afterReset;
@@ -172,9 +170,9 @@ public:
     void resetValue (bool toInitial);
     void resetPressed (GdkEventButton* event);
     void editedToggled ();
-    double trimValue (double val);
-    float trimValue (float val);
-    int trimValue (int val);
+    void trimValue (double &val);
+    void trimValue (float &val);
+    void trimValue (int &val);
 };
 
 #endif

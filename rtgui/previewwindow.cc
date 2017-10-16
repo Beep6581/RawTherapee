@@ -22,7 +22,7 @@
 #include "cursormanager.h"
 
 PreviewWindow::PreviewWindow () : previewHandler(nullptr), mainCropWin(nullptr), imageArea(nullptr), imgX(0), imgY(0), imgW(0), imgH(0),
-    zoom(0.0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
+    zoom(0.0), press_x(0), press_y(0), isMoving(false), needsUpdate(false), cursor_type(CSUndefined)
 
 {
     set_name("PreviewWindow");
@@ -211,8 +211,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
     int x, y, w, h;
     getObservedFrameArea (x, y, w, h);
     if (x>imgX || y>imgY || w < imgW || h < imgH) {
-        bool inside = event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
-        bool moreInside = event->x > x + 6 && event->x < x + w - 1 - 6 && event->y > y + 6 && event->y < y + h - 1 - 6;
+        bool inside =     event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
 
         CursorShape newType = cursor_type;
 
@@ -220,7 +219,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event)
             mainCropWin->remoteMove ((event->x - press_x) / zoom, (event->y - press_y) / zoom);
             press_x = event->x;
             press_y = event->y;
-        } else if (inside && !moreInside) {
+        } else if (inside) {
             newType = CSClosedHand;
         } else {
             newType = CSArrow;
@@ -247,18 +246,10 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event)
     if (x>imgX || y>imgY || w < imgW || h < imgH) {
 
         if (!isMoving) {
-            bool inside = event->x > x - 6 && event->x < x + w - 1 + 6 && event->y > y - 6 && event->y < y + h - 1 + 6;
-            bool moreInside = event->x > x + 6 && event->x < x + w - 1 - 6 && event->y > y + 6 && event->y < y + h - 1 - 6;
             isMoving = true;
 
-            if (!inside || moreInside) {
-                mainCropWin->remoteMove ((event->x - (x + w / 2)) / zoom, (event->y - (y + h / 2)) / zoom);
-                press_x = x + w / 2;
-                press_y = y + h / 2;
-            } else {
-                press_x = event->x;
-                press_y = event->y;
-            }
+            press_x = event->x;
+            press_y = event->y;
 
             if (cursor_type != CSClosedHand) {
                 cursor_type = CSClosedHand;

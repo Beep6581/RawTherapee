@@ -75,7 +75,7 @@ public:
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr);
 
-    void setImageData   (const rtengine::ImageMetaData* id);
+    void setImageData   (const rtengine::FramesMetaData* id);
 
     void notifyListener ();
 

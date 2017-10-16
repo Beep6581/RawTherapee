@@ -194,7 +194,7 @@ void CurveEditorGroup::curveListComplete()
  */
 void CurveEditorGroup::typeSelectionChanged (CurveEditor* ce, int n)
 {
-    // Same type : do nothing
+    // Same curve and same type : do nothing
     if (ce == displayedCurve && n == (int)ce->selected) {
         return;
     }
@@ -395,7 +395,7 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce)
     }
 }
 
-CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename("")
+CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename(""), valLinear(0), valUnchanged(0), parent(nullptr)
 {
     leftBar = nullptr;
     bottomBar = nullptr;

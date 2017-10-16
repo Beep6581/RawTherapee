@@ -108,11 +108,11 @@ endif()
 
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build with -std=c++0x" OFF)
 option(BUILD_SHARED "Build with shared libraries" OFF)
-option(WITH_BZIP "Build with Bzip2 support" ON)
 option(WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option(WITH_LTO "Build with link-time optimizations" OFF)
 option(WITH_SAN "Build with run-time sanitizer" OFF)
 option(WITH_PROF "Build with profiling instrumentation" OFF)
+option(WITH_SYSTEM_KLT "Build using system KLT library." OFF)
 option(OPTION_OMP "Build with OpenMP support" ON)
 option(STRICT_MUTEX "True (recommended): MyMutex will behave like POSIX Mutex; False: MyMutex will behave like POSIX RecMutex; Note: forced to ON for Debug builds" ON)
 option(TRACE_MYRWMUTEX "Trace custom R/W Mutex (Debug builds only); redirecting std::out to a file is strongly recommended!" OFF)
@@ -224,11 +224,15 @@ endif()
 if(NOT DEFINED APPDATADIR)
     if(UNIX)
         if(BUILD_BUNDLE)
-            set(APPDATADIR "${DATADIR}/share/appdata")
+            set(APPDATADIR "${DATADIR}/share/metainfo")
         else()
-            set(APPDATADIR "${CMAKE_INSTALL_PREFIX}/share/appdata")
+            set(APPDATADIR "${CMAKE_INSTALL_PREFIX}/share/metainfo")
         endif()
     endif()
+endif()
+
+if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
+    set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
 endif()
 
 # Enforce absolute paths for non-bundle builds:
@@ -262,16 +266,22 @@ endif()
 
 # Check for libraries:
 find_package(PkgConfig)
+if(WIN32)
+pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.22.24)
+pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.22)
+else()
 pkg_check_modules (GTK     REQUIRED gtk+-3.0>=3.16)
+pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.16)
+endif()
 pkg_check_modules (GLIB2   REQUIRED glib-2.0>=2.44)
 pkg_check_modules (GLIBMM  REQUIRED glibmm-2.4>=2.44)
-pkg_check_modules (GTKMM   REQUIRED gtkmm-3.0>=3.16)
 pkg_check_modules (CAIROMM REQUIRED cairomm-1.0)
 pkg_check_modules (GIO     REQUIRED gio-2.0>=2.44)
 pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.44)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.44)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.44)
 pkg_check_modules (SIGC    REQUIRED sigc++-2.0>=2.3.1)
+pkg_check_modules (LENSFUN REQUIRED lensfun>=0.2)
 
 if(WIN32)
     add_definitions(-DWIN32)
@@ -293,15 +303,8 @@ find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(ZLIB REQUIRED)
-
-# Link with bzip:
-if(WITH_BZIP)
-    find_package(BZip2)
-    if(BZIP2_FOUND)
-        add_definitions(-DBZIP_SUPPORT)
-        set(EXTRA_INCDIR ${BZIP2_INCLUDE_DIR})
-        set(EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
-    endif()
+if(WITH_SYSTEM_KLT)
+    find_package(KLT REQUIRED)
 endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
@@ -396,7 +399,8 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
     -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
     -DOPTION_OMP:STRING=${OPTION_OMP}
-    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
+    -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+    -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
 
 if(WIN32)
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
@@ -445,6 +449,34 @@ endif()
 if(UNIX)
     install(FILES rawtherapee.appdata.xml DESTINATION "${APPDATADIR}")
 endif()
+
+# check whether the used version of lensfun has lfDatabase::LoadDirectory
+include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_INCLUDES ${LENSFUN_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_LIBRARIES)
+foreach(l ${LENSFUN_LIBRARIES})
+    if(LENSFUN_LIBRARY_DIRS)
+        # the NO_DEFAULT_PATH is to make sure we find the lensfun version we
+        # want, and not the system's one (e.g. if we have a custom version
+        # installed in a non-standard location)
+        find_library(_l ${l} PATHS ${LENSFUN_LIBRARY_DIRS} NO_DEFAULT_PATH)
+    else()
+        # LENSFUN_LIBRARY_DIRS can be empty if lensfun is installed in the
+        # default path. In this case, adding NO_DEFAULT_PATH would make
+        # find_library fail...
+        find_library(_l ${l})
+    endif()
+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_l})
+endforeach()
+check_cxx_source_compiles(
+    "#include <lensfun.h>
+int main()
+{
+    lfDatabase *db = 0;
+    bool b = db->LoadDirectory(0);
+    return 0;
+}" LENSFUN_HAS_LOAD_DIRECTORY)
+
 
 add_subdirectory(rtexif)
 add_subdirectory(rtengine)

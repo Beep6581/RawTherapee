@@ -17,33 +17,73 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "thumbbrowserentrybase.h"
-#include "thumbbrowserbase.h"
+
 #include "options.h"
+#include "thumbbrowserbase.h"
+
 #include "../rtengine/mytime.h"
 
-ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname)
-    : fnlabw(0), fnlabh(0), dtlabw(0), dtlabh(0), exlabw(0), exlabh(0), prew(0), preh(0),
-      prex(0), prey(0), upperMargin(6), borderWidth(1), textGap(6), sideMargin(8), lowerMargin(8),
-      preview(nullptr), dispname(Glib::path_get_basename (fname)), buttonSet(nullptr), width(0), height(0),
-      exp_width(0), exp_height(0), startx(0), starty(0), ofsX(0), ofsY(0), redrawRequests(0),
-      parent(nullptr), original(nullptr), bbSelected(false), bbFramed(false), bbPreview(nullptr), cursor_type(CSUndefined),
-      thumbnail(nullptr), filename(fname), shortname(dispname), exifline(""), datetimeline(""),
-      selected(false), drawable(false), filtered(false), framed(false), processing(false), italicstyle(false),
-      edited(false), recentlysaved(false), updatepriority(false), withFilename(WFNAME_NONE) {}
+ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
+    fnlabw(0),
+    fnlabh(0),
+    dtlabw(0),
+    dtlabh(0),
+    exlabw(0),
+    exlabh(0),
+    prew(0),
+    preh(0),
+    prex(0),
+    prey(0),
+    upperMargin(6),
+    borderWidth(1),
+    textGap(6),
+    sideMargin(8),
+    lowerMargin(8),
+    preview(nullptr),
+    dispname(Glib::path_get_basename(fname)),
+    buttonSet(nullptr),
+    width(0),
+    height(0),
+    exp_width(0),
+    exp_height(0),
+    startx(0),
+    starty(0),
+    ofsX(0),
+    ofsY(0),
+    redrawRequests(0),
+    parent(nullptr),
+    original(nullptr),
+    bbSelected(false),
+    bbFramed(false),
+    bbPreview(nullptr),
+    cursor_type(CSUndefined),
+    collate_name(dispname.casefold().collate_key()),
+    thumbnail(nullptr),
+    filename(fname),
+    shortname(dispname),
+    exifline(""),
+    datetimeline(""),
+    selected(false),
+    drawable(false),
+    filtered(false),
+    framed(false),
+    processing(false),
+    italicstyle(false),
+    edited(false),
+    recentlysaved(false),
+    updatepriority(false),
+    withFilename(WFNAME_NONE)
+{
+}
 
 ThumbBrowserEntryBase::~ThumbBrowserEntryBase ()
 {
-
-    if (preview) {
-        delete [] preview;
-    }
-
+    delete[] preview;
     delete buttonSet;
 }
 
 void ThumbBrowserEntryBase::addButtonSet (LWButtonSet* bs)
 {
-
     buttonSet = bs;
 }
 
@@ -56,20 +96,12 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     Gtk::Widget* w = parent->getDrawingArea ();
 
-    Glib::RefPtr<Gdk::Window> win = w->get_window();
-
-    if (!win)
-        // Nothing to draw on, so we return
-    {
-        return;
-    }
-
     if (backBuffer && (backBuffer->getWidth() != exp_width || backBuffer->getHeight() != exp_height )) {
         // deleting the existing BackBuffer
         backBuffer.reset();
     }
     if (!backBuffer) {
-        backBuffer = Glib::RefPtr<BackBuffer> ( new BackBuffer (exp_width, exp_height, win) );
+        backBuffer = Glib::RefPtr<BackBuffer>(new BackBuffer(exp_width, exp_height));
     }
 
     // If thumbnail is hidden by a filter, drawing to it will crash
@@ -128,6 +160,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     // draw icons onto the thumbnail area
     bbIcons = getIconsOnImageArea ();
+    bbSpecificityIcons = getSpecificityIconsOnImageArea ();
 
     int infow, infoh;
     getTextSizes (infow, infoh);
@@ -189,6 +222,19 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
             cc->rectangle(istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height());
             cc->fill();
             istartx += bbIcons[i]->get_width() + igap;
+        }
+    }
+
+    if (!bbSpecificityIcons.empty()) {
+        int igap = 2;
+        int istartx2 = prex + prew - 1 + igap;
+        int istarty2 = prey + preh - igap - 1;
+
+        for (size_t i = 0; i < bbSpecificityIcons.size(); ++i) {
+            istartx2 -= bbSpecificityIcons[i]->get_width() - igap;
+            Gdk::Cairo::set_source_pixbuf(cc, bbSpecificityIcons[i], istartx2, istarty2 - bbSpecificityIcons[i]->get_height());
+            cc->rectangle(istartx2, istarty2 - bbSpecificityIcons[i]->get_height(), bbSpecificityIcons[i]->get_width(), bbSpecificityIcons[i]->get_height());
+            cc->fill();
         }
     }
 
@@ -480,7 +526,9 @@ void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
     }
 
     if (!backBuffer || selected != bbSelected || framed != bbFramed || preview != bbPreview
-            || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons || backBuffer->isDirty()) {
+            || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons
+            || getSpecificityIconsOnImageArea() != bbSpecificityIcons || backBuffer->isDirty())
+    {
         updateBackBuffer ();
     }
 
@@ -556,6 +604,11 @@ bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h)
 }
 
 std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getIconsOnImageArea()
+{
+    return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
+}
+
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getSpecificityIconsOnImageArea()
 {
     return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
 }

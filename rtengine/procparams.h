@@ -73,8 +73,8 @@ public:
         initEq1 = startAtOne;
         value[0] = bottom;
         value[1] = top;
-        value[2] = T(0);
-        value[3] = T(0);
+        value[2] = T (0);
+        value[3] = T (0);
         _isDouble = false;
     }
 
@@ -89,14 +89,14 @@ public:
     }
 
     // for convenience, since 'values' is public
-    void setValues(T bottom, T top)
+    void setValues (T bottom, T top)
     {
         value[0] = bottom;
         value[1] = top;
     }
 
     // for convenience, since 'values' is public
-    void setValues(T bottomLeft, T topLeft, T bottomRight, T topRight)
+    void setValues (T bottomLeft, T topLeft, T bottomRight, T topRight)
     {
         value[0] = bottomLeft;
         value[1] = topLeft;
@@ -113,64 +113,64 @@ public:
     // RV: Type of the value on the X axis
     // RV2: Type of the maximum value on the Y axis
     template <typename RT, typename RV, typename RV2>
-    RT multiply(RV x, RV2 yMax) const
+    RT multiply (RV x, RV2 yMax) const
     {
-        double val = double(x);
+        double val = double (x);
 
         if (initEq1) {
             if (_isDouble) {
-                if (val == double(value[2]) && double(value[2]) == double(value[3]))
+                if (val == double (value[2]) && double (value[2]) == double (value[3]))
                     // this handle the special case where the 2 right values are the same, then bottom one is sent back,
                     // useful if one wants to keep the bottom value even beyond the x max bound
                 {
-                    return RT(0.);
+                    return RT (0.);
                 }
 
-                if (val >= double(value[3])) {
-                    return RT(yMax);
+                if (val >= double (value[3])) {
+                    return RT (yMax);
                 }
 
-                if (val > double(value[2])) {
-                    return RT(double(yMax) * (val - double(value[2])) / (double(value[3]) - double(value[2])));
+                if (val > double (value[2])) {
+                    return RT (double (yMax) * (val - double (value[2])) / (double (value[3]) - double (value[2])));
                 }
             }
 
-            if (val >= double(value[0])) {
-                return RT(0);
+            if (val >= double (value[0])) {
+                return RT (0);
             }
 
-            if (val > double(value[1])) {
-                return RT(double(yMax) * (1. - (val - double(value[0])) / (double(value[1]) - double(value[0]))));
+            if (val > double (value[1])) {
+                return RT (double (yMax) * (1. - (val - double (value[0])) / (double (value[1]) - double (value[0]))));
             }
 
-            return RT(yMax);
+            return RT (yMax);
         } else {
             if (_isDouble) {
-                if (val == double(value[2]) && double(value[2]) == double(value[3]))
+                if (val == double (value[2]) && double (value[2]) == double (value[3]))
                     // this handle the special case where the 2 right values are the same, then top one is sent back,
                     // useful if one wants to keep the top value even beyond the x max bound
                 {
-                    return RT(yMax);
+                    return RT (yMax);
                 }
 
-                if (val >= double(value[2])) {
-                    return RT(0);
+                if (val >= double (value[2])) {
+                    return RT (0);
                 }
 
-                if (val > double(value[3])) {
-                    return RT(double(yMax) * (1. - (val - double(value[3])) / (double(value[2]) - double(value[3]))));
+                if (val > double (value[3])) {
+                    return RT (double (yMax) * (1. - (val - double (value[3])) / (double (value[2]) - double (value[3]))));
                 }
             }
 
-            if (val >= double(value[1])) {
-                return RT(yMax);
+            if (val >= double (value[1])) {
+                return RT (yMax);
             }
 
-            if (val > double(value[0])) {
-                return RT(double(yMax) * (val - double(value[0])) / (double(value[1]) - double(value[0])));
+            if (val > double (value[0])) {
+                return RT (double (yMax) * (val - double (value[0])) / (double (value[1]) - double (value[0])));
             }
 
-            return RT(0);
+            return RT (0);
         }
     }
 
@@ -207,7 +207,7 @@ public:
         }
     }*/
 
-    Threshold<T>& operator =(const Threshold<T> &rhs)
+    Threshold<T>& operator = (const Threshold<T> &rhs)
     {
         value[0] = rhs.value[0];
         value[1] = rhs.value[1];
@@ -219,21 +219,21 @@ public:
     }
 
     template<typename U = T>
-    typename std::enable_if<std::is_floating_point<U>::value, bool>::type operator ==(const Threshold<U> &rhs) const
+    typename std::enable_if<std::is_floating_point<U>::value, bool>::type operator == (const Threshold<U> &rhs) const
     {
         if (_isDouble) {
-            return std::fabs(value[0] - rhs.value[0]) < 1e-10
-                   && std::fabs(value[1] - rhs.value[1]) < 1e-10
-                   && std::fabs(value[2] - rhs.value[2]) < 1e-10
-                   && std::fabs(value[3] - rhs.value[3]) < 1e-10;
+            return std::fabs (value[0] - rhs.value[0]) < 1e-10
+                   && std::fabs (value[1] - rhs.value[1]) < 1e-10
+                   && std::fabs (value[2] - rhs.value[2]) < 1e-10
+                   && std::fabs (value[3] - rhs.value[3]) < 1e-10;
         } else {
-            return std::fabs(value[0] - rhs.value[0]) < 1e-10
-                   && std::fabs(value[1] - rhs.value[1]) < 1e-10;
+            return std::fabs (value[0] - rhs.value[0]) < 1e-10
+                   && std::fabs (value[1] - rhs.value[1]) < 1e-10;
         }
     }
 
     template<typename U = T>
-    typename std::enable_if<std::is_integral<U>::value, bool>::type operator ==(const Threshold<U> &rhs) const
+    typename std::enable_if<std::is_integral<U>::value, bool>::type operator == (const Threshold<U> &rhs) const
     {
         if (_isDouble) {
             return
@@ -288,7 +288,7 @@ public:
         setDefaults();
     }
     void setDefaults();
-    static bool HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
+    static bool HLReconstructionNecessary (LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
 };
 /**
   * Parameters of Retinex
@@ -312,7 +312,6 @@ public:
     double  gam;
     double  slope;
     int     neigh;
-    int     gain;
     int     offs;
     int     highlights;
     int     htonalwidth;
@@ -328,16 +327,15 @@ public:
     int     vart;
     int     limd;
     int     highl;
-    double     baselog;
     int     skal;
     bool    medianmap;
     RetinexParams ();
     void setDefaults();
-    void getCurves(RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const;
+    void getCurves (RetinextransmissionCurve &transmissionCurveLUT, RetinexgaintransmissionCurve &gaintransmissionCurveLUT) const;
 
-    static void getDefaultgaintransmissionCurve(std::vector<double> &curve);
+    static void getDefaultgaintransmissionCurve (std::vector<double> &curve);
 
-    static void getDefaulttransmissionCurve(std::vector<double> &curve);
+    static void getDefaulttransmissionCurve (std::vector<double> &curve);
 };
 
 
@@ -433,16 +431,16 @@ public:
     ColorToningParams ();
     void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
     /// @brief Transform the mixer values to their curve equivalences
-    void mixerToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
+    void mixerToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
     /// @brief Specifically transform the sliders values to their curve equivalences
-    void slidersToCurve(std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
+    void slidersToCurve (std::vector<double> &colorCurve, std::vector<double> &opacityCurve) const;
     /// @brief Fill the ColorGradientCurve and OpacityCurve LUTf from the control points curve or sliders value
-    void getCurves(ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const;
+    void getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const;
 
-    static void getDefaultColorCurve(std::vector<double> &curve);
-    static void getDefaultOpacityCurve(std::vector<double> &curve);
-    static void getDefaultCLCurve(std::vector<double> &curve);
-    static void getDefaultCL2Curve(std::vector<double> &curve);
+    static void getDefaultColorCurve (std::vector<double> &curve);
+    static void getDefaultOpacityCurve (std::vector<double> &curve);
+    static void getDefaultCLCurve (std::vector<double> &curve);
+    static void getDefaultCL2Curve (std::vector<double> &curve);
 };
 
 /**
@@ -467,7 +465,7 @@ public:
     int            deconviter;
     int            deconvdamping;
 
-    SharpeningParams() : threshold(20, 80, 2000, 1200, false) {};
+    SharpeningParams();
 };
 class SharpenEdgeParams
 {
@@ -502,7 +500,7 @@ public:
     bool           pastsattog;
     std::vector<double> skintonescurve;
 
-    VibranceParams() : psthreshold(0, 75,  false) {};
+    VibranceParams();
 };
 
 /**
@@ -548,7 +546,7 @@ public:
     double equal;
     double tempBias;
 
-    WBEntry(const Glib::ustring &p, enum WBTypes t, const Glib::ustring &l, int temp, double green, double equal, double bias) : ppLabel(p), type(t), GUILabel(l), temperature(temp), green(green), equal(equal), tempBias(bias) {};
+    WBEntry (const Glib::ustring &p, enum WBTypes t, const Glib::ustring &l, int temp, double green, double equal, double bias) : ppLabel (p), type (t), GUILabel (l), temperature (temp), green (green), equal (equal), tempBias (bias) {};
 };
 
 class WBParams
@@ -587,6 +585,8 @@ public:
     bool          enabled;
     int           degree;
     bool          autodegree;
+    int           degreeout;
+    bool          autodegreeout;
     std::vector<double> curve;
     std::vector<double> curve2;
     std::vector<double> curve3;
@@ -595,8 +595,11 @@ public:
     eCTCModeId    curveMode3;
 
     Glib::ustring surround;
+    Glib::ustring surrsrc;
     double        adapscen;
     bool          autoadapscen;
+    int        ybscen;
+    bool          autoybscen;
 
     double        adaplum;
     int           badpixsl;
@@ -616,6 +619,12 @@ public:
     //      bool          badpix;
     bool          datacie;
     bool          tonecie;
+    int tempout;
+    int ybout;
+    double greenout;
+    int tempsc;
+    double greensc;
+
     //      bool          sharpcie;
 };
 
@@ -690,7 +699,6 @@ public:
     bool    enabled;
     bool    enhance;
     bool    median;
-    bool    autochroma;
 
     bool    perform;
     double  luma;
@@ -711,10 +719,10 @@ public:
 
     DirPyrDenoiseParams ();
     void setDefaults();  // SHOULD BE GENERALIZED TO ALL CLASSES!
-    void getCurves(NoiseCurve &lCurve, NoiseCurve &cCurve) const;
+    void getCurves (NoiseCurve &lCurve, NoiseCurve &cCurve) const;
 
-    static void getDefaultNoisCurve(std::vector<double> &curve);
-    static void getDefaultCCCurve(std::vector<double> &curve);
+    static void getDefaultNoisCurve (std::vector<double> &curve);
+    static void getDefaultCCCurve (std::vector<double> &curve);
 
 };
 
@@ -764,8 +772,8 @@ public:
     Glib::ustring   orientation;
     Glib::ustring   guide;
 
-    CropParams() : enabled(false), x(0), y(0), w(0), h(0), fixratio(false) {};
-    void mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
+    CropParams() : enabled (false), x (0), y (0), w (0), h (0), fixratio (false) {};
+    void mapToResized (int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
 };
 
 /**
@@ -821,15 +829,63 @@ class LensProfParams
 {
 
 public:
+    enum class LcMode {
+        NONE,               // No lens correction
+        LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
+        LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
+        LCP                 // Lens correction using lcp file
+    };
+
+    static const char *methodstring[static_cast<size_t>(LcMode::LCP) + 1u];
+    LcMode lcMode;
     Glib::ustring lcpFile;
     bool useDist, useVign, useCA;
+    Glib::ustring lfCameraMake;
+    Glib::ustring lfCameraModel;
+    Glib::ustring lfLens;
 
     LensProfParams()
     {
         setDefaults();
     }
     void setDefaults();
+
+    bool useLensfun() const
+    {
+        return lcMode == LcMode::LENSFUNAUTOMATCH || lcMode == LcMode::LENSFUNMANUAL;
+    }
+
+    bool lfAutoMatch() const
+    {
+        return lcMode == LcMode::LENSFUNAUTOMATCH;
+    }
+
+    bool useLcp() const
+    {
+        return lcMode == LcMode::LCP && lcpFile.length() > 0;
+    }
+
+    bool lfManual() const
+    {
+        return lcMode == LcMode::LENSFUNMANUAL;
+    }
+
+    Glib::ustring getMethodString(LcMode mode) const
+    {
+        return methodstring[static_cast<size_t>(mode)];
+    }
+
+    LcMode getMethodNumber(const Glib::ustring &mode) const
+    {
+        for(size_t i = 0; i <= static_cast<size_t>(LcMode::LCP); ++i) {
+            if(methodstring[i] == mode) {
+                return static_cast<LcMode>(i);
+            }
+        }
+        return LcMode::NONE;
+    }
 };
+
 
 /**
   * Parameters of the perspective correction
@@ -983,7 +1039,6 @@ public:
     bool          applyLookTable;
     bool          applyBaselineExposureOffset;
     bool          applyHueSatMap;
-    bool          blendCMSMatrix; // setting no longer used
     int dcpIlluminant;
     Glib::ustring working;
     Glib::ustring output;
@@ -1108,12 +1163,12 @@ public:
 
     WaveletParams ();
     void setDefaults();
-    void getCurves(WavCurve &cCurve, WavOpacityCurveRG &opacityCurveLUTRG , WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const;
-    static void getDefaultCCWCurve(std::vector<double> &curve);
-    static void getDefaultOpacityCurveRG(std::vector<double> &curve);
-    static void getDefaultOpacityCurveBY(std::vector<double> &curve);
-    static void getDefaultOpacityCurveW(std::vector<double> &curve);
-    static void getDefaultOpacityCurveWL(std::vector<double> &curve);
+    void getCurves (WavCurve &cCurve, WavOpacityCurveRG &opacityCurveLUTRG, WavOpacityCurveBY &opacityCurveLUTBY, WavOpacityCurveW &opacityCurveLUTW, WavOpacityCurveWL &opacityCurveLUTWL) const;
+    static void getDefaultCCWCurve (std::vector<double> &curve);
+    static void getDefaultOpacityCurveRG (std::vector<double> &curve);
+    static void getDefaultOpacityCurveBY (std::vector<double> &curve);
+    static void getDefaultOpacityCurveW (std::vector<double> &curve);
+    static void getDefaultOpacityCurveWL (std::vector<double> &curve);
 
 };
 
@@ -1133,7 +1188,7 @@ public:
     Threshold<int> hueskin;
     //Glib::ustring algo;
     Glib::ustring cbdlMethod;
-    DirPyrEqualizerParams() : hueskin(20, 80, 2000, 1200, false) {};
+    DirPyrEqualizerParams() : hueskin (20, 80, 2000, 1200, false) {};
 };
 
 /**
@@ -1284,7 +1339,6 @@ public:
     int ff_clipControl;
 
     bool ca_autocorrect;
-    double caautostrength;
     double cared;
     double cablue;
 
@@ -1425,7 +1479,7 @@ class PartialProfile
 public:
     rtengine::procparams::ProcParams* pparams;
     ParamsEdited* pedited;
-    PartialProfile& operator =(const PartialProfile& rhs)
+    PartialProfile& operator = (const PartialProfile& rhs)
     {
         pparams = rhs.pparams;
         pedited = rhs.pedited;
@@ -1450,7 +1504,7 @@ public:
 class AutoPartialProfile : public PartialProfile
 {
 public:
-    AutoPartialProfile() : PartialProfile(true) {}
+    AutoPartialProfile() : PartialProfile (true) {}
     ~AutoPartialProfile()
     {
         deleteInstance();

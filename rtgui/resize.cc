@@ -29,14 +29,13 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     croph = 0;
 
     Gtk::Table* combos = Gtk::manage (new Gtk::Table (2, 2));
-    Gtk::Label *label = nullptr;
 
     appliesTo = Gtk::manage (new MyComboBoxText ());
     appliesTo->append (M("TP_RESIZE_CROPPEDAREA"));
     appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
 
-    label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
+    Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO")));
     label->set_alignment(0., 0.);
     combos->attach (*label, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     combos->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
@@ -621,3 +620,14 @@ void Resize::enabledChanged ()
     }
 }
 
+void Resize::setAdjusterBehavior (bool scaleadd)
+{
+
+    scale->setAddMode(scaleadd);
+}
+
+void Resize::trimValues (rtengine::procparams::ProcParams* pp)
+{
+
+    scale->trimValue(pp->resize.scale);
+}

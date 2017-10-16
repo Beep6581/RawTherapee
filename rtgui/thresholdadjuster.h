@@ -60,7 +60,6 @@ protected:
     //sigc::connection spinChange;
     sigc::connection selectorChange;
     sigc::connection editedChange;
-    bool listenerReady;
     double initialDefaultVal[4];    // default value at construction time
     EditedState editedState;
     EditedState defEditedState;

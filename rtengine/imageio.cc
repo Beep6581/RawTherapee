@@ -52,7 +52,6 @@ namespace
 // Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
 FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 {
-    FILE* f = nullptr;
 
 #ifdef WIN32
 
@@ -61,6 +60,7 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     std::unique_ptr<wchar_t, GFreeFunc> wfname (reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
 
     HANDLE hFile = CreateFileW ( wfname.get (), GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    FILE* f = nullptr;
 
     if (hFile != INVALID_HANDLE_VALUE) {
         f = _fdopen (_open_osfhandle ((intptr_t)hFile, 0), "wb");
@@ -68,7 +68,7 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 
 #else
 
-    f = ::g_fopen (fname.c_str (), "wb");
+    FILE* f = ::g_fopen (fname.c_str (), "wb");
 
 #endif
 
@@ -867,8 +867,8 @@ int ImageIO::loadTIFF (Glib::ustring fname)
                   );
 
 #endif
-        float minVal = min( min( minValue[0], minValue[1] ), minValue[2] );
-        float maxVal = max( max( maxValue[0], maxValue[1] ), maxValue[2] );
+        float minVal = rtengine::min(minValue[0], minValue[1], minValue[2]);
+        float maxVal = rtengine::max(maxValue[0], maxValue[1], maxValue[2]);
         normalizeFloat(minVal, maxVal);
     }
 

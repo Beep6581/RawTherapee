@@ -67,7 +67,6 @@ public:
     bool gam;
     bool slope;
     bool neigh;
-    bool gain;
     bool offs;
     bool retinexMethod;
     bool mapMethod;
@@ -290,10 +289,15 @@ public:
     bool enabled;
     bool degree;
     bool autodegree;
+    bool degreeout;
+    bool autodegreeout;
     bool autoadapscen;
+    bool autoybscen;
     bool surround;
+    bool surrsrc;
     bool adapscen;
     bool adaplum;
+    bool ybscen;
     bool badpixsl;
     bool wbmodel;
     bool algo;
@@ -312,6 +316,12 @@ public:
     bool datacie;
     bool tonecie;
 //  bool sharpcie;
+    bool tempout;
+    bool greenout;
+    bool ybout;
+    bool tempsc;
+    bool greensc;
+
 };
 
 class DirPyrDenoiseParamsEdited
@@ -321,7 +331,6 @@ public:
     bool enabled;
     bool enhance;
     bool median;
-    bool autochroma;
     bool Ldetail;
     bool luma;
     bool chroma;
@@ -419,6 +428,8 @@ class LensProfParamsEdited
 {
 public:
     bool lcpFile, useDist, useVign, useCA;
+    bool useLensfun, lfAutoMatch, lfCameraMake, lfCameraModel, lfLens;
+    bool lcMode;
 
     bool isUnchanged() const;
 };
@@ -540,7 +551,6 @@ public:
     bool applyLookTable;
     bool applyBaselineExposureOffset;
     bool applyHueSatMap;
-    bool blendCMSMatrix;
     bool dcpIlluminant;
     bool working;
     bool output;
@@ -747,7 +757,6 @@ public:
     XTransSensor xtranssensor;
 
     bool caCorrection;
-    bool caAutoStrength;
     bool caRed;
     bool caBlue;
     bool hotPixelFilter;

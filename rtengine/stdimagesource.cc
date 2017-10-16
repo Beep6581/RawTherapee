@@ -158,7 +158,7 @@ int StdImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
 
     embProfile = img->getEmbeddedProfile ();
 
-    idata = new ImageData (fname);
+    idata = new FramesData (fname);
 
     if (idata->hasExif()) {
         int deg = 0;

@@ -73,7 +73,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNRadius: obsolete,
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
-    ALL,              // EvBlendCMSMatrix,
+    0,                // free entry
     RGBCURVE,         // EvDCPToneCurve,
     ALLNORAW,         // EvDCPIlluminant,
     RETINEX,          // EvSHEnabled,
@@ -451,7 +451,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvLgam
     DEMOSAIC,         // EvLslope
     RETINEX,          // EvLhighl
-    DEMOSAIC,         // EvLbaselog
+    0,                // --unused--
     DEMOSAIC,         // EvRetinexlhcurve
     OUTPUTPROFILE,    // EvOIntent
     MONITORTRANSFORM, // EvMonitorTransform: no history message
@@ -501,7 +501,19 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvPixelShiftSmooth
     DEMOSAIC,         // EvPixelShiftLmmse
     DEMOSAIC,         // EvPixelShiftEqualBright
-    DEMOSAIC          // EvPixelShiftEqualBrightChannel
+    DEMOSAIC,          // EvPixelShiftEqualBrightChannel
+    LUMINANCECURVE,   // EvCATtempout
+    LUMINANCECURVE,   // EvCATgreenout
+    LUMINANCECURVE,   // EvCATybout
+    LUMINANCECURVE,   // EvCATDegreeout
+    LUMINANCECURVE,   // EvCATAutoDegreeout
+    LUMINANCECURVE,   // EvCATtempsc
+    LUMINANCECURVE,   // EvCATgreensc
+    LUMINANCECURVE,   // EvCATybscen
+    LUMINANCECURVE,   // EvCATAutoyb
+    DARKFRAME,        // EvLensCorrMode
+    DARKFRAME,        // EvLensCorrLensfunCamera
+    DARKFRAME         // EvLensCorrLensfunLens
 
 };
 

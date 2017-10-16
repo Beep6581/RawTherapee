@@ -288,8 +288,6 @@ PREFERENCES_CACHETHUMBHEIGHT;Maximálna výška zmenšenín
 PREFERENCES_CLIPPINGIND;Indikácia orezu
 PREFERENCES_DATEFORMAT;Formát dátumu
 PREFERENCES_DATEFORMATHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%y</b><i> : rok</i>\n<b>%m</b><i> : mesiac</i>\n<b>%d</b><i> : deň</i>\n<i>\nNapríklad, slovenský formát je:</i>\n<b>%d.%m.%y</b>
-PREFERENCES_DEFAULTLANG;Predvolený jazyk
-PREFERENCES_DEFAULTTHEME;Predvolený vzhľad
 PREFERENCES_DIRHOME;Domovský adresár
 PREFERENCES_DIRLAST;Posledný navštívený adresár
 PREFERENCES_DIROTHER;Iný
@@ -530,6 +528,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !CURVEEDITOR_MINMAXCPOINTS;Equalizer
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard.
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard.
+!DONT_SHOW_AGAIN;Don't show this message again.
 !DYNPROFILEEDITOR_DELETE;Delete
 !DYNPROFILEEDITOR_EDIT;Edit
 !DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
@@ -544,6 +543,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
 !EXIFFILTER_FILETYPE;File type
+!EXIFPANEL_SHOWALL;Show all
 !EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_ALL;Select / Unselect All
 !EXPORT_BYPASS_DEFRINGE;Bypass Defringe
@@ -650,6 +650,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !GENERAL_NONE;None
 !GENERAL_OPEN;Open
 !GENERAL_WARNING;Warning
+!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.\nRight-click on image preview to freeze/unfreeze.
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
 !HISTOGRAM_TOOLTIP_FULL;Toggle full (off) or scaled (on) histogram.
@@ -1021,6 +1022,18 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_473;PS - Use LMMSE
 !HISTORY_MSG_474;PS - Equalize
 !HISTORY_MSG_475;PS - Equalize channel
+!HISTORY_MSG_476;CAM02 - Temp out
+!HISTORY_MSG_477;CAM02 - Green out
+!HISTORY_MSG_478;CAM02 - Yb out
+!HISTORY_MSG_479;CAM02 - CAT02 adaptation out
+!HISTORY_MSG_480;CAM02 - Automatic CAT02 out
+!HISTORY_MSG_481;CAM02 - Temp scene
+!HISTORY_MSG_482;CAM02 - Green scene
+!HISTORY_MSG_483;CAM02 - Yb scene
+!HISTORY_MSG_484;CAM02 - Auto Yb scene
+!HISTORY_MSG_485;Lens Correction
+!HISTORY_MSG_486;Lens Correction - Camera
+!HISTORY_MSG_487;Lens Correction - Lens
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 !IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
@@ -1047,6 +1060,10 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
 !IPTCPANEL_TRANSREFERENCE;Job ID
 !IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+!LENSPROFILE_CORRECTION_AUTOMATCH;Auto-matched correction parameters
+!LENSPROFILE_CORRECTION_LCPFILE;LCP File
+!LENSPROFILE_CORRECTION_MANUAL;Manual correction parameters
+!LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
@@ -1060,6 +1077,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoes not exist. Please set a correct path in Preferences.
 !MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
+!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
 !MAIN_MSG_WRITEFAILED;Failed to write\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
@@ -1075,6 +1093,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>Middle grey</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History.\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
 !MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-f</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels.\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom, about 10-30%.
@@ -1122,7 +1141,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_GRADIENT;Graduated filter
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
-!PARTIALPASTE_LENSPROFILE;Lens correction profile
+!PARTIALPASTE_LENSPROFILE;Profiled lens correction
 !PARTIALPASTE_PCVIGNETTE;Vignette filter
 !PARTIALPASTE_PERSPECTIVE;Perspective
 !PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
@@ -1142,7 +1161,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_RAW_FALSECOLOR;False color suppression
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
+!PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_RETINEX;Retinex
 !PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
@@ -1155,6 +1174,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_AUTLISVLOW;None
 !PREFERENCES_AUTLOW;Low
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
+!PREFERENCES_AUTOSAVE_TP_OPEN;Automatically save tools collapsed/expanded\nstate before exiting
 !PREFERENCES_AUTSTD;Standard
 !PREFERENCES_BEHADDALL;All to 'Add'
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
@@ -1169,7 +1189,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
 !PREFERENCES_CLUTSDIR;HaldCLUT directory
 !PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_CURVEBBOXPOS;Position of curve copypasta buttons
+!PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
 !PREFERENCES_CURVEBBOXPOS_ABOVE;Above
 !PREFERENCES_CURVEBBOXPOS_BELOW;Below
 !PREFERENCES_CURVEBBOXPOS_LEFT;Left
@@ -1181,7 +1201,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_D50;5000K
+!PREFERENCES_D50;Settings in main menu
+!PREFERENCES_D50_OLD;5000K
 !PREFERENCES_D55;5500K
 !PREFERENCES_D60;6000K
 !PREFERENCES_D65;6500K
@@ -1209,7 +1230,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_GREY05;Yb=05 CIE L#30
 !PREFERENCES_GREY10;Yb=10 CIE L#40
 !PREFERENCES_GREY15;Yb=15 CIE L#45
-!PREFERENCES_GREY18;Yb=18 CIE L#50
+!PREFERENCES_GREY18;Settings in main menu
+!PREFERENCES_GREY18_OLD;Yb=18 CIE L#50
 !PREFERENCES_GREY23;Yb=23 CIE L#55
 !PREFERENCES_GREY30;Yb=30 CIE L#60
 !PREFERENCES_GREY40;Yb=40 CIE L#70
@@ -1224,6 +1246,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
+!PREFERENCES_LANG;Language
 !PREFERENCES_LANGAUTODETECT;Use system language
 !PREFERENCES_LEVAUTDN;Denoising level
 !PREFERENCES_LEVDN;Cell size
@@ -1266,6 +1289,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in "Single Editor Tab Mode" and when "Demosaicing method used for the preview at <100% zoom" is set to "As in PP3".
 !PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction and Wavelet Levels
 !PREFERENCES_RGBDTL_TOOLTIP;Leave the setting at "0" to automatically use as many threads as possible. The more threads run in parallel, the faster the computation. Refer to RawPedia for memory requirements.
+!PREFERENCES_SAVE_TP_OPEN_NOW;Save tools collapsed/expanded state now
 !PREFERENCES_SELECTFONT_COLPICKER;Select Color Picker's font
 !PREFERENCES_SERIALIZE_TIFF_READ;Tiff Read Settings
 !PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize read of tiff files
@@ -1283,6 +1307,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
 !PREFERENCES_TAB_PERFORMANCE;Performance & Quality
 !PREFERENCES_TAB_SOUND;Sounds
+!PREFERENCES_THEME;Theme
 !PREFERENCES_TIMAX;High
 !PREFERENCES_TINB;Number of tiles
 !PREFERENCES_TISTD;Standard
@@ -1309,6 +1334,15 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
+!QINFO_FRAMECOUNT;%2 frames
+!QINFO_HDR;HDR / %2 frame(s)
+!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+!SAMPLEFORMAT_0;Unknown data format
+!SAMPLEFORMAT_1;Unsigned 8 bits
+!SAMPLEFORMAT_2;Unsigned 16 bits
+!SAMPLEFORMAT_4;LogLuv 24 bits
+!SAMPLEFORMAT_8;LogLuv 32 bits
+!SAMPLEFORMAT_16;32 bits floating point
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
 !SAVEDLG_SUBSAMP_1;Best compression
@@ -1317,8 +1351,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SAVEDLG_WARNFILENAME;File will be named
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colors from the output profile.
-!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate de rendering generated by the output profile of the ICM tool. Most useful for simulating printing outputs.
+!SOFTPROOF_GAMUTCHECK_TOOLTIP;If active, indicates in grey the pixels which have out of gamut colors from the Printer profile.
+!SOFTPROOF_TOOLTIP;Soft-proofing\nIf active, let you simulate the printer's output by using the Printer profile set in Preferences > Color Management.
 !THRESHOLDSELECTOR_B;Bottom
 !THRESHOLDSELECTOR_BL;Bottom-left
 !THRESHOLDSELECTOR_BR;Bottom-right
@@ -1392,11 +1426,11 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_CBDL_METHOD;Process located
 !TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_COLORAPP_ADAPTSCENE;Scene luminosity
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
-!TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²).
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first.
+!TP_COLORAPP_ADAPTSCENE;Scene absolute luminance
+!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environment (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider.
+!TP_COLORAPP_ADAPTVIEWING;Viewing absolute luminance (cd/m²)
+!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16cd/m²).
+!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RawTherapee calculates an optimum value from the Exif data.\nTo set the value manually, uncheck the checkbox first.
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -1416,8 +1450,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
 !TP_COLORAPP_CONTRAST;Contrast (J)
 !TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from L*a*b* and RGB contrast.
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from L*a*b* and RGB contrast.
+!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Differs from L*a*b* and RGB contrast.
+!TP_COLORAPP_CONTRAST_TOOLTIP;Differs from L*a*b* and RGB contrast.
 !TP_COLORAPP_CURVEEDITOR1;Tone curve 1
 !TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 !TP_COLORAPP_CURVEEDITOR2;Tone curve 2
@@ -1428,6 +1462,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RawTherapee calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended).
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002.
+!TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 !TP_COLORAPP_HUE;Hue (h)
@@ -1439,9 +1474,11 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
 !TP_COLORAPP_MODEL;WP Model
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in <i>Preferences > Color Management</i>.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in <i>Preferences - Color Management</i>.
+!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected bu user, output device's white balance is set in Viewing Conditions.
+!TP_COLORAPP_NEUTRAL;Reset
+!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
-!TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin-tones protection affects both sliders and curves.
+!TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 !TP_COLORAPP_SHARPCIE;--unused--
 !TP_COLORAPP_SHARPCIE_TOOLTIP;--unused--
 !TP_COLORAPP_SURROUND;Surround
@@ -1460,10 +1497,14 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
+!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
+!TP_COLORAPP_YB;Yb% (mean luminance)
+!TP_COLORAPP_YBSCENE;Yb% (mean luminance)
+!TP_COLORAPP_YBSCENE_TOOLTIP;if auto enable, Yb is calculated from the mean value of actual image luminance
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
@@ -1642,17 +1683,17 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
-!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only enabled if the selected DCP has any.
+!TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYHUESATMAP;Base table
-!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only enabled if the selected DCP has one.
+!TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYLOOKTABLE;Look table
-!TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only enabled if the selected DCP has one.
+!TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover clipped highlights when using LUT-based ICC profiles.
 !TP_ICM_BPC;Black Point Compensation
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
-!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 !TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced RawTherapee version (whichever is available based on camera model) or one embedded in the DNG.
@@ -1666,7 +1707,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 !TP_ICM_TONECURVE;Tone curve
-!TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
+!TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 !TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 !TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction.
 !TP_LABCURVE_CHROMATICITY;Chromaticity
@@ -1700,7 +1741,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_LABCURVE_LCREDSK_TIP;If enabled, the LC Curve affects only red and skin-tones.\nIf disabled, it applies to all tones.
 !TP_LABCURVE_RSTPROTECTION;Red and skin-tones protection
 !TP_LABCURVE_RSTPRO_TOOLTIP;Works on the Chromaticity slider and the CC curve.
-!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_LABEL;Profiled Lens Correction
 !TP_LENSPROFILE_USECA;Chromatic aberration correction
 !TP_LENSPROFILE_USEDIST;Distortion correction
 !TP_LENSPROFILE_USEVIGN;Vignetting correction

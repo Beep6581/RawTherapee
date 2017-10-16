@@ -125,14 +125,23 @@ void findOriginalEntries (const std::vector<ThumbBrowserEntryBase*>& entries)
 
 }
 
-FileBrowser::FileBrowser ()
-    : tbl(nullptr), numFiltered(0)
+FileBrowser::FileBrowser () :
+    menuLabel(nullptr),
+    selectDF(nullptr),
+    thisIsDF(nullptr),
+    autoDF(nullptr),
+    selectFF(nullptr),
+    thisIsFF(nullptr),
+    autoFF(nullptr),
+    clearFromCache(nullptr),
+    clearFromCacheFull(nullptr),
+    colorLabel_actionData(nullptr),
+    bppcl(nullptr),
+    tbl(nullptr),
+    numFiltered(0),
+    exportPanel(nullptr)
 {
-
-    fbih = new FileBrowserIdleHelper;
-    fbih->fbrowser = this;
-    fbih->destroyed = false;
-    fbih->pending = 0;
+    session_id_ = 0;
 
     ProfileStore::getInstance()->addListener(this);
 
@@ -546,36 +555,26 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry)
 void FileBrowser::addEntry (FileBrowserEntry* entry)
 {
     struct addparams {
-        FileBrowserIdleHelper* fbih;
-        FileBrowserEntry* entry;
+        FileBrowser *browser;
+        FileBrowserEntry *entry;
+        unsigned int session_id;
     };
 
-    fbih->pending++;
-    entry->setParent (this);
     addparams* const ap = new addparams;
-    ap->fbih = fbih;
+    entry->setParent (this);
+    ap->browser = this;
     ap->entry = entry;
+    ap->session_id = session_id();
 
     const auto func = [](gpointer data) -> gboolean {
         addparams* const ap = static_cast<addparams*>(data);
-        FileBrowserIdleHelper* fbih = ap->fbih;
-
-        if (fbih->destroyed) {
-            if (fbih->pending == 1) {
-                delete fbih;
-            } else {
-                fbih->pending--;
-            }
-
+        if (ap->session_id != ap->browser->session_id()) {
             delete ap->entry;
             delete ap;
-
-            return 0;
+        } else {
+            ap->browser->addEntry_(ap->entry);
+            delete ap;
         }
-
-        ap->fbih->fbrowser->addEntry_ (ap->entry);
-        delete ap;
-        fbih->pending--;
 
         return FALSE;
     };
@@ -601,20 +600,22 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     {
         MYWRITERLOCK(l, entryRW);
 
-        std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
-
-        while (i != fd.end() && *entry < * ((FileBrowserEntry*)*i)) {
-            ++i;
-        }
-
-        fd.insert (i, entry);
+        fd.insert(
+            std::lower_bound(
+                fd.begin(),
+                fd.end(),
+                entry,
+                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+                {
+                    return *a < *b;
+                }
+            ),
+            entry
+        );
 
         initEntry (entry);
     }
     redraw ();
-
-    // newly added item might have been already trashed in a previous session
-    trash_changed().emit();
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
@@ -653,16 +654,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
 
 void FileBrowser::close ()
 {
-    if (fbih->pending) {
-        fbih->destroyed = true;
-    } else {
-        delete fbih;
-    }
-
-    fbih = new FileBrowserIdleHelper;
-    fbih->fbrowser = this;
-    fbih->destroyed = false;
-    fbih->pending = 0;
+    ++session_id_;
 
     {
         MYWRITERLOCK(l, entryRW);
@@ -983,15 +975,11 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             bppcl->endBatchPParamsChange();
         }
     } else if (m == clearFromCache) {
-        for (size_t i = 0; i < mselected.size(); i++) {
-            tbl->clearFromCacheRequested (mselected, false);
-        }
+        tbl->clearFromCacheRequested (mselected, false);
 
         //queue_draw ();
     } else if (m == clearFromCacheFull) {
-        for (size_t i = 0; i < mselected.size(); i++) {
-            tbl->clearFromCacheRequested (mselected, true);
-        }
+        tbl->clearFromCacheRequested (mselected, true);
 
         //queue_draw ();
     } else if (miOpenDefaultViewer != nullptr && m == miOpenDefaultViewer) {
@@ -1547,8 +1535,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb)   // true -> entry
                && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp) > 0);
 
     return
-        (!filter.exifFilter.filterShutter || (rtengine::ImageMetaData::shutterFromString(rtengine::ImageMetaData::shutterToString(cfs->shutter)) >= filter.exifFilter.shutterFrom - tol2 && rtengine::ImageMetaData::shutterFromString(rtengine::ImageMetaData::shutterToString(cfs->shutter)) <= filter.exifFilter.shutterTo + tol2))
-        && (!filter.exifFilter.filterFNumber || (rtengine::ImageMetaData::apertureFromString(rtengine::ImageMetaData::apertureToString(cfs->fnumber)) >= filter.exifFilter.fnumberFrom - tol2 && rtengine::ImageMetaData::apertureFromString(rtengine::ImageMetaData::apertureToString(cfs->fnumber)) <= filter.exifFilter.fnumberTo + tol2))
+        (!filter.exifFilter.filterShutter || (rtengine::FramesMetaData::shutterFromString(rtengine::FramesMetaData::shutterToString(cfs->shutter)) >= filter.exifFilter.shutterFrom - tol2 && rtengine::FramesMetaData::shutterFromString(rtengine::FramesMetaData::shutterToString(cfs->shutter)) <= filter.exifFilter.shutterTo + tol2))
+        && (!filter.exifFilter.filterFNumber || (rtengine::FramesMetaData::apertureFromString(rtengine::FramesMetaData::apertureToString(cfs->fnumber)) >= filter.exifFilter.fnumberFrom - tol2 && rtengine::FramesMetaData::apertureFromString(rtengine::FramesMetaData::apertureToString(cfs->fnumber)) <= filter.exifFilter.fnumberTo + tol2))
         && (!filter.exifFilter.filterFocalLen || (cfs->focalLen >= filter.exifFilter.focalFrom - tol && cfs->focalLen <= filter.exifFilter.focalTo + tol))
         && (!filter.exifFilter.filterISO     || (cfs->iso >= filter.exifFilter.isoFrom && cfs->iso <= filter.exifFilter.isoTo))
         && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp) > 0)

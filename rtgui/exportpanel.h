@@ -76,8 +76,6 @@ protected:
     MyComboBoxText* raw_xtrans_method;
 
     Gtk::Button* btnFastExport;
-    Gtk::Button* btnExportLoadSettings;
-    Gtk::Button* btnExportSaveSettings;
 
     MySpinButton* MaxWidth;
     MySpinButton* MaxHeight;

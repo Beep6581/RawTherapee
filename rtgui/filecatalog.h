@@ -36,20 +36,6 @@
 #include "multilangmgr.h"
 #include "threadutils.h"
 
-
-class DirEntry
-{
-
-public:
-    Glib::ustring fullName;
-
-    explicit DirEntry (const Glib::ustring& n) : fullName (n) {}
-
-    bool operator< (DirEntry& other)
-    {
-        return fullName.casefold() < other.fullName.casefold();
-    }
-};
 class FilePanel;
 /*
  * Class:

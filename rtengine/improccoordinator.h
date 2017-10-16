@@ -223,7 +223,7 @@ public:
         *dst = params;
     }
 
-    void        startProcessing(int changeCode);
+    void        startProcessing (int changeCode);
     ProcParams* beginUpdateParams ();
     void        endUpdateParams (ProcEvent change);  // must be called after beginUpdateParams, triggers update
     void        endUpdateParams (int changeFlags);
@@ -304,7 +304,7 @@ public:
     {
         aeListener = ael;
     }
-    void setHistogramListener(HistogramListener *h)
+    void setHistogramListener (HistogramListener *h)
     {
         hListener = h;
     }
@@ -355,7 +355,7 @@ public:
     }
 
     struct DenoiseInfoStore {
-        DenoiseInfoStore () : chM(0), max_r{}, max_b{}, ch_M{}, valid(false)  {}
+        DenoiseInfoStore () : chM (0), max_r{}, max_b{}, ch_M{}, valid (false)  {}
         float chM;
         float max_r[9];
         float max_b[9];

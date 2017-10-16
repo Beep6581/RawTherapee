@@ -59,7 +59,7 @@ InspectorBuffer::~InspectorBuffer() {
 //int InspectorBuffer::infoFromImage (const Glib::ustring& fname)
 //{
 //
-//    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, nullptr);
+//    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
 //
 //    if (!idata) {
 //        return 0;
@@ -259,6 +259,7 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
                 images.push_back(iBuffer);
                 currImage = images.at(images.size() - 1);
             } else {
+                delete iBuffer;
                 currImage = nullptr;
             }
         }

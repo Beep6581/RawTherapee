@@ -44,12 +44,16 @@ using namespace std;
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     filepanel(filepanel),
     selectedDirectoryId(1),
+    actionNextPrevious(NAV_NONE),
     listener(nullptr),
     fslistener(nullptr),
+    iatlistener(nullptr),
     hasValidCurrentEFS(false),
     filterPanel(nullptr),
+    exportPanel(nullptr),
     previewsToLoad(0),
     previewsLoaded(0),
+    modifierKey(0),
     coarsePanel(cp),
     toolBar(tb)
 {
@@ -720,6 +724,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
 {
 
     if ( dir_id != selectedDirectoryId ) {
+        delete fdn;
         return;
     }
 
@@ -765,6 +770,8 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn)
             if (cfs->focalLen > dirEFS.focalTo) {
                 dirEFS.focalTo = cfs->focalLen;
             }
+
+            //TODO: ass filters for HDR and PixelShift files
         }
 
         dirEFS.filetypes.insert (cfs->filetype);
@@ -820,6 +827,9 @@ void FileCatalog::previewsFinishedUI ()
         refImageForOpen_fname = "";
         actionNextPrevious = NAV_NONE;
     }
+
+    // newly added item might have been already trashed in a previous session
+    trashChanged();
 }
 
 void FileCatalog::previewsFinished (int dir_id)
@@ -1787,38 +1797,36 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file)
 {
-    if (!file) {
-        return;
-    }
 
-    if (!file->query_exists()) {
+    if (!file) {
         return;
     }
 
     try {
 
-        auto info = file->query_info ();
+        const auto info = file->query_info("standard::*");
 
-        if (!info || info->get_file_type () == Gio::FILE_TYPE_DIRECTORY) {
+        if (!info || info->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
             return;
         }
 
-        if (!options.fbShowHidden && info->is_hidden ()) {
+        if (!options.fbShowHidden && info->is_hidden()) {
             return;
         }
 
         Glib::ustring ext;
 
-        const auto lastdot = info->get_name ().find_last_of ('.');
+        const auto lastdot = info->get_name().find_last_of('.');
+
         if (lastdot != Glib::ustring::npos) {
-            ext = info->get_name ().substr (lastdot + 1);
+            ext = info->get_name().substr(lastdot + 1);
         }
 
-        if (!options.is_extention_enabled (ext)) {
+        if (!options.is_extention_enabled(ext)) {
             return;
         }
 
-        previewLoader->add (selectedDirectoryId, file->get_parse_name (), this);
+        previewLoader->add(selectedDirectoryId, file->get_parse_name(), this);
         previewsToLoad++;
 
     } catch(Gio::Error&) {}

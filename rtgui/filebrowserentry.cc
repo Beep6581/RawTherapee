@@ -36,9 +36,11 @@ bool FileBrowserEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
+Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
-    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
+    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
 {
     thumbnail = thm;
 
@@ -57,12 +59,12 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
         editedIcon = RTImage::createFromFile ("edited.png");
         recentlySavedIcon = RTImage::createFromFile ("recent-save.png");
         enqueuedIcon = RTImage::createFromFile ("processing.png");
+        hdr = RTImage::createFromFile ("HDR-thumbnail.png");
+        ps = RTImage::createFromFile ("PixelShift-thumbnail.png");
         iconsLoaded = true;
     }
 
-    if (thm) {
-        thm->addThumbnailListener (this);
-    }
+    thumbnail->addThumbnailListener (this);
 }
 
 FileBrowserEntry::~FileBrowserEntry ()
@@ -139,6 +141,26 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getIconsOnImageArea ()
     return ret;
 }
 
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getSpecificityIconsOnImageArea ()
+{
+
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
+
+    if (!thumbnail) {
+        return ret;
+    }
+
+    if (thumbnail->isHDR() && hdr) {
+        ret.push_back (hdr);
+    }
+
+    if (thumbnail->isPixelShift() && ps) {
+        ret.push_back (ps);
+    }
+
+    return ret;
+}
+
 void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
 {
     if(scale != 1.0 && cropParams.enabled) { // somewhere in pipeline customBackBufferUpdate is called when scale == 1.0, which is nonsense for a thumb
@@ -207,11 +229,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
         cropParams
     };
 
-#if __GNUC__ == 4 && __GNUC_MINOR__ == 8 && defined( WIN32 ) && defined(__x86_64__)
-    const gint priority = G_PRIORITY_DEFAULT;
-#else
     const gint priority = G_PRIORITY_LOW;
-#endif
 
     const auto func = [](gpointer data) -> gboolean {
         tiupdate* const params = static_cast<tiupdate*>(data);

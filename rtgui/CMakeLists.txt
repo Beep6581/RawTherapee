@@ -169,6 +169,7 @@ if(WIN32)
         ${GLIBMM_INCLUDE_DIRS}
         ${GTKMM_INCLUDE_DIRS}
         ${GTK_INCLUDE_DIRS}
+        ${LENSFUN_INCLUDE_DIRS}
         )
     link_directories(. "${PROJECT_SOURCE_DIR}/rtexif"
         ${EXTRA_LIBDIR}
@@ -178,8 +179,8 @@ if(WIN32)
         ${GLIBMM_LIBRARY_DIRS}
         ${GTKMM_LIBRARY_DIRS}
         ${GTK_LIBRARY_DIRS}
+        ${LENSFUN_LIBRARY_DIRS}
         )
-    #set_target_properties(rth PROPERTIES LINK_FLAGS "-mwindows")
 else()
     include_directories(${EXTRA_INCDIR}
         ${CANBERRA-GTK_INCLUDE_DIRS}
@@ -195,6 +196,7 @@ else()
         ${GTK_INCLUDE_DIRS}
         ${IPTCDATA_INCLUDE_DIRS}
         ${LCMS_INCLUDE_DIRS}
+        ${LENSFUN_INCLUDE_DIRS}
         )
     link_directories(${EXTRA_LIBDIR}
         ${CANBERRA-GTK_LIBRARY_DIRS}
@@ -210,6 +212,7 @@ else()
         ${GTK_LIBRARY_DIRS}
         ${IPTCDATA_LIBRARY_DIRS}
         ${LCMS_LIBRARY_DIRS}
+        ${LENSFUN_LIBRARY_DIRS}
         )
 endif()
 
@@ -225,6 +228,10 @@ add_dependencies(rth UpdateInfo)
 add_dependencies(rth-cli UpdateInfo)
 
 # Set executables targets properties, i.e. output filename and compile flags
+# for "Debug" builds, open a console in all cases for Windows version
+if((WIN32) AND NOT(UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG"))
+    set_target_properties(rth PROPERTIES LINK_FLAGS "-mwindows")
+endif()
 set_target_properties(rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee)
 set_target_properties(rth-cli PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_NAME rawtherapee-cli)
 
@@ -248,6 +255,7 @@ target_link_libraries(rth rtengine
     ${PNG_LIBRARIES}
     ${TIFF_LIBRARIES}
     ${ZLIB_LIBRARIES}
+    ${LENSFUN_LIBRARIES}
     )
 
 target_link_libraries(rth-cli rtengine
@@ -267,6 +275,7 @@ target_link_libraries(rth-cli rtengine
     ${PNG_LIBRARIES}
     ${TIFF_LIBRARIES}
     ${ZLIB_LIBRARIES}
+    ${LENSFUN_LIBRARIES}
     )
 
 # Install executables

@@ -197,8 +197,11 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
     remoteDrag = false;
     selected = DCT_Linear;
     bottomBarCP = nullptr;
+    bottomBarCId = 0;
     leftBarCP = nullptr;
+    leftBarCId = 0;
     curveCP = nullptr;
+    curveCId = 0;
     relatedWidget = nullptr;
     expandRelatedWidget = true;
 
@@ -214,7 +217,7 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
     curveType->set_tooltip_text(M("CURVEEDITOR_TYPE"));
     // TODO: Does this signal have to be blocked when on curve type change ?
     curveType->signal_toggled().connect ( sigc::mem_fun(*this, &CurveEditor::curveTypeToggled) );
-    typeconn  = curveType->signal_changed().connect (sigc::mem_fun(*this, &CurveEditor::typeSelectionChanged) );
+    typeconn  = curveType->signal_item_selected().connect (sigc::mem_fun(*this, &CurveEditor::typeSelectionChanged) );
 }
 
 void CurveEditor::setCurve (const std::vector<double>& p)

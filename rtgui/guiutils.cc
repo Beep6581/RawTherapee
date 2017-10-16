@@ -247,8 +247,9 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         cr->set_source_rgb (0, 0, 0);
     } else if (options.bgcolor == 2) {
         cr->set_source_rgb (1, 1, 1);
+    } else if (options.bgcolor == 3) {
+        cr->set_source_rgb (0.467, 0.467, 0.467);
     }
-
 
     cr->rectangle (imx, imy, imw + 0.5, round(c1y) + 0.5);
     cr->rectangle (imx, round(imy + c2y) + 0.5, imw + 0.5, round(imh - c2y) + 0.5);
@@ -849,13 +850,15 @@ bool MyExpander::get_expanded()
     return expBox ? expBox->get_visible() : false;
 }
 
-void MyExpander::add  (Gtk::Container& widget)
+void MyExpander::add  (Gtk::Container& widget, bool setChild)
 {
-    child = &widget;
+    if(setChild) {
+        child = &widget;
+    }
     expBox = Gtk::manage (new ExpanderBox (child));
-    expBox->add (*child);
+    expBox->add (widget);
     pack_start(*expBox, Gtk::PACK_SHRINK, 0);
-    child->show();
+    widget.show();
     expBox->hideBox();
 }
 
@@ -887,11 +890,6 @@ bool MyExpander::on_toggle(GdkEventButton* event)
     }
 
     return false;
-}
-
-Gtk::Container* MyExpander::getChild()
-{
-    return child;
 }
 
 // used to connect a function to the enabled_toggled signal
@@ -1281,6 +1279,8 @@ MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileNam
     if (!imageFileName.empty()) {
         image = Gtk::manage( new RTImage(imageFileName) );
         box->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
+    } else {
+        image = nullptr;
     }
 
     box->attach_next_to(*this->label, Gtk::POS_RIGHT, 1, 1);
@@ -1323,26 +1323,6 @@ BackBuffer::BackBuffer(int width, int height, Cairo::Format format) : x(0), y(0)
 {
     if (w > 0 && h > 0) {
         surface = Cairo::ImageSurface::create(format, w, h);
-    } else {
-        w = h = 0;
-    }
-}
-
-BackBuffer::BackBuffer(int width, int height, Glib::RefPtr<Gdk::Window> referenceWindow) : x(0), y(0), w(width), h(height), offset(0, 0), dirty(true)
-{
-    if (w > 0 && h > 0 && referenceWindow) {
-        Cairo::RefPtr<Cairo::Surface> surf = referenceWindow->create_similar_image_surface(Cairo::FORMAT_RGB24, w, h, 0);
-        Cairo::SurfaceType type = surf->get_type();
-
-        if (type == Cairo::SURFACE_TYPE_IMAGE || type == Cairo::SURFACE_TYPE_WIN32) {
-            surface = Cairo::RefPtr<Cairo::ImageSurface>::cast_static(surf);
-
-            if (!surface || !surface->get_width() || !surface->get_height()) {
-                printf("ERRRROOOOORRRR!\n");
-            }
-        } else {
-            printf("ERROR: wrong surface type. 0 or 7 was expected, but we've got %d instead.\n", type);
-        }
     } else {
         w = h = 0;
     }

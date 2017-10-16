@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.51 - requires RT 5.0 (Gtk+ >= 3.20)
+  Version 2.57
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 @define-color bg-highlighted-text-color rgb(35,99,166); /*** Highlighted text color background* Default: rgb(35,99,166) ***/
 @define-color highlighted-text-color rgb(210,210,210);  /*** Highlighted text color * Default: rgb(210,210,210) ***/
 
-@define-color bg-image rgb(70,70,70);                   /*** Image area & File Browser background * Default: rgb(70,70,70) ***/
+@define-color bg-image rgb(75,75,75);                   /*** Image area & File Browser background * Default: rgb(70,70,70) ***/
 
 @define-color accent-color2 rgb(35,99,166);             /*** Scale, Progressbar, Scrollbar, Tabs * Default: rgb(35,99,166) ***/
 @define-color accent-color4 rgb(115,115,115);           /*** Slider knob * Default: rgb(115,115,115) ***/
@@ -36,9 +36,9 @@
 
 /*** Change me end *****************************************************************************/
 
-@define-color bg-light-grey rgb(90,90,90);
-@define-color bg-grey rgb(70,70,70);
-@define-color bg-dark-grey rgb(36,36,36);
+@define-color bg-light-grey rgb(95,95,95);
+@define-color bg-grey rgb(75,75,75);
+@define-color bg-dark-grey rgb(40,40,40);
 
 @define-color bg-button-hover rgba(0,0,0,.25);
 @define-color bg-button-active rgba(0,0,0,.60);
@@ -47,8 +47,8 @@
 @define-color winTitle rgb(190,190,190);
 
 @define-color bg-tooltip rgb(185,185,185);
-@define-color border-tooltip rgb(36,36,36);
-@define-color text-tooltip rgb(36,36,36);
+@define-color border-tooltip rgb(40,40,40);
+@define-color text-tooltip rgb(40,40,40);
 /***********************************************/
 @define-color text-color rgb(186,186,186);
 @define-color text-tbEntry rgb(192,192,192);
@@ -61,6 +61,9 @@
 @define-color headline-big rgb(195,195,195);
 @define-color headline-hl rgb(230,230,230);
 @define-color headline-frame rgb(215,215,215);
+/*** New Color Variable v2.53 ************************************************************************/
+@define-color fg-disabled rgb(128,128,128);
+@define-color bg-tb-spinbutton shade(@bg-grey, 1.33);
 /***********************************************************************************************/
 
 * {
@@ -72,7 +75,7 @@
 }
 
 *:disabled {
-    color: rgb(128,128,128);
+    color: @fg-disabled;
 }
 
 #ToolPanelNotebook {
@@ -422,6 +425,7 @@ paned.horizontal > separator {
 }
 
 paned.vertical > separator {
+	background-image: image(@bg-dark-grey);
     background-color: @bg-light-grey;
     min-height: 0.5em;
     border-top: 1px solid @bg-light-grey;
@@ -594,7 +598,7 @@ scale slider {
     margin: calc(-0.33334em - 1px);
     border-radius: 0.83334em;
     background-image: linear-gradient(to bottom, shade (@accent-color4,1.15), shade (@accent-color4,.85));
-    border: 0.08334em solid @bg-dark-grey;
+    border: 0.08334em solid @bg-button-border;
     box-shadow: none;
 }
 scale slider:hover {
@@ -604,13 +608,13 @@ scale slider:hover {
 scale trough {
     margin: 0.5em; /* has to be half of "scale slider / min-width min-height*/
     background-color: @bg-scale-entry;
-    border: 0.08334em solid @bg-dark-grey;
+    border: 0.08334em solid @bg-button-border;
     box-shadow: inset 0 0.08334em rgba(255, 255, 255, 0.11), 0 0.08334em rgba(242, 242, 242, 0.11);
     border-radius: 0.5em;
 }
 scale:not(:disabled) trough highlight {
     background-color: @accent-color2;
-    border: 0.08334em solid @bg-dark-grey;
+    border: 0.08334em solid @bg-button-border;
     box-shadow: inset 0 0.08334em shade(@accent-color2, 1.3);
     border-radius: 0.5em;
 }
@@ -1031,36 +1035,10 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin-right: 0;
 }
 
-#EditorTopPanel > box:nth-child(9) > button.image-button:not(:nth-child(6)) {
+#EditorTopPanel > box:nth-child(9) > button.image-button {
     min-width: 0;
-    padding-left: 0.33334em;
-    padding-right: 0.33334em;
-}
-
-#EditorTopPanel > box:nth-child(9) > button.image-button:nth-child(6) {
-    -gtk-icon-shadow: none;
-}
-#EditorTopPanel > box > box > button {
-    min-height: 0.625em;
-    min-width: 0;
-    margin: 0 0.16667em;
-    padding: 0 0.16667em;
-    border: 0.08334em solid transparent;
-    background-color: transparent;
-    background-image: none;
-    box-shadow: none;
-}
-#EditorTopPanel > box > box > button:hover {
-    background-color: transparent;
-    background-image: none;
-    border: 0.08334em solid transparent;
-    box-shadow: none;
-}
-#EditorTopPanel > box > box > button:checked {
-    background-color: transparent;
-    background-image: none;
-    border: 0.08334em solid @bg-button-border;
-    box-shadow: none;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
 }
 
 /*Button editor bottom*/
@@ -1204,7 +1182,7 @@ entry > window > frame > border {
     padding: 0.08334em;
     border: 0.08334em solid @accent-color;
 }
-.csd entry > window > frame > border {
+entry > window > frame > border {
     margin: 0.08334em;
 }
 /* end */
@@ -1212,15 +1190,14 @@ entry > window > frame > border {
 /*** end ***************************************************************************************/
 
 /*** Popover *** Context menu filechooser ******************************************************/
-.csd popover.background {
-    box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
-}
+
 popover.background {
     background-color: @bg-dark-grey;
     border: 0.08334em solid  @accent-color;
     border-radius: 0;
     padding: 0;
     margin: 0;
+	box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px @bg-dark-grey;
 }
 popover.background > box {
     padding: 0;
@@ -1639,7 +1616,7 @@ radiobutton {
 
 check,
 radio {
-    border: calc(0.083334em + 0.18px) solid shade(@text-color, .9);
+    border: calc(0.083334em + 0.18px) solid @text-color;
     background-image: none;
     background-color: transparent;
     margin: 0;
@@ -1649,6 +1626,7 @@ radio {
     box-shadow: none;
     background-repeat: no-repeat;
     -gtk-icon-shadow: none;
+	color: @text-color;
 }
 radiobutton label,
 checkbutton label {
@@ -1664,7 +1642,7 @@ radio{
 }
 check:disabled,
 radio:disabled {
-    border-color: rgb(120,120,120);
+    border-color: @fg-disabled;
 }
 
 frame > checkbutton check{
@@ -1717,7 +1695,7 @@ spinbutton {
     min-width: 0;
     border-top-left-radius: 1.83334em;
     border-bottom-left-radius: 1.83334em;
-    background-color: shade(@bg-grey, 1.33);
+    background-color: @bg-tb-spinbutton;
     border: 0.08334em solid @bg-button-border;
     color: @text-tbEntry;
     box-shadow: inset 0.08334em  0.08334em rgba(0, 0, 0, .12), 0 0.08334em rgba(255, 255, 255, 0.12);
@@ -1858,5 +1836,4 @@ headerbar:backdrop {
 headerbar .title:backdrop {
     color: alpha(@winTitle,.60);
 }
-/**/
 /*** end ***************************************************************************************/

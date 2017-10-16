@@ -22,7 +22,7 @@
 #include "inspector.h"
 #include "placesbrowser.h"
 
-FilePanel::FilePanel () : parent(nullptr)
+FilePanel::FilePanel () : parent(nullptr), error(0)
 {
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
@@ -157,6 +157,8 @@ FilePanel::~FilePanel ()
     if (inspectorPanel) {
         delete inspectorPanel;
     }
+
+    delete tpc;
 }
 
 void FilePanel::on_realize ()
@@ -190,8 +192,12 @@ void FilePanel::init ()
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (argv1 != "" && Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR)) {
-        dirBrowser->open (argv1);
+    if (!argv1.empty() && Glib::file_test (argv1, Glib::FILE_TEST_EXISTS)) {
+        Glib::ustring d(argv1);
+        if (!Glib::file_test(d, Glib::FILE_TEST_IS_DIR)) {
+            d = Glib::path_get_dirname(d);
+        }
+        dirBrowser->open(d);
     } else {
         if (options.startupDir == STARTUPDIR_HOME) {
             dirBrowser->open (PlacesBrowser::userPicturesDir ());
@@ -273,9 +279,23 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             if (options.tabbedUI) {
                 EditorPanel* epanel;
                 {
+#ifdef WIN32
+                    int winGdiHandles = GetGuiResources( GetCurrentProcess(), GR_GDIOBJECTS);
+                    if(winGdiHandles > 0 && winGdiHandles <= 8500) // 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
+#endif
+                    {
                     GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
                     epanel = Gtk::manage (new EditorPanel ());
                     parent->addEditorPanel (epanel, pl->thm->getFileName());
+                    }
+#ifdef WIN32
+                    else {
+                        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
+                        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+                        msgd.run ();
+                        goto MAXGDIHANDLESREACHED;
+                    }
+#endif
                 }
                 epanel->open(pl->thm, pl->pc->returnValue() );
 
@@ -295,7 +315,9 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
-
+#ifdef WIN32
+MAXGDIHANDLESREACHED:
+#endif
         delete pl->pc;
 
         {

@@ -3,8 +3,11 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wparentheses"
-#if (__GNUC__ == 6)
+#if (__GNUC__ >= 6)
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#if (__GNUC__ >= 7)
+#pragma GCC diagnostic ignored "-Wdangling-else"
+#endif
 #endif
 #endif
 
@@ -2560,6 +2563,12 @@ void CLASS kodak_radc_load_raw()
   for (row=0; row < height; row+=4) {
     FORC3 mul[c] = getbits(6);
     FORC3 {
+        if (!mul[c]) {
+            mul[c] = 1;
+            derror();
+        }
+    }
+    FORC3 {
       val = ((0x1000000/last[c] + 0x7ff) >> 12) * mul[c];
       s = val > 65564 ? 10:12;
       x = ~(-1 << (s-1));
@@ -2921,9 +2930,13 @@ void CLASS kodak_65000_load_raw()
       pred[0] = pred[1] = 0;
       len = MIN (256, width-col);
       ret = kodak_65000_decode (buf, len);
-      for (i=0; i < len; i++)
-	if ((RAW(row,col+i) =	curve[ret ? buf[i] :
-		(pred[i & 1] += buf[i])]) >> 12) derror();
+      for (i=0; i < len; i++) {
+	    int idx = ret ? buf[i] : (pred[i & 1] += buf[i]);
+        if(idx >=0 && idx <= 0xffff) {
+          if ((RAW(row,col+i) = curve[idx]) >> 12) derror();
+        } else
+          derror();
+      }
     }
 }
 
@@ -3045,34 +3058,60 @@ void CLASS sony_arw_load_raw()
 
 void CLASS sony_arw2_load_raw()
 {
-  uchar *data, *dp;
-  ushort pix[16];
-  int row, col, val, max, min, imax, imin, sh, bit, i;
 
-  data = (uchar *) malloc (raw_width+1);
-  merror (data, "sony_arw2_load_raw()");
-  for (row=0; row < height; row++) {
-    fread (data, 1, raw_width, ifp);
-    for (dp=data, col=0; col < raw_width-30; dp+=16) {
-      max = 0x7ff & (val = sget4(dp));
-      min = 0x7ff & val >> 11;
-      imax = 0x0f & val >> 22;
-      imin = 0x0f & val >> 26;
-      for (sh=0; sh < 4 && 0x80 << sh <= max-min; sh++);
-      for (bit=30, i=0; i < 16; i++)
-	if      (i == imax) pix[i] = max;
-	else if (i == imin) pix[i] = min;
-	else {
-	  pix[i] = ((sget2(dp+(bit >> 3)) >> (bit & 7) & 0x7f) << sh) + min;
-	  if (pix[i] > 0x7ff) pix[i] = 0x7ff;
-	  bit += 7;
-	}
-      for (i=0; i < 16; i++, col+=2)
-       RAW(row,col) = curve[pix[i] << 1]; // >> 2; RT: disabled shifting to avoid precision loss
-      col -= col & 1 ? 1:31;
+#if defined( _OPENMP ) && defined( MYFILE_MMAP )
+#pragma omp parallel
+#endif
+{
+    uchar *data = new (std::nothrow) uchar[raw_width + 1];
+    merror(data, "sony_arw2_load_raw()");
+    IMFILE ifpthr = *ifp;
+    int pos = ifpthr.pos;
+    ushort pix[16];
+
+#if defined( _OPENMP ) && defined( MYFILE_MMAP )
+    // only master thread will update the progress bar
+    ifpthr.plistener = nullptr;
+    #pragma omp master
+    {
+    ifpthr.plistener = ifp->plistener;
     }
-  }
-  free (data);
+    #pragma omp for schedule(dynamic,16) nowait
+#endif
+
+    for (int row = 0; row < height; row++) {
+        fseek(&ifpthr, pos + row * raw_width, SEEK_SET);
+        fread(data, 1, raw_width, &ifpthr);
+        uchar *dp = data;
+        for (int col = 0; col < raw_width - 30; dp += 16) {
+            int val = sget4(dp);
+            int max = 0x7ff & val;
+            int min = 0x7ff & val >> 11;
+            int imax = 0x0f & val >> 22;
+            int imin = 0x0f & val >> 26;
+            int bit = 30;
+            for (int i = 0; i < 16; i++) {
+                if (i == imax) {
+                    pix[i] = max;
+                } else if (i == imin) {
+                    pix[i] = min;
+                } else {
+                    int sh;
+                    for (sh = 0; sh < 4 && 0x80 << sh <= max - min; sh++)
+                        ;
+                    pix[i] = ((sget2(dp + (bit >> 3)) >> (bit & 7) & 0x7f) << sh) + min;
+                    pix[i] = std::min(pix[i], (ushort)0x7ff);
+                    bit += 7;
+                }
+            }
+            for (int i = 0; i < 16; i++, col += 2) {
+                RAW(row,col) = curve[pix[i] << 1]; // >> 2; RT: disabled shifting to avoid precision loss
+            }
+            col -= col & 1 ? 1:31;
+        }
+    }
+  delete [] data;
+}
   maximum = curve[0x7ff << 1]; // RT: fix maximum.
   maximum = 16300; // RT: conservative white level tested on various ARW2 cameras. This constant was set in 2013-12-17, may need re-evaluation in the future.
 }
@@ -6205,6 +6244,16 @@ guess_cfa_pc:
     free (buf);
   }
 
+  /* RT -- do not use CameraCalibration matrices for DNGs - see #4129 */
+  for (j=0; j < 4; j++) {
+      ab[j] = 1;
+      for (i=0; i < 4; i++) {
+          cc[0][j][i] = i == j;
+          cc[1][j][i] = i == j;
+      }
+  }
+  /* RT end */
+
   for (i=0; i < colors; i++)
     FORCC cc[cm_D65][i][c] *= ab[i];
   if (use_cm) {
@@ -9021,6 +9070,10 @@ canon_a5:
       flip = 6;
     } else if (load_raw != &CLASS packed_load_raw)
       maximum = (is_raw == 2 && shot_select) ? 0x2f00 : 0x3e00;
+    if (!strncmp(model,"X-A10",5)) {
+        raw_width = 4912;
+        raw_height = 3278;
+    }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
     if (width == 2848 || width == 3664) filters = 0x16161616;
@@ -9507,7 +9560,7 @@ dng_skip:
 	adobe_coeff (make, model);
   if(!strncmp(make, "Samsung", 7) && !strncmp(model, "NX1",3))
 	adobe_coeff (make, model);
-  if((!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4) || !strncmp(model, "K-1",3))) && filters != 0)
+  if((!strncmp(make, "Pentax", 6) && (!strncmp(model, "K10D",4) || !strncmp(model, "K-70",4) || !strncmp(model, "K-1",3) || !strncmp(model, "KP",2))) && filters != 0)
 	adobe_coeff (make, model);
   if(!strncmp(make, "Leica", 5) && !strncmp(model, "Q",1))
     adobe_coeff (make, model);
@@ -9751,11 +9804,45 @@ static void copyFloatDataToInt(float * src, ushort * dst, size_t size, float max
     fprintf(stderr, "DNG Float: NaN data found in input file\n");
 }
 
+static int decompress(size_t srcLen, size_t dstLen, unsigned char *in, unsigned char *out) {
+    // At least in zlib 1.2.11 the uncompress function is not thread save while it is thread save in zlib 1.2.8
+    // This simple replacement is thread save. Used example code from https://zlib.net/zlib_how.html
+
+    int ret;
+    z_stream strm;
+    /* allocate inflate state */
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    strm.avail_in = 0;
+    strm.next_in = Z_NULL;
+    ret = inflateInit(&strm);
+    if (ret != Z_OK) {
+        return ret;
+    }
+    strm.avail_out = dstLen;
+    strm.next_out = out;
+    strm.avail_in = srcLen;
+    strm.next_in = in;
+    ret = inflate(&strm, Z_NO_FLUSH);
+    switch (ret) {
+    case Z_NEED_DICT:
+        ret = Z_DATA_ERROR;     /* and fall through */
+    case Z_DATA_ERROR:
+    case Z_MEM_ERROR:
+        (void)inflateEnd(&strm);
+        return ret;
+    }
+    /* clean up and return */
+    (void)inflateEnd(&strm);
+    return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+}
+
 void CLASS deflate_dng_load_raw() {
     float_raw_image = new float[raw_width * raw_height];
 
 #ifdef _OPENMP
-#pragma omp parallel for
+    #pragma omp parallel for
 #endif
     for (size_t i = 0; i < raw_width * raw_height; ++i)
       float_raw_image[i] = 0.0f;
@@ -9812,44 +9899,45 @@ void CLASS deflate_dng_load_raw() {
     }
     uLongf dstLen = tile_width * tile_length * 4;
 
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
+#ifdef _OPENMP
 #pragma omp parallel
 #endif
 {
     Bytef * cBuffer = new Bytef[maxCompressed];
     Bytef * uBuffer = new Bytef[dstLen];
 
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
-#pragma omp for collapse(2) nowait
+#ifdef _OPENMP
+    #pragma omp for collapse(2) schedule(dynamic) nowait
 #endif
     for (size_t y = 0; y < raw_height; y += tile_length) {
-      for (size_t x = 0; x < raw_width; x += tile_width) {
-		size_t t = (y / tile_length) * tilesWide + (x / tile_width);
-#if defined(_OPENMP) && ZLIB_VER_REVISION == 8
-#pragma omp critical
+        for (size_t x = 0; x < raw_width; x += tile_width) {
+            size_t t = (y / tile_length) * tilesWide + (x / tile_width);
+#ifdef _OPENMP
+            #pragma omp critical
 #endif
-{
-        fseek(ifp, tileOffsets[t], SEEK_SET);
-        fread(cBuffer, 1, tileBytes[t], ifp);
-}
-        int err = uncompress(uBuffer, &dstLen, cBuffer, tileBytes[t]);
-        if (err != Z_OK) {
-          fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
-        } else if (ifd->sample_format == 3) {  // Floating point data
-          int bytesps = ifd->bps >> 3;
-          size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
-          size_t thisTileWidth = x + tile_width > raw_width ? raw_width - x : tile_width;
-          for (size_t row = 0; row < thisTileLength; ++row) {
-            Bytef * src = uBuffer + row*tile_width*bytesps;
-            Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
-            if (predFactor)
-              decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
-            expandFloats(dst, thisTileWidth, bytesps);
-          }
-        } else {  // 32-bit Integer data
-          // TODO
+            {
+                fseek(ifp, tileOffsets[t], SEEK_SET);
+                fread(cBuffer, 1, tileBytes[t], ifp);
+            }
+            int err = decompress(tileBytes[t], dstLen, cBuffer, uBuffer);
+            if (err != Z_OK) {
+                fprintf(stderr, "DNG Deflate: Failed uncompressing tile %d, with error %d\n", (int)t, err);
+            } else if (ifd->sample_format == 3) {  // Floating point data
+                int bytesps = ifd->bps >> 3;
+                size_t thisTileLength = y + tile_length > raw_height ? raw_height - y : tile_length;
+                size_t thisTileWidth = x + tile_width > raw_width ? raw_width - x : tile_width;
+                for (size_t row = 0; row < thisTileLength; ++row) {
+                    Bytef * src = uBuffer + row*tile_width*bytesps;
+                    Bytef * dst = (Bytef *)&float_raw_image[(y+row)*raw_width + x];
+                    if (predFactor) {
+                        decodeFPDeltaRow(src, dst, thisTileWidth, tile_width, bytesps, predFactor);
+                    }
+                    expandFloats(dst, thisTileWidth, bytesps);
+                }
+            } else {  // 32-bit Integer data
+                // TODO
+            }
         }
-      }
     }
 
     delete [] cBuffer;

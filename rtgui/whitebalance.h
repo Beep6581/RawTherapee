@@ -86,7 +86,7 @@ protected:
     int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
 
     Gtk::TreeModel::Row            getActiveMethod ();
-    int                            findWBEntryId   (Glib::ustring label, enum WB_LabelType lblType = WBLT_GUI);
+    unsigned int                   findWBEntryId   (const Glib::ustring &label, enum WB_LabelType lblType = WBLT_GUI);
     rtengine::procparams::WBEntry* findWBEntry     (Glib::ustring label, enum WB_LabelType lblType = WBLT_GUI);
 
 public:

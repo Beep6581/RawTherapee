@@ -305,7 +305,7 @@ rtengine::CLUTStore& rtengine::CLUTStore::getInstance()
     return instance;
 }
 
-std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ustring& filename)
+std::shared_ptr<rtengine::HaldCLUT> rtengine::CLUTStore::getClut(const Glib::ustring& filename) const
 {
     std::shared_ptr<rtengine::HaldCLUT> result;
 

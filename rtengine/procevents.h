@@ -73,7 +73,7 @@ enum ProcEvent {
     EvLDNRadius = 43, // obsolete
     EvLDNEdgeTolerance = 44, // obsolete
     EvCDNEnabled = 45, // obsolete
-    EvBlendCMSMatrix = 46,
+    EvBlendCMSMatrix = 46, // obsolete
     EvDCPToneCurve = 47,
     EvDCPIlluminant = 48,
     EvSHEnabled = 49,
@@ -451,7 +451,7 @@ enum ProcEvent {
     EvLgam = 421,
     EvLslope = 422,
     EvLhighl = 423,
-    EvLbaselog = 424,
+//    EvLbaselog = 424,   -- can be reused --
     EvRetinexlhcurve = 425,
     EvOIntent = 426,
     EvMonitorTransform = 427,
@@ -502,6 +502,20 @@ enum ProcEvent {
     EvPixelShiftLmmse = 472,
     EvPixelShiftEqualBright = 473,
     EvPixelShiftEqualBrightChannel = 474,
+    EvCATtempout = 475,
+    EvCATgreenout = 476,
+    EvCATybout = 477,
+    EvCATDegreeout = 478,
+    EvCATAutoDegreeout = 479,
+    EvCATtempsc = 480,
+    EvCATgreensc = 481,
+    EvCATybscen = 482,
+    EvCATAutoyb = 483,
+    // profiled lens correction new events
+    EvLensCorrMode = 484,
+    EvLensCorrLensfunCamera = 485,
+    EvLensCorrLensfunLens = 486,
+
     NUMOFEVENTS
 
 };

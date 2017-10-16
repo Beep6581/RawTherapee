@@ -26,7 +26,7 @@ using namespace rtengine::procparams;
 
 Glib::ustring eventDescrArray[NUMOFEVENTS];
 
-History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmnum (1)
+History::History (bool bookmarkSupport) : historyVPaned(nullptr), blistener(nullptr), tpc (nullptr), bmnum (1)
 {
 
     blistenerLock = false; // sets default that the Before preview will not be locked
@@ -54,7 +54,6 @@ History::History (bool bookmarkSupport) : blistener(nullptr), tpc (nullptr), bmn
     hTreeView->set_hscroll_policy(Gtk::SCROLL_MINIMUM);
     hTreeView->set_vscroll_policy(Gtk::SCROLL_NATURAL);
     hTreeView->set_size_request(80, -1);
-    hTreeView->set_resize_mode(Gtk::RESIZE_QUEUE);
 
     Gtk::CellRendererText *changecrt = Gtk::manage (new Gtk::CellRendererText());
     changecrt->property_ellipsize() = Pango::ELLIPSIZE_END;
@@ -266,7 +265,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
         Gtk::TreeModel::Row newrow = *(historyModel->append());
         newrow[historyColumns.realText] = eventDescrArray[ev];
         newrow[historyColumns.text] = text;
-        newrow[historyColumns.value] = descr;
+        newrow[historyColumns.value] = g_markup_escape_text(descr.c_str(), -1);
         newrow[historyColumns.chev] = ev;
         newrow[historyColumns.params] = *params;
         newrow[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
@@ -285,7 +284,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     else {
         row[historyColumns.realText] = eventDescrArray[ev];
         row[historyColumns.text] = text;
-        row[historyColumns.value] = descr;
+        row[historyColumns.value] = g_markup_escape_text(descr.c_str(), -1);
         row[historyColumns.chev] = ev;
         row[historyColumns.params] = *params;
         row[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;

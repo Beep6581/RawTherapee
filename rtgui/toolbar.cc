@@ -21,15 +21,13 @@
 #include "multilangmgr.h"
 #include "guiutils.h"
 
-ToolBar::ToolBar () : showColPickers(true), listener (nullptr)
+ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(nullptr)
 {
 
     editingMode = false;
 
-    handimg = Gtk::manage (new RTImage ("openhand.png"));
-    handimg->reference();
-    editinghandimg = Gtk::manage (new RTImage ("editmodehand.png"));
-    editinghandimg->reference();
+    handimg.reset(new RTImage("openhand.png"));
+    editinghandimg.reset(new RTImage("editmodehand.png"));
 
     handTool = Gtk::manage (new Gtk::ToggleButton ());
     handTool->add (*handimg);
@@ -48,10 +46,8 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr)
 
     pack_start (*wbTool);
 
-    showcolpickersimg = Gtk::manage (new RTImage ("colorPickers-show.png"));
-    showcolpickersimg->reference();
-    hidecolpickersimg = Gtk::manage (new RTImage ("colorPickers-hide.png"));
-    hidecolpickersimg->reference();
+    showcolpickersimg.reset(new RTImage("colorPickers-show.png"));
+    hidecolpickersimg.reset(new RTImage("colorPickers-hide.png"));
 
     colPickerTool = Gtk::manage (new Gtk::ToggleButton ());
     colPickerTool->add (*showcolpickersimg);
@@ -97,14 +93,6 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr)
     straTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_STRAIGHTEN"));
 }
 
-ToolBar::~ToolBar ()
-{
-    handimg->unreference();
-    editinghandimg->unreference();
-    showcolpickersimg->unreference();
-    hidecolpickersimg->unreference();
-
-}
 //
 // Selects the desired tool without notifying the listener
 //

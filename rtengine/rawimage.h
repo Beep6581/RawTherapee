@@ -20,9 +20,11 @@
 #define __RAWIMAGE_H
 
 #include <ctime>
+#include <cmath>
+#include <iostream>
 
 #include "dcraw.h"
-#include "imageio.h"
+#include "imageformat.h"
 #include "noncopyable.h"
 
 namespace rtengine
@@ -119,7 +121,7 @@ public:
     {
         return image;
     }
-    float** compress_image(int frameNum); // revert to compressed pixels format and release image data
+    float** compress_image(int frameNum, bool freeImage = true); // revert to compressed pixels format and release image data
     float** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
     unsigned prefilters;               // original filters saved ( used for 4 color processing )
     unsigned int getFrameCount() const { return is_raw; }
@@ -233,7 +235,13 @@ public:
     }
     float get_pre_mul(int c )const
     {
-        return pre_mul[c];
+        if(std::isfinite(pre_mul[c])) {
+            return pre_mul[c];
+        } else {
+            std::cout << "Failure decoding '" << filename << "', please file a bug report including the raw file and the line below:" << std::endl;
+            std::cout << "rawimage.h get_pre_mul() : pre_mul[" << c << "] value " << pre_mul[c] << " automatically replaced by value 1.0" << std::endl;
+            return 1.f;
+        }
     }
     float get_rgb_cam( int r, int c) const
     {

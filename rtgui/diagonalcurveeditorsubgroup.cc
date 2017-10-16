@@ -525,7 +525,8 @@ void DiagonalCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int mo
 
     case (DCT_Parametric):
         if (editedAdjuster) {
-            int trimmedValue = editedAdjuster->trimValue(editedAdjusterValue - (provider->deltaScreen.y / 2));
+            int trimmedValue = editedAdjusterValue - (provider->deltaScreen.y / 2);
+            editedAdjuster->trimValue(trimmedValue);
 
             if (trimmedValue != editedAdjuster->getIntValue()) {
                 editedAdjuster->setValue(trimmedValue);
@@ -620,7 +621,9 @@ void DiagonalCurveEditorSubGroup::switchGUI()
         } else {
             // dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
             if (!leftBar) {
-                leftBar = new ColoredBar(RTO_Bottom2Top);
+				leftBar = new ColoredBar(RTO_Bottom2Top);
+				
+				
             }
 
             if (barColorProvider) {

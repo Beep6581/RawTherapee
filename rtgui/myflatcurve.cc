@@ -21,7 +21,25 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyFlatCurve::MyFlatCurve ()
+MyFlatCurve::MyFlatCurve () :
+    clampedX(0.0),
+    clampedY(0.0),
+    deltaX(0.0),
+    deltaY(0.0),
+    distanceX(0.0),
+    distanceY(0.0),
+    ugpX(0.0),
+    ugpY(0.0),
+    leftTanX(0.0),
+    rightTanX(0.0),
+    preciseCursorX(0.0),
+    preciseCursorY(0.0),
+    minDistanceX(0.0),
+    minDistanceY(0.0),
+    deletedPointX(0.0),
+    leftTanHandle({0.0, 0.0}),
+    rightTanHandle({0.0, 0.0}),
+    draggingElement(false)
 {
 
     graphW = get_allocation().get_width() - RADIUS * 2;

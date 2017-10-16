@@ -255,29 +255,6 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     set_keep_above (true);
 }
 
-Splash::Splash (Gtk::Window& parent, int maxtime) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true)
-{
-
-    splashImage = Gtk::manage(new SplashImage ());
-    get_content_area()->pack_start (*splashImage);
-    splashImage->show ();
-
-    if (maxtime > 0) {
-        Glib::signal_timeout().connect (sigc::mem_fun(*this, &Splash::on_timer), maxtime);
-    }
-
-    set_position (Gtk::WIN_POS_CENTER);
-
-    if (maxtime > 0) {
-        set_decorated (false);
-    }
-
-    add_events(Gdk::BUTTON_RELEASE_MASK);
-    set_resizable (false);
-
-    set_keep_above (true);
-}
-
 bool Splash::on_timer ()
 {
 

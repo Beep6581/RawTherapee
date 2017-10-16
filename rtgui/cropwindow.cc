@@ -36,7 +36,7 @@ using namespace rtengine;
 
 CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDetailWindow)
     : ObjectMOBuffer(parent), state(SNormal), press_x(0), press_y(0), action_x(0), action_y(0), pickedObject(-1), pickModifierKey(0), rot_deg(0), onResizeArea(false), deleted(false),
-      fitZoomEnabled(true), fitZoom(false), /*isLowUpdatePriority(isLowUpdatePriority_),*/ hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
+      fitZoomEnabled(true), fitZoom(false), cursor_type(CSArrow), /*isLowUpdatePriority(isLowUpdatePriority_),*/ hoveredPicker(nullptr), cropLabel(Glib::ustring("100%")),
       backColor(options.bgcolor), decorated(true), isFlawnOver(false), titleHeight(30), sideBorderWidth(3), lowerBorderWidth(3),
       upperBorderWidth(1), sepWidth(2), xpos(30), ypos(30), width(0), height(0), imgAreaX(0), imgAreaY(0), imgAreaW(0), imgAreaH(0),
       imgX(-1), imgY(-1), imgW(1), imgH(1), iarea(parent), cropZoom(0), zoomVersion(0), exposeVersion(0), cropgl(nullptr),
@@ -895,7 +895,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
     } else if (state == SDragPicker) {
         Coord imgPos;
         action_x = x - press_x;
-        action_x = y - press_y;
+        action_y = y - press_y;
         screenCoordToImage (x, y, imgPos.x, imgPos.y);
         if (imgPos.x < 0) {
             imgPos.x = 0;
@@ -1026,6 +1026,12 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
             cropHandler.cimg.lock ();
             int vx = x - xpos - imgX;
             int vy = y - ypos - imgY;
+
+            if(decorated) {
+                vx -= sideBorderWidth;
+                vy -= (titleHeight + upperBorderWidth + sepWidth);
+            }
+
 //          guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
 //          if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
 //              pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
@@ -1318,6 +1324,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             cr->set_source_rgb (0, 0, 0);
         } else if (backColor == 2) {
             cr->set_source_rgb (1, 1, 1);
+        } else if (backColor == 3) {
+            cr->set_source_rgb (0.467, 0.467, 0.467);
         }
 
         cr->set_line_width (0.);
@@ -1353,13 +1361,13 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
             imgH = cropHandler.cropPixbuf->get_height ();
             exposeVersion++;
 
-            bool showcs = iarea->indClippedPanel->showClippedShadows();
-            bool showch = iarea->indClippedPanel->showClippedHighlights();
             const bool showR  = iarea->previewModePanel->showR(); // will show clipping if R channel is clipped
             const bool showG  = iarea->previewModePanel->showG(); // will show clipping if G channel is clipped
             const bool showB  = iarea->previewModePanel->showB(); // will show clipping if B channel is clipped
             const bool showL  = iarea->previewModePanel->showL(); // will show clipping if L value   is clipped
-            const bool showFocusMask  = iarea->previewModePanel->showFocusMask();
+            const bool showFocusMask  = iarea->indClippedPanel->showFocusMask();
+            bool showcs = iarea->indClippedPanel->showClippedShadows();
+            bool showch = iarea->indClippedPanel->showClippedHighlights();
 
             // While the Right-side ALT is pressed, auto-enable highlight and shadow clipping indicators
             // TODO: Add linux/MacOS specific functions for alternative
@@ -1613,9 +1621,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 
                     const int hlThreshold = options.highlightThreshold;
                     const int shThreshold = options.shadowThreshold;
-                    const float ShawdowFac = 64 / (options.shadowThreshold + 1);
-                    const float HighlightFac = 64 / (256 - options.highlightThreshold);
-                    const bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any of RGB chanels is clipped
+                    const float ShawdowFac = 64.f / (options.shadowThreshold + 1);
+                    const float HighlightFac = 64.f / (256 - options.highlightThreshold);
+                    const bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any (all) of RGB chanels is (shadow) clipped
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16)
@@ -1673,17 +1681,21 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
                             }
 
                             if (showcs) {
-                                if ((showclippedAny || showR) && currWS[0] <= shThreshold ) {
+                                bool scR = currWS[0] <= shThreshold;
+                                bool scG = currWS[1] <= shThreshold;
+                                bool scB = currWS[2] <= shThreshold;
+
+                                if (((showclippedAny && (scG && scB)) || showR) && scR ) {
                                     delta += currWS[0];
                                     changedSH = true;
                                 }
 
-                                if ((showclippedAny || showG) && currWS[1] <= shThreshold ) {
+                                if (((showclippedAny && (scR && scB)) || showG) && scG ) {
                                     delta += currWS[1];
                                     changedSH = true;
                                 }
 
-                                if ((showclippedAny || showB) && currWS[2] <= shThreshold ) {
+                                if (((showclippedAny && (scR && scG)) || showB) && scB ) {
                                     delta += currWS[2];
                                     changedSH = true;
                                 }

@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
+#include <exception>
 
 #define STARTUPDIR_CURRENT 0
 #define STARTUPDIR_HOME    1
@@ -42,17 +43,16 @@
 // Special name for the Dynamic profile
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
-struct SaveFormat
-{
+struct SaveFormat {
     SaveFormat() :
-        format("jpg"),
-        pngBits(8),
-        pngCompression(6),
-        jpegQuality(90),
-        jpegSubSamp(2),
-        tiffBits(8),
-        tiffUncompressed(true),
-        saveParams(true)
+        format ("jpg"),
+        pngBits (8),
+        pngCompression (6),
+        jpegQuality (90),
+        jpegSubSamp (2),
+        tiffBits (8),
+        tiffUncompressed (true),
+        saveParams (true)
     {
     }
 
@@ -73,14 +73,31 @@ enum prevdemo_t {PD_Sidecar = 1, PD_Fast = 0};
 
 class Options
 {
+public:
+    class Error: public std::exception
+    {
+    public:
+        Error (const Glib::ustring &msg): msg_ (msg) {}
+        const char *what() const throw()
+        {
+            return msg_.c_str();
+        }
+        const Glib::ustring &get_msg() const throw()
+        {
+            return msg_;
+        }
+
+    private:
+        Glib::ustring msg_;
+    };
 
 private:
     bool defProfRawMissing;
     bool defProfImgMissing;
     Glib::ustring userProfilePath;
     Glib::ustring globalProfilePath;
-    bool checkProfilePath(Glib::ustring &path);
-    bool checkDirPath(Glib::ustring &path, Glib::ustring errString);
+    bool checkProfilePath (Glib::ustring &path);
+    bool checkDirPath (Glib::ustring &path, Glib::ustring errString);
     void updatePaths();
     int getString (const char* src, char* dst);
     void error (int line);
@@ -95,8 +112,8 @@ private:
      * @param destination destination variable to store to
      * @return @c true if @p destination was changed
      */
-    bool safeDirGet(const Glib::KeyFile& keyFile, const Glib::ustring& section,
-                    const Glib::ustring& entryName, Glib::ustring& destination);
+    bool safeDirGet (const Glib::KeyFile& keyFile, const Glib::ustring& section,
+                     const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
 
@@ -132,17 +149,26 @@ public:
     bool browserDirPanelOpened;
     bool editorFilmStripOpened;
     int historyPanelWidth;
-    int windowWidth;
-    int windowHeight;
     int windowX;
     int windowY;
+    int windowWidth;
+    int windowHeight;
     bool windowMaximized;
+    int windowMonitor;
+    int meowMonitor;
+    bool meowFullScreen;
+    bool meowMaximized;
+    int meowWidth;
+    int meowHeight;
+    int meowX;
+    int meowY;
     int detailWindowWidth;
     int detailWindowHeight;
     int dirBrowserWidth;
     int dirBrowserHeight;
     int preferencesWidth;
     int preferencesHeight;
+    bool lastShowAllExif;
     int lastScale;
     int panAccelFactor;
     int lastCropSize;
@@ -198,6 +224,7 @@ public:
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::vector<int> tpOpen;
+    bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;
@@ -307,6 +334,7 @@ public:
     Glib::ustring lastProfilingReferenceDir;
     Glib::ustring lastBWCurvesDir;
     Glib::ustring lastLensProfileDir;
+    bool gimpPluginShowInfoDialog;
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
@@ -317,10 +345,10 @@ public:
     Options*    copyFrom        (Options* other);
     void        filterOutParsedExtensions ();
     void        setDefaults     ();
-    int         readFromFile    (Glib::ustring fname);
-    int         saveToFile      (Glib::ustring fname);
-    static bool load            (bool lightweight = false);
-    static void save            ();
+    void readFromFile (Glib::ustring fname);
+    void saveToFile (Glib::ustring fname);
+    static void load (bool lightweight = false);
+    static void save();
 
     // if multiUser=false, send back the global profile path
     Glib::ustring getPreferredProfilePath();
@@ -332,10 +360,10 @@ public:
     {
         return globalProfilePath;
     }
-    Glib::ustring findProfilePath(Glib::ustring &profName);
+    Glib::ustring findProfilePath (Glib::ustring &profName);
     bool        is_parse_extention (Glib::ustring fname);
     bool        has_retained_extention (Glib::ustring fname);
-    bool        is_extention_enabled(Glib::ustring ext);
+    bool        is_extention_enabled (Glib::ustring ext);
     bool        is_defProfRawMissing()
     {
         return defProfRawMissing;
@@ -344,11 +372,11 @@ public:
     {
         return defProfImgMissing;
     }
-    void        setDefProfRawMissing(bool value)
+    void        setDefProfRawMissing (bool value)
     {
         defProfRawMissing = value;
     }
-    void        setDefProfImgMissing(bool value)
+    void        setDefProfImgMissing (bool value)
     {
         defProfImgMissing = value;
     }
@@ -358,6 +386,8 @@ extern Options options;
 extern Glib::ustring argv0;
 extern Glib::ustring argv1;
 extern bool simpleEditor;
+extern bool gimpPlugin;
+extern bool remote;
 extern Glib::ustring versionString;
 extern Glib::ustring paramFileExtension;
 

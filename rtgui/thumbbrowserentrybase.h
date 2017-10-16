@@ -80,6 +80,7 @@ protected:
     bool bbSelected, bbFramed;
     guint8* bbPreview;
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbIcons;
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > bbSpecificityIcons;
     CursorShape cursor_type;
 
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::RGBA& bg, const Gdk::RGBA& fg);
@@ -87,6 +88,9 @@ protected:
 
     // called during updateBackBuffer for custom overlays
     virtual void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) {}
+
+private:
+    const std::string collate_name;
 
 public:
 
@@ -167,9 +171,9 @@ public:
     void setPosition        (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
-    bool operator< (ThumbBrowserEntryBase& other)
+    bool operator <(const ThumbBrowserEntryBase& other) const
     {
-        return shortname.casefold() > other.shortname.casefold();
+        return collate_name < other.collate_name;
     }
 
     ThumbBrowserEntryBase* getOriginal () const;
@@ -182,6 +186,7 @@ public:
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) {}
 
     virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getSpecificityIconsOnImageArea ();
     virtual void getIconSize (int& w, int& h);
 
     virtual bool    motionNotify  (int x, int y);

@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CoarsePanel::CoarsePanel () : ToolPanel ()
+CoarsePanel::CoarsePanel () : ToolPanel (), oldhflip(false), oldvflip(false)
 {
 
     degree = 0;

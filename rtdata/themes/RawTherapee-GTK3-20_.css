@@ -31,7 +31,7 @@ scrollbar:not(.overlay-indicator):hover {
     color: #666666;
 }
 
-.view:selected {
+.view:selected:not(check):not(radio) {
     color: #262626;
     background-color: #AAAAAA
 }
@@ -171,6 +171,7 @@ eventbox.frame {
     border-color: #565656;
 }
 
+/*** Scrollbar ***************************************/
 scrollbar {
     background-color: #303030;
 }
@@ -181,30 +182,79 @@ scrollbar slider:hover {
     background-color: #999999;
 }
 
+scrollbar:not(.overlay-indicator).horizontal slider,
+scrollbar.horizontal.hovering slider {
+    min-height: 6px;
+    min-width: 24px;
+}
+scrollbar:not(.overlay-indicator).horizontal.fine-tune slider,
+scrollbar.horizontal.hovering.fine-tune slider {
+    min-height: 4px;
+    border-width: 4px;
+    margin: 0 -1px;
+}
+scrollbar.horizontal.overlay-indicator:not(.hovering) slider {
+    min-width: 24px;
+    min-height: 3px;
+    margin: 0 2px;
+}
+
+scrollbar:not(.overlay-indicator).vertical slider,
+scrollbar.vertical.hovering slider {
+    min-height: 24px;
+    min-width: 6px;
+}
+scrollbar:not(.overlay-indicator).vertical.fine-tune slider,
+scrollbar.vertical.hovering.fine-tune slider {
+    min-width: 4px;
+    border-width: 4px;
+    margin: -1px 0;
+}
+scrollbar.vertical.overlay-indicator:not(.hovering) slider {
+    min-width: 3px;
+    min-height: 24px;
+    margin: 2px 0;
+}
+
+/**************************************************/
+
 button  {
     padding: 0;
     min-height: 5px;
     min-width: 5px;
     background-image: linear-gradient(#343434, #2E2E2E, #292929);
 }
+
+/* Curve mode buttons and drop-downs */
+button:checked.Left {
+    background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
+    background-color: #585858;
+}
+
 button.flat  {
     background-image: none;
 }
+
 button.flat:checked {
     background-image:  linear-gradient(#343434, #2E2E2E, #292929);
 }
+
 checkbutton > check {
     background-image: linear-gradient(#343434, #2E2E2E, #292929);
 }
+
 radiobutton > radio {
     background-image: linear-gradient(#343434, #2E2E2E, #292929);
 }
+
 button:hover , button.flat:hover, checkbutton:hover > check, radiobutton:hover > radio {
     background-image: linear-gradient(shade(#343434,1.3), shade(#2E2E2E,1.3), shade(#292929,1.3));
 }
+
 button.popupbutton-arrow {
     min-width: 18px;
 }
+
 /* Save, Cancel, OK ... buttons */
 .dialog-action-area button {
     min-height: 24px;
@@ -626,18 +676,11 @@ paned box, paned grid {
 }
 
 paned > separator {
-    border-width: 1px;
-    border-color: #484848;
-    margin: 0;
-    padding: 0;
-}
-paned.horizontal > separator {
-    min-width: 2px;
-    border-style: none solid;
-}
-paned.vertical > separator {
-    min-height: 2px;
-    border-style: solid none;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    border-color: #404040;
+    padding: 0px;
+    margin: 4px;
 }
 
 #PlacesPaned {

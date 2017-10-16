@@ -19,19 +19,25 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <cstdio>
+#include <iostream>
 #include <cmath>
 #include <cstring>
 #include <ctime>
 #include <sstream>
 #include <stdint.h>
+#include <tiff.h>
 
 #include <glib/gstdio.h>
+#include <glib/gunicode.h>
 
 #include "rtexif.h"
 
 #include "../rtgui/cacheimagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
+
+// see end of ExifManager::parse(bool, bool)
+#define PRINT_METADATA_TREE 0
 
 using namespace std;
 
@@ -43,8 +49,6 @@ Interpreter stdInterpreter;
 //--------------- class TagDirectory ------------------------------------------
 // this class is a collection (an array) of tags
 //-----------------------------------------------------------------------------
-
-#define TAG_SUBFILETYPE 0x00fe
 
 TagDirectory::TagDirectory ()
     : attribs (ifdAttribs), order (HOSTORDER), parent (nullptr) {}
@@ -78,7 +82,7 @@ TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib*
             int id = newTag->getID();
 
             // detect and possibly ignore tags of directories belonging to the embedded thumbnail image
-            if (attribs == ifdAttribs && id == TAG_SUBFILETYPE && newTag->toInt() != 0) {
+            if (attribs == ifdAttribs && id == TIFFTAG_SUBFILETYPE && newTag->toInt() != 0) {
                 thumbdescr = true;
             }
 
@@ -207,11 +211,14 @@ void TagDirectory::printAll (unsigned int level) const
     for (size_t i = 0; i < tags.size(); i++) {
         std::string name = tags[i]->nameToString ();
 
+        TagDirectory* currTagDir;
         if (tags[i]->isDirectory()) {
-            for (int j = 0; tags[i]->getDirectory (j); j++) {
+            for (int j = 0; (currTagDir = tags[i]->getDirectory (j)) != nullptr; j++) {
                 printf ("%s+-- DIRECTORY %s[%d]:\n", prefixStr, name.c_str(), j);
-                tags[i]->getDirectory (j)->printAll (level + 1);
+                currTagDir->printAll (level + 1);
             }
+        } else {
+            printf ("%s- %s\n", prefixStr, name.c_str());
         }
     }
 }
@@ -285,6 +292,10 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
             kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
             kf->set_boolean ("RT General", "FlaggingMode", flagMode);
 
+            kf->set_integer ("Common Data", "FrameCount", cfs->frameCount);
+            kf->set_integer ("Common Data", "SampleFormat", cfs->sampleFormat);
+            kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
+            kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
             kf->set_double ("Common Data", "FNumber", cfs->fnumber);
             kf->set_double ("Common Data", "Shutter", cfs->shutter);
             kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
@@ -445,33 +456,125 @@ Tag* TagDirectory::getTagP (const char* name) const
     return nullptr;
 }
 
-Tag* TagDirectory::findTag (const char* name) const
+Tag* TagDirectory::findTag (const char* name, bool lookUpward) const
 {
-    if (attribs) {
-        for (int i = 0; attribs[i].ignore != -1; i++)
-            if (!strcmp (attribs[i].name, name)) {
-                Tag* t = getTag (attribs[i].ID);
+    Tag* t = getTag(name);
+    if (t) {
+        return t;
+    }
+
+    for (auto tag : tags) {
+        if (tag->isDirectory()) {
+            TagDirectory *dir;
+            int i = 0;
+            while ((dir = tag->getDirectory(i)) != nullptr) {
+                TagDirectory *dir = tag->getDirectory();
+                Tag* t = dir->findTag (name);
 
                 if (t) {
                     return t;
-                } else {
-                    break;
                 }
-            }
-    }
-
-    for (size_t i = 0; i < tags.size(); i++)
-        if (tags[i]->isDirectory()) {
-            TagDirectory *dir = tags[i]->getDirectory();
-            Tag* t = dir->findTag (name);
-
-            if (t) {
-                return t;
+                ++i;
             }
         }
+    }
+
+    if (lookUpward && parent) {
+        Tag* t = parent->findTagUpward(name);
+
+        if (t) {
+            return t;
+        }
+    }
 
     return nullptr;
 }
+
+std::vector<const Tag*> TagDirectory::findTags (int ID)
+{
+
+    std::vector<const Tag*> tagList;
+
+    //assuming that an entry can only exist once
+    Tag* t = getTag(ID);
+    if (t) {
+        tagList.push_back(t);
+    }
+
+    for (auto tag : tags) {
+        if (tag->isDirectory()) {
+            TagDirectory *dir;
+            int i = 0;
+            while ((dir = tag->getDirectory(i)) != nullptr) {
+                std::vector<const Tag*> subTagList = dir->findTags (ID);
+
+                if (!subTagList.empty()) {
+                    // concatenating the 2 vectors
+                    // not really optimal in a memory efficiency pov
+                    for (auto tag2 : subTagList) {
+                        tagList.push_back(tag2);
+                    }
+                }
+                ++i;
+            }
+        }
+    }
+
+    return tagList;
+}
+
+std::vector<const Tag*> TagDirectory::findTags (const char* name)
+{
+
+    std::vector<const Tag*> tagList;
+
+    //assuming that an entry can only exist once
+    Tag* t = getTag(name);
+    if (t) {
+        tagList.push_back(t);
+    }
+
+    for (auto tag : tags) {
+        if (tag->isDirectory()) {
+            TagDirectory *dir;
+            int i = 0;
+            while ((dir = tag->getDirectory(i)) != nullptr) {
+                std::vector<const Tag*> subTagList = dir->findTags (name);
+
+                if (!subTagList.empty()) {
+                    // concatenating the 2 vectors
+                    // not really optimal in a memory efficiency pov, but adding 10 items should be a maximum
+                    for (auto tag2 : subTagList) {
+                        tagList.push_back(tag2);
+                    }
+                }
+                ++i;
+            }
+        }
+    }
+
+    return tagList;
+}
+
+
+Tag* TagDirectory::findTagUpward (const char* name) const
+{
+    Tag* t = findTag(name);
+    if (t) {
+        return t;
+    }
+
+    if (parent) {
+        Tag* t = parent->findTagUpward(name);
+
+        if (t) {
+            return t;
+        }
+    }
+
+    return nullptr;
+}
+
 
 // Searches a simple value, as either attribute or element
 // only for simple values, not for entries with special chars or free text
@@ -605,7 +708,7 @@ int TagDirectory::write (int start, unsigned char* buffer)
     return maxPos;
 }
 
-void TagDirectory::applyChange (std::string name, std::string value)
+void TagDirectory::applyChange (std::string name, Glib::ustring value)
 {
 
     std::string::size_type dp = name.find_first_of ('.');
@@ -627,7 +730,12 @@ void TagDirectory::applyChange (std::string name, std::string value)
         } else if (value == "#delete" && t) {
             t->setKeep (false);
         } else if (t && !t->isDirectory()) {
-            t->valueFromString (value);
+            if (name == "UserComment") {
+                // UserComment can be Unicode
+                t->userCommentFromString (value);
+            } else {
+                t->valueFromString (value);
+            }
         } else {
             const TagAttrib* attrib = nullptr;
 
@@ -639,7 +747,12 @@ void TagDirectory::applyChange (std::string name, std::string value)
 
             if (attrib) {
                 Tag* nt = new Tag (this, attrib);
-                nt->initString (value.c_str());
+                if (name == "UserComment") {
+                    // UserComment can be Unicode
+                    nt->initUserComment (value);
+                } else {
+                    nt->initString (value.c_str());
+                }
                 addTag (nt);
             }
         }
@@ -780,6 +893,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     // (only a small part of it will actually be parsed though)
     if ((int)type < 1 || (int)type > 14 || count > 10 * 1024 * 1024) {
         type = INVALID;
+        valuesize = 0;
         return;
     }
 
@@ -848,9 +962,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
     }
 
     if (tag == 0x002e) { // location of the embedded preview image in raw files of Panasonic cameras
-        TagDirectory* previewdir = ExifManager::parseJPEG (f, ftell (f)); // try to parse the exif data from the preview image
+        ExifManager eManager(f, nullptr, true);
+        eManager.parseJPEG(ftell(f)); // try to parse the exif data from the preview image
 
-        if (previewdir) {
+        if (eManager.roots.size()) {
+            const TagDirectory* const previewdir = eManager.roots.at(0);
             if (previewdir->getTag ("Exif")) {
                 if (previewdir->getTag ("Make")) {
                     if (previewdir->getTag ("Make")->valueToString() == "Panasonic") { // "make" is not yet available here, so get it from the preview tags to assure we're doing the right thing
@@ -1084,7 +1200,7 @@ defsubdirs:
     // read value
     value = new unsigned char [valuesize];
     fread (value, 1, valuesize, f);
-    int pos = ftell (f);
+
     // count the number of valid subdirs
     int sdcount = count;
 
@@ -1101,7 +1217,6 @@ defsubdirs:
             int newpos = base + toInt (j * 4, LONG);
             fseek (f, newpos, SEEK_SET);
             directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
-            fseek (f, pos, SEEK_SET);
         }
 
         // set the terminating NULL
@@ -1346,10 +1461,12 @@ void Tag::fromString (const char* v, int size)
         value = new unsigned char [valuesize];
     }
 
-    memcpy ((char*)value, v, valuesize);
+    if(value) {
+        memcpy ((char*)value, v, valuesize);
+    }
 }
 
-int Tag::toInt (int ofs, TagType astype)
+int Tag::toInt (int ofs, TagType astype) const
 {
     if (attrib) {
         return attrib->interpreter->toInt (this, ofs, astype);
@@ -1400,7 +1517,7 @@ int Tag::toInt (int ofs, TagType astype)
     return 0;
 }
 
-double Tag::toDouble (int ofs)
+double Tag::toDouble (int ofs) const
 {
     if (attrib) {
         return attrib->interpreter->toDouble (this, ofs);
@@ -1450,7 +1567,6 @@ double Tag::toDouble (int ofs)
             return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
     }
 
-    return 0.;
 }
 
 /**
@@ -1606,10 +1722,10 @@ void Tag::toString (char* buffer, int ofs)
 std::string Tag::nameToString (int i)
 {
 
-    char buffer[1024];
+    char buffer[1025];
 
     if (attrib) {
-        strcpy (buffer, attrib->name);
+        strncpy (buffer, attrib->name, 1024);
     } else {
         sprintf (buffer, "0x%x", tag);
     }
@@ -1641,6 +1757,19 @@ void Tag::valueFromString (const std::string& value)
     }
 }
 
+void Tag::userCommentFromString (const Glib::ustring& text)
+{
+
+    if (!allocOwnMemory) {
+        return;
+    }
+    if (value) {
+        delete [] value;
+        value = nullptr;
+    }
+    initUserComment(text);
+}
+
 int Tag::calculateSize ()
 {
     int size = 0;
@@ -1655,17 +1784,15 @@ int Tag::calculateSize ()
         if (j > 1) {
             size += 4 * j;
         }
+        if (makerNoteKind != NOMK) {
+            count = directory[0]->calculateSize () / getTypeSize (type);
+        }
     } else if (valuesize > 4) {
         size += valuesize + (valuesize % 2);    // we align tags to even byte positions
     }
 
-    if (makerNoteKind != NOMK) {
-        count = directory[0]->calculateSize () / getTypeSize (type);
-    }
 
-    if (makerNoteKind == NIKON3 || makerNoteKind == OLYMPUS2 || makerNoteKind == FUJI) {
-        size += valuesize;
-    } else if (makerNoteKind == HEADERIFD) {
+    if (makerNoteKind == NIKON3 || makerNoteKind == OLYMPUS2 || makerNoteKind == FUJI || makerNoteKind == HEADERIFD) {
         size += valuesize;
     }
 
@@ -1804,6 +1931,28 @@ void Tag::initInt (int data, TagType t, int cnt)
     setInt (data, 0, t);
 }
 
+void Tag::initUserComment (const Glib::ustring &text)
+{
+    type = UNDEFINED;
+    if (text.is_ascii()) {
+        count = 8 + strlen (text.c_str());
+        valuesize = count;
+        value = new unsigned char[valuesize];
+        strcpy ((char*)value, "ASCII");
+        value[5] = value[6] = value[7] = 0;
+        strcpy ((char*)value + 8, text.c_str());
+    } else {
+        wchar_t *commentStr = (wchar_t*)g_utf8_to_utf16 (text.c_str(), -1, NULL, NULL, NULL);
+        count = 8 + wcslen(commentStr)*2;
+        valuesize = count;
+        value = (unsigned char*)new char[valuesize];
+        strcpy ((char*)value, "UNICODE");
+        value[7] = 0;
+        wcscpy(((wchar_t*)value) + 4, commentStr);
+        g_free(commentStr);
+    }
+}
+
 void Tag::initString (const char* text)
 {
 
@@ -1894,8 +2043,12 @@ const TagAttrib* lookupAttrib (const TagAttrib* dir, const char* field)
     return nullptr;
 }
 
+void ExifManager::setIFDOffset(unsigned int offset)
+{
+    IFDOffset = offset;
+}
 
-TagDirectory* ExifManager::parseCIFF (FILE* f, int base, int length)
+void ExifManager::parseCIFF ()
 {
 
     TagDirectory* root = new TagDirectory (nullptr, ifdAttribs, INTEL);
@@ -1905,33 +2058,44 @@ TagDirectory* ExifManager::parseCIFF (FILE* f, int base, int length)
     mn->initMakerNote (IFD, canonAttribs);
     root->addTag (exif);
     exif->getDirectory()->addTag (mn);
-    parseCIFF (f, base, length, root);
+    parseCIFF (rml->ciffLength, root);
     root->sort ();
-    return root;
 }
 
-Tag* ExifManager::saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const char* name)
+Tag* ExifManager::saveCIFFMNTag (TagDirectory* root, int len, const char* name)
 {
     int s = ftell (f);
-    char* data = new char [len];
-    fread (data, len, 1, f);
-    TagDirectory* mn = root->getTag ("Exif")->getDirectory()->getTag ("MakerNote")->getDirectory();
-    Tag* cs = new Tag (mn, lookupAttrib (canonAttribs, name));
-    cs->initUndefArray (data, len);
-    mn->addTag (cs);
-    fseek (f, s, SEEK_SET);
-    return cs;
+    if(s >= 0) {
+        char* data = new char [len];
+        fread (data, len, 1, f);
+        TagDirectory* mn = root->getTag ("Exif")->getDirectory()->getTag ("MakerNote")->getDirectory();
+        Tag* cs = new Tag (mn, lookupAttrib (canonAttribs, name));
+        cs->initUndefArray (data, len);
+        mn->addTag (cs);
+        fseek (f, s, SEEK_SET);
+        delete [] data;
+        return cs;
+    } else {
+        return nullptr;
+    }
 }
 
-void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
+void ExifManager::parseCIFF (int length, TagDirectory* root)
 {
+
+    if (!f) {
+        #ifndef NDEBUG
+        std::cerr << "ERROR : no file opened !" << std::endl;
+        #endif
+        return;
+    }
 
     char buffer[1024];
     Tag* t;
 
-    fseek (f, base + length - 4, SEEK_SET);
+    fseek (f, rml->ciffBase + length - 4, SEEK_SET);
 
-    int dirStart = get4 (f, INTEL) + base;
+    int dirStart = get4 (f, INTEL) + rml->ciffBase;
     fseek (f, dirStart, SEEK_SET);
 
     int numOfTags = get2 (f, INTEL);
@@ -1956,10 +2120,19 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
         int nextPos = ftell (f) + 4;
 
         // seek to the location of the value
-        fseek (f, base + get4 (f, INTEL), SEEK_SET);
+        fseek (f, rml->ciffBase + get4 (f, INTEL), SEEK_SET);
 
         if ((((type >> 8) + 8) | 8) == 0x38) {
-            parseCIFF (f, ftell (f), len, root);   // Parse a sub-table
+            ExifManager(
+                f,
+                std::unique_ptr<rtengine::RawMetaDataLocation>(
+                    new rtengine::RawMetaDataLocation(
+                        ftell(f),
+                        len
+                    )
+                ),
+                true
+            ).parseCIFF(len, root); // Parse a sub-table
         }
 
         if (type == 0x0810) {
@@ -1990,8 +2163,9 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
 
         }
 
+        ExifManager exifManager(f, nullptr, true);
         if (type == 0x102d) {
-            Tag* t = saveCIFFMNTag (f, root, len, "CanonCameraSettings");
+            Tag* t = exifManager.saveCIFFMNTag (root, len, "CanonCameraSettings");
             int mm = t->toInt (34, SHORT);
             Tag* nt = new Tag (exif, lookupAttrib (exifAttribs, "MeteringMode"));
 
@@ -2070,31 +2244,31 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
         }
 
         if (type == 0x1029) {
-            saveCIFFMNTag (f, root, len, "CanonFocalLength");
+            exifManager.saveCIFFMNTag (root, len, "CanonFocalLength");
         }
 
         if (type == 0x1031) {
-            saveCIFFMNTag (f, root, len, "SensorInfo");
+            exifManager.saveCIFFMNTag (root, len, "SensorInfo");
         }
 
         if (type == 0x1033) {
-            saveCIFFMNTag (f, root, len, "CustomFunctions");
+            exifManager.saveCIFFMNTag (root, len, "CustomFunctions");
         }
 
         if (type == 0x1038) {
-            saveCIFFMNTag (f, root, len, "CanonAFInfo");
+            exifManager.saveCIFFMNTag (root, len, "CanonAFInfo");
         }
 
         if (type == 0x1093) {
-            saveCIFFMNTag (f, root, len, "CanonFileInfo");
+            exifManager.saveCIFFMNTag (root, len, "CanonFileInfo");
         }
 
         if (type == 0x10a9) {
-            saveCIFFMNTag (f, root, len, "ColorBalance");
+            exifManager.saveCIFFMNTag (root, len, "ColorBalance");
         }
 
         if (type == 0x102a) {
-            saveCIFFMNTag (f, root, len, "CanonShotInfo");
+            exifManager.saveCIFFMNTag (root, len, "CanonShotInfo");
 
             iso = pow (2, (get4 (f, INTEL), get2 (f, INTEL)) / 32.0 - 4) * 50;
             aperture  = (get2 (f, INTEL), (short)get2 (f, INTEL)) / 32.0f;
@@ -2189,6 +2363,9 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root)
         t->initString (buffer);
         root->addTag (t);
     }
+
+    roots.push_back(root);
+
 }
 
 static void
@@ -2500,6 +2677,8 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
                     if (*p1 != '\0') {
                         t->initInt (atoi (p1), LONG);
                         exif->getDirectory()->addTagFront (t);
+                    } else {
+                        delete t;
                     }
                 } else if (strcmp (tag, "DateTimeOriginal") == 0 &&
                            sscanf (val, "%d-%d-%dT%d:%d:%dZ",
@@ -2524,33 +2703,65 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
     }
 }
 
-TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
+void ExifManager::parseRaw (bool skipIgnored) {
+    parse(true, skipIgnored);
+}
+
+void ExifManager::parseStd (bool skipIgnored) {
+    parse(false, skipIgnored);
+}
+
+void ExifManager::parse (bool isRaw, bool skipIgnored)
 {
+    int ifdOffset = IFDOffset;
+
+    if (!f) {
+        #ifndef NDEBUG
+        std::cerr << "ERROR : no file opened !" << std::endl;
+        #endif
+        return;
+    }
     setlocale (LC_NUMERIC, "C"); // to set decimal point in sscanf
-    // read tiff header
-    fseek (f, base, SEEK_SET);
-    unsigned short bo;
-    fread (&bo, 1, 2, f);
-    ByteOrder order = (ByteOrder) ((int)bo);
-    get2 (f, order);
-    int firstifd = get4 (f, order);
 
-    // seek to IFD0
-    fseek (f, base + firstifd, SEEK_SET);
+    if (order == ByteOrder::UNKNOWN) {
+        // read tiff header
+        fseek (f, rml->exifBase, SEEK_SET);
+        unsigned short bo;
+        fread (&bo, 1, 2, f);
+        order = (ByteOrder) ((int)bo);
+        get2 (f, order);
+        if (!ifdOffset) {
+            ifdOffset = get4 (f, order);
+        }
+    }
 
-    // first read the IFD directory
-    TagDirectory* root =  new TagDirectory (nullptr, f, base, ifdAttribs, order, skipIgnored);
+    do {
+        // seek to IFD
+        fseek (f, rml->exifBase + ifdOffset, SEEK_SET);
 
-    // fix ISO issue with nikon and panasonic cameras
-    Tag* make = root->getTag ("Make");
-    Tag* exif = root->getTag ("Exif");
+        // first read the IFD directory
+        TagDirectory* root =  new TagDirectory (nullptr, f, rml->exifBase, ifdAttribs, order, skipIgnored);
 
-    if (exif && !exif->getDirectory()->getTag ("ISOSpeedRatings")) {
-        if (make && !strncmp ((char*)make->getValue(), "NIKON", 5)) {
-            Tag* mn   = exif->getDirectory()->getTag ("MakerNote");
+        // fix ISO issue with nikon and panasonic cameras
+        Tag* make = root->getTag ("Make");
+        Tag* exif = root->getTag ("Exif");
 
-            if (mn) {
-                Tag* iso = mn->getDirectory()->getTag ("ISOSpeed");
+        if (exif && !exif->getDirectory()->getTag ("ISOSpeedRatings")) {
+            if (make && !strncmp ((char*)make->getValue(), "NIKON", 5)) {
+                Tag* mn   = exif->getDirectory()->getTag ("MakerNote");
+
+                if (mn) {
+                    Tag* iso = mn->getDirectory()->getTag ("ISOSpeed");
+
+                    if (iso) {
+                        std::string isov = iso->valueToString ();
+                        Tag* niso = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
+                        niso->initInt (atoi (isov.c_str()), SHORT);
+                        exif->getDirectory()->addTagFront (niso);
+                    }
+                }
+            } else if (make && (!strncmp ((char*)make->getValue(), "Panasonic", 9) || !strncmp ((char*)make->getValue(), "LEICA", 5))) {
+                Tag* iso = root->getTag ("PanaISO");
 
                 if (iso) {
                     std::string isov = iso->valueToString ();
@@ -2559,258 +2770,359 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored)
                     exif->getDirectory()->addTagFront (niso);
                 }
             }
-        } else if (make && (!strncmp ((char*)make->getValue(), "Panasonic", 9) || !strncmp ((char*)make->getValue(), "LEICA", 5))) {
-            Tag* iso = root->getTag ("PanaISO");
-
-            if (iso) {
-                std::string isov = iso->valueToString ();
-                Tag* niso = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
-                niso->initInt (atoi (isov.c_str()), SHORT);
-                exif->getDirectory()->addTagFront (niso);
-            }
         }
-    }
 
-    if (make && !strncmp ((char*)make->getValue(), "Kodak", 5)) {
-        if (!exif) {
-            // old Kodak cameras may have exif tags in IFD0, reparse and create an exif subdir
-            fseek (f, base + firstifd, SEEK_SET);
-            TagDirectory* exifdir =  new TagDirectory (nullptr, f, base, exifAttribs, order, true);
+        if (make && !strncmp ((char*)make->getValue(), "Kodak", 5)) {
+            if (!exif) {
+                // old Kodak cameras may have exif tags in IFD0, reparse and create an exif subdir
+                fseek (f, rml->exifBase + ifdOffset, SEEK_SET);
+                TagDirectory* exifdir =  new TagDirectory (nullptr, f, rml->exifBase, exifAttribs, order, true);
 
-            exif = new Tag (root, root->getAttrib ("Exif"));
-            exif->initSubDir (exifdir);
-            root->addTagFront (exif);
+                exif = new Tag (root, root->getAttrib ("Exif"));
+                exif->initSubDir (exifdir);
+                root->addTagFront (exif);
 
-            if (!exif->getDirectory()->getTag ("ISOSpeedRatings") && exif->getDirectory()->getTag ("ExposureIndex")) {
-                Tag* niso = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
-                niso->initInt (exif->getDirectory()->getTag ("ExposureIndex")->toInt(), SHORT);
-                exif->getDirectory()->addTagFront (niso);
+                if (!exif->getDirectory()->getTag ("ISOSpeedRatings") && exif->getDirectory()->getTag ("ExposureIndex")) {
+                    Tag* niso = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
+                    niso->initInt (exif->getDirectory()->getTag ("ExposureIndex")->toInt(), SHORT);
+                    exif->getDirectory()->addTagFront (niso);
+                }
+            }
+
+            Tag *kodakIFD = root->getTag ("KodakIFD");
+
+            if (kodakIFD && kodakIFD->getDirectory()->getTag ("TextualInfo")) {
+                parseKodakIfdTextualInfo (kodakIFD->getDirectory()->getTag ("TextualInfo"), exif);
             }
         }
 
-        Tag *kodakIFD = root->getTag ("KodakIFD");
+        parse_leafdata (root, order);
 
-        if (kodakIFD && kodakIFD->getDirectory()->getTag ("TextualInfo")) {
-            parseKodakIfdTextualInfo (kodakIFD->getDirectory()->getTag ("TextualInfo"), exif);
-        }
-    }
+        if (make && !strncmp ((char*)make->getValue(), "Hasselblad", 10)) {
+            /*
+            Figuring out the Hasselblad model is a mess. Hasselblad raw data comes in four slightly
+            different containers, 3FR (directly from CF card), FFF (same as 3FR but filtered through
+            Phocus, calibration data applied and a bit different tags), Adobe-generated DNGs and
+            Phocus-generated DNGs.
 
-    parse_leafdata (root, order);
+            FFF usually has a sane model name in Model (and is used as reference for what we shall
+            call the different Hasselblad models), but 3FR only says like "Hasselblad H3D" for
+            all H3D models, or "Flash Sync" if the back has been used on a mechanical camera body.
+            V-mount backs may have the model name of the V body instead of the back model. Etc...
+            as said it's a mess.
 
-    if (make && !strncmp ((char*)make->getValue(), "Hasselblad", 10)) {
-        /*
-        Figuring out the Hasselblad model is a mess. Hasselblad raw data comes in four slightly
-        different containers, 3FR (directly from CF card), FFF (same as 3FR but filtered through
-        Phocus, calibration data applied and a bit different tags), Adobe-generated DNGs and
-        Phocus-generated DNGs.
+            This code is supposed to handle all raw containers and end up with the same model
+            regardless of container.
 
-        FFF usually has a sane model name in Model (and is used as reference for what we shall
-        call the different Hasselblad models), but 3FR only says like "Hasselblad H3D" for
-        all H3D models, or "Flash Sync" if the back has been used on a mechanical camera body.
-        V-mount backs may have the model name of the V body instead of the back model. Etc...
-        as said it's a mess.
+            We don't differ between single shot and multi-shot models, and probably there's no use
+            of doing so. You need Hasselblad's own software to shoot multi-shot and can only do that
+            tethered. In single-shot mode they should be exactly the same as the single-shot models.
+                  */
+            Tag *subd = root->getTag (0x14a);
+            Tag *iw = (subd) ? subd->getDirectory()->getTag ("ImageWidth") : nullptr;
+            int sensorWidth = (iw) ? iw->toInt() : 0;
+            Tag* tmodel = root->getTag ("Model");
+            const char *model = (tmodel) ? (const char *)tmodel->getValue() : "";
 
-        This code is supposed to handle all raw containers and end up with the same model
-        regardless of container.
+            if (strstr (model, "Hasselblad ") == model) {
+                model += 11;
+            } else {
+                // if HxD is used in flash sync mode for example, we need to fetch model from this tag
+                Tag* tmodel3 = root->getTag ("UniqueCameraModel");
+                const char *model3 = (tmodel3) ? (const char *)tmodel3->getValue() : "";
 
-        We don't differ between single shot and multi-shot models, and probably there's no use
-        of doing so. You need Hasselblad's own software to shoot multi-shot and can only do that
-        tethered. In single-shot mode they should be exactly the same as the single-shot models.
-              */
-        Tag *subd = root->getTag (0x14a);
-        Tag *iw = (subd) ? subd->getDirectory()->getTag ("ImageWidth") : nullptr;
-        int sensorWidth = (iw) ? iw->toInt() : 0;
-        Tag* tmodel = root->getTag ("Model");
-        const char *model = (tmodel) ? (const char *)tmodel->getValue() : "";
+                if (strstr (model3, "Hasselblad ") == model3) {
+                    model = model3 + 11;
+                }
+            }
 
-        if (strstr (model, "Hasselblad ") == model) {
-            model += 11;
-        } else {
-            // if HxD is used in flash sync mode for example, we need to fetch model from this tag
+            // FIXME: due to lack of test files this Hasselblad model identification is not 100% complete
+            // This needs checking out: CFV-39/CFV-50 3FR, H3DII vs H3D, old CF/CFH models
+
+            if (!strcmp (model, "H3D")) {
+                // We can't differ between H3D and H3DII for the 22, 31 and 39 models. There's was no H3D-50 so we know that is a
+                // H3DII-50. At the time of writing I have no test files for the H3D vs H3DII models, so there still may be a chance
+                // to differ between them. AFAIK Adobe's DNG converter don't differ between them, and actually call the H3DII-50
+                // H3D-50 although Hasselblad never released such a model.
+                switch (sensorWidth) {
+                    case 4096:
+                        tmodel->initString ("H3D-22");
+                        break;
+
+                    case 6542:
+                        tmodel->initString ("H3D-31");
+                        break;
+
+                    case 7262:
+                        tmodel->initString ("H3D-39");
+                        break;
+
+                    case 8282:
+                        tmodel->initString ("H3DII-50");
+                        break;
+                }
+            } else if (!strcmp (model, "H4D")) {
+                switch (sensorWidth) {
+                    case 6542:
+                        tmodel->initString ("H4D-31");
+                        break;
+
+                    case 7410:
+                        tmodel->initString ("H4D-40");
+                        break;
+
+                    case 8282:
+                        tmodel->initString ("H4D-50");
+                        break;
+
+                    case 9044:
+                        tmodel->initString ("H4D-60");
+                        break;
+                }
+            } else if (!strcmp (model, "H5D")) {
+                switch (sensorWidth) {
+                    case 7410:
+                        tmodel->initString ("H5D-40");
+                        break;
+
+                    case 8282:
+                        tmodel->initString ("H5D-50");
+                        break;
+
+                    case 8374:
+                        tmodel->initString ("H5D-50c");
+                        break;
+
+                    case 9044:
+                        tmodel->initString ("H5D-60");
+                        break;
+                }
+            } else if (!strcmp (model, "CFV")) {
+                switch (sensorWidth) {
+                    case 7262:
+                        tmodel->initString ("CFV-39");
+                        break;
+
+                    case 8282:
+                        tmodel->initString ("CFV-50");
+                        break;
+
+                    case 8374:
+                        tmodel->initString ("CFV-50c");
+                        break;
+                }
+            }
+
+            // and a few special cases
             Tag* tmodel3 = root->getTag ("UniqueCameraModel");
             const char *model3 = (tmodel3) ? (const char *)tmodel3->getValue() : "";
 
             if (strstr (model3, "Hasselblad ") == model3) {
-                model = model3 + 11;
-            }
-        }
-
-        // FIXME: due to lack of test files this Hasselblad model identification is not 100% complete
-        // This needs checking out: CFV-39/CFV-50 3FR, H3DII vs H3D, old CF/CFH models
-
-        if (!strcmp (model, "H3D")) {
-            // We can't differ between H3D and H3DII for the 22, 31 and 39 models. There's was no H3D-50 so we know that is a
-            // H3DII-50. At the time of writing I have no test files for the H3D vs H3DII models, so there still may be a chance
-            // to differ between them. AFAIK Adobe's DNG converter don't differ between them, and actually call the H3DII-50
-            // H3D-50 although Hasselblad never released such a model.
-            switch (sensorWidth) {
-                case 4096:
-                    tmodel->initString ("H3D-22");
-                    break;
-
-                case 6542:
-                    tmodel->initString ("H3D-31");
-                    break;
-
-                case 7262:
-                    tmodel->initString ("H3D-39");
-                    break;
-
-                case 8282:
-                    tmodel->initString ("H3DII-50");
-                    break;
-            }
-        } else if (!strcmp (model, "H4D")) {
-            switch (sensorWidth) {
-                case 6542:
-                    tmodel->initString ("H4D-31");
-                    break;
-
-                case 7410:
-                    tmodel->initString ("H4D-40");
-                    break;
-
-                case 8282:
-                    tmodel->initString ("H4D-50");
-                    break;
-
-                case 9044:
-                    tmodel->initString ("H4D-60");
-                    break;
-            }
-        } else if (!strcmp (model, "H5D")) {
-            switch (sensorWidth) {
-                case 7410:
-                    tmodel->initString ("H5D-40");
-                    break;
-
-                case 8282:
-                    tmodel->initString ("H5D-50");
-                    break;
-
-                case 8374:
-                    tmodel->initString ("H5D-50c");
-                    break;
-
-                case 9044:
-                    tmodel->initString ("H5D-60");
-                    break;
-            }
-        } else if (!strcmp (model, "CFV")) {
-            switch (sensorWidth) {
-                case 7262:
-                    tmodel->initString ("CFV-39");
-                    break;
-
-                case 8282:
-                    tmodel->initString ("CFV-50");
-                    break;
-
-                case 8374:
-                    tmodel->initString ("CFV-50c");
-                    break;
-            }
-        }
-
-        // and a few special cases
-        Tag* tmodel3 = root->getTag ("UniqueCameraModel");
-        const char *model3 = (tmodel3) ? (const char *)tmodel3->getValue() : "";
-
-        if (strstr (model3, "Hasselblad ") == model3) {
-            model3 = model3 + 11;
-        }
-
-        if (!strcmp (model3, "ixpressCF132")) {
-            tmodel->initString ("CF-22");
-        } else if (!strcmp (model3, "Hasselblad96")) {
-            tmodel->initString ("CFV"); // popularly called CFV-16, but the official name is CFV
-        } else if (!strcmp (model3, "Hasselblad234")) {
-            tmodel->initString ("CFV-39");
-        } else if (sensorWidth == 4090) {
-            tmodel->initString ("V96C");
-        }
-
-        // and yet some, this is for Adobe-generated DNG files
-        Tag* tmodel4 = root->getTag ("LocalizedCameraModel");
-
-        if (tmodel4) {
-            const char *model4 = (tmodel4) ? (const char *)tmodel4->getValue() : "";
-
-            if (strstr (model4, "Hasselblad ") == model4) {
-                model4 = model4 + 11;
+                model3 = model3 + 11;
             }
 
-            if (!strcmp (model4, "ixpressCF132-22")) {
+            if (!strcmp (model3, "ixpressCF132")) {
                 tmodel->initString ("CF-22");
-            } else if (!strcmp (model4, "Hasselblad96-16")) {
-                tmodel->initString ("CFV");
-            } else if (!strcmp (model4, "Hasselblad234-39")) {
+            } else if (!strcmp (model3, "Hasselblad96")) {
+                tmodel->initString ("CFV"); // popularly called CFV-16, but the official name is CFV
+            } else if (!strcmp (model3, "Hasselblad234")) {
                 tmodel->initString ("CFV-39");
-            } else if (!strcmp (model4, "H3D-50")) {
-                // Adobe names H3DII-50 incorrectly as H3D-50
-                tmodel->initString ("H3DII-50");
-            } else if (strstr (model4, "H3D-") == model4 || strstr (model4, "H4D-") == model4 || strstr (model4, "H5D-") == model4) {
-                tmodel->initString (model4);
-            }
-        }
-    }
-
-    if (!root->getTag ("Orientation")) {
-        if (make && !strncmp ((char*)make->getValue(), "Phase One", 9)) {
-            int orientation = 0;
-            Tag *iw = root->getTag ("ImageWidth");
-
-            if (iw) {
-                // from dcraw, derive orientation from image width
-                orientation = "0653"[iw->toInt() & 3] - '0';
+            } else if (sensorWidth == 4090) {
+                tmodel->initString ("V96C");
             }
 
-            Tag *t = new Tag (root, root->getAttrib ("Orientation"));
-            t->initInt (orientation, SHORT);
-            root->addTagFront (t);
+            // and yet some, this is for Adobe-generated DNG files
+            Tag* tmodel4 = root->getTag ("LocalizedCameraModel");
+
+            if (tmodel4) {
+                const char *model4 = (const char *)tmodel4->getValue();
+
+                if (strstr (model4, "Hasselblad ") == model4) {
+                    model4 = model4 + 11;
+                }
+
+                if (!strcmp (model4, "ixpressCF132-22")) {
+                    tmodel->initString ("CF-22");
+                } else if (!strcmp (model4, "Hasselblad96-16")) {
+                    tmodel->initString ("CFV");
+                } else if (!strcmp (model4, "Hasselblad234-39")) {
+                    tmodel->initString ("CFV-39");
+                } else if (!strcmp (model4, "H3D-50")) {
+                    // Adobe names H3DII-50 incorrectly as H3D-50
+                    tmodel->initString ("H3DII-50");
+                } else if (strstr (model4, "H3D-") == model4 || strstr (model4, "H4D-") == model4 || strstr (model4, "H5D-") == model4) {
+                    tmodel->initString (model4);
+                }
+            }
         }
+
+        if (!root->getTag ("Orientation")) {
+            if (make && !strncmp ((char*)make->getValue(), "Phase One", 9)) {
+                int orientation = 0;
+                Tag *iw = root->getTag ("ImageWidth");
+
+                if (iw) {
+                    // from dcraw, derive orientation from image width
+                    orientation = "0653"[iw->toInt() & 3] - '0';
+                }
+
+                Tag *t = new Tag (root, root->getAttrib ("Orientation"));
+                t->initInt (orientation, SHORT);
+                root->addTagFront (t);
+            }
+        }
+
+        // --- detecting image root IFD based on SubFileType, or if not provided, on PhotometricInterpretation
+
+        bool frameRootDetected = false;
+
+        if(!frameRootDetected) {
+            std::vector<const Tag*> risTagList = root->findTags("RawImageSegmentation");
+            if (!risTagList.empty()) {
+                for (auto ris : risTagList) {
+                    frames.push_back(ris->getParent());
+                    frameRootDetected = true;
+
+    #if PRINT_METADATA_TREE
+                    printf("\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
+                    ris->getParent()->printAll ();
+    #endif
+                }
+            }
+        }
+
+        if(!frameRootDetected) {
+            std::vector<const Tag*> sftTagList = root->findTags(TIFFTAG_SUBFILETYPE);
+            if (!sftTagList.empty()) {
+                for (auto sft : sftTagList) {
+                    int sftVal = sft->toInt();
+                    if (sftVal == (isRaw ? 0 : 2)) {
+                        frames.push_back(sft->getParent());
+                        frameRootDetected = true;
+
+#if PRINT_METADATA_TREE
+                        printf("\n--------------- FRAME (SUBFILETYPE) ---------------\n\n");
+                        sft->getParent()->printAll ();
+#endif
+                    }
+                }
+            }
+        }
+
+        if(!frameRootDetected) {
+            std::vector<const Tag*> sftTagList = root->findTags(TIFFTAG_OSUBFILETYPE);
+            if (!sftTagList.empty()) {
+                for (auto sft : sftTagList) {
+                    int sftVal = sft->toInt();
+                    if (sftVal == OFILETYPE_IMAGE) {
+                        frames.push_back(sft->getParent());
+                        frameRootDetected = true;
+
+#if PRINT_METADATA_TREE
+                        printf("\n--------------- FRAME (OSUBFILETYPE) ---------------\n\n");
+                        sft->getParent()->printAll ();
+#endif
+                    }
+                }
+            }
+        }
+
+        if(!frameRootDetected) {
+            std::vector<const Tag*> piTagList = root->findTags("PhotometricInterpretation");
+            if (!piTagList.empty()) {
+                for (auto pi : piTagList) {
+                    int piVal = pi->toInt();
+                    if (piVal == (isRaw ? 32803 : 2)) {
+                        frames.push_back(pi->getParent());
+                        //frameRootDetected = true;  not used afterward
+
+#if PRINT_METADATA_TREE
+                        printf("\n--------------- FRAME (PHOTOMETRIC) ---------------\n\n");
+                        pi->getParent()->printAll ();
+#endif
+                    }
+                }
+            }
+        }
+
+        // --- getting next sibling root
+
+        ifdOffset = get4 (f, order);
+
+        roots.push_back(root);
+
+#if PRINT_METADATA_TREE
+        printf("\n~~~~~~~~~ ROOT ~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+        root->printAll ();
+#endif
+
+    } while (ifdOffset && !onlyFirst);
+
+    // Security check : if there's at least one root, there must be at least one image.
+    // If the following occurs, then image detection above has failed or it's an unsupported file type.
+    // Yet the result of this should be valid.
+    if (!roots.empty() && frames.empty()) {
+        frames.push_back(roots.at(0));
     }
-
-// root->printAll ();
-
-    return root;
 }
 
-TagDirectory* ExifManager::parseJPEG (FILE* f, int offset)
+void ExifManager::parseJPEG (int offset)
 {
+    if (!f) {
+        #ifndef NDEBUG
+        std::cerr << "ERROR : no file opened !" << std::endl;
+        #endif
+        return;
+    }
 
-    fseek (f, offset, SEEK_SET);
-    unsigned char markerl = 0xff;
-    unsigned char c;
-    fread (&c, 1, 1, f);
-    const char exifid[] = "Exif\0\0";
-    char idbuff[8];
-    int tiffbase = -1;
+    if(!fseek (f, offset, SEEK_SET)) {
+        unsigned char c;
+        if(fread (&c, 1, 1, f) == 1) {
+            constexpr unsigned char markerl = 0xff;
+            const char exifid[] = "Exif\0\0";
+            char idbuff[8];
+            int tiffbase = -1;
 
-    while (fread (&c, 1, 1, f)) {
-        if (c != markerl) {
-            continue;
-        }
+            while (fread (&c, 1, 1, f)) {
+                if (c != markerl) {
+                    continue;
+                }
 
-        if (fread (&c, 1, 1, f) && c == 0xe1) { // APP1 marker found
-            if (fread (idbuff, 1, 8, f) < 8) {
-                return nullptr;
-            }
+                if (fread (&c, 1, 1, f) && c == 0xe1) { // APP1 marker found
+                    if (fread (idbuff, 1, 8, f) < 8) {
+                        return;
+                    }
 
-            if (!memcmp (idbuff + 2, exifid, 6)) {  // Exif info found
-                tiffbase = ftell (f);
-                return parse (f, tiffbase);
+                    if (!memcmp (idbuff + 2, exifid, 6)) {  // Exif info found
+                        tiffbase = ftell (f);
+
+                        // We need a RawMetaDataLocation to put the 'tiffbase' value
+                        const bool rmlCreated = !rml;
+                        if (rmlCreated) {
+                            rml.reset(new rtengine::RawMetaDataLocation(0));
+                        }
+                        rml->exifBase = tiffbase;
+                        parse (false);
+                        if (rmlCreated) {
+                            rml.reset();
+                        }
+                        return;
+                    }
+                }
             }
         }
     }
-
-    return nullptr;
 }
 
-TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored)
+void ExifManager::parseTIFF (bool skipIgnored)
 {
-
-    return parse (f, 0, skipIgnored);
+    if (!rml) {
+        rml.reset(new rtengine::RawMetaDataLocation(0));
+        parse(false, skipIgnored);
+        rml.reset();
+    } else {
+        parse (false,skipIgnored);
+    }
 }
 
 std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
@@ -3108,8 +3420,8 @@ bool extractLensInfo (std::string &fullname, double &minFocal, double &maxFocal,
     maxFocal = 0.0;
     maxApertureAtMinFocal = 0.0;
     maxApertureAtMaxFocal = 0.0;
-    char buffer[1024];
-    strcpy (buffer, fullname.c_str());
+    char buffer[1025];
+    strncpy (buffer, fullname.c_str(), 1024);
     char *pF = strstr (buffer, "f/" );
 
     if ( pF ) {

@@ -693,9 +693,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     // the general section is always ignored, whichever operation we use the PartialPaste for
     filterPE.general = falsePE.general;
-    // raw.caAutoStrength is ignored at the moment.
-    filterPE.raw.caAutoStrength = false;
-
 
     // Now we filter out the filter depending on the checked items
     if (!wb->get_active ()) {
@@ -893,6 +890,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.raw.bayersensor.pixelShiftBlur                   = falsePE.raw.bayersensor.pixelShiftBlur;
         filterPE.raw.bayersensor.pixelShiftEperIso                = falsePE.raw.bayersensor.pixelShiftEperIso;
         filterPE.raw.bayersensor.pixelShiftEqualBright            = falsePE.raw.bayersensor.pixelShiftEqualBright;
+        filterPE.raw.bayersensor.pixelShiftEqualBrightChannel     = falsePE.raw.bayersensor.pixelShiftEqualBrightChannel;
         filterPE.raw.bayersensor.pixelShiftExp0                   = falsePE.raw.bayersensor.pixelShiftExp0;
         filterPE.raw.bayersensor.pixelShiftGreen                  = falsePE.raw.bayersensor.pixelShiftGreen;
         filterPE.raw.bayersensor.pixelShiftHoleFill               = falsePE.raw.bayersensor.pixelShiftHoleFill;
