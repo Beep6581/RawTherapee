@@ -2,7 +2,7 @@
   This file is part of RawTherapee.
 
   Copyright (c) 2016-2017 TooWaBoo
-  Version 2.57
+  Version 2.58
 
   RawTherapee is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1612,6 +1612,10 @@ radiobutton {
     padding: 0;
     margin: 0;
     min-height: 2em;
+}
+#PrefNotebook checkbox,
+#PrefNotebook checkbutton {
+    min-height: 1.6667em;
 }
 
 check,
