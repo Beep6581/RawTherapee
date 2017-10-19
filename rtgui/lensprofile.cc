@@ -420,7 +420,8 @@ bool LensProfilePanel::setLensfunLens(const Glib::ustring &lens)
         if (it && (*it)[lf->lensfunModelLens.lens] == lens) {
             return true;
         }
-        
+
+        bool first_maker_found = false;
         for (auto row : lf->lensfunLensModel->children()) {
             if (lens.find(row[lf->lensfunModelLens.lens]) == 0) {
                 auto &c = row.children();
@@ -431,6 +432,11 @@ bool LensProfilePanel::setLensfunLens(const Glib::ustring &lens)
                         return true;
                     }
                 }
+                // we do not break immediately here, because there might be multiple makers
+                // sharing the same prefix (e.g. "Leica" and "Leica Camera AG").
+                // therefore, we break below when the lens doesn't match any of them
+                first_maker_found = true;
+            } else if (first_maker_found) {
                 break;
             }
         }
