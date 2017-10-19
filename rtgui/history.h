@@ -40,7 +40,6 @@ public:
     class HistoryColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn<Glib::ustring>  realText;
         Gtk::TreeModelColumn<Glib::ustring>  text;
         Gtk::TreeModelColumn<Glib::ustring>  value;
         Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
@@ -49,7 +48,6 @@ public:
         HistoryColumns()
         {
             add(text);
-            add(realText);
             add(value);
             add(chev);
             add(params);

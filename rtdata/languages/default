@@ -1028,7 +1028,7 @@ PARTIALPASTE_RAW_DMETHOD;Demosaic method
 PARTIALPASTE_RAW_FALSECOLOR;False color suppression
 PARTIALPASTE_RAW_IMAGENUM;Sub-image
 PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-PARTIALPASTE_RAW_PIXELSHIFT;PixelShift
+PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_RGBCURVES;RGB curves
@@ -1091,7 +1091,6 @@ PREFERENCES_D50_OLD;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;Dark-Frame
 PREFERENCES_DARKFRAMEFOUND;Found
 PREFERENCES_DARKFRAMESHOTS;shots
 PREFERENCES_DARKFRAMETEMPLATES;templates
@@ -1100,6 +1099,7 @@ PREFERENCES_DATEFORMATHINT;You can use the following formatting strings:\n<b>%y<
 PREFERENCES_DAUB_LABEL;Use Daubechies D6 wavelets instead of D4
 PREFERENCES_DAUB_TOOLTIP;The Noise Reduction and Wavelet Levels tools use a Debauchies mother wavelet. If you choose D6 instead of D4 you increase the number of orthogonal Daubechies coefficients and probably increase quality of small-scale levels. There is no memory or processing time difference between the two.
 PREFERENCES_DIRDARKFRAMES;Dark-frames directory
+PREFERENCES_DIRECTORIES;Directories
 PREFERENCES_DIRHOME;Home directory
 PREFERENCES_DIRLAST;Last visited directory
 PREFERENCES_DIROTHER;Other
@@ -1112,8 +1112,6 @@ PREFERENCES_EXTERNALEDITOR;External Editor
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar\n(de-select for low resolution display)
 PREFERENCES_FILEFORMAT;File format
-PREFERENCES_FILMSIMULATION;Film Simulation
-PREFERENCES_FLATFIELD;Flat-Field
 PREFERENCES_FLATFIELDFOUND;Found
 PREFERENCES_FLATFIELDSDIR;Flat-fields directory
 PREFERENCES_FLATFIELDSHOTS;shots
@@ -1309,7 +1307,7 @@ QINFO_FRAMECOUNT;%2 frames
 QINFO_HDR;HDR / %2 frame(s)
 QINFO_ISO;ISO
 QINFO_NOEXIF;Exif data not available.
-QINFO_PIXELSHIFT;PixelShift / %2 frame(s)
+QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 SAMPLEFORMAT_0;Unknown data format
 SAMPLEFORMAT_1;Unsigned 8 bits
 SAMPLEFORMAT_2;Unsigned 16 bits

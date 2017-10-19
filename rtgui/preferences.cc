@@ -528,51 +528,59 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     hbmip->set_border_width (4);
     mvbpp->pack_start (*fmip, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DARKFRAME")) );
-    Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
-    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+//    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DARKFRAME")) );
+//    Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
+//    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    // Directories
+    Gtk::Frame* cdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DIRECTORIES")) );
+    Gtk::Grid* dirgrid = Gtk::manage (new Gtk::Grid ());
+    setExpandAlignProperties(dirgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
     Gtk::Label *dfLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_DIRDARKFRAMES") + ":"));
-    hb42->pack_start (*dfLab, Gtk::PACK_SHRINK, 4 );
-    hb42->pack_start (*darkFrameDir, Gtk::PACK_EXPAND_WIDGET, 4);
+    setExpandAlignProperties(dfLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(darkFrameDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     dfLabel = Gtk::manage (new Gtk::Label ("Found:"));
-    Gtk::VBox* vbdf = Gtk::manage (new Gtk::VBox ());
-    vbdf->pack_start (*hb42, Gtk::PACK_SHRINK, 4);
-    vbdf->pack_start (*dfLabel, Gtk::PACK_SHRINK, 4 );
-    fdf->add (*vbdf );
-    mvbpp->pack_start (*fdf, Gtk::PACK_SHRINK, 4);
+    setExpandAlignProperties(dfLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*dfLab, Gtk::POS_TOP, 1, 1);
+    dirgrid->attach_next_to(*darkFrameDir, *dfLab, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*dfLabel, *darkFrameDir, Gtk::POS_RIGHT, 1, 1);
 
     //dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
     dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged), true);
 
     // FLATFIELD
-    Gtk::Frame* fff = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_FLATFIELD")) );
-    Gtk::HBox* hb43 = Gtk::manage (new Gtk::HBox ());
-    flatFieldDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *ffLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_FLATFIELDSDIR") + ":"));
-    hb43->pack_start (*ffLab, Gtk::PACK_SHRINK, 4 );
-    hb43->pack_start (*flatFieldDir);
+    setExpandAlignProperties(ffLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    flatFieldDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(flatFieldDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     ffLabel = Gtk::manage (new Gtk::Label ("Found:"));
-    Gtk::VBox* vbff = Gtk::manage (new Gtk::VBox ());
-    vbff->pack_start (*hb43, Gtk::PACK_SHRINK, 4);
-    vbff->pack_start (*ffLabel, Gtk::PACK_SHRINK, 4 );
-    fff->add (*vbff );
-    mvbpp->pack_start (*fff, Gtk::PACK_SHRINK, 4);
+    setExpandAlignProperties(ffLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*ffLab, *dfLab, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*flatFieldDir, *ffLab, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*ffLabel, *flatFieldDir, Gtk::POS_RIGHT, 1, 1);
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
     ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::flatFieldChanged), true);
 
     //Cluts Dir
-    Gtk::Frame* clutsDirFrame = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_FILMSIMULATION")) );
-    Gtk::HBox* clutsDirBox = Gtk::manage (new Gtk::HBox ());
-    clutsDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_CLUTSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     Gtk::Label *clutsDirLabel = Gtk::manage (new Gtk::Label (M ("PREFERENCES_CLUTSDIR") + ":"));
+    setExpandAlignProperties(clutsDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    clutsDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_CLUTSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(clutsDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* clutsRestartNeeded = Gtk::manage ( new Gtk::Label (Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    clutsDirBox->pack_start (*clutsDirLabel, Gtk::PACK_SHRINK, 4 );
-    clutsDirBox->pack_start (*clutsDir );
-    clutsDirBox->pack_start (*clutsRestartNeeded, Gtk::PACK_SHRINK, 4 );
-    clutsDirFrame->add (*clutsDirBox );
-    mvbpp->pack_start (*clutsDirFrame, Gtk::PACK_SHRINK, 4 );
+    setExpandAlignProperties(clutsRestartNeeded, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
+    dirgrid->attach_next_to(*clutsDirLabel, *ffLab, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*clutsDir, *clutsDirLabel, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*clutsRestartNeeded, *clutsDir, Gtk::POS_RIGHT, 1, 1);
+
+    cdf->add(*dirgrid);
+    mvbpp->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
+
+    // Metadata
     Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_METADATA")));
     Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
     ckbTunnelMetaData = Gtk::manage (new Gtk::CheckButton (M ("PREFERENCES_TUNNELMETADATA")));

@@ -24,18 +24,17 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Glib::ustring eventDescrArray[NUMOFEVENTS];
 
 History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nullptr), tpc (nullptr), bmnum (1)
 {
 
     blistenerLock = false; // sets default that the Before preview will not be locked
-
+/*
     // fill history event message array
     for (int i = 0; i < NUMOFEVENTS; i++) {
         eventDescrArray[i] = M (Glib::ustring::compose ("HISTORY_MSG_%1", i + 1));
     }
-
+*/
     // History List
     // ~~~~~~~~~~~~
     Gtk::ScrolledWindow* hscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
@@ -238,7 +237,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     }
 
     // construct formatted list content
-    Glib::ustring text = Glib::ustring::compose ("%1", eventDescrArray[ev]);
+    Glib::ustring text = M("HISTORY_MSG_" + std::to_string(ev + 1));
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
@@ -262,8 +261,9 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
 
     // if there is no last item or its chev!=ev, create a new one
     if (size == 0 || !row || row[historyColumns.chev] != ev || ev == EvProfileChanged) {
-        Gtk::TreeModel::Row newrow = * (historyModel->append());
-        newrow[historyColumns.realText] = eventDescrArray[ev];
+ //       Gtk::TreeModel::Row newrow = * (historyModel->append());
+ //       newrow[historyColumns.realText] = eventDescrArray[ev];
+        Gtk::TreeModel::Row newrow = *(historyModel->append());
         newrow[historyColumns.text] = text;
         newrow[historyColumns.value] = g_markup_escape_text (descr.c_str(), -1);
         newrow[historyColumns.chev] = ev;
@@ -282,7 +282,6 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     }
     // else just update it
     else {
-        row[historyColumns.realText] = eventDescrArray[ev];
         row[historyColumns.text] = text;
         row[historyColumns.value] = g_markup_escape_text (descr.c_str(), -1);
         row[historyColumns.chev] = ev;
@@ -430,9 +429,12 @@ bool History::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib:
             Gtk::TreeModel::iterator iter = historyModel->get_iter (path);
 
             if (iter) {
-                Glib::ustring param, val;
-                iter->get_value<Glib::ustring> (1, param);
-                iter->get_value<Glib::ustring> (2, val);
+//                Glib::ustring param, val;
+//                iter->get_value<Glib::ustring> (1, param);
+//                iter->get_value<Glib::ustring> (2, val);
+                Glib::ustring text, val;
+                iter->get_value<Glib::ustring>(0, text);
+                iter->get_value<Glib::ustring>(1, val);
 
                 /*
                  *
@@ -451,7 +453,8 @@ bool History::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib:
                 tooltip->set_custom(*hbox);
                 */
 
-                tooltip->set_text (param + " : " + val);
+ //               tooltip->set_text (param + " : " + val);
+                tooltip->set_text(text + " : " + val);
                 displayTooltip = true;
             }
         }

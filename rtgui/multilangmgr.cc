@@ -114,35 +114,37 @@ MultiLangMgr::MultiLangMgr (const Glib::ustring& fname, MultiLangMgr* fallbackMg
 
 bool MultiLangMgr::load (const Glib::ustring& fname, MultiLangMgr* fallbackMgr)
 {
-    this->fallbackMgr.reset (fallbackMgr);
+    this->fallbackMgr.reset(fallbackMgr);
 
-    std::ifstream file (fname.c_str ());
-    if (!file.is_open ()) {
+    std::ifstream file(fname.c_str());
+    if (!file.is_open()) {
         return false;
     }
 
     std::map<std::string, Glib::ustring> translations;
-    std::string entry, key, value;
+    std::string entry;
 
-    while (std::getline (file, entry)) {
+    while (std::getline(file, entry)) {
 
-        if (entry.empty () || entry.front () == '#') {
+        if (entry.empty() || entry.front() == '#' || entry.front() == '!') {
             continue;
         }
 
-        std::istringstream line (entry);
+        std::string key, value;
 
-        if (!std::getline (line, key, ';') || !std::getline (line, value)) {
+        std::istringstream line(entry);
+
+        if (!std::getline(line, key, ';') || !std::getline(line, value)) {
             continue;
         }
 
-        static const std::regex newline ("\\\\n");
-        value = std::regex_replace (value, newline, "\n");
+        static const std::regex newline("\\\\n");
+        value = std::regex_replace(value, newline, "\n");
 
-        translations.emplace (key, value);
+        translations.emplace(key, value);
     }
 
-    this->translations.swap (translations);
+    this->translations.swap(translations);
     return true;
 }
 

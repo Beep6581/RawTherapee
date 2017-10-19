@@ -1494,7 +1494,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键: <b>-</b>
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !QINFO_FRAMECOUNT;%2 frames
 !QINFO_HDR;HDR / %2 frame(s)
-!QINFO_PIXELSHIFT;PixelShift / %2 frame(s)
+!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;Unsigned 8 bits
 !SAMPLEFORMAT_2;Unsigned 16 bits
