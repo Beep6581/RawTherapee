@@ -1842,15 +1842,15 @@ TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_LABEL;Local L*a*b*
 TP_LOCALLAB_NEUTRAL;Reset
-TP_LOCALLAB_NEUTRAL_TIP;Reset Current Control point
-TP_LOCALLAB_NBSPOT;Control points
-TP_LOCALLAB_NBSPOT_TOOLTIP;Add multiple control points and select
+TP_LOCALLAB_NEUTRAL_TIP;Reset Current Control spot
+TP_LOCALLAB_NBSPOT;Control spots
+TP_LOCALLAB_NBSPOT_TOOLTIP;Add multiple control spots and select
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_THRES;Threshold chroma
 TP_LOCALLAB_PROXI;Iterations
-TP_LOCALLAB_ANBSPOT;Help to Move Control point
+TP_LOCALLAB_ANBSPOT;Help to Move Control spot
 TP_LOCALLAB_ANBSPOT_TOOLTIP;Provisory control (I hope somebody can help to manage events!! and suppress this bad function)
 TP_LOCALLAB_LIGHTNESS;Lightness
 TP_LOCALLAB_METHOD_TOOLTIP;Default - in Preferences - Performance et Quality\nIf you select Enhanced or enhanced chroma denoise - only for Color Light-Sharpening-Retinex-CBDL in normal mode\nEnhanced and chroma denoise significantly increases processing times.
