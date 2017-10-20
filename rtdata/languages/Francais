@@ -955,7 +955,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_DARKFRAME;Soustraction de Trame Noire
 PREFERENCES_DARKFRAMEFOUND;Trouvé
 PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
@@ -964,6 +963,7 @@ PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes f
 PREFERENCES_DAUB_LABEL;Utiliser les ondelettes de Daubechies D6 au lieu de D4
 PREFERENCES_DAUB_TOOLTIP;Les outils de Réduction de Bruit et de Niveaux d'Ondelettes utilisent une ondelette de Debauchie mère. Si vous choisissez D6 au lieu de D4 vous augmentez le nombre de coéf. orthogonaux de Daubechies et augmentez probablement la qualité des niveaux de taille moyenne. Il n'y a pas de différence de consommation mémoire ou de temps de traitement entre les deux.
 PREFERENCES_DIRDARKFRAMES;Dossier des images de Trame Noire
+PREFERENCES_DIRECTORIES;Dossiers
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
@@ -976,8 +976,6 @@ PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers et de vignettes
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne\n(à désactiver pour les écrans de faible résolution)
 PREFERENCES_FILEFORMAT;Format du fichier
-PREFERENCES_FILMSIMULATION;Simulation de Film
-PREFERENCES_FLATFIELD;Champ Uniforme
 PREFERENCES_FLATFIELDFOUND;Trouvé
 PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
 PREFERENCES_FLATFIELDSHOTS;image(s)

@@ -20,8 +20,8 @@
 #define _MULTILANGMGR_
 
 #include <map>
-#include <memory>
 #include <string>
+#include <vector>
 
 #include <glibmm/ustring.h>
 
@@ -29,22 +29,14 @@ class MultiLangMgr
 {
 public:
     MultiLangMgr ();
-    MultiLangMgr (const Glib::ustring& fname, MultiLangMgr* fallbackMgr = nullptr);
 
-public:
-    bool load (const Glib::ustring& fname, MultiLangMgr* fallbackMgr = nullptr);
-
-public:
-    Glib::ustring getStr (const std::string& key) const;
-
-public:
-    static bool isOSLanguageDetectSupported ();
-    static Glib::ustring getOSUserLanguage ();
+    void load(const std::vector<Glib::ustring> &fnames);
+    Glib::ustring getStr(const std::string& key) const;
+    static bool isOSLanguageDetectSupported();
+    static Glib::ustring getOSUserLanguage();
 
 private:
     std::map<std::string, Glib::ustring> translations;
-    std::unique_ptr<MultiLangMgr> fallbackMgr;
-
 };
 
 extern MultiLangMgr langMgr;
