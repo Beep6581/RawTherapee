@@ -1078,7 +1078,7 @@ private:
         CurveFactory::curveWavContL (wavcontlutili, params.wavelet.wavclCurve, wavclCurve,/* hist16C, dummy,*/ 1);
 
         if (params.wavelet.enabled) {
-            ipf.ip_wavelet (labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, wavcontlutili, 1);
+            ipf.ip_wavelet (labView, labView, 2, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW,  waOpacityCurveWL, wavclCurve, 1);
         }
 
         wavCLVCurve.Reset();

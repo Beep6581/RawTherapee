@@ -801,7 +801,6 @@ void Crop::update (int todo)
         bool ccutili = parent->ccutili;
         bool clcutili = parent->clcutili;
         bool cclutili = parent->cclutili;
-        bool wavcontlutili = parent->wavcontlutili;
 
         LUTu dummy;
         //    parent->ipf.MSR(labnCrop, labnCrop->W, labnCrop->H, 1);
@@ -921,7 +920,7 @@ void Crop::update (int todo)
 
             params.wavelet.getCurves (wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL);
 
-            parent->ipf.ip_wavelet (labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, wavcontlutili, skip);
+            parent->ipf.ip_wavelet (labnCrop, labnCrop, kall, WaveParams, wavCLVCurve, waOpacityCurveRG, waOpacityCurveBY, waOpacityCurveW, waOpacityCurveWL, parent->wavclCurve, skip);
         }
 
         //     }
