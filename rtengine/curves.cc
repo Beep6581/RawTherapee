@@ -1986,7 +1986,7 @@ void PerceptualToneCurve::Apply(float &r, float &g, float &b, PerceptualToneCurv
     Ciecam02::jch2xyz_ciecam02float( x, y, z,
                                      J, C, h,
                                      xw, yw,  zw,
-                                     f,  c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw );
+                                     c, nc, 1, pow1, nbb, ncb, fl, cz, d, aw );
 
     if (!isfinite(x) || !isfinite(y) || !isfinite(z)) {
         // can happen for colors on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
