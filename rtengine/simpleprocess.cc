@@ -718,7 +718,7 @@ private:
             LUTu aehist;
             int aehistcompr;
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-            ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+            ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
         }
 
         // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -1086,7 +1086,6 @@ private:
         //Colorappearance and tone-mapping associated
 
         int f_w = 1, f_h = 1;
-        int begh = 0, endh = fh;
 
         if (params.colorappearance.tonecie || params.colorappearance.enabled) {
             f_w = fw;
@@ -1094,8 +1093,7 @@ private:
         }
 
         CieImage *cieView = new CieImage (f_w, (f_h));
-        begh = 0;
-        endh = fh;
+
         CurveFactory::curveLightBrightColor (
             params.colorappearance.curve,
             params.colorappearance.curve2,
@@ -1137,18 +1135,18 @@ private:
             if (params.sharpening.enabled) {
                 if (settings->ciecamfloat) {
                     float d, dj, yb;
-                    ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
+                    ipf.ciecam_02float (cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
                 } else {
-                    double dd, dj, yb;
-                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, yb, 1);
+                    double dd, dj;
+                    ipf.ciecam_02 (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, 1);
                 }
             } else {
                 if (settings->ciecamfloat) {
                     float d, dj, yb;
-                    ipf.ciecam_02float (cieView, float (adap), begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
+                    ipf.ciecam_02float (cieView, float (adap), 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, d, dj, yb, 1);
                 } else {
-                    double dd, dj, yb;
-                    ipf.ciecam_02 (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, yb, 1);
+                    double dd, dj;
+                    ipf.ciecam_02 (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, true, dd, dj, 1);
                 }
             }
         }

@@ -2003,7 +2003,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         double clip = 0;
         int brightness, contrast, black, hlcompr, hlcomprthresh;
         getAutoExpHistogram (aehist, aehistcompr);
-        ImProcFunctions::getAutoExp (aehist, aehistcompr, getDefGain(), clip, dirpyrdenoiseExpComp, brightness, contrast, black, hlcompr, hlcomprthresh);
+        ImProcFunctions::getAutoExp (aehist, aehistcompr, clip, dirpyrdenoiseExpComp, brightness, contrast, black, hlcompr, hlcomprthresh);
     }
 
     t2.set();

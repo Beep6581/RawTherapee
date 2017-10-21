@@ -443,7 +443,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             LUTu aehist;
             int aehistcompr;
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-            ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp,
+            ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, params.toneCurve.expcomp,
                             params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
 
             if (aeListener)
@@ -759,8 +759,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
                 // end calculation adaptation scene luminosity
             }
 
-            int begh = 0;
-            int endh = pH;
             float d, dj, yb;
             bool execsharp = false;
 
@@ -781,7 +779,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             CAMBrightCurveJ.dirty = true;
             CAMBrightCurveQ.dirty = true;
 
-            ipf.ciecam_02float (ncie, float (adap), begh, endh, pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, dj, yb, 1);
+            ipf.ciecam_02float (ncie, float (adap), pW, 2, nprevl, &params, customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, scale, execsharp, d, dj, yb, 1);
 
             if ((params.colorappearance.autodegree || params.colorappearance.autodegreeout) && acListener && params.colorappearance.enabled) {
                 acListener->autoCamChanged (100.* (double)d, 100.* (double)dj);

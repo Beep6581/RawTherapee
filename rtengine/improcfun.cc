@@ -208,9 +208,9 @@ void ImProcFunctions::firstAnalysis (const Imagefloat* const original, const Pro
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
+void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                  const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
-                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, double &dj, double &yb, int rtt)
+                                 LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, double &d, double &dj, int rtt)
 {
     if (params->colorappearance.enabled) {
 //int lastskip;
@@ -256,7 +256,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
         int width = lab->W, height = lab->H;
         float minQ = 10000.f;
         float maxQ = -1000.f;
-        float w_h;
         float a_w;
         float c_;
         float f_l;
@@ -607,7 +606,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
 
 #ifndef _DEBUG
-        #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW, scale)
+        #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW, scale)
 #endif
         {
             //matrix for current working space
@@ -661,7 +660,6 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                     Qpro = Q;
                     Mpro = M;
                     spro = s;
-                    w_h = wh + epsil;
                     a_w = aw;
                     c_ = c;
                     f_l = fl;
@@ -1347,14 +1345,14 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
                 ||  (params->colorappearance.badpixsl > 0 && settings->autocielab)) {
 
             if (params->epd.enabled  && params->colorappearance.tonecie  && algepd) {
-                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
             }
 
             //EPDToneMapCIE adapted to CIECAM
 
 
 #ifndef _DEBUG
-            #pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh, nc2,f2,c2, gamu, highlight,pW)
+            #pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width, nc2,f2,c2, gamu, highlight,pW)
 #endif
             {
                 TMatrix wiprofa = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.working);
@@ -1521,7 +1519,7 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh
 
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
+void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const ProcParams* params,
                                       const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2, const ColorAppearance & customColCurve3,
                                       LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt)
 {
@@ -1982,7 +1980,6 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
         const float pow1n = pow_F ( 1.64f - pow_F ( 0.29f, nj ), 0.73f );
 
         const float epsil = 0.0001f;
-        const float w_h = wh + epsil;
         const float coefQ = 32767.f / wh;
         const float a_w = aw;
         const float c_ = c;
@@ -2810,7 +2807,7 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int 
 
             if (epdEnabled  && params->colorappearance.tonecie && algepd) {
                 lab->deleteLab();
-                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+                ImProcFunctions::EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
                 lab->reallocLab();
             }
 
@@ -4064,7 +4061,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                 float lumbefore = 0.299f * r + 0.587f * g + 0.114f * b;
                                 float ro, go, bo;
                                 int mode = 0;
-                                toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, preser, strProtect);
+                                toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, strProtect);
                                 float lumafter = 0.299f * ro + 0.587f * go + 0.114f * bo;
                                 float preserv = 1.f;
 
@@ -4743,7 +4740,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         if (lumbefore < 65000.f  && lumbefore > 500.f) { //reduct artifacts for highlights an extrem shadows
                             float ro, go, bo;
                             int mode = 1;
-                            toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, preser, strProtect);
+                            toningsmh (r, g, b, ro, go, bo, RedLow, GreenLow, BlueLow, RedMed, GreenMed, BlueMed, RedHigh, GreenHigh, BlueHigh, reducac, mode, strProtect);
                             float lumafter = 0.299f * ro + 0.587f * go + 0.114f * bo;
                             float preserv = 1.f;
 
@@ -5085,7 +5082,7 @@ void ImProcFunctions::secondeg_begin (float reducac, float vend, float &aam, flo
 * @param mode ?
 * @param preser whether to preserve luminance (if 1) or not
 **/
-void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go, float &bo, float RedLow, float GreenLow, float BlueLow, float RedMed, float GreenMed, float BlueMed, float RedHigh, float GreenHigh, float BlueHigh, float reducac, int mode, int preser, float strProtect)
+void ImProcFunctions::toningsmh (float r, float g, float b, float &ro, float &go, float &bo, float RedLow, float GreenLow, float BlueLow, float RedMed, float GreenMed, float BlueMed, float RedHigh, float GreenHigh, float BlueHigh, float reducac, int mode, float strProtect)
 {
     float bmu = mode == 1 ? 0.5f : 0.4f;
     float RedL   = 1.f + (RedLow  - 1.f) * 0.4f;
@@ -6378,8 +6375,8 @@ SSEFUNCTION void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBu
 
 //#include "cubic.cc"
 
-void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew)
-{
+//void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew)
+//{
 
     /*    LUT<double> cmultiplier(181021);
 
@@ -6456,7 +6453,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew)
             }
     */
     //delete [] cmultiplier;
-}
+//}
 
 void ImProcFunctions::impulsedenoise (LabImage* lab)
 {
@@ -6539,7 +6536,7 @@ void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
         dirpyr_equalizer (lab->L, lab->L, lab->W, lab->H, lab->a, lab->b, lab->a, lab->b, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, params->dirpyrequalizer.gamutlab,  b_l, t_l, t_r, b_r, choice, scale);
     }
 }
-void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip)
+void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, int Wid, int Hei, float minQ, float maxQ, unsigned int Iterates, int skip)
 {
 
     if (!params->epd.enabled) {
@@ -6752,7 +6749,7 @@ void ImProcFunctions::EPDToneMap (LabImage *lab, unsigned int Iterates, int skip
 }
 
 
-void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double defgain, double clip,
+void ImProcFunctions::getAutoExp  (const LUTu &histogram, int histcompr, double clip,
                                    double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh)
 {
 

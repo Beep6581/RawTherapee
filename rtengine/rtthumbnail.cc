@@ -1126,8 +1126,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     int     hlcomprthresh = params.toneCurve.hlcomprthresh;
 
     if (params.toneCurve.autoexp && aeHistogram) {
-        double logDefGain = 0.0;
-        ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
     }
 
     LUTf curve1 (65536);
@@ -1290,7 +1289,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             customColCurve2,
             customColCurve3,
             16);
-        int begh = 0, endh = labView->H;
+
         bool execsharp = false;
         float d, dj, yb;
         float fnum = fnumber;// F number
@@ -1323,7 +1322,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         CAMMean = NAN;
         CAMBrightCurveJ.dirty = true;
         CAMBrightCurveQ.dirty = true;
-        ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
+        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
 
@@ -1433,7 +1432,7 @@ void Thumbnail::applyAutoExp (procparams::ProcParams& params)
 
     if (params.toneCurve.autoexp && aeHistogram) {
         ImProcFunctions ipf (&params, false);
-        ipf.getAutoExp (aeHistogram, aeHistCompression, log (defGain) / log (2.0), params.toneCurve.clip, params.toneCurve.expcomp,
+        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, params.toneCurve.expcomp,
                         params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
     }
 }
