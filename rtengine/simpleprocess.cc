@@ -778,9 +778,9 @@ private:
             // CurveFactory::denoiseLL(lldenoiseutili, denoiseParams.lcurve, Noisecurve,1);
             //denoiseParams.getCurves(noiseLCurve);
 //      ipf.RGB_denoise(baseImg, baseImg, calclum, imgsrc->isRAW(), denoiseParams, params.defringe, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, lldenoiseutili);
-            float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
+            float nresi, highresi;
             int kall = 2;
-            ipf.RGB_denoise (kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+            ipf.RGB_denoise (kall, baseImg, baseImg, calclum, ch_M, max_r, max_b, imgsrc->isRAW(), denoiseParams, imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, nresi, highresi);
 
         }
 

@@ -653,8 +653,8 @@ void Crop::update (int todo)
             if (skip == 1 && denoiseParams.enabled) {
                 int kall = 0;
 
-                float chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi;
-                parent->ipf.RGB_denoise (kall, origCrop, origCrop, calclum, parent->denoiseInfoStore.ch_M, parent->denoiseInfoStore.max_r, parent->denoiseInfoStore.max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, chaut, redaut, blueaut, maxredaut, maxblueaut, nresi, highresi);
+                float nresi, highresi;
+                parent->ipf.RGB_denoise (kall, origCrop, origCrop, calclum, parent->denoiseInfoStore.ch_M, parent->denoiseInfoStore.max_r, parent->denoiseInfoStore.max_b, parent->imgsrc->isRAW(), /*Roffset,*/ denoiseParams, parent->imgsrc->getDirPyrDenoiseExpComp(), noiseLCurve, noiseCCurve, nresi, highresi);
 
                 if (parent->adnListener) {
                     parent->adnListener->noiseChanged (nresi, highresi);
