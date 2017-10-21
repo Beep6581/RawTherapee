@@ -2612,7 +2612,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 #define FORC(cnt) for (c=0; c < cnt; c++)
 #define FORC3 FORC(3)
 
-void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
+void RawImageSource::ahd_demosaic()
 {
     int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
     float (*pix)[4], (*rix)[3];

@@ -247,7 +247,7 @@ protected:
     void amaze_demosaic_RT(int winx, int winy, int winw, int winh, array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);//Emil's code for AMaZE
     void fast_demosaic(int winx, int winy, int winw, int winh );//Emil's code for fast demosaicing
     void dcb_demosaic(int iterations, bool dcb_enhance);
-    void ahd_demosaic(int winx, int winy, int winw, int winh);
+    void ahd_demosaic();
     void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
     void border_interpolate2(int winw, int winh, int lborders);
     void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
