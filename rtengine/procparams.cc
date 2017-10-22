@@ -18,7 +18,6 @@
  */
 #include <glib/gstdio.h>
 #include "procparams.h"
-#include "rt_math.h"
 #include "curves.h"
 #include "../rtgui/multilangmgr.h"
 #include "../rtgui/version.h"
@@ -26,6 +25,7 @@
 #include "../rtgui/paramsedited.h"
 #include "../rtgui/options.h"
 #include <locale.h>
+
 #define APPVERSION RTVERSION
 
 using namespace std;
@@ -558,7 +558,7 @@ void ColorToningParams::slidersToCurve (std::vector<double> &colorCurve, std::ve
     opacityCurve.at (8) = 0.35;
 }
 
-void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], const double rgb_xyz[3][3], bool &opautili) const
+void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCurve &opacityCurveLUT, const double xyz_rgb[3][3], bool &opautili) const
 {
     float satur = 0.8f;
     float lumin = 0.5f; //middle of luminance for optimization of gamut - no real importance...as we work in XYZ and gamut control
@@ -8829,7 +8829,7 @@ void PartialProfile::clearGeneral ()
     }
 }
 
-const void PartialProfile::applyTo (ProcParams *destParams) const
+void PartialProfile::applyTo (ProcParams *destParams) const
 {
     if (destParams && pparams && pedited) {
         pedited->combine (*destParams, *pparams, true);
