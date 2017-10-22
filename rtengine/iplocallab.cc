@@ -1878,7 +1878,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
                     float khu = 0.f;
                     float kch = 1.f;
                     float fach = 1.f;
-					float falu = 1.f;
+                    float falu = 1.f;
                     float deltachro = fabs (rchro - chromaref);
                     float deltahue = fabs (rhue - hueref);
 
@@ -2072,7 +2072,7 @@ void ImProcFunctions::TM_Local (int call, int sp, LabImage * tmp1, float **bufli
 
 
 
-void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
+void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, float ** buflight, float ** bufchro, const float hueplus, const float huemoins, const float hueref, const float dhue, const float chromaref, const float lumaref, const local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy)
 {
 //local BLUR
     BENCHFUN
@@ -2091,6 +2091,9 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 
     const float ahu = 1.f / (2.8f * lp.sensbn - 280.f);
     const float bhu = 1.f - ahu * 2.8f * lp.sensbn;
+
+    const float alum = 1.f / (lp.sensbn - 100.f);
+    const float blum = 1.f - alum * lp.sensbn;
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -2147,6 +2150,10 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 
             for (int x = 0, lox = cx + x; x < transformed->W; x++, lox++) {
                 int zone = 0;
+                // int lox = cx + x;
+                int begx = int (lp.xc - lp.lxL);
+                int begy = int (lp.yc - lp.lyT);
+
                 float localFactor = 1.f;
                 calcTransition (lox, loy, ach, lp, zone, localFactor);
 
@@ -2169,17 +2176,39 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                 const float rchro = sqrt (SQR (original->b[y][x]) + SQR (original->a[y][x])) / 327.68f;
 #endif
 
+                float rL = original->L[y][x] / 327.68f;
+
+                float cli = 1.f;
+                float clc = 1.f;
+
+                cli = (buflight[loy - begy][lox - begx]);
+                clc = (bufchro[loy - begy][lox - begx]);
+
+                float aplus = (1.f - cli) / delhu;
+                float bplus = 1.f - aplus * hueplus;
+                float amoins = (cli - 1.f) / delhu;
+                float bmoins = 1.f - amoins * huemoins;
+
+                float aplusch = (1.f - clc) / delhu;
+                float bplusch = 1.f - aplusch * hueplus;
+                float amoinsch = (clc - 1.f) / delhu;
+                float bmoinsch = 1.f - amoinsch * huemoins;
+
                 //prepare shape detection
                 float kch = 1.f;
                 float fach = 1.f;
+                float falu = 1.f;
                 float deltachro = fabs (rchro - chromaref);
                 float deltahue = fabs (rhue - hueref);
+                float realstr = 1.f;
+                float realstrch = 1.f;
 
                 if (deltahue > rtengine::RT_PI) {
                     deltahue = - (deltahue - 2.f * rtengine::RT_PI);
                 }
 
                 float deltaE = 20.f * deltahue + deltachro; //pseudo deltaE between 0 and 280
+                float deltaL = fabs (lumaref - rL); //between 0 and 100
 
                 //kch to modulate action with chroma
                 if (deltachro < 160.f * SQR (lp.sensbn / 100.f)) {
@@ -2201,64 +2230,101 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                         //hue detection
                         if ((hueref + dhue) < rtengine::RT_PI && rhue < hueplus && rhue > huemoins) { //transition are good
                             if (rhue >= hueplus - delhu )  {
+                                realstr = aplus * rhue + bplus;
+                                realstrch = aplusch * rhue + bplusch;
                                 khu  = apl * rhue + bpl;
                             } else if (rhue < huemoins + delhu)  {
+                                realstr = amoins * rhue + bmoins;
+                                realstrch = amoinsch * rhue + bmoinsch;
                                 khu = amo * rhue + bmo;
                             } else {
+                                realstr = cli;
+                                realstrch = clc;
                                 khu = 1.f;
                             }
                         } else if ((hueref + dhue) >= rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                                realstr = aplus * rhue + bplus;
+                                realstrch = aplusch * rhue + bplusch;
                                 khu  = apl * rhue + bpl;
                             } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                                realstr = amoins * rhue + bmoins;
+                                realstrch = amoinsch * rhue + bmoinsch;
                                 khu = amo * rhue + bmo;
                             } else {
+                                realstr = cli;
+                                realstrch = clc;
                                 khu = 1.f;
                             }
                         }
 
                         if ((hueref - dhue) > -rtengine::RT_PI && rhue < hueplus && rhue > huemoins ) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                                realstr = aplus * rhue + bplus;
+                                realstrch = aplusch * rhue + bplusch;
                                 khu  = apl * rhue + bpl;
                             } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                                realstrch = amoinsch * rhue + bmoinsch;
+                                realstr = amoins * rhue + bmoins;
                                 khu = amo * rhue + bmo;
                             } else {
+                                realstr = cli;
+                                realstrch = clc;
                                 khu = 1.f;
                             }
                         } else if ((hueref - dhue) <= -rtengine::RT_PI && (rhue > huemoins  || rhue < hueplus )) {
                             if (rhue >= hueplus - delhu  && rhue < hueplus)  {
+                                realstr = aplus * rhue + bplus;
+                                realstrch = aplusch * rhue + bplusch;
                                 khu  = apl * rhue + bpl;
                             } else if (rhue >= huemoins && rhue < huemoins + delhu)  {
+                                realstr = amoins * rhue + bmoins;
+                                realstrch = amoinsch * rhue + bmoinsch;
                                 khu = amo * rhue + bmo;
                             } else {
+                                realstrch = clc;
+                                realstr = cli;
                                 khu = 1.f;
                             }
                         }
 
-                        if (deltaE <  2.8f * lp.sensbn) {
-                            fach = khu;
-                        } else {
-                            fach = khu * (ahu * deltaE + bhu);
-                        }
+                        if (lp.sensbn <= 20.f) { //to try...
+
+                            if (deltaE <  2.8f * lp.sensbn) {
+                                fach = khu;
+                            } else {
+                                fach = khu * (ahu * deltaE + bhu);
+                            }
 
 
-                        float kcr = 10.f;
+                            float kcr = 10.f;
 
-                        if (rchro < kcr) {
-                            fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            if (rchro < kcr) {
+                                fach *= (1.f / (kcr * kcr)) * rchro * rchro;
+                            }
+
+                            if (lp.qualmet >= 1) {
+                            } else {
+                                fach = 1.f;
+                            }
+
+                            if (deltaL <  lp.sensbn) {
+                                falu = 1.f;
+                            } else {
+                                falu = alum * deltaL + blum;
+                            }
+
                         }
                     }
                 }
-
-                int begx = lp.xc - lp.lxL;
-                int begy = lp.yc - lp.lyT;
 
                 switch (zone) {
 
                     case 1: { // inside transition zone
                         float difL, difa, difb;
+                        float factorx = localFactor;
 
-                        if (call == 2) {
+                        if (call <= 3) {
                             difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
                             difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
                             difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
@@ -2270,15 +2336,21 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 
                         }
 
-                        difL *= localFactor;
+                        //   difL *= localFactor;
+                        difL *= factorx * (100.f + realstr) / 100.f;
+                        difL *= kch * fach;
 
-                        transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                        transformed->L[y][x] = original->L[y][x] + difL;
+
 
                         if (!lp.actsp) {
-                            difa *= localFactor;
-                            difb *= localFactor;
-                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach;//same as Luma
-                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach;//same as Luma
+                            difa *= factorx * (100.f + realstrch * falu) / 100.f;
+                            difb *= factorx * (100.f + realstrch * falu) / 100.f;
+                            difa *= kch * fach;
+                            difb *= kch * fach;
+                            transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                            transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+
                         }
 
                         break;
@@ -2287,7 +2359,7 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
                     case 2: { // inside selection => full effect, no transition
                         float difL, difa, difb;
 
-                        if (call == 2) {
+                        if (call <= 3) {
                             difL = tmp1->L[loy - begy][lox - begx] - original->L[y][x];
                             difa = tmp1->a[loy - begy][lox - begx] - original->a[y][x];
                             difb = tmp1->b[loy - begy][lox - begx] - original->b[y][x];
@@ -2298,11 +2370,21 @@ void ImProcFunctions::BlurNoise_Local (int call, int sp, LabImage * tmp1, const 
 
                         }
 
-                        transformed->L[y][x] = original->L[y][x] + difL * kch * fach;
+                        difL *= (100.f + realstr) / 100.f;
+                        difL *= kch * fach;
+
+                        transformed->L[y][x] = original->L[y][x] + difL;
+
 
                         if (!lp.actsp) {
-                            transformed->a[y][x] = original->a[y][x] + difa * kch * fach;//same as Luma
-                            transformed->b[y][x] = original->b[y][x] + difb * kch * fach;//same as Luma
+                            difa *= (100.f + realstrch * falu) / 100.f;
+                            difb *= (100.f + realstrch * falu) / 100.f;
+                            difa *= kch * fach;
+                            difb *= kch * fach;
+
+                            transformed->a[y][x] = CLIPC (original->a[y][x] + difa);
+                            transformed->b[y][x] = CLIPC (original->b[y][x] + difb);
+
                         }
                     }
                 }
@@ -5224,14 +5306,36 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
         if (((radius >= 1.5 * GAUSS_SKIP && lp.rad > 1.) || lp.stren > 0.1)  && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
             LabImage *tmp1 = nullptr;
             LabImage *bufgb = nullptr;
+            float **buflight = nullptr;
+            float **bufchro = nullptr;
+            float *origBuffer = nullptr;
+
             int GW = transformed->W;
             int GH = transformed->H;
             //  printf ("rad=%f gaus=%f call=%i skip=%i\n", radius, GAUSS_SKIP, call, sk);
+            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
+            int bfw = int (lp.lx + lp.lxL) + del;
+            float *orig[bfh] ALIGNED16;
 
-            if (call == 2  && !lp.invrad) { //simpleprocess
-                int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-                int bfw = int (lp.lx + lp.lxL) + del;
+            if (call <= 3  && !lp.invrad) {
                 bufgb = new LabImage (bfw, bfh);
+                buflight   = new float*[bfh];
+
+                for (int i = 0; i < bfh; i++) {
+                    buflight[i] = new float[bfw];
+                }
+
+                bufchro   = new float*[bfh];//for chroma reti
+
+                for (int i = 0; i < bfh; i++) {
+                    bufchro[i] = new float[bfw];
+                }
+
+                origBuffer = new float[bfh * bfw];
+
+                for (int i = 0; i < bfh; i++) {
+                    orig[i] = &origBuffer[i * bfw];
+                }
 
 #ifdef _OPENMP
                 #pragma omp parallel for
@@ -5242,6 +5346,9 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                         bufgb->L[ir][jr] = 0.f;
                         bufgb->a[ir][jr] = 0.f;
                         bufgb->b[ir][jr] = 0.f;
+                        buflight[ir][jr] = 0.f;
+                        bufchro[ir][jr] = 0.f;
+
                     }
 
                 int begy = lp.yc - lp.lyT;
@@ -5265,28 +5372,6 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                         }
                     }
 
-                /*
-                There is a bug in this calculation ==> out of limits ==> crash
-                                int yStart = lp.yc - lp.lyT - cy;
-                                int yEnd = lp.yc + lp.ly - cy;
-                                int xStart = lp.xc - lp.lxL - cx;
-                                int xEnd = lp.xc + lp.lx - cx;
-                                int begy = lp.yc - lp.lyT;
-                                int begx = lp.xc - lp.lxL;
-                #ifdef _OPENMP
-                                #pragma omp parallel for schedule(dynamic,16)
-                #endif
-
-                                for (int y = yStart; y < yEnd ; y++) {
-                                    int loy = cy + y;
-
-                                    for (int x = xStart, lox = cx + x; x < xEnd; x++, lox++) {
-                                        bufgb->L[loy - begy][lox - begx] = original->L[y][x];//fill square buffer with datas
-                                        bufgb->a[loy - begy][lox - begx] = original->a[y][x];//fill square buffer with datas
-                                        bufgb->b[loy - begy][lox - begx] = original->b[y][x];//fill square buffer with datas
-                                    }
-                                }
-                */
                 tmp1 = new LabImage (bfw, bfh);
 #ifdef _OPENMP
                 #pragma omp parallel
@@ -5319,7 +5404,6 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
             }
 
             if (!lp.invrad) { //blur and noise (center)
-                //         BlurNoise_Local(call, lp, original, transformed, tmp1, cx, cy);
                 float hueplus = hueref + dhuebn;
                 float huemoins = hueref - dhuebn;
 
@@ -5331,7 +5415,40 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                     huemoins = hueref - dhuebn + 2.f * rtengine::RT_PI;
                 }
 
-                BlurNoise_Local (call, sp, tmp1, hueplus, huemoins, hueref, dhuebn, chromaref, lumaref, lp, original, transformed, cx, cy);
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++)
+                    for (int jr = 0; jr < bfw; jr++) {
+                        float rL;
+                        rL = CLIPRET ((tmp1->L[ir][jr] - bufgb->L[ir][jr]) / 328.f);
+                        buflight[ir][jr] = rL;
+
+                    }
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                for (int ir = 0; ir < bfh; ir += 1)
+                    for (int jr = 0; jr < bfw; jr += 1) {
+                        orig[ir][jr] = sqrt (SQR (bufgb->a[ir][jr]) + SQR (bufgb->b[ir][jr]));
+                    }
+
+
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int ir = 0; ir < bfh; ir++)
+                    for (int jr = 0; jr < bfw; jr++) {
+                        float rch;
+                        rch = CLIPRET ((sqrt ((SQR (tmp1->a[ir][jr]) + SQR (tmp1->a[ir][jr]))) - orig[ir][jr]) / 328.f);
+                        bufchro[ir][jr] = rch;
+                    }
+
+                BlurNoise_Local (call, sp, tmp1, buflight, bufchro, hueplus, huemoins, hueref, dhuebn, chromaref, lumaref, lp, original, transformed, cx, cy);
 
             } else {
 
@@ -5339,8 +5456,23 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
 
             }
 
-            if (call == 2  && !lp.invrad) {
+            if (call <= 3  && !lp.invrad) {
                 delete bufgb;
+
+                for (int i = 0; i < bfh; i++) {
+                    delete [] buflight[i];
+                }
+
+                delete [] buflight;
+
+                for (int i = 0; i < bfh; i++) {
+                    delete [] bufchro[i];
+                }
+
+                delete [] bufchro;
+                delete [] origBuffer;
+
+
             }
 
             delete tmp1;
@@ -6721,13 +6853,13 @@ void ImProcFunctions::Lab_Local (LocallabParams &loc, int call, int sp, float** 
                     bufchr[i] = new float[bfw];
                 }
 
-                buflight   = new float*[bfh];//for lightness reti
+                buflight   = new float*[bfh];
 
                 for (int i = 0; i < bfh; i++) {
                     buflight[i] = new float[bfw];
                 }
 
-                bufchrom   = new float*[bfh];//for lightness reti
+                bufchrom   = new float*[bfh];
 
                 for (int i = 0; i < bfh; i++) {
                     bufchrom[i] = new float[bfw];

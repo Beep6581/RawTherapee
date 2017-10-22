@@ -1025,7 +1025,7 @@ void LocallabParams::setDefaults()
     sensih = 19;
     retrab = 500;
     sensicb = 19;
-    sensibn = 60;
+    sensibn = 19;
     sensitm = 19;
     sensisha = 19;
     transit = 60;
