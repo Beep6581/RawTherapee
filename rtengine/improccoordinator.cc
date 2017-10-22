@@ -333,7 +333,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
         ipf.setScale (scale);
 
-        imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.raw);
         denoiseInfoStore.valid = false;
         //ColorTemp::CAT02 (orig_prev, &params) ;
         //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
@@ -556,7 +556,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
             double bbm = 33.;
 
             DCPProfile::ApplyState as;
-            DCPProfile *dcpProf = imgsrc->getDCP (params.icm, currWB, as);
+            DCPProfile *dcpProf = imgsrc->getDCP (params.icm, as);
 
             ipf.rgbProc (oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, colourToningSatLimit, colourToningSatLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, dcpProf, as, histToneCurve);
@@ -1223,7 +1223,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname, bool 
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage (currWB, tr, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
+    imgsrc->getImage (currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
     ImProcFunctions ipf (&ppar, true);
 
     if (ipf.needsTransform()) {

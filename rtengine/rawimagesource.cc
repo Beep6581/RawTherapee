@@ -87,7 +87,7 @@ void transLineStandard (const float* const red, const float* const green, const 
     rotateLine (blue, image->b, tran, i, imwidth, imheight);
 }
 
-void transLineFuji (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight, const int fw)
+void transLineFuji (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imheight, const int fw)
 {
 
     // Fuji SuperCCD rotation + coarse rotation
@@ -623,7 +623,7 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
     return gain;
 }
 
-void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw )
+void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw )
 {
     MyMutex::MyLock lock(getImageMutex);
 
@@ -824,7 +824,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             if(d1x) {
                 transLineD1x (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, d1xHeightOdd, doClip);
             } else if(fuji) {
-                transLineFuji (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
+                transLineFuji (line_red, line_grn, line_blue, ix, image, tran, imheight, fw);
             } else {
                 transLineStandard (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight);
             }
@@ -910,7 +910,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
 {
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
@@ -1518,7 +1518,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname, int imageNum, bool batch)
+int RawImageSource::load (const Glib::ustring &fname)
 {
 
     MyTime t1, t2;

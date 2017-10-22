@@ -116,7 +116,7 @@ public:
     RawImageSource ();
     ~RawImageSource ();
 
-    int         load        (const Glib::ustring &fname, int imageNum = 0, bool batch = false);
+    int         load        (const Glib::ustring &fname);
     void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise = true);
     void        demosaic    (const RAWParams &raw);
     void        retinex       (ColorManagementParams cmp, const RetinexParams &deh, ToneCurveParams Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI);
@@ -138,7 +138,7 @@ public:
     void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW);
     void        scaleColors (int winx, int winy, int winw, int winh, const RAWParams &raw, array2D<float> &rawData); // raw for cblack
 
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const ColorManagementParams &cmp, const RAWParams &raw);
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw);
     eSensorType getSensorType () const
     {
         return ri != nullptr ? ri->getSensorType() : ST_NONE;
@@ -185,7 +185,7 @@ public:
     }
     void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
     void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
-    DCPProfile *getDCP(const ColorManagementParams &cmp, ColorTemp &wb, DCPProfile::ApplyState &as);
+    DCPProfile *getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as);
 
     void convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb);
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
