@@ -3261,7 +3261,6 @@ SSEFUNCTION void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat 
                 realblue = 0.001f;
             }
 
-            //TODO: implement using AlignedBufferMP
             //fill tile from image; convert RGB to "luma/chroma"
 
             if (isRAW) {//image is raw; use channel differences for chroma channels
