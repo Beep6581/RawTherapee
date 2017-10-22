@@ -7064,7 +7064,7 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
             return 0.0;
         }
 
-        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, sensorType, w_raw, h_raw, 1, 1.0, FALSE, 0);
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, sensorType, w_raw, h_raw, 1, 1.0, FALSE);
 
         if (!raw) {
             delete thumb;

@@ -381,7 +381,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -929,7 +929,7 @@ Thumbnail::~Thumbnail ()
 }
 
 // Simple processing of RAW internal JPGs
-IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, rtengine::TypeInterpolation interp, double& myscale)
+IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, rtengine::TypeInterpolation interp)
 {
 
     int rwidth;
@@ -1761,7 +1761,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
     return tmpdata;
 }
 
-bool Thumbnail::writeImage (const Glib::ustring& fname, int format)
+bool Thumbnail::writeImage (const Glib::ustring& fname)
 {
 
     if (!thumbImg) {

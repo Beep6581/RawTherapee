@@ -72,12 +72,12 @@ public:
     void init ();
 
     IImage8* processImage   (const procparams::ProcParams& pparams, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& scale);
-    IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
+    IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp);
     int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
     void     getDimensions  (int& w, int& h, double& scaleFac);
 
     static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false);
-    static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, int imageNum);
+    static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate);
     static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode = false);
     static RawMetaDataLocation loadMetaDataFromRaw (const Glib::ustring& fname);
 
@@ -88,7 +88,7 @@ public:
     void applyAutoExp (procparams::ProcParams& pparams);
 
     unsigned char* getGrayscaleHistEQ (int trim_width);
-    bool writeImage (const Glib::ustring& fname, int format);
+    bool writeImage (const Glib::ustring& fname);
     bool readImage (const Glib::ustring& fname);
 
     bool readData  (const Glib::ustring& fname);
