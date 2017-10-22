@@ -30,7 +30,6 @@
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
 #define MAXR(a,b) ((a) > (b) ? (a) : (b))
-#define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 namespace rtengine
 {

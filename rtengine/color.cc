@@ -25,8 +25,6 @@
 #include "opthelper.h"
 #include "iccstore.h"
 
-#define pow_F(a,b) (xexpf(b*xlogf(a)))
-
 using namespace std;
 
 namespace rtengine

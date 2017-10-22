@@ -22,6 +22,8 @@
 #ifndef OPTHELPER_H
     #define OPTHELPER_H
 
+    #define pow_F(a,b) (xexpf(b*xlogf(a)))
+
     #ifdef __SSE2__
         #include "sleefsseavx.c"
         #ifdef __GNUC__
