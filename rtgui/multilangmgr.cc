@@ -19,7 +19,6 @@
 #include "multilangmgr.h"
 
 #include <fstream>
-#include <regex>
 
 #ifdef WIN32
 #include <windows.h>
@@ -107,57 +106,50 @@ MultiLangMgr::MultiLangMgr ()
 {
 }
 
-MultiLangMgr::MultiLangMgr (const Glib::ustring& fname, MultiLangMgr* fallbackMgr)
+void MultiLangMgr::load (const std::vector<Glib::ustring> &fnames)
 {
-    load (fname, fallbackMgr);
-}
+    translations.clear();
 
-bool MultiLangMgr::load (const Glib::ustring& fname, MultiLangMgr* fallbackMgr)
-{
-    this->fallbackMgr.reset(fallbackMgr);
-
-    std::ifstream file(fname.c_str());
-    if (!file.is_open()) {
-        return false;
-    }
-
-    std::map<std::string, Glib::ustring> translations;
-    std::string entry;
-
-    while (std::getline(file, entry)) {
-
-        if (entry.empty() || entry.front() == '#' || entry.front() == '!') {
+    for (const auto& fname : fnames) {
+        if(fname.empty()) {
             continue;
         }
 
-        std::string key, value;
-
-        std::istringstream line(entry);
-
-        if (!std::getline(line, key, ';') || !std::getline(line, value)) {
+        std::ifstream file(fname.c_str());
+        if (!file.is_open()) {
             continue;
         }
 
-        static const std::regex newline("\\\\n");
-        value = std::regex_replace(value, newline, "\n");
+        std::string entry;
+        auto hint = translations.begin();
+        while (std::getline(file, entry)) {
 
-        translations.emplace(key, value);
+            if (entry.empty() || entry.front() == '#' || entry.front() == '!') {
+                continue;
+            }
+
+            std::string key, value;
+
+            std::istringstream line(entry);
+
+            if(std::getline(line, key, ';') && translations.find(key) == translations.end() && std::getline(line, value)) {
+                size_t pos = 0;
+                while((pos = value.find("\\n", pos)) != std::string::npos) {
+                     value.replace(pos, 2, "\n");
+                     pos++;
+                }
+                hint = translations.emplace_hint(hint, key, value);
+            }
+        }
     }
-
-    this->translations.swap(translations);
-    return true;
 }
 
 Glib::ustring MultiLangMgr::getStr (const std::string& key) const
 {
-    const auto iterator = translations.find (key);
+    const auto iterator = translations.find(key);
 
-    if (iterator != translations.end ()) {
+    if (iterator != translations.end()) {
         return iterator->second;
-    }
-
-    if (fallbackMgr) {
-        return fallbackMgr->getStr (key);
     }
 
     return key;

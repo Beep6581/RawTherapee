@@ -393,14 +393,22 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
             lname = camera.getModel(); // "Standard"
         }
         auto found = data_->FindLenses(camera.data_, nullptr, lname.c_str());
-        if (!found) {
-            // try to split the maker from the model of the lens
+        for (size_t pos = 0; !found && pos < name.size(); ) {
+            // try to split the maker from the model of the lens -- we have to
+            // guess a bit here, since there are makers with a multi-word name
+            // (e.g. "Leica Camera AG")
+            if (name.find("f/", pos) == 0) {
+                break; // no need to search further
+            }
             Glib::ustring make, model;
-            auto i = name.find_first_of(' ');
+            auto i = name.find(' ', pos);
             if (i != Glib::ustring::npos) {
                 make = name.substr(0, i);
                 model = name.substr(i+1);
                 found = data_->FindLenses(camera.data_, make.c_str(), model.c_str());
+                pos = i+1;
+            } else {
+                break;
             }
         }
         if (found) {
