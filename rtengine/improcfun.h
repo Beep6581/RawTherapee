@@ -339,13 +339,13 @@ public:
     void idirpyr_eq_channelcam  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float multi[6], const double dirpyrThreshold, float ** l_a_h, float ** l_b_c, const double skinprot, float b_l, float t_l, float t_r);
     void defringe       (LabImage* lab);
     void defringecam    (CieImage* ncie);
-    void badpixcam      (CieImage* ncie, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad);
-    void badpixlab      (LabImage* lab, double rad, int thr, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom);
+    void badpixcam      (CieImage* ncie, double rad, int thr, int mode, float skinprot, float chrom, int hotbad);
+    void badpixlab      (LabImage* lab, double rad, int thr, int mode, float skinprot, float chrom);
 
     void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh);
     void PF_correct_RTcam (CieImage * src, CieImage * dst, double radius, int thresh);
-    void Badpixelscam (CieImage * src, CieImage * dst, double radius, int thresh, int mode,  float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom, int hotbad);
-    void BadpixelsLab (LabImage * src, LabImage * dst, double radius, int thresh, int mode, float b_l, float t_l, float t_r, float b_r, float skinprot, float chrom);
+    void Badpixelscam (CieImage * src, CieImage * dst, double radius, int thresh, int mode, float skinprot, float chrom, int hotbad);
+    void BadpixelsLab (LabImage * src, LabImage * dst, double radius, int thresh, int mode, float skinprot, float chrom);
 
     Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool bw, GammaValues *ga = nullptr);
