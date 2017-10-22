@@ -281,7 +281,7 @@ public:
 
 public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-                              procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+                              const std::vector<double>& curvePoints, const std::vector<double>& curvePoints2,
                               LUTu & histogram, LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2,
 
                               int skip = 1);
@@ -687,10 +687,10 @@ public:
     virtual ~ColorGradientCurve() {};
 
     void Reset();
-    void SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin);
-    void SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3], float satur, float lumin);
-    void SetRGB(const Curve *pCurve, const double xyz_rgb[3][3], const double rgb_xyz[3][3]);
-    void SetRGB(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], const double rgb_xyz[3][3]);
+    void SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3], float satur, float lumin);
+    void SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], float satur, float lumin);
+    void SetRGB(const Curve *pCurve);
+    void SetRGB(const std::vector<double> &curvePoints);
 
     /**
     * @brief Get the value of Red, Green and Blue corresponding to the requested index

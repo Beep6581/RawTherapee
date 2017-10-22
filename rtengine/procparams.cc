@@ -584,13 +584,13 @@ void ColorToningParams::getCurves (ColorGradientCurve &colorCurveLUT, OpacityCur
             satur = 0.9f;
         }
 
-        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, satur, lumin);
         opacityCurveLUT.Set (oCurve, opautili);
     } else if (method == "Splitlr" || method == "Splitco") {
-        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, rgb_xyz, satur, lumin);
+        colorCurveLUT.SetXYZ (cCurve, xyz_rgb, satur, lumin);
         opacityCurveLUT.Set (oCurve, opautili);
     } else if (method.substr (0, 3) == "RGB") {
-        colorCurveLUT.SetRGB (cCurve, xyz_rgb, rgb_xyz);
+        colorCurveLUT.SetRGB (cCurve);
         opacityCurveLUT.Set (oCurve, opautili);
     }
 }

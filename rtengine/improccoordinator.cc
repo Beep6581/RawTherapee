@@ -461,7 +461,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall)
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black / 65535.0,
                                     params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
                                     params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
-                                    params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
+                                    params.toneCurve.curve, params.toneCurve.curve2,
                                     vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);

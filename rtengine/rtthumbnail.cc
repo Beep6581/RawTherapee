@@ -1152,8 +1152,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ToneCurve customToneCurvebw2;
     CurveFactory::complexCurve (expcomp, black / 65535.0, hlcompr, hlcomprthresh,
                                 params.toneCurve.shcompr, bright, contr,
-                                params.toneCurve.curveMode, params.toneCurve.curve,
-                                params.toneCurve.curveMode2, params.toneCurve.curve2,
+                                params.toneCurve.curve,
+                                params.toneCurve.curve2,
                                 hist16, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2, 16);
 
     LUTf rCurve;
