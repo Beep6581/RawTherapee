@@ -2117,8 +2117,8 @@ void RawImageSource::retinexPrepareBuffers(ColorManagementParams cmp, const Reti
             std::swap(pwr, gamm);
         }
 
-        int mode = 0, imax = 0;
-        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
+        int mode = 0;
+        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
 
         //    printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
@@ -2384,13 +2384,13 @@ void RawImageSource::retinex(ColorManagementParams cmp, const RetinexParams &deh
         double gamm = deh.gam;
         double gamm2 = gamm;
         double ts = deh.slope;
-        int mode = 0, imax = 0;
+        int mode = 0;
 
         if(gamm2 < 1.) {
             std::swap(pwr, gamm);
         }
 
-        Color::calcGamma(pwr, ts, mode, imax, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
 
         double mul = 1. + g_a[4];
         double add;
