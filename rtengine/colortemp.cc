@@ -1025,7 +1025,7 @@ void ColorTemp::cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, dou
 
 }
 
-void ColorTemp::temp2mulxyz (double tem, double gree, const std::string &method, double &Xxyz, double &Zxyz)
+void ColorTemp::temp2mulxyz (double tem, const std::string &method, double &Xxyz, double &Zxyz)
 {
     double xD, yD, x_D, y_D, interm;
     double x, y, z;

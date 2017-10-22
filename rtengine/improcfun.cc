@@ -275,9 +275,9 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
 
         bool ciedata = params->colorappearance.datacie;
 
-        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
-        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
-        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
+        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, "Custom", Xwsc, Zwsc);
 
         //viewing condition for surrsrc
         if (params->colorappearance.surrsrc == "Average") {
@@ -1558,9 +1558,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                        || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
                        || (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl > 0 && settings->autocielab));
 
-        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
-        ColorTemp::temp2mulxyz (params->colorappearance.tempout, params->colorappearance.greenout, "Custom", Xwout, Zwout);
-        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, params->colorappearance.greensc, "Custom", Xwsc, Zwsc);
+        ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz (params->colorappearance.tempout, "Custom", Xwout, Zwout);
+        ColorTemp::temp2mulxyz (params->colorappearance.tempsc, "Custom", Xwsc, Zwsc);
 
         //viewing condition for surrsrc
         if (params->colorappearance.surrsrc == "Average") {
