@@ -1310,10 +1310,8 @@ void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int pW, int pwb, L
                 if (rtt == 1) {
                     float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
                     float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                    float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
                     float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-                    int choice = 0; //not disabled in case of ! always 0
-                    dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale);   //contrast by detail adapted to CIECAM
+                    dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold,  params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale);   //contrast by detail adapted to CIECAM
                 }
             }
 
@@ -2757,11 +2755,9 @@ void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int pW, int pw
                     if (rtt == 1) {
                         float b_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[0]) / 100.0f;
                         float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
-                        float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
                         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-                        int choice = 0; // I have not suppress this statement in case of !! always to 0
                         lab->deleteLab();
-                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect,  true, params->dirpyrequalizer.gamutlab, b_l, t_l, t_r, b_r, choice, scale); //contrast by detail adapted to CIECAM
+                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, true, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -6506,7 +6502,6 @@ void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
         float t_l = static_cast<float> (params->dirpyrequalizer.hueskin.value[1]) / 100.0f;
         float b_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[2]) / 100.0f;
         float t_r = static_cast<float> (params->dirpyrequalizer.hueskin.value[3]) / 100.0f;
-        int choice = 0; //I have  not disabled this statement in case of ! always 0
         //      if     (params->dirpyrequalizer.algo=="FI") choice=0;
         //      else if(params->dirpyrequalizer.algo=="LA") choice=1;
         float artifact = (float) settings->artifact_cbdl;
@@ -6526,7 +6521,7 @@ void ImProcFunctions::dirpyrequalizer (LabImage* lab, int scale)
         }
 
         //dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
-        dirpyr_equalizer (lab->L, lab->L, lab->W, lab->H, lab->a, lab->b, lab->a, lab->b, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, params->dirpyrequalizer.gamutlab,  b_l, t_l, t_r, b_r, choice, scale);
+        dirpyr_equalizer (lab->L, lab->L, lab->W, lab->H, lab->a, lab->b, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, b_l, t_l, t_r, scale);
     }
 }
 void ImProcFunctions::EPDToneMapCIE (CieImage *ncie, float a_w, float c_, int Wid, int Hei, float minQ, float maxQ, unsigned int Iterates, int skip)
