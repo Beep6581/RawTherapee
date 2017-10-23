@@ -4196,21 +4196,21 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         if (beforeCurveMode == BlackWhiteParams::TC_MODE_STD_BW) { // Standard
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const StandardToneCurvebw& userToneCurvebw = static_cast<const StandardToneCurvebw&> (customToneCurvebw1);
+                                    const StandardToneCurve& userToneCurvebw = static_cast<const StandardToneCurve&> (customToneCurvebw1);
                                     userToneCurvebw.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
                         } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_FILMLIKE_BW) { // Adobe like
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const AdobeToneCurvebw& userToneCurvebw = static_cast<const AdobeToneCurvebw&> (customToneCurvebw1);
+                                    const AdobeToneCurve& userToneCurvebw = static_cast<const AdobeToneCurve&> (customToneCurvebw1);
                                     userToneCurvebw.Apply (rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj]);
                                 }
                             }
                         } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW) { // apply the curve on the saturation and value channels
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const SatAndValueBlendingToneCurvebw& userToneCurvebw = static_cast<const SatAndValueBlendingToneCurvebw&> (customToneCurvebw1);
+                                    const SatAndValueBlendingToneCurve& userToneCurvebw = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurvebw1);
                                     rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
                                     gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
                                     btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
@@ -4220,7 +4220,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         } else if (beforeCurveMode == BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW) { // apply the curve to the rgb channels, weighted
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                                    const WeightedStdToneCurvebw& userToneCurvebw = static_cast<const WeightedStdToneCurvebw&> (customToneCurvebw1);
+                                    const WeightedStdToneCurve& userToneCurvebw = static_cast<const WeightedStdToneCurve&> (customToneCurvebw1);
                                     rtemp[ti * TS + tj] = CLIP<float> (rtemp[ti * TS + tj]);
                                     gtemp[ti * TS + tj] = CLIP<float> (gtemp[ti * TS + tj]);
                                     btemp[ti * TS + tj] = CLIP<float> (btemp[ti * TS + tj]);
@@ -4660,7 +4660,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 for (int i = 0; i < tH; i++) {
                     for (int j = 0; j < tW; j++) {
-                        const StandardToneCurvebw& userToneCurve = static_cast<const StandardToneCurvebw&> (customToneCurvebw2);
+                        const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurvebw2);
                         userToneCurve.Apply (tmpImage->r (i, j), tmpImage->g (i, j), tmpImage->b (i, j));
                     }
                 }
@@ -4671,7 +4671,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                 for (int i = 0; i < tH; i++) { //for ulterior usage if bw data modified
                     for (int j = 0; j < tW; j++) {
-                        const WeightedStdToneCurvebw& userToneCurve = static_cast<const WeightedStdToneCurvebw&> (customToneCurvebw2);
+                        const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&> (customToneCurvebw2);
 
                         tmpImage->r (i, j) = CLIP<float> (tmpImage->r (i, j));
                         tmpImage->g (i, j) = CLIP<float> (tmpImage->g (i, j));
