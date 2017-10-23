@@ -24,7 +24,7 @@
 #include "iptcpairs.h"
 #include "imagesource.h"
 #include "rt_math.h"
-
+#pragma GCC diagnostic warning "-Wextra"
 #define PRINT_HDR_PS_DETECTION 0
 
 using namespace rtengine;
@@ -1041,7 +1041,7 @@ failure:
 
 }
 
-FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly, bool loadAll) :
+FramesData::FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly) :
     iptc(nullptr), dcrawFrameCount (0)
 {
     if (rml && (rml->exifBase >= 0 || rml->ciffBase >= 0)) {
