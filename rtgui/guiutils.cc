@@ -1168,9 +1168,188 @@ bool MyHScale::on_key_press_event (GdkEventKey* event)
     }
 }
 
-MyFileChooserButton::MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action) : Gtk::FileChooserButton(title, action)
+MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action):
+    title_(title),
+    action_(action),
+    lbl_(""),
+    filename_("")
 {
-    //set_size_request(35, -1);
+    lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
+    lbl_.set_justify(Gtk::JUSTIFY_LEFT);
+    set_none();
+    box_.pack_start(lbl_, true, false);
+    Gtk::Image *img = Gtk::manage(new Gtk::Image());
+    img->set_from_icon_name("document-open", Gtk::ICON_SIZE_BUTTON);
+    box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
+    box_.pack_start(*img, false, false);
+    box_.show_all_children();
+    add(box_);
+    signal_clicked().connect(sigc::mem_fun(*this, &MyFileChooserButton::show_chooser));
+}
+
+
+void MyFileChooserButton::show_chooser()
+{
+#if 1
+        Gtk::FileChooserDialog dlg(*static_cast<Gtk::Window *>(get_toplevel()), title_, action_);
+        dlg.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+        dlg.add_button("Ok", Gtk::RESPONSE_OK);
+        dlg.set_filename(filename_);
+        for (auto &f : file_filters_) {
+            dlg.add_filter(f);
+        }
+        if (cur_filter_) {
+            dlg.set_filter(cur_filter_);
+        }
+        for (auto &f : shortcut_folders_) {
+            dlg.add_shortcut_folder(f);
+        }
+        if (!current_folder_.empty()) {
+            dlg.set_current_folder(current_folder_);
+        }
+        int res = dlg.run();
+        if (res == Gtk::RESPONSE_OK) {
+            filename_ = dlg.get_filename();
+            current_folder_ = dlg.get_current_folder();
+            lbl_.set_label(Glib::path_get_basename(filename_));
+            selection_changed_.emit();
+        }
+#else
+        // TO BE COMPLETED!
+        GtkWindow *parent_window = static_cast<Gtk::Window *>(get_toplevel())->gobj();
+        GtkFileChooserNative *native;
+        GtkFileChooserAction action = action_;
+        gint res;
+
+        native = gtk_file_chooser_native_new (title_.c_str(),
+                                              parent_window,
+                                              action,
+                                              "_Ok",
+                                              "_Cancel");
+
+        res = gtk_native_dialog_run (GTK_NATIVE_DIALOG (native));
+        if (res == GTK_RESPONSE_ACCEPT)
+        {
+            char *filename;
+            GtkFileChooser *chooser = GTK_FILE_CHOOSER (native);
+            filename = gtk_file_chooser_get_filename (chooser);
+            filename_ = filename;
+            g_free (filename);
+            lbl_.set_label(Glib::path_get_basename(filename_));
+            selection_changed_.emit();
+        }
+
+        g_object_unref (native);
+#endif
+}
+
+
+sigc::signal<void> &MyFileChooserButton::signal_selection_changed()
+{
+    return selection_changed_;
+}
+
+
+sigc::signal<void> &MyFileChooserButton::signal_file_set()
+{
+    return selection_changed_;
+}
+
+
+std::string MyFileChooserButton::get_filename() const
+{
+    return filename_;
+}
+
+
+bool MyFileChooserButton::set_filename(const std::string &filename)
+{
+    filename_ = filename;
+    if (Glib::file_test(filename_, Glib::FILE_TEST_EXISTS)) {
+        lbl_.set_label(Glib::path_get_basename(filename_));
+    } else {
+        set_none();
+    }
+    return true;
+}
+
+void MyFileChooserButton::add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    file_filters_.push_back(filter);
+}
+
+
+void MyFileChooserButton::remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    auto it = std::find(file_filters_.begin(), file_filters_.end(), filter);
+    if (it != file_filters_.end()) {
+        file_filters_.erase(it);
+    }
+}
+
+
+void MyFileChooserButton::set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    cur_filter_ = filter;
+}
+    
+
+std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserButton::list_filters()
+{
+    return file_filters_;
+}
+
+    
+bool MyFileChooserButton::set_current_folder(const std::string &filename)
+{
+    current_folder_ = filename;
+    if (action_ == Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) {
+        set_filename(filename);
+    }
+    return true;
+}
+
+std::string MyFileChooserButton::get_current_folder() const
+{
+    return current_folder_;
+}
+
+
+bool MyFileChooserButton::add_shortcut_folder(const std::string &folder)
+{
+    shortcut_folders_.push_back(folder);
+    return true;
+}
+
+
+bool MyFileChooserButton::remove_shortcut_folder(const std::string &folder)
+{
+    auto it = std::find(shortcut_folders_.begin(), shortcut_folders_.end(), folder);
+    if (it != shortcut_folders_.end()) {
+        shortcut_folders_.erase(it);
+    }
+    return true;
+}
+
+
+void MyFileChooserButton::unselect_all()
+{
+    filename_ = "";
+    set_none();
+}
+
+
+void MyFileChooserButton::unselect_filename(const std::string &filename)
+{
+    if (filename_ == filename) {
+        unselect_all();
+    }
+}
+
+
+void MyFileChooserButton::set_none()
+{
+    lbl_.set_label(Glib::ustring("(") + M("GENERAL_NONE") + ")");
 }
 
 // For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
@@ -1179,7 +1358,7 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
 
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
-        Gtk::FileChooserButton::on_scroll_event(event);
+        Gtk::Button::on_scroll_event(event);
         return true;
     }
 
@@ -1197,19 +1376,6 @@ void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int 
 }
 
 
-void bindCurrentFolder (Gtk::FileChooser& chooser, Glib::ustring& variable)
-{
-    chooser.signal_selection_changed ().connect ([&]()
-    {
-        const auto current_folder = chooser.get_current_folder ();
-
-        if (!current_folder.empty ())
-            variable = current_folder;
-    });
-
-    if (!variable.empty ())
-        chooser.set_current_folder (variable);
-}
 
 TextOrIcon::TextOrIcon (Glib::ustring fname, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type)
 {

@@ -520,7 +520,7 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
 
     Gtk::Label *dfLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_DIRDARKFRAMES") + ":"));
     setExpandAlignProperties(dfLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    darkFrameDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     setExpandAlignProperties(darkFrameDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     dfLabel = Gtk::manage (new Gtk::Label ("Found:"));
     setExpandAlignProperties(dfLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -530,12 +530,12 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     dirgrid->attach_next_to(*dfLabel, *darkFrameDir, Gtk::POS_RIGHT, 1, 1);
 
     //dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
-    dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged), true);
+    dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged)); //, true);
 
     // FLATFIELD
     Gtk::Label *ffLab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_FLATFIELDSDIR") + ":"));
     setExpandAlignProperties(ffLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    flatFieldDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    flatFieldDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     setExpandAlignProperties(flatFieldDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     ffLabel = Gtk::manage (new Gtk::Label ("Found:"));
     setExpandAlignProperties(ffLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -545,12 +545,12 @@ Gtk::Widget* Preferences::getProcParamsPanel ()
     dirgrid->attach_next_to(*ffLabel, *flatFieldDir, Gtk::POS_RIGHT, 1, 1);
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
-    ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::flatFieldChanged), true);
+    ffconn = flatFieldDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::flatFieldChanged)); //, true);
 
     //Cluts Dir
     Gtk::Label *clutsDirLabel = Gtk::manage (new Gtk::Label (M ("PREFERENCES_CLUTSDIR") + ":"));
     setExpandAlignProperties(clutsDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    clutsDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_CLUTSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    clutsDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_CLUTSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     setExpandAlignProperties(clutsDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* clutsRestartNeeded = Gtk::manage ( new Gtk::Label (Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     setExpandAlignProperties(clutsRestartNeeded, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -720,7 +720,7 @@ Gtk::Widget* Preferences::getColorManagementPanel ()
     Gtk::VBox* mvbcm = Gtk::manage (new Gtk::VBox ());
     mvbcm->set_spacing (4);
 
-    iccDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    iccDir = Gtk::manage (new MyFileChooserButton (M ("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     setExpandAlignProperties (iccDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     Gtk::Label* pdlabel = Gtk::manage (new Gtk::Label (M ("PREFERENCES_ICCDIR") + ":", Gtk::ALIGN_START));
     setExpandAlignProperties (pdlabel, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -1207,7 +1207,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     edPS = Gtk::manage ( new Gtk::RadioButton (M ("PREFERENCES_PSPATH") + ":"));
     setExpandAlignProperties (edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage ( new Gtk::FileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
+    psDir = Gtk::manage ( new MyFileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
     setExpandAlignProperties (psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     externaleditorGrid->attach_next_to (*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
     externaleditorGrid->attach_next_to (*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
@@ -1218,7 +1218,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 #elif defined WIN32
     edGimp = Gtk::manage ( new Gtk::RadioButton (M ("PREFERENCES_GIMPPATH") + ":") );
     setExpandAlignProperties (edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    gimpDir = Gtk::manage ( new Gtk::FileChooserButton (M ("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
+    gimpDir = Gtk::manage ( new MyFileChooserButton (M ("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
     setExpandAlignProperties (gimpDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     externaleditorGrid->attach_next_to (*edGimp, Gtk::POS_TOP, 1, 1);
     externaleditorGrid->attach_next_to (*gimpDir, *edGimp, Gtk::POS_RIGHT, 1, 1);
@@ -1226,7 +1226,7 @@ Gtk::Widget* Preferences::getGeneralPanel ()
 
     edPS = Gtk::manage ( new Gtk::RadioButton (M ("PREFERENCES_PSPATH") + ":") );
     setExpandAlignProperties (edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage ( new Gtk::FileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
+    psDir = Gtk::manage ( new MyFileChooserButton (M ("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
     setExpandAlignProperties (psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     externaleditorGrid->attach_next_to (*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
     externaleditorGrid->attach_next_to (*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
