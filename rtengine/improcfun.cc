@@ -28,7 +28,6 @@
 #include "curves.h"
 #include "mytime.h"
 #include "iccstore.h"
-#include "impulse_denoise.h"
 #include "imagesource.h"
 #include "rtthumbnail.h"
 #include "utils.h"
