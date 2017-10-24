@@ -372,6 +372,7 @@ private:
     std::vector<Glib::RefPtr<Gtk::FileFilter>> file_filters_;
     Glib::RefPtr<Gtk::FileFilter> cur_filter_;
     std::vector<std::string> shortcut_folders_;
+    bool show_hidden_;
     sigc::signal<void> selection_changed_;
 
 protected:
@@ -403,6 +404,8 @@ public:
 
     void unselect_all();
     void unselect_filename(const std::string &filename);
+
+    void set_show_hidden(bool yes);
 };
 
 /**

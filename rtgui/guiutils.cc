@@ -1172,7 +1172,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     title_(title),
     action_(action),
     lbl_(""),
-    filename_("")
+    show_hidden_(false)
 {
     lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
     lbl_.set_justify(Gtk::JUSTIFY_LEFT);
@@ -1207,6 +1207,7 @@ void MyFileChooserButton::show_chooser()
         if (!current_folder_.empty()) {
             dlg.set_current_folder(current_folder_);
         }
+        dlg.set_show_hidden(show_hidden_);
         int res = dlg.run();
         if (res == Gtk::RESPONSE_OK) {
             filename_ = dlg.get_filename();
@@ -1272,6 +1273,7 @@ bool MyFileChooserButton::set_filename(const std::string &filename)
     }
     return true;
 }
+
 
 void MyFileChooserButton::add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
 {
@@ -1344,6 +1346,12 @@ void MyFileChooserButton::unselect_filename(const std::string &filename)
     if (filename_ == filename) {
         unselect_all();
     }
+}
+
+
+void MyFileChooserButton::set_show_hidden(bool yes)
+{
+    show_hidden_ = yes;
 }
 
 
