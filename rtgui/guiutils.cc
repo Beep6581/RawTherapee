@@ -1171,13 +1171,13 @@ bool MyHScale::on_key_press_event (GdkEventKey* event)
 MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action):
     title_(title),
     action_(action),
-    lbl_(""),
+    lbl_("", Gtk::ALIGN_START),
     show_hidden_(false)
 {
     lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
     lbl_.set_justify(Gtk::JUSTIFY_LEFT);
     set_none();
-    box_.pack_start(lbl_, true, false);
+    box_.pack_start(lbl_, true, true);
     Gtk::Image *img = Gtk::manage(new Gtk::Image());
     img->set_from_icon_name("document-open", Gtk::ICON_SIZE_BUTTON);
     box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
