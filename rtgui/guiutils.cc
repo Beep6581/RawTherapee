@@ -1190,58 +1190,30 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
 
 void MyFileChooserButton::show_chooser()
 {
-#if 1
-        Gtk::FileChooserDialog dlg(*static_cast<Gtk::Window *>(get_toplevel()), title_, action_);
-        dlg.add_button("Cancel", Gtk::RESPONSE_CANCEL);
-        dlg.add_button("Ok", Gtk::RESPONSE_OK);
-        dlg.set_filename(filename_);
-        for (auto &f : file_filters_) {
-            dlg.add_filter(f);
-        }
-        if (cur_filter_) {
-            dlg.set_filter(cur_filter_);
-        }
-        for (auto &f : shortcut_folders_) {
-            dlg.add_shortcut_folder(f);
-        }
-        if (!current_folder_.empty()) {
-            dlg.set_current_folder(current_folder_);
-        }
-        dlg.set_show_hidden(show_hidden_);
-        int res = dlg.run();
-        if (res == Gtk::RESPONSE_OK) {
-            filename_ = dlg.get_filename();
-            current_folder_ = dlg.get_current_folder();
-            lbl_.set_label(Glib::path_get_basename(filename_));
-            selection_changed_.emit();
-        }
-#else
-        // TO BE COMPLETED!
-        GtkWindow *parent_window = static_cast<Gtk::Window *>(get_toplevel())->gobj();
-        GtkFileChooserNative *native;
-        GtkFileChooserAction action = action_;
-        gint res;
-
-        native = gtk_file_chooser_native_new (title_.c_str(),
-                                              parent_window,
-                                              action,
-                                              "_Ok",
-                                              "_Cancel");
-
-        res = gtk_native_dialog_run (GTK_NATIVE_DIALOG (native));
-        if (res == GTK_RESPONSE_ACCEPT)
-        {
-            char *filename;
-            GtkFileChooser *chooser = GTK_FILE_CHOOSER (native);
-            filename = gtk_file_chooser_get_filename (chooser);
-            filename_ = filename;
-            g_free (filename);
-            lbl_.set_label(Glib::path_get_basename(filename_));
-            selection_changed_.emit();
-        }
-
-        g_object_unref (native);
-#endif
+    Gtk::FileChooserDialog dlg(*static_cast<Gtk::Window *>(get_toplevel()), title_, action_);
+    dlg.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+    dlg.add_button("Ok", Gtk::RESPONSE_OK);
+    dlg.set_filename(filename_);
+    for (auto &f : file_filters_) {
+        dlg.add_filter(f);
+    }
+    if (cur_filter_) {
+        dlg.set_filter(cur_filter_);
+    }
+    for (auto &f : shortcut_folders_) {
+        dlg.add_shortcut_folder(f);
+    }
+    if (!current_folder_.empty()) {
+        dlg.set_current_folder(current_folder_);
+    }
+    dlg.set_show_hidden(show_hidden_);
+    int res = dlg.run();
+    if (res == Gtk::RESPONSE_OK) {
+        filename_ = dlg.get_filename();
+        current_folder_ = dlg.get_current_folder();
+        lbl_.set_label(Glib::path_get_basename(filename_));
+        selection_changed_.emit();
+    }
 }
 
 
