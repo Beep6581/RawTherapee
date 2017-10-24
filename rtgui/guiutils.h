@@ -33,7 +33,6 @@
 
 // for convenience...
 #include "pathutils.h"
-#include "multilangmgr.h"
 
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);

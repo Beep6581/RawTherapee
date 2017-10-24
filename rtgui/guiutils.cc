@@ -1190,9 +1190,9 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
 
 void MyFileChooserButton::show_chooser()
 {
-    Gtk::FileChooserDialog dlg(*static_cast<Gtk::Window *>(get_toplevel()), title_, action_);
-    dlg.add_button("Cancel", Gtk::RESPONSE_CANCEL);
-    dlg.add_button("Ok", Gtk::RESPONSE_OK);
+    Gtk::FileChooserDialog dlg(getToplevelWindow(this), title_, action_);
+    dlg.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dlg.add_button(M(action_ == Gtk::FILE_CHOOSER_ACTION_SAVE ? "GENERAL_SAVE" : "GENERAL_OPEN"), Gtk::RESPONSE_OK);
     dlg.set_filename(filename_);
     for (auto &f : file_filters_) {
         dlg.add_filter(f);
