@@ -1177,14 +1177,20 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
     lbl_.set_justify(Gtk::JUSTIFY_LEFT);
     set_none();
-    box_.pack_start(lbl_, true, true);
+    box_.pack_start(lbl_, true, true, 3);
     Gtk::Image *img = Gtk::manage(new Gtk::Image());
     img->set_from_icon_name("document-open", Gtk::ICON_SIZE_BUTTON);
     box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
-    box_.pack_start(*img, false, false);
+    box_.pack_start(*img, false, false, 3);
     box_.show_all_children();
     add(box_);
     signal_clicked().connect(sigc::mem_fun(*this, &MyFileChooserButton::show_chooser));
+
+    set_border_width(2);
+    set_name("MyFileChooserButton");
+    lbl_.set_name("MyFileChooserButton");
+    box_.set_name("MyFileChooserButton");
+    img->set_name("MyFileChooserButton");
 }
 
 
